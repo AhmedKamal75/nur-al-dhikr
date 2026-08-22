@@ -1,0 +1,3165 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "id": "pdf-duas",
+    "name": {
+      "en": "Duas from Islamic Literature",
+      "ar": "أدعية من الأدب الإسلامي"
+    },
+    "description": {
+      "en": "Authentic duas from: Joami Dua al-Nabi, 100 Authentic Duas (Al-Munajjid), Man Yaduni (Al-Maiman), Munajat al-Muhsinin (Al-Muqaddam), and Ruqyah Treatment (Al-Qahtani)",
+      "ar": "أدعية صحيحة من: جوامع دعاء النبي، 100 دعاء للمنجد، من يدعوني للميمان، مناجاة المحسنين للمقدم، الرقية للقحطاني"
+    },
+    "version": "2.0.0",
+    "source": {
+      "en": "Multiple authentic Islamic books",
+      "ar": "مصادر إسلامية موثوقة"
+    },
+    "license": "Various",
+    "homepage": "",
+    "authors": [],
+    "updated": "2026-08-07"
+  },
+  "categories": [
+    {
+      "id": "joami-nabi",
+      "section_id": "pdf-duas",
+      "name": {
+        "en": "Comprehensive Duas of the Prophet ﷺ",
+        "ar": "جوامع دعاء النبي ﷺ"
+      },
+      "description": {
+        "en": "A collection of comprehensive supplications taught by the Prophet Muhammad ﷺ.",
+        "ar": "مجموعة من الأدعية الجامعة من السنة النبوية."
+      },
+      "order": 1,
+      "icon": "heart",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "pdf-joami-001",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Forgiveness of All Sins",
+            "ar": "دعاء مغفرة الذنوب كلها"
+          },
+          "arabic": "اللَّهُمَّ اغْفِرْ لِي خَطِيئَتِي وَجَهْلِي، وَإِسْرَافِي فِي أَمْرِي، وَمَا أَنْتَ أَعْلَمُ بِهِ مِنِّي، اللَّهُمَّ اغْفِرْ لِي جِدِّي وَهَزْلِي، وَخَطَئِي وَعَمْدِي، وَكُلُّ ذَلِكَ عِنْدِي",
+          "transliteration": "Allahummaghfir li khati'ati wa jahli, wa israfi fi amri, wa ma anta a'lamu bihi minni. Allahummaghfir li jiddi wa hazli, wa khata'i wa 'amdi, wa kullu dhalika 'indi.",
+          "translation": {
+            "en": "O Allah, forgive my sin, my ignorance, my extravagance in my affairs, and what You know better than I. O Allah, forgive my earnestness and my jest, my mistake and my deliberate actions, all of that is from me.",
+            "ar": "اللهم اغفر لي خطيئتي وجهلي وإسرافي في أمري..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "6398",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Also Sahih Muslim 2719."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "From the comprehensive duas of the Prophet ﷺ.",
+            "ar": "من جوامع دعاء النبي ﷺ."
+          },
+          "tags": [
+            "prophetic-dua",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 1
+        },
+        {
+          "id": "pdf-joami-002",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Good Outcome",
+            "ar": "دعاء حسن العاقبة"
+          },
+          "arabic": "اللَّهُمَّ أَحْسِنْ عَاقِبَتِي فِي الأُمُورِ كُلِّهَا، وَأَجِرْنِي مِنْ خِزْيِ الدُّنْيَا وَعَذَابِ الآخِرَةِ",
+          "transliteration": "Allahumma ahsin 'aqibati fil-umuri kulliha, wa ajirni min khizyid-dunya wa 'adhabil-akhirah.",
+          "translation": {
+            "en": "O Allah, make the outcome of all my affairs good, and protect me from the disgrace of this world and the punishment of the Hereafter.",
+            "ar": "اللهم أحسن عاقبتي في الأمور كلها وأجرني من خزي الدنيا وعذاب الآخرة"
+          },
+          "reference": {
+            "collection": "Musnad Ahmad",
+            "book": "",
+            "chapter": "",
+            "hadith": "26030",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Classed Sahih by Al-Albani."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Comprehensive dua for good endings.",
+            "ar": "من جوامع الدعاء."
+          },
+          "tags": [
+            "prophetic-dua",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 2
+        },
+        {
+          "id": "pdf-joami-003",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Help in Worship",
+            "ar": "دعاء الإعانة على العبادة"
+          },
+          "arabic": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ، وَشُكْرِكَ، وَحُسْنِ عِبَادَتِكَ",
+          "transliteration": "Allahumma a'inni 'ala dhikrika, wa shukrika, wa husni 'ibadatik.",
+          "translation": {
+            "en": "O Allah, help me to remember You, to thank You, and to worship You in the best manner.",
+            "ar": "اللهم أعني على ذكرك وشكرك وحسن عبادتك"
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "1522",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ told Mu'adh not to neglect this after every prayer.",
+            "ar": "قال النبي ﷺ لمعاذ: لا تدعن في دبر كل صلاة."
+          },
+          "tags": [
+            "prophetic-dua",
+            "worship"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 3
+        },
+        {
+          "id": "pdf-joami-004",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Light",
+            "ar": "دعاء النور"
+          },
+          "arabic": "اللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا، وَفِي بَصَرِي نُورًا، وَفِي سَمْعِي نُورًا، وَعَنْ يَمِينِي نُورًا، وَعَنْ يَسَارِي نُورًا، وَفَوْقِي نُورًا، وَتَحْتِي نُورًا، وَأَمَامِي نُورًا، وَخَلْفِي نُورًا، وَاجْعَلْ لِي نُورًا",
+          "transliteration": "Allahummaj'al fi qalbi nuran, wa fi basari nuran, wa fi sam'i nuran, wa 'an yamini nuran, wa 'an yasari nuran, wa fawqi nuran, wa tahti nuran, wa amami nuran, wa khalfi nuran, waj'al li nuran.",
+          "translation": {
+            "en": "O Allah, place light in my heart, light in my sight, light in my hearing, light on my right, light on my left, light above me, light below me, light before me, light behind me, and make for me light.",
+            "ar": "اللهم اجعل في قلبي نوراً وفي بصري نوراً..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Tahajjud",
+            "chapter": "",
+            "hadith": "6316",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Also Sahih Muslim 763."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The dua of light — the Prophet ﷺ said this in his night prayer.",
+            "ar": "كان النبي ﷺ يقوله في قنوت الليل."
+          },
+          "tags": [
+            "prophetic-dua",
+            "nur",
+            "light"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 4
+        },
+        {
+          "id": "pdf-joami-005",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Forgiveness and Well-being",
+            "ar": "دعاء العفو والعافية"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي",
+          "transliteration": "Allahumma inni as'alukal-'afwa wal-'afiyata fid-dunya wal-akhirah. Allahumma inni as'alukal-'afwa wal-'afiyata fi dini wa dunyaya wa ahli wa mali.",
+          "translation": {
+            "en": "O Allah, I ask You for forgiveness and well-being in this world and the Hereafter. O Allah, I ask You for forgiveness and well-being in my religion, my worldly affairs, my family, and my wealth.",
+            "ar": "اللهم إني أسألك العفو والعافية في الدنيا والآخرة..."
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Adab",
+            "chapter": "",
+            "hadith": "5074",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "From the comprehensive duas of the Prophet ﷺ.",
+            "ar": "من جوامع دعاء النبي ﷺ."
+          },
+          "tags": [
+            "prophetic-dua",
+            "forgiveness",
+            "afiyah"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 5
+        },
+        {
+          "id": "pdf-joami-006",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Guidance and Piety",
+            "ar": "دعاء الهدى والتقوى"
+          },
+          "arabic": "اللَّهُمَّ اهْدِنِي لِصَالِحِ الأَعْمَالِ وَالأَخْلاَقِ، إِنَّهُ لاَ يَهْدِي لِصَالِحِهَا وَلاَ يَصْرِفُ سَيِّئَهَا إِلاَّ أَنْتَ",
+          "transliteration": "Allahummahdini li-salihil-a'mali wal-akhlaq, innahu la yahdi li-salihiha wa la yasrifu sayyi'aha illa ant.",
+          "translation": {
+            "en": "O Allah, guide me to the best of deeds and the best of manners, for none can guide to their good or avert their evil except You.",
+            "ar": "اللهم اهدني لصالح الأعمال والأخلاق..."
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "10338",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Comprehensive dua for guidance.",
+            "ar": "من جوامع الدعاء."
+          },
+          "tags": [
+            "prophetic-dua",
+            "guidance"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 6
+        },
+        {
+          "id": "pdf-joami-007",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Steadfastness",
+            "ar": "دعاء الثبات"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الثَّبَاتَ فِي الأَمْرِ، وَالْعَزِيمَةَ عَلَى الرُّشْدِ، وَأَسْأَلُكَ شُكْرَ نِعْمَتِكَ، وَأَسْأَلُكَ حُسْنَ عِبَادَتِكَ، وَأَسْأَلُكَ قَلْبًا سَلِيمًا، وَأَسْأَلُكَ لِسَانًا صَادِقًا",
+          "transliteration": "Allahumma inni as'alukath-thabata fil-amri, wal-'azimata 'alar-rushdi, wa as'aluka shukra ni'matik, wa as'aluka husna 'ibadatik, wa as'aluka qalban saliman, wa as'aluka lisanan sadiqa.",
+          "translation": {
+            "en": "O Allah, I ask You for steadfastness in the matter, determination in guidance, gratitude for Your blessing, excellent worship, a sound heart, and a truthful tongue.",
+            "ar": "اللهم إني أسألك الثبات في الأمر والعزيمة على الرشد..."
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "10339",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Comprehensive dua for steadfastness.",
+            "ar": "من جوامع الدعاء."
+          },
+          "tags": [
+            "prophetic-dua",
+            "steadfastness"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 7
+        },
+        {
+          "id": "pdf-joami-008",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Ease",
+            "ar": "دعاء التيسير"
+          },
+          "arabic": "اللَّهُمَّ يَسِّرْ لِي لِلْيُسْرَى، وَجَنِّبْنِي لِلْعُسْرَى، وَاغْفِرْ لِي فِي الآخِرَةِ وَالأُولَى",
+          "transliteration": "Allahumma yassir li lil-yusra, wa jannibni lil-'usra, waghfir li fil-akhirati wal-ula.",
+          "translation": {
+            "en": "O Allah, make easy for me the path of ease, and keep me away from the path of hardship, and forgive me in this life and the Hereafter.",
+            "ar": "اللهم يسر لي لليسرى وجنبني للعسرى..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Tahajjud",
+            "chapter": "",
+            "hadith": "1163",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Comprehensive dua for ease in all affairs.",
+            "ar": "من جوامع الدعاء."
+          },
+          "tags": [
+            "prophetic-dua",
+            "ease"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 8
+        },
+        {
+          "id": "pdf-joami-009",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Purification of Heart",
+            "ar": "دعاء طهارة القلب"
+          },
+          "arabic": "اللَّهُمَّ طَهِّرْ قَلْبِي مِنَ النِّفَاقِ، وَعَمَلِي مِنَ الرِّيَاءِ، وَلِسَانِي مِنَ الْكَذِبِ، وَعَيْنِي مِنَ الْخِيَانَةِ، فَإِنَّكَ تَعْلَمُ خَائِنَةَ الأَعْيُنِ وَمَا تُخْفِي الصُّدُورُ",
+          "transliteration": "Allahumma tahhir qalbi minan-nifaq, wa 'amali minar-riya', wa lisani minal-kadhib, wa 'ayni minal-khiyanah, fa innaka ta'lamu kha'inatal-a'yun wa ma tukhfish-sudur.",
+          "translation": {
+            "en": "O Allah, purify my heart from hypocrisy, my deeds from showing off, my tongue from lying, and my eyes from betrayal, for You know the treachery of the eyes and what the breasts conceal.",
+            "ar": "اللهم طهر قلبي من النفاق..."
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i",
+            "book": "Book of Purification",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Classed Hasan."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Hasan",
+            "ar": "حسن"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for inner purity.",
+            "ar": "دعاء لطهارة الباطن."
+          },
+          "tags": [
+            "prophetic-dua",
+            "heart",
+            "purification"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 9
+        },
+        {
+          "id": "pdf-joami-010",
+          "category_id": "joami-nabi",
+          "title": {
+            "en": "Dua for Good Character",
+            "ar": "دعاء حسن الأخلاق"
+          },
+          "arabic": "اللَّهُمَّ جَنِّبْنِي مُنْكَرَاتِ الأَخْلاَقِ، وَالأَعْمَالِ، وَالأَهْوَاءِ، وَالأَدْوَاءِ",
+          "transliteration": "Allahumma jannibni munkaratil-akhlaq, wal-a'mali, wal-ahwa', wal-adwa'.",
+          "translation": {
+            "en": "O Allah, keep me away from reprehensible manners, deeds, desires, and diseases.",
+            "ar": "اللهم جنبني منكرات الأخلاق والأعمال والأهواء والأدواء"
+          },
+          "reference": {
+            "collection": "Sunan Ibn Majah",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3871",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Hasan by Al-Albani",
+            "ar": "حسنه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Protection from bad character and diseases.",
+            "ar": "حماية من سوء الأخلاق."
+          },
+          "tags": [
+            "prophetic-dua",
+            "character"
+          ],
+          "related": [],
+          "notes": "Source: جوامع دعاء النبي",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "100-authentic-duas",
+      "section_id": "pdf-duas",
+      "name": {
+        "en": "100 Authentic Duas (Al-Munajjid)",
+        "ar": "100 دعاء من الكتاب والسنة (المنجد)"
+      },
+      "description": {
+        "en": "Selected duas from the book by Sheikh Muhammad Salih Al-Munajjid",
+        "ar": "أدعية مختارة من كتاب الشيخ محمد صالح المنجد"
+      },
+      "order": 2,
+      "icon": "book",
+      "color": "amber",
+      "items": [
+        {
+          "id": "pdf-100-001",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua by the Name of Allah the One",
+            "ar": "دعاء باسم الله الأحد"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ يَا اللَّهُ الأَحَدَ الصَّمَدَ الَّذِي لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ، أَنْ تَغْفِرَ لِي ذُنُوبِي، إِنَّكَ أَنْتَ الْغَفُورُ الرَّحِيمُ",
+          "transliteration": "Allahumma inni as'aluka ya-Allahul-Ahadas-Samad alladhi lam yalid wa lam yulad wa lam yakun lahu kufuwan ahad, an taghfira li dhunubi, innaka antal-Ghafurur-Rahim.",
+          "translation": {
+            "en": "O Allah, I ask You, O Allah the One, the Self-Sufficient, who neither begets nor is born, and to whom none is equal, to forgive my sins, for You are the Most Forgiving, the Most Merciful.",
+            "ar": "اللهم إني أسألك يا الله الأحد الصمد..."
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "10340",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua #1 from 100 Duas collection.",
+            "ar": "الدعاء الأول من 100 دعاء."
+          },
+          "tags": [
+            "100-duas",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء من الكتاب والسنة، محمد صالح المنجد",
+          "order": 1
+        },
+        {
+          "id": "pdf-100-002",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Comprehensive Dua for All Good",
+            "ar": "الدعاء الجامع للخير كله"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنَ الْخَيْرِ كُلِّهِ عَاجِلِهِ وَآجِلِهِ، مَا عَلِمْتُ مِنْهُ وَمَا لَمْ أَعْلَمْ، وَأَعُوذُ بِكَ مِنَ الشَّرِّ كُلِّهِ عَاجِلِهِ وَآجِلِهِ مَا عَلِمْتُ مِنْهُ وَمَا لَمْ أَعْلَمْ",
+          "transliteration": "Allahumma inni as'aluka minal-khayri kullihi 'ajilihi wa ajilihi, ma 'alimtu minhu wa ma lam a'lam, wa a'udhu bika minash-sharri kullihi 'ajilihi wa ajilihi ma 'alimtu minhu wa ma lam a'lam.",
+          "translation": {
+            "en": "O Allah, I ask You for all that is good, in this world and the Hereafter, what I know and what I do not know. I seek refuge in You from all evil, in this world and the Hereafter, what I know and what I do not know.",
+            "ar": "اللهم إني أسألك من الخير كله عاجله وآجله..."
+          },
+          "reference": {
+            "collection": "Sunan Ibn Majah",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3871",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The most comprehensive dua ever narrated.",
+            "ar": "أجمع الدعاء."
+          },
+          "tags": [
+            "100-duas",
+            "comprehensive"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 2
+        },
+        {
+          "id": "pdf-100-003",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua for Submission to Allah",
+            "ar": "دعاء التسليم لله"
+          },
+          "arabic": "اللَّهُمَّ لَكَ أَسْلَمْتُ، وَبِكَ آمَنْتُ، وَعَلَيْكَ تَوَكَّلْتُ، وَإِلَيْكَ أَنَبْتُ، وَبِكَ خَاصَمْتُ، اللَّهُمَّ إِنِّي أَعُوذُ بِعِزَّتِكَ، لاَ إِلَهَ إِلاَّ أَنْتَ أَنْ تُضِلَّنِي",
+          "transliteration": "Allahumma laka aslamtu, wa bika amantu, wa 'alayka tawakkaltu, wa ilayka anabtu, wa bika khasamtu. Allahumma inni a'udhu bi'izzatik, la ilaha illa ant an tudillani.",
+          "translation": {
+            "en": "O Allah, to You I submit, in You I believe, upon You I rely, to You I turn, and with Your help I argue. O Allah, I seek refuge in Your might — there is no deity except You — that You lead me astray.",
+            "ar": "اللهم لك أسلمت وبك آمنت وعليك توكلت..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "2717",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "You are the Living, the Eternal — none can mislead whom You guide.",
+            "ar": "أنت الحي الذي لا يموت."
+          },
+          "tags": [
+            "100-duas",
+            "submission",
+            "tawakkul"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 3
+        },
+        {
+          "id": "pdf-100-004",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua for Protection from All Evil",
+            "ar": "دعاء الحماية من كل شر"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ خَيْرِ مَا سَأَلَكَ مِنْهُ عَبْدُكَ وَنَبِيُّكَ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا عَاذَ بِهِ عَبْدُكَ وَنَبِيُّكَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَمَا قَرَّبَ إِلَيْهَا مِنْ قَوْلٍ أَوْ عَمَلٍ، وَأَعُوذُ بِكَ مِنَ النَّارِ وَمَا قَرَّبَ إِلَيْهَا مِنْ قَوْلٍ أَوْ عَمَلٍ",
+          "transliteration": "Allahumma inni as'aluka min khayri ma sa'alaka minhu 'abduka wa nabiyyuk, wa a'udhu bika min sharri ma 'adha bihi 'abduka wa nabiyyuk. Allahumma inni as'alukal-jannata wa ma qarraba ilayha min qawlin aw 'amal, wa a'udhu bika minan-nari wa ma qarraba ilayha min qawlin aw 'amal.",
+          "translation": {
+            "en": "O Allah, I ask You for the good that Your servant and Prophet asked You for, and I seek refuge in You from the evil that Your servant and Prophet sought refuge from. O Allah, I ask You for Paradise and whatever words or deeds bring near to it, and I seek refuge in You from the Fire and whatever words or deeds bring near to it.",
+            "ar": "اللهم إني أسألك من خير ما سألك عبدك ونبيك..."
+          },
+          "reference": {
+            "collection": "Sunan Ibn Majah",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3862",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Asking for all the good the Prophet ﷺ asked for.",
+            "ar": "تتضمن خير ما سأله النبي ﷺ."
+          },
+          "tags": [
+            "100-duas",
+            "protection",
+            "jannah"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 4
+        },
+        {
+          "id": "pdf-100-005",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua for Well-being in All Things",
+            "ar": "دعاء المعافاة في كل شيء"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْمُعَافَاةَ فِي الدُّنْيَا وَالآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي، اللَّهُمَّ اسْتُرْ عَوْرَاتِي وَآمِنْ رَوْعَاتِي",
+          "transliteration": "Allahumma inni as'alukal-mu'afata fid-dunya wal-akhirah. Allahumma inni as'alukal-'afwa wal-'afiyata fi dini wa dunyaya wa ahli wa mali. Allahumastur 'awrati wa amin raw'ati.",
+          "translation": {
+            "en": "O Allah, I ask You for well-being in this world and the Hereafter. O Allah, I ask You for forgiveness and well-being in my religion, my worldly affairs, my family, and my wealth. O Allah, conceal my faults and calm my fears.",
+            "ar": "اللهم إني أسألك المعافاة في الدنيا والآخرة..."
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Adab",
+            "chapter": "",
+            "hadith": "5074",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Comprehensive dua for well-being.",
+            "ar": "دعاء شامل للمعافاة."
+          },
+          "tags": [
+            "100-duas",
+            "well-being",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 5
+        },
+        {
+          "id": "pdf-100-006",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua Seeking Refuge from Hunger",
+            "ar": "الاستعاذة من الجوع"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْجُوعِ، فَإِنَّهُ بِئْسَ الضَّجِيعُ، وَأَعُوذُ بِكَ مِنَ الْخِيَانَةِ، فَإِنَّهَا بِئْسَتِ الْبِطَانَةُ",
+          "transliteration": "Allahumma inni a'udhu bika minal-ju', fa innahu bi'sad-daji', wa a'udhu bika minal-khiyanah, fa innaha bi'satil-bitanah.",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from hunger, for it is an evil bedfellow, and I seek refuge in You from betrayal, for it is an evil inner garment.",
+            "ar": "اللهم إني أعوذ بك من الجوع..."
+          },
+          "reference": {
+            "collection": "Sunan Ibn Majah",
+            "book": "Book of Etiquette",
+            "chapter": "",
+            "hadith": "3356",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Protection from hunger and betrayal.",
+            "ar": "حماية من الجوع والخيانة."
+          },
+          "tags": [
+            "100-duas",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 6
+        },
+        {
+          "id": "pdf-100-007",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua Seeking Refuge from Cowardice & Miserliness",
+            "ar": "الاستعاذة من الجبن والبخل"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْجُبْنِ وَالْبُخْلِ، وَأَعُوذُ بِكَ مِنْ أَنْ أُرَدَّ إِلَى أَرْذَلِ الْعُمُرِ، وَأَعُوذُ بِكَ مِنْ فِتْنَةِ الدُّنْيَا وَعَذَابِ الْقَبْرِ",
+          "transliteration": "Allahumma inni a'udhu bika minal-jubni wal-bukhl, wa a'udhu bika an uradda ila ardhalil-'umur, wa a'udhu bika min fitnatid-dunya wa 'adhabil-qabr.",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from cowardice and miserliness, from reaching the worst age, from the trial of this world, and from the punishment of the grave.",
+            "ar": "اللهم إني أعوذ بك من الجبن والبخل..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Jihad",
+            "chapter": "",
+            "hadith": "2822",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Protection from four major trials.",
+            "ar": "حماية من أربع."
+          },
+          "tags": [
+            "100-duas",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 7
+        },
+        {
+          "id": "pdf-100-008",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua Seeking Refuge from Loss of Blessings",
+            "ar": "الاستعاذة من زوال النعمة"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ زَوَالِ نِعْمَتِكَ، وَتَحَوُّلِ عَافِيَتِكَ، وَفَجَاءَةِ نِقْمَتِكَ، وَجَمِيعِ سَخَطِكَ",
+          "transliteration": "Allahumma inni a'udhu bika min zawali ni'matik, wa tahawwuli 'afiyatik, wa fuja'ati niqmatik, wa jami' sakhatik.",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from the removal of Your blessing, the change of Your well-being, the suddenness of Your punishment, and all of Your wrath.",
+            "ar": "اللهم إني أعوذ بك من زوال نعمتك..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "2718",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Protection from losing Allah's blessings.",
+            "ar": "حماية من زوال النعمة."
+          },
+          "tags": [
+            "100-duas",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 8
+        },
+        {
+          "id": "pdf-100-009",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua Seeking Refuge from Leprosy & Madness",
+            "ar": "الاستعاذة من الجذام والجنون"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْبَرَصِ، وَالْجُنُونِ، وَالْجَذَامِ، وَمِنْ سَيِّئِ الأَسْقَامِ",
+          "transliteration": "Allahumma inni a'udhu bika minal-baras, wal-junon, wal-jadham, wa min sayyi'il-asqam.",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from leprosy, madness, leprosy, and from severe illnesses.",
+            "ar": "اللهم إني أعوذ بك من البرص والجنون والجذام..."
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "1554",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Protection from severe diseases.",
+            "ar": "حماية من الأمراض الشديدة."
+          },
+          "tags": [
+            "100-duas",
+            "protection",
+            "health"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 9
+        },
+        {
+          "id": "pdf-100-010",
+          "category_id": "100-authentic-duas",
+          "title": {
+            "en": "Dua for All Good & Refuge from All Evil",
+            "ar": "دعاء لكل خير واستعاذة من كل شر"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ كُلِّ خَيْرٍ خَزَائِنُهُ بِيَدِكَ، وَأَعُوذُ بِكَ مِنْ كُلِّ شَرٍّ خَزَائِنُهُ بِيَدِكَ",
+          "transliteration": "Allahumma inni as'aluka min kulli khayrin khaza'inuhu bi-yadik, wa a'udhu bika min kulli sharrin khaza'inuhu bi-yadik.",
+          "translation": {
+            "en": "O Allah, I ask You for all good whose treasures are in Your hand, and I seek refuge in You from all evil whose treasures are in Your hand.",
+            "ar": "اللهم إني أسألك من كل خير خزائنه بيدك..."
+          },
+          "reference": {
+            "collection": "Mustadrak al-Hakim",
+            "book": "",
+            "chapter": "",
+            "hadith": "1862",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Classed Sahih by Al-Albani."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "All good and evil are in Allah's hand.",
+            "ar": "كل الخير والشر بيد الله."
+          },
+          "tags": [
+            "100-duas",
+            "comprehensive"
+          ],
+          "related": [],
+          "notes": "Source: 100 دعاء، المنجد",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "munajat",
+      "section_id": "pdf-duas",
+      "name": {
+        "en": "Supplications of the Righteous",
+        "ar": "مناجاة المحسنين"
+      },
+      "description": {
+        "en": "Heartfelt supplications and devotions of the pious.",
+        "ar": "مناجات وأدعية المحسنين في الخلوات."
+      },
+      "order": 3,
+      "icon": "moon",
+      "color": "slate",
+      "items": [
+        {
+          "id": "pdf-munajat-001",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Faith and Certainty",
+            "ar": "دعاء الإيمان واليقين"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ إِيمَانًا يُبَاشِرُ قَلْبِي، وَيَقِينًا صَادِقًا، حَتَّى أَعْلَمَ أَنَّهُ لَنْ يُصِيبَنِي إِلاَّ مَا كَتَبْتَ لِي، وَأَنَّ مَا أَصَابَنِي لَمْ يَكُنْ لِيُخْطِئَنِي، وَمَا أَخْطَأَنِي لَمْ يَكُنْ لِيُصِيبَنِي",
+          "transliteration": "Allahumma inni as'aluka imanan yumashiru qalbi, wa yaqinan sadiqa, hatta a'lama annahu lan yusibani illa ma katabta li, wa anna ma asabani lam yakun liyukhti'ani, wa ma akhta'ani lam yakun liyusibani.",
+          "translation": {
+            "en": "O Allah, I ask You for faith that touches my heart, and true certainty, so that I know that nothing will befall me except what You have written for me, and that what has befallen me was never meant to miss me, and what missed me was never meant to befall me.",
+            "ar": "اللهم إني أسألك إيمانا يباشر قلبي..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Based on authentic hadith in Musnad Ahmad."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Based on authentic narration",
+            "ar": "مبني على حديث صحيح"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for unshakeable faith and certainty in Allah's decree.",
+            "ar": "دعاء لليقين بقضاء الله."
+          },
+          "tags": [
+            "munajat",
+            "faith",
+            "qadar"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين في الخلوات، المقدم",
+          "order": 1
+        },
+        {
+          "id": "pdf-munajat-002",
+          "category_id": "munajat",
+          "title": {
+            "en": "Longing for Allah",
+            "ar": "الشوق إلى الله"
+          },
+          "arabic": "إِلَهِي مَا أَشْوَقَنِي إِلَى لِقَائِكَ، وَأَعْظَمَ رَجَائِي لِجَزَائِكَ، وَأَنْتَ الْكَرِيمُ الَّذِي لاَ يُخَيِّبُ لَدَيْكَ أَمَلَ الآمِلِينَ، وَلاَ يُبْطِلُ عِنْدَكَ شَوْقَ الْمُشْتَاقِينَ",
+          "transliteration": "Ilahi ma ashwaqani ila liqa'ik, wa a'zama raja'i li-za'ik, wa antal-karim alladhi la yukhayibu ladayka amalal-amilin, wa la yubtilu 'indaka shawqal-mushtaqin.",
+          "translation": {
+            "en": "My God, how I long to meet You, how great is my hope for Your reward. You are the Generous One who does not disappoint the hopes of those who hope, nor does He nullify the longing of those who yearn.",
+            "ar": "إلهي ما أشوقني إلى لقائك..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Devotional text from the book."
+          },
+          "grade": "Unknown",
+          "custom_grade": {
+            "en": "Devotional supplication",
+            "ar": "مناجاة"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Expressing longing for Allah.",
+            "ar": "التعبير عن الشوق إلى الله."
+          },
+          "tags": [
+            "munajat",
+            "longing",
+            "devotion"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 2
+        },
+        {
+          "id": "pdf-munajat-003",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Elevated Status",
+            "ar": "دعاء رفع الذكر وتضع الوزر"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ أَنْ تَرْفَعَ ذِكْرِي، وَتَضَعَ وِزْرِي، وَتُطَهِّرَ قَلْبِي، وَتُحَصِّنَ فَرْجِي، وَتَغْفِرَ لِي ذَنْبِي، وَأَسْأَلُكَ الدَّرَجَاتِ الْعُلَى مِنَ الْجَنَّةِ",
+          "transliteration": "Allahumma inni as'aluka an tarfa'a dhikri, wa tada'a wizri, wa tuhahhira qalbi, wa tuhassina farji, wa taghfira li dhanbi, wa as'alukad-darajatil-'ula minal-jannah.",
+          "translation": {
+            "en": "O Allah, I ask You to raise my mention, lighten my burden, purify my heart, protect my chastity, forgive my sin, and I ask You for the highest ranks of Paradise.",
+            "ar": "اللهم إني أسألك أن ترفع ذكري وتضع وزري..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Based on authentic hadith."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Based on authentic narration",
+            "ar": "مبني على حديث صحيح"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Comprehensive dua for honor and purity.",
+            "ar": "دعاء شامل للشرف والطهارة."
+          },
+          "tags": [
+            "munajat",
+            "jannah",
+            "purification"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 3
+        },
+        {
+          "id": "pdf-munajat-004",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Contentment with Allah's Decree",
+            "ar": "دعاء الرضا بالقضاء"
+          },
+          "arabic": "اللَّهُمَّ رَضِّنِي بِقَضَائِكَ، وَبَارِكْ لِي فِي قَدَرِكَ، حَتَّى لاَ أُحِبَّ تَعْجِيلَ مَا أَخَّرْتَ، وَلاَ تَأْخِيرَ مَا عَجَّلْتَ",
+          "transliteration": "Allahumma radini bi-qaDa'ik, wa barik li fi qadarik, hatta la uhibba ta'jila ma akhkharta, wa la ta'khira ma 'ajjalta.",
+          "translation": {
+            "en": "O Allah, make me content with Your decree, bless me in what You have destined, so that I do not love to hasten what You have delayed, nor delay what You have hastened.",
+            "ar": "اللهم رضني بقضائك وبارك لي في قدرك..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Devotional text."
+          },
+          "grade": "Unknown",
+          "custom_grade": {
+            "en": "Devotional supplication",
+            "ar": "مناجاة"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Contentment with Allah's decree.",
+            "ar": "الرضا بالقضاء."
+          },
+          "tags": [
+            "munajat",
+            "contentment",
+            "qadar"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 4
+        },
+        {
+          "id": "pdf-munajat-005",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Good Character & Provision",
+            "ar": "دعاء حسن الأخلاق وتيسير الأرزاق"
+          },
+          "arabic": "اللَّهُمَّ حَسِّنْ أَخْلاَقَنَا، وَسَهِّلْ أَرْزَاقَنَا، وَارْحَمْ فِي الدُّنْيَا غُرْبَتَنَا، وَفِي الْقَبْرِ وَحْشَتَنَا",
+          "transliteration": "Allahumma hassin akhlaqana, wa sah-hil arzaqana, warham fid-dunya ghurbatana, wa fil-qabr wahshatana.",
+          "translation": {
+            "en": "O Allah, beautify our character, make our provision easy, have mercy on our estrangement in this world, and on our loneliness in the grave.",
+            "ar": "اللهم حسن أخلاقنا وسهل أرزاقنا..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Devotional text."
+          },
+          "grade": "Unknown",
+          "custom_grade": {
+            "en": "Devotional supplication",
+            "ar": "مناجاة"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Beautiful dua for character, provision, and mercy.",
+            "ar": "دعاء جميل للأخلاق والرزق والرحمة."
+          },
+          "tags": [
+            "munajat",
+            "character",
+            "rizq",
+            "mercy"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 5
+        },
+        {
+          "id": "pdf-munajat-006",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua of Gratitude",
+            "ar": "دعاء الشكر"
+          },
+          "arabic": "اللَّهُمَّ لَكَ الْحَمْدُ كُلُّهُ، لاَ قَابِضَ لِمَا بَسَطْتَ، وَلاَ بَاسِطَ لِمَا قَبَضْتَ، وَلاَ هَادِيَ لِمَنْ أَضْلَلْتَ، وَلاَ مُضِلَّ لِمَنْ هَدَيْتَ، وَلاَ مُعْطِيَ لِمَا مَنَعْتَ، وَلاَ مَانِعَ لِمَا أَعْطَيْتَ",
+          "transliteration": "Allahumma lakal-hamdu kulluhu, la qabida lima basatta, wa la basita lima qabadta, wa la hadiya liman adlalta, wa la mudilla liman hadayt, wa la mu'tiya lima mana'ta, wa la mania lima a'tayt.",
+          "translation": {
+            "en": "O Allah, all praise is Yours. None can withhold what You extend, none can extend what You withhold, none can guide whom You misguide, none can misguide whom You guide, none can give what You withhold, none can withhold what You give.",
+            "ar": "اللهم لك الحمد كله..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Based on authentic narration in Ibn Majah."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Based on authentic narration",
+            "ar": "مبني على حديث صحيح"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Complete praise of Allah's power.",
+            "ar": "حمد كامل لقدرة الله."
+          },
+          "tags": [
+            "munajat",
+            "gratitude",
+            "hamd"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 6
+        },
+        {
+          "id": "pdf-munajat-007",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Forgiveness and Repentance",
+            "ar": "دعاء الاستغفار والتوبة"
+          },
+          "arabic": "اللَّهُمَّ مَغْفِرَتُكَ أَوْسَعُ مِنْ ذُنُوبِي، وَرَحْمَتُكَ أَرْجَى عِنْدِي مِنْ عَمَلِي، فَاجْعَلِ الْعَفْوَ قَرَارِي، وَلاَ تَقْطَعْ رَجَائِي",
+          "transliteration": "Allahumma maghfiratuk awsa'u min dhunubi, wa rahmatuk arja 'indi min 'amali, faj'alil-'afwa qarari, wa la taqta' raja'i.",
+          "translation": {
+            "en": "O Allah, Your forgiveness is wider than my sins, Your mercy is more hopeful to me than my deeds. So make forgiveness my resting place, and do not cut off my hope.",
+            "ar": "اللهم مغفرتك أوسع من ذنوبي..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Devotional text."
+          },
+          "grade": "Unknown",
+          "custom_grade": {
+            "en": "Devotional supplication",
+            "ar": "مناجاة"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Beautiful expression of hope in Allah's mercy.",
+            "ar": "تعبير جميل عن الرجاء في رحمة الله."
+          },
+          "tags": [
+            "munajat",
+            "forgiveness",
+            "hope"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 7
+        },
+        {
+          "id": "pdf-munajat-008",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Sound Heart and Truthful Tongue",
+            "ar": "دعاء القلب السليم واللسان الصادق"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ نَفْسًا طَيِّبَةً، وَقَلْبًا سَلِيمًا، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا تَعْلَمُ، وَأَسْأَلُكَ مِنْ خَيْرِ مَا تَعْلَمُ، وَأَسْتَغْفِرُكَ لِمَا تَعْلَمُ، إِنَّكَ أَنْتَ عَلاَّمُ الْغُيُوبِ",
+          "transliteration": "Allahumma inni as'aluka nafsan tayyibatan, wa qalban saliman, wa a'udhu bika min sharri ma ta'lam, wa as'aluka min khayri ma ta'lam, wa astaghfiruka lima ta'lam, innaka anta 'allamul-ghuyub.",
+          "translation": {
+            "en": "O Allah, I ask You for a good soul, a sound heart. I seek refuge in You from the evil of what You know, I ask You for the good of what You know, and I seek Your forgiveness for what You know. Indeed, You are the Knower of the unseen.",
+            "ar": "اللهم إني أسألك نفساً طيبةً وقلباً سليماً..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Based on authentic narration."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Based on authentic narration",
+            "ar": "مبني على حديث صحيح"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for inner purity and truthfulness.",
+            "ar": "دعاء لطهارة الباطن والصدق."
+          },
+          "tags": [
+            "munajat",
+            "heart",
+            "purification"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 8
+        },
+        {
+          "id": "pdf-munajat-009",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Provision and Blessing",
+            "ar": "دعاء الرزق والبركة"
+          },
+          "arabic": "اللَّهُمَّ فَارْزُقْنِي مِمَّا رَزَقْتَنِي، وَبَارِكْ لِي فِيهِ، وَاخْلُفْ عَلَى كُلِّ غَائِبَةٍ لِي بِخَيْرٍ",
+          "transliteration": "Allahumma farzuqni mimma razaqtani, wa barik li fihi, wakhluf 'ala kulli gha'ibatin li bi-khayr.",
+          "translation": {
+            "en": "O Allah, provide me from what You have provided, bless it for me, and substitute every absent thing of mine with something better.",
+            "ar": "اللهم فارزقني مما رزقتني وبارك لي فيه..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Based on authentic narration."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Based on authentic narration",
+            "ar": "مبني على حديث صحيح"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for provision and blessing.",
+            "ar": "دعاء للرزق والبركة."
+          },
+          "tags": [
+            "munajat",
+            "rizq",
+            "barakah"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 9
+        },
+        {
+          "id": "pdf-munajat-010",
+          "category_id": "munajat",
+          "title": {
+            "en": "Dua for Devotion and Fear of Allah",
+            "ar": "دعاء الخشية والإخلاص"
+          },
+          "arabic": "اللَّهُمَّ اجْعَلْنِي أَخْشَاكَ حَتَّى كَأَنِّي أَرَاكَ، وَأَسْعِدْنِي بِتَقْوَاكَ، وَلاَ تَجْعَلْنِي بِمَعْصِيَتِكَ مَطْرُودًا، وَرَضِّنِي بِقَضَائِكَ، وَبَارِكْ لِي فِي قَدَرِكَ",
+          "transliteration": "Allahummaj'alni akshaka hatta ka-anni arak, wa as'idni bi-taqwak, wa la taj'alni bi-ma'siyatika matrudan, wa radini bi-qaDa'ik, wa barik li fi qadarik.",
+          "translation": {
+            "en": "O Allah, make me fear You as if I see You, make me happy through Your consciousness, do not make me outcast through my disobedience, make me content with Your decree, and bless me in what You have destined.",
+            "ar": "اللهم اجعلني أخشاك حتى كأني أراك..."
+          },
+          "reference": {
+            "collection": "Munajat al-Muhsinin",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Devotional text."
+          },
+          "grade": "Unknown",
+          "custom_grade": {
+            "en": "Devotional supplication",
+            "ar": "مناجاة"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for fear of Allah and devotion.",
+            "ar": "دعاء للخشية والإخلاص."
+          },
+          "tags": [
+            "munajat",
+            "fear",
+            "devotion"
+          ],
+          "related": [],
+          "notes": "Source: مناجاة المحسنين، المقدم",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "comprehensive-duas",
+      "section_id": "pdf-duas",
+      "name": {
+        "en": "Comprehensive Supplications",
+        "ar": "أدعية جامعة"
+      },
+      "description": {
+        "en": "General comprehensive supplications for all needs.",
+        "ar": "أدعية جامعة لجميع الحوائج."
+      },
+      "order": 4,
+      "icon": "heart",
+      "color": "ocean",
+      "items": [
+        {
+          "id": "pdf-yaduni-001",
+          "category_id": "comprehensive-duas",
+          "title": {
+            "en": "Dua for Forgiveness of Past and Future Sins",
+            "ar": "دعاء مغفرة ما قدمت وما أخرت"
+          },
+          "arabic": "اللَّهُمَّ اغْفِرْ لِي مَا قَدَّمْتُ وَمَا أَخَّرْتُ، وَمَا أَسْرَرْتُ وَمَا أَعْلَنْتُ، وَمَا أَسْرَفْتُ، وَمَا أَنْتَ أَعْلَمُ بِهِ مِنِّي، أَنْتَ الْمُقَدِّمُ وَأَنْتَ الْمُؤَخِّرُ، لاَ إِلَهَ إِلاَّ أَنْتَ",
+          "transliteration": "Allahummaghfir li ma qaddamtu wa ma akhkhartu, wa ma asrartu wa ma a'lantu, wa ma asraftu, wa ma anta a'lamu bihi minni, antal-muqaddimu wa antal-mu'akhkhir, la ilaha illa ant.",
+          "translation": {
+            "en": "O Allah, forgive me what I have sent ahead and what I have left behind, what I have concealed and what I have declared, and what I have been extravagant in. You are the Advancer and the Delayer, there is no deity except You.",
+            "ar": "اللهم اغفر لي ما قدمت وما أخرت..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Mosques",
+            "chapter": "",
+            "hadith": "771",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Comprehensive dua for all sins.",
+            "ar": "دعاء شامل لجميع الذنوب."
+          },
+          "tags": [
+            "comprehensive",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "Source: من يدعوني، الميمان",
+          "order": 1
+        },
+        {
+          "id": "pdf-yaduni-002",
+          "category_id": "comprehensive-duas",
+          "title": {
+            "en": "Dua for Righteous Deeds",
+            "ar": "دعاء للأعمال الزاكية"
+          },
+          "arabic": "اللَّهُمَّ اغْفِرْ لِي جَمِيعَ مَا سَلَفَ مِنْ ذُنُوبِي، وَاعْصِمْنِي فِيمَا بَقِيَ مِنْ عُمْرِي، وَارْزُقْنِي أَعْمَالاً زَاكِيَةً تَرْضَى بِهَا عَنِّي",
+          "transliteration": "Allahummaghfir li jami'a ma salafa min dhunubi, wa'ismimi fimA baqiya min 'umri, warzuqni a'malan zakiyatan tarda biha 'anni.",
+          "translation": {
+            "en": "O Allah, forgive all my past sins, protect me for the rest of my life, and provide me with righteous deeds that please You.",
+            "ar": "اللهم اغفر لي جميع ما سلف من ذنوبي..."
+          },
+          "reference": {
+            "collection": "Man Yaduni",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Classed Hasan."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Hasan",
+            "ar": "حسن"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for forgiveness and righteous future.",
+            "ar": "دعاء للمغفرة والعمل الصالح."
+          },
+          "tags": [
+            "comprehensive",
+            "forgiveness",
+            "deeds"
+          ],
+          "related": [],
+          "notes": "Source: من يدعوني، الميمان",
+          "order": 2
+        },
+        {
+          "id": "pdf-yaduni-003",
+          "category_id": "comprehensive-duas",
+          "title": {
+            "en": "Dua for Paradise (High Ranks)",
+            "ar": "دعاء درجات الجنة العلى"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الدَّرَجَاتِ الْعُلَى مِنَ الْجَنَّةِ، اللَّهُمَّ أَجِرْنِي مِنَ النَّارِ، اللَّهُمَّ نَجِّنِي مِنَ النَّارِ",
+          "transliteration": "Allahumma inni as'alukad-darajatil-'ula minal-jannah. Allahumma ajirni minan-nar. Allahumma najjini minan-nar.",
+          "translation": {
+            "en": "O Allah, I ask You for the highest ranks of Paradise. O Allah, protect me from the Fire. O Allah, save me from the Fire.",
+            "ar": "اللهم إني أسألك الدرجات العلى من الجنة..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "1386",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for the highest ranks of Paradise.",
+            "ar": "دعاء لأعلى درجات الجنة."
+          },
+          "tags": [
+            "comprehensive",
+            "jannah",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: من يدعوني، الميمان",
+          "order": 3
+        },
+        {
+          "id": "pdf-yaduni-004",
+          "category_id": "comprehensive-duas",
+          "title": {
+            "en": "Dua for Heart Steadfastness",
+            "ar": "دعاء تثبيت القلب"
+          },
+          "arabic": "يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَى دِينِكَ",
+          "transliteration": "Ya muqallibal-qulub thabbit qalbi 'ala dinik.",
+          "translation": {
+            "en": "O Turner of hearts, make my heart firm upon Your religion.",
+            "ar": "يا مقلب القلوب ثبت قلبي على دينك"
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3522",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Hasan by Al-Albani",
+            "ar": "حسنه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Hearts are between Allah's fingers — He turns them as He wills.",
+            "ar": "القلوب بين إصبعين من أصابع الرحمن."
+          },
+          "tags": [
+            "comprehensive",
+            "heart",
+            "faith"
+          ],
+          "related": [],
+          "notes": "Source: من يدعوني، الميمان",
+          "order": 4
+        },
+        {
+          "id": "pdf-yaduni-005",
+          "category_id": "comprehensive-duas",
+          "title": {
+            "en": "Dua for Loneliness & Debt",
+            "ar": "دعاء للوحدة والدين"
+          },
+          "arabic": "اللَّهُمَّ آنِسْ وَحْشَتِي، وَارْحَمْ غُرْبَتِي، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ، وَغَلَبَةِ الْعَدُوِّ",
+          "transliteration": "Allahumma anis wahshati, warham ghurbati. Allahumma inni a'udhu bika min ghalabatid-dayn, wa ghalabatil-'aduww.",
+          "translation": {
+            "en": "O Allah, be the companion of my loneliness, have mercy on my estrangement. O Allah, I seek refuge in You from being overcome by debt and by the enemy.",
+            "ar": "اللهم آنس وحشتي وارحم غربتي..."
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "1489",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Hasan by Al-Albani",
+            "ar": "حسنه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for loneliness, estrangement, and debt.",
+            "ar": "دعاء للوحدة والغربة والدين."
+          },
+          "tags": [
+            "comprehensive",
+            "loneliness",
+            "debt"
+          ],
+          "related": [],
+          "notes": "Source: من يدعوني، الميمان",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "id": "ruqyah-treatment",
+      "section_id": "pdf-duas",
+      "name": {
+        "en": "Ruqyah & Healing Supplications",
+        "ar": "الرقية والعلاج بالأدعية"
+      },
+      "description": {
+        "en": "Protective and healing supplications from the Quran and Sunnah.",
+        "ar": "أدعية الرقية والعلاج من الكتاب والسنة."
+      },
+      "order": 5,
+      "icon": "shield",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "pdf-ruqyah-001",
+          "category_id": "ruqyah-treatment",
+          "title": {
+            "en": "Ruqyah with Al-Fatihah",
+            "ar": "رقية بالفاتحة"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ، الرَّحْمَٰنِ الرَّحِيمِ، مَالِكِ يَوْمِ الدِّينِ، إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ، اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ، صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلاَ الضَّالِّينَ",
+          "transliteration": "Alhamdu lillahi Rabbil-'alamin, ar-Rahmanir-Rahim, Maliki yawmid-din, iyyaka na'budu wa iyyaka nasta'in, ihdinas-siratal-mustaqim, siratal-ladhina an'amta 'alayhim ghayril-maghdubi 'alayhim wa lad-dallin.",
+          "translation": {
+            "en": "Surah Al-Fatihah — the cure (shifa). Recite as ruqyah for healing.",
+            "ar": "سورة الفاتحة — هي الشفاء."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Fatihah",
+            "chapter": "1",
+            "hadith": "1-7",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "The Prophet ﷺ used Al-Fatihah as ruqyah."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 7,
+          "virtues": {
+            "en": "Al-Fatihah is a cure (ruqyah) — the Prophet ﷺ recited it over the sick.",
+            "ar": "الفاتحة شفاء ورقية."
+          },
+          "tags": [
+            "ruqyah",
+            "healing",
+            "quran",
+            "shifa"
+          ],
+          "related": [],
+          "notes": "Source: العلاج بالرقية، القحطاني",
+          "order": 1
+        },
+        {
+          "id": "pdf-ruqyah-002",
+          "category_id": "ruqyah-treatment",
+          "title": {
+            "en": "Ruqyah of the Prophet ﷺ",
+            "ar": "رقية النبي ﷺ"
+          },
+          "arabic": "اللَّهُمَّ رَبَّ النَّاسِ، أَذْهِبِ الْبَأْسَ، اشْفِ أَنْتَ الشَّافِي، لاَ شِفَاءَ إِلاَّ شِفَاؤُكَ، شِفَاءً لاَ يُغَادِرُ سَقَمًا",
+          "transliteration": "Allahumma Rabban-nas, adhhibil-ba's, ishfi antash-Shafi, la shifa'a illa shifa'uk, shifa'an la yughadiru saqama.",
+          "translation": {
+            "en": "O Allah, Lord of mankind, remove the harm and heal. You are the Healer. There is no healing except Your healing — a healing that leaves no disease.",
+            "ar": "اللهم رب الناس أذهب البأس اشف أنت الشافي..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Patients",
+            "chapter": "",
+            "hadith": "5743",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 7,
+          "virtues": {
+            "en": "The most powerful ruqyah for healing. Recite 7× on the sick.",
+            "ar": "أقوى رقية للشفاء. تقرأ سبع مرات."
+          },
+          "tags": [
+            "ruqyah",
+            "healing",
+            "shifa",
+            "sickness"
+          ],
+          "related": [],
+          "notes": "Source: العلاج بالرقية، القحطاني",
+          "order": 2
+        },
+        {
+          "id": "pdf-ruqyah-003",
+          "category_id": "ruqyah-treatment",
+          "title": {
+            "en": "Ruqyah with Three Quls",
+            "ar": "رقية بالمعوذات الثلاث"
+          },
+          "arabic": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nقُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ\n\nبِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ\n\nبِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ",
+          "transliteration": "Qul huwa-llahu ahad... Qul a'udhu bi-rabbil-falaq... Qul a'udhu bi-rabbin-nas...",
+          "translation": {
+            "en": "Surah Al-Ikhlas, Al-Falaq, and An-Nas — recite 3× each as ruqyah for protection and healing. Blow into hands and wipe over body.",
+            "ar": "المعوذات الثلاث — تقرأ ثلاث مرات وتنفث في اليدين وتمسح الجسد."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "6319",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "The Prophet ﷺ did this every night."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "Protection from all evil, jinn, magic, and envy.",
+            "ar": "حماية من كل شر والجن والسحر والحسد."
+          },
+          "tags": [
+            "ruqyah",
+            "healing",
+            "protection",
+            "quran"
+          ],
+          "related": [],
+          "notes": "Source: العلاج بالرقية، القحطاني",
+          "order": 3
+        },
+        {
+          "id": "pdf-ruqyah-004",
+          "category_id": "ruqyah-treatment",
+          "title": {
+            "en": "Ruqyah for Evil Eye & Envy",
+            "ar": "رقية للعين والحسد"
+          },
+          "arabic": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+          "transliteration": "A'udhu bikalimatillahit-tammati min sharri ma khalaq.",
+          "translation": {
+            "en": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
+            "ar": "أعوذ بكلمات الله التامات من شر ما خلق"
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "2708",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "Protection from evil eye, envy, and all harm.",
+            "ar": "حماية من العين والحسد وكل أذى."
+          },
+          "tags": [
+            "ruqyah",
+            "evil-eye",
+            "envy",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: العلاج بالرقية، القحطاني",
+          "order": 4
+        },
+        {
+          "id": "pdf-ruqyah-005",
+          "category_id": "ruqyah-treatment",
+          "title": {
+            "en": "Ruqyah for Magic & Jinn",
+            "ar": "رقية للسحر والجن"
+          },
+          "arabic": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ السَّبْعِ، وَرَبَّ الْعَرْشِ الْعَظِيمِ، كُنْ لِي جَارًا مِنْ فُلاَنِ بْنِ فُلاَنٍ (يُسَمَّى الْمَارِدُ مِنَ الْجِنِّ)، أَنْ يَفْرُطَ عَلَيَّ أَحَدٌ مِنْهُمْ أَوْ يَطْغَى، عَزَّ جَارُكَ، وَجَلَّ ثَنَاؤُكَ، وَلاَ إِلَهَ غَيْرُكَ",
+          "transliteration": "Allahumma Rabbas-samawatis-sab', wa Rabbal-'Arshil-'Azim, kun li jaran min [name], an yafruta 'alayya ahadun minhum aw yatgha, 'azza jaruk, wa jalla thana'uk, wa la ilaha ghayruk.",
+          "translation": {
+            "en": "O Allah, Lord of the seven heavens and the Magnificent Throne, be my protector from [name the person/jinn], lest any of them attack or transgress against me. Your protection is mighty, Your praise is exalted, and there is no deity except You.",
+            "ar": "اللهم رب السماوات السبع ورب العرش العظيم..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Tauhid",
+            "chapter": "",
+            "hadith": "7391",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Protection from jinn and magic.",
+            "ar": "حماية من الجن والسحر."
+          },
+          "tags": [
+            "ruqyah",
+            "jinn",
+            "magic",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: العلاج بالرقية، القحطاني",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "id": "additional-duas",
+      "section_id": "duas",
+      "name": {
+        "en": "Additional Supplications",
+        "ar": "أدعية إضافية"
+      },
+      "description": {
+        "en": "Selected supplications from classical collections.",
+        "ar": "أدعية مختارة من المجموعات الكلاسيكية."
+      },
+      "order": 100,
+      "icon": "hands",
+      "color": "",
+      "items": [
+        {
+          "id": "cu-001",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Surah Al-Ikhlas",
+            "ar": "سورة الإخلاص"
+          },
+          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
+          "transliteration": "Qul huwa Allahu ahad. Allahu-s-samad. Lam yalid wa lam yulad. Wa lam yakun lahu kufuwan ahad.",
+          "translation": {
+            "en": "Say, He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born, nor is there to Him any equivalent.",
+            "ar": "قل هو الله أحد"
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah Al-Ikhlas",
+            "chapter": "",
+            "hadith": "112",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "repetitions": 3,
+          "virtues": {
+            "en": "Reciting these three chapters three times each morning and evening suffices against every harm.",
+            "ar": "تكفيك من كل شيء."
+          },
+          "tags": [
+            "morning",
+            "protection",
+            "quran"
+          ],
+          "related": [
+            "morning-003",
+            "morning-004"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 1
+        },
+        {
+          "id": "cu-002",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Surah Al-Falaq",
+            "ar": "سورة الفلق"
+          },
+          "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+          "transliteration": "Qul a'udhu bi Rabbil-falaq. Min sharri ma khalaq. Wa min sharri ghasiqin idha waqab. Wa min sharrin-naffathati fil-'uqad. Wa min sharri hasidin idha hasad.",
+          "translation": {
+            "en": "Say, I seek refuge in the Lord of daybreak, from the evil of that which He created, and from the evil of darkness when it settles, and from the evil of the blowers in knots, and from the evil of an envier when he envies.",
+            "ar": "قل أعوذ برب الفلق"
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah Al-Falaq",
+            "chapter": "",
+            "hadith": "113",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "repetitions": 3,
+          "virtues": {
+            "en": "A protection recited each morning and evening against unseen harm.",
+            "ar": "حفظ من كل مكروه."
+          },
+          "tags": [
+            "morning",
+            "protection",
+            "quran"
+          ],
+          "related": [
+            "morning-002",
+            "morning-004"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 2
+        },
+        {
+          "id": "cu-003",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Surah An-Nas",
+            "ar": "سورة الناس"
+          },
+          "arabic": "قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ",
+          "transliteration": "Qul a'udhu bi Rabbin-nas. Malikin-nas. Ilahin-nas. Min sharril-waswasil-khannas. Alladhi yuwaswisu fi sudurin-nas. Minal-jinnati wan-nas.",
+          "translation": {
+            "en": "Say, I seek refuge in the Lord of mankind, the Sovereign of mankind, the God of mankind, from the evil of the retreating whisperer who whispers in the breasts of mankind, from among jinn and mankind.",
+            "ar": "قل أعوذ برب الناس"
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah An-Nas",
+            "chapter": "",
+            "hadith": "114",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "repetitions": 3,
+          "virtues": {
+            "en": "Protection from the whispering of Shaytan, recited morning and evening.",
+            "ar": "حفظ من وسوسة الشيطان."
+          },
+          "tags": [
+            "morning",
+            "protection",
+            "quran"
+          ],
+          "related": [
+            "morning-002",
+            "morning-003"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 3
+        },
+        {
+          "id": "cu-004",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "The Master of Seeking Forgiveness",
+            "ar": "سيد الاستغفار"
+          },
+          "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+          "transliteration": "Allahumma anta Rabbi la ilaha illa ant, khalaqtani wa ana 'abduk, wa ana 'ala 'ahdika wa wa'dika mastata't, a'udhu bika min sharri ma sana't, abu'u laka bini'matika 'alayy, wa abu'u bidhanbi faghfir li fa innahu la yaghfirudh-dhunuba illa ant.",
+          "translation": {
+            "en": "O Allah, You are my Lord, there is no deity but You. You created me and I am Your servant, and I am upon Your covenant and promise as much as I am able. I seek refuge in You from the evil of what I have done. I acknowledge Your favor upon me, and I acknowledge my sin, so forgive me, for none forgives sins except You.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "6306",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Whoever recites it with certainty in the morning and dies that day enters Paradise; likewise in the evening.",
+            "ar": "من قالها موقنًا بها حين يصبح فمات من يومه دخل الجنة."
+          },
+          "tags": [
+            "morning",
+            "forgiveness"
+          ],
+          "related": [
+            "evening-007"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 4
+        },
+        {
+          "id": "cu-005",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "We Are Pleased with Allah as Lord",
+            "ar": "رضيت بالله ربا"
+          },
+          "arabic": "رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا",
+          "transliteration": "Radhitu billahi Rabba, wa bil-Islami dina, wa bi Muhammadin sallallahu 'alayhi wa sallama Nabiyya.",
+          "translation": {
+            "en": "I am pleased with Allah as a Lord, with Islam as a religion, and with Muhammad ﷺ as a Prophet.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "5072",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 3,
+          "virtues": {
+            "en": "Whoever says this three times each morning and evening, Allah guarantees his pleasure on the Day of Judgment.",
+            "ar": "كان حقًا على الله أن يرضيه يوم القيامة."
+          },
+          "tags": [
+            "morning",
+            "contentment"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 5
+        },
+        {
+          "id": "cu-006",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Upon the Natural Disposition of Islam",
+            "ar": "أصبحنا على فطرة الإسلام"
+          },
+          "arabic": "أَصْبَحْنَا عَلَىٰ فِطْرَةِ الْإِسْلَامِ، وَعَلَىٰ كَلِمَةِ الْإِخْلَاصِ، وَعَلَىٰ دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَىٰ مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+          "transliteration": "Asbahna 'ala fitratil-Islam, wa 'ala kalimatil-ikhlas, wa 'ala dini Nabiyyina Muhammadin sallallahu 'alayhi wa sallam, wa 'ala millati abina Ibrahima hanifan musliman wa ma kana minal-mushrikin.",
+          "translation": {
+            "en": "We have reached the morning upon the natural disposition of Islam, the word of sincere devotion, the religion of our Prophet Muhammad ﷺ, and the way of our father Ibrahim, a monotheist and Muslim, and he was not of the polytheists.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Musnad Ahmad",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "15368",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "A daily renewal of one's Islamic identity and creed.",
+            "ar": ""
+          },
+          "tags": [
+            "morning",
+            "tawheed"
+          ],
+          "related": [
+            "evening-010"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 6
+        },
+        {
+          "id": "cu-007",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Whatever Blessing I Have Reached",
+            "ar": "ما أصبح بي من نعمة"
+          },
+          "arabic": "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ",
+          "transliteration": "Allahumma ma asbaha bi min ni'matin aw bi ahadin min khalqik, faminka wahdaka la sharika lak, falakal-hamdu wa lakash-shukr.",
+          "translation": {
+            "en": "O Allah, whatever blessing has reached me or any of Your creation this morning is from You alone, without partner, so to You belongs all praise and all thanks.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "5073",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Whoever says this has fulfilled the gratitude due for that day.",
+            "ar": "فقد أدى شكر يومه."
+          },
+          "tags": [
+            "morning",
+            "gratitude"
+          ],
+          "related": [
+            "evening-011"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 7
+        },
+        {
+          "id": "cu-008",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Allah Suffices Me",
+            "ar": "حسبي الله"
+          },
+          "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+          "transliteration": "Hasbiyallahu la ilaha illa Huwa, 'alayhi tawakkaltu wa Huwa Rabbul-'Arshil-'Adhim.",
+          "translation": {
+            "en": "Allah is sufficient for me; there is no deity but Him. Upon Him I rely, and He is the Lord of the Mighty Throne.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "5081",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 7,
+          "virtues": {
+            "en": "Whoever says this seven times morning and evening, Allah will be sufficient for them in whatever concerns them.",
+            "ar": "كفاه الله ما أهمه."
+          },
+          "tags": [
+            "morning",
+            "reliance"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 8
+        },
+        {
+          "id": "cu-009",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Surah Al-Ikhlas, Al-Falaq, An-Nas",
+            "ar": "الإخلاص والفلق والناس"
+          },
+          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+          "transliteration": "Qul huwa Allahu ahad — Qul a'udhu bi Rabbil falaq — Qul a'udhu bi Rabbin nas.",
+          "translation": {
+            "en": "The three chapters of sincere devotion and seeking refuge, recited together each evening.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surahs 112–114",
+            "chapter": "",
+            "hadith": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "repetitions": 3,
+          "virtues": {
+            "en": "Sufficient protection against every harm until morning.",
+            "ar": ""
+          },
+          "tags": [
+            "evening",
+            "protection",
+            "quran"
+          ],
+          "related": [
+            "morning-002",
+            "morning-003",
+            "morning-004"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 9
+        },
+        {
+          "id": "cu-010",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "The Master of Seeking Forgiveness (Evening)",
+            "ar": "سيد الاستغفار"
+          },
+          "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+          "transliteration": "Allahumma anta Rabbi la ilaha illa ant...",
+          "translation": {
+            "en": "O Allah, You are my Lord, there is no deity but You... I acknowledge Your favor upon me and I acknowledge my sin, so forgive me.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "6306",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Whoever recites it with certainty in the evening and dies that night enters Paradise.",
+            "ar": ""
+          },
+          "tags": [
+            "evening",
+            "forgiveness"
+          ],
+          "related": [
+            "morning-007"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 10
+        },
+        {
+          "id": "cu-011",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Upon the Natural Disposition of Islam (Evening)",
+            "ar": "أمسينا على فطرة الإسلام"
+          },
+          "arabic": "أَمْسَيْنَا عَلَىٰ فِطْرَةِ الْإِسْلَامِ، وَعَلَىٰ كَلِمَةِ الْإِخْلَاصِ، وَعَلَىٰ دِينِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ، وَعَلَىٰ مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+          "transliteration": "Amsayna 'ala fitratil-Islam...",
+          "translation": {
+            "en": "We have reached the evening upon the natural disposition of Islam, the word of sincere devotion, and the way of Ibrahim the monotheist.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Musnad Ahmad",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "15368",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "evening",
+            "tawheed"
+          ],
+          "related": [
+            "morning-010"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 11
+        },
+        {
+          "id": "cu-012",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Whatever Blessing I Have Reached (Evening)",
+            "ar": "ما أمسى بي من نعمة"
+          },
+          "arabic": "اللَّهُمَّ مَا أَمْسَى بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ، فَمِنْكَ وَحْدَكَ لَا شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ",
+          "transliteration": "Allahumma ma amsa bi min ni'matin aw bi ahadin min khalqik, faminka wahdaka la sharika lak, falakal-hamdu wa lakash-shukr.",
+          "translation": {
+            "en": "O Allah, whatever blessing has reached me or any of Your creation this evening is from You alone.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "5073",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "evening",
+            "gratitude"
+          ],
+          "related": [
+            "morning-011"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 12
+        },
+        {
+          "id": "cu-013",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Allah Suffices Me (Evening)",
+            "ar": "حسبي الله"
+          },
+          "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+          "transliteration": "Hasbiyallahu la ilaha illa Huwa, 'alayhi tawakkaltu wa Huwa Rabbul-'Arshil-'Adhim.",
+          "translation": {
+            "en": "Allah is sufficient for me; there is no deity but Him. Upon Him I rely.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "5081",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 7,
+          "virtues": {
+            "en": "Whoever says this seven times morning and evening, Allah will be sufficient for them in whatever concerns them.",
+            "ar": "كفاه الله ما أهمه."
+          },
+          "tags": [
+            "evening",
+            "reliance"
+          ],
+          "related": [
+            "morning-012"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 13
+        },
+        {
+          "id": "cu-014",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Ayat al-Kursi Before Sleep",
+            "ar": "آية الكرسي عند النوم"
+          },
+          "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+          "transliteration": "Allahu la ilaha illa Huwa, al-Hayyu al-Qayyum...",
+          "translation": {
+            "en": "Reciting Ayat al-Kursi before sleeping.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Invocations",
+            "chapter": "",
+            "hadith": "2311",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "A protector remains with the one who recites it, and Shaytan does not come near until morning.",
+            "ar": ""
+          },
+          "tags": [
+            "sleep",
+            "protection",
+            "quran"
+          ],
+          "related": [
+            "morning-001"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json) [Full Ayat al-Kursi restored.]",
+          "order": 14
+        },
+        {
+          "id": "cu-015",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Blowing the Mu'awwidhat into the Hands",
+            "ar": "نفث المعوذات في الكفين"
+          },
+          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ، قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+          "transliteration": "Qul huwa Allahu ahad, Qul a'udhu bi Rabbil-falaq, Qul a'udhu bi Rabbin-nas.",
+          "translation": {
+            "en": "Recite the three chapters, blow into the cupped hands, then wipe over the body as much as possible.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Virtues of the Qur'an",
+            "chapter": "",
+            "hadith": "5017",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 3,
+          "virtues": {
+            "en": "The Prophet ﷺ practiced this nightly before sleeping.",
+            "ar": ""
+          },
+          "tags": [
+            "sleep",
+            "protection",
+            "quran"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 15
+        },
+        {
+          "id": "cu-016",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Tasbih of Fatimah",
+            "ar": "تسبيح فاطمة"
+          },
+          "arabic": "سُبْحَانَ اللَّهِ (٣٣)، الْحَمْدُ لِلَّهِ (٣٣)، اللَّهُ أَكْبَرُ (٣٤)",
+          "transliteration": "Subhanallah (x33), Alhamdulillah (x33), Allahu Akbar (x34).",
+          "translation": {
+            "en": "Glory be to Allah (33 times), Praise be to Allah (33 times), Allah is the Greatest (34 times).",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari & Muslim",
+            "book": "Book of Invocations",
+            "chapter": "",
+            "hadith": "6318",
+            "url": "",
+            "notes": "The Prophet ﷺ taught this to Fatimah (RA)"
+          },
+          "grade": "Sahih",
+          "repetitions": 100,
+          "virtues": {
+            "en": "Better than a servant to help with household work, as the Prophet ﷺ told Fatimah (RA).",
+            "ar": ""
+          },
+          "tags": [
+            "sleep",
+            "tasbih"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 16
+        },
+        {
+          "id": "cu-017",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "O Allah, Lord of the Heavens",
+            "ar": "اللهم رب السماوات"
+          },
+          "arabic": "اللَّهُمَّ رَبَّ السَّمَاوَاتِ وَرَبَّ الْأَرْضِ وَرَبَّ الْعَرْشِ الْعَظِيمِ، رَبَّنَا وَرَبَّ كُلِّ شَيْءٍ، فَالِقَ الْحَبِّ وَالنَّوَىٰ، وَمُنْزِلَ التَّوْرَاةِ وَالْإِنْجِيلِ وَالْفُرْقَانِ، أَعُوذُ بِكَ مِنْ شَرِّ كُلِّ شَيْءٍ أَنْتَ آخِذٌ بِنَاصِيَتِهِ",
+          "transliteration": "Allahumma Rabbas-samawati wa Rabbal-ardi wa Rabbal-'Arshil-'Adhim, Rabbana wa Rabba kulli shay', faliqal-habbi wan-nawa, wa munzilat-Tawrati wal-Injili wal-Furqan, a'udhu bika min sharri kulli shay'in anta akhidhun binasiyatih.",
+          "translation": {
+            "en": "O Allah, Lord of the heavens, Lord of the earth, and Lord of the Mighty Throne; our Lord and Lord of all things, Splitter of the seed and the date-stone, Revealer of the Torah, the Gospel, and the Criterion, I seek refuge in You from the evil of everything You hold by its forelock.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "2713",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "sleep",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 17
+        },
+        {
+          "id": "cu-018",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "In Your Name My Lord I Lay My Side",
+            "ar": "باسمك ربي وضعت جنبي"
+          },
+          "arabic": "بِاسْمِكَ رَبِّي وَضَعْتُ جَنْبِي، وَبِكَ أَرْفَعُهُ، فَإِنْ أَمْسَكْتَ نَفْسِي فَارْحَمْهَا، وَإِنْ أَرْسَلْتَهَا فَاحْفَظْهَا بِمَا تَحْفَظُ بِهِ عِبَادَكَ الصَّالِحِينَ",
+          "transliteration": "Bismika Rabbi wada'tu janbi, wa bika arfa'uh, fa in amsakta nafsi farhamha, wa in arsaltaha fahfadhha bima tahfadhu bihi 'ibadakas-salihin.",
+          "translation": {
+            "en": "In Your name my Lord, I lay down my side, and by Your leave I raise it. If You take my soul, have mercy on it, and if You release it, then protect it as You protect Your righteous servants.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari & Muslim",
+            "book": "Book of Invocations",
+            "chapter": "",
+            "hadith": "6320",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "sleep"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 18
+        },
+        {
+          "id": "cu-019",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Astaghfirullah (Three Times)",
+            "ar": "أستغفر الله"
+          },
+          "arabic": "أَسْتَغْفِرُ اللَّهَ، أَسْتَغْفِرُ اللَّهَ، أَسْتَغْفِرُ اللَّهَ",
+          "transliteration": "Astaghfirullah, Astaghfirullah, Astaghfirullah.",
+          "translation": {
+            "en": "I seek the forgiveness of Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "591",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 3,
+          "virtues": {
+            "en": "The first words the Prophet ﷺ said upon finishing prayer.",
+            "ar": ""
+          },
+          "tags": [
+            "prayer",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 19
+        },
+        {
+          "id": "cu-020",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "O Allah, You Are Peace",
+            "ar": "اللهم أنت السلام"
+          },
+          "arabic": "اللَّهُمَّ أَنْتَ السَّلَامُ، وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+          "transliteration": "Allahumma antas-Salam, wa minkas-salam, tabarakta ya Dhal-Jalali wal-Ikram.",
+          "translation": {
+            "en": "O Allah, You are Peace and from You comes peace; blessed are You, O Owner of majesty and honor.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "591",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "prayer"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 20
+        },
+        {
+          "id": "cu-021",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "There Is No Deity but Allah Alone",
+            "ar": "لا إله إلا الله وحده"
+          },
+          "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ، وَلَا مُعْطِيَ لِمَا مَنَعْتَ، وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ",
+          "transliteration": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa Huwa 'ala kulli shay'in qadir. Allahumma la mani'a lima a'tayt, wa la mu'tiya lima mana't, wa la yanfa'u dhal-jaddi minkal-jadd.",
+          "translation": {
+            "en": "There is no deity but Allah alone, with no partner. His is the dominion and His is the praise, and He is over all things capable. O Allah, none can withhold what You give, and none can give what You withhold, and the might of the mighty does not benefit them against You.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Adhan",
+            "chapter": "",
+            "hadith": "844",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "A million good deeds are recorded and a million sins erased for whoever says this in the marketplace.",
+            "ar": ""
+          },
+          "tags": [
+            "prayer",
+            "tawheed"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 21
+        },
+        {
+          "id": "cu-022",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Tasbih, Tahmid, and Takbir (33 Each)",
+            "ar": "التسبيح والتحميد والتكبير"
+          },
+          "arabic": "سُبْحَانَ اللَّهِ (٣٣)، الْحَمْدُ لِلَّهِ (٣٣)، اللَّهُ أَكْبَرُ (٣٣)، ثم تُتَمَّ المائة بـ: لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "Subhanallah (x33), Alhamdulillah (x33), Allahu Akbar (x33), then complete one hundred with: La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa Huwa 'ala kulli shay'in qadir.",
+          "translation": {
+            "en": "Glory to Allah, praise to Allah, and Allah is the Greatest, each thirty-three times, completed to one hundred with the declaration of Allah's oneness.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "597",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 100,
+          "virtues": {
+            "en": "Whoever does this after every prayer, their sins are forgiven even if like the foam of the sea.",
+            "ar": ""
+          },
+          "tags": [
+            "prayer",
+            "tasbih"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 22
+        },
+        {
+          "id": "cu-023",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Ayat al-Kursi After Prayer",
+            "ar": "آية الكرسي دبر كل صلاة"
+          },
+          "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+          "transliteration": "Allahu la ilaha illa Huwa, al-Hayyu al-Qayyum...",
+          "translation": {
+            "en": "Reciting Ayat al-Kursi at the end of each obligatory prayer.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i (in al-Kubra)",
+            "book": "Book of Remembrance",
+            "chapter": "",
+            "hadith": "9928",
+            "url": "",
+            "notes": "Graded sahih by some scholars including al-Albani"
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Nothing stands between the reciter and entering Paradise except death.",
+            "ar": ""
+          },
+          "tags": [
+            "prayer",
+            "quran"
+          ],
+          "related": [
+            "morning-001"
+          ],
+          "notes": "Source: Claude reference implementation (adhkar.json) [Full Ayat al-Kursi restored.]",
+          "order": 23
+        },
+        {
+          "id": "cu-024",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "The Three Quls After Prayer",
+            "ar": "المعوذات دبر كل صلاة"
+          },
+          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ، قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+          "transliteration": "Qul huwa Allahu ahad, Qul a'udhu bi Rabbil-falaq, Qul a'udhu bi Rabbin-nas.",
+          "translation": {
+            "en": "Recite the three chapters of sincere devotion and refuge after each obligatory prayer.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Witr",
+            "chapter": "",
+            "hadith": "1523",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ practiced this nightly before sleeping.",
+            "ar": ""
+          },
+          "tags": [
+            "prayer",
+            "quran"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 24
+        },
+        {
+          "id": "cu-025",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Glory Be to You, O Allah",
+            "ar": "سبحانك اللهم وبحمدك"
+          },
+          "arabic": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا أَنْتَ، أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ",
+          "transliteration": "Subhanaka Allahumma wa bihamdik, ashhadu an la ilaha illa ant, astaghfiruka wa atubu ilayk.",
+          "translation": {
+            "en": "Glory is to You, O Allah, and praise; I bear witness that there is no deity but You. I seek Your forgiveness and turn to You in repentance.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i",
+            "book": "Book of Purification",
+            "chapter": "",
+            "hadith": "148",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Recommended to say after completing wudu, as it is sealed with a seal not to be broken until the Day of Judgment.",
+            "ar": ""
+          },
+          "tags": [
+            "wudu"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (adhkar.json)",
+          "order": 25
+        },
+        {
+          "id": "cu-125",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Returning from Travel",
+            "ar": "دعاء الرجوع من السفر"
+          },
+          "arabic": "آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ",
+          "transliteration": "Ayibuna ta'ibuna 'abiduna li Rabbina hamidun.",
+          "translation": {
+            "en": "We return, repentant, worshipping, and praising our Lord.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari & Muslim",
+            "book": "Book of Hajj",
+            "chapter": "",
+            "hadith": "1797",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Recited by the Prophet ﷺ each time he returned from a journey.",
+            "ar": ""
+          },
+          "tags": [
+            "travel"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 125
+        },
+        {
+          "id": "cu-126",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "After Rainfall",
+            "ar": "دعاء بعد المطر"
+          },
+          "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
+          "transliteration": "Mutirna bifadhlillahi wa rahmatih.",
+          "translation": {
+            "en": "We have been given rain by the grace and mercy of Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari & Muslim",
+            "book": "Book of Prayer for Rain",
+            "chapter": "",
+            "hadith": "846",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "The statement of true faith in contrast to attributing rain to stars.",
+            "ar": ""
+          },
+          "tags": [
+            "rain",
+            "weather",
+            "gratitude"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 126
+        },
+        {
+          "id": "cu-127",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Remove the Harm",
+            "ar": "أذهب البأس"
+          },
+          "arabic": "اللَّهُمَّ رَبَّ النَّاسِ أَذْهِبِ الْبَأْسَ، اشْفِ أَنْتَ الشَّافِي، لَا شِفَاءَ إِلَّا شِفَاؤُكَ، شِفَاءً لَا يُغَادِرُ سَقَمًا",
+          "transliteration": "Allahumma Rabban-nasi adhhibil-ba's, ishfi antash-Shafi, la shifa'a illa shifa'uk, shifa'an la yughadiru saqama.",
+          "translation": {
+            "en": "O Allah, Lord of mankind, remove the harm and heal, for You are the Healer. There is no healing except Your healing, a healing that leaves no illness behind.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari & Muslim",
+            "book": "Book of Patients",
+            "chapter": "",
+            "hadith": "5675",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ would recite this while visiting the sick.",
+            "ar": ""
+          },
+          "tags": [
+            "illness",
+            "healing"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 127
+        },
+        {
+          "id": "cu-128",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "I Ask Allah the Mighty",
+            "ar": "أسأل الله العظيم"
+          },
+          "arabic": "أَسْأَلُ اللَّهَ الْعَظِيمَ رَبَّ الْعَرْشِ الْعَظِيمِ أَنْ يَشْفِيَكَ",
+          "transliteration": "As'alullahal-'Adhima Rabbal-'Arshil-'Adhimi an yashfiyak.",
+          "translation": {
+            "en": "I ask Allah, the Mighty, Lord of the Mighty Throne, to heal you.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud & Tirmidhi",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "3106",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 7,
+          "virtues": {
+            "en": "Whoever visits a sick person not yet at the point of death and says this seven times, Allah will heal them.",
+            "ar": ""
+          },
+          "tags": [
+            "illness",
+            "healing"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 128
+        },
+        {
+          "id": "cu-129",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "In the Name of Allah (Ruqyah)",
+            "ar": "بسم الله أرقيك"
+          },
+          "arabic": "بِسْمِ اللَّهِ أَرْقِيكَ، مِنْ كُلِّ شَيْءٍ يُؤْذِيكَ، مِنْ شَرِّ كُلِّ نَفْسٍ أَوْ عَيْنِ حَاسِدٍ، اللَّهُ يَشْفِيكَ، بِسْمِ اللَّهِ أَرْقِيكَ",
+          "transliteration": "Bismillahi arqik, min kulli shay'in yu'dhik, min sharri kulli nafsin aw 'ayni hasid, Allahu yashfik, bismillahi arqik.",
+          "translation": {
+            "en": "In the name of Allah I perform ruqyah for you, from everything that harms you, from the evil of every soul or envious eye, may Allah heal you, in the name of Allah I perform ruqyah for you.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Greetings",
+            "chapter": "",
+            "hadith": "2186",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 3,
+          "virtues": {
+            "en": "The ruqyah of Jibril to the Prophet ﷺ.",
+            "ar": ""
+          },
+          "tags": [
+            "illness",
+            "healing",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 129
+        },
+        {
+          "id": "cu-130",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Entering the Home",
+            "ar": "دعاء دخول المنزل"
+          },
+          "arabic": "بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَىٰ رَبِّنَا تَوَكَّلْنَا",
+          "transliteration": "Bismillahi walajna, wa bismillahi kharajna, wa 'ala Rabbina tawakkalna.",
+          "translation": {
+            "en": "In the name of Allah we enter, and in the name of Allah we leave, and upon our Lord we place our trust.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "5096",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Then one should greet the household with salam.",
+            "ar": ""
+          },
+          "tags": [
+            "home"
+          ],
+          "related": [
+            "home-002"
+          ],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 130
+        },
+        {
+          "id": "cu-131",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Leaving the Home",
+            "ar": "دعاء الخروج من المنزل"
+          },
+          "arabic": "بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+          "transliteration": "Bismillah, tawakkaltu 'alallah, wa la hawla wa la quwwata illa billah.",
+          "translation": {
+            "en": "In the name of Allah, I place my trust in Allah, and there is no power nor might except with Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud & Tirmidhi",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "5095",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "repetitions": 1,
+          "virtues": {
+            "en": "Whoever says this is told: you are guided, sufficed, and protected, and Shaytan turns away from him.",
+            "ar": ""
+          },
+          "tags": [
+            "home"
+          ],
+          "related": [
+            "home-001"
+          ],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 131
+        },
+        {
+          "id": "cu-132",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "For One's Spouse",
+            "ar": "دعاء عند الزواج"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا جَبَلْتَهَا عَلَيْهِ، وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا جَبَلْتَهَا عَلَيْهِ",
+          "transliteration": "Allahumma inni as'aluka khayraha wa khayra ma jabaltaha 'alayh, wa a'udhu bika min sharriha wa sharri ma jabaltaha 'alayh.",
+          "translation": {
+            "en": "O Allah, I ask You for her goodness and the goodness You have instilled in her nature, and I seek refuge in You from her evil and the evil You have instilled in her nature.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Marriage",
+            "chapter": "",
+            "hadith": "2160",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "home",
+            "marriage"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 132
+        },
+        {
+          "id": "cu-133",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Entering the Marketplace",
+            "ar": "دعاء دخول السوق"
+          },
+          "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, yuhyi wa yumit, wa Huwa hayyun la yamut, biyadihil-khayr, wa Huwa 'ala kulli shay'in qadir.",
+          "translation": {
+            "en": "There is no deity but Allah alone, with no partner. His is the dominion and His is the praise. He gives life and causes death, and He is Living and does not die. In His hand is all good, and He is over all things capable.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Jami' at-Tirmidhi",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3428",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "repetitions": 1,
+          "virtues": {
+            "en": "A million good deeds are recorded and a million sins erased for whoever says this in the marketplace.",
+            "ar": ""
+          },
+          "tags": [
+            "protection"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (duas.json)",
+          "order": 133
+        },
+        {
+          "id": "cu-134",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Expand My Chest",
+            "ar": "رب اشرح لي صدري"
+          },
+          "arabic": "رَبِّ اشْرَحْ لِي صَدْرِي ۝ وَيَسِّرْ لِي أَمْرِي ۝ وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي ۝ يَفْقَهُوا قَوْلِي",
+          "transliteration": "Rabbi-shrah li sadri, wa yassir li amri, wahlul 'uqdatan min lisani, yafqahu qawli.",
+          "translation": {
+            "en": "My Lord, expand for me my chest, ease my task for me, and untie the knot from my tongue that they may understand my speech.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah Ta-Ha",
+            "chapter": "",
+            "hadith": "20:25-28",
+            "url": "",
+            "notes": "The supplication of Prophet Musa (AS)"
+          },
+          "grade": "Quran",
+          "repetitions": 1,
+          "virtues": {
+            "en": "A supplication for ease, clarity of speech, and confidence before a difficult task.",
+            "ar": ""
+          },
+          "tags": [
+            "quran",
+            "ease"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (quran-duas.json)",
+          "order": 134
+        },
+        {
+          "id": "cu-135",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Do Not Burden Us Beyond Our Capacity",
+            "ar": "ربنا لا تؤاخذنا"
+          },
+          "arabic": "رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا",
+          "transliteration": "Rabbana la tu'akhidhna in nasina aw akhta'na.",
+          "translation": {
+            "en": "Our Lord, do not hold us accountable if we forget or make a mistake.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah Al-Baqarah",
+            "chapter": "",
+            "hadith": "2:286",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "quran",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (quran-duas.json)",
+          "order": 135
+        },
+        {
+          "id": "cu-136",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "We Believe, So Forgive Us",
+            "ar": "ربنا إننا آمنا"
+          },
+          "arabic": "رَبَّنَا إِنَّنَا آمَنَّا فَاغْفِرْ لَنَا ذُنُوبَنَا وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Rabbana innana amanna faghfir lana dhunubana wa qina 'adhaban-nar.",
+          "translation": {
+            "en": "Our Lord, indeed we have believed, so forgive us our sins and protect us from the punishment of the Fire.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah Ali 'Imran",
+            "chapter": "",
+            "hadith": "3:16",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "quran",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (quran-duas.json)",
+          "order": 136
+        },
+        {
+          "id": "cu-137",
+          "category_id": "additional-duas",
+          "title": {
+            "en": "Complete Our Light",
+            "ar": "ربنا أتمم لنا نورنا"
+          },
+          "arabic": "رَبَّنَا أَتْمِمْ لَنَا نُورَنَا وَاغْفِرْ لَنَا ۖ إِنَّكَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "Rabbana atmim lana nurana waghfir lana, innaka 'ala kulli shay'in qadir.",
+          "translation": {
+            "en": "Our Lord, complete for us our light and forgive us; indeed You are over all things capable.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah At-Tahrim",
+            "chapter": "",
+            "hadith": "66:8",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "tags": [
+            "quran",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "Source: Claude reference implementation (quran-duas.json)",
+          "order": 137
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+// ESLint flat config (ESLint 9+). No framework-specific plugins — this is a
+// vanilla ES-module app, so the ruleset focuses on correctness (catching
+// real bugs: undeclared globals, shadowing, unreachable code, unsafe
+// equality) rather than stylistic opinions, which are Prettier's job.
+export default [
+  {
+    ignores: ['data/**', 'assets/**', 'tests/**', 'node_modules/**', 'sw.js.bak'],
+  },
+  {
+    files: ['js/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        navigator: 'readonly',
+        localStorage: 'readonly',
+        indexedDB: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        Notification: 'readonly',
+        SpeechSynthesisUtterance: 'readonly',
+        speechSynthesis: 'readonly',
+        AudioContext: 'readonly',
+        webkitAudioContext: 'readonly',
+        CustomEvent: 'readonly',
+        requestAnimationFrame: 'readonly',
+        cancelAnimationFrame: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        URL: 'readonly',
+        Blob: 'readonly',
+        FileReader: 'readonly',
+        performance: 'readonly',
+        matchMedia: 'readonly',
+        self: 'readonly',
+        caches: 'readonly',
+        FormData: 'readonly',
+        structuredClone: 'readonly',
+        getComputedStyle: 'readonly',
+        DeviceOrientationEvent: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-undef': 'error',
+      'no-var': 'error',
+      'prefer-const': 'warn',
+      eqeqeq: ['error', 'smart'],
+      'no-dupe-keys': 'error',
+      'no-dupe-args': 'error',
+      'no-duplicate-imports': 'error',
+      'no-unreachable': 'error',
+      'no-fallthrough': 'error',
+      'no-const-assign': 'error',
+      'no-self-compare': 'error',
+      'no-shadow-restricted-names': 'error',
+      'no-implicit-globals': 'error',
+      'no-return-await': 'off',
+      'no-async-promise-executor': 'error',
+      'no-await-in-loop': 'off',
+    },
+  },
+  {
+    files: ['sw.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'script',
+      globals: {
+        self: 'readonly',
+        caches: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        URL: 'readonly',
+        Response: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'warn',
+      'no-undef': 'error',
+    },
+  },
+  {
+    files: ['tests/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+      },
+    },
+  },
+];

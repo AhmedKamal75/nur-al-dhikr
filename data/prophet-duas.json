@@ -1,0 +1,2832 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "id": "prophet-duas",
+    "name": {
+      "en": "Duas of the Prophets",
+      "ar": "أدعية الأنبياء"
+    },
+    "description": {
+      "en": "Authentic supplications of all prophets from the Quran",
+      "ar": "أدعية الأنبياء من القرآن الكريم"
+    },
+    "version": "1.0.0",
+    "source": {
+      "en": "Quran — duas of Adam, Nuh, Ibrahim, Musa, Yunus, Zakariya, Ayyub, Sulayman",
+      "ar": "القرآن الكريم"
+    },
+    "license": "Public domain",
+    "homepage": "",
+    "authors": [],
+    "updated": "2026-08-07"
+  },
+  "categories": [
+    {
+      "id": "adam-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Adam (AS)",
+        "ar": "أدعية آدم عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Adam",
+        "ar": "أدعية نبي الله آدم"
+      },
+      "order": 1,
+      "icon": "heart",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "pro-adam-001",
+          "category_id": "adam-duas",
+          "title": {
+            "en": "Dua for Forgiveness (Adam & Hawwa)",
+            "ar": "دعاء التوبة (آدم وحواء)"
+          },
+          "arabic": "رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ",
+          "transliteration": "Rabbana zalamna anfusana wa in lam taghfir lana wa tarhamna lanakunanna minal-khasirin.",
+          "translation": {
+            "en": "Our Lord, we have wronged ourselves, and if You do not forgive us and have mercy upon us, we will surely be among the losers.",
+            "ar": "ربنا ظلمنا أنفسنا وإن لم تغفر لنا وترحمنا لنكونن من الخاسرين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-A'raf",
+            "chapter": "7",
+            "hadith": "23",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "First dua of mankind after descent from Paradise.",
+            "ar": "أول دعاء من بني آدم."
+          },
+          "tags": [
+            "adam",
+            "forgiveness",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": "nuh-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Nuh (AS)",
+        "ar": "أدعية نوح عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Nuh",
+        "ar": "أدعية نبي الله نوح"
+      },
+      "order": 2,
+      "icon": "rain",
+      "color": "ocean",
+      "items": [
+        {
+          "id": "pro-nuh-001",
+          "category_id": "nuh-duas",
+          "title": {
+            "en": "Dua for Help",
+            "ar": "دعاء الاستغاثة"
+          },
+          "arabic": "رَبِّ إِنِّي مَغْلُوبٌ فَانتَصِرْ",
+          "transliteration": "Rabbi inni maghlubun fantasir.",
+          "translation": {
+            "en": "My Lord, I am overcome, so help [me].",
+            "ar": "رب إني مغلوب فانتصر"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Qamar",
+            "chapter": "54",
+            "hadith": "10",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Nuh (AS) when overwhelmed by his people.",
+            "ar": "دعاء نوح عند الغلبة."
+          },
+          "tags": [
+            "nuh",
+            "help",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "pro-nuh-002",
+          "category_id": "nuh-duas",
+          "title": {
+            "en": "Dua for Boarding the Ark",
+            "ar": "دعاء ركوب السفينة"
+          },
+          "arabic": "بِسْمِ اللَّهِ مَجْرَاهَا وَمُرْسَاهَا ۚ إِنَّ رَبِّي لَغَفُورٌ رَّحِيمٌ",
+          "transliteration": "Bismillahi majraha wa mursaha, inna Rabbi laghafurur-rahim.",
+          "translation": {
+            "en": "In the name of Allah is its course and its anchorage. Indeed, my Lord is Forgiving and Merciful.",
+            "ar": "بسم الله مجراها ومرساها إن ربي لغفور رحيم"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Hud",
+            "chapter": "11",
+            "hadith": "41",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Said by Nuh (AS) when boarding the Ark.",
+            "ar": "قالها نوح عند ركوب السفينة."
+          },
+          "tags": [
+            "nuh",
+            "travel",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        },
+        {
+          "id": "pro-nuh-003",
+          "category_id": "nuh-duas",
+          "title": {
+            "en": "Dua of Gratitude After the Flood",
+            "ar": "دعاء الشكر بعد الطوفان"
+          },
+          "arabic": "رَبِّ أَنزِلْنِي مُنزَلًا مُّبَارَكًا وَأَنتَ خَيْرُ الْمُنزِلِينَ",
+          "transliteration": "Rabbi anzilni munzalan mubarakan wa anta khayrul-munzilin.",
+          "translation": {
+            "en": "My Lord, enable me to land at a blessed landing place, and You are the best to accommodate [us].",
+            "ar": "رب أنزلني منزلاً مباركاً وأنت خير المنزلين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Mu'minun",
+            "chapter": "23",
+            "hadith": "29",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Nuh (AS) upon safely landing after the flood.",
+            "ar": "دعاء نوح بعد النجاة من الطوفان."
+          },
+          "tags": [
+            "nuh",
+            "gratitude",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "glm-pd-02",
+          "category_id": "prophets-duas-nuh",
+          "title": {
+            "en": "Du’a of Nuh — Victory Over Deniers",
+            "ar": "دعاء نوح — النصر"
+          },
+          "arabic": "رَبِّ انصُرْنِي بِمَا كَذَّبُونِ",
+          "transliteration": "Rabbi-nsurni bima kadhdhabooni",
+          "translation": {
+            "en": "My Lord, help me against the people who deny the truth.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 54:10",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Nuh made this du’a after centuries of patient da’wah. It teaches us to seek Allah’s help when facing rejection and to never despair of His support.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "nuh",
+            "victory",
+            "patience",
+            "guidance",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-pd-03",
+          "category_id": "prophets-duas-nuh",
+          "title": {
+            "en": "Du’a of Nuh — For His Son",
+            "ar": "دعاء نوح — لابنه"
+          },
+          "arabic": "رَبِّ إِنَّ ابْنِي مِنْ أَهْلِي وَإِنَّ وَعْدَكَ الْحَقُّ وَأَنتَ أَحْكَمُ الْحَاكِمِينَ",
+          "transliteration": "Rabbi inna ibni min ahli wa-inna wa’daka al-haqq wa-anta ahkam al-hakimeen",
+          "translation": {
+            "en": "My Lord, indeed my son is of my family, and indeed Your promise is true, and You are the most just of judges.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 11:45",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Nuh appealed to Allah for his disbelieving son during the flood. Allah corrected him, teaching that a disbeliever is not truly of one’s family in matters of faith.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "nuh",
+            "family",
+            "decree",
+            "justice",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "glm-pd-04",
+          "category_id": "prophets-duas-nuh",
+          "title": {
+            "en": "Du’a of Iblis — A Warning (Contrast)",
+            "ar": "دعاء إبليس — إعلام التحذير"
+          },
+          "arabic": "رَبِّ بِمَا أَغْوَيتَنِي لَأُزَيِّنَنَّ لَهُمْ فِي الْأَرْضِ وَلَأُغْوِيَنَّهُمْ أَجْمَعِينَ",
+          "transliteration": "Rabbi bima aghwaytani la-uzayyinanna lahum fil-ardi wa-la-ughwiyanahum ajma’een",
+          "translation": {
+            "en": "My Lord, because You have put me in error, I will surely make disobedience attractive to them on earth, and I will mislead them all.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 15:39",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Iblis’s request after his arrogance led to his expulsion. Included as a contrast — it shows how a du’a rooted in pride and rebellion is the opposite of the prophets’ humble supplications.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "iblis",
+            "warning",
+            "arrogance",
+            "contrast",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "id": "ibrahim-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Ibrahim (AS)",
+        "ar": "أدعية إبراهيم عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Ibrahim",
+        "ar": "أدعية خليل الله إبراهيم"
+      },
+      "order": 3,
+      "icon": "mosque",
+      "color": "amber",
+      "items": [
+        {
+          "id": "pro-ibrahim-001",
+          "category_id": "ibrahim-duas",
+          "title": {
+            "en": "Dua for Makkah",
+            "ar": "دعاء لمكة"
+          },
+          "arabic": "رَبِّ اجْعَلْ هَٰذَا بَلَدًا آمِنًا وَارْزُقْ أَهْلَهُ مِنَ الثَّمَرَاتِ مَنْ آمَنَ مِنْهُم بِاللَّهِ وَالْيَوْمِ الْآخِرِ",
+          "transliteration": "Rabbij'al hadha baladan aminan warzuq ahlahu minath-thamarati man amana minhum billahi wal-yawmil-akhir.",
+          "translation": {
+            "en": "My Lord, make this a secure city and provide its people with fruits — whoever of them believes in Allah and the Last Day.",
+            "ar": "رب اجعل هذا بلداً آمناً وارزق أهله من الثمرات..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Baqarah",
+            "chapter": "2",
+            "hadith": "126",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Ibrahim (AS) for Makkah.",
+            "ar": "دعاء إبراهيم لمكة."
+          },
+          "tags": [
+            "ibrahim",
+            "makkah",
+            "rizq",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "pro-ibrahim-002",
+          "category_id": "ibrahim-duas",
+          "title": {
+            "en": "Dua for Righteous Offspring",
+            "ar": "دعاء للذرية الصالحة"
+          },
+          "arabic": "رَبِّ هَبْ لِي مِنَ الصَّالِحِينَ",
+          "transliteration": "Rabbi hab li minas-salihin.",
+          "translation": {
+            "en": "My Lord, grant me from among the righteous.",
+            "ar": "رب هب لي من الصالحين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "As-Saffat",
+            "chapter": "37",
+            "hadith": "100",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah responded by giving him Ismail (AS).",
+            "ar": "فبشرناه بغلام حليم."
+          },
+          "tags": [
+            "ibrahim",
+            "children",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        },
+        {
+          "id": "pro-ibrahim-003",
+          "category_id": "ibrahim-duas",
+          "title": {
+            "en": "Dua for Acceptance of Deeds",
+            "ar": "دعاء قبول الأعمال"
+          },
+          "arabic": "رَبَّنَا تَقَبَّلْ مِنَّا ۖ إِنَّكَ أَنتَ السَّمِيعُ الْعَلِيمُ",
+          "transliteration": "Rabbana taqabbal minna, innaka antas-Sami'ul-'Alim.",
+          "translation": {
+            "en": "Our Lord, accept it from us. Indeed, You are the All-Hearing, the All-Knowing.",
+            "ar": "ربنا تقبل منا إنك أنت السميع العليم"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Baqarah",
+            "chapter": "2",
+            "hadith": "127",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Ibrahim and Ismail when building the Ka'bah.",
+            "ar": "دعاء إبراهيم وإسماعيل عند بناء الكعبة."
+          },
+          "tags": [
+            "ibrahim",
+            "deeds",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "pro-ibrahim-004",
+          "category_id": "ibrahim-duas",
+          "title": {
+            "en": "Dua for Family & Prayer",
+            "ar": "دعاء للأهل والصلاة"
+          },
+          "arabic": "رَبِّ اجْعَلْنِي مُقِيمَ الصَّلَاةِ وَمِن ذُرِّيَّتِي ۚ رَبَّنَا وَتَقَبَّلْ دُعَاءِ",
+          "transliteration": "Rabbij'alni muqimas-salati wa min dhurriyyati, Rabbana wa taqabbal du'a'.",
+          "translation": {
+            "en": "My Lord, make me an establisher of prayer, and from my descendants. Our Lord, and accept my supplication.",
+            "ar": "رب اجعلني مقيم الصلاة ومن ذريتي..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Ibrahim",
+            "chapter": "14",
+            "hadith": "40",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for establishing prayer in the family.",
+            "ar": "دعاء لإقامة الصلاة."
+          },
+          "tags": [
+            "ibrahim",
+            "prayer",
+            "family",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "pro-ibrahim-005",
+          "category_id": "ibrahim-duas",
+          "title": {
+            "en": "Dua for Protection from Shirk",
+            "ar": "دعاء النجاة من الشرك"
+          },
+          "arabic": "رَبِّ اجْنُبْنِي وَبَنِيَّ أَن نَّعْبُدَ الْأَصْنَامَ",
+          "transliteration": "Rabbijnubni wa baniyya an na'budal-asnam.",
+          "translation": {
+            "en": "My Lord, keep me and my children away from worshipping idols.",
+            "ar": "رب اجنبني وبني أن نعبد الأصنام"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Ibrahim",
+            "chapter": "14",
+            "hadith": "35",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Ibrahim (AS) for protection from shirk.",
+            "ar": "دعاء إبراهيم للنجاة من الشرك."
+          },
+          "tags": [
+            "ibrahim",
+            "shirk",
+            "protection",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "pro-ibrahim-006",
+          "category_id": "ibrahim-duas",
+          "title": {
+            "en": "Dua in the Fire",
+            "ar": "دعاء في النار"
+          },
+          "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ ۖ عَلَيْهِ تَوَكَّلْتُ ۖ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+          "transliteration": "Hasbiyallahu la ilaha illa huwa, 'alayhi tawakkaltu wa huwa Rabbul-'Arshil-'Azim.",
+          "translation": {
+            "en": "Allah is sufficient for me. There is no deity except Him. Upon Him I rely, and He is the Lord of the Magnificent Throne.",
+            "ar": "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "At-Tawbah",
+            "chapter": "9",
+            "hadith": "129",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "This dua was said by Ibrahim (AS) when he was thrown into the fire, according to some narrations."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 7,
+          "virtues": {
+            "en": "Allah suffices him who says this against what concerns him.",
+            "ar": "من قالها كفاه الله ما أهمه."
+          },
+          "tags": [
+            "ibrahim",
+            "tawakkul",
+            "protection",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "glm-pd-06",
+          "category_id": "prophets-duas-ibrahim",
+          "title": {
+            "en": "Du’a of Ibrahim — Submission for Himself and Descendants",
+            "ar": "دعاء إبراهيم — الإسلام له وذريته"
+          },
+          "arabic": "رَبَّنَا وَاجْعَلْنَا مُسْلِمَيْنِ لَكَ وَمِن ذُرِّيَّتِنَا أُمَّةً مُّسْلِمَةً لَّكَ",
+          "transliteration": "Rabbana-waj’alna muslimayni laka wa-min dhurriyyatina ummatan muslimatan laka",
+          "translation": {
+            "en": "Our Lord, make us both [fully] submitted to You and from our descendants a submitting community.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 2:128",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "After building the Ka’bah, Ibrahim asked Allah to make him and his offspring submit to Him alone. This du’a encompasses every Muslim who came after.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "ibrahim",
+            "submission",
+            "family",
+            "descendants",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
+        },
+        {
+          "id": "glm-pd-08",
+          "category_id": "prophets-duas-ibrahim",
+          "title": {
+            "en": "Du’a of Ibrahim — Security of Makkah",
+            "ar": "دعاء إبراهيم — أمن مكة"
+          },
+          "arabic": "رَبِّ اجْعَلْ هَٰذَا الْبَلَدَ آمِنًا",
+          "transliteration": "Rabbi-j’al hadha al-balada aminan",
+          "translation": {
+            "en": "My Lord, make this city [Makkah] secure.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 14:35",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Ibrahim prayed for the security of Makkah after settling his family there. Allah answered his du’a, making Makkah a sanctuary of peace to this day.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "ibrahim",
+            "security",
+            "makkah",
+            "protection",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 8
+        },
+        {
+          "id": "glm-pd-09",
+          "category_id": "prophets-duas-ibrahim",
+          "title": {
+            "en": "Du’a of Ibrahim — Forgiveness on the Day of Judgment",
+            "ar": "دعاء إبراهيم — المغفرة يوم الحساب"
+          },
+          "arabic": "رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ",
+          "transliteration": "Rabbana-ghfir li wa-liwalidayya wa-lil-mu’mineena yawma yaqum al-hisab",
+          "translation": {
+            "en": "Our Lord, forgive me and my parents and the believers the Day the account is established.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 14:41",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Ibrahim’s du’a encompasses not only himself and his parents but all believers. It reminds us to include the entire Ummah in our supplications.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "ibrahim",
+            "forgiveness",
+            "parents",
+            "judgment",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 9
+        },
+        {
+          "id": "glm-pd-10",
+          "category_id": "prophets-duas-ibrahim",
+          "title": {
+            "en": "Du’a of Ibrahim — Gratitude for Children in Old Age",
+            "ar": "دعاء إبراهيم — الحمد على الذرية"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ الَّذِي وَهَبَ لِي عَلَى الْكِبَرِ إِسْمَاعِيلَ وَإِسْحَاقَ",
+          "transliteration": "Al-hamdu lillahi alladhi wahaba li ’ala al-kibri Isma’ila wa-Ishaq",
+          "translation": {
+            "en": "All praise is due to Allah, who has granted me in old age Ishmael and Isaac.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 14:39",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Ibrahim expressed profound gratitude when Allah blessed him with two prophet-sons despite his and his wife’s advanced age. A model of shukr (gratitude) for blessings.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "ibrahim",
+            "gratitude",
+            "children",
+            "blessings",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "musa-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Musa (AS)",
+        "ar": "أدعية موسى عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Musa",
+        "ar": "أدعية كليم الله موسى"
+      },
+      "order": 4,
+      "icon": "book",
+      "color": "ocean",
+      "items": [
+        {
+          "id": "pro-musa-001",
+          "category_id": "musa-duas",
+          "title": {
+            "en": "Dua for Chest Expansion",
+            "ar": "دعاء شرح الصدر"
+          },
+          "arabic": "قَالَ رَبِّ اشْرَحْ لِي صَدْرِي، وَيَسِّرْ لِي أَمْرِي، وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي، يَفْقَهُوا قَوْلِي",
+          "transliteration": "Qala Rabbi-shrah li sadri, wa yassir li amri, wah-lul 'uqdatam min lisani, yafqahu qawli.",
+          "translation": {
+            "en": "He said: My Lord, expand for me my breast, ease for me my task, and untie the knot from my tongue, that they may understand my speech.",
+            "ar": "قال رب اشرح لي صدري ويسر لي أمري..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Ta-Ha",
+            "chapter": "20",
+            "hadith": "25-28",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Excellent dua for students, speakers, and clarity.",
+            "ar": "دعاء موسى للفصاحة والفهم."
+          },
+          "tags": [
+            "musa",
+            "knowledge",
+            "speaking",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "pro-musa-002",
+          "category_id": "musa-duas",
+          "title": {
+            "en": "Dua for Strength",
+            "ar": "دعاء القوة"
+          },
+          "arabic": "وَاجْعَل لِّي وَزِيرًا مِّنْ أَهْلِي، هَارُونَ أَخِي، اشْدُدْ بِهِ أَزْرِي، وَأَشْرِكْهُ فِي أَمْرِي",
+          "transliteration": "Waj'al li waziran min ahli, Haruna akhi, ishkud bihi azri, wa ashrikhu fi amri.",
+          "translation": {
+            "en": "And appoint for me a helper from my family — Harun, my brother. Strengthen my back through him, and let him share my task.",
+            "ar": "واجعل لي وزيراً من أهلي هارون أخي..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Ta-Ha",
+            "chapter": "20",
+            "hadith": "29-32",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for a supportive partner in good deeds.",
+            "ar": "دعاء للمعين."
+          },
+          "tags": [
+            "musa",
+            "family",
+            "support",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        },
+        {
+          "id": "pro-musa-003",
+          "category_id": "musa-duas",
+          "title": {
+            "en": "Dua of Gratitude",
+            "ar": "دعاء الشكر"
+          },
+          "arabic": "قَالَ رَبِّ بِمَا أَنْعَمْتَ عَلَيَّ فَلَنْ أَكُونَ ظَهِيرًا لِّلْمُجْرِمِينَ",
+          "transliteration": "Qala Rabbi bima an'amta 'alayya falan akuna zahiral-lilmujrimin.",
+          "translation": {
+            "en": "He said: My Lord, for the favor You bestowed upon me, I will never be an assistant to the criminals.",
+            "ar": "قال رب بما أنعمت عليّ فلن أكون ظهيراً للمجرمين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Qasas",
+            "chapter": "28",
+            "hadith": "17",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Gratitude expressed through action — refusing to aid wrongdoing.",
+            "ar": "الشكر العملي."
+          },
+          "tags": [
+            "musa",
+            "gratitude",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "pro-musa-004",
+          "category_id": "musa-duas",
+          "title": {
+            "en": "Dua for Provision",
+            "ar": "دعاء الرزق"
+          },
+          "arabic": "رَبِّ إِنِّي لِمَا أَنزَلْتَ إِلَيَّ مِنْ خَيْرٍ فَقِيرٌ",
+          "transliteration": "Rabbi inni lima anzalta ilayya min khayrin faqir.",
+          "translation": {
+            "en": "My Lord, I am in need of whatever good You send down to me.",
+            "ar": "رب إني لما أنزلت إليّ من خير فقير"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Qasas",
+            "chapter": "28",
+            "hadith": "24",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Said by Musa (AS) when he arrived in Madyan. Allah responded by giving him a wife and a job.",
+            "ar": "دعاء موسى عند الماء."
+          },
+          "tags": [
+            "musa",
+            "rizq",
+            "marriage",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-pd-11",
+          "category_id": "prophets-duas-musa",
+          "title": {
+            "en": "Du’a of Musa — Expansion of the Chest",
+            "ar": "دعاء موسى — شرح الصدر"
+          },
+          "arabic": "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي",
+          "transliteration": "Rabbi-shrah li sadri wa-yassir li amri",
+          "translation": {
+            "en": "My Lord, expand for me my breast [with assurance] and ease for me my task.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 20:25-26",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Musa made this du’a before confronting Pharaoh, the most powerful tyrant of his time. The Prophet صلى الله عليه وسلم recommended it before any difficult task or overwhelming situation.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "musa",
+            "courage",
+            "ease",
+            "anxiety",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "glm-pd-12",
+          "category_id": "prophets-duas-musa",
+          "title": {
+            "en": "Du’a of Musa — Increase in Knowledge",
+            "ar": "دعاء موسى — زيادة العلم"
+          },
+          "arabic": "رَبِّ زِدْنِي عِلْمًا",
+          "transliteration": "Rabbi zidni ’ilman",
+          "translation": {
+            "en": "My Lord, increase me in knowledge.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 20:114",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Despite being a prophet and having spoken directly to Allah, Musa still asked for more knowledge. This is the Quranic du’a for students and seekers of knowledge.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "musa",
+            "knowledge",
+            "study",
+            "learning",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "glm-pd-13",
+          "category_id": "prophets-duas-musa",
+          "title": {
+            "en": "Du’a of Musa — Against Pharaoh’s Tyranny",
+            "ar": "دعاء موسى — على طغية فرعون"
+          },
+          "arabic": "رَبَّنَا إِنَّكَ آتَيتَ فِرْعَوْنَ وَمَلَأَهُ زِينَةً وَأَمْوالًا",
+          "transliteration": "Rabbana innaka atayta Fir’awna wa-mala’ahu zeenatan wa-amwalan",
+          "translation": {
+            "en": "Our Lord, indeed You have granted Pharaoh and his establishment splendor and wealth.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 10:88",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Musa and Harun made this du’a together, acknowledging Allah’s power over tyrants and asking Him to destroy their corruption. A du’a against oppression.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "musa",
+            "harun",
+            "oppression",
+            "justice",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
+        },
+        {
+          "id": "glm-pd-14",
+          "category_id": "prophets-duas-musa",
+          "title": {
+            "en": "Du’a of Musa — Repentance and Declaration of Faith",
+            "ar": "دعاء موسى — التوبة والإيمان"
+          },
+          "arabic": "سُبْحَانَكَ تُبْتُ إِلَيْكَ وَأَنَا أَوَّلُ الْمُؤْمِنِينَ",
+          "transliteration": "Subhanaka tubtu ilayka wa-ana awwalu al-mu’mineen",
+          "translation": {
+            "en": "Exalted are You, I have repented to You, and I am the first of the believers.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 7:143",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "After witnessing Allah’s manifestation at Mount Sinai, Musa fell unconscious then awoke declaring his faith and repentance. It shows the overwhelming awe of Allah’s presence.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "musa",
+            "repentance",
+            "faith",
+            "awe",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 8
+        }
+      ]
+    },
+    {
+      "id": "yunus-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Yunus (AS)",
+        "ar": "أدعية يونس عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Yunus",
+        "ar": "أدعية نبي الله يونس"
+      },
+      "order": 5,
+      "icon": "ocean",
+      "color": "ocean",
+      "items": [
+        {
+          "id": "pro-yunus-001",
+          "category_id": "yunus-duas",
+          "title": {
+            "en": "Dua in the Belly of the Whale",
+            "ar": "دعاء في بطن الحوت"
+          },
+          "arabic": "لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",
+          "transliteration": "La ilaha illa anta subhanaka inni kuntu minaz-zalimin.",
+          "translation": {
+            "en": "There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.",
+            "ar": "لا إله إلا أنت سبحانك إني كنت من الظالمين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Anbiya",
+            "chapter": "21",
+            "hadith": "87",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "No Muslim ever supplicates with it except that Allah responds.",
+            "ar": "ما دعا بها مسلم في شيء قط إلا استجاب الله له."
+          },
+          "tags": [
+            "yunus",
+            "distress",
+            "forgiveness",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": "zakariya-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Zakariya (AS)",
+        "ar": "أدعية زكريا عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Zakariya",
+        "ar": "أدعية نبي الله زكريا"
+      },
+      "order": 6,
+      "icon": "heart",
+      "color": "amber",
+      "items": [
+        {
+          "id": "pro-zakariya-001",
+          "category_id": "zakariya-duas",
+          "title": {
+            "en": "Dua for a Righteous Child",
+            "ar": "دعاء للولد الصالح"
+          },
+          "arabic": "رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً ۖ إِنَّكَ سَمِيعُ الدُّعَاءِ",
+          "transliteration": "Rabbi hab li min ladunka dhurriyyatan tayyibatan, innaka sami'ud-du'a'.",
+          "translation": {
+            "en": "My Lord, grant me from Yourself a good offspring. Indeed, You are the Hearer of supplication.",
+            "ar": "رب هب لي من لدنك ذرية طيبة إنك سميع الدعاء"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al Imran",
+            "chapter": "3",
+            "hadith": "38",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah responded by giving him Yahya (AS).",
+            "ar": "فنادته الملائكة وهو قائم يصلي."
+          },
+          "tags": [
+            "zakariya",
+            "children",
+            "family",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "pro-zakariya-002",
+          "category_id": "zakariya-duas",
+          "title": {
+            "en": "Dua for an Heir",
+            "ar": "دعاء للوارث"
+          },
+          "arabic": "رَبِّ لَا تَذَرْنِي فَرْدًا وَأَنتَ خَيْرُ الْوَارِثِينَ",
+          "transliteration": "Rabbi la tatharni farda wa anta khayrul-warithin.",
+          "translation": {
+            "en": "My Lord, do not leave me alone [with no offspring], while You are the best of inheritors.",
+            "ar": "رب لا تذرني فرداً وأنت خير الوارثين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Anbiya",
+            "chapter": "21",
+            "hadith": "89",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Zakariya (AS) when he was old.",
+            "ar": "دعاء زكريا عليه السلام."
+          },
+          "tags": [
+            "zakariya",
+            "children",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "id": "ayyub-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Ayyub (AS)",
+        "ar": "أدعية أيوب عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Ayyub",
+        "ar": "أدعية نبي الله أيوب"
+      },
+      "order": 7,
+      "icon": "heart",
+      "color": "rose",
+      "items": [
+        {
+          "id": "pro-ayyub-001",
+          "category_id": "ayyub-duas",
+          "title": {
+            "en": "Dua in Sickness & Hardship",
+            "ar": "دعاء في المرض والشدة"
+          },
+          "arabic": "وَأَيُّوبَ إِذْ نَادَىٰ رَبَّهُ أَنِّي مَسَّنِيَ الضُّرُّ وَأَنتَ أَرْحَمُ الرَّاحِمِينَ",
+          "transliteration": "Wa Ayyuba idh nada Rabbahu anni massaniyad-durru wa anta arhamur-rahimin.",
+          "translation": {
+            "en": "And [mention] Ayyub, when he called to his Lord: Indeed, adversity has touched me, and You are the Most Merciful of the merciful.",
+            "ar": "وأيوب إذ نادى ربه أني مسني الضر وأنت أرحم الراحمين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Anbiya",
+            "chapter": "21",
+            "hadith": "83",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The dua of patience in extreme hardship. Allah responded and cured him.",
+            "ar": "دعاء الصبر في الشدة."
+          },
+          "tags": [
+            "ayyub",
+            "sickness",
+            "patience",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "glm-pd-18",
+          "category_id": "prophets-duas-ayyub",
+          "title": {
+            "en": "Du’a of Ayyub — In Affliction",
+            "ar": "دعاء أيوب — في البلاء"
+          },
+          "arabic": "أَنِّي مَسَّنِيَ الضُّرُّ وَأَنتَ أَرْحَمُ الرَّاحِمِينَ",
+          "transliteration": "Anni massaniyad-durru wa-anta arhamur-rahimeen",
+          "translation": {
+            "en": "Indeed, adversity has touched me, and You are the Most Merciful of the merciful.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 21:83",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Ayyub suffered illness, loss of wealth, and death of his children for years, yet remained patient. When he finally made this brief du’a, Allah answered it immediately and restored everything doubled.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "ayyub",
+            "patience",
+            "healing",
+            "affliction",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "id": "sulayman-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Duas of Sulayman (AS)",
+        "ar": "أدعية سليمان عليه السلام"
+      },
+      "description": {
+        "en": "Supplications of Prophet Sulayman",
+        "ar": "أدعية نبي الله سليمان"
+      },
+      "order": 8,
+      "icon": "star",
+      "color": "amber",
+      "items": [
+        {
+          "id": "pro-sulayman-001",
+          "category_id": "sulayman-duas",
+          "title": {
+            "en": "Dua for Gratitude",
+            "ar": "دعاء الشكر"
+          },
+          "arabic": "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَىٰ وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ",
+          "transliteration": "Rabbi awzi'ni an ashkura ni'mataka allati an'amta 'alayya wa 'ala walidayya wa an a'mala salihan tardahu wa adkhilni bi-rahmatika fi 'ibadikas-salihin.",
+          "translation": {
+            "en": "My Lord, enable me to be grateful for Your favor which You have bestowed upon me and upon my parents and to work righteousness of which You will be pleased and make me righteous with regard to my offspring. Indeed, I have repented to You, and indeed, I am of the Muslims.",
+            "ar": "رب أوزعني أن أشكر نعمتك..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "An-Naml",
+            "chapter": "27",
+            "hadith": "19",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Sulayman (AS) when he heard the ant's speech.",
+            "ar": "دعاء سليمان عند سماع قول النملة."
+          },
+          "tags": [
+            "sulayman",
+            "shukr",
+            "parents",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "glm-pd-19",
+          "category_id": "prophets-duas-sulayman",
+          "title": {
+            "en": "Du’a of Sulayman — Gratitude for Blessings",
+            "ar": "دعاء سليمان — الشكر على النعم"
+          },
+          "arabic": "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَىٰ وَالِدَيَّ",
+          "transliteration": "Rabbi awzi’ni an ashkura ni’mataka allati an’amta ’alayya wa-’ala walidayya",
+          "translation": {
+            "en": "My Lord, enable me to be grateful for Your favor which You have bestowed upon me and upon my parents.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 27:19",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Sulayman was given a kingdom unmatched by any before or after him — control over jinn, wind, and animals. Yet his first request was for the ability to be grateful. A profound lesson in humility.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sulayman",
+            "gratitude",
+            "humility",
+            "blessings",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "id": "believers-duas",
+      "section_id": "quran",
+      "name": {
+        "en": "Believers' Supplications",
+        "ar": "مناجات المؤمنين"
+      },
+      "description": {
+        "en": "Quranic supplications taught for all believers",
+        "ar": "أدعية قرآنية تعلمها المؤمنون"
+      },
+      "order": 9,
+      "icon": "heart",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "pro-believers-001",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Good in Both Worlds",
+            "ar": "دعاء الحسنى في الدارين"
+          },
+          "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adhaban-nar.",
+          "translation": {
+            "en": "Our Lord, give us in this world good and in the Hereafter good and protect us from the punishment of the Fire.",
+            "ar": "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Baqarah",
+            "chapter": "2",
+            "hadith": "201",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The most comprehensive dua in the Quran.",
+            "ar": "أجمع دعاء في القرآن."
+          },
+          "tags": [
+            "quran",
+            "guidance",
+            "dunya",
+            "akhirah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "pro-believers-002",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Steadfastness",
+            "ar": "دعاء الثبات"
+          },
+          "arabic": "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ الْوَهَّابُ",
+          "transliteration": "Rabbana la tuzigh qulubana ba'da idh hadaytana wa hab lana min ladunka rahmatan, innaka antal-Wahhab.",
+          "translation": {
+            "en": "Our Lord, let not our hearts deviate after You have guided us and grant us from Yourself mercy. Indeed, You are the Bestower.",
+            "ar": "ربنا لا تزغ قلوبنا بعد إذ هديتنا..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al Imran",
+            "chapter": "3",
+            "hadith": "8",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for steadfastness in faith.",
+            "ar": "دعاء الثبات على الدين."
+          },
+          "tags": [
+            "quran",
+            "faith",
+            "guidance"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        },
+        {
+          "id": "pro-believers-003",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Forgiveness for All Believers",
+            "ar": "دعاء للمؤمنين والمؤمنات"
+          },
+          "arabic": "رَبَّنَا اغْفِرْ لَنَا وَلِإِخْوَانِنَا الَّذِينَ سَبَقُونَا بِالْإِيمَانِ وَلَا تَجْعَلْ فِي قُلُوبِنَا غِلًّا لِّلَّذِينَ آمَنُوا ۚ رَبَّنَا إِنَّكَ رَءُوفٌ رَّحِيمٌ",
+          "transliteration": "Rabbana-ghfir lana wa li-ikhwaninal-ladhina sabaquna bil-imani wa la taj'al fi qulubina ghillan lilladhina amanu, Rabbana innaka ra'ufur-rahim.",
+          "translation": {
+            "en": "Our Lord, forgive us and our brothers who preceded us in faith and put not in our hearts any resentment toward those who have believed. Our Lord, indeed You are Kind and Merciful.",
+            "ar": "ربنا اغفر لنا ولإخواننا الذين سبقونا بالإيمان..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Hashr",
+            "chapter": "59",
+            "hadith": "10",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Purifies the heart from rancor.",
+            "ar": "تنقية القلب من الغل."
+          },
+          "tags": [
+            "quran",
+            "forgiveness",
+            "believers"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "pro-believers-004",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Patience & Victory",
+            "ar": "دعاء الصبر والنصر"
+          },
+          "arabic": "رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَثَبِّتْ أَقْدَامَنَا وَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ",
+          "transliteration": "Rabbana afrigh 'alayna sabran wa thabbit aqdamana wansurna 'alal-qawmil-kafirin.",
+          "translation": {
+            "en": "Our Lord, pour upon us patience and plant firmly our feet and give us victory over the disbelieving people.",
+            "ar": "ربنا أفرغ علينا صبراً وثبت أقدامنا..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Baqarah",
+            "chapter": "2",
+            "hadith": "250",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Talut's army before battle.",
+            "ar": "دعاء جيش طالوت."
+          },
+          "tags": [
+            "quran",
+            "patience",
+            "victory"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "pro-believers-005",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Protection from Hellfire",
+            "ar": "دعاء النجاة من النار"
+          },
+          "arabic": "رَبَّنَا اصْرِفْ عَنَّا عَذَابَ جَهَنَّمَ ۚ إِنَّ عَذَابَهَا كَانَ غَرَامًا",
+          "transliteration": "Rabbana-srif 'anna 'adhaba jahannam, inna 'adhabaha kana gharama.",
+          "translation": {
+            "en": "Our Lord, avert from us the punishment of Hell. Indeed, its punishment is ever adhering.",
+            "ar": "ربنا اصرف عنا عذاب جهنم..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Furqan",
+            "chapter": "25",
+            "hadith": "65",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of the servants of the Most Merciful.",
+            "ar": "من دعاء عباد الرحمن."
+          },
+          "tags": [
+            "quran",
+            "hellfire",
+            "protection"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "pro-believers-006",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Family Comfort",
+            "ar": "دعاء قرة العين"
+          },
+          "arabic": "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا",
+          "transliteration": "Rabbana hab lana min azwajina wa dhurriyatina qurrata a'yunin waj'alna lil-muttaqina imama.",
+          "translation": {
+            "en": "Our Lord, grant us from among our spouses and offspring comfort to our eyes and make us a leader for the righteous.",
+            "ar": "ربنا هب لنا من أزواجنا وذرياتنا قرة أعين..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Furqan",
+            "chapter": "25",
+            "hadith": "74",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua for righteous family.",
+            "ar": "دعاء لصلاح الأسرة."
+          },
+          "tags": [
+            "quran",
+            "family",
+            "spouses",
+            "children"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "pro-believers-007",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Acceptance",
+            "ar": "دعاء القبول"
+          },
+          "arabic": "رَبَّنَا تَقَبَّلْ مِنَّا ۖ إِنَّكَ أَنتَ السَّمِيعُ الْعَلِيمُ",
+          "transliteration": "Rabbana taqabbal minna, innaka antas-Sami'ul-'Alim.",
+          "translation": {
+            "en": "Our Lord, accept it from us. Indeed You are the All-Hearing, the All-Knowing.",
+            "ar": "ربنا تقبل منا إنك أنت السميع العليم"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Baqarah",
+            "chapter": "2",
+            "hadith": "127",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Ibrahim and Ismail when building the Ka'bah.",
+            "ar": "دعاء إبراهيم وإسماعيل."
+          },
+          "tags": [
+            "quran",
+            "deeds",
+            "ibrahim"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
+        },
+        {
+          "id": "pro-believers-008",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Parents",
+            "ar": "دعاء للوالدين"
+          },
+          "arabic": "رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+          "transliteration": "Rabbirhamhuma kama rabbayani saghira.",
+          "translation": {
+            "en": "My Lord, have mercy upon them as they brought me up [when I was] small.",
+            "ar": "رب ارحمهما كما ربياني صغيراً"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Isra",
+            "chapter": "17",
+            "hadith": "24",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Quranic command to supplicate for parents.",
+            "ar": "أمر قرآني بالدعاء للوالدين."
+          },
+          "tags": [
+            "quran",
+            "parents"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 8
+        },
+        {
+          "id": "pro-believers-009",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Knowledge",
+            "ar": "دعاء العلم"
+          },
+          "arabic": "رَّبِّ زِدْنِي عِلْمًا",
+          "transliteration": "Rabbi zidni ilma.",
+          "translation": {
+            "en": "My Lord, increase me in knowledge.",
+            "ar": "رب زدني علماً"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Ta-Ha",
+            "chapter": "20",
+            "hadith": "114",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The only dua the Prophet ﷺ was commanded to make in the Quran.",
+            "ar": "الدعاء الوحيد الذي أمر الله به نبيه."
+          },
+          "tags": [
+            "quran",
+            "knowledge",
+            "ilm"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 9
+        },
+        {
+          "id": "pro-believers-010",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Guidance (Al-Fatihah)",
+            "ar": "دعاء الهداية (الفاتحة)"
+          },
+          "arabic": "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ، صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+          "transliteration": "Ihdinas-siratal-mustaqim, siratal-ladhina an'amta 'alayhim ghayril-maghdubi 'alayhim wa lad-dallin.",
+          "translation": {
+            "en": "Guide us to the straight path — the path of those upon whom You have bestowed favor, not of those who have evoked anger or of those who are astray.",
+            "ar": "اهدنا الصراط المستقيم..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-Fatihah",
+            "chapter": "1",
+            "hadith": "6-7",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The most recited dua — in every unit of prayer.",
+            "ar": "أكثر دعاء يقرأ."
+          },
+          "tags": [
+            "quran",
+            "guidance",
+            "fatihah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 10
+        },
+        {
+          "id": "pro-believers-011",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Ease",
+            "ar": "دعاء التيسير"
+          },
+          "arabic": "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي",
+          "transliteration": "Rabbi-shrah li sadri wa yassir li amri.",
+          "translation": {
+            "en": "My Lord, expand for me my breast and ease for me my task.",
+            "ar": "رب اشرح لي صدري ويسر لي أمري"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Ta-Ha",
+            "chapter": "20",
+            "hadith": "25-26",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Musa (AS) before any difficult task.",
+            "ar": "دعاء موسى قبل المهمة الصعبة."
+          },
+          "tags": [
+            "quran",
+            "ease",
+            "musa"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 11
+        },
+        {
+          "id": "pro-believers-012",
+          "category_id": "believers-duas",
+          "title": {
+            "en": "Dua for Protection from Misguidance",
+            "ar": "دعاء الحماية من الضلال"
+          },
+          "arabic": "رَبِّ إِنِّي أَعُوذُ بِكَ أَنْ أَسْأَلَكَ مَا لَيْسَ لِي بِهِ عِلْمٌ ۖ وَإِلَّا تَغْفِرْ لِي وَتَرْحَمْنِي أَكُن مِّنَ الْخَاسِرِينَ",
+          "transliteration": "Rabbi inni a'udhu bika an as'alaka ma laysa li bihi 'ilmun, wa illa taghfir li wa tarhamni akun minal-khasirin.",
+          "translation": {
+            "en": "My Lord, I seek refuge in You from asking that of which I have no knowledge. And unless You forgive me and have mercy upon me, I will be of the losers.",
+            "ar": "رب إني أعوذ بك أن أسألك ما ليس لي به علم..."
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Hud",
+            "chapter": "11",
+            "hadith": "47",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dua of Nuh (AS).",
+            "ar": "دعاء نوح عليه السلام."
+          },
+          "tags": [
+            "quran",
+            "nooh",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 12
+        },
+        {
+          "id": "glm-pd-28",
+          "category_id": "prophets-duas-believers",
+          "title": {
+            "en": "Du’a of the Believers — Steadfastness After Guidance",
+            "ar": "دعاء المؤمنين — ثبات القلب"
+          },
+          "arabic": "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً",
+          "transliteration": "Rabbana la tuzigh qulubana ba’da idh hadaytana wa-hab lana min ladunka rahmah",
+          "translation": {
+            "en": "Our Lord, let not our hearts deviate after You have guided us, and grant us from Yourself mercy.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 3:8",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The believers’ du’a after hearing about the People of the Book who changed their scriptures. A vital du’a to protect one’s faith and prevent spiritual drift.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "believers",
+            "steadfastness",
+            "guidance",
+            "heart",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 13
+        },
+        {
+          "id": "glm-pd-29",
+          "category_id": "prophets-duas-believers",
+          "title": {
+            "en": "Du’a of the Believers — Forgiveness for Sins and Excesses",
+            "ar": "دعاء المؤمنين — مغفرة الذنوب"
+          },
+          "arabic": "رَبَّنَا اغْفِرْ لَنَا ذُنُوبَنَا وَإِسْرَافَنَا فِي أَمْرِنَا",
+          "transliteration": "Rabbana-ghfir lana dhunoobana wa-israfana fi amrina",
+          "translation": {
+            "en": "Our Lord, forgive us our sins and our extravagance in our affairs.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 3:147",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This du’a was made by the believers during the Battle of Uhud after they disobeyed the Prophet’s orders. It acknowledges both sins and excesses, seeking comprehensive forgiveness.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "believers",
+            "forgiveness",
+            "sins",
+            "repentance",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 14
+        },
+        {
+          "id": "glm-pd-30",
+          "category_id": "prophets-duas-believers",
+          "title": {
+            "en": "Du’a of the Believers — Mercy and Right Guidance",
+            "ar": "دعاء المؤمنين — الرحمة والرشد"
+          },
+          "arabic": "رَبَّنَا آتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا",
+          "transliteration": "Rabbana atina min ladunka rahmatan wa-hayyi’ lana min amrina rashadan",
+          "translation": {
+            "en": "Our Lord, grant us from Yourself mercy and prepare for us from our affair right guidance.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 18:10",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The du’a of the Youth of the Cave (Ashab al-Kahf) when they fled their people to preserve their faith. It combines asking for Allah’s mercy with seeking His guidance in all affairs.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "believers",
+            "mercy",
+            "guidance",
+            "youth",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 15
+        },
+        {
+          "id": "glm-pd-31",
+          "category_id": "prophets-duas-believers",
+          "title": {
+            "en": "Du’a of the Believers — Gratitude for Blessings",
+            "ar": "دعاء المؤمنين — الشكر على النعم"
+          },
+          "arabic": "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ",
+          "transliteration": "Rabbi awzi’ni an ashkura ni’mataka allati an’amta ’alayya",
+          "translation": {
+            "en": "My Lord, enable me to be grateful for Your favor which You have bestowed upon me.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 27:19",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "A du’a for gratitude that any believer can make. Asking Allah for the ability to be thankful is itself an act of gratitude. This prayer ensures we recognize and appreciate Allah’s countless blessings.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "believers",
+            "gratitude",
+            "blessings",
+            "thankfulness",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 16
+        },
+        {
+          "id": "glm-pd-33",
+          "category_id": "prophets-duas-believers",
+          "title": {
+            "en": "Du’a of the Believers — Rescue from Oppressors",
+            "ar": "دعاء المؤمنين — النجاة من الظالمين"
+          },
+          "arabic": "رَبَّنَا لَا تَجْعَلْنَا فِتْنَةً لِّلْقَوْمِ الظَّالِمِينَ وَنَجِّنَا بِرَحْمَتِكَ مِنَ الْقَوْمِ الْكَافِرِينَ",
+          "transliteration": "Rabbana la taj’alna fitnatan lil-qawmidh-zalimeen wa-najjina bi-rahmatika minal-qawmil-kafireen",
+          "translation": {
+            "en": "Our Lord, make us not [a trial] for the wrongdoing people and save us by Your mercy from the disbelieving people.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 10:85-86",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The du’a of Musa’s people when they faced Pharaoh’s persecution. It asks Allah to protect believers from being a means of trial and to rescue them from oppressors.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "believers",
+            "oppression",
+            "rescue",
+            "protection",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 17
+        },
+        {
+          "id": "glm-pd-34",
+          "category_id": "prophets-duas-believers",
+          "title": {
+            "en": "Du’a of the Believers — Sufficiency of Allah",
+            "ar": "دعاء المؤمنين — حسبي الله"
+          },
+          "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+          "transliteration": "Hasbiyallahu la ilaha illa huwa ’alayhi tawakkaltu wa-huwa Rabbul-’Arshil-’Azeem",
+          "translation": {
+            "en": "Sufficient for me is Allah; there is no deity except Him. Upon Him I have relied, and He is the Lord of the Great Throne.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 9:129, Abu Dawud 5075",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Ibrahim recited these words when he was thrown into the fire, and the fire became cool and safe. The Prophet صلى الله عليه وسلم said: “Whoever says it seven times in the morning and evening, Allah will suffice him for whatever concerns him.” (Abu Dawud 5075)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "believers",
+            "tawakkul",
+            "sufficiency",
+            "tawheed",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 18
+        },
+        {
+          "id": "glm-pd-35",
+          "category_id": "prophets-duas-believers",
+          "title": {
+            "en": "Du’a of the Believers — Forgiveness for All Believers",
+            "ar": "دعاء المؤمنين — غفران للجميع"
+          },
+          "arabic": "رَبَّنَا اغْفِرْ لَنَا وَإِخْوَانَنَا الَّذِينَ سَبَقُونَا بِالْإِيمَانِ",
+          "transliteration": "Rabbana-ghfir lana wa-ikhwanana alladheena sabaquna bil-iman",
+          "translation": {
+            "en": "Our Lord, forgive us and our brothers who preceded us in faith.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 59:10",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The believers’ du’a from Surah al-Hashr. It teaches us to include all Muslims — past, present, and future — in our prayers for forgiveness. A beautiful expression of Ummah unity.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "believers",
+            "forgiveness",
+            "brotherhood",
+            "ummah",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 19
+        }
+      ]
+    },
+    {
+      "id": "dawud-duas",
+      "section_id": "prophet-duas",
+      "name": {
+        "en": "Duas of Dawud (AS)",
+        "ar": "أدعية داود عليه السلام"
+      },
+      "description": {
+        "en": "",
+        "ar": ""
+      },
+      "order": 10,
+      "icon": "book",
+      "color": "amber",
+      "items": [
+        {
+          "id": "glm-pd-20",
+          "category_id": "prophets-duas-dawud",
+          "title": {
+            "en": "Du’a of Dawud — For an Unmatched Kingdom",
+            "ar": "دعاء داود — الملك المفرد"
+          },
+          "arabic": "رَبِّ اغْفِرْ لِي وَهِبْ لِي مُلْكًا لَّا يَنبَغِي لِأَحَدٍ مِّن بَعْدِي",
+          "transliteration": "Rabbi-ghfir li wa-hib li mulkan la yanbaghi li-ahadin min ba’di",
+          "translation": {
+            "en": "My Lord, forgive me and grant me a kingdom such as will not belong to anyone after me.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 38:35",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Dawud combined seeking forgiveness with asking for a unique blessing. Allah answered both parts of his du’a — forgiving him and granting him an unparalleled kingdom.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "dawud",
+            "forgiveness",
+            "kingdom",
+            "blessings",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1001
+        }
+      ]
+    },
+    {
+      "id": "isa-duas",
+      "section_id": "prophet-duas",
+      "name": {
+        "en": "Duas of Isa (AS)",
+        "ar": "أدعية عيسى عليه السلام"
+      },
+      "description": {
+        "en": "",
+        "ar": ""
+      },
+      "order": 11,
+      "icon": "heart",
+      "color": "ocean",
+      "items": [
+        {
+          "id": "glm-pd-21",
+          "category_id": "prophets-duas-isa",
+          "title": {
+            "en": "Du’a of Isa — The Heavenly Table",
+            "ar": "دعاء عيسى — المائدة السماوية"
+          },
+          "arabic": "اللَّهُمَّ رَبَّنَا أَنزِلْ عَلَيْنَا مَائِدَةً مِّنَ السَّمَاءِ",
+          "transliteration": "Allahumma Rabbana anzil ’alayna ma’idatan minas-sama’i",
+          "translation": {
+            "en": "O Allah, our Lord, send down to us a table [spread with food] from the heaven.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 5:114",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Isa made this du’a when the Hawariyyun (disciples) requested a miraculous feast as a sign. It shows that even prophets turn to Allah for provision and signs.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "isa",
+            "provision",
+            "signs",
+            "miracles",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1001
+        },
+        {
+          "id": "glm-pd-22",
+          "category_id": "prophets-duas-isa",
+          "title": {
+            "en": "Du’a of Isa — Surrendering Judgment to Allah",
+            "ar": "دعاء عيسى — التسليم لحكم الله"
+          },
+          "arabic": "إِن تُعَذِّبْهُمْ فإِنَّهُمْ عِبَادُكَ وَإِن تَغْفِرْ لَهُمْ فإِنَّكَ أَنتَ الْعَزِيزُ الْحَكِيمُ",
+          "transliteration": "In tu’adhdhibhum fa-innahum ’ibaduka, wa-in taghfir lahum fa-innaka Antal-’Azeezul-Hakeem",
+          "translation": {
+            "en": "If You should punish them — indeed they are Your servants; but if You forgive them — indeed it is You who is the Exalted in Might, the Wise.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 5:118",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Isa will say this on the Day of Judgment when Allah asks him about those who took him and his mother as deities. It is the ultimate expression of entrusting all matters to Allah’s wisdom.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "isa",
+            "judgment",
+            "mercy",
+            "wisdom",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1002
+        }
+      ]
+    },
+    {
+      "id": "muhammad-duas",
+      "section_id": "prophet-duas",
+      "name": {
+        "en": "Duas of Prophet Muhammad ﷺ",
+        "ar": "أدعية النبي محمد ﷺ"
+      },
+      "description": {
+        "en": "",
+        "ar": ""
+      },
+      "order": 12,
+      "icon": "mosque",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "glm-pd-23",
+          "category_id": "prophets-duas-muhammad",
+          "title": {
+            "en": "Du’a of Muhammad — Refuge from Cowardice and Miserliness",
+            "ar": "دعاء محمد — الأعوذ من الجبن"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْجُبْنِ وَأَعُوذُ بِكَ مِنَ البُخْلِ وَأَعُوذُ بِكَ مِنْ أَنْ أُرَدَّ إِلَىٰ أَرْذَلِ الْعُمُرِ",
+          "transliteration": "Allahumma inni a’udhu bika min al-jubni, wa-a’udhu bika min al-bukhli, wa-a’udhu bika min an uradda ila ardhali al-’umur",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from cowardice, and I seek refuge in You from miserliness, and I seek refuge in You from being returned to the worst of old age.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6369",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم regularly sought refuge from these three spiritual ailments. A comprehensive du’a for courage, generosity, and vitality.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "muhammad",
+            "courage",
+            "generosity",
+            "aging",
+            "hadith"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1001
+        },
+        {
+          "id": "glm-pd-24",
+          "category_id": "prophets-duas-muhammad",
+          "title": {
+            "en": "Du’a of Muhammad — Guidance, Taqwa, Chastity, and Sufficiency",
+            "ar": "دعاء محمد — الهدى والتقوى"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَىٰ وَالتُّقَىٰ وَالْعَفَافَ وَالغَنَىٰ",
+          "transliteration": "Allahumma inni as-alukal-huda wat-taqwa wal-’afafa wal-ghina",
+          "translation": {
+            "en": "O Allah, I ask You for guidance, piety, chastity, and self-sufficiency.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2721",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم would supplicate with these four comprehensive requests. Together they encompass the complete well-being of a believer — spiritual, moral, and material.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "muhammad",
+            "guidance",
+            "taqwa",
+            "chastity",
+            "sufficiency",
+            "hadith"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1002
+        },
+        {
+          "id": "glm-pd-25",
+          "category_id": "prophets-duas-muhammad",
+          "title": {
+            "en": "Du’a of Muhammad — Goodness in Both Worlds",
+            "ar": "دعاء محمد — حسنة الدنيا والآخرة"
+          },
+          "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Rabbana atina fid-dunya hasanatan wa-fil-akhirati hasanatan wa-qina ’adhaban-nar",
+          "translation": {
+            "en": "Our Lord, give us in this world [that which is] good and in the Hereafter [that which is] good and protect us from the punishment of the Fire.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 4522",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "One of the most comprehensive and frequently recited duas of the Prophet صلى الله عليه وسلم. Anas ibn Malik said it was the most frequent du’a of the Prophet. It covers all worldly and spiritual needs.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "muhammad",
+            "comprehensive",
+            "this-world",
+            "hereafter",
+            "hadith"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1003
+        },
+        {
+          "id": "glm-pd-26",
+          "category_id": "prophets-duas-muhammad",
+          "title": {
+            "en": "Du’a of Muhammad — Rectification of Religion and Worldly Life",
+            "ar": "دعاء محمد — إصلاح الدين والدنيا"
+          },
+          "arabic": "اللَّهُمَّ أَصْلِحْ لِي دِينِي الَّذِي هُوَ عِصْمَةُ أَمْرِي وَأَصْلِحْ لِي دُنْيَايَ الَّتِي فِيهَا مَعَاشِي",
+          "transliteration": "Allahumma aslih li deeni alladhi huwa ’ismatu amri, wa-aslih li dunyaya allati fiha ma’ashi",
+          "translation": {
+            "en": "O Allah, rectify for me my religion which is the safeguard of my affairs, and rectify for me my worldly life wherein is my livelihood.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Ibn Majah",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم prioritized the rectification of religion above all else, recognizing it as the foundation of all other success. A beautifully balanced du’a.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "muhammad",
+            "religion",
+            "worldly-life",
+            "balance",
+            "hadith"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1004
+        },
+        {
+          "id": "glm-pd-27",
+          "category_id": "prophets-duas-muhammad",
+          "title": {
+            "en": "Du’a of Muhammad — Ease in Difficulties",
+            "ar": "دعاء محمد — التسهيل في الصعاب"
+          },
+          "arabic": "اللَّهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلتَهُ سَهْلًا وَأَنتَ تَجْعَلُ الحَزْنَ إِذَا شِئتَ سَهْلًا",
+          "transliteration": "Allahumma la sahla illa ma ja’altahu sahalan, wa-anta taj’al al-hazna idha shi’ta sahalan",
+          "translation": {
+            "en": "O Allah, there is no ease except what You make easy, and You make the difficult easy if You will.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Ibn Hibban",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم taught this du’a to acknowledge that all ease comes from Allah alone. A powerful reminder when facing any difficulty.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "muhammad",
+            "ease",
+            "difficulty",
+            "reliance",
+            "hadith"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1005
+        }
+      ]
+    }
+  ]
+}

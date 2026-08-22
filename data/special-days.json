@@ -1,0 +1,1171 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "id": "special-days",
+    "name": {
+      "en": "Special Days & Seasons",
+      "ar": "المناسبات والمواسم"
+    },
+    "description": {
+      "en": "Virtues, guidance and duas for the Islamic calendar's special days and blessed seasons.",
+      "ar": "فضائل وإرشادات وأدعية للأيام الفاضلة والمواسم المباركة في التقويم الإسلامي."
+    },
+    "version": "1.0.0",
+    "source": {
+      "en": "Compiled from authentic sources",
+      "ar": "مجمّعة من مصادر موثوقة"
+    }
+  },
+  "categories": [
+    {
+      "id": "dhul-hijjah",
+      "section_id": "special-days",
+      "name": {
+        "en": "The Ten Days of Dhul Hijjah",
+        "ar": "عشر ذي الحجة"
+      },
+      "description": {
+        "en": "The best ten days of the year: virtues, recommended deeds, fasting and dhikr.",
+        "ar": "أفضل أيام السنة: فضائلها والأعمال المستحبة فيها والصيام والذكر."
+      },
+      "order": 1,
+      "icon": "star",
+      "color": "amber",
+      "items": [
+        {
+          "id": "glm-dh-001",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Takbir Tashreeq",
+            "ar": "التكبير التشريق"
+          },
+          "arabic": "اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ، لَا إِلَٰهَ إِلَّا اللَّهُ، اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ وَلِلَّهِ الْحَمْدُ",
+          "transliteration": "Allahu Akbar, Allahu Akbar, Allahu Akbar, la ilaha illallah, Allahu Akbar, Allahu Akbar wa lillahil-hamd",
+          "translation": {
+            "en": "Allah is the Greatest, Allah is the Greatest, Allah is the Greatest, there is no deity except Allah. Allah is the Greatest, Allah is the Greatest, and all praise is due to Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 968, Sunan at-Tirmidhi 534",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "The Takbir Tashreeq is wajib (obligatory) after every fard prayer from Fajr of the 9th of Dhul Hijjah until Asr of the 13th. Ibn Umar and Abu Hurairah (RA) would go to the marketplace during these days raising their voices with the Takbir. This was a well-known practice among the Companions, and Imam Al-Bukhari titled a chapter: \"The Chapter on the Takbir on the Days of Mina.\" (Bukhari 968, Tirmidhi 534)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "takbir",
+            "tashreeq",
+            "eid",
+            "obligatory"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1001
+        },
+        {
+          "id": "glm-dh-002",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Virtue of Fasting the First 9 Days of Dhul Hijjah",
+            "ar": "فضل صيام التسع الأيام من ذي الحجة"
+          },
+          "arabic": "صِيَامُ التَّسْعِ الْأَيَّامِ الْأُوَلِ مِنْ ذِي الْحِجَّةِ",
+          "transliteration": "Siyam at-tis'al-ayyam al-ula min dhi al-hijjah",
+          "translation": {
+            "en": "Fasting the first nine days of Dhul Hijjah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 969, Sunan Abi Dawud 2438",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"There are no days on which righteous deeds are more beloved to Allah than these ten days.\" They asked: \"Not even Jihad?\" He said: \"Not even Jihad, except for a man who goes out risking himself and his wealth and returns with nothing.\" Fasting these days, especially the 9th (Day of Arafah), is among the best deeds. (Bukhari 969, Abu Dawud 2438)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "fasting",
+            "virtues",
+            "days-of-hajj"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1002
+        },
+        {
+          "id": "glm-dh-003",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Fasting the Day of Arafah — Expiation of Sins",
+            "ar": "صيام يوم عرفة"
+          },
+          "arabic": "صِيَامُ يَوْمِ عَرَفَةَ",
+          "transliteration": "Siyam yawmi arafah",
+          "translation": {
+            "en": "Fasting the Day of Arafah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 1162, Sunan Abi Dawud 2425",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"Fasting the Day of Arafah expiates the sins of the previous year and the coming year.\" This is an immense reward — one day of fasting wiping out two years of minor sins. For the pilgrim standing at Arafah, fasting is not recommended as they should focus on supplication. (Muslim 1162, Abu Dawud 2425)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "fasting",
+            "arafah",
+            "expiation",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1003
+        },
+        {
+          "id": "glm-dh-004",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Best Dua on the Day of Arafah",
+            "ar": "أفضل الدعاء يوم عرفة"
+          },
+          "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay-in qadeer",
+          "translation": {
+            "en": "There is no deity except Allah, alone, without partner. To Him belongs the dominion and all praise, and He is over all things competent.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 3585, Muwatta Malik 503",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 100,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"The best of dua is the dua on the Day of Arafah, and the best of what I and the Prophets before me have said is: La ilaha illallah wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay-in qadeer.\" This is the most excellent statement on the most excellent day. (Tirmidhi 3585, Malik 503)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "arafah",
+            "tawhid",
+            "dua",
+            "best-dua"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1004
+        },
+        {
+          "id": "glm-dh-005",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "The Talbiyah",
+            "ar": "التلبية"
+          },
+          "arabic": "لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ لَا شَرِيكَ لَكَ",
+          "transliteration": "Labbaik Allahumma labbaik, labbaika la sharika laka labbaik. Inna al-hamda wan-ni'mata laka wal-mulk, la sharika lak",
+          "translation": {
+            "en": "Here I am, O Allah, here I am. Here I am, You have no partner, here I am. Indeed, all praise and blessings are Yours, and all sovereignty. You have no partner.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 828, Sunan Ibn Majah 2922",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "The Talbiyah is the signature call of Hajj and Umrah. The Prophet صلى الله عليه وسلم said: \"There is no Muslim who recites the Talbiyah except that everything — the stones, the earth, the trees — recites it with him to the ends of the earth.\" It is a proclamation of complete submission to Allah. (Tirmidhi 828, Ibn Majah 2922)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "talbiyah",
+            "hajj",
+            "umrah",
+            "submission"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1005
+        },
+        {
+          "id": "glm-dh-006",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Virtues of the First 10 Days — The Best Days",
+            "ar": "أفضل أيام الدنيا العشر من ذي الحجة"
+          },
+          "arabic": "مَا مِنْ أَيَّامٍ الْعَمَلُ الصَّالِحُ فِيهَا أَحَبُّ إِلَى اللَّهِ مِنْ هَذِهِ الْأَيَّامِ",
+          "transliteration": "Ma min ayyamin al-amalus-salihu fiha ahabbu ilallahi min hadhihil-ayyam",
+          "translation": {
+            "en": "There are no days on which righteous deeds are more beloved to Allah than these days.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 969, Sunan at-Tirmidhi 757",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"There are no days on which righteous deeds are more beloved to Allah than these ten days (of Dhul Hijjah).\" The Companions asked: \"Not even Jihad in the way of Allah?\" He replied: \"Not even Jihad in the way of Allah, except for a man who goes out with his life and wealth and does not return with anything.\" This highlights the supreme status of these days. (Bukhari 969, Tirmidhi 757)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "virtues",
+            "ten-days",
+            "righteous-deeds"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1006
+        },
+        {
+          "id": "glm-dh-007",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Dua While Standing at Arafah",
+            "ar": "الدعاء في عرفة"
+          },
+          "arabic": "اَللَّهُمَّ إِنَّكَ تَسْمَعُ كَلَامِي وَتَرَى مَكَانِي وَتَعْلَمُ سِرِّي وَعَلَانِيَتِي، لَا يَخْفَىٰ عَلَيْكَ شَيْءٌ مِنْ أَمْرِي، أَنَا الْبَائِسُ الْفَقِيرُ، الْمُسْتَغِيثُ الْمُسْتَجِيرُ، أَنَا الضَّعِيفُ الْمُقِرُّ بِذَنْبِي",
+          "transliteration": "Allahumma innaka tami'u kalami wa tara makani wa ta'lamu sirri wa `alaniyati, la yakhfa alayka shay-un min amri, ana al-ba-isul-faqeer, al-mustaghithul-mustajeer, ana adh-da'iful-muqirru bidhanbi",
+          "translation": {
+            "en": "O Allah, You hear my words, You see my place, You know my secret and my public. Nothing of my affair is hidden from You. I am the distressed, the needy, the one who cries for help and seeks refuge. I am the weak who acknowledges his sin.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 3585, Sahih al-Bukhari 7407",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 7,
+          "virtues": {
+            "en": "This is from the comprehensive duas of the Day of Arafah. The Prophet صلى الله عليه وسلم said: \"The best of dua is the dua of the Day of Arafah.\" The day is characterized by intense supplication, humility, and tears. Scholars emphasize combining Quranic duas with personal heartfelt pleas on this day. (Tirmidhi 3585)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "arafah",
+            "dua",
+            "hajj",
+            "humility"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1007
+        },
+        {
+          "id": "glm-dh-008",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Dua After Stoning the Jamarat",
+            "ar": "الدعاء بعد رمي الجمرات"
+          },
+          "arabic": "اَللَّهُمَّ اجْعَلْهُ حَجًّا مَبْرُورًا وَسَعْيًا مَشْكُورًا وَذَنْبًا مَغْفُورًا",
+          "transliteration": "Allahummaj'alhu hajjan mabranran wa sa'yan mashkran wa dhanban maghfuran",
+          "translation": {
+            "en": "O Allah, make it an accepted Hajj, a recognized effort, and a forgiven sin.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 839, Sunan Ibn Majah 3050",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"The Hajj that is accepted has no reward except Paradise.\" After stoning the Jamarat, it is sunnah to face the Qiblah and make earnest dua. The smaller Jamarat is especially a time for extended supplication. (Tirmidhi 839, Ibn Majah 3050)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "jamarat",
+            "hajj",
+            "dua",
+            "stoning"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1008
+        },
+        {
+          "id": "glm-dh-009",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Dua During Tawaf — Rabbana atina",
+            "ar": "الدعاء في الطواف"
+          },
+          "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Rabbana atina fid-dunya hasanatan, wa fil-akhirati hasanatan, wa qina adhaban-nar",
+          "translation": {
+            "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud 1892, Sunan Ibn Majah 2974, Quran 2:201",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 7,
+          "virtues": {
+            "en": "Ibn Abbas (RA) narrated that between the Yemeni Corner and the Black Stone, the Prophet صلى الله عليه وسلم would recite: \"Rabbana atina fid-dunya hasanatan...\" This dua is especially recommended during Tawaf and is one of the most comprehensive duas in Islam, asking for good in both worlds. (Abu Dawud 1892, Ibn Majah 2974)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "tawaf",
+            "hajj",
+            "quran",
+            "comprehensive"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1009
+        },
+        {
+          "id": "glm-dh-010",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Dua During Sa'i Between Safa and Marwah",
+            "ar": "الدعاء في السعي"
+          },
+          "arabic": "اَللَّهُمَّ اغْفِرْ وَارْحَمْ وَاعْفُ عَمَّا تَعْلَمُ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ، اَللَّهُمَّ آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Allahummaghfir warham wa `fu amma ta'lam, innaka antal-a'azzul-akram. Allahumma atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar",
+          "translation": {
+            "en": "O Allah, forgive and have mercy, and pardon what You know. Indeed, You are the Most Mighty, the Most Generous. O Allah, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 1218, Sahih al-Bukhari 1620",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم would recite this during Sa'i between Safa and Marwah. On the hills of Safa and Marwah, he would also face the Qiblah and raise his hands saying: \"La ilaha illallah wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay-in qadeer.\" (Muslim 1218, Bukhari 1620)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sai",
+            "hajj",
+            "dua",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1010
+        },
+        {
+          "id": "glm-dh-011",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Dua When Slaughtering the Sacrifice",
+            "ar": "التسمية عند الذبح"
+          },
+          "arabic": "بِسْمِ اللَّهِ وَاللَّهُ أَكْبَرُ، اَللَّهُمَّ هٰذَا مِنْكَ وَلَكَ، اَللَّهُمَّ تَقَبَّلْ مِنِّي كَمَا تَقَبَّلْتَ مِنْ إِبْرَاهِيمَ خَلِيلِكَ مِنْ مُحَمَّدٍ نَبِيِّكَ",
+          "transliteration": "Bismillahi wallahu Akbar. Allahumma hadha minka wa laka, Allahumma taqabbal minni kama taqabbalta min Ibrahima khalilika wa min Muhammadin nabiyyika",
+          "translation": {
+            "en": "In the name of Allah and Allah is the Greatest. O Allah, this is from You and for You. O Allah, accept it from me as You accepted it from Ibrahim, Your intimate friend, and from Muhammad, Your Prophet.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 1493, Sunan Ibn Majah 3126",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"The son of Adam will not have a deed more beloved to Allah on the Day of Sacrifice than sacrificing an animal. It will come on the Day of Judgment with its horns, hair, and hooves, and the blood is accepted by Allah before it reaches the ground.\" (Tirmidhi 1493, Ibn Majah 3126)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sacrifice",
+            "udhiyah",
+            "hajj",
+            "eid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1011
+        },
+        {
+          "id": "glm-dh-012",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Eid al-Adha Takbir",
+            "ar": "تكبيرات العيد"
+          },
+          "arabic": "اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ، لَا إِلَٰهَ إِلَّا اللَّهُ، اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ وَلِلَّهِ الْحَمْدُ، اَللَّهُ أَكْبَرُ كَبِيرًا وَالْحَمْدُ لِلَّهِ كَثِيرًا",
+          "transliteration": "Allahu Akbar, Allahu Akbar, Allahu Akbar, la ilaha illallah, Allahu Akbar, Allahu Akbar wa lillahil-hamd. Allahu Akbaru kabeera wal-hamdu lillahi katheera",
+          "translation": {
+            "en": "Allah is the Greatest, Allah is the Greatest, Allah is the Greatest, there is no deity except Allah. Allah is the Greatest, Allah is the Greatest, and all praise is due to Allah. Allah is the Greatest, immensely, and all praise is due to Allah, abundantly.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2086, Sunan Ibn Majah 1282",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "The Eid takbir is recited on the way to the Eid prayer and during the prayer itself. The expanded form includes \"Allahu Akbaru kabeera wal-hamdu lillahi katheera\" which the Prophet صلى الله عليه وسلم described as more beloved to him than everything upon which the sun rises. (Muslim 2086, Ibn Majah 1282)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "takbir",
+            "prayer",
+            "celebration"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1012
+        },
+        {
+          "id": "glm-dh-013",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Quranic Virtue: Sworn by the Ten Nights",
+            "ar": "أقسم الله بالعشر"
+          },
+          "arabic": "وَالْفَجْرِ، وَلَيَالٍ عَشْرٍ، وَالشَّفْعِ وَالْوَتْرِ",
+          "transliteration": "Wal-fajr, wa layalin `ashr, wash-shaf`i wat-watr",
+          "translation": {
+            "en": "By the dawn, and by the ten nights, and by the even and the odd.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran 89:1-2, Tafsir Ibn Kathir",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah swore an oath by the ten nights of Dhul Hijjah in Surah Al-Fajr (89:1-2). When Allah swears by something in the Quran, it indicates its immense significance. Ibn Abbas, Ibn Az-Zubair, Mujahid, and others from the early scholars all stated that the \"ten nights\" refer to the first ten days of Dhul Hijjah. This divine oath elevates the status of these days above all others.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "quran",
+            "ten-days",
+            "oath",
+            "virtues"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1013
+        },
+        {
+          "id": "glm-dh-014",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Dhikr and Takbir on the Ten Days",
+            "ar": "الذكر والتكبير في العشر"
+          },
+          "arabic": "اَللَّهُ أَكْبَرُ، اَللَّهُ أَكْبَرُ، لَا إِلَٰهَ إِلَّا اللَّهُ، وَاَللَّهُ أَكْبَرُ، اَللَّهُ أَكْبَرُ وَلِلَّهِ الْحَمْدُ",
+          "transliteration": "Allahu Akbar, Allahu Akbar, la ilaha illallah, wallahu Akbar, Allahu Akbar wa lillahil-hamd",
+          "translation": {
+            "en": "Allah is the Greatest, Allah is the Greatest, there is no deity except Allah. And Allah is the Greatest, Allah is the Greatest, and all praise is due to Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 968, Sunan at-Tirmidhi 534",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "Ibn Umar (RA) would say this takbir in Mina during the days of Dhul Hijjah, and the people would follow him. The Prophet صلى اله عليه وسلم commanded increased dhikr, takbir, tahleel, and tahmeed on these ten days. It is recommended to recite the takbir openly after every prayer and throughout the day. (Bukhari 968, Tirmidhi 534)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "dhikr",
+            "takbir",
+            "ten-days",
+            "virtues"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1014
+        },
+        {
+          "id": "glm-dh-015",
+          "category_id": "dhul-hijjah",
+          "title": {
+            "en": "Virtue of the Udhiyah (Sacrifice)",
+            "ar": "فضل الأضحية"
+          },
+          "arabic": "إِنَّمَا نُحْنُ إِلَىٰ اللَّهِ مُسْلِمُونَ",
+          "transliteration": "Innama nahnu ilallahi muslimun",
+          "translation": {
+            "en": "Indeed, we are Muslims (submitting) to Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 5565, Sahih Muslim 1966, Quran 37:102",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم sacrificed two rams — one on behalf of his ummah and one for himself. He sacrificed them with his own hand, said Bismillah and Allahu Akbar, and placed his foot on their sides. The sacrifice commemorates the willingness of Ibrahim (alayhis-salam) to sacrifice his son in obedience to Allah. (Bukhari 5565, Muslim 1966)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sacrifice",
+            "udhiyah",
+            "ibrahim",
+            "eid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1015
+        }
+      ]
+    },
+    {
+      "id": "eid-special",
+      "section_id": "special-days",
+      "name": {
+        "en": "Eid & Special Occasions",
+        "ar": "العيد والمناسبات الخاصة"
+      },
+      "description": {
+        "en": "Duas, takbir and recommended actions for Eid al-Fitr and Eid al-Adha.",
+        "ar": "أدعية وتكبيرات وأعمال مستحبة لعيد الفطر وعيد الأضحى."
+      },
+      "order": 2,
+      "icon": "sparkle",
+      "color": "rose",
+      "items": [
+        {
+          "id": "glm-eid-001",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Eid Takbir",
+            "ar": "تكبيرة العيد"
+          },
+          "arabic": "اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ لَا إِلَٰهَ إِلَّا اللَّهُ اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ وَلِلَّهِ الْحَمْدُ",
+          "transliteration": "Allahu Akbar, Allahu Akbar, Allahu Akbar. La ilaha illallahu, Allahu Akbar, Allahu Akbar, wa lillahil-hamd",
+          "translation": {
+            "en": "Allah is the Greatest, Allah is the Greatest, Allah is the Greatest. There is no deity except Allah. Allah is the Greatest, Allah is the Greatest, and all praise is for Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Fath al-Bari",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "The prescribed takbirat to be recited from the night of Eid until the Eid prayer. It is a sunnah to recite these takbirat abundantly. (Fath al-Bari)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "takbir",
+            "celebration"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1001
+        },
+        {
+          "id": "glm-eid-002",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Takbir of Eid al-Fitr",
+            "ar": "تكبيرات عيد الفطر"
+          },
+          "arabic": "اَللَّهُ أَكْبَرُ كَبِيرًا وَالْحَمْدُ لِلَّهِ كَثِيرًا وَسُبْحَانَ اللَّهِ بُكْرَةً وَأَصِيلًا لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
+          "transliteration": "Allahu Akbar kabiran walhamdu lillahi kathiran wa subhanallahi bukratan wa asilan. La ilaha illallahu wahdahu la sharika lah",
+          "translation": {
+            "en": "Allah is the Greatest, greatly. All praise is for Allah, abundantly. Glory be to Allah, morning and evening. There is no deity except Allah, alone, having no partner.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih - Ibn Abi Shaybah",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "Ibn Masud reported this extended form of the takbir (Sahih - Ibn Abi Shaybah). This is one of the most authentic and complete forms of the Eid takbir.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "takbir",
+            "extended"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1002
+        },
+        {
+          "id": "glm-eid-003",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Eid Greeting Dua",
+            "ar": "دعاء التحية في العيد"
+          },
+          "arabic": "تَقَبَّلَ اللَّهُ مِنَّا وَمِنكُمْ",
+          "transliteration": "Taqabbalallahu minna wa minkum",
+          "translation": {
+            "en": "May Allah accept from us and from you.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Fath al-Bari",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The companions would greet each other on Eid with this phrase. Jubayr ibn Nufayr said: The companions of the Prophet, when they met on Eid day, would say to one another: Taqabbalallahu minna wa minkum. (Fath al-Bari)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "greeting",
+            "acceptance"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1003
+        },
+        {
+          "id": "glm-eid-004",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Dua on the Way to Eid Prayer",
+            "ar": "الدعاء في طريق صلاة العيد"
+          },
+          "arabic": "اَللَّهُمَّ إِنِّي أَسْأَلُكَ الْخَيْرَ كُلَّهُ أَعْظَمَهُ وَأَصْغَرَهُ",
+          "transliteration": "Allahumma inni as-alukal-khayra kullahu aazamahu wa asgharahu",
+          "translation": {
+            "en": "O Allah, I ask You for all good, the greatest of it and the smallest of it.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 986",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "The Prophet would take different routes to and from the Eid prayer ground. Making dua on the way to Eid prayer is recommended. (Sahih al-Bukhari 986)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "prayer",
+            "supplication"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1004
+        },
+        {
+          "id": "glm-eid-005",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Dua for Eid Joy",
+            "ar": "دعاء فرح العيد"
+          },
+          "arabic": "اَلْحَمْدُ لِلَّهِ الَّذِي جَعَلَنَا مِنَ الْمُسْلِمِينَ وَأَتَمَّ عَلَيْنَا نِعْمَهُ",
+          "transliteration": "Alhamdu lillahilladhi ja-alana minal-muslimeen wa atamma alayna ni-matahu",
+          "translation": {
+            "en": "All praise is for Allah who made us among the Muslims and completed His blessings upon us.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 952",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "A dua of gratitude for reaching Eid and being able to celebrate as a Muslim. The Prophet said: Every people have their festival, and this is our festival. (Sahih al-Bukhari 952)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "gratitude",
+            "blessing"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1005
+        },
+        {
+          "id": "glm-eid-006",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Eid al-Adha: Takbir at Mina",
+            "ar": "تكبيرات منى"
+          },
+          "arabic": "اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ لَا إِلَٰهَ إِلَّا اللَّهُ وَاَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ وَلِلَّهِ الْحَمْدُ",
+          "transliteration": "Allahu Akbar, Allahu Akbar. La ilaha illallahu, wallahu Akbar, Allahu Akbar, wa lillahil-hamd",
+          "translation": {
+            "en": "Allah is the Greatest, Allah is the Greatest. There is no deity except Allah, and Allah is the Greatest, Allah is the Greatest, and all praise is for Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 1141",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "This is the takbir recited at Mina during the days of Tashreeq (11th, 12th, 13th of Dhul Hijjah). The Prophet said: The days of Tashreeq are days of eating, drinking, and remembering Allah. (Sahih Muslim 1141)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "adha",
+            "tashreeq",
+            "takbir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1006
+        },
+        {
+          "id": "glm-eid-007",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Eid al-Fitr Khutbah Opening Dua",
+            "ar": "دعاء افتتاح خطبة عيد الفطر"
+          },
+          "arabic": "اَلْحَمْدُ لِلَّهِ الَّذِي فَرَضَ عَلَيْنَا صِيَامَ رَمَضَانَ وَقِيَامَ لَيْلِهِ",
+          "transliteration": "Alhamdu lillahilladhi farada alayna siyama Ramadan wa qiyama laylihi",
+          "translation": {
+            "en": "All praise is for Allah who has obligated upon us the fasting of Ramadan and its night prayers.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Scholarly practice",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The opening of the Eid khutbah typically begins with praise and thanks to Allah for completing Ramadan. While the exact wording varies by imam, this is a common and beautiful opening.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "fitr",
+            "khutbah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1007
+        },
+        {
+          "id": "glm-eid-008",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Dua Before Eid Prayer",
+            "ar": "الدعاء قبل صلاة العيد"
+          },
+          "arabic": "اَللَّهُمَّ أَصْلِحْ لِي دِينِي الَّذِي هُوَ عِصْمَةُ أَمْرِي وَأَصْلِحْ لِي دُنْيَايَ الَّتِي فِيهَا مَعَاشِي",
+          "transliteration": "Allahumma aslih li deeni alladhi huwa ismatu amri wa aslih li dunyaya allati fiha ma-ashi",
+          "translation": {
+            "en": "O Allah, set right my religion which is the safeguard of my affairs, and set right my worldly life wherein is my livelihood.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2720",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "A comprehensive dua to recite before Eid prayer. The Prophet taught this dua (Sahih Muslim 2720) as one of the most comprehensive supplications.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "prayer",
+            "comprehensive"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1008
+        },
+        {
+          "id": "glm-eid-009",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Dua for Unity on Eid",
+            "ar": "دعاء الوحدة في العيد"
+          },
+          "arabic": "اَللَّهُمَّ اغْفِرْ لِلْمُسْلِمِينَ وَالْمُسْلِمَاتِ وَالْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ الْأَحْيَاءِ مِنْهُمْ وَالْأَمْوَاتِ",
+          "transliteration": "Allahumma-ghfir lil-muslimeena wal-muslimati wal-mu-mineena wal-mu-minatil-ahyai minhum wal-amwat",
+          "translation": {
+            "en": "O Allah, forgive the Muslim men and women, the believing men and women, the living among them and the dead.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 969",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "The Prophet said: When you finish the funeral prayer, make this dua. (Sahih Muslim 969). On Eid, when the community gathers, it is especially appropriate to pray for the unity and forgiveness of the entire Ummah.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "unity",
+            "forgiveness",
+            "community"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1009
+        },
+        {
+          "id": "glm-eid-010",
+          "category_id": "eid-special-duas",
+          "title": {
+            "en": "Eid al-Adha: Sacrifice Dua",
+            "ar": "دعاء الأضحية"
+          },
+          "arabic": "بِسْمِ اللَّهِ وَاللَّهُ أَكْبَرُ اَللَّهُمَّ مِنْكَ وَلَكَ",
+          "transliteration": "Bismillahi wallahu Akbar. Allahumma minka wa laka",
+          "translation": {
+            "en": "In the name of Allah, and Allah is the Greatest. O Allah, from You and to You.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 5565",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The dua to recite when slaughtering the sacrifice on Eid al-Adha. The Prophet said: When you slaughter, say: Bismillah, wallahu Akbar. (Sahih al-Bukhari 5565)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "adha",
+            "sacrifice",
+            "udhiyah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1010
+        }
+      ]
+    }
+  ]
+}

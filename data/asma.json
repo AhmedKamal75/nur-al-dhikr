@@ -1,0 +1,4372 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "id": "asma",
+    "name": {
+      "en": "Asma ul Husna",
+      "ar": "أسماء الله الحسنى"
+    },
+    "description": {
+      "en": "The 99 Names of Allah — whoever enumerates them enters Paradise",
+      "ar": "الأسماء الحسنى — من أحصاها دخل الجنة"
+    },
+    "version": "3.0.0",
+    "source": {
+      "en": "Quran & Sunnah (Tirmidhi 3507)",
+      "ar": "القرآن والسنة (الترمذي 3507)"
+    },
+    "license": "Public domain",
+    "homepage": "",
+    "authors": [],
+    "updated": "2026-08-05"
+  },
+  "categories": [
+    {
+      "id": "asma-all-99",
+      "section_id": "asma",
+      "name": {
+        "en": "All 99 Names",
+        "ar": "الأسماء التسعة والتسعون"
+      },
+      "description": {
+        "en": "The authentic 99 Names of Allah",
+        "ar": "الأسماء الحسنى الواردة في الحديث"
+      },
+      "order": 1,
+      "icon": "star",
+      "color": "amber",
+      "items": [
+        {
+          "id": "asma-001",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ar-Rahman",
+            "ar": "الرحمن"
+          },
+          "arabic": "الرَّحْمَٰنُ",
+          "transliteration": "Ar-Rahman",
+          "translation": {
+            "en": "The Most Merciful, The Entirely Merciful",
+            "ar": "الرحمن"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 17:110; 7:156; Surah Maryam ayah 96. Source: https://myislam.org/ar-rahman/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The most frequently recited Name in the Quran, appearing at the beginning of every surah as \"Ar-Rahmanir-Raheem.\" Allah says: \"Call upon Allah or call upon the Most Merciful. Whichever you call - to Him belong the best names\" (Quran 17:110). The Prophet ﷺ said: \"Allah has one hundred mercies, of which He sent down one to the jinn, humans, animals, and insects. By it, they are compassionate and merciful to each other, and by it, even the wild beast is kind to its young. Allah has kept ninety-nine mercies with Him, by which He will have mercy on His servants on the Day of Resurrection.\" (Sahih al-Bukhari 6000)",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "mercy",
+            "asma-ul-husna",
+            "divine-names",
+            "ar-rahman"
+          ],
+          "related": [
+            "asma-002"
+          ],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "asma-002",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ar-Raheem",
+            "ar": "الرحيم"
+          },
+          "arabic": "الرَّحِيمُ",
+          "transliteration": "Ar-Raheem",
+          "translation": {
+            "en": "The Especially Merciful",
+            "ar": "الرحيم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 33:43; 2:143; 39:53; Surah Maryam ayah 96. Source: https://myislam.org/ar-raheem/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Appears alongside Ar-Rahman in the Basmalah. While Ar-Rahman encompasses all creation, Ar-Raheem is particularly for the believers. Allah says: \"And He is ever, to the believers, Merciful\" (Quran 33:43). The Prophet ﷺ said: \"Whoever says SubhanAllahi wa bihamdihi 100 times, his sins will be forgiven even if they were like the foam of the sea\" (Sahih al-Bukhari 6405).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "mercy",
+            "asma-ul-husna",
+            "divine-names",
+            "ar-raheem"
+          ],
+          "related": [
+            "asma-001"
+          ],
+          "notes": "",
+          "order": 2
+        },
+        {
+          "id": "asma-003",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Malik",
+            "ar": "الملك"
+          },
+          "arabic": "الْمَلِكُ",
+          "transliteration": "Al-Malik",
+          "translation": {
+            "en": "The King and Owner of Dominion",
+            "ar": "الملك"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 20:114; 3:26; 23:116; 59:23; 0:00. Source: https://myislam.org/al-malik/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"The Sovereign of the Day of Recompense\" (Quran 1:4). He is the true King to whom all sovereignty belongs: \"To Him belongs whoever is in the heavens and the earth\" (Quran 2:116). Umar ibn al-Khattab used to say: \"Say: O Allah, King of Kingship, You take away kingship from whom You will and You grant kingship to whom You will.\"",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "sovereignty",
+            "asma-ul-husna",
+            "divine-names",
+            "al-malik"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "asma-004",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Quddus",
+            "ar": "القدوس"
+          },
+          "arabic": "الْقُدُّوسُ",
+          "transliteration": "Al-Quddus",
+          "translation": {
+            "en": "The Absolutely Pure and Perfect",
+            "ar": "القدوس"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 2:253; 5:110; 16:102; 59:23; 62:1. Source: https://myislam.org/al-quddus/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The angels declare His purity as mentioned in the Quran: \"The angels and the Spirit descend therein by permission of their Lord for every matter. Peace it is until the emergence of dawn\" (Quran 97:4). Al-Quddus means the One far removed from every imperfection. The Prophet ﷺ used to say in prayer: \"Subhanaka Allahumma wa bihamdika, tabarakasmuka wa ta\"ala jadduka, wa la ilaha ghairuk\" (Sahih Muslim 771).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "purity",
+            "asma-ul-husna",
+            "divine-names",
+            "al-quddus"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "asma-005",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "As-Salam",
+            "ar": "السلام"
+          },
+          "arabic": "السَّلَامُ",
+          "transliteration": "As-Salam",
+          "translation": {
+            "en": "The Source of Peace, the Flawless",
+            "ar": "السلام"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 59:23; 37:181; 36:58. Source: https://myislam.org/as-salam/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is Allah, other than whom there is no deity, the Sovereign, the Pure (Al-Quddus), the Source of Peace (As-Salam)\" (Quran 59:23). The Prophet ﷺ would say after prayer: \"Allahumma antas-Salam wa minkas-Salam\" (Sahih Muslim 591). Paradise is called Dar as-Salam (the Abode of Peace) because true peace only comes from Allah.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "peace",
+            "asma-ul-husna",
+            "divine-names",
+            "as-salam"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "asma-006",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mu'min",
+            "ar": "المؤمن"
+          },
+          "arabic": "الْمُؤْمِنُ",
+          "transliteration": "Al-Mu'min",
+          "translation": {
+            "en": "The Granter of Security, the Faithful",
+            "ar": "المؤمن"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 4:40; 59:23; 4:28; 106:4. Source: https://myislam.org/al-mumin/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is Allah, other than whom there is no deity... Al-Mu'min, Al-Muhaymin\" (Quran 59:23). Al-Mu'min means the One who confirms and verifies the truth. He grants His servants security (amanah) and is the One who fulfills His promises. He confirms the truth of the Prophets with miracles and clear signs.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "protection",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mu'min"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "asma-007",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muhaymin",
+            "ar": "المهيمن"
+          },
+          "arabic": "الْمُهَيْمِنُ",
+          "transliteration": "Al-Muhaymin",
+          "translation": {
+            "en": "The Guardian, The Witness, The Overseer",
+            "ar": "المهيمن"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 59:23. Source: https://myislam.org/al-muhaymin/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Al-Muhaymin means the Watchful, the Guardian, the Witness who oversees all things. He is the One who preserves and protects the Quran: \"Indeed, it is We who sent down the Quran and indeed, We will be its guardian\" (Quran 15:9). He watches over every soul: \"And indeed, [appointed] over you are keepers, noble and recording; they know whatever you do\" (Quran 82:10-12).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muhaymin"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
+        },
+        {
+          "id": "asma-008",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Aziz",
+            "ar": "العزيز"
+          },
+          "arabic": "الْعَزِيزُ",
+          "transliteration": "Al-Aziz",
+          "translation": {
+            "en": "The Almighty, The All-Powerful, The Invincible, The Honorable",
+            "ar": "العزيز"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 38:9; 48:7; 6:96; 35:28; 3:26. Source: https://myislam.org/al-aziz/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Al-'Aziz appears over 90 times in the Quran. It denotes strength, power, and invincibility combined with honor and prestige. Allah says: \"Indeed, Allah is the Exalted in Might, the Wise\" (Quran 2:209). This Name pairs frequently with Al-Hakeem (the Wise), showing that Allah's power is always exercised with perfect wisdom.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "power",
+            "asma-ul-husna",
+            "divine-names",
+            "al-'aziz"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 8
+        },
+        {
+          "id": "asma-009",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Jabbar",
+            "ar": "الجبار"
+          },
+          "arabic": "الْجَبَّارُ",
+          "transliteration": "Al-Jabbar",
+          "translation": {
+            "en": "The Compeller, The Restorer",
+            "ar": "الجبار"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 59:23; 36:82; 40:35. Source: https://myislam.org/al-jabbar/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Al-Jabbar has multiple meanings: (1) The One who compels and subdues the arrogant, (2) The One who restores and mends what is broken, (3) The One who elevates the downtrodden. Unlike human tyrants, Allah's jabr (compelling) is always just and merciful. The Prophet ﷺ prohibited naming a child \"Jabbar\" because only Allah deserves this Name.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "might",
+            "asma-ul-husna",
+            "divine-names",
+            "al-jabbar"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 9
+        },
+        {
+          "id": "asma-010",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mutakabbir",
+            "ar": "المتكبر"
+          },
+          "arabic": "الْمُتَكَبِّرُ",
+          "transliteration": "Al-Mutakabbir",
+          "translation": {
+            "en": "The Supreme in Glory, The Rightfully Proud",
+            "ar": "المتكبر"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 59:23; 40:35; 40:27; 3:160. Source: https://myislam.org/al-mutakabbir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "While arrogance (kibr) is a sin for humans, it is a right exclusive to Allah. He alone has the right to be above all creation and to possess true greatness. Allah says: \"He is Allah, other than whom there is no deity... the Compeller, the Supreme\" (Quran 59:23). The Prophet ﷺ said: \"Allah the Exalted says: Pride is My cloak and greatness is My garment\" (Sahih Muslim 2745).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "majesty",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mutakabbir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 10
+        },
+        {
+          "id": "asma-011",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Khaliq",
+            "ar": "الخالق"
+          },
+          "arabic": "الْخَالِقُ",
+          "transliteration": "Al-Khaliq",
+          "translation": {
+            "en": "The Creator, The Maker",
+            "ar": "الخالق"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 59:24; 23:14; 23:115; 15:86. Source: https://myislam.org/al-khaliq/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is Allah, the Creator, the Inventor, the Fashioner\" (Quran 59:24). He creates without any precedent or model. Everything He creates serves a purpose: \"We did not create the heaven and earth and everything between them playfully\" (Quran 21:16). The creation of the heavens and the earth is greater than the creation of mankind (Quran 40:57).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "creation",
+            "asma-ul-husna",
+            "divine-names",
+            "al-khaliq"
+          ],
+          "related": [
+            "asma-012",
+            "asma-013"
+          ],
+          "notes": "",
+          "order": 11
+        },
+        {
+          "id": "asma-012",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Bari'",
+            "ar": "البارئ"
+          },
+          "arabic": "الْبَارِئُ",
+          "transliteration": "Al-Bari'",
+          "translation": {
+            "en": "The Originator, The Inventor",
+            "ar": "البارئ"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 59:24; 82:7; 95:4; 4:28; 27:88. Source: https://myislam.org/al-bari/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Al-Bari' refers to the One who initiates and originates creation without any prior example. He brought the universe into being from non-existence. Allah says: \"He is Allah, the Creator, the Originator, the Fashioner\" (Quran 59:24). Every aspect of His creation is perfect and beautiful: \"Who perfected everything which He created\" (Quran 32:7).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "creation",
+            "asma-ul-husna",
+            "divine-names",
+            "al-bari'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 12
+        },
+        {
+          "id": "asma-013",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Musawwir",
+            "ar": "المصور"
+          },
+          "arabic": "الْمُصَوِّرُ",
+          "transliteration": "Al-Musawwir",
+          "translation": {
+            "en": "The Fashioner, The Shaper",
+            "ar": "المصور"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
+            "notes": "Appears in: 59:24; 30:22; 16:78; 27:19; 82:6. Source: https://myislam.org/al-musawwir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The culmination of creation is giving form and beauty. Allah says: \"He created you from one soul. Then He made from it its mate\" (Quran 39:6). Every human has unique fingerprints, DNA, and appearance — all designed by Al-Musawwir. The Prophet ﷺ said: \"When one of you fights his brother, let him avoid the face, for Allah created Adam in His image\" (Sahih al-Bukhari 3334).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "creation",
+            "asma-ul-husna",
+            "divine-names",
+            "al-musawwir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 13
+        },
+        {
+          "id": "asma-014",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Ghaffar",
+            "ar": "الغفار"
+          },
+          "arabic": "الْغَفَّارُ",
+          "transliteration": "Al-Ghaffar",
+          "translation": {
+            "en": "The Constant Forgiver, The Great Forgiver",
+            "ar": "الغفار"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 39:53; 71:10; 4:48; 4:116; 20:82; 38:66; 39:5; 40:42. Source: https://myislam.org/al-ghaffar/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The intensive form (Ghaffar, not Ghafir) indicates vastness and repetition of forgiveness. Allah says: \"Lord, forgive me and my parents and whoever enters my home a believer and the believing men and believing women\" (Quran 71:28). The Prophet ﷺ said: \"By Allah, I seek the forgiveness of Allah and I repent to Him more than seventy times each day\" (Sahih al-Bukhari 6307).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "forgiveness",
+            "asma-ul-husna",
+            "divine-names",
+            "al-ghaffar"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 14
+        },
+        {
+          "id": "asma-015",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Qahhar",
+            "ar": "القهار"
+          },
+          "arabic": "الْقَهَّارُ",
+          "transliteration": "Al-Qahhar",
+          "translation": {
+            "en": "The Subduer, The Ever-Dominating",
+            "ar": "القهار"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 38:65; 12:39; 13:16; 14:48; 39:4; 40:16; 3:160. Source: https://myislam.org/al-qahhar/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And He is the subjugator (Al-Qahhar) over His servants\" (Quran 6:18). He subdues tyrants, overcomes all opposition, and nothing can resist His will. The Day of Judgment is called \"Yawm al-Qahhar\" — the Day of Subjugation — when all creation will submit to His authority.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "power",
+            "asma-ul-husna",
+            "divine-names",
+            "al-qahhar"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 15
+        },
+        {
+          "id": "asma-016",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wahhab",
+            "ar": "الوهاب"
+          },
+          "arabic": "الْوَهَّابُ",
+          "transliteration": "Al-Wahhab",
+          "translation": {
+            "en": "The Bestower, the Giver of Gifts",
+            "ar": "الوهاب"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/gift-giving-episode-5-to-know-him-is-to-love-him",
+            "notes": "Appears in: 38:9; 38:35. Source: https://myislam.org/al-wahhab/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says about Prophet Zakariya's prayer: \"So We responded to him and gave him Yahya, and amended for him his wife. Indeed, they used to hasten to good deeds and supplicate Us in hope and fear, and they were to Us humbly submissive\" (Quran 21:90). Al-Wahhab gives without being asked and gives more than what is asked.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "rizq",
+            "asma-ul-husna",
+            "divine-names",
+            "al-wahhab"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 16
+        },
+        {
+          "id": "asma-017",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ar-Razzaq",
+            "ar": "الرزاق"
+          },
+          "arabic": "الرَّزَّاقُ",
+          "transliteration": "Ar-Razzaq",
+          "translation": {
+            "en": "The Ever-Providing, The Constant Provider",
+            "ar": "الرزاق"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/trusting-god-the-provider-with-dr-jinan-yousef-doubletake-podcast",
+            "notes": "Appears in: 30:40; 35:3; 34:24; 67:21; 26:78; 51:56. Source: https://myislam.org/ar-razzaq/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, it is Allah who is the [continual] Provider, the firm possessor of strength\" (Quran 51:58). Every creature's provision comes from Allah, whether they realize it or not. Even the unborn child receives its nourishment through the mother. The Prophet ﷺ said: \"A person will not die until he has received his complete provision\" (Sunan Ibn Majah 2144).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "rizq",
+            "asma-ul-husna",
+            "divine-names",
+            "ar-razzaq"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 17
+        },
+        {
+          "id": "asma-018",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Fattah",
+            "ar": "الفتاح"
+          },
+          "arabic": "الْفَتَّاحُ",
+          "transliteration": "Al-Fattah",
+          "translation": {
+            "en": "The Opener, the Judge",
+            "ar": "الفتاح"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 6:44; 34:26; 35:2. Source: https://myislam.org/al-fattah/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Say: Our Lord will bring us together; then He will judge between us in truth. And He is the Knowing Judge\" and \"If Allah should grant you mercy, none can withhold it\" (Quran 35:2). The Prophet ﷺ would frequently say in his sujud: \"Allahumma iftah li abwaba rahmatik\" (Sahih Muslim 482).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "victory",
+            "asma-ul-husna",
+            "divine-names",
+            "al-fattah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 18
+        },
+        {
+          "id": "asma-019",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Alim",
+            "ar": "العليم"
+          },
+          "arabic": "الْعَلِيمُ",
+          "transliteration": "Al-Alim",
+          "translation": {
+            "en": "The All-Knowing, The Omniscient",
+            "ar": "العليم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 34:3; 5:109; 6:59; 20:52; 66:2; 2:32; 2:30. Source: https://myislam.org/al-alim/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah's knowledge is absolute and perfect. He says: \"And with Him are the keys of the unseen; none knows them except Him. And He knows what is on the land and in the sea. Not a leaf falls but that He knows it\" (Quran 6:59). The Prophet ﷺ said: \"The first thing Allah created was the Pen, and He said to it: Write. It said: O Lord, what shall I write? He said: Write the decrees of all things until the Hour is established\" (Sunan Abi Dawud 4700).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "knowledge",
+            "asma-ul-husna",
+            "divine-names",
+            "al-'alim"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 19
+        },
+        {
+          "id": "asma-020",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Qabid",
+            "ar": "القابض"
+          },
+          "arabic": "الْقَابِضُ",
+          "transliteration": "Al-Qabid",
+          "translation": {
+            "en": "The Withholder, the Constrictor",
+            "ar": "القابض"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:245; 42:27; 4:40; 13:26; 94:5. Source: https://myislam.org/al-qabid/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah withholds and expands as He wills. He says: \"And if Allah had extended [excessively] provision for His servants, they would have caused tyranny throughout the earth. But He sends [it] down in an amount which He wills\" (Quran 42:27). This Name teaches patience during times of financial difficulty — Allah withholds for a wisdom known only to Him.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-qabid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 20
+        },
+        {
+          "id": "asma-021",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Basit",
+            "ar": "الباسط"
+          },
+          "arabic": "الْبَاسِطُ",
+          "transliteration": "Al-Basit",
+          "translation": {
+            "en": "The Reliever, the Expander",
+            "ar": "الباسط"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:245; 42:27; 13:26. Source: https://myislam.org/al-basit/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Paired with Al-Qabid, Al-Basit shows that Allah is the One who expands when He wills and withholds when He wills. He expands the hearts of the believers with knowledge and faith: \"Did We not expand for you your breast?\" (Quran 94:1). He also expands provision: \"Allah extends provision for whom He wills of His servants and restricts it\" (Quran 29:62).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "rizq",
+            "asma-ul-husna",
+            "divine-names",
+            "al-basit"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 21
+        },
+        {
+          "id": "asma-022",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Khafid",
+            "ar": "الخافض"
+          },
+          "arabic": "الْخَافِضُ",
+          "transliteration": "Al-Khafid",
+          "translation": {
+            "en": "The Reducer, The Abaser",
+            "ar": "الخافض"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 56:3; 10:92; 95:4; 89:15. Source: https://myislam.org/al-khafid/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah humbles those who are arrogant and refuse to submit to Him. He says: \"So We have made the wrongdoers intimate friends of one another because of what they used to earn\" (Quran 6:129). This is different from human humiliation — Allah's humiliation is always just and serves as a warning and lesson.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-khafid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 22
+        },
+        {
+          "id": "asma-023",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ar-Rafi'",
+            "ar": "الرافع"
+          },
+          "arabic": "الرَّافِعُ",
+          "transliteration": "Ar-Rafi'",
+          "translation": {
+            "en": "The Exalter, The Elevator",
+            "ar": "الرافع"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 6:83; 58:11; 40:15; 66:6; 2:34; 18:50; 38:76; 94:4; 38:77. Source: https://myislam.org/ar-rafi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah raised the status of the Prophets, the righteous, and the believers. He says: \"And We raised your mention\" (Quran 94:4) to Prophet Muhammad ﷺ. He also raised the heavens: \"[It is] Allah who has created seven heavens and of the earth, the like of them\" (Quran 65:12). The believers in Paradise will be raised to the highest stations.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "ar-rafi'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 23
+        },
+        {
+          "id": "asma-024",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mu'izz",
+            "ar": "المعز"
+          },
+          "arabic": "الْمُعِزُّ",
+          "transliteration": "Al-Mu'izz",
+          "translation": {
+            "en": "The Honourer, The Bestower of Honor",
+            "ar": "المعز"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:26; 12:76; 35:10; 28:77. Source: https://myislam.org/al-muizz/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Say: O Allah, Possessor of Sovereignty, You give sovereignty to whom You will and You take sovereignty away from whom You will\" (Quran 3:26). True honor comes only from Allah, not from wealth, status, or position. The Prophet ﷺ said: \"Whoever desires honor, then know that honor belongs entirely to Allah\" (Quran 35:10).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "honor",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mu'izz"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 24
+        },
+        {
+          "id": "asma-025",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mudhill",
+            "ar": "المذل"
+          },
+          "arabic": "الْمُذِلُّ",
+          "transliteration": "Al-Mudhill",
+          "translation": {
+            "en": "The Dishonourer, The Humiliator",
+            "ar": "المذل"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:26; 39:26; 57:14. Source: https://myislam.org/al-muzil/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Paired with Al-Mu'izz, this Name shows that honor and disgrace are both in Allah's hands alone. Those who turn away from Allah will face disgrace in this life and the next. Allah says about the disbelievers: \"And they will have no protectors to help them other than Allah. And whoever Allah sends astray - for him there is no way\" (Quran 42:46).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mudhill"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 25
+        },
+        {
+          "id": "asma-026",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "As-Sami'",
+            "ar": "السميع"
+          },
+          "arabic": "السَّمِيعُ",
+          "transliteration": "As-Sami'",
+          "translation": {
+            "en": "The All-Hearing",
+            "ar": "السميع"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-sami-the-one-who-always-listens",
+            "notes": "Appears in: 34:50; 2:186; 58:1; 12:86; 12:21; 2:127. Source: https://myislam.org/as-sami/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah hears everything: the loud and the quiet, the secret and the public. He says: \"And if Allah had willed, He could have taken away their hearing and their sight\" (Quran 2:20). The Prophet ﷺ said: \"You are calling upon the All-Hearing, the All-Seeing, the Near, the Responsive\" (Sahih al-Bukhari 7386). This encourages the believer that every dua is heard.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "dua",
+            "asma-ul-husna",
+            "divine-names",
+            "as-sami'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 26
+        },
+        {
+          "id": "asma-027",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Basir",
+            "ar": "البصير"
+          },
+          "arabic": "الْبَصِيرُ",
+          "transliteration": "Al-Basir",
+          "translation": {
+            "en": "The All-Seeing",
+            "ar": "البصير"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 20:46; 4:58; 3:15; 55:60; 9:105; 26:217. Source: https://myislam.org/al-baseer/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah sees everything: \"And whether you conceal your speech or publicize it, indeed He is Knowing of that within the breasts\" (Quran 67:13). He sees the ant in the darkness of night on a black stone. This Name brings both comfort (He sees your good deeds) and caution (He sees everything hidden).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "vision",
+            "asma-ul-husna",
+            "divine-names",
+            "al-baseer"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 27
+        },
+        {
+          "id": "asma-028",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Hakam",
+            "ar": "الحكم"
+          },
+          "arabic": "الْحَكَمُ",
+          "transliteration": "Al-Hakam",
+          "translation": {
+            "en": "The Judge, The Giver of Justice",
+            "ar": "الحكم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 5:50; 54:49; 22:69; 10:109; 53:39. Source: https://myislam.org/al-hakam/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah is the ultimate Judge. He says: \"Judgment is not but for Allah\" (Quran 6:57). On the Day of Judgment, all disputes will be resolved by His perfect justice. The Prophet ﷺ said: \"The first people to be judged on the Day of Resurrection will be a man who died as a martyr...\" (Sahih Muslim 1895).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "justice",
+            "asma-ul-husna",
+            "divine-names",
+            "al-hakam"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 28
+        },
+        {
+          "id": "asma-029",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-'Adl",
+            "ar": "العدل"
+          },
+          "arabic": "الْعَدْلُ",
+          "transliteration": "Al-'Adl",
+          "translation": {
+            "en": "The Utterly Just",
+            "ar": "العدل"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 4:40; 16:90; 6:115; 2:155; 2:286; 4:135. Source: https://myislam.org/al-adl/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And the word of your Lord has been fulfilled in truth and in justice. None can alter His words\" (Quran 6:115). His justice is perfect — He never wrongs anyone, even by the weight of an atom. The Prophet ﷺ said: \"Allah the Exalted said: O My servants, I have forbidden injustice for Myself and have made it forbidden amongst you, so do not oppress one another\" (Sahih Muslim 2577).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "justice",
+            "asma-ul-husna",
+            "divine-names",
+            "al-'adl"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 29
+        },
+        {
+          "id": "asma-030",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Latif",
+            "ar": "اللطيف"
+          },
+          "arabic": "اللَّطِيفُ",
+          "transliteration": "Al-Latif",
+          "translation": {
+            "en": "The Most Gentle, The Subtle One",
+            "ar": "اللطيف"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-latif-the-most-subtle",
+            "notes": "Appears in: 31:16; 22:63; 12:100; 12:4; 12:10; 6:103; 33:34; 42:19; 67:14. Source: https://myislam.org/al-lateef/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Do you not see that Allah has sent down rain from the sky and the earth becomes green? Indeed, Allah is Subtle and Acquainted\" (Quran 22:63). Al-Latif brings blessings through subtle, imperceptible means. He knows the innermost secrets of the heart and provides through channels the servant never expected.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "gentleness",
+            "asma-ul-husna",
+            "divine-names",
+            "al-latif"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 30
+        },
+        {
+          "id": "asma-031",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Khabir",
+            "ar": "الخبير"
+          },
+          "arabic": "الْخَبِيرُ",
+          "transliteration": "Al-Khabir",
+          "translation": {
+            "en": "The All-Aware, The All-Acquainted",
+            "ar": "الخبير"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 59:18; 6:103; 35:14; 31:34. Source: https://myislam.org/al-khabir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, Allah is Knower of all things\" (Quran 2:234). Al-Khabeer denotes a deeper, more intimate level of knowledge than Al-Alim — He is aware of the subtle inner realities, hidden intentions, and unseen consequences of all matters. He knows what is in the hearts and what the eyes conceal. The Prophet ﷺ said: \"The keys of the unseen are five and none knows them but Allah: knowledge of the Hour, sending down of rain, what is in the wombs, what one will earn tomorrow, and in which land one will die\" (Sahih al-Bukhari 4778).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-khabeer"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 31
+        },
+        {
+          "id": "asma-032",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Halim",
+            "ar": "الحليم"
+          },
+          "arabic": "الْحَلِيمُ",
+          "transliteration": "Al-Halim",
+          "translation": {
+            "en": "The Forbearing, the Gentle",
+            "ar": "الحليم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-forbearance-in-islam-allahs-name-al-halim",
+            "notes": "Appears in: 16:61; 3:155; 35:45; 2:263; 17:44; 35:41; 9:114. Source: https://myislam.org/al-haleem/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And if Allah were to punish people for what they have earned, He would not leave upon the earth any creature\" (Quran 35:45). His forbearance is not weakness — it is supreme wisdom. He gives the wrongdoer time to repent, just as He gave the people of Nuh 950 years. The Prophet ﷺ said: \"No one is more patient than Allah, hearing abusive language from those who associate partners with Him, yet they say He has a child, while He provides for them and heals them\" (Sahih al-Bukhari 7500).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "patience",
+            "asma-ul-husna",
+            "divine-names",
+            "al-haleem"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 32
+        },
+        {
+          "id": "asma-033",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-'Azim",
+            "ar": "العظيم"
+          },
+          "arabic": "الْعَظِيمُ",
+          "transliteration": "Al-'Azim",
+          "translation": {
+            "en": "The Magnificent, the Supreme",
+            "ar": "العظيم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 56:96; 69:52; 2:255; 42:4; 15:87. Source: https://myislam.org/al-azeem/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And your Lord is the Most Great\" (Quran 2:255). His magnificence is evident in the vastness of His creation — the heavens, the stars, the oceans — yet all of creation is merely a small sign of His true greatness. The Prophet ﷺ would say in ruku: \"Subhana Rabbiyal-Azeem\" (Glory be to my Lord, the Magnificent) (Sahih al-Bukhari 763). Aisha reported that the Prophet ﷺ used to say in his ruku and sujud so much that the Quran would be revealed regarding it (Sahih Muslim 482).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "greatness",
+            "asma-ul-husna",
+            "divine-names",
+            "al-azeem"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 33
+        },
+        {
+          "id": "asma-034",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Ghafur",
+            "ar": "الغفور"
+          },
+          "arabic": "الْغَفُورُ",
+          "transliteration": "Al-Ghafur",
+          "translation": {
+            "en": "The Forgiving, The Exceedingly Forgiving",
+            "ar": "الغفور"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 15:49; 41:32; 2:173. Source: https://myislam.org/al-ghafoor/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And indeed, I am the Forgiving\" (Quran 20:82). The Name Al-Ghafour appears 91 times in the Quran, emphasizing the vastness of His forgiveness. He not only forgives but also conceals the sin so that others do not see it. The Prophet ﷺ said: \"By the One in Whose hand is my soul, were you not to sin, Allah would replace you with a people who would sin and then seek forgiveness from Allah, and He would forgive them\" (Sahih Muslim 2749). This hadith shows that seeking forgiveness is beloved to Allah.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "forgiveness",
+            "asma-ul-husna",
+            "divine-names",
+            "al-ghafour"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 34
+        },
+        {
+          "id": "asma-035",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ash-Shakur",
+            "ar": "الشكور"
+          },
+          "arabic": "الشَّكُورُ",
+          "transliteration": "Ash-Shakur",
+          "translation": {
+            "en": "The Most Appreciative",
+            "ar": "الشكور"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/allah-appreciates-your-smallest-deeds-khutbah",
+            "notes": "Appears in: 2:158; 4:147; 35:34; 69:24; 14:17; 39:7; 42:23. Source: https://myislam.org/ash-shakur/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"If you are grateful, I will surely give you more\" (Quran 14:7). His appreciation is unparalleled — a small act of worship is multiplied tenfold to seven hundredfold or more. Even a half-date given in charity is accepted by Ash-Shakoor. The Prophet ﷺ said: \"Allah the Exalted said: If the son of Adam were to flee from Me as he flees from the fire, I would still join him in it. And if he comes to Me walking, I would come to him running\" (Sahih al-Bukhari 7405).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "shukr",
+            "asma-ul-husna",
+            "divine-names",
+            "ash-shakoor"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 35
+        },
+        {
+          "id": "asma-036",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-'Ali",
+            "ar": "العلي"
+          },
+          "arabic": "الْعَلِيُّ",
+          "transliteration": "Al-'Ali",
+          "translation": {
+            "en": "The Most High, The Exalted",
+            "ar": "العلي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 87:1; 16:50; 57:4; 2:255; 35:10; 70:4; 34:23. Source: https://myislam.org/al-aliyy/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is the Most High, the Most Great\" (Quran 2:255). He is high above His creation in His essence, above having any partners or rivals, and above all deficiencies and weaknesses. The Prophet ﷺ said: \"The most beloved names to Allah are Abdullah and Abdur-Rahman\" (Sahih Muslim 2132). Reflecting on this Name elevates the heart above worldly attachments. The heavens and the earth together cannot encompass His greatness, yet He is closer to man than his jugular vein.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "exaltation",
+            "asma-ul-husna",
+            "divine-names",
+            "al-aliyy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 36
+        },
+        {
+          "id": "asma-037",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Kabir",
+            "ar": "الكبير"
+          },
+          "arabic": "الْكَبِيرُ",
+          "transliteration": "Al-Kabir",
+          "translation": {
+            "en": "The Greatest, The Most Grand",
+            "ar": "الكبير"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 31:30; 34:23; 13:9; 22:62; 49:13; 40:64; 27:88; 95:4. Source: https://myislam.org/al-kabeer/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"That is because Allah is the Truth, and that which they call upon other than Him is falsehood, and because Allah is the Most High, the Greatest\" (Quran 31:30). Every attribute of perfection belongs to Allah in the greatest measure. His knowledge is the greatest, His power is the greatest, His mercy is the greatest. When combined with Al-Aliyy, the meaning encompasses the Highest and the Greatest in every conceivable sense. The Prophet ﷺ said: \"The most detestable of names to Allah is a man who names himself 'King of Kings' (Malik al-Amlak)\" (Sahih al-Bukhari 6206).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "greatness",
+            "asma-ul-husna",
+            "divine-names",
+            "al-kabeer"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 37
+        },
+        {
+          "id": "asma-038",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Hafiz",
+            "ar": "الحفيظ"
+          },
+          "arabic": "الْحَفِيظُ",
+          "transliteration": "Al-Hafiz",
+          "translation": {
+            "en": "The Preserver, The All-Heedful and All-Protecting",
+            "ar": "الحفيظ"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 11:57; 15:9; 12:64; 2:255; 30:17. Source: https://myislam.org/al-hafiz/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"But if they turn away — then indeed, Allah is the Preserver over all things\" (Quran 11:57). He preserves the Quran from alteration, the heavens and the earth from collapsing, and the believers from misguidance. Every atom in the universe is maintained by His preservation. Even the sperm in the womb is preserved and shaped by Al-Hafeez. The Prophet ﷺ said: \"Whoever observes the fasts of Ramadan with faith and seeking reward, his previous sins will be forgiven\" (Sahih al-Bukhari 38), showing that Allah preserves the record of deeds.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "protection",
+            "asma-ul-husna",
+            "divine-names",
+            "al-hafeez"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 38
+        },
+        {
+          "id": "asma-039",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muqit",
+            "ar": "المقيت"
+          },
+          "arabic": "الْمُقِيتُ",
+          "transliteration": "Al-Muqit",
+          "translation": {
+            "en": "The Nourisher, The All-Powerful Maintainer",
+            "ar": "المقيت"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 4:85; 11:6; 14:32; 6:14; 2:155. Source: https://myislam.org/al-muqeet/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And Allah provides for whom He wills without account\" (Quran 2:212). Al-Muqeet gives each creature exactly what it needs, when it needs it — from the embryo receiving nourishment through the umbilical cord to the plants receiving rain from the sky. The word \"muqeet\" also implies one who observes and measures precisely. The Prophet ﷺ used to say: \"O Allah, suffice me with what You have permitted so that I have no need of what You have forbidden, and make me independent of all besides You\" (Sunan at-Tirmidhi 3586).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "rizq",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muqeet"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 39
+        },
+        {
+          "id": "asma-040",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Hasib",
+            "ar": "الحسيب"
+          },
+          "arabic": "الْحَسِيبُ",
+          "transliteration": "Al-Hasib",
+          "translation": {
+            "en": "The Reckoner, the Sufficient",
+            "ar": "الحسيب"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 33:39; 3:173; 21:47; 4:85. Source: https://myislam.org/al-haseeb/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"O Prophet, sufficient for you is Allah and whoever follows you of the believers\" (Quran 8:64). Al-Hasib has two primary meanings: first, He is sufficient for those who put their trust in Him; second, He will reckon every deed with perfect precision. The Prophet ﷺ said: \"Allah is sufficient for me; there is no deity except Him. Upon Him I have relied, and He is the Lord of the Great Throne\" (Quran 9:129). When Ibrahim was thrown into the fire, he said: \"Allah is sufficient for me, and He is the best Disposer of affairs.\"",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "protection",
+            "asma-ul-husna",
+            "divine-names",
+            "al-hasib"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 40
+        },
+        {
+          "id": "asma-041",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Jalil",
+            "ar": "الجليل"
+          },
+          "arabic": "الْجَلِيلُ",
+          "transliteration": "Al-Jalil",
+          "translation": {
+            "en": "The Majestic, the Sublime",
+            "ar": "الجليل"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 55:27; 7:143. Source: https://myislam.org/al-jaleel/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Blessed is the Name of your Lord, Owner of Majesty and Honor\" (Quran 55:78). His majesty is evident in the grandeur of His creation and the perfection of His attributes. The Prophet ﷺ said: \"The most beloved names to Allah are Abdullah, Abdur-Rahman, and the most truthful is Harith and Hammam, and the ugliest is Harb and Murrah\" (Sahih Muslim 2132). Reciting \"Subhana Dhil-Jalali wal-Ikram\" (Glory be to the Lord of Majesty and Generosity) is a noble dhikr.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "majesty",
+            "asma-ul-husna",
+            "divine-names",
+            "al-jaleel"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 41
+        },
+        {
+          "id": "asma-042",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Karim",
+            "ar": "الكريم"
+          },
+          "arabic": "الْكَرِيمُ",
+          "transliteration": "Al-Karim",
+          "translation": {
+            "en": "The Most Generous, The Most Noble",
+            "ar": "الكريم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/belief-in-divine-love-discovering-spiritual-attachment-styles",
+            "notes": "Appears in: 17:70; 82:6; 27:40; 57:18; 96:3. Source: https://myislam.org/99-names-of-allah/al-karim/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"O mankind, what has deceived you concerning your Lord, the Generous?\" (Quran 82:6). His generosity is not limited by the worthiness of the recipient — He gives even to those who reject Him and disobey Him. He gives without being asked and gives more than what is asked. The Prophet ﷺ said: \"Your Lord is Munificent and Generous, and is ashamed to turn away His servant empty-handed when he raises his hands to Him in supplication\" (Sunan at-Tirmidhi 3605). The Quran itself is described as \"Kareem\" — noble and generous.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "generosity",
+            "asma-ul-husna",
+            "divine-names",
+            "al-kareem"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 42
+        },
+        {
+          "id": "asma-043",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ar-Raqib",
+            "ar": "الرقيب"
+          },
+          "arabic": "الرَّقِيبُ",
+          "transliteration": "Ar-Raqib",
+          "translation": {
+            "en": "The Watchful, The All-Watchful",
+            "ar": "الرقيب"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 4:1; 5:117; 5:118. Source: https://myislam.org/ar-raqib/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And indeed, over you are keepers, noble and recording; they know whatever you do\" (Quran 82:10-12). Two angels record every deed — the Kiraman Katibin — as appointed by Ar-Raqeeb. Every breath, every glance, every intention is known to Him. The Prophet ﷺ said: \"Fear Allah wherever you are, follow up a bad deed with a good one and it will wipe it out, and behave well towards people\" (Sunan at-Tirmidhi 1987). This Name instills God-consciousness (taqwa) in the heart of the believer.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "protection",
+            "asma-ul-husna",
+            "divine-names",
+            "ar-raqeeb"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 43
+        },
+        {
+          "id": "asma-044",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mujib",
+            "ar": "المجيب"
+          },
+          "arabic": "الْمُجِيبُ",
+          "transliteration": "Al-Mujib",
+          "translation": {
+            "en": "The Responsive, The Answerer",
+            "ar": "المجيب"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 11:61; 40:60; 2:186; 2:155; 2:286; 3:160; 93:10. Source: https://myislam.org/al-mujeeb/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And when My servants ask you concerning Me, indeed I am near\" (Quran 2:186). Despite His supreme exaltation above the heavens, Allah is nearer to His servants than they imagine. He hears the whisper of the heart and responds to the silent prayer. The Prophet ﷺ said: \"You are calling upon the All-Hearing, the All-Seeing, the Near, the Responsive\" (Sahih al-Bukhari 7386). This Name brings immense comfort to the believer — one is never truly alone, for Allah is closer than one's jugular vein (Quran 50:16).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "dua",
+            "asma-ul-husna",
+            "divine-names",
+            "al-qareeb"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 44
+        },
+        {
+          "id": "asma-045",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wasi'",
+            "ar": "الواسع"
+          },
+          "arabic": "الْوَاسِعُ",
+          "transliteration": "Al-Wasi'",
+          "translation": {
+            "en": "The All-Encompassing, the Boundless",
+            "ar": "الواسع"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:115; 2:268; 39:53; 4:130; 3:73. Source: https://myislam.org/al-wasi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And your Lord says: Call upon Me; I will respond to you\" (Quran 40:60). This is a direct invitation from Allah — a promise that every dua is heard and answered. The Prophet ﷺ said: \"The supplication of every one of you is granted as long as he is not impatient, saying: I supplicated but it was not granted\" (Sahih al-Bukhari 6340). Sometimes the response comes in this world, sometimes it is stored for the Hereafter, and sometimes a hardship is averted in its place — all are forms of Allah's response.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mujeeb"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 45
+        },
+        {
+          "id": "asma-046",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Hakim",
+            "ar": "الحكيم"
+          },
+          "arabic": "الْحَكِيمُ",
+          "transliteration": "Al-Hakim",
+          "translation": {
+            "en": "The All-Wise",
+            "ar": "الحكيم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 12:4; 12:23; 12:25; 12:26; 12:100; 2:216; 24:11; 24:18. Source: https://myislam.org/al-hakeem/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And do not despair of the mercy of Allah. Indeed, no one despairs of the mercy of Allah except the disbelieving people\" (Quran 12:87). His mercy is vast enough to encompass all sinners who sincerely repent. His knowledge encompasses all things past, present, and future. The Prophet ﷺ said: \"When Allah created the creation, He wrote a Book which is with Him above the Throne: My mercy prevails over My wrath\" (Sahih al-Bukhari 3194). This vastness should give the sinner hope and the believer confidence.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "wisdom",
+            "asma-ul-husna",
+            "divine-names",
+            "al-wasi'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 46
+        },
+        {
+          "id": "asma-047",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wadud",
+            "ar": "الودود"
+          },
+          "arabic": "الْوَدُودُ",
+          "transliteration": "Al-Wadud",
+          "translation": {
+            "en": "The Most Loving",
+            "ar": "الودود"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-wadud-seeking-the-love-of-allah",
+            "notes": "Appears in: 11:90; 85:14; 39:53; 2:222; 3:31. Source: https://myislam.org/al-wadud/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And you will not find in the way of Allah any change\" (Quran 48:23). Every decree of Allah contains hidden wisdom that the believer may not immediately comprehend. This Name appears most frequently alongside Al-Azeez (the Almighty), showing that Allah's power is always exercised with perfect wisdom. The Prophet ﷺ said: \"No Muslim is afflicted with harm — whether it be a thorn that pricks him or something greater — except that Allah expiates some of his sins because of it\" (Sahih al-Bukhari 5640).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "love",
+            "asma-ul-husna",
+            "divine-names",
+            "al-hakeem"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 47
+        },
+        {
+          "id": "asma-048",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Majid",
+            "ar": "المجيد"
+          },
+          "arabic": "الْمَجِيدُ",
+          "transliteration": "Al-Majid",
+          "translation": {
+            "en": "The All-Glorious, The Ever-Majestic",
+            "ar": "المجيد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 11:73; 85:15; 2:255; 50:1. Source: https://myislam.org/al-majeed/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And He is the Forgiving, the Loving\" (Quran 85:14). His love for His servants is real and manifest — He shows it by guiding them, forgiving them, answering their prayers, and preparing Paradise for them. The Prophet ﷺ said: \"When Allah loves a servant, He calls Jibril saying: I love so-and-so, so love him. Then Jibril loves him, and makes a proclamation among the inhabitants of heaven: Indeed Allah loves so-and-so, so love him. Then the inhabitants of heaven love him, and acceptance is placed for him on the earth\" (Sahih al-Bukhari 3209).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-wadood"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 48
+        },
+        {
+          "id": "asma-049",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Ba'ith",
+            "ar": "الباعث"
+          },
+          "arabic": "الْبَاعِثُ",
+          "transliteration": "Al-Ba'ith",
+          "translation": {
+            "en": "The Infuser of New Life, The Resurrector",
+            "ar": "الباعث"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 46:33; 22:7; 62:2; 6:60; 3:169; 23:115; 2:156. Source: https://myislam.org/al-baith/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Lord of the Throne, the Glorious\" (Quran 85:15). His glory is manifested in His perfect attributes, His beautiful creation, and His infinite generosity toward His servants. The Quran itself is described as \"Quran Majeed\" (Glorious Quran) in Surah Qaf (50:1), reflecting the glory of the One who revealed it. The Prophet ﷺ was described as having a \"majeed\" (glorious) character (Quran 68:4). Everything associated with Allah carries glory.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-majeed"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 49
+        },
+        {
+          "id": "asma-050",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ash-Shahid",
+            "ar": "الشهيد"
+          },
+          "arabic": "الشَّهِيدُ",
+          "transliteration": "Ash-Shahid",
+          "translation": {
+            "en": "The All-Witnessing",
+            "ar": "الشهيد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 9:94; 12:81; 58:6; 4:79; 41:53. Source: https://myislam.org/ash-shaheed/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Then indeed, to Allah belongs [all] authority. He sends the wind, and it raises the clouds\" (Quran 2:255). Resurrection is a fundamental pillar of Islamic belief — Allah will bring every person back to life with the same body they had in this world, down to the smallest detail. The Prophet ﷺ said: \"The people will be gathered on the Day of Resurrection barefoot, naked, and uncircumcised\" (Sahih al-Bukhari 6527). He also sends messengers to revive the hearts of the people with guidance.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "justice",
+            "asma-ul-husna",
+            "divine-names",
+            "al-ba'ith"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 50
+        },
+        {
+          "id": "asma-051",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Haqq",
+            "ar": "الحق"
+          },
+          "arabic": "الْحَقُّ",
+          "transliteration": "Al-Haqq",
+          "translation": {
+            "en": "The Absolute Truth",
+            "ar": "الحق"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 31:30; 10:32; 6:62; 22:6; 22:62; 57:20; 77:7. Source: https://myislam.org/al-haqq/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And sufficient is Allah as Witness\" (Quran 4:79). Nothing escapes His testimony — He witnesses every prayer, every act of worship, every injustice, and every act of kindness. On the Day of Judgment, the Prophet ﷺ will be a witness over his nation, and Allah will be the ultimate Witness over all. The Prophet ﷺ said: \"Every deed of the son of Adam is for him except fasting; it is for Me and I shall reward for it\" (Sahih al-Bukhari 1904), showing Allah's personal witnessing of our worship.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "truth",
+            "asma-ul-husna",
+            "divine-names",
+            "ash-shaheed"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 51
+        },
+        {
+          "id": "asma-052",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wakil",
+            "ar": "الوكيل"
+          },
+          "arabic": "الْوَكِيلُ",
+          "transliteration": "Al-Wakil",
+          "translation": {
+            "en": "The Trustee, the Disposer of Affairs",
+            "ar": "الوكيل"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:173; 4:132; 73:9; 13:11; 6:102. Source: https://myislam.org/al-wakeel/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"That is because Allah is the Truth, and that which they call upon other than Him is falsehood\" (Quran 22:62). Everything besides Allah is temporary and subject to change, but He is the eternal Truth. Paradise is called \"Haqq\" because it is real and permanent, while the worldly life is temporary. The Prophet ﷺ said: \"Whoever dies knowing that there is no god but Allah shall enter Paradise\" (Sahih Muslim 26). Calling upon Al-Haqq in prayer affirms that only He is the true reality.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "tawakkul",
+            "asma-ul-husna",
+            "divine-names",
+            "al-haqq"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 52
+        },
+        {
+          "id": "asma-053",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Qawiyy",
+            "ar": "القوي"
+          },
+          "arabic": "الْقَوِيُّ",
+          "transliteration": "Al-Qawiyy",
+          "translation": {
+            "en": "The All-Strong",
+            "ar": "القوي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:255; 28:26; 22:74; 42:19; 3:160; 20:24; 57:25; 33:25. Source: https://myislam.org/al-qawiyy/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And rely upon the Ever-Living who does not die\" (Quran 25:58). The Prophet ﷺ would say in times of hardship: \"Hasbunallahu wa ni'mal-Wakeel\" (Allah is sufficient for us, and He is the best Trustee) (Sahih al-Bukhari 3861). Tawakkul (reliance on Allah) is a fundamental pillar of faith — the believer strives but trusts the outcome to Allah. The Prophet ﷺ said: \"If you put your trust completely in Allah, He would provide for you as He provides for the birds. They go out in the morning empty and return in the evening full\" (Sunan at-Tirmidhi 2344).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "power",
+            "asma-ul-husna",
+            "divine-names",
+            "al-wakeel"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 53
+        },
+        {
+          "id": "asma-054",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Matin",
+            "ar": "المتين"
+          },
+          "arabic": "الْمَتِينُ",
+          "transliteration": "Al-Matin",
+          "translation": {
+            "en": "The Firm, the Steadfast",
+            "ar": "المتين"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 51:58; 27:88; 58:21; 7:183; 68:45. Source: https://myislam.org/al-matin/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, your Lord is the All-Strong, the All-Powerful\" (Quran 11:66). His strength is unlike any created strength — it never tires, never wavers, and never fails. He created the heavens and the earth, sustains them, and will recreate them, all with effortless strength. The Prophet ﷺ said: \"The strong believer is better and more beloved to Allah than the weak believer, while there is good in both\" (Sahih Muslim 2664), encouraging believers to cultivate both physical and spiritual strength.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-qawiyy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 54
+        },
+        {
+          "id": "asma-055",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wali",
+            "ar": "الولي"
+          },
+          "arabic": "الْوَلِيُّ",
+          "transliteration": "Al-Wali",
+          "translation": {
+            "en": "The Protector, The Guardian",
+            "ar": "الولي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 5:56; 2:257; 5:55; 42:28; 7:196; 12:101; 45:19. Source: https://myislam.org/al-waliy/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, Allah is the All-Strong, the Firm\" (Quran 51:58). Al-Mateen intensifies the concept of Al-Qawiyy — not only is Allah strong, but His strength is firm and unyielding. He does not change His mind, He does not weaken, and His decrees are immovable. The Prophet ﷺ was commanded: \"So remain on a right course as you have been commanded\" (Quran 11:112), reflecting the firmness of Allah's nature that the believer should emulate. The heavens are held up by His firm power.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "guardianship",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mateen"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 55
+        },
+        {
+          "id": "asma-056",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Hamid",
+            "ar": "الحميد"
+          },
+          "arabic": "الْحَمِيدُ",
+          "transliteration": "Al-Hamid",
+          "translation": {
+            "en": "The Praiseworthy, The Most Praised",
+            "ar": "الحميد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:267; 57:24; 31:12; 35:15; 41:42; 42:28. Source: https://myislam.org/al-hameed/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Allah is the Protector of those who believe\" (Quran 2:257). He is the Ally of the righteous — guiding them to truth, protecting them from harm, supporting them in every difficulty, and granting them victory. In contrast, the disbelievers have no true protector. The Prophet ﷺ said: \"For every prophet there is a supplication that is answered, and every prophet hastened to make his supplication, but I have concealed my supplication so that it will be an intercession for my Ummah on the Day of Resurrection\" (Sahih al-Bukhari 6304).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "hamd",
+            "asma-ul-husna",
+            "divine-names",
+            "al-waliyy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 56
+        },
+        {
+          "id": "asma-057",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muhsi",
+            "ar": "المحصي"
+          },
+          "arabic": "الْمُحْصِي",
+          "transliteration": "Al-Muhsi",
+          "translation": {
+            "en": "The All-Enumerating, The Counter",
+            "ar": "المحصي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 72:28; 78:29; 18:49; 14:34; 36:12; 2:284; 6:59. Source: https://myislam.org/al-muhsi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And to Allah belongs all praise\" (Quran 1:2). All praise ultimately returns to Him because all goodness originates from Him and all perfection belongs to Him. He is praised for His mercy, His justice, His creation, His sustenance, and His every attribute. Even the creation itself praises Him, though we may not understand how. The Prophet ﷺ said: \"No one is more patient than Allah against the harmful and annoying things he hears\" (Sahih al-Bukhari 7500), and for this forbearance He is truly worthy of all praise.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-hameed"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 57
+        },
+        {
+          "id": "asma-058",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mubdi'",
+            "ar": "المبدئ"
+          },
+          "arabic": "الْمُبْدِئُ",
+          "transliteration": "Al-Mubdi'",
+          "translation": {
+            "en": "The Originator, The Initiator",
+            "ar": "المبدئ"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 29:19; 30:30; 10:34; 27:64; 85:13. Source: https://myislam.org/al-mubdi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And He has counted everything, a counting\" (Quran 72:28). He knows the exact number of every raindrop, every grain of sand, every leaf on every tree, and every breath every creature has ever taken. On the Day of Judgment, He will bring a perfect account of every deed. The Prophet ﷺ said: \"Allah will bring a man from my Ummah before all creation on the Day of Resurrection and ninety-nine scrolls will be spread out for him, each scroll extending as far as the eye can see\" (Sunan at-Tirmidhi 2416).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muhsee"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 58
+        },
+        {
+          "id": "asma-059",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mu'id",
+            "ar": "المعيد"
+          },
+          "arabic": "الْمُعِيدُ",
+          "transliteration": "Al-Mu'id",
+          "translation": {
+            "en": "The Restorer, The Reviver",
+            "ar": "المعيد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 21:104; 10:34; 27:64; 85:13; 29:19. Source: https://myislam.org/al-muid/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, it is He who originates [creation] and repeats\" (Quran 85:13). He began the creation without any prior template or example — the first act of creation was entirely from His will alone. The Prophet ﷺ would say: \"O Allah, Lord of the heavens and Lord of the earth, Lord of the Magnificent Throne, our Lord and Lord of all things, Originator of the heavens and the earth\" (Sahih Muslim 771). This Name reminds the believer that just as Allah originated creation, He can originate new beginnings in one's life.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mubdi'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 59
+        },
+        {
+          "id": "asma-060",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muhyi",
+            "ar": "المحيي"
+          },
+          "arabic": "الْمُحْيِي",
+          "transliteration": "Al-Muhyi",
+          "translation": {
+            "en": "The Giver of Life",
+            "ar": "المحيي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:28; 7:158; 10:56; 5:110; 2:286. Source: https://myislam.org/al-muhyi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"As We began the first creation, We will repeat it\" (Quran 21:104). Just as He originated creation from nothing, He will bring it all back with perfect precision on the Day of Judgment. Those who doubt resurrection should consider that if Allah could create from nothing, He can surely recreate from what already was. The Prophet ﷺ said: \"The people will be resurrected on the Day of Judgment barefoot, naked, and uncircumcised\" (Sahih al-Bukhari 6527). This Name strengthens the believer's conviction in the Hereafter.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "life",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mu'eed"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 60
+        },
+        {
+          "id": "asma-061",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mumit",
+            "ar": "المميت"
+          },
+          "arabic": "الْمُمِيتُ",
+          "transliteration": "Al-Mumit",
+          "translation": {
+            "en": "The Taker of Life, The Causer of Death",
+            "ar": "المميت"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 6:32; 7:34; 57:2; 10:56; 31:34; 25:75. Source: https://myislam.org/al-mumeet/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, it is He who originates [creation] and repeats\" (Quran 30:27). He gives life to the sperm and egg, transforming them into a complete human being. He gives life to the dead earth with rain, producing vegetation. And on the Day of Judgment, He will give life back to every person who ever lived. The Prophet ﷺ said: \"Whoever loves to be granted more provision and have his lifespan prolonged, let him maintain the ties of kinship\" (Sahih al-Bukhari 5986), for Allah grants life and prolongs it as He wills.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muhyi"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 61
+        },
+        {
+          "id": "asma-062",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Hayy",
+            "ar": "الحي"
+          },
+          "arabic": "الْحَيُّ",
+          "transliteration": "Al-Hayy",
+          "translation": {
+            "en": "The Ever-Living",
+            "ar": "الحي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:255; 3:2; 20:111; 25:58; 40:65; 7:180; 27:15. Source: https://myislam.org/al-hayy/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"How can you disbelieve in Allah when you were lifeless and He gave you life? Then He will cause you to die\" (Quran 2:28). Death is not annihilation — it is a transition from the worldly life to the realm of Barzakh (the intermediate state). Every soul will taste death (Quran 3:185), and no one can die except by Allah's permission at an appointed time. The Prophet ﷺ said: \"Remember often the destroyer of pleasures\" — meaning death (Sunan at-Tirmidhi 2307). This Name reminds the believer to prepare for the inevitable.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mumeet"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 62
+        },
+        {
+          "id": "asma-063",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Qayyum",
+            "ar": "القيوم"
+          },
+          "arabic": "الْقَيُّومُ",
+          "transliteration": "Al-Qayyum",
+          "translation": {
+            "en": "The Sustainer, The Self-Subsisting",
+            "ar": "القيوم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:2; 20:111; 2:255. Source: https://myislam.org/al-qayyum/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Allah — there is no deity except Him, the Ever-Living, the Sustainer of existence\" (Quran 2:255, Ayat al-Kursi). His life is the source of all life in creation. Unlike created beings whose lives depend on food, water, and air, Allah's life is self-sustaining and independent. The Prophet ﷺ said: \"The best that I and the Prophets before me have said is: La ilaha illa Allah, wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa ala kulli shay'in qadeer\" (Sahih at-Tirmidhi 3430). Al-Hayy is the greatest of Allah's Names by which He should be called.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-hayy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 63
+        },
+        {
+          "id": "asma-064",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wajid",
+            "ar": "الواجد"
+          },
+          "arabic": "الْوَاجِدُ",
+          "transliteration": "Al-Wajid",
+          "translation": {
+            "en": "The Ever-Wealthy, The Self-Sufficient",
+            "ar": "الواجد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 4:78; 24:39; 93:7. Source: https://myislam.org/al-wajid/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Allah — there is no deity except Him, the Ever-Living, the Sustainer of existence\" (Quran 2:255). He manages the affairs of the heavens and the earth without any fatigue or weakness. His throne extends over the heavens and the earth, and their preservation does not burden Him (Quran 2:255). The Prophet ﷺ said: \"The greatest verse in the Quran is Ayat al-Kursi\" (Sahih Muslim 810), which prominently features this Name. Al-Qayyum combined with Al-Hayy represents the essence of divine perfection.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-qayyum"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 64
+        },
+        {
+          "id": "asma-065",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Majid",
+            "ar": "الماجد"
+          },
+          "arabic": "الْمَاجِدُ",
+          "transliteration": "Al-Majid",
+          "translation": {
+            "en": "The Noble, The Generous",
+            "ar": "الماجد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 11:73; 87:1. Source: https://myislam.org/al-maajid/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Al-Wajid perceives the needs of all His servants and finds solutions for every difficulty. Nothing is lost, hidden, or overlooked by Him. He finds every servant regardless of where they are and knows their situation completely. This Name is also understood to mean that Allah does not lack anything — He finds whatever He wills and nothing is absent from His knowledge. The Quran says: \"Did He not find you orphaned and give [you] refuge? And He found you lost and guided [you], and He found you poor and made [you] self-sufficient\" (Quran 93:6-8), showing how Al-Wajid finds and cares for His servants.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-wajid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 65
+        },
+        {
+          "id": "asma-066",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wahid",
+            "ar": "الواحد"
+          },
+          "arabic": "الْوَاحِدُ",
+          "transliteration": "Al-Wahid",
+          "translation": {
+            "en": "The One, The Indivisible",
+            "ar": "الواحد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 13:16; 39:4; 38:65; 14:48; 6:19. Source: https://myislam.org/al-wahid/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "His nobility and generosity are reflected in His perfect attributes and His generous treatment of creation. While Al-Majeed refers to the One who is inherently glorious, Al-Majid emphasizes the One whose noble actions are evident to all. The Quran describes the divine message as \"majid\" (noble) in Surah Buruj (85:21), indicating the nobility of the One who revealed it. The Prophet ﷺ was sent as a mercy to all mankind, reflecting the nobility of the One who sent him. This Name encourages the servant to embody nobility in their own character.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "tawhid",
+            "asma-ul-husna",
+            "divine-names",
+            "al-majid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 66
+        },
+        {
+          "id": "asma-067",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Ahad",
+            "ar": "الأحد"
+          },
+          "arabic": "الْأَحَدُ",
+          "transliteration": "Al-Ahad",
+          "translation": {
+            "en": "The Unique, The Only One",
+            "ar": "الأحد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 112:1; 112:4. Source: https://myislam.org/al-ahad/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Say: He is Allah, the One\" (Quran 112:1). The concept of Tawheed (the oneness of God) is the central and most fundamental pillar of Islam. Allah is one in His essence (no one shares His being), one in His attributes (no one shares His perfection), and one in His actions (no one shares His power). The Prophet ﷺ said: \"The most meritorious of your deeds is faith in Allah and His Messenger\" (Sahih al-Bukhari 1520). Surah Al-Ikhlas, which describes Allah's oneness, is equivalent to one-third of the Quran.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "tawhid",
+            "asma-ul-husna",
+            "divine-names",
+            "al-wahid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 67
+        },
+        {
+          "id": "asma-068",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "As-Samad",
+            "ar": "الصمد"
+          },
+          "arabic": "الصَّمَدُ",
+          "transliteration": "As-Samad",
+          "translation": {
+            "en": "The Self-Subsisting, The One Upon Whom All Depend",
+            "ar": "الصمد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-as-samad-the-eternal-the-absolute",
+            "notes": "Appears in: 112:1. Source: https://myislam.org/as-samad/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Say: He is Allah, the One (Al-Ahad)\" (Quran 112:1). Al-Ahad goes beyond Al-Wahid — while \"Wahid\" can sometimes be used in comparative or numerical sense, \"Ahad\" indicates absolute, indivisible uniqueness. No one was like Him before, and no one will be like Him after. The Prophet ﷺ said: \"Is anyone of you unable to recite one-third of the Quran in a night? They said: How could anyone among us be able to do that? He said: Surah Al-Ikhlas is equivalent to one-third of the Quran\" (Sahih al-Bukhari 6627).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "tawhid",
+            "asma-ul-husna",
+            "divine-names",
+            "al-ahad"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 68
+        },
+        {
+          "id": "asma-069",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Qadir",
+            "ar": "القادر"
+          },
+          "arabic": "الْقَادِرُ",
+          "transliteration": "Al-Qadir",
+          "translation": {
+            "en": "The Omnipotent, The All-Able",
+            "ar": "القادر"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:26; 2:259; 3:37; 3:38; 3:165. Source: https://myislam.org/al-qadir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Allah, the Eternal Refuge (As-Samad)\" (Quran 112:2). As-Samad means the Ultimate Master whom all turn to in need, the One who is obeyed, the One who is not deficient in any way, and the One to whom all matters return. All creation depends on Him for existence, sustenance, guidance, and every blessing, but He needs nothing from anyone. The Prophet ﷺ said: \"Allah the Exalted said: O son of Adam, I do not care about anything as much as I care about My right upon you\" — referring to the obligation of worship (Sunan at-Tirmidhi 3641).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "as-samad"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 69
+        },
+        {
+          "id": "asma-070",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muqtadir",
+            "ar": "المقتدر"
+          },
+          "arabic": "الْمُقْتَدِرُ",
+          "transliteration": "Al-Muqtadir",
+          "translation": {
+            "en": "The All-Powerful, The Dominant",
+            "ar": "المقتدر"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 54:55; 3:160; 18:45; 54:42; 77:23; 28:18; 28:24. Source: https://myislam.org/al-muqtadir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, Allah is over all things competent\" (Quran 2:20). Nothing is impossible for Allah — He created the universe from nothing, sustains it, and will recreate it. He can bring the dead back to life, provide from sources one never imagined, and change any situation in an instant. The Prophet ﷺ said: \"Know that if the nation were to gather together to benefit you with anything, it would benefit you only with something that Allah had already prescribed for you\" (Sunan at-Tirmidhi 2516).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-qadir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 70
+        },
+        {
+          "id": "asma-071",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muqaddim",
+            "ar": "المقدم"
+          },
+          "arabic": "الْمُقَدِّمُ",
+          "transliteration": "Al-Muqaddim",
+          "translation": {
+            "en": "The Expediter, The Promoter",
+            "ar": "المقدم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 85:22; 6:59; 21:90; 7:96; 71:10. Source: https://myislam.org/al-muqaddim/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"In a Seat of Honor near an All-Powerful Sovereign\" (Quran 54:55). While Al-Qadir refers to the ability to do all things, Al-Muqtadir emphasizes the actual execution of that power — He not only has the power but enforces His will completely and without opposition. Nothing can resist His decree. The Prophet ﷺ said: \"The strong believer is better and more beloved to Allah than the weak believer\" (Sahih Muslim 2664), encouraging believers to draw strength from Al-Muqtadir.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muqtadir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 71
+        },
+        {
+          "id": "asma-072",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mu'akhkhir",
+            "ar": "المؤخر"
+          },
+          "arabic": "الْمُؤَخِّرُ",
+          "transliteration": "Al-Mu'akhkhir",
+          "translation": {
+            "en": "The Delayer, The Postponer",
+            "ar": "المؤخر"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 75:13; 29:14; 11:43; 11:59. Source: https://myislam.org/al-muakhkhir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah advances whom He wills in rank and status — He elevated the rank of the Prophets, the martyrs, and the righteous above others. He also advances the time of provision for some and delays it for others, all with perfect wisdom. The Prophet ﷺ said: \"Indeed, Allah has chosen Isma'il from the children of Ibrahim\" (Sahih al-Bukhari 3359), showing how Allah advances whom He chooses. The believer should strive to be among those whom Allah advances in rank through good deeds and sincerity.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muqaddim"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 72
+        },
+        {
+          "id": "asma-073",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Awwal",
+            "ar": "الأول"
+          },
+          "arabic": "الْأَوَّلُ",
+          "transliteration": "Al-Awwal",
+          "translation": {
+            "en": "The First, The Pre-Existing",
+            "ar": "الأول"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 57:3; 2:156; 29:51. Source: https://myislam.org/al-awwal/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah delays the punishment of the wrongdoers to give them time for repentance: \"And your Lord is Forgiving, the Lord of Mercy. If He willed, He could have taken them away for what they earned\" (Quran 18:58). He also delays the time of death and provision for whom He wills. Every delay has a purpose known only to Him. The Prophet ﷺ said: \"No one's lifespan is increased or decreased except by a decree that has already been written\" (Sahih al-Bukhari 6609), reminding us that all timing is in Allah's hands.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mu'akhkhir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 73
+        },
+        {
+          "id": "asma-074",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Akhir",
+            "ar": "الآخر"
+          },
+          "arabic": "الْآخِرُ",
+          "transliteration": "Al-Akhir",
+          "translation": {
+            "en": "The Last, The Ever-Remaining",
+            "ar": "الآخر"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 57:3; 2:156; 29:51. Source: https://myislam.org/al-akhir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is the First and the Last, the Manifest and the Hidden\" (Quran 57:3). He existed before time, before space, before anything was created. There was nothing, and then there was Allah, and then He created everything. The Prophet ﷺ used to say: \"O Allah, You are the First, there is nothing before You, and You are the Last, there is nothing after You\" (Sahih Muslim 2713). This Name gives the believer perspective — all worldly things are temporary, but Allah is eternal.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-awwal"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 74
+        },
+        {
+          "id": "asma-075",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Az-Zahir",
+            "ar": "الظاهر"
+          },
+          "arabic": "الظَّاهِرُ",
+          "transliteration": "Az-Zahir",
+          "translation": {
+            "en": "The Manifest, The Highest",
+            "ar": "الظاهر"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 57:3; 6:103; 7:143; 42:51; 36:82; 6:120. Source: https://myislam.org/az-zaahir/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is the First and the Last\" (Quran 57:3). After everything in the heavens and the earth perishes, only His Face will remain: \"Everything upon the earth will perish, and there will remain the Face of your Lord, Owner of Majesty and Honor\" (Quran 55:26-27). He is the final destination and the eternal reality. The Prophet ﷺ used to say in prayer: \"O Allah, You are the First, there is nothing before You, and You are the Last, there is nothing after You\" (Sahih Muslim 2713).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-aakhir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 75
+        },
+        {
+          "id": "asma-076",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Batin",
+            "ar": "الباطن"
+          },
+          "arabic": "الْبَاطِنُ",
+          "transliteration": "Al-Batin",
+          "translation": {
+            "en": "The Hidden One, Knower of the Hidden",
+            "ar": "الباطن"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 57:3; 6:103; 7:143; 42:51; 36:82; 6:120. Source: https://myislam.org/al-baatin/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is the First and the Last, the Manifest and the Hidden\" (Quran 57:3). His existence is manifest through His signs in creation — the stars, the seas, the mountains, the perfect design of the human body, the cycle of day and night, all point unmistakably to a Creator. The Quran says: \"We will show them Our signs in the horizons and within themselves until it becomes clear to them that it is the truth\" (Quran 41:53). The Prophet ﷺ said: \"Reflect upon the creation of Allah but do not reflect upon the essence of Allah\" (Musnad Ahmad).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "az-zaahir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 76
+        },
+        {
+          "id": "asma-077",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Wali",
+            "ar": "الوالي"
+          },
+          "arabic": "الْوَالِي",
+          "transliteration": "Al-Wali",
+          "translation": {
+            "en": "The Sole Governor",
+            "ar": "الوالي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 8:30; 3:26; 6:102; 2:257. Source: https://myislam.org/al-wali/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"He is the First and the Last, the Manifest and the Hidden, and He is Knowing of all things\" (Quran 57:3). Though we cannot see Allah with our physical eyes, we know Him through His signs in creation, His revelation in the Quran, and the light of faith (nur al-iman) that He places in the heart. The Quran says: \"Vision perceives Him not, but He perceives [all] vision\" (Quran 6:103). This Name teaches that the deepest realities are perceived not with the eyes but with the heart.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-baatin"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 77
+        },
+        {
+          "id": "asma-078",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muta'ali",
+            "ar": "المتعالي"
+          },
+          "arabic": "الْمُتَعَالِي",
+          "transliteration": "Al-Muta'ali",
+          "translation": {
+            "en": "The Most Exalted",
+            "ar": "المتعالي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 92:20; 22:62; 42:4; 27:63; 13:9. Source: https://myislam.org/al-mutaali/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "He manages the affairs of the entire universe perfectly: the orbits of planets, the cycle of life and death, the rise and fall of nations, the beating of every heart — all under His perfect governance. Nothing happens in the heavens or on earth except by His command. The Prophet ﷺ said: \"Be mindful of Allah and He will be mindful of you\" (Sunan at-Tirmidhi 2516). The believer who recognizes Al-Wali submits to His governance and finds peace in knowing that all affairs are in the best of hands.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-wali"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 78
+        },
+        {
+          "id": "asma-079",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Barr",
+            "ar": "البر"
+          },
+          "arabic": "الْبَرُّ",
+          "transliteration": "Al-Barr",
+          "translation": {
+            "en": "The Most Kind, the Source of Goodness",
+            "ar": "البر"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 52:28; 2:185. Source: https://myislam.org/al-barr/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"The Knower of the unseen and the witnessed, the Grand, the Most Exalted\" (Quran 13:9). He is exalted above all human conceptions, above having any partners, above any need, and above any deficiency. The Prophet ﷺ said: \"Allah the Exalted says: Pride is My cloak and greatness is My garment, so whoever competes with Me in either of these, I will cast him into the Hellfire\" (Sahih Muslim 2745). This Name teaches the servant to humble themselves before the Most Exalted.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "kindness",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muta'ali"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 79
+        },
+        {
+          "id": "asma-080",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "At-Tawwab",
+            "ar": "التواب"
+          },
+          "arabic": "التَّوَّابُ",
+          "transliteration": "At-Tawwab",
+          "translation": {
+            "en": "The Accepter of Repentance, The Ever-Relenting",
+            "ar": "التواب"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/allahs-name-at-tawwab-the-one-who-accepts-repentance-khutbah",
+            "notes": "Appears in: 2:54; 9:104; 52:32; 39:53; 4:27; 2:37; 2:160. Source: https://myislam.org/at-tawwab/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, we used to supplicate Him before. Indeed, it is He who is the Beneficent, the Merciful\" (Quran 52:28). All goodness in the universe originates from Him — every act of kindness, every blessing, every moment of joy. He is good to His servants in this world and the Hereafter. The Prophet ﷺ taught a dua: \"O Allah, make me good inwardly and outwardly\" (Sahih Ibn Majah 3871). The name \"Ibrahim\" contains this root, and Prophet Ibrahim was known for his goodness and hospitality.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "tawbah",
+            "asma-ul-husna",
+            "divine-names",
+            "al-barr"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 80
+        },
+        {
+          "id": "asma-081",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muntaqim",
+            "ar": "المنتقم"
+          },
+          "arabic": "الْمُنْتَقِمُ",
+          "transliteration": "Al-Muntaqim",
+          "translation": {
+            "en": "The Avenger",
+            "ar": "المنتقم"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 29:14; 26:116; 54:9; 71:28; 54:10; 54:11; 7:136; 11:34; 43:41; 44:16; 3:4. Source: https://myislam.org/al-muntaqim/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Then Adam received from his Lord [some] words, and He accepted his repentance\" (Quran 2:37). The intensive form (Tawwab, not Ta'ib) shows He accepts repentance repeatedly and abundantly. The door of repentance is always open. The Prophet ﷺ said: \"Allah extends His hand at night to accept the repentance of the one who sinned during the day, and He extends His hand during the day to accept the repentance of the one who sinned at night\" (Sahih Muslim 2759). This Name gives the sinner hope — no sin is too great for Allah's forgiveness.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "at-tawwab"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 81
+        },
+        {
+          "id": "asma-082",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-'Afuww",
+            "ar": "العفو"
+          },
+          "arabic": "الْعَفُوُّ",
+          "transliteration": "Al-'Afuww",
+          "translation": {
+            "en": "The Pardoner",
+            "ar": "العفو"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 4:149; 22:60; 12:87; 25:70; 97:1. Source: https://myislam.org/al-afuw/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And whoever avenges himself after having been wronged — those have not upon them any cause [for blame]\" (Quran 42:41). His vengeance is always just, measured, and never excessive or arbitrary. It is a warning to those who oppress others and persist in sin without repenting. The Quran tells the story of Pharaoh, who was destroyed despite all the warnings: \"So We seized him and his soldiers and threw them into the sea\" (Quran 28:40). This Name balances Allah's mercy with His justice.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "forgiveness",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muntaqim"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 82
+        },
+        {
+          "id": "asma-083",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ar-Ra'uf",
+            "ar": "الرؤوف"
+          },
+          "arabic": "الرَّؤُوفُ",
+          "transliteration": "Ar-Ra'uf",
+          "translation": {
+            "en": "The Most Kind, the Compassionate",
+            "ar": "الرؤوف"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 59:10; 57:9; 24:20; 9:117; 2:207. Source: https://myislam.org/ar-rauf/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And let them pardon and overlook. Would you not like that Allah should forgive you?\" (Quran 24:22). Al-Afuww goes beyond Al-Ghafur — while Al-Ghafur forgives, Al-Afuww completely wipes away and removes all trace of the sin. The Prophet ﷺ taught his companions to say: \"O Allah, You are Al-Afuww, You love to pardon, so pardon me\" (Sunan at-Tirmidhi 3513), especially during the Night of Decree (Laylat al-Qadr). This is the most comprehensive form of divine forgiveness — total erasure of the record of sin.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "mercy",
+            "asma-ul-husna",
+            "divine-names",
+            "al-afuww"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 83
+        },
+        {
+          "id": "asma-084",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Malik al-Mulk",
+            "ar": "مالك الملك"
+          },
+          "arabic": "مَالِكُ الْمُلْكِ",
+          "transliteration": "Malikul-Mulk",
+          "translation": {
+            "en": "Master of the Dominion, Owner of the Kingdom",
+            "ar": "مالك الملك"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:160; 3:26; 24:42; 1:4; 2:258; 27:19. Source: https://myislam.org/malikul-mulk/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And ever is your Lord, the All-Knowing, Kind\" (Quran 17:25). Ar-Ra'oof represents a special, tender form of compassion — a gentle kindness that is more delicate and intimate than general Rahmah. The Prophet ﷺ was described in the Quran as \"Ra'oofun Rahim\" (9:128) — full of kindness and mercy toward the believers. This Name teaches that Allah's mercy is not distant or cold but warm, personal, and tender. The Prophet ﷺ said: \"He who shows no mercy to people, Allah will show no mercy to him\" (Sahih al-Bukhari 5997).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "ar-ra'oof"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 84
+        },
+        {
+          "id": "asma-085",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Dhul-Jalali wal-Ikram",
+            "ar": "ذو الجلال والإكرام"
+          },
+          "arabic": "ذُو الْجَلَالِ وَالْإِكْرَامِ",
+          "transliteration": "Dhul-Jalali wal-Ikram",
+          "translation": {
+            "en": "Possessor of Glory and Honour",
+            "ar": "ذو الجلال والإكرام"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 55:27; 55:78. Source: https://myislam.org/zul-jalaali-wal-ikram/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Say: O Allah, Owner of Sovereignty, You give sovereignty to whom You will and You take sovereignty away from whom You will\" (Quran 3:26). All political authority, all power, all dominion belongs to Allah alone. Kings, presidents, and rulers are merely temporary custodians who will one day answer to the true King. The Prophet ﷺ used to say: \"O Allah, Sovereign of all sovereignty, You give sovereignty to whom You will and You take it away from whom You will\" (Sahih Muslim 2713). This Name reminds the believer that true power and authority belong only to Allah.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "majesty",
+            "asma-ul-husna",
+            "divine-names",
+            "malik",
+            "al-mulk"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 85
+        },
+        {
+          "id": "asma-086",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Muqsit",
+            "ar": "المقسط"
+          },
+          "arabic": "الْمُقْسِطُ",
+          "transliteration": "Al-Muqsit",
+          "translation": {
+            "en": "The Equitable, the Just",
+            "ar": "المقسط"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 21:47; 16:111; 3:18; 5:42; 49:9; 60:8. Source: https://myislam.org/al-muqsit/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ would say after prayer: \"Allahumma antas-Salam wa minkas-Salam, tabarakta ya Dhal-Jalali wal-Ikram\" (O Allah, You are the Source of Peace, and from You comes peace. Blessed are You, O Possessor of Majesty and Generosity) (Sahih Muslim 591). This combination shows that Allah's majesty does not prevent His generosity — He is both awesome in power and overflowing in kindness. The Quran says: \"Blessed is the Name of your Lord, Owner of Majesty and Honor\" (Quran 55:78). Calling upon Allah by this Name brings both reverence and hope.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "justice",
+            "asma-ul-husna",
+            "divine-names",
+            "dhul",
+            "jalali",
+            "wal-ikram"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 86
+        },
+        {
+          "id": "asma-087",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Jami'",
+            "ar": "الجامع"
+          },
+          "arabic": "الْجَامِعُ",
+          "transliteration": "Al-Jami'",
+          "translation": {
+            "en": "The Gatherer, the Uniter",
+            "ar": "الجامع"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:9; 42:7; 77:38; 52:21; 75:3. Source: https://myislam.org/al-jami/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, Allah does not do injustice, [even] as much as an atom's weight\" (Quran 4:40). His justice is perfect and comprehensive — no good deed goes unrewarded and no evil deed goes unpunished, except what He forgives by His mercy. The Prophet ﷺ said: \"Allah the Exalted said: O My servants, I have forbidden injustice for Myself and have made it forbidden amongst you, so do not oppress one another\" (Sahih Muslim 2577). The believer should strive to be equitable in all dealings, reflecting the justice of Al-Muqsit.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-muqsit"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 87
+        },
+        {
+          "id": "asma-088",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Ghani",
+            "ar": "الغني"
+          },
+          "arabic": "الْغَنِيُّ",
+          "transliteration": "Al-Ghani",
+          "translation": {
+            "en": "The Self-Sufficient, The Free of All Need",
+            "ar": "الغني"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 3:181; 27:40; 6:133; 7:17; 2:263. Source: https://myislam.org/al-ghaniy/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Our Lord, surely You will gather the people for a Day about which there is no doubt\" (Quran 3:9). On the Day of Judgment, Allah will gather all of humanity — from the first to the last — in one place for the ultimate reckoning. He also gathers hearts, unites the believers, and brings together all conditions and circumstances according to His wisdom. The Prophet ﷺ said: \"Allah will gather the creation on the Day of Resurrection barefoot, naked, and uncircumcised\" (Sahih al-Bukhari 6527).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "ghina",
+            "asma-ul-husna",
+            "divine-names",
+            "al-jami'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 88
+        },
+        {
+          "id": "asma-089",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mughni",
+            "ar": "المغني"
+          },
+          "arabic": "الْمُغْنِي",
+          "transliteration": "Al-Mughni",
+          "translation": {
+            "en": "The Enricher",
+            "ar": "المغني"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:186; 21:90; 3:38; 21:89; 53:48; 28:24; 27:62. Source: https://myislam.org/al-mughni/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"O mankind, you are those in need of Allah, while Allah is the Free of need, the Praiseworthy\" (Quran 35:15). He needs nothing from anyone — not our worship, not our obedience, not our gratitude. We need Him for every breath, every heartbeat, every moment of existence. The Prophet ﷺ said: \"The hand of Allah is full and it is not diminished by any spending, night or day\" (Sahih al-Bukhari 7411). This Name humbles the servant and fills the heart with reverence and dependence on the One who needs nothing.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "rizq",
+            "asma-ul-husna",
+            "divine-names",
+            "al-ghaniyy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 89
+        },
+        {
+          "id": "asma-090",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Mani'",
+            "ar": "المانع"
+          },
+          "arabic": "الْمَانِعُ",
+          "transliteration": "Al-Mani'",
+          "translation": {
+            "en": "The Withholder",
+            "ar": "المانع"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 59:7; 22:38; 67:21. Source: https://myislam.org/al-mani/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And whoever fears Allah — He will make for him a way out. And will provide for him from where he does not expect\" (Quran 65:2-3). True wealth is contentment with what Allah has given, for the Prophet ﷺ said: \"Wealth is not in having many possessions; rather, true wealth is the richness of the soul\" (Sahih al-Bukhari 6446). Allah enriches with both material provision and spiritual contentment. The richest person is the one who is satisfied with what Allah has allotted for them.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mughni"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 90
+        },
+        {
+          "id": "asma-091",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ad-Darr",
+            "ar": "الضار"
+          },
+          "arabic": "الضَّارُّ",
+          "transliteration": "Ad-Darr",
+          "translation": {
+            "en": "The Distresser (the One who tests)",
+            "ar": "الضار"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 4:78; 10:106; 6:71; 26:77; 4:123; 21:69. Source: https://myislam.org/ad-darr/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And whatever you have of favor — it is from Allah. And when adversity touches you, it is to Him you cry for help\" (Quran 16:53). He withholds from some what He gives to others, and each case has perfect wisdom behind it. Sometimes withholding is a mercy in disguise — protecting the servant from what would harm them. The Prophet ﷺ used to seek refuge in Allah from the withholding of Al-Mani' and the loss of His blessings. This Name teaches patience and trust during times of difficulty.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-mani'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 91
+        },
+        {
+          "id": "asma-092",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "An-Nafi'",
+            "ar": "النافع"
+          },
+          "arabic": "النَّافِعُ",
+          "transliteration": "An-Nafi'",
+          "translation": {
+            "en": "The Propitious, The Benefactor",
+            "ar": "النافع"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 4:78; 10:106; 6:71; 26:77; 4:123; 21:69. Source: https://myislam.org/an-naafi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And We test you with evil and with good as trial\" (Quran 21:35). Hardship is sometimes a test of faith, sometimes a purification of sins, and sometimes a just punishment. The Prophet ﷺ said: \"No fatigue, illness, anxiety, sorrow, harm, or distress afflicts a Muslim, even the prick of a thorn, but Allah expiates some of his sins thereby\" (Sahih al-Bukhari 5640). Every difficulty contains hidden mercy for the patient believer. Ad-Darr paired with An-Nafi' (the Benefactor) shows that all benefit and harm come from Allah.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "ad-darr"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 92
+        },
+        {
+          "id": "asma-093",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "An-Nur",
+            "ar": "النور"
+          },
+          "arabic": "النُّورُ",
+          "transliteration": "An-Nur",
+          "translation": {
+            "en": "The Light",
+            "ar": "النور"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 6:103; 6:59; 5:15; 24:35; 66:8; 7:143; 36:82; 57:12. Source: https://myislam.org/an-noor/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Paired with Ad-Darr, this Name shows that all benefit and harm ultimately come from Allah. He is the source of every good thing: health, knowledge, guidance, provision, faith, and Paradise itself. The Prophet ﷺ would say: \"O Allah, benefit me by what You have taught me, and teach me that which benefits me, and increase me in knowledge\" (Sunan at-Tirmidhi 3483). Recognizing An-Nafi' fills the heart with gratitude, knowing that every blessing — no matter how small — comes from the Benefactor.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "light",
+            "asma-ul-husna",
+            "divine-names",
+            "an-nafi'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 93
+        },
+        {
+          "id": "asma-094",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Hadi",
+            "ar": "الهادي"
+          },
+          "arabic": "الْهَادِي",
+          "transliteration": "Al-Hadi",
+          "translation": {
+            "en": "The Guide",
+            "ar": "الهادي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 33:21; 7:158; 28:56; 20:50; 87:3; 17:9; 11:12; 22:49. Source: https://myislam.org/al-hadi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Allah is the Light of the heavens and the earth\" (Quran 24:35), followed by the famous Ayat an-Nur (Verse of Light) with its beautiful parable. He guides hearts to truth, illuminates the path of the believers, and will be the light of the believers on the Day of Judgment when all other light is extinguished. The Prophet ﷺ said: \"Guidance and knowledge are the light of the believer\" (Sahih Ibn Majah 224). The Quran itself is described as a light: \"We have sent down to you clear proofs\" (Quran 4:174).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "guidance",
+            "asma-ul-husna",
+            "divine-names",
+            "an-nur"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 94
+        },
+        {
+          "id": "asma-095",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Badi'",
+            "ar": "البديع"
+          },
+          "arabic": "الْبَدِيعُ",
+          "transliteration": "Al-Badi'",
+          "translation": {
+            "en": "The Incomparable Originator",
+            "ar": "البديع"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:117; 6:101; 50:6. Source: https://myislam.org/al-badi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Indeed, [O Muhammad], you do not guide whom you like, but Allah guides whom He wills\" (Quran 28:56). Guidance is a gift from Allah alone — no one can guide themselves or others without His permission. The Prophet ﷺ would say: \"O Allah, guide me among those You have guided\" (Sahih Muslim 771). The Quran describes itself as a guide: \"This is the Book about which there is no doubt, a guidance for those conscious of Allah\" (Quran 2:2). Al-Hadi shows the way to peace in this world and Paradise in the next.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-hadi"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 95
+        },
+        {
+          "id": "asma-096",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Baqi",
+            "ar": "الباقي"
+          },
+          "arabic": "الْبَاقِي",
+          "transliteration": "Al-Baqi",
+          "translation": {
+            "en": "The Ever-Lasting",
+            "ar": "الباقي"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 16:96; 7:115; 28:60; 12:33; 55:26; 7:117; 20:72. Source: https://myislam.org/al-baaqi/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Originator of the heavens and the earth\" (Quran 2:117). He created the universe in ways unprecedented and unrepeatable by anyone else. No one before Him created anything, and no one after Him can create like He does. Every new thing in creation — every snowflake, every fingerprint, every sunset — is His unique innovation. The Prophet ﷺ used to say: \"O Allah, Lord of the heavens and Lord of the earth, Lord of the Magnificent Throne, our Lord and Lord of all things, Originator of the heavens and the earth\" (Sahih Muslim 771).",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "eternity",
+            "asma-ul-husna",
+            "divine-names",
+            "al-badi'"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 96
+        },
+        {
+          "id": "asma-097",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Al-Warith",
+            "ar": "الوارث"
+          },
+          "arabic": "الْوَارِثُ",
+          "transliteration": "Al-Warith",
+          "translation": {
+            "en": "The Inheritor",
+            "ar": "الوارث"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 15:23; 21:89; 40:16; 28:58; 2:261. Source: https://myislam.org/al-warith/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"Everyone upon the earth will perish, and there will remain the Face of your Lord, Owner of Majesty and Honor\" (Quran 55:26-27). Everything we see around us — mountains, oceans, stars, civilizations — will eventually fade and pass away, but Allah is eternal and everlasting. The Prophet ﷺ said: \"The most truthful words the pre-Islamic Arabs said were the words of Labid: Indeed, everything besides Allah is falsehood\" (Sahih al-Bukhari 3848). Clinging to the Everlasting while the world passes away is the secret of true contentment.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "asma-ul-husna",
+            "divine-names",
+            "al-baqi"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 97
+        },
+        {
+          "id": "asma-098",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "Ar-Rashid",
+            "ar": "الرشيد"
+          },
+          "arabic": "الرَّشِيدُ",
+          "transliteration": "Ar-Rashid",
+          "translation": {
+            "en": "The Guide to the Right Path",
+            "ar": "الرشيد"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 2:256; 72:14; 46:30; 19:76; 18:10; 1:6. Source: https://myislam.org/ar-rasheed/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And indeed, it is We who give life and cause death, and We are the Inheritor\" (Quran 15:23). After all creation passes away, Allah remains as the sole inheritor of everything. Whatever people leave behind — wealth, power, knowledge, beauty — ultimately belongs to Allah. The Prophet ﷺ would say: \"O Allah, make me live poor and make me die poor, and gather me among the poor on the Day of Resurrection\" (Sunan at-Tirmidhi 2352), for the poor have less attachment to the world that Al-Warith will inherit.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "guidance",
+            "asma-ul-husna",
+            "divine-names",
+            "al-warith"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 98
+        },
+        {
+          "id": "asma-099",
+          "category_id": "asma-all-99",
+          "title": {
+            "en": "As-Sabur",
+            "ar": "الصبور"
+          },
+          "arabic": "الصَّبُورُ",
+          "transliteration": "As-Sabur",
+          "translation": {
+            "en": "The Patient, the Forbearing",
+            "ar": "الصبور"
+          },
+          "reference": {
+            "collection": "Quran & Sunnah",
+            "book": "",
+            "chapter": "",
+            "hadith": "Tirmidhi 3507",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Appears in: 35:45; 16:27; 2:153; 3:200; 70:5. Source: https://myislam.org/as-sabur/"
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah says: \"And obey Allah and His Messenger, and do not dispute and [thus] lose courage and [then] your strength would depart; and be patient. Indeed, Allah is with the patient\" (Quran 8:46). His patience is perfect — He gives the disbeliever an entire lifetime to repent. He watches the sinner return to the same sin again and again, yet continues to provide for them, give them health, and keep the doors of repentance open. The Prophet ﷺ said: \"No one is more patient than Allah, hearing abusive language\" (Sahih al-Bukhari 7502). For the believer, patience (sabr) is half of faith.",
+            "ar": ""
+          },
+          "tags": [
+            "asma",
+            "patience",
+            "asma-ul-husna",
+            "divine-names",
+            "as-sabur"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 99
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "nur-al-dhikr",
+  "version": "2.2.0",
+  "description": "An offline-first, installable web app for daily Islamic remembrance — Adhkar, Duas, the 99 Names of Allah, prayer times, a Hijri calendar, a tasbih counter, and a full content editor.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{js,css,html,json,md}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{js,css,html,json,md}\" --ignore-path .prettierignore",
+    "test": "node --test tests/",
+    "validate:data": "node --test tests/data.test.js",
+    "check": "npm run lint && npm run format:check && npm test"
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR_USERNAME/nur-al-dhikr.git"
+  }
+}

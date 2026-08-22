@@ -1,0 +1,32 @@
+/* ==========================================================================
+   animations.css
+   ========================================================================== */
+
+.view { animation: viewIn var(--dur-slow) var(--ease-standard); }
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card { animation: cardIn var(--dur-base) var(--ease-standard); }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.focus { animation: focusIn var(--dur-slow) var(--ease-standard); }
+@keyframes focusIn { from { opacity: 0; } to { opacity: 1; } }
+
+.counter-pill, .focus__counter, .tasbih-dial { transition: transform var(--dur-fast) var(--ease-spring); }
+.counter-pill:active, .focus__counter:active, .tasbih-dial:active { transform: scale(0.94); }
+
+.icon-btn--active .icon { animation: pulseHeart var(--dur-slow) var(--ease-spring); }
+@keyframes pulseHeart {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}

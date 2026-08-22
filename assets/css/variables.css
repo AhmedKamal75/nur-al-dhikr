@@ -1,0 +1,155 @@
+/* ==========================================================================
+   variables.css — Design tokens for Nūr al-Dhikr
+   Aesthetic direction: a quiet, mosque-inspired calm — emerald/teal as the
+   grounding color (evoking tilework and manuscript ink), warm ivory paper
+   tones for light mode, deep near-black slate for dark mode, and a single
+   restrained geometric motif (an 8-point star / arabesque line) used as the
+   signature decorative element rather than scattered ornamentation.
+   Palette + shape are switched at runtime by theme.js via data-attributes;
+   this file defines the neutral scale and the semantic aliases everything
+   else in the app consumes.
+   ========================================================================== */
+
+:root {
+  /* ---- Neutral scale (light mode) ---- */
+  --color-bg: #FAF9F5;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #F1EFE7;
+  --color-surface-raised: #FFFFFF;
+  --color-border: #E7E4D9;
+  --color-border-strong: #D3CFC0;
+  --color-text: #201F1A;
+  --color-text-secondary: #57554B;
+  --color-text-muted: #716D5C;
+  --color-overlay: rgba(20, 20, 16, 0.48);
+
+  /* ---- Brand (palette-driven; theme.js sets the -raw values) ---- */
+  --color-primary-raw: #0F766E;
+  --color-accent-raw: #10B981;
+  --color-primary: var(--color-primary-raw);
+  --color-accent: var(--color-accent-raw);
+  --color-on-primary: #FFFFFF;
+
+  /* ---- Semantic ---- */
+  --color-danger: #B91C1C;
+  --color-danger-bg: #FEF2F2;
+  --color-success: #15803D;
+  --color-success-bg: #F0FDF4;
+  --color-warning: #B45309;
+  --color-warning-bg: #FFFBEB;
+
+  /* ---- Grade chip colors ---- */
+  --grade-quran: #0F766E;
+  --grade-sahih: #15803D;
+  --grade-hasan: #0369A1;
+  --grade-daif: #B45309;
+  --grade-athar: #6D28D9;
+  --grade-custom: #57534E;
+  --grade-unknown: #78716C;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 56px;
+  --space-10: 72px;
+
+  /* ---- Radius (shape-driven) ---- */
+  --radius-card: 20px;
+  --radius-sm: calc(var(--radius-card) * 0.4);
+  --radius-md: calc(var(--radius-card) * 0.7);
+  --radius-lg: var(--radius-card);
+  --radius-pill: 999px;
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 1px 2px rgba(20, 20, 16, 0.06);
+  --shadow-md: 0 4px 16px rgba(20, 20, 16, 0.08);
+  --shadow-lg: 0 12px 32px rgba(20, 20, 16, 0.12);
+  --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+
+  /* ---- Typography ---- */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-arabic: 'Amiri', 'Traditional Arabic', 'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+  --font-scale: 1;
+  --arabic-font-scale: 1;
+
+  --fs-caption: calc(0.75rem * var(--font-scale));
+  --fs-sm: calc(0.875rem * var(--font-scale));
+  --fs-base: calc(1rem * var(--font-scale));
+  --fs-md: calc(1.125rem * var(--font-scale));
+  --fs-lg: calc(1.375rem * var(--font-scale));
+  --fs-xl: calc(1.75rem * var(--font-scale));
+  --fs-2xl: calc(2.25rem * var(--font-scale));
+
+  --fs-arabic-card: calc(1.75rem * var(--arabic-font-scale));
+  --fs-arabic-focus: calc(2.5rem * var(--arabic-font-scale));
+
+  --lh-tight: 1.25;
+  --lh-normal: 1.55;
+  --lh-arabic: 2.05;
+
+  /* ---- Layout ---- */
+  --topbar-height: 60px;
+  --bottomnav-height: 64px;
+  --sidenav-width: 240px;
+  --content-max-width: 720px;
+
+  /* ---- Motion ---- */
+  --dur-fast: 100ms;
+  --dur-base: 160ms;
+  --dur-slow: 280ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+[data-theme="dark"] {
+  --color-bg: #0C0F0D;
+  --color-surface: #131715;
+  --color-surface-alt: #181D1A;
+  --color-surface-raised: #1B211D;
+  --color-border: #262C27;
+  --color-border-strong: #333A33;
+  --color-text: #EDEBE3;
+  --color-text-secondary: #B7B4A8;
+  --color-text-muted: #938F80;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+  --color-on-primary: #FFFFFF;
+
+  --color-danger-bg: #2A1414;
+  --color-success-bg: #0F2418;
+  --color-warning-bg: #2A2010;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+[data-high-contrast="true"] {
+  --color-border: var(--color-border-strong);
+  --color-text-secondary: var(--color-text);
+  --color-text-muted: var(--color-text-secondary);
+}
+
+[data-high-contrast="true"][data-theme="light"] {
+  --color-bg: #FFFFFF;
+  --color-surface-alt: #F0F0EC;
+}
+
+[data-high-contrast="true"][data-theme="dark"] {
+  --color-bg: #000000;
+  --color-surface: #0A0C0B;
+}
+
+@font-face {
+  font-family: 'Amiri';
+  src: local('Amiri'), local('Amiri Regular');
+  font-weight: 400 700;
+  font-display: swap;
+}

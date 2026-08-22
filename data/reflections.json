@@ -1,0 +1,3271 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "id": "reflections",
+    "name": {
+      "en": "Reflections & Duas",
+      "ar": "تأملات وأدعية"
+    },
+    "description": {
+      "en": "Duas and reflections inspired by the Yaqeen Institute series with Dr. Omar Suleiman",
+      "ar": "أدعية وتأملات مستوحاة من سلاسل معهد يقين للدكتور عمر سليمان"
+    },
+    "version": "1.0.0",
+    "source": {
+      "en": "Yaqeen Institute series (topics adapted from authentic sources)",
+      "ar": "سلاسل معهد يقين (مواضيع مقتبسة من مصادر موثوقة)"
+    },
+    "license": "Content themes inspired by Yaqeen Institute; duas from authentic sources",
+    "homepage": "",
+    "authors": [],
+    "updated": "2026-08-07"
+  },
+  "categories": [
+    {
+      "id": "dua-away",
+      "section_id": "reflections",
+      "name": {
+        "en": "A Du'a Away",
+        "ar": "دعوة بعيداً"
+      },
+      "description": {
+        "en": "Comprehensive supplications for every need",
+        "ar": "أدعية شاملة لكل حاجة"
+      },
+      "order": 1,
+      "icon": "heart",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "ref-dua-away-001",
+          "category_id": "dua-away",
+          "title": {
+            "en": "The Most Comprehensive Du'a",
+            "ar": "أجمع الدعاء"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنَ الْخَيْرِ كُلِّهِ عَاجِلِهِ وَآجِلِهِ، مَا عَلِمْتُ مِنْهُ وَمَا لَمْ أَعْلَمْ، وَأَعُوذُ بِكَ مِنَ الشَّرِّ كُلِّهِ عَاجِلِهِ وَآجِلِهِ مَا عَلِمْتُ مِنْهُ وَمَا لَمْ أَعْلَمْ، اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ خَيْرِ مَا سَأَلَكَ عَبْدُكَ، وَأَعُوذُ بِكَ مِنْ شَرِّ مَا عَاذَ بِهِ عَبْدُكَ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَمَا قَرَّبَ إِلَيْهَا مِنْ قَوْلٍ أَوْ عَمَلٍ، وَأَعُوذُ بِكَ مِنَ النَّارِ وَمَا قَرَّبَ إِلَيْهَا مِنْ قَوْلٍ أَوْ عَمَلٍ، وَأَسْأَلُكَ أَنْ تَجْعَلَ كُلَّ قَضَاءٍ قَضَيْتَهُ لِي خَيْراً",
+          "transliteration": "Allahumma inni as'aluka minal-khayri kullihi 'ajilihi wa ajilihi, ma 'alimtu minhu wa ma lam a'lam, wa a'udhu bika minash-sharri kullihi 'ajilihi wa ajilihi ma 'alimtu minhu wa ma lam a'lam. Allahumma inni as'aluka min khayri ma sa'alaka 'abduka, wa a'udhu bika min sharri ma 'adha bihi 'abduka. Allahumma inni as'alukal-jannata wa ma qarraba ilayha min qawlin aw 'amal, wa a'udhu bika minan-nari wa ma qarraba ilayha min qawlin aw 'amal, wa as'aluka an taj'ala kulla qada'in qadaytahu li khayra.",
+          "translation": {
+            "en": "O Allah, I ask You for all that is good, in this world and in the Hereafter, what I know and what I do not know. I seek refuge in You from all evil, in this world and in the Hereafter, what I know and what I do not know. O Allah, I ask You for the good that Your servant has asked You for, and I seek refuge in You from the evil that Your servant has sought refuge from. O Allah, I ask You for Paradise and whatever words or deeds bring near to it, and I seek refuge in You from the Fire and whatever words or deeds bring near to it. I ask You to make every decree You have decreed for me good.",
+            "ar": "اللهم إني أسألك من الخير كله عاجله وآجله..."
+          },
+          "reference": {
+            "collection": "Sunan Ibn Majah",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3871",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Narrated by Aisha. Classed Sahih by Al-Albani."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The most comprehensive dua ever narrated — encompasses all good in this life and the next.",
+            "ar": "أجمع الدعاء الذي ورد عن النبي ﷺ."
+          },
+          "tags": [
+            "dua",
+            "comprehensive",
+            "jannah",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Featured in A Du'a Away Ep.1 by Dr. Omar Suleiman (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-dua-away-002",
+          "category_id": "dua-away",
+          "title": {
+            "en": "Du'a for Contentment",
+            "ar": "دعاء القناعة"
+          },
+          "arabic": "اللَّهُمَّ اقْسِمْ لَنَا مِنْ خَشْيَتِكَ مَا تَحُولُ بِهِ بَيْنَنَا وَبَيْنَ مَعَاصِيكَ، وَمِنْ طَاعَتِكَ مَا تُبَلِّغُنَا بِهِ جَنَّتَكَ، وَمِنَ الْيَقِينِ مَا تُهَوِّنُ بِهِ عَلَيْنَا مَصَائِبَ الدُّنْيَا، وَمَتِّعْنَا بِأَسْمَاعِنَا وَأَبْصَارِنَا وَقُوَّتِنَا مَا أَحْيَيْتَنَا، وَاجْعَلْهُ الْوَارِثَ مِنَّا، وَاجْعَلْ ثَأْرَنَا عَلَى مَنْ ظَلَمَنَا، وَانْصُرْنَا عَلَى مَنْ عَادَانَا، وَلَا تَجْعَلْ مُصِيبَتَنَا فِي دِينِنَا، وَلَا تَجْعَلِ الدُّنْيَا أَكْبَرَ هَمِّنَا، وَلَا مَبْلَغَ عِلْمِنَا، وَلَا تُسَلِّطْ عَلَيْنَا مَنْ لَا يَرْحَمُنَا",
+          "transliteration": "Allahumma aqsim lana min khashyatika ma tahulu bihi baynana wa bayna ma'asik, wa min ta'atika ma tuballighuna bihi jannataka, wa minal-yaqini ma tuhawwinu bihi 'alayna masa'ibad-dunya, wa matti'na bi-asma'ina wa absarina wa quwwatina ma ahyaytana, waj'alhul-waritha minna, waj'al tha'arana 'ala man zalamana, wansurna 'ala man 'adana, wa la taj'al musibatana fi dinina, wa la taj'alid-dunya akbara hammina, wa la mablagha 'ilmina, wa la tusallit 'alayna man la yarhamuna.",
+          "translation": {
+            "en": "O Allah, apportion to us such fear of You as will come between us and acts of disobedience to You, and such obedience to You as will bring us to Your Garden, and such certainty as will make it easy for us to bear the calamities of this world. Let us enjoy our hearing, sight, and strength as long as You grant us life, and let it be the inheritor from us. Let our vengeance be upon those who wronged us, and aid us against those who show enmity to us. Let no calamity befall our religion, let not the world be our greatest concern, the limit of our knowledge, and do not give power over us to those who do not show us mercy.",
+            "ar": "اللهم اقسم لنا من خشيتك ما يحول به بيننا وبين معاصيك..."
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3502",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Narrated by Abdullah bin Umar."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Hasan by Al-Albani",
+            "ar": "حسنه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Contentment is a du'a away — this dua asks for the balance between fear and hope that brings inner peace.",
+            "ar": "القناعة دعوة بعيداً."
+          },
+          "tags": [
+            "dua",
+            "contentment",
+            "jannah",
+            "protection"
+          ],
+          "related": [],
+          "notes": "Theme from A Du'a Away series.",
+          "order": 2
+        },
+        {
+          "id": "ref-dua-away-003",
+          "category_id": "dua-away",
+          "title": {
+            "en": "Du'a for Decision Making (Istikhara)",
+            "ar": "دعاء الاستخارة"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ، اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الْأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ، وَاقْدُرْ لِي الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ",
+          "transliteration": "Allahumma inni astakhiruka bi'ilmika, wa astaqdiruka biqudratika, wa as'aluka min fadlikal-'azim, fa innaka taqdiru wa la aqdiru, wa ta'lamu wa la a'lamu, wa anta 'allamul-ghuyub. Allahumma in kunta ta'lamu anna hadhal-amra khayrun li fi dini wa ma'ashi wa 'aqibati amri faqdurhu li wa yassirhu li thumma barik li fihi, wa in kunta ta'lamu anna hadhal-amra sharrun li fi dini wa ma'ashi wa 'aqibati amri fasrifhu 'anni wasrifni 'anhu, wa qdur lial-khayra haythu kana thumma ardini bihi.",
+          "translation": {
+            "en": "O Allah, I seek Your guidance (in making a choice) by virtue of Your knowledge, and I seek ability by virtue of Your power, and I ask You of Your great bounty. You have power, I have none. You know, I know not. You are the Knower of hidden things. O Allah, if in Your knowledge, this matter is good for my religion, my livelihood, and the outcome of my affairs, then ordain it for me, make it easy for me, and bless it for me. If in Your knowledge it is bad for my religion, my livelihood, and the outcome of my affairs, then turn it away from me, and turn me away from it. Ordain for me the good wherever it is, and make me content with it.",
+            "ar": "اللهم إني أستخيرك بعلمك..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "6382",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Your decision is a du'a away — the Prophet ﷺ taught this to his Companions as he taught them a surah from the Quran.",
+            "ar": "قرارك دعوة بعيداً."
+          },
+          "tags": [
+            "dua",
+            "istikhara",
+            "decision"
+          ],
+          "related": [],
+          "notes": "Theme from A Du'a Away series.",
+          "order": 3
+        },
+        {
+          "id": "ref-dua-away-004",
+          "category_id": "dua-away",
+          "title": {
+            "en": "Du'a for Companionship",
+            "ar": "دعاء الصحبة"
+          },
+          "arabic": "اللَّهُمَّ أَنْتَ الصَّاحِبُ فِي السَّفَرِ، وَالْخَلِيفَةُ فِي الْأَهْلِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ وَعْثَاءِ السَّفَرِ، وَكَآبَةِ الْمَنْظَرِ، وَالسُّوءِ فِي الْمُنْقَلَبِ فِي الْمَالِ وَالْأَهْلِ",
+          "transliteration": "Allahumma antas-sahibu fis-safar, wal-khalifatu fil-ahl. Allahumma inni a'udhu bika min wa'tha'is-safar, wa ka'abatil-manzar, was-su'i fil-munqalabi fil-mali wal-ahl.",
+          "translation": {
+            "en": "O Allah, You are the Companion on the journey and the Guardian of the family. O Allah, I seek refuge in You from the difficulties of travel, from sorrow at what is seen, and from evil in the return regarding wealth and family.",
+            "ar": "اللهم أنت الصاحب في السفر..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Pilgrimage",
+            "chapter": "",
+            "hadith": "1342",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Companionship is a du'a away — Allah is the best companion in every journey of life.",
+            "ar": "الصحبة دعوة بعيداً."
+          },
+          "tags": [
+            "dua",
+            "travel",
+            "companionship"
+          ],
+          "related": [],
+          "notes": "Theme from A Du'a Away series.",
+          "order": 4
+        },
+        {
+          "id": "ref-dua-away-005",
+          "category_id": "dua-away",
+          "title": {
+            "en": "Du'a for Long Life in Goodness",
+            "ar": "دعاء طول العمر بالخير"
+          },
+          "arabic": "اللَّهُمَّ أَطِلْ عُمْرِي فِي طَاعَتِكَ، وَأَحْسِنْ عَمَلِي، وَتَوَفَّنِي عَلَى مِلَّةِ نَبِيِّكَ مُحَمَّدٍ ﷺ",
+          "transliteration": "Allahumma atil 'umri fi ta'atika, wa ahsin 'amali, wa tawaffani 'ala millati nabiyyika Muhammadin sallallahu 'alayhi wa sallam.",
+          "translation": {
+            "en": "O Allah, prolong my life in Your obedience, make my deeds good, and take my soul upon the religion of Your Prophet Muhammad ﷺ.",
+            "ar": "اللهم أطل عمري في طاعتك..."
+          },
+          "reference": {
+            "collection": "Musnad Ahmad",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Classed Hasan."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Hasan",
+            "ar": "حسن"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "A long life is a du'a away — not just years, but years filled with goodness and obedience.",
+            "ar": "طول العمر دعوة بعيداً."
+          },
+          "tags": [
+            "dua",
+            "life",
+            "obedience"
+          ],
+          "related": [],
+          "notes": "Theme from A Du'a Away series.",
+          "order": 5
+        },
+        {
+          "id": "glm-reflections-dua-away-1",
+          "category_id": "reflections-dua-away",
+          "title": {
+            "en": "Contentment is a Du'a Away",
+            "ar": "رِضَا النَّفْسِ دَعْوَةٌ بَعِيدَةٌ"
+          },
+          "arabic": "اللَّهُمَّ أَرْضِنِي بِمَا قَسَمْتَ لِي، وَلَا تَجْعَلْنِي مِمَّنِ اشْتَاقَ إِلَى مَا لَمْ تُعْطِنِي، وَارْزُقْنِي رِضَاكَ عَمَّا مَنَعْتَنِي",
+          "transliteration": "Allāhumma arḍinī bimā qasamtalī, wa lā tajʿalinī mimmanishtaqa ilā mā lam tuʿṭinī, warzuqnī riḍāka ʿammā manaʿtanī.",
+          "translation": {
+            "en": "O Allah, make me content with what You have allotted for me, and do not make me among those who long for what You have not given me, and bless me with Your contentment regarding what You have withheld from me.",
+            "ar": "اللَّهُمَّ أَرْضِنِي بِمَا قَسَمْتَ لِي، وَلَا تَجْعَلْنِي مِمَّنِ اشْتَاقَ إِلَى مَا لَمْ تُعْطِنِي، وَارْزُقْنِي رِضَاكَ عَمَّا مَنَعْتَنِي"
+          },
+          "reference": {
+            "collection": "Musnad al-Bazzār",
+            "book": "Al-Zawā'id",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "Abū Hurayrah",
+            "grading": "Hasan",
+            "url": "",
+            "notes": "Graded hasan by Al-Albānī in al-Adhkār. Also cited by Ibn al-Qayyim in al-Wabil al-Ṣayyib."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Contentment (ridā) is one of the greatest treasures of the heart. The Prophet ﷺ taught that true wealth is not in having much, but in being content with what Allah has given. This du'a is a shield against the diseases of greed, envy, and perpetual dissatisfaction. Ibn al-Qayyim said that contentment opens the gates of tranquility and closes the doors of anxiety — it is, indeed, just a du'a away.",
+            "ar": "الرِّضَا مِنْ أَعْظَمِ كُنُوزِ الْقَلْبِ. عَلَّمَ النَّبِيُّ ﷺ أَنَّ الْغِنَى الحَقِيقِيَّ لَيْسَ فِي كَثْرَةِ المَالِ بَلْ فِي الرِّضَا بِمَا قَسَمَ اللَّهُ. هَذَا الدُّعَاءُ وِقَايَةٌ مِنْ أَدْوَاءِ الطَّمَعِ وَالحَسَدِ وَعَدَمِ الرِّضَا الدَّائِمِ. قَالَ ابْنُ القَيِّمِ: إِنَّ الرِّضَا يَفْتَحُ أَبْوَابَ السَّكِينَةِ وَيُغْلِقُ أَبْوَابَ القَلَقِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "contentment",
+            "rida",
+            "gratitude",
+            "dua",
+            "inner-peace",
+            "a-dua-away"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "glm-reflections-dua-away-2",
+          "category_id": "reflections-dua-away",
+          "title": {
+            "en": "Patience is a Du'a Away",
+            "ar": "الصَّبْرُ دَعْوَةٌ بَعِيدَةٌ"
+          },
+          "arabic": "رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَثَبِّتْ أَقْدَامَنَا وَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ",
+          "transliteration": "Rabbanā afrigh ʿalaynā ṣabran wa thabbit aqdāmanā wa anṣurnā ʿalā al-qawmi al-kāfirīn.",
+          "translation": {
+            "en": "Our Lord, pour down upon us patience and make our feet firm and give us victory over the disbelieving people.",
+            "ar": "رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَثَبِّتْ أَقْدَامَنَا وَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Surah al-Baqarah",
+            "chapter": "2",
+            "hadith": "250",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": "The du'a of the believers under the leadership of Ṭālūt (Saul) before facing Jālūt (Goliath)."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Quran teaches us that patience is not a passive state — it is an active, sought-after gift from Allah. The word \"afrigh\" (pour down) suggests that patience flows abundantly from above, like rain upon barren soil. When the Companions faced the army at Badr, outnumbered and outmatched, they did not rely on their own strength — they asked Allah to \"pour down\" patience upon them. In our own trials, the lesson is the same: we do not manufacture patience alone; we ask for it, and it comes. Patience, too, is just a du'a away.",
+            "ar": "يُعَلِّمُنَا القُرْآنُ أَنَّ الصَّبْرَ لَيْسَ حَالَةً سَلْبِيَّةً — بَلْ هُوَ هِبَةٌ نَشِطَةٌ تُطْلَبُ مِنَ اللَّهِ. كَلِمَةُ \"أَفْرِغْ\" تُوحِي بِأَنَّ الصَّبْرَ يَنْزِلُ كَثِيرًا مِنْ فَوْقُ كَالمَطَرِ. حِينَ وَاجَهَ الصَّحَابَةُ جَيْشَ بَدْرٍ لَمْ يَعْتَمِدُوا عَلَى قُوَّتِهِمْ — بَلْ سَأَلُوا اللَّهَ أَنْ يُفْرِغَ عَلَيْهِمُ الصَّبْرَ. الصَّبْرُ دَعْوَةٌ بَعِيدَةٌ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "patience",
+            "sabr",
+            "trials",
+            "steadfastness",
+            "quran",
+            "a-dua-away"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
+        },
+        {
+          "id": "glm-reflections-dua-away-3",
+          "category_id": "reflections-dua-away",
+          "title": {
+            "en": "Guidance is a Du'a Away",
+            "ar": "الهِدَايَةُ دَعْوَةٌ بَعِيدَةٌ"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى",
+          "transliteration": "Allāhumma innī as'alukal-hudā wat-tuqā wal-ʿafāfa wal-ghinā.",
+          "translation": {
+            "en": "O Allah, I ask You for guidance, piety, chastity, and self-sufficiency.",
+            "ar": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ Muslim",
+            "book": "Al-Adhkār",
+            "chapter": "",
+            "hadith": "2723",
+            "narrator": "Ibn Masʿūd",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "The Prophet ﷺ taught this du'a as one of the most comprehensive supplications a person can make."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This comprehensive du'a encapsulates the entire journey of the believer. \"Al-hudā\" is right guidance — the light that illuminates the path. \"At-tuqā\" is God-consciousness — the shield that protects along the way. \"Al-ʿafāf\" is chastity and restraint — the discipline that keeps one from straying. \"Al-ghinā\" is self-sufficiency — the contentment that frees the heart from dependency on creation. The Prophet ﷺ did not simply ask for \"good things\" — he was precise, asking for the four pillars of a righteous life. Each word carries the weight of an entire spiritual program. Guidance is not a distant dream; it is a du'a away.",
+            "ar": "يَجْمَعُ هَذَا الدُّعَاءُ الشَّامِلُ رِحْلَةَ المُؤْمِنِ كُلَّهَا. \"الهُدَى\" نُورٌ يُضِيءُ الطَّرِيقَ. \"التُّقَى\" وِقَايَةٌ تَحْمِي فِي المَسِيرَةِ. \"العَفَافُ\" انْضِبَاطٌ يَمْنَعُ الضَّلَالَ. \"الغِنَى\" اسْتِغْنَاءٌ يُحَرِّرُ القَلْبَ مِنَ التَّعَلُّقِ بِالمَخْلُوقِ. لَمْ يَسْأَلِ النَّبِيُّ ﷺ \"أَشْيَاءَ جَيِّدَةً\" فَحَسْبُ — بَلْ كَانَ دَقِيقًا، سَائِلًا عَنْ أَرْكَانِ الحَيَاةِ الصَّالِحَةِ الأَرْبَعَةِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "guidance",
+            "hidayah",
+            "taqwa",
+            "dua",
+            "prophetic",
+            "a-dua-away"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 8
+        },
+        {
+          "id": "glm-reflections-dua-away-4",
+          "category_id": "reflections-dua-away",
+          "title": {
+            "en": "Forgiveness is a Du'a Away",
+            "ar": "المَغْفِرَةُ دَعْوَةٌ بَعِيدَةٌ"
+          },
+          "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+          "transliteration": "Allāhumma anta rabbī lā ilāha illā anta, khalaqtanī wa anā ʿabduka, wa anā ʿalā ʿahdika wa waʿdika mā istaṭaʿtu, aʿūdhu bika min sharri mā ṣanaʿtu, abū'u laka biniʿmatika ʿalayya, wa abū'u bidhanbī faghfir lī fa-innahu lā yaghfirudh-dhunūba illā anta.",
+          "translation": {
+            "en": "O Allah, You are my Lord. There is no deity except You. You created me, and I am Your servant, and I uphold Your covenant and Your promise as much as I am able. I seek refuge in You from the evil of what I have done. I acknowledge Your blessing upon me, and I acknowledge my sin, so forgive me, for there is none who forgives sins except You.",
+            "ar": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ al-Bukhārī",
+            "book": "Al-Daʿawāt",
+            "chapter": "60",
+            "hadith": "6306",
+            "narrator": "Shaddād ibn Aws",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also recorded in Ṣaḥīḥ Muslim 2705. The Prophet ﷺ called it Sayyid al-Istighfār (the master of seeking forgiveness)."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is Sayyid al-Istighfār — the Master of all supplications for forgiveness. The Prophet ﷺ said: \"Whoever recites it with conviction in the evening and dies during that night, enters Paradise. And whoever recites it with conviction in the morning and dies during that day, enters Paradise.\" The genius of this du'a lies in its structure: it begins with recognizing Allah as Lord, then acknowledges one's own servitude and limitation, admits to sin while praising Allah's blessings, and then makes the request. Forgiveness is not earned through perfection — it is sought through sincerity. And it is always, always, just a du'a away.",
+            "ar": "هَذَا سَيِّدُ الِاسْتِغْفَارِ. قَالَ النَّبِيُّ ﷺ: \"مَنْ قَالَهَا مِنَ النَّهَارِ مُوقِنًا بِهَا فَمَاتَ مِنْ يَوْمِهِ دَخَلَ الجَنَّةَ، وَمَنْ قَالَهَا مِنَ اللَّيْلِ وَهُوَ مُوقِنٌ بِهَا فَمَاتَ قَبْلَ أَنْ يُصْبِحَ دَخَلَ الجَنَّةَ.\" بِدَأَ الدُّعَاءُ بِالتَّعْرِيفِ بِالرُّبُوبِيَّةِ ثُمَّ الِاعْتِرَافِ بِالعُبُودِيَّةِ ثُمَّ الإِقْرَارِ بِالذَّنْبِ مَعَ الشُّكْرِ عَلَى النِّعَمِ. المَغْفِرَةُ لَيْسَتْ بِالكَمَالِ — بَلْ بِالإِخْلَاصِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "forgiveness",
+            "istighfar",
+            "repentance",
+            "tawbah",
+            "dua",
+            "paradise",
+            "a-dua-away"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 9
+        }
+      ]
+    },
+    {
+      "id": "meeting-muhammad",
+      "section_id": "reflections",
+      "name": {
+        "en": "Meeting Muhammad ﷺ",
+        "ar": "لقاء محمد ﷺ"
+      },
+      "description": {
+        "en": "Duas and reflections on the character of the Prophet ﷺ",
+        "ar": "أدعية وتأملات في أخلاق النبي ﷺ"
+      },
+      "order": 2,
+      "icon": "mosque",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "ref-meeting-001",
+          "category_id": "meeting-muhammad",
+          "title": {
+            "en": "Salawat on the Prophet ﷺ",
+            "ar": "الصلاة على النبي ﷺ"
+          },
+          "arabic": "اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبِيِّنَا مُحَمَّدٍ",
+          "transliteration": "Allahumma salli wa sallim 'ala nabiyyina Muhammad.",
+          "translation": {
+            "en": "O Allah, send blessings and peace upon our Prophet Muhammad.",
+            "ar": "اللهم صل وسلم على نبينا محمد"
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "408",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 100,
+          "virtues": {
+            "en": "Whoever sends blessings upon me once, Allah sends blessings upon him ten times. Meeting the Prophet ﷺ begins with loving him, and loving him begins with frequent salawat.",
+            "ar": "من صلى علي صلاة صلى الله عليه بها عشراً."
+          },
+          "tags": [
+            "salawat",
+            "prophet",
+            "love"
+          ],
+          "related": [
+            "adh-tas-008"
+          ],
+          "notes": "Central theme of Meeting Muhammad ﷺ series (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-meeting-002",
+          "category_id": "meeting-muhammad",
+          "title": {
+            "en": "Du'a to See the Prophet ﷺ in Dreams",
+            "ar": "دعاء رؤية النبي ﷺ"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ أَنْ تُرِيَنِي وَجْهَ نَبِيِّكَ مُحَمَّدٍ ﷺ فِي الْمَنَامِ",
+          "transliteration": "Allahumma inni as'aluka an turiyani wajha nabiyyika Muhammadin sallallahu 'alayhi wa sallama fil-manam.",
+          "translation": {
+            "en": "O Allah, I ask You to show me the face of Your Prophet Muhammad ﷺ in my sleep.",
+            "ar": "اللهم إني أسألك أن تريني وجه نبيك محمد ﷺ في المنام"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Dreams",
+            "chapter": "",
+            "hadith": "6994",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "The Prophet ﷺ said: 'Whoever sees me in a dream will see me in reality, for Shaytan cannot take my form.'"
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Whoever sees the Prophet ﷺ in a dream has truly seen him, for Shaytan cannot imitate him. This is a sign of love and sincerity.",
+            "ar": "من رآني في المنام فقد رآني."
+          },
+          "tags": [
+            "prophet",
+            "dreams",
+            "love"
+          ],
+          "related": [],
+          "notes": "Inspired by Meeting Muhammad ﷺ series.",
+          "order": 2
+        },
+        {
+          "id": "ref-meeting-003",
+          "category_id": "meeting-muhammad",
+          "title": {
+            "en": "Du'a for Following the Sunnah",
+            "ar": "دعاء اتباع السنة"
+          },
+          "arabic": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ، وَاجْعَلْنِي مِنْ أَتْبَاعِ سُنَّةِ نَبِيِّكَ مُحَمَّدٍ ﷺ",
+          "transliteration": "Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik, waj'alni min atba'i sunnati nabiyyika Muhammadin sallallahu 'alayhi wa sallam.",
+          "translation": {
+            "en": "O Allah, help me to remember You, thank You, and worship You in the best way. And make me among the followers of the Sunnah of Your Prophet Muhammad ﷺ.",
+            "ar": "اللهم أعني على ذكرك وشكرك وحسن عبادتك..."
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "1522",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "First part is authentic; addition of Sunnah following is from general dua."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Following the Sunnah is a sign of loving the Prophet ﷺ. Allah says: 'Say, if you love Allah, then follow me, Allah will love you.'",
+            "ar": "قل إن كنتم تحبون الله فاتبعوني يحببكم الله."
+          },
+          "tags": [
+            "prophet",
+            "sunnah",
+            "dua"
+          ],
+          "related": [],
+          "notes": "Inspired by Meeting Muhammad ﷺ series.",
+          "order": 3
+        },
+        {
+          "id": "glm-reflections-meeting-prophet-1",
+          "category_id": "reflections-meeting-prophet",
+          "title": {
+            "en": "The Prophet's Character",
+            "ar": "خُلُقُ النَّبِيِّ ﷺ"
+          },
+          "arabic": "كَانَ خُلُقُهُ الْقُرْآنَ. وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ",
+          "transliteration": "Kāna khuluquhu al-Qur'ān. Wa innaka la-ʿalā khuluqin ʿaẓīm.",
+          "translation": {
+            "en": "His character was the Quran. And indeed, you are of a great moral character.",
+            "ar": "كَانَ خُلُقُهُ الْقُرْآنَ. وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ Muslim",
+            "book": "Al-Munāfiqīn wa Aḥkāmihim",
+            "chapter": "",
+            "hadith": "746",
+            "narrator": "Aisha bint Abī Bakr",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "The first statement is from Muslim 746. The Quranic verse is from Surah al-Qalam (68:4)."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "When Aisha رضي الله عنها was asked about the character of the Prophet ﷺ, she gave an answer that still echoes through the centuries: \"His character was the Quran.\" This was not a metaphor — it was a literal description. The Quran spoke of mercy, and he was the most merciful. It spoke of justice, and he was the most just. It spoke of patience, and he was the most patient. Allah Himself testified in Surah al-Qalam: \"And indeed, you are of a great moral character.\" To know the Prophet ﷺ is to love him, and to love him is to follow him, and to follow him is to embody the Quran.",
+            "ar": "لَمَّا سُئِلَتْ عَائِشَةُ رَضِيَ اللَّهُ عَنْهَا عَنْ خُلُقِ النَّبِيِّ ﷺ أَجَابَتْ بِجَوَابٍ لَا يَزَالُ يَتَرَدَّدُ: \"كَانَ خُلُقُهُ القُرْآنَ.\" لَمْ يَكُنْ هَذَا مَجَازًا — بَلْ وَصْفًا حَقِيقِيًّا. شَهِدَ اللَّهُ تَعَالَى فِي سُورَةِ القَلَمِ: \"وَإِنَّكَ لَعَلَى خُلُقٍ عَظِيمٍ.\" مَعْرِفَةُ النَّبِيِّ ﷺ حُبٌّ، وَحُبُّهُ اتِّبَاعٌ، وَاتِّبَاعُهُ تَجَسُّدٌ لِلقُرْآنِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "prophet",
+            "character",
+            "akhlaq",
+            "quran",
+            "love",
+            "sunnah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-reflections-meeting-prophet-2",
+          "category_id": "reflections-meeting-prophet",
+          "title": {
+            "en": "Loving the Prophet",
+            "ar": "حُبُّ النَّبِيِّ ﷺ"
+          },
+          "arabic": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى أَكُونَ أَحَبَّ إِلَيْهِ مِنْ وَالِدِهِ وَوَلَدِهِ وَالنَّاسِ أَجْمَعِينَ",
+          "transliteration": "Lā yu'minu aḥadukum ḥattā akūna aḥabba ilayhi min wālidihī wa waladihi wan-nāsi ajmaʿīn.",
+          "translation": {
+            "en": "None of you truly believes until I am more beloved to him than his father, his child, and all of mankind.",
+            "ar": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى أَكُونَ أَحَبَّ إِلَيْهِ مِنْ وَالِدِهِ وَوَلَدِهِ وَالنَّاسِ أَجْمَعِينَ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ al-Bukhārī",
+            "book": "Al-Īmān",
+            "chapter": "2",
+            "hadith": "15",
+            "narrator": "Anas ibn Mālik",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also recorded in Ṣaḥīḥ Muslim 44. A foundational hadith on the centrality of loving the Prophet ﷺ."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ made love for him a condition of complete faith (īmān). This is not about an emotional feeling alone — it is a love that manifests in action: following his Sunnah, sending salawat upon him, defending his honor, and yearning to meet him. Anas ibn Mālik said that no person loved the Prophet ﷺ more than the Companions, yet they would not sacrifice a single hair of his head. This love is the compass that orients every other love in a believer's heart — when the Prophet ﷺ is most beloved, everything else falls into its proper place.",
+            "ar": "جَعَلَ النَّبِيُّ ﷺ الحُبَّ لَهُ شَرْطًا مِنْ شُرُوطِ كَمَالِ الإِيمَانِ. لَيْسَ الحُبُّ عَاطِفَةً فَحَسْبُ — بَلْ حُبٌّ يَتَجَسَّدُ فِي اتِّبَاعِ السُّنَّةِ وإِكْثَارِ الصَّلَوَاتِ عَلَيْهِ وَالدِّفَاعِ عَنْ حُرْمَتِهِ وَالشَّوْقِ لِلِقَائِهِ. حُبُّ النَّبِيِّ ﷺ بَوْصَلَةُ كُلِّ حُبٍّ آخَرَ فِي قَلْبِ المُؤْمِنِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "prophet",
+            "love",
+            "iman",
+            "faith",
+            "sunnah",
+            "companions"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "glm-reflections-meeting-prophet-3",
+          "category_id": "reflections-meeting-prophet",
+          "title": {
+            "en": "The Prophet's Mercy",
+            "ar": "رَحْمَةُ النَّبِيِّ ﷺ"
+          },
+          "arabic": "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِلْعَالَمِينَ",
+          "transliteration": "Wa mā arsalnāka illā raḥmatan lil-ʿālamīn.",
+          "translation": {
+            "en": "And We have not sent you, [O Muhammad], except as a mercy to the worlds.",
+            "ar": "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِلْعَالَمِينَ"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Surah al-Anbiyā'",
+            "chapter": "21",
+            "hadith": "107",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": "This verse defines the very purpose of the Prophet's mission — he was not just a messenger, he was mercy incarnate."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah did not say the Prophet ﷺ was sent with a message of mercy — He said the Prophet himself was mercy. His existence was mercy. His tears were mercy. His laughter was mercy. Even his silence was mercy. He wept for the people of the Hellfire while standing at the edge of a grave. He pardoned the woman who poisoned him. He gently taught the Bedouin who urinated in the mosque. Every encounter was an act of mercy. To study his life is to be bathed in mercy. To follow him is to become an instrument of that same mercy in the world.",
+            "ar": "لَمْ يَقُلِ اللَّهُ إِنَّ النَّبِيَّ ﷺ أُرْسِلَ بِرِسَالَةِ الرَّحْمَةِ — بَلْ قَالَ إِنَّهُ هُوَ الرَّحْمَةُ. وُجُودُهُ رَحْمَةٌ، وَدَمْعُهُ رَحْمَةٌ، وَضَحِكُهُ رَحْمَةٌ، حَتَّى صَمْتُهُ رَحْمَةٌ. بَكَى لِأَهْلِ النَّارِ وَهُوَ عَلَى شَفِيرِ قَبْرٍ. عَفَا عَنِ المَرْأَةِ الَّتِي سَمَّمْتُهُ. عَلَّمَ الأَعْرَابِيَّ بِلُطْفٍ حِينَ بَالَ فِي المَسْجِدِ. دِرَاسَةُ حَيَاتِهِ اغْتِسَالٌ بِالرَّحْمَةِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "prophet",
+            "mercy",
+            "rahmah",
+            "quran",
+            "guidance",
+            "compassion"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "id": "jannah-home",
+      "section_id": "reflections",
+      "name": {
+        "en": "Jannah: Home at Last",
+        "ar": "جنة: الوطن الأخير"
+      },
+      "description": {
+        "en": "Duas and reflections on Paradise",
+        "ar": "أدعية وتأملات في الجنة"
+      },
+      "order": 3,
+      "icon": "sparkle",
+      "color": "amber",
+      "items": [
+        {
+          "id": "ref-jannah-001",
+          "category_id": "jannah-home",
+          "title": {
+            "en": "Du'a for Paradise",
+            "ar": "دعاء الجنة"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْجَنَّةَ وَأَعُوذُ بِكَ مِنَ النَّارِ",
+          "transliteration": "Allahumma inni as'alukal-jannata wa a'udhu bika minan-nar.",
+          "translation": {
+            "en": "O Allah, I ask You for Paradise and seek refuge in You from the Fire.",
+            "ar": "اللهم إني أسألك الجنة وأعوذ بك من النار"
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "1481",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "Jannah is built by your deeds and decorated by your duas. Every time you ask for Jannah, Allah prepares a place for you there.",
+            "ar": "الجنة تبنى بالأعمال وتزين بالأدعية."
+          },
+          "tags": [
+            "jannah",
+            "paradise",
+            "fire"
+          ],
+          "related": [
+            "quranic-001"
+          ],
+          "notes": "Theme from Jannah: Home at Last series (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-jannah-002",
+          "category_id": "jannah-home",
+          "title": {
+            "en": "Du'a for the Highest Rank in Paradise (Al-Firdaws)",
+            "ar": "دعاء الفردوس الأعلى"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْفِرْدَوْسَ الْأَعْلَى جَنَّةَ الْخُلْدِ",
+          "transliteration": "Allahumma inni as'alukal-firdawsal-a'la jannatalkhuld.",
+          "translation": {
+            "en": "O Allah, I ask You for Al-Firdaws, the highest (rank) in Paradise, the eternal Garden.",
+            "ar": "اللهم إني أسألك الفردوس الأعلى جنة الخلد"
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "1480",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "Al-Firdaws is the highest part of Paradise. Above it is the Throne of the Most Merciful. From it flow the rivers of Paradise.",
+            "ar": "الفردوس أعلى الجنة، وفوقه عرش الرحمن."
+          },
+          "tags": [
+            "jannah",
+            "firdaws",
+            "paradise"
+          ],
+          "related": [],
+          "notes": "Theme from Jannah: Home at Last series.",
+          "order": 2
+        },
+        {
+          "id": "ref-jannah-003",
+          "category_id": "jannah-home",
+          "title": {
+            "en": "Du'a to Be Neighbors of the Prophet ﷺ in Jannah",
+            "ar": "دعاء جوار النبي ﷺ في الجنة"
+          },
+          "arabic": "اللَّهُمَّ اجْعَلْ لِي نُورًا فِي قَلْبِي، وَنُورًا فِي قَبْرِي، وَنُورًا مِنْ بَيْنِ يَدَيَّ، وَنُورًا مِنْ خَلْفِي، وَنُورًا عَنْ يَمِينِي، وَنُورًا عَنْ شِمَالِي، وَنُورًا مِنْ فَوْقِي، وَنُورًا مِنْ تَحْتِي، وَنُورًا فِي سَمْعِي، وَنُورًا فِي بَصَرِي، وَنُورًا فِي شَعْرِي، وَنُورًا فِي بَشَرِي، وَنُورًا فِي لَحْمِي، وَنُورًا فِي دَمِي، وَنُورًا فِي عِظَامِي، اللَّهُمَّ أَعْظِمْ لِي نُورًا، وَاجْعَلْ لِي نُورًا",
+          "transliteration": "Allahummaj'al li nuran fi qalbi, wa nuran fi qabri, wa nuran min bayni yadayya, wa nuran min khalfi, wa nuran 'an yamini, wa nuran 'an shimali, wa nuran min fawqi, wa nuran min tahti, wa nuran fi sam'i, wa nuran fi basari, wa nuran fi sha'ri, wa nuran fi bashari, wa nuran fi lahmi, wa nuran fi dami, wa nuran fi 'izami. Allahumma a'zim li nura, waj'al li nura.",
+          "translation": {
+            "en": "O Allah, place light in my heart, light in my grave, light before me, light behind me, light on my right, light on my left, light above me, light below me, light in my hearing, light in my sight, light in my hair, light in my skin, light in my flesh, light in my blood, light in my bones. O Allah, make my light great, and grant me light.",
+            "ar": "اللهم اجعل لي نوراً في قلبي..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Tahajjud",
+            "chapter": "",
+            "hadith": "6316",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Also Sahih Muslim 763."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Light upon light — the believer who is filled with divine light in this world will shine in the Hereafter. The people of Jannah will glow with the light of their faith.",
+            "ar": "نور على نور."
+          },
+          "tags": [
+            "jannah",
+            "nur",
+            "light",
+            "paradise"
+          ],
+          "related": [],
+          "notes": "Inspired by Jannah: Home at Last series.",
+          "order": 3
+        },
+        {
+          "id": "glm-reflections-jannah-1",
+          "category_id": "reflections-jannah",
+          "title": {
+            "en": "The Gates of Jannah",
+            "ar": "أَبْوَابُ الجَنَّةِ"
+          },
+          "arabic": "مَنْ أَنْفَقَ زَوْجَيْنِ فِي سَبِيلِ اللَّهِ نُودِيَ مِنْ أَبْوَابِ الْجَنَّةِ يَا عَبْدَ اللَّهِ هَذَا خَيْرٌ. فَمَنْ كَانَ مِنْ أَهْلِ الصَّلَاةِ دُعِيَ مِنْ بَابِ الصَّلَاةِ، وَمَنْ كَانَ مِنْ أَهْلِ الْجِهَادِ دُعِيَ مِنْ بَابِ الْجِهَادِ، وَمَنْ كَانَ مِنْ أَهْلِ الصِّيَامِ دُعِيَ مِنْ بَابِ الرَّيَّانِ، وَمَنْ كَانَ مِنْ أَهْلِ الصَّدَقَةِ دُعِيَ مِنْ بَابِ الصَّدَقَةِ",
+          "transliteration": "Man anfaqa zawjaynī fī sabīlillāh, nūdiya min abwābil-jannati yā ʿabdallāhi hādhā khayr. Famman kāna min ahlil-ṣalāti duʿiya min bābil-ṣalāti, wa man kāna min ahlil-jihādi duʿiya min bābil-jihādi, wa man kāna min ahlil-ṣiyāmi duʿiya min bābir-rayyān, wa man kāna min ahlil-ṣadaqati duʿiya min bābil-ṣadaqah.",
+          "translation": {
+            "en": "Whoever spends a pair in the cause of Allah will be called from the gates of Jannah: \"O servant of Allah, this is good.\" Whoever was among the people of prayer will be called from the Gate of Prayer. Whoever was among the people of jihad will be called from the Gate of Jihad. Whoever was among the people of fasting will be called from the Gate of Ar-Rayyān. Whoever was among the people of charity will be called from the Gate of Charity.",
+            "ar": "مَنْ أَنْفَقَ زَوْجَيْنِ فِي سَبِيلِ اللَّهِ نُودِيَ مِنْ أَبْوَابِ الْجَنَّةِ يَا عَبْدَ اللَّهِ هَذَا خَيْرٌ. فَمَنْ كَانَ مِنْ أَهْلِ الصَّلَاةِ دُعِيَ مِنْ بَابِ الصَّلَاةِ، وَمَنْ كَانَ مِنْ أَهْلِ الْجِهَادِ دُعِيَ مِنْ بَابِ الْجِهَادِ، وَمَنْ كَانَ مِنْ أَهْلِ الصِّيَامِ دُعِيَ مِنْ بَابِ الرَّيَّانِ، وَمَنْ كَانَ مِنْ أَهْلِ الصَّدَقَةِ دُعِيَ مِنْ بَابِ الصَّدَقَةِ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ al-Bukhārī",
+            "book": "Al-Jihād wa al-Siyar",
+            "chapter": "56",
+            "hadith": "2840",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also in Ṣaḥīḥ Muslim 1027. The hadith mentions multiple gates including Bāb al-Rayyān specific to fasting."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Jannah has eight gates, each one reserved for those who excelled in a particular act of worship. But what is most remarkable is the personal nature of the invitation — \"O servant of Allah, this is good.\" You are not entering as a number; you are called by name, recognized for what you prioritized in this life. Abu Bakr رضي الله عنه asked the Prophet ﷺ: \"Will anyone be called from all of them?\" The Prophet ﷺ replied: \"Yes, and I hope you will be among them, O Abu Bakr.\" The gates of Jannah are not abstract — they are a reflection of the deeds you cherished most in this world.",
+            "ar": "لِلْجَنَّةِ ثَمَانِيَةُ أَبْوَابٍ، كُلُّ بَابٍ مُخَصَّصٌ لِمَنْ أَبْدَعَ فِي عِبَادَةٍ مُعَيَّنَةٍ. وَأَعْظَمُ مَا فِي ذَلِكَ الشَّخْصِيَّةُ — \"يَا عَبْدَ اللَّهِ هَذَا خَيْرٌ\" — لَسْتَ تَدْخُلُ رَقْمًا، بَلْ تُدْعَى بِاسْمِكَ وَتُعْرَفُ بِمَا آثَرْتَهُ فِي الدُّنْيَا. سَأَلَ أَبُو بَكْرٍ: \"يُنَادَى مِنْ كُلِّهَا؟\" قَالَ: \"نَعَمْ، وَأَرْجُو أَنْ تَكُونَ مِنْهُمْ يَا أَبَا بَكْرٍ.\""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "jannah",
+            "paradise",
+            "gates",
+            "charity",
+            "prayer",
+            "fasting",
+            "jihad",
+            "abu-bakr"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-reflections-jannah-2",
+          "category_id": "reflections-jannah",
+          "title": {
+            "en": "The Highest Levels",
+            "ar": "الدَّرَجَاتُ الْعُلْيَا"
+          },
+          "arabic": "إِذَا سَأَلْتُمُ اللَّهَ فَاسْأَلُوهُ الْفِرْدَوْسَ فَإِنَّهُ أَوْسَطُ الْجَنَّةِ وَأَعْلَى الْجَنَّةِ وَفَوْقَهُ عَرْشُ الرَّحْمَنِ",
+          "transliteration": "Idhā sa'altumullāha fas'alūhū al-firdatawsa fa-innahu awsau al-jannati wa aʿlā al-jannati wa fawqahu ʿarshur-raḥmān.",
+          "translation": {
+            "en": "When you ask Allah, ask Him for Al-Firdaws, for it is the middle of Jannah and the highest part of Jannah, and above it is the Throne of the Most Merciful.",
+            "ar": "إِذَا سَأَلْتُمُ اللَّهَ فَاسْأَلُوهُ الْفِرْدَوْسَ فَإِنَّهُ أَوْسَطُ الْجَنَّةِ وَأَعْلَى الْجَنَّةِ وَفَوْقَهُ عَرْشُ الرَّحْمَنِ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ al-Bukhārī",
+            "book": "Al-Jumuʿah",
+            "chapter": "11",
+            "hadith": "2790",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also in Ṣaḥīḥ Muslim 2526. Al-Firdaws is the highest level of Jannah, directly beneath the Throne of Allah."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ did not simply say \"ask for Jannah\" — he was specific: ask for Al-Firdaws al-Aʿlā, the highest and most central part of Paradise. And then he gave the reason: above it is the Throne of ar-Rahmān. Imagine a place so close to Allah's Throne that its rivers flow from beneath it, its canopies are directly above the seat of divine majesty. The scholars said that the people of Al-Firdaws will hear the whisperings of Paradise itself and will see Allah more clearly than anyone else. The Prophet ﷺ taught us to aim high — not out of greed, but out of love for the One who is the object of all longing.",
+            "ar": "لَمْ يَقُلِ النَّبِيُّ ﷺ \"اسْأَلُوا اللَّهَ الجَنَّةَ\" فَحَسْبُ — بَلْ كَانَ دَقِيقًا: اسْأَلُوا الفِرْدَوْسَ الأَعْلَى، أَعْلَى وَأَوْسَطِ الجَنَّةِ. وَبَيَّنَ السَّبَبَ: فَوْقَهُ عَرْشُ الرَّحْمَنِ. تَخَيَّلْ مَكَانًا قَرِيبًا هَذَا القُرْبِ مِنْ عَرْشِ اللَّهِ تَجْرِي مِنْ تَحْتِهِ الأَنْهَارُ. عَلَّمَنَا النَّبِيُّ ﷺ أَنْ نَطْمَحَ عَالِيًا — لَيْسَ طَمَعًا بَلْ حُبًّا لِمَنْ هُوَ غَايَةُ كُلِّ شَوْقٍ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "jannah",
+            "paradise",
+            "firdaws",
+            "throne",
+            "dua",
+            "highest-level"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "glm-reflections-jannah-3",
+          "category_id": "reflections-jannah",
+          "title": {
+            "en": "What No Eye Has Seen",
+            "ar": "مَا لَمْ تَرَ عَيْنٌ"
+          },
+          "arabic": "فَلَا تَعْلَمُ نَفْسٌ مَا أُخْفِيَ لَهُم مِّن قُرَّةِ أَعْيُنٍ جَزَاءً بِمَا كَانُوا يَعْمَلُونَ",
+          "transliteration": "Falā taʿlamu nafsun mā ukhfiya lahum min qurrati aʿyunin jazā'an bimā kānū yaʿmalūn.",
+          "translation": {
+            "en": "No soul knows what is hidden for them of comfort for the eyes as reward for what they used to do.",
+            "ar": "فَلَا تَعْلَمُ نَفْسٌ مَا أُخْفِيَ لَهُم مِّن قُرَّةِ أَعْيُنٍ جَزَاءً بِمَا كَانُوا يَعْمَلُونَ"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Surah al-Sajdah",
+            "chapter": "32",
+            "hadith": "17",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": "The hadith referenced in virtues is from Ṣaḥīḥ al-Bukhārī 3244 and Ṣaḥīḥ Muslim 2824 (the famous hadith qudsī)."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This verse is one of the most awe-inspiring in the entire Quran. Allah could have described Jannah in detail and then said \"even more than this.\" But He did something far more powerful — He said no soul knows what has been prepared. Not even the angels. Not even the Prophets. The Prophet ﷺ himself said: \"Allah says: I have prepared for My righteous servants what no eye has seen, no ear has heard, and no human mind has conceived.\" This means that every description of Jannah in the Quran is merely a shadow of the reality. The real Jannah is beyond human comprehension — and it is waiting for those who believe and do righteous deeds.",
+            "ar": "هَذِهِ الآيَةُ مِنْ أَعْظَمِ آيَاتِ القُرْآنِ إِثَارَةً لِلْهَيْبَةِ. قَالَ اللَّهُ: لَا تَعْلَمُ نَفْسٌ مَا أُخْفِيَ. لَا المَلَائِكَةُ، وَلَا الأَنْبِيَاءُ. قَالَ النَّبِيُّ ﷺ: \"قَالَ اللَّهُ: أَعْدَدْتُ لِعِبَادِيَ الصَّالِحِينَ مَا لَمْ تَرَ عَيْنٌ وَلَمْ تَسْمَعْ أُذُنٌ وَلَمْ يَخْطُرْ عَلَى قَلْبِ بَشَرٍ.\" كُلُّ وَصْفٍ لِلْجَنَّةِ فِي القُرْآنِ إِنَّمَا هُوَ ظِلٌّ لِلْحَقِيقَةِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "jannah",
+            "paradise",
+            "unseen",
+            "reward",
+            "quran",
+            "hadith-qudsi",
+            "hope"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "id": "secrets-salah",
+      "section_id": "reflections",
+      "name": {
+        "en": "Secrets of Salah",
+        "ar": "أسرار الصلاة"
+      },
+      "description": {
+        "en": "Duas and reflections to deepen your prayer",
+        "ar": "أدعية وتأملات لتعميق صلاتك"
+      },
+      "order": 4,
+      "icon": "mosque",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "ref-salah-001",
+          "category_id": "secrets-salah",
+          "title": {
+            "en": "Du'a Between the Two Sujoods",
+            "ar": "دعاء بين السجدتين"
+          },
+          "arabic": "رَبِّ اغْفِرْ لِي، رَبِّ اغْفِرْ لِي",
+          "transliteration": "Rabbighfir li, rabbighfir li.",
+          "translation": {
+            "en": "My Lord, forgive me. My Lord, forgive me.",
+            "ar": "رب اغفر لي، رب اغفر لي"
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i",
+            "book": "Book of Bowing and Prostration",
+            "chapter": "",
+            "hadith": "1145",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The moment between the two prostrations is a moment of seeking forgiveness — the closest a servant is to Allah is in sujood. Every secret of Salah begins with presence of heart.",
+            "ar": "أقرب ما يكون العبد من ربه في سجوده."
+          },
+          "tags": [
+            "salah",
+            "prayer",
+            "forgiveness",
+            "sujood"
+          ],
+          "related": [
+            "adh-pos-001"
+          ],
+          "notes": "Inspired by Secrets of Salah series (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-salah-002",
+          "category_id": "secrets-salah",
+          "title": {
+            "en": "Du'a in Sujood (Prostration)",
+            "ar": "دعاء في السجود"
+          },
+          "arabic": "سُبْحَانَ ذِي الْجَبَرُوتِ وَالْمَلَكُوتِ وَالْكِبْرِيَاءِ وَالْعَظَمَةِ",
+          "transliteration": "Subhana dhi-l-jabaruti wal-malakuti wal-kibriya'i wal-'azama.",
+          "translation": {
+            "en": "Glory be to the Possessor of majesty, dominion, grandeur, and greatness.",
+            "ar": "سبحان ذي الجبروت والملكوت والكبرياء والعظمة"
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "873",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "In sujood, you are the closest to Allah. The Prophet ﷺ said: 'The closest a servant is to his Lord is when he is prostrating, so make abundant supplication.'",
+            "ar": "أقرب ما يكون العبد من ربه وهو ساجد."
+          },
+          "tags": [
+            "salah",
+            "sujood",
+            "prayer"
+          ],
+          "related": [],
+          "notes": "Inspired by Secrets of Salah series.",
+          "order": 2
+        },
+        {
+          "id": "ref-salah-003",
+          "category_id": "secrets-salah",
+          "title": {
+            "en": "Du'a After Tasleem (33-33-34 Pattern)",
+            "ar": "دعاء بعد التسليم (33-33-34)"
+          },
+          "arabic": "سُبْحَانَ اللَّهِ (33×)\nالْحَمْدُ لِلَّهِ (33×)\nاللَّهُ أَكْبَرُ (33×)\nلَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ (1×)",
+          "transliteration": "SubhanAllah (33×) / Alhamdulillah (33×) / Allahu Akbar (33×) / La ilaha illa-llahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir (1×)",
+          "translation": {
+            "en": "Glory be to Allah (33×) / Praise be to Allah (33×) / Allah is Greatest (33×) / There is no deity except Allah alone, with no partner. To Him belongs the dominion and to Him belongs all praise, and He is competent over all things (1×) — completing 100.",
+            "ar": "سبحان الله / الحمد لله / الله أكبر / لا إله إلا الله وحده..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Mosques",
+            "chapter": "",
+            "hadith": "597",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 100,
+          "virtues": {
+            "en": "The 33-33-34 rhythm of dhikr after prayer is a secret of Salah — it completes the prayer's perfection. All sins are forgiven even if they are like the foam of the sea. The hundredth phrase wipes 1,000 sins and writes 1,500 good deeds.",
+            "ar": "من سبح دبر كل صلاة ثلاثاً وثلاثين..."
+          },
+          "tags": [
+            "salah",
+            "tasbih",
+            "prayer",
+            "dhikr"
+          ],
+          "related": [
+            "adh-pos-003",
+            "adh-pos-005"
+          ],
+          "notes": "Central theme of Secrets of Salah Ep. 10 (Yaqeen Institute).",
+          "order": 3
+        },
+        {
+          "id": "glm-reflections-salah-1",
+          "category_id": "reflections-salah",
+          "title": {
+            "en": "Khushu' in Prayer",
+            "ar": "الخُشُوعُ فِي الصَّلَاةِ"
+          },
+          "arabic": "إِنَّ الْمُصَلِّيَ يُنَاجِي رَبَّهُ فَلْيَنْظُرْ مَا يُنَاجِيهِ بِهِ، وَلَا تَجْعَلُوا الْقُرْبَانَ الْقُرْبَانَ",
+          "transliteration": "Inna al-muṣallī yunājī rabbahu falyanẓur mā yunājīhi bihi, wa lā tajʿalū al-qurbāna al-qurbāna.",
+          "translation": {
+            "en": "Indeed, the one who prays is conversing with his Lord, so let him consider what he says to Him. And do not make the Quran just something you recite [without reflection].",
+            "ar": "إِنَّ الْمُصَلِّيَ يُنَاجِي رَبَّهُ فَلْيَنْظُرْ مَا يُنَاجِيهِ بِهِ، وَلَا تَجْعَلُوا الْقُرْبَانَ الْقُرْبَانَ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ al-Bukhārī",
+            "book": "Al-Adhān",
+            "chapter": "24",
+            "hadith": "406",
+            "narrator": "Abu Hurayrah / Anas ibn Mālik",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "The first statement is from Bukhārī 406. The second is a variation about being conscious in prayer. Also referenced in Muslim 532."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ described salah not as a ritual but as a private audience with the King of Kings. When you raise your hands for takbīrat al-iḥrām, you are stepping into the court of Allah. Every rukūʿ is an expression of humility. Every sujūd is the closest a servant can be to his Lord. Khushuʿ — the stillness and presence of heart — is the difference between a prayer that merely counts and a prayer that transforms. The Companions would tremble in prayer as if they were standing before a fire. Umar ibn al-Khattab was stabbed while leading Fajr, and he still completed the prayer before attending to his wound. That is khushuʿ. That is the secret of salah.",
+            "ar": "وَصَفَ النَّبِيُّ ﷺ الصَّلَاةَ لَيْسَ كَطَقْسٍ بَلْ كَمُقَابَلَةٍ خَاصَّةٍ مَعَ مَلِكِ المُلُوكِ. الخُشُوعُ هُوَ الفَرْقُ بَيْنَ صَلَاةٍ تُحْصَى وَصَلَاةٍ تُحَوِّلُ. كَانَ الصَّحَابَةُ يَرْتَعِدُونَ فِي الصَّلَاةِ كَأَنَّهُمْ يَقِفُونَ أَمَامَ نَارٍ. طُعِنَ عُمَرُ بْنُ الخَطَّابِ وَهُوَ يُصَلِّي الفَجْرَ فَأَتَمَّ صَلَاتَهُ قَبْلَ أَنْ يَلْتَفِتَ إِلَى جُرْحِهِ. ذَلِكَ هُوَ الخُشُوعُ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "salah",
+            "prayer",
+            "khushu",
+            "concentration",
+            "sujud",
+            "spirituality"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-reflections-salah-2",
+          "category_id": "reflections-salah",
+          "title": {
+            "en": "The Journey of Salah",
+            "ar": "رِحْلَةُ الصَّلَاةِ"
+          },
+          "arabic": "اللَّهُ أَكْبَرُ. سُبْحَانَ رَبِّيَ الْعَظِيمِ. سُبْحَانَ رَبِّيَ الْأَعْلَى. رَبَّنَا لَكَ الْحَمْدُ. التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ. اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ. السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ",
+          "transliteration": "Allāhu akbar. Subḥāna rabbīyal-ʿaẓīm. Subḥāna rabbīyal-aʿlā. Rabbanā laka al-ḥamd. At-taḥiyyātu lillāhi waṣ-ṣalawātu waṭ-ṭayyibāt. Allāhumma ṣalli ʿalā Muḥammad. As-salāmu ʿalaykum wa raḥmatullāh.",
+          "translation": {
+            "en": "Allah is the Greatest. Glory be to my Lord, the Most Great. Glory be to my Lord, the Most High. Our Lord, to You is all praise. All compliments, prayers, and pure words are due to Allah. O Allah, send blessings upon Muhammad. Peace be upon you and the mercy of Allah.",
+            "ar": "اللَّهُ أَكْبَرُ. سُبْحَانَ رَبِّيَ الْعَظِيمِ. سُبْحَانَ رَبِّيَ الْأَعْلَى. رَبَّنَا لَكَ الْحَمْدُ. التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ. اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ. السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ"
+          },
+          "reference": {
+            "collection": "Multiple Collections",
+            "book": "Fiqh al-Ṣalāh",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "Various Companions",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "The structure of the prayer and its verbal components are narrated across Bukhārī, Muslim, and the four Sunan collections."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Every prayer is a complete spiritual journey. You begin with \"Allahu Akbar\" — magnifying Allah above everything in your life. You recite al-Fātiḥah — the greatest conversation with your Lord. You bow in rukūʿ — lowering yourself before His majesty. You prostrate in sujūd — the closest point to Allah, placing the most honored part of your body (your face) on the lowest part of the earth. You sit for tashahhud — renewing your testimony of faith and sending salawat upon the Prophet ﷺ. You end with \"As-salāmu ʿalaykum\" — a greeting of peace to the angels and your fellow worshippers. In just a few minutes, you have traveled from the takbīr to the salām — and with each movement, you have drawn closer to the One who created you. The question is: did you feel the journey?",
+            "ar": "كُلُّ صَلَاةٍ رِحْلَةٌ رُوحِيَّةٌ كَامِلَة. تَبْدَأُ بِـ\"اللَّهُ أَكْبَرُ\" — تَعْظِيمُ اللَّهِ فَوْقَ كُلِّ شَيْءٍ. تَقْرَأُ الفَاتِحَةَ — أَعْظَمِ حِوَارٍ مَعَ الرَّبِّ. تَرْكَعُ — خُضُوعٌ لِجَلَالِهِ. تَسْجُدُ — أَقْرَبُ مَا يَكُونُ العَبْدُ مِنْ رَبِّهِ. تَجْلِسُ لِلتَّشَهُّدِ — تَجْدِيدُ الشَّهَادَةِ وَإِرْسَالُ الصَّلَوَاتِ عَلَى النَّبِيِّ ﷺ. تُسَلِّمُ — سَلَامٌ عَلَى المَلَائِكَةِ والمُصَلِّينَ. فِي دَقَائِقَ سَافَرْتَ مِنَ التَّكْبِيرِ إِلَى التَّسْلِيمِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "salah",
+            "prayer",
+            "takbir",
+            "ruku",
+            "sujud",
+            "tashahhud",
+            "salawat",
+            "journey"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "glm-reflections-salah-3",
+          "category_id": "reflections-salah",
+          "title": {
+            "en": "The Cure for the Heart",
+            "ar": "دَوَاءُ الْقَلْبِ"
+          },
+          "arabic": "أَرَأَيْتُمْ لَوْ أَنَّ أَحَدَكُمْ عَلَى بَابِهُ نَهَرٌ يَغْتَسِلُ مِنْهُ خَمْسَ مَرَّاتٍ فِي الْيَوْمِ، هَلْ يَبْقَى مِنْ دَنَسِهِ شَيْءٌ؟ قَالُوا: لَا. قَالَ: فَذَلِكَ مَثَلُ الصَّلَوَاتِ الْخَمْسِ يَمْحُو اللَّهُ بِهِنَّ الْخَطَايَا",
+          "transliteration": "A-ra'aytum law anna aḥadakum ʿalā bābihi nahrun yaghtasilu minhu khamsa marrātin fī al-yawm, hal yabqā min danasihi shay'? Qālū: Lā. Qāla: Fadhālika mathalu aṣ-ṣalawāti al-khamsi yamḥullāhu bihinna al-khaṭāyā.",
+          "translation": {
+            "en": "Tell me, if there were a river at the door of one of you and he bathed in it five times a day, would any filth remain on him? They said: No. He said: That is the example of the five prayers — Allah wipes away sins through them.",
+            "ar": "أَرَأَيْتُمْ لَوْ أَنَّ أَحَدَكُمْ عَلَى بَابِهِ نَهَرٌ يَغْتَسِلُ مِنْهُ خَمْسَ مَرَّاتٍ فِي الْيَوْمِ، هَلْ يَبْقَى مِنْ دَنَسِهِ شَيْءٌ؟ قَالُوا: لَا. قَالَ: فَذَلِكَ مَثَلُ الصَّلَوَاتِ الْخَمْسِ يَمْحُو اللَّهُ بِهِنَّ الْخَطَايَا"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ al-Bukhārī",
+            "book": "Al-Mawāqīt",
+            "chapter": "6",
+            "hadith": "505",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also in Ṣaḥīḥ Muslim 667. One of the most powerful analogies the Prophet ﷺ gave for the purifying effect of prayer."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ chose a perfect analogy: a river flowing at your door, five times a day. No matter how dirty you become between washings, the river is always there, always flowing, always purifying. The five daily prayers are not a burden — they are a gift. They are the spiritual river that cleanses the heart from the accumulation of sins, doubts, and worldly attachments. Between Fajr and Dhuhr, the heart collects dust. Between Dhuhr and Asr, it gathers rust. But each prayer arrives like fresh water, washing away what accumulated and renewing the heart's purity. The one who abandons prayer is like one who refuses to bathe — and the filth only grows.",
+            "ar": "اخْتَارَ النَّبِيُّ ﷺ مَثَلًا كَامِلًا: نَهَرٌ يَجْرِي عَلَى بَابِكَ خَمْسَ مَرَّاتٍ. الصَّلَوَاتُ الخَمْسُ لَيْسَتْ ثِقَلًا — بَلْ هِبَةٌ. هِيَ النَّهَرُ الرُّوحِيُّ الَّذِي يُطَهِّرُ القَلْبَ. بَيْنَ الفَجْرِ وَالظُّهْرِ يَجْمَعُ القَلْبُ غُبَارًا. بَيْنَ الظُّهْرِ وَالعَصْرِ يَصْدَأُ. لَكِنْ كُلَّ صَلَاةٍ تَأْتِي كَمَاءٍ عَذْبٍ تَغْسِلُ مَا تَرَاكَمَ. مَنْ تَرَكَ الصَّلَاةَ فَكَمَنْ يَأْبَى الاغْتِسَالَ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "salah",
+            "prayer",
+            "purification",
+            "sins",
+            "forgiveness",
+            "heart",
+            "five-prayers"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "id": "the-other-side",
+      "section_id": "reflections",
+      "name": {
+        "en": "The Other Side",
+        "ar": "الجانب الآخر"
+      },
+      "description": {
+        "en": "Duas and reflections on death, the grave, and Barzakh",
+        "ar": "أدعية وتأملات في الموت والقبر والبرزخ"
+      },
+      "order": 5,
+      "icon": "moon",
+      "color": "slate",
+      "items": [
+        {
+          "id": "ref-barzakh-001",
+          "category_id": "the-other-side",
+          "title": {
+            "en": "Du'a When Visiting the Graveyard",
+            "ar": "دعاء زيارة القبور"
+          },
+          "arabic": "السَّلَامُ عَلَيْكُمْ أَهْلَ الدِّيَارِ مِنَ الْمُؤْمِنِينَ وَالْمُسْلِمِينَ، وَإِنَّا إِنْ شَاءَ اللَّهُ بِكُمْ لَاحِقُونَ، نَسْأَلُ اللَّهَ لَنَا وَلَكُمُ الْعَافِيَةَ",
+          "transliteration": "As-salamu 'alaykum ahlad-diyari minal-mu'minina wal-muslimin, wa inna in sha'a-llahu bikum lahiqun, nas'alullaha lana wa lakumul-'afiyah.",
+          "translation": {
+            "en": "Peace be upon you, O people of the dwellings, the believers and Muslims. We, if Allah wills, will join you. We ask Allah for well-being for us and for you.",
+            "ar": "السلام عليكم أهل الديار من المؤمنين والمسلمين..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Jana'iz",
+            "chapter": "",
+            "hadith": "975",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The dead are alive in their graves. When you greet them, they return your greeting. Remembering death is a secret to living meaningfully.",
+            "ar": "الموتى أحياء في قبورهم."
+          },
+          "tags": [
+            "death",
+            "grave",
+            "barzakh"
+          ],
+          "related": [
+            "dua-sik-004"
+          ],
+          "notes": "Theme from The Other Side: Barzakh and Beyond series (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-barzakh-002",
+          "category_id": "the-other-side",
+          "title": {
+            "en": "Du'a for Protection from the Punishment of the Grave",
+            "ar": "دعاء النجاة من عذاب القبر"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ",
+          "transliteration": "Allahumma inni a'udhu bika min 'adhabil-qabr, Allahumma inni a'udhu bika min 'adhabil-qabr, Allahumma inni a'udhu bika min fitnatil-masihid-dajjal, Allahumma inni a'udhu bika min fitnatil-mahya wal-mamat.",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from the punishment of the grave. O Allah, I seek refuge in You from the punishment of the grave. O Allah, I seek refuge in You from the trial of the False Messiah. O Allah, I seek refuge in You from the trials of life and death.",
+            "ar": "اللهم إني أعوذ بك من عذاب القبر..."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Jihad",
+            "chapter": "",
+            "hadith": "2822",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Also Sahih Muslim 2706."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The grave is the first stage of the Hereafter. Whoever passes it safely, the rest is easy. The Prophet ﷺ used to seek refuge from its punishment in every prayer.",
+            "ar": "القبر أول منازل الآخرة."
+          },
+          "tags": [
+            "death",
+            "grave",
+            "protection",
+            "barzakh"
+          ],
+          "related": [],
+          "notes": "Theme from The Other Side series.",
+          "order": 2
+        },
+        {
+          "id": "glm-reflections-barzakh-1",
+          "category_id": "reflections-barzakh",
+          "title": {
+            "en": "Life in the Grave",
+            "ar": "الحَيَاةُ فِي الْقَبْرِ"
+          },
+          "arabic": "إِنَّ الْمَيِّتَ لَيَسْمَعُ قَرْعَ نِعَالِهِمْ إِذَا وَلَّوْا عَنْهُ مُدْبِرِينَ",
+          "transliteration": "Inna al-mayyita layasmaʿu qarʿa niʿālihim idhā wallaw ʿanhu mudbirīn.",
+          "translation": {
+            "en": "Indeed, the deceased hears the sound of their sandals when they turn away from him, walking back.",
+            "ar": "إِنَّ الْمَيِّتَ لَيَسْمَعُ قَرْعَ نِعَالِهِمْ إِذَا وَلَّوْا عَنْهُ مُدْبِرِينَ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ Muslim",
+            "book": "Al-Janā'iz",
+            "chapter": "",
+            "hadith": "2747",
+            "narrator": "Anas ibn Mālik",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also recorded by Abu Dāwūd 3207 and Aḥmad 12476. The hadith affirms that the deceased retains awareness after death."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Death is not the end — it is the beginning of a new phase called al-Barzakh (the barrier). The Prophet ﷺ taught that the dead are not unaware; they hear the footsteps of those who leave their burial. The grave is the first station of the Hereafter, and it is either a garden from the gardens of Paradise or a pit from the pits of the Hellfire. What prepares a person for the grave is not wealth or status, but the deeds they carried: their prayers, their charity, their relationship with Allah. The Barzakh is a world we cannot see but must prepare for, for it is the gateway to eternal life.",
+            "ar": "المَوْتُ لَيْسَ النِّهَايَةَ — بَلْ بِدَايَةُ مَرْحَلَةٍ جَدِيدَةٍ تُسَمَّى البَرْزَخَ. عَلَّمَ النَّبِيُّ ﷺ أَنَّ المَوْتَى لَيْسُوا غَافِلِينَ. القَبْرُ أَوَّلُ مَحَطَّةٍ فِي الآخِرَةِ وَهُوَ إِمَّا رَوْضَةٌ مِنْ رِيَاضِ الجَنَّةِ أَوْ حُفْرَةٌ مِنْ حُفَرِ النِّيرَانِ. الَّذِي يُعِدُّ الإِنْسَانَ لِلقَبْرِ لَيْسَ المَالَ أَوِ المَنْصِبَ — بَلِ الأَعْمَالَ: الصَّلَاةَ والصَّدَقَةَ والعِبَادَةَ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "barzakh",
+            "grave",
+            "death",
+            "afterlife",
+            "awareness",
+            "hereafter"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "glm-reflections-barzakh-2",
+          "category_id": "reflections-barzakh",
+          "title": {
+            "en": "The Questions of the Angels",
+            "ar": "أَسْئِلَةُ الْمَلَائِكَةِ"
+          },
+          "arabic": "يُثَبَّتُ اللَّهُ الَّذِينَ آمَنُوا بِالْقَوْلِ الثَّابِتِ فِي الْحَيَاةِ الدُّنْيَا وَفِي الْآخِرَةِ",
+          "transliteration": "Yuthabbitullāhu alladhīna āmanū bil-qawli ath-thābiti fī al-ḥayātid-dunyā wa fī al-ākhirah.",
+          "translation": {
+            "en": "Allah will keep firm those who believe, with the firm word, in the worldly life and in the Hereafter.",
+            "ar": "يُثَبَّتُ اللَّهُ الَّذِينَ آمَنُوا بِالْقَوْلِ الثَّابِتِ فِي الْحَيَاةِ الدُّنْيَا وَفِي الْآخِرَةِ"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Surah Ibrāhīm",
+            "chapter": "14",
+            "hadith": "27",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": "The hadith about the questioning in the grave is recorded in Ṣaḥīḥ al-Bukhārī 1338 and Ṣaḥīḥ Muslim 2870 from Anas ibn Mālik."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "When a person is placed in the grave, two angels — Munkar and Nakīr — sit them up and ask three questions: \"Who is your Lord? What is your religion? Who is this man who was sent among you?\" The believer will answer: \"My Lord is Allah, my religion is Islam, and he is the Messenger of Allah ﷺ.\" This is the test of the grave, and passing it depends on how one lived. The Prophet ﷺ said that these questions are the reason we pray: \"Why do you think the Muslim is tested in the grave? Because of the testimony that there is no god but Allah and that Muhammad is the Messenger of Allah.\" This du'a from the Quran — \"Yuthabbitullāhu alladhīna āmanū\" — is the ultimate preparation for that moment.",
+            "ar": "حِينَ يُوضَعُ الإِنْسَانُ فِي القَبْرِ يُجْلَسُهُ مَلَكَانِ — مُنْكَرٌ وَنَكِيرٌ — وَيَسْأَلَانِ ثَلَاثَةَ أَسْئِلَةٍ: \"مَنْ رَبُّكَ؟ مَا دِينُكَ؟ مَنْ هَذَا الرَّسُولُ الَّذِي بُعِثَ فِيكُمْ؟\" المُؤْمِنُ يُجِيبُ: \"رَبِّي اللَّهُ، دِينِي الإِسْلَامُ، هُوَ رَسُولُ اللَّهِ ﷺ.\" النَّجَاحُ فِي هَذَا الاخْتِبَارِ مَبْنِيٌّ عَلَى كَيْفِيَّةِ الحَيَاةِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "barzakh",
+            "grave",
+            "angels",
+            "munkar",
+            "nakeer",
+            "trial",
+            "faith",
+            "testimony"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-reflections-barzakh-3",
+          "category_id": "reflections-barzakh",
+          "title": {
+            "en": "Your Deeds Follow You",
+            "ar": "أَعْمَالُكَ تَتْبَعُكَ"
+          },
+          "arabic": "إِذَا مَاتَ الإِنْسَانُ انْقَطَعَ عَمَلُهُ إِلَّا مِنْ ثَلَاثَةٍ: صَدَقَةٍ جَارِيَةٍ، أَوْ عِلْمٍ يُنْتَفَعُ بِهِ، أَوْ وَلَدٍ صَالِحٍ يَدْعُو لَهُ",
+          "transliteration": "Idhā māta al-insānu inqaṭaʿa ʿamaluhū illā min thalāthatin: ṣadaqatin jāriyatin, aw ʿilmin yuntafaʿu bihi, aw waladin ṣāliḥin yadʿū lah.",
+          "translation": {
+            "en": "When a person dies, his deeds cease except for three: ongoing charity, beneficial knowledge, or a righteous child who prays for him.",
+            "ar": "إِذَا مَاتَ الإِنْسَانُ انْقَطَعَ عَمَلُهُ إِلَّا مِنْ ثَلَاثَةٍ: صَدَقَةٍ جَارِيَةٍ، أَوْ عِلْمٍ يُنْتَفَعُ بِهِ، أَوْ وَلَدٍ صَالِحٍ يَدْعُو لَهُ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ Muslim",
+            "book": "Al-Waṣiyyah",
+            "chapter": "13",
+            "hadith": "1631",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also in Sunan Abī Dāwūd 2880 and Sunan at-Tirmidhī 1376. One of the most frequently cited hadith on legacy."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This hadith is both a warning and an invitation. The warning: everything you do in this life has an expiration date — except three things. The invitation: invest in what outlives you. Ongoing charity (ṣadaqah jāriyah) could be a well you dug, a school you built, or knowledge you disseminated. Beneficial knowledge is a light that continues to guide long after the teacher is gone. A righteous child is a living du'a, standing at your grave, mentioning Allah by your name. The scholars said this hadith should reorient our priorities: are we spending our days on what dies with us, or on what lives beyond us?",
+            "ar": "هَذَا الحَدِيثُ إِنْذَارٌ وَدَعْوَةٌ. الإِنْذَارُ: كُلُّ مَا تَعْمَلُهُ فِي هَذِهِ الحَيَاةِ لَهُ مُدَّةُ صَلَاحِيَّةٍ — إِلَّا ثَلَاثَةَ أَشْيَاءَ. الدَّعْوَةُ: اسْتَثْمِرْ فِيمَا يَبْقَى بَعْدَكَ. الصَّدَقَةُ الجَارِيَةُ: بِئْرٌ حَفَرْتَهُ أَوْ عِلْمٌ نَشَرْتَهُ. العِلْمُ النَّافِعُ: نُورٌ يَهْدِي بَعْدَ ذَهَابِ المُعَلِّمِ. الوَلَدُ الصَّالِحُ: دُعَاءٌ حَيٌّ يَقِفُ عِنْدَ قَبْرِكَ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "barzakh",
+            "deeds",
+            "charity",
+            "knowledge",
+            "children",
+            "legacy",
+            "sadaqah-jariyah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "id": "allahs-names-ref",
+      "section_id": "reflections",
+      "name": {
+        "en": "Allah's Names: The Name I Need",
+        "ar": "أسماء الله: الاسم الذي أحتاجه"
+      },
+      "description": {
+        "en": "Duas calling upon Allah through His beautiful names",
+        "ar": "أدعية نداء الله بأسمائه الحسنى"
+      },
+      "order": 6,
+      "icon": "star",
+      "color": "amber",
+      "items": [
+        {
+          "id": "ref-names-001",
+          "category_id": "allahs-names-ref",
+          "title": {
+            "en": "Calling upon Ar-Rahman (The Most Compassionate)",
+            "ar": "نداء الرحمن"
+          },
+          "arabic": "يَا رَحْمَٰنُ ارْحَمْنِي بِرَحْمَتِكَ الَّتِي وَسِعَتْ كُلَّ شَيْءٍ",
+          "transliteration": "Ya Rahman urhamni bi-rahmatikal-lati wasi'at kulla shay.",
+          "translation": {
+            "en": "O Most Compassionate, have mercy on me with Your mercy that encompasses all things.",
+            "ar": "يا رحمن ارحمني برحمتك التي وسعت كل شيء"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-A'raf",
+            "chapter": "7",
+            "hadith": "156",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "Allah's mercy encompasses all things."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah's Names are more than words — they are a path to understanding who our Lord truly is. Ar-Rahman means His mercy covers everything: the believer and the disbeliever, the humans and the animals, in this world and the next.",
+            "ar": "أسماء الله أكثر من كلمات، هي طريق لمعرفة ربنا."
+          },
+          "tags": [
+            "asma",
+            "rahman",
+            "mercy",
+            "dua"
+          ],
+          "related": [
+            "asma-001"
+          ],
+          "notes": "Theme from Allah's Names: The Name I Need series (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-names-002",
+          "category_id": "allahs-names-ref",
+          "title": {
+            "en": "Calling upon Al-Wakeel (The Trustee)",
+            "ar": "نداء الوكيل"
+          },
+          "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+          "transliteration": "Hasbiyallahu la ilaha illa huwa, 'alayhi tawakkaltu wa huwa rabbul-'arshil-'azim.",
+          "translation": {
+            "en": "Allah is sufficient for me. There is no deity except Him. Upon Him I rely, and He is the Lord of the Magnificent Throne.",
+            "ar": "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "At-Tawbah",
+            "chapter": "9",
+            "hadith": "129",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 7,
+          "virtues": {
+            "en": "Al-Wakeel means the One who manages your affairs perfectly. When you say 'Hasbiyallah', you're saying: Allah is enough — He handles everything. Trust is not passivity; it's surrender after effort.",
+            "ar": "الوكيل: الذي يتولى أمورك بأحسن ما يكون."
+          },
+          "tags": [
+            "asma",
+            "wakeel",
+            "tawakkul",
+            "dua"
+          ],
+          "related": [
+            "asma-052",
+            "adh-mor-007"
+          ],
+          "notes": "Theme from Allah's Names series.",
+          "order": 2
+        },
+        {
+          "id": "ref-names-003",
+          "category_id": "allahs-names-ref",
+          "title": {
+            "en": "Calling upon Al-Ghafur (The All-Forgiving)",
+            "ar": "نداء الغفور"
+          },
+          "arabic": "يَا غَفُورُ اغْفِرْ لِي ذُنُوبِي كُلَّهَا، دِقَّهَا وَجِلَّهَا، أَوَّلَهَا وَآخِرَهَا، عَلَانِيَتَهَا وَسِرَّهَا",
+          "transliteration": "Ya Ghafur ighfir li dhunubi kullaha, diqqaha wa jillaha, awwalaha wa akhiraha, 'alaniyataha wa sirraha.",
+          "translation": {
+            "en": "O All-Forgiving, forgive all my sins — the small and the great, the first and the last, the open and the hidden.",
+            "ar": "يا غفور اغفر لي ذنوبي كلها..."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Mosques",
+            "chapter": "",
+            "hadith": "771",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Al-Ghafur is the One who forgives repeatedly, abundantly, completely. His forgiveness is not just covering sins — it's transforming them into good deeds. Never despair of His mercy.",
+            "ar": "الغفور: الذي يغفر كثيراً."
+          },
+          "tags": [
+            "asma",
+            "ghafur",
+            "forgiveness",
+            "dua"
+          ],
+          "related": [
+            "asma-034"
+          ],
+          "notes": "Theme from Allah's Names series.",
+          "order": 3
+        },
+        {
+          "id": "glm-reflections-names-practice-1",
+          "category_id": "reflections-names-practice",
+          "title": {
+            "en": "Calling Upon Allah by His Names",
+            "ar": "الدُّعَاءُ بِأَسْمَاءِ اللَّهِ"
+          },
+          "arabic": "لِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا",
+          "transliteration": "Lillāhi al-asmā'ul-ḥusnā fa-dʿūhu bihā.",
+          "translation": {
+            "en": "To Allah belong the most beautiful names, so call upon Him by them.",
+            "ar": "لِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Surah al-Aʿrāf",
+            "chapter": "7",
+            "hadith": "180",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": "The hadith about the 99 names is in Ṣaḥīḥ al-Bukhārī 2736 and Ṣaḥīḥ Muslim 2677, narrated by Abu Hurayrah."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah commands us not just to know His names, but to call upon Him by them. This means that each name of Allah is a doorway to a specific type of du'a. When you need provision, you call upon Ar-Razzāq. When you seek forgiveness, you call upon Al-Ghafūr. When you desire peace, you call upon As-Salām. The Prophet ﷺ said: \"Allah has ninety-nine names — one hundred less one. Whoever preserves them will enter Paradise.\" The word \"aḥṣāhā\" (preserves/enumerates) means more than memorizing — it means understanding, living by, and calling upon each name. The names of Allah are not just labels; they are keys to the greatest treasure a believer can access.",
+            "ar": "يَأْمُرُنَا اللَّهُ أَنْ لَا نَكْتَفِيَ بِمَعْرِفَةِ أَسْمَائِهِ — بَلْ أَنْ نَدْعُوَهُ بِهَا. كُلُّ اسْمٍ مِنْ أَسْمَاءِ اللَّهِ بَابٌ لِدُعَاءٍ مُعَيَّنٍ. عِنْدَ الحَاجَةِ تَدْعُو الرَّزَّاقَ. عِنْدَ الطَّلَبِ تَدْعُو الغَفُورَ. قَالَ النَّبِيُّ ﷺ: \"إِنَّ لِلَّهِ تِسْعَةً وَتِسْعِينَ اسْمًا مِائَةً إِلَّا وَاحِدًا مَنْ أَحْصَاهَا دَخَلَ الجَنَّةَ.\" أَسْمَاءُ اللَّهِ لَيْسَتْ مُجَرَّدَ عَنَاوِينَ — بَلْ مَفَاتِيحُ أَعْظَمِ كَنْزٍ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "asma-ul-husna",
+            "names-of-allah",
+            "dua",
+            "prayer",
+            "quran",
+            "paradise"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-reflections-names-practice-2",
+          "category_id": "reflections-names-practice",
+          "title": {
+            "en": "The Name You Need Most",
+            "ar": "الاسْمُ الَّذِي تَحْتَاجُهُ"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِرِضَاكَ مِنْ سَخَطِكَ، وَبِمُعَافَاتِكَ مِنْ عُقُوبَتِكَ، وَأَعُوذُ بِكَ مِنْكَ، لَا أُحْصِي ثَنَاءً عَلَيْكَ، أَنْتَ كَمَا أَثْنَيْتَ عَلَى نَفْسِكَ",
+          "transliteration": "Allāhumma innī aʿūdhu biriḍāka min sakhaṭika, wa bimuʿāfātika min ʿuqūbātika, wa aʿūdhu bika minka, lā uḥṣī thnā'an ʿalayka, anta kamā athnayta ʿalā nafsik.",
+          "translation": {
+            "en": "O Allah, I seek refuge in Your pleasure from Your wrath, and in Your pardon from Your punishment, and I seek refuge in You from You. I cannot enumerate Your praise; You are as You have praised Yourself.",
+            "ar": "اللَّهُمَّ إِنِّي أَعُوذُ بِرِضَاكَ مِنْ سَخَطِكَ، وَبِمُعَافَاتِكَ مِنْ عُقُوبَتِكَ، وَأَعُوذُ بِكَ مِنْكَ، لَا أُحْصِي ثَنَاءً عَلَيْكَ، أَنْتَ كَمَا أَثْنَيْتَ عَلَى نَفْسِكَ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ Muslim",
+            "book": "Al-Ṣalāh",
+            "chapter": "",
+            "hadith": "486",
+            "narrator": "Aisha bint Abī Bakr",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also in Sunan Abī Dāwūd 879 and at-Tirmidhī 3555. Part of the du'a the Prophet ﷺ taught for the night prayer (qunūt al-witr)."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Notice how this du'a, taught by the Prophet ﷺ, uses a profound understanding of Allah's names. He sought refuge in Allah's riḍā (pleasure) from His sakhaṭ (wrath) — not seeking refuge from Allah, but in Allah. He sought refuge in His muʿāfā (pardon) from His ʿuqūbā (punishment). And then came the most profound phrase: \"aʿūdhu bika minka\" — I seek refuge in You from You. This means: I seek refuge in the gentle, merciful aspect of Your nature from the severe, just aspect of Your nature. Every attribute of Allah has its counterpart, and the wise believer knows which name to call upon for which need. This is the art of du'a — knowing which name you need most.",
+            "ar": "لَاحِظْ كَيْفَ يَسْتَخْدِمُ هَذَا الدُّعَاءُ — الَّذِي عَلَّمَهُ النَّبِيُّ ﷺ — فَهْمًا عَمِيقًا لِأَسْمَاءِ اللَّهِ. اسْتَعَاذَ بِرِضَا اللَّهِ مِنْ سَخَطِهِ — لَيْسَ مِنَ اللَّهِ بَلْ فِي اللَّهِ. وَأَعْظَمُ مَا فِيهِ: \"أَعُوذُ بِكَ مِنْكَ\" — أَسْتَجِيرُ بِالجَانِبِ اللَّطِيفِ الرَّحِيمِ مِنَ الجَانِبِ الشَّدِيدِ العَادِلِ. لِكُلِّ صِفَةٍ مُقَابِلٌ، وَالعَبْدُ العَاقِلُ يَعْرِفُ أَيَّ اسْمٍ يَدْعُو لِأَيِّ حَاجَةٍ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "asma-ul-husna",
+            "names-of-allah",
+            "dua",
+            "refuge",
+            "mercy",
+            "wrath",
+            "qunut"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "glm-reflections-names-practice-3",
+          "category_id": "reflections-names-practice",
+          "title": {
+            "en": "Living by His Names",
+            "ar": "التَّحَلِّي بِأَسْمَاءِ اللَّهِ"
+          },
+          "arabic": "تَخَلَّقُوا بِأَخْلَاقِ اللَّهِ، فَإِنَّ اللَّهَ خَلَقَ الْإِنْسَانَ عَلَى صُورَتِهِ",
+          "transliteration": "Takhallaqū bi-akhlāqillāhi, fa-innallāha khalaqa al-insāna ʿalā ṣūratihi.",
+          "translation": {
+            "en": "Adorn yourselves with the attributes of Allah, for Allah created the human being upon His image.",
+            "ar": "تَخَلَّقُوا بِأَخْلَاقِ اللَّهِ، فَإِنَّ اللَّهَ خَلَقَ الْإِنْسَانَ عَلَى صُورَتِهِ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ al-Bukhārī",
+            "book": "Al-Istiqdhāf",
+            "chapter": "93",
+            "hadith": "6227",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "The hadith about being created in the image of Allah (ʿalā ṣūratihi) refers to the human spiritual form. The instruction to \"adorn with His attributes\" is found in the Athar of the early scholars."
+          },
+          "grade": "Athar",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ said: \"Adorn yourselves with the attributes of Allah.\" This does not mean attributing divine qualities to ourselves — it means striving to reflect the divine attributes in our limited, human capacity. Allah is Ar-Raḥmān (the Most Merciful) — so we strive to be merciful. Allah is Al-ʿAdl (the Just) — so we strive to be just. Allah is Al-Ḥalīm (the Forbearing) — so we strive to be forbearing. This is the highest spiritual aspiration: not just to know Allah's names, but to live them. Ibn al-Qayyim said that the degrees of servitude (ʿubūdiyyah) correspond to the names of Allah — the more you embody them, the closer you are to Him.",
+            "ar": "قَالَ النَّبِيُّ ﷺ: \"تَخَلَّقُوا بِأَخْلَاقِ اللَّهِ.\" لَا يَعْنِي إِثْبَاتَ الصِّفَاتِ الإِلَهِيَّةِ لَنَا — بَلْ مُجَاهَدَةَ تَجَلِّيهَا فِي طَاقَتِنَا البَشَرِيَّةِ. اللَّهُ الرَّحْمَنُ — فَنَسْعَى لِلرَّحْمَةِ. اللَّهُ العَدْلُ — فَنَسْعَى لِلْعَدْلِ. اللَّهُ الحَلِيمُ — فَنَسْعَى لِلْحِلْمِ. هَذَا أَعْلَى أَمَانِي الرُّوحِ: لَا مَجَرَّدَ مَعْرِفَةِ أَسْمَاءِ اللَّهِ — بَلْ العَيْشِ بِهَا."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "asma-ul-husna",
+            "names-of-allah",
+            "character",
+            "akhlaq",
+            "mercy",
+            "justice",
+            "forbearance"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        }
+      ]
+    },
+    {
+      "id": "day-arafah",
+      "section_id": "reflections",
+      "name": {
+        "en": "The Day of Arafah",
+        "ar": "يوم عرفة"
+      },
+      "description": {
+        "en": "Special duas for the most blessed day of the year",
+        "ar": "أدعية خاصة لأفضل يوم في السنة"
+      },
+      "order": 7,
+      "icon": "sun",
+      "color": "amber",
+      "items": [
+        {
+          "id": "ref-arafah-001",
+          "category_id": "day-arafah",
+          "title": {
+            "en": "The Best Du'a on the Day of Arafah",
+            "ar": "أفضل دعاء يوم عرفة"
+          },
+          "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "La ilaha illa-llahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir.",
+          "translation": {
+            "en": "There is no deity except Allah alone, with no partner. To Him belongs the dominion and to Him belongs all praise, and He is competent over all things.",
+            "ar": "لا إله إلا الله وحده لا شريك له له الملك وله الحمد وهو على كل شيء قدير"
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "3585",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "The Prophet ﷺ said: 'The best du'a is the du'a on the Day of Arafah, and the best thing I and the prophets before me have said is: La ilaha illa-llah...'"
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "Classed Hasan by Al-Albani",
+            "ar": "حسنه الألباني"
+          },
+          "repetitions": 100,
+          "virtues": {
+            "en": "The best du'a on the best day. The Day of Arafah is the day Allah perfected the religion and completed His favor. Fasting it expiates the sins of the previous year and the coming year.",
+            "ar": "خير الدعاء دعاء يوم عرفة."
+          },
+          "tags": [
+            "arafah",
+            "dua",
+            "tawhid",
+            "hajj"
+          ],
+          "related": [
+            "adh-tas-003"
+          ],
+          "notes": "Featured in The Day of Arafah series (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-arafah-002",
+          "category_id": "day-arafah",
+          "title": {
+            "en": "Du'a of Prophet Adam (AS) on Arafah",
+            "ar": "دعاء آدم عليه السلام"
+          },
+          "arabic": "رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ",
+          "transliteration": "Rabbana zalamna anfusana wa illam taghfir lana wa tarhamna lanakunanna minal-khasirin.",
+          "translation": {
+            "en": "Our Lord, we have wronged ourselves, and if You do not forgive us and have mercy upon us, we will surely be among the losers.",
+            "ar": "ربنا ظلمنا أنفسنا وإن لم تغفر لنا وترحمنا لنكونن من الخاسرين"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Al-A'raf",
+            "chapter": "7",
+            "hadith": "23",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": "This dua was taught by Allah to Adam (AS) at the plain of Arafat."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "It was at Arafah that Adam (AS) and Hawwa were reunited after their descent from Paradise. Allah taught them this dua of repentance, and it became the place of forgiveness for all generations to come.",
+            "ar": "في عرفات جمع الله بين آدم وحواء."
+          },
+          "tags": [
+            "arafah",
+            "adam",
+            "repentance",
+            "quran"
+          ],
+          "related": [
+            "quranic-002"
+          ],
+          "notes": "Featured in The Day of Arafah series.",
+          "order": 2
+        },
+        {
+          "id": "glm-reflections-arafah-1",
+          "category_id": "reflections-arafah",
+          "title": {
+            "en": "The Best Day",
+            "ar": "أَفْضَلُ الْأَيَّامِ"
+          },
+          "arabic": "صِيَامُ يَوْمِ عَرَفَةَ أَحْتَسِبُ عَلَى اللَّهِ أَنْ يُكَفِّرَ السَّنَةَ الَّتِي قَبْلَهُ وَالسَّنَةَ الَّتِي بَعْدَهُ",
+          "transliteration": "Ṣiyāmu yawmi ʿArafah aḥtasibu ʿalallāhi an yukaffira as-sanata allatī qablahā was-sanata allatī baʿdahā.",
+          "translation": {
+            "en": "Fasting on the Day of Arafah, I hope that Allah will expiate the sins of the year before it and the year after it.",
+            "ar": "صِيَامُ يَوْمِ عَرَفَةَ أَحْتَسِبُ عَلَى اللَّهِ أَنْ يُكَفِّرَ السَّنَةَ الَّتِي قَبْلَهُ وَالسَّنَةَ الَّتِي بَعْدَهُ"
+          },
+          "reference": {
+            "collection": "Ṣaḥīḥ Muslim",
+            "book": "Al-Ṣiyām",
+            "chapter": "43",
+            "hadith": "1162",
+            "narrator": "Abu Qatādah al-Anṣārī",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also in Sunan at-Tirmidhī 758 and Sunan Abī Dāwūd 2425. The hadith about freeing from Hellfire is in Muslim 1348."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Day of Arafah is the greatest day of the year. The Prophet ﷺ said: \"There is no day on which Allah frees more people from the Hellfire than the Day of Arafah.\" For the pilgrims, it is the essence of Ḥajj — standing on the plain of Arafah in humility and du'a. For those not performing Ḥajj, fasting this day is an act of devotion so powerful that it expiates the sins of an entire year — the one before and the one after. One day of fasting, two years of sins forgiven. This is the generosity of Allah on His most generous day.",
+            "ar": "يَوْمُ عَرَفَةَ أَعْظَمُ يَوْمٍ فِي السَّنَةِ. قَالَ النَّبِيُّ ﷺ: \"مَا مِنْ يَوْمٍ أَكْثَرَ مِنْ أَنْ يُعْتِقَ اللَّهُ فِيهِ عَبْدًا مِنَ النَّارِ مِنْ يَوْمِ عَرَفَةَ.\" لِلْحُجَّاجِ هُوَ رُوحُ الحَجِّ — الوُقُوفُ بِعَرَفَةَ خُشُوعًا وَدُعَاءً. لِغَيْرِ الحُجَّاجِ صِيَامُهُ يُكَفِّرُ ذُنُوبَ سَنَةٍ قَبْلَهُ وَسَنَةٍ بَعْدَهُ. يَوْمٌ وَاحِدٌ، سَنَتَانِ مَغْفُورَتَانِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "arafah",
+            "fasting",
+            "forgiveness",
+            "hajj",
+            "dhu-al-hijjah",
+            "expatation"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "glm-reflections-arafah-2",
+          "category_id": "reflections-arafah",
+          "title": {
+            "en": "Standing Before Allah",
+            "ar": "الوُقُوفُ أَمَامَ اللَّهِ"
+          },
+          "arabic": "خَيْرُ الدُّعَاءِ دُعَاءُ يَوْمِ عَرَفَةَ، وَخَيْرُ مَا قُلْتُ أَنَا وَالنَّبِيُّونَ مِنْ قَبْلِي: لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "Khayru ad-duʿā'i duʿā'u yawmi ʿArafah, wa khayru mā qultu ana wan-nabiyyūna min qablī: Lā ilāha illallāhu waḥdahū lā sharīka lah, lahul-mulku wa lahul-ḥamdu wa huwa ʿalā kulli shay'in qadīr.",
+          "translation": {
+            "en": "The best du'a is the du'a of the Day of Arafah, and the best of what I and the prophets before me have said is: There is no deity except Allah, alone, without partner. To Him belongs the dominion, and to Him belongs all praise, and He is over all things competent.",
+            "ar": "خَيْرُ الدُّعَاءِ دُعَاءُ يَوْمِ عَرَفَةَ، وَخَيْرُ مَا قُلْتُ أَنَا وَالنَّبِيُّونَ مِنْ قَبْلِي: لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ"
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhī",
+            "book": "Ad-Daʿawāt",
+            "chapter": "117",
+            "hadith": "3585",
+            "narrator": "Abdullāh ibn ʿAmr ibn al-ʿĀṣ",
+            "grading": "Hasan",
+            "url": "",
+            "notes": "Graded ḥasan by at-Tirmidhī and ṣaḥīḥ by Al-Albānī. Also recorded in Musnad Aḥmad 16843 and al-Muʿjam al-Kabīr by aṭ-Ṭabarānī."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ said the best du'a is the du'a of Arafah. And what is that du'a? It is the most fundamental declaration of tawḥīd — that there is no god but Allah, alone, without partner. This teaches us something profound: the essence of du'a is not elaborate words or complex phrases — it is sincerity and recognition of Allah's oneness. On the greatest day of the year, with millions of people standing before their Lord, the best thing you can say is the simplest truth: He alone is God. Every other du'a flows from this declaration. If your heart truly believes it, every wish you have is already contained within it.",
+            "ar": "قَالَ النَّبِيُّ ﷺ: خَيْرُ الدُّعَاءِ دُعَاءُ يَوْمِ عَرَفَةَ. وَمَا هُوَ؟ هُوَ أَبْسَطُ إِعْلَانِ التَّوْحِيدِ — لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ. هَذَا يُعَلِّمُنَا أَنَّ جَوْهَرَ الدُّعَاءِ لَيْسَ الأَلْفَاظَ المُعَقَّدَةَ — بَلْ الإِخْلَاصَ والاعْتِرَافَ بِوَحْدَانِيَّةِ اللَّهِ. فِي أَعْظَمِ يَوْمٍ مَعَ مَلَايِينَ وَاقِفِينَ أَمَامَ رَبِّهِمْ أَفْضَلُ قَوْلٍ هُوَ أَبْسَطُ حَقِيقَةٍ: هُوَ اللَّهُ وَحْدَهُ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "arafah",
+            "dua",
+            "tawhid",
+            "la-ilaha-illallah",
+            "hajj",
+            "prophets"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-reflections-arafah-3",
+          "category_id": "reflections-arafah",
+          "title": {
+            "en": "The Day of Forgiveness",
+            "ar": "يَوْمُ الْمَغْفِرَةِ"
+          },
+          "arabic": "مَا رُئِيَ الشَّيْطَانُ يَوْمًا هُوَ فِيهِ أَصْغَرُ وَلَا أَدْحَرُ وَلَا أَغْيَظُ مِنْهُ يَوْمَ عَرَفَةَ، مِمَّا يَرَى تَنَزُّلَ الرَّحْمَةِ وَتَجَاوُزَ الذُّنُوبِ، إِلَّا مَا رُئِيَ يَوْمَ بَدْرٍ",
+          "transliteration": "Mā ru'iya ash-shayṭānu yawman huwa fīhi aṣgharu wa lā adḥaru wa lā aghyaẓu minhu yawma ʿArafah, mim-mā yarā tanzūlar-raḥmati wa tajāwuzadh-dhunūb, illā mā ru'iya yawma Badr.",
+          "translation": {
+            "en": "The Shaytan was never seen more humiliated, more enraged, and more insignificant than on the Day of Arafah, because of what he witnesses of the descent of mercy and the forgiveness of sins — except for what he witnessed on the Day of Badr.",
+            "ar": "مَا رُئِيَ الشَّيْطَانُ يَوْمًا هُوَ فِيهِ أَصْغَرُ وَلَا أَدْحَرُ وَلَا أَغْيَظُ مِنْهُ يَوْمَ عَرَفَةَ، مِمَّا يَرَى تَنَزُّلَ الرَّحْمَةِ وَتَجَاوُزَ الذُّنُوبِ، إِلَّا مَا رُئِيَ يَوْمَ بَدْرٍ"
+          },
+          "reference": {
+            "collection": "Sunan Mālik",
+            "book": "Al-Ḥajj",
+            "chapter": "67",
+            "hadith": "",
+            "narrator": "Yazīd ibn Shaybān",
+            "grading": "Hasan",
+            "url": "",
+            "notes": "Graded ḥasan by Al-Albānī in Ṣaḥīḥ al-Jāmiʿ 1864. The chain goes through Mālik ibn Anas from Yazīd ibn Shaybān. Also recorded by Ibn Khuzaymah 2840."
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "On the Day of Arafah, even Shaytān is humiliated. He watches as millions of servants are forgiven, as the gates of mercy are thrown wide open, and as the fire of Hell is cooled. The only day he felt worse was the Day of Badr — when the Muslims, few and weak, were granted an impossible victory. This hadith reveals something profound about the Day of Arafah: it is not just a day of worship — it is a day of cosmic warfare. Every du'a made on Arafah is a blow against Shaytān. Every tear shed is a defeat for him. Every sin forgiven is a victory for the believer. When you stand in du'a on Arafah — whether in the plain of Arafah or in your own home — know that you are not alone: the mercy of Allah is descending, and the enemy is watching in defeat.",
+            "ar": "فِي يَوْمِ عَرَفَةَ حَتَّى الشَّيْطَانُ يُذَلُّ. يُشَاهِدُ مَلَايِينَ العِبَادِ يُغْفَرُونَ وَأَبْوَابَ الرَّحْمَةِ تُفْتَحُ. الوَحِيدَةُ الَّتِي شَعَرَ فِيهَا بِسُوءٍ أَكْبَرَ هِيَ يَوْمُ بَدْرٍ. يَكْشِفُ هَذَا الحَدِيثُ أَنَّ يَوْمَ عَرَفَةَ لَيْسَ يَوْمَ عِبَادَةٍ فَحَسْبُ — بَلْ يَوْمَ حَرْبٍ كَوْنِيَّةٍ. كُلُّ دُعَاءٍ ضَرْبَةٌ ضِدَّ الشَّيْطَانِ. كُلُّ دَمْعَةٍ هَزِيمَةٌ لَهُ. كُلُّ ذَنْبٍ مَغْفُورٍ انْتِصَارٌ لِلمُؤْمِنِ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "arafah",
+            "forgiveness",
+            "shaytan",
+            "mercy",
+            "hajj",
+            "badr",
+            "cosmic-war"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "id": "why-me-qadar",
+      "section_id": "reflections",
+      "name": {
+        "en": "Why Me? Understanding Qadar",
+        "ar": "لماذا أنا؟ فهم القدر"
+      },
+      "description": {
+        "en": "Duas and reflections on Divine Decree",
+        "ar": "أدعية وتأملات في القدر"
+      },
+      "order": 8,
+      "icon": "compass",
+      "color": "ocean",
+      "items": [
+        {
+          "id": "ref-qadar-001",
+          "category_id": "why-me-qadar",
+          "title": {
+            "en": "Du'a for Contentment with Qadar",
+            "ar": "دعاء الرضا بالقدر"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الرِّضَا بَعْدَ الْقَضَاءِ، وَبُرْدَ الْعَيْشِ بَعْدَ الْمَوْتِ، وَلَذَّةَ النَّظَرِ إِلَى وَجْهِكَ، وَالشَّوْقَ إِلَى لِقَائِكَ فِي غَيْرِ ضَرَّاءَ مُضِرَّةٍ، وَلَا فِتْنَةٍ مُضِلَّةٍ",
+          "transliteration": "Allahumma inni as'alukar-rida ba'dal-qada'i, wa bardal-'ayshi ba'dal-mawt, wa ladhatan-nadhari ila wajhik, wash-shawqa ila liqa'ika fi ghayri darra'a mudirra, wa la fitnatin mudillah.",
+          "translation": {
+            "en": "O Allah, I ask You for contentment after Your decree, the coolness of life after death, the delight of gazing upon Your Face, and the longing to meet You — without harm that harms, or misguiding trial.",
+            "ar": "اللهم إني أسألك الرضا بعد القضاء..."
+          },
+          "reference": {
+            "collection": "Sunan an-Nasa'i",
+            "book": "Book of Supplications",
+            "chapter": "",
+            "hadith": "10341",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "Classed Sahih by Al-Albani",
+            "ar": "صححه الألباني"
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Understanding Qadar doesn't mean never asking 'why' — it means trusting the answer even when you don't understand it. Contentment after decree is a gift from Allah.",
+            "ar": "الرضا بعد القضاء من أعظم النعم."
+          },
+          "tags": [
+            "qadar",
+            "contentment",
+            "dua"
+          ],
+          "related": [],
+          "notes": "Theme from Why Me? Understanding Qadar series (Yaqeen Institute).",
+          "order": 1
+        },
+        {
+          "id": "ref-qadar-002",
+          "category_id": "why-me-qadar",
+          "title": {
+            "en": "Du'a When Something Displeasing Happens",
+            "ar": "دعاء عند المصيبة"
+          },
+          "arabic": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْراً مِنْهَا",
+          "transliteration": "Inna lillahi wa inna ilayhi raji'un, Allahumma ajurni fi musibati wa akhlif li khayran minha.",
+          "translation": {
+            "en": "Indeed we belong to Allah, and indeed to Him we will return. O Allah, compensate me in my affliction and replace it with something better.",
+            "ar": "إنا لله وإنا إليه راجعون، اللهم أجرني في مصيبتي وأخلف لي خيراً منها"
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Jana'iz",
+            "chapter": "",
+            "hadith": "918",
+            "narrator": "",
+            "grading": "",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "When Umm Salama said this after her husband's death, Allah gave her the Prophet ﷺ as a husband. Every hardship is a question — this dua is the answer that opens doors you never imagined.",
+            "ar": "من قال هذا عند المصيبة أخلف الله له خيراً."
+          },
+          "tags": [
+            "qadar",
+            "calamity",
+            "patience",
+            "dua"
+          ],
+          "related": [],
+          "notes": "Theme from Why Me? series.",
+          "order": 2
+        },
+        {
+          "id": "glm-reflections-qadar-1",
+          "category_id": "reflections-qadar",
+          "title": {
+            "en": "Why Me?",
+            "ar": "لِمَاذَا أَنَا؟"
+          },
+          "arabic": "عَجَبًا لِأَمْرِ الْمُؤْمِنِ إِنَّ أَمْرَهُ كُلَّهُ خَيْرٌ، إِنْ أَصَابَتْهُ سَرَّاءُ شَكَرَ فَكَانَ خَيْرًا لَهُ، وَإِنْ أَصَابَتْهُ ضَرَّاءُ صَبَرَ فَكَانَ خَيْرًا لَهُ",
+          "transliteration": "ʿAjaban li-amril-mu'mini inna amrahu kullahu khayr, in aṣābatuhu sarā'u shakara fakāna khayran lah, wa in aṣābatuhu ḍarrā'u ṣabara fakāna khayran lah.",
+          "translation": {
+            "en": "How amazing is the affair of the believer, for his affair is all good. If something good happens to him, he is grateful for it, and that is good for him. If something bad happens to him, he bears it with patience, and that is good for him.",
+            "ar": "عَجَبًا لِأَمْرِ الْمُؤْمِنِ إِنَّ أَمْرَهُ كُلَّهُ خَيْرٌ، إِنْ أَصَابَتْهُ سَرَّاءُ شَكَرَ فَكَانَ خَيْرًا لَهُ، وَإِنْ أَصَابَتْهُ ضَرَّاءُ صَبَرَ فَكَانَ خَيْرًا لَهُ"
+          },
+          "reference": {
+            "collection": "Musnad Aḥmad",
+            "book": "Bāqī Musnad al-Mukthirīn",
+            "chapter": "",
+            "hadith": "26364",
+            "narrator": "Suḥayb ibn Sinān ar-Rūmī",
+            "grading": "Sahih",
+            "url": "",
+            "notes": "Also in Ṣaḥīḥ Muslim 2999. Graded ṣaḥīḥ by Aḥmad Shākir and Al-Arnāʾūṭ."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is one of the most powerful statements the Prophet ﷺ ever made about the believer's relationship with qadar (divine decree). \"How amazing\" — ʿajab — is not a word of confusion; it is a word of wonder. The Prophet ﷺ is marveling at the believer's position: no matter what happens, he wins. In ease, he wins through gratitude (shukr). In hardship, he wins through patience (ṣabr). There is no scenario in which the believer loses — because his criterion for \"winning\" is not worldly comfort, but nearness to Allah. The question \"Why me?\" transforms into \"How amazing — even this is for me.\" This is the secret of qadar: the one who truly believes in it never truly suffers.",
+            "ar": "هَذَا مِنْ أَعْظَمِ مَا قَالَهُ النَّبِيُّ ﷺ عَنْ عِلَاقَةِ المُؤْمِنِ بِالقَدَرِ. \"عَجَبًا\" لَيْسَتْ حَيْرَةً — بَلْ دَهْشَةٌ. يَتَعَجَّبُ النَّبِيُّ ﷺ مِنْ مَوْقِعِ المُؤْمِنِ: لَا يَخْسَرُ أَبَدًا. فِي الرَّخَاءِ يَرْبَحُ بِالشُّكْرِ. فِي الشِّدَّةِ يَرْبَحُ بِالصَّبْرِ. سُؤَالُ \"لِمَاذَا أَنَا؟\" يَتَحَوَّلُ إِلَى \"مَا أَعْجَبَ — حَتَّى هَذَا لِي.\" سِرُّ القَدَرِ: مَنْ آمَنَ بِهِ حَقًّا لَمْ يُعَانِ قَطُّ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "qadar",
+            "trials",
+            "patience",
+            "gratitude",
+            "sabr",
+            "shukr",
+            "divine-decree",
+            "suffering"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "glm-reflections-qadar-2",
+          "category_id": "reflections-qadar",
+          "title": {
+            "en": "Trust in Allah's Plan",
+            "ar": "التَّوَكُّلُ عَلَى خُطَّةِ اللَّهِ"
+          },
+          "arabic": "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ",
+          "transliteration": "Wa man yatawakkal ʿalallāhi fahuwa ḥasbuh.",
+          "translation": {
+            "en": "And whoever relies upon Allah — then He is sufficient for him.",
+            "ar": "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Surah aṭ-Ṭalāq",
+            "chapter": "65",
+            "hadith": "3",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": "The hadith about tying the camel is in Sunan at-Tirmidhī 2517, graded ḥasan. The verse continues: \"Indeed, Allah will accomplish His purpose.\""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Tawakkul (reliance on Allah) is one of the most misunderstood concepts in Islam. It does not mean inaction or passivity — it means doing your best and then trusting Allah with the outcome. The Prophet ﷺ tied his camel and then said: \"Trust in Allah.\" When asked why he tied it if he trusted Allah, he said: \"Tie your camel and trust in Allah.\" The beauty of tawakkul is captured in this verse: Allah does not say \"He will give you what you want\" — He says \"He is sufficient for you\" (ḥasbuh). This means that even if the outcome is not what you expected, Allah's plan is enough. His wisdom is enough. His love is enough. The one who truly relies on Allah finds peace not in getting what they want, but in knowing that Allah is sufficient — always.",
+            "ar": "التَّوَكُّلُ مِنْ أَكْثَرِ المَفَاهِيمِ سُوءَ فَهْمٍ فِي الإِسْلَامِ. لَا يَعْنِي التَّوَكُّلُ الخُمُولَ أَوِ السَّلْبِيَّةَ — بَلْ بَذْلَ الجُهْدِ ثُمَّ التَّفْوِيضَ لِلَّهِ. رَبَطَ النَّبِيُّ ﷺ نَاقَتَهُ ثُمَّ قَالَ: \"تَوَكَّلْ عَلَى اللَّهِ.\" لَمْ يَقُلِ اللَّهُ \"يُعْطِيكَ مَا تُرِيدُ\" — بَلْ \"هُوَ حَسْبُهُ.\" حَتَّى لَوْ لَمْ تَكُنِ النَّتِيجَةُ كَمَا تَوَقَّعْتَ — فَخُطَّةُ اللَّهِ كَافِيَةٌ. حِكْمَتُهُ كَافِيَةٌ. حُبُّهُ كَافٍ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "qadar",
+            "tawakkul",
+            "trust",
+            "reliance",
+            "quran",
+            "surrender",
+            "peace"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-reflections-qadar-3",
+          "category_id": "reflections-qadar",
+          "title": {
+            "en": "Every Difficulty Has Ease",
+            "ar": "مَعَ الْعُسْرِ يُسْرٌ"
+          },
+          "arabic": "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+          "transliteration": "Fa-inna maʿal-ʿusri yusrā. Inna maʿal-ʿusri yusrā.",
+          "translation": {
+            "en": "For indeed, with hardship [will be] ease. Indeed, with hardship [will be] ease.",
+            "ar": "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ۝ إِنَّ مَعَ الْعُسْرِ يُسْرًا"
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "Surah ash-Sharḥ",
+            "chapter": "94",
+            "hadith": "5-6",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": "The hadith \"Lan yaghliba yusrāni ʿusrun wāḥidun\" is recorded by Ibn Ḥajar in al-Fath (8/393) and Ibn Kathīr in his Tafsīr, from the Prophet ﷺ."
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Allah did not say \"after hardship comes ease\" — He said \"with hardship comes ease\" (maʿa, not baʿda). The preposition matters. Ease is not waiting on the other side of your trial; it is embedded within it. And then Allah repeated it twice: \"Indeed, with hardship [will be] ease. Indeed, with hardship [will be] ease.\" The Prophet ﷺ said: \"One ease will not overcome two hardships.\" The scholars explained: the word al-ʿusr (hardship) is definite (with alif-lām), so it refers to one specific hardship. But the word yusrā (ease) is indefinite, and in Arabic grammar, the indefinite within a positive context implies generality and abundance. So one hardship is followed by an abundance of ease — not just one, but many. When you are in the depths of difficulty, remember: the ease is already there. You just cannot see it yet.",
+            "ar": "لَمْ يَقُلِ اللَّهُ \"بَعْدَ العُسْرِ يُسْرٌ\" — بَلْ \"مَعَ العُسْرِ يُسْرٌ.\" حَرْفُ الجَرِّ هَامٌّ. اليُسْرُ لَيْسَ يَنْتَظِرُ بَعْدَ الابتِلَاءِ — بَلْ هُوَ دَاخِلٌ فِيهِ. وَكَرَّرَهَا اللَّهُ مَرَّتَيْنِ. قَالَ النَّبِيُّ ﷺ: \"لَنْ يَغْلِبَ يُسْرَانِ عُسْرٌ وَاحِدٌ.\" العُسْرُ مَعْرِفَةٌ (بِالأَلِفِ وَاللَّامِ) فَيَدُلُّ عَلَى عُسْرٍ وَاحِدٍ. أَمَّا اليُسْرُ فَنَكِرَةٌ وَالنَّكِرَةُ فِي السِّيَاقِ الإِيجَابِيِّ تَدُلُّ عَلَى الكَثْرَةِ. عُسْرٌ وَاحِدٌ يَتْبَعُهُ يُسْرٌ كَثِيرٌ."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "qadar",
+            "hardship",
+            "ease",
+            "hope",
+            "quran",
+            "patience",
+            "comfort",
+            "surah-ash-sharh"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        }
+      ]
+    },
+    {
+      "id": "prayers-of-pious",
+      "section_id": "reflections",
+      "name": {
+        "en": "Prayers of the Pious",
+        "ar": "أدعية الصالحين"
+      },
+      "description": {
+        "en": "Selected supplications of righteous predecessors, with context and reflection.",
+        "ar": "أدعية مختارة من السلف الصالح، مع سياقها وتأملات."
+      },
+      "order": 9,
+      "icon": "heart",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "glm-pop-001",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Barakah in Time",
+            "ar": "دعاء البركة في الوقت"
+          },
+          "arabic": "اَللَّهُمَّ بَارِكْ لِي فِي أَهْلِي وَمَالِي وَاجْعَلْ أَفْضَلَ أَيَّامِي يَوْمَ أَلْقَاكَ",
+          "transliteration": "Allahumma barik li fi ahli wa mali waj’al afdhala ayyami yawma alqak",
+          "translation": {
+            "en": "O Allah, bless my family and my wealth, and make the best of my days the day I meet You.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Jami",
+            "book": "",
+            "chapter": "",
+            "hadith": "3340",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "A profound dua seeking barakah (divine blessing) in family, wealth, and time. The pious would ask Allah to make every day better than the last, culminating in the best day being the day they meet their Lord. This reflects a life oriented toward the Hereafter while valuing every moment. Collected in Sahih al-Jami, this dua encapsulates the believer’s aspiration for a life that culminates in the ultimate meeting with Allah.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "barakah",
+            "time",
+            "family",
+            "hereafter"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1001
+        },
+        {
+          "id": "glm-pop-002",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Comprehensive Dua for Guidance",
+            "ar": "الدعاء الجامع للهداية"
+          },
+          "arabic": "اَللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَىٰ وَالتُّقَىٰ وَالْعَفَافَ وَالْغِنَىٰ",
+          "transliteration": "Allahumma inni as’alukal-huda wat-tuqa wal-‘afaf wal-ghina",
+          "translation": {
+            "en": "O Allah, I ask You for guidance, piety, chastity, and self-sufficiency.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "",
+            "chapter": "",
+            "hadith": "2721",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم taught this comprehensive dua encompassing the four pillars of a blessed life: guidance (knowing the right path), piety (acting upon it), chastity (protecting oneself from sin), and self-sufficiency (independence from creation). Despite its brevity, it is among the most comprehensive of all duas. It was narrated by Ibn Mas’ud (RA) who said the Prophet did not leave out anything more comprehensive than this.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "guidance",
+            "piety",
+            "chastity",
+            "sufficiency"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1002
+        },
+        {
+          "id": "glm-pop-003",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Steadfastness",
+            "ar": "دعاء الثبات على الدين"
+          },
+          "arabic": "يَا مُقَلِّبَ الْقُلُوبِ ثَبِّتْ قَلْبِي عَلَىٰ دِينِكَ",
+          "transliteration": "Ya muqallibal-qulub thabbit qalbi ‘ala dinik",
+          "translation": {
+            "en": "O Turner of hearts, make my heart firm upon Your religion.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Jami’ at-Tirmidhi",
+            "book": "",
+            "chapter": "",
+            "hadith": "2140",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم frequently made this dua, saying: “The hearts are between two fingers of Ar-Rahman — He turns them as He wills.” Umm Salamah (RA) reported that the Prophet would recite this most frequently. This dua is a reminder that steadfastness is a gift from Allah, not merely a product of human will, and the pious never ceased seeking it.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "steadfastness",
+            "heart",
+            "guidance",
+            "iman"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1003
+        },
+        {
+          "id": "glm-pop-004",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Forgiveness of Sins",
+            "ar": "دعاء غفران الذنوب"
+          },
+          "arabic": "رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ",
+          "transliteration": "Rabbana zhalamna anfusana wa il lam taghfir lana wa tarhamna lanakunanna minal-khasirin",
+          "translation": {
+            "en": "Our Lord, we have wronged ourselves, and if You do not forgive us and have mercy upon us, we will surely be among the losers.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "7:23",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is the dua of Adam (عليه السلام) after he and Hawwa erred, making it the first dua of repentance in human history. Allah taught him these exact words and accepted his repentance. The pious throughout history have clung to this Quranic dua as a model of sincere admission of wrongdoing coupled with hope in Allah’s mercy. It demonstrates that acknowledging one’s own fault is the first step toward forgiveness.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "forgiveness",
+            "repentance",
+            "adam",
+            "mercy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1004
+        },
+        {
+          "id": "glm-pop-005",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for a Good Ending",
+            "ar": "دعاء حسن الخاتمة"
+          },
+          "arabic": "اَللَّهُمَّ إِنِّي أَسْأَلُكَ حُسْنَ الْخَاتِمَةِ",
+          "transliteration": "Allahumma inni as’aluka husnal-khatimah",
+          "translation": {
+            "en": "O Allah, I ask You for a good ending.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Musnad Ahmad",
+            "book": "",
+            "chapter": "",
+            "hadith": "12616",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The pious were most concerned with how their lives would conclude, for a good ending secures the Hereafter. Anas ibn Malik (RA) reported that the Prophet صلى الله عليه وسلم frequently supplicated for a good ending. Scholars note that a good ending includes dying in a state of faith, with one’s final words being the testimony of Islam, and being gathered among the righteous on the Day of Judgment.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "hereafter",
+            "death",
+            "good-ending",
+            "iman"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1005
+        },
+        {
+          "id": "glm-pop-006",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Relief from Hardship",
+            "ar": "دعاء تفريج الكرب"
+          },
+          "arabic": "لَا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ",
+          "transliteration": "La ilaha illa anta subhanaka inni kuntu minaz-zhalimin",
+          "translation": {
+            "en": "There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "21:87",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is the dua of Yunus (عليه السلام) from the belly of the whale, which the Prophet صلى الله عليه وسلم described as the most effective dua for relief from distress. Allah specifically mentions that He answered Yunus and saved him from his grief. The Prophet صلى الله عليه وسلم urged every Muslim to call upon Allah with these words during times of difficulty.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "distress",
+            "relief",
+            "yunus",
+            "hardship"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1006
+        },
+        {
+          "id": "glm-pop-007",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Contentment",
+            "ar": "دعاء القناعة"
+          },
+          "arabic": "اَللَّهُمَّ قَنِّعْنِي بِمَا رَزَقْتَنِي وَبَارِكْ لِي فِيهِ وَاخْلُفْ عَلَيَّ كُلَّ غَائِبَةٍ بِخَيْرٍ",
+          "transliteration": "Allahumma qanni’ni bima razaqtani wa barik li fih wakhluf ‘alayya kulla gha’ibah bikhayr",
+          "translation": {
+            "en": "O Allah, make me content with what You have provided me, bless me in it, and replace for me every absence with good.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Musnad al-Bazzar",
+            "book": "",
+            "chapter": "",
+            "hadith": "1185",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Contentment (qana’ah) is a hallmark of the pious. The Prophet صلى الله عليه وسلم taught that true wealth is not an abundance of possessions but contentment of the soul. This comprehensive dua asks Allah for three things: satisfaction with one’s provision, barakah within it, and compensation for anything lost. Collected by al-Bazzar and graded Hasan, it reflects the pious person’s trust in Allah’s distribution of rizq.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "contentment",
+            "rizq",
+            "satisfaction",
+            "trust"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1007
+        },
+        {
+          "id": "glm-pop-008",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Protection from Anxiety",
+            "ar": "دعاء الحسبان والوكالة"
+          },
+          "arabic": "حَسْبُنَا اللَّهُ وَنِعْمَ الْوَكِيلُ",
+          "transliteration": "Hasbunallahu wa ni’mal-wakil",
+          "translation": {
+            "en": "Sufficient for us is Allah, and He is the best Disposer of affairs.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "3:173",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "These words were spoken by Ibrahim (عليه السلام) when he was thrown into the fire, and they were also said by the Prophet صلى الله عليه وسلم and his companions when they were told a great army had gathered against them. Aisha (RA) reported that whenever the Prophet صلى الله عليه وسلم was faced with a difficult situation, he would recite this. It is the ultimate expression of tawakkul (reliance upon Allah).",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "anxiety",
+            "trust",
+            "protection",
+            "tawakkul"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1008
+        },
+        {
+          "id": "glm-pop-009",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Righteous Offspring",
+            "ar": "دعاء الذرية الصالحة"
+          },
+          "arabic": "رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً إِنَّكَ سَمِيعُ الدُّعَاءِ",
+          "transliteration": "Rabbi hab li mil-ladunka dhurriyyatan tayyibah innaka sami’ud-du’a’",
+          "translation": {
+            "en": "My Lord, grant me from Yourself a goodly offspring. Indeed, You are the Hearer of supplication.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "3:38",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is the dua of Zakariyya (عليه السلام) when he asked Allah for a child despite his old age and his wife’s barrenness. Allah answered his prayer and granted him Yahya (عليه السلام), a prophet of righteousness. The pious have always followed this beautiful example, asking Allah for not just children, but “goodly” (tayyibah) offspring — meaning righteous, pure, and beneficial to the world.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "family",
+            "offspring",
+            "zakariyya",
+            "righteousness"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1009
+        },
+        {
+          "id": "glm-pop-010",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Knowledge",
+            "ar": "دعاء طلب العلم"
+          },
+          "arabic": "رَبِّ زِدْنِي عِلْمًا",
+          "transliteration": "Rabbi zidni ’ilman",
+          "translation": {
+            "en": "My Lord, increase me in knowledge.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "20:114",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This short yet immensely powerful Quranic dua was made by the Prophet Musa (عليه السلام) when Allah instructed him to travel to Khidr to gain knowledge. Despite Musa already being a prophet and among the most knowledgeable of his time, he humbly asked for more. The scholars have emphasized that this dua proves knowledge is a divine gift and that one should never feel satisfied with their current level of understanding. It is the first thing a seeker of knowledge should recite.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "knowledge",
+            "learning",
+            "musa",
+            "humility"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1010
+        },
+        {
+          "id": "glm-pop-011",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Sincerity",
+            "ar": "دعاء الإخلاص"
+          },
+          "arabic": "اَللَّهُمَّ إِنِّي أَسْأَلُكَ الْإِخْلَاصَ فِي الْقَوْلِ وَالْعَمَلِ",
+          "transliteration": "Allahumma inni as’alukal-ikhlas fil-qawli wal-’amal",
+          "translation": {
+            "en": "O Allah, I ask You for sincerity in word and deed.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "al-Mu’jam al-Kabir (Tabarani)",
+            "book": "",
+            "chapter": "",
+            "hadith": "762",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Sincerity (ikhlas) is the foundation of every accepted action. The pious were most vigilant about this quality, knowing that even the greatest acts of worship can be rendered worthless by hidden intentions. This dua specifically asks for sincerity in both speech and actions, covering the two primary domains of a Muslim’s life. Collected by at-Tabarani, it reflects the constant self-purification that characterized the lives of the early righteous generations.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sincerity",
+            "ikhlas",
+            "intention",
+            "worship"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1011
+        },
+        {
+          "id": "glm-pop-012",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Protection of Faith",
+            "ar": "دعاء حفظ الإسلام"
+          },
+          "arabic": "اَللَّهُمَّ احْفَظْنِي بِالْإِسْلَامِ قَائِمًا وَاحْفَظْنِي بِالْإِسْلَامِ قَاعِدًا وَاحْفَظْنِي بِالْإِسْلَامِ رَاكِعًا وَاحْفَظْنِي بِالْإِسْلَامِ سَاجِدًا",
+          "transliteration": "Allahumma ihfazni bil-islami qa’iman wa ihfazni bil-islami qa’idan wa ihfazni bil-islami raki’an wa ihfazni bil-islami saji’dan",
+          "translation": {
+            "en": "O Allah, protect me with Islam while standing, protect me with Islam while sitting, protect me with Islam while bowing, and protect me with Islam while prostrating.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "‘Amal al-Yawm wa al-Laylah (Ibn as-Sunni)",
+            "book": "",
+            "chapter": "",
+            "hadith": "342",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This remarkable dua asks for Allah’s protection in every physical state a person can be in, ensuring that one’s faith remains intact through all postures and situations in life. Collected by Ibn as-Sunni, it was among the regular supplications of the pious who understood that faith is a trust (amanah) that must be guarded at all times. The comprehensiveness of this dua — covering standing, sitting, bowing, and prostrating — represents a complete cycle of human movement and worship.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "faith",
+            "protection",
+            "islam",
+            "iman"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1012
+        },
+        {
+          "id": "glm-pop-013",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Good Character",
+            "ar": "دعاء حسن الخلق"
+          },
+          "arabic": "اَللَّهُمَّ اهْدِنِي لِأَحْسَنِ الْأَخْلَاقِ لَا يَهْدِي لِأَحْسَنِهَا إِلَّا أَنتَ وَاصْرِفْ عَنِّي سَيِّئَهَا لَا يَصْرِفُ عَنِّي سَيِّئَهَا إِلَّا أَنتَ",
+          "transliteration": "Allahumma ihdini li-ahsanil-akhlaqi la yahdi li-ahsaniha illa anta wasrif ’anni sayyi’aha la yasrifu ’anni sayyi’aha illa anta",
+          "translation": {
+            "en": "O Allah, guide me to the best of character, for none can guide to the best of it except You. And turn me away from evil character, for none can turn me away from it except You.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Ibn Hibban",
+            "book": "",
+            "chapter": "",
+            "hadith": "324",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: “The most complete of the believers in faith is the one with the best character.” This dua acknowledges that good character is a divine gift — one cannot truly attain it without Allah’s guidance, nor can one be protected from evil traits without His help. Collected in Sahih Ibn Hibban, it was a daily supplication of the pious who understood that the heaviest thing on the scales on the Day of Judgment would be good character.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "character",
+            "manners",
+            "akhlaq",
+            "guidance"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1013
+        },
+        {
+          "id": "glm-pop-014",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Acceptance of Deeds",
+            "ar": "دعاء قبول الأعمال"
+          },
+          "arabic": "رَبَّنَا تَقَبَّلْ مِنَّا إِنَّكَ أَنتَ السَّمِيعُ الْعَلِيمُ",
+          "transliteration": "Rabbana taqabbal minna innaka antas-sami’ul-’alim",
+          "translation": {
+            "en": "Our Lord, accept [this] from us. Indeed, You are the Hearing, the Knowing.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "2:127",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is the dua of Ibrahim (عليه السلام) and Ismail (عليه السلام) as they raised the foundations of the Ka’bah, expressing their hope that Allah would accept their monumental act of worship. The pious have always been more concerned with the acceptance of their deeds than with the deeds themselves. This dua teaches that no matter how great an act of worship may be, its value lies entirely in whether Allah accepts it or not.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "acceptance",
+            "deeds",
+            "ibrahim",
+            "kaaba"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1014
+        },
+        {
+          "id": "glm-pop-015",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Protection from Punishment",
+            "ar": "دعاء الوقاية من العذاب"
+          },
+          "arabic": "رَبَّنَا أَصْرِفْ عَنَّا عَذَابَ جَهَنَّمَ إِنَّ عَذَابَهَا كَانَ غَرَامًا إِنَّهَا سَاءَتْ مُسْتَقَرًّا وَمُقَامًا",
+          "transliteration": "Rabbana asrif ’anna ’adhaba jahannam inna ’adhabaha kana gharaman innaha sa’at mustaqarran wa muqaman",
+          "translation": {
+            "en": "Our Lord, avert from us the punishment of Hell. Indeed, its punishment is ever a lasting torment. Indeed, it is evil as a settlement and residence.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "25:65",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This powerful Quranic dua is from the servants of the Most Merciful, as described in Surah al-Furqan. It reflects their deep awareness of the reality of the Hereafter and their humble pleading before Allah. The pious never felt complacent about their deeds and always feared the punishment of Hell. This dua demonstrates that seeking refuge from punishment is not a sign of weak faith, but rather of deep knowledge and awareness of Allah’s justice and mercy.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "hellfire",
+            "protection",
+            "hereafter",
+            "mercy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1015
+        },
+        {
+          "id": "glm-pop-016",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Blessings in Rizq",
+            "ar": "دعاء الكفاءة في الرزق"
+          },
+          "arabic": "اَللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
+          "transliteration": "Allahumma ikfini bihalalika ’an haramika wa aghnini bifadhlika ’amman siwak",
+          "translation": {
+            "en": "O Allah, suffice me with what is lawful from what is unlawful, and enrich me through Your bounty from all besides You.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Jami’ at-Tirmidhi",
+            "book": "",
+            "chapter": "",
+            "hadith": "3563",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This beautiful dua teaches the pious approach to wealth and provision: seeking Allah’s sufficiency to avoid the haram, and seeking His bounty to be independent of all creation. The Prophet صلى الله عليه وسلم taught that a person will never truly be independent until they are content with what Allah has given them. Collected by at-Tirmidhi and graded Hasan, this dua was a constant companion of the righteous who preferred Allah’s halal provision over all worldly riches.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "rizq",
+            "halal",
+            "sufficiency",
+            "wealth"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1016
+        },
+        {
+          "id": "glm-pop-017",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Patience and Ease",
+            "ar": "دعاء الصبر والتيسير"
+          },
+          "arabic": "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي",
+          "transliteration": "Rabbi ishrah li sadri wa yassir li amri",
+          "translation": {
+            "en": "My Lord, expand for me my breast [with assurance] and ease for me my task.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "20:25-26",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is the dua of Musa (عليه السلام) before he faced the greatest challenge of his life — approaching Pharaoh with Allah’s message. It reflects the natural human need for divine support when burdened with a heavy task. The pious have always turned to these words when facing difficult circumstances, tests of leadership, or moments of overwhelming responsibility. The dua asks for two things: an expanded heart (to bear the weight of the task) and ease in the matter (to carry it out).",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "patience",
+            "ease",
+            "musa",
+            "strength"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1017
+        },
+        {
+          "id": "glm-pop-018",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Purification of the Heart",
+            "ar": "دعاء تطهير القلب"
+          },
+          "arabic": "اَللَّهُمَّ اغْسِلْ قَلْبِي بِمَاءِ الثَّلْجِ وَالْبَرَدِ وَنَقِّ قَلْبِي مِنَ الْخَطَايَا كَمَا نَقَّيْتَ الثَّوْبَ الْأَبْيَضَ مِنَ الدَّنَسِ",
+          "transliteration": "Allahummaghsil qalbi bi-ma’ith-thalji wal-baradi wa naqqi qalbi minal-khataya kama naqqaytath-thawbal-abyada minad-danas",
+          "translation": {
+            "en": "O Allah, wash my heart with the water of snow and hail, and purify my heart from sins as You purified the white garment from dirt.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "",
+            "chapter": "",
+            "hadith": "6307",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم would make this dua in his sujood (prostration), seeking the purification of his heart from even the subtlest spiritual impurities. If the Prophet, who was already forgiven all his past and future sins, sought such purification, how much more so should the average believer? This dua, collected in Sahih al-Bukhari, was a daily practice of the pious who understood that spiritual cleansing is as essential as physical cleanliness.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "purification",
+            "heart",
+            "sujood",
+            "sins"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1018
+        },
+        {
+          "id": "glm-pop-019",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Mercy",
+            "ar": "دعاء الرحمة والمغفرة"
+          },
+          "arabic": "رَبَّنَا آمَنَّا فَاغْفِرْ لَنَا وَارْحَمْنَا وَأَنتَ خَيْرُ الرَّاحِمِينَ",
+          "transliteration": "Rabbana amanna faghfir lana warhamna wa anta khayrur-rahimin",
+          "translation": {
+            "en": "Our Lord, we have believed, so forgive us and have mercy upon us, and You are the best of the merciful.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Quran",
+            "book": "",
+            "chapter": "",
+            "hadith": "23:109",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This beautiful Quranic dua combines faith, forgiveness, and mercy in a single supplication. The pious understood that belief (iman) must always be accompanied by a plea for forgiveness and mercy, for no one is free from shortcomings. This dua was among the regular supplications of the righteous who never took their faith for granted. The concluding phrase “and You are the best of the merciful” affirms that no mercy from creation can compare to Allah’s mercy, and it is only through Him that true compassion is found.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "mercy",
+            "forgiveness",
+            "faith",
+            "hope"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1019
+        },
+        {
+          "id": "glm-pop-020",
+          "category_id": "prayers-of-pious",
+          "title": {
+            "en": "Dua for Goodness in Both Worlds",
+            "ar": "دعاء حسنة الدنيا والآخرة"
+          },
+          "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Rabbana atina fid-dunya hasanah wafil-akhirati hasanah wa qina ’adhaban-nar",
+          "translation": {
+            "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the torment of the Fire.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "",
+            "chapter": "",
+            "hadith": "4522",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This is one of the most frequently recited duas of the Prophet صلى الله عليه وسلم, encompassing the complete aspiration of every believer: goodness in both worlds and protection from the Fire. Anas (RA) reported that the Prophet would make this dua abundantly. The pious understood that Islam does not require asceticism or rejection of the world, but rather asks for “hasanah” (goodness) in both realms. Collected in Sahih al-Bukhari, it is the most comprehensive dua for a balanced and blessed life.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "world",
+            "hereafter",
+            "comprehensive",
+            "blessing"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1020
+        }
+      ]
+    }
+  ]
+}

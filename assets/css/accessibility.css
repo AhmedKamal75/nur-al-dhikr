@@ -1,0 +1,27 @@
+/* ==========================================================================
+   accessibility.css
+   ========================================================================== */
+
+[data-high-contrast="true"] .card,
+[data-high-contrast="true"] .quick-action,
+[data-high-contrast="true"] .category-tile,
+[data-high-contrast="true"] .collection-tile,
+[data-high-contrast="true"] .stat-card {
+  border-width: 2px;
+}
+
+[data-high-contrast="true"] .chip { border-width: 1px; border-color: currentColor; }
+[data-high-contrast="true"] .btn--ghost { border: 1px solid var(--color-border-strong); }
+[data-high-contrast="true"] .icon-btn { width: 44px; height: 44px; }
+
+[dir="rtl"] .back-link .icon { transform: scaleX(-1); }
+[dir="rtl"] .card__arabic,
+[dir="rtl"] .focus__arabic { text-align: right; }
+
+[lang="ar"] { direction: rtl; }
+
+@media print {
+  .topbar, .bottomnav, #modal-root, #toast-root, .card__actions, .card__footer { display: none !important; }
+  body { background: #fff; color: #000; }
+  .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+}

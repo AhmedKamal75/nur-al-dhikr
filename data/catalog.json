@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "catalog_version": "3.0.0",
+  "libraries": [
+    {
+      "id": "adhkar",
+      "file": "data/adhkar.json",
+      "order": 1,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "duas",
+      "file": "data/duas.json",
+      "order": 2,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "quranic",
+      "file": "data/quranic.json",
+      "order": 3,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "prophet-duas",
+      "file": "data/prophet-duas.json",
+      "order": 4,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "asma",
+      "file": "data/asma.json",
+      "order": 5,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "reflections",
+      "file": "data/reflections.json",
+      "order": 6,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "pdf-duas",
+      "file": "data/pdf-duas.json",
+      "order": 7,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "daily-sunnah",
+      "file": "data/daily-sunnah.json",
+      "order": 8,
+      "builtin": true,
+      "enabled": true
+    },
+    {
+      "id": "special-days",
+      "file": "data/special-days.json",
+      "order": 9,
+      "builtin": true,
+      "enabled": true
+    }
+  ]
+}

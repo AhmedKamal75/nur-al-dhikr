@@ -1,0 +1,3165 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "id": "daily-sunnah",
+    "name": {
+      "en": "Daily Sunnah",
+      "ar": "سنن يومية"
+    },
+    "description": {
+      "en": "Small prophetic practices for everyday life",
+      "ar": "سنن نبوية للحياة اليومية"
+    },
+    "version": "2.0.0",
+    "source": {
+      "en": "Authentic Sunnah",
+      "ar": "السنة الصحيحة"
+    }
+  },
+  "categories": [
+    {
+      "id": "general-sunnah",
+      "section_id": "daily-sunnah",
+      "name": {
+        "en": "General Sunnah",
+        "ar": "سنن عامة"
+      },
+      "description": {
+        "en": "Simple prophetic habits for daily living",
+        "ar": "عادات نبوية بسيطة للحياة اليومية"
+      },
+      "order": 1,
+      "icon": "book",
+      "color": "teal",
+      "items": [
+        {
+          "id": "sunnah-001",
+          "category_id": "general-sunnah",
+          "title": {
+            "en": "Sleeping on the Right Side",
+            "ar": "النوم على الجانب الأيمن"
+          },
+          "arabic": "كَانَ النَّبِيُّ ﷺ إِذَا أَوَىٰ إِلَىٰ فِرَاشِهِ نَامَ عَلَىٰ شِقِّهِ الْأَيْمَنِ",
+          "transliteration": "Kanan-Nabiyyu sallallahu 'alayhi wa sallam idha awa ila firashihi nama 'ala shiqqihil-ayman.",
+          "translation": {
+            "en": "The Prophet ﷺ, when he went to bed, would sleep on his right side.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Invocations",
+            "chapter": "",
+            "hadith": "6314",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "A simple physical sunnah observed nightly before sleep.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sunnah",
+            "sleep"
+          ],
+          "related": [
+            "sleep-001"
+          ]
+        },
+        {
+          "id": "sunnah-002",
+          "category_id": "general-sunnah",
+          "title": {
+            "en": "Entering the Masjid with the Right Foot",
+            "ar": "دخول المسجد بالرجل اليمنى"
+          },
+          "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+          "transliteration": "Allahumma-ftah li abwaba rahmatik.",
+          "translation": {
+            "en": "O Allah, open for me the doors of Your mercy.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "713",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Said while stepping into the masjid with the right foot first.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sunnah",
+            "masjid"
+          ],
+          "related": []
+        },
+        {
+          "id": "sunnah-003",
+          "category_id": "general-sunnah",
+          "title": {
+            "en": "Leaving the Masjid with the Left Foot",
+            "ar": "الخروج من المسجد بالرجل اليسرى"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+          "transliteration": "Allahumma inni as'aluka min fadlik.",
+          "translation": {
+            "en": "O Allah, I ask You from Your favor.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer",
+            "chapter": "",
+            "hadith": "713",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Said while stepping out of the masjid with the left foot first.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sunnah",
+            "masjid"
+          ],
+          "related": []
+        },
+        {
+          "id": "sunnah-004",
+          "category_id": "general-sunnah",
+          "title": {
+            "en": "Sneezing and Its Response",
+            "ar": "تشميت العاطس"
+          },
+          "arabic": "إِذَا عَطَسَ أَحَدُكُمْ فَلْيَقُلِ: الْحَمْدُ لِلَّهِ، وَلْيَقُلْ لَهُ أَخُوهُ أَوْ صَاحِبُهُ: يَرْحَمُكَ اللَّهُ، فَإِذَا قَالَ لَهُ: يَرْحَمُكَ اللَّهُ، فَلْيَقُلْ: يَهْدِيكُمُ اللَّهُ وَيُصْلِحُ بَالَكُمْ",
+          "transliteration": "Alhamdulillah — then the other replies: Yarhamukallah — then the sneezer responds: Yahdikumullahu wa yuslihu balakum.",
+          "translation": {
+            "en": "When one of you sneezes, let him say 'Praise be to Allah'; his companion should reply 'May Allah have mercy on you'; and he should then reply 'May Allah guide you and set your affairs right.'",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Manners",
+            "chapter": "",
+            "hadith": "6224",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "A small daily exchange of mercy and gratitude between believers.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sunnah",
+            "manners"
+          ],
+          "related": []
+        },
+        {
+          "id": "sunnah-005",
+          "category_id": "general-sunnah",
+          "title": {
+            "en": "Greeting with Salam",
+            "ar": "إفشاء السلام"
+          },
+          "arabic": "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ",
+          "transliteration": "As-salamu 'alaykum wa rahmatullahi wa barakatuh.",
+          "translation": {
+            "en": "Peace, the mercy of Allah, and His blessings be upon you.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Faith",
+            "chapter": "",
+            "hadith": "54",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ said none of you truly believes until you love for your brother what you love for yourself, and spreading salam is a means of that love.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sunnah",
+            "manners"
+          ],
+          "related": []
+        },
+        {
+          "id": "sunnah-006",
+          "category_id": "general-sunnah",
+          "title": {
+            "en": "Removing Harm from the Path",
+            "ar": "إماطة الأذى عن الطريق"
+          },
+          "arabic": "الْإِيمَانُ بِضْعٌ وَسَبْعُونَ أَوْ بِضْعٌ وَسِتُّونَ شُعْبَةً... وَأَدْنَاهَا إِمَاطَةُ الْأَذَىٰ عَنِ الطَّرِيقِ",
+          "transliteration": "Al-imanu bidh'un wa sab'una aw bidh'un wa sittuna shu'bah... wa adnaha imatatul-adha 'anit-tariq.",
+          "translation": {
+            "en": "Faith has over seventy branches, the least of which is removing harm from the road.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Faith",
+            "chapter": "",
+            "hadith": "35",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "A reminder that even small acts of public good are a part of faith.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sunnah",
+            "manners"
+          ],
+          "related": []
+        },
+        {
+          "id": "glm-ds-001-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua Upon Waking Up",
+            "ar": "دعاء الاستيقاظ من النوم"
+          },
+          "arabic": "اَلْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+          "transliteration": "Alhamdu lillahilladhi ahyana ba'da ma amatana wa ilayhin-nushur",
+          "translation": {
+            "en": "All praise is due to Allah who gave us life after having taken it from us and unto Him is the resurrection.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6312, Sahih Muslim 2711",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"When one of you wakes up, let him say: Alhamdu lillahilladhi ahyana ba'da ma amatana wa ilayhin-nushur.\" This expresses gratitude for the gift of life and reminds the believer of the Day of Resurrection. Sleep is a form of minor death, and waking is a reminder that Allah will resurrect us. (Bukhari 6312, Muslim 2711)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "waking",
+            "sleep",
+            "gratitude",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "glm-ds-002-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua Before Entering the Bathroom",
+            "ar": "دعاء دخول الخلاء"
+          },
+          "arabic": "اَللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْخُبُثِ وَالْخَبَائِثِ",
+          "transliteration": "Allahumma inni a'udhu bika minal-khubuthi wal-khaba-ith",
+          "translation": {
+            "en": "O Allah, I seek Your protection from the male and female devils.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 142, Sahih Muslim 375",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"When any one of you enters the toilet, let him say: O Allah, I seek refuge with You from the male and female devils (khubuth and khaba-ith).\" This dua should be said with the left foot entering first. (Bukhari 142, Muslim 375, Abu Dawud 6)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "bathroom",
+            "protection",
+            "daily",
+            "etiquette"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        },
+        {
+          "id": "glm-ds-003-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua After Exiting the Bathroom",
+            "ar": "دعاء الخروج من الخلاء"
+          },
+          "arabic": "غُفْرَانَكَ",
+          "transliteration": "Ghufaranak",
+          "translation": {
+            "en": "I seek Your forgiveness (Your pardon).",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 7, Sunan Abi Dawud 30",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم would say \"Ghufaranak\" upon exiting the bathroom. Even though using the bathroom is a natural act, the believer seeks Allah's forgiveness as a sign of humility and to maintain a state of purity with Allah. Exit with the right foot first. (Tirmidhi 7, Abu Dawud 30)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "bathroom",
+            "forgiveness",
+            "daily",
+            "etiquette"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "glm-ds-004-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua Before Wudu",
+            "ar": "دعاء الوضوء"
+          },
+          "arabic": "بِسْمِ اللَّهِ",
+          "transliteration": "Bismillah",
+          "translation": {
+            "en": "In the name of Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 24, Sunan Ibn Majah 397",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"There is no wudu for the one who does not mention the Name of Allah upon it.\" Starting with Bismillah is a sunnah mu'akkadah (strongly recommended) and brings barakah to the act of purification. (Tirmidhi 24, Ibn Majah 397)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "wudu",
+            "bismillah",
+            "purity",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "glm-ds-005-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Shahadah After Wudu",
+            "ar": "الشهادة بعد الوضوء"
+          },
+          "arabic": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+          "transliteration": "Ashhadu alla ilaha illallahu wahdahu la sharika lah, wa ashhadu anna Muhammadan abduhu wa rasuluh",
+          "translation": {
+            "en": "I bear witness that there is no deity except Allah, alone, without partner, and I bear witness that Muhammad is His servant and Messenger.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 234",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"Whoever performs wudu and does it well, then says: I bear witness that there is no deity except Allah... the eight gates of Paradise will be opened for him, and he may enter through whichever one he wishes.\" (Muslim 234)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "wudu",
+            "shahadah",
+            "paradise",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "glm-ds-006-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua Before Eating",
+            "ar": "دعاء قبل الطعام"
+          },
+          "arabic": "بِسْمِ اللَّهِ وَبَرَكَةِ اللَّهِ",
+          "transliteration": "Bismillahi wa barakatillah",
+          "translation": {
+            "en": "In the name of Allah and with the blessings of Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 5376, Sahih Muslim 2022, Sunan at-Tirmidhi 1856",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"When one of you eats, let him mention the name of Allah. If he forgets to mention the name of Allah at the beginning, let him say: Bismillahi awwalahu wa akhirahu (In the name of Allah at its beginning and end).\" The Prophet also added \"wa barakatillah\" when eating. (Bukhari 5376, Muslim 2022, Tirmidhi 1856)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eating",
+            "bismillah",
+            "barakah",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "glm-ds-007-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua After Eating",
+            "ar": "دعاء بعد الطعام"
+          },
+          "arabic": "اَلْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ",
+          "transliteration": "Alhamdu lillahilladhi at'amana wa saqana wa ja'alana muslimeen",
+          "translation": {
+            "en": "All praise is due to Allah who fed us, gave us drink, and made us Muslims.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2734, Sunan Abi Dawud 3854",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"Allah is pleased with His servant when he eats food and praises Him for it, and when he drinks and praises Him for it.\" A shorter version \"Alhamdulillah\" is also from the Sunnah. (Muslim 2734, Abu Dawud 3854)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eating",
+            "praise",
+            "gratitude",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
+        },
+        {
+          "id": "glm-ds-008-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua When Wearing New Clothes",
+            "ar": "دعاء لبس الثوب الجديد"
+          },
+          "arabic": "اَللَّهُمَّ لَكَ الْحَمْدُ كَمَا أَنْتَ، رَبِّي كَمَا يَنْبَغِي لِجَلَالِ وَجْهِكَ وَعَظِيمِ سُلْطَانِكَ",
+          "transliteration": "Allahumma lakal-hamdu kama anta, rabbi kama yanbaghi li-jalali wajhika wa azeemi sultanik",
+          "translation": {
+            "en": "O Allah, to You is all praise as You are, my Lord, as is befitting for the majesty of Your Face and the greatness of Your authority.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 1769, Sunan Abi Dawud 4020",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said this when wearing a new garment, then he would call it by its name — whether shirt (qamis), turban (imamah), or cloak (rida). A beautiful expression of gratitude acknowledging Allah's greatness. (Tirmidhi 1769, Abu Dawud 4020)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "clothing",
+            "gratitude",
+            "daily",
+            "etiquette"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 8
+        },
+        {
+          "id": "glm-ds-009-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua When Looking in the Mirror",
+            "ar": "دعاء النظر في المرآة"
+          },
+          "arabic": "اَللَّهُمَّ كَمَا أَحْسَنْتَ خَلْقِي فَحَسِّنْ خُلُقِي",
+          "transliteration": "Allahumma kama ahsanta khalqi fahassin khuluqi",
+          "translation": {
+            "en": "O Allah, just as You have made my outward appearance good, make my character good.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Musnad Ahmad 6/155, Sahih al-Jami 4862",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "This dua is narrated from the Prophet صلى الله عليه وسلم. It teaches that beauty of the soul (character) is far more important than beauty of the body. When one looks at their reflection, they should remember to ask Allah to beautify their inner self. (Reported by Ahmad, graded Hasan by Al-Albani in Sahih al-Jami 4862)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "mirror",
+            "character",
+            "beauty",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 9
+        },
+        {
+          "id": "glm-ds-010-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua When Leaving the Home",
+            "ar": "دعاء الخروج من المنزل"
+          },
+          "arabic": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+          "transliteration": "Bismillahi tawakkaltu alallahi wa la hawla wa la quwwata illa billah",
+          "translation": {
+            "en": "In the name of Allah, I place my trust in Allah, and there is no power and no strength except with Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 3426, Sunan Abi Dawud 5095",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"When a man leaves his house and says: Bismillahi tawakkaltu alallahi wa la hawla wa la quwwata illa billah — it is said to him: You are guided, sufficed, and protected.\" Then Shaytan keeps away from him. (Tirmidhi 3426, Abu Dawud 5095)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "leaving-home",
+            "tawakkul",
+            "protection",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 10
+        },
+        {
+          "id": "glm-ds-011-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua When Entering the Home",
+            "ar": "دعاء دخول المنزل"
+          },
+          "arabic": "بِسْمِ اللَّهِ وَجَأْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
+          "transliteration": "Bismillahi wajana wa bismillahi khrajna wa alallahi rabbina tawakkalna",
+          "translation": {
+            "en": "In the name of Allah we enter, and in the name of Allah we leave, and upon Allah, our Lord, we rely.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 5377, Sunan Abi Dawud 5096",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم taught that one should greet (salam) when entering the home and begin with Bismillah. By doing so, Shaytan is instructed: \"You have no place to stay tonight.\" (Bukhari 5377, Abu Dawud 5096)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "entering-home",
+            "greeting",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 11
+        },
+        {
+          "id": "glm-ds-012-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua When Going to the Mosque",
+            "ar": "دعاء المشي إلى المسجد"
+          },
+          "arabic": "اَللَّهُمَّ اجْعَلْ فِي قَلْبِي نُورًا وَفِي بَصَرِي نُورًا وَفِي سَمْعِي نُورًا وَفِي عِظَامِي نُورًا وَاجْعَلْ مِنْ وَرَائِي نُورًا وَمِنْ أَمَامِي نُورًا وَمِنْ فَوْقِي نُورًا وَمِنْ تَحْتِي نُورًا",
+          "transliteration": "Allahummaj'al fi qalbi nuran, wa fi basari nuran, wa fi sam'i nuran, wa fi izami nuran, waj'al min wara-i nuran, wa min amami nuran, wa min fawqi nuran, wa min tahti nuran",
+          "translation": {
+            "en": "O Allah, place light in my heart, and light in my sight, and light in my hearing, and light in my bones. Make light before me and light behind me, and light above me and light below me.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6316, Sahih Muslim 763",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Part of a longer dua the Prophet صلى الله عليه وسلم would recite when going to the mosque. The full version includes asking for light in every limb and in all directions. Every step to the mosque raises one's rank. (Bukhari 6316, Muslim 763)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "mosque",
+            "light",
+            "prayer",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 12
+        },
+        {
+          "id": "glm-ds-013-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "After Salah: Astaghfirullah Three Times",
+            "ar": "الاستغفار بعد الصلاة"
+          },
+          "arabic": "أَسْتَغْفِرُ اللَّهَ (ثَلَاثًا)",
+          "transliteration": "Astaghfirullah (thalathan)",
+          "translation": {
+            "en": "I seek the forgiveness of Allah (three times).",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih Muslim 591",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم would immediately say Astaghfirullah three times after the taslim. This shows that even after the most perfect act of worship (prayer), the believer turns to Allah in humility seeking forgiveness for any shortcomings. (Muslim 591)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "post-salah",
+            "istighfar",
+            "prayer",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 13
+        },
+        {
+          "id": "glm-ds-014-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua After Sneezing",
+            "ar": "دعاء العطاس"
+          },
+          "arabic": "اَلْحَمْدُ لِلَّهِ",
+          "transliteration": "Alhamdulillah",
+          "translation": {
+            "en": "All praise is due to Allah.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6223, Sahih Muslim 2991",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم said: \"When one of you sneezes, let him say: Alhamdulillah.\" And the one who hears should say: \"Yarhamukallah\" (May Allah have mercy on you).\" Sneezing is a blessing from Allah as it expels irritants from the body. (Bukhari 6223, Muslim 2991)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sneezing",
+            "praise",
+            "daily",
+            "etiquette"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 14
+        },
+        {
+          "id": "glm-ds-015-2",
+          "category_id": "daily-sunnah",
+          "title": {
+            "en": "Dua When Hearing Thunder",
+            "ar": "دعاء سماع الرعد"
+          },
+          "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
+          "transliteration": "Subhanalladhi yusabbihur-ra'du bihamdihi wal-mala-ikatu min kheefatihi",
+          "translation": {
+            "en": "Exalted is He Whom the thunder glorifies with His praise, and the angels out of fear of Him.",
+            "ar": ""
+          },
+          "reference": {
+            "collection": "Muwatta Malik 494, Sunan at-Tirmidhi 3450",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet صلى الله عليه وسلم used to say this when he heard thunder. It is derived from the Quran (13:13) and reminds us that even thunder and angels glorify Allah. A moment of awe and remembrance. (Malik 494, Tirmidhi 3450)",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "thunder",
+            "rain",
+            "nature",
+            "daily"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 15
+        }
+      ]
+    },
+    {
+      "id": "sunnah-acts",
+      "section_id": "daily-sunnah",
+      "name": {
+        "en": "Sunnah Acts & Etiquette",
+        "ar": "السنن والآداب"
+      },
+      "description": {
+        "en": "Everyday Sunnah acts and prophetic etiquette across daily situations.",
+        "ar": "أعمال السنة اليومية والآداب النبوية في مختلف المواقف."
+      },
+      "order": 2,
+      "icon": "book",
+      "color": "teal",
+      "items": [
+        {
+          "id": "glm-sa-001",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Dua Before Wudu",
+            "ar": "دعاء قبل الوضوء"
+          },
+          "arabic": "بِسْمِ اللَّهِ",
+          "transliteration": "Bismillah",
+          "translation": {
+            "en": "In the name of Allah.",
+            "ar": "بسم الله"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 786",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"There is no wudu for the one who does not mention the name of Allah upon it.\"",
+            "ar": "The Prophet (peace be upon him) said: \"There is no wudu for the one who does not mention the name of Allah upon it.\""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "wudu",
+            "purity",
+            "beginning"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1001
+        },
+        {
+          "id": "glm-sa-002",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Dua After Wudu",
+            "ar": "دعاء بعد الوضوء"
+          },
+          "arabic": "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+          "transliteration": "Ash-hadu alla ilaha illallahu wahdahu la sharika lah wa ash-hadu anna Muhammadan abduhu wa rasuluh",
+          "translation": {
+            "en": "I bear witness that there is no god but Allah alone, with no partner, and I bear witness that Muhammad is His servant and messenger.",
+            "ar": "أشهد أن لا إله إلا الله وحده لا شريك له وأشهد أن محمدا عبده ورسوله"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 234",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The eight gates of Paradise will be opened for the one who recites this after wudu, and he may enter through whichever one he wishes.",
+            "ar": "The eight gates of Paradise will be opened for the one who recites this after wudu, and he may enter through whichever one he wishes."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "wudu",
+            "shahada",
+            "testimony"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1002
+        },
+        {
+          "id": "glm-sa-003",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Entering the Mosque",
+            "ar": "دعاء دخول المسجد"
+          },
+          "arabic": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+          "transliteration": "Allahummaftah li abwaba rahmatik",
+          "translation": {
+            "en": "O Allah, open for me the gates of Your mercy.",
+            "ar": "اللهم افتح لي أبواب رحمتك"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 713",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "mosque",
+            "mercy",
+            "entering"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1003
+        },
+        {
+          "id": "glm-sa-004",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Leaving the Mosque",
+            "ar": "دعاء الخروج من المسجد"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+          "transliteration": "Allahumma inni as'aluka min fadlik",
+          "translation": {
+            "en": "O Allah, I ask You from Your bounty.",
+            "ar": "اللهم إني أسألك من فضلك"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 713",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "mosque",
+            "bounty",
+            "leaving"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1004
+        },
+        {
+          "id": "glm-sa-005",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Sneezing Dua",
+            "ar": "دعاء العطاس"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ",
+          "transliteration": "Alhamdulillah",
+          "translation": {
+            "en": "All praise is for Allah.",
+            "ar": "الحمد لله"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6223",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "When a Muslim sneezes and praises Allah, it is a duty upon every Muslim who hears him to say: \"Yarhamukallah\" (May Allah have mercy on you).",
+            "ar": "When a Muslim sneezes and praises Allah, it is a duty upon every Muslim who hears him to say: \"Yarhamukallah\" (May Allah have mercy on you)."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sneezing",
+            "praise",
+            "manners"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1005
+        },
+        {
+          "id": "glm-sa-006",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Responding to Sneeze",
+            "ar": "الرد على العاطس"
+          },
+          "arabic": "يَرْحَمُكَ اللَّهُ",
+          "transliteration": "Yarhamukallah",
+          "translation": {
+            "en": "May Allah have mercy on you.",
+            "ar": "يرحمك الله"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6223",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sneezing",
+            "mercy",
+            "manners"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1006
+        },
+        {
+          "id": "glm-sa-007",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Sneezing Response Reply",
+            "ar": "رد العطاس"
+          },
+          "arabic": "يَهْدِيكُمُ اللَّهُ وَيُصْلِحُ بَالَكُمْ",
+          "transliteration": "Yahdikumullahu wa yuslihu balakum",
+          "translation": {
+            "en": "May Allah guide you and set right your affairs.",
+            "ar": "يهديكم الله ويصلح بالكم"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6224",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sneezing",
+            "guidance",
+            "manners"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1007
+        },
+        {
+          "id": "glm-sa-008",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Wearing Clothes",
+            "ar": "دعاء لبس الثوب"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا الثَّوْبَ وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+          "transliteration": "Alhamdulillahilladhi kasani hadha ath-thawba wa razaqanihi min ghayri hawlin minni wa la quwwah",
+          "translation": {
+            "en": "All praise is for Allah who has clothed me with this garment and provided it for me without any power or might from me.",
+            "ar": "الحمد لله الذي كساني هذا الثوب ورزقنيه من غير حول مني ولا قوة"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6014",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Whoever wears a garment and says this, Allah will forgive all his past sins.",
+            "ar": "Whoever wears a garment and says this, Allah will forgive all his past sins."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "clothes",
+            "gratitude",
+            "provision"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1008
+        },
+        {
+          "id": "glm-sa-009",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Looking in the Mirror",
+            "ar": "دعاء النظر في المرآة"
+          },
+          "arabic": "اللَّهُمَّ كَمَا أَحْسَنْتَ خَلْقِي فَحَسِّنْ خُلُقِي",
+          "transliteration": "Allahumma kama ahsanta khalqi fa ahsin khuluqi",
+          "translation": {
+            "en": "O Allah, just as You have made my external form beautiful, make my character beautiful.",
+            "ar": "اللهم كما أحسنت خلقي فحسن خلقي"
+          },
+          "reference": {
+            "collection": "Al-Mu'jamul-Kabir of At-Tabarani 10949",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "mirror",
+            "character",
+            "beauty"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1009
+        },
+        {
+          "id": "glm-sa-010",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Entering the Home",
+            "ar": "دعاء دخول المنزل"
+          },
+          "arabic": "بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
+          "transliteration": "Bismillahi walajna wa bismillahi khrajna wa alallahi rabbana tawakkalna",
+          "translation": {
+            "en": "In the name of Allah we enter, and in the name of Allah we leave, and upon Allah our Lord we rely.",
+            "ar": "بسم الله ولجنا وبسم الله خرجنا وعلى الله ربنا توكلنا"
+          },
+          "reference": {
+            "collection": "Sahih Abi Dawud 5096",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "home",
+            "entering",
+            "reliance"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1010
+        },
+        {
+          "id": "glm-sa-011",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Leaving the Home",
+            "ar": "دعاء الخروج من المنزل"
+          },
+          "arabic": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+          "transliteration": "Bismillahi tawakkaltu alallahi, la hawla wa la quwwata illa billah",
+          "translation": {
+            "en": "In the name of Allah, I place my trust in Allah. There is no power and no strength except with Allah.",
+            "ar": "بسم الله توكلت على الله لا حول ولا قوة إلا بالله"
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud 5095",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"When a man leaves his house and says this, it is said to him: You are guided, sufficed, and protected. The devils distance themselves from him.",
+            "ar": "The Prophet (peace be upon him) said: \"When a man leaves his house and says this, it is said to him: You are guided, sufficed, and protected. The devils distance themselves from him."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "home",
+            "leaving",
+            "trust"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1011
+        },
+        {
+          "id": "glm-sa-012",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Hearing Thunder",
+            "ar": "دعاء سماع الرعد"
+          },
+          "arabic": "سُبْحَانَ الَّذِي يُسَبِّحُ الرَّعْدُ بِحَمْدِهِ وَالْمَلَائِكَةُ مِنْ خِيفَتِهِ",
+          "transliteration": "Subhanalladhi yusabbihur-ra'du bihamdihi wal-mala'ikatu min khifatih",
+          "translation": {
+            "en": "Glory be to the One whom the thunder glorifies with His praise, and the angels from fear of Him.",
+            "ar": "سبحان الذي يسبح الرعد بحمده والملائكة من خيفته"
+          },
+          "reference": {
+            "collection": "Surah ar-Ra'd 13:13 / Malik in al-Muwatta",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "thunder",
+            "glorification",
+            "nature"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1012
+        },
+        {
+          "id": "glm-sa-013",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Seeing Lightning",
+            "ar": "دعاء رؤية البرق"
+          },
+          "arabic": "اللَّهُمَّ لَا تَقْتُلْنَا بِغَضَبِكَ وَلَا تُهْلِكْنَا بِعَذَابِكَ وَعَافِنَا قَبْلَ ذَلِكَ",
+          "transliteration": "Allahumma la taqtulna bi-ghadabik wa la tuhlikna bi-'adhabik wa aafina qabla dhalik",
+          "translation": {
+            "en": "O Allah, do not kill us with Your wrath and do not destroy us with Your punishment, and grant us well-being before that.",
+            "ar": "اللهم لا تقتلنا بغضبك ولا تهلكنا بعذابك وعافنا قبل ذلك"
+          },
+          "reference": {
+            "collection": "Al-Mu'jamul-Kabir of At-Tabarani 11826",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "lightning",
+            "protection",
+            "anger"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1013
+        },
+        {
+          "id": "glm-sa-014",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Seeing the New Moon",
+            "ar": "دعاء رؤية الهلال"
+          },
+          "arabic": "اللَّهُمَّ أَهِلَّهُ عَلَيْنَا بِالْأَمْنِ وَالْإِيمَانِ وَالسَّلَامَةِ وَالْإِسْلَامِ وَالتَّوْفِيقِ لِمَا تُحِبُّ وَتَرْضَى رَبُّنَا وَرَبُّكَ اللَّهُ",
+          "transliteration": "Allahumma ahillahu alayna bil-amni wal-iman was-salamati wal-islam, wat-tawfiqi lima tuhibbu wa tardha, rabbuna wa rabbukallah",
+          "translation": {
+            "en": "O Allah, make it a moon of security, faith, safety, and Islam. Grant us success in what You love and are pleased with. Our Lord and your Lord is Allah.",
+            "ar": "اللهم أهله علينا بالأمن والإيمان والسلامة والإسلام والتوفيق لما تحب وترضى ربنا وربك الله"
+          },
+          "reference": {
+            "collection": "Sahih at-Tirmidhi 3451 / Sunan ad-Darimi 1594",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "moon",
+            "ramadan",
+            "security"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1014
+        },
+        {
+          "id": "glm-sa-015",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Eid Takbeer",
+            "ar": "تكبير العيد"
+          },
+          "arabic": "اللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ لَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ اللَّهُ أَكْبَرُ وَلِلَّهِ الْحَمْدُ",
+          "transliteration": "Allahu akbar, Allahu akbar, la ilaha illallah, wallahu akbar, Allahu akbar, walillahil-hamd",
+          "translation": {
+            "en": "Allah is the Greatest, Allah is the Greatest, there is no god but Allah. Allah is the Greatest, Allah is the Greatest, and all praise is for Allah.",
+            "ar": "الله أكبر الله أكبر لا إله إلا الله والله أكبر الله أكبر ولله الحمد"
+          },
+          "reference": {
+            "collection": "Sahih Ibn Khuzaymah 1759",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 33,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eid",
+            "takbeer",
+            "praise"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1015
+        },
+        {
+          "id": "glm-sa-016",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Greeting",
+            "ar": "السلام"
+          },
+          "arabic": "السَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ",
+          "transliteration": "As-salamu alaykum wa rahmatullahi wa barakatuh",
+          "translation": {
+            "en": "May the peace, mercy, and blessings of Allah be upon you.",
+            "ar": "السلام عليكم ورحمة الله وبركاته"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 12",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"You will not enter Paradise until you believe, and you will not believe until you love one another. Shall I not tell you about something which, if you do it, you will love one another? Spread the greeting of peace among yourselves.\"",
+            "ar": "The Prophet (peace be upon him) said: \"You will not enter Paradise until you believe, and you will not believe until you love one another. Shall I not tell you about something which, if you do it, you will love one another? Spread the greeting of peace among yourselves.\""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "greeting",
+            "peace",
+            "mercy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1016
+        },
+        {
+          "id": "glm-sa-017",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Replying to Greeting",
+            "ar": "الرد على السلام"
+          },
+          "arabic": "وَعَلَيْكُمُ السَّلَامُ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ",
+          "transliteration": "Wa alaykumus-salam wa rahmatullahi wa barakatuh",
+          "translation": {
+            "en": "And upon you be peace, and the mercy of Allah and His blessings.",
+            "ar": "وعليكم السلام ورحمة الله وبركاته"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 12",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "greeting",
+            "reply",
+            "manners"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1017
+        },
+        {
+          "id": "glm-sa-018",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Shaking Hands",
+            "ar": "المصافحة"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+          "transliteration": "Alhamdulillahi rabbil-'alameen",
+          "translation": {
+            "en": "All praise is for Allah, Lord of the worlds.",
+            "ar": "الحمد لله رب العالمين"
+          },
+          "reference": {
+            "collection": "Musnad Ahmad 23479",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"If two Muslims meet and shake hands, their sins are forgiven before they separate.",
+            "ar": "The Prophet (peace be upon him) said: \"If two Muslims meet and shake hands, their sins are forgiven before they separate."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "handshake",
+            "greeting",
+            "sunnah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1018
+        },
+        {
+          "id": "glm-sa-019",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Thanking Someone",
+            "ar": "شكر الناس"
+          },
+          "arabic": "جَزَاكَ اللَّهُ خَيْرًا",
+          "transliteration": "Jazakallahu khayran",
+          "translation": {
+            "en": "May Allah reward you with goodness.",
+            "ar": "جزاك الله خيرا"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 3022",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "gratitude",
+            "people",
+            "kindness"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1019
+        },
+        {
+          "id": "glm-sa-020",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When Angry",
+            "ar": "عند الغضب"
+          },
+          "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
+          "transliteration": "A'udhu billahi minash-shaytanir-rajeem",
+          "translation": {
+            "en": "I seek refuge in Allah from the accursed Satan.",
+            "ar": "أعوذ بالله من الشيطان الرجيم"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 3282 / Sahih Muslim 2610",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"I know a word which, if he were to say it, what he feels would go away: I seek refuge in Allah from the accursed Satan.",
+            "ar": "The Prophet (peace be upon him) said: \"I know a word which, if he were to say it, what he feels would go away: I seek refuge in Allah from the accursed Satan."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "anger",
+            "shaytan",
+            "refuge"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1020
+        },
+        {
+          "id": "glm-sa-021",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When Afraid",
+            "ar": "عند الخوف"
+          },
+          "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+          "transliteration": "Hasbiyallahu la ilaha illa huwa alayhi tawakkaltu wa huwa rabbul-'arshil-azeem",
+          "translation": {
+            "en": "Allah is sufficient for me. There is no god but Him. Upon Him I have relied, and He is the Lord of the Noble Throne.",
+            "ar": "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم"
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud 4431",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 7,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"Whoever says this seven times in the morning and evening, Allah will suffice him for everything that concerns him.",
+            "ar": "The Prophet (peace be upon him) said: \"Whoever says this seven times in the morning and evening, Allah will suffice him for everything that concerns him."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "fear",
+            "reliance",
+            "throne"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1021
+        },
+        {
+          "id": "glm-sa-022",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Expressing Gratitude to Someone",
+            "ar": "شكر المنعم"
+          },
+          "arabic": "بَارَكَ اللَّهُ لَكَ فِي أَهْلِكَ وَمَالِكَ",
+          "transliteration": "Barakallahu laka fi ahlika wa malik",
+          "translation": {
+            "en": "May Allah bless you in your family and your wealth.",
+            "ar": "بارك الله لك في أهلك ومالك"
+          },
+          "reference": {
+            "collection": "Sahih at-Tirmidhi 3526",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "gratitude",
+            "family",
+            "wealth"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1022
+        },
+        {
+          "id": "glm-sa-023",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "After Sneezing (Three Times)",
+            "ar": "بعد العطاس ثلاثا"
+          },
+          "arabic": "يَرْحَمُكَ اللَّهُ",
+          "transliteration": "Yarhamukallah",
+          "translation": {
+            "en": "May Allah have mercy on you.",
+            "ar": "يرحمك الله"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2992",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "If someone sneezes three or more times, it is said: \"May Allah heal you\" (Yashfikallah) instead of \"May Allah have mercy on you.\"",
+            "ar": "If someone sneezes three or more times, it is said: \"May Allah heal you\" (Yashfikallah) instead of \"May Allah have mercy on you.\""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sneezing",
+            "mercy",
+            "excessive"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1023
+        },
+        {
+          "id": "glm-sa-024",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Drinking Water Sitting",
+            "ar": "الشرب جالسا"
+          },
+          "arabic": "بِسْمِ اللَّهِ",
+          "transliteration": "Bismillah",
+          "translation": {
+            "en": "In the name of Allah.",
+            "ar": "بسم الله"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2667",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) prohibited drinking while standing. He would drink in three sips, sitting down.",
+            "ar": "The Prophet (peace be upon him) prohibited drinking while standing. He would drink in three sips, sitting down."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "drinking",
+            "manners",
+            "sunnah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1024
+        },
+        {
+          "id": "glm-sa-025",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Drinking in Three Sips",
+            "ar": "الشرب على ثلاث دفعات"
+          },
+          "arabic": "بِسْمِ اللَّهِ (في البداية)",
+          "transliteration": "Bismillah (at the beginning)",
+          "translation": {
+            "en": "In the name of Allah (at the beginning).",
+            "ar": "بسم الله"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2667",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) would breathe three times when drinking, saying: \"It is more satisfying, healthier, and more thirst-quenching.",
+            "ar": "The Prophet (peace be upon him) would breathe three times when drinking, saying: \"It is more satisfying, healthier, and more thirst-quenching."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "drinking",
+            "sunnah",
+            "manners"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1025
+        },
+        {
+          "id": "glm-sa-026",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Thanking Allah for Food",
+            "ar": "شكر الله على الطعام"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ",
+          "transliteration": "Alhamdulillahilladhi at'amana wa saqana wa ja'alana muslimeen",
+          "translation": {
+            "en": "All praise is for Allah who fed us, gave us drink, and made us Muslims.",
+            "ar": "الحمد لله الذي أطعمنا وسقانا وجعلنا مسلمين"
+          },
+          "reference": {
+            "collection": "Sahih at-Tirmidhi 3458",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "food",
+            "gratitude",
+            "islam"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1026
+        },
+        {
+          "id": "glm-sa-027",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When It Rains",
+            "ar": "عند نزول المطر"
+          },
+          "arabic": "اللَّهُمَّ صَيِّبًا نَافِعًا",
+          "transliteration": "Allahumma sayyiban nafi'an",
+          "translation": {
+            "en": "O Allah, make it a beneficial rain.",
+            "ar": "اللهم صيبا نافعا"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 1032",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "rain",
+            "blessing",
+            "weather"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1027
+        },
+        {
+          "id": "glm-sa-028",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "After Rain Falls",
+            "ar": "بعد نزول المطر"
+          },
+          "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
+          "transliteration": "Umirna bifadlillahi wa rahmatih",
+          "translation": {
+            "en": "We have been given rain by the bounty of Allah and His mercy.",
+            "ar": "مطرنا بفضل الله ورحمته"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 848",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "rain",
+            "gratitude",
+            "bounty"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1028
+        },
+        {
+          "id": "glm-sa-029",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When Seeing a Beautiful Thing",
+            "ar": "عند رؤية جميل"
+          },
+          "arabic": "مَا شَاءَ اللَّهُ لَا قُوَّةَ إِلَّا بِاللَّهِ",
+          "transliteration": "Mashallah, la quwwata illa billah",
+          "translation": {
+            "en": "What Allah has willed — there is no power except with Allah.",
+            "ar": "ما شاء الله لا قوة إلا بالله"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6610",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"If one of you sees something in himself or in his wealth or in his brother that he admires, let him pray for blessing over it, for the evil eye is real.",
+            "ar": "The Prophet (peace be upon him) said: \"If one of you sees something in himself or in his wealth or in his brother that he admires, let him pray for blessing over it, for the evil eye is real."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "beauty",
+            "envy",
+            "protection"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1029
+        },
+        {
+          "id": "glm-sa-030",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Seeing a Sick Person",
+            "ar": "عند رؤية المريض"
+          },
+          "arabic": "لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ",
+          "transliteration": "La ba'sa tahurun in shaa Allah",
+          "translation": {
+            "en": "No harm, it is a purification, if Allah wills.",
+            "ar": "لا بأس طهور إن شاء الله"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 3616",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sick",
+            "comfort",
+            "purification"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1030
+        },
+        {
+          "id": "glm-sa-031",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "At the Funeral",
+            "ar": "في الجنازة"
+          },
+          "arabic": "اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَاعْفُ عَنْهُ وَعَافِهِ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ",
+          "transliteration": "Allahummagh-fir lahu warhamhu wa 'fu anhu wa 'afihi wa akrim nuzulahu wa wassi' mudkhalahu wagh-silhu bil-ma'i wath-thalji wal-barad",
+          "translation": {
+            "en": "O Allah, forgive him, have mercy upon him, pardon him, grant him well-being, honor his resting place, and make his entrance wide. Wash him with water, snow, and hail.",
+            "ar": "اللهم اغفر له وارحمه وعف عنه وعافه وأكرم نزله ووسع مدخله واغسله بالماء والثلج والبرد"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 963",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"Whoever attends the funeral and prays over it will get one qirat, and whoever attends until it is buried will get two qirats.\" A qirat is like Uhud mountain.",
+            "ar": "The Prophet (peace be upon him) said: \"Whoever attends the funeral and prays over it will get one qirat, and whoever attends until it is buried will get two qirats.\" A qirat is like Uhud mountain."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "funeral",
+            "prayer",
+            "mercy"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1031
+        },
+        {
+          "id": "glm-sa-032",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Visiting Graves",
+            "ar": "زيارة القبور"
+          },
+          "arabic": "السَّلَامُ عَلَيْكُمْ أَهْلَ الدِّيَارِ مِنَ الْمُؤْمِنِينَ وَالْمُسْلِمِينَ وَإِنَّا إِنْ شَاءَ اللَّهُ بِكُمْ لَلَاحِقُونَ",
+          "transliteration": "As-salamu alaykum ahlad-diyari minal-mu'mineena wal-muslimeen, wa inna in shaa Allahu bikum lala-hiqun",
+          "translation": {
+            "en": "Peace be upon you, O people of the dwellings, believers and Muslims. If Allah wills, we shall join you.",
+            "ar": "السلام عليكم أهل الديار من المؤمنين والمسلمين وإنا إن شاء الله بكم للاحقون"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 975",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "graves",
+            "visiting",
+            "hereafter"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1032
+        },
+        {
+          "id": "glm-sa-033",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Upon Waking at Night",
+            "ar": "الاستيقاظ ليلا"
+          },
+          "arabic": "لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ اللَّهُمَّ اغْفِرْ لِي",
+          "transliteration": "La ilaha illa anta subhanaka Allahumma wa bihamdik, Allahummagh-fir li",
+          "translation": {
+            "en": "There is no god but You, glory be to You. O Allah, all praise is for You. O Allah, forgive me.",
+            "ar": "لا إله إلا أنت سبحانك اللهم وبحمدك اللهم اغفر لي"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 1145 / Sahih Muslim 769",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "Whoever wakes up at night and says this, then makes dua, his dua will be answered. If he makes wudu and prays, his prayer will be accepted.",
+            "ar": "Whoever wakes up at night and says this, then makes dua, his dua will be answered. If he makes wudu and prays, his prayer will be accepted."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "waking",
+            "night",
+            "forgiveness"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1033
+        },
+        {
+          "id": "glm-sa-034",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Before Sleeping",
+            "ar": "دعاء قبل النوم"
+          },
+          "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+          "transliteration": "Bismikallahumma amutu wa ahya",
+          "translation": {
+            "en": "In Your name, O Allah, I die and I live.",
+            "ar": "باسمك اللهم أموت وأحيا"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6954",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sleep",
+            "death",
+            "life"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1034
+        },
+        {
+          "id": "glm-sa-035",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Morning and Evening Adhkar",
+            "ar": "أذكار الصباح والمساء"
+          },
+          "arabic": "اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
+          "transliteration": "Allahumma bika asbahna wa bika amsayna, wa bika nahya wa bika namutu, wa ilaykan-nushur",
+          "translation": {
+            "en": "O Allah, by Your grace we enter the morning and by Your grace we enter the evening. By You we live, by You we die, and to You is the resurrection.",
+            "ar": "اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6339",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "morning",
+            "evening",
+            "life"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1035
+        },
+        {
+          "id": "glm-sa-036",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When Mounting an Animal",
+            "ar": "عند ركوب الدابة"
+          },
+          "arabic": "بِسْمِ اللَّهِ الْحَمْدُ لِلَّهِ سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا",
+          "transliteration": "Bismillah, alhamdulillah, subhanalladhi sakhkhara lana haza",
+          "translation": {
+            "en": "In the name of Allah, all praise is for Allah. Glory be to the One Who has subjected this for us.",
+            "ar": "بسم الله الحمد لله سبحان الذي سخر لنا هذا"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 1343",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "mounting",
+            "travel",
+            "gratitude"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1036
+        },
+        {
+          "id": "glm-sa-037",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Entering the Marketplace",
+            "ar": "دعاء دخول السوق"
+          },
+          "arabic": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ يُحْيِي وَيُمِيتُ وَهُوَ حَيٌّ لَا يَمُوتُ بِيَدِهِ الْخَيْرُ",
+          "transliteration": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu, yuhyi wa yumitu wa huwa hayyun la yamut, biyadihil-khayr",
+          "translation": {
+            "en": "There is no god but Allah alone, with no partner. To Him belongs the dominion and all praise. He gives life and causes death. He is Ever-Living and never dies. In His hand is all good.",
+            "ar": "لا إله إلا الله وحده لا شريك له له الملك وله الحمد يحيي ويموت وهو حي لا يموت بيده الخير"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 2344",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"Whoever enters the marketplace and says this, Allah will record for him a million good deeds, erase a million evil deeds, and raise him by a million ranks.",
+            "ar": "The Prophet (peace be upon him) said: \"Whoever enters the marketplace and says this, Allah will record for him a million good deeds, erase a million evil deeds, and raise him by a million ranks."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "market",
+            "trade",
+            "tawheed"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1037
+        },
+        {
+          "id": "glm-sa-038",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Expressing Love",
+            "ar": "التعبير عن الحب"
+          },
+          "arabic": "أَحَبُّكَ فِي اللَّهِ",
+          "transliteration": "Uhibbuka fillah",
+          "translation": {
+            "en": "I love you for the sake of Allah.",
+            "ar": "أحبك في الله"
+          },
+          "reference": {
+            "collection": "Sahih Abi Dawud 5125",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"A man will be with those whom he loves\" in the Hereafter.",
+            "ar": "The Prophet (peace be upon him) said: \"A man will be with those whom he loves\" in the Hereafter."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "love",
+            "sake-of-allah",
+            "brotherhood"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1038
+        },
+        {
+          "id": "glm-sa-039",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When Feeling Cold",
+            "ar": "عند البرد"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الزَّمْهَرِيرِ وَأَعُوذُ بِكَ مِنَ الْحَرِّ وَالْجَحِيمِ",
+          "transliteration": "Allahumma inni a'udhu bika minaz-zamhariri wa a'udhu bika minal-harri wal-jaheem",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from the severe cold and I seek refuge in You from the heat of Hellfire.",
+            "ar": "اللهم إني أعوذ بك من الزمهرير وأعوذ بك من الحر والجحيم"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6214",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 3,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "cold",
+            "heat",
+            "hellfire"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1039
+        },
+        {
+          "id": "glm-sa-040",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Dua After Adhan",
+            "ar": "الدعاء بعد الأذان"
+          },
+          "arabic": "اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ وَابْعَثْهُ مَقَامًا مَحْمُودًا",
+          "transliteration": "Allahumma rabba hadhihid-da'watit-tammah was-salatil-qa'imah, ati Muhammadan al-waseelata wal-fadeelata wab'athhu maqaman mahmudan",
+          "translation": {
+            "en": "O Allah, Lord of this perfect call and established prayer, grant Muhammad the means and the excellence, and raise him to the praised station.",
+            "ar": "اللهم رب هذه الدعوة التامة والصلاة القائمة آت محمدا الوسيلة والفضيلة وابعثه مقاما محمودا"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 614",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"Whoever says this after hearing the adhan, my intercession will be guaranteed for him on the Day of Judgment.",
+            "ar": "The Prophet (peace be upon him) said: \"Whoever says this after hearing the adhan, my intercession will be guaranteed for him on the Day of Judgment."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "adhan",
+            "prayer",
+            "intercession"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1040
+        },
+        {
+          "id": "glm-sa-041",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Before Fajr Prayer",
+            "ar": "قبل صلاة الفجر"
+          },
+          "arabic": "اللَّهُمَّ رَبَّ جَبْرَائِيلَ وَمِيكَائِيلَ وَإِسْرَافِيلَ فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ عَالِمَ الْغَيْبِ وَالشَّهَادَةِ",
+          "transliteration": "Allahumma rabba jibra'ila wa mika'ila wa israfeela fatiras-samawati wal-ardi 'alimal-ghaybi wash-shahadah",
+          "translation": {
+            "en": "O Allah, Lord of Jibreel, Mika'eel, and Israfeel, Creator of the heavens and the earth, Knower of the unseen and the seen.",
+            "ar": "اللهم رب جبرائيل وميكائيل وإسرافيل فاطر السماوات والأرض عالم الغيب والشهادة"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 2713",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"Whoever offers the Fajr prayer and then sits in his place of prayer remembering Allah until sunrise, then prays two rak'ahs, he will have a reward like that of Hajj and Umrah.",
+            "ar": "The Prophet (peace be upon him) said: \"Whoever offers the Fajr prayer and then sits in his place of prayer remembering Allah until sunrise, then prays two rak'ahs, he will have a reward like that of Hajj and Umrah."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "fajr",
+            "angels",
+            "prayer"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1041
+        },
+        {
+          "id": "glm-sa-042",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "After Prayer",
+            "ar": "بعد الصلاة"
+          },
+          "arabic": "أَسْتَغْفِرُ اللَّهَ (ثلاثًا) اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
+          "transliteration": "Astaghfirullah (3x) Allahumma antas-Salamu wa minkas-Salam, tabarakta ya dhal-jalali wal-ikram",
+          "translation": {
+            "en": "I seek forgiveness from Allah (3x). O Allah, You are As-Salam and from You comes all peace. Blessed are You, O Possessor of Majesty and Honor.",
+            "ar": "أستغفر الله (ثلاثا) اللهم أنت السلام ومنك السلام تباركت يا ذا الجلال والإكرام"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 591",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "prayer",
+            "forgiveness",
+            "peace"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1042
+        },
+        {
+          "id": "glm-sa-043",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "After Wudu: Shahaadah",
+            "ar": "الشهادة بعد الوضوء"
+          },
+          "arabic": "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+          "transliteration": "Ash-hadu alla ilaha illallahu wahdahu la sharika lah wa ash-hadu anna Muhammadan abduhu wa rasuluh",
+          "translation": {
+            "en": "I bear witness that there is no god but Allah alone, with no partner, and I bear witness that Muhammad is His servant and messenger.",
+            "ar": "أشهد أن لا إله إلا الله وحده لا شريك له وأشهد أن محمدا عبده ورسوله"
+          },
+          "reference": {
+            "collection": "Sahih Muslim 234",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "wudu",
+            "testimony",
+            "paradise"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1043
+        },
+        {
+          "id": "glm-sa-044",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Sleeping on the Right Side",
+            "ar": "النوم على الجانب الأيمن"
+          },
+          "arabic": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+          "transliteration": "Bismikallahumma amutu wa ahya",
+          "translation": {
+            "en": "In Your name, O Allah, I die and I live.",
+            "ar": "باسمك اللهم أموت وأحيا"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 6954",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) used to sleep on his right side, placing his right hand under his right cheek.",
+            "ar": "The Prophet (peace be upon him) used to sleep on his right side, placing his right hand under his right cheek."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sleep",
+            "right-side",
+            "sunnah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1044
+        },
+        {
+          "id": "glm-sa-045",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When Drinking Zamzam",
+            "ar": "عند شرب زمزم"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا وَرِزْقًا وَاسِعًا وَشِفَاءً مِنْ كُلِّ دَاءٍ",
+          "transliteration": "Allahumma inni as'aluka 'ilman nafi'an wa rizqan wasi'an wa shifa'an min kulli da'",
+          "translation": {
+            "en": "O Allah, I ask You for beneficial knowledge, abundant provision, and healing from every disease.",
+            "ar": "اللهم إني أسألك علما نافعا ورزقا واسعا وشفاء من كل داء"
+          },
+          "reference": {
+            "collection": "Sahih at-Tirmidhi 3578",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"The water of Zamzam is for whatever it is drunk for.",
+            "ar": "The Prophet (peace be upon him) said: \"The water of Zamzam is for whatever it is drunk for."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "zamzam",
+            "healing",
+            "knowledge"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1045
+        },
+        {
+          "id": "glm-sa-046",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "When Seeing Someone in Hardship",
+            "ar": "عند رؤية مصاب"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ الَّذِي عَافَانِي مِمَّا ابْتَلَاكَ بِهِ وَفَضَّلَنِي عَلَى كَثِيرٍ مِمَّنْ خَلَقَ تَفْضِيلًا",
+          "transliteration": "Alhamdulillahilladhi aafani mima ibtalaka bihi wa faddalani ala katheerin mimman khalaqa tafdeelan",
+          "translation": {
+            "en": "All praise is for Allah who has kept me safe from that with which He has tested you, and has favored me above many of His creation.",
+            "ar": "الحمد لله الذي عافاني مما ابتلاك به وفضلني على كثير ممن خلق تفضيلا"
+          },
+          "reference": {
+            "collection": "Sahih at-Tirmidhi 3534",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "trial",
+            "gratitude",
+            "safety"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1046
+        },
+        {
+          "id": "glm-sa-047",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Lowering the Gaze",
+            "ar": "خفض البصر"
+          },
+          "arabic": "وَقُلْ لِلْمُؤْمِنَاتِ يَغْضُضْنَ مِنْ أَبْصَارِهِنَّ",
+          "transliteration": "Wa qul lil-mu'minati yaghuddhunna min absarihinna",
+          "translation": {
+            "en": "And tell the believing women to lower their gaze.",
+            "ar": "وقل للمؤمنات يغضضن من أبصارهن"
+          },
+          "reference": {
+            "collection": "Surah an-Nur 24:31",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"A gaze is a poisoned arrow from the arrows of Satan. Whoever abandons it out of fear of Allah, He will grant him faith that he will find sweet in his heart.",
+            "ar": "The Prophet (peace be upon him) said: \"A gaze is a poisoned arrow from the arrows of Satan. Whoever abandons it out of fear of Allah, He will grant him faith that he will find sweet in his heart."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "gaze",
+            "modesty",
+            "quran"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1047
+        },
+        {
+          "id": "glm-sa-048",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Dua Before Eating",
+            "ar": "دعاء قبل الأكل"
+          },
+          "arabic": "بِسْمِ اللَّهِ وَبَرَكَةِ اللَّهِ",
+          "transliteration": "Bismillahi wa barakatillah",
+          "translation": {
+            "en": "In the name of Allah and with the blessings of Allah.",
+            "ar": "بسم الله وبركة الله"
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari 5376",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Sahih",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eating",
+            "bismillah",
+            "blessing"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1048
+        },
+        {
+          "id": "glm-sa-049",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "After Eating",
+            "ar": "دعاء بعد الأكل"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ",
+          "transliteration": "Alhamdulillahilladhi at'amana wa saqana wa ja'alana muslimeen",
+          "translation": {
+            "en": "All praise is for Allah who fed us, gave us drink, and made us Muslims.",
+            "ar": "الحمد لله الذي أطعمنا وسقانا وجعلنا مسلمين"
+          },
+          "reference": {
+            "collection": "Sunan at-Tirmidhi 3458",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "eating",
+            "gratitude",
+            "islam"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1049
+        },
+        {
+          "id": "glm-sa-050",
+          "category_id": "sunnah-acts",
+          "title": {
+            "en": "Morning Remembrance",
+            "ar": "ذكر الصباح"
+          },
+          "arabic": "أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ وَعَلَى كَلِمَةِ الْإِخْلَاصِ وَعَلَى دِينِ نَبِيِّنَا مُحَمَّدٍ وَعَلَى مِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+          "transliteration": "Asbahna ala fitratil-islam wa ala kalimatil-ikhlas wa ala deeni nabiyyina Muhammad wa ala millati abina Ibrahim hanifan musliman wa ma kana minal-mushrikeen",
+          "translation": {
+            "en": "We have entered the morning upon the natural disposition of Islam, upon the word of sincerity, upon the religion of our Prophet Muhammad, and upon the religion of our father Ibrahim, upright and Muslim, and he was not of the polytheists.",
+            "ar": "أصبحنا على فطرة الإسلام وعلى كلمة الإخلاص وعلى دين نبينا محمد وعلى ملة أبيينا إبراهيم حنيفا مسلما وما كان من المشركين"
+          },
+          "reference": {
+            "collection": "Sahih at-Tirmidhi 3385",
+            "book": "",
+            "chapter": "",
+            "hadith": "",
+            "narrator": "",
+            "grading": "Hasan",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet (peace be upon him) said: \"Whoever says this in the morning, he has fulfilled the obligation of thanking Allah for that day. And whoever says it in the evening, he has fulfilled the obligation of thanking Allah for that night.",
+            "ar": "The Prophet (peace be upon him) said: \"Whoever says this in the morning, he has fulfilled the obligation of thanking Allah for that day. And whoever says it in the evening, he has fulfilled the obligation of thanking Allah for that night."
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "morning",
+            "fitrah",
+            "islam"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1050
+        }
+      ]
+    }
+  ]
+}
