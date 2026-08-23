@@ -25,6 +25,8 @@
 .quick-action--tasbih { color: var(--color-primary); }
 .quick-action--prayer { color: #0369A1; }
 .quick-action--qibla { color: #6D28D9; }
+.quick-action--ramadan { color: #7C3AED; }
+.quick-action--zakat { color: #0D9488; }
 
 .streak-badge { display: inline-flex; align-items: center; gap: var(--space-1); color: #C2410C; font-weight: 700; font-size: var(--fs-sm); }
 .progress-bar { height: 10px; border-radius: var(--radius-pill); background: var(--color-surface-alt); overflow: hidden; }
@@ -210,6 +212,35 @@
 .icon-btn--active-bell { color: var(--color-primary); }
 .sound-picker-row { display: flex; gap: var(--space-2); align-items: center; }
 .sound-picker-row .select { flex: 1; }
+
+/* ---- Ramadan & Fasting Companion ---- */
+.ramadan-times-row { display: flex; gap: var(--space-4); font-size: var(--fs-caption); opacity: 0.9; margin-top: var(--space-2); flex-wrap: wrap; justify-content: center; }
+.ramadan-times-row span { display: inline-flex; align-items: center; gap: var(--space-1); }
+.panel--ramadan-status { align-items: center; text-align: center; }
+.ramadan-day-badge { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.ramadan-day-badge__num { font-size: 2.75rem; font-weight: 800; color: var(--color-primary); line-height: 1; font-variant-numeric: tabular-nums; }
+.ramadan-day-badge__label { color: var(--color-text-muted); font-size: var(--fs-sm); }
+.ramadan-voluntary-hint { display: flex; align-items: center; justify-content: center; gap: var(--space-1); color: var(--color-accent); }
+.panel--ramadan-log { }
+.ramadan-log-row { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.ramadan-dua-cards { display: flex; flex-direction: column; gap: var(--space-3); }
+
+/* ---- Zakat calculator ---- */
+.panel--zakat-result {
+  align-items: center; text-align: center;
+  padding: var(--space-6) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.zakat-result__label { font-size: var(--fs-sm); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.zakat-result__amount { font-size: var(--fs-2xl); font-weight: 800; color: var(--color-primary); font-variant-numeric: tabular-nums; }
+.zakat-fields { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+.zakat-field { display: flex; flex-direction: column; gap: var(--space-1); }
+.zakat-field label { font-size: var(--fs-sm); color: var(--color-text-secondary); }
+@media (max-width: 420px) {
+  .zakat-fields { grid-template-columns: 1fr; }
+}
 
 /* ---- Calendar ---- */
 .hijri-today { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--space-6) 0; }

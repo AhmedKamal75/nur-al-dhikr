@@ -1,5 +1,51 @@
 # Changelog
 
+## v2.4.0
+
+### Added
+- **Ramadan & Fasting Companion** — a live Suhoor-to-Iftar countdown, built
+  on the same offline solar-position calculation the Prayer view already
+  uses (Suhoor ends at Fajr, Iftar begins at Maghrib — no new astronomy, no
+  network calls). Shows day-of-Ramadan progress, a private fasting log with
+  a streak badge (mirroring the existing daily-checklist streak pattern),
+  and the bundled Suhoor/Iftar duas front and center. Also works outside
+  Ramadan for voluntary Monday/Thursday fasts. New `js/ramadan.js` pure
+  logic module + `views/ramadan.js`.
+- **Offline Zakat calculator** — computes Zakat al-Mal (2.5% of zakatable
+  wealth once it meets the nisab threshold) from cash, gold, silver,
+  investments, business inventory, receivables, and liabilities. Shows
+  both the gold-standard (85g) and silver-standard (595g) nisab thresholds;
+  gold/silver spot prices are entered manually since this app makes no
+  network calls. New `js/zakat.js` pure logic module + `views/zakat.js`.
+- **Per-ayah bookmarking in the Mushaf reader** — a bookmark toggle in the
+  ayah detail modal (opened by tapping any ayah), a small star marker on
+  bookmarked ayahs directly on the page, and a "Bookmarked Ayahs" section
+  in the existing jump drawer to revisit or remove them. Distinct from the
+  existing last-page-visited bookmark — this is an explicit, multi-entry
+  per-verse list.
+- Two new Home quick-action tiles (Ramadan, Zakat) and two new desktop-nav
+  entries, following the same "quick action on mobile, side-rail on
+  desktop" pattern already used for Prayer/Qibla/Checklist/Calendar.
+
+### Engineering
+- New unit-tested pure modules: `ramadan.js` (Ramadan status via the
+  existing Hijri conversion, Suhoor/Iftar phase detection, fasting streaks)
+  and `zakat.js` (nisab + zakat-due calculation). 23 new tests; all
+  existing tests continue to pass unchanged.
+- Three new persisted state slices (`ramadanFasting`, `zakat`,
+  `mushafAyahBookmarks`), included in JSON backup/restore automatically
+  since `backup.js` serializes whatever `PERSISTED_KEYS` lists.
+- The Zakat form binds its number fields on `change` (blur), matching the
+  existing `dailyGoal`/prayer-settings pattern — the renderer does a full
+  `innerHTML` swap on every dispatch, so binding on every keystroke would
+  steal focus mid-type on a form with this many fields.
+- Bumped the service worker cache version and added the two new view files
+  to the precache list. While doing that, also found and fixed three
+  pre-existing files (`calendarNotes.js`, `components/calendarModals.js`,
+  `prayerSound.js`) that were never being precached — they worked online
+  via the cache-first fallback fetch, but wouldn't have been available on
+  a first-ever offline load. All `js/**/*.js` files are now precached.
+
 ## v2.3.0
 
 ### Added

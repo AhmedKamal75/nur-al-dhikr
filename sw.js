@@ -8,7 +8,7 @@
  *  - Navigation requests fall back to offline.html when nothing is cached.
  */
 
-const VERSION = 'nur-al-dhikr-v2.3.0';
+const VERSION = 'nur-al-dhikr-v2.4.0';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 
@@ -31,12 +31,17 @@ const APP_SHELL = [
   'js/app.js',
   'js/backup.js',
   'js/calendar.js',
+  'js/calendarNotes.js',
   'js/checklist.js',
   'js/compass.js',
   'js/qibla.js',
   'js/mushaf.js',
+  'js/ramadan.js',
+  'js/zakat.js',
   'js/recitation.js',
+  'js/prayerSound.js',
   'js/components/card.js',
+  'js/components/calendarModals.js',
   'js/components/menus.js',
   'js/components/modal.js',
   'js/components/shell.js',
@@ -75,10 +80,12 @@ const APP_SHELL = [
   'js/views/qibla.js',
   'js/views/quiz.js',
   'js/views/quran.js',
+  'js/views/ramadan.js',
   'js/views/search.js',
   'js/views/settings.js',
   'js/views/statistics.js',
   'js/views/tasbih.js',
+  'js/views/zakat.js',
   'data/catalog.json',
   'data/adhkar.json',
   'data/duas.json',
@@ -90,12 +97,13 @@ const APP_SHELL = [
   'data/daily-sunnah.json',
   'data/special-days.json',
   'data/quran-meta.json',
-  'data/mushaf-meta.json'
+  'data/mushaf-meta.json',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(SHELL_CACHE)
+    caches
+      .open(SHELL_CACHE)
       .then((cache) => cache.addAll(APP_SHELL))
       .then(() => self.skipWaiting())
       .catch((err) => console.warn('[sw] precache failed', err))
@@ -104,9 +112,14 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(
-      keys.filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE).map((k) => caches.delete(k))
-    )).then(() => self.clients.claim())
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys.filter((k) => k !== SHELL_CACHE && k !== DATA_CACHE).map((k) => caches.delete(k))
+        )
+      )
+      .then(() => self.clients.claim())
   );
 });
 
@@ -127,7 +140,9 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request).catch(() => caches.match('index.html').then((r) => r || caches.match('offline.html')))
+      fetch(request).catch(() =>
+        caches.match('index.html').then((r) => r || caches.match('offline.html'))
+      )
     );
     return;
   }
@@ -153,10 +168,18 @@ async function cacheFirst(request) {
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(DATA_CACHE);
   const cached = await cache.match(request);
-  const networkFetch = fetch(request).then((response) => {
-    if (response && response.ok) cache.put(request, response.clone());
-    return response;
-  }).catch(() => null);
+  const networkFetch = fetch(request)
+    .then((response) => {
+      if (response && response.ok) cache.put(request, response.clone());
+      return response;
+    })
+    .catch(() => null);
 
-  return cached || (await networkFetch) || new Response(JSON.stringify({ error: 'offline' }), { headers: { 'Content-Type': 'application/json' } });
+  return (
+    cached ||
+    (await networkFetch) ||
+    new Response(JSON.stringify({ error: 'offline' }), {
+      headers: { 'Content-Type': 'application/json' },
+    })
+  );
 }

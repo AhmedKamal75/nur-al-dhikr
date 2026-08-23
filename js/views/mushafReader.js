@@ -33,20 +33,29 @@ export function renderMushaf(state) {
   const headerChapter = pageDoc.chapters[0];
   const juzLabel = `${t('mushaf.juz', lang)} ${toEasternArabicNumerals(pageDoc.juz)}`;
 
-  const chaptersHtml = pageDoc.chapters.map((chapter) => {
-    const showBanner = chapter.startsHere;
-    const showBismillah = chapter.startsHere && chapter.number !== 9;
-    const banner = showBanner ? `
+  const chaptersHtml = pageDoc.chapters
+    .map((chapter) => {
+      const showBanner = chapter.startsHere;
+      const showBismillah = chapter.startsHere && chapter.number !== 9;
+      const banner = showBanner
+        ? `
       <div class="mushaf-surah-banner">
         <span class="mushaf-surah-banner__name">${escapeHTML(chapter.titleAr)}</span>
       </div>
       ${showBismillah ? `<p class="mushaf-bismillah">\u0628ِ\u0633\u0652\u0645ِ \u0627\u0644\u0644\u0651\u064e\u0647ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u064e\u0670\u0646ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645ِ</p>` : ''}
-    ` : '';
+    `
+        : '';
 
-    const versesHtml = chapter.verses.map((v) => `<span class="mushaf-ayah" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" tabindex="0" role="button" aria-label="${chapter.number}:${v.number}">${escapeHTML(v.text)}<span class="mushaf-ayah__marker">\uFD3F${toEasternArabicNumerals(v.number)}\uFD3E</span></span>`).join(' ');
+      const versesHtml = chapter.verses
+        .map((v) => {
+          const isBookmarked = !!state.mushafAyahBookmarks[`${chapter.number}:${v.number}`];
+          return `<span class="mushaf-ayah ${isBookmarked ? 'mushaf-ayah--bookmarked' : ''}" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" tabindex="0" role="button" aria-label="${chapter.number}:${v.number}">${escapeHTML(v.text)}<span class="mushaf-ayah__marker">${isBookmarked ? `<span class="mushaf-ayah__star">${icon('star-filled', { size: 11 })}</span>` : ''}\uFD3F${toEasternArabicNumerals(v.number)}\uFD3E</span></span>`;
+        })
+        .join(' ');
 
-    return `${banner}<span class="mushaf-verses">${versesHtml}</span>`;
-  }).join(' ');
+      return `${banner}<span class="mushaf-verses">${versesHtml}</span>`;
+    })
+    .join(' ');
 
   return `
   <section class="view view--mushaf">
@@ -89,14 +98,46 @@ export function buildMushafJump(state) {
   const meta = state.mushaf.meta;
   if (!meta) return `<p>${t('mushaf.loading', lang)}</p>`;
 
-  const surahButtons = Object.entries(meta.chapterNames).map(([num, names]) => `
+  const surahButtons = Object.entries(meta.chapterNames)
+    .map(
+      ([num, names]) => `
     <button type="button" class="mushaf-jump__surah" data-action="mushaf-jump-page" data-page="${meta.surahFirstPage[num] || 1}">
       <span class="mushaf-jump__surah-num">${num}</span>
       <span class="mushaf-jump__surah-name">${escapeHTML(pickLocale(names, lang))}</span>
-    </button>`).join('');
+    </button>`
+    )
+    .join('');
 
-  const juzButtons = Object.entries(meta.juzFirstPage).map(([juzNum, page]) => `
-    <button type="button" class="mushaf-jump__juz" data-action="mushaf-jump-page" data-page="${page}">${juzNum}</button>`).join('');
+  const juzButtons = Object.entries(meta.juzFirstPage)
+    .map(
+      ([juzNum, page]) => `
+    <button type="button" class="mushaf-jump__juz" data-action="mushaf-jump-page" data-page="${page}">${juzNum}</button>`
+    )
+    .join('');
+
+  const bookmarkEntries = Object.values(state.mushafAyahBookmarks || {}).sort(
+    (a, b) => (a.page || 0) - (b.page || 0)
+  );
+  const bookmarksSection = bookmarkEntries.length
+    ? `
+    <h3 class="mushaf-jump__heading">${t('mushaf.bookmarkedAyahs', lang)}</h3>
+    <div class="mushaf-jump__bookmark-list">
+      ${bookmarkEntries
+        .map(
+          (b) => `
+      <div class="mushaf-jump__bookmark-row">
+        <button type="button" class="mushaf-jump__bookmark-main" data-action="mushaf-jump-page" data-page="${b.page}">
+          <span class="mushaf-jump__bookmark-surah">${escapeHTML(pickLocale(meta.chapterNames[String(b.surah)], lang))}</span>
+          <span class="mushaf-jump__bookmark-ref" dir="ltr">${b.surah}:${b.ayah}</span>
+        </button>
+        <button type="button" class="icon-btn icon-btn--sm" data-action="mushaf-jump-remove-bookmark" data-surah="${b.surah}" data-ayah="${b.ayah}" aria-label="${t('common.delete', lang)}">
+          ${icon('trash', { size: 14 })}
+        </button>
+      </div>`
+        )
+        .join('')}
+    </div>`
+    : '';
 
   return `
   <div class="mushaf-jump">
@@ -108,6 +149,7 @@ export function buildMushafJump(state) {
         <button type="submit" class="btn btn--primary btn--sm">${t('mushaf.go', lang)}</button>
       </div>
     </form>
+    ${bookmarksSection}
     <h3 class="mushaf-jump__heading">${t('mushaf.surahs', lang)}</h3>
     <div class="mushaf-jump__surah-list">${surahButtons}</div>
     <h3 class="mushaf-jump__heading">${t('mushaf.juzSection', lang)}</h3>
@@ -118,15 +160,23 @@ export function buildMushafJump(state) {
 /**
  * Per-ayah detail modal: Arabic (already on hand from the page data),
  * translation (from the classic reader's already-loaded surah data, if
- * available), play/copy actions. `surahDoc` is `state.quran.surahs[surah]`
- * — the caller is responsible for making sure it's loaded first so this
- * stays a pure template function.
+ * available), play/copy/bookmark actions. `surahDoc` is
+ * `state.quran.surahs[surah]` — the caller is responsible for making sure
+ * it's loaded first so this stays a pure template function. `page` is the
+ * Mushaf page the ayah was tapped from, carried along so the bookmark
+ * entry can jump straight back here later.
  */
-export function buildMushafAyahDetail(arabicText, surahDoc, surahNumber, ayahNumber, state) {
+export function buildMushafAyahDetail(arabicText, surahDoc, surahNumber, ayahNumber, state, page) {
   const lang = state.settings.language;
   const ayah = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayahNumber));
-  const audioUrl = ayahAudioUrl(state.quran.meta?.surahs, state.settings.reciter, surahNumber, ayahNumber);
+  const audioUrl = ayahAudioUrl(
+    state.quran.meta?.surahs,
+    state.settings.reciter,
+    surahNumber,
+    ayahNumber
+  );
   const key = `${surahNumber}:${ayahNumber}`;
+  const isBookmarked = !!state.mushafAyahBookmarks[key];
 
   return `
   <div class="mushaf-ayah-detail">
@@ -135,10 +185,17 @@ export function buildMushafAyahDetail(arabicText, surahDoc, surahNumber, ayahNum
     <p class="mushaf-ayah-detail__arabic" dir="rtl" lang="ar">${escapeHTML(arabicText)}</p>
     ${ayah?.translation ? `<p class="mushaf-ayah-detail__translation">${escapeHTML(ayah.translation)}</p>` : ''}
     <div class="mushaf-ayah-detail__actions">
-      ${audioUrl ? `
+      <button type="button" class="btn btn--secondary btn--sm ${isBookmarked ? 'btn--active' : ''}" data-action="mushaf-toggle-ayah-bookmark" data-surah="${surahNumber}" data-ayah="${ayahNumber}" data-page="${page || ''}" aria-pressed="${isBookmarked}">
+        ${icon(isBookmarked ? 'star-filled' : 'star', { size: 16 })} ${t(isBookmarked ? 'mushaf.bookmarked' : 'mushaf.bookmark', lang)}
+      </button>
+      ${
+        audioUrl
+          ? `
       <button type="button" class="btn btn--secondary btn--sm" data-action="play-ayah" data-url="${escapeHTML(audioUrl)}" data-key="${escapeHTML(key)}">
         ${icon('volume', { size: 16 })} ${t('mushaf.listen', lang)}
-      </button>` : ''}
+      </button>`
+          : ''
+      }
       <button type="button" class="btn btn--secondary btn--sm" data-action="mushaf-copy-ayah" data-text="${escapeHTML(arabicText)}" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
         ${icon('copy', { size: 16 })} ${t('card.copy', lang)}
       </button>

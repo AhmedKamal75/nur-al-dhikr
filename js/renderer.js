@@ -29,6 +29,8 @@ import { renderQuiz } from './views/quiz.js';
 import { renderMushaf } from './views/mushafReader.js';
 import { renderCalendar } from './views/calendar.js';
 import { renderQuran } from './views/quran.js';
+import { renderRamadan } from './views/ramadan.js';
+import { renderZakat } from './views/zakat.js';
 import { renderSettings } from './views/settings.js';
 import { renderAbout } from './views/about.js';
 import { renderEditor } from './views/editor.js';
@@ -51,9 +53,11 @@ const VIEW_TABLE = {
   [VIEWS.MUSHAF]: renderMushaf,
   [VIEWS.CALENDAR]: renderCalendar,
   [VIEWS.QURAN]: renderQuran,
+  [VIEWS.RAMADAN]: renderRamadan,
+  [VIEWS.ZAKAT]: renderZakat,
   [VIEWS.SETTINGS]: renderSettings,
   [VIEWS.ABOUT]: renderAbout,
-  [VIEWS.EDITOR]: renderEditor
+  [VIEWS.EDITOR]: renderEditor,
 };
 
 let lastView = null;
@@ -80,7 +84,10 @@ export function render(state) {
   mainEl.innerHTML = view(state);
 
   if (state.activeView !== lastView) {
-    mainEl.scrollTo({ top: 0, behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' });
+    mainEl.scrollTo({
+      top: 0,
+      behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto',
+    });
     lastView = state.activeView;
     // Move focus to the main region heading for screen reader / keyboard users on navigation.
     mainEl.focus({ preventScroll: true });

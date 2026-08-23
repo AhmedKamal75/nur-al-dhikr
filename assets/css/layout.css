@@ -160,3 +160,4 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
   color: var(--color-text-muted);
 }
 .empty-state__hint { font-size: var(--fs-sm); }
+.empty-state--inline { padding: var(--space-6) var(--space-4); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); }

@@ -75,6 +75,23 @@ offline from then on.
   a date range.
 - **Smart Prayer Alerts** computed against your actual daily prayer times
   (not a fixed clock time that drifts), with a choice of alert tones.
+- **Ramadan & Fasting Companion** — a live Suhoor-to-Iftar countdown built
+  on the same offline solar-position prayer-time math as the Prayer view
+  (Suhoor ends at Fajr, Iftar begins at Maghrib), day-of-Ramadan tracking,
+  a simple private fasting log with a streak badge, and quick access to
+  the bundled Suhoor/Iftar duas. Works for voluntary Monday/Thursday fasts
+  too, not just Ramadan.
+- **Offline Zakat calculator** — estimates Zakat al-Mal (2.5% of zakatable
+  wealth held a lunar year, once it meets the nisab). Cash, gold, silver,
+  investments, business inventory, receivables, and liabilities are all
+  entered by hand; since the app makes no network calls, gold/silver spot
+  prices are entered manually too rather than pretending to be live. Shows
+  both the gold- and silver-standard nisab thresholds side by side. This is
+  a calculation aid, not a fatwa.
+- **Per-ayah bookmarking in the Mushaf reader** — tap any ayah to bookmark
+  it directly from the page (a small star marks it inline), then revisit
+  every bookmarked ayah from the same jump drawer used to navigate by
+  surah/juz/page.
 - **A visible Play (listen-aloud) button** on every card and in Focus Mode.
 
 ## Architecture
@@ -113,7 +130,9 @@ js/
   tasbih.js                    Counting logic shared by cards + dial
   prayer.js                     Solar-position prayer time calculation
   calendar.js                    Gregorian ⇄ Hijri conversion
-  notifications.js                Local reminder scheduling
+  ramadan.js                      Ramadan status + Suhoor/Iftar countdown
+  zakat.js                         Zakat al-Mal calculation
+  notifications.js                  Local reminder scheduling
   speech.js                        Web Speech "listen" wrapper
   backup.js                         Export/import
   editor.js                          Custom content CRUD
@@ -126,7 +145,8 @@ js/
   components/   card.js, shell.js, modal.js, toast.js, menus.js
   views/        home, library, category, focus, search, favorites,
                 collections, collection, statistics, tasbih, prayer,
-                calendar, settings, about, editor
+                calendar, settings, about, editor, quran, mushafReader,
+                qibla, checklist, ramadan, zakat
 ```
 
 **Data flow is one-directional**: views are pure functions of state that

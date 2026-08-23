@@ -9,8 +9,18 @@
  *     attaches its own listeners.
  */
 
-import { CATALOG_URL, QURAN_META_URL, QURAN_SURAH_URL, MUSHAF_META_URL, MUSHAF_PAGE_URL, VIEWS, QUIZ_LENGTH, QUIZ_CHOICE_COUNT, QUIZ_LIBRARY_ID } from './config.js';
-import { store, actions, persistedSnapshot } from './state.js';
+import {
+  CATALOG_URL,
+  QURAN_META_URL,
+  QURAN_SURAH_URL,
+  MUSHAF_META_URL,
+  MUSHAF_PAGE_URL,
+  VIEWS,
+  QUIZ_LENGTH,
+  QUIZ_CHOICE_COUNT,
+  QUIZ_LIBRARY_ID,
+} from './config.js';
+import { store, actions, persistedSnapshot, selectors } from './state.js';
 import { migrate } from './migration.js';
 import { processDocument } from './schema.js';
 import { buildIndex } from './search.js';
@@ -19,6 +29,7 @@ import { applyTheme, watchSystemTheme } from './theme.js';
 import { initRouter, go, replaceGo } from './router.js';
 import { t } from './i18n.js';
 import { pickLocale, uid, vibrate } from './utils.js';
+import { icon } from './icons.js';
 import * as tasbih from './tasbih.js';
 import * as speech from './speech.js';
 import * as backup from './backup.js';
@@ -32,7 +43,12 @@ import * as recitation from './recitation.js';
 import { buildMushafJump, buildMushafAyahDetail } from './views/mushafReader.js';
 import { openModal, closeModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
-import { buildCardMenu, buildCollectionPicker, buildConfirm, buildTextPrompt } from './components/menus.js';
+import {
+  buildCardMenu,
+  buildCollectionPicker,
+  buildConfirm,
+  buildTextPrompt,
+} from './components/menus.js';
 import { buildItemForm, buildCategoryForm, buildLibraryForm } from './views/editor.js';
 import { buildDayDetail, buildNoteForm } from './components/calendarModals.js';
 import { PRESETS as TASBIH_PRESETS } from './views/tasbih.js';
@@ -66,26 +82,30 @@ async function loadLibraries() {
   const order = [];
   try {
     const catalog = await fetchJSON(CATALOG_URL);
-    const libs = (catalog.libraries || []).filter((l) => l.enabled !== false).sort((a, b) => (a.order || 0) - (b.order || 0));
+    const libs = (catalog.libraries || [])
+      .filter((l) => l.enabled !== false)
+      .sort((a, b) => (a.order || 0) - (b.order || 0));
 
     // Fetch every library file in parallel (they're independent), then apply
     // results back in catalog order so display order stays deterministic
     // regardless of which network request happens to resolve first.
-    const results = await Promise.all(libs.map(async (lib) => {
-      try {
-        const raw = await fetchJSON(lib.file);
-        const migrated = migrate(raw, lib.id);
-        const result = processDocument(migrated);
-        if (!result.success) {
-          console.error(`[boot] ${lib.id} failed validation:`, result.error);
+    const results = await Promise.all(
+      libs.map(async (lib) => {
+        try {
+          const raw = await fetchJSON(lib.file);
+          const migrated = migrate(raw, lib.id);
+          const result = processDocument(migrated);
+          if (!result.success) {
+            console.error(`[boot] ${lib.id} failed validation:`, result.error);
+            return null;
+          }
+          return { id: lib.id, doc: result.value };
+        } catch (err) {
+          console.error(`[boot] Failed to load library "${lib.id}"`, err);
           return null;
         }
-        return { id: lib.id, doc: result.value };
-      } catch (err) {
-        console.error(`[boot] Failed to load library "${lib.id}"`, err);
-        return null;
-      }
-    }));
+      })
+    );
 
     for (const entry of results) {
       if (!entry) continue;
@@ -129,9 +149,15 @@ function renderErrorScreen(err) {
       <button id="error-reload-btn" style="margin:4px;padding:10px 20px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer;">Reload</button>
       <button id="error-reset-btn" style="margin:4px;padding:10px 20px;border-radius:8px;border:none;background:#B91C1C;color:#fff;cursor:pointer;">Reset app data</button>
     </div>`;
-  document.getElementById('error-reload-btn')?.addEventListener('click', () => window.location.reload());
+  document
+    .getElementById('error-reload-btn')
+    ?.addEventListener('click', () => window.location.reload());
   document.getElementById('error-reset-btn')?.addEventListener('click', () => {
-    try { localStorage.removeItem('nurAlDhikr:v2:state'); } catch { /* ignore */ }
+    try {
+      localStorage.removeItem('nurAlDhikr:v2:state');
+    } catch {
+      /* ignore */
+    }
     window.location.hash = '';
     window.location.reload();
   });
@@ -199,13 +225,19 @@ function startCompassIfNeeded() {
 function stopCompass() {
   if (!compassRunning) return;
   compassRunning = false;
-  if (compassRAFHandle) { cancelAnimationFrame(compassRAFHandle); compassRAFHandle = null; }
+  if (compassRAFHandle) {
+    cancelAnimationFrame(compassRAFHandle);
+    compassRAFHandle = null;
+  }
   compass.stop();
 }
 
 function updateCompassLifecycle(state) {
   const onQibla = state.activeView === VIEWS.QIBLA;
-  if (!onQibla) { stopCompass(); return; }
+  if (!onQibla) {
+    stopCompass();
+    return;
+  }
   // On browsers that require an explicit permission prompt (iOS Safari),
   // wait for the person to tap "Enable Compass" (see clickHandlers below)
   // rather than starting automatically.
@@ -315,7 +347,9 @@ async function ensureMushafData(state) {
       mushafPageFetchesInFlight.add(adjKey);
       fetchJSON(MUSHAF_PAGE_URL(adjKey))
         .then((doc) => store.dispatch(actions.setMushafPage(adjKey, doc)))
-        .catch(() => { /* best-effort prefetch; a real navigation there will retry */ })
+        .catch(() => {
+          /* best-effort prefetch; a real navigation there will retry */
+        })
         .finally(() => mushafPageFetchesInFlight.delete(adjKey));
     }
   }
@@ -360,7 +394,9 @@ async function boot() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   const doRegister = () => {
-    navigator.serviceWorker.register('sw.js').catch((err) => console.warn('[sw] registration failed', err));
+    navigator.serviceWorker
+      .register('sw.js')
+      .catch((err) => console.warn('[sw] registration failed', err));
   };
   // boot() is async and may finish well after window's 'load' event already fired
   // (e.g. slow catalog fetch), so check readyState instead of blindly awaiting 'load'.
@@ -377,7 +413,9 @@ function getItemEntry(itemId) {
 }
 
 function itemClipboardText(item, lang) {
-  const parts = [item.arabic, item.transliteration, pickLocale(item.translation, lang)].filter(Boolean);
+  const parts = [item.arabic, item.transliteration, pickLocale(item.translation, lang)].filter(
+    Boolean
+  );
   return parts.join('\n\n');
 }
 
@@ -408,7 +446,10 @@ function buildQuizDeck(state) {
   if (allIds.length < QUIZ_CHOICE_COUNT) return [];
   const questionIds = shuffled(allIds).slice(0, Math.min(QUIZ_LENGTH, allIds.length));
   return questionIds.map((itemId) => {
-    const distractors = shuffled(allIds.filter((id) => id !== itemId)).slice(0, QUIZ_CHOICE_COUNT - 1);
+    const distractors = shuffled(allIds.filter((id) => id !== itemId)).slice(
+      0,
+      QUIZ_CHOICE_COUNT - 1
+    );
     return { itemId, choices: shuffled([itemId, ...distractors]) };
   });
 }
@@ -431,13 +472,21 @@ const clickHandlers = {
     store.dispatch(actions.toggleFavorite(ds.itemId));
   },
 
+  'set-zakat-standard': (ds) => {
+    store.dispatch(actions.updateZakat({ nisabStandard: ds.value === 'gold' ? 'gold' : 'silver' }));
+  },
+
   'counter-tap': (ds) => {
     const target = parseInt(ds.target, 10) || 1;
     const result = tasbih.increment(ds.itemId, ds.categoryId || null, target);
     tasbih.playTick(result.cycleCompleted ? 'complete' : 'tick');
 
     const state = store.getState();
-    if (result.cycleCompleted && state.activeView === VIEWS.FOCUS && state.settings.autoAdvanceFocus) {
+    if (
+      result.cycleCompleted &&
+      state.activeView === VIEWS.FOCUS &&
+      state.settings.autoAdvanceFocus
+    ) {
       setTimeout(() => navigateFocusAdjacent(1), 550);
     }
   },
@@ -498,7 +547,11 @@ const clickHandlers = {
     const text = itemClipboardText(entry.item, lang);
     const title = pickLocale(entry.item.title, lang);
     if (navigator.share) {
-      try { await navigator.share({ title, text }); } catch { /* user cancelled */ }
+      try {
+        await navigator.share({ title, text });
+      } catch {
+        /* user cancelled */
+      }
     } else {
       try {
         await navigator.clipboard.writeText(text);
@@ -525,7 +578,7 @@ const clickHandlers = {
         if (store.getState().speakingItemId === ds.itemId) {
           store.dispatch(actions.setSpeakingItem(null));
         }
-      }
+      },
     });
     closeModal();
   },
@@ -533,12 +586,21 @@ const clickHandlers = {
   'open-collection-picker': (ds) => {
     const entry = getItemEntry(ds.itemId);
     if (!entry) return;
-    openModal(buildCollectionPicker(entry.item, store.getState()), { labelledBy: 'modal-title-picker' });
+    openModal(buildCollectionPicker(entry.item, store.getState()), {
+      labelledBy: 'modal-title-picker',
+    });
   },
 
   'create-collection': () => {
     const lang = store.getState().settings.language;
-    openModal(buildTextPrompt({ title: t('collections.namePrompt', lang), confirmAction: 'submit-new-collection', lang }), { labelledBy: 'modal-title-prompt' });
+    openModal(
+      buildTextPrompt({
+        title: t('collections.namePrompt', lang),
+        confirmAction: 'submit-new-collection',
+        lang,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
   },
 
   'create-collection-suggested': (ds) => {
@@ -549,12 +611,27 @@ const clickHandlers = {
 
   'create-collection-inline': (ds) => {
     const lang = store.getState().settings.language;
-    openModal(buildTextPrompt({ title: t('collections.namePrompt', lang), confirmAction: 'submit-new-collection-inline', confirmData: { itemId: ds.itemId }, lang }), { labelledBy: 'modal-title-prompt' });
+    openModal(
+      buildTextPrompt({
+        title: t('collections.namePrompt', lang),
+        confirmAction: 'submit-new-collection-inline',
+        confirmData: { itemId: ds.itemId },
+        lang,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
   },
 
   'delete-collection': (ds) => {
     const lang = store.getState().settings.language;
-    openModal(buildConfirm({ message: t('editor.deleteConfirm', lang), confirmAction: 'confirm-delete-collection', confirmData: { id: ds.id }, lang }));
+    openModal(
+      buildConfirm({
+        message: t('editor.deleteConfirm', lang),
+        confirmAction: 'confirm-delete-collection',
+        confirmData: { id: ds.id },
+        lang,
+      })
+    );
   },
 
   'confirm-delete-collection': (ds) => {
@@ -598,7 +675,13 @@ const clickHandlers = {
 
   'reset-all-data': () => {
     const lang = store.getState().settings.language;
-    openModal(buildConfirm({ message: t('settings.resetConfirm', lang), confirmAction: 'confirm-reset-all', lang }));
+    openModal(
+      buildConfirm({
+        message: t('settings.resetConfirm', lang),
+        confirmAction: 'confirm-reset-all',
+        lang,
+      })
+    );
   },
 
   'confirm-reset-all': () => {
@@ -609,15 +692,20 @@ const clickHandlers = {
 
   'prayer-request-location': () => {
     const lang = store.getState().settings.language;
-    if (!navigator.geolocation) { showToast(t('prayer.locationUnavailable', lang)); return; }
+    if (!navigator.geolocation) {
+      showToast(t('prayer.locationUnavailable', lang));
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        store.dispatch(actions.updatePrayerSettings({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          locationName: ''
-        }));
+        store.dispatch(
+          actions.updatePrayerSettings({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            locationName: '',
+          })
+        );
       },
       () => showToast(t('prayer.locationDenied', lang)),
       { enableHighAccuracy: false, timeout: 10000 }
@@ -726,9 +814,38 @@ const clickHandlers = {
 
     const finalState = store.getState();
     openModal(
-      buildMushafAyahDetail(verse.text, finalState.quran.surahs[ds.surah], ds.surah, ds.ayah, finalState),
+      buildMushafAyahDetail(
+        verse.text,
+        finalState.quran.surahs[ds.surah],
+        ds.surah,
+        ds.ayah,
+        finalState,
+        page
+      ),
       { labelledBy: 'modal-title-mushaf-ayah' }
     );
+  },
+
+  'mushaf-toggle-ayah-bookmark': (ds, e, target) => {
+    store.dispatch(actions.toggleMushafAyahBookmark(ds.surah, ds.ayah, ds.page));
+    const state = store.getState();
+    const lang = state.settings.language;
+    const isBookmarked = selectors.isMushafAyahBookmarked(state, ds.surah, ds.ayah);
+    // Patch the button in place rather than reopening the modal — avoids
+    // stealing focus/scroll from an already-open dialog. The Mushaf page
+    // underneath has already re-rendered from the dispatch above, so the
+    // star marker on the page itself is correct as soon as the modal closes.
+    if (target) {
+      target.classList.toggle('btn--active', isBookmarked);
+      target.setAttribute('aria-pressed', String(isBookmarked));
+      target.innerHTML = `${icon(isBookmarked ? 'star-filled' : 'star', { size: 16 })} ${t(isBookmarked ? 'mushaf.bookmarked' : 'mushaf.bookmark', lang)}`;
+    }
+    if (state.settings.hapticsEnabled) vibrate(isBookmarked ? 10 : 6);
+  },
+
+  'mushaf-jump-remove-bookmark': (ds, e, target) => {
+    store.dispatch(actions.toggleMushafAyahBookmark(ds.surah, ds.ayah, null));
+    target?.closest('.mushaf-jump__bookmark-row')?.remove();
   },
 
   'mushaf-copy-ayah': async (ds) => {
@@ -763,7 +880,9 @@ const clickHandlers = {
     const lang = store.getState().settings.language;
     const note = store.getState().calendarNotes.find((n) => n.id === ds.id);
     if (!note) return;
-    openModal(buildNoteForm(ds.date || note.startDate, note, lang), { labelledBy: 'modal-title-note' });
+    openModal(buildNoteForm(ds.date || note.startDate, note, lang), {
+      labelledBy: 'modal-title-note',
+    });
   },
 
   'calendar-delete-note': (ds) => {
@@ -773,7 +892,9 @@ const clickHandlers = {
 
   'toggle-prayer-alert': (ds) => {
     const current = store.getState().settings.prayer.alerts || {};
-    store.dispatch(actions.updatePrayerSettings({ alerts: { ...current, [ds.prayer]: !current[ds.prayer] } }));
+    store.dispatch(
+      actions.updatePrayerSettings({ alerts: { ...current, [ds.prayer]: !current[ds.prayer] } })
+    );
   },
 
   'prayer-test-sound': () => {
@@ -810,12 +931,21 @@ const clickHandlers = {
 
   'editor-new-category': (ds) => {
     const lang = store.getState().settings.language;
-    openModal(buildCategoryForm({ libraryId: ds.libraryId, lang }), { labelledBy: 'modal-title-category' });
+    openModal(buildCategoryForm({ libraryId: ds.libraryId, lang }), {
+      labelledBy: 'modal-title-category',
+    });
   },
 
   'editor-delete-category': (ds) => {
     const lang = store.getState().settings.language;
-    openModal(buildConfirm({ message: t('editor.deleteConfirm', lang), confirmAction: 'confirm-delete-category', confirmData: { libraryId: ds.libraryId, categoryId: ds.categoryId }, lang }));
+    openModal(
+      buildConfirm({
+        message: t('editor.deleteConfirm', lang),
+        confirmAction: 'confirm-delete-category',
+        confirmData: { libraryId: ds.libraryId, categoryId: ds.categoryId },
+        lang,
+      })
+    );
   },
 
   'confirm-delete-category': (ds) => {
@@ -826,7 +956,9 @@ const clickHandlers = {
   'editor-new-item': (ds) => {
     const lang = store.getState().settings.language;
     const blank = editorApi.blankItemTemplate(ds.categoryId);
-    openModal(buildItemForm(blank, { libraryId: ds.libraryId, categoryId: ds.categoryId, lang }), { labelledBy: 'modal-title-item' });
+    openModal(buildItemForm(blank, { libraryId: ds.libraryId, categoryId: ds.categoryId, lang }), {
+      labelledBy: 'modal-title-item',
+    });
   },
 
   'editor-edit-item': (ds) => {
@@ -835,7 +967,9 @@ const clickHandlers = {
     const cat = lib?.categories.find((c) => c.id === ds.categoryId);
     const item = cat?.items.find((i) => i.id === ds.itemId);
     if (!item) return;
-    openModal(buildItemForm(item, { libraryId: ds.libraryId, categoryId: ds.categoryId, lang }), { labelledBy: 'modal-title-item' });
+    openModal(buildItemForm(item, { libraryId: ds.libraryId, categoryId: ds.categoryId, lang }), {
+      labelledBy: 'modal-title-item',
+    });
   },
 
   'editor-duplicate-item': (ds) => {
@@ -844,7 +978,14 @@ const clickHandlers = {
 
   'editor-delete-item': (ds) => {
     const lang = store.getState().settings.language;
-    openModal(buildConfirm({ message: t('editor.deleteConfirm', lang), confirmAction: 'confirm-delete-item', confirmData: { libraryId: ds.libraryId, categoryId: ds.categoryId, itemId: ds.itemId }, lang }));
+    openModal(
+      buildConfirm({
+        message: t('editor.deleteConfirm', lang),
+        confirmAction: 'confirm-delete-item',
+        confirmData: { libraryId: ds.libraryId, categoryId: ds.categoryId, itemId: ds.itemId },
+        lang,
+      })
+    );
   },
 
   'confirm-delete-item': (ds) => {
@@ -852,7 +993,10 @@ const clickHandlers = {
     closeModal();
   },
 
-  'modal-close': () => { recitation.stop(); closeModal(); }
+  'modal-close': () => {
+    recitation.stop();
+    closeModal();
+  },
 };
 
 function reminderFormHTML(lang) {
@@ -893,7 +1037,6 @@ const formHandlers = {
     go(VIEWS.MUSHAF, { page: String(clampPage(fd.get('page'))) });
   },
 
-
   item: (form) => {
     const fd = new FormData(form);
     const fields = {
@@ -909,16 +1052,24 @@ const formHandlers = {
         narrator: fd.get('referenceNarrator') || '',
         grading: fd.get('referenceGrading') || '',
         url: '',
-        notes: ''
+        notes: '',
       },
       grade: fd.get('grade') || 'Unknown',
       custom_grade: { en: fd.get('customGradeEn') || '', ar: '' },
       repetitions: parseInt(fd.get('repetitions'), 10) || 1,
       virtues: { en: fd.get('virtuesEn') || '', ar: '' },
-      tags: (fd.get('tags') || '').split(',').map((s) => s.trim()).filter(Boolean),
-      notes: fd.get('notes') || ''
+      tags: (fd.get('tags') || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+      notes: fd.get('notes') || '',
     };
-    const result = editorApi.saveItem(form.dataset.libraryId, form.dataset.categoryId, fields, form.dataset.itemId || null);
+    const result = editorApi.saveItem(
+      form.dataset.libraryId,
+      form.dataset.categoryId,
+      fields,
+      form.dataset.itemId || null
+    );
     if (result.success) {
       closeModal();
       // Save still succeeds either way — this is a heads-up, not a block —
@@ -934,7 +1085,10 @@ const formHandlers = {
 
   category: (form) => {
     const fd = new FormData(form);
-    editorApi.addCategory(form.dataset.libraryId, { nameEn: fd.get('nameEn'), nameAr: fd.get('nameAr') });
+    editorApi.addCategory(form.dataset.libraryId, {
+      nameEn: fd.get('nameEn'),
+      nameAr: fd.get('nameAr'),
+    });
     closeModal();
   },
 
@@ -946,7 +1100,11 @@ const formHandlers = {
 
   reminder: (form) => {
     const fd = new FormData(form);
-    store.dispatch(actions.addReminder(notifications.makeReminder({ id: uid('rem'), time: fd.get('time'), label: fd.get('label') })));
+    store.dispatch(
+      actions.addReminder(
+        notifications.makeReminder({ id: uid('rem'), time: fd.get('time'), label: fd.get('label') })
+      )
+    );
     closeModal();
   },
 
@@ -954,13 +1112,18 @@ const formHandlers = {
     const fd = new FormData(form);
     const lat = parseFloat(fd.get('latitude'));
     const lng = parseFloat(fd.get('longitude'));
-    if (Number.isNaN(lat) || Number.isNaN(lng)) { showToast(t('common.error', store.getState().settings.language)); return; }
-    store.dispatch(actions.updatePrayerSettings({
-      latitude: lat,
-      longitude: lng,
-      locationName: fd.get('locationName') || '',
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-    }));
+    if (Number.isNaN(lat) || Number.isNaN(lng)) {
+      showToast(t('common.error', store.getState().settings.language));
+      return;
+    }
+    store.dispatch(
+      actions.updatePrayerSettings({
+        latitude: lat,
+        longitude: lng,
+        locationName: fd.get('locationName') || '',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      })
+    );
     closeModal();
   },
 
@@ -976,16 +1139,23 @@ const formHandlers = {
       body: fd.get('body') || '',
       startDate: form.dataset.date,
       recurrence,
-      intervalDays: recurrence === 'interval' ? Math.max(2, parseInt(fd.get('intervalDays'), 10) || 3) : null,
-      endDate: recurrence === 'range' ? (fd.get('endDateRange') || null)
-        : recurrence === 'daily' ? (fd.get('endDateDaily') || null)
-        : null,
+      intervalDays:
+        recurrence === 'interval' ? Math.max(2, parseInt(fd.get('intervalDays'), 10) || 3) : null,
+      endDate:
+        recurrence === 'range'
+          ? fd.get('endDateRange') || null
+          : recurrence === 'daily'
+            ? fd.get('endDateDaily') || null
+            : null,
       reminder: fd.get('reminder') === 'on',
-      reminderTime: fd.get('reminder') === 'on' ? (fd.get('reminderTime') || '08:00') : null,
-      createdAt: form.dataset.noteId ? undefined : Date.now()
+      reminderTime: fd.get('reminder') === 'on' ? fd.get('reminderTime') || '08:00' : null,
+      createdAt: form.dataset.noteId ? undefined : Date.now(),
     };
 
-    if (recurrence === 'range' && !note.endDate) { showToast(t('calendar.untilDate', store.getState().settings.language)); return; }
+    if (recurrence === 'range' && !note.endDate) {
+      showToast(t('calendar.untilDate', store.getState().settings.language));
+      return;
+    }
 
     if (form.dataset.noteId) {
       store.dispatch(actions.updateCalendarNote(form.dataset.noteId, note));
@@ -995,7 +1165,7 @@ const formHandlers = {
     }
     closeModal();
     showToast(t('common.done', store.getState().settings.language));
-  }
+  },
 };
 
 function handlePromptForm(form) {
@@ -1062,6 +1232,25 @@ function bindGlobalEvents() {
       store.dispatch(actions.updateReminder(target.dataset.id, { enabled: target.checked }));
       return;
     }
+    if (target.matches('[data-action="ramadan-toggle-fast"]')) {
+      store.dispatch(actions.toggleRamadanFast());
+      const state = store.getState();
+      if (state.settings.hapticsEnabled) vibrate(target.checked ? 10 : 6);
+      return;
+    }
+    if (target.dataset.bind && target.dataset.bind.startsWith('zakat-')) {
+      const field = target.dataset.bind.slice('zakat-'.length);
+      if (field === 'currency') {
+        store.dispatch(actions.updateZakat({ currency: target.value.trim().slice(0, 8) }));
+      } else if (field === 'goldPricePerGram' || field === 'silverPricePerGram') {
+        const n = parseFloat(target.value);
+        store.dispatch(actions.updateZakat({ [field]: Number.isFinite(n) && n > 0 ? n : null }));
+      } else {
+        const n = parseFloat(target.value);
+        store.dispatch(actions.updateZakat({ [field]: Number.isFinite(n) && n >= 0 ? n : 0 }));
+      }
+      return;
+    }
     if (target.matches('[data-action="collection-picker-toggle"]')) {
       const { collectionId, itemId } = target.dataset;
       if (target.checked) store.dispatch(actions.addToCollection(collectionId, itemId));
@@ -1069,7 +1258,9 @@ function bindGlobalEvents() {
       return;
     }
     if (target.matches('[data-bind="dailyGoal"]')) {
-      store.dispatch(actions.updateSettings({ dailyGoal: Math.max(1, parseInt(target.value, 10) || 100) }));
+      store.dispatch(
+        actions.updateSettings({ dailyGoal: Math.max(1, parseInt(target.value, 10) || 100) })
+      );
       return;
     }
     if (target.matches('[data-bind="prayer-method"]')) {
@@ -1140,23 +1331,31 @@ function bindGlobalEvents() {
   });
 
   let touchStartX = null;
-  document.addEventListener('touchstart', (e) => {
-    if (!document.body.classList.contains('is-focus-mode')) return;
-    touchStartX = e.touches[0].clientX;
-  }, { passive: true });
-  document.addEventListener('touchend', (e) => {
-    if (touchStartX == null || !document.body.classList.contains('is-focus-mode')) return;
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    touchStartX = null;
-    if (Math.abs(dx) < 60) return;
-    const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
-    // In LTR, swiping left means "forward" (next). In RTL, reading and
-    // navigation flow the opposite way, so the same physical swipe should
-    // move in the opposite logical direction.
-    const swipedTowardStart = dx < 0; // physically swiped leftward
-    const dir = isRTL ? (swipedTowardStart ? -1 : 1) : (swipedTowardStart ? 1 : -1);
-    navigateFocusAdjacent(dir);
-  }, { passive: true });
+  document.addEventListener(
+    'touchstart',
+    (e) => {
+      if (!document.body.classList.contains('is-focus-mode')) return;
+      touchStartX = e.touches[0].clientX;
+    },
+    { passive: true }
+  );
+  document.addEventListener(
+    'touchend',
+    (e) => {
+      if (touchStartX == null || !document.body.classList.contains('is-focus-mode')) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      touchStartX = null;
+      if (Math.abs(dx) < 60) return;
+      const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
+      // In LTR, swiping left means "forward" (next). In RTL, reading and
+      // navigation flow the opposite way, so the same physical swipe should
+      // move in the opposite logical direction.
+      const swipedTowardStart = dx < 0; // physically swiped leftward
+      const dir = isRTL ? (swipedTowardStart ? -1 : 1) : swipedTowardStart ? 1 : -1;
+      navigateFocusAdjacent(dir);
+    },
+    { passive: true }
+  );
 
   // Mushaf page-flip swipe. Unlike the focus-mode swipe above, this is
   // *always* right-to-left reading order — it's emulating a physical Arabic
@@ -1164,23 +1363,31 @@ function bindGlobalEvents() {
   // language the way focus mode's does.
   let mushafTouchStartX = null;
   let mushafTouchStartY = null;
-  document.addEventListener('touchstart', (e) => {
-    if (store.getState().activeView !== VIEWS.MUSHAF) return;
-    mushafTouchStartX = e.touches[0].clientX;
-    mushafTouchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  document.addEventListener('touchend', (e) => {
-    if (mushafTouchStartX == null || store.getState().activeView !== VIEWS.MUSHAF) return;
-    const dx = e.changedTouches[0].clientX - mushafTouchStartX;
-    const dy = e.changedTouches[0].clientY - mushafTouchStartY;
-    mushafTouchStartX = null;
-    mushafTouchStartY = null;
-    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return; // ignore short/mostly-vertical swipes (scrolling)
-    const state = store.getState();
-    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
-    if (dx < 0) go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
-    else go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
-  }, { passive: true });
+  document.addEventListener(
+    'touchstart',
+    (e) => {
+      if (store.getState().activeView !== VIEWS.MUSHAF) return;
+      mushafTouchStartX = e.touches[0].clientX;
+      mushafTouchStartY = e.touches[0].clientY;
+    },
+    { passive: true }
+  );
+  document.addEventListener(
+    'touchend',
+    (e) => {
+      if (mushafTouchStartX == null || store.getState().activeView !== VIEWS.MUSHAF) return;
+      const dx = e.changedTouches[0].clientX - mushafTouchStartX;
+      const dy = e.changedTouches[0].clientY - mushafTouchStartY;
+      mushafTouchStartX = null;
+      mushafTouchStartY = null;
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return; // ignore short/mostly-vertical swipes (scrolling)
+      const state = store.getState();
+      const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+      if (dx < 0) go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
+      else go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
+    },
+    { passive: true }
+  );
 }
 
 let searchDebounceTimer = null;
@@ -1222,7 +1429,10 @@ function handleFocusKeydown(e) {
   else if (e.key === 'ArrowLeft') navigateFocusAdjacent(-1);
   else if (e.key === ' ' || e.key === 'Enter') {
     const btn = document.querySelector('.focus__counter');
-    if (btn && document.activeElement !== btn) { e.preventDefault(); btn.click(); }
+    if (btn && document.activeElement !== btn) {
+      e.preventDefault();
+      btn.click();
+    }
   } else if (e.key === 'Escape') {
     go(VIEWS.CATEGORY, { id: state.activeParams.id });
   }
@@ -1244,7 +1454,10 @@ async function handleImportFile(file) {
   try {
     const text = await backup.readFileAsText(file);
     const result = backup.parseBackup(text);
-    if (!result.success) { showToast(result.error); return; }
+    if (!result.success) {
+      showToast(result.error);
+      return;
+    }
     store.dispatch(actions.restoreState(result.value));
     showToast(t('common.done', store.getState().settings.language));
     go(VIEWS.HOME);

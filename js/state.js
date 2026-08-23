@@ -5,7 +5,7 @@
  * subscribe() to react to changes. Renderer treats state as read-only.
  */
 
-import { DEFAULT_SETTINGS, DEFAULT_VIEW, SCHEMA_VERSION } from './config.js';
+import { DEFAULT_SETTINGS, DEFAULT_VIEW, DEFAULT_ZAKAT, SCHEMA_VERSION } from './config.js';
 import { clone, debounce, dateKey } from './utils.js';
 import { loadState, saveState } from './storage.js';
 import { normalizeCustomContentMap } from './schema.js';
@@ -18,28 +18,28 @@ function initialState() {
     activeParams: {},
     library: {
       // populated at boot by app.js from catalog + fetched documents
-      documents: {},      // { libraryId: normalizedDocument }
-      itemIndex: {},       // { itemId: { item, category, document } }
-      order: []             // library ids in catalog order
+      documents: {}, // { libraryId: normalizedDocument }
+      itemIndex: {}, // { itemId: { item, category, document } }
+      order: [], // library ids in catalog order
     },
     settings: clone(DEFAULT_SETTINGS),
     favorites: [],
-    collections: [],        // [{ id, name:{en,ar}, items:[ids], createdAt }]
-    counters: {},            // { itemId: { count, target, completedCycles, lastUpdated } }
-    reminders: [],           // [{ id, type, time, section, enabled }]
-    calendarNotes: [],       // [{ id, title, body, startDate, recurrence, intervalDays, endDate, reminder, reminderTime, createdAt }]
+    collections: [], // [{ id, name:{en,ar}, items:[ids], createdAt }]
+    counters: {}, // { itemId: { count, target, completedCycles, lastUpdated } }
+    reminders: [], // [{ id, type, time, section, enabled }]
+    calendarNotes: [], // [{ id, title, body, startDate, recurrence, intervalDays, endDate, reminder, reminderTime, createdAt }]
     statistics: {
-      dailyHistory: {},       // { 'YYYY-MM-DD': { recitations, sessions, itemIds:[...] } }
+      dailyHistory: {}, // { 'YYYY-MM-DD': { recitations, sessions, itemIds:[...] } }
       totalRecitations: 0,
       totalSessions: 0,
       longestStreak: 0,
       currentStreak: 0,
       lastActiveDate: null,
-      favoriteCategories: {}   // { categoryId: count }
+      favoriteCategories: {}, // { categoryId: count }
     },
-    history: [],              // [{ itemId, categoryId, ts }] most-recent-first, capped
+    history: [], // [{ itemId, categoryId, ts }] most-recent-first, capped
     search: { historyList: [] },
-    customContent: {},        // { libraryId: normalizedDocument } user-authored, mirrors library shape
+    customContent: {}, // { libraryId: normalizedDocument } user-authored, mirrors library shape
     editor: { undoStack: [], redoStack: [] },
     tasbih: { activeItemId: null, activePhrase: null },
     // Complete Qur'an text/meta, fetched lazily (never at boot) and cached
@@ -65,26 +65,63 @@ function initialState() {
     // A private, local-only tracker — separate from the recitation-based
     // streak in `statistics`, and never auto-derived from it or vice versa.
     dailyChecklist: {},
+    // Ramadan & Fasting Companion: which calendar days the person has
+    // logged as fasted, `{ 'YYYY-MM-DD': true }`. Works for any fast (the
+    // 30 obligatory Ramadan days or voluntary Mon/Thu ones) — just a
+    // private, local-only log, same spirit as dailyChecklist.
+    ramadanFasting: {},
+    // Zakat calculator inputs — persisted so the person can revisit and
+    // update it as their situation changes, rather than re-entering
+    // everything each time. See config.js DEFAULT_ZAKAT for field docs.
+    zakat: clone(DEFAULT_ZAKAT),
+    // Per-ayah bookmarks made from the Mushaf reader, keyed "surah:ayah" ->
+    // { surah, ayah, page, ts }. Distinct from mushafBookmark (last page
+    // visited) and quranBookmark (last surah in the classic reader) — this
+    // is an explicit, multi-entry "save this exact verse" list.
+    mushafAyahBookmarks: {},
     // 99 Names quiz: ephemeral in-progress session (never persisted — a
     // half-finished quiz shouldn't survive a reload any more than a
     // half-typed search does). `deck` is an array of
     // { itemId, choices: [itemId, itemId, itemId, itemId] } built once at
     // QUIZ_START time so the reducer itself never needs randomness.
-    quiz: { deck: [], index: 0, correctCount: 0, wrongCount: 0, revealed: false, selectedId: null, finished: false },
+    quiz: {
+      deck: [],
+      index: 0,
+      correctCount: 0,
+      wrongCount: 0,
+      revealed: false,
+      selectedId: null,
+      finished: false,
+    },
     // Lifetime quiz stats — this part IS persisted, so "best score" survives reloads.
     quizStats: { bestScore: 0, totalAttempts: 0, totalCorrect: 0 },
     // Ephemeral (never persisted) — which item's TTS is currently playing,
     // if any. Lives in state (not a module-level var) so every card
     // showing that item re-renders its Play button reactively, and
     // starting playback on a new item correctly reverts any other card.
-    speakingItemId: null
+    speakingItemId: null,
   };
 }
 
 const PERSISTED_KEYS = [
-  'settings', 'favorites', 'collections', 'counters', 'reminders', 'calendarNotes',
-  'statistics', 'history', 'search', 'customContent', 'tasbih', 'quranBookmark',
-  'dailyChecklist', 'quizStats', 'mushafBookmark'
+  'settings',
+  'favorites',
+  'collections',
+  'counters',
+  'reminders',
+  'calendarNotes',
+  'statistics',
+  'history',
+  'search',
+  'customContent',
+  'tasbih',
+  'quranBookmark',
+  'dailyChecklist',
+  'quizStats',
+  'mushafBookmark',
+  'ramadanFasting',
+  'zakat',
+  'mushafAyahBookmarks',
 ];
 
 function pickPersisted(state) {
@@ -115,7 +152,7 @@ class Store {
         // field can never crash boot — see the "type confusion" incident in
         // the product review (a string where an array was expected crashed
         // the entire app on every subsequent load until storage was wiped).
-        customContent: normalizeCustomContentMap(result.value.customContent)
+        customContent: normalizeCustomContentMap(result.value.customContent),
       };
     }
     return this.state;
@@ -136,7 +173,11 @@ class Store {
     if (next === prev) return; // no-op action, skip render + persist churn
     this.state = next;
     this._listeners.forEach((fn) => {
-      try { fn(this.state, action, prev); } catch (err) { console.error('[state] subscriber error', err); }
+      try {
+        fn(this.state, action, prev);
+      } catch (err) {
+        console.error('[state] subscriber error', err);
+      }
     });
     this._persist();
   }
@@ -158,13 +199,18 @@ function reduce(state, action) {
       return { ...state, settings: { ...state.settings, ...action.patch } };
 
     case 'SETTINGS_UPDATE_PRAYER':
-      return { ...state, settings: { ...state.settings, prayer: { ...state.settings.prayer, ...action.patch } } };
+      return {
+        ...state,
+        settings: { ...state.settings, prayer: { ...state.settings.prayer, ...action.patch } },
+      };
 
     case 'FAVORITE_TOGGLE': {
       const has = state.favorites.includes(action.itemId);
       return {
         ...state,
-        favorites: has ? state.favorites.filter((id) => id !== action.itemId) : [...state.favorites, action.itemId]
+        favorites: has
+          ? state.favorites.filter((id) => id !== action.itemId)
+          : [...state.favorites, action.itemId],
       };
     }
 
@@ -179,7 +225,9 @@ function reduce(state, action) {
     case 'COLLECTION_RENAME':
       return {
         ...state,
-        collections: state.collections.map((c) => (c.id === action.id ? { ...c, name: action.name } : c))
+        collections: state.collections.map((c) =>
+          c.id === action.id ? { ...c, name: action.name } : c
+        ),
       };
 
     case 'COLLECTION_ADD_ITEM':
@@ -189,32 +237,46 @@ function reduce(state, action) {
           if (c.id !== action.collectionId) return c;
           if (c.items.includes(action.itemId)) return c;
           return { ...c, items: [...c.items, action.itemId] };
-        })
+        }),
       };
 
     case 'COLLECTION_REMOVE_ITEM':
       return {
         ...state,
-        collections: state.collections.map((c) => (
-          c.id === action.collectionId ? { ...c, items: c.items.filter((id) => id !== action.itemId) } : c
-        ))
+        collections: state.collections.map((c) =>
+          c.id === action.collectionId
+            ? { ...c, items: c.items.filter((id) => id !== action.itemId) }
+            : c
+        ),
       };
 
     case 'COUNTER_SET': {
-      const existing = state.counters[action.itemId] || { count: 0, target: action.target || 1, completedCycles: 0 };
+      const existing = state.counters[action.itemId] || {
+        count: 0,
+        target: action.target || 1,
+        completedCycles: 0,
+      };
       return {
         ...state,
         counters: {
           ...state.counters,
-          [action.itemId]: { ...existing, ...action.patch, lastUpdated: Date.now() }
-        }
+          [action.itemId]: { ...existing, ...action.patch, lastUpdated: Date.now() },
+        },
       };
     }
 
     case 'COUNTER_RESET':
       return {
         ...state,
-        counters: { ...state.counters, [action.itemId]: { count: 0, target: action.target || 1, completedCycles: 0, lastUpdated: Date.now() } }
+        counters: {
+          ...state.counters,
+          [action.itemId]: {
+            count: 0,
+            target: action.target || 1,
+            completedCycles: 0,
+            lastUpdated: Date.now(),
+          },
+        },
       };
 
     case 'REMINDER_ADD':
@@ -223,7 +285,7 @@ function reduce(state, action) {
     case 'REMINDER_UPDATE':
       return {
         ...state,
-        reminders: state.reminders.map((r) => (r.id === action.id ? { ...r, ...action.patch } : r))
+        reminders: state.reminders.map((r) => (r.id === action.id ? { ...r, ...action.patch } : r)),
       };
 
     case 'REMINDER_DELETE':
@@ -235,7 +297,9 @@ function reduce(state, action) {
     case 'CALENDAR_NOTE_UPDATE':
       return {
         ...state,
-        calendarNotes: state.calendarNotes.map((n) => (n.id === action.id ? { ...n, ...action.patch } : n))
+        calendarNotes: state.calendarNotes.map((n) =>
+          n.id === action.id ? { ...n, ...action.patch } : n
+        ),
       };
 
     case 'CALENDAR_NOTE_DELETE':
@@ -243,11 +307,17 @@ function reduce(state, action) {
 
     case 'STATISTICS_RECORD': {
       const key = dateKey(new Date());
-      const today = state.statistics.dailyHistory[key] || { recitations: 0, sessions: 0, itemIds: [] };
+      const today = state.statistics.dailyHistory[key] || {
+        recitations: 0,
+        sessions: 0,
+        itemIds: [],
+      };
       const nextToday = {
         recitations: today.recitations + (action.count || 1),
         sessions: today.sessions + (action.newSession ? 1 : 0),
-        itemIds: today.itemIds.includes(action.itemId) ? today.itemIds : [...today.itemIds, action.itemId]
+        itemIds: today.itemIds.includes(action.itemId)
+          ? today.itemIds
+          : [...today.itemIds, action.itemId],
       };
       const favCat = { ...state.statistics.favoriteCategories };
       if (action.categoryId) favCat[action.categoryId] = (favCat[action.categoryId] || 0) + 1;
@@ -264,8 +334,8 @@ function reduce(state, action) {
           favoriteCategories: favCat,
           lastActiveDate: key,
           currentStreak,
-          longestStreak: Math.max(longestStreak, state.statistics.longestStreak)
-        }
+          longestStreak: Math.max(longestStreak, state.statistics.longestStreak),
+        },
       };
     }
 
@@ -286,7 +356,10 @@ function reduce(state, action) {
       return { ...state, search: { historyList: [] } };
 
     case 'CUSTOM_LIBRARY_UPSERT':
-      return { ...state, customContent: { ...state.customContent, [action.library.metadata.id]: action.library } };
+      return {
+        ...state,
+        customContent: { ...state.customContent, [action.library.metadata.id]: action.library },
+      };
 
     case 'CUSTOM_LIBRARY_DELETE': {
       const next = { ...state.customContent };
@@ -295,7 +368,10 @@ function reduce(state, action) {
     }
 
     case 'TASBIH_SET_ACTIVE':
-      return { ...state, tasbih: { activeItemId: action.itemId, activePhrase: action.phrase || null } };
+      return {
+        ...state,
+        tasbih: { activeItemId: action.itemId, activePhrase: action.phrase || null },
+      };
 
     case 'SPEECH_SET_ACTIVE':
       return { ...state, speakingItemId: action.itemId };
@@ -310,7 +386,10 @@ function reduce(state, action) {
       return { ...state, quran: { ...state.quran, meta: action.meta } };
 
     case 'QURAN_SURAH_LOADED':
-      return { ...state, quran: { ...state.quran, surahs: { ...state.quran.surahs, [action.number]: action.surah } } };
+      return {
+        ...state,
+        quran: { ...state.quran, surahs: { ...state.quran.surahs, [action.number]: action.surah } },
+      };
 
     case 'QURAN_BOOKMARK_SET':
       return { ...state, quranBookmark: { surah: action.surah, ts: Date.now() } };
@@ -319,7 +398,10 @@ function reduce(state, action) {
       return { ...state, mushaf: { ...state.mushaf, meta: action.meta } };
 
     case 'MUSHAF_PAGE_LOADED':
-      return { ...state, mushaf: { ...state.mushaf, pages: { ...state.mushaf.pages, [action.page]: action.doc } } };
+      return {
+        ...state,
+        mushaf: { ...state.mushaf, pages: { ...state.mushaf.pages, [action.page]: action.doc } },
+      };
 
     case 'MUSHAF_BOOKMARK_SET':
       return { ...state, mushafBookmark: { page: action.page, ts: Date.now() } };
@@ -329,14 +411,45 @@ function reduce(state, action) {
       const day = state.dailyChecklist[key] || {};
       return {
         ...state,
-        dailyChecklist: { ...state.dailyChecklist, [key]: { ...day, [action.item]: !day[action.item] } }
+        dailyChecklist: {
+          ...state.dailyChecklist,
+          [key]: { ...day, [action.item]: !day[action.item] },
+        },
       };
+    }
+
+    case 'RAMADAN_FAST_TOGGLE': {
+      const key = action.date || dateKey(new Date());
+      const next = { ...state.ramadanFasting };
+      if (next[key]) delete next[key];
+      else next[key] = true;
+      return { ...state, ramadanFasting: next };
+    }
+
+    case 'ZAKAT_UPDATE':
+      return { ...state, zakat: { ...state.zakat, ...action.patch } };
+
+    case 'MUSHAF_AYAH_BOOKMARK_TOGGLE': {
+      const key = `${action.surah}:${action.ayah}`;
+      const next = { ...state.mushafAyahBookmarks };
+      if (next[key]) delete next[key];
+      else
+        next[key] = { surah: action.surah, ayah: action.ayah, page: action.page, ts: Date.now() };
+      return { ...state, mushafAyahBookmarks: next };
     }
 
     case 'QUIZ_START':
       return {
         ...state,
-        quiz: { deck: action.deck, index: 0, correctCount: 0, wrongCount: 0, revealed: false, selectedId: null, finished: false }
+        quiz: {
+          deck: action.deck,
+          index: 0,
+          correctCount: 0,
+          wrongCount: 0,
+          revealed: false,
+          selectedId: null,
+          finished: false,
+        },
       };
 
     case 'QUIZ_ANSWER': {
@@ -350,8 +463,8 @@ function reduce(state, action) {
           revealed: true,
           selectedId: action.itemId,
           correctCount: state.quiz.correctCount + (correct ? 1 : 0),
-          wrongCount: state.quiz.wrongCount + (correct ? 0 : 1)
-        }
+          wrongCount: state.quiz.wrongCount + (correct ? 0 : 1),
+        },
       };
     }
 
@@ -359,7 +472,13 @@ function reduce(state, action) {
       if (!state.quiz.deck.length) return state;
       const nextIndex = state.quiz.index + 1;
       const finished = nextIndex >= state.quiz.deck.length;
-      const nextQuiz = { ...state.quiz, index: nextIndex, revealed: false, selectedId: null, finished };
+      const nextQuiz = {
+        ...state.quiz,
+        index: nextIndex,
+        revealed: false,
+        selectedId: null,
+        finished,
+      };
       if (!finished) return { ...state, quiz: nextQuiz };
       return {
         ...state,
@@ -367,13 +486,24 @@ function reduce(state, action) {
         quizStats: {
           bestScore: Math.max(state.quizStats.bestScore, state.quiz.correctCount),
           totalAttempts: state.quizStats.totalAttempts + 1,
-          totalCorrect: state.quizStats.totalCorrect + state.quiz.correctCount
-        }
+          totalCorrect: state.quizStats.totalCorrect + state.quiz.correctCount,
+        },
       };
     }
 
     case 'QUIZ_EXIT':
-      return { ...state, quiz: { deck: [], index: 0, correctCount: 0, wrongCount: 0, revealed: false, selectedId: null, finished: false } };
+      return {
+        ...state,
+        quiz: {
+          deck: [],
+          index: 0,
+          correctCount: 0,
+          wrongCount: 0,
+          revealed: false,
+          selectedId: null,
+          finished: false,
+        },
+      };
 
     case 'RESTORE_STATE':
       return {
@@ -384,7 +514,7 @@ function reduce(state, action) {
         // (or hand-editable) data and must never be trusted as pre-validated.
         customContent: normalizeCustomContentMap(action.payload.customContent),
         library: state.library,
-        booted: true
+        booted: true,
       };
 
     case 'RESET_ALL':
@@ -406,30 +536,64 @@ function reduce(state, action) {
 function sanitizeRestoredPayload(payload) {
   const p = payload || {};
   const asArray = (v, fallback = []) => (Array.isArray(v) ? v : fallback);
-  const asObject = (v, fallback = {}) => (v && typeof v === 'object' && !Array.isArray(v) ? v : fallback);
+  const asObject = (v, fallback = {}) =>
+    v && typeof v === 'object' && !Array.isArray(v) ? v : fallback;
   const stats = asObject(p.statistics);
   const qb = asObject(p.quranBookmark);
   const mb = asObject(p.mushafBookmark);
   const quizStats = asObject(p.quizStats);
+  const zakatIn = asObject(p.zakat);
+  const asNum = (v, fallback = 0) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
 
   return {
     ...p,
     favorites: asArray(p.favorites).filter((id) => typeof id === 'string'),
-    collections: asArray(p.collections).filter((c) => c && typeof c === 'object' && typeof c.id === 'string').map((c) => ({
-      ...c,
-      items: asArray(c.items).filter((id) => typeof id === 'string')
-    })),
+    collections: asArray(p.collections)
+      .filter((c) => c && typeof c === 'object' && typeof c.id === 'string')
+      .map((c) => ({
+        ...c,
+        items: asArray(c.items).filter((id) => typeof id === 'string'),
+      })),
     counters: asObject(p.counters),
-    reminders: asArray(p.reminders).filter((r) => r && typeof r === 'object' && typeof r.id === 'string'),
+    reminders: asArray(p.reminders).filter(
+      (r) => r && typeof r === 'object' && typeof r.id === 'string'
+    ),
     history: asArray(p.history),
-    search: { historyList: asArray(asObject(p.search).historyList).filter((q) => typeof q === 'string') },
-    quranBookmark: { surah: typeof qb.surah === 'string' ? qb.surah : null, ts: Number.isFinite(qb.ts) ? qb.ts : null },
-    mushafBookmark: { page: Number.isFinite(mb.page) ? mb.page : null, ts: Number.isFinite(mb.ts) ? mb.ts : null },
+    search: {
+      historyList: asArray(asObject(p.search).historyList).filter((q) => typeof q === 'string'),
+    },
+    quranBookmark: {
+      surah: typeof qb.surah === 'string' ? qb.surah : null,
+      ts: Number.isFinite(qb.ts) ? qb.ts : null,
+    },
+    mushafBookmark: {
+      page: Number.isFinite(mb.page) ? mb.page : null,
+      ts: Number.isFinite(mb.ts) ? mb.ts : null,
+    },
     dailyChecklist: asObject(p.dailyChecklist),
+    ramadanFasting: asObject(p.ramadanFasting),
+    mushafAyahBookmarks: asObject(p.mushafAyahBookmarks),
+    zakat: {
+      ...DEFAULT_ZAKAT,
+      cash: asNum(zakatIn.cash),
+      gold: asNum(zakatIn.gold),
+      silver: asNum(zakatIn.silver),
+      investments: asNum(zakatIn.investments),
+      business: asNum(zakatIn.business),
+      receivables: asNum(zakatIn.receivables),
+      other: asNum(zakatIn.other),
+      liabilities: asNum(zakatIn.liabilities),
+      goldPricePerGram:
+        zakatIn.goldPricePerGram != null ? asNum(zakatIn.goldPricePerGram, null) : null,
+      silverPricePerGram:
+        zakatIn.silverPricePerGram != null ? asNum(zakatIn.silverPricePerGram, null) : null,
+      nisabStandard: zakatIn.nisabStandard === 'gold' ? 'gold' : 'silver',
+      currency: typeof zakatIn.currency === 'string' ? zakatIn.currency : '',
+    },
     quizStats: {
       bestScore: Number.isFinite(quizStats.bestScore) ? quizStats.bestScore : 0,
       totalAttempts: Number.isFinite(quizStats.totalAttempts) ? quizStats.totalAttempts : 0,
-      totalCorrect: Number.isFinite(quizStats.totalCorrect) ? quizStats.totalCorrect : 0
+      totalCorrect: Number.isFinite(quizStats.totalCorrect) ? quizStats.totalCorrect : 0,
     },
     statistics: {
       dailyHistory: asObject(stats.dailyHistory),
@@ -438,8 +602,8 @@ function sanitizeRestoredPayload(payload) {
       longestStreak: Number.isFinite(stats.longestStreak) ? stats.longestStreak : 0,
       currentStreak: Number.isFinite(stats.currentStreak) ? stats.currentStreak : 0,
       lastActiveDate: typeof stats.lastActiveDate === 'string' ? stats.lastActiveDate : null,
-      favoriteCategories: asObject(stats.favoriteCategories)
-    }
+      favoriteCategories: asObject(stats.favoriteCategories),
+    },
   };
 }
 
@@ -482,8 +646,16 @@ export const actions = {
   createCollection: (id, name) => ({ type: 'COLLECTION_CREATE', id, name }),
   deleteCollection: (id) => ({ type: 'COLLECTION_DELETE', id }),
   renameCollection: (id, name) => ({ type: 'COLLECTION_RENAME', id, name }),
-  addToCollection: (collectionId, itemId) => ({ type: 'COLLECTION_ADD_ITEM', collectionId, itemId }),
-  removeFromCollection: (collectionId, itemId) => ({ type: 'COLLECTION_REMOVE_ITEM', collectionId, itemId }),
+  addToCollection: (collectionId, itemId) => ({
+    type: 'COLLECTION_ADD_ITEM',
+    collectionId,
+    itemId,
+  }),
+  removeFromCollection: (collectionId, itemId) => ({
+    type: 'COLLECTION_REMOVE_ITEM',
+    collectionId,
+    itemId,
+  }),
   setCounter: (itemId, patch, target) => ({ type: 'COUNTER_SET', itemId, patch, target }),
   resetCounter: (itemId, target) => ({ type: 'COUNTER_RESET', itemId, target }),
   addReminder: (reminder) => ({ type: 'REMINDER_ADD', reminder }),
@@ -492,7 +664,13 @@ export const actions = {
   addCalendarNote: (note) => ({ type: 'CALENDAR_NOTE_ADD', note }),
   updateCalendarNote: (id, patch) => ({ type: 'CALENDAR_NOTE_UPDATE', id, patch }),
   deleteCalendarNote: (id) => ({ type: 'CALENDAR_NOTE_DELETE', id }),
-  recordStatistic: (itemId, categoryId, count, newSession) => ({ type: 'STATISTICS_RECORD', itemId, categoryId, count, newSession }),
+  recordStatistic: (itemId, categoryId, count, newSession) => ({
+    type: 'STATISTICS_RECORD',
+    itemId,
+    categoryId,
+    count,
+    newSession,
+  }),
   pushHistory: (itemId, categoryId) => ({ type: 'HISTORY_PUSH', itemId, categoryId }),
   addSearchHistory: (query) => ({ type: 'SEARCH_HISTORY_ADD', query }),
   clearSearchHistory: () => ({ type: 'SEARCH_HISTORY_CLEAR' }),
@@ -511,10 +689,18 @@ export const actions = {
   setMushafBookmark: (page) => ({ type: 'MUSHAF_BOOKMARK_SET', page }),
   setRecitingAyah: (key) => ({ type: 'RECITATION_SET_ACTIVE', key }),
   toggleChecklistItem: (item, date) => ({ type: 'CHECKLIST_TOGGLE', item, date }),
+  toggleRamadanFast: (date) => ({ type: 'RAMADAN_FAST_TOGGLE', date }),
+  updateZakat: (patch) => ({ type: 'ZAKAT_UPDATE', patch }),
+  toggleMushafAyahBookmark: (surah, ayah, page) => ({
+    type: 'MUSHAF_AYAH_BOOKMARK_TOGGLE',
+    surah: String(surah),
+    ayah: String(ayah),
+    page: Number(page) || null,
+  }),
   startQuiz: (deck) => ({ type: 'QUIZ_START', deck }),
   answerQuiz: (itemId) => ({ type: 'QUIZ_ANSWER', itemId }),
   nextQuiz: () => ({ type: 'QUIZ_NEXT' }),
-  exitQuiz: () => ({ type: 'QUIZ_EXIT' })
+  exitQuiz: () => ({ type: 'QUIZ_EXIT' }),
 };
 
 export function persistedSnapshot(state) {
@@ -527,6 +713,13 @@ export const selectors = {
   getItem: (state, itemId) => state.library.itemIndex[itemId] || null,
   getCounter: (state, itemId) => state.counters[itemId] || null,
   getCollection: (state, id) => state.collections.find((c) => c.id === id) || null,
-  todayStats: (state) => state.statistics.dailyHistory[dateKey(new Date())] || { recitations: 0, sessions: 0, itemIds: [] },
-  todayChecklist: (state) => state.dailyChecklist[dateKey(new Date())] || {}
+  todayStats: (state) =>
+    state.statistics.dailyHistory[dateKey(new Date())] || {
+      recitations: 0,
+      sessions: 0,
+      itemIds: [],
+    },
+  todayChecklist: (state) => state.dailyChecklist[dateKey(new Date())] || {},
+  todayFasted: (state) => !!state.ramadanFasting[dateKey(new Date())],
+  isMushafAyahBookmarked: (state, surah, ayah) => !!state.mushafAyahBookmarks[`${surah}:${ayah}`],
 };

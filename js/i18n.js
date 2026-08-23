@@ -123,7 +123,8 @@ const dict = {
     'prayer.maghrib': 'Maghrib',
     'prayer.isha': 'Isha',
     'prayer.enableLocation': 'Enable Location',
-    'prayer.locationNeeded': 'Prayer times require your location. This stays entirely on your device.',
+    'prayer.locationNeeded':
+      'Prayer times require your location. This stays entirely on your device.',
     'prayer.method': 'Calculation Method',
     'prayer.asrMethod': 'Asr Juristic Method',
     'prayer.manualLocation': 'Enter coordinates manually',
@@ -131,7 +132,8 @@ const dict = {
     'prayer.alertOff': 'Turn on alert',
     'prayer.alertSound': 'Alert Sound',
     'prayer.testSound': 'Test sound',
-    'prayer.alertSoundNote': 'Plays while the app is open. If the app is closed or in the background, your device uses its own default notification sound instead.',
+    'prayer.alertSoundNote':
+      'Plays while the app is open. If the app is closed or in the background, your device uses its own default notification sound instead.',
     'prayer.sound.chime': 'Chime',
     'prayer.sound.bell': 'Bell',
     'prayer.sound.ding': 'Ding',
@@ -147,16 +149,20 @@ const dict = {
     'qibla.bearing': 'Direction',
     'qibla.distance': 'Distance to the Kaaba',
     'qibla.holdFlat': 'Hold your phone flat and turn until the marker points up.',
-    'qibla.noSensor': "This device doesn't support a live compass — use the direction below with a physical compass.",
+    'qibla.noSensor':
+      "This device doesn't support a live compass — use the direction below with a physical compass.",
     'qibla.enableCompass': 'Enable Compass',
-    'qibla.permissionDenied': 'Compass access was not granted. You can still use the direction and distance below.',
+    'qibla.permissionDenied':
+      'Compass access was not granted. You can still use the direction and distance below.',
     'qibla.aligned': "You're facing the Qibla.",
     'qibla.turnToAlign': 'Keep turning toward the marker.',
     'qibla.calibrate': 'If this seems off, calibrate by moving your phone in a figure-8.',
-    'qibla.disclaimer': "A phone's compass sensor can be thrown off by metal, magnets, or nearby electronics. The direction and distance above are calculated from your location and are always accurate; treat the live needle as a helpful guide, not the final word.",
+    'qibla.disclaimer':
+      "A phone's compass sensor can be thrown off by metal, magnets, or nearby electronics. The direction and distance above are calculated from your location and are always accurate; treat the live needle as a helpful guide, not the final word.",
 
     'checklist.title': 'Daily Checklist',
-    'checklist.subtitle': 'A private, on-this-device reminder for your prayers and adhkar — not a substitute for praying on time.',
+    'checklist.subtitle':
+      'A private, on-this-device reminder for your prayers and adhkar — not a substitute for praying on time.',
     'checklist.today': 'today',
     'checklist.dayStreak': 'day streak',
     'checklist.groupPrayer': 'Prayers',
@@ -171,7 +177,8 @@ const dict = {
     'checklist.quran': "Qur'an reading",
 
     'quiz.title': '99 Names Quiz',
-    'quiz.intro': 'A {n}-question multiple-choice quiz on the meanings of the 99 Names of Allah, drawn from this library.',
+    'quiz.intro':
+      'A {n}-question multiple-choice quiz on the meanings of the 99 Names of Allah, drawn from this library.',
     'quiz.start': 'Start Quiz',
     'quiz.tryAgain': 'Try Again',
     'quiz.exit': 'Back to Names',
@@ -195,6 +202,63 @@ const dict = {
     'mushaf.surahs': 'Surahs',
     'mushaf.juzSection': 'Juz',
     'mushaf.listen': 'Listen',
+    'mushaf.bookmark': 'Bookmark this ayah',
+    'mushaf.bookmarked': 'Bookmarked',
+    'mushaf.bookmarkedAyahs': 'Bookmarked Ayahs',
+
+    'nav.ramadan': 'Ramadan',
+    'ramadan.title': 'Ramadan & Fasting',
+    'ramadan.subtitle':
+      'A Suhoor-to-Iftar countdown and a simple fasting log — for Ramadan or any voluntary fast.',
+    'ramadan.untilSuhoorEnds': 'Until Suhoor ends',
+    'ramadan.untilIftar': 'Until Iftar',
+    'ramadan.untilNextSuhoor': 'Until tomorrow\u2019s Suhoor ends',
+    'ramadan.suhoorEnds': 'Suhoor ends',
+    'ramadan.iftarBegins': 'Iftar',
+    'ramadan.dayOf': 'of {total} days of Ramadan',
+    'ramadan.fastsLogged': 'fasts logged this Ramadan',
+    'ramadan.startsToday': 'Ramadan begins today, in sha\u2019 Allah',
+    'ramadan.daysUntil': '{n} days until Ramadan',
+    'ramadan.voluntaryToday': 'Today is a recommended voluntary fasting day',
+    'ramadan.fastingLog': 'Today\u2019s Fast',
+    'ramadan.iFastedToday': 'I fasted today',
+    'ramadan.dayStreak': 'day streak',
+    'ramadan.alertTip': 'Tip: enable Fajr & Maghrib alerts for Suhoor and Iftar reminders in',
+    'ramadan.duas': 'Suhoor & Iftar Duas',
+    'ramadan.browseAll': 'Browse all Ramadan & Fasting duas',
+
+    'nav.zakat': 'Zakat',
+    'zakat.title': 'Zakat Calculator',
+    'zakat.subtitle':
+      'Estimate your Zakat al-Mal: 2.5% of zakatable wealth held for a lunar year, once it meets the nisab threshold. Prices are entered manually \u2014 this app makes no network calls.',
+    'zakat.due': 'Zakat Due',
+    'zakat.netWealth': 'Net zakatable wealth',
+    'zakat.nisabUnknown':
+      'Enter a gold or silver price below to check whether you\u2019ve reached the nisab threshold.',
+    'zakat.meetsNisab': 'Your wealth meets the nisab ({n}) \u2014 zakat is due.',
+    'zakat.belowNisab':
+      'Your wealth is below the nisab ({n}) \u2014 zakat isn\u2019t obligatory this year.',
+    'zakat.currency': 'Currency label',
+    'zakat.currencyPlaceholder': 'e.g. USD, $, \u062c.\u0645',
+    'zakat.assets': 'Zakatable Assets',
+    'zakat.cash': 'Cash & bank savings',
+    'zakat.gold': 'Gold (value)',
+    'zakat.silver': 'Silver (value)',
+    'zakat.investments': 'Investments & stocks',
+    'zakat.business': 'Business inventory',
+    'zakat.receivables': 'Money owed to you',
+    'zakat.other': 'Other zakatable assets',
+    'zakat.liabilities': 'Debts due (deducted)',
+    'zakat.nisab': 'Nisab Threshold',
+    'zakat.nisabExplain':
+      'Nisab is the value of 85g of gold or 595g of silver \u2014 scholars differ on which to use; silver gives a lower, more inclusive threshold.',
+    'zakat.goldPricePerGram': 'Gold price / gram',
+    'zakat.silverPricePerGram': 'Silver price / gram',
+    'zakat.nisabStandard': 'Use as threshold',
+    'zakat.standardSilver': 'Silver (595g)',
+    'zakat.standardGold': 'Gold (85g)',
+    'zakat.disclaimer':
+      'A calculation aid at the standard {rate}% rate, not a fatwa \u2014 it doesn\u2019t cover every fiqh nuance. Please confirm with a knowledgeable scholar for your specific situation.',
 
     'reminder.time': 'Time',
     'reminder.labelPlaceholder': 'Morning Adhkar',
@@ -242,14 +306,16 @@ const dict = {
     'settings.autoAdvanceFocus': 'Auto-Advance After Completing',
     'settings.dailyGoal': 'Daily Dhikr Goal',
     'settings.reciter': 'Qur\u2019an Reciter',
-    'settings.reciterHint': 'Used for the Listen button in the Qur\u2019an reader and Mushaf view. Audio streams from a public Qur\u2019an CDN when you tap play — nothing is downloaded in advance.',
+    'settings.reciterHint':
+      'Used for the Listen button in the Qur\u2019an reader and Mushaf view. Audio streams from a public Qur\u2019an CDN when you tap play — nothing is downloaded in advance.',
     'settings.notifications': 'Notifications & Reminders',
     'settings.addReminder': 'Add Reminder',
     'settings.data': 'Data Management',
     'settings.exportBackup': 'Export Backup',
     'settings.importBackup': 'Import Backup',
     'settings.resetData': 'Reset All Data',
-    'settings.resetConfirm': 'This will permanently erase all favorites, statistics, and settings on this device. This cannot be undone. Continue?',
+    'settings.resetConfirm':
+      'This will permanently erase all favorites, statistics, and settings on this device. This cannot be undone. Continue?',
     'settings.storageUsed': 'Storage Used',
     'settings.themeMode.light': 'Light',
     'settings.themeMode.dark': 'Dark',
@@ -257,10 +323,12 @@ const dict = {
     'about.title': 'About Nūr al-Dhikr',
     'about.mission': 'A quiet, offline-first companion for daily remembrance of Allah.',
     'about.privacy': 'Privacy',
-    'about.privacyBody': 'Nothing you do in this app ever leaves your device. There is no analytics, no tracking, and no account required.',
+    'about.privacyBody':
+      'Nothing you do in this app ever leaves your device. There is no analytics, no tracking, and no account required.',
     'about.sources': 'Sources',
     'about.version': 'Version',
-    'about.builtWith': 'Built with vanilla HTML, CSS, and JavaScript \u2014 no frameworks, no dependencies, no tracking.',
+    'about.builtWith':
+      'Built with vanilla HTML, CSS, and JavaScript \u2014 no frameworks, no dependencies, no tracking.',
     'editor.title': 'Content Editor',
     'editor.newItem': 'New Item',
     'editor.newCategory': 'New Category',
@@ -275,7 +343,8 @@ const dict = {
     'editor.redo': 'Redo',
     'editor.preview': 'Preview',
     'editor.validationError': 'Please fix the highlighted fields before saving.',
-    'editor.savedWithWarning': 'Saved — but this item has no Arabic text or translation yet, so it will look empty.',
+    'editor.savedWithWarning':
+      'Saved — but this item has no Arabic text or translation yet, so it will look empty.',
     'editor.fieldTitleEn': 'Title (English)',
     'editor.fieldTitleAr': 'Title (Arabic)',
     'editor.fieldArabic': 'Arabic Text',
@@ -315,7 +384,7 @@ const dict = {
     'a11y.mainNav': 'Main navigation',
     'a11y.themeToggle': 'Toggle color theme',
     'a11y.counterProgress': '{count} of {target}',
-    'a11y.counterComplete': 'Completed. Cycle {n}.'
+    'a11y.counterComplete': 'Completed. Cycle {n}.',
   },
   ar: {
     'app.name': 'نور الذكر',
@@ -443,7 +512,8 @@ const dict = {
     'prayer.alertOff': 'تفعيل التنبيه',
     'prayer.alertSound': 'نغمة التنبيه',
     'prayer.testSound': 'تجربة الصوت',
-    'prayer.alertSoundNote': 'يعمل أثناء فتح التطبيق. إذا كان التطبيق مغلقًا أو في الخلفية، سيستخدم جهازك نغمة الإشعار الافتراضية الخاصة به بدلاً من ذلك.',
+    'prayer.alertSoundNote':
+      'يعمل أثناء فتح التطبيق. إذا كان التطبيق مغلقًا أو في الخلفية، سيستخدم جهازك نغمة الإشعار الافتراضية الخاصة به بدلاً من ذلك.',
     'prayer.sound.chime': 'رنين',
     'prayer.sound.bell': 'جرس',
     'prayer.sound.ding': 'دينغ',
@@ -461,14 +531,17 @@ const dict = {
     'qibla.holdFlat': 'أمسك هاتفك بشكل أفقي ثابت، ثم استدر حتى يشير المؤشر للأعلى.',
     'qibla.noSensor': 'هذا الجهاز لا يدعم البوصلة المباشرة — استخدم الاتجاه أدناه مع بوصلة فعلية.',
     'qibla.enableCompass': 'تفعيل البوصلة',
-    'qibla.permissionDenied': 'لم يتم منح إذن الوصول إلى البوصلة. لا يزال بإمكانك استخدام الاتجاه والمسافة أدناه.',
+    'qibla.permissionDenied':
+      'لم يتم منح إذن الوصول إلى البوصلة. لا يزال بإمكانك استخدام الاتجاه والمسافة أدناه.',
     'qibla.aligned': 'أنت متجه نحو القبلة.',
     'qibla.turnToAlign': 'استمر بالاستدارة باتجاه المؤشر.',
     'qibla.calibrate': 'إذا بدت النتيجة غير دقيقة، عايِر البوصلة بتحريك هاتفك على شكل رقم 8.',
-    'qibla.disclaimer': 'قد يتأثر مستشعر البوصلة في الهاتف بالمعادن أو المغناطيس أو الأجهزة الإلكترونية القريبة. الاتجاه والمسافة أعلاه محسوبان من موقعك ودقيقان دائمًا؛ اعتبر المؤشر الحي مجرد مرشد مساعد لا القول الفصل.',
+    'qibla.disclaimer':
+      'قد يتأثر مستشعر البوصلة في الهاتف بالمعادن أو المغناطيس أو الأجهزة الإلكترونية القريبة. الاتجاه والمسافة أعلاه محسوبان من موقعك ودقيقان دائمًا؛ اعتبر المؤشر الحي مجرد مرشد مساعد لا القول الفصل.',
 
     'checklist.title': 'القائمة اليومية',
-    'checklist.subtitle': 'تذكير خاص يبقى على جهازك لصلواتك وأذكارك — وليس بديلاً عن أداء الصلاة في وقتها.',
+    'checklist.subtitle':
+      'تذكير خاص يبقى على جهازك لصلواتك وأذكارك — وليس بديلاً عن أداء الصلاة في وقتها.',
     'checklist.today': 'اليوم',
     'checklist.dayStreak': 'أيام متتالية',
     'checklist.groupPrayer': 'الصلوات',
@@ -483,7 +556,8 @@ const dict = {
     'checklist.quran': 'قراءة القرآن',
 
     'quiz.title': 'اختبار الأسماء الحسنى',
-    'quiz.intro': 'اختبار من {n} أسئلة متعددة الخيارات حول معاني أسماء الله الحسنى، مأخوذة من هذه المكتبة.',
+    'quiz.intro':
+      'اختبار من {n} أسئلة متعددة الخيارات حول معاني أسماء الله الحسنى، مأخوذة من هذه المكتبة.',
     'quiz.start': 'ابدأ الاختبار',
     'quiz.tryAgain': 'حاول مرة أخرى',
     'quiz.exit': 'العودة إلى الأسماء',
@@ -507,6 +581,61 @@ const dict = {
     'mushaf.surahs': 'السور',
     'mushaf.juzSection': 'الأجزاء',
     'mushaf.listen': 'استماع',
+    'mushaf.bookmark': 'حفظ هذه الآية',
+    'mushaf.bookmarked': 'محفوظة',
+    'mushaf.bookmarkedAyahs': 'الآيات المحفوظة',
+
+    'nav.ramadan': 'رمضان',
+    'ramadan.title': 'رمضان والصيام',
+    'ramadan.subtitle':
+      'عدّ تنازلي من السحور إلى الإفطار، وسجلّ صيام بسيط — لرمضان أو لأي صيام تطوّع.',
+    'ramadan.untilSuhoorEnds': 'حتى انتهاء وقت السحور',
+    'ramadan.untilIftar': 'حتى الإفطار',
+    'ramadan.untilNextSuhoor': 'حتى انتهاء سحور الغد',
+    'ramadan.suhoorEnds': 'نهاية السحور',
+    'ramadan.iftarBegins': 'الإفطار',
+    'ramadan.dayOf': 'من {total} يومًا من رمضان',
+    'ramadan.fastsLogged': 'صيامًا مسجلاً هذا الشهر',
+    'ramadan.startsToday': 'يبدأ رمضان اليوم إن شاء الله',
+    'ramadan.daysUntil': 'يتبقى {n} يومًا على رمضان',
+    'ramadan.voluntaryToday': 'اليوم من أيام الصيام المستحبة',
+    'ramadan.fastingLog': 'صيام اليوم',
+    'ramadan.iFastedToday': 'صمت اليوم',
+    'ramadan.dayStreak': 'أيام متتالية',
+    'ramadan.alertTip': 'نصيحة: فعّل تنبيهي الفجر والمغرب لتذكيرك بالسحور والإفطار من صفحة',
+    'ramadan.duas': 'أدعية السحور والإفطار',
+    'ramadan.browseAll': 'تصفّح جميع أدعية رمضان والصيام',
+
+    'nav.zakat': 'الزكاة',
+    'zakat.title': 'حاسبة الزكاة',
+    'zakat.subtitle':
+      'تقدير زكاة المال: 2.5% من المال الزكوي الذي حال عليه الحول إذا بلغ النصاب. الأسعار تُدخل يدويًا — هذا التطبيق لا يتصل بالإنترنت.',
+    'zakat.due': 'الزكاة المستحقة',
+    'zakat.netWealth': 'صافي المال الزكوي',
+    'zakat.nisabUnknown': 'أدخل سعر الذهب أو الفضة أدناه لمعرفة ما إذا كنت قد بلغت النصاب.',
+    'zakat.meetsNisab': 'مالك يبلغ النصاب ({n}) — الزكاة واجبة.',
+    'zakat.belowNisab': 'مالك أقل من النصاب ({n}) — لا تجب الزكاة هذا العام.',
+    'zakat.currency': 'رمز العملة',
+    'zakat.currencyPlaceholder': 'مثال: USD أو $ أو ج.م',
+    'zakat.assets': 'الأموال الزكوية',
+    'zakat.cash': 'النقد والمدخرات المصرفية',
+    'zakat.gold': 'الذهب (القيمة)',
+    'zakat.silver': 'الفضة (القيمة)',
+    'zakat.investments': 'الاستثمارات والأسهم',
+    'zakat.business': 'مخزون التجارة',
+    'zakat.receivables': 'أموال مستحقة لك عند الغير',
+    'zakat.other': 'أموال زكوية أخرى',
+    'zakat.liabilities': 'الديون المستحقة (تُخصم)',
+    'zakat.nisab': 'حدّ النصاب',
+    'zakat.nisabExplain':
+      'النصاب هو قيمة 85 جرامًا من الذهب أو 595 جرامًا من الفضة — اختلف العلماء في المعتمد منهما؛ نصاب الفضة أقل وأشمل.',
+    'zakat.goldPricePerGram': 'سعر جرام الذهب',
+    'zakat.silverPricePerGram': 'سعر جرام الفضة',
+    'zakat.nisabStandard': 'اعتماد النصاب بحسب',
+    'zakat.standardSilver': 'الفضة (595 جم)',
+    'zakat.standardGold': 'الذهب (85 جم)',
+    'zakat.disclaimer':
+      'أداة حسابية بمعدل {rate}% المعتاد، وليست فتوى — لا تغطي كل تفاصيل الفقه. يُرجى مراجعة أهل العلم لحالتك الخاصة.',
 
     'reminder.time': 'الوقت',
     'reminder.labelPlaceholder': 'أذكار الصباح',
@@ -554,14 +683,16 @@ const dict = {
     'settings.autoAdvanceFocus': 'الانتقال التلقائي بعد الإكمال',
     'settings.dailyGoal': 'هدف الذكر اليومي',
     'settings.reciter': 'قارئ القرآن',
-    'settings.reciterHint': 'يُستخدم في زر الاستماع بقارئ القرآن وعرض المصحف. يتم بث الصوت من خدمة قرآنية عامة عند الضغط على تشغيل — لا يُحمَّل شيء مسبقًا.',
+    'settings.reciterHint':
+      'يُستخدم في زر الاستماع بقارئ القرآن وعرض المصحف. يتم بث الصوت من خدمة قرآنية عامة عند الضغط على تشغيل — لا يُحمَّل شيء مسبقًا.',
     'settings.notifications': 'التذكيرات والإشعارات',
     'settings.addReminder': 'إضافة تذكير',
     'settings.data': 'إدارة البيانات',
     'settings.exportBackup': 'تصدير نسخة احتياطية',
     'settings.importBackup': 'استيراد نسخة احتياطية',
     'settings.resetData': 'إعادة تعيين جميع البيانات',
-    'settings.resetConfirm': 'سيؤدي هذا إلى مسح جميع المفضلة والإحصائيات والإعدادات نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا. متابعة؟',
+    'settings.resetConfirm':
+      'سيؤدي هذا إلى مسح جميع المفضلة والإحصائيات والإعدادات نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا. متابعة؟',
     'settings.storageUsed': 'المساحة المستخدمة',
     'settings.themeMode.light': 'فاتح',
     'settings.themeMode.dark': 'داكن',
@@ -569,10 +700,12 @@ const dict = {
     'about.title': 'حول نور الذكر',
     'about.mission': 'رفيق هادئ يعمل بلا اتصال لذكر الله اليومي.',
     'about.privacy': 'الخصوصية',
-    'about.privacyBody': 'لا شيء تفعله في هذا التطبيق يغادر جهازك أبدًا. لا تحليلات، لا تتبع، ولا حاجة لحساب.',
+    'about.privacyBody':
+      'لا شيء تفعله في هذا التطبيق يغادر جهازك أبدًا. لا تحليلات، لا تتبع، ولا حاجة لحساب.',
     'about.sources': 'المصادر',
     'about.version': 'الإصدار',
-    'about.builtWith': 'بُني باستخدام HTML و CSS و JavaScript الأصلية — بلا أطر عمل، بلا اعتماديات، بلا تتبع.',
+    'about.builtWith':
+      'بُني باستخدام HTML و CSS و JavaScript الأصلية — بلا أطر عمل، بلا اعتماديات، بلا تتبع.',
     'editor.title': 'محرر المحتوى',
     'editor.newItem': 'عنصر جديد',
     'editor.newCategory': 'قسم جديد',
@@ -587,7 +720,8 @@ const dict = {
     'editor.redo': 'إعادة',
     'editor.preview': 'معاينة',
     'editor.validationError': 'يرجى تصحيح الحقول المميزة قبل الحفظ.',
-    'editor.savedWithWarning': 'تم الحفظ — لكن هذا العنصر لا يحتوي على نص عربي أو ترجمة بعد، لذا سيظهر فارغًا.',
+    'editor.savedWithWarning':
+      'تم الحفظ — لكن هذا العنصر لا يحتوي على نص عربي أو ترجمة بعد، لذا سيظهر فارغًا.',
     'editor.fieldTitleEn': 'العنوان (إنجليزي)',
     'editor.fieldTitleAr': 'العنوان (عربي)',
     'editor.fieldArabic': 'النص العربي',
@@ -627,8 +761,8 @@ const dict = {
     'a11y.mainNav': 'التنقل الرئيسي',
     'a11y.themeToggle': 'تبديل السمة اللونية',
     'a11y.counterProgress': '{count} من {target}',
-    'a11y.counterComplete': 'اكتمل. الدورة {n}.'
-  }
+    'a11y.counterComplete': 'اكتمل. الدورة {n}.',
+  },
 };
 
 /**

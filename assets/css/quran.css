@@ -199,6 +199,7 @@
   transition: background var(--dur-fast) var(--ease-standard);
 }
 .mushaf-ayah:hover, .mushaf-ayah:focus-visible { background: color-mix(in srgb, var(--color-primary) 12%, transparent); outline: none; }
+.mushaf-ayah--bookmarked { background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
 .mushaf-ayah__marker {
   font-family: var(--font-arabic);
   font-size: 0.65em;
@@ -206,6 +207,7 @@
   padding: 0 2px;
   white-space: nowrap;
 }
+.mushaf-ayah__star { display: inline-flex; vertical-align: middle; color: var(--color-accent); margin-inline-end: 2px; }
 
 .mushaf-page__footer { display: flex; justify-content: center; margin-top: var(--space-3); }
 .mushaf-page__number {
@@ -253,6 +255,19 @@
   border: 1px solid var(--color-border);
   font-weight: 700;
 }
+.mushaf-jump__bookmark-list { display: flex; flex-direction: column; gap: var(--space-1); }
+.mushaf-jump__bookmark-row { display: flex; align-items: center; gap: var(--space-2); }
+.mushaf-jump__bookmark-main {
+  flex: 1;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  text-align: start;
+}
+.mushaf-jump__bookmark-surah { font-weight: 600; }
+.mushaf-jump__bookmark-ref { color: var(--color-text-muted); font-size: var(--fs-caption); }
 
 /* ---- Ayah detail modal ---- */
 .mushaf-ayah-detail__ref { color: var(--color-text-muted); font-size: var(--fs-caption); margin-bottom: var(--space-3); }

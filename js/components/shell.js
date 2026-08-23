@@ -22,10 +22,19 @@ const NAV_ITEMS = [
   { view: VIEWS.PRAYER, icon: 'compass', label: 'nav.prayer' },
   { view: VIEWS.QIBLA, icon: 'mosque', label: 'nav.qibla' },
   { view: VIEWS.CALENDAR, icon: 'calendar', label: 'nav.calendar' },
-  { view: VIEWS.SETTINGS, icon: 'settings', label: 'nav.settings' }
+  { view: VIEWS.RAMADAN, icon: 'crescent-star', label: 'nav.ramadan' },
+  { view: VIEWS.ZAKAT, icon: 'calculator', label: 'nav.zakat' },
+  { view: VIEWS.SETTINGS, icon: 'settings', label: 'nav.settings' },
 ];
 
-const PRIMARY_MOBILE = [VIEWS.HOME, VIEWS.LIBRARY, VIEWS.QURAN, VIEWS.SEARCH, VIEWS.TASBIH, VIEWS.SETTINGS];
+const PRIMARY_MOBILE = [
+  VIEWS.HOME,
+  VIEWS.LIBRARY,
+  VIEWS.QURAN,
+  VIEWS.SEARCH,
+  VIEWS.TASBIH,
+  VIEWS.SETTINGS,
+];
 
 export function renderTopBar(state) {
   const lang = state.settings.language;
@@ -54,7 +63,10 @@ export function renderNav(state) {
   const lang = state.settings.language;
   const active = state.activeView;
   const items = NAV_ITEMS.map((n) => {
-    const isActive = active === n.view || (n.view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active));
+    const isActive =
+      active === n.view ||
+      (n.view === VIEWS.LIBRARY &&
+        [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active));
     return `
     <a class="nav__item ${isActive ? 'nav__item--active' : ''} ${PRIMARY_MOBILE.includes(n.view) ? '' : 'nav__item--desktop-only'}"
        href="${buildHash(n.view)}" data-action="navigate" data-view="${n.view}"
