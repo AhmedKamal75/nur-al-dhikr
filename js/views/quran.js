@@ -11,6 +11,7 @@ import { icon } from '../icons.js';
 import { buildHash } from '../router.js';
 import { escapeHTML } from '../utils.js';
 import { VIEWS } from '../config.js';
+import { ayahAudioUrl } from '../mushaf.js';
 
 const BISMILLAH_AR = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
 
@@ -86,11 +87,19 @@ function surahReaderHTML(state, number) {
     ? `
       ${showBismillah ? `<p class="quran-bismillah" dir="rtl">${BISMILLAH_AR}</p>` : ''}
       <div class="ayah-list">
-        ${surah.ayahs.map((a) => `
+        ${surah.ayahs.map((a) => {
+          const audioUrl = ayahAudioUrl(meta?.surahs, state.settings.reciter, number, a.number);
+          const key = `${number}:${a.number}`;
+          const playing = state.recitingAyahKey === key;
+          return `
           <div class="ayah-card">
             <div class="ayah-card__top">
               <span class="ayah-card__badge">${a.number}</span>
               <div class="ayah-card__actions">
+                ${audioUrl ? `
+                <button type="button" class="icon-btn icon-btn--sm ${playing ? 'icon-btn--playing' : ''}" data-action="play-ayah" data-url="${escapeHTML(audioUrl)}" data-key="${escapeHTML(key)}" aria-label="${t('mushaf.listen', lang)}">
+                  ${icon(playing ? 'stop' : 'volume', { size: 16 })}
+                </button>` : ''}
                 <button type="button" class="icon-btn icon-btn--sm" data-action="copy-ayah" data-surah="${number}" data-ayah="${a.number}" aria-label="${t('common.export', lang)}">
                   ${icon('copy', { size: 16 })}
                 </button>
@@ -98,7 +107,8 @@ function surahReaderHTML(state, number) {
             </div>
             <p class="ayah-card__arabic" dir="rtl">${escapeHTML(a.text)}</p>
             ${state.settings.showTranslation ? `<p class="ayah-card__translation">${escapeHTML(a.translation)}</p>` : ''}
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>`
     : `<div class="quran-loading">${t('quran.loading', lang)}</div>`;
 
@@ -115,11 +125,16 @@ export function renderQuran(state) {
   const lang = state.settings.language;
   const id = state.activeParams.id;
 
+  const mushafLink = id
+    ? `<button type="button" class="btn btn--secondary btn--sm quran-mushaf-toggle" data-action="mushaf-open-at-surah" data-surah="${id}">${icon('book', { size: 16 })} ${t('quran.viewInMushaf', lang)}</button>`
+    : `<button type="button" class="btn btn--secondary btn--sm quran-mushaf-toggle" data-action="navigate" data-view="${VIEWS.MUSHAF}">${icon('book', { size: 16 })} ${t('quran.viewInMushaf', lang)}</button>`;
+
   return `
   <section class="view view--quran">
     <header class="view-header">
       ${id ? `<a class="back-link" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">${icon('chevronLeft', { size: 18 })} ${t('quran.backToList', lang)}</a>` : ''}
       ${!id ? `<h1 class="view__title">${t('quran.title', lang)}</h1><p class="view__subtitle">${t('quran.subtitle', lang)}</p>` : ''}
+      ${mushafLink}
     </header>
     ${id ? surahReaderHTML(state, id) : surahListHTML(state)}
   </section>`;

@@ -1,5 +1,46 @@
 # Changelog
 
+## v2.3.0
+
+### Added
+- **Mushaf Reader** — a new page-by-page "book" mode for the Qur'an,
+  matching the real, printed 604-page Madani Mushaf exactly: authentic page
+  boundaries (verified against known references — e.g. At-Tawbah correctly
+  begins on page 187, Al-Baqara spans pages 2-49), a surah-name/Juz header,
+  a Bismillah banner wherever a surah opens on the page, and Eastern
+  Arabic-Indic page numbering. Swipe or use the arrows to turn pages (fixed
+  to the book's own right-to-left direction regardless of UI language); tap
+  any ayah for its translation and a Listen button. Jump instantly to any
+  surah, Juz, or page number from the jump drawer. Reachable from the
+  classic Qur'an reader's new "Mushaf View" button, or directly from the
+  Qur'an tab.
+- **Qur'an audio recitation** — a "Listen" button on every ayah, in both the
+  classic reader and the new Mushaf reader, streaming from the free,
+  no-API-key Al Quran Cloud CDN. Nothing plays without an explicit tap;
+  nothing is downloaded in advance or proxied through this app. Pick from
+  five reciters (Alafasy, Al-Husary, Abdul Basit, As-Sudais, Al Muaiqly) in
+  Settings.
+
+### Engineering
+- New unit-tested pure modules: `mushaf.js` (page navigation, and the
+  surah:ayah → global-ayah-number conversion the audio CDN needs — verified
+  against a known reference, Ayat al-Kursi = global ayah 262) and a
+  `toEasternArabicNumerals()` helper in `utils.js`.
+- Found and fixed a real bug during testing: the Mushaf reader's audio button
+  depends on `quran-meta.json` (per-surah ayah counts), which was previously
+  only ever fetched by the classic reader — opening Mushaf mode first left
+  Listen unable to resolve a URL. Now both readers ensure it's loaded.
+- 604-page dataset built from a page-accurate open dataset (see data
+  provenance below), verified against known Mushaf facts (48 pages for
+  Al-Baqara, 30 Juz, page 187 for At-Tawbah) before being bundled.
+
+### Data provenance
+- Mushaf page layout: derived from the `hamzakat/madani-muhsaf-json`
+  dataset (public page-boundary data for the standard Madani/King Fahd
+  Complex Mushaf).
+- Qur'an audio: streamed at runtime from `cdn.islamic.network` (Al Quran
+  Cloud), a free, documented, no-key CDN intended for direct client-side use.
+
 ## v2.2.0
 
 New features, plus a round of engineering hardening (tests, linting, CI-ready

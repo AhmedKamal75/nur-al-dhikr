@@ -9,7 +9,7 @@
  *     attaches its own listeners.
  */
 
-import { CATALOG_URL, QURAN_META_URL, QURAN_SURAH_URL, VIEWS, QUIZ_LENGTH, QUIZ_CHOICE_COUNT, QUIZ_LIBRARY_ID } from './config.js';
+import { CATALOG_URL, QURAN_META_URL, QURAN_SURAH_URL, MUSHAF_META_URL, MUSHAF_PAGE_URL, VIEWS, QUIZ_LENGTH, QUIZ_CHOICE_COUNT, QUIZ_LIBRARY_ID } from './config.js';
 import { store, actions, persistedSnapshot } from './state.js';
 import { migrate } from './migration.js';
 import { processDocument } from './schema.js';
@@ -27,6 +27,9 @@ import * as editorApi from './editor.js';
 import * as compass from './compass.js';
 import { qiblaBearing } from './qibla.js';
 import { updateQiblaCompassDOM } from './views/qibla.js';
+import { clampPage, nextPage as mushafNextPage, prevPage as mushafPrevPage } from './mushaf.js';
+import * as recitation from './recitation.js';
+import { buildMushafJump, buildMushafAyahDetail } from './views/mushafReader.js';
 import { openModal, closeModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import { buildCardMenu, buildCollectionPicker, buildConfirm, buildTextPrompt } from './components/menus.js';
@@ -144,6 +147,7 @@ function onStateChange(stateArg) {
     }
     applyTheme(state.settings);
     if (state.activeView === VIEWS.QURAN) ensureQuranData(state);
+    if (state.activeView === VIEWS.MUSHAF) ensureMushafData(state);
     updateCompassLifecycle(state);
     render(state);
   } catch (err) {
@@ -219,6 +223,8 @@ function updateCompassLifecycle(state) {
 
 let quranMetaFetchStarted = false;
 const quranSurahFetchesInFlight = new Set();
+let mushafMetaFetchStarted = false;
+const mushafPageFetchesInFlight = new Set();
 
 async function ensureQuranData(state) {
   if (!state.quran.meta && !quranMetaFetchStarted) {
@@ -252,6 +258,69 @@ async function ensureQuranData(state) {
   }
 }
 
+async function ensureMushafData(state) {
+  // The ayah-detail audio button needs quran-meta.json's per-surah ayah
+  // counts to compute the global ayah number the recitation CDN keys audio
+  // by. Only the classic reader normally triggers that fetch (via
+  // ensureQuranData), so make sure it happens here too — otherwise opening
+  // the Mushaf reader before ever visiting the classic reader would leave
+  // the Listen button unable to resolve a URL.
+  if (!state.quran.meta && !quranMetaFetchStarted) {
+    quranMetaFetchStarted = true;
+    try {
+      const meta = await fetchJSON(QURAN_META_URL);
+      store.dispatch(actions.setQuranMeta(meta));
+    } catch (err) {
+      console.error('[quran] failed to load meta', err);
+      quranMetaFetchStarted = false;
+    }
+  }
+
+  if (!state.mushaf.meta && !mushafMetaFetchStarted) {
+    mushafMetaFetchStarted = true;
+    try {
+      const meta = await fetchJSON(MUSHAF_META_URL);
+      store.dispatch(actions.setMushafMeta(meta));
+    } catch (err) {
+      console.error('[mushaf] failed to load page index', err);
+      mushafMetaFetchStarted = false; // allow a retry on the next navigation
+    }
+  }
+
+  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  const key = String(page);
+
+  if (state.mushafBookmark.page !== page) {
+    store.dispatch(actions.setMushafBookmark(page));
+  }
+
+  if (!state.mushaf.pages[key] && !mushafPageFetchesInFlight.has(key)) {
+    mushafPageFetchesInFlight.add(key);
+    try {
+      const doc = await fetchJSON(MUSHAF_PAGE_URL(key));
+      store.dispatch(actions.setMushafPage(key, doc));
+    } catch (err) {
+      console.error('[mushaf] failed to load page', key, err);
+    } finally {
+      mushafPageFetchesInFlight.delete(key);
+    }
+  }
+
+  // Prefetch the adjacent page too, so tapping next/prev (or swiping) feels
+  // instant most of the time instead of showing the loading state on every
+  // single page turn — the whole point of a "flip through it" reader.
+  for (const adj of [mushafNextPage(page), mushafPrevPage(page)]) {
+    const adjKey = String(adj);
+    if (adjKey !== key && !state.mushaf.pages[adjKey] && !mushafPageFetchesInFlight.has(adjKey)) {
+      mushafPageFetchesInFlight.add(adjKey);
+      fetchJSON(MUSHAF_PAGE_URL(adjKey))
+        .then((doc) => store.dispatch(actions.setMushafPage(adjKey, doc)))
+        .catch(() => { /* best-effort prefetch; a real navigation there will retry */ })
+        .finally(() => mushafPageFetchesInFlight.delete(adjKey));
+    }
+  }
+}
+
 async function boot() {
   mountShell();
   try {
@@ -265,6 +334,11 @@ async function boot() {
     applyTheme(store.getState().settings);
     watchSystemTheme(() => applyTheme(store.getState().settings));
     speech.warmVoices();
+    // Reflect the shared recitation <audio> element's play/stop state back
+    // into the store so any card/button showing that ayah re-renders with
+    // the right "now playing" affordance, the same way speakingItemId does
+    // for text-to-speech.
+    recitation.onPlaybackChange((key) => store.dispatch(actions.setRecitingAyah(key)));
     notifications.startScheduler(
       () => store.getState().reminders,
       store.getState().settings.language,
@@ -594,6 +668,88 @@ const clickHandlers = {
     go(VIEWS.LIBRARY);
   },
 
+  'mushaf-prev': () => {
+    const state = store.getState();
+    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
+  },
+
+  'mushaf-next': () => {
+    const state = store.getState();
+    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
+  },
+
+  'mushaf-open-jump': () => {
+    openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+  },
+
+  'mushaf-jump-page': (ds) => {
+    closeModal();
+    go(VIEWS.MUSHAF, { page: String(clampPage(ds.page)) });
+  },
+
+  'mushaf-open-at-surah': async (ds) => {
+    let state = store.getState();
+    if (!state.mushaf.meta) {
+      try {
+        const meta = await fetchJSON(MUSHAF_META_URL);
+        store.dispatch(actions.setMushafMeta(meta));
+      } catch (err) {
+        console.error('[mushaf] failed to load page index', err);
+      }
+      state = store.getState();
+    }
+    const page = state.mushaf.meta?.surahFirstPage?.[String(ds.surah)] || 1;
+    go(VIEWS.MUSHAF, { page: String(page) });
+  },
+
+  'mushaf-ayah-tap': async (ds) => {
+    const state = store.getState();
+    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    const pageDoc = state.mushaf.pages[String(page)];
+    const chapter = pageDoc?.chapters.find((c) => String(c.number) === String(ds.surah));
+    const verse = chapter?.verses.find((v) => String(v.number) === String(ds.ayah));
+    if (!verse) return;
+
+    if (!state.quran.surahs[ds.surah] && !quranSurahFetchesInFlight.has(ds.surah)) {
+      quranSurahFetchesInFlight.add(ds.surah);
+      try {
+        const surah = await fetchJSON(QURAN_SURAH_URL(ds.surah));
+        store.dispatch(actions.setQuranSurah(ds.surah, surah));
+      } catch (err) {
+        console.error('[mushaf] failed to load surah translation', ds.surah, err);
+      } finally {
+        quranSurahFetchesInFlight.delete(ds.surah);
+      }
+    }
+
+    const finalState = store.getState();
+    openModal(
+      buildMushafAyahDetail(verse.text, finalState.quran.surahs[ds.surah], ds.surah, ds.ayah, finalState),
+      { labelledBy: 'modal-title-mushaf-ayah' }
+    );
+  },
+
+  'mushaf-copy-ayah': async (ds) => {
+    const lang = store.getState().settings.language;
+    try {
+      await navigator.clipboard.writeText(`${ds.text}\n\n\u2014 ${ds.surah}:${ds.ayah}`);
+      showToast(t('card.copied', lang));
+    } catch {
+      showToast(t('card.copyFailed', lang));
+    }
+  },
+
+  'play-ayah': (ds) => {
+    if (!ds.url) return;
+    if (recitation.isPlaying(ds.key)) {
+      recitation.stop();
+    } else {
+      recitation.play(ds.url, ds.key);
+    }
+  },
+
   'calendar-open-day': (ds) => {
     openModal(buildDayDetail(ds.date, store.getState()), { labelledBy: 'modal-title-day' });
   },
@@ -696,7 +852,7 @@ const clickHandlers = {
     closeModal();
   },
 
-  'modal-close': () => closeModal()
+  'modal-close': () => { recitation.stop(); closeModal(); }
 };
 
 function reminderFormHTML(lang) {
@@ -731,6 +887,13 @@ function manualLocationFormHTML(lang, p) {
 /* ------------------------------------------------------------------ */
 
 const formHandlers = {
+  'mushaf-jump-page': (form) => {
+    const fd = new FormData(form);
+    closeModal();
+    go(VIEWS.MUSHAF, { page: String(clampPage(fd.get('page'))) });
+  },
+
+
   item: (form) => {
     const fd = new FormData(form);
     const fields = {
@@ -865,6 +1028,7 @@ function bindGlobalEvents() {
     // (Handled first and separately so that closest() below never treats an unrelated
     // descendant — e.g. a modal's submit button — as if it clicked the overlay.)
     if (e.target.classList?.contains('modal-overlay')) {
+      recitation.stop();
       closeModal();
       return;
     }
@@ -992,6 +1156,30 @@ function bindGlobalEvents() {
     const swipedTowardStart = dx < 0; // physically swiped leftward
     const dir = isRTL ? (swipedTowardStart ? -1 : 1) : (swipedTowardStart ? 1 : -1);
     navigateFocusAdjacent(dir);
+  }, { passive: true });
+
+  // Mushaf page-flip swipe. Unlike the focus-mode swipe above, this is
+  // *always* right-to-left reading order — it's emulating a physical Arabic
+  // book, so the gesture direction doesn't follow the app's own UI
+  // language the way focus mode's does.
+  let mushafTouchStartX = null;
+  let mushafTouchStartY = null;
+  document.addEventListener('touchstart', (e) => {
+    if (store.getState().activeView !== VIEWS.MUSHAF) return;
+    mushafTouchStartX = e.touches[0].clientX;
+    mushafTouchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if (mushafTouchStartX == null || store.getState().activeView !== VIEWS.MUSHAF) return;
+    const dx = e.changedTouches[0].clientX - mushafTouchStartX;
+    const dy = e.changedTouches[0].clientY - mushafTouchStartY;
+    mushafTouchStartX = null;
+    mushafTouchStartY = null;
+    if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return; // ignore short/mostly-vertical swipes (scrolling)
+    const state = store.getState();
+    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    if (dx < 0) go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
+    else go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
   }, { passive: true });
 }
 

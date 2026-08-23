@@ -4,7 +4,7 @@
 import { t, availableLanguages } from '../i18n.js';
 import { icon } from '../icons.js';
 import { escapeHTML, pickLocale } from '../utils.js';
-import { PALETTES, SHAPES, THEME_MODES } from '../config.js';
+import { PALETTES, SHAPES, THEME_MODES, QURAN_RECITERS } from '../config.js';
 
 export function renderSettings(state) {
   const lang = state.settings.language;
@@ -21,6 +21,12 @@ export function renderSettings(state) {
 
   const langButtons = availableLanguages().map((l) => `
     <button type="button" class="segmented__btn ${s.language === l ? 'segmented__btn--active' : ''}" data-action="set-setting" data-key="language" data-value="${l}">${l === 'en' ? 'English' : '\u0627\u0644\u0639\u0631\u0628\u064A\u0629'}</button>`).join('');
+
+  const reciterRows = QURAN_RECITERS.map((r) => `
+    <button type="button" class="reciter-row ${s.reciter === r.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="reciter" data-value="${r.id}">
+      <span class="reciter-row__name">${escapeHTML(pickLocale({ en: r.nameEn, ar: r.nameAr }, lang))}</span>
+      ${s.reciter === r.id ? icon('check', { size: 16 }) : ''}
+    </button>`).join('');
 
   const reminders = state.reminders.map((r) => `
     <div class="reminder-row">
@@ -71,6 +77,12 @@ export function renderSettings(state) {
       ${toggleRow('autoAdvanceFocus', s.autoAdvanceFocus, t('settings.autoAdvanceFocus', lang))}
       <p class="field-label">${t('settings.dailyGoal', lang)}</p>
       <input type="number" class="input" min="1" max="10000" value="${s.dailyGoal}" data-bind="dailyGoal" />
+    </section>
+
+    <section class="panel">
+      <div class="panel__header"><h2>${t('settings.reciter', lang)}</h2></div>
+      <p class="panel__subtext">${t('settings.reciterHint', lang)}</p>
+      <div class="reciter-list">${reciterRows}</div>
     </section>
 
     <section class="panel">

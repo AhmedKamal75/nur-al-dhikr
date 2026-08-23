@@ -26,6 +26,7 @@ import { renderPrayer } from './views/prayer.js';
 import { renderQibla } from './views/qibla.js';
 import { renderChecklist } from './views/checklist.js';
 import { renderQuiz } from './views/quiz.js';
+import { renderMushaf } from './views/mushafReader.js';
 import { renderCalendar } from './views/calendar.js';
 import { renderQuran } from './views/quran.js';
 import { renderSettings } from './views/settings.js';
@@ -47,6 +48,7 @@ const VIEW_TABLE = {
   [VIEWS.QIBLA]: renderQibla,
   [VIEWS.CHECKLIST]: renderChecklist,
   [VIEWS.QUIZ]: renderQuiz,
+  [VIEWS.MUSHAF]: renderMushaf,
   [VIEWS.CALENDAR]: renderCalendar,
   [VIEWS.QURAN]: renderQuran,
   [VIEWS.SETTINGS]: renderSettings,

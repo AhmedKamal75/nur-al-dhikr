@@ -6,7 +6,7 @@
 
 export const APP_NAME = 'Nūr al-Dhikr';
 export const APP_NAME_AR = 'نور الذكر';
-export const APP_VERSION = '2.2.0';
+export const APP_VERSION = '2.3.0';
 export const SCHEMA_VERSION = 2;
 export const STORAGE_KEY = 'nurAlDhikr:v2:state';
 export const DB_NAME = 'nurAlDhikrDB';
@@ -15,6 +15,27 @@ export const DB_VERSION = 1;
 export const CATALOG_URL = 'data/catalog.json';
 export const QURAN_META_URL = 'data/quran-meta.json';
 export const QURAN_SURAH_URL = (n) => `data/quran/${encodeURIComponent(n)}.json`;
+export const MUSHAF_META_URL = 'data/mushaf-meta.json';
+export const MUSHAF_PAGE_URL = (n) => `data/mushaf/${encodeURIComponent(n)}.json`;
+export const MUSHAF_PAGE_COUNT = 604;
+
+/**
+ * Verse-by-verse reciters available via the Al Quran Cloud CDN
+ * (cdn.islamic.network — free, no API key, documented for direct client-side
+ * use: https://alquran.cloud/cdn). Playback happens straight from the
+ * person's browser to that CDN; nothing is proxied or bundled by this app,
+ * and nothing plays without the person tapping play.
+ */
+export const QURAN_RECITERS = Object.freeze([
+  { id: 'ar.alafasy', nameEn: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
+  { id: 'ar.husary', nameEn: 'Mahmoud Al-Husary', nameAr: 'محمود الحصري' },
+  { id: 'ar.abdulbasitmurattal', nameEn: 'Abdul Basit (Murattal)', nameAr: 'عبد الباسط عبد الصمد' },
+  { id: 'ar.abdurrahmaansudais', nameEn: 'Abdurrahman As-Sudais', nameAr: 'عبدالرحمن السديس' },
+  { id: 'ar.mahermuaiqly', nameEn: 'Maher Al Muaiqly', nameAr: 'ماهر المعيقلي' }
+]);
+export const DEFAULT_RECITER = 'ar.alafasy';
+export const quranAudioUrl = (reciterId, globalAyahNumber, bitrate = 128) =>
+  `https://cdn.islamic.network/quran/audio/${bitrate}/${encodeURIComponent(reciterId)}/${globalAyahNumber}.mp3`;
 
 export const VIEWS = Object.freeze({
   HOME: 'home',
@@ -33,6 +54,7 @@ export const VIEWS = Object.freeze({
   QUIZ: 'quiz',
   CALENDAR: 'calendar',
   QURAN: 'quran',
+  MUSHAF: 'mushaf',
   SETTINGS: 'settings',
   ABOUT: 'about',
   EDITOR: 'editor'
@@ -93,6 +115,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   showTranslation: true,
   autoAdvanceFocus: false,
   dailyGoal: 100,
+  reciter: 'ar.alafasy',
   prayer: {
     method: 'MWL',
     asr: 'Standard',

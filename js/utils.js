@@ -85,6 +85,19 @@ export function formatTime(date, hour12 = false) {
 }
 
 /** Format a JS Date as YYYY-MM-DD (local time, stable for use as a stats key). */
+const EASTERN_ARABIC_DIGITS = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+/**
+ * Render a non-negative integer using Eastern Arabic-Indic numerals
+ * (٠-٩) — the print convention for page/ayah/juz numbers in an Arabic
+ * Mushaf, used regardless of the app's current UI language since it's
+ * reproducing a fixed typographic feature of the physical book, not
+ * translating UI chrome.
+ */
+export function toEasternArabicNumerals(n) {
+  return String(n).replace(/[0-9]/g, (d) => EASTERN_ARABIC_DIGITS[Number(d)]);
+}
+
 export function dateKey(date = new Date()) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');

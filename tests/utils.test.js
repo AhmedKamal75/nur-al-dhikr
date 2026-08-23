@@ -11,6 +11,7 @@ import {
   uid,
   ok,
   fail,
+  toEasternArabicNumerals,
 } from '../js/utils.js';
 
 describe('escapeHTML', () => {
@@ -118,5 +119,17 @@ describe('ok/fail Result helpers', () => {
     assert.equal(r.success, false);
     assert.equal(r.value, null);
     assert.equal(r.error, 'boom');
+  });
+});
+
+describe('toEasternArabicNumerals', () => {
+  test('converts each ASCII digit to its Eastern Arabic-Indic form', () => {
+    assert.equal(toEasternArabicNumerals(0), '٠');
+    assert.equal(toEasternArabicNumerals(604), '٦٠٤');
+    assert.equal(toEasternArabicNumerals('255'), '٢٥٥');
+  });
+
+  test('leaves non-digit characters untouched', () => {
+    assert.equal(toEasternArabicNumerals('2:255'), '٢:٢٥٥');
   });
 });

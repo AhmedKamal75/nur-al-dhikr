@@ -4,7 +4,7 @@
 // equality) rather than stylistic opinions, which are Prettier's job.
 export default [
   {
-    ignores: ['data/**', 'assets/**', 'tests/**', 'node_modules/**', 'sw.js.bak'],
+    ignores: ['data/**', 'assets/**', 'node_modules/**', 'sw.js.bak'],
   },
   {
     files: ['js/**/*.js'],
@@ -42,6 +42,7 @@ export default [
         structuredClone: 'readonly',
         getComputedStyle: 'readonly',
         DeviceOrientationEvent: 'readonly',
+        Audio: 'readonly',
       },
     },
     rules: {

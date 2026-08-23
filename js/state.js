@@ -47,10 +47,20 @@ function initialState() {
     // persisting it to localStorage on every dispatch would be wasteful;
     // the browser HTTP cache / service worker already makes repeat visits fast.
     quran: { meta: null, surahs: {} },
+    // Mushaf (604-page book-style reader): meta is the compact page/juz/surah
+    // index (mushaf-meta.json); pages caches individual page JSON as visited.
+    // Both ephemeral — refetched (from cache-first storage.js/SW) each session.
+    mushaf: { meta: null, pages: {} },
     // Last surah the reader opened, persisted so Home can offer a
     // "Continue Reading" shortcut back into the Qur'an, mirroring the
     // pattern already used for adhkar/dua reading history.
     quranBookmark: { surah: null, ts: null },
+    // Last page opened in the Mushaf (book-style) reader, separate from the
+    // classic reader's surah bookmark since they're different browsing modes.
+    mushafBookmark: { page: null, ts: null },
+    // Ephemeral — which "surah:ayah" key is currently playing recited audio,
+    // if any. Mirrors speakingItemId's reactive-highlight purpose.
+    recitingAyahKey: null,
     // Daily habit checklist: { 'YYYY-MM-DD': { fajr: true, dhuhr: false, ... } }.
     // A private, local-only tracker — separate from the recitation-based
     // streak in `statistics`, and never auto-derived from it or vice versa.
@@ -74,7 +84,7 @@ function initialState() {
 const PERSISTED_KEYS = [
   'settings', 'favorites', 'collections', 'counters', 'reminders', 'calendarNotes',
   'statistics', 'history', 'search', 'customContent', 'tasbih', 'quranBookmark',
-  'dailyChecklist', 'quizStats'
+  'dailyChecklist', 'quizStats', 'mushafBookmark'
 ];
 
 function pickPersisted(state) {
@@ -290,6 +300,9 @@ function reduce(state, action) {
     case 'SPEECH_SET_ACTIVE':
       return { ...state, speakingItemId: action.itemId };
 
+    case 'RECITATION_SET_ACTIVE':
+      return { ...state, recitingAyahKey: action.key };
+
     case 'LIBRARY_SET_INDEX':
       return { ...state, library: { ...state.library, itemIndex: action.itemIndex } };
 
@@ -301,6 +314,15 @@ function reduce(state, action) {
 
     case 'QURAN_BOOKMARK_SET':
       return { ...state, quranBookmark: { surah: action.surah, ts: Date.now() } };
+
+    case 'MUSHAF_META_LOADED':
+      return { ...state, mushaf: { ...state.mushaf, meta: action.meta } };
+
+    case 'MUSHAF_PAGE_LOADED':
+      return { ...state, mushaf: { ...state.mushaf, pages: { ...state.mushaf.pages, [action.page]: action.doc } } };
+
+    case 'MUSHAF_BOOKMARK_SET':
+      return { ...state, mushafBookmark: { page: action.page, ts: Date.now() } };
 
     case 'CHECKLIST_TOGGLE': {
       const key = action.date || dateKey(new Date());
@@ -387,6 +409,7 @@ function sanitizeRestoredPayload(payload) {
   const asObject = (v, fallback = {}) => (v && typeof v === 'object' && !Array.isArray(v) ? v : fallback);
   const stats = asObject(p.statistics);
   const qb = asObject(p.quranBookmark);
+  const mb = asObject(p.mushafBookmark);
   const quizStats = asObject(p.quizStats);
 
   return {
@@ -401,6 +424,7 @@ function sanitizeRestoredPayload(payload) {
     history: asArray(p.history),
     search: { historyList: asArray(asObject(p.search).historyList).filter((q) => typeof q === 'string') },
     quranBookmark: { surah: typeof qb.surah === 'string' ? qb.surah : null, ts: Number.isFinite(qb.ts) ? qb.ts : null },
+    mushafBookmark: { page: Number.isFinite(mb.page) ? mb.page : null, ts: Number.isFinite(mb.ts) ? mb.ts : null },
     dailyChecklist: asObject(p.dailyChecklist),
     quizStats: {
       bestScore: Number.isFinite(quizStats.bestScore) ? quizStats.bestScore : 0,
@@ -482,6 +506,10 @@ export const actions = {
   setQuranMeta: (meta) => ({ type: 'QURAN_META_LOADED', meta }),
   setQuranSurah: (number, surah) => ({ type: 'QURAN_SURAH_LOADED', number: String(number), surah }),
   setQuranBookmark: (surah) => ({ type: 'QURAN_BOOKMARK_SET', surah }),
+  setMushafMeta: (meta) => ({ type: 'MUSHAF_META_LOADED', meta }),
+  setMushafPage: (page, doc) => ({ type: 'MUSHAF_PAGE_LOADED', page: String(page), doc }),
+  setMushafBookmark: (page) => ({ type: 'MUSHAF_BOOKMARK_SET', page }),
+  setRecitingAyah: (key) => ({ type: 'RECITATION_SET_ACTIVE', key }),
   toggleChecklistItem: (item, date) => ({ type: 'CHECKLIST_TOGGLE', item, date }),
   startQuiz: (deck) => ({ type: 'QUIZ_START', deck }),
   answerQuiz: (itemId) => ({ type: 'QUIZ_ANSWER', itemId }),

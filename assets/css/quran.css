@@ -114,3 +114,171 @@
   font-weight: 700;
   font-size: var(--fs-sm);
 }
+
+.quran-mushaf-toggle { align-self: flex-start; }
+
+/* ==========================================================================
+   Mushaf (604-page book-style) reader
+   ========================================================================== */
+.view--mushaf { display: flex; flex-direction: column; gap: var(--space-3); min-height: 70vh; }
+
+.mushaf-loading { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); color: var(--color-text-muted); padding: var(--space-9) 0; }
+
+.mushaf-topbar { display: flex; align-items: center; gap: var(--space-2); }
+.mushaf-topbar__title {
+  flex: 1;
+  background: none; border: none;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  text-align: center;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+.mushaf-topbar__title:active { background: var(--color-surface-alt); }
+
+.mushaf-page-wrap { display: flex; justify-content: center; flex: 1; }
+
+.mushaf-page {
+  width: 100%;
+  max-width: 46ch;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-5) var(--space-5) var(--space-3);
+  position: relative;
+}
+.mushaf-page::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+  border-radius: calc(var(--radius-lg) - 4px);
+  pointer-events: none;
+}
+
+.mushaf-page__text {
+  font-family: var(--font-arabic);
+  font-size: calc(1.35rem * var(--arabic-font-scale));
+  line-height: 2.35;
+  text-align: justify;
+  text-align-last: center;
+  direction: rtl;
+  color: var(--color-text);
+}
+
+.mushaf-surah-banner {
+  display: block;
+  text-align: center;
+  margin: var(--space-4) 0 var(--space-2);
+  padding: var(--space-2) 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
+.mushaf-page__text > .mushaf-surah-banner:first-child { margin-top: 0; }
+.mushaf-surah-banner__name {
+  font-family: var(--font-arabic);
+  font-size: calc(1.5rem * var(--arabic-font-scale));
+  color: var(--color-primary);
+  font-weight: 700;
+}
+.mushaf-bismillah {
+  display: block;
+  text-align: center;
+  font-family: var(--font-arabic);
+  font-size: calc(1.3rem * var(--arabic-font-scale));
+  color: var(--color-text);
+  margin: 0 0 var(--space-3);
+}
+
+.mushaf-verses { display: inline; }
+.mushaf-ayah {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background var(--dur-fast) var(--ease-standard);
+}
+.mushaf-ayah:hover, .mushaf-ayah:focus-visible { background: color-mix(in srgb, var(--color-primary) 12%, transparent); outline: none; }
+.mushaf-ayah__marker {
+  font-family: var(--font-arabic);
+  font-size: 0.65em;
+  color: var(--color-primary);
+  padding: 0 2px;
+  white-space: nowrap;
+}
+
+.mushaf-page__footer { display: flex; justify-content: center; margin-top: var(--space-3); }
+.mushaf-page__number {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  min-width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+}
+
+.mushaf-nav { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) 0; }
+.mushaf-nav__btn { background: var(--color-surface); border: 1px solid var(--color-border-strong); }
+.mushaf-nav__btn:disabled { opacity: 0.35; }
+.mushaf-nav__hint { font-size: var(--fs-caption); color: var(--color-text-muted); text-align: center; flex: 1; }
+
+/* ---- Jump-to drawer (rendered inside the shared modal) ---- */
+.mushaf-jump__page-form { margin: var(--space-3) 0 var(--space-4); }
+.mushaf-jump__page-row { display: flex; gap: var(--space-2); margin-top: var(--space-1); }
+.mushaf-jump__page-row input { flex: 1; }
+.mushaf-jump__heading { font-size: var(--fs-sm); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin: var(--space-4) 0 var(--space-2); }
+.mushaf-jump__surah-list { display: flex; flex-direction: column; gap: var(--space-1); max-height: 220px; overflow-y: auto; }
+.mushaf-jump__surah {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  text-align: start;
+}
+.mushaf-jump__surah-num {
+  width: 24px; height: 24px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: var(--fs-caption); font-weight: 700;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+}
+.mushaf-jump__juz-list { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-2); }
+.mushaf-jump__juz {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-weight: 700;
+}
+
+/* ---- Ayah detail modal ---- */
+.mushaf-ayah-detail__ref { color: var(--color-text-muted); font-size: var(--fs-caption); margin-bottom: var(--space-3); }
+.mushaf-ayah-detail__arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-arabic-focus);
+  line-height: var(--lh-arabic);
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+.mushaf-ayah-detail__translation { color: var(--color-text-secondary); margin-bottom: var(--space-4); }
+.mushaf-ayah-detail__actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+/* ---- Recitation "now playing" state (used by both the classic reader's
+   per-ayah Listen button and any future reuse) ---- */
+.icon-btn--playing { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 14%, transparent); }
+
+/* ---- Settings: reciter picker ---- */
+.reciter-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.reciter-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+.reciter-row--active { border-color: var(--color-primary); color: var(--color-primary); font-weight: 600; }
+

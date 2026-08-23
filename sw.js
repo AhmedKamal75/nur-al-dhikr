@@ -8,7 +8,7 @@
  *  - Navigation requests fall back to offline.html when nothing is cached.
  */
 
-const VERSION = 'nur-al-dhikr-v2.2.0';
+const VERSION = 'nur-al-dhikr-v2.3.0';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 
@@ -34,6 +34,8 @@ const APP_SHELL = [
   'js/checklist.js',
   'js/compass.js',
   'js/qibla.js',
+  'js/mushaf.js',
+  'js/recitation.js',
   'js/components/card.js',
   'js/components/menus.js',
   'js/components/modal.js',
@@ -68,6 +70,7 @@ const APP_SHELL = [
   'js/views/focus.js',
   'js/views/home.js',
   'js/views/library.js',
+  'js/views/mushafReader.js',
   'js/views/prayer.js',
   'js/views/qibla.js',
   'js/views/quiz.js',
@@ -86,7 +89,8 @@ const APP_SHELL = [
   'data/pdf-duas.json',
   'data/daily-sunnah.json',
   'data/special-days.json',
-  'data/quran-meta.json'
+  'data/quran-meta.json',
+  'data/mushaf-meta.json'
 ];
 
 self.addEventListener('install', (event) => {
