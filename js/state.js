@@ -5,7 +5,14 @@
  * subscribe() to react to changes. Renderer treats state as read-only.
  */
 
-import { DEFAULT_SETTINGS, DEFAULT_VIEW, DEFAULT_ZAKAT, SCHEMA_VERSION } from './config.js';
+import {
+  DEFAULT_SETTINGS,
+  DEFAULT_VIEW,
+  DEFAULT_ZAKAT,
+  DEFAULT_KHATM,
+  DEFAULT_QADA,
+  SCHEMA_VERSION,
+} from './config.js';
 import { clone, debounce, dateKey } from './utils.js';
 import { loadState, saveState } from './storage.js';
 import { normalizeCustomContentMap } from './schema.js';
@@ -79,6 +86,14 @@ function initialState() {
     // visited) and quranBookmark (last surah in the classic reader) — this
     // is an explicit, multi-entry "save this exact verse" list.
     mushafAyahBookmarks: {},
+    // Qur'an reading-plan (Khatm) tracker — see config.js DEFAULT_KHATM.
+    khatm: clone(DEFAULT_KHATM),
+    // Missed-prayer (Qada') make-up counters, one per obligatory prayer.
+    qada: clone(DEFAULT_QADA),
+    // Ongoing charity (Sadaqah) log — separate from the once-a-year Zakat
+    // calculator. Array of { id, amount, currency, cause, date, note },
+    // newest first.
+    sadaqah: [],
     // 99 Names quiz: ephemeral in-progress session (never persisted — a
     // half-finished quiz shouldn't survive a reload any more than a
     // half-typed search does). `deck` is an array of
@@ -122,6 +137,9 @@ const PERSISTED_KEYS = [
   'ramadanFasting',
   'zakat',
   'mushafAyahBookmarks',
+  'khatm',
+  'qada',
+  'sadaqah',
 ];
 
 function pickPersisted(state) {
@@ -438,6 +456,32 @@ function reduce(state, action) {
       return { ...state, mushafAyahBookmarks: next };
     }
 
+    case 'KHATM_START':
+      return {
+        ...state,
+        khatm: {
+          active: true,
+          startDate: dateKey(new Date()),
+          targetDays: Math.max(1, action.targetDays || 30),
+          startPage: action.startPage || 1,
+        },
+      };
+
+    case 'KHATM_RESET':
+      return { ...state, khatm: clone(DEFAULT_KHATM) };
+
+    case 'QADA_STEP': {
+      const current = state.qada[action.prayer] || 0;
+      const next = Math.max(0, current + (action.delta || 0));
+      return { ...state, qada: { ...state.qada, [action.prayer]: next } };
+    }
+
+    case 'SADAQAH_ADD':
+      return { ...state, sadaqah: [action.entry, ...state.sadaqah] };
+
+    case 'SADAQAH_DELETE':
+      return { ...state, sadaqah: state.sadaqah.filter((e) => e.id !== action.id) };
+
     case 'QUIZ_START':
       return {
         ...state,
@@ -543,6 +587,8 @@ function sanitizeRestoredPayload(payload) {
   const mb = asObject(p.mushafBookmark);
   const quizStats = asObject(p.quizStats);
   const zakatIn = asObject(p.zakat);
+  const khatmIn = asObject(p.khatm);
+  const qadaIn = asObject(p.qada);
   const asNum = (v, fallback = 0) => (Number.isFinite(Number(v)) ? Number(v) : fallback);
 
   return {
@@ -590,6 +636,22 @@ function sanitizeRestoredPayload(payload) {
       nisabStandard: zakatIn.nisabStandard === 'gold' ? 'gold' : 'silver',
       currency: typeof zakatIn.currency === 'string' ? zakatIn.currency : '',
     },
+    khatm: {
+      active: khatmIn.active === true,
+      startDate: typeof khatmIn.startDate === 'string' ? khatmIn.startDate : null,
+      targetDays: Math.max(1, asNum(khatmIn.targetDays, 30)),
+      startPage: Math.min(604, Math.max(1, asNum(khatmIn.startPage, 1))),
+    },
+    qada: {
+      fajr: Math.max(0, asNum(qadaIn.fajr)),
+      dhuhr: Math.max(0, asNum(qadaIn.dhuhr)),
+      asr: Math.max(0, asNum(qadaIn.asr)),
+      maghrib: Math.max(0, asNum(qadaIn.maghrib)),
+      isha: Math.max(0, asNum(qadaIn.isha)),
+    },
+    sadaqah: asArray(p.sadaqah).filter(
+      (e) => e && typeof e === 'object' && typeof e.id === 'string'
+    ),
     quizStats: {
       bestScore: Number.isFinite(quizStats.bestScore) ? quizStats.bestScore : 0,
       totalAttempts: Number.isFinite(quizStats.totalAttempts) ? quizStats.totalAttempts : 0,
@@ -697,6 +759,11 @@ export const actions = {
     ayah: String(ayah),
     page: Number(page) || null,
   }),
+  startKhatm: (targetDays, startPage) => ({ type: 'KHATM_START', targetDays, startPage }),
+  resetKhatm: () => ({ type: 'KHATM_RESET' }),
+  stepQada: (prayer, delta) => ({ type: 'QADA_STEP', prayer, delta }),
+  addSadaqah: (entry) => ({ type: 'SADAQAH_ADD', entry }),
+  deleteSadaqah: (id) => ({ type: 'SADAQAH_DELETE', id }),
   startQuiz: (deck) => ({ type: 'QUIZ_START', deck }),
   answerQuiz: (itemId) => ({ type: 'QUIZ_ANSWER', itemId }),
   nextQuiz: () => ({ type: 'QUIZ_NEXT' }),

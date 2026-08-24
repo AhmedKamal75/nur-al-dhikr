@@ -11,7 +11,11 @@ import {
   fastingStreak,
   ramadanFastsLogged,
   isVoluntaryFastDay,
+  voluntaryFastReasons,
+  shawwalProgress,
   RAMADAN_HIJRI_MONTH,
+  SHAWWAL_HIJRI_MONTH,
+  SHAWWAL_FAST_GOAL,
 } from '../js/ramadan.js';
 
 const dk = (d) => d.toISOString().slice(0, 10);
@@ -176,5 +180,81 @@ describe('isVoluntaryFastDay', () => {
       d.setDate(d.getDate() + 1);
     }
     assert.equal(isVoluntaryFastDay(d), false);
+  });
+});
+
+describe('voluntaryFastReasons', () => {
+  test('returns no reasons during Ramadan', () => {
+    const hijriNow = toHijri(new Date());
+    const start = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
+    assert.deepEqual(voluntaryFastReasons(start), []);
+  });
+
+  test('includes "white-day" on the 14th of the Hijri month (outside Ramadan)', () => {
+    const hijriNow = toHijri(new Date());
+    // Pick a month that isn't Ramadan to land the 14th outside it.
+    const month = hijriNow.month === RAMADAN_HIJRI_MONTH ? RAMADAN_HIJRI_MONTH + 1 : hijriNow.month;
+    const whiteDay = toGregorian(hijriNow.year, month, 14);
+    const reasons = voluntaryFastReasons(whiteDay);
+    assert.ok(reasons.includes('white-day'));
+  });
+
+  test('includes "weekday" on a Monday outside Ramadan', () => {
+    // Find the next Monday, then confirm it's outside Ramadan (or skip to one that is).
+    let d = new Date();
+    for (let i = 0; i < 14; i += 1) {
+      d.setDate(d.getDate() + 1);
+      if (d.getDay() === 1 && !ramadanStatus(d).inRamadan) break;
+    }
+    const reasons = voluntaryFastReasons(d);
+    assert.ok(reasons.includes('weekday'));
+  });
+});
+
+describe('shawwalProgress', () => {
+  test('returns null outside Shawwal', () => {
+    const hijriNow = toHijri(new Date());
+    const notShawwal = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
+    assert.equal(shawwalProgress({}, notShawwal), null);
+  });
+
+  test('counts logged fasts within Shawwal, capped at the goal', () => {
+    const hijriNow = toHijri(new Date());
+    const shawwalStart = toGregorian(hijriNow.year, SHAWWAL_HIJRI_MONTH, 1);
+    const log = {};
+    for (let i = 0; i < 8; i += 1) {
+      // Log 8 days fasted (more than the goal of 6) to verify capping.
+      log[
+        dk(
+          new Date(shawwalStart.getFullYear(), shawwalStart.getMonth(), shawwalStart.getDate() + i)
+        )
+      ] = true;
+    }
+    const midShawwal = new Date(
+      shawwalStart.getFullYear(),
+      shawwalStart.getMonth(),
+      shawwalStart.getDate() + 10
+    );
+    const progress = shawwalProgress(log, midShawwal);
+    assert.equal(progress.goal, SHAWWAL_FAST_GOAL);
+    assert.equal(progress.count, SHAWWAL_FAST_GOAL);
+  });
+
+  test('does not count fasts logged outside Shawwal', () => {
+    const hijriNow = toHijri(new Date());
+    const shawwalStart = toGregorian(hijriNow.year, SHAWWAL_HIJRI_MONTH, 1);
+    const dayBeforeShawwal = new Date(
+      shawwalStart.getFullYear(),
+      shawwalStart.getMonth(),
+      shawwalStart.getDate() - 1
+    );
+    const log = { [dk(dayBeforeShawwal)]: true };
+    const midShawwal = new Date(
+      shawwalStart.getFullYear(),
+      shawwalStart.getMonth(),
+      shawwalStart.getDate() + 5
+    );
+    const progress = shawwalProgress(log, midShawwal);
+    assert.equal(progress.count, 0);
   });
 });

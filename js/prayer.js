@@ -18,38 +18,65 @@ export const METHODS = Object.freeze({
   Karachi: { name: 'University of Islamic Sciences, Karachi', fajr: 18, isha: 18 },
   UmmAlQura: { name: 'Umm al-Qura, Makkah', fajr: 18.5, isha: null, ishaMinutesAfterMaghrib: 90 },
   Tehran: { name: 'Institute of Geophysics, Tehran', fajr: 17.7, isha: 14 },
-  MoonsightingCommittee: { name: 'Moonsighting Committee', fajr: 18, isha: 18 }
+  MoonsightingCommittee: { name: 'Moonsighting Committee', fajr: 18, isha: 18 },
 });
 
 export const ASR_FACTORS = Object.freeze({ Standard: 1, Hanafi: 2 });
 
-function sin(d) { return Math.sin(d * D2R); }
-function cos(d) { return Math.cos(d * D2R); }
-function tan(d) { return Math.tan(d * D2R); }
-function arcsin(x) { return Math.asin(x) * R2D; }
-function arccos(x) { return Math.acos(x) * R2D; }
-function arctan2(y, x) { return Math.atan2(y, x) * R2D; }
-function arccot(x) { return arctan2(1, x); }
-function fixHour(h) { const x = h % 24; return x < 0 ? x + 24 : x; }
+function sin(d) {
+  return Math.sin(d * D2R);
+}
+function cos(d) {
+  return Math.cos(d * D2R);
+}
+function tan(d) {
+  return Math.tan(d * D2R);
+}
+function arcsin(x) {
+  return Math.asin(x) * R2D;
+}
+function arccos(x) {
+  return Math.acos(x) * R2D;
+}
+function arctan2(y, x) {
+  return Math.atan2(y, x) * R2D;
+}
+function arccot(x) {
+  return arctan2(1, x);
+}
+function fixHour(h) {
+  const x = h % 24;
+  return x < 0 ? x + 24 : x;
+}
 
 /** Julian Day Number at Greenwich noon for a given Gregorian date. */
 function julianDay(year, month, day) {
-  if (month <= 2) { year -= 1; month += 12; }
+  if (month <= 2) {
+    year -= 1;
+    month += 12;
+  }
   const A = Math.floor(year / 100);
   const B = 2 - A + Math.floor(A / 4);
   return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
 }
 
-function fixMod(val, mod) { const x = val % mod; return x < 0 ? x + mod : x; }
-function fixHour360(v) { return fixMod(v, 360); }
-function fixHourBase(h) { return fixHour(h); }
+function fixMod(val, mod) {
+  const x = val % mod;
+  return x < 0 ? x + mod : x;
+}
+function fixHour360(v) {
+  return fixMod(v, 360);
+}
+function fixHourBase(h) {
+  return fixHour(h);
+}
 
 /** Sun's declination (deg) and the equation of time (hours) for a given Julian day. */
 function sunPosition(jd) {
   const D = jd - 2451545.0;
   const g = fixHour360(357.529 + 0.98560028 * D);
   const q = fixHour360(280.459 + 0.98564736 * D);
-  const L = fixHour360(q + 1.915 * sin(g) + 0.020 * sin(2 * g));
+  const L = fixHour360(q + 1.915 * sin(g) + 0.02 * sin(2 * g));
   const e = 23.439 - 0.00000036 * D;
   const RA = fixHourBase(arctan2(cos(e) * sin(L), cos(L)) / 15);
   const eqt = q / 15 - RA;
@@ -82,9 +109,17 @@ function asrTime(factor, jd, lat, transit) {
  * Compute prayer times for a given date/location/settings.
  * @returns {{fajr,sunrise,dhuhr,asr,maghrib,isha}} decimal hours in *local solar* time (needs timezone correction)
  */
-export function calculateTimes({ date = new Date(), latitude, longitude, timezoneOffsetHours, method = 'MWL', asr = 'Standard' }) {
+export function calculateTimes({
+  date = new Date(),
+  latitude,
+  longitude,
+  timezoneOffsetHours,
+  method = 'MWL',
+  asr = 'Standard',
+}) {
   if (latitude == null || longitude == null) return null;
-  const jd = julianDay(date.getFullYear(), date.getMonth() + 1, date.getDate()) - longitude / (15 * 24);
+  const jd =
+    julianDay(date.getFullYear(), date.getMonth() + 1, date.getDate()) - longitude / (15 * 24);
   const { equation } = sunPosition(jd);
   const transit = 12 + timezoneOffsetHours - longitude / 15 - equation;
 
@@ -98,7 +133,10 @@ export function calculateTimes({ date = new Date(), latitude, longitude, timezon
   const maghribR = sunAngleTime(0.833, jd, lat, 1, transit);
   let ishaR;
   if (cfg.isha == null && cfg.ishaMinutesAfterMaghrib) {
-    ishaR = { time: maghribR.time + cfg.ishaMinutesAfterMaghrib / 60, unreachable: maghribR.unreachable };
+    ishaR = {
+      time: maghribR.time + cfg.ishaMinutesAfterMaghrib / 60,
+      unreachable: maghribR.unreachable,
+    };
   } else {
     ishaR = sunAngleTime(cfg.isha, jd, lat, 1, transit);
   }
@@ -116,7 +154,7 @@ export function calculateTimes({ date = new Date(), latitude, longitude, timezon
     dhuhr: fixHourBase(dhuhr),
     asr: fixHourBase(asrT.time),
     maghrib: fixHourBase(maghribR.time),
-    isha: fixHourBase(isha)
+    isha: fixHourBase(isha),
   };
 }
 
@@ -154,4 +192,18 @@ export function decimalHoursToDate(baseDate, decimalHours) {
   const { h, m } = hoursToClock(decimalHours);
   d.setHours(h, m, 0, 0);
   return d;
+}
+
+/**
+ * Splits the night (Maghrib to next Fajr) into thirds. The last third is
+ * classically held to be an especially blessed time for dua and voluntary
+ * night prayer (tahajjud). `maghribDate` and `fajrDate` should be actual
+ * Date objects for today's Maghrib and the *following* day's Fajr.
+ */
+export function nightThirds(maghribDate, fajrDate) {
+  const nightMs = fajrDate.getTime() - maghribDate.getTime();
+  if (!(nightMs > 0)) return null;
+  const midpoint = new Date(maghribDate.getTime() + nightMs / 2);
+  const lastThirdStart = new Date(maghribDate.getTime() + (nightMs * 2) / 3);
+  return { midpoint, lastThirdStart, fajrDate };
 }

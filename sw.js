@@ -8,7 +8,7 @@
  *  - Navigation requests fall back to offline.html when nothing is cached.
  */
 
-const VERSION = 'nur-al-dhikr-v2.4.0';
+const VERSION = 'nur-al-dhikr-v2.5.0';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 
@@ -38,6 +38,7 @@ const APP_SHELL = [
   'js/mushaf.js',
   'js/ramadan.js',
   'js/zakat.js',
+  'js/khatm.js',
   'js/recitation.js',
   'js/prayerSound.js',
   'js/components/card.js',
@@ -81,6 +82,7 @@ const APP_SHELL = [
   'js/views/quiz.js',
   'js/views/quran.js',
   'js/views/ramadan.js',
+  'js/views/sadaqah.js',
   'js/views/search.js',
   'js/views/settings.js',
   'js/views/statistics.js',

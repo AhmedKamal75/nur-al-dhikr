@@ -18,7 +18,8 @@ import {
   formatCountdown,
   fastingStreak,
   ramadanFastsLogged,
-  isVoluntaryFastDay,
+  voluntaryFastReasons,
+  shawwalProgress,
 } from '../ramadan.js';
 import { selectors } from '../state.js';
 import { cardHTML } from '../components/card.js';
@@ -48,7 +49,8 @@ export function renderRamadan(state) {
   const status = ramadanStatus(now);
   const fasted = selectors.todayFasted(state);
   const streak = fastingStreak(state.ramadanFasting, now);
-  const voluntary = isVoluntaryFastDay(now);
+  const reasons = voluntaryFastReasons(now);
+  const shawwal = shawwalProgress(state.ramadanFasting, now);
 
   let countdownCard = '';
   if (!hasLocation) {
@@ -103,7 +105,22 @@ export function renderRamadan(state) {
     : `
     <section class="panel panel--ramadan-status">
       <p class="panel__subtext">${daysUntilRamadan(now) === 0 ? t('ramadan.startsToday', lang) : t('ramadan.daysUntil', lang, { n: daysUntilRamadan(now) })}</p>
-      ${voluntary ? `<p class="panel__subtext ramadan-voluntary-hint">${icon('sparkle', { size: 14 })} ${t('ramadan.voluntaryToday', lang)}</p>` : ''}
+      ${reasons
+        .map(
+          (reason) =>
+            `<p class="panel__subtext ramadan-voluntary-hint">${icon('sparkle', { size: 14 })} ${t(reason === 'white-day' ? 'ramadan.whiteDayToday' : 'ramadan.voluntaryToday', lang)}</p>`
+        )
+        .join('')}
+      ${
+        shawwal
+          ? `
+      <p class="field-label">${t('ramadan.shawwalTitle', lang)}</p>
+      <div class="progress-bar" role="progressbar" aria-valuenow="${Math.round((shawwal.count / shawwal.goal) * 100)}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar__fill" style="width:${Math.round((shawwal.count / shawwal.goal) * 100)}%"></div>
+      </div>
+      <p class="panel__subtext" dir="ltr">${shawwal.count} / ${shawwal.goal} ${t('ramadan.shawwalFasts', lang)}</p>`
+          : ''
+      }
     </section>`;
 
   return `

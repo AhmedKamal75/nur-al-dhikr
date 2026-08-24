@@ -24,6 +24,7 @@ const NAV_ITEMS = [
   { view: VIEWS.CALENDAR, icon: 'calendar', label: 'nav.calendar' },
   { view: VIEWS.RAMADAN, icon: 'crescent-star', label: 'nav.ramadan' },
   { view: VIEWS.ZAKAT, icon: 'calculator', label: 'nav.zakat' },
+  { view: VIEWS.SADAQAH, icon: 'coins', label: 'nav.sadaqah' },
   { view: VIEWS.SETTINGS, icon: 'settings', label: 'nav.settings' },
 ];
 

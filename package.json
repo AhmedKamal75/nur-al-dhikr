@@ -1,6 +1,6 @@
 {
   "name": "nur-al-dhikr",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "An offline-first, installable web app for daily Islamic remembrance — Adhkar, Duas, the 99 Names of Allah, prayer times, a Hijri calendar, a tasbih counter, and a full content editor.",
   "type": "module",
   "private": true,

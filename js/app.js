@@ -28,7 +28,7 @@ import { render, mountShell } from './renderer.js';
 import { applyTheme, watchSystemTheme } from './theme.js';
 import { initRouter, go, replaceGo } from './router.js';
 import { t } from './i18n.js';
-import { pickLocale, uid, vibrate } from './utils.js';
+import { pickLocale, uid, vibrate, dateKey } from './utils.js';
 import { icon } from './icons.js';
 import * as tasbih from './tasbih.js';
 import * as speech from './speech.js';
@@ -474,6 +474,28 @@ const clickHandlers = {
 
   'set-zakat-standard': (ds) => {
     store.dispatch(actions.updateZakat({ nisabStandard: ds.value === 'gold' ? 'gold' : 'silver' }));
+  },
+
+  'khatm-start': (ds) => {
+    const state = store.getState();
+    const days = parseInt(ds.days, 10) || 30;
+    const startPage = state.mushafBookmark.page || 1;
+    store.dispatch(actions.startKhatm(days, startPage));
+    if (state.settings.hapticsEnabled) vibrate(10);
+  },
+
+  'khatm-reset': () => {
+    store.dispatch(actions.resetKhatm());
+  },
+
+  'qada-step': (ds) => {
+    const state = store.getState();
+    store.dispatch(actions.stepQada(ds.prayer, parseInt(ds.delta, 10) || 0));
+    if (state.settings.hapticsEnabled) vibrate(6);
+  },
+
+  'delete-sadaqah': (ds) => {
+    store.dispatch(actions.deleteSadaqah(ds.id));
   },
 
   'counter-tap': (ds) => {
@@ -1035,6 +1057,25 @@ const formHandlers = {
     const fd = new FormData(form);
     closeModal();
     go(VIEWS.MUSHAF, { page: String(clampPage(fd.get('page'))) });
+  },
+
+  'sadaqah-add': (form) => {
+    const fd = new FormData(form);
+    const amount = parseFloat(fd.get('amount'));
+    if (!Number.isFinite(amount) || amount <= 0) return;
+    store.dispatch(
+      actions.addSadaqah({
+        id: uid('sadaqah'),
+        amount,
+        cause: fd.get('cause') || 'general',
+        date: fd.get('date') || dateKey(new Date()),
+        note: (fd.get('note') || '').toString().trim().slice(0, 120),
+      })
+    );
+    // No manual form.reset() needed: the store notify above already
+    // triggers a full re-render, and this form has no state-bound
+    // `value` attributes (besides the date, which re-renders to today),
+    // so the freshly rendered form comes back blank on its own.
   },
 
   item: (form) => {

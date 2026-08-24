@@ -53,6 +53,8 @@ const PATHS = {
     '<path d="M15.3 4.3A7.7 7.7 0 1 0 15.3 19a9.2 9.2 0 0 1 0-14.7Z"/><path d="M19 3.2c.25 1.35.95 2.05 2.25 2.3C19.95 5.75 19.25 6.45 19 7.8c-.25-1.35-.95-2.05-2.25-2.3C18.05 5.25 18.75 4.55 19 3.2Z" fill="currentColor" stroke="none"/>',
   calculator:
     '<rect x="5" y="3.5" width="14" height="17" rx="1.5"/><rect x="7.3" y="6" width="9.4" height="3.4" rx="0.6"/><circle cx="8.4" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="12" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="15.6" cy="13" r="0.9" fill="currentColor" stroke="none"/><circle cx="8.4" cy="16.7" r="0.9" fill="currentColor" stroke="none"/><circle cx="12" cy="16.7" r="0.9" fill="currentColor" stroke="none"/><circle cx="15.6" cy="16.7" r="0.9" fill="currentColor" stroke="none"/>',
+  coins:
+    '<circle cx="9" cy="9" r="5.5"/><path d="M13.2 6.2A5.5 5.5 0 1 1 9 15.9"/><path d="M7 9h4M9 7v4" stroke-width="1.4"/>',
   book: '<path d="M5 4.5h6a2 2 0 0 1 2 2V20a2 2 0 0 0-2-1.5H5Z"/><path d="M19 4.5h-6a2 2 0 0 0-2 2V20a2 2 0 0 1 2-1.5h6Z"/>',
   'book-open':
     '<path d="M3 6a2 2 0 0 1 2-2h4.5a2 2 0 0 1 2 2v13a1.5 1.5 0 0 0-1.5-1.5H3Z"/><path d="M21 6a2 2 0 0 0-2-2h-4.5a2 2 0 0 0-2 2v13a1.5 1.5 0 0 1 1.5-1.5H21Z"/>',

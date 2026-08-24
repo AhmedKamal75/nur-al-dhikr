@@ -31,6 +31,7 @@ import { renderCalendar } from './views/calendar.js';
 import { renderQuran } from './views/quran.js';
 import { renderRamadan } from './views/ramadan.js';
 import { renderZakat } from './views/zakat.js';
+import { renderSadaqah } from './views/sadaqah.js';
 import { renderSettings } from './views/settings.js';
 import { renderAbout } from './views/about.js';
 import { renderEditor } from './views/editor.js';
@@ -55,6 +56,7 @@ const VIEW_TABLE = {
   [VIEWS.QURAN]: renderQuran,
   [VIEWS.RAMADAN]: renderRamadan,
   [VIEWS.ZAKAT]: renderZakat,
+  [VIEWS.SADAQAH]: renderSadaqah,
   [VIEWS.SETTINGS]: renderSettings,
   [VIEWS.ABOUT]: renderAbout,
   [VIEWS.EDITOR]: renderEditor,

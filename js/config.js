@@ -6,7 +6,7 @@
 
 export const APP_NAME = 'Nūr al-Dhikr';
 export const APP_NAME_AR = 'نور الذكر';
-export const APP_VERSION = '2.4.0';
+export const APP_VERSION = '2.5.0';
 export const SCHEMA_VERSION = 2;
 export const STORAGE_KEY = 'nurAlDhikr:v2:state';
 export const DB_NAME = 'nurAlDhikrDB';
@@ -57,6 +57,7 @@ export const VIEWS = Object.freeze({
   MUSHAF: 'mushaf',
   RAMADAN: 'ramadan',
   ZAKAT: 'zakat',
+  SADAQAH: 'sadaqah',
   SETTINGS: 'settings',
   ABOUT: 'about',
   EDITOR: 'editor',
@@ -207,4 +208,27 @@ export const DEFAULT_ZAKAT = Object.freeze({
   silverPricePerGram: null,
   nisabStandard: 'silver',
   currency: '',
+});
+
+/**
+ * Qur'an reading-plan (Khatm) tracker default. `startPage` lets someone
+ * start mid-Mushaf and still get a sane plan; progress is simply "how far
+ * past startPage is the current Mushaf bookmark", which is an honest
+ * approximation (it assumes roughly linear front-to-back reading) rather
+ * than tracking every page actually visited.
+ */
+export const DEFAULT_KHATM = Object.freeze({
+  active: false,
+  startDate: null,
+  targetDays: 30,
+  startPage: 1,
+});
+
+/** Missed-prayer (Qada') make-up counters, one per obligatory prayer. */
+export const DEFAULT_QADA = Object.freeze({
+  fajr: 0,
+  dhuhr: 0,
+  asr: 0,
+  maghrib: 0,
+  isha: 0,
 });

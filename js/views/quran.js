@@ -12,8 +12,50 @@ import { buildHash } from '../router.js';
 import { escapeHTML } from '../utils.js';
 import { VIEWS } from '../config.js';
 import { ayahAudioUrl } from '../mushaf.js';
+import { khatmProgress } from '../khatm.js';
 
 const BISMILLAH_AR = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
+
+function khatmPanelHTML(state) {
+  const lang = state.settings.language;
+  const currentPage = state.mushafBookmark.page || 1;
+  const progress = khatmProgress(state.khatm, currentPage);
+
+  if (!progress) {
+    return `
+    <section class="panel panel--khatm-start">
+      <div class="panel__header"><h2>${icon('book-open', { size: 18 })} ${t('khatm.title', lang)}</h2></div>
+      <p class="panel__subtext">${t('khatm.subtitle', lang)}</p>
+      <div class="khatm-start-options">
+        <button type="button" class="btn btn--secondary btn--sm" data-action="khatm-start" data-days="30">${t('khatm.days', lang, { n: 30 })}</button>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="khatm-start" data-days="60">${t('khatm.days', lang, { n: 60 })}</button>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="khatm-start" data-days="604">${t('khatm.onePagePerDay', lang)}</button>
+      </div>
+    </section>`;
+  }
+
+  const statusText = progress.completed
+    ? t('khatm.completed', lang)
+    : progress.overdue
+      ? t('khatm.overdue', lang)
+      : progress.onTrack
+        ? t('khatm.onTrack', lang)
+        : t('khatm.behind', lang, { n: progress.pagesPerDayNeeded });
+
+  return `
+  <section class="panel panel--khatm-progress">
+    <div class="panel__header">
+      <h2>${icon('book-open', { size: 18 })} ${t('khatm.title', lang)}</h2>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="khatm-reset" aria-label="${t('khatm.cancel', lang)}">${icon('close', { size: 15 })}</button>
+    </div>
+    <div class="progress-bar" role="progressbar" aria-valuenow="${progress.percent}" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar__fill" style="width:${progress.percent}%"></div>
+    </div>
+    <p class="panel__subtext" dir="ltr">${progress.percent}% \u2014 ${progress.pagesRead}/${progress.pagesToRead} ${t('khatm.pages', lang)}</p>
+    <p class="panel__subtext ${progress.completed ? 'khatm-status--done' : progress.overdue || !progress.onTrack ? 'khatm-status--behind' : 'khatm-status--ontrack'}">${statusText}</p>
+    ${!progress.completed ? `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.MUSHAF, { page: currentPage })}" data-action="navigate" data-view="${VIEWS.MUSHAF}" data-page="${currentPage}">${t('khatm.continueReading', lang)}</a>` : ''}
+  </section>`;
+}
 
 function surahListHTML(state) {
   const lang = state.settings.language;
@@ -34,7 +76,9 @@ function surahListHTML(state) {
     );
   });
 
-  const tiles = surahs.map((s) => `
+  const tiles = surahs
+    .map(
+      (s) => `
     <a class="surah-tile" href="${buildHash(VIEWS.QURAN, { id: s.number })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${s.number}">
       <span class="surah-tile__num">${s.number}</span>
       <span class="surah-tile__text">
@@ -42,9 +86,12 @@ function surahListHTML(state) {
         <span class="surah-tile__meta">${t('quran.ayahCount', lang, { n: s.ayahCount })} \u2022 ${t(s.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</span>
       </span>
       <span class="surah-tile__name-ar" dir="rtl">${escapeHTML(s.nameAr)}</span>
-    </a>`).join('');
+    </a>`
+    )
+    .join('');
 
   return `
+    ${q ? '' : khatmPanelHTML(state)}
     <div class="search-bar quran-search">
       <span class="search-bar__icon">${icon('search', { size: 18 })}</span>
       <input
@@ -75,31 +122,38 @@ function surahReaderHTML(state, number) {
   const next = num < 114 ? num + 1 : null;
   const showBismillah = num !== 1 && num !== 9;
 
-  const header = surahMeta ? `
+  const header = surahMeta
+    ? `
     <header class="quran-reader__header">
       <p class="quran-reader__num">${t('quran.surah', lang)} ${surahMeta.number}</p>
       <h1 class="quran-reader__name-ar" dir="rtl">${escapeHTML(surahMeta.nameAr)}</h1>
       <p class="quran-reader__name-en">${escapeHTML(surahMeta.nameTransliteration)} \u2014 ${escapeHTML(surahMeta.nameEn)}</p>
       <p class="quran-reader__meta">${t('quran.ayahCount', lang, { n: surahMeta.ayahCount })} \u2022 ${t(surahMeta.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</p>
-    </header>` : '';
+    </header>`
+    : '';
 
   const body = surah
     ? `
       ${showBismillah ? `<p class="quran-bismillah" dir="rtl">${BISMILLAH_AR}</p>` : ''}
       <div class="ayah-list">
-        ${surah.ayahs.map((a) => {
-          const audioUrl = ayahAudioUrl(meta?.surahs, state.settings.reciter, number, a.number);
-          const key = `${number}:${a.number}`;
-          const playing = state.recitingAyahKey === key;
-          return `
+        ${surah.ayahs
+          .map((a) => {
+            const audioUrl = ayahAudioUrl(meta?.surahs, state.settings.reciter, number, a.number);
+            const key = `${number}:${a.number}`;
+            const playing = state.recitingAyahKey === key;
+            return `
           <div class="ayah-card">
             <div class="ayah-card__top">
               <span class="ayah-card__badge">${a.number}</span>
               <div class="ayah-card__actions">
-                ${audioUrl ? `
+                ${
+                  audioUrl
+                    ? `
                 <button type="button" class="icon-btn icon-btn--sm ${playing ? 'icon-btn--playing' : ''}" data-action="play-ayah" data-url="${escapeHTML(audioUrl)}" data-key="${escapeHTML(key)}" aria-label="${t('mushaf.listen', lang)}">
                   ${icon(playing ? 'stop' : 'volume', { size: 16 })}
-                </button>` : ''}
+                </button>`
+                    : ''
+                }
                 <button type="button" class="icon-btn icon-btn--sm" data-action="copy-ayah" data-surah="${number}" data-ayah="${a.number}" aria-label="${t('common.export', lang)}">
                   ${icon('copy', { size: 16 })}
                 </button>
@@ -108,7 +162,8 @@ function surahReaderHTML(state, number) {
             <p class="ayah-card__arabic" dir="rtl">${escapeHTML(a.text)}</p>
             ${state.settings.showTranslation ? `<p class="ayah-card__translation">${escapeHTML(a.translation)}</p>` : ''}
           </div>`;
-        }).join('')}
+          })
+          .join('')}
       </div>`
     : `<div class="quran-loading">${t('quran.loading', lang)}</div>`;
 

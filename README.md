@@ -92,6 +92,23 @@ offline from then on.
   it directly from the page (a small star marks it inline), then revisit
   every bookmarked ayah from the same jump drawer used to navigate by
   surah/juz/page.
+- **Qur'an reading-plan (Khatm) tracker** — set a pace (30 days, 60 days,
+  or one page a day) from the Qur'an hub screen and track progress against
+  it: percent complete, on-track/behind/overdue status, and pages-per-day
+  needed to catch up — all derived from the existing Mushaf page bookmark.
+- **Missed-prayer (Qada') tracker** — five simple counters (Fajr–Isha) in
+  the Prayer view to log and work down prayers you still need to make up.
+- **Last-Third-of-the-Night time** in the Prayer view — the window
+  classically held to be especially blessed for dua and tahajjud, computed
+  from tonight's Maghrib to tomorrow's Fajr with the same offline solar
+  calculation the rest of the Prayer view uses.
+- **Extended fasting tracking** — the Ramadan & Fasting Companion now also
+  flags White Days (Ayyam al-Beedh) and tracks the Six Days of Shawwal
+  (X/6) automatically once Shawwal begins, on top of the existing
+  Ramadan/Suhoor/Iftar tracking.
+- **Sadaqah (charity) log** — a private, ongoing record of charitable
+  giving, separate from the once-a-year Zakat calculator: log entries with
+  amount/cause/date/note, see this-month and all-time totals.
 - **A visible Play (listen-aloud) button** on every card and in Focus Mode.
 
 ## Architecture
@@ -130,9 +147,11 @@ js/
   tasbih.js                    Counting logic shared by cards + dial
   prayer.js                     Solar-position prayer time calculation
   calendar.js                    Gregorian ⇄ Hijri conversion
-  ramadan.js                      Ramadan status + Suhoor/Iftar countdown
+  ramadan.js                      Ramadan status + Suhoor/Iftar countdown,
+                                   White Days + Six-of-Shawwal tracking
   zakat.js                         Zakat al-Mal calculation
-  notifications.js                  Local reminder scheduling
+  khatm.js                          Qur'an reading-plan (Khatm) progress
+  notifications.js                   Local reminder scheduling
   speech.js                        Web Speech "listen" wrapper
   backup.js                         Export/import
   editor.js                          Custom content CRUD
@@ -146,7 +165,7 @@ js/
   views/        home, library, category, focus, search, favorites,
                 collections, collection, statistics, tasbih, prayer,
                 calendar, settings, about, editor, quran, mushafReader,
-                qibla, checklist, ramadan, zakat
+                qibla, checklist, ramadan, zakat, sadaqah
 ```
 
 **Data flow is one-directional**: views are pure functions of state that

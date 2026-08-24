@@ -99,6 +99,10 @@ export function renderHome(state) {
         ${icon('calculator', { size: 26 })}
         <span>${t('nav.zakat', lang)}</span>
       </a>
+      <a class="quick-action quick-action--sadaqah" href="${buildHash(VIEWS.SADAQAH)}" data-action="navigate" data-view="${VIEWS.SADAQAH}">
+        ${icon('coins', { size: 26 })}
+        <span>${t('nav.sadaqah', lang)}</span>
+      </a>
     </div>
 
     <a class="panel panel--checklist-summary-link" href="${buildHash(VIEWS.CHECKLIST)}" data-action="navigate" data-view="${VIEWS.CHECKLIST}">

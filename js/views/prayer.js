@@ -4,11 +4,27 @@
 import { t } from '../i18n.js';
 import { icon } from '../icons.js';
 import { escapeHTML } from '../utils.js';
-import { calculateTimes, formatClock, nextPrayer, METHODS, ASR_FACTORS } from '../prayer.js';
+import {
+  calculateTimes,
+  formatClock,
+  nextPrayer,
+  decimalHoursToDate,
+  nightThirds,
+  METHODS,
+  ASR_FACTORS,
+} from '../prayer.js';
 import { SOUND_IDS } from '../prayerSound.js';
 
 const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
-const PRAYER_ICONS = { fajr: 'sunrise', sunrise: 'sun', dhuhr: 'sun', asr: 'sun', maghrib: 'sunset', isha: 'moon' };
+const PRAYER_ICONS = {
+  fajr: 'sunrise',
+  sunrise: 'sun',
+  dhuhr: 'sun',
+  asr: 'sun',
+  maghrib: 'sunset',
+  isha: 'moon',
+};
+const QADA_PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
 
 export function renderPrayer(state) {
   const lang = state.settings.language;
@@ -36,11 +52,11 @@ export function renderPrayer(state) {
     longitude: p.longitude,
     timezoneOffsetHours: tzOffsetHours,
     method: p.method,
-    asr: p.asr
+    asr: p.asr,
   });
   const next = nextPrayer(times, now);
   const nowHours = now.getHours() + now.getMinutes() / 60;
-  const minsUntil = Math.round((((next.hours - nowHours) + 24) % 24) * 60);
+  const minsUntil = Math.round(((next.hours - nowHours + 24) % 24) * 60);
   const hrsUntil = Math.floor(minsUntil / 60);
   const remMins = minsUntil % 60;
 
@@ -58,10 +74,50 @@ export function renderPrayer(state) {
     </div>`;
   }).join('');
 
-  const methodOptions = Object.entries(METHODS).map(([id, m]) => `<option value="${id}" ${p.method === id ? 'selected' : ''}>${escapeHTML(m.name)}</option>`).join('');
-  const asrOptions = Object.keys(ASR_FACTORS).map((id) => `<option value="${id}" ${p.asr === id ? 'selected' : ''}>${id}</option>`).join('');
-  const soundOptions = SOUND_IDS.map((id) => `<option value="${id}" ${p.alertSound === id ? 'selected' : ''}>${t('prayer.sound.' + id, lang)}</option>`).join('');
+  const methodOptions = Object.entries(METHODS)
+    .map(
+      ([id, m]) =>
+        `<option value="${id}" ${p.method === id ? 'selected' : ''}>${escapeHTML(m.name)}</option>`
+    )
+    .join('');
+  const asrOptions = Object.keys(ASR_FACTORS)
+    .map((id) => `<option value="${id}" ${p.asr === id ? 'selected' : ''}>${id}</option>`)
+    .join('');
+  const soundOptions = SOUND_IDS.map(
+    (id) =>
+      `<option value="${id}" ${p.alertSound === id ? 'selected' : ''}>${t('prayer.sound.' + id, lang)}</option>`
+  ).join('');
   const anyAlertOn = PRAYER_ORDER.some((n) => p.alerts?.[n]);
+
+  const tomorrow = new Date(now.getTime() + 86400000);
+  const tomorrowTimes = calculateTimes({
+    date: tomorrow,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    timezoneOffsetHours: -tomorrow.getTimezoneOffset() / 60,
+    method: p.method,
+    asr: p.asr,
+  });
+  const thirds = nightThirds(
+    decimalHoursToDate(now, times.maghrib),
+    decimalHoursToDate(tomorrow, tomorrowTimes.fajr)
+  );
+
+  const qada = state.qada;
+  const qadaRows = QADA_PRAYERS.map((name) => {
+    const count = qada[name] || 0;
+    return `
+    <div class="qada-row">
+      <span class="qada-row__icon">${icon(PRAYER_ICONS[name], { size: 16 })}</span>
+      <span class="qada-row__name">${t('prayer.' + name, lang)}</span>
+      <div class="target-stepper">
+        <button type="button" class="icon-btn icon-btn--sm" data-action="qada-step" data-prayer="${name}" data-delta="-1" aria-label="${t('qada.decrement', lang)}" ${count === 0 ? 'disabled' : ''}>${icon('close', { size: 13 })}</button>
+        <span class="target-stepper__value" dir="ltr">${count}</span>
+        <button type="button" class="icon-btn icon-btn--sm" data-action="qada-step" data-prayer="${name}" data-delta="1" aria-label="${t('qada.increment', lang)}">${icon('plus', { size: 13 })}</button>
+      </div>
+    </div>`;
+  }).join('');
+  const qadaTotal = QADA_PRAYERS.reduce((sum, n) => sum + (qada[n] || 0), 0);
 
   return `
   <section class="view view--prayer">
@@ -77,7 +133,27 @@ export function renderPrayer(state) {
 
     <p class="view__meta">${escapeHTML(p.locationName || `${p.latitude.toFixed(2)}, ${p.longitude.toFixed(2)}`)}</p>
 
-    ${anyAlertOn ? `
+    ${
+      thirds
+        ? `
+    <section class="panel panel--night-thirds">
+      <p class="panel__subtext">${icon('sparkle', { size: 14 })} ${t('prayer.lastThird', lang)} <span dir="ltr">${formatClock(thirds.lastThirdStart.getHours() + thirds.lastThirdStart.getMinutes() / 60)}</span></p>
+    </section>`
+        : ''
+    }
+
+    <section class="panel panel--qada">
+      <div class="panel__header">
+        <h2>${t('qada.title', lang)}</h2>
+        ${qadaTotal > 0 ? `<span class="qada-total" dir="ltr">${qadaTotal}</span>` : ''}
+      </div>
+      <p class="panel__subtext">${t('qada.subtitle', lang)}</p>
+      <div class="qada-list">${qadaRows}</div>
+    </section>
+
+    ${
+      anyAlertOn
+        ? `
     <section class="panel">
       <div class="panel__header"><h2>${t('prayer.alertSound', lang)}</h2></div>
       <div class="sound-picker-row">
@@ -85,7 +161,9 @@ export function renderPrayer(state) {
         <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-test-sound">${icon('volume', { size: 14 })} ${t('prayer.testSound', lang)}</button>
       </div>
       <p class="panel__subtext">${t('prayer.alertSoundNote', lang)}</p>
-    </section>` : ''}
+    </section>`
+        : ''
+    }
 
     <section class="panel">
       <div class="panel__header"><h2>${t('prayer.method', lang)}</h2></div>

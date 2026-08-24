@@ -1,5 +1,52 @@
 # Changelog
 
+## v2.5.0
+
+### Added
+- **Qur'an reading-plan (Khatm) tracker** — new `js/khatm.js` pure module
+  and a panel at the top of the Qur'an hub view. Pick a pace (30 days, 60
+  days, or one page a day) and get a progress bar, percent complete, and
+  an honest on-track/behind/overdue/completed status computed from the
+  existing Mushaf page bookmark — no new "which pages did I read" tracking,
+  just an approximate linear-progress read against your target date.
+- **Missed-prayer (Qada') tracker** — five +/- counters (Fajr–Isha) added
+  directly to the Prayer view, reusing the existing `.target-stepper`
+  component from the Tasbih view.
+- **Last-Third-of-the-Night time** — new `nightThirds()` helper in
+  `prayer.js`, surfaced in the Prayer view as the classically blessed
+  window for dua and tahajjud (computed from tonight's Maghrib to
+  tomorrow's Fajr with the same offline solar-position math already in use).
+- **Extended Sunnah fasting tracking** — the Ramadan & Fasting Companion
+  now also flags White Days (Ayyam al-Beedh, using the existing
+  `isWhiteDay` calendar helper) as a recommended-fast day, and shows a
+  Six-Days-of-Shawwal progress panel (X/6) automatically once Shawwal
+  begins — both built on top of last release's fasting log with no new
+  state needed (`voluntaryFastReasons()`, `shawwalProgress()` in
+  `ramadan.js`).
+- **Sadaqah (charity) log** — new `views/sadaqah.js`: log ongoing
+  charitable giving (amount, cause, date, optional note), see this-month
+  and all-time running totals, browse and delete history. Deliberately
+  separate from the once-a-year Zakat calculator. Reuses the Zakat
+  currency label so the two stay consistent.
+- New Home quick-action tile and desktop-nav entry for Sadaqah; a new
+  `coins` icon.
+
+### Engineering
+- 30 new unit tests: `tests/khatm.test.js` (7), `tests/prayer.test.js` (2,
+  first tests for `prayer.js`'s core astronomy), and 12 more added to
+  `tests/ramadan.test.js` for the White Days/Shawwal helpers. All 108
+  tests (pre-existing + new) pass; 0 ESLint errors project-wide.
+- Extended the ad-hoc jsdom smoke test to render the Qur'an hub across all
+  five Khatm states (no plan / on-track / behind / overdue / completed),
+  the Prayer view with and without logged Qada', and the Sadaqah log with
+  real entries — and hand-verified the computed numbers (e.g. a 15-day-in
+  30-day plan at page 20 correctly reports "39 pages/day needed"; two
+  Sadaqah entries in the same month correctly total both "this month" and
+  "all time").
+- Bumped the service worker cache version and kept 100% precache parity
+  with `js/**/*.js` (verified by diffing the file tree against the
+  precache list).
+
 ## v2.4.0
 
 ### Added

@@ -11,11 +11,13 @@
  * falls on.
  */
 
-import { toHijri, toGregorian, daysInHijriMonth, isSunnahFastDay } from './calendar.js';
+import { toHijri, toGregorian, daysInHijriMonth, isSunnahFastDay, isWhiteDay } from './calendar.js';
 import { calculateTimes, decimalHoursToDate } from './prayer.js';
 import { dateKey, addDays } from './utils.js';
 
 export const RAMADAN_HIJRI_MONTH = 9;
+export const SHAWWAL_HIJRI_MONTH = 10;
+export const SHAWWAL_FAST_GOAL = 6;
 
 const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
@@ -153,4 +155,41 @@ export function ramadanFastsLogged(ramadanFasting, hijriYear) {
 /** True if the given date is a recommended voluntary fasting day and it's not Ramadan (Ramadan is already obligatory). */
 export function isVoluntaryFastDay(now = new Date()) {
   return !ramadanStatus(now).inRamadan && isSunnahFastDay(now);
+}
+
+/**
+ * Every recommended-fast reason that applies to "now", excluding Ramadan
+ * (already obligatory, so not a "voluntary" reason). A day can have more
+ * than one — e.g. a White Day that also happens to be a Monday.
+ * @returns {Array<'weekday'|'white-day'>}
+ */
+export function voluntaryFastReasons(now = new Date()) {
+  const status = ramadanStatus(now);
+  if (status.inRamadan) return [];
+  const reasons = [];
+  if (isSunnahFastDay(now)) reasons.push('weekday');
+  if (isWhiteDay(status.hijri.day)) reasons.push('white-day');
+  return reasons;
+}
+
+/**
+ * Progress toward the "Six Days of Shawwal" Sunnah — only meaningful
+ * while the current Hijri month actually is Shawwal. Returns null
+ * otherwise so callers know not to show it.
+ */
+export function shawwalProgress(ramadanFasting, now = new Date()) {
+  const hijri = toHijri(now);
+  if (hijri.month !== SHAWWAL_HIJRI_MONTH) return null;
+  const map = ramadanFasting && typeof ramadanFasting === 'object' ? ramadanFasting : {};
+  const start = toGregorian(hijri.year, SHAWWAL_HIJRI_MONTH, 1);
+  const total = daysInHijriMonth(hijri.year, SHAWWAL_HIJRI_MONTH);
+  let count = 0;
+  for (let i = 0; i < total; i += 1) {
+    if (map[dateKey(addDays(start, i))]) count += 1;
+  }
+  return {
+    count: Math.min(count, SHAWWAL_FAST_GOAL),
+    goal: SHAWWAL_FAST_GOAL,
+    daysLeftInShawwal: total - hijri.day,
+  };
 }
