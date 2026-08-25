@@ -1,0 +1,173 @@
+{
+ "schema_version": 1,
+ "editions": [
+  {
+   "id": "muyassar",
+   "slug": "ar-tafsir-muyassar",
+   "category": "tafsir",
+   "bundled": true,
+   "nameAr": "التفسير الميسر",
+   "nameEn": "Al-Muyassar",
+   "authorAr": "نخبة من العلماء — مجمع الملك فهد",
+   "authorEn": "Panel of scholars — King Fahd Complex"
+  },
+  {
+   "id": "mukhtasar",
+   "slug": "ar-tafsir-al-mukhtasar",
+   "category": "tafsir",
+   "bundled": true,
+   "nameAr": "المختصر في التفسير",
+   "nameEn": "Al-Mukhtasar",
+   "authorAr": "مركز تفسير للدراسات القرآنية",
+   "authorEn": "Tafsir Center for Quranic Studies"
+  },
+  {
+   "id": "jalalayn",
+   "slug": "ar-tafsir-al-jalalayn",
+   "category": "tafsir",
+   "bundled": true,
+   "nameAr": "تفسير الجلالين",
+   "nameEn": "Tafsir al-Jalalayn",
+   "authorAr": "جلال الدين المحلي وجلال الدين السيوطي",
+   "authorEn": "Jalal ad-Din al-Mahalli & Jalal ad-Din as-Suyuti"
+  },
+  {
+   "id": "saadi",
+   "slug": "ar-tafsir-as-saadi",
+   "category": "tafsir",
+   "bundled": false,
+   "nameAr": "تفسير السعدي (تيسير الكريم الرحمن)",
+   "nameEn": "As-Sa'di",
+   "authorAr": "عبد الرحمن بن ناصر السعدي",
+   "authorEn": "'Abd ar-Rahman ibn Nasir as-Sa'di"
+  },
+  {
+   "id": "jadwal",
+   "slug": "al-jadwal-fi-i-rab-al-quran",
+   "category": "grammar",
+   "bundled": true,
+   "nameAr": "الجدول في إعراب القرآن وصرفه وبيانه",
+   "nameEn": "Al-Jadwal fi I'rab al-Qur'an",
+   "authorAr": "محمود صافي",
+   "authorEn": "Mahmoud Safi",
+   "sections": [
+    "irab",
+    "sarf",
+    "balagha",
+    "fawaid"
+   ]
+  },
+  {
+   "id": "irab-muyassar",
+   "slug": "al-i-rab-al-muyassar",
+   "category": "grammar",
+   "bundled": true,
+   "nameAr": "الإعراب الميسر للقرآن الكريم",
+   "nameEn": "Al-I'rab al-Muyassar",
+   "authorAr": "نخبة من العلماء",
+   "authorEn": "Panel of scholars",
+   "sections": [
+    "irab"
+   ]
+  },
+  {
+   "id": "tahlil-kalimat",
+   "slug": "tahlil-kalimat-al-qur-an",
+   "category": "grammar",
+   "bundled": true,
+   "nameAr": "تحليل كلمات القرآن (الصرف)",
+   "nameEn": "Tahlil Kalimat al-Qur'an (word morphology)",
+   "authorAr": "مجمع الملك فهد — موسوعة التفسير",
+   "authorEn": "King Fahd Complex — Tafsir Encyclopedia",
+   "sections": [
+    "sarf"
+   ]
+  },
+  {
+   "id": "gharib",
+   "slug": "al-muyassar-fi-al-gharib",
+   "category": "grammar",
+   "bundled": true,
+   "nameAr": "الميسر في غريب القرآن",
+   "nameEn": "Al-Muyassar fi Gharib al-Qur'an",
+   "authorAr": "نخبة من العلماء — مجمع الملك فهد",
+   "authorEn": "Panel of scholars — King Fahd Complex",
+   "sections": [
+    "gharib"
+   ]
+  },
+  {
+   "id": "ibn-kathir",
+   "slug": "ar-tafsir-ibn-kathir",
+   "category": "tafsir",
+   "bundled": false,
+   "nameAr": "تفسير ابن كثير",
+   "nameEn": "Ibn Kathir",
+   "authorAr": "الحافظ ابن كثير",
+   "authorEn": "Hafiz Ibn Kathir"
+  },
+  {
+   "id": "qurtubi",
+   "slug": "ar-tafseer-al-qurtubi",
+   "category": "tafsir",
+   "bundled": false,
+   "nameAr": "تفسير القرطبي",
+   "nameEn": "Al-Qurtubi",
+   "authorAr": "الإمام القرطبي",
+   "authorEn": "Imam al-Qurtubi"
+  },
+  {
+   "id": "tabari",
+   "slug": "ar-tafsir-al-tabari",
+   "category": "tafsir",
+   "bundled": false,
+   "nameAr": "تفسير الطبري (جامع البيان)",
+   "nameEn": "At-Tabari",
+   "authorAr": "الإمام الطبري",
+   "authorEn": "Imam at-Tabari"
+  },
+  {
+   "id": "baghawi",
+   "slug": "ar-tafsir-al-baghawi",
+   "category": "tafsir",
+   "bundled": false,
+   "nameAr": "تفسير البغوي (معالم التنزيل)",
+   "nameEn": "Al-Baghawi",
+   "authorAr": "الإمام البغوي",
+   "authorEn": "Imam al-Baghawi"
+  },
+  {
+   "id": "wasit",
+   "slug": "ar-tafsir-al-wasit",
+   "category": "tafsir",
+   "bundled": false,
+   "nameAr": "التفسير الوسيط",
+   "nameEn": "Al-Waseet",
+   "authorAr": "محمد سيد طنطاوي",
+   "authorEn": "Muhammad Sayyid Tantawy"
+  },
+  {
+   "id": "tanwir-miqbas",
+   "slug": "ar-tafseer-tanwir-al-miqbas",
+   "category": "tafsir",
+   "bundled": false,
+   "nameAr": "تنوير المقباس من تفسير ابن عباس",
+   "nameEn": "Tanwir al-Miqbas (attributed to Ibn Abbas)",
+   "authorAr": "عبد الله بن عباس (رواية)",
+   "authorEn": "Ibn 'Abbas (attributed)"
+  },
+  {
+   "id": "darwish",
+   "slug": "i-rab-al-quran-li-al-darwish",
+   "category": "grammar",
+   "bundled": false,
+   "nameAr": "إعراب القرآن وبيانه",
+   "nameEn": "I'rab al-Qur'an (ad-Darwish)",
+   "authorAr": "محيي الدين الدرويش",
+   "authorEn": "Muhyi al-Din ad-Darwish",
+   "sections": [
+    "irab"
+   ]
+  }
+ ]
+}

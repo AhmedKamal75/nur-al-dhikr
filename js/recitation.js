@@ -13,13 +13,17 @@
 let audioEl = null;
 let currentKey = null; // e.g. "2:255" — lets a card ask "is *this* ayah playing?"
 let onKeyChange = null; // optional callback(key|null), fired on start/stop/end/error
+let onError = null; // optional callback(key) — verse audio failed to play
 
 function getAudioEl() {
   if (!audioEl) {
     audioEl = new Audio();
     audioEl.preload = 'none';
     audioEl.addEventListener('ended', () => setKey(null));
-    audioEl.addEventListener('error', () => setKey(null));
+    audioEl.addEventListener('error', () => {
+      onError?.(currentKey);
+      setKey(null);
+    });
   }
   return audioEl;
 }
@@ -34,12 +38,21 @@ export function onPlaybackChange(callback) {
   onKeyChange = callback;
 }
 
+/** Register a listener for verse-playback failures, so the UI can say why
+ *  the button just reverted instead of failing in silence. */
+export function onPlaybackError(callback) {
+  onError = callback;
+}
+
 /** Start playing `url`, tagged with `key` for isPlaying()/UI reflection. */
 export function play(url, key) {
   const el = getAudioEl();
   el.src = url;
   setKey(key);
-  el.play().catch(() => setKey(null)); // e.g. autoplay policy or network failure
+  el.play().catch(() => {
+    onError?.(key);
+    setKey(null);
+  }); // e.g. autoplay policy or network failure
 }
 
 export function stop() {

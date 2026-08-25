@@ -1,195 +1,184 @@
 /**
  * ramadan.js
- * Pure helpers for the Ramadan & Fasting Companion. No DOM, no state.js —
- * state.js owns the `ramadanFasting` slice and dispatches; this module only
- * computes derived values from it (and from calendar.js / prayer.js), which
- * keeps it trivially unit-testable.
+ * Pure Ramadan-companion logic: fasting-window detection, Suhoor/Iftar
+ * countdown phases, fasting-day bookkeeping, and next-Ramadan/Eid lookups.
+ * No DOM, no store, no network — everything here is trivially testable and
+ * consumed by views/ramadan.js and app.js's countdown ticker.
  *
- * Suhoor ends at Fajr and Iftar begins at Maghrib — this module doesn't
- * duplicate that astronomy, it just asks prayer.js for the same times the
- * Prayer view already shows, then figures out which side of them "now"
- * falls on.
+ * Hijri conversion rides on calendar.js's civil tabular algorithm, so all
+ * the usual caveats apply: dates can differ ±1–2 days from local moon
+ * sighting, and the UI says so.
  */
 
-import { toHijri, toGregorian, daysInHijriMonth, isSunnahFastDay, isWhiteDay } from './calendar.js';
-import { calculateTimes, decimalHoursToDate } from './prayer.js';
-import { dateKey, addDays } from './utils.js';
+import { toHijri, toGregorian, daysInHijriMonth } from './calendar.js';
 
-export const RAMADAN_HIJRI_MONTH = 9;
-export const SHAWWAL_HIJRI_MONTH = 10;
-export const SHAWWAL_FAST_GOAL = 6;
-
-const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+/** Hijri month number of Ramadan (1-indexed, 9). */
+export const RAMADAN_MONTH = 9;
 
 /**
- * Where "now" sits relative to Ramadan: currently in it (with day-of-month
- * and the month's total day count), or not.
+ * Ramadan season info for a given day.
+ * Returns { inRamadan, hijri } where hijri is the toHijri() result.
  */
-export function ramadanStatus(now = new Date()) {
-  const hijri = toHijri(now);
-  if (hijri.month === RAMADAN_HIJRI_MONTH) {
-    return {
-      inRamadan: true,
-      dayOfRamadan: hijri.day,
-      totalDays: daysInHijriMonth(hijri.year, RAMADAN_HIJRI_MONTH),
-      hijri,
-    };
-  }
-  return { inRamadan: false, dayOfRamadan: null, totalDays: null, hijri };
+export function ramadanInfo(date = new Date()) {
+  const hijri = toHijri(date);
+  return { inRamadan: hijri.month === RAMADAN_MONTH, hijri };
 }
 
 /**
- * The Gregorian date Ramadan begins — this Ramadan's start if we're
- * currently in it, otherwise the next upcoming one.
+ * Total days in this Ramadan (29 or 30, per the tabular calendar).
+ * Only meaningful while in Ramadan.
  */
-export function nextRamadanStart(now = new Date()) {
-  const hijri = toHijri(now);
-  let start = toGregorian(hijri.year, RAMADAN_HIJRI_MONTH, 1);
-  if (hijri.month !== RAMADAN_HIJRI_MONTH && startOfDay(start) < startOfDay(now)) {
-    start = toGregorian(hijri.year + 1, RAMADAN_HIJRI_MONTH, 1);
-  }
-  return start;
-}
-
-/** Whole days remaining until the next Ramadan begins (0 = starts today). */
-export function daysUntilRamadan(now = new Date()) {
-  const start = nextRamadanStart(now);
-  return Math.round((startOfDay(start) - startOfDay(now)) / 86400000);
+export function ramadanLength(hijriYear) {
+  return daysInHijriMonth(hijriYear, RAMADAN_MONTH);
 }
 
 /**
- * The fasting-day phase for "now" at a given location: before Fajr
- * (Suhoor window still open), between Fajr and Maghrib (fasting, counting
- * down to Iftar), or after Maghrib (counting down to tomorrow's Suhoor
- * cutoff). Returns null if no location is configured yet — callers should
- * show the same "enable location" prompt the Prayer view uses.
+ * The Gregorian date of 1 Ramadan for the *current* Hijri year, even if
+ * that's in the past — used to derive "day N of Ramadan" style facts.
  */
-export function fastingCountdown(
-  { latitude, longitude, method = 'MWL', asr = 'Standard' } = {},
-  now = new Date()
-) {
-  if (latitude == null || longitude == null) return null;
-
-  const timesFor = (d) =>
-    calculateTimes({
-      date: d,
-      latitude,
-      longitude,
-      timezoneOffsetHours: -d.getTimezoneOffset() / 60,
-      method,
-      asr,
-    });
-
-  const times = timesFor(now);
-  if (!times) return null;
-  const suhoorTime = decimalHoursToDate(now, times.fajr);
-  const iftarTime = decimalHoursToDate(now, times.maghrib);
-
-  if (now < suhoorTime) {
-    return {
-      phase: 'before-fajr',
-      target: suhoorTime,
-      msRemaining: suhoorTime - now,
-      suhoorTime,
-      iftarTime,
-    };
-  }
-  if (now < iftarTime) {
-    return {
-      phase: 'fasting',
-      target: iftarTime,
-      msRemaining: iftarTime - now,
-      suhoorTime,
-      iftarTime,
-    };
-  }
-
-  const tomorrow = addDays(now, 1);
-  const timesTomorrow = timesFor(tomorrow);
-  const nextSuhoorTime = decimalHoursToDate(tomorrow, timesTomorrow.fajr);
-  return {
-    phase: 'after-maghrib',
-    target: nextSuhoorTime,
-    msRemaining: nextSuhoorTime - now,
-    suhoorTime,
-    iftarTime,
-    nextSuhoorTime,
-  };
+export function ramadanStartForHijriYear(hijriYear) {
+  return toGregorian(hijriYear, RAMADAN_MONTH, 1);
 }
 
-/** Split a millisecond duration into whole hours + minutes for display. */
+/**
+ * Find the next 1 Ramadan strictly after `date` (inclusive of today when
+ * today IS 1 Ramadan). Scans the current and following Hijri years, so it
+ * works whether Ramadan just ended, is running, or hasn't begun.
+ * Returns { hijriYear, startDate, daysUntil }.
+ */
+export function nextRamadan(date = new Date()) {
+  const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const thisYear = toHijri(startOfDay).year;
+
+  for (const hy of [thisYear, thisYear + 1, thisYear + 2]) {
+    const start = ramadanStartForHijriYear(hy);
+    const days = Math.round((start - startOfDay) / 86400000);
+    if (days >= 0) return { hijriYear: hy, startDate: start, daysUntil: days };
+  }
+  // Unreachable, but keep the contract total.
+  return { hijriYear: thisYear + 3, startDate: ramadanStartForHijriYear(thisYear + 3), daysUntil: 0 };
+}
+
+/**
+ * Eid al-Fitr = 1 Shawwal. Returns the next occurrence after `date`
+ * (if today is Eid, that's today, daysUntil 0).
+ */
+export function nextEidAlFitr(date = new Date()) {
+  const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const h = toHijri(startOfDay);
+  // Eid candidates: this year, next year (and a safety third).
+  const candidates = [];
+  // If still before end of Shawwal this hijri year, this year's eid counts.
+  candidates.push({ hy: h.year, when: toGregorian(h.year, RAMADAN_MONTH + 1, 1) });
+  candidates.push({ hy: h.year + 1, when: toGregorian(h.year + 1, RAMADAN_MONTH + 1, 1) });
+
+  for (const c of candidates) {
+    const days = Math.round((c.when - startOfDay) / 86400000);
+    if (days >= 0) return { hijriYear: c.hy, startDate: c.when, daysUntil: days };
+  }
+  return { hijriYear: h.year + 1, startDate: candidates[1].when, daysUntil: 0 };
+}
+
+/**
+ * Fasting phase relative to today's prayer times.
+ * Suhoor ends at Fajr; the fast breaks at Maghrib. Between Maghrib and
+ * Fajr the relevant countdown is "time left to eat" (i.e. until Fajr).
+ *
+ * times: the object returned by prayer.js calculateTimes for TODAY
+ * (decimal hours per name). tomorrowFajr: decimal hours (may cross
+ * midnight into tomorrow, so can be numerically smaller than now).
+ *
+ * Returns { phase: 'fasting' | 'night', targetName, targetHours, targetLabelKey }
+ *  - fasting: countdown to Maghrib (Iftar)
+ *  - night: countdown to tomorrow's Fajr (Suhoor end)
+ */
+export function fastPhase(now, times, tomorrowFajr) {
+  const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  const maghrib = times.maghrib;
+  const fajr = times.fajr;
+
+  if (nowHours >= fajr && nowHours < maghrib) {
+    return { phase: 'fasting', targetName: 'maghrib', targetHours: maghrib, targetLabelKey: 'ramadan.untilIftar' };
+  }
+  // Night = [maghrib → midnight → fajr). Two distinct stretches:
+  //  - evening (maghrib → midnight): target is TOMORROW's fajr, which as a
+  //    decimal hour is numerically smaller than now (e.g. 5.05 < 20.5) —
+  //    the countdown wraps past midnight (+24h) at the caller.
+  //  - post-midnight (00:00 → fajr): target is TODAY's fajr, already ahead.
+  let target;
+  if (nowHours < fajr) {
+    target = fajr;
+  } else {
+    target = tomorrowFajr != null && Number.isFinite(tomorrowFajr) ? tomorrowFajr : fajr;
+  }
+  return { phase: 'night', targetName: 'fajr', targetHours: target, targetLabelKey: 'ramadan.untilSuhoor' };
+}
+
+/** Format milliseconds of remaining time as "H:MM:SS" (or "M:SS" under an hour). */
 export function formatCountdown(ms) {
-  const totalMinutes = Math.max(0, Math.round(ms / 60000));
-  return { h: Math.floor(totalMinutes / 60), m: totalMinutes % 60 };
+  if (!Number.isFinite(ms) || ms < 0) ms = 0;
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
 
 /**
- * Consecutive-day fasting streak, walking backward from today. Mirrors
- * checklist.js's checklistStreak: today not yet logged doesn't break a
- * streak that was otherwise unbroken through yesterday.
+ * Laylat al-Qadr hint: the last ten nights of Ramadan, with the odd ones
+ * (21, 23, 25, 27, 29) traditionally highlighted. Returns null outside
+ * Ramadan, otherwise { dayOfRamadan, isOdd, inLastTen, isLikelyQadrNight }.
  */
-export function fastingStreak(ramadanFasting, today = new Date()) {
-  const map = ramadanFasting && typeof ramadanFasting === 'object' ? ramadanFasting : {};
-  const todayKey = dateKey(today);
-  let streak = 0;
-  let cursor = map[todayKey] ? today : addDays(today, -1);
-  while (map[dateKey(cursor)]) {
-    streak += 1;
-    cursor = addDays(cursor, -1);
-  }
-  return streak;
-}
-
-/** How many days of the given Hijri year's Ramadan have been logged as fasted so far. */
-export function ramadanFastsLogged(ramadanFasting, hijriYear) {
-  const map = ramadanFasting && typeof ramadanFasting === 'object' ? ramadanFasting : {};
-  const start = toGregorian(hijriYear, RAMADAN_HIJRI_MONTH, 1);
-  const total = daysInHijriMonth(hijriYear, RAMADAN_HIJRI_MONTH);
-  let count = 0;
-  for (let i = 0; i < total; i += 1) {
-    if (map[dateKey(addDays(start, i))]) count += 1;
-  }
-  return { count, total };
-}
-
-/** True if the given date is a recommended voluntary fasting day and it's not Ramadan (Ramadan is already obligatory). */
-export function isVoluntaryFastDay(now = new Date()) {
-  return !ramadanStatus(now).inRamadan && isSunnahFastDay(now);
-}
-
-/**
- * Every recommended-fast reason that applies to "now", excluding Ramadan
- * (already obligatory, so not a "voluntary" reason). A day can have more
- * than one — e.g. a White Day that also happens to be a Monday.
- * @returns {Array<'weekday'|'white-day'>}
- */
-export function voluntaryFastReasons(now = new Date()) {
-  const status = ramadanStatus(now);
-  if (status.inRamadan) return [];
-  const reasons = [];
-  if (isSunnahFastDay(now)) reasons.push('weekday');
-  if (isWhiteDay(status.hijri.day)) reasons.push('white-day');
-  return reasons;
-}
-
-/**
- * Progress toward the "Six Days of Shawwal" Sunnah — only meaningful
- * while the current Hijri month actually is Shawwal. Returns null
- * otherwise so callers know not to show it.
- */
-export function shawwalProgress(ramadanFasting, now = new Date()) {
-  const hijri = toHijri(now);
-  if (hijri.month !== SHAWWAL_HIJRI_MONTH) return null;
-  const map = ramadanFasting && typeof ramadanFasting === 'object' ? ramadanFasting : {};
-  const start = toGregorian(hijri.year, SHAWWAL_HIJRI_MONTH, 1);
-  const total = daysInHijriMonth(hijri.year, SHAWWAL_HIJRI_MONTH);
-  let count = 0;
-  for (let i = 0; i < total; i += 1) {
-    if (map[dateKey(addDays(start, i))]) count += 1;
-  }
+export function qadrNightInfo(hijriDay) {
+  const day = hijriDay;
+  const inLastTen = day >= 21;
+  const isOdd = day % 2 === 1;
   return {
-    count: Math.min(count, SHAWWAL_FAST_GOAL),
-    goal: SHAWWAL_FAST_GOAL,
-    daysLeftInShawwal: total - hijri.day,
+    dayOfRamadan: day,
+    isOdd,
+    inLastTen,
+    isLikelyQadrNight: inLastTen && isOdd
   };
+}
+
+/** Storage key for a Ramadan fast log entry: '1447-9' (hijriYear-month). */
+export function ramadanLogKey(hijriYear) {
+  return `${hijriYear}-${RAMADAN_MONTH}`;
+}
+
+/**
+ * Ramadan alert clock-times for the notifications scheduler.
+ * suhoor = Fajr minus the offset in minutes (floor to the whole minute);
+ * iftar = Maghrib exactly. Both returned as decimal hours. The scheduler
+ * compares them against the wall clock, so any midnight wrap is handled by
+ * simply never producing a negative value (fajr - offset <= 0 degenerates
+ * to 0.0 = midnight, the best available fallback for extreme latitudes).
+ */
+export function ramadanAlertTimes(times, suhoorOffsetMin = 30) {
+  const offset = Number.isFinite(suhoorOffsetMin) && suhoorOffsetMin > 0 ? suhoorOffsetMin : 30;
+  const suhoor = Math.max(0, Math.floor(((times.fajr - offset / 60) * 60)) / 60);
+  return { suhoor, iftar: times.maghrib };
+}
+
+/**
+ * How many fasts were marked kept in a given log object for a hijri year.
+ * log shape: state.ramadanLog = { '1447-9': { '1': true, '3': true, ... } }
+ */
+export function keptFastCount(ramadanLog, hijriYear) {
+  const entry = ramadanLog?.[ramadanLogKey(hijriYear)] || {};
+  return Object.values(entry).filter(Boolean).length;
+}
+
+/**
+ * Serialize the 29/30 fasting-day tracker cells for the current Ramadan.
+ * Returns an array of { day, kept, isToday } for easy template rendering.
+ */
+export function fastTrackerDays(ramadanLog, hijriYear, todayHijriDay, totalDays) {
+  const entry = ramadanLog?.[ramadanLogKey(hijriYear)] || {};
+  const days = [];
+  for (let d = 1; d <= totalDays; d += 1) {
+    days.push({ day: d, kept: !!entry[String(d)], isToday: d === todayHijriDay });
+  }
+  return days;
 }

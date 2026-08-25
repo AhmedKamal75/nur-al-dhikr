@@ -1,162 +1,251 @@
 /**
  * views/ramadan.js
- * Ramadan & Fasting Companion: a live Suhoor <-> Iftar countdown built on
- * the same offline prayer-time astronomy the Prayer view already uses
- * (Suhoor ends at Fajr, Iftar begins at Maghrib), a simple fasting log
- * with a streak badge, and quick access to the bundled Suhoor/Iftar duas.
- * Works for voluntary fasts too, not just Ramadan itself.
+ * The Ramadan & Fasting companion: a live Suhoor–Iftar countdown driven by
+ * the person's actual Fajr/Maghrib times (same solar-position engine the
+ * Prayer view uses), a 29/30-day fasting tracker, a Laylat al-Qadr
+ * odd-night indicator for the last ten nights, and — outside Ramadan — a
+ * countdown to the next Ramadan and Eid al-Fitr.
+ *
+ * The ticking seconds are NOT re-rendered through the store (that would
+ * churn localStorage every second); app.js patches the countdown DOM nodes
+ * directly each tick, the same way the Qibla compass patches its dial.
  */
+
 import { t } from '../i18n.js';
 import { icon } from '../icons.js';
-import { VIEWS } from '../config.js';
+import { pickLocale } from '../utils.js';
 import { buildHash } from '../router.js';
-import { formatClock } from '../prayer.js';
+import { VIEWS, SUHOOR_OFFSETS } from '../config.js';
+import { calculateTimes, formatClock } from '../prayer.js';
+import { permissionState } from '../notifications.js';
 import {
-  ramadanStatus,
-  daysUntilRamadan,
-  fastingCountdown,
-  formatCountdown,
-  fastingStreak,
-  ramadanFastsLogged,
-  voluntaryFastReasons,
-  shawwalProgress,
+  ramadanInfo,
+  ramadanLength,
+  nextRamadan,
+  nextEidAlFitr,
+  fastPhase,
+  qadrNightInfo,
+  fastTrackerDays,
+  keptFastCount,
+  ramadanLogKey
 } from '../ramadan.js';
-import { selectors } from '../state.js';
-import { cardHTML } from '../components/card.js';
 
-const RAMADAN_DUA_IDS = { suhoor: 'glm-ram-004', iftar: 'glm-ram-002' };
+/**
+ * Resolve the iftar/suhoor dua item id against the live library index —
+ * preferred known ids first, then any matching item in the Ramadan
+ * category, then the category's first item. Content ids are data, not
+ * code: hardcoding them broke silently whenever the library was edited
+ * (exactly what the v2.5 data cleanup did).
+ */
+const IFTAR_PREFERENCE = ['dua-ram-002', 'glm-ram-002', 'dua-ram-001'];
+const SUHOOR_PREFERENCE = ['glm-ram-004', 'dua-ram-004', 'glm-ram-001', 'dua-ram-001'];
 
-function duaCard(state, itemId) {
-  const entry = state.library.itemIndex[itemId];
-  if (!entry) return '';
-  const lang = state.settings.language;
-  return cardHTML(entry.item, entry.category, {
-    lang,
-    isFavorite: selectors.isFavorite(state, itemId),
-    isSpeaking: state.speakingItemId === itemId,
-    counter: selectors.getCounter(state, itemId),
-    showTransliteration: state.settings.showTransliteration,
-    showTranslation: state.settings.showTranslation,
-    compact: true,
-  });
+function resolveDuaId(itemIndex, preferred, match) {
+  for (const id of preferred) {
+    if (itemIndex[id]) return id;
+  }
+  const entries = Object.values(itemIndex).filter((e) => e.category?.id === 'ramadan-special');
+  const matched = match ? entries.find((e) => match.test((e.item?.title?.en || '').toLowerCase())) : null;
+  if (matched) return matched.item.id;
+  return entries[0]?.item?.id || null;
+}
+
+function phaseCard(state, lang, times, tomorrowFajr) {
+  const phase = fastPhase(new Date(), times, tomorrowFajr);
+  const isFasting = phase.phase === 'fasting';
+  const targetClock = formatClock(phase.targetHours);
+
+  const duaId = isFasting
+    ? resolveDuaId(state.library.itemIndex, IFTAR_PREFERENCE, /iftar|breaking fast|fasting person/)
+    : resolveDuaId(state.library.itemIndex, SUHOOR_PREFERENCE, /suhoor|pre-dawn|sahar/);
+  const duaLink = duaId
+    ? `<a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.FOCUS, { id: 'ramadan-special', subId: duaId })}" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="ramadan-special" data-sub-id="${duaId}">
+        ${icon('hands', { size: 15 })} ${t(isFasting ? 'ramadan.iftarDua' : 'ramadan.suhoorDua', lang)}
+      </a>`
+    : ''; // library not loaded yet — better no button than a dead link
+
+  return `
+  <section class="ramadan-hero ${isFasting ? 'ramadan-hero--fasting' : 'ramadan-hero--night'}">
+    <div class="ramadan-hero__head">
+      <span class="ramadan-hero__icon">${icon(isFasting ? 'sun' : 'moon', { size: 28 })}</span>
+      <div class="ramadan-hero__labels">
+        <span class="ramadan-hero__phase">${t(isFasting ? 'ramadan.fastingNow' : 'ramadan.nightNow', lang)}</span>
+        <span class="ramadan-hero__target">${t(isFasting ? 'ramadan.iftarAt' : 'ramadan.suhoorEndsAt', lang)} <bdi dir="ltr">${targetClock}</bdi></span>
+      </div>
+    </div>
+    <p class="ramadan-hero__countdown" data-ramadan-countdown dir="ltr" aria-live="off">–:––:––</p>
+    <p class="ramadan-hero__caption">${t(isFasting ? 'ramadan.untilIftar' : 'ramadan.untilSuhoor', lang)}</p>
+    <div class="ramadan-hero__duas">${duaLink}</div>
+  </section>`;
+}
+
+function trackerPanel(state, lang, hijri) {
+  const total = ramadanLength(hijri.year);
+  const days = fastTrackerDays(state.ramadanLog, hijri.year, hijri.day, total);
+  const kept = keptFastCount(state.ramadanLog, hijri.year);
+  const qadr = qadrNightInfo(hijri.day);
+
+  const cells = days.map((d) => `
+    <button type="button" class="fast-dot ${d.kept ? 'fast-dot--kept' : ''} ${d.isToday ? 'fast-dot--today' : ''}"
+      data-action="ramadan-toggle-fast" data-day="${d.day}" data-log-key="${ramadanLogKey(hijri.year)}"
+      aria-pressed="${d.kept}" aria-label="${t('ramadan.fastDay', lang, { n: d.day })}"
+      ${d.isToday ? '' : 'disabled'} title="${t('ramadan.fastDay', lang, { n: d.day })}"></button>`).join('');
+
+  return `
+  <section class="panel panel--fast-tracker">
+    <div class="panel__header">
+      <h2>${t('ramadan.fastTracker', lang)}</h2>
+      <span class="streak-badge">${icon('check', { size: 14 })} ${kept} / ${total}</span>
+    </div>
+    <div class="fast-dot-grid">${cells}</div>
+    <p class="panel__subtext">${t('ramadan.fastTrackerHint', lang)}</p>
+    ${qadr.inLastTen ? `
+    <div class="qadr-banner ${qadr.isLikelyQadrNight ? 'qadr-banner--odd' : ''}">
+      ${icon('sparkle', { size: 16 })}
+      <span>${qadr.isLikelyQadrNight ? t('ramadan.qadrTonight', lang) : t('ramadan.lastTenNights', lang, { n: hijri.day })}</span>
+    </div>` : ''}
+  </section>`;
+}
+
+function alertsPanel(state, lang, times) {
+  const ra = state.settings.prayer.ramadanAlerts || { suhoor: false, iftar: false, suhoorOffset: 30 };
+  const perm = permissionState();
+  const granted = perm === 'granted';
+  const offsetOptions = SUHOOR_OFFSETS.map((m) => `<option value="${m}" ${ra.suhoorOffset === m ? 'selected' : ''}>${m}</option>`).join('');
+
+  const permBanner = granted ? '' : `
+    <div class="qadr-banner">
+      ${icon('bell', { size: 16 })}
+      <span>${perm === 'denied' ? t('ramadan.alertsDenied', lang) : t('ramadan.alertsNeedPermission', lang)}</span>
+      ${perm === 'default' ? `<button type="button" class="btn btn--secondary btn--sm" data-action="ramadan-enable-notifications">${t('ramadan.enableNotifications', lang)}</button>` : ''}
+    </div>`;
+
+  return `
+  <section class="panel">
+    <div class="panel__header"><h2>${t('ramadan.alertsTitle', lang)}</h2></div>
+    ${permBanner}
+    <div class="prayer-row">
+      <span class="prayer-row__icon">${icon('moon', { size: 18 })}</span>
+      <span class="prayer-row__name">${t('ramadan.suhoorAlert', lang)}</span>
+      <span class="prayer-row__time" dir="ltr">${formatClock(Math.max(0, times.fajr - (ra.suhoorOffset || 30) / 60))}</span>
+      <button type="button" class="icon-btn icon-btn--sm ${ra.suhoor ? 'icon-btn--active-bell' : ''}" data-action="toggle-ramadan-alert" data-alert="suhoor" aria-pressed="${ra.suhoor}" aria-label="${t('ramadan.suhoorAlert', lang)}">
+        ${icon('bell', { size: 15 })}
+      </button>
+    </div>
+    <div class="prayer-row">
+      <span class="prayer-row__icon">${icon('sunset', { size: 18 })}</span>
+      <span class="prayer-row__name">${t('ramadan.iftarAlert', lang)}</span>
+      <span class="prayer-row__time" dir="ltr">${formatClock(times.maghrib)}</span>
+      <button type="button" class="icon-btn icon-btn--sm ${ra.iftar ? 'icon-btn--active-bell' : ''}" data-action="toggle-ramadan-alert" data-alert="iftar" aria-pressed="${ra.iftar}" aria-label="${t('ramadan.iftarAlert', lang)}">
+        ${icon('bell', { size: 15 })}
+      </button>
+    </div>
+    <div class="sound-picker-row">
+      <label class="field-label" for="suhoor-offset-select">${t('ramadan.suhoorOffset', lang)}</label>
+      <select class="select" id="suhoor-offset-select" data-bind="ramadan-suhoor-offset">${offsetOptions}</select>
+    </div>
+    <p class="panel__subtext">${t('ramadan.alertsNote', lang)}</p>
+  </section>`;
+}
+
+function linksPanel(lang) {
+  return `
+  <section class="panel">
+    <div class="panel__header"><h2>${t('ramadan.explore', lang)}</h2></div>
+    <div class="quick-actions quick-actions--compact">
+      <a class="quick-action quick-action--prayer" href="${buildHash(VIEWS.CATEGORY, { id: 'ramadan-special' })}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="ramadan-special">
+        ${icon('hands', { size: 22 })}<span>${t('ramadan.ramadanDuas', lang)}</span>
+      </a>
+      <a class="quick-action quick-action--quran" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">
+        ${icon('quran', { size: 22 })}<span>${t('ramadan.readQuran', lang)}</span>
+      </a>
+      <a class="quick-action quick-action--qibla" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">
+        ${icon('compass', { size: 22 })}><span>${t('nav.prayer', lang)}</span>
+      </a>
+      <a class="quick-action quick-action--tasbih" href="${buildHash(VIEWS.ZAKAT)}" data-action="navigate" data-view="${VIEWS.ZAKAT}">
+        ${icon('calculator', { size: 22 })}<span>${t('nav.zakat', lang)}</span>
+      </a>
+    </div>
+  </section>`;
+}
+
+function countdownBlock(label, value, sub) {
+  return `
+  <div class="ramadan-countdown-block">
+    <span class="ramadan-countdown-block__label">${label}</span>
+    <span class="ramadan-countdown-block__value" dir="ltr">${value}</span>
+    ${sub ? `<span class="ramadan-countdown-block__sub">${sub}</span>` : ''}
+  </div>`;
 }
 
 export function renderRamadan(state) {
   const lang = state.settings.language;
-  const now = new Date();
   const p = state.settings.prayer;
   const hasLocation = p.latitude != null && p.longitude != null;
-  const status = ramadanStatus(now);
-  const fasted = selectors.todayFasted(state);
-  const streak = fastingStreak(state.ramadanFasting, now);
-  const reasons = voluntaryFastReasons(now);
-  const shawwal = shawwalProgress(state.ramadanFasting, now);
 
-  let countdownCard = '';
+  const { inRamadan, hijri } = ramadanInfo(new Date());
+  const hijriDateLabel = `${hijri.day} ${pickLocale(hijri.monthName, lang)} ${hijri.year} AH`;
+
+  let main;
+
   if (!hasLocation) {
-    countdownCard = `
-    <div class="empty-state empty-state--inline">
-      ${icon('compass', { size: 32 })}
-      <p>${t('prayer.locationNeeded', lang)}</p>
-      <button type="button" class="btn btn--primary btn--sm" data-action="prayer-request-location">${icon('location', { size: 15 })} ${t('prayer.enableLocation', lang)}</button>
+    main = `
+    <div class="empty-state">
+      ${icon('moon', { size: 40 })}
+      <p>${t('ramadan.locationNeeded', lang)}</p>
+      <button type="button" class="btn btn--primary" data-action="prayer-request-location">${icon('location', { size: 16 })} ${t('prayer.enableLocation', lang)}</button>
+      <button type="button" class="link-btn" data-action="prayer-manual-location">${t('prayer.manualLocation', lang)}</button>
     </div>`;
-  } else {
-    const cd = fastingCountdown(
-      { latitude: p.latitude, longitude: p.longitude, method: p.method, asr: p.asr },
-      now
-    );
-    if (cd) {
-      const { h, m } = formatCountdown(cd.msRemaining);
-      const phaseLabelKey =
-        cd.phase === 'before-fajr'
-          ? 'ramadan.untilSuhoorEnds'
-          : cd.phase === 'fasting'
-            ? 'ramadan.untilIftar'
-            : 'ramadan.untilNextSuhoor';
-      countdownCard = `
-      <div class="next-prayer-card next-prayer-card--ramadan">
-        <span class="next-prayer-card__label">${t(phaseLabelKey, lang)}</span>
-        <span class="next-prayer-card__countdown" dir="ltr" style="font-size:1.6em">${h > 0 ? h + 'h ' : ''}${m}m</span>
-        <div class="ramadan-times-row">
-          <span>${icon('sunrise', { size: 14 })} ${t('ramadan.suhoorEnds', lang)} <span dir="ltr">${formatClock(cd.suhoorTime.getHours() + cd.suhoorTime.getMinutes() / 60)}</span></span>
-          <span>${icon('sunset', { size: 14 })} ${t('ramadan.iftarBegins', lang)} <span dir="ltr">${formatClock(cd.iftarTime.getHours() + cd.iftarTime.getMinutes() / 60)}</span></span>
-        </div>
-      </div>`;
-    }
-  }
+  } else if (inRamadan) {
+    const now = new Date();
+    const tz = -now.getTimezoneOffset() / 60;
+    const times = calculateTimes({ date: now, latitude: p.latitude, longitude: p.longitude, timezoneOffsetHours: tz, method: p.method, asr: p.asr });
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const tomorrowTimes = calculateTimes({ date: tomorrow, latitude: p.latitude, longitude: p.longitude, timezoneOffsetHours: tz, method: p.method, asr: p.asr });
 
-  const statusPanel = status.inRamadan
-    ? `
-    <section class="panel panel--ramadan-status">
-      <div class="ramadan-day-badge">
-        <span class="ramadan-day-badge__num" dir="ltr">${status.dayOfRamadan}</span>
-        <span class="ramadan-day-badge__label">${t('ramadan.dayOf', lang, { total: status.totalDays })}</span>
-      </div>
-      ${(() => {
-        const { count, total } = ramadanFastsLogged(state.ramadanFasting, status.hijri.year);
-        const pct = Math.round((count / total) * 100);
-        return `
-        <div class="progress-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
-          <div class="progress-bar__fill" style="width:${pct}%"></div>
+    const total = ramadanLength(hijri.year);
+    const daysLeft = total - hijri.day;
+
+    main = `
+    ${phaseCard(state, lang, times, tomorrowTimes.fajr)}
+
+    <div class="ramadan-countdown-row">
+      ${countdownBlock(t('ramadan.dayOf', lang), `${hijri.day} / ${total}`, hijriDateLabel)}
+      ${countdownBlock(t('ramadan.daysLeft', lang), String(daysLeft), t('ramadan.daysLeftSub', lang))}
+    </div>
+
+    ${trackerPanel(state, lang, hijri)}
+    ${alertsPanel(state, lang, times)}
+    ${linksPanel(lang)}`;
+  } else {
+    const nr = nextRamadan(new Date());
+    const eid = nextEidAlFitr(new Date());
+    const lastKept = keptFastCount(state.ramadanLog, hijri.year - (hijri.month >= 10 ? 0 : 1));
+
+    const fmtDate = (d) => d.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    main = `
+    <section class="ramadan-hero ramadan-hero--waiting">
+      <div class="ramadan-hero__head">
+        <span class="ramadan-hero__icon">${icon('moon', { size: 28 })}</span>
+        <div class="ramadan-hero__labels">
+          <span class="ramadan-hero__phase">${t('ramadan.notYet', lang)}</span>
+          <span class="ramadan-hero__target">${hijriDateLabel}</span>
         </div>
-        <p class="panel__subtext" dir="ltr">${count} / ${total} ${t('ramadan.fastsLogged', lang)}</p>`;
-      })()}
-    </section>`
-    : `
-    <section class="panel panel--ramadan-status">
-      <p class="panel__subtext">${daysUntilRamadan(now) === 0 ? t('ramadan.startsToday', lang) : t('ramadan.daysUntil', lang, { n: daysUntilRamadan(now) })}</p>
-      ${reasons
-        .map(
-          (reason) =>
-            `<p class="panel__subtext ramadan-voluntary-hint">${icon('sparkle', { size: 14 })} ${t(reason === 'white-day' ? 'ramadan.whiteDayToday' : 'ramadan.voluntaryToday', lang)}</p>`
-        )
-        .join('')}
-      ${
-        shawwal
-          ? `
-      <p class="field-label">${t('ramadan.shawwalTitle', lang)}</p>
-      <div class="progress-bar" role="progressbar" aria-valuenow="${Math.round((shawwal.count / shawwal.goal) * 100)}" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-bar__fill" style="width:${Math.round((shawwal.count / shawwal.goal) * 100)}%"></div>
       </div>
-      <p class="panel__subtext" dir="ltr">${shawwal.count} / ${shawwal.goal} ${t('ramadan.shawwalFasts', lang)}</p>`
-          : ''
-      }
-    </section>`;
+      <div class="ramadan-countdown-row ramadan-countdown-row--stacked">
+        ${countdownBlock(t('ramadan.untilRamadan', lang), t('ramadan.daysUnit', lang, { n: nr.daysUntil }), fmtDate(nr.startDate))}
+        ${countdownBlock(t('ramadan.untilEid', lang), t('ramadan.daysUnit', lang, { n: eid.daysUntil }), fmtDate(eid.startDate))}
+      </div>
+      ${lastKept > 0 ? `<p class="ramadan-hero__caption">${t('ramadan.lastKept', lang, { n: lastKept })}</p>` : ''}
+    </section>
+    ${linksPanel(lang)}`;
+  }
 
   return `
   <section class="view view--ramadan">
-    <h1 class="view__title">${icon('crescent-star', { size: 24 })} ${t('ramadan.title', lang)}</h1>
-    <p class="view__subtitle">${t('ramadan.subtitle', lang)}</p>
-
-    ${countdownCard}
-    ${statusPanel}
-
-    <section class="panel panel--ramadan-log">
-      <div class="panel__header"><h2>${t('ramadan.fastingLog', lang)}</h2></div>
-      <div class="ramadan-log-row">
-        <label class="switch">
-          <input type="checkbox" data-action="ramadan-toggle-fast" ${fasted ? 'checked' : ''} />
-          <span class="switch__track"></span>
-        </label>
-        <span>${t('ramadan.iFastedToday', lang)}</span>
-        ${streak > 0 ? `<span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('ramadan.dayStreak', lang)}</span>` : ''}
-      </div>
-    </section>
-
-    ${
-      hasLocation
-        ? `
-    <p class="view__meta">${icon('bell', { size: 14 })} ${t('ramadan.alertTip', lang)} <a href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">${t('nav.prayer', lang)}</a></p>`
-        : ''
-    }
-
-    <section class="panel">
-      <div class="panel__header"><h2>${t('ramadan.duas', lang)}</h2></div>
-      <div class="ramadan-dua-cards">
-        ${duaCard(state, RAMADAN_DUA_IDS.suhoor)}
-        ${duaCard(state, RAMADAN_DUA_IDS.iftar)}
-      </div>
-      <a class="link-btn" href="${buildHash(VIEWS.CATEGORY, { id: 'ramadan-special' })}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="ramadan-special">${t('ramadan.browseAll', lang)}</a>
-    </section>
+    <h1 class="view__title">${t('ramadan.title', lang)}</h1>
+    ${main}
+    <p class="view__meta">${t('ramadan.hijriNote', lang)}</p>
   </section>`;
 }

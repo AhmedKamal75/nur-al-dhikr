@@ -23,7 +23,6 @@
 .btn--secondary { background: var(--color-surface); border-color: var(--color-border-strong); }
 .btn--ghost { background: transparent; }
 .btn--danger { background: var(--color-danger); color: #fff; }
-.btn--active { background: color-mix(in srgb, var(--color-primary) 14%, transparent); border-color: var(--color-primary); color: var(--color-primary); }
 .btn-stack { display: flex; flex-direction: column; gap: var(--space-2); align-items: stretch; }
 .link-btn { color: var(--color-primary); font-weight: 600; font-size: var(--fs-sm); display: inline-flex; gap: var(--space-1); align-items: center; background: none; border: none; cursor: pointer; padding: var(--space-1) 0; }
 
@@ -233,7 +232,24 @@
   max-width: 90vw;
   text-align: center;
 }
-#toast-root.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast-root.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+#toast-root.has-action { display: flex; align-items: center; gap: var(--space-4); text-align: left; }
+
+.toast-action {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-bg) 16%, transparent);
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-pill);
+  transition: background var(--dur-fast) var(--ease-standard);
+}
+.toast-action:hover { background: color-mix(in srgb, var(--color-bg) 28%, transparent); }
+.toast-action:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
 @media (min-width: 960px) {
   #toast-root { bottom: var(--space-6); }
@@ -348,3 +364,290 @@
 .quiz-result { padding-top: var(--space-8); }
 .quiz-result__score { font-size: var(--fs-2xl); font-weight: 800; color: var(--color-primary); }
 
+
+/* ==========================================================================
+   Ramadan companion (v2.4)
+   ========================================================================== */
+.ramadan-hero {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(120% 90% at 50% -20%, color-mix(in srgb, var(--color-primary) 16%, transparent), transparent 60%),
+    var(--color-surface);
+  text-align: center;
+  overflow: hidden;
+  margin-bottom: var(--space-5);
+}
+.ramadan-hero--night {
+  background:
+    radial-gradient(120% 90% at 50% -20%, color-mix(in srgb, var(--color-primary) 26%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 10%, var(--color-surface)), var(--color-surface));
+}
+.ramadan-hero--fasting::after, .ramadan-hero--night::after {
+  content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+  opacity: 0.8;
+}
+.ramadan-hero__head { display: flex; align-items: center; gap: var(--space-3); }
+.ramadan-hero__icon {
+  display: grid; place-items: center; width: 48px; height: 48px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  color: var(--color-primary);
+}
+.ramadan-hero__labels { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: start; }
+.ramadan-hero__phase { font-weight: 700; font-size: var(--fs-base); color: var(--color-text); }
+.ramadan-hero__target { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+.ramadan-hero__countdown {
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.6rem, 12vw, 4rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--color-primary);
+  line-height: 1.1;
+  margin-top: var(--space-3);
+}
+.ramadan-hero__caption { color: var(--color-text-muted); font-size: var(--fs-sm); }
+.ramadan-hero__duas { margin-top: var(--space-3); }
+
+.ramadan-countdown-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-5); }
+.ramadan-countdown-row--stacked { grid-template-columns: 1fr; margin-bottom: 0; }
+.ramadan-countdown-block {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: var(--space-4) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.ramadan-countdown-block__label { font-size: var(--fs-sm); color: var(--color-text-secondary); font-weight: 600; }
+.ramadan-countdown-block__value { font-size: var(--fs-xl); font-weight: 800; color: var(--color-text); font-variant-numeric: tabular-nums; }
+.ramadan-countdown-block__sub { font-size: var(--fs-sm); color: var(--color-text-muted); }
+
+.fast-dot-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: var(--space-2); }
+.fast-dot {
+  aspect-ratio: 1; width: 100%;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-surface);
+  display: grid; place-items: center;
+  transition: background var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard);
+}
+.fast-dot:not(:disabled) { cursor: pointer; }
+.fast-dot:not(:disabled):active { transform: scale(0.9); }
+.fast-dot--kept { background: var(--color-primary); border-color: var(--color-primary); }
+.fast-dot--today { border-color: var(--color-accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 40%, transparent); }
+.fast-dot:disabled { opacity: 0.55; }
+@media (max-width: 480px) { .fast-dot-grid { grid-template-columns: repeat(6, 1fr); } }
+
+.qadr-banner {
+  display: flex; align-items: center; gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.qadr-banner--odd { background: color-mix(in srgb, var(--color-primary) 12%, transparent); color: var(--color-primary); }
+
+.panel--ramadan-banner {
+  display: flex; align-items: center; gap: var(--space-3);
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 10%, var(--color-surface)), var(--color-surface));
+}
+.panel--ramadan-banner__icon { color: var(--color-primary); display: grid; place-items: center; }
+.panel--ramadan-banner__text { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.panel--ramadan-banner__label { font-weight: 700; color: var(--color-text); }
+.panel--ramadan-banner__sub { font-size: var(--fs-sm); color: var(--color-text-secondary); }
+
+.quick-actions--compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.quick-action--ramadan { color: var(--color-primary); }
+.quick-action--zakat { color: var(--color-warning); }
+
+/* ==========================================================================
+   Zakat calculator (v2.4)
+   ========================================================================== */
+.zakat-nisab-basis { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-4); }
+.chip--basis {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill, 9999px);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+.chip--basis-active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.zakat-price-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-3); }
+.zakat-inputs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3); }
+.zakat-field--liability span { color: var(--color-danger); }
+
+.zakat-result { border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border)); }
+.zakat-result--due { background: linear-gradient(180deg, color-mix(in srgb, var(--color-primary) 7%, var(--color-surface)), var(--color-surface)); }
+.chip--ok {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px var(--space-3); border-radius: 9999px;
+  background: var(--color-success-bg); color: var(--color-success);
+  font-size: var(--fs-sm); font-weight: 600;
+}
+.chip--muted {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px var(--space-3); border-radius: 9999px;
+  background: var(--color-surface-alt); color: var(--color-text-muted);
+  font-size: var(--fs-sm); font-weight: 600;
+}
+.zakat-breakdown { display: flex; flex-direction: column; gap: var(--space-2); margin: var(--space-3) 0; }
+.zakat-breakdown div { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.zakat-breakdown dt { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+.zakat-breakdown dd { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--color-text); }
+.zakat-due {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  margin: var(--space-4) 0;
+}
+.zakat-due__label { font-weight: 700; color: var(--color-text); }
+.zakat-due__amount { font-size: var(--fs-2xl); font-weight: 800; color: var(--color-primary); font-variant-numeric: tabular-nums; }
+.zakat-due--fitr { background: var(--color-surface-alt); }
+.zakat-due--fitr .zakat-due__amount { color: var(--color-text); }
+.link-btn--sm { font-size: var(--fs-sm); }
+
+.zakat-history-row {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.zakat-history-row:last-child { border-bottom: none; }
+.zakat-history-row__main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.zakat-history-row__date { font-size: var(--fs-sm); color: var(--color-text-muted); }
+.zakat-history-row__amount { font-weight: 700; color: var(--color-text); font-variant-numeric: tabular-nums; }
+.zakat-history-row__meta { font-size: var(--fs-sm); color: var(--color-text-secondary); white-space: nowrap; }
+
+/* ---- Zakat hawl anniversary chips (v2.5) ---- */
+.zakat-hawl--due { color: var(--color-warning); font-weight: 700; }
+
+/* ---- Ramadan alerts permission banner fix: keep row readable ---- */
+.qadr-banner { flex-wrap: wrap; }
+
+/* ---- v2.5.1 QA pass: passed-hawl rows read as muted history ---- */
+.zakat-hawl--passed { color: var(--color-text-muted); font-weight: 600; }
+
+/* ---- v2.5.1 QA: themed placeholders (browser-default gray was illegible
+   on dark surfaces; muted token adapts to theme automatically) ---- */
+/* NB: kept as separate rules — mixing an unknown pseudo-class like
+   :-ms-input-placeholder into one selector list would invalidate the
+   entire rule in modern engines. */
+.input::placeholder { color: var(--color-text-muted); opacity: 1; }
+.textarea::placeholder { color: var(--color-text-muted); opacity: 1; }
+
+/* ==========================================================================
+   Reciters & offline audio + player bar (v2.6)
+   ========================================================================== */
+.reciter-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.reciter-row {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+.reciter-row--active { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 8%, transparent); }
+.reciter-row__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; background: none; border: none; text-align: start; cursor: pointer; color: var(--color-text); font: inherit; padding: 0; }
+.reciter-row__name { font-weight: 600; }
+.reciter-row__sub { font-size: var(--fs-sm); color: var(--color-text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.dl-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: var(--space-2); }
+.dl-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.dl-cell__btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer; font: inherit; font-size: var(--fs-sm);
+}
+.dl-cell__btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.dl-cell--done .dl-cell__btn {
+  border-color: color-mix(in srgb, var(--color-success) 55%, transparent);
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+.dl-cell__bytes { font-size: 10.5px; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+
+/* Player bar: docked above the bottom nav (mobile) / bottom of content (desktop) */
+.player-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: var(--bottomnav-height);
+  z-index: 39;
+  background: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-2) var(--space-3) var(--space-2);
+  padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0));
+}
+.player-bar__head { display: flex; align-items: center; gap: var(--space-2); }
+.player-bar__play {
+  display: grid; place-items: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--color-primary); color: var(--color-on-primary);
+  border: none; cursor: pointer; flex-shrink: 0;
+}
+.player-bar__meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.player-bar__surah { font-weight: 700; font-size: var(--fs-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-bar__reciter { font-size: var(--fs-sm); color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-bar__chip {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 4px var(--space-2); border-radius: 9999px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm); font-weight: 600;
+  cursor: pointer; flex-shrink: 0;
+}
+.player-bar__chip--on { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+.player-bar__buffer {
+  flex-shrink: 0;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 3px var(--space-2);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  animation: playerBufferPulse 1.2s ease-in-out infinite;
+}
+@keyframes playerBufferPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+[data-reduce-motion="true"] .player-bar__buffer { animation: none; }
+.player-bar__track { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); }
+.player-bar__time { font-size: 11px; color: var(--color-text-muted); font-variant-numeric: tabular-nums; min-width: 34px; text-align: center; }
+.player-bar__seek { flex: 1; accent-color: var(--color-primary); height: 18px; }
+
+body.is-focus-mode .player-bar { display: none; }
+@media (min-width: 960px) {
+  .player-bar {
+    left: var(--sidenav-live);
+    bottom: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin: 0 var(--space-4) var(--space-3);
+    max-width: 720px;
+  }
+}
+#main { padding-bottom: calc(var(--bottomnav-height) + var(--space-10)); }
+body.has-player #main { padding-bottom: calc(var(--bottomnav-height) + 132px); }
+@media (min-width: 960px) {
+  #main { padding-bottom: var(--space-10); }
+  body.has-player #main { padding-bottom: 140px; }
+}

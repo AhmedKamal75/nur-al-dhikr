@@ -10,7 +10,7 @@
       "en": "Authentic supplications from the Holy Quran",
       "ar": "أدعية من القرآن الكريم"
     },
-    "version": "3.0.0",
+    "version": "3.0.2",
     "source": {
       "en": "Quran",
       "ar": "القرآن الكريم"
@@ -100,7 +100,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Quran 23."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -637,48 +637,6 @@
           "order": 14
         },
         {
-          "id": "quranic-015",
-          "category_id": "quranic-general",
-          "title": {
-            "en": "Dua for Forgiveness & Mercy",
-            "ar": "دعاء المغفرة والرحمة"
-          },
-          "arabic": "رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ",
-          "transliteration": "Rabbana zalamna anfusana wa in lam taghfir lana wa tarhamna lanakunanna minal-khasirin.",
-          "translation": {
-            "en": "Our Lord, we have wronged ourselves, and if You do not forgive us and have mercy upon us, we will surely be among the losers.",
-            "ar": "ربنا ظلمنا أنفسنا..."
-          },
-          "reference": {
-            "collection": "Quran",
-            "book": "Al-A'raf",
-            "chapter": "7",
-            "hadith": "23",
-            "narrator": "",
-            "grading": "",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Quran",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "Dua of Adam and Hawwa after their descent.",
-            "ar": "دعاء آدم وحواء عليهما السلام."
-          },
-          "tags": [
-            "quran",
-            "forgiveness",
-            "mercy"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 15
-        },
-        {
           "id": "quranic-016",
           "category_id": "quranic-general",
           "title": {
@@ -718,7 +676,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 16
+          "order": 15
         },
         {
           "id": "quranic-017",
@@ -762,7 +720,7 @@
             "quranic-008"
           ],
           "notes": "",
-          "order": 17
+          "order": 16
         },
         {
           "id": "quranic-018",
@@ -804,7 +762,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 18
+          "order": 17
         },
         {
           "id": "quranic-019",
@@ -846,7 +804,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 19
+          "order": 18
         },
         {
           "id": "quranic-020",
@@ -890,7 +848,7 @@
             "quranic-005"
           ],
           "notes": "",
-          "order": 20
+          "order": 19
         },
         {
           "id": "glm-quran-001",
@@ -935,7 +893,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 21
+          "order": 20
         },
         {
           "id": "glm-quran-002",
@@ -981,7 +939,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 22
+          "order": 21
         },
         {
           "id": "glm-quran-003",
@@ -1027,7 +985,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 23
+          "order": 22
         },
         {
           "id": "glm-quran-004",
@@ -1073,7 +1031,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 24
+          "order": 23
         },
         {
           "id": "glm-quran-005",
@@ -1119,7 +1077,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 25
+          "order": 24
         },
         {
           "id": "glm-quran-006",
@@ -1166,7 +1124,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 26
+          "order": 25
         },
         {
           "id": "glm-quran-007",
@@ -1213,7 +1171,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 27
+          "order": 26
         },
         {
           "id": "glm-quran-008",
@@ -1259,7 +1217,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 28
+          "order": 27
         },
         {
           "id": "glm-quran-009",
@@ -1306,7 +1264,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 29
+          "order": 28
         },
         {
           "id": "glm-quran-010",
@@ -1352,7 +1310,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 30
+          "order": 29
         },
         {
           "id": "glm-quran-011",
@@ -1398,7 +1356,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 31
+          "order": 30
         },
         {
           "id": "glm-quran-012",
@@ -1445,7 +1403,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 32
+          "order": 31
         },
         {
           "id": "glm-quran-013",
@@ -1491,7 +1449,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 33
+          "order": 32
         },
         {
           "id": "glm-quran-014",
@@ -1537,7 +1495,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 34
+          "order": 33
         },
         {
           "id": "glm-quran-015",
@@ -1584,7 +1542,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 35
+          "order": 34
         },
         {
           "id": "glm-quran-018",
@@ -1607,7 +1565,7 @@
             "narrator": "",
             "grading": "Quran",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Quran 2:286."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1631,7 +1589,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 36
+          "order": 35
         },
         {
           "id": "glm-quran-019",
@@ -1677,7 +1635,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 37
+          "order": 36
         },
         {
           "id": "glm-quran-020",
@@ -1723,7 +1681,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 38
+          "order": 37
         },
         {
           "id": "glm-quran-021",
@@ -1770,7 +1728,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 39
+          "order": 38
         },
         {
           "id": "glm-quran-022",
@@ -1817,7 +1775,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 40
+          "order": 39
         },
         {
           "id": "glm-quran-023",
@@ -1840,7 +1798,7 @@
             "narrator": "",
             "grading": "Quran",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Quran 3:191-192."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1864,7 +1822,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 41
+          "order": 40
         },
         {
           "id": "glm-quran-024",
@@ -1912,7 +1870,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 42
+          "order": 41
         },
         {
           "id": "glm-quran-025",
@@ -1959,7 +1917,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 43
+          "order": 42
         },
         {
           "id": "glm-quran-026",
@@ -2006,7 +1964,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 44
+          "order": 43
         },
         {
           "id": "glm-quran-027",
@@ -2052,7 +2010,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 45
+          "order": 44
         },
         {
           "id": "glm-quran-028",
@@ -2100,7 +2058,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 46
+          "order": 45
         },
         {
           "id": "glm-quran-029",
@@ -2147,7 +2105,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 47
+          "order": 46
         },
         {
           "id": "glm-quran-031",
@@ -2196,7 +2154,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 48
+          "order": 47
         },
         {
           "id": "glm-quran-032",
@@ -2245,7 +2203,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 49
+          "order": 48
         },
         {
           "id": "glm-quran-033",
@@ -2293,7 +2251,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 50
+          "order": 49
         },
         {
           "id": "glm-quran-035",
@@ -2341,7 +2299,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 51
+          "order": 50
         },
         {
           "id": "glm-quran-037",
@@ -2388,7 +2346,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 52
+          "order": 51
         },
         {
           "id": "glm-quran-038",
@@ -2434,7 +2392,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 53
+          "order": 52
         },
         {
           "id": "glm-quran-039",
@@ -2481,7 +2439,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 54
+          "order": 53
         },
         {
           "id": "glm-quran-041",
@@ -2529,7 +2487,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 55
+          "order": 54
         },
         {
           "id": "glm-quran-043",
@@ -2577,7 +2535,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 56
+          "order": 55
         },
         {
           "id": "glm-quran-044",
@@ -2624,7 +2582,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 57
+          "order": 56
         },
         {
           "id": "glm-quran-045",
@@ -2671,7 +2629,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 58
+          "order": 57
         },
         {
           "id": "glm-quran-046",
@@ -2718,7 +2676,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 59
+          "order": 58
         },
         {
           "id": "glm-quran-047",
@@ -2766,7 +2724,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 60
+          "order": 59
         },
         {
           "id": "glm-quran-048",
@@ -2814,7 +2772,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 61
+          "order": 60
         },
         {
           "id": "glm-quran-050",
@@ -2837,7 +2795,7 @@
             "narrator": "",
             "grading": "Quran",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Quran 60:5."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2862,7 +2820,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 62
+          "order": 61
         },
         {
           "id": "glm-quran-051",
@@ -2910,7 +2868,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 63
+          "order": 62
         },
         {
           "id": "glm-quran-052",
@@ -2959,7 +2917,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 64
+          "order": 63
         },
         {
           "id": "glm-quran-053",
@@ -3005,7 +2963,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 65
+          "order": 64
         },
         {
           "id": "glm-eqd-002",
@@ -3050,7 +3008,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 66
+          "order": 65
         },
         {
           "id": "glm-eqd-003",
@@ -3095,7 +3053,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 67
+          "order": 66
         },
         {
           "id": "glm-eqd-004",
@@ -3140,53 +3098,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 68
-        },
-        {
-          "id": "glm-eqd-006",
-          "category_id": "quranic-duas",
-          "title": {
-            "en": "Allah Does Not Burden a Soul Beyond Its Capacity",
-            "ar": "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا"
-          },
-          "arabic": "رَبَّنَا لَا تُؤَاخِذْنَا إِن نَّسِينَا أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَا إِصْرًا كَمَا حَمَلْتَهُ عَلَى الَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِ ۖ وَاعْفُ عَنَّا وَاغْفِرْ لَنَا وَارْحَمْنَا ۚ أَنتَ مَوْلَانَا فَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ",
-          "transliteration": "Rabbana la tu'akhidhna in nasina aw akhta'na, rabbana wa la tahmil `alayna isran kama hamaltahu `alalladhina min qablina, rabbana wa la tuhammilna ma la taqata lana bihi, wa `fu `anna waghfir lana warhamna, anta mawlana fansurna `alal-qawmil-kafirin.",
-          "translation": {
-            "en": "Our Lord, do not impose blame upon us if we have forgotten or erred. Our Lord, do not burden us with that which we have no ability to bear. Pardon us, forgive us, and have mercy upon us. You are our protector, so give us victory over the disbelieving people.",
-            "ar": "ربنا لا تؤاخذنا إن نسينا أو أخطأنا ربنا ولا تحمل علينا إصرا كما حملته على الذين من قبلنا ربنا ولا تحملنا ما لا طاقة لنا به واعف عنا واغفر لنا وارحمنا أنت مولانا فانصرنا على القوم الكافرين"
-          },
-          "reference": {
-            "collection": "Quran 2:286",
-            "book": "",
-            "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "Quran",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Quran",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "This verse was revealed in response to the believers' concern about the commands and prohibitions. The Prophet (peace be upon him) said that when Allah said \"I will do it,\" the angels said \"Amin.\" It is one of the most comprehensive duas encompassing pardon, forgiveness, mercy, and victory.",
-            "ar": "This verse was revealed in response to the believers' concern about the commands and prohibitions. The Prophet (peace be upon him) said that when Allah said \"I will do it,\" the angels said \"Amin.\" It is one of the most comprehensive duas encompassing pardon, forgiveness, mercy, and victory."
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "forgiveness",
-            "mercy",
-            "burden",
-            "capacity",
-            "protection"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 69
+          "order": 67
         },
         {
           "id": "glm-eqd-007",
@@ -3231,7 +3143,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 70
+          "order": 68
         },
         {
           "id": "glm-eqd-011",
@@ -3276,7 +3188,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 71
+          "order": 69
         },
         {
           "id": "glm-eqd-013",
@@ -3321,7 +3233,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 72
+          "order": 70
         },
         {
           "id": "glm-eqd-015",
@@ -3366,7 +3278,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 73
+          "order": 71
         },
         {
           "id": "glm-eqd-016",
@@ -3411,7 +3323,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 74
+          "order": 72
         },
         {
           "id": "glm-eqd-017",
@@ -3456,7 +3368,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 75
+          "order": 73
         },
         {
           "id": "glm-eqd-018",
@@ -3501,7 +3413,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 76
+          "order": 74
         },
         {
           "id": "glm-eqd-020",
@@ -3546,7 +3458,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 77
+          "order": 75
         },
         {
           "id": "glm-eqd-022",
@@ -3591,7 +3503,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 78
+          "order": 76
         },
         {
           "id": "glm-eqd-023",
@@ -3636,7 +3548,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 79
+          "order": 77
         },
         {
           "id": "glm-eqd-024",
@@ -3681,7 +3593,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 80
+          "order": 78
         },
         {
           "id": "glm-eqd-026",
@@ -3726,7 +3638,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 81
+          "order": 79
         },
         {
           "id": "glm-eqd-029",
@@ -3771,7 +3683,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 82
+          "order": 80
         },
         {
           "id": "glm-eqd-030",
@@ -3816,7 +3728,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 83
+          "order": 81
         },
         {
           "id": "glm-eqd-031",
@@ -3861,7 +3773,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 84
+          "order": 82
         },
         {
           "id": "glm-eqd-032",
@@ -3906,7 +3818,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 85
+          "order": 83
         },
         {
           "id": "glm-eqd-033",
@@ -3951,7 +3863,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 86
+          "order": 84
         },
         {
           "id": "glm-eqd-035",
@@ -3996,7 +3908,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 87
+          "order": 85
         },
         {
           "id": "glm-eqd-036",
@@ -4041,7 +3953,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 88
+          "order": 86
         },
         {
           "id": "glm-eqd-037",
@@ -4086,7 +3998,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 89
+          "order": 87
         },
         {
           "id": "glm-eqd-038",
@@ -4131,7 +4043,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 90
+          "order": 88
         },
         {
           "id": "glm-eqd-039",
@@ -4176,7 +4088,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 91
+          "order": 89
         },
         {
           "id": "glm-eqd-041",
@@ -4221,7 +4133,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 92
+          "order": 90
         },
         {
           "id": "glm-eqd-042",
@@ -4266,7 +4178,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 93
+          "order": 91
         },
         {
           "id": "glm-eqd-043",
@@ -4311,7 +4223,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 94
+          "order": 92
         },
         {
           "id": "glm-eqd-044",
@@ -4356,7 +4268,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 95
+          "order": 93
         },
         {
           "id": "glm-eqd-045",
@@ -4401,7 +4313,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 96
+          "order": 94
         },
         {
           "id": "glm-eqd-047",
@@ -4446,7 +4358,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 97
+          "order": 95
         },
         {
           "id": "glm-eqd-048",
@@ -4469,7 +4381,7 @@
             "narrator": "",
             "grading": "Quran",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Quran 87. Also reported: Quran 87."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4491,7 +4403,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 98
+          "order": 96
         },
         {
           "id": "glm-eqd-049",
@@ -4536,7 +4448,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 99
+          "order": 97
         },
         {
           "id": "glm-eqd-050",
@@ -4581,7 +4493,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 100
+          "order": 98
         },
         {
           "id": "glm-eqd-053",
@@ -4626,97 +4538,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 101
-        },
-        {
-          "id": "glm-eqd-054",
-          "category_id": "quranic-duas",
-          "title": {
-            "en": "Prayer for Salvation from the Fire",
-            "ar": "رَبَّنَا لَا تَجْعَلْنَا فِتْنَةً لِّلَّذِينَ كَفَرُوا"
-          },
-          "arabic": "رَبَّنَا لَا تَجْعَلْنَا فِتْنَةً لِّلَّذِينَ كَفَرُوا وَاغْفِرْ لَنَا رَبَّنَا ۖ إِنَّكَ أَنتَ الْعَزِيزُ الْحَكِيمُ",
-          "transliteration": "Rabbana la taj'alna fitnatan lilladhina kafaru waghfir lana rabbana, innaka antal-'azizul-hakim.",
-          "translation": {
-            "en": "Our Lord, make us not [a cause of] trial for the disbelievers and forgive us, our Lord. Indeed, You are the Exalted in Might, the Wise.",
-            "ar": "ربنا لا تجعلنا فتنة للذين كفروا واغفر لنا ربنا إنك أنت العزيز الحكيم"
-          },
-          "reference": {
-            "collection": "Quran 60:5",
-            "book": "",
-            "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "Quran",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Quran",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "This dua follows the previous one, where Ibrahim and his followers pray not to be made a trial for the disbelievers — meaning not to be defeated in a way that strengthens disbelief. It is a prayer for strength, forgiveness, and wisdom in the face of opposition.",
-            "ar": "This dua follows the previous one, where Ibrahim and his followers pray not to be made a trial for the disbelievers — meaning not to be defeated in a way that strengthens disbelief. It is a prayer for strength, forgiveness, and wisdom in the face of opposition."
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "trial",
-            "forgiveness",
-            "protection",
-            "wisdom"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 102
-        },
-        {
-          "id": "glm-eqd-056",
-          "category_id": "quranic-duas",
-          "title": {
-            "en": "Prayer of Those Who Reflect on Creation",
-            "ar": "رَبَّنَا مَا خَلَقْتَ هَٰذَا بَاطِلًا سُبْحَانَكَ"
-          },
-          "arabic": "رَبَّنَا مَا خَلَقْتَ هَٰذَا بَاطِلًا سُبْحَانَكَ فَقِنَا عَذَابَ النَّارِ ۔ رَبَّنَا إِنَّكَ مَن تُدْخِلِ النَّارَ فَقَدْ أَخْزَيْتَهُ",
-          "transliteration": "Rabbana ma khalaqta hadha batilan subhanaka faqina adhaban-nar. Rabbana innaka man tudkhilin-nara faqad akhzaytahu.",
-          "translation": {
-            "en": "Our Lord, You did not create this aimlessly; exalted are You. So save us from the punishment of the Fire. Our Lord, indeed whoever You admit to the Fire — You have disgraced him.",
-            "ar": "ربنا ما خلقت هذا باطلا سبحانك فقنا عذاب النار ربنا إنك من تدخل النار فقد أخزيته"
-          },
-          "reference": {
-            "collection": "Quran 3:191-192",
-            "book": "",
-            "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "Quran",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Quran",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "This is the prayer that emerges from deep reflection on the creation of the heavens and the earth. The people of understanding, who remember Allah standing, sitting, and lying down, make this dua. It teaches that reflection on creation should lead to dua and awareness of the Hereafter.",
-            "ar": "This is the prayer that emerges from deep reflection on the creation of the heavens and the earth. The people of understanding, who remember Allah standing, sitting, and lying down, make this dua. It teaches that reflection on creation should lead to dua and awareness of the Hereafter."
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "creation",
-            "purpose",
-            "fire",
-            "reflection"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 103
+          "order": 99
         },
         {
           "id": "glm-eqd-057",
@@ -4761,7 +4583,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 104
+          "order": 100
         },
         {
           "id": "glm-eqd-058",
@@ -4806,7 +4628,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 105
+          "order": 101
         },
         {
           "id": "glm-eqd-059",
@@ -4851,7 +4673,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 106
+          "order": 102
         },
         {
           "id": "glm-eqd-060",
@@ -4896,7 +4718,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 107
+          "order": 103
         }
       ]
     }

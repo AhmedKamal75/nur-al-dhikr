@@ -1,260 +1,140 @@
-import { test, describe } from 'node:test';
+/**
+ * ramadan.test.js — pure-logic tests for the Ramadan companion module.
+ * Run: node --test tests/ramadan.test.js
+ */
+
+import test from 'node:test';
 import assert from 'node:assert/strict';
-import { toHijri, toGregorian } from '../js/calendar.js';
-import { calculateTimes, decimalHoursToDate } from '../js/prayer.js';
 import {
-  ramadanStatus,
-  nextRamadanStart,
-  daysUntilRamadan,
-  fastingCountdown,
+  ramadanInfo,
+  ramadanLength,
+  nextRamadan,
+  nextEidAlFitr,
+  fastPhase,
   formatCountdown,
-  fastingStreak,
-  ramadanFastsLogged,
-  isVoluntaryFastDay,
-  voluntaryFastReasons,
-  shawwalProgress,
-  RAMADAN_HIJRI_MONTH,
-  SHAWWAL_HIJRI_MONTH,
-  SHAWWAL_FAST_GOAL,
+  qadrNightInfo,
+  keptFastCount,
+  fastTrackerDays,
+  ramadanLogKey,
+  ramadanAlertTimes
 } from '../js/ramadan.js';
+import { toGregorian } from '../js/calendar.js';
 
-const dk = (d) => d.toISOString().slice(0, 10);
-
-describe('ramadanStatus', () => {
-  test('reports inRamadan on the first day of Ramadan', () => {
-    const hijriNow = toHijri(new Date());
-    const start = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
-    const status = ramadanStatus(start);
-    assert.equal(status.inRamadan, true);
-    assert.equal(status.dayOfRamadan, 1);
-    assert.ok(status.totalDays === 29 || status.totalDays === 30);
-  });
-
-  test('reports not-in-Ramadan on the first day of the following month (Shawwal)', () => {
-    const hijriNow = toHijri(new Date());
-    const shawwalStart = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH + 1, 1);
-    const status = ramadanStatus(shawwalStart);
-    assert.equal(status.inRamadan, false);
-    assert.equal(status.dayOfRamadan, null);
-  });
+test('ramadanInfo detects a known Ramadan date (1 Ramadan 1447 ≈ 19 Feb 2028 tabular)', () => {
+  // Tabular-civil conversion, so derive the expected date instead of
+  // hardcoding: 1 Ramadan 1447 through the same calendar.
+  const first = toGregorian(1447, 9, 1);
+  const info = ramadanInfo(first);
+  assert.equal(info.inRamadan, true);
+  assert.equal(info.hijri.year, 1447);
+  assert.equal(info.hijri.month, 9);
+  assert.equal(info.hijri.day, 1);
 });
 
-describe('nextRamadanStart / daysUntilRamadan', () => {
-  test('counts down correctly to a known Ramadan start', () => {
-    const hijriNow = toHijri(new Date());
-    let year = hijriNow.year;
-    let start = toGregorian(year, RAMADAN_HIJRI_MONTH, 1);
-    // If this year's Ramadan 1 already passed, the function should roll to next year — mirror that here.
-    if (
-      start < new Date(new Date().setHours(0, 0, 0, 0)) &&
-      hijriNow.month !== RAMADAN_HIJRI_MONTH
-    ) {
-      year += 1;
-      start = toGregorian(year, RAMADAN_HIJRI_MONTH, 1);
-    }
-    const fiveDaysBefore = new Date(start);
-    fiveDaysBefore.setDate(fiveDaysBefore.getDate() - 5);
-
-    assert.equal(dk(nextRamadanStart(fiveDaysBefore)), dk(start));
-    assert.equal(daysUntilRamadan(fiveDaysBefore), 5);
-  });
-
-  test('returns 0 on the day Ramadan starts', () => {
-    const hijriNow = toHijri(new Date());
-    const start = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
-    assert.equal(daysUntilRamadan(start), 0);
-  });
+test('ramadanInfo rejects a date outside Ramadan', () => {
+  const notRamadan = toGregorian(1447, 10, 5); // Shawwal
+  assert.equal(ramadanInfo(notRamadan).inRamadan, false);
 });
 
-describe('fastingCountdown', () => {
-  const loc = { latitude: 21.4225, longitude: 39.8262, method: 'MWL', asr: 'Standard' }; // Makkah
-
-  test('returns null without a location', () => {
-    assert.equal(fastingCountdown({}, new Date()), null);
-  });
-
-  // Rather than assuming a wall-clock hour maps to "before Fajr" (which
-  // depends on the test runner's system timezone matching Makkah's — not
-  // a safe assumption in CI), derive today's actual Fajr/Maghrib the same
-  // way the module does, then pick `now` relative to them.
-  function todaysTimes(now) {
-    const times = calculateTimes({
-      date: now,
-      latitude: loc.latitude,
-      longitude: loc.longitude,
-      timezoneOffsetHours: -now.getTimezoneOffset() / 60,
-      method: loc.method,
-      asr: loc.asr,
-    });
-    return {
-      fajr: decimalHoursToDate(now, times.fajr),
-      maghrib: decimalHoursToDate(now, times.maghrib),
-    };
+test('ramadanLength is 29 or 30 days', () => {
+  for (const hy of [1446, 1447, 1448]) {
+    const len = ramadanLength(hy);
+    assert.ok(len === 29 || len === 30, `unexpected length ${len} for ${hy}`);
   }
-
-  test('phase is "before-fajr" shortly before Fajr', () => {
-    const base = new Date();
-    const { fajr } = todaysTimes(base);
-    const now = new Date(fajr.getTime() - 30 * 60 * 1000);
-    const cd = fastingCountdown(loc, now);
-    assert.equal(cd.phase, 'before-fajr');
-    assert.ok(cd.msRemaining > 0 && cd.msRemaining <= 30 * 60 * 1000 + 1000);
-  });
-
-  test('phase is "fasting" at the midpoint between Fajr and Maghrib', () => {
-    const base = new Date();
-    const { fajr, maghrib } = todaysTimes(base);
-    const now = new Date((fajr.getTime() + maghrib.getTime()) / 2);
-    const cd = fastingCountdown(loc, now);
-    assert.equal(cd.phase, 'fasting');
-    assert.ok(cd.msRemaining > 0);
-    assert.ok(cd.iftarTime.getTime() > now.getTime());
-  });
-
-  test('phase is "after-maghrib" shortly after Maghrib', () => {
-    const base = new Date();
-    const { maghrib } = todaysTimes(base);
-    const now = new Date(maghrib.getTime() + 10 * 60 * 1000);
-    const cd = fastingCountdown(loc, now);
-    assert.equal(cd.phase, 'after-maghrib');
-    assert.ok(cd.nextSuhoorTime.getTime() > now.getTime());
-  });
 });
 
-describe('formatCountdown', () => {
-  test('splits milliseconds into whole hours and minutes', () => {
-    assert.deepEqual(formatCountdown(90 * 60 * 1000), { h: 1, m: 30 });
-    assert.deepEqual(formatCountdown(20 * 1000), { h: 0, m: 0 });
-    assert.deepEqual(formatCountdown(-5000), { h: 0, m: 0 });
-  });
+test('nextRamadan on 1 Ramadan returns today (daysUntil 0)', () => {
+  const first = toGregorian(1447, 9, 1);
+  const nr = nextRamadan(first);
+  assert.equal(nr.daysUntil, 0);
+  assert.equal(nr.hijriYear, 1447);
 });
 
-describe('fastingStreak', () => {
-  function daysAgoKey(n) {
-    const d = new Date();
-    d.setDate(d.getDate() - n);
-    return dk(d);
-  }
-
-  test('counts consecutive logged days ending today', () => {
-    const log = { [daysAgoKey(0)]: true, [daysAgoKey(1)]: true, [daysAgoKey(2)]: true };
-    assert.equal(fastingStreak(log), 3);
-  });
-
-  test('still counts an unbroken streak through yesterday even if today is not yet logged', () => {
-    const log = { [daysAgoKey(1)]: true, [daysAgoKey(2)]: true };
-    assert.equal(fastingStreak(log), 2);
-  });
-
-  test('a gap breaks the streak', () => {
-    const log = { [daysAgoKey(0)]: true, [daysAgoKey(2)]: true };
-    assert.equal(fastingStreak(log), 1);
-  });
-
-  test('returns 0 for an empty log', () => {
-    assert.equal(fastingStreak({}), 0);
-  });
+test('nextRamadan the day after Eid looks to next year', () => {
+  const afterEid = toGregorian(1447, 10, 3);
+  const nr = nextRamadan(afterEid);
+  assert.equal(nr.hijriYear, 1448);
+  // A lunar year is ~354 days; from 3 Shawwal it's ~323 to the next 1 Ramadan.
+  assert.ok(nr.daysUntil > 310 && nr.daysUntil < 345, `expected ~a year out, got ${nr.daysUntil}`);
 });
 
-describe('ramadanFastsLogged', () => {
-  test('counts only days that fall within that Ramadan and reports the month total', () => {
-    const hijriNow = toHijri(new Date());
-    const start = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
-    const day1 = dk(start);
-    const day2 = dk(new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1));
-    const log = { [day1]: true, [day2]: true, 'unrelated-key': true };
-    const { count, total } = ramadanFastsLogged(log, hijriNow.year);
-    assert.equal(count, 2);
-    assert.ok(total === 29 || total === 30);
-  });
+test('fastPhase: post-midnight before fajr targets today\'s fajr', () => {
+  const at2am = new Date(2026, 2, 5, 2, 0, 0);
+  const phase = fastPhase(at2am, { fajr: 5.0, maghrib: 18.2 }, 5.05);
+  assert.equal(phase.phase, 'night');
+  assert.equal(phase.targetHours, 5.0); // today's fajr, not tomorrow's
 });
 
-describe('isVoluntaryFastDay', () => {
-  test('is false during Ramadan even on a Monday/Thursday', () => {
-    const hijriNow = toHijri(new Date());
-    // Find a Monday within this Ramadan.
-    const start = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
-    let d = new Date(start);
-    for (let i = 0; i < 10; i += 1) {
-      if (d.getDay() === 1) break;
-      d.setDate(d.getDate() + 1);
-    }
-    assert.equal(isVoluntaryFastDay(d), false);
-  });
+test('nextEidAlFitr during Ramadan counts down within the same hijri year', () => {
+  const midRamadan = toGregorian(1447, 9, 15);
+  const eid = nextEidAlFitr(midRamadan);
+  assert.equal(eid.hijriYear, 1447);
+  assert.ok(eid.daysUntil > 0 && eid.daysUntil < 20);
 });
 
-describe('voluntaryFastReasons', () => {
-  test('returns no reasons during Ramadan', () => {
-    const hijriNow = toHijri(new Date());
-    const start = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
-    assert.deepEqual(voluntaryFastReasons(start), []);
-  });
-
-  test('includes "white-day" on the 14th of the Hijri month (outside Ramadan)', () => {
-    const hijriNow = toHijri(new Date());
-    // Pick a month that isn't Ramadan to land the 14th outside it.
-    const month = hijriNow.month === RAMADAN_HIJRI_MONTH ? RAMADAN_HIJRI_MONTH + 1 : hijriNow.month;
-    const whiteDay = toGregorian(hijriNow.year, month, 14);
-    const reasons = voluntaryFastReasons(whiteDay);
-    assert.ok(reasons.includes('white-day'));
-  });
-
-  test('includes "weekday" on a Monday outside Ramadan', () => {
-    // Find the next Monday, then confirm it's outside Ramadan (or skip to one that is).
-    let d = new Date();
-    for (let i = 0; i < 14; i += 1) {
-      d.setDate(d.getDate() + 1);
-      if (d.getDay() === 1 && !ramadanStatus(d).inRamadan) break;
-    }
-    const reasons = voluntaryFastReasons(d);
-    assert.ok(reasons.includes('weekday'));
-  });
+test('fastPhase: midday is fasting, target maghrib', () => {
+  const noon = new Date(2026, 2, 5, 12, 0, 0); // month index 2 = March
+  const times = { fajr: 5.0, maghrib: 18.2 };
+  const phase = fastPhase(noon, times, 5.1);
+  assert.equal(phase.phase, 'fasting');
+  assert.equal(phase.targetName, 'maghrib');
+  assert.equal(phase.targetHours, 18.2);
 });
 
-describe('shawwalProgress', () => {
-  test('returns null outside Shawwal', () => {
-    const hijriNow = toHijri(new Date());
-    const notShawwal = toGregorian(hijriNow.year, RAMADAN_HIJRI_MONTH, 1);
-    assert.equal(shawwalProgress({}, notShawwal), null);
-  });
+test('fastPhase: after maghrib is night, target tomorrow fajr', () => {
+  const night = new Date(2026, 2, 5, 20, 30, 0);
+  const times = { fajr: 5.0, maghrib: 18.2 };
+  const phase = fastPhase(night, times, 5.05);
+  assert.equal(phase.phase, 'night');
+  assert.equal(phase.targetName, 'fajr');
+  assert.equal(phase.targetHours, 5.05);
+});
 
-  test('counts logged fasts within Shawwal, capped at the goal', () => {
-    const hijriNow = toHijri(new Date());
-    const shawwalStart = toGregorian(hijriNow.year, SHAWWAL_HIJRI_MONTH, 1);
-    const log = {};
-    for (let i = 0; i < 8; i += 1) {
-      // Log 8 days fasted (more than the goal of 6) to verify capping.
-      log[
-        dk(
-          new Date(shawwalStart.getFullYear(), shawwalStart.getMonth(), shawwalStart.getDate() + i)
-        )
-      ] = true;
-    }
-    const midShawwal = new Date(
-      shawwalStart.getFullYear(),
-      shawwalStart.getMonth(),
-      shawwalStart.getDate() + 10
-    );
-    const progress = shawwalProgress(log, midShawwal);
-    assert.equal(progress.goal, SHAWWAL_FAST_GOAL);
-    assert.equal(progress.count, SHAWWAL_FAST_GOAL);
-  });
+test('fastPhase: before fajr is night', () => {
+  const lateNight = new Date(2026, 2, 5, 3, 0, 0);
+  const phase = fastPhase(lateNight, { fajr: 5.0, maghrib: 18.2 }, 5.0);
+  assert.equal(phase.phase, 'night');
+});
 
-  test('does not count fasts logged outside Shawwal', () => {
-    const hijriNow = toHijri(new Date());
-    const shawwalStart = toGregorian(hijriNow.year, SHAWWAL_HIJRI_MONTH, 1);
-    const dayBeforeShawwal = new Date(
-      shawwalStart.getFullYear(),
-      shawwalStart.getMonth(),
-      shawwalStart.getDate() - 1
-    );
-    const log = { [dk(dayBeforeShawwal)]: true };
-    const midShawwal = new Date(
-      shawwalStart.getFullYear(),
-      shawwalStart.getMonth(),
-      shawwalStart.getDate() + 5
-    );
-    const progress = shawwalProgress(log, midShawwal);
-    assert.equal(progress.count, 0);
-  });
+test('formatCountdown formats hours, minutes, seconds', () => {
+  assert.equal(formatCountdown(0), '0:00');
+  assert.equal(formatCountdown(65000), '1:05');
+  assert.equal(formatCountdown(3661000), '1:01:01');
+  assert.equal(formatCountdown(-500), '0:00');
+});
+
+test('qadrNightInfo flags odd nights in the last ten only', () => {
+  assert.equal(qadrNightInfo(15).isLikelyQadrNight, false);
+  assert.equal(qadrNightInfo(20).isLikelyQadrNight, false);
+  assert.equal(qadrNightInfo(21).isLikelyQadrNight, true);
+  assert.equal(qadrNightInfo(22).isLikelyQadrNight, false);
+  assert.equal(qadrNightInfo(27).isLikelyQadrNight, true);
+  assert.equal(qadrNightInfo(29).isLikelyQadrNight, true);
+});
+
+test('keptFastCount + fastTrackerDays + log key round-trip', () => {
+  const hy = 1447;
+  const log = { [ramadanLogKey(hy)]: { 1: true, 3: true, 5: false } };
+  assert.equal(keptFastCount(log, hy), 2);
+  assert.equal(keptFastCount({}, hy), 0);
+
+  const days = fastTrackerDays(log, hy, 3, 30);
+  assert.equal(days.length, 30);
+  assert.equal(days[0].kept, true);
+  assert.equal(days[2].kept, true);
+  assert.equal(days[2].isToday, true);
+  assert.equal(days[4].kept, false);
+});
+
+test('ramadanAlertTimes: suhoor = fajr minus offset, floored; iftar = maghrib', () => {
+  const a = ramadanAlertTimes({ fajr: 4.52, maghrib: 18.24 }, 30);
+  assert.equal(a.iftar, 18.24);
+  // 4.52 - 0.5 = 4.02h = 241.2min → floored to the minute = 241min = 4.01666…h (4:01)
+  assert.ok(Math.abs(a.suhoor - 4.0166666667) < 1e-6);
+});
+
+test('ramadanAlertTimes: never negative, bad offset falls back to 30', () => {
+  assert.equal(ramadanAlertTimes({ fajr: 0.2, maghrib: 18 }, 60).suhoor, 0);
+  const weird = ramadanAlertTimes({ fajr: 5, maghrib: 18 }, 'nope');
+  assert.equal(weird.suhoor, 4.5); // 30-minute default
 });

@@ -10,7 +10,7 @@
       "en": "Virtues, guidance and duas for the Islamic calendar's special days and blessed seasons.",
       "ar": "فضائل وإرشادات وأدعية للأيام الفاضلة والمواسم المباركة في التقويم الإسلامي."
     },
-    "version": "1.0.0",
+    "version": "1.0.2",
     "source": {
       "en": "Compiled from authentic sources",
       "ar": "مجمّعة من مصادر موثوقة"
@@ -53,7 +53,7 @@
             "narrator": "",
             "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Sahih Muslim 2086, Sunan Ibn Majah 1282."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -75,7 +75,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-dh-002",
@@ -119,7 +119,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-dh-003",
@@ -164,7 +164,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         },
         {
           "id": "glm-dh-004",
@@ -209,7 +209,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1004
+          "order": 4
         },
         {
           "id": "glm-dh-005",
@@ -254,7 +254,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1005
+          "order": 5
         },
         {
           "id": "glm-dh-006",
@@ -298,7 +298,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1006
+          "order": 6
         },
         {
           "id": "glm-dh-007",
@@ -343,7 +343,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1007
+          "order": 7
         },
         {
           "id": "glm-dh-008",
@@ -388,7 +388,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1008
+          "order": 8
         },
         {
           "id": "glm-dh-009",
@@ -433,7 +433,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1009
+          "order": 9
         },
         {
           "id": "glm-dh-010",
@@ -478,7 +478,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1010
+          "order": 10
         },
         {
           "id": "glm-dh-011",
@@ -523,52 +523,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1011
-        },
-        {
-          "id": "glm-dh-012",
-          "category_id": "dhul-hijjah",
-          "title": {
-            "en": "Eid al-Adha Takbir",
-            "ar": "تكبيرات العيد"
-          },
-          "arabic": "اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ، لَا إِلَٰهَ إِلَّا اللَّهُ، اَللَّهُ أَكْبَرُ اَللَّهُ أَكْبَرُ وَلِلَّهِ الْحَمْدُ، اَللَّهُ أَكْبَرُ كَبِيرًا وَالْحَمْدُ لِلَّهِ كَثِيرًا",
-          "transliteration": "Allahu Akbar, Allahu Akbar, Allahu Akbar, la ilaha illallah, Allahu Akbar, Allahu Akbar wa lillahil-hamd. Allahu Akbaru kabeera wal-hamdu lillahi katheera",
-          "translation": {
-            "en": "Allah is the Greatest, Allah is the Greatest, Allah is the Greatest, there is no deity except Allah. Allah is the Greatest, Allah is the Greatest, and all praise is due to Allah. Allah is the Greatest, immensely, and all praise is due to Allah, abundantly.",
-            "ar": ""
-          },
-          "reference": {
-            "collection": "Sahih Muslim 2086, Sunan Ibn Majah 1282",
-            "book": "",
-            "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 33,
-          "virtues": {
-            "en": "The Eid takbir is recited on the way to the Eid prayer and during the prayer itself. The expanded form includes \"Allahu Akbaru kabeera wal-hamdu lillahi katheera\" which the Prophet صلى الله عليه وسلم described as more beloved to him than everything upon which the sun rises. (Muslim 2086, Ibn Majah 1282)",
-            "ar": ""
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "eid",
-            "takbir",
-            "prayer",
-            "celebration"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 1012
+          "order": 11
         },
         {
           "id": "glm-dh-013",
@@ -613,7 +568,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1013
+          "order": 12
         },
         {
           "id": "glm-dh-014",
@@ -658,7 +613,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1014
+          "order": 13
         },
         {
           "id": "glm-dh-015",
@@ -703,7 +658,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1015
+          "order": 14
         }
       ]
     },
@@ -764,7 +719,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-eid-002",
@@ -808,7 +763,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-eid-003",
@@ -852,7 +807,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         },
         {
           "id": "glm-eid-004",
@@ -896,7 +851,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1004
+          "order": 4
         },
         {
           "id": "glm-eid-005",
@@ -940,7 +895,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1005
+          "order": 5
         },
         {
           "id": "glm-eid-006",
@@ -985,7 +940,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1006
+          "order": 6
         },
         {
           "id": "glm-eid-007",
@@ -1029,7 +984,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1007
+          "order": 7
         },
         {
           "id": "glm-eid-008",
@@ -1073,7 +1028,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1008
+          "order": 8
         },
         {
           "id": "glm-eid-009",
@@ -1118,7 +1073,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1009
+          "order": 9
         },
         {
           "id": "glm-eid-010",
@@ -1163,7 +1118,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1010
+          "order": 10
         }
       ]
     }

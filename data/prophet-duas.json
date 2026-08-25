@@ -10,7 +10,7 @@
       "en": "Authentic supplications of all prophets from the Quran",
       "ar": "أدعية الأنبياء من القرآن الكريم"
     },
-    "version": "1.0.0",
+    "version": "1.0.2",
     "source": {
       "en": "Quran — duas of Adam, Nuh, Ibrahim, Musa, Yunus, Zakariya, Ayyub, Sulayman",
       "ar": "القرآن الكريم"
@@ -2105,7 +2105,7 @@
             "narrator": "",
             "grading": "Quran",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Quran 8. Also reported: Quran 8."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2467,7 +2467,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         }
       ]
     },
@@ -2530,7 +2530,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-pd-22",
@@ -2576,7 +2576,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         }
       ]
     },
@@ -2639,7 +2639,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-pd-24",
@@ -2686,7 +2686,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-pd-25",
@@ -2732,7 +2732,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         },
         {
           "id": "glm-pd-26",
@@ -2778,7 +2778,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1004
+          "order": 4
         },
         {
           "id": "glm-pd-27",
@@ -2824,7 +2824,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1005
+          "order": 5
         }
       ]
     }

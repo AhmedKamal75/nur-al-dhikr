@@ -1,80 +1,146 @@
 /**
  * zakat.js
- * Pure Zakat al-Mal calculation. No DOM, no state.js, no network — every
- * amount the person enters is assumed to already be in whatever currency
- * they think in, and gold/silver spot prices are supplied by the person
- * rather than fetched, since this app makes no network calls at runtime.
+ * Pure Zakat arithmetic: nisab thresholds, zakatable-wealth aggregation,
+ * the 2.5% due amount, the mandatory round-up to whole currency units,
+ * and the Zakat al-Fitr per-household amount. No DOM, no store, no
+ * network — fully unit-tested and consumed by views/zakat.js.
  *
- * Zakat is due at 2.5% of zakatable wealth held for a full lunar year,
- * once that wealth meets or exceeds the nisab (minimum) threshold. Nisab
- * is classically defined as the value of 85g of gold or 595g of silver;
- * scholars differ on which of the two to apply today (silver gives a
- * lower, more inclusive threshold). This module computes both and lets
- * the caller pick.
+ * Fiqh basis (Hanafi-majority mainstream, stated in-app too):
+ *  - Gold nisab: 85 g of pure gold (20 mithqal).
+ *  - Silver nisab: 595 g of pure silver (200 dirhams).
+ *  - Rate: 2.5% (1/40) of net zakatable wealth held for one lunar year.
+ *  - The paid amount is rounded UP to the smallest whole currency unit
+ *    (one never rounds the poor person's share down).
+ *  - Zakat al-Fitr: one sa' (~2.5–3 kg) of the local staple food per
+ *    household member, payable before the Eid prayer.
  *
- * This is a calculation aid, not a fatwa — it doesn't account for every
- * fiqh nuance (e.g. zakat on personal-use jewelry, business inventory
- * valuation methods, or a Hijri-year holding requirement), and a person
- * with a complex financial situation should still confirm with a
- * knowledgeable scholar.
+ * This module does math, not fatwas: the app's UI tells the user to
+ * confirm figures with a qualified scholar for their madhhab/situation.
  */
 
 export const ZAKAT_RATE = 0.025;
-export const GOLD_NISAB_GRAMS = 85;
-export const SILVER_NISAB_GRAMS = 595;
+export const NISAB_GOLD_GRAMS = 85;
+export const NISAB_SILVER_GRAMS = 595;
 
-export const ZAKAT_ASSET_FIELDS = Object.freeze([
-  'cash',
-  'gold',
-  'silver',
-  'investments',
-  'business',
-  'receivables',
-  'other',
-]);
-
-function positiveNumber(v) {
-  const n = Number(v);
+/** Safely coerce user input to a non-negative finite number. */
+function num(v) {
+  const n = typeof v === 'number' ? v : parseFloat(v);
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
 /**
- * @param {object} input - raw, possibly-string field values (as they'd
- *   arrive from a form): the seven asset fields, `liabilities`,
- *   `goldPricePerGram`, `silverPricePerGram`, `nisabStandard` ('gold' | 'silver').
- * @returns {{assets, totalAssets, liabilities, netWealth, goldNisab, silverNisab,
- *   nisabThreshold, standard, meetsNisab, zakatDue}}
- *   `meetsNisab` is `null` (not `false`) when the relevant price wasn't
- *   entered — the caller should distinguish "not due" from "unknown".
+ * Compute the nisab threshold in the user's own currency.
+ * prefs: { basis: 'gold'|'silver', goldPricePerGram, silverPricePerGram }
  */
-export function calculateZakat(input = {}) {
-  const assets = {};
-  for (const field of ZAKAT_ASSET_FIELDS) assets[field] = positiveNumber(input[field]);
-  const totalAssets = ZAKAT_ASSET_FIELDS.reduce((sum, field) => sum + assets[field], 0);
-  const liabilities = positiveNumber(input.liabilities);
+export function computeNisab(prefs) {
+  const basis = prefs?.basis === 'silver' ? 'silver' : 'gold';
+  const threshold =
+    basis === 'gold'
+      ? NISAB_GOLD_GRAMS * num(prefs?.goldPricePerGram)
+      : NISAB_SILVER_GRAMS * num(prefs?.silverPricePerGram);
+  return { basis, threshold };
+}
+
+/**
+ * Round the due amount UP to the smallest whole currency unit.
+ * e.g. 25.4 -> 26, 25.0001 -> 26, 25 -> 25. Math.ceil on the absolute
+ * value keeps the shariah rule (never round down) intact for 0 due too.
+ */
+export function roundUpToUnit(amount) {
+  if (!Number.isFinite(amount) || amount <= 0) return 0;
+  return Math.ceil(amount - 1e-9); // epsilon guards fp noise like 25.000000000000004
+}
+
+/**
+ * Aggregate zakatable wealth and compute the due amount.
+ *
+ * inputs (all strings-or-numbers, own currency):
+ *   cash            — cash on hand + bank accounts
+ *   goldGrams       — weight of gold owned
+ *   silverGrams     — weight of silver owned
+ *   investments     — market value of shares/funds (fully zakatable simplification)
+ *   businessGoods   — inventory/sale stock at current market value
+ *   receivables     — money lent out that you expect back (good loans)
+ *   otherAssets     — anything else zakatable (crypto etc.)
+ *   liabilities     — debts/bills due now, deducted
+ *
+ * prefs: as in computeNisab (also values the gold/silver weight above).
+ *
+ * Returns a full breakdown so the UI can show every intermediate figure.
+ */
+export function computeZakat(inputs, prefs) {
+  const i = inputs || {};
+  const goldGrams = num(i.goldGrams);
+  const silverGrams = num(i.silverGrams);
+  const goldValue = goldGrams * num(prefs?.goldPricePerGram);
+  const silverValue = silverGrams * num(prefs?.silverPricePerGram);
+
+  const liquid = num(i.cash) + num(i.investments) + num(i.businessGoods) + num(i.receivables) + num(i.otherAssets);
+  const totalAssets = liquid + goldValue + silverValue;
+  const liabilities = num(i.liabilities);
   const netWealth = Math.max(0, totalAssets - liabilities);
 
-  const goldPrice = positiveNumber(input.goldPricePerGram);
-  const silverPrice = positiveNumber(input.silverPricePerGram);
-  const goldNisab = goldPrice > 0 ? goldPrice * GOLD_NISAB_GRAMS : null;
-  const silverNisab = silverPrice > 0 ? silverPrice * SILVER_NISAB_GRAMS : null;
-
-  const standard = input.nisabStandard === 'gold' ? 'gold' : 'silver';
-  const nisabThreshold = standard === 'gold' ? goldNisab : silverNisab;
-
-  const meetsNisab = nisabThreshold == null ? null : netWealth >= nisabThreshold;
-  const zakatDue = meetsNisab ? Math.round(netWealth * ZAKAT_RATE * 100) / 100 : 0;
+  const { basis, threshold } = computeNisab(prefs);
+  const nisabMet = netWealth >= threshold && threshold > 0;
+  const rawDue = nisabMet ? netWealth * ZAKAT_RATE : 0;
 
   return {
-    assets,
+    goldGrams,
+    silverGrams,
+    goldValue,
+    silverValue,
+    liquid,
     totalAssets,
     liabilities,
     netWealth,
-    goldNisab,
-    silverNisab,
-    nisabThreshold,
-    standard,
-    meetsNisab,
-    zakatDue,
+    nisab: threshold,
+    nisabBasis: basis,
+    nisabMet,
+    rate: ZAKAT_RATE,
+    due: roundUpToUnit(rawDue),
+    dueRaw: rawDue
   };
+}
+
+/**
+ * Zakat al-Fitr: per-person staple-food value × household size.
+ * The per-person amount is whatever the local staple (rice, wheat, dates…)
+ * costs for one sa' — the user enters it; nothing is fetched online.
+ */
+export function computeFitr(perPersonValue, people) {
+  const per = num(perPersonValue);
+  const count = Math.max(0, Math.round(num(people)));
+  return { perPerson: per, people: count, total: roundUpToUnit(per * count) };
+}
+
+/** Format a number for display with up to 2 decimals, thousands separators. */
+export function formatAmount(value, symbol = '') {
+  const n = Number.isFinite(value) ? value : 0;
+  const rounded = Math.round(n * 100) / 100;
+  const [intPart, decPart] = rounded.toFixed(2).split('.');
+  const withSeparators = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const trimmed = decPart === '00' ? withSeparators : `${withSeparators}.${decPart}`;
+  return symbol ? `${trimmed} ${symbol}`.trim() : trimmed;
+}
+
+/** Length of a lunar (hijri) year in days, as used for the hawl. */
+export const HAWL_DAYS = 354;
+
+/**
+ * The hawl anniversary of a zakat assessment: one lunar year (~354 days)
+ * after the assessment date. Zakat becomes due again each time a full
+ * hawl passes on wealth still at/above nisab.
+ */
+export function hawlDueFor(assessmentTs) {
+  return assessmentTs + HAWL_DAYS * 86400000;
+}
+
+/**
+ * Signed whole days from `now` until the hawl date: positive = upcoming,
+ * 0 = today is the anniversary, negative = passed N days ago.
+ */
+export function daysUntilHawl(hawlTs, now = Date.now()) {
+  const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
+  const startOfHawl = new Date(hawlTs); startOfHawl.setHours(0, 0, 0, 0);
+  return Math.round((startOfHawl - startOfToday) / 86400000);
 }

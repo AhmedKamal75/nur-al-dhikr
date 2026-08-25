@@ -199,7 +199,6 @@
   transition: background var(--dur-fast) var(--ease-standard);
 }
 .mushaf-ayah:hover, .mushaf-ayah:focus-visible { background: color-mix(in srgb, var(--color-primary) 12%, transparent); outline: none; }
-.mushaf-ayah--bookmarked { background: color-mix(in srgb, var(--color-accent) 14%, transparent); }
 .mushaf-ayah__marker {
   font-family: var(--font-arabic);
   font-size: 0.65em;
@@ -207,7 +206,6 @@
   padding: 0 2px;
   white-space: nowrap;
 }
-.mushaf-ayah__star { display: inline-flex; vertical-align: middle; color: var(--color-accent); margin-inline-end: 2px; }
 
 .mushaf-page__footer { display: flex; justify-content: center; margin-top: var(--space-3); }
 .mushaf-page__number {
@@ -255,19 +253,6 @@
   border: 1px solid var(--color-border);
   font-weight: 700;
 }
-.mushaf-jump__bookmark-list { display: flex; flex-direction: column; gap: var(--space-1); }
-.mushaf-jump__bookmark-row { display: flex; align-items: center; gap: var(--space-2); }
-.mushaf-jump__bookmark-main {
-  flex: 1;
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  text-align: start;
-}
-.mushaf-jump__bookmark-surah { font-weight: 600; }
-.mushaf-jump__bookmark-ref { color: var(--color-text-muted); font-size: var(--fs-caption); }
 
 /* ---- Ayah detail modal ---- */
 .mushaf-ayah-detail__ref { color: var(--color-text-muted); font-size: var(--fs-caption); margin-bottom: var(--space-3); }
@@ -297,3 +282,253 @@
 }
 .reciter-row--active { border-color: var(--color-primary); color: var(--color-primary); font-weight: 600; }
 
+
+/* ==========================================================================
+   Mushaf per-ayah bookmarks + khatma progress (v2.4)
+   ========================================================================== */
+.mushaf-ayah--bookmarked {
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  border-radius: 6px;
+  padding: 0 2px;
+}
+.mushaf-ayah__bookmark-flag {
+  color: var(--color-primary);
+  font-size: 0.85em;
+  margin-inline-start: 2px;
+}
+.mushaf-topbar__bookmarks-btn { position: relative; }
+.icon-btn--badged::after {
+  content: '';
+  position: absolute;
+  top: 4px; inset-inline-end: 4px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+.mushaf-bookmarks { display: flex; flex-direction: column; gap: var(--space-2); }
+.mushaf-bookmark-row {
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md, 12px);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.mushaf-bookmark-row__main {
+  display: flex; align-items: baseline; gap: var(--space-3);
+  flex: 1; min-width: 0;
+  background: none; border: none; cursor: pointer;
+  color: var(--color-text); text-align: start;
+  padding: var(--space-1) 0;
+}
+.mushaf-bookmark-row__ref { font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-primary); }
+.mushaf-bookmark-row__name { font-size: var(--fs-sm, 0.875rem); color: var(--color-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.mushaf-khatma { margin: var(--space-4) 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.mushaf-khatma__head { display: flex; align-items: center; justify-content: space-between; }
+.mushaf-khatma__label { font-size: var(--fs-sm, 0.875rem); font-weight: 600; color: var(--color-text-secondary); }
+.mushaf-khatma__sub { font-size: var(--fs-sm, 0.875rem); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+
+/* ---- Khatma planner (v2.9) ---- */
+.mushaf-khatma__bits { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
+.mushaf-khatma__bitwrap { display: inline-flex; }
+.mushaf-khatma__bit {
+  font-size: var(--fs-caption, 0.75rem);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-alt);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-variant-numeric: tabular-nums;
+}
+.mushaf-khatma__verdict {
+  font-size: var(--fs-sm, 0.875rem);
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  align-self: flex-start;
+}
+.mushaf-khatma__verdict--good { color: var(--color-success); background: var(--color-success-bg); }
+.mushaf-khatma__verdict--warn { color: var(--color-warning); background: var(--color-warning-bg); }
+.mushaf-khatma__verdict--done { color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+.mushaf-khatma__actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.mushaf-khatma__history {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--color-text-muted); font-size: var(--fs-caption, 0.75rem);
+}
+.khatma-plan { display: flex; flex-direction: column; gap: var(--space-2); }
+.khatma-plan__actions { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
+.khatma-plan__presets { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; padding-bottom: var(--space-2); border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-2); }
+
+/* ---- Bookmarks modal: folders + notes (v2.5) ---- */
+.mushaf-folder-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-bottom: var(--space-3); }
+.mushaf-folder-chip-wrap { display: inline-flex; align-items: center; gap: 2px; }
+.chip__x {
+  width: 18px; height: 18px;
+  display: inline-grid; place-items: center;
+  border: none; border-radius: 50%;
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  font-size: 12px; line-height: 1;
+  cursor: pointer;
+  margin-inline-start: -6px;
+}
+.chip__x:hover { background: var(--color-danger-bg); color: var(--color-danger); }
+.chip--add { border-style: dashed; }
+.mushaf-bookmark-row { gap: var(--space-2); }
+.mushaf-bookmark-row__note { min-width: 90px; max-width: 160px; padding: var(--space-1) var(--space-2); font-size: var(--fs-sm, 0.875rem); }
+.mushaf-bookmark-row__folder { min-width: 90px; max-width: 130px; font-size: var(--fs-sm, 0.875rem); padding: var(--space-1) var(--space-2); }
+@media (max-width: 520px) {
+  .mushaf-bookmark-row { flex-wrap: wrap; }
+  /* Stack ref + surah name vertically so the name is never ellipsized into
+     uselessness — a bookmark you can't identify is no bookmark. */
+  .mushaf-bookmark-row__main { flex-direction: column; align-items: flex-start; gap: 1px; }
+  .mushaf-bookmark-row__name { white-space: normal; }
+  .mushaf-bookmark-row__note { max-width: none; flex: 1; }
+  .mushaf-bookmark-row__folder { max-width: none; flex: 1; }
+}
+
+/* ---- Surah list per-tile play button (v2.6) ---- */
+.surah-tile-wrap { position: relative; display: flex; align-items: stretch; }
+.surah-tile-wrap .surah-tile { flex: 1; min-width: 0; }
+.surah-tile__play { align-self: center; margin-inline-start: var(--space-2); flex-shrink: 0; }
+
+/* ==========================================================================
+   Word-by-word study, multi-source tafsir, and Mushaf display settings
+   ========================================================================== */
+
+/* ---- Tappable word spans (both the classic reader and the Mushaf) ---- */
+.qword {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 1px;
+  transition: background var(--dur-fast) var(--ease-standard);
+}
+.qword:hover, .qword:focus-visible { background: color-mix(in srgb, var(--color-primary) 16%, transparent); outline: none; }
+.qword--underline { box-shadow: inset 0 -0.14em 0 -0.02em color-mix(in srgb, var(--color-primary) 30%, transparent); }
+.mushaf-page__text .qword--underline { box-shadow: inset 0 -0.16em 0 -0.03em color-mix(in srgb, var(--mushaf-paper-ink, var(--color-primary)) 22%, transparent); }
+.mushaf-page__text .qword:hover, .mushaf-page__text .qword:focus-visible { background: color-mix(in srgb, var(--mushaf-paper-ink, var(--color-primary)) 14%, transparent); }
+
+/* ---- Word grammar popover ---- */
+.word-study { display: flex; flex-direction: column; gap: var(--space-2); }
+.word-study__ref { color: var(--color-text-muted); font-size: var(--fs-caption); }
+.word-study__arabic { font-family: var(--font-arabic); font-size: calc(2.4rem * var(--arabic-font-scale)); text-align: center; color: var(--color-text); margin: var(--space-1) 0; }
+.word-study__translit { text-align: center; color: var(--color-text-muted); font-style: italic; }
+.word-study__gloss { text-align: center; font-weight: 700; font-size: var(--fs-md); color: var(--color-text); }
+.word-study__grammar { text-align: center; color: var(--color-primary); font-weight: 600; font-size: var(--fs-sm); }
+.word-study__tags { display: flex; flex-wrap: wrap; gap: var(--space-1); justify-content: center; margin: var(--space-1) 0; }
+.chip--sm { padding: 2px var(--space-2); font-size: 0.7rem; }
+.word-study__affixes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); font-size: var(--fs-sm); padding-top: var(--space-2); border-top: 1px dashed var(--color-border); }
+.word-study__affixes-label { color: var(--color-text-muted); font-weight: 600; margin-inline-end: var(--space-1); }
+.word-study__root { padding-top: var(--space-2); border-top: 1px dashed var(--color-border); }
+.word-study__root-head { display: flex; align-items: baseline; gap: var(--space-2); flex-wrap: wrap; }
+.word-study__root-label { color: var(--color-text-muted); font-size: var(--fs-sm); font-weight: 600; }
+.word-study__root-text { font-family: var(--font-arabic); font-size: var(--fs-md); color: var(--color-primary); font-weight: 700; }
+.word-study__root-count { color: var(--color-text-muted); font-size: var(--fs-caption); }
+.word-study__root-hint { color: var(--color-text-muted); font-size: var(--fs-caption); margin-top: var(--space-1); }
+.word-study__root-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.word-study__root-chips .chip--basis { flex-direction: column; align-items: center; gap: 2px; padding: var(--space-2) var(--space-3); }
+.word-study__root-chips .chip--basis span[dir="rtl"] { font-family: var(--font-arabic); font-size: var(--fs-sm); }
+.word-study__root-ref { font-size: var(--fs-caption); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.word-study__actions { display: flex; justify-content: center; padding-top: var(--space-2); }
+
+/* ---- Multi-source tafsir panel (tabs + reading area) ---- */
+.ayah-study-divider { border-top: 1px solid var(--color-border); margin: var(--space-4) 0; }
+.tafsir-panel { display: flex; flex-direction: column; gap: var(--space-3); }
+.tafsir-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.tafsir-tabs__sep { width: 1px; align-self: stretch; background: var(--color-border); margin: 0 var(--space-1); }
+.tafsir-tab {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tafsir-tab--active { border-color: var(--color-primary); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+.tafsir-tab__cloud { opacity: 0.7; display: inline-flex; }
+.tafsir-panel__author { font-size: var(--fs-caption); color: var(--color-text-muted); font-weight: 600; margin-bottom: var(--space-1); }
+.tafsir-panel__body { font-family: var(--font-arabic); font-size: calc(1.15rem * var(--arabic-font-scale)); line-height: 2; color: var(--color-text); }
+.tafsir-panel__body p { margin: 0 0 var(--space-3); }
+.tafsir-section-h {
+  font-family: var(--font-ui, inherit);
+  font-size: var(--fs-sm);
+  color: var(--color-primary);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: var(--space-3) 0 var(--space-1);
+  padding-bottom: 2px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+.tafsir-panel__body .tafsir-section-h:first-child { margin-top: 0; }
+.tafsir-word-mark { color: var(--color-primary); font-weight: 700; }
+.tafsir-panel__loading { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); color: var(--color-text-muted); padding: var(--space-6) 0; }
+.tafsir-panel__remote { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); padding: var(--space-3) 0; }
+
+/* ---- Mushaf display settings modal ---- */
+.mushaf-settings { display: flex; flex-direction: column; }
+.mushaf-settings__fonts { display: flex; flex-direction: column; gap: var(--space-2); }
+.mushaf-settings__font {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-align: start;
+}
+.mushaf-settings__font--active { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 8%, transparent); }
+.mushaf-settings__font-sample { font-size: 1.4rem; direction: rtl; }
+.mushaf-settings__font-name { font-size: var(--fs-caption); color: var(--color-text-muted); font-weight: 600; flex-shrink: 0; }
+.mushaf-settings__papers { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.mushaf-settings__paper {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.mushaf-settings__paper--active { border-color: var(--color-primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 40%, transparent); }
+.mushaf-settings__fonts + .mushaf-jump__heading,
+.mushaf-settings__papers + .mushaf-jump__heading { margin-top: var(--space-5); }
+
+/* ---- Mushaf paper theme: the page reads its background/ink/border from
+   CSS variables set inline by mushafReader.js (see MUSHAF_PAPERS in
+   config.js), completely independent of the app's own light/dark theme —
+   exactly like a physical Mushaf's paper looks the same in any room. ---- */
+.mushaf-page {
+  background: var(--mushaf-paper-bg, color-mix(in srgb, var(--color-primary) 4%, var(--color-surface)));
+  border-color: var(--mushaf-paper-border, color-mix(in srgb, var(--color-primary) 35%, var(--color-border)));
+  color: var(--mushaf-paper-ink, var(--color-text));
+}
+.mushaf-page::before { border-color: color-mix(in srgb, var(--mushaf-paper-ink, var(--color-primary)) 22%, transparent); }
+.mushaf-page__text {
+  font-family: var(--mushaf-font-family, var(--font-arabic));
+  font-size: calc(1.35rem * var(--arabic-font-scale) * var(--mushaf-font-scale, 1));
+  line-height: calc(2.35 * var(--mushaf-line-scale, 1));
+  color: inherit;
+}
+.mushaf-surah-banner__name, .mushaf-ayah__marker { color: color-mix(in srgb, var(--mushaf-paper-ink, var(--color-primary)) 75%, var(--color-primary) 25%); }
+.mushaf-page__number { color: color-mix(in srgb, var(--mushaf-paper-ink, var(--color-text-muted)) 65%, transparent); border-color: var(--mushaf-paper-border, var(--color-border)); }
+
+/* ---- Page-flip animation ---- */
+.mushaf-page-wrap { perspective: 1400px; }
+.mushaf-page { transform-origin: center center; will-change: transform, opacity; }
+@keyframes mushafFlipFromNext {
+  from { transform: rotateY(-8deg) scale(0.97); opacity: 0.45; }
+  to { transform: rotateY(0) scale(1); opacity: 1; }
+}
+@keyframes mushafFlipFromPrev {
+  from { transform: rotateY(8deg) scale(0.97); opacity: 0.45; }
+  to { transform: rotateY(0) scale(1); opacity: 1; }
+}
+.mushaf-page--flip-next { animation: mushafFlipFromNext 280ms var(--ease-standard); }
+.mushaf-page--flip-prev { animation: mushafFlipFromPrev 280ms var(--ease-standard); }
+.mushaf-page.mushaf-page--no-anim { animation: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .mushaf-page--flip-next, .mushaf-page--flip-prev { animation: none; }
+}

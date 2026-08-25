@@ -47,6 +47,30 @@ export function totalInLastDays(statistics, days) {
   return sum;
 }
 
+/**
+ * Average recitations per day over the last N days, one decimal — the honest
+ * denominator is the full window (not just active days), otherwise a single
+ * busy day would masquerade as a towering daily average.
+ */
+export function averagePerDay(statistics, days) {
+  return Math.round((totalInLastDays(statistics, days) / Math.max(1, days)) * 10) / 10;
+}
+
+/** How many distinct days have any recorded activity, all time. */
+export function activeDays(statistics) {
+  return Object.values(statistics.dailyHistory || {}).filter((d) => (d.recitations || 0) > 0).length;
+}
+
+/** Total recitations within the calendar month of refDate (0 for future months). */
+export function monthTotal(statistics, refDate) {
+  const prefix = `${refDate.getFullYear()}-${String(refDate.getMonth() + 1).padStart(2, '0')}`;
+  let sum = 0;
+  for (const [key, day] of Object.entries(statistics.dailyHistory || {})) {
+    if (key.startsWith(prefix)) sum += day.recitations || 0;
+  }
+  return sum;
+}
+
 /** Return the top N most-recited category ids with counts, sorted descending. */
 export function mostReadCategories(statistics, limit = 5) {
   return Object.entries(statistics.favoriteCategories || {})

@@ -10,7 +10,7 @@
       "en": "Authentic remembrance from Hisn al-Muslim, Bukhari, Muslim, and the Sunnah",
       "ar": "أذكار صحيحة من حصن المسلم والبخاري ومسلم والسنة"
     },
-    "version": "4.0.0",
+    "version": "4.0.2",
     "source": {
       "en": "Hisn al-Muslim, Sahih al-Bukhari, Sahih Muslim, Sunan Abi Dawud, Sunan at-Tirmidhi, Sunan an-Nasa'i, Sunan Ibn Majah",
       "ar": "حصن المسلم، صحيح البخاري، صحيح مسلم، سنن أبي داود، سنن الترمذي، سنن النسائي، سنن ابن ماجه"
@@ -146,7 +146,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — equals one-third of the Quran (Sahih al-Bukhari 5013). Recite 3× each morning and evening with Al-Falaq and An-Nas (Sunan Abu Dawud 5082, Sahih by Al-Albani)."
+            "notes": "Sahih — equals one-third of the Quran (Sahih al-Bukhari 5013). Recite 3× each morning and evening with Al-Falaq and An-Nas (Sunan Abu Dawud 5082, Sahih by Al-Albani). Also reported: Sunan Abi Dawud 5084; [Sahih]."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -193,7 +193,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — revealed with An-Nas as the two protectives (Sahih Muslim 2775a). Recite 3× each morning and evening (Sunan Abu Dawud 5082, Sahih by Al-Albani)."
+            "notes": "Sahih — revealed with An-Nas as the two protectives (Sahih Muslim 2775a). Recite 3× each morning and evening (Sunan Abu Dawud 5082, Sahih by Al-Albani). Also reported: Sunan Abi Dawud 5084; [Sahih]."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -239,7 +239,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — revealed with Al-Falaq as the two protectives (Sahih Muslim 2775a). Recite 3× each morning and evening (Sunan Abu Dawud 5082, Sahih by Al-Albani)."
+            "notes": "Sahih — revealed with Al-Falaq as the two protectives (Sahih Muslim 2775a). Recite 3× each morning and evening (Sunan Abu Dawud 5082, Sahih by Al-Albani). Also reported: Sunan Abi Dawud 5084; [Sahih]."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1247,144 +1247,6 @@
           "order": 28
         },
         {
-          "id": "glm-morning-2",
-          "category_id": "morning-adhkar",
-          "title": {
-            "en": "Reciting Surah al-Ikhlas Three Times for Morning Protection",
-            "ar": "تِلَاوَةُ سُورَةِ الإِخْلَاصِ ثَلَاثَ مَرَّاتٍ لِلْحِمَايَةِ الصَّبَاحِيَّةِ"
-          },
-          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
-          "transliteration": "Qul huwa Allāhu aḥad. Allāhuṣ-ṣamad. Lam yalid wa lam yūlad. Wa lam yakul-lahū kufuwan aḥad.",
-          "translation": {
-            "en": "Say: He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born. Nor is there to Him any equivalent.",
-            "ar": "قُلْ هُوَ اللَّهُ أَحَدٌ، اللَّهُ الصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ"
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Al-Adab",
-            "chapter": "",
-            "hadith": "5084",
-            "narrator": "Abdullah ibn Khubayb",
-            "grading": "Sahih",
-            "url": "",
-            "notes": "Also recorded by al-Tirmidhi"
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 3,
-          "virtues": {
-            "en": "The Prophet ﷺ said: \"Whoever recites Qul Huwa Allahu Ahad and the two Muʿawwidhatayn (Surah al-Falaq and an-Nas) in the morning, they will suffice him against everything.\" In another narration: \"Recite Surah al-Ikhlas and the two Muʿawwidhatayn morning and evening, three times each; that will suffice you for everything.\"",
-            "ar": "عَنْ عَبْدِ اللَّهِ بْنِ خُبَيْبٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: خَرَجْنَا فِي لَيْلَةِ مَطَرٍ وَظُلْمَةٍ شَدِيدَةٍ نَطْلُبُ رَسُولَ اللَّهِ ﷺ لِيُصَلِّيَ لَنَا، فَأَدْرَكْنَاهُ فَقَالَ: أَصَلَّيْتُمْ؟ فَلَمْ أَقُلْ شَيْئًا، فَقَالَ: قُلْ. فَلَمْ أَقُلْ شَيْئًا، ثُمَّ قَالَ: قُلْ. فَقُلْتُ: يَا رَسُولَ اللَّهِ مَا أَقُولُ؟ قَالَ: قُلْ ﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾ وَالْمُعَوِّذَتَيْنِ حِينَ تُمْسِي وَحِينَ تُصْبِحُ ثَلَاثَ مَرَّاتٍ تَكْفِيكَ مِنْ كُلِّ شَيْءٍ. رَوَاهُ أَبُو دَاوُدَ وَالتِّرْمِذِيُّ"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "protection",
-            "sincerity",
-            "quran",
-            "tawheed",
-            "morning"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 29
-        },
-        {
-          "id": "glm-morning-3",
-          "category_id": "morning-adhkar",
-          "title": {
-            "en": "Reciting Surah al-Falaq Three Times to Seek Refuge from Created Harm",
-            "ar": "تِلَاوَةُ سُورَةِ الفَلَقِ ثَلَاثَ مَرَّاتٍ لِلِاسْتِعَاذَةِ مِنْ شَرِّ الْمَخْلُوقَاتِ"
-          },
-          "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
-          "transliteration": "Qul aʿūdhu birabbi al-falaq. Min sharri mā khalaq. Wa min sharri ghāsiqin idhā waqab. Wa min sharrin-naffāthāti fī al-ʿuqad. Wa min sharri ḥāsidin idhā ḥasad.",
-          "translation": {
-            "en": "Say: I seek refuge in the Lord of daybreak. From the evil of that which He created. And from the evil of darkness when it settles. And from the evil of the blowers in knots. And from the evil of an envier when he envies.",
-            "ar": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِنْ شَرِّ مَا خَلَقَ، وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ"
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Al-Adab",
-            "chapter": "",
-            "hadith": "5084",
-            "narrator": "Abdullah ibn Khubayb",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 3,
-          "virtues": {
-            "en": "The Prophet ﷺ said: \"Recite Surah al-Ikhlas and the two Muʿawwidhatayn morning and evening, three times each; that will suffice you for everything.\" (Reported by Abu Dawud and al-Tirmidhi with a sahih chain).",
-            "ar": "عَنْ عَبْدِ اللَّهِ بْنِ خُبَيْبٍ قَالَ: قَالَ رَسُولُ اللَّهِ ﷺ: قُلْ ﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾ وَالْمُعَوِّذَتَيْنِ حِينَ تُمْسِي وَحِينَ تُصْبِحُ ثَلَاثَ مَرَّاتٍ تَكْفِيكَ مِنْ كُلِّ شَيْءٍ. رَوَاهُ أَبُو دَاوُدَ"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "protection",
-            "morning",
-            "quran",
-            "seeking-refuge",
-            "evil-eye"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 30
-        },
-        {
-          "id": "glm-morning-4",
-          "category_id": "morning-adhkar",
-          "title": {
-            "en": "Reciting Surah an-Nas Three Times to Seek Allah’s Refuge from All Evil",
-            "ar": "تِلَاوَةُ سُورَةِ النَّاسِ ثَلَاثَ مَرَّاتٍ لِلِاسْتِعَاذَةِ بِاللَّهِ مِنْ كُلِّ شَرٍّ"
-          },
-          "arabic": "قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ",
-          "transliteration": "Qul aʿūdhu birabbi n-nās. Maliki n-nās. Ilāhi n-nās. Min sharri al-waswāsi al-khannās. Alladhī yuwaswisu fī ṣudūri n-nās. Mina al-jinnati wa n-nās.",
-          "translation": {
-            "en": "Say: I seek refuge in the Lord of mankind. The Sovereign of mankind. The God of mankind. From the evil of the retreating whisperer. Who whispers in the breasts of mankind. From among the jinn and mankind.",
-            "ar": "قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَهِ النَّاسِ، مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَالنَّاسِ"
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Al-Adab",
-            "chapter": "",
-            "hadith": "5084",
-            "narrator": "Abdullah ibn Khubayb",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 3,
-          "virtues": {
-            "en": "The Prophet ﷺ said: \"Recite Surah al-Ikhlas and the two Muʿawwidhatayn morning and evening, three times each; that will suffice you for everything.\"",
-            "ar": "عَنْ عَبْدِ اللَّهِ بْنِ خُبَيْبٍ قَالَ: قَالَ رَسُولُ اللَّهِ ﷺ: قُلْ ﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾ وَالْمُعَوِّذَتَيْنِ حِينَ تُمْسِي وَحِينَ تُصْبِحُ ثَلَاثَ مَرَّاتٍ تَكْفِيكَ مِنْ كُلِّ شَيْءٍ. رَوَاهُ أَبُو دَاوُدَ وَالتِّرْمِذِيُّ"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "protection",
-            "morning",
-            "quran",
-            "whispers",
-            "shaytan"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 31
-        },
-        {
           "id": "glm-morning-8",
           "category_id": "morning-adhkar",
           "title": {
@@ -1428,7 +1290,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 32
+          "order": 29
         },
         {
           "id": "glm-morning-9",
@@ -1474,7 +1336,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 33
+          "order": 30
         },
         {
           "id": "glm-morning-10",
@@ -1520,7 +1382,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 34
+          "order": 31
         },
         {
           "id": "glm-morning-12",
@@ -1566,7 +1428,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 35
+          "order": 32
         },
         {
           "id": "glm-morning-13",
@@ -1612,7 +1474,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 36
+          "order": 33
         },
         {
           "id": "glm-morning-14",
@@ -1658,7 +1520,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 37
+          "order": 34
         },
         {
           "id": "glm-morning-15",
@@ -1704,7 +1566,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 38
+          "order": 35
         },
         {
           "id": "glm-morning-16",
@@ -1750,7 +1612,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 39
+          "order": 36
         },
         {
           "id": "glm-morning-17",
@@ -1796,7 +1658,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 40
+          "order": 37
         },
         {
           "id": "glm-morning-18",
@@ -1842,7 +1704,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 41
+          "order": 38
         },
         {
           "id": "glm-morning-19",
@@ -1888,7 +1750,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 42
+          "order": 39
         },
         {
           "id": "glm-morning-20",
@@ -1934,7 +1796,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 43
+          "order": 40
         },
         {
           "id": "glm-morning-21",
@@ -1980,7 +1842,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 44
+          "order": 41
         },
         {
           "id": "glm-morning-22",
@@ -2026,7 +1888,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 45
+          "order": 42
         },
         {
           "id": "glm-morning-23",
@@ -2072,7 +1934,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 46
+          "order": 43
         },
         {
           "id": "glm-morning-24",
@@ -2118,7 +1980,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 47
+          "order": 44
         },
         {
           "id": "glm-morning-25",
@@ -2164,7 +2026,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 48
+          "order": 45
         },
         {
           "id": "glm-morning-26",
@@ -2210,7 +2072,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 49
+          "order": 46
         },
         {
           "id": "glm-morning-27",
@@ -2256,7 +2118,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 50
+          "order": 47
         },
         {
           "id": "glm-morning-28",
@@ -2302,7 +2164,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 51
+          "order": 48
         },
         {
           "id": "glm-morning-29",
@@ -2348,7 +2210,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 52
+          "order": 49
         },
         {
           "id": "glm-morning-30",
@@ -2394,7 +2256,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 53
+          "order": 50
         },
         {
           "id": "glm-morning-31",
@@ -2440,7 +2302,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 54
+          "order": 51
         },
         {
           "id": "glm-morning-33",
@@ -2486,7 +2348,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 55
+          "order": 52
         },
         {
           "id": "glm-morning-35",
@@ -2532,7 +2394,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 56
+          "order": 53
         },
         {
           "id": "glm-morning-36",
@@ -2578,7 +2440,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 57
+          "order": 54
         },
         {
           "id": "glm-morning-37",
@@ -2624,7 +2486,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 58
+          "order": 55
         },
         {
           "id": "glm-morning-38",
@@ -2670,7 +2532,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 59
+          "order": 56
         },
         {
           "id": "glm-morning-39",
@@ -2716,7 +2578,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 60
+          "order": 57
         },
         {
           "id": "glm-morning-40",
@@ -2762,7 +2624,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 61
+          "order": 58
         },
         {
           "id": "glm-morning-41",
@@ -2809,7 +2671,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 62
+          "order": 59
         }
       ]
     },
@@ -2937,7 +2799,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — equals one-third of the Quran (Sahih al-Bukhari 5013). Recite 3× each evening with Al-Falaq and An-Nas (Sunan Abu Dawud 5082, Sahih by Al-Albani)."
+            "notes": "Sahih — equals one-third of the Quran (Sahih al-Bukhari 5013). Recite 3× each evening with Al-Falaq and An-Nas (Sunan Abu Dawud 5082, Sahih by Al-Albani). Also reported: Sunan Abi Dawud 5084; [Sahih]."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2984,7 +2846,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — revealed with An-Nas as the two protectives (Sahih Muslim 2775a). Recite 3× each evening (Sunan Abu Dawud 5082, Sahih by Al-Albani)."
+            "notes": "Sahih — revealed with An-Nas as the two protectives (Sahih Muslim 2775a). Recite 3× each evening (Sunan Abu Dawud 5082, Sahih by Al-Albani). Also reported: Sunan Abi Dawud 5084; [Sahih]."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3030,7 +2892,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — revealed with Al-Falaq as the two protectives (Sahih Muslim 2775a). Recite 3× each evening (Sunan Abu Dawud 5082, Sahih by Al-Albani)."
+            "notes": "Sahih — revealed with Al-Falaq as the two protectives (Sahih Muslim 2775a). Recite 3× each evening (Sunan Abu Dawud 5082, Sahih by Al-Albani). Also reported: Sunan Abi Dawud 5084; [Sahih]."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3619,144 +3481,6 @@
           "order": 18
         },
         {
-          "id": "glm-evening-5",
-          "category_id": "evening-adhkar",
-          "title": {
-            "en": "Reciting Surah al-Ikhlas Three Times for Evening Protection",
-            "ar": "تِلَاوَةُ سُورَةِ الإِخْلَاصِ ثَلَاثَ مَرَّاتٍ لِلْحِمَايَةِ الْمَسَائِيَّةِ"
-          },
-          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ",
-          "transliteration": "Qul huwa Allāhu aḥad. Allāhuṣ-ṣamad. Lam yalid wa lam yūlad. Wa lam yakul-lahū kufuwan aḥad.",
-          "translation": {
-            "en": "Say: He is Allah, the One. Allah, the Eternal Refuge. He neither begets nor is born. Nor is there to Him any equivalent.",
-            "ar": "قُلْ هُوَ اللَّهُ أَحَدٌ، اللَّهُ الصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ"
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Al-Adab",
-            "chapter": "",
-            "hadith": "5084",
-            "narrator": "Abdullah ibn Khubayb",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 3,
-          "virtues": {
-            "en": "The Prophet ﷺ said: \"Whoever recites Qul Huwa Allahu Ahad and the two Muʿawwidhatayn (Surah al-Falaq and an-Nas) in the evening, they will suffice him against everything.\" (Sunan Abi Dawud 5084, Sunan at-Tirmidhi).",
-            "ar": "عَنْ عَبْدِ اللَّهِ بْنِ خُبَيْبٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: قَالَ رَسُولُ اللَّهِ ﷺ: قُلْ ﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾ وَالْمُعَوِّذَتَيْنِ حِينَ تُمْسِي وَحِينَ تُصْبِحُ ثَلَاثَ مَرَّاتٍ تَكْفِيكَ مِنْ كُلِّ شَيْءٍ. رَوَاهُ أَبُو دَاوُدَ وَالتِّرْمِذِيُّ"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "protection",
-            "evening",
-            "quran",
-            "sincerity",
-            "tawheed"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 19
-        },
-        {
-          "id": "glm-evening-6",
-          "category_id": "evening-adhkar",
-          "title": {
-            "en": "Reciting Surah al-Falaq Three Times for Evening Protection from Harm",
-            "ar": "تِلَاوَةُ سُورَةِ الْفَلَقِ ثَلَاثَ مَرَّاتٍ لِلْحِمَايَةِ الْمَسَائِيَّةِ"
-          },
-          "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
-          "transliteration": "Qul aʿūdhu birabbi al-falaq. Min sharri mā khalaq. Wa min sharri ghāsiqin idhā waqab. Wa min sharrin-naffāthāti fī al-ʿuqad. Wa min sharri ḥāsidin idhā ḥasad.",
-          "translation": {
-            "en": "Say: I seek refuge in the Lord of daybreak. From the evil of that which He created. And from the evil of darkness when it settles. And from the evil of the blowers in knots. And from the evil of an envier when he envies.",
-            "ar": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، مِنْ شَرِّ مَا خَلَقَ، وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ، وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ، وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ"
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Al-Adab",
-            "chapter": "",
-            "hadith": "5084",
-            "narrator": "Abdullah ibn Khubayb",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 3,
-          "virtues": {
-            "en": "The Prophet ﷺ said: \"Recite Surah al-Ikhlas and the two Muʿawwidhatayn in the evening, three times each; that will suffice you for everything.\" (Sunan Abi Dawud 5084, Sunan at-Tirmidhi — Sahih)",
-            "ar": "عَنْ عَبْدِ اللَّهِ بْنِ خُبَيْبٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: قَالَ رَسُولُ اللَّهِ ﷺ: قُلْ ﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾ وَالْمُعَوِّذَتَيْنِ حِينَ تُمْسِي وَحِينَ تُصْبِحُ ثَلَاثَ مَرَّاتٍ تَكْفِيكَ مِنْ كُلِّ شَيْءٍ. رَوَاهُ أَبُو دَاوُدَ"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "protection",
-            "evening",
-            "quran",
-            "evil-eye",
-            "seeking-refuge"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 20
-        },
-        {
-          "id": "glm-evening-7",
-          "category_id": "evening-adhkar",
-          "title": {
-            "en": "Reciting Surah an-Nas Three Times for Evening Refuge from All Evil",
-            "ar": "تِلَاوَةُ سُورَةِ النَّاسِ ثَلَاثَ مَرَّاتٍ لِلِاسْتِعَاذَةِ الْمَسَائِيَّةِ"
-          },
-          "arabic": "قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ",
-          "transliteration": "Qul aʿūdhu birabbi n-nās. Maliki n-nās. Ilāhi n-nās. Min sharri al-waswāsi al-khannās. Alladhī yuwaswisu fī ṣudūri n-nās. Mina al-jinnati wa n-nās.",
-          "translation": {
-            "en": "Say: I seek refuge in the Lord of mankind. The Sovereign of mankind. The God of mankind. From the evil of the retreating whisperer. Who whispers in the breasts of mankind. From among the jinn and mankind.",
-            "ar": "قُلْ أَعُوذُ بِرَبِّ النَّاسِ، مَلِكِ النَّاسِ، إِلَهِ النَّاسِ، مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ، الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ، مِنَ الْجِنَّةِ وَالنَّاسِ"
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Al-Adab",
-            "chapter": "",
-            "hadith": "5084",
-            "narrator": "Abdullah ibn Khubayb",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 3,
-          "virtues": {
-            "en": "The Prophet ﷺ said: \"Recite Surah al-Ikhlas and the two Muʿawwidhatayn in the evening, three times each; that will suffice you for everything.\" (Sunan Abi Dawud 5084, Sunan at-Tirmidhi — Sahih)",
-            "ar": "عَنْ عَبْدِ اللَّهِ بْنِ خُبَيْبٍ رَضِيَ اللَّهُ عَنْهُ قَالَ: قَالَ رَسُولُ اللَّهِ ﷺ: قُلْ ﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾ وَالْمُعَوِّذَتَيْنِ حِينَ تُمْسِي وَحِينَ تُصْبِحُ ثَلَاثَ مَرَّاتٍ تَكْفِيكَ مِنْ كُلِّ شَيْءٍ. رَوَاهُ أَبُو دَاوُدَ"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "protection",
-            "evening",
-            "quran",
-            "whispers",
-            "shaytan"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 21
-        },
-        {
           "id": "glm-evening-8",
           "category_id": "evening-adhkar",
           "title": {
@@ -3800,7 +3524,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 22
+          "order": 19
         },
         {
           "id": "glm-evening-10",
@@ -3846,7 +3570,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 23
+          "order": 20
         },
         {
           "id": "glm-evening-11",
@@ -3892,7 +3616,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 24
+          "order": 21
         },
         {
           "id": "glm-evening-12",
@@ -3938,7 +3662,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 25
+          "order": 22
         },
         {
           "id": "glm-evening-13",
@@ -3984,7 +3708,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 26
+          "order": 23
         },
         {
           "id": "glm-evening-14",
@@ -4030,7 +3754,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 27
+          "order": 24
         },
         {
           "id": "glm-evening-15",
@@ -4076,7 +3800,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 28
+          "order": 25
         },
         {
           "id": "glm-evening-17",
@@ -4122,7 +3846,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 29
+          "order": 26
         },
         {
           "id": "glm-evening-18",
@@ -4168,7 +3892,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 30
+          "order": 27
         },
         {
           "id": "glm-evening-19",
@@ -4214,7 +3938,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 31
+          "order": 28
         },
         {
           "id": "glm-evening-20",
@@ -4260,7 +3984,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 32
+          "order": 29
         },
         {
           "id": "glm-evening-21",
@@ -4306,7 +4030,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 33
+          "order": 30
         },
         {
           "id": "glm-evening-22",
@@ -4352,7 +4076,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 34
+          "order": 31
         },
         {
           "id": "glm-evening-23",
@@ -4398,7 +4122,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 35
+          "order": 32
         },
         {
           "id": "glm-evening-24",
@@ -4444,7 +4168,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 36
+          "order": 33
         },
         {
           "id": "glm-evening-25",
@@ -4490,7 +4214,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 37
+          "order": 34
         },
         {
           "id": "glm-evening-26",
@@ -4536,7 +4260,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 38
+          "order": 35
         },
         {
           "id": "glm-evening-27",
@@ -4582,7 +4306,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 39
+          "order": 36
         },
         {
           "id": "glm-evening-28",
@@ -4628,7 +4352,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 40
+          "order": 37
         },
         {
           "id": "glm-evening-29",
@@ -4674,7 +4398,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 41
+          "order": 38
         },
         {
           "id": "glm-evening-30",
@@ -4720,7 +4444,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 42
+          "order": 39
         },
         {
           "id": "glm-evening-32",
@@ -4766,7 +4490,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 43
+          "order": 40
         },
         {
           "id": "glm-evening-34",
@@ -4812,7 +4536,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 44
+          "order": 41
         },
         {
           "id": "glm-evening-35",
@@ -4858,7 +4582,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 45
+          "order": 42
         },
         {
           "id": "glm-evening-36",
@@ -4904,7 +4628,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 46
+          "order": 43
         },
         {
           "id": "glm-evening-37",
@@ -4950,7 +4674,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 47
+          "order": 44
         },
         {
           "id": "glm-evening-38",
@@ -4996,7 +4720,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 48
+          "order": 45
         },
         {
           "id": "glm-evening-39",
@@ -5042,7 +4766,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 49
+          "order": 46
         },
         {
           "id": "glm-evening-40",
@@ -5089,7 +4813,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 50
+          "order": 47
         }
       ]
     },
@@ -5523,7 +5247,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — narrated by Abdullah bin Khubayb; classed Sahih by Al-Albani in Sahih Abi Dawud 1523."
+            "notes": "Sahih — narrated by Abdullah bin Khubayb; classed Sahih by Al-Albani in Sahih Abi Dawud 1523. Also reported: Sunan Abi Dawud 1523."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -5568,7 +5292,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — narrated by Abdullah bin Khubayb; classed Sahih by Al-Albani in Sahih Abi Dawud 1523."
+            "notes": "Sahih — narrated by Abdullah bin Khubayb; classed Sahih by Al-Albani in Sahih Abi Dawud 1523. Also reported: Sahih al-Bukhari 5016. Also reported: Sunan Abi Dawud 1523."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -5613,7 +5337,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — narrated by Abdullah bin Khubayb; classed Sahih by Al-Albani in Sahih Abi Dawud 1523."
+            "notes": "Sahih — narrated by Abdullah bin Khubayb; classed Sahih by Al-Albani in Sahih Abi Dawud 1523. Also reported: Sahih al-Bukhari 5016. Also reported: Sunan Abi Dawud 1523."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -5823,54 +5547,6 @@
           "order": 16
         },
         {
-          "id": "glm-postprayer-009",
-          "category_id": "post-prayer-adhkar",
-          "title": {
-            "en": "Reciting Surah al-Ikhlas, al-Falaq, and an-Nas After Each Prayer",
-            "ar": "قراءة الإخلاص والفلق والناس بعد كل صلاة"
-          },
-          "arabic": "قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ۜ — قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ۜ — قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ",
-          "transliteration": "Qul huwallahu ahad. Allahus-samad. Lam yalid wa lam yulad. Wa lam yakul-lahu kufuwan ahad. — Qul a'udhu birabbil-falaq. Min sharri ma khalaq. Wa min sharri ghasiqin idha waqab. Wa min sharrin-naffathati fil-`uqad. Wa min sharri hasidin idha hasad. — Qul a'udhu birabbin-nas. Malikin-nas. Ilahin-nas. Min sharril-waswasil-khannas. Alladhi yuwaswisu fi sudurin-nas. Minal-jinnati wan-nas.",
-          "translation": {
-            "en": "Surah al-Ikhlas, Surah al-Falaq, and Surah an-Nas (the Mu'awwidhatayn plus al-Ikhlas).",
-            "ar": "سورة الإخلاح والفلق والناس"
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "",
-            "chapter": "",
-            "hadith": "1523",
-            "narrator": "Mu'adh ibn Jabal",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "The Prophet (peace be upon him) said to Mu'adh ibn Jabal and Abu Hurairah: \"After every prayer, recite: Qul huwallahu ahad, then Qul a'udhu birabbil-falaq, then Qul a'udhu birabbin-nas.\" (Sunan Abi Dawud 1523, Sunan at-Tirmidhi 2903). In another narration, he said they would be sufficient for him against everything (Sahih al-Bukhari 5023, Sunan Abi Dawud 5081). The Prophet (peace be upon him) also used to blow into his hands and wipe his face and body with them after reciting these surahs.",
-            "ar": "قال النبي (صلى الله عليه وسلم) لمعاذ بن جبل وأبي هريرة: \"بعد كل صلاة اقرأ قل هو الله أحد ثم قل أعوذ برب الفلق ثم قل أعوذ برب الناس\" (أبو داود 1523، الترمذي 2903). وقال في رواية أخرى: \"تكفيك من كل شيء\" (البخاري 5023)"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "post-prayer",
-            "quran",
-            "ikhlas",
-            "falaq",
-            "nas",
-            "protection",
-            "muawwidhatayn"
-          ],
-          "related": [],
-          "notes": "Recite all three surahs once after each obligatory prayer.",
-          "order": 17
-        },
-        {
           "id": "glm-postprayer-010",
           "category_id": "post-prayer-adhkar",
           "title": {
@@ -5915,7 +5591,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 18
+          "order": 17
         },
         {
           "id": "glm-postprayer-011",
@@ -5962,7 +5638,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 19
+          "order": 18
         },
         {
           "id": "glm-postprayer-012",
@@ -6008,7 +5684,7 @@
           ],
           "related": [],
           "notes": "This is an alternative way of counting. Each phrase 25 times totals 100.",
-          "order": 20
+          "order": 19
         },
         {
           "id": "glm-postprayer-013",
@@ -6054,7 +5730,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 21
+          "order": 20
         },
         {
           "id": "glm-postprayer-014",
@@ -6100,7 +5776,7 @@
           ],
           "related": [],
           "notes": "This is said in the final sitting (tashahhud) before the taslim.",
-          "order": 22
+          "order": 21
         },
         {
           "id": "glm-postprayer-015",
@@ -6147,7 +5823,7 @@
           ],
           "related": [],
           "notes": "This is said in the final sitting (tashahhud) before the taslim.",
-          "order": 23
+          "order": 22
         },
         {
           "id": "glm-postprayer-016",
@@ -6194,55 +5870,7 @@
           ],
           "related": [],
           "notes": "Said in the final sitting (tashahhud) before the taslim.",
-          "order": 24
-        },
-        {
-          "id": "glm-postprayer-017",
-          "category_id": "post-prayer-adhkar",
-          "title": {
-            "en": "Reciting the Mu'awwidhatayn and Blowing After Prayer",
-            "ar": "قراءة المعوذتين والنفث بعد الصلاة"
-          },
-          "arabic": "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِن شَرِّ مَا خَلَقَ ۝ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ — قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ",
-          "transliteration": "Qul a'udhu birabbil-falaq. Min sharri ma khalaq. Wa min sharri ghasiqin idha waqab. Wa min sharrin-naffathati fil-`uqad. Wa min sharri hasidin idha hasad. — Qul a'udhu birabbin-nas. Malikin-nas. Ilahin-nas. Min sharril-waswasil-khannas. Alladhi yuwaswisu fi sudurin-nas. Minal-jinnati wan-nas.",
-          "translation": {
-            "en": "Surah al-Falaq and Surah an-Nas (the two seeking-refuge surahs).",
-            "ar": "سورة الفلق وسورة الناس"
-          },
-          "reference": {
-            "collection": "Sahih al-Bukhari",
-            "book": "",
-            "chapter": "",
-            "hadith": "5016",
-            "narrator": "Aisha bint Abi Bakr",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "The Prophet (peace be upon him) would recite the Mu'awwidhatayn and then blow onto his hands and wipe them over his face and body. Aisha (may Allah be pleased with her) reported: \"When the Messenger of Allah (peace be upon him) was ill, he would recite the Mu'awwidhatayn and blow over himself. When his pain increased, I would blow over him and wipe his body with his own hand, seeking its blessing.\" (Sahih al-Bukhari 5016). After prayer, reciting them and blowing on oneself is a powerful protection.",
-            "ar": "كان النبي (صلى الله عليه وسلم) يقرأ المعوذتين ثم ينفث في كفيه ويمسح بهما وجهه وجسده. قالت عائشة: \"كان إذا اشتكى يقرأ المعوذتين وينفث على نفسه\" (البخاري 5016). وتلاوتها بعد الصلاة والنفث على النفس حماية قوية"
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "post-prayer",
-            "quran",
-            "falaq",
-            "nas",
-            "protection",
-            "blowing",
-            "aisha"
-          ],
-          "related": [],
-          "notes": "Recite both surahs, then blow into your hands and wipe over your face and body.",
-          "order": 25
+          "order": 23
         },
         {
           "id": "glm-postprayer-018",
@@ -6289,7 +5917,7 @@
           ],
           "related": [],
           "notes": "This specific version with \"yuhyi wa yumitu\" is said after Fajr and Maghrib prayers.",
-          "order": 26
+          "order": 24
         },
         {
           "id": "glm-postprayer-020",
@@ -6335,7 +5963,7 @@
           ],
           "related": [],
           "notes": "Said in the final tashahhud before the taslim. Part of the obligatory prayer.",
-          "order": 27
+          "order": 25
         },
         {
           "id": "glm-postprayer-021",
@@ -6381,7 +6009,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 28
+          "order": 26
         }
       ]
     },
@@ -6461,7 +6089,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Sahih — virtue narrated by Abu Hurairah, Sahih al-Bukhari 2311 (the famous story of the shaytan who came to steal charity)."
+            "notes": "Sahih — virtue narrated by Abu Hurairah, Sahih al-Bukhari 2311 (the famous story of the shaytan who came to steal charity). Also reported: Sahih al-Bukhari 2311."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -7658,51 +7286,6 @@
           "order": 28
         },
         {
-          "id": "glm-topical-sl-003",
-          "category_id": "dua-sleep",
-          "title": {
-            "en": "Ayatul Kursi Before Sleeping",
-            "ar": "آية الكرسي قبل النوم"
-          },
-          "arabic": "اَللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ",
-          "transliteration": "Allahu la ilaha illa huwal-hayyul-qayyum la ta'khudhuhu sinatun wa la nawm.",
-          "translation": {
-            "en": "Allah! There is no deity except Him, the Ever-Living, the Sustainer of existence. Neither drowsiness overtakes Him nor sleep.",
-            "ar": ""
-          },
-          "reference": {
-            "collection": "Sahih al-Bukhari 2311",
-            "book": "",
-            "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "Sahih",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "The Prophet said: Whoever recites Ayatul Kursi when going to bed, there will remain a guardian from Allah over him, and no devil will approach him until morning. (Sahih al-Bukhari 2311).",
-            "ar": ""
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "sleep",
-            "protection",
-            "ayatul-kursi",
-            "night"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 29
-        },
-        {
           "id": "glm-topical-sl-004",
           "category_id": "dua-sleep",
           "title": {
@@ -7745,7 +7328,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 30
+          "order": 29
         },
         {
           "id": "glm-topical-sl-005",
@@ -7790,7 +7373,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 31
+          "order": 30
         }
       ]
     },
@@ -8312,7 +7895,7 @@
             "narrator": "Abu Hurairah",
             "grading": "Hasan",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Sunan at-Tirmidhi 3401. Also reported: Sunan at-Tirmidhi 3401."
           },
           "grade": "Hasan",
           "custom_grade": {
@@ -10442,7 +10025,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-ds-002",
@@ -10487,7 +10070,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-ds-003",
@@ -10531,7 +10114,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         },
         {
           "id": "glm-ds-004",
@@ -10575,7 +10158,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1004
+          "order": 4
         },
         {
           "id": "glm-ds-005",
@@ -10620,7 +10203,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1005
+          "order": 5
         },
         {
           "id": "glm-ds-006",
@@ -10664,7 +10247,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1006
+          "order": 6
         },
         {
           "id": "glm-ds-007",
@@ -10708,7 +10291,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1007
+          "order": 7
         },
         {
           "id": "glm-ds-008",
@@ -10752,7 +10335,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1008
+          "order": 8
         },
         {
           "id": "glm-ds-009",
@@ -10796,7 +10379,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1009
+          "order": 9
         },
         {
           "id": "glm-ds-011",
@@ -10840,7 +10423,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1010
+          "order": 10
         },
         {
           "id": "glm-ds-012",
@@ -10884,7 +10467,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1011
+          "order": 11
         },
         {
           "id": "glm-ds-013",
@@ -10929,7 +10512,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1012
+          "order": 12
         },
         {
           "id": "glm-ds-014",
@@ -10974,7 +10557,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1013
+          "order": 13
         },
         {
           "id": "glm-ds-015",
@@ -11018,7 +10601,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1014
+          "order": 14
         },
         {
           "id": "glm-ds-016",
@@ -11062,7 +10645,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1015
+          "order": 15
         },
         {
           "id": "glm-ds-017",
@@ -11106,7 +10689,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1016
+          "order": 16
         },
         {
           "id": "glm-ds-018",
@@ -11150,7 +10733,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1017
+          "order": 17
         },
         {
           "id": "glm-ds-019",
@@ -11194,7 +10777,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1018
+          "order": 18
         },
         {
           "id": "glm-ds-020",
@@ -11239,7 +10822,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1019
+          "order": 19
         },
         {
           "id": "glm-ds-021",
@@ -11284,7 +10867,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1020
+          "order": 20
         },
         {
           "id": "glm-ds-022",
@@ -11328,7 +10911,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1021
+          "order": 21
         },
         {
           "id": "glm-ds-023",
@@ -11372,7 +10955,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1022
+          "order": 22
         },
         {
           "id": "glm-ds-024",
@@ -11416,7 +10999,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1023
+          "order": 23
         },
         {
           "id": "glm-ds-025",
@@ -11460,7 +11043,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1024
+          "order": 24
         },
         {
           "id": "glm-ds-026",
@@ -11504,7 +11087,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1025
+          "order": 25
         },
         {
           "id": "glm-ds-027",
@@ -11549,7 +11132,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1026
+          "order": 26
         },
         {
           "id": "glm-ds-028",
@@ -11594,7 +11177,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1027
+          "order": 27
         },
         {
           "id": "glm-ds-029",
@@ -11639,7 +11222,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1028
+          "order": 28
         },
         {
           "id": "glm-ds-030",
@@ -11683,7 +11266,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1029
+          "order": 29
         },
         {
           "id": "glm-ds-031",
@@ -11728,7 +11311,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1030
+          "order": 30
         },
         {
           "id": "glm-ds-032",
@@ -11773,7 +11356,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1031
+          "order": 31
         },
         {
           "id": "glm-ds-034",
@@ -11817,7 +11400,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1032
+          "order": 32
         },
         {
           "id": "glm-ds-035",
@@ -11861,7 +11444,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1033
+          "order": 33
         },
         {
           "id": "glm-ds-036",
@@ -11905,7 +11488,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1034
+          "order": 34
         },
         {
           "id": "glm-ds-037",
@@ -11950,7 +11533,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1035
+          "order": 35
         },
         {
           "id": "glm-ds-038",
@@ -11995,7 +11578,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1036
+          "order": 36
         },
         {
           "id": "glm-ds-039",
@@ -12040,7 +11623,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1037
+          "order": 37
         },
         {
           "id": "glm-ds-040",
@@ -12085,7 +11668,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1038
+          "order": 38
         },
         {
           "id": "glm-ds-041",
@@ -12129,7 +11712,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1039
+          "order": 39
         },
         {
           "id": "glm-ds-042",
@@ -12173,7 +11756,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1040
+          "order": 40
         },
         {
           "id": "glm-ds-043",
@@ -12218,7 +11801,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1041
+          "order": 41
         },
         {
           "id": "glm-ds-044",
@@ -12263,7 +11846,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1042
+          "order": 42
         },
         {
           "id": "glm-ds-045",
@@ -12308,7 +11891,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1043
+          "order": 43
         },
         {
           "id": "glm-ds-046",
@@ -12353,7 +11936,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1044
+          "order": 44
         },
         {
           "id": "glm-ds-047",
@@ -12398,7 +11981,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1045
+          "order": 45
         },
         {
           "id": "glm-ds-048",
@@ -12443,7 +12026,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1046
+          "order": 46
         },
         {
           "id": "glm-ds-049",
@@ -12488,7 +12071,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1047
+          "order": 47
         },
         {
           "id": "glm-ds-050",
@@ -12533,7 +12116,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1048
+          "order": 48
         },
         {
           "id": "glm-ds-051",
@@ -12578,7 +12161,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1049
+          "order": 49
         },
         {
           "id": "glm-ds-052",
@@ -12624,7 +12207,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1050
+          "order": 50
         },
         {
           "id": "glm-ds-053",
@@ -12670,7 +12253,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1051
+          "order": 51
         },
         {
           "id": "glm-ds-054",
@@ -12715,7 +12298,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1052
+          "order": 52
         },
         {
           "id": "glm-ds-055",
@@ -12762,7 +12345,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1053
+          "order": 53
         },
         {
           "id": "glm-ds-056",
@@ -12808,7 +12391,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1054
+          "order": 54
         },
         {
           "id": "glm-ds-057",
@@ -12853,7 +12436,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1055
+          "order": 55
         },
         {
           "id": "glm-ds-058",
@@ -12898,7 +12481,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1056
+          "order": 56
         },
         {
           "id": "glm-ds-059",
@@ -12943,7 +12526,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1057
+          "order": 57
         },
         {
           "id": "glm-ds-060",
@@ -12988,7 +12571,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1058
+          "order": 58
         },
         {
           "id": "glm-ds-061",
@@ -13033,7 +12616,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1059
+          "order": 59
         },
         {
           "id": "glm-ds-062",
@@ -13078,7 +12661,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1060
+          "order": 60
         },
         {
           "id": "glm-ds-063",
@@ -13124,7 +12707,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1061
+          "order": 61
         },
         {
           "id": "glm-ds-064",
@@ -13169,7 +12752,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1062
+          "order": 62
         },
         {
           "id": "glm-ds-065",
@@ -13214,7 +12797,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1063
+          "order": 63
         },
         {
           "id": "glm-ds-066",
@@ -13259,7 +12842,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1064
+          "order": 64
         }
       ]
     }

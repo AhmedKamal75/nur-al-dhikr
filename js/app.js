@@ -19,8 +19,14 @@ import {
   QUIZ_LENGTH,
   QUIZ_CHOICE_COUNT,
   QUIZ_LIBRARY_ID,
+  MUSHAF_PAGE_COUNT,
+  QURAN_WORDS_URL,
+  QURAN_ROOTS_URL,
+  TAFSIR_EDITIONS_URL,
+  TAFSIR_TEXT_URL,
+  TAFSIR_REMOTE_URL,
 } from './config.js';
-import { store, actions, persistedSnapshot, selectors } from './state.js';
+import { store, actions, persistedSnapshot } from './state.js';
 import { migrate } from './migration.js';
 import { processDocument } from './schema.js';
 import { buildIndex } from './search.js';
@@ -29,7 +35,6 @@ import { applyTheme, watchSystemTheme } from './theme.js';
 import { initRouter, go, replaceGo } from './router.js';
 import { t } from './i18n.js';
 import { pickLocale, uid, vibrate, dateKey } from './utils.js';
-import { icon } from './icons.js';
 import * as tasbih from './tasbih.js';
 import * as speech from './speech.js';
 import * as backup from './backup.js';
@@ -40,7 +45,30 @@ import { qiblaBearing } from './qibla.js';
 import { updateQiblaCompassDOM } from './views/qibla.js';
 import { clampPage, nextPage as mushafNextPage, prevPage as mushafPrevPage } from './mushaf.js';
 import * as recitation from './recitation.js';
-import { buildMushafJump, buildMushafAyahDetail } from './views/mushafReader.js';
+import {
+  buildMushafJump,
+  buildMushafAyahDetail,
+  buildMushafBookmarks,
+  setBookmarkFolderFilter,
+  buildKhatmaPlanForm,
+  setFlipDirection,
+  setActiveTafsirTab,
+  getActiveTafsirTab,
+} from './views/mushafReader.js';
+import { buildWordStudyPanel, buildMushafSettingsPanel } from './views/tafsirPanel.js';
+import { calculateTimes, nextPrayer } from './prayer.js';
+import { fastPhase, formatCountdown } from './ramadan.js';
+import { computeZakat, computeFitr, hawlDueFor } from './zakat.js';
+import {
+  loadCatalog,
+  findMoshaf,
+  surahUrl,
+  customMoshafId,
+  validateCustomServer,
+  searchReciters,
+} from './audioCatalog.js';
+import * as audioStore from './audioStore.js';
+import * as player from './player.js';
 import { openModal, closeModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import {
@@ -53,6 +81,11 @@ import { buildItemForm, buildCategoryForm, buildLibraryForm } from './views/edit
 import { buildDayDetail, buildNoteForm } from './components/calendarModals.js';
 import { PRESETS as TASBIH_PRESETS } from './views/tasbih.js';
 import { playSound } from './prayerSound.js';
+import { dayComplete } from './prayerLog.js';
+import { generateCardBlob, downloadBlob, cardFilename } from './shareCard.js';
+import { ramadanKhatmaPreset } from './khatma.js';
+
+const { requestPermission } = notifications;
 
 /* ------------------------------------------------------------------ */
 /* Boot                                                                */
@@ -123,9 +156,38 @@ function refreshLibraryIndex() {
   const itemIndex = buildItemIndex(state.library.documents, state.customContent);
   store.dispatch(actions.setLibraryIndex(itemIndex));
   buildIndex(itemIndex);
+  // Content edits (bundled-library updates, imports) can remove item ids that
+  // favorites/collections still reference. Prune those dead references so
+  // counts stay honest and backups stay clean. Reducer no-ops when clean.
+  store.dispatch(actions.pruneDanglingRefs(new Set(Object.keys(itemIndex))));
 }
 
 let lastCustomContentRef = null;
+
+/* ------------------------------------------------------------------ */
+/* Mobile nav drawer: open/close with focus management                 */
+/* ------------------------------------------------------------------ */
+
+let navDrawerOpener = null;
+
+function openNavDrawer() {
+  const active = document.activeElement;
+  navDrawerOpener = active && typeof active.focus === 'function' ? active : null;
+  document.body.classList.add('nav-drawer-open');
+  // Move focus into the sheet so keyboard/SR users land inside it, not on
+  // the covered page behind the overlay.
+  requestAnimationFrame(() => {
+    const closeBtn = document.querySelector('.nav-drawer [data-action="nav-drawer-close"]');
+    closeBtn?.focus();
+  });
+}
+
+function closeNavDrawer() {
+  if (!document.body.classList.contains('nav-drawer-open')) return;
+  document.body.classList.remove('nav-drawer-open');
+  navDrawerOpener?.focus();
+  navDrawerOpener = null;
+}
 
 /**
  * Renders directly to #main, bypassing renderer.js/views entirely, since
@@ -171,10 +233,20 @@ function onStateChange(stateArg) {
       refreshLibraryIndex();
       state = store.getState();
     }
+    // FIX (review v3.1 A1/B3): RESTORE_STATE / RESET_ALL wipe the ephemeral
+    // quran/mushaf slices, but the lazy-fetch "started" guards below are
+    // module-level and used to stay true — leaving the readers stuck on
+    // "Loading…" for the rest of the session. Whenever the data is gone,
+    // the guard is wrong: reset it so the next navigation refetches.
+    if (!state.quran.meta) quranMetaFetchStarted = false;
+    if (!state.mushaf.meta) mushafMetaFetchStarted = false;
     applyTheme(state.settings);
     if (state.activeView === VIEWS.QURAN) ensureQuranData(state);
     if (state.activeView === VIEWS.MUSHAF) ensureMushafData(state);
+    if (state.activeView === VIEWS.AUDIO) ensureRecitersData(state);
     updateCompassLifecycle(state);
+    updateRamadanLifecycle(state);
+    updateHomeTickerLifecycle(state);
     render(state);
   } catch (err) {
     renderErrorScreen(err);
@@ -232,6 +304,133 @@ function stopCompass() {
   compass.stop();
 }
 
+/* ------------------------------------------------------------------ */
+/* Full-surah audio: catalog + player + offline downloads              */
+/* ------------------------------------------------------------------ */
+
+let batchCancelled = false;
+
+async function startAudioPlay(moshafId, surah) {
+  const state = store.getState();
+  // FIX (review A1): the reciters catalog is lazily loaded by the Audio
+  // view — but this path runs from the Qur'an view, the player bar, and
+  // auto-advance. Guarantee the catalog before resolving any moshaf.
+  // loadCatalog() is idempotent and cached; it never throws.
+  await loadCatalog();
+  const customs = state.settings.customReciters || [];
+  let moshaf = findMoshaf(moshafId, customs);
+  if (!moshaf) {
+    // First launch (no preference yet) or a stale/removed id: fall back to
+    // Al-Husary murattal, then to the first entry in the catalog.
+    const husary = findMoshaf('mp3-118-118', customs);
+    moshafId = husary ? husary.id : searchReciters('', customs)[0]?.id;
+    moshaf = findMoshaf(moshafId, customs);
+  }
+  if (!moshaf) {
+    showToast(t('audio.playFailed', state.settings.language));
+    store.dispatch(actions.setAudioPlayer({ moshafId: null, surah: null, playing: false }));
+    return;
+  }
+  // FIX (review A3): one voice at a time — starting a surah stops any
+  // verse-by-verse recitation in flight.
+  if (recitation.currentlyPlayingKey()) recitation.stop();
+  store.dispatch(actions.setAudioPlayer({ moshafId, surah, playing: true }));
+  store.dispatch(actions.setAudioPrefs({ moshafId }));
+  try {
+    const { offline, error } = await player.play(moshafId, surah, surahUrl(moshaf.server, surah));
+    store.dispatch(actions.setAudioPlayer({ offline }));
+    // FIX (review A2/B4): playback could not start (dead URL, autoplay
+    // rejection, storage failure) — revert the optimistic state and say
+    // so, instead of a player bar that mimes playing forever.
+    if (error) {
+      store.dispatch(actions.setAudioPlayer({ playing: false }));
+      showToast(t('audio.playFailed', state.settings.language));
+    }
+  } catch (err) {
+    console.error('[app] startAudioPlay failed', err);
+    store.dispatch(actions.setAudioPlayer({ playing: false }));
+    showToast(t('audio.playFailed', state.settings.language));
+  }
+}
+
+function wirePlayer() {
+  player.onPlayerPatch((info) => {
+    // DOM patches only — never the store — while audio is running.
+    const bar = document.querySelector('.player-bar');
+    if (!bar) return;
+    const timeEl = bar.querySelector('[data-player-time]');
+    const durEl = bar.querySelector('[data-player-dur]');
+    const seek = bar.querySelector('[data-player-seek]');
+    const bufEl = bar.querySelector('[data-player-buffer]');
+    const fmt = (s) => {
+      const n = Math.max(0, Math.floor(s || 0));
+      return `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
+    };
+    // While the seek thumb is being dragged (it has focus), the live preview
+    // written by the input handler owns the time label — don't let the
+    // timeupdate patches overwrite it until the drag ends.
+    if (timeEl && !(seek && document.activeElement === seek))
+      timeEl.textContent = fmt(info.currentTime);
+    if (durEl) durEl.textContent = fmt(info.duration);
+    if (seek && document.activeElement !== seek && info.duration > 0) {
+      seek.value = String((info.currentTime / info.duration) * 100);
+    }
+    // FIX (review A6): honest buffering state — shown only when the element
+    // wants to play but has no data yet, never as a false "playing".
+    if (bufEl) bufEl.hidden = !info.buffering;
+  });
+  // FIX (review A10): the element is the source of truth — if the OS,
+  // headphones, or a suspended tab pause playback, the store follows.
+  player.onPlayingStateChange((playing) => {
+    const p = store.getState().player;
+    if (p?.moshafId && p.playing !== playing) {
+      store.dispatch(actions.setAudioPlayer({ playing }));
+    }
+  });
+  // FIX (review A2/R12): a mid-stream drop (tunnel Wi-Fi) reverts the UI
+  // and tells the person — no silent lying bar.
+  player.onPlayerError(() => {
+    const p = store.getState().player;
+    if (p?.moshafId && p.playing) {
+      store.dispatch(actions.setAudioPlayer({ playing: false }));
+      showToast(t('audio.playFailed', store.getState().settings.language));
+    }
+  });
+  // FIX (review A7/B8): verse playback failures are spoken, not swallowed.
+  recitation.onPlaybackError(() => {
+    showToast(t('audio.playFailed', store.getState().settings.language));
+  });
+  player.onTrackEnded(() => {
+    const state = store.getState();
+    const p = state.player;
+    if (!p?.moshafId || p.surah == null) return;
+    if (state.settings.audio.repeat === 'one') {
+      startAudioPlay(p.moshafId, p.surah);
+      return;
+    }
+    if (p.surah < 114) startAudioPlay(p.moshafId, p.surah + 1);
+    else store.dispatch(actions.setAudioPlayer({ playing: false }));
+  });
+}
+
+async function ensureRecitersData(state) {
+  if (state.activeView !== VIEWS.AUDIO) return;
+  const doc = await loadCatalog();
+  // Flip catalogReady exactly once: true state change → one re-render that
+  // drops the loading hint. Reducer no-ops on every later call.
+  if (doc) store.dispatch(actions.setAudioCatalogReady());
+}
+
+async function downloadOne(moshafId, surah) {
+  const state = store.getState();
+  const moshaf = findMoshaf(moshafId, state.settings.customReciters || []);
+  if (!moshaf) return { ok: false, error: 'no-moshaf' };
+  const res = await audioStore.downloadSurah(moshafId, surah, surahUrl(moshaf.server, surah));
+  if (res.ok)
+    store.dispatch(actions.markAudioDownload(audioStore.audioKey(moshafId, surah), res.bytes));
+  return res;
+}
+
 function updateCompassLifecycle(state) {
   const onQibla = state.activeView === VIEWS.QIBLA;
   if (!onQibla) {
@@ -242,6 +441,129 @@ function updateCompassLifecycle(state) {
   // wait for the person to tap "Enable Compass" (see clickHandlers below)
   // rather than starting automatically.
   if (compass.isSupported() && !compass.needsPermission()) startCompassIfNeeded();
+}
+
+/* ------------------------------------------------------------------ */
+/* Ramadan: live Suhoor/Iftar countdown                                */
+/* ------------------------------------------------------------------ */
+// A per-second countdown must not flow through the store — dispatching
+// every second would re-render the whole view and hammer localStorage
+// (the store persists on every action). Instead, exactly like the Qibla
+// compass heading, a single interval patches the countdown DOM node's
+// text directly; the view itself only re-renders on real state changes.
+
+let ramadanTickerHandle = null;
+
+function ramadanTick() {
+  const state = store.getState();
+  if (state.activeView !== VIEWS.RAMADAN) return;
+  const el = document.querySelector('[data-ramadan-countdown]');
+  if (!el) return;
+
+  const p = state.settings.prayer;
+  if (p.latitude == null || p.longitude == null) return;
+
+  const now = new Date();
+  const tz = -now.getTimezoneOffset() / 60;
+  const times = calculateTimes({
+    date: now,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    timezoneOffsetHours: tz,
+    method: p.method,
+    asr: p.asr,
+  });
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const tomorrowTimes = calculateTimes({
+    date: tomorrow,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    timezoneOffsetHours: tz,
+    method: p.method,
+    asr: p.asr,
+  });
+
+  const phase = fastPhase(now, times, tomorrowTimes.fajr);
+  const nowMs =
+    now.getHours() * 3600000 +
+    now.getMinutes() * 60000 +
+    now.getSeconds() * 1000 +
+    now.getMilliseconds();
+  let targetMs = phase.targetHours * 3600000;
+  if (targetMs <= nowMs) targetMs += 86400000; // night phase counting into tomorrow
+  el.textContent = formatCountdown(targetMs - nowMs);
+
+  // Phase rollover (Iftar reached, or Suhoor end reached): the label data
+  // is stale, so nudge a cheap re-render through a no-op-ish store action.
+  if (targetMs - nowMs < 1000) store.dispatch(actions.setSpeakingItem(null));
+}
+
+function updateRamadanLifecycle(state) {
+  const onRamadan = state.activeView === VIEWS.RAMADAN;
+  if (onRamadan && ramadanTickerHandle == null) {
+    ramadanTick();
+    ramadanTickerHandle = setInterval(ramadanTick, 1000);
+  } else if (!onRamadan && ramadanTickerHandle != null) {
+    clearInterval(ramadanTickerHandle);
+    ramadanTickerHandle = null;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Home: live next-prayer countdown                                    */
+/* ------------------------------------------------------------------ */
+// Same discipline as the Ramadan ticker: a per-second clock must not flow
+// through the store (it would re-render Home and hit localStorage every
+// second). One interval patches [data-home-countdown] directly; the view
+// re-renders only on genuine state changes.
+
+let homeTickerHandle = null;
+
+function homeTick() {
+  const state = store.getState();
+  if (state.activeView !== VIEWS.HOME) return;
+  const el = document.querySelector('[data-home-countdown]');
+  if (!el) return;
+
+  const p = state.settings.prayer;
+  if (p.latitude == null || p.longitude == null) return;
+
+  const now = new Date();
+  const tz = -now.getTimezoneOffset() / 60;
+  const times = calculateTimes({
+    date: now,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    timezoneOffsetHours: tz,
+    method: p.method,
+    asr: p.asr,
+  });
+  if (!times) return;
+  const next = nextPrayer(times, now);
+
+  const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  const diffHours = (next.hours - nowHours + 24) % 24;
+  const totalSec = Math.round(diffHours * 3600);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  el.textContent =
+    h > 0 ? `${h}h ${String(m).padStart(2, '0')}m` : `${m}m ${String(s).padStart(2, '0')}s`;
+
+  // Prayer rollover: the name/clock-time next to the countdown is now stale.
+  // Nudge a cheap re-render the same way the Ramadan ticker does.
+  if (totalSec < 1) store.dispatch(actions.setSpeakingItem(null));
+}
+
+function updateHomeTickerLifecycle(state) {
+  const onHome = state.activeView === VIEWS.HOME;
+  if (onHome && homeTickerHandle == null) {
+    homeTick();
+    homeTickerHandle = setInterval(homeTick, 1000);
+  } else if (!onHome && homeTickerHandle != null) {
+    clearInterval(homeTickerHandle);
+    homeTickerHandle = null;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -288,6 +610,10 @@ async function ensureQuranData(state) {
       quranSurahFetchesInFlight.delete(id);
     }
   }
+
+  if (state.settings.mushafPrefs.wordByWordStudy) {
+    ensureQuranWordsData(store.getState(), id);
+  }
 }
 
 async function ensureMushafData(state) {
@@ -326,6 +652,17 @@ async function ensureMushafData(state) {
     store.dispatch(actions.setMushafBookmark(page));
   }
 
+  // Khatma progress: opening a page counts as having read it. Idempotent
+  // (the reducer no-ops when already marked), so it's safe on every render.
+  if (!state.mushafPagesRead[key]) {
+    store.dispatch(actions.markMushafPageVisited(key));
+    // The reducer just recorded a khatma completion if this was the final
+    // page — celebrate once, here, where side effects belong.
+    if (Object.keys(store.getState().mushafPagesRead).length >= MUSHAF_PAGE_COUNT) {
+      showToast(t('khatma.completeToast', store.getState().settings.language), { duration: 6000 });
+    }
+  }
+
   if (!state.mushaf.pages[key] && !mushafPageFetchesInFlight.has(key)) {
     mushafPageFetchesInFlight.add(key);
     try {
@@ -353,6 +690,145 @@ async function ensureMushafData(state) {
         .finally(() => mushafPageFetchesInFlight.delete(adjKey));
     }
   }
+
+  // Word-by-word study data for every surah touched by this page, so the
+  // words render as tappable spans immediately rather than only after a
+  // separate fetch triggered by the first tap.
+  if (state.settings.mushafPrefs.wordByWordStudy) {
+    const freshDoc = store.getState().mushaf.pages[key];
+    if (freshDoc) {
+      for (const chapter of freshDoc.chapters) {
+        ensureQuranWordsData(store.getState(), chapter.number);
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Word study + tafsir: lazy data loading                              */
+/* ------------------------------------------------------------------ */
+
+const quranWordsFetchesInFlight = new Set();
+let quranRootsFetchStarted = false;
+let tafsirEditionsFetchStarted = false;
+const tafsirTextFetchesInFlight = new Set();
+
+async function ensureQuranWordsData(state, surahNumber) {
+  const id = String(surahNumber);
+  if (state.quranWords[id] || quranWordsFetchesInFlight.has(id)) return;
+  quranWordsFetchesInFlight.add(id);
+  try {
+    const words = await fetchJSON(QURAN_WORDS_URL(id));
+    store.dispatch(actions.setQuranWords(id, words));
+  } catch (err) {
+    console.error('[wordStudy] failed to load word data', id, err);
+  } finally {
+    quranWordsFetchesInFlight.delete(id);
+  }
+}
+
+async function ensureQuranRoots(state) {
+  if (state.quranRoots || quranRootsFetchStarted) return;
+  quranRootsFetchStarted = true;
+  try {
+    const roots = await fetchJSON(QURAN_ROOTS_URL);
+    store.dispatch(actions.setQuranRoots(roots));
+  } catch (err) {
+    console.error('[wordStudy] failed to load root index', err);
+    quranRootsFetchStarted = false;
+  }
+}
+
+async function ensureTafsirEditions(state) {
+  if (state.tafsirEditions || tafsirEditionsFetchStarted) return;
+  tafsirEditionsFetchStarted = true;
+  try {
+    const editions = await fetchJSON(TAFSIR_EDITIONS_URL);
+    store.dispatch(actions.setTafsirEditions(editions));
+  } catch (err) {
+    console.error('[tafsir] failed to load editions catalog', err);
+    tafsirEditionsFetchStarted = false;
+  }
+}
+
+/** Bundled editions fetch from the app's own data/ folder; on-demand
+ *  ("remote") editions only ever fetch when `allowRemote` is explicitly
+ *  passed (the person tapped "Download") — never silently over the network. */
+async function ensureTafsirText(state, editionId, surahNumber, allowRemote = false) {
+  const id = String(surahNumber);
+  const key = `${editionId}:${id}`;
+  if (state.tafsir?.[editionId]?.[id] || tafsirTextFetchesInFlight.has(key)) return true;
+  const edition = (state.tafsirEditions?.editions || []).find((e) => e.id === editionId);
+  if (!edition) return false;
+  if (!edition.bundled && !allowRemote) return false;
+  tafsirTextFetchesInFlight.add(key);
+  try {
+    const url = edition.bundled
+      ? TAFSIR_TEXT_URL(editionId, id)
+      : TAFSIR_REMOTE_URL(edition.slug, id);
+    const raw = await fetchJSON(url);
+    // The remote spa5k/tafsir_api shape is an array of {text, ayah, surah};
+    // the bundled shape is already {ayah: text}. Normalize once here.
+    const text = Array.isArray(raw)
+      ? Object.fromEntries(
+          raw.filter((r) => r.ayah != null && r.text).map((r) => [String(r.ayah), r.text.trim()])
+        )
+      : raw;
+    store.dispatch(actions.setTafsirText(editionId, id, text));
+    return true;
+  } catch (err) {
+    console.error('[tafsir] failed to load text', key, err);
+    return false;
+  } finally {
+    tafsirTextFetchesInFlight.delete(key);
+  }
+}
+
+/** Open the shared ayah-detail + tafsir modal from anywhere (Mushaf tap,
+ *  classic reader's Tafsir button, or the word-study popover's "open
+ *  tafsir" shortcut). `page` is the Mushaf page to record on a new
+ *  bookmark, or null when opened from a context with no page concept. */
+/** Best-effort page lookup for contexts where we don't already know the
+ *  page (root-jump, tafsir tab switches, the classic reader's Tafsir
+ *  button): search pages already in memory first, then fall back to the
+ *  Mushaf index's "first page of this surah" if it's loaded, else null
+ *  (in which case the ayah-detail modal simply omits the bookmark button). */
+function currentAyahDetailPage(surah, ayah) {
+  const state = store.getState();
+  for (const [pageNum, doc] of Object.entries(state.mushaf.pages)) {
+    const chapter = doc.chapters.find((c) => String(c.number) === String(surah));
+    if (chapter?.verses.some((v) => String(v.number) === String(ayah))) return Number(pageNum);
+  }
+  return state.mushaf.meta?.surahFirstPage?.[String(surah)] || null;
+}
+
+async function openAyahStudy(surah, ayah, page = null) {
+  let state = store.getState();
+  if (!state.quran.meta) {
+    try {
+      store.dispatch(actions.setQuranMeta(await fetchJSON(QURAN_META_URL)));
+    } catch {
+      /* best effort */
+    }
+  }
+  if (!state.quran.surahs[String(surah)]) {
+    try {
+      store.dispatch(actions.setQuranSurah(surah, await fetchJSON(QURAN_SURAH_URL(surah))));
+    } catch {
+      /* best effort */
+    }
+  }
+  await ensureTafsirEditions(store.getState());
+  state = store.getState();
+  const defaultId = getActiveTafsirTab() || state.settings.mushafPrefs.defaultTafsir;
+  setActiveTafsirTab(defaultId);
+  if (defaultId) await ensureTafsirText(store.getState(), defaultId, surah);
+  state = store.getState();
+  const surahDoc = state.quran.surahs[String(surah)];
+  const arabicText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayah))?.text || '';
+  openModal(buildMushafAyahDetail(arabicText, surahDoc, surah, ayah, state, page), {
+    labelledBy: 'modal-title-mushaf-ayah',
+  });
 }
 
 async function boot() {
@@ -377,14 +853,23 @@ async function boot() {
       () => store.getState().reminders,
       store.getState().settings.language,
       () => store.getState().calendarNotes,
-      () => store.getState().settings.prayer
+      () => store.getState().settings.prayer,
+      () => store.getState().zakatHistory
     );
 
     store.subscribe(onStateChange);
+    // FIX (review v3.1 A4): persistence failures (e.g. storage quota
+    // exceeded) were silent — the app looked like it was saving while every
+    // write was lost. One honest toast, once per broken session.
+    store.onPersistError = () => {
+      showToast(t('storage.persistFailed', store.getState().settings.language), { duration: 6000 });
+    };
+    wirePlayer();
     initRouter(); // dispatches the first NAVIGATE
     render(store.getState());
 
     registerServiceWorker();
+    wireInstallPrompt();
     bindGlobalEvents();
   } catch (err) {
     renderErrorScreen(err);
@@ -396,12 +881,86 @@ function registerServiceWorker() {
   const doRegister = () => {
     navigator.serviceWorker
       .register('sw.js')
+      .then((registration) => {
+        // PWA update flow: without this, a cache-first worker means people
+        // who installed the app keep running the old build indefinitely —
+        // the exact failure mode this app's changelog has had to fix by
+        // hand before. When a freshly installed worker is *waiting* (i.e.
+        // the person has already used the app before — controller exists),
+        // offer a one-tap refresh. The worker itself answers SKIP_WAITING
+        // (sw.js) and the reload lands in the new version.
+        const offerUpdate = (worker) => {
+          if (!navigator.serviceWorker.controller) return; // first install, nothing to update
+          showToast(t('update.available', store.getState().settings.language), {
+            duration: 0, // no auto-dismiss: an update notice should stay tappable
+            actionLabel: t('update.refresh', store.getState().settings.language),
+            onAction: () => {
+              navigator.serviceWorker.addEventListener(
+                'controllerchange',
+                () => window.location.reload(),
+                { once: true }
+              );
+              worker.postMessage('SKIP_WAITING');
+              // Belt-and-braces: if controllerchange never fires (e.g. the
+              // browser decided otherwise), still reload after a grace period.
+              setTimeout(() => window.location.reload(), 4000);
+            },
+          });
+        };
+
+        if (registration.waiting && navigator.serviceWorker.controller) {
+          offerUpdate(registration.waiting);
+        } else {
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                offerUpdate(newWorker);
+              }
+            });
+          });
+        }
+
+        // Also poll on regaining focus/network — installed PWAs can sit in
+        // the background for weeks; this catches updates shipped meanwhile.
+        const checkForUpdate = () => registration.update().catch(() => {});
+        window.addEventListener('focus', checkForUpdate);
+        window.addEventListener('online', checkForUpdate);
+        setInterval(checkForUpdate, 6 * 60 * 60 * 1000); // every 6h
+      })
       .catch((err) => console.warn('[sw] registration failed', err));
   };
   // boot() is async and may finish well after window's 'load' event already fired
   // (e.g. slow catalog fetch), so check readyState instead of blindly awaiting 'load'.
   if (document.readyState === 'complete') doRegister();
   else window.addEventListener('load', doRegister);
+}
+
+/* ------------------------------------------------------------------ */
+/* Install prompt (onboarding "Install the app" step)                  */
+/* ------------------------------------------------------------------ */
+// beforeinstallprompt can be consumed exactly once, so the event itself
+// lives here; the store only carries the reactive flags (state.install)
+// so the onboarding panel re-renders when availability changes. Browsers
+// without the event (iOS Safari) simply show the manual hint instead.
+
+let deferredInstallPrompt = null;
+
+function wireInstallPrompt() {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // keep the browser's own mini-infobar out of the way
+    deferredInstallPrompt = e;
+    store.dispatch(actions.installPromptReady());
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    store.dispatch(actions.markAppInstalled());
+  });
+  // Already running standalone (launched from a home-screen icon)?
+  const standalone =
+    window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  if (standalone) store.dispatch(actions.markAppInstalled());
 }
 
 /* ------------------------------------------------------------------ */
@@ -463,6 +1022,29 @@ const clickHandlers = {
     go(ds.view, params);
   },
 
+  /* ---------------- Shell: collapsible nav ---------------- */
+
+  'nav-toggle': () => {
+    // Desktop: collapse/expand the side rail (persisted). Mobile: open the
+    // grouped drawer sheet (transient body class — not worth persisting).
+    const isDesktop = window.matchMedia('(min-width: 960px)').matches;
+    if (isDesktop) {
+      const next = !store.getState().settings.navCollapsed;
+      store.dispatch(actions.updateSettings({ navCollapsed: next }));
+    } else {
+      openNavDrawer();
+    }
+  },
+
+  'nav-drawer-close': () => {
+    closeNavDrawer();
+  },
+
+  'nav-drawer-go': (ds) => {
+    closeNavDrawer();
+    go(ds.view, {});
+  },
+
   'quick-theme-toggle': () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     store.dispatch(actions.updateSettings({ themeMode: isDark ? 'light' : 'dark' }));
@@ -470,32 +1052,6 @@ const clickHandlers = {
 
   'toggle-favorite': (ds) => {
     store.dispatch(actions.toggleFavorite(ds.itemId));
-  },
-
-  'set-zakat-standard': (ds) => {
-    store.dispatch(actions.updateZakat({ nisabStandard: ds.value === 'gold' ? 'gold' : 'silver' }));
-  },
-
-  'khatm-start': (ds) => {
-    const state = store.getState();
-    const days = parseInt(ds.days, 10) || 30;
-    const startPage = state.mushafBookmark.page || 1;
-    store.dispatch(actions.startKhatm(days, startPage));
-    if (state.settings.hapticsEnabled) vibrate(10);
-  },
-
-  'khatm-reset': () => {
-    store.dispatch(actions.resetKhatm());
-  },
-
-  'qada-step': (ds) => {
-    const state = store.getState();
-    store.dispatch(actions.stepQada(ds.prayer, parseInt(ds.delta, 10) || 0));
-    if (state.settings.hapticsEnabled) vibrate(6);
-  },
-
-  'delete-sadaqah': (ds) => {
-    store.dispatch(actions.deleteSadaqah(ds.id));
   },
 
   'counter-tap': (ds) => {
@@ -565,24 +1121,48 @@ const clickHandlers = {
   'share-item': async (ds) => {
     const entry = getItemEntry(ds.itemId);
     if (!entry) return;
-    const lang = store.getState().settings.language;
+    const state = store.getState();
+    const lang = state.settings.language;
     const text = itemClipboardText(entry.item, lang);
     const title = pickLocale(entry.item.title, lang);
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text });
-      } catch {
-        /* user cancelled */
+    closeModal();
+
+    // v3.0: share as a rendered image card when possible (Web Share with
+    // files), fall back to a PNG download, and keep the old text-share path
+    // as the last resort so sharing never regresses.
+    let handled = false;
+    try {
+      const blob = await generateCardBlob(entry.item, state);
+      const file = new File([blob], cardFilename(entry.item), { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title, text });
+        handled = true;
+      } else {
+        downloadBlob(blob, cardFilename(entry.item));
+        showToast(t('card.imageSaved', lang));
+        handled = true;
       }
-    } else {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast(t('card.copied', lang));
-      } catch {
-        showToast(t('card.copyFailed', lang));
+    } catch (err) {
+      // The person dismissing the OS share sheet is not an error — abort cleanly.
+      if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) handled = true;
+    }
+
+    if (!handled) {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, text });
+        } catch {
+          /* user cancelled */
+        }
+      } else {
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast(t('card.copied', lang));
+        } catch {
+          showToast(t('card.copyFailed', lang));
+        }
       }
     }
-    closeModal();
   },
 
   'toggle-speech': (ds) => {
@@ -684,6 +1264,19 @@ const clickHandlers = {
     store.dispatch(actions.deleteReminder(ds.id));
   },
 
+  'import-backup-confirmed': () => {
+    if (!pendingImportPayload) {
+      closeModal();
+      return;
+    }
+    const payload = pendingImportPayload;
+    pendingImportPayload = null;
+    store.dispatch(actions.restoreState(payload));
+    closeModal();
+    showToast(t('backup.importDone', store.getState().settings.language));
+    go(VIEWS.HOME);
+  },
+
   'export-backup': () => {
     backup.downloadBackup(persistedSnapshot(store.getState()));
     showToast(t('common.done', store.getState().settings.language));
@@ -781,12 +1374,14 @@ const clickHandlers = {
   'mushaf-prev': () => {
     const state = store.getState();
     const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    setFlipDirection('prev');
     go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
   },
 
   'mushaf-next': () => {
     const state = store.getState();
     const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    setFlipDirection('next');
     go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
   },
 
@@ -821,53 +1416,108 @@ const clickHandlers = {
     const chapter = pageDoc?.chapters.find((c) => String(c.number) === String(ds.surah));
     const verse = chapter?.verses.find((v) => String(v.number) === String(ds.ayah));
     if (!verse) return;
-
-    if (!state.quran.surahs[ds.surah] && !quranSurahFetchesInFlight.has(ds.surah)) {
-      quranSurahFetchesInFlight.add(ds.surah);
-      try {
-        const surah = await fetchJSON(QURAN_SURAH_URL(ds.surah));
-        store.dispatch(actions.setQuranSurah(ds.surah, surah));
-      } catch (err) {
-        console.error('[mushaf] failed to load surah translation', ds.surah, err);
-      } finally {
-        quranSurahFetchesInFlight.delete(ds.surah);
-      }
-    }
-
-    const finalState = store.getState();
-    openModal(
-      buildMushafAyahDetail(
-        verse.text,
-        finalState.quran.surahs[ds.surah],
-        ds.surah,
-        ds.ayah,
-        finalState,
-        page
-      ),
-      { labelledBy: 'modal-title-mushaf-ayah' }
-    );
+    setActiveTafsirTab(null); // fresh ayah -> fall back to the default tafsir source
+    await openAyahStudy(ds.surah, ds.ayah, page);
   },
 
-  'mushaf-toggle-ayah-bookmark': (ds, e, target) => {
-    store.dispatch(actions.toggleMushafAyahBookmark(ds.surah, ds.ayah, ds.page));
+  'word-tap': async (ds) => {
+    const surah = ds.surah,
+      ayah = ds.ayah,
+      i = Number(ds.i);
+    store.dispatch(actions.openWordStudy(surah, ayah, i));
+    await ensureQuranWordsData(store.getState(), surah);
+    ensureQuranRoots(store.getState()); // fire-and-forget; popover works without it, just no root chips yet
+    openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
+  },
+
+  'root-jump': async (ds) => {
+    closeModal();
+    setActiveTafsirTab(null);
+    await openAyahStudy(ds.surah, ds.ayah, null);
+  },
+
+  'tafsir-open': async (ds) => {
+    closeModal();
+    await openAyahStudy(ds.surah, ds.ayah, null);
+  },
+
+  'tafsir-tab': async (ds) => {
+    setActiveTafsirTab(ds.edition);
+    await ensureTafsirText(store.getState(), ds.edition, ds.surah);
+    await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
+  },
+
+  'tafsir-download': async (ds) => {
+    const lang = store.getState().settings.language;
+    const ok = await ensureTafsirText(store.getState(), ds.edition, ds.surah, true);
+    showToast(t(ok ? 'tafsir.downloadDone' : 'tafsir.downloadFailed', lang));
+    if (ok) {
+      setActiveTafsirTab(ds.edition);
+      await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
+    }
+  },
+
+  'mushaf-open-settings': () => {
+    openModal(buildMushafSettingsPanel(store.getState()), {
+      labelledBy: 'modal-title-mushaf-settings',
+    });
+  },
+
+  'mushaf-set-font': (ds) => {
+    store.dispatch(actions.updateMushafPrefs({ font: ds.font }));
+    openModal(buildMushafSettingsPanel(store.getState()), {
+      labelledBy: 'modal-title-mushaf-settings',
+    });
+  },
+
+  'mushaf-set-paper': (ds) => {
+    store.dispatch(actions.updateMushafPrefs({ paper: ds.paper }));
+    openModal(buildMushafSettingsPanel(store.getState()), {
+      labelledBy: 'modal-title-mushaf-settings',
+    });
+  },
+
+  'mushaf-toggle-bookmark': async (ds) => {
+    const key = `${ds.surah}:${ds.ayah}`;
     const state = store.getState();
-    const lang = state.settings.language;
-    const isBookmarked = selectors.isMushafAyahBookmarked(state, ds.surah, ds.ayah);
-    // Patch the button in place rather than reopening the modal — avoids
-    // stealing focus/scroll from an already-open dialog. The Mushaf page
-    // underneath has already re-rendered from the dispatch above, so the
-    // star marker on the page itself is correct as soon as the modal closes.
-    if (target) {
-      target.classList.toggle('btn--active', isBookmarked);
-      target.setAttribute('aria-pressed', String(isBookmarked));
-      target.innerHTML = `${icon(isBookmarked ? 'star-filled' : 'star', { size: 16 })} ${t(isBookmarked ? 'mushaf.bookmarked' : 'mushaf.bookmark', lang)}`;
-    }
-    if (state.settings.hapticsEnabled) vibrate(isBookmarked ? 10 : 6);
+    const wasMarked = state.ayahBookmarks.some((b) => b.key === key);
+    store.dispatch(actions.toggleAyahBookmark(key, ds.surah, ds.ayah, clampPage(ds.page)));
+    // Keep the modal open and re-render its content in place so the person
+    // can also listen/copy right after (un)bookmarking without losing context.
+    await openAyahStudy(ds.surah, ds.ayah, clampPage(ds.page));
+    const lang = store.getState().settings.language;
+    showToast(t(wasMarked ? 'mushaf.bookmarkRemoved' : 'mushaf.bookmarkAdded', lang));
   },
 
-  'mushaf-jump-remove-bookmark': (ds, e, target) => {
-    store.dispatch(actions.toggleMushafAyahBookmark(ds.surah, ds.ayah, null));
-    target?.closest('.mushaf-jump__bookmark-row')?.remove();
+  'mushaf-open-bookmarks': () => {
+    openModal(buildMushafBookmarks(store.getState()), {
+      labelledBy: 'modal-title-mushaf-bookmarks',
+    });
+  },
+
+  'mushaf-remove-bookmark': (ds) => {
+    store.dispatch(actions.removeAyahBookmark(ds.key));
+    openModal(buildMushafBookmarks(store.getState()), {
+      labelledBy: 'modal-title-mushaf-bookmarks',
+    });
+  },
+
+  'mushaf-reset-progress': () => {
+    const lang = store.getState().settings.language;
+    store.dispatch(actions.resetMushafProgress());
+    openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+    showToast(t('mushaf.khatmaResetDone', lang));
+  },
+
+  'khatma-open-plan': () => {
+    openModal(buildKhatmaPlanForm(store.getState()), { labelledBy: 'modal-title-khatma-plan' });
+  },
+
+  'khatma-clear-plan': () => {
+    // Removing the schedule never touches reading progress — say so.
+    store.dispatch(actions.clearKhatmaPlan());
+    openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+    showToast(t('khatma.planCleared', store.getState().settings.language));
   },
 
   'mushaf-copy-ayah': async (ds) => {
@@ -885,6 +1535,13 @@ const clickHandlers = {
     if (recitation.isPlaying(ds.key)) {
       recitation.stop();
     } else {
+      // FIX (review A3): one voice at a time — starting a verse pauses the
+      // full-surah player (kept in the bar, resumable).
+      const p = store.getState().player;
+      if (p?.moshafId && p.playing) {
+        player.pause();
+        store.dispatch(actions.setAudioPlayer({ playing: false }));
+      }
       recitation.play(ds.url, ds.key);
     }
   },
@@ -919,8 +1576,294 @@ const clickHandlers = {
     );
   },
 
+  'prayer-log-cycle': (ds) => {
+    const state = store.getState();
+    const todayKey = dateKey(new Date());
+    const wasComplete = dayComplete(state.dailyChecklist[todayKey]);
+    store.dispatch(actions.cyclePrayerLog(ds.prayer));
+    const nowComplete = dayComplete(store.getState().dailyChecklist[todayKey]);
+    // Celebrate the moment the fifth prayer lands — once per day, not on
+    // every later cycle (complete → complete never re-fires).
+    if (nowComplete && !wasComplete) {
+      showToast(t('plog.allLoggedToast', state.settings.language), { duration: 3200 });
+    }
+  },
+
+  'khatma-ramadan-preset': () => {
+    const lang = store.getState().settings.language;
+    const preset = ramadanKhatmaPreset(new Date());
+    const set = (id, v) => {
+      const input = document.getElementById(id);
+      if (input) input.value = v;
+    };
+    set('khatma-start-date', preset.startDate);
+    set('khatma-target-date', preset.targetDate);
+    set('khatma-daily-target', String(preset.dailyTarget));
+    showToast(t('khatma.presetFilled', lang), { duration: 3200 });
+  },
+
+  'stats-heatmap-shift': (ds) => {
+    const now = new Date();
+    const baseRef = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    store.dispatch(actions.shiftStatsHeatmapMonth(parseInt(ds.delta, 10) || 0, baseRef));
+  },
+
+  'onboarding-dismiss': () => {
+    store.dispatch(actions.dismissOnboarding());
+  },
+
+  'onboarding-install': async () => {
+    if (!deferredInstallPrompt) return;
+    const prompt = deferredInstallPrompt;
+    deferredInstallPrompt = null;
+    store.dispatch(actions.installPromptClear());
+    try {
+      await prompt.prompt();
+      // userChoice resolves after the person answers the browser dialog;
+      // 'appinstalled' (wired above) flips the done flag on acceptance.
+      await prompt.userChoice?.catch?.(() => {});
+    } catch {
+      /* the browser may refuse the second prompt — nothing to do */
+    }
+  },
+
   'prayer-test-sound': () => {
     playSound(store.getState().settings.prayer.alertSound);
+  },
+
+  /* ---------------- Ramadan companion ---------------- */
+
+  'ramadan-toggle-fast': (ds) => {
+    store.dispatch(actions.toggleRamadanFast(ds.logKey, ds.day));
+    const state = store.getState();
+    if (state.settings.hapticsEnabled) vibrate(10);
+  },
+
+  'toggle-ramadan-alert': (ds) => {
+    const current = store.getState().settings.prayer.ramadanAlerts || {
+      suhoor: false,
+      iftar: false,
+      suhoorOffset: 30,
+    };
+    store.dispatch(
+      actions.updatePrayerSettings({
+        ramadanAlerts: { ...current, [ds.alert]: !current[ds.alert] },
+      })
+    );
+  },
+
+  'ramadan-enable-notifications': async () => {
+    const lang = store.getState().settings.language;
+    const perm = await requestPermission();
+    showToast(
+      t(perm === 'granted' ? 'ramadan.notificationsGranted' : 'ramadan.notificationsDenied', lang)
+    );
+    if (perm === 'granted') store.dispatch(actions.updateSettings({})); // force re-render of the permission banner
+  },
+
+  /* ---------------- Zakat calculator ------------------ */
+
+  'zakat-set-basis': (ds) => {
+    store.dispatch(actions.setZakatPrefs({ basis: ds.basis === 'silver' ? 'silver' : 'gold' }));
+  },
+
+  'zakat-clear-inputs': () => {
+    store.dispatch(actions.clearZakatInputs());
+    refocusZakatInput('in-cash');
+  },
+
+  'zakat-save-snapshot': () => {
+    const state = store.getState();
+    const r = computeZakat(state.zakat.inputs, state.zakat.prefs);
+    const f = computeFitr(state.zakat.prefs.fitrPer || 0, state.zakat.prefs.fitrPeople || 0);
+    const ts = Date.now();
+    const snapshot = {
+      id: uid('zak'),
+      ts,
+      hawlDue: hawlDueFor(ts),
+      remind: true,
+      due: r.due,
+      currency: state.zakat.prefs.currency || '',
+      netWealth: Math.round(r.netWealth * 100) / 100,
+      nisabMet: r.nisabMet,
+      fitrTotal: f.total,
+    };
+    store.dispatch(actions.saveZakatSnapshot(snapshot));
+    showToast(t('zakat.snapshotSaved', state.settings.language));
+  },
+
+  'zakat-delete-snapshot': (ds) => {
+    store.dispatch(actions.deleteZakatSnapshot(ds.id));
+  },
+
+  'zakat-toggle-hawl-remind': (ds) => {
+    const snap = store.getState().zakatHistory.find((s) => s.id === ds.id);
+    if (!snap) return;
+    store.dispatch(actions.updateZakatSnapshot(ds.id, { remind: snap.remind === false }));
+  },
+
+  /* ---------------- Ayah bookmark folders/notes ---------------- */
+
+  'bookmark-filter-folder': (ds) => {
+    setBookmarkFolderFilter(ds.folder);
+    openModal(buildMushafBookmarks(store.getState()), {
+      labelledBy: 'modal-title-mushaf-bookmarks',
+    });
+  },
+
+  'bookmark-new-folder': () => {
+    const lang = store.getState().settings.language;
+    openModal(
+      buildTextPrompt({
+        title: t('mushaf.newFolder', lang),
+        placeholder: t('mushaf.folderNamePh', lang),
+        confirmAction: 'submit-new-bookmark-folder',
+        lang,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
+    // NOTE: the submit path routes through handlePromptForm (no click
+    // handler with this name, so the form's native submit fires normally).
+  },
+
+  'bookmark-delete-folder': (ds) => {
+    store.dispatch(actions.deleteBookmarkFolder(ds.folder));
+    openModal(buildMushafBookmarks(store.getState()), {
+      labelledBy: 'modal-title-mushaf-bookmarks',
+    });
+  },
+
+  /* ---------------- Reciters & offline audio ---------------- */
+
+  'audio-select-moshaf': (ds) => {
+    store.dispatch(actions.setAudioPrefs({ moshafId: ds.id }));
+  },
+
+  'audio-download-surah': async (ds) => {
+    const lang = store.getState().settings.language;
+    showToast(t('audio.downloading', lang));
+    const res = await downloadOne(ds.moshaf, parseInt(ds.surah, 10));
+    // FIX (review A5/B6): say how it ended — silence after "Downloading…"
+    // left people guessing whether 2MB landed.
+    showToast(t(res.ok ? 'audio.downloadDone' : 'audio.downloadFailed', lang));
+  },
+
+  'audio-delete-surah': async (ds) => {
+    await audioStore.deleteAudio(ds.moshaf, parseInt(ds.surah, 10));
+    store.dispatch(
+      actions.markAudioDownload(audioStore.audioKey(ds.moshaf, parseInt(ds.surah, 10)), 0, true)
+    );
+  },
+
+  'audio-download-all': async (ds) => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    batchCancelled = false;
+    const missing = [];
+    for (let n = 1; n <= 114; n += 1) {
+      if (!state.audioDownloads[`${ds.moshaf}:${n}`]) missing.push(n);
+    }
+    if (!missing.length) {
+      showToast(t('audio.allDone', lang));
+      return;
+    }
+    showToast(t('audio.batchStarted', lang, { n: missing.length }));
+    let ok = 0;
+    for (const n of missing) {
+      if (batchCancelled) break;
+      const res = await downloadOne(ds.moshaf, n);
+      if (res.ok) ok += 1;
+      else if (res.error === 'quota') {
+        showToast(t('audio.quota', lang));
+        break;
+      }
+    }
+    showToast(
+      batchCancelled
+        ? t('audio.batchCancelled', lang, { n: ok })
+        : t('audio.batchDone', lang, { n: ok })
+    );
+  },
+
+  'audio-delete-moshaf': async (ds) => {
+    const n = await audioStore.deleteMoshafAudio(ds.moshaf);
+    for (let s = 1; s <= 114; s += 1) {
+      store.dispatch(actions.markAudioDownload(audioStore.audioKey(ds.moshaf, s), 0, true));
+    }
+    const lang = store.getState().settings.language;
+    showToast(t('audio.deleted', lang, { n }));
+  },
+
+  'audio-remove-custom': (ds) => {
+    store.dispatch(actions.removeCustomReciter(ds.id));
+  },
+
+  'quran-play-surah': (ds) => {
+    const state = store.getState();
+    const surah = parseInt(ds.surah, 10);
+    const p = state.player;
+    // If this exact track is playing → pause; if paused on it → resume;
+    // otherwise start it. Moshaf resolution (incl. loading the lazily
+    // fetched catalog) lives inside startAudioPlay — review A1.
+    if (p?.moshafId && p.surah === surah) {
+      if (p.playing) {
+        player.pause();
+        store.dispatch(actions.setAudioPlayer({ playing: false }));
+      } else {
+        player.toggle();
+        store.dispatch(actions.setAudioPlayer({ playing: true }));
+      }
+      return;
+    }
+    startAudioPlay(state.settings.audio.moshafId, surah);
+  },
+
+  'audio-play-moshaf': (ds) => {
+    startAudioPlay(ds.moshaf, 1);
+  },
+
+  /* ---------------- Player bar ---------------- */
+
+  'player-toggle': () => {
+    const p = store.getState().player;
+    if (!p?.moshafId) return;
+    if (p.playing) {
+      player.pause();
+      store.dispatch(actions.setAudioPlayer({ playing: false }));
+    } else {
+      player.toggle();
+      store.dispatch(actions.setAudioPlayer({ playing: true }));
+    }
+  },
+
+  'player-close': () => {
+    player.stop();
+    store.dispatch(
+      actions.setAudioPlayer({ moshafId: null, surah: null, playing: false, offline: false })
+    );
+  },
+
+  'player-next': () => {
+    const p = store.getState().player;
+    if (p?.surah != null && p.surah < 114) startAudioPlay(p.moshafId, p.surah + 1);
+  },
+
+  'player-prev': () => {
+    const p = store.getState().player;
+    if (p?.surah != null && p.surah > 1) startAudioPlay(p.moshafId, p.surah - 1);
+  },
+
+  'player-repeat': () => {
+    const cur = store.getState().settings.audio.repeat === 'one' ? 'off' : 'one';
+    store.dispatch(actions.setAudioPrefs({ repeat: cur }));
+  },
+
+  'player-rate': () => {
+    const RATES = [1, 1.25, 1.5, 0.75];
+    const cur = store.getState().settings.audio.rate || 1;
+    const next = RATES[(RATES.indexOf(cur) + 1) % RATES.length];
+    player.setRate(next);
+    store.dispatch(actions.setAudioPrefs({ rate: next }));
   },
 
   'tasbih-select': (ds) => {
@@ -1059,23 +2002,29 @@ const formHandlers = {
     go(VIEWS.MUSHAF, { page: String(clampPage(fd.get('page'))) });
   },
 
-  'sadaqah-add': (form) => {
+  'khatma-plan': (form) => {
     const fd = new FormData(form);
-    const amount = parseFloat(fd.get('amount'));
-    if (!Number.isFinite(amount) || amount <= 0) return;
-    store.dispatch(
-      actions.addSadaqah({
-        id: uid('sadaqah'),
-        amount,
-        cause: fd.get('cause') || 'general',
-        date: fd.get('date') || dateKey(new Date()),
-        note: (fd.get('note') || '').toString().trim().slice(0, 120),
-      })
-    );
-    // No manual form.reset() needed: the store notify above already
-    // triggers a full re-render, and this form has no state-bound
-    // `value` attributes (besides the date, which re-renders to today),
-    // so the freshly rendered form comes back blank on its own.
+    const lang = store.getState().settings.language;
+    const ISO = /^\d{4}-\d{2}-\d{2}$/;
+    const todayISO = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    };
+    const startDate = ISO.test(String(fd.get('startDate') || ''))
+      ? String(fd.get('startDate'))
+      : todayISO();
+    const targetRaw = String(fd.get('targetDate') || '');
+    const targetDate = ISO.test(targetRaw) ? targetRaw : null;
+    const dailyRaw = parseInt(fd.get('dailyTarget'), 10);
+    const dailyTarget = Number.isFinite(dailyRaw) && dailyRaw >= 1 ? Math.min(604, dailyRaw) : null;
+    if (!targetDate && !dailyTarget) {
+      showToast(t('khatma.needOne', lang));
+      return; // keep the form open so the person can fix it
+    }
+    store.dispatch(actions.setKhatmaPlan({ startDate, targetDate, dailyTarget }));
+    closeModal();
+    openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+    showToast(t('khatma.planSaved', lang));
   },
 
   item: (form) => {
@@ -1207,6 +2156,41 @@ const formHandlers = {
     closeModal();
     showToast(t('common.done', store.getState().settings.language));
   },
+
+  'audio-custom-reciter': async (form) => {
+    const fd = new FormData(form);
+    const lang = store.getState().settings.language;
+    const name = String(fd.get('name') || '').trim();
+    const check = validateCustomServer(fd.get('server'));
+    if (!name || !check.ok) {
+      showToast(t('audio.customInvalid', lang));
+      return;
+    }
+    showToast(t('audio.customChecking', lang));
+    // Verify the server actually serves audio before accepting it.
+    try {
+      const res = await fetch(surahUrl(check.server, 1), { method: 'HEAD' });
+      const type = res.headers.get('content-type') || '';
+      if (!res.ok || !/audio|octet|mpeg|mp3/i.test(type)) {
+        showToast(t('audio.customNotAudio', lang));
+        return;
+      }
+    } catch {
+      showToast(t('audio.customNotAudio', lang));
+      return;
+    }
+    store.dispatch(
+      actions.addCustomReciter({
+        id: customMoshafId(check.server),
+        nameEn: name,
+        nameAr: name,
+        rewaya: '',
+        server: check.server,
+      })
+    );
+    closeModal();
+    showToast(t('common.done', lang));
+  },
 };
 
 function handlePromptForm(form) {
@@ -1226,6 +2210,13 @@ function handlePromptForm(form) {
     store.dispatch(actions.addToCollection(id, form.dataset.itemId));
     closeModal();
     showToast(t('common.done', store.getState().settings.language));
+  } else if (action === 'submit-new-bookmark-folder') {
+    const id = uid('bmf');
+    store.dispatch(actions.createBookmarkFolder(id, value));
+    closeModal();
+    openModal(buildMushafBookmarks(store.getState()), {
+      labelledBy: 'modal-title-mushaf-bookmarks',
+    });
   }
 }
 
@@ -1259,8 +2250,42 @@ function bindGlobalEvents() {
   document.addEventListener('change', (e) => {
     const target = e.target;
 
+    if (target.matches('[data-player-seek]')) {
+      const pct = parseFloat(target.value) || 0;
+      player.seek((pct / 100) * player.duration());
+      return;
+    }
     if (target.matches('[data-action="toggle-setting"]')) {
       store.dispatch(actions.updateSettings({ [target.dataset.key]: target.checked }));
+      return;
+    }
+    if (target.matches('[data-action="toggle-mushaf-pref"]')) {
+      store.dispatch(actions.updateMushafPrefs({ [target.dataset.key]: target.checked }));
+      return;
+    }
+    if (target.matches('[data-bind="mushaf-font-scale"]')) {
+      store.dispatch(actions.updateMushafPrefs({ fontScale: parseFloat(target.value) || 1 }));
+      return;
+    }
+    if (target.matches('[data-bind="mushaf-line-spacing"]')) {
+      store.dispatch(actions.updateMushafPrefs({ lineSpacing: parseFloat(target.value) || 1 }));
+      return;
+    }
+    if (target.matches('[data-bind="ramadan-suhoor-offset"]')) {
+      const current = store.getState().settings.prayer.ramadanAlerts || {};
+      const mins = parseInt(target.value, 10) || 30;
+      store.dispatch(
+        actions.updatePrayerSettings({ ramadanAlerts: { ...current, suhoorOffset: mins } })
+      );
+      return;
+    }
+    if (target.matches('[data-bind="bookmark-folder"]')) {
+      store.dispatch(
+        actions.updateAyahBookmark(target.dataset.key, { folderId: target.value || null })
+      );
+      openModal(buildMushafBookmarks(store.getState()), {
+        labelledBy: 'modal-title-mushaf-bookmarks',
+      });
       return;
     }
     if (target.matches('[data-action="checklist-toggle"]')) {
@@ -1271,25 +2296,6 @@ function bindGlobalEvents() {
     }
     if (target.matches('[data-action="toggle-reminder"]')) {
       store.dispatch(actions.updateReminder(target.dataset.id, { enabled: target.checked }));
-      return;
-    }
-    if (target.matches('[data-action="ramadan-toggle-fast"]')) {
-      store.dispatch(actions.toggleRamadanFast());
-      const state = store.getState();
-      if (state.settings.hapticsEnabled) vibrate(target.checked ? 10 : 6);
-      return;
-    }
-    if (target.dataset.bind && target.dataset.bind.startsWith('zakat-')) {
-      const field = target.dataset.bind.slice('zakat-'.length);
-      if (field === 'currency') {
-        store.dispatch(actions.updateZakat({ currency: target.value.trim().slice(0, 8) }));
-      } else if (field === 'goldPricePerGram' || field === 'silverPricePerGram') {
-        const n = parseFloat(target.value);
-        store.dispatch(actions.updateZakat({ [field]: Number.isFinite(n) && n > 0 ? n : null }));
-      } else {
-        const n = parseFloat(target.value);
-        store.dispatch(actions.updateZakat({ [field]: Number.isFinite(n) && n >= 0 ? n : 0 }));
-      }
       return;
     }
     if (target.matches('[data-action="collection-picker-toggle"]')) {
@@ -1337,6 +2343,20 @@ function bindGlobalEvents() {
 
   document.addEventListener('input', (e) => {
     const target = e.target;
+    // FIX (review A8): live time preview while dragging the seek range —
+    // the seek itself still commits on change (release), so streaming
+    // isn't thrashed with range requests, but the thumb never feels dead.
+    if (target.matches('[data-player-seek]')) {
+      const dur = player.duration();
+      const bar = document.querySelector('.player-bar');
+      const timeEl = bar?.querySelector('[data-player-time]');
+      if (timeEl && dur > 0) {
+        const pct = parseFloat(target.value) || 0;
+        const n = Math.max(0, Math.floor((pct / 100) * dur));
+        timeEl.textContent = `${Math.floor(n / 60)}:${String(n % 60).padStart(2, '0')}`;
+      }
+      return;
+    }
     if (target.matches('[data-bind="fontScale"]')) {
       store.dispatch(actions.updateSettings({ fontScale: parseFloat(target.value) }));
     } else if (target.matches('[data-bind="arabicFontScale"]')) {
@@ -1345,10 +2365,70 @@ function bindGlobalEvents() {
       debounceSearchNavigate(target.value);
     } else if (target.matches('[data-bind="quran-search"]')) {
       debounceQuranSearchNavigate(target.value);
+    } else if (target.matches('[data-bind^="zakat-"]')) {
+      handleZakatInput(target);
+    } else if (target.matches('[data-bind="bookmark-note"]')) {
+      // Modal inputs live outside #main, so re-renders never steal focus
+      // here — dispatch straight through with no refocus dance.
+      store.dispatch(actions.updateAyahBookmark(target.dataset.key, { note: target.value }));
+    } else if (target.matches('[data-bind="audio-search"]')) {
+      const v = target.value;
+      clearTimeout(audioSearchTimer);
+      audioSearchTimer = setTimeout(() => {
+        store.dispatch(actions.setAudioManagerQuery(v));
+        requestAnimationFrame(() => {
+          const input = document.getElementById('audio-search-input');
+          if (input && document.activeElement !== input) {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+          }
+        });
+      }, 180);
     }
   });
 
   document.addEventListener('keydown', (e) => {
+    // FIX (review A4/B5): elements exposed as role="button" (Mushaf ayahs)
+    // must actually behave like buttons — Enter/Space activates them through
+    // the same delegated path a click takes. Real <button>/<a> elements fire
+    // native click events and are excluded, as are form fields.
+    if (
+      (e.key === 'Enter' || e.key === ' ') &&
+      e.target instanceof Element &&
+      e.target.matches('[role="button"][data-action]') &&
+      !e.target.matches('button, a[href], input, select, textarea, [contenteditable="true"]')
+    ) {
+      e.preventDefault();
+      const handler = clickHandlers[e.target.dataset.action];
+      if (handler) handler(e.target.dataset, e, e.target);
+      return;
+    }
+    if (e.key === 'Escape') {
+      if (document.body.classList.contains('nav-drawer-open')) {
+        closeNavDrawer();
+        return;
+      }
+    }
+    // Basic focus containment for the mobile nav drawer: Tab cycles inside
+    // it while open (the dialog is a small, flat list — a full trap isn't
+    // needed, just keep Tab from escaping into the covered page).
+    if (e.key === 'Tab' && document.body.classList.contains('nav-drawer-open')) {
+      const drawer = document.querySelector('.nav-drawer');
+      const focusables = drawer ? drawer.querySelectorAll('a[href], button:not([disabled])') : null;
+      if (!focusables || !focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      } else if (!drawer.contains(document.activeElement)) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
     if (e.target.matches('[data-bind="search-query"]') && e.key === 'Enter') {
       const value = e.target.value.trim();
       if (value) store.dispatch(actions.addSearchHistory(value));
@@ -1365,7 +2445,7 @@ function bindGlobalEvents() {
       formHandlers[form.dataset.form]?.(form);
       return;
     }
-    if (form.dataset.action?.startsWith('submit-new-collection')) {
+    if (form.dataset.action) {
       e.preventDefault();
       handlePromptForm(form);
     }
@@ -1424,8 +2504,13 @@ function bindGlobalEvents() {
       if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return; // ignore short/mostly-vertical swipes (scrolling)
       const state = store.getState();
       const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
-      if (dx < 0) go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
-      else go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
+      if (dx < 0) {
+        setFlipDirection('next');
+        go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
+      } else {
+        setFlipDirection('prev');
+        go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
+      }
     },
     { passive: true }
   );
@@ -1449,6 +2534,7 @@ function debounceSearchNavigate(value) {
 }
 
 let quranSearchDebounceTimer = null;
+let audioSearchTimer = null;
 function debounceQuranSearchNavigate(value) {
   clearTimeout(quranSearchDebounceTimer);
   quranSearchDebounceTimer = setTimeout(() => {
@@ -1461,6 +2547,64 @@ function debounceQuranSearchNavigate(value) {
       }
     });
   }, 180);
+}
+
+/*
+ * Zakat inputs: every keystroke dispatches into the store (one-way data
+ * flow), which re-renders the view — so focus + caret are restored on the
+ * very same input right after, exactly the trick the search boxes use.
+ * data-ref is stable across renders (unlike ids, which are avoided here
+ * since several rows share markup shape). No per-field debounce: a shared
+ * timer would swallow all but the last-edited field, and the store's own
+ * debounced persistence already absorbs the write churn.
+ */
+function refocusZakatInput(ref, caret) {
+  requestAnimationFrame(() => {
+    const input = document.querySelector(`[data-ref="${ref}"]`);
+    if (!input) return;
+    // If the person (or an assistive tool) already moved to a DIFFERENT
+    // zakat field before this frame, never steal focus back — only restore
+    // it when focus was lost to <body> by the innerHTML swap.
+    const active = document.activeElement;
+    const activeRef = active?.dataset?.ref;
+    if (active && active !== document.body && activeRef && activeRef !== ref) return;
+    input.focus();
+    // number inputs reject setSelectionRange (InvalidStateError) — they
+    // manage the caret natively, so only restore it for text-like fields.
+    if (
+      input.type === 'text' ||
+      input.type === 'search' ||
+      input.type === 'url' ||
+      input.type === 'tel' ||
+      input.type === 'password'
+    ) {
+      const pos = caret != null ? caret : input.value.length;
+      input.setSelectionRange(pos, pos);
+    }
+  });
+}
+
+function handleZakatInput(target) {
+  const caret = target.selectionStart;
+  if (target.matches('[data-bind="zakat-input"]')) {
+    store.dispatch(actions.setZakatInput(target.dataset.field, target.value));
+    refocusZakatInput(target.dataset.ref, caret);
+    return;
+  }
+  if (target.matches('[data-bind="zakat-gold-price"]')) {
+    store.dispatch(actions.setZakatPrefs({ goldPricePerGram: target.value }));
+  } else if (target.matches('[data-bind="zakat-silver-price"]')) {
+    store.dispatch(actions.setZakatPrefs({ silverPricePerGram: target.value }));
+  } else if (target.matches('[data-bind="zakat-currency"]')) {
+    store.dispatch(actions.setZakatPrefs({ currency: target.value }));
+  } else if (target.matches('[data-bind="zakat-fitr-per"]')) {
+    store.dispatch(actions.setZakatPrefs({ fitrPer: target.value }));
+  } else if (target.matches('[data-bind="zakat-fitr-people"]')) {
+    store.dispatch(actions.setZakatPrefs({ fitrPeople: target.value }));
+  } else {
+    return; // nothing matched — don't refocus
+  }
+  refocusZakatInput(target.dataset.ref, caret);
 }
 
 function handleFocusKeydown(e) {
@@ -1491,6 +2635,8 @@ function navigateFocusAdjacent(dir) {
   if (target) go(VIEWS.FOCUS, { id: categoryId, subId: target.id });
 }
 
+let pendingImportPayload = null;
+
 async function handleImportFile(file) {
   try {
     const text = await backup.readFileAsText(file);
@@ -1499,9 +2645,21 @@ async function handleImportFile(file) {
       showToast(result.error);
       return;
     }
-    store.dispatch(actions.restoreState(result.value));
-    showToast(t('common.done', store.getState().settings.language));
-    go(VIEWS.HOME);
+    // FIX (review v3.1 A2/B1): importing replaces EVERYTHING on this device
+    // — favorites, streaks, collections, statistics — with no undo. One
+    // misclick used to wipe months of data with a cheerful "Done". Now the
+    // person sees exactly what is about to happen and confirms first.
+    const lang = store.getState().settings.language;
+    pendingImportPayload = result.value;
+    openModal(
+      buildConfirm({
+        message: t('backup.importConfirm', lang),
+        confirmAction: 'import-backup-confirmed',
+        lang,
+        danger: true,
+      }),
+      { labelledBy: 'modal-title-confirm' }
+    );
   } catch (err) {
     showToast(t('common.error', store.getState().settings.language));
     console.error('[import]', err);

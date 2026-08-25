@@ -10,7 +10,7 @@
       "en": "Authentic duas from: Joami Dua al-Nabi, 100 Authentic Duas (Al-Munajjid), Man Yaduni (Al-Maiman), Munajat al-Muhsinin (Al-Muqaddam), and Ruqyah Treatment (Al-Qahtani)",
       "ar": "أدعية صحيحة من: جوامع دعاء النبي، 100 دعاء للمنجد، من يدعوني للميمان، مناجاة المحسنين للمقدم، الرقية للقحطاني"
     },
-    "version": "2.0.0",
+    "version": "2.0.2",
     "source": {
       "en": "Multiple authentic Islamic books",
       "ar": "مصادر إسلامية موثوقة"
@@ -1929,7 +1929,7 @@
             "chapter": "",
             "hadith": "6306",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Sahih al-Bukhari 6306."
           },
           "grade": "Sahih",
           "repetitions": 1,
@@ -2075,7 +2075,7 @@
             "chapter": "",
             "hadith": "5081",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Sunan Abi Dawud 5081."
           },
           "grade": "Sahih",
           "repetitions": 7,
@@ -2132,43 +2132,6 @@
           "order": 9
         },
         {
-          "id": "cu-010",
-          "category_id": "additional-duas",
-          "title": {
-            "en": "The Master of Seeking Forgiveness (Evening)",
-            "ar": "سيد الاستغفار"
-          },
-          "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَىٰ عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
-          "transliteration": "Allahumma anta Rabbi la ilaha illa ant...",
-          "translation": {
-            "en": "O Allah, You are my Lord, there is no deity but You... I acknowledge Your favor upon me and I acknowledge my sin, so forgive me.",
-            "ar": ""
-          },
-          "reference": {
-            "collection": "Sahih al-Bukhari",
-            "book": "Book of Supplications",
-            "chapter": "",
-            "hadith": "6306",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "repetitions": 1,
-          "virtues": {
-            "en": "Whoever recites it with certainty in the evening and dies that night enters Paradise.",
-            "ar": ""
-          },
-          "tags": [
-            "evening",
-            "forgiveness"
-          ],
-          "related": [
-            "morning-007"
-          ],
-          "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 10
-        },
-        {
           "id": "cu-011",
           "category_id": "additional-duas",
           "title": {
@@ -2203,7 +2166,7 @@
             "morning-010"
           ],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 11
+          "order": 10
         },
         {
           "id": "cu-012",
@@ -2240,44 +2203,7 @@
             "morning-011"
           ],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 12
-        },
-        {
-          "id": "cu-013",
-          "category_id": "additional-duas",
-          "title": {
-            "en": "Allah Suffices Me (Evening)",
-            "ar": "حسبي الله"
-          },
-          "arabic": "حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
-          "transliteration": "Hasbiyallahu la ilaha illa Huwa, 'alayhi tawakkaltu wa Huwa Rabbul-'Arshil-'Adhim.",
-          "translation": {
-            "en": "Allah is sufficient for me; there is no deity but Him. Upon Him I rely.",
-            "ar": ""
-          },
-          "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Book of Manners",
-            "chapter": "",
-            "hadith": "5081",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Sahih",
-          "repetitions": 7,
-          "virtues": {
-            "en": "Whoever says this seven times morning and evening, Allah will be sufficient for them in whatever concerns them.",
-            "ar": "كفاه الله ما أهمه."
-          },
-          "tags": [
-            "evening",
-            "reliance"
-          ],
-          "related": [
-            "morning-012"
-          ],
-          "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 13
+          "order": 11
         },
         {
           "id": "cu-014",
@@ -2298,7 +2224,7 @@
             "chapter": "",
             "hadith": "2311",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Sunan an-Nasa'i (in al-Kubra) 9928."
           },
           "grade": "Sahih",
           "repetitions": 1,
@@ -2315,7 +2241,7 @@
             "morning-001"
           ],
           "notes": "Source: Claude reference implementation (adhkar.json) [Full Ayat al-Kursi restored.]",
-          "order": 14
+          "order": 12
         },
         {
           "id": "cu-015",
@@ -2351,7 +2277,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 15
+          "order": 13
         },
         {
           "id": "cu-016",
@@ -2386,7 +2312,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 16
+          "order": 14
         },
         {
           "id": "cu-017",
@@ -2421,7 +2347,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 17
+          "order": 15
         },
         {
           "id": "cu-018",
@@ -2455,7 +2381,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 18
+          "order": 16
         },
         {
           "id": "cu-019",
@@ -2490,7 +2416,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 19
+          "order": 17
         },
         {
           "id": "cu-020",
@@ -2524,7 +2450,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 20
+          "order": 18
         },
         {
           "id": "cu-021",
@@ -2559,7 +2485,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 21
+          "order": 19
         },
         {
           "id": "cu-022",
@@ -2594,44 +2520,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 22
-        },
-        {
-          "id": "cu-023",
-          "category_id": "additional-duas",
-          "title": {
-            "en": "Ayat al-Kursi After Prayer",
-            "ar": "آية الكرسي دبر كل صلاة"
-          },
-          "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
-          "transliteration": "Allahu la ilaha illa Huwa, al-Hayyu al-Qayyum...",
-          "translation": {
-            "en": "Reciting Ayat al-Kursi at the end of each obligatory prayer.",
-            "ar": ""
-          },
-          "reference": {
-            "collection": "Sunan an-Nasa'i (in al-Kubra)",
-            "book": "Book of Remembrance",
-            "chapter": "",
-            "hadith": "9928",
-            "url": "",
-            "notes": "Graded sahih by some scholars including al-Albani"
-          },
-          "grade": "Sahih",
-          "repetitions": 1,
-          "virtues": {
-            "en": "Nothing stands between the reciter and entering Paradise except death.",
-            "ar": ""
-          },
-          "tags": [
-            "prayer",
-            "quran"
-          ],
-          "related": [
-            "morning-001"
-          ],
-          "notes": "Source: Claude reference implementation (adhkar.json) [Full Ayat al-Kursi restored.]",
-          "order": 23
+          "order": 20
         },
         {
           "id": "cu-024",
@@ -2666,7 +2555,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 24
+          "order": 21
         },
         {
           "id": "cu-025",
@@ -2700,7 +2589,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (adhkar.json)",
-          "order": 25
+          "order": 22
         },
         {
           "id": "cu-125",
@@ -2734,7 +2623,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 125
+          "order": 23
         },
         {
           "id": "cu-126",
@@ -2770,7 +2659,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 126
+          "order": 24
         },
         {
           "id": "cu-127",
@@ -2805,7 +2694,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 127
+          "order": 25
         },
         {
           "id": "cu-128",
@@ -2840,7 +2729,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 128
+          "order": 26
         },
         {
           "id": "cu-129",
@@ -2876,7 +2765,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 129
+          "order": 27
         },
         {
           "id": "cu-130",
@@ -2912,7 +2801,7 @@
             "home-002"
           ],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 130
+          "order": 28
         },
         {
           "id": "cu-131",
@@ -2948,7 +2837,7 @@
             "home-001"
           ],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 131
+          "order": 29
         },
         {
           "id": "cu-132",
@@ -2983,7 +2872,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 132
+          "order": 30
         },
         {
           "id": "cu-133",
@@ -3017,7 +2906,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 133
+          "order": 31
         },
         {
           "id": "cu-134",
@@ -3052,7 +2941,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (quran-duas.json)",
-          "order": 134
+          "order": 32
         },
         {
           "id": "cu-135",
@@ -3087,7 +2976,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (quran-duas.json)",
-          "order": 135
+          "order": 33
         },
         {
           "id": "cu-136",
@@ -3122,7 +3011,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (quran-duas.json)",
-          "order": 136
+          "order": 34
         },
         {
           "id": "cu-137",
@@ -3157,7 +3046,7 @@
           ],
           "related": [],
           "notes": "Source: Claude reference implementation (quran-duas.json)",
-          "order": 137
+          "order": 35
         }
       ]
     }

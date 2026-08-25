@@ -147,9 +147,32 @@
   --color-surface: #0A0C0B;
 }
 
+/* Bundled Amiri (SIL OFL 1.1 — see assets/fonts/OFL.txt), Arabic subset.
+   local() first so devices with Amiri installed never download a byte;
+   the bundled woff2 guarantees the same Naskh rendering everywhere else.
+   font-display: swap shows the system fallback instantly, then swaps in. */
 @font-face {
   font-family: 'Amiri';
-  src: local('Amiri'), local('Amiri Regular');
-  font-weight: 400 700;
+  src: local('Amiri'), local('Amiri Regular'), url('../fonts/Amiri-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Amiri';
+  src: local('Amiri Bold'), local('Amiri'), url('../fonts/Amiri-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* Amiri Quran — a Naskh cut specifically shaped for full-Mushaf typesetting
+   (taller extenders, Qur'an-specific annotation marks). Used as the default
+   Mushaf typeface; the plain Amiri above remains the default everywhere
+   else (surah list, ayah cards, etc.). Same OFL license, same foundry. */
+@font-face {
+  font-family: 'Amiri Quran';
+  src: local('Amiri Quran'), url('../fonts/AmiriQuran.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
   font-display: swap;
 }

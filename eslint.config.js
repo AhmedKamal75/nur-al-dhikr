@@ -12,6 +12,7 @@ export default [
       ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
+        IDBKeyRange: 'readonly',
         window: 'readonly',
         document: 'readonly',
         navigator: 'readonly',
@@ -34,6 +35,8 @@ export default [
         URL: 'readonly',
         Blob: 'readonly',
         FileReader: 'readonly',
+        File: 'readonly',
+        Element: 'readonly',
         performance: 'readonly',
         matchMedia: 'readonly',
         self: 'readonly',
@@ -77,6 +80,7 @@ export default [
         console: 'readonly',
         URL: 'readonly',
         Response: 'readonly',
+        Request: 'readonly',
       },
     },
     rules: {

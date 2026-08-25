@@ -83,6 +83,7 @@ export function renderSettings(state) {
       <div class="panel__header"><h2>${t('settings.reciter', lang)}</h2></div>
       <p class="panel__subtext">${t('settings.reciterHint', lang)}</p>
       <div class="reciter-list">${reciterRows}</div>
+      <a class="btn btn--secondary btn--sm" href="#/audio" data-action="navigate" data-view="audio">${icon('volume', { size: 14 })} ${t('settings.audioManager', lang)}</a>
     </section>
 
     <section class="panel">

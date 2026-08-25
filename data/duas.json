@@ -10,15 +10,15 @@
       "en": "Prophetic supplications for every occasion from Hisn al-Muslim and the Sunnah — all grades included",
       "ar": "أدعية نبوية لكل المناسبات من حصن المسلم والسنة — جميع الدرجات"
     },
-    "version": "4.0.0",
+    "version": "4.1.0",
     "source": {
-      "en": "Hisn al-Muslim (selected chapters), Sahih al-Bukhari, Sahih Muslim, Sunan Abi Dawud, Sunan at-Tirmidhi, Sunan an-Nasa'i, Sunan Ibn Majah, Musnad Ahmad",
+      "en": "Hisn al-Muslim (selected chapters), Sahih al-Bukhari, Sahih Muslim, Sunan Abi Dawud, Sunan at-Tirmidhi, Sunan an-Nasa'i, Sunan Ibn Majah, Musnad Ahmad; enrichment cross-checked against sunnah.com, islamqa.info and published Hisn al-Muslim chapters (2026-08)",
       "ar": "حصن المسلم (أبواب مختارة)، صحيح البخاري، صحيح مسلم، سنن أبي داود، سنن الترمذي، سنن النسائي، سنن ابن ماجه، مسند أحمد"
     },
     "license": "Public domain",
     "homepage": "",
     "authors": [],
-    "updated": "2026-08-07"
+    "updated": "2026-08-23"
   },
   "categories": [
     {
@@ -1808,7 +1808,7 @@
             "narrator": "Abdullah ibn Umar",
             "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Also reported: Quran 43:13-14; [Quran]."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -2521,51 +2521,6 @@
           "order": 19
         },
         {
-          "id": "glm-topical-tr-002",
-          "category_id": "dua-travel",
-          "title": {
-            "en": "Subhanalladhi Sakhkhara Lana",
-            "ar": "سبحان الذي سخر لنا"
-          },
-          "arabic": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَٰذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَىٰ رَبِّنَا لَمُنقَلِبُونَ",
-          "transliteration": "Subhanalladhi sakhkhara lana hadha wa ma kunna lahu muqrineen wa inna ila Rabbina lamunqalibun.",
-          "translation": {
-            "en": "Glory is to Him Who has subjected this to us, and we could not have done it otherwise. Indeed, to our Lord we will return.",
-            "ar": ""
-          },
-          "reference": {
-            "collection": "Quran 43:13-14",
-            "book": "",
-            "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "Quran",
-            "url": "",
-            "notes": ""
-          },
-          "grade": "Quran",
-          "custom_grade": {
-            "en": "",
-            "ar": ""
-          },
-          "repetitions": 1,
-          "virtues": {
-            "en": "The Quranic dua when mounting a vehicle or transport (Quran 43:13-14). The Prophet also taught a shorter version for traveling. (Sahih Muslim 1342).",
-            "ar": ""
-          },
-          "audio": null,
-          "image": null,
-          "tags": [
-            "travel",
-            "mounting",
-            "quran",
-            "gratitude"
-          ],
-          "related": [],
-          "notes": "",
-          "order": 20
-        },
-        {
           "id": "glm-topical-tr-003",
           "category_id": "dua-travel",
           "title": {
@@ -2608,7 +2563,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 21
+          "order": 20
         },
         {
           "id": "glm-topical-tr-006",
@@ -2653,7 +2608,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 22
+          "order": 21
         },
         {
           "id": "glm-topical-tr-008",
@@ -2698,7 +2653,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 23
+          "order": 22
         }
       ]
     },
@@ -3233,6 +3188,94 @@
           "related": [],
           "notes": "",
           "order": 12
+        },
+        {
+          "id": "dua-anx-010",
+          "category_id": "anxiety-distress",
+          "title": {
+            "en": "Refuge from Sin and Debt",
+            "ar": "الاستعاذة من المأثم والمغرم"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْمَأْثَمِ وَالْمَغْرَمِ",
+          "transliteration": "Allahumma inni a'udhu bika min al-ma'thami wal-maghram.",
+          "translation": {
+            "en": "O Allah, I seek refuge in You from sin and from debt.",
+            "ar": "اللهم إني أعوذ بك من المأثم والمغرم."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Adhan (Prostration of Recitation)",
+            "chapter": "",
+            "hadith": "832; Muslim 589",
+            "narrator": "Aisha",
+            "grading": "Sahih (al-Bukhari; Muslim)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "When asked \"what is al-maghram?\" the Prophet ﷺ said: \"a man who owes a debt and cannot repay it.\" He made this a constant refuge in his prayer.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "debt",
+            "anxiety",
+            "protection"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 13
+        },
+        {
+          "id": "dua-anx-011",
+          "category_id": "anxiety-distress",
+          "title": {
+            "en": "Sufficiency from Debt — Halal Over Haram",
+            "ar": "دعاء السداد والغنى"
+          },
+          "arabic": "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
+          "transliteration": "Allahumma-kfini bi-halalika 'an haramika, wa aghnini bi-fadlika 'amman siwak.",
+          "translation": {
+            "en": "O Allah, suffice me with the lawful instead of the unlawful, and enrich me by Your bounty so I am free of need of anyone else.",
+            "ar": "اللهم اكفني بحلالك عن حرامك وأغنني بفضلك عمن سواك."
+          },
+          "reference": {
+            "collection": "Jami' at-Tirmidhi",
+            "book": "Chapters on Supplication",
+            "chapter": "",
+            "hadith": "3563",
+            "narrator": "Ali ibn Abi Talib",
+            "grading": "Hasan (at-Tirmidhi)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The debt-burdened man was taught this by the Prophet ﷺ; the muezzin announced it after prayers so all could learn it.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "debt",
+            "provision",
+            "anxiety"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 14
         }
       ]
     },
@@ -4812,6 +4855,51 @@
           "related": [],
           "notes": "",
           "order": 20
+        },
+        {
+          "id": "dua-knw-021",
+          "category_id": "knowledge-rizq",
+          "title": {
+            "en": "Increase in Knowledge — Rabbi Zidni Ilma",
+            "ar": "رب زدني علمًا"
+          },
+          "arabic": "وَقُل رَّبِّ زِدْنِي عِلْمًا",
+          "transliteration": "Wa qul: Rabbi zidni 'ilma.",
+          "translation": {
+            "en": "And say: My Lord, increase me in knowledge. (Qur'an 20:114 — the only thing the Prophet ﷺ was commanded to ask for increase.)",
+            "ar": "وقل رب زدني علمًا."
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah Ta-Ha",
+            "chapter": "",
+            "hadith": "20:114",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The concise study dua: before lessons, revision, exams — asking for increase, not just acquisition.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "knowledge",
+            "study",
+            "quranic",
+            "exam"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 21
         }
       ]
     },
@@ -5538,6 +5626,138 @@
           "related": [],
           "notes": "Narrated by Talhah bin Ubaidullah.",
           "order": 4
+        },
+        {
+          "id": "dua-rain-005",
+          "category_id": "rain-nature",
+          "title": {
+            "en": "When Rain Becomes Harmful",
+            "ar": "دعاء نزول المطر الضار"
+          },
+          "arabic": "اللَّهُمَّ حَوَالَيْنَا وَلَا عَلَيْنَا، اللَّهُمَّ عَلَى الْآكَامِ وَالظِّرَابِ، وَبُطُونِ الْأَوْدِيَةِ، وَمَنَابِتِ الشَّجَرِ",
+          "transliteration": "Allahumma hawalayna wa la 'alayna, Allahumma 'ala al-akami wa az-zirab, wa butuni al-awdiyati, wa manabiti ash-shajar.",
+          "translation": {
+            "en": "O Allah, around us and not upon us; O Allah, on the hills and mountains, the valleys and the places where trees grow.",
+            "ar": "اللهم حوالينا ولا علينا، اللهم على الآكام والظراب وبطون الأودية ومنابت الشجر."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Invocations",
+            "chapter": "",
+            "hadith": "1013",
+            "narrator": "Anas ibn Malik",
+            "grading": "Sahih (al-Bukhari)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Said when rain threatens harm or flooding — asking that its harm be diverted to uninhabited land.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "rain",
+            "harm",
+            "protection"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "dua-rain-006",
+          "category_id": "rain-nature",
+          "title": {
+            "en": "After the Rain",
+            "ar": "دعاء بعد نزول المطر"
+          },
+          "arabic": "مُطِرْنَا بِفَضْلِ اللَّهِ وَرَحْمَتِهِ",
+          "transliteration": "Mutirna bi-fadlillahi wa rahmatih.",
+          "translation": {
+            "en": "We have been given rain by the bounty and mercy of Allah.",
+            "ar": "مُطرنا بفضل الله ورحمته."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Invocations",
+            "chapter": "",
+            "hadith": "846",
+            "narrator": "Zayd ibn Khalid al-Juhani",
+            "grading": "Sahih (al-Bukhari; Muslim 71)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Attributing rain to Allah's bounty alone — not to stars or omens — is part of tawhid; the Prophet ﷺ said this after leading the people in rain-soaked dawn prayer.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "rain",
+            "gratitude",
+            "tawhid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "dua-rain-007",
+          "category_id": "rain-nature",
+          "title": {
+            "en": "Prayer for Rain in Drought (Istisqa)",
+            "ar": "دعاء الاستسقاء"
+          },
+          "arabic": "اللَّهُمَّ أَغِثْنَا، اللَّهُمَّ أَغِثْنَا، اللَّهُمَّ أَسْقِنَا غَيْثًا مُغِيثًا مَرِيئًا مَرِيعًا، نَافِعًا غَيْرَ ضَارٍّ، عَاجِلًا غَيْرَ آجِلٍ",
+          "transliteration": "Allahumma aghithna, Allahumma aghithna, Allahumma asqina ghaythan mughithan mari'an mari'an, nafi'an ghayra darirrin, 'ajilan ghayra ajil.",
+          "translation": {
+            "en": "O Allah, relieve us; O Allah, relieve us; O Allah, send us rain — a relieving, wholesome, nourishing rain, beneficial and not harmful, swift and not delayed.",
+            "ar": "اللهم أغثنا، اللهم أغثنا، اللهم اسقنا غيثًا مغيثًا مريئًا مريعًا نافعًا غير ضار عاجلًا غير آجل."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Invocations",
+            "chapter": "",
+            "hadith": "1013 / 1014",
+            "narrator": "Jabir ibn Abdullah & Anas",
+            "grading": "Sahih (al-Bukhari)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The cry of the community in drought — raised in the istisqa prayer or simply in earnest supplication.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "drought",
+            "rain",
+            "istisqa"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
         }
       ]
     },
@@ -8809,6 +9029,230 @@
           "related": [],
           "notes": "Narrated by Jabir.",
           "order": 2
+        },
+        {
+          "id": "dua-haj-003",
+          "category_id": "hajj-umrah",
+          "title": {
+            "en": "The Best Dua of the Day of Arafah",
+            "ar": "أفضل دعاء يوم عرفة"
+          },
+          "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "La ilaha illa Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu, wa huwa 'ala kulli shay'in qadir.",
+          "translation": {
+            "en": "There is no deity but Allah alone, without partner. His is the dominion and His is the praise, and He is able to do all things.",
+            "ar": "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، وهو على كل شيء قدير."
+          },
+          "reference": {
+            "collection": "Jami' at-Tirmidhi",
+            "book": "Chapters on Supplication",
+            "chapter": "",
+            "hadith": "3585",
+            "narrator": "Amr ibn Shu'ayb, from his father, from his grandfather",
+            "grading": "Hasan (at-Tirmidhi)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 100,
+          "virtues": {
+            "en": "\"The best supplication is the supplication of the Day of Arafah, and the best of what the Prophets before me and I have said is: ...\" — the essence of Arafah.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "arafah",
+            "hajj",
+            "tawhid",
+            "dhikr"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "dua-haj-004",
+          "category_id": "hajj-umrah",
+          "title": {
+            "en": "Between the Yemeni Corner and the Black Stone",
+            "ar": "بين الركن اليماني والحجر"
+          },
+          "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Rabbana atina fi ad-dunya hasanatan wa fi al-akhirati hasanatan wa qina 'adhab an-nar.",
+          "translation": {
+            "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
+            "ar": "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Hajj",
+            "chapter": "",
+            "hadith": "1218",
+            "narrator": "Abdullah ibn Sa'ib",
+            "grading": "Established (recited by the Prophet ﷺ in tawaf; Muslim)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Recited between the Yemeni Corner and the Black Stone during tawaf, as reported from the Prophet's ﷺ tawaf (Muslim 1218); the verse is Qur'an 2:201.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "tawaf",
+            "hajj",
+            "umrah",
+            "quranic"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "dua-haj-005",
+          "category_id": "hajj-umrah",
+          "title": {
+            "en": "Takbir of the Days of Dhul-Hijjah",
+            "ar": "تكبير أيام ذي الحجة"
+          },
+          "arabic": "اللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، لَا إِلَٰهَ إِلَّا اللَّهُ، وَاللَّهُ أَكْبَرُ، اللَّهُ أَكْبَرُ، وَلِلَّهِ الْحَمْدُ",
+          "transliteration": "Allahu akbar, Allahu akbar, la ilaha illa Allah, wallahu akbar, Allahu akbar, wa lillah al-hamd.",
+          "translation": {
+            "en": "Allah is the Greatest, Allah is the Greatest; there is no deity but Allah. Allah is the Greatest, Allah is the Greatest, and to Allah belongs all praise.",
+            "ar": "الله أكبر، الله أكبر، لا إله إلا الله، والله أكبر، الله أكبر، ولله الحمد."
+          },
+          "reference": {
+            "collection": "Sunan al-Bayhaqi / Musannaf Ibn Abi Shaybah",
+            "book": "Reports of the Takbir",
+            "chapter": "",
+            "hadith": "—",
+            "narrator": "Ibn Umar and Abu Hurayrah",
+            "grading": "Athar (practice of the Companions; the sunnah of loud takbir from Fajr of Arafah day is in al-Bukhari 969)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Athar",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The unrestrained takbir chanted through the first ten days of Dhul-Hijjah, from Fajr on the Day of Arafah until Asr on the final tashreeq day.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "dhul-hijjah",
+            "takbir",
+            "hajj",
+            "eid"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "dua-haj-006",
+          "category_id": "hajj-umrah",
+          "title": {
+            "en": "Takbir When Stoning the Jamarat",
+            "ar": "التكبير عند الرمي"
+          },
+          "arabic": "اللَّهُ أَكْبَرُ",
+          "transliteration": "Allahu akbar.",
+          "translation": {
+            "en": "Say \"Allahu akbar\" with each pebble thrown at each jamarah.",
+            "ar": "الله أكبر."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Hajj",
+            "chapter": "",
+            "hadith": "1685",
+            "narrator": "Ibn Umar / Abu Hurayrah reports",
+            "grading": "Sahih (established practice)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Established from the Prophet's ﷺ stoning: takbir with every pebble, seven pebbles per pillar.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "ramy",
+            "hajj",
+            "takbir"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
+        },
+        {
+          "id": "dua-haj-007",
+          "category_id": "hajj-umrah",
+          "title": {
+            "en": "Salutations Upon the Prophet in Madinah",
+            "ar": "الصلاة على النبي في المدينة"
+          },
+          "arabic": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ",
+          "transliteration": "Allahumma salli 'ala Muhammadin wa 'ala ali Muhammad, kama sallayta 'ala Ibrahima wa 'ala ali Ibrahim, innaka hamidun majid.",
+          "translation": {
+            "en": "O Allah, send blessings upon Muhammad and the family of Muhammad, as You sent blessings upon Ibrahim and the family of Ibrahim; indeed You are Praiseworthy, Glorious.",
+            "ar": "اللهم صل على محمد وعلى آل محمد كما صليت على إبراهيم وعلى آل إبراهيم إنك حميد مجيد."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Prophetic Commentary",
+            "chapter": "",
+            "hadith": "3370",
+            "narrator": "Ka'b ibn Ujrah (the Ibrahimic salawat)",
+            "grading": "Sahih (al-Bukhari)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Abundant salawat — especially with the Ibrahimic form — when visiting the Prophet's mosque and standing before his resting place.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "madinah",
+            "salawat",
+            "hajj",
+            "ziyarah"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 7
         }
       ]
     },
@@ -11043,6 +11487,140 @@
           "related": [],
           "notes": "Narrated by Umm Salama.",
           "order": 3
+        },
+        {
+          "id": "dua-dth-004",
+          "category_id": "death-afterlife",
+          "title": {
+            "en": "Words of Consolation to the Bereaved",
+            "ar": "التعزية"
+          },
+          "arabic": "إِنَّ لِلَّهِ مَا أَخَذَ، وَلَهُ مَا أَعْطَى، وَكُلُّ شَيْءٍ عِنْدَهُ بِأَجَلٍ مُسَمًّى… فَلْتَصْبِرْ وَلْتَحْتَسِبْ",
+          "transliteration": "Inna lillahi ma akhadh, wa lahu ma a'ta, wa kullu shay'in 'indahu bi-ajalin musamma… fa-ltasbir wa-ltahtasib.",
+          "translation": {
+            "en": "To Allah belongs what He has taken, and to Him belongs what He gives, and everything with Him has an appointed term… so be patient and seek your reward with Allah.",
+            "ar": "إن لله ما أخذ وله ما أعطى وكل شيء عنده بأجل مسمى فلتصبر ولتحتسب."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Funerals",
+            "chapter": "",
+            "hadith": "1284",
+            "narrator": "Usamah ibn Zayd",
+            "grading": "Sahih (al-Bukhari)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet's ﷺ condolence to a bereaved father — add: \"Ajazakallahu al-musibah\" style phrases are later formulations; the transmitted form is this one.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "condolence",
+            "death",
+            "patience"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "dua-dth-005",
+          "category_id": "death-afterlife",
+          "title": {
+            "en": "Dua When Calamity Strikes",
+            "ar": "دعاء المصيبة"
+          },
+          "arabic": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي، وَأَخْلِفْ لِي خَيْرًا مِنْهَا",
+          "transliteration": "Inna lillahi wa inna ilayhi raji'un, Allahumma-jurni fi musibati, wa akhlif li khayran minha.",
+          "translation": {
+            "en": "We belong to Allah and to Him we return. O Allah, reward me for my affliction and replace it for me with something better.",
+            "ar": "إنا لله وإنا إليه راجعون، اللهم أجرني في مصيبتي وأخلف لي خيرًا منها."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Funerals",
+            "chapter": "",
+            "hadith": "918",
+            "narrator": "Umm Salamah",
+            "grading": "Sahih (Muslim)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Umm Salamah said: the Prophet ﷺ taught that whoever says this at calamity, Allah will reward her and give her better in its place — \"so I said it, and Allah gave me better: the Messenger of Allah ﷺ himself.\"",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "calamity",
+            "death",
+            "patience",
+            "istirja"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "dua-dth-006",
+          "category_id": "death-afterlife",
+          "title": {
+            "en": "After the Burial — Seeking Steadfastness for the Deceased",
+            "ar": "الاستغفار للميت بعد الدفن"
+          },
+          "arabic": "اسْتَغْفِرُوا لِأَخِيكُمْ وَاسْأَلُوا لَهُ التَّثْبِيتَ، فَإِنَّهُ الْآنَ يُسْأَلُ",
+          "transliteration": "Istaghfiru li-akhikum wa-s'alu lahu at-tathbit, fa-innahu al-ana yus'al.",
+          "translation": {
+            "en": "Pray for forgiveness for your brother (the deceased) and ask steadfastness for him, for he is now being questioned (in the grave).",
+            "ar": "استغفروا لأخيكم واسألوا له التثبيت فإنه الآن يُسأل."
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Funerals",
+            "chapter": "",
+            "hadith": "3221",
+            "narrator": "Uthman ibn Affan",
+            "grading": "Sahih (authenticated by al-Albani)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Said by the Prophet ﷺ after the burial was complete — the standing supplication at the graveside.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "burial",
+            "death",
+            "forgiveness",
+            "grave"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
         }
       ]
     },
@@ -19920,7 +20498,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-topical-gd-002",
@@ -19965,7 +20543,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-topical-gd-003",
@@ -20010,7 +20588,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         },
         {
           "id": "glm-topical-gd-004",
@@ -20055,7 +20633,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1004
+          "order": 4
         },
         {
           "id": "glm-topical-gd-005",
@@ -20100,7 +20678,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1005
+          "order": 5
         },
         {
           "id": "glm-topical-gd-006",
@@ -20145,7 +20723,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1006
+          "order": 6
         },
         {
           "id": "glm-topical-gd-007",
@@ -20190,7 +20768,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1007
+          "order": 7
         },
         {
           "id": "glm-topical-gd-008",
@@ -20235,7 +20813,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1008
+          "order": 8
         }
       ]
     },
@@ -20297,7 +20875,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-topical-pa-002",
@@ -20342,7 +20920,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-topical-pa-003",
@@ -20387,7 +20965,96 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
+        },
+        {
+          "id": "dua-pat-001",
+          "category_id": "patience",
+          "title": {
+            "en": "When Something Is Lost or Afflicted",
+            "ar": "دعاء المصيبة (الصبر والاحتساب)"
+          },
+          "arabic": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ، اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي، وَأَخْلِفْ لِي خَيْرًا مِنْهَا",
+          "transliteration": "Inna lillahi wa inna ilayhi raji'un, Allahumma-jurni fi musibati, wa akhlif li khayran minha.",
+          "translation": {
+            "en": "We belong to Allah and to Him we return. O Allah, reward me in my affliction and replace it with something better.",
+            "ar": "إنا لله وإنا إليه راجعون اللهم أجرني في مصيبتي وأخلف لي خيرًا منها."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Funerals",
+            "chapter": "",
+            "hadith": "918",
+            "narrator": "Umm Salamah",
+            "grading": "Sahih (Muslim)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "For every loss — not only death: health, wealth, work, relationships. Allah promised better in exchange for the patient supplication.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "patience",
+            "loss",
+            "calamity",
+            "reward"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "dua-pat-002",
+          "category_id": "patience",
+          "title": {
+            "en": "When You See Another Afflicted — Gratitude Dua",
+            "ar": "دعاء العافية عند رؤية المبتلى"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ الَّذِي عَافَانِي مِمَّا ابْتَلَاكَ بِهِ، وَفَضَّلَنِي عَلَى كَثِيرٍ مِمَّنْ خَلَقَ تَفْضِيلًا",
+          "transliteration": "Alhamdulillahi alladhi 'afani mimma ibtalaka bihi, wa faddalani 'ala kathirin mimman khalaqa tafdila.",
+          "translation": {
+            "en": "Praise be to Allah who has spared me what He has afflicted you with, and preferred me above many of His creation.",
+            "ar": "الحمد لله الذي عافاني مما ابتلاك به وفضلني على كثير ممن خلق تفضيلًا."
+          },
+          "reference": {
+            "collection": "Jami' at-Tirmidhi",
+            "book": "Chapters on Supplication",
+            "chapter": "",
+            "hadith": "3432",
+            "narrator": "Abdullah ibn Umar",
+            "grading": "Hasan (at-Tirmidhi; elevated to sahih by others)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Said silently upon seeing someone tested with illness or hardship — gratitude that guards against pride and heals envy.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "gratitude",
+            "patience",
+            "wellbeing"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
         }
       ]
     },
@@ -20449,7 +21116,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-topical-fa-002",
@@ -20494,7 +21161,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-topical-fa-003",
@@ -20539,7 +21206,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         }
       ]
     },
@@ -20601,7 +21268,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-topical-gr-002",
@@ -20646,7 +21313,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-topical-gr-003",
@@ -20691,7 +21358,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         }
       ]
     },
@@ -20753,7 +21420,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-topical-wd-002",
@@ -20798,7 +21465,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-topical-wd-003",
@@ -20843,7 +21510,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         }
       ]
     },
@@ -20903,7 +21570,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1001
+          "order": 1
         },
         {
           "id": "glm-yd-002",
@@ -20946,7 +21613,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1002
+          "order": 2
         },
         {
           "id": "glm-yd-003",
@@ -20990,7 +21657,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1003
+          "order": 3
         },
         {
           "id": "glm-yd-004",
@@ -21034,7 +21701,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1004
+          "order": 4
         },
         {
           "id": "glm-yd-005",
@@ -21077,7 +21744,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1005
+          "order": 5
         },
         {
           "id": "glm-yd-006",
@@ -21121,7 +21788,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1006
+          "order": 6
         },
         {
           "id": "glm-yd-007",
@@ -21165,7 +21832,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1007
+          "order": 7
         },
         {
           "id": "glm-yd-008",
@@ -21208,7 +21875,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1008
+          "order": 8
         },
         {
           "id": "glm-yd-009",
@@ -21252,7 +21919,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1009
+          "order": 9
         },
         {
           "id": "glm-yd-010",
@@ -21296,7 +21963,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1010
+          "order": 10
         },
         {
           "id": "glm-yd-011",
@@ -21340,7 +22007,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1011
+          "order": 11
         },
         {
           "id": "glm-yd-012",
@@ -21384,7 +22051,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1012
+          "order": 12
         },
         {
           "id": "glm-yd-014",
@@ -21428,7 +22095,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1013
+          "order": 13
         },
         {
           "id": "glm-yd-015",
@@ -21472,7 +22139,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1014
+          "order": 14
         },
         {
           "id": "glm-yd-016",
@@ -21516,7 +22183,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1015
+          "order": 15
         },
         {
           "id": "glm-yd-017",
@@ -21560,7 +22227,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1016
+          "order": 16
         },
         {
           "id": "glm-yd-018",
@@ -21604,7 +22271,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1017
+          "order": 17
         },
         {
           "id": "glm-yd-019",
@@ -21648,7 +22315,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1018
+          "order": 18
         },
         {
           "id": "glm-yd-020",
@@ -21692,7 +22359,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1019
+          "order": 19
         },
         {
           "id": "glm-yd-021",
@@ -21736,7 +22403,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1020
+          "order": 20
         },
         {
           "id": "glm-yd-022",
@@ -21780,7 +22447,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1021
+          "order": 21
         },
         {
           "id": "glm-yd-023",
@@ -21824,7 +22491,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1022
+          "order": 22
         },
         {
           "id": "glm-yd-024",
@@ -21868,7 +22535,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1023
+          "order": 23
         },
         {
           "id": "glm-yd-025",
@@ -21912,7 +22579,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1024
+          "order": 24
         },
         {
           "id": "glm-yd-026",
@@ -21956,7 +22623,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1025
+          "order": 25
         },
         {
           "id": "glm-yd-027",
@@ -22000,7 +22667,7 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1026
+          "order": 26
         },
         {
           "id": "glm-yd-029",
@@ -22044,7 +22711,506 @@
           ],
           "related": [],
           "notes": "",
-          "order": 1027
+          "order": 27
+        }
+      ]
+    },
+    {
+      "id": "decisions-istikharah",
+      "section_id": "duas",
+      "name": {
+        "en": "Decisions & Istikharah",
+        "ar": "القرارات والاستخارة"
+      },
+      "description": {
+        "en": "Supplications for guidance when choosing between matters — the prophetic istikharah and duas for a good outcome.",
+        "ar": "أدعية الهداية عند الاختيار بين الأمور: الاستخارة النبوية ودعاء حسن العاقبة."
+      },
+      "order": 122,
+      "icon": "sparkle",
+      "color": "royal",
+      "items": [
+        {
+          "id": "dua-ist-001",
+          "category_id": "decisions-istikharah",
+          "title": {
+            "en": "Salat al-Istikharah — The Full Dua",
+            "ar": "دعاء صلاة الاستخارة"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلَا أَقْدِرُ، وَتَعْلَمُ وَلَا أَعْلَمُ، وَأَنْتَ عَلَّامُ الْغُيُوبِ. اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الْأَمْرَ خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الْأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ، وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ، ثُمَّ أَرْضِنِي بِهِ",
+          "transliteration": "Allahumma inni astakhiruka bi-'ilmika, wa astaqdiruka bi-qudratika, wa as'aluka min fadlika al-'azim. Fa innaka taqdiru wa la aqdiru, wa ta'lamu wa la a'lamu, wa anta 'allamu al-ghuyub. Allahumma in kunta ta'lamu anna hadha al-amra khayrun li fi dini wa ma'ashi wa 'aqibati amri fa-qdurhu li wa yassirhu li thumma barik li fihi. Wa in kunta ta'lamu anna hadha al-amra sharrun li fi dini wa ma'ashi wa 'aqibati amri fa-srifhu 'anni wa-srifni 'anhu, wa-qdur liya al-khayra haythu kana, thumma ardini bihi.",
+          "translation": {
+            "en": "O Allah, I seek Your guidance by Your knowledge and Your power, and I ask You of Your immense bounty. You are able and I am not; You know and I do not; You are the Knower of hidden things. O Allah, if in Your knowledge this matter is good for my religion, my livelihood and the outcome of my affairs, then decree it for me, make it easy for me, and bless it for me. And if in Your knowledge it is bad for my religion, my livelihood and the outcome of my affairs, then turn it away from me and turn me away from it, and decree for me the good wherever it is, and make me content with it.",
+            "ar": "اللهم إني أستخيرك بعلمك وأستقدرك بقدرتك وأسألك من فضلك العظيم، فإنك تقدر ولا أقدر وتعلم ولا أعلم وأنت علام الغيوب."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Tahajjud",
+            "chapter": "",
+            "hadith": "1166",
+            "narrator": "Jabir ibn Abdullah",
+            "grading": "Sahih (al-Bukhari)",
+            "url": "",
+            "notes": "Name the specific matter in place of \"هذا الأمر\" (this matter)."
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ taught the Companions istikharah for all matters as he taught them a surah of the Qur'an. Pray two rak'ahs (other than the obligatory prayer), then recite this dua naming your matter.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "istikharah",
+            "decision",
+            "guidance",
+            "choice"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "dua-ist-002",
+          "category_id": "decisions-istikharah",
+          "title": {
+            "en": "After Choosing — Good in This World and the Next",
+            "ar": "دعاء الخير في الدنيا والآخرة"
+          },
+          "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+          "transliteration": "Rabbana atina fi ad-dunya hasanatan wa fi al-akhirati hasanatan wa qina 'adhab an-nar.",
+          "translation": {
+            "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
+            "ar": "ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Dhikr and Dua",
+            "chapter": "",
+            "hadith": "2690",
+            "narrator": "Anas ibn Malik",
+            "grading": "Sahih (al-Bukhari 6389, Muslim 2690)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The most frequent supplication of the Prophet ﷺ (Anas). The verse itself is Qur'an 2:201; asking for the good outcome of any decision is contained within it.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "decision",
+            "goodness",
+            "protection",
+            "quranic"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "id": "work-trade",
+      "section_id": "duas",
+      "name": {
+        "en": "Work & Trade",
+        "ar": "العمل والتجارة"
+      },
+      "description": {
+        "en": "Remembrance and supplications for the marketplace, honest earning, and freedom from debt.",
+        "ar": "أذكار وأدعية السوق والكسب الحلال والتحرر من الدين."
+      },
+      "order": 123,
+      "icon": "coins",
+      "color": "amber",
+      "items": [
+        {
+          "id": "dua-wrk-001",
+          "category_id": "work-trade",
+          "title": {
+            "en": "Dua When Entering the Marketplace",
+            "ar": "دعاء دخول السوق"
+          },
+          "arabic": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ حَيٌّ لَا يَمُوتُ، بِيَدِهِ الْخَيْرُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+          "transliteration": "La ilaha illa Allahu wahdahu la sharika lah, lahu al-mulku wa lahu al-hamdu, yuhyi wa yumit, wa huwa hayyun la yamut, bi-yadihi al-khayr, wa huwa 'ala kulli shay'in qadir.",
+          "translation": {
+            "en": "There is no deity but Allah alone, without partner. His is the dominion and His is the praise; He gives life and death, and He is Ever-Living and does not die; in His hand is all good, and He is able to do all things.",
+            "ar": "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد، يحيي ويميت، وهو حي لا يموت، بيده الخير، وهو على كل شيء قدير."
+          },
+          "reference": {
+            "collection": "Jami' at-Tirmidhi",
+            "book": "Chapters on Supplication",
+            "chapter": "",
+            "hadith": "3428",
+            "narrator": "Umar ibn al-Khattab",
+            "grading": "Da'if (per al-Albani; some scholars graded it hasan)",
+            "url": "",
+            "notes": "Graded Da'if — knowingly included with its honest grade because of how widely it circulates."
+          },
+          "grade": "Daif",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The famous marketplace remembrance: \"Whoever enters the marketplace and says it, Allah records a million good deeds for him...\". Graded weak by al-Albani in Da'if at-Tirmidhi, so treat it as optional, not an established sunnah — included here for completeness with its honest grading.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "marketplace",
+            "trade",
+            "shopping",
+            "dhikr"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "dua-wrk-002",
+          "category_id": "work-trade",
+          "title": {
+            "en": "Contentment and Freedom from Debt",
+            "ar": "دعاء الكفاية من الدين"
+          },
+          "arabic": "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ، وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
+          "transliteration": "Allahumma-kfini bi-halalika 'an haramika, wa aghnini bi-fadlika 'amman siwak.",
+          "translation": {
+            "en": "O Allah, suffice me with what You have made lawful, keep me away from what You have forbidden, and enrich me by Your bounty so I need none besides You.",
+            "ar": "اللهم اكفني بحلالك عن حرامك، وأغنني بفضلك عمن سواك."
+          },
+          "reference": {
+            "collection": "Jami' at-Tirmidhi",
+            "book": "Chapters on Supplication",
+            "chapter": "",
+            "hadith": "3563",
+            "narrator": "Ali ibn Abi Talib",
+            "grading": "Hasan (at-Tirmidhi; authenticated by others)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ taught this to a man in debt — the muezzin would call it after prayer so the people could learn it: sufficiency through halal earnings is the heart of honest work.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "work",
+            "debt",
+            "halal",
+            "provision"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        }
+      ]
+    },
+    {
+      "id": "etiquette-daily",
+      "section_id": "duas",
+      "name": {
+        "en": "Greetings & Etiquette",
+        "ar": "التحيات والآداب"
+      },
+      "description": {
+        "en": "The prophetic etiquette of daily life: the greeting of salam, sneezing, yawning, thanks, and home greetings.",
+        "ar": "آداب الحياة اليومية النبوية: السلام والعطاس والتثاؤب والشكر وتحية البيت."
+      },
+      "order": 124,
+      "icon": "hands",
+      "color": "emerald",
+      "items": [
+        {
+          "id": "dua-etq-001",
+          "category_id": "etiquette-daily",
+          "title": {
+            "en": "Answering the Greeting of Salam",
+            "ar": "رد السلام"
+          },
+          "arabic": "وَإِذَا حُيِّيتُم بِتَحِيَّةٍ فَحَيُّوا بِأَحْسَنَ مِنْهَا أَوْ رُدُّوهَا",
+          "transliteration": "Wa idha huyyitum bi-tahyyatin fa-hayyu bi-ahsana minha aw rudduha.",
+          "translation": {
+            "en": "When you are greeted with a greeting, greet in return with what is better than it, or (at least) return it equally. (Reply: \"Wa 'alaykum as-salam wa rahmatullah\")",
+            "ar": "وإذا حييتم بتحية فحيوا بأحسن منها أو ردوها."
+          },
+          "reference": {
+            "collection": "Qur'an",
+            "book": "Surah an-Nisa",
+            "chapter": "",
+            "hadith": "4:86",
+            "narrator": "",
+            "grading": "Quran",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Quran",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Returning the salam is an obligation; returning it better (\"wa rahmatullahi wa barakatuh\") is the sunnah of excellence.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "salam",
+            "greeting",
+            "etiquette"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 1
+        },
+        {
+          "id": "dua-etq-002",
+          "category_id": "etiquette-daily",
+          "title": {
+            "en": "When Sneezing — the Full Exchange",
+            "ar": "التشميت: العطاس وردّه"
+          },
+          "arabic": "الْحَمْدُ لِلَّهِ — يَرْحَمُكَ اللَّهُ — يَهْدِيكُمُ اللَّهُ وَيُصْلِحُ بَالَكُمْ",
+          "transliteration": "Alhamdulillah — (reply:) Yarhamuka Allah — (counter-reply:) Yahdikumu Allah wa yuslihu balakum.",
+          "translation": {
+            "en": "The one who sneezes says \"Alhamdulillah\"; his brother replies \"May Allah have mercy on you\"; he then returns \"May Allah guide you and set your affairs right.\"",
+            "ar": "الحمد لله — يرحمك الله — يهديكم الله ويصلح بالكم."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of Adab",
+            "chapter": "",
+            "hadith": "6224",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih (al-Bukhari)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The three-part exchange is precisely transmitted in al-Bukhari; saying the counter-reply completes the sunnah.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "sneezing",
+            "salam",
+            "etiquette",
+            "adhkar"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 2
+        },
+        {
+          "id": "dua-etq-003",
+          "category_id": "etiquette-daily",
+          "title": {
+            "en": "When Yawning",
+            "ar": "التثاؤب"
+          },
+          "arabic": "إِذَا تَثَاءَبَ أَحَدُكُمْ فَلْيَضَعْ يَدَهُ عَلَى فِيهِ",
+          "transliteration": "Idha tathaa'aba ahadukum fa-l-yada' yadahu 'ala fihih.",
+          "translation": {
+            "en": "When one of you yawns, let him place his hand over his mouth.",
+            "ar": "إذا تثاءب أحدكم فليضع يده على فيه."
+          },
+          "reference": {
+            "collection": "Sunan Abi Dawud",
+            "book": "Book of Adab",
+            "chapter": "",
+            "hadith": "5028",
+            "narrator": "Abu Sa'id al-Khudri",
+            "grading": "Sahih (authenticated by al-Albani)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "Yawning in prayer or conversation comes from shaytan when exaggerated — suppressing it and covering the mouth is the prophetic etiquette.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "yawn",
+            "etiquette",
+            "adab"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 3
+        },
+        {
+          "id": "dua-etq-004",
+          "category_id": "etiquette-daily",
+          "title": {
+            "en": "When Hearing a Rooster or Donkey at Night",
+            "ar": "صياح الديك والحمار"
+          },
+          "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+          "transliteration": "Allahumma inni as'aluka min fadlik.",
+          "translation": {
+            "en": "When you hear a rooster, ask Allah of His bounty (this dua); when you hear a donkey bray, seek refuge with Allah from shaytan (\"A'udhu billahi min ash-shaytan ir-rajim\").",
+            "ar": "اللهم إني أسألك من فضلك."
+          },
+          "reference": {
+            "collection": "Sahih al-Bukhari",
+            "book": "Book of the Merits of the Ansar",
+            "chapter": "",
+            "hadith": "3308",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih (al-Bukhari)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "The Prophet ﷺ explained: the rooster saw mercy, so ask for it; the braying donkey saw shaytan, so seek refuge.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "night",
+            "protection",
+            "dhikr",
+            "etiquette"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 4
+        },
+        {
+          "id": "dua-etq-005",
+          "category_id": "etiquette-daily",
+          "title": {
+            "en": "Thanking Someone Who Did Good — Jazakallahu Khayran",
+            "ar": "جزاك الله خيرًا"
+          },
+          "arabic": "جَزَاكَ اللَّهُ خَيْرًا",
+          "transliteration": "Jazaka Allah khayran.",
+          "translation": {
+            "en": "May Allah reward you with goodness.",
+            "ar": "جزاك الله خيرًا."
+          },
+          "reference": {
+            "collection": "Jami' at-Tirmidhi",
+            "book": "Chapters on Supplication",
+            "chapter": "",
+            "hadith": "2035",
+            "narrator": "Usamah ibn Zayd",
+            "grading": "Hasan (at-Tirmidhi)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Hasan",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "\"Whoever has good done to him and says this to the doer has praised him amply\" — the fullest form of thanks to people.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "gratitude",
+            "thanks",
+            "etiquette",
+            "salam"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 5
+        },
+        {
+          "id": "dua-etq-006",
+          "category_id": "etiquette-daily",
+          "title": {
+            "en": "Greeting When Entering Your Home",
+            "ar": "السلام عند دخول البيت"
+          },
+          "arabic": "السَّلَامُ عَلَيْكُمْ",
+          "transliteration": "As-salamu 'alaykum.",
+          "translation": {
+            "en": "Peace be upon you — say it when entering, even if the house is empty; the greeting is a blessing on its people and the angels who guard it.",
+            "ar": "السلام عليكم."
+          },
+          "reference": {
+            "collection": "Sahih Muslim",
+            "book": "Book of Greetings",
+            "chapter": "",
+            "hadith": "2018",
+            "narrator": "Anas ibn Malik",
+            "grading": "Sahih (Muslim)",
+            "url": "",
+            "notes": ""
+          },
+          "grade": "Sahih",
+          "custom_grade": {
+            "en": "",
+            "ar": ""
+          },
+          "repetitions": 1,
+          "virtues": {
+            "en": "\"When you enter your home, greet your family with salam — it is a blessing for you and them\" — and when none is present, the greeting returns from its guardian angels.",
+            "ar": ""
+          },
+          "audio": null,
+          "image": null,
+          "tags": [
+            "salam",
+            "home",
+            "family",
+            "blessing"
+          ],
+          "related": [],
+          "notes": "",
+          "order": 6
         }
       ]
     }

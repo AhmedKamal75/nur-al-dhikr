@@ -2,7 +2,8 @@
 
 An offline-first, installable web app for daily Islamic remembrance —
 Adhkar, Duas, the 99 Names of Allah, prayer times, a Hijri calendar, a
-tasbih counter, and a full content editor for adding your own material.
+tasbih counter, a Ramadan fasting companion, a Zakat calculator, and a
+full content editor for adding your own material.
 
 Built entirely in vanilla HTML, CSS, and JavaScript (ES modules). No build
 step, no framework, no external runtime dependencies, no analytics or
@@ -66,49 +67,88 @@ offline from then on.
 - **10 color palettes × 8 shape styles**, light/dark/auto themes, adjustable
   font sizes, reduced-motion and high-contrast modes.
 - **Full English/Arabic UI** with correct RTL mirroring.
+- **Bundled Amiri typography** — the Arabic Naskh rendering is identical
+  on every device (Amiri Regular + Bold, Arabic-subset woff2, SIL OFL 1.1,
+  local()-first so devices with Amiri installed download nothing).
+- **Share as an image card** — any dua or adhkar renders as a designed
+  PNG (palette-aware, Amiri Arabic, Khatim-star frame, grade chip) sized
+  to its text so nothing is cropped; shared via the Web Share API with a
+  download fallback.
+- **A prayer log** — a tri-state button beside each of the five prayers
+  (prayed / in congregation / clear) with a week strip, full-day streak,
+  and month count, sharing storage with the daily checklist so the two
+  views always agree.
+- **Browse by need** — twelve curated moods (anxious, seeking forgiveness,
+  grateful, healing, protection, provision, decisions, patience, family,
+  travel, sleep, purify the heart), each assembling a cross-library list
+  from whole categories plus tag matches everywhere.
+- **A Khatma planner** — set a finish date and/or pages-per-day goal on the
+  604-page Mushaf; get today's target pages, your pace, the required
+  pages/day for the deadline, a projected finish date, an honest
+  on-track verdict, and a small history of completed khatmas — plus a
+  one-tap Ramadan preset that finishes by the 27th night.
+- **A living Home screen** — the next prayer (name, clock time, and a
+  ticking countdown) computed from the same solar engine as the Prayer
+  view, today's Hijri date, and time-aware "Now" nudges on the morning/
+  evening adhkar shortcuts that follow the actual sun (Fajr→Dhuhr,
+  Asr→Isha) once a location is set.
+- **A first-run "Getting started" panel** — four observable steps (set
+  location, personalize, install, first reading) with deep links and an
+  honest install fallback; auto-hidden when complete and never shown to
+  returning users on upgrade.
+- **Statistics that tell the truth** — total, streaks, a 30-day total,
+  average-per-day over the full window (not just active days), all-time
+  active days, a weekly bar chart with value labels and a best-day
+  highlight, and a heatmap you can page back through a year of history.
 - **JSON backup/restore** — export everything to a file, import it back on
   any device. No account, no server, nothing ever leaves your device.
 - **PWA**: installable, offline-capable via a service worker (cache-first
-  app shell, stale-while-revalidate content), app icons, shortcuts.
+  app shell, stale-while-revalidate content), app icons, shortcuts — and
+  a proper update flow: when a new build ships, installed apps get a
+  one-tap "Refresh" toast instead of silently running the old version
+  forever.
 - **Dual Hijri/Gregorian calendar** with month navigation, plus custom
   notes and reminders on any date — once, daily, every N days, or across
   a date range.
+- **Ramadan Companion** — a live Suhoor–Iftar countdown computed from your
+  actual Fajr/Maghrib times (ticking once a second without touching the
+  store), a 29/30-day fasting tracker with a private per-Ramadan log, a
+  Laylat al-Qadr odd-night indicator for the last ten nights, and —
+  outside the month — countdowns to the next Ramadan and Eid al-Fitr.
+- **Zakat Calculator** — gold (85 g) / silver (595 g) nisab with your own
+  metal prices, seven asset categories minus liabilities, a live 2.5%
+  result rounded up to the whole currency unit, a Zakat al-Fitr household
+  sub-calculator, and a saved history. Everything stays on-device.
+- **Per-ayah Mushaf bookmarks + khatma progress** — bookmark any ayah from
+  its detail sheet (marked on the page with a highlight and star), jump
+  back from the bookmark list, and track how many of the 604 pages you've
+  opened with a resettable khatma progress bar. Bookmarks can be filed
+  into folders and carry a short note.
+- **Word-by-word grammar study & multi-source tafsir** — tap any word (in
+  either reading mode) for its root, i'rab (case/mood), sarf (verb form &
+  pattern), an English gloss, and real Qur'anic ayahs sharing the same
+  root; open a tabbed panel per ayah with 7 bundled tafsir/grammar sources
+  (al-Muyassar, al-Mukhtasar, al-Jalalayn, al-Jadwal fī I'rāb al-Qur'ān,
+  al-I'rāb al-Muyassar, Tahlīl Kalimāt al-Qur'ān, Gharīb al-Qur'ān — all
+  fully offline) plus 8 more classical works available with a one-tap
+  download, cached forever after. Mushaf display settings add 3 typefaces,
+  8 paper color themes, text-size/line-spacing sliders, and a page-flip
+  animation.
+- **Suhoor/Iftar alerts** — Hijri-gated Ramadan alerts N minutes before
+  Fajr (selectable offset) and at Maghrib, on the same solar engine as
+  Smart Prayer Alerts.
+- **Zakat hawl reminders** — each saved assessment tracks its lunar-year
+  anniversary (~354 days) with a reminder on the day.
+- **Audited, enriched content** — a scripted dedupe pass removed true
+  double-entries (composites vs. split cards) across every library, and
+  three new duas sections (Decisions & Istikharah, Work & Trade,
+  Greetings & Etiquette) plus 26 authenticated items were added with
+  honest gradings.
+- **Collapsible grouped navigation** — a scrollable, hamburger-collapsible
+  side rail (Read / Worship / Tools / Mine) on desktop and a grouped
+  More-drawer on mobile.
 - **Smart Prayer Alerts** computed against your actual daily prayer times
   (not a fixed clock time that drifts), with a choice of alert tones.
-- **Ramadan & Fasting Companion** — a live Suhoor-to-Iftar countdown built
-  on the same offline solar-position prayer-time math as the Prayer view
-  (Suhoor ends at Fajr, Iftar begins at Maghrib), day-of-Ramadan tracking,
-  a simple private fasting log with a streak badge, and quick access to
-  the bundled Suhoor/Iftar duas. Works for voluntary Monday/Thursday fasts
-  too, not just Ramadan.
-- **Offline Zakat calculator** — estimates Zakat al-Mal (2.5% of zakatable
-  wealth held a lunar year, once it meets the nisab). Cash, gold, silver,
-  investments, business inventory, receivables, and liabilities are all
-  entered by hand; since the app makes no network calls, gold/silver spot
-  prices are entered manually too rather than pretending to be live. Shows
-  both the gold- and silver-standard nisab thresholds side by side. This is
-  a calculation aid, not a fatwa.
-- **Per-ayah bookmarking in the Mushaf reader** — tap any ayah to bookmark
-  it directly from the page (a small star marks it inline), then revisit
-  every bookmarked ayah from the same jump drawer used to navigate by
-  surah/juz/page.
-- **Qur'an reading-plan (Khatm) tracker** — set a pace (30 days, 60 days,
-  or one page a day) from the Qur'an hub screen and track progress against
-  it: percent complete, on-track/behind/overdue status, and pages-per-day
-  needed to catch up — all derived from the existing Mushaf page bookmark.
-- **Missed-prayer (Qada') tracker** — five simple counters (Fajr–Isha) in
-  the Prayer view to log and work down prayers you still need to make up.
-- **Last-Third-of-the-Night time** in the Prayer view — the window
-  classically held to be especially blessed for dua and tahajjud, computed
-  from tonight's Maghrib to tomorrow's Fajr with the same offline solar
-  calculation the rest of the Prayer view uses.
-- **Extended fasting tracking** — the Ramadan & Fasting Companion now also
-  flags White Days (Ayyam al-Beedh) and tracks the Six Days of Shawwal
-  (X/6) automatically once Shawwal begins, on top of the existing
-  Ramadan/Suhoor/Iftar tracking.
-- **Sadaqah (charity) log** — a private, ongoing record of charitable
-  giving, separate from the once-a-year Zakat calculator: log entries with
-  amount/cause/date/note, see this-month and all-time totals.
 - **A visible Play (listen-aloud) button** on every card and in Focus Mode.
 
 ## Architecture
@@ -137,6 +177,12 @@ js/
   config.js             Static constants (views, palettes, defaults)
   utils.js               Pure helpers (no DOM/state coupling)
   i18n.js                 UI string dictionary (EN/AR)
+  adhkarTiming.js           Sun-based (or clock-fallback) adhkar windows
+  khatma.js                   Khatma planner math (pace, projection, Ramadan preset)
+  moods.js                     "Browse by need" curated cross-library moods
+  prayerLog.js                 Tri-state five-prayer log helpers
+  shareCard.js                 Canvas renderer for shareable image cards
+  onboarding.js             First-run step logic (pure)
   schema.js               Content validation + normalization
   migration.js            Upgrades legacy/unknown JSON shapes
   storage.js               localStorage + IndexedDB wrapper (only module
@@ -147,11 +193,7 @@ js/
   tasbih.js                    Counting logic shared by cards + dial
   prayer.js                     Solar-position prayer time calculation
   calendar.js                    Gregorian ⇄ Hijri conversion
-  ramadan.js                      Ramadan status + Suhoor/Iftar countdown,
-                                   White Days + Six-of-Shawwal tracking
-  zakat.js                         Zakat al-Mal calculation
-  khatm.js                          Qur'an reading-plan (Khatm) progress
-  notifications.js                   Local reminder scheduling
+  notifications.js                Local reminder scheduling
   speech.js                        Web Speech "listen" wrapper
   backup.js                         Export/import
   editor.js                          Custom content CRUD
@@ -162,10 +204,9 @@ js/
   app.js                                  Boot + global event delegation
 
   components/   card.js, shell.js, modal.js, toast.js, menus.js
-  views/        home, library, category, focus, search, favorites,
+  views/        home, library, category, mood, focus, search, favorites,
                 collections, collection, statistics, tasbih, prayer,
-                calendar, settings, about, editor, quran, mushafReader,
-                qibla, checklist, ramadan, zakat, sadaqah
+                calendar, settings, about, editor
 ```
 
 **Data flow is one-directional**: views are pure functions of state that
@@ -199,12 +240,32 @@ excluded. The factual fields (Arabic, transliteration, translation) for
 each of the 99 Names remain, since those are standard across virtually
 every Islamic reference and not meaningfully "authored" content.
 
+**A note on the Qur'an word-study & tafsir data**: per-word root/i'rab/sarf
+data is derived from the Quranic Arabic Corpus morphology dataset
+(corpus.quran.com, Kais Dukes et al.); English word-by-word glosses and
+transliteration from the quranwbw.com dataset; tafsir and grammar texts
+(al-Muyassar, al-Mukhtasar, al-Jalalayn, Ibn Kathir, al-Qurtubi, at-Tabari,
+al-Baghawi, al-Waseet, Tanwir al-Miqbas, as-Sa'di, al-Jadwal fi I'rab
+al-Qur'an, al-I'rab al-Muyassar, Tahlil Kalimat al-Qur'an, Gharib
+al-Qur'an, and ad-Darwish's I'rab al-Qur'an) via spa5k/tafsir_api, each
+authored by the classical or contemporary scholar named in its own entry.
+As with the rest of this app, none of this is a substitute for scholarly
+guidance.
+
 ## Notes on scope
 
-- Arabic/UI fonts use a system font-stack fallback (Amiri → Traditional
-  Arabic → Noto Naskh Arabic → serif) rather than a bundled webfont, since
-  this build environment couldn't reach a font CDN. Drop `Amiri-Regular.woff2`
-  etc. into a `assets/fonts/` folder and add an `@font-face` rule in
-  `variables.css` for fully consistent typography across devices.
+- Arabic typography is bundled: Amiri Regular + Bold + Amiri Quran
+  (Arabic-subset woff2) ship in `assets/fonts/` under the SIL Open Font
+  License 1.1 (`OFL.txt`), referenced `local()`-first from `variables.css`
+  so installed copies are preferred and nothing downloads needlessly.
+- The bundled word-study + tafsir data adds roughly 90MB on-device
+  (`data/quran-words/`, `data/quran-roots.json`, `data/tafsir/`) —
+  fetched lazily per surah/edition the same way `data/quran/*.json`
+  always has been, never on first load, and cached offline by the
+  service worker after each surah/edition is opened once. The handful of
+  very large classical tafsirs (Tabari, Qurtubi, etc.) are deliberately
+  *not* bundled — see `data/tafsir-editions.json` and the README note
+  above.
 - Audio recitation (`item.audio`) is left `null` throughout — the schema
-  supports it, but no audio files are bundled.
+  supports it, but no audio files are bundled (the reciter system streams
+  from public CDNs instead, with optional offline downloads).
