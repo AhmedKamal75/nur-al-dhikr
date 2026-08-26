@@ -255,6 +255,14 @@ export function buildAyahStudyExtras(state, surah, ayah, activeTafsirId) {
 export function buildMushafSettingsPanel(state) {
   const lang = state.settings.language;
   const prefs = state.settings.mushafPrefs;
+  // Defense-in-depth (review v3.3 B1): sanitized upstream, but the slider
+  // value attributes still interpolate prefs — emit clamped numbers only.
+  const clampNum = (v, min, max, fallback) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+  };
+  const fontScale = clampNum(prefs.fontScale, 0.8, 1.6, 1);
+  const lineSpacing = clampNum(prefs.lineSpacing, 0.85, 1.3, 1);
 
   const fontRow = MUSHAF_FONTS.map(
     (f) => `
@@ -291,10 +299,10 @@ export function buildMushafSettingsPanel(state) {
     <div class="mushaf-settings__papers">${paperRow}</div>
 
     <h3 class="mushaf-jump__heading">${t('mushaf.textSize', lang)}</h3>
-    <input class="slider" type="range" min="0.8" max="1.6" step="0.05" value="${prefs.fontScale}" data-bind="mushaf-font-scale" aria-label="${t('mushaf.textSize', lang)}" />
+    <input class="slider" type="range" min="0.8" max="1.6" step="0.05" value="${fontScale}" data-bind="mushaf-font-scale" aria-label="${t('mushaf.textSize', lang)}" />
 
     <h3 class="mushaf-jump__heading">${t('mushaf.lineSpacing', lang)}</h3>
-    <input class="slider" type="range" min="0.85" max="1.3" step="0.05" value="${prefs.lineSpacing}" data-bind="mushaf-line-spacing" aria-label="${t('mushaf.lineSpacing', lang)}" />
+    <input class="slider" type="range" min="0.85" max="1.3" step="0.05" value="${lineSpacing}" data-bind="mushaf-line-spacing" aria-label="${t('mushaf.lineSpacing', lang)}" />
 
     <h3 class="mushaf-jump__heading">${t('mushaf.behavior', lang)}</h3>
     ${toggle('pageFlipAnimation', 'mushaf.flipAnimation')}

@@ -436,8 +436,26 @@
 /* ---- Multi-source tafsir panel (tabs + reading area) ---- */
 .ayah-study-divider { border-top: 1px solid var(--color-border); margin: var(--space-4) 0; }
 .tafsir-panel { display: flex; flex-direction: column; gap: var(--space-3); }
-.tafsir-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
-.tafsir-tabs__sep { width: 1px; align-self: stretch; background: var(--color-border); margin: 0 var(--space-1); }
+/* FIX (review v3.3 A5): fifteen editions wrapped into ragged, uneven rows
+ * inside the modal. A tab strip should be ONE row that scrolls sideways
+ * (RTL-aware, thin scrollbar, fade hints at the edges), like every other
+ * tabbed surface on the platform. */
+.tafsir-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-2);
+  align-items: center;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  padding-bottom: var(--space-1);
+  margin-bottom: calc(-1 * var(--space-1));
+  scrollbar-width: thin;
+}
+.tafsir-tabs::-webkit-scrollbar { height: 4px; }
+.tafsir-tabs::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 999px; }
+.tafsir-tab { flex: 0 0 auto; scroll-snap-align: start; }
+.tafsir-tabs__sep { width: 1px; align-self: stretch; background: var(--color-border); margin: 0 var(--space-1); flex: 0 0 auto; }
 .tafsir-tab {
   display: inline-flex; align-items: center; gap: 4px;
   padding: var(--space-1) var(--space-3);

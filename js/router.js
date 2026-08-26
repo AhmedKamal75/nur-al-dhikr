@@ -8,6 +8,23 @@
 import { store, actions } from './state.js';
 import { VIEWS } from './config.js';
 
+/** decodeURIComponent that survives malformed input. A truncated or
+ *  mangled deep link (e.g. `#/category/%C3` — percent-escape cut mid-
+ *  sequence, which happens whenever a shared URL gets chopped) used to
+ *  throw URIError out of parseHash; because initRouter() runs inside
+ *  boot()'s try/catch, that rendered the scary "your data may be
+ *  corrupted / reset app data" error screen over a mere typo. (FIX
+ *  review v3.3 B3.) Malformed segments now fall back to their raw text,
+ *  which at worst yields a "not found" view — never a boot crash.
+ *  Exported for unit tests. */
+export const safeDecode = (s) => {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+};
+
 function parseHash() {
   let hash = window.location.hash || '';
   if (hash.startsWith('#')) hash = hash.slice(1);
@@ -16,12 +33,12 @@ function parseHash() {
   const segments = pathPart.split('/').filter(Boolean);
   const view = segments[0] || VIEWS.HOME;
   const params = {};
-  if (segments[1]) params.id = decodeURIComponent(segments[1]);
-  if (segments[2]) params.subId = decodeURIComponent(segments[2]);
+  if (segments[1]) params.id = safeDecode(segments[1]);
+  if (segments[2]) params.subId = safeDecode(segments[2]);
   if (queryPart) {
     for (const pair of queryPart.split('&')) {
       const [k, v] = pair.split('=');
-      if (k) params[decodeURIComponent(k)] = decodeURIComponent(v || '');
+      if (k) params[safeDecode(k)] = safeDecode(v || '');
     }
   }
   return { view, params };

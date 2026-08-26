@@ -17,6 +17,12 @@ import { daysUntilHawl } from './zakat.js';
 
 let checkTimer = null;
 const firedToday = new Set();
+// FIX (review v3.3 B6): the dedup set is keyed per-day but was never
+// cleared, so it grew for the life of the tab (a small leak and a small
+// lie about its own name). Track the day it belongs to and reset it when
+// the date rolls over — dedup still holds within a day, which is all the
+// catch-up logic ever promised.
+let firedTodayKey = null;
 
 export function permissionState() {
   if (!('Notification' in window)) return 'unsupported';
@@ -35,7 +41,12 @@ export async function requestPermission() {
 function notify(title, body, tag) {
   if (permissionState() !== 'granted') return;
   try {
-    const n = new Notification(title, { body, tag, icon: 'assets/icons/icon-192.png', silent: false });
+    const n = new Notification(title, {
+      body,
+      tag,
+      icon: 'assets/icons/icon-192.png',
+      silent: false,
+    });
     n.onclick = () => {
       // Most platforms don't auto-focus the originating tab/window on
       // notification click — do it explicitly so tapping the reminder
@@ -53,9 +64,16 @@ function notify(title, body, tag) {
  * for reminders, calendar notes, and prayer settings (so we always read
  * fresh state, never a stale snapshot from boot time).
  */
-export function startScheduler(getReminders, lang = 'en', getCalendarNotes = () => [], getPrayerSettings = () => null, getZakatHistory = () => []) {
+export function startScheduler(
+  getReminders,
+  lang = 'en',
+  getCalendarNotes = () => [],
+  getPrayerSettings = () => null,
+  getZakatHistory = () => []
+) {
   stopScheduler();
-  const tickFn = () => tick(getReminders(), lang, getCalendarNotes(), getPrayerSettings(), getZakatHistory());
+  const tickFn = () =>
+    tick(getReminders(), lang, getCalendarNotes(), getPrayerSettings(), getZakatHistory());
   checkTimer = setInterval(tickFn, 30 * 1000);
   tickFn();
 }
@@ -70,7 +88,7 @@ const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
 /** Minutes since a "HH:MM" clock time, negative if it hasn't come yet. */
 function minutesSince(hhmm, now) {
   const [h, m] = hhmm.split(':').map(Number);
-  return (now.getHours() * 60 + now.getMinutes()) - (h * 60 + m);
+  return now.getHours() * 60 + now.getMinutes() - (h * 60 + m);
 }
 
 /**
@@ -92,6 +110,12 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
   const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   const dayKey = `${now.toDateString()}|${hhmm.slice(0, 5)}`;
   const todayKey = dateKey(now);
+  // Day rollover: drop the previous day's dedup keys (see firedTodayKey
+  // note above) so the set never outlives the day it describes.
+  if (firedTodayKey !== todayKey) {
+    firedTodayKey = todayKey;
+    firedToday.clear();
+  }
 
   for (const r of reminders || []) {
     if (!r.enabled) continue;
@@ -118,7 +142,11 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
 
   // Smart Prayer Alerts: computed against today's *actual* solar prayer
   // times, not a fixed clock time, so they stay correct through the year.
-  if (prayerSettings?.latitude != null && prayerSettings?.longitude != null && prayerSettings.alerts) {
+  if (
+    prayerSettings?.latitude != null &&
+    prayerSettings?.longitude != null &&
+    prayerSettings.alerts
+  ) {
     const anyEnabled = PRAYER_ORDER.some((n) => prayerSettings.alerts[n]);
     if (anyEnabled) {
       const tzOffsetHours = -now.getTimezoneOffset() / 60;
@@ -128,7 +156,7 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
         longitude: prayerSettings.longitude,
         timezoneOffsetHours: tzOffsetHours,
         method: prayerSettings.method,
-        asr: prayerSettings.asr
+        asr: prayerSettings.asr,
       });
       for (const name of PRAYER_ORDER) {
         if (!prayerSettings.alerts[name]) continue;
@@ -146,7 +174,12 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
   // gated on the day actually being in Ramadan (tabular Hijri check), so
   // the toggles can stay on year-round without firing outside the month.
   const rAlerts = prayerSettings?.ramadanAlerts;
-  if (rAlerts && (rAlerts.suhoor || rAlerts.iftar) && prayerSettings?.latitude != null && prayerSettings?.longitude != null) {
+  if (
+    rAlerts &&
+    (rAlerts.suhoor || rAlerts.iftar) &&
+    prayerSettings?.latitude != null &&
+    prayerSettings?.longitude != null
+  ) {
     if (toHijri(now).month === 9) {
       const tzOffsetHours = -now.getTimezoneOffset() / 60;
       const times = calculateTimes({
@@ -155,7 +188,7 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
         longitude: prayerSettings.longitude,
         timezoneOffsetHours: tzOffsetHours,
         method: prayerSettings.method,
-        asr: prayerSettings.asr
+        asr: prayerSettings.asr,
       });
       const alertTimes = ramadanAlertTimes(times, rAlerts.suhoorOffset);
       if (rAlerts.suhoor && shouldFire(formatClock(alertTimes.suhoor, false), now)) {
@@ -164,7 +197,10 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
           firedToday.add(fireKey);
           notify(
             t('ramadan.alertSuhoorTitle', lang),
-            t('ramadan.alertSuhoorBody', lang, { n: rAlerts.suhoorOffset || 30, fajr: formatClock(times.fajr) }),
+            t('ramadan.alertSuhoorBody', lang, {
+              n: rAlerts.suhoorOffset || 30,
+              fajr: formatClock(times.fajr),
+            }),
             'ramadan-suhoor'
           );
           if (document.visibilityState === 'visible') playSound(prayerSettings.alertSound);
@@ -174,7 +210,11 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
         const fireKey = `ramadan-iftar|${todayKey}`;
         if (!firedToday.has(fireKey)) {
           firedToday.add(fireKey);
-          notify(t('ramadan.alertIftarTitle', lang), t('ramadan.alertIftarBody', lang), 'ramadan-iftar');
+          notify(
+            t('ramadan.alertIftarTitle', lang),
+            t('ramadan.alertIftarBody', lang),
+            'ramadan-iftar'
+          );
           if (document.visibilityState === 'visible') playSound(prayerSettings.alertSound);
         }
       }
@@ -202,7 +242,20 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
   if (firedToday.size > 500) firedToday.clear();
 }
 
-/** Build a default reminder object for the editor UI. */
+/** FIX (walkthrough v3.4 W-4): defense in depth for the reminder time.
+ * The form's <input type="time"> + native validation covers real users,
+ * but programmatic paths (older backups, extensions, future callers) can
+ * hand in garbage — a reminder whose time can't parse never fires and
+ * fails silently. Invalid input falls back to the default time. */
+const CLOCK_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+
 export function makeReminder({ id, time = '06:00', label = '', body = '', section = null }) {
-  return { id, time, label, body, section, enabled: true };
+  return {
+    id,
+    time: CLOCK_RE.test(String(time)) ? time : '06:00',
+    label,
+    body,
+    section,
+    enabled: true,
+  };
 }

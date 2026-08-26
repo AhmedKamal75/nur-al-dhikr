@@ -46,6 +46,15 @@ export function renderPrayer(state) {
   const hrsUntil = Math.floor(minsUntil / 60);
   const remMins = minsUntil % 60;
 
+  // FIX (review v3.3 A7): the solar times are correct for the saved
+  // coordinates, but the CLOCK they are expressed on is always the
+  // device's. When the longitude-implied UTC offset differs from the
+  // device's by 45 minutes or more, the person is almost certainly
+  // looking at a place in another time zone — flag it instead of letting
+  // the numbers silently pose as local prayer times.
+  const longitudeImpliedOffset = Math.round((p.longitude / 15) * 4) / 4; // nearest 15 min
+  const tzMismatch = Math.abs(longitudeImpliedOffset - tzOffsetHours) >= 0.75;
+
   // Prayer log (v3.0): tri-state cycle button per fard prayer, riding the
   // same dailyChecklist storage the habit checklist uses (see js/prayerLog.js).
   const todayLog = selectors.todayChecklist(state);
@@ -101,6 +110,13 @@ export function renderPrayer(state) {
     </div>
 
     <div class="prayer-list">${rows}</div>
+
+    ${/* FIX (review v3.3 A7): prayer times are computed on the device's
+        clock offset, so coordinates entered for a different time zone show
+        clock times nobody there can pray by — silently. When the saved
+        longitude implies a different offset (≥ 45 min) from the device's,
+        say so honestly instead of letting the numbers pass as local. */ ''}
+    ${tzMismatch ? `<p class="panel__subtext tz-mismatch-note">${icon('info', { size: 14 })} ${t('prayer.tzMismatch', lang)}</p>` : ''}
 
     <section class="panel panel--prayer-log">
       <div class="panel__header">

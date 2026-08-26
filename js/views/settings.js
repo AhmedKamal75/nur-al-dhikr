@@ -57,9 +57,9 @@ export function renderSettings(state) {
       <p class="field-label">${t('settings.shape', lang)}</p>
       <div class="shape-row">${shapeButtons}</div>
       <p class="field-label">${t('settings.fontSize', lang)}</p>
-      <input type="range" class="slider" min="0.85" max="1.4" step="0.05" value="${s.fontScale}" data-bind="fontScale" />
+      <input type="range" class="slider" min="0.85" max="1.4" step="0.05" value="${Number(s.fontScale) || 1}" data-bind="fontScale" />
       <p class="field-label">${t('settings.arabicFontSize', lang)}</p>
-      <input type="range" class="slider" min="0.85" max="1.6" step="0.05" value="${s.arabicFontScale}" data-bind="arabicFontScale" />
+      <input type="range" class="slider" min="0.85" max="1.6" step="0.05" value="${Number(s.arabicFontScale) || 1}" data-bind="arabicFontScale" />
     </section>
 
     <section class="panel">
@@ -76,7 +76,7 @@ export function renderSettings(state) {
       ${toggleRow('showTranslation', s.showTranslation, t('settings.showTranslation', lang))}
       ${toggleRow('autoAdvanceFocus', s.autoAdvanceFocus, t('settings.autoAdvanceFocus', lang))}
       <p class="field-label">${t('settings.dailyGoal', lang)}</p>
-      <input type="number" class="input" min="1" max="10000" value="${s.dailyGoal}" data-bind="dailyGoal" />
+      <input type="number" class="input" min="1" max="10000" value="${escapeHTML(String(s.dailyGoal ?? ''))}" data-bind="dailyGoal" />
     </section>
 
     <section class="panel">

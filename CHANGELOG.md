@@ -1,5 +1,157 @@
 # Changelog
 
+## v3.4.0 — Live user-walkthrough: four fixes found by clicking everything
+
+A full live walkthrough of v3.3.1 in the persona of an impatient real
+user — every view, every button, every form, rage-taps, hostile input,
+a crafted backup, and an offline reload (see REVIEW-v3.4.0.md, shipped
+alongside this release). Four defects were confirmed and fixed; several
+spectacular-looking suspects turned out to be tooling artifacts and are
+documented so the next reviewer doesn't chase them.
+
+### Fixed
+- **A modal left open survived view navigation** *(W-1, medium)*.
+  Open a card's "More" menu, press Back (or swipe back on mobile): the
+  action sheet stayed trapped on top of the newly-rendered view,
+  offering Copy/Share/Listen for a card that no longer existed, with
+  focus still inside it. Every NAVIGATE now closes any open modal —
+  a safety net for the history/deep-link paths that bypassed the
+  click handlers (which already closed modals before navigating).
+- **Tapping a single-repetition dhikr gave zero visible feedback**
+  *(W-2, medium)*. For target=1 items (most duas) each tap completed a
+  cycle and instantly reset the count, so the pill read "0 / 1" forever
+  and the progress ring never filled — on desktop, with no haptics and
+  muted sound, a tap produced no visible change at all. The counter pill
+  now carries a check + completed-cycle badge (`✓ 4`) and a done state
+  as soon as the first cycle completes.
+- **Double-escaped currency in the zakat nisab threshold** *(W-3, low)*.
+  A currency containing markup characters (`AT&T`) rendered as
+  `AT&amp;T` on the "Nisab threshold" line — the view pre-escaped the
+  symbol before passing it to `formatAmount()`, which escapes it again.
+  The raw string now goes to `formatAmount()`; the escaped form is used
+  only for the input's `value` attribute.
+- **Reminders with unparseable times silently never fired** *(W-4,
+  medium)*. A backup (or tampered storage) carrying `time: "25:99"`
+  showed a live, enabled reminder in Settings that could never fire —
+  the scheduler parses garbage to NaN and skips it forever. Restore now
+  drops reminders whose time fails a strict HH:MM check and nulls
+  unparseable calendar-note reminder times; `makeReminder()` also
+  sanitizes its input for programmatic callers.
+- Added 7 regression tests (233 total) covering the badge render, the
+  single-escape contract of the nisab line, and both reminder-time
+  validation layers.
+
+### Verified (no change needed)
+- The v3.3.1 security fixes were re-attacked and held: crafted-backup
+  import (attribute injection, hostile currency, hostile location name),
+  hostile editor/collection/note content, malformed deep links, offline
+  boot from the service-worker cache.
+- Tasbih rapid-tap integrity: 20/20 taps register (the earlier "lost
+  taps" reading was debounced-storage staleness, not a defect).
+- Two source-level "corruptions" spotted mid-review were byte-verified
+  as terminal display artifacts (`a[href]` and `const [h, m]` displayed
+  with their opening brackets eaten) and discarded.
+
+## v3.3.1 — Third adversarial review: trusted-input hardening, honest inputs
+
+A third two-hat adversarial review (hard-to-please product reviewer +
+suspicious/malicious beta tester; see REVIEW-v3.3.0.md, shipped alongside
+this release) covering the new word-study/tafsir surface, the zakat
+calculator, backup import, deep links, and offline installs. Every finding
+below was reproduced live in the browser before the fix, and every fix was
+re-verified the same way.
+
+### Fixed
+- **Stored XSS via an imported backup — two independent chains**
+  *(B1/B2/B5, critical)*. A crafted backup file carrying
+  `settings.mushafPrefs.fontScale = '1" onmouseover="…'` executed script
+  the moment the Mushaf rendered (the value was interpolated raw into the
+  page's `style` attribute and the settings sliders' `value` attributes);
+  the same was true of `zakat.prefs.currency` through `formatAmount()` into
+  the result panel. Reproduced end-to-end through the real Import flow.
+  Settings are now treated as untrusted input: a new `sanitizeSettings()`
+  validates every field (enums checked, numbers coerced and clamped,
+  booleans coerced, nested objects deep-merged over their defaults) on
+  both `hydrate()` and `RESTORE_STATE`, and every render sink that
+  interpolates a preference emits a clamped number or escaped string.
+- **Importing a backup silently switched features off** *(B4, high)*.
+  The settings merge was a shallow spread, so any payload whose
+  `mushafPrefs`/`prayer`/`audio` lacked a key replaced the whole object —
+  word-by-word study, underlines, the flip animation, and tafsir defaults
+  quietly became `undefined`. The deep merge in `sanitizeSettings()`
+  restores every missing key to its default.
+- **The Zakat calculator corrupted the numbers you typed** *(A1,
+  critical)*. Every keystroke re-rendered the view, and the caret-restore
+  helper skipped `type="number"` fields (where `setSelectionRange`
+  throws) — leaving the caret at position 0, so digits inserted in
+  reverse: typing `50000` produced `00005`, and zakat was computed on 5.
+  Number inputs now restore the caret via a brief type-swap, and the
+  store clamps slider values into their declared ranges.
+- **The Settings text-size sliders could not be dragged** *(A2, high)*.
+  The per-tick re-render destroyed the slider mid-drag (pointer capture
+  died with the element), leaving single-step clicks as the only way to
+  move it. Slider-only settings updates now skip the `#main` re-render —
+  the CSS custom properties `applyTheme()` sets are the only DOM they
+  need.
+- **A truncated deep link showed the "your data may be corrupted" error
+  screen** *(B3, critical)*. `decodeURIComponent` threw `URIError` on
+  percent-escape fragments cut mid-sequence (e.g. `#/category/%C3`),
+  and since `initRouter()` runs inside `boot()`'s try/catch, a mangled
+  shared link ended in the reset-your-data screen. Hash segments are now
+  decoded defensively and fall back to their raw text.
+- **The first word-tap of a session reported "0 occurrences in the
+  Qur'an"** *(A3, high)*. The roots index was fetched fire-and-forget,
+  so the grammar popover rendered before it arrived — and modals never
+  re-render — showing zero occurrence counts for roots with hundreds.
+  The roots fetch is now awaited alongside the word data.
+- **The offline-install promise had a hole: three modules were missing
+  from the service-worker precache** *(A4, high)*. `js/calendarNotes.js`,
+  `js/components/calendarModals.js`, and `js/prayerSound.js` are imported
+  at boot but were not in `APP_SHELL`, so a first-visit install could
+  fail to boot offline. All three are precached, and a new unit test
+  walks the import graph against the precache list so the gap cannot
+  quietly reopen.
+- **The 99 Names quiz graded you on answers it displayed** *(A6,
+  medium)*. The transliteration ("Al-Qadir") sat in the question prompt
+  right above the correct meaning ("The All-Able"). It now appears only
+  in the post-answer reinforcement block.
+- **Fifteen tafsir tabs wrapped into ragged rows** *(A5, medium)*. The
+  edition strip is now a single horizontally scrollable row with scroll
+  snapping, RTL-aware.
+- **Prayer times for manually entered coordinates posed as local
+  times** *(A7, medium)*. Times are computed on the device's clock; for
+  coordinates in another time zone that is misleading. When the
+  longitude-implied offset differs from the device's by 45 minutes or
+  more, the Prayer view now says so explicitly.
+- Small honesty fixes: backup export shows a confirmation toast *(A10)*;
+  the reminder dedup set clears at day rollover instead of growing for
+  the life of the tab *(B6)*; the manifest `theme_color` matches the
+  runtime light chrome instead of a teal nothing ever shows *(A8)*;
+  `npm test` works on current Node (`tests/` directory argument was
+  removed upstream) *(A9)*.
+
+### Verified clean in this review (regression notes)
+Editor content and custom-reciter names (XSS-probe attempts in library/
+category/item titles, translations, tags); bookmark notes/folders,
+calendar-note bodies, and collection names; prayer-time solar math
+(cross-checked against an independent NOAA implementation); Arabic/RTL
+layout with zero horizontal overflow at 390 px across all views; keyboard
+activation of tappable words; word-study data coverage (all 77,429 words,
+zero gaps); import failure handling for garbage JSON; audio player
+error surfaces.
+
+### Engineering
+- `sanitizeSettings()` / `sanitizeMushafPrefs()` in `config.js` (pure,
+  unit-tested) run on every hydrate and restore; `formatAmount()` escapes
+  and caps the currency symbol; `safeDecode()` in the router; the zakat
+  number-input caret restore uses the type-swap technique;
+  `isSelfRenderedSettingsUpdate()` gates the render skip;
+  `ensureQuranRoots` is awaited in the word-tap handler; sw.js VERSION
+  bumped so installed apps pick the fixes up through the update toast.
+- 11 new unit tests (hostile settings payloads, escaping, malformed
+  hashes, precache completeness). 226/226 pass; eslint clean; prettier
+  delta zero against the pre-existing (documented) style debt.
+
 ## v3.3.0 — Word-by-word grammar study + multi-source tafsir + Mushaf display settings
 
 A full study layer for the Qur'an reader, in both the classic list view and

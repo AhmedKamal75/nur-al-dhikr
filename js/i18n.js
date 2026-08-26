@@ -270,6 +270,7 @@ const dict = {
     'card.notes': 'Notes',
     'card.more': 'More',
     'card.openFocus': 'Open in Focus Mode',
+    'card.completedTimes': 'Completed {n} times',
     'focus.tapToCount': 'Tap anywhere to count',
     'focus.progress': '{count} of {target}',
     'focus.complete': 'Completed',
@@ -326,6 +327,8 @@ const dict = {
     'prayer.longitude': 'Longitude',
     'prayer.locationUnavailable': 'Location unavailable on this device',
     'prayer.locationDenied': 'Location permission denied',
+    'prayer.tzMismatch':
+      'These times follow the sun at your saved coordinates but are shown on this device\u2019s clock. If you entered coordinates for a place in another time zone, pray by the local times there, not by this clock.',
 
     'qibla.subtitle': 'The direction to face for prayer, from your location.',
     'qibla.bearing': 'Direction',
@@ -466,6 +469,7 @@ const dict = {
     'settings.addReminder': 'Add Reminder',
     'settings.data': 'Data Management',
     'settings.exportBackup': 'Export Backup',
+    'settings.backupExported': 'Backup file created — check your downloads.',
     'settings.importBackup': 'Import Backup',
     'settings.resetData': 'Reset All Data',
     'settings.resetConfirm':
@@ -890,6 +894,7 @@ const dict = {
     'card.notes': 'ملاحظات',
     'card.more': 'المزيد',
     'card.openFocus': 'فتح في وضع التركيز',
+    'card.completedTimes': 'تمّ {n} مرة',
     'focus.tapToCount': 'اضغط في أي مكان للعد',
     'focus.progress': '{count} من {target}',
     'focus.complete': 'اكتمل',
@@ -945,6 +950,8 @@ const dict = {
     'prayer.longitude': 'خط الطول',
     'prayer.locationUnavailable': 'الموقع غير متاح على هذا الجهاز',
     'prayer.locationDenied': 'تم رفض إذن الموقع',
+    'prayer.tzMismatch':
+      'هذه المواقيت محسوبة لشمس الإحداثيات التي حفظتها لكنها معروضة بتوقيت هذا الجهاز. إذا أدخلت إحداثيات لمكان في نطاق زمني آخر، فصلِّ بمواقيت ذلك المكان لا بهذا التوقيت.',
 
     'qibla.subtitle': 'اتجاه القبلة الذي تستقبله في الصلاة، بناءً على موقعك.',
     'qibla.bearing': 'الاتجاه',
@@ -1084,6 +1091,7 @@ const dict = {
     'settings.addReminder': 'إضافة تذكير',
     'settings.data': 'إدارة البيانات',
     'settings.exportBackup': 'تصدير نسخة احتياطية',
+    'settings.backupExported': 'تم إنشاء ملف النسخة الاحتياطية — راجع تنزيلاتك.',
     'settings.importBackup': 'استيراد نسخة احتياطية',
     'settings.resetData': 'إعادة تعيين جميع البيانات',
     'settings.resetConfirm':

@@ -69,7 +69,7 @@ import {
 } from './audioCatalog.js';
 import * as audioStore from './audioStore.js';
 import * as player from './player.js';
-import { openModal, closeModal } from './components/modal.js';
+import { openModal, closeModal, isModalOpen } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import {
   buildCardMenu,
@@ -225,9 +225,39 @@ function renderErrorScreen(err) {
   });
 }
 
-function onStateChange(stateArg) {
+/* FIX (review v3.3 A2): the Settings text-size sliders dispatched
+ * SETTINGS_UPDATE on every `input` tick, and the full #main innerHTML swap
+ * destroyed the slider mid-drag — the thumb moved one step and the drag
+ * died (pointer capture is bound to the destroyed element). The same swap
+ * reset the daily-goal number field's caret to position 0, mangling
+ * multi-digit entry. These settings reach the DOM either through the
+ * <html>-level CSS custom properties that applyTheme() sets
+ * (--font-scale / --arabic-font-scale) or through the input element the
+ * person is actively editing — nothing else inside #main renders them. So
+ * for these patches we apply the theme (subscriber, above) and SKIP the
+ * view re-render: the control keeps its element, its drag, and its caret.
+ * Every other settings change still re-renders normally. */
+const SELF_RENDERED_SETTING_KEYS = new Set(['fontScale', 'arabicFontScale', 'dailyGoal']);
+
+function isSelfRenderedSettingsUpdate(action) {
+  if (!action || action.type !== 'SETTINGS_UPDATE' || !action.patch) return false;
+  const keys = Object.keys(action.patch);
+  return keys.length > 0 && keys.every((k) => SELF_RENDERED_SETTING_KEYS.has(k));
+}
+
+function onStateChange(stateArg, action) {
   try {
     let state = stateArg;
+    // FIX (walkthrough v3.4 W-1): a modal left open used to survive view
+    // navigation — most reproducibly via the browser Back button / mobile
+    // back-swipe with a card menu open: the hash changes, the view under
+    // the overlay re-renders, and the stale menu (Copy/Share/Listen for a
+    // card that is no longer on screen) stays trapped on top with focus
+    // still inside it. Every modal belongs to the view that opened it, so
+    // any NAVIGATE now closes whatever is open. All existing call sites
+    // already closeModal() before go(); this is the safety net for the
+    // navigation paths that bypass handlers (history, deep links).
+    if (action && action.type === 'NAVIGATE' && isModalOpen()) closeModal();
     if (state.customContent !== lastCustomContentRef) {
       lastCustomContentRef = state.customContent;
       refreshLibraryIndex();
@@ -247,7 +277,7 @@ function onStateChange(stateArg) {
     updateCompassLifecycle(state);
     updateRamadanLifecycle(state);
     updateHomeTickerLifecycle(state);
-    render(state);
+    if (!isSelfRenderedSettingsUpdate(action)) render(state);
   } catch (err) {
     renderErrorScreen(err);
   }
@@ -1279,7 +1309,9 @@ const clickHandlers = {
 
   'export-backup': () => {
     backup.downloadBackup(persistedSnapshot(store.getState()));
-    showToast(t('common.done', store.getState().settings.language));
+    // FIX (review v3.3 A10): the browser's download bar was the only
+    // acknowledgment — an in-app toast matching every other action here.
+    showToast(t('settings.backupExported', store.getState().settings.language));
   },
 
   'import-backup': () => {
@@ -1426,7 +1458,15 @@ const clickHandlers = {
       i = Number(ds.i);
     store.dispatch(actions.openWordStudy(surah, ayah, i));
     await ensureQuranWordsData(store.getState(), surah);
-    ensureQuranRoots(store.getState()); // fire-and-forget; popover works without it, just no root chips yet
+    // FIX (review v3.3 A3): the roots index used to be fetched
+    // fire-and-forget, so the very first word-tap of a session built the
+    // popover before the 1 MB quran-roots.json arrived — showing
+    // "0 occurrences in the Qur'an" for roots with hundreds of them, and
+    // never correcting itself (modals don't re-render on store changes).
+    // It is now awaited like the word data itself: the popover it opens is
+    // already complete and honest. The file is local (SW-cached after the
+    // first fetch), so the cost is one short pause on the first-ever tap.
+    await ensureQuranRoots(store.getState());
     openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
   },
 
@@ -2264,11 +2304,15 @@ function bindGlobalEvents() {
       return;
     }
     if (target.matches('[data-bind="mushaf-font-scale"]')) {
-      store.dispatch(actions.updateMushafPrefs({ fontScale: parseFloat(target.value) || 1 }));
+      store.dispatch(
+        actions.updateMushafPrefs({ fontScale: clampSliderNum(target.value, 0.8, 1.6) })
+      );
       return;
     }
     if (target.matches('[data-bind="mushaf-line-spacing"]')) {
-      store.dispatch(actions.updateMushafPrefs({ lineSpacing: parseFloat(target.value) || 1 }));
+      store.dispatch(
+        actions.updateMushafPrefs({ lineSpacing: clampSliderNum(target.value, 0.85, 1.3) })
+      );
       return;
     }
     if (target.matches('[data-bind="ramadan-suhoor-offset"]')) {
@@ -2558,6 +2602,15 @@ function debounceQuranSearchNavigate(value) {
  * timer would swallow all but the last-edited field, and the store's own
  * debounced persistence already absorbs the write churn.
  */
+/* Clamp a slider/number input's value into [min, max]; used wherever a
+ * numeric preference is dispatched from the DOM so the store can never
+ * hold a value outside its declared range (or a non-number at all). */
+function clampSliderNum(v, min, max) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return min + (max - min) / 2;
+  return Math.min(max, Math.max(min, n));
+}
+
 function refocusZakatInput(ref, caret) {
   requestAnimationFrame(() => {
     const input = document.querySelector(`[data-ref="${ref}"]`);
@@ -2580,6 +2633,27 @@ function refocusZakatInput(ref, caret) {
     ) {
       const pos = caret != null ? caret : input.value.length;
       input.setSelectionRange(pos, pos);
+      return;
+    }
+    // FIX (review v3.3 A1): number inputs used to keep their NATIVE caret,
+    // which Chromium parks at position 0 after the innerHTML swap + focus —
+    // so every digit typed after the first landed BEFORE the existing text.
+    // Typing "50000" produced "00005", and the zakat was silently computed
+    // on 5. Briefly switching the field to type="text" (a well-known
+    // workaround; the value survives the swap) makes setSelectionRange
+    // legal, so the caret returns exactly where the person was typing —
+    // normally the end (number inputs report selectionStart as null, so
+    // that is the fallback), mid-string for text-like fields.
+    if (input.type === 'number') {
+      const pos =
+        caret != null && caret >= 0 ? Math.min(caret, input.value.length) : input.value.length;
+      try {
+        input.type = 'text';
+        input.setSelectionRange(pos, pos);
+        input.type = 'number';
+      } catch {
+        /* best effort — worst case the caret sits at the end */
+      }
     }
   });
 }

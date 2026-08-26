@@ -8,7 +8,7 @@
  *  - Navigation requests fall back to offline.html when nothing is cached.
  */
 
-const VERSION = 'nur-al-dhikr-v3.3.0';
+const VERSION = 'nur-al-dhikr-v3.4.0';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -47,6 +47,7 @@ const APP_SHELL = [
   'js/shareCard.js',
   'js/backup.js',
   'js/calendar.js',
+  'js/calendarNotes.js',
   'js/checklist.js',
   'js/compass.js',
   'js/qibla.js',
@@ -59,6 +60,7 @@ const APP_SHELL = [
   'js/player.js',
   'js/recitation.js',
   'js/components/card.js',
+  'js/components/calendarModals.js',
   'js/components/menus.js',
   'js/components/modal.js',
   'js/components/shell.js',
@@ -70,6 +72,7 @@ const APP_SHELL = [
   'js/migration.js',
   'js/notifications.js',
   'js/prayer.js',
+  'js/prayerSound.js',
   'js/renderer.js',
   'js/router.js',
   'js/schema.js',

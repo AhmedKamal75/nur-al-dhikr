@@ -254,6 +254,23 @@
   opacity: 0.18;
 }
 .counter-pill__label { position: relative; }
+/* FIX (walkthrough v3.4 W-2): completed-cycle badge — visible proof that a
+   tap on a target=1 dhikr actually registered. The ring stays subtle; the
+   check + count is the signal. */
+.counter-pill__cycles {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 3px;
+  margin-inline-start: var(--space-2);
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.counter-pill--done .counter-pill__ring { opacity: 0.28; }
+[data-theme="dark"] .counter-pill__cycles { background: var(--color-primary); }
 
 .mini-card { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3); border-radius: var(--radius-sm); background: var(--color-surface-alt); border: none; text-align: left; cursor: pointer; width: 100%; }
 .mini-card__title { font-weight: 600; font-size: var(--fs-sm); }

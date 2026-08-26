@@ -38,6 +38,16 @@ export function renderMushaf(state) {
   const prefs = state.settings.mushafPrefs;
   const font = MUSHAF_FONTS.find((f) => f.id === prefs.font) || MUSHAF_FONTS[0];
   const paper = MUSHAF_PAPERS.find((p) => p.id === prefs.paper) || MUSHAF_PAPERS[0];
+  // Defense-in-depth (review v3.3 B1): prefs arrive sanitized from the
+  // store, but never interpolate a raw settings value into a style
+  // attribute — coerce to a clamped number so even a future code path
+  // that skips sanitization cannot break out of the attribute.
+  const clampNum = (v, min, max, fallback) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+  };
+  const mushafScale = clampNum(prefs.fontScale, 0.8, 1.6, 1);
+  const mushafLineScale = clampNum(prefs.lineSpacing, 0.85, 1.3, 1);
   // Bookmark lookup set — built once per render, O(1) per ayah.
   const bookmarkedKeys = new Set(state.ayahBookmarks.map((b) => b.key));
   const dir = flipDirection;
@@ -105,7 +115,7 @@ export function renderMushaf(state) {
     </header>
 
     <div class="mushaf-page-wrap" data-mushaf-paper="${paper.id}" style="--mushaf-paper-bg:${paper.bg};--mushaf-paper-ink:${paper.ink};--mushaf-paper-border:${paper.border};">
-      <article class="mushaf-page ${dir ? `mushaf-page--flip-${dir}` : ''} ${prefs.pageFlipAnimation ? '' : 'mushaf-page--no-anim'}" dir="rtl" lang="ar" style="--mushaf-font-family:${font.family};--mushaf-font-scale:${prefs.fontScale};--mushaf-line-scale:${prefs.lineSpacing};">
+      <article class="mushaf-page ${dir ? `mushaf-page--flip-${dir}` : ''} ${prefs.pageFlipAnimation ? '' : 'mushaf-page--no-anim'}" dir="rtl" lang="ar" style="--mushaf-font-family:${font.family};--mushaf-font-scale:${mushafScale};--mushaf-line-scale:${mushafLineScale};">
         <div class="mushaf-page__text">${chaptersHtml}</div>
         <footer class="mushaf-page__footer">
           <span class="mushaf-page__number">${toEasternArabicNumerals(page)}</span>

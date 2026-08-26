@@ -6,7 +6,7 @@
 
 export const APP_NAME = 'Nūr al-Dhikr';
 export const APP_NAME_AR = 'نور الذكر';
-export const APP_VERSION = '3.3.0';
+export const APP_VERSION = '3.4.0';
 export const SCHEMA_VERSION = 2;
 export const STORAGE_KEY = 'nurAlDhikr:v2:state';
 export const DB_NAME = 'nurAlDhikrDB';
@@ -299,6 +299,151 @@ export const DEFAULT_SETTINGS = Object.freeze({
 
 /** Offsets offered for the Suhoor pre-alert (minutes before Fajr). */
 export const SUHOOR_OFFSETS = Object.freeze([10, 15, 20, 30, 45, 60]);
+
+/* ------------------------------------------------------------------ */
+/* Settings sanitization                                                */
+/* ------------------------------------------------------------------ */
+//
+// FIX (review v3.3 B1/B4/B5): persisted/imported settings are UNTRUSTED
+// input. A backup file (or hand-edited localStorage) could carry anything
+// in any field — and several settings are interpolated into HTML
+// attributes by the views (mushafPrefs.fontScale into the Mushaf page's
+// style attribute, the sliders' value attributes, etc.), which made a
+// crafted backup a stored-XSS vector. Beyond security, a shallow
+// `{ ...DEFAULTS, ...payload }` merge silently DELETED every default key
+// missing from an older or hand-made backup — turning word-by-word study
+// and other features off with no notice. This module validates every
+// field: enums are checked against their legal values, numbers are
+// coerced and clamped to their slider ranges, booleans are coerced, and
+// nested objects are merged key-by-key over their defaults so partial
+// payloads keep the defaults for the keys they lack. Pure function — no
+// imports beyond this file's own constants — so it is directly
+// unit-testable and safe to run on both hydrate() and RESTORE_STATE.
+
+const MUSHAF_FONT_IDS = new Set(MUSHAF_FONTS.map((f) => f.id));
+const MUSHAF_PAPER_IDS = new Set(MUSHAF_PAPERS.map((p) => p.id));
+const PALETTE_IDS = new Set(PALETTES.map((p) => p.id));
+const SHAPE_IDS = new Set(SHAPES.map((s) => s.id));
+
+function asBool(v, fallback) {
+  return typeof v === 'boolean' ? v : fallback;
+}
+function asNumber(v, fallback, min, max) {
+  const n = Number(v);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(min, n));
+}
+function asEnum(v, legal, fallback) {
+  return typeof v === 'string' && legal.has(v) ? v : fallback;
+}
+function asShortStr(v, fallback, maxLen = 40) {
+  return typeof v === 'string' && v.length <= maxLen ? v : fallback;
+}
+function asCoords(v, fallback) {
+  const n = Number(v);
+  return Number.isFinite(n) && Math.abs(n) <= 180 ? n : fallback;
+}
+
+export function sanitizeMushafPrefs(raw) {
+  const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  return {
+    font: asEnum(p.font, MUSHAF_FONT_IDS, DEFAULT_MUSHAF_FONT),
+    paper: asEnum(p.paper, MUSHAF_PAPER_IDS, DEFAULT_MUSHAF_PAPER),
+    fontScale: asNumber(p.fontScale, 1, 0.8, 1.6),
+    lineSpacing: asNumber(p.lineSpacing, 1, 0.85, 1.3),
+    pageFlipAnimation: asBool(p.pageFlipAnimation, true),
+    wordByWordStudy: asBool(p.wordByWordStudy, true),
+    wordUnderline: asBool(p.wordUnderline, true),
+    defaultTafsir: asShortStr(p.defaultTafsir, 'muyassar', 40),
+  };
+}
+
+function sanitizePrayer(raw) {
+  const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  const d = DEFAULT_SETTINGS.prayer;
+  const alerts = p.alerts && typeof p.alerts === 'object' && !Array.isArray(p.alerts) ? p.alerts : {};
+  const ra =
+    p.ramadanAlerts && typeof p.ramadanAlerts === 'object' && !Array.isArray(p.ramadanAlerts)
+      ? p.ramadanAlerts
+      : {};
+  return {
+    method: asShortStr(p.method, d.method, 24),
+    asr: asShortStr(p.asr, d.asr, 24),
+    latitude: p.latitude == null ? null : asCoords(p.latitude, null),
+    longitude: p.longitude == null ? null : asCoords(p.longitude, null),
+    timezone: asShortStr(p.timezone, d.timezone, 64),
+    locationName: asShortStr(p.locationName, d.locationName, 80),
+    alerts: {
+      fajr: asBool(alerts.fajr, false),
+      sunrise: asBool(alerts.sunrise, false),
+      dhuhr: asBool(alerts.dhuhr, false),
+      asr: asBool(alerts.asr, false),
+      maghrib: asBool(alerts.maghrib, false),
+      isha: asBool(alerts.isha, false),
+    },
+    alertSound: asShortStr(p.alertSound, d.alertSound, 24),
+    ramadanAlerts: {
+      suhoor: asBool(ra.suhoor, false),
+      iftar: asBool(ra.iftar, false),
+      suhoorOffset: asNumber(ra.suhoorOffset, d.ramadanAlerts.suhoorOffset, 5, 120),
+    },
+  };
+}
+
+function sanitizeAudio(raw) {
+  const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  const d = DEFAULT_SETTINGS.audio;
+  return {
+    moshafId: p.moshafId == null ? null : asShortStr(p.moshafId, null, 80),
+    rate: asNumber(p.rate, d.rate, 0.5, 2),
+    repeat: p.repeat === 'one' ? 'one' : 'off',
+  };
+}
+
+function sanitizeCustomReciters(raw) {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((r) => r && typeof r === 'object' && !Array.isArray(r))
+    .map((r) => ({
+      id: asShortStr(r.id, `custom-${Math.random().toString(36).slice(2, 8)}`, 80),
+      nameEn: asShortStr(r.nameEn, '', 80),
+      nameAr: asShortStr(r.nameAr, '', 80),
+      rewaya: asShortStr(r.rewaya, '', 40),
+      server: asShortStr(r.server, '', 300),
+    }))
+    .filter((r) => r.nameEn || r.nameAr);
+}
+
+/** Validate/normalize an untrusted settings object (backup import or
+ *  localStorage) against DEFAULT_SETTINGS. Returns a fully-typed settings
+ *  object with every known key present — hostile strings in numeric or
+ *  enum slots are replaced by their defaults, never rendered downstream. */
+export function sanitizeSettings(raw) {
+  const s = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  const d = DEFAULT_SETTINGS;
+  return {
+    language: s.language === 'ar' ? 'ar' : 'en',
+    themeMode: asEnum(s.themeMode, new Set(THEME_MODES), d.themeMode),
+    palette: asEnum(s.palette, PALETTE_IDS, d.palette),
+    shape: asEnum(s.shape, SHAPE_IDS, d.shape),
+    fontScale: asNumber(s.fontScale, d.fontScale, 0.85, 1.4),
+    arabicFontScale: asNumber(s.arabicFontScale, d.arabicFontScale, 0.85, 1.6),
+    reduceMotion: asBool(s.reduceMotion, d.reduceMotion),
+    highContrast: asBool(s.highContrast, d.highContrast),
+    soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
+    hapticsEnabled: asBool(s.hapticsEnabled, d.hapticsEnabled),
+    showTransliteration: asBool(s.showTransliteration, d.showTransliteration),
+    showTranslation: asBool(s.showTranslation, d.showTranslation),
+    autoAdvanceFocus: asBool(s.autoAdvanceFocus, d.autoAdvanceFocus),
+    dailyGoal: Math.round(asNumber(s.dailyGoal, d.dailyGoal, 1, 10000)),
+    reciter: asShortStr(s.reciter, d.reciter, 60),
+    navCollapsed: asBool(s.navCollapsed, d.navCollapsed),
+    audio: sanitizeAudio(s.audio),
+    customReciters: sanitizeCustomReciters(s.customReciters),
+    prayer: sanitizePrayer(s.prayer),
+    mushafPrefs: sanitizeMushafPrefs(s.mushafPrefs),
+  };
+}
 
 export const ICON_SIZES = Object.freeze([24, 32, 48, 64]);
 

@@ -12,6 +12,7 @@ import {
   VIEWS,
   MUSHAF_PAGE_COUNT,
   CHECKLIST_ITEMS,
+  sanitizeSettings,
 } from './config.js';
 import { clone, debounce, dateKey, uid } from './utils.js';
 import { loadState, saveState } from './storage.js';
@@ -241,7 +242,15 @@ class Store {
       this.state = {
         ...this.state,
         ...sanitizeRestoredPayload(result.value),
-        settings: { ...DEFAULT_SETTINGS, ...(result.value.settings || {}) },
+        // FIX (review v3.3 B1/B4/B5): settings from storage are untrusted
+        // (tampered localStorage, hostile/older backup imports). The old
+        // shallow spread let crafted strings reach HTML attributes
+        // (stored XSS) and dropped every default key a partial payload
+        // lacked, silently disabling features. sanitizeSettings validates
+        // every field, clamps numbers, checks enums, and deep-merges the
+        // nested objects (prayer / audio / mushafPrefs) over their
+        // defaults.
+        settings: sanitizeSettings(result.value.settings),
         // Defense-in-depth: localStorage can end up holding malformed custom
         // content from a bad import, manual tampering, or a bug in an older
         // version of this app. Normalize on every load so a single corrupted
@@ -906,9 +915,11 @@ function reduce(state, action) {
       return {
         ...initialState(),
         ...sanitizeRestoredPayload(action.payload),
-        settings: { ...DEFAULT_SETTINGS, ...(action.payload.settings || {}) },
         // Same defense as hydrate(): an imported backup is user-supplied
         // (or hand-editable) data and must never be trusted as pre-validated.
+        // sanitizeSettings blocks the crafted-mushafPrefs XSS chain and keeps
+        // partial/legacy backups from silently switching features off.
+        settings: sanitizeSettings(action.payload?.settings),
         customContent: normalizeCustomContentMap(action.payload.customContent),
         library: state.library,
         booted: true,
@@ -935,6 +946,9 @@ function sanitizeRestoredPayload(payload) {
   const asArray = (v, fallback = []) => (Array.isArray(v) ? v : fallback);
   const asObject = (v, fallback = {}) =>
     v && typeof v === 'object' && !Array.isArray(v) ? v : fallback;
+  // FIX (walkthrough v3.4 W-4): strict 24-hour HH:MM clock. Shared by the
+  // reminder and calendar-note sanitizers below.
+  const CLOCK_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
   const stats = asObject(p.statistics);
   const qb = asObject(p.quranBookmark);
   const mb = asObject(p.mushafBookmark);
@@ -1017,7 +1031,7 @@ function sanitizeRestoredPayload(payload) {
         basis: zakatPrefs.basis === 'silver' ? 'silver' : 'gold',
         goldPricePerGram: asStr(zakatPrefs.goldPricePerGram),
         silverPricePerGram: asStr(zakatPrefs.silverPricePerGram),
-        currency: asStr(zakatPrefs.currency),
+        currency: asStr(zakatPrefs.currency).slice(0, 12),
         fitrPer: asNumStr(zakatPrefs.fitrPer),
         fitrPeople: asNumStr(zakatPrefs.fitrPeople),
       },
@@ -1042,9 +1056,23 @@ function sanitizeRestoredPayload(payload) {
         items: asArray(c.items).filter((id) => typeof id === 'string'),
       })),
     counters: asObject(p.counters),
+    // FIX (walkthrough v3.4 W-4): reminders only validated structurally
+    // before — a hostile/older backup could carry time:"garbage" (or an
+    // empty string), which the scheduler's minutesSince() parses to NaN:
+    // no crash, but the reminder silently NEVER fires while the Settings
+    // list shows it as live. Broken-time reminders are now dropped at the
+    // state boundary; calendar notes get the same treatment below.
     reminders: asArray(p.reminders).filter(
-      (r) => r && typeof r === 'object' && typeof r.id === 'string'
+      (r) => r && typeof r === 'object' && typeof r.id === 'string' && CLOCK_RE.test(String(r.time))
     ),
+    calendarNotes: asArray(p.calendarNotes)
+      .filter((n) => n && typeof n === 'object' && typeof n.id === 'string')
+      .map((n) => ({
+        ...n,
+        // An unparseable reminderTime on a note is a dead reminder —
+        // normalize it away rather than keep a silently-broken alert.
+        reminderTime: CLOCK_RE.test(String(n.reminderTime)) ? n.reminderTime : null,
+      })),
     history: asArray(p.history),
     search: {
       historyList: asArray(asObject(p.search).historyList).filter((q) => typeof q === 'string'),

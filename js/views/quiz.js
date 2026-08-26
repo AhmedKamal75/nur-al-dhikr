@@ -83,14 +83,17 @@ function renderQuestion(state, lang) {
 
     <div class="quiz-prompt">
       <p class="quiz-prompt__arabic" dir="rtl" lang="ar">${escapeHTML(item.arabic)}</p>
-      ${state.settings.showTransliteration ? `<p class="quiz-prompt__translit">${escapeHTML(item.transliteration)}</p>` : ''}
       <p class="quiz-prompt__hint">${t('quiz.whatDoesItMean', lang)}</p>
     </div>
 
     <div class="quiz-choices">${choiceButtons}</div>
 
+    ${/* FIX (review v3.3 A6): the transliteration moved into the
+        post-answer reinforcement below — showing it in the prompt leaked
+        the correct answer ("Al-Qadir" ↔ "The All-Able"). */ ''}
     ${revealed ? `
     <div class="quiz-feedback">
+      <p class="quiz-prompt__translit">${escapeHTML(item.transliteration)}</p>
       ${item.virtues?.[lang] ? `<p class="quiz-feedback__virtue">${escapeHTML(item.virtues[lang])}</p>` : ''}
       <button type="button" class="btn btn--primary" data-action="quiz-next">
         ${index + 1 >= deck.length ? t('quiz.seeResults', lang) : t('quiz.next', lang)} ${icon('chevronRight', { size: 16 })}

@@ -113,14 +113,25 @@ export function computeFitr(perPersonValue, people) {
   return { perPerson: per, people: count, total: roundUpToUnit(per * count) };
 }
 
-/** Format a number for display with up to 2 decimals, thousands separators. */
+/** Format a number for display with up to 2 decimals, thousands separators.
+ * The currency symbol comes from user input (or an imported backup), and
+ * every caller interpolates the result directly into HTML — so the symbol
+ * is escaped HERE, once, at the boundary. (FIX review v3.3 B2: a crafted
+ * `zakat.prefs.currency` used to inject markup into the result panel.) */
 export function formatAmount(value, symbol = '') {
   const n = Number.isFinite(value) ? value : 0;
   const rounded = Math.round(n * 100) / 100;
   const [intPart, decPart] = rounded.toFixed(2).split('.');
   const withSeparators = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   const trimmed = decPart === '00' ? withSeparators : `${withSeparators}.${decPart}`;
-  return symbol ? `${trimmed} ${symbol}`.trim() : trimmed;
+  const safeSymbol = String(symbol ?? '')
+    .slice(0, 12)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+  return safeSymbol ? `${trimmed} ${safeSymbol}`.trim() : trimmed;
 }
 
 /** Length of a lunar (hijri) year in days, as used for the hawl. */
