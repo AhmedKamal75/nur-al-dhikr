@@ -11,6 +11,7 @@ import { t } from '../i18n.js';
 import { icon } from '../icons.js';
 import { escapeHTML, pickLocale } from '../utils.js';
 import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../config.js';
+import { classifyAyahTajweed, classifyWordTajweed, wordUnits, TAJWEED_RULES } from '../tajweed.js';
 import {
   getWord,
   wordGrammarSummary,
@@ -37,23 +38,105 @@ export function renderAyahWords(
   wordRecords,
   surah,
   ayah,
-  { tappable = true, underline = true } = {}
+  { tappable = true, underline = true, tajweed = false } = {}
 ) {
   const tokens = String(officialText || '')
     .trim()
     .split(/\s+/)
     .filter(Boolean);
-  if (!tappable || !Array.isArray(wordRecords) || !wordRecords.length) {
-    return escapeHTML(officialText || '');
-  }
+  const tajweedByWord = tajweed ? classifyAyahTajweed(officialText) : null;
+
   return tokens
     .map((tok, idx) => {
       const i = idx + 1;
-      const has = wordRecords.some((w) => w.i === i);
-      if (!has) return escapeHTML(tok);
-      return `<span class="qword ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="0" role="button">${escapeHTML(tok)}</span>`;
+      const inner = tajweedByWord
+        ? colorizeWord(tok, tajweedByWord[idx]?.spans || [])
+        : escapeHTML(tok);
+      const hasWordData = Array.isArray(wordRecords) && wordRecords.some((w) => w.i === i);
+      if (!tappable || !hasWordData) return inner;
+      return `<span class="qword ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="0" role="button">${inner}</span>`;
     })
     .join(' ');
+}
+
+/** Wrap a word's tajweed-flagged letter runs in colored spans, escaping
+ *  everything else as plain text. Spans are character-index ranges into
+ *  `word` produced by tajweed.js — see that module for why they're safe
+ *  to trust (computed directly from this app's own text, not aligned
+ *  against a third-party offset table). */
+function colorizeWord(word, spans) {
+  if (!spans.length) return escapeHTML(word);
+  const sorted = [...spans].sort((a, b) => a.start - b.start);
+  let out = '';
+  let cursor = 0;
+  for (const s of sorted) {
+    if (s.start < cursor) continue; // rules should never overlap, but never let one clobber the last
+    out += escapeHTML(word.slice(cursor, s.start));
+    out += `<span class="tajweed tajweed--${s.rule}">${escapeHTML(word.slice(s.start, s.end))}</span>`;
+    cursor = s.end;
+  }
+  out += escapeHTML(word.slice(cursor));
+  return out;
+}
+
+/** v3.7 — Tajweed inspector: what to DO at this specific word.
+ * Recomputes the classification from the official ayah token with proper
+ * one-letter lookahead, then lists every rule applying here — bilingual
+ * name, legend color, and the pronunciation instruction — so tapping any
+ * word answers "which letters carry a rule and how do I recite them?"
+ * straight from the same classifier that colors the page. It can never
+ * disagree with the colored text, because it IS the colored text's source.
+ */
+function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
+  if (!state.settings.mushafPrefs?.tajweedInspector) return '';
+  const doc = state.quran.surahs[String(surah)];
+  const ayahText = doc?.ayahs?.find((x) => String(x.number) === String(ayah))?.text;
+  if (!ayahText) return '';
+  const tokens = ayahText.trim().split(/\s+/).filter(Boolean);
+  const token = tokens[wordIndex - 1];
+  if (!token) return '';
+  // Reading order: the first letter AFTER this word decides cross-word
+  // rules; it comes from the same tokenizer the rules themselves use.
+  const nextToken = tokens[wordIndex];
+  const nextUnits = nextToken ? wordUnits(nextToken) : [];
+  const spans = classifyWordTajweed(token, {
+    nextWordFirstBase: nextUnits[0] ? nextToken[nextUnits[0].start] : null,
+    isLastWordOfAyah: wordIndex === tokens.length,
+  });
+  if (!spans.length) return '';
+  // Dedupe identical (rule, range) pairs defensively; sort in reading order.
+  const seen = new Set();
+  const rows = spans
+    .filter((sp) => {
+      const key = `${sp.rule}:${sp.start}:${sp.end}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((p1, p2) => p1.start - p2.start || p1.end - p2.end)
+    .map((sp) => {
+      const rule = TAJWEED_RULES.find((r) => r.id === sp.rule);
+      if (!rule) return '';
+      const name = lang === 'ar' ? rule.name.ar : rule.name.en;
+      const nameAlt = lang === 'ar' ? '' : ` \u00B7 ${rule.name.ar}`;
+      const desc = lang === 'ar' ? rule.desc.ar : rule.desc.en;
+      return `
+        <div class="wti-row">
+          <span class="wti-swatch" style="background:${rule.color}" aria-hidden="true"></span>
+          <div class="wti-body">
+            <span class="wti-name">${escapeHTML(name)}<span dir="rtl" class="wti-name-alt">${escapeHTML(nameAlt)}</span></span>
+            <span class="wti-desc">${escapeHTML(desc)}</span>
+            <span class="wti-letters" dir="rtl" lang="ar">${escapeHTML(token.slice(sp.start, sp.end))}</span>
+          </div>
+        </div>`;
+    })
+    .join('');
+  return `
+    <div class="word-study__tajweed">
+      <p class="word-study__tajweed-label">${t('wordStudy.tajweed', lang)}</p>
+      <div class="word-study__tajweed-arabic" dir="rtl" lang="ar">${colorizeWord(token, spans)}</div>
+      ${rows}
+    </div>`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -131,6 +214,7 @@ export function buildWordStudyPanel(state) {
     ${affixHtml(prefixes, 'wordStudy.prefix')}
     ${affixHtml(suffixes, 'wordStudy.suffix')}
     ${rootHtml}
+    ${wordTajweedSection(state, surah, ayah, i, lang)}
     <div class="word-study__actions">
       <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
         ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)}
@@ -304,9 +388,47 @@ export function buildMushafSettingsPanel(state) {
     <h3 class="mushaf-jump__heading">${t('mushaf.lineSpacing', lang)}</h3>
     <input class="slider" type="range" min="0.85" max="1.3" step="0.05" value="${lineSpacing}" data-bind="mushaf-line-spacing" aria-label="${t('mushaf.lineSpacing', lang)}" />
 
+    <h3 class="mushaf-jump__heading">${t('mushaf.bismillahStyle', lang)}</h3>
+    <div class="mushaf-settings__bismillah">
+      ${['auto', 'gold', 'accent', 'hidden']
+        .map(
+          (st) => `
+      <button type="button" class="mushaf-settings__bismillah-chip ${prefs.bismillahStyle === st ? 'mushaf-settings__bismillah-chip--active' : ''}" data-action="mushaf-set-bismillah" data-style="${st}">
+        <span dir="rtl" lang="ar" class="bismillah-sample bismillah--${st}">بِسْمِ اللَّهِ</span>
+        <span class="mushaf-settings__bismillah-label">${t(`mushaf.bismillah_${st}`, lang)}</span>
+      </button>`
+        )
+        .join('')}
+    </div>
+
     <h3 class="mushaf-jump__heading">${t('mushaf.behavior', lang)}</h3>
     ${toggle('pageFlipAnimation', 'mushaf.flipAnimation')}
+    ${toggle('tajweedInspector', 'mushaf.tajweedInspector')}
     ${toggle('wordByWordStudy', 'mushaf.wordStudy')}
     ${toggle('wordUnderline', 'mushaf.wordUnderline')}
+    ${toggle('tajweedColoring', 'mushaf.tajweed')}
+
+    <button type="button" class="btn btn--secondary practice-launch-btn" data-action="practice-open">
+      ${icon('sparkle', { size: 15 })} ${t('practice.launchFromSettings', lang)}
+    </button>
+
+    ${
+      prefs.tajweedColoring
+        ? `
+    <h3 class="mushaf-jump__heading">${t('mushaf.tajweedLegend', lang)}</h3>
+    <div class="tajweed-legend">
+      ${TAJWEED_RULES.map(
+        (r) => `
+        <div class="tajweed-legend__row">
+          <span class="tajweed-legend__swatch" style="background:${r.color}"></span>
+          <div>
+            <div class="tajweed-legend__name">${escapeHTML(pickLocale(r.name, lang))}</div>
+            <div class="tajweed-legend__desc">${escapeHTML(pickLocale(r.desc, lang))}</div>
+          </div>
+        </div>`
+      ).join('')}
+    </div>`
+        : ''
+    }
   </div>`;
 }

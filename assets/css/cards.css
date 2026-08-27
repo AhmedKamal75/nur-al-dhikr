@@ -272,6 +272,7 @@
 .counter-pill--done .counter-pill__ring { opacity: 0.28; }
 [data-theme="dark"] .counter-pill__cycles { background: var(--color-primary); }
 
+
 .mini-card { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3); border-radius: var(--radius-sm); background: var(--color-surface-alt); border: none; text-align: left; cursor: pointer; width: 100%; }
 .mini-card__title { font-weight: 600; font-size: var(--fs-sm); }
 .mini-card__arabic { font-family: var(--font-arabic); direction: rtl; color: var(--color-text-secondary); }
@@ -313,6 +314,13 @@
 .focus__count { font-size: var(--fs-2xl); font-weight: 800; font-variant-numeric: tabular-nums; }
 .focus__target { font-size: var(--fs-sm); color: var(--color-text-muted); }
 .focus__hint { text-align: center; color: var(--color-text-muted); font-size: var(--fs-caption); margin-top: var(--space-2); }
+/* v3.7: cycle-completion feedback. The render model replaces the button on
+ * every update, so the pulse rides a class stamped during the completing
+ * render (tasbih.wasJustCompleted) and disappears naturally on later renders
+ * once the ~700ms window passes. Keyframes live in animations.css. */
+.is-just-completed.focus__counter { animation: cycleComplete 0.7s var(--ease-spring, ease-out); }
+.is-just-completed.focus__counter .focus__ring-fill { stroke: var(--color-success, var(--color-primary)); }
+.is-just-completed.focus__hint { color: var(--color-success, var(--color-primary)); font-weight: 600; }
 .focus__nav { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-5); padding-bottom: max(var(--space-4), env(safe-area-inset-bottom)); }
 .focus__nav-arrows { display: flex; gap: var(--space-2); }
 

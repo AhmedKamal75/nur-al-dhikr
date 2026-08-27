@@ -14,6 +14,10 @@ import {
   CHECKLIST_ITEMS,
   sanitizeSettings,
 } from './config.js';
+import {
+  defaultTajweedPracticeStats,
+  nextStats as nextTajweedPracticeStats,
+} from './tajweedPractice.js';
 import { clone, debounce, dateKey, uid } from './utils.js';
 import { loadState, saveState } from './storage.js';
 import { normalizeCustomContentMap } from './schema.js';
@@ -74,6 +78,10 @@ function initialState() {
     // Ephemeral — which word's grammar popover is open, if any:
     // { surah, ayah, i } | null. Never persisted; closes on navigation.
     activeWordStudy: null,
+    // Curated ayah pool for the Tajweed practice/drill mode, fetched once.
+    tajweedPool: null,
+    // Persisted streak/accuracy stats for the drill mode.
+    tajweedPracticeStats: defaultTajweedPracticeStats(),
     // Last surah the reader opened, persisted so Home can offer a
     // "Continue Reading" shortcut back into the Qur'an, mirroring the
     // pattern already used for adhkar/dua reading history.
@@ -208,6 +216,7 @@ const PERSISTED_KEYS = [
   'onboarding',
   'khatmaPlan',
   'khatmaHistory',
+  'tajweedPracticeStats',
 ];
 
 function pickPersisted(state) {
@@ -221,6 +230,13 @@ class Store {
     this.state = initialState();
     this._listeners = new Set();
     this._persistFailed = false;
+    // v3.7: multi-action atomicity. A single logical user gesture (e.g. one
+    // tasbih tap = counter update + statistics + history) used to notify
+    // subscribers — and therefore re-render the whole app via innerHTML —
+    // once PER dispatch. Batched dispatches coalesce into exactly one
+    // notification + one persist after the outermost batch exits.
+    this._batchDepth = 0;
+    this._batchDirty = false;
     // FIX (review v3.1 A4): a quota-exceeded (or otherwise failing) save used
     // to be swallowed silently — the app appeared to save and didn't.
     // Register a callback to tell the person, once, that persistence is
@@ -277,14 +293,48 @@ class Store {
     const next = reduce(prev, action);
     if (next === prev) return; // no-op action, skip render + persist churn
     this.state = next;
+    if (this._batchDepth > 0) {
+      // Inside a batch: hold notifications until the outermost batch exits.
+      this._batchDirty = true;
+      this._batchLastAction = action;
+      return;
+    }
+    this._notifyAll(action);
+    this._persist();
+  }
+
+  /**
+   * Run a multi-action mutation as ONE logical update: subscribers fire
+   * (and the app re-renders) exactly once after the whole mutator has run,
+   * instead of once per dispatch. Nesting is supported; state reads inside
+   * the batch always see the latest composed state immediately.
+   */
+  batch(mutator) {
+    this._batchDepth++;
+    try {
+      mutator();
+    } finally {
+      this._batchDepth--;
+      if (this._batchDepth === 0 && this._batchDirty) {
+        this._batchDirty = false;
+        // Subscribers see the LAST action of the batch (the app only ever
+        // inspects action.type, e.g. its NAVIGATE modal-close safety net).
+        const lastAction = this._batchLastAction;
+        this._batchLastAction = null;
+        this._notifyAll(lastAction);
+        this._persist();
+      }
+    }
+  }
+
+  _notifyAll(action) {
     this._listeners.forEach((fn) => {
       try {
-        fn(this.state, action, prev);
+        fn(this.state, action);
       } catch (err) {
         console.error('[state] subscriber error', err);
       }
     });
-    this._persist();
   }
 }
 
@@ -546,6 +596,16 @@ function reduce(state, action) {
         quran: { ...state.quran, surahs: { ...state.quran.surahs, [action.number]: action.surah } },
       };
 
+    // v3.6: full-text search bulk-warms the whole corpus. ONE dispatch (not
+    // 114) so the view re-renders exactly once after the batch lands.
+    case 'QURAN_SURAHS_BULK_LOADED': {
+      const docs = action.docs && typeof action.docs === 'object' && !Array.isArray(action.docs) ? action.docs : {};
+      if (!Object.keys(docs).length) return state;
+      const merged = { ...state.quran.surahs };
+      for (const [k, doc] of Object.entries(docs)) merged[k] = doc;
+      return { ...state, quran: { ...state.quran, surahs: merged } };
+    }
+
     case 'QURAN_BOOKMARK_SET':
       return { ...state, quranBookmark: { surah: action.surah, ts: Date.now() } };
 
@@ -587,6 +647,19 @@ function reduce(state, action) {
 
     case 'WORD_STUDY_CLOSE':
       return { ...state, activeWordStudy: null };
+
+    case 'TAJWEED_POOL_LOADED':
+      return { ...state, tajweedPool: action.pool };
+
+    case 'TAJWEED_PRACTICE_RESULT':
+      return {
+        ...state,
+        tajweedPracticeStats: nextTajweedPracticeStats(
+          state.tajweedPracticeStats,
+          action.ruleId,
+          action.perfect
+        ),
+      };
 
     case 'AYAH_BOOKMARK_TOGGLE': {
       const exists = state.ayahBookmarks.some((b) => b.key === action.key);
@@ -915,11 +988,11 @@ function reduce(state, action) {
       return {
         ...initialState(),
         ...sanitizeRestoredPayload(action.payload),
-        // Same defense as hydrate(): an imported backup is user-supplied
-        // (or hand-editable) data and must never be trusted as pre-validated.
         // sanitizeSettings blocks the crafted-mushafPrefs XSS chain and keeps
         // partial/legacy backups from silently switching features off.
         settings: sanitizeSettings(action.payload?.settings),
+        // Same defense as hydrate(): an imported backup is user-supplied
+        // (or hand-editable) data and must never be trusted as pre-validated.
         customContent: normalizeCustomContentMap(action.payload.customContent),
         library: state.library,
         booted: true,
@@ -955,6 +1028,7 @@ function sanitizeRestoredPayload(payload) {
   const quizStats = asObject(p.quizStats);
   const ob = asObject(p.onboarding);
   const kp = asObject(p.khatmaPlan);
+  const tps = asObject(p.tajweedPracticeStats, defaultTajweedPracticeStats());
   const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
   const zakatObj = asObject(p.zakat);
   const zakatPrefs = asObject(zakatObj.prefs);
@@ -965,6 +1039,13 @@ function sanitizeRestoredPayload(payload) {
 
   return {
     ...p,
+    tajweedPracticeStats: {
+      totalCorrect: Number.isFinite(tps.totalCorrect) ? tps.totalCorrect : 0,
+      totalAttempts: Number.isFinite(tps.totalAttempts) ? tps.totalAttempts : 0,
+      currentStreak: Number.isFinite(tps.currentStreak) ? tps.currentStreak : 0,
+      bestStreak: Number.isFinite(tps.bestStreak) ? tps.bestStreak : 0,
+      byRule: asObject(tps.byRule),
+    },
     // Onboarding: honor an explicit flag from the payload; when absent
     // (pre-onboarding versions, fresh imports), returning users are
     // auto-dismissed so upgrades never meet a first-run wizard, while
@@ -1031,7 +1112,7 @@ function sanitizeRestoredPayload(payload) {
         basis: zakatPrefs.basis === 'silver' ? 'silver' : 'gold',
         goldPricePerGram: asStr(zakatPrefs.goldPricePerGram),
         silverPricePerGram: asStr(zakatPrefs.silverPricePerGram),
-        currency: asStr(zakatPrefs.currency).slice(0, 12),
+        currency: asStr(zakatPrefs.currency),
         fitrPer: asNumStr(zakatPrefs.fitrPer),
         fitrPeople: asNumStr(zakatPrefs.fitrPeople),
       },
@@ -1056,15 +1137,14 @@ function sanitizeRestoredPayload(payload) {
         items: asArray(c.items).filter((id) => typeof id === 'string'),
       })),
     counters: asObject(p.counters),
-    // FIX (walkthrough v3.4 W-4): reminders only validated structurally
-    // before — a hostile/older backup could carry time:"garbage" (or an
-    // empty string), which the scheduler's minutesSince() parses to NaN:
-    // no crash, but the reminder silently NEVER fires while the Settings
-    // list shows it as live. Broken-time reminders are now dropped at the
-    // state boundary; calendar notes get the same treatment below.
-    reminders: asArray(p.reminders).filter(
-      (r) => r && typeof r === 'object' && typeof r.id === 'string' && CLOCK_RE.test(String(r.time))
-    ),
+    reminders: asArray(p.reminders)
+      .filter((r) => r && typeof r === 'object' && typeof r.id === 'string')
+      // FIX (walkthrough v3.4 W-4): a reminder whose time can never parse
+      // ("25:99", "9am", NaN …) showed up as a live, enabled reminder in
+      // Settings but was silently skipped by the scheduler forever — the
+      // worst kind of failure for something that promises to wake you for
+      // fajr. Drop anything that isn't a strict 24-hour HH:MM at restore.
+      .filter((r) => CLOCK_RE.test(String(r.time))),
     calendarNotes: asArray(p.calendarNotes)
       .filter((n) => n && typeof n === 'object' && typeof n.id === 'string')
       .map((n) => ({
@@ -1179,6 +1259,7 @@ export const actions = {
   resetAll: () => ({ type: 'RESET_ALL' }),
   setQuranMeta: (meta) => ({ type: 'QURAN_META_LOADED', meta }),
   setQuranSurah: (number, surah) => ({ type: 'QURAN_SURAH_LOADED', number: String(number), surah }),
+  setQuranSurahsBulk: (docs) => ({ type: 'QURAN_SURAHS_BULK_LOADED', docs }),
   setQuranBookmark: (surah) => ({ type: 'QURAN_BOOKMARK_SET', surah }),
   setMushafMeta: (meta) => ({ type: 'MUSHAF_META_LOADED', meta }),
   setMushafPage: (page, doc) => ({ type: 'MUSHAF_PAGE_LOADED', page: String(page), doc }),
@@ -1199,6 +1280,12 @@ export const actions = {
     i: Number(i),
   }),
   closeWordStudy: () => ({ type: 'WORD_STUDY_CLOSE' }),
+  setTajweedPool: (pool) => ({ type: 'TAJWEED_POOL_LOADED', pool }),
+  recordTajweedPracticeResult: (ruleId, perfect) => ({
+    type: 'TAJWEED_PRACTICE_RESULT',
+    ruleId,
+    perfect,
+  }),
   updateMushafPrefs: (patch) => ({ type: 'SETTINGS_UPDATE_MUSHAF_PREFS', patch }),
   toggleAyahBookmark: (key, surah, ayah, page) => ({
     type: 'AYAH_BOOKMARK_TOGGLE',

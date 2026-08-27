@@ -9,7 +9,7 @@
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait-primary",
   "background_color": "#FAF9F5",
-  "theme_color": "#FFFFFF",
+  "theme_color": "#0F766E",
   "lang": "en",
   "dir": "ltr",
   "categories": ["lifestyle", "education", "books"],

@@ -1,156 +1,209 @@
 # Changelog
 
-## v3.4.0 — Live user-walkthrough: four fixes found by clicking everything
+## v3.8.0 — Real Adhan at prayer time
 
-A full live walkthrough of v3.3.1 in the persona of an impatient real
-user — every view, every button, every form, rage-taps, hostile input,
-a crafted backup, and an offline reload (see REVIEW-v3.4.0.md, shipped
-alongside this release). Four defects were confirmed and fixed; several
-spectacular-looking suspects turned out to be tooling artifacts and are
-documented so the next reviewer doesn't chase them.
+The TODO list's top Critical item, closed.
 
-### Fixed
-- **A modal left open survived view navigation** *(W-1, medium)*.
-  Open a card's "More" menu, press Back (or swipe back on mobile): the
-  action sheet stayed trapped on top of the newly-rendered view,
-  offering Copy/Share/Listen for a card that no longer existed, with
-  focus still inside it. Every NAVIGATE now closes any open modal —
-  a safety net for the history/deep-link paths that bypassed the
-  click handlers (which already closed modals before navigating).
-- **Tapping a single-repetition dhikr gave zero visible feedback**
-  *(W-2, medium)*. For target=1 items (most duas) each tap completed a
-  cycle and instantly reset the count, so the pill read "0 / 1" forever
-  and the progress ring never filled — on desktop, with no haptics and
-  muted sound, a tap produced no visible change at all. The counter pill
-  now carries a check + completed-cycle badge (`✓ 4`) and a done state
-  as soon as the first cycle completes.
-- **Double-escaped currency in the zakat nisab threshold** *(W-3, low)*.
-  A currency containing markup characters (`AT&T`) rendered as
-  `AT&amp;T` on the "Nisab threshold" line — the view pre-escaped the
-  symbol before passing it to `formatAmount()`, which escapes it again.
-  The raw string now goes to `formatAmount()`; the escaped form is used
-  only for the input's `value` attribute.
-- **Reminders with unparseable times silently never fired** *(W-4,
-  medium)*. A backup (or tampered storage) carrying `time: "25:99"`
-  showed a live, enabled reminder in Settings that could never fire —
-  the scheduler parses garbage to NaN and skips it forever. Restore now
-  drops reminders whose time fails a strict HH:MM check and nulls
-  unparseable calendar-note reminder times; `makeReminder()` also
-  sanitizes its input for programmatic callers.
-- Added 7 regression tests (233 total) covering the badge render, the
-  single-escape contract of the nisab line, and both reminder-time
-  validation layers.
+### Added
+- **A real, vocal call to prayer at prayer time.** The Prayer screen's
+  alert panel now offers **Adhan / Tone / Off**. The bundled recording is a
+  full-length (2m34s) **public-domain (CC0)** adhan from Wikimedia Commons
+  (`assets/audio/adhan/`, provenance + license in `CREDITS.md`,
+  loudness-normalized, MP3 so iOS Safari plays it too), precached by the
+  service worker — it works offline like everything else in this app.
+- **Bring-your-own muezzin.** Each variant slot (Standard, Fajr) accepts a
+  user-imported recording: MP3/M4A/OGG/WAV, ≤8 MB, magic-byte validated,
+  stored offline in the existing audio IndexedDB. No Fajr-wording adhan
+  with a clean license exists to bundle, so the Fajr slot falls back to
+  the standard recording until the user imports one — stated plainly in
+  the UI rather than hidden.
+- The settings **Test button now previews exactly what a real alert would
+  play** (Fajr-flavored, so you hear your Fajr variant when one exists).
+- The resolution logic is a pure, fully unit-tested function
+  (`resolveAlertSource`): mode → tone id / custom-Fajr → custom-standard
+  → bundled, with hostile settings degrading safely instead of throwing.
 
-### Verified (no change needed)
-- The v3.3.1 security fixes were re-attacked and held: crafted-backup
-  import (attribute injection, hostile currency, hostile location name),
-  hostile editor/collection/note content, malformed deep links, offline
-  boot from the service-worker cache.
-- Tasbih rapid-tap integrity: 20/20 taps register (the earlier "lost
-  taps" reading was debounced-storage staleness, not a defect).
-- Two source-level "corruptions" spotted mid-review were byte-verified
-  as terminal display artifacts (`a[href]` and `const [h, m]` displayed
-  with their opening brackets eaten) and discarded.
+### Honest limitations (unchanged platform reality)
+Page-audio fires only while the tab is open and after the user has
+interacted with the app at least once this session (browser autoplay
+policy). When the tab is closed, the system notification still uses the
+platform's own default sound — tracked separately under prayer-alert
+reliability in TODO.md.
 
-## v3.3.1 — Third adversarial review: trusted-input hardening, honest inputs
+### Also
+- Zip-container note (no content change): v3.7.0's archive ships files at
+  the archive root rather than inside a `nur-al-dhikr/` wrapper and at
+  maximum deflate, so its *compressed* size is smaller than v3.5.0's even
+  though its *uncompressed* payload is larger (+87 KB of features/tests).
 
-A third two-hat adversarial review (hard-to-please product reviewer +
-suspicious/malicious beta tester; see REVIEW-v3.3.0.md, shipped alongside
-this release) covering the new word-study/tafsir surface, the zakat
-calculator, backup import, deep links, and offline installs. Every finding
-below was reproduced live in the browser before the fix, and every fix was
-re-verified the same way.
+## v3.7.0 — the tap-a-word Tajweed inspector + meem-sakinah completed + counter polish
 
 ### Fixed
-- **Stored XSS via an imported backup — two independent chains**
-  *(B1/B2/B5, critical)*. A crafted backup file carrying
-  `settings.mushafPrefs.fontScale = '1" onmouseover="…'` executed script
-  the moment the Mushaf rendered (the value was interpolated raw into the
-  page's `style` attribute and the settings sliders' `value` attributes);
-  the same was true of `zakat.prefs.currency` through `formatAmount()` into
-  the result panel. Reproduced end-to-end through the real Import flow.
-  Settings are now treated as untrusted input: a new `sanitizeSettings()`
-  validates every field (enums checked, numbers coerced and clamped,
-  booleans coerced, nested objects deep-merged over their defaults) on
-  both `hydrate()` and `RESTORE_STATE`, and every render sink that
-  interpolates a preference emits a clamped number or escaped string.
-- **Importing a backup silently switched features off** *(B4, high)*.
-  The settings merge was a shallow spread, so any payload whose
-  `mushafPrefs`/`prayer`/`audio` lacked a key replaced the whole object —
-  word-by-word study, underlines, the flip animation, and tafsir defaults
-  quietly became `undefined`. The deep merge in `sanitizeSettings()`
-  restores every missing key to its default.
-- **The Zakat calculator corrupted the numbers you typed** *(A1,
-  critical)*. Every keystroke re-rendered the view, and the caret-restore
-  helper skipped `type="number"` fields (where `setSelectionRange`
-  throws) — leaving the caret at position 0, so digits inserted in
-  reverse: typing `50000` produced `00005`, and zakat was computed on 5.
-  Number inputs now restore the caret via a brief type-swap, and the
-  store clamps slider values into their declared ranges.
-- **The Settings text-size sliders could not be dragged** *(A2, high)*.
-  The per-tick re-render destroyed the slider mid-drag (pointer capture
-  died with the element), leaving single-step clicks as the only way to
-  move it. Slider-only settings updates now skip the `#main` re-render —
-  the CSS custom properties `applyTheme()` sets are the only DOM they
-  need.
-- **A truncated deep link showed the "your data may be corrupted" error
-  screen** *(B3, critical)*. `decodeURIComponent` threw `URIError` on
-  percent-escape fragments cut mid-sequence (e.g. `#/category/%C3`),
-  and since `initRouter()` runs inside `boot()`'s try/catch, a mangled
-  shared link ended in the reset-your-data screen. Hash segments are now
-  decoded defensively and fall back to their raw text.
-- **The first word-tap of a session reported "0 occurrences in the
-  Qur'an"** *(A3, high)*. The roots index was fetched fire-and-forget,
-  so the grammar popover rendered before it arrived — and modals never
-  re-render — showing zero occurrence counts for roots with hundreds.
-  The roots fetch is now awaited alongside the word data.
-- **The offline-install promise had a hole: three modules were missing
-  from the service-worker precache** *(A4, high)*. `js/calendarNotes.js`,
-  `js/components/calendarModals.js`, and `js/prayerSound.js` are imported
-  at boot but were not in `APP_SHELL`, so a first-visit install could
-  fail to boot offline. All three are precached, and a new unit test
-  walks the import graph against the precache list so the gap cannot
-  quietly reopen.
-- **The 99 Names quiz graded you on answers it displayed** *(A6,
-  medium)*. The transliteration ("Al-Qadir") sat in the question prompt
-  right above the correct meaning ("The All-Able"). It now appears only
-  in the post-answer reinforcement block.
-- **Fifteen tafsir tabs wrapped into ragged rows** *(A5, medium)*. The
-  edition strip is now a single horizontally scrollable row with scroll
-  snapping, RTL-aware.
-- **Prayer times for manually entered coordinates posed as local
-  times** *(A7, medium)*. Times are computed on the device's clock; for
-  coordinates in another time zone that is misleading. When the
-  longitude-implied offset differs from the device's by 45 minutes or
-  more, the Prayer view now says so explicitly.
-- Small honesty fixes: backup export shows a confirmation toast *(A10)*;
-  the reminder dedup set clears at day rollover instead of growing for
-  the life of the tab *(B6)*; the manifest `theme_color` matches the
-  runtime light chrome instead of a teal nothing ever shows *(A8)*;
-  `npm test` works on current Node (`tests/` directory argument was
-  removed upstream) *(A9)*.
+- **Tasbih counter**, three long-standing irritations reported directly:
+  - One tap no longer re-renders the whole app three times. A tap dispatches
+    counter + statistics + history; these now run as ONE batched store update
+    (`store.batch()`), so the view redraws exactly once. The batching
+    primitive is general — any future multi-action gesture gets the same
+    behavior for free.
+  - Target-1 zikrs finally *show* their completion: the ring blooms and the
+    hint line lights up for ~0.7s (`wasJustCompleted()`), because the count
+    reset to 0 is correct but was indistinguishable from "nothing happened".
+  - Auto-advance can no longer skip to the item AFTER next. Each completion
+    armed an anonymous, never-cancelled timer; two quick completions armed
+    two timers, and the second fired after the first had already navigated.
+    One pending timer exists now, and it re-checks the exact item/view before
+    acting, so a stale timer can never yank you away.
 
-### Verified clean in this review (regression notes)
-Editor content and custom-reciter names (XSS-probe attempts in library/
-category/item titles, translations, tags); bookmark notes/folders,
-calendar-note bodies, and collection names; prayer-time solar math
-(cross-checked against an independent NOAA implementation); Arabic/RTL
-layout with zero horizontal overflow at 390 px across all views; keyboard
-activation of tappable words; word-study data coverage (all 77,429 words,
-zero gaps); import failure handling for garbage JSON; audio player
-error surfaces.
+### Added
+- **Tap-a-word Tajweed inspector** (both reading modes). Tapping a word in
+  the word-study popover now shows, for THAT word, every recitation rule
+  that applies — each with its legend color, bilingual name, the letter(s)
+  involved, and a plain "what to do with your mouth" instruction — computed
+  live by the same classifier that colors the reading view, so the two can
+  never disagree. Honored as a Mushaf Display toggle (default on).
+- **The meem-sakinah family** completes the classifier's rule set
+  (`js/tajweed.js`): Izhar Shafawi, Idgham Shafawi (mutamathilayn), and
+  Ikhfa Shafawi, using the same bare-letter-implies-sukun convention the
+  noon family already established. Full-corpus verification: +8,251 rule
+  instances (6,948 / 822 / 481), zero crashes, zero out-of-range spans,
+  total now 89,907 across all 77,429 words. Closes the known gap TODO.md
+  documented since v3.4.
+- **Bismillah presentation settings** — the reported contrast bug: on light
+  papers the Basmala could vanish. The Mushaf's Bismillah now follows the
+  paper's own ink by default (auto), with new Mushaf Display choices:
+  Gilded (deep-gold gradient, brightened on dark papers), Accent color, or
+  Hidden. Works in both reading modes.
+- Practice pools regenerated for all **18** rules with the deterministic
+  surah-spread picker — every rule now has 25 real Qur'anic ayahs
+  (madd_6 was short at 12), and Mixed Practice draws from all families
+  including the new shafawi ones. All entries verified end-to-end through
+  the live answer-key path.
 
-### Engineering
-- `sanitizeSettings()` / `sanitizeMushafPrefs()` in `config.js` (pure,
-  unit-tested) run on every hydrate and restore; `formatAmount()` escapes
-  and caps the currency symbol; `safeDecode()` in the router; the zakat
-  number-input caret restore uses the type-swap technique;
-  `isSelfRenderedSettingsUpdate()` gates the render skip;
-  `ensureQuranRoots` is awaited in the word-tap handler; sw.js VERSION
-  bumped so installed apps pick the fixes up through the update toast.
-- 11 new unit tests (hostile settings payloads, escaping, malformed
-  hashes, precache completeness). 226/226 pass; eslint clean; prettier
-  delta zero against the pre-existing (documented) style debt.
+### Data & sourcing note
+The "verified standard dataset" question keeps resolving the same way:
+third-party Tajweed annotation tables (e.g. character-offset sets over
+Tanzil text) measurably misalign against THIS app's own Uthmani source
+(~17% at full-Quran scale when checked in v3.4) — wrong for a feature whose
+whole point is showing the exact letter to pronounce. The rules are
+therefore derived mechanically from this app's own text, with each rule's
+conditions taken from the classical descriptions (noon/meem sakinah
+categories, qalqalah letters, madd types). Every new classification is
+sanity-probed against textbook examples before it ships.
+
+## v3.6.0 — Qur'an full-text search + the branch reunion
+
+This release reunites two lines that had silently forked — this v3.5.x
+line and the parallel security/QA line (review v3.3 B/A fixes +
+walkthrough v3.4 W fixes) — into one honest baseline, then closes the
+single biggest study gap the TODO list had flagged.
+
+### Reunited
+- All hardening from the parallel security/QA branch is restored here:
+  input validation, storage schema guards, notification edge cases,
+  escape audits across dynamic render paths. **278 tests green** on this
+  baseline (up from 265), including a dedicated hostile-input battery for
+  everything new in this release.
+
+### Added
+- **Full-text search across the entire Qur'an**, in the global Search
+  view — Uthmani Arabic (diacritic-insensitive) plus the bundled Sahih
+  International translation.
+  - The index is built once from whatever surah documents are already
+    loaded plus one batched fetch of the rest (~2.7MB of local JSON that
+    the service worker caches as it passes through), so every later
+    search works offline forever; while it builds, the view shows an
+    honest loading state instead of pretending nothing happened.
+  - Ranking keeps the library search's honesty rules: AND semantics over
+    all terms, exact-phrase hits strongly outrank scattered-term hits,
+    Arabic and translation weigh equally.
+  - Result rows jump straight into the per-surah reader via
+    `#/quran/N?ay=A` deep links that auto-scroll to the ayah and tint it
+    once arrived (repeated gently across renders until the surah doc is
+    in flight-then-loaded, with a silent give-up so nothing wedges).
+- **Alef-elision matching** (`js/quranSearch.js`). The bug the first
+  sanity sweep caught: Uthmani orthography and what a person actually
+  types disagree about *where alefs sit* — dagger-alif words like
+  إِلَٰهَ are typed اله or إلاه, hamzat al-wasl comes and goes — and one
+  inter-letter alef of delta breaks substring matching, with regex
+  "optional alef" patterns failing in one direction or the other. The
+  fix deletes every alef from both the Arabic haystack and each query
+  term identically: symmetric by construction, O(1) per term, no
+  backtracking, and the English translation haystack is untouched by
+  any of it. Pure-alef tokens (a lone "ا") are ignored rather than
+  allowed to veto real matches — but a query made entirely of them
+  returns nothing, like any other no-op query.
+- A hostile-input battery (`scripts/hostile-quran-search.mjs`, not
+  shipped): XSS vectors through query echo, prototype-pollution-shaped
+  surah keys, 50k-char queries, combining-mark floods, astronomic ayah
+  numbers, poisoned documents — nothing throws, nothing leaks, worst
+  realistic multi-term search stays sub-millisecond.
+
+### Known gaps (tracked in TODO.md)
+Tafsir-library text isn't searched yet (deliberately deferred); result
+rows show raw ayah text without inline match highlighting.
+
+## v3.5.0 — Tajweed practice mode + a Tier 2 delighters roadmap
+
+### Added
+- **Tajweed practice/drill mode.** "Find every [rule] in this ayah" — tap
+  the letters, check the answer, see exactly which were correct, missed,
+  or wrong, then go again. Built on the same deterministic classifier
+  (`js/tajweed.js`) that colors the reading view, so the quiz can never
+  disagree with what the app itself would color.
+  - **Practice This Ayah** — a one-tap shortcut on whatever ayah is
+    currently open, quizzing on every rule present in it. The "check
+    what I just read" loop.
+  - **Dedicated practice picker** (from Mushaf Display settings) — choose
+    a specific rule or Mixed Practice, drawing from a curated pool of 25
+    ayahs per rule (`data/tajweed-practice.json`, mined offline from the
+    classifier itself — see `js/tajweedPractice.js` for the pure
+    scoring/pool logic). Shows per-rule accuracy and a streak.
+  - Persisted stats (`tajweedPracticeStats`), zero server, zero accounts.
+- **`TODO.md`** gained a new **Tier 2 — delighters** section: small,
+  non-obvious touches (a root-family browser, a shareable ayah card, a
+  worship "year in review," a real Home-screen "continue" button, and
+  more) distinct from the Tier 1 critical-gap list — the kind of thing
+  that makes an app someone's favorite rather than merely complete.
+
+## v3.4.0 — Tajweed color-coding
+
+Color-coded Tajweed rules on the Qur'an text itself, in both reading
+modes, via a from-scratch deterministic rule engine rather than a
+third-party annotation dataset (see below for why).
+
+### Added
+- **`js/tajweed.js`** — classifies every word's Tajweed rules directly
+  from this app's own Uthmani text: hamzat al-wasl, lam shamsiyyah,
+  qalqalah, ghunnah, the noon-sakinah/tanween family (iqlab, idgham with
+  and without ghunnah, ikhfa), and madd (natural, badal, silah/ha'
+  al-kinayah, muttasil, munfasil, and the muqatta'at's obligatory 6-count
+  madd). Verified across the entire Qur'an: 81,656 rule instances over
+  all 77,429 words, zero crashes, zero out-of-range spans.
+- A **Tajweed color-coding** toggle in Mushaf Display settings, with a
+  bilingual color legend, working in both the classic reader and the
+  Mushaf. Off by default so first-time readers see plain text.
+- Dark-paper contrast handling (Night/True Black Mushaf themes brighten
+  the palette automatically).
+
+### Why not the obvious open dataset
+The natural starting point (cpfair/quran-tajweed, character-offset
+annotations over Tanzil's Uthmani text) drifted out of alignment with
+this app's own text by roughly 17% once checked across the full Qur'an —
+Basmala-prefixed offsets on every surah's first ayah, differing tatweel/
+sukun glyph choices, etc. For a feature whose entire purpose is telling
+someone which letter to pronounce how, "usually right" isn't good enough,
+so the rules were reimplemented as a rule engine running directly against
+this app's own text instead — it can't misalign by construction. That
+investigation surfaced a genuinely interesting fact along the way: this
+Uthmani text source writes several very common particles (مِنْ etc.) with
+the sukun left implicit, and separately uses a combining "madda" mark to
+explicitly flag every madd point in the text — including on the bare
+consonants of the muqatta'at (disjointed) letters, e.g. الٓمٓ. The
+classifier leans on that signal directly rather than re-deriving it.
+
+### Known gaps (tracked in TODO.md)
+Meem-sakinah rules (ikhfa/idgham shafawi) aren't classified yet, and a
+few rare Qur'anic annotation marks aren't individually interpreted.
 
 ## v3.3.0 — Word-by-word grammar study + multi-source tafsir + Mushaf display settings
 

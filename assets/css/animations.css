@@ -27,6 +27,15 @@
   100% { transform: scale(1); }
 }
 
+/* v3.7: tasbih cycle completion — a satisfied "bloom" rather than the
+ * attention-grabbing shake every habit app reaches for. Applied via the
+ * transient .is-just-completed class stamped by views/focus.js. */
+@keyframes cycleComplete {
+  0% { transform: scale(0.9); }
+  55% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }

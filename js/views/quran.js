@@ -97,15 +97,18 @@ function surahReaderHTML(state, number) {
 
   const body = surah
     ? `
-      ${showBismillah ? `<p class="quran-bismillah" dir="rtl">${BISMILLAH_AR}</p>` : ''}
+      ${showBismillah && state.settings.mushafPrefs.bismillahStyle !== 'hidden' ? `<p class="quran-bismillah bismillah--${state.settings.mushafPrefs.bismillahStyle}" dir="rtl">${BISMILLAH_AR}</p>` : ''}
       <div class="ayah-list">
         ${surah.ayahs
           .map((a) => {
             const audioUrl = ayahAudioUrl(meta?.surahs, state.settings.reciter, number, a.number);
             const key = `${number}:${a.number}`;
             const playing = state.recitingAyahKey === key;
+            // v3.6 deep-link focus target ('#/quran/N?ay=A'): the anchor id
+            // lets app.js scroll here; --focus tints it once arrived.
+            const focus = String(state.activeParams?.ay || '') === String(a.number);
             return `
-          <div class="ayah-card">
+          <div class="ayah-card${focus ? ' ayah-card--focus' : ''}"${focus ? ` id="ayah-${a.number}"` : ''}>
             <div class="ayah-card__top">
               <span class="ayah-card__badge">${a.number}</span>
               <div class="ayah-card__actions">
@@ -125,7 +128,7 @@ function surahReaderHTML(state, number) {
                 </button>
               </div>
             </div>
-            <p class="ayah-card__arabic" dir="rtl">${renderAyahWords(a.text, state.quranWords[String(number)]?.[String(a.number)], number, a.number, { tappable: state.settings.mushafPrefs.wordByWordStudy, underline: state.settings.mushafPrefs.wordUnderline })}</p>
+            <p class="ayah-card__arabic" dir="rtl">${renderAyahWords(a.text, state.quranWords[String(number)]?.[String(a.number)], number, a.number, { tappable: state.settings.mushafPrefs.wordByWordStudy, underline: state.settings.mushafPrefs.wordUnderline, tajweed: state.settings.mushafPrefs.tajweedColoring })}</p>
             ${state.settings.showTranslation ? `<p class="ayah-card__translation">${escapeHTML(a.translation)}</p>` : ''}
           </div>`;
           })

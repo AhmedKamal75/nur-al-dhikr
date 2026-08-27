@@ -8,7 +8,7 @@
  *  - Navigation requests fall back to offline.html when nothing is cached.
  */
 
-const VERSION = 'nur-al-dhikr-v3.4.0';
+const VERSION = 'nur-al-dhikr-v3.8.0';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -38,6 +38,7 @@ const APP_SHELL = [
   'assets/fonts/Amiri-Regular.woff2',
   'assets/fonts/Amiri-Bold.woff2',
   'assets/fonts/AmiriQuran.woff2',
+  'assets/audio/adhan/adhan.mp3',
   'js/app.js',
   'js/adhkarTiming.js',
   'js/khatma.js',
@@ -53,6 +54,8 @@ const APP_SHELL = [
   'js/qibla.js',
   'js/mushaf.js',
   'js/wordStudy.js',
+  'js/tajweed.js',
+  'js/tajweedPractice.js',
   'js/ramadan.js',
   'js/zakat.js',
   'js/audioCatalog.js',
@@ -75,6 +78,7 @@ const APP_SHELL = [
   'js/prayerSound.js',
   'js/renderer.js',
   'js/router.js',
+  'js/quranSearch.js',
   'js/schema.js',
   'js/search.js',
   'js/speech.js',
@@ -98,6 +102,7 @@ const APP_SHELL = [
   'js/views/mood.js',
   'js/views/mushafReader.js',
   'js/views/tafsirPanel.js',
+  'js/views/tajweedPracticeView.js',
   'js/views/onboardingPanel.js',
   'js/views/prayer.js',
   'js/views/qibla.js',
@@ -125,6 +130,7 @@ const APP_SHELL = [
   'data/mushaf-meta.json',
   'data/quran-roots.json',
   'data/tafsir-editions.json',
+  'data/tajweed-practice.json',
   'data/reciters.json',
 ];
 

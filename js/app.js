@@ -25,14 +25,18 @@ import {
   TAFSIR_EDITIONS_URL,
   TAFSIR_TEXT_URL,
   TAFSIR_REMOTE_URL,
+  TAJWEED_PRACTICE_POOL_URL,
 } from './config.js';
 import { store, actions, persistedSnapshot } from './state.js';
 import { migrate } from './migration.js';
 import { processDocument } from './schema.js';
 import { buildIndex } from './search.js';
+import { buildQuranIndex, isQuranSearchReady, setQuranIndexReady } from './quranSearch.js';
 import { render, mountShell } from './renderer.js';
 import { applyTheme, watchSystemTheme } from './theme.js';
 import { initRouter, go, replaceGo } from './router.js';
+import { pickRoundEntry, buildAnswerKey, scoreRound } from './tajweedPractice.js';
+import { buildPracticePicker, buildPracticeRound } from './views/tajweedPracticeView.js';
 import { t } from './i18n.js';
 import { pickLocale, uid, vibrate, dateKey } from './utils.js';
 import * as tasbih from './tasbih.js';
@@ -80,7 +84,12 @@ import {
 import { buildItemForm, buildCategoryForm, buildLibraryForm } from './views/editor.js';
 import { buildDayDetail, buildNoteForm } from './components/calendarModals.js';
 import { PRESETS as TASBIH_PRESETS } from './views/tasbih.js';
-import { playSound } from './prayerSound.js';
+import {
+  playSound,
+  previewAlert,
+  refreshCustomAdhanFlags,
+  stopAdhan,
+} from './prayerSound.js';
 import { dayComplete } from './prayerLog.js';
 import { generateCardBlob, downloadBlob, cardFilename } from './shareCard.js';
 import { ramadanKhatmaPreset } from './khatma.js';
@@ -277,9 +286,108 @@ function onStateChange(stateArg, action) {
     updateCompassLifecycle(state);
     updateRamadanLifecycle(state);
     updateHomeTickerLifecycle(state);
+    maybeStartQuranSearchBuild(state);
     if (!isSelfRenderedSettingsUpdate(action)) render(state);
+    maybeScrollToFocusAyah(state);
   } catch (err) {
     renderErrorScreen(err);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Qur'an full-text search corpus                                       */
+/* ------------------------------------------------------------------ */
+// The classic reader fetches surah documents lazily, one at a time — fine
+// for reading, useless for searching. The first full-text search therefore
+// fetches the whole corpus (~2.7MB of local JSON) in one batch, dispatches
+// a single bulk action so the view re-renders exactly once, and builds the
+// index in quranSearch.js. The service worker caches every surah file on
+// its way through, so this whole flow works offline after the first use.
+
+let quranSearchBuildStarted = false;
+
+async function ensureQuranSearchData() {
+  if (quranSearchBuildStarted || isQuranSearchReady()) return;
+  quranSearchBuildStarted = true;
+  try {
+    if (!store.getState().quran.meta) {
+      const meta = await fetchJSON(QURAN_META_URL);
+      store.dispatch(actions.setQuranMeta(meta));
+    }
+    const existing = store.getState().quran.surahs;
+    const missing = [];
+    for (let n = 1; n <= 114; n++) {
+      if (!existing[String(n)]) missing.push(n);
+    }
+    // Fetch in modest chunks so a flaky connection surfaces errors early
+    // instead of after 114 parallel requests.
+    const CHUNK = 24;
+    const fetched = {};
+    for (let i = 0; i < missing.length; i += CHUNK) {
+      const chunk = missing.slice(i, i + CHUNK);
+      const docs = await Promise.all(
+        chunk.map((n) =>
+          fetchJSON(QURAN_SURAH_URL(n)).catch((err) => {
+            console.error('[quran-search] failed to load surah', n, err);
+            return null;
+          })
+        )
+      );
+      chunk.forEach((n, j) => {
+        if (docs[j]) fetched[n] = docs[j];
+      });
+    }
+    buildQuranIndex({ ...existing, ...fetched });
+    setQuranIndexReady(true);
+    // Bulk-warm the reader cache too (one dispatch, one re-render): search
+    // results link into the per-surah reader, which should never have to
+    // re-fetch something already on screen.
+    store.dispatch(actions.setQuranSurahsBulk(fetched));
+  } catch (err) {
+    console.error('[quran-search] corpus load failed', err);
+    quranSearchBuildStarted = false; // allow a retry on the next query
+  }
+}
+
+/* Deep-link scroll target: '#/quran/36?ay=12' focuses ayah 12 once its
+ * element exists. Because the surah document may still be in flight when
+ * NAVIGATE fires, attempts repeat across subsequent renders until success
+ * or until the user navigates elsewhere (whichever comes first). */
+let pendingAyahScroll = null;
+let ayahScrollAttempts = 0;
+
+function maybeScrollToFocusAyah(state) {
+  if (state.activeView !== VIEWS.QURAN || state.activeParams?.ay == null) {
+    pendingAyahScroll = null;
+    return;
+  }
+  const want = String(state.activeParams.ay);
+  if (
+    pendingAyahScroll === null ||
+    pendingAyahScroll.queryKey !== `${state.activeParams.id}:${want}`
+  ) {
+    pendingAyahScroll = { ay: want, queryKey: `${state.activeParams.id}:${want}` };
+    ayahScrollAttempts = 0;
+  }
+  requestAnimationFrame(() => {
+    if (!pendingAyahScroll) return;
+    const el = document.getElementById(`ayah-${pendingAyahScroll.ay}`);
+    if (el) {
+      pendingAyahScroll = null;
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    } else if (++ayahScrollAttempts > 20) {
+      pendingAyahScroll = null; // give up silently — never wedge the app
+    }
+  });
+}
+
+function maybeStartQuranSearchBuild(state) {
+  if (
+    state.activeView === VIEWS.SEARCH &&
+    (state.activeParams?.q || '').trim() &&
+    !isQuranSearchReady()
+  ) {
+    ensureQuranSearchData();
   }
 }
 
@@ -781,6 +889,19 @@ async function ensureTafsirEditions(state) {
   }
 }
 
+let tajweedPoolFetchStarted = false;
+async function ensureTajweedPool(state) {
+  if (state.tajweedPool || tajweedPoolFetchStarted) return;
+  tajweedPoolFetchStarted = true;
+  try {
+    const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
+    store.dispatch(actions.setTajweedPool(pool));
+  } catch (err) {
+    console.error('[tajweed] failed to load practice pool', err);
+    tajweedPoolFetchStarted = false;
+  }
+}
+
 /** Bundled editions fetch from the app's own data/ folder; on-demand
  *  ("remote") editions only ever fetch when `allowRemote` is explicitly
  *  passed (the person tapped "Download") — never silently over the network. */
@@ -859,6 +980,61 @@ async function openAyahStudy(surah, ayah, page = null) {
   openModal(buildMushafAyahDetail(arabicText, surahDoc, surah, ayah, state, page), {
     labelledBy: 'modal-title-mushaf-ayah',
   });
+}
+
+/* ------------------------------------------------------------------ */
+/* Tajweed practice / drill mode                                       */
+/* ------------------------------------------------------------------ */
+
+// Transient round state — a half-tapped quiz has no business being
+// persisted or undo-able, same reasoning as flipDirection/activeTafsirTab.
+let practiceSession = null;
+
+function renderPracticeRound() {
+  openModal(buildPracticeRound(store.getState(), practiceSession), {
+    labelledBy: 'modal-title-practice',
+  });
+}
+
+async function startPracticeRound(ruleId) {
+  const state = store.getState();
+  await ensureTajweedPool(state);
+  const pool = store.getState().tajweedPool;
+  const avoid =
+    practiceSession && practiceSession.ruleId === ruleId
+      ? { s: practiceSession.surah, a: practiceSession.ayah }
+      : null;
+  const entry = pickRoundEntry(pool, ruleId, avoid);
+  if (!entry) {
+    showToast(t('practice.noneAvailable', state.settings.language));
+    return;
+  }
+  if (!store.getState().quran.surahs[String(entry.s)]) {
+    try {
+      store.dispatch(actions.setQuranSurah(entry.s, await fetchJSON(QURAN_SURAH_URL(entry.s))));
+    } catch (err) {
+      console.error('[tajweed] failed to load surah for practice', entry.s, err);
+      showToast(t('practice.loadFailed', state.settings.language));
+      return;
+    }
+  }
+  const surahDoc = store.getState().quran.surahs[String(entry.s)];
+  const ayahText = surahDoc?.ayahs?.find((a) => String(a.number) === String(entry.a))?.text;
+  if (!ayahText) {
+    showToast(t('practice.loadFailed', state.settings.language));
+    return;
+  }
+  practiceSession = {
+    ruleId,
+    surah: entry.s,
+    ayah: entry.a,
+    text: ayahText,
+    selected: new Set(),
+    checked: false,
+    targets: buildAnswerKey(ayahText, ruleId),
+    result: null,
+  };
+  renderPracticeRound();
 }
 
 async function boot() {
@@ -1095,7 +1271,7 @@ const clickHandlers = {
       state.activeView === VIEWS.FOCUS &&
       state.settings.autoAdvanceFocus
     ) {
-      setTimeout(() => navigateFocusAdjacent(1), 550);
+      scheduleAutoAdvance();
     }
   },
 
@@ -1458,14 +1634,6 @@ const clickHandlers = {
       i = Number(ds.i);
     store.dispatch(actions.openWordStudy(surah, ayah, i));
     await ensureQuranWordsData(store.getState(), surah);
-    // FIX (review v3.3 A3): the roots index used to be fetched
-    // fire-and-forget, so the very first word-tap of a session built the
-    // popover before the 1 MB quran-roots.json arrived — showing
-    // "0 occurrences in the Qur'an" for roots with hundreds of them, and
-    // never correcting itself (modals don't re-render on store changes).
-    // It is now awaited like the word data itself: the popover it opens is
-    // already complete and honest. The file is local (SW-cached after the
-    // first fetch), so the cost is one short pause on the first-ever tap.
     await ensureQuranRoots(store.getState());
     openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
   },
@@ -1503,6 +1671,60 @@ const clickHandlers = {
     });
   },
 
+  'practice-open': async () => {
+    await ensureTajweedPool(store.getState());
+    openModal(buildPracticePicker(store.getState()), { labelledBy: 'modal-title-practice' });
+  },
+
+  'practice-start': async (ds) => {
+    await startPracticeRound(ds.rule);
+  },
+
+  'practice-tap': (ds) => {
+    if (!practiceSession || practiceSession.checked) return;
+    const key = `${ds.word}:${ds.start}:${ds.end}`;
+    if (practiceSession.selected.has(key)) practiceSession.selected.delete(key);
+    else practiceSession.selected.add(key);
+    renderPracticeRound();
+  },
+
+  'practice-check': () => {
+    if (!practiceSession || practiceSession.checked) return;
+    const result = scoreRound(practiceSession.targets, practiceSession.selected);
+    practiceSession.checked = true;
+    practiceSession.result = result;
+    store.dispatch(actions.recordTajweedPracticeResult(practiceSession.ruleId, result.perfect));
+    renderPracticeRound();
+  },
+
+  'practice-next': async () => {
+    if (!practiceSession) return;
+    await startPracticeRound(practiceSession.ruleId);
+  },
+
+  'practice-this-ayah': async (ds) => {
+    const state = store.getState();
+    const surahDoc = state.quran.surahs[String(ds.surah)];
+    const ayahText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ds.ayah))?.text;
+    if (!ayahText) return;
+    const targets = buildAnswerKey(ayahText, 'mixed');
+    if (!targets.length) {
+      showToast(t('practice.nothingHere', state.settings.language));
+      return;
+    }
+    practiceSession = {
+      ruleId: 'mixed',
+      surah: Number(ds.surah),
+      ayah: Number(ds.ayah),
+      text: ayahText,
+      selected: new Set(),
+      checked: false,
+      targets,
+      result: null,
+    };
+    renderPracticeRound();
+  },
+
   'mushaf-set-font': (ds) => {
     store.dispatch(actions.updateMushafPrefs({ font: ds.font }));
     openModal(buildMushafSettingsPanel(store.getState()), {
@@ -1512,6 +1734,13 @@ const clickHandlers = {
 
   'mushaf-set-paper': (ds) => {
     store.dispatch(actions.updateMushafPrefs({ paper: ds.paper }));
+    openModal(buildMushafSettingsPanel(store.getState()), {
+      labelledBy: 'modal-title-mushaf-settings',
+    });
+  },
+
+  'mushaf-set-bismillah': (ds) => {
+    store.dispatch(actions.updateMushafPrefs({ bismillahStyle: ds.style }));
     openModal(buildMushafSettingsPanel(store.getState()), {
       labelledBy: 'modal-title-mushaf-settings',
     });
@@ -1668,7 +1897,39 @@ const clickHandlers = {
   },
 
   'prayer-test-sound': () => {
-    playSound(store.getState().settings.prayer.alertSound);
+    // v3.8: previews EXACTLY what a real prayer alert would do right now
+    // (adhan source chain or the chosen tone), Fajr-flavored to show the
+    // Fajr variant when one exists.
+    previewAlert(store.getState().settings.prayer, { fajr: true });
+  },
+
+  'prayer-set-alert-mode': (ds) => {
+    if (!['adhan', 'tone', 'off'].includes(ds.mode)) return;
+    stopAdhan(); // switching modes must never leave a half-playing file
+    store.dispatch(actions.updatePrayerSettings({ adhanMode: ds.mode }));
+  },
+
+  'prayer-adhan-import': (ds) => {
+    const kind = ds.kind === 'fajr' ? 'fajr' : 'standard';
+    const input = document.getElementById('adhan-file-input');
+    if (!input) return;
+    input.dataset.kind = kind;
+    input.value = ''; // allow re-selecting the same file
+    input.click();
+  },
+
+  'prayer-adhan-clear': async (ds) => {
+    const kind = ds.kind === 'fajr' ? 'fajr' : 'standard';
+    const { deleteAdhanAudio } = await import('./audioStore.js');
+    await deleteAdhanAudio(kind);
+    await refreshCustomAdhanFlags();
+    showToast(
+      t(
+        store.getState().settings.language === 'ar' ? 'prayer.adhanCleared' : 'prayer.adhanCleared',
+        store.getState().settings.language
+      )
+    );
+    render(store.getState());
   },
 
   /* ---------------- Ramadan companion ---------------- */
@@ -2301,6 +2562,12 @@ function bindGlobalEvents() {
     }
     if (target.matches('[data-action="toggle-mushaf-pref"]')) {
       store.dispatch(actions.updateMushafPrefs({ [target.dataset.key]: target.checked }));
+      // The legend only shows while tajweed coloring is on, and toggles in
+      // general read better with instant feedback — refresh the panel in
+      // place rather than waiting for the next unrelated re-render.
+      openModal(buildMushafSettingsPanel(store.getState()), {
+        labelledBy: 'modal-title-mushaf-settings',
+      });
       return;
     }
     if (target.matches('[data-bind="mushaf-font-scale"]')) {
@@ -2382,6 +2649,9 @@ function bindGlobalEvents() {
     }
     if (target.id === 'backup-file-input' && target.files?.[0]) {
       handleImportFile(target.files[0]);
+    }
+    if (target.id === 'adhan-file-input' && target.files?.[0]) {
+      handleAdhanImport(target.files[0], target.dataset.kind === 'fajr' ? 'fajr' : 'standard');
     }
   });
 
@@ -2709,7 +2979,75 @@ function navigateFocusAdjacent(dir) {
   if (target) go(VIEWS.FOCUS, { id: categoryId, subId: target.id });
 }
 
+/* v3.7 FIX — auto-advance used to stack one anonymous setTimeout per
+ * cycle completion with no cancellation. Two completions in quick succession
+ * (small-target zikr chains tap fast by nature) armed TWO timers: the first
+ * advanced to the next item, the second fired after that and advanced AGAIN —
+ * landing on next-next and skipping the item in between entirely.
+ *
+ * Now a single pending timer exists at most ever; scheduling clears any prior
+ * one, and when it fires it re-checks that the user is still on EXACTLY the
+ * item/view the completion happened on, so a stale timer can never yank the
+ * view away from somewhere new. */
+let pendingAutoAdvanceTimer = null;
+function scheduleAutoAdvance() {
+  const origin = store.getState();
+  const from = {
+    view: origin.activeView,
+    id: String(origin.activeParams?.id ?? ''),
+    subId: String(origin.activeParams?.subId ?? ''),
+  };
+  clearTimeout(pendingAutoAdvanceTimer);
+  pendingAutoAdvanceTimer = setTimeout(() => {
+    pendingAutoAdvanceTimer = null;
+    const now = store.getState();
+    if (now.activeView !== from.view) return;
+    if (String(now.activeParams?.id ?? '') !== from.id) return;
+    if (String(now.activeParams?.subId ?? '') !== from.subId) return;
+    navigateFocusAdjacent(1);
+  }, 550);
+}
+
 let pendingImportPayload = null;
+
+/* v3.8: import a user-provided adhan recording (standard or Fajr) into the
+ * offline audio store. Validates size/type with the same defensive posture
+ * as every other untrusted input, then refreshes the fire-path flags. */
+async function handleAdhanImport(file, kind) {
+  const lang = store.getState().settings.language;
+  const { validateAdhanFile, looksLikeAudio, saveAdhanAudio } = await import('./audioStore.js');
+  const code = validateAdhanFile(file);
+  const errorKey = {
+    invalid: 'prayer.adhanInvalid',
+    empty: 'prayer.adhanInvalid',
+    tooLarge: 'prayer.adhanTooLarge',
+    notAudio: 'prayer.adhanInvalid',
+  }[code];
+  if (errorKey) {
+    showToast(t(errorKey, lang));
+    return;
+  }
+  try {
+    const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+    if (!looksLikeAudio(head)) {
+      showToast(t('prayer.adhanInvalid', lang));
+      return;
+    }
+    const result = await saveAdhanAudio(kind, file);
+    if (!result.ok) {
+      showToast(
+        t(result.error === 'quota' ? 'storage.persistFailed' : 'prayer.adhanImportFailed', lang)
+      );
+      return;
+    }
+    await refreshCustomAdhanFlags();
+    showToast(t('prayer.adhanImported', lang));
+    render(store.getState());
+  } catch (err) {
+    console.error('[adhan-import]', err);
+    showToast(t('prayer.adhanImportFailed', lang));
+  }
+}
 
 async function handleImportFile(file) {
   try {

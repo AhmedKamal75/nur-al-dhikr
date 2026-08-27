@@ -68,6 +68,24 @@ export function normalizeSearch(str = '') {
     .trim();
 }
 
+/** Pre-normalizer for Qur'anic text before normalizeSearch(): aligns
+ *  Uthmani orthography with what a person can actually TYPE.
+ *    - The small-high aleph (U+0670, e.g. عَٰلَمِينَ) SUPPLEMENTS/SUPPLANTS
+ *      a written alef in this source, so it is SUBSTITUTED with 'ا' — a
+ *      user typing 'عالمين' must match, and deleting the mark instead made
+ *      them silently miss (the v3.6 sanity run caught exactly this).
+ *    - Everything else annotation-only is deleted: cluster-end ligatures &
+ *      small-high marks (U+06D6..U+06ED incl. the small-high sukun this
+ *      text uses instead of U+0652 in several common particles), the ayah
+ *      sign (U+06DD), madda/hamza combining marks (U+0653..U+0655), the
+ *      standalone hamza mark (U+0674), Arabic honorifics (U+0610..U+061A).
+ *  Search-only: display text never passes through here. */
+export function stripQuranAnnotations(str = '') {
+  return String(str)
+    .replace(/\u0670/g, '\u0627')
+    .replace(/[\u0610-\u061A\u0653-\u0655\u0674\u06D6-\u06ED]/g, '');
+}
+
 /** Get a localized field object { en, ar } safely, falling back across languages. */
 export function pickLocale(field, lang = 'en') {
   if (field == null) return '';

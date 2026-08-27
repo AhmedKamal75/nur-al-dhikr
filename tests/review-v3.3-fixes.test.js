@@ -88,6 +88,10 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
     wordUnderline: true,
     defaultTafsir: 'jalalayn',
   });
+  // v3.5.0 added tajweedColoring (default false) to the mushaf prefs —
+  // the merged sanitizer keeps that key with a safe boolean default.
+  // v3.7 adds bismillahStyle (enum, default 'auto') and tajweedInspector
+  // (boolean, default true) to the sanitized prefs shape.
   assert.deepEqual(p, {
     font: 'amiri',
     paper: 'sepia',
@@ -96,8 +100,20 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
     pageFlipAnimation: false,
     wordByWordStudy: false,
     wordUnderline: true,
+    tajweedColoring: false,
+    tajweedInspector: true,
+    bismillahStyle: 'auto',
     defaultTafsir: 'jalalayn',
   });
+});
+
+test('sanitizeMushafPrefs rejects hostile values for the v3.7 fields', () => {
+  const p = sanitizeMushafPrefs({
+    bismillahStyle: '"><script>alert(1)</script>',
+    tajweedInspector: 'on',
+  });
+  assert.equal(p.bismillahStyle, 'auto');
+  assert.equal(p.tajweedInspector, true);
 });
 
 /* ------------------------------------------------------------------ */

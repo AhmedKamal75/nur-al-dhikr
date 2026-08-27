@@ -11,13 +11,16 @@
  */
 
 const AUDIO_DB = 'nurAlDhikrAudio';
-const STORE = 'files';               // key -> { key, moshafId, surah, bytes, ts, blob }
+const STORE = 'files'; // key -> { key, moshafId, surah, bytes, ts, blob }
 let dbPromise = null;
 
 function openDB() {
   if (dbPromise) return dbPromise;
   dbPromise = new Promise((resolve) => {
-    if (!('indexedDB' in window)) { resolve(null); return; }
+    if (!('indexedDB' in window)) {
+      resolve(null);
+      return;
+    }
     const req = indexedDB.open(AUDIO_DB, 1);
     req.onupgradeneeded = () => {
       const db = req.result;
@@ -52,8 +55,12 @@ export async function saveAudio(moshafId, surahNumber, blob) {
   try {
     const tx = db.transaction(STORE, 'readwrite');
     tx.objectStore(STORE).put({
-      key, moshafId, surah: Number(surahNumber),
-      bytes: blob.size, ts: Date.now(), blob
+      key,
+      moshafId,
+      surah: Number(surahNumber),
+      bytes: blob.size,
+      ts: Date.now(),
+      blob,
     });
     await txDone(tx);
     return { ok: true, bytes: blob.size };
@@ -74,7 +81,9 @@ export async function getAudio(moshafId, surahNumber) {
       const req = tx.objectStore(STORE).get(audioKey(moshafId, surahNumber));
       req.onsuccess = () => resolve(req.result?.blob || null);
       req.onerror = () => resolve(null);
-    } catch { resolve(null); }
+    } catch {
+      resolve(null);
+    }
   });
 }
 
@@ -87,7 +96,9 @@ export async function deleteAudio(moshafId, surahNumber) {
     tx.objectStore(STORE).delete(audioKey(moshafId, surahNumber));
     await txDone(tx);
     return true;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 /** Delete every file of a moshaf. Returns deleted count. */
@@ -110,7 +121,9 @@ export async function deleteMoshafAudio(moshafId) {
       };
       tx.oncomplete = () => resolve(n);
       tx.onerror = () => resolve(n);
-    } catch { resolve(0); }
+    } catch {
+      resolve(0);
+    }
   });
 }
 
@@ -125,7 +138,9 @@ export async function moshafKeys(moshafId) {
       const req = idx.getAllKeys(IDBKeyRange.only(moshafId));
       req.onsuccess = () => resolve(req.result || []);
       req.onerror = () => resolve([]);
-    } catch { resolve([]); }
+    } catch {
+      resolve([]);
+    }
   });
 }
 
@@ -166,6 +181,70 @@ export async function storageEstimate() {
       const est = await navigator.storage.estimate();
       if (est && Number.isFinite(est.usage) && Number.isFinite(est.quota)) return est;
     }
-  } catch { /* unsupported */ }
+  } catch {
+    /* unsupported */
+  }
   return null;
+}
+
+/* ------------------------------------------------------------------ *
+ * v3.8 — Adhan recordings.
+ * Reuses this same IndexedDB store under a reserved "moshaf" id, with a
+ * fixed slot per variant (standard / Fajr). Users bring their own files
+ * (any audio they lawfully possess); nothing is fetched from any server,
+ * keeping the nothing-leaves-your-device promise intact.
+ * ------------------------------------------------------------------ */
+export const ADHAN_MOSHAF_ID = '__adhan__';
+export const ADHAN_KIND_SLOTS = Object.freeze({ standard: 1, fajr: 2 });
+export const ADHAN_MAX_BYTES = 8 * 1024 * 1024; // generous cap: ~8 minutes of 128k MP3
+
+/** Light magic-byte sniffing: accept MP3 (ID3 or frame sync), Ogg, WAV, and
+ *  MP4/M4A containers. Pure function over the first bytes — unit-testable. */
+export function looksLikeAudio(bytes) {
+  if (!bytes || bytes.length < 12) return false;
+  const ascii = (off, len) => String.fromCharCode(...bytes.subarray(off, off + len));
+  if (ascii(0, 3) === 'ID3') return true; // MP3 with metadata
+  if (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0) return true; // MP3 frame sync
+  if (ascii(0, 4) === 'OggS') return true; // Ogg (Vorbis/Opus)
+  if (ascii(0, 4) === 'RIFF' && ascii(8, 4) === 'WAVE') return true; // WAV
+  if (ascii(4, 4) === 'ftyp') return true; // MP4/M4A
+  return false;
+}
+
+/** Validate a user-picked File/Blob for import. Returns null when OK,
+ *  otherwise an i18n-ish error code string. Pure (reads only size/type). */
+export function validateAdhanFile(file) {
+  if (!file || typeof file !== 'object') return 'invalid';
+  if (!Number.isFinite(file.size) || file.size <= 0) return 'empty';
+  if (file.size > ADHAN_MAX_BYTES) return 'tooLarge';
+  // type is optional on some browsers — judge by magic bytes later; here
+  // only reject an explicitly bogus top-level type.
+  if (
+    typeof file.type === 'string' &&
+    file.type &&
+    !file.type.startsWith('audio/') &&
+    file.type !== 'video/mp4'
+  ) {
+    return 'notAudio';
+  }
+  return null;
+}
+
+export async function saveAdhanAudio(kind, blob) {
+  const slot = ADHAN_KIND_SLOTS[kind];
+  if (!slot) return { ok: false, error: 'invalid' };
+  return saveAudio(ADHAN_MOSHAF_ID, slot, blob);
+}
+
+/** Returns the stored Blob or null when the user never imported one. */
+export async function getAdhanAudio(kind) {
+  const slot = ADHAN_KIND_SLOTS[kind];
+  if (!slot) return null;
+  return getAudio(ADHAN_MOSHAF_ID, slot);
+}
+
+export async function deleteAdhanAudio(kind) {
+  const slot = ADHAN_KIND_SLOTS[kind];
+  if (!slot) return false;
+  return deleteAudio(ADHAN_MOSHAF_ID, slot);
 }

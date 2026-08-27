@@ -9,6 +9,7 @@ import { buildHash } from '../router.js';
 import { pickLocale, escapeHTML } from '../utils.js';
 import { selectors } from '../state.js';
 import { VIEWS, GRADE_LABELS } from '../config.js';
+import { wasJustCompleted } from '../tasbih.js';
 
 function findCategory(state, categoryId) {
   const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
@@ -72,7 +73,7 @@ export function renderFocus(state) {
       </div>
     </div>
 
-    <button type="button" class="focus__counter" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${counter.target}" aria-label="${t('focus.tapToCount', lang)}">
+    <button type="button" class="focus__counter${wasJustCompleted(item.id) ? ' is-just-completed' : ''}" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${counter.target}" aria-label="${t('focus.tapToCount', lang)}">
       <svg class="focus__ring" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
         <circle cx="60" cy="60" r="52" class="focus__ring-track"/>
         <circle cx="60" cy="60" r="52" class="focus__ring-fill" style="--pct:${pct}"/>
@@ -80,7 +81,7 @@ export function renderFocus(state) {
       <span class="focus__count" aria-live="polite" aria-atomic="true">${counter.count}</span>
       <span class="focus__target">/ ${counter.target}</span>
     </button>
-    <p class="focus__hint">${t('focus.tapToCount', lang)}</p>
+    <p class="focus__hint${wasJustCompleted(item.id) ? ' is-just-completed' : ''}">${t('focus.tapToCount', lang)}</p>
 
     <footer class="focus__nav">
       <button type="button" class="btn btn--ghost" data-action="focus-reset" data-item-id="${escapeHTML(item.id)}" data-target="${counter.target}">${t('focus.reset', lang)}</button>

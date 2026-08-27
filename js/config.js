@@ -6,7 +6,7 @@
 
 export const APP_NAME = 'Nūr al-Dhikr';
 export const APP_NAME_AR = 'نور الذكر';
-export const APP_VERSION = '3.4.0';
+export const APP_VERSION = '3.6.0';
 export const SCHEMA_VERSION = 2;
 export const STORAGE_KEY = 'nurAlDhikr:v2:state';
 export const DB_NAME = 'nurAlDhikrDB';
@@ -49,6 +49,11 @@ export const TAFSIR_TEXT_URL = (editionId, n) =>
   `data/tafsir/${encodeURIComponent(editionId)}/${encodeURIComponent(n)}.json`;
 export const TAFSIR_REMOTE_URL = (slug, n) =>
   `https://raw.githubusercontent.com/spa5k/tafsir_api/main/tafsir/${encodeURIComponent(slug)}/${encodeURIComponent(n)}.json`;
+
+/** Curated ayahs for the Tajweed practice/drill mode, grouped by rule —
+ *  see build_tajweed_pool.mjs (not shipped; a one-time data-build script)
+ *  for how the pool was mined from the classifier in tajweed.js. */
+export const TAJWEED_PRACTICE_POOL_URL = 'data/tajweed-practice.json';
 
 /**
  * Verse-by-verse reciters available via the Al Quran Cloud CDN
@@ -277,6 +282,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
     // through the year without the user ever touching a setting.
     alerts: { fajr: false, sunrise: false, dhuhr: false, asr: false, maghrib: false, isha: false },
     alertSound: 'chime',
+    adhanMode: 'adhan', // v3.8: 'adhan' (real call) | 'tone' (synthesized) | 'off'
     // Ramadan fasting alerts: Suhoor fires N minutes before Fajr (the offset,
     // in minutes), Iftar fires exactly at Maghrib. They only ever fire on
     // days that are actually in Ramadan (checked via the Hijri calendar at
@@ -293,6 +299,9 @@ export const DEFAULT_SETTINGS = Object.freeze({
     pageFlipAnimation: true,
     wordByWordStudy: true, // tap a word for grammar/i'rab/sarf/meaning
     wordUnderline: true, // subtle per-word affordance dots/underline
+    tajweedColoring: false, // color-code Qalqalah/Ghunnah/Madd/etc. — off by default so first-time readers see plain text
+    tajweedInspector: true, // v3.7: tapping a word lists its rules + what to do (word-study popover)
+    bismillahStyle: 'auto', // v3.7: 'auto' (paper-contrast ink) | 'gold' | 'accent' | 'hidden'
     defaultTafsir: 'muyassar',
   },
 });
@@ -321,7 +330,9 @@ export const SUHOOR_OFFSETS = Object.freeze([10, 15, 20, 30, 45, 60]);
 // unit-testable and safe to run on both hydrate() and RESTORE_STATE.
 
 const MUSHAF_FONT_IDS = new Set(MUSHAF_FONTS.map((f) => f.id));
+export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent', 'hidden']);
 const MUSHAF_PAPER_IDS = new Set(MUSHAF_PAPERS.map((p) => p.id));
+const ADHAN_MODE_IDS = new Set(['adhan', 'tone', 'off']);
 const PALETTE_IDS = new Set(PALETTES.map((p) => p.id));
 const SHAPE_IDS = new Set(SHAPES.map((s) => s.id));
 
@@ -348,12 +359,15 @@ export function sanitizeMushafPrefs(raw) {
   const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
   return {
     font: asEnum(p.font, MUSHAF_FONT_IDS, DEFAULT_MUSHAF_FONT),
+    bismillahStyle: asEnum(p.bismillahStyle, BISMILLAH_STYLES, 'auto'),
     paper: asEnum(p.paper, MUSHAF_PAPER_IDS, DEFAULT_MUSHAF_PAPER),
     fontScale: asNumber(p.fontScale, 1, 0.8, 1.6),
     lineSpacing: asNumber(p.lineSpacing, 1, 0.85, 1.3),
     pageFlipAnimation: asBool(p.pageFlipAnimation, true),
     wordByWordStudy: asBool(p.wordByWordStudy, true),
+    tajweedInspector: asBool(p.tajweedInspector, true),
     wordUnderline: asBool(p.wordUnderline, true),
+    tajweedColoring: asBool(p.tajweedColoring, false),
     defaultTafsir: asShortStr(p.defaultTafsir, 'muyassar', 40),
   };
 }
@@ -361,7 +375,8 @@ export function sanitizeMushafPrefs(raw) {
 function sanitizePrayer(raw) {
   const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
   const d = DEFAULT_SETTINGS.prayer;
-  const alerts = p.alerts && typeof p.alerts === 'object' && !Array.isArray(p.alerts) ? p.alerts : {};
+  const alerts =
+    p.alerts && typeof p.alerts === 'object' && !Array.isArray(p.alerts) ? p.alerts : {};
   const ra =
     p.ramadanAlerts && typeof p.ramadanAlerts === 'object' && !Array.isArray(p.ramadanAlerts)
       ? p.ramadanAlerts
@@ -382,6 +397,7 @@ function sanitizePrayer(raw) {
       isha: asBool(alerts.isha, false),
     },
     alertSound: asShortStr(p.alertSound, d.alertSound, 24),
+    adhanMode: asEnum(p.adhanMode, ADHAN_MODE_IDS, d.adhanMode),
     ramadanAlerts: {
       suhoor: asBool(ra.suhoor, false),
       iftar: asBool(ra.iftar, false),

@@ -10,7 +10,7 @@ import { t } from './i18n.js';
 import { appliesToDate } from './calendarNotes.js';
 import { dateKey } from './utils.js';
 import { calculateTimes, formatClock } from './prayer.js';
-import { playSound } from './prayerSound.js';
+import { playAlert, refreshCustomAdhanFlags } from './prayerSound.js';
 import { toHijri } from './calendar.js';
 import { ramadanAlertTimes } from './ramadan.js';
 import { daysUntilHawl } from './zakat.js';
@@ -64,6 +64,8 @@ function notify(title, body, tag) {
  * for reminders, calendar notes, and prayer settings (so we always read
  * fresh state, never a stale snapshot from boot time).
  */
+let adhanFlagsWarmed = false;
+
 export function startScheduler(
   getReminders,
   lang = 'en',
@@ -72,6 +74,12 @@ export function startScheduler(
   getZakatHistory = () => []
 ) {
   stopScheduler();
+  // v3.8: warm the "does the user have custom adhan recordings?" cache once
+  // per session (async, best-effort — the fire path reads the cached flags).
+  if (!adhanFlagsWarmed) {
+    adhanFlagsWarmed = true;
+    refreshCustomAdhanFlags();
+  }
   const tickFn = () =>
     tick(getReminders(), lang, getCalendarNotes(), getPrayerSettings(), getZakatHistory());
   checkTimer = setInterval(tickFn, 30 * 1000);
@@ -84,6 +92,13 @@ export function stopScheduler() {
 }
 
 const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+/** FIX (walkthrough v3.4 W-4): defense in depth for the reminder time.
+ * The form's <input type="time"> + native validation covers real users,
+ * but programmatic paths (older backups, extensions, future callers) can
+ * hand in garbage — a reminder whose time can't parse never fires and
+ * fails silently. Invalid input falls back to the default time. */
+const CLOCK_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 /** Minutes since a "HH:MM" clock time, negative if it hasn't come yet. */
 function minutesSince(hhmm, now) {
@@ -110,6 +125,7 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
   const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   const dayKey = `${now.toDateString()}|${hhmm.slice(0, 5)}`;
   const todayKey = dateKey(now);
+
   // Day rollover: drop the previous day's dedup keys (see firedTodayKey
   // note above) so the set never outlives the day it describes.
   if (firedTodayKey !== todayKey) {
@@ -165,7 +181,8 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
         if (firedToday.has(fireKey)) continue;
         firedToday.add(fireKey);
         notify(t('prayer.' + name, lang), t('prayer.next', lang), `prayer-${name}`);
-        if (document.visibilityState === 'visible') playSound(prayerSettings.alertSound);
+        if (document.visibilityState === 'visible')
+          playAlert(prayerSettings, { fajr: name === 'Fajr' });
       }
     }
   }
@@ -203,7 +220,7 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
             }),
             'ramadan-suhoor'
           );
-          if (document.visibilityState === 'visible') playSound(prayerSettings.alertSound);
+          if (document.visibilityState === 'visible') playAlert(prayerSettings, { fajr: true });
         }
       }
       if (rAlerts.iftar && shouldFire(formatClock(alertTimes.iftar, false), now)) {
@@ -215,7 +232,7 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
             t('ramadan.alertIftarBody', lang),
             'ramadan-iftar'
           );
-          if (document.visibilityState === 'visible') playSound(prayerSettings.alertSound);
+          if (document.visibilityState === 'visible') playAlert(prayerSettings, { fajr: false });
         }
       }
     }
@@ -242,13 +259,11 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory) {
   if (firedToday.size > 500) firedToday.clear();
 }
 
-/** FIX (walkthrough v3.4 W-4): defense in depth for the reminder time.
- * The form's <input type="time"> + native validation covers real users,
- * but programmatic paths (older backups, extensions, future callers) can
- * hand in garbage — a reminder whose time can't parse never fires and
- * fails silently. Invalid input falls back to the default time. */
-const CLOCK_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-
+/** Build a default reminder object for the editor UI.
+ * FIX (walkthrough v3.4 W-4): defense in depth for the reminder time —
+ * programmatic paths (older backups, extensions, future callers) can hand
+ * in garbage; invalid input falls back to the default 06:00 rather than
+ * becoming a silently-dead reminder. */
 export function makeReminder({ id, time = '06:00', label = '', body = '', section = null }) {
   return {
     id,

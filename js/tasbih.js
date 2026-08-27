@@ -28,14 +28,48 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
     cycleCompleted = true;
   }
 
-  store.dispatch(actions.setCounter(itemId, { count, target: existing.target, completedCycles }));
-  store.dispatch(actions.recordStatistic(itemId, categoryId, step, false));
-  store.dispatch(actions.pushHistory(itemId, categoryId));
+  // v3.7 FIX: one tap used to mean THREE synchronous full-app re-renders
+  // (counter → statistics → history each notified subscribers on its own).
+  // Batching makes the whole tap one logical update — exactly one render.
+  store.batch(() => {
+    store.dispatch(actions.setCounter(itemId, { count, target: existing.target, completedCycles }));
+    store.dispatch(actions.recordStatistic(itemId, categoryId, step, false));
+    store.dispatch(actions.pushHistory(itemId, categoryId));
+  });
 
+  if (cycleCompleted) markJustCompleted(itemId);
   if (state.settings.hapticsEnabled) vibrate(cycleCompleted ? [10, 40, 10] : 8);
   announceCount(count, existing.target, cycleCompleted, completedCycles);
 
   return { count, target: existing.target, completedCycles, cycleCompleted };
+}
+
+/* ------------------------------------------------------------------ *
+ * Transient "just completed" feedback.
+ * The render model is full re-render per state change, so a CSS pulse
+ * keyed off ephemeral store state would be erased by every later render.
+ * Instead a short-lived in-memory stamp lets any view currently rendering
+ * this item decorate it with the completion animation; the class simply
+ * stops being added once the window passes.
+ * ------------------------------------------------------------------ */
+const JUST_COMPLETED_MS = 700;
+const justCompletedAt = new Map();
+
+function markJustCompleted(itemId) {
+  const now = Date.now();
+  justCompletedAt.set(itemId, now);
+  // Opportunistic pruning so the map can never grow unbounded.
+  if (justCompletedAt.size > 64) {
+    for (const [k, at] of justCompletedAt) {
+      if (now - at > JUST_COMPLETED_MS) justCompletedAt.delete(k);
+    }
+  }
+}
+
+/** True within JUST_COMPLETED_MS of this item's most recent completed cycle. */
+export function wasJustCompleted(itemId) {
+  const at = justCompletedAt.get(itemId);
+  return typeof at === 'number' && Date.now() - at < JUST_COMPLETED_MS;
 }
 
 /**

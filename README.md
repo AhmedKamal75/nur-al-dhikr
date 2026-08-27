@@ -134,6 +134,14 @@ offline from then on.
   download, cached forever after. Mushaf display settings add 3 typefaces,
   8 paper color themes, text-size/line-spacing sliders, and a page-flip
   animation.
+- **Tajweed color-coding & practice mode** — every rule (qalqalah,
+  ghunnah, iqlab, idgham, ikhfa, and five madd sub-types) computed
+  directly from the Qur'an text by a from-scratch rule engine
+  (`js/tajweed.js`), not aligned against a third-party dataset — see
+  CHANGELOG for why that distinction mattered. Toggle + bilingual legend
+  in Mushaf Display settings. A drill mode ("find every [rule] in this
+  ayah," with per-rule accuracy and a streak) turns the legend into
+  active practice instead of a poster to skim once.
 - **Suhoor/Iftar alerts** — Hijri-gated Ramadan alerts N minutes before
   Fajr (selectable offset) and at Maghrib, on the same solar engine as
   Smart Prayer Alerts.

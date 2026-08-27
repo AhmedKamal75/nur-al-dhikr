@@ -29,23 +29,14 @@ export function cardHTML(item, category, opts = {}) {
     counter = null,
     showTransliteration = true,
     showTranslation = true,
-    compact = false,
+    compact = false
   } = opts;
 
   const title = pickLocale(item.title, lang) || item.transliteration || item.arabic;
   const translation = pickLocale(item.translation, lang);
   const virtue = pickLocale(item.virtues, lang);
-  const gradeLabel = GRADE_LABELS[item.grade]
-    ? pickLocale(GRADE_LABELS[item.grade], lang)
-    : item.grade;
-  const refParts = [
-    item.reference?.collection,
-    item.reference?.hadith,
-    item.reference?.narrator ? `${t('card.narratedBy', lang)} ${item.reference.narrator}` : '',
-    item.reference?.grading,
-  ]
-    .filter(Boolean)
-    .join(' \u00B7 ');
+  const gradeLabel = GRADE_LABELS[item.grade] ? pickLocale(GRADE_LABELS[item.grade], lang) : item.grade;
+  const refParts = [item.reference?.collection, item.reference?.hadith, item.reference?.narrator ? `${t('card.narratedBy', lang)} ${item.reference.narrator}` : '', item.reference?.grading].filter(Boolean).join(' \u00B7 ');
   const target = counter?.target || item.repetitions || 1;
   const count = counter?.count || 0;
   // FIX (walkthrough v3.4 W-2): for target=1 dhikr (most duas) every tap
@@ -96,7 +87,7 @@ export function cardHTML(item, category, opts = {}) {
       <button type="button" class="counter-pill${cycles > 0 ? ' counter-pill--done' : ''}" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}" data-target="${target}" ${cycles > 0 ? `title="${escapeHTML(t('card.completedTimes', lang, { n: cycles }))}"` : ''}>
         <span class="counter-pill__ring" style="--progress:${progressPct}%"></span>
         <span class="counter-pill__label" dir="ltr" aria-live="polite" aria-atomic="true">${count} / ${target}</span>
-        ${cycles > 0 ? `<span class="counter-pill__cycles" dir="ltr">${icon('check', { size: 12 })}${cycles}</span>` : ''}
+        ${cycles > 0 ? `<span class="counter-pill__cycles">✓ ${cycles}</span>` : ''}
       </button>
       <button type="button" class="btn btn--ghost btn--sm" data-action="open-focus" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}">
         ${t('card.openFocus', lang)}

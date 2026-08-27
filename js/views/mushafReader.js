@@ -72,7 +72,7 @@ export function renderMushaf(state) {
       <div class="mushaf-surah-banner">
         <span class="mushaf-surah-banner__name">${escapeHTML(chapter.titleAr)}</span>
       </div>
-      ${showBismillah ? `<p class="mushaf-bismillah">\u0628ِ\u0633\u0652\u0645ِ \u0627\u0644\u0644\u0651\u064e\u0647ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u064e\u0670\u0646ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645ِ</p>` : ''}
+      ${showBismillah && prefs.bismillahStyle !== 'hidden' ? `<p class="mushaf-bismillah bismillah--${prefs.bismillahStyle}">\u0628ِ\u0633\u0652\u0645ِ \u0627\u0644\u0644\u0651\u064e\u0647ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u064e\u0670\u0646ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645ِ</p>` : ''}
     `
         : '';
 
@@ -84,6 +84,7 @@ export function renderMushaf(state) {
           const wordsHtml = renderAyahWords(v.text, words, chapter.number, v.number, {
             tappable: prefs.wordByWordStudy,
             underline: prefs.wordUnderline,
+            tajweed: prefs.tajweedColoring,
           });
           const focusAttrs = prefs.wordByWordStudy ? '' : 'tabindex="0" role="button"';
           return `<span class="mushaf-ayah ${isMarked ? 'mushaf-ayah--bookmarked' : ''}" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" ${focusAttrs} aria-label="${chapter.number}:${v.number}">${wordsHtml}<span class="mushaf-ayah__marker" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" tabindex="0" role="button">\uFD3F${toEasternArabicNumerals(v.number)}\uFD3E</span>${isMarked ? '<span class="mushaf-ayah__bookmark-flag" aria-hidden="true">\u2726</span>' : ''}</span>`;
@@ -465,6 +466,9 @@ export function buildMushafAyahDetail(
       }
       <button type="button" class="btn btn--secondary btn--sm" data-action="mushaf-copy-ayah" data-text="${escapeHTML(arabicText)}" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
         ${icon('copy', { size: 16 })} ${t('card.copy', lang)}
+      </button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="practice-this-ayah" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
+        ${icon('sparkle', { size: 16 })} ${t('practice.thisAyah', lang)}
       </button>
     </div>
     ${buildAyahStudyExtras(state, surahNumber, ayahNumber, activeTafsirTab)}

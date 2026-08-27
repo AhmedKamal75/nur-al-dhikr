@@ -22,6 +22,13 @@ import {
   renderAyahWords,
   formatArabicCommentary,
 } from '../js/views/tafsirPanel.js';
+import { buildPracticePicker, buildPracticeRound } from '../js/views/tajweedPracticeView.js';
+import {
+  buildAnswerKey,
+  scoreRound,
+  defaultTajweedPracticeStats,
+  nextStats,
+} from '../js/tajweedPractice.js';
 import { renderMushaf, buildMushafAyahDetail, setFlipDirection } from '../js/views/mushafReader.js';
 import { renderQuran } from '../js/views/quran.js';
 import { DEFAULT_SETTINGS } from '../js/config.js';
@@ -55,6 +62,7 @@ function baseState(overrides = {}) {
     tafsirEditions: editions,
     tafsir: { muyassar: { 1: muyassar1 }, jadwal: { 1: jadwal1 } },
     activeWordStudy: { surah: '1', ayah: '1', i: 2 },
+    tajweedPracticeStats: defaultTajweedPracticeStats(),
     recitingAyahKey: null,
     player: null,
     ...rest,
@@ -72,6 +80,22 @@ function assertClean(html, label) {
 test('buildWordStudyPanel renders for a real word, both languages', () => {
   assertClean(buildWordStudyPanel(baseState()), 'word study (en)');
   assertClean(buildWordStudyPanel(baseState({ settings: { language: 'ar' } })), 'word study (ar)');
+});
+
+test('buildWordStudyPanel embeds the v3.7 Tajweed inspector with bilingual rows', () => {
+  // Surah 1 opens with rule-dense words; word 3 of 1:4 (d-deen's diin?) ->
+  // use 1:4 word 4 (aldin) — final noon sakinah at ayah end has no following
+  // word, so instead assert on a word guaranteed to carry a colored span:
+  // 1:1 word 3 (ar-Raheem's sibling ar-Rahman) holds lam shamsiyyah + madd_2.
+  const html = buildWordStudyPanel(baseState({ activeWordStudy: { surah: '1', ayah: '1', i: 3 } }));
+  assertClean(html, 'tajweed inspector');
+  assert.ok(html.includes('word-study__tajweed'), 'inspector section renders');
+  assert.ok(html.includes('wti-row'), 'at least one rule row renders');
+  assert.ok(html.includes('Lam Shamsiyyah'), 'english rule name present');
+  const ar = buildWordStudyPanel(
+    baseState({ activeWordStudy: { surah: '1', ayah: '1', i: 3 }, settings: { language: 'ar' } })
+  );
+  assert.ok(ar.includes('\u0627\u0644\u0644\u0627\u0645 \u0627\u0644\u0634\u0645\u0633\u064A\u0629'.replace('\u0627\u0644\u0644\u0627\u0645', '\u0627\u0644\u0644\u0627\u0645')), 'arabic rule name present');
 });
 
 test('buildWordStudyPanel degrades gracefully when the word is not found', () => {
@@ -141,12 +165,49 @@ test('renderAyahWords falls back to plain escaped text when not tappable or data
   );
 });
 
+test('renderAyahWords colors tajweed rules when requested, and nests correctly inside word-tap spans', () => {
+  const text = surah1.ayahs[0].text; // بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+  const withTajweed = renderAyahWords(text, words1['1'], 1, 1, { tappable: true, tajweed: true });
+  assertClean(withTajweed, 'renderAyahWords (tajweed on)');
+  assert.match(withTajweed, /class="tajweed tajweed--hamzat_wasl"/);
+  assert.match(withTajweed, /class="tajweed tajweed--madd_246"/);
+  // every tajweed span must sit inside a word-tap span, not float outside one
+  assert.doesNotMatch(withTajweed, /^\s*<span class="tajweed/);
+
+  const withoutTajweed = renderAyahWords(text, words1['1'], 1, 1, {
+    tappable: true,
+    tajweed: false,
+  });
+  assert.doesNotMatch(withoutTajweed, /class="tajweed/);
+});
+
+test('renderAyahWords tajweed coloring never throws when word data has not loaded', () => {
+  const text = surah1.ayahs[0].text;
+  const html = renderAyahWords(text, undefined, 1, 1, { tappable: true, tajweed: true });
+  assertClean(html, 'renderAyahWords (tajweed on, no word data)');
+  assert.match(html, /tajweed--hamzat_wasl/); // coloring itself doesn't depend on word-study data being loaded
+  assert.doesNotMatch(html, /data-action="word-tap"/); // but the tap affordance correctly still needs it
+});
+
 test('buildMushafSettingsPanel renders in both languages with no crash', () => {
   assertClean(buildMushafSettingsPanel(baseState()), 'mushaf settings (en)');
   assertClean(
     buildMushafSettingsPanel(baseState({ settings: { language: 'ar' } })),
     'mushaf settings (ar)'
   );
+});
+
+test('buildMushafSettingsPanel shows the tajweed legend only once coloring is enabled', () => {
+  const off = buildMushafSettingsPanel(baseState());
+  assertClean(off, 'mushaf settings (tajweed off)');
+  assert.doesNotMatch(off, /tajweed-legend/);
+
+  const st = baseState();
+  st.settings.mushafPrefs = { ...st.settings.mushafPrefs, tajweedColoring: true };
+  const on = buildMushafSettingsPanel(st);
+  assertClean(on, 'mushaf settings (tajweed on)');
+  assert.match(on, /tajweed-legend/);
+  assert.match(on, /tajweed-legend__row/); // at least one rule listed
 });
 
 test('renderMushaf renders page 1 with tappable words and reflects every paper theme', () => {
@@ -197,6 +258,81 @@ test('renderQuran (classic reader) renders word-tappable ayahs and a tafsir shor
   assert.match(html, /data-action="tafsir-open"/);
 });
 
+test('renderQuran respects the tajweed coloring preference', () => {
+  const st = baseState({ activeParams: { id: '1' } });
+  st.settings.mushafPrefs = { ...st.settings.mushafPrefs, tajweedColoring: true };
+  const html = renderQuran(st);
+  assertClean(html, 'classic reader (tajweed on)');
+  assert.match(html, /class="tajweed/);
+});
+
 test('renderQuran surah list still renders untouched', () => {
   assertClean(renderQuran(baseState({ activeParams: {} })), 'classic reader (list)');
+});
+
+test('buildPracticePicker renders with and without prior stats, both languages', () => {
+  assertClean(buildPracticePicker(baseState()), 'practice picker (no stats)');
+  const withStats = baseState();
+  withStats.tajweedPracticeStats = nextStats(defaultTajweedPracticeStats(), 'qalqalah', true);
+  const html = buildPracticePicker(withStats);
+  assertClean(html, 'practice picker (with stats)');
+  assert.match(html, /practice-stats/);
+  assertClean(
+    buildPracticePicker(baseState({ settings: { language: 'ar' } })),
+    'practice picker (ar)'
+  );
+});
+
+test('buildPracticeRound renders an unchecked round with every letter tappable', () => {
+  const text = surah1.ayahs[0].text;
+  const session = {
+    ruleId: 'hamzat_wasl',
+    surah: 1,
+    ayah: 1,
+    text,
+    selected: new Set(),
+    checked: false,
+    targets: buildAnswerKey(text, 'hamzat_wasl'),
+    result: null,
+  };
+  const html = buildPracticeRound(baseState(), session);
+  assertClean(html, 'practice round (unchecked)');
+  assert.match(html, /data-action="practice-tap"/);
+  assert.doesNotMatch(html, /pu--correct|pu--missed|pu--wrong/);
+});
+
+test('buildPracticeRound reveals correct/missed/wrong feedback once checked', () => {
+  const text = surah1.ayahs[0].text;
+  const targets = buildAnswerKey(text, 'hamzat_wasl'); // 3 occurrences
+  const selected = new Set([`${targets[0].word}:${targets[0].start}:${targets[0].end}`, '99:0:1']); // one right, one bogus wrong tap
+  const session = {
+    ruleId: 'hamzat_wasl',
+    surah: 1,
+    ayah: 1,
+    text,
+    selected,
+    checked: true,
+    targets,
+    result: scoreRound(targets, selected),
+  };
+  const html = buildPracticeRound(baseState(), session);
+  assertClean(html, 'practice round (checked)');
+  assert.match(html, /pu--correct/);
+  assert.match(html, /pu--missed/); // two targets were never tapped
+  assert.doesNotMatch(html, /data-action="practice-tap"/); // no longer editable once checked
+});
+
+test('buildPracticeRound handles "mixed" mode (no single rule) without crashing', () => {
+  const text = surah1.ayahs[0].text;
+  const session = {
+    ruleId: 'mixed',
+    surah: 1,
+    ayah: 1,
+    text,
+    selected: new Set(),
+    checked: false,
+    targets: buildAnswerKey(text, 'mixed'),
+    result: null,
+  };
+  assertClean(buildPracticeRound(baseState(), session), 'practice round (mixed)');
 });

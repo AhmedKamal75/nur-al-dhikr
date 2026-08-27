@@ -1,56 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" dir="ltr" data-theme="light" data-palette="emerald" data-shape="rounded">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Nūr al-Dhikr — Adhkar &amp; Duas</title>
-<meta name="description" content="An offline-first daily companion for Adhkar, Duas, and the 99 Names of Allah — with prayer times, a Hijri calendar, tasbih counter, and a full content editor." />
-<meta name="theme-color" content="#FFFFFF" />
-<meta name="color-scheme" content="light dark" />
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="Nūr al-Dhikr" />
-<link rel="manifest" href="manifest.json" />
-<link rel="icon" href="favicon.ico" sizes="any" />
-<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
-<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
-<link rel="preload" as="font" type="font/woff2" href="assets/fonts/Amiri-Regular.woff2" crossorigin />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Nūr al-Dhikr — Adhkar &amp; Duas</title>
+    <meta
+      name="description"
+      content="An offline-first daily companion for Adhkar, Duas, and the 99 Names of Allah — with prayer times, a Hijri calendar, tasbih counter, and a full content editor."
+    />
+    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Nūr al-Dhikr" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="assets/fonts/Amiri-Regular.woff2"
+      crossorigin
+    />
 
-<link rel="stylesheet" href="assets/css/variables.css" />
-<link rel="stylesheet" href="assets/css/base.css" />
-<link rel="stylesheet" href="assets/css/layout.css" />
-<link rel="stylesheet" href="assets/css/components.css" />
-<link rel="stylesheet" href="assets/css/cards.css" />
-<link rel="stylesheet" href="assets/css/quran.css" />
-<link rel="stylesheet" href="assets/css/animations.css" />
-<link rel="stylesheet" href="assets/css/accessibility.css" />
-</head>
-<body>
-  <a class="skip-link" href="#main">Skip to content</a>
+    <link rel="stylesheet" href="assets/css/variables.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/layout.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/cards.css" />
+    <link rel="stylesheet" href="assets/css/quran.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+    <link rel="stylesheet" href="assets/css/accessibility.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-  <div id="app">
-    <header class="topbar" id="topbar" role="banner"></header>
+    <div id="app">
+      <header class="topbar" id="topbar" role="banner"></header>
 
-    <main id="main" role="main" tabindex="-1"></main>
+      <main id="main" role="main" tabindex="-1"></main>
 
-    <nav class="bottomnav" id="bottomnav" aria-label="Primary"></nav>
-    <div id="playerbar" aria-label="Audio player"></div>
-  </div>
-
-  <div id="modal-root" aria-live="polite"></div>
-  <div id="toast-root" role="status" aria-live="polite"></div>
-  <div id="counter-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-
-  <input type="file" id="backup-file-input" accept="application/json" class="sr-only" tabindex="-1" />
-
-  <noscript>
-    <div style="padding:2rem;font-family:sans-serif;max-width:480px;margin:0 auto;text-align:center;">
-      <h1>Nūr al-Dhikr</h1>
-      <p>This app requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+      <nav class="bottomnav" id="bottomnav" aria-label="Primary"></nav>
+      <div id="playerbar" aria-label="Audio player"></div>
     </div>
-  </noscript>
 
-  <script type="module" src="js/app.js"></script>
-</body>
+    <div id="modal-root" aria-live="polite"></div>
+    <div id="toast-root" role="status" aria-live="polite"></div>
+    <div id="counter-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <input
+      type="file"
+      id="backup-file-input"
+      accept="application/json"
+      class="sr-only"
+      tabindex="-1"
+    />
+    <input type="file" id="adhan-file-input" accept="audio/*" class="sr-only" tabindex="-1" />
+
+    <noscript>
+      <div
+        style="
+          padding: 2rem;
+          font-family: sans-serif;
+          max-width: 480px;
+          margin: 0 auto;
+          text-align: center;
+        "
+      >
+        <h1>Nūr al-Dhikr</h1>
+        <p>
+          This app requires JavaScript to run. Please enable JavaScript in your browser settings.
+        </p>
+      </div>
+    </noscript>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
 </html>
