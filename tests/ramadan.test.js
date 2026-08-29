@@ -16,7 +16,7 @@ import {
   keptFastCount,
   fastTrackerDays,
   ramadanLogKey,
-  ramadanAlertTimes
+  ramadanAlertTimes,
 } from '../js/ramadan.js';
 import { toGregorian } from '../js/calendar.js';
 
@@ -58,7 +58,7 @@ test('nextRamadan the day after Eid looks to next year', () => {
   assert.ok(nr.daysUntil > 310 && nr.daysUntil < 345, `expected ~a year out, got ${nr.daysUntil}`);
 });
 
-test('fastPhase: post-midnight before fajr targets today\'s fajr', () => {
+test("fastPhase: post-midnight before fajr targets today's fajr", () => {
   const at2am = new Date(2026, 2, 5, 2, 0, 0);
   const phase = fastPhase(at2am, { fajr: 5.0, maghrib: 18.2 }, 5.05);
   assert.equal(phase.phase, 'night');

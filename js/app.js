@@ -13,6 +13,8 @@ import {
   CATALOG_URL,
   QURAN_META_URL,
   QURAN_SURAH_URL,
+  TRANSLATION_URL,
+  overlayTranslation,
   MUSHAF_META_URL,
   MUSHAF_PAGE_URL,
   VIEWS,
@@ -26,6 +28,8 @@ import {
   TAFSIR_TEXT_URL,
   TAFSIR_REMOTE_URL,
   TAJWEED_PRACTICE_POOL_URL,
+  HADITH_INDEX_URL,
+  HADITH_BOOK_URL,
 } from './config.js';
 import { store, actions, persistedSnapshot } from './state.js';
 import { migrate } from './migration.js';
@@ -39,7 +43,15 @@ import { pickRoundEntry, buildAnswerKey, scoreRound } from './tajweedPractice.js
 import { buildPracticePicker, buildPracticeRound } from './views/tajweedPracticeView.js';
 import { t } from './i18n.js';
 import { pickLocale, uid, vibrate, dateKey } from './utils.js';
+import {
+  validateHadithIndex,
+  validateHadithDoc,
+  pickDailyHadith,
+  pageForNumber,
+} from './hadith.js';
 import * as tasbih from './tasbih.js';
+import * as soundDesign from './soundDesign.js';
+import { markCelebration } from './celebrate.js';
 import * as speech from './speech.js';
 import * as backup from './backup.js';
 import * as notifications from './notifications.js';
@@ -47,8 +59,14 @@ import * as editorApi from './editor.js';
 import * as compass from './compass.js';
 import { qiblaBearing } from './qibla.js';
 import { updateQiblaCompassDOM } from './views/qibla.js';
-import { clampPage, nextPage as mushafNextPage, prevPage as mushafPrevPage } from './mushaf.js';
+import {
+  clampPage,
+  nextPage as mushafNextPage,
+  prevPage as mushafPrevPage,
+  resolvePage as resolveMushafPage,
+} from './mushaf.js';
 import * as recitation from './recitation.js';
+import * as surahPlayback from './surahPlayback.js';
 import {
   buildMushafJump,
   buildMushafAyahDetail,
@@ -84,12 +102,7 @@ import {
 import { buildItemForm, buildCategoryForm, buildLibraryForm } from './views/editor.js';
 import { buildDayDetail, buildNoteForm } from './components/calendarModals.js';
 import { PRESETS as TASBIH_PRESETS } from './views/tasbih.js';
-import {
-  playSound,
-  previewAlert,
-  refreshCustomAdhanFlags,
-  stopAdhan,
-} from './prayerSound.js';
+import { playSound, previewAlert, refreshCustomAdhanFlags, stopAdhan } from './prayerSound.js';
 import { dayComplete } from './prayerLog.js';
 import { generateCardBlob, downloadBlob, cardFilename } from './shareCard.js';
 import { ramadanKhatmaPreset } from './khatma.js';
@@ -279,20 +292,185 @@ function onStateChange(stateArg, action) {
     // the guard is wrong: reset it so the next navigation refetches.
     if (!state.quran.meta) quranMetaFetchStarted = false;
     if (!state.mushaf.meta) mushafMetaFetchStarted = false;
+    // v3.15: translation edition changed through ANY path (settings picker,
+    // backup restore, reset) → re-merge loaded surah docs once, and reset
+    // the search-index latch so the index re-warms in the new language.
+    if (
+      lastSeenTranslationEdition !== null &&
+      state.settings.quranTranslation !== lastSeenTranslationEdition
+    ) {
+      applyTranslationEdition(state.settings.quranTranslation);
+    }
+    lastSeenTranslationEdition = state.settings.quranTranslation;
     applyTheme(state.settings);
     if (state.activeView === VIEWS.QURAN) ensureQuranData(state);
     if (state.activeView === VIEWS.MUSHAF) ensureMushafData(state);
     if (state.activeView === VIEWS.AUDIO) ensureRecitersData(state);
+    if (state.activeView === VIEWS.HADITH) ensureHadithData(state);
     updateCompassLifecycle(state);
     updateRamadanLifecycle(state);
     updateHomeTickerLifecycle(state);
     maybeStartQuranSearchBuild(state);
     if (!isSelfRenderedSettingsUpdate(action)) render(state);
     maybeScrollToFocusAyah(state);
+    maybeScrollToFocusHadith(state);
+    maybeFollowRecitation(state);
   } catch (err) {
     renderErrorScreen(err);
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Qur'an surah document loading (with translation overlay)            */
+/* ------------------------------------------------------------------ */
+// Every surah doc that enters the app flows through loadSurahDoc(): the
+// corpus file (Uthmani text + inline Sahih International) is fetched once
+// and kept in surahCorpusCache — the pristine copy — and when the user has
+// selected a non-default translation edition, the matching overlay file
+// from data/translations/{edition}/{n}.json is merged on top (pure
+// overlayTranslation from config.js). Both readers, the mushaf ayah
+// detail, the tajweed practice pool and the search index therefore all see
+// the selected edition without a single per-view change. The overlay
+// files ride the service worker's stale-while-revalidate data rule, so an
+// edition works offline after its first use.
+
+const surahCorpusCache = new Map();
+const translationDocCache = new Map();
+
+async function fetchTranslationOverlay(edKey, n) {
+  const key = `${edKey}:${n}`;
+  let tdoc = translationDocCache.get(key);
+  if (!tdoc) {
+    tdoc = await fetchJSON(TRANSLATION_URL(edKey, n));
+    translationDocCache.set(key, tdoc);
+  }
+  return tdoc;
+}
+
+async function loadSurahDoc(n) {
+  const id = String(n);
+  let doc = surahCorpusCache.get(id);
+  if (!doc) {
+    doc = await fetchJSON(QURAN_SURAH_URL(id));
+    surahCorpusCache.set(id, doc);
+  }
+  // Edition freshness: the setting can change while the corpus/overlay
+  // fetches are in flight (rapid switching). A doc merged with a stale
+  // edition must never be dispatched — re-check after every await and
+  // redo the overlay if the target moved (bounded, converges because the
+  // switch itself re-merges loaded surahs).
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const edKey = store.getState().settings.quranTranslation;
+    if (!edKey || edKey === 'en-sahih') return { ...doc, translationEdition: 'en-sahih' };
+    try {
+      const tdoc = await fetchTranslationOverlay(edKey, id);
+      const merged = overlayTranslation(doc, tdoc);
+      if (store.getState().settings.quranTranslation === edKey) {
+        if (merged !== doc) return { ...merged, translationEdition: edKey };
+        console.warn('[quran] translation overlay shape mismatch, keeping Sahih', edKey, id);
+        return { ...doc, translationEdition: 'en-sahih' };
+      }
+      // edition moved mid-fetch — loop and merge against the new one
+    } catch (err) {
+      console.warn('[quran] translation file unavailable, keeping Sahih', edKey, id, err);
+      return { ...doc, translationEdition: 'en-sahih' };
+    }
+  }
+  console.warn('[quran] edition kept changing under surah load, giving up on overlay', id);
+  return { ...doc, translationEdition: 'en-sahih' };
+}
+
+/**
+ * Dispatch a surah doc only when its translation content matches the
+ * CURRENT setting. loadSurahDoc stamps translationEdition on every doc;
+ * if the setting moved between merge-start and dispatch (the one window
+ * the in-load re-check cannot see), re-fetch/merge once against the
+ * current edition, then dispatch whatever we have — the reader is never
+ * blocked, worst case it shows the bundled Sahih text for one surah.
+ */
+async function dispatchSurahDoc(id) {
+  let doc = await loadSurahDoc(id);
+  const want = store.getState().settings.quranTranslation || 'en-sahih';
+  if ((doc.translationEdition || 'en-sahih') !== want) {
+    doc = await loadSurahDoc(id);
+  }
+  store.dispatch(actions.setQuranSurah(String(id), doc));
+  return doc;
+}
+
+/**
+ * Edition switch (settings change, backup restore, reset): re-derive every
+ * already-loaded surah doc from its pristine corpus copy with the new
+ * edition overlaid, in ONE bulk dispatch, and reset the full-text search
+ * latch so the index re-warms in the new language on next search open
+ * (already-cached surahs make that re-warm nearly free). Failures fall
+ * back to the pristine doc per surah — a missing overlay file must never
+ * blank or block the reader.
+ *
+ * SINGLE-FLIGHT: rapid switching must never run two re-merge loops
+ * concurrently (their bulk dispatches would interleave and fight). While a
+ * switch runs, later requests just update `editionSwitchTarget`; the
+ * running loop re-checks after each await and the collapsed runner
+ * re-executes once with the final target if it moved.
+ */
+let editionSwitchRunning = false;
+let editionSwitchTarget = null;
+
+async function runEditionSwitch(edKey) {
+  const existing = store.getState().quran.surahs;
+  const ids = Object.keys(existing);
+  if (!ids.length) return;
+  const merged = {};
+  for (const id of ids) {
+    // collapse: a newer switch request supersedes this pass mid-loop
+    if (editionSwitchTarget !== null && editionSwitchTarget !== edKey) return;
+    const pristine = surahCorpusCache.get(id) || existing[id];
+    if (!edKey || edKey === 'en-sahih') {
+      merged[id] = { ...pristine, translationEdition: 'en-sahih' };
+      continue;
+    }
+    try {
+      const tdoc = await fetchTranslationOverlay(edKey, id);
+      merged[id] = { ...overlayTranslation(pristine, tdoc), translationEdition: edKey };
+    } catch (err) {
+      console.warn('[quran] edition switch: overlay unavailable for', edKey, id, err);
+      merged[id] = { ...pristine, translationEdition: 'en-sahih' };
+    }
+  }
+  if (editionSwitchTarget !== null && editionSwitchTarget !== edKey) return;
+  store.dispatch(actions.setQuranSurahsBulk(merged));
+  setQuranIndexReady(false);
+  quranSearchBuildStarted = false;
+}
+
+async function applyTranslationEdition(edKey) {
+  if (editionSwitchRunning) {
+    editionSwitchTarget = edKey; // latest target wins; runner picks it up
+    return;
+  }
+  editionSwitchRunning = true;
+  editionSwitchTarget = edKey;
+  try {
+    // Collapse loop: keep running until the target stops moving.
+    while (editionSwitchTarget !== null) {
+      const target = editionSwitchTarget;
+      try {
+        await runEditionSwitch(target);
+      } catch (err) {
+        console.error('[quran] applyTranslationEdition failed', err);
+      }
+      if (editionSwitchTarget === target) editionSwitchTarget = null;
+    }
+  } finally {
+    editionSwitchRunning = false;
+    editionSwitchTarget = null;
+  }
+}
+
+// Tracks the last edition seen by the store subscriber so every change
+// path (settings UI, backup restore, factory reset) triggers exactly one
+// re-merge. null = first run (boot), never triggers.
+let lastSeenTranslationEdition = null;
 
 /* ------------------------------------------------------------------ */
 /* Qur'an full-text search corpus                                       */
@@ -326,12 +504,19 @@ async function ensureQuranSearchData() {
     for (let i = 0; i < missing.length; i += CHUNK) {
       const chunk = missing.slice(i, i + CHUNK);
       const docs = await Promise.all(
-        chunk.map((n) =>
-          fetchJSON(QURAN_SURAH_URL(n)).catch((err) => {
+        chunk.map(async (n) => {
+          try {
+            let doc = await loadSurahDoc(n);
+            const want = store.getState().settings.quranTranslation || 'en-sahih';
+            if ((doc.translationEdition || 'en-sahih') !== want) {
+              doc = await loadSurahDoc(n);
+            }
+            return doc;
+          } catch (err) {
             console.error('[quran-search] failed to load surah', n, err);
             return null;
-          })
-        )
+          }
+        })
       );
       chunk.forEach((n, j) => {
         if (docs[j]) fetched[n] = docs[j];
@@ -388,6 +573,208 @@ function maybeStartQuranSearchBuild(state) {
     !isQuranSearchReady()
   ) {
     ensureQuranSearchData();
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Ahadeeth library (v3.9)                                             */
+/* ------------------------------------------------------------------ */
+// Lazy-loading mirrors the Qur'an corpus pattern: the index (book registry)
+// and the small bundled books are SW-precached; each big Sahih is fetched
+// the first time its book is opened and cached offline forever after.
+// Fetched JSON is untrusted: validateHadith*() degrades malformed documents
+// to a load failure (with an in-app retry) instead of crashing a render.
+
+let hadithIndexStarted = false;
+const hadithBookFetches = new Map();
+let hadithBookViewLastId = null;
+let hadithDeepRef = null;
+
+async function ensureHadithIndex(force = false) {
+  if (store.getState().hadith.index) return true;
+  if (hadithIndexStarted && !force) return false;
+  hadithIndexStarted = true;
+  try {
+    const raw = await fetchJSON(HADITH_INDEX_URL);
+    const index = validateHadithIndex(raw);
+    if (!index) throw new Error('malformed hadith index');
+    store.dispatch(actions.setHadithIndex(index));
+    return true;
+  } catch (err) {
+    console.error('[hadith] index load failed', err);
+    store.dispatch(actions.hadithIndexFailed());
+    hadithIndexStarted = false; // the Retry button calls again with force
+    return false;
+  }
+}
+
+async function ensureHadithBook(id, force = false) {
+  const bookId = String(id || '');
+  if (!/^[a-z0-9-]{1,40}$/.test(bookId)) return false; // id is also a path segment
+  if (store.getState().hadith.docs[bookId]) return true;
+  if (hadithBookFetches.has(bookId) && !force) return hadithBookFetches.get(bookId);
+  const p = (async () => {
+    try {
+      const raw = await fetchJSON(HADITH_BOOK_URL(bookId));
+      const doc = validateHadithDoc(raw);
+      if (!doc || doc.id !== bookId) throw new Error('malformed book document');
+      store.dispatch(actions.setHadithBook(bookId, doc));
+      return true;
+    } catch (err) {
+      console.error('[hadith] book load failed', bookId, err);
+      store.dispatch(actions.hadithBookFailed(bookId));
+      hadithBookFetches.delete(bookId); // allow a retry
+      return false;
+    }
+  })();
+  hadithBookFetches.set(bookId, p);
+  return p;
+}
+
+/** Per-view loader: runs on every render of the Ahadeeth screens. */
+function ensureHadithData(state) {
+  ensureHadithIndex();
+  const bookId = String(state.activeParams?.id || '');
+  if (!bookId) {
+    hadithBookViewLastId = null;
+    hadithDeepRef = null;
+    return;
+  }
+  // Reset the reader's search/chapter/pager state when switching books —
+  // a stale query from Bukhari must never pre-filter Muslim.
+  if (hadithBookViewLastId !== bookId) {
+    hadithBookViewLastId = bookId;
+    hadithDeepRef = null;
+    store.dispatch(actions.setHadithView({ query: '', section: 'all', page: 1, consumedN: null }));
+  }
+  const doc = state.hadith.docs[bookId];
+  const deepN = state.activeParams?.n;
+  // Deep link ?n=<number>: resolve its page once per (book, number) pair.
+  // The book document may still be in flight on the first render — the
+  // key guard keeps retrying on subsequent renders like the ayah scroller.
+  if (doc && deepN != null && hadithDeepRef !== `${bookId}:${deepN}`) {
+    hadithDeepRef = `${bookId}:${deepN}`;
+    const page = pageForNumber(
+      doc,
+      Number(deepN),
+      state.hadith.bookView.section,
+      state.hadith.bookView.query
+    );
+    store.dispatch(actions.setHadithView({ page: page ?? 1, consumedN: String(deepN) }));
+  }
+}
+
+/** Deterministic daily hadith for the Home card: index + bundled books
+ *  (both SW-precached, so this never forces a big-Sahih download), then one
+ *  HADITH_DAILY_SET dispatch. Same (date, data) → same hadith, forever. */
+let hadithDailyStarted = false;
+async function warmHadithDaily() {
+  if (hadithDailyStarted) return;
+  hadithDailyStarted = true;
+  try {
+    const gotIndex = await ensureHadithIndex();
+    if (!gotIndex) return;
+    const bundled = (store.getState().hadith.index?.books || []).filter((b) => b.bundled);
+    await Promise.all(bundled.map((b) => ensureHadithBook(b.id)));
+    const st = store.getState();
+    const daily = pickDailyHadith(
+      st.hadith.index?.books || [],
+      st.hadith.docs,
+      dateKey(new Date())
+    );
+    if (daily) store.dispatch(actions.setHadithDaily({ bookId: daily.bookId, n: daily.hadith.n }));
+  } catch (err) {
+    console.error('[hadith] daily warm failed', err);
+    hadithDailyStarted = false; // next boot/session retries
+  }
+}
+
+/** Deep-link scroll for '#/hadith/<book>?n=<n>' — the hadith card may still
+ *  be loading when the view first renders, so attempts repeat across
+ *  renders until success or navigation away (same contract as the ayah one). */
+let pendingHadithScroll = null;
+let hadithScrollAttempts = 0;
+
+function maybeScrollToFocusHadith(state) {
+  if (state.activeView !== VIEWS.HADITH || state.activeParams?.n == null) {
+    pendingHadithScroll = null;
+    return;
+  }
+  const want = String(state.activeParams.n);
+  const key = `${state.activeParams?.id}:${want}`;
+  if (pendingHadithScroll === null || pendingHadithScroll.queryKey !== key) {
+    pendingHadithScroll = { n: want, queryKey: key };
+    hadithScrollAttempts = 0;
+  }
+  requestAnimationFrame(() => {
+    if (!pendingHadithScroll) return;
+    const el = document.getElementById(`hadith-${CSS.escape(pendingHadithScroll.n)}`);
+    if (el) {
+      pendingHadithScroll = null;
+      el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    } else if (++hadithScrollAttempts > 20) {
+      pendingHadithScroll = null;
+    }
+  });
+}
+
+/** Page flips land the list's top in view — otherwise the pager buttons
+ *  scroll away underneath the reader's thumb/finger. */
+function scrollToHadithListTop() {
+  requestAnimationFrame(() => {
+    document.querySelector('.hadith-list')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Continuous recitation: follow effects (v3.10)                        */
+/* ------------------------------------------------------------------ */
+// The engine mirrors progress into state.surahPlayback; this effect keeps
+// the VIEW synced when "follow" is on: the classic reader scrolls to the
+// reciting ayah, the Mushaf flips to the right PAGE and then scrolls the
+// ayah into view. Fires only on ayah CHANGES — never on every render — so
+// the person can still scroll freely between verses.
+let lastFollowedAyahKey = null;
+
+function maybeFollowRecitation(state) {
+  const sp = state.surahPlayback;
+  if (!sp.active || !sp.ayah) {
+    lastFollowedAyahKey = null;
+    return;
+  }
+  if (!(state.settings.audio.ayahFollow ?? true)) return;
+  const key = `${sp.surah}:${sp.ayah}`;
+  if (key === lastFollowedAyahKey) return;
+  lastFollowedAyahKey = key;
+
+  if (
+    state.activeView === VIEWS.QURAN &&
+    String(state.activeParams?.id || '') === String(sp.surah)
+  ) {
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`ayah-${CSS.escape(String(sp.ayah))}`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+    return;
+  }
+
+  if (state.activeView === VIEWS.MUSHAF) {
+    const meta = state.mushaf.meta;
+    const page = meta ? resolveMushafPage(meta.ayahPages, sp.surah, sp.ayah) : null;
+    if (!page) return;
+    const current = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    if (page !== current) {
+      setFlipDirection(page > current ? 'next' : 'prev');
+      playFlipSound();
+      go(VIEWS.MUSHAF, { page: String(page) });
+      return;
+    }
+    requestAnimationFrame(() => {
+      document
+        .querySelector(`.mushaf-ayah[data-surah="${sp.surah}"][data-ayah="${sp.ayah}"]`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
   }
 }
 
@@ -740,8 +1127,7 @@ async function ensureQuranData(state) {
   if (!state.quran.surahs[id] && !quranSurahFetchesInFlight.has(id)) {
     quranSurahFetchesInFlight.add(id);
     try {
-      const surah = await fetchJSON(QURAN_SURAH_URL(id));
-      store.dispatch(actions.setQuranSurah(id, surah));
+      await dispatchSurahDoc(id);
     } catch (err) {
       console.error('[quran] failed to load surah', id, err);
     } finally {
@@ -798,6 +1184,9 @@ async function ensureMushafData(state) {
     // page — celebrate once, here, where side effects belong.
     if (Object.keys(store.getState().mushafPagesRead).length >= MUSHAF_PAGE_COUNT) {
       showToast(t('khatma.completeToast', store.getState().settings.language), { duration: 6000 });
+      // v3.14 Phase C: optional (off-by-default) completion chime — see
+      // js/soundDesign.js. Fires in the same once-only window as the toast.
+      soundDesign.playKhatmaChime(store.getState().settings.khatmaChimeSound);
     }
   }
 
@@ -964,7 +1353,7 @@ async function openAyahStudy(surah, ayah, page = null) {
   }
   if (!state.quran.surahs[String(surah)]) {
     try {
-      store.dispatch(actions.setQuranSurah(surah, await fetchJSON(QURAN_SURAH_URL(surah))));
+      await dispatchSurahDoc(surah);
     } catch {
       /* best effort */
     }
@@ -1011,7 +1400,7 @@ async function startPracticeRound(ruleId) {
   }
   if (!store.getState().quran.surahs[String(entry.s)]) {
     try {
-      store.dispatch(actions.setQuranSurah(entry.s, await fetchJSON(QURAN_SURAH_URL(entry.s))));
+      await dispatchSurahDoc(entry.s);
     } catch (err) {
       console.error('[tajweed] failed to load surah for practice', entry.s, err);
       showToast(t('practice.loadFailed', state.settings.language));
@@ -1055,6 +1444,16 @@ async function boot() {
     // the right "now playing" affordance, the same way speakingItemId does
     // for text-to-speech.
     recitation.onPlaybackChange((key) => store.dispatch(actions.setRecitingAyah(key)));
+    // Continuous recitation: the engine owns the audio; this mirrors its
+    // progress into the store so every view (reader, Mushaf, player bar)
+    // renders the moving highlight reactively.
+    surahPlayback.onAyahChange((surah, ayah) => {
+      store.dispatch(actions.setSurahPlayback({ active: ayah != null, surah, ayah }));
+    });
+    surahPlayback.onError((surah, ayah) => {
+      console.error('[surah-playback] verse failed', surah, ayah);
+      showToast(t('audio.reciteVerseFailed', store.getState().settings.language));
+    });
     notifications.startScheduler(
       () => store.getState().reminders,
       store.getState().settings.language,
@@ -1073,6 +1472,10 @@ async function boot() {
     wirePlayer();
     initRouter(); // dispatches the first NAVIGATE
     render(store.getState());
+
+    // Warm today's daily hadith (index + small bundled books — never the
+    // multi-MB Sahihs). Fire-and-forget: the Home card appears when ready.
+    warmHadithDaily();
 
     registerServiceWorker();
     wireInstallPrompt();
@@ -1324,6 +1727,47 @@ const clickHandlers = {
     }
   },
 
+  // ---- Ahadeeth (v3.9) ----
+  'hadith-copy': async (ds) => {
+    const st = store.getState();
+    const bookId = String(st.activeParams?.id || '');
+    const doc = st.hadith.docs[bookId];
+    const h = doc?.hadiths.find((x) => String(x.n) === String(ds.n));
+    if (!h) return;
+    const lang = st.settings.language;
+    const text = `${h.ar}\n\n${h.en}\n\n\u2014 ${pickLocale(doc.name, lang)} \u2116${h.n}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(t('card.copied', lang));
+    } catch {
+      showToast(t('card.copyFailed', lang));
+    }
+  },
+
+  'hadith-section': (ds) => {
+    store.dispatch(actions.setHadithView({ section: String(ds.id || 'all'), page: 1 }));
+  },
+
+  'hadith-page-prev': () => {
+    const page = Math.max(1, (store.getState().hadith.bookView.page || 1) - 1);
+    store.dispatch(actions.setHadithView({ page }));
+    scrollToHadithListTop();
+  },
+
+  'hadith-page-next': () => {
+    const page = (store.getState().hadith.bookView.page || 1) + 1;
+    store.dispatch(actions.setHadithView({ page }));
+    scrollToHadithListTop();
+  },
+
+  'hadith-retry': (ds) => {
+    ensureHadithBook(ds.id, true);
+  },
+
+  'hadith-retry-index': () => {
+    ensureHadithIndex(true);
+  },
+
   'share-item': async (ds) => {
     const entry = getItemEntry(ds.itemId);
     if (!entry) return;
@@ -1572,6 +2016,9 @@ const clickHandlers = {
 
   'quiz-next': () => {
     store.dispatch(actions.nextQuiz());
+    // v3.12: the finish moment — the result screen blooms once via the
+    // transient celebrate stamp; re-renders after the window stay silent.
+    if (store.getState().quiz.finished) markCelebration('quiz');
   },
 
   'quiz-exit-link': () => {
@@ -1583,6 +2030,7 @@ const clickHandlers = {
     const state = store.getState();
     const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
     setFlipDirection('prev');
+    playFlipSound();
     go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
   },
 
@@ -1590,6 +2038,7 @@ const clickHandlers = {
     const state = store.getState();
     const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
     setFlipDirection('next');
+    playFlipSound();
     go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
   },
 
@@ -1801,8 +2250,9 @@ const clickHandlers = {
 
   'play-ayah': (ds) => {
     if (!ds.url) return;
-    if (recitation.isPlaying(ds.key)) {
-      recitation.stop();
+    if (recitation.isPlaying(ds.key) || surahPlayback.isActive()) {
+      surahPlayback.stop();
+      if (recitation.isPlaying(ds.key)) recitation.stop();
     } else {
       // FIX (review A3): one voice at a time — starting a verse pauses the
       // full-surah player (kept in the bar, resumable).
@@ -1813,6 +2263,60 @@ const clickHandlers = {
       }
       recitation.play(ds.url, ds.key);
     }
+  },
+
+  // ---- Continuous surah recitation (v3.10): "listen and follow along" ----
+  'surah-play': async (ds) => {
+    const surah = parseInt(ds.surah, 10);
+    if (!Number.isFinite(surah) || surah < 1 || surah > 114) return;
+    const sp = store.getState().surahPlayback;
+    if (sp.active && sp.surah === surah) {
+      surahPlayback.stop();
+      return;
+    }
+    // The engine needs surah ayahCounts (quran-meta) and, for Mushaf page
+    // following, the ayahPages index (mushaf-meta) — both lazily loaded.
+    let state = store.getState();
+    try {
+      if (!state.quran.meta) {
+        const meta = await fetchJSON(QURAN_META_URL);
+        store.dispatch(actions.setQuranMeta(meta));
+        state = store.getState();
+      }
+      if (!state.mushaf.meta) {
+        const meta = await fetchJSON(MUSHAF_META_URL);
+        store.dispatch(actions.setMushafMeta(meta));
+        state = store.getState();
+      }
+      // One voice: the full-surah player yields to recitation.
+      const p = state.player;
+      if (p?.moshafId && p.playing) {
+        player.pause();
+        store.dispatch(actions.setAudioPlayer({ playing: false }));
+      }
+      surahPlayback.start({
+        surah,
+        from: parseInt(ds.ayah, 10) || 1,
+        total: state.quran.meta.surahs.find((x) => Number(x.number) === surah)?.ayahCount,
+        reciterId: state.settings.reciter,
+        surahsMeta: state.quran.meta.surahs,
+      });
+    } catch (err) {
+      console.error('[surah-playback] failed to start', err);
+      showToast(t('audio.reciteStartFailed', store.getState().settings.language));
+    }
+  },
+
+  'recite-stop': () => {
+    surahPlayback.stop();
+  },
+
+  'recite-follow-toggle': () => {
+    const next = !(store.getState().settings.audio.ayahFollow ?? true);
+    store.dispatch(
+      actions.updateSettings({ audio: { ...store.getState().settings.audio, ayahFollow: next } })
+    );
+    surahPlayback.setFollow(next);
   },
 
   'calendar-open-day': (ds) => {
@@ -1851,9 +2355,14 @@ const clickHandlers = {
     const wasComplete = dayComplete(state.dailyChecklist[todayKey]);
     store.dispatch(actions.cyclePrayerLog(ds.prayer));
     const nowComplete = dayComplete(store.getState().dailyChecklist[todayKey]);
+    // v3.14 Phase C: haptic parity with the checklist toggle — a log tap
+    // should be felt, not just seen. Kept AFTER the dispatch so the
+    // vibration never lands on a rejected action.
+    if (store.getState().settings.hapticsEnabled) vibrate(8);
     // Celebrate the moment the fifth prayer lands — once per day, not on
     // every later cycle (complete → complete never re-fires).
     if (nowComplete && !wasComplete) {
+      markCelebration('plog-day');
       showToast(t('plog.allLoggedToast', state.settings.language), { duration: 3200 });
     }
   },
@@ -2042,8 +2551,12 @@ const clickHandlers = {
 
   'audio-download-surah': async (ds) => {
     const lang = store.getState().settings.language;
+    const key = audioStore.audioKey(ds.moshaf, parseInt(ds.surah, 10));
+    if (store.getState().audioDownloading[key]) return; // already in flight
+    store.dispatch(actions.markAudioDownloadStart(key));
     showToast(t('audio.downloading', lang));
     const res = await downloadOne(ds.moshaf, parseInt(ds.surah, 10));
+    store.dispatch(actions.markAudioDownloadEnd(key));
     // FIX (review A5/B6): say how it ended — silence after "Downloading…"
     // left people guessing whether 2MB landed.
     showToast(t(res.ok ? 'audio.downloadDone' : 'audio.downloadFailed', lang));
@@ -2072,7 +2585,11 @@ const clickHandlers = {
     let ok = 0;
     for (const n of missing) {
       if (batchCancelled) break;
+      const fileKey = audioStore.audioKey(ds.moshaf, n);
+      if (store.getState().audioDownloading[fileKey]) continue;
+      store.dispatch(actions.markAudioDownloadStart(fileKey));
       const res = await downloadOne(ds.moshaf, n);
+      store.dispatch(actions.markAudioDownloadEnd(fileKey));
       if (res.ok) ok += 1;
       else if (res.error === 'quota') {
         showToast(t('audio.quota', lang));
@@ -2116,6 +2633,7 @@ const clickHandlers = {
       }
       return;
     }
+    surahPlayback.stop();
     startAudioPlay(state.settings.audio.moshafId, surah);
   },
 
@@ -2297,6 +2815,15 @@ function manualLocationFormHTML(lang, p) {
 /* ------------------------------------------------------------------ */
 
 const formHandlers = {
+  'hadith-jump': (form) => {
+    const input = form.querySelector('input');
+    const raw = parseInt(input?.value, 10);
+    const bookId = String(store.getState().activeParams?.id || '');
+    if (!Number.isFinite(raw) || raw < 1 || !bookId) return;
+    input.value = '';
+    go(VIEWS.HADITH, { id: bookId, n: String(raw) });
+  },
+
   'mushaf-jump-page': (form) => {
     const fd = new FormData(form);
     closeModal();
@@ -2679,6 +3206,8 @@ function bindGlobalEvents() {
       debounceSearchNavigate(target.value);
     } else if (target.matches('[data-bind="quran-search"]')) {
       debounceQuranSearchNavigate(target.value);
+    } else if (target.matches('[data-bind="hadith-query"]')) {
+      debounceHadithQuery(target.value);
     } else if (target.matches('[data-bind^="zakat-"]')) {
       handleZakatInput(target);
     } else if (target.matches('[data-bind="bookmark-note"]')) {
@@ -2820,14 +3349,24 @@ function bindGlobalEvents() {
       const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
       if (dx < 0) {
         setFlipDirection('next');
+        playFlipSound();
         go(VIEWS.MUSHAF, { page: String(mushafNextPage(page)) });
       } else {
         setFlipDirection('prev');
+        playFlipSound();
         go(VIEWS.MUSHAF, { page: String(mushafPrevPage(page)) });
       }
     },
     { passive: true }
   );
+}
+
+/** v3.14 Phase C: soft paper sound for Mushaf page flips (opt-in via
+ * settings.pageTurnSound, off by default). Called from every flip path —
+ * swipe, prev/next buttons, and recitation follow — so the sound always
+ * pairs with the flip animation itself, never with anything else. */
+function playFlipSound() {
+  soundDesign.playPageTurn(store.getState().settings.pageTurnSound);
 }
 
 let searchDebounceTimer = null;
@@ -2861,6 +3400,17 @@ function debounceQuranSearchNavigate(value) {
       }
     });
   }, 180);
+}
+
+let hadithQueryTimer = null;
+/** In-book hadith search: dispatch-only (no history churn — the book URL
+ *  stays put), reset the page, and let the renderer's focus salvage keep
+ *  the caret in the search box while the results re-render. */
+function debounceHadithQuery(value) {
+  clearTimeout(hadithQueryTimer);
+  hadithQueryTimer = setTimeout(() => {
+    store.dispatch(actions.setHadithView({ query: String(value || ''), page: 1 }));
+  }, 200);
 }
 
 /*

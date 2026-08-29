@@ -18,7 +18,10 @@ import { escapeHTML, pickLocale } from '../utils.js';
  */
 function toKebabAttrs(obj) {
   return Object.entries(obj)
-    .map(([k, v]) => `data-${k.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()}="${escapeHTML(String(v))}"`)
+    .map(
+      ([k, v]) =>
+        `data-${k.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()}="${escapeHTML(String(v))}"`
+    )
     .join(' ');
 }
 
@@ -43,15 +46,17 @@ export function buildCardMenu(item, categoryId, lang = 'en') {
 
 export function buildCollectionPicker(item, state) {
   const lang = state.settings.language;
-  const rows = state.collections.map((c) => {
-    const has = c.items.includes(item.id);
-    return `
+  const rows = state.collections
+    .map((c) => {
+      const has = c.items.includes(item.id);
+      return `
     <label class="picker-row">
       <input type="checkbox" data-action="collection-picker-toggle" data-collection-id="${escapeHTML(c.id)}" data-item-id="${escapeHTML(item.id)}" ${has ? 'checked' : ''} />
       <span>${escapeHTML(pickLocale(c.name, lang))}</span>
       <span class="picker-row__count">${c.items.length}</span>
     </label>`;
-  }).join('');
+    })
+    .join('');
 
   return `
   <div class="collection-picker">
@@ -63,7 +68,13 @@ export function buildCollectionPicker(item, state) {
   </div>`;
 }
 
-export function buildConfirm({ message, confirmAction, confirmData = {}, lang = 'en', danger = true }) {
+export function buildConfirm({
+  message,
+  confirmAction,
+  confirmData = {},
+  lang = 'en',
+  danger = true,
+}) {
   const dataAttrs = toKebabAttrs(confirmData);
   return `
   <div class="confirm-dialog">
@@ -76,7 +87,13 @@ export function buildConfirm({ message, confirmAction, confirmData = {}, lang = 
   </div>`;
 }
 
-export function buildTextPrompt({ title, placeholder = '', confirmAction, confirmData = {}, lang = 'en' }) {
+export function buildTextPrompt({
+  title,
+  placeholder = '',
+  confirmAction,
+  confirmData = {},
+  lang = 'en',
+}) {
   const dataAttrs = toKebabAttrs(confirmData);
   return `
   <form class="prompt-dialog" data-action="${confirmAction}" ${dataAttrs}>

@@ -13,6 +13,8 @@ import { searchQuran, isQuranSearchReady } from '../quranSearch.js';
 import { buildHash } from '../router.js';
 import { VIEWS } from '../config.js';
 import { cardHTML } from '../components/card.js';
+import { skeletonLines } from '../components/skeleton.js';
+import { emptyStateHTML } from '../components/emptyState.js';
 
 /** One ayah hit in the "From the Qur'an" block. Links straight to the
  *  classic reader at that surah; app.js scrolls to and highlights the
@@ -26,7 +28,7 @@ function quranResultRow(state, hit, lang) {
   return `
   <a class="quran-hit" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
     <p class="quran-hit__arabic" dir="rtl" lang="ar">${escapeHTML(ayah.text)}</p>
-    ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation">${escapeHTML(ayah.translation)}</p>` : ''}
+    ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
     <span class="quran-hit__ref">${refLabel} ${icon('chevronRight', { size: 12 })}</span>
   </a>`;
 }
@@ -38,6 +40,7 @@ function quranSection(state, query, lang) {
     <section class="panel quran-search-panel">
       <div class="panel__header"><h2>${t('search.quranResults', lang)}</h2></div>
       <p class="empty-hint">${t('search.loadingCorpus', lang)}</p>
+      ${skeletonLines(lang, [92, 84, 88, 62])}
     </section>`;
   }
   const hits = searchQuran(query, { limit: 15 });
@@ -51,7 +54,11 @@ function quranSection(state, query, lang) {
     ${
       hits.length
         ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang)).join('')}</div>`
-        : `<p class="empty-hint">${t('search.noResults', lang)}</p>`
+        : emptyStateHTML({
+            iconName: 'search',
+            title: t('search.noResults', lang),
+            hint: t('search.noResultsHint', lang),
+          })
     }
   </section>`;
 }
@@ -116,7 +123,11 @@ export function renderSearch(state) {
           )
           .join('')}
       </div>`
-          : `<p class="empty-hint">${t('search.noResults', lang)}</p>`
+          : emptyStateHTML({
+              iconName: 'search',
+              title: t('search.noResults', lang),
+              hint: t('search.noResultsHint', lang),
+            })
       }
     `
         : ''

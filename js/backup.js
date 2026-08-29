@@ -17,7 +17,7 @@ export function buildBackupPayload(persistedState) {
     appVersion: APP_VERSION,
     schemaVersion: SCHEMA_VERSION,
     exportedAt: new Date().toISOString(),
-    data: persistedState
+    data: persistedState,
   };
 }
 

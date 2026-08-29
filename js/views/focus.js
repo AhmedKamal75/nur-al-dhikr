@@ -36,13 +36,26 @@ export function renderFocus(state) {
   const prevItem = items[idx - 1] || null;
   const nextItem = items[idx + 1] || null;
 
-  const counter = selectors.getCounter(state, item.id) || { count: 0, target: item.repetitions || 1, completedCycles: 0 };
+  const counter = selectors.getCounter(state, item.id) || {
+    count: 0,
+    target: item.repetitions || 1,
+    completedCycles: 0,
+  };
   const isFav = selectors.isFavorite(state, item.id);
   const isSpeaking = state.speakingItemId === item.id;
   const translation = pickLocale(item.translation, lang);
   const virtue = pickLocale(item.virtues, lang);
-  const gradeLabel = GRADE_LABELS[item.grade] ? pickLocale(GRADE_LABELS[item.grade], lang) : item.grade;
-  const refParts = [item.reference?.collection, item.reference?.hadith, item.reference?.narrator ? `${t('card.narratedBy', lang)} ${item.reference.narrator}` : '', item.reference?.grading].filter(Boolean).join(' \u00B7 ');
+  const gradeLabel = GRADE_LABELS[item.grade]
+    ? pickLocale(GRADE_LABELS[item.grade], lang)
+    : item.grade;
+  const refParts = [
+    item.reference?.collection,
+    item.reference?.hadith,
+    item.reference?.narrator ? `${t('card.narratedBy', lang)} ${item.reference.narrator}` : '',
+    item.reference?.grading,
+  ]
+    .filter(Boolean)
+    .join(' \u00B7 ');
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
 
   return `

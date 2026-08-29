@@ -8,6 +8,7 @@
 
 import { store, actions } from './state.js';
 import { vibrate } from './utils.js';
+import { markCelebration, wasCelebrated } from './celebrate.js';
 import { t } from './i18n.js';
 
 /**
@@ -51,25 +52,19 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
  * Instead a short-lived in-memory stamp lets any view currently rendering
  * this item decorate it with the completion animation; the class simply
  * stops being added once the window passes.
+ * v3.12: the registry itself was generalized into js/celebrate.js so the
+ * khatma verdict, quiz results and the prayer-log day-complete moment use
+ * the exact same mechanism; only the keying and the window differ here.
  * ------------------------------------------------------------------ */
 const JUST_COMPLETED_MS = 700;
-const justCompletedAt = new Map();
 
 function markJustCompleted(itemId) {
-  const now = Date.now();
-  justCompletedAt.set(itemId, now);
-  // Opportunistic pruning so the map can never grow unbounded.
-  if (justCompletedAt.size > 64) {
-    for (const [k, at] of justCompletedAt) {
-      if (now - at > JUST_COMPLETED_MS) justCompletedAt.delete(k);
-    }
-  }
+  markCelebration(`tasbih:${itemId}`);
 }
 
 /** True within JUST_COMPLETED_MS of this item's most recent completed cycle. */
 export function wasJustCompleted(itemId) {
-  const at = justCompletedAt.get(itemId);
-  return typeof at === 'number' && Date.now() - at < JUST_COMPLETED_MS;
+  return wasCelebrated(`tasbih:${itemId}`, JUST_COMPLETED_MS);
 }
 
 /**
@@ -95,7 +90,13 @@ export function reset(itemId, target = 1) {
 export function setTarget(itemId, target) {
   const state = store.getState();
   const existing = state.counters[itemId] || { count: 0, completedCycles: 0 };
-  store.dispatch(actions.setCounter(itemId, { count: existing.count, target, completedCycles: existing.completedCycles }));
+  store.dispatch(
+    actions.setCounter(itemId, {
+      count: existing.count,
+      target,
+      completedCycles: existing.completedCycles,
+    })
+  );
 }
 
 export function getCounter(itemId, fallbackTarget = 33) {
@@ -116,9 +117,14 @@ export function playTick(kind = 'tick') {
     osc.frequency.value = kind === 'complete' ? 660 : 880;
     gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (kind === 'complete' ? 0.35 : 0.09));
+    gain.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioCtx.currentTime + (kind === 'complete' ? 0.35 : 0.09)
+    );
     osc.connect(gain).connect(audioCtx.destination);
     osc.start();
     osc.stop(audioCtx.currentTime + (kind === 'complete' ? 0.4 : 0.12));
-  } catch { /* audio unavailable, ignore silently */ }
+  } catch {
+    /* audio unavailable, ignore silently */
+  }
 }

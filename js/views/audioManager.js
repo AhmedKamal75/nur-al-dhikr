@@ -16,6 +16,8 @@ import { icon } from '../icons.js';
 import { escapeHTML } from '../utils.js';
 import { searchReciters, findMoshaf } from '../audioCatalog.js';
 import { formatBytes } from '../audioStore.js';
+import { skeletonReciterRows } from '../components/skeleton.js';
+import { emptyStateHTML } from '../components/emptyState.js';
 
 function surahName(state, n) {
   const meta = state.quran.meta;
@@ -31,9 +33,11 @@ export function renderAudio(state) {
   const selected = selectedId ? findMoshaf(selectedId, state.settings.customReciters || []) : null;
   const downloads = state.audioDownloads || {};
 
-  const rows = hits.slice(0, 60).map((r) => {
-    const active = r.id === selectedId;
-    return `
+  const rows = hits
+    .slice(0, 60)
+    .map((r) => {
+      const active = r.id === selectedId;
+      return `
     <div class="reciter-row ${active ? 'reciter-row--active' : ''}">
       <button type="button" class="reciter-row__main" data-action="audio-select-moshaf" data-id="${escapeHTML(r.id)}">
         <span class="reciter-row__name">${escapeHTML(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn)}</span>
@@ -41,7 +45,8 @@ export function renderAudio(state) {
       </button>
       ${r.source === 'custom' ? `<button type="button" class="icon-btn icon-btn--sm" data-action="audio-remove-custom" data-id="${escapeHTML(r.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 14 })}</button>` : ''}
     </div>`;
-  }).join('');
+    })
+    .join('');
 
   let grid = '';
   if (selected) {
@@ -54,14 +59,18 @@ export function renderAudio(state) {
     for (let n = 1; n <= 114; n += 1) {
       const key = `${selected.id}:${n}`;
       const dl = downloads[key];
+      // v3.14 Phase C: an in-flight download shows a spinner cell (and the
+      // tap is ignored by the handler), so a 2MB fetch never reads as a
+      // dead button.
+      const busy = !!(state.audioDownloading && state.audioDownloading[key]);
       const label = lang === 'ar' ? t('quran.surah', lang) + ' ' + n : String(n);
       cells.push(`
-      <div class="dl-cell ${dl ? 'dl-cell--done' : ''}">
+      <div class="dl-cell ${dl ? 'dl-cell--done' : ''}${busy ? ' dl-cell--busy' : ''}">
         <button type="button" class="dl-cell__btn" data-action="${dl ? 'audio-delete-surah' : 'audio-download-surah'}" data-moshaf="${escapeHTML(selected.id)}" data-surah="${n}"
           title="${escapeHTML(surahName(state, n))}"
           aria-label="${escapeHTML(surahName(state, n))} — ${dl ? t('audio.deleteFile', lang) : t('audio.downloadFile', lang)}">
           <span class="dl-cell__num">${label}</span>
-          <span class="dl-cell__state">${dl ? icon('check', { size: 13 }) : icon('download', { size: 13 })}</span>
+          <span class="dl-cell__state">${dl ? icon('check', { size: 13 }) : busy ? '<span class="dl-cell__spinner" role="status" aria-label="…"></span>' : icon('download', { size: 13 })}</span>
         </button>
         ${dl ? `<span class="dl-cell__bytes">${formatBytes(dl.bytes)}</span>` : ''}
       </div>`);
@@ -110,8 +119,8 @@ export function renderAudio(state) {
         placeholder="${t('audio.searchPh', lang)}" value="${escapeHTML(q)}"
         data-bind="audio-search" autocomplete="off" />
     </div>
-    ${!(state.audioManager?.catalogReady) && !hits.length ? `<p class="empty-hint">${t('common.loading', lang)}</p>` : ''}
-    ${rows ? `<div class="reciter-list">${rows}</div>` : (state.audioManager?.catalogReady ? `<p class="empty-hint">${t('search.noResults', lang)}</p>` : '')}
+    ${!state.audioManager?.catalogReady && !hits.length ? skeletonReciterRows(lang, 6) : ''}
+    ${rows ? `<div class="reciter-list">${rows}</div>` : state.audioManager?.catalogReady && !hits.length ? emptyStateHTML({ iconName: 'volume', title: t('search.noResults', lang), hint: t('audio.noResultsHint', lang) }) : ''}
     ${hits.length > 60 ? `<p class="empty-hint">${t('audio.moreResults', lang, { n: hits.length })}</p>` : ''}
 
     ${grid}

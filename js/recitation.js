@@ -14,12 +14,17 @@ let audioEl = null;
 let currentKey = null; // e.g. "2:255" — lets a card ask "is *this* ayah playing?"
 let onKeyChange = null; // optional callback(key|null), fired on start/stop/end/error
 let onError = null; // optional callback(key) — verse audio failed to play
+let onEnded = null; // optional callback(key) — verse finished playing naturally
 
 function getAudioEl() {
   if (!audioEl) {
     audioEl = new Audio();
     audioEl.preload = 'none';
-    audioEl.addEventListener('ended', () => setKey(null));
+    audioEl.addEventListener('ended', () => {
+      const finished = currentKey;
+      setKey(null);
+      onEnded?.(finished);
+    });
     audioEl.addEventListener('error', () => {
       onError?.(currentKey);
       setKey(null);
@@ -42,6 +47,13 @@ export function onPlaybackChange(callback) {
  *  the button just reverted instead of failing in silence. */
 export function onPlaybackError(callback) {
   onError = callback;
+}
+
+/** Register a listener that fires when a verse finishes playing NATURALLY
+ *  (not via stop()) with the finished key — the seam the continuous
+ *  surah-recitation engine (surahPlayback.js) advances on. */
+export function onPlaybackEnded(callback) {
+  onEnded = callback;
 }
 
 /** Start playing `url`, tagged with `key` for isPlaying()/UI reflection. */
@@ -69,4 +81,39 @@ export function isPlaying(key) {
 
 export function currentlyPlayingKey() {
   return currentKey;
+}
+
+/* Surah-playback hands its own driver in via configureDriver() so the
+ * continuous engine can be unit-tested without real audio. */
+let driver = null;
+
+export function configureDriver(custom) {
+  driver = custom; // { play(url, key), stop(), onEnded(cb), onError(cb) } | null
+}
+
+function drv() {
+  return (
+    driver ?? {
+      play: (url, key) => play(url, key),
+      stop: () => stop(),
+      onEnded: (cb) => onPlaybackEnded(cb),
+      onError: (cb) => onPlaybackError(cb),
+    }
+  );
+}
+
+export function driverPlay(url, key) {
+  drv().play(url, key);
+}
+
+export function driverStop() {
+  drv().stop();
+}
+
+export function driverOnEnded(cb) {
+  drv().onEnded(cb);
+}
+
+export function driverOnError(cb) {
+  drv().onError(cb);
 }

@@ -14,9 +14,13 @@ export function renderEditor(state) {
   const lang = state.settings.language;
   const libraries = Object.values(state.customContent);
 
-  const librariesHTML = libraries.map((doc) => {
-    const cats = doc.categories.map((cat) => {
-      const items = cat.items.map((item) => `
+  const librariesHTML = libraries
+    .map((doc) => {
+      const cats = doc.categories
+        .map((cat) => {
+          const items = cat.items
+            .map(
+              (item) => `
         <div class="editor-item-row">
           <span class="editor-item-row__title">${escapeHTML(pickLocale(item.title, lang) || item.transliteration || '(untitled)')}</span>
           <span class="editor-item-row__grade">${escapeHTML(GRADE_LABELS[item.grade] ? pickLocale(GRADE_LABELS[item.grade], lang) : item.grade)}</span>
@@ -25,9 +29,11 @@ export function renderEditor(state) {
             <button type="button" class="icon-btn" data-action="editor-duplicate-item" data-library-id="${escapeHTML(doc.metadata.id)}" data-category-id="${escapeHTML(cat.id)}" data-item-id="${escapeHTML(item.id)}" aria-label="${t('editor.duplicate', lang)}">${icon('copy', { size: 15 })}</button>
             <button type="button" class="icon-btn" data-action="editor-delete-item" data-library-id="${escapeHTML(doc.metadata.id)}" data-category-id="${escapeHTML(cat.id)}" data-item-id="${escapeHTML(item.id)}" aria-label="${t('editor.delete', lang)}">${icon('trash', { size: 15 })}</button>
           </div>
-        </div>`).join('');
+        </div>`
+            )
+            .join('');
 
-      return `
+          return `
       <div class="editor-category">
         <div class="editor-category__header">
           <span>${escapeHTML(pickLocale(cat.name, lang))}</span>
@@ -38,9 +44,10 @@ export function renderEditor(state) {
         </div>
         ${items || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
       </div>`;
-    }).join('');
+        })
+        .join('');
 
-    return `
+      return `
     <section class="panel">
       <div class="panel__header">
         <h2>${escapeHTML(pickLocale(doc.metadata.name, lang))}</h2>
@@ -48,7 +55,8 @@ export function renderEditor(state) {
       </div>
       ${cats || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
     </section>`;
-  }).join('');
+    })
+    .join('');
 
   return `
   <section class="view view--editor">
@@ -56,18 +64,24 @@ export function renderEditor(state) {
       <h1 class="view__title">${t('editor.title', lang)}</h1>
       <button type="button" class="btn btn--primary btn--sm" data-action="editor-new-library">${icon('plus', { size: 16 })} ${t('editor.newLibrary', lang)}</button>
     </header>
-    ${librariesHTML || `
+    ${
+      librariesHTML ||
+      `
     <div class="empty-state">
       ${icon('edit', { size: 40 })}
       <p>${t('editor.emptyState', lang)}</p>
       <button type="button" class="btn btn--primary" data-action="editor-new-category" data-library-id="${DEFAULT_CUSTOM_LIBRARY_ID}">${t('editor.newCategory', lang)}</button>
-    </div>`}
+    </div>`
+    }
   </section>`;
 }
 
 /** Modal form markup for creating/editing a single item. */
 export function buildItemForm(item, { libraryId, categoryId, lang = 'en' }) {
-  const gradeOptions = GRADES.map((g) => `<option value="${g}" ${item.grade === g ? 'selected' : ''}>${escapeHTML(pickLocale(GRADE_LABELS[g], lang))}</option>`).join('');
+  const gradeOptions = GRADES.map(
+    (g) =>
+      `<option value="${g}" ${item.grade === g ? 'selected' : ''}>${escapeHTML(pickLocale(GRADE_LABELS[g], lang))}</option>`
+  ).join('');
   return `
   <form class="editor-form" data-form="item" data-library-id="${escapeHTML(libraryId)}" data-category-id="${escapeHTML(categoryId)}" data-item-id="${escapeHTML(item.id || '')}">
     <h2 id="modal-title-item">${item.id ? t('editor.edit', lang) : t('editor.newItem', lang)}</h2>

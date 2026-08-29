@@ -18,7 +18,7 @@ import { buildHash } from '../router.js';
 import { VIEWS } from '../config.js';
 import { buildOnboardingSteps } from '../onboarding.js';
 
-const STEP_ICONS = {
+export const STEP_ICONS = {
   location: 'location',
   appearance: 'settings',
   install: 'download',

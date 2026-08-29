@@ -4,6 +4,7 @@
 import { t } from '../i18n.js';
 import { icon } from '../icons.js';
 import { escapeHTML } from '../utils.js';
+import { wasCelebrated } from '../celebrate.js';
 import { calculateTimes, formatClock, nextPrayer, METHODS, ASR_FACTORS } from '../prayer.js';
 import { SOUND_IDS, ADHAN_MODES, customAdhanFlags } from '../prayerSound.js';
 import { selectors } from '../state.js';
@@ -17,7 +18,7 @@ import {
 } from '../prayerLog.js';
 
 const PRAYER_ORDER = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
-const PRAYER_ICONS = {
+export const PRAYER_ICONS = {
   fajr: 'sunrise',
   sunrise: 'sun',
   dhuhr: 'sun',
@@ -171,7 +172,11 @@ export function renderPrayer(state) {
     <section class="panel panel--prayer-log">
       <div class="panel__header">
         <h2>${t('plog.title', lang)}</h2>
-        ${streak > 0 ? `<span class="streak-badge">${icon('flame', { size: 15 })} ${t('plog.streak', lang, { n: streak })}</span>` : ''}
+        ${
+          streak > 0
+            ? `<span class="streak-badge${wasCelebrated('plog-day') ? ' celebrate' : ''}">${icon('flame', { size: 15 })} ${t('plog.streak', lang, { n: streak })}</span>`
+            : ''
+        }
       </div>
       <p class="panel__subtext" dir="ltr">${loggedToday} / ${PRAYER_KEYS.length} ${t('checklist.today', lang)}${monthCount ? ` · ${t('plog.monthCount', lang, { n: monthCount })}` : ''}</p>
       <div class="plog-week">${weekCells}</div>

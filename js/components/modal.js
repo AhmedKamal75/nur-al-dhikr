@@ -11,7 +11,8 @@ import { icon } from '../icons.js';
 let lastFocused = null;
 let trapHandler = null;
 
-const FOCUSABLE_SELECTOR = 'input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR =
+  'input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])';
 
 export function openModal(innerHTML, { labelledBy = null, size = 'default' } = {}) {
   const root = document.getElementById('modal-root');
@@ -43,7 +44,10 @@ export function closeModal() {
   root.classList.remove('is-open');
   root.innerHTML = '';
   document.removeEventListener('keydown', onModalKeydown);
-  if (trapHandler) { document.removeEventListener('keydown', trapHandler, true); trapHandler = null; }
+  if (trapHandler) {
+    document.removeEventListener('keydown', trapHandler, true);
+    trapHandler = null;
+  }
   if (lastFocused && document.contains(lastFocused)) lastFocused.focus({ preventScroll: true });
 }
 
@@ -54,7 +58,9 @@ function onModalKeydown(e) {
 /** Keep Tab/Shift+Tab cycling within the modal panel while it's open. */
 function trapFocus(e, panel) {
   if (e.key !== 'Tab' || !panel) return;
-  const focusables = Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR)).filter((el) => el.offsetParent !== null);
+  const focusables = Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+    (el) => el.offsetParent !== null
+  );
   if (!focusables.length) return;
   const first = focusables[0];
   const last = focusables[focusables.length - 1];

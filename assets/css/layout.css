@@ -39,20 +39,31 @@
   justify-content: space-between;
   gap: var(--space-3);
 }
-.topbar__lead { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
+.topbar__lead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
 .topbar__brand {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   font-weight: 700;
   font-size: var(--fs-md);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.topbar__brand-icon { font-size: 1.3em; }
-.topbar__actions { display: flex; align-items: center; gap: var(--space-1); }
+.topbar__brand-icon {
+  font-size: 1.3em;
+}
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
 
 #main {
   flex: 1;
@@ -61,15 +72,21 @@
   margin: 0 auto;
   padding: var(--space-5) var(--space-4) calc(var(--bottomnav-height) + var(--space-8));
 }
-#main:focus { outline: none; }
+#main:focus {
+  outline: none;
+}
 
 /* ---- Mobile bottom bar + drawer ---------------------------------------- */
 
-.nav__scroller { display: none; }
+.nav__scroller {
+  display: none;
+}
 
 .nav-mobile-bar {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 40;
   height: var(--bottomnav-height);
   display: flex;
@@ -94,8 +111,13 @@
   font: inherit;
   transition: color var(--dur-base) var(--ease-standard);
 }
-.nav-mobile-bar__item--active { color: var(--color-primary); }
-.nav__label { font-size: 10.5px; font-weight: 600; }
+.nav-mobile-bar__item--active {
+  color: var(--color-primary-text);
+}
+.nav__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+}
 
 .nav-drawer-overlay {
   position: fixed;
@@ -108,40 +130,72 @@
 }
 .nav-drawer {
   position: fixed;
-  left: 0; right: 0; bottom: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 51;
   max-height: 78dvh;
   display: flex;
   flex-direction: column;
-  background: var(--color-surface);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-lg);
   border-top: 1px solid var(--color-border);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   transform: translateY(102%);
   transition: transform var(--dur-slow) var(--ease-standard);
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
-body.nav-drawer-open .nav-drawer-overlay { opacity: 1; pointer-events: auto; }
-body.nav-drawer-open .nav-drawer { transform: translateY(0); }
+body.nav-drawer-open .nav-drawer-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* v3.12 (Phase B) bottom-sheet physics: the sheet arrives on the spring
+ * curve — a confident settle with a hint of overshoot at the top of its
+ * travel — and leaves on the standard curve, because a bounce-out reads
+ * as the sheet refusing to leave. */
+body.nav-drawer-open .nav-drawer {
+  transform: translateY(0);
+  transition-timing-function: var(--ease-spring);
+}
 .nav-drawer__head {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--color-border);
 }
-.nav-drawer__title { font-weight: 700; color: var(--color-primary); }
-.nav-drawer__body { overflow-y: auto; padding: var(--space-4) var(--space-3) var(--space-6); }
+.nav-drawer__title {
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+.nav-drawer__body {
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-3) var(--space-6);
+}
 
 body.is-focus-mode .topbar,
 body.is-focus-mode .nav-mobile-bar,
 body.is-focus-mode .nav-drawer,
-body.is-focus-mode .nav-drawer-overlay { display: none; }
-body.is-focus-mode #main { padding: 0; max-width: none; }
+body.is-focus-mode .nav-drawer-overlay {
+  display: none;
+}
+body.is-focus-mode #main {
+  padding: 0;
+  max-width: none;
+}
 
 /* ---- Shared nav item styling (rail + drawer) ---------------------------- */
 
-.nav__group { display: flex; flex-direction: column; gap: 2px; }
-.nav__group + .nav__group { margin-top: var(--space-4); }
+.nav__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nav__group + .nav__group {
+  margin-top: var(--space-4);
+}
 .nav__group-label {
-  font-size: 11px;
+  font-size: var(--fs-caption);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -157,26 +211,49 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   color: var(--color-text-muted);
-  transition: color var(--dur-base) var(--ease-standard), background var(--dur-base) var(--ease-standard);
+  transition:
+    color var(--dur-base) var(--ease-standard),
+    background var(--dur-base) var(--ease-standard);
 }
 .nav__item--active {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
 }
-.nav-drawer .nav__label { font-size: var(--fs-base); color: var(--color-text); }
-.nav-drawer .nav__item { padding-block: var(--space-4); }
+.nav-drawer .nav__label {
+  font-size: var(--fs-base);
+  color: var(--color-text);
+}
+.nav-drawer .nav__item {
+  padding-block: var(--space-4);
+}
 
 /* ---- Desktop: grouped, collapsible, SCROLLABLE side rail --------------- */
 
 @media (min-width: 960px) {
-  html[data-nav-collapsed='1'] { --sidenav-live: var(--sidenav-width-collapsed); }
+  html[data-nav-collapsed='1'] {
+    --sidenav-live: var(--sidenav-width-collapsed);
+  }
 
-  #app { flex-direction: row; }
+  #app {
+    flex-direction: row;
+  }
 
-  .topbar { position: fixed; left: var(--sidenav-live); right: 0; top: 0; transition: left var(--dur-base) var(--ease-standard); }
-  .topbar__inner { max-width: none; }
+  .topbar {
+    position: fixed;
+    left: var(--sidenav-live);
+    right: 0;
+    top: 0;
+    transition: left var(--dur-base) var(--ease-standard);
+  }
+  .topbar__inner {
+    max-width: none;
+  }
 
-  .nav-mobile-bar, .nav-drawer, .nav-drawer-overlay { display: none; }
+  .nav-mobile-bar,
+  .nav-drawer,
+  .nav-drawer-overlay {
+    display: none;
+  }
 
   /* The rail itself: fixed, full height, independently scrollable — the
      original overflow bug (items below Settings unreachable) is fixed by
@@ -184,7 +261,9 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
   .nav__scroller {
     display: block;
     position: fixed;
-    top: 0; left: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    bottom: 0;
     width: var(--sidenav-live);
     height: 100dvh;
     z-index: 45;
@@ -198,8 +277,13 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
     scrollbar-width: thin;
     scrollbar-color: var(--color-border-strong) transparent;
   }
-  .nav__scroller::-webkit-scrollbar { width: 6px; }
-  .nav__scroller::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 9999px; }
+  .nav__scroller::-webkit-scrollbar {
+    width: 6px;
+  }
+  .nav__scroller::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: 9999px;
+  }
 
   .nav__inner {
     display: flex;
@@ -207,15 +291,22 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
     gap: var(--space-1);
     padding: 0 var(--space-3);
   }
-  .nav__label { font-size: var(--fs-sm); white-space: nowrap; }
+  .nav__label {
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+  }
 
   /* Collapsed (icon-only) rail.
      Labels are removed with display:none — NOT opacity — so they leave the
      layout entirely (icons center truly) and the accessibility tree (the
      links carry aria-label instead). Group headers become hairline
      dividers so the grouped rhythm stays visible at 76px. */
-  html[data-nav-collapsed='1'] .nav__label { display: none; }
-  html[data-nav-collapsed='1'] .nav__group-label { display: none; }
+  html[data-nav-collapsed='1'] .nav__label {
+    display: none;
+  }
+  html[data-nav-collapsed='1'] .nav__group-label {
+    display: none;
+  }
   html[data-nav-collapsed='1'] .nav__group + .nav__group {
     margin-top: var(--space-3);
     padding-top: var(--space-3);
@@ -227,8 +318,12 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
     padding: 0;
     height: 44px; /* consistent icon-only touch target */
   }
-  html[data-nav-collapsed='1'] .nav__item svg { flex-shrink: 0; }
-  .nav__item:hover { background: color-mix(in srgb, var(--color-text-muted) 10%, transparent); }
+  html[data-nav-collapsed='1'] .nav__item svg {
+    flex-shrink: 0;
+  }
+  .nav__item:hover {
+    background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
+  }
 
   #main {
     margin-left: var(--sidenav-live);
@@ -237,34 +332,131 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
     max-width: none;
     transition: margin-left var(--dur-base) var(--ease-standard);
   }
-  #main > .view { max-width: var(--content-max-width); margin: 0 auto; }
+  #main > .view {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+  }
 
-  body.is-focus-mode .nav__scroller { display: none; }
-  body.is-focus-mode #main { margin: 0; }
+  body.is-focus-mode .nav__scroller {
+    display: none;
+  }
+  body.is-focus-mode #main {
+    margin: 0;
+  }
 }
 
 /* Generic view scaffolding shared by most screens */
-.view { display: flex; flex-direction: column; gap: var(--space-6); }
-.view__title { font-size: var(--fs-xl); }
-.view__subtitle { color: var(--color-text-secondary); }
-.view__meta { color: var(--color-text-muted); font-size: var(--fs-sm); }
-.view-header { display: flex; flex-direction: column; gap: var(--space-2); }
-.view-header--row { flex-direction: row; align-items: center; justify-content: space-between; }
-.back-link { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--color-text-secondary); font-weight: 600; font-size: var(--fs-sm); width: fit-content; }
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+.view__title {
+  font-size: var(--fs-xl);
+}
+.view__subtitle {
+  color: var(--color-text-secondary);
+}
+.view__meta {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+.view-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.view-header--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-target);
+  gap: var(--space-1);
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  width: fit-content;
+}
 
-.panel { display: flex; flex-direction: column; gap: var(--space-3); }
-.panel__header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
-.panel__header h2 { font-size: var(--fs-md); }
-.panel__header-side { color: var(--color-text-muted); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
-.panel__subtext { color: var(--color-text-muted); font-size: var(--fs-sm); }
-.field-label { font-size: var(--fs-sm); font-weight: 600; color: var(--color-text-secondary); margin-top: var(--space-2); }
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.panel__header h2 {
+  font-size: var(--fs-md);
+}
+.panel__header-side {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+.panel__subtext {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+.field-label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2);
+}
 
-.card-list, .card-row { display: flex; flex-direction: column; gap: var(--space-4); }
-.card-row { flex-direction: row; overflow-x: auto; padding-bottom: var(--space-1); scrollbar-width: none; }
-.card-row::-webkit-scrollbar { display: none; }
-.card-row > .card { min-width: 280px; flex-shrink: 0; }
+.card-list,
+.card-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.card-row {
+  flex-direction: row;
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+  scrollbar-width: none;
+}
+.card-row::-webkit-scrollbar {
+  display: none;
+}
+.card-row > .card {
+  min-width: 280px;
+  flex-shrink: 0;
+}
 
-.empty-hint { color: var(--color-text-muted); font-size: var(--fs-sm); padding: var(--space-4) 0; }
+.empty-hint {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  padding: var(--space-4) 0;
+}
+/* v3.14 Phase C: upgraded empty state — soft icon medallion, a title that
+ * names the empty thing honestly, a short hint, and an optional one-tap
+ * next action (emptyStateHTML() in js/components/emptyState.js). */
+.empty-state__medallion {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+}
+.empty-state__title {
+  color: var(--color-text);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  margin: 0;
+}
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -274,4 +466,6 @@ body.is-focus-mode #main { padding: 0; max-width: none; }
   padding: var(--space-9) var(--space-4);
   color: var(--color-text-muted);
 }
-.empty-state__hint { font-size: var(--fs-sm); }
+.empty-state__hint {
+  font-size: var(--fs-sm);
+}

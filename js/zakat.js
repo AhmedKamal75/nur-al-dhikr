@@ -75,7 +75,12 @@ export function computeZakat(inputs, prefs) {
   const goldValue = goldGrams * num(prefs?.goldPricePerGram);
   const silverValue = silverGrams * num(prefs?.silverPricePerGram);
 
-  const liquid = num(i.cash) + num(i.investments) + num(i.businessGoods) + num(i.receivables) + num(i.otherAssets);
+  const liquid =
+    num(i.cash) +
+    num(i.investments) +
+    num(i.businessGoods) +
+    num(i.receivables) +
+    num(i.otherAssets);
   const totalAssets = liquid + goldValue + silverValue;
   const liabilities = num(i.liabilities);
   const netWealth = Math.max(0, totalAssets - liabilities);
@@ -98,7 +103,7 @@ export function computeZakat(inputs, prefs) {
     nisabMet,
     rate: ZAKAT_RATE,
     due: roundUpToUnit(rawDue),
-    dueRaw: rawDue
+    dueRaw: rawDue,
   };
 }
 
@@ -151,7 +156,9 @@ export function hawlDueFor(assessmentTs) {
  * 0 = today is the anniversary, negative = passed N days ago.
  */
 export function daysUntilHawl(hawlTs, now = Date.now()) {
-  const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
-  const startOfHawl = new Date(hawlTs); startOfHawl.setHours(0, 0, 0, 0);
+  const startOfToday = new Date(now);
+  startOfToday.setHours(0, 0, 0, 0);
+  const startOfHawl = new Date(hawlTs);
+  startOfHawl.setHours(0, 0, 0, 0);
   return Math.round((startOfHawl - startOfToday) / 86400000);
 }

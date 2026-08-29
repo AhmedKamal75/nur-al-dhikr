@@ -14,7 +14,11 @@ export function uid(prefix = 'id') {
 /** Deep clone via structured clone with JSON fallback. */
 export function clone(value) {
   if (typeof structuredClone === 'function') {
-    try { return structuredClone(value); } catch { /* fallthrough */ }
+    try {
+      return structuredClone(value);
+    } catch {
+      /* fallthrough */
+    }
   }
   return JSON.parse(JSON.stringify(value));
 }
@@ -98,7 +102,7 @@ export function formatTime(date, hour12 = false) {
   return date.toLocaleTimeString(hour12 ? 'en-US' : 'en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12
+    hour12,
   });
 }
 
@@ -137,7 +141,9 @@ export function clamp(n, min, max) {
 
 /** Simple event emitter used by several services that are not part of global state. */
 export class Emitter {
-  constructor() { this._listeners = new Map(); }
+  constructor() {
+    this._listeners = new Map();
+  }
   on(event, fn) {
     if (!this._listeners.has(event)) this._listeners.set(event, new Set());
     this._listeners.get(event).add(fn);
@@ -148,7 +154,11 @@ export class Emitter {
   }
   emit(event, payload) {
     this._listeners.get(event)?.forEach((fn) => {
-      try { fn(payload); } catch (err) { console.error(`[Emitter] listener error for "${event}"`, err); }
+      try {
+        fn(payload);
+      } catch (err) {
+        console.error(`[Emitter] listener error for "${event}"`, err);
+      }
     });
   }
 }
@@ -174,7 +184,9 @@ export function h(tag, attrs = {}, children = []) {
     else if (key.startsWith('on') && typeof value === 'function') {
       el.addEventListener(key.slice(2).toLowerCase(), value);
     } else if (key === 'dataset') {
-      Object.entries(value).forEach(([k, v]) => { el.dataset[k] = v; });
+      Object.entries(value).forEach(([k, v]) => {
+        el.dataset[k] = v;
+      });
     } else {
       el.setAttribute(key, value);
     }
@@ -188,12 +200,20 @@ export function h(tag, attrs = {}, children = []) {
 }
 
 /** Result wrapper used by services per the architecture spec: { success, value, error }. */
-export function ok(value) { return { success: true, value, error: null }; }
-export function fail(error) { return { success: false, value: null, error: String(error && error.message || error) }; }
+export function ok(value) {
+  return { success: true, value, error: null };
+}
+export function fail(error) {
+  return { success: false, value: null, error: String((error && error.message) || error) };
+}
 
 /** Wrap a function so it never throws, returning a Result instead. */
 export async function safe(fn) {
-  try { return ok(await fn()); } catch (err) { return fail(err); }
+  try {
+    return ok(await fn());
+  } catch (err) {
+    return fail(err);
+  }
 }
 
 /** Basic Web Storage availability check (private-browsing / disabled storage). */
@@ -212,7 +232,11 @@ export function storageAvailable(kind = 'localStorage') {
 /** Trigger a haptic pulse if supported and enabled. */
 export function vibrate(pattern = 10) {
   if (navigator.vibrate) {
-    try { navigator.vibrate(pattern); } catch { /* ignore */ }
+    try {
+      navigator.vibrate(pattern);
+    } catch {
+      /* ignore */
+    }
   }
 }
 

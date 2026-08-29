@@ -15,9 +15,10 @@ import { icon } from '../icons.js';
 import { escapeHTML, pickLocale, toEasternArabicNumerals } from '../utils.js';
 import { buildHash } from '../router.js';
 import { clampPage, isFirstPage, isLastPage, ayahAudioUrl } from '../mushaf.js';
-import { planStatus } from '../khatma.js';
+import { planStatus, justCompletedKhatma } from '../khatma.js';
 import { VIEWS, MUSHAF_PAGE_COUNT, MUSHAF_FONTS, MUSHAF_PAPERS } from '../config.js';
 import { renderAyahWords, buildAyahStudyExtras } from './tafsirPanel.js';
+import { skeletonMushafPage, skeletonLines } from '../components/skeleton.js';
 
 /**
  * Which direction the page should animate in from, set by app.js right
@@ -56,7 +57,7 @@ export function renderMushaf(state) {
   if (!meta || !pageDoc) {
     return `
     <section class="view view--mushaf">
-      <div class="mushaf-loading">${icon('quran', { size: 32 })}<p>${t('mushaf.loading', lang)}</p></div>
+      <div class="mushaf-loading">${skeletonMushafPage(lang)}</div>
     </section>`;
   }
 
@@ -80,6 +81,7 @@ export function renderMushaf(state) {
         .map((v) => {
           const bmKey = `${chapter.number}:${v.number}`;
           const isMarked = bookmarkedKeys.has(bmKey);
+          const isReciting = state.surahPlayback?.active && state.recitingAyahKey === bmKey;
           const words = state.quranWords[String(chapter.number)]?.[String(v.number)];
           const wordsHtml = renderAyahWords(v.text, words, chapter.number, v.number, {
             tappable: prefs.wordByWordStudy,
@@ -87,7 +89,7 @@ export function renderMushaf(state) {
             tajweed: prefs.tajweedColoring,
           });
           const focusAttrs = prefs.wordByWordStudy ? '' : 'tabindex="0" role="button"';
-          return `<span class="mushaf-ayah ${isMarked ? 'mushaf-ayah--bookmarked' : ''}" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" ${focusAttrs} aria-label="${chapter.number}:${v.number}">${wordsHtml}<span class="mushaf-ayah__marker" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" tabindex="0" role="button">\uFD3F${toEasternArabicNumerals(v.number)}\uFD3E</span>${isMarked ? '<span class="mushaf-ayah__bookmark-flag" aria-hidden="true">\u2726</span>' : ''}</span>`;
+          return `<span class="mushaf-ayah ${isMarked ? 'mushaf-ayah--bookmarked' : ''} ${isReciting ? 'mushaf-ayah--reciting' : ''}" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" ${focusAttrs} aria-label="${chapter.number}:${v.number}">${wordsHtml}<span class="mushaf-ayah__marker" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" tabindex="0" role="button">\uFD3F${toEasternArabicNumerals(v.number)}\uFD3E</span>${isMarked ? '<span class="mushaf-ayah__bookmark-flag" aria-hidden="true">\u2726</span>' : ''}</span>`;
         })
         .join(' ');
 
@@ -109,6 +111,12 @@ export function renderMushaf(state) {
       </button>
       <button type="button" class="icon-btn mushaf-topbar__bookmarks-btn ${state.ayahBookmarks.length ? 'icon-btn--badged' : ''}" data-action="mushaf-open-bookmarks" aria-label="${t('mushaf.bookmarks', lang)}">
         ${icon('bookmark', { size: 18 })}
+      </button>
+      <button type="button" class="icon-btn ${state.surahPlayback?.active && Number(state.surahPlayback.surah) === Number(headerChapter.number) ? 'icon-btn--playing' : ''}" data-action="surah-play" data-surah="${headerChapter.number}" aria-label="${state.surahPlayback?.active ? t('audio.reciteStop', lang) : t('audio.reciteSurah', lang)}" title="${state.surahPlayback?.active ? t('audio.reciteStop', lang) : t('audio.reciteSurah', lang)}">
+        ${icon(state.surahPlayback?.active && Number(state.surahPlayback.surah) === Number(headerChapter.number) ? 'stop' : 'play', { size: 18 })}
+      </button>
+      <button type="button" class="icon-btn ${(state.settings.audio?.ayahFollow ?? true) ? 'icon-btn--recite-follow' : ''}" data-action="recite-follow-toggle" aria-pressed="${state.settings.audio?.ayahFollow ?? true}" aria-label="${t('audio.follow', lang)}" title="${t('audio.follow', lang)}">
+        ${icon((state.settings.audio?.ayahFollow ?? true) ? 'eye' : 'eyeOff', { size: 18 })}
       </button>
       <button type="button" class="icon-btn" data-action="mushaf-open-settings" aria-label="${t('mushaf.settingsTitle', lang)}">
         ${icon('settings', { size: 18 })}
@@ -140,7 +148,7 @@ export function renderMushaf(state) {
 export function buildMushafJump(state) {
   const lang = state.settings.language;
   const meta = state.mushaf.meta;
-  if (!meta) return `<p>${t('mushaf.loading', lang)}</p>`;
+  if (!meta) return skeletonLines(lang, [64, 88, 64, 88, 64]);
 
   const surahButtons = Object.entries(meta.chapterNames)
     .map(
@@ -208,9 +216,14 @@ export function buildMushafJump(state) {
     // schedule > ahead of the daily schedule > pace/projection verdicts.
     let verdictText = '';
     let verdictCls = '';
+    let verdictCelebrate = false;
     if (status.complete) {
       verdictText = t('khatma.completeBanner', lang);
       verdictCls = 'mushaf-khatma__verdict--done';
+      // v3.12: one-shot bloom stamped only while the completion stamp in
+      // khatmaHistory is fresh — later re-renders of the same banner stay
+      // silent (see js/celebrate.js for the contract).
+      verdictCelebrate = justCompletedKhatma(state);
     } else if (status.behindBy > 0) {
       verdictText = t('khatma.behind', lang, { n: status.behindBy });
       verdictCls = 'mushaf-khatma__verdict--warn';
@@ -226,7 +239,7 @@ export function buildMushafJump(state) {
     }
     planRows = `
     <div class="mushaf-khatma__bits">${bits.map((b) => `<span class="mushaf-khatma__bitwrap">${b}</span>`).join('')}</div>
-    ${verdictText ? `<p class="mushaf-khatma__verdict ${verdictCls}">${verdictText}</p>` : ''}`;
+    ${verdictText ? `<p class="mushaf-khatma__verdict ${verdictCls}${verdictCelebrate ? ' celebrate' : ''}">${verdictText}</p>` : ''}`;
   }
 
   const planButtons = `
@@ -446,7 +459,7 @@ export function buildMushafAyahDetail(
     <h2 id="modal-title-mushaf-ayah" class="sr-only">${surahDoc ? escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang)) : ''} ${surahNumber}:${ayahNumber}</h2>
     <p class="mushaf-ayah-detail__ref" dir="ltr">${surahNumber}:${ayahNumber}${surahDoc ? ` \u2014 ${escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang))}` : ''}</p>
     <p class="mushaf-ayah-detail__arabic" dir="rtl" lang="ar">${escapeHTML(arabicText)}</p>
-    ${ayah?.translation ? `<p class="mushaf-ayah-detail__translation">${escapeHTML(ayah.translation)}</p>` : ''}
+    ${ayah?.translation ? `<p class="mushaf-ayah-detail__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
     <div class="mushaf-ayah-detail__actions">
       ${
         currentPage != null

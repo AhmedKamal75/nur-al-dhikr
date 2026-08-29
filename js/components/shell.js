@@ -27,8 +27,9 @@ const NAV_GROUPS = [
       { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
       { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
       { view: VIEWS.QURAN, icon: 'quran', label: 'nav.quran' },
-      { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' }
-    ]
+      { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
+      { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' },
+    ],
   },
   {
     label: 'nav.group.worship',
@@ -37,16 +38,16 @@ const NAV_GROUPS = [
       { view: VIEWS.QIBLA, icon: 'mosque', label: 'nav.qibla' },
       { view: VIEWS.RAMADAN, icon: 'moon', label: 'nav.ramadan' },
       { view: VIEWS.CALENDAR, icon: 'calendar', label: 'nav.calendar' },
-      { view: VIEWS.CHECKLIST, icon: 'target', label: 'nav.checklist' }
-    ]
+      { view: VIEWS.CHECKLIST, icon: 'target', label: 'nav.checklist' },
+    ],
   },
   {
     label: 'nav.group.tools',
     items: [
       { view: VIEWS.TASBIH, icon: 'tasbih', label: 'nav.tasbih' },
       { view: VIEWS.ZAKAT, icon: 'calculator', label: 'nav.zakat' },
-      { view: VIEWS.STATISTICS, icon: 'stats', label: 'nav.statistics' }
-    ]
+      { view: VIEWS.STATISTICS, icon: 'stats', label: 'nav.statistics' },
+    ],
   },
   {
     label: 'nav.group.mine',
@@ -54,15 +55,18 @@ const NAV_GROUPS = [
       { view: VIEWS.FAVORITES, icon: 'heart', label: 'nav.favorites' },
       { view: VIEWS.EDITOR, icon: 'edit', label: 'nav.editor' },
       { view: VIEWS.SETTINGS, icon: 'settings', label: 'nav.settings' },
-      { view: VIEWS.ABOUT, icon: 'info', label: 'nav.about' }
-    ]
-  }
+      { view: VIEWS.ABOUT, icon: 'info', label: 'nav.about' },
+    ],
+  },
 ];
 
 /** Flat lookup used to decide the active item for the current view. */
 function isActive(active, view) {
   if (active === view) return true;
-  return view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active);
+  if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
+  return (
+    view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
+  );
 }
 
 function navItemHTML(n, active, lang, { drawer = false } = {}) {
@@ -77,11 +81,13 @@ function navItemHTML(n, active, lang, { drawer = false } = {}) {
 }
 
 function groupsHTML(active, lang, { drawer = false } = {}) {
-  return NAV_GROUPS.map((g) => `
+  return NAV_GROUPS.map(
+    (g) => `
   <div class="nav__group">
     <span class="nav__group-label">${t(g.label, lang)}</span>
     ${g.items.map((n) => navItemHTML(n, active, lang, { drawer })).join('')}
-  </div>`).join('');
+  </div>`
+  ).join('');
 }
 
 export function renderTopBar(state) {
@@ -123,15 +129,17 @@ export function renderNav(state) {
     { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
     { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
     { view: VIEWS.QURAN, icon: 'quran', label: 'nav.quran' },
-    { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' }
+    { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
   ];
   const mobileBar = `
     <div class="nav-mobile-bar" aria-label="${t('a11y.mainNav', lang)}">
-      ${MOBILE_ITEMS.map((n) => `
+      ${MOBILE_ITEMS.map(
+        (n) => `
       <a class="nav-mobile-bar__item ${isActive(active, n.view) ? 'nav-mobile-bar__item--active' : ''}" href="${buildHash(n.view)}" data-action="navigate" data-view="${n.view}" aria-current="${isActive(active, n.view) ? 'page' : 'false'}">
         ${icon(n.icon, { size: 22 })}
         <span class="nav__label">${t(n.label, lang)}</span>
-      </a>`).join('')}
+      </a>`
+      ).join('')}
       <button type="button" class="nav-mobile-bar__item" data-action="nav-toggle" aria-haspopup="dialog" aria-label="${t('nav.more', lang)}">
         ${icon('menu', { size: 22 })}
         <span class="nav__label">${t('nav.more', lang)}</span>

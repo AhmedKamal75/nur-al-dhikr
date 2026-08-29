@@ -12,7 +12,16 @@
 import { t } from '../i18n.js';
 import { icon } from '../icons.js';
 import { escapeHTML } from '../utils.js';
-import { computeZakat, computeNisab, computeFitr, formatAmount, hawlDueFor, daysUntilHawl, NISAB_GOLD_GRAMS, NISAB_SILVER_GRAMS } from '../zakat.js';
+import {
+  computeZakat,
+  computeNisab,
+  computeFitr,
+  formatAmount,
+  hawlDueFor,
+  daysUntilHawl,
+  NISAB_GOLD_GRAMS,
+  NISAB_SILVER_GRAMS,
+} from '../zakat.js';
 
 const ASSET_FIELDS = [
   { id: 'cash', label: 'zakat.cash', placeholder: 'zakat.ph.amount' },
@@ -22,7 +31,12 @@ const ASSET_FIELDS = [
   { id: 'businessGoods', label: 'zakat.businessGoods', placeholder: 'zakat.ph.amount' },
   { id: 'receivables', label: 'zakat.receivables', placeholder: 'zakat.ph.amount' },
   { id: 'otherAssets', label: 'zakat.otherAssets', placeholder: 'zakat.ph.amount' },
-  { id: 'liabilities', label: 'zakat.liabilities', placeholder: 'zakat.ph.amount', isLiability: true }
+  {
+    id: 'liabilities',
+    label: 'zakat.liabilities',
+    placeholder: 'zakat.ph.amount',
+    isLiability: true,
+  },
 ];
 
 function nisabPanel(state, lang) {
@@ -64,13 +78,15 @@ function nisabPanel(state, lang) {
 
 function inputsPanel(state, lang) {
   const inputs = state.zakat.inputs;
-  const rows = ASSET_FIELDS.map((f) => `
+  const rows = ASSET_FIELDS.map(
+    (f) => `
     <label class="field ${f.isLiability ? 'zakat-field--liability' : ''}">
       <span>${t(f.label, lang)}</span>
       <input class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr"
         data-bind="zakat-input" data-ref="in-${f.id}" data-field="${f.id}"
         value="${escapeHTML(String(inputs[f.id] || ''))}" placeholder="${f.unit === 'g' ? '0' : '0.00'}" />
-    </label>`).join('');
+    </label>`
+  ).join('');
 
   return `
   <section class="panel">
@@ -155,24 +171,33 @@ function fitrPanel(state, lang) {
 function savedPanel(state, lang) {
   if (!state.zakatHistory.length) return '';
   const cur = state.zakat.prefs.currency || '';
-  const fmt = (ts) => new Date(ts).toLocaleDateString(lang === 'ar' ? 'ar' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const fmt = (ts) =>
+    new Date(ts).toLocaleDateString(lang === 'ar' ? 'ar' : 'en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
 
   // Soonest hawl first — the row you need to act on sits at the top.
-  const rows = [...state.zakatHistory].sort((a, b) => {
-    const ha = Number.isFinite(a.hawlDue) ? a.hawlDue : hawlDueFor(a.ts || 0);
-    const hb = Number.isFinite(b.hawlDue) ? b.hawlDue : hawlDueFor(b.ts || 0);
-    return ha - hb;
-  }).map((s) => {
-    const hawlTs = Number.isFinite(s.hawlDue) ? s.hawlDue : hawlDueFor(s.ts || 0);
-    const days = daysUntilHawl(hawlTs);
-    const dueSoon = days <= 14;
-    const passed = days < 0;
-    const status = passed
-      ? t('zakat.hawlPassed', lang, { n: Math.abs(days) })
-      : days === 0 ? t('zakat.hawlToday', lang)
-      : dueSoon ? t('zakat.hawlDueSoon', lang, { n: days })
-      : t('zakat.hawlIn', lang, { n: days });
-    return `
+  const rows = [...state.zakatHistory]
+    .sort((a, b) => {
+      const ha = Number.isFinite(a.hawlDue) ? a.hawlDue : hawlDueFor(a.ts || 0);
+      const hb = Number.isFinite(b.hawlDue) ? b.hawlDue : hawlDueFor(b.ts || 0);
+      return ha - hb;
+    })
+    .map((s) => {
+      const hawlTs = Number.isFinite(s.hawlDue) ? s.hawlDue : hawlDueFor(s.ts || 0);
+      const days = daysUntilHawl(hawlTs);
+      const dueSoon = days <= 14;
+      const passed = days < 0;
+      const status = passed
+        ? t('zakat.hawlPassed', lang, { n: Math.abs(days) })
+        : days === 0
+          ? t('zakat.hawlToday', lang)
+          : dueSoon
+            ? t('zakat.hawlDueSoon', lang, { n: days })
+            : t('zakat.hawlIn', lang, { n: days });
+      return `
     <div class="zakat-history-row">
       <div class="zakat-history-row__main">
         <span class="zakat-history-row__date" dir="ltr">${fmt(hawlTs)}</span>
@@ -186,7 +211,8 @@ function savedPanel(state, lang) {
         ${icon('trash', { size: 14 })}
       </button>
     </div>`;
-  }).join('');
+    })
+    .join('');
 
   return `
   <section class="panel">

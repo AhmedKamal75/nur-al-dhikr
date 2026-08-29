@@ -8,7 +8,7 @@
  *  - Navigation requests fall back to offline.html when nothing is cached.
  */
 
-const VERSION = 'nur-al-dhikr-v3.8.0';
+const VERSION = 'nur-al-dhikr-v3.16.0';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -40,6 +40,7 @@ const APP_SHELL = [
   'assets/fonts/AmiriQuran.woff2',
   'assets/audio/adhan/adhan.mp3',
   'js/app.js',
+  'js/celebrate.js',
   'js/adhkarTiming.js',
   'js/khatma.js',
   'js/moods.js',
@@ -68,6 +69,9 @@ const APP_SHELL = [
   'js/components/modal.js',
   'js/components/shell.js',
   'js/components/toast.js',
+  'js/components/skeleton.js',
+  'js/components/emptyState.js',
+  'js/soundDesign.js',
   'js/config.js',
   'js/editor.js',
   'js/i18n.js',
@@ -79,6 +83,8 @@ const APP_SHELL = [
   'js/renderer.js',
   'js/router.js',
   'js/quranSearch.js',
+  'js/hadith.js',
+  'js/surahPlayback.js',
   'js/schema.js',
   'js/search.js',
   'js/speech.js',
@@ -102,6 +108,7 @@ const APP_SHELL = [
   'js/views/mood.js',
   'js/views/mushafReader.js',
   'js/views/tafsirPanel.js',
+  'js/views/hadith.js',
   'js/views/tajweedPracticeView.js',
   'js/views/onboardingPanel.js',
   'js/views/prayer.js',
@@ -132,6 +139,13 @@ const APP_SHELL = [
   'data/tafsir-editions.json',
   'data/tajweed-practice.json',
   'data/reciters.json',
+  // Ahadeeth (v3.9): the book registry + the two small books are precached
+  // (the daily hadith works with zero network, ever). The two big Sahihs
+  // load on first open and are kept offline by the /data stale-while-
+  // revalidate rule below — same contract as the on-demand tafsir volumes.
+  'data/hadith/index.json',
+  'data/hadith/nawawi.json',
+  'data/hadith/qudsi.json',
 ];
 
 self.addEventListener('install', (event) => {

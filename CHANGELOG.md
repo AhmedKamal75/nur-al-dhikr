@@ -1,5 +1,480 @@
 # Changelog
 
+## v3.16.0 — Fork re-union: the four Sunan collections restored + external-review hardening
+
+### The fork, honestly
+- Two different builds were both labeled v3.15.0. This line carried the
+  **Qur'an translation editions**; a parallel build carried the **four
+  Sunan hadith collections** (+19,217 hadith), its own `scripts/hostile-battery.mjs`,
+  and adhkar/duas extension-tier work. All four version markers said
+  3.15.0 on both, so neither build could disambiguate the other. Following
+  the v3.6.0 precedent, the lines are re-united rather than chosen between
+  — shipping either alone would have been a real regression of the other's
+  verified work.
+- **Restored in this release**: Sunan Abu Dawud (5,272), Jami' at-Tirmidhi
+  (3,926), Sunan an-Nasa'i (5,679) and Sunan Ibn Majah (4,340) — together
+  **+19,217 hadith**, rebuilt independently from the same CC0
+  sunnah.com/hadith-api source through this repo's own pipeline and
+  integrity gates (1:1 Arabic↔English alignment by hadith number, unique
+  numbers, full chapter coverage, markup refusal). The rebuild lands on
+  **exactly** the parallel build's verified totals: 15,022 → **34,239**.
+  A permanent test gate now locks the 34,239 library total in
+  tests/hadith.test.js so this content can never silently regress again.
+- **Still pending from that build**: its adhkar/duas extension-tier work
+  and any fixes it carried beyond the Sunans — a true code-level merge
+  needs that build's zip; recorded as open, not silently dropped.
+- Version bumped to **3.16.0** in all four markers so "v3.15.0" stops
+  being ambiguous in conversation.
+
+### Fixed — external hostile review (fork-collision review of this build)
+- **tests/icons.test.js no longer hard-crashes in the shipped zip.** The
+  file had a top-level `import … from '../../scripts/icon-audit.mjs'`;
+  the release zip excludes repo-root `scripts/` by design (AGENTS.md
+  §4.4), so in the packaged artifact the import died with
+  `ERR_MODULE_NOT_FOUND` before a single test in the file ran (440/441 in
+  the reviewed build). Fix: the icon gate's single source of truth moved
+  **inside the app boundary** to `tests/helpers/icon-audit.mjs` (it ships
+  with the app; the gate runs from the extracted zip again), and
+  `scripts/icon-audit.mjs` is now a thin shim re-exporting it, so the
+  standing CLI command is unchanged.
+- **Generalized, not patched one-off** (the review's explicit lesson —
+  this was the second occurrence of the defect class): new AGENTS.md §3
+  rule — tests must be runnable from the shipped zip; never statically
+  import outside the app directory; optional out-of-boundary deps
+  dynamic-import and skip loudly.
+- **Hadith build gate false-positive fixed**: the markup gate's
+  event-handler regex (`\son[a-z]+\s*=`) misread ordinary Zakat prose in
+  Ibn Majah #1805 — "even one = then three sheep" — as an `on*=` handler
+  and refused the book. Handlers are now anchored to a tag context
+  (`<[a-z][^>]*\son[a-z]+=`); dangerous-tag detection is unchanged.
+- **Prettier drift paid down to zero**: 45 files (debt had grown 37 → 45,
+  against AGENTS.md §3) reformatted in one `npm run format` pass;
+  `format:check` is now clean repo-wide.
+
+### Added
+- **`scripts/hostile-battery.mjs`** — one command that runs the entire
+  standing battery: unit + shipped-data gates, both hostile scripts
+  (quran-search, translations), the real-corpus search sanity, the
+  tajweed corpus sweep, the icon gate and both CSS audits, with a
+  pass/fail roll-up and non-zero exit on any failure.
+
+### Library
+- The Ahadeeth library now ships the **six canonical books** — the two
+  Sahihs and the four Sunans — plus the two Forties: 34,239 hadith,
+  all bilingual (Arabic + English), chapter-indexed, deep-linkable,
+  lazy-loaded on first open through the existing SW data rule and cached
+  offline forever after. Source notes in About and the library footer
+  updated in both languages; provenance in data/SOURCES.md + CREDITS.md.
+
+## v3.15.0 — More Qur'an translations (the last Critical TODO item) + edition-aware search
+
+### Added — four complete translation editions, selectable per person
+- Settings → Content Display gains a **Qur'an Translation** picker with
+  five editions: English (Sahih International, unchanged default), **Urdu**
+  (Fateh Muhammad Jalandhry), **French** (Muhammad Hamidullah), **Turkish**
+  (Diyanet İşleri) and **Indonesian** (Kemenag). Each option keeps its own
+  native script and names its translator, the same contract as the reciter
+  list. All four are open Tanzil-derived corpora (provenance and licence
+  notes in data/SOURCES.md + CREDITS.md).
+- Architecture: the four editions ship as slim per-surah overlay files
+  (`data/translations/{edition}/{surah}.json`, ~5MB total) that merge onto
+  the app's own Uthmani corpus at load time — the Arabic text is always
+  the app's, only the translation paragraph swaps. The merge happens in
+  one place (`loadSurahDoc` in app.js) before state dispatch, so both
+  readers, deep links, the mushaf ayah-detail and the tajweed practice
+  pool all render the selected edition with zero per-view branching.
+  Overlay files ride the existing stale-while-revalidate data rule, so an
+  edition works offline after its first open; nothing new is precached,
+  and the default English experience is byte-identical to v3.14.
+- Urdu renders right-to-left: translation paragraphs are now `dir="auto"`
+  (classic reader, mushaf ayah detail, search results) so any edition's
+  script direction resolves itself.
+- **Full-text search follows the selected edition**: the v3.6 index builds
+  from the same surah docs the readers display, so switching editions
+  resets the index latch and the next search re-warms in that language
+  (already-cached surahs make the re-warm nearly free). Searching in the
+  language you read is the honest contract; the Settings hint says so.
+
+### Correctness — edition switches can never leave mixed-language state
+- Edition switching is **single-flight**: rapid switching collapses into
+  the latest target (no interleaved bulk re-merges fighting over state).
+- Every surah doc carries a `translationEdition` stamp; a doc merged while
+  an older edition was selected can never be dispatched under a newer one
+  (the dispatcher re-merges once against the current setting if the stamp
+  disagrees). A missing/failed overlay file degrades to the bundled Sahih
+  text per surah — the reader is never blocked or blanked.
+- Hard gates (scripts/build-translations.mjs, mirrored permanently in
+  tests/translations.test.js): 114/114 files per edition, 6,236 verses,
+  per-surah counts 1:1 with the app corpus, sequential verse numbers, no
+  empty texts, no trailing truncation, no HTML, and a 2:1 muqatta'at
+  sanity string per edition as a bismillah-bleed detector.
+
+### Fixed
+- The css-token audit under-reported two v3.14 skeleton tokens
+  (`--sk-w/--sk-h` are set inline by JS); the checker's JS-registered
+  allowlist now knows them, so the audit reads clean again.
+
+### Notes
+- v3.14 shipped with `APP_VERSION` still reading 3.12.0; repaired to
+  3.14.0 in that release. All four version markers (package.json, sw.js,
+  config.js APP_VERSION, this changelog) now read 3.15.0.
+
+## v3.14.0 — UI/UX Phase C: loading & feedback (skeletons, optimistic taps, optional sound design, empty states)
+
+### Added — skeleton shimmer placeholders for every lazily-loaded surface
+- Every surface that fetches on demand used to show a bare text line
+  ("Loading…"). Each now shows a shape-mirroring skeleton that previews
+  the layout about to land: the 114-surah picker (tile rows), the classic
+  reader (ayah cards), hadith books (card lines), tafsir panels (commentary
+  lines), mushaf pages (centred RTL ink lines on paper), and the reciters
+  catalog (reciter rows). Screen readers get an sr-only "loading"
+  announcement, so the shimmer is never the only signal. The shimmer sweep
+  and all skeleton motion collapse under both reduce-motion kill rules,
+  and the whole system is token-based (`--color-surface-alt` bars +
+  `--sk-sheen` highlight) so every theme/palette renders it correctly.
+
+### Added — optional sound design (the Tier-2 item, shipped) + "Sound & Haptics" settings panel
+- New `js/soundDesign.js`: everything synthesized in-memory with the Web
+  Audio API — zero audio assets, the offline shell stays the same size.
+  The Mushaf page-turn is a soft bandpassed noise sweep (paper, not
+  alert); the khatma completion chime is a quiet E5→B5→E6 rise, longer and
+  calmer than the prayer-alert tones by design. Both are OFF by default,
+  individually toggleable, and fire from every flip path (swipe, prev/
+  next, recitation follow) so the sound always pairs with the flip
+  animation itself. The pre-existing tasbih tick keeps its existing
+  `soundEnabled` gate. Gating is explicit and unit-tested; devices without
+  a working AudioContext get silent no-ops, never errors — same honest
+  autoplay-policy limits as every page sound in this app (sounds need one
+  prior interaction, which any tap inherently is).
+- Settings gained a dedicated **Sound & Haptics** panel (haptics, sound
+  effects, page-turn, khatma chime + an honest note about device/browser
+  limits); the two feedback toggles moved out of Accessibility where they
+  never belonged.
+
+### Added — optimistic tap feedback
+- Press-state scaling on the habit checklist rows and the prayer-log
+  cycle buttons (the Phase B press contract, extended to the two surfaces
+  where a tap must feel answered before the eye moves), plus the missing
+  haptic tick on prayer-log taps — haptic parity with the checklist,
+  kept AFTER the dispatch so vibration never lands on a rejected action.
+
+### Added — in-flight download feedback
+- A surah-audio download used to leave its grid cell looking dead for the
+  seconds a 2 MB fetch takes. Cells now show a spinner via a new ephemeral
+  `audioDownloading` store slice (never persisted — a reload simply
+  forgets mid-flight work), double-taps are ignored while in flight, and
+  batch downloads light up each cell as the loop reaches it.
+
+### Changed — empty states hand you your next move
+- New shared `emptyStateHTML()` component: soft icon medallion + honest
+  title + one-line hint + optional primary action. Wired into Favorites
+  (with a one-tap "Browse the Library"), Collections (hint points at the
+  suggestion chips right below), and both no-results states in Search plus
+  the reciters catalog (try-different-spelling hints). Everything escapes
+  through the standard sanitizer and ships bilingually.
+
+### Fixed — release protocol
+- v3.13.0 shipped with `APP_VERSION` still reading 3.12.0 (package.json
+  and SW cache were bumped, config.js was missed). Now 3.14.0 everywhere.
+
+### Gates
+- eslint clean; prettier clean on the touched scope; 427/427 tests
+  (12 new Phase C gates: skeleton bounds/escaping, empty-state escaping,
+  sound gating, strict-asBool settings, ephemeral-state round-trip +
+  persistence exclusion); css-token-check clean (new `--sk-w`/`--sk-h`
+  inline tokens registered, `--sk-sheen` defined in variables.css);
+  contrast audit 261 pairs / 0 failing; icon audit PASS (58 referenced /
+  0 unknown); motion contract updated with the two new documented infinite
+  loops (sk-sweep, dl-spin). Browser smoke test (fresh profile): boot,
+  Qur'an list + surah reader, Sound & Haptics toggles persisting, mushaf
+  flip with page-turn on, search/favorites empty states, checklist tap —
+  zero page errors.
+
+## v3.13.0 — patch engine deep-reconcile (the focus-mode flicker, finished) + icon system upgrade
+
+### Fixed — focus-mode flicker: the patch engine's single-root gap
+- **Root cause.** The v3.9 engine reconciled only the TOP-LEVEL children of
+  each mount. The focus view renders a single root
+  (`<section class="focus">`), and the standalone Tasbih screen a single
+  root (`<section class="view--tasbih">`), so any state change inside them —
+  above all every counter/dial tap — changed the root's outerHTML, failed
+  exact matching, and destroyed + rebuilt the ENTIRE screen. innerHTML
+  replacement by another name. On every tap this (1) re-created the
+  progress ring's circle, which is born at its final `stroke-dashoffset`
+  and therefore JUMPED instead of animating its transition, (2) reset the
+  `.focus__scroll` scroll position, (3) cut the `:active` press state
+  mid-tap, and (4) restarted the cycle-completion bloom on every tap
+  inside its 700 ms window. v3.12 had removed the entrance-animation
+  re-run on top of this replacement — the replacement itself stayed.
+- **Fix.** The patch engine gained a second, structural matching pass and
+  now reconciles RECURSIVELY: children bind first by exact identity
+  (byte-identical outerHTML, unchanged behaviour), and failing that by
+  STRUCTURAL identity (same namespace + tag + id — deliberately
+  class-free, because transient classes like `is-just-completed` appear on
+  an otherwise-identical node). A structural match keeps the live DOM node
+  and updates it in place: attributes sync (never touching live form
+  values — attributes are default state only), then the reconcile descends.
+  Result: tapping the counter now touches only the genuinely changed nodes
+  — the count text, the ring's `--pct`, the transient class — and the
+  ring's `stroke-dashoffset` transition finally animates. The counter
+  button, the ring, the scroller and the footer keep their nodes across
+  taps. Views with genuinely different roots (loading → content) still
+  replace exactly as before, and any reconcile failure still falls back to
+  the plain innerHTML assignment, so the engine can only be as safe as the
+  old path.
+- **Verification.** The matchers and key functions are pure and
+  unit-tested (12 new tests in `tests/renderPatch.test.js` — exact-first
+  priority, order preservation, no double-binding, namespace separation,
+  hostile input), and a browser smoke test asserted node identity across
+  taps: same `<section>`, same `<circle>`, count updating, scroll kept.
+
+### Added — icon system upgrade
+- **Standing integrity gate** (`scripts/icon-audit.mjs` +
+  `tests/icons.test.js`): every name the app can reference — static
+  `icon('…')` calls, ternary first arguments, `icon:` map values, the
+  exported `PRAYER_ICONS`/`STEP_ICONS` maps, and `"icon"` fields in the
+  top-level data JSON — must resolve to a defined glyph or alias. A typo
+  used to ship silently as the blank-square fallback; now it fails lint,
+  the test suite and the standalone audit.
+- **Aliases, not duplicates.** `food` and `rain` were byte-identical
+  copies of `utensils` and `cloud-rain`; they are now explicit ALIASES
+  entries (data files keep their names, the drawing exists once). The gate
+  fails if duplicated path data ever reappears.
+- **Dead code out.** `sunset` carried an invisible `opacity="0"` path
+  (copy-paste leftover); removed — and the gate now rejects dead markup.
+  The unused `hasIcon` export (zero call sites since introduction) is
+  gone.
+- **Conventions documented** in `icons.js` itself: 24×24 stroke geometry,
+  explicit opt-out for solid shapes, aliasing over duplication, no dead
+  markup. `PRAYER_ICONS` and `STEP_ICONS` are exported so the gate can see
+  them. Current coverage: 58 referenced names, 61 defined glyphs, 2
+  aliases, 0 unknown, 3 genuinely unused (a small reserve: bead, folder,
+  volume-x).
+
+## v3.12.0 — UI/UX modernization Phase B: motion & micro-interactions
+
+Second landing of the UI/UX program (TODO "Phase B"): purposeful motion,
+built ON the v3.9 patch engine rather than fighting it. Everything is
+sub-300ms unless explicitly allow-listed, everything honours
+`prefers-reduced-motion`, and nothing animates "just because" — the Mushaf
+keeps its calm, the readers stay distraction-free, the chrome around them
+moves well.
+
+### CRITICAL FIX — the app has been blank since v3.10
+- **`resolvePage` was imported but never written.** v3.10's follow-along
+  recitation added an import of `resolvePage` from `js/mushaf.js`; the
+  function itself never made it into the file. A missing import is a
+  module-LINK failure: the entry module (app.js) never evaluated, and the
+  app rendered an empty shell — on the deployed Pages build and in the
+  shipped zips. It slipped through because every prior import gate
+  exercised the view graph only, never app.js itself. Fixed here
+  (restored as a defensive pure resolver over the build-time ayah→page
+  map), covered by unit tests with the v3.10 build-gate spot checks
+  (1:1→1, 2:255→42, 114:6→604), and — so this class of defect can never
+  ship again — a new gate, `tests/appEntry.test.js`, imports the REAL
+  entry module in a child process and fails the release on any link
+  failure. Verified: with the export temporarily removed, the gate fails;
+  with it present, the app boots and renders (browser smoke test).
+
+### Added
+- **One-shot view entrance that can never re-flicker.** The `.view`
+  entrance animation used to ride on the class itself, so any re-render
+  that replaced a view's root (every content-changing tap inside
+  single-root views) re-ran it — a subtle cousin of the v3.9 "F5
+  refresh" defect. renderer.js now stamps a transient
+  `data-view-enter` attribute on `#main` ONLY on genuine navigation and
+  removes it ~350ms later; CSS keys the entrance on that state. Verified
+  live: navigation animates once, same-view re-renders never re-animate.
+- **Reusable celebration micro-interaction (`js/celebrate.js` +
+  `.celebrate`).** The tasbih cycle-completion bloom generalized into a
+  transient timestamp registry (`markCelebration` / `wasCelebrated`) and
+  a CSS bloom. New sites: the khatma completion verdict (derives its
+  freshness from the persisted `completedAt` stamp the reducer already
+  writes exactly once), the 99-Names quiz result screen, and the
+  prayer-log streak badge the moment a day's fifth prayer lands. The
+  class disappears after the window, so later re-renders are silent by
+  construction; tasbih.js now delegates to the shared registry.
+- **Press states on the shared chrome.** Nav items and interactive chips
+  get a consistent 0.98 `:active` scale (the buttons, tiles and counters
+  already had their own); scale is symmetric so RTL needs no mirroring.
+- **Motion contract gates** (`tests/motion.test.js`, 21 tests): the
+  viewIn rule must stay scoped under `[data-view-enter]`; every
+  animation/transition duration is bounded (≤300ms) except the two
+  named celebration blooms and the documented ambient loops; the
+  reduce-motion kill rule must remain; flip/drawer spring curves are
+  pinned.
+
+### Changed
+- **Mushaf page-flip is spring-tuned.** The flip now starts a touch
+  deeper (10°/0.96/0.35) and settles on the app-wide spring curve, so
+  the page lands like paper. `will-change` moved off the base page
+  element onto the animating classes only — a permanent compositor
+  layer on a full page of text was memory for nothing.
+- **Bottom-sheet physics for the mobile drawer.** The sheet arrives on
+  the spring curve (confident settle) and leaves on the standard curve
+  (a bounce-out reads as the sheet refusing to leave).
+
+## v3.11.0 — UI/UX modernization Phase A: design-system foundations
+
+First landing of the UI/UX modernization program (TODO "Phase A"): the
+token/contrast/focus/touch layer under every surface. Nothing flashy —
+this is the release that makes everything above it consistent.
+
+### Added
+- **Foreground color variants (`--color-primary-text`, `-accent-text`,
+  `-danger-text`, `-success-text`, `-warning-text`).** The rule now is:
+  fills/backgrounds use the raw tokens, every FOREGROUND (color, fill,
+  stroke, border-color of active states) uses the `-text` variant. In
+  light mode they are identical values — zero visual change; in dark
+  mode the variants are brightened so brand links, nav-active items,
+  ayah numbers, progress rings, the qibla needle and semantic messages
+  hold WCAG AA (4.5:1) on every dark surface, for EVERY palette.
+  Previously all ten palettes failed AA in dark mode (emerald 3.5:1,
+  midnight 1.1:1 — effectively invisible).
+- **Two new standing audits + a permanent test gate:**
+  `scripts/css-token-check.mjs` (every `var()` must resolve — the v3.9
+  hadith styles shipped with undefined `var(--radius)` /
+  `var(--transition-fast)` and rendered unstyled for a release),
+  `scripts/css-contrast-audit.mjs` (261 semantic pairs across
+  light/dark/AMOLED × all palettes, now 0 failing), and
+  `tests/cssDesign.test.js` (10 gates) so none of this can regress.
+- **Selection-ring tokens** (`--ring-primary`, `--ring-accent`,
+  `--ring-inset-primary`): the hand-rolled `0 0 0 2px color-mix(…)`
+  halos scattered across five files now share one treatment.
+
+### Fixed
+- **Focus-ring pill-snap:** the global `:focus-visible` rule forced
+  `border-radius: 4px`, so pill buttons and round icons snapped to
+  squares whenever keyboard-focused. Removed — the outline now follows
+  each element's own radius — and the ring color uses the dark-tuned
+  foreground token so it stays visible on dark themes.
+- **Search bar keyboard focus was invisible** (the input suppressed its
+  own outline inside the pill): the pill now glows via `:focus-within`.
+- **Hadith surfaces had no radius and no hover transition** (the
+  undefined-token bug above).
+- **Hadith/Arabic text ignored the user's font-scale settings:** raw
+  rem sizes in the v3.9 styles now derive from `--fs-*` tokens and
+  Arabic sizes from `--arabic-font-scale` (hadith cards, word-study
+  rows, mushaf font sample, bismillah sample, recite counter…).
+- **Palette AA fixes:** ivory primary stone-500 → stone-600 (4.17:1 on
+  surface-alt chips) and amber primary amber-700 → amber-800 (4.36:1);
+  both picked by the audit, both one step on their own Tailwind scale.
+- **Elevation finally has a third layer:** modals and the nav drawer
+  render on `--color-surface-raised` with `--shadow-lg` — both tokens
+  existed since v1 but were never used, so dark-mode sheets sat flat on
+  same-colored pages.
+
+### Changed
+- **Touch targets to the 44px token** (`--touch-target`): icon buttons
+  40→44, player play button 40→44, compact icon buttons keep a 32px
+  visual with a transparent hit-area pseudo-element, chips and tafsir
+  tabs keep their visual size with vertical-only hit expansion (adjacent
+  chips never overlap), switch, swatches, small buttons, segmented
+  buttons, reciter rows, download cells, jump inputs, adhan chips,
+  mushaf topbar title / paper swatches / jump rows, back-links, nav
+  links, counter pills. In-text targets (mushaf words, ayah spans,
+  practice letters) rely on the WCAG 2.5.8 inline exception — their
+  2.35 line-height already yields ~50px effective height.
+- Spacing scale gained `--space-1_5` (6px); radius scale gained fixed
+  `--radius-xs` (4px) for inline micro-details that must not change with
+  the shape setting.
+
+## v3.10.0 — Continuous follow-along recitation (the last Critical item)
+
+### Added
+- **"Listen to the whole surah, follow along" in both reading modes.**
+  A new recitation session engine (`js/surahPlayback.js`) plays a surah
+  verse-by-verse through the app's single per-ayah audio element with
+  automatic advance:
+  - **Classic reader:** "Recite surah" in the surah header; the reciting
+    ayah is highlighted (`ayah-card--reciting`) and — with the new
+    persisted **Follow** toggle on — auto-scrolls into view verse by verse.
+  - **Mushaf reader:** the same control sits in the topbar; the reader
+    FLIPS to the page holding the reciting ayah (across page turns) and
+    tints the ayah in place. This needed something the codebase openly
+    lacked — a global ayah→page map — so `mushaf-meta.json` now ships an
+    `ayahPages` index built and gate-checked by
+    `scripts/build-mushaf-ayah-pages.mjs` (all 6,236 ayahs, spot-checked
+    against known pages: 1:1→1, 2:255→42, 114:6→604).
+  - **Player bar:** doubles as the recitation console — pulsing indicator,
+    live ayah counter (N/total), follow toggle, stop.
+  - **Behaviour:** surah-scoped sessions (the last ayah ends it — the
+    standard), one-voice both ways (full-surah player / single-ayah /
+    session each stop the others), follow persists in settings and is
+    hostile-input-sanitized, verse-load failures stop gracefully with an
+    honest toast (nothing hangs, nothing pretends).
+  - **Engineering:** the engine is a pure state machine over a swappable
+    audio driver — `tests/surahPlayback.test.js` simulates complete
+    surahs, stale `ended` events, restarts, failures and hostile inputs
+    without any audio device. Recitation playback now exposes an
+    `onPlaybackEnded` seam instead of the UI polling.
+
+## v3.9.0 — Ahadeeth library, adhkar overhaul, and the universal anti-flicker render engine
+
+Three owner-reported issues closed, plus the standing AI system command.
+
+### Added
+- **The Ahadeeth library.** A full new section of the app: Sahih al-Bukhari
+  (7,580 hadith) and Sahih Muslim (7,360) complete in Arabic + English,
+  plus the Forty Hadith of an-Nawawi (42) and Forty Hadith Qudsi (40) —
+  **15,042 authentic hadith**, chapter-indexed from the classical book
+  divisions. Book grid → chapter chips → paginated reader (20 per page),
+  in-book search that folds diacritics on both sides, jump-to-number,
+  deep links (`#/hadith/bukhari?n=7544`) with the target card
+  highlighted and scrolled to, one-tap copy of Arabic + translation +
+  citation. A "Hadith of the day" card on Home rotates deterministically
+  through the two small precached books (never the multi-MB Sahihs).
+  Texts are public-domain (sunnah.com) obtained via the CC0
+  fawazahmed0/hadith-api dataset; the build pipeline enforces 1:1
+  Arabic/English alignment, drops the 212 non-hadith intro placeholders,
+  and gates against markup payloads, duplicates and unreachable rows.
+  Nawawi + Qudsi + the book index are service-worker precached; the two
+  big Sahihs fetch on first open and stay offline forever after — the
+  same honest on-demand contract as the remote tafsir volumes. (The
+  Forty of Dehlawi was deliberately not shipped: its Arabic dump uses
+  Urdu orthography, visually inconsistent with the rest of the app.)
+- **The standing system command for AI assistants.** `AGENTS.md` at the
+  repo root: the non-negotiables (nothing leaves the device; religious
+  content only from named trusted sources, complete, untruncated, in
+  canonical order; validation gates; untrusted-input discipline), the
+  architecture rules (string rendering, patch engine, batching, lazy
+  data tiers, bilingual parity), quality gates, the release protocol,
+  and the recurring audit checklist. Surfaced in-app from About → "For
+  AI assistants" so any LLM that opens the deployed site can read it.
+- **Daily data gates for the adhkar library** (`tests/adhkar-gates.test.js`
+  + the build pipeline): zero truncation markers, zero duplicate texts
+  within a category, sequential ordering, canonical anchor positions,
+  and Qur'an excerpts byte-equal to the app's own Qur'an corpus.
+
+### Fixed
+- **The "F5 refresh" flicker on every tap (universal fix).** Root cause:
+  every state change reassigned `innerHTML` on topbar, nav, main and the
+  player bar even when the new HTML was byte-identical — restarting CSS
+  animations, re-decoding images, dropping input focus, and re-creating
+  the tapped control. renderer.js now uses a three-tier patch engine:
+  (1) identical output → assign nothing at all; (2) changed output →
+  top-level child reconciliation, so untouched subtrees keep their live
+  DOM nodes (their animations, scroll, and focus survive); (3) focus
+  salvage for form fields inside replaced subtrees (search-as-you-type
+  keeps its caret). The matcher is a pure, unit-tested function; the
+  engine degrades to plain innerHTML on any reconcile failure.
+- **The adhkar library data overhaul** ("the azkar are jumbled up… go
+  over every and each one"). The audit found 116 paraphrased
+  duplicates layered over the Hisn-al-Muslim core, Ayat al-Kursi cut
+  mid-ayah, "Surah al-Mulk (full)" holding exactly one verse,
+  transliteration text sitting in the Arabic field, ~60 fields ending
+  in "...", and canonical sequences ignored. Rebuilt end-to-end:
+  Qur'an extracts are now byte-identical to the app's own corpus
+  (al-Mulk ships complete), every translation and transliteration is
+  completed, duplicates are merged, and morning/evening/post-prayer/
+  sleep/wake-up follow the canonical Hisn al-Muslim order. 168
+  verified records, each with reference, repetitions, and virtue notes.
+  Item ids of surviving records are unchanged, so existing counters and
+  favorites for those items keep working; references to the 116 dropped
+  duplicates are pruned by the app's existing dangling-ref cleanup.
+- `APP_VERSION` in config.js had drifted (still 3.6.0 while the package
+  was 3.8.0) — all four version markers now move together.
+
 ## v3.8.0 — Real Adhan at prayer time
 
 The TODO list's top Critical item, closed.

@@ -47,24 +47,43 @@ export function renderCalendar(state) {
     const g = new Date(year, month, d);
     const key = dateKey(g);
     const h = toHijri(g);
-    dayCellsData.push({ key, gDay: d, hDay: h.day, hMonth: h.month, hMonthName: h.monthName, isToday: key === todayKey, isWhite: isWhiteDay(h.day) });
+    dayCellsData.push({
+      key,
+      gDay: d,
+      hDay: h.day,
+      hMonth: h.month,
+      hMonthName: h.monthName,
+      isToday: key === todayKey,
+      isWhite: isWhiteDay(h.day),
+    });
   }
   const allKeysThisMonth = dayCellsData.map((c) => c.key);
   const notedDates = datesWithNotesInRange(state.calendarNotes, allKeysThisMonth);
 
-  const dowLabels = lang === 'ar'
-    ? ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت']
-    : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const dowLabels =
+    lang === 'ar'
+      ? ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت']
+      : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-  const blanks = Array.from({ length: startDow }, () => `<span class="cal-cell cal-cell--empty"></span>`).join('');
-  const dayCells = dayCellsData.map((c) => `
+  const blanks = Array.from(
+    { length: startDow },
+    () => `<span class="cal-cell cal-cell--empty"></span>`
+  ).join('');
+  const dayCells = dayCellsData
+    .map(
+      (c) => `
     <button type="button" class="cal-cell cal-cell--dual ${c.isToday ? 'cal-cell--today' : ''} ${c.isWhite ? 'cal-cell--white' : ''}" data-action="calendar-open-day" data-date="${c.key}" aria-label="${c.key}">
       <span class="cal-cell__g">${c.gDay}</span>
       <span class="cal-cell__h">${c.hDay}</span>
       ${notedDates.has(c.key) ? '<span class="cal-cell__dot" aria-hidden="true"></span>' : ''}
-    </button>`).join('');
+    </button>`
+    )
+    .join('');
 
-  const monthLabel = firstOfMonth.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { month: 'long', year: 'numeric' });
+  const monthLabel = firstOfMonth.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+    month: 'long',
+    year: 'numeric',
+  });
   const prevMonth = new Date(year, month - 1, 1);
   const nextMonth = new Date(year, month + 1, 1);
 
@@ -87,7 +106,7 @@ export function renderCalendar(state) {
         <button type="button" class="icon-btn" data-action="navigate" data-view="calendar" data-month="${monthParamFor(prevMonth)}" aria-label="Previous month">${icon('chevronLeft', { size: 18 })}</button>
         <div class="cal-nav__label">
           <strong>${escapeHTML(monthLabel)}</strong>
-          <span class="cal-nav__hijri">${escapeHTML((dayCellsData[0]?.hMonthName[lang]) || '')} \u2013 ${escapeHTML((dayCellsData[dayCellsData.length - 1]?.hMonthName[lang]) || '')} ${hToday.year} AH</span>
+          <span class="cal-nav__hijri">${escapeHTML(dayCellsData[0]?.hMonthName[lang] || '')} \u2013 ${escapeHTML(dayCellsData[dayCellsData.length - 1]?.hMonthName[lang] || '')} ${hToday.year} AH</span>
         </div>
         <button type="button" class="icon-btn" data-action="navigate" data-view="calendar" data-month="${monthParamFor(nextMonth)}" aria-label="Next month">${icon('chevronRight', { size: 18 })}</button>
         ${!isCurrentMonth ? `<button type="button" class="link-btn cal-nav__today" data-action="navigate" data-view="calendar">${t('calendar.today', lang)}</button>` : ''}
@@ -103,17 +122,25 @@ export function renderCalendar(state) {
       </div>
     </section>
 
-    ${events.length ? `
+    ${
+      events.length
+        ? `
     <section class="panel">
       <div class="panel__header"><h2>${t('calendar.events', lang)}</h2></div>
       <div class="event-list">
-        ${events.map((e) => `
+        ${events
+          .map(
+            (e) => `
         <div class="event-row">
           <span class="event-row__date">${e.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { month: 'short', day: 'numeric' })}</span>
           <span class="event-row__label">${escapeHTML(EVENT_LABELS[e.key][lang] || EVENT_LABELS[e.key].en)}</span>
-        </div>`).join('')}
+        </div>`
+          )
+          .join('')}
       </div>
       <p class="panel__subtext">${t('calendar.gregorian', lang)} \u2014 estimates based on the tabular calendar; may differ by a day from local moon-sighting announcements.</p>
-    </section>` : ''}
+    </section>`
+        : ''
+    }
   </section>`;
 }

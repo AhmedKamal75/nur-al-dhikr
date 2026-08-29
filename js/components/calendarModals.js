@@ -13,21 +13,30 @@ const RECURRENCE_LABEL_KEY = {
   once: 'calendar.recurOnce',
   daily: 'calendar.recurDaily',
   interval: 'calendar.recurInterval',
-  range: 'calendar.recurRange'
+  range: 'calendar.recurRange',
 };
 
 function formatDateLabel(dateKeyStr, lang) {
   const d = new Date(dateKeyStr + 'T00:00:00');
   const h = toHijri(d);
-  const g = d.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const g = d.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
   const hLabel = `${h.day} ${h.monthName[lang] || h.monthName.en} ${h.year} AH`;
   return { g, hLabel };
 }
 
 function recurrenceSummary(note, lang) {
   if (note.recurrence === 'once') return t('calendar.recurOnce', lang);
-  if (note.recurrence === 'daily') return note.endDate ? `${t('calendar.recurDaily', lang)} \u2192 ${note.endDate}` : t('calendar.recurDaily', lang);
-  if (note.recurrence === 'interval') return t('calendar.recurIntervalSummary', lang, { n: note.intervalDays || 1 });
+  if (note.recurrence === 'daily')
+    return note.endDate
+      ? `${t('calendar.recurDaily', lang)} \u2192 ${note.endDate}`
+      : t('calendar.recurDaily', lang);
+  if (note.recurrence === 'interval')
+    return t('calendar.recurIntervalSummary', lang, { n: note.intervalDays || 1 });
   if (note.recurrence === 'range') return `${note.startDate} \u2192 ${note.endDate}`;
   return '';
 }
@@ -38,7 +47,9 @@ export function buildDayDetail(dateKeyStr, state) {
   const { g, hLabel } = formatDateLabel(dateKeyStr, lang);
   const notes = notesForDate(state.calendarNotes, dateKeyStr);
 
-  const noteRows = notes.map((n) => `
+  const noteRows = notes
+    .map(
+      (n) => `
     <div class="day-note-row">
       <div class="day-note-row__body">
         <strong>${escapeHTML(n.title)}</strong>
@@ -49,7 +60,9 @@ export function buildDayDetail(dateKeyStr, state) {
         <button type="button" class="icon-btn" data-action="calendar-edit-note" data-id="${escapeHTML(n.id)}" data-date="${escapeHTML(dateKeyStr)}" aria-label="${t('editor.edit', lang)}">${icon('edit', { size: 15 })}</button>
         <button type="button" class="icon-btn" data-action="calendar-delete-note" data-id="${escapeHTML(n.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 15 })}</button>
       </div>
-    </div>`).join('');
+    </div>`
+    )
+    .join('');
 
   return `
   <div class="day-detail">
@@ -66,7 +79,10 @@ export function buildDayDetail(dateKeyStr, state) {
 export function buildNoteForm(dateKeyStr, note, lang = 'en') {
   const isEdit = !!note;
   const recurrence = note?.recurrence || 'once';
-  const recurOptions = RECURRENCE_TYPES.map((r) => `<option value="${r}" ${recurrence === r ? 'selected' : ''}>${t(RECURRENCE_LABEL_KEY[r], lang)}</option>`).join('');
+  const recurOptions = RECURRENCE_TYPES.map(
+    (r) =>
+      `<option value="${r}" ${recurrence === r ? 'selected' : ''}>${t(RECURRENCE_LABEL_KEY[r], lang)}</option>`
+  ).join('');
 
   return `
   <form class="editor-form note-form" data-form="calendar-note" data-date="${escapeHTML(dateKeyStr)}" data-note-id="${escapeHTML(note?.id || '')}">
@@ -84,11 +100,11 @@ export function buildNoteForm(dateKeyStr, note, lang = 'en') {
     </div>
 
     <div class="note-form__conditional" data-recurrence-group="range" ${recurrence === 'range' ? '' : 'hidden'}>
-      <label class="field">${t('calendar.untilDate', lang)}<input class="input" type="date" name="endDateRange" value="${note?.recurrence === 'range' ? (note?.endDate || '') : ''}" /></label>
+      <label class="field">${t('calendar.untilDate', lang)}<input class="input" type="date" name="endDateRange" value="${note?.recurrence === 'range' ? note?.endDate || '' : ''}" /></label>
     </div>
 
     <div class="note-form__conditional" data-recurrence-group="daily" ${recurrence === 'daily' ? '' : 'hidden'}>
-      <label class="field">${t('calendar.untilDateOptional', lang)}<input class="input" type="date" name="endDateDaily" value="${note?.recurrence === 'daily' ? (note?.endDate || '') : ''}" /></label>
+      <label class="field">${t('calendar.untilDateOptional', lang)}<input class="input" type="date" name="endDateDaily" value="${note?.recurrence === 'daily' ? note?.endDate || '' : ''}" /></label>
     </div>
 
     <div class="toggle-row">

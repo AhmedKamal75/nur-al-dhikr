@@ -46,6 +46,8 @@ export default [
         getComputedStyle: 'readonly',
         DeviceOrientationEvent: 'readonly',
         Audio: 'readonly',
+        CSS: 'readonly',
+        requestSubmit: 'readonly',
       },
     },
     rules: {

@@ -8,6 +8,7 @@ import {
   isLastPage,
   globalAyahNumber,
   ayahAudioUrl,
+  resolvePage,
   surahStartPage,
   juzStartPage,
 } from '../js/mushaf.js';
@@ -92,7 +93,10 @@ describe('globalAyahNumber', () => {
 
 describe('ayahAudioUrl', () => {
   test('builds a CDN URL containing the reciter id and global ayah number', () => {
-    const surahs = [{ number: 1, ayahCount: 7 }, { number: 2, ayahCount: 286 }];
+    const surahs = [
+      { number: 1, ayahCount: 7 },
+      { number: 2, ayahCount: 286 },
+    ];
     const url = ayahAudioUrl(surahs, 'ar.alafasy', 2, 1);
     assert.match(url, /^https:\/\/cdn\.islamic\.network\/quran\/audio\/128\/ar\.alafasy\/8\.mp3$/);
   });
@@ -103,7 +107,7 @@ describe('ayahAudioUrl', () => {
 });
 
 describe('surahStartPage / juzStartPage', () => {
-  const meta = { surahFirstPage: { '1': 1, '2': 2, '9': 187 }, juzFirstPage: { '1': 1, '2': 22 } };
+  const meta = { surahFirstPage: { 1: 1, 2: 2, 9: 187 }, juzFirstPage: { 1: 1, 2: 22 } };
 
   test('looks up known start pages', () => {
     assert.equal(surahStartPage(meta, 2), 2);
@@ -115,5 +119,45 @@ describe('surahStartPage / juzStartPage', () => {
     assert.equal(surahStartPage(null, 2), 1);
     assert.equal(surahStartPage(meta, 999), 1);
     assert.equal(juzStartPage(undefined, 5), 1);
+  });
+});
+
+describe('resolvePage (ayah → mushaf page, v3.12)', () => {
+  // Tiny fixture in the real map's shape ("surah:ayah" → page).
+  const ayahPages = { '1:1': 1, '1:7': 1, '2:255': 42, '114:6': 604 };
+
+  test('resolves known ayahs — the v3.10 build-gate spot checks', () => {
+    assert.equal(resolvePage(ayahPages, 1, 1), 1);
+    assert.equal(resolvePage(ayahPages, 2, 255), 42);
+    assert.equal(resolvePage(ayahPages, 114, 6), 604);
+  });
+
+  test('accepts numeric strings (URL params / dataset values are strings)', () => {
+    assert.equal(resolvePage(ayahPages, '2', '255'), 42);
+    assert.equal(resolvePage(ayahPages, '114', '6'), 604);
+  });
+
+  test('returns null for unknown ayahs, out-of-range, and malformed input', () => {
+    assert.equal(resolvePage(ayahPages, 3, 200), null);
+    assert.equal(resolvePage(ayahPages, 0, 1), null);
+    assert.equal(resolvePage(ayahPages, -1, 5), null);
+    assert.equal(resolvePage(ayahPages, 2, 0), null);
+    assert.equal(resolvePage(ayahPages, 'x', 'y'), null);
+    assert.equal(resolvePage(ayahPages, NaN, 3), null);
+    assert.equal(resolvePage(ayahPages, 2, Infinity), null);
+  });
+
+  test('returns null for missing/malformed maps instead of throwing', () => {
+    assert.equal(resolvePage(null, 1, 1), null);
+    assert.equal(resolvePage(undefined, 1, 1), null);
+    assert.equal(resolvePage('nope', 1, 1), null);
+    assert.equal(resolvePage(42, 1, 1), null);
+  });
+
+  test('THE REGRESSION: the export exists at all (v3.10 shipped without it)', () => {
+    // v3.10 shipped app.js importing this function while the function was
+    // never written — the ENTRY MODULE failed to link and nothing loaded.
+    // If this test fails, the entry link is broken again.
+    assert.equal(typeof resolvePage, 'function');
   });
 });

@@ -201,3 +201,22 @@ export function ramadanKhatmaPreset(today = new Date()) {
 
   return { hijriYear, startDate, targetDate, dailyTarget, days };
 }
+
+/**
+ * True while the most recent khatma completion is fresh enough to deserve
+ * its one-shot celebration bloom (v3.12). Derives purely from the persisted
+ * khatmaHistory stamp — the reducer writes `completedAt` exactly once (the
+ * dispatch that added the 604th page), so this is true only inside the
+ * window after the real moment, and every later re-render is silent.
+ * Pure; `nowMs` injectable for tests.
+ */
+export const KHATMA_CELEBRATION_MS = 1500;
+export function justCompletedKhatma(state, nowMs = Date.now()) {
+  const first = state?.khatmaHistory?.[0];
+  return (
+    !!first &&
+    Number.isFinite(first.completedAt) &&
+    nowMs - first.completedAt >= 0 &&
+    nowMs - first.completedAt < KHATMA_CELEBRATION_MS
+  );
+}

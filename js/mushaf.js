@@ -68,3 +68,29 @@ export function juzStartPage(meta, juzNumber) {
   if (!meta || !meta.juzFirstPage) return 1;
   return clampPage(meta.juzFirstPage[String(juzNumber)] || 1);
 }
+
+/**
+ * Mushaf page carrying a specific ayah, from mushaf-meta.json's ayahPages
+ * map ("surah:ayah" → page, all 6,236 entries, gate-checked at build time
+ * by scripts/build-mushaf-ayah-pages.mjs). Used by the v3.10 follow-along
+ * recitation to flip the Mushaf to the right page as each ayah is recited.
+ * v3.12 NOTE: this export was declared as an app.js dependency in v3.10 but
+ * the function itself never made it into this file — the app's entry module
+ * failed to link from v3.10 onwards and nothing loaded. It is restored here
+ * with the defensive shape every other helper in this file uses, and the
+ * node import gate in tests/motion.test.js now imports app.js ITSELF so a
+ * broken entry link can never ship again.
+ *
+ * @param {Record<string, number>|undefined} ayahPages
+ * @param {number|string} surah
+ * @param {number|string} ayah
+ * @returns {number|null} page number, or null when unresolvable
+ */
+export function resolvePage(ayahPages, surah, ayah) {
+  if (!ayahPages || typeof ayahPages !== 'object') return null;
+  const s = Number(surah);
+  const a = Number(ayah);
+  if (!Number.isFinite(s) || !Number.isFinite(a) || s < 1 || a < 1) return null;
+  const page = ayahPages[`${s}:${a}`];
+  return Number.isFinite(page) ? clampPage(page) : null;
+}

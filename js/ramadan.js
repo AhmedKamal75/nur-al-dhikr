@@ -56,7 +56,11 @@ export function nextRamadan(date = new Date()) {
     if (days >= 0) return { hijriYear: hy, startDate: start, daysUntil: days };
   }
   // Unreachable, but keep the contract total.
-  return { hijriYear: thisYear + 3, startDate: ramadanStartForHijriYear(thisYear + 3), daysUntil: 0 };
+  return {
+    hijriYear: thisYear + 3,
+    startDate: ramadanStartForHijriYear(thisYear + 3),
+    daysUntil: 0,
+  };
 }
 
 /**
@@ -98,7 +102,12 @@ export function fastPhase(now, times, tomorrowFajr) {
   const fajr = times.fajr;
 
   if (nowHours >= fajr && nowHours < maghrib) {
-    return { phase: 'fasting', targetName: 'maghrib', targetHours: maghrib, targetLabelKey: 'ramadan.untilIftar' };
+    return {
+      phase: 'fasting',
+      targetName: 'maghrib',
+      targetHours: maghrib,
+      targetLabelKey: 'ramadan.untilIftar',
+    };
   }
   // Night = [maghrib → midnight → fajr). Two distinct stretches:
   //  - evening (maghrib → midnight): target is TOMORROW's fajr, which as a
@@ -111,7 +120,12 @@ export function fastPhase(now, times, tomorrowFajr) {
   } else {
     target = tomorrowFajr != null && Number.isFinite(tomorrowFajr) ? tomorrowFajr : fajr;
   }
-  return { phase: 'night', targetName: 'fajr', targetHours: target, targetLabelKey: 'ramadan.untilSuhoor' };
+  return {
+    phase: 'night',
+    targetName: 'fajr',
+    targetHours: target,
+    targetLabelKey: 'ramadan.untilSuhoor',
+  };
 }
 
 /** Format milliseconds of remaining time as "H:MM:SS" (or "M:SS" under an hour). */
@@ -138,7 +152,7 @@ export function qadrNightInfo(hijriDay) {
     dayOfRamadan: day,
     isOdd,
     inLastTen,
-    isLikelyQadrNight: inLastTen && isOdd
+    isLikelyQadrNight: inLastTen && isOdd,
   };
 }
 
@@ -157,7 +171,7 @@ export function ramadanLogKey(hijriYear) {
  */
 export function ramadanAlertTimes(times, suhoorOffsetMin = 30) {
   const offset = Number.isFinite(suhoorOffsetMin) && suhoorOffsetMin > 0 ? suhoorOffsetMin : 30;
-  const suhoor = Math.max(0, Math.floor(((times.fajr - offset / 60) * 60)) / 60);
+  const suhoor = Math.max(0, Math.floor((times.fajr - offset / 60) * 60) / 60);
   return { suhoor, iftar: times.maghrib };
 }
 

@@ -23,7 +23,13 @@ export function migrate(raw, fallbackId = 'imported') {
   if (Array.isArray(raw)) {
     return {
       schema_version: SCHEMA_VERSION,
-      metadata: { id: fallbackId, name: { en: fallbackId, ar: fallbackId }, description: { en: '', ar: '' }, version: '1.0.0', source: { en: '', ar: '' } },
+      metadata: {
+        id: fallbackId,
+        name: { en: fallbackId, ar: fallbackId },
+        description: { en: '', ar: '' },
+        version: '1.0.0',
+        source: { en: '', ar: '' },
+      },
       categories: [
         {
           id: `${fallbackId}-general`,
@@ -33,9 +39,9 @@ export function migrate(raw, fallbackId = 'imported') {
           order: 1,
           icon: 'book',
           color: 'slate',
-          items: raw.map((it, idx) => migrateLegacyItem(it, `${fallbackId}-general`, idx))
-        }
-      ]
+          items: raw.map((it, idx) => migrateLegacyItem(it, `${fallbackId}-general`, idx)),
+        },
+      ],
     };
   }
 
@@ -45,21 +51,29 @@ export function migrate(raw, fallbackId = 'imported') {
       schema_version: SCHEMA_VERSION,
       metadata: {
         id: raw.id || fallbackId,
-        name: typeof raw.name === 'string' ? { en: raw.name, ar: '' } : (raw.name || { en: fallbackId, ar: '' }),
+        name:
+          typeof raw.name === 'string'
+            ? { en: raw.name, ar: '' }
+            : raw.name || { en: fallbackId, ar: '' },
         description: { en: '', ar: '' },
         version: '1.0.0',
-        source: { en: '', ar: '' }
+        source: { en: '', ar: '' },
       },
       categories: raw.sections.map((sec, sIdx) => ({
         id: sec.id || `${fallbackId}-cat-${sIdx}`,
         section_id: raw.id || fallbackId,
-        name: typeof sec.category === 'string' ? { en: sec.category, ar: sec.category_ar || '' } : (sec.name || { en: `Section ${sIdx + 1}`, ar: '' }),
+        name:
+          typeof sec.category === 'string'
+            ? { en: sec.category, ar: sec.category_ar || '' }
+            : sec.name || { en: `Section ${sIdx + 1}`, ar: '' },
         description: { en: '', ar: '' },
         order: sIdx + 1,
         icon: sec.icon || 'book',
         color: sec.color || 'slate',
-        items: (sec.items || []).map((it, idx) => migrateLegacyItem(it, sec.id || `${fallbackId}-cat-${sIdx}`, idx))
-      }))
+        items: (sec.items || []).map((it, idx) =>
+          migrateLegacyItem(it, sec.id || `${fallbackId}-cat-${sIdx}`, idx)
+        ),
+      })),
     };
   }
 
@@ -72,9 +86,15 @@ export function migrate(raw, fallbackId = 'imported') {
   console.warn('[migration] Unrecognized document shape; producing an empty library.', raw);
   return {
     schema_version: SCHEMA_VERSION,
-    metadata: { id: fallbackId, name: { en: fallbackId, ar: fallbackId }, description: { en: '', ar: '' }, version: '0.0.0', source: { en: '', ar: '' } },
+    metadata: {
+      id: fallbackId,
+      name: { en: fallbackId, ar: fallbackId },
+      description: { en: '', ar: '' },
+      version: '0.0.0',
+      source: { en: '', ar: '' },
+    },
     categories: [],
-    _legacy: raw
+    _legacy: raw,
   };
 }
 
@@ -88,7 +108,14 @@ function migrateLegacyItem(it, categoryId, idx) {
     arabic: it.arabic || it.ar || it.text || '',
     transliteration: it.transliteration || it.translit || it.transliterated || '',
     translation: it.translation || { en: it.en || it.meaning || '', ar: it.translation_ar || '' },
-    reference: it.reference || { collection: it.source || it.ref || '', book: '', chapter: '', hadith: it.hadith || '', url: '', notes: '' },
+    reference: it.reference || {
+      collection: it.source || it.ref || '',
+      book: '',
+      chapter: '',
+      hadith: it.hadith || '',
+      url: '',
+      notes: '',
+    },
     grade: it.grade || it.authenticity || 'Unknown',
     custom_grade: it.custom_grade || { en: '', ar: '' },
     repetitions: it.repetitions || it.repeat || it.count || 1,
@@ -97,6 +124,6 @@ function migrateLegacyItem(it, categoryId, idx) {
     image: it.image || null,
     tags: it.tags || [],
     related: it.related || [],
-    order: it.order ?? idx
+    order: it.order ?? idx,
   };
 }

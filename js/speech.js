@@ -33,13 +33,21 @@ export function speakItem(item, { onEnd } = {}) {
   stop();
 
   const arVoice = pickVoice('ar');
-  const text = arVoice ? item.arabic : (item.transliteration || item.arabic);
+  const text = arVoice ? item.arabic : item.transliteration || item.arabic;
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = arVoice ? 'ar-SA' : 'en-US';
   if (arVoice) utter.voice = arVoice;
   utter.rate = 0.85;
-  utter.onend = () => { currentUtterance = null; currentItemId = null; onEnd?.(); };
-  utter.onerror = () => { currentUtterance = null; currentItemId = null; onEnd?.(); };
+  utter.onend = () => {
+    currentUtterance = null;
+    currentItemId = null;
+    onEnd?.();
+  };
+  utter.onerror = () => {
+    currentUtterance = null;
+    currentItemId = null;
+    onEnd?.();
+  };
   currentUtterance = utter;
   currentItemId = item.id;
   window.speechSynthesis.speak(utter);

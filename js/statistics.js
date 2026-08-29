@@ -31,7 +31,12 @@ export function monthWindow(statistics, refDate = new Date()) {
   for (let day = 1; day <= daysInMonth; day += 1) {
     const d = new Date(year, month, day);
     const key = dateKey(d);
-    cells.push({ key, date: d, count: statistics.dailyHistory[key]?.recitations || 0, inMonth: true });
+    cells.push({
+      key,
+      date: d,
+      count: statistics.dailyHistory[key]?.recitations || 0,
+      inMonth: true,
+    });
   }
   return cells;
 }
@@ -58,7 +63,8 @@ export function averagePerDay(statistics, days) {
 
 /** How many distinct days have any recorded activity, all time. */
 export function activeDays(statistics) {
-  return Object.values(statistics.dailyHistory || {}).filter((d) => (d.recitations || 0) > 0).length;
+  return Object.values(statistics.dailyHistory || {}).filter((d) => (d.recitations || 0) > 0)
+    .length;
 }
 
 /** Total recitations within the calendar month of refDate (0 for future months). */

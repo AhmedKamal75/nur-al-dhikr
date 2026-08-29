@@ -25,6 +25,7 @@
 }
 .btn--sm {
   padding: var(--space-2) var(--space-4);
+  min-height: var(--touch-target);
   font-size: var(--fs-caption);
 }
 .btn--primary {
@@ -49,12 +50,13 @@
   align-items: stretch;
 }
 .link-btn {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-weight: 600;
   font-size: var(--fs-sm);
   display: inline-flex;
   gap: var(--space-1);
   align-items: center;
+  min-height: var(--touch-target);
   background: none;
   border: none;
   cursor: pointer;
@@ -65,8 +67,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target);
+  height: var(--touch-target);
   border-radius: var(--radius-pill);
   border: none;
   background: transparent;
@@ -79,11 +81,26 @@
 .icon-btn:hover {
   background: var(--color-surface-alt);
 }
+/* Compact visual size with a full-size hit area — for icon buttons that
+   sit inside dense rows (prayer list, card headers). The transparent
+   ::after forwards every tap/click to the button. */
+.icon-btn--sm {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  color: var(--color-text-muted);
+}
+.icon-btn--sm::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: var(--radius-pill);
+}
 .icon-btn--active {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .icon-btn--play.icon-btn--playing {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   background: color-mix(in srgb, var(--color-primary) 14%, transparent);
   animation: playPulse 1.6s ease-in-out infinite;
 }
@@ -101,12 +118,17 @@
   pointer-events: none;
 }
 
-/* ---- Chips ---- */
+/* ---- Chips ----
+   The chip's visual height is ~32px, but its hit area extends to the
+   44px touch target vertically (inset-block -6px). Horizontal expansion
+   is kept tiny (-3px) so adjacent chips in a scroll row never overlap. */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
   padding: var(--space-1) var(--space-3);
+  min-height: 32px;
+  position: relative;
   border-radius: var(--radius-pill);
   font-size: var(--fs-caption);
   font-weight: 600;
@@ -114,6 +136,13 @@
   color: var(--color-text-secondary);
   border: 1px solid transparent;
   white-space: nowrap;
+}
+.chip::after {
+  content: '';
+  position: absolute;
+  inset-block: -6px;
+  inset-inline: -3px;
+  border-radius: var(--radius-pill);
 }
 .chip-row {
   display: flex;
@@ -300,7 +329,7 @@
 .input:focus,
 .textarea:focus,
 .select:focus {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-text);
   box-shadow: var(--shadow-focus);
 }
 
@@ -311,6 +340,12 @@
   background: var(--color-surface-alt);
   border-radius: var(--radius-pill);
   padding: var(--space-3) var(--space-4);
+}
+/* The bare input suppresses its own outline (it sits flush inside the
+   pill), so keyboard focus is shown on the pill itself via focus-within
+   — visible AND elegant, both themes. */
+.search-bar:focus-within {
+  box-shadow: var(--shadow-focus);
 }
 .search-bar__input {
   flex: 1;
@@ -328,15 +363,23 @@
 
 .slider {
   width: 100%;
-  accent-color: var(--color-primary);
+  accent-color: var(--color-primary-text);
 }
 
+/* The switch is 44x26 visually (standard toggle proportions); the label
+   column and row padding give it room, and an invisible pseudo-element
+   pads the hit area up to the 44px touch target without moving layout. */
 .switch {
   position: relative;
   display: inline-block;
   width: 44px;
   height: 26px;
   flex-shrink: 0;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  inset: -9px -6px;
 }
 .switch input {
   opacity: 0;
@@ -404,6 +447,7 @@
 }
 .segmented__btn {
   padding: var(--space-2) var(--space-4);
+  min-height: var(--touch-target);
   border-radius: var(--radius-pill);
   border: none;
   background: none;
@@ -414,7 +458,7 @@
 }
 .segmented__btn--active {
   background: var(--color-surface);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   box-shadow: var(--shadow-sm);
 }
 
@@ -426,10 +470,19 @@
 .swatch {
   width: 36px;
   height: 36px;
+  position: relative;
   border-radius: 50%;
   border: 3px solid transparent;
   background: var(--sw-color);
   cursor: pointer;
+}
+/* hit-area padding up to the 44px target; swatches sit in a 12px-gap
+   flex row, so ±4px keeps neighbors just clear of each other */
+.swatch::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
 }
 .swatch--active {
   border-color: var(--color-text);
@@ -460,20 +513,20 @@
   border-radius: var(--sh-radius);
 }
 .shape-btn__label {
-  font-size: 10px;
+  font-size: var(--fs-caption);
   color: var(--color-text-secondary);
   font-weight: 600;
 }
 .shape-btn--active {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-text);
   background: color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 .shape-btn--active .shape-btn__swatch {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-text);
   background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface-alt));
 }
 .shape-btn--active .shape-btn__label {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 /* ---- Modal / overlay ---- */
@@ -497,7 +550,10 @@
 }
 .modal {
   position: relative;
-  background: var(--color-surface);
+  /* raised surface + deep shadow: the topmost layer must read as above
+     the page even where the page behind is a plain sheet (dark/AMOLED) */
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-lg);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   width: 100%;
   max-width: 480px;
@@ -699,7 +755,7 @@
 }
 .qibla-compass__label {
   fill: var(--color-text-muted);
-  font-size: 14px;
+  font-size: var(--fs-sm);
   font-weight: 700;
   font-family: var(--font-ui);
 }
@@ -709,7 +765,7 @@
   transition: transform var(--dur-base) var(--ease-standard);
 }
 .qibla-compass__needle-head {
-  fill: var(--color-primary);
+  fill: var(--color-primary-text);
 }
 .qibla-compass__needle-shaft {
   stroke: var(--color-border-strong);
@@ -787,7 +843,7 @@
   color: inherit;
 }
 .panel--checklist-summary-link__icon {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   flex-shrink: 0;
 }
 .panel--checklist-summary-link__text {
@@ -828,7 +884,7 @@
 }
 .checklist-history__day--complete .checklist-history__dot {
   background: var(--color-primary);
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-text);
 }
 .checklist-history__label {
   font-size: var(--fs-caption);
@@ -855,7 +911,7 @@
 }
 .checklist-row--checked {
   background: var(--color-success-bg);
-  border-color: var(--color-success);
+  border-color: var(--color-success-text);
 }
 .checklist-row__input {
   position: absolute;
@@ -868,20 +924,20 @@
   flex-shrink: 0;
 }
 .checklist-row--checked .checklist-row__icon {
-  color: var(--color-success);
+  color: var(--color-success-text);
 }
 .checklist-row__label {
   flex: 1;
   font-weight: 500;
 }
 .checklist-row__check {
-  color: var(--color-success);
+  color: var(--color-success-text);
   flex-shrink: 0;
   width: 16px;
 }
 .checklist-row__input:focus-visible ~ .checklist-row__check,
 .checklist-row:has(.checklist-row__input:focus-visible) {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-primary-text);
   outline-offset: 2px;
 }
 
@@ -941,14 +997,14 @@
 }
 .quiz-choice--correct {
   background: var(--color-success-bg);
-  border-color: var(--color-success);
-  color: var(--color-success);
+  border-color: var(--color-success-text);
+  color: var(--color-success-text);
   font-weight: 600;
 }
 .quiz-choice--wrong {
   background: var(--color-danger-bg);
-  border-color: var(--color-danger);
-  color: var(--color-danger);
+  border-color: var(--color-danger-text);
+  color: var(--color-danger-text);
 }
 
 .quiz-feedback {
@@ -973,7 +1029,7 @@
 .quiz-result__score {
   font-size: var(--fs-2xl);
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 /* ==========================================================================
@@ -1034,7 +1090,7 @@
   height: 48px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 .ramadan-hero__labels {
   display: flex;
@@ -1057,7 +1113,7 @@
   font-size: clamp(2.6rem, 12vw, 4rem);
   font-weight: 800;
   letter-spacing: 0.02em;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   line-height: 1.1;
   margin-top: var(--space-3);
 }
@@ -1131,11 +1187,11 @@
 }
 .fast-dot--kept {
   background: var(--color-primary);
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-text);
 }
 .fast-dot--today {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 40%, transparent);
+  border-color: var(--color-accent-text);
+  box-shadow: var(--ring-accent);
 }
 .fast-dot:disabled {
   opacity: 0.55;
@@ -1154,13 +1210,13 @@
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   background: var(--color-warning-bg);
-  color: var(--color-warning);
+  color: var(--color-warning-text);
   font-size: var(--fs-sm);
   font-weight: 600;
 }
 .qadr-banner--odd {
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 
 .panel--ramadan-banner {
@@ -1175,7 +1231,7 @@
   );
 }
 .panel--ramadan-banner__icon {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   display: grid;
   place-items: center;
 }
@@ -1198,10 +1254,10 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .quick-action--ramadan {
-  color: var(--color-primary);
+  color: var(--color-primary-text);
 }
 .quick-action--zakat {
-  color: var(--color-warning);
+  color: var(--color-warning-text);
 }
 
 /* ==========================================================================
@@ -1227,8 +1283,8 @@
   cursor: pointer;
 }
 .chip--basis-active {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--color-primary-text);
+  color: var(--color-primary-text);
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 .zakat-price-row {
@@ -1242,7 +1298,7 @@
   gap: var(--space-3);
 }
 .zakat-field--liability span {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 
 .zakat-result {
@@ -1262,7 +1318,7 @@
   padding: 2px var(--space-3);
   border-radius: 9999px;
   background: var(--color-success-bg);
-  color: var(--color-success);
+  color: var(--color-success-text);
   font-size: var(--fs-sm);
   font-weight: 600;
 }
@@ -1315,7 +1371,7 @@
 .zakat-due__amount {
   font-size: var(--fs-2xl);
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   font-variant-numeric: tabular-nums;
 }
 .zakat-due--fitr {
@@ -1362,7 +1418,7 @@
 
 /* ---- Zakat hawl anniversary chips (v2.5) ---- */
 .zakat-hawl--due {
-  color: var(--color-warning);
+  color: var(--color-warning-text);
   font-weight: 700;
 }
 
@@ -1404,12 +1460,13 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
+  min-height: 48px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
 }
 .reciter-row--active {
-  border-color: var(--color-primary);
+  border-color: var(--color-primary-text);
   background: color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 .reciter-row__main {
@@ -1428,6 +1485,12 @@
 }
 .reciter-row__name {
   font-weight: 600;
+}
+/* v3.15: secondary translator line inside the translation picker rows. */
+.reciter-row__meta {
+  font-weight: 400;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
 }
 .reciter-row__sub {
   font-size: var(--fs-sm);
@@ -1460,6 +1523,7 @@
   justify-content: space-between;
   gap: 4px;
   padding: var(--space-2) var(--space-2);
+  min-height: var(--touch-target);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
@@ -1469,16 +1533,16 @@
   font-size: var(--fs-sm);
 }
 .dl-cell__btn:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--color-primary-text);
+  color: var(--color-primary-text);
 }
 .dl-cell--done .dl-cell__btn {
   border-color: color-mix(in srgb, var(--color-success) 55%, transparent);
   background: var(--color-success-bg);
-  color: var(--color-success);
+  color: var(--color-success-text);
 }
 .dl-cell__bytes {
-  font-size: 10.5px;
+  font-size: var(--fs-caption);
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
@@ -1504,8 +1568,8 @@
 .player-bar__play {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: var(--touch-target);
+  height: var(--touch-target);
   border-radius: 50%;
   background: var(--color-primary);
   color: var(--color-on-primary);
@@ -1539,6 +1603,8 @@
   align-items: center;
   gap: 3px;
   padding: 4px var(--space-2);
+  min-height: 36px;
+  position: relative;
   border-radius: 9999px;
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
@@ -1548,16 +1614,26 @@
   cursor: pointer;
   flex-shrink: 0;
 }
+/* vertical-only hit expansion to 44px — the player-bar head row is 44px
+   tall, so the expanded area stays inside the row and never reaches the
+   seek slider beneath it */
+.player-bar__chip::after {
+  content: '';
+  position: absolute;
+  inset-block: -4px;
+  inset-inline: -2px;
+  border-radius: 9999px;
+}
 .player-bar__chip--on {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
+  border-color: var(--color-primary-text);
+  color: var(--color-primary-text);
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 .player-bar__buffer {
   flex-shrink: 0;
   font-size: var(--fs-caption);
   font-weight: 600;
-  color: var(--color-primary);
+  color: var(--color-primary-text);
   padding: 3px var(--space-2);
   border-radius: 9999px;
   background: color-mix(in srgb, var(--color-primary) 10%, transparent);
@@ -1582,7 +1658,7 @@
   margin-top: var(--space-1);
 }
 .player-bar__time {
-  font-size: 11px;
+  font-size: var(--fs-caption);
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
   min-width: 34px;
@@ -1590,7 +1666,7 @@
 }
 .player-bar__seek {
   flex: 1;
-  accent-color: var(--color-primary);
+  accent-color: var(--color-primary-text);
   height: 18px;
 }
 
@@ -1638,7 +1714,7 @@ body.has-player #main {
   display: block;
 }
 .word-study__tajweed-arabic {
-  font-size: 1.35rem;
+  font-size: calc(1.35rem * var(--arabic-font-scale));
   line-height: 2;
   direction: rtl;
   margin-bottom: var(--space-2);
@@ -1647,7 +1723,7 @@ body.has-player #main {
   display: flex;
   gap: var(--space-2);
   align-items: flex-start;
-  padding: var(--space-1_5, 6px) 0;
+  padding: var(--space-1_5) 0;
 }
 .wti-swatch {
   flex: none;
@@ -1677,7 +1753,7 @@ body.has-player #main {
 .wti-letters {
   align-self: flex-start;
   font-family: var(--font-arabic);
-  font-size: 1.15rem;
+  font-size: calc(1.15rem * var(--arabic-font-scale));
   color: inherit;
   background: var(--color-surface-alt);
   border-radius: 6px;
@@ -1698,6 +1774,7 @@ body.has-player #main {
 .adhan-mode-chip {
   flex: 1;
   padding: var(--space-2) var(--space-3);
+  min-height: var(--touch-target);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface-alt);
@@ -1707,9 +1784,9 @@ body.has-player #main {
   font-weight: 600;
 }
 .adhan-mode-chip--active {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary) inset;
+  border-color: var(--color-primary-text);
+  color: var(--color-primary-text);
+  box-shadow: var(--ring-inset-primary);
   background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface-alt));
 }
 .adhan-variants {
@@ -1731,4 +1808,446 @@ body.has-player #main {
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
   margin-inline-end: auto;
+}
+
+/* ------------------------------------------------------------------ */
+/* Ahadeeth library (v3.9)                                             */
+/* ------------------------------------------------------------------ */
+
+.hadith-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-3);
+}
+
+.hadith-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+}
+.hadith-tile:hover {
+  border-color: var(--color-primary-text);
+  transform: translateY(-1px);
+}
+.hadith-tile__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+.hadith-tile__icon {
+  color: var(--color-primary-text);
+}
+.hadith-tile__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--color-success-text, #15803d);
+  background: color-mix(in srgb, var(--color-success, #15803d) 12%, transparent);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.hadith-tile__badge--ondemand {
+  color: var(--color-text-secondary);
+  background: color-mix(in srgb, var(--color-text-secondary) 12%, transparent);
+}
+.hadith-tile__name {
+  font-weight: 700;
+  font-size: var(--fs-base);
+}
+.hadith-tile__author {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+.hadith-tile__blurb {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.hadith-tile__count {
+  margin-top: var(--space-1);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--color-primary-text);
+}
+
+.hadith-note {
+  margin-top: var(--space-4);
+}
+
+.hadith-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+}
+
+.hadith-controls {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+  margin: var(--space-3) 0;
+}
+.hadith-controls .search-bar__input {
+  flex: 1;
+  min-width: 0;
+}
+.hadith-jump {
+  display: flex;
+  gap: var(--space-1);
+}
+.hadith-jump__input {
+  width: 7.5rem;
+  padding: 0 var(--space-2);
+  min-height: var(--touch-target);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.hadith-controls + .chip-row {
+  margin-bottom: var(--space-3);
+}
+
+.hadith-card {
+  position: relative;
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.hadith-card--target {
+  border-color: var(--color-primary-text);
+  box-shadow: var(--ring-primary);
+}
+.hadith-card__meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.hadith-card__number {
+  font-weight: 700;
+  font-size: var(--fs-caption);
+  color: var(--color-primary-text);
+}
+.hadith-card__section {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+.hadith-card__arabic {
+  font-family: var(--font-arabic, 'Amiri', serif);
+  font-size: calc(1.35rem * var(--arabic-font-scale));
+  line-height: 2;
+  margin-bottom: var(--space-3);
+}
+.hadith-card__translation {
+  font-size: var(--fs-base);
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+.hadith-card__actions {
+  margin-top: var(--space-2);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hadith-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  flex-wrap: wrap;
+}
+.hadith-pager__status {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+
+.panel--hadith-daily .hadith-card {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--color-border) 60%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Continuous follow-along recitation (v3.10)                          */
+/* ------------------------------------------------------------------ */
+
+.quran-reader__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+.quran-reader__recite-progress {
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--color-primary-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The reciting ayah breathes instead of flashing — a soft, calm tint that
+   respects reduce-motion (animations.css global override). */
+.ayah-card--reciting {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+}
+.mushaf-ayah--reciting {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border-radius: var(--radius-xs);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+.icon-btn--recite-follow {
+  color: var(--color-primary-text);
+}
+
+.player-bar--recite .player-bar__head {
+  gap: var(--space-3);
+}
+.player-bar--recite .player-bar__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.player-bar__ayah-counter {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  font-variant-numeric: tabular-nums;
+}
+.player-bar__pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  flex: 0 0 auto;
+  animation: recite-pulse 2.2s ease-in-out infinite;
+}
+@keyframes recite-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .player-bar__pulse {
+    animation: none;
+  }
+}
+
+/* ---- v3.14 Phase C: skeleton shimmer placeholders ---------------------- *
+ * Shape-mirroring placeholders for lazily-loaded surfaces. Bars read as   *
+ * content through --color-surface-alt (theme-aware) and carry a slow      *
+ * sheen sweep; both collapse under the reduce-motion kill rules.          */
+.sk {
+  display: block;
+  width: var(--sk-w, 100%);
+  height: var(--sk-h, 10px);
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-alt);
+  position: relative;
+  overflow: hidden;
+}
+.sk::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--sk-sheen), transparent);
+  animation: sk-sweep 1.4s var(--ease-standard) infinite;
+}
+@keyframes sk-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
+.sk--badge {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+.sk--chip {
+  width: 48px;
+  height: 20px;
+  border-radius: 999px;
+}
+.sk--arabic {
+  height: 20px;
+  border-radius: var(--radius-sm);
+}
+.sk--paper {
+  height: 13px;
+  background: var(--mushaf-paper-ink, var(--color-text));
+  opacity: 0.16;
+}
+.sk-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) 0;
+}
+.sk-block--cards {
+  gap: var(--space-3);
+}
+/* mirrors .surah-grid > .surah-tile */
+.sk-surah-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+}
+.sk-tile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+.sk-tile__lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+/* mirrors .reciter-list > .reciter-row */
+.sk-reciter-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+}
+.sk-reciter-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+/* mirrors .ayah-card */
+.sk-ayah-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+.sk-ayah-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+/* mirrors the hadith .panel body */
+.sk-hadith-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sk-hadith-card__body,
+.sk-hadith-card__chips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sk-hadith-card__chips {
+  flex-direction: row;
+}
+/* mirrors a mushaf paper page (ink-tinted lines, no card chrome) */
+.sk-mushaf-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+}
+[data-reduce-motion='true'] .sk::after {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sk::after {
+    animation: none;
+  }
+}
+
+/* ---- v3.14 Phase C: instant tap feedback (optimistic UI) ---------------- *
+ * Same press contract Phase B gave nav items and chips, extended to the    *
+ * two surfaces where a tap must feel answered before the eye moves: the    *
+ * habit checklist rows and the prayer-log cycle buttons. Instant transform *
+ * (not an animation) so it reads as the control being pressed, and the     *
+ * release lands as soon as the state patch does.                           */
+.checklist-row:active .checklist-row__icon,
+.checklist-row:active .checklist-row__check {
+  transform: scale(0.96);
+}
+.checklist-row__icon,
+.checklist-row__check {
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+.prayer-log-btn:active {
+  transform: scale(0.94);
+}
+[data-reduce-motion='true'] .checklist-row:active .checklist-row__icon,
+[data-reduce-motion='true'] .checklist-row:active .checklist-row__check,
+[data-reduce-motion='true'] .prayer-log-btn:active {
+  transform: none;
+}
+
+/* ---- v3.14 Phase C: in-flight download state ---------------------------- */
+.dl-cell--busy .dl-cell__btn {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.dl-cell__spinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-primary-text);
+  animation: dl-spin 0.8s linear infinite;
+}
+@keyframes dl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+[data-reduce-motion='true'] .dl-cell__spinner {
+  animation: none;
+  border-top-color: var(--color-border);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dl-cell__spinner {
+    animation: none;
+  }
 }

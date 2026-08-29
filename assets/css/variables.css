@@ -12,43 +12,57 @@
 
 :root {
   /* ---- Neutral scale (light mode) ---- */
-  --color-bg: #FAF9F5;
-  --color-surface: #FFFFFF;
-  --color-surface-alt: #F1EFE7;
-  --color-surface-raised: #FFFFFF;
-  --color-border: #E7E4D9;
-  --color-border-strong: #D3CFC0;
-  --color-text: #201F1A;
-  --color-text-secondary: #57554B;
-  --color-text-muted: #716D5C;
+  --color-bg: #faf9f5;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f1efe7;
+  --color-surface-raised: #ffffff;
+  --color-border: #e7e4d9;
+  --color-border-strong: #d3cfc0;
+  --color-text: #201f1a;
+  --color-text-secondary: #57554b;
+  --color-text-muted: #716d5c;
   --color-overlay: rgba(20, 20, 16, 0.48);
 
   /* ---- Brand (palette-driven; theme.js sets the -raw values) ---- */
-  --color-primary-raw: #0F766E;
-  --color-accent-raw: #10B981;
+  --color-primary-raw: #0f766e;
+  --color-accent-raw: #10b981;
   --color-primary: var(--color-primary-raw);
   --color-accent: var(--color-accent-raw);
-  --color-on-primary: #FFFFFF;
+  --color-on-primary: #ffffff;
 
   /* ---- Semantic ---- */
-  --color-danger: #B91C1C;
-  --color-danger-bg: #FEF2F2;
-  --color-success: #15803D;
-  --color-success-bg: #F0FDF4;
-  --color-warning: #B45309;
-  --color-warning-bg: #FFFBEB;
+  --color-danger: #b91c1c;
+  --color-danger-bg: #fef2f2;
+  --color-success: #15803d;
+  --color-success-bg: #f0fdf4;
+  --color-warning: #b45309;
+  --color-warning-bg: #fffbeb;
+
+  /* ---- Foreground variants (v3.11 Phase A) ----
+     color/fill/stroke/border-color usages point at these, fills at the
+     originals. In light mode they are the same values, so nothing changes
+     visually; in dark mode the -text variants are brightened so every
+     brand/semantic FOREGROUND holds WCAG AA (4.5:1) on every surface it
+     renders on — audited by scripts/css-contrast-audit.mjs and gated in
+     tests/cssDesign.test.js. */
+  --color-primary-text: var(--color-primary);
+  --color-accent-text: var(--color-accent);
+  --color-danger-text: var(--color-danger);
+  --color-success-text: var(--color-success);
+  --color-warning-text: var(--color-warning);
 
   /* ---- Grade chip colors ---- */
-  --grade-quran: #0F766E;
-  --grade-sahih: #15803D;
-  --grade-hasan: #0369A1;
-  --grade-daif: #B45309;
-  --grade-athar: #6D28D9;
-  --grade-custom: #57534E;
-  --grade-unknown: #78716C;
+  --grade-quran: #0f766e;
+  --grade-sahih: #15803d;
+  --grade-hasan: #0369a1;
+  --grade-daif: #b45309;
+  --grade-athar: #6d28d9;
+  --grade-custom: #57534e;
+  --grade-unknown: #78716c;
 
   /* ---- Spacing scale (4px base) ---- */
   --space-1: 4px;
+  --space-1_5: 6px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
@@ -59,22 +73,39 @@
   --space-9: 56px;
   --space-10: 72px;
 
-  /* ---- Radius (shape-driven) ---- */
+  /* ---- Radius (shape-driven) ----
+     --radius-xs stays fixed: it is for inline micro-details (tappable
+     ayah spans, swatches) that must not change with the shape setting. */
   --radius-card: 20px;
+  --radius-xs: 4px;
   --radius-sm: calc(var(--radius-card) * 0.4);
   --radius-md: calc(var(--radius-card) * 0.7);
   --radius-lg: var(--radius-card);
   --radius-pill: 999px;
 
-  /* ---- Shadows ---- */
+  /* ---- Shadows & rings ----
+     --ring-* are the shared "selected" treatment (2px halo); components
+     must use them instead of hand-rolled color-mix rings. */
   --shadow-sm: 0 1px 2px rgba(20, 20, 16, 0.06);
   --shadow-md: 0 4px 16px rgba(20, 20, 16, 0.08);
   --shadow-lg: 0 12px 32px rgba(20, 20, 16, 0.12);
-  --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-primary-text) 40%, transparent);
+  --ring-primary: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent);
+  --ring-accent: 0 0 0 2px color-mix(in srgb, var(--color-accent) 45%, transparent);
+  --ring-inset-primary: inset 0 0 0 1px var(--color-primary);
+
+  /* ---- Touch targets (WCAG 2.5.5 / iOS HIG) ----
+     Standalone controls are at least this large; densely-packed inline
+     targets (in-text words, grid dots) use hit-area expansion or rely on
+     the WCAG 2.5.8 inline exception — documented at each site. */
+  --touch-target: 44px;
 
   /* ---- Typography ---- */
-  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-arabic: 'Amiri', 'Traditional Arabic', 'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif;
+  --font-ui:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-arabic:
+    'Amiri', 'Traditional Arabic', 'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
   --font-scale: 1;
@@ -107,44 +138,56 @@
   --dur-slow: 280ms;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* v3.14: skeleton shimmer highlight (translucent, theme-independent) */
+  --sk-sheen: rgba(255, 255, 255, 0.5);
 }
 
-[data-theme="dark"] {
-  --color-bg: #0C0F0D;
+[data-theme='dark'] {
+  --color-bg: #0c0f0d;
   --color-surface: #131715;
-  --color-surface-alt: #181D1A;
-  --color-surface-raised: #1B211D;
-  --color-border: #262C27;
-  --color-border-strong: #333A33;
-  --color-text: #EDEBE3;
-  --color-text-secondary: #B7B4A8;
-  --color-text-muted: #938F80;
+  --color-surface-alt: #181d1a;
+  --color-surface-raised: #1b211d;
+  --color-border: #262c27;
+  --color-border-strong: #333a33;
+  --color-text: #edebe3;
+  --color-text-secondary: #b7b4a8;
+  --color-text-muted: #938f80;
   --color-overlay: rgba(0, 0, 0, 0.6);
-  --color-on-primary: #FFFFFF;
+  --color-on-primary: #ffffff;
 
-  --color-danger-bg: #2A1414;
-  --color-success-bg: #0F2418;
-  --color-warning-bg: #2A2010;
+  --color-danger-bg: #2a1414;
+  --color-success-bg: #0f2418;
+  --color-warning-bg: #2a2010;
+
+  /* Brightened foregrounds: 50/50 mix toward white holds ≥ 4.5:1 for
+     EVERY bundled palette on EVERY dark surface (worst case 4.85 —
+     verified in scripts/css-contrast-audit.mjs). Fills keep the raw
+     palette colors, so --color-on-primary stays white. */
+  --color-primary-text: color-mix(in srgb, var(--color-primary-raw) 50%, white);
+  --color-accent-text: color-mix(in srgb, var(--color-accent-raw) 50%, white);
+  --color-danger-text: #f87171;
+  --color-success-text: #4ade80;
+  --color-warning-text: #fbbf24;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
 }
 
-[data-high-contrast="true"] {
+[data-high-contrast='true'] {
   --color-border: var(--color-border-strong);
   --color-text-secondary: var(--color-text);
   --color-text-muted: var(--color-text-secondary);
 }
 
-[data-high-contrast="true"][data-theme="light"] {
-  --color-bg: #FFFFFF;
-  --color-surface-alt: #F0F0EC;
+[data-high-contrast='true'][data-theme='light'] {
+  --color-bg: #ffffff;
+  --color-surface-alt: #f0f0ec;
 }
 
-[data-high-contrast="true"][data-theme="dark"] {
+[data-high-contrast='true'][data-theme='dark'] {
   --color-bg: #000000;
-  --color-surface: #0A0C0B;
+  --color-surface: #0a0c0b;
 }
 
 /* Bundled Amiri (SIL OFL 1.1 — see assets/fonts/OFL.txt), Arabic subset.
@@ -153,14 +196,20 @@
    font-display: swap shows the system fallback instantly, then swaps in. */
 @font-face {
   font-family: 'Amiri';
-  src: local('Amiri'), local('Amiri Regular'), url('../fonts/Amiri-Regular.woff2') format('woff2');
+  src:
+    local('Amiri'),
+    local('Amiri Regular'),
+    url('../fonts/Amiri-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Amiri';
-  src: local('Amiri Bold'), local('Amiri'), url('../fonts/Amiri-Bold.woff2') format('woff2');
+  src:
+    local('Amiri Bold'),
+    local('Amiri'),
+    url('../fonts/Amiri-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -171,7 +220,9 @@
    else (surah list, ayah cards, etc.). Same OFL license, same foundry. */
 @font-face {
   font-family: 'Amiri Quran';
-  src: local('Amiri Quran'), url('../fonts/AmiriQuran.woff2') format('woff2');
+  src:
+    local('Amiri Quran'),
+    url('../fonts/AmiriQuran.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;

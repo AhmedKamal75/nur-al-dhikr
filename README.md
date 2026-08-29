@@ -1,9 +1,10 @@
 # Nūr al-Dhikr (نور الذكر)
 
 An offline-first, installable web app for daily Islamic remembrance —
-Adhkar, Duas, the 99 Names of Allah, prayer times, a Hijri calendar, a
-tasbih counter, a Ramadan fasting companion, a Zakat calculator, and a
-full content editor for adding your own material.
+Adhkar, Duas, the Ahadeeth (the six canonical books, the two Forties), the 99 Names
+of Allah, the complete Qur'an with per-word study, prayer times, a Hijri
+calendar, a tasbih counter, a Ramadan fasting companion, a Zakat
+calculator, and a full content editor for adding your own material.
 
 Built entirely in vanilla HTML, CSS, and JavaScript (ES modules). No build
 step, no framework, no external runtime dependencies, no analytics or
@@ -43,10 +44,11 @@ offline from then on.
   narrator and grading detail), an authenticity grade, repetition count,
   and virtue text.
 - **A complete Qur'an reader** — all 114 surahs, 6,236 ayahs, Arabic text
-  with the Sahih International translation, searchable by surah name or
-  number, fetched lazily (never bloats first load) and cached offline
-  per-surah after first visit. Includes a "Continue Reading" shortcut back
-  to the last surah opened.
+  with a selectable translation (Sahih International by default; Urdu,
+  French, Turkish and Indonesian editions since v3.15), searchable by
+  surah name or number, fetched lazily (never bloats first load) and
+  cached offline per-surah after first visit. Includes a "Continue
+  Reading" shortcut back to the last surah opened.
 - **Offline prayer times** computed from real solar-position astronomy
   (no API calls) — 7 calculation methods, both Asr conventions, and a
   high-latitude fallback (one-seventh-of-night rule) for locations where
@@ -176,6 +178,10 @@ data/
   quran/1.json … 114.json
                         Full Qur'an text (Arabic + Sahih International),
                         one file per surah — fetched lazily, never at boot
+  translations/ur-jalandhry/1.json … id-kemenag/114.json
+                        Four additional translation editions (Urdu, French,
+                        Turkish, Indonesian), slim per-surah overlays merged
+                        onto the corpus at load time (v3.15)
 
 assets/css/           variables → base → layout → components → cards →
                        quran → animations → accessibility (loaded in that order)
@@ -219,7 +225,7 @@ js/
 
 **Data flow is one-directional**: views are pure functions of state that
 return HTML strings; `renderer.js` swaps them into `#main`; every user
-interaction goes through a *single* delegated event listener in `app.js`
+interaction goes through a _single_ delegated event listener in `app.js`
 (click/input/change/submit/keydown on `document`) that dispatches actions
 into `state.js`; the store notifies its one subscriber, which re-applies
 the theme and re-renders. No view ever touches `localStorage`, fetches
@@ -227,7 +233,7 @@ data, or attaches its own listeners.
 
 ## Content sources & accuracy
 
-Adhkar/Duas text is drawn from *Hisn al-Muslim* and the authentic Sunnah
+Adhkar/Duas text is drawn from _Hisn al-Muslim_ and the authentic Sunnah
 (Bukhari, Muslim, Abu Dawud, Tirmidhi, Nasa'i, Ibn Majah, Ahmad), a
 published "100 Duas from the Qur'an and Sunnah" collection (Al-Munajjid),
 and other named Islamic literature sources cited per-item where available.
@@ -272,7 +278,7 @@ guidance.
   always has been, never on first load, and cached offline by the
   service worker after each surah/edition is opened once. The handful of
   very large classical tafsirs (Tabari, Qurtubi, etc.) are deliberately
-  *not* bundled — see `data/tafsir-editions.json` and the README note
+  _not_ bundled — see `data/tafsir-editions.json` and the README note
   above.
 - Audio recitation (`item.audio`) is left `null` throughout — the schema
   supports it, but no audio files are bundled (the reciter system streams

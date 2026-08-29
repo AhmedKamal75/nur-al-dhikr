@@ -13,7 +13,12 @@ describe('qiblaBearing', () => {
   });
 
   test('always returns a value in [0, 360)', () => {
-    for (const [lat, lon] of [[89, 179], [-89, -179], [0, 0], [21.4, 39.8]]) {
+    for (const [lat, lon] of [
+      [89, 179],
+      [-89, -179],
+      [0, 0],
+      [21.4, 39.8],
+    ]) {
       const b = qiblaBearing(lat, lon);
       assert.ok(b >= 0 && b < 360, `${b} out of range for (${lat}, ${lon})`);
     }

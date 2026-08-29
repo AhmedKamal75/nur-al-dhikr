@@ -69,10 +69,14 @@ export function renderQibla(state) {
       </p>
     </div>
 
-    ${sensorSupported && needsPermission ? `
+    ${
+      sensorSupported && needsPermission
+        ? `
     <button type="button" class="btn btn--secondary" data-action="qibla-enable-compass">
       ${icon('compass', { size: 16 })} ${t('qibla.enableCompass', lang)}
-    </button>` : ''}
+    </button>`
+        : ''
+    }
 
     <section class="panel qibla-facts">
       <div class="qibla-fact">
@@ -108,7 +112,7 @@ export function updateQiblaCompassDOM(bearing, heading, accurate, lang) {
   // to wherever the top of the phone is currently pointing, that the person
   // needs to turn toward. When it points straight up, the phone's top edge
   // is aimed at the Qibla.
-  const relative = ((bearing - heading) % 360 + 360) % 360;
+  const relative = (((bearing - heading) % 360) + 360) % 360;
   needle.style.transform = `rotate(${relative}deg)`;
 
   const aligned = relative <= 6 || relative >= 354;

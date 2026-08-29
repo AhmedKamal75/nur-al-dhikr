@@ -2,7 +2,11 @@
    base.css — reset + base element styles
    ========================================================================== */
 
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -22,35 +26,84 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4 { margin: 0; font-weight: 700; line-height: var(--lh-tight); }
-p { margin: 0; }
-ul { margin: 0; padding: 0; list-style: none; }
-button { font: inherit; color: inherit; }
-input, textarea, select { font: inherit; color: inherit; }
-a { color: inherit; text-decoration: none; }
-img, svg { display: block; max-width: 100%; }
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-weight: 700;
+  line-height: var(--lh-tight);
+}
+p {
+  margin: 0;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
 
-[dir="rtl"] body { font-family: var(--font-arabic), var(--font-ui); }
+[dir='rtl'] body {
+  font-family: var(--font-arabic), var(--font-ui);
+}
 
-::selection { background: color-mix(in srgb, var(--color-primary) 30%, transparent); }
+::selection {
+  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
+}
 
 /* Scrollbars (WebKit) */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: var(--radius-pill); border: 2px solid var(--color-bg); }
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-bg);
+}
 
-/* Focus visibility everywhere, keyboard-only */
-:focus { outline: none; }
+/* Focus visibility everywhere, keyboard-only.
+   The outline follows each element's own border-radius in modern engines —
+   the old global `border-radius: 4px` here silently snapped pill buttons
+   and round icons to squares whenever they were keyboard-focused (fixed
+   v3.11 Phase A). --color-primary-text keeps the ring at AA contrast on
+   dark themes too. */
+:focus {
+  outline: none;
+}
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-primary-text);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 .sr-only {
   position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
@@ -69,13 +122,17 @@ img, svg { display: block; max-width: 100%; }
   transition: top var(--dur-base) var(--ease-standard);
   font-weight: 600;
 }
-.skip-link:focus { top: var(--space-4); }
+.skip-link:focus {
+  top: var(--space-4);
+}
 
-[data-reduce-motion="true"] * {
+[data-reduce-motion='true'] * {
   animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
 
-.icon { flex-shrink: 0; }
+.icon {
+  flex-shrink: 0;
+}

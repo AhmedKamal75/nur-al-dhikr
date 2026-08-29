@@ -8,6 +8,7 @@
 import { t } from '../i18n.js';
 import { icon } from '../icons.js';
 import { escapeHTML, pickLocale } from '../utils.js';
+import { wasCelebrated } from '../celebrate.js';
 import { buildHash } from '../router.js';
 import { VIEWS, QUIZ_LENGTH } from '../config.js';
 
@@ -29,10 +30,14 @@ function renderStart(state, lang) {
 function renderFinished(state, lang) {
   const { correctCount } = state.quiz;
   const best = state.quizStats.bestScore;
+  // v3.12: bloom on the finish moment only — wasCelebrated goes false once
+  // the celebration window passes, so lingering on the result screen (or
+  // coming back to it later) never re-runs the animation.
+  const celebrate = wasCelebrated('quiz');
   return `
   <section class="view view--quiz">
     <h1 class="view__title">${t('quiz.done', lang)}</h1>
-    <div class="empty-state quiz-result">
+    <div class="empty-state quiz-result${celebrate ? ' celebrate' : ''}">
       ${icon(correctCount === QUIZ_LENGTH ? 'sparkle' : 'star', { size: 40 })}
       <p class="quiz-result__score" dir="ltr">${correctCount} / ${QUIZ_LENGTH}</p>
       <p class="panel__subtext">${t('quiz.bestScore', lang, { best, total: QUIZ_LENGTH })}</p>
@@ -58,20 +63,22 @@ function renderQuestion(state, lang) {
   const item = entry.item;
   const pct = Math.round((index / deck.length) * 100);
 
-  const choiceButtons = q.choices.map((choiceId) => {
-    const choiceEntry = state.library.itemIndex[choiceId];
-    const label = choiceEntry ? escapeHTML(pickLocale(choiceEntry.item.translation, lang)) : '';
-    let cls = 'quiz-choice';
-    if (revealed) {
-      if (choiceId === q.itemId) cls += ' quiz-choice--correct';
-      else if (choiceId === selectedId) cls += ' quiz-choice--wrong';
-    }
-    return `
+  const choiceButtons = q.choices
+    .map((choiceId) => {
+      const choiceEntry = state.library.itemIndex[choiceId];
+      const label = choiceEntry ? escapeHTML(pickLocale(choiceEntry.item.translation, lang)) : '';
+      let cls = 'quiz-choice';
+      if (revealed) {
+        if (choiceId === q.itemId) cls += ' quiz-choice--correct';
+        else if (choiceId === selectedId) cls += ' quiz-choice--wrong';
+      }
+      return `
     <button type="button" class="${cls}" data-action="quiz-answer" data-item-id="${choiceId}" ${revealed ? 'disabled' : ''}>
       ${label}
       ${revealed && choiceId === q.itemId ? icon('check', { size: 16 }) : ''}
     </button>`;
-  }).join('');
+    })
+    .join('');
 
   return `
   <section class="view view--quiz">
@@ -88,17 +95,23 @@ function renderQuestion(state, lang) {
 
     <div class="quiz-choices">${choiceButtons}</div>
 
-    ${/* FIX (review v3.3 A6): the transliteration moved into the
+    ${
+      /* FIX (review v3.3 A6): the transliteration moved into the
         post-answer reinforcement below — showing it in the prompt leaked
-        the correct answer ("Al-Qadir" ↔ "The All-Able"). */ ''}
-    ${revealed ? `
+        the correct answer ("Al-Qadir" ↔ "The All-Able"). */ ''
+    }
+    ${
+      revealed
+        ? `
     <div class="quiz-feedback">
       <p class="quiz-prompt__translit">${escapeHTML(item.transliteration)}</p>
       ${item.virtues?.[lang] ? `<p class="quiz-feedback__virtue">${escapeHTML(item.virtues[lang])}</p>` : ''}
       <button type="button" class="btn btn--primary" data-action="quiz-next">
         ${index + 1 >= deck.length ? t('quiz.seeResults', lang) : t('quiz.next', lang)} ${icon('chevronRight', { size: 16 })}
       </button>
-    </div>` : ''}
+    </div>`
+        : ''
+    }
   </section>`;
 }
 

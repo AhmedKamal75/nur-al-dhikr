@@ -7,15 +7,49 @@
  * announcements — always defer to a local authority for worship timing.
  */
 
-const HIJRI_MONTHS_EN = ['Muharram', 'Safar', "Rabi' al-Awwal", "Rabi' al-Thani", 'Jumada al-Awwal', 'Jumada al-Thani', 'Rajab', "Sha'ban", 'Ramadan', 'Shawwal', "Dhu al-Qa'dah", 'Dhu al-Hijjah'];
-const HIJRI_MONTHS_AR = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الآخر', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+const HIJRI_MONTHS_EN = [
+  'Muharram',
+  'Safar',
+  "Rabi' al-Awwal",
+  "Rabi' al-Thani",
+  'Jumada al-Awwal',
+  'Jumada al-Thani',
+  'Rajab',
+  "Sha'ban",
+  'Ramadan',
+  'Shawwal',
+  "Dhu al-Qa'dah",
+  'Dhu al-Hijjah',
+];
+const HIJRI_MONTHS_AR = [
+  'محرم',
+  'صفر',
+  'ربيع الأول',
+  'ربيع الآخر',
+  'جمادى الأولى',
+  'جمادى الآخرة',
+  'رجب',
+  'شعبان',
+  'رمضان',
+  'شوال',
+  'ذو القعدة',
+  'ذو الحجة',
+];
 
 /** Gregorian calendar date -> Julian Day Number (integer, noon convention dropped for this use). */
 function gregorianToJDN(year, month, day) {
   const a = Math.floor((14 - month) / 12);
   const y = year + 4800 - a;
   const m = month + 12 * a - 3;
-  return day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+  return (
+    day +
+    Math.floor((153 * m + 2) / 5) +
+    365 * y +
+    Math.floor(y / 4) -
+    Math.floor(y / 100) +
+    Math.floor(y / 400) -
+    32045
+  );
 }
 
 /** Julian Day Number -> Gregorian calendar date. */
@@ -37,8 +71,14 @@ function jdnToHijri(jdn) {
   let l = jdn - 1948440 + 10632;
   const n = Math.floor((l - 1) / 10631);
   l = l - 10631 * n + 354;
-  const j = Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) + Math.floor(l / 5670) * Math.floor((43 * l) / 15238);
-  l = l - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29;
+  const j =
+    Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) +
+    Math.floor(l / 5670) * Math.floor((43 * l) / 15238);
+  l =
+    l -
+    Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) -
+    Math.floor(j / 16) * Math.floor((15238 * j) / 43) +
+    29;
   const month = Math.floor((24 * l) / 709);
   const day = l - Math.floor((709 * month) / 24);
   const year = 30 * n + j - 30;
@@ -53,7 +93,8 @@ function hijriToJDN(year, month, day) {
     30 * month -
     Math.floor((month - 1) / 2) +
     day +
-    1948440 - 385
+    1948440 -
+    385
   );
 }
 
@@ -65,7 +106,7 @@ export function toHijri(date, adjustDays = 0) {
     year: h.year,
     month: h.month, // 1-12
     day: h.day,
-    monthName: { en: HIJRI_MONTHS_EN[h.month - 1], ar: HIJRI_MONTHS_AR[h.month - 1] }
+    monthName: { en: HIJRI_MONTHS_EN[h.month - 1], ar: HIJRI_MONTHS_AR[h.month - 1] },
   };
 }
 
@@ -100,7 +141,8 @@ export function islamicEventsForYear(gregorianYear, adjustDays = 0) {
   for (const hy of [approxHijriYear - 1, approxHijriYear, approxHijriYear + 1]) {
     const push = (month, day, key) => {
       const g = toGregorian(hy, month, day, adjustDays);
-      if (g.getFullYear() === gregorianYear) events.push({ key, date: g, hijri: { year: hy, month, day } });
+      if (g.getFullYear() === gregorianYear)
+        events.push({ key, date: g, hijri: { year: hy, month, day } });
     };
     push(1, 1, 'hijriNewYear');
     push(1, 10, 'ashura');
@@ -119,13 +161,13 @@ export function islamicEventsForYear(gregorianYear, adjustDays = 0) {
 export const EVENT_LABELS = Object.freeze({
   hijriNewYear: { en: 'Islamic New Year', ar: 'رأس السنة الهجرية' },
   ashura: { en: 'Day of Ashura', ar: 'يوم عاشوراء' },
-  mawlid: { en: "Mawlid an-Nabi", ar: 'المولد النبوي' },
+  mawlid: { en: 'Mawlid an-Nabi', ar: 'المولد النبوي' },
   ramadanStart: { en: 'Start of Ramadan', ar: 'بداية رمضان' },
   laylatAlQadr: { en: 'Laylat al-Qadr (estimated 27th)', ar: 'ليلة القدر (تقديرًا الليلة ٢٧)' },
   eidFitr: { en: 'Eid al-Fitr', ar: 'عيد الفطر' },
   hajjStart: { en: 'Hajj Begins', ar: 'بداية الحج' },
   arafah: { en: 'Day of Arafah', ar: 'يوم عرفة' },
-  eidAdha: { en: 'Eid al-Adha', ar: 'عيد الأضحى' }
+  eidAdha: { en: 'Eid al-Adha', ar: 'عيد الأضحى' },
 });
 
 /** True if the given Hijri day-of-month is one of the three "White Days" (13, 14, 15). */

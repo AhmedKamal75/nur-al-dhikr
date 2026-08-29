@@ -6,7 +6,7 @@
 
 export const APP_NAME = 'Nūr al-Dhikr';
 export const APP_NAME_AR = 'نور الذكر';
-export const APP_VERSION = '3.6.0';
+export const APP_VERSION = '3.16.0';
 export const SCHEMA_VERSION = 2;
 export const STORAGE_KEY = 'nurAlDhikr:v2:state';
 export const DB_NAME = 'nurAlDhikrDB';
@@ -15,6 +15,82 @@ export const DB_VERSION = 1;
 export const CATALOG_URL = 'data/catalog.json';
 export const QURAN_META_URL = 'data/quran-meta.json';
 export const QURAN_SURAH_URL = (n) => `data/quran/${encodeURIComponent(n)}.json`;
+
+// v3.15: selectable Qur'an translations. The DEFAULT edition (en-sahih) is
+// inline in data/quran/*.json exactly as it has always been; the four
+// additional editions are slim per-surah overlays under
+// data/translations/{id}/{surah}.json, lazily fetched (the service worker's
+// stale-while-revalidate data rule covers nested paths) and merged onto the
+// corpus doc by app.js before dispatch — so both readers, deep links and
+// the search index all render/index the selected edition with zero
+// per-view branching. Provenance: data/SOURCES.md + CREDITS.md.
+export const TRANSLATION_EDITIONS = [
+  {
+    id: 'en-sahih',
+    native: 'English',
+    lang: 'English',
+    author: 'Sahih International',
+    dir: 'ltr',
+    // en-sahih is inline in the corpus — no overlay files exist for it.
+    inline: true,
+  },
+  {
+    id: 'ur-jalandhry',
+    native: 'اردو',
+    lang: 'Urdu',
+    author: 'Fateh Muhammad Jalandhry',
+    dir: 'rtl',
+  },
+  {
+    id: 'fr-hamidullah',
+    native: 'Français',
+    lang: 'French',
+    author: 'Muhammad Hamidullah',
+    dir: 'ltr',
+  },
+  {
+    id: 'tr-diyanet',
+    native: 'Türkçe',
+    lang: 'Turkish',
+    author: 'Diyanet İşleri Başkanlığı',
+    dir: 'ltr',
+  },
+  {
+    id: 'id-kemenag',
+    native: 'Bahasa Indonesia',
+    lang: 'Indonesian',
+    author: 'Indonesian Islamic Affairs Ministry (Kemenag)',
+    dir: 'ltr',
+  },
+];
+export const DEFAULT_TRANSLATION_EDITION = 'en-sahih';
+export const TRANSLATION_URL = (edKey, n) =>
+  `data/translations/${encodeURIComponent(edKey)}/${encodeURIComponent(n)}.json`;
+
+/**
+ * Pure overlay: attach an edition's translation texts onto a corpus surah
+ * doc WITHOUT mutating either input. Falls back to the doc's own text
+ * (Sahih International) per-ayah whenever the overlay record is missing or
+ * empty, so a partial/corrupt overlay file can never blank a verse.
+ */
+export function overlayTranslation(doc, tdoc) {
+  if (!doc || !Array.isArray(doc.ayahs)) return doc;
+  const rows = tdoc && Array.isArray(tdoc.ayahs) ? tdoc.ayahs : null;
+  if (!rows || rows.length !== doc.ayahs.length) return doc;
+  return {
+    ...doc,
+    ayahs: doc.ayahs.map((a, i) => {
+      const t =
+        rows[i] && typeof rows[i].translation === 'string' ? rows[i].translation.trim() : '';
+      return t ? { ...a, translation: t } : { ...a };
+    }),
+  };
+}
+
+/** Allowlist guard for the persisted quranTranslation setting. */
+export function asTranslationEdition(v, fallback = DEFAULT_TRANSLATION_EDITION) {
+  return TRANSLATION_EDITIONS.some((e) => e.id === v) ? v : fallback;
+}
 export const MUSHAF_META_URL = 'data/mushaf-meta.json';
 export const MUSHAF_PAGE_URL = (n) => `data/mushaf/${encodeURIComponent(n)}.json`;
 export const MUSHAF_PAGE_COUNT = 604;
@@ -56,6 +132,16 @@ export const TAFSIR_REMOTE_URL = (slug, n) =>
 export const TAJWEED_PRACTICE_POOL_URL = 'data/tajweed-practice.json';
 
 /**
+ * Ahadeeth library (v3.9): one compact JSON per book + an index, built by
+ * scripts/build-hadith.mjs from public-domain collection texts (see
+ * data/SOURCES.md). The small bundled books (Nawawi/Qudsi) are SW-precached;
+ * the two big Sahihs are fetched on first open and cached offline forever
+ * by the service worker's stale-while-revalidate data rule.
+ */
+export const HADITH_INDEX_URL = 'data/hadith/index.json';
+export const HADITH_BOOK_URL = (id) => `data/hadith/${encodeURIComponent(id)}.json`;
+
+/**
  * Verse-by-verse reciters available via the Al Quran Cloud CDN
  * (cdn.islamic.network — free, no API key, documented for direct client-side
  * use: https://alquran.cloud/cdn). Playback happens straight from the
@@ -91,6 +177,7 @@ export const VIEWS = Object.freeze({
   ZAKAT: 'zakat',
   AUDIO: 'audio',
   QURAN: 'quran',
+  HADITH: 'hadith',
   MUSHAF: 'mushaf',
   SETTINGS: 'settings',
   ABOUT: 'about',
@@ -223,13 +310,19 @@ export const PALETTES = Object.freeze([
     primary: '#6D28D9',
     accent: '#A78BFA',
   },
-  { id: 'amber', name: { en: 'Amber', ar: 'كهرماني' }, primary: '#B45309', accent: '#FBBF24' },
+  /* amber's primary is amber-800 (not -700): it is used as TEXT on
+     surface-alt chips, and amber-700 measured 4.36:1 there — under AA.
+     Same fix as ivory below; picked by scripts/css-contrast-audit.mjs. */
+  { id: 'amber', name: { en: 'Amber', ar: 'كهرماني' }, primary: '#92400E', accent: '#FBBF24' },
   { id: 'slate', name: { en: 'Slate', ar: 'رمادي' }, primary: '#334155', accent: '#94A3B8' },
   { id: 'rose', name: { en: 'Rose', ar: 'وردي' }, primary: '#BE123C', accent: '#FB7185' },
   { id: 'forest', name: { en: 'Forest', ar: 'أخضر غابي' }, primary: '#14532D', accent: '#4ADE80' },
   { id: 'ocean', name: { en: 'Ocean', ar: 'محيطي' }, primary: '#0369A1', accent: '#38BDF8' },
   { id: 'midnight', name: { en: 'Midnight', ar: 'ليلي' }, primary: '#111827', accent: '#6B7280' },
-  { id: 'ivory', name: { en: 'Ivory', ar: 'عاجي' }, primary: '#78716C', accent: '#A8A29E' },
+  /* ivory's primary is stone-600 (not -500): it is used as TEXT on
+     surface-alt chips, and stone-500 measured 4.17:1 there — under AA.
+     Picked by scripts/css-contrast-audit.mjs. */
+  { id: 'ivory', name: { en: 'Ivory', ar: 'عاجي' }, primary: '#57534E', accent: '#A8A29E' },
 ]);
 
 export const SHAPES = Object.freeze([
@@ -256,8 +349,15 @@ export const DEFAULT_SETTINGS = Object.freeze({
   highContrast: false,
   soundEnabled: true,
   hapticsEnabled: true,
+  // v3.14 Phase C: optional soft sounds — off by default (the owner-facing
+  // rule from the Tier-2 sound-design item: opt-in, never imposed).
+  pageTurnSound: false,
+  khatmaChimeSound: false,
   showTransliteration: true,
   showTranslation: true,
+  // v3.15: which Qur'an translation edition both readers show. Allowlist-
+  // sanitized (garbage/unknown → en-sahih); overlay files load lazily.
+  quranTranslation: 'en-sahih',
   autoAdvanceFocus: false,
   dailyGoal: 100,
   reciter: 'ar.alafasy',
@@ -265,7 +365,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   navCollapsed: false,
   // Full-surah audio player preferences. moshafId points into the
   // bundled reciters catalog (data/reciters.json) or a custom entry below.
-  audio: { moshafId: null, rate: 1, repeat: 'off' },
+  // ayahFollow: continuous recitation keeps the view synced — highlight
+  // + auto-scroll (classic reader) and page flips (Mushaf). Persisted so
+  // "I read with my eyes on the page" survives reloads.
+  audio: { moshafId: null, rate: 1, repeat: 'off', ayahFollow: true },
   // User-added reciters: [{ id, nameEn, nameAr, rewaya, server }]. Lets a
   // person wire in ANY server following the 001.mp3..114.mp3 pattern.
   customReciters: [],
@@ -413,6 +516,7 @@ function sanitizeAudio(raw) {
     moshafId: p.moshafId == null ? null : asShortStr(p.moshafId, null, 80),
     rate: asNumber(p.rate, d.rate, 0.5, 2),
     repeat: p.repeat === 'one' ? 'one' : 'off',
+    ayahFollow: asBool(p.ayahFollow, d.ayahFollow ?? true),
   };
 }
 
@@ -448,8 +552,11 @@ export function sanitizeSettings(raw) {
     highContrast: asBool(s.highContrast, d.highContrast),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
     hapticsEnabled: asBool(s.hapticsEnabled, d.hapticsEnabled),
+    pageTurnSound: asBool(s.pageTurnSound, d.pageTurnSound),
+    khatmaChimeSound: asBool(s.khatmaChimeSound, d.khatmaChimeSound),
     showTransliteration: asBool(s.showTransliteration, d.showTransliteration),
     showTranslation: asBool(s.showTranslation, d.showTranslation),
+    quranTranslation: asTranslationEdition(s.quranTranslation, d.quranTranslation),
     autoAdvanceFocus: asBool(s.autoAdvanceFocus, d.autoAdvanceFocus),
     dailyGoal: Math.round(asNumber(s.dailyGoal, d.dailyGoal, 1, 10000)),
     reciter: asShortStr(s.reciter, d.reciter, 60),

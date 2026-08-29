@@ -10,6 +10,7 @@
 import { t } from '../i18n.js';
 import { icon } from '../icons.js';
 import { escapeHTML, pickLocale } from '../utils.js';
+import { skeletonLines } from '../components/skeleton.js';
 import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../config.js';
 import { classifyAyahTajweed, classifyWordTajweed, wordUnits, TAJWEED_RULES } from '../tajweed.js';
 import {
@@ -276,7 +277,7 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
   const lang = state.settings.language;
   const editions = state.tafsirEditions;
   if (!editions) {
-    return `<div class="tafsir-panel"><p class="panel__subtext">${t('tafsir.loading', lang)}</p></div>`;
+    return `<div class="tafsir-panel">${skeletonLines(lang, [46, 94, 90, 66])}</div>`;
   }
   const { bundled, remote } = splitEditions(editions);
   const active = activeId || state.settings.mushafPrefs.defaultTafsir || bundled[0]?.id;
@@ -298,7 +299,7 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
         <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: activeEdition.authorEn, ar: activeEdition.authorAr }, lang))}</p>
         <div class="tafsir-panel__body" dir="rtl" lang="ar">${formatArabicCommentary(text)}</div>`;
     } else if (activeEdition.bundled) {
-      body = `<div class="tafsir-panel__loading">${icon('quran', { size: 22 })}<p>${t('tafsir.loading', lang)}</p></div>`;
+      body = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
     } else {
       body = `
         <div class="tafsir-panel__remote">

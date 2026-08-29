@@ -27,7 +27,16 @@ function normalizeReference(ref) {
   // explicit, type-checked fields rather than relying on an unchecked
   // spread, so a malformed/imported reference object can't smuggle a
   // non-string value through into rendering.
-  const base = { collection: '', book: '', chapter: '', hadith: '', narrator: '', grading: '', url: '', notes: '' };
+  const base = {
+    collection: '',
+    book: '',
+    chapter: '',
+    hadith: '',
+    narrator: '',
+    grading: '',
+    url: '',
+    notes: '',
+  };
   if (ref == null) return base;
   if (typeof ref === 'string') return { ...base, collection: ref };
   const out = { ...base };
@@ -50,7 +59,8 @@ export function normalizeItem(raw, categoryId) {
     reference: normalizeReference(item.reference),
     grade: GRADES.includes(item.grade) ? item.grade : 'Unknown',
     custom_grade: normalizeLocale(item.custom_grade),
-    repetitions: Number.isFinite(item.repetitions) && item.repetitions > 0 ? Math.floor(item.repetitions) : 1,
+    repetitions:
+      Number.isFinite(item.repetitions) && item.repetitions > 0 ? Math.floor(item.repetitions) : 1,
     virtues: normalizeLocale(item.virtues),
     audio: item.audio || null,
     image: item.image || null,
@@ -61,7 +71,7 @@ export function normalizeItem(raw, categoryId) {
     // in most. Kept as a plain string, not localized, since it's metadata
     // about provenance rather than devotional content.
     notes: typeof item.notes === 'string' ? item.notes : '',
-    order: Number.isFinite(item.order) ? item.order : 0
+    order: Number.isFinite(item.order) ? item.order : 0,
   };
 }
 
@@ -77,7 +87,7 @@ export function normalizeCategory(raw, sectionId) {
     order: Number.isFinite(cat.order) ? cat.order : 0,
     icon: cat.icon || 'book',
     color: cat.color || 'slate',
-    items: Array.isArray(cat.items) ? cat.items.map((it) => normalizeItem(it, id)) : []
+    items: Array.isArray(cat.items) ? cat.items.map((it) => normalizeItem(it, id)) : [],
   };
 }
 
@@ -92,9 +102,11 @@ export function normalizeDocument(raw) {
       name: normalizeLocale(metadata.name),
       description: normalizeLocale(metadata.description),
       version: metadata.version || '1.0.0',
-      source: normalizeLocale(metadata.source)
+      source: normalizeLocale(metadata.source),
     },
-    categories: Array.isArray(doc.categories) ? doc.categories.map((c) => normalizeCategory(c, metadata.id)) : []
+    categories: Array.isArray(doc.categories)
+      ? doc.categories.map((c) => normalizeCategory(c, metadata.id))
+      : [],
   };
 }
 
@@ -114,14 +126,20 @@ export function validateDocument(doc) {
   }
 
   for (const cat of doc.categories || []) {
-    if (!cat.id) { warnings.push('A category is missing an id'); continue; }
+    if (!cat.id) {
+      warnings.push('A category is missing an id');
+      continue;
+    }
     if (seenCategoryIds.has(cat.id)) {
       return fail(`Duplicate category id: ${cat.id}`);
     }
     seenCategoryIds.add(cat.id);
 
     for (const item of cat.items || []) {
-      if (!item.id) { warnings.push(`An item in category "${cat.id}" is missing an id`); continue; }
+      if (!item.id) {
+        warnings.push(`An item in category "${cat.id}" is missing an id`);
+        continue;
+      }
       if (seenItemIds.has(item.id)) {
         return fail(`Duplicate item id: ${item.id}`);
       }
@@ -148,19 +166,28 @@ export function processDocument(raw) {
   const result = validateDocument(normalized);
   if (!result.success) return fail(result.error);
   if (result.value.warnings.length) {
-    console.warn(`[schema] ${normalized.metadata.id}: ${result.value.warnings.length} warning(s)`, result.value.warnings);
+    console.warn(
+      `[schema] ${normalized.metadata.id}: ${result.value.warnings.length} warning(s)`,
+      result.value.warnings
+    );
   }
   return ok(normalized);
 }
 
 /** Produce a blank item template for the editor, pre-filled with sane defaults. */
 export function blankItem(categoryId) {
-  return normalizeItem({ id: '', category_id: categoryId, repetitions: 1, grade: 'Unknown' }, categoryId);
+  return normalizeItem(
+    { id: '', category_id: categoryId, repetitions: 1, grade: 'Unknown' },
+    categoryId
+  );
 }
 
 /** Produce a blank category template for the editor. */
 export function blankCategory(sectionId) {
-  return normalizeCategory({ id: '', section_id: sectionId, order: 0, icon: 'book', color: 'slate', items: [] }, sectionId);
+  return normalizeCategory(
+    { id: '', section_id: sectionId, order: 0, icon: 'book', color: 'slate', items: [] },
+    sectionId
+  );
 }
 
 /**

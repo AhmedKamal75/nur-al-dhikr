@@ -95,7 +95,15 @@ test('buildWordStudyPanel embeds the v3.7 Tajweed inspector with bilingual rows'
   const ar = buildWordStudyPanel(
     baseState({ activeWordStudy: { surah: '1', ayah: '1', i: 3 }, settings: { language: 'ar' } })
   );
-  assert.ok(ar.includes('\u0627\u0644\u0644\u0627\u0645 \u0627\u0644\u0634\u0645\u0633\u064A\u0629'.replace('\u0627\u0644\u0644\u0627\u0645', '\u0627\u0644\u0644\u0627\u0645')), 'arabic rule name present');
+  assert.ok(
+    ar.includes(
+      '\u0627\u0644\u0644\u0627\u0645 \u0627\u0644\u0634\u0645\u0633\u064A\u0629'.replace(
+        '\u0627\u0644\u0644\u0627\u0645',
+        '\u0627\u0644\u0644\u0627\u0645'
+      )
+    ),
+    'arabic rule name present'
+  );
 });
 
 test('buildWordStudyPanel degrades gracefully when the word is not found', () => {

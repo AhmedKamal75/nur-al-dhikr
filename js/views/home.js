@@ -14,6 +14,7 @@ import { toHijri } from '../calendar.js';
 import { recommendedAdhkarWindow } from '../adhkarTiming.js';
 import { calculateTimes, nextPrayer, formatClock } from '../prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
+import { dailyHadithCardHTML } from './hadith.js';
 
 function greetingKey() {
   const h = new Date().getHours();
@@ -34,9 +35,13 @@ function greetingKey() {
  * their own library.
  */
 function pickDailyItem(itemIndex) {
-  const eligible = Object.values(itemIndex).filter((entry) => entry.document?.metadata?.id !== 'asma');
+  const eligible = Object.values(itemIndex).filter(
+    (entry) => entry.document?.metadata?.id !== 'asma'
+  );
   if (!eligible.length) return null;
-  const seed = dateKey(new Date()).split('-').reduce((a, c) => a + parseInt(c, 10), 0);
+  const seed = dateKey(new Date())
+    .split('-')
+    .reduce((a, c) => a + parseInt(c, 10), 0);
   const idx = seed % eligible.length;
   return eligible[idx];
 }
@@ -52,7 +57,14 @@ function todayPrayerTimes(state) {
   if (p.latitude == null || p.longitude == null) return null;
   const now = new Date();
   const tz = -now.getTimezoneOffset() / 60;
-  return calculateTimes({ date: now, latitude: p.latitude, longitude: p.longitude, timezoneOffsetHours: tz, method: p.method, asr: p.asr });
+  return calculateTimes({
+    date: now,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    timezoneOffsetHours: tz,
+    method: p.method,
+    asr: p.asr,
+  });
 }
 
 /**
@@ -117,8 +129,14 @@ export function renderHome(state) {
   // (see js/adhkarTiming.js for the reasoning behind each range).
   const nowWindow = recommendedAdhkarWindow(new Date(), prayerTimes);
 
-  const recentEntries = state.history.slice(0, 3).map((h) => state.library.itemIndex[h.itemId]).filter(Boolean);
-  const favEntries = state.favorites.slice(0, 3).map((id) => state.library.itemIndex[id]).filter(Boolean);
+  const recentEntries = state.history
+    .slice(0, 3)
+    .map((h) => state.library.itemIndex[h.itemId])
+    .filter(Boolean);
+  const favEntries = state.favorites
+    .slice(0, 3)
+    .map((id) => state.library.itemIndex[id])
+    .filter(Boolean);
   const pinnedCollections = state.collections.slice(0, 3);
 
   return `
@@ -171,7 +189,8 @@ export function renderHome(state) {
 
     ${(() => {
       const { inRamadan, hijri } = ramadanInfo(new Date());
-      return inRamadan ? `
+      return inRamadan
+        ? `
     <a class="panel panel--ramadan-banner" href="${buildHash(VIEWS.RAMADAN)}" data-action="navigate" data-view="${VIEWS.RAMADAN}">
       <span class="panel--ramadan-banner__icon">${icon('moon', { size: 22 })}</span>
       <span class="panel--ramadan-banner__text">
@@ -179,7 +198,8 @@ export function renderHome(state) {
         <span class="panel--ramadan-banner__sub">${t('ramadan.bannerSub', lang, { n: hijri.day })}</span>
       </span>
       ${icon('chevronRight', { size: 18 })}
-    </a>` : '';
+    </a>`
+        : '';
     })()}
 
     <a class="panel panel--checklist-summary-link" href="${buildHash(VIEWS.CHECKLIST)}" data-action="navigate" data-view="${VIEWS.CHECKLIST}">
@@ -191,7 +211,9 @@ export function renderHome(state) {
       ${icon('chevronRight', { size: 18 })}
     </a>
 
-    ${state.quranBookmark?.surah ? `
+    ${
+      state.quranBookmark?.surah
+        ? `
     <a class="panel panel--quran-continue" href="${buildHash(VIEWS.QURAN, { id: state.quranBookmark.surah })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${state.quranBookmark.surah}">
       <span class="panel--quran-continue__icon">${icon('quran', { size: 22 })}</span>
       <span class="panel--quran-continue__text">
@@ -199,7 +221,9 @@ export function renderHome(state) {
         <span class="panel--quran-continue__sub">${t('quran.surah', lang)} ${escapeHTML(String(state.quranBookmark.surah))}</span>
       </span>
       ${icon('chevronRight', { size: 18 })}
-    </a>` : ''}
+    </a>`
+        : ''
+    }
 
     <section class="panel panel--progress">
       <div class="panel__header">
@@ -212,21 +236,33 @@ export function renderHome(state) {
       <p class="panel__subtext" dir="ltr">${today.recitations} / ${goal}</p>
     </section>
 
-    ${daily ? `
+    ${
+      daily
+        ? `
     <section class="panel panel--reflection">
       <div class="panel__header"><h2>${t('home.verseOfTheDay', lang)}</h2></div>
       ${cardHTML(daily.item, daily.category, { lang, isFavorite: selectors.isFavorite(state, daily.item.id), isSpeaking: state.speakingItemId === daily.item.id, counter: selectors.getCounter(state, daily.item.id), showTransliteration: state.settings.showTransliteration, showTranslation: state.settings.showTranslation, compact: true })}
-    </section>` : ''}
+    </section>`
+        : ''
+    }
 
-    ${recentEntries.length ? `
+    ${dailyHadithCardHTML(state)}
+
+    ${
+      recentEntries.length
+        ? `
     <section class="panel">
       <div class="panel__header"><h2>${t('home.continueReading', lang)}</h2></div>
       <div class="card-row">
         ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
       </div>
-    </section>` : `<p class="empty-hint">${t('home.noRecent', lang)}</p>`}
+    </section>`
+        : `<p class="empty-hint">${t('home.noRecent', lang)}</p>`
+    }
 
-    ${favEntries.length ? `
+    ${
+      favEntries.length
+        ? `
     <section class="panel">
       <div class="panel__header">
         <h2>${t('home.favorites', lang)}</h2>
@@ -235,9 +271,13 @@ export function renderHome(state) {
       <div class="card-row">
         ${favEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: true, isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
       </div>
-    </section>` : ''}
+    </section>`
+        : ''
+    }
 
-    ${pinnedCollections.length ? `
+    ${
+      pinnedCollections.length
+        ? `
     <section class="panel">
       <div class="panel__header">
         <h2>${t('home.collections', lang)}</h2>
@@ -246,6 +286,8 @@ export function renderHome(state) {
       <div class="chip-row">
         ${pinnedCollections.map((c) => `<a class="chip chip--collection" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">${escapeHTML(pickLocale(c.name, lang))} <span class="chip__count">${c.items.length}</span></a>`).join('')}
       </div>
-    </section>` : ''}
+    </section>`
+        : ''
+    }
   </section>`;
 }

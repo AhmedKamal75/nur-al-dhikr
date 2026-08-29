@@ -126,9 +126,9 @@ test('meem sakinah family: idgham (before م), ikhfa (before ب), izhar (everyth
   // أَلَمْ before نَشْرَحْ (surah 94 opening) — izhar shafawi; exercises the
   // alternate small-high-rounded-zero sukun glyph this source actually uses.
   assert.ok(
-    classifyAyahTajweed('\u0623\u064E\u0644\u064E\u0645\u06E1 \u0646\u064E\u0634\u0652\u0631\u064E\u062D\u0652')[0].spans.some(
-      (s) => s.rule === 'izhar_shafawi'
-    ),
+    classifyAyahTajweed(
+      '\u0623\u064E\u0644\u064E\u0645\u06E1 \u0646\u064E\u0634\u0652\u0631\u064E\u062D\u0652'
+    )[0].spans.some((s) => s.rule === 'izhar_shafawi'),
     'alam nashrah: sakin meem before noon must be izhar shafawi'
   );
   // The mushadda'd member of the pair itself is ghunnah, independently.

@@ -7,12 +7,42 @@ import { escapeHTML } from '../utils.js';
 import { getCounter } from '../tasbih.js';
 
 const PRESETS = [
-  { id: 'subhanallah', ar: '\u0633\u064F\u0628\u0652\u062D\u064E\u0627\u0646\u064E \u0627\u0644\u0644\u0651\u0647\u0650', en: 'SubhanAllah', target: 33 },
-  { id: 'alhamdulillah', ar: '\u0627\u0644\u0652\u062D\u064E\u0645\u0652\u062F\u064F \u0644\u0644\u0651\u0647\u0650', en: 'Alhamdulillah', target: 33 },
-  { id: 'allahuakbar', ar: '\u0627\u0644\u0644\u0651\u0647\u064F \u0623\u064E\u0643\u0652\u0628\u064E\u0631', en: 'Allahu Akbar', target: 34 },
-  { id: 'astaghfirullah', ar: '\u0623\u064E\u0633ْتَغْفِرُ اللَّه', en: 'Astaghfirullah', target: 100 },
-  { id: 'lahawla', ar: '\u0644\u0627 \u062D\u0648\u0644 \u0648\u0644\u0627 \u0642\u0648\u0629 \u0625\u0644\u0627 \u0628\u0627\u0644\u0644\u0647', en: 'La hawla wa la quwwata illa billah', target: 100 },
-  { id: 'salawat', ar: '\u0627\u0644\u0644\u0647\u0645 \u0635\u0644 \u0639\u0644\u0649 \u0645\u062D\u0645\u062F', en: 'Allahumma salli \u2019ala Muhammad', target: 100 }
+  {
+    id: 'subhanallah',
+    ar: '\u0633\u064F\u0628\u0652\u062D\u064E\u0627\u0646\u064E \u0627\u0644\u0644\u0651\u0647\u0650',
+    en: 'SubhanAllah',
+    target: 33,
+  },
+  {
+    id: 'alhamdulillah',
+    ar: '\u0627\u0644\u0652\u062D\u064E\u0645\u0652\u062F\u064F \u0644\u0644\u0651\u0647\u0650',
+    en: 'Alhamdulillah',
+    target: 33,
+  },
+  {
+    id: 'allahuakbar',
+    ar: '\u0627\u0644\u0644\u0651\u0647\u064F \u0623\u064E\u0643\u0652\u0628\u064E\u0631',
+    en: 'Allahu Akbar',
+    target: 34,
+  },
+  {
+    id: 'astaghfirullah',
+    ar: '\u0623\u064E\u0633ْتَغْفِرُ اللَّه',
+    en: 'Astaghfirullah',
+    target: 100,
+  },
+  {
+    id: 'lahawla',
+    ar: '\u0644\u0627 \u062D\u0648\u0644 \u0648\u0644\u0627 \u0642\u0648\u0629 \u0625\u0644\u0627 \u0628\u0627\u0644\u0644\u0647',
+    en: 'La hawla wa la quwwata illa billah',
+    target: 100,
+  },
+  {
+    id: 'salawat',
+    ar: '\u0627\u0644\u0644\u0647\u0645 \u0635\u0644 \u0639\u0644\u0649 \u0645\u062D\u0645\u062F',
+    en: 'Allahumma salli \u2019ala Muhammad',
+    target: 100,
+  },
 ];
 
 export function renderTasbih(state) {
@@ -23,10 +53,12 @@ export function renderTasbih(state) {
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
   const lifetime = state.statistics.totalRecitations;
 
-  const chips = PRESETS.map((p) => `
+  const chips = PRESETS.map(
+    (p) => `
     <button type="button" class="chip chip--phrase ${p.id === activePreset.id ? 'chip--phrase-active' : ''}" data-action="tasbih-select" data-phrase-id="${p.id}" data-target="${p.target}">
       ${escapeHTML(p.en)}
-    </button>`).join('');
+    </button>`
+  ).join('');
 
   return `
   <section class="view view--tasbih">

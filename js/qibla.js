@@ -29,7 +29,8 @@ export function qiblaBearing(latitude, longitude) {
   const deltaLambda = toRad(KAABA.longitude - longitude);
 
   const y = Math.sin(deltaLambda) * Math.cos(phi2);
-  const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
+  const x =
+    Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
   const theta = Math.atan2(y, x);
 
   return (toDeg(theta) + 360) % 360;
@@ -48,7 +49,24 @@ export function distanceToKaabaKm(latitude, longitude) {
   return EARTH_RADIUS_KM * c;
 }
 
-const COMPASS_POINTS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+const COMPASS_POINTS = [
+  'N',
+  'NNE',
+  'NE',
+  'ENE',
+  'E',
+  'ESE',
+  'SE',
+  'SSE',
+  'S',
+  'SSW',
+  'SW',
+  'WSW',
+  'W',
+  'WNW',
+  'NW',
+  'NNW',
+];
 
 /** Convert a 0-360 bearing into a 16-point compass label (e.g. "NE"). */
 export function cardinalLabel(bearingDeg) {

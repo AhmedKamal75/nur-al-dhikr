@@ -27,7 +27,7 @@ import {
   qadrNightInfo,
   fastTrackerDays,
   keptFastCount,
-  ramadanLogKey
+  ramadanLogKey,
 } from '../ramadan.js';
 
 /**
@@ -45,7 +45,9 @@ function resolveDuaId(itemIndex, preferred, match) {
     if (itemIndex[id]) return id;
   }
   const entries = Object.values(itemIndex).filter((e) => e.category?.id === 'ramadan-special');
-  const matched = match ? entries.find((e) => match.test((e.item?.title?.en || '').toLowerCase())) : null;
+  const matched = match
+    ? entries.find((e) => match.test((e.item?.title?.en || '').toLowerCase()))
+    : null;
   if (matched) return matched.item.id;
   return entries[0]?.item?.id || null;
 }
@@ -85,11 +87,15 @@ function trackerPanel(state, lang, hijri) {
   const kept = keptFastCount(state.ramadanLog, hijri.year);
   const qadr = qadrNightInfo(hijri.day);
 
-  const cells = days.map((d) => `
+  const cells = days
+    .map(
+      (d) => `
     <button type="button" class="fast-dot ${d.kept ? 'fast-dot--kept' : ''} ${d.isToday ? 'fast-dot--today' : ''}"
       data-action="ramadan-toggle-fast" data-day="${d.day}" data-log-key="${ramadanLogKey(hijri.year)}"
       aria-pressed="${d.kept}" aria-label="${t('ramadan.fastDay', lang, { n: d.day })}"
-      ${d.isToday ? '' : 'disabled'} title="${t('ramadan.fastDay', lang, { n: d.day })}"></button>`).join('');
+      ${d.isToday ? '' : 'disabled'} title="${t('ramadan.fastDay', lang, { n: d.day })}"></button>`
+    )
+    .join('');
 
   return `
   <section class="panel panel--fast-tracker">
@@ -99,21 +105,33 @@ function trackerPanel(state, lang, hijri) {
     </div>
     <div class="fast-dot-grid">${cells}</div>
     <p class="panel__subtext">${t('ramadan.fastTrackerHint', lang)}</p>
-    ${qadr.inLastTen ? `
+    ${
+      qadr.inLastTen
+        ? `
     <div class="qadr-banner ${qadr.isLikelyQadrNight ? 'qadr-banner--odd' : ''}">
       ${icon('sparkle', { size: 16 })}
       <span>${qadr.isLikelyQadrNight ? t('ramadan.qadrTonight', lang) : t('ramadan.lastTenNights', lang, { n: hijri.day })}</span>
-    </div>` : ''}
+    </div>`
+        : ''
+    }
   </section>`;
 }
 
 function alertsPanel(state, lang, times) {
-  const ra = state.settings.prayer.ramadanAlerts || { suhoor: false, iftar: false, suhoorOffset: 30 };
+  const ra = state.settings.prayer.ramadanAlerts || {
+    suhoor: false,
+    iftar: false,
+    suhoorOffset: 30,
+  };
   const perm = permissionState();
   const granted = perm === 'granted';
-  const offsetOptions = SUHOOR_OFFSETS.map((m) => `<option value="${m}" ${ra.suhoorOffset === m ? 'selected' : ''}>${m}</option>`).join('');
+  const offsetOptions = SUHOOR_OFFSETS.map(
+    (m) => `<option value="${m}" ${ra.suhoorOffset === m ? 'selected' : ''}>${m}</option>`
+  ).join('');
 
-  const permBanner = granted ? '' : `
+  const permBanner = granted
+    ? ''
+    : `
     <div class="qadr-banner">
       ${icon('bell', { size: 16 })}
       <span>${perm === 'denied' ? t('ramadan.alertsDenied', lang) : t('ramadan.alertsNeedPermission', lang)}</span>
@@ -199,9 +217,23 @@ export function renderRamadan(state) {
   } else if (inRamadan) {
     const now = new Date();
     const tz = -now.getTimezoneOffset() / 60;
-    const times = calculateTimes({ date: now, latitude: p.latitude, longitude: p.longitude, timezoneOffsetHours: tz, method: p.method, asr: p.asr });
+    const times = calculateTimes({
+      date: now,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      timezoneOffsetHours: tz,
+      method: p.method,
+      asr: p.asr,
+    });
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    const tomorrowTimes = calculateTimes({ date: tomorrow, latitude: p.latitude, longitude: p.longitude, timezoneOffsetHours: tz, method: p.method, asr: p.asr });
+    const tomorrowTimes = calculateTimes({
+      date: tomorrow,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      timezoneOffsetHours: tz,
+      method: p.method,
+      asr: p.asr,
+    });
 
     const total = ramadanLength(hijri.year);
     const daysLeft = total - hijri.day;
@@ -222,7 +254,12 @@ export function renderRamadan(state) {
     const eid = nextEidAlFitr(new Date());
     const lastKept = keptFastCount(state.ramadanLog, hijri.year - (hijri.month >= 10 ? 0 : 1));
 
-    const fmtDate = (d) => d.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fmtDate = (d) =>
+      d.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
 
     main = `
     <section class="ramadan-hero ramadan-hero--waiting">

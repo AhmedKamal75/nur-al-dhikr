@@ -138,12 +138,37 @@ function initialState() {
     // Offline audio registry: mirror of the audio IndexedDB (key "moshafId:surah"
     // -> { bytes, ts }) so download UI renders instantly without opening IDB.
     audioDownloads: {},
+    // v3.14 Phase C: in-flight surah-audio downloads (key -> true) so the
+    // per-surah grid can show a busy spinner instead of a dead-looking tap.
+    // Ephemeral by design — a reload simply forgets what was mid-flight.
+    audioDownloading: {},
     // Ephemeral full-surah player state (DOM-patched per tick; only coarse
     // changes dispatch through here).
     player: { moshafId: null, surah: null, playing: false, offline: false },
     // Ephemeral download manager UI state (selected moshaf, search text,
     // and whether the catalog finished loading — flip once → one re-render).
     audioManager: { query: '', catalogReady: false },
+    // Ahadeeth library (v3.9): lazy-loaded like the Qur'an corpus, never
+    // persisted — the service worker caches the JSON files themselves, so a
+    // fresh session refetches from cache at zero cost. `index` is the book
+    // registry; `docs` holds loaded book documents; `daily` is today's
+    // deterministic { bookId, n } pick for the Home card; bookView carries
+    // the reader's in-book search/chapter/pager state; errors keys books
+    // whose fetch failed so the reader can offer a retry instead of spinning.
+    hadith: {
+      index: null,
+      indexFailed: false,
+      docs: {},
+      errors: {},
+      daily: null,
+      bookView: { query: '', section: 'all', page: 1 },
+    },
+    // Continuous surah recitation (v3.10): the "listen and follow along"
+    // session driven by js/surahPlayback.js over the shared per-ayah audio
+    // element. Ephemeral — a half-finished listening session has exactly
+    // the same lifetime as a half-finished quiz. The engine module owns
+    // the truth; this slice mirrors it so views render reactively.
+    surahPlayback: { active: false, surah: null, ayah: null, total: 0 },
     // Ephemeral — which "surah:ayah" key is currently playing recited audio,
     // if any. Mirrors speakingItemId's reactive-highlight purpose.
     recitingAyahKey: null,
@@ -190,7 +215,8 @@ function initialState() {
   };
 }
 
-const PERSISTED_KEYS = [
+export const PERSISTED_KEYS = [
+  // exported for the v3.14 ephemeral-state gate
   'settings',
   'favorites',
   'collections',
@@ -599,7 +625,10 @@ function reduce(state, action) {
     // v3.6: full-text search bulk-warms the whole corpus. ONE dispatch (not
     // 114) so the view re-renders exactly once after the batch lands.
     case 'QURAN_SURAHS_BULK_LOADED': {
-      const docs = action.docs && typeof action.docs === 'object' && !Array.isArray(action.docs) ? action.docs : {};
+      const docs =
+        action.docs && typeof action.docs === 'object' && !Array.isArray(action.docs)
+          ? action.docs
+          : {};
       if (!Object.keys(docs).length) return state;
       const merged = { ...state.quran.surahs };
       for (const [k, doc] of Object.entries(docs)) merged[k] = doc;
@@ -650,6 +679,60 @@ function reduce(state, action) {
 
     case 'TAJWEED_POOL_LOADED':
       return { ...state, tajweedPool: action.pool };
+
+    // ---- Ahadeeth (v3.9) — all ephemeral, see initialState ----
+    case 'HADITH_INDEX_LOADED':
+      return { ...state, hadith: { ...state.hadith, index: action.index, indexFailed: false } };
+
+    case 'HADITH_INDEX_FAILED':
+      return { ...state, hadith: { ...state.hadith, indexFailed: true } };
+
+    case 'HADITH_BOOK_LOADED': {
+      const id = String(action.bookId || '');
+      if (!id || !action.doc || action.doc.id !== id) return state; // poisoned/mismatched doc: ignore
+      return {
+        ...state,
+        hadith: {
+          ...state.hadith,
+          docs: { ...state.hadith.docs, [id]: action.doc },
+          errors: { ...state.hadith.errors, [id]: false },
+        },
+      };
+    }
+
+    case 'HADITH_BOOK_FAILED':
+      return {
+        ...state,
+        hadith: {
+          ...state.hadith,
+          errors: { ...state.hadith.errors, [String(action.bookId || '')]: true },
+        },
+      };
+
+    case 'HADITH_DAILY_SET':
+      return { ...state, hadith: { ...state.hadith, daily: action.daily } };
+
+    case 'SURAH_PLAYBACK_SET': {
+      const patch =
+        action.patch && typeof action.patch === 'object' && !Array.isArray(action.patch)
+          ? action.patch
+          : {};
+      return { ...state, surahPlayback: { ...state.surahPlayback, ...patch } };
+    }
+
+    case 'HADITH_VIEW_SET': {
+      const patch =
+        action.patch && typeof action.patch === 'object' && !Array.isArray(action.patch)
+          ? action.patch
+          : {};
+      return {
+        ...state,
+        hadith: {
+          ...state.hadith,
+          bookView: { ...state.hadith.bookView, ...patch },
+        },
+      };
+    }
 
     case 'TAJWEED_PRACTICE_RESULT':
       return {
@@ -846,6 +929,18 @@ function reduce(state, action) {
       if (action.remove) delete next[action.key];
       else next[action.key] = { bytes: action.bytes || 0, ts: Date.now() };
       return { ...state, audioDownloads: next };
+    }
+
+    case 'AUDIO_DOWNLOAD_START': {
+      if (state.audioDownloading[action.key]) return state;
+      return { ...state, audioDownloading: { ...state.audioDownloading, [action.key]: true } };
+    }
+
+    case 'AUDIO_DOWNLOAD_END': {
+      if (!state.audioDownloading[action.key]) return state;
+      const inFlight = { ...state.audioDownloading };
+      delete inFlight[action.key];
+      return { ...state, audioDownloading: inFlight };
     }
 
     case 'AUDIO_CATALOG_READY':
@@ -1281,6 +1376,13 @@ export const actions = {
   }),
   closeWordStudy: () => ({ type: 'WORD_STUDY_CLOSE' }),
   setTajweedPool: (pool) => ({ type: 'TAJWEED_POOL_LOADED', pool }),
+  setHadithIndex: (index) => ({ type: 'HADITH_INDEX_LOADED', index }),
+  hadithIndexFailed: () => ({ type: 'HADITH_INDEX_FAILED' }),
+  setHadithBook: (bookId, doc) => ({ type: 'HADITH_BOOK_LOADED', bookId, doc }),
+  hadithBookFailed: (bookId) => ({ type: 'HADITH_BOOK_FAILED', bookId }),
+  setHadithDaily: (daily) => ({ type: 'HADITH_DAILY_SET', daily }),
+  setHadithView: (patch) => ({ type: 'HADITH_VIEW_SET', patch }),
+  setSurahPlayback: (patch) => ({ type: 'SURAH_PLAYBACK_SET', patch }),
   recordTajweedPracticeResult: (ruleId, perfect) => ({
     type: 'TAJWEED_PRACTICE_RESULT',
     ruleId,
@@ -1316,6 +1418,8 @@ export const actions = {
   addCustomReciter: (entry) => ({ type: 'AUDIO_CUSTOM_ADD', entry }),
   removeCustomReciter: (id) => ({ type: 'AUDIO_CUSTOM_REMOVE', id }),
   markAudioDownload: (key, bytes, remove) => ({ type: 'AUDIO_DOWNLOAD_DONE', key, bytes, remove }),
+  markAudioDownloadStart: (key) => ({ type: 'AUDIO_DOWNLOAD_START', key }),
+  markAudioDownloadEnd: (key) => ({ type: 'AUDIO_DOWNLOAD_END', key }),
   setAudioManagerQuery: (query) => ({ type: 'AUDIO_MANAGER_QUERY', query }),
   setAudioCatalogReady: () => ({ type: 'AUDIO_CATALOG_READY' }),
   setRecitingAyah: (key) => ({ type: 'RECITATION_SET_ACTIVE', key }),

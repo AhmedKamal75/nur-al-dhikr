@@ -57,3 +57,82 @@ As with every other content library in this app (see the main README),
 this data is offered for personal study and convenience. It is not a
 replacement for consulting qualified scholars, especially for anything
 you intend to rely on religiously.
+
+## Ahadeeth library (data/hadith/)
+
+The Ahadeeth texts (Arabic + English) are the public-domain collection
+texts of **the six canonical books — Sahih al-Bukhari, Sahih Muslim,
+Sunan Abu Dawud, Jami' at-Tirmidhi, Sunan an-Nasa'i and Sunan Ibn Majah —
+plus the Forty Hadith of Imam an-Nawawi and Forty Hadith Qudsi** as
+published by sunnah.com, obtained via the CC0-dedicated dataset repository
+[fawazahmed0/hadith-api](https://github.com/fawazahmed0/hadith-api)
+(edition dumps, cached in scripts/cache/hadith/ outside the app dir and
+transformed by scripts/build-hadith.mjs). The classical collections
+themselves are 13th-century-and-earlier works in the public domain.
+
+- v3.16: the four Sunan collections (Abu Dawud 5,272 · Tirmidhi 3,926 ·
+  an-Nasa'i 5,679 · Ibn Majah 4,340) were rebuilt from the same source
+  through the same gates, restoring content built on the parallel
+  v3.15.0 line — the library totals 34,239 hadith, locked by a permanent
+  test gate.
+- The build enforces 1:1 Arabic↔English alignment by hadith number and
+  drops sunnah.com's non-hadith book-introduction placeholders (203 rows
+  in Muslim, 9 in Bukhari).
+- Chapter (book) headings are shipped in English as published by the
+  source dataset; a bilingual chapter-name overlay is a known follow-up.
+- Integrity gates: no markup-like payloads, unique numbers, every row
+  reachable through its chapter, counts consistent with the index. The
+  event-handler check is anchored to tag context — ordinary prose with an
+  equals sign (Ibn Majah #1805, "even one = then three sheep") is text,
+  not markup.
+
+## Adhkar rebuild (data/adhkar.json, v5)
+
+- **Texts** retained verbatim from the vetted Hisn-al-Muslim core records;
+  **Qur'an excerpts are extracted byte-identically from the app's own
+  Qur'an corpus** (data/quran/) by scripts/build-adhkar.mjs — Ayat
+  al-Kursi, the three surahs, al-Kafirun, al-Mulk (complete), and the
+  last two verses of al-Baqarah.
+- **Ordering** follows the canonical sequence of *Hisn al-Muslim*
+  (Fortress of the Muslim) by Sa'id ibn Ali ibn Wahf al-Qahtani for the
+  morning, evening, post-prayer, sleep and wake-up categories; tasbih
+  formulas and daily supplications are ordered topically after the same
+  book's chapter flow.
+- **References** cite the collection (Bukhari/Muslim/Abu Dawud/Tirmidhi/
+  Ibn Majah/Ahmad) with hadith numbers only where they are certain;
+  otherwise the collection + narrator is named without an invented number.
+- The per-category canonical specs (scripts/adhkar-spec/) are the
+  human-reviewed source of truth; the build regenerates data/adhkar.json
+  from them and hard-fails on truncation, duplication or schema drift.
+
+## Qur'an translations (data/translations/, v3.15)
+
+Four additional complete translation editions, shipped as slim per-surah
+overlay files (`data/translations/{edition}/{surah}.json`) that the app
+merges onto its own corpus at load time — the Arabic text is always the
+app's Uthmani corpus, never the upstream's:
+
+- **Urdu** — Fateh Muhammad Jalandhry (`ur-jalandhry`)
+- **French** — Muhammad Hamidullah (`fr-hamidullah`)
+- **Turkish** — Diyanet İşleri Başkanlığı (`tr-diyanet`)
+- **Indonesian** — Indonesian Islamic Affairs Ministry / Kemenag
+  (`id-kemenag`)
+
+- **Source**: the Tanzil.net translation corpora, redistributed by
+  [fawazahmed0/quran-api](https://github.com/fawazahmed0/quran-api)
+  (branch 1). Tanzil texts are CC BY 3.0 / CC BY-NC where marked; the
+  upstream dataset is CC0 as published. The Kemenag edition originates
+  from quranenc.com (Kemenag RI). Tanzil's own licence terms apply to the
+  translation texts; attribution to the translators is rendered in the
+  Settings picker itself.
+- **Build pipeline**: scripts/build-translations.mjs (kept outside the
+  shipped app). Fetches all 114 chapter files per edition, aligns 1:1 with
+  the app corpus (per-surah ayah counts must match data/quran exactly),
+  and hard-fails on: verse-count drift (6,236 per edition), non-sequential
+  verse numbers, empty texts, trailing truncation, HTML payloads, and
+  bismillah bleed into 2:1 (muqatta'at sanity strings per edition).
+  Output is deterministic (fixed key order, compact JSON, LF).
+- **Integrity gates** re-run as a standing test (tests/translations.test.js)
+  so shipped data can never drift from the build's own gates.
+- The default English edition (Sahih International) remains inline in
+  data/quran/ exactly as before; no overlay files exist for it.

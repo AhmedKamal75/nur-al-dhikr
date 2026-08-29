@@ -13,7 +13,9 @@ let mediaQuery = null;
 
 function resolveMode(mode) {
   if (mode === 'auto') {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   }
   return mode;
 }
@@ -49,11 +51,19 @@ export function watchSystemTheme(onChange) {
   if (!window.matchMedia) return () => {};
   mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   const handler = () => onChange();
-  mediaQuery.addEventListener ? mediaQuery.addEventListener('change', handler) : mediaQuery.addListener(handler);
+  mediaQuery.addEventListener
+    ? mediaQuery.addEventListener('change', handler)
+    : mediaQuery.addListener(handler);
   return () => {
-    mediaQuery.removeEventListener ? mediaQuery.removeEventListener('change', handler) : mediaQuery.removeListener(handler);
+    mediaQuery.removeEventListener
+      ? mediaQuery.removeEventListener('change', handler)
+      : mediaQuery.removeListener(handler);
   };
 }
 
-export function paletteList() { return PALETTES; }
-export function shapeList() { return SHAPES; }
+export function paletteList() {
+  return PALETTES;
+}
+export function shapeList() {
+  return SHAPES;
+}

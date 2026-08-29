@@ -7,7 +7,14 @@
  */
 
 import { store, actions } from './state.js';
-import { normalizeDocument, normalizeItem, normalizeCategory, validateDocument, blankItem, blankCategory } from './schema.js';
+import {
+  normalizeDocument,
+  normalizeItem,
+  normalizeCategory,
+  validateDocument,
+  blankItem,
+  blankCategory,
+} from './schema.js';
 import { clone, uid } from './utils.js';
 
 const DEFAULT_CUSTOM_LIBRARY_ID = 'custom';
@@ -16,8 +23,13 @@ function ensureCustomLibrary(libraryId = DEFAULT_CUSTOM_LIBRARY_ID) {
   const state = store.getState();
   if (state.customContent[libraryId]) return state.customContent[libraryId];
   const doc = normalizeDocument({
-    metadata: { id: libraryId, name: { en: 'My Content', ar: 'محتواي' }, description: { en: 'Custom items you\u2019ve added', ar: '' }, version: '1.0.0' },
-    categories: []
+    metadata: {
+      id: libraryId,
+      name: { en: 'My Content', ar: 'محتواي' },
+      description: { en: 'Custom items you\u2019ve added', ar: '' },
+      version: '1.0.0',
+    },
+    categories: [],
   });
   store.dispatch(actions.upsertCustomLibrary(doc));
   return doc;
@@ -43,8 +55,13 @@ export function getCustomLibrary(libraryId = DEFAULT_CUSTOM_LIBRARY_ID) {
 export function createLibrary({ id, nameEn, nameAr }) {
   const libId = id || uid('lib');
   const doc = normalizeDocument({
-    metadata: { id: libId, name: { en: nameEn || 'Untitled', ar: nameAr || '' }, description: { en: '', ar: '' }, version: '1.0.0' },
-    categories: []
+    metadata: {
+      id: libId,
+      name: { en: nameEn || 'Untitled', ar: nameAr || '' },
+      description: { en: '', ar: '' },
+      version: '1.0.0',
+    },
+    categories: [],
   });
   store.dispatch(actions.upsertCustomLibrary(doc));
   return doc;
@@ -58,15 +75,18 @@ export function deleteLibrary(libraryId) {
 export function addCategory(libraryId, { nameEn, nameAr, icon = 'book', color = 'slate' }) {
   const doc = clone(getCustomLibrary(libraryId) || ensureCustomLibrary(libraryId));
   pushUndo(doc);
-  const cat = normalizeCategory({
-    id: uid('cat'),
-    section_id: libraryId,
-    name: { en: nameEn || 'Untitled Category', ar: nameAr || '' },
-    order: doc.categories.length + 1,
-    icon,
-    color,
-    items: []
-  }, libraryId);
+  const cat = normalizeCategory(
+    {
+      id: uid('cat'),
+      section_id: libraryId,
+      name: { en: nameEn || 'Untitled Category', ar: nameAr || '' },
+      order: doc.categories.length + 1,
+      icon,
+      color,
+      items: [],
+    },
+    libraryId
+  );
   doc.categories.push(cat);
   store.dispatch(actions.upsertCustomLibrary(doc));
   return cat;
@@ -115,7 +135,11 @@ export function duplicateItem(libraryId, categoryId, itemId) {
   const item = cat?.items.find((it) => it.id === itemId);
   if (!item) return null;
   pushUndo(doc);
-  const copy = { ...clone(item), id: uid('item'), title: { en: `${item.title.en} (copy)`, ar: item.title.ar } };
+  const copy = {
+    ...clone(item),
+    id: uid('item'),
+    title: { en: `${item.title.en} (copy)`, ar: item.title.ar },
+  };
   cat.items.push(copy);
   store.dispatch(actions.upsertCustomLibrary(doc));
   return copy;
@@ -142,6 +166,10 @@ export function undo() {
   return true;
 }
 
-export function blankItemTemplate(categoryId) { return blankItem(categoryId); }
-export function blankCategoryTemplate(libraryId) { return blankCategory(libraryId); }
+export function blankItemTemplate(categoryId) {
+  return blankItem(categoryId);
+}
+export function blankCategoryTemplate(libraryId) {
+  return blankCategory(libraryId);
+}
 export { DEFAULT_CUSTOM_LIBRARY_ID };

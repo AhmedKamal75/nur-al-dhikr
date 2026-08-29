@@ -30,16 +30,24 @@ export function renderCollection(state) {
       <p class="view__meta">${t('collections.itemCount', lang, { n: entries.length })}</p>
     </header>
 
-    ${entries.length ? `
+    ${
+      entries.length
+        ? `
     <div class="card-list">
-      ${entries.map((e) => cardHTML(e.item, e.category, {
-        lang,
-        isFavorite: selectors.isFavorite(state, e.item.id),
-        isSpeaking: state.speakingItemId === e.item.id,
-        counter: selectors.getCounter(state, e.item.id),
-        showTransliteration: state.settings.showTransliteration,
-        showTranslation: state.settings.showTranslation
-      })).join('')}
-    </div>` : `<p class="empty-hint">${t('collections.empty', lang)}</p>`}
+      ${entries
+        .map((e) =>
+          cardHTML(e.item, e.category, {
+            lang,
+            isFavorite: selectors.isFavorite(state, e.item.id),
+            isSpeaking: state.speakingItemId === e.item.id,
+            counter: selectors.getCounter(state, e.item.id),
+            showTransliteration: state.settings.showTransliteration,
+            showTranslation: state.settings.showTranslation,
+          })
+        )
+        .join('')}
+    </div>`
+        : `<p class="empty-hint">${t('collections.empty', lang)}</p>`
+    }
   </section>`;
 }

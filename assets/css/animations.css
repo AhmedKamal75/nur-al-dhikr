@@ -1,41 +1,154 @@
 /* ==========================================================================
    animations.css
+   v3.12 (UI/UX Phase B) — motion rules live here under one contract:
+     * every entrance/feedback motion is sub-300ms, except the two named
+       celebration blooms (700ms, allow-listed in tests/motion.test.js);
+     * celebrations are stamped transiently by js/celebrate.js — a class
+       present in markup alone must never animate anything;
+     * the view entrance is gated on #main[data-view-enter], stamped only
+       by renderer.js on genuine navigation, so same-view re-renders can
+       never restart it (the motion half of the v3.9 anti-flicker work);
+     * everything honours prefers-reduced-motion via the global kill rule.
    ========================================================================== */
 
-.view { animation: viewIn var(--dur-slow) var(--ease-standard); }
+/* ---- View entrance (one-shot, navigation only) -------------------------- */
+/* Applied to every top-level child of #main so it covers both single-root
+ * views (.view) and the fragment views whose sections are siblings. */
+#main[data-view-enter] > * {
+  animation: viewIn var(--dur-slow) var(--ease-standard);
+}
 @keyframes viewIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.card { animation: cardIn var(--dur-base) var(--ease-standard); }
+/* Card entrance: intentionally KEPT on the class. Under the patch engine a
+ * card's node is only replaced when its own content changed, so this reads
+ * as "something here updated" feedback (4px, 160ms), not flicker. */
+.card {
+  animation: cardIn var(--dur-base) var(--ease-standard);
+}
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.focus { animation: focusIn var(--dur-slow) var(--ease-standard); }
-@keyframes focusIn { from { opacity: 0; } to { opacity: 1; } }
+.focus {
+  animation: focusIn var(--dur-slow) var(--ease-standard);
+}
+@keyframes focusIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
-.counter-pill, .focus__counter, .tasbih-dial { transition: transform var(--dur-fast) var(--ease-spring); }
-.counter-pill:active, .focus__counter:active, .tasbih-dial:active { transform: scale(0.94); }
+/* ---- Press states -------------------------------------------------------- */
+/* Physical confirmation on exactly the controls that don't already have
+ * one; .btn/.quick-action/quiz-choice/surah-tile/fast-dot/counters carry
+ * their own (components.css / cards.css / quran.css). Scale is symmetric,
+ * so the RTL mirror needs no extra work. */
+.nav__item:active,
+button.chip:active,
+.chip[data-action]:active,
+[role='button'].chip:active {
+  transform: scale(0.98);
+}
+.nav__item {
+  transition:
+    color var(--dur-base) var(--ease-standard),
+    background var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+}
+button.chip,
+.chip[data-action],
+[role='button'].chip {
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
 
-.icon-btn--active .icon { animation: pulseHeart var(--dur-slow) var(--ease-spring); }
+.counter-pill,
+.focus__counter,
+.tasbih-dial {
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.counter-pill:active,
+.focus__counter:active,
+.tasbih-dial:active {
+  transform: scale(0.94);
+}
+
+.icon-btn--active .icon {
+  animation: pulseHeart var(--dur-slow) var(--ease-spring);
+}
 @keyframes pulseHeart {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.3); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-/* v3.7: tasbih cycle completion — a satisfied "bloom" rather than the
- * attention-grabbing shake every habit app reaches for. Applied via the
- * transient .is-just-completed class stamped by views/focus.js. */
+/* ---- Celebration bloom (reusable micro-interaction, v3.12) --------------- *
+ * Generalized from the tasbih cycle-complete "bloom" — a satisfied settle,
+ * not an attention-grabbing shake. Views add .celebrate ONLY while
+ * wasCelebrated(key) is true (js/celebrate.js); the class disappearing
+ * after the window is what makes later re-renders silent. Current sites:
+ * the tasbih cycle (its own legacy class below), the khatma completion
+ * verdict, the quiz result screen, and the prayer-log streak badge.
+ * Requires a transformable element (flex/inline-flex/block) — documented
+ * at each use site. */
+.celebrate {
+  animation: celebrateBloom 0.7s var(--ease-spring);
+}
+@keyframes celebrateBloom {
+  0% {
+    transform: scale(0.9);
+  }
+  55% {
+    transform: scale(1.07);
+    box-shadow: var(--ring-accent);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* v3.7: tasbih cycle completion — the original bloom this generalizes.
+ * Applied via the transient .is-just-completed class stamped by
+ * views/focus.js through tasbih.wasJustCompleted(). */
 @keyframes cycleComplete {
-  0% { transform: scale(0.9); }
-  55% { transform: scale(1.08); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.9);
+  }
+  55% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }

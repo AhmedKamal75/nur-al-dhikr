@@ -25,7 +25,10 @@ export function isSupported() {
  * expose heading data without asking.
  */
 export function needsPermission() {
-  return typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
+  return (
+    typeof DeviceOrientationEvent !== 'undefined' &&
+    typeof DeviceOrientationEvent.requestPermission === 'function'
+  );
 }
 
 /** Resolves true if permission was granted, false otherwise. Never throws. */

@@ -61,7 +61,9 @@ export function buildHash(view, params = {}) {
   if (params.subId) path += `/${encodeURIComponent(params.subId)}`;
   const queryEntries = Object.entries(params).filter(([k]) => !['id', 'subId'].includes(k));
   if (queryEntries.length) {
-    path += '?' + queryEntries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+    path +=
+      '?' +
+      queryEntries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
   }
   return path;
 }

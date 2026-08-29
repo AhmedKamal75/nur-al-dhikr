@@ -8,7 +8,12 @@ import { APP_VERSION } from '../config.js';
 export function renderAbout(state) {
   const lang = state.settings.language;
   const docs = Object.values(state.library.documents);
-  const sources = docs.map((d) => `<li>${escapeHTML(pickLocale(d.metadata.name, lang))} \u2014 ${escapeHTML(pickLocale(d.metadata.source, lang))}</li>`).join('');
+  const sources = docs
+    .map(
+      (d) =>
+        `<li>${escapeHTML(pickLocale(d.metadata.name, lang))} \u2014 ${escapeHTML(pickLocale(d.metadata.source, lang))}</li>`
+    )
+    .join('');
 
   return `
   <section class="view view--about">
@@ -23,6 +28,18 @@ export function renderAbout(state) {
     <section class="panel">
       <div class="panel__header"><h2>${t('about.sources', lang)}</h2></div>
       <ul class="source-list">${sources}</ul>
+      <p class="panel__subtext">${t('about.hadithSources', lang)}</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel__header"><h2>${t('about.forAI', lang)}</h2></div>
+      <p>${t('about.forAIBody', lang)}</p>
+      <ul class="source-list">
+        <li>${t('about.forAIPoint1', lang)}</li>
+        <li>${t('about.forAIPoint2', lang)}</li>
+        <li>${t('about.forAIPoint3', lang)}</li>
+      </ul>
+      <p class="panel__subtext">${t('about.forAIFile', lang)}</p>
     </section>
 
     <p class="about-version">${t('about.version', lang)}: ${APP_VERSION}</p>

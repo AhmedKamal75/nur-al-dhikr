@@ -12,7 +12,7 @@
 
 import { RECITERS_URL } from './config.js';
 
-let catalogCache = null;   // { kind, reciters: [...] }
+let catalogCache = null; // { kind, reciters: [...] }
 let catalogFetchStarted = false;
 
 export function pad3(n) {
@@ -21,13 +21,18 @@ export function pad3(n) {
 
 /** Per-surah audio URL for a catalog entry's server. */
 export function surahUrl(server, surahNumber) {
-  const base = String(server || '').trim().replace(/\/+$/, '');
+  const base = String(server || '')
+    .trim()
+    .replace(/\/+$/, '');
   return `${base}/${pad3(surahNumber)}.mp3`.replace(/([^:])\/\//g, '$1/');
 }
 
 /** Moshaf id for a custom (user-added) server. Deterministic + stable. */
 export function customMoshafId(server) {
-  const base = String(server || '').trim().replace(/\/+$/, '').toLowerCase();
+  const base = String(server || '')
+    .trim()
+    .replace(/\/+$/, '')
+    .toLowerCase();
   let h = 0;
   for (let i = 0; i < base.length; i += 1) {
     h = (h * 31 + base.charCodeAt(i)) | 0;
@@ -78,15 +83,17 @@ function normAr(s) {
 export function searchReciters(query, customs = []) {
   const all = [
     ...(catalogCache?.reciters || []),
-    ...customs.map((c) => ({ ...c, source: 'custom', rewaya: c.rewaya || '' }))
+    ...customs.map((c) => ({ ...c, source: 'custom', rewaya: c.rewaya || '' })),
   ];
   const q = normAr(query);
   const hits = !q
     ? all
-    : all.filter((r) =>
-        normAr(r.nameEn).includes(q) ||
-        normAr(r.nameAr).includes(q) ||
-        normAr(r.rewaya).includes(q));
+    : all.filter(
+        (r) =>
+          normAr(r.nameEn).includes(q) ||
+          normAr(r.nameAr).includes(q) ||
+          normAr(r.rewaya).includes(q)
+      );
   return hits.sort((a, b) => (a.nameEn || '').localeCompare(b.nameEn || ''));
 }
 

@@ -26,22 +26,29 @@ export function renderChecklist(state) {
   const streak = checklistStreak(state.dailyChecklist);
   const history = recentHistory(state.dailyChecklist, 7);
 
-  const groupRows = (group) => CHECKLIST_ITEMS.filter((i) => i.group === group).map((item) => {
-    const checked = !!today[item.id];
-    return `
+  const groupRows = (group) =>
+    CHECKLIST_ITEMS.filter((i) => i.group === group)
+      .map((item) => {
+        const checked = !!today[item.id];
+        return `
     <label class="checklist-row ${checked ? 'checklist-row--checked' : ''}">
       <input type="checkbox" class="checklist-row__input" data-action="checklist-toggle" data-item="${item.id}" ${checked ? 'checked' : ''} />
       <span class="checklist-row__icon">${icon(item.icon, { size: 18 })}</span>
       <span class="checklist-row__label">${t(item.label, lang)}</span>
       <span class="checklist-row__check">${checked ? icon('check', { size: 16 }) : ''}</span>
     </label>`;
-  }).join('');
+      })
+      .join('');
 
-  const historyStrip = history.map((d) => `
+  const historyStrip = history
+    .map(
+      (d) => `
     <div class="checklist-history__day ${d.complete ? 'checklist-history__day--complete' : ''}" title="${d.count}/${d.total}">
       <span class="checklist-history__dot" style="--fill:${Math.round((d.count / d.total) * 100)}%"></span>
       <span class="checklist-history__label">${dayLabel(d.dateKey, lang)}</span>
-    </div>`).join('');
+    </div>`
+    )
+    .join('');
 
   return `
   <section class="view view--checklist">

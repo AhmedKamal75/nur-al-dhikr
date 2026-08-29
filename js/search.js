@@ -33,13 +33,23 @@ export function buildIndex(itemIndex) {
       pickLocale(category?.name, 'en'),
       pickLocale(category?.name, 'ar'),
       pickLocale(document?.metadata?.name, 'en'),
-      pickLocale(document?.metadata?.name, 'ar')
-    ].filter(Boolean).join(' \u2022 ');
+      pickLocale(document?.metadata?.name, 'ar'),
+    ]
+      .filter(Boolean)
+      .join(' \u2022 ');
 
     const rec = {
       itemId,
       haystack: normalizeSearch(fields),
-      titleHaystack: normalizeSearch(pickLocale(item.title, 'en') + ' ' + pickLocale(item.title, 'ar') + ' ' + item.arabic + ' ' + item.transliteration)
+      titleHaystack: normalizeSearch(
+        pickLocale(item.title, 'en') +
+          ' ' +
+          pickLocale(item.title, 'ar') +
+          ' ' +
+          item.arabic +
+          ' ' +
+          item.transliteration
+      ),
     };
     index.push(rec);
     itemLookup.set(itemId, entry);
@@ -68,7 +78,10 @@ export function search(query, { limit = 50 } = {}) {
     for (const term of terms) {
       const inTitle = rec.titleHaystack.includes(term);
       const inBody = rec.haystack.includes(term);
-      if (!inTitle && !inBody) { allMatch = false; break; }
+      if (!inTitle && !inBody) {
+        allMatch = false;
+        break;
+      }
       score += inTitle ? 5 : 1;
       if (rec.titleHaystack.startsWith(term)) score += 3;
     }
@@ -76,7 +89,9 @@ export function search(query, { limit = 50 } = {}) {
   }
 
   results.sort((a, b) => b.score - a.score);
-  return results.slice(0, limit).map((r) => ({ ...itemLookup.get(r.itemId), itemId: r.itemId, score: r.score }));
+  return results
+    .slice(0, limit)
+    .map((r) => ({ ...itemLookup.get(r.itemId), itemId: r.itemId, score: r.score }));
 }
 
 /** Return lightweight suggestions (top matching titles) for a partial query, for type-ahead UI. */

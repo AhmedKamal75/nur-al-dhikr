@@ -17,7 +17,9 @@ const hasLocalStorage = storageAvailable('localStorage');
 
 export function loadState() {
   try {
-    const raw = hasLocalStorage ? localStorage.getItem(STORAGE_KEY) : memoryFallback.get(STORAGE_KEY);
+    const raw = hasLocalStorage
+      ? localStorage.getItem(STORAGE_KEY)
+      : memoryFallback.get(STORAGE_KEY);
     if (!raw) return ok(null);
     return ok(JSON.parse(raw));
   } catch (err) {
@@ -48,7 +50,9 @@ export function clearState() {
 
 export function estimateStorageBytes() {
   try {
-    const raw = hasLocalStorage ? localStorage.getItem(STORAGE_KEY) : memoryFallback.get(STORAGE_KEY);
+    const raw = hasLocalStorage
+      ? localStorage.getItem(STORAGE_KEY)
+      : memoryFallback.get(STORAGE_KEY);
     return ok(raw ? new Blob([raw]).size : 0);
   } catch (err) {
     return fail(err);

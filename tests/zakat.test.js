@@ -15,7 +15,7 @@ import {
   daysUntilHawl,
   HAWL_DAYS,
   NISAB_GOLD_GRAMS,
-  NISAB_SILVER_GRAMS
+  NISAB_SILVER_GRAMS,
 } from '../js/zakat.js';
 
 test('nisab constants are the classical weights', () => {
@@ -52,7 +52,15 @@ test('roundUpToUnit always rounds the due UP, never down', () => {
 
 test('computeZakat: wealth above nisab pays exactly 2.5%, rounded up', () => {
   const r = computeZakat(
-    { cash: 5000, goldGrams: 10, investments: 2000, businessGoods: 0, receivables: 500, otherAssets: 0, liabilities: 1000 },
+    {
+      cash: 5000,
+      goldGrams: 10,
+      investments: 2000,
+      businessGoods: 0,
+      receivables: 500,
+      otherAssets: 0,
+      liabilities: 1000,
+    },
     { basis: 'gold', goldPricePerGram: 30, silverPricePerGram: 0.5 }
   );
   // gold 10g*30 = 300; liquid = 5000+2000+0+500+0 = 7500; total 7800; net 6800
@@ -64,27 +72,39 @@ test('computeZakat: wealth above nisab pays exactly 2.5%, rounded up', () => {
 });
 
 test('computeZakat: below nisab owes nothing', () => {
-  const r = computeZakat({ cash: 100 }, { basis: 'gold', goldPricePerGram: 50, silverPricePerGram: 1 });
+  const r = computeZakat(
+    { cash: 100 },
+    { basis: 'gold', goldPricePerGram: 50, silverPricePerGram: 1 }
+  );
   assert.equal(r.nisabMet, false);
   assert.equal(r.due, 0);
 });
 
 test('computeZakat: fractional due is rounded up to whole unit', () => {
-  const r = computeZakat({ cash: 1000 }, { basis: 'silver', goldPricePerGram: 999, silverPricePerGram: 1 });
+  const r = computeZakat(
+    { cash: 1000 },
+    { basis: 'silver', goldPricePerGram: 999, silverPricePerGram: 1 }
+  );
   // nisab = 595; net 1000 → due raw 25.000000000000004-ish → 25
   assert.equal(r.dueRaw > 24.9 && r.dueRaw < 25.1, true);
   assert.equal(r.due, 25);
 });
 
 test('computeZakat: liabilities can bring wealth below zero (clamped)', () => {
-  const r = computeZakat({ cash: 1000, liabilities: 5000 }, { basis: 'silver', silverPricePerGram: 1 });
+  const r = computeZakat(
+    { cash: 1000, liabilities: 5000 },
+    { basis: 'silver', silverPricePerGram: 1 }
+  );
   assert.equal(r.netWealth, 0);
   assert.equal(r.nisabMet, false);
   assert.equal(r.due, 0);
 });
 
 test('computeZakat: string inputs and negatives are sanitized', () => {
-  const r = computeZakat({ cash: '1500.5', investments: '-400', otherAssets: 'abc' }, { basis: 'silver', silverPricePerGram: 1 });
+  const r = computeZakat(
+    { cash: '1500.5', investments: '-400', otherAssets: 'abc' },
+    { basis: 'silver', silverPricePerGram: 1 }
+  );
   assert.equal(r.totalAssets, 1500.5); // -400 → 0, 'abc' → 0
 });
 
@@ -112,9 +132,9 @@ test('hawlDueFor = assessment + 354 lunar days', () => {
 test('daysUntilHawl: future, today, and past cases at day granularity', () => {
   const now = new Date(2026, 5, 15, 9, 30).getTime();
   const mk = (d) => new Date(2026, 5, d).getTime();
-  assert.equal(daysUntilHawl(mk(20), now), 5);    // upcoming
-  assert.equal(daysUntilHawl(mk(15), now), 0);    // today
-  assert.equal(daysUntilHawl(mk(10), now), -5);   // passed 5 days ago
+  assert.equal(daysUntilHawl(mk(20), now), 5); // upcoming
+  assert.equal(daysUntilHawl(mk(15), now), 0); // today
+  assert.equal(daysUntilHawl(mk(10), now), -5); // passed 5 days ago
   // same-day time-of-day differences must not skew the day count
   assert.equal(daysUntilHawl(new Date(2026, 5, 15, 23, 59).getTime(), now), 0);
 });

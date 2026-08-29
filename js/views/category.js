@@ -37,22 +37,34 @@ export function renderCategory(state) {
       <h1 class="view__title">${escapeHTML(pickLocale(cat.name, lang))}</h1>
       ${cat.description?.[lang] ? `<p class="view__subtitle">${escapeHTML(pickLocale(cat.description, lang))}</p>` : ''}
       <p class="view__meta">${t('collections.itemCount', lang, { n: items.length })} \u2022 ${escapeHTML(pickLocale(doc.metadata.name, lang))}</p>
-      ${doc.metadata.id === QUIZ_LIBRARY_ID ? `
+      ${
+        doc.metadata.id === QUIZ_LIBRARY_ID
+          ? `
       <button type="button" class="btn btn--secondary btn--sm" data-action="quiz-start">
         ${icon('star', { size: 16 })} ${t('quiz.start', lang)}
-      </button>` : ''}
+      </button>`
+          : ''
+      }
     </header>
 
-    ${items.length ? `
+    ${
+      items.length
+        ? `
     <div class="card-list">
-      ${items.map((item) => cardHTML(item, cat, {
-        lang,
-        isFavorite: selectors.isFavorite(state, item.id),
-        isSpeaking: state.speakingItemId === item.id,
-        counter: selectors.getCounter(state, item.id),
-        showTransliteration: state.settings.showTransliteration,
-        showTranslation: state.settings.showTranslation
-      })).join('')}
-    </div>` : `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
+      ${items
+        .map((item) =>
+          cardHTML(item, cat, {
+            lang,
+            isFavorite: selectors.isFavorite(state, item.id),
+            isSpeaking: state.speakingItemId === item.id,
+            counter: selectors.getCounter(state, item.id),
+            showTransliteration: state.settings.showTransliteration,
+            showTranslation: state.settings.showTranslation,
+          })
+        )
+        .join('')}
+    </div>`
+        : `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`
+    }
   </section>`;
 }
