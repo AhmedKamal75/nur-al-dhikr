@@ -9,7 +9,7 @@ import {
   isTafsirLoaded,
   splitEditions,
   findEdition,
-} from '../js/wordStudy.js';
+} from '../js/domain/wordStudy.js';
 
 const SAMPLE_WORDS = {
   1: {

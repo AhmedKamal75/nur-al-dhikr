@@ -12,7 +12,7 @@ import {
   ok,
   fail,
   toEasternArabicNumerals,
-} from '../js/utils.js';
+} from '../js/core/utils.js';
 
 describe('escapeHTML', () => {
   test('escapes all five dangerous characters', () => {

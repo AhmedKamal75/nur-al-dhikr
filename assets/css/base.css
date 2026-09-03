@@ -1,5 +1,6 @@
 /* ==========================================================================
-   base.css — reset + base element styles
+   base.css — reset, document defaults, focus, motion hygiene
+   Loaded second, after variables.css. No component classes live here.
    ========================================================================== */
 
 *,
@@ -10,67 +11,111 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
   font-family: var(--font-ui);
   font-size: var(--fs-base);
   line-height: var(--lh-normal);
+  color: var(--color-text);
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  min-height: 100vh; /* pre-dvh fallback */
   min-height: 100dvh;
-  overflow-x: hidden;
+  transition:
+    background-color var(--dur-slow) var(--ease-standard),
+    color var(--dur-slow) var(--ease-standard);
+}
+
+/* Arabic body direction (theme.js sets <html dir>) — switch the UI face. */
+[dir='rtl'] body {
+  font-family: var(--font-arabic);
 }
 
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   margin: 0;
   font-weight: 700;
   line-height: var(--lh-tight);
+  color: var(--color-text);
 }
+
 p {
-  margin: 0;
+  margin: 0 0 var(--space-3);
 }
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+p:last-child {
+  margin-bottom: 0;
 }
+
+a {
+  color: var(--color-primary-text);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
 button {
   font: inherit;
   color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
+
 input,
-textarea,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
-a {
-  color: inherit;
-  text-decoration: none;
-}
+
 img,
 svg {
   display: block;
   max-width: 100%;
 }
 
-[dir='rtl'] body {
-  font-family: var(--font-arabic), var(--font-ui);
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+dl,
+dd,
+figure {
+  margin: 0;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 24%, transparent);
+  color: var(--color-text);
 }
 
-/* Scrollbars (WebKit) */
+/* ---- Focus ----------------------------------------------------------
+   THE global focus contract (test-gated): uses the theme-tuned foreground
+   token, and NEVER touches border-radius so pill/round controls keep
+   their shape when focused. */
+:focus-visible {
+  outline: 2px solid var(--color-primary-text);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ---- Scrollbars (WebKit) --------------------------------------------- */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -79,25 +124,18 @@ svg {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border-strong);
+  background: color-mix(in srgb, var(--color-text-muted) 35%, transparent);
   border-radius: var(--radius-pill);
-  border: 2px solid var(--color-bg);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-text-muted) 55%, transparent);
+  background-clip: content-box;
+  border: 2px solid transparent;
 }
 
-/* Focus visibility everywhere, keyboard-only.
-   The outline follows each element's own border-radius in modern engines —
-   the old global `border-radius: 4px` here silently snapped pill buttons
-   and round icons to squares whenever they were keyboard-focused (fixed
-   v3.11 Phase A). --color-primary-text keeps the ring at AA contrast on
-   dark themes too. */
-:focus {
-  outline: none;
-}
-:focus-visible {
-  outline: 2px solid var(--color-primary-text);
-  outline-offset: 2px;
-}
-
+/* ---- Utility classes -------------------------------------------------- */
 .sr-only {
   position: absolute;
   width: 1px;
@@ -105,34 +143,84 @@ svg {
   padding: 0;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
 }
 
 .skip-link {
   position: fixed;
-  top: -100px;
-  left: var(--space-4);
-  z-index: 1000;
+  top: var(--space-2);
+  inset-inline-start: var(--space-2);
+  z-index: var(--z-toast-urgent);
+  padding: var(--space-2) var(--space-4);
   background: var(--color-primary);
   color: var(--color-on-primary);
-  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-sm);
-  transition: top var(--dur-base) var(--ease-standard);
   font-weight: 600;
+  transform: translateY(calc(-100% - var(--space-4)));
+  transition: transform var(--dur-base) var(--ease-standard);
 }
-.skip-link:focus {
-  top: var(--space-4);
+.skip-link:focus-visible {
+  transform: translateY(0);
+  text-decoration: none;
 }
 
-[data-reduce-motion='true'] * {
+/* ---- Motion hygiene ----------------------------------------------------
+   Reduced motion is honored in two layers (test-gated): an app setting
+   (data-reduce-motion) and the OS-level preference. Both kill animations
+   and transitions AND clamp iteration counts so no infinite loop spins
+   at 0.001ms forever. */
+[data-reduce-motion='true'] *,
+[data-reduce-motion='true'] *::before,
+[data-reduce-motion='true'] *::after {
   animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
 
-.icon {
-  flex-shrink: 0;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   (v5.1.0) Designed scrollbars — the last unstyled chrome. Thin, pill-
+   shaped, theme-aware thumbs on a transparent track: the detail that
+   separates "an app" from "a web page". Firefox via scrollbar-width +
+   scrollbar-color; Chromium/Safari via ::-webkit-scrollbar. The 3px
+   transparent border + background-clip keeps the thumb visually slim
+   while the hit area stays comfortable.
+   ========================================================================== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-text-muted) 32%, transparent) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-text-muted) 32%, transparent);
+  border: 3px solid transparent;
+  border-radius: var(--radius-pill);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-text-muted) 48%, transparent);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
 }

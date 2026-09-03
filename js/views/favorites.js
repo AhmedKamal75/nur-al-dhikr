@@ -1,12 +1,12 @@
 /**
  * views/favorites.js
  */
-import { t } from '../i18n.js';
-import { selectors } from '../state.js';
-import { cardHTML } from '../components/card.js';
-import { emptyStateHTML } from '../components/emptyState.js';
-import { buildHash } from '../router.js';
-import { VIEWS } from '../config.js';
+import { t } from '../core/i18n.js';
+import { selectors } from '../core/state.js';
+import { cardHTML } from '../ui/card.js';
+import { emptyStateHTML } from '../ui/emptyState.js';
+import { buildHash } from '../core/router.js';
+import { VIEWS } from '../core/config.js';
 
 export function renderFavorites(state) {
   const lang = state.settings.language;

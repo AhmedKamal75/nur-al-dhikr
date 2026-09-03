@@ -5,12 +5,13 @@
  * existing asma.json library — this view only selects, shuffles, and scores;
  * it never invents or alters any of the underlying content.
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { escapeHTML, pickLocale } from '../utils.js';
-import { wasCelebrated } from '../celebrate.js';
-import { buildHash } from '../router.js';
-import { VIEWS, QUIZ_LENGTH } from '../config.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { emptyStateHTML } from '../ui/emptyState.js';
+import { escapeHTML, pickLocale } from '../core/utils.js';
+import { wasCelebrated } from '../domain/celebrate.js';
+import { buildHash } from '../core/router.js';
+import { VIEWS, QUIZ_LENGTH } from '../core/config.js';
 
 function renderStart(state, lang) {
   const best = state.quizStats.bestScore;
@@ -18,12 +19,12 @@ function renderStart(state, lang) {
   return `
   <section class="view view--quiz">
     <h1 class="view__title">${t('quiz.title', lang)}</h1>
-    <div class="empty-state">
-      ${icon('star', { size: 40 })}
-      <p>${t('quiz.intro', lang, { n: QUIZ_LENGTH })}</p>
-      ${attempts > 0 ? `<p class="panel__subtext">${t('quiz.bestScore', lang, { best, total: QUIZ_LENGTH })}</p>` : ''}
-      <button type="button" class="btn btn--primary" data-action="quiz-start">${icon('play', { size: 16 })} ${t('quiz.start', lang)}</button>
-    </div>
+    ${emptyStateHTML({
+      iconName: 'star',
+      title: t('quiz.intro', lang, { n: QUIZ_LENGTH }),
+      hint: attempts > 0 ? t('quiz.bestScore', lang, { best, total: QUIZ_LENGTH }) : '',
+      actionHTML: `<button type="button" class="btn btn--primary" data-action="quiz-start">${icon('play', { size: 16 })} ${t('quiz.start', lang)}</button>`,
+    })}
   </section>`;
 }
 
@@ -68,14 +69,22 @@ function renderQuestion(state, lang) {
       const choiceEntry = state.library.itemIndex[choiceId];
       const label = choiceEntry ? escapeHTML(pickLocale(choiceEntry.item.translation, lang)) : '';
       let cls = 'quiz-choice';
+      let marker = '';
       if (revealed) {
-        if (choiceId === q.itemId) cls += ' quiz-choice--correct';
-        else if (choiceId === selectedId) cls += ' quiz-choice--wrong';
+        if (choiceId === q.itemId) {
+          cls += ' quiz-choice--correct';
+          marker = icon('check', { size: 16 });
+        } else if (choiceId === selectedId) {
+          cls += ' quiz-choice--wrong';
+          // (v4.2) the wrong pick gets a ✗ too — correctness was color-only
+          // (WCAG 1.4.1), invisible to screen readers and color-blind users.
+          marker = icon('close', { size: 16 });
+        }
       }
       return `
     <button type="button" class="${cls}" data-action="quiz-answer" data-item-id="${choiceId}" ${revealed ? 'disabled' : ''}>
       ${label}
-      ${revealed && choiceId === q.itemId ? icon('check', { size: 16 }) : ''}
+      ${marker}
     </button>`;
     })
     .join('');
@@ -86,7 +95,7 @@ function renderQuestion(state, lang) {
       <p class="view__meta">${t('quiz.progress', lang, { current: index + 1, total: deck.length })}</p>
       <p class="view__meta" dir="ltr">${icon('check', { size: 14 })} ${correctCount}</p>
     </header>
-    <div class="progress-bar"><div class="progress-bar__fill" style="width:${pct}%"></div></div>
+    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="${t('quiz.progress', lang, { current: index + 1, total: deck.length })}"><div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div></div>
 
     <div class="quiz-prompt">
       <p class="quiz-prompt__arabic" dir="rtl" lang="ar">${escapeHTML(item.arabic)}</p>
@@ -103,7 +112,8 @@ function renderQuestion(state, lang) {
     ${
       revealed
         ? `
-    <div class="quiz-feedback">
+    <div class="quiz-feedback" role="status" aria-live="polite">
+      <p class="quiz-feedback__verdict ${selectedId === q.itemId ? 'quiz-feedback__verdict--correct' : 'quiz-feedback__verdict--wrong'}">${icon(selectedId === q.itemId ? 'check' : 'close', { size: 15 })} ${t(selectedId === q.itemId ? 'quiz.correct' : 'quiz.wrong', lang)}</p>
       <p class="quiz-prompt__translit">${escapeHTML(item.transliteration)}</p>
       ${item.virtues?.[lang] ? `<p class="quiz-feedback__virtue">${escapeHTML(item.virtues[lang])}</p>` : ''}
       <button type="button" class="btn btn--primary" data-action="quiz-next">

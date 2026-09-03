@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PALETTES } from '../js/config.js';
+import { PALETTES } from '../js/core/config.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CSS_DIR = join(HERE, '..', 'assets', 'css');
@@ -42,8 +42,11 @@ const JS_SET = new Set([
   '--fill',
   '--sk-w', // v3.14 skeleton bar width (inline on each .sk element)
   '--sk-h', // v3.14 skeleton bar height (inline on each .sk element)
+  '--hifz-w', // v3.17 hifz blank width = hidden word length (inline per blank)
   '--pct',
   '--progress',
+  '--p', // v4.1 progress-bar fill scale 0–1 (inline per fill)
+  '--bar-h', // v4.1 bar-chart bar height in px (inline per bar)
   '--hero-pattern',
   '--mushaf-font-family',
   '--mushaf-font-scale',

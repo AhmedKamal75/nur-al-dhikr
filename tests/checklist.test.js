@@ -1,8 +1,13 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { completedCount, isDayComplete, checklistStreak, recentHistory } from '../js/checklist.js';
-import { CHECKLIST_ITEMS } from '../js/config.js';
-import { dateKey, addDays } from '../js/utils.js';
+import {
+  completedCount,
+  isDayComplete,
+  checklistStreak,
+  recentHistory,
+} from '../js/services/checklist.js';
+import { CHECKLIST_ITEMS } from '../js/core/config.js';
+import { dateKey, addDays } from '../js/core/utils.js';
 
 function fullDay() {
   const day = {};

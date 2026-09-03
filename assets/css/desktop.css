@@ -1,0 +1,325 @@
+/* ==========================================================================
+   desktop.css — (v4.5) the desktop refinement layer
+   --------------------------------------------------------------------------
+   Loaded LAST so a single ≥960px layer can lift every view from the honest
+   mobile-first layout to a composed desktop one — the "PC view gets the same
+   care as mobile" pass. Mobile CSS stays untouched: everything here is
+   additive, pointer-fine where relevant, and scoped under @media (min-width:
+   960px) blocks.
+
+   The five moves (from the v4.5 design audit):
+   1. MEASURE — reading text never spans a 1440px screen; text blocks get
+      a human measure (60–70ch / ~46rem) and centered columns.
+   2. DENSITY — grids fill the width instead of one stretched column;
+      stat cards compact; multi-column layouts for dashboards.
+   3. GROUPING — settings forms stop stretching controls edge-to-edge;
+      related rows sit in a definition-list rhythm.
+   4. HOVER — pointer-fine affordances: card lifts, tile borders, button
+      elevation — the page answers the mouse.
+   5. RHYTHM — view headers become a title row (title + inline actions),
+      sections get breathing room, nothing floats in a void.
+   ========================================================================== */
+
+@media (min-width: 960px) {
+  /* ------------------------------------------------------------------
+     0. CANVAS — the desktop app breathes on a wider content measure.
+     The mobile canvas (46rem / 720px) made every hub view a lonely
+     center column with vast dead margins (the "cave-man" complaint).
+     60rem is the hub canvas; reading views below re-narrow themselves
+     to a human measure. The Mushaf (92rem), reader-immersive (58rem) and
+     focus (full-bleed) shells override #main with body-class rules of
+     higher specificity, so they are untouched by this widening.
+     The topbar's inner row reads the same variable, so the brand and
+     actions stay flush with the content edges.
+     ------------------------------------------------------------------ */
+  :root {
+    --content-max-width: 60rem;
+  }
+
+  /* ------------------------------------------------------------------
+     5. RHYTHM — view headers: title and meta on one baseline, actions
+     tucked right on the same line instead of stacking under them.
+     ------------------------------------------------------------------ */
+  .view-header {
+    gap: var(--space-2);
+  }
+  .view-header--row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .view__title {
+    font-size: var(--fs-xl);
+  }
+  .view__subtitle {
+    max-width: 62ch;
+  }
+  /* The reader-style view headers (Qur'an list, category pages) that carry
+     inline .btn toolbars get them on the header's own row, flush-inline-end,
+     not wrapped awkwardly below the title. */
+  .view-header .quran-mushaf-toggle,
+  .view-header .btn--sm {
+    flex-shrink: 0;
+  }
+
+  /* ------------------------------------------------------------------
+     1. MEASURE — cards and reading text keep a human line length even
+     inside wide panels; translations and virtues cap at ~64ch.
+     ------------------------------------------------------------------ */
+  .card__translation,
+  .card__virtue,
+  .focus__translation,
+  .mushaf-tray__text {
+    max-width: 64ch;
+  }
+
+  /* ------------------------------------------------------------------
+     2. DENSITY — hub grids use the width.
+     ------------------------------------------------------------------ */
+  /* Home: quick actions spread to five across; the onboarding checklist
+     breaks out of one endless column into two side-by-side groups. */
+  .quick-actions {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .view--home .home-hero__title {
+    max-width: 24ch;
+  }
+
+  /* Library: category tiles fill rows of four with equal heights (grid
+     stretch is default — the staircase the audit flagged came from tiles
+     fighting it via align-self in a row-flex emulation). */
+  .category-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mood-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Surah list: three columns on a rail layout, four on ultra-wide. */
+  .surah-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Hadith collection tiles: three-up with a hard equal-height contract. */
+  .hadith-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+  .hadith-tile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Statistics: compact, scannable — auto-fit fills each row evenly no
+     matter how many cards a period ships (2/3/4/6), so no lopsided
+     orphan row of two on a four-wide canvas. */
+  .stat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-2);
+  }
+  .stat-card {
+    padding: var(--space-3);
+  }
+  .stat-card__value {
+    font-size: var(--fs-2xl);
+  }
+
+  /* Prayer (v5.1.0): the sunnah/qada panels moved into the "⋯" menu in
+     v4.6.0, which left this two-column grid with a permanently EMPTY
+     second column — half a desktop screen of dead air. The page is now
+     one centered column of labeled blocks (hero → times → log → tools),
+     and the tools grid reads three-across. */
+  .view--prayer:has(.empty-state) {
+    display: block;
+  }
+  .view--prayer .empty-state {
+    max-width: 34rem;
+    margin-inline: auto;
+    padding-block: var(--space-9) var(--space-6);
+  }
+  .view--prayer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+  .view--prayer .quick-actions--compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* ------------------------------------------------------------------
+     3. GROUPING — settings: a two-column definition rhythm; controls
+     capped at a sane width; sliders never span a meter of screen.
+     ------------------------------------------------------------------ */
+  .view--settings .panel {
+    max-width: 52rem;
+  }
+  .view--settings .toggle-row {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) auto;
+    justify-content: start;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .view--settings .input,
+  .view--settings .select,
+  .view--settings input[type='range'] {
+    max-width: 24rem;
+  }
+  .view--settings .segmented {
+    max-width: 24rem;
+  }
+  .reciter-list {
+    max-width: 40rem;
+  }
+
+  /* Tasbih: a meditation document, not a lonely column — the whole view
+     is one centered sheet of fixed width (the page margins become
+     symmetric paper margins), the phrase chips center under the title,
+     the presence dial grows, and the control cluster is ONE footer card. */
+  .view--tasbih {
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+  .view--tasbih .chip-row {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .view--tasbih .tasbih-stage {
+    padding-block: var(--space-8);
+  }
+  .tasbih-dial {
+    width: 240px;
+    height: 240px;
+  }
+  .tasbih-dial__ring {
+    width: 240px;
+    height: 240px;
+  }
+  .tasbih-controls {
+    max-width: 40rem;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+  .target-presets {
+    justify-self: end;
+  }
+  .tasbih-lifetime {
+    max-width: 40rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1200px) {
+  .surah-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .hadith-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .category-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------------
+   4. HOVER — pointer-fine affordances: the page answers the mouse.
+   (Kept out of the width query: capability, not size, is what earns a
+   hover state — a 960px touchscreen laptop must not depend on them.)
+   ------------------------------------------------------------------ */
+@media (min-width: 960px) and (hover: hover) and (pointer: fine) {
+  /* Interactive tiles and cards lift gently; links inside keep their own. */
+  .card,
+  .category-tile,
+  .mood-tile,
+  .hadith-tile,
+  .surah-tile,
+  .mushaf-jump__surah,
+  .mini-card {
+    transition:
+      transform var(--dur-base) var(--ease-standard),
+      box-shadow var(--dur-base) var(--ease-standard),
+      border-color var(--dur-base) var(--ease-standard);
+  }
+  .card:hover,
+  .category-tile:hover,
+  .mood-tile:hover,
+  .hadith-tile:hover,
+  .surah-tile:hover,
+  .mushaf-jump__surah:hover,
+  .mini-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+  }
+  /* Count-tap cards answer the hover with the count tint, not just a lift —
+     the affordance for "the card is the button" (APP-FLOW I6). */
+  .card[data-action='counter-tap']:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  }
+  /* Panels stay flat (they're containers, not targets); buttons elevate. */
+  .btn:not(:disabled):hover {
+    box-shadow: var(--shadow-sm);
+  }
+  .chip:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+  }
+  .reader-immersive-exit .icon-btn:hover,
+  .mushaf-fs-controls .icon-btn:hover {
+    background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Focus-mode & immersive guards (shared with mobile, but defined here
+   so the desktop layer owns its own compose): on wide screens the focus
+   stage and the immersive reading column center themselves instead of
+   stretching, and the reading column widens a touch for two-pane comfort.
+   ------------------------------------------------------------------ */
+@media (min-width: 960px) {
+  body.is-focus-mode .focus__content {
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+  /* Reading collections: the whole SECTION (header + list) becomes one
+     centered sheet — a centered list under a full-width header read as
+     lopsided; the sheet makes the margins symmetric paper margins. */
+  .view--category,
+  .view--collection,
+  .view--favorites {
+    max-width: 50rem;
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @media (min-width: 960px) and (hover: hover) and (pointer: fine) {
+    .card,
+    .category-tile,
+    .mood-tile,
+    .hadith-tile,
+    .surah-tile,
+    .mushaf-jump__surah,
+    .mini-card,
+    .card:hover,
+    .category-tile:hover,
+    .mood-tile:hover,
+    .hadith-tile:hover,
+    .surah-tile:hover,
+    .mushaf-jump__surah:hover,
+    .mini-card:hover {
+      transition: none;
+      transform: none;
+    }
+  }
+}

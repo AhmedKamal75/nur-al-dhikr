@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { matchChildren, nodeKey, structuralKey, matchChildrenDeep } from '../js/renderer.js';
+import { matchChildren, nodeKey, structuralKey, matchChildrenDeep } from '../js/app/renderer.js';
 
 /**
  * The patch engine's matcher is pure (keys in, matches out) so the ordering

@@ -1,20 +1,21 @@
 /**
  * views/collection.js
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { buildHash } from '../router.js';
-import { pickLocale, escapeHTML } from '../utils.js';
-import { selectors } from '../state.js';
-import { VIEWS } from '../config.js';
-import { cardHTML } from '../components/card.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { buildHash } from '../core/router.js';
+import { pickLocale, escapeHTML } from '../core/utils.js';
+import { selectors } from '../core/state.js';
+import { VIEWS } from '../core/config.js';
+import { cardHTML } from '../ui/card.js';
+import { notFoundStateHTML } from '../ui/emptyState.js';
 
 export function renderCollection(state) {
   const lang = state.settings.language;
   const col = selectors.getCollection(state, state.activeParams.id);
 
   if (!col) {
-    return `<section class="view"><p class="empty-hint">Collection not found.</p></section>`;
+    return `<section class="view">${notFoundStateHTML({ title: t('common.notFoundCollection', lang), lang, t })}</section>`;
   }
 
   const entries = col.items.map((id) => state.library.itemIndex[id]).filter(Boolean);

@@ -8,7 +8,7 @@ import {
   inclusiveDays,
   suggestDailyTarget,
   ramadanKhatmaPreset,
-} from '../js/khatma.js';
+} from '../js/domain/khatma.js';
 
 const TOTAL = 604;
 
@@ -93,9 +93,11 @@ test('targetDate plan: required/day and projection honestly flag an off-pace pla
   assert.equal(s.daysRemaining, 30); // Aug 24 → Sep 22 inclusive
   assert.equal(s.requiredPerDay, Math.ceil(520 / 30));
   assert.equal(s.pace, 16.8);
-  // At 16.8/day, 520 remaining → ceil(520/16.8) = 31 more days → finish Sep 23.
-  assert.equal(s.projectedFinishISO, iso(2026, 9, 23));
-  assert.equal(s.onTrack, false); // Sep 23 > Sep 22
+  // (v4.3) At 16.8/day, 520 remaining needs ceil(520/16.8) = 31 more READING
+  // days (30 × 16.8 = 504 < 520 — the old projection's −1 baked in an
+  // optimistic day the pace cannot pay for). 31 days after Aug 24 → Sep 24.
+  assert.equal(s.projectedFinishISO, iso(2026, 9, 24));
+  assert.equal(s.onTrack, false); // Sep 24 > Sep 22
 });
 
 test('targetDate plan: fast pace projects inside the deadline', () => {

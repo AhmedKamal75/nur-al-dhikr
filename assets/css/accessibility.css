@@ -1,55 +1,224 @@
 /* ==========================================================================
-   accessibility.css
+   accessibility.css — high-contrast mode, print, and support utilities.
+   Eighth and final load.
    ========================================================================== */
 
-[data-high-contrast='true'] .card,
-[data-high-contrast='true'] .quick-action,
-[data-high-contrast='true'] .category-tile,
-[data-high-contrast='true'] .collection-tile,
-[data-high-contrast='true'] .stat-card {
+/* ==========================================================================
+   High contrast (setting-driven; token overrides live in variables.css)
+   ========================================================================== */
+[data-high-contrast='true'] {
+  /* Harder borders on the interactive chrome. */
+}
+[data-high-contrast='true'] .chip,
+[data-high-contrast='true'] .btn--secondary,
+[data-high-contrast='true'] .input,
+[data-high-contrast='true'] .select,
+[data-high-contrast='true'] .textarea,
+[data-high-contrast='true'] .search-bar__input {
   border-width: 2px;
 }
-
-[data-high-contrast='true'] .chip {
-  border-width: 1px;
-  border-color: currentColor;
+[data-high-contrast='true'] .card,
+[data-high-contrast='true'] .panel,
+[data-high-contrast='true'] .stat-card,
+[data-high-contrast='true'] .ayah-card,
+[data-high-contrast='true'] .hadith-card {
+  border-width: 2px;
 }
-[data-high-contrast='true'] .btn--ghost {
-  border: 1px solid var(--color-border-strong);
-}
-[data-high-contrast='true'] .icon-btn {
-  width: 44px;
-  height: 44px;
+[data-high-contrast='true'] :focus-visible {
+  outline-width: 3px;
 }
 
-[dir='rtl'] .back-link .icon {
-  transform: scaleX(-1);
-}
-[dir='rtl'] .card__arabic,
-[dir='rtl'] .focus__arabic {
-  text-align: right;
+/* ==========================================================================
+   Print — cards only; chrome and navigation never print.
+   ========================================================================== */
+@media print {
+  #topbar,
+  #bottomnav,
+  #playerbar,
+  #modal-root,
+  #toast-root,
+  .nav-drawer,
+  .nav-drawer-overlay,
+  .nav__scroller,
+  .quick-actions,
+  .card__actions,
+  .ayah-card__actions,
+  .hadith-card__actions,
+  .btn,
+  .icon-btn,
+  .back-link {
+    display: none !important;
+  }
+  body,
+  #main {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+  .card,
+  .panel,
+  .ayah-card,
+  .hadith-card {
+    break-inside: avoid;
+    border: 1px solid #999999 !important;
+    box-shadow: none !important;
+  }
+  .card__arabic,
+  .ayah-card__arabic {
+    color: #000000 !important;
+  }
+
+  /* v4.1 — information-bearing FILLS. Browsers strip backgrounds by
+     default when printing, which turned white-text-on-fill elements into
+     white-on-white: hadith grading chips (core scholarly info), the active
+     tafsir tab, selected phrase chips, and the "NOW" badge all vanished.
+     print-color-adjust asks the engine to keep them; the border fallback
+     covers engines that refuse. */
+  .chip--grade,
+  .chip--grade-quran,
+  .chip--grade-sahih,
+  .chip--grade-hasan,
+  .chip--grade-daif,
+  .chip--grade-athar,
+  .chip--grade-custom,
+  .chip--grade-unknown,
+  .tafsir-tab--active,
+  .chip--phrase-active,
+  .chip--basis-active,
+  .chip--active,
+  .quick-action__now {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    border: 1px solid #000000 !important;
+  }
+  .quick-action__now {
+    color: #000000 !important; /* fixed dark ink prints legibly regardless */
+  }
+
+  /* Heatmap cells lose their color intensity on print — the day numeral
+     (already rendered in each cell) becomes the data channel, and a hair
+     border keeps the grid readable. */
+  .heatmap__cell {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    border: 1px solid #cccccc !important;
+  }
 }
 
+/* ==========================================================================
+   Interactive-control underlines for pointer-capable devices (hover hint),
+   off for touch-primary contexts where hover is a lie.
+   ========================================================================== */
+@media (hover: hover) {
+  .qword:hover,
+  .pu:hover {
+    text-decoration: none;
+  }
+}
+
+/* Utility: visible focus for custom in-text buttons that default to none.
+   (v4.1: dropped the border-radius declaration — the base.css focus
+   contract says focus styles never touch an element's border-radius, and
+   this rule silently violated it for every role="button" span.) */
+[role='button']:focus-visible {
+  outline: 2px solid var(--color-primary-text);
+  outline-offset: 2px;
+}
+
+/* Directional isolation: any Arabic run keeps its own script direction
+   regardless of surrounding UI direction. */
 [lang='ar'] {
   direction: rtl;
 }
 
-@media print {
-  .topbar,
-  .bottomnav,
-  #modal-root,
-  #toast-root,
-  .card__actions,
-  .card__footer {
-    display: none !important;
+/* ==========================================================================
+   (v4.2) forced-colors — Windows High Contrast / forced-colors mode.
+   The OS palette replaces our color-mix backgrounds, so every surface
+   whose STATE is carried by a background alone (active chips, downloaded
+   cells, quiz verdicts, heatmap buckets, legend swatches) must fall back
+   to a border/underline it keeps. information-bearing swatches opt out of
+   forced-color-adjust so their hue survives as the legend key.
+   ========================================================================== */
+@media (forced-colors: active) {
+  /* Interactive chrome: keep a visible edge where the OS removes fills. */
+  .chip,
+  .btn,
+  .icon-btn,
+  .input,
+  .select,
+  .textarea,
+  .search-bar__input,
+  .swatch,
+  .shape-btn,
+  .counter-pill {
+    border: 1px solid ButtonText;
   }
-  body {
-    background: #fff;
-    color: #000;
+
+  /* State-bearing controls: the state needs geometry, not just color. */
+  .chip--active,
+  .chip--basis-active,
+  .chip[aria-pressed='true'],
+  .segmented__btn--active,
+  .swatch--active,
+  .shape-btn--active {
+    border: 2px solid Highlight;
+    font-weight: 700;
   }
-  .card {
-    box-shadow: none;
-    border: 1px solid #ccc;
-    break-inside: avoid;
+
+  /* Download grid: "saved offline" must survive without its tint. */
+  .dl-cell--done {
+    position: relative;
+    border: 2px solid Highlight;
+  }
+  .dl-cell--done::after {
+    /* A checkmark glyph in forced-text color — the tint alone is gone.
+       (v4.3) raised to the app's own 12px floor: the sub-floor glyph was
+       a legacy of the pre-audit CSS, invisible at forced-colors sizes. */
+    content: '\2713';
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-end: 4px;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  /* Quiz verdicts + choices: correctness via outline, not tint. */
+  .quiz-choice--correct {
+    border: 2px solid Highlight;
+  }
+  .quiz-choice--wrong {
+    border: 2px solid Mark;
+    text-decoration: line-through;
+  }
+
+  /* Heatmap + legends: hue IS the information — preserve it. */
+  .heatmap__cell--1,
+  .heatmap__cell--2,
+  .heatmap__cell--3,
+  .heatmap__cell--4,
+  .cal-legend__swatch,
+  .pu-dot,
+  .cal-cell__dot {
+    forced-color-adjust: none;
+  }
+  .heatmap__cell {
+    border: 1px solid CanvasText;
+  }
+  .heatmap__cell--today {
+    border: 2px solid Highlight;
+  }
+
+  /* The today/white-day calendar rings and the skip link survive as
+     outlines; the toast action button keeps its button face. */
+  .cal-cell--today {
+    border: 2px solid Highlight;
+  }
+  .toast-action {
+    border: 1px solid ButtonText;
+  }
+  .skip-link {
+    border: 2px solid ButtonText;
   }
 }

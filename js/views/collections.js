@@ -1,12 +1,12 @@
 /**
  * views/collections.js
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { buildHash } from '../router.js';
-import { pickLocale, escapeHTML } from '../utils.js';
-import { VIEWS, COLLECTION_SUGGESTIONS } from '../config.js';
-import { emptyStateHTML } from '../components/emptyState.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { buildHash } from '../core/router.js';
+import { pickLocale, escapeHTML } from '../core/utils.js';
+import { VIEWS, COLLECTION_SUGGESTIONS } from '../core/config.js';
+import { emptyStateHTML } from '../ui/emptyState.js';
 
 export function renderCollections(state) {
   const lang = state.settings.language;

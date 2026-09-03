@@ -1,107 +1,545 @@
 /* ==========================================================================
-   cards.css — content cards, Focus Mode, tasbih, stats visualizations
+   cards.css — content surfaces: dua/adhkar cards, tiles, home panels,
+   prayer/checklist/worship rows, hadith cards, focus mode, tasbih dial.
+   Fifth load, after components.css.
    ========================================================================== */
 
-/* ---- Home hero ---- */
-.home-hero {
+/* ==========================================================================
+   1. The content card (duas / adhkar / 99 Names / custom content)
+   ========================================================================== */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   padding: var(--space-5);
-  margin: var(--space-4) 0 var(--space-3);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
-  background: var(--hero-pattern, none), var(--color-surface);
-  background-color: var(--color-surface);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard);
+}
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* (v4.5, APP-FLOW I6) the card BODY is the count target — the affordance
+   must say so: a count cursor and a press ripple on the whole article,
+   scoped to cards that actually carry a counter (data-target present).
+   Inner controls keep their own cursors and win taps by DOM proximity. */
+.card[data-action='counter-tap'] {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.card[data-action='counter-tap']:active {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent);
+}
+.card[data-action='counter-tap'] p {
+  cursor: inherit;
+}
+
+.card--compact {
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+.card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1_5);
+  flex: 1;
+  min-width: 0;
+}
+
+.card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+.card__title {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.card__arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-arabic-card);
+  line-height: var(--lh-arabic);
+  color: var(--color-text);
+  text-align: start;
+}
+
+.card__translit {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.card__translation {
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  line-height: var(--lh-normal);
+}
+
+.card__virtue {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  padding-inline-start: var(--space-3);
+  border-inline-start: 3px solid color-mix(in srgb, var(--color-accent-raw) 45%, transparent);
+}
+
+.card__reference {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1_5);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.card__reference svg {
+  flex-shrink: 0;
+}
+
+.card__reference-note,
+.card__attribution {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Counter pill (tap-to-count ring, conic progress) */
+.counter-pill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  min-height: var(--touch-target);
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
+}
+/* v4.1: a completed pill reads as achieved — the class was emitted by
+   views with no rule behind it. */
+.counter-pill--done .counter-pill__label,
+.worship-row__value--done {
+  color: var(--color-success-text);
+}
+.counter-pill__ring {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(var(--color-primary) calc(var(--progress, 0%)), transparent 0);
+  opacity: 0.18;
+}
+.counter-pill__label {
+  position: relative;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.counter-pill__cycles {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-inline-start: var(--space-2);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-success-text);
+}
+
+/* Mini card (one-line dense variant; whole row = Focus button) */
+.mini-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  text-align: start;
+  transition: background-color var(--dur-base) var(--ease-standard);
+}
+.mini-card:hover {
+  background: var(--color-surface-alt);
+}
+.mini-card__title {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.mini-card__arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: rtl;
+  flex: 1;
+  min-width: 0;
+}
+
+.card-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* ==========================================================================
+   2. Tiles: category / mood / collection / surah / hadith / root
+   ========================================================================== */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+
+.category-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  text-align: start;
+  transition:
+    transform var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard);
+}
+.category-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--tile-cat, var(--cat-emerald)) 35%, transparent);
+}
+.category-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--tile-cat, var(--cat-emerald)) 12%, transparent);
+  color: var(--tile-cat-text, var(--cat-emerald-text));
+}
+.category-tile__icon--amber {
+  --tile-cat: var(--cat-amber);
+  --tile-cat-text: var(--cat-amber-text);
+}
+.category-tile__icon--blue {
+  --tile-cat: var(--cat-blue);
+  --tile-cat-text: var(--cat-blue-text);
+}
+.category-tile__icon--cyan {
+  --tile-cat: var(--cat-cyan);
+  --tile-cat-text: var(--cat-cyan-text);
+}
+.category-tile__icon--emerald {
+  --tile-cat: var(--cat-emerald);
+  --tile-cat-text: var(--cat-emerald-text);
+}
+.category-tile__icon--gold {
+  --tile-cat: var(--cat-gold);
+  --tile-cat-text: var(--cat-gold-text);
+}
+.category-tile__icon--indigo {
+  --tile-cat: var(--cat-indigo);
+  --tile-cat-text: var(--cat-indigo-text);
+}
+.category-tile__icon--lime {
+  --tile-cat: var(--cat-lime);
+  --tile-cat-text: var(--cat-lime-text);
+}
+.category-tile__icon--ocean {
+  --tile-cat: var(--cat-ocean);
+  --tile-cat-text: var(--cat-ocean-text);
+}
+.category-tile__icon--orange {
+  --tile-cat: var(--cat-orange);
+  --tile-cat-text: var(--cat-orange-text);
+}
+.category-tile__icon--pink {
+  --tile-cat: var(--cat-pink);
+  --tile-cat-text: var(--cat-pink-text);
+}
+.category-tile__icon--purple {
+  --tile-cat: var(--cat-purple);
+  --tile-cat-text: var(--cat-purple-text);
+}
+.category-tile__icon--red {
+  --tile-cat: var(--cat-red);
+  --tile-cat-text: var(--cat-red-text);
+}
+.category-tile__icon--rose {
+  --tile-cat: var(--cat-rose);
+  --tile-cat-text: var(--cat-rose-text);
+}
+.category-tile__icon--sky {
+  --tile-cat: var(--cat-sky);
+  --tile-cat-text: var(--cat-sky-text);
+}
+.category-tile__icon--slate {
+  --tile-cat: var(--cat-slate);
+  --tile-cat-text: var(--cat-slate-text);
+}
+.category-tile__icon--stone {
+  --tile-cat: var(--cat-stone);
+  --tile-cat-text: var(--cat-stone-text);
+}
+.category-tile__icon--teal {
+  --tile-cat: var(--cat-teal);
+  --tile-cat-text: var(--cat-teal-text);
+}
+.category-tile__icon--violet {
+  --tile-cat: var(--cat-violet);
+  --tile-cat-text: var(--cat-violet-text);
+}
+.category-tile__icon--yellow {
+  --tile-cat: var(--cat-yellow);
+  --tile-cat-text: var(--cat-yellow-text);
+}
+
+.category-tile__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.category-tile__name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: var(--lh-tight);
+}
+.category-tile__count {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mood tiles ("browse by need") */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+.mood-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(
+      120% 140% at 100% 0%,
+      color-mix(in srgb, var(--color-primary) 8%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--color-surface);
+  text-align: start;
+  transition:
+    transform var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard);
+}
+.mood-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.mood-tile__icon {
+  color: var(--color-primary-text);
+}
+.mood-tile__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.mood-tile__name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.mood-tile__count {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Collection tiles */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+.collection-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  text-align: start;
+  transition:
+    transform var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard);
+}
+.collection-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.collection-tile__icon {
+  color: var(--color-primary-text);
+}
+.collection-tile__name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.collection-tile__count {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Library sections */
+.library-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.library-section__title {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+.library-section__desc {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   3. Home
+   ========================================================================== */
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1_5);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
+  background:
+    radial-gradient(
+      140% 180% at 100% 0%,
+      color-mix(in srgb, var(--color-primary) 10%, transparent) 0%,
+      transparent 55%
+    ),
+    var(--color-surface);
   position: relative;
   overflow: hidden;
 }
-/* Subtle 8-point star lattice — the app's signature motif, applied at a
-   whisper-quiet opacity so it reads as texture, not decoration. The two
-   offset layers keep it from looking like a plain grid. */
 .home-hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image:
-    radial-gradient(
-      circle at 100% 0%,
-      color-mix(in srgb, var(--color-primary) 7%, transparent),
-      transparent 55%
-    ),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%230F766E' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M28 2 L54 28 L28 54 L2 28 Z'/%3E%3Cpath d='M12 12 L44 12 L44 44 L12 44 Z'/%3E%3C/g%3E%3C/svg%3E");
-  background-size:
-    cover,
-    56px 56px;
+  /* Khatim-star lattice, rebuilt as a palette-aware dot grid: the v3 SVG
+     hardcoded emerald under all 10 palettes, and its v4 tokenized
+     replacement (--hero-pattern) was never wired by any JS — the ornament
+     had silently vanished. This reads the active palette via --color-primary. */
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-primary) 16%, transparent) 1px,
+    transparent 1.4px
+  );
+  background-size: 22px 22px;
+  background-repeat: repeat;
+  opacity: 0.55;
   pointer-events: none;
 }
-.home-hero > * {
-  position: relative;
-}
-/* Dark mode swaps the lattice stroke from ink-dark to paper-light; high
-   contrast suppresses the texture entirely for maximum legibility. */
-[data-theme='dark'] .home-hero::before {
-  background-image:
-    radial-gradient(
-      circle at 100% 0%,
-      color-mix(in srgb, var(--color-primary) 10%, transparent),
-      transparent 55%
-    ),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23EDEBE3' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M28 2 L54 28 L28 54 L2 28 Z'/%3E%3Cpath d='M12 12 L44 12 L44 44 L12 44 Z'/%3E%3C/g%3E%3C/svg%3E");
-}
-[data-high-contrast='true'] .home-hero::before {
-  background-image: none;
-}
 .home-hero__greeting {
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  position: relative;
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
   flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
 }
 .home-hero__hijri {
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 600;
-  color: var(--color-primary-text);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  padding: var(--space-1) var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
   border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary-text);
   font-size: var(--fs-caption);
+  font-weight: 600;
 }
 .home-hero__title {
+  position: relative;
   font-size: var(--fs-xl);
-  margin-top: var(--space-2);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
-/* ---- Home: next-prayer strip ---- */
+/* Next-prayer strip */
 .home-prayer-strip {
   display: flex;
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5);
-  margin-bottom: var(--space-4);
   border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
-  background:
-    radial-gradient(
-      circle at 0% 50%,
-      color-mix(in srgb, var(--color-primary) 9%, transparent),
-      transparent 60%
-    ),
-    var(--color-surface);
-  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }
-.home-prayer-strip__icon {
-  display: inline-flex;
+.home-prayer-strip--setup {
+  /* (v4.6.0) one calm horizontal row: icon beside text, chevron riding
+     the CTA line — the stacked variant left a lonely chevron at the
+     bottom edge with a cramped tap area. */
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
+  gap: var(--space-4);
+}
+.home-prayer-strip__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
   color: var(--color-primary-text);
   flex-shrink: 0;
 }
@@ -113,1325 +551,1675 @@
   flex: 1;
 }
 .home-prayer-strip__label {
-  color: var(--color-text-muted);
   font-size: var(--fs-caption);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
 }
 .home-prayer-strip__name {
-  font-weight: 700;
   font-size: var(--fs-md);
+  font-weight: 700;
 }
 .home-prayer-strip__countdown {
-  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--color-primary-text);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-pill);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.home-prayer-strip--setup .home-prayer-strip__label {
-  font-size: var(--fs-sm);
-  text-transform: none;
-  letter-spacing: 0;
-  color: var(--color-text);
-  font-weight: 500;
-}
-.home-prayer-strip--setup .home-prayer-strip__cta {
-  color: var(--color-primary-text);
-  font-weight: 700;
+.home-prayer-strip__cta {
   font-size: var(--fs-sm);
 }
 
-/* ---- Home: first-run onboarding panel ---- */
-.panel--onboarding {
-  background:
-    radial-gradient(
-      circle at 0% 0%,
-      color-mix(in srgb, var(--color-accent) 7%, transparent),
-      transparent 55%
-    ),
-    var(--color-surface);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-border));
-}
-.onboarding-steps {
-  display: flex;
-  flex-direction: column;
+/* Quick actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-2);
 }
-.onboarding-step {
+@media (max-width: 480px) {
+  .quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.quick-actions--compact {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.quick-action {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
+  justify-content: center;
+  gap: var(--space-1_5);
+  min-height: 84px;
+  padding: var(--space-3) var(--space-2);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  color: var(--color-text);
-  min-height: 44px;
-}
-@media (hover: hover) {
-  a.onboarding-step:hover {
-    border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
-    background: var(--color-surface-alt);
-  }
-}
-.onboarding-step__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  color: var(--color-primary-text);
-}
-.onboarding-step__check {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-success) 14%, transparent);
-  color: var(--color-success-text);
-}
-.onboarding-step__text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  flex: 1;
-  min-width: 0;
-}
-.onboarding-step__label {
-  font-weight: 600;
-  font-size: var(--fs-sm);
-}
-.onboarding-step__hint {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-size: var(--fs-caption);
-}
-.onboarding-step--done {
-  opacity: 0.66;
-}
-.onboarding-step--done .onboarding-step__label {
-  text-decoration: line-through;
-  text-decoration-color: var(--color-text-muted);
-  text-decoration-thickness: 1px;
-}
-.onboarding-step__manual {
-  color: var(--color-text-muted);
-  font-size: var(--fs-caption);
-  max-width: 40%;
-  text-align: end;
-}
-@media (max-width: 480px) {
-  .onboarding-step__manual {
-    max-width: 55%;
-  }
-}
-
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-}
-.quick-action {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  color: var(--color-text);
   font-weight: 600;
-  position: relative;
+  text-align: center;
   transition:
     transform var(--dur-fast) var(--ease-standard),
     box-shadow var(--dur-base) var(--ease-standard),
     border-color var(--dur-base) var(--ease-standard);
 }
-@media (hover: hover) {
-  .quick-action:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
-  }
+.quick-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  text-decoration: none;
 }
-.quick-action:active {
-  transform: scale(0.98);
-}
-.quick-action--sunrise {
-  color: #b45309;
-}
-.quick-action--sunset {
-  color: #c2410c;
-}
-.quick-action--tasbih {
-  color: var(--color-primary-text);
-}
-.quick-action--prayer {
-  color: #0369a1;
-}
-.quick-action--qibla {
-  color: #6d28d9;
-}
-
-/* The "suggested right now" treatment for the in-window adhkar action. */
+/* "Suggested now" emphasis: the current time window's shortcut. The class
+   existed in markup with no rule — the suggestion was invisible. */
 .quick-action--suggested {
-  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
-  background:
-    radial-gradient(
-      circle at 100% 0%,
-      color-mix(in srgb, var(--color-primary) 8%, transparent),
-      transparent 55%
-    ),
-    var(--color-surface);
-}
-.quick-action__now {
-  position: absolute;
-  top: calc(var(--space-3) * -1);
-  inset-inline-end: var(--space-3);
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: var(--color-on-primary);
-  background: var(--color-primary);
-  padding: 2px var(--space-3);
-  border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-sm);
-  animation: nowBadgePulse 2.4s var(--ease-standard) infinite;
-}
-@keyframes nowBadgePulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-primary) 35%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-primary) 0%, transparent);
-  }
-}
-[data-reduce-motion='true'] .quick-action__now {
-  animation: none;
-}
-
-.streak-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: #c2410c;
-  font-weight: 700;
-  font-size: var(--fs-sm);
-}
-.progress-bar {
-  height: 10px;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-alt);
-  overflow: hidden;
-}
-.progress-bar__fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-  transition: width var(--dur-slow) var(--ease-standard);
-}
-
-/* ---- Card ---- */
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-.card--compact {
-  padding: var(--space-4);
-  gap: var(--space-2);
-}
-.card__top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-.card__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-.card__actions {
-  display: flex;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.card__title {
-  font-size: var(--fs-md);
-}
-.card__arabic {
-  font-family: var(--font-arabic);
-  font-size: var(--fs-arabic-card);
-  line-height: var(--lh-arabic);
-  text-align: right;
-  color: var(--color-text);
-}
-.card__translit {
-  font-style: italic;
-  color: var(--color-text-secondary);
-  font-size: var(--fs-sm);
-}
-.card__translation {
-  color: var(--color-text-secondary);
-}
-.card__virtue {
-  font-size: var(--fs-sm);
-  color: var(--color-text-secondary);
-  background: var(--color-surface-alt);
-  padding: var(--space-3);
-  border-radius: var(--radius-sm);
-}
-.card__reference {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-}
-.card__reference-note {
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-  font-style: italic;
-}
-.card__attribution {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-  opacity: 0.85;
-}
-.card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  margin-top: var(--space-1);
-}
-
-.counter-pill {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-2) var(--space-4);
-  min-height: var(--touch-target);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-alt);
-  border: none;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  overflow: hidden;
-}
-.counter-pill__ring {
-  position: absolute;
-  inset: 0;
-  background: conic-gradient(var(--color-primary) calc(var(--progress, 0%)), transparent 0);
-  opacity: 0.18;
-}
-.counter-pill__label {
-  position: relative;
-}
-/* FIX (walkthrough v3.4 W-2): completed-cycle badge — visible proof that a
-   tap on a target=1 dhikr actually registered. The ring stays subtle; the
-   check + count is the signal. */
-.counter-pill__cycles {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  margin-inline-start: var(--space-2);
-  padding: 1px 8px;
-  border-radius: var(--radius-pill);
-  background: var(--color-primary);
-  color: var(--color-on-primary, #fff);
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.counter-pill--done .counter-pill__ring {
-  opacity: 0.28;
-}
-[data-theme='dark'] .counter-pill__cycles {
-  background: var(--color-primary);
-}
-
-.mini-card {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--space-3);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-alt);
-  border: none;
-  text-align: left;
-  cursor: pointer;
-  width: 100%;
-}
-.mini-card__title {
-  font-weight: 600;
-  font-size: var(--fs-sm);
-}
-.mini-card__arabic {
-  font-family: var(--font-arabic);
-  direction: rtl;
-  color: var(--color-text-secondary);
-}
-
-/* ---- Focus mode ---- */
-.focus {
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-bg);
-}
-.focus__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-}
-.focus__top-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-.focus__position {
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
-.focus__scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 var(--space-5);
-}
-.focus__content {
-  max-width: 640px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-4) 0 var(--space-6);
-  align-items: center;
-  text-align: center;
-}
-.focus__arabic {
-  font-family: var(--font-arabic);
-  font-size: var(--fs-arabic-focus);
-  line-height: var(--lh-arabic);
-  direction: rtl;
-}
-.focus__translit {
-  font-style: italic;
-  color: var(--color-text-secondary);
-  font-size: var(--fs-md);
-}
-.focus__translation {
-  color: var(--color-text-secondary);
-  font-size: var(--fs-md);
-}
-.focus__virtue {
-  font-size: var(--fs-sm);
-  color: var(--color-text-secondary);
-  background: var(--color-surface-alt);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-}
-.focus__reference {
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-}
-.focus__reference-note {
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-  font-style: italic;
-}
-.focus__attribution {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-  opacity: 0.85;
-}
-
-.focus__counter {
-  align-self: center;
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-.focus__ring {
-  position: absolute;
-  inset: 0;
-  transform: rotate(-90deg);
-}
-.focus__ring-track,
-.focus__ring-fill {
-  fill: none;
-  stroke-width: 8;
-}
-.focus__ring-track {
-  stroke: var(--color-surface-alt);
-}
-.focus__ring-fill {
-  stroke: var(--color-primary-text);
-  stroke-linecap: round;
-  stroke-dasharray: 326.7;
-  stroke-dashoffset: calc(326.7 - (326.7 * var(--pct, 0) / 100));
-  transition: stroke-dashoffset var(--dur-base) var(--ease-standard);
-}
-.focus__count {
-  font-size: var(--fs-2xl);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-.focus__target {
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-}
-.focus__hint {
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: var(--fs-caption);
-  margin-top: var(--space-2);
-}
-/* v3.7: cycle-completion feedback. The render model replaces the button on
- * every update, so the pulse rides a class stamped during the completing
- * render (tasbih.wasJustCompleted) and disappears naturally on later renders
- * once the ~700ms window passes. Keyframes live in animations.css. */
-.is-just-completed.focus__counter {
-  animation: cycleComplete 0.7s var(--ease-spring, ease-out);
-}
-.is-just-completed.focus__counter .focus__ring-fill {
-  stroke: var(--color-success, var(--color-primary));
-}
-.is-just-completed.focus__hint {
-  color: var(--color-success-text, var(--color-primary-text));
-  font-weight: 600;
-}
-.focus__nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
-  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
-}
-.focus__nav-arrows {
-  display: flex;
-  gap: var(--space-2);
-}
-
-/* ---- Tasbih ---- */
-.tasbih-stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-6) 0;
-}
-.tasbih-stage__arabic {
-  font-family: var(--font-arabic);
-  font-size: var(--fs-xl);
-  direction: rtl;
-}
-.tasbih-dial {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.tasbih-dial__ring {
-  position: absolute;
-  inset: 0;
-  transform: rotate(-90deg);
-}
-.tasbih-dial__track,
-.tasbih-dial__fill {
-  fill: none;
-  stroke-width: 10;
-}
-.tasbih-dial__track {
-  stroke: var(--color-surface-alt);
-}
-.tasbih-dial__fill {
-  stroke: var(--color-primary-text);
-  stroke-linecap: round;
-  stroke-dasharray: 552.9;
-  stroke-dashoffset: calc(552.9 - (552.9 * var(--pct, 0) / 100));
-  transition: stroke-dashoffset var(--dur-base) var(--ease-standard);
-}
-.tasbih-dial__count {
-  font-size: 3rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-}
-.tasbih-dial__target {
-  color: var(--color-text-muted);
-}
-.tasbih-stage__cycles {
-  color: var(--color-text-secondary);
-  font-size: var(--fs-sm);
-}
-.tasbih-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-.target-stepper {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-.target-stepper__value {
-  min-width: 2ch;
-  text-align: center;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.tasbih-lifetime {
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-}
-
-/* ---- Library / category browse ---- */
-.library-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-.library-section__title {
-  font-size: var(--fs-lg);
-}
-.library-section__desc {
-  color: var(--color-text-secondary);
-}
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: var(--space-3);
-}
-.category-tile {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-}
-.category-tile__icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.category-tile__name {
-  font-weight: 700;
-  display: block;
-}
-.category-tile__count {
-  color: var(--color-text-muted);
-  font-size: var(--fs-caption);
-}
-
-/* ---- Browse by need (v2.9): mood tiles ---- */
-.library-section--moods {
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
-  background:
-    radial-gradient(
-      circle at 0% 0%,
-      color-mix(in srgb, var(--color-primary) 6%, transparent),
-      transparent 55%
-    ),
-    var(--color-surface);
-}
-.mood-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: var(--space-2);
-}
-.mood-tile {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
-  min-height: 44px;
-  transition:
-    border-color var(--dur-base) var(--ease-standard),
-    background var(--dur-base) var(--ease-standard);
-}
-@media (hover: hover) {
-  .mood-tile:hover {
-    border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
-    background: var(--color-surface-alt);
-  }
-}
-.mood-tile__icon {
-  width: 34px;
-  height: 34px;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  color: var(--color-primary-text);
-}
-.mood-tile__text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-.mood-tile__name {
-  font-weight: 600;
-  font-size: var(--fs-sm);
-}
-.mood-tile__count {
-  color: var(--color-text-muted);
-  font-size: var(--fs-caption);
-}
-.view--mood .view__title {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-primary-text);
-}
-
-.collection-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: var(--space-3);
-}
-.collection-tile {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-}
-.collection-tile__icon {
-  color: var(--color-primary-text);
-}
-.collection-tile__name {
-  font-weight: 700;
-}
-.collection-tile__count {
-  color: var(--color-text-muted);
-  font-size: var(--fs-caption);
-}
-
-/* ---- Statistics ---- */
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-3);
-}
-@media (min-width: 560px) {
-  .stat-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-.stat-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.stat-card__value {
-  font-size: var(--fs-xl);
-  font-weight: 800;
-  color: var(--color-primary-text);
-  font-variant-numeric: tabular-nums;
-}
-.stat-card__label {
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-}
-
-.bar-chart {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  height: 90px;
-  gap: var(--space-2);
-}
-.bar-chart__col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  flex: 1;
-}
-.bar-chart__bar {
-  width: 100%;
-  max-width: 28px;
-  background: linear-gradient(180deg, var(--color-accent), var(--color-primary));
-  border-radius: 6px 6px 2px 2px;
-}
-.bar-chart__label {
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-}
-
-/* Large weekly chart: taller bars, a value label above each bar, and a
-   distinct treatment for the week's best day. */
-.bar-chart--lg {
-  height: 170px;
-}
-.bar-chart--lg .bar-chart__col {
-  justify-content: flex-end;
-}
-.bar-chart__value {
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  min-height: 14px; /* keeps bars bottom-aligned when the label is empty */
-}
-.bar-chart__value--zero {
-  min-height: 14px;
-}
-.bar-chart__bar--best {
+  border-color: color-mix(in srgb, var(--color-accent-raw) 55%, transparent);
   box-shadow: var(--ring-accent);
 }
+.quick-action svg {
+  color: var(--qa-color, var(--color-primary-text));
+}
+.quick-action:hover {
+  border-color: color-mix(in srgb, var(--qa-color, var(--color-primary)) 45%, transparent);
+}
 
-.heatmap {
+.quick-action--quran {
+  --qa-color: var(--cat-teal-text);
+}
+.quick-action--prayer {
+  --qa-color: var(--cat-indigo-text);
+}
+.quick-action--qibla {
+  --qa-color: var(--cat-violet-text);
+}
+.quick-action--ramadan {
+  --qa-color: var(--cat-ocean-text);
+}
+.quick-action--zakat {
+  --qa-color: var(--cat-amber-text);
+}
+.quick-action--tasbih {
+  --qa-color: var(--cat-emerald-text);
+}
+.quick-action--sunrise {
+  --qa-color: var(--cat-gold-text);
+}
+.quick-action--sunset {
+  --qa-color: var(--cat-orange-text);
+}
+
+.quick-action__now {
+  position: absolute;
+  top: var(--space-1_5);
+  inset-inline-end: var(--space-1_5);
+  padding: 1px var(--space-1_5);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  /* Fixed dark ink, NOT white: white on accent measured 1.67–2.7:1 on 9 of
+     10 bundled palettes; dark ink holds ≥ 6.1:1 on every accent in both
+     themes (the accent is theme-independent, so the ink must be too). */
+  color: var(--color-ink-fixed);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  animation: nowBadgePulse var(--dur-loop-slow) var(--ease-standard) infinite;
+}
+
+/* Nudge card (gentle, anti-guilt) */
+.panel--nudge {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-4);
+  border-color: color-mix(in srgb, var(--color-accent-raw) 30%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-accent-raw) 8%, transparent),
+      transparent 60%
+    ),
+    var(--color-surface);
+}
+.panel--nudge__icon {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-accent-raw) 14%, transparent);
+  color: color-mix(in srgb, var(--color-accent-raw) 60%, var(--color-text));
+  flex-shrink: 0;
 }
-.heatmap__dow {
-  text-align: center;
-  font-size: 10px;
-  color: var(--color-text-muted);
-}
-.heatmap__cell {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  font-size: 10px;
-  color: var(--color-text-muted);
-  background: var(--color-surface-alt);
-}
-.heatmap__cell--empty {
-  background: none;
-}
-.heatmap__cell--1 {
-  background: color-mix(in srgb, var(--color-primary) 22%, var(--color-surface-alt));
-  color: var(--color-text);
-}
-.heatmap__cell--2 {
-  background: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface-alt));
-  color: #fff;
-}
-.heatmap__cell--3 {
-  background: color-mix(in srgb, var(--color-primary) 70%, var(--color-surface-alt));
-  color: #fff;
-}
-.heatmap__cell--4 {
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-}
-
-/* Heatmap month navigation (browse up to a year of history). */
-.heatmap-month-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-.heatmap-month-nav__label {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  min-width: 110px;
-  text-align: center;
-}
-.heatmap-month-nav .icon-btn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.ranked-list {
+.panel--nudge__text {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.panel--nudge__title {
+  font-weight: 700;
+  font-size: var(--fs-sm);
+}
+.panel--nudge__line {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+.panel--nudge__cta {
+  flex-shrink: 0;
+}
+.panel--nudge__dismiss {
+  align-self: flex-start;
+}
+
+/* Onboarding steps */
+.panel--onboarding {
   gap: var(--space-2);
 }
-.ranked-row {
+.onboarding-step {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* (v4.6.0) the install action wraps below the text
+     instead of squeezing the label into one-word-per-line wrapping */
+  gap: var(--space-2) var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: background-color var(--dur-base) var(--ease-standard);
+}
+.onboarding-step:hover {
+  background: var(--color-surface-alt);
+}
+.onboarding-step__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+.onboarding-step__check {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  flex-shrink: 0;
+}
+.onboarding-step__label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  /* (v4.4) balanced wrapping keeps short titles like "Install the app"
+     from breaking one word per line on narrow cards. */
+  text-wrap: balance;
+  white-space: nowrap; /* (v4.6.0) two short words stay on one line */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.onboarding-step__text {
+  flex: 1 1 12rem; /* (v4.6.0) let the text claim real width before the row wraps */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+.onboarding-step__hint {
+  display: block;
+  font-size: var(--fs-caption);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  text-wrap: balance;
+}
+.onboarding-step__manual {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* Continue-reading / reflection / daily cards */
+.panel--quran-continue {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-4);
+}
+.panel--quran-continue__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--cat-teal) 12%, transparent);
+  color: var(--cat-teal-text);
+  flex-shrink: 0;
+}
+.panel--quran-continue__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.panel--quran-continue__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+.panel--quran-continue__sub {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+
+.panel--reflection .card__arabic {
+  font-size: calc(var(--fs-arabic-card) * 0.85);
+}
+
+/* Ramadan seasonal banner */
+.panel--ramadan-banner {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-4);
+  border-color: color-mix(in srgb, var(--cat-ocean) 30%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--cat-ocean) 10%, transparent), transparent 55%),
+    var(--color-surface);
+}
+.panel--ramadan-banner__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--cat-ocean) 14%, transparent);
+  color: var(--cat-ocean-text);
+  flex-shrink: 0;
+}
+.panel--ramadan-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+.panel--ramadan-banner__label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+.panel--ramadan-banner__sub {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* Checklist summary link */
+.panel--checklist-summary {
+  gap: var(--space-2);
+}
+.panel--checklist-summary-link {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-height: var(--touch-target);
+  border-radius: var(--radius-md);
+  text-align: start;
+  transition: background-color var(--dur-base) var(--ease-standard);
 }
-.ranked-row__icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+.panel--checklist-summary-link:hover {
+  background: var(--color-surface-alt);
+}
+.panel--checklist-summary-link__icon {
+  color: var(--color-primary-text);
+}
+.panel--checklist-summary-link__text {
+  flex: 1;
+  min-width: 0;
+}
+.panel--checklist-summary-link__label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.panel--checklist-summary-link__sub {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* Progress panel */
+.panel--progress {
+  gap: var(--space-3);
+}
+
+/* Worship "today" rows */
+.worship-list {
+  display: flex;
+  flex-direction: column;
+}
+.worship-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  text-align: start;
+}
+a.worship-row:hover {
+  background: var(--color-surface-alt);
+  text-decoration: none;
+}
+.worship-row__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  color: var(--color-primary-text);
   flex-shrink: 0;
 }
-.ranked-row__label {
+.worship-row__name {
   flex: 1;
   font-size: var(--fs-sm);
+  font-weight: 500;
+  min-width: 0;
 }
-.ranked-row__value {
+.worship-row__value {
+  font-size: var(--fs-sm);
   font-weight: 700;
+  color: var(--color-primary-text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.worship-row--actions {
+  gap: var(--space-1);
+}
+
+/* ==========================================================================
+   4. Prayer view
+   ========================================================================== */
+.next-prayer-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.next-prayer-card__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+.next-prayer-card__name {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+.next-prayer-card__countdown {
+  margin-inline-start: auto;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-primary-text);
   font-variant-numeric: tabular-nums;
 }
 
-/* ---- Prayer ---- */
-.next-prayer-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-7) var(--space-4);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(
-    160deg,
-    var(--color-primary),
-    color-mix(in srgb, var(--color-primary) 70%, #000)
-  );
-  color: var(--color-on-primary);
-}
-.next-prayer-card__label {
-  font-size: var(--fs-sm);
-  opacity: 0.85;
-}
-.next-prayer-card__name {
-  font-size: var(--fs-2xl);
-  font-weight: 800;
-}
-.next-prayer-card__countdown {
-  font-size: var(--fs-sm);
-  opacity: 0.9;
-}
 .prayer-list {
   display: flex;
   flex-direction: column;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--color-border);
 }
 .prayer-row {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-4);
-  background: var(--color-surface);
+  min-height: 56px;
+  padding: var(--space-2) 0;
   border-bottom: 1px solid var(--color-border);
 }
 .prayer-row:last-child {
   border-bottom: none;
 }
+/* The NEXT prayer's row: emphasized so "what comes next" is scannable at
+   a glance. Emitted by views/prayer.js since v3; never styled until v4.1. */
 .prayer-row--active {
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
 }
 .prayer-row__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
   color: var(--color-primary-text);
+  flex-shrink: 0;
 }
 .prayer-row__name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
   flex: 1;
-  font-weight: 600;
 }
 .prayer-row__time {
-  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-md);
   font-weight: 700;
-}
-/* Compact icon button (defined with its hit area in components.css;
-   this rule only adjusts its color inside card contexts). */
-.icon-btn--sm {
-  color: var(--color-text-muted);
-}
-.icon-btn--active-bell {
-  color: var(--color-primary-text);
-}
-.sound-picker-row {
-  display: flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-.sound-picker-row .select {
-  flex: 1;
+  font-variant-numeric: tabular-nums;
 }
 
-/* ---- Prayer log (v3.0) ---- */
+/* Tri-state log dot */
 .prayer-log-btn {
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-border-strong);
+  color: var(--color-text-muted);
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
 }
-.prayer-log-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--color-border-strong);
-  display: inline-block;
+.prayer-log-btn:hover {
+  border-color: var(--color-text-muted);
+}
+.prayer-log-btn:active {
+  transform: scale(0.92);
 }
 .prayer-log-btn--prayed {
-  color: var(--color-success-text);
   background: var(--color-success-bg);
-  border-color: transparent;
+  border-color: var(--color-success);
+  color: var(--color-success-text);
 }
 .prayer-log-btn--jamaah {
-  color: var(--color-primary-text);
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-  border-color: transparent;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
-.panel--prayer-log {
-  margin-top: var(--space-4);
+.prayer-log-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-strong);
 }
+/* (v4.1) --prayed/--jamaah variants removed: the view swaps in icon glyphs
+   for those states, so the dot only ever renders in its empty form. */
+
 .plog-week {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   gap: var(--space-1);
 }
 .plog-week__day {
-  flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: var(--space-1) 0;
-  border-radius: var(--radius-sm);
-}
-.plog-week__label {
+  gap: var(--space-2);
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
 }
+/* v4.1: a fully-logged day lifts its label — the class shipped unstyled. */
+.plog-week__day--complete {
+  color: var(--color-success-text);
+}
 .plog-week__dots {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-.plog-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--color-surface-alt);
-  border: 1px solid var(--color-border);
-}
-.plog-dot--prayed {
-  background: var(--color-success);
-  border-color: var(--color-success-text);
-}
-.plog-dot--jamaah {
-  background: var(--color-primary);
-  border-color: var(--color-primary-text);
-}
-.plog-week__day--complete {
-  background: color-mix(in srgb, var(--color-success) 8%, transparent);
-}
-.plog-week__day--complete .plog-week__label {
-  color: var(--color-success-text);
-  font-weight: 700;
+  gap: var(--space-1);
 }
 
-/* ---- Calendar ---- */
-.hijri-today {
+.tz-mismatch-note {
+  font-size: var(--fs-caption);
+  color: var(--color-warning-text);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-warning-bg);
+}
+
+.panel--prayer-log {
+  gap: var(--space-3);
+}
+.panel--alert-reliability {
+  border-color: color-mix(in srgb, var(--color-warning) 30%, transparent);
+  background: var(--color-warning-bg);
+  gap: var(--space-2);
+}
+
+/* ==========================================================================
+   5. Checklist
+   ========================================================================== */
+.checklist-list {
+  display: flex;
+  flex-direction: column;
+}
+.checklist-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-2) 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.checklist-row--checked .checklist-row__label {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+}
+.checklist-row__check {
+  flex-shrink: 0;
+}
+.checklist-row__icon {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+.checklist-row__label {
+  flex: 1;
+  font-size: var(--fs-sm);
+}
+
+.checklist-history {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+}
+.checklist-history__day {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: var(--space-6) 0;
-}
-.hijri-today__day {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--color-primary-text);
-  line-height: 1;
-}
-.hijri-today__month {
-  font-weight: 700;
-}
-.hijri-today__gregorian {
+  gap: var(--space-1);
+  font-size: var(--fs-caption);
   color: var(--color-text-muted);
+}
+.checklist-history__dot {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-alt);
+  /* (v4.4) a ring so empty dots stay visible on dark surfaces — they were
+     measured as near-invisible circles on the dark checklist. */
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+.checklist-history__day--complete .checklist-history__dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(var(--color-success) calc(var(--fill, 0%) * 1%), transparent 0);
+}
+.checklist-history__label {
+  font-size: var(--fs-caption);
+}
+
+/* ==========================================================================
+   6. Focus mode
+   ========================================================================== */
+.focus {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* pre-dvh fallback */
+  height: 100dvh;
+  background: var(--color-bg);
+}
+.focus__top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  padding-top: calc(var(--space-3) + env(safe-area-inset-top, 0));
+}
+.focus__position {
   font-size: var(--fs-sm);
-}
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-.cal-dow {
-  text-align: center;
-  font-size: 10px;
   color: var(--color-text-muted);
-  padding-bottom: 4px;
+  font-variant-numeric: tabular-nums;
 }
-.cal-cell {
-  aspect-ratio: 1;
+.focus__top-actions {
+  margin-inline-start: auto;
+  display: flex;
+  gap: var(--space-1);
+}
+.focus__scroll {
+  flex: 1;
+  overflow-y: auto;
+  /* (v5.1.0) THE SCROLL FIX: this stage used to inherit overflow:hidden
+     from the ripple-clip rule near the end of this file, which silently
+     overrode overflow-y:auto (source order, equal specificity). Result:
+     scrollHeight reported the full text while the person saw one clipped
+     line and could not scroll at all. The stage now anchors the ripple
+     (position:relative, set at the bottom of this file) but NEVER clips —
+     clipping is reserved for non-scrolling tap surfaces. */
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  text-align: center;
+  /* (v4.5, APP-FLOW I7) the stage is the count button: the whole reading
+     surface says "tap me" without stealing any inner control's cursor. */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.focus__scroll p,
+.focus__scroll .chip {
+  cursor: inherit;
+}
+.focus__arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-arabic-focus);
+  line-height: var(--lh-arabic);
+  max-width: 22ch;
+}
+.focus__translit {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+.focus__translation {
+  font-size: var(--fs-md);
+  max-width: 42ch;
+}
+.focus__virtue {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  max-width: 44ch;
+}
+.focus__reference,
+.focus__reference-note {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+/* (v5.1.0) COMPACT CONTROL BAR — the counter cluster dropped from ~280px
+   (180px dial + hint line + 72px nav footer) to one ~76px row: reset,
+   prev/next, a 64px progress counter, and the card menu. The reading
+   stage reclaims the space; the counter keeps the same "done / target ✓"
+   contract, the ring, the ripple and the cycle-complete celebration. */
+.focus__hint {
+  padding: 0 var(--space-4);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+.focus__hint.is-just-completed {
+  color: var(--color-success-text);
+  font-weight: 600;
+  animation: cycleComplete var(--dur-celebrate) var(--ease-spring);
+}
+.focus__bar {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  font-size: var(--fs-sm);
-  font-variant-numeric: tabular-nums;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) calc(var(--space-3) + env(safe-area-inset-bottom, 0));
 }
-.cal-cell--empty {
-  visibility: hidden;
+.focus__bar-arrows {
+  display: flex;
+  gap: var(--space-1);
 }
-.cal-cell--today {
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 700;
-}
-.cal-cell--white:not(.cal-cell--today) {
-  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
-}
-
-/* Dual-calendar cell: Gregorian day large, Hijri day small beneath, tappable */
-.cal-cell--dual {
+.focus__counter {
   position: relative;
-  border-radius: var(--radius-sm);
-  border: none;
-  background: none;
-  cursor: pointer;
-  flex-direction: column;
-  gap: 0;
-  padding: 2px 0;
-  color: var(--color-text);
-  transition: background var(--dur-fast) var(--ease-standard);
+  display: grid;
+  place-items: center;
+  grid-template-areas:
+    'num'
+    'den';
+  width: 64px;
+  height: 64px;
+  margin-inline: auto;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
+  transition: transform var(--dur-fast) var(--ease-standard);
 }
-.cal-cell--dual:hover {
-  background: var(--color-surface-alt);
+.focus__counter:active {
+  transform: scale(0.94);
 }
-.cal-cell--dual.cal-cell--today {
-  background: var(--color-primary);
-}
-.cal-cell--dual.cal-cell--today .cal-cell__h {
-  color: color-mix(in srgb, var(--color-on-primary) 75%, transparent);
-}
-.cal-cell__g {
+.focus__counter-num {
+  grid-area: num;
+  font-size: 20px;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+  color: var(--color-text);
+}
+.focus__counter-den {
+  grid-area: den;
+  /* 12px, not smaller: the design system's accessibility floor
+     (test-gated) applies to the compact denominator too. */
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
   line-height: 1.1;
 }
-.cal-cell__h {
-  font-size: 9px;
+.focus__counter.is-done .focus__counter-num {
+  color: var(--color-success-text);
+}
+.focus__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.focus__ring-track {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 4;
+}
+.focus__ring-fill {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 169.6;
+  stroke-dashoffset: calc(169.6 * (1 - var(--pct, 0) / 100));
+  transition: stroke-dashoffset var(--dur-slow) var(--ease-standard);
+}
+.focus__counter.is-just-completed {
+  animation: cycleComplete var(--dur-celebrate) var(--ease-spring);
+}
+
+/* ==========================================================================
+   7. Tasbih dial
+   ========================================================================== */
+.tasbih-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+  /* (v4.5, APP-FLOW I7) the whole stage counts; the dial is the visual. */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.tasbih-stage__arabic {
+  cursor: inherit;
+  font-family: var(--font-arabic);
+  font-size: calc(var(--fs-arabic-card) * 1.15);
+  line-height: var(--lh-arabic);
+  text-align: center;
+}
+.tasbih-stage__cycles {
+  font-size: var(--fs-sm);
   color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tasbih-dial {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 200px;
+  height: 200px;
+  border-radius: var(--radius-pill);
+  /* The app's #1 rapid-tap surface: kill double-tap zoom, text-selection
+     callouts and the gray tap flash before they eat a count. */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+.tasbih-dial:active {
+  transform: scale(0.97);
+}
+.tasbih-dial__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+.tasbih-dial__track {
+  fill: none;
+  stroke: var(--color-border);
+  stroke-width: 10;
+}
+.tasbih-dial__fill {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 552.9;
+  stroke-dashoffset: calc(552.9 * (1 - var(--pct, 0) / 100));
+  transition: stroke-dashoffset var(--dur-slow) var(--ease-standard);
+}
+.tasbih-dial__count {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   line-height: 1;
 }
-.cal-cell__dot {
-  position: absolute;
-  bottom: 2px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--color-accent);
+.tasbih-dial__target {
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
-.cal-cell--dual.cal-cell--today .cal-cell__dot {
-  background: var(--color-on-primary);
+
+.tasbih-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.target-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+.target-stepper__value {
+  min-width: 3ch;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.tasbih-lifetime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1_5);
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   8. Hadith library
+   ========================================================================== */
+.hadith-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-3);
+}
+.hadith-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  text-align: start;
+  transition:
+    transform var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard);
+}
+.hadith-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.hadith-tile__head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.hadith-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--cat-emerald) 12%, transparent);
+  color: var(--cat-emerald-text);
+  flex-shrink: 0;
+}
+.hadith-tile__name {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+}
+.hadith-tile__author {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.hadith-tile__blurb {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-normal);
+}
+.hadith-tile__count {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hadith-tile__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+}
+.hadith-tile__badge--ondemand {
+  background: color-mix(in srgb, var(--cat-ocean) 10%, transparent);
+  color: var(--cat-ocean-text);
+}
+
+.hadith-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.hadith-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.hadith-card--target {
+  border-color: var(--color-primary);
+  box-shadow: var(--ring-primary);
+}
+.hadith-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.hadith-card__number {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 26px;
+  padding-inline: var(--space-1_5);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary-text);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.hadith-card__section {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.hadith-card__arabic {
+  font-family: var(--font-arabic);
+  font-size: calc(var(--fs-arabic-card) * 0.8);
+  line-height: var(--lh-arabic);
+}
+.hadith-card__translation {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+}
+.hadith-card__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hadith-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.hadith-jump {
+  display: flex;
+  gap: var(--space-2);
+}
+.hadith-jump__input {
+  width: 110px;
+}
+.hadith-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+.hadith-pager__status {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hadith-note,
+.hadith-loading {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   9. Search results
+   ========================================================================== */
+.search-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+.search-results-count {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.quran-search-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.quran-hit-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.quran-hit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1_5);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  text-align: start;
+  transition: border-color var(--dur-base) var(--ease-standard);
+}
+.quran-hit:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+.quran-hit__ref {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+.quran-hit__arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-md);
+  line-height: var(--lh-arabic);
+}
+.quran-hit__translation {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   10. Calendar + fasting
+   ========================================================================== */
+.hijri-today {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.hijri-today__day {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  line-height: 1;
+}
+.hijri-today__month {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+.hijri-today__gregorian {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
 }
 
 .cal-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-2);
+  gap: var(--space-2);
   position: relative;
 }
 .cal-nav__label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  flex: 1;
+  font-size: var(--fs-md);
+  font-weight: 700;
 }
 .cal-nav__hijri {
-  font-size: 10px;
+  display: block;
+  font-size: var(--fs-caption);
+  font-weight: 400;
   color: var(--color-text-muted);
 }
 .cal-nav__today {
   position: absolute;
-  right: 0;
-  top: -22px;
+  inset-inline-end: 0;
+  top: 100%;
   font-size: var(--fs-caption);
+  color: var(--color-primary-text);
+  font-weight: 600;
+}
+
+.cal-dow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  text-align: center;
+  font-weight: 600;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-grid--dual {
+  gap: 2px;
+}
+.cal-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  aspect-ratio: 1;
+  min-height: 44px;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard);
+}
+.cal-cell:hover {
+  background: var(--color-surface-alt);
+}
+.cal-cell--empty {
+  pointer-events: none;
+}
+.cal-cell--today {
+  border-color: var(--color-primary);
+  box-shadow: var(--ring-primary);
+}
+.cal-cell--white {
+  background: color-mix(in srgb, var(--cat-violet) 8%, transparent);
+}
+.cal-cell__g {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1;
+}
+.cal-cell__h {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+.cal-cell__dot {
+  position: absolute;
+  bottom: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  /* (v4.1) primary, not accent-raw: a "has notes" indicator is meaningful
+     non-text content and owes 3:1 against the cell (accent measured 2.54). */
+  background: var(--color-primary);
 }
 
 .cal-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-4);
-  margin-top: var(--space-3);
+  gap: var(--space-3);
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
-}
-.cal-legend span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
 }
 .cal-legend__swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
   display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--color-border-strong);
+  vertical-align: -1px;
+  margin-inline-end: var(--space-1);
 }
 .cal-legend__swatch--today {
-  background: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: var(--ring-primary);
 }
 .cal-legend__swatch--white {
-  background: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  background: color-mix(in srgb, var(--cat-violet) 15%, transparent);
 }
 .cal-legend__swatch--dot {
-  background: var(--color-accent);
-  width: 6px;
-  height: 6px;
-}
-
-.day-detail {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-.day-detail__hijri {
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  margin-top: -8px;
-}
-.day-note-row {
-  display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  background: var(--color-surface-alt);
-  border-radius: var(--radius-sm);
-  align-items: flex-start;
-}
-.day-note-row__body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.day-note-row__body p {
-  color: var(--color-text-secondary);
-  font-size: var(--fs-sm);
-}
-.day-note-row__meta {
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.day-note-row__actions {
-  display: flex;
-  gap: 2px;
-  flex-shrink: 0;
-}
-.note-form__conditional {
-  display: flex;
-  flex-direction: column;
-}
-.note-form__conditional[hidden] {
-  display: none;
+  background: var(--color-accent-raw);
+  border: none;
+  border-radius: var(--radius-pill);
 }
 
 .event-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 .event-row {
   display: flex;
+  align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--color-border);
+  min-height: 40px;
+  font-size: var(--fs-sm);
 }
-.event-row:last-child {
-  border-bottom: none;
+.event-row__label {
+  flex: 1;
 }
 .event-row__date {
   color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  min-width: 64px;
+  font-variant-numeric: tabular-nums;
 }
-.event-row__label {
+
+/* Fasting panel */
+.panel--fasting {
+  gap: var(--space-3);
+}
+.fast-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  font-size: var(--fs-sm);
+}
+.fast-row__name {
+  flex: 1;
+}
+.fast-row__text {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.fast-row--time {
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+}
+
+.fast-dot-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+@media (max-width: 480px) {
+  .fast-dot-grid {
+    gap: var(--space-1);
+  }
+}
+.fast-dot {
+  width: 40px; /* v4.1: 34px was under both the 44px comfort target and the
+     fast tracker's only enabled control */
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-strong);
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.fast-dot--kept {
+  background: var(--color-success-bg);
+  border-color: var(--color-success);
+  color: var(--color-success-text);
+  font-weight: 700;
+}
+.fast-dot--today {
+  border-color: var(--color-primary);
+  box-shadow: var(--ring-primary);
+}
+.fast-dot:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.panel--fasting-days,
+.panel--fasting-upcoming {
+  gap: var(--space-2);
+}
+
+/* ==========================================================================
+   11. Ramadan companion
+   ========================================================================== */
+.ramadan-hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--cat-ocean) 25%, transparent);
+  background:
+    radial-gradient(
+      160% 200% at 100% 0%,
+      color-mix(in srgb, var(--cat-ocean) 14%, transparent) 0%,
+      transparent 60%
+    ),
+    var(--color-surface);
+}
+.ramadan-hero__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.ramadan-hero__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--cat-ocean) 14%, transparent);
+  color: var(--cat-ocean-text);
+}
+.ramadan-hero__phase {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+.ramadan-hero__caption {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.ramadan-hero__labels {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.ramadan-countdown-row {
+  display: flex;
+  gap: var(--space-4);
+}
+.ramadan-countdown-row--stacked {
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ramadan-countdown-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.ramadan-countdown-block__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+.ramadan-countdown-block__value {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ramadan-countdown-block__sub {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.ramadan-hero__duas {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.ramadan-hero__countdown {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.qadr-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--cat-violet) 10%, transparent);
+  color: var(--cat-violet-text);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.qadr-banner--odd {
+  background: color-mix(in srgb, var(--cat-violet) 18%, transparent);
+}
+
+/* ==========================================================================
+   12. Zakat calculator
+   ========================================================================== */
+.zakat-nisab-basis {
+  display: flex;
+  gap: var(--space-2);
+}
+.zakat-price-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+.zakat-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-3);
+}
+.zakat-field--liability .input {
+  border-style: dashed;
+}
+.zakat-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
+  background: var(--color-success-bg);
+}
+.zakat-result--due {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+.zakat-due {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.zakat-due__label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.zakat-due__amount {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  font-variant-numeric: tabular-nums;
+}
+.zakat-due--fitr .zakat-due__amount {
+  font-size: var(--fs-lg);
+}
+.zakat-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+}
+.zakat-breakdown dl {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.dl-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.zakat-history-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  padding: var(--space-2) 0;
+}
+.zakat-history-row__main {
+  flex: 1;
+  min-width: 0;
+}
+.zakat-history-row__meta {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.zakat-history-row__date {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.zakat-history-row__amount {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.zakat-hawl--due {
+  color: var(--color-warning-text);
+  font-weight: 600;
+}
+.zakat-hawl--passed {
+  color: var(--color-danger-text);
   font-weight: 600;
 }
 
-/* ---- Editor ---- */
-.editor-category {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-4);
+/* ==========================================================================
+   13. Qibla compass
+   ========================================================================== */
+.qibla-compass {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+}
+.qibla-compass__dial {
+  position: relative;
+  width: min(280px, 70vw);
+  aspect-ratio: 1;
+}
+.qibla-compass__ring {
+  fill: none;
+  stroke: var(--color-border-strong);
+  stroke-width: 1.5;
+}
+.qibla-compass__ring--inner {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+.qibla-compass__label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  fill: var(--color-text-muted);
+}
+.qibla-compass__needle {
+  transform-origin: center;
+  transition: transform var(--dur-slow) var(--ease-standard);
+}
+.qibla-compass__needle-shaft {
+  stroke: var(--color-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.qibla-compass__needle-head {
+  fill: var(--color-primary);
+}
+.qibla-compass__needle--aligned .qibla-compass__needle-shaft {
+  stroke: var(--color-success);
+}
+.qibla-compass__needle--aligned .qibla-compass__needle-head {
+  fill: var(--color-success);
+}
+.qibla-compass__hub {
+  fill: var(--color-surface);
+  stroke: var(--color-border-strong);
+  stroke-width: 2;
+}
+.qibla-compass__hint {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  min-height: 1.4em;
+  font-variant-numeric: tabular-nums;
+}
+
+.qibla-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+}
+.qibla-fact {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+.qibla-fact__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+.qibla-fact__value {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.qibla-fact__value-sub {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.qibla-disclaimer {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   14. Editor
+   ========================================================================== */
+.editor-category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 .editor-category__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-weight: 700;
+  gap: var(--space-2);
+}
+.editor-category__header h3 {
+  flex: 1;
+  font-size: var(--fs-md);
 }
 .editor-item-row {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
-  border-top: 1px solid var(--color-border);
+  min-height: var(--touch-target);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 .editor-item-row__title {
   flex: 1;
+  min-width: 0;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .editor-item-row__grade {
   font-size: var(--fs-caption);
@@ -1439,41 +2227,865 @@
 }
 .editor-item-row__actions {
   display: flex;
-  gap: 2px;
+  gap: var(--space-1);
 }
 
-/* ---- About ---- */
+/* About */
 .about-mission {
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
   color: var(--color-text-secondary);
+  line-height: var(--lh-normal);
+}
+.about-version {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.about-builtwith {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
 }
 .source-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-}
-.source-list li {
+  gap: var(--space-1_5);
   font-size: var(--fs-sm);
   color: var(--color-text-secondary);
-  padding-left: var(--space-4);
+}
+.source-list li {
   position: relative;
+  padding-inline-start: var(--space-4);
 }
 .source-list li::before {
-  content: '\25CF';
+  content: '';
   position: absolute;
-  left: 0;
-  color: var(--color-primary-text);
-  font-size: 8px;
-  top: 6px;
-}
-.about-version,
-.about-builtwith {
-  color: var(--color-text-muted);
-  font-size: var(--fs-caption);
-  text-align: center;
+  inset-inline-start: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 45%, transparent);
 }
 
-.search-results-count {
-  color: var(--color-text-muted);
+/* ==========================================================================
+   15. 99 Names quiz
+   ========================================================================== */
+.quiz-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+.quiz-prompt__arabic {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-arabic);
+}
+.quiz-prompt__translit {
   font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--color-text-muted);
+  visibility: hidden;
+}
+.quiz-prompt__translit.is-visible {
+  visibility: visible;
+}
+.quiz-prompt__hint {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+
+.quiz-choices {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+@media (min-width: 560px) {
+  .quiz-choices {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.quiz-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-align: center;
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard);
+}
+.quiz-choice:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+.quiz-choice:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+.quiz-choice--correct {
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  font-weight: 700;
+  opacity: 1;
+}
+.quiz-choice--wrong {
+  border-color: var(--color-danger);
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  opacity: 1;
+}
+
+.quiz-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+  text-align: center;
+}
+/* (v4.2) verdict line: correctness in WORDS + icon, never color alone. */
+.quiz-feedback__verdict {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-weight: 700;
+  font-size: var(--fs-md);
+}
+.quiz-feedback__verdict--correct {
+  color: var(--color-success-text, var(--color-primary-text));
+}
+.quiz-feedback__verdict--wrong {
+  color: var(--color-danger-text, var(--color-text-secondary));
+}
+.quiz-feedback__virtue {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+.quiz-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+}
+.quiz-result__score {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Checklist summary row (progress + streak inline) */
+.checklist-summary__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Prayer-log week dot (shared with history strips) */
+.plog-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-strong);
+}
+.plog-dot--prayed {
+  background: var(--color-success);
+}
+.plog-dot--jamaah {
+  background: var(--color-primary);
+}
+
+/* Adhan variants block + audio search wrapper */
+.adhan-variants {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.audio-search {
+  margin-bottom: var(--space-3);
+}
+
+/* Ramadan waiting hero (outside the month) */
+.ramadan-hero--waiting {
+  text-align: center;
+  align-items: center;
+}
+/* v4.1: day/night phases — fasting days carry an amber warmth, nights an
+   indigo cool. Both classes shipped in markup with no rules behind them. */
+.ramadan-hero--fasting {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--cat-amber) 10%, transparent), transparent 60%),
+    var(--color-surface);
+}
+.ramadan-hero--night {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--cat-indigo) 12%, transparent),
+      transparent 60%
+    ),
+    var(--color-surface);
+}
+
+/* Fasting tracker + hadith daily + worship panels inherit .panel spacing */
+.panel--fast-tracker,
+.panel--hadith-daily,
+.panel--worship {
+  gap: var(--space-3);
+}
+
+/* Library moods section header */
+.library-section--moods .library-section__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Onboarding steps wrapper */
+.onboarding-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Dual calendar cells are slightly tighter than the single grid */
+.cal-cell--dual {
+  min-height: 44px;
+}
+
+/* Skeleton block (generic card-shaped placeholder) */
+.sk-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.sk-block--cards {
+  gap: var(--space-4);
+}
+
+/* ==========================================================================
+   8. The Garden (v4.5.2) — lifetime-dhikr growth view
+   ========================================================================== */
+.view--garden {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+/* (v4.6.0) The living hero: a wider stage for the layered plant, a soft
+   sky-tinted backdrop, and room for the scene's motes to drift. */
+.garden-hero {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  position: relative;
+  overflow: hidden;
+}
+.garden-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      120px 70px at 78% 22%,
+      color-mix(in srgb, var(--color-accent-raw) 14%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      160px 90px at 20% 90%,
+      color-mix(in srgb, var(--color-success-text) 10%, transparent),
+      transparent 75%
+    );
+  pointer-events: none;
+}
+.garden-hero > * {
+  position: relative;
+}
+.garden-hero__plant {
+  flex-shrink: 0;
+  width: 150px;
+  height: 150px;
+  filter: drop-shadow(0 6px 10px color-mix(in srgb, var(--color-success-text) 22%, transparent));
+}
+.garden-plant {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.garden-hero__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.garden-hero__stage {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+.garden-hero__planted {
+  color: var(--color-text-secondary);
+}
+.garden-hero__planted strong {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-success-text);
+  margin-inline-end: var(--space-1);
+}
+.garden-hero__bar {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  /* a visible track: the first audit pass read the old surface-alt fill
+     as "nearly invisible" — border tone keeps the unfilled span legible. */
+  background: var(--color-border);
+  overflow: hidden;
+}
+.garden-hero__bar-fill {
+  display: block;
+  height: 100%;
+  width: var(--fill, 0%);
+  border-radius: inherit;
+  background: var(--color-success);
+  transition: width var(--dur-slow) var(--ease-standard);
+}
+.garden-hero__bar-caption {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.garden-timeline__title,
+.garden-harvest__title {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+.garden-timeline {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  list-style: none;
+}
+.garden-timeline__node {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.garden-timeline__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+}
+.garden-timeline__node--reached {
+  color: var(--color-success-text);
+}
+.garden-timeline__node--reached .garden-timeline__icon {
+  border-color: color-mix(in srgb, var(--color-success) 55%, transparent);
+  background: color-mix(in srgb, var(--color-success) 14%, var(--color-surface));
+}
+.garden-timeline__node--current .garden-timeline__icon {
+  border-width: 2.5px;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-success) 22%, transparent);
+}
+.garden-timeline__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+}
+.garden-timeline__count {
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+.garden-harvest__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.garden-harvest__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-success) 14%, var(--color-surface));
+  color: var(--color-success-text);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.garden-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-content: center;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  padding: var(--space-2);
+}
+.garden-link:hover {
+  color: var(--color-primary-text);
+  text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+  .garden-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+  .garden-hero__side {
+    align-items: center;
+  }
+  .garden-timeline {
+    flex-wrap: wrap;
+  }
+  .garden-timeline__node {
+    flex: 1 1 33%;
+  }
+}
+/* (v4.5.2) The Statistics → Garden invitation row */
+.stat-garden-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-success) 40%, transparent);
+  background: color-mix(in srgb, var(--color-success) 8%, var(--color-surface));
+  color: var(--color-success-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+.stat-garden-link:hover {
+  background: color-mix(in srgb, var(--color-success) 16%, var(--color-surface));
+}
+.stat-garden-link span {
+  flex: 1;
+}
+[dir='rtl'] .stat-garden-link svg:last-child {
+  transform: scaleX(-1);
+}
+
+/* ==========================================================================
+   9. In-place content manage mode (v4.5.2)
+   ========================================================================== */
+.view-header--row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+/* (v4.6.0 redesign) The manage bar reads as a calm mode indicator: what
+   you're managing, the exit, nothing else. Reset lives in the section's
+   ⋯ menu now — not a third button competing for attention. */
+.manage-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+.manage-bar__hint {
+  flex: 1 1 12rem;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  min-width: 0;
+}
+.manage-bar__spacer {
+  flex: 0 1 auto;
+}
+.card-manage-wrap {
+  display: flex;
+  flex-direction: column;
+}
+.card-manage-wrap .card {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+/* (v4.6.0 redesign) The per-card manage row: joined pill segments —
+   reorder (up/down), a real −/+ count stepper, then hide, and for custom
+   sections edit / duplicate / delete. 36px targets, one visual rhythm,
+   no raw form controls. */
+.manage-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-end-start-radius: var(--radius-md);
+  border-end-end-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-surface-alt) 55%, var(--color-surface));
+}
+.manage-row__spacer {
+  flex: 1 1 auto;
+}
+/* Joined segment groups: buttons share a pill outline, inner dividers. */
+.manage-seg {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+.manage-seg__btn {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 36px;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.manage-seg__btn + .manage-seg__btn {
+  border-inline-start: 1px solid var(--color-border);
+}
+.manage-seg__btn:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary-text);
+}
+.manage-seg__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.manage-seg__btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
+}
+/* The count stepper: − [n] + as one segment. The center value is a
+   borderless number input — directly editable, always in rhythm. */
+.manage-seg__value {
+  display: inline-grid;
+  place-items: center;
+  min-width: 52px;
+  padding: 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+  border-inline-start: 1px solid var(--color-border);
+  border-inline-end: 1px solid var(--color-border);
+  user-select: none;
+}
+.manage-seg__value input {
+  width: 52px;
+  min-height: 36px;
+  padding: 0 var(--space-1);
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.manage-seg__value input::-webkit-outer-spin-button,
+.manage-seg__value input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.manage-seg__value input:focus {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
+}
+.manage-row__danger:hover {
+  color: var(--color-danger-text, #b91c1c);
+}
+/* Standalone circular actions (hide/edit/duplicate/delete). */
+.manage-action {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  min-height: 36px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.manage-action:hover {
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary-text);
+}
+.manage-action--danger:hover {
+  background: color-mix(in srgb, #b91c1c 8%, var(--color-surface));
+  border-color: color-mix(in srgb, #b91c1c 35%, transparent);
+  color: #b91c1c;
+}
+.manage-action:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.manage-row__target {
+  display: none; /* legacy selector kept for compatibility; steppers own counts now */
+}
+.manage-add {
+  align-self: flex-start;
+  margin-block-start: var(--space-3);
+}
+.unhide-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--color-border-strong);
+  margin-block-start: var(--space-3);
+}
+.unhide-bar__count {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+.unhide-bar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1_5);
+}
+.unhide-bar__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.unhide-bar__chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-text);
+}
+.category-tile-wrap {
+  position: relative;
+}
+.category-tile__manage {
+  position: absolute;
+  top: var(--space-1);
+  inset-inline-end: var(--space-1);
+}
+
+/* ================================================================== */
+/* (v5.0.0) The counting ripple — one radial bloom per tap, at the tap */
+/* point. Inert (never intercepts a tap), reaped on animationend, and  */
+/* dead under prefers-reduced-motion (the animation is the only        */
+/* visible payload).                                                   */
+/* ================================================================== */
+
+.card,
+.focus__counter,
+.tasbih-stage,
+.tasbih-dial {
+  position: relative;
+  overflow: hidden;
+}
+
+/* (v5.1.0) THE FOCUS-STAGE EXCEPTION: the rule above used to include
+   .focus__scroll, and its overflow:hidden silently overrode the stage's
+   overflow-y:auto (same specificity, later in source order). The stage
+   became unscrollable — clipped to one line of text with no way to read
+   the rest. The stage stays a ripple ANCHOR (position:relative) but never
+   a ripple CLIP: a 14px bloom escaping a scrollable surface's edge is a
+   nothing; an unreadable dhikr is not. */
+.focus__scroll {
+  position: relative;
+}
+
+.count-ripple {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-primary) 26%, transparent) 0%,
+    color-mix(in srgb, var(--color-primary) 12%, transparent) 42%,
+    transparent 70%
+  );
+  animation: count-ripple 520ms var(--ease-standard) forwards;
+}
+
+@keyframes count-ripple {
+  from {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(14);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .count-ripple {
+    animation: none;
+    display: none;
+  }
+}
+
+/* (v5.0.0) Banner-level manage bar — wraps on small screens, keeps the
+   44px rhythm of the manage rows. */
+.manage-bar--library {
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* The restore affordance color (used on manage rows + sheets). */
+.manage-action--restore:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-border));
+  color: var(--color-primary);
+}
+
+/* Schedule rows inside the manager sheet. */
+.view-sheet__row--schedule {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.view-sheet__row--schedule .view-sheet__label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.view-sheet__row--schedule .view-sheet__hint {
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.view-sheet__intro {
+  margin: 0 0 var(--space-2);
+  font-size: 0.92em;
+  opacity: 0.8;
+}
+
+/* (v5.0.0) editor-form note (the "original stays on file" line). */
+.editor-form__note {
+  margin: 0 0 var(--space-3);
+  font-size: 0.88em;
+  opacity: 0.75;
+  border-inline-start: 3px solid var(--color-border);
+  padding-inline-start: var(--space-3);
+}
+
+/* (v5.0.0) About page — the capability list + hero. */
+.about-hero {
+  text-align: center;
+  margin-block-end: var(--space-5);
+}
+
+.about-hero .about-version {
+  margin: var(--space-1) 0 0;
+  font-size: 0.88em;
+  opacity: 0.7;
+}
+
+.about-caps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.about-cap {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.about-cap__icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+
+/* (v5.0.0) Settings — iconed panel headers + the clickable toggle row. */
+.panel__header--icon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.panel__icon {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+}
+
+button.toggle-row {
+  all: unset;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+button.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+button.toggle-row .switch__track {
+  display: inline-block;
+}
+
+button.toggle-row:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }

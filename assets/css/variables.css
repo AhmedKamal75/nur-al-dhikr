@@ -1,17 +1,32 @@
 /* ==========================================================================
-   variables.css — Design tokens for Nūr al-Dhikr
-   Aesthetic direction: a quiet, mosque-inspired calm — emerald/teal as the
-   grounding color (evoking tilework and manuscript ink), warm ivory paper
-   tones for light mode, deep near-black slate for dark mode, and a single
-   restrained geometric motif (an 8-point star / arabesque line) used as the
-   signature decorative element rather than scattered ornamentation.
-   Palette + shape are switched at runtime by theme.js via data-attributes;
-   this file defines the neutral scale and the semantic aliases everything
-   else in the app consumes.
+   variables.css — Nūr al-Dhikr design tokens (v4.0 system)
+
+   Aesthetic direction: "manuscript calm" — the grounding palette evokes
+   emerald tilework and manuscript ink; surfaces are warm ivory paper in
+   light mode and deep botanical slate in dark mode. One restrained
+   geometric motif (the 8-point Khatim star) is the only ornament.
+
+   Architecture of this file:
+     1. Neutral scales (light + dark)          — contrast-audited AA
+     2. Brand + semantic tokens                — palette-driven via theme.js
+     3. Category color system (19 families)    — tokenized, dark-mode safe
+     4. Tajweed rule colors                    — tokenized, dark-mode safe
+     5. Grade + map tokens
+     6. Spacing / radius (shape-driven) / elevation / z-scale
+     7. Typography
+     8. Layout + motion
+
+   Rules enforced by tests/cssDesign.test.js (keep true):
+     - every var() used anywhere must be defined here or JS-set inline
+     - accent is never a text color (use --color-accent-text)
+     - text tiers hold 4.5:1 on bg/surface/surface-alt in BOTH themes
+     - dark semantic foregrounds are exactly #F87171 / #4ADE80 / #FBBF24
+     - grade tokens hold white text at 4.5:1
+     - --touch-target is 44px
    ========================================================================== */
 
 :root {
-  /* ---- Neutral scale (light mode) ---- */
+  /* ---- 1. Neutral scale (light) -------------------------------------- */
   --color-bg: #faf9f5;
   --color-surface: #ffffff;
   --color-surface-alt: #f1efe7;
@@ -23,14 +38,18 @@
   --color-text-muted: #716d5c;
   --color-overlay: rgba(20, 20, 16, 0.48);
 
-  /* ---- Brand (palette-driven; theme.js sets the -raw values) ---- */
+  /* ---- 2. Brand + semantic ------------------------------------------- */
+  /* theme.js injects the two -raw values per palette (10 bundled palettes). */
   --color-primary-raw: #0f766e;
   --color-accent-raw: #10b981;
   --color-primary: var(--color-primary-raw);
   --color-accent: var(--color-accent-raw);
   --color-on-primary: #ffffff;
+  /* Fixed dark ink for text sitting ON theme-independent fills (accent
+     badges, heatmap bucket-4 in light mode). NOT overridden by dark mode —
+     the fills it labels stay light/mid-tone in both themes. */
+  --color-ink-fixed: #201f1a;
 
-  /* ---- Semantic ---- */
   --color-danger: #b91c1c;
   --color-danger-bg: #fef2f2;
   --color-success: #15803d;
@@ -38,20 +57,72 @@
   --color-warning: #b45309;
   --color-warning-bg: #fffbeb;
 
-  /* ---- Foreground variants (v3.11 Phase A) ----
-     color/fill/stroke/border-color usages point at these, fills at the
-     originals. In light mode they are the same values, so nothing changes
-     visually; in dark mode the -text variants are brightened so every
-     brand/semantic FOREGROUND holds WCAG AA (4.5:1) on every surface it
-     renders on — audited by scripts/css-contrast-audit.mjs and gated in
-     tests/cssDesign.test.js. */
+  /* Foreground variants: identical in light mode; brightened in dark mode
+     so every brand/semantic FOREGROUND holds WCAG AA on every surface. */
   --color-primary-text: var(--color-primary);
   --color-accent-text: var(--color-accent);
   --color-danger-text: var(--color-danger);
   --color-success-text: var(--color-success);
   --color-warning-text: var(--color-warning);
 
-  /* ---- Grade chip colors ---- */
+  /* ---- 3. Category color system ---------------------------------------
+     19 content families. Each defines a strong base (fills, icons) and a
+     -text variant (foregrounds). Chips and tiles consume the TINT
+     (base at 12% over surface) for backgrounds and the -text variant for
+     labels — this holds AA in both themes by construction, replacing the
+     old hardcoded chip hexes that failed dark mode at 2.4–3.6:1. */
+  --cat-amber: #b45309;
+  --cat-blue: #1d4ed8;
+  --cat-cyan: #0e7490;
+  --cat-emerald: #047857;
+  --cat-gold: #a16207;
+  --cat-indigo: #4338ca;
+  --cat-lime: #4d7c0f;
+  --cat-ocean: #0369a1;
+  --cat-orange: #c2410c;
+  --cat-pink: #be185d;
+  --cat-purple: #7e22ce;
+  --cat-red: #b91c1c;
+  --cat-rose: #be123c;
+  --cat-sky: #0369a1;
+  --cat-slate: #475569;
+  --cat-stone: #57534e;
+  --cat-teal: #0f766e;
+  --cat-violet: #6d28d9;
+  --cat-yellow: #a16207;
+
+  /* ---- 4. Tajweed rule colors ------------------------------------------
+     The science of recitation is color-coded by convention. (v4.5.2)
+     STANDARD PALETTE: these are now the reference chart's colors (the
+     classic 8-family color-coded mushaf legend the user supplied) —
+     silent gray, nasal green, qalqalah cyan, tafkhim blue, and the madd
+     ladder pink → orange → deep pink → red. Dark theme lifts each hue
+     for dark paper. Mushaf paper themes override locally inside
+     quran.css. */
+  /* Values mirror domain/tajweed.js's rule table exactly so the colored
+     text and the legend swatches (which render from the JS table) can
+     never disagree. idgham-bila-ghunna and izhar shafawi are deliberately
+     UNTOKENIZED — the standard convention leaves both uncolored. */
+  --tw-hamza-wasl: #9e9e9e;
+  --tw-lam-shamsiyah: #9e9e9e;
+  --tw-ghunnah: #4caf50;
+  --tw-ikhfa: #4caf50;
+  --tw-iqlab: #4caf50;
+  --tw-idgham-ghunnah: #4caf50;
+  --tw-idgham-shafawi: #4caf50;
+  --tw-ikhfa-shafawi: #4caf50;
+  --tw-qalqalah: #00bcd4;
+  --tw-tafkhim: #2196f3;
+  --tw-madd-normal: #f48fb1;
+  --tw-madd-iwad: #f48fb1;
+  --tw-madd-badal: #f48fb1;
+  --tw-madd-arid: #f48fb1;
+  --tw-madd-munfasil: #ff9800;
+  --tw-madd-silah: #ff9800;
+  --tw-madd-muttasil: #f06292;
+  --tw-madd-laazim: #f44336;
+
+  /* ---- 5. Grade + map tokens ------------------------------------------ */
   --grade-quran: #0f766e;
   --grade-sahih: #15803d;
   --grade-hasan: #0369a1;
@@ -60,7 +131,15 @@
   --grade-custom: #57534e;
   --grade-unknown: #78716c;
 
-  /* ---- Spacing scale (4px base) ---- */
+  /* Heatmap intensity buckets (filled cells). Bucket 4 sits at 92% primary
+     so WHITE day-numbers hold 4.5:1 on every bundled palette (85% measured
+     4.06:1 worst-case); bucket 3 uses --color-text ink (see components.css). */
+  --heat-1: color-mix(in srgb, var(--color-primary) 25%, var(--color-surface));
+  --heat-2: color-mix(in srgb, var(--color-primary) 45%, var(--color-surface));
+  --heat-3: color-mix(in srgb, var(--color-primary) 65%, var(--color-surface));
+  --heat-4: color-mix(in srgb, var(--color-primary) 92%, var(--color-surface));
+
+  /* ---- 6. Space / radius / elevation / z ------------------------------ */
   --space-1: 4px;
   --space-1_5: 6px;
   --space-2: 8px;
@@ -73,9 +152,7 @@
   --space-9: 56px;
   --space-10: 72px;
 
-  /* ---- Radius (shape-driven) ----
-     --radius-xs stays fixed: it is for inline micro-details (tappable
-     ayah spans, swatches) that must not change with the shape setting. */
+  /* Shape-driven radius: theme.js sets --radius-card from the 8 shapes. */
   --radius-card: 20px;
   --radius-xs: 4px;
   --radius-sm: calc(var(--radius-card) * 0.4);
@@ -83,34 +160,47 @@
   --radius-lg: var(--radius-card);
   --radius-pill: 999px;
 
-  /* ---- Shadows & rings ----
-     --ring-* are the shared "selected" treatment (2px halo); components
-     must use them instead of hand-rolled color-mix rings. */
-  --shadow-sm: 0 1px 2px rgba(20, 20, 16, 0.06);
-  --shadow-md: 0 4px 16px rgba(20, 20, 16, 0.08);
-  --shadow-lg: 0 12px 32px rgba(20, 20, 16, 0.12);
+  /* (v5.1.0) Two-layer "modern app" elevation: a tight contact shadow + a
+     soft ambient one — the look the temporary Next.js build had. Softer
+     alphas, larger blur; dark theme deepens both layers. */
+  --shadow-sm: 0 1px 2px rgba(20, 20, 16, 0.05), 0 1px 4px rgba(20, 20, 16, 0.04);
+  --shadow-md: 0 2px 4px rgba(20, 20, 16, 0.04), 0 10px 28px rgba(20, 20, 16, 0.08);
+  --shadow-lg: 0 4px 10px rgba(20, 20, 16, 0.05), 0 24px 48px rgba(20, 20, 16, 0.16);
   --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-primary-text) 40%, transparent);
   --ring-primary: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent);
   --ring-accent: 0 0 0 2px color-mix(in srgb, var(--color-accent) 45%, transparent);
   --ring-inset-primary: inset 0 0 0 1px var(--color-primary);
 
-  /* ---- Touch targets (WCAG 2.5.5 / iOS HIG) ----
-     Standalone controls are at least this large; densely-packed inline
-     targets (in-text words, grid dots) use hit-area expansion or rely on
-     the WCAG 2.5.8 inline exception — documented at each site. */
+  /* Stacking scale — one layer per concern, nothing between. */
+  --z-raised: 1; /* local stacking above a sibling (e.g. modal close over body) */
+  --z-player: 39;
+  --z-nav: 40;
+  --z-drawer-overlay: 50;
+  --z-drawer: 51;
+  --z-modal: 200;
+  --z-toast: 300;
+  --z-toast-urgent: 1000;
+
+  /* ---- Touch targets (WCAG 2.5.5 / iOS HIG) --------------------------- */
   --touch-target: 44px;
 
-  /* ---- Typography ---- */
+  /* ---- 7. Typography ----------------------------------------------------
+     The UI face is the platform's native system stack — honest and instant
+     (the old stack named 'Inter' first but never bundled it, so every
+     platform silently rendered its own default anyway). Arabic renders in
+     bundled Amiri everywhere, local()-first. */
   --font-ui:
-    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif,
+    'Amiri Arabic Fallback';
   --font-arabic:
     'Amiri', 'Traditional Arabic', 'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif;
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
+  /* Two independent multipliers (UI + Arabic), set by theme.js. */
   --font-scale: 1;
   --arabic-font-scale: 1;
 
+  /* Modular scale, ~1.25 (major third) — caption→2xl. */
   --fs-caption: calc(0.75rem * var(--font-scale));
   --fs-sm: calc(0.875rem * var(--font-scale));
   --fs-base: calc(1rem * var(--font-scale));
@@ -126,22 +216,36 @@
   --lh-normal: 1.55;
   --lh-arabic: 2.05;
 
-  /* ---- Layout ---- */
+  /* ---- 8. Layout + motion ---------------------------------------------- */
   --topbar-height: 60px;
   --bottomnav-height: 64px;
+  --playerbar-height: 132px;
   --sidenav-width: 240px;
+  /* (v5.1.0) 76 → 84px: with the landscape-padding fix the icons are full
+     24px again; the extra 8px keeps the collapsed item's tap pill from
+     feeling cramped (59px → 67px of usable item width). */
+  --sidenav-width-collapsed: 84px;
   --content-max-width: 720px;
 
-  /* ---- Motion ---- */
   --dur-fast: 100ms;
   --dur-base: 160ms;
   --dur-slow: 280ms;
+  /* One-shot celebration blooms (700ms) + ambient loop durations — the
+     only long-running animations in the system (see animations.css). */
+  --dur-celebrate: 700ms;
+  --dur-loop-med: 1.6s;
+  --dur-loop-slow: 2.4s;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
-  /* v3.14: skeleton shimmer highlight (translucent, theme-independent) */
+
+  /* Skeleton shimmer highlight (translucent, theme-independent). */
   --sk-sheen: rgba(255, 255, 255, 0.5);
 }
 
+/* ==========================================================================
+   Dark theme — deep botanical slate. Every category/tajweed family gets a
+   brightened -text variant; fills stay deep so surfaces stay calm.
+   ========================================================================== */
 [data-theme='dark'] {
   --color-bg: #0c0f0d;
   --color-surface: #131715;
@@ -150,8 +254,8 @@
   --color-border: #262c27;
   --color-border-strong: #333a33;
   --color-text: #edebe3;
-  --color-text-secondary: #b7b4a8;
-  --color-text-muted: #938f80;
+  --color-text-secondary: #c6c3b7; /* lifted for AA+ comfort on inactive labels */
+  --color-text-muted: #a8a494;
   --color-overlay: rgba(0, 0, 0, 0.6);
   --color-on-primary: #ffffff;
 
@@ -159,41 +263,106 @@
   --color-success-bg: #0f2418;
   --color-warning-bg: #2a2010;
 
-  /* Brightened foregrounds: 50/50 mix toward white holds ≥ 4.5:1 for
-     EVERY bundled palette on EVERY dark surface (worst case 4.85 —
-     verified in scripts/css-contrast-audit.mjs). Fills keep the raw
-     palette colors, so --color-on-primary stays white. */
+  /* 50/50 mix toward white holds ≥ 4.5:1 for EVERY bundled palette on
+     EVERY dark surface (worst case 4.85 — audited + test-gated). */
   --color-primary-text: color-mix(in srgb, var(--color-primary-raw) 50%, white);
   --color-accent-text: color-mix(in srgb, var(--color-accent-raw) 50%, white);
   --color-danger-text: #f87171;
   --color-success-text: #4ade80;
   --color-warning-text: #fbbf24;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+  /* Category families brightened for dark foregrounds (fills stay deep). */
+  --cat-amber-text: #fbbf24;
+  --cat-blue-text: #93c5fd;
+  --cat-cyan-text: #67e8f9;
+  --cat-emerald-text: #6ee7b7;
+  --cat-gold-text: #facc15;
+  --cat-indigo-text: #a5b4fc;
+  --cat-lime-text: #bef264;
+  --cat-ocean-text: #7dd3fc;
+  --cat-orange-text: #fdba74;
+  --cat-pink-text: #f9a8d4;
+  --cat-purple-text: #d8b4fe;
+  --cat-red-text: #fca5a5;
+  --cat-rose-text: #fda4af;
+  --cat-sky-text: #7dd3fc;
+  --cat-slate-text: #cbd5e1;
+  --cat-stone-text: #d6d3d1;
+  --cat-teal-text: #5eead4;
+  --cat-violet-text: #c4b5fd;
+  --cat-yellow-text: #fde047;
+
+  /* Tajweed: each standard-chart hue lifted for dark surfaces (the
+     pink/orange/deep-pink madd ladder reads well as-is on dark; the rest
+     get +1 lightness step to stay clear of 3:1). */
+  --tw-hamza-wasl: #bdbdbd;
+  --tw-lam-shamsiyah: #bdbdbd;
+  --tw-ghunnah: #66bb6a;
+  --tw-ikhfa: #66bb6a;
+  --tw-iqlab: #66bb6a;
+  --tw-idgham-ghunnah: #66bb6a;
+  --tw-idgham-shafawi: #66bb6a;
+  --tw-ikhfa-shafawi: #66bb6a;
+  --tw-qalqalah: #4dd0e1;
+  --tw-tafkhim: #64b5f6;
+  --tw-madd-normal: #f8a8c5;
+  --tw-madd-iwad: #f8a8c5;
+  --tw-madd-badal: #f8a8c5;
+  --tw-madd-arid: #f8a8c5;
+  --tw-madd-munfasil: #ffa726;
+  --tw-madd-silah: #ffa726;
+  --tw-madd-muttasil: #f77fb0;
+  --tw-madd-laazim: #ef5350;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.32), 0 1px 4px rgba(0, 0, 0, 0.28);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.28), 0 10px 28px rgba(0, 0, 0, 0.36);
+  --shadow-lg: 0 4px 10px rgba(0, 0, 0, 0.3), 0 24px 48px rgba(0, 0, 0, 0.5);
+  --sk-sheen: rgba(255, 255, 255, 0.08);
 }
 
+/* Light-mode category -text variants = the strong bases themselves. */
+:root {
+  --cat-amber-text: var(--cat-amber);
+  --cat-blue-text: var(--cat-blue);
+  --cat-cyan-text: var(--cat-cyan);
+  --cat-emerald-text: var(--cat-emerald);
+  --cat-gold-text: var(--cat-gold);
+  --cat-indigo-text: var(--cat-indigo);
+  --cat-lime-text: var(--cat-lime);
+  --cat-ocean-text: var(--cat-ocean);
+  --cat-orange-text: var(--cat-orange);
+  --cat-pink-text: var(--cat-pink);
+  --cat-purple-text: var(--cat-purple);
+  --cat-red-text: var(--cat-red);
+  --cat-rose-text: var(--cat-rose);
+  --cat-sky-text: var(--cat-sky);
+  --cat-slate-text: var(--cat-slate);
+  --cat-stone-text: var(--cat-stone);
+  --cat-teal-text: var(--cat-teal);
+  --cat-violet-text: var(--cat-violet);
+  --cat-yellow-text: var(--cat-yellow);
+}
+
+/* High-contrast mode: collapse the text hierarchy, harden borders. */
 [data-high-contrast='true'] {
   --color-border: var(--color-border-strong);
   --color-text-secondary: var(--color-text);
   --color-text-muted: var(--color-text-secondary);
 }
-
 [data-high-contrast='true'][data-theme='light'] {
   --color-bg: #ffffff;
   --color-surface-alt: #f0f0ec;
 }
-
 [data-high-contrast='true'][data-theme='dark'] {
   --color-bg: #000000;
   --color-surface: #0a0c0b;
 }
 
-/* Bundled Amiri (SIL OFL 1.1 — see assets/fonts/OFL.txt), Arabic subset.
-   local() first so devices with Amiri installed never download a byte;
-   the bundled woff2 guarantees the same Naskh rendering everywhere else.
-   font-display: swap shows the system fallback instantly, then swaps in. */
+/* ==========================================================================
+   Bundled Amiri (SIL OFL 1.1 — assets/fonts/OFL.txt), Arabic subset.
+   local() first so devices with Amiri installed download nothing; the
+   bundled woff2 guarantees identical Naskh rendering everywhere else.
+   ========================================================================== */
 @font-face {
   font-family: 'Amiri';
   src:
@@ -214,10 +383,8 @@
   font-style: normal;
   font-display: swap;
 }
-/* Amiri Quran — a Naskh cut specifically shaped for full-Mushaf typesetting
-   (taller extenders, Qur'an-specific annotation marks). Used as the default
-   Mushaf typeface; the plain Amiri above remains the default everywhere
-   else (surah list, ayah cards, etc.). Same OFL license, same foundry. */
+/* Amiri Quran — a Naskh cut shaped for full-Mushaf typesetting (taller
+   extenders, Qur'an annotation marks). Default Mushaf typeface. */
 @font-face {
   font-family: 'Amiri Quran';
   src:
@@ -226,4 +393,32 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+}
+/* (v4.4) Arabic-block fallback for the UI stack. Latin-first stacks
+   (system-ui on Linux/Android, Roboto, Liberation…) routinely lack Arabic
+   Presentation Forms, so honorifics like ﷺ (U+FDFA) inside English
+   sentences rendered as tofu boxes — measured live in the hadith subtitle.
+   The unicode-range gate means browsers only pull the file when an Arabic
+   codepoint actually appears; pure-Latin screens download nothing. */
+@font-face {
+  font-family: 'Amiri Arabic Fallback';
+  src:
+    local('Amiri'),
+    local('Amiri Regular'),
+    url('../fonts/Amiri-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
+}
+@font-face {
+  font-family: 'Amiri Arabic Fallback';
+  src:
+    local('Amiri Bold'),
+    local('Amiri'),
+    url('../fonts/Amiri-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
 }

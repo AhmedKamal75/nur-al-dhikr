@@ -1,22 +1,25 @@
 /* ==========================================================================
-   animations.css
-   v3.12 (UI/UX Phase B) — motion rules live here under one contract:
-     * every entrance/feedback motion is sub-300ms, except the two named
-       celebration blooms (700ms, allow-listed in tests/motion.test.js);
-     * celebrations are stamped transiently by js/celebrate.js — a class
-       present in markup alone must never animate anything;
-     * the view entrance is gated on #main[data-view-enter], stamped only
-       by renderer.js on genuine navigation, so same-view re-renders can
-       never restart it (the motion half of the v3.9 anti-flicker work);
-     * everything honours prefers-reduced-motion via the global kill rule.
+   animations.css — keyframes + motion orchestration. Seventh load.
+
+   THE MOTION CONTRACT (test-gated by tests/motion.test.js):
+   - Entrances are sub-300ms and scoped: the view entrance runs ONLY under
+     #main[data-view-enter] (stamped by the renderer on real navigation,
+     never on same-view re-renders — the v3.9 anti-flicker guarantee).
+   - The only animations above 300ms are the three 700ms one-shots
+     (celebrateBloom, cycleComplete, ayah-focus-glow) and the named ambient
+     loops below.
+   - Transitions never exceed 300ms.
+   - Reduced motion kills everything globally (base.css carries the
+     data-reduce-motion rule; the OS-level rule lives here).
    ========================================================================== */
 
-/* ---- View entrance (one-shot, navigation only) -------------------------- */
-/* Applied to every top-level child of #main so it covers both single-root
- * views (.view) and the fragment views whose sections are siblings. */
+/* ==========================================================================
+   1. View entrance (navigation only — never a same-view re-render)
+   ========================================================================== */
 #main[data-view-enter] > * {
   animation: viewIn var(--dur-slow) var(--ease-standard);
 }
+
 @keyframes viewIn {
   from {
     opacity: 0;
@@ -28,127 +31,335 @@
   }
 }
 
-/* Card entrance: intentionally KEPT on the class. Under the patch engine a
- * card's node is only replaced when its own content changed, so this reads
- * as "something here updated" feedback (4px, 160ms), not flicker. */
-.card {
-  animation: cardIn var(--dur-base) var(--ease-standard);
-}
-@keyframes cardIn {
+/* ==========================================================================
+   2. Overlays + sheets
+   ========================================================================== */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(4px);
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes sheetIn {
+  from {
+    transform: translateY(28px);
+    opacity: 0.6;
+  }
+  to {
     transform: translateY(0);
-  }
-}
-
-.focus {
-  animation: focusIn var(--dur-slow) var(--ease-standard);
-}
-@keyframes focusIn {
-  from {
-    opacity: 0;
-  }
-  to {
     opacity: 1;
   }
 }
 
-/* ---- Press states -------------------------------------------------------- */
-/* Physical confirmation on exactly the controls that don't already have
- * one; .btn/.quick-action/quiz-choice/surah-tile/fast-dot/counters carry
- * their own (components.css / cards.css / quran.css). Scale is symmetric,
- * so the RTL mirror needs no extra work. */
-.nav__item:active,
-button.chip:active,
-.chip[data-action]:active,
-[role='button'].chip:active {
-  transform: scale(0.98);
-}
-.nav__item {
-  transition:
-    color var(--dur-base) var(--ease-standard),
-    background var(--dur-base) var(--ease-standard),
-    transform var(--dur-fast) var(--ease-standard);
-}
-button.chip,
-.chip[data-action],
-[role='button'].chip {
-  transition: transform var(--dur-fast) var(--ease-standard);
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-.counter-pill,
-.focus__counter,
-.tasbih-dial {
-  transition: transform var(--dur-fast) var(--ease-spring);
-}
-.counter-pill:active,
-.focus__counter:active,
-.tasbih-dial:active {
-  transform: scale(0.94);
-}
-
-.icon-btn--active .icon {
-  animation: pulseHeart var(--dur-slow) var(--ease-spring);
-}
-@keyframes pulseHeart {
-  0% {
+@keyframes popIn {
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
+  to {
     transform: scale(1);
-  }
-  40% {
-    transform: scale(1.3);
-  }
-  100% {
-    transform: scale(1);
+    opacity: 1;
   }
 }
 
-/* ---- Celebration bloom (reusable micro-interaction, v3.12) --------------- *
- * Generalized from the tasbih cycle-complete "bloom" — a satisfied settle,
- * not an attention-grabbing shake. Views add .celebrate ONLY while
- * wasCelebrated(key) is true (js/celebrate.js); the class disappearing
- * after the window is what makes later re-renders silent. Current sites:
- * the tasbih cycle (its own legacy class below), the khatma completion
- * verdict, the quiz result screen, and the prayer-log streak badge.
- * Requires a transformable element (flex/inline-flex/block) — documented
- * at each use site. */
+/* ==========================================================================
+   3. Celebrations + one-shots — the 700ms family (the ONLY >300ms event
+      animations; all durations come from --dur-celebrate)
+   ========================================================================== */
 .celebrate {
-  animation: celebrateBloom 0.7s var(--ease-spring);
+  animation: celebrateBloom var(--dur-celebrate) var(--ease-spring);
 }
+
 @keyframes celebrateBloom {
   0% {
-    transform: scale(0.9);
-  }
-  55% {
-    transform: scale(1.07);
-    box-shadow: var(--ring-accent);
-  }
-  100% {
     transform: scale(1);
   }
-}
-
-/* v3.7: tasbih cycle completion — the original bloom this generalizes.
- * Applied via the transient .is-just-completed class stamped by
- * views/focus.js through tasbih.wasJustCompleted(). */
-@keyframes cycleComplete {
-  0% {
-    transform: scale(0.9);
-  }
-  55% {
+  35% {
     transform: scale(1.08);
   }
+  70% {
+    transform: scale(0.97);
+  }
   100% {
     transform: scale(1);
   }
 }
 
+@keyframes cycleComplete {
+  0% {
+    transform: scale(1);
+    color: var(--color-success-text);
+  }
+  60% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+   4. Ambient loops (all named in the allow-list; reduced-motion kills them)
+   ========================================================================== */
+@keyframes recite-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.6;
+  }
+}
+
+@keyframes nowBadgePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px transparent;
+  }
+}
+
+@keyframes sk-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes dl-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   5. Event-driven emphasis
+   ========================================================================== */
+/* Mushaf page turns — consumed by quran.css (.mushaf-page--flip-next/-prev).
+   The keyframes were dropped in the v4 CSS rewrite, so page turns silently
+   did not animate at all. Direction follows the RTL book: "next" pages
+   arrive from the inline-end (left) edge. */
+@keyframes mushafFlipFromNext {
+  from {
+    transform: translateX(-3%);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes mushafFlipFromPrev {
+  from {
+    transform: translateX(3%);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* (v4.4) TRUE fullscreen bloom — consumed by quran.css
+   (.mushaf-page--fs-in / --fs-out). Entering fullscreen, the page blooms
+   out from its windowed size to fill the viewport; leaving, it settles
+   back into its column. Deliberately NOT silenced by the
+   pageFlipAnimation pref — that pref scopes to page TURNS only; the
+   mode change itself is chrome motion, like viewIn. */
+@keyframes mushafFsIn {
+  from {
+    transform: scale(0.94) translateY(10px);
+    opacity: 0.4;
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes mushafFsOut {
+  from {
+    transform: scale(1.015);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Ayah deep-link tint: one calm 700ms pulse so the eye finds the verse —
+   the static .ayah-card--focus ring persists afterwards. (Was a 2.4s
+   double-pulse that violated the motion contract above.) */
+@keyframes ayah-focus-glow {
+  0% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  40% {
+    box-shadow: var(--ring-primary);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* ==========================================================================
+   6. Press states for shared chrome (test-gated presence)
+   ========================================================================== */
+.nav__item:active,
+.nav-mobile-bar__item:active {
+  transform: scale(0.9);
+}
+
+button.chip:active,
+.counter-pill:active,
+.category-tile:active,
+.mood-tile:active,
+.collection-tile:active,
+.surah-tile:active,
+.quick-action:active {
+  transform: scale(0.9);
+}
+
+.icon-btn:active,
+.btn:active {
+  transform: scale(0.9);
+}
+
+/* ==========================================================================
+   7. OS-level reduced motion — global kill (the data-reduce-motion twin
+      lives in base.css; both are test-gated)
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   8. (v4.6.0) The living garden — ambient, infinite, and deliberately
+      allow-listed in tests/motion.test.js (garden-sway / garden-sway-alt /
+      garden-float / garden-breathe). Every one of them dies under the
+      global reduced-motion kill rule in section 7 above.
+   ========================================================================== */
+
+/* The plant's stem group pivots at its base and sways like foliage in a
+   light breeze — two desynchronized variants so multi-stem plants (the
+   grove) don't move in lockstep. */
+.garden-plant__sway {
+  transform-origin: 24px 44px;
+  animation: garden-sway 6.5s ease-in-out infinite;
+}
+.garden-plant__stem--alt {
+  animation: garden-sway-alt 5.2s ease-in-out infinite;
+  transform-origin: 24px 44px;
+}
+.garden-plant__foliage--back {
+  transform-origin: 24px 44px;
+  animation: garden-sway-alt 7.4s ease-in-out infinite;
+}
+@keyframes garden-sway {
+  0%,
+  100% {
+    transform: rotate(-1.6deg);
+  }
+  50% {
+    transform: rotate(2.2deg);
+  }
+}
+@keyframes garden-sway-alt {
+  0%,
+  100% {
+    transform: rotate(1.8deg);
+  }
+  50% {
+    transform: rotate(-2deg);
+  }
+}
+
+/* Pollen motes drift upward and fade — the garden's air. */
+.garden-scene__mote {
+  animation: garden-float 9s ease-in-out infinite;
+}
+.garden-scene__mote--2 {
+  animation-duration: 11s;
+  animation-delay: 1.4s;
+}
+.garden-scene__mote--3 {
+  animation-duration: 8s;
+  animation-delay: 2.8s;
+}
+.garden-scene__mote--4 {
+  animation-duration: 12s;
+  animation-delay: 0.8s;
+}
+.garden-scene__mote--5 {
+  animation-duration: 10s;
+  animation-delay: 3.6s;
+}
+@keyframes garden-float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(-7px);
+    opacity: 0.7;
+  }
+}
+
+/* Grass blades tremble independently of the plant. */
+.garden-scene__blade {
+  transform-origin: bottom center;
+  animation: garden-sway 4.6s ease-in-out infinite;
+}
+.garden-scene__blade--1 {
+  animation-duration: 5.4s;
+  animation-delay: 0.7s;
+}
+
+/* The hero panel breathes almost imperceptibly — a living thing, not a
+   widget. */
+.garden-hero--living .garden-hero__plant {
+  animation: garden-breathe 8s ease-in-out infinite;
+}
+@keyframes garden-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
   }
 }

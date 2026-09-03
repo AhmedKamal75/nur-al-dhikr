@@ -3,7 +3,11 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { recommendedAdhkarWindow, MORNING_WINDOW, EVENING_WINDOW } from '../js/adhkarTiming.js';
+import {
+  recommendedAdhkarWindow,
+  MORNING_WINDOW,
+  EVENING_WINDOW,
+} from '../js/domain/adhkarTiming.js';
 
 function at(hour, minute = 0) {
   const d = new Date(2026, 7, 24, hour, minute, 0, 0);

@@ -1,20 +1,140 @@
 /**
  * views/home.js
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { buildHash } from '../router.js';
-import { pickLocale, dateKey, escapeHTML } from '../utils.js';
-import { selectors } from '../state.js';
-import { VIEWS, CHECKLIST_ITEMS } from '../config.js';
-import { cardHTML } from '../components/card.js';
-import { completedCount } from '../checklist.js';
-import { ramadanInfo } from '../ramadan.js';
-import { toHijri } from '../calendar.js';
-import { recommendedAdhkarWindow } from '../adhkarTiming.js';
-import { calculateTimes, nextPrayer, formatClock } from '../prayer.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { buildHash } from '../core/router.js';
+import { pickLocale, dateKey, escapeHTML } from '../core/utils.js';
+import { selectors } from '../core/state.js';
+import { VIEWS, CHECKLIST_ITEMS } from '../core/config.js';
+import { cardHTML } from '../ui/card.js';
+import { loadErrorStateHTML } from '../ui/emptyState.js';
+import { completedCount } from '../services/checklist.js';
+import { ramadanInfo } from '../domain/ramadan.js';
+import { toHijri } from '../domain/calendar.js';
+import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
+import { calculateTimes, nextPrayer, formatClock } from '../domain/prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
 import { dailyHadithCardHTML } from './hadith.js';
+import { hifzReviewCardHTML } from './quran.js';
+import { worshipTodayRows } from '../domain/worship.js';
+import { computeNudge, shouldShowNudge } from '../domain/nudge.js';
+
+/**
+ * v3.19 combined "Today in worship" card: prayers, Qur'an reading (pages
+ * today + reading streak), dhikr, fasting and sadaqah — one view over the
+ * day instead of five separate counters. Every source is existing per-day
+ * data (see js/worship.js); sadaqah quick-log/undo is the only input here.
+ */
+export function worshipTodayCardHTML(state) {
+  const lang = state.settings.language;
+  const rows = worshipTodayRows(
+    {
+      statistics: state.statistics,
+      dailyChecklist: state.dailyChecklist,
+      ramadanLog: state.ramadanLog,
+      sadaqahLog: state.sadaqahLog,
+    },
+    new Date()
+  );
+  const views = {
+    prayers: VIEWS.PRAYER,
+    quran: VIEWS.MUSHAF,
+    dhikr: VIEWS.TASBIH,
+    fasting: VIEWS.CALENDAR,
+  };
+  const rowIcons = {
+    prayers: 'prayer-rug',
+    quran: 'quran',
+    dhikr: 'bead',
+    fasting: 'droplet',
+    sadaqah: 'coins',
+  };
+
+  const valueText = (r) => {
+    if (r.id === 'prayers') return `${r.count}/${r.total}`;
+    if (r.id === 'quran') return t('worship.pagesToday', lang, { n: r.count });
+    if (r.id === 'dhikr') return t('worship.countToday', lang, { n: r.count });
+    return r.done ? t(`worship.${r.id}Done`, lang, { n: r.count }) : t('worship.notYet', lang);
+  };
+
+  const sadaqahList = Array.isArray(state.sadaqahLog) ? state.sadaqahLog : [];
+  const sadaqah = rows.find((r) => r.id === 'sadaqah');
+  const todayTs = dateKey(new Date());
+  const newestTodayId = sadaqahList.find((e) => e && dateKey(new Date(e.ts)) === todayTs)?.id;
+
+  const rowHTML = (r) => {
+    const inner = `
+      <span class="worship-row__icon">${icon(rowIcons[r.id], { size: 16 })}</span>
+      <span class="worship-row__name">${t(`worship.row.${r.id}`, lang)}</span>
+      <span class="worship-row__value ${r.done ? 'worship-row__value--done' : ''}" dir="auto">
+        ${r.done ? icon('check', { size: 13 }) : ''} ${valueText(r)}
+        ${r.id === 'quran' && r.streak > 1 ? `<span class="chip chip__count">${t('worship.streak', lang, { n: r.streak })}</span>` : ''}
+      </span>`;
+    if (r.id === 'sadaqah') {
+      return `
+      <div class="worship-row worship-row--actions">
+        ${inner}
+        ${
+          sadaqah.done
+            ? `<button type="button" class="icon-btn icon-btn--sm" data-action="sadaqah-remove" data-id="${escapeHTML(newestTodayId ?? '')}" aria-label="${t('worship.undo', lang)}" title="${t('worship.undo', lang)}" ${newestTodayId ? '' : 'disabled'}>${icon('close', { size: 13 })}</button>`
+            : `<button type="button" class="chip" data-action="sadaqah-log">${t('worship.logSadaqah', lang)}</button>`
+        }
+      </div>`;
+    }
+    return `
+      <a class="worship-row" href="${buildHash(views[r.id])}" data-action="navigate" data-view="${views[r.id]}">
+        ${inner}
+        ${icon('chevronRight', { size: 13 })}
+      </a>`;
+  };
+
+  return `
+  <section class="panel panel--worship">
+    <div class="panel__header"><h2>${icon('target', { size: 16 })} ${t('worship.title', lang)}</h2></div>
+    <div class="worship-list">
+      ${rows.map(rowHTML).join('')}
+    </div>
+  </section>`;
+}
+
+/**
+ * v3.25 gentle "it's been a while" line. The decision (whether, which kind,
+ * which tier) is entirely js/nudge.js's; the anti-guilt contract is pinned
+ * by tests: no counting the absence, no streak vocabulary, at most one
+ * showing per 7-day quiet stretch, a dismissal that is never held against
+ * anyone. The card carries NO numbers and NO dates — those would be the
+ * manipulative version the TODO forbids.
+ */
+export function nudgeCardHTML(state, today = new Date()) {
+  const lang = state.settings.language;
+  const nudge = computeNudge(state, today);
+  if (!nudge || !shouldShowNudge(state, nudge, today)) return '';
+
+  const kindIcon = { quran: 'bookmark', dhikr: 'bead', prayers: 'sunrise' };
+  // (v4.4) the Qur'an nudge lands on the person's saved MUSHAF page —
+  // the book is the default reading experience now.
+  const views = { quran: VIEWS.MUSHAF, dhikr: VIEWS.TASBIH, prayers: VIEWS.PRAYER };
+  const view = views[nudge.kind] ?? VIEWS.HOME;
+  // The quran CTA lands on the bookmark itself when one exists — "your
+  // place is saved" must mean it literally.
+  const bookmarkPage = nudge.kind === 'quran' ? state.mushafBookmark?.page : null;
+  const href =
+    nudge.kind === 'quran'
+      ? buildHash(VIEWS.MUSHAF, bookmarkPage ? { page: String(bookmarkPage) } : {})
+      : buildHash(view);
+
+  return `
+  <aside class="panel panel--nudge" data-nudge-card>
+    <span class="panel--nudge__icon">${icon(kindIcon[nudge.kind] ?? 'sunrise', { size: 20 })}</span>
+    <div class="panel--nudge__text">
+      <p class="panel--nudge__title">${t(`nudge.title.${nudge.tier}`, lang)}</p>
+      <p class="panel--nudge__line">${t(`nudge.line.${nudge.kind}`, lang)}</p>
+      <a class="panel--nudge__cta" href="${href}" data-action="navigate" data-view="${view}"${bookmarkPage != null ? ` data-page="${escapeHTML(String(bookmarkPage))}"` : ''}>${t(`nudge.cta.${nudge.kind}`, lang)} ${icon('chevronRight', { size: 12 })}</a>
+    </div>
+    <button type="button" class="icon-btn icon-btn--sm panel--nudge__dismiss" data-action="nudge-dismiss" aria-label="${t('nudge.dismiss', lang)}" title="${t('nudge.dismiss', lang)}">${icon('close', { size: 13 })}</button>
+  </aside>`;
+}
 
 function greetingKey() {
   const h = new Date().getHours();
@@ -85,9 +205,8 @@ function nextPrayerStrip(state, lang, times) {
       <span class="home-prayer-strip__icon">${icon('compass', { size: 20 })}</span>
       <span class="home-prayer-strip__text">
         <span class="home-prayer-strip__label">${t('home.setLocation', lang)}</span>
-        <span class="home-prayer-strip__cta">${t('home.setLocationAction', lang)}</span>
+        <span class="home-prayer-strip__cta">${t('home.setLocationAction', lang)} ${icon('chevronRight', { size: 14 })}</span>
       </span>
-      ${icon('chevronRight', { size: 16 })}
     </a>`;
   }
 
@@ -112,6 +231,16 @@ function hijriChipHTML(lang) {
   const h = toHijri(new Date());
   const monthName = pickLocale(h.monthName, lang);
   return `<span class="home-hero__hijri" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(`${h.day} ${monthName} ${h.year}`)} ${t('home.hijriOn', lang)}</span>`;
+}
+
+/** (v4.3) Cold-start offline: the library tier failed at boot — say so
+ *  with a Retry affordance instead of letting Home render as an app full
+ *  of inexplicably empty lists. Hidden again the moment any library is
+ *  present (partial load is better than a full-page error). */
+function libraryErrorHTML(state, lang) {
+  if (!state.loadErrors?.library) return '';
+  if (state.library.order?.length) return '';
+  return `<section class="panel">${loadErrorStateHTML({ lang, tierKey: 'library', t })}</section>`;
 }
 
 export function renderHome(state) {
@@ -148,10 +277,14 @@ export function renderHome(state) {
 
     ${nextPrayerStrip(state, lang, prayerTimes)}
 
+    ${libraryErrorHTML(state, lang)}
+
+    ${nudgeCardHTML(state)}
+
     ${onboardingPanelHTML(state, lang)}
 
     <div class="quick-actions">
-      <a class="quick-action quick-action--quran" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">
+      <a class="quick-action quick-action--quran" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">
         ${icon('quran', { size: 26 })}
         <span>${t('quran.readShortcut', lang)}</span>
       </a>
@@ -214,7 +347,7 @@ export function renderHome(state) {
     ${
       state.quranBookmark?.surah
         ? `
-    <a class="panel panel--quran-continue" href="${buildHash(VIEWS.QURAN, { id: state.quranBookmark.surah })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${state.quranBookmark.surah}">
+    <a class="panel panel--quran-continue" href="${buildHash(VIEWS.MUSHAF)}" data-action="mushaf-open-at-surah" data-surah="${escapeHTML(String(state.quranBookmark.surah))}">
       <span class="panel--quran-continue__icon">${icon('quran', { size: 22 })}</span>
       <span class="panel--quran-continue__text">
         <span class="panel--quran-continue__label">${t('quran.continueReading', lang)}</span>
@@ -230,10 +363,10 @@ export function renderHome(state) {
         <h2>${t('home.dailyProgress', lang)}</h2>
         <span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
       </div>
-      <div class="progress-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-bar__fill" style="width:${pct}%"></div>
+      <div class="progress-bar" role="progressbar" aria-label="${t('home.dailyProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
       </div>
-      <p class="panel__subtext" dir="ltr">${today.recitations} / ${goal}</p>
+      <p class="panel__subtext" dir="ltr">${escapeHTML(String(today?.recitations || 0))} / ${escapeHTML(String(goal))}</p>
     </section>
 
     ${
@@ -247,6 +380,10 @@ export function renderHome(state) {
     }
 
     ${dailyHadithCardHTML(state)}
+
+    ${hifzReviewCardHTML(state)}
+
+    ${worshipTodayCardHTML(state)}
 
     ${
       recentEntries.length
@@ -266,7 +403,7 @@ export function renderHome(state) {
     <section class="panel">
       <div class="panel__header">
         <h2>${t('home.favorites', lang)}</h2>
-        <a href="${buildHash(VIEWS.FAVORITES)}" data-action="navigate" data-view="${VIEWS.FAVORITES}">${icon('chevronRight', { size: 16 })}</a>
+        <a href="${buildHash(VIEWS.FAVORITES)}" data-action="navigate" data-view="${VIEWS.FAVORITES}" aria-label="${t('home.viewAll.favorites', lang)}">${icon('chevronRight', { size: 16 })}</a>
       </div>
       <div class="card-row">
         ${favEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: true, isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
@@ -281,7 +418,7 @@ export function renderHome(state) {
     <section class="panel">
       <div class="panel__header">
         <h2>${t('home.collections', lang)}</h2>
-        <a href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}">${icon('chevronRight', { size: 16 })}</a>
+        <a href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}" aria-label="${t('home.viewAll.collections', lang)}">${icon('chevronRight', { size: 16 })}</a>
       </div>
       <div class="chip-row">
         ${pinnedCollections.map((c) => `<a class="chip chip--collection" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">${escapeHTML(pickLocale(c.name, lang))} <span class="chip__count">${c.items.length}</span></a>`).join('')}

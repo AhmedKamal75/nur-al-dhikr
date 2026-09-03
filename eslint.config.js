@@ -28,6 +28,10 @@ export default [
         CustomEvent: 'readonly',
         requestAnimationFrame: 'readonly',
         cancelAnimationFrame: 'readonly',
+        Worker: 'readonly',
+        Blob: 'readonly',
+        URL: 'readonly',
+        queueMicrotask: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         setInterval: 'readonly',
@@ -48,6 +52,7 @@ export default [
         Audio: 'readonly',
         CSS: 'readonly',
         requestSubmit: 'readonly',
+        MessageChannel: 'readonly',
       },
     },
     rules: {
@@ -83,6 +88,9 @@ export default [
         URL: 'readonly',
         Response: 'readonly',
         Request: 'readonly',
+        indexedDB: 'readonly',
+        Notification: 'readonly',
+        TimestampTrigger: 'readonly', // Notification Triggers API (Chromium, feature-detected)
       },
     },
     rules: {

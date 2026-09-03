@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { PATHS, ALIASES, icon } from '../js/icons.js';
+import { PATHS, ALIASES, icon } from '../js/core/icons.js';
 import { auditIcons } from './helpers/icon-audit.mjs';
 
 /**

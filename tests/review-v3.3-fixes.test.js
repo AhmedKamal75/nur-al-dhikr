@@ -7,13 +7,13 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { dirname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { sanitizeSettings, sanitizeMushafPrefs, DEFAULT_SETTINGS } from '../js/config.js';
-import { formatAmount } from '../js/zakat.js';
-import { safeDecode } from '../js/router.js';
+import { sanitizeSettings, sanitizeMushafPrefs, DEFAULT_SETTINGS } from '../js/core/config.js';
+import { formatAmount } from '../js/domain/zakat.js';
+import { safeDecode } from '../js/core/router.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -87,11 +87,18 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
     wordByWordStudy: false,
     wordUnderline: true,
     defaultTafsir: 'jalalayn',
+    translationPanel: true,
+    spread: false,
   });
   // v3.5.0 added tajweedColoring (default false) to the mushaf prefs —
   // the merged sanitizer keeps that key with a safe boolean default.
   // v3.7 adds bismillahStyle (enum, default 'auto') and tajweedInspector
   // (boolean, default true) to the sanitized prefs shape.
+  // v4.4 adds translationPanel (boolean, default false) — the translation
+  // tray under the Mushaf page.
+  // v4.5 adds spread (boolean, default true) — the two-page facing layout
+  // on wide viewports — and widens fontScale's clamp to 0.6–2.2 so the
+  // pinch-zoom/ctrl+wheel gestures share the slider's range.
   assert.deepEqual(p, {
     font: 'amiri',
     paper: 'sepia',
@@ -104,7 +111,20 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
     tajweedInspector: true,
     bismillahStyle: 'auto',
     defaultTafsir: 'jalalayn',
+    translationPanel: true,
+    spread: false,
   });
+});
+
+test('sanitizeMushafPrefs clamps the v4.5 zoom range and defaults spread on', () => {
+  const p = sanitizeMushafPrefs({
+    fontScale: 9,
+    spread: 'yes',
+  });
+  assert.equal(p.fontScale, 2.2);
+  assert.equal(p.spread, true);
+  const low = sanitizeMushafPrefs({ fontScale: 0 });
+  assert.equal(low.fontScale, 0.6);
 });
 
 test('sanitizeMushafPrefs rejects hostile values for the v3.7 fields', () => {
@@ -185,5 +205,35 @@ test('every ES module imported by the app is in the SW precache list', () => {
     missing,
     [],
     `These modules are imported but NOT precached — a first-visit offline install would fail to boot: ${missing.join(', ')}`
+  );
+});
+
+/* ------------------------------------------------------------------ */
+/* v4.1 — precache disk-existence gate                                */
+/* ------------------------------------------------------------------ */
+
+test('every APP_SHELL entry exists on disk (no phantom precache paths)', () => {
+  const sw = readFileSync(join(ROOT, 'sw.js'), 'utf8');
+  const match = sw.match(/const APP_SHELL = \[(.*?)\];/s);
+  assert.ok(match, 'APP_SHELL list must exist in sw.js');
+  const entries = [...match[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
+
+  // cache.addAll() is all-or-nothing: ONE phantom path rejects the whole
+  // precache, the install handler swallows it, and the "offline-first" app
+  // silently ships with an empty shell cache. (v4.0 shipped exactly two
+  // phantom audioStore paths; this gate exists so that class of defect
+  // can never ship again.)
+  const missing = entries.filter((e) => {
+    try {
+      statSync(join(ROOT, e));
+      return false;
+    } catch {
+      return true;
+    }
+  });
+  assert.deepEqual(
+    missing,
+    [],
+    `These APP_SHELL entries do not exist on disk — addAll() would reject and the offline shell would silently fail to install: ${missing.join(', ')}`
   );
 });

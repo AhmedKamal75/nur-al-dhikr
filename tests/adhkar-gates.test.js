@@ -2,7 +2,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { processDocument } from '../js/schema.js';
+import { processDocument } from '../js/core/schema.js';
 
 /**
  * The Adhkar data gates (v3.9) — the standing acceptance criteria for the
@@ -148,4 +148,42 @@ describe('adhkar data gates', () => {
     const expected = `${JSON.parse(readFileSync(join(ROOT, 'data/quran/1.json'), 'utf8')).ayahs[0].text} ${surah67.ayahs.map((a) => a.text).join(' ')}`;
     assert.equal(mulk.arabic, expected, 'al-Mulk must be the full corpus surah with basmala');
   });
+});
+
+/* ------------------------------------------------------------------ */
+/* v4.5.2 — the section-names gate (the "deleted names of sections"    */
+/* regression). Every category of every built-in content library must  */
+/* carry a non-empty localized name and an icon: an unnamed tile in    */
+/* the Library is a shipping blocker, not a cosmetic nit.              */
+/* ------------------------------------------------------------------ */
+
+const LIBRARY_FILES = [
+  'adhkar.json',
+  'duas.json',
+  'quranic.json',
+  'prophet-duas.json',
+  'asma.json',
+  'reflections.json',
+  'pdf-duas.json',
+  'daily-sunnah.json',
+  'special-days.json',
+];
+
+for (const file of LIBRARY_FILES) {
+  test(`${file}: every category has a name (EN+AR) and an icon`, () => {
+    const libDoc = JSON.parse(readFileSync(join(ROOT, 'data', file), 'utf8'));
+    for (const cat of libDoc.categories) {
+      assert.ok(cat.name?.en?.trim(), `${file}/${cat.id}: missing EN name`);
+      assert.ok(cat.name?.ar?.trim(), `${file}/${cat.id}: missing AR name`);
+      assert.ok(cat.icon, `${file}/${cat.id}: missing icon`);
+    }
+  });
+}
+
+test('adhkar: the seven canonical sections are named (the v4.5.2 restore)', () => {
+  const names = Object.fromEntries(doc.categories.map((c) => [c.id, c.name?.ar ?? '']));
+  assert.equal(names.morning, 'أذكار الصباح');
+  assert.equal(names.evening, 'أذكار المساء');
+  assert.equal(names.sleep, 'أذكار النوم');
+  assert.equal(names['wake-up'], 'أذكار الاستيقاظ');
 });

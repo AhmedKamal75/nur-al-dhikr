@@ -8,11 +8,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { cardHTML } from '../js/components/card.js';
-import { formatAmount } from '../js/zakat.js';
-import { makeReminder } from '../js/notifications.js';
+import { cardHTML } from '../js/ui/card.js';
+import { formatAmount } from '../js/domain/zakat.js';
+import { makeReminder } from '../js/services/notifications.js';
 import { renderZakat } from '../js/views/zakat.js';
-import { store } from '../js/state.js';
+import { store } from '../js/core/state.js';
 
 /* ------------------------------------------------------------------ */
 /* W-2: the counter pill must show completed cycles                    */
@@ -30,8 +30,10 @@ const BASE_ITEM = {
 test('cardHTML shows a completed-cycles badge once cycles exist', () => {
   const html = cardHTML(BASE_ITEM, null, { counter: { count: 0, target: 1, completedCycles: 4 } });
   assert.match(html, /counter-pill--done/);
-  assert.match(html, /counter-pill__cycles/);
-  assert.match(html, /4/);
+  // (v4.3) /4/ matched ANY 4 anywhere in the card (widths, ids, svg paths);
+  // pin the digit to its actual home — the cycles badge's own text node
+  // (which renders as "✓ 4").
+  assert.match(html, /counter-pill__cycles[^>]*>[^<]*\b4\b/);
   // title tooltip uses the translated label
   assert.match(html, /Completed 4 times/);
 });

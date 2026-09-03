@@ -1,6 +1,12 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { qiblaBearing, distanceToKaabaKm, cardinalLabel, angleDelta, KAABA } from '../js/qibla.js';
+import {
+  qiblaBearing,
+  distanceToKaabaKm,
+  cardinalLabel,
+  angleDelta,
+  KAABA,
+} from '../js/domain/qibla.js';
 
 describe('qiblaBearing', () => {
   test('matches widely-published reference bearings for major cities', () => {

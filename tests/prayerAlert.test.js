@@ -7,10 +7,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { resolveAlertSource, ADHAN_MODES } from '../js/prayerSound.js';
-import { validateAdhanFile, looksLikeAudio, ADHAN_MAX_BYTES } from '../js/audioStore.js';
-import { DEFAULT_SETTINGS } from '../js/config.js';
-import { sanitizeSettings } from '../js/config.js';
+import { resolveAlertSource, ADHAN_MODES } from '../js/services/prayerSound.js';
+import { validateAdhanFile, looksLikeAudio, ADHAN_MAX_BYTES } from '../js/services/audioStore.js';
+import { DEFAULT_SETTINGS } from '../js/core/config.js';
+import { sanitizeSettings } from '../js/core/config.js';
 
 const NO_CUSTOM = { standard: false, fajr: false };
 const CUSTOM_BOTH = { standard: true, fajr: true };

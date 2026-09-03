@@ -6,11 +6,12 @@
  * praying on time, and it never feeds — or is fed by — the app's existing
  * recitation-based streak in Statistics (see js/checklist.js for why).
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { CHECKLIST_ITEMS } from '../config.js';
-import { selectors } from '../state.js';
-import { completedCount, checklistStreak, recentHistory } from '../checklist.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { CHECKLIST_ITEMS } from '../core/config.js';
+import { selectors } from '../core/state.js';
+import { completedCount, checklistStreak, recentHistory } from '../services/checklist.js';
+import { viewMenuButton } from '../ui/viewSheet.js';
 
 function dayLabel(dateKeyStr, lang) {
   const d = new Date(dateKeyStr + 'T00:00:00');
@@ -43,21 +44,24 @@ export function renderChecklist(state) {
   const historyStrip = history
     .map(
       (d) => `
-    <div class="checklist-history__day ${d.complete ? 'checklist-history__day--complete' : ''}" title="${d.count}/${d.total}">
-      <span class="checklist-history__dot" style="--fill:${Math.round((d.count / d.total) * 100)}%"></span>
-      <span class="checklist-history__label">${dayLabel(d.dateKey, lang)}</span>
+    <div class="checklist-history__day ${d.complete ? 'checklist-history__day--complete' : ''}" role="img" aria-label="${dayLabel(d.dateKey, lang)}: ${d.count}/${d.total}" title="${d.count}/${d.total}">
+      <span class="checklist-history__dot" style="--fill:${Math.round((d.count / d.total) * 100)}%" aria-hidden="true"></span>
+      <span class="checklist-history__label" aria-hidden="true">${dayLabel(d.dateKey, lang)}</span>
     </div>`
     )
     .join('');
 
   return `
   <section class="view view--checklist">
-    <h1 class="view__title">${t('checklist.title', lang)}</h1>
+    <div class="view-header view-header--row">
+      <h1 class="view__title">${t('checklist.title', lang)}</h1>
+      ${viewMenuButton('checklist', lang, { labelKey: 'viewMenu.checklist' })}
+    </div>
     <p class="view__subtitle">${t('checklist.subtitle', lang)}</p>
 
     <section class="panel panel--checklist-summary">
-      <div class="progress-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-bar__fill" style="width:${pct}%"></div>
+      <div class="progress-bar" role="progressbar" aria-label="${t('checklist.progress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
       </div>
       <div class="checklist-summary__row">
         <p class="panel__subtext" dir="ltr">${done} / ${total} ${t('checklist.today', lang)}</p>

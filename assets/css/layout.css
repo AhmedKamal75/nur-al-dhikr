@@ -1,471 +1,579 @@
 /* ==========================================================================
-   layout.css — app shell
-   Mobile: topbar + scrollable main + bottom tab bar (4 destinations + More,
-   which opens a grouped drawer sheet).
-   Desktop (>= 960px): a GROUPED, COLLAPSIBLE side rail (Read / Worship /
-   Tools / Mine). The hamburger toggles it between labeled and icon-only
-   (persisted in settings.navCollapsed, applied via <html
-   data-nav-collapsed>). The rail scrolls independently, so every
-   destination is always reachable no matter the viewport height.
+   layout.css — the app shell: topbar, side rail, bottom bar, drawer, main
+   Third load. Pure structure — no component styling beyond the chrome.
+   Breakpoints: ≥960px desktop rail; 640/560/520/480 minor grids.
    ========================================================================== */
-
-:root {
-  --sidenav-width-collapsed: 76px;
-  --sidenav-live: var(--sidenav-width);
-}
 
 #app {
   display: flex;
   flex-direction: column;
+  min-height: 100vh; /* pre-dvh fallback */
   min-height: 100dvh;
 }
 
-.topbar {
+/* ==========================================================================
+   Topbar
+   ========================================================================== */
+#topbar {
   position: sticky;
   top: 0;
-  z-index: 40;
-  height: var(--topbar-height);
-  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
-  backdrop-filter: blur(10px);
+  z-index: var(--z-nav);
+  /* (v5.1.0) deeper frosted glass — blur + saturation is the "premium
+     chrome" combination modern app shells use; 80% tint keeps every
+     text tier's AA ratio over the blurred content behind it. */
+  background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
   border-bottom: 1px solid var(--color-border);
 }
+
 .topbar__inner {
-  height: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 var(--space-4);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  height: var(--topbar-height);
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
 }
+
 .topbar__lead {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-1_5);
   min-width: 0;
 }
+
 .topbar__brand {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  height: 44px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-md);
   font-weight: 700;
   font-size: var(--fs-md);
+  color: var(--color-text);
+}
+.topbar__brand:hover {
+  text-decoration: none;
+  background: var(--color-surface-alt);
+}
+
+.topbar__brand-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   color: var(--color-primary-text);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.topbar__brand-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.topbar__brand-icon {
-  font-size: 1.3em;
-}
+
 .topbar__actions {
   display: flex;
   align-items: center;
   gap: var(--space-1);
+  margin-inline-start: auto;
 }
 
+/* ==========================================================================
+   Main view outlet
+   ========================================================================== */
 #main {
   flex: 1;
   width: 100%;
   max-width: var(--content-max-width);
   margin: 0 auto;
-  padding: var(--space-5) var(--space-4) calc(var(--bottomnav-height) + var(--space-8));
-}
-#main:focus {
+  padding: var(--space-5) var(--space-4) calc(var(--bottomnav-height) + var(--space-9));
   outline: none;
 }
 
-/* ---- Mobile bottom bar + drawer ---------------------------------------- */
+/* The docked player lifts content clear of itself. */
+body.has-player #main {
+  padding-bottom: calc(var(--bottomnav-height) + var(--playerbar-height));
+}
+
+/* ==========================================================================
+   Bottom navigation (mobile bar + drawer + desktop rail all render from
+   shell.js; CSS picks presentation by viewport)
+   ========================================================================== */
+#bottomnav {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  z-index: var(--z-nav);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Mobile bar */
+.nav-mobile-bar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-around;
+  height: var(--bottomnav-height);
+}
+
+.nav-mobile-bar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1 1 0;
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+  font-weight: 500;
+  line-height: 1;
+  transition: color var(--dur-base) var(--ease-standard);
+  border-radius: var(--radius-sm);
+}
+/* Active/hover states shared by both bars. (v4.1: the earlier duplicate
+   subset of these rules — same selectors, same values, defined 20 lines up
+   — was removed; this block is the single owner.) */
+.nav-mobile-bar__item:hover {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.nav-mobile-bar__item--active,
+.nav-mobile-bar__item[aria-current='page'] {
+  color: var(--color-primary-text);
+  font-weight: 600;
+}
+.nav-mobile-bar__item--active::after,
+.nav-mobile-bar__item[aria-current='page']::after {
+  content: '';
+  width: 18px;
+  height: 2.5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+}
+
+.nav__item--active,
+.nav__item[aria-current='page'] {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary-text);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Desktop ≥960px: side rail replaces the mobile bar
+   ========================================================================== */
+.nav__inner {
+  display: contents;
+}
 
 .nav__scroller {
   display: none;
 }
 
-.nav-mobile-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
-  height: var(--bottomnav-height);
-  display: flex;
-  align-items: stretch;
-  justify-content: space-around;
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid var(--color-border);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
-.nav-mobile-bar__item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  color: var(--color-text-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font: inherit;
-  transition: color var(--dur-base) var(--ease-standard);
-}
-.nav-mobile-bar__item--active {
-  color: var(--color-primary-text);
-}
-.nav__label {
-  font-size: var(--fs-caption);
-  font-weight: 600;
-}
-
-.nav-drawer-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  background: var(--color-overlay);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur-base) var(--ease-standard);
-}
-.nav-drawer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 51;
-  max-height: 78dvh;
-  display: flex;
-  flex-direction: column;
-  background: var(--color-surface-raised);
-  box-shadow: var(--shadow-lg);
-  border-top: 1px solid var(--color-border);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  transform: translateY(102%);
-  transition: transform var(--dur-slow) var(--ease-standard);
-  padding-bottom: env(safe-area-inset-bottom, 0);
-}
-body.nav-drawer-open .nav-drawer-overlay {
-  opacity: 1;
-  pointer-events: auto;
-}
-/* v3.12 (Phase B) bottom-sheet physics: the sheet arrives on the spring
- * curve — a confident settle with a hint of overshoot at the top of its
- * travel — and leaves on the standard curve, because a bounce-out reads
- * as the sheet refusing to leave. */
-body.nav-drawer-open .nav-drawer {
-  transform: translateY(0);
-  transition-timing-function: var(--ease-spring);
-}
-.nav-drawer__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--color-border);
-}
-.nav-drawer__title {
-  font-weight: 700;
-  color: var(--color-primary-text);
-}
-.nav-drawer__body {
-  overflow-y: auto;
-  padding: var(--space-4) var(--space-3) var(--space-6);
-}
-
-body.is-focus-mode .topbar,
-body.is-focus-mode .nav-mobile-bar,
-body.is-focus-mode .nav-drawer,
-body.is-focus-mode .nav-drawer-overlay {
-  display: none;
-}
-body.is-focus-mode #main {
-  padding: 0;
-  max-width: none;
-}
-
-/* ---- Shared nav item styling (rail + drawer) ---------------------------- */
-
-.nav__group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.nav__group + .nav__group {
-  margin-top: var(--space-4);
-}
-.nav__group-label {
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-text-muted);
-  padding: var(--space-2) var(--space-4) var(--space-1);
-}
-.nav__item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
-  color: var(--color-text-muted);
-  transition:
-    color var(--dur-base) var(--ease-standard),
-    background var(--dur-base) var(--ease-standard);
-}
-.nav__item--active {
-  color: var(--color-primary-text);
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-}
-.nav-drawer .nav__label {
-  font-size: var(--fs-base);
-  color: var(--color-text);
-}
-.nav-drawer .nav__item {
-  padding-block: var(--space-4);
-}
-
-/* ---- Desktop: grouped, collapsible, SCROLLABLE side rail --------------- */
-
 @media (min-width: 960px) {
-  html[data-nav-collapsed='1'] {
-    --sidenav-live: var(--sidenav-width-collapsed);
-  }
-
   #app {
     flex-direction: row;
   }
 
-  .topbar {
+  #topbar {
     position: fixed;
-    left: var(--sidenav-live);
-    right: 0;
-    top: 0;
-    transition: left var(--dur-base) var(--ease-standard);
+    inset-inline-start: var(--sidenav-width);
+    inset-inline-end: 0;
+    transition: inset-inline-start var(--dur-slow) var(--ease-standard);
   }
+  html[data-nav-collapsed='true'] #topbar {
+    inset-inline-start: var(--sidenav-width-collapsed);
+  }
+
+  /* (v5.1.0) THE TOPBAR ORDER FIX (asked for since v4.4): on desktop the
+     inner row used to cap at the centered content measure, which floated
+     the whole [back][hamburger][brand] cluster to the middle of the
+     screen — the "centered title" that never matched the spec. The row
+     now spans rail-edge → screen-edge: hamburger at the far start, the
+     brand immediately beside it, search/theme/back flush at the far end.
+     (Markup order in shell.js: menu, brand … search, theme, back.) */
   .topbar__inner {
     max-width: none;
+  }
+  .topbar__actions .topbar__back {
+    order: 3;
+  }
+
+  #bottomnav {
+    position: fixed;
+    top: var(--topbar-height);
+    bottom: 0;
+    inset-inline-start: 0;
+    width: var(--sidenav-width);
+    border-top: none;
+    border-inline-end: 1px solid var(--color-border);
+    background: var(--color-bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transition: width var(--dur-slow) var(--ease-standard);
+  }
+  html[data-nav-collapsed='true'] #bottomnav {
+    width: var(--sidenav-width-collapsed);
   }
 
   .nav-mobile-bar,
   .nav-drawer,
   .nav-drawer-overlay {
-    display: none;
+    display: none !important;
   }
 
-  /* The rail itself: fixed, full height, independently scrollable — the
-     original overflow bug (items below Settings unreachable) is fixed by
-     overflow-y: auto + a thin themed scrollbar. */
   .nav__scroller {
     display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: var(--sidenav-live);
-    height: 100dvh;
-    z-index: 45;
-    background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-    backdrop-filter: blur(12px);
-    border-right: 1px solid var(--color-border);
+    height: 100%;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: var(--space-5) 0 var(--space-6);
-    transition: width var(--dur-base) var(--ease-standard);
+    padding: var(--space-3) var(--space-2) var(--space-6);
     scrollbar-width: thin;
-    scrollbar-color: var(--color-border-strong) transparent;
-  }
-  .nav__scroller::-webkit-scrollbar {
-    width: 6px;
-  }
-  .nav__scroller::-webkit-scrollbar-thumb {
-    background: var(--color-border-strong);
-    border-radius: 9999px;
   }
 
-  .nav__inner {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: 0 var(--space-3);
+  .nav__group + .nav__group {
+    margin-top: var(--space-4);
   }
-  .nav__label {
-    font-size: var(--fs-sm);
+
+  .nav__group-label {
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--fs-caption);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
     white-space: nowrap;
   }
-
-  /* Collapsed (icon-only) rail.
-     Labels are removed with display:none — NOT opacity — so they leave the
-     layout entirely (icons center truly) and the accessibility tree (the
-     links carry aria-label instead). Group headers become hairline
-     dividers so the grouped rhythm stays visible at 76px. */
-  html[data-nav-collapsed='1'] .nav__label {
-    display: none;
-  }
-  html[data-nav-collapsed='1'] .nav__group-label {
-    display: none;
-  }
-  html[data-nav-collapsed='1'] .nav__group + .nav__group {
-    margin-top: var(--space-3);
-    padding-top: var(--space-3);
-    border-top: 1px solid var(--color-border);
-    margin-inline: var(--space-3);
-  }
-  html[data-nav-collapsed='1'] .nav__item {
-    justify-content: center;
+  html[data-nav-collapsed='true'] .nav__group-label {
+    visibility: hidden;
+    height: var(--space-2);
     padding: 0;
-    height: 44px; /* consistent icon-only touch target */
   }
-  html[data-nav-collapsed='1'] .nav__item svg {
-    flex-shrink: 0;
+
+  .nav__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--touch-target);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur-base) var(--ease-standard),
+      color var(--dur-base) var(--ease-standard);
   }
   .nav__item:hover {
-    background: color-mix(in srgb, var(--color-text-muted) 10%, transparent);
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  .nav__item[aria-current='page'],
+  .nav__item--active {
+    background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+    color: var(--color-primary-text);
+    font-weight: 600;
+    /* v4.1: logical marker — the old inset box-shadow pinned the bar to the
+       LEFT edge, which is the content-facing side once the rail sits right
+       in RTL. border-inline-start follows the reading direction. */
+    border-inline-start: 3px solid var(--color-primary);
+  }
+  .nav__item svg {
+    flex-shrink: 0;
+    /* (v5.1.0) hard size floor: the base `svg { max-width: 100% }` squeeze
+       is what physically shrank the glyphs once the rail lost width (see
+       the landscape note above). An explicit 24×24 in BOTH states is the
+       contract: collapsed icons are the SAME SIZE as expanded ones. */
+    width: 24px;
+    height: 24px;
+  }
+
+  html[data-nav-collapsed='true'] .nav__item {
+    justify-content: center;
+    padding: var(--space-2);
+  }
+  html[data-nav-collapsed='true'] .nav__label {
+    display: none;
   }
 
   #main {
-    margin-left: var(--sidenav-live);
-    margin-top: var(--topbar-height);
-    padding: var(--space-8) var(--space-6) var(--space-10);
-    max-width: none;
-    transition: margin-left var(--dur-base) var(--ease-standard);
+    padding-top: calc(var(--topbar-height) + var(--space-5));
+    margin-inline-start: var(--sidenav-width);
+    transition: margin-inline-start var(--dur-slow) var(--ease-standard);
   }
-  #main > .view {
-    max-width: var(--content-max-width);
-    margin: 0 auto;
+  html[data-nav-collapsed='true'] #main {
+    margin-inline-start: var(--sidenav-width-collapsed);
+  }
+  body.has-player #main {
+    padding-bottom: var(--space-9);
   }
 
-  body.is-focus-mode .nav__scroller {
-    display: none;
+  /* The player floats as a rounded card beside the rail on desktop. */
+  #playerbar {
+    inset-inline-start: calc(var(--sidenav-width) + var(--space-4));
+    transition: inset-inline-start var(--dur-slow) var(--ease-standard);
   }
-  body.is-focus-mode #main {
-    margin: 0;
+  html[data-nav-collapsed='true'] #playerbar {
+    inset-inline-start: calc(var(--sidenav-width-collapsed) + var(--space-4));
   }
 }
 
-/* Generic view scaffolding shared by most screens */
-.view {
+/* ==========================================================================
+   Mobile "More" drawer (bottom sheet)
+   ========================================================================== */
+.nav-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer-overlay);
+  background: var(--color-overlay);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+body.nav-drawer-open .nav-drawer-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-drawer {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  z-index: var(--z-drawer);
+  max-height: 78vh; /* pre-dvh fallback */
+  max-height: 78dvh;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(105%);
+  visibility: hidden;
+  transition:
+    transform var(--dur-slow) var(--ease-standard),
+    visibility 0s linear var(--dur-slow);
 }
-.view__title {
-  font-size: var(--fs-xl);
+body.nav-drawer-open .nav-drawer {
+  transform: translateY(0);
+  visibility: visible;
+  transition: transform var(--dur-slow) var(--ease-spring);
 }
-.view__subtitle {
-  color: var(--color-text-secondary);
-}
-.view__meta {
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-}
-.view-header {
+
+/* The hamburger next to the brand gets a slightly larger glyph so its
+   optical weight matches the 30px brand mark (both sit on the same
+   44px centerline — the alignment the hostile review flagged). */
+
+.nav-drawer__head {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-.view-header--row {
-  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-}
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--touch-target);
-  gap: var(--space-1);
-  color: var(--color-text-secondary);
-  font-weight: 600;
-  font-size: var(--fs-sm);
-  width: fit-content;
-}
-
-.panel {
-  display: flex;
-  flex-direction: column;
   gap: var(--space-3);
+  padding: var(--space-4) var(--space-5) var(--space-2);
+  position: relative;
 }
-.panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
+
+/* The iOS-style grab handle: signals "this sheet slides down". */
+.nav-drawer__head::before {
+  content: '';
+  position: absolute;
+  top: var(--space-1_5);
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  width: 38px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--color-border-strong);
 }
-.panel__header h2 {
+
+.nav-drawer__title {
   font-size: var(--fs-md);
-}
-.panel__header-side {
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  font-variant-numeric: tabular-nums;
-}
-.panel__subtext {
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-}
-.field-label {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--color-text-secondary);
+  font-weight: 700;
   margin-top: var(--space-2);
 }
 
-.card-list,
-.card-row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-.card-row {
-  flex-direction: row;
-  overflow-x: auto;
-  padding-bottom: var(--space-1);
-  scrollbar-width: none;
-}
-.card-row::-webkit-scrollbar {
-  display: none;
-}
-.card-row > .card {
-  min-width: 280px;
-  flex-shrink: 0;
+.nav-drawer__body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-2) var(--space-3) calc(var(--space-5) + env(safe-area-inset-bottom, 0));
 }
 
-.empty-hint {
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  padding: var(--space-4) 0;
+.nav-drawer__body .nav__group + .nav__group {
+  margin-top: var(--space-4);
 }
-/* v3.14 Phase C: upgraded empty state — soft icon medallion, a title that
- * names the empty thing honestly, a short hint, and an optional one-tap
- * next action (emptyStateHTML() in js/components/emptyState.js). */
-.empty-state__medallion {
-  width: 64px;
-  height: 64px;
+
+.nav-drawer__body .nav__group-label {
+  padding: var(--space-1) var(--space-3) var(--space-1);
+  margin-bottom: 0;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.nav-drawer__body .nav__item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--color-surface-alt);
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
   color: var(--color-text-secondary);
-  margin-bottom: var(--space-1);
-}
-.empty-state__title {
-  color: var(--color-text);
   font-size: var(--fs-md);
-  font-weight: 600;
-  margin: 0;
+  font-weight: 500;
 }
-.empty-state {
+.nav-drawer__body .nav__item svg {
+  flex-shrink: 0;
+}
+.nav-drawer__body .nav__item:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  text-decoration: none;
+}
+.nav-drawer__body .nav__item[aria-current='page'] {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary-text);
+  font-weight: 600;
+}
+.nav-drawer__body .nav__item:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
+}
+
+/* ==========================================================================
+   Focus mode — full-bleed, chrome hidden
+   ========================================================================== */
+body.is-focus-mode #topbar,
+body.is-focus-mode #bottomnav,
+body.is-focus-mode .nav-drawer,
+body.is-focus-mode .nav-drawer-overlay,
+body.is-focus-mode #playerbar {
+  display: none !important;
+}
+body.is-focus-mode #main {
+  margin: 0;
+  max-width: none;
+  padding: 0;
+}
+body.is-focus-mode {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   (v4.4) TRUE fullscreen Mushaf — the book claims every pixel
+   --------------------------------------------------------------------------
+   Same contract as focus mode, plus the desktop rail margins (the rail IS
+   #bottomnav at ≥960px, and #main carries its margin-inline-start) and the
+   scroll lock moves INSIDE the page's text column, so the illuminated
+   frame, medallions and page number stay pinned while the ayahs flow.
+   Body class toggled by app/renderer.js from state.mushafFullscreen.
+   ========================================================================== */
+/* (v4.5) The Mushaf route claims a WIDE reading column — a spread's two
+   facing pages need far more than the standard content column. Scoped to
+   the route via a body class the renderer toggles; TRUE fullscreen still
+   overrides this below (its #main rules are later + stricter). */
+body.is-mushaf-view #main {
+  max-width: 92rem;
+}
+
+/* (v4.5) Classic-reader immersive mode: the study reader hides its chrome
+   and widens the reading column. The playerbar STAYS — recitation follow-
+   along is part of an immersive reading session, not chrome. */
+body.is-reader-immersive #topbar,
+body.is-reader-immersive #bottomnav,
+body.is-reader-immersive .nav-mobile-bar,
+body.is-reader-immersive .nav-drawer,
+body.is-reader-immersive .nav-drawer-overlay {
+  display: none !important;
+}
+body.is-reader-immersive #main {
+  max-width: 58rem;
+}
+body.is-reader-immersive .view-header {
+  border-block-end: none;
+}
+
+body.is-mushaf-fullscreen #topbar,
+body.is-mushaf-fullscreen #bottomnav,
+body.is-mushaf-fullscreen .nav-mobile-bar,
+body.is-mushaf-fullscreen .nav-drawer,
+body.is-mushaf-fullscreen .nav-drawer-overlay,
+body.is-mushaf-fullscreen #playerbar {
+  display: none !important;
+}
+body.is-mushaf-fullscreen #main {
+  margin: 0 !important;
+  max-width: none;
+  padding: 0;
+  overflow: hidden;
+}
+body.is-mushaf-fullscreen {
+  overflow: hidden;
+}
+
+/* v4.1 — landscape safe areas (notched phones in landscape keep the
+   bottom nav and player clear of the sensor housing).
+   (v5.1.0) THE COLLAPSED-RAIL ICON FIX (complained about since v4.4):
+   this rule used to be bare `@media (orientation: landscape)`, which
+   matches EVERY desktop viewport — and #bottomnav carries the
+   .bottomnav class, so desktops silently paid 24px of horizontal
+   padding inside a 76px collapsed rail. With the scroller's own padding
+   and the scrollbar, the rail's content box fell below 24px and the nav
+   icons (svg max-width:100%) squeezed to 16-19px — the "tiny
+   indistinguishable icons" report. Scoped to <960px, the desktop rail
+   now keeps its full width and the icons render at the same 24px they
+   show when the rail is expanded. */
+@media (orientation: landscape) and (max-width: 959px) {
+  .bottomnav,
+  #playerbar .player-bar {
+    padding-inline: max(var(--space-3), env(safe-area-inset-left, 0px))
+      max(var(--space-3), env(safe-area-inset-right, 0px));
+  }
+  #main {
+    padding-inline: max(var(--space-4), env(safe-area-inset-left, 0px))
+      max(var(--space-4), env(safe-area-inset-right, 0px));
+  }
+}
+
+/* v4.1 — Boot skeleton: shown by app/boot.js between shell mount and the
+   first real render (the content-library download). Mirrors the content
+   column so the swap into the Home view causes no layout jump. */
+.boot-skeleton {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: var(--space-4);
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 18vh var(--space-5) var(--space-8);
   text-align: center;
-  gap: var(--space-3);
-  padding: var(--space-9) var(--space-4);
-  color: var(--color-text-muted);
 }
-.empty-state__hint {
-  font-size: var(--fs-sm);
+.boot-skeleton__mark {
+  font-size: 2.4rem;
+  color: var(--color-primary-text);
+  line-height: 1;
+}
+.boot-skeleton__title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--color-text);
+}
+.boot-skeleton__lines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: min(320px, 80%);
 }

@@ -13,10 +13,9 @@ import {
   formatAmount,
   hawlDueFor,
   daysUntilHawl,
-  HAWL_DAYS,
   NISAB_GOLD_GRAMS,
   NISAB_SILVER_GRAMS,
-} from '../js/zakat.js';
+} from '../js/domain/zakat.js';
 
 test('nisab constants are the classical weights', () => {
   assert.equal(NISAB_GOLD_GRAMS, 85);
@@ -124,9 +123,23 @@ test('formatAmount adds separators and trims trailing zeros', () => {
   assert.equal(formatAmount(5, 'EGP'), '5 EGP');
 });
 
-test('hawlDueFor = assessment + 354 lunar days', () => {
-  const ts = Date.UTC(2026, 0, 1);
-  assert.equal(hawlDueFor(ts) - ts, HAWL_DAYS * 86400000);
+test('hawlDueFor: same Hijri date one year later (tabular), 354-day fallback', () => {
+  // (v4.3) The hawl anniversary now follows the tabular Hijri calendar
+  // (same month/day, year+1) instead of a flat 354 days, which drifted
+  // ~11 days per 30-year cycle against the real ~354.37-day lunar year.
+  // 2026-01-01 is 1447-07-12; one Hijri year later lands on 2026-12-22
+  // (355 days — the leap-lunar-year length), cross-checked against the
+  // converter's published anchor (1 Ramadan 1446 = 2025-03-01).
+  const ts = new Date(2026, 0, 1, 12, 0, 0).getTime();
+  const due = hawlDueFor(ts);
+  assert.equal(due, new Date(2026, 11, 22).getTime());
+  const spanDays = Math.round((due - ts) / 86400000);
+  assert.ok(spanDays === 354 || spanDays === 355, `hawl span ${spanDays} should be 354/355`);
+  // Hostile input falls back without throwing (NaN propagates as NaN —
+  // daysUntilHawl already treats non-finite dates as junk).
+  assert.ok(Number.isNaN(hawlDueFor(NaN)));
+  // The flat 354-day fallback survives for exotic finite dates.
+  assert.ok(Number.isFinite(hawlDueFor(0)));
 });
 
 test('daysUntilHawl: future, today, and past cases at day granularity', () => {

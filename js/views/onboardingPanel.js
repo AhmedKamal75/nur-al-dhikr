@@ -12,11 +12,11 @@
  *  - The panel disappears on its own once all steps are done.
  */
 
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { buildHash } from '../router.js';
-import { VIEWS } from '../config.js';
-import { buildOnboardingSteps } from '../onboarding.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { buildHash } from '../core/router.js';
+import { VIEWS } from '../core/config.js';
+import { buildOnboardingSteps } from '../domain/onboarding.js';
 
 export const STEP_ICONS = {
   location: 'location',

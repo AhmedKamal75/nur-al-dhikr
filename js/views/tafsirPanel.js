@@ -7,12 +7,23 @@
  * views/quran.js (classic list reader) and views/mushafReader.js (604-page
  * book reader) so the two reading modes share one implementation.
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { escapeHTML, pickLocale } from '../utils.js';
-import { skeletonLines } from '../components/skeleton.js';
-import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../config.js';
-import { classifyAyahTajweed, classifyWordTajweed, wordUnits, TAJWEED_RULES } from '../tajweed.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { clamp, escapeHTML, pickLocale } from '../core/utils.js';
+import { skeletonLines } from '../ui/skeleton.js';
+import { loadErrorStateHTML } from '../ui/emptyState.js';
+import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
+import {
+  classifyAyahTajweed,
+  classifyWordTajweed,
+  wordUnits,
+  TAJWEED_RULES,
+  TAJWEED_FAMILIES,
+  tajweedPrefsOf,
+  ruleEnabled,
+  effectiveRuleColor,
+  filterSpansByPrefs,
+} from '../domain/tajweed.js';
 import {
   getWord,
   wordGrammarSummary,
@@ -20,7 +31,7 @@ import {
   wordAffixLabels,
   rootOccurrences,
   splitEditions,
-} from '../wordStudy.js';
+} from '../domain/wordStudy.js';
 
 /* ------------------------------------------------------------------ */
 /* Word-by-word rendering                                              */
@@ -39,7 +50,7 @@ export function renderAyahWords(
   wordRecords,
   surah,
   ayah,
-  { tappable = true, underline = true, tajweed = false } = {}
+  { tappable = true, underline = true, tajweed = false, prefs = null } = {}
 ) {
   const tokens = String(officialText || '')
     .trim()
@@ -51,10 +62,12 @@ export function renderAyahWords(
     .map((tok, idx) => {
       const i = idx + 1;
       const inner = tajweedByWord
-        ? colorizeWord(tok, tajweedByWord[idx]?.spans || [])
+        ? colorizeWord(tok, tajweedByWord[idx]?.spans || [], prefs)
         : escapeHTML(tok);
-      const hasWordData = Array.isArray(wordRecords) && wordRecords.some((w) => w.i === i);
-      if (!tappable || !hasWordData) return inner;
+      // (v4.6.0) a word is tappable even without grammar data — the tap
+      // opens the study panel, which always answers the tajweed question
+      // from the ayah text itself. `tappable` opts OUT (practice mode).
+      if (!tappable) return inner;
       return `<span class="qword ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="0" role="button">${inner}</span>`;
     })
     .join(' ');
@@ -65,15 +78,18 @@ export function renderAyahWords(
  *  `word` produced by tajweed.js — see that module for why they're safe
  *  to trust (computed directly from this app's own text, not aligned
  *  against a third-party offset table). */
-function colorizeWord(word, spans) {
-  if (!spans.length) return escapeHTML(word);
-  const sorted = [...spans].sort((a, b) => a.start - b.start);
+function colorizeWord(word, spans, prefs = null) {
+  const active = filterSpansByPrefs(spans, prefs);
+  if (!active.length) return escapeHTML(word);
+  const sorted = [...active].sort((a, b) => a.start - b.start);
   let out = '';
   let cursor = 0;
   for (const s of sorted) {
     if (s.start < cursor) continue; // rules should never overlap, but never let one clobber the last
     out += escapeHTML(word.slice(cursor, s.start));
-    out += `<span class="tajweed tajweed--${s.rule}">${escapeHTML(word.slice(s.start, s.end))}</span>`;
+    const rule = TAJWEED_RULES.find((r) => r.id === s.rule);
+    const color = effectiveRuleColor(prefs, rule);
+    out += `<span class="tajweed tajweed--${s.rule}"${color ? ` style="color:${color}"` : ''}>${escapeHTML(word.slice(s.start, s.end))}</span>`;
     cursor = s.end;
   }
   out += escapeHTML(word.slice(cursor));
@@ -87,9 +103,13 @@ function colorizeWord(word, spans) {
  * word answers "which letters carry a rule and how do I recite them?"
  * straight from the same classifier that colors the page. It can never
  * disagree with the colored text, because it IS the colored text's source.
+ *
+ * (v4.6.0) No longer gated on the tajweedInspector pref: tapping a word
+ * ALWAYS answers the tajweed question — that is the tap's whole job when
+ * grammar data hasn't loaded (the classic "mushaf words do nothing"
+ * complaint).
  */
 function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
-  if (!state.settings.mushafPrefs?.tajweedInspector) return '';
   const doc = state.quran.surahs[String(surah)];
   const ayahText = doc?.ayahs?.find((x) => String(x.number) === String(ayah))?.text;
   if (!ayahText) return '';
@@ -100,10 +120,12 @@ function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
   // rules; it comes from the same tokenizer the rules themselves use.
   const nextToken = tokens[wordIndex];
   const nextUnits = nextToken ? wordUnits(nextToken) : [];
-  const spans = classifyWordTajweed(token, {
+  const prefs = tajweedPrefsOf(state);
+  const allSpans = classifyWordTajweed(token, {
     nextWordFirstBase: nextUnits[0] ? nextToken[nextUnits[0].start] : null,
     isLastWordOfAyah: wordIndex === tokens.length,
   });
+  const spans = filterSpansByPrefs(allSpans, prefs);
   if (!spans.length) return '';
   // Dedupe identical (rule, range) pairs defensively; sort in reading order.
   const seen = new Set();
@@ -117,13 +139,14 @@ function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
     .sort((p1, p2) => p1.start - p2.start || p1.end - p2.end)
     .map((sp) => {
       const rule = TAJWEED_RULES.find((r) => r.id === sp.rule);
-      if (!rule) return '';
+      if (!rule || !ruleEnabled(prefs, sp.rule)) return '';
       const name = lang === 'ar' ? rule.name.ar : rule.name.en;
       const nameAlt = lang === 'ar' ? '' : ` \u00B7 ${rule.name.ar}`;
       const desc = lang === 'ar' ? rule.desc.ar : rule.desc.en;
+      const color = effectiveRuleColor(prefs, rule);
       return `
         <div class="wti-row">
-          <span class="wti-swatch" style="background:${rule.color}" aria-hidden="true"></span>
+          <span class="wti-swatch" style="background:${color || 'transparent'}" aria-hidden="true"></span>
           <div class="wti-body">
             <span class="wti-name">${escapeHTML(name)}<span dir="rtl" class="wti-name-alt">${escapeHTML(nameAlt)}</span></span>
             <span class="wti-desc">${escapeHTML(desc)}</span>
@@ -135,7 +158,7 @@ function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
   return `
     <div class="word-study__tajweed">
       <p class="word-study__tajweed-label">${t('wordStudy.tajweed', lang)}</p>
-      <div class="word-study__tajweed-arabic" dir="rtl" lang="ar">${colorizeWord(token, spans)}</div>
+      <div class="word-study__tajweed-arabic" dir="rtl" lang="ar">${colorizeWord(token, spans, prefs)}</div>
       ${rows}
     </div>`;
 }
@@ -152,13 +175,29 @@ export function buildWordStudyPanel(state) {
   const word = getWord(state.quranWords, surah, ayah, i);
 
   if (!word) {
+    // (v4.6.0) No grammar data is not a dead end: the ayah text itself
+    // still carries the tajweed answer. Show the token, colorized, with
+    // every rule it contains — then the tafsir deep-link as before.
+    const doc = state.quran.surahs[String(surah)];
+    const ayahText = doc?.ayahs?.find((x) => String(x.number) === String(ayah))?.text;
+    const token = ayahText ? ayahText.trim().split(/\s+/).filter(Boolean)[i - 1] : null;
+    const tajweedHTML = token ? wordTajweedSection(state, surah, ayah, i, lang) : '';
     return `
     <div class="word-study">
       <h2 id="modal-title-word-study" class="sr-only">${t('wordStudy.title', lang)}</h2>
-      <p class="empty-hint">${t('wordStudy.noData', lang)}</p>
-      <button type="button" class="btn btn--secondary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
-        ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)}
-      </button>
+      ${
+        token
+          ? `<p class="word-study__ref" dir="ltr">${surah}:${ayah} \u00B7 ${t('wordStudy.wordN', lang, { n: i })}</p>
+      <p class="word-study__arabic word-study__arabic--solo" dir="rtl" lang="ar">${escapeHTML(token)}</p>`
+          : `<p class="empty-hint">${t('wordStudy.noData', lang)}</p>`
+      }
+      ${tajweedHTML}
+      ${token ? `<p class="panel__subtext">${t('wordStudy.tajweedOnly', lang)}</p>` : ''}
+      <div class="word-study__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
+          ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)}
+        </button>
+      </div>
     </div>`;
   }
 
@@ -200,6 +239,9 @@ export function buildWordStudyPanel(state) {
       </div>`
           : ''
       }
+      <button type="button" class="btn btn--secondary btn--sm word-study__root-browse" data-action="roots-open" data-root="${escapeHTML(word.root)}">
+        ${t('wordStudy.rootBrowse', lang, { n: count })}
+      </button>
     </div>`
     : '';
 
@@ -277,6 +319,11 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
   const lang = state.settings.language;
   const editions = state.tafsirEditions;
   if (!editions) {
+    // v4.1: editions-catalog failure gets an inline error + Retry instead
+    // of a permanent skeleton.
+    if (state.loadErrors?.['tafsir-editions']) {
+      return `<div class="tafsir-panel">${loadErrorStateHTML({ lang, tierKey: 'tafsir-editions', t })}</div>`;
+    }
     return `<div class="tafsir-panel">${skeletonLines(lang, [46, 94, 90, 66])}</div>`;
   }
   const { bundled, remote } = splitEditions(editions);
@@ -284,7 +331,7 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
   const activeEdition = [...bundled, ...remote].find((e) => e.id === active);
 
   const tabBtn = (ed) => `
-    <button type="button" class="tafsir-tab ${active === ed.id ? 'tafsir-tab--active' : ''}" data-action="tafsir-tab" data-edition="${ed.id}" data-surah="${surah}" data-ayah="${ayah}">
+    <button type="button" role="tab" id="tafsir-tab-${ed.id}" aria-controls="tafsir-panel-content" aria-selected="${active === ed.id}" tabindex="${active === ed.id ? '0' : '-1'}" class="tafsir-tab ${active === ed.id ? 'tafsir-tab--active' : ''}" data-action="tafsir-tab" data-edition="${ed.id}" data-surah="${surah}" data-ayah="${ayah}">
       ${escapeHTML(pickLocale({ en: ed.nameEn, ar: ed.nameAr }, lang))}
       ${!ed.bundled ? `<span class="tafsir-tab__cloud">${icon('download', { size: 11 })}</span>` : ''}
     </button>`;
@@ -298,6 +345,9 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
       body = `
         <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: activeEdition.authorEn, ar: activeEdition.authorAr }, lang))}</p>
         <div class="tafsir-panel__body" dir="rtl" lang="ar">${formatArabicCommentary(text)}</div>`;
+    } else if (state.loadErrors?.['tafsir-text']) {
+      // v4.1: the text fetch failed — Retry instead of a stuck skeleton.
+      body = `<div class="tafsir-panel__loading">${loadErrorStateHTML({ lang, tierKey: 'tafsir-text', t })}</div>`;
     } else if (activeEdition.bundled) {
       body = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
     } else {
@@ -311,13 +361,15 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
     }
   }
 
+  const activeTabId = activeEdition ? `tafsir-tab-${activeEdition.id}` : '';
+
   return `
   <div class="tafsir-panel">
-    <div class="tafsir-tabs" role="tablist">
+    <div class="tafsir-tabs" role="tablist" aria-label="${t('tafsir.title', lang)}">
       ${bundled.map(tabBtn).join('')}
       ${remote.length ? `<span class="tafsir-tabs__sep"></span>${remote.map(tabBtn).join('')}` : ''}
     </div>
-    <div class="tafsir-panel__content">${body}</div>
+    <div class="tafsir-panel__content" role="tabpanel" id="tafsir-panel-content" ${activeTabId ? `aria-labelledby="${activeTabId}"` : ''} tabindex="0">${body}</div>
   </div>`;
 }
 
@@ -342,12 +394,9 @@ export function buildMushafSettingsPanel(state) {
   const prefs = state.settings.mushafPrefs;
   // Defense-in-depth (review v3.3 B1): sanitized upstream, but the slider
   // value attributes still interpolate prefs — emit clamped numbers only.
-  const clampNum = (v, min, max, fallback) => {
-    const n = Number(v);
-    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
-  };
-  const fontScale = clampNum(prefs.fontScale, 0.8, 1.6, 1);
-  const lineSpacing = clampNum(prefs.lineSpacing, 0.85, 1.3, 1);
+  // (v4.5) the range widened to match the new pinch-zoom / ctrl+wheel span.
+  const fontScale = clamp(Number(prefs.fontScale) || 1, 0.6, 2.2);
+  const lineSpacing = clamp(Number(prefs.lineSpacing) || 1, 0.85, 1.3);
 
   const fontRow = MUSHAF_FONTS.map(
     (f) => `
@@ -365,13 +414,13 @@ export function buildMushafSettingsPanel(state) {
   ).join('');
 
   const toggle = (key, labelKey) => `
-    <div class="toggle-row">
+    <label class="toggle-row">
       <span class="toggle-row__label">${t(labelKey, lang)}</span>
-      <label class="switch">
+      <span class="switch">
         <input type="checkbox" data-action="toggle-mushaf-pref" data-key="${key}" ${prefs[key] ? 'checked' : ''} />
         <span class="switch__track"></span>
-      </label>
-    </div>`;
+      </span>
+    </label>`;
 
   return `
   <div class="mushaf-settings">
@@ -384,7 +433,7 @@ export function buildMushafSettingsPanel(state) {
     <div class="mushaf-settings__papers">${paperRow}</div>
 
     <h3 class="mushaf-jump__heading">${t('mushaf.textSize', lang)}</h3>
-    <input class="slider" type="range" min="0.8" max="1.6" step="0.05" value="${fontScale}" data-bind="mushaf-font-scale" aria-label="${t('mushaf.textSize', lang)}" />
+    <input class="slider" type="range" min="0.6" max="2.2" step="0.05" value="${fontScale}" data-bind="mushaf-font-scale" aria-label="${t('mushaf.textSize', lang)}" />
 
     <h3 class="mushaf-jump__heading">${t('mushaf.lineSpacing', lang)}</h3>
     <input class="slider" type="range" min="0.85" max="1.3" step="0.05" value="${lineSpacing}" data-bind="mushaf-line-spacing" aria-label="${t('mushaf.lineSpacing', lang)}" />
@@ -403,6 +452,7 @@ export function buildMushafSettingsPanel(state) {
     </div>
 
     <h3 class="mushaf-jump__heading">${t('mushaf.behavior', lang)}</h3>
+    ${toggle('spread', 'mushaf.spread')}
     ${toggle('pageFlipAnimation', 'mushaf.flipAnimation')}
     ${toggle('tajweedInspector', 'mushaf.tajweedInspector')}
     ${toggle('wordByWordStudy', 'mushaf.wordStudy')}
@@ -418,16 +468,35 @@ export function buildMushafSettingsPanel(state) {
         ? `
     <h3 class="mushaf-jump__heading">${t('mushaf.tajweedLegend', lang)}</h3>
     <div class="tajweed-legend">
-      ${TAJWEED_RULES.map(
-        (r) => `
-        <div class="tajweed-legend__row">
-          <span class="tajweed-legend__swatch" style="background:${r.color}"></span>
-          <div>
-            <div class="tajweed-legend__name">${escapeHTML(pickLocale(r.name, lang))}</div>
-            <div class="tajweed-legend__desc">${escapeHTML(pickLocale(r.desc, lang))}</div>
+      ${TAJWEED_FAMILIES.map(
+        (family) => `
+        <div class="tajweed-legend__family">
+          <div class="tajweed-legend__family-head">
+            <span class="tajweed-legend__swatch" style="background:${family.color}"></span>
+            <span class="tajweed-legend__family-name">${escapeHTML(pickLocale(family.name, lang))}</span>
           </div>
+          <p class="tajweed-legend__family-desc">${escapeHTML(pickLocale(family.desc, lang))}</p>
+          ${TAJWEED_RULES.filter((r) => r.family === family.id)
+            .map(
+              (r) => `
+          <div class="tajweed-legend__row">
+            <span class="tajweed-legend__swatch tajweed-legend__swatch--${r.color ? 'solid' : 'plain'}" ${r.color ? `style="background:${r.color}"` : ''} title="${escapeHTML(t('mushaf.tajweedUncolored', lang))}"></span>
+            <div>
+              <div class="tajweed-legend__name">${escapeHTML(pickLocale(r.name, lang))}</div>
+              <div class="tajweed-legend__desc">${escapeHTML(pickLocale(r.desc, lang))}</div>
+            </div>
+          </div>`
+            )
+            .join('')}
         </div>`
       ).join('')}
+      <div class="tajweed-legend__row tajweed-legend__row--plain">
+        <span class="tajweed-legend__swatch tajweed-legend__swatch--plain"></span>
+        <div>
+          <div class="tajweed-legend__name">${escapeHTML(t('mushaf.tajweedUncolored', lang))}</div>
+          <div class="tajweed-legend__desc">${escapeHTML(t('mushaf.tajweedCoverage', lang))}</div>
+        </div>
+      </div>
     </div>`
         : ''
     }

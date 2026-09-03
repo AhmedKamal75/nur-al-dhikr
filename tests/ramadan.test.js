@@ -17,8 +17,8 @@ import {
   fastTrackerDays,
   ramadanLogKey,
   ramadanAlertTimes,
-} from '../js/ramadan.js';
-import { toGregorian } from '../js/calendar.js';
+} from '../js/domain/ramadan.js';
+import { toGregorian } from '../js/domain/calendar.js';
 
 test('ramadanInfo detects a known Ramadan date (1 Ramadan 1447 ≈ 19 Feb 2028 tabular)', () => {
   // Tabular-civil conversion, so derive the expected date instead of

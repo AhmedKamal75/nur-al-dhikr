@@ -36,13 +36,23 @@ const CHILD_SCRIPT = `
     console.error('UNEXPECTED REJECTION:', msg);
     process.exit(3);
   });
+  // v4.1: app.js now guards its own boot() with .catch(renderErrorScreen),
+  // so a headless boot is HANDLED — no unhandled rejection is produced.
+  // Watch stderr for the error screen's signature line instead: it proves
+  // the module-level boot() call actually ran.
+  let sawBootRun = false;
+  const origError = console.error;
+  console.error = (...args) => {
+    if (String(args[0]).includes('[app] Unrecoverable render error')) sawBootRun = true;
+    origError(...args);
+  };
   try {
     await import('./js/app.js');
-    // Import resolved; give boot()'s expected DOM rejection a beat to land.
     setTimeout(() => {
+      if (sawBootRun) process.exit(0);
       console.error('boot() never ran — module-level call missing?');
       process.exit(4);
-    }, 1000);
+    }, 300);
   } catch (err) {
     console.error('ENTRY LINK FAILURE:', err && err.message);
     process.exit(2);

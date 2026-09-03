@@ -3,7 +3,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { averagePerDay, activeDays, monthTotal, totalInLastDays } from '../js/statistics.js';
+import { averagePerDay, activeDays, monthTotal, totalInLastDays } from '../js/domain/statistics.js';
 
 function key(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -58,13 +58,29 @@ test('averagePerDay with no data is 0', () => {
 
 test('monthTotal sums only days in the ref month', () => {
   const now = new Date();
-  const thisMonth = statsWith({ daysAgo: { 0: 10, 5: 20 } });
+  // (v4.6.0) Use explicit same-month keys: a fixed "-5 days" offset crosses
+  // the month boundary whenever today's date is ≤ 5, which made this test
+  // fail on the 1st–5th of every month (a flake, not a regression).
+  const sameMonthDay = (dayOfMonth) =>
+    `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(dayOfMonth).padStart(2, '0')}`;
+  const thisMonth = { dailyHistory: {}, totalRecitations: 0, totalSessions: 0 };
+  thisMonth.dailyHistory[sameMonthDay(now.getDate())] = {
+    recitations: 10,
+    sessions: 1,
+    itemIds: [],
+  };
+  thisMonth.dailyHistory[sameMonthDay(Math.max(1, now.getDate() - 1))] = {
+    recitations: 20,
+    sessions: 1,
+    itemIds: [],
+  };
   assert.equal(monthTotal(thisMonth, now), 30);
 
   // Previous-month data must not leak into the current month's total.
   const prevMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 15);
   const prevKey = key(prevMonthDate);
-  const mixed = statsWith({ daysAgo: { 0: 10 } });
+  const mixed = { dailyHistory: {}, totalRecitations: 0, totalSessions: 0 };
+  mixed.dailyHistory[sameMonthDay(now.getDate())] = { recitations: 10, sessions: 1, itemIds: [] };
   mixed.dailyHistory[prevKey] = { recitations: 999, sessions: 1, itemIds: [] };
   assert.equal(monthTotal(mixed, now), 10);
   assert.equal(monthTotal(mixed, prevMonthDate), 999);

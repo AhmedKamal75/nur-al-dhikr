@@ -7,7 +7,7 @@ import {
   defaultTajweedPracticeStats,
   nextStats,
   accuracyFor,
-} from '../js/tajweedPractice.js';
+} from '../js/domain/tajweedPractice.js';
 
 const POOL = {
   byRule: {

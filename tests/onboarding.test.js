@@ -8,7 +8,7 @@ import {
   buildOnboardingSteps,
   onboardingComplete,
   shouldShowOnboarding,
-} from '../js/onboarding.js';
+} from '../js/domain/onboarding.js';
 
 function baseState(overrides = {}) {
   return {

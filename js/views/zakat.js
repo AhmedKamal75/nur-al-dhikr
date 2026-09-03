@@ -9,9 +9,9 @@
  * re-render — the same trick the search box uses to survive re-renders.
  */
 
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { escapeHTML } from '../utils.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { escapeHTML } from '../core/utils.js';
 import {
   computeZakat,
   computeNisab,
@@ -21,7 +21,8 @@ import {
   daysUntilHawl,
   NISAB_GOLD_GRAMS,
   NISAB_SILVER_GRAMS,
-} from '../zakat.js';
+} from '../domain/zakat.js';
+import { viewMenuButton } from '../ui/viewSheet.js';
 
 const ASSET_FIELDS = [
   { id: 'cash', label: 'zakat.cash', placeholder: 'zakat.ph.amount' },
@@ -53,7 +54,7 @@ function nisabPanel(state, lang) {
   return `
   <section class="panel">
     <div class="panel__header"><h2>${t('zakat.nisabTitle', lang)}</h2></div>
-    <div class="zakat-nisab-basis" role="radiogroup" aria-label="${t('zakat.nisabBasis', lang)}">
+    <div class="zakat-nisab-basis" role="group" aria-label="${t('zakat.nisabBasis', lang)}">
       <button type="button" class="chip chip--basis ${basis === 'gold' ? 'chip--basis-active' : ''}" data-action="zakat-set-basis" data-basis="gold" aria-pressed="${basis === 'gold'}">
         ${icon('star', { size: 14 })} ${t('zakat.goldStandard', lang)}
       </button>
@@ -118,8 +119,8 @@ function resultPanel(state, lang) {
       <div><dt>${t('zakat.nisab', lang)} (${r.nisabBasis === 'gold' ? t('zakat.goldStandardShort', lang) : t('zakat.silverStandardShort', lang)})</dt><dd dir="ltr">${formatAmount(r.nisab, cur)}</dd></div>
     </dl>
 
-    <div class="progress-bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
-      <div class="progress-bar__fill" style="width:${pct}%"></div>
+    <div class="progress-bar" role="progressbar" aria-label="${t('zakat.nisabProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
     </div>
     <p class="panel__subtext">${t('zakat.nisabProgress', lang)}: ${pct}%</p>
 
@@ -226,7 +227,10 @@ export function renderZakat(state) {
   const lang = state.settings.language;
   return `
   <section class="view view--zakat">
-    <h1 class="view__title">${t('zakat.title', lang)}</h1>
+    <div class="view-header view-header--row">
+      <h1 class="view__title">${t('zakat.title', lang)}</h1>
+      ${viewMenuButton('zakat', lang, { labelKey: 'viewMenu.zakat' })}
+    </div>
     <p class="view__subtitle">${t('zakat.subtitle', lang)}</p>
 
     ${nisabPanel(state, lang)}

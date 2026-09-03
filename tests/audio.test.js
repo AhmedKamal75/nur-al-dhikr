@@ -14,9 +14,9 @@ import {
   customMoshafId,
   validateCustomServer,
   searchReciters,
-} from '../js/audioCatalog.js';
-import { formatBytes, audioKey } from '../js/audioStore.js';
-import { formatCountdown } from '../js/ramadan.js';
+} from '../js/services/audioCatalog.js';
+import { formatBytes, audioKey } from '../js/services/audioStore.js';
+import { formatCountdown } from '../js/domain/ramadan.js';
 
 const DIR = new URL('../data/', import.meta.url);
 

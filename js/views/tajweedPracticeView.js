@@ -6,11 +6,11 @@
  * used for the flip direction and active tafsir tab, since a half-tapped
  * quiz round has no business being persisted or undo-able.
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { escapeHTML, pickLocale } from '../utils.js';
-import { TAJWEED_RULES, tajweedRule, wordUnits } from '../tajweed.js';
-import { accuracyFor } from '../tajweedPractice.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { escapeHTML, pickLocale } from '../core/utils.js';
+import { TAJWEED_RULES, tajweedRule, wordUnits } from '../domain/tajweed.js';
+import { accuracyFor } from '../domain/tajweedPractice.js';
 
 /** The entry screen: pick a rule to drill, or "Mixed," with stats. */
 export function buildPracticePicker(state) {
@@ -96,13 +96,14 @@ export function buildPracticeRound(state, session) {
 
   const resultHtml = session.checked
     ? `
-    <div class="practice-result ${session.result.perfect ? 'practice-result--perfect' : ''}">
+    <div class="practice-result ${session.result.perfect ? 'practice-result--perfect' : ''}" role="status" aria-live="polite">
       <p class="practice-result__headline">${t(session.result.perfect ? 'practice.perfect' : 'practice.notQuite', lang)}</p>
-      <div class="practice-result__legend">
+      <div class="practice-result__legend" aria-hidden="true">
         <span><span class="pu-dot pu-dot--correct"></span> ${t('practice.legendCorrect', lang)}</span>
         <span><span class="pu-dot pu-dot--missed"></span> ${t('practice.legendMissed', lang)}</span>
         <span><span class="pu-dot pu-dot--wrong"></span> ${t('practice.legendWrong', lang)}</span>
       </div>
+      <p class="sr-only">${t('practice.scoreSr', lang, { hit: session.result.correct.length, total: session.result.targetCount })}</p>
     </div>`
     : '';
 

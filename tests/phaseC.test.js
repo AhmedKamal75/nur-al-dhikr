@@ -20,11 +20,11 @@ import {
   skeletonReciterRows,
   skeletonHadithCard,
   skeletonMushafPage,
-} from '../js/components/skeleton.js';
-import { emptyStateHTML } from '../js/components/emptyState.js';
-import * as soundDesign from '../js/soundDesign.js';
-import { sanitizeSettings, DEFAULT_SETTINGS } from '../js/config.js';
-import { store, actions, PERSISTED_KEYS } from '../js/state.js';
+} from '../js/ui/skeleton.js';
+import { emptyStateHTML } from '../js/ui/emptyState.js';
+import * as soundDesign from '../js/services/soundDesign.js';
+import { sanitizeSettings, DEFAULT_SETTINGS } from '../js/core/config.js';
+import { store, actions, PERSISTED_KEYS } from '../js/core/state.js';
 
 const XSS = '<img src=x onerror="alert(1)">';
 
@@ -54,8 +54,10 @@ describe('skeleton builders', () => {
 
   test('no caller string is ever embedded raw (skeletons only emit bars)', () => {
     // widths are numbers; the only external input is lang → passed to t().
+    // (v4.3) the old `|| true` made the first assertion unfalsifiable — it
+    // could never fail, so the clamp it names was never actually tested.
     const html = skeletonLines('en', [10, 120, -5]);
-    assert.ok(!html.includes('120%') || true); // clamped to 100
+    assert.ok(!html.includes('120%')); // clamped to 100
     assert.ok(!html.includes('-5%'));
     assert.match(html, /--sk-w:100%/);
     assert.match(html, /--sk-w:10%/);

@@ -11,13 +11,13 @@
  * view is a pure template over state + the download registry.
  */
 
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { escapeHTML } from '../utils.js';
-import { searchReciters, findMoshaf } from '../audioCatalog.js';
-import { formatBytes } from '../audioStore.js';
-import { skeletonReciterRows } from '../components/skeleton.js';
-import { emptyStateHTML } from '../components/emptyState.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { escapeHTML } from '../core/utils.js';
+import { searchReciters, findMoshaf } from '../services/audioCatalog.js';
+import { formatBytes } from '../services/audioStore.js';
+import { skeletonReciterRows } from '../ui/skeleton.js';
+import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 
 function surahName(state, n) {
   const meta = state.quran.meta;
@@ -70,7 +70,7 @@ export function renderAudio(state) {
           title="${escapeHTML(surahName(state, n))}"
           aria-label="${escapeHTML(surahName(state, n))} — ${dl ? t('audio.deleteFile', lang) : t('audio.downloadFile', lang)}">
           <span class="dl-cell__num">${label}</span>
-          <span class="dl-cell__state">${dl ? icon('check', { size: 13 }) : busy ? '<span class="dl-cell__spinner" role="status" aria-label="…"></span>' : icon('download', { size: 13 })}</span>
+          <span class="dl-cell__state">${dl ? icon('check', { size: 13 }) : busy ? `<span class="dl-cell__spinner" role="status" aria-label="${t('common.loading', lang)}"></span>` : icon('download', { size: 13 })}</span>
         </button>
         ${dl ? `<span class="dl-cell__bytes">${formatBytes(dl.bytes)}</span>` : ''}
       </div>`);
@@ -83,9 +83,15 @@ export function renderAudio(state) {
         <span class="chip__count">${doneCount} / 114 · ${formatBytes(totalBytes)}</span>
       </div>
       <div class="dl-actions">
-        <button type="button" class="btn btn--primary btn--sm" data-action="audio-download-all" data-moshaf="${escapeHTML(selected.id)}">
+        ${
+          state.audioManager?.batchRunning
+            ? `<button type="button" class="btn btn--danger btn--sm" data-action="audio-batch-stop" data-moshaf="${escapeHTML(selected.id)}">
+          ${icon('close', { size: 14 })} ${t('audio.batchStop', lang)}
+        </button>`
+            : `<button type="button" class="btn btn--primary btn--sm" data-action="audio-download-all" data-moshaf="${escapeHTML(selected.id)}">
           ${icon('download', { size: 14 })} ${doneCount >= 114 ? t('audio.downloadMissing', lang) : t('audio.downloadAll', lang)}
-        </button>
+        </button>`
+        }
         <button type="button" class="btn btn--secondary btn--sm" data-action="audio-play-moshaf" data-moshaf="${escapeHTML(selected.id)}">
           ${icon('play', { size: 14 })} ${t('audio.playFirst', lang)}
         </button>
@@ -114,12 +120,18 @@ export function renderAudio(state) {
     <p class="view__subtitle">${t('audio.subtitle', lang)}</p>
 
     <div class="search-bar audio-search">
-      <span class="search-bar__icon">${icon('search', { size: 18 })}</span>
+      <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
       <input type="search" class="search-bar__input" id="audio-search-input"
-        placeholder="${t('audio.searchPh', lang)}" value="${escapeHTML(q)}"
+        placeholder="${t('audio.searchPh', lang)}" aria-label="${t('audio.searchPh', lang)}" value="${escapeHTML(q)}"
         data-bind="audio-search" autocomplete="off" />
     </div>
-    ${!state.audioManager?.catalogReady && !hits.length ? skeletonReciterRows(lang, 6) : ''}
+    ${
+      state.loadErrors?.['reciters-catalog']
+        ? loadErrorStateHTML({ lang, tierKey: 'reciters-catalog', t })
+        : !state.audioManager?.catalogReady && !hits.length
+          ? skeletonReciterRows(lang, 6)
+          : ''
+    }
     ${rows ? `<div class="reciter-list">${rows}</div>` : state.audioManager?.catalogReady && !hits.length ? emptyStateHTML({ iconName: 'volume', title: t('search.noResults', lang), hint: t('audio.noResultsHint', lang) }) : ''}
     ${hits.length > 60 ? `<p class="empty-hint">${t('audio.moreResults', lang, { n: hits.length })}</p>` : ''}
 

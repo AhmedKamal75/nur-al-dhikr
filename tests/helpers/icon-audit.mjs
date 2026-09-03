@@ -43,7 +43,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { PATHS, ALIASES } from '../../js/icons.js';
+import { PATHS, ALIASES } from '../../js/core/icons.js';
 import { PRAYER_ICONS } from '../../js/views/prayer.js';
 import { STEP_ICONS } from '../../js/views/onboardingPanel.js';
 
@@ -63,7 +63,7 @@ function walk(dir, out = []) {
 export function auditIcons(appRoot = APP_ROOT) {
   const known = new Set([...Object.keys(PATHS), ...Object.keys(ALIASES)]);
   const referenced = new Set();
-  const NAME = "['\"]([a-zA-Z0-9_-]+)['\"]";
+  const NAME = '[\'"]([a-zA-Z0-9_-]+)[\'"]';
 
   for (const file of walk(join(appRoot, 'js'))) {
     const src = readFileSync(file, 'utf8');
@@ -100,7 +100,9 @@ export function auditIcons(appRoot = APP_ROOT) {
   const unknown = [...referenced].filter((n) => !known.has(n)).sort();
   // alias targets render through their aliases — not "unused" drawings
   const viaAlias = new Set(Object.values(ALIASES));
-  const unused = [...Object.keys(PATHS)].filter((n) => !referenced.has(n) && !viaAlias.has(n)).sort();
+  const unused = [...Object.keys(PATHS)]
+    .filter((n) => !referenced.has(n) && !viaAlias.has(n))
+    .sort();
 
   const seen = new Map();
   const duplicates = [];
@@ -117,12 +119,21 @@ export function auditIcons(appRoot = APP_ROOT) {
     .filter(([, target]) => !PATHS[target])
     .map(([alias]) => alias);
 
-  return { referenced: [...referenced].sort(), unknown, unused, duplicates, deadMarkup, brokenAliases };
+  return {
+    referenced: [...referenced].sort(),
+    unknown,
+    unused,
+    duplicates,
+    deadMarkup,
+    brokenAliases,
+  };
 }
 
 export function runCli() {
   const r = auditIcons();
-  console.log(`icon-audit: ${r.referenced.length} referenced names, ${Object.keys(PATHS).length} defined, ${Object.keys(ALIASES).length} aliases`);
+  console.log(
+    `icon-audit: ${r.referenced.length} referenced names, ${Object.keys(PATHS).length} defined, ${Object.keys(ALIASES).length} aliases`
+  );
   if (r.unknown.length) {
     console.error('FAIL unknown referenced names (would render the blank-square fallback):');
     for (const n of r.unknown) console.error(`  - ${n}`);
@@ -142,7 +153,8 @@ export function runCli() {
   if (r.unused.length) {
     console.log(`info: defined but never referenced (${r.unused.length}): ${r.unused.join(', ')}`);
   }
-  const failed = r.unknown.length || r.brokenAliases.length || r.duplicates.length || r.deadMarkup.length;
+  const failed =
+    r.unknown.length || r.brokenAliases.length || r.duplicates.length || r.deadMarkup.length;
   if (!failed) console.log('icon-audit: PASS');
   process.exit(failed ? 1 : 0);
 }

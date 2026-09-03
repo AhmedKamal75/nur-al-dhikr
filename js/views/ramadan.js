@@ -11,24 +11,26 @@
  * directly each tick, the same way the Qibla compass patches its dial.
  */
 
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { pickLocale } from '../utils.js';
-import { buildHash } from '../router.js';
-import { VIEWS, SUHOOR_OFFSETS } from '../config.js';
-import { calculateTimes, formatClock } from '../prayer.js';
-import { permissionState } from '../notifications.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { emptyStateHTML } from '../ui/emptyState.js';
+import { pickLocale } from '../core/utils.js';
+import { buildHash } from '../core/router.js';
+import { VIEWS, SUHOOR_OFFSETS } from '../core/config.js';
+import { calculateTimes, formatClock } from '../domain/prayer.js';
+import { permissionState } from '../services/notifications.js';
 import {
   ramadanInfo,
   ramadanLength,
   nextRamadan,
   nextEidAlFitr,
   fastPhase,
-  qadrNightInfo,
+  qadrNightFor,
   fastTrackerDays,
   keptFastCount,
   ramadanLogKey,
-} from '../ramadan.js';
+} from '../domain/ramadan.js';
+import { viewMenuButton } from '../ui/viewSheet.js';
 
 /**
  * Resolve the iftar/suhoor dua item id against the live library index —
@@ -81,11 +83,17 @@ function phaseCard(state, lang, times, tomorrowFajr) {
   </section>`;
 }
 
-function trackerPanel(state, lang, hijri) {
-  const total = ramadanLength(hijri.year);
+function trackerPanel(state, lang, hijri, times = null, totalDays = null) {
+  const total = totalDays ?? ramadanLength(hijri.year);
   const days = fastTrackerDays(state.ramadanLog, hijri.year, hijri.day, total);
   const kept = keptFastCount(state.ramadanLog, hijri.year);
-  const qadr = qadrNightInfo(hijri.day);
+  // (v4.3) Laylat al-Qadr attribution follows the Islamic night (Maghrib →
+  // Fajr), not the calendar day number — the extracted rule lives in
+  // domain/ramadan.js#qadrNightFor with the full reasoning + tests.
+  const now = new Date();
+  const nowHours = now.getHours() + now.getMinutes() / 60;
+  const qadr = qadrNightFor(hijri, times, nowHours, total);
+  const nightDay = qadr ? qadr.dayOfRamadan : hijri.day + 1;
 
   const cells = days
     .map(
@@ -106,11 +114,11 @@ function trackerPanel(state, lang, hijri) {
     <div class="fast-dot-grid">${cells}</div>
     <p class="panel__subtext">${t('ramadan.fastTrackerHint', lang)}</p>
     ${
-      qadr.inLastTen
+      qadr?.inLastTen
         ? `
     <div class="qadr-banner ${qadr.isLikelyQadrNight ? 'qadr-banner--odd' : ''}">
       ${icon('sparkle', { size: 16 })}
-      <span>${qadr.isLikelyQadrNight ? t('ramadan.qadrTonight', lang) : t('ramadan.lastTenNights', lang, { n: hijri.day })}</span>
+      <span>${qadr.isLikelyQadrNight ? t('ramadan.qadrTonight', lang) : t('ramadan.lastTenNights', lang, { n: nightDay })}</span>
     </div>`
         : ''
     }
@@ -174,11 +182,11 @@ function linksPanel(lang) {
       <a class="quick-action quick-action--prayer" href="${buildHash(VIEWS.CATEGORY, { id: 'ramadan-special' })}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="ramadan-special">
         ${icon('hands', { size: 22 })}<span>${t('ramadan.ramadanDuas', lang)}</span>
       </a>
-      <a class="quick-action quick-action--quran" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">
+      <a class="quick-action quick-action--quran" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">
         ${icon('quran', { size: 22 })}<span>${t('ramadan.readQuran', lang)}</span>
       </a>
       <a class="quick-action quick-action--qibla" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">
-        ${icon('compass', { size: 22 })}><span>${t('nav.prayer', lang)}</span>
+        ${icon('compass', { size: 22 })}<span>${t('nav.prayer', lang)}</span>
       </a>
       <a class="quick-action quick-action--tasbih" href="${buildHash(VIEWS.ZAKAT)}" data-action="navigate" data-view="${VIEWS.ZAKAT}">
         ${icon('calculator', { size: 22 })}<span>${t('nav.zakat', lang)}</span>
@@ -207,13 +215,15 @@ export function renderRamadan(state) {
   let main;
 
   if (!hasLocation) {
-    main = `
-    <div class="empty-state">
-      ${icon('moon', { size: 40 })}
-      <p>${t('ramadan.locationNeeded', lang)}</p>
+    // (v4.2) shared empty-state builder — the hand-rolled twins of this
+    // block (prayer/qibla/ramadan) had already drifted once before.
+    main = emptyStateHTML({
+      iconName: 'moon',
+      title: t('ramadan.locationNeeded', lang),
+      actionHTML: `
       <button type="button" class="btn btn--primary" data-action="prayer-request-location">${icon('location', { size: 16 })} ${t('prayer.enableLocation', lang)}</button>
-      <button type="button" class="link-btn" data-action="prayer-manual-location">${t('prayer.manualLocation', lang)}</button>
-    </div>`;
+      <button type="button" class="link-btn" data-action="prayer-manual-location">${t('prayer.manualLocation', lang)}</button>`,
+    });
   } else if (inRamadan) {
     const now = new Date();
     const tz = -now.getTimezoneOffset() / 60;
@@ -230,7 +240,10 @@ export function renderRamadan(state) {
       date: tomorrow,
       latitude: p.latitude,
       longitude: p.longitude,
-      timezoneOffsetHours: tz,
+      // (v4.3) tomorrow's own UTC offset: on the night a DST shift occurs,
+      // reusing TODAY's offset put tomorrow's Fajr a full hour off in the
+      // suhoor countdown.
+      timezoneOffsetHours: -tomorrow.getTimezoneOffset() / 60,
       method: p.method,
       asr: p.asr,
     });
@@ -246,7 +259,7 @@ export function renderRamadan(state) {
       ${countdownBlock(t('ramadan.daysLeft', lang), String(daysLeft), t('ramadan.daysLeftSub', lang))}
     </div>
 
-    ${trackerPanel(state, lang, hijri)}
+    ${trackerPanel(state, lang, hijri, times, total)}
     ${alertsPanel(state, lang, times)}
     ${linksPanel(lang)}`;
   } else {
@@ -281,7 +294,10 @@ export function renderRamadan(state) {
 
   return `
   <section class="view view--ramadan">
-    <h1 class="view__title">${t('ramadan.title', lang)}</h1>
+    <div class="view-header view-header--row">
+      <h1 class="view__title">${t('ramadan.title', lang)}</h1>
+      ${viewMenuButton('ramadan', lang, { labelKey: 'viewMenu.ramadan' })}
+    </div>
     ${main}
     <p class="view__meta">${t('ramadan.hijriNote', lang)}</p>
   </section>`;

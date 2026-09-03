@@ -3,7 +3,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { shouldFire } from '../js/notifications.js';
+import { shouldFire } from '../js/services/notifications.js';
 
 const at = (h, m) => new Date(2026, 7, 24, h, m, 0, 0);
 

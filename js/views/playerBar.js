@@ -6,10 +6,11 @@
  * bar itself only re-renders on coarse state changes (track, play/pause).
  */
 
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { escapeHTML } from '../utils.js';
-import { findMoshaf } from '../audioCatalog.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { escapeHTML } from '../core/utils.js';
+import { findMoshaf } from '../services/audioCatalog.js';
+import { sleepSnapshot } from '../services/surahPlayback.js';
 
 const RATES = [1, 1.25, 1.5, 0.75];
 
@@ -49,7 +50,7 @@ export function renderPlayerBar(state) {
       <button type="button" class="player-bar__chip ${repeat !== 'off' ? 'player-bar__chip--on' : ''}" data-action="player-repeat" aria-pressed="${repeat !== 'off'}" aria-label="${t('audio.repeat', lang)}">
         ${icon('repeat', { size: 14 })}
       </button>
-      <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)}">${rate}&times;</button>
+      <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)} — ${rate}&times;">${rate}&times;</button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="player-close" aria-label="${t('common.close', lang)}">${icon('close', { size: 16 })}</button>
     </div>
     <div class="player-bar__track">
@@ -69,6 +70,14 @@ export function renderPlayerBar(state) {
 function recitationBarHTML(state, lang) {
   const sp = state.surahPlayback;
   const follow = state.settings.audio?.ayahFollow ?? true;
+  // v4.4 listen mode: continuous multi-surah playback + sleep timer.
+  const continuous = sp.continuous === true;
+  const sleep = sleepSnapshot();
+  // v3.17 hifz: per-ayah repeat budget + manual ayah skips (the ∞ mode's
+  // exit hatch). Chip reads the live session snapshot; the persisted
+  // default comes from settings.audio.ayahRepeat.
+  const rep = [1, 3, 5, 10, -1].includes(sp.repeat) ? sp.repeat : 1;
+  const repLabel = rep === -1 ? '\u221e' : `\u00d7${rep}`;
   const surah = state.quran.meta?.surahs?.find((x) => String(x.number) === String(sp.surah));
   const name = surah
     ? lang === 'ar'
@@ -83,8 +92,19 @@ function recitationBarHTML(state, lang) {
         <span class="player-bar__reciter">${escapeHTML(t('audio.reciting', lang))} · ${escapeHTML(name)}</span>
         <span class="player-bar__ayah-counter" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}</span>
       </div>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-ayah-prev" aria-label="${t('audio.ayahPrev', lang)}" title="${t('audio.ayahPrev', lang)}">${icon('chevronLeft', { size: 15 })}</button>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-ayah-next" aria-label="${t('audio.ayahNext', lang)}" title="${t('audio.ayahNext', lang)}">${icon('chevronRight', { size: 15 })}</button>
+      <button type="button" class="player-bar__chip ${rep !== 1 ? 'player-bar__chip--on' : ''}" data-action="recite-repeat-toggle" aria-label="${escapeHTML(t('audio.repeatAyah', lang))} (${repLabel})" title="${escapeHTML(t('audio.repeatAyah', lang))} (${repLabel})">
+        ${icon('repeat', { size: 13 })} ${repLabel}
+      </button>
       <button type="button" class="player-bar__chip ${follow ? 'player-bar__chip--on' : ''}" data-action="recite-follow-toggle" aria-pressed="${follow}" aria-label="${t('audio.follow', lang)}" title="${t('audio.follow', lang)}">
         ${icon(follow ? 'eye' : 'eyeOff', { size: 14 })}
+      </button>
+      <button type="button" class="player-bar__chip ${continuous ? 'player-bar__chip--on' : ''}" data-action="recite-listen-toggle" aria-pressed="${continuous}" aria-label="${t('audio.listenMode', lang)}" title="${t('audio.listenMode', lang)}">
+        ${icon('play', { size: 13 })} ${t('audio.listen', lang)}
+      </button>
+      <button type="button" class="player-bar__chip ${sleep.enabled ? 'player-bar__chip--on' : ''}" data-action="recite-sleep-cycle" aria-label="${t('audio.sleepTimer', lang)}" title="${t('audio.sleepTimer', lang)}">
+        ${icon('moon', { size: 13 })}${sleep.enabled ? ` ${escapeHTML(sleep.label)}` : ''}
       </button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="recite-stop" aria-label="${t('audio.reciteStop', lang)}">
         ${icon('stop', { size: 16 })}

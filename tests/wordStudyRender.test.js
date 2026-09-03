@@ -28,10 +28,10 @@ import {
   scoreRound,
   defaultTajweedPracticeStats,
   nextStats,
-} from '../js/tajweedPractice.js';
+} from '../js/domain/tajweedPractice.js';
 import { renderMushaf, buildMushafAyahDetail, setFlipDirection } from '../js/views/mushafReader.js';
 import { renderQuran } from '../js/views/quran.js';
-import { DEFAULT_SETTINGS } from '../js/config.js';
+import { DEFAULT_SETTINGS } from '../js/core/config.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -161,13 +161,15 @@ test('renderAyahWords produces one tappable span per official-text word', () => 
   assert.equal(spanCount, text.trim().split(/\s+/).length);
 });
 
-test('renderAyahWords falls back to plain escaped text when not tappable or data missing', () => {
+test('renderAyahWords falls back to plain escaped text when not tappable', () => {
   const text = surah1.ayahs[0].text;
   assert.doesNotMatch(
     renderAyahWords(text, words1['1'], 1, 1, { tappable: false }),
     /data-action="word-tap"/
   );
-  assert.doesNotMatch(
+  // (v4.6.0) with tappable on, a word is a tap target even before the
+  // grammar data loads — the tap answers tajweed from the ayah text.
+  assert.match(
     renderAyahWords(text, undefined, 1, 1, { tappable: true }),
     /data-action="word-tap"/
   );
@@ -194,7 +196,7 @@ test('renderAyahWords tajweed coloring never throws when word data has not loade
   const html = renderAyahWords(text, undefined, 1, 1, { tappable: true, tajweed: true });
   assertClean(html, 'renderAyahWords (tajweed on, no word data)');
   assert.match(html, /tajweed--hamzat_wasl/); // coloring itself doesn't depend on word-study data being loaded
-  assert.doesNotMatch(html, /data-action="word-tap"/); // but the tap affordance correctly still needs it
+  assert.match(html, /data-action="word-tap"/); // (v4.6.0) the tap affordance no longer depends on it either
 });
 
 test('buildMushafSettingsPanel renders in both languages with no crash', () => {
@@ -229,12 +231,15 @@ test('renderMushaf renders page 1 with tappable words and reflects every paper t
   }
 });
 
-test('renderMushaf respects the word-by-word toggle', () => {
+test('renderMushaf: words stay tappable for tajweed even with word study off', () => {
   const st = baseState();
   st.settings.mushafPrefs = { ...st.settings.mushafPrefs, wordByWordStudy: false };
   const html = renderMushaf(st);
   assertClean(html, 'mushaf page (word study off)');
-  assert.doesNotMatch(html, /data-action="word-tap"/);
+  // (v4.6.0) the pref now governs the underline hint and tab strategy —
+  // a tap still answers the tajweed question, so spans remain tappable.
+  assert.match(html, /data-action="word-tap"/);
+  assert.doesNotMatch(html, /qword--underline/);
 });
 
 test('renderMushaf consumes the flip direction exactly once', () => {

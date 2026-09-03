@@ -9,8 +9,8 @@ import {
   blankItem,
   blankCategory,
   normalizeCustomContentMap,
-} from '../js/schema.js';
-import { GRADES } from '../js/config.js';
+} from '../js/core/schema.js';
+import { GRADES } from '../js/core/config.js';
 
 describe('normalizeItem', () => {
   test('fills in every field defined by the spec, even from an empty object', () => {

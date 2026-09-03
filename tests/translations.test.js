@@ -26,7 +26,7 @@ import {
   overlayTranslation,
   sanitizeSettings,
   DEFAULT_SETTINGS,
-} from '../js/config.js';
+} from '../js/core/config.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const APP = join(HERE, '..');

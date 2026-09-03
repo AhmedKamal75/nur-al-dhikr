@@ -18,9 +18,9 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-import { markCelebration, wasCelebrated, clearCelebrations } from '../js/celebrate.js';
-import { justCompletedKhatma, KHATMA_CELEBRATION_MS } from '../js/khatma.js';
-import { shouldMarkViewEnter, VIEW_ENTER_MS } from '../js/renderer.js';
+import { markCelebration, wasCelebrated, clearCelebrations } from '../js/domain/celebrate.js';
+import { justCompletedKhatma, KHATMA_CELEBRATION_MS } from '../js/domain/khatma.js';
+import { shouldMarkViewEnter, VIEW_ENTER_MS } from '../js/app/renderer.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CSS_DIR = join(ROOT, 'assets', 'css');
@@ -159,6 +159,10 @@ function parseDurationSeconds(token) {
 const LONG_ANIMATION_ALLOWLIST = {
   celebrateBloom: 0.7,
   cycleComplete: 0.7,
+  // (v5.0.0) the counting tap-ripple: a single 520ms radial bloom per
+  // tap — a feedback gesture on a user-initiated event, allow-listed
+  // like the celebration bloom, dead under prefers-reduced-motion.
+  'count-ripple': 0.52,
 };
 
 describe('CSS motion contract', () => {
@@ -196,18 +200,19 @@ describe('CSS motion contract', () => {
     );
   });
 
-  /** Ambient/attention loops and event-driven emphasis pulses that pre-date
-   *  or deliberately exceed the entrance budget. Every entry here is a
+  /** Ambient/attention loops and event-driven emphasis pulses that
+   *  deliberately exceed the entrance budget. Every entry here is a
    *  conscious exception; a NEW name above 300ms must be added or shortened. */
   const LONG_ANIMATION_NAMED = [
     'nowBadgePulse', // "today" badge breathing loop (infinite)
-    'playPulse', // now-playing pulse (infinite)
-    'playerBufferPulse', // buffering indicator (infinite)
     'recite-pulse', // recitation console pulse (infinite)
     'sk-sweep', // skeleton shimmer sweep (infinite, v3.14)
     'dl-spin', // download-in-flight spinner (infinite, v3.14)
-    'puPulse', // ayah deep-link tint pulse (2 iterations, event-driven)
-    'ayah-focus-glow', // ayah focus glow (event-driven)
+    'ayah-focus-glow', // ayah deep-link pulse — 700ms one-shot (v4.1)
+    'garden-sway', // (v4.6.0) plant stem sway — ambient breeze loop (infinite)
+    'garden-sway-alt', // (v4.6.0) counter-phase sway for multi-stem plants (infinite)
+    'garden-float', // (v4.6.0) drifting pollen motes (infinite)
+    'garden-breathe', // (v4.6.0) hero plant breathing loop (infinite)
   ];
 
   test('every animation duration is bounded; long ones are consciously allow-listed', () => {

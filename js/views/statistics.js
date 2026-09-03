@@ -1,9 +1,13 @@
 /**
  * views/statistics.js
  */
-import { t } from '../i18n.js';
-import { icon } from '../icons.js';
-import { escapeHTML, pickLocale } from '../utils.js';
+import { t } from '../core/i18n.js';
+import { icon } from '../core/icons.js';
+import { emptyStateHTML } from '../ui/emptyState.js';
+import { dateKey, escapeHTML, categoryDisplayName } from '../core/utils.js';
+import { buildHash } from '../core/router.js';
+import { VIEWS } from '../core/config.js';
+import { worshipReview, reviewIsEmpty, keyToDate } from '../domain/review.js';
 import {
   weekWindow,
   monthWindow,
@@ -13,7 +17,8 @@ import {
   averagePerDay,
   activeDays,
   monthTotal,
-} from '../statistics.js';
+} from '../domain/statistics.js';
+import { viewMenuButton } from '../ui/viewSheet.js';
 
 function findCategoryMeta(state, categoryId) {
   const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
@@ -33,6 +38,84 @@ function monthRef(date) {
 function refDate(ref) {
   const [y, m] = ref.split('-').map(Number);
   return new Date(y, m - 1, 1);
+}
+
+/**
+ * v3.23.0 — the worship "year in review" panel, top of the Statistics
+ * view. Computed entirely from data already tracked (js/review.js);
+ * framed as a quiet summary of what the person actually did — never a
+ * count of days missed, never a leaderboard. Every label uses the
+ * "label: {n}" shape so Arabic number agreement can't betray the copy.
+ */
+function reviewStatCard(lang, labelKey, n) {
+  return `
+      <div class="stat-card">
+        <span class="stat-card__value">${Number(n) || 0}</span>
+        <span class="stat-card__label">${t(labelKey, lang)}</span>
+      </div>`;
+}
+
+function reviewWindowBlock(lang, title, win, fasts, sadaqah) {
+  return `
+    <div class="review-window">
+      <h3 class="review-window__title">${escapeHTML(title)}</h3>
+      <div class="stat-grid">
+        ${reviewStatCard(lang, 'review.pages', win.pages)}
+        ${reviewStatCard(lang, 'review.recitations', win.recitations)}
+        ${reviewStatCard(lang, 'review.prayers', win.prayers)}
+        ${reviewStatCard(lang, 'review.jamaah', win.jamaah)}
+        ${reviewStatCard(lang, 'review.fasts', fasts)}
+        ${reviewStatCard(lang, 'review.sadaqah', sadaqah)}
+      </div>
+    </div>`;
+}
+
+function reviewPanelHTML(state) {
+  const lang = state.settings.language;
+  const review = worshipReview(state);
+  if (reviewIsEmpty(review)) {
+    return `
+    <section class="panel">
+      <div class="panel__header"><h2>${t('review.title', lang)}</h2></div>
+      ${emptyStateHTML({ iconName: 'book', title: t('review.empty', lang) })}
+    </section>`;
+  }
+  const since = review.sinceKey
+    ? keyToDate(review.sinceKey).toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
+  const streakCards = `
+      <div class="stat-grid">
+        ${reviewStatCard(lang, 'review.longestDhikr', review.streaks.longestRecitations)}
+        ${reviewStatCard(lang, 'review.longestReading', review.streaks.longestReading)}
+        ${reviewStatCard(lang, 'review.currentReading', review.streaks.currentReading)}
+      </div>`;
+  const allTimeCards = `
+      <div class="stat-grid">
+        ${reviewStatCard(lang, 'review.bookmarks', review.allTime.ayahBookmarks)}
+        ${reviewStatCard(lang, 'review.khatmas', review.allTime.khatmas)}
+        ${reviewStatCard(lang, 'review.mushafPages', review.allTime.mushafPages)}
+      </div>`;
+  return `
+    <section class="panel">
+      <div class="panel__header"><h2>${t('review.title', lang)}</h2></div>
+      <p class="panel__subtext">${t('review.subtitle', lang)}</p>
+      ${
+        since
+          ? `<p class="panel__subtext">${t('review.since', lang, { date: since })} · ${t('review.daysActive', lang, { n: review.windows.all.days })}</p>`
+          : ''
+      }
+      ${reviewWindowBlock(lang, t('review.last90', lang), review.windows.d90, review.fasts.d90, review.sadaqah.d90)}
+      ${reviewWindowBlock(lang, t('review.hijriYear', lang, { n: review.hijriYear }), review.windows.hijriYear, review.fasts.hijriYear, review.sadaqah.hijriYear)}
+      ${reviewWindowBlock(lang, t('review.allTime', lang), review.windows.all, review.fasts.all, review.sadaqah.all)}
+      <h3 class="review-window__title">${t('review.streaks', lang)}</h3>
+      ${streakCards}
+      <h3 class="review-window__title">${t('review.kept', lang)}</h3>
+      ${allTimeCards}
+    </section>`;
 }
 
 export function renderStatistics(state) {
@@ -60,21 +143,34 @@ export function renderStatistics(state) {
       const dayLabel = d.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
         weekday: 'narrow',
       });
+      const fullDay = d.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+        weekday: 'long',
+      });
       const isBest = i === bestDayIdx && d.count > 0;
       return `
     <div class="bar-chart__col">
-      <span class="bar-chart__value ${d.count ? '' : 'bar-chart__value--zero'}">${d.count || ''}</span>
-      <div class="bar-chart__bar ${isBest ? 'bar-chart__bar--best' : ''}" style="height:${h}px" title="${d.count}"></div>
-      <span class="bar-chart__label">${dayLabel}</span>
+      <span class="bar-chart__value ${d.count ? '' : 'bar-chart__value--zero'}">${escapeHTML(String(d.count || ''))}</span>
+      <div class="bar-chart__bar ${isBest ? 'bar-chart__bar--best' : ''}" style="--bar-h:${h}px" role="img" aria-label="${escapeHTML(fullDay)}: ${escapeHTML(String(d.count))}" title="${escapeHTML(String(d.count))}"></div>
+      <span class="bar-chart__label" aria-hidden="true">${dayLabel}</span>
     </div>`;
     })
     .join('');
 
+  // (v4.2) the today marker must key on the LOCAL date, like monthCells —
+  // a UTC key pointed at tomorrow's cell every evening in UTC−X zones.
+  const todayKey = dateKey(new Date());
   const heatCells = monthCells
     .map((c) => {
       if (!c) return `<span class="heatmap__cell heatmap__cell--empty"></span>`;
       const bucket = intensityBucket(c.count, maxMonth);
-      return `<span class="heatmap__cell heatmap__cell--${bucket}" title="${c.key}: ${c.count}">${c.date.getDate()}</span>`;
+      const dayLabel = c.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+        weekday: 'long',
+        day: 'numeric',
+      });
+      const isToday = c.key === todayKey;
+      return `<span class="heatmap__cell heatmap__cell--${bucket} ${
+        isToday ? 'heatmap__cell--today' : ''
+      }" role="img" aria-label="${escapeHTML(dayLabel)}: ${escapeHTML(String(c.count))}" title="${escapeHTML(c.key)}: ${escapeHTML(String(c.count))}">${c.date.getDate()}</span>`;
     })
     .join('');
 
@@ -93,22 +189,27 @@ export function renderStatistics(state) {
       <div class="ranked-row">
         <span class="ranked-row__icon ranked-row__icon--emerald">${icon('tasbih', { size: 16 })}</span>
         <span class="ranked-row__label">${t('nav.tasbih', lang)}</span>
-        <span class="ranked-row__value">${count}</span>
+        <span class="ranked-row__value">${escapeHTML(String(count))}</span>
       </div>`;
       }
       const cat = findCategoryMeta(state, categoryId);
       return `
     <div class="ranked-row">
       <span class="ranked-row__icon ranked-row__icon--${escapeHTML(cat?.color || 'slate')}">${icon(cat?.icon || 'book', { size: 16 })}</span>
-      <span class="ranked-row__label">${escapeHTML(cat ? pickLocale(cat.name, lang) : categoryId)}</span>
-      <span class="ranked-row__value">${count}</span>
+      <span class="ranked-row__label">${escapeHTML(cat ? categoryDisplayName(cat, lang) : categoryId)}</span>
+      <span class="ranked-row__value">${escapeHTML(String(count))}</span>
     </div>`;
     })
     .join('');
 
   return `
   <section class="view view--statistics">
-    <h1 class="view__title">${t('nav.statistics', lang)}</h1>
+    <div class="view-header view-header--row">
+      <h1 class="view__title">${t('nav.statistics', lang)}</h1>
+      ${viewMenuButton('statistics', lang, { labelKey: 'viewMenu.statistics' })}
+    </div>
+
+    ${reviewPanelHTML(state)}
 
     ${
       hasAnyData
@@ -140,6 +241,12 @@ export function renderStatistics(state) {
       </div>
     </div>
 
+    <a class="stat-garden-link" href="${buildHash(VIEWS.GARDEN)}" data-action="navigate" data-view="${VIEWS.GARDEN}">
+      ${icon('sprout', { size: 18 })}
+      <span>${t('garden.invite', lang)}</span>
+      ${icon('chevronRight', { size: 16 })}
+    </a>
+
     <section class="panel">
       <div class="panel__header">
         <h2>${t('stats.week', lang)}</h2>
@@ -158,8 +265,19 @@ export function renderStatistics(state) {
         </span>
       </div>
       <div class="heatmap">
-        ${['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => `<span class="heatmap__dow">${d}</span>`).join('')}
-        ${heatCells}
+        <div class="heatmap__dow" aria-hidden="true">${(lang === 'ar'
+          ? ['أحد', 'إثن', 'ثلا', 'أرب', 'خمي', 'جمع', 'سبت']
+          : ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+        )
+          .map((d) => `<span>${d}</span>`)
+          .join('')}</div>
+        <div
+          class="heatmap__grid"
+          role="img"
+          aria-label="${escapeHTML(monthLabel)} — ${t('stats.monthTotalLabel', lang)}: ${focusTotal}"
+        >
+          ${heatCells}
+        </div>
       </div>
       ${focusTotal ? `<p class="panel__subtext" dir="ltr">${escapeHTML(monthLabel)} — ${t('stats.monthTotalLabel', lang)}: ${focusTotal}</p>` : ''}
     </section>
@@ -174,11 +292,7 @@ export function renderStatistics(state) {
         : ''
     }
     `
-        : `
-    <div class="empty-state">
-      ${icon('stats', { size: 40 })}
-      <p>${t('stats.noData', lang)}</p>
-    </div>`
+        : emptyStateHTML({ iconName: 'stats', title: t('stats.noData', lang) })
     }
   </section>`;
 }

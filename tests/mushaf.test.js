@@ -11,7 +11,7 @@ import {
   resolvePage,
   surahStartPage,
   juzStartPage,
-} from '../js/mushaf.js';
+} from '../js/services/mushaf.js';
 
 describe('clampPage', () => {
   test('clamps into the valid 1..604 range', () => {

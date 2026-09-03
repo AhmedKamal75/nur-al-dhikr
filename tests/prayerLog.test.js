@@ -12,7 +12,7 @@ import {
   prayerStreak,
   prayerWeek,
   prayerMonthCount,
-} from '../js/prayerLog.js';
+} from '../js/domain/prayerLog.js';
 
 const iso = (y, m, d) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 const at = (y, m, d) => new Date(y, m - 1, d, 12, 0, 0);

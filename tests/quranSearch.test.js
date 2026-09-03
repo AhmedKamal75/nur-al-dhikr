@@ -12,8 +12,8 @@ import {
   quranIndexSize,
   isQuranSearchReady,
   setQuranIndexReady,
-} from '../js/quranSearch.js';
-import { stripQuranAnnotations, normalizeArabic } from '../js/utils.js';
+} from '../js/domain/quranSearch.js';
+import { stripQuranAnnotations, normalizeArabic } from '../js/core/utils.js';
 
 const SURAH_1 = {
   ayahs: [
@@ -196,7 +196,7 @@ test('ready flag round-trips', () => {
 /* Bulk reducer case -------------------------------------------------- */
 // state.js exposes a singleton store (not the class); drive the real one
 // and restore its prior quran slice afterwards so suites stay independent.
-import { store, actions } from '../js/state.js';
+import { store, actions } from '../js/core/state.js';
 
 test('QURAN_SURAHS_BULK_LOADED merges docs in one dispatch and ignores junk', () => {
   const before = store.getState().quran;

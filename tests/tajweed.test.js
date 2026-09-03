@@ -9,8 +9,9 @@ import {
   classifyWordTajweed,
   classifyAyahTajweed,
   TAJWEED_RULES,
+  TAJWEED_FAMILIES,
   tajweedRule,
-} from '../js/tajweed.js';
+} from '../js/domain/tajweed.js';
 
 function rulesOf(word, opts) {
   return classifyWordTajweed(word, opts).map((s) => s.rule);
@@ -27,7 +28,12 @@ test('Al-Fatiha 1:1 matches the well-known reference reading', () => {
     '\u0628ِ\u0633\u0652\u0645ِ \u0671\u0644\u0644\u0651\u064e\u0647ِ \u0671\u0644\u0631\u0651\u064e\u062D\u0652\u0645\u064e\u0670\u0646ِ \u0671\u0644\u0631\u0651\u064e\u062D\u0650\u064a\u0645ِ'
   );
   assert.deepEqual(result[0].spans, []); // بِسْمِ — nothing to mark
-  assert.deepEqual(ruleTextPairs(result[1].word), [{ rule: 'hamzat_wasl', text: '\u0671' }]); // ٱللَّهِ — divine name, lam left uncolored
+  // (v4.5.2) the divine name's second lam is now Tafkhim (blue, per the
+  // standard chart) instead of deliberately uncolored.
+  assert.deepEqual(ruleTextPairs(result[1].word), [
+    { rule: 'hamzat_wasl', text: '\u0671' },
+    { rule: 'tafkhim', text: '\u0644\u0651\u064e' },
+  ]); // ٱللَّهِ — divine name: wasla gray + the heavy lam blue (lam+shadda+fatha)
   const rahman = ruleTextPairs(result[2].word);
   assert.ok(rahman.some((r) => r.rule === 'hamzat_wasl'));
   assert.ok(rahman.some((r) => r.rule === 'lam_shamsiyyah'));
@@ -177,5 +183,81 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
   for (const r of TAJWEED_RULES) {
     assert.ok(r.name.en && r.name.ar, `${r.id} missing a name`);
     assert.ok(r.desc.en && r.desc.ar, `${r.id} missing a description`);
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* v4.5.2 — the standard-palette additions: Tafkhim + Madd 'Iwad      */
+/* ------------------------------------------------------------------ */
+
+test('tafkhim: the heavy lam of the divine name, with or without a prefix', () => {
+  // ٱللَّهِ — bare divine name
+  assert.ok(rulesOf('\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
+  // وَٱللَّهِ — oath form (waw prefix)
+  assert.ok(rulesOf('\u0648\u064e\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
+  // بِٱللَّهِ — with ba' prefix
+  assert.ok(rulesOf('\u0628\u0650\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
+  // لِلَّهِ — with bare lam prefix
+  assert.ok(rulesOf('\u0644\u0650\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
+  // ٱللَّهُمَّ — Allahumma: the lam-ha ending is NOT there (ends لهم), no tafkhim lam
+  assert.ok(
+    !rulesOf('\u0671\u0644\u0644\u0651\u064e\u0647\u064f\u0645\u0651\u064e').includes('tafkhim')
+  );
+});
+
+test('tafkhim: ra\u2019 mufakhkhamah (fatha/damma) fires; kasra and sukun do not', () => {
+  assert.ok(rulesOf('\u0631\u064e\u0628\u0651').includes('tafkhim')); // رَبّ — fatha
+  assert.ok(rulesOf('\u0631\u064f\u0632\u0650\u0642').includes('tafkhim')); // رُزِق — damma
+  assert.ok(!rulesOf('\u0631\u0650\u062C\u064e\u0644').includes('tafkhim')); // رِجَل — kasra = tarqiq
+  assert.ok(!rulesOf('\u0627\u0644\u0652\u0642\u064e\u0645\u064e\u0631').includes('tafkhim')); // القَمَر final sukun ra — context rule, left uncolored
+});
+
+test("madd 'iwad: ayah-final fathah tanween is pink; mid-ayah tanween is not", () => {
+  // عَلِيمًا as the LAST word of an ayah → 'iwad
+  assert.ok(
+    rulesOf('\u0639\u064e\u0644\u0650\u064A\u0645\u064b\u0627', {
+      isLastWordOfAyah: true,
+    }).includes('madd_iwad')
+  );
+  // the same word mid-ayah → no 'iwad (the noon family owns tanween there)
+  assert.ok(
+    !rulesOf('\u0639\u064e\u0644\u0650\u064A\u0645\u064b\u0627', {
+      isLastWordOfAyah: false,
+    }).includes('madd_iwad')
+  );
+});
+
+test('the standard chart palette: families match the reference chart colors', () => {
+  const colorOf = (id) => TAJWEED_RULES.find((r) => r.id === id)?.color;
+  // silent gray
+  assert.equal(colorOf('hamzat_wasl'), '#9E9E9E');
+  assert.equal(colorOf('lam_shamsiyyah'), '#9E9E9E');
+  // nasal green family — one color for the whole noon/meem sakinah family
+  for (const id of [
+    'ghunnah',
+    'ikhfa',
+    'iqlab',
+    'idgham_ghunnah',
+    'idgham_shafawi',
+    'ikhfa_shafawi',
+  ])
+    assert.equal(colorOf(id), '#4CAF50', `${id} should be standard green`);
+  // qalqalah cyan, tafkhim blue
+  assert.equal(colorOf('qalqalah'), '#00BCD4');
+  assert.equal(colorOf('tafkhim'), '#2196F3');
+  // madd ladder: pink 2-count, orange separated, deep pink connected, red necessary
+  assert.equal(colorOf('madd_2'), '#F48FB1');
+  assert.equal(colorOf('madd_iwad'), '#F48FB1');
+  assert.equal(colorOf('madd_munfasil'), '#FF9800');
+  assert.equal(colorOf('madd_muttasil'), '#F06292');
+  assert.equal(colorOf('madd_6'), '#F44336');
+  // the two rules the standard convention leaves uncolored
+  assert.equal(colorOf('idgham_no_ghunnah'), null);
+  assert.equal(colorOf('izhar_shafawi'), null);
+  // every rule carries a family, and every family id exists in TAJWEED_FAMILIES
+  const familyIds = new Set(TAJWEED_FAMILIES.map((f) => f.id));
+  for (const r of TAJWEED_RULES) {
+    assert.ok(r.family, `${r.id} missing family`);
+    if (r.family !== 'plain') assert.ok(familyIds.has(r.family), `${r.id} unknown family`);
   }
 });

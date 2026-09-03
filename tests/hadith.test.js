@@ -12,7 +12,7 @@ import {
   pageForNumber,
   daySeed,
   pickDailyHadith,
-} from '../js/hadith.js';
+} from '../js/services/hadith.js';
 
 const ROOT = join(import.meta.dirname, '..');
 

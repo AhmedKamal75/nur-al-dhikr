@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Offline — Nūr al-Dhikr</title>
+    <!-- (v4.3) bilingual title + direction-aware markup: this fallback is
+         served to Arabic-UI users too, and the English-only title was the
+         last monolingual surface in the app. -->
+    <title>Offline · دون اتصال — Nūr al-Dhikr</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -32,12 +35,16 @@
   </head>
   <body>
     <div class="box">
-      <h1>You're offline</h1>
+      <h1>You're offline · أنت دون اتصال</h1>
       <p>
         This page hasn't been saved for offline use yet. Once you've opened the app while online,
         everything works without a connection.
       </p>
-      <p><a href="./index.html">Try again</a></p>
+      <p dir="rtl" lang="ar">
+        لم تُحفظ هذه الصفحة للاستخدام دون اتصال بعد. بعد فتح التطبيق مرة واحدة أثناء الاتصال
+        بالإنترنت، سيعمل كل شيء دون اتصال.
+      </p>
+      <p><a href="./index.html">Try again · حاول مجددًا</a></p>
     </div>
   </body>
 </html>
