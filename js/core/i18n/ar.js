@@ -1389,6 +1389,11 @@ export const ar = {
   'prayer.sheet.calc': 'إعدادات الحساب',
   'prayer.sheet.calcHint': 'الطريقة واتفاقية العصر',
   'prayer.sheet.exportIcs': 'تصدير مواقيت اليوم (.ics)',
+  'prayer.sheet.monthTimetable': 'جدول المواقيت الشهري',
+  'prayer.sheet.exportIcsMonth': 'تنزيل الشهر (.ics)',
+  'prayer.prevMonth': 'الشهر السابق',
+  'prayer.nextMonth': 'الشهر التالي',
+  'common.print': 'طباعة',
   'prayer.sheet.ambient': 'شاشة المنضدة الليلية',
   'title.ambient': 'المنضدة',
   'ambient.exit': 'خروج من شاشة المنضدة',
@@ -1488,6 +1493,9 @@ export const ar = {
   'hadith.noteDeleted': 'حُذفت الملاحظة',
   'hadith.memorize': 'حفظ هذا الحديث',
   'hadith.memorizeClose': 'الخروج من وضع الحفظ',
+  'byheart.mode': 'عن ظهر قلب',
+  'byheart.hint':
+    'العربية مخفية خلف نقرة — استحضر كل ذكر من معناه ثم قيّم نفسك. المراجعات تعود وفق جدول الحفظ.',
   'grammar.title': 'بطاقات النحو',
   'grammar.hint':
     'عشر كلمات قرآنية عشوائية في كل جولة — خمّن نوع الكلمة، اكشفها، قيّم نفسك. الكلمات من بيانات النحو دون اتصال.',

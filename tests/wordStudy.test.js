@@ -181,3 +181,19 @@ describe('splitEditions / findEdition', () => {
     assert.equal(findEdition(catalog, 'nope'), null);
   });
 });
+
+test('ayahTranslit joins per-word romanization, null when absent', async () => {
+  const { ayahTranslit } = await import('../js/domain/wordStudy.js');
+  assert.equal(
+    ayahTranslit([
+      { text: 'a', translit: 'alif' },
+      { text: 'b', translit: '  baa  ' },
+      { text: 'c' },
+    ]),
+    'alif baa'
+  );
+  assert.equal(ayahTranslit(null), null);
+  assert.equal(ayahTranslit([]), null);
+  assert.equal(ayahTranslit([{ text: 'x' }]), null);
+  assert.equal(ayahTranslit('junk'), null);
+});

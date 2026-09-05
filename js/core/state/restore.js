@@ -251,6 +251,8 @@ export function sanitizeRestoredPayload(payload) {
     hadithNotes: cleanHadithNotes(p.hadithNotes),
     // Hadith memorization SRS records (same ladder math as hifz).
     hadithMemRecords: sanitizeMemRecords(p.hadithMemRecords, 'hadith'),
+    // By-heart dhikr SRS records over library item ids.
+    byHeartRecords: sanitizeMemRecords(p.byHeartRecords, 'item'),
     // Recitation queues: capped counts, safe ids, clamped range ints.
     playlists: cleanPlaylists(p.playlists),
     // (v4.2) surah/ayah/page are typed now: they render into data-*

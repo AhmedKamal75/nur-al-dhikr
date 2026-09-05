@@ -36,6 +36,11 @@ export function initialState() {
     // Hadith memorization records: { "<bookId>:<n>": SRS record } reusing
     // the hifz interval ladder (domain/hifz.js key-agnostic twins).
     hadithMemRecords: {},
+    // By-heart dhikr records: { "<itemId>": SRS record }, same ladder.
+    byHeartRecords: {},
+    // By-heart mode session (ephemeral): which category hides its Arabic
+    // behind reveal taps + which items are currently revealed.
+    byHeart: null,
     // Grammar-flashcard drill session (ephemeral): shuffled word cards from
     // the bundled morphology, self-graded Right/Wrong. Null when idle.
     grammarDrill: null,
@@ -322,6 +327,7 @@ export const PERSISTED_KEYS = [
   'hadithBookmarks',
   'hadithNotes',
   'hadithMemRecords',
+  'byHeartRecords',
   'playlists',
   'collections',
   'counters',

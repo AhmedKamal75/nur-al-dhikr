@@ -238,8 +238,13 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
 - [ ] Uthmani vs IndoPak script toggle; multiple qira'at text (data project).
 - [x] Hadith bookmarks + personal notes (`hadithNotes`, per-card note button + note
       display + modal editor, persisted + restore-sanitized, capped).
-- [x] Hadith memorization — done (see above). Still open: adhkar-by-heart mode
-      (same ladder over dhikr item ids).
+- [x] Hadith memorization — done (see above).
+- [x] Adhkar-by-heart mode: category-level hide-and-recall with per-card Reveal +
+      Recalled/Struggled on the shared ladder (`byHeartRecords`, ephemeral session).
+- [x] Verse transliteration line in the classic reader (joined from the bundled
+      per-word romanization behind the existing toggle; Mushaf paper untouched).
+- [x] Monthly prayer timetable: modal table with month nav, month .ics download,
+      print-only-timetable stylesheet.
 - [ ] Jumu'ah (Surah Al-Kahf) + daily-verse OS notification presets on the
       existing reminder scheduler (`services/notifications.js` `makeReminder` supports
       deep-link `targetView`).

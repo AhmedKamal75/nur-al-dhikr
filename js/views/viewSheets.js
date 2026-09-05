@@ -389,6 +389,7 @@ export function buildPrayerSheet(state) {
           sheetRow('prayer-open-location', 'prayer.sheet.location', 'location', lang),
           sheetRow('prayer-request-location', 'prayer.enableLocation', 'location', lang),
           sheetRow('prayer-export-ics', 'prayer.sheet.exportIcs', 'download', lang),
+          sheetRow('prayer-month-open', 'prayer.sheet.monthTimetable', 'calendar', lang),
         ],
       },
     ],

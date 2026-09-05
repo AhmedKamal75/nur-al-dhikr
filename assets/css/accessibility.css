@@ -69,6 +69,31 @@
   .ayah-card__arabic {
     color: #000000 !important;
   }
+  /* Monthly timetable: print ONLY the open modal's table (the handler
+     sets body.print-timetable around window.print()). */
+  body.print-timetable #main {
+    display: none !important;
+  }
+  body.print-timetable #modal-root {
+    display: block !important;
+    position: static !important;
+  }
+  body.print-timetable .prayer-month .editor-form__actions {
+    display: none !important;
+  }
+  body.print-timetable .table-scroll {
+    overflow: visible !important;
+  }
+  body.print-timetable .prayer-month__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  body.print-timetable .prayer-month__table th,
+  body.print-timetable .prayer-month__table td {
+    border: 1px solid #999999 !important;
+    padding: 4px 6px;
+    color: #000000 !important;
+  }
 
   /* v4.1 — information-bearing FILLS. Browsers strip backgrounds by
      default when printing, which turned white-text-on-fill elements into

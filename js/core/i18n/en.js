@@ -1420,6 +1420,11 @@ export const en = {
   'prayer.sheet.calc': 'Calculation settings',
   'prayer.sheet.calcHint': 'Method and Asr convention',
   'prayer.sheet.exportIcs': "Export today's times (.ics)",
+  'prayer.sheet.monthTimetable': 'Monthly timetable',
+  'prayer.sheet.exportIcsMonth': 'Download month (.ics)',
+  'prayer.prevMonth': 'Previous month',
+  'prayer.nextMonth': 'Next month',
+  'common.print': 'Print',
   'prayer.sheet.ambient': 'Nightstand display',
   'title.ambient': 'Nightstand',
   'ambient.exit': 'Exit nightstand display',
@@ -1520,6 +1525,9 @@ export const en = {
   'hadith.noteDeleted': 'Note deleted',
   'hadith.memorize': 'Memorize this hadith',
   'hadith.memorizeClose': 'Exit memorize mode',
+  'byheart.mode': 'By heart',
+  'byheart.hint':
+    'Arabic hides behind a tap — recall each dhikr from its meaning, then grade yourself. Reviews resurface on the memorization schedule.',
   'grammar.title': 'Grammar flashcards',
   'grammar.hint':
     'Ten random Qur’anic words per round — guess the part of speech, reveal, grade yourself. Words load from the offline grammar data.',

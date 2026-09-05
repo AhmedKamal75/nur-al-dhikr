@@ -15,10 +15,26 @@ import {
   PRAYER_EXPORT_ORDER,
   buildPrayerICS,
   prayerICSFilename,
+  buildMonthTimetable,
+  buildMonthICS,
+  prayerMonthICSFilename,
 } from '../../domain/prayerExport.js';
 import { openModal, closeModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import { dateKey } from '../../core/utils.js';
+
+/** Download a text blob (calendar exports). Same pattern as the daily .ics. */
+function downloadTextFile(text, filename, mime) {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
 import {
   buildLibrarySheet,
   buildCategorySheet,
@@ -44,6 +60,7 @@ import {
   adhanPanelHTML,
   calcPanelHTML,
   profilesPanelHTML,
+  buildMonthModal,
 } from '../../views/prayer.js';
 
 const SHEET_BUILDERS = {
@@ -152,6 +169,63 @@ export const clickHandlers = {
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
     showToast(t('prayer.exportedIcs', lang));
+  },
+
+  // Monthly timetable: modal table for the whole month (prev/next inside
+  // the modal), with month .ics download + print.
+  'prayer-month-open': () => {
+    const now = new Date();
+    openModal(buildMonthModal(store.getState(), now.getFullYear(), now.getMonth() + 1), {
+      labelledBy: 'modal-title-prayer-month',
+    });
+  },
+
+  'prayer-month-nav': (ds) => {
+    const y = parseInt(ds.y, 10);
+    const m = parseInt(ds.m, 10);
+    if (!Number.isFinite(y) || !Number.isFinite(m) || m < 1 || m > 12) return;
+    openModal(buildMonthModal(store.getState(), y, m), { labelledBy: 'modal-title-prayer-month' });
+  },
+
+  'prayer-month-ics': (ds) => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const p = state.settings.prayer;
+    const y = parseInt(ds.y, 10);
+    const m = parseInt(ds.m, 10);
+    if (!Number.isFinite(y) || !Number.isFinite(m) || m < 1 || m > 12) return;
+    if (p.latitude == null || p.longitude == null) {
+      showToast(t('prayer.locationNeeded', lang));
+      return;
+    }
+    const table = buildMonthTimetable({
+      year: y,
+      month: m,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      timezoneOffsetHours: -new Date(y, m - 1, 1).getTimezoneOffset() / 60,
+      method: p.method,
+      asr: p.asr,
+    });
+    const names = {};
+    for (const n of PRAYER_EXPORT_ORDER) names[n] = t(`prayer.${n}`, lang);
+    const ics = buildMonthICS(table, { place: p.locationName || '', names });
+    downloadTextFile(ics, prayerMonthICSFilename(y, m), 'text/calendar;charset=utf-8');
+    showToast(t('prayer.exportedIcs', lang));
+  },
+
+  'prayer-month-print': () => {
+    // Print ONLY the timetable: a body flag flips the print stylesheet to
+    // show the open modal instead of the page (removed right after).
+    try {
+      document.body.classList.add('print-timetable');
+      const done = () => document.body.classList.remove('print-timetable');
+      window.addEventListener('afterprint', done, { once: true });
+      setTimeout(done, 5000);
+      window.print();
+    } catch {
+      document.body.classList.remove('print-timetable');
+    }
   },
 
   'view-toggle-traveler': () => {

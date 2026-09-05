@@ -11,6 +11,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { escapeHTML } from '../core/utils.js';
 import { VIEWS, TRANSLATION_EDITIONS } from '../core/config.js';
+import { ayahTranslit } from '../domain/wordStudy.js';
 import { ayahAudioUrl } from '../services/mushaf.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
 import { reciterShortLabel } from './playerBar.js';
@@ -134,6 +135,20 @@ function recitationToolbarHTML(state, number, lang) {
             : ''
         }
       </div>`;
+}
+
+/**
+ * Ayah transliteration line under the Arabic (classic reader only — the
+ * Mushaf page stays pure Arabic). Joined from the bundled per-word
+ * romanization; shown only when the global transliteration toggle is on
+ * AND this surah's word data has loaded, otherwise omitted silently.
+ */
+function joinTranslitLine(state, surah, ayah) {
+  if (state.settings.showTransliteration !== true) return '';
+  const words = state.quranWords?.[String(surah)]?.[String(ayah)];
+  const line = ayahTranslit(words);
+  if (!line) return '';
+  return `<p class="ayah-card__translit" dir="ltr">${escapeHTML(line)}</p>`;
 }
 
 /**
@@ -378,6 +393,7 @@ function surahReaderHTML(state, number) {
               </div>
             </div>
             <p class="ayah-card__arabic" dir="rtl">${arabicHTML}</p>
+            ${joinTranslitLine(state, number, a.number)}
             ${showTranslation ? `<p class="ayah-card__translation" dir="auto">${escapeHTML(a.translation)}</p>` : ''}
             ${
               showTranslation && typeof bText === 'string' && bText

@@ -106,6 +106,12 @@ export const actions = {
   // Hadith memorization (SRS records over "<bookId>:<n>" keys).
   markHadithMemorized: (key) => ({ type: 'HADITH_MEM_MARK', key }),
   reviewHadithMem: (key, grade) => ({ type: 'HADITH_MEM_REVIEW', key, grade }),
+  // By-heart dhikr mode (SRS records over library item ids).
+  startByHeart: (categoryId) => ({ type: 'BYHEART_START', categoryId }),
+  exitByHeart: () => ({ type: 'BYHEART_EXIT' }),
+  revealByHeart: (itemId) => ({ type: 'BYHEART_REVEAL', itemId }),
+  markByHeart: (key) => ({ type: 'BYHEART_MARK', key }),
+  reviewByHeart: (key, grade) => ({ type: 'BYHEART_REVIEW', key, grade }),
   // Grammar-flashcard drill (ephemeral session over prebuilt decks).
   startGrammarDrill: (cards) => ({ type: 'GRAMMAR_DRILL_START', cards }),
   revealGrammarCard: () => ({ type: 'GRAMMAR_DRILL_REVEAL' }),

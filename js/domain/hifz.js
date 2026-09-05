@@ -120,6 +120,8 @@ export function logReview(records, surah, grade, today = dateKey()) {
  */
 const MEM_KEY_RES = {
   hadith: /^[A-Za-z0-9_-]{1,40}:\d{1,6}$/,
+  // Dhikr library item ids (bundled `adh-mor-001` style + user-added slugs).
+  item: /^[A-Za-z0-9_-]{1,64}$/,
 };
 
 function memRecordShape(r) {
@@ -142,6 +144,7 @@ export function sanitizeMemRecords(raw, kind = 'hadith') {
   const out = {};
   if (!re || !raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
   for (const [k, v] of Object.entries(raw)) {
+    if (Object.keys(out).length >= 2000) break;
     if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue;
     if (!re.test(k) || !isSafeKey(String(k).split(':')[0])) continue;
     const r = v && typeof v === 'object' && !Array.isArray(v) ? v : null;

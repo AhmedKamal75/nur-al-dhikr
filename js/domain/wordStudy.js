@@ -116,3 +116,19 @@ export function splitEditions(editions) {
 export function findEdition(editions, id) {
   return (editions?.editions || []).find((e) => e.id === id) || null;
 }
+
+/**
+ * Ayah-level transliteration from the bundled per-word romanization
+ * (`data/quran-words/`). Joins each word's `translit` in order — the
+ * dataset's own transcription, never invented. Returns null when the word
+ * data isn't loaded (the caller omits the line) or carries no romanization.
+ */
+export function ayahTranslit(words) {
+  if (!Array.isArray(words) || !words.length) return null;
+  const parts = [];
+  for (const w of words) {
+    if (!w || typeof w !== 'object') continue;
+    if (typeof w.translit === 'string' && w.translit.trim()) parts.push(w.translit.trim());
+  }
+  return parts.length ? parts.join(' ') : null;
+}

@@ -37,6 +37,7 @@ export function cardHTML(item, category, opts = {}) {
     showTranslation = true,
     compact = false,
     fields = null,
+    byHeart = null,
   } = opts;
 
   // (v5.0.0) Effective field visibility: banner-level toggles win, then
@@ -107,7 +108,13 @@ export function cardHTML(item, category, opts = {}) {
 
     ${title ? `<h3 class="card__title">${escapeHTML(title)}</h3>` : ''}
 
-    ${item.arabic ? `<p class="card__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>` : ''}
+    ${
+      byHeart && !byHeart.revealed && item.arabic
+        ? `<button type="button" class="hadith-card__cloze" data-action="byheart-reveal" data-item-id="${escapeHTML(item.id)}" aria-label="${t('hifz.reveal', lang)}">${t('hifz.reveal', lang)}</button>`
+        : item.arabic
+          ? `<p class="card__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
+          : ''
+    }
     ${show.transliteration && item.transliteration ? `<p class="card__translit">${escapeHTML(item.transliteration)}</p>` : ''}
     ${show.translation && translation ? `<p class="card__translation">${escapeHTML(translation)}</p>` : ''}
 
@@ -115,6 +122,21 @@ export function cardHTML(item, category, opts = {}) {
     ${show.reference && refParts ? `<p class="card__reference">${icon('book', { size: 14 })} ${escapeHTML(refParts)}</p>` : ''}
     ${show.reference && item.reference?.notes ? `<p class="card__reference-note">${escapeHTML(item.reference.notes)}</p>` : ''}
     ${show.notes && item.notes ? `<p class="card__attribution">${icon('info', { size: 12 })} ${escapeHTML(item.notes)}</p>` : ''}
+
+    ${
+      byHeart
+        ? `
+    <div class="hadith-card__mem">
+      ${byHeart.due ? `<span class="hifz-due" dir="auto">${t('hifz.memorizedBadge', lang, { date: byHeart.due })}</span>` : ''}
+      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="easy">
+        ${icon('check', { size: 13 })} ${t('hifz.recalled', lang)}
+      </button>
+      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="again">
+        ${icon('repeat', { size: 13 })} ${t('hifz.struggled', lang)}
+      </button>
+    </div>`
+        : ''
+    }
 
     <footer class="card__footer">
       <!-- (v4.5, APP-FLOW I6) the CARD BODY is the count target (see the

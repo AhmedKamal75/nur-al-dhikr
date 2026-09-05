@@ -247,6 +247,39 @@ export const clickHandlers = {
     showToast(t(was ? 'hadith.unbookmarked' : 'hadith.bookmarkedToast', st.settings.language));
   },
 
+  // By-heart dhikr mode: hide Arabic per category, grade per card on the
+  // shared SRS ladder. Opening grades nothing; each review marks-then-logs
+  // so the first recall starts the ladder.
+  'byheart-start': (ds) => {
+    if (!ds.categoryId) return;
+    store.dispatch(actions.startByHeart(ds.categoryId));
+  },
+
+  'byheart-exit': () => {
+    store.dispatch(actions.exitByHeart());
+  },
+
+  'byheart-reveal': (ds) => {
+    if (!ds.itemId) return;
+    store.dispatch(actions.revealByHeart(ds.itemId));
+  },
+
+  'byheart-review': (ds) => {
+    if (!ds.itemId) return;
+    const grade = ds.grade === 'again' ? 'again' : ds.grade === 'easy' ? 'easy' : null;
+    if (!grade) return;
+    const st = store.getState();
+    store.batch(() => {
+      if (!st.byHeartRecords?.[ds.itemId]) store.dispatch(actions.markByHeart(ds.itemId));
+      store.dispatch(actions.reviewByHeart(ds.itemId, grade));
+    });
+    const rec = store.getState().byHeartRecords?.[ds.itemId];
+    showToast(
+      t(grade === 'easy' ? 'hifz.recalled' : 'hifz.struggled', st.settings.language) +
+        (rec?.due ? ` · ${rec.due}` : '')
+    );
+  },
+
   // Personal hadith notes: a small modal with the existing note (if any).
   // Saving an empty note deletes it (same contract as ayah bookmark notes).
   'hadith-note-open': (ds) => {

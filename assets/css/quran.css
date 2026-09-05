@@ -232,6 +232,14 @@
   color: var(--color-text);
   line-height: var(--lh-normal);
 }
+/* Word-by-word romanization under the Arabic (classic reader only),
+   from the bundled morphology — secondary, italic, Latin only. */
+.ayah-card__translit {
+  font-size: var(--fs-sm);
+  font-style: italic;
+  color: var(--color-text-secondary);
+  line-height: var(--lh-normal);
+}
 /* (v5.2.0) Translation-compare second line: visually secondary, with an
    edition tag so two translations never blur together. */
 .ayah-card__translation--compare {

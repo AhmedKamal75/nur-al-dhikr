@@ -17,6 +17,7 @@ import { wasCelebrated } from '../domain/celebrate.js';
 import { calculateTimes, formatClock, nextPrayer, METHODS, ASR_FACTORS } from '../domain/prayer.js';
 import { buildTimeline } from '../domain/prayerTimeline.js';
 import { SOUND_IDS, ADHAN_MODES, customAdhanFlags } from '../services/prayerSound.js';
+import { buildMonthTimetable, timetableCell, PRAYER_EXPORT_ORDER } from '../domain/prayerExport.js';
 import { selectors } from '../core/state.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 import {
@@ -456,6 +457,67 @@ function volumeScheduleHTML(state, lang) {
           : ''
       }
     </div>`;
+}
+
+/**
+ * Monthly timetable modal: every day of the month with its six times,
+ * month prev/next, .ics download, and a print button (print CSS keeps
+ * only the table — see layout.css).
+ */
+export function buildMonthModal(state, year, month) {
+  const lang = state.settings.language;
+  const p = state.settings.prayer;
+  const table = buildMonthTimetable({
+    year,
+    month,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    timezoneOffsetHours: -new Date(year, month - 1, 1).getTimezoneOffset() / 60,
+    method: p.method,
+    asr: p.asr,
+  });
+  if (!table) return '';
+  const monthName = new Date(year, month - 1, 1).toLocaleDateString(
+    lang === 'ar' ? 'ar' : 'en-US',
+    {
+      month: 'long',
+      year: 'numeric',
+    }
+  );
+  const prev = month === 1 ? { y: year - 1, m: 12 } : { y: year, m: month - 1 };
+  const next = month === 12 ? { y: year + 1, m: 1 } : { y: year, m: month + 1 };
+  const headCells = PRAYER_EXPORT_ORDER.map(
+    (n) => `<th scope="col">${t(`prayer.${n}`, lang)}</th>`
+  ).join('');
+  const rows = table.rows.length
+    ? table.rows
+        .map(
+          (r) => `
+      <tr>
+        <th scope="row" dir="ltr">${r.day}</th>
+        ${PRAYER_EXPORT_ORDER.map((n) => `<td dir="ltr">${timetableCell(r.times, n)}</td>`).join('')}
+      </tr>`
+        )
+        .join('')
+    : `<tr><td colspan="7">${t('prayer.locationNeeded', lang)}</td></tr>`;
+  return `
+  <div class="prayer-month">
+    <h2 id="modal-title-prayer-month">${escapeHTML(monthName)}</h2>
+    <div class="editor-form__actions">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${prev.y}" data-m="${prev.m}">${icon('chevronRight', { size: 14 })} ${t('prayer.prevMonth', lang)}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${next.y}" data-m="${next.m}">${t('prayer.nextMonth', lang)} ${icon('chevronLeft', { size: 14 })}</button>
+    </div>
+    <div class="table-scroll">
+      <table class="prayer-month__table">
+        <thead><tr><th scope="col">#</th>${headCells}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div class="editor-form__actions">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-ics" data-y="${year}" data-m="${month}">${icon('download', { size: 14 })} ${t('prayer.sheet.exportIcsMonth', lang)}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-print">${icon('printer', { size: 14 })} ${t('common.print', lang)}</button>
+    </div>
+  </div>`;
 }
 
 export function calcPanelHTML(state) {

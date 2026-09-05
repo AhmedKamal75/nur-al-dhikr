@@ -1693,6 +1693,35 @@ body.modal-open {
   gap: var(--space-4);
 }
 
+/* Monthly prayer timetable modal: scrollable table, full grid. */
+.prayer-month {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.table-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.prayer-month__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
+.prayer-month__table th,
+.prayer-month__table td {
+  border: 1px solid var(--color-border);
+  padding: var(--space-1_5) var(--space-2);
+  text-align: center;
+  white-space: nowrap;
+}
+.prayer-month__table thead th {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  position: sticky;
+  top: 0;
+}
+
 /* Grammar flashcards (Roots view): big Arabic prompt, graded answers. */
 .panel--grammar {
   gap: var(--space-2);

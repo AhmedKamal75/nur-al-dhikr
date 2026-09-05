@@ -178,6 +178,44 @@ export function reduceLibrary(state, action) {
       };
     }
 
+    // By-heart dhikr mode: category-scoped hide-and-recall over the same
+    // SRS ladder (item-id keys). Grades validated; unknown = no-op.
+    case 'BYHEART_START': {
+      const id =
+        typeof action.categoryId === 'string' && action.categoryId ? action.categoryId : null;
+      if (!id) return state;
+      return { ...state, byHeart: { categoryId: id, revealed: {} } };
+    }
+    case 'BYHEART_EXIT':
+      if (!state.byHeart) return state;
+      return { ...state, byHeart: null };
+    case 'BYHEART_REVEAL': {
+      const b = state.byHeart;
+      if (!b || typeof action.itemId !== 'string' || b.revealed[action.itemId]) return state;
+      return { ...state, byHeart: { ...b, revealed: { ...b.revealed, [action.itemId]: true } } };
+    }
+    case 'BYHEART_MARK': {
+      if ((state.byHeartRecords || {})[action.key]) return state;
+      if (Object.keys(state.byHeartRecords || {}).length >= 2000) return state;
+      return {
+        ...state,
+        byHeartRecords: markMemorizedKey(
+          state.byHeartRecords,
+          action.key,
+          'item',
+          dateKey(new Date())
+        ),
+      };
+    }
+    case 'BYHEART_REVIEW': {
+      const grade = action.grade === 'again' ? 'again' : action.grade === 'easy' ? 'easy' : null;
+      if (!grade) return state;
+      return {
+        ...state,
+        byHeartRecords: logReviewKey(state.byHeartRecords, action.key, grade, dateKey(new Date())),
+      };
+    }
+
     case 'COLLECTION_CREATE': {
       const col = { id: action.id, name: action.name, items: [], createdAt: Date.now() };
       return { ...state, collections: [...state.collections, col] };

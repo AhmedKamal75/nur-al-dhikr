@@ -111,6 +111,13 @@ export function renderCategory(state) {
         ${icon('star', { size: 16 })} ${t('quiz.start', lang)}
       </button>`
       : '';
+  // By-heart mode: hide every Arabic in this section behind reveal taps +
+  // per-card Recalled/Struggled SRS grading (same ladder as hifz).
+  const byHeartOn = state.byHeart?.categoryId === cat.id;
+  const byHeartButton = `
+      <button type="button" class="btn ${byHeartOn ? 'btn--primary' : 'btn--secondary'} btn--sm" data-action="${byHeartOn ? 'byheart-exit' : 'byheart-start'}" data-category-id="${escapeHTML(cat.id)}" aria-pressed="${byHeartOn}">
+        ${icon('target', { size: 16 })} ${t('byheart.mode', lang)}
+      </button>`;
 
   // (v5.1.0) Declutter: the manage bar exists ONLY while manage mode is ON
   // (entered through the header's "⋯" menu → Manage). Reading mode shows
@@ -170,6 +177,8 @@ export function renderCategory(state) {
       ${cat.description?.[lang] ? `<p class="view__subtitle">${escapeHTML(pickLocale(cat.description, lang))}</p>` : ''}
       <p class="view__meta">${t('collections.itemCount', lang, { n: visibleItems.length })} \u2022 ${escapeHTML(pickLocale(doc.metadata.name, lang))}</p>
       ${quizButton}
+      ${byHeartButton}
+      ${byHeartOn ? `<p class="panel__subtext">${t('byheart.hint', lang)}</p>` : ''}
     </header>
 
     ${manageBar}
@@ -189,6 +198,12 @@ export function renderCategory(state) {
             showTransliteration: state.settings.showTransliteration,
             showTranslation: state.settings.showTranslation,
             fields: fieldTogglesFor(state, doc.metadata.id),
+            byHeart: byHeartOn
+              ? {
+                  revealed: state.byHeart?.revealed?.[item.id] === true,
+                  due: state.byHeartRecords?.[item.id]?.due || '',
+                }
+              : null,
           });
           // In manage mode each card is FOLLOWED by its manage row (a
           // sibling, not a child — the card body stays the count target,
