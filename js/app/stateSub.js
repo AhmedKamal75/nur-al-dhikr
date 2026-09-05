@@ -134,6 +134,8 @@ export function onStateChange(stateArg, action) {
     rt.lastSeenTranslationEdition = state.settings.quranTranslation;
     applyTheme(state.settings);
     if (state.activeView === VIEWS.QURAN) ensureQuranData(state);
+    // Kids tiles need the surah names — same lazy tier as the reader.
+    if (state.activeView === VIEWS.KIDS) ensureQuranData(state);
     if (state.activeView === VIEWS.ROOTS) {
       ensureQuranRoots(state); // small precached index -> instant render
       ensureQuranRootsFull(state); // uncapped browser index -> upgrade

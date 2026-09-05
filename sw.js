@@ -199,6 +199,7 @@ const APP_SHELL = [
   'js/views/hadith.js',
   'js/views/home.js',
   'js/views/journal.js',
+  'js/views/kids.js',
   'js/views/library.js',
   'js/views/mood.js',
   'js/views/mushafReader.js',

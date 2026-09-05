@@ -216,6 +216,21 @@ export function reduceLibrary(state, action) {
       };
     }
 
+    // Kids-mode stars: one per naturally finished recitation. Date math
+    // via dateKey (local day) like every other daily counter here.
+    case 'KIDS_AWARD_STAR': {
+      const key = dateKey(new Date());
+      const cur = state.kidsStars && typeof state.kidsStars === 'object' ? state.kidsStars : {};
+      const days = cur.days && typeof cur.days === 'object' ? cur.days : {};
+      return {
+        ...state,
+        kidsStars: {
+          total: (Number(cur.total) || 0) + 1,
+          days: { ...days, [key]: (Number(days[key]) || 0) + 1 },
+        },
+      };
+    }
+
     case 'COLLECTION_CREATE': {
       const col = { id: action.id, name: action.name, items: [], createdAt: Date.now() };
       return { ...state, collections: [...state.collections, col] };

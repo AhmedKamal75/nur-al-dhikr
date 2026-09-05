@@ -185,6 +185,7 @@ export function sanitizeSettings(raw) {
     reduceMotion: asBool(s.reduceMotion, d.reduceMotion),
     highContrast: asBool(s.highContrast, d.highContrast),
     elderMode: asBool(s.elderMode, d.elderMode),
+    kidsMode: asBool(s.kidsMode, d.kidsMode),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
     hapticsEnabled: asBool(s.hapticsEnabled, d.hapticsEnabled),
     pageTurnSound: asBool(s.pageTurnSound, d.pageTurnSound),

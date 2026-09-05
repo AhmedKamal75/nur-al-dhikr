@@ -51,6 +51,14 @@ export const clickHandlers = {
     }
   },
 
+  // Kids mode exit (fired by the 2s hold timer in events.js, never by tap):
+  // switching the mode off returns home with the full app restored.
+  'kids-exit': () => {
+    store.dispatch(actions.updateSettings({ kidsMode: false }));
+    showToast(t('kids.exitDone', store.getState().settings.language));
+    go(VIEWS.HOME);
+  },
+
   // (U14) Settings table-of-contents jump: scrolls to the panel without
   // touching the hash router (a plain #anchor would be parsed as a route).
   // The button keeps focus, so nothing is lost for keyboard users.

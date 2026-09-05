@@ -160,6 +160,17 @@ export function nextSpeed(v) {
 /* ------------------------------------------------------------------ */
 
 let session = null; // { surah, ayah, from, total, end, reciterId, reciterIdB, compare, comparePass, ranged, stopAt, surahsMeta, active, repeat, repeatsLeft, loop, loopsLeft, speed, continuous }
+// Last surah that played to its natural end (bounds/roll/queue spent) —
+// read once via consumeLastFinish() (kids-mode stars). Manual stops never
+// set it; start() clears it.
+let lastFinishSurah = null;
+
+/** Take the pending natural-finish surah (or null) — single-read. */
+export function consumeLastFinish() {
+  const s = lastFinishSurah;
+  lastFinishSurah = null;
+  return s;
+}
 let ayahChangeCb = null; // (surah, ayah|null) — null = session over
 let errorCb = null; // (surah, ayah) — verse audio failed
 
@@ -419,6 +430,7 @@ export function start({
       else if (ss > s) stopPoint = { surah: ss, ayah: sa };
     }
   }
+  lastFinishSurah = null;
   // Same-surah stopAt folds into the end bound (never before `from`).
   const finalEnd =
     stopPoint && stopPoint.surah === s ? Math.max(startAyah, Math.min(end, stopPoint.ayah)) : end;
@@ -563,6 +575,7 @@ function advanceAyah() {
     }
     // A queued range list rolls into its next resolvable item.
     if (advanceQueue()) return;
+    lastFinishSurah = session.surah;
     stop(); // surah-scoped: last ayah ends the session (notifies null)
     return;
   }
@@ -577,18 +590,21 @@ function advanceAyah() {
 function advanceSurah() {
   if (!session || !session.active) return false;
   if (session.surah >= 114) {
+    lastFinishSurah = session.surah;
     stop();
     return false;
   }
   const nextS = session.surah + 1;
   // A cross-surah stopAt blocks rolling past its surah.
   if (session.stopAt && nextS > session.stopAt.surah) {
+    lastFinishSurah = session.surah;
     stop();
     return false;
   }
   const meta = session.surahsMeta?.find((m) => Number(m.number) === nextS);
   const nextTotal = Math.floor(Number(meta?.ayahCount));
   if (!Number.isFinite(nextTotal) || nextTotal < 1) {
+    lastFinishSurah = session.surah;
     stop();
     return false;
   }

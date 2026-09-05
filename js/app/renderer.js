@@ -91,6 +91,7 @@ import { renderEditor } from '../views/editor.js';
 import { renderGarden } from '../views/garden.js';
 import { renderMutashabihat } from '../views/mutashabihat.js';
 import { renderJournal } from '../views/journal.js';
+import { renderKids } from '../views/kids.js';
 import { renderCertificate } from '../views/certificate.js';
 import { renderPlayerBar } from '../views/playerBar.js';
 
@@ -123,6 +124,7 @@ const VIEW_TABLE = {
   [VIEWS.EDITOR]: renderEditor,
   [VIEWS.MUTASHABIHAT]: renderMutashabihat,
   [VIEWS.JOURNAL]: renderJournal,
+  [VIEWS.KIDS]: renderKids,
   [VIEWS.CERTIFICATE]: renderCertificate,
   [VIEWS.GARDEN]: renderGarden,
   [VIEWS.AMBIENT]: renderAmbient,
@@ -479,6 +481,8 @@ export function render(state) {
   // Elderly mode: one body class scales type + targets app-wide (pure CSS
   // in accessibility.css); the renderer owns it like every body class.
   document.body.classList.toggle('is-elder', state.settings.elderMode === true);
+  // Kids mode hides the bottom nav (the Kids home is the whole world).
+  document.body.classList.toggle('is-kids', state.settings.kidsMode === true);
   // (v5.2.0) Ambient nightstand display: same chrome-hiding contract as
   // mushaf fullscreen, keyed off the route (leaving the route restores
   // chrome — no stuck state possible).

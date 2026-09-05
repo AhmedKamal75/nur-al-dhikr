@@ -256,7 +256,10 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       deep-link `targetView`).
 - [ ] Shake-to-count (needs DeviceMotion permission UX + flakiness handling).
 - [ ] Contextual home-panel reorder; time-of-day reading insight from local stats.
-- [ ] App-wide second profile (hifz-only multi-profile exists); kids' mode.
+- [x] Kids' mode: Kids home route (Al-Fatiha + surahs 93–114 tiles, tasbih door,
+      star per naturally finished listen, hold-2s-to-exit back home with mode off,
+      bottom nav hidden, spec row in APP-FLOW.md).
+- [ ] App-wide second profile (hifz-only multi-profile exists).
 - [ ] Auto-silence/DND during prayer: NOT feasible on the web (no browser DND API) —
       document as native-wrapper-only.
 - [ ] Cross-device sync: needs a transport; explicitly out of scope for zero-server.

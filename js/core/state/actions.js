@@ -101,6 +101,8 @@ export const actions = {
     type: 'HADITH_BOOKMARK_TOGGLE',
     key: `${String(bookId)}:${String(n)}`,
   }),
+  // Kids-mode star for a naturally finished recitation.
+  awardKidsStar: () => ({ type: 'KIDS_AWARD_STAR' }),
   // Personal hadith notes — empty/blank text deletes the note.
   setHadithNote: (key, text) => ({ type: 'HADITH_NOTE_SET', key, text }),
   // Hadith memorization (SRS records over "<bookId>:<n>" keys).

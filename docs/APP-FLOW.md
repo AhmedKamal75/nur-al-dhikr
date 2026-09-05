@@ -120,6 +120,7 @@ tables below need to be precise we write them as `(mushaf, ∅, fullscreen)`.
 | Tools   | `certificate`      | —              | statistics, journal streak                  | back-link + nav                      |
 | Tools   | `audio`            | —              | reader links, mushaf sheet                  | back-link + nav                      |
 | Mine    | `settings`         | —              | topbar, nav, onboarding                     | topbar is fixed                      |
+| Kids    | `kids`             | —              | settings toggle (kids mode)                 | **hold-exit (2s) → home, mode off**  |
 | Mine    | `about`            | —              | settings, nav                               | back-link + nav                      |
 | Mine    | `editor`           | —              | topbar, library manage                      | back-link + nav                      |
 

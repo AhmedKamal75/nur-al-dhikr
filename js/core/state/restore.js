@@ -253,6 +253,21 @@ export function sanitizeRestoredPayload(payload) {
     hadithMemRecords: sanitizeMemRecords(p.hadithMemRecords, 'hadith'),
     // By-heart dhikr SRS records over library item ids.
     byHeartRecords: sanitizeMemRecords(p.byHeartRecords, 'item'),
+    // Kids stars: non-negative total + real calendar-day counts only.
+    kidsStars: (() => {
+      const k = p.kidsStars && typeof p.kidsStars === 'object' ? p.kidsStars : {};
+      const days = {};
+      const src = k.days && typeof k.days === 'object' ? k.days : {};
+      for (const [d, n] of Object.entries(src).slice(0, 3700)) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+        if (!m || Number(m[2]) < 1 || Number(m[2]) > 12 || Number(m[3]) < 1 || Number(m[3]) > 31)
+          continue;
+        const c = Math.floor(Number(n));
+        if (Number.isFinite(c) && c > 0) days[d] = Math.min(c, 10000);
+      }
+      const total = Math.floor(Number(k.total));
+      return { total: Number.isFinite(total) && total > 0 ? Math.min(total, 1000000) : 0, days };
+    })(),
     // Recitation queues: capped counts, safe ids, clamped range ints.
     playlists: cleanPlaylists(p.playlists),
     // (v4.2) surah/ayah/page are typed now: they render into data-*

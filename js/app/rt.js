@@ -78,4 +78,6 @@ export const rt = {
   longPressTimer: null,
   longPressAnchor: null,
   suppressClickUntil: 0,
+  // Kids-mode hold-to-exit pending timer (2s press, cancelled on release).
+  kidsExitTimer: null,
 };

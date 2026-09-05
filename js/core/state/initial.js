@@ -38,6 +38,9 @@ export function initialState() {
     hadithMemRecords: {},
     // By-heart dhikr records: { "<itemId>": SRS record }, same ladder.
     byHeartRecords: {},
+    // Kids-mode stars: { total, days: { 'YYYY-MM-DD': n } }. Awarded for
+    // finishing a recitation naturally while kids mode is on.
+    kidsStars: { total: 0, days: {} },
     // By-heart mode session (ephemeral): which category hides its Arabic
     // behind reveal taps + which items are currently revealed.
     byHeart: null,
@@ -330,6 +333,7 @@ export const PERSISTED_KEYS = [
   'hadithNotes',
   'hadithMemRecords',
   'byHeartRecords',
+  'kidsStars',
   'playlists',
   'collections',
   'counters',

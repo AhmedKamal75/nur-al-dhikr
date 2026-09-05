@@ -157,6 +157,37 @@ function cancelAyahLongPress() {
   rt.longPressAnchor = null;
 }
 
+const KIDS_EXIT_HOLD_MS = 2000;
+
+function cancelKidsExitHold() {
+  if (rt.kidsExitTimer) {
+    clearTimeout(rt.kidsExitTimer);
+    rt.kidsExitTimer = null;
+  }
+}
+
+/** Hold-to-exit for Kids mode: a full 2s press fires 'kids-exit' (a plain
+ *  tap never does — the click table has no entry that exits on tap). */
+function armKidsExitHold() {
+  document.addEventListener(
+    'pointerdown',
+    (e) => {
+      cancelKidsExitHold();
+      if (e.button != null && e.button !== 0) return;
+      if (!e.target?.closest?.('[data-action="kids-exit-hold"]')) return;
+      rt.kidsExitTimer = setTimeout(() => {
+        rt.kidsExitTimer = null;
+        if (store.getState().settings.hapticsEnabled) vibrate(20);
+        const handler = clickHandlers['kids-exit'];
+        if (handler) dispatchHandler('kids-exit', {}, e, e.target);
+      }, KIDS_EXIT_HOLD_MS);
+    },
+    { passive: true }
+  );
+  document.addEventListener('pointerup', cancelKidsExitHold, { passive: true });
+  document.addEventListener('pointercancel', cancelKidsExitHold, { passive: true });
+}
+
 /** Arm the press-and-hold detector for classic-reader ayah text. */
 function armAyahLongPress() {
   document.addEventListener(
@@ -259,6 +290,8 @@ export function bindGlobalEvents() {
   // (buttons/links/inputs) are excluded — their own tap still wins.
   // Movement beyond 12px cancels (scrolls stay scrolls).
   armAyahLongPress();
+  // Kids-mode hold-to-exit (2s press on the exit button; taps never exit).
+  armKidsExitHold();
   document.addEventListener('click', (e) => {
     if (Date.now() < rt.suppressClickUntil) {
       e.preventDefault();
@@ -331,6 +364,14 @@ export function bindGlobalEvents() {
       if (target.dataset.key === 'reciterCompare' && surahPlayback.isActive()) {
         store.dispatch(actions.setSurahPlayback(surahPlayback.setCompare(target.checked)));
       }
+      return;
+    }
+    // Kids mode: entering navigates straight into the Kids home (the
+    // parent hands the device over); leaving returns home.
+    if (target.matches('[data-action="toggle-kids-mode"]')) {
+      const on = target.checked;
+      store.dispatch(actions.updateSettings({ kidsMode: on }));
+      go(on ? VIEWS.KIDS : VIEWS.HOME);
       return;
     }
     // Elderly one-tap mode: the class does the styling; enabling ALSO bumps

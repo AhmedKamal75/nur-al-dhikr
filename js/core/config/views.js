@@ -40,6 +40,8 @@ export const VIEWS = Object.freeze({
   GARDEN: 'garden',
   // (v5.2.0) Ambient nightstand display (big next-prayer countdown).
   AMBIENT: 'ambient',
+  // Kids mode home: big tiles, short surahs, stars (see views/kids.js).
+  KIDS: 'kids',
 });
 
 export const DEFAULT_VIEW = VIEWS.HOME;
@@ -209,6 +211,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // Enabling also bumps the two font scales once (kept afterwards — the
   // sliders stay the source of truth, the toggle only styles + presets).
   elderMode: false,
+  // Kids mode: the app skins down to the Kids home (big tiles, short
+  // surahs, stars). Parents toggle it in Settings; kids leave via the
+  // hold-to-exit button (2s press).
+  kidsMode: false,
   soundEnabled: true,
   hapticsEnabled: true,
   // v3.14 Phase C: optional soft sounds — off by default (the owner-facing

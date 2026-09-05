@@ -137,6 +137,12 @@ describe('contract: every emitted data-action resolves to a handler', () => {
     // Elderly-mode switch in Settings → Accessibility (toggle-elder-mode
     // branch in the same change listener).
     'toggle-elder-mode',
+    // Kids-mode switch in Settings → Accessibility (toggle-kids-mode branch
+    // in the same change listener).
+    'toggle-kids-mode',
+    // Kids hold-to-exit: fired by the 2s press timer in events.js, never by
+    // tap — intentionally absent from the click table.
+    'kids-exit-hold',
     // (v4.5.2) manage-mode target stepper: a number <input>, so it lives in
     // the CHANGE pipeline (the content-set-target branch in events.js).
     'content-set-target',

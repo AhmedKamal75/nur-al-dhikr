@@ -285,6 +285,13 @@ export function renderSettings(state) {
           <span class="switch__track"></span>
         </span>
       </label>
+      <label class="toggle-row">
+        <span class="toggle-row__label">${escapeHTML(t('settings.kidsMode', lang))}<br /><span class="panel__subtext">${escapeHTML(t('settings.kidsHint', lang))}</span></span>
+        <span class="switch">
+          <input type="checkbox" data-action="toggle-kids-mode" ${s.kidsMode ? 'checked' : ''} />
+          <span class="switch__track"></span>
+        </span>
+      </label>
     </section>
 
     <section class="panel" id="settings-sec-data">
