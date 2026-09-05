@@ -5,7 +5,7 @@
  */
 
 import { rt } from './rt.js';
-import { wirePlayer } from './audioEngine.js';
+import { wirePlayer, startAudioPlay as wireAudioStart } from './audioEngine.js';
 import { renderErrorScreen } from './drawer.js';
 import { bindGlobalEvents } from './events.js';
 import { warmHadithDaily } from './hadithData.js';
@@ -21,7 +21,9 @@ import { applyTheme, watchSystemTheme } from '../core/theme.js';
 import { applyTajweedColors } from './handlers/quran.js';
 import { loadLibraries, refreshLibraryIndex } from './net.js';
 import { showToast } from '../ui/toast.js';
+import { flushReading } from './readingTimer.js';
 import * as notifications from '../services/notifications.js';
+import * as mediaSession from '../services/mediaSession.js';
 import * as recitation from '../services/recitation.js';
 import * as speech from '../services/speech.js';
 import * as surahPlayback from '../services/surahPlayback.js';
@@ -73,8 +75,16 @@ export async function boot() {
     };
     window.addEventListener('pagehide', flushPendingPersist);
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') flushPendingPersist();
+      if (document.visibilityState === 'hidden') {
+        // Bank the open reading stretch before the tab freezes — timers
+        // don't run backgrounded, so unflushed time would vanish.
+        flushReading();
+        flushPendingPersist();
+      }
     });
+    // Same banking when the page itself goes away (persist flushes after,
+    // so the seconds are included in what lands on disk).
+    window.addEventListener('pagehide', () => flushReading());
     window.addEventListener('pagehide', () => {
       if (rt.triggerArmTimer) {
         clearTimeout(rt.triggerArmTimer);
@@ -101,14 +111,68 @@ export async function boot() {
     surahPlayback.onAyahChange((surah, ayah) => {
       // carry the live repeat budget too, so the recitation console's chip
       // renders from state rather than going stale between ayah changes
+      const snap = surahPlayback.snapshot();
       store.dispatch(
         actions.setSurahPlayback({
           active: ayah != null,
           surah,
           ayah,
-          repeat: surahPlayback.snapshot().repeat,
+          repeat: snap.repeat,
+          // (v5.2.0) echo mode + "your turn" pause ride the same mirror.
+          listenRepeat: snap.listenRepeat === true,
+          waiting: snap.waiting === true,
+          // FIX (v5.2.1): the mirror used to drop total/end, so every
+          // counter in the app ("1 / 0" in the player bar AND the
+          // fullscreen glass bar) read zero. The engine owns them.
+          total: snap.total,
+          end: snap.end,
+          // FIX: the mirror also dropped listen mode + voices, so enabling
+          // continuous/compare then advancing one ayah silently lost them
+          // (continuous "didn't work"; a reciter change never stuck).
+          continuous: snap.continuous === true,
+          reciterId: snap.reciterId,
+          reciterIdB: snap.reciterIdB,
+          compare: snap.compare === true,
+          loop: snap.loop,
+          speed: snap.speed,
+          queue: snap.queue,
+          qIndex: snap.qIndex,
         })
       );
+      // Lock-screen / headset metadata follows the reciting ayah (cleared
+      // when the session closes) — best-effort, silent where unsupported.
+      if (ayah != null) {
+        mediaSession.syncMetadata(
+          mediaSession.verseMetadata({
+            surah,
+            ayah,
+            total: snap.total,
+            reciter: snap.reciterId,
+          })
+        );
+      } else {
+        mediaSession.clearMetadata();
+      }
+    });
+    // Lock-screen prev/next: verse session wins when active, otherwise the
+    // full-surah player steps tracks. Installed once; all decisions read
+    // live state inside the callbacks.
+    mediaSession.installMediaHandlers({
+      onPrev: () => {
+        if (surahPlayback.isActive()) surahPlayback.skip(-1);
+        else {
+          const p = store.getState().player;
+          if (p?.moshafId && p.surah > 1) wireAudioStart(p.moshafId, p.surah - 1);
+        }
+      },
+      onNext: () => {
+        if (surahPlayback.isActive()) surahPlayback.skip(1);
+        else {
+          const p = store.getState().player;
+          if (p?.moshafId && p.surah != null && p.surah < 114)
+            wireAudioStart(p.moshafId, p.surah + 1);
+        }
+      },
     });
     surahPlayback.onError((surah, ayah) => {
       console.error('[surah-playback] verse failed', surah, ayah);

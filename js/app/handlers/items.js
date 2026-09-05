@@ -11,7 +11,7 @@ import { asTranslationEdition, TRANSLATION_EDITIONS, VIEWS } from '../../core/co
 import { t } from '../../core/i18n.js';
 import { go } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
-import { pickLocale, uid } from '../../core/utils.js';
+import { escapeHTML, pickLocale, uid } from '../../core/utils.js';
 // (v4.3) shareCard.js (553 lines of canvas rendering) is imported lazily:
 // it is only ever needed on an explicit share/download tap, so every boot
 // used to pay for code nobody opened. Both callers are async handlers, so
@@ -231,6 +231,55 @@ export const clickHandlers = {
 
   'hadith-section': (ds) => {
     store.dispatch(actions.setHadithView({ section: String(ds.id || 'all'), page: 1 }));
+  },
+
+  // (v5.2.0) Hadith bookmarks — the ayah-bookmark equivalent for hadith.
+  // The book id rides on the button (cards in the daily widget render
+  // outside the book route, where activeParams.id is empty).
+  'hadith-bookmark': (ds) => {
+    const st = store.getState();
+    const bookId = String(ds.bookId || st.activeParams?.id || '');
+    const n = String(ds.n || '');
+    if (!bookId || !n) return;
+    const key = `${bookId}:${n}`;
+    const was = (st.hadithBookmarks || []).includes(key);
+    store.dispatch(actions.toggleHadithBookmark(bookId, n));
+    showToast(t(was ? 'hadith.unbookmarked' : 'hadith.bookmarkedToast', st.settings.language));
+  },
+
+  // Personal hadith notes: a small modal with the existing note (if any).
+  // Saving an empty note deletes it (same contract as ayah bookmark notes).
+  'hadith-note-open': (ds) => {
+    const st = store.getState();
+    const lang = st.settings.language;
+    const bookId = String(ds.bookId || st.activeParams?.id || '');
+    const n = String(ds.n || '');
+    if (!bookId || !n) return;
+    const key = `${bookId}:${n}`;
+    const cur = (st.hadithNotes || {})[key] || '';
+    openModal(
+      `
+      <form class="editor-form" data-form="hadith-note" data-key="${escapeHTML(key)}">
+        <h2 id="modal-title-hadith-note">${t('hadith.noteTitle', lang)}</h2>
+        <p class="editor-form__note" dir="ltr">${escapeHTML(key)}</p>
+        <label class="field">${t('hadith.note', lang)}
+          <textarea class="input" name="note" dir="auto" rows="4" maxlength="2000" placeholder="${t('hadith.notePh', lang)}">${escapeHTML(cur)}</textarea>
+        </label>
+        <div class="editor-form__actions">
+          ${cur ? `<button type="button" class="btn btn--danger btn--sm" data-action="hadith-note-delete" data-key="${escapeHTML(key)}">${t('common.delete', lang)}</button>` : ''}
+          <button type="button" class="btn btn--ghost" data-action="modal-close">${t('editor.cancel', lang)}</button>
+          <button type="submit" class="btn btn--primary">${t('common.save', lang)}</button>
+        </div>
+      </form>`,
+      { labelledBy: 'modal-title-hadith-note' }
+    );
+  },
+
+  'hadith-note-delete': (ds) => {
+    if (!ds.key) return;
+    closeModal();
+    store.dispatch(actions.setHadithNote(ds.key, ''));
+    showToast(t('hadith.noteDeleted', store.getState().settings.language));
   },
 
   // (v4.6.0) Hadith cards get the same treatment as azkar cards: share

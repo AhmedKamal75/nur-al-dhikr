@@ -13,6 +13,7 @@ import { findMoshaf, loadCatalog, searchReciters, surahUrl } from '../services/a
 import { showToast } from '../ui/toast.js';
 import * as compass from '../domain/compass.js';
 import * as audioStore from '../services/audioStore.js';
+import * as mediaSession from '../services/mediaSession.js';
 import * as player from '../services/player.js';
 import * as recitation from '../services/recitation.js';
 import * as surahPlayback from '../services/surahPlayback.js';
@@ -59,6 +60,19 @@ export async function startAudioPlay(moshafId, surah) {
   });
   try {
     const { offline, error } = await player.play(moshafId, surah, surahUrl(moshaf.server, surah));
+    // Lock-screen metadata for the full-surah track (cleared on stop/close
+    // by the recite-stop / player-close handlers via clearMetadata).
+    if (!error) {
+      const name = moshaf.nameEn || moshaf.nameAr || '';
+      mediaSession.syncMetadata(mediaSession.fullSurahMetadata({ surah, reciter: name }));
+    }
+    // The stored speed survives track changes: a fresh <audio> element (or
+    // a prior 1x default) would otherwise reset to 1x while the chip still
+    // claims 1.5x. Re-assert the preference on every track start.
+    if (!error) {
+      const rate = Number(state.settings.audio?.rate);
+      if (Number.isFinite(rate) && rate !== 1) player.setRate(rate);
+    }
     // (v4.2) dispatch only on an actual change — the common case (online
     // → online) was a third full re-render for nothing.
     if (offline !== store.getState().player.offline)

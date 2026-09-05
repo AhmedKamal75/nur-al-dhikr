@@ -510,7 +510,14 @@ body.is-mushaf-fullscreen #bottomnav,
 body.is-mushaf-fullscreen .nav-mobile-bar,
 body.is-mushaf-fullscreen .nav-drawer,
 body.is-mushaf-fullscreen .nav-drawer-overlay,
-body.is-mushaf-fullscreen #playerbar {
+body.is-mushaf-fullscreen #playerbar,
+/* (v5.2.0) Ambient nightstand display: same chrome-hiding contract. */
+body.is-ambient #topbar,
+body.is-ambient #bottomnav,
+body.is-ambient .nav-mobile-bar,
+body.is-ambient .nav-drawer,
+body.is-ambient .nav-drawer-overlay,
+body.is-ambient #playerbar {
   display: none !important;
 }
 body.is-mushaf-fullscreen #main {

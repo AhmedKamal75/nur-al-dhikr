@@ -284,7 +284,7 @@ export const formHandlers = {
 
   'quran-range': (form) => {
     // (v5.0.0) The ayah-range playback submit: re-dispatch into the
-    // existing surah-play handler with from/to bounds.
+    // existing surah-play handler with from/to bounds (+ loop passes).
     const fd = new FormData(form);
     const from = Math.max(1, parseInt(fd.get('from'), 10) || 1);
     let to = Math.max(1, parseInt(fd.get('to'), 10) || 1);
@@ -294,6 +294,7 @@ export const formHandlers = {
       surah: form.dataset.surah,
       from: String(from),
       to: String(to),
+      loop: String(parseInt(fd.get('loop'), 10) || 1),
     });
   },
 
@@ -400,6 +401,17 @@ export const formHandlers = {
     closeModal();
     showToast(t('common.done', lang));
   },
+
+  'hadith-note': (form) => {
+    // Personal hadith note save: blank text deletes (reducer contract).
+    const key = String(form.dataset.key || '');
+    const fd = new FormData(form);
+    const text = String(fd.get('note') ?? '');
+    closeModal();
+    store.dispatch(actions.setHadithNote(key, text));
+    const lang = store.getState().settings.language;
+    showToast(t(text.trim() ? 'hadith.noteSaved' : 'hadith.noteDeleted', lang));
+  },
 };
 
 export function handlePromptForm(form) {
@@ -419,6 +431,11 @@ export function handlePromptForm(form) {
     store.dispatch(actions.addToCollection(id, form.dataset.itemId));
     closeModal();
     showToast(t('common.done', store.getState().settings.language));
+  } else if (action === 'submit-new-playlist') {
+    const id = uid('plq');
+    store.dispatch(actions.createPlaylist(id, value));
+    closeModal();
+    showToast(t('playlist.created', store.getState().settings.language));
   } else if (action === 'submit-new-bookmark-folder') {
     const id = uid('bmf');
     store.dispatch(actions.createBookmarkFolder(id, value));

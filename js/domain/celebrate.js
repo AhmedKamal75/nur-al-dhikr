@@ -30,6 +30,20 @@ const MAX_ENTRIES = 64;
 
 const stampedAt = new Map();
 
+/**
+ * (v5.2.0) Tasbih milestone pings ("buzz every Nth count"). Pure: true
+ * exactly when `count` is a positive multiple of `every`. `every <= 0`
+ * (the "off" setting) never fires; garbage inputs never fire.
+ */
+export function milestoneHit(count, every) {
+  const c = Number(count);
+  const e = Number(every);
+  if (!Number.isFinite(c) || !Number.isFinite(e)) return false;
+  if (!Number.isInteger(c) || !Number.isInteger(e)) return false;
+  if (c <= 0 || e <= 0) return false;
+  return c % e === 0;
+}
+
 /** Stamp `key` as celebrated right now. */
 export function markCelebration(key) {
   const now = Date.now();

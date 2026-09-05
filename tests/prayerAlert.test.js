@@ -115,3 +115,50 @@ test('sanitizeSettings keeps adhanMode inside the legal set', () => {
   const s2 = sanitizeSettings({ prayer: { adhanMode: '"><img src=x>' } });
   assert.equal(s2.prayer.adhanMode, 'adhan');
 });
+
+test('effectiveAdhanVolume: day default, quiet window, midnight wrap', async () => {
+  const { effectiveAdhanVolume } = await import('../js/services/prayerSound.js');
+  const at = (h, m = 0) => new Date(2026, 0, 1, h, m);
+  assert.equal(effectiveAdhanVolume({ adhanVolume: 80 }, at(12)), 0.8);
+  assert.equal(effectiveAdhanVolume({}, at(12)), 0.8, 'garbage → default, never surprise-silence');
+  const night = {
+    adhanVolume: 80,
+    quietEnabled: true,
+    quietStart: '22:00',
+    quietEnd: '06:00',
+    quietVolume: 30,
+  };
+  assert.equal(effectiveAdhanVolume(night, at(23)), 0.3, 'inside overnight window');
+  assert.equal(effectiveAdhanVolume(night, at(3)), 0.3, 'wrap past midnight');
+  assert.equal(effectiveAdhanVolume(night, at(12)), 0.8, 'outside window');
+  assert.equal(effectiveAdhanVolume(night, at(6)), 0.8, 'end is exclusive');
+  const day = { ...night, quietStart: '13:00', quietEnd: '14:00' };
+  assert.equal(effectiveAdhanVolume(day, at(13, 30)), 0.3, 'same-day window');
+  assert.equal(effectiveAdhanVolume(day, at(15)), 0.8);
+  assert.equal(
+    effectiveAdhanVolume({ ...night, quietStart: 'xx' }, at(23)),
+    0.8,
+    'bad clock falls back to day volume'
+  );
+  assert.equal(
+    effectiveAdhanVolume({ ...night, quietVolume: 0 }, at(23)),
+    0,
+    'explicit 0 is honest silence'
+  );
+});
+
+test('sanitizeSettings clamps the loudness schedule', () => {
+  const s = sanitizeSettings({
+    prayer: {
+      adhanVolume: 500,
+      quietEnabled: 'yes',
+      quietStart: '25:00',
+      quietEnd: '06:00',
+      quietVolume: -20,
+    },
+  });
+  assert.equal(s.prayer.adhanVolume, 100);
+  assert.equal(s.prayer.quietEnabled, false, 'non-boolean coerced');
+  assert.equal(s.prayer.quietStart, '22:00', 'bad clock falls back');
+  assert.equal(s.prayer.quietVolume, 0);
+});

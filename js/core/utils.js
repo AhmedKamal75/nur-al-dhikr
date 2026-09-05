@@ -205,13 +205,43 @@ export function escapeHTML(str = '') {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Prototype-pollution guard for restored/imported maps (S3). Any plain
+ * object built with `out[k] = …` from hostile keys is a pollution sink:
+ * `out["__proto__"] = value` mutates Object.prototype instead of storing
+ * a key. Every sanitizer that copies map keys from a backup/import must
+ * route keys through this (regex allowlists like SAFE_ID_RE do NOT stop
+ * `__proto__` — it matches them).
+ */
+export function isSafeKey(k) {
+  return typeof k === 'string' && k !== '__proto__' && k !== 'constructor' && k !== 'prototype';
+}
+
+/**
+ * Shallow defensive copy of a hostile map: own enumerable string keys
+ * minus prototype-pollution keys. For passthrough slices that need no
+ * per-value typing (quranWords, tasbih, ramadanLog, …) — replaces a bare
+ * `asObject()` return so an own `__proto__` data property from
+ * JSON.parse can never ride into live state.
+ */
+export function cleanObject(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const [k, v] of Object.entries(raw)) {
+    if (isSafeKey(k)) out[k] = v;
+  }
+  return out;
+}
+
 /** Create a DOM element with attributes and children in one call. */
 export function h(tag, attrs = {}, children = []) {
   const el = document.createElement(tag);
   for (const [key, value] of Object.entries(attrs || {})) {
     if (value == null || value === false) continue;
     if (key === 'class') el.className = value;
-    else if (key === 'html') el.innerHTML = value;
+    // NOTE (2026-09 audit S1): no `html` branch on purpose. h() never sets
+    // innerHTML, so untrusted strings cannot become markup through this helper.
+    // Do not re-add an html passthrough without a sanitizer + contract test.
     else if (key.startsWith('on') && typeof value === 'function') {
       el.addEventListener(key.slice(2).toLowerCase(), value);
     } else if (key === 'dataset') {

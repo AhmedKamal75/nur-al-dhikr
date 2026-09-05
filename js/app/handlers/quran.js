@@ -37,6 +37,7 @@ import {
   buildKhatmaPlanForm,
   buildMushafBookmarks,
   buildMushafJump,
+  buildMushafPlayPick,
   buildMushafSheet,
   setActiveTafsirTab,
   setFlipDirection,
@@ -258,6 +259,17 @@ export const clickHandlers = {
     await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
   },
 
+  // Tafsir compare: a second source under the active tab. Tapping the
+  // active pick turns compare off. Re-opens the study modal in place so
+  // the new column renders immediately (same pattern as tafsir-tab).
+  'tafsir-compare': async (ds) => {
+    const cur = store.getState().settings.tafsirCompareB || null;
+    const next = ds.edition && ds.edition !== cur ? ds.edition : null;
+    store.dispatch(actions.updateSettings({ tafsirCompareB: next }));
+    if (next) await ensureTafsirText(store.getState(), next, ds.surah);
+    await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
+  },
+
   'tafsir-download': async (ds) => {
     const lang = store.getState().settings.language;
     const ok = await ensureTafsirText(store.getState(), ds.edition, ds.surah, true);
@@ -271,6 +283,13 @@ export const clickHandlers = {
   'mushaf-open-settings': () => {
     openModal(buildMushafSettingsPanel(store.getState()), {
       labelledBy: 'modal-title-mushaf-settings',
+    });
+  },
+
+  // Multi-surah page: pick which surah on these pages to recite.
+  'mushaf-play-pick': () => {
+    openModal(buildMushafPlayPick(store.getState()), {
+      labelledBy: 'modal-title-mushaf-pick',
     });
   },
 

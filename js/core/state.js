@@ -7,7 +7,10 @@
  *
  *   state/initial.js   initialState(), PERSISTED_KEYS, pickPersisted()
  *   state/store.js     Store class (dispatch/batch/subscribe/persist) + the store instance
- *   state/reducer.js   reduce() — the single action switch
+ *   state/reducer.js   reduce() — dispatcher over state/slices/* (shell,
+ *                      library, quran, hadith, worship, audio)
+ *   state/slices/      one pure reduce<Slice>(state, action) per feature
+ *                      area; each returns undefined for foreign actions
  *   state/actions.js   action creators
  *   state/restore.js   sanitizeRestoredPayload(), dryRunRestore(), persistedSnapshot()
  *   state/selectors.js selectors

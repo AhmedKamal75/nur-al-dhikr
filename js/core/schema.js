@@ -5,7 +5,7 @@
  */
 
 import { GRADES, SCHEMA_VERSION } from './config.js';
-import { ok, fail } from './utils.js';
+import { isSafeKey, ok, fail } from './utils.js';
 
 const LOCALE_KEYS = ['en', 'ar'];
 
@@ -206,6 +206,12 @@ export function normalizeCustomContentMap(customContent) {
       const normalized = normalizeDocument(rawDoc);
       // Ensure the map key and the document's own id never disagree.
       normalized.metadata.id = normalized.metadata.id || libraryId;
+      // (S3) the resolved id becomes a map key — drop hostile ids instead
+      // of polluting Object.prototype via `out["__proto__"]`.
+      if (!isSafeKey(normalized.metadata.id)) {
+        console.warn(`[schema] Dropping custom library with unsafe id "${libraryId}"`);
+        continue;
+      }
       out[normalized.metadata.id] = normalized;
     } catch (err) {
       console.warn(`[schema] Dropping unrecoverable custom library "${libraryId}"`, err);

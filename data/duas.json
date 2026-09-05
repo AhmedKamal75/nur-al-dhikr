@@ -50,14 +50,14 @@
             "ar": "اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور"
           },
           "reference": {
-            "collection": "Sunan at-Tirmidhi",
+            "collection": "Sunan Abi Dawud; Jami' at-Tirmidhi",
             "book": "Book of Supplications",
             "chapter": "",
             "hadith": "3391",
-            "narrator": "",
+            "narrator": "Abu Hurayrah",
             "grading": "",
             "url": "",
-            "notes": ""
+            "notes": "Wording per Abu Dawud and Hisn al-Muslim (morning ends with al-nushur); Tirmidhi 3391 has al-masir in the morning and al-nushur in the evening."
           },
           "grade": "Hasan",
           "custom_grade": {
@@ -90,31 +90,31 @@
             "ar": "اللهم أنت ربي لا إله إلا أنت..."
           },
           "reference": {
-            "collection": "Sunan Abi Dawud",
-            "book": "Book of Adab",
+            "collection": "Ibn al-Sunni, 'Amal al-Yawm wal-Laylah",
+            "book": "'Amal al-Yawm wal-Laylah",
             "chapter": "",
-            "hadith": "5050",
-            "narrator": "",
+            "hadith": "57",
+            "narrator": "Abu al-Darda (via Talq ibn Habib)",
             "grading": "",
             "url": "",
-            "notes": ""
+            "notes": "Also in al-Tabarani, al-Du'a (343). Corrected 2026-09: this is not Abu Dawud 5050 (the bed-dusting dua)."
           },
-          "grade": "Hasan",
+          "grade": "Daif",
           "custom_grade": {
-            "en": "Classed Hasan by Al-Albani",
-            "ar": "حسنه الألباني"
+            "en": "Graded very weak by Al-Albani (Silsilat al-Da'ifa 6420)",
+            "ar": "ضعفه الألباني جداً (السلسلة الضعيفة 6420)"
           },
           "repetitions": 1,
           "virtues": {
-            "en": "Allah suffices him against the matters of this world and the Hereafter.",
-            "ar": "من قالها كفاه الله ما أهمه."
+            "en": "As worded in the narration: whoever says these words at the start of the day, no calamity befalls him until evening (weak narration).",
+            "ar": "ورد في الرواية: من قالهن أول نهاره لم تصبه مصيبة حتى يمسي (رواية ضعيفة)."
           },
           "tags": [
             "morning",
             "tawakkul"
           ],
           "related": [],
-          "notes": "Narrated by Abu Malik al-Ash'ari.",
+          "notes": "Narrated from Abu al-Darda via Talq ibn Habib.",
           "order": 2
         },
         {
@@ -172,14 +172,14 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Sunan at-Tirmidhi 3391",
+            "collection": "Sunan Abi Dawud; Jami' at-Tirmidhi 3391",
             "book": "",
             "chapter": "",
             "hadith": "",
             "narrator": "",
             "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Wording per Abu Dawud and Hisn al-Muslim (morning ends with al-nushur); Tirmidhi 3391 has al-masir in the morning."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -188,7 +188,7 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "A comprehensive morning and evening dua acknowledging complete dependence on Allah for every transition of time. (Sunan at-Tirmidhi 3391, graded Sahih).",
+            "en": "A comprehensive morning and evening dua acknowledging complete dependence on Allah for every transition of time. (Sunan Abi Dawud; Jami' at-Tirmidhi 3391, graded Sahih).",
             "ar": ""
           },
           "audio": null,
@@ -217,14 +217,14 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Sunan at-Tirmidhi 3391",
+            "collection": "Sunan Abi Dawud; Jami' at-Tirmidhi 3391",
             "book": "",
             "chapter": "",
             "hadith": "",
             "narrator": "",
             "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Wording per Abu Dawud and Hisn al-Muslim (evening ends with al-masir); Tirmidhi 3391 has al-nushur in the evening."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -7271,14 +7271,14 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Sunan at-Tirmidhi 3391",
+            "collection": "Sunan Abi Dawud; Jami' at-Tirmidhi 3391",
             "book": "",
             "chapter": "",
             "hadith": "",
             "narrator": "",
             "grading": "Hasan",
             "url": "",
-            "notes": ""
+            "notes": "Wording per Abu Dawud and Hisn al-Muslim (morning ends with al-nushur); Tirmidhi 3391 has al-masir in the morning."
           },
           "grade": "Hasan",
           "custom_grade": {
@@ -7287,7 +7287,7 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "A comprehensive morning dua that is especially recommended on Friday, combining gratitude, reliance, and remembrance of the Hereafter. (Sunan at-Tirmidhi 3391, graded Hasan).",
+            "en": "A comprehensive morning dua that is especially recommended on Friday, combining gratitude, reliance, and remembrance of the Hereafter. (Sunan Abi Dawud; Jami' at-Tirmidhi 3391, graded Hasan).",
             "ar": ""
           },
           "audio": null,
@@ -11891,12 +11891,12 @@
             "book": "",
             "chapter": "",
             "hadith": "477",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Sa'id al-Khudri",
+            "grading": "Sahih",
             "url": "",
             "notes": ""
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -11986,12 +11986,12 @@
             "book": "",
             "chapter": "",
             "hadith": "6306",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Shaddad ibn Aws",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Sayyid al-Istighfar (Master of Seeking Forgiveness). Whoever says it by day with certainty and dies before evening, or by night with certainty and dies before dawn, is of the people of Paradise."
+            "notes": "Sayyid al-Istighfar."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12026,12 +12026,12 @@
             "book": "",
             "chapter": "",
             "hadith": "6399",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Musa al-Ash'ari",
+            "grading": "Sahih",
             "url": "",
             "notes": "Also in Muslim 2719"
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12146,12 +12146,12 @@
             "book": "",
             "chapter": "",
             "hadith": "483",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Said in prostration."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12185,13 +12185,13 @@
             "collection": "Sunan Abi Dawud",
             "book": "",
             "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "",
+            "hadith": "985",
+            "narrator": "Mihjan ibn al-Adra'",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Tirmidhi 1494 & 3475"
+            "notes": "Citation added round-2 audit; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12262,16 +12262,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Musnad Ahmad",
+            "collection": "Sunan Abi Dawud",
             "book": "",
             "chapter": "",
-            "hadith": "19138",
-            "narrator": "",
-            "grading": "",
+            "hadith": "850",
+            "narrator": "Ibn Abbas",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Tirmidhi variant uses 'wajburni' instead of 'wa'afini'; Ibn Majah variant uses 'warfa'ni' instead of 'wahdini'"
+            "notes": "Citation corrected round-2 audit (was Musnad Ahmad 19138, unverifiable here); verified on sunnah.com, Hasan per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12346,12 +12346,12 @@
             "book": "",
             "chapter": "",
             "hadith": "771",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Ali ibn Abi Talib",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Closing dua of the night-prayer narration."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12426,12 +12426,12 @@
             "book": "",
             "chapter": "",
             "hadith": "744",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 598"
+            "notes": "Opening supplication (istiftah)."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12505,13 +12505,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "6399",
-            "narrator": "",
-            "grading": "",
+            "hadith": "6398",
+            "narrator": "Abu Musa al-Ash'ari",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 2719"
+            "notes": "Citation corrected round-2 audit (was 6399); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12627,11 +12627,11 @@
             "chapter": "",
             "hadith": "6326",
             "narrator": "Abu Bakr as-Siddiq",
-            "grading": "",
+            "grading": "Sahih",
             "url": "",
             "notes": "Also in Muslim 2705. The Prophet taught this to Abu Bakr when he asked for a dua to recite in his prayer."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12666,12 +12666,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1516",
-            "narrator": "Ibn Umar",
-            "grading": "",
+            "narrator": "Abdullah ibn Umar",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Tirmidhi 3434 & 3814, Ibn Majah 10292, Nasa'i. The Prophet used to say this a hundred times in a single sitting."
+            "notes": "Said 100 times in a gathering. Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -12709,7 +12709,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": ""
+            "notes": "CITATION-DISPUTED round-2 audit: 5054 is the bedtime bismika dua, not this text; true home not yet traced."
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -12906,12 +12906,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1753",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abdullah ibn Amr ibn al-As",
+            "grading": "Hasan",
             "url": "",
-            "notes": ""
+            "notes": "The dua words are Ibn Amr's at iftar inside the hasan narration; Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13003,13 +13003,13 @@
             "collection": "Sunan Ibn Majah",
             "book": "",
             "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "",
+            "hadith": "3846",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Ahmad 3846 [Hadith number removed — out of collection range; see original source.]"
+            "notes": "Citation added round-2 audit (middle portion of the comprehensive dua); Sahih per Darussalam; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13127,12 +13127,12 @@
             "book": "",
             "chapter": "",
             "hadith": "5079",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Muslim ibn al-Harith at-Tamimi",
+            "grading": "Daif",
             "url": "",
-            "notes": ""
+            "notes": "Daif per Albani; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13208,13 +13208,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "589",
-            "narrator": "",
-            "grading": "",
+            "hadith": "6377",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 6377"
+            "notes": "Citation corrected round-2 audit (was 589); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13280,23 +13280,23 @@
             "en": "Supplication 9",
             "ar": "الدعاء 9"
           },
-          "arabic": "رَبِّ أَعُوذُ بِكَ مِنْ حَالِ النَّارِ",
-          "transliteration": "",
+          "arabic": "وَأَعُوذُ بِاللَّهِ مِنْ حَالِ أَهْلِ النَّارِ",
+          "transliteration": "Wa a‘udhu billahi min hali ahlin-nar.",
           "translation": {
-            "en": "",
-            "ar": ""
+            "en": "And I seek refuge with Allah from the state of the people of the Fire (closing phrase of the supplication).",
+            "ar": "الختام من الدعاء: الاستعاذة بالله من حال أهل النار."
           },
           "reference": {
             "collection": "Jami' at-Tirmidhi",
             "book": "",
             "chapter": "",
             "hadith": "3599",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Daif",
             "url": "",
-            "notes": "Also in Ibn Majah 3833"
+            "notes": "ARABIC-FIXED round-2 audit: was a corrupt fragment; closing phrase of Tirmidhi 3599 (also Ibn Majah 3833); Daif per Darussalam, hasan-gharib per Tirmidhi."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13333,11 +13333,11 @@
             "chapter": "",
             "hadith": "2790",
             "narrator": "",
-            "grading": "",
+            "grading": "Sahih",
             "url": "",
-            "notes": "The Prophet said: 'When you ask Allah, ask Him for al-Firdaws, for it is the middle of Paradise, the highest part of Paradise, above which is the Throne of the Most Merciful, and from it flow the rivers of Paradise.'"
+            "notes": "Supplicatory wording derived from the Firdaus hadith; meaning established in Sahih."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13513,12 +13513,12 @@
             "book": "",
             "chapter": "",
             "hadith": "771",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Ali ibn Abi Talib",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "From the night-prayer narration."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13593,12 +13593,12 @@
             "book": "",
             "chapter": "",
             "hadith": "2721",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abdullah ibn Mas'ud",
+            "grading": "Sahih",
             "url": "",
             "notes": ""
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13633,12 +13633,12 @@
             "book": "",
             "chapter": "",
             "hadith": "770",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Opening of the night prayer."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13753,12 +13753,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1425",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Al-Hasan ibn Ali",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Tirmidhi, Nasa'i 464, Ibn Majah 1745. Hasan (al-Albani). This is the Qunut of Witr."
+            "notes": "Witr qunut. Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13793,12 +13793,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1305",
-            "narrator": "Ammar bin Yasir",
-            "grading": "",
+            "narrator": "Ammar ibn Yasir",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Ahmad 18325"
+            "notes": "Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13833,12 +13833,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3407",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Shaddad ibn Aws",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Nasa'i 9849, Ahmad 1304. Hasan bi turuqihi (verifiers of Musnad). The Prophet said: 'When people hoard gold and silver, hoard these words.'"
+            "notes": "Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13913,12 +13913,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1510",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abdullah ibn Abbas",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Tirmidhi, Nasa'i 3551, Ibn Majah 10443, Ahmad 3830 & 1997"
+            "notes": "Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -13993,12 +13993,12 @@
             "book": "",
             "chapter": "",
             "hadith": "969",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abdullah ibn Mas'ud",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Sahih al-Adab al-Mufrad 235 (al-Albani). Abdullah bin Mas'ud used to frequently supplicate with these duas."
+            "notes": "Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14033,12 +14033,12 @@
             "book": "",
             "chapter": "",
             "hadith": "2720",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
             "url": "",
             "notes": ""
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14113,12 +14113,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3483",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Imran ibn Husayn",
+            "grading": "Daif",
             "url": "",
-            "notes": ""
+            "notes": "Daif per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14153,12 +14153,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3516",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Bakr as-Siddiq",
+            "grading": "Daif",
             "url": "",
-            "notes": ""
+            "notes": "Daif per Darussalam (gharib; Zanfal weak)."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14289,13 +14289,13 @@
             "collection": "Sahih Muslim",
             "book": "",
             "chapter": "",
-            "hadith": "2654",
-            "narrator": "",
-            "grading": "",
+            "hadith": "2655",
+            "narrator": "Abdullah ibn Amr ibn al-As",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Citation corrected round-2 audit (was 2654); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14370,12 +14370,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3490",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu ad-Darda'",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Ahmad 3235 & 22162"
+            "notes": "Shorter wording of the same hadith as my-05-005; Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14410,12 +14410,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3490",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu ad-Darda'",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Extended variant of the preceding dua."
+            "notes": "From Dawud's supplication; hasan-gharib per Tirmidhi, Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14530,12 +14530,12 @@
             "book": "",
             "chapter": "",
             "hadith": "2722",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Zaid ibn Arqam",
+            "grading": "Sahih",
             "url": "",
             "notes": ""
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14650,12 +14650,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3586",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Umar ibn al-Khattab",
+            "grading": "Daif",
             "url": "",
-            "notes": ""
+            "notes": "Daif per Darussalam (gharib, weak isnad)."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14850,12 +14850,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3491",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abdullah ibn Yazid al-Khatmi",
+            "grading": "Daif",
             "url": "",
-            "notes": ""
+            "notes": "Daif per Darussalam (hasan-gharib per Tirmidhi)."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14889,13 +14889,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "763",
-            "narrator": "",
-            "grading": "",
+            "hadith": "6316",
+            "narrator": "Ibn Abbas",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 6316. From Ibn Umar: the Prophet ﷺ supplicated with this."
+            "notes": "Citation corrected round-2 audit (was 763); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -14966,16 +14966,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "من يدعوني؟",
+            "collection": "Jami' at-Tirmidhi",
             "book": "",
             "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "",
+            "hadith": "3419",
+            "narrator": "Ibn Abbas",
+            "grading": "Daif",
             "url": "",
-            "notes": "See original source for full citation."
+            "notes": "Citation added round-2 audit (excerpt from the long Ibn Abbas supplication); Daif per Darussalam; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -15107,12 +15107,12 @@
             "book": "",
             "chapter": "",
             "hadith": "5671",
-            "narrator": "Anas bin Malik",
-            "grading": "",
+            "narrator": "Anas ibn Malik",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 2680"
+            "notes": "Do not wish for death; ask for life/death by benefit."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -15187,12 +15187,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1890",
-            "narrator": "Umar bin al-Khattab",
-            "grading": "",
+            "narrator": "Umar ibn al-Khattab",
+            "grading": "Sahih",
             "url": "",
             "notes": "Umar supplicated: 'O Allah, grant me martyrdom in Your path, and make my death in the city of Your Messenger.'"
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -15560,16 +15560,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "من يدعوني؟",
+            "collection": "Jami' at-Tirmidhi",
             "book": "",
             "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "",
+            "hadith": "3599",
+            "narrator": "Abu Hurayrah",
+            "grading": "Daif",
             "url": "",
-            "notes": "See original source for full citation."
+            "notes": "Citation added round-2 audit (also Ibn Majah 3833 with variant ending); Daif per Darussalam, hasan-gharib per Tirmidhi; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -15862,12 +15862,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1555",
-            "narrator": "Abu Umamah",
-            "grading": "",
+            "narrator": "Abu Sa'id al-Khudri",
+            "grading": "Daif",
             "url": "",
-            "notes": "Also in Bayhaqi, ad-Du'at al-Kabir 974. The Prophet ﷺ taught this to Abu Umamah who was in the mosque burdened by worries and debts. Ibn Hibban 2427 (Sahih)."
+            "notes": "Daif per Albani; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -15945,11 +15945,11 @@
             "chapter": "",
             "hadith": "918",
             "narrator": "Umm Salama",
-            "grading": "",
+            "grading": "Sahih",
             "url": "",
-            "notes": "The Prophet ﷺ said: 'No Muslim is afflicted by a calamity and says what Allah commands — Allahumma ajirni fi musibati, wa akhlif li khayran minha — except that Allah gives him better than it.'"
+            "notes": "Said at calamity."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -16026,12 +16026,12 @@
             "book": "",
             "chapter": "",
             "hadith": "5475",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abdullah ibn Amr ibn al-As",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Ahmad 6618"
+            "notes": "Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -16149,12 +16149,12 @@
             "book": "",
             "chapter": "",
             "hadith": "5090",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Bakrah",
+            "grading": "Hasan",
             "url": "",
-            "notes": "The supplication of the one overwhelmed by distress (du'at al-makrub)."
+            "notes": "Hasan in chain per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -16227,16 +16227,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Sahih al-Bukhari",
+            "collection": "Sahih Muslim",
             "book": "",
             "chapter": "",
             "hadith": "2730",
             "narrator": "Ibn Abbas",
-            "grading": "",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 6346. The Prophet ﷺ used to say this at times of distress."
+            "notes": "Citation corrected round-2 audit (was Sahih al-Bukhari 2730, a different hadith); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -16312,13 +16312,13 @@
             "collection": "Sunan Abi Dawud",
             "book": "",
             "chapter": "",
-            "hadith": "",
-            "narrator": "",
-            "grading": "",
+            "hadith": "5085",
+            "narrator": "Aisha",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Nasa'i 5085 [Hadith number removed — out of collection range; see original source.]"
+            "notes": "Citation added round-2 audit; Hasan Sahih per Albani; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -16493,13 +16493,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "2191",
-            "narrator": "",
-            "grading": "",
+            "hadith": "5743",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 5742"
+            "notes": "Citation corrected round-2 audit (was 2191, a sales hadith); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -16613,16 +16613,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Musnad al-Bazzar",
+            "collection": "Jami' at-Tirmidhi",
             "book": "",
             "chapter": "",
-            "hadith": "2294",
-            "narrator": "",
-            "grading": "",
+            "hadith": "3502",
+            "narrator": "Abdullah ibn Umar",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Citation corrected round-2 audit (was Musnad al-Bazzar 2294, unverifiable here); Sahih per Darussalam; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -16972,16 +16972,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Sunan an-Nasa'i",
+            "collection": "Sunan Abi Dawud",
             "book": "",
             "chapter": "",
             "hadith": "1544",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Ibn Majah 5460, Abu Dawud"
+            "notes": "Citation corrected round-2 audit (was Sunan an-Nasa'i 1544, a different hadith); Sahih per Albani; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -17016,12 +17016,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3563",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Ali ibn Abi Talib",
+            "grading": "Hasan",
             "url": "",
-            "notes": ""
+            "notes": "Hasan-gharib per Tirmidhi, Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -17135,13 +17135,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "589",
-            "narrator": "",
-            "grading": "",
+            "hadith": "6377",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 6368"
+            "notes": "Citation corrected round-2 audit (was 589); second half of the same matn as my-03-007; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -17389,16 +17389,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Sahih al-Bukhari",
+            "collection": "Sunan Ibn Majah",
             "book": "",
             "chapter": "",
-            "hadith": "6389",
-            "narrator": "Anas bin Malik",
-            "grading": "",
+            "hadith": "3846",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 2690. The Prophet ﷺ supplicated most frequently with this."
+            "notes": "Citation corrected round-2 audit (was Sahih al-Bukhari 6389, the Rabbana-atina hadith); Sahih per Darussalam; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -17552,13 +17552,13 @@
             "collection": "Jami' at-Tirmidhi",
             "book": "",
             "chapter": "",
-            "hadith": "3484",
-            "narrator": "",
-            "grading": "",
+            "hadith": "3235",
+            "narrator": "Mu'adh ibn Jabal",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Ahmad 3233"
+            "notes": "Citation corrected round-2 audit (was 3484); hasan-sahih per Tirmidhi/Bukhari verdict quoted on sunnah.com; Darussalam Hasan; verified."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -17593,12 +17593,12 @@
             "book": "",
             "chapter": "",
             "hadith": "925",
-            "narrator": "Umm Salama (the Prophet's supplication in the morning)",
-            "grading": "",
+            "narrator": "Umm Salama",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Nasa'i 9930"
+            "notes": "After Fajr salam. Sahih per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -17953,12 +17953,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3558",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Bakr as-Siddiq",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Nasa'i 10717, Ahmad 6"
+            "notes": "Hasan-gharib per Tirmidhi, Sahih per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18050,12 +18050,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1537",
-            "narrator": "The Prophet ﷺ (when he feared someone)",
-            "grading": "",
+            "narrator": "Abu Musa al-Ash'ari",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Nasa'i, Ahmad 19719. Iraqi authenticated its chain in Takhrij al-Ihya 387."
+            "notes": "When fearing a people. Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18090,12 +18090,12 @@
             "book": "",
             "chapter": "",
             "hadith": "2632",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Anas ibn Malik",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "At battle encounter. Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18133,9 +18133,9 @@
             "narrator": "Ibn Abbas",
             "grading": "",
             "url": "",
-            "notes": "Ibrahim said it when he was thrown into the fire, and Muhammad ﷺ said it when they (the disbelievers) said [what they said]."
+            "notes": "Qur'anic phrase (3:173); discussed in Bukhari 4563 (Ibrahim and the Prophet ﷺ said it)."
           },
-          "grade": "Unknown",
+          "grade": "Quran",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18250,12 +18250,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3005",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Suhaib ibn Sinan",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "The boy's words quoted inside the Ashab al-Ukhdud narration; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18289,13 +18289,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "1742",
-            "narrator": "",
-            "grading": "",
+            "hadith": "4115",
+            "narrator": "Abdullah ibn Abi Awfa",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 4115. The Prophet ﷺ supplicated with this on the day of Badr."
+            "notes": "Citation corrected round-2 audit (was 1742); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18507,12 +18507,12 @@
             "book": "",
             "chapter": "",
             "hadith": "486",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "In prostration at night."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18548,12 +18548,12 @@
             "book": "",
             "chapter": "",
             "hadith": "775",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Sa'id al-Khudri",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Tirmidhi 242, Ahmad 11473"
+            "notes": "Night-prayer opening. Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18630,12 +18630,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3371",
-            "narrator": "Ibn Abbas (the Prophet ﷺ used to seek refuge for al-Hasan and al-Husayn with these words)",
-            "grading": "",
+            "narrator": "Ibn Abbas",
+            "grading": "Sahih",
             "url": "",
-            "notes": "He said: 'Your father (Ibrahim) used to seek refuge with these words for Isma'il and Ishaq.'"
+            "notes": "Ruqyah words for Hasan and Husayn."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18671,12 +18671,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1552",
-            "narrator": "",
-            "grading": "",
+            "narrator": "AbulYusr",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Nasa'i 1546, Ahmad 5531"
+            "notes": "Same hadith as my-06-002. Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18711,13 +18711,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "590",
-            "narrator": "",
-            "grading": "",
+            "hadith": "6367",
+            "narrator": "Anas ibn Malik",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 1377"
+            "notes": "Citation corrected round-2 audit (was 590); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18753,12 +18753,12 @@
             "book": "",
             "chapter": "",
             "hadith": "6390",
-            "narrator": "Sa'd bin Abi Waqqas",
-            "grading": "",
+            "narrator": "Sa'd ibn Abi Waqqas",
+            "grading": "Sahih",
             "url": "",
-            "notes": "The Prophet ﷺ used to teach his Companions these words as the Quran is taught."
+            "notes": "Via his son Mus'ab."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18835,12 +18835,12 @@
             "book": "",
             "chapter": "",
             "hadith": "2716",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Aisha",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Via Farwa ibn Nawfal."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18917,12 +18917,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3591",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Qutbah ibn Malik",
+            "grading": "Sahih",
             "url": "",
-            "notes": ""
+            "notes": "Hasan-gharib per Tirmidhi, Sahih per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18958,12 +18958,12 @@
             "book": "",
             "chapter": "",
             "hadith": "5094",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Umm Salama",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Tirmidhi 5444, Nasa'i 1551, Ibn Majah 3427"
+            "notes": "When leaving home. Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -18999,12 +18999,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1551",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Shakl ibn Humayd",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Tirmidhi 3492, Nasa'i 5456"
+            "notes": "Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19041,11 +19041,11 @@
             "chapter": "",
             "hadith": "832",
             "narrator": "Aisha",
-            "grading": "",
+            "grading": "Sahih",
             "url": "",
             "notes": "Also in Muslim 589. The Prophet ﷺ used to supplicate with this in his prayer. He was asked why he so frequently sought refuge from debt; he replied: 'When a man incurs debt, he lies when he speaks and breaks when he promises.'"
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19122,12 +19122,12 @@
             "book": "",
             "chapter": "",
             "hadith": "2739",
-            "narrator": "The Prophet ﷺ (from Aisha)",
-            "grading": "",
+            "narrator": "Abdullah ibn Umar",
+            "grading": "Sahih",
             "url": "",
             "notes": ""
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19163,12 +19163,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1347",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Bakrah",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Ahmad 20397"
+            "notes": "After every prayer. Hasan per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19203,13 +19203,13 @@
             "collection": "Sunan Abi Dawud",
             "book": "",
             "chapter": "",
-            "hadith": "1547",
-            "narrator": "",
-            "grading": "",
+            "hadith": "1546",
+            "narrator": "Abu Hurayrah",
+            "grading": "Daif",
             "url": "",
-            "notes": "Also in Nasa'i 1546, Ibn Majah 5468"
+            "notes": "Citation corrected round-2 audit (was 1547, the hunger hadith); Daif per Albani; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19245,12 +19245,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1377",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
             "url": "",
             "notes": "Also in Muslim 590"
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19286,12 +19286,12 @@
             "book": "",
             "chapter": "",
             "hadith": "1547",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Hasan",
             "url": "",
-            "notes": "Also in Nasa'i"
+            "notes": "Hunger and treachery. Hasan per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19327,12 +19327,12 @@
             "book": "",
             "chapter": "",
             "hadith": "3520",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Ali ibn Abi Talib",
+            "grading": "Daif",
             "url": "",
-            "notes": ""
+            "notes": "Arafat dua; gharib with weak isnad per Tirmidhi; Daif per Darussalam."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19446,16 +19446,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Sahih al-Bukhari",
+            "collection": "Sahih Muslim",
             "book": "",
             "chapter": "",
             "hadith": "2707",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abu Hurayrah",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 6347"
+            "notes": "Citation corrected round-2 audit (was Sahih al-Bukhari 2707, nonexistent pairing); verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -19789,16 +19789,16 @@
             "ar": ""
           },
           "reference": {
-            "collection": "Musannaf Ibn Abi Shaybah",
+            "collection": "Jami' at-Tirmidhi",
             "book": "",
             "chapter": "",
-            "hadith": "29861",
-            "narrator": "",
-            "grading": "",
+            "hadith": "3586",
+            "narrator": "Umar ibn al-Khattab",
+            "grading": "Daif",
             "url": "",
-            "notes": ""
+            "notes": "Citation corrected round-2 audit (was Musannaf Ibn Abi Shaybah 29861, unverifiable here); gharib weak isnad per Tirmidhi; Daif per Darussalam; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Daif",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -20027,12 +20027,12 @@
             "book": "",
             "chapter": "",
             "hadith": "969",
-            "narrator": "",
-            "grading": "",
+            "narrator": "Abdullah ibn Mas'ud",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Abu Dawud 10426, Tabarani 969, Ahmad 17665"
+            "notes": "Excerpt (the barakah portion) of the 969 supplication; Sahih per Albani."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",
@@ -20179,14 +20179,14 @@
             "ar": ""
           },
           "reference": {
-            "collection": "من يدعوني؟",
+            "collection": "Jami' at-Tirmidhi",
             "book": "",
             "chapter": "",
-            "hadith": "",
-            "narrator": "",
+            "hadith": "3173",
+            "narrator": "Umar ibn al-Khattab",
             "grading": "",
             "url": "",
-            "notes": "See original source for full citation."
+            "notes": "Citation added round-2 audit; isnad disputed (mursal in one route per Tirmidhi) so no ruling assigned; verified text on sunnah.com."
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -20260,13 +20260,13 @@
             "collection": "Sahih al-Bukhari",
             "book": "",
             "chapter": "",
-            "hadith": "824",
-            "narrator": "",
-            "grading": "",
+            "hadith": "3742",
+            "narrator": "Alqama ibn Qays",
+            "grading": "Sahih",
             "url": "",
-            "notes": "Also in Muslim 6278"
+            "notes": "Citation corrected round-2 audit (was 824); Alqama's own words reported in the narration; verified on sunnah.com."
           },
-          "grade": "Unknown",
+          "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
             "en": "",

@@ -8,7 +8,7 @@
 
 import { store, actions } from '../core/state.js';
 import { vibrate } from '../core/utils.js';
-import { markCelebration, wasCelebrated } from '../domain/celebrate.js';
+import { markCelebration, milestoneHit, wasCelebrated } from '../domain/celebrate.js';
 import { t } from '../core/i18n.js';
 import { getAudioContext } from './audioContext.js';
 
@@ -40,7 +40,17 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
   });
 
   if (cycleCompleted) markJustCompleted(itemId);
-  if (state.settings.hapticsEnabled) vibrate(cycleCompleted ? [10, 40, 10] : 8);
+  // (v5.2.0) Milestone ping: the tasbihMilestone setting (0 = off) buzzes
+  // + ticks every N counts so long sessions get rhythm feedback. Skipped on
+  // the tap that completes a cycle — that tap already gets the completion
+  // pattern, and two patterns on one tap would blur together.
+  const milestone = !cycleCompleted && milestoneHit(count, state.settings.tasbihMilestone);
+  if (state.settings.hapticsEnabled) {
+    if (cycleCompleted) vibrate([10, 40, 10]);
+    else if (milestone) vibrate([20, 60, 20]);
+    else vibrate(8);
+  }
+  if (milestone) playTick('milestone');
   announceCount(count, existing.target, cycleCompleted, completedCycles);
 
   return { count, target: existing.target, completedCycles, cycleCompleted };
@@ -120,7 +130,7 @@ export function playTick(kind = 'tick') {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
-    osc.frequency.value = kind === 'complete' ? 660 : 880;
+    osc.frequency.value = kind === 'complete' ? 660 : kind === 'milestone' ? 990 : 880;
     gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.01);
     gain.gain.exponentialRampToValueAtTime(

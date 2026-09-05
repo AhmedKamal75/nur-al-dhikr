@@ -12,8 +12,8 @@
     },
     "version": "3.0.0",
     "source": {
-      "en": "Quran & Sunnah (Tirmidhi 3507)",
-      "ar": "القرآن والسنة (الترمذي 3507)"
+      "en": "Qur'an & Sunnah (enumeration: Tirmidhi 3507, graded gharib)",
+      "ar": "القرآن والسنة (السرد: الترمذي 3507، وهو حديث غريب)"
     },
     "license": "Public domain",
     "homepage": "",
@@ -29,8 +29,8 @@
         "ar": "الأسماء التسعة والتسعون"
       },
       "description": {
-        "en": "The authentic 99 Names of Allah",
-        "ar": "الأسماء الحسنى الواردة في الحديث"
+        "en": "The 99 Names of Allah — enumeration per Tirmidhi 3507 (graded gharib); each Name is individually attested in the Qur'an, see per-item references",
+        "ar": "الأسماء التسعة والتسعون — السرد من حديث الترمذي 3507 (غريب)، وكل اسم ثابت في القرآن، انظر مراجع كل اسم"
       },
       "order": 1,
       "icon": "star",
@@ -56,8 +56,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 17:110; 7:156; Surah Maryam ayah 96. Source: https://myislam.org/ar-rahman/"
+            "url": "",
+            "notes": "Appears in: 17:110; 7:156; Surah Maryam ayah 96. Further reading: https://myislam.org/ar-rahman/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -102,8 +102,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 33:43; 2:143; 39:53; Surah Maryam ayah 96. Source: https://myislam.org/ar-raheem/"
+            "url": "",
+            "notes": "Appears in: 33:43; 2:143; 39:53; Surah Maryam ayah 96. Further reading: https://myislam.org/ar-raheem/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -148,8 +148,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 20:114; 3:26; 23:116; 59:23; 0:00. Source: https://myislam.org/al-malik/"
+            "url": "",
+            "notes": "Appears in: 20:114; 3:26; 23:116; 59:23; 0:00. Further reading: https://myislam.org/al-malik/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -192,8 +192,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 2:253; 5:110; 16:102; 59:23; 62:1. Source: https://myislam.org/al-quddus/"
+            "url": "",
+            "notes": "Appears in: 2:253; 5:110; 16:102; 59:23; 62:1. Further reading: https://myislam.org/al-quddus/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -236,8 +236,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 59:23; 37:181; 36:58. Source: https://myislam.org/as-salam/"
+            "url": "",
+            "notes": "Appears in: 59:23; 37:181; 36:58. Further reading: https://myislam.org/as-salam/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -280,8 +280,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 4:40; 59:23; 4:28; 106:4. Source: https://myislam.org/al-mumin/"
+            "url": "",
+            "notes": "Appears in: 4:40; 59:23; 4:28; 106:4. Further reading: https://myislam.org/al-mumin/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -324,8 +324,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 59:23. Source: https://myislam.org/al-muhaymin/"
+            "url": "",
+            "notes": "Appears in: 59:23. Further reading: https://myislam.org/al-muhaymin/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -367,8 +367,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 38:9; 48:7; 6:96; 35:28; 3:26. Source: https://myislam.org/al-aziz/"
+            "url": "",
+            "notes": "Appears in: 38:9; 48:7; 6:96; 35:28; 3:26. Further reading: https://myislam.org/al-aziz/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -411,8 +411,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 59:23; 36:82; 40:35. Source: https://myislam.org/al-jabbar/"
+            "url": "",
+            "notes": "Appears in: 59:23; 36:82; 40:35. Further reading: https://myislam.org/al-jabbar/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -455,8 +455,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 59:23; 40:35; 40:27; 3:160. Source: https://myislam.org/al-mutakabbir/"
+            "url": "",
+            "notes": "Appears in: 59:23; 40:35; 40:27; 3:160. Further reading: https://myislam.org/al-mutakabbir/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -499,8 +499,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 59:24; 23:14; 23:115; 15:86. Source: https://myislam.org/al-khaliq/"
+            "url": "",
+            "notes": "Appears in: 59:24; 23:14; 23:115; 15:86. Further reading: https://myislam.org/al-khaliq/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -546,8 +546,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 59:24; 82:7; 95:4; 4:28; 27:88. Source: https://myislam.org/al-bari/"
+            "url": "",
+            "notes": "Appears in: 59:24; 82:7; 95:4; 4:28; 27:88. Further reading: https://myislam.org/al-bari/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -590,8 +590,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr",
-            "notes": "Appears in: 59:24; 30:22; 16:78; 27:19; 82:6. Source: https://myislam.org/al-musawwir/"
+            "url": "",
+            "notes": "Appears in: 59:24; 30:22; 16:78; 27:19; 82:6. Further reading: https://myislam.org/al-musawwir/ Further reading: https://yaqeeninstitute.org/read/paper/how-to-get-closer-to-allah-exploring-the-sequence-of-allahs-names-in-surah-al-hashr"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -635,7 +635,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 39:53; 71:10; 4:48; 4:116; 20:82; 38:66; 39:5; 40:42. Source: https://myislam.org/al-ghaffar/"
+            "notes": "Appears in: 39:53; 71:10; 4:48; 4:116; 20:82; 38:66; 39:5; 40:42. Further reading: https://myislam.org/al-ghaffar/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -679,7 +679,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 38:65; 12:39; 13:16; 14:48; 39:4; 40:16; 3:160. Source: https://myislam.org/al-qahhar/"
+            "notes": "Appears in: 38:65; 12:39; 13:16; 14:48; 39:4; 40:16; 3:160. Further reading: https://myislam.org/al-qahhar/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -722,8 +722,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/gift-giving-episode-5-to-know-him-is-to-love-him",
-            "notes": "Appears in: 38:9; 38:35. Source: https://myislam.org/al-wahhab/"
+            "url": "",
+            "notes": "Appears in: 38:9; 38:35. Further reading: https://myislam.org/al-wahhab/ Further reading: https://yaqeeninstitute.org/watch/series/names-of-allah/gift-giving-episode-5-to-know-him-is-to-love-him"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -766,8 +766,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/trusting-god-the-provider-with-dr-jinan-yousef-doubletake-podcast",
-            "notes": "Appears in: 30:40; 35:3; 34:24; 67:21; 26:78; 51:56. Source: https://myislam.org/ar-razzaq/"
+            "url": "",
+            "notes": "Appears in: 30:40; 35:3; 34:24; 67:21; 26:78; 51:56. Further reading: https://myislam.org/ar-razzaq/ Further reading: https://yaqeeninstitute.org/watch/series/names-of-allah/trusting-god-the-provider-with-dr-jinan-yousef-doubletake-podcast"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -811,7 +811,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 6:44; 34:26; 35:2. Source: https://myislam.org/al-fattah/"
+            "notes": "Appears in: 6:44; 34:26; 35:2. Further reading: https://myislam.org/al-fattah/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -855,7 +855,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 34:3; 5:109; 6:59; 20:52; 66:2; 2:32; 2:30. Source: https://myislam.org/al-alim/"
+            "notes": "Appears in: 34:3; 5:109; 6:59; 20:52; 66:2; 2:32; 2:30. Further reading: https://myislam.org/al-alim/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -899,7 +899,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:245; 42:27; 4:40; 13:26; 94:5. Source: https://myislam.org/al-qabid/"
+            "notes": "Appears in: 2:245; 42:27; 4:40; 13:26; 94:5. Further reading: https://myislam.org/al-qabid/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -942,7 +942,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:245; 42:27; 13:26. Source: https://myislam.org/al-basit/"
+            "notes": "Appears in: 2:245; 42:27; 13:26. Further reading: https://myislam.org/al-basit/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -986,7 +986,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 56:3; 10:92; 95:4; 89:15. Source: https://myislam.org/al-khafid/"
+            "notes": "Appears in: 56:3; 10:92; 95:4; 89:15. Further reading: https://myislam.org/al-khafid/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1029,7 +1029,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 6:83; 58:11; 40:15; 66:6; 2:34; 18:50; 38:76; 94:4; 38:77. Source: https://myislam.org/ar-rafi/"
+            "notes": "Appears in: 6:83; 58:11; 40:15; 66:6; 2:34; 18:50; 38:76; 94:4; 38:77. Further reading: https://myislam.org/ar-rafi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1072,7 +1072,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:26; 12:76; 35:10; 28:77. Source: https://myislam.org/al-muizz/"
+            "notes": "Appears in: 3:26; 12:76; 35:10; 28:77. Further reading: https://myislam.org/al-muizz/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1116,7 +1116,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:26; 39:26; 57:14. Source: https://myislam.org/al-muzil/"
+            "notes": "Appears in: 3:26; 39:26; 57:14. Further reading: https://myislam.org/al-muzil/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1158,8 +1158,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-sami-the-one-who-always-listens",
-            "notes": "Appears in: 34:50; 2:186; 58:1; 12:86; 12:21; 2:127. Source: https://myislam.org/as-sami/"
+            "url": "",
+            "notes": "Appears in: 34:50; 2:186; 58:1; 12:86; 12:21; 2:127. Further reading: https://myislam.org/as-sami/ Further reading: https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-sami-the-one-who-always-listens"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1203,7 +1203,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 20:46; 4:58; 3:15; 55:60; 9:105; 26:217. Source: https://myislam.org/al-baseer/"
+            "notes": "Appears in: 20:46; 4:58; 3:15; 55:60; 9:105; 26:217. Further reading: https://myislam.org/al-baseer/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1247,7 +1247,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 5:50; 54:49; 22:69; 10:109; 53:39. Source: https://myislam.org/al-hakam/"
+            "notes": "Appears in: 5:50; 54:49; 22:69; 10:109; 53:39. Further reading: https://myislam.org/al-hakam/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1291,7 +1291,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 4:40; 16:90; 6:115; 2:155; 2:286; 4:135. Source: https://myislam.org/al-adl/"
+            "notes": "Appears in: 4:40; 16:90; 6:115; 2:155; 2:286; 4:135. Further reading: https://myislam.org/al-adl/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1334,8 +1334,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-latif-the-most-subtle",
-            "notes": "Appears in: 31:16; 22:63; 12:100; 12:4; 12:10; 6:103; 33:34; 42:19; 67:14. Source: https://myislam.org/al-lateef/"
+            "url": "",
+            "notes": "Appears in: 31:16; 22:63; 12:100; 12:4; 12:10; 6:103; 33:34; 42:19; 67:14. Further reading: https://myislam.org/al-lateef/ Further reading: https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-latif-the-most-subtle"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1379,7 +1379,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 59:18; 6:103; 35:14; 31:34. Source: https://myislam.org/al-khabir/"
+            "notes": "Appears in: 59:18; 6:103; 35:14; 31:34. Further reading: https://myislam.org/al-khabir/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1421,8 +1421,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-forbearance-in-islam-allahs-name-al-halim",
-            "notes": "Appears in: 16:61; 3:155; 35:45; 2:263; 17:44; 35:41; 9:114. Source: https://myislam.org/al-haleem/"
+            "url": "",
+            "notes": "Appears in: 16:61; 3:155; 35:45; 2:263; 17:44; 35:41; 9:114. Further reading: https://myislam.org/al-haleem/ Further reading: https://yaqeeninstitute.org/read/paper/the-meaning-of-forbearance-in-islam-allahs-name-al-halim"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1466,7 +1466,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 56:96; 69:52; 2:255; 42:4; 15:87. Source: https://myislam.org/al-azeem/"
+            "notes": "Appears in: 56:96; 69:52; 2:255; 42:4; 15:87. Further reading: https://myislam.org/al-azeem/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1510,7 +1510,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 15:49; 41:32; 2:173. Source: https://myislam.org/al-ghafoor/"
+            "notes": "Appears in: 15:49; 41:32; 2:173. Further reading: https://myislam.org/al-ghafoor/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1553,8 +1553,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/allah-appreciates-your-smallest-deeds-khutbah",
-            "notes": "Appears in: 2:158; 4:147; 35:34; 69:24; 14:17; 39:7; 42:23. Source: https://myislam.org/ash-shakur/"
+            "url": "",
+            "notes": "Appears in: 2:158; 4:147; 35:34; 69:24; 14:17; 39:7; 42:23. Further reading: https://myislam.org/ash-shakur/ Further reading: https://yaqeeninstitute.org/watch/series/names-of-allah/allah-appreciates-your-smallest-deeds-khutbah"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1598,7 +1598,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 87:1; 16:50; 57:4; 2:255; 35:10; 70:4; 34:23. Source: https://myislam.org/al-aliyy/"
+            "notes": "Appears in: 87:1; 16:50; 57:4; 2:255; 35:10; 70:4; 34:23. Further reading: https://myislam.org/al-aliyy/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1642,7 +1642,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 31:30; 34:23; 13:9; 22:62; 49:13; 40:64; 27:88; 95:4. Source: https://myislam.org/al-kabeer/"
+            "notes": "Appears in: 31:30; 34:23; 13:9; 22:62; 49:13; 40:64; 27:88; 95:4. Further reading: https://myislam.org/al-kabeer/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1686,7 +1686,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 11:57; 15:9; 12:64; 2:255; 30:17. Source: https://myislam.org/al-hafiz/"
+            "notes": "Appears in: 11:57; 15:9; 12:64; 2:255; 30:17. Further reading: https://myislam.org/al-hafiz/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1730,7 +1730,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 4:85; 11:6; 14:32; 6:14; 2:155. Source: https://myislam.org/al-muqeet/"
+            "notes": "Appears in: 4:85; 11:6; 14:32; 6:14; 2:155. Further reading: https://myislam.org/al-muqeet/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1774,7 +1774,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 33:39; 3:173; 21:47; 4:85. Source: https://myislam.org/al-haseeb/"
+            "notes": "Appears in: 33:39; 3:173; 21:47; 4:85. Further reading: https://myislam.org/al-haseeb/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1818,7 +1818,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 55:27; 7:143. Source: https://myislam.org/al-jaleel/"
+            "notes": "Appears in: 55:27; 7:143. Further reading: https://myislam.org/al-jaleel/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1861,8 +1861,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/belief-in-divine-love-discovering-spiritual-attachment-styles",
-            "notes": "Appears in: 17:70; 82:6; 27:40; 57:18; 96:3. Source: https://myislam.org/99-names-of-allah/al-karim/"
+            "url": "",
+            "notes": "Appears in: 17:70; 82:6; 27:40; 57:18; 96:3. Further reading: https://myislam.org/99-names-of-allah/al-karim/ Further reading: https://yaqeeninstitute.org/read/paper/belief-in-divine-love-discovering-spiritual-attachment-styles"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1906,7 +1906,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 4:1; 5:117; 5:118. Source: https://myislam.org/ar-raqib/"
+            "notes": "Appears in: 4:1; 5:117; 5:118. Further reading: https://myislam.org/ar-raqib/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1950,7 +1950,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 11:61; 40:60; 2:186; 2:155; 2:286; 3:160; 93:10. Source: https://myislam.org/al-mujeeb/"
+            "notes": "Appears in: 11:61; 40:60; 2:186; 2:155; 2:286; 3:160; 93:10. Further reading: https://myislam.org/al-mujeeb/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1994,7 +1994,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:115; 2:268; 39:53; 4:130; 3:73. Source: https://myislam.org/al-wasi/"
+            "notes": "Appears in: 2:115; 2:268; 39:53; 4:130; 3:73. Further reading: https://myislam.org/al-wasi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2037,7 +2037,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 12:4; 12:23; 12:25; 12:26; 12:100; 2:216; 24:11; 24:18. Source: https://myislam.org/al-hakeem/"
+            "notes": "Appears in: 12:4; 12:23; 12:25; 12:26; 12:100; 2:216; 24:11; 24:18. Further reading: https://myislam.org/al-hakeem/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2080,8 +2080,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-wadud-seeking-the-love-of-allah",
-            "notes": "Appears in: 11:90; 85:14; 39:53; 2:222; 3:31. Source: https://myislam.org/al-wadud/"
+            "url": "",
+            "notes": "Appears in: 11:90; 85:14; 39:53; 2:222; 3:31. Further reading: https://myislam.org/al-wadud/ Further reading: https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-al-wadud-seeking-the-love-of-allah"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2125,7 +2125,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 11:73; 85:15; 2:255; 50:1. Source: https://myislam.org/al-majeed/"
+            "notes": "Appears in: 11:73; 85:15; 2:255; 50:1. Further reading: https://myislam.org/al-majeed/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2168,7 +2168,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 46:33; 22:7; 62:2; 6:60; 3:169; 23:115; 2:156. Source: https://myislam.org/al-baith/"
+            "notes": "Appears in: 46:33; 22:7; 62:2; 6:60; 3:169; 23:115; 2:156. Further reading: https://myislam.org/al-baith/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2211,7 +2211,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 9:94; 12:81; 58:6; 4:79; 41:53. Source: https://myislam.org/ash-shaheed/"
+            "notes": "Appears in: 9:94; 12:81; 58:6; 4:79; 41:53. Further reading: https://myislam.org/ash-shaheed/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2255,7 +2255,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 31:30; 10:32; 6:62; 22:6; 22:62; 57:20; 77:7. Source: https://myislam.org/al-haqq/"
+            "notes": "Appears in: 31:30; 10:32; 6:62; 22:6; 22:62; 57:20; 77:7. Further reading: https://myislam.org/al-haqq/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2299,7 +2299,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:173; 4:132; 73:9; 13:11; 6:102. Source: https://myislam.org/al-wakeel/"
+            "notes": "Appears in: 3:173; 4:132; 73:9; 13:11; 6:102. Further reading: https://myislam.org/al-wakeel/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2343,7 +2343,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:255; 28:26; 22:74; 42:19; 3:160; 20:24; 57:25; 33:25. Source: https://myislam.org/al-qawiyy/"
+            "notes": "Appears in: 2:255; 28:26; 22:74; 42:19; 3:160; 20:24; 57:25; 33:25. Further reading: https://myislam.org/al-qawiyy/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2387,7 +2387,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 51:58; 27:88; 58:21; 7:183; 68:45. Source: https://myislam.org/al-matin/"
+            "notes": "Appears in: 51:58; 27:88; 58:21; 7:183; 68:45. Further reading: https://myislam.org/al-matin/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2430,7 +2430,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 5:56; 2:257; 5:55; 42:28; 7:196; 12:101; 45:19. Source: https://myislam.org/al-waliy/"
+            "notes": "Appears in: 5:56; 2:257; 5:55; 42:28; 7:196; 12:101; 45:19. Further reading: https://myislam.org/al-waliy/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2474,7 +2474,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:267; 57:24; 31:12; 35:15; 41:42; 42:28. Source: https://myislam.org/al-hameed/"
+            "notes": "Appears in: 2:267; 57:24; 31:12; 35:15; 41:42; 42:28. Further reading: https://myislam.org/al-hameed/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2518,7 +2518,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 72:28; 78:29; 18:49; 14:34; 36:12; 2:284; 6:59. Source: https://myislam.org/al-muhsi/"
+            "notes": "Appears in: 72:28; 78:29; 18:49; 14:34; 36:12; 2:284; 6:59. Further reading: https://myislam.org/al-muhsi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2561,7 +2561,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 29:19; 30:30; 10:34; 27:64; 85:13. Source: https://myislam.org/al-mubdi/"
+            "notes": "Appears in: 29:19; 30:30; 10:34; 27:64; 85:13. Further reading: https://myislam.org/al-mubdi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2604,7 +2604,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 21:104; 10:34; 27:64; 85:13; 29:19. Source: https://myislam.org/al-muid/"
+            "notes": "Appears in: 21:104; 10:34; 27:64; 85:13; 29:19. Further reading: https://myislam.org/al-muid/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2647,7 +2647,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:28; 7:158; 10:56; 5:110; 2:286. Source: https://myislam.org/al-muhyi/"
+            "notes": "Appears in: 2:28; 7:158; 10:56; 5:110; 2:286. Further reading: https://myislam.org/al-muhyi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2691,7 +2691,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 6:32; 7:34; 57:2; 10:56; 31:34; 25:75. Source: https://myislam.org/al-mumeet/"
+            "notes": "Appears in: 6:32; 7:34; 57:2; 10:56; 31:34; 25:75. Further reading: https://myislam.org/al-mumeet/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2734,7 +2734,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:255; 3:2; 20:111; 25:58; 40:65; 7:180; 27:15. Source: https://myislam.org/al-hayy/"
+            "notes": "Appears in: 2:255; 3:2; 20:111; 25:58; 40:65; 7:180; 27:15. Further reading: https://myislam.org/al-hayy/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2777,7 +2777,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:2; 20:111; 2:255. Source: https://myislam.org/al-qayyum/"
+            "notes": "Appears in: 3:2; 20:111; 2:255. Further reading: https://myislam.org/al-qayyum/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2820,7 +2820,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 4:78; 24:39; 93:7. Source: https://myislam.org/al-wajid/"
+            "notes": "Appears in: 4:78; 24:39; 93:7. Further reading: https://myislam.org/al-wajid/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2863,7 +2863,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 11:73; 87:1. Source: https://myislam.org/al-maajid/"
+            "notes": "Appears in: 11:73; 87:1. Further reading: https://myislam.org/al-maajid/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2906,7 +2906,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 13:16; 39:4; 38:65; 14:48; 6:19. Source: https://myislam.org/al-wahid/"
+            "notes": "Appears in: 13:16; 39:4; 38:65; 14:48; 6:19. Further reading: https://myislam.org/al-wahid/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2950,7 +2950,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 112:1; 112:4. Source: https://myislam.org/al-ahad/"
+            "notes": "Appears in: 112:1; 112:4. Further reading: https://myislam.org/al-ahad/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -2993,8 +2993,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-as-samad-the-eternal-the-absolute",
-            "notes": "Appears in: 112:1. Source: https://myislam.org/as-samad/"
+            "url": "",
+            "notes": "Appears in: 112:1. Further reading: https://myislam.org/as-samad/ Further reading: https://yaqeeninstitute.org/read/paper/the-meaning-of-allahs-name-as-samad-the-eternal-the-absolute"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3038,7 +3038,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:26; 2:259; 3:37; 3:38; 3:165. Source: https://myislam.org/al-qadir/"
+            "notes": "Appears in: 3:26; 2:259; 3:37; 3:38; 3:165. Further reading: https://myislam.org/al-qadir/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3081,7 +3081,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 54:55; 3:160; 18:45; 54:42; 77:23; 28:18; 28:24. Source: https://myislam.org/al-muqtadir/"
+            "notes": "Appears in: 54:55; 3:160; 18:45; 54:42; 77:23; 28:18; 28:24. Further reading: https://myislam.org/al-muqtadir/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3124,7 +3124,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 85:22; 6:59; 21:90; 7:96; 71:10. Source: https://myislam.org/al-muqaddim/"
+            "notes": "Appears in: 85:22; 6:59; 21:90; 7:96; 71:10. Further reading: https://myislam.org/al-muqaddim/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3167,7 +3167,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 75:13; 29:14; 11:43; 11:59. Source: https://myislam.org/al-muakhkhir/"
+            "notes": "Appears in: 75:13; 29:14; 11:43; 11:59. Further reading: https://myislam.org/al-muakhkhir/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3210,7 +3210,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 57:3; 2:156; 29:51. Source: https://myislam.org/al-awwal/"
+            "notes": "Appears in: 57:3; 2:156; 29:51. Further reading: https://myislam.org/al-awwal/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3253,7 +3253,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 57:3; 2:156; 29:51. Source: https://myislam.org/al-akhir/"
+            "notes": "Appears in: 57:3; 2:156; 29:51. Further reading: https://myislam.org/al-akhir/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3296,7 +3296,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 57:3; 6:103; 7:143; 42:51; 36:82; 6:120. Source: https://myislam.org/az-zaahir/"
+            "notes": "Appears in: 57:3; 6:103; 7:143; 42:51; 36:82; 6:120. Further reading: https://myislam.org/az-zaahir/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3339,7 +3339,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 57:3; 6:103; 7:143; 42:51; 36:82; 6:120. Source: https://myislam.org/al-baatin/"
+            "notes": "Appears in: 57:3; 6:103; 7:143; 42:51; 36:82; 6:120. Further reading: https://myislam.org/al-baatin/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3382,7 +3382,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 8:30; 3:26; 6:102; 2:257. Source: https://myislam.org/al-wali/"
+            "notes": "Appears in: 8:30; 3:26; 6:102; 2:257. Further reading: https://myislam.org/al-wali/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3425,7 +3425,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 92:20; 22:62; 42:4; 27:63; 13:9. Source: https://myislam.org/al-mutaali/"
+            "notes": "Appears in: 92:20; 22:62; 42:4; 27:63; 13:9. Further reading: https://myislam.org/al-mutaali/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3468,7 +3468,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 52:28; 2:185. Source: https://myislam.org/al-barr/"
+            "notes": "Appears in: 52:28; 2:185. Further reading: https://myislam.org/al-barr/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3511,8 +3511,8 @@
             "hadith": "Tirmidhi 3507",
             "narrator": "",
             "grading": "",
-            "url": "https://yaqeeninstitute.org/watch/series/names-of-allah/allahs-name-at-tawwab-the-one-who-accepts-repentance-khutbah",
-            "notes": "Appears in: 2:54; 9:104; 52:32; 39:53; 4:27; 2:37; 2:160. Source: https://myislam.org/at-tawwab/"
+            "url": "",
+            "notes": "Appears in: 2:54; 9:104; 52:32; 39:53; 4:27; 2:37; 2:160. Further reading: https://myislam.org/at-tawwab/ Further reading: https://yaqeeninstitute.org/watch/series/names-of-allah/allahs-name-at-tawwab-the-one-who-accepts-repentance-khutbah"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3556,7 +3556,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 29:14; 26:116; 54:9; 71:28; 54:10; 54:11; 7:136; 11:34; 43:41; 44:16; 3:4. Source: https://myislam.org/al-muntaqim/"
+            "notes": "Appears in: 29:14; 26:116; 54:9; 71:28; 54:10; 54:11; 7:136; 11:34; 43:41; 44:16; 3:4. Further reading: https://myislam.org/al-muntaqim/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3599,7 +3599,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 4:149; 22:60; 12:87; 25:70; 97:1. Source: https://myislam.org/al-afuw/"
+            "notes": "Appears in: 4:149; 22:60; 12:87; 25:70; 97:1. Further reading: https://myislam.org/al-afuw/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3643,7 +3643,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 59:10; 57:9; 24:20; 9:117; 2:207. Source: https://myislam.org/ar-rauf/"
+            "notes": "Appears in: 59:10; 57:9; 24:20; 9:117; 2:207. Further reading: https://myislam.org/ar-rauf/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3687,7 +3687,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:160; 3:26; 24:42; 1:4; 2:258; 27:19. Source: https://myislam.org/malikul-mulk/"
+            "notes": "Appears in: 3:160; 3:26; 24:42; 1:4; 2:258; 27:19. Further reading: https://myislam.org/malikul-mulk/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3730,7 +3730,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 55:27; 55:78. Source: https://myislam.org/zul-jalaali-wal-ikram/"
+            "notes": "Appears in: 55:27; 55:78. Further reading: https://myislam.org/zul-jalaali-wal-ikram/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3775,7 +3775,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 21:47; 16:111; 3:18; 5:42; 49:9; 60:8. Source: https://myislam.org/al-muqsit/"
+            "notes": "Appears in: 21:47; 16:111; 3:18; 5:42; 49:9; 60:8. Further reading: https://myislam.org/al-muqsit/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3821,7 +3821,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:9; 42:7; 77:38; 52:21; 75:3. Source: https://myislam.org/al-jami/"
+            "notes": "Appears in: 3:9; 42:7; 77:38; 52:21; 75:3. Further reading: https://myislam.org/al-jami/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3864,7 +3864,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 3:181; 27:40; 6:133; 7:17; 2:263. Source: https://myislam.org/al-ghaniy/"
+            "notes": "Appears in: 3:181; 27:40; 6:133; 7:17; 2:263. Further reading: https://myislam.org/al-ghaniy/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3908,7 +3908,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:186; 21:90; 3:38; 21:89; 53:48; 28:24; 27:62. Source: https://myislam.org/al-mughni/"
+            "notes": "Appears in: 2:186; 21:90; 3:38; 21:89; 53:48; 28:24; 27:62. Further reading: https://myislam.org/al-mughni/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3952,7 +3952,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 59:7; 22:38; 67:21. Source: https://myislam.org/al-mani/"
+            "notes": "Appears in: 59:7; 22:38; 67:21. Further reading: https://myislam.org/al-mani/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -3995,7 +3995,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 4:78; 10:106; 6:71; 26:77; 4:123; 21:69. Source: https://myislam.org/ad-darr/"
+            "notes": "Appears in: 4:78; 10:106; 6:71; 26:77; 4:123; 21:69. Further reading: https://myislam.org/ad-darr/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4038,7 +4038,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 4:78; 10:106; 6:71; 26:77; 4:123; 21:69. Source: https://myislam.org/an-naafi/"
+            "notes": "Appears in: 4:78; 10:106; 6:71; 26:77; 4:123; 21:69. Further reading: https://myislam.org/an-naafi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4081,7 +4081,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 6:103; 6:59; 5:15; 24:35; 66:8; 7:143; 36:82; 57:12. Source: https://myislam.org/an-noor/"
+            "notes": "Appears in: 6:103; 6:59; 5:15; 24:35; 66:8; 7:143; 36:82; 57:12. Further reading: https://myislam.org/an-noor/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4125,7 +4125,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 33:21; 7:158; 28:56; 20:50; 87:3; 17:9; 11:12; 22:49. Source: https://myislam.org/al-hadi/"
+            "notes": "Appears in: 33:21; 7:158; 28:56; 20:50; 87:3; 17:9; 11:12; 22:49. Further reading: https://myislam.org/al-hadi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4169,7 +4169,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:117; 6:101; 50:6. Source: https://myislam.org/al-badi/"
+            "notes": "Appears in: 2:117; 6:101; 50:6. Further reading: https://myislam.org/al-badi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4212,7 +4212,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 16:96; 7:115; 28:60; 12:33; 55:26; 7:117; 20:72. Source: https://myislam.org/al-baaqi/"
+            "notes": "Appears in: 16:96; 7:115; 28:60; 12:33; 55:26; 7:117; 20:72. Further reading: https://myislam.org/al-baaqi/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4256,7 +4256,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 15:23; 21:89; 40:16; 28:58; 2:261. Source: https://myislam.org/al-warith/"
+            "notes": "Appears in: 15:23; 21:89; 40:16; 28:58; 2:261. Further reading: https://myislam.org/al-warith/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4299,7 +4299,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 2:256; 72:14; 46:30; 19:76; 18:10; 1:6. Source: https://myislam.org/ar-rasheed/"
+            "notes": "Appears in: 2:256; 72:14; 46:30; 19:76; 18:10; 1:6. Further reading: https://myislam.org/ar-rasheed/"
           },
           "grade": "Quran",
           "custom_grade": {
@@ -4343,7 +4343,7 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "Appears in: 35:45; 16:27; 2:153; 3:200; 70:5. Source: https://myislam.org/as-sabur/"
+            "notes": "Appears in: 35:45; 16:27; 2:153; 3:200; 70:5. Further reading: https://myislam.org/as-sabur/"
           },
           "grade": "Quran",
           "custom_grade": {

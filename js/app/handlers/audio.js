@@ -6,10 +6,15 @@
 
 import { rt } from '../../app/rt.js';
 import { downloadOne, startAudioPlay } from '../audioEngine.js';
+import { fetchJSON } from '../net.js';
+import { MUSHAF_META_URL, QURAN_META_URL } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
+import { buildConfirm, buildTextPrompt } from '../../ui/menus.js';
+import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import * as audioStore from '../../services/audioStore.js';
+import * as mediaSession from '../../services/mediaSession.js';
 import * as player from '../../services/player.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
 
@@ -156,6 +161,127 @@ export const clickHandlers = {
     startAudioPlay(ds.moshaf, 1);
   },
 
+  /* ---------------- Recitation queues (playlists) ---------------- */
+
+  'playlist-create': () => {
+    const lang = store.getState().settings.language;
+    openModal(
+      buildTextPrompt({
+        title: t('playlist.createTitle', lang),
+        placeholder: t('playlist.namePh', lang),
+        confirmAction: 'submit-new-playlist',
+        lang,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
+  },
+
+  'playlist-delete': (ds) => {
+    if (!ds.id) return;
+    const lang = store.getState().settings.language;
+    openModal(
+      buildConfirm({
+        message: t('playlist.deleteConfirm', lang),
+        confirmAction: 'playlist-delete-confirmed',
+        confirmData: { id: ds.id },
+        lang,
+      })
+    );
+  },
+
+  'playlist-delete-confirmed': (ds) => {
+    if (!ds.id) return;
+    closeModal();
+    store.dispatch(actions.deletePlaylist(ds.id));
+    showToast(t('playlist.deleted', store.getState().settings.language));
+  },
+
+  // Play a queue in order through the verse engine (first resolvable item
+  // starts; the rest follow via the engine's queue advance). Empty or
+  // fully-unresolvable queues say so instead of failing silently.
+  'playlist-play': async (ds) => {
+    if (!ds.id) return;
+    const lang = store.getState().settings.language;
+    const pl = (store.getState().playlists || []).find((p) => p.id === ds.id);
+    if (!pl || !pl.items.length) {
+      showToast(t('playlist.empty', lang));
+      return;
+    }
+    // Toggle: tapping play on the queue that is already running stops it.
+    {
+      const st = store.getState();
+      const q = st.surahPlayback?.queue;
+      if (
+        st.surahPlayback?.active &&
+        Array.isArray(q) &&
+        surahPlayback.queueSignature(q) === surahPlayback.queueSignature(pl.items)
+      ) {
+        surahPlayback.stop();
+        mediaSession.clearMetadata();
+        return;
+      }
+    }
+    let state = store.getState();
+    try {
+      if (!state.quran.meta) {
+        store.dispatch(actions.setQuranMeta(await fetchJSON(QURAN_META_URL)));
+        state = store.getState();
+      }
+      if (!state.mushaf.meta) {
+        store.dispatch(actions.setMushafMeta(await fetchJSON(MUSHAF_META_URL)));
+        state = store.getState();
+      }
+      const idx = pl.items.findIndex(
+        (it, i) => surahPlayback.resolveQueueItem(pl.items, i, state.quran.meta.surahs) != null
+      );
+      if (idx < 0) {
+        showToast(t('playlist.unresolvable', lang), { assertive: true });
+        return;
+      }
+      const r = surahPlayback.resolveQueueItem(pl.items, idx, state.quran.meta.surahs);
+      surahPlayback.start({
+        surah: r.surah,
+        from: r.from,
+        to: r.end,
+        total: r.total,
+        reciterId: state.settings.reciter,
+        reciterIdB: state.settings.reciterB,
+        compare: state.settings.reciterCompare === true,
+        surahsMeta: state.quran.meta.surahs,
+        repeat: state.settings.audio?.ayahRepeat,
+        loop: 1,
+        speed: state.settings.audio?.verseRate ?? 1,
+        queue: pl.items,
+        qIndex: idx,
+      });
+      closeModal();
+    } catch (err) {
+      console.error('[playlist] failed to start', err);
+      showToast(t('audio.reciteStartFailed', store.getState().settings.language));
+    }
+  },
+
+  'playlist-remove-item': (ds) => {
+    if (!ds.id || ds.index == null) return;
+    store.dispatch(actions.removePlaylistItem(ds.id, parseInt(ds.index, 10)));
+  },
+
+  // Save the range picker's current from/to into an existing queue.
+  'playlist-save-range': (ds, el) => {
+    const lang = store.getState().settings.language;
+    const form = el?.closest?.('form');
+    const fd = form ? new FormData(form) : null;
+    const surah = parseInt(form?.dataset.surah || ds.surah, 10);
+    const from = Math.max(1, parseInt(fd?.get('from'), 10) || 1);
+    let to = Math.max(1, parseInt(fd?.get('to'), 10) || 1);
+    if (to < from) to = from;
+    const id = String(fd?.get('playlist') || ds.playlist || '');
+    if (!Number.isFinite(surah) || !id) return;
+    store.dispatch(actions.addPlaylistItem(id, { surah, from, to }));
+    closeModal();
+    showToast(t('playlist.addedRange', lang));
+  },
+
   /* ---------------- Player bar ---------------- */
 
   'player-toggle': () => {
@@ -172,6 +298,7 @@ export const clickHandlers = {
 
   'player-close': () => {
     player.stop();
+    mediaSession.clearMetadata();
     store.dispatch(
       actions.setAudioPlayer({ moshafId: null, surah: null, playing: false, offline: false })
     );

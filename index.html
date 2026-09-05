@@ -125,6 +125,9 @@
         n.id = 'file-protocol-notice';
         n.setAttribute('role', 'alert');
         n.setAttribute('dir', 'ltr');
+        // NOTE (2026-09 audit S2): static-only innerHTML — this string is a
+        // hardcoded literal with no user/backup/network input. Keep it that
+        // way; never interpolate variables here without escaping.
         n.innerHTML =
           '<style>' +
           '#file-protocol-notice{position:fixed;inset:0;z-index:2147483647;overflow:auto;background:#faf9f5;color:#1c2421;' +

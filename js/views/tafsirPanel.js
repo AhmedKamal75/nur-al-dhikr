@@ -219,7 +219,7 @@ export function buildWordStudyPanel(state) {
     <div class="word-study__root">
       <div class="word-study__root-head">
         <span class="word-study__root-label">${t('wordStudy.root', lang)}</span>
-        <span class="word-study__root-text" dir="rtl">${escapeHTML(word.root)}</span>
+        <span class="word-study__root-text" dir="rtl" lang="ar">${escapeHTML(word.root)}</span>
         <span class="word-study__root-count">${t('wordStudy.rootCount', lang, { n: count })}</span>
       </div>
       ${
@@ -362,6 +362,14 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
   }
 
   const activeTabId = activeEdition ? `tafsir-tab-${activeEdition.id}` : '';
+  const compareBlock = buildTafsirCompare(
+    state,
+    surah,
+    ayah,
+    [...bundled, ...remote],
+    activeEdition?.id,
+    lang
+  );
 
   return `
   <div class="tafsir-panel">
@@ -370,7 +378,52 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
       ${remote.length ? `<span class="tafsir-tabs__sep"></span>${remote.map(tabBtn).join('')}` : ''}
     </div>
     <div class="tafsir-panel__content" role="tabpanel" id="tafsir-panel-content" ${activeTabId ? `aria-labelledby="${activeTabId}"` : ''} tabindex="0">${body}</div>
+    ${compareBlock}
   </div>`;
+}
+
+/**
+ * Tafsir compare: a second source beneath the active tab. The picker offers
+ * bundled editions plus remote ones already cached for THIS surah (an
+ * uncached remote would need its own download flow — the primary tab owns
+ * that). The choice persists in settings.tafsirCompareB; a stale id renders
+ * only the picker, never an error.
+ */
+function buildTafsirCompare(state, surah, ayah, editions, activeId, lang) {
+  const picked = state.settings.tafsirCompareB || null;
+  const cached = (ed) => ed.bundled || state.tafsir?.[ed.id]?.[String(surah)] != null;
+  const options = editions.filter((ed) => ed.id !== activeId && cached(ed));
+  const chipFor = (id, label, on) => `
+    <button type="button" class="chip ${on ? 'chip--active' : ''}" data-action="tafsir-compare" data-edition="${escapeHTML(id)}" data-surah="${surah}" data-ayah="${ayah}" aria-pressed="${on}">
+      ${escapeHTML(label)}
+    </button>`;
+  const picker = `
+    <div class="tafsir-compare__pick">
+      <span class="tafsir-compare__label">${t('tafsir.compare', lang)}</span>
+      ${chipFor('', t('tafsir.compareOff', lang), !picked)}
+      ${options.map((ed) => chipFor(ed.id, pickLocale({ en: ed.nameEn, ar: ed.nameAr }, lang), picked === ed.id)).join('')}
+    </div>`;
+
+  let second = '';
+  if (picked && picked !== activeId) {
+    const ed = editions.find((e) => e.id === picked);
+    const text = ed ? state.tafsir?.[ed.id]?.[String(surah)]?.[String(ayah)] : null;
+    if (ed && text) {
+      second = `
+      <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: ed.authorEn, ar: ed.authorAr }, lang))}</p>
+      <div class="tafsir-panel__body" dir="rtl" lang="ar">${formatArabicCommentary(text)}</div>`;
+    } else if (ed && cached(ed)) {
+      second = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
+    }
+    // Uncached remote / unknown id: picker only (above) — the text arrives
+    // via the primary tab's own download flow, then appears here.
+  }
+  if (!options.length && !second) return '';
+  return `
+    <div class="tafsir-compare">
+      ${picker}
+      ${second ? `<div class="tafsir-compare__body">${second}</div>` : ''}
+    </div>`;
 }
 
 /**
@@ -401,7 +454,7 @@ export function buildMushafSettingsPanel(state) {
   const fontRow = MUSHAF_FONTS.map(
     (f) => `
     <button type="button" class="mushaf-settings__font ${prefs.font === f.id ? 'mushaf-settings__font--active' : ''}" data-action="mushaf-set-font" data-font="${f.id}" style="font-family:${f.family}">
-      <span class="mushaf-settings__font-sample" dir="rtl">${'\u0628\u0650\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u0651\u064e\u0647\u0650'}</span>
+      <span class="mushaf-settings__font-sample" dir="rtl" lang="ar">${'\u0628\u0650\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u0651\u064e\u0647\u0650'}</span>
       <span class="mushaf-settings__font-name">${escapeHTML(pickLocale(f.name, lang))}</span>
     </button>`
   ).join('');

@@ -3,7 +3,7 @@
  */
 
 import { MUSHAF_PAGE_COUNT } from '../config.js';
-import { clone } from '../utils.js';
+import { cleanObject, clone, isSafeKey } from '../utils.js';
 import { isReturningUser } from '../../domain/onboarding.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
 import { sanitizeHifzRecords } from '../../domain/hifz.js';
@@ -38,6 +38,65 @@ function validSurahBookmarkId(value) {
 // PERSISTED_KEYS ALLOWLIST at the top of sanitizeRestoredPayload: only
 // persisted keys may ever enter live state, so ephemeral slices (player,
 // install, hifzSession, hadith/quran caches, …) are dropped by omission.
+
+/**
+ * Personal hadith notes from a backup: same "<bookId>:<n>" key shape as
+ * bookmarks (S3: the book half must pass isSafeKey — the regex alone still
+ * matches `__proto__`), plain text values capped at 2000 chars, blank
+ * texts dropped, whole map capped at 1000 entries.
+ */
+function cleanHadithNotes(raw) {
+  const src = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  const out = {};
+  for (const k of Object.keys(src)) {
+    if (Object.keys(out).length >= 1000) break;
+    if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue;
+    const parts = String(k).split(':');
+    if (parts.length !== 2 || !isSafeKey(parts[0]) || !/^[A-Za-z0-9_-]{1,40}:\d{1,6}$/.test(k))
+      continue;
+    const v = src[k];
+    if (typeof v !== 'string' || !v.trim()) continue;
+    out[k] = v.slice(0, 2000);
+  }
+  return cleanObject(out);
+}
+
+/**
+ * Recitation queues from a backup: at most 50 lists, safe-key ids,
+ * trimmed names, at most 200 range items each with surah 1–114 and
+ * positive from/to ints. Anything else drops silently.
+ */
+function cleanPlaylists(raw) {
+  if (!Array.isArray(raw)) return [];
+  const out = [];
+  for (const p of raw.slice(0, 50)) {
+    if (!p || typeof p !== 'object' || Array.isArray(p)) continue;
+    if (typeof p.id !== 'string' || !isSafeKey(p.id)) continue;
+    if (out.some((q) => q.id === p.id)) continue;
+    const items = [];
+    if (Array.isArray(p.items)) {
+      for (const it of p.items.slice(0, 200)) {
+        if (!it || typeof it !== 'object' || Array.isArray(it)) continue;
+        const surah = Math.floor(Number(it.surah));
+        if (!Number.isFinite(surah) || surah < 1 || surah > 114) continue;
+        const from = Math.floor(Number(it.from));
+        const to = it.to == null ? null : Math.floor(Number(it.to));
+        items.push({
+          surah,
+          from: Number.isFinite(from) && from >= 1 ? from : 1,
+          to: Number.isFinite(to) && to >= 1 ? to : null,
+        });
+      }
+    }
+    out.push({
+      id: p.id,
+      name: typeof p.name === 'string' && p.name.trim() ? p.name.trim().slice(0, 80) : 'Queue',
+      items,
+      createdAt: Number.isFinite(p.createdAt) ? p.createdAt : null,
+    });
+  }
+  return out;
+}
 
 /** Defensively coerce a restored/imported backup marker (v3.26). A future
  *  timestamp is junk — a backup cannot happen ahead of the device — and
@@ -100,7 +159,9 @@ export function sanitizeRestoredPayload(payload) {
       totalAttempts: Number.isFinite(tps.totalAttempts) ? tps.totalAttempts : 0,
       currentStreak: Number.isFinite(tps.currentStreak) ? tps.currentStreak : 0,
       bestStreak: Number.isFinite(tps.bestStreak) ? tps.bestStreak : 0,
-      byRule: asObject(tps.byRule),
+      // (S3) cleanObject, not bare asObject: an own `__proto__` key from a
+      // crafted backup must not ride into live state.
+      byRule: cleanObject(tps.byRule),
     },
     // Hifz records (v3.17): only well-formed per-surah entries survive —
     // hostile shapes drop silently rather than poison a later render.
@@ -129,7 +190,9 @@ export function sanitizeRestoredPayload(payload) {
       if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
       const out = {};
       for (const [id, records] of Object.entries(raw)) {
-        if (typeof id === 'string' && id.length <= 40) out[id] = sanitizeHifzRecords(records);
+        // (S3) isSafeKey: `__proto__` passes the length check below.
+        if (typeof id === 'string' && id.length <= 40 && isSafeKey(id))
+          out[id] = sanitizeHifzRecords(records);
       }
       return out;
     })(),
@@ -179,6 +242,15 @@ export function sanitizeRestoredPayload(payload) {
       }))
       .slice(0, 20),
     favorites: asArray(p.favorites).filter((id) => typeof id === 'string'),
+    // (v5.2.0) hadith bookmark keys are "<bookId>:<n>" slugs, capped so a
+    // hostile backup cannot bloat the persisted blob.
+    hadithBookmarks: asArray(p.hadithBookmarks)
+      .filter((k) => typeof k === 'string' && /^[A-Za-z0-9_-]{1,40}:\d{1,6}$/.test(k))
+      .slice(0, 1000),
+    // Personal hadith notes: same key shape, plain capped text values.
+    hadithNotes: cleanHadithNotes(p.hadithNotes),
+    // Recitation queues: capped counts, safe ids, clamped range ints.
+    playlists: cleanPlaylists(p.playlists),
     // (v4.2) surah/ayah/page are typed now: they render into data-*
     // attributes and "surah:ayah" labels in the mushaf bookmark list.
     ayahBookmarks: asArray(p.ayahBookmarks)
@@ -221,13 +293,13 @@ export function sanitizeRestoredPayload(payload) {
     // (review v3.21): the word-by-word slice was the one persisted map that
     // passed through the ...p spread uncoerced — a null from a tampered
     // payload crashed renderQuran on every loaded surah.
-    quranWords: asObject(p.quranWords),
+    quranWords: cleanObject(p.quranWords),
     // Coarse shape guard for the tasbih counters (same class as the rest).
-    tasbih: asObject(p.tasbih),
+    tasbih: cleanObject(p.tasbih),
     // (audioDownloads intentionally omitted here — see the note above: the
     // registry is always cleared on restore because the IndexedDB blobs
     // never travel inside a backup.)
-    ramadanLog: asObject(p.ramadanLog),
+    ramadanLog: cleanObject(p.ramadanLog),
     zakat: {
       prefs: {
         basis: zakatPrefs.basis === 'silver' ? 'silver' : 'gold',
@@ -269,6 +341,8 @@ export function sanitizeRestoredPayload(payload) {
       const raw = asObject(p.counters);
       const clean = {};
       for (const [id, v] of Object.entries(raw).slice(0, 2000)) {
+        // (S3) isSafeKey: counter ids copy verbatim as keys below.
+        if (!isSafeKey(id)) continue;
         if (!v || typeof v !== 'object' || Array.isArray(v)) continue;
         clean[id] = {
           count: asCount(v.count),
@@ -327,7 +401,7 @@ export function sanitizeRestoredPayload(payload) {
       page: Number.isFinite(mb.page) ? mb.page : null,
       ts: Number.isFinite(mb.ts) ? mb.ts : null,
     },
-    dailyChecklist: asObject(p.dailyChecklist),
+    dailyChecklist: cleanObject(p.dailyChecklist),
     quizStats: {
       bestScore: Number.isFinite(quizStats.bestScore) ? quizStats.bestScore : 0,
       totalAttempts: Number.isFinite(quizStats.totalAttempts) ? quizStats.totalAttempts : 0,
@@ -364,10 +438,12 @@ export function sanitizeRestoredPayload(payload) {
       currentStreak: asCount(stats.currentStreak),
       lastActiveDate: ISO_DATE.test(String(stats.lastActiveDate)) ? stats.lastActiveDate : null,
       // (v4.2) values render in the ranked-categories list.
+      // (S3) isSafeKey: arbitrary category keys copy verbatim here.
       favoriteCategories: (() => {
         const raw = asObject(stats.favoriteCategories);
         const clean = {};
-        for (const [k, v] of Object.entries(raw).slice(0, 100)) clean[k] = asCount(v);
+        for (const [k, v] of Object.entries(raw).slice(0, 100))
+          if (isSafeKey(k)) clean[k] = asCount(v);
         return clean;
       })(),
     },

@@ -20,5 +20,12 @@
   },
   "engines": {
     "node": ">=20"
-  }
+  },
+  "main": "eslint.config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": ""
 }

@@ -47,9 +47,12 @@ function hadithCardHTML(
     showArabic = true,
     manageable = false,
     bookId = '',
+    bookmarked = false,
+    note = '',
   }
 ) {
   const num = String(h.n);
+  const hasNote = typeof note === 'string' && note.trim() !== '';
   return `
   <article class="hadith-card${isTarget ? ' hadith-card--target' : ''}" ${isTarget ? 'data-hadith-target' : ''} id="hadith-${escapeHTML(num)}">
     <div class="hadith-card__meta">
@@ -63,7 +66,10 @@ function hadithCardHTML(
     </div>
     ${showArabic && h.ar ? `<p class="hadith-card__arabic" dir="rtl" lang="ar">${escapeHTML(h.ar)}</p>` : ''}
     ${h.en && showTranslation ? `<p class="hadith-card__translation" dir="ltr">${escapeHTML(h.en)}</p>` : ''}
+    ${hasNote ? `<p class="hadith-card__note" dir="auto"><span class="hadith-card__note-label">${t('hadith.note', lang)}</span> ${escapeHTML(note)}</p>` : ''}
     <div class="hadith-card__actions">
+      <button type="button" class="icon-btn icon-btn--sm${bookmarked ? ' icon-btn--active' : ''}" data-action="hadith-bookmark" data-book-id="${escapeHTML(bookId)}" data-n="${escapeHTML(num)}" aria-pressed="${bookmarked}" aria-label="${t(bookmarked ? 'hadith.unbookmark' : 'hadith.bookmark', lang)}" title="${t(bookmarked ? 'hadith.unbookmark' : 'hadith.bookmark', lang)}">${icon('bookmark', { size: 15 })}</button>
+      <button type="button" class="icon-btn icon-btn--sm${hasNote ? ' icon-btn--active' : ''}" data-action="hadith-note-open" data-book-id="${escapeHTML(bookId)}" data-n="${escapeHTML(num)}" aria-pressed="${hasNote}" aria-label="${t(hasNote ? 'hadith.editNote' : 'hadith.addNote', lang)}" title="${t(hasNote ? 'hadith.editNote' : 'hadith.addNote', lang)}">${icon('edit', { size: 15 })}</button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="hadith-copy" data-n="${escapeHTML(num)}" aria-label="${t('common.copy', lang)}" title="${t('common.copy', lang)}">${icon('copy', { size: 15 })}</button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="hadith-share" data-n="${escapeHTML(num)}" aria-label="${t('hadith.cardShare', lang)}" title="${t('hadith.cardShare', lang)}">${icon('share', { size: 15 })}</button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="hadith-speak" data-n="${escapeHTML(num)}" aria-label="${t('hadith.cardListen', lang)}" title="${t('hadith.cardListen', lang)}">${icon('volume', { size: 15 })}</button>
@@ -193,9 +199,12 @@ function renderBookGrid(state, lang) {
 /* Book reader                                                         */
 /* ------------------------------------------------------------------ */
 
-function sectionChipRow(doc, active, lang) {
+function sectionChipRow(doc, active, lang, bookmarkCount = 0) {
   const chips = [
     `<button type="button" class="chip ${active === 'all' ? 'chip--active' : ''}" data-action="hadith-section" data-id="all" aria-pressed="${active === 'all'}">${t('hadith.allChapters', lang)}</button>`,
+    // (v5.2.0) Bookmarks pseudo-section — filtered in renderBookReader,
+    // not in services/hadith.js (which only knows chapter ids).
+    `<button type="button" class="chip ${active === 'bookmarked' ? 'chip--active' : ''}" data-action="hadith-section" data-id="bookmarked" aria-pressed="${active === 'bookmarked'}">${icon('bookmark', { size: 13 })} ${t('hadith.bookmarked', lang)} <span class="chip__count">${bookmarkCount}</span></button>`,
     ...doc.sections.map(
       (s) => `
     <button type="button" class="chip ${active === s.id ? 'chip--active' : ''}" data-action="hadith-section" data-id="${escapeHTML(s.id)}" aria-pressed="${active === s.id}" title="${escapeHTML(s.name)}">
@@ -257,7 +266,12 @@ function renderBookReader(state, lang) {
       ? deepN
       : null;
 
-  const filteredAll = filterHadiths(doc, { query: view.query, section: view.section });
+  const filteredAll = filterHadiths(doc, {
+    query: view.query,
+    // (v5.2.0) the bookmarks pseudo-section is resolved here, in the view:
+    // services/hadith.js only knows real chapter ids.
+    section: view.section === 'bookmarked' ? 'all' : view.section,
+  });
   // (v5.0.0) hidden individual hadiths never render (manage mode still
   // hides them — the unhide bar below is the recovery point, same as azkar).
   const prefs = contentPrefsOf(state).hadithPrefs || {};
@@ -266,9 +280,17 @@ function renderBookReader(state, lang) {
   const hiddenInBook = Object.keys(hiddenHadiths).filter(
     (k) => hiddenHadiths[k] && k.startsWith(`${bookId}:`)
   );
-  const filtered = manage
+  const bookmarks = new Set(
+    (state.hadithBookmarks || []).filter((k) => k.startsWith(`${bookId}:`))
+  );
+  const bookmarkCount = bookmarks.size;
+  const filteredBase = manage
     ? filteredAll
     : filteredAll.filter((h) => !hiddenHadiths[`${bookId}:${h.n}`]);
+  const filtered =
+    view.section === 'bookmarked'
+      ? filteredBase.filter((h) => bookmarks.has(`${bookId}:${h.n}`))
+      : filteredBase;
   const page = clampPage(view.page, filtered);
   const pages = pageCount(filtered);
   const from = filtered.length ? (page - 1) * HADITH_PAGE_SIZE + 1 : 0;
@@ -295,6 +317,7 @@ function renderBookReader(state, lang) {
     </div>`
       : '';
 
+  const notes = state.hadithNotes || {};
   const cards = filtered
     .slice((page - 1) * HADITH_PAGE_SIZE, page * HADITH_PAGE_SIZE)
     .map((h) =>
@@ -306,6 +329,8 @@ function renderBookReader(state, lang) {
         showArabic: state.settings.showHadithArabic !== false,
         manageable: manage,
         bookId,
+        bookmarked: bookmarks.has(`${bookId}:${h.n}`),
+        note: notes[`${bookId}:${h.n}`] || '',
       })
     )
     .join('');
@@ -330,7 +355,7 @@ function renderBookReader(state, lang) {
       </form>
     </div>
 
-    ${sectionChipRow(doc, view.section, lang)}
+    ${sectionChipRow(doc, view.section, lang, bookmarkCount)}
 
     ${unhideBar}
 
@@ -374,6 +399,12 @@ export function dailyHadithCardHTML(state) {
       <a href="${buildHash(VIEWS.HADITH, { id: daily.bookId, n: String(h.n) })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-id="${escapeHTML(daily.bookId)}" data-n="${escapeHTML(String(h.n))}" aria-label="${t('hadith.openBook', lang)}">${icon('chevronRight', { size: 16 })}</a>
     </div>
     <p class="panel__subtext">${escapeHTML(pickLocale(bookMeta?.name ?? { en: daily.bookId }, lang))}</p>
-    ${hadithCardHTML(h, { lang, showTranslation: state.settings.showTranslation })}
+    ${hadithCardHTML(h, {
+      lang,
+      showTranslation: state.settings.showTranslation,
+      bookId: daily.bookId,
+      bookmarked: (state.hadithBookmarks || []).includes(`${daily.bookId}:${h.n}`),
+      note: (state.hadithNotes || {})[`${daily.bookId}:${h.n}`] || '',
+    })}
   </section>`;
 }

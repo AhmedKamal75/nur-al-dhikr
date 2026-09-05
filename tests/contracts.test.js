@@ -131,6 +131,9 @@ describe('contract: every emitted data-action resolves to a handler', () => {
     // branches in js/app/events.js's change listener).
     'sunnah-toggle',
     'toggle-traveler-mode',
+    // Quiet-hours switch in the Prayer adhan panel (toggle-prayer-quiet
+    // branch in the same change listener).
+    'toggle-prayer-quiet',
     // (v4.5.2) manage-mode target stepper: a number <input>, so it lives in
     // the CHANGE pipeline (the content-set-target branch in events.js).
     'content-set-target',
@@ -150,6 +153,7 @@ describe('contract: every emitted data-action resolves to a handler', () => {
       'submit-new-collection-inline',
       'submit-new-bookmark-folder',
       'submit-new-location-profile',
+      'submit-new-playlist',
     ]) {
       registered.add(a);
     }

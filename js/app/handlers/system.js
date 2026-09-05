@@ -10,8 +10,18 @@ import { retryLibraryLoad } from '../net.js';
 import { VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
 import { go } from '../../core/router.js';
+import {
+  DAILY_VERSE_PRESET_ID,
+  JUMUAH_PRESET_ID,
+  dailyVerseReminder,
+  dayKey,
+  hasPreset,
+  jumuahNote,
+} from '../../domain/reminderPresets.js';
 import { actions, dryRunRestore, persistedSnapshot, store } from '../../core/state.js';
+import { buildReciterPick } from './quranAudio.js';
 import { dryRunVerdict } from '../../services/dataHealth.js';
+import * as surahPlayback from '../../services/surahPlayback.js';
 import { buildConfirm } from '../../ui/menus.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -20,6 +30,35 @@ import * as backup from '../../services/backup.js';
 export const clickHandlers = {
   'set-setting': (ds) => {
     store.dispatch(actions.updateSettings({ [ds.key]: ds.value }));
+    // Live-apply reciter voices to a running recitation session — otherwise
+    // picking a new reciter mid-listen does nothing until the next manual
+    // play (the "always the same reciter" complaint).
+    if (surahPlayback.isActive()) {
+      if (ds.key === 'reciter') {
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setReciter(ds.value)));
+      } else if (ds.key === 'reciterB') {
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setReciterB(ds.value)));
+      } else if (ds.key === 'reciterCompare') {
+        const on = ds.value === true || ds.value === 'true';
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setCompare(on)));
+      }
+    }
+    // Picks made inside the in-player voice picker re-render the picker in
+    // place so the check marks follow the choice (the main view re-renders
+    // behind the modal, never the modal itself).
+    if (ds.refresh === 'recite-voice-open') {
+      openModal(buildReciterPick(store.getState()), { labelledBy: 'modal-title-reciter' });
+    }
+  },
+
+  // (U14) Settings table-of-contents jump: scrolls to the panel without
+  // touching the hash router (a plain #anchor would be parsed as a route).
+  // The button keeps focus, so nothing is lost for keyboard users.
+  'settings-toc-go': (ds) => {
+    const el = typeof ds.target === 'string' ? document.getElementById(ds.target) : null;
+    if (!el) return;
+    const reduce = !!store.getState().settings.reduceMotion;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   },
 
   /**
@@ -43,6 +82,41 @@ export const clickHandlers = {
   'add-reminder': () => {
     const lang = store.getState().settings.language;
     openModal(reminderFormHTML(lang), { labelledBy: 'modal-title-reminder' });
+  },
+
+  // (v5.2.0) One-tap notification presets on the existing scheduler —
+  // Jumu'ah (recurring Friday calendar note) and daily verse (morning
+  // reminder deep-linking home). Idempotent: re-tapping reports "already".
+  'add-preset': (ds) => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    if (ds.preset === 'jumuah') {
+      if (hasPreset(state.calendarNotes, JUMUAH_PRESET_ID)) {
+        showToast(t('preset.exists', lang));
+        return;
+      }
+      const note = jumuahNote(dayKey(new Date()), {
+        title: t('preset.jumuahTitle', lang),
+        body: t('preset.jumuahBody', lang),
+      });
+      if (!note) return;
+      store.dispatch(actions.addCalendarNote(note));
+      showToast(t('preset.added', lang));
+      return;
+    }
+    if (ds.preset === 'dailyVerse') {
+      if (hasPreset(state.reminders, DAILY_VERSE_PRESET_ID)) {
+        showToast(t('preset.exists', lang));
+        return;
+      }
+      const reminder = dailyVerseReminder({
+        label: t('preset.dailyVerseLabel', lang),
+        body: t('preset.dailyVerseBody', lang),
+      });
+      if (!reminder) return;
+      store.dispatch(actions.addReminder(reminder));
+      showToast(t('preset.added', lang));
+    }
   },
 
   'delete-reminder': (ds) => {

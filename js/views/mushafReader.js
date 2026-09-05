@@ -43,7 +43,9 @@ import {
 } from '../services/mushaf.js';
 import { planStatus, justCompletedKhatma } from '../domain/khatma.js';
 import { VIEWS, MUSHAF_PAGE_COUNT, MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
+import { sleepSnapshot } from '../services/surahPlayback.js';
 import { renderAyahWords, buildAyahStudyExtras } from './tafsirPanel.js';
+import { reciterShortLabel } from './playerBar.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonMushafPage, skeletonLines } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
@@ -56,6 +58,24 @@ import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
  *  number, the surah cartouche count) stay Eastern always, because they
  *  ARE the mushaf, whatever language its reader speaks. */
 const numFor = (lang, n) => (lang === 'ar' ? toEasternArabicNumerals(n) : String(n));
+
+/** Distinct surah chapters across the visible page docs, in book order —
+ *  the source for the multi-surah recitation picker (a page often holds
+ *  the tail of one surah plus the head of the next). */
+export function pageChapters(docs) {
+  const seen = new Set();
+  const out = [];
+  for (const doc of docs) {
+    if (!doc || !Array.isArray(doc.chapters)) continue;
+    for (const c of doc.chapters) {
+      const n = Number(c?.number);
+      if (!Number.isFinite(n) || seen.has(n)) continue;
+      seen.add(n);
+      out.push(c);
+    }
+  }
+  return out;
+}
 
 /** (v4.5.2) Arabic plural grammar for the ayah-count lines: 3–10 takes
  *  the plural (آيات), everything above takes the singular (آية) — “١١٠
@@ -153,16 +173,22 @@ export function renderMushaf(state) {
         // an ornament-framed cartouche carrying the surah name, flanked by
         // decorative diamonds, with the Bismillah in gilded calligraphy
         // beneath it wherever the surah opens.
+        // The banner doubles as the surah's recite button (tap the cartouche
+        // to listen from its start) — no extra chrome on the paper, just an
+        // affordance with a matching label.
+        const recitingBanner =
+          state.surahPlayback?.active &&
+          Number(state.surahPlayback.surah) === Number(chapter.number);
         const banner = showBanner
           ? `
-      <div class="mushaf-surah-banner" role="heading" aria-level="2">
+      <button type="button" class="mushaf-surah-banner" data-action="surah-play" data-surah="${chapter.number}" aria-label="${escapeHTML(chapter.titleAr)} — ${t(recitingBanner ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}" title="${t(recitingBanner ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}">
         <span class="mushaf-surah-banner__flank" aria-hidden="true">◆</span>
         <span class="mushaf-surah-banner__frame">
           <span class="mushaf-surah-banner__name">${escapeHTML(chapter.titleAr)}</span>
           ${surahAyahCountLine(state, chapter, lang)}
         </span>
         <span class="mushaf-surah-banner__flank" aria-hidden="true">◆</span>
-      </div>
+      </button>
       ${showBismillah && prefs.bismillahStyle !== 'hidden' ? `<p class="mushaf-bismillah bismillah--${prefs.bismillahStyle}">\u0628ِ\u0633\u0652\u0645ِ \u0627\u0644\u0644\u0651\u064e\u0647ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u064e\u0670\u0646ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645ِ</p>` : ''}
     `
           : '';
@@ -210,6 +236,21 @@ export function renderMushaf(state) {
   /* The windowed (normal) shell: a calm app bar + the book + nav.     */
   /* Fullscreen swaps ALL of it for the book alone + fading controls.  */
   /* ---------------------------------------------------------------- */
+  // A page (or spread) can hold several surahs — the topbar play button
+  // recites the single surah directly, or opens the surah picker when the
+  // visible pages hold more than one.
+  const pageSurahs = pageChapters(leftDoc ? [rightDoc, leftDoc] : [rightDoc]);
+  const recitingOnPage =
+    state.surahPlayback?.active &&
+    pageSurahs.some((c) => Number(c.number) === Number(state.surahPlayback.surah));
+  const topbarPlay =
+    pageSurahs.length > 1
+      ? `<button type="button" class="icon-btn ${recitingOnPage ? 'icon-btn--playing' : ''}" data-action="mushaf-play-pick" aria-label="${t('mushaf.playSurahOnPage', lang)}" title="${t('mushaf.playSurahOnPage', lang)}">
+        ${icon(recitingOnPage ? 'stop' : 'play', { size: 18 })}
+      </button>`
+      : `<button type="button" class="icon-btn ${recitingOnPage ? 'icon-btn--playing' : ''}" data-action="surah-play" data-surah="${headerChapter.number}" aria-label="${state.surahPlayback?.active ? t('audio.reciteStop', lang) : t('audio.reciteSurah', lang)}" title="${state.surahPlayback?.active ? t('audio.reciteStop', lang) : t('audio.reciteSurah', lang)}">
+        ${icon(recitingOnPage ? 'stop' : 'play', { size: 18 })}
+      </button>`;
   const topbar = `
     <header class="mushaf-topbar">
       <a class="icon-btn" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}" aria-label="${t('nav.home', lang)}">
@@ -221,9 +262,7 @@ export function renderMushaf(state) {
       <button type="button" class="icon-btn" data-action="mushaf-open-jump" aria-label="${t('mushaf.jumpTo', lang)}" title="${t('mushaf.jumpTo', lang)}">
         ${icon('grid', { size: 18 })}
       </button>
-      <button type="button" class="icon-btn ${state.surahPlayback?.active && Number(state.surahPlayback.surah) === Number(headerChapter.number) ? 'icon-btn--playing' : ''}" data-action="surah-play" data-surah="${headerChapter.number}" aria-label="${state.surahPlayback?.active ? t('audio.reciteStop', lang) : t('audio.reciteSurah', lang)}" title="${state.surahPlayback?.active ? t('audio.reciteStop', lang) : t('audio.reciteSurah', lang)}">
-        ${icon(state.surahPlayback?.active && Number(state.surahPlayback.surah) === Number(headerChapter.number) ? 'stop' : 'play', { size: 18 })}
-      </button>
+      ${topbarPlay}
       <button type="button" class="icon-btn" data-action="mushaf-toggle-fullscreen" aria-label="${t('mushaf.fullscreenEnter', lang)}" title="${t('mushaf.fullscreenEnter', lang)}">
         ${icon('expand', { size: 18 })}
       </button>
@@ -288,7 +327,7 @@ export function renderMushaf(state) {
     <div class="mushaf-page-wrap" data-mushaf-paper="${paper.id}" style="--mushaf-paper-bg:${paper.bg};--mushaf-paper-ink:${paper.ink};--mushaf-paper-border:${paper.border};">
       ${bookHTML}
     </div>
-    ${buildFullscreenControls(state, rightPage, leftPage, headerChapter, canPrev, canNext, lang)}
+    ${buildFullscreenControls(state, rightPage, leftPage, headerChapter, pageSurahs, canPrev, canNext, lang)}
     <div class="mushaf-fs-taps" aria-hidden="true">
       <button type="button" class="mushaf-fs-tap mushaf-fs-tap--prev" data-action="mushaf-prev" tabindex="-1">${icon('chevronRight', { size: 22 })}</button>
       <button type="button" class="mushaf-fs-tap mushaf-fs-tap--next" data-action="mushaf-next" tabindex="-1">${icon('chevronLeft', { size: 22 })}</button>
@@ -373,22 +412,43 @@ function surahAyahCountLine(state, chapter, lang) {
  * drives opacity from app/events.js), translucent over the book, and
  * carrying everything a fullscreen session needs — page turns, the page
  * counter, recitation play/stop with its live ayah counter, and exit.
- * The recitation console parity (repeat/follow/listen/sleep chips) lives
- * in the windowed player bar; here the counter + stop button keep the
- * session controllable without breaking the "only the mushaf" promise.
+ *
+ * Full parity with the windowed recitation console: while a session runs,
+ * a second glass row carries the SAME chips as the player bar (ayah
+ * prev/next, per-ayah repeat, follow, listen/continuous, echo, sleep,
+ * voice picker, A/B compare, stop) so nothing is lost by going fullscreen.
  */
 function buildFullscreenControls(
   state,
   rightPage,
   leftPage,
   headerChapter,
+  visibleSurahs,
   canPrev,
   canNext,
   lang
 ) {
   const sp = state.surahPlayback;
-  const recitingThis = sp?.active && Number(sp.surah) === Number(headerChapter.number);
+  const recitingThis =
+    sp?.active && visibleSurahs.some((c) => Number(c.number) === Number(sp.surah));
+  const qPos =
+    recitingThis &&
+    Array.isArray(sp.queue) &&
+    sp.queue.length > 1 &&
+    Number.isFinite(Number(sp.qIndex))
+      ? ` · ${Number(sp.qIndex) + 1}/${sp.queue.length}`
+      : '';
   const reciteLabel = recitingThis ? t('audio.reciteStop', lang) : t('audio.reciteSurah', lang);
+  // A spread page often holds 2+ surahs — direct-play only when there is
+  // exactly one; otherwise the button opens the surah picker.
+  const playBtn =
+    visibleSurahs.length > 1
+      ? `<button type="button" class="icon-btn ${recitingThis ? 'icon-btn--playing' : ''}" data-action="mushaf-play-pick" aria-label="${t('mushaf.playSurahOnPage', lang)}" title="${t('mushaf.playSurahOnPage', lang)}">
+        ${icon(recitingThis ? 'stop' : 'play', { size: 18 })}
+      </button>`
+      : `<button type="button" class="icon-btn ${recitingThis ? 'icon-btn--playing' : ''}" data-action="surah-play" data-surah="${headerChapter.number}" aria-label="${reciteLabel}" title="${reciteLabel}">
+        ${icon(recitingThis ? 'stop' : 'play', { size: 18 })}
+      </button>`;
   // (v4.5) the page counter reads the SPREAD: "٣–٤ / ٦٠٤" in two-page
   // mode, the plain page number in single-page mode.
   const pageLabel = leftPage
@@ -406,11 +466,49 @@ function buildFullscreenControls(
       <button type="button" class="icon-btn" data-action="mushaf-next" ${canNext ? '' : 'disabled'} aria-label="${t('mushaf.nextPage', lang)}">
         ${icon('chevronLeft', { size: 20 })}
       </button>
-      <button type="button" class="icon-btn ${recitingThis ? 'icon-btn--playing' : ''}" data-action="surah-play" data-surah="${headerChapter.number}" aria-label="${reciteLabel}" title="${reciteLabel}">
-        ${icon(recitingThis ? 'stop' : 'play', { size: 18 })}
-      </button>
-      ${recitingThis ? `<span class="mushaf-fs-controls__ayah" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}</span>` : ''}
-    </div>`;
+      ${playBtn}
+      ${recitingThis ? `<span class="mushaf-fs-controls__ayah" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}${escapeHTML(qPos)}</span>` : ''}
+    </div>
+    ${recitingThis ? buildFullscreenConsole(state, lang) : ''}`;
+}
+
+/** The fullscreen console's second glass row — the windowed player bar's
+ *  recitation chips, re-homed over the book. Same actions, same labels. */
+function buildFullscreenConsole(state, lang) {
+  const sp = state.surahPlayback;
+  const follow = state.settings.audio?.ayahFollow ?? true;
+  const continuous = sp.continuous === true;
+  const sleep = sleepSnapshot();
+  const rep = [1, 3, 5, 10, -1].includes(sp.repeat) ? sp.repeat : 1;
+  const repLabel = rep === -1 ? '\u221e' : `\u00d7${rep}`;
+  const echo = sp.listenRepeat === true;
+  const compare = sp.compare === true;
+  const voiceB = state.settings.reciterB || sp.reciterIdB || null;
+  const voiceA = sp.reciterId || state.settings.reciter;
+  const loop = [1, 2, 3, 5, 10].includes(sp.loop) ? sp.loop : 1;
+  const speed = Number(sp.speed) || 1;
+  const chip = (action, on, label, inner, extra = '') =>
+    `<button type="button" class="mushaf-fs-chip ${on ? 'mushaf-fs-chip--on' : ''}" data-action="${action}" aria-label="${escapeHTML(label)}" title="${escapeHTML(label)}"${extra ? ` ${extra}` : ''}>${inner}</button>`;
+  return `
+    <div class="mushaf-fs-console" data-fs-controls>
+      <button type="button" class="icon-btn" data-action="recite-ayah-prev" aria-label="${t('audio.ayahPrev', lang)}" title="${t('audio.ayahPrev', lang)}">${icon('chevronRight', { size: 16 })}</button>
+      <button type="button" class="icon-btn" data-action="recite-ayah-next" aria-label="${t('audio.ayahNext', lang)}" title="${t('audio.ayahNext', lang)}">${icon('chevronLeft', { size: 16 })}</button>
+      ${chip('recite-repeat-toggle', rep !== 1, `${t('audio.repeatAyah', lang)} (${repLabel})`, `${icon('repeat', { size: 13 })} ${repLabel}`)}
+      ${chip('recite-follow-toggle', follow, t('audio.follow', lang), icon(follow ? 'eye' : 'eyeOff', { size: 14 }))}
+      ${chip('recite-listen-toggle', continuous, t('audio.listenMode', lang), `${icon('play', { size: 13 })} ${t('audio.listen', lang)}`)}
+      ${chip('recite-echo-toggle', echo, t('audio.echoMode', lang), `${icon('volume', { size: 13 })} ${t('audio.echo', lang)}`)}
+      ${chip('recite-sleep-cycle', sleep.enabled, t('audio.sleepTimer', lang), `${icon('moon', { size: 13 })}${sleep.enabled ? ` ${escapeHTML(sleep.label)}` : ''}`)}
+      ${chip('recite-voice-open', false, `${t('audio.chooseReciter', lang)} — ${reciterShortLabel(voiceA, lang)}${voiceB ? ` + ${reciterShortLabel(voiceB, lang)}` : ''}`, `${icon('volume', { size: 13 })} ${escapeHTML(reciterShortLabel(voiceA, lang))}${voiceB ? `+${escapeHTML(reciterShortLabel(voiceB, lang))}` : ''}`)}
+      ${chip('recite-compare-toggle', compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
+      ${chip('recite-loop-toggle', loop !== 1, t('audio.loopMode', lang), `${icon('repeat', { size: 13 })} ${loop === 1 ? t('audio.loop', lang) : `×${loop}`}`)}
+      ${chip('recite-speed-cycle', false, t('audio.speed', lang), `${speed}×`)}
+      <button type="button" class="icon-btn" data-action="recite-stop" aria-label="${t('audio.reciteStop', lang)}" title="${t('audio.reciteStop', lang)}">${icon('stop', { size: 16 })}</button>
+    </div>
+    ${
+      sp.waiting === true
+        ? `<div class="mushaf-fs-echo" role="status">${icon('volume', { size: 14 })} ${t('audio.yourTurn', lang)}</div>`
+        : ''
+    }`;
 }
 
 /**
@@ -455,6 +553,49 @@ function buildTranslationTray(state, docs, lang) {
   return `
     <h2 class="mushaf-tray__title">${icon('book', { size: 15 })} ${t('mushaf.translation', lang)}</h2>
     ${rows.join('')}`;
+}
+
+/**
+ * Multi-surah picker for the recitation button: when the visible pages hold
+ * more than one surah (tail of one + head of the next), each row recites
+ * that surah from its start (or opens the ayah-range picker for a slice).
+ * Pure template over the same page docs the reader renders.
+ */
+export function buildMushafPlayPick(state) {
+  const lang = state.settings.language;
+  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+  const right = spreadOn ? spreadRightPage(page) : page;
+  const left = spreadOn ? spreadLeftPage(right) : null;
+  const docs =
+    left != null
+      ? [state.mushaf.pages[String(right)], state.mushaf.pages[String(left)]]
+      : [state.mushaf.pages[String(page)]];
+  const surahs = pageChapters(docs);
+  const activeSurah = state.surahPlayback?.active ? Number(state.surahPlayback.surah) : null;
+  const rows = surahs
+    .map((c) => {
+      const n = Number(c.number);
+      const active = activeSurah === n;
+      const name = lang === 'ar' ? c.titleAr : `${c.titleEn || ''} · ${c.titleAr || ''}`;
+      return `
+      <div class="mushaf-pick-row">
+        <span class="mushaf-pick-row__name">${escapeHTML(name)}</span>
+        <button type="button" class="btn ${active ? 'btn--primary' : 'btn--secondary'} btn--sm" data-action="surah-play" data-surah="${n}">
+          ${icon(active ? 'stop' : 'play', { size: 14 })} ${t(active ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}
+        </button>
+        <button type="button" class="icon-btn" data-action="quran-range-open" data-surah="${n}" aria-label="${t('audio.rangeTitle', lang)}" title="${t('audio.rangeTitle', lang)}">
+          ${icon('target', { size: 16 })}
+        </button>
+      </div>`;
+    })
+    .join('');
+  return `
+  <div class="mushaf-pick">
+    <h2 id="modal-title-mushaf-pick">${t('mushaf.playSurahOnPage', lang)}</h2>
+    <p class="panel__subtext">${t('mushaf.playSurahHint', lang)}</p>
+    ${rows}
+  </div>`;
 }
 
 /** Jump-to-surah / jump-to-juz / jump-to-page drawer, opened in the shared modal. */

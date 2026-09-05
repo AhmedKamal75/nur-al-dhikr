@@ -35,6 +35,7 @@ import { closeModal, openModal, isModalOpen } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as player from '../services/player.js';
 import * as recitation from '../services/recitation.js';
+import * as surahPlayback from '../services/surahPlayback.js';
 import { clickHandlers as navClick } from './handlers/navigation.js';
 import { clickHandlers as itemsClick } from './handlers/items.js';
 import { clickHandlers as systemClick } from './handlers/system.js';
@@ -259,6 +260,11 @@ export function bindGlobalEvents() {
     }
     if (target.matches('[data-action="toggle-setting"]')) {
       store.dispatch(actions.updateSettings({ [target.dataset.key]: target.checked }));
+      // Live-apply the compare-mode preference to a running recitation
+      // session (same as the set-setting click path in handlers/system.js).
+      if (target.dataset.key === 'reciterCompare' && surahPlayback.isActive()) {
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setCompare(target.checked)));
+      }
       return;
     }
     if (target.matches('[data-action="toggle-mushaf-pref"]')) {
@@ -350,6 +356,30 @@ export function bindGlobalEvents() {
     if (target.matches('[data-bind="prayer-alert-sound"]')) {
       store.dispatch(actions.updatePrayerSettings({ alertSound: target.value }));
       playSound(target.value);
+      return;
+    }
+    if (target.matches('[data-bind="prayer-adhan-volume"]')) {
+      const v = Math.min(100, Math.max(0, parseInt(target.value, 10) || 0));
+      store.dispatch(actions.updatePrayerSettings({ adhanVolume: v }));
+      return;
+    }
+    if (target.matches('[data-bind="prayer-quiet-start"]')) {
+      if (/^([01]\d|2[0-3]):[0-5]\d$/.test(target.value))
+        store.dispatch(actions.updatePrayerSettings({ quietStart: target.value }));
+      return;
+    }
+    if (target.matches('[data-bind="prayer-quiet-end"]')) {
+      if (/^([01]\d|2[0-3]):[0-5]\d$/.test(target.value))
+        store.dispatch(actions.updatePrayerSettings({ quietEnd: target.value }));
+      return;
+    }
+    if (target.matches('[data-bind="prayer-quiet-volume"]')) {
+      const v = Math.min(100, Math.max(0, parseInt(target.value, 10) || 0));
+      store.dispatch(actions.updatePrayerSettings({ quietVolume: v }));
+      return;
+    }
+    if (target.matches('[data-action="toggle-prayer-quiet"]')) {
+      store.dispatch(actions.updatePrayerSettings({ quietEnabled: target.checked }));
       return;
     }
     if (target.matches('[data-bind="note-recurrence"]')) {

@@ -22,6 +22,17 @@ export function initialState() {
     },
     settings: clone(DEFAULT_SETTINGS),
     favorites: [],
+    // (v5.2.0) Hadith bookmarks: ["<bookId>:<n>"] — the ayah-bookmark
+    // equivalent for the hadith reader (hadith docs are ephemeral, so the
+    // key carries everything needed to deep-link back).
+    hadithBookmarks: [],
+    // Personal notes on individual hadiths: { "<bookId>:<n>": text }.
+    // Persisted + restore-sanitized like bookmarks (capped, key-shaped).
+    hadithNotes: {},
+    // Recitation queues (playlists): [{ id, name, items: [{ surah, from,
+    // to }], createdAt }]. Persisted + restore-sanitized (capped counts,
+    // clamped surah/ayah ints). Played in order through the verse engine.
+    playlists: [],
     collections: [], // [{ id, name:{en,ar}, items:[ids], createdAt }]
     counters: {}, // { itemId: { count, target, completedCycles, lastUpdated } }
     reminders: [], // [{ id, type, time, section, enabled }]
@@ -302,6 +313,9 @@ export const PERSISTED_KEYS = [
   // exported for the v3.14 ephemeral-state gate
   'settings',
   'favorites',
+  'hadithBookmarks',
+  'hadithNotes',
+  'playlists',
   'collections',
   'counters',
   'reminders',

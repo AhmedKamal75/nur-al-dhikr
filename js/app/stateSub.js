@@ -22,6 +22,7 @@ import {
   maybeStartQuranSearchBuild,
 } from './quranSearch.js';
 import { maybeFollowRecitation } from './recitationFollow.js';
+import { syncReadingTimer } from './readingTimer.js';
 import { render } from './renderer.js';
 import {
   maybeMarkNudgeShown,
@@ -30,7 +31,7 @@ import {
   updateRamadanLifecycle,
 } from './tickers.js';
 import { scheduleTriggerArm } from './triggers.js';
-import { armFsControlsAfterEnter } from './fullscreen.js';
+import { armFsControlsAfterEnter, updateAmbientWakeLifecycle } from './fullscreen.js';
 import { VIEWS } from '../core/config.js';
 
 import { store } from '../core/state.js';
@@ -145,6 +146,8 @@ export function onStateChange(stateArg, action) {
     updateCompassLifecycle(state);
     updateRamadanLifecycle(state);
     updateHomeTickerLifecycle(state);
+    // (v5.2.0) ambient nightstand wake lock follows the route.
+    updateAmbientWakeLifecycle(state);
     maybeMarkNudgeShown(state);
     maybeProbeStorage(state);
     maybeStartQuranSearchBuild(state);
@@ -165,6 +168,9 @@ export function onStateChange(stateArg, action) {
     }
     rt.lastArmLang = state.settings.language;
     if (!isSelfRenderedSettingsUpdate(action)) render(state);
+    // Reading timer follows navigation (entering/leaving the two readers
+    // starts/stops the clock; same-view param changes never disturb it).
+    syncReadingTimer(state, action);
     maybeScrollToFocusAyah(state);
     maybeScrollToFocusHadith(state);
     maybeFollowRecitation(state);

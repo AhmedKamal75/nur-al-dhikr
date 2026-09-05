@@ -41,6 +41,7 @@ export const actions = {
     count,
     newSession,
   }),
+  addReadingSeconds: (seconds) => ({ type: 'READING_ADD_SECONDS', seconds }),
   pushHistory: (itemId, categoryId) => ({ type: 'HISTORY_PUSH', itemId, categoryId }),
   addSearchHistory: (query) => ({ type: 'SEARCH_HISTORY_ADD', query }),
   clearSearchHistory: () => ({ type: 'SEARCH_HISTORY_CLEAR' }),
@@ -57,6 +58,12 @@ export const actions = {
   retryDataLoad: (key) => ({ type: 'DATA_LOAD_RETRY', key }),
   setQuranSurah: (number, surah) => ({ type: 'QURAN_SURAH_LOADED', number: String(number), surah }),
   setQuranSurahsBulk: (docs) => ({ type: 'QURAN_SURAHS_BULK_LOADED', docs }),
+  // (v5.2.0) Translation-compare: second-edition overlay text per surah.
+  setQuranTranslationBDoc: (number, doc) => ({
+    type: 'QURAN_TRANSLATION_B_LOADED',
+    number: String(number),
+    doc,
+  }),
   setQuranBookmark: (surah) => ({ type: 'QURAN_BOOKMARK_SET', surah }),
   setMushafMeta: (meta) => ({ type: 'MUSHAF_META_LOADED', meta }),
   setMushafPage: (page, doc) => ({ type: 'MUSHAF_PAGE_LOADED', page: String(page), doc }),
@@ -89,6 +96,19 @@ export const actions = {
   hadithBookFailed: (bookId) => ({ type: 'HADITH_BOOK_FAILED', bookId }),
   setHadithDaily: (daily) => ({ type: 'HADITH_DAILY_SET', daily }),
   setHadithView: (patch) => ({ type: 'HADITH_VIEW_SET', patch }),
+  // (v5.2.0) Hadith bookmarks — key is "<bookId>:<n>".
+  toggleHadithBookmark: (bookId, n) => ({
+    type: 'HADITH_BOOKMARK_TOGGLE',
+    key: `${String(bookId)}:${String(n)}`,
+  }),
+  // Personal hadith notes — empty/blank text deletes the note.
+  setHadithNote: (key, text) => ({ type: 'HADITH_NOTE_SET', key, text }),
+  // Recitation queues (playlists) of { surah, from, to } ranges.
+  createPlaylist: (id, name) => ({ type: 'PLAYLIST_CREATE', id, name }),
+  renamePlaylist: (id, name) => ({ type: 'PLAYLIST_RENAME', id, name }),
+  deletePlaylist: (id) => ({ type: 'PLAYLIST_DELETE', id }),
+  addPlaylistItem: (id, item) => ({ type: 'PLAYLIST_ADD_ITEM', id, item }),
+  removePlaylistItem: (id, index) => ({ type: 'PLAYLIST_REMOVE_ITEM', id, index }),
   setSurahPlayback: (patch) => ({ type: 'SURAH_PLAYBACK_SET', patch }),
   // Hifz (memorization, v3.17)
   hifzSessionStart: ({ surah, level }) => ({ type: 'HIFZ_SESSION_START', surah, level }),

@@ -17,7 +17,7 @@
 
 import { icon } from '../core/icons.js';
 import { rt } from '../app/rt.js';
-import { t } from '../core/i18n.js';
+import { isRTL, t } from '../core/i18n.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 
@@ -117,10 +117,12 @@ export function renderTopBar(state) {
   // browser history (I3), so it always lands where the user actually came
   // from — including out-of-app entries on a fresh tab.
   const backDepth = typeof rt.navBackStack?.length === 'number' ? rt.navBackStack.length : 0;
+  // (U7) mirror the Back chevron in RTL — forward/back flips with direction.
+  const backIcon = isRTL(lang) ? 'chevronRight' : 'chevronLeft';
   const backButton =
     backDepth > 0
       ? `<button type="button" class="icon-btn topbar__back" data-action="go-back" aria-label="${t('nav.back', lang)}" title="${t('nav.back', lang)}">
-        ${icon('chevronLeft', { size: 20 })}
+        ${icon(backIcon, { size: 20 })}
       </button>`
       : '';
   return `
@@ -159,7 +161,7 @@ export function renderNav(state) {
     { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
   ];
   const mobileBar = `
-    <div class="nav-mobile-bar" aria-label="${t('a11y.mainNav', lang)}">
+    <nav class="nav-mobile-bar" aria-label="${t('a11y.mainNav', lang)}">
       ${MOBILE_ITEMS.map(
         (n) => `
       <a class="nav-mobile-bar__item ${isActive(active, n.view) ? 'nav-mobile-bar__item--active' : ''}" href="${buildHash(n.view)}" data-action="navigate" data-view="${n.view}" aria-current="${isActive(active, n.view) ? 'page' : 'false'}">
@@ -171,13 +173,13 @@ export function renderNav(state) {
         ${icon('menu', { size: 22 })}
         <span class="nav__label">${t('nav.more', lang)}</span>
       </button>
-    </div>`;
+    </nav>`;
 
   return `
   <div class="nav__scroller" data-nav-collapsed="${collapsed ? 'true' : 'false'}">
-    <div class="nav__inner" role="navigation" aria-label="${t('a11y.mainNav', lang)}">
+    <nav class="nav__inner" aria-label="${t('a11y.mainNav', lang)}">
       ${groupsHTML(active, lang)}
-    </div>
+    </nav>
   </div>
   ${mobileBar}
   <div class="nav-drawer-overlay" data-action="nav-drawer-close"></div>

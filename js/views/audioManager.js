@@ -14,6 +14,7 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
+import { queueSignature } from '../services/surahPlayback.js';
 import { searchReciters, findMoshaf } from '../services/audioCatalog.js';
 import { formatBytes } from '../services/audioStore.js';
 import { skeletonReciterRows } from '../ui/skeleton.js';
@@ -136,7 +137,80 @@ export function renderAudio(state) {
     ${hits.length > 60 ? `<p class="empty-hint">${t('audio.moreResults', lang, { n: hits.length })}</p>` : ''}
 
     ${grid}
+    ${renderQueuePanel(state, lang)}
     ${storageRow}
     <p class="view__meta">${t('audio.note', lang)}</p>
   </section>`;
+}
+
+/**
+ * Recitation queues: named lists of (surah, from, to) ranges played in
+ * order through the verse-by-verse engine. Ranges are saved from any
+ * ayah-range picker; queues play from here.
+ */
+function renderQueuePanel(state, lang) {
+  const lists = state.playlists || [];
+  const playingId =
+    state.surahPlayback?.active && Array.isArray(state.surahPlayback.queue)
+      ? queueIdOf(state)
+      : null;
+  const itemLabel = (it) => {
+    const name = surahName(state, it.surah);
+    const range = it.to != null && it.to !== it.from ? `:${it.from}–${it.to}` : `:${it.from}`;
+    return `${name} ${range}`;
+  };
+  const rows = lists
+    .map(
+      (p) => `
+    <div class="queue-row">
+      <div class="queue-row__head">
+        <span class="queue-row__name">${escapeHTML(p.name)}</span>
+        <span class="chip__count">${p.items.length}</span>
+        <button type="button" class="btn ${playingId === p.id ? 'btn--primary' : 'btn--secondary'} btn--sm" data-action="playlist-play" data-id="${escapeHTML(p.id)}">
+          ${icon(playingId === p.id ? 'stop' : 'play', { size: 14 })} ${t(playingId === p.id ? 'audio.reciteStop' : 'playlist.playQueue', lang)}
+        </button>
+        <button type="button" class="icon-btn icon-btn--sm" data-action="playlist-delete" data-id="${escapeHTML(p.id)}" aria-label="${t('common.delete', lang)}">
+          ${icon('trash', { size: 14 })}
+        </button>
+      </div>
+      ${
+        p.items.length
+          ? `<ol class="queue-row__items">${p.items
+              .map(
+                (it, i) => `
+            <li class="queue-row__item">
+              <span class="queue-row__item-label" dir="auto">${escapeHTML(itemLabel(it))}</span>
+              <button type="button" class="icon-btn icon-btn--sm" data-action="playlist-remove-item" data-id="${escapeHTML(p.id)}" data-index="${i}" aria-label="${t('common.delete', lang)}">
+                ${icon('close', { size: 13 })}
+              </button>
+            </li>`
+              )
+              .join('')}</ol>`
+          : `<p class="empty-hint">${t('playlist.empty', lang)}</p>`
+      }
+    </div>`
+    )
+    .join('');
+  return `
+    <section class="panel panel--queue">
+      <div class="panel__header">
+        <h2>${t('playlist.title', lang)}</h2>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="playlist-create">
+          ${icon('plus', { size: 14 })} ${t('playlist.create', lang)}
+        </button>
+      </div>
+      <p class="panel__subtext">${t('playlist.hint', lang)}</p>
+      ${rows || `<p class="empty-hint">${t('playlist.noQueues', lang)}</p>`}
+    </section>`;
+}
+
+/**
+ * Which saved queue (if any) the running verse session is playing: the
+ * engine holds the item list, not the playlist id, so match by exact item
+ * sequence against saved lists.
+ */
+function queueIdOf(state) {
+  const sig = queueSignature(state.surahPlayback?.queue);
+  if (!sig) return null;
+  return (state.playlists || []).find((p) => queueSignature(p.items) === sig)?.id || null;
 }

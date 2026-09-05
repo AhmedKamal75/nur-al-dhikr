@@ -95,8 +95,13 @@ js/
 ├── core/                  Infrastructure (no domain knowledge; the state/
 │   │                      package is the documented exception — see the
 │   │                      layer rule below)
-│   ├── config.js          Constants: VIEWS, palettes, shapes, defaults,
-│   │                      data URLs, sanitizers for settings shapes
+│   ├── config.js          Facade: APP_VERSION + re-exports of core/config/
+│   │                      (every importer keeps this one stable path)
+│   ├── config/            Split from the 1,133-line god-file (v5.2)
+│   │   ├── app.js         identity, storage keys, checklists, quiz, offsets
+│   │   ├── quran.js       corpus/Mushaf/tafsir/hadith/reciter URLs + editions
+│   │   ├── views.js       routes, Mushaf type/paper, grades, themes, defaults
+│   │   └── sanitize.js    sanitizeSettings/sanitizeMushafPrefs (XSS boundary)
 │   ├── i18n/              UI-chrome dictionary, split per language (v4.2)
 │   │   ├── en.js          882 English keys (contract-gated against ar)
 │   │   ├── ar.js          882 Arabic keys
@@ -124,7 +129,12 @@ js/
 │       │                  whole session if the app closed inside the
 │       │                  debounce window)
 │       ├── initial.js     initialState() + PERSISTED_KEYS + pickPersisted
-│       ├── reducer.js     reduce(): the single action switch
+ │       ├── reducer.js     reduce(): dispatcher over slices/* (same
+ │       │                  export + semantics as the old single switch)
+ │       ├── slices/        One pure reduce<Slice>(state, action) per area —
+ │       │                  shell, library, quran, hadith, worship, audio.
+ │       │                  Each returns undefined for foreign actions; the
+ │       │                  dispatcher tries them in turn, else returns state.
 │       ├── actions.js     Action creators
 │       ├── restore.js     Backup/localStorage sanitizer + dry-run (v4.2:
 │       │                  PERSISTED_KEYS ALLOWLIST + per-value coercion —
@@ -141,13 +151,14 @@ js/
 │   │                      cards, hadith/mushaf data services, tasbih)
 ├── ui/                    Components: card, shell, modal, toast, menus,
 │   │                      emptyState, skeleton, calendarModals
-└── views/                 30 pure string-template views (state → HTML)
+└── views/                 37 pure string-template views (state → HTML)
 
-assets/css/                8 files, strict load order:
+assets/css/                9 files, strict load order:
                            variables → base → layout → components →
-                           cards → quran → animations → accessibility
+                           cards → quran → animations → desktop →
+                           accessibility
 data/                      Content corpora (~157MB; see data/SOURCES.md)
-tests/                     49 test files + helpers / 756 tests (node --test)
+tests/                     58 test files + helpers / 845 tests (node --test)
 sw.js                      Service worker (precache + SWR data + triggers)
 ```
 
@@ -163,9 +174,10 @@ in v4.3 (the caller passes the computed Hijri in). Violations of this
 rule are what the layer split exists to prevent.
 
 **Documented v4.2 refinement — `core/state` is domain-aware:** the store
-package's `reducer.js`/`initial.js`/`restore.js` import sanitizers and
-defaults from `domain/` (tajweedPractice, hifz, fasting, worship, nudge,
-prayerLog, onboarding) — ten `core/state → domain` edges that the naive
+package's slices (`shell.js`/`library.js`/`quran.js`/`worship.js`) and
+`initial.js`/`restore.js` import sanitizers and defaults from `domain/`
+(tajweedPractice, hifz, fasting, worship, nudge, prayerLog, onboarding,
+locations, qada, contentLens) — `core/state → domain` edges that the naive
 reading of the rule forbids. This is deliberate and now documented rather
 than refactored away: the store is the single trust boundary for hostile
 payloads, so its sanitizers ARE domain knowledge, and inverting the
@@ -283,7 +295,7 @@ layers are exactly what may be broken.
   `fetchJSON` actually throws into these paths instead of handing callers
   a 200-OK `{error:'offline'` error document.)
 - **Known perf trade-off (deliberate):** views load via STATIC imports —
-  all 141 modules arrive before first render. Lazy-loading `VIEW_TABLE`
+  all 180 modules arrive before first render. Lazy-loading `VIEW_TABLE`
   would cut first-visit JS by roughly half, but 13 app-layer modules import
   view builders/setters directly (modal builders, `setFlipDirection`,
   `setActiveTafsirTab`, `bookmarkFolderFilter`), so the flip requires first
@@ -345,7 +357,7 @@ layers are exactly what may be broken.
 
 ```
 npx eslint .             # zero errors (js, tests, sw.js — all linted)
-npm test                 # 756 tests, all green
+npm test                 # 845 tests, all green
 npx prettier --check .   # whole tree (npm run check runs all three)
 ```
 
@@ -425,6 +437,10 @@ eliminated from the last two raw-millisecond date walks), a feature-parity
 diff against v3.27 (the lock holds — zero losses across all waves), two
 service-worker P0s (failed-precache shell deletion; the 200-OK offline
 stub that bypassed every Retry path), and the contract gates that make
-the release protocols themselves testable. The remaining known god-file
-is `core/state/reducer.js` (~1,020 lines — one cohesive action switch,
-not mixed concerns); slice-based splitting is the natural next refactor.
+the release protocols themselves testable. v5.2 is the structural cleanup:
+the two remaining god-files were split without moving any public path —
+`core/config.js` into `core/config/` (app/quran/views/sanitize) and the
+`core/state/reducer.js` action switch into `core/state/slices/` (shell,
+library, quran, hadith, worship, audio) behind a dispatcher facade —
+plus dependency-hygiene (vendored transitive deps removed from
+package.json), SW precache completion, and doc-number corrections.

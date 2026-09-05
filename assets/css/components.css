@@ -254,6 +254,7 @@
 .chip__x {
   display: grid;
   place-items: center;
+  position: relative;
   /* (v4.2) the × sits beside the filter chip people tap constantly — a
      bare glyph was a sub-16px target, well under the app's own 36px
      minimum. Same min-size as icon-btn--sm. */
@@ -261,6 +262,14 @@
   min-block-size: 36px;
   margin-inline-start: var(--space-1);
   color: var(--color-text-muted);
+}
+/* (v5.2) 44px hit-area expansion, same documented .chip pattern: the
+   visual stays a compact 36px × but the tap box reaches the token. */
+.chip__x::after {
+  content: '';
+  position: absolute;
+  inset-block: -4px;
+  inset-inline: -4px;
 }
 .chip__x:hover {
   color: var(--color-danger-text);
@@ -270,6 +279,21 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+/* (v5.2, U14) Settings table of contents: sticky section-jump chips so
+   the 11-panel settings scroll stays navigable without memorization. */
+.settings-toc {
+  position: sticky;
+  top: var(--topbar-height);
+  z-index: var(--z-raised);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  background: var(--color-surface);
+}
+.view--settings .panel {
+  scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
 }
 .chip-row--scroll {
   flex-wrap: nowrap;
@@ -1447,6 +1471,10 @@ body.modal-open {
 .player-bar__chip {
   display: inline-flex;
   align-items: center;
+  position: relative; /* FIX (v5.2.1): the ::after hit-expansion below
+    positions against the nearest positioned ancestor — without this it
+    anchored to the bar itself, so every chip's invisible hit box stacked
+    over its neighbors and taps (e.g. repeat) landed on the wrong chip. */
   gap: var(--space-1);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-pill);
@@ -1467,6 +1495,19 @@ body.modal-open {
   border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
   color: var(--color-primary-text);
+}
+
+/* (v5.2.0) Echo-mode "your turn" banner inside the recitation console. */
+.player-bar__echo-wait {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  border-radius: var(--radius-pill);
 }
 
 .player-bar__buffer {
@@ -1650,6 +1691,69 @@ body.modal-open {
 
 .panel--dl {
   gap: var(--space-4);
+}
+
+/* Adhan loudness schedule (Prayer view): day volume + quiet-hours row. */
+.adhan-volume {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.adhan-quiet-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-2);
+}
+@media (max-width: 560px) {
+  .adhan-quiet-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Recitation queues: saved (surah, from, to) range lists in the Audio view. */
+.panel--queue {
+  gap: var(--space-3);
+}
+.queue-row {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.queue-row__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.queue-row__name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.queue-row__items {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.queue-row__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+}
+.queue-row__item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ==========================================================================

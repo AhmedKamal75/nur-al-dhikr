@@ -21,7 +21,7 @@
  * Pure functions only (no imports of state/ui) — trivially testable.
  */
 
-import { clone } from '../core/utils.js';
+import { clone, isSafeKey } from '../core/utils.js';
 
 const EMPTY = {};
 
@@ -166,6 +166,7 @@ export function lensLibrary(rawDocuments, rawOrder, prefs) {
   const deletedLibs = prefs.deletedLibraries || EMPTY;
   const documents = {};
   for (const [id, doc] of Object.entries(rawDocuments || {})) {
+    if (!isSafeKey(id)) continue; // (S3) ids become documents-map keys
     if (deletedLibs[id]) continue;
     const lensed = mergeLibraryMeta(doc, prefs);
     documents[id] = { ...lensed, categories: lensDocumentCategories(lensed, prefs) };

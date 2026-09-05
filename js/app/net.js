@@ -13,6 +13,7 @@
 import { CATALOG_URL } from '../core/config.js';
 import { migrate } from '../core/migration.js';
 import { processDocument } from '../core/schema.js';
+import { isSafeKey } from '../core/utils.js';
 import { actions, store } from '../core/state.js';
 import { buildIndex } from '../domain/search.js';
 import { rt } from './rt.js';
@@ -48,6 +49,8 @@ export function buildItemIndex(documents, customContent) {
   for (const doc of allDocs) {
     for (const category of doc.categories) {
       for (const item of category.items) {
+        // (S3) prototype-pollution guard: item ids become index keys.
+        if (!isSafeKey(item.id)) continue;
         index[item.id] = { item, category, document: doc };
       }
     }
@@ -88,6 +91,8 @@ export async function loadLibraries() {
 
     for (const entry of results) {
       if (!entry) continue;
+      // (S3) catalog ids become documents-map keys.
+      if (!isSafeKey(entry.id)) continue;
       documents[entry.id] = entry.doc;
       order.push(entry.id);
     }

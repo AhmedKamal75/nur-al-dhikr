@@ -15,6 +15,7 @@ import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML } from '../core/utils.js';
 import { wasCelebrated } from '../domain/celebrate.js';
 import { calculateTimes, formatClock, nextPrayer, METHODS, ASR_FACTORS } from '../domain/prayer.js';
+import { buildTimeline } from '../domain/prayerTimeline.js';
 import { SOUND_IDS, ADHAN_MODES, customAdhanFlags } from '../services/prayerSound.js';
 import { selectors } from '../core/state.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
@@ -206,6 +207,31 @@ export function renderPrayer(state) {
         <h2>${t('prayer.timesTitle', lang)}</h2>
         <span class="panel__header-side">${dateLabel}</span>
       </div>
+      ${(() => {
+        // (v5.2.0) Full-day timeline: all six times at a glance with a
+        // moving "now" marker. Pure HTML (no new data-actions); positions
+        // come from domain/prayerTimeline.js. dir=ltr — time flows left
+        // to right in both languages, like a clock face.
+        const nowHours = now.getHours() + now.getMinutes() / 60;
+        const tl = buildTimeline(times, nowHours);
+        if (!tl.markers.length) return '';
+        const dots = tl.markers
+          .map(
+            (m) =>
+              `<span class="prayer-timeline__dot${next.name === m.name ? ' prayer-timeline__dot--next' : ''}" style="inset-inline-start:${(m.at * 100).toFixed(2)}%" title="${escapeHTML(`${t('prayer.' + m.name, lang)} · ${formatClock(times[m.name], true, { am: t('common.am', lang), pm: t('common.pm', lang) })}`)}"></span>`
+          )
+          .join('');
+        return `
+      <div class="prayer-timeline" dir="ltr" role="img" aria-label="${escapeHTML(t('prayer.timelineLabel', lang))}">
+        <div class="prayer-timeline__track"></div>
+        ${dots}
+        ${
+          tl.nowAt === null
+            ? ''
+            : `<span class="prayer-timeline__now" style="inset-inline-start:${(tl.nowAt * 100).toFixed(2)}%"></span>`
+        }
+      </div>`;
+      })()}
       <div class="prayer-list">${rows}</div>
       ${
         fallbackNames.length
@@ -391,8 +417,45 @@ export function adhanPanelHTML(state) {
     <p class="panel__subtext">${t('prayer.adhanNote', lang)}</p>`
         : ''
     }
+    ${mode === 'off' ? '' : volumeScheduleHTML(state, lang)}
     ${anyAlertOn ? '' : `<p class="panel__subtext">${t('prayer.alertOffNote', lang)}</p>`}
   </div>`;
+}
+
+/**
+ * Alert loudness: day volume slider + optional quiet-hours window at its
+ * own volume. Applies to both adhan recordings and synthesized tones
+ * (the platform notification sound itself stays the OS default — a
+ * documented browser limit).
+ */
+function volumeScheduleHTML(state, lang) {
+  const p = state.settings.prayer;
+  const vol = Number.isFinite(Number(p.adhanVolume)) ? Number(p.adhanVolume) : 80;
+  const qVol = Number.isFinite(Number(p.quietVolume)) ? Number(p.quietVolume) : 30;
+  const quiet = p.quietEnabled === true;
+  return `
+    <div class="adhan-volume">
+      <label class="field-label" for="adhan-volume-slider">${t('prayer.adhanVolume', lang)} — ${vol}%</label>
+      <input type="range" class="slider" id="adhan-volume-slider" min="0" max="100" step="5" value="${vol}" data-bind="prayer-adhan-volume" aria-label="${t('prayer.adhanVolume', lang)}" />
+      <label class="toggle-row">
+        <span class="toggle-row__label">${t('prayer.quietEnabled', lang)}</span>
+        <span class="switch">
+          <input type="checkbox" data-action="toggle-prayer-quiet" ${quiet ? 'checked' : ''} />
+          <span class="switch__track"></span>
+        </span>
+      </label>
+      ${
+        quiet
+          ? `
+      <div class="adhan-quiet-row">
+        <label class="field">${t('prayer.quietStart', lang)}<input type="time" class="input" value="${p.quietStart || '22:00'}" data-bind="prayer-quiet-start" /></label>
+        <label class="field">${t('prayer.quietEnd', lang)}<input type="time" class="input" value="${p.quietEnd || '06:00'}" data-bind="prayer-quiet-end" /></label>
+        <label class="field">${t('prayer.quietVolume', lang)}<input type="number" class="input" min="0" max="100" step="5" value="${qVol}" data-bind="prayer-quiet-volume" /></label>
+      </div>
+      <p class="panel__subtext">${t('prayer.quietHint', lang)}</p>`
+          : ''
+      }
+    </div>`;
 }
 
 export function calcPanelHTML(state) {

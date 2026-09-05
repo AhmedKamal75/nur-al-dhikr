@@ -232,6 +232,19 @@
   color: var(--color-text);
   line-height: var(--lh-normal);
 }
+/* (v5.2.0) Translation-compare second line: visually secondary, with an
+   edition tag so two translations never blur together. */
+.ayah-card__translation--compare {
+  color: var(--color-text-secondary);
+  border-inline-start: 3px solid var(--color-border-strong);
+  padding-inline-start: var(--space-2);
+}
+.ayah-card__compare-label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  margin-inline-end: var(--space-1);
+}
 .ayah-study-divider {
   border: none;
   border-top: 1px dashed var(--color-border-strong);
@@ -240,9 +253,19 @@
 
 /* Tappable per-word spans */
 .qword {
+  position: relative;
   cursor: pointer;
   border-radius: var(--radius-xs);
   transition: background-color var(--dur-fast) var(--ease-standard);
+}
+/* (v5.2) vertical-only 44px-ish hit expansion: inline words must stay
+   inline (padding would reflow the sacred layout), and horizontal
+   expansion would steal taps from neighboring words. */
+.qword::after {
+  content: '';
+  position: absolute;
+  inset-block: -8px;
+  inset-inline: 0;
 }
 .qword:hover {
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
@@ -683,8 +706,18 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  margin: var(--space-4) 0 var(--space-3);
+  width: 100%;
+  margin: var(--space-2) 0;
   text-align: center;
+  /* The banner is a recite button — reset the button chrome so the paper
+     reads exactly as before, with a pointer + focus ring as the only tells. */
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 .mushaf-surah-banner__flank {
   position: relative;
@@ -718,7 +751,7 @@
   inset-inline-start: 100%;
 }
 .mushaf-surah-banner__frame {
-  padding: var(--space-1) var(--space-6);
+  padding: calc(var(--space-1) / 2) var(--space-4);
   border: 1px solid color-mix(in srgb, var(--mushaf-gold) 58%, transparent);
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--mushaf-gold) 7%, transparent);
@@ -726,7 +759,7 @@
 }
 .mushaf-surah-banner__name {
   font-family: var(--mushaf-font-family, var(--font-arabic));
-  font-size: 1.12em;
+  font-size: 1em;
   font-weight: 700;
   color: color-mix(in srgb, var(--mushaf-gold) 35%, var(--mushaf-paper-ink, var(--color-text)));
 }
@@ -888,10 +921,113 @@
 .mushaf-fs-controls__ayah {
   color: #d4bd77;
 }
-body.mushaf-fs-idle .mushaf-fs-controls {
+body.mushaf-fs-idle .mushaf-fs-controls,
+body.mushaf-fs-idle .mushaf-fs-console,
+body.mushaf-fs-idle .mushaf-fs-echo {
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
+}
+
+/* Fullscreen console second row: the windowed recitation chips re-homed
+   over the book. Horizontally scrollable so small phones keep every chip
+   reachable; same glass treatment + idle auto-fade as the control bar. */
+.mushaf-fs-console {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 52px);
+  margin-inline: auto;
+  width: fit-content;
+  max-width: calc(100vw - var(--space-6));
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(232, 227, 211, 0.16);
+  background: color-mix(in srgb, #10201a 76%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-nav);
+  overflow-x: auto;
+  scrollbar-width: none;
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-spring);
+}
+.mushaf-fs-console::-webkit-scrollbar {
+  display: none;
+}
+.mushaf-fs-console .icon-btn {
+  color: #e8e3d3;
+  flex: none;
+}
+.mushaf-fs-console .icon-btn:hover {
+  background: rgba(232, 227, 211, 0.14);
+}
+.mushaf-fs-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--touch-target);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(232, 227, 211, 0.22);
+  background: transparent;
+  color: #e8e3d3;
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mushaf-fs-chip--on {
+  color: #d4bd77;
+  border-color: rgba(212, 189, 119, 0.55);
+  background: rgba(212, 189, 119, 0.16);
+}
+.mushaf-fs-echo {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 104px);
+  margin-inline: auto;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1_5);
+  padding: var(--space-1_5) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, #10201a 82%, transparent);
+  border: 1px solid rgba(212, 189, 119, 0.45);
+  color: #d4bd77;
+  font-size: var(--fs-sm);
+  z-index: var(--z-nav);
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-spring);
+}
+
+/* Multi-surah recitation picker + in-player voice picker rows. */
+.mushaf-pick-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-1_5);
+  border-bottom: 1px solid var(--color-border);
+}
+.mushaf-pick-row:last-child {
+  border-bottom: none;
+}
+.mushaf-pick-row__name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-arabic);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reciter-pick .panel__subtext {
+  margin-block: var(--space-3) var(--space-1);
 }
 
 /* --- (v4.5) Fullscreen edge tap zones ---------------------------------------
@@ -927,9 +1063,12 @@ body.mushaf-fs-idle .mushaf-fs-controls {
   transition: color var(--dur-base) var(--ease-standard);
 }
 .mushaf-fs-tap--prev {
+  /* physical: fixed book edges, not mirrored — the zones are positional
+     (screen edges), while the chevrons inside already swap per RTL. */
   right: 0;
 }
 .mushaf-fs-tap--next {
+  /* physical: see above. */
   left: 0;
 }
 @media (hover: hover) {
@@ -1360,21 +1499,103 @@ body.mushaf-fs-idle .mushaf-fs-controls {
 /* Auto-fade on idle — same contract as the mushaf bar: gone from the
    reading line after 3s, summoned back by any pointer/key. The fade keeps
    a hover listener alive via the body class re-added on pointermove. */
-body.reader-fs-idle .reader-immersive-exit {
+body.reader-fs-idle .reader-immersive-exit,
+body.reader-fs-idle .reader-immersive-console,
+body.reader-fs-idle .reader-immersive-echo {
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
 }
-/* While the playerbar is up (follow-along recitation), the glass bar
-   lifts clear of it instead of fighting for the same bottom space. */
+/* While the playerbar is up (follow-along recitation), the glass bars
+   lift clear of it instead of fighting for the same bottom space. */
 body.has-player .reader-immersive-exit {
   bottom: calc(var(--space-4) + var(--playerbar-height) + env(safe-area-inset-bottom, 0px));
+}
+body.has-player .reader-immersive-console {
+  bottom: calc(var(--space-4) + var(--playerbar-height) + env(safe-area-inset-bottom, 0px) + 52px);
+}
+body.has-player .reader-immersive-echo {
+  bottom: calc(var(--space-4) + var(--playerbar-height) + env(safe-area-inset-bottom, 0px) + 104px);
 }
 @media (prefers-reduced-motion: reduce) {
   .reader-immersive-exit,
   body.reader-fs-idle .reader-immersive-exit {
     transition: none;
   }
+}
+
+/* Immersive console second row + echo banner: the windowed recitation
+   chips re-homed over the reading column. Same glass treatment, same
+   idle auto-fade, horizontally scrollable for small phones. */
+.reader-immersive-console {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 52px);
+  margin-inline: auto;
+  width: fit-content;
+  max-width: calc(100vw - var(--space-6));
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 84%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-nav);
+  overflow-x: auto;
+  scrollbar-width: none;
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-standard);
+}
+.reader-immersive-console::-webkit-scrollbar {
+  display: none;
+}
+.reader-immersive-console .icon-btn {
+  flex: none;
+}
+.reader-immersive-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: var(--touch-target);
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.reader-immersive-chip--on {
+  color: var(--color-primary-text);
+  border-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+.reader-immersive-echo {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 104px);
+  margin-inline: auto;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1_5);
+  padding: var(--space-1_5) var(--space-3);
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  color: var(--color-primary-text);
+  font-size: var(--fs-sm);
+  z-index: var(--z-nav);
+  transition:
+    opacity var(--dur-slow) var(--ease-standard),
+    transform var(--dur-slow) var(--ease-standard);
 }
 
 /* ==========================================================================
@@ -1390,6 +1611,7 @@ body.has-player .reader-immersive-exit {
 .tafsir-tab {
   display: inline-flex;
   align-items: center;
+  position: relative; /* ::after below expands the hit area to 44px */
   gap: var(--space-1);
   padding: var(--space-1_5) var(--space-3);
   border-radius: var(--radius-pill);
@@ -1399,14 +1621,21 @@ body.has-player .reader-immersive-exit {
   font-weight: 600;
   color: var(--color-text-secondary);
   white-space: nowrap;
-  /* v4.1: raised to 40px — a standalone tab control below the 44px touch
-     contract (the ::after expansion chips use is not defined here). */
+  /* v4.1: raised to 40px visual; 2026-09 audit U2 adds the ::after hit
+     expansion below so the effective touch target meets the 44px contract. */
   min-height: 40px;
   touch-action: manipulation;
   transition:
     background-color var(--dur-base) var(--ease-standard),
     border-color var(--dur-base) var(--ease-standard),
     color var(--dur-base) var(--ease-standard);
+}
+/* 2026-09 audit U2: 40px visual, 44px hit area via the .chip ::after pattern. */
+.tafsir-tab::after {
+  content: '';
+  position: absolute;
+  inset-block: -2px;
+  inset-inline: -4px;
 }
 .tafsir-tab:hover {
   border-color: var(--color-border-strong);
@@ -1461,6 +1690,32 @@ body.has-player .reader-immersive-exit {
   align-items: flex-start;
   font-size: var(--fs-sm);
   color: var(--color-text-secondary);
+}
+
+/* Tafsir compare: the second source sits under a hairline, with its own
+   picker row (single-source chip + one chip per comparable edition). */
+.tafsir-compare {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.tafsir-compare__pick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1_5);
+}
+.tafsir-compare__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.tafsir-compare__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
 /* ==========================================================================
@@ -1876,11 +2131,19 @@ body.has-player .reader-immersive-exit {
 
 /* Practice letters: default / selected / verdict states */
 .pu {
+  position: relative;
   cursor: pointer;
   border-radius: var(--radius-xs);
   transition:
     background-color var(--dur-fast) var(--ease-standard),
     color var(--dur-fast) var(--ease-standard);
+}
+/* (v5.2) same vertical hit expansion as .qword above. */
+.pu::after {
+  content: '';
+  position: absolute;
+  inset-block: -8px;
+  inset-inline: 0;
 }
 .pu:hover {
   background: color-mix(in srgb, var(--color-primary) 12%, transparent);
@@ -2059,6 +2322,9 @@ body.has-player .reader-immersive-exit {
  * they read as part of the reading flow, not as an error state. */
 .quran-window-load {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-target);
   margin-inline: auto;
   margin-block: var(--space-3);
 }
@@ -2115,12 +2381,19 @@ body.has-player .reader-immersive-exit {
   gap: var(--space-1_5);
 }
 .tajpick__swatch {
+  position: relative;
   width: 32px;
   height: 32px;
   border-radius: var(--radius-pill);
   border: 2px solid transparent;
   cursor: pointer;
   transition: transform var(--dur-fast) var(--ease-standard);
+}
+/* (v5.2) 44px hit-area expansion without growing the color dot itself. */
+.tajpick__swatch::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
 }
 .tajpick__swatch:hover {
   transform: scale(1.12);

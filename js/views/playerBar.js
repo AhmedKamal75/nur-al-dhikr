@@ -7,10 +7,19 @@
  */
 
 import { t } from '../core/i18n.js';
+import { QURAN_RECITERS } from '../core/config.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { findMoshaf } from '../services/audioCatalog.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
+
+/** Short voice label for the console's reciter chip ("Alafasy", "Husary"…). */
+export function reciterShortLabel(reciterId, lang) {
+  const r = QURAN_RECITERS.find((x) => x.id === reciterId);
+  if (!r) return reciterId || '';
+  const name = lang === 'ar' ? r.nameAr : r.nameEn;
+  return String(name).split(' ')[0];
+}
 
 const RATES = [1, 1.25, 1.5, 0.75];
 
@@ -78,6 +87,21 @@ function recitationBarHTML(state, lang) {
   // default comes from settings.audio.ayahRepeat.
   const rep = [1, 3, 5, 10, -1].includes(sp.repeat) ? sp.repeat : 1;
   const repLabel = rep === -1 ? '\u221e' : `\u00d7${rep}`;
+  // (v5.2.0) echo mode: listen, then recite back in the held silence.
+  const echo = sp.listenRepeat === true;
+  const waiting = sp.waiting === true;
+  // Compare-two-reciters: voice B armed + whether this session alternates.
+  const compare = sp.compare === true;
+  const voiceB = state.settings.reciterB || sp.reciterIdB || null;
+  const voiceA = sp.reciterId || state.settings.reciter;
+  // Bounds loop passes + verse speed (both live-toggled from the console).
+  const loop = [1, 2, 3, 5, 10].includes(sp.loop) ? sp.loop : 1;
+  const speed = Number(sp.speed) || 1;
+  // Queue position ("2/5") when a saved queue is playing.
+  const qPos =
+    Array.isArray(sp.queue) && sp.queue.length > 1 && Number.isFinite(Number(sp.qIndex))
+      ? ` · ${Number(sp.qIndex) + 1}/${sp.queue.length}`
+      : '';
   const surah = state.quran.meta?.surahs?.find((x) => String(x.number) === String(sp.surah));
   const name = surah
     ? lang === 'ar'
@@ -90,7 +114,7 @@ function recitationBarHTML(state, lang) {
       <span class="player-bar__pulse" aria-hidden="true"></span>
       <div class="player-bar__meta">
         <span class="player-bar__reciter">${escapeHTML(t('audio.reciting', lang))} · ${escapeHTML(name)}</span>
-        <span class="player-bar__ayah-counter" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}</span>
+        <span class="player-bar__ayah-counter" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}${escapeHTML(qPos)}</span>
       </div>
       <button type="button" class="icon-btn icon-btn--sm" data-action="recite-ayah-prev" aria-label="${t('audio.ayahPrev', lang)}" title="${t('audio.ayahPrev', lang)}">${icon('chevronLeft', { size: 15 })}</button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="recite-ayah-next" aria-label="${t('audio.ayahNext', lang)}" title="${t('audio.ayahNext', lang)}">${icon('chevronRight', { size: 15 })}</button>
@@ -103,6 +127,19 @@ function recitationBarHTML(state, lang) {
       <button type="button" class="player-bar__chip ${continuous ? 'player-bar__chip--on' : ''}" data-action="recite-listen-toggle" aria-pressed="${continuous}" aria-label="${t('audio.listenMode', lang)}" title="${t('audio.listenMode', lang)}">
         ${icon('play', { size: 13 })} ${t('audio.listen', lang)}
       </button>
+      <button type="button" class="player-bar__chip ${echo ? 'player-bar__chip--on' : ''}" data-action="recite-echo-toggle" aria-pressed="${echo}" aria-label="${t('audio.echoMode', lang)}" title="${t('audio.echoMode', lang)}">
+        ${icon('volume', { size: 13 })} ${t('audio.echo', lang)}
+      </button>
+      <button type="button" class="player-bar__chip" data-action="recite-voice-open" aria-label="${t('audio.chooseReciter', lang)}" title="${t('audio.chooseReciter', lang)} — ${escapeHTML(reciterShortLabel(voiceA, lang))}${voiceB ? ` + ${escapeHTML(reciterShortLabel(voiceB, lang))}` : ''}">
+        ${icon('volume', { size: 13 })} ${escapeHTML(reciterShortLabel(voiceA, lang))}${voiceB ? `+${escapeHTML(reciterShortLabel(voiceB, lang))}` : ''}
+      </button>
+      <button type="button" class="player-bar__chip ${compare ? 'player-bar__chip--on' : ''}" data-action="recite-compare-toggle" aria-pressed="${compare}" aria-label="${t('audio.compareMode', lang)}" title="${t('audio.compareMode', lang)}">
+        ${icon('grid', { size: 13 })} ${t('audio.compare', lang)}
+      </button>
+      <button type="button" class="player-bar__chip ${loop !== 1 ? 'player-bar__chip--on' : ''}" data-action="recite-loop-toggle" aria-label="${t('audio.loopMode', lang)}" title="${t('audio.loopMode', lang)}">
+        ${icon('repeat', { size: 13 })} ${loop === 1 ? t('audio.loop', lang) : `×${loop}`}
+      </button>
+      <button type="button" class="player-bar__chip" data-action="recite-speed-cycle" aria-label="${t('audio.speed', lang)}" title="${t('audio.speed', lang)}">${speed}×</button>
       <button type="button" class="player-bar__chip ${sleep.enabled ? 'player-bar__chip--on' : ''}" data-action="recite-sleep-cycle" aria-label="${t('audio.sleepTimer', lang)}" title="${t('audio.sleepTimer', lang)}">
         ${icon('moon', { size: 13 })}${sleep.enabled ? ` ${escapeHTML(sleep.label)}` : ''}
       </button>
@@ -110,5 +147,10 @@ function recitationBarHTML(state, lang) {
         ${icon('stop', { size: 16 })}
       </button>
     </div>
+    ${
+      waiting
+        ? `<div class="player-bar__echo-wait" role="status">${icon('volume', { size: 14 })} ${t('audio.yourTurn', lang)}</div>`
+        : ''
+    }
   </div>`;
 }

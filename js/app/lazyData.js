@@ -1,6 +1,6 @@
 import { rt } from './rt.js';
 import { fetchJSON } from './net.js';
-import { dispatchSurahDoc } from './quranData.js';
+import { dispatchSurahDoc, ensureTranslationBDoc } from './quranData.js';
 
 import {
   MUSHAF_META_URL,
@@ -98,6 +98,13 @@ export async function ensureQuranData(state) {
 
   if (state.settings.mushafPrefs.wordByWordStudy) {
     ensureQuranWordsData(store.getState(), id);
+  }
+
+  // (v5.2.0) Translation-compare second edition rides the same pass —
+  // fire-and-forget (the reader shows the primary edition first, the
+  // compare line appears when the overlay lands and triggers its dispatch).
+  if (state.settings.quranTranslationB) {
+    ensureTranslationBDoc(id);
   }
 }
 
@@ -418,6 +425,18 @@ export async function openAyahStudy(surah, ayah, page = null) {
   const defaultId = getActiveTafsirTab() || state.settings.mushafPrefs.defaultTafsir;
   setActiveTafsirTab(defaultId);
   if (defaultId) await ensureTafsirText(store.getState(), defaultId, surah);
+  // The compare column's bundled second source loads alongside the primary
+  // tab — otherwise the picker would show a skeleton with no fetch behind
+  // it. Remote editions stay on-demand via the primary tab's download flow.
+  state = store.getState();
+  const compareB = state.settings.tafsirCompareB;
+  if (compareB && compareB !== defaultId) {
+    try {
+      await ensureTafsirText(store.getState(), compareB, surah);
+    } catch {
+      /* best effort — the panel degrades to picker-only */
+    }
+  }
   state = store.getState();
   const surahDoc = state.quran.surahs[String(surah)];
   const arabicText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayah))?.text || '';

@@ -29,6 +29,23 @@ function findCategoryMeta(state, categoryId) {
   return null;
 }
 
+/** Today's accumulated Qur'an/Mushaf reading seconds (0 when none). */
+export function todayReadingSec(state) {
+  const entry = state.statistics?.dailyHistory?.[dateKey(new Date())];
+  const n = Number(entry?.readingSec);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+}
+
+/** Compact duration: "45s", "12 min", "1h 5m" — unit-tested below. */
+export function formatReadingMinutes(totalSec) {
+  const s = Math.floor(Number(totalSec));
+  if (!Number.isFinite(s) || s <= 0) return '0 min';
+  if (s < 60) return `${s}s`;
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m} min`;
+  return `${Math.floor(m / 60)}h ${m % 60}m`;
+}
+
 /** 'YYYY-MM' for a Date, matching the statsHeatmapRef format in state. */
 function monthRef(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -218,6 +235,10 @@ export function renderStatistics(state) {
       <div class="stat-card">
         <span class="stat-card__value">${stats.totalRecitations}</span>
         <span class="stat-card__label">${t('stats.totalRecitations', lang)}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__value" dir="ltr">${formatReadingMinutes(todayReadingSec(state))}</span>
+        <span class="stat-card__label">${t('stats.readingToday', lang)}</span>
       </div>
       <div class="stat-card">
         <span class="stat-card__value">${stats.currentStreak}</span>

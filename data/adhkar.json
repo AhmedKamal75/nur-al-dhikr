@@ -49,14 +49,14 @@
             "ar": "آية الكرسي كاملة — أعظم آية في القرآن، فيها التوحيد والعظمة، وتُقال كلما أوى المرء إلى فراشه."
           },
           "reference": {
-            "collection": "Sahih al-Bukhari",
-            "book": "Book of the Virtues of the Qur'an",
-            "chapter": "2",
-            "hadith": "",
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer — Travellers",
+            "chapter": "",
+            "hadith": "810",
             "narrator": "Ubayy ibn Ka'b",
             "grading": "Sahih",
             "url": "",
-            "notes": "Qur'an text extracted verbatim from the app's own corpus (al-Baqarah 255)."
+            "notes": "Qur'an text extracted verbatim from the app's own corpus (al-Baqarah 255). Virtues cite Muslim 810; al-Nasa'i 100; al-Bukhari 2311."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -65,8 +65,8 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "The Prophet ﷺ told Ubayy: 'Do you not know that saying it after every prayer — and before sleeping — guards you, and no devil will come near you until morning?' (al-Hakim, sahih). It is the greatest ayah in the Book of Allah (Muslim 810).",
-            "ar": "قال النبي ﷺ لأبيّ بن كعب: «أتعلم أيّة من كتاب الله معك أعظم؟ أتعلم؟» قال: قلت: قال: «هي آية الكرسي» — رواه مسلم (810)، وفي الحاكم صحيح: من قرأها حين يأوي إلى فراشه لم يقربه شيطان حتى يصبح."
+            "en": "The greatest verse in the Book of Allah: when the Prophet ﷺ asked Ubayy ibn Ka'b which ayah was greatest, Ubayy answered with Ayat al-Kursi and the Prophet ﷺ approved (Sahih Muslim 810). Whoever recites it after every prescribed prayer, nothing stands between him and Paradise except death (Sunan al-Nasa'i 100; graded sahih by al-Albani). Whoever recites it before sleeping is guarded, and no devil comes near him until morning (Sahih al-Bukhari 2311).",
+            "ar": "أعظم آية في كتاب الله: سأل النبي ﷺ أبيّ بن كعب: «أتدري أي آية من كتاب الله معك أعظم؟» فأجاب بآية الكرسي فأقرّه (مسلم 810). ومن قرأها دبر كل صلاة مكتوبة لم يمنعه من دخول الجنة إلا أن يموت (النسائي 100، وصححه الألباني). ومن قرأها حين يأوي إلى فراشه حفظه الله ولا يقربه شيطان حتى يصبح (البخاري 2311)."
           },
           "tags": [
             "morning",
@@ -232,14 +232,14 @@
             "ar": "دعاء الدخول في الصباح: توحيد وحمد وطلب خير اليوم وما بعده والاستعاذة من شره ومن الكسل وسوء الكبر وعذاب النار والقبر — رواه مسلم."
           },
           "reference": {
-            "collection": "Sahih Muslim",
+            "collection": "Sahih Muslim; Sunan Abi Dawud",
             "book": "Book of Dhikr and Supplication",
             "chapter": "",
-            "hadith": "2723",
-            "narrator": "Abu Hurayrah",
+            "hadith": "2723; 5071",
+            "narrator": "Abdullah ibn Mas'ud",
             "grading": "Sahih",
             "url": "",
-            "notes": "Part of the morning remembrance the Prophet ﷺ taught Abu Hurayrah."
+            "notes": "Morning wording narrated by Abdullah ibn Mas'ud (Sahih Muslim 2723; Sunan Abi Dawud 5071, sahih per Albani)."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -248,8 +248,8 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "The Prophet ﷺ recited this with Abu Hurayrah three times, then said: 'I have taught you words — say them morning and evening' (Abu Dawud 5071; Muslim 2723).",
-            "ar": "قرأها النبي ﷺ مع أبي هريرة ثلاث مرات ثم قال: «لقد علّمتك كلمات بعد أن علّمتك: قلها حين تمسي وحين تصبح» — أبو داود 5071، مسلم 2723."
+            "en": "Narrated by Abdullah ibn Mas'ud: the Prophet ﷺ would say this in the evening, and likewise in the morning (Sahih Muslim 2723; Sunan Abi Dawud 5071, graded sahih by Albani).",
+            "ar": "عن عبد الله بن مسعود رضي الله عنه أن النبي ﷺ كان يقول ذلك إذا أمسى وإذا أصبح (صحيح مسلم 2723؛ سنن أبي داود 5071 وصححه الألباني)."
           },
           "tags": [
             "morning",
@@ -259,7 +259,7 @@
           "related": [
             "adh-eve-010"
           ],
-          "notes": "Narrated by Abu Hurairah.",
+          "notes": "Narrated by Abdullah ibn Mas'ud.",
           "order": 5
         },
         {
@@ -276,14 +276,14 @@
             "ar": "اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور."
           },
           "reference": {
-            "collection": "Jami' at-Tirmidhi",
+            "collection": "Sunan Abi Dawud; Jami' at-Tirmidhi",
             "book": "Supplications",
             "chapter": "",
             "hadith": "3391",
             "narrator": "Abu Hurayrah",
             "grading": "Sahih",
             "url": "",
-            "notes": "The Prophet ﷺ would say it when the morning came; also in Sahih Muslim with 'amsayna' wording."
+            "notes": "Wording per Abu Dawud and Hisn al-Muslim (morning ends with al-nushur); Tirmidhi 3391 has al-masir in the morning and al-nushur in the evening."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -292,8 +292,8 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "Reported in Sahih Muslim 2799 and Jami' at-Tirmidhi 3391 (sahih) as the Prophet's ﷺ morning and evening remembrance.",
-            "ar": "رواه مسلم (2799) والترمذي (3391) صحيحاً — من أذكار النبي ﷺ حين يصبح وحين يمسي."
+            "en": "The Prophet's ﷺ morning and evening remembrance (Sunan Abi Dawud; Jami' at-Tirmidhi 3391, sahih).",
+            "ar": "من أذكار النبي ﷺ حين يصبح وحين يمسي (أبو داود؛ الترمذي 3391، صحيح)."
           },
           "tags": [
             "morning",
@@ -1304,14 +1304,14 @@
             "ar": "آية الكرسي كاملة — تقال في المساء كما تقال في الصباح، حفظاً ورعاية حتى الصباح."
           },
           "reference": {
-            "collection": "Sahih al-Bukhari",
-            "book": "Book of the Virtues of the Qur'an",
-            "chapter": "2",
-            "hadith": "",
+            "collection": "Sahih Muslim",
+            "book": "Book of Prayer — Travellers",
+            "chapter": "",
+            "hadith": "810",
             "narrator": "Ubayy ibn Ka'b",
             "grading": "Sahih",
             "url": "",
-            "notes": "Qur'an text extracted verbatim from the app's own corpus (al-Baqarah 255)."
+            "notes": "Qur'an text extracted verbatim from the app's own corpus (al-Baqarah 255). Virtues cite Muslim 810; al-Bukhari 2311."
           },
           "grade": "Quran",
           "custom_grade": {
@@ -1320,8 +1320,8 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "Whoever says it when the evening comes is guarded until the morning; no devil will come near him (al-Hakim, sahih). It is the greatest ayah in the Qur'an (Muslim 810).",
-            "ar": "من قالها حين يمسي حُفظ حتى يصبح ولم يقربه شيطان (الحاكم، صحيح)، وهي أعظم آية في القرآن (مسلم 810)."
+            "en": "Whoever recites it in the evening is guarded through the night, and no devil comes near him until morning (Sahih al-Bukhari 2311). It is the greatest ayah in the Qur'an (Sahih Muslim 810).",
+            "ar": "من قرأها حين يمسي حفظه الله ولا يقربه شيطان حتى يصبح (البخاري 2311)، وهي أعظم آية في القرآن (مسلم 810)."
           },
           "tags": [
             "evening",
@@ -1531,14 +1531,14 @@
             "ar": "دعاء الدخول في المساء بنظير دعاء الصباح: توحيد وحمد وطلب خير الليلة وما بعدها والاستعاذة من شرها ومن الكسل وسوء الكبر وعذاب النار والقبر — رواه مسلم."
           },
           "reference": {
-            "collection": "Sahih Muslim",
+            "collection": "Sahih Muslim; Sunan Abi Dawud",
             "book": "Book of Dhikr and Supplication",
             "chapter": "",
-            "hadith": "2723",
-            "narrator": "Abu Hurayrah",
+            "hadith": "2723; 5071",
+            "narrator": "Abdullah ibn Mas'ud",
             "grading": "Sahih",
             "url": "",
-            "notes": "The evening wording of the remembrance the Prophet ﷺ taught Abu Hurayrah."
+            "notes": "Evening wording narrated by Abdullah ibn Mas'ud (Sahih Muslim 2723; Sunan Abi Dawud 5071, sahih per Albani)."
           },
           "grade": "Sahih",
           "custom_grade": {
@@ -1547,8 +1547,8 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "The Prophet ﷺ taught Abu Hurayrah these words for the morning and evening (Abu Dawud 5071; Muslim 2723).",
-            "ar": "علّم النبي ﷺ أبا هريرة هذه الكلمات للصباح والمساء (أبو داود 5071، مسلم 2723)."
+            "en": "Narrated by Abdullah ibn Mas'ud: the Prophet ﷺ would say this in the evening, and likewise in the morning (Sahih Muslim 2723; Sunan Abi Dawud 5071, graded sahih by Albani).",
+            "ar": "عن عبد الله بن مسعود رضي الله عنه أن النبي ﷺ كان يقول ذلك إذا أمسى وإذا أصبح (صحيح مسلم 2723؛ سنن أبي داود 5071 وصححه الألباني)."
           },
           "tags": [
             "evening",
@@ -1575,14 +1575,14 @@
             "ar": "اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير."
           },
           "reference": {
-            "collection": "Jami' at-Tirmidhi",
+            "collection": "Sunan Abi Dawud; Jami' at-Tirmidhi",
             "book": "Supplications",
             "chapter": "",
             "hadith": "3391",
             "narrator": "Abu Hurayrah",
             "grading": "Sahih",
             "url": "",
-            "notes": "The evening wording; Muslim 2799 records the morning variant."
+            "notes": "Wording per Abu Dawud and Hisn al-Muslim (evening ends with al-masir); Tirmidhi 3391 has al-nushur in the evening."
           },
           "grade": "Hasan",
           "custom_grade": {
@@ -1591,8 +1591,8 @@
           },
           "repetitions": 1,
           "virtues": {
-            "en": "Reported in Sahih Muslim 2799 and Tirmidhi 3391 (sahih).",
-            "ar": "رواه مسلم (2799) والترمذي (3391) صحيحاً."
+            "en": "The Prophet's ﷺ evening remembrance (Sunan Abi Dawud; Tirmidhi 3391, sahih).",
+            "ar": "من أذكار النبي ﷺ حين يمسي (أبو داود؛ الترمذي 3391، صحيح)."
           },
           "tags": [
             "evening",

@@ -40,6 +40,17 @@ export function availableLanguages() {
   return Object.keys(dict);
 }
 
+/**
+ * (v5.2.0) Native label for a language code, for the Settings switcher.
+ * New languages add one entry here (and in docs/ADD-LANGUAGE.md) — the
+ * switcher, t() fallback and parity gate all key off this registry.
+ */
+export const LANGUAGE_LABELS = Object.freeze({ en: 'English', ar: 'العربية' });
+
+export function languageLabel(code) {
+  return LANGUAGE_LABELS[code] || code;
+}
+
 export function isRTL(lang) {
   return lang === 'ar';
 }

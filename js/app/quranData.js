@@ -7,6 +7,7 @@ import { rt } from './rt.js';
 import { fetchJSON } from './net.js';
 import { overlayTranslation, QURAN_SURAH_URL, TRANSLATION_URL } from '../core/config.js';
 import { actions, store } from '../core/state.js';
+import { translationBMap } from '../domain/translationCompare.js';
 import { setQuranIndexReady } from '../domain/quranSearch.js';
 
 /* Qur'an surah document loading (with translation overlay)            */
@@ -24,6 +25,47 @@ import { setQuranIndexReady } from '../domain/quranSearch.js';
 
 const surahCorpusCache = new Map();
 const translationDocCache = new Map();
+const translationBInFlight = new Set();
+
+/**
+ * Pure: reduce an overlay file ({ ayahs: [{ number, translation }] })
+ * to a { [ayahNumber]: text } map. Re-exported from the domain module so
+ * callers have one import surface; the implementation lives where tests
+ * can reach it without pulling the app store graph.
+ */
+export { translationBMap } from '../domain/translationCompare.js';
+
+/**
+ * (v5.2.0) Translation-compare: ensure the SECOND edition's overlay text
+ * for one surah is in state.quran.translationB. Skips when compare is off,
+ * when B equals the primary edition, or for en-sahih (inline — the reader
+ * already shows it). Single-flight per surah; failures are silent (the
+ * reader simply hides the compare line) and never touch loadErrors.
+ */
+export async function ensureTranslationBDoc(surahId) {
+  const id = String(surahId);
+  const settings = store.getState().settings;
+  const edKey = settings.quranTranslationB;
+  const primary = settings.quranTranslation || 'en-sahih';
+  if (!edKey || edKey === primary || edKey === 'en-sahih') return null;
+  const have = store.getState().quran.translationB?.[id];
+  if (have && have.edKey === edKey) return have;
+  if (translationBInFlight.has(id)) return null;
+  translationBInFlight.add(id);
+  try {
+    const tdoc = await fetchTranslationOverlay(edKey, id);
+    if (store.getState().settings.quranTranslationB !== edKey) return null;
+    const byAyah = translationBMap(tdoc);
+    if (!byAyah) return null;
+    const doc = { edKey, byAyah };
+    store.dispatch(actions.setQuranTranslationBDoc(id, doc));
+    return doc;
+  } catch {
+    return null;
+  } finally {
+    translationBInFlight.delete(id);
+  }
+}
 
 export async function fetchTranslationOverlay(edKey, n) {
   const key = `${edKey}:${n}`;

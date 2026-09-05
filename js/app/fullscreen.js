@@ -145,6 +145,60 @@ export function reacquireWakeLockIfFullscreen() {
   if (store.getState().mushafFullscreen) acquireWakeLock();
 }
 
+/**
+ * (v5.2.0) Ambient nightstand display owns a SEPARATE wake lock from the
+ * mushaf one (the two sessions never overlap — entering one route leaves
+ * the other — but sharing the handle would make "who released it" racy).
+ * Best-effort everywhere: absence of the API is silence, never an error.
+ */
+let ambientLock = null;
+
+async function acquireAmbientLock() {
+  if (ambientLock) return;
+  if (!('wakeLock' in navigator) || !navigator.wakeLock?.request) return;
+  try {
+    ambientLock = await navigator.wakeLock.request('screen');
+    ambientLock.addEventListener?.('release', () => {
+      ambientLock = null;
+    });
+  } catch {
+    ambientLock = null;
+  }
+}
+
+function releaseAmbientLock() {
+  if (ambientLock && typeof ambientLock.release === 'function') {
+    try {
+      const p = ambientLock.release();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
+    } catch {
+      /* best effort */
+    }
+  }
+  ambientLock = null;
+}
+
+/**
+ * Lifecycle for the ambient route — call from the store subscriber on
+ * every notify: entering AMBIENT acquires, anything else releases.
+ * Idempotent, so the per-dispatch call is free.
+ */
+let ambientHeld = false;
+
+export function updateAmbientWakeLifecycle(state) {
+  const onAmbient = state.activeView === VIEWS.AMBIENT;
+  if (onAmbient && !ambientHeld) {
+    ambientHeld = true;
+    acquireAmbientLock();
+  } else if (!onAmbient && ambientHeld) {
+    ambientHeld = false;
+    releaseAmbientLock();
+  } else if (onAmbient && document.visibilityState === 'visible') {
+    // Re-arm after a tab-hide dropped the platform lock mid-session.
+    acquireAmbientLock();
+  }
+}
+
 /** Wire the one-time browser listeners. Called once from app/events.js
  *  at boot. fullscreenchange is the important one: the browser's own
  *  exit paths (Esc key, notification shade, tab switch) must take the
@@ -159,6 +213,12 @@ export function initFullscreenSync() {
     }
   });
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') reacquireWakeLockIfFullscreen();
+    if (document.visibilityState === 'visible') {
+      reacquireWakeLockIfFullscreen();
+      // The ambient nightstand's lock is dropped by the platform on tab-hide
+      // exactly like the mushaf one — but no store notify fires on return,
+      // so its lifecycle (which runs per-notify) would never re-arm it.
+      updateAmbientWakeLifecycle(store.getState());
+    }
   });
 }

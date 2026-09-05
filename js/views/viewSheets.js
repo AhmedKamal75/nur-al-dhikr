@@ -379,6 +379,7 @@ export function buildPrayerSheet(state) {
         rows: [
           sheetRow('prayer-open-adhan', 'prayer.sheet.adhan', 'volume', lang),
           sheetRow('prayer-open-calc', 'prayer.sheet.calc', 'calculator', lang),
+          sheetLinkRow('prayer.sheet.ambient', 'moon', VIEWS.AMBIENT, {}, lang),
           sheetSwitchRow('view-toggle-traveler', 'traveler.title', 'plane', lang, traveler),
         ],
       },
@@ -387,6 +388,7 @@ export function buildPrayerSheet(state) {
         rows: [
           sheetRow('prayer-open-location', 'prayer.sheet.location', 'location', lang),
           sheetRow('prayer-request-location', 'prayer.enableLocation', 'location', lang),
+          sheetRow('prayer-export-ics', 'prayer.sheet.exportIcs', 'download', lang),
         ],
       },
     ],

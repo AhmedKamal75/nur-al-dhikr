@@ -81,6 +81,13 @@ export function setVolume(v) {
   if (audioEl && Number.isFinite(n)) audioEl.volume = Math.min(1, Math.max(0, n));
 }
 
+/** Verse speed: applies live to the shared element (takes effect instantly,
+ *  no restart needed — the platform stretches the running buffer). */
+export function setPlaybackRate(v) {
+  const n = Number(v);
+  if (audioEl && Number.isFinite(n)) audioEl.playbackRate = Math.min(2, Math.max(0.5, n));
+}
+
 export function isPlaying(key) {
   return currentKey === key;
 }
@@ -119,6 +126,11 @@ export function driverStop() {
 export function driverSetVolume(v) {
   if (driver?.setVolume) driver.setVolume(v);
   else setVolume(v);
+}
+
+export function driverSetRate(v) {
+  if (driver?.setRate) driver.setRate(v);
+  else setPlaybackRate(v);
 }
 
 export function driverOnEnded(cb) {

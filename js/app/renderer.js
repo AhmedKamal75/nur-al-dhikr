@@ -86,6 +86,7 @@ import { renderRoots } from '../views/roots.js';
 import { renderHadith } from '../views/hadith.js';
 import { renderSettings } from '../views/settings.js';
 import { renderAbout } from '../views/about.js';
+import { renderAmbient } from '../views/ambient.js';
 import { renderEditor } from '../views/editor.js';
 import { renderGarden } from '../views/garden.js';
 import { renderMutashabihat } from '../views/mutashabihat.js';
@@ -124,6 +125,7 @@ const VIEW_TABLE = {
   [VIEWS.JOURNAL]: renderJournal,
   [VIEWS.CERTIFICATE]: renderCertificate,
   [VIEWS.GARDEN]: renderGarden,
+  [VIEWS.AMBIENT]: renderAmbient,
 };
 
 let lastView = null;
@@ -474,6 +476,10 @@ export function render(state) {
   // piece of chrome and lets the book claim the whole viewport. The
   // renderer owns body classes because views are pure string templates.
   document.body.classList.toggle('is-mushaf-fullscreen', state.mushafFullscreen === true);
+  // (v5.2.0) Ambient nightstand display: same chrome-hiding contract as
+  // mushaf fullscreen, keyed off the route (leaving the route restores
+  // chrome — no stuck state possible).
+  document.body.classList.toggle('is-ambient', state.activeView === VIEWS.AMBIENT);
   // (v4.5) the Mushaf route gets a wide reading column (facing pages on
   // desktop); the classic reader's immersive mode hides its chrome. Both
   // scoped to their own routes — NAVIGATE resets the fullscreen/immersive

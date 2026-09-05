@@ -86,7 +86,7 @@ tables below need to be precise we write them as `(mushaf, ∅, fullscreen)`.
 
 ## 2. Q — the states
 
-### 2.1 ROUTES (29) — grouped by region of the app
+### 2.1 ROUTES (30) — grouped by region of the app
 
 | Group   | Route              | Params         | Reached from                                | Back path (I1 owner)                 |
 | ------- | ------------------ | -------------- | ------------------------------------------- | ------------------------------------ |
@@ -106,6 +106,7 @@ tables below need to be precise we write them as `(mushaf, ∅, fullscreen)`.
 | Find    | `collection/:id`   | id             | collections                                 | **back-link → collections**          |
 | Find    | `mood`             | —              | home                                        | back-link + nav                      |
 | Worship | `prayer`           | —              | nav, home                                   | nav                                  |
+| Worship | `ambient`          | —              | Prayer ⋯ menu                               | **exit ✕ → prayer** (I1) + nav       |
 | Worship | `qibla`            | —              | prayer card, nav                            | back-link + nav                      |
 | Worship | `ramadan`          | —              | nav                                         | nav                                  |
 | Worship | `calendar`         | —              | nav, ramadan                                | nav                                  |
@@ -221,16 +222,16 @@ Invariants that make this loop safe:
 
 ## 5. Chrome-removing modes — exact contracts
 
-|                       | `focus` (route)                      | `mushaf + fullscreen`                                             | `quran/:id + immersive`                                |
+| | `focus` (route) | `mushaf + fullscreen` | `quran/:id + immersive` | `ambient` (route) |
 | --------------------- | ------------------------------------ | ----------------------------------------------------------------- | ------------------------------------------------------ |
-| Hides                 | topbar, bottomnav, drawer, playerbar | topbar, bottomnav, drawer, playerbar                              | topbar, bottomnav, drawer                              |
-| Keeps                 | its own top bar                      | floating fs-controls + tap zones                                  | playerbar (follow-along) + glass bar                   |
-| Always-visible exit   | ✕ button, top-inline-start           | compress button in fs bar (auto-fade: any pointer/key re-summons) | compress button in glass bar (same auto-fade contract) |
-| Esc (no native API)   | n/a (it's a route: ✕ / BACK)         | exits fullscreen (I2 #3)                                          | exits immersive (I2 #4)                                |
-| Native Fullscreen API | —                                    | requested on enter, synced on `fullscreenchange`                  | not requested                                          |
-| Wake lock             | —                                    | held while active                                                 | —                                                      |
-| Keyboard              | —                                    | `←`/`→` page-turn, Esc                                            | Esc                                                    |
-| Reset on route leave  | —                                    | yes (reducer, I4)                                                 | yes (reducer, I4)                                      |
+| Hides | topbar, bottomnav, drawer, playerbar | topbar, bottomnav, drawer, playerbar | topbar, bottomnav, drawer | topbar, bottomnav, drawer, playerbar |
+| Keeps | its own top bar | floating fs-controls + tap zones | playerbar (follow-along) + glass bar | its own ✕ exit |
+| Always-visible exit | ✕ button, top-inline-start | compress button in fs bar (auto-fade: any pointer/key re-summons) | compress button in glass bar (same auto-fade contract) | ✕ button → prayer (no auto-fade: it IS the display) |
+| Esc (no native API) | n/a (it's a route: ✕ / BACK) | exits fullscreen (I2 #3) | exits immersive (I2 #4) | n/a (it's a route: ✕ / BACK) |
+| Native Fullscreen API | — | requested on enter, synced on `fullscreenchange` | not requested | not requested |
+| Wake lock | — | held while active | — | held while route open (own handle, released on leave) |
+| Keyboard | — | `←`/`→` page-turn, Esc | Esc | Esc (via BACK) |
+| Reset on route leave | — | yes (reducer, I4) | yes (reducer, I4) | n/a (route, not a mode flag) + lock released on leave |
 
 **Auto-fade contract (shared):** the floating controls of BOTH fullscreen
 modes fade after 3 s of idle (`body.mushaf-fs-idle` / `body.reader-fs-idle`)

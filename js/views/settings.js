@@ -7,7 +7,7 @@
  * the schedules manager link. Every control keeps its existing
  * data-action contract (set-setting / toggle-setting / data-bind …).
  */
-import { t, availableLanguages } from '../core/i18n.js';
+import { t, availableLanguages, languageLabel } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import {
@@ -16,6 +16,7 @@ import {
   THEME_MODES,
   QURAN_RECITERS,
   TRANSLATION_EDITIONS,
+  TASBIH_MILESTONES,
   APP_VERSION,
   VIEWS,
 } from '../core/config.js';
@@ -31,6 +32,23 @@ const FIELD_LABELS = {
   grade: 'content.fieldGrade',
   notes: 'content.fieldNotes',
 };
+
+/** (U14) In-page table of contents: [label-key, panel-id] pairs mirroring
+ *  the 11 panels below, in the same order. Labels reuse the panel headers
+ *  so no extra dictionary keys are needed (only settings.toc is new). */
+const TOC_SECTIONS = [
+  ['settings.language', 'settings-sec-language'],
+  ['settings.appearance', 'settings-sec-appearance'],
+  ['settings.content', 'settings-sec-content'],
+  ['settings.cardFields', 'settings-sec-cardfields'],
+  ['settings.reciter', 'settings-sec-reciter'],
+  ['settings.translation', 'settings-sec-translation'],
+  ['settings.compareTranslation', 'settings-sec-compare'],
+  ['settings.feedback', 'settings-sec-feedback'],
+  ['settings.notifications', 'settings-sec-notifications'],
+  ['settings.accessibility', 'settings-sec-accessibility'],
+  ['settings.data', 'settings-sec-data'],
+];
 
 /** A settings section header with an icon and an optional hint line. */
 function panelHeader(title, iconName, lang, hintKey) {
@@ -79,7 +97,7 @@ export function renderSettings(state) {
   const langButtons = availableLanguages()
     .map(
       (l) => `
-    <button type="button" class="segmented__btn ${s.language === l ? 'segmented__btn--active' : ''}" data-action="set-setting" data-key="language" data-value="${l}" aria-pressed="${s.language === l}">${l === 'en' ? 'English' : 'العربية'}</button>`
+    <button type="button" class="segmented__btn ${s.language === l ? 'segmented__btn--active' : ''}" data-action="set-setting" data-key="language" data-value="${l}" aria-pressed="${s.language === l}">${escapeHTML(languageLabel(l))}</button>`
     )
     .join('');
 
@@ -90,6 +108,20 @@ export function renderSettings(state) {
       ${s.reciter === r.id ? icon('check', { size: 16 }) : ''}
     </button>`
   ).join('');
+  // Compare-two-reciters: voice B (empty = off) + whether new sessions start comparing.
+  const reciterBRows =
+    `
+    <button type="button" class="reciter-row ${!s.reciterB ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="reciterB" data-value="" aria-pressed="${!s.reciterB}">
+      <span class="reciter-row__name">${escapeHTML(t('audio.noSecondVoice', lang))}</span>
+      ${!s.reciterB ? icon('check', { size: 16 }) : ''}
+    </button>` +
+    QURAN_RECITERS.map(
+      (r) => `
+    <button type="button" class="reciter-row ${s.reciterB === r.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="reciterB" data-value="${r.id}" aria-pressed="${s.reciterB === r.id}">
+      <span class="reciter-row__name">${escapeHTML(pickLocale({ en: r.nameEn, ar: r.nameAr }, lang))}</span>
+      ${s.reciterB === r.id ? icon('check', { size: 16 }) : ''}
+    </button>`
+    ).join('');
 
   // v3.15: Qur'an translation edition picker. Each option keeps its own
   // native name (script never translated away) with the translator as the
@@ -101,6 +133,25 @@ export function renderSettings(state) {
       ${s.quranTranslation === ed.id ? icon('check', { size: 16 }) : ''}
     </button>`
   ).join('');
+
+  // (v5.2.0) Translation-compare: a second edition shown under the primary
+  // one in the classic reader. Same set-setting pipeline (sanitizer maps
+  // '' back to null = off); en-sahih excluded — it is already inline.
+  const compareRows =
+    `
+    <button type="button" class="reciter-row ${!s.quranTranslationB ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="quranTranslationB" data-value="" aria-pressed="${!s.quranTranslationB}">
+      <span class="reciter-row__name">${escapeHTML(t('settings.compareOff', lang))}</span>
+      ${!s.quranTranslationB ? icon('check', { size: 16 }) : ''}
+    </button>` +
+    TRANSLATION_EDITIONS.filter((ed) => !ed.inline)
+      .map(
+        (ed) => `
+    <button type="button" class="reciter-row ${s.quranTranslationB === ed.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="quranTranslationB" data-value="${ed.id}" dir="auto" aria-pressed="${s.quranTranslationB === ed.id}">
+      <span class="reciter-row__name">${escapeHTML(ed.native)}<span class="reciter-row__meta"> — ${escapeHTML(ed.author)}</span></span>
+      ${s.quranTranslationB === ed.id ? icon('check', { size: 16 }) : ''}
+    </button>`
+      )
+      .join('');
 
   const reminders = state.reminders
     .map(
@@ -132,12 +183,19 @@ export function renderSettings(state) {
   <section class="view view--settings">
     <h1 class="view__title">${t('settings.title', lang)}</h1>
 
-    <section class="panel">
+    <nav class="settings-toc" aria-label="${escapeHTML(t('settings.toc', lang))}">
+      ${TOC_SECTIONS.map(
+        ([key, target]) => `
+      <button type="button" class="chip chip--sm" data-action="settings-toc-go" data-target="${target}">${t(key, lang)}</button>`
+      ).join('')}
+    </nav>
+
+    <section class="panel" id="settings-sec-language">
       ${panelHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-appearance">
       ${panelHeader(t('settings.appearance', lang), 'sun', lang)}
       <p class="field-label">${t('settings.theme', lang)}</p>
       <div class="segmented">${modeButtons}</div>
@@ -151,7 +209,7 @@ export function renderSettings(state) {
       <input type="range" class="slider" min="0.85" max="1.6" step="0.05" value="${Number(s.arabicFontScale) || 1}" data-bind="arabicFontScale" aria-labelledby="arabic-font-scale-label" />
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-content">
       ${panelHeader(t('settings.content', lang), 'list', lang)}
       ${toggleRow('showTransliteration', s.showTransliteration, t('settings.showTransliteration', lang))}
       ${toggleRow('showTranslation', s.showTranslation, t('settings.showTranslation', lang))}
@@ -160,48 +218,69 @@ export function renderSettings(state) {
       <input type="number" class="input" min="1" max="10000" value="${escapeHTML(String(s.dailyGoal ?? ''))}" data-bind="dailyGoal" aria-labelledby="daily-goal-label" />
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-cardfields">
       ${panelHeader(t('settings.cardFields', lang), 'grid', lang, 'settings.cardFieldsHint')}
       ${cardFieldRows}
       <button type="button" class="btn btn--secondary btn--sm" data-action="content-restore-all">${icon('refresh', { size: 14 })} ${t('library.sheet.restoreAll', lang)}</button>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-reciter">
       ${panelHeader(t('settings.reciter', lang), 'volume', lang, 'settings.reciterHint')}
       <div class="reciter-list">${reciterRows}</div>
+      <p class="field-label">${t('settings.reciterB', lang)}</p>
+      <p class="panel__subtext">${t('settings.reciterBHint', lang)}</p>
+      <div class="reciter-list">${reciterBRows}</div>
+      ${toggleRow('reciterCompare', s.reciterCompare === true, t('settings.reciterCompare', lang))}
       <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.AUDIO)}" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 14 })} ${t('settings.audioManager', lang)}</a>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-translation">
       ${panelHeader(t('settings.translation', lang), 'book', lang, 'settings.quranTranslationHint')}
       <div class="reciter-list">${translationRows}</div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-compare">
+      ${panelHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
+      <div class="reciter-list">${compareRows}</div>
+    </section>
+
+    <section class="panel" id="settings-sec-feedback">
       ${panelHeader(t('settings.feedback', lang), 'bead', lang, 'settings.feedbackHint')}
       ${toggleRow('hapticsEnabled', s.hapticsEnabled, t('settings.haptics', lang))}
       ${toggleRow('soundEnabled', s.soundEnabled, t('settings.sound', lang))}
       ${toggleRow('tapRipple', s.tapRipple, t('settings.ripple', lang))}
       ${toggleRow('pageTurnSound', s.pageTurnSound, t('settings.pageTurn', lang))}
       ${toggleRow('khatmaChimeSound', s.khatmaChimeSound, t('settings.khatmaChime', lang))}
+      <p class="panel__subtext"><strong>${escapeHTML(t('settings.milestone', lang))}</strong> — ${escapeHTML(t('settings.milestoneHint', lang))}</p>
+      <div class="chip-row" role="group" aria-label="${escapeHTML(t('settings.milestone', lang))}">
+        ${[...TASBIH_MILESTONES]
+          .sort((a, b) => a - b)
+          .map(
+            (n) => `
+        <button type="button" class="chip ${s.tasbihMilestone === n ? 'chip--active' : ''}" data-action="set-setting" data-key="tasbihMilestone" data-value="${n}" aria-pressed="${s.tasbihMilestone === n}">${n === 0 ? escapeHTML(t('settings.milestoneOff', lang)) : escapeHTML(String(n))}</button>`
+          )
+          .join('')}
+      </div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-notifications">
       ${panelHeader(t('settings.notifications', lang), 'bell', lang)}
       <div class="btn-stack">
         <button type="button" class="btn btn--secondary btn--sm" data-action="add-reminder">${icon('plus', { size: 14 })} ${t('settings.addReminder', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="schedule-open-manager">${icon('calendar', { size: 14 })} ${t('schedule.manager', lang)}</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="jumuah">${icon('moon', { size: 14 })} ${t('preset.jumuah', lang)}</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="dailyVerse">${icon('book', { size: 14 })} ${t('preset.dailyVerse', lang)}</button>
       </div>
       ${reminders || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-accessibility">
       ${panelHeader(t('settings.accessibility', lang), 'hands', lang)}
       ${toggleRow('reduceMotion', s.reduceMotion, t('settings.reduceMotion', lang))}
       ${toggleRow('highContrast', s.highContrast, t('settings.highContrast', lang))}
     </section>
 
-    <section class="panel">
+    <section class="panel" id="settings-sec-data">
       ${panelHeader(t('settings.data', lang), 'shield', lang)}
       <!-- v3.26 data health check: three honest facts, zero servers -->
       <div class="data-health">

@@ -41,26 +41,52 @@ function tone(freq, startTime, duration, gainPeak = 0.15, type = 'sine') {
   osc.stop(c.currentTime + startTime + duration + 0.05);
 }
 
+/**
+ * PURE — effective alert loudness 0..1 for the given prayer settings at a
+ * moment in time. Day volume normally; the quiet-hours volume inside the
+ * window (which may wrap past midnight, e.g. 22:00–06:00). Garbage in →
+ * the 80 default, never silence-by-surprise (0 only when explicitly set).
+ */
+export function effectiveAdhanVolume(prefs, now = new Date()) {
+  const clampVol = (v, dflt) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) / 100 : dflt / 100;
+  };
+  const day = clampVol(prefs?.adhanVolume, 80);
+  if (prefs?.quietEnabled !== true) return day;
+  const toMin = (s) => {
+    const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(typeof s === 'string' ? s : '');
+    return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+  };
+  const start = toMin(prefs.quietStart);
+  const end = toMin(prefs.quietEnd);
+  if (start == null || end == null || start === end) return day;
+  const t = now instanceof Date ? now.getHours() * 60 + now.getMinutes() : 0;
+  const inside = start < end ? t >= start && t < end : t >= start || t < end;
+  return inside ? clampVol(prefs.quietVolume, 30) : day;
+}
+
 const SOUNDS = {
-  chime: () => {
-    tone(587.33, 0, 0.5);
-    tone(880, 0.15, 0.6);
+  chime: (v = 1) => {
+    tone(587.33, 0, 0.5, 0.15 * v);
+    tone(880, 0.15, 0.6, 0.15 * v);
   }, // D5 -> A5, gentle two-note rise
-  bell: () => {
-    tone(660, 0, 1.1, 0.18, 'triangle');
-    tone(1320, 0, 1.1, 0.05, 'triangle');
+  bell: (v = 1) => {
+    tone(660, 0, 1.1, 0.18 * v, 'triangle');
+    tone(1320, 0, 1.1, 0.05 * v, 'triangle');
   }, // fundamental + soft overtone
-  ding: () => {
-    tone(1046.5, 0, 0.28, 0.16);
+  ding: (v = 1) => {
+    tone(1046.5, 0, 0.28, 0.16 * v);
   }, // single bright ping
   silent: () => {},
 };
 
 export const SOUND_IDS = Object.freeze(['chime', 'bell', 'ding', 'silent']);
 
-export function playSound(id) {
+export function playSound(id, volume = 1) {
   try {
-    (SOUNDS[id] || SOUNDS.chime)();
+    const v = Number.isFinite(Number(volume)) ? Math.min(1, Math.max(0, Number(volume))) : 1;
+    (SOUNDS[id] || SOUNDS.chime)(v);
   } catch {
     /* AudioContext unavailable or blocked before first user gesture — ignore silently */
   }
@@ -150,20 +176,22 @@ export function stopAdhan() {
   releaseObjectUrl();
 }
 
-/** Fire-and-forget playback of one resolved adhan source. */
-export async function startAdhan(source) {
+/** Fire-and-forget playback of one resolved adhan source (0..1 volume). */
+export async function startAdhan(source, volume = 1) {
   stopAdhan();
   try {
     if (source === 'custom-standard' || source === 'custom-fajr') {
       const kind = source === 'custom-fajr' ? 'fajr' : 'standard';
       const blob = await getAdhanAudio(kind);
-      if (!blob) return startAdhan('bundled'); // import vanished — fall back
+      if (!blob) return startAdhan('bundled', volume); // import vanished — fall back
       adhanObjectUrl = URL.createObjectURL(blob);
       adhanAudio = new Audio(adhanObjectUrl);
     } else {
       adhanAudio = new Audio(BUNDLED_ADHAN_URL);
     }
     adhanAudio.preload = 'auto';
+    const v = Number.isFinite(Number(volume)) ? Math.min(1, Math.max(0, Number(volume))) : 1;
+    adhanAudio.volume = v;
     // (v4.2) release the element + blob right after natural playback ends:
     // a custom adhan's blob otherwise stayed pinned in memory from Fajr
     // until the NEXT alert (or stop) ~24h later. stopAdhan() is unchanged
@@ -188,8 +216,10 @@ export async function startAdhan(source) {
 export function playAlert(prefs, { fajr = false } = {}) {
   const resolved = resolveAlertSource(prefs, { fajr, custom: customAdhanFlags() });
   if (!resolved) return;
-  if (resolved.kind === 'tone') playSound(resolved.id);
-  else startAdhan(resolved.source);
+  const volume = effectiveAdhanVolume(prefs);
+  if (volume <= 0) return; // explicit 0 = silent hours, honestly silent
+  if (resolved.kind === 'tone') playSound(resolved.id, volume);
+  else startAdhan(resolved.source, volume);
 }
 
 /** Settings "Test" preview: plays exactly what the current mode resolves to. */

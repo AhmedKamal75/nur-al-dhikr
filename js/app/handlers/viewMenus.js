@@ -10,6 +10,12 @@
 
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
+import { calculateTimes } from '../../domain/prayer.js';
+import {
+  PRAYER_EXPORT_ORDER,
+  buildPrayerICS,
+  prayerICSFilename,
+} from '../../domain/prayerExport.js';
 import { openModal, closeModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import { dateKey } from '../../core/utils.js';
@@ -111,6 +117,41 @@ export const clickHandlers = {
 
   'prayer-open-location': () => {
     openModal(profilesPanelHTML(store.getState()), { labelledBy: 'panel-profiles-title' });
+  },
+
+  // (v5.2.0) Export today's prayer times as an .ics file for the phone's
+  // system calendar. Computed on-device with the same engine + location
+  // the Prayer view uses; polar-fallback times are excluded by the builder.
+  'prayer-export-ics': () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const p = state.settings.prayer;
+    if (p.latitude == null || p.longitude == null) {
+      showToast(t('prayer.locationNeeded', lang));
+      return;
+    }
+    const now = new Date();
+    const times = calculateTimes({
+      date: now,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      timezoneOffsetHours: -now.getTimezoneOffset() / 60,
+      method: p.method,
+      asr: p.asr,
+    });
+    const names = {};
+    for (const n of PRAYER_EXPORT_ORDER) names[n] = t(`prayer.${n}`, lang);
+    const ics = buildPrayerICS(times, now, { place: p.locationName || '', names });
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = prayerICSFilename(now);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    showToast(t('prayer.exportedIcs', lang));
   },
 
   'view-toggle-traveler': () => {

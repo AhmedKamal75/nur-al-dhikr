@@ -4,7 +4,12 @@ import { playFlipSound } from './inputs.js';
 
 import { VIEWS } from '../core/config.js';
 import { go } from '../core/router.js';
-import { clampPage, resolvePage as resolveMushafPage } from '../services/mushaf.js';
+import {
+  clampPage,
+  mushafSpreadActive,
+  resolvePage as resolveMushafPage,
+  spreadRightPage,
+} from '../services/mushaf.js';
 import { setFlipDirection } from '../views/mushafReader.js';
 
 /**
@@ -48,8 +53,15 @@ export function maybeFollowRecitation(state) {
     const page = meta ? resolveMushafPage(meta.ayahPages, sp.surah, sp.ayah) : null;
     if (!page) return;
     const current = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
-    if (page !== current) {
-      setFlipDirection(page > current ? 'next' : 'prev');
+    // In a two-page spread both facing pages are already on screen — only
+    // turn when the ayah's spread differs from the visible one. Comparing
+    // raw pages here flipped pointlessly (and pushed a history entry) every
+    // time recitation crossed from the right to the left facing page.
+    const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+    const target = spreadOn ? spreadRightPage(page) : page;
+    const shown = spreadOn ? spreadRightPage(current) : current;
+    if (target !== shown) {
+      setFlipDirection(target > shown ? 'next' : 'prev');
       playFlipSound();
       go(VIEWS.MUSHAF, { page: String(page) });
       return;

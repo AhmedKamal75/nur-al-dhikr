@@ -136,3 +136,24 @@ app's Uthmani corpus, never the upstream's:
   so shipped data can never drift from the build's own gates.
 - The default English edition (Sahih International) remains inline in
   data/quran/ exactly as before; no overlay files exist for it.
+
+## 2026-09 independent audit corrections
+
+- `duas.json` `dua-mor-ex-002` (tawakkul dua) was mis-cited as Abu Dawud 5050
+  (the bed-dusting dua) with a Hasan grade; corrected to Ibn al-Sunni
+  57 / al-Tabarani, graded Daif (Albani, Silsilat al-Da'ifa 6420), narrator
+  Abu al-Darda via Talq ibn Habib.
+- Morning/evening "bika asbahna/amsayna" items now cite Abu Dawud jointly
+  with Tirmidhi 3391 and note the wording direction (Hisn al-Muslim
+  convention: morning ends with al-nushur), since Tirmidhi 3391 has the two
+  endings swapped relative to the app's wording.
+- `adhkar.json` Ayat al-Kursi virtues no longer conflate narrations: Muslim
+  810 (greatest ayah), al-Nasa'i 100 (after every prayer), Bukhari 2311
+  (before sleep) are cited separately.
+- `asma.json` now states the Tirmidhi 3507 enumeration is graded gharib and
+  moved blog URLs from reference fields to "Further reading" notes.
+- `adhkar.json` `adh-mor-010` / `adh-eve-010` (amsayna/asbahna al-mulk dua)
+  wrongly named Abu Hurayrah as narrator with an unverified "recited three
+  times" virtues story; corrected to Abdullah ibn Mas'ud, citing Sahih
+  Muslim 2723 + Sunan Abi Dawud 5071 (sahih per Albani), verified on
+  sunnah.com (round-2 audit).
