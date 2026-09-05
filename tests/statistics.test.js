@@ -90,3 +90,24 @@ test('totalInLastDays rolling window includes today, excludes older', () => {
   const s = statsWith({ daysAgo: { 0: 1, 6: 1, 7: 1, 8: 1 } });
   assert.equal(totalInLastDays(s, 7), 2); // days 0 and 6, not 7/8
 });
+
+test('weekly share helpers: reading/active windows + summary text', async () => {
+  const { readingInLastDays, activeDaysInLastDays, buildWeekSummary } =
+    await import('../js/domain/statistics.js');
+  const { dateKey, addDays } = await import('../js/core/utils.js');
+  const key = (ago) => dateKey(addDays(new Date(), -ago));
+  const stats = {
+    dailyHistory: {
+      [key(0)]: { recitations: 10, readingSec: 600 },
+      [key(3)]: { recitations: 0, readingSec: 300 },
+      [key(9)]: { recitations: 99, readingSec: 9999 },
+    },
+  };
+  assert.equal(readingInLastDays(stats, 7), 900, 'window excludes day 9');
+  assert.equal(activeDaysInLastDays(stats, 7), 2, 'zero-recitation day counts via reading');
+  const text = buildWeekSummary({ recitations: 10, activeDays: 2, readingMin: 15, streak: 3 }, {});
+  assert.ok(text.includes('10') && text.includes('2/7') && text.includes('15 min'));
+  assert.ok(text.includes('3'));
+  const hostile = buildWeekSummary({ recitations: 'x', activeDays: -2 }, {});
+  assert.ok(hostile.includes('0'), 'garbage coerces to zero');
+});

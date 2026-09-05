@@ -583,6 +583,7 @@ export function buildStatisticsSheet(state) {
         rows: [
           sheetLinkRow('stats.sheet.garden', 'sprout', VIEWS.GARDEN, {}, lang),
           sheetLinkRow('stats.sheet.review', 'target', VIEWS.QURAN, { mem: '1' }, lang),
+          sheetRow('statistics-share-week', 'stats.sheet.shareWeek', 'share', lang),
         ],
       },
       {

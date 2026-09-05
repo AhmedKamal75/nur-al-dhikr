@@ -11,6 +11,7 @@ import { cardHTML } from '../ui/card.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { completedCount } from '../services/checklist.js';
 import { ramadanInfo } from '../domain/ramadan.js';
+import { resolveHomePanels } from '../domain/homePanels.js';
 import { toHijri } from '../domain/calendar.js';
 import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
 import { calculateTimes, nextPrayer, formatClock } from '../domain/prayer.js';
@@ -268,11 +269,117 @@ export function renderHome(state) {
     .filter(Boolean);
   const pinnedCollections = state.collections.slice(0, 3);
 
+  // Active non-main profile rides the hero as a tappable chip (into
+  // Settings → profiles) so nobody mistakes whose streaks these are.
+  const profile = (state.profiles || []).find((p) => p.id === state.activeProfile);
+  const profileChip = profile
+    ? `
+      <a class="chip chip--active home-hero__profile" href="${buildHash(VIEWS.SETTINGS)}" data-action="navigate" data-view="${VIEWS.SETTINGS}">${icon('folder', { size: 13 })} ${escapeHTML(profile.name)}</a>`
+    : '';
+
+  // Home panels as an id-keyed map: the user's saved order + hides
+  // (settings.homeOrder / hiddenHome) rearrange them below. Conditional
+  // panels evaluate to '' when they have nothing to say, exactly as before.
+  const homePanels = {
+    ramadan: (() => {
+      const { inRamadan, hijri } = ramadanInfo(new Date());
+      return inRamadan
+        ? `
+    <a class="panel panel--ramadan-banner" href="${buildHash(VIEWS.RAMADAN)}" data-action="navigate" data-view="${VIEWS.RAMADAN}">
+      <span class="panel--ramadan-banner__icon">${icon('moon', { size: 22 })}</span>
+      <span class="panel--ramadan-banner__text">
+        <span class="panel--ramadan-banner__label">${t('ramadan.bannerTitle', lang)}</span>
+        <span class="panel--ramadan-banner__sub">${t('ramadan.bannerSub', lang, { n: hijri.day })}</span>
+      </span>
+      ${icon('chevronRight', { size: 18 })}
+    </a>`
+        : '';
+    })(),
+    checklist: `
+    <a class="panel panel--checklist-summary-link" href="${buildHash(VIEWS.CHECKLIST)}" data-action="navigate" data-view="${VIEWS.CHECKLIST}">
+      <span class="panel--checklist-summary-link__icon">${icon('target', { size: 22 })}</span>
+      <span class="panel--checklist-summary-link__text">
+        <span class="panel--checklist-summary-link__label">${t('checklist.title', lang)}</span>
+        <span class="panel--checklist-summary-link__sub" dir="ltr">${completedCount(selectors.todayChecklist(state))} / ${CHECKLIST_ITEMS.length} ${t('checklist.today', lang)}</span>
+      </span>
+      ${icon('chevronRight', { size: 18 })}
+    </a>`,
+    continue: state.quranBookmark?.surah
+      ? `
+    <a class="panel panel--quran-continue" href="${buildHash(VIEWS.MUSHAF)}" data-action="mushaf-open-at-surah" data-surah="${escapeHTML(String(state.quranBookmark.surah))}">
+      <span class="panel--quran-continue__icon">${icon('quran', { size: 22 })}</span>
+      <span class="panel--quran-continue__text">
+        <span class="panel--quran-continue__label">${t('quran.continueReading', lang)}</span>
+        <span class="panel--quran-continue__sub">${t('quran.surah', lang)} ${escapeHTML(String(state.quranBookmark.surah))}</span>
+      </span>
+      ${icon('chevronRight', { size: 18 })}
+    </a>`
+      : '',
+    progress: `
+    <section class="panel panel--progress">
+      <div class="panel__header">
+        <h2>${t('home.dailyProgress', lang)}</h2>
+        <span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
+      </div>
+      <div class="progress-bar" role="progressbar" aria-label="${t('home.dailyProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
+      </div>
+      <p class="panel__subtext" dir="ltr">${escapeHTML(String(today?.recitations || 0))} / ${escapeHTML(String(goal))}</p>
+    </section>`,
+    verse: daily
+      ? `
+    <section class="panel panel--reflection">
+      <div class="panel__header"><h2>${t('home.verseOfTheDay', lang)}</h2></div>
+      ${cardHTML(daily.item, daily.category, { lang, isFavorite: selectors.isFavorite(state, daily.item.id), isSpeaking: state.speakingItemId === daily.item.id, counter: selectors.getCounter(state, daily.item.id), showTransliteration: state.settings.showTransliteration, showTranslation: state.settings.showTranslation, compact: true })}
+    </section>`
+      : '',
+    hadith: dailyHadithCardHTML(state),
+    hifz: hifzReviewCardHTML(state),
+    worship: worshipTodayCardHTML(state),
+    recent: recentEntries.length
+      ? `
+    <section class="panel">
+      <div class="panel__header"><h2>${t('home.continueReading', lang)}</h2></div>
+      <div class="card-row">
+        ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
+      </div>
+    </section>`
+      : `<p class="empty-hint">${t('home.noRecent', lang)}</p>`,
+    favorites: favEntries.length
+      ? `
+    <section class="panel">
+      <div class="panel__header">
+        <h2>${t('home.favorites', lang)}</h2>
+        <a href="${buildHash(VIEWS.FAVORITES)}" data-action="navigate" data-view="${VIEWS.FAVORITES}" aria-label="${t('home.viewAll.favorites', lang)}">${icon('chevronRight', { size: 16 })}</a>
+      </div>
+      <div class="card-row">
+        ${favEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: true, isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
+      </div>
+    </section>`
+      : '',
+    collections: pinnedCollections.length
+      ? `
+    <section class="panel">
+      <div class="panel__header">
+        <h2>${t('home.collections', lang)}</h2>
+        <a href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}" aria-label="${t('home.viewAll.collections', lang)}">${icon('chevronRight', { size: 16 })}</a>
+      </div>
+      <div class="chip-row">
+        ${pinnedCollections.map((c) => `<a class="chip chip--collection" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">${escapeHTML(pickLocale(c.name, lang))} <span class="chip__count">${c.items.length}</span></a>`).join('')}
+      </div>
+    </section>`
+      : '',
+  };
+  const orderedHomePanels = resolveHomePanels(state.settings.homeOrder, state.settings.hiddenHome)
+    .map((id) => homePanels[id] || '')
+    .join('');
+
   return `
   <section class="view view--home">
     <div class="home-hero">
       <p class="home-hero__greeting">${t(greetingKey(), lang)}${hijriChipHTML(lang)}</p>
       <h1 class="home-hero__title">${t('app.tagline', lang)}</h1>
+      ${profileChip}
     </div>
 
     ${nextPrayerStrip(state, lang, prayerTimes)}
@@ -320,111 +427,6 @@ export function renderHome(state) {
       </a>
     </div>
 
-    ${(() => {
-      const { inRamadan, hijri } = ramadanInfo(new Date());
-      return inRamadan
-        ? `
-    <a class="panel panel--ramadan-banner" href="${buildHash(VIEWS.RAMADAN)}" data-action="navigate" data-view="${VIEWS.RAMADAN}">
-      <span class="panel--ramadan-banner__icon">${icon('moon', { size: 22 })}</span>
-      <span class="panel--ramadan-banner__text">
-        <span class="panel--ramadan-banner__label">${t('ramadan.bannerTitle', lang)}</span>
-        <span class="panel--ramadan-banner__sub">${t('ramadan.bannerSub', lang, { n: hijri.day })}</span>
-      </span>
-      ${icon('chevronRight', { size: 18 })}
-    </a>`
-        : '';
-    })()}
-
-    <a class="panel panel--checklist-summary-link" href="${buildHash(VIEWS.CHECKLIST)}" data-action="navigate" data-view="${VIEWS.CHECKLIST}">
-      <span class="panel--checklist-summary-link__icon">${icon('target', { size: 22 })}</span>
-      <span class="panel--checklist-summary-link__text">
-        <span class="panel--checklist-summary-link__label">${t('checklist.title', lang)}</span>
-        <span class="panel--checklist-summary-link__sub" dir="ltr">${completedCount(selectors.todayChecklist(state))} / ${CHECKLIST_ITEMS.length} ${t('checklist.today', lang)}</span>
-      </span>
-      ${icon('chevronRight', { size: 18 })}
-    </a>
-
-    ${
-      state.quranBookmark?.surah
-        ? `
-    <a class="panel panel--quran-continue" href="${buildHash(VIEWS.MUSHAF)}" data-action="mushaf-open-at-surah" data-surah="${escapeHTML(String(state.quranBookmark.surah))}">
-      <span class="panel--quran-continue__icon">${icon('quran', { size: 22 })}</span>
-      <span class="panel--quran-continue__text">
-        <span class="panel--quran-continue__label">${t('quran.continueReading', lang)}</span>
-        <span class="panel--quran-continue__sub">${t('quran.surah', lang)} ${escapeHTML(String(state.quranBookmark.surah))}</span>
-      </span>
-      ${icon('chevronRight', { size: 18 })}
-    </a>`
-        : ''
-    }
-
-    <section class="panel panel--progress">
-      <div class="panel__header">
-        <h2>${t('home.dailyProgress', lang)}</h2>
-        <span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
-      </div>
-      <div class="progress-bar" role="progressbar" aria-label="${t('home.dailyProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
-      </div>
-      <p class="panel__subtext" dir="ltr">${escapeHTML(String(today?.recitations || 0))} / ${escapeHTML(String(goal))}</p>
-    </section>
-
-    ${
-      daily
-        ? `
-    <section class="panel panel--reflection">
-      <div class="panel__header"><h2>${t('home.verseOfTheDay', lang)}</h2></div>
-      ${cardHTML(daily.item, daily.category, { lang, isFavorite: selectors.isFavorite(state, daily.item.id), isSpeaking: state.speakingItemId === daily.item.id, counter: selectors.getCounter(state, daily.item.id), showTransliteration: state.settings.showTransliteration, showTranslation: state.settings.showTranslation, compact: true })}
-    </section>`
-        : ''
-    }
-
-    ${dailyHadithCardHTML(state)}
-
-    ${hifzReviewCardHTML(state)}
-
-    ${worshipTodayCardHTML(state)}
-
-    ${
-      recentEntries.length
-        ? `
-    <section class="panel">
-      <div class="panel__header"><h2>${t('home.continueReading', lang)}</h2></div>
-      <div class="card-row">
-        ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
-      </div>
-    </section>`
-        : `<p class="empty-hint">${t('home.noRecent', lang)}</p>`
-    }
-
-    ${
-      favEntries.length
-        ? `
-    <section class="panel">
-      <div class="panel__header">
-        <h2>${t('home.favorites', lang)}</h2>
-        <a href="${buildHash(VIEWS.FAVORITES)}" data-action="navigate" data-view="${VIEWS.FAVORITES}" aria-label="${t('home.viewAll.favorites', lang)}">${icon('chevronRight', { size: 16 })}</a>
-      </div>
-      <div class="card-row">
-        ${favEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: true, isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
-      </div>
-    </section>`
-        : ''
-    }
-
-    ${
-      pinnedCollections.length
-        ? `
-    <section class="panel">
-      <div class="panel__header">
-        <h2>${t('home.collections', lang)}</h2>
-        <a href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}" aria-label="${t('home.viewAll.collections', lang)}">${icon('chevronRight', { size: 16 })}</a>
-      </div>
-      <div class="chip-row">
-        ${pinnedCollections.map((c) => `<a class="chip chip--collection" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">${escapeHTML(pickLocale(c.name, lang))} <span class="chip__count">${c.items.length}</span></a>`).join('')}
-      </div>
-    </section>`
-        : ''
-    }
+    ${orderedHomePanels}
   </section>`;
 }

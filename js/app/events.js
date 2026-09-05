@@ -504,6 +504,15 @@ export function bindGlobalEvents() {
       store.dispatch(actions.updatePrayerSettings({ quietEnabled: target.checked }));
       return;
     }
+    // Home panel visibility: the checkbox means VISIBLE (unchecked hides).
+    if (target.matches('[data-action="home-panel-toggle"]')) {
+      const id = String(target.dataset.id || '');
+      const hidden = { ...(store.getState().settings.hiddenHome || {}) };
+      if (target.checked) delete hidden[id];
+      else hidden[id] = true;
+      store.dispatch(actions.updateSettings({ hiddenHome: hidden }));
+      return;
+    }
     if (target.matches('[data-bind="note-recurrence"]')) {
       const form = target.closest('form');
       form.querySelectorAll('[data-recurrence-group]').forEach((el) => {

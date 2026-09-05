@@ -52,6 +52,29 @@ export function totalInLastDays(statistics, days) {
   return sum;
 }
 
+/** Reading seconds banked in the last N days (the reading timer's key). */
+export function readingInLastDays(statistics, days) {
+  let sum = 0;
+  const today = new Date();
+  for (let i = 0; i < days; i += 1) {
+    const key = dateKey(addDays(today, -i));
+    sum += statistics.dailyHistory[key]?.readingSec || 0;
+  }
+  return sum;
+}
+
+/** Active days (any recitations OR reading) inside the last N days. */
+export function activeDaysInLastDays(statistics, days) {
+  let n = 0;
+  const today = new Date();
+  for (let i = 0; i < days; i += 1) {
+    const key = dateKey(addDays(today, -i));
+    const d = statistics.dailyHistory[key];
+    if ((d?.recitations || 0) > 0 || (d?.readingSec || 0) > 0) n += 1;
+  }
+  return n;
+}
+
 /**
  * Average recitations per day over the last N days, one decimal — the honest
  * denominator is the full window (not just active days), otherwise a single
@@ -65,6 +88,26 @@ export function averagePerDay(statistics, days) {
 export function activeDays(statistics) {
   return Object.values(statistics.dailyHistory || {}).filter((d) => (d.recitations || 0) > 0)
     .length;
+}
+
+/**
+ * Weekly share text: recitations, active days, reading minutes, streak —
+ * plain localized lines (labels passed in), shared via Web Share with a
+ * clipboard fallback. Pure string building, no DOM.
+ */
+export function buildWeekSummary(
+  { recitations = 0, activeDays = 0, readingMin = 0, streak = 0 } = {},
+  labels = {}
+) {
+  const L = (k, d) => (typeof labels[k] === 'string' && labels[k] ? labels[k] : d);
+  const n = (v) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Math.floor(Number(v)) : 0);
+  return [
+    L('title', 'My week'),
+    `${L('recitations', 'Dhikr')}: ${n(recitations)}`,
+    `${L('days', 'Active days')}: ${n(activeDays)}/7`,
+    `${L('reading', 'Quran reading')}: ${n(readingMin)} min`,
+    `${L('streak', 'Streak')}: ${n(streak)}`,
+  ].join('\n');
 }
 
 /** Total recitations within the calendar month of refDate (0 for future months). */

@@ -19,6 +19,12 @@ import {
   buildMonthICS,
   prayerMonthICSFilename,
 } from '../../domain/prayerExport.js';
+import {
+  totalInLastDays,
+  activeDaysInLastDays,
+  readingInLastDays,
+  buildWeekSummary,
+} from '../../domain/statistics.js';
 import { openModal, closeModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import { dateKey } from '../../core/utils.js';
@@ -225,6 +231,41 @@ export const clickHandlers = {
       window.print();
     } catch {
       document.body.classList.remove('print-timetable');
+    }
+  },
+
+  // Weekly share: the last 7 days as plain localized lines — Web Share
+  // with files when possible, clipboard when not (same fallback ladder as
+  // hadith-share). Numbers come from the same helpers the Statistics view
+  // renders, so shared figures never disagree with the screen.
+  'statistics-share-week': async () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const stats = state.statistics;
+    const text = buildWeekSummary(
+      {
+        recitations: totalInLastDays(stats, 7),
+        activeDays: activeDaysInLastDays(stats, 7),
+        readingMin: Math.round(readingInLastDays(stats, 7) / 60),
+        streak: stats.currentStreak || 0,
+      },
+      {
+        title: t('stats.shareTitle', lang),
+        recitations: t('stats.totalRecitations', lang),
+        days: t('stats.activeDays', lang),
+        reading: t('stats.readingToday', lang),
+        streak: t('stats.currentStreak', lang),
+      }
+    );
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        showToast(t('card.copied', lang));
+      }
+    } catch {
+      /* user dismissed the share sheet — not an error */
     }
   },
 

@@ -9,6 +9,7 @@
 
 import { dateKey, isSafeKey } from '../../utils.js';
 import { markMemorizedKey, logReviewKey } from '../../../domain/hifz.js';
+import { initialState } from '../initial.js';
 import { computeStreak } from '../streak.js';
 
 /** One playlist range item, or null when unusable. Surah is strictly
@@ -228,6 +229,70 @@ export function reduceLibrary(state, action) {
           total: (Number(cur.total) || 0) + 1,
           days: { ...days, [key]: (Number(days[key]) || 0) + 1 },
         },
+      };
+    }
+
+    // App-wide progress profiles: favorites/counters/statistics/history
+    // travel per profile (settings stay device-global). Same stash pattern
+    // as HIFZ_PROFILE_SWITCH: the outgoing slices park in the store under
+    // the old id, the incoming ones load (or start empty). 'main' needs no
+    // list entry — its data is the top-level slices themselves.
+    case 'PROFILE_CREATE': {
+      const id = typeof action.id === 'string' && isSafeKey(action.id) ? action.id : null;
+      if (!id || id === 'main') return state;
+      if ((state.profiles || []).some((p) => p.id === id)) return state;
+      if ((state.profiles || []).length >= 8) return state;
+      const name =
+        typeof action.name === 'string' && action.name.trim()
+          ? action.name.trim().slice(0, 40)
+          : id;
+      return {
+        ...state,
+        profiles: [...(state.profiles || []), { id, name, createdAt: Date.now() }],
+      };
+    }
+
+    case 'PROFILE_SWITCH': {
+      const target = String(action.id || 'main');
+      if (target === state.activeProfile) return state;
+      if (target !== 'main' && !(state.profiles || []).some((p) => p.id === target)) return state;
+      const store = { ...(state.profileStore || {}) };
+      store[state.activeProfile] = {
+        favorites: state.favorites,
+        counters: state.counters,
+        statistics: state.statistics,
+        history: state.history,
+      };
+      const next = store[target] || {};
+      delete store[target];
+      // A never-visited profile starts from EMPTY progress — falling back
+      // to the outgoing slices here would leak one person's streaks into
+      // another's (the whole point of profiles).
+      const emptyStats = initialState().statistics;
+      return {
+        ...state,
+        favorites: Array.isArray(next.favorites) ? next.favorites : [],
+        counters: next.counters && typeof next.counters === 'object' ? next.counters : {},
+        statistics:
+          next.statistics && typeof next.statistics === 'object' ? next.statistics : emptyStats,
+        history: Array.isArray(next.history) ? next.history : [],
+        profileStore: store,
+        activeProfile: target,
+      };
+    }
+
+    case 'PROFILE_DELETE': {
+      const id = String(action.id || '');
+      // 'main' is structural (never deletable); the active profile must be
+      // left first — deleting it would strand its unsaved slices.
+      if (!id || id === 'main' || id === state.activeProfile) return state;
+      if (!(state.profiles || []).some((p) => p.id === id)) return state;
+      const store = { ...(state.profileStore || {}) };
+      delete store[id];
+      return {
+        ...state,
+        profiles: state.profiles.filter((p) => p.id !== id),
+        profileStore: store,
       };
     }
 

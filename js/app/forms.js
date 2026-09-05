@@ -441,6 +441,11 @@ export function handlePromptForm(form) {
     store.dispatch(actions.createPlaylist(id, value));
     closeModal();
     showToast(t('playlist.created', store.getState().settings.language));
+  } else if (action === 'submit-new-profile') {
+    const id = uid('prof');
+    store.dispatch(actions.createProfile(id, value));
+    closeModal();
+    showToast(t('settings.profileCreated', store.getState().settings.language));
   } else if (action === 'submit-new-bookmark-folder') {
     const id = uid('bmf');
     store.dispatch(actions.createBookmarkFolder(id, value));

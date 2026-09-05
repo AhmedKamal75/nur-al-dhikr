@@ -186,6 +186,8 @@ export function sanitizeSettings(raw) {
     highContrast: asBool(s.highContrast, d.highContrast),
     elderMode: asBool(s.elderMode, d.elderMode),
     kidsMode: asBool(s.kidsMode, d.kidsMode),
+    homeOrder: sanitizeHomeOrder(s.homeOrder),
+    hiddenHome: sanitizeHiddenHome(s.hiddenHome),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
     hapticsEnabled: asBool(s.hapticsEnabled, d.hapticsEnabled),
     pageTurnSound: asBool(s.pageTurnSound, d.pageTurnSound),
@@ -229,6 +231,42 @@ export function sanitizeSettings(raw) {
     mushafPrefs: sanitizeMushafPrefs(s.mushafPrefs),
     contentPrefs: sanitizeContentPrefs(s.contentPrefs),
   };
+}
+
+const HOME_PANEL_ID_SET = new Set([
+  'ramadan',
+  'checklist',
+  'continue',
+  'progress',
+  'verse',
+  'hadith',
+  'hifz',
+  'worship',
+  'recent',
+  'favorites',
+  'collections',
+]);
+
+/** Home panel order: known ids, deduped, or null (= book order). */
+function sanitizeHomeOrder(raw) {
+  if (raw == null) return null;
+  if (!Array.isArray(raw)) return null;
+  const out = [];
+  for (const id of raw) {
+    if (typeof id === 'string' && HOME_PANEL_ID_SET.has(id) && !out.includes(id)) out.push(id);
+  }
+  return out.length ? out : null;
+}
+
+/** Home panel hides: literal-true flags on known ids only. */
+function sanitizeHiddenHome(raw) {
+  const out = {};
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    for (const [k, v] of Object.entries(raw)) {
+      if (HOME_PANEL_ID_SET.has(k) && isSafeKey(k) && v === true) out[k] = true;
+    }
+  }
+  return out;
 }
 
 /**

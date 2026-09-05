@@ -103,6 +103,10 @@ export const actions = {
   }),
   // Kids-mode star for a naturally finished recitation.
   awardKidsStar: () => ({ type: 'KIDS_AWARD_STAR' }),
+  // App-wide progress profiles (family sharing).
+  createProfile: (id, name) => ({ type: 'PROFILE_CREATE', id, name }),
+  switchProfile: (id) => ({ type: 'PROFILE_SWITCH', id }),
+  deleteProfile: (id) => ({ type: 'PROFILE_DELETE', id }),
   // Personal hadith notes — empty/blank text deletes the note.
   setHadithNote: (key, text) => ({ type: 'HADITH_NOTE_SET', key, text }),
   // Hadith memorization (SRS records over "<bookId>:<n>" keys).

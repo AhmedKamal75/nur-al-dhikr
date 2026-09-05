@@ -215,6 +215,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // surahs, stars). Parents toggle it in Settings; kids leave via the
   // hold-to-exit button (2s press).
   kidsMode: false,
+  // Home panel order (null = book order) + per-panel hides. Unknown ids
+  // are ignored at render time so newer-version backups can't blank Home.
+  homeOrder: null,
+  hiddenHome: {},
   soundEnabled: true,
   hapticsEnabled: true,
   // v3.14 Phase C: optional soft sounds — off by default (the owner-facing

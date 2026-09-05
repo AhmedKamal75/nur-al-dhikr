@@ -143,6 +143,9 @@ describe('contract: every emitted data-action resolves to a handler', () => {
     // Kids hold-to-exit: fired by the 2s press timer in events.js, never by
     // tap — intentionally absent from the click table.
     'kids-exit-hold',
+    // Home panel visibility checkbox (home-panel-toggle branch in the
+    // events.js change listener).
+    'home-panel-toggle',
     // (v4.5.2) manage-mode target stepper: a number <input>, so it lives in
     // the CHANGE pipeline (the content-set-target branch in events.js).
     'content-set-target',
@@ -163,6 +166,7 @@ describe('contract: every emitted data-action resolves to a handler', () => {
       'submit-new-bookmark-folder',
       'submit-new-location-profile',
       'submit-new-playlist',
+      'submit-new-profile',
     ]) {
       registered.add(a);
     }

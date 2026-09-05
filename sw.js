@@ -119,6 +119,7 @@ const APP_SHELL = [
   'js/domain/fasting.js',
   'js/domain/garden.js',
   'js/domain/grammarDrill.js',
+  'js/domain/homePanels.js',
   'js/domain/hifz.js',
   'js/domain/khatma.js',
   'js/domain/locations.js',

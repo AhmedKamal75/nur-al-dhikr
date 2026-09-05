@@ -41,6 +41,14 @@ export function initialState() {
     // Kids-mode stars: { total, days: { 'YYYY-MM-DD': n } }. Awarded for
     // finishing a recitation naturally while kids mode is on.
     kidsStars: { total: 0, days: {} },
+    // App-wide profiles (family sharing one device): named progress
+    // identities. Only the PROGRESS slices travel (favorites, counters,
+    // statistics, history) — settings stay device-global, exactly like the
+    // hifz-only multi-profile pattern. 'main' is implicit (its data lives
+    // in the top-level slices); the store holds every other profile.
+    profiles: [],
+    profileStore: {},
+    activeProfile: 'main',
     // By-heart mode session (ephemeral): which category hides its Arabic
     // behind reveal taps + which items are currently revealed.
     byHeart: null,
@@ -334,6 +342,9 @@ export const PERSISTED_KEYS = [
   'hadithMemRecords',
   'byHeartRecords',
   'kidsStars',
+  'profiles',
+  'profileStore',
+  'activeProfile',
   'playlists',
   'collections',
   'counters',

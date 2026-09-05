@@ -22,7 +22,8 @@ import { actions, dryRunRestore, persistedSnapshot, store } from '../../core/sta
 import { buildReciterPick } from './quranAudio.js';
 import { dryRunVerdict } from '../../services/dataHealth.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
-import { buildConfirm } from '../../ui/menus.js';
+import { moveHomePanel } from '../../domain/homePanels.js';
+import { buildConfirm, buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import * as backup from '../../services/backup.js';
@@ -57,6 +58,61 @@ export const clickHandlers = {
     store.dispatch(actions.updateSettings({ kidsMode: false }));
     showToast(t('kids.exitDone', store.getState().settings.language));
     go(VIEWS.HOME);
+  },
+
+  // Home panel reorder: move one panel up/down in the saved order (the
+  // domain starts from the book order when nothing is saved yet).
+  'home-panel-move': (ds) => {
+    if (!ds.id) return;
+    const dir = Number(ds.dir) >= 0 ? 1 : -1;
+    const next = moveHomePanel(store.getState().settings.homeOrder, ds.id, dir);
+    store.dispatch(actions.updateSettings({ homeOrder: next }));
+  },
+
+  // App-wide progress profiles (family sharing): create via text prompt,
+  // switch swaps the progress slices, delete needs confirm (and never the
+  // active profile — the handler says so instead of stranding slices).
+  'profile-create': () => {
+    const lang = store.getState().settings.language;
+    openModal(
+      buildTextPrompt({
+        title: t('settings.profileNewTitle', lang),
+        placeholder: t('settings.profileNamePh', lang),
+        confirmAction: 'submit-new-profile',
+        lang,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
+  },
+
+  'profile-switch': (ds) => {
+    if (!ds.id) return;
+    store.dispatch(actions.switchProfile(ds.id));
+    showToast(t('settings.profileSwitched', store.getState().settings.language));
+  },
+
+  'profile-delete': (ds) => {
+    if (!ds.id) return;
+    const lang = store.getState().settings.language;
+    if (ds.id === store.getState().activeProfile) {
+      showToast(t('settings.profileDeleteActive', lang));
+      return;
+    }
+    openModal(
+      buildConfirm({
+        message: t('settings.profileDeleteConfirm', lang),
+        confirmAction: 'profile-delete-confirmed',
+        confirmData: { id: ds.id },
+        lang,
+      })
+    );
+  },
+
+  'profile-delete-confirmed': (ds) => {
+    if (!ds.id) return;
+    closeModal();
+    store.dispatch(actions.deleteProfile(ds.id));
+    showToast(t('settings.profileDeleted', store.getState().settings.language));
   },
 
   // (U14) Settings table-of-contents jump: scrolls to the panel without

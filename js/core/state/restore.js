@@ -98,6 +98,44 @@ function cleanPlaylists(raw) {
   return out;
 }
 
+/**
+ * Progress profiles from a backup: at most 8 named profiles (main is
+ * implicit), each stash holding array/object progress slices only.
+ */
+function cleanProfiles(rawProfiles, rawStore, rawActive) {
+  const profiles = [];
+  if (Array.isArray(rawProfiles)) {
+    for (const p of rawProfiles.slice(0, 8)) {
+      if (!p || typeof p !== 'object' || Array.isArray(p)) continue;
+      if (typeof p.id !== 'string' || !isSafeKey(p.id) || p.id === 'main') continue;
+      if (profiles.some((q) => q.id === p.id)) continue;
+      profiles.push({
+        id: p.id,
+        name: typeof p.name === 'string' && p.name.trim() ? p.name.trim().slice(0, 40) : p.id,
+        createdAt: Number.isFinite(p.createdAt) ? p.createdAt : null,
+      });
+    }
+  }
+  const ids = new Set([...profiles.map((p) => p.id), 'main']);
+  const store = {};
+  const src = rawStore && typeof rawStore === 'object' && !Array.isArray(rawStore) ? rawStore : {};
+  for (const [id, snap] of Object.entries(src)) {
+    if (!ids.has(id)) continue;
+    if (id === '__proto__' || id === 'constructor' || id === 'prototype') continue;
+    if (!snap || typeof snap !== 'object') continue;
+    store[id] = {
+      favorites: Array.isArray(snap.favorites)
+        ? snap.favorites.filter((x) => typeof x === 'string').slice(0, 5000)
+        : [],
+      counters: snap.counters && typeof snap.counters === 'object' ? snap.counters : {},
+      statistics: snap.statistics && typeof snap.statistics === 'object' ? snap.statistics : {},
+      history: Array.isArray(snap.history) ? snap.history.slice(0, 50) : [],
+    };
+  }
+  const active = typeof rawActive === 'string' && ids.has(rawActive) ? rawActive : 'main';
+  return { profiles, profileStore: cleanObject(store), activeProfile: active };
+}
+
 /** Defensively coerce a restored/imported backup marker (v3.26). A future
  *  timestamp is junk — a backup cannot happen ahead of the device — and
  *  would make "days since backup" go negative forever. */
@@ -253,6 +291,10 @@ export function sanitizeRestoredPayload(payload) {
     hadithMemRecords: sanitizeMemRecords(p.hadithMemRecords, 'hadith'),
     // By-heart dhikr SRS records over library item ids.
     byHeartRecords: sanitizeMemRecords(p.byHeartRecords, 'item'),
+    // App-wide profiles: safe ids, trimmed names, stashed progress slices
+    // in the same shapes the live reducer writes (capped so a hostile
+    // backup can't bloat the blob; unknown active profile falls to main).
+    ...cleanProfiles(p.profiles, p.profileStore, p.activeProfile),
     // Kids stars: non-negative total + real calendar-day counts only.
     kidsStars: (() => {
       const k = p.kidsStars && typeof p.kidsStars === 'object' ? p.kidsStars : {};

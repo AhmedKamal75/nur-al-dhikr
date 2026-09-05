@@ -259,7 +259,13 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
 - [x] Kids' mode: Kids home route (Al-Fatiha + surahs 93–114 tiles, tasbih door,
       star per naturally finished listen, hold-2s-to-exit back home with mode off,
       bottom nav hidden, spec row in APP-FLOW.md).
-- [ ] App-wide second profile (hifz-only multi-profile exists).
+- [x] App-wide second profile: named family profiles with own favorites/counters/
+      statistics/history (settings stay device-global), Settings panel + home hero
+      chip, stash pattern mirroring hifz profiles.
+- [x] Contextual home-panel reorder: saved order + per-panel hides (Settings →
+      Content), stale ids degrade to book order.
+- [x] Weekly shareable summary: last-7-days recitations/active-days/reading/streak
+      as localized text via Web Share / clipboard (same helpers the view renders).
 - [ ] Auto-silence/DND during prayer: NOT feasible on the web (no browser DND API) —
       document as native-wrapper-only.
 - [ ] Cross-device sync: needs a transport; explicitly out of scope for zero-server.

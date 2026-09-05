@@ -23,6 +23,7 @@ import {
 import { daysSinceBackup, formatBytes, dryRunVerdict } from '../services/dataHealth.js';
 import { buildHash } from '../core/router.js';
 import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
+import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 
 const FIELD_LABELS = {
   transliteration: 'content.fieldTranslit',
@@ -34,7 +35,7 @@ const FIELD_LABELS = {
 };
 
 /** (U14) In-page table of contents: [label-key, panel-id] pairs mirroring
- *  the 11 panels below, in the same order. Labels reuse the panel headers
+ *  the panels below, in the same order. Labels reuse the panel headers
  *  so no extra dictionary keys are needed (only settings.toc is new). */
 const TOC_SECTIONS = [
   ['settings.language', 'settings-sec-language'],
@@ -47,8 +48,33 @@ const TOC_SECTIONS = [
   ['settings.feedback', 'settings-sec-feedback'],
   ['settings.notifications', 'settings-sec-notifications'],
   ['settings.accessibility', 'settings-sec-accessibility'],
+  ['settings.profiles', 'settings-sec-profiles'],
   ['settings.data', 'settings-sec-data'],
 ];
+
+/** Home panel order rows: up/down buttons + hide checkbox per panel.
+ *  Shows every panel (visible in effective order, hidden ones last) so a
+ *  hidden panel can always be brought back. */
+function homePanelRows(state, lang) {
+  const order = resolveHomePanels(state.settings.homeOrder, {});
+  const hidden = state.settings.hiddenHome || {};
+  const listed = [...order];
+  for (const id of HOME_PANEL_IDS) if (!listed.includes(id)) listed.push(id);
+  return listed
+    .map(
+      (id, i) => `
+    <div class="home-panel-row">
+      <span class="home-panel-row__label">${escapeHTML(t(`home.panel.${id}`, lang))}</span>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="home-panel-move" data-id="${id}" data-dir="-1" ${i === 0 ? 'disabled' : ''} aria-label="${t('settings.moveUp', lang)}">${icon('chevronUp', { size: 15 })}</button>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="home-panel-move" data-id="${id}" data-dir="1" ${i === listed.length - 1 ? 'disabled' : ''} aria-label="${t('settings.moveDown', lang)}">${icon('chevronDown', { size: 15 })}</button>
+      <label class="switch" title="${escapeHTML(t('settings.hidePanel', lang))}">
+        <input type="checkbox" data-action="home-panel-toggle" data-id="${id}" ${hidden[id] ? '' : 'checked'} aria-label="${escapeHTML(t(`home.panel.${id}`, lang))}" />
+        <span class="switch__track"></span>
+      </label>
+    </div>`
+    )
+    .join('');
+}
 
 /** A settings section header with an icon and an optional hint line. */
 function panelHeader(title, iconName, lang, hintKey) {
@@ -216,6 +242,9 @@ export function renderSettings(state) {
       ${toggleRow('autoAdvanceFocus', s.autoAdvanceFocus, t('settings.autoAdvanceFocus', lang))}
       <p class="field-label" id="daily-goal-label">${t('settings.dailyGoal', lang)}</p>
       <input type="number" class="input" min="1" max="10000" value="${escapeHTML(String(s.dailyGoal ?? ''))}" data-bind="dailyGoal" aria-labelledby="daily-goal-label" />
+      <p class="field-label">${t('settings.homePanels', lang)}</p>
+      <p class="panel__subtext">${t('settings.homePanelsHint', lang)}</p>
+      ${homePanelRows(state, lang)}
     </section>
 
     <section class="panel" id="settings-sec-cardfields">
@@ -292,6 +321,23 @@ export function renderSettings(state) {
           <span class="switch__track"></span>
         </span>
       </label>
+    </section>
+
+    <section class="panel" id="settings-sec-profiles">
+      ${panelHeader(t('settings.profiles', lang), 'folder', lang, 'settings.profilesHint')}
+      <div class="chip-row" role="group" aria-label="${escapeHTML(t('settings.profiles', lang))}">
+        <button type="button" class="chip ${state.activeProfile === 'main' ? 'chip--active' : ''}" data-action="profile-switch" data-id="main" aria-pressed="${state.activeProfile === 'main'}">${escapeHTML(t('settings.profileMain', lang))}</button>
+        ${(state.profiles || [])
+          .map(
+            (p) => `
+        <span class="mushaf-folder-chip-wrap">
+          <button type="button" class="chip ${state.activeProfile === p.id ? 'chip--active' : ''}" data-action="profile-switch" data-id="${escapeHTML(p.id)}" aria-pressed="${state.activeProfile === p.id}">${escapeHTML(p.name)}</button>
+          <button type="button" class="chip__x" data-action="profile-delete" data-id="${escapeHTML(p.id)}" aria-label="${t('common.delete', lang)}">×</button>
+        </span>`
+          )
+          .join('')}
+        <button type="button" class="chip chip--add" data-action="profile-create">${icon('plus', { size: 12 })} ${t('settings.profileNew', lang)}</button>
+      </div>
     </section>
 
     <section class="panel" id="settings-sec-data">
