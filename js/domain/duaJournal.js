@@ -96,22 +96,29 @@ export function promptForDate(date = new Date()) {
   return REFLECTION_PROMPTS[weekNum % REFLECTION_PROMPTS.length];
 }
 
+/** Local YYYY-MM-DD for a timestamp (the export must agree with the UI,
+ *  which renders local days — toISOString would stamp yesterday near
+ *  midnight east of Greenwich). */
+export function localDayKey(ts) {
+  const d = new Date(ts);
+  if (!Number.isFinite(d.getTime())) return '';
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 /** Plain-text export of the journals (the user owns their words). */
 export function journalExportText({ duas = [], reflections = [] } = {}) {
   const lines = ['Nur al-Dhikr — Journal export', ''];
   if (duas.length) {
     lines.push('== My duas ==', '');
     for (const d of duas) {
-      lines.push(
-        `[${d.date || new Date(d.ts).toISOString().slice(0, 10)}]${d.answered ? ' ✓' : ''}`
-      );
+      lines.push(`[${d.date || localDayKey(d.ts)}]${d.answered ? ' ✓' : ''}`);
       lines.push(d.text.trim(), '');
     }
   }
   if (reflections.length) {
     lines.push('== Reflections ==', '');
     for (const r of reflections) {
-      lines.push(`[${new Date(r.ts).toISOString().slice(0, 10)}]`);
+      lines.push(`[${r.date || localDayKey(r.ts)}]`);
       lines.push(r.text.trim(), '');
     }
   }

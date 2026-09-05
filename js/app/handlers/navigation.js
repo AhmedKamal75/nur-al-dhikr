@@ -27,6 +27,19 @@ export const clickHandlers = {
     if (ds.q) params.q = ds.q;
     if (ds.page) params.page = ds.page;
     if (ds.mem) params.mem = ds.mem;
+    // Views may also emit a raw query string (the journal's tab switcher
+    // uses data-query="tab=reflections") — forward its pairs so the SPA
+    // click lands where the href already points. Keys/values are capped
+    // plain strings; the router + reducers sanitize downstream.
+    if (ds.query) {
+      for (const pair of String(ds.query).split('&')) {
+        const eq = pair.indexOf('=');
+        if (eq <= 0) continue;
+        const k = pair.slice(0, eq);
+        const v = pair.slice(eq + 1);
+        if (/^[A-Za-z]{1,16}$/.test(k) && v.length <= 200) params[k] = v;
+      }
+    }
     go(ds.view, params);
   },
 

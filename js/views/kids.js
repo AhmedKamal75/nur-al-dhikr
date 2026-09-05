@@ -70,6 +70,7 @@ export function renderKids(state) {
     </a>
 
     <button type="button" class="kids-exit" data-action="kids-exit-hold">
+      <span class="kids-exit__fill" aria-hidden="true"></span>
       ${icon('close', { size: 16 })} ${t('kids.exit', lang)}
     </button>
     <p class="panel__subtext kids-exit__hint">${t('kids.exitHint', lang)}</p>

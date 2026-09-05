@@ -28,6 +28,11 @@ function pickVoice(lang) {
  * Speak Arabic text if an Arabic voice is available, otherwise speak the
  * transliteration in the default voice. Returns which mode was used.
  */
+// Generation token: cancel() fires the OLD utterance's onend/onerror
+// asynchronously, which used to wipe the NEW session's id when two Listen
+// taps raced (no button showed playing, second tap stacked a voice).
+let speechToken = 0;
+
 export function speakItem(item, { onEnd } = {}) {
   if (!isSupported()) return 'unsupported';
   stop();
@@ -35,15 +40,18 @@ export function speakItem(item, { onEnd } = {}) {
   const arVoice = pickVoice('ar');
   const text = arVoice ? item.arabic : item.transliteration || item.arabic;
   const utter = new SpeechSynthesisUtterance(text);
+  const tok = ++speechToken;
   utter.lang = arVoice ? 'ar-SA' : 'en-US';
   if (arVoice) utter.voice = arVoice;
   utter.rate = 0.85;
   utter.onend = () => {
+    if (tok !== speechToken) return; // stale utterance from a raced tap
     currentUtterance = null;
     currentItemId = null;
     onEnd?.();
   };
   utter.onerror = () => {
+    if (tok !== speechToken) return;
     currentUtterance = null;
     currentItemId = null;
     onEnd?.();
@@ -55,6 +63,7 @@ export function speakItem(item, { onEnd } = {}) {
 }
 
 export function stop() {
+  speechToken += 1; // invalidate any in-flight end/error callbacks first
   if (isSupported() && window.speechSynthesis.speaking) {
     window.speechSynthesis.cancel();
   }

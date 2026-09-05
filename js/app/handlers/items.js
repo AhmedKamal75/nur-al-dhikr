@@ -5,6 +5,7 @@
  */
 
 import { scheduleAutoAdvance } from '../focusRuntime.js';
+import { rt } from '../rt.js';
 import { ensureHadithBook, ensureHadithIndex, scrollToHadithListTop } from '../hadithData.js';
 import { getItemEntry, itemClipboardText } from '../shared.js';
 import { asTranslationEdition, TRANSLATION_EDITIONS, VIEWS } from '../../core/config.js';
@@ -99,6 +100,10 @@ export const clickHandlers = {
   },
 
   'focus-reset': (ds) => {
+    // A pending auto-advance would otherwise yank the view right after the
+    // reset (the timer only checks view/params, which reset preserves).
+    clearTimeout(rt.pendingAutoAdvanceTimer);
+    rt.pendingAutoAdvanceTimer = null;
     tasbih.reset(ds.itemId, parseInt(ds.target, 10) || 1);
   },
 

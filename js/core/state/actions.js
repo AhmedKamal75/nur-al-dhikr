@@ -187,8 +187,7 @@ export const actions = {
   switchHifzProfile: (id) => ({ type: 'HIFZ_PROFILE_SWITCH', id }),
   // (v4.4) Mutashabihat drill session (ephemeral)
   updateMutashabihat: (patch) => ({ type: 'MUTASHABIHAT_SESSION_UPDATE', patch }),
-  // (v4.4) Reader immersion (ephemeral)
-  toggleImmersiveReader: () => ({ type: 'IMMERSIVE_READER_TOGGLE' }),
+
   // (v4.4) Plan import (family sharing, zero-account)
   importPlan: (plan) => ({ type: 'PLAN_IMPORT', plan }),
   markNudgeShown: () => ({ type: 'NUDGE_SHOWN' }),

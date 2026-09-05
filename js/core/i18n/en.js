@@ -645,6 +645,7 @@ export const en = {
   'qibla.declinationNote':
     'The direction above is true north. A magnetic needle (like a physical compass or this device\u2019s, where noted) points to magnetic north — offset from true north by this much here. The live needle is corrected automatically when your device reports magnetic north.',
   'qibla.needleTrue': 'Needle anchored to true north — no correction needed.',
+  'qibla.needleUncorrected': 'Magnetic north, no declination correction available here.',
   'qibla.needleCorrected': 'Needle corrected for magnetic declination ({d}).',
   'qibla.needleRelative':
     'This device\u2019s sensor has no absolute anchor — treat the needle as an aid and trust the direction above.',

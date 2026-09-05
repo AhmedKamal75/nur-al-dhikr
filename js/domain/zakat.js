@@ -116,7 +116,9 @@ export function computeZakat(inputs, prefs) {
  */
 export function computeFitr(perPersonValue, people) {
   const per = num(perPersonValue);
-  const count = Math.max(0, Math.round(num(people)));
+  // Floor, not round: household size is a head count, and rounding 2.5 up
+  // would bill a phantom third person (the input is already step=1).
+  const count = Math.max(0, Math.floor(num(people)));
   return { perPerson: per, people: count, total: roundUpToUnit(per * count) };
 }
 

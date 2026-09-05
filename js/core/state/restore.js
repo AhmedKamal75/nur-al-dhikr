@@ -459,7 +459,13 @@ export function sanitizeRestoredPayload(payload) {
       ts: Number.isFinite(qb.ts) ? qb.ts : null,
     },
     mushafBookmark: {
-      page: Number.isFinite(mb.page) ? mb.page : null,
+      // Clamped 1..604 like the quranBookmark validator above — a crafted
+      // backup's page 0/99999 used to ride in unclamped (consumers clamp
+      // at render, but the stored lie also fed jump inputs + khatma math).
+      page:
+        Number.isFinite(mb.page) && mb.page >= 1 && mb.page <= MUSHAF_PAGE_COUNT
+          ? Math.floor(mb.page)
+          : null,
       ts: Number.isFinite(mb.ts) ? mb.ts : null,
     },
     dailyChecklist: cleanObject(p.dailyChecklist),

@@ -8,6 +8,13 @@ import { pickLocale, escapeHTML } from '../core/utils.js';
 import { VIEWS, COLLECTION_SUGGESTIONS } from '../core/config.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 
+/** Live item count (prune keeps deleted ids for restore; the index drops
+ *  them — the tile must agree with the detail view, not the raw array). */
+export function liveCollectionCount(state, collection) {
+  const index = state.library?.itemIndex || {};
+  return (collection?.items || []).filter((id) => index[id]).length;
+}
+
 export function renderCollections(state) {
   const lang = state.settings.language;
   const cols = state.collections;
@@ -33,7 +40,7 @@ export function renderCollections(state) {
         <a class="collection-tile" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">
           <span class="collection-tile__icon">${icon('bookmark', { size: 22 })}</span>
           <span class="collection-tile__name">${escapeHTML(pickLocale(c.name, lang))}</span>
-          <span class="collection-tile__count">${t('collections.itemCount', lang, { n: c.items.length })}</span>
+          <span class="collection-tile__count">${t('collections.itemCount', lang, { n: liveCollectionCount(state, c) })}</span>
         </a>`
         )
         .join('')}

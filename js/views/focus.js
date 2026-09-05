@@ -61,6 +61,16 @@ export function renderFocus(state) {
     .filter(Boolean)
     .join(' \u00B7 ');
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
+  // By-heart mode: the focus stage hides Arabic + transliteration behind
+  // the same reveal tap as the category cards, with recall grading below.
+  // Listening is parked in this mode — hearing the Arabic IS the answer.
+  const bh =
+    state.byHeart?.categoryId === cat.id
+      ? {
+          revealed: state.byHeart?.revealed?.[item.id] === true,
+          due: state.byHeartRecords?.[item.id]?.due || '',
+        }
+      : null;
   // (v5.0.0) Same "done / target ✓" contract as the card pill: resting
   // after a completed cycle the dial shows the completed count (1 / 1 with
   // the check), never 0 / 1.
@@ -75,9 +85,13 @@ export function renderFocus(state) {
       <button type="button" class="icon-btn" data-action="focus-exit" data-category-id="${escapeHTML(cat.id)}" aria-label="${t('focus.exit', lang)}">${icon('close', { size: 22 })}</button>
       <span class="focus__position" dir="ltr">${idx + 1} / ${items.length}</span>
       <div class="focus__top-actions">
-        <button type="button" class="icon-btn icon-btn--play ${isSpeaking ? 'icon-btn--playing' : ''}" data-action="toggle-speech" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isSpeaking}" aria-label="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}" title="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}">
+        ${
+          bh
+            ? ''
+            : `<button type="button" class="icon-btn icon-btn--play ${isSpeaking ? 'icon-btn--playing' : ''}" data-action="toggle-speech" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isSpeaking}" aria-label="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}" title="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}">
           ${icon(isSpeaking ? 'stop' : 'volume', { size: 20 })}
-        </button>
+        </button>`
+        }
         <button type="button" class="icon-btn ${isFav ? 'icon-btn--active' : ''}" data-action="toggle-favorite" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isFav}" aria-label="${t('card.favorite', lang)}">
           ${icon(isFav ? 'heart-filled' : 'heart', { size: 20 })}
         </button>
@@ -94,9 +108,27 @@ export function renderFocus(state) {
     <div class="focus__scroll" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}">
       <div class="focus__content">
         ${item.grade ? `<span class="chip chip--grade chip--grade-${escapeHTML(item.grade.toLowerCase())}">${escapeHTML(gradeLabel)}</span>` : ''}
-        <p class="focus__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>
-        ${state.settings.showTransliteration && item.transliteration ? `<p class="focus__translit">${escapeHTML(item.transliteration)}</p>` : ''}
+        ${
+          bh && !bh.revealed
+            ? `<button type="button" class="hadith-card__cloze" data-action="byheart-reveal" data-item-id="${escapeHTML(item.id)}" aria-label="${t('hifz.reveal', lang)}">${t('hifz.reveal', lang)}</button>`
+            : `<p class="focus__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
+        }
+        ${!bh && state.settings.showTransliteration && item.transliteration ? `<p class="focus__translit">${escapeHTML(item.transliteration)}</p>` : ''}
         ${state.settings.showTranslation && translation ? `<p class="focus__translation">${escapeHTML(translation)}</p>` : ''}
+        ${
+          bh
+            ? `
+        <div class="hadith-card__mem">
+          ${bh.due ? `<span class="hifz-due" dir="auto">${t('hifz.memorizedBadge', lang, { date: bh.due })}</span>` : ''}
+          <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="easy">
+            ${icon('check', { size: 13 })} ${t('hifz.recalled', lang)}
+          </button>
+          <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="again">
+            ${icon('repeat', { size: 13 })} ${t('hifz.struggled', lang)}
+          </button>
+        </div>`
+            : ''
+        }
         ${virtue ? `<p class="focus__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${escapeHTML(virtue)}</p>` : ''}
         ${refParts ? `<p class="focus__reference">${icon('book', { size: 14 })} ${escapeHTML(refParts)}</p>` : ''}
         ${item.reference?.notes ? `<p class="focus__reference-note">${escapeHTML(item.reference.notes)}</p>` : ''}

@@ -138,10 +138,12 @@ let topbarEl = null;
 let navEl = null;
 let viewEnterTimer = null;
 
-/** Scroll memory key: view + id, so quran/2 and quran/3 remember
- *  independently and category pages restore per-category. */
-function viewKeyOf(view, params) {
-  return `${view}|${params?.id || ''}`;
+/** Scroll memory key: view + the params that change the scrollable
+ *  surface (surah id, mushaf page, search/tab context) — all 604 mushaf
+ *  pages used to share one entry and restore unrelated offsets. Exported
+ *  for unit tests. */
+export function viewKeyOf(view, params) {
+  return [view, params?.id || '', params?.page || '', params?.q || '', params?.tab || ''].join('|');
 }
 
 /** How long the view-enter animation state ([data-view-enter]) stays on
@@ -454,6 +456,11 @@ export function render(state) {
     } else if (lastView) {
       rt.navBackStack.push(lastViewKey);
     }
+  } else {
+    // Same-view traversal (mushaf page turns, surah jumps): the pop flag
+    // belongs to THIS step, not the next one — consume it here or the
+    // following genuine view change misfires as a pop with stale scroll.
+    consumePopNavigation();
   }
 
   patchHTML(topbarEl, renderTopBar(state));

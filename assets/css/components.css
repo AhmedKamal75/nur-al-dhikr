@@ -1861,6 +1861,8 @@ body.is-kids #bottomnav {
 }
 .kids-exit {
   align-self: center;
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: var(--space-1_5);
@@ -1872,8 +1874,23 @@ body.is-kids #bottomnav {
   color: var(--color-text-muted);
   font-size: var(--fs-sm);
 }
+/* Hold progress: fills in 25% steps over the 2s press (JS interval —
+   a single 2s CSS transition would break the 300ms motion contract). */
+.kids-exit__fill {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  background: color-mix(in srgb, var(--color-primary) 25%, transparent);
+  pointer-events: none;
+  transition: width 0.25s linear;
+}
 .kids-exit__hint {
   text-align: center;
+}
+/* Kids mode hides the bottom nav — the desktop rail margin must go with
+   it, or #main keeps a rail-sized hole on wide screens. */
+body.is-kids #main {
+  margin-inline-start: 0;
 }
 
 /* Grammar flashcards (Roots view): big Arabic prompt, graded answers. */

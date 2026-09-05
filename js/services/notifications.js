@@ -173,6 +173,7 @@ const CLOCK_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 /** Minutes since a "HH:MM" clock time, negative if it hasn't come yet. */
 function minutesSince(hhmm, now) {
+  if (typeof hhmm !== 'string' || !CLOCK_RE.test(hhmm)) return NaN;
   const [h, m] = hhmm.split(':').map(Number);
   return now.getHours() * 60 + now.getMinutes() - (h * 60 + m);
 }
@@ -187,8 +188,11 @@ function minutesSince(hhmm, now) {
 const CATCHUP_MINUTES = 2;
 
 export function shouldFire(hhmm, now) {
+  // A corrupt/clockless time (old backup, hand edit) must NEVER throw
+  // inside the 30s tick — one bad reminder used to abort the whole pass
+  // and kill every prayer/Ramadan/zakat/fasting alert with it.
   const since = minutesSince(hhmm, now);
-  return since >= 0 && since <= CATCHUP_MINUTES;
+  return Number.isFinite(since) && since >= 0 && since <= CATCHUP_MINUTES;
 }
 
 function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fastingPrefs) {
@@ -208,8 +212,9 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fast
     if (!r.enabled) continue;
     if (!shouldFire(r.time, now)) continue;
     const fireKey = `${r.id}|${dayKey.slice(0, dayKey.indexOf('|') + 1)}${r.time}`;
-    if (firedToday.has(fireKey)) continue;
-    firedToday.add(fireKey);
+    // Persisted dedup: a reload inside the catch-up window used to refire.
+    if (wasDayFired(fireKey, todayKey)) continue;
+    markDayFired(fireKey, todayKey);
     notify(
       r.label || t('app.name', lang),
       r.body || t('home.dailyProgress', lang),
@@ -223,8 +228,8 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fast
     if (!shouldFire(note.reminderTime, now)) continue;
     if (!appliesToDate(note, todayKey)) continue;
     const fireKey = `note-${note.id}|${todayKey}`;
-    if (firedToday.has(fireKey)) continue;
-    firedToday.add(fireKey);
+    if (wasDayFired(fireKey, todayKey)) continue;
+    markDayFired(fireKey, todayKey);
     notify(note.title || t('app.name', lang), note.body || '', `calendar-note-${note.id}`);
   }
 
@@ -248,10 +253,16 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fast
       });
       for (const name of PRAYER_ORDER) {
         if (!prayerSettings.alerts[name]) continue;
+        // Polar-fallback entries (day-relative <0h/≥24h) belong to another
+        // calendar day — the SW trigger path already skips them via
+        // decimalHoursToDate; the in-tab path must not arm a folded clock.
+        if (times?.unreachable?.[name]) continue;
         if (!shouldFire(formatClock(times[name], false), now)) continue;
         const fireKey = `prayer-${name}|${todayKey}`;
-        if (firedToday.has(fireKey)) continue;
-        firedToday.add(fireKey);
+        // A reload inside the 2-minute catch-up window used to fire a
+        // second full-volume adhan — the day-persisted dedup survives it.
+        if (wasDayFired(fireKey, todayKey)) continue;
+        markDayFired(fireKey, todayKey);
         notify(
           t('prayer.' + name, lang),
           t('prayer.timeFor', lang, { name: t('prayer.' + name, lang) }),

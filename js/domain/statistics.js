@@ -84,10 +84,12 @@ export function averagePerDay(statistics, days) {
   return Math.round((totalInLastDays(statistics, days) / Math.max(1, days)) * 10) / 10;
 }
 
-/** How many distinct days have any recorded activity, all time. */
+/** How many distinct days have any recorded activity, all time — dhikr
+ *  counts AND Quran reading both qualify (a read-only day is active). */
 export function activeDays(statistics) {
-  return Object.values(statistics.dailyHistory || {}).filter((d) => (d.recitations || 0) > 0)
-    .length;
+  return Object.values(statistics.dailyHistory || {}).filter(
+    (d) => (d.recitations || 0) > 0 || (d.readingSec || 0) > 0
+  ).length;
 }
 
 /**

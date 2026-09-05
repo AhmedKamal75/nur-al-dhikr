@@ -233,8 +233,12 @@ export function renderCalendar(state) {
   const prevMonth = new Date(year, month - 1, 1);
   const nextMonth = new Date(year, month + 1, 1);
 
+  // Start-of-day comparison: event dates are midnights, so comparing
+  // against "now" hid today's event the second the day began.
+  const todayStart = new Date(today);
+  todayStart.setHours(0, 0, 0, 0);
   const events = islamicEventsForYear(today.getFullYear())
-    .filter((e) => e.date >= today)
+    .filter((e) => e.date >= todayStart)
     .slice(0, 5);
 
   return `

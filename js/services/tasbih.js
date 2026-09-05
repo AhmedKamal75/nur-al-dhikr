@@ -20,11 +20,21 @@ import { getAudioContext } from './audioContext.js';
 export function increment(itemId, categoryId, target = 1, step = 1) {
   const state = store.getState();
   const existing = state.counters[itemId] || { count: 0, target, completedCycles: 0 };
+  // The rendered pill shows the EFFECTIVE target (manage overrides) — the
+  // stored one goes stale the moment the stepper moves, so the passed-in
+  // target wins and the record is healed to match it.
+  const argTarget = Math.floor(Number(target));
+  const effTarget =
+    Number.isFinite(argTarget) && argTarget >= 1
+      ? argTarget
+      : Math.floor(Number(existing.target)) >= 1
+        ? Math.floor(Number(existing.target))
+        : 1;
   let count = existing.count + step;
   let completedCycles = existing.completedCycles;
   let cycleCompleted = false;
 
-  if (count >= existing.target) {
+  if (count >= effTarget) {
     completedCycles += 1;
     count = 0;
     cycleCompleted = true;
@@ -34,7 +44,7 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
   // (counter → statistics → history each notified subscribers on its own).
   // Batching makes the whole tap one logical update — exactly one render.
   store.batch(() => {
-    store.dispatch(actions.setCounter(itemId, { count, target: existing.target, completedCycles }));
+    store.dispatch(actions.setCounter(itemId, { count, target: effTarget, completedCycles }));
     store.dispatch(actions.recordStatistic(itemId, categoryId, step, false));
     store.dispatch(actions.pushHistory(itemId, categoryId));
   });
@@ -51,9 +61,9 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
     else vibrate(8);
   }
   if (milestone) playTick('milestone');
-  announceCount(count, existing.target, cycleCompleted, completedCycles);
+  announceCount(count, effTarget, cycleCompleted, completedCycles);
 
-  return { count, target: existing.target, completedCycles, cycleCompleted };
+  return { count, target: effTarget, completedCycles, cycleCompleted };
 }
 
 /* ------------------------------------------------------------------ *

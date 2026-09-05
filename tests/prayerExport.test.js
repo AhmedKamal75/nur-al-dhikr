@@ -61,7 +61,6 @@ test('monthly timetable: row per day, null without location, leap February', asy
     month: 2,
     latitude: 30.0444,
     longitude: 31.2357,
-    timezoneOffsetHours: 2,
     method: 'MWL',
     asr: 'Standard',
   };
@@ -79,4 +78,34 @@ test('monthly timetable: row per day, null without location, leap February', asy
   const events = ics.split('BEGIN:VEVENT').length - 1;
   assert.equal(events, 28 * 6, 'one event per prayer per day');
   assert.ok(ics.includes('UID:nur-month-20260201-fajr@nur-al-dhikr'), 'month UID namespace');
+});
+
+test('monthly timetable matches per-day single calculations across DST', async () => {
+  const prevTZ = process.env.TZ;
+  process.env.TZ = 'Europe/Berlin'; // DST shift inside March 2026
+  try {
+    const { buildMonthTimetable } = await import('../js/domain/prayerExport.js');
+    const { calculateTimes } = await import('../js/domain/prayer.js');
+    const base = { latitude: 52.52, longitude: 13.405, method: 'MWL', asr: 'Standard' };
+    const table = buildMonthTimetable({ year: 2026, month: 3, ...base });
+    assert.equal(table.rows.length, 31);
+    for (const row of table.rows) {
+      const day = new Date(2026, 2, row.day);
+      const single = calculateTimes({
+        ...base,
+        date: day,
+        timezoneOffsetHours: -day.getTimezoneOffset() / 60,
+      });
+      for (const name of ['fajr', 'dhuhr', 'maghrib']) {
+        const a = row.times?.[name];
+        const b = single?.[name];
+        if (Number.isFinite(a) && Number.isFinite(b)) {
+          assert.ok(Math.abs(a - b) < 0.01, `Mar ${row.day} ${name}: timetable == single-day`);
+        }
+      }
+    }
+  } finally {
+    if (prevTZ === undefined) delete process.env.TZ;
+    else process.env.TZ = prevTZ;
+  }
 });

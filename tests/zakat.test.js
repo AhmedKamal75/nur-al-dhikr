@@ -151,3 +151,8 @@ test('daysUntilHawl: future, today, and past cases at day granularity', () => {
   // same-day time-of-day differences must not skew the day count
   assert.equal(daysUntilHawl(new Date(2026, 5, 15, 23, 59).getTime(), now), 0);
 });
+
+test('computeFitr floors fractional household size (never bills a phantom person)', () => {
+  assert.equal(computeFitr(10, 2.9).people, 2);
+  assert.equal(computeFitr(10, 2.9).total, 20);
+});

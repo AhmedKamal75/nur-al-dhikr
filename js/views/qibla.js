@@ -171,6 +171,12 @@ export function updateQiblaCompassDOM(bearing, heading, source, lang, declinatio
     } else if (source === 'true') {
       hintEl.textContent = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
       hintEl.title = t('qibla.needleTrue', lang);
+    } else if (source === 'magnetic') {
+      // Magnetic sensor, no declination model value: the needle still
+      // points, but uncorrected — say that plainly instead of implying a
+      // sensor fault with the calibrate hint.
+      hintEl.textContent = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
+      hintEl.title = t('qibla.needleUncorrected', lang);
     } else {
       hintEl.textContent = t('qibla.calibrate', lang);
     }

@@ -107,7 +107,10 @@ export const clickHandlers = {
     const found = findCategoryById(state, ds.categoryId);
     if (!found) return;
     for (const it of found.cat.items || []) {
-      if (state.counters[it.id]) store.dispatch(actions.resetCounter(it.id, it.repetitions || 1));
+      // The EFFECTIVE target (manage override), not the corpus default —
+      // resetting used to snap the pill back to /3 while the stepper said 10.
+      if (state.counters[it.id])
+        store.dispatch(actions.resetCounter(it.id, itemTargetOf(state, it)));
     }
   },
 

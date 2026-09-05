@@ -211,13 +211,17 @@ export const CARD_FIELD_KEYS = [
  */
 export function fieldTogglesFor(state, libraryId) {
   const prefs = prefsOf(state);
+  const global = state?.settings?.cardFields;
   const libToggles = (prefs.libraryFieldToggles || EMPTY)[libraryId];
+  // Per-key fallback: a PARTIAL library object must not resurrect fields
+  // the globals hid — absent keys inherit the global (or visible).
   if (libToggles && typeof libToggles === 'object') {
     const out = {};
-    for (const k of CARD_FIELD_KEYS) out[k] = libToggles[k] !== false;
+    for (const k of CARD_FIELD_KEYS) {
+      out[k] = k in libToggles ? libToggles[k] !== false : global?.[k] !== false;
+    }
     return out;
   }
-  const global = state?.settings?.cardFields;
   if (global && typeof global === 'object') {
     const out = {};
     for (const k of CARD_FIELD_KEYS) out[k] = global[k] !== false;
@@ -267,7 +271,9 @@ export function stripCategoryKeys(prefs, categoryId) {
   delete (next.hiddenCategories || {})[categoryId];
   delete (next.addedItems || {})[categoryId];
   delete (next.orderOverrides || {})[categoryId];
-  delete (next.categoryOrderOverrides || {})[categoryId];
+  // NOTE: categoryOrderOverrides is keyed by LIBRARY id, not category —
+  // the library-level strip owns that key (see stripLibraryKeys). A delete
+  // here would be a silent no-op against the wrong scope.
   return next;
 }
 

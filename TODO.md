@@ -210,6 +210,55 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## Independent audit round (2026-09-05, three read-only passes + verification)
+
+Three parallel audits (shell/router/persist, prayer/worship, library/cards/habits)
+returned ~30 code-verified findings; each was re-verified in-session before
+fixing. Full suite 916/916 green + eslint/prettier clean after fixes.
+
+### Fixed P0 (broken)
+
+- Scheduler hardening (`services/notifications.js`): a corrupt reminder time
+  threw inside the 30s tick and killed every prayer/Ramadan/zakat/fasting
+  alert — `shouldFire` now degrades to false, never throws.
+- Tasbih target healing (`services/tasbih.js`): the passed-in effective
+  target wins over the stale stored one (manage stepper 3→10 completed at 3).
+- Focus-vs-lens (`app/focusRuntime.js`): arrows/auto-advance walk the manage
+  lens (hidden skipped, custom order) instead of stranding on hidden ids.
+
+### Fixed P1 (wrong behavior)
+
+- Journal tab param (`app/handlers/navigation.js`): `data-query` pairs now
+  forward (Reflections tab works by tap, not just middle-click).
+- Back/pop staleness (`app/renderer.js`, `core/router.js`): same-hash `go()`
+  no longer arms the pop flag; same-view traversals consume it; scroll keys
+  include page/q/tab; mobile drawer closes on any NAVIGATE.
+- Month DST (`domain/prayerExport.js`): per-day UTC offsets (was 1st-of-month
+  for all days); regression test spans a real DST boundary.
+- Calendar today (`views/calendar.js`): start-of-day comparison — today's
+  event no longer vanishes at 00:00:01.
+- Alert dedup (`services/notifications.js`): reminders/notes/prayer alerts
+  use the persisted day-dedup (reload in the catch-up window no longer
+  double-fires a full-volume adhan).
+- TTS race (`services/speech.js`): generation token — rapid Listen A→B no
+  longer wipes the new session's state.
+- By-heart leaks (`ui/card.js`, `views/focus.js`): transliteration hidden and
+  listening parked in recall mode (translation stays as the prompt).
+- Section reset + collection counts + search honesty (target/lens/count fixes).
+
+### Fixed P2 + hygiene
+
+- Ramadan backfill (past days tappable), fitr floor (no phantom person),
+  journal export local dates, qibla uncorrected-magnetic hint, lens
+  per-key fallback, mushafBookmark restore clamp, dead `immersiveReader`
+  twin removed, tasbih stepper ceiling, polar-fallback skip in tab alerts.
+- Kids exit: hold-progress fill (stepped, motion-contract-safe), keyboard
+  hold (Enter/Space), `body.is-kids` rail-margin fix — the "vanished
+  sidebar" was persisted kids mode hiding the rail, plus a leftover margin.
+- Deliberately NOT changed: forward-vs-back disambiguation (no reliable
+  signal), `quranWords` restore sanitizer (unreachable but harmless),
+  polar engine math (upstream of the app), shake-to-count (needs a device).
+
 ## Scoped follow-ups (verified missing, NOT built — need data/view/routes work)
 
 - [x] Tafsir compare (second source column under the active tab; `settings.tafsirCompareB`,

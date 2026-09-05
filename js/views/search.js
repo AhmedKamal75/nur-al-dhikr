@@ -12,6 +12,7 @@ import { search as runSearch } from '../domain/search.js';
 import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
+import { fieldTogglesFor } from '../domain/contentLens.js';
 import { cardHTML } from '../ui/card.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
@@ -80,10 +81,12 @@ const SUGGESTIONS = {
   ar: ['رحمة', 'الصبر', 'مغفرة', 'الجنة', 'نور', 'هداية'],
 };
 
+const SEARCH_LIMIT = 40;
+
 export function renderSearch(state) {
   const lang = state.settings.language;
   const query = state.activeParams.q || '';
-  const results = query ? runSearch(query, { limit: 40 }) : [];
+  const results = query ? runSearch(query, { limit: SEARCH_LIMIT }) : [];
   const history = state.search.historyList;
   const suggestions = SUGGESTIONS[lang] || SUGGESTIONS.en;
 
@@ -143,7 +146,7 @@ export function renderSearch(state) {
     ${
       query
         ? `
-      <p class="search-results-count" role="status">${t('search.resultsCount', lang, { n: results.length })}</p>
+      <p class="search-results-count" role="status">${t('search.resultsCount', lang, { n: results.length >= SEARCH_LIMIT ? `${SEARCH_LIMIT}+` : results.length })}</p>
       ${
         results.length
           ? `
@@ -157,6 +160,7 @@ export function renderSearch(state) {
               counter: selectors.getCounter(state, r.item.id),
               showTransliteration: state.settings.showTransliteration,
               showTranslation: state.settings.showTranslation,
+              fields: fieldTogglesFor(state, r.document?.metadata?.id),
               compact: true,
             })
           )

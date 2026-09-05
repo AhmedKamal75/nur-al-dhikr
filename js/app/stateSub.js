@@ -7,7 +7,7 @@
 import { rt } from './rt.js';
 import { ensureRecitersData, updateCompassLifecycle } from './audioEngine.js';
 import { refreshLibraryIndex } from './net.js';
-import { renderErrorScreen } from './drawer.js';
+import { renderErrorScreen, closeNavDrawer } from './drawer.js';
 import { ensureHadithData, maybeScrollToFocusHadith } from './hadithData.js';
 import {
   ensureMushafData,
@@ -71,6 +71,9 @@ export function onStateChange(stateArg, action) {
     // already closeModal() before go(); this is the safety net for the
     // navigation paths that bypass handlers (history, deep links).
     if (action && action.type === 'NAVIGATE' && isModalOpen()) closeModal();
+    // The mobile "More" drawer belongs to its view too: Back-button and
+    // deep-link navigations bypass tap handlers, so close it here (idempotent).
+    if (action && action.type === 'NAVIGATE') closeNavDrawer();
     // (v4.2) a pending search debounce must not outlive its view: typing a
     // query then tapping a bottom-nav item within the 180ms window let the
     // timer fire AFTER navigation and yank the app back to SEARCH (or

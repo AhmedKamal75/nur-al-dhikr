@@ -94,9 +94,13 @@ export function cardHTML(item, category, opts = {}) {
         ${show.grade && item.grade ? `<span class="chip chip--grade chip--grade-${escapeHTML(item.grade.toLowerCase())}">${escapeHTML(gradeLabel)}</span>` : ''}
       </div>
       <div class="card__actions">
-        <button type="button" class="icon-btn icon-btn--play ${isSpeaking ? 'icon-btn--playing' : ''}" data-action="toggle-speech" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isSpeaking}" aria-label="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}" title="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}">
+        ${
+          byHeart
+            ? ''
+            : `<button type="button" class="icon-btn icon-btn--play ${isSpeaking ? 'icon-btn--playing' : ''}" data-action="toggle-speech" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isSpeaking}" aria-label="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}" title="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}">
           ${icon(isSpeaking ? 'stop' : 'volume', { size: 18 })}
-        </button>
+        </button>`
+        }
         <button type="button" class="icon-btn ${isFavorite ? 'icon-btn--active' : ''}" data-action="toggle-favorite" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isFavorite}" aria-label="${t(isFavorite ? 'card.unfavorite' : 'card.favorite', lang)}" title="${t(isFavorite ? 'card.unfavorite' : 'card.favorite', lang)}">
           ${icon(isFavorite ? 'heart-filled' : 'heart', { size: 18 })}
         </button>
@@ -115,7 +119,7 @@ export function cardHTML(item, category, opts = {}) {
           ? `<p class="card__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
           : ''
     }
-    ${show.transliteration && item.transliteration ? `<p class="card__translit">${escapeHTML(item.transliteration)}</p>` : ''}
+    ${!byHeart && show.transliteration && item.transliteration ? `<p class="card__translit">${escapeHTML(item.transliteration)}</p>` : ''}
     ${show.translation && translation ? `<p class="card__translation">${escapeHTML(translation)}</p>` : ''}
 
     ${show.virtues && virtue ? `<p class="card__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${escapeHTML(virtue)}</p>` : ''}

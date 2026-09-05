@@ -158,34 +158,80 @@ function cancelAyahLongPress() {
 }
 
 const KIDS_EXIT_HOLD_MS = 2000;
+const KIDS_EXIT_STEPS = 4;
+
+function paintKidsExitStep(btn, step) {
+  const fill = btn?.querySelector('.kids-exit__fill');
+  if (fill) fill.style.width = `${Math.min(100, step * 25)}%`;
+}
 
 function cancelKidsExitHold() {
   if (rt.kidsExitTimer) {
     clearTimeout(rt.kidsExitTimer);
     rt.kidsExitTimer = null;
   }
+  if (rt.kidsExitPaint) {
+    clearInterval(rt.kidsExitPaint);
+    rt.kidsExitPaint = null;
+  }
+  const btn = document.querySelector('.kids-exit.is-holding');
+  btn?.classList.remove('is-holding');
+  paintKidsExitStep(btn, 0);
+}
+
+function startKidsExitHold(btn, e) {
+  cancelKidsExitHold();
+  btn.classList.remove('is-holding');
+  void btn.offsetWidth; // restart the stepped fill on re-press
+  btn.classList.add('is-holding');
+  paintKidsExitStep(btn, 0);
+  let step = 0;
+  rt.kidsExitPaint = setInterval(() => {
+    step += 1;
+    paintKidsExitStep(btn, step);
+  }, KIDS_EXIT_HOLD_MS / KIDS_EXIT_STEPS);
+  rt.kidsExitTimer = setTimeout(() => {
+    rt.kidsExitTimer = null;
+    if (rt.kidsExitPaint) {
+      clearInterval(rt.kidsExitPaint);
+      rt.kidsExitPaint = null;
+    }
+    btn.classList.remove('is-holding');
+    if (store.getState().settings.hapticsEnabled) vibrate(20);
+    const handler = clickHandlers['kids-exit'];
+    if (handler) dispatchHandler('kids-exit', {}, e, btn);
+  }, KIDS_EXIT_HOLD_MS);
 }
 
 /** Hold-to-exit for Kids mode: a full 2s press fires 'kids-exit' (a plain
- *  tap never does — the click table has no entry that exits on tap). */
+ *  tap never does — the click table has no entry that exits on tap).
+ *  Pointer covers mouse + touch + pen; the keydown path covers
+ *  keyboard-only desktop (hold Enter/Space on the focused button). Both
+ *  paint the button's progress fill so the hold is discoverable. */
 function armKidsExitHold() {
   document.addEventListener(
     'pointerdown',
     (e) => {
       cancelKidsExitHold();
       if (e.button != null && e.button !== 0) return;
-      if (!e.target?.closest?.('[data-action="kids-exit-hold"]')) return;
-      rt.kidsExitTimer = setTimeout(() => {
-        rt.kidsExitTimer = null;
-        if (store.getState().settings.hapticsEnabled) vibrate(20);
-        const handler = clickHandlers['kids-exit'];
-        if (handler) dispatchHandler('kids-exit', {}, e, e.target);
-      }, KIDS_EXIT_HOLD_MS);
+      const btn = e.target?.closest?.('[data-action="kids-exit-hold"]');
+      if (!btn) return;
+      startKidsExitHold(btn, e);
     },
     { passive: true }
   );
   document.addEventListener('pointerup', cancelKidsExitHold, { passive: true });
   document.addEventListener('pointercancel', cancelKidsExitHold, { passive: true });
+  document.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const btn = e.target?.closest?.('[data-action="kids-exit-hold"]');
+    if (!btn || rt.kidsExitTimer) return;
+    startKidsExitHold(btn, e);
+  });
+  document.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') cancelKidsExitHold();
+  });
 }
 
 /** Arm the press-and-hold detector for classic-reader ayah text. */

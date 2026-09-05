@@ -438,9 +438,6 @@ export function reduceQuran(state, action) {
       if (!state.grammarDrill) return state;
       return { ...state, grammarDrill: null };
 
-    case 'IMMERSIVE_READER_TOGGLE':
-      return { ...state, immersiveReader: !state.immersiveReader };
-
     default:
       return undefined;
   }

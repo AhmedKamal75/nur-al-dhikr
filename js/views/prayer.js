@@ -472,7 +472,6 @@ export function buildMonthModal(state, year, month) {
     month,
     latitude: p.latitude,
     longitude: p.longitude,
-    timezoneOffsetHours: -new Date(year, month - 1, 1).getTimezoneOffset() / 60,
     method: p.method,
     asr: p.asr,
   });

@@ -44,7 +44,9 @@ export const clickHandlers = {
     const key = 'tasbih:' + ds.phraseId;
     const counter = tasbih.getCounter(key, 33);
     const delta = parseInt(ds.delta, 10) || 0;
-    const nextTarget = Math.max(1, counter.target + delta);
+    // Same 100000 ceiling as the direct-set path — an uncapped hold on +
+    // used to walk the target into the absurd.
+    const nextTarget = Math.min(100000, Math.max(1, counter.target + delta));
     tasbih.setTarget(key, nextTarget);
   },
 

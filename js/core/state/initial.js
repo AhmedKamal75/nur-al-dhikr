@@ -276,8 +276,8 @@ export function initialState() {
     // Ephemeral (v4.4) — the look-alike (mutashabihat) drill session:
     // today's seed, the picked option, reveal flag, and the running score.
     mutashabihat: { seed: null, picked: null, reveal: false, right: 0, wrong: 0 },
-    // Ephemeral (v4.4) — reader immersion mode (hides app chrome while on).
-    immersiveReader: false,
+    // (Removed: the v4.4 immersiveReader twin of readerImmersive was never
+    // dispatched or read anywhere — one rename away from a real bug.)
     // Gentle "it's been a while" nudge (v3.25) — the day the card last
     // actually painted (or was dismissed), as 'YYYY-MM-DD'. One small
     // persisted write; every decision rule and the anti-guilt contract

@@ -87,7 +87,6 @@ export function buildMonthTimetable({
   month,
   latitude,
   longitude,
-  timezoneOffsetHours,
   method = 'MWL',
   asr = 'Standard',
 }) {
@@ -101,7 +100,16 @@ export function buildMonthTimetable({
     const date = new Date(y, m - 1, d);
     let times = null;
     try {
-      times = calculateTimes({ date, latitude, longitude, timezoneOffsetHours, method, asr });
+      // Per-day UTC offset (not the month's): a DST shift mid-month would
+      // otherwise skew every later day by an hour, including the .ics.
+      times = calculateTimes({
+        date,
+        latitude,
+        longitude,
+        timezoneOffsetHours: -date.getTimezoneOffset() / 60,
+        method,
+        asr,
+      });
     } catch {
       times = null;
     }

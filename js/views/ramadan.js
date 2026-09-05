@@ -95,13 +95,17 @@ function trackerPanel(state, lang, hijri, times = null, totalDays = null) {
   const qadr = qadrNightFor(hijri, times, nowHours, total);
   const nightDay = qadr ? qadr.dayOfRamadan : hijri.day + 1;
 
+  // Backfill allowed: any elapsed day of this Ramadan toggles (forgotten
+  // yesterday is correctable); future days stay disabled — fasting
+  // tomorrow can't be logged today.
+  const loggable = (d) => d.day <= hijri.day;
   const cells = days
     .map(
       (d) => `
     <button type="button" class="fast-dot ${d.kept ? 'fast-dot--kept' : ''} ${d.isToday ? 'fast-dot--today' : ''}"
       data-action="ramadan-toggle-fast" data-day="${d.day}" data-log-key="${ramadanLogKey(hijri.year)}"
       aria-pressed="${d.kept}" aria-label="${t('ramadan.fastDay', lang, { n: d.day })}"
-      ${d.isToday ? '' : 'disabled'} title="${t('ramadan.fastDay', lang, { n: d.day })}"></button>`
+      ${loggable(d) ? '' : 'disabled'} title="${t('ramadan.fastDay', lang, { n: d.day })}"></button>`
     )
     .join('');
 

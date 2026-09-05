@@ -5,6 +5,7 @@
 
 import { rt } from './rt.js';
 import { getItemEntry } from './shared.js';
+import { visibleCategoryItems } from '../services/contentPrefs.js';
 import { VIEWS } from '../core/config.js';
 import { go } from '../core/router.js';
 import { store } from '../core/state.js';
@@ -37,7 +38,9 @@ export function navigateFocusAdjacent(dir) {
   const itemId = state.activeParams.subId;
   const entry = getItemEntry(itemId);
   if (!entry) return;
-  const items = [...entry.category.items].sort((a, b) => a.order - b.order);
+  // Walk the MANAGE LENS (user order, hidden removed) — the raw corpus
+  // used to step onto hidden ids and strand the view on "item not found".
+  const items = visibleCategoryItems(state, entry.category);
   const idx = items.findIndex((i) => i.id === itemId);
   const target = items[idx + dir];
   if (target) go(VIEWS.FOCUS, { id: categoryId, subId: target.id });

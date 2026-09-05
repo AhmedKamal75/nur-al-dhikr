@@ -117,8 +117,12 @@ export function buildHash(view, params = {}) {
 
 /** Navigate programmatically (pushes a real history entry via location.hash). */
 export function go(view, params = {}) {
+  const next = buildHash(view, params);
+  // Same-hash taps push no entry and fire no hashchange — arming the flag
+  // anyway used to eat the NEXT real browser Back (misclassified pop).
+  if (window.location.hash === next) return;
   pushExpected = true; // see the popstate note above
-  window.location.hash = buildHash(view, params);
+  window.location.hash = next;
 }
 
 /**

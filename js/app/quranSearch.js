@@ -29,10 +29,10 @@ export async function ensureQuranSearchData() {
       const meta = await fetchJSON(QURAN_META_URL);
       store.dispatch(actions.setQuranMeta(meta));
     }
-    const existing = store.getState().quran.surahs;
+    const snapBefore = store.getState().quran.surahs;
     const missing = [];
     for (let n = 1; n <= 114; n++) {
-      if (!existing[String(n)]) missing.push(n);
+      if (!snapBefore[String(n)]) missing.push(n);
     }
     // Fetch in modest chunks so a flaky connection surfaces errors early
     // instead of after 114 parallel requests.
@@ -59,7 +59,11 @@ export async function ensureQuranSearchData() {
         if (docs[j]) fetched[n] = docs[j];
       });
     }
-    buildQuranIndex({ ...existing, ...fetched });
+    // Re-read AFTER the fetch loop: an edition switch (or any surah load)
+    // landing mid-build re-merges quran.surahs. Fresh state wins where it
+    // has a doc (newest edition); just-fetched docs fill only the gaps —
+    // the reverse order would bake the old language into the index.
+    buildQuranIndex({ ...fetched, ...store.getState().quran.surahs });
     setQuranIndexReady(true);
     // Bulk-warm the reader cache too (one dispatch, one re-render): search
     // results link into the per-surah reader, which should never have to

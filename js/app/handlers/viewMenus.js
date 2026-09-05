@@ -209,7 +209,6 @@ export const clickHandlers = {
       month: m,
       latitude: p.latitude,
       longitude: p.longitude,
-      timezoneOffsetHours: -new Date(y, m - 1, 1).getTimezoneOffset() / 60,
       method: p.method,
       asr: p.asr,
     });
