@@ -205,6 +205,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   arabicFontScale: 1,
   reduceMotion: false,
   highContrast: false,
+  // Elderly one-tap mode: XL type + 52px targets via body.is-elder.
+  // Enabling also bumps the two font scales once (kept afterwards — the
+  // sliders stay the source of truth, the toggle only styles + presets).
+  elderMode: false,
   soundEnabled: true,
   hapticsEnabled: true,
   // v3.14 Phase C: optional soft sounds — off by default (the owner-facing

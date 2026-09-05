@@ -476,6 +476,9 @@ export function render(state) {
   // piece of chrome and lets the book claim the whole viewport. The
   // renderer owns body classes because views are pure string templates.
   document.body.classList.toggle('is-mushaf-fullscreen', state.mushafFullscreen === true);
+  // Elderly mode: one body class scales type + targets app-wide (pure CSS
+  // in accessibility.css); the renderer owns it like every body class.
+  document.body.classList.toggle('is-elder', state.settings.elderMode === true);
   // (v5.2.0) Ambient nightstand display: same chrome-hiding contract as
   // mushaf fullscreen, keyed off the route (leaving the route restores
   // chrome — no stuck state possible).

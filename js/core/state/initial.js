@@ -287,8 +287,10 @@ export function initialState() {
     // Ephemeral memorize session for the classic reader: which surah is in
     // memorize mode, the cloze level ('word' | 'ayah'), and what has been
     // revealed this session ({ [ayah]: { all } | { words: {[i]: true} } }).
+    // `test` adds a recall check on top: 'firstword' (first word free) or
+    // 'mcq' (translation matching, `mcq` holds the live question + score).
     // Never persisted — a study session has quiz-session lifetime.
-    hifzSession: { mode: false, surah: null, level: 'word', revealed: {} },
+    hifzSession: { mode: false, surah: null, level: 'word', revealed: {}, test: null, mcq: null },
     // Ephemeral (never persisted) — which item's TTS is currently playing,
     // if any. Lives in state (not a module-level var) so every card
     // showing that item re-renders its Play button reactively, and

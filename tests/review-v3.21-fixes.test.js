@@ -78,7 +78,14 @@ describe('review v3.21: quranBookmark surah validation', () => {
     // junk keys dropped; only the in-range page survives; 0 and 605 are not pages
     assert.deepEqual(s.mushafPagesRead, { 2: true });
     assert.deepEqual(s.quranWords, {});
-    assert.deepEqual(s.hifzSession, { mode: false, surah: null, level: 'word', revealed: {} });
+    assert.deepEqual(s.hifzSession, {
+      mode: false,
+      surah: null,
+      level: 'word',
+      revealed: {},
+      test: null,
+      mcq: null,
+    });
     assert.deepEqual(s.alertTriggerStatus, { mode: 'unknown', count: 0 });
     assert.equal(s.player.playing, false);
     assert.equal(s.mushaf.meta, null);

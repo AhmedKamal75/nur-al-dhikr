@@ -184,6 +184,7 @@ export function sanitizeSettings(raw) {
     arabicFontScale: asNumber(s.arabicFontScale, d.arabicFontScale, 0.85, 1.6),
     reduceMotion: asBool(s.reduceMotion, d.reduceMotion),
     highContrast: asBool(s.highContrast, d.highContrast),
+    elderMode: asBool(s.elderMode, d.elderMode),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
     hapticsEnabled: asBool(s.hapticsEnabled, d.hapticsEnabled),
     pageTurnSound: asBool(s.pageTurnSound, d.pageTurnSound),

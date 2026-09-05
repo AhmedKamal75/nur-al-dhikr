@@ -225,6 +225,12 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       per-card memorize mode with reveal + Recalled/Struggled, persisted records).
 - [x] Verse speed control (0.5–2×, live, persisted `audio.verseRate`) + lock-screen
       Media Session controls (prev/next ayah or surah + metadata, `services/mediaSession.js`).
+- [x] Hifz test modes: first-word prompt (free opening word) + translation-matching
+      MCQ with score (`HIFZ_TEST/MCQ_NEW/MCQ_PICK`, `buildMcqOptions`).
+- [x] Long-press ayah quick actions (550ms hold → recite/copy/tafsir/range sheet;
+      release-click suppressed, scrolls unaffected).
+- [x] Elderly one-tap mode (`body.is-elder` XL type + 52px targets, one-time
+      font/high-contrast bump, toggle in Settings → Accessibility).
 - [x] Recitation queues (playlists): persisted named `[{surah,from,to}]` lists, engine
       queue advance with junk-skipping + prefetch, Audio-view panel, save-from-range,
       queue position in all consoles, toggle-play. (`state.playlists`, `PLAYLIST_*`.)

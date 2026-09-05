@@ -278,6 +278,13 @@ export function renderSettings(state) {
       ${panelHeader(t('settings.accessibility', lang), 'hands', lang)}
       ${toggleRow('reduceMotion', s.reduceMotion, t('settings.reduceMotion', lang))}
       ${toggleRow('highContrast', s.highContrast, t('settings.highContrast', lang))}
+      <label class="toggle-row">
+        <span class="toggle-row__label">${escapeHTML(t('settings.elderMode', lang))}<br /><span class="panel__subtext">${escapeHTML(t('settings.elderHint', lang))}</span></span>
+        <span class="switch">
+          <input type="checkbox" data-action="toggle-elder-mode" ${s.elderMode ? 'checked' : ''} />
+          <span class="switch__track"></span>
+        </span>
+      </label>
     </section>
 
     <section class="panel" id="settings-sec-data">

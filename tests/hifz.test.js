@@ -345,3 +345,61 @@ describe('cloze renderer', () => {
     assert.equal(normalizeHifzLevel(undefined), 'word');
   });
 });
+
+describe('recall checks', () => {
+  test('normalizeHifzTest allowlists firstword/mcq', async () => {
+    const { normalizeHifzTest, buildMcqOptions } = await import('../js/domain/hifz.js');
+    assert.equal(normalizeHifzTest('mcq'), 'mcq');
+    assert.equal(normalizeHifzTest('firstword'), 'firstword');
+    assert.equal(normalizeHifzTest('junk'), null);
+    assert.equal(normalizeHifzTest(null), null);
+    const ayahs = [
+      { number: 1, translation: 'One' },
+      { number: 2, translation: 'Two' },
+      { number: 3, translation: 'Three' },
+      { number: 4, translation: 'Four' },
+    ];
+    const opts = buildMcqOptions(ayahs, 2, { rng: () => 0 });
+    assert.equal(opts.length, 4, 'target + 3 distractors');
+    assert.ok(
+      opts.some((o) => o.ayah === 2 && o.text === 'Two'),
+      'correct option present'
+    );
+    assert.deepEqual(opts.map((o) => o.ayah).sort(), [1, 2, 3, 4]);
+    assert.deepEqual(buildMcqOptions([{ number: 1, translation: 'Only' }], 1), [
+      { ayah: 1, text: 'Only' },
+    ]);
+    assert.deepEqual(buildMcqOptions(ayahs, 9), [], 'unknown ayah → no question');
+    assert.deepEqual(buildMcqOptions(null, 1), []);
+  });
+
+  test('HIFZ_TEST/MCQ_NEW/MCQ_PICK walk the question lifecycle', async () => {
+    const { actions } = await import('../js/core/state/actions.js');
+    const { reduce } = await import('../js/core/state/reducer.js');
+    const { initialState } = await import('../js/core/state/initial.js');
+    let s = { ...initialState() };
+    s = reduce(s, actions.hifzSessionStart({ surah: 112, level: 'word' }));
+    s = reduce(s, actions.hifzTest('mcq'));
+    assert.equal(s.hifzSession.test, 'mcq');
+    const mcq = {
+      ayah: 2,
+      options: [
+        { ayah: 2, text: 'B' },
+        { ayah: 1, text: 'A' },
+      ],
+    };
+    s = reduce(s, actions.hifzMcqNew(mcq));
+    assert.equal(s.hifzSession.mcq.picked, null);
+    s = reduce(s, actions.hifzMcqPick(1));
+    assert.deepEqual([s.hifzSession.mcq.picked, s.hifzSession.mcq.wrong], [1, 1]);
+    s = reduce(s, actions.hifzMcqPick(2));
+    assert.equal(s.hifzSession.mcq.picked, 1, 'locked after first pick');
+    s = reduce(s, actions.hifzMcqNew({ ayah: 3, options: [{ ayah: 3, text: 'C' }] }));
+    assert.equal(s.hifzSession.mcq.wrong, 1, 'score carries across questions');
+    s = reduce(s, actions.hifzTest(null));
+    assert.equal(s.hifzSession.test, null);
+    assert.equal(s.hifzSession.mcq, null, 'switching test clears the question');
+    s = reduce(s, actions.hifzMcqNew({ ayah: 99, options: [{ ayah: 1, text: 'A' }] }));
+    assert.equal(s.hifzSession.mcq, null, 'target must be among options');
+  });
+});

@@ -134,6 +134,9 @@ describe('contract: every emitted data-action resolves to a handler', () => {
     // Quiet-hours switch in the Prayer adhan panel (toggle-prayer-quiet
     // branch in the same change listener).
     'toggle-prayer-quiet',
+    // Elderly-mode switch in Settings → Accessibility (toggle-elder-mode
+    // branch in the same change listener).
+    'toggle-elder-mode',
     // (v4.5.2) manage-mode target stepper: a number <input>, so it lives in
     // the CHANGE pipeline (the content-set-target branch in events.js).
     'content-set-target',

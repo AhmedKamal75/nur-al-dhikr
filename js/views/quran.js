@@ -192,13 +192,65 @@ function hifzToolbarHTML(state, number, lang) {
       <div class="quran-reader__toolbar quran-reader__toolbar--hifz">${memorizeChip}${reviewGroup}</div>`;
   }
   const lvl = sess.level;
+  const test = sess.test || null;
+  const testChip = (id, labelKey) => `
+        <button type="button" class="chip ${test === id ? 'chip--active' : ''}" data-action="hifz-test" data-test="${id || ''}" aria-pressed="${test === id}">${t(labelKey, lang)}</button>`;
   return `
       <div class="quran-reader__toolbar quran-reader__toolbar--hifz">
         ${memorizeChip}
         <button type="button" class="chip ${lvl === 'word' ? 'chip--active' : ''}" data-action="hifz-level" data-level="word" aria-pressed="${lvl === 'word'}">${t('hifz.levelWord', lang)}</button>
         <button type="button" class="chip ${lvl === 'ayah' ? 'chip--active' : ''}" data-action="hifz-level" data-level="ayah" aria-pressed="${lvl === 'ayah'}">${t('hifz.levelAyah', lang)}</button>
         <button type="button" class="chip" data-action="hifz-rehide">${icon('eyeOff', { size: 13 })} ${t('hifz.rehide', lang)}</button>
+        ${testChip(null, 'hifz.testOff')}
+        ${testChip('firstword', 'hifz.testFirstword')}
+        ${testChip('mcq', 'hifz.testMcq')}
         ${reviewGroup}
+      </div>`;
+}
+
+/**
+ * Recall-check panels under the toolbars: the translation MCQ card (Arabic
+ * ayah + 4 translation options + score + next) when the mcq test is armed.
+ * First-word mode needs no panel — it renders inside each ayah card.
+ */
+function hifzMcqPanelHTML(state, surahDoc, lang) {
+  const sess = state.hifzSession;
+  if (!sess?.mode || sess.test !== 'mcq') return '';
+  const q = sess.mcq;
+  if (!q) {
+    return `
+      <div class="panel panel--mcq">
+        <p class="panel__subtext">${t('hifz.mcqDealing', lang)}</p>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="hifz-mcq-new">${t('hifz.mcqNew', lang)}</button>
+      </div>`;
+  }
+  const ayah = surahDoc?.ayahs?.find((a) => Number(a.number) === Number(q.ayah));
+  const opts = q.options
+    .map((o) => {
+      const picked = q.picked != null && Number(o.ayah) === Number(q.picked);
+      const correct = q.picked != null && Number(o.ayah) === Number(q.ayah);
+      const cls = q.picked == null ? '' : correct ? 'chip--correct' : picked ? 'chip--wrong' : '';
+      return `
+        <button type="button" class="chip chip--mcq ${cls}" data-action="hifz-mcq-pick" data-ayah="${Number(o.ayah)}" ${q.picked != null ? 'disabled' : ''} aria-pressed="${picked}">
+          ${escapeHTML(o.text)}
+        </button>`;
+    })
+    .join('');
+  return `
+      <div class="panel panel--mcq" aria-live="polite">
+        <div class="panel__header">
+          <h2>${t('hifz.mcqTitle', lang)}</h2>
+          <span class="chip__count" dir="ltr">${Number(q.right) || 0}/${(Number(q.right) || 0) + (Number(q.wrong) || 0)}</span>
+        </div>
+        ${ayah ? `<p class="grammar-word" dir="rtl" lang="ar">${escapeHTML(ayah.text)}</p>` : ''}
+        <div class="mcq-options">${opts}</div>
+        ${
+          q.picked != null
+            ? `<div class="editor-form__actions">
+          <button type="button" class="btn btn--primary btn--sm" data-action="hifz-mcq-new">${t('hifz.mcqNew', lang)}</button>
+        </div>`
+            : ''
+        }
       </div>`;
 }
 
@@ -322,12 +374,18 @@ function surahReaderHTML(state, number) {
             };
             const hifzActive = hifzSession.mode && Number(hifzSession.surah) === num;
             const revealed = hifzActive ? hifzSession.revealed[a.number] : null;
+            // First-word test: the opening word stays free, the rest hides
+            // behind the standard word blanks (same reveal taps, same shapes).
+            const firstwordRevealed =
+              hifzActive && hifzSession.test === 'firstword'
+                ? { all: false, words: { 0: true, ...((revealed || {}).words || {}) } }
+                : revealed;
             const arabicHTML = hifzActive
               ? clozeAyahHTML({
                   text: a.text,
                   level: hifzSession.level,
                   ayah: a.number,
-                  revealed,
+                  revealed: firstwordRevealed,
                   labels: { reveal: t('hifz.reveal', lang) },
                 })
               : renderAyahWords(
@@ -415,7 +473,8 @@ function surahReaderHTML(state, number) {
       ${next ? `<a class="quran-reader__nav-link" href="${buildHash(VIEWS.QURAN, { id: next })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${next}">${t('quran.nextSurah', lang)} ${icon('chevronLeft', { size: 16 })}</a>` : '<span></span>'}
     </nav>`;
 
-  return `${header}${body}${surah ? nav : ''}`;
+  const mcqPanel = surah ? hifzMcqPanelHTML(state, surah, lang) : '';
+  return `${header}${mcqPanel}${body}${surah ? nav : ''}`;
 }
 
 /** Canonical int from an untrusted hash segment, 0 when unusable. */
@@ -547,6 +606,30 @@ export function renderQuran(state) {
     ${id ? surahReaderHTML(state, id) : surahListHTML(state)}
     ${immersiveExit}
   </section>`;
+}
+
+/**
+ * Long-press quick sheet for a classic-reader ayah: recite-from-here,
+ * copy, tafsir, range — every button reuses an existing handler, so the
+ * sheet adds zero new actions to the contract.
+ */
+export function buildAyahQuickSheet(surah, ayah, lang) {
+  const s = parseInt(surah, 10) || 0;
+  const a = parseInt(ayah, 10) || 0;
+  const row = (action, labelKey, iconName, extra = '') => `
+    <button type="button" class="mushaf-sheet__row" data-action="${action}" data-surah="${s}" data-ayah="${a}"${extra ? ` ${extra}` : ''}>
+      ${icon(iconName, { size: 17 })}<span class="mushaf-sheet__label">${t(labelKey, lang)}</span>
+    </button>`;
+  return `
+  <div class="mushaf-sheet">
+    <h2 id="modal-title-ayah-quick"><span dir="ltr">${s}:${a}</span> · ${t('quran.quickActions', lang)}</h2>
+    <div class="mushaf-sheet__group">
+      ${row('surah-play', 'audio.reciteFromHere', 'play')}
+      ${row('copy-ayah', 'common.copy', 'copy')}
+      ${row('tafsir-open', 'wordStudy.openTafsir', 'book')}
+      ${row('quran-range-open', 'audio.rangeTitle', 'target')}
+    </div>
+  </div>`;
 }
 
 /**

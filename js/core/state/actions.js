@@ -127,6 +127,9 @@ export const actions = {
   // Hifz (memorization, v3.17)
   hifzSessionStart: ({ surah, level }) => ({ type: 'HIFZ_SESSION_START', surah, level }),
   hifzSessionEnd: () => ({ type: 'HIFZ_SESSION_END' }),
+  hifzTest: (test) => ({ type: 'HIFZ_TEST', test }),
+  hifzMcqNew: (mcq) => ({ type: 'HIFZ_MCQ_NEW', mcq }),
+  hifzMcqPick: (ayah) => ({ type: 'HIFZ_MCQ_PICK', ayah }),
   hifzLevel: (level) => ({ type: 'HIFZ_LEVEL', level }),
   hifzReveal: ({ ayah, word = null }) => ({ type: 'HIFZ_REVEAL', ayah, word }),
   hifzRehide: () => ({ type: 'HIFZ_REHIDE' }),

@@ -4,6 +4,33 @@
    ========================================================================== */
 
 /* ==========================================================================
+   Elderly mode (body.is-elder): XL type + 52px targets, app-wide.
+   Font-size bumps ride the existing --font-scale custom properties where
+   possible; the class adds the extra step plus roomier touch targets.
+   ========================================================================== */
+body.is-elder {
+  --touch-target: 52px;
+  --fs-base: calc(1rem * var(--font-scale) * 1.18);
+  --fs-sm: calc(0.875rem * var(--font-scale) * 1.16);
+  --fs-caption: calc(0.75rem * var(--font-scale) * 1.25);
+  --fs-xl: calc(1.75rem * var(--font-scale) * 1.1);
+  --fs-arabic-card: calc(1.75rem * var(--arabic-font-scale) * 1.3);
+}
+body.is-elder .btn--sm,
+body.is-elder .chip {
+  min-height: var(--touch-target);
+  font-size: var(--fs-base);
+}
+body.is-elder .icon-btn {
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+}
+body.is-elder .view__subtitle,
+body.is-elder .panel__subtext {
+  font-size: var(--fs-base);
+}
+
+/* ==========================================================================
    High contrast (setting-driven; token overrides live in variables.css)
    ========================================================================== */
 [data-high-contrast='true'] {

@@ -55,6 +55,7 @@ import { setItemTarget } from '../services/contentPrefs.js';
 import { clickHandlers as journalClick } from './handlers/journal.js';
 import { clickHandlers as grammarClick } from './handlers/grammar.js';
 import { buildMushafBookmarks, setFlipDirection } from '../views/mushafReader.js';
+import { buildAyahQuickSheet } from '../views/quran.js';
 import { buildMushafSettingsPanel } from '../views/tafsirPanel.js';
 import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
 
@@ -145,6 +146,57 @@ function dispatchHandler(action, ds, e, target) {
 /* Global event delegation                                             */
 /* ------------------------------------------------------------------ */
 
+const LONG_PRESS_MS = 550;
+const LONG_PRESS_MOVE_PX = 12;
+
+function cancelAyahLongPress() {
+  if (rt.longPressTimer) {
+    clearTimeout(rt.longPressTimer);
+    rt.longPressTimer = null;
+  }
+  rt.longPressAnchor = null;
+}
+
+/** Arm the press-and-hold detector for classic-reader ayah text. */
+function armAyahLongPress() {
+  document.addEventListener(
+    'pointerdown',
+    (e) => {
+      cancelAyahLongPress();
+      if (e.button != null && e.button !== 0) return;
+      const card = e.target?.closest?.('.ayah-card');
+      if (!card || e.target?.closest?.('button, a, input, select, textarea')) return;
+      const state = store.getState();
+      if (state.activeView !== VIEWS.QURAN || !state.activeParams?.id) return;
+      const ayah = parseInt(card.id?.replace('ayah-', ''), 10);
+      const surah = parseInt(state.activeParams.id, 10);
+      if (!Number.isFinite(ayah) || !Number.isFinite(surah)) return;
+      rt.longPressAnchor = { x: e.clientX, y: e.clientY, surah, ayah };
+      rt.longPressTimer = setTimeout(() => {
+        rt.longPressTimer = null;
+        const anchor = rt.longPressAnchor;
+        rt.longPressAnchor = null;
+        if (!anchor) return;
+        const lang = store.getState().settings.language;
+        if (store.getState().settings.hapticsEnabled) vibrate(10);
+        rt.suppressClickUntil = Date.now() + 600;
+        openModal(buildAyahQuickSheet(anchor.surah, anchor.ayah, lang), {
+          labelledBy: 'modal-title-ayah-quick',
+        });
+      }, LONG_PRESS_MS);
+    },
+    { passive: true }
+  );
+  const moveCancels = (e) => {
+    const a = rt.longPressAnchor;
+    if (!a || e.clientX == null) return;
+    if (Math.hypot(e.clientX - a.x, e.clientY - a.y) > LONG_PRESS_MOVE_PX) cancelAyahLongPress();
+  };
+  document.addEventListener('pointermove', moveCancels, { passive: true });
+  document.addEventListener('pointerup', cancelAyahLongPress, { passive: true });
+  document.addEventListener('pointercancel', cancelAyahLongPress, { passive: true });
+}
+
 export function bindGlobalEvents() {
   // (v4.4) TRUE fullscreen Mushaf: browser-exit sync + wake-lock re-arm.
   initFullscreenSync();
@@ -201,7 +253,18 @@ export function bindGlobalEvents() {
     { passive: false }
   );
 
+  // Long-press ayah quick actions (classic reader): holding ayah text
+  // 550ms opens the quick sheet; the release click is suppressed so the
+  // underlying control never double-fires. Interactive descendants
+  // (buttons/links/inputs) are excluded — their own tap still wins.
+  // Movement beyond 12px cancels (scrolls stay scrolls).
+  armAyahLongPress();
   document.addEventListener('click', (e) => {
+    if (Date.now() < rt.suppressClickUntil) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     // (v4.2) the skip-to-content link must never touch the hash: routing it
     // through the normal hash pipeline treated '#main' as a view name,
     // threw the user to Home, and showed a spurious "error" toast — the one
@@ -268,6 +331,21 @@ export function bindGlobalEvents() {
       if (target.dataset.key === 'reciterCompare' && surahPlayback.isActive()) {
         store.dispatch(actions.setSurahPlayback(surahPlayback.setCompare(target.checked)));
       }
+      return;
+    }
+    // Elderly one-tap mode: the class does the styling; enabling ALSO bumps
+    // the two font scales + high contrast once (kept afterwards — the
+    // sliders stay the source of truth, disabling only drops the class).
+    if (target.matches('[data-action="toggle-elder-mode"]')) {
+      const on = target.checked;
+      const patch = { elderMode: on };
+      if (on) {
+        const s = store.getState().settings;
+        patch.fontScale = Math.max(Number(s.fontScale) || 1, 1.25);
+        patch.arabicFontScale = Math.max(Number(s.arabicFontScale) || 1, 1.5);
+        patch.highContrast = true;
+      }
+      store.dispatch(actions.updateSettings(patch));
       return;
     }
     if (target.matches('[data-action="toggle-mushaf-pref"]')) {

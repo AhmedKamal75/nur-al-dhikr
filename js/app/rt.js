@@ -72,4 +72,10 @@ export const rt = {
   hadithQueryTimer: null,
   pendingAutoAdvanceTimer: null,
   pendingImportPayload: null,
+  // Long-press ayah quick actions: pending timer id, press anchor, and the
+  // timestamp until which click dispatch stays suppressed (the release
+  // after a long-press must not also trigger the underlying control).
+  longPressTimer: null,
+  longPressAnchor: null,
+  suppressClickUntil: 0,
 };

@@ -1722,6 +1722,31 @@ body.modal-open {
   top: 0;
 }
 
+/* Hifz translation MCQ: option chips with right/wrong states. */
+.panel--mcq {
+  gap: var(--space-2);
+}
+.mcq-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1_5);
+}
+.chip--mcq {
+  justify-content: flex-start;
+  text-align: start;
+  white-space: normal;
+  min-height: var(--touch-target);
+}
+.chip--correct {
+  border-color: color-mix(in srgb, var(--color-success, #15803d) 60%, transparent);
+  background: color-mix(in srgb, var(--color-success, #15803d) 12%, transparent);
+}
+.chip--wrong {
+  border-color: color-mix(in srgb, var(--color-danger, #b91c1c) 60%, transparent);
+  background: color-mix(in srgb, var(--color-danger, #b91c1c) 10%, transparent);
+  opacity: 0.75;
+}
+
 /* Grammar flashcards (Roots view): big Arabic prompt, graded answers. */
 .panel--grammar {
   gap: var(--space-2);

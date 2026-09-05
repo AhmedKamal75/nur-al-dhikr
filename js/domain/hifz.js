@@ -282,6 +282,40 @@ export function clozeWords(text) {
     .filter(Boolean);
 }
 
+export const HIFZ_TESTS = ['firstword', 'mcq'];
+
+export function normalizeHifzTest(test) {
+  return HIFZ_TESTS.includes(test) ? test : null;
+}
+
+/**
+ * Translation-matching MCQ: the given ayah's translation plus up to 3
+ * distractors from sibling ayahs, shuffled. `rng` injectable for tests.
+ * Returns [{ ayah, text }] (fewer when the surah is tiny) — never empty
+ * when the target ayah exists in `ayahs`.
+ */
+export function buildMcqOptions(ayahs, ayahNumber, { count = 4, rng = Math.random } = {}) {
+  const list = Array.isArray(ayahs) ? ayahs : [];
+  const target = list.find((a) => Number(a?.number) === Number(ayahNumber));
+  if (!target || typeof target.translation !== 'string') return [];
+  const rand = typeof rng === 'function' ? rng : Math.random;
+  const others = list.filter((a) => Number(a?.number) !== Number(ayahNumber));
+  for (let i = others.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [others[i], others[j]] = [others[j], others[i]];
+  }
+  const picked = others.slice(0, Math.max(0, count - 1));
+  const options = [
+    { ayah: Number(target.number), text: target.translation },
+    ...picked.map((a) => ({ ayah: Number(a.number), text: a.translation })),
+  ];
+  for (let i = options.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [options[i], options[j]] = [options[j], options[i]];
+  }
+  return options;
+}
+
 /**
  * Render one ayah for memorize mode. `revealed` mirrors the session slice:
  * { all: boolean, words: { [index]: true } } | undefined. Whole-ayah level

@@ -11,7 +11,12 @@
 import { MUSHAF_PAGE_COUNT } from '../../config.js';
 import { dateKey, uid } from '../../utils.js';
 import { nextStats as nextTajweedPracticeStats } from '../../../domain/tajweedPractice.js';
-import { normalizeHifzLevel, markMemorized, logReview } from '../../../domain/hifz.js';
+import {
+  normalizeHifzLevel,
+  normalizeHifzTest,
+  markMemorized,
+  logReview,
+} from '../../../domain/hifz.js';
 
 export function reduceQuran(state, action) {
   switch (action.type) {
@@ -279,13 +284,71 @@ export function reduceQuran(state, action) {
           surah: s,
           level: normalizeHifzLevel(action.level),
           revealed: {},
+          test: null,
+          mcq: null,
         },
       };
     }
     case 'HIFZ_SESSION_END':
       if (!state.hifzSession.mode) return state;
       // keep the last-used level — the next session starts where you left off
-      return { ...state, hifzSession: { ...state.hifzSession, mode: false, revealed: {} } };
+      return {
+        ...state,
+        hifzSession: { ...state.hifzSession, mode: false, revealed: {}, test: null, mcq: null },
+      };
+    // Recall checks on top of memorize mode (first-word prompt / MCQ).
+    // Switching tests clears the live question; grading needs a reveal.
+    case 'HIFZ_TEST': {
+      if (!state.hifzSession.mode) return state;
+      const test = normalizeHifzTest(action.test);
+      if (test === (state.hifzSession.test || null)) return state;
+      return { ...state, hifzSession: { ...state.hifzSession, test, mcq: null } };
+    }
+    case 'HIFZ_MCQ_NEW': {
+      if (!state.hifzSession.mode) return state;
+      const m = action.mcq && typeof action.mcq === 'object' ? action.mcq : null;
+      const ayah = Math.floor(Number(m?.ayah));
+      const options = Array.isArray(m?.options)
+        ? m.options
+            .filter((o) => o && Number.isFinite(Number(o.ayah)) && typeof o.text === 'string')
+            .slice(0, 4)
+        : [];
+      if (!Number.isFinite(ayah) || !options.some((o) => Number(o.ayah) === ayah)) return state;
+      const prev = state.hifzSession.mcq;
+      return {
+        ...state,
+        hifzSession: {
+          ...state.hifzSession,
+          test: 'mcq',
+          mcq: {
+            ayah,
+            options,
+            picked: null,
+            right: Number(prev?.right) || 0,
+            wrong: Number(prev?.wrong) || 0,
+          },
+        },
+      };
+    }
+    case 'HIFZ_MCQ_PICK': {
+      const d = state.hifzSession;
+      if (!d.mode || !d.mcq || d.mcq.picked != null) return state;
+      const ayah = Math.floor(Number(action.ayah));
+      if (!d.mcq.options.some((o) => Number(o.ayah) === ayah)) return state;
+      const right = ayah === d.mcq.ayah;
+      return {
+        ...state,
+        hifzSession: {
+          ...d,
+          mcq: {
+            ...d.mcq,
+            picked: ayah,
+            right: d.mcq.right + (right ? 1 : 0),
+            wrong: d.mcq.wrong + (right ? 0 : 1),
+          },
+        },
+      };
+    }
     case 'HIFZ_LEVEL': {
       if (!state.hifzSession.mode) return state;
       const level = normalizeHifzLevel(action.level);
