@@ -52,10 +52,19 @@ export const clickHandlers = {
       }
       // (v5.0.0) an ayah RANGE (data-from / data-to) bounds the session:
       // "play 1–10" ends at 10; absent both = the whole surah (v4 behavior).
+      // data-surah-to past the start surah becomes a cross-surah stopAt.
+      const endSurahTo = parseInt(ds.surahTo, 10);
+      const stopAt =
+        Number.isFinite(endSurahTo) && endSurahTo > surah
+          ? { surah: Math.min(endSurahTo, 114), ayah: parseInt(ds.to, 10) || 1 }
+          : Number.isFinite(endSurahTo) && endSurahTo === surah
+            ? { surah, ayah: parseInt(ds.to, 10) || 1 }
+            : null;
       surahPlayback.start({
         surah,
         from: parseInt(ds.ayah, 10) || parseInt(ds.from, 10) || 1,
         to: ds.to ? parseInt(ds.to, 10) : null,
+        stopAt,
         total: state.quran.meta.surahs.find((x) => Number(x.number) === surah)?.ayahCount,
         reciterId: state.settings.reciter,
         reciterIdB: state.settings.reciterB,
@@ -71,28 +80,41 @@ export const clickHandlers = {
     }
   },
 
-  /* (v5.0.0) The ayah-range picker — "play from ayah X to ayah Y". */
+  /* (v5.0.0) The ayah-range picker — "play from ayah X to ayah Y", with an
+  optional end surah for cross-surah ranges (the engine clamps + rolls). */
   'quran-range-open': (ds) => {
     const state = store.getState();
     const lang = state.settings.language;
     const surah = parseInt(ds.surah, 10);
     if (!Number.isFinite(surah) || surah < 1 || surah > 114) return;
-    const meta = state.quran.meta?.surahs?.find((x) => Number(x.number) === surah);
+    const metas = state.quran.meta?.surahs || [];
+    const meta = metas.find((x) => Number(x.number) === surah);
     const count = meta?.ayahCount || 7;
     const name = meta ? `${meta.nameEn || meta.name} ` : '';
-    const options = (selected) =>
+    const options = (selected, max) =>
       Array.from(
-        { length: count },
+        { length: max },
         (_, i) =>
           `<option value="${i + 1}" ${i + 1 === selected ? 'selected' : ''}>${i + 1}</option>`
       ).join('');
+    // End-surah list: current surah through 114 (never backwards).
+    const surahOptions = metas.length
+      ? metas
+          .filter((m) => Number(m.number) >= surah)
+          .map(
+            (m) =>
+              `<option value="${m.number}" ${Number(m.number) === surah ? 'selected' : ''}>${m.number} — ${escapeHTML(m.nameTransliteration || m.nameEn || '')}</option>`
+          )
+          .join('')
+      : `<option value="${surah}" selected>${surah}</option>`;
     openModal(
       `
       <form class="editor-form" data-form="quran-range" data-surah="${surah}">
         <h2 id="modal-title-range">${t('audio.rangeTitle', lang)}</h2>
         <p class="editor-form__note">${escapeHTML(name)}· ${t('quran.ayahCount', lang, { n: count })}</p>
-        <label class="field">${t('audio.rangeFrom', lang)}<select class="select" name="from">${options(1)}</select></label>
-        <label class="field">${t('audio.rangeTo', lang)}<select class="select" name="to">${options(count)}</select></label>
+        <label class="field">${t('audio.rangeFrom', lang)}<select class="select" name="from">${options(1, count)}</select></label>
+        <label class="field">${t('audio.rangeToSurah', lang)}<select class="select" name="surahTo">${surahOptions}</select></label>
+        <label class="field">${t('audio.rangeTo', lang)}<select class="select" name="to">${options(count, 286)}</select></label>
         <label class="field">${t('audio.rangeLoop', lang)}<select class="select" name="loop">
           ${surahPlayback.LOOP_CYCLE.map(
             (n) =>

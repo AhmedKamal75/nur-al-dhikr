@@ -1679,6 +1679,22 @@ body.is-ambient #main {
   font-weight: 700;
   color: var(--color-primary-text);
 }
+.hadith-card__cloze {
+  width: 100%;
+  min-height: var(--touch-target);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+  color: var(--color-primary-text);
+  font-weight: 700;
+  cursor: pointer;
+}
+.hadith-card__mem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1_5);
+}
 .hadith-card__actions {
   display: flex;
   justify-content: flex-end;

@@ -149,6 +149,7 @@ describe('engine (fake driver)', () => {
       speed: 1,
       queue: null,
       qIndex: 0,
+      stopAt: null,
     });
     stop();
     configureDriver(null);
@@ -593,6 +594,66 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     assert.equal(resolveQueueItem(q, 5, SURAHS), null, 'out of range');
     assert.equal(resolveQueueItem(q, 0, []), null, 'no meta, no resolve');
     assert.equal(queueSignature(q), queueSignature([{ surah: 1, from: 2, to: 3 }]));
+  });
+
+  test('cross-surah range rolls and stops at the stop ayah', () => {
+    const d = makeDriver();
+    configureDriver(d);
+    start({
+      surah: 1,
+      from: 6,
+      total: 7,
+      reciterId: 'x',
+      surahsMeta: SURAHS,
+      stopAt: { surah: 2, ayah: 2 },
+    });
+    assert.equal(snapshot().continuous, true, 'roll implied');
+    assert.deepEqual(snapshot().stopAt, { surah: 2, ayah: 2 });
+    d.end('1:6');
+    d.end('1:7'); // rolls into Baqarah…
+    assert.equal(snapshot().surah, 2);
+    assert.equal(snapshot().end, 2, 'clamped to the stop ayah');
+    d.end('2:1');
+    d.end('2:2'); // …and closes there instead of wandering on
+    assert.equal(isActive(), false);
+    stop();
+    configureDriver(null);
+  });
+
+  test('stopAt validates: same-surah folds in, earlier ignored, junk dropped', () => {
+    const d = makeDriver();
+    configureDriver(d);
+    start({
+      surah: 1,
+      from: 2,
+      to: 6,
+      total: 7,
+      reciterId: 'x',
+      surahsMeta: SURAHS,
+      stopAt: { surah: 1, ayah: 4 },
+    });
+    assert.equal(snapshot().end, 4, 'same-surah stop tightens the range');
+    stop();
+    start({
+      surah: 2,
+      total: 286,
+      reciterId: 'x',
+      surahsMeta: SURAHS,
+      stopAt: { surah: 1, ayah: 7 },
+    });
+    assert.equal(snapshot().stopAt, null, 'earlier surah ignored');
+    assert.equal(snapshot().continuous, false);
+    stop();
+    start({
+      surah: 1,
+      total: 7,
+      reciterId: 'x',
+      surahsMeta: SURAHS,
+      stopAt: { surah: 999, ayah: 1 },
+    });
+    assert.equal(snapshot().stopAt, null, 'junk dropped');
+    stop();
+    configureDriver(null);
   });
 
   test('setListenRepeat off cancels the pause and replays nothing', async () => {

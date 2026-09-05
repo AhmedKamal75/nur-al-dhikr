@@ -103,6 +103,14 @@ export const actions = {
   }),
   // Personal hadith notes — empty/blank text deletes the note.
   setHadithNote: (key, text) => ({ type: 'HADITH_NOTE_SET', key, text }),
+  // Hadith memorization (SRS records over "<bookId>:<n>" keys).
+  markHadithMemorized: (key) => ({ type: 'HADITH_MEM_MARK', key }),
+  reviewHadithMem: (key, grade) => ({ type: 'HADITH_MEM_REVIEW', key, grade }),
+  // Grammar-flashcard drill (ephemeral session over prebuilt decks).
+  startGrammarDrill: (cards) => ({ type: 'GRAMMAR_DRILL_START', cards }),
+  revealGrammarCard: () => ({ type: 'GRAMMAR_DRILL_REVEAL' }),
+  gradeGrammarCard: (right) => ({ type: 'GRAMMAR_DRILL_GRADE', right }),
+  exitGrammarDrill: () => ({ type: 'GRAMMAR_DRILL_EXIT' }),
   // Recitation queues (playlists) of { surah, from, to } ranges.
   createPlaylist: (id, name) => ({ type: 'PLAYLIST_CREATE', id, name }),
   renamePlaylist: (id, name) => ({ type: 'PLAYLIST_RENAME', id, name }),

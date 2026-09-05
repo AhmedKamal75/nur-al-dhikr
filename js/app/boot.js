@@ -137,6 +137,7 @@ export async function boot() {
           speed: snap.speed,
           queue: snap.queue,
           qIndex: snap.qIndex,
+          stopAt: snap.stopAt,
         })
       );
       // Lock-screen / headset metadata follows the reciting ayah (cleared

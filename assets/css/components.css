@@ -1693,6 +1693,26 @@ body.modal-open {
   gap: var(--space-4);
 }
 
+/* Grammar flashcards (Roots view): big Arabic prompt, graded answers. */
+.panel--grammar {
+  gap: var(--space-2);
+}
+.grammar-word {
+  font-family: var(--font-arabic);
+  font-size: calc(var(--fs-arabic-card) * 0.9);
+  line-height: var(--lh-arabic);
+  text-align: center;
+}
+.grammar-answer {
+  font-size: var(--fs-base);
+  text-align: center;
+}
+.grammar-score {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  text-align: center;
+}
+
 /* Adhan loudness schedule (Prayer view): day volume + quiet-hours row. */
 .adhan-volume {
   display: flex;

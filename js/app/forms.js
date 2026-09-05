@@ -285,15 +285,20 @@ export const formHandlers = {
   'quran-range': (form) => {
     // (v5.0.0) The ayah-range playback submit: re-dispatch into the
     // existing surah-play handler with from/to bounds (+ loop passes).
+    // An end surah past the start surah becomes a cross-surah stopAt; the
+    // engine clamps the ayah, so the 286-wide `to` list needs no JS here.
     const fd = new FormData(form);
+    const startSurah = parseInt(form.dataset.surah, 10) || 1;
     const from = Math.max(1, parseInt(fd.get('from'), 10) || 1);
     let to = Math.max(1, parseInt(fd.get('to'), 10) || 1);
-    if (to < from) to = from;
+    const endSurah = parseInt(fd.get('surahTo'), 10) || startSurah;
+    if (endSurah === startSurah && to < from) to = from;
     closeModal();
     quranAudioClick['surah-play']({
       surah: form.dataset.surah,
       from: String(from),
       to: String(to),
+      surahTo: endSurah === startSurah ? null : String(endSurah),
       loop: String(parseInt(fd.get('loop'), 10) || 1),
     });
   },

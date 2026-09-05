@@ -341,6 +341,40 @@ export function reduceQuran(state, action) {
     case 'MUTASHABIHAT_SESSION_UPDATE':
       return { ...state, mutashabihat: { ...state.mutashabihat, ...action.patch } };
 
+    // Grammar-flashcard drill (ephemeral): prebuilt card decks only — the
+    // reducer never fetches or shuffles, it just walks the session.
+    case 'GRAMMAR_DRILL_START': {
+      const cards = Array.isArray(action.cards)
+        ? action.cards.filter((c) => c && typeof c.id === 'string').slice(0, 50)
+        : [];
+      if (!cards.length) return state;
+      return {
+        ...state,
+        grammarDrill: { cards, index: 0, revealed: false, right: 0, wrong: 0 },
+      };
+    }
+    case 'GRAMMAR_DRILL_REVEAL':
+      if (!state.grammarDrill || state.grammarDrill.revealed) return state;
+      return { ...state, grammarDrill: { ...state.grammarDrill, revealed: true } };
+    case 'GRAMMAR_DRILL_GRADE': {
+      const d = state.grammarDrill;
+      if (!d || !d.revealed || d.index >= d.cards.length) return state;
+      const right = action.right === true;
+      return {
+        ...state,
+        grammarDrill: {
+          ...d,
+          index: d.index + 1,
+          revealed: false,
+          right: d.right + (right ? 1 : 0),
+          wrong: d.wrong + (right ? 0 : 1),
+        },
+      };
+    }
+    case 'GRAMMAR_DRILL_EXIT':
+      if (!state.grammarDrill) return state;
+      return { ...state, grammarDrill: null };
+
     case 'IMMERSIVE_READER_TOGGLE':
       return { ...state, immersiveReader: !state.immersiveReader };
 

@@ -56,6 +56,69 @@ function searchBox(lang, q) {
     </div>`;
 }
 
+/** Drill launcher: one tap builds a 10-card round from random surahs. */
+function drillLauncherHTML(lang) {
+  return `
+    <section class="panel panel--grammar">
+      <div class="panel__header">
+        <h2>${t('grammar.title', lang)}</h2>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="grammar-start">
+          ${icon('play', { size: 14 })} ${t('grammar.start', lang)}
+        </button>
+      </div>
+      <p class="panel__subtext">${t('grammar.hint', lang)}</p>
+    </section>`;
+}
+
+/** Active drill session: flashcard front (guess the POS) → reveal → grade. */
+function drillHTML(state, lang) {
+  const d = state.grammarDrill;
+  const card = d.cards[d.index] || null;
+  const total = d.cards.length;
+  const progress =
+    d.index >= total
+      ? t('grammar.done', lang, { r: d.right, n: total })
+      : t('grammar.progress', lang, { i: Math.min(d.index + 1, total), n: total, r: d.right });
+  let body = '';
+  if (!card) {
+    body = `
+      <p class="grammar-score" dir="auto">${escapeHTML(progress)}</p>
+      <div class="editor-form__actions">
+        <button type="button" class="btn btn--secondary btn--sm" data-action="grammar-restart">${icon('repeat', { size: 14 })} ${t('grammar.restart', lang)}</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="grammar-exit">${t('grammar.exit', lang)}</button>
+      </div>`;
+  } else if (!d.revealed) {
+    body = `
+      <p class="grammar-word" dir="rtl" lang="ar">${escapeHTML(card.text)}</p>
+      ${card.translit ? `<p class="panel__subtext" dir="ltr">${escapeHTML(card.translit)}</p>` : ''}
+      <p class="panel__subtext">${t('grammar.prompt', lang)} · <span dir="ltr">${card.surah}:${card.ayah}</span></p>
+      <div class="editor-form__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="grammar-reveal">${t('grammar.reveal', lang)}</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="grammar-exit">${t('grammar.exit', lang)}</button>
+      </div>`;
+  } else {
+    const feats = [card.posEn, ...card.feats].filter(Boolean);
+    body = `
+      <p class="grammar-word" dir="rtl" lang="ar">${escapeHTML(card.text)}</p>
+      <p class="grammar-answer" dir="auto"><strong>${escapeHTML(card.posEn)}</strong>${card.posAr ? ` · <span dir="rtl" lang="ar">${escapeHTML(card.posAr)}</span>` : ''}</p>
+      ${card.gloss ? `<p class="panel__subtext" dir="auto">“${escapeHTML(card.gloss)}”</p>` : ''}
+      ${feats.length > 1 ? `<p class="panel__subtext" dir="auto">${escapeHTML(feats.slice(1).join(' · '))}</p>` : ''}
+      ${card.root ? `<p class="panel__subtext">${t('roots.title', lang)}: <span dir="rtl" lang="ar">${escapeHTML(card.root)}</span></p>` : ''}
+      <div class="editor-form__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="grammar-grade" data-right="1">${icon('check', { size: 14 })} ${t('grammar.right', lang)}</button>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="grammar-grade" data-right="0">${icon('close', { size: 14 })} ${t('grammar.wrong', lang)}</button>
+      </div>`;
+  }
+  return `
+    <section class="panel panel--grammar" aria-live="polite">
+      <div class="panel__header">
+        <h2>${t('grammar.title', lang)}</h2>
+        <span class="chip__count" dir="ltr">${escapeHTML(progress)}</span>
+      </div>
+      ${body}
+    </section>`;
+}
+
 /** Index mode: searchable list of all root families, busiest first. */
 function renderRootsIndex(state, lang) {
   const q = state.activeParams?.q || '';
@@ -78,10 +141,12 @@ function renderRootsIndex(state, lang) {
     ? t('roots.showing', lang, { n: results.length, total: roots })
     : t('roots.indexStats', lang, { n: roots, m: occurrences });
 
+  const drill = state.grammarDrill ? drillHTML(state, lang) : drillLauncherHTML(lang);
   return `
   <section class="view view--roots">
     <h1 class="view__title">${t('roots.title', lang)}</h1>
     <p class="view__subtitle">${t('roots.subtitle', lang)}</p>
+    ${drill}
     ${searchBox(lang, q)}
     <p class="roots-totals">${totalLine}</p>
     <div class="surah-grid">

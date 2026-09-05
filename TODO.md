@@ -214,11 +214,15 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
 
 - [x] Tafsir compare (second source column under the active tab; `settings.tafsirCompareB`,
       bundled + cached-remote only — remote fetch stays on the primary tab's download flow).
-- [ ] Grammar-flashcard drill UI on the existing word-morphology data
-      (`data/quran-words/` has POS/case/mood/verb-form per word).
+- [x] Grammar-flashcard drill UI — done (see above).
 - [x] Listen-and-repeat mode, reciter A/B compare, A–B range loop ×N
       (engine `loop`/`loopsLeft`, range-picker loop select, console loop chips).
-      Still open: cross-surah playback ranges (stop at surah S ayah Y).
+- [x] Cross-surah playback ranges: engine `stopAt` (rolls + clamps, implied
+      listen mode, junk ignored), end-surah picker in the range modal.
+- [x] Grammar-flashcard drill on the bundled morphology (`domain/grammarDrill.js`,
+      10-card self-graded rounds in the Roots view, ephemeral session).
+- [x] Hadith memorization reusing the hifz SRS ladder (key-agnostic domain twins,
+      per-card memorize mode with reveal + Recalled/Struggled, persisted records).
 - [x] Verse speed control (0.5–2×, live, persisted `audio.verseRate`) + lock-screen
       Media Session controls (prev/next ayah or surah + metadata, `services/mediaSession.js`).
 - [x] Recitation queues (playlists): persisted named `[{surah,from,to}]` lists, engine
@@ -234,7 +238,8 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
 - [ ] Uthmani vs IndoPak script toggle; multiple qira'at text (data project).
 - [x] Hadith bookmarks + personal notes (`hadithNotes`, per-card note button + note
       display + modal editor, persisted + restore-sanitized, capped).
-- [ ] Hadith memorization + adhkar-by-heart modes reusing the hifz SRS engine.
+- [x] Hadith memorization — done (see above). Still open: adhkar-by-heart mode
+      (same ladder over dhikr item ids).
 - [ ] Jumu'ah (Surah Al-Kahf) + daily-verse OS notification presets on the
       existing reminder scheduler (`services/notifications.js` `makeReminder` supports
       deep-link `targetView`).

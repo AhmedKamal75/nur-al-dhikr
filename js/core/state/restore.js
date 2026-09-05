@@ -6,7 +6,7 @@ import { MUSHAF_PAGE_COUNT } from '../config.js';
 import { cleanObject, clone, isSafeKey } from '../utils.js';
 import { isReturningUser } from '../../domain/onboarding.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
-import { sanitizeHifzRecords } from '../../domain/hifz.js';
+import { sanitizeHifzRecords, sanitizeMemRecords } from '../../domain/hifz.js';
 import { sanitizeFastingPrefs } from '../../domain/fasting.js';
 import { sanitizeSadaqahLog } from '../../domain/worship.js';
 import { sanitizeSunnahLog } from '../../domain/sunnah.js';
@@ -249,6 +249,8 @@ export function sanitizeRestoredPayload(payload) {
       .slice(0, 1000),
     // Personal hadith notes: same key shape, plain capped text values.
     hadithNotes: cleanHadithNotes(p.hadithNotes),
+    // Hadith memorization SRS records (same ladder math as hifz).
+    hadithMemRecords: sanitizeMemRecords(p.hadithMemRecords, 'hadith'),
     // Recitation queues: capped counts, safe ids, clamped range ints.
     playlists: cleanPlaylists(p.playlists),
     // (v4.2) surah/ayah/page are typed now: they render into data-*

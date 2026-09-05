@@ -159,7 +159,7 @@ export function nextSpeed(v) {
 /* Engine                                                              */
 /* ------------------------------------------------------------------ */
 
-let session = null; // { surah, ayah, from, total, end, reciterId, reciterIdB, compare, comparePass, ranged, surahsMeta, active, repeat, repeatsLeft, loop, loopsLeft, speed, continuous }
+let session = null; // { surah, ayah, from, total, end, reciterId, reciterIdB, compare, comparePass, ranged, stopAt, surahsMeta, active, repeat, repeatsLeft, loop, loopsLeft, speed, continuous }
 let ayahChangeCb = null; // (surah, ayah|null) — null = session over
 let errorCb = null; // (surah, ayah) — verse audio failed
 
@@ -287,7 +287,9 @@ export function peekNextUrl() {
     );
   }
   // End of surah with listen mode: first ayah of the next surah (when known).
-  if (session.continuous === true && !session.ranged && session.surah < 114) {
+  // A cross-surah stopAt blocks the roll past its surah.
+  const blockedPast = session.stopAt && session.surah + 1 > session.stopAt.surah;
+  if (session.continuous === true && !session.ranged && session.surah < 114 && !blockedPast) {
     const meta = session.surahsMeta?.find((m) => Number(m.number) === session.surah + 1);
     const nextTotal = Math.floor(Number(meta?.ayahCount));
     if (Number.isFinite(nextTotal) && nextTotal >= 1) {
@@ -346,6 +348,7 @@ export function snapshot() {
       speed: 1,
       queue: null,
       qIndex: null,
+      stopAt: null,
     };
   return {
     active: session.active,
@@ -364,6 +367,7 @@ export function snapshot() {
     speed: session.speed,
     queue: Array.isArray(session.queue) ? session.queue : null,
     qIndex: session.qIndex,
+    stopAt: session.stopAt ? { ...session.stopAt } : null,
   };
 }
 
@@ -388,6 +392,7 @@ export function start({
   speed = 1,
   queue = null,
   qIndex = 0,
+  stopAt = null,
 }) {
   stop();
   const s = Math.floor(Number(surah));
@@ -402,15 +407,32 @@ export function start({
     Number.isFinite(e) && e >= 1 && e <= t ? Math.max(e, Number.isFinite(f) && f >= 1 ? f : 1) : t;
   const b = typeof reciterIdB === 'string' && reciterIdB ? reciterIdB : null;
   const startAyah = Number.isFinite(f) && f >= 1 && f <= t ? f : 1;
+  // Cross-surah stop: { surah, ayah } the session must not play past.
+  // Same-surah folds into `end`; a later surah auto-enables listen mode so
+  // the session actually rolls there; an earlier surah is ignored.
+  let stopPoint = null;
+  {
+    const ss = Math.floor(Number(stopAt?.surah));
+    const sa = Math.floor(Number(stopAt?.ayah));
+    if (Number.isFinite(ss) && ss >= 1 && ss <= 114 && Number.isFinite(sa) && sa >= 1) {
+      if (ss === s) stopPoint = { surah: ss, ayah: sa };
+      else if (ss > s) stopPoint = { surah: ss, ayah: sa };
+    }
+  }
+  // Same-surah stopAt folds into the end bound (never before `from`).
+  const finalEnd =
+    stopPoint && stopPoint.surah === s ? Math.max(startAyah, Math.min(end, stopPoint.ayah)) : end;
   session = {
     surah: s,
     ayah: startAyah,
     from: startAyah,
     total: t,
-    end,
+    end: finalEnd,
     // A bounded range (to < total) never rolls into the next surah —
     // "play 1–10 continuously" means repeat/stop at 10, not wander on.
-    ranged: end < t,
+    // (A cross-surah stopAt is the exception: it auto-enables the roll.)
+    ranged: stopPoint && stopPoint.surah > s ? false : finalEnd < t,
+    stopAt: stopPoint,
     reciterId: String(reciterId || ''),
     reciterIdB: b,
     compare: compare === true && !!b,
@@ -423,7 +445,9 @@ export function start({
     speed: normalizeSpeed(speed),
     queue: normalizeQueue(queue),
     qIndex: Number.isFinite(Math.floor(Number(qIndex))) ? Math.floor(Number(qIndex)) : 0,
-    continuous: false,
+    // Cross-surah stopAt rolls surah-to-surah on its own — listen mode is
+    // implied so the session actually travels there.
+    continuous: !!(stopPoint && stopPoint.surah > s),
     // (v5.2.0) echo mode starts off; the toggle owns it mid-session.
     listenRepeat: false,
     waiting: false,
@@ -557,6 +581,11 @@ function advanceSurah() {
     return false;
   }
   const nextS = session.surah + 1;
+  // A cross-surah stopAt blocks rolling past its surah.
+  if (session.stopAt && nextS > session.stopAt.surah) {
+    stop();
+    return false;
+  }
   const meta = session.surahsMeta?.find((m) => Number(m.number) === nextS);
   const nextTotal = Math.floor(Number(meta?.ayahCount));
   if (!Number.isFinite(nextTotal) || nextTotal < 1) {
@@ -568,9 +597,15 @@ function advanceSurah() {
   // The new surah owns its own bounds: total AND end both reset, so a
   // 7-ayah Fatiha rolling into 286-ayah Baqarah plays all 286 (and a long
   // surah rolling into a short one can never invent ayahs past its end).
+  // Rolling INTO the stopAt surah clamps the end to the stop ayah.
   session.total = nextTotal;
-  session.end = nextTotal;
-  session.ranged = false;
+  if (session.stopAt && nextS === session.stopAt.surah) {
+    session.end = Math.max(1, Math.min(nextTotal, session.stopAt.ayah));
+    session.ranged = session.end < nextTotal;
+  } else {
+    session.end = nextTotal;
+    session.ranged = false;
+  }
   session.from = 1;
   session.comparePass = 0;
   session.repeatsLeft = session.repeat;

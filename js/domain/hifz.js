@@ -18,7 +18,7 @@
  * which is flowing text today — recorded in TODO.md, not silently dropped.
  */
 
-import { escapeHTML, dateKey, addDays } from '../core/utils.js';
+import { escapeHTML, dateKey, addDays, isSafeKey } from '../core/utils.js';
 
 /** Growing review intervals, in days. Index = record level. */
 export const HIFZ_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
@@ -111,6 +111,96 @@ export function logReview(records, surah, grade, today = dateKey()) {
       lapses: rec.lapses + (grade === 'again' ? 1 : 0),
     },
   };
+}
+
+/**
+ * Key-agnostic twins of the surah ladder above (hadith memorization reuses
+ * the SAME intervals/reviews math over "<bookId>:<n>" keys). `keyRe`
+ * guards the key shape — anything else is a pure no-op, never stored.
+ */
+const MEM_KEY_RES = {
+  hadith: /^[A-Za-z0-9_-]{1,40}:\d{1,6}$/,
+};
+
+function memRecordShape(r) {
+  const iso = (x) => (typeof x === 'string' && ISO_DATE.test(x) ? x : null);
+  const since = iso(r.since);
+  const due = iso(r.due) ?? since;
+  if (!due) return null;
+  return {
+    level: Math.min(HIFZ_INTERVALS.length - 1, Math.max(0, Math.floor(Number(r.level)) || 0)),
+    due,
+    since: since ?? due,
+    lastReviewed: iso(r.lastReviewed),
+    reviews: Math.max(0, Math.floor(Number(r.reviews)) || 0),
+    lapses: Math.max(0, Math.floor(Number(r.lapses)) || 0),
+  };
+}
+
+export function sanitizeMemRecords(raw, kind = 'hadith') {
+  const re = MEM_KEY_RES[kind];
+  const out = {};
+  if (!re || !raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const [k, v] of Object.entries(raw)) {
+    if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue;
+    if (!re.test(k) || !isSafeKey(String(k).split(':')[0])) continue;
+    const r = v && typeof v === 'object' && !Array.isArray(v) ? v : null;
+    if (!r) continue;
+    const shaped = memRecordShape(r);
+    if (shaped) out[k] = shaped;
+  }
+  return out;
+}
+
+export function markMemorizedKey(records, key, kind = 'hadith', today = dateKey()) {
+  const re = MEM_KEY_RES[kind];
+  // (S3) the regex alone still matches `__proto__:1` — the book half must
+  // also pass isSafeKey before the key ever reaches a map assignment.
+  if (
+    !re ||
+    typeof key !== 'string' ||
+    !re.test(key) ||
+    !isSafeKey(key.split(':')[0]) ||
+    !ISO_DATE.test(String(today))
+  )
+    return records ?? {};
+  return {
+    ...(records ?? {}),
+    [key]: {
+      level: 0,
+      since: today,
+      lastReviewed: today,
+      due: plusDays(today, 1),
+      reviews: 0,
+      lapses: 0,
+    },
+  };
+}
+
+export function logReviewKey(records, key, grade, today = dateKey()) {
+  const rec = (records ?? {})[typeof key === 'string' ? key : ''];
+  if (!rec || !ISO_DATE.test(String(today))) return records ?? {};
+  if (grade !== 'easy' && grade !== 'again') return records;
+  const level = grade === 'easy' ? Math.min(rec.level + 1, HIFZ_INTERVALS.length - 1) : 0;
+  return {
+    ...records,
+    [key]: {
+      ...rec,
+      level,
+      lastReviewed: today,
+      due: plusDays(today, HIFZ_INTERVALS[level]),
+      reviews: rec.reviews + 1,
+      lapses: rec.lapses + (grade === 'again' ? 1 : 0),
+    },
+  };
+}
+
+/** Records due on/before `today` (any key kind), oldest due first. */
+export function dueMemRecords(records, today = dateKey()) {
+  return Object.entries(records ?? {})
+    .filter(([, r]) => r && typeof r === 'object' && !Array.isArray(r) && r.due <= today)
+    .map(([k, r]) => ({ key: k, level: r.level, due: r.due, overdue: diffDays(r.due, today) }))
+    .sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
 }
 
 /** Surahs due for review on/before `today`, oldest due first. Defensive

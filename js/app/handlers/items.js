@@ -282,6 +282,56 @@ export const clickHandlers = {
     showToast(t('hadith.noteDeleted', store.getState().settings.language));
   },
 
+  // Hadith memorization: one hadith at a time hides its Arabic behind a
+  // reveal tap; Recalled/Struggled log the shared SRS ladder (same math as
+  // surah hifz). Opening a hadith with no record marks it (ladder starts).
+  'hadith-memorize': (ds) => {
+    const st = store.getState();
+    const bookId = String(ds.bookId || st.activeParams?.id || '');
+    const n = String(ds.n || '');
+    if (!bookId || !n) return;
+    const key = `${bookId}:${n}`;
+    const cur = st.hadith.bookView?.memorizeKey || null;
+    if (cur === key) {
+      store.dispatch(actions.setHadithView({ memorizeKey: null, memorizeRevealed: false }));
+      return;
+    }
+    store.batch(() => {
+      if (!st.hadithMemRecords?.[key]) store.dispatch(actions.markHadithMemorized(key));
+      store.dispatch(
+        actions.setHadithView({
+          memorizeKey: key,
+          memorizeRevealed: false,
+          page: st.hadith.bookView?.page ?? 1,
+        })
+      );
+    });
+  },
+
+  'hadith-mem-reveal': () => {
+    store.dispatch(actions.setHadithView({ memorizeRevealed: true }));
+  },
+
+  'hadith-mem-review': (ds) => {
+    const st = store.getState();
+    const bookId = String(ds.bookId || st.activeParams?.id || '');
+    const n = String(ds.n || '');
+    if (!bookId || !n) return;
+    const key = `${bookId}:${n}`;
+    const grade = ds.grade === 'again' ? 'again' : ds.grade === 'easy' ? 'easy' : null;
+    if (!grade) return;
+    store.batch(() => {
+      if (!st.hadithMemRecords?.[key]) store.dispatch(actions.markHadithMemorized(key));
+      store.dispatch(actions.reviewHadithMem(key, grade));
+      store.dispatch(actions.setHadithView({ memorizeRevealed: false }));
+    });
+    const rec = store.getState().hadithMemRecords?.[key];
+    showToast(
+      t(grade === 'easy' ? 'hifz.recalled' : 'hifz.struggled', st.settings.language) +
+        (rec?.due ? ` · ${rec.due}` : '')
+    );
+  },
+
   // (v4.6.0) Hadith cards get the same treatment as azkar cards: share
   // (Web Share API with clipboard fallback) and listen (Web Speech on the
   // Arabic text). Same doc lookup as hadith-copy.

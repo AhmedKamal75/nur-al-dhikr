@@ -8,6 +8,7 @@
  */
 
 import { dateKey, isSafeKey } from '../../utils.js';
+import { markMemorizedKey, logReviewKey } from '../../../domain/hifz.js';
 import { computeStreak } from '../streak.js';
 
 /** One playlist range item, or null when unusable. Surah is strictly
@@ -139,6 +140,40 @@ export function reduceLibrary(state, action) {
         ...state,
         playlists: state.playlists.map((p) =>
           p.id === action.id ? { ...p, items: p.items.filter((_, i) => i !== idx) } : p
+        ),
+      };
+    }
+
+    // Hadith memorization records — the hifz SRS ladder over hadith
+    // keys (domain/hifz.js key-agnostic twins). Grades/keys validated in
+    // the domain; unknown grade/key is a pure no-op.
+    case 'HADITH_MEM_MARK': {
+      if (
+        !(state.hadithMemRecords || {})[action.key] &&
+        Object.keys(state.hadithMemRecords || {}).length >= 1000
+      )
+        return state;
+      return {
+        ...state,
+        hadithMemRecords: markMemorizedKey(
+          state.hadithMemRecords,
+          action.key,
+          'hadith',
+          dateKey(new Date())
+        ),
+      };
+    }
+
+    case 'HADITH_MEM_REVIEW': {
+      const grade = action.grade === 'again' ? 'again' : action.grade === 'easy' ? 'easy' : null;
+      if (!grade) return state;
+      return {
+        ...state,
+        hadithMemRecords: logReviewKey(
+          state.hadithMemRecords,
+          action.key,
+          grade,
+          dateKey(new Date())
         ),
       };
     }

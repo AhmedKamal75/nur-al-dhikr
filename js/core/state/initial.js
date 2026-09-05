@@ -33,6 +33,12 @@ export function initialState() {
     // to }], createdAt }]. Persisted + restore-sanitized (capped counts,
     // clamped surah/ayah ints). Played in order through the verse engine.
     playlists: [],
+    // Hadith memorization records: { "<bookId>:<n>": SRS record } reusing
+    // the hifz interval ladder (domain/hifz.js key-agnostic twins).
+    hadithMemRecords: {},
+    // Grammar-flashcard drill session (ephemeral): shuffled word cards from
+    // the bundled morphology, self-graded Right/Wrong. Null when idle.
+    grammarDrill: null,
     collections: [], // [{ id, name:{en,ar}, items:[ids], createdAt }]
     counters: {}, // { itemId: { count, target, completedCycles, lastUpdated } }
     reminders: [], // [{ id, type, time, section, enabled }]
@@ -315,6 +321,7 @@ export const PERSISTED_KEYS = [
   'favorites',
   'hadithBookmarks',
   'hadithNotes',
+  'hadithMemRecords',
   'playlists',
   'collections',
   'counters',

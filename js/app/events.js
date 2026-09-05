@@ -53,6 +53,7 @@ import { clickHandlers as contentClick } from './handlers/content.js';
 import { clickHandlers as viewMenusClick } from './handlers/viewMenus.js';
 import { setItemTarget } from '../services/contentPrefs.js';
 import { clickHandlers as journalClick } from './handlers/journal.js';
+import { clickHandlers as grammarClick } from './handlers/grammar.js';
 import { buildMushafBookmarks, setFlipDirection } from '../views/mushafReader.js';
 import { buildMushafSettingsPanel } from '../views/tafsirPanel.js';
 import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
@@ -86,6 +87,7 @@ const clickHandlers = {
   ...contentClick,
   ...viewMenusClick,
   ...journalClick,
+  ...grammarClick,
 };
 
 // (v4.3) test surface: the merged table and its source maps are exported so
@@ -109,6 +111,7 @@ export const handlerMaps = [
   ['editor', editorClick],
   ['viewMenus', viewMenusClick],
   ['journal', journalClick],
+  ['grammar', grammarClick],
 ];
 export const mergedClickHandlers = clickHandlers;
 
