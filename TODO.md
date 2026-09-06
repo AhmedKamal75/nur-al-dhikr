@@ -210,6 +210,15 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## External test report, part 2 (2026-09-06)
+
+- Cross-surah truncation confirmed + fixed: the end surah's ayah leaked
+  into the starting surah's bound (1:6→2:2 played only 1:6). `start()` now
+  resolves the cross-surah stop first and always plays the starting surah
+  through; regression test mirrors the reported case exactly.
+- Console matrix, mid-recitation voice switch, and compare mode all PASS
+  per the external run (real execution, CDN blocked by sandbox egress).
+
 ## External test report, part 1 (2026-09-06)
 
 - Setup gate failure was real: prettier flagged `docs/ADD-LANGUAGE.md` +

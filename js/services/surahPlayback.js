@@ -447,9 +447,19 @@ export function start({
   if (!Number.isFinite(s) || s < 1 || s > 114) throw new Error('surah out of range');
   if (!Number.isFinite(t) || t < 1) throw new Error('total out of range');
   // (v5.0.0) the range end: clamped into [from, total] so a hostile
-  // data-attribute can never invent an ayah.
-  const end =
-    Number.isFinite(e) && e >= 1 && e <= t ? Math.max(e, Number.isFinite(f) && f >= 1 ? f : 1) : t;
+  // data-attribute can never invent an ayah. Cross-surah stop (a LATER
+  // surah) is resolved first: `to` is the END surah's ayah, not this
+  // surah's — using it here chopped the starting leg (1:6→2:2 played only
+  // 1:6). The starting surah always plays through to its last ayah.
+  const crossSurah = (() => {
+    const ss = Math.floor(Number(stopAt?.surah));
+    return Number.isFinite(ss) && ss > s && ss <= 114;
+  })();
+  const end = crossSurah
+    ? t
+    : Number.isFinite(e) && e >= 1 && e <= t
+      ? Math.max(e, Number.isFinite(f) && f >= 1 ? f : 1)
+      : t;
   const b = typeof reciterIdB === 'string' && reciterIdB ? reciterIdB : null;
   const startAyah = Number.isFinite(f) && f >= 1 && f <= t ? f : 1;
   // Cross-surah stop: { surah, ayah } the session must not play past.

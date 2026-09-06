@@ -635,6 +635,33 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
+  test('cross-surah range keeps the whole starting leg when `to` is passed', () => {
+    // External report: 1:6→2:2 played only 1:6 — the end surah's ayah (2)
+    // leaked into the starting surah's bound via `to`. `to` belongs to the
+    // END surah; the starting surah always plays through to its last ayah.
+    const d = makeDriver();
+    configureDriver(d);
+    start({
+      surah: 1,
+      from: 6,
+      to: 2,
+      total: 7,
+      reciterId: 'x',
+      surahsMeta: SURAHS,
+      stopAt: { surah: 2, ayah: 2 },
+    });
+    assert.equal(snapshot().end, 7, 'starting leg not truncated by `to`');
+    d.end('1:6');
+    assert.equal(snapshot().ayah, 7, '1:7 plays, not skipped');
+    d.end('1:7');
+    assert.equal(snapshot().surah, 2);
+    d.end('2:1');
+    d.end('2:2');
+    assert.equal(isActive(), false);
+    stop();
+    configureDriver(null);
+  });
+
   test('stopAt validates: same-surah folds in, earlier ignored, junk dropped', () => {
     const d = makeDriver();
     configureDriver(d);
