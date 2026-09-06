@@ -210,6 +210,14 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## External test report, part 5 (2026-09-06)
+
+- "Save to queue" totally broken — confirmed + fixed: `playlist-save-range`
+  read `.closest` off the dispatcher's SECOND arg (the Event), not the
+  element (third), so it silently bailed before dispatching. Only handler in
+  the tree with that shape (sweep-verified). Pure core extracted as
+  `resolveRangeSave` with unit tests; queues are playable end to end now.
+
 ## External test report, part 4 (2026-09-06)
 
 - 2e tap-layering note confirmed real but by design: verse words always

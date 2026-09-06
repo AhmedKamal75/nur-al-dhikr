@@ -267,17 +267,23 @@ export const clickHandlers = {
   },
 
   // Save the range picker's current from/to into an existing queue.
-  'playlist-save-range': (ds, el) => {
+  // NOTE: the dispatcher calls handlers as (dataset, event, element) —
+  // the element is the THIRD arg; reading .closest off the second used to
+  // silently no-op the whole save path (no toast, no error, empty queues).
+  'playlist-save-range': (ds, _e, el) => {
     const lang = store.getState().settings.language;
     const form = el?.closest?.('form');
     const fd = form ? new FormData(form) : null;
-    const surah = parseInt(form?.dataset.surah || ds.surah, 10);
-    const from = Math.max(1, parseInt(fd?.get('from'), 10) || 1);
-    let to = Math.max(1, parseInt(fd?.get('to'), 10) || 1);
-    if (to < from) to = from;
-    const id = String(fd?.get('playlist') || ds.playlist || '');
-    if (!Number.isFinite(surah) || !id) return;
-    store.dispatch(actions.addPlaylistItem(id, { surah, from, to }));
+    const saved = resolveRangeSave(ds, {
+      surah: form?.dataset.surah,
+      from: fd?.get('from'),
+      to: fd?.get('to'),
+      playlist: fd?.get('playlist'),
+    });
+    if (!saved) return;
+    store.dispatch(
+      actions.addPlaylistItem(saved.id, { surah: saved.surah, from: saved.from, to: saved.to })
+    );
     closeModal();
     showToast(t('playlist.addedRange', lang));
   },
@@ -327,3 +333,18 @@ export const clickHandlers = {
     store.dispatch(actions.setAudioPrefs({ rate: next }));
   },
 };
+
+/**
+ * Pure core of playlist-save-range: resolve { surah, from, to, id } from
+ * the picker's dataset + field values, or null when unusable. Hostile or
+ * missing values degrade to null (the handler no-ops) — never throw.
+ */
+export function resolveRangeSave(ds, fields = {}) {
+  const surah = parseInt(fields.surah ?? ds?.surah, 10);
+  const from = Math.max(1, parseInt(fields.from, 10) || 1);
+  let to = Math.max(1, parseInt(fields.to, 10) || 1);
+  if (to < from) to = from;
+  const id = String(fields.playlist ?? ds?.playlist ?? '');
+  if (!Number.isFinite(surah) || surah < 1 || surah > 114 || !id) return null;
+  return { surah, from, to, id };
+}

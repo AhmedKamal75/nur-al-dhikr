@@ -68,3 +68,30 @@ describe('restore sanitizer', () => {
     assert.equal(sanitizeRestoredPayload({ playlists: big }).playlists.length, 50);
   });
 });
+
+describe('resolveRangeSave', () => {
+  test('resolves picker values; hostile degrades to null', async () => {
+    const { resolveRangeSave } = await import('../js/app/handlers/audio.js');
+    assert.deepEqual(
+      resolveRangeSave({ surah: '1' }, { surah: '1', from: '6', to: '7', playlist: 'q1' }),
+      { surah: 1, from: 6, to: 7, id: 'q1' }
+    );
+    assert.deepEqual(
+      resolveRangeSave({ surah: '2' }, { surah: '2', from: '10', to: '3', playlist: 'q1' }),
+      { surah: 2, from: 10, to: 10, id: 'q1' },
+      'to < from clamps up'
+    );
+    assert.equal(
+      resolveRangeSave({ surah: '1' }, { surah: '1', from: '1', to: '2', playlist: '' }),
+      null
+    );
+    assert.equal(resolveRangeSave({}, { surah: '999', from: '1', to: '2', playlist: 'q1' }), null);
+    assert.equal(resolveRangeSave({}, {}), null);
+    // The reported bug shape: an Event object in place of the element must
+    // never reach here — the handler reads .closest only off arg 3 now.
+    assert.equal(
+      resolveRangeSave({ surah: '114' }, { surah: '114', from: '1', to: '6', playlist: 'm' }).id,
+      'm'
+    );
+  });
+});
