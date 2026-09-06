@@ -1143,6 +1143,7 @@ export const ar = {
   'kids.starEarned': 'كسبت نجمة!',
   'kids.exit': 'الخروج من وضع الأطفال',
   'kids.exitHint': 'للكبار: اضغط مطوّلًا على هذا الزر لثانيتين.',
+  'kids.exitHow': 'النقر لا يخرج — اضغط مطوّلًا حتى يمتلئ الشريط.',
   'kids.exitDone': 'تم إيقاف وضع الأطفال',
   'stats.avgPerDay': 'المعدل اليومي (٣٠ يومًا)',
   'stats.weekTotal': 'هذا الأسبوع',

@@ -1170,6 +1170,7 @@ export const en = {
   'kids.starEarned': 'You earned a star!',
   'kids.exit': 'Exit kids mode',
   'kids.exitHint': 'Grown-ups: press and hold this button for 2 seconds.',
+  'kids.exitHow': 'Tapping does not exit — press AND HOLD the button until the bar fills.',
   'kids.exitDone': 'Kids mode off',
   'stats.avgPerDay': 'Avg / Day (30d)',
   'stats.weekTotal': 'This week',

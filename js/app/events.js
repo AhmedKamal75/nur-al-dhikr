@@ -159,6 +159,18 @@ function cancelAyahLongPress() {
 
 const KIDS_EXIT_HOLD_MS = 2000;
 const KIDS_EXIT_STEPS = 4;
+const KIDS_EXIT_TAP_WINDOW_MS = 6000;
+const KIDS_EXIT_TAPS_TO_HINT = 3;
+
+function trackKidsExitTaps() {
+  const now = Date.now();
+  rt.kidsExitTaps = (rt.kidsExitTaps || []).filter((ts) => now - ts < KIDS_EXIT_TAP_WINDOW_MS);
+  rt.kidsExitTaps.push(now);
+  if (rt.kidsExitTaps.length >= KIDS_EXIT_TAPS_TO_HINT) {
+    rt.kidsExitTaps = [];
+    showToast(t('kids.exitHow', store.getState().settings.language));
+  }
+}
 
 function paintKidsExitStep(btn, step) {
   const fill = btn?.querySelector('.kids-exit__fill');
@@ -367,6 +379,10 @@ export function bindGlobalEvents() {
     if (!target) return;
     const action = target.dataset.action;
     if (action === 'modal-close-overlay') return;
+    // Kids exit has no tap handler on purpose — but repeated taps mean a
+    // grown-up who missed the hint. After 3 taps in 6s, say plainly that
+    // only a 2-second HOLD exits (the hold paints progress meanwhile).
+    if (action === 'kids-exit-hold') trackKidsExitTaps();
 
     const handler = clickHandlers[action];
     if (handler) {

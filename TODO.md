@@ -210,6 +210,16 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## Missing-rail diagnosis (2026-09-06, user screenshot)
+
+- The vanished desktop rail was persisted kids mode (`body.is-kids` hides
+  `#bottomnav` on every route) while the exit hold was undiscoverable.
+- Fixes: hold-progress fill + keyboard hold already shipped; added a
+  tap-counter that toasts the hold instructions after 3 plain taps, and
+  zeroed the desktop rail margin under `is-kids`. Verified the rail
+  element, its render path, and every other `display:none` in layout.css —
+  no other route-independent hider exists.
+
 ## Reader header rebuild (2026-09-06, user screenshots)
 
 - One-row top bar (back + Mushaf/Reciters/immersive grouped end, never

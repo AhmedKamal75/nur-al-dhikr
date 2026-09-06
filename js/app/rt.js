@@ -79,7 +79,9 @@ export const rt = {
   longPressAnchor: null,
   suppressClickUntil: 0,
   // Kids-mode hold-to-exit pending timer (2s press, cancelled on release)
-  // plus the progress-fill paint interval.
+  // plus the progress-fill paint interval and the tap-counter that teaches
+  // the hold after repeated plain taps.
   kidsExitTimer: null,
   kidsExitPaint: null,
+  kidsExitTaps: null,
 };
