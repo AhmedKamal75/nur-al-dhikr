@@ -210,6 +210,18 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## External test report, part 3 (2026-09-06)
+
+- 1e re-verified on current branch: the truncation fix holds (regression
+  test mirrors the exact 1:6→2:2 and 284→3:3 cases). The agent's FAIL came
+  from the pre-fix zip — no code change needed beyond 4e62c1c.
+- 1h doc note confirmed: word data preloads on surah open (wordByWordStudy
+  default), so transliteration usually precedes any tap. Test-plan wording
+  corrected; behavior kept (nicer UX, tap fallback intact).
+- 1i stolen tap: fixed at the root class — ayah/hadith cards now carry
+  scroll margins clearing the sticky topbar + fixed nav/playerbar, so no
+  programmatic scroll can park tappable content under chrome.
+
 ## External test report, part 2 (2026-09-06)
 
 - Cross-surah truncation confirmed + fixed: the end surah's ayah leaked

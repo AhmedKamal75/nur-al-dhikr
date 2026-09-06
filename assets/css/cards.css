@@ -1631,6 +1631,13 @@ body.is-ambient #main {
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  /* Same stolen-tap class as ayah cards: programmatic scrolls must clear
+     the sticky topbar above and the fixed nav/playerbar below. */
+  scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--space-4));
+}
+body.has-player .hadith-card {
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--playerbar-height) + var(--space-4));
 }
 .hadith-card--target {
   border-color: var(--color-primary);

@@ -236,6 +236,17 @@
   box-shadow: var(--ring-primary);
   animation: ayah-focus-glow var(--dur-celebrate) var(--ease-standard);
 }
+/* Programmatic scrolls (follow-along, deep-link focus) must never park a
+   card under the fixed bottom nav / playerbar where taps get stolen by
+   chrome — external report: a cloze word rendered untappable behind the
+   nav's More button on a 420px viewport. */
+.ayah-card {
+  scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--space-4));
+}
+body.has-player .ayah-card {
+  scroll-margin-bottom: calc(var(--bottomnav-height) + var(--playerbar-height) + var(--space-4));
+}
 
 .ayah-card__top {
   display: flex;
