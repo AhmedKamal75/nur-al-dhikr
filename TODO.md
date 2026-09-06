@@ -210,6 +210,17 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## External test report, part 4 (2026-09-06)
+
+- 2e tap-layering note confirmed real but by design: verse words always
+  resolve to word-taps (v4.6.0 tajweed answers), so the ﴿n﴾ marker glyph is
+  the only pointer path to the ayah detail (keyboard path already works via
+  the ayah's own tab stop; the word panel's Tafsir button reaches the same
+  modal in two labeled taps). Fix: invisible hitbox expansion on the marker
+  (paper untouched) so the 12px glyph taps like 30px+.
+- Stale tally items (setup gate, titles, cross-surah, tap overlap) are all
+  fixed on current branch — agent needs a fresh zip.
+
 ## External test report, part 3 (2026-09-06)
 
 - 1e re-verified on current branch: the truncation fix holds (regression

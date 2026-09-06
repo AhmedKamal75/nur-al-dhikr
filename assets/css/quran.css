@@ -748,6 +748,11 @@ body.has-player .ayah-card {
   font-size: 0.75em;
   color: color-mix(in srgb, var(--mushaf-gold) 60%, var(--mushaf-paper-ink, var(--color-text)));
   white-space: nowrap;
+  /* The marker glyph is the pointer path to the ayah detail (verse words
+     resolve to word-taps by design) — expand its hitbox invisibly so the
+     12px glyph taps like a 30px+ target without touching the paper. */
+  padding: 0.45em 0.55em;
+  margin: -0.45em -0.55em;
 }
 .mushaf-ayah__bookmark-flag {
   color: var(--cat-gold-text);
