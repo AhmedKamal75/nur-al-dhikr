@@ -26,7 +26,7 @@ pins en↔ar parity only; extend it when the new language is complete.
    you still need to translate; `t()` covers the rest with English until
    you do. Have a native speaker review religious strings before calling
    the language "supported" in the README.
-6. **Content vs chrome:** this covers UI chrome. Library *content*
+6. **Content vs chrome:** this covers UI chrome. Library _content_
    (dua meanings, virtues) is per-item `{en, ar}` data — a third content
    language is a data project (see the Arabic-content backlog in
    TODO.md), not this recipe.
@@ -34,6 +34,6 @@ pins en↔ar parity only; extend it when the new language is complete.
 ## Suggested order (most Muslims first)
 
 Urdu → Bengali → Turkish → French → Indonesian. Note the Qur'an reader
-already ships Urdu, French, Turkish and Indonesian *translation editions*
+already ships Urdu, French, Turkish and Indonesian _translation editions_
 (`data/translations/`) — the study content is there; only the chrome is
 missing.

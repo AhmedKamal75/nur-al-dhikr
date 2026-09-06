@@ -6,6 +6,7 @@
 
 import { rt } from './rt.js';
 import { wirePlayer, startAudioPlay as wireAudioStart } from './audioEngine.js';
+import * as fullSurahPlayer from '../services/player.js';
 import { renderErrorScreen } from './drawer.js';
 import { bindGlobalEvents } from './events.js';
 import { warmHadithDaily } from './hadithData.js';
@@ -138,6 +139,7 @@ export async function boot() {
           queue: snap.queue,
           qIndex: snap.qIndex,
           stopAt: snap.stopAt,
+          paused: snap.paused === true,
         })
       );
       // Lock-screen / headset metadata follows the reciting ayah (cleared
@@ -163,9 +165,10 @@ export async function boot() {
         showToast(t('kids.starEarned', store.getState().settings.language));
       }
     });
-    // Lock-screen prev/next: verse session wins when active, otherwise the
-    // full-surah player steps tracks. Installed once; all decisions read
-    // live state inside the callbacks.
+    // Lock-screen controls: the verse session wins when active (prev/next
+    // ayah, play/pause in place), otherwise the full-surah player steps
+    // tracks and toggles. Installed once; all decisions read live state
+    // inside the callbacks.
     mediaSession.installMediaHandlers({
       onPrev: () => {
         if (surahPlayback.isActive()) surahPlayback.skip(-1);
@@ -180,6 +183,26 @@ export async function boot() {
           const p = store.getState().player;
           if (p?.moshafId && p.surah != null && p.surah < 114)
             wireAudioStart(p.moshafId, p.surah + 1);
+        }
+      },
+      onToggle: () => {
+        const sp = store.getState().surahPlayback;
+        if (sp?.active) {
+          store.dispatch(
+            actions.setSurahPlayback(
+              sp.paused === true ? surahPlayback.resume() : surahPlayback.pause()
+            )
+          );
+          return;
+        }
+        const p = store.getState().player;
+        if (!p?.moshafId) return;
+        if (p.playing) {
+          fullSurahPlayer.pause();
+          store.dispatch(actions.setAudioPlayer({ playing: false }));
+        } else {
+          fullSurahPlayer.toggle();
+          store.dispatch(actions.setAudioPlayer({ playing: true }));
         }
       },
     });

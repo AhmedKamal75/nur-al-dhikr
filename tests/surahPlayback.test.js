@@ -37,6 +37,8 @@ import {
   normalizeQueue,
   resolveQueueItem,
   queueSignature,
+  pause,
+  resume,
 } from '../js/services/surahPlayback.js';
 import { configureDriver } from '../js/services/recitation.js';
 
@@ -58,6 +60,9 @@ function makeDriver() {
     played: [], // keys in order
     stopped: 0,
     rates: [], // playback rates applied per play
+    paused: 0,
+    resumed: 0,
+    ended: false, // element played-through state for resume decisions
     endedCb: null,
     errorCb: null,
     end(key) {
@@ -67,8 +72,17 @@ function makeDriver() {
       d.errorCb?.();
     },
   };
-  d.play = (url, key) => d.played.push({ url, key });
+  d.play = (url, key) => {
+    d.played.push({ url, key });
+    d.ended = false;
+  };
   d.setRate = (v) => d.rates.push(v);
+  d.pause = () => {
+    d.paused += 1;
+  };
+  d.resume = () => {
+    d.resumed += 1;
+  };
   d.stop = () => {
     d.stopped += 1;
   };
@@ -150,6 +164,7 @@ describe('engine (fake driver)', () => {
       queue: null,
       qIndex: 0,
       stopAt: null,
+      paused: false,
     });
     stop();
     configureDriver(null);
@@ -653,6 +668,43 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     });
     assert.equal(snapshot().stopAt, null, 'junk dropped');
     stop();
+    configureDriver(null);
+  });
+
+  test('pause freezes mid-ayah; resume continues without restart', () => {
+    const d = makeDriver();
+    configureDriver(d);
+    start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
+    pause();
+    assert.equal(snapshot().paused, true);
+    assert.equal(d.paused, 1, 'driver paused once');
+    assert.equal(d.played.length, 1, 'no replay on pause');
+    pause();
+    assert.equal(d.paused, 1, 'double pause is a no-op');
+    resume();
+    assert.equal(snapshot().paused, false);
+    assert.equal(d.resumed, 1, 'element resumed in place');
+    assert.equal(d.played.length, 1, 'no restart on resume');
+    stop();
+    configureDriver(null);
+  });
+
+  test('new plays clear a stale pause; resume replays a played-through element', () => {
+    const d = makeDriver();
+    configureDriver(d);
+    start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
+    pause();
+    setReciter('ar.husary'); // voice switch restarts → must unpause
+    assert.equal(snapshot().paused, false);
+    assert.equal(d.played.at(-1).key, '1:1');
+    pause();
+    d.ended = true; // element already played through (echo-wait case)
+    resume();
+    assert.equal(d.played.at(-1).key, '1:1', 'fresh replay, not a dead resume');
+    assert.equal(snapshot().paused, false);
+    stop();
+    assert.deepEqual(resume(), snapshot(), 'resume with no session is a safe no-op');
+    assert.deepEqual(pause(), snapshot(), 'pause with no session is a safe no-op');
     configureDriver(null);
   });
 

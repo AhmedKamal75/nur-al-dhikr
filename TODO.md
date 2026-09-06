@@ -210,6 +210,18 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## External test report, part 1 (2026-09-06)
+
+- Setup gate failure was real: prettier flagged `docs/ADD-LANGUAGE.md` +
+  `README.md`, aborting `npm run check` before tests. Fixed (both
+  formatted); gates re-verified end to end.
+- Missing tab titles confirmed: `title.mutashabihat/journal/certificate/
+garden/kids` absent EN+AR → fallback-to-Home titles. Added both languages.
+- Verse pause button (user note): the verse console genuinely had stop but
+  no pause. Added engine `pause()/resume()` (freeze in place, echo-safe,
+  played-through replays fresh), pause buttons on all three consoles, and
+  lock-screen play/pause (verse toggle, else full-surah toggle).
+
 ## Missing-rail diagnosis (2026-09-06, user screenshot)
 
 - The vanished desktop rail was persisted kids mode (`body.is-kids` hides

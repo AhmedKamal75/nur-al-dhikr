@@ -1456,6 +1456,11 @@ export const ar = {
   'common.print': 'طباعة',
   'prayer.sheet.ambient': 'شاشة المنضدة الليلية',
   'title.ambient': 'المنضدة',
+  'title.mutashabihat': 'المتشابهات',
+  'title.journal': 'اليوميات',
+  'title.certificate': 'الشهادة',
+  'title.garden': 'الحديقة',
+  'title.kids': 'قرآن الأطفال',
   'ambient.exit': 'خروج من شاشة المنضدة',
   'prayer.exportedIcs': 'نُزّلت المواقيت — استورد الملف في تطبيق التقويم',
   /* (v5.1.0) أقسام صفحة الصلاة */

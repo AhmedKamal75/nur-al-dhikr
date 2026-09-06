@@ -27,6 +27,9 @@ import {
   driverOnError,
   driverSetVolume,
   driverSetRate,
+  driverPause,
+  driverResume,
+  driverHasEnded,
 } from './recitation.js';
 import { SLEEP_TIMER_CHOICES, volumeAt, countdownLabel } from '../domain/sleepTimer.js';
 
@@ -253,9 +256,38 @@ function playCurrent() {
     failSession();
     return;
   }
+  session.paused = false;
   driverSetRate(session.speed);
   driverPlay(url, ayahKey(session.surah, session.ayah));
   prefetchNext();
+}
+
+/**
+ * Pause mid-ayah (the missing pause button): the element freezes in place
+ * and resume() continues it — no restart, no lost position. Pausing also
+ * cancels a pending echo wait (resuming replays the ayah instead of
+ * waking into silence). Natural 'ended' events can't fire while paused,
+ * so the session can never advance underneath a pause.
+ */
+export function pause() {
+  if (!session || !session.active || session.paused) return snapshot();
+  clearEchoWait();
+  session.paused = true;
+  driverPause();
+  notify(session.surah, session.ayah);
+  return snapshot();
+}
+
+/** Resume a paused session: continue the frozen ayah in place. If the
+ *  element already played through (pause landed in an echo wait), replay
+ *  the ayah fresh instead of waking into another silence. */
+export function resume() {
+  if (!session || !session.active || !session.paused) return snapshot();
+  session.paused = false;
+  if (driverHasEnded()) playCurrent();
+  else driverResume();
+  notify(session.surah, session.ayah);
+  return snapshot();
 }
 
 /**
@@ -360,6 +392,7 @@ export function snapshot() {
       queue: null,
       qIndex: null,
       stopAt: null,
+      paused: false,
     };
   return {
     active: session.active,
@@ -379,6 +412,7 @@ export function snapshot() {
     queue: Array.isArray(session.queue) ? session.queue : null,
     qIndex: session.qIndex,
     stopAt: session.stopAt ? { ...session.stopAt } : null,
+    paused: session.paused === true,
   };
 }
 
@@ -457,6 +491,7 @@ export function start({
     speed: normalizeSpeed(speed),
     queue: normalizeQueue(queue),
     qIndex: Number.isFinite(Math.floor(Number(qIndex))) ? Math.floor(Number(qIndex)) : 0,
+    paused: false,
     // Cross-surah stopAt rolls surah-to-surah on its own — listen mode is
     // implied so the session actually travels there.
     continuous: !!(stopPoint && stopPoint.surah > s),

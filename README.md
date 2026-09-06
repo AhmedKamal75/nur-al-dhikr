@@ -185,7 +185,7 @@ real scrolling.
    `overflow-y: auto` — scrollHeight still reported the full text, so
    it LOOKED scrollable while the person saw one clipped line. The
    stage is now a scroll container again, with `overscroll-behavior:
-   contain`; the ripple anchors but never clips a scrollable surface.
+contain`; the ripple anchors but never clips a scrollable surface.
 2. **Focus counter: 180px dial → one 76px bar.** Reset, prev/next, a
    64px progress counter ("1 ✓ / 1"), and the card menu in a single
    footer row. The reading stage reclaims ~170px on phones

@@ -75,6 +75,32 @@ export function stop() {
   setKey(null);
 }
 
+/** Pause mid-ayah, keeping src + key so resume() continues in place. */
+export function pause() {
+  if (audioEl && !audioEl.paused) audioEl.pause();
+}
+
+/** Resume after pause(). A failed resume surfaces as a playback error
+ *  (same contract as play()) so the session ends honestly, never hung. */
+export function resume() {
+  if (!audioEl || !audioEl.paused || !audioEl.currentSrc) return;
+  const key = currentKey;
+  audioEl.play().catch(() => {
+    onError?.(key);
+    setKey(null);
+  });
+}
+
+/** True while an ayah is paused mid-stream (source still loaded). */
+export function isPaused() {
+  return !!audioEl && !!audioEl.currentSrc && audioEl.paused && currentKey != null;
+}
+
+/** True when the element already played through (resume would no-op). */
+export function hasEnded() {
+  return !!audioEl && !!audioEl.currentSrc && audioEl.ended;
+}
+
 /** (v4.4) Sleep-timer fade: clamp volume on the shared element. */
 export function setVolume(v) {
   const n = Number(v);
@@ -131,6 +157,26 @@ export function driverSetVolume(v) {
 export function driverSetRate(v) {
   if (driver?.setRate) driver.setRate(v);
   else setPlaybackRate(v);
+}
+
+export function driverPause() {
+  if (driver?.pause) driver.pause();
+  else pause();
+}
+
+export function driverResume() {
+  if (driver?.resume) driver.resume();
+  else resume();
+}
+
+export function driverIsPaused() {
+  if (driver?.isPaused) return driver.isPaused();
+  return isPaused();
+}
+
+export function driverHasEnded() {
+  if (typeof driver?.ended === 'boolean') return driver.ended;
+  return hasEnded();
 }
 
 export function driverOnEnded(cb) {

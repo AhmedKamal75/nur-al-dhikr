@@ -143,6 +143,9 @@ function recitationBarHTML(state, lang) {
       <button type="button" class="player-bar__chip ${sleep.enabled ? 'player-bar__chip--on' : ''}" data-action="recite-sleep-cycle" aria-label="${t('audio.sleepTimer', lang)}" title="${t('audio.sleepTimer', lang)}">
         ${icon('moon', { size: 13 })}${sleep.enabled ? ` ${escapeHTML(sleep.label)}` : ''}
       </button>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-pause-toggle" aria-label="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}" title="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}">
+        ${icon(sp.paused === true ? 'play' : 'pause', { size: 16 })}
+      </button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="recite-stop" aria-label="${t('audio.reciteStop', lang)}">
         ${icon('stop', { size: 16 })}
       </button>

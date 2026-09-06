@@ -136,6 +136,15 @@ export const clickHandlers = {
     mediaSession.clearMetadata();
   },
 
+  // Pause/resume mid-ayah (the console's pause button): freezes in place,
+  // resumes without restart. Mirrored so the button icon follows instantly.
+  'recite-pause-toggle': () => {
+    const paused = store.getState().surahPlayback?.paused === true;
+    store.dispatch(
+      actions.setSurahPlayback(paused ? surahPlayback.resume() : surahPlayback.pause())
+    );
+  },
+
   // Reciter picker from inside the player console (both voices): voice A
   // restarts the current ayah immediately; voice B arms compare mode's
   // second pass. Same allowlisted QURAN_RECITERS set as Settings.

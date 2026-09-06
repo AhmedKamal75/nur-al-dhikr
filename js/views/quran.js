@@ -554,6 +554,7 @@ function buildReaderImmersiveConsole(state, lang) {
       ${chip('recite-compare-toggle', compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
       ${chip('recite-loop-toggle', loop !== 1, t('audio.loopMode', lang), `${icon('repeat', { size: 13 })} ${loop === 1 ? t('audio.loop', lang) : `×${loop}`}`)}
       ${chip('recite-speed-cycle', false, t('audio.speed', lang), `${speed}×`)}
+      <button type="button" class="icon-btn" data-action="recite-pause-toggle" aria-label="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}" title="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}">${icon(sp.paused === true ? 'play' : 'pause', { size: 16 })}</button>
       <button type="button" class="icon-btn" data-action="recite-stop" aria-label="${t('audio.reciteStop', lang)}" title="${t('audio.reciteStop', lang)}">${icon('stop', { size: 16 })}</button>
     </div>
     ${

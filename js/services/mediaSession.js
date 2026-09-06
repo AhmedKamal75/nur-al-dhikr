@@ -61,15 +61,19 @@ export function clearMetadata() {
 let handlersInstalled = false;
 
 /**
- * Install lock-screen prev/next exactly once. Callbacks stay in app-land
- * (this module never imports the store or the engines).
+ * Install lock-screen prev/next/play-pause exactly once. Callbacks stay in
+ * app-land (this module never imports the store or the engines).
  */
-export function installMediaHandlers({ onPrev, onNext } = {}) {
+export function installMediaHandlers({ onPrev, onNext, onToggle } = {}) {
   const m = api();
   if (!m || handlersInstalled) return false;
   try {
     if (typeof onPrev === 'function') m.setActionHandler('previoustrack', onPrev);
     if (typeof onNext === 'function') m.setActionHandler('nexttrack', onNext);
+    if (typeof onToggle === 'function') {
+      m.setActionHandler('play', onToggle);
+      m.setActionHandler('pause', onToggle);
+    }
     handlersInstalled = true;
     return true;
   } catch {

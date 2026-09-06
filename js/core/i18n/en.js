@@ -1487,6 +1487,11 @@ export const en = {
   'common.print': 'Print',
   'prayer.sheet.ambient': 'Nightstand display',
   'title.ambient': 'Nightstand',
+  'title.mutashabihat': 'Look-alike Verses',
+  'title.journal': 'Journal',
+  'title.certificate': 'Certificate',
+  'title.garden': 'Garden',
+  'title.kids': 'Kids Quran',
   'ambient.exit': 'Exit nightstand display',
   'prayer.exportedIcs': 'Prayer times downloaded — import the file into your calendar app',
   /* (v5.1.0) Prayer page blocks */
