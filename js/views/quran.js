@@ -122,18 +122,6 @@ function recitationToolbarHTML(state, number, lang) {
           ${icon(follow ? 'eye' : 'eyeOff', { size: 13 })}
           ${t('audio.follow', lang)}
         </button>
-        <button type="button" class="chip" data-action="recite-voice-open" title="${t('audio.chooseReciter', lang)}">
-          ${icon('volume', { size: 13 })}
-          ${t('quran.recitersLink', lang)}
-        </button>
-        ${
-          active
-            ? `<button type="button" class="chip ${sp.compare === true ? 'chip--active' : ''}" data-action="recite-compare-toggle" aria-pressed="${sp.compare === true}" title="${t('audio.compareMode', lang)}">
-          ${icon('grid', { size: 13 })}
-          ${t('audio.compare', lang)}
-        </button>`
-            : ''
-        }
       </div>`;
 }
 
@@ -336,12 +324,20 @@ function surahReaderHTML(state, number) {
       ? `<button type="button" class="btn btn--secondary btn--sm quran-window-load" data-action="quran-window-expand" data-dir="down">${t('quran.showNext', lang, { n: Math.min(nextHidden, READER_WINDOW_SIZE) })} ${icon('chevronDown', { size: 14 })}</button>`
       : '';
 
+  // The transliteration and the English name are often identical
+  // ("Al-Baqarah — Al-Baqarah") — show the name once in that case.
+  const nameEn =
+    surahMeta &&
+    surahMeta.nameEn &&
+    surahMeta.nameEn.toLowerCase() !== String(surahMeta.nameTransliteration || '').toLowerCase()
+      ? ` \u2014 ${surahMeta.nameEn}`
+      : '';
   const header = surahMeta
     ? `
     <header class="quran-reader__header">
-      <p class="quran-reader__num">${t('quran.surah', lang)} ${surahMeta.number}</p>
+      <p class="quran-reader__eyebrow">${t('quran.surah', lang)} ${surahMeta.number}</p>
       <h1 class="quran-reader__name-ar" dir="rtl">${escapeHTML(surahMeta.nameAr)}</h1>
-      <p class="quran-reader__name-en">${escapeHTML(surahMeta.nameTransliteration)} \u2014 ${escapeHTML(surahMeta.nameEn)}</p>
+      <p class="quran-reader__name-en">${escapeHTML(surahMeta.nameTransliteration)}${escapeHTML(nameEn)}</p>
       <p class="quran-reader__meta">${t('quran.ayahCount', lang, { n: surahMeta.ayahCount })} \u2022 ${t(surahMeta.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</p>
       ${recitationToolbarHTML(state, number, lang)}
       ${hifzToolbarHTML(state, number, lang)}
@@ -596,13 +592,17 @@ export function renderQuran(state) {
 
   return `
   <section class="view view--quran">
-    <header class="view-header">
-      ${id ? `<a class="back-link" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">${icon('chevronLeft', { size: 18 })} ${t('quran.backToList', lang)}</a>` : ''}
-      ${!id ? `<h1 class="view__title">${t('quran.title', lang)}</h1><p class="view__subtitle">${t('quran.subtitle', lang)}</p>` : ''}
-      ${mushafLink}
-      ${recitersLink}
-      ${immersiveBtn}
+    <header class="view-header view-header--row quran-topbar">
+      <div class="quran-topbar__start">
+        ${id ? `<a class="back-link" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">${icon('chevronLeft', { size: 18 })} ${t('quran.backToList', lang)}</a>` : `<h1 class="view__title">${t('quran.title', lang)}</h1>`}
+      </div>
+      <div class="quran-topbar__actions">
+        ${mushafLink}
+        ${recitersLink}
+        ${immersiveBtn}
+      </div>
     </header>
+    ${!id ? `<p class="view__subtitle">${t('quran.subtitle', lang)}</p>` : ''}
     ${id ? surahReaderHTML(state, id) : surahListHTML(state)}
     ${immersiveExit}
   </section>`;

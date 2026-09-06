@@ -93,22 +93,65 @@
   align-self: flex-start;
 }
 
+/* Reader top bar: back/title start, quiet action group end — one row,
+   never stacked. */
+.quran-topbar {
+  justify-content: space-between;
+}
+.quran-topbar__start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.quran-topbar__start .view__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quran-topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1_5);
+  margin-inline-start: auto;
+  flex: none;
+}
+.quran-topbar__actions .quran-mushaf-toggle {
+  align-self: center;
+}
+
 /* ==========================================================================
    2. Classic reader
    ========================================================================== */
 .quran-reader__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  align-items: center;
+  gap: var(--space-1_5);
+  text-align: center;
+  padding-block: var(--space-2) var(--space-1);
 }
-.quran-reader__name-en {
-  font-size: var(--fs-xl);
+.quran-reader__eyebrow {
+  font-size: var(--fs-caption);
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 .quran-reader__name-ar {
   font-family: var(--font-arabic);
-  font-size: var(--fs-xl);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  line-height: var(--lh-arabic);
+  color: var(--color-text);
+}
+.quran-reader__name-en {
+  font-size: var(--fs-base);
+  font-weight: 600;
   color: var(--color-text-secondary);
+}
+.quran-reader__toolbar {
+  align-self: stretch;
 }
 .quran-reader__meta {
   font-size: var(--fs-caption);

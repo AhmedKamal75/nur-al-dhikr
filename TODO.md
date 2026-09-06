@@ -210,6 +210,15 @@ genuinely-missing, web-feasible items were built (A–D below, all tested).
       `domain/prayerTimeline.js`, `views/prayer.js`, `assets/css/cards.css`,
       i18n `prayer.timelineLabel`, `tests/prayerTimeline.test.js`.
 
+## Reader header rebuild (2026-09-06, user screenshots)
+
+- One-row top bar (back + Mushaf/Reciters/immersive grouped end, never
+  stacked); centered surah identity with eyebrow, Arabic hero, deduped
+  English name ("Al-Baqarah — Al-Baqarah" is gone); slim recitation toolbar
+  (Recite/Range/Follow — voice+compare live in the console only).
+- Note: the floating dark countdown card in the screenshots is not app UI
+  (no such string/markup in the tree) — an OS-level overlay in the capture.
+
 ## Independent audit round (2026-09-05, three read-only passes + verification)
 
 Three parallel audits (shell/router/persist, prayer/worship, library/cards/habits)
