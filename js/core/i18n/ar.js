@@ -369,7 +369,6 @@ export const ar = {
   'mushaf.khatma': 'تقدم الختمة',
   'mushaf.khatmaReset': 'تصفير',
   'mushaf.khatmaResetDone': 'تم تصفير تقدم الختمة',
-  'home.continueReading': 'متابعة القراءة',
   'home.morningShortcut': 'أذكار الصباح',
   'home.eveningShortcut': 'أذكار المساء',
   'home.dailyProgress': 'تقدم اليوم',
@@ -711,6 +710,7 @@ export const ar = {
   'mushaf.textSize': 'حجم الخط',
   'mushaf.lineSpacing': 'تباعد الأسطر',
   'mushaf.behavior': 'القراءة',
+  'mushaf.studyAids': 'وسائل الدراسة',
   'mushaf.flipAnimation': 'حركة تقليب الصفحة',
   'mushaf.wordStudy': 'اضغط على كلمة لعرض إعرابها ومعناها',
   'mushaf.wordUnderline': 'تسطير الكلمات القابلة للضغط',
@@ -1540,6 +1540,14 @@ export const ar = {
   'mushaf.tajweedPractice': 'تدريب التجويد',
   'mushaf.mutashabihat': 'الآيات المتشابهات',
   'mushaf.roots': 'جذور الكلمات',
+
+  /* إعادة تنظيم المصحف: أقسام مسماة + لوحة تقدم مستقلة */
+  'mushaf.sectionGo': 'الانتقال',
+  'mushaf.sectionDisplay': 'العرض',
+  'mushaf.sectionStudy': 'الدراسة',
+  'mushaf.sectionListen': 'الاستماع',
+  'mushaf.sectionTrack': 'التقدم',
+  'mushaf.trackHint': 'خطتك وتقدمك في القراءة هنا — تغيير الخطة لا يمس ما قرأته أبدًا.',
 
   /* أزرار بطاقة الحديث */
   'hadith.cardListen': 'استماع',

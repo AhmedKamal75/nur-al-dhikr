@@ -7,7 +7,7 @@
  * (views/viewSheets.js + handlers/viewMenus.js), each opening one of the
  * panel builders exported here. Same data, same handlers, one clean page.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
@@ -503,8 +503,8 @@ export function buildMonthModal(state, year, month) {
   <div class="prayer-month">
     <h2 id="modal-title-prayer-month">${escapeHTML(monthName)}</h2>
     <div class="editor-form__actions">
-      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${prev.y}" data-m="${prev.m}">${icon('chevronRight', { size: 14 })} ${t('prayer.prevMonth', lang)}</button>
-      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${next.y}" data-m="${next.m}">${t('prayer.nextMonth', lang)} ${icon('chevronLeft', { size: 14 })}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${prev.y}" data-m="${prev.m}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('prayer.prevMonth', lang)}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="prayer-month-nav" data-y="${next.y}" data-m="${next.m}">${t('prayer.nextMonth', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}</button>
     </div>
     <div class="table-scroll">
       <table class="prayer-month__table">

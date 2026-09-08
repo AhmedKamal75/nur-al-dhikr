@@ -466,8 +466,8 @@ export function buildMushafSettingsPanel(state) {
     </button>`
   ).join('');
 
-  const toggle = (key, labelKey) => `
-    <label class="toggle-row">
+  const toggle = (key, labelKey, sub = false) => `
+    <label class="toggle-row${sub ? ' toggle-row--sub' : ''}">
       <span class="toggle-row__label">${t(labelKey, lang)}</span>
       <span class="switch">
         <input type="checkbox" data-action="toggle-mushaf-pref" data-key="${key}" ${prefs[key] ? 'checked' : ''} />
@@ -507,42 +507,61 @@ export function buildMushafSettingsPanel(state) {
     <h3 class="mushaf-jump__heading">${t('mushaf.behavior', lang)}</h3>
     ${toggle('spread', 'mushaf.spread')}
     ${toggle('pageFlipAnimation', 'mushaf.flipAnimation')}
-    ${toggle('tajweedInspector', 'mushaf.tajweedInspector')}
-    ${toggle('wordByWordStudy', 'mushaf.wordStudy')}
-    ${toggle('wordUnderline', 'mushaf.wordUnderline')}
-    ${toggle('tajweedColoring', 'mushaf.tajweed')}
 
-    <button type="button" class="btn btn--secondary practice-launch-btn" data-action="practice-open">
-      ${icon('sparkle', { size: 15 })} ${t('practice.launchFromSettings', lang)}
-    </button>
+    <h3 class="mushaf-jump__heading">${t('mushaf.studyAids', lang)}</h3>
+    ${toggle('wordByWordStudy', 'mushaf.wordStudy')}
+    ${toggle('wordUnderline', 'mushaf.wordUnderline', true)}
+    ${toggle('tajweedColoring', 'mushaf.tajweed')}
+    ${toggle('tajweedInspector', 'mushaf.tajweedInspector')}
+
+    <div class="mushaf-settings__study-links">
+      <button type="button" class="btn btn--secondary practice-launch-btn" data-action="practice-open">
+        ${icon('sparkle', { size: 15 })} ${t('practice.launchFromSettings', lang)}
+      </button>
+      <button type="button" class="btn btn--secondary practice-launch-btn" data-action="tajweed-open-settings">
+        ${icon('sparkle', { size: 15 })} ${t('mushaf.tajweedSettings', lang)}
+      </button>
+    </div>
 
     ${
       prefs.tajweedColoring
         ? `
     <h3 class="mushaf-jump__heading">${t('mushaf.tajweedLegend', lang)}</h3>
     <div class="tajweed-legend">
-      ${TAJWEED_FAMILIES.map(
-        (family) => `
+      ${TAJWEED_FAMILIES.map((family) => {
+        // The legend mirrors the page exactly: family swatches resolve the
+        // user's color overrides, and rules toggled off render as plain
+        // swatches (the page leaves them uncolored). Defaults alone used
+        // to render here, so any customization made this chart disagree
+        // with the colored text.
+        const override = prefs.colors?.[family.id];
+        const familyColor =
+          typeof override === 'string' && /^#[0-9a-fA-F]{6}$/.test(override)
+            ? override
+            : family.color;
+        return `
         <div class="tajweed-legend__family">
           <div class="tajweed-legend__family-head">
-            <span class="tajweed-legend__swatch" style="background:${family.color}"></span>
+            <span class="tajweed-legend__swatch" style="background:${familyColor}"></span>
             <span class="tajweed-legend__family-name">${escapeHTML(pickLocale(family.name, lang))}</span>
           </div>
           <p class="tajweed-legend__family-desc">${escapeHTML(pickLocale(family.desc, lang))}</p>
           ${TAJWEED_RULES.filter((r) => r.family === family.id)
-            .map(
-              (r) => `
+            .map((r) => {
+              const on = ruleEnabled(prefs, r.id);
+              const rc = on ? effectiveRuleColor(prefs, r) : null;
+              return `
           <div class="tajweed-legend__row">
-            <span class="tajweed-legend__swatch tajweed-legend__swatch--${r.color ? 'solid' : 'plain'}" ${r.color ? `style="background:${r.color}"` : ''} title="${escapeHTML(t('mushaf.tajweedUncolored', lang))}"></span>
+            <span class="tajweed-legend__swatch tajweed-legend__swatch--${rc ? 'solid' : 'plain'}" ${rc ? `style="background:${rc}"` : ''} title="${escapeHTML(t('mushaf.tajweedUncolored', lang))}"></span>
             <div>
               <div class="tajweed-legend__name">${escapeHTML(pickLocale(r.name, lang))}</div>
               <div class="tajweed-legend__desc">${escapeHTML(pickLocale(r.desc, lang))}</div>
             </div>
-          </div>`
-            )
+          </div>`;
+            })
             .join('')}
-        </div>`
-      ).join('')}
+        </div>`;
+      }).join('')}
       <div class="tajweed-legend__row tajweed-legend__row--plain">
         <span class="tajweed-legend__swatch tajweed-legend__swatch--plain"></span>
         <div>

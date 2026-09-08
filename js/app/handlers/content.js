@@ -613,3 +613,29 @@ export const clickHandlers = {
     showToast(t('content.allRestored', lang()));
   },
 };
+
+/** change registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const changeHandlers = [
+  {
+    // Manage-mode target stepper: commits the contentPrefs override AND
+    // keeps the live counter record in agreement, so the pill re-renders
+    // instantly.
+    sel: '[data-action="content-set-target"]',
+    run: (ds, el) => {
+      const state = store.getState();
+      const prefs = setItemTarget(state, ds.itemId, el.value);
+      if (prefs !== state.settings.contentPrefs) {
+        commit(prefs);
+        const counter = state.counters[ds.itemId];
+        if (counter) {
+          store.dispatch(
+            actions.setCounter(ds.itemId, {
+              ...counter,
+              target: prefs.targetOverrides[ds.itemId],
+            })
+          );
+        }
+      }
+    },
+  },
+];

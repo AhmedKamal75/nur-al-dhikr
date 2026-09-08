@@ -31,30 +31,34 @@
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  min-height: var(--touch-target);
-  padding: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   text-align: start;
   transition:
     border-color var(--dur-base) var(--ease-standard),
-    box-shadow var(--dur-base) var(--ease-standard);
+    box-shadow var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
 }
 .surah-tile:hover {
   border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 .surah-tile__num {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 20%, transparent);
   color: var(--color-primary-text);
   font-size: var(--fs-caption);
-  font-weight: 700;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
@@ -67,11 +71,14 @@
 }
 .surah-tile__name-en {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 .surah-tile__meta {
   font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 .surah-tile__name-ar {
   font-family: var(--font-arabic);
@@ -457,9 +464,21 @@ body.has-player .ayah-card {
   justify-content: center;
 }
 .mushaf-page-wrap[data-mushaf-paper='night'],
-.mushaf-page-wrap[data-mushaf-paper='amoled'] {
+.mushaf-page-wrap[data-mushaf-paper='amoled'],
+.mushaf-page-wrap[data-mushaf-paper='royal-black'] {
   --mushaf-gold: #d4bd77;
   --mushaf-gold-soft: rgba(212, 189, 119, 0.24);
+}
+/* Print-edition frames: the Madinah mushaf rules its margins in green,
+   the cream (Indo-Pak) print in a deep antique gold — the frame,
+   corners, medallions and cartouche all follow --mushaf-gold. */
+.mushaf-page-wrap[data-mushaf-paper='madinah'] {
+  --mushaf-gold: #1e7a5a;
+  --mushaf-gold-soft: rgba(30, 122, 90, 0.22);
+}
+.mushaf-page-wrap[data-mushaf-paper='cream'] {
+  --mushaf-gold: #8f6b1d;
+  --mushaf-gold-soft: rgba(143, 107, 29, 0.22);
 }
 
 /* --- The book (v4.5) ------------------------------------------------------
@@ -666,6 +685,50 @@ body.has-player .ayah-card {
   right: 5px;
 }
 
+/* --- Edition lattice band (print-edition ornament) ----------------------
+   An original geometric diamond lattice ringing the page just outside
+   the gold rule — the visual language of the Madinah green margins and
+   the Indo-Pak cream prints, drawn from scratch in pure CSS (no copied
+   artwork, no image assets). Only the three print-edition papers show
+   it; every other paper keeps the clean gold rule. The pattern renders
+   as a padding ring so it can never cover the text, and the whole band
+   stays hidden where mask-composite is unsupported (graceful fallback
+   to the plain frame, never a full-bleed fill). */
+.mushaf-page__lattice {
+  display: none;
+}
+@supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+  .mushaf-page-wrap[data-mushaf-paper='madinah'] .mushaf-page__lattice,
+  .mushaf-page-wrap[data-mushaf-paper='cream'] .mushaf-page__lattice,
+  .mushaf-page-wrap[data-mushaf-paper='royal-black'] .mushaf-page__lattice {
+    display: block;
+    position: absolute;
+    inset: -11px;
+    padding: 5px;
+    border: 1px solid color-mix(in srgb, var(--mushaf-gold) 55%, transparent);
+    border-radius: 5px;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        color-mix(in srgb, var(--mushaf-gold) 42%, transparent) 0 1.5px,
+        transparent 1.5px 7px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        color-mix(in srgb, var(--mushaf-gold) 42%, transparent) 0 1.5px,
+        transparent 1.5px 7px
+      );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+}
+
 /* --- Margin medallions (page head) --------------------------------------
    The juz number in a gold rosette pill, the running surah name in a
    hairline cartouche — the two-line running head of a printed mushaf.
@@ -765,6 +828,80 @@ body.has-player .ayah-card {
   color: var(--mushaf-gold);
 }
 
+/* --- Madinah text rhythm ---------------------------------------------------
+   The Madinah print justifies every line edge-to-edge with generous word
+   spacing; its ayah-end numbers sit in ornate roundels. The roundel is an
+   original CSS treatment (tinted pill ring behind the marker glyph — the
+   marker's invisible 30px+ hitbox is untouched), and justification stays
+   word-based: Arabic script must never be letter-spaced (it breaks joins). */
+.mushaf-page-wrap[data-mushaf-paper='madinah'] .mushaf-page__text {
+  text-align: justify;
+  text-align-last: center;
+  text-justify: inter-word;
+  word-spacing: 0.13em;
+}
+.mushaf-page-wrap[data-mushaf-paper='madinah'] .mushaf-ayah__marker {
+  /* Tight roundel: the tint paints only behind the glyphs (content-box)
+     and the ring is an inward-offset outline — the marker's padded 30px+
+     hitbox stays untouched, so only the number wears the circle. The
+     inline-start margin is slightly relaxed so the ring never kisses the
+     previous ayah's last letter. */
+  background: color-mix(in srgb, var(--mushaf-gold) 13%, transparent);
+  background-clip: content-box;
+  outline: 1px solid color-mix(in srgb, var(--mushaf-gold) 50%, transparent);
+  outline-offset: -0.4em;
+  border-radius: var(--radius-pill);
+  margin-inline-start: -0.4em;
+}
+.mushaf-page-wrap[data-mushaf-paper='madinah'] .mushaf-bismillah {
+  font-size: 1.12em;
+  font-weight: 700;
+}
+
+/* --- Cream edition markers ---------------------------------------------------
+   Indo-Pak prints mark ayah ends in deep red. Fixed print red (the documented
+   raw-hex exception for print — this red lives on the cream paper in both
+   app themes, never on app surfaces). */
+.mushaf-page-wrap[data-mushaf-paper='cream'] .mushaf-ayah__marker {
+  /* Same tight-roundel technique as the Madinah edition, in print red. */
+  color: #b3261e;
+  background: color-mix(in srgb, #b3261e 9%, transparent);
+  background-clip: content-box;
+  outline: 1px solid color-mix(in srgb, #b3261e 45%, transparent);
+  outline-offset: -0.4em;
+  border-radius: var(--radius-pill);
+  margin-inline-start: -0.4em;
+}
+
+/* --- Tajweed on dark papers ---------------------------------------------------
+   The --tw-* hues are app-theme scoped, but mushaf paper is independent of
+   the app theme — a black page open in light mode used to get the light
+   hues on a dark ground (ghunnah green and qalqalah cyan washed out). Dark
+   papers always take the lifted hues. Values mirror the dark-theme block
+   in variables.css; keep them in lockstep. */
+.mushaf-page-wrap[data-mushaf-paper='night'],
+.mushaf-page-wrap[data-mushaf-paper='amoled'],
+.mushaf-page-wrap[data-mushaf-paper='royal-black'] {
+  --tw-hamza-wasl: #bdbdbd;
+  --tw-lam-shamsiyah: #bdbdbd;
+  --tw-ghunnah: #66bb6a;
+  --tw-ikhfa: #66bb6a;
+  --tw-iqlab: #66bb6a;
+  --tw-idgham-ghunnah: #66bb6a;
+  --tw-idgham-shafawi: #66bb6a;
+  --tw-ikhfa-shafawi: #66bb6a;
+  --tw-qalqalah: #4dd0e1;
+  --tw-tafkhim: #64b5f6;
+  --tw-madd-normal: #f8a8c5;
+  --tw-madd-iwad: #f8a8c5;
+  --tw-madd-badal: #f8a8c5;
+  --tw-madd-arid: #f8a8c5;
+  --tw-madd-munfasil: #ffa726;
+  --tw-madd-silah: #ffa726;
+  --tw-madd-muttasil: #f77fb0;
+  --tw-madd-laazim: #ef5350;
+}
+
 /* --- In-flow surah banner --------------------------------------------------
    A new surah opens with an ornament-framed cartouche carrying its name,
    flanked by gold diamonds on fading hairlines. */
@@ -837,6 +974,39 @@ body.has-player .ayah-card {
   flex-direction: column;
   align-items: center;
   gap: 1px;
+}
+
+/* --- Print-edition surah panels ------------------------------------------
+   The Madinah print opens each surah with a filled rectangular panel, the
+   cream Indo-Pak print with a heavier gilded band, the black edition with
+   a pale-gold outline on the dark page. Original CSS treatments in each
+   edition's own accent — same markup, same recite affordance. */
+.mushaf-page-wrap[data-mushaf-paper='madinah'] .mushaf-surah-banner__frame {
+  padding: var(--space-1_5) var(--space-6);
+  border: 1.5px solid color-mix(in srgb, var(--mushaf-gold) 72%, transparent);
+  background: color-mix(in srgb, var(--mushaf-gold) 13%, transparent);
+  box-shadow:
+    inset 0 0 0 2px var(--mushaf-paper-bg, var(--color-surface)),
+    inset 0 0 0 3px color-mix(in srgb, var(--mushaf-gold) 42%, transparent);
+}
+.mushaf-page-wrap[data-mushaf-paper='madinah'] .mushaf-surah-banner__name {
+  font-size: 1.12em;
+}
+.mushaf-page-wrap[data-mushaf-paper='cream'] .mushaf-surah-banner__frame {
+  padding: var(--space-1_5) var(--space-6);
+  border: 1.5px solid color-mix(in srgb, var(--mushaf-gold) 75%, transparent);
+  background: color-mix(in srgb, var(--mushaf-gold) 16%, transparent);
+  box-shadow:
+    inset 0 0 0 2px var(--mushaf-paper-bg, var(--color-surface)),
+    inset 0 0 0 3px color-mix(in srgb, var(--mushaf-gold) 45%, transparent);
+}
+.mushaf-page-wrap[data-mushaf-paper='royal-black'] .mushaf-surah-banner__frame {
+  padding: var(--space-1_5) var(--space-6);
+  border: 1.5px solid color-mix(in srgb, var(--mushaf-gold) 80%, transparent);
+  background: transparent;
+  box-shadow:
+    inset 0 0 0 2px var(--mushaf-paper-bg, var(--color-surface)),
+    inset 0 0 0 3px color-mix(in srgb, var(--mushaf-gold) 35%, transparent);
 }
 .mushaf-surah-banner__meta {
   font-family: var(--font-arabic);
@@ -2075,6 +2245,19 @@ body.has-player .reader-immersive-echo {
 .mushaf-settings__bismillah-chip--active {
   border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
   box-shadow: var(--ring-primary);
+}
+/* Display settings: the underline toggle is a sub-option of word study,
+   so it nests one level in — same switch, just a visual parent/child cue. */
+.toggle-row--sub {
+  margin-inline-start: var(--space-6);
+}
+/* Display settings: the two study entry points (drill + rules & colors)
+   sit side by side as one group instead of a lone floating button. */
+.mushaf-settings__study-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
 }
 
 /* ==========================================================================

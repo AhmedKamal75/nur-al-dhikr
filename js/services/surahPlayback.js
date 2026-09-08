@@ -25,6 +25,8 @@ import {
   driverStop,
   driverOnEnded,
   driverOnError,
+  driverOffEnded,
+  driverOffError,
   driverSetVolume,
   driverSetRate,
   driverPause,
@@ -734,6 +736,11 @@ export function stop() {
   clearEchoWait();
   const wasActive = session.active;
   session = null;
+  // (B3) unregister the session handlers: with listener sets (not a
+  // single slot) the engine must clean up after itself, or every start
+  // would stack another onVerseFailed on the shared element.
+  driverOffEnded(onVerseEnded);
+  driverOffError(onVerseFailed);
   driverStop();
   if (wasActive) notify(null, null);
 }

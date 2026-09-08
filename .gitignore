@@ -8,3 +8,5 @@ npm-debug.log*
 .idea/
 coverage/
 *.local
+test-results/
+playwright-report/

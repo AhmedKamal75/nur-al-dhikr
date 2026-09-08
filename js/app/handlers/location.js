@@ -51,3 +51,17 @@ export const clickHandlers = {
     }
   },
 };
+
+/** change registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const changeHandlers = [
+  {
+    sel: '[data-action="toggle-traveler-mode"]',
+    run: (ds, el) => {
+      const next = el.checked === true;
+      store.dispatch(actions.updatePrayerSettings({ travelerMode: next }));
+      showToast(
+        t(next ? 'traveler.enabled' : 'traveler.disabled', store.getState().settings.language)
+      );
+    },
+  },
+];

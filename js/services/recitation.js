@@ -12,9 +12,12 @@
 
 let audioEl = null;
 let currentKey = null; // e.g. "2:255" — lets a card ask "is *this* ayah playing?"
-let onKeyChange = null; // optional callback(key|null), fired on start/stop/end/error
-let onError = null; // optional callback(key) — verse audio failed to play
-let onEnded = null; // optional callback(key) — verse finished playing naturally
+// (B3) listener SETS, not single slots: two owners (the toast wiring and
+// the continuous engine) used to share one slot, so starting a verse
+// session silently clobbered single-ayah failure toasts forever after.
+const keyListeners = new Set();
+const errorListeners = new Set();
+const endedListeners = new Set();
 
 function getAudioEl() {
   if (!audioEl) {
@@ -23,11 +26,24 @@ function getAudioEl() {
     audioEl.addEventListener('ended', () => {
       const finished = currentKey;
       setKey(null);
-      onEnded?.(finished);
+      for (const cb of [...endedListeners]) {
+        try {
+          cb(finished);
+        } catch (err) {
+          console.error('[recitation] ended listener failed', err);
+        }
+      }
     });
     audioEl.addEventListener('error', () => {
-      onError?.(currentKey);
+      const failed = currentKey;
       setKey(null);
+      for (const cb of [...errorListeners]) {
+        try {
+          cb(failed);
+        } catch (err) {
+          console.error('[recitation] error listener failed', err);
+        }
+      }
     });
   }
   return audioEl;
@@ -35,25 +51,53 @@ function getAudioEl() {
 
 function setKey(key) {
   currentKey = key;
-  if (onKeyChange) onKeyChange(key);
+  for (const cb of [...keyListeners]) {
+    try {
+      cb(key);
+    } catch (err) {
+      console.error('[recitation] change listener failed', err);
+    }
+  }
 }
 
 /** Register a listener that's called whenever the playing ayah key changes. */
 export function onPlaybackChange(callback) {
-  onKeyChange = callback;
+  if (typeof callback === 'function') keyListeners.add(callback);
+}
+
+export function offPlaybackChange(callback) {
+  keyListeners.delete(callback);
 }
 
 /** Register a listener for verse-playback failures, so the UI can say why
  *  the button just reverted instead of failing in silence. */
 export function onPlaybackError(callback) {
-  onError = callback;
+  if (typeof callback === 'function') errorListeners.add(callback);
+}
+
+export function offPlaybackError(callback) {
+  errorListeners.delete(callback);
 }
 
 /** Register a listener that fires when a verse finishes playing NATURALLY
  *  (not via stop()) with the finished key — the seam the continuous
  *  surah-recitation engine (surahPlayback.js) advances on. */
 export function onPlaybackEnded(callback) {
-  onEnded = callback;
+  if (typeof callback === 'function') endedListeners.add(callback);
+}
+
+export function offPlaybackEnded(callback) {
+  endedListeners.delete(callback);
+}
+
+function emitError(key) {
+  for (const cb of [...errorListeners]) {
+    try {
+      cb(key);
+    } catch (err) {
+      console.error('[recitation] error listener failed', err);
+    }
+  }
 }
 
 /** Start playing `url`, tagged with `key` for isPlaying()/UI reflection. */
@@ -62,7 +106,7 @@ export function play(url, key) {
   el.src = url;
   setKey(key);
   el.play().catch(() => {
-    onError?.(key);
+    emitError(key);
     setKey(null);
   }); // e.g. autoplay policy or network failure
 }
@@ -86,7 +130,7 @@ export function resume() {
   if (!audioEl || !audioEl.paused || !audioEl.currentSrc) return;
   const key = currentKey;
   audioEl.play().catch(() => {
-    onError?.(key);
+    emitError(key);
     setKey(null);
   });
 }
@@ -137,6 +181,8 @@ function drv() {
       stop: () => stop(),
       onEnded: (cb) => onPlaybackEnded(cb),
       onError: (cb) => onPlaybackError(cb),
+      offEnded: (cb) => offPlaybackEnded(cb),
+      offError: (cb) => offPlaybackError(cb),
     }
   );
 }
@@ -185,4 +231,28 @@ export function driverOnEnded(cb) {
 
 export function driverOnError(cb) {
   drv().onError(cb);
+}
+
+export function driverOffEnded(cb) {
+  try {
+    drv().offEnded?.(cb);
+  } catch {
+    /* custom driver without removal — session guard still applies */
+  }
+}
+
+export function driverOffError(cb) {
+  try {
+    drv().offError?.(cb);
+  } catch {
+    /* custom driver without removal — session guard still applies */
+  }
+}
+
+/** Test-only: drop all listeners + driver between cases. */
+export function resetRecitationForTests() {
+  keyListeners.clear();
+  errorListeners.clear();
+  endedListeners.clear();
+  driver = null;
 }

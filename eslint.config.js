@@ -48,6 +48,8 @@ export default [
         getComputedStyle: 'readonly',
         DeviceOrientationEvent: 'readonly',
         Audio: 'readonly',
+        AbortController: 'readonly',
+        AbortSignal: 'readonly',
         MediaMetadata: 'readonly',
         CSS: 'readonly',
         requestSubmit: 'readonly',
@@ -104,6 +106,22 @@ export default [
       sourceType: 'module',
       globals: {
         console: 'readonly',
+      },
+    },
+  },
+  {
+    // Playwright specs run in a real browser: document/window/Buffer are
+    // provided by the browser + Playwright runtime, not the app.
+    files: ['tests/e2e/**/*.spec.js', 'playwright.config.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        document: 'readonly',
+        window: 'readonly',
+        Buffer: 'readonly',
+        process: 'readonly',
       },
     },
   },

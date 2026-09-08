@@ -32,15 +32,59 @@ import { rt } from './rt.js';
  * proxy) could still hand back the old 200 stub, which used to slip past
  * the !res.ok guard and poison callers with an "error document" that
  * rendered as empty content.
+ *
+ * (v5.2.2, B8) every fetch carries a timeout: browsers apply no default,
+ * so a mobile-network handoff used to hang until the socket died while
+ * the surah/page/tafsir ids sat in lazyData's in-flight Sets — skeleton
+ * forever, no error state, no Retry. A timeout turns the hang into the
+ * thrown error the loadErrors machinery already handles.
  */
-export async function fetchJSON(url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-  const body = await res.json();
-  if (body && typeof body === 'object' && !Array.isArray(body) && body.error === 'offline') {
-    throw new Error(`Failed to fetch ${url}: offline stub`);
+export const FETCH_TIMEOUT_MS = 15000;
+
+function timeoutSignal(timeoutMs, external) {
+  // Manual controller (not AbortSignal.timeout): the platform primitive's
+  // internal timer does not hold the event loop in every runtime, and it
+  // is missing in older browsers — a ref'd setTimeout escapes a hung
+  // socket (B8) everywhere instead of pinning the lazyData in-flight
+  // latches on a skeleton forever.
+  const ctl = new AbortController();
+  const timer = setTimeout(() => {
+    try {
+      ctl.abort(new Error(`Timed out after ${timeoutMs}ms`));
+    } catch {
+      /* already aborted */
+    }
+  }, timeoutMs);
+  if (external) {
+    if (external.aborted) ctl.abort(external.reason);
+    else {
+      const onExternal = () => ctl.abort(external.reason);
+      external.addEventListener('abort', onExternal, { once: true });
+      return {
+        signal: ctl.signal,
+        cleanup: () => {
+          clearTimeout(timer);
+          external.removeEventListener('abort', onExternal);
+        },
+      };
+    }
   }
-  return body;
+  return { signal: ctl.signal, cleanup: () => clearTimeout(timer) };
+}
+
+export async function fetchJSON(url, { timeoutMs = FETCH_TIMEOUT_MS, signal } = {}) {
+  const { signal: sig, cleanup } = timeoutSignal(timeoutMs, signal);
+  try {
+    const res = await fetch(url, { signal: sig });
+    if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+    const body = await res.json();
+    if (body && typeof body === 'object' && !Array.isArray(body) && body.error === 'offline') {
+      throw new Error(`Failed to fetch ${url}: offline stub`);
+    }
+    return body;
+  } finally {
+    cleanup();
+  }
 }
 
 export function buildItemIndex(documents, customContent) {

@@ -6,7 +6,7 @@
  * reads that cache and renders whatever is currently available, showing a
  * loading state while a fetch is in flight.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { escapeHTML } from '../core/utils.js';
@@ -14,7 +14,11 @@ import { VIEWS, TRANSLATION_EDITIONS } from '../core/config.js';
 import { ayahTranslit } from '../domain/wordStudy.js';
 import { ayahAudioUrl } from '../services/mushaf.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
-import { reciterShortLabel } from './playerBar.js';
+import {
+  consoleSnapshot,
+  recitationChipsHTML,
+  recitationEchoHTML,
+} from '../ui/recitationConsole.js';
 import { renderAyahWords } from './tafsirPanel.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
@@ -527,41 +531,12 @@ function buildReaderImmersiveBar(state, surahNum, lang) {
  * session must never strand the listener without their controls.
  */
 function buildReaderImmersiveConsole(state, lang) {
-  const sp = state.surahPlayback;
-  const follow = state.settings.audio?.ayahFollow ?? true;
-  const continuous = sp.continuous === true;
-  const sleep = sleepSnapshot();
-  const rep = [1, 3, 5, 10, -1].includes(sp.repeat) ? sp.repeat : 1;
-  const repLabel = rep === -1 ? '\u221e' : `\u00d7${rep}`;
-  const echo = sp.listenRepeat === true;
-  const compare = sp.compare === true;
-  const voiceB = state.settings.reciterB || sp.reciterIdB || null;
-  const voiceA = sp.reciterId || state.settings.reciter;
-  const loop = [1, 2, 3, 5, 10].includes(sp.loop) ? sp.loop : 1;
-  const speed = Number(sp.speed) || 1;
-  const chip = (action, on, label, inner) =>
-    `<button type="button" class="reader-immersive-chip ${on ? 'reader-immersive-chip--on' : ''}" data-action="${action}" aria-label="${escapeHTML(label)}" title="${escapeHTML(label)}">${inner}</button>`;
+  const snap = consoleSnapshot(state.surahPlayback, state.settings, sleepSnapshot(), lang);
   return `
     <div class="reader-immersive-console" data-reader-fs-controls>
-      <button type="button" class="icon-btn" data-action="recite-ayah-prev" aria-label="${t('audio.ayahPrev', lang)}" title="${t('audio.ayahPrev', lang)}">${icon('chevronRight', { size: 16 })}</button>
-      <button type="button" class="icon-btn" data-action="recite-ayah-next" aria-label="${t('audio.ayahNext', lang)}" title="${t('audio.ayahNext', lang)}">${icon('chevronLeft', { size: 16 })}</button>
-      ${chip('recite-repeat-toggle', rep !== 1, `${t('audio.repeatAyah', lang)} (${repLabel})`, `${icon('repeat', { size: 13 })} ${repLabel}`)}
-      ${chip('recite-follow-toggle', follow, t('audio.follow', lang), icon(follow ? 'eye' : 'eyeOff', { size: 14 }))}
-      ${chip('recite-listen-toggle', continuous, t('audio.listenMode', lang), `${icon('play', { size: 13 })} ${t('audio.listen', lang)}`)}
-      ${chip('recite-echo-toggle', echo, t('audio.echoMode', lang), `${icon('volume', { size: 13 })} ${t('audio.echo', lang)}`)}
-      ${chip('recite-sleep-cycle', sleep.enabled, t('audio.sleepTimer', lang), `${icon('moon', { size: 13 })}${sleep.enabled ? ` ${escapeHTML(sleep.label)}` : ''}`)}
-      ${chip('recite-voice-open', false, `${t('audio.chooseReciter', lang)} — ${reciterShortLabel(voiceA, lang)}${voiceB ? ` + ${reciterShortLabel(voiceB, lang)}` : ''}`, `${icon('volume', { size: 13 })} ${escapeHTML(reciterShortLabel(voiceA, lang))}${voiceB ? `+${escapeHTML(reciterShortLabel(voiceB, lang))}` : ''}`)}
-      ${chip('recite-compare-toggle', compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
-      ${chip('recite-loop-toggle', loop !== 1, t('audio.loopMode', lang), `${icon('repeat', { size: 13 })} ${loop === 1 ? t('audio.loop', lang) : `×${loop}`}`)}
-      ${chip('recite-speed-cycle', false, t('audio.speed', lang), `${speed}×`)}
-      <button type="button" class="icon-btn" data-action="recite-pause-toggle" aria-label="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}" title="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}">${icon(sp.paused === true ? 'play' : 'pause', { size: 16 })}</button>
-      <button type="button" class="icon-btn" data-action="recite-stop" aria-label="${t('audio.reciteStop', lang)}" title="${t('audio.reciteStop', lang)}">${icon('stop', { size: 16 })}</button>
+      ${recitationChipsHTML(snap, lang, { chip: 'reader-immersive-chip', on: 'reader-immersive-chip--on', btn: 'icon-btn' })}
     </div>
-    ${
-      sp.waiting === true
-        ? `<div class="reader-immersive-echo" role="status">${icon('volume', { size: 14 })} ${t('audio.yourTurn', lang)}</div>`
-        : ''
-    }`;
+    ${recitationEchoHTML(snap, lang, 'reader-immersive-echo')}`;
 }
 
 export function renderQuran(state) {
@@ -595,7 +570,7 @@ export function renderQuran(state) {
   <section class="view view--quran">
     <header class="view-header view-header--row quran-topbar">
       <div class="quran-topbar__start">
-        ${id ? `<a class="back-link" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">${icon('chevronLeft', { size: 18 })} ${t('quran.backToList', lang)}</a>` : `<h1 class="view__title">${t('quran.title', lang)}</h1>`}
+        ${id ? `<a class="back-link" href="${buildHash(VIEWS.QURAN)}" data-action="navigate" data-view="${VIEWS.QURAN}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('quran.backToList', lang)}</a>` : `<h1 class="view__title">${t('quran.title', lang)}</h1>`}
       </div>
       <div class="quran-topbar__actions">
         ${mushafLink}

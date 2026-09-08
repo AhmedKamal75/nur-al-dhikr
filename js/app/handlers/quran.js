@@ -39,6 +39,7 @@ import {
   buildMushafJump,
   buildMushafPlayPick,
   buildMushafSheet,
+  buildMushafTrack,
   setActiveTafsirTab,
   setFlipDirection,
   setFullscreenAnim,
@@ -134,6 +135,12 @@ export const clickHandlers = {
 
   'mushaf-open-jump': () => {
     openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+  },
+
+  // Khatma progress lives in its own TRACK panel (opened from the ⋯ sheet),
+  // never inside the Jump drawer — navigation stays pure navigation.
+  'mushaf-open-track': () => {
+    openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
   },
 
   'mushaf-jump-page': (ds) => {
@@ -325,9 +332,15 @@ export const clickHandlers = {
   },
 
   'practice-this-ayah': async (ds) => {
+    // (B11) dataset values are hostile: clamp at the edge like
+    // mushaf-open-in-study so a forged value can never reach the
+    // template interpolations or the practice session.
+    const surah = parseInt(ds.surah, 10);
+    const ayah = parseInt(ds.ayah, 10);
+    if (!(surah >= 1 && surah <= 114) || !(ayah >= 1 && ayah <= 286)) return;
     const state = store.getState();
-    const surahDoc = state.quran.surahs[String(ds.surah)];
-    const ayahText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ds.ayah))?.text;
+    const surahDoc = state.quran.surahs[String(surah)];
+    const ayahText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayah))?.text;
     if (!ayahText) return;
     const targets = buildAnswerKey(ayahText, 'mixed');
     if (!targets.length) {
@@ -336,8 +349,8 @@ export const clickHandlers = {
     }
     rt.practiceSession = {
       ruleId: 'mixed',
-      surah: Number(ds.surah),
-      ayah: Number(ds.ayah),
+      surah,
+      ayah,
       text: ayahText,
       selected: new Set(),
       checked: false,
@@ -408,13 +421,20 @@ export const clickHandlers = {
   },
 
   'mushaf-toggle-bookmark': async (ds) => {
-    const key = `${ds.surah}:${ds.ayah}`;
+    // (B11) same edge cladding: forged data-surah/data-ayah/data-page
+    // must not reach the stored bookmark or the re-opened study modal.
+    // Canonical strings keep the stored shape identical for honest input.
+    const surah = parseInt(ds.surah, 10);
+    const ayah = parseInt(ds.ayah, 10);
+    if (!(surah >= 1 && surah <= 114) || !(ayah >= 1 && ayah <= 286)) return;
+    const page = clampPage(ds.page);
+    const key = `${surah}:${ayah}`;
     const state = store.getState();
     const wasMarked = state.ayahBookmarks.some((b) => b.key === key);
-    store.dispatch(actions.toggleAyahBookmark(key, ds.surah, ds.ayah, clampPage(ds.page)));
+    store.dispatch(actions.toggleAyahBookmark(key, String(surah), String(ayah), page));
     // Keep the modal open and re-render its content in place so the person
     // can also listen/copy right after (un)bookmarking without losing context.
-    await openAyahStudy(ds.surah, ds.ayah, clampPage(ds.page));
+    await openAyahStudy(surah, ayah, page);
     const lang = store.getState().settings.language;
     showToast(t(wasMarked ? 'mushaf.bookmarkRemoved' : 'mushaf.bookmarkAdded', lang));
   },
@@ -435,7 +455,7 @@ export const clickHandlers = {
   'mushaf-reset-progress': () => {
     const lang = store.getState().settings.language;
     store.dispatch(actions.resetMushafProgress());
-    openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+    openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
     showToast(t('mushaf.khatmaResetDone', lang));
   },
 
@@ -446,7 +466,7 @@ export const clickHandlers = {
   'khatma-clear-plan': () => {
     // Removing the schedule never touches reading progress — say so.
     store.dispatch(actions.clearKhatmaPlan());
-    openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+    openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
     showToast(t('khatma.planCleared', store.getState().settings.language));
   },
 
@@ -477,3 +497,35 @@ export const clickHandlers = {
     }
   },
 };
+
+/** change/input registries (Blueprint D): { sel, run(ds, el, e) }. */
+export const changeHandlers = [
+  {
+    sel: '[data-bind="bookmark-folder"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updateAyahBookmark(ds.key, { folderId: el.value || null }));
+      openModal(buildMushafBookmarks(store.getState()), {
+        labelledBy: 'modal-title-mushaf-bookmarks',
+      });
+    },
+  },
+];
+
+export const inputHandlers = [
+  {
+    sel: '[data-bind="bookmark-note"]',
+    run: (ds, el) => {
+      // Modal inputs live outside #main, so re-renders never steal focus
+      // here — dispatch straight through with no refocus dance.
+      // Debounced: every keystroke used to dispatch a full re-render of
+      // the underlying view plus a scheduled full-state persist. Same
+      // keyed-timer pattern as the zakat inputs.
+      const key = String(ds.key || '');
+      const value = el.value;
+      clearTimeout(rt.bookmarkNoteTimer);
+      rt.bookmarkNoteTimer = setTimeout(() => {
+        store.dispatch(actions.updateAyahBookmark(key, { note: value }));
+      }, 250);
+    },
+  },
+];

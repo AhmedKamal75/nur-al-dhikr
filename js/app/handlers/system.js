@@ -19,6 +19,9 @@ import {
   jumuahNote,
 } from '../../domain/reminderPresets.js';
 import { actions, dryRunRestore, persistedSnapshot, store } from '../../core/state.js';
+import { clampSliderNum } from '../inputs.js';
+import { buildMushafSheet } from '../../views/mushafReader.js';
+import { buildMushafSettingsPanel } from '../../views/tafsirPanel.js';
 import { buildReciterPick } from './quranAudio.js';
 import { dryRunVerdict } from '../../services/dataHealth.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
@@ -270,3 +273,119 @@ export const clickHandlers = {
     go(VIEWS.HOME);
   },
 };
+
+/** change registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const changeHandlers = [
+  {
+    sel: '[data-action="toggle-setting"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updateSettings({ [ds.key]: el.checked }));
+      // Live-apply the compare-mode preference to a running recitation
+      // session (same as the set-setting click path below).
+      if (ds.key === 'reciterCompare' && surahPlayback.isActive()) {
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setCompare(el.checked)));
+      }
+    },
+  },
+  {
+    // Kids mode: entering navigates straight into the Kids home (the
+    // parent hands the device over); leaving returns home.
+    sel: '[data-action="toggle-kids-mode"]',
+    run: (ds, el) => {
+      const on = el.checked;
+      store.dispatch(actions.updateSettings({ kidsMode: on }));
+      go(on ? VIEWS.KIDS : VIEWS.HOME);
+    },
+  },
+  {
+    // Elderly one-tap mode: the class does the styling; enabling ALSO bumps
+    // the two font scales + high contrast once (kept afterwards — the
+    // sliders stay the source of truth, disabling only drops the class).
+    sel: '[data-action="toggle-elder-mode"]',
+    run: (ds, el) => {
+      const on = el.checked;
+      const patch = { elderMode: on };
+      if (on) {
+        const s = store.getState().settings;
+        patch.fontScale = Math.max(Number(s.fontScale) || 1, 1.25);
+        patch.arabicFontScale = Math.max(Number(s.arabicFontScale) || 1, 1.5);
+        patch.highContrast = true;
+      }
+      store.dispatch(actions.updateSettings(patch));
+    },
+  },
+  {
+    sel: '[data-action="toggle-mushaf-pref"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updateMushafPrefs({ [ds.key]: el.checked }));
+      // The legend only shows while tajweed coloring is on, and toggles in
+      // general read better with instant feedback — refresh the originating
+      // panel in place (sheet toggles stay in the sheet, settings toggles
+      // stay in settings) rather than waiting for the next re-render.
+      if (el.closest('.mushaf-sheet')) {
+        openModal(buildMushafSheet(store.getState()), {
+          labelledBy: 'modal-title-mushaf-sheet',
+        });
+      } else {
+        openModal(buildMushafSettingsPanel(store.getState()), {
+          labelledBy: 'modal-title-mushaf-settings',
+        });
+      }
+    },
+  },
+  {
+    sel: '[data-bind="mushaf-font-scale"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updateMushafPrefs({ fontScale: clampSliderNum(el.value, 0.6, 2.2) }));
+    },
+  },
+  {
+    sel: '[data-bind="mushaf-line-spacing"]',
+    run: (ds, el) => {
+      store.dispatch(
+        actions.updateMushafPrefs({ lineSpacing: clampSliderNum(el.value, 0.85, 1.3) })
+      );
+    },
+  },
+  {
+    sel: '[data-bind="dailyGoal"]',
+    run: (ds, el) => {
+      store.dispatch(
+        actions.updateSettings({ dailyGoal: Math.max(1, parseInt(el.value, 10) || 100) })
+      );
+    },
+  },
+  {
+    sel: '[data-action="toggle-reminder"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updateReminder(ds.id, { enabled: el.checked }));
+    },
+  },
+  {
+    // Home panel visibility: the checkbox means VISIBLE (unchecked hides).
+    sel: '[data-action="home-panel-toggle"]',
+    run: (ds, el) => {
+      const id = String(ds.id || '');
+      const hidden = { ...(store.getState().settings.hiddenHome || {}) };
+      if (el.checked) delete hidden[id];
+      else hidden[id] = true;
+      store.dispatch(actions.updateSettings({ hiddenHome: hidden }));
+    },
+  },
+];
+
+/** input registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const inputHandlers = [
+  {
+    sel: '[data-bind="fontScale"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updateSettings({ fontScale: parseFloat(el.value) }));
+    },
+  },
+  {
+    sel: '[data-bind="arabicFontScale"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updateSettings({ arabicFontScale: parseFloat(el.value) }));
+    },
+  },
+];

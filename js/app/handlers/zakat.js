@@ -4,7 +4,7 @@
  * app/events.js merges them into the single delegation table.
  */
 
-import { refocusZakatInput } from '../inputs.js';
+import { refocusZakatInput, handleZakatInput } from '../inputs.js';
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { uid } from '../../core/utils.js';
@@ -118,3 +118,13 @@ export const clickHandlers = {
     });
   },
 };
+
+/** input registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const inputHandlers = [
+  {
+    sel: '[data-bind^="zakat-"]',
+    run: (ds, el) => {
+      handleZakatInput(el);
+    },
+  },
+];

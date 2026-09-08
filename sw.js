@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.1.0';
+const VERSION = 'nur-al-dhikr-v5.2.6';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -107,6 +107,7 @@ const APP_SHELL = [
   'js/core/state/store.js',
   'js/core/state/streak.js',
   'js/core/storage.js',
+  'js/core/idb/openDB.js',
   'js/core/theme.js',
   'js/core/utils.js',
   'js/domain/adhkarTiming.js',
@@ -180,6 +181,7 @@ const APP_SHELL = [
   'js/ui/emptyState.js',
   'js/ui/menus.js',
   'js/ui/modal.js',
+  'js/ui/recitationConsole.js',
   'js/ui/shell.js',
   'js/ui/skeleton.js',
   'js/ui/toast.js',
@@ -187,6 +189,7 @@ const APP_SHELL = [
   'js/views/about.js',
   'js/views/ambient.js',
   'js/views/audioManager.js',
+  'js/views/ayahStudy.js',
   'js/views/calendar.js',
   'js/views/category.js',
   'js/views/certificate.js',
@@ -200,9 +203,11 @@ const APP_SHELL = [
   'js/views/hadith.js',
   'js/views/home.js',
   'js/views/journal.js',
+  'js/views/khatma.js',
   'js/views/kids.js',
   'js/views/library.js',
   'js/views/mood.js',
+  'js/views/mushafBookmarks.js',
   'js/views/mushafReader.js',
   'js/views/mutashabihat.js',
   'js/views/onboardingPanel.js',
@@ -236,6 +241,9 @@ const APP_SHELL = [
   'assets/fonts/Amiri-Regular.woff2',
   'assets/fonts/Amiri-Bold.woff2',
   'assets/fonts/AmiriQuran.woff2',
+  'assets/fonts/ScheherazadeNew-Regular.ttf',
+  'assets/fonts/ScheherazadeNew-Bold.ttf',
+  'assets/fonts/ScheherazadeNew-OFL.txt',
   'assets/fonts/OFL.txt',
   'assets/audio/adhan/adhan.mp3',
 ];
@@ -730,6 +738,21 @@ function isDataRequest(url) {
   return url.pathname.includes('/data/') && url.pathname.endsWith('.json');
 }
 
+/**
+ * (B6) refresh recency on a hit: delete + re-insert moves the entry to
+ * the end of cache.keys() insertion order, turning the eviction policy
+ * into least-recently-SERVED (see putWithEviction). Re-inserts whatever
+ * is CURRENT at call time — callers must run this after revalidation
+ * settles, never concurrently with it.
+ */
+async function bumpRecency(cache, request) {
+  const current = await cache.match(request);
+  if (!current) return;
+  const copy = current.clone();
+  await cache.delete(request);
+  await cache.put(request, copy);
+}
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
@@ -804,43 +827,37 @@ async function cacheFirst(request) {
     }
     return response;
   } catch {
-    return cached || Response.error();
+    // (B13) no cache fallback can exist here: `cached` was null past the
+    // early return above, so say so plainly instead of implying one.
+    return Response.error();
   }
 }
 
 async function staleWhileRevalidate(request, event) {
   const cache = await caches.open(DATA_CACHE);
   const cached = await cache.match(request);
-  if (cached && event) {
-    // (v4.3) refresh recency on every hit: delete + re-insert moves the
-    // entry to the end of cache.keys() insertion order, turning the
-    // eviction policy into least-recently-SERVED (see putWithEviction).
-    // Clone before handing the original to the browser.
-    try {
-      const copy = cached.clone();
-      event.waitUntil(
-        cache
-          .delete(request)
-          .then(() => cache.put(request, copy))
-          .catch(() => {})
-      );
-    } catch {
-      /* clone/put is best-effort freshness bookkeeping */
-    }
-  }
   const networkFetch = fetch(request)
     .then((response) => {
-      if (response && response.status === 200) {
-        // Store the fresh copy WITHOUT delaying the response: the put rides
-        // waitUntil (legal here — respondWith is still awaiting this
-        // promise, so the event is active). If the event has already
-        // settled (cache-hit path), the put degrades to best-effort.
-        const revalidate = putWithEviction(cache, request, response.clone()).catch(() => {});
-        try {
-          if (event) event.waitUntil(revalidate);
-        } catch {
-          /* event settled — untracked best-effort refresh */
+      // Store the fresh copy WITHOUT delaying the response: the refresh
+      // rides waitUntil (legal here — respondWith is still awaiting this
+      // promise, so the event is active). If the event has already
+      // settled (cache-hit path), the refresh degrades to best-effort.
+      const refresh = (async () => {
+        if (response && response.status === 200) {
+          await putWithEviction(cache, request, response.clone()).catch(() => {});
         }
+        // (B6) recency AFTER revalidation settles: the old code bumped
+        // recency in a second concurrent waitUntil (delete + re-insert of
+        // the stale copy), which could land after the network put and
+        // overwrite fresh bytes with stale ones. Serialized here, the
+        // bump re-inserts whatever is current — fresh when revalidation
+        // succeeded, the stale copy only when it didn't.
+        await bumpRecency(cache, request).catch(() => {});
+      })();
+      try {
+        if (event) event.waitUntil(refresh);
+      } catch {
+        /* event settled — untracked best-effort refresh */
       }
       return response;
     })

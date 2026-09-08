@@ -378,7 +378,6 @@ export const en = {
   'mushaf.khatma': 'Khatma progress',
   'mushaf.khatmaReset': 'Reset',
   'mushaf.khatmaResetDone': 'Khatma progress reset',
-  'home.continueReading': 'Continue Reading',
   'home.morningShortcut': 'Morning Adhkar',
   'home.eveningShortcut': 'Evening Adhkar',
   'home.dailyProgress': 'Today\u2019s Progress',
@@ -726,6 +725,7 @@ export const en = {
   'mushaf.textSize': 'Text Size',
   'mushaf.lineSpacing': 'Line Spacing',
   'mushaf.behavior': 'Reading',
+  'mushaf.studyAids': 'Study aids',
   'mushaf.flipAnimation': 'Page-flip animation',
   'mushaf.wordStudy': 'Tap a word for grammar & meaning',
   'mushaf.wordUnderline': 'Underline tappable words',
@@ -1572,6 +1572,15 @@ export const en = {
   'mushaf.tajweedPractice': 'Practice Tajweed',
   'mushaf.mutashabihat': 'Similar verses',
   'mushaf.roots': 'Word roots',
+
+  /* Mushaf regroup: labeled sheet sections + dedicated progress panel */
+  'mushaf.sectionGo': 'Go',
+  'mushaf.sectionDisplay': 'Display',
+  'mushaf.sectionStudy': 'Study',
+  'mushaf.sectionListen': 'Listen',
+  'mushaf.sectionTrack': 'Progress',
+  'mushaf.trackHint':
+    'Your plan and reading progress live here — changing the plan never touches what you have read.',
 
   /* Hadith card actions */
   'hadith.cardListen': 'Listen',

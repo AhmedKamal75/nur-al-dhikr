@@ -17,6 +17,9 @@
  *     z-index scale is used, no sub-12px floor violations, forced-colors
  *     block exists, tap-target floors are pinned.
  *  7. Views use the shared empty-state builder (no hand-rolled drift).
+ *  8. APP_SHELL content is version-stamped — any cache-first byte change
+ *     without a version bump leaves installed clients stale forever (B7):
+ *     the committed hash snapshot must match at the current version.
  */
 
 import { test, describe } from 'node:test';
@@ -27,6 +30,7 @@ import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
 import { handlerMaps, mergedClickHandlers } from '../js/app/events.js';
 import { formHandlers } from '../js/app/forms.js';
+import { hashShell, loadSnapshot } from './helpers/shell-hash.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 
@@ -349,7 +353,6 @@ describe('contract: CSS design-system protocols', () => {
 /* ------------------------------------------------------------------ */
 /* 7. Shared empty-state builder (no hand-rolled drift)                */
 /* ------------------------------------------------------------------ */
-
 describe('contract: views use the shared empty-state builder', () => {
   test('no hand-rolled empty-state markup outside the sanctioned sites', () => {
     // The shared builder emits class="empty-state…". Small inline hints
@@ -365,5 +368,42 @@ describe('contract: views use the shared empty-state builder', () => {
       }
     }
     assert.deepEqual(offenders, [], `hand-rolled empty states: ${offenders.join(', ')}`);
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* 8. APP_SHELL content is version-stamped (B7)                         */
+/* ------------------------------------------------------------------ */
+
+describe('contract: cache-first bytes change only with a version bump', () => {
+  test('the committed shell snapshot matches the current version', () => {
+    const pkg = JSON.parse(readProject('package.json'));
+    const snapshot = loadSnapshot(ROOT);
+    assert.equal(
+      snapshot.version,
+      pkg.version,
+      `shell snapshot is stamped at v${snapshot.version} but markers say v${pkg.version} — ` +
+        'run npm run snapshot-shell alongside the version bump'
+    );
+  });
+
+  test('no APP_SHELL byte changed without a version bump', () => {
+    const sw = readProject('sw.js');
+    const snapshot = loadSnapshot(ROOT);
+    const current = hashShell(ROOT, sw);
+    const changed = Object.keys(snapshot.files).filter((f) => current[f] !== snapshot.files[f]);
+    const added = Object.keys(current).filter((f) => !(f in snapshot.files));
+    const removed = Object.keys(snapshot.files).filter((f) => !(f in current));
+    const drift = [
+      ...changed,
+      ...added.map((f) => `${f} (added)`),
+      ...removed.map((f) => `${f} (removed)`),
+    ];
+    assert.deepEqual(
+      drift,
+      [],
+      `cache-first bytes changed at v${snapshot.version} with no version bump — ` +
+        'bump the five markers and run npm run snapshot-shell'
+    );
   });
 });

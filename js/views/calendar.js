@@ -92,7 +92,7 @@ function fastingPanelHTML(state, lang, today) {
     : '';
 
   return `
-    <section class="panel panel--fasting">
+    <section class="panel panel--fasting" id="calendar-fasting">
       <div class="panel__header"><h2>${icon('sun', { size: 16 })} ${t('fasting.title', lang)}</h2></div>
       <p class="panel__subtext">
         ${t('fasting.count', lang, { n: counts.total })}${counts.thisHijriYear ? ` · ${t('fasting.countYear', lang, { n: counts.thisHijriYear })}` : ''}

@@ -33,7 +33,6 @@ import {
   isFirstPage,
   isLastPage,
   isSajdaAyah,
-  ayahAudioUrl,
   mushafSpreadActive,
   spreadRightPage,
   spreadLeftPage,
@@ -41,14 +40,20 @@ import {
   prevSpreadPage,
   juzEighth,
 } from '../services/mushaf.js';
-import { planStatus, justCompletedKhatma } from '../domain/khatma.js';
 import { VIEWS, MUSHAF_PAGE_COUNT, MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
-import { renderAyahWords, buildAyahStudyExtras } from './tafsirPanel.js';
-import { reciterShortLabel } from './playerBar.js';
+import { renderAyahWords } from './tafsirPanel.js';
+import {
+  consoleSnapshot,
+  recitationChipsHTML,
+  recitationEchoHTML,
+} from '../ui/recitationConsole.js';
+// (Blueprint E step 2) extracted view parts live in their own modules;
+// this file re-exports them so every existing importer keeps working.
+export { setBookmarkFolderFilter, buildMushafBookmarks } from './mushafBookmarks.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonMushafPage, skeletonLines } from '../ui/skeleton.js';
-import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
+import { loadErrorStateHTML } from '../ui/emptyState.js';
 
 /** (v4.5.2) "Arabic for Arabic, English for English" in the mushaf CHROME:
  *  the banner, the medallions, the fullscreen counter and the jump
@@ -281,6 +286,7 @@ export function renderMushaf(state) {
   const pageArticle = (pageNum, doc) => `
       <article class="mushaf-page ${dir ? `mushaf-page--flip-${dir}` : ''} ${fsAnim ? `mushaf-page--fs-${fsAnim}` : ''} ${prefs.pageFlipAnimation ? '' : 'mushaf-page--no-anim'} ${doc ? '' : 'mushaf-page--pending'}" dir="rtl" lang="ar" style="${pageStyleVars}">
         <div class="mushaf-page__frame" aria-hidden="true">
+          <span class="mushaf-page__lattice" aria-hidden="true"></span>
           <span class="mushaf-page__corner mushaf-page__corner--tl"></span>
           <span class="mushaf-page__corner mushaf-page__corner--tr"></span>
           <span class="mushaf-page__corner mushaf-page__corner--bl"></span>
@@ -473,43 +479,15 @@ function buildFullscreenControls(
 }
 
 /** The fullscreen console's second glass row — the windowed player bar's
- *  recitation chips, re-homed over the book. Same actions, same labels. */
+ *  recitation chips, re-homed over the book. Same actions, same labels
+ *  (the single shared builder in ui/recitationConsole.js). */
 function buildFullscreenConsole(state, lang) {
-  const sp = state.surahPlayback;
-  const follow = state.settings.audio?.ayahFollow ?? true;
-  const continuous = sp.continuous === true;
-  const sleep = sleepSnapshot();
-  const rep = [1, 3, 5, 10, -1].includes(sp.repeat) ? sp.repeat : 1;
-  const repLabel = rep === -1 ? '\u221e' : `\u00d7${rep}`;
-  const echo = sp.listenRepeat === true;
-  const compare = sp.compare === true;
-  const voiceB = state.settings.reciterB || sp.reciterIdB || null;
-  const voiceA = sp.reciterId || state.settings.reciter;
-  const loop = [1, 2, 3, 5, 10].includes(sp.loop) ? sp.loop : 1;
-  const speed = Number(sp.speed) || 1;
-  const chip = (action, on, label, inner, extra = '') =>
-    `<button type="button" class="mushaf-fs-chip ${on ? 'mushaf-fs-chip--on' : ''}" data-action="${action}" aria-label="${escapeHTML(label)}" title="${escapeHTML(label)}"${extra ? ` ${extra}` : ''}>${inner}</button>`;
+  const snap = consoleSnapshot(state.surahPlayback, state.settings, sleepSnapshot(), lang);
   return `
     <div class="mushaf-fs-console" data-fs-controls>
-      <button type="button" class="icon-btn" data-action="recite-ayah-prev" aria-label="${t('audio.ayahPrev', lang)}" title="${t('audio.ayahPrev', lang)}">${icon('chevronRight', { size: 16 })}</button>
-      <button type="button" class="icon-btn" data-action="recite-ayah-next" aria-label="${t('audio.ayahNext', lang)}" title="${t('audio.ayahNext', lang)}">${icon('chevronLeft', { size: 16 })}</button>
-      ${chip('recite-repeat-toggle', rep !== 1, `${t('audio.repeatAyah', lang)} (${repLabel})`, `${icon('repeat', { size: 13 })} ${repLabel}`)}
-      ${chip('recite-follow-toggle', follow, t('audio.follow', lang), icon(follow ? 'eye' : 'eyeOff', { size: 14 }))}
-      ${chip('recite-listen-toggle', continuous, t('audio.listenMode', lang), `${icon('play', { size: 13 })} ${t('audio.listen', lang)}`)}
-      ${chip('recite-echo-toggle', echo, t('audio.echoMode', lang), `${icon('volume', { size: 13 })} ${t('audio.echo', lang)}`)}
-      ${chip('recite-sleep-cycle', sleep.enabled, t('audio.sleepTimer', lang), `${icon('moon', { size: 13 })}${sleep.enabled ? ` ${escapeHTML(sleep.label)}` : ''}`)}
-      ${chip('recite-voice-open', false, `${t('audio.chooseReciter', lang)} — ${reciterShortLabel(voiceA, lang)}${voiceB ? ` + ${reciterShortLabel(voiceB, lang)}` : ''}`, `${icon('volume', { size: 13 })} ${escapeHTML(reciterShortLabel(voiceA, lang))}${voiceB ? `+${escapeHTML(reciterShortLabel(voiceB, lang))}` : ''}`)}
-      ${chip('recite-compare-toggle', compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
-      ${chip('recite-loop-toggle', loop !== 1, t('audio.loopMode', lang), `${icon('repeat', { size: 13 })} ${loop === 1 ? t('audio.loop', lang) : `×${loop}`}`)}
-      ${chip('recite-speed-cycle', false, t('audio.speed', lang), `${speed}×`)}
-      <button type="button" class="icon-btn" data-action="recite-pause-toggle" aria-label="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}" title="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}">${icon(sp.paused === true ? 'play' : 'pause', { size: 16 })}</button>
-      <button type="button" class="icon-btn" data-action="recite-stop" aria-label="${t('audio.reciteStop', lang)}" title="${t('audio.reciteStop', lang)}">${icon('stop', { size: 16 })}</button>
+      ${recitationChipsHTML(snap, lang, { chip: 'mushaf-fs-chip', on: 'mushaf-fs-chip--on', btn: 'icon-btn' })}
     </div>
-    ${
-      sp.waiting === true
-        ? `<div class="mushaf-fs-echo" role="status">${icon('volume', { size: 14 })} ${t('audio.yourTurn', lang)}</div>`
-        : ''
-    }`;
+    ${recitationEchoHTML(snap, lang, 'mushaf-fs-echo')}`;
 }
 
 /**
@@ -599,7 +577,9 @@ export function buildMushafPlayPick(state) {
   </div>`;
 }
 
-/** Jump-to-surah / jump-to-juz / jump-to-page drawer, opened in the shared modal. */
+/** Jump-to-surah / jump-to-juz / jump-to-page drawer, opened in the shared modal.
+ *  Pure NAVIGATION: page form + surah list + juz list. Progress (khatma
+ *  plan/history) lives in buildMushafTrack, opened from the ⋯ sheet. */
 export function buildMushafJump(state) {
   const lang = state.settings.language;
   const meta = state.mushaf.meta;
@@ -623,93 +603,6 @@ export function buildMushafJump(state) {
     )
     .join('');
 
-  const readCount = Object.keys(state.mushafPagesRead).length;
-  const pct = Math.round((readCount / MUSHAF_PAGE_COUNT) * 100);
-
-  // Khatma plan block: pure status from js/khatma.js, rendered compactly.
-  const status = planStatus({ pagesRead: state.mushafPagesRead, plan: state.khatmaPlan });
-  const plan = state.khatmaPlan;
-  const fmtDate = (iso) =>
-    new Date(`${iso}T00:00:00`).toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-
-  let planRows = '';
-  if (plan) {
-    const bits = [];
-    if (plan.dailyTarget && status.todayEnd) {
-      bits.push(
-        `<span class="mushaf-khatma__bit">${t('khatma.todayTarget', lang, { a: status.todayStart, b: status.todayEnd })}</span>`
-      );
-    }
-    if (plan.dailyTarget && status.pace != null) {
-      bits.push(
-        `<span class="mushaf-khatma__bit" dir="ltr">${t('khatma.pace', lang, { n: status.pace })}</span>`
-      );
-    }
-    if (
-      plan.targetDate &&
-      status.requiredPerDay != null &&
-      Number.isFinite(status.requiredPerDay)
-    ) {
-      bits.push(
-        `<span class="mushaf-khatma__bit" dir="ltr">${t('khatma.neededPerDay', lang, { n: status.requiredPerDay })}</span>`
-      );
-    }
-    if (plan.targetDate) {
-      bits.push(
-        `<span class="mushaf-khatma__bit">${t('khatma.deadline', lang, { date: fmtDate(plan.targetDate) })}</span>`
-      );
-    }
-    if (status.projectedFinishISO) {
-      bits.push(
-        `<span class="mushaf-khatma__bit">${t('khatma.projected', lang, { date: fmtDate(status.projectedFinishISO) })}</span>`
-      );
-    }
-    // One honest verdict, in priority order: finished > behind the daily
-    // schedule > ahead of the daily schedule > pace/projection verdicts.
-    let verdictText = '';
-    let verdictCls = '';
-    let verdictCelebrate = false;
-    if (status.complete) {
-      verdictText = t('khatma.completeBanner', lang);
-      verdictCls = 'mushaf-khatma__verdict--done';
-      // v3.12: one-shot bloom stamped only while the completion stamp in
-      // khatmaHistory is fresh — later re-renders of the same banner stay
-      // silent (see js/celebrate.js for the contract).
-      verdictCelebrate = justCompletedKhatma(state);
-    } else if (status.behindBy > 0) {
-      verdictText = t('khatma.behind', lang, { n: status.behindBy });
-      verdictCls = 'mushaf-khatma__verdict--warn';
-    } else if (status.todayEnd && status.read >= status.todayEnd) {
-      verdictText = t('khatma.ahead', lang);
-      verdictCls = 'mushaf-khatma__verdict--good';
-    } else if (status.onTrack === true) {
-      verdictText = t('khatma.onTrack', lang);
-      verdictCls = 'mushaf-khatma__verdict--good';
-    } else if (status.onTrack === false) {
-      verdictText = t('khatma.behindSchedule', lang);
-      verdictCls = 'mushaf-khatma__verdict--warn';
-    }
-    planRows = `
-    <div class="mushaf-khatma__bits">${bits.map((b) => `<span class="mushaf-khatma__bitwrap">${b}</span>`).join('')}</div>
-    ${verdictText ? `<p class="mushaf-khatma__verdict ${verdictCls}${verdictCelebrate ? ' celebrate' : ''}">${verdictText}</p>` : ''}`;
-  }
-
-  const planButtons = `
-    <div class="mushaf-khatma__actions">
-      <button type="button" class="btn ${plan ? 'btn--secondary' : 'btn--primary'} btn--sm" data-action="khatma-open-plan">
-        ${icon('target', { size: 14 })} ${t(plan ? 'khatma.editPlan' : 'khatma.setPlan', lang)}
-      </button>
-      ${plan ? `<button type="button" class="link-btn link-btn--sm" data-action="khatma-clear-plan">${t('khatma.clearPlan', lang)}</button>` : ''}
-    </div>`;
-
-  const historyLine = state.khatmaHistory?.length
-    ? `<p class="mushaf-khatma__history">${icon('star', { size: 13 })} ${t('khatma.history', lang, { n: state.khatmaHistory.length })}${state.khatmaHistory[0]?.days ? ` · ${state.khatmaHistory[0].days === 1 ? t('khatma.lastDaysOne', lang) : t('khatma.lastDays', lang, { n: state.khatmaHistory[0].days })}` : ''}</p>`
-    : '';
-
   return `
   <div class="mushaf-jump">
     <h2 id="modal-title-mushaf-jump">${t('mushaf.jumpTo', lang)}</h2>
@@ -720,19 +613,6 @@ export function buildMushafJump(state) {
         <button type="submit" class="btn btn--primary btn--sm">${t('mushaf.go', lang)}</button>
       </div>
     </form>
-    <div class="mushaf-khatma">
-      <div class="mushaf-khatma__head">
-        <span class="mushaf-khatma__label">${t('mushaf.khatma', lang)}</span>
-        <button type="button" class="link-btn link-btn--sm" data-action="mushaf-reset-progress">${t('mushaf.khatmaReset', lang)}</button>
-      </div>
-      <div class="progress-bar" role="progressbar" aria-label="${t('mushaf.khatmaProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
-      </div>
-      <p class="mushaf-khatma__sub" dir="ltr">${readCount} / ${MUSHAF_PAGE_COUNT} · ${pct}%</p>
-      ${planRows}
-      ${planButtons}
-      ${historyLine}
-    </div>
     <h3 class="mushaf-jump__heading">${t('mushaf.surahs', lang)}</h3>
     <div class="mushaf-jump__surah-list" role="group" aria-label="${t('mushaf.surahs', lang)}" data-roving>${surahButtons}</div>
     <h3 class="mushaf-jump__heading">${t('mushaf.juzSection', lang)}</h3>
@@ -740,6 +620,12 @@ export function buildMushafJump(state) {
   </div>`;
 }
 
+/**
+ * Khatma progress panel (TRACK): reading progress + plan schedule +
+ * completion history. Moved verbatim out of the Jump drawer so navigation
+ * stays pure navigation; opened from the ⋯ sheet via `mushaf-open-track`.
+ * Pure template — same status helpers, same actions, new home.
+ */
 /**
  * (v4.4) The Mushaf action sheet — the "everything this book does"
  * drawer behind the ⋯ button. Feature parity was the redesign's hard
@@ -785,270 +671,45 @@ export function buildMushafSheet(state) {
   <div class="mushaf-sheet">
     <h2 id="modal-title-mushaf-sheet">${t('mushaf.more', lang)}</h2>
     <div class="mushaf-sheet__group">
+      <h3 class="mushaf-jump__heading">${t('mushaf.sectionGo', lang)}</h3>
       ${row('mushaf-open-jump', 'mushaf.jumpTo', 'grid')}
       ${row('mushaf-open-bookmarks', 'mushaf.bookmarks', 'bookmark')}
-      ${row('mushaf-open-settings', 'mushaf.settingsTitle', 'settings')}
-      ${row('tajweed-open-settings', 'mushaf.tajweedSettings', 'sparkle')}
+      ${linkRow('quran.searchShortcut', 'search', VIEWS.SEARCH)}
+      ${linkRow('quran.viewInReader', 'list', VIEWS.QURAN)}
     </div>
     <div class="mushaf-sheet__group">
+      <h3 class="mushaf-jump__heading">${t('mushaf.sectionDisplay', lang)}</h3>
+      ${row('mushaf-open-settings', 'mushaf.settingsTitle', 'settings')}
+      ${row('tajweed-open-settings', 'mushaf.tajweedSettings', 'sparkle')}
       ${toggleRow('spread', 'mushaf.spread', 'book')}
       ${toggleRow('translationPanel', 'mushaf.translation', 'book')}
       ${toggleRow('tajweedColoring', 'mushaf.tajweed', 'sparkle')}
       ${toggleRow('wordByWordStudy', 'mushaf.wordStudy', 'quran')}
-      ${
-        follow
-          ? row('recite-follow-toggle', 'audio.follow', 'eye')
-          : row('recite-follow-toggle', 'audio.follow', 'eyeOff')
-      }
     </div>
     <div class="mushaf-sheet__group">
+      <h3 class="mushaf-jump__heading">${t('mushaf.sectionStudy', lang)}</h3>
       ${
         surah ? linkRow('mushaf.memorizeSurah', 'target', VIEWS.QURAN, { id: surah, mem: '1' }) : ''
       }
       ${row('practice-open', 'mushaf.tajweedPractice', 'sparkle')}
       ${linkRow('mushaf.mutashabihat', 'quran', VIEWS.MUTASHABIHAT, {})}
       ${linkRow('mushaf.roots', 'book', VIEWS.ROOTS, {})}
-      ${linkRow('quran.searchShortcut', 'search', VIEWS.SEARCH)}
+    </div>
+    <div class="mushaf-sheet__group">
+      <h3 class="mushaf-jump__heading">${t('mushaf.sectionListen', lang)}</h3>
+      ${
+        follow
+          ? row('recite-follow-toggle', 'audio.follow', 'eye')
+          : row('recite-follow-toggle', 'audio.follow', 'eyeOff')
+      }
       ${linkRow('mushaf.reciters', 'volume', VIEWS.AUDIO)}
-      ${linkRow('quran.viewInReader', 'list', VIEWS.QURAN)}
+    </div>
+    <div class="mushaf-sheet__group">
+      <h3 class="mushaf-jump__heading">${t('mushaf.sectionTrack', lang)}</h3>
+      ${row('mushaf-open-track', 'mushaf.khatma', 'target')}
     </div>
   </div>`;
 }
 
-/** Khatma plan editor, opened from the jump drawer. Pure template — the
- *  form is processed by the 'khatma-plan' handler in app.js. */
-export function buildKhatmaPlanForm(state) {
-  const lang = state.settings.language;
-  const plan = state.khatmaPlan;
-  const todayISO = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;
-  const suggestion = 20;
-  return `
-  <div class="khatma-plan">
-    <h2 id="modal-title-khatma-plan">${t('khatma.planTitle', lang)}</h2>
-    <form class="editor-form" data-form="khatma-plan">
-      <div class="khatma-plan__presets">
-        <button type="button" class="btn btn--secondary btn--sm" data-action="khatma-ramadan-preset">
-          ${icon('moon', { size: 14 })} ${t('khatma.ramadanPreset', lang)}
-        </button>
-        <span class="panel__subtext">${t('khatma.ramadanPresetHint', lang)}</span>
-      </div>
-      <label class="field-label" for="khatma-start-date">${t('khatma.startLabel', lang)}</label>
-      <input class="input" type="date" id="khatma-start-date" name="startDate" value="${plan?.startDate || todayISO}" />
-
-      <label class="field-label" for="khatma-target-date">${t('khatma.targetLabel', lang)}</label>
-      <input class="input" type="date" id="khatma-target-date" name="targetDate" value="${plan?.targetDate || ''}" min="${todayISO}" />
-
-      <label class="field-label" for="khatma-daily-target">${t('khatma.dailyLabel', lang)}</label>
-      <input class="input" type="number" id="khatma-daily-target" name="dailyTarget" min="1" max="604" inputmode="numeric" placeholder="${suggestion}" value="${plan?.dailyTarget || ''}" />
-
-      <p class="panel__subtext">${t('khatma.planHint', lang)}</p>
-      <div class="khatma-plan__actions">
-        <button type="submit" class="btn btn--primary">${icon('check', { size: 16 })} ${t('khatma.save', lang)}</button>
-      </div>
-    </form>
-  </div>`;
-}
-
-/** Saved per-ayah bookmarks list, opened from the Mushaf topbar.
- *  Bookmarks can be filed into user-made folders and carry a short note;
- *  the currently-selected folder filter lives in module scope (rebuilt
- *  into the modal each time it re-opens or an action re-renders it).
- */
-let bookmarkFolderFilter = '__all__';
-
-export function setBookmarkFolderFilter(id) {
-  bookmarkFolderFilter = id || '__all__';
-}
-
-export function buildMushafBookmarks(state) {
-  const lang = state.settings.language;
-  const meta = state.mushaf.meta;
-  const folders = state.ayahBookmarkFolders || [];
-  if (
-    bookmarkFolderFilter !== '__all__' &&
-    bookmarkFolderFilter !== '__unfiled__' &&
-    !folders.some((f) => f.id === bookmarkFolderFilter)
-  ) {
-    bookmarkFolderFilter = '__all__';
-  }
-
-  const chip = (id, label, extra = '') => `
-    <button type="button" class="chip chip--basis ${bookmarkFolderFilter === id ? 'chip--basis-active' : ''}" data-action="bookmark-filter-folder" data-folder="${escapeHTML(String(id))}" aria-pressed="${bookmarkFolderFilter === id}">
-      ${extra}${escapeHTML(label)}
-    </button>`;
-
-  const folderChips = [
-    chip('__all__', t('mushaf.allBookmarks', lang)),
-    chip('__unfiled__', t('mushaf.unfiled', lang)),
-    ...folders.map(
-      (f) => `
-      <span class="mushaf-folder-chip-wrap">
-        ${chip(f.id, f.name, `<span class="chip__count">${state.ayahBookmarks.filter((b) => b.folderId === f.id).length}</span>`)}
-        <button type="button" class="chip__x" data-action="bookmark-delete-folder" data-folder="${escapeHTML(f.id)}" aria-label="${t('common.delete', lang)}">×</button>
-      </span>`
-    ),
-    `<button type="button" class="chip chip--basis chip--add" data-action="bookmark-new-folder">${icon('plus', { size: 12 })} ${t('mushaf.newFolder', lang)}</button>`,
-  ].join('');
-
-  const visible = state.ayahBookmarks
-    .filter(
-      (b) =>
-        bookmarkFolderFilter === '__all__' ||
-        (bookmarkFolderFilter === '__unfiled__' && !folders.some((f) => f.id === b.folderId)) ||
-        b.folderId === bookmarkFolderFilter
-    )
-    .sort((a, b) => a.page - b.page || a.surah - b.surah || a.ayah - b.ayah);
-
-  if (!state.ayahBookmarks.length) {
-    return `
-    <div class="mushaf-bookmarks">
-      <h2 id="modal-title-mushaf-bookmarks">${t('mushaf.bookmarks', lang)}</h2>
-      ${emptyStateHTML({
-        iconName: 'bookmark',
-        title: t('mushaf.noBookmarks', lang),
-        hint: t('mushaf.noBookmarksHint', lang),
-      })}
-    </div>`;
-  }
-
-  const folderOptions = (selected) =>
-    [
-      `<option value="" ${!selected ? 'selected' : ''}>${t('mushaf.unfiled', lang)}</option>`,
-      ...folders.map(
-        (f) =>
-          `<option value="${escapeHTML(f.id)}" ${selected === f.id ? 'selected' : ''}>${escapeHTML(f.name)}</option>`
-      ),
-    ].join('');
-
-  const rows = visible
-    .map((b) => {
-      const names = meta?.chapterNames?.[String(b.surah)];
-      const name = names ? pickLocale(names, lang) : '';
-      return `
-    <div class="mushaf-bookmark-row">
-      <button type="button" class="mushaf-bookmark-row__main" data-action="mushaf-jump-page" data-page="${escapeHTML(String(b.page))}">
-        <span class="mushaf-bookmark-row__ref" dir="ltr">${escapeHTML(String(b.surah))}:${escapeHTML(String(b.ayah))}</span>
-        <span class="mushaf-bookmark-row__name">${escapeHTML(name)} · ${t('mushaf.pageShort', lang)} ${escapeHTML(String(b.page))}</span>
-      </button>
-      <input class="input mushaf-bookmark-row__note" type="text" dir="auto" maxlength="140"
-        placeholder="${t('mushaf.notePh', lang)}" value="${escapeHTML(b.note || '')}"
-        data-bind="bookmark-note" data-key="${escapeHTML(b.key)}" aria-label="${t('mushaf.noteLabel', lang)}" />
-      <select class="select mushaf-bookmark-row__folder" data-bind="bookmark-folder" data-key="${escapeHTML(b.key)}" aria-label="${t('mushaf.folderLabel', lang)}">
-        ${folderOptions(b.folderId)}
-      </select>
-      <button type="button" class="icon-btn icon-btn--sm" data-action="mushaf-remove-bookmark" data-key="${escapeHTML(b.key)}" aria-label="${t('common.delete', lang)}">
-        ${icon('trash', { size: 14 })}
-      </button>
-    </div>`;
-    })
-    .join('');
-
-  return `
-  <div class="mushaf-bookmarks">
-    <h2 id="modal-title-mushaf-bookmarks">${t('mushaf.bookmarks', lang)} <span class="chip__count">${state.ayahBookmarks.length}</span></h2>
-    <div class="mushaf-folder-chips">${folderChips}</div>
-    ${visible.length ? rows : `<p class="empty-hint">${t('mushaf.folderEmpty', lang)}</p>`}
-  </div>`;
-}
-
-/**
- * (v4.5) Feature-parity hifz row for the ayah detail: the SAME spaced-
- * repetition actions the classic reader's toolbar carries (mark a surah
- * memorized, or log today's recall grade), one tap from the mushaf.
- */
-function hifzRowFor(state, surahNumber, lang) {
-  const rec = state.hifzRecords?.[String(surahNumber)];
-  const num = String(parseInt(surahNumber, 10) || 0);
-  return `
-    <div class="mushaf-ayah-detail__hifz">
-      ${
-        rec
-          ? `
-      <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="easy" title="${t('hifz.recalled', lang)}">
-        ${icon('check', { size: 13 })} ${t('hifz.recalled', lang)}
-      </button>
-      <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="again" title="${t('hifz.struggled', lang)}">
-        ${icon('repeat', { size: 13 })} ${t('hifz.struggled', lang)}
-      </button>`
-          : `
-      <button type="button" class="chip" data-action="hifz-mark" data-surah="${num}" title="${t('hifz.markMemorized', lang)}">
-        ${icon('check', { size: 13 })} ${t('hifz.markMemorized', lang)}
-      </button>`
-      }
-    </div>`;
-}
-
-/**
- * Per-ayah detail modal: Arabic (already on hand from the page data),
- * translation (from the classic reader's already-loaded surah data, if
- * available), play/copy actions. `surahDoc` is `state.quran.surahs[surah]`
- * — the caller is responsible for making sure it's loaded first so this
- * stays a pure template function.
- */
-let activeTafsirTab = null;
-export function setActiveTafsirTab(id) {
-  activeTafsirTab = id;
-}
-export function getActiveTafsirTab() {
-  return activeTafsirTab;
-}
-
-export function buildMushafAyahDetail(
-  arabicText,
-  surahDoc,
-  surahNumber,
-  ayahNumber,
-  state,
-  currentPage
-) {
-  const lang = state.settings.language;
-  const ayah = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayahNumber));
-  const audioUrl = ayahAudioUrl(
-    state.quran.meta?.surahs,
-    state.settings.reciter,
-    surahNumber,
-    ayahNumber
-  );
-  const key = `${surahNumber}:${ayahNumber}`;
-  const isMarked = state.ayahBookmarks.some((b) => b.key === key);
-
-  return `
-  <div class="mushaf-ayah-detail">
-    <h2 id="modal-title-mushaf-ayah" class="sr-only">${surahDoc ? escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang)) : ''} ${surahNumber}:${ayahNumber}</h2>
-    <p class="mushaf-ayah-detail__ref" dir="ltr">${surahNumber}:${ayahNumber}${surahDoc ? ` \u2014 ${escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang))}` : ''}</p>
-    <p class="mushaf-ayah-detail__arabic" dir="rtl" lang="ar">${escapeHTML(arabicText)}</p>
-    ${ayah?.translation ? `<p class="mushaf-ayah-detail__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
-    <div class="mushaf-ayah-detail__actions">
-      ${
-        currentPage != null
-          ? `
-      <button type="button" class="btn ${isMarked ? 'btn--primary' : 'btn--secondary'} btn--sm" data-action="mushaf-toggle-bookmark" data-surah="${surahNumber}" data-ayah="${ayahNumber}" data-page="${currentPage}" aria-pressed="${isMarked}">
-        ${icon('bookmark', { size: 16 })} ${t(isMarked ? 'mushaf.bookmarked' : 'mushaf.bookmarkAyah', lang)}
-      </button>`
-          : ''
-      }
-      ${
-        audioUrl
-          ? `
-      <button type="button" class="btn btn--secondary btn--sm" data-action="play-ayah" data-url="${escapeHTML(audioUrl)}" data-key="${escapeHTML(key)}">
-        ${icon('volume', { size: 16 })} ${t('mushaf.listen', lang)}
-      </button>`
-          : ''
-      }
-      <button type="button" class="btn btn--secondary btn--sm" data-action="mushaf-copy-ayah" data-text="${escapeHTML(arabicText)}" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
-        ${icon('copy', { size: 16 })} ${t('card.copy', lang)}
-      </button>
-      <button type="button" class="btn btn--secondary btn--sm" data-action="practice-this-ayah" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
-        ${icon('sparkle', { size: 16 })} ${t('practice.thisAyah', lang)}
-      </button>
-      <button type="button" class="btn btn--secondary btn--sm" data-action="ayah-share" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
-        ${icon('share', { size: 16 })} ${t('quran.shareAyah', lang)}
-      </button>
-      <button type="button" class="btn btn--secondary btn--sm" data-action="mushaf-open-in-study" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
-        ${icon('list', { size: 16 })} ${t('mushaf.openInStudy', lang)}
-      </button>
-    </div>
-    ${hifzRowFor(state, surahNumber, lang)}
-    ${buildAyahStudyExtras(state, surahNumber, ayahNumber, activeTafsirTab)}
-  </div>`;
-}
+export { buildMushafTrack, buildKhatmaPlanForm } from './khatma.js';
+export { setActiveTafsirTab, getActiveTafsirTab, buildMushafAyahDetail } from './ayahStudy.js';

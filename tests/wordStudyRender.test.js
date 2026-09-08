@@ -224,7 +224,7 @@ test('renderMushaf renders page 1 with tappable words and reflects every paper t
   const html = renderMushaf(baseState());
   assertClean(html, 'mushaf page');
   assert.match(html, /data-action="word-tap"/);
-  for (const paper of ['ivory', 'sepia', 'night', 'amoled']) {
+  for (const paper of ['ivory', 'sepia', 'night', 'amoled', 'madinah', 'cream', 'royal-black']) {
     const st = baseState();
     st.settings.mushafPrefs = { ...st.settings.mushafPrefs, paper };
     assertClean(renderMushaf(st), `mushaf page (paper=${paper})`);

@@ -40,20 +40,50 @@ export function scheduleTriggerArm() {
   }, 250);
 }
 
+/** Orphan reply ports (worker never answers) must not linger forever. */
+const TRIGGER_REPLY_TIMEOUT_MS = 10000;
+
 export function sendTriggerPlan(plan, onResult) {
-  try {
-    const channel = new MessageChannel();
-    channel.port1.onmessage = (event) => {
+  const channel = new MessageChannel();
+  let settled = false;
+  const closePort = () => {
+    try {
+      channel.port1.close();
+    } catch {
+      /* already closed */
+    }
+  };
+  let orphanTimer = null;
+  // (B10) the old handler never closed port1 and stayed armed: one
+  // channel per arm (visibility/settings churn) leaked an entangled
+  // port with a live handler each. First reply wins, then the port
+  // closes; a worker that never answers is reaped by timeout.
+  channel.port1.onmessage = (event) => {
+    if (settled) return;
+    settled = true;
+    if (orphanTimer) clearTimeout(orphanTimer);
+    try {
       const data = event.data || {};
       if (data.type === 'schedule-prayer-triggers-result' && onResult) onResult(data);
-    };
+    } finally {
+      closePort();
+    }
+  };
+  try {
     rt.swRegistration.active.postMessage({ type: 'schedule-prayer-triggers', plan }, [
       channel.port2,
     ]);
-    return true;
   } catch {
+    closePort();
     return false;
   }
+  orphanTimer = setTimeout(() => {
+    if (!settled) {
+      settled = true;
+      closePort();
+    }
+  }, TRIGGER_REPLY_TIMEOUT_MS);
+  return true;
 }
 
 export async function armPrayerTriggers(force = false) {

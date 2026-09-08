@@ -12,7 +12,7 @@ import { showToast } from '../ui/toast.js';
 import * as editorApi from '../services/editor.js';
 import * as notifications from '../services/notifications.js';
 import { clickHandlers as quranAudioClick } from './handlers/quranAudio.js';
-import { buildMushafBookmarks, buildMushafJump } from '../views/mushafReader.js';
+import { buildMushafBookmarks, buildMushafTrack } from '../views/mushafReader.js';
 import {
   applyItemFields,
   applyCategoryFields,
@@ -113,7 +113,7 @@ export const formHandlers = {
     }
     store.dispatch(actions.setKhatmaPlan({ startDate, targetDate, dailyTarget }));
     closeModal();
-    openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
+    openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
     showToast(t('khatma.planSaved', lang));
   },
 

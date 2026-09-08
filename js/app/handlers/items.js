@@ -567,3 +567,15 @@ export const clickHandlers = {
     store.dispatch(actions.clearSearchHistory());
   },
 };
+
+/** change registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const changeHandlers = [
+  {
+    sel: '[data-action="collection-picker-toggle"]',
+    run: (ds, el) => {
+      const { collectionId, itemId } = ds;
+      if (el.checked) store.dispatch(actions.addToCollection(collectionId, itemId));
+      else store.dispatch(actions.removeFromCollection(collectionId, itemId));
+    },
+  },
+];

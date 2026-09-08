@@ -11,7 +11,7 @@
  * gate, but the render-side escape is the authoritative defense).
  */
 
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
@@ -241,11 +241,15 @@ function sectionChipRow(doc, active, lang, bookmarkCount = 0) {
 }
 
 function pagerHTML(page, total, filteredCount, from, to, lang) {
+  // (UX-4) chrome mirrors by UI language (the shell's U7 rule) — the old
+  // hardcoded LTR pair pointed backwards for Arabic readers.
+  const prevIcon = isRTL(lang) ? 'chevronRight' : 'chevronLeft';
+  const nextIcon = isRTL(lang) ? 'chevronLeft' : 'chevronRight';
   return `
   <div class="hadith-pager" dir="ltr">
-    <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-page-prev" ${page <= 1 ? 'disabled' : ''}>${icon('chevronLeft', { size: 14 })} ${t('common.prev', lang)}</button>
+    <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-page-prev" ${page <= 1 ? 'disabled' : ''}>${icon(prevIcon, { size: 14 })} ${t('common.prev', lang)}</button>
     <span class="hadith-pager__status">${t('hadith.pageStatus', lang, { from, to, total: filteredCount, p: page, pages: total })}</span>
-    <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-page-next" ${page >= total ? 'disabled' : ''}>${t('common.next', lang)} ${icon('chevronRight', { size: 14 })}</button>
+    <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-page-next" ${page >= total ? 'disabled' : ''}>${t('common.next', lang)} ${icon(nextIcon, { size: 14 })}</button>
   </div>`;
 }
 
@@ -257,7 +261,7 @@ function renderBookReader(state, lang) {
 
   const header = `
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.HADITH)}" data-action="navigate" data-view="${VIEWS.HADITH}">${icon('chevronLeft', { size: 18 })} ${t('hadith.title', lang)}</a>
+      <a class="back-link" href="${buildHash(VIEWS.HADITH)}" data-action="navigate" data-view="${VIEWS.HADITH}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('hadith.title', lang)}</a>
       <div class="view-header--row">
         <h1 class="view__title" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(pickLocale(bookMeta?.name ?? doc?.name ?? { en: bookId }, lang))}</h1>
         ${viewMenuButton('hadith-book', lang, { labelKey: 'viewMenu.hadithBook' })}

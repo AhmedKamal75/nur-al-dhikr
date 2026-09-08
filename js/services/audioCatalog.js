@@ -14,7 +14,7 @@ import { RECITERS_URL } from '../core/config.js';
 import { actions, store } from '../core/state.js';
 
 let catalogCache = null; // { kind, reciters: [...] }
-let catalogFetchStarted = false;
+let catalogPromise = null; // in-flight (or resolved) load; never null-while-loading
 
 export function pad3(n) {
   return String(n).padStart(3, '0');
@@ -47,22 +47,35 @@ export function customMoshafId(server) {
  * custom reciters and retry.
  */
 export async function loadCatalog() {
-  if (catalogCache) return catalogCache;
-  if (catalogFetchStarted) return null; // fetch in flight
-  catalogFetchStarted = true;
-  try {
-    const res = await fetch(RECITERS_URL, { cache: 'force-cache' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const doc = await res.json();
-    catalogCache = Array.isArray(doc?.reciters) ? doc : { ...doc, reciters: [] };
-  } catch (err) {
-    console.error('[audioCatalog] failed to load reciters.json', err);
-    catalogFetchStarted = false; // allow retry on next open
-    // v4.1: surface the failure so the Audio view can swap its permanent
-    // skeleton for an error + Retry.
-    store.dispatch(actions.setLoadError('reciters-catalog', true));
+  if (!catalogPromise) {
+    // (B2) cache the PROMISE, not the intention: concurrent callers share
+    // the live fetch instead of the second getting null ("catalog empty").
+    catalogPromise = (async () => {
+      // Fast path: already resolved successfully.
+      if (catalogCache) return catalogCache;
+      try {
+        const res = await fetch(RECITERS_URL, { cache: 'force-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const doc = await res.json();
+        catalogCache = Array.isArray(doc?.reciters) ? doc : { ...doc, reciters: [] };
+        return catalogCache;
+      } catch (err) {
+        console.error('[audioCatalog] failed to load reciters.json', err);
+        catalogPromise = null; // failed: next caller retries cleanly
+        // v4.1: surface the failure so the Audio view can swap its permanent
+        // skeleton for an error + Retry.
+        store.dispatch(actions.setLoadError('reciters-catalog', true));
+        return null;
+      }
+    })();
   }
-  return catalogCache;
+  return catalogPromise;
+}
+
+/** Test-only: reset the catalog cache/promise between cases. */
+export function resetCatalogForTests() {
+  catalogCache = null;
+  catalogPromise = null;
 }
 
 /** Strip Arabic diacritics + unify alef/ya so Arabic search matches. */

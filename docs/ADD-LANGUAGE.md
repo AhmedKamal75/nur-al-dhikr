@@ -29,7 +29,7 @@ pins en↔ar parity only; extend it when the new language is complete.
 6. **Content vs chrome:** this covers UI chrome. Library _content_
    (dua meanings, virtues) is per-item `{en, ar}` data — a third content
    language is a data project (see the Arabic-content backlog in
-   TODO.md), not this recipe.
+   docs/AUDITS.md), not this recipe.
 
 ## Suggested order (most Muslims first)
 

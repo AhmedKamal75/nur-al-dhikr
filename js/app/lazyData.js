@@ -52,6 +52,40 @@ import {
 
 const quranSurahFetchesInFlight = new Set();
 const mushafPageFetchesInFlight = new Set();
+let quranMetaInFlight = null;
+
+/**
+ * (B9) the single owner of the quran-meta fetch. The reader pass, the
+ * mushaf pass, and the ayah-study modal used to fetch the same URL
+ * through three different guards (one of them none at all) — opening the
+ * study modal mid-fetch fired a duplicate request plus a second dispatch,
+ * and a failure left the modal on empty Arabic with no error surface.
+ * Concurrent callers now share one promise: late joiners wait for the
+ * in-flight fetch instead of duplicating it or rendering without it.
+ */
+function fetchQuranMetaShared({ announce = false } = {}) {
+  if (store.getState().quran.meta) return Promise.resolve(true);
+  if (!quranMetaInFlight) {
+    rt.quranMetaFetchStarted = true;
+    quranMetaInFlight = (async () => {
+      try {
+        const meta = await fetchJSON(QURAN_META_URL);
+        store.dispatch(actions.setQuranMeta(meta));
+        flagLoad('quran-meta', false);
+        return true;
+      } catch (err) {
+        console.error('[quran] failed to load meta', err);
+        rt.quranMetaFetchStarted = false; // allow a retry on the next navigation
+        flagLoad('quran-meta', true);
+        if (announce) showToast(t('quran.loadFailed', store.getState().settings.language));
+        return false;
+      } finally {
+        quranMetaInFlight = null;
+      }
+    })();
+  }
+  return quranMetaInFlight;
+}
 
 /** Record a tier's fetch outcome in the store so views can swap their
  *  infinite skeleton for an error + Retry (the hadith reader's pattern,
@@ -61,18 +95,8 @@ function flagLoad(key, failed) {
 }
 
 export async function ensureQuranData(state) {
-  if (!state.quran.meta && !rt.quranMetaFetchStarted) {
-    rt.quranMetaFetchStarted = true;
-    try {
-      const meta = await fetchJSON(QURAN_META_URL);
-      store.dispatch(actions.setQuranMeta(meta));
-      flagLoad('quran-meta', false);
-    } catch (err) {
-      console.error('[quran] failed to load meta', err);
-      rt.quranMetaFetchStarted = false; // allow a retry on the next navigation
-      flagLoad('quran-meta', true);
-      showToast(t('quran.loadFailed', store.getState().settings.language));
-    }
+  if (!state.quran.meta) {
+    await fetchQuranMetaShared({ announce: true });
   }
 
   const id = state.activeParams.id;
@@ -115,17 +139,8 @@ export async function ensureMushafData(state) {
   // ensureQuranData), so make sure it happens here too — otherwise opening
   // the Mushaf reader before ever visiting the classic reader would leave
   // the Listen button unable to resolve a URL.
-  if (!state.quran.meta && !rt.quranMetaFetchStarted) {
-    rt.quranMetaFetchStarted = true;
-    try {
-      const meta = await fetchJSON(QURAN_META_URL);
-      store.dispatch(actions.setQuranMeta(meta));
-      flagLoad('quran-meta', false);
-    } catch (err) {
-      console.error('[quran] failed to load meta', err);
-      rt.quranMetaFetchStarted = false;
-      flagLoad('quran-meta', true);
-    }
+  if (!state.quran.meta) {
+    await fetchQuranMetaShared();
   }
 
   // (v4.4) the translation tray (mushafPrefs.translationPanel) reads the
@@ -405,14 +420,10 @@ export function currentAyahDetailPage(surah, ayah) {
 }
 
 export async function openAyahStudy(surah, ayah, page = null) {
+  // (B9) join the shared meta fetch: never a duplicate request, never a
+  // modal on empty Arabic without the load-failed toast behind it.
+  await fetchQuranMetaShared({ announce: true });
   let state = store.getState();
-  if (!state.quran.meta) {
-    try {
-      store.dispatch(actions.setQuranMeta(await fetchJSON(QURAN_META_URL)));
-    } catch {
-      /* best effort */
-    }
-  }
   if (!state.quran.surahs[String(surah)]) {
     try {
       await dispatchSurahDoc(surah);

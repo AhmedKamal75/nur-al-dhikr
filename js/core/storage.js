@@ -7,6 +7,7 @@
 
 import { STORAGE_KEY, DB_NAME, DB_VERSION } from './config.js';
 import { ok, fail, storageAvailable } from './utils.js';
+import { openDB, withStore } from './idb/openDB.js';
 
 const memoryFallback = new Map();
 const hasLocalStorage = storageAvailable('localStorage');
@@ -54,68 +55,36 @@ export function estimateStorageBytes() {
 /* ------------------------------------------------------------------ */
 
 const STORES = ['customLibraries', 'attachments'];
-let dbPromise = null;
 
-function openDB() {
-  if (!('indexedDB' in window)) return Promise.resolve(null);
-  if (dbPromise) return dbPromise;
-  dbPromise = new Promise((resolve) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      for (const store of STORES) {
-        if (!db.objectStoreNames.contains(store)) {
-          db.createObjectStore(store, { keyPath: 'id' });
-        }
-      }
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => resolve(null);
-  });
-  return dbPromise;
+function upgradeDb(db) {
+  for (const store of STORES) {
+    if (!db.objectStoreNames.contains(store)) {
+      db.createObjectStore(store, { keyPath: 'id' });
+    }
+  }
 }
 
-export async function idbPut(store, record) {
-  const db = await openDB();
-  if (!db) return fail('IndexedDB unavailable');
-  return new Promise((resolve) => {
-    try {
-      const tx = db.transaction(store, 'readwrite');
-      tx.objectStore(store).put(record);
-      tx.oncomplete = () => resolve(ok(record));
-      tx.onerror = () => resolve(fail(tx.error));
-    } catch (err) {
-      resolve(fail(err));
-    }
-  });
+async function db() {
+  return openDB(DB_NAME, DB_VERSION, upgradeDb);
 }
 
-export async function idbDelete(store, id) {
-  const db = await openDB();
-  if (!db) return fail('IndexedDB unavailable');
-  return new Promise((resolve) => {
-    try {
-      const tx = db.transaction(store, 'readwrite');
-      tx.objectStore(store).delete(id);
-      tx.oncomplete = () => resolve(ok(true));
-      tx.onerror = () => resolve(fail(tx.error));
-    } catch (err) {
-      resolve(fail(err));
-    }
-  });
+export async function idbPut(storeName, record) {
+  const d = await db();
+  if (!d) return fail('IndexedDB unavailable');
+  const r = await withStore(d, storeName, 'readwrite', (s) => s.put(record));
+  return r.success ? ok(record) : r;
 }
 
-export async function idbClear(store) {
-  const db = await openDB();
-  if (!db) return fail('IndexedDB unavailable');
-  return new Promise((resolve) => {
-    try {
-      const tx = db.transaction(store, 'readwrite');
-      tx.objectStore(store).clear();
-      tx.oncomplete = () => resolve(ok(true));
-      tx.onerror = () => resolve(fail(tx.error));
-    } catch (err) {
-      resolve(fail(err));
-    }
-  });
+export async function idbDelete(storeName, id) {
+  const d = await db();
+  if (!d) return fail('IndexedDB unavailable');
+  const r = await withStore(d, storeName, 'readwrite', (s) => s.delete(id));
+  return r.success ? ok(true) : r;
+}
+
+export async function idbClear(storeName) {
+  const d = await db();
+  if (!d) return fail('IndexedDB unavailable');
+  const r = await withStore(d, storeName, 'readwrite', (s) => s.clear());
+  return r.success ? ok(true) : r;
 }

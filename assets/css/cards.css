@@ -24,7 +24,8 @@
   box-shadow: var(--shadow-sm);
   transition:
     box-shadow var(--dur-base) var(--ease-standard),
-    border-color var(--dur-base) var(--ease-standard);
+    border-color var(--dur-base) var(--ease-standard),
+    transform var(--dur-fast) var(--ease-standard);
 }
 .card:hover {
   box-shadow: var(--shadow-md);
@@ -75,9 +76,11 @@
 }
 
 .card__title {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 .card__arabic {
@@ -86,25 +89,34 @@
   line-height: var(--lh-arabic);
   color: var(--color-text);
   text-align: start;
+  text-wrap: pretty;
 }
 
 .card__translit {
   font-size: var(--fs-sm);
   font-style: italic;
   color: var(--color-text-secondary);
+  line-height: 1.6;
 }
 
 .card__translation {
-  font-size: var(--fs-sm);
+  font-size: 1rem;
   color: var(--color-text);
-  line-height: var(--lh-normal);
+  line-height: 1.7;
 }
 
 .card__virtue {
   font-size: var(--fs-sm);
   color: var(--color-text-secondary);
-  padding-inline-start: var(--space-3);
-  border-inline-start: 3px solid color-mix(in srgb, var(--color-accent-raw) 45%, transparent);
+  line-height: 1.65;
+  padding: var(--space-3) var(--space-4);
+  padding-inline-start: var(--space-4);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  border-inline-start: 3px solid var(--color-gold);
+  background: color-mix(in srgb, var(--color-gold) 7%, transparent);
+}
+[dir='rtl'] .card__virtue {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
 }
 
 .card__reference {
@@ -128,8 +140,8 @@
 .card__footer {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding-top: var(--space-1);
+  gap: var(--space-3);
+  padding-top: var(--space-3);
   border-top: 1px solid var(--color-border);
 }
 
@@ -139,11 +151,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2) var(--space-4);
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
   min-height: var(--touch-target);
+  min-width: 132px;
   border-radius: var(--radius-pill);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 32%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-primary) 10%, var(--color-surface)),
+    color-mix(in srgb, var(--color-primary) 5%, var(--color-surface))
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 2px 8px rgba(8, 51, 47, 0.1);
   overflow: hidden;
   font-variant-numeric: tabular-nums;
   touch-action: manipulation;
@@ -152,7 +173,11 @@
   -webkit-tap-highlight-color: transparent;
   transition:
     background-color var(--dur-base) var(--ease-standard),
-    transform var(--dur-fast) var(--ease-standard);
+    transform var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard);
+}
+.counter-pill:active {
+  transform: scale(0.97);
 }
 /* v4.1: a completed pill reads as achieved — the class was emitted by
    views with no rule behind it. */
@@ -169,7 +194,8 @@
 .counter-pill__label {
   position: relative;
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 800;
+  letter-spacing: 0.01em;
   color: var(--color-text);
 }
 .counter-pill__cycles {
@@ -226,7 +252,7 @@
    ========================================================================== */
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: var(--space-3);
 }
 
@@ -234,11 +260,12 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   text-align: start;
   transition:
     transform var(--dur-fast) var(--ease-standard),
@@ -253,11 +280,13 @@
 .category-tile__icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--tile-cat, var(--cat-emerald)) 12%, transparent);
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--tile-cat, var(--cat-emerald)) 13%, var(--color-surface));
   color: var(--tile-cat-text, var(--cat-emerald-text));
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--tile-cat, var(--cat-emerald)) 20%, transparent);
 }
 .category-tile__icon--amber {
   --tile-cat: var(--cat-amber);
@@ -344,13 +373,17 @@
 }
 .category-tile__name {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.005em;
   color: var(--color-text);
-  line-height: var(--lh-tight);
+  line-height: 1.35;
 }
 .category-tile__count {
+  display: inline-flex;
+  align-items: center;
   font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -363,8 +396,8 @@
 .mood-tile {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background:
@@ -374,17 +407,27 @@
       transparent 60%
     ),
     var(--color-surface);
+  box-shadow: var(--shadow-sm);
   text-align: start;
   transition:
     transform var(--dur-fast) var(--ease-standard),
-    box-shadow var(--dur-base) var(--ease-standard);
+    box-shadow var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard);
 }
 .mood-tile:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
 }
 .mood-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
   color: var(--color-primary-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 .mood-tile__text {
   display: flex;
@@ -393,11 +436,13 @@
 }
 .mood-tile__name {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 .mood-tile__count {
   font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -410,30 +455,42 @@
 .collection-tile {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   text-align: start;
   transition:
     transform var(--dur-fast) var(--ease-standard),
-    box-shadow var(--dur-base) var(--ease-standard);
+    box-shadow var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard);
 }
 .collection-tile:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
 }
 .collection-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
   color: var(--color-primary-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 20%, transparent);
 }
 .collection-tile__name {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 .collection-tile__count {
   font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
@@ -444,12 +501,24 @@
   gap: var(--space-3);
 }
 .library-section__title {
-  font-size: var(--fs-md);
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.library-section__title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
 }
 .library-section__desc {
   font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  max-width: 62ch;
 }
 
 /* ==========================================================================
@@ -458,35 +527,50 @@
 .home-hero {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1_5);
-  padding: var(--space-6) var(--space-5);
-  border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
+  gap: var(--space-3);
+  padding: var(--space-7) var(--space-6);
+  border-radius: calc(var(--radius-lg) + 6px);
+  border: 1px solid rgba(232, 212, 139, 0.28);
   background:
-    radial-gradient(
-      140% 180% at 100% 0%,
-      color-mix(in srgb, var(--color-primary) 10%, transparent) 0%,
-      transparent 55%
-    ),
-    var(--color-surface);
+    radial-gradient(120% 130% at 85% -10%, rgba(232, 212, 139, 0.32) 0%, transparent 46%),
+    radial-gradient(130% 150% at 0% 110%, rgba(16, 185, 129, 0.35) 0%, transparent 52%),
+    linear-gradient(
+      150deg,
+      var(--color-primary-ink) 0%,
+      var(--color-primary-deep) 52%,
+      var(--color-primary) 130%
+    );
+  box-shadow: var(--shadow-hero);
   position: relative;
   overflow: hidden;
+  color: #ffffff;
 }
 .home-hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  /* Khatim-star lattice, rebuilt as a palette-aware dot grid: the v3 SVG
-     hardcoded emerald under all 10 palettes, and its v4 tokenized
-     replacement (--hero-pattern) was never wired by any JS — the ornament
-     had silently vanished. This reads the active palette via --color-primary. */
-  background-image: radial-gradient(
-    color-mix(in srgb, var(--color-primary) 16%, transparent) 1px,
-    transparent 1.4px
-  );
+  /* Faint Islamic lattice: palette-aware dot grid in soft gold. */
+  background-image: radial-gradient(rgba(232, 212, 139, 0.34) 1px, transparent 1.5px);
   background-size: 22px 22px;
   background-repeat: repeat;
-  opacity: 0.55;
+  opacity: 0.35;
+  pointer-events: none;
+}
+.home-hero::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-gold-soft) 30%,
+    var(--color-gold) 50%,
+    var(--color-gold-soft) 70%,
+    transparent
+  );
+  opacity: 0.85;
   pointer-events: none;
 }
 .home-hero__greeting {
@@ -495,28 +579,61 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--fs-sm);
-  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
 }
 .home-hero__hijri {
   display: inline-flex;
   align-items: center;
-  padding: 2px var(--space-2);
+  padding: 4px var(--space-3);
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  color: var(--color-primary-text);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #ffffff;
   font-size: var(--fs-caption);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 .home-hero__title {
   position: relative;
-  font-size: var(--fs-xl);
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: clamp(1.7rem, 5.4vw, 2.3rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: #ffffff;
+  text-wrap: balance;
+  max-width: 26ch;
+}
+/* (UX-9) the tagline is no longer the page H1 — visually unchanged. */
+.home-hero__tagline {
+  position: relative;
+  margin: 0;
+  font-size: var(--fs-base);
+  color: rgba(255, 255, 255, 0.85);
+}
+.home-hero .home-hero__profile {
+  position: relative;
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+[data-theme='dark'] .home-hero {
+  border-color: rgba(232, 212, 139, 0.22);
+  background:
+    radial-gradient(120% 130% at 85% -10%, rgba(232, 212, 139, 0.22) 0%, transparent 46%),
+    radial-gradient(130% 150% at 0% 110%, rgba(16, 185, 129, 0.28) 0%, transparent 52%),
+    linear-gradient(150deg, #041f1c 0%, #07302b 55%, #0b4a43 130%);
 }
 
 /* Next-prayer strip */
 .home-prayer-strip {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-4);
@@ -525,6 +642,15 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.home-prayer-strip::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--color-gold-soft), var(--color-primary) 70%);
 }
 .home-prayer-strip--setup {
   /* (v4.6.0) one calm horizontal row: icon beside text, chevron riding
@@ -536,11 +662,14 @@
 .home-prayer-strip__icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
-  color: var(--color-primary-text);
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, var(--color-primary) 0%, var(--color-primary-deep) 100%);
+  color: #ffffff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 6px 16px rgba(8, 51, 47, 0.25);
   flex-shrink: 0;
 }
 .home-prayer-strip__text {
@@ -563,46 +692,52 @@
 }
 .home-prayer-strip__countdown {
   font-size: var(--fs-md);
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-primary-text);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, transparent);
 }
 .home-prayer-strip__cta {
   font-size: var(--fs-sm);
 }
 
-/* Quick actions */
+/* Quick actions — modern horizontal cards: tinted icon tile + bold label.
+   No markup change: the icon svg becomes its own tile via CSS. */
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-2);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
 }
-@media (max-width: 480px) {
+@media (max-width: 380px) {
   .quick-actions {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 .quick-actions--compact {
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .quick-action {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-1_5);
-  min-height: 84px;
-  padding: var(--space-3) var(--space-2);
+  gap: var(--space-3);
+  min-height: 76px;
+  padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  color: var(--color-text-secondary);
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  text-align: center;
+  color: var(--color-text);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  text-align: start;
+  box-shadow: var(--shadow-sm);
   transition:
     transform var(--dur-fast) var(--ease-standard),
     box-shadow var(--dur-base) var(--ease-standard),
@@ -612,6 +747,7 @@
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   text-decoration: none;
+  border-color: color-mix(in srgb, var(--qa-color, var(--color-primary)) 40%, transparent);
 }
 /* "Suggested now" emphasis: the current time window's shortcut. The class
    existed in markup with no rule — the suggestion was invisible. */
@@ -620,7 +756,15 @@
   box-shadow: var(--ring-accent);
 }
 .quick-action svg {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  padding: 11px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--qa-color, var(--color-primary)) 13%, var(--color-surface));
   color: var(--qa-color, var(--color-primary-text));
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--qa-color, var(--color-primary)) 18%, transparent);
 }
 .quick-action:hover {
   border-color: color-mix(in srgb, var(--qa-color, var(--color-primary)) 45%, transparent);
@@ -724,10 +868,14 @@
   flex-wrap: wrap; /* (v4.6.0) the install action wraps below the text
      instead of squeezing the label into one-word-per-line wrapping */
   gap: var(--space-2) var(--space-3);
-  min-height: var(--touch-target);
-  padding: var(--space-2);
+  min-height: 56px;
+  padding: var(--space-3) var(--space-2);
   border-radius: var(--radius-md);
+  border-bottom: 1px solid var(--color-border);
   transition: background-color var(--dur-base) var(--ease-standard);
+}
+.onboarding-step:last-child {
+  border-bottom: none;
 }
 .onboarding-step:hover {
   background: var(--color-surface-alt);
@@ -735,20 +883,22 @@
 .onboarding-step__icon {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-alt);
-  color: var(--color-text-muted);
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary-text);
   flex-shrink: 0;
 }
 .onboarding-step__check {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-pill);
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
   background: var(--color-success-bg);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-success) 30%, transparent);
   color: var(--color-success-text);
   flex-shrink: 0;
 }
@@ -904,11 +1054,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  min-height: var(--touch-target);
-  padding: var(--space-2) 0;
-  border-radius: var(--radius-sm);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border-bottom: 1px solid var(--color-border);
   color: var(--color-text);
   text-align: start;
+  transition: background-color var(--dur-base) var(--ease-standard);
+}
+.worship-row:last-child {
+  border-bottom: none;
 }
 a.worship-row:hover {
   background: var(--color-surface-alt);
@@ -917,17 +1072,19 @@ a.worship-row:hover {
 .worship-row__icon {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
   color: var(--color-primary-text);
   flex-shrink: 0;
 }
 .worship-row__name {
   flex: 1;
   font-size: var(--fs-sm);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.005em;
   min-width: 0;
 }
 .worship-row__value {
@@ -948,24 +1105,47 @@ a.worship-row:hover {
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  padding: var(--space-5) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(232, 212, 139, 0.3);
+  background:
+    radial-gradient(130% 150% at 90% -20%, rgba(232, 212, 139, 0.3) 0%, transparent 48%),
+    linear-gradient(
+      150deg,
+      var(--color-primary-ink) 0%,
+      var(--color-primary-deep) 60%,
+      var(--color-primary) 135%
+    );
+  box-shadow: var(--shadow-md);
+  color: #ffffff;
 }
 .next-prayer-card__label {
-  font-size: var(--fs-caption);
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.75);
 }
 .next-prayer-card__name {
-  font-size: var(--fs-lg);
-  font-weight: 700;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1.15;
 }
 .next-prayer-card__countdown {
   margin-inline-start: auto;
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--color-primary-text);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
   font-variant-numeric: tabular-nums;
+  padding: 8px var(--space-4);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  white-space: nowrap;
 }
 
 .prayer-list {
@@ -976,40 +1156,45 @@ a.worship-row:hover {
    Decorative (role=img with an aria-label); the rows below stay canonical. */
 .prayer-timeline {
   position: relative;
-  height: 28px;
-  margin: var(--space-1) 0 var(--space-2);
+  height: 34px;
+  margin: var(--space-2) 0 var(--space-2);
 }
 .prayer-timeline__track {
   position: absolute;
   inset-inline: 0;
   top: 50%;
-  height: 4px;
+  height: 6px;
   transform: translateY(-50%);
   border-radius: var(--radius-pill);
-  background: var(--color-border);
+  background: var(--color-surface-alt);
+  box-shadow: inset 0 1px 2px rgba(28, 32, 28, 0.12);
 }
 .prayer-timeline__dot {
   position: absolute;
   top: 50%;
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   /* Container is dir=ltr in both languages (time flows like a clock
      face), so one centering transform is correct everywhere. */
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: var(--color-surface);
-  border: 2px solid var(--color-primary);
+  border: 2.5px solid var(--color-primary);
+  box-shadow: 0 1px 4px rgba(8, 51, 47, 0.25);
 }
 .prayer-timeline__dot--next {
   background: var(--color-primary);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--color-primary) 20%, transparent),
+    0 2px 8px rgba(8, 51, 47, 0.35);
 }
 .prayer-timeline__now {
   position: absolute;
-  top: 2px;
-  bottom: 2px;
+  top: 3px;
+  bottom: 3px;
   width: 2px;
   transform: translateX(-50%);
-  background: var(--color-accent);
+  background: var(--color-gold);
   border-radius: 2px;
 }
 
@@ -1083,9 +1268,10 @@ body.is-ambient #main {
 .prayer-row {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  min-height: 56px;
-  padding: var(--space-2) 0;
+  gap: var(--space-4);
+  min-height: 64px;
+  padding: var(--space-3) var(--space-3);
+  border-radius: var(--radius-md);
   border-bottom: 1px solid var(--color-border);
 }
 .prayer-row:last-child {
@@ -1094,28 +1280,35 @@ body.is-ambient #main {
 /* The NEXT prayer's row: emphasized so "what comes next" is scannable at
    a glance. Emitted by views/prayer.js since v3; never styled until v4.1. */
 .prayer-row--active {
-  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
-  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+  box-shadow: var(--shadow-sm);
 }
 .prayer-row__icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
   color: var(--color-primary-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
   flex-shrink: 0;
 }
 .prayer-row__name {
   display: flex;
   flex-direction: column;
+  gap: 1px;
   min-width: 0;
   flex: 1;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  letter-spacing: -0.005em;
 }
 .prayer-row__time {
-  font-size: var(--fs-md);
-  font-weight: 700;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: 0.005em;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1209,10 +1402,18 @@ body.is-ambient #main {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  min-height: var(--touch-target);
-  padding: var(--space-2) 0;
-  border-radius: var(--radius-sm);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border-bottom: 1px solid var(--color-border);
   cursor: pointer;
+  transition: background-color var(--dur-base) var(--ease-standard);
+}
+.checklist-row:last-child {
+  border-bottom: none;
+}
+.checklist-row:hover {
+  background: var(--color-surface-alt);
 }
 .checklist-row--checked .checklist-row__label {
   color: var(--color-text-muted);
@@ -1229,6 +1430,8 @@ body.is-ambient #main {
 .checklist-row__label {
   flex: 1;
   font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: -0.005em;
 }
 
 .checklist-history {
@@ -1332,6 +1535,7 @@ body.is-ambient #main {
 }
 .focus__translation {
   font-size: var(--fs-md);
+  line-height: 1.7;
   max-width: 42ch;
 }
 .focus__virtue {
@@ -1365,7 +1569,14 @@ body.is-ambient #main {
   align-items: center;
   justify-content: center;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-3) calc(var(--space-3) + env(safe-area-inset-bottom, 0));
+  margin: 0 var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0));
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-md);
 }
 .focus__bar-arrows {
   display: flex;
@@ -1444,7 +1655,17 @@ body.is-ambient #main {
   flex-direction: column;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-8) var(--space-5);
+  border-radius: calc(var(--radius-lg) + 4px);
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(
+      120% 120% at 50% -20%,
+      color-mix(in srgb, var(--color-primary) 9%, transparent) 0%,
+      transparent 55%
+    ),
+    var(--color-surface);
+  box-shadow: var(--shadow-md);
   /* (v4.5, APP-FLOW I7) the whole stage counts; the dial is the visual. */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -1455,11 +1676,20 @@ body.is-ambient #main {
   font-size: calc(var(--fs-arabic-card) * 1.15);
   line-height: var(--lh-arabic);
   text-align: center;
+  text-wrap: balance;
+  max-width: 28ch;
 }
 .tasbih-stage__cycles {
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
+  padding: 4px var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
 }
 
 .tasbih-dial {
@@ -1504,13 +1734,16 @@ body.is-ambient #main {
   transition: stroke-dashoffset var(--dur-slow) var(--ease-standard);
 }
 .tasbih-dial__count {
-  font-size: var(--fs-2xl);
-  font-weight: 700;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 .tasbih-dial__target {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1518,8 +1751,13 @@ body.is-ambient #main {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-4);
+  gap: var(--space-3) var(--space-4);
   flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 }
 .target-stepper {
   display: flex;
@@ -1554,19 +1792,22 @@ body.is-ambient #main {
 .hadith-tile {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-4);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   text-align: start;
   transition:
     transform var(--dur-fast) var(--ease-standard),
-    box-shadow var(--dur-base) var(--ease-standard);
+    box-shadow var(--dur-base) var(--ease-standard),
+    border-color var(--dur-base) var(--ease-standard);
 }
 .hadith-tile:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
 }
 .hadith-tile__head {
   display: flex;
@@ -1576,11 +1817,12 @@ body.is-ambient #main {
 .hadith-tile__icon {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--cat-emerald) 12%, transparent);
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--cat-emerald) 13%, var(--color-surface));
   color: var(--cat-emerald-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cat-emerald) 22%, transparent);
   flex-shrink: 0;
 }
 .hadith-tile__name {
@@ -1631,6 +1873,7 @@ body.is-ambient #main {
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   /* Same stolen-tap class as ayah cards: programmatic scrolls must clear
      the sticky topbar above and the fixed nav/playerbar below. */
   scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
@@ -1652,19 +1895,21 @@ body.has-player .hadith-card {
 .hadith-card__number {
   display: grid;
   place-items: center;
-  min-width: 34px;
-  height: 26px;
-  padding-inline: var(--space-1_5);
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  min-width: 38px;
+  height: 28px;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 20%, transparent);
   color: var(--color-primary-text);
   font-size: var(--fs-caption);
-  font-weight: 700;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 .hadith-card__section {
   font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: var(--color-text-secondary);
 }
 .hadith-card__arabic {
   font-family: var(--font-arabic);
@@ -1672,8 +1917,8 @@ body.has-player .hadith-card {
   line-height: var(--lh-arabic);
 }
 .hadith-card__translation {
-  font-size: var(--fs-sm);
-  line-height: var(--lh-normal);
+  font-size: 1rem;
+  line-height: 1.7;
 }
 .hadith-card__note {
   font-size: var(--fs-sm);
@@ -1803,11 +2048,14 @@ body.has-player .hadith-card {
 }
 .hijri-today__day {
   font-size: var(--fs-2xl);
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 .hijri-today__month {
   font-size: var(--fs-sm);
+  font-weight: 600;
   color: var(--color-text-secondary);
 }
 .hijri-today__gregorian {
@@ -1823,8 +2071,9 @@ body.has-player .hadith-card {
   position: relative;
 }
 .cal-nav__label {
-  font-size: var(--fs-md);
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 .cal-nav__hijri {
   display: block;
@@ -1869,24 +2118,28 @@ body.has-player .hadith-card {
   aspect-ratio: 1;
   min-height: 44px;
   padding: 2px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
   color: var(--color-text);
   font-variant-numeric: tabular-nums;
   transition:
     background-color var(--dur-base) var(--ease-standard),
-    border-color var(--dur-base) var(--ease-standard);
+    border-color var(--dur-base) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard);
 }
 .cal-cell:hover {
   background: var(--color-surface-alt);
+  border-color: var(--color-border);
 }
 .cal-cell--empty {
   pointer-events: none;
 }
 .cal-cell--today {
   border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
   box-shadow: var(--ring-primary);
+  font-weight: 700;
 }
 .cal-cell--white {
   background: color-mix(in srgb, var(--cat-violet) 8%, transparent);
@@ -2039,41 +2292,64 @@ body.has-player .hadith-card {
    11. Ramadan companion
    ========================================================================== */
 .ramadan-hero {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: var(--space-6) var(--space-5);
-  border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--cat-ocean) 25%, transparent);
+  padding: var(--space-6) var(--space-6);
+  border-radius: calc(var(--radius-lg) + 4px);
+  border: 1px solid rgba(232, 212, 139, 0.3);
   background:
-    radial-gradient(
-      160% 200% at 100% 0%,
-      color-mix(in srgb, var(--cat-ocean) 14%, transparent) 0%,
-      transparent 60%
-    ),
-    var(--color-surface);
+    radial-gradient(130% 150% at 90% -20%, rgba(232, 212, 139, 0.28) 0%, transparent 48%),
+    radial-gradient(140% 160% at 0% 115%, rgba(109, 40, 217, 0.4) 0%, transparent 55%),
+    linear-gradient(155deg, #101a3a 0%, #1b2a5e 55%, #0f766e 135%);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  color: #ffffff;
+}
+.ramadan-hero::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-gold-soft) 30%,
+    var(--color-gold) 50%,
+    var(--color-gold-soft) 70%,
+    transparent
+  );
+  opacity: 0.85;
+  pointer-events: none;
 }
 .ramadan-hero__head {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
 .ramadan-hero__icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--cat-ocean) 14%, transparent);
-  color: var(--cat-ocean-text);
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  color: var(--color-gold-soft);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 .ramadan-hero__phase {
-  font-size: var(--fs-md);
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: #ffffff;
 }
 .ramadan-hero__caption {
-  font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  color: rgba(255, 255, 255, 0.78);
 }
 .ramadan-hero__labels {
   display: flex;
@@ -2095,20 +2371,23 @@ body.has-player .hadith-card {
   flex: 1;
 }
 .ramadan-countdown-block__label {
-  font-size: var(--fs-caption);
-  font-weight: 600;
+  font-size: 0.7rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.09em;
+  color: rgba(255, 255, 255, 0.72);
 }
 .ramadan-countdown-block__value {
-  font-size: var(--fs-xl);
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
   font-variant-numeric: tabular-nums;
 }
 .ramadan-countdown-block__sub {
   font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
 }
 .ramadan-hero__duas {
   display: flex;
@@ -2117,7 +2396,9 @@ body.has-player .hadith-card {
 }
 .ramadan-hero__countdown {
   font-size: var(--fs-2xl);
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
   font-variant-numeric: tabular-nums;
 }
 
@@ -2160,10 +2441,17 @@ body.has-player .hadith-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  padding: var(--space-5);
+  padding: var(--space-6) var(--space-5);
   border-radius: var(--radius-lg);
   border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
-  background: var(--color-success-bg);
+  background:
+    radial-gradient(
+      130% 150% at 100% 0%,
+      color-mix(in srgb, var(--color-success) 10%, transparent) 0%,
+      transparent 55%
+    ),
+    var(--color-success-bg);
+  box-shadow: var(--shadow-md);
 }
 .zakat-result--due {
   border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
@@ -2176,11 +2464,13 @@ body.has-player .hadith-card {
 }
 .zakat-due__label {
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 .zakat-due__amount {
-  font-size: var(--fs-xl);
-  font-weight: 700;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--color-primary-text);
   font-variant-numeric: tabular-nums;
 }
@@ -2209,8 +2499,12 @@ body.has-player .hadith-card {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  min-height: var(--touch-target);
-  padding: var(--space-2) 0;
+  min-height: 56px;
+  padding: var(--space-3) var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+}
+.zakat-history-row:last-child {
+  border-bottom: none;
 }
 .zakat-history-row__main {
   flex: 1;
@@ -2248,8 +2542,18 @@ body.has-player .hadith-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-6) var(--space-4);
+  gap: var(--space-4);
+  padding: var(--space-7) var(--space-5);
+  border-radius: calc(var(--radius-lg) + 4px);
+  border: 1px solid var(--color-border);
+  background:
+    radial-gradient(
+      120% 120% at 50% -20%,
+      color-mix(in srgb, var(--color-primary) 9%, transparent) 0%,
+      transparent 55%
+    ),
+    var(--color-surface);
+  box-shadow: var(--shadow-md);
 }
 .qibla-compass__dial {
   position: relative;
@@ -2309,25 +2613,29 @@ body.has-player .hadith-card {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: var(--space-3);
+  padding: var(--space-4);
   border-radius: var(--radius-md);
-  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 }
 .qibla-fact__label {
   font-size: var(--fs-caption);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.07em;
+  color: var(--color-text-secondary);
 }
 .qibla-fact__value {
-  font-size: var(--fs-md);
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 .qibla-fact__value-sub {
   font-size: var(--fs-caption);
-  color: var(--color-text-muted);
+  font-weight: 600;
+  color: var(--color-text-secondary);
 }
 .qibla-disclaimer {
   font-size: var(--fs-caption);
@@ -2646,6 +2954,11 @@ body.has-player .hadith-card {
   gap: var(--space-5);
   position: relative;
   overflow: hidden;
+  padding: var(--space-6) var(--space-5);
+  border-radius: calc(var(--radius-lg) + 4px);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
 }
 .garden-hero::before {
   content: '';
@@ -2685,8 +2998,9 @@ body.has-player .hadith-card {
   min-width: 0;
 }
 .garden-hero__stage {
-  font-size: var(--fs-lg);
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
 }
 .garden-hero__planted {
   color: var(--color-text-secondary);

@@ -134,7 +134,12 @@ export function wirePlayer() {
     }
   });
   // FIX (review A7/B8): verse playback failures are spoken, not swallowed.
+  // (B3) the session owner reports its own failures (reciteVerseFailed):
+  // the shared toast stays silent while a session is active so one dead
+  // verse does not produce two toasts — and it keeps working after the
+  // session ends, which the old single-slot wiring broke.
   recitation.onPlaybackError(() => {
+    if (surahPlayback.isActive()) return;
     showToast(t('audio.playFailed', store.getState().settings.language), { assertive: true });
   });
   player.onTrackEnded(() => {

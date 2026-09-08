@@ -7,19 +7,15 @@
  */
 
 import { t } from '../core/i18n.js';
-import { QURAN_RECITERS } from '../core/config.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { findMoshaf } from '../services/audioCatalog.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
-
-/** Short voice label for the console's reciter chip ("Alafasy", "Husary"…). */
-export function reciterShortLabel(reciterId, lang) {
-  const r = QURAN_RECITERS.find((x) => x.id === reciterId);
-  if (!r) return reciterId || '';
-  const name = lang === 'ar' ? r.nameAr : r.nameEn;
-  return String(name).split(' ')[0];
-}
+import {
+  consoleSnapshot,
+  recitationChipsHTML,
+  recitationEchoHTML,
+} from '../ui/recitationConsole.js';
 
 const RATES = [1, 1.25, 1.5, 0.75];
 
@@ -78,25 +74,14 @@ export function renderPlayerBar(state) {
  */
 function recitationBarHTML(state, lang) {
   const sp = state.surahPlayback;
-  const follow = state.settings.audio?.ayahFollow ?? true;
-  // v4.4 listen mode: continuous multi-surah playback + sleep timer.
-  const continuous = sp.continuous === true;
-  const sleep = sleepSnapshot();
-  // v3.17 hifz: per-ayah repeat budget + manual ayah skips (the ∞ mode's
-  // exit hatch). Chip reads the live session snapshot; the persisted
-  // default comes from settings.audio.ayahRepeat.
-  const rep = [1, 3, 5, 10, -1].includes(sp.repeat) ? sp.repeat : 1;
-  const repLabel = rep === -1 ? '\u221e' : `\u00d7${rep}`;
-  // (v5.2.0) echo mode: listen, then recite back in the held silence.
-  const echo = sp.listenRepeat === true;
-  const waiting = sp.waiting === true;
-  // Compare-two-reciters: voice B armed + whether this session alternates.
-  const compare = sp.compare === true;
-  const voiceB = state.settings.reciterB || sp.reciterIdB || null;
-  const voiceA = sp.reciterId || state.settings.reciter;
-  // Bounds loop passes + verse speed (both live-toggled from the console).
-  const loop = [1, 2, 3, 5, 10].includes(sp.loop) ? sp.loop : 1;
-  const speed = Number(sp.speed) || 1;
+  // The 13 controls come from the single shared builder (UX-5) — this bar
+  // only owns the header/counter chrome around them.
+  const snap = consoleSnapshot(sp, state.settings, sleepSnapshot(), lang);
+  const chips = recitationChipsHTML(snap, lang, {
+    chip: 'player-bar__chip',
+    on: 'player-bar__chip--on',
+    btn: 'icon-btn icon-btn--sm',
+  });
   // Queue position ("2/5") when a saved queue is playing.
   const qPos =
     Array.isArray(sp.queue) && sp.queue.length > 1 && Number.isFinite(Number(sp.qIndex))
@@ -116,44 +101,8 @@ function recitationBarHTML(state, lang) {
         <span class="player-bar__reciter">${escapeHTML(t('audio.reciting', lang))} · ${escapeHTML(name)}</span>
         <span class="player-bar__ayah-counter" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}${escapeHTML(qPos)}</span>
       </div>
-      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-ayah-prev" aria-label="${t('audio.ayahPrev', lang)}" title="${t('audio.ayahPrev', lang)}">${icon('chevronLeft', { size: 15 })}</button>
-      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-ayah-next" aria-label="${t('audio.ayahNext', lang)}" title="${t('audio.ayahNext', lang)}">${icon('chevronRight', { size: 15 })}</button>
-      <button type="button" class="player-bar__chip ${rep !== 1 ? 'player-bar__chip--on' : ''}" data-action="recite-repeat-toggle" aria-label="${escapeHTML(t('audio.repeatAyah', lang))} (${repLabel})" title="${escapeHTML(t('audio.repeatAyah', lang))} (${repLabel})">
-        ${icon('repeat', { size: 13 })} ${repLabel}
-      </button>
-      <button type="button" class="player-bar__chip ${follow ? 'player-bar__chip--on' : ''}" data-action="recite-follow-toggle" aria-pressed="${follow}" aria-label="${t('audio.follow', lang)}" title="${t('audio.follow', lang)}">
-        ${icon(follow ? 'eye' : 'eyeOff', { size: 14 })}
-      </button>
-      <button type="button" class="player-bar__chip ${continuous ? 'player-bar__chip--on' : ''}" data-action="recite-listen-toggle" aria-pressed="${continuous}" aria-label="${t('audio.listenMode', lang)}" title="${t('audio.listenMode', lang)}">
-        ${icon('play', { size: 13 })} ${t('audio.listen', lang)}
-      </button>
-      <button type="button" class="player-bar__chip ${echo ? 'player-bar__chip--on' : ''}" data-action="recite-echo-toggle" aria-pressed="${echo}" aria-label="${t('audio.echoMode', lang)}" title="${t('audio.echoMode', lang)}">
-        ${icon('volume', { size: 13 })} ${t('audio.echo', lang)}
-      </button>
-      <button type="button" class="player-bar__chip" data-action="recite-voice-open" aria-label="${t('audio.chooseReciter', lang)}" title="${t('audio.chooseReciter', lang)} — ${escapeHTML(reciterShortLabel(voiceA, lang))}${voiceB ? ` + ${escapeHTML(reciterShortLabel(voiceB, lang))}` : ''}">
-        ${icon('volume', { size: 13 })} ${escapeHTML(reciterShortLabel(voiceA, lang))}${voiceB ? `+${escapeHTML(reciterShortLabel(voiceB, lang))}` : ''}
-      </button>
-      <button type="button" class="player-bar__chip ${compare ? 'player-bar__chip--on' : ''}" data-action="recite-compare-toggle" aria-pressed="${compare}" aria-label="${t('audio.compareMode', lang)}" title="${t('audio.compareMode', lang)}">
-        ${icon('grid', { size: 13 })} ${t('audio.compare', lang)}
-      </button>
-      <button type="button" class="player-bar__chip ${loop !== 1 ? 'player-bar__chip--on' : ''}" data-action="recite-loop-toggle" aria-label="${t('audio.loopMode', lang)}" title="${t('audio.loopMode', lang)}">
-        ${icon('repeat', { size: 13 })} ${loop === 1 ? t('audio.loop', lang) : `×${loop}`}
-      </button>
-      <button type="button" class="player-bar__chip" data-action="recite-speed-cycle" aria-label="${t('audio.speed', lang)}" title="${t('audio.speed', lang)}">${speed}×</button>
-      <button type="button" class="player-bar__chip ${sleep.enabled ? 'player-bar__chip--on' : ''}" data-action="recite-sleep-cycle" aria-label="${t('audio.sleepTimer', lang)}" title="${t('audio.sleepTimer', lang)}">
-        ${icon('moon', { size: 13 })}${sleep.enabled ? ` ${escapeHTML(sleep.label)}` : ''}
-      </button>
-      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-pause-toggle" aria-label="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}" title="${t(sp.paused === true ? 'audio.play' : 'audio.pause', lang)}">
-        ${icon(sp.paused === true ? 'play' : 'pause', { size: 16 })}
-      </button>
-      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-stop" aria-label="${t('audio.reciteStop', lang)}">
-        ${icon('stop', { size: 16 })}
-      </button>
+      ${chips}
     </div>
-    ${
-      waiting
-        ? `<div class="player-bar__echo-wait" role="status">${icon('volume', { size: 14 })} ${t('audio.yourTurn', lang)}</div>`
-        : ''
-    }
+    ${recitationEchoHTML(snap, lang, 'player-bar__echo-wait')}
   </div>`;
 }

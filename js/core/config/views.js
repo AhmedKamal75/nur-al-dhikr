@@ -55,6 +55,12 @@ export const MUSHAF_FONTS = Object.freeze([
     family: "'Amiri Quran', 'Amiri', 'Traditional Arabic', serif",
   },
   {
+    id: 'scheherazade',
+    name: { en: 'Scheherazade New', ar: 'شهرزاد الجديد' },
+    sub: { en: 'Closest free Naskh to Medina print', ar: 'أقرب خط حر لطبعة المدينة' },
+    family: "'Scheherazade New', 'Amiri Quran', 'Traditional Arabic', serif",
+  },
+  {
     id: 'amiri',
     name: { en: 'Amiri', ar: 'أميري' },
     sub: { en: 'Classic Naskh typeface', ar: 'خط نسخ كلاسيكي' },
@@ -105,6 +111,30 @@ export const MUSHAF_PAPERS = Object.freeze([
     ink: '#1A1A1A',
     border: '#E2E2E2',
     dark: false,
+  },
+  {
+    id: 'madinah',
+    name: { en: 'Madinah Green', ar: 'أخضر مدني' },
+    bg: '#FDFDF6',
+    ink: '#1C1A12',
+    border: '#1E7A5A',
+    dark: false,
+  },
+  {
+    id: 'cream',
+    name: { en: 'Cream (Indo-Pak)', ar: 'كريمي' },
+    bg: '#F7E6A2',
+    ink: '#2A2114',
+    border: '#B98A1D',
+    dark: false,
+  },
+  {
+    id: 'royal-black',
+    name: { en: 'Black & Gold', ar: 'أسود وذهبي' },
+    bg: '#101010',
+    ink: '#EDE6D0',
+    border: '#6B5A2E',
+    dark: true,
   },
   {
     id: 'mint',

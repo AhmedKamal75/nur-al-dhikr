@@ -434,10 +434,16 @@ describe('v4.3 sw.js: offline stub + precache discipline', () => {
   });
 
   test('LRU re-insertion on cache hit (recency bookkeeping)', () => {
-    // Whitespace-tolerant: prettier may wrap the delete→put chain.
+    // (v5.2.3, B6) recency is bumpRecency() run AFTER revalidation
+    // settles — the old concurrent delete→put waitUntil could overwrite
+    // fresh bytes with the stale copy. Whitespace-tolerant.
     assert.match(
       sw,
-      /cache\s*\.\s*delete\(request\)\s*\.\s*then\(\s*\(\)\s*=>\s*cache\s*\.\s*put\(request,\s*copy\)/s
+      /async function bumpRecency\(cache,\s*request\)[\s\S]*?await cache\s*\.\s*delete\(request\)[\s\S]*?await cache\s*\.\s*put\(request,\s*copy\)/s
+    );
+    assert.match(
+      sw,
+      /putWithEviction\(cache, request, response\.clone\(\)\)[\s\S]*?bumpRecency\(cache, request\)/s
     );
   });
 });

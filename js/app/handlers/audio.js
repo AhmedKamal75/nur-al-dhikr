@@ -10,6 +10,7 @@ import { fetchJSON } from '../net.js';
 import { MUSHAF_META_URL, QURAN_META_URL } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
+import { formatCountdown } from '../../domain/ramadan.js';
 import { buildConfirm, buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -333,6 +334,56 @@ export const clickHandlers = {
     store.dispatch(actions.setAudioPrefs({ rate: next }));
   },
 };
+
+/**
+ * change/input registries (Blueprint D): { sel, run(ds, el, e) } owned by
+ * the feature that renders the control. events.js dispatches first-match-
+ * wins through the same rejection boundary as click handlers.
+ */
+export const changeHandlers = [
+  {
+    sel: '[data-player-seek]',
+    run: (ds, el) => {
+      const pct = parseFloat(el.value) || 0;
+      player.seek((pct / 100) * player.duration());
+    },
+  },
+];
+
+export const inputHandlers = [
+  {
+    // Live time preview while dragging the seek range — the seek itself
+    // still commits on change (release), so streaming isn't thrashed.
+    sel: '[data-player-seek]',
+    run: (ds, el) => {
+      const dur = player.duration();
+      const bar = document.querySelector('.player-bar');
+      const timeEl = bar?.querySelector('[data-player-time]');
+      if (timeEl && dur > 0) {
+        const pct = parseFloat(el.value) || 0;
+        const n = Math.max(0, Math.floor((pct / 100) * dur));
+        timeEl.textContent = formatCountdown(n * 1000);
+      }
+    },
+  },
+  {
+    sel: '[data-bind="audio-search"]',
+    run: (ds, el) => {
+      const v = el.value;
+      clearTimeout(rt.audioSearchTimer);
+      rt.audioSearchTimer = setTimeout(() => {
+        store.dispatch(actions.setAudioManagerQuery(v));
+        requestAnimationFrame(() => {
+          const input = document.getElementById('audio-search-input');
+          if (input && document.activeElement !== input) {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+          }
+        });
+      }, 180);
+    },
+  },
+];
 
 /**
  * Pure core of playlist-save-range: resolve { surah, from, to, id } from

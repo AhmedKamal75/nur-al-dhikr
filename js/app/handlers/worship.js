@@ -16,7 +16,12 @@ import { markCelebration } from '../../domain/celebrate.js';
 import { nextRemindTime } from '../../domain/fasting.js';
 import { ramadanKhatmaPreset } from '../../domain/khatma.js';
 import { dayComplete } from '../../domain/prayerLog.js';
-import { previewAlert, refreshCustomAdhanFlags, stopAdhan } from '../../services/prayerSound.js';
+import {
+  previewAlert,
+  refreshCustomAdhanFlags,
+  stopAdhan,
+  playSound,
+} from '../../services/prayerSound.js';
 import { buildDayDetail, buildNoteForm } from '../../ui/calendarModals.js';
 import { buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, isModalOpen, openModal } from '../../ui/modal.js';
@@ -37,6 +42,17 @@ function hijriForDateKey(dateKeyStr) {
 }
 
 export const clickHandlers = {
+  // (UX-6) the calendar sheet's fasting row: close the sheet, then jump
+  // to the fasting panel on the page beneath (settings-toc-go pattern —
+  // a plain #anchor would be parsed as a route).
+  'calendar-goto-fasting': () => {
+    closeModal();
+    const el = document.getElementById('calendar-fasting');
+    if (!el) return;
+    const reduce = !!store.getState().settings.reduceMotion;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  },
+
   'fasting-toggle-category': (ds) => {
     store.dispatch(actions.fastingToggleCategory(ds.cat));
     const state = store.getState();
@@ -323,3 +339,106 @@ export const clickHandlers = {
     store.dispatch(actions.removeLocationProfile(ds.id));
   },
 };
+
+/** change registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const changeHandlers = [
+  {
+    sel: '[data-bind="ramadan-suhoor-offset"]',
+    run: (ds, el) => {
+      const current = store.getState().settings.prayer.ramadanAlerts || {};
+      const mins = parseInt(el.value, 10) || 30;
+      store.dispatch(
+        actions.updatePrayerSettings({ ramadanAlerts: { ...current, suhoorOffset: mins } })
+      );
+    },
+  },
+  {
+    sel: '[data-action="checklist-toggle"]',
+    run: (ds, el) => {
+      store.dispatch(actions.toggleChecklistItem(ds.item));
+      const state = store.getState();
+      if (state.settings.hapticsEnabled) vibrate(el.checked ? 10 : 6);
+    },
+  },
+  {
+    // Sunnah tracker rows — checkbox change pipeline, same pattern as
+    // checklist-toggle (the click delegation would preventDefault the
+    // checkbox state away).
+    sel: '[data-action="sunnah-toggle"]',
+    run: (ds, el) => {
+      store.dispatch(actions.toggleSunnah(ds.id));
+      const state = store.getState();
+      if (state.settings.hapticsEnabled) vibrate(el.checked ? 10 : 6);
+    },
+  },
+  {
+    sel: '[data-bind="prayer-method"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updatePrayerSettings({ method: el.value }));
+    },
+  },
+  {
+    sel: '[data-bind="prayer-asr"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updatePrayerSettings({ asr: el.value }));
+    },
+  },
+  {
+    sel: '[data-bind="prayer-alert-sound"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updatePrayerSettings({ alertSound: el.value }));
+      playSound(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="prayer-adhan-volume"]',
+    run: (ds, el) => {
+      const v = Math.min(100, Math.max(0, parseInt(el.value, 10) || 0));
+      store.dispatch(actions.updatePrayerSettings({ adhanVolume: v }));
+    },
+  },
+  {
+    sel: '[data-bind="prayer-quiet-start"]',
+    run: (ds, el) => {
+      if (/^([01]\d|2[0-3]):[0-5]\d$/.test(el.value))
+        store.dispatch(actions.updatePrayerSettings({ quietStart: el.value }));
+    },
+  },
+  {
+    sel: '[data-bind="prayer-quiet-end"]',
+    run: (ds, el) => {
+      if (/^([01]\d|2[0-3]):[0-5]\d$/.test(el.value))
+        store.dispatch(actions.updatePrayerSettings({ quietEnd: el.value }));
+    },
+  },
+  {
+    sel: '[data-bind="prayer-quiet-volume"]',
+    run: (ds, el) => {
+      const v = Math.min(100, Math.max(0, parseInt(el.value, 10) || 0));
+      store.dispatch(actions.updatePrayerSettings({ quietVolume: v }));
+    },
+  },
+  {
+    sel: '[data-action="toggle-prayer-quiet"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updatePrayerSettings({ quietEnabled: el.checked }));
+    },
+  },
+  {
+    sel: '[data-bind="note-recurrence"]',
+    run: (ds, el) => {
+      const form = el.closest('form');
+      form.querySelectorAll('[data-recurrence-group]').forEach((group) => {
+        group.hidden = group.dataset.recurrenceGroup !== el.value;
+      });
+    },
+  },
+  {
+    sel: '[data-bind="note-reminder-toggle"]',
+    run: (ds, el) => {
+      const form = el.closest('form');
+      const group = form.querySelector('[data-reminder-group]');
+      if (group) group.hidden = !el.checked;
+    },
+  },
+];

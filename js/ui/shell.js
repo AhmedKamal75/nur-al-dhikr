@@ -132,7 +132,7 @@ export function renderTopBar(state) {
         ${icon('menu', { size: 22 })}
       </button>
       <a class="topbar__brand" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">
-        <span class="topbar__brand-icon" aria-hidden="true">\u262A</span>
+        <span class="topbar__brand-icon" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 13.2A8.2 8.2 0 0 1 10.8 4 8.2 8.2 0 1 0 20 13.2Z" fill="currentColor" opacity="0.95"/><path d="M17.2 4.6l.7 1.7 1.7.7-1.7.7-.7 1.7-.7-1.7-1.7-.7 1.7-.7.7-1.7Z" fill="#e8d48b"/></svg></span>
         <span class="topbar__brand-text">${t('app.name', lang)}</span>
       </a>
     </div>

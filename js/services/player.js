@@ -12,7 +12,7 @@
  * error) go through dispatched actions.
  */
 
-import { getAudio } from './audioStore.js';
+import { getAudio as defaultGetAudio } from './audioStore.js';
 
 let audioEl = null;
 let patchFn = null; // (info) => void — DOM patch callback
@@ -20,9 +20,11 @@ let endedHandler = null; // configured by app.js for repeat/autoplay logic
 let errorFn = null; // notified when the element itself errors mid-stream
 let stateFn = null; // notified on real play/pause/ended transitions
 let currentObjectUrl = null;
-let switching = false; // suppresses state sync while swapping tracks
+let switching = false; // suppresses element→store sync while the CURRENT swap runs
 let intendPlay = false; // we WANT playback — covers stalled loads where the
 // element sits paused-but-loading with play() still pending
+let playSeq = 0; // THE guard: increments on every play()/stop()
+let audioFetcher = defaultGetAudio; // test seam (see setAudioFetcher)
 
 function el() {
   if (!audioEl) {
@@ -82,6 +84,7 @@ function wireEventsOnce() {
   const a = el();
   if (a.__nurWired) return;
   a.__nurWired = true;
+  if (a.__nurSeq == null) a.__nurSeq = playSeq;
   a.addEventListener('timeupdate', emit);
   a.addEventListener('durationchange', emit);
   a.addEventListener('progress', emit);
@@ -97,6 +100,8 @@ function wireEventsOnce() {
   a.addEventListener('waiting', emit);
   a.addEventListener('canplay', emit);
   a.addEventListener('ended', () => {
+    // Stale 'ended' from a superseded track must not trigger autoplay chains.
+    if (a.__nurSeq !== playSeq) return;
     intendPlay = false;
     emit();
     notifyState();
@@ -104,10 +109,35 @@ function wireEventsOnce() {
   });
   a.addEventListener('error', () => {
     console.error('[player] audio error', a.error?.code);
+    if (a.__nurSeq !== playSeq) return;
     intendPlay = false;
     emit();
     errorFn?.();
   });
+}
+
+/** Test seam: swap the offline-blob fetcher (mirrors surahPlayback's configureDriver). */
+export function setAudioFetcher(fn) {
+  if (fn) audioFetcher = fn;
+}
+
+export function resetAudioFetcher() {
+  audioFetcher = defaultGetAudio;
+}
+
+/** Test-only: drop the singleton element + sequence so cases isolate. */
+export function resetPlayerForTests() {
+  try {
+    audioEl?.pause?.();
+  } catch {
+    /* ignore */
+  }
+  releaseObjectUrl();
+  audioEl = null;
+  playSeq = 0;
+  switching = false;
+  intendPlay = false;
+  audioFetcher = defaultGetAudio;
 }
 
 /**
@@ -120,43 +150,77 @@ function wireEventsOnce() {
  */
 export async function play(moshafId, surahNumber, url) {
   wireEventsOnce();
+  // (B1) single-flight guard: every entry invalidates pending predecessors.
+  const seq = ++playSeq;
   releaseObjectUrl();
+  // Suppress element→store sync for THIS swap only; a stale exit must not
+  // clear a newer swap's suppression (the old finally { switching = false } did).
   switching = true;
   const a = el();
-  a.pause();
+  try {
+    a.pause();
+  } catch {
+    /* element already paused */
+  }
 
   let offline = false;
-  let error = false;
   try {
-    const blob = await getAudio(moshafId, surahNumber);
+    const blob = await audioFetcher(moshafId, surahNumber);
+    // Loser unwinds silently: no src swap, no blob URL, no ghost error.
+    if (seq !== playSeq) return { offline: false, error: false };
     if (blob) {
-      currentObjectUrl = URL.createObjectURL(blob);
+      const objectUrl = URL.createObjectURL(blob);
+      // Re-check after the sync URL creation: a swap may have landed while
+      // we built the URL — revoke ours instead of leaking it (B1 leak).
+      if (seq !== playSeq) {
+        URL.revokeObjectURL(objectUrl);
+        return { offline: false, error: false };
+      }
+      currentObjectUrl = objectUrl;
       a.src = currentObjectUrl;
       offline = true;
     } else {
       a.src = url;
     }
+    a.__nurSeq = seq;
     a.playbackRate = a.playbackRate || 1;
     intendPlay = true;
     emit();
     try {
       await a.play();
     } catch (err) {
+      // A superseded call's abort is expected, never a user-facing failure.
+      if (seq !== playSeq) return { offline, error: false };
       console.error('[player] play() rejected', err);
-      error = true;
       intendPlay = false;
       emit();
+      if (seq === playSeq) {
+        switching = false;
+        notifyState();
+      }
+      return { offline, error: true };
     }
+    // Late-resolving winner check: B's IDB read beat A's, A's src swap
+    // must not clobber B's newer track (B1 wrong-track).
+    if (seq !== playSeq) return { offline, error: false };
+    if (seq === playSeq) {
+      switching = false;
+      notifyState();
+    }
+    return { offline, error: false };
   } catch (err) {
-    // e.g. IndexedDB blew up mid-lookup — surface it, never swallow it.
+    // e.g. IndexedDB blew up mid-lookup — surface it, never swallow it,
+    // unless we already lost the race (then stay silent for the winner).
+    if (seq !== playSeq) return { offline: false, error: false };
     console.error('[player] track load failed', err);
-    error = true;
     intendPlay = false;
-  } finally {
-    switching = false;
-    notifyState();
+    emit();
+    if (seq === playSeq) {
+      switching = false;
+      notifyState();
+    }
+    return { offline, error: true };
   }
-  return { offline, error };
 }
 
 export function toggle() {
@@ -192,11 +256,14 @@ export function setRate(r) {
 }
 
 export function stop() {
+  ++playSeq; // outstanding awaits become no-ops; stale ended/error ignored
   const a = el();
   intendPlay = false;
+  switching = false;
   a.pause();
   a.removeAttribute('src');
   a.load();
+  a.__nurSeq = playSeq;
   releaseObjectUrl();
   emit();
 }

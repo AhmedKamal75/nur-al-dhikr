@@ -5,6 +5,12 @@
  */
 
 import { closeNavDrawer, openNavDrawer } from '../drawer.js';
+import {
+  debounceHadithQuery,
+  debounceQuranSearchNavigate,
+  debounceRootsSearchNavigate,
+  debounceSearchNavigate,
+} from '../inputs.js';
 import { go } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
 
@@ -80,3 +86,31 @@ export const clickHandlers = {
     store.dispatch(actions.updateSettings({ themeMode: isDark ? 'light' : 'dark' }));
   },
 };
+
+/** input registry (Blueprint D): { sel, run(ds, el, e) }. */
+export const inputHandlers = [
+  {
+    sel: '[data-bind="search-query"]',
+    run: (ds, el) => {
+      debounceSearchNavigate(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="quran-search"]',
+    run: (ds, el) => {
+      debounceQuranSearchNavigate(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="roots-search"]',
+    run: (ds, el) => {
+      debounceRootsSearchNavigate(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="hadith-query"]',
+    run: (ds, el) => {
+      debounceHadithQuery(el.value);
+    },
+  },
+];

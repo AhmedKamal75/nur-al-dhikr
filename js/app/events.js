@@ -1,18 +1,9 @@
 import { rt } from './rt.js';
-import { formatCountdown } from '../domain/ramadan.js';
 import { closeNavDrawer } from './drawer.js';
 import { handleAdhanImport, handleImportFile } from './fileImports.js';
 import { handleFocusKeydown, navigateFocusAdjacent } from './focusRuntime.js';
 import { handlePromptForm, formHandlers } from './forms.js';
-import {
-  clampSliderNum,
-  debounceHadithQuery,
-  debounceQuranSearchNavigate,
-  debounceRootsSearchNavigate,
-  debounceSearchNavigate,
-  handleZakatInput,
-  playFlipSound,
-} from './inputs.js';
+import { playFlipSound } from './inputs.js';
 
 import { VIEWS } from '../core/config.js';
 import { t } from '../core/i18n.js';
@@ -30,44 +21,62 @@ import {
   prevSpreadPage,
   setMushafWideLayout,
 } from '../services/mushaf.js';
-import { playSound } from '../services/prayerSound.js';
 import { closeModal, openModal, isModalOpen } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
-import * as player from '../services/player.js';
 import * as recitation from '../services/recitation.js';
-import * as surahPlayback from '../services/surahPlayback.js';
-import { clickHandlers as navClick } from './handlers/navigation.js';
-import { clickHandlers as itemsClick } from './handlers/items.js';
-import { clickHandlers as systemClick } from './handlers/system.js';
-import { clickHandlers as locationClick } from './handlers/location.js';
+import {
+  clickHandlers as navClick,
+  inputHandlers as navigationInput,
+} from './handlers/navigation.js';
+import { clickHandlers as itemsClick, changeHandlers as itemsChange } from './handlers/items.js';
+import {
+  clickHandlers as systemClick,
+  changeHandlers as systemChange,
+  inputHandlers as systemInput,
+} from './handlers/system.js';
+import {
+  clickHandlers as locationClick,
+  changeHandlers as locationChange,
+} from './handlers/location.js';
 import { clickHandlers as quizClick } from './handlers/quiz.js';
-import { clickHandlers as quranClick } from './handlers/quran.js';
+import {
+  clickHandlers as quranClick,
+  changeHandlers as quranChange,
+  inputHandlers as quranInput,
+} from './handlers/quran.js';
 import { clickHandlers as quranAudioClick } from './handlers/quranAudio.js';
 import { clickHandlers as hifzClick } from './handlers/hifz.js';
-import { clickHandlers as worshipClick } from './handlers/worship.js';
-import { clickHandlers as zakatClick } from './handlers/zakat.js';
-import { clickHandlers as audioClick } from './handlers/audio.js';
+import {
+  clickHandlers as worshipClick,
+  changeHandlers as worshipChange,
+} from './handlers/worship.js';
+import { clickHandlers as zakatClick, inputHandlers as zakatInput } from './handlers/zakat.js';
+import {
+  clickHandlers as audioClick,
+  changeHandlers as audioChange,
+  inputHandlers as audioInput,
+} from './handlers/audio.js';
 import { clickHandlers as tasbihClick } from './handlers/tasbih.js';
 import { clickHandlers as editorClick } from './handlers/editor.js';
-import { clickHandlers as contentClick } from './handlers/content.js';
+import {
+  clickHandlers as contentClick,
+  changeHandlers as contentChange,
+} from './handlers/content.js';
 import { clickHandlers as viewMenusClick } from './handlers/viewMenus.js';
-import { setItemTarget } from '../services/contentPrefs.js';
 import { clickHandlers as journalClick } from './handlers/journal.js';
 import { clickHandlers as grammarClick } from './handlers/grammar.js';
-import { buildMushafBookmarks, setFlipDirection } from '../views/mushafReader.js';
 import { buildAyahQuickSheet } from '../views/quran.js';
-import { buildMushafSettingsPanel } from '../views/tafsirPanel.js';
+import { setFlipDirection } from '../views/mushafReader.js';
 import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
 
 /**
  * app/events.js — THE single delegated event listener. Click, change,
  * input, submit, and keydown on document resolve [data-action] /
- * [data-bind] / [data-form] attributes into the merged handler maps.
- * Views stay pure string templates; no view ever attaches a listener.
+ * [data-bind] / [data-form] attributes into tables owned by the feature
+ * modules: click actions merge into ONE dispatch table, change/input
+ * selectors merge into TWO registries. Views stay pure string templates;
+ * no view ever attaches a listener.
  */
-
-/** (v4.5.2) commit a computed contentPrefs slice in one dispatch. */
-const commitPrefs = (prefs) => store.dispatch(actions.updateSettings({ contentPrefs: prefs }));
 
 /** The complete click-dispatch table: one merged view over every
  * feature-scoped handler module. Keys are unique; order is irrelevant. */
@@ -117,6 +126,62 @@ export const handlerMaps = [
 export const mergedClickHandlers = clickHandlers;
 
 /**
+ * Change/input registries (Blueprint D). Each entry is
+ * { sel, run(ds, el, e) } owned by the feature module that renders the
+ * control; first matching selector wins, mirroring the old if/else-chain
+ * order. run() may be async — rejections surface through the same
+ * boundary as click handlers (an async throw inside an arm used to be
+ * an unhandled rejection).
+ */
+export const changeRegistry = [
+  ...audioChange,
+  ...contentChange,
+  ...systemChange,
+  ...worshipChange,
+  ...locationChange,
+  ...itemsChange,
+  ...quranChange,
+];
+
+export const inputRegistry = [
+  ...audioInput,
+  ...systemInput,
+  ...navigationInput,
+  ...zakatInput,
+  ...quranInput,
+];
+
+function matchRegistry(registry, el) {
+  for (const entry of registry) {
+    try {
+      if (el?.matches?.(entry.sel)) return entry;
+    } catch {
+      /* an invalid selector fails the gate test loudly instead */
+    }
+  }
+  return null;
+}
+
+export { matchRegistry };
+
+function dispatchPromise(action, result) {
+  if (result && typeof result.catch === 'function') {
+    result.catch((err) => reportHandlerError(action, err));
+  }
+}
+
+export function dispatchRegistry(kind, registry, e) {
+  const entry = matchRegistry(registry, e.target);
+  if (!entry) return false;
+  try {
+    dispatchPromise(`${kind}:${entry.sel}`, entry.run(e.target.dataset, e.target, e));
+  } catch (err) {
+    reportHandlerError(`${kind}:${entry.sel}`, err);
+  }
+  return true;
+}
+
+/**
  * Rejection boundary for delegated handlers. Every user action in the app
  * flows through one of two dispatch calls below; before v4.1 neither
  * awaited nor caught, so any async throw (~30 handlers: surah-play,
@@ -134,10 +199,7 @@ function dispatchHandler(action, ds, e, target) {
   const handler = clickHandlers[action];
   if (!handler) return;
   try {
-    const result = handler(ds, e, target);
-    if (result && typeof result.catch === 'function') {
-      result.catch((err) => reportHandlerError(action, err));
-    }
+    dispatchPromise(action, handler(ds, e, target));
   } catch (err) {
     reportHandlerError(action, err);
   }
@@ -392,267 +454,24 @@ export function bindGlobalEvents() {
   });
 
   document.addEventListener('change', (e) => {
+    if (dispatchRegistry('change', changeRegistry, e)) return;
+    // App-wide file inputs live here, not in a feature: importing a
+    // backup or a custom adhan recording. Both are async — rejections
+    // surface through the same boundary as every other handler.
     const target = e.target;
-
-    if (target.matches('[data-player-seek]')) {
-      const pct = parseFloat(target.value) || 0;
-      player.seek((pct / 100) * player.duration());
-      return;
-    }
-    // (v4.5.2) manage-mode target stepper: an inline number input on the
-    // card's manage row. Commits the contentPrefs override AND keeps the
-    // live counter record in agreement, so the pill re-renders instantly.
-    if (target.matches('[data-action="content-set-target"]')) {
-      const state = store.getState();
-      const prefs = setItemTarget(state, target.dataset.itemId, target.value);
-      if (prefs !== state.settings.contentPrefs) {
-        commitPrefs(prefs);
-        const counter = state.counters[target.dataset.itemId];
-        if (counter) {
-          store.dispatch(
-            actions.setCounter(target.dataset.itemId, {
-              ...counter,
-              target: prefs.targetOverrides[target.dataset.itemId],
-            })
-          );
-        }
-      }
-      return;
-    }
-    if (target.matches('[data-action="toggle-setting"]')) {
-      store.dispatch(actions.updateSettings({ [target.dataset.key]: target.checked }));
-      // Live-apply the compare-mode preference to a running recitation
-      // session (same as the set-setting click path in handlers/system.js).
-      if (target.dataset.key === 'reciterCompare' && surahPlayback.isActive()) {
-        store.dispatch(actions.setSurahPlayback(surahPlayback.setCompare(target.checked)));
-      }
-      return;
-    }
-    // Kids mode: entering navigates straight into the Kids home (the
-    // parent hands the device over); leaving returns home.
-    if (target.matches('[data-action="toggle-kids-mode"]')) {
-      const on = target.checked;
-      store.dispatch(actions.updateSettings({ kidsMode: on }));
-      go(on ? VIEWS.KIDS : VIEWS.HOME);
-      return;
-    }
-    // Elderly one-tap mode: the class does the styling; enabling ALSO bumps
-    // the two font scales + high contrast once (kept afterwards — the
-    // sliders stay the source of truth, disabling only drops the class).
-    if (target.matches('[data-action="toggle-elder-mode"]')) {
-      const on = target.checked;
-      const patch = { elderMode: on };
-      if (on) {
-        const s = store.getState().settings;
-        patch.fontScale = Math.max(Number(s.fontScale) || 1, 1.25);
-        patch.arabicFontScale = Math.max(Number(s.arabicFontScale) || 1, 1.5);
-        patch.highContrast = true;
-      }
-      store.dispatch(actions.updateSettings(patch));
-      return;
-    }
-    if (target.matches('[data-action="toggle-mushaf-pref"]')) {
-      store.dispatch(actions.updateMushafPrefs({ [target.dataset.key]: target.checked }));
-      // The legend only shows while tajweed coloring is on, and toggles in
-      // general read better with instant feedback — refresh the panel in
-      // place rather than waiting for the next unrelated re-render.
-      openModal(buildMushafSettingsPanel(store.getState()), {
-        labelledBy: 'modal-title-mushaf-settings',
-      });
-      return;
-    }
-    if (target.matches('[data-bind="mushaf-font-scale"]')) {
-      store.dispatch(
-        actions.updateMushafPrefs({ fontScale: clampSliderNum(target.value, 0.6, 2.2) })
-      );
-      return;
-    }
-    if (target.matches('[data-bind="mushaf-line-spacing"]')) {
-      store.dispatch(
-        actions.updateMushafPrefs({ lineSpacing: clampSliderNum(target.value, 0.85, 1.3) })
-      );
-      return;
-    }
-    if (target.matches('[data-bind="ramadan-suhoor-offset"]')) {
-      const current = store.getState().settings.prayer.ramadanAlerts || {};
-      const mins = parseInt(target.value, 10) || 30;
-      store.dispatch(
-        actions.updatePrayerSettings({ ramadanAlerts: { ...current, suhoorOffset: mins } })
-      );
-      return;
-    }
-    if (target.matches('[data-bind="bookmark-folder"]')) {
-      store.dispatch(
-        actions.updateAyahBookmark(target.dataset.key, { folderId: target.value || null })
-      );
-      openModal(buildMushafBookmarks(store.getState()), {
-        labelledBy: 'modal-title-mushaf-bookmarks',
-      });
-      return;
-    }
-    if (target.matches('[data-action="checklist-toggle"]')) {
-      store.dispatch(actions.toggleChecklistItem(target.dataset.item));
-      const state = store.getState();
-      if (state.settings.hapticsEnabled) vibrate(target.checked ? 10 : 6);
-      return;
-    }
-    // (v4.4) Sunnah tracker rows — checkbox change pipeline, same pattern
-    // as checklist-toggle (the click delegation would preventDefault the
-    // checkbox state away).
-    if (target.matches('[data-action="sunnah-toggle"]')) {
-      store.dispatch(actions.toggleSunnah(target.dataset.id));
-      const state = store.getState();
-      if (state.settings.hapticsEnabled) vibrate(target.checked ? 10 : 6);
-      return;
-    }
-    if (target.matches('[data-action="toggle-traveler-mode"]')) {
-      const next = target.checked === true;
-      store.dispatch(actions.updatePrayerSettings({ travelerMode: next }));
-      showToast(
-        t(next ? 'traveler.enabled' : 'traveler.disabled', store.getState().settings.language)
-      );
-      return;
-    }
-    if (target.matches('[data-action="toggle-reminder"]')) {
-      store.dispatch(actions.updateReminder(target.dataset.id, { enabled: target.checked }));
-      return;
-    }
-    if (target.matches('[data-action="collection-picker-toggle"]')) {
-      const { collectionId, itemId } = target.dataset;
-      if (target.checked) store.dispatch(actions.addToCollection(collectionId, itemId));
-      else store.dispatch(actions.removeFromCollection(collectionId, itemId));
-      return;
-    }
-    if (target.matches('[data-bind="dailyGoal"]')) {
-      store.dispatch(
-        actions.updateSettings({ dailyGoal: Math.max(1, parseInt(target.value, 10) || 100) })
-      );
-      return;
-    }
-    if (target.matches('[data-bind="prayer-method"]')) {
-      store.dispatch(actions.updatePrayerSettings({ method: target.value }));
-      return;
-    }
-    if (target.matches('[data-bind="prayer-asr"]')) {
-      store.dispatch(actions.updatePrayerSettings({ asr: target.value }));
-      return;
-    }
-    if (target.matches('[data-bind="prayer-alert-sound"]')) {
-      store.dispatch(actions.updatePrayerSettings({ alertSound: target.value }));
-      playSound(target.value);
-      return;
-    }
-    if (target.matches('[data-bind="prayer-adhan-volume"]')) {
-      const v = Math.min(100, Math.max(0, parseInt(target.value, 10) || 0));
-      store.dispatch(actions.updatePrayerSettings({ adhanVolume: v }));
-      return;
-    }
-    if (target.matches('[data-bind="prayer-quiet-start"]')) {
-      if (/^([01]\d|2[0-3]):[0-5]\d$/.test(target.value))
-        store.dispatch(actions.updatePrayerSettings({ quietStart: target.value }));
-      return;
-    }
-    if (target.matches('[data-bind="prayer-quiet-end"]')) {
-      if (/^([01]\d|2[0-3]):[0-5]\d$/.test(target.value))
-        store.dispatch(actions.updatePrayerSettings({ quietEnd: target.value }));
-      return;
-    }
-    if (target.matches('[data-bind="prayer-quiet-volume"]')) {
-      const v = Math.min(100, Math.max(0, parseInt(target.value, 10) || 0));
-      store.dispatch(actions.updatePrayerSettings({ quietVolume: v }));
-      return;
-    }
-    if (target.matches('[data-action="toggle-prayer-quiet"]')) {
-      store.dispatch(actions.updatePrayerSettings({ quietEnabled: target.checked }));
-      return;
-    }
-    // Home panel visibility: the checkbox means VISIBLE (unchecked hides).
-    if (target.matches('[data-action="home-panel-toggle"]')) {
-      const id = String(target.dataset.id || '');
-      const hidden = { ...(store.getState().settings.hiddenHome || {}) };
-      if (target.checked) delete hidden[id];
-      else hidden[id] = true;
-      store.dispatch(actions.updateSettings({ hiddenHome: hidden }));
-      return;
-    }
-    if (target.matches('[data-bind="note-recurrence"]')) {
-      const form = target.closest('form');
-      form.querySelectorAll('[data-recurrence-group]').forEach((el) => {
-        el.hidden = el.dataset.recurrenceGroup !== target.value;
-      });
-      return;
-    }
-    if (target.matches('[data-bind="note-reminder-toggle"]')) {
-      const form = target.closest('form');
-      const group = form.querySelector('[data-reminder-group]');
-      if (group) group.hidden = !target.checked;
-      return;
-    }
     if (target.id === 'backup-file-input' && target.files?.[0]) {
-      handleImportFile(target.files[0]);
+      dispatchPromise('backup-file-input', handleImportFile(target.files[0]));
     }
     if (target.id === 'adhan-file-input' && target.files?.[0]) {
-      handleAdhanImport(target.files[0], target.dataset.kind === 'fajr' ? 'fajr' : 'standard');
+      dispatchPromise(
+        'adhan-file-input',
+        handleAdhanImport(target.files[0], target.dataset.kind === 'fajr' ? 'fajr' : 'standard')
+      );
     }
   });
 
   document.addEventListener('input', (e) => {
-    const target = e.target;
-    // FIX (review A8): live time preview while dragging the seek range —
-    // the seek itself still commits on change (release), so streaming
-    // isn't thrashed with range requests, but the thumb never feels dead.
-    if (target.matches('[data-player-seek]')) {
-      const dur = player.duration();
-      const bar = document.querySelector('.player-bar');
-      const timeEl = bar?.querySelector('[data-player-time]');
-      if (timeEl && dur > 0) {
-        const pct = parseFloat(target.value) || 0;
-        const n = Math.max(0, Math.floor((pct / 100) * dur));
-        timeEl.textContent = formatCountdown(n * 1000);
-      }
-      return;
-    }
-    if (target.matches('[data-bind="fontScale"]')) {
-      store.dispatch(actions.updateSettings({ fontScale: parseFloat(target.value) }));
-    } else if (target.matches('[data-bind="arabicFontScale"]')) {
-      store.dispatch(actions.updateSettings({ arabicFontScale: parseFloat(target.value) }));
-    } else if (target.matches('[data-bind="search-query"]')) {
-      debounceSearchNavigate(target.value);
-    } else if (target.matches('[data-bind="quran-search"]')) {
-      debounceQuranSearchNavigate(target.value);
-    } else if (target.matches('[data-bind="roots-search"]')) {
-      debounceRootsSearchNavigate(target.value);
-    } else if (target.matches('[data-bind="hadith-query"]')) {
-      debounceHadithQuery(target.value);
-    } else if (target.matches('[data-bind^="zakat-"]')) {
-      handleZakatInput(target);
-    } else if (target.matches('[data-bind="bookmark-note"]')) {
-      // Modal inputs live outside #main, so re-renders never steal focus
-      // here — dispatch straight through with no refocus dance.
-      // (v4.2) …but debounced: every keystroke used to dispatch a full
-      // re-render of the underlying view (the whole Mushaf page, tajweed
-      // classification and all) plus a scheduled full-state persist. Same
-      // keyed-timer pattern as the zakat inputs.
-      const key = String(target.dataset.key || '');
-      const value = target.value;
-      clearTimeout(rt.bookmarkNoteTimer);
-      rt.bookmarkNoteTimer = setTimeout(() => {
-        store.dispatch(actions.updateAyahBookmark(key, { note: value }));
-      }, 250);
-    } else if (target.matches('[data-bind="audio-search"]')) {
-      const v = target.value;
-      clearTimeout(rt.audioSearchTimer);
-      rt.audioSearchTimer = setTimeout(() => {
-        store.dispatch(actions.setAudioManagerQuery(v));
-        requestAnimationFrame(() => {
-          const input = document.getElementById('audio-search-input');
-          if (input && document.activeElement !== input) {
-            input.focus();
-            input.setSelectionRange(input.value.length, input.value.length);
-          }
-        });
-      }, 180);
-    }
+    dispatchRegistry('input', inputRegistry, e);
   });
 
   document.addEventListener('keydown', (e) => {

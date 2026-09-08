@@ -62,9 +62,12 @@ js/
 │   ├── stateSub.js        The store's ONE subscriber (guard resets,
 │   │                      lifecycles, theme, re-render)
 │   ├── events.js          THE single delegated event listener; merges the
-│   │                      13 handler maps into one dispatch table
+│   │                      17 click maps into one dispatch table plus the
+│   │                      change/input registries (v5.2.4, Blueprint D)
 │   ├── handlers/          Feature-scoped click-handler maps, each a pure
-│   │                      (dataset, element, event) => void object
+│   │                      (dataset, element, event) => void object, plus
+│   │                      change/input { sel, run } registries owned by
+│   │                      the feature that renders the control
 │   ├── forms.js           data-form submit handlers
 │   ├── inputs.js          data-bind routing (debounced search, zakat live
 │   │                      inputs with caret salvage)
@@ -113,6 +116,10 @@ js/
 │   ├── schema.js          Content-document validation/normalization
 │   ├── migration.js       Legacy JSON shape upgrades
 │   ├── storage.js         The ONLY module touching localStorage/IndexedDB
+│   │                      (its IDB half delegates to core/idb/openDB.js)
+│   ├── idb/               Hardened IndexedDB boundary (v5.2.2, B4)
+│   │   └── openDB.js      blocked/failure settle + retry, versionchange
+│   │                      close + evict, abort-aware withStore
 │   ├── theme.js           Applies settings to <html> attrs + theme-color
 │   ├── utils.js           Pure helpers (no DOM/state coupling)
 │   └── state/             The store package (domain-AWARE: its sanitizers
@@ -150,15 +157,17 @@ js/
 │   │                      notifications, speech, backup, editor, share
 │   │                      cards, hadith/mushaf data services, tasbih)
 ├── ui/                    Components: card, shell, modal, toast, menus,
-│   │                      emptyState, skeleton, calendarModals
-└── views/                 37 pure string-template views (state → HTML)
+│   │                      emptyState, skeleton, calendarModals,
+│   │                      recitationConsole (the ONE 13-chip console,
+│   │                      v5.2.5 — hosts pass classes + sleep in)
+└── views/                 38 pure string-template views (state → HTML)
 
 assets/css/                9 files, strict load order:
                            variables → base → layout → components →
                            cards → quran → animations → desktop →
                            accessibility
 data/                      Content corpora (~157MB; see data/SOURCES.md)
-tests/                     58 test files + helpers / 845 tests (node --test)
+tests/                     81 test files + helpers / 972 tests (node --test)
 sw.js                      Service worker (precache + SWR data + triggers)
 ```
 
@@ -216,7 +225,9 @@ layers are exactly what may be broken.
    preservation for replaced inputs. Same-view re-renders never animate.
 3. Every user interaction flows through ONE delegated listener per event
    type in `app/events.js`: `[data-action]` → merged click-handler map,
-   `[data-bind]` → input routing, `[data-form]` → form handlers. Views
+   change/input `[data-action]`/`[data-bind]` → feature-owned
+   `{ sel, run }` registries (first match wins, same rejection
+   boundary), `[data-form]` → form handlers. Views
    declare behavior as data attributes, nothing else.
 4. Handlers dispatch actions into `core/state`. The reducer treats every
    payload as hostile (validate, clamp, or drop). Multi-action gestures
@@ -244,9 +255,11 @@ layers are exactly what may be broken.
   Session-only slices (player, modals, arm status) are stripped.
 - **Known compromise:** four Mushaf view transients (flip direction,
   fullscreen anim direction, bookmark folder filter, active tafsir tab)
-  are documented single-use module state inside
-  `views/mushafReader.js`. Do not add more; if you
-  touch that file, consider promoting them.
+  are documented single-use module state — flip/fullscreen in
+  `views/mushafReader.js`, the filter in `views/mushafBookmarks.js`,
+  the tab in `views/ayahStudy.js` (v5.2.6 split, Blueprint E step 2;
+  the filter no longer writes back mid-render). Do not add more; if you
+  touch those files, consider promoting them.
 - **(v4.4) Mushaf-first reading.** The Mushaf (paper-book view) is the
   app's default Qur'an experience; the classic list reader is a peer,
   reachable in one tap from either side. Generic "read the Qur'an"
@@ -357,7 +370,7 @@ layers are exactly what may be broken.
 
 ```
 npx eslint .             # zero errors (js, tests, sw.js — all linted)
-npm test                 # 845 tests, all green
+npm test                 # 972 tests, all green
 npx prettier --check .   # whole tree (npm run check runs all three)
 ```
 
@@ -385,7 +398,9 @@ never "add it to the allowlist" — it's a real regression.
 
 1. Bump all five version markers in lockstep: `package.json`,
    `APP_VERSION` in `core/config.js`, `VERSION` in `sw.js`, `version` +
-   `version_name` in `manifest.json`, and the README release note.
+   `version_name` in `manifest.json`, and the `docs/RELEASES.md` entry.
+   Then run `npm run snapshot-shell` — the version-stamp gate fails
+   until the committed `tests/app-shell-hashes.json` matches the bump.
 2. Run the full quality gates; verify the entry-link and SW-precache
    gates specifically (they catch the "app ships blank" and "offline
    install silently fails" classes). Regenerate `sw.js`'s APP_SHELL with
@@ -395,6 +410,8 @@ never "add it to the allowlist" — it's a real regression.
 4. Package the zip: site files at the root, `node_modules/` excluded,
    dotfiles preserved.
 5. Never claim a test/audit ran unless you ran it in this session.
+6. Docs numbers are regenerated from counts, never typed: test totals
+   from `npm test`, test-file counts from `ls tests/*.test.js`.
 
 ## 8. UX bar
 
@@ -444,3 +461,7 @@ the two remaining god-files were split without moving any public path —
 library, quran, hadith, worship, audio) behind a dispatcher facade —
 plus dependency-hygiene (vendored transitive deps removed from
 package.json), SW precache completion, and doc-number corrections.
+v5.2.2 is the hostile-audit hotfix wave: single-flight player tokens,
+fetch timeouts, promise-cached catalog, persisted Ramadan dedup, the
+`core/idb` boundary, and recitation listener sets — each pinned by a
+regression test that fails on the old code.

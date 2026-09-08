@@ -2,6 +2,187 @@
 
 # Status update 2026-09-04: all items fixed except U5 (needs a real device).
 
+# HOSTILE BLUEPRINT VERIFICATION + PHASE-0 HOTFIXES (v5.2.2, 2026-09-07)
+
+# Source: external "Hostile Audit & Rebuild Blueprint" (.docx/.pdf in repo
+
+# root, 1 P1 + 7 P2 + 5 P3 + 9 UX + debt map + 5 blueprints + roadmap).
+
+# Independently re-verified: evidence base TRUE (934/934 green, all-5.1.0
+
+# markers vs v5.2.x docs, 38 views, 72 test files, mushafReader 1082 lines,
+
+# events.js 966 lines), every B-bug reproduced at the cited lines, every
+
+# UX finding spot-checked (UX-2 keys, UX-3 icons, UX-4 chevrons, UX-5 console
+
+# twins, UX-9 H1 all confirmed). Blueprint deviations: player keeps a
+
+# token-guarded `switching` suppress (plain removal flickers the store
+
+# mid-swap); fetch timeout is a ref'd setTimeout, not AbortSignal.timeout
+
+# (whose timer does not hold the Node event loop); recitation fix adds a
+
+# session-active guard so one dead verse yields one toast, not two.
+
+# `npm run check`: eslint 0, 951/951 green (934 + 17 new), prettier clean.
+
+- [x] **B1 (P1) player race** — `services/player.js`: sequence token,
+      stale ended/error guards, `stop()` invalidates. Test:
+      `tests/player-race.test.js` (3).
+- [x] **B2/B8 catalog + fetch** — `loadCatalog()` caches its promise;
+      `fetchJSON` gains a 15s timeout into loadErrors. Test:
+      `tests/fetch-timeout-catalog.test.js` (4).
+- [x] **B5 Ramadan re-adhan** — suhoor/iftar use `wasDayFired` /
+      `markDayFired`. Test: `tests/ramadan-dedup.test.js` (reload
+      simulation fails on old code, verified via stash).
+- [x] **B4 storage boundary** — new `js/core/idb/openDB.js`
+      (settle-don't-hang, no failure memo, versionchange evict,
+      abort-aware `withStore`); `core/storage.js` delegates; precache + B13 dead-code cleanup in `sw.js`. Test:
+      `tests/idb-boundary.test.js` (6).
+- [x] **B3 recitation clobber** — listener sets + `off*` removers,
+      `surahPlayback.stop()` unregisters, toast skips while a session
+      is active. Test: `tests/recitation-listeners.test.js` (3).
+- [x] **B7 version lockstep** — markers 5.1.0 → 5.2.2 (package, config,
+      sw, manifest ×2) + `docs/RELEASES.md` entries for the unmarked
+      v5.2.0/v5.2.1 + this release; README/ARCHITECTURE counts re-synced
+      (77 files / 951 tests).
+- [ ] Blueprint remainder (NOT started): B6 SWR recency, B9–B12 P3s,
+      UX-1–UX-9, events.js registries, mushafReader decomposition,
+      features/ strangler. (Playwright + CI + version-hash gate are DONE
+      below — the "process and safety net" phase.)
+
+# PHASE 1 — PROCESS AND SAFETY NET (v5.2.2, 2026-09-07)
+
+# `npm run check`: eslint 0, 953/953 green (951 + 2 gate tests), prettier clean.
+
+# (v5.2.3: 955/955 — trigger-plan ×2. Counts below stay as-run.)
+
+# `npm run e2e`: 3/3 green on local Chromium (smoke ×2, B1 race ×1).
+
+- [x] **CI.** `.github/workflows/check.yml`: `check` job (`npm ci` +
+      `npm run check`) and `e2e` job (Chromium + `npm run e2e`) on push
+      and pull_request. No CI configuration shipped before this.
+- [x] **Version-stamp gate (B7, permanent).** `tests/app-shell-hashes.json`
+      snapshots sha256 of all 219 cache-first bytes at the bumped version;
+      `tests/contracts.test.js §8` fails on (a) any byte change at the
+      stamped version and (b) markers moved without re-stamping.
+      `npm run snapshot-shell` (scripts/, dev-only, never shipped)
+      re-stamps; release protocol §7 now requires it. Both drift
+      directions verified to fail; shared logic in
+      `tests/helpers/shell-hash.mjs`.
+- [x] **Playwright, kept in-tree.** `playwright.config.js` (chromium,
+      python http.server, `.spec.js` so node --test never picks them up),
+      `tests/e2e/smoke.spec.js` (9 routes render, zero console/page
+      errors; tasbih burst +5 survives reload), `tests/e2e/races.spec.js`
+      (B1: sync triple-tap over route-fulfilled WAV silence → one track,
+      zero alert toasts, zero console errors). The race spec was proven
+      against the pre-fix player: it fails with the exact ghost
+      (`play() rejected AbortError … interrupted by pause()`). Adhan-window
+      reload e2e still needs an app-exposed time seam — the dedup itself
+      stays pinned by `tests/ramadan-dedup.test.js`.
+- [x] **Docs.** Release protocol gains "docs numbers are regenerated
+      from counts, never typed" + the snapshot-shell step.
+
+# V5.2.6 — MUSHAF SPLITS, BLUEPRINT E STEP 2 (2026-09-07)
+
+# `npm run check`: eslint 0, 972/972 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.5 → 5.2.6 + re-stamp (223 files).
+
+- [x] **God-file split.** `views/mushafReader.js` 1058 → 715 lines:
+      bookmarks+folders → `views/mushafBookmarks.js`, Khatma
+      tracker+plan form → `views/khatma.js`, ayah-study modal →
+      `views/ayahStudy.js`. Each move render-verified byte-identical
+      against the original before deletion; the facade re-exports keep
+      all 10+ importers and 4 test files untouched. Test:
+      `tests/mushaf-structure.test.js` (4: size cap, import allowlist,
+      no back-edges, facade resolution).
+- [x] **B12.** Stale folder filter corrects read-only at render (no more
+      mid-render write-back).
+- [x] **B11.** `mushaf-toggle-bookmark` + `practice-this-ayah` clamp
+      dataset values at the handler edge (canonical strings keep stored
+      shape identical); `open-in-study`/`ayah-share` already clamped,
+      `copy-ayah` is a text sink (safe as-is).
+- [ ] Still open: UX-1/UX-7/UX-8, features/ strangler (deliberately
+      deferred — moves without re-exports would churn all importers).
+
+# V5.2.5 — ONE CONSOLE, BLUEPRINT E STEP 1 (2026-09-07)
+
+# `npm run check`: eslint 0, 968/968 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.4 → 5.2.5 + re-stamp (220 files).
+
+- [x] **UX-5 console triplication.** New `js/ui/recitationConsole.js`
+      (snapshot + 13 chips + echo banner, precached): Mushaf fullscreen,
+      reader immersive, and player-bar consoles render from it with
+      per-host classes, zero visual change. `reciterShortLabel` moves
+      there too (ends the view→view imports). Player-bar ayah prev/next
+      unified to mushaf order (was the LTR odd one out). Test:
+      `tests/recitation-console.test.js` (6).
+- [ ] Still open: B11/B12, UX-1/UX-7/UX-8, Blueprint E step 2 (mushaf
+      splits), features/ strangler.
+
+# V5.2.4 — DECLARATIVE CHANGE/INPUT WIRING, BLUEPRINT D (2026-09-07)
+
+# `npm run check`: eslint 0, 962/962 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.3 → 5.2.4 + re-stamp.
+
+- [x] **Blueprint D.** `app/events.js` 966 → 778 lines: the change/input
+      `if/else` chains are `changeRegistry` (27) + `inputRegistry` (10),
+      assembled from feature-owned `{ sel, run }` arrays (audio, content,
+      system, worship, location, items, quran, navigation, zakat), first
+      match wins, same rejection boundary as clicks (file-import async
+      paths included — previously unhandled). `events.js` keeps no
+      feature knowledge beyond the two app-wide file inputs.
+      `tests/event-registries.test.js` (7): completeness counts,
+      selector uniqueness, first-match order, round-trips
+      (prayer-method, home-panel-toggle, fontScale), throwing-run
+      boundary. Zero behavior change by construction.
+- [ ] Still open: B11/B12, UX-1/UX-5/UX-7/UX-8, Blueprint E (console +
+      mushaf splits), features/ strangler.
+
+# V5.2.3 — SWR, LATCHES, PORTS, CHROME HONESTY (2026-09-07)
+
+# `npm run check`: eslint 0, 955/955 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.2 → 5.2.3 + re-stamp (the
+
+# version-stamp gate caught these very changes mid-flight, as designed).
+
+- [x] **B6 SWR recency.** `sw.js#staleWhileRevalidate`: recency bump
+      serialized behind revalidation via `bumpRecency()` (no new unit
+      surface — SW has no Node harness; syntax + lint + review).
+      `tests/v4.3-fixes.test.js` now pins the new chain, not the old one.
+- [x] **B9 meta latch.** `app/lazyData.js#fetchQuranMetaShared`: reader,
+      mushaf, and ayah-study modal share one meta promise (late joiners
+      wait; failures flag + toast instead of a silent empty modal).
+- [x] **B10 trigger ports.** `app/triggers.js#sendTriggerPlan`: first
+      reply wins, port closes, orphans reaped after 10s. Test:
+      `tests/trigger-plan.test.js` (2).
+- [x] **UX-2 names.** Recent-adhkar panel takes the Settings name
+      ("Recently read"); the dead `home.continueReading` key is deleted
+      in both languages (parity gate green).
+- [x] **UX-3 icons.** Home quick-actions use prayer-rug/compass like the
+      corrected rail.
+- [x] **UX-4 arrows.** Hadith pager, both in-view back links, and the
+      prayer month modal mirror by UI language (the shell's U7 rule).
+      Quranic-sequence chevrons (surah/ayah order) stay RTL-book
+      deliberately — chrome mirrors, content order doesn't.
+- [x] **UX-6 dead row.** The calendar sheet's self-link is now
+      `calendar-goto-fasting`: closes the sheet, scrolls to
+      `#calendar-fasting` (settings-toc-go pattern). New `data-action`
+      resolves (dead-action gate green).
+- [x] **UX-9 H1.** Home hero H1 is the app name; the tagline is a styled
+      paragraph (`.home-hero__tagline`, `--fs-base` token).
+- [ ] Still open: B11/B12, UX-1/UX-5/UX-7/UX-8, Blueprint D (event
+      registries), Blueprint E (console + mushaf splits), features/
+      strangler.
+
+# Status update 2026-09-04: all items fixed except U5 (needs a real device).
+
 # `npm test`: 813/813 green after fixes. eslint/prettier not runnable here
 
 # (dev deps not installed); edits follow existing style. Re-run `npm run check` on a dev machine.

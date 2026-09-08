@@ -33,7 +33,7 @@
      actions stay flush with the content edges.
      ------------------------------------------------------------------ */
   :root {
-    --content-max-width: 60rem;
+    --content-max-width: 76rem;
   }
 
   /* ------------------------------------------------------------------
@@ -77,23 +77,38 @@
   /* ------------------------------------------------------------------
      2. DENSITY — hub grids use the width.
      ------------------------------------------------------------------ */
-  /* Home: quick actions spread to five across; the onboarding checklist
+  /* Home: quick actions flow to fill the row; the onboarding checklist
      breaks out of one endless column into two side-by-side groups. */
   .quick-actions {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+  .view--home .home-hero {
+    padding: var(--space-8) var(--space-8);
   }
   .view--home .home-hero__title {
-    max-width: 24ch;
+    max-width: 26ch;
+  }
+
+  /* Reading views keep a human measure on wide screens — text never spans
+     the full canvas — while hub views (library, hadith, stats, search…)
+     fill it via their own auto-fill grids. */
+  .view--quran,
+  .view--hadith-book,
+  .view--journal,
+  .view--quiz {
+    max-width: 52rem;
+    margin-inline: auto;
+    width: 100%;
   }
 
   /* Library: category tiles fill rows of four with equal heights (grid
      stretch is default — the staircase the audit flagged came from tiles
      fighting it via align-self in a row-flex emulation). */
   .category-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
   }
   .mood-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   }
 
   /* Surah list: three columns on a rail layout, four on ultra-wide. */
@@ -142,8 +157,9 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
-    max-width: 44rem;
+    max-width: 50rem;
     margin-inline: auto;
+    width: 100%;
   }
   .view--prayer .quick-actions--compact {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -218,6 +234,17 @@
     margin-inline: auto;
     text-align: center;
   }
+
+  /* Hub views with form-like content breathe at a wide-but-bounded width
+     instead of stretching inputs edge to edge. */
+  .view--zakat,
+  .view--qibla,
+  .view--ramadan,
+  .view--calendar {
+    max-width: 64rem;
+    margin-inline: auto;
+    width: 100%;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -229,6 +256,21 @@
   }
   .category-grid {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  /* Home dashboard: on wide screens the stacked panels become two columns
+     (hero, prayer strip and quick actions still span full width) so the
+     page fills the canvas instead of leaving a dead right half. DOM order
+     is untouched — only visual placement changes. */
+  .view--home {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+  .view--home > .home-hero,
+  .view--home > .home-prayer-strip,
+  .view--home > .quick-actions {
+    grid-column: 1 / -1;
   }
 }
 

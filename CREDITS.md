@@ -54,6 +54,9 @@ recording is credited in `assets/audio/adhan/CREDITS.md`.
 
 - Amiri Regular + Bold + Amiri Quran (Arabic-subset woff2), SIL Open Font
   License 1.1 (`assets/fonts/OFL.txt`).
+- Scheherazade New Regular + Bold (TTF), SIL Open Font License 1.1
+  (`assets/fonts/ScheherazadeNew-OFL.txt`) — the closest freely-licensed
+  Naskh to the Medina print hand, offered as a Mushaf typeface choice.
 - Bundled adhan recording: public-domain (CC0); provenance in
   `assets/audio/adhan/CREDITS.md`.
 

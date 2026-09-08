@@ -297,8 +297,11 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fast
       const alertTimes = ramadanAlertTimes(times, rAlerts.suhoorOffset);
       if (rAlerts.suhoor && shouldFire(formatClock(alertTimes.suhoor, false), now)) {
         const fireKey = `ramadan-suhoor|${todayKey}`;
-        if (!firedToday.has(fireKey)) {
-          firedToday.add(fireKey);
+        // (B5) day-persisted dedup like the prayer block above: the
+        // in-memory Set alone re-fired a full-volume adhan on reload
+        // inside the catch-up window.
+        if (!wasDayFired(fireKey, todayKey)) {
+          markDayFired(fireKey, todayKey);
           notify(
             t('ramadan.alertSuhoorTitle', lang),
             t('ramadan.alertSuhoorBody', lang, {
@@ -312,8 +315,8 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fast
       }
       if (rAlerts.iftar && shouldFire(formatClock(alertTimes.iftar, false), now)) {
         const fireKey = `ramadan-iftar|${todayKey}`;
-        if (!firedToday.has(fireKey)) {
-          firedToday.add(fireKey);
+        if (!wasDayFired(fireKey, todayKey)) {
+          markDayFired(fireKey, todayKey);
           notify(
             t('ramadan.alertIftarTitle', lang),
             t('ramadan.alertIftarBody', lang),
@@ -382,6 +385,18 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fast
       firedToday.delete(k);
     }
   }
+}
+
+/** Test seam: run one scheduler pass without arming the 30s interval. */
+export function tickForTests(
+  reminders,
+  lang,
+  calendarNotes,
+  prayerSettings,
+  zakatHistory,
+  fastingPrefs
+) {
+  return tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fastingPrefs);
 }
 
 /** Build a default reminder object for the editor UI.

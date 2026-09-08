@@ -339,7 +339,7 @@ export function renderHome(state) {
     recent: recentEntries.length
       ? `
     <section class="panel">
-      <div class="panel__header"><h2>${t('home.continueReading', lang)}</h2></div>
+      <div class="panel__header"><h2>${t('home.panel.recent', lang)}</h2></div>
       <div class="card-row">
         ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
       </div>
@@ -378,7 +378,8 @@ export function renderHome(state) {
   <section class="view view--home">
     <div class="home-hero">
       <p class="home-hero__greeting">${t(greetingKey(), lang)}${hijriChipHTML(lang)}</p>
-      <h1 class="home-hero__title">${t('app.tagline', lang)}</h1>
+      <h1 class="home-hero__title">${t('app.name', lang)}</h1>
+      <p class="home-hero__tagline">${t('app.tagline', lang)}</p>
       ${profileChip}
     </div>
 
@@ -410,11 +411,11 @@ export function renderHome(state) {
         <span>${t('nav.tasbih', lang)}</span>
       </a>
       <a class="quick-action quick-action--prayer" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">
-        ${icon('compass', { size: 26 })}
+        ${icon('prayer-rug', { size: 26 })}
         <span>${t('nav.prayer', lang)}</span>
       </a>
       <a class="quick-action quick-action--qibla" href="${buildHash(VIEWS.QIBLA)}" data-action="navigate" data-view="${VIEWS.QIBLA}">
-        ${icon('mosque', { size: 26 })}
+        ${icon('compass', { size: 26 })}
         <span>${t('nav.qibla', lang)}</span>
       </a>
       <a class="quick-action quick-action--ramadan" href="${buildHash(VIEWS.RAMADAN)}" data-action="navigate" data-view="${VIEWS.RAMADAN}">
