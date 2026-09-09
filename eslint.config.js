@@ -50,6 +50,8 @@ export default [
         Audio: 'readonly',
         AbortController: 'readonly',
         AbortSignal: 'readonly',
+        DecompressionStream: 'readonly',
+        Response: 'readonly',
         MediaMetadata: 'readonly',
         CSS: 'readonly',
         requestSubmit: 'readonly',

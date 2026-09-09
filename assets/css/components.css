@@ -1786,6 +1786,48 @@ body.modal-open {
   font-size: var(--fs-sm);
 }
 
+/* Offline library rows (Offline view): icon + name/size + status + action. */
+.offline-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-target);
+  padding-block: var(--space-1);
+  border-bottom: 1px solid var(--color-border);
+}
+.offline-row:last-child {
+  border-bottom: none;
+}
+.offline-row__icon {
+  flex: none;
+  color: var(--color-text-secondary);
+}
+.offline-row__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.offline-row__name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.offline-row__sub {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.offline-row__status {
+  flex: none;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.offline-row__status--done {
+  color: var(--color-primary-text);
+}
+
 /* Monthly prayer timetable modal: scrollable table, full grid. */
 .prayer-month {
   display: flex;

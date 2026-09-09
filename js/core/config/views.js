@@ -42,6 +42,9 @@ export const VIEWS = Object.freeze({
   AMBIENT: 'ambient',
   // Kids mode home: big tiles, short surahs, stars (see views/kids.js).
   KIDS: 'kids',
+  // (v5.3.0) Offline library: one-tap bulk download of every on-demand
+  // text corpus for offline use (views/offline.js).
+  OFFLINE: 'offline',
 });
 
 export const DEFAULT_VIEW = VIEWS.HOME;
@@ -249,6 +252,14 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // are ignored at render time so newer-version backups can't blank Home.
   homeOrder: null,
   hiddenHome: {},
+  // (v5.3.0) Offline-library completion registry: { [groupId]: { done,
+  // total, at } } — explicit bulk downloads only (browsing warms the same
+  // cache untracked). Sanitized like everything else in settings.
+  offline: {},
+  // (v5.3.0) Offline-library compression: fetch data JSON as sibling
+  // .json.gz (built at packaging) and cache the small bytes. Saves
+  // ~120MB disk + transfer at the cost of gunzip CPU per file open.
+  compressedDownloads: false,
   soundEnabled: true,
   hapticsEnabled: true,
   // v3.14 Phase C: optional soft sounds — off by default (the owner-facing

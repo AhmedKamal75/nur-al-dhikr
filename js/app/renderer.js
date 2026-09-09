@@ -81,6 +81,7 @@ import { renderCalendar } from '../views/calendar.js';
 import { renderRamadan } from '../views/ramadan.js';
 import { renderZakat } from '../views/zakat.js';
 import { renderAudio } from '../views/audioManager.js';
+import { renderOffline } from '../views/offline.js';
 import { renderQuran } from '../views/quran.js';
 import { renderRoots } from '../views/roots.js';
 import { renderHadith } from '../views/hadith.js';
@@ -116,6 +117,7 @@ const VIEW_TABLE = {
   [VIEWS.RAMADAN]: renderRamadan,
   [VIEWS.ZAKAT]: renderZakat,
   [VIEWS.AUDIO]: renderAudio,
+  [VIEWS.OFFLINE]: renderOffline,
   [VIEWS.QURAN]: renderQuran,
   [VIEWS.ROOTS]: renderRoots,
   [VIEWS.HADITH]: renderHadith,

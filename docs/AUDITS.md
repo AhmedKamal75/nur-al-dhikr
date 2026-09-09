@@ -85,6 +85,48 @@
 - [x] **Docs.** Release protocol gains "docs numbers are regenerated
       from counts, never typed" + the snapshot-shell step.
 
+# V5.2.13 — COMPRESSED DOWNLOADS OPTION (USER REQUEST, 2026-09-07)
+
+# `npm run check`: eslint 0, 1009/1009 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.12 → 5.2.13 + re-stamp.
+
+- [x] **Storage mode.** `settings.compressedDownloads` (default off):
+      fetch layer transparently tries sibling `.json.gz`
+      (`scripts/compress-data.mjs` builds them at packaging), gunzips
+      via DecompressionStream, falls back to plain on 404-only, skips
+      cleanly without the API. Shared by fetchJSON + hadith bulk
+      fetches; SW data route extended. ~150 MB → ~27 MB measured.
+- [x] **Toggle UX.** Offline-library storage section; flipping wipes
+      the old-encoding data cache + resets measured rows (else both
+      encodings would sit side by side costing more). Quota preflight
+      and size labels follow the mode.
+- [x] **Proof.** `tests/offline-gzip.test.js` (10: decode, pre-decoded
+      fallback, 404 fallback, no failure-masking, pref-off single
+      fetch, sanitizer, toggle wipe, script) + a live dumb-server run
+      (python http.server, byte-identical parse).
+
+# V5.2.12 — OFFLINE LIBRARY (USER REQUEST, 2026-09-07)
+
+# `npm run check`: eslint 0, 999/999 green, prettier clean.
+
+# `npm run e2e`: 3/3 green (smoke walks 10 routes now).
+
+# Markers 5.2.11 → 5.2.12 + re-stamp (227 files).
+
+- [x] **One-tap full-text offline.** New `offline` route + view (nav
+      drawer Tools, Settings data section, back-link → settings;
+      APP-FLOW table 31 routes): big button + per-group rows + storage
+      meter + audio pointer. `domain/offline.js` inventory (~2,000
+      files, ~150 MB), `app/offlineJobs.js` fetch-and-discard 3-wide
+      pool (never loads state), cancellable, quota/online preflights,
+      throttled progress, per-group completion in settings.offline
+      (sanitized). Reciter audio stays per-reciter in Audio, as chosen.
+      Tests: `tests/offline-library.test.js` (6: inventory, id
+      validation, slice, sanitizer, view states); dead-action,
+      precache, i18n-parity gates all cover the new surface.
+- [ ] Still open: features/ strangler (deferred).
+
 # V5.2.11 — TAJWEED CORRECTNESS (USER REPORT, 2026-09-07)
 
 # `npm run check`: eslint 0, 993/993 green, prettier clean.

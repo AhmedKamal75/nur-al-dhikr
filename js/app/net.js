@@ -73,15 +73,67 @@ function timeoutSignal(timeoutMs, external) {
 }
 
 export async function fetchJSON(url, { timeoutMs = FETCH_TIMEOUT_MS, signal } = {}) {
+  const res = await fetchDataResponse(url, { timeoutMs, signal });
+  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
+  const body = await res.json();
+  if (body && typeof body === 'object' && !Array.isArray(body) && body.error === 'offline') {
+    throw new Error(`Failed to fetch ${url}: offline stub`);
+  }
+  return body;
+}
+
+/**
+ * (v5.3.0) compressed downloads: when settings.compressedDownloads is on,
+ * data JSON is fetched as sibling `.json.gz` files (built at packaging by
+ * scripts/compress-data.mjs) and gunzipped here — transfer drops ~4× on
+ * hosts without transport compression, and the SW caches the small bytes
+ * so the disk saving persists. Plain `.json` is the silent fallback
+ * (404 only — genuine failures still throw fast), and runtimes without
+ * DecompressionStream skip the whole thing.
+ */
+function wantsGzip(url) {
+  return (
+    typeof DecompressionStream !== 'undefined' &&
+    typeof url === 'string' &&
+    url.endsWith('.json') &&
+    !url.endsWith('.json.gz') &&
+    store.getState().settings?.compressedDownloads === true
+  );
+}
+
+async function decodeGzipResponse(res) {
+  const contentType = res.headers?.get?.('content-type') || '';
+  if ((!res.url.endsWith('.gz') && !contentType.includes('gzip')) || !res.body) return res;
+  // Some static servers pre-decode .json.gz (Content-Encoding: gzip) —
+  // gunzipping twice corrupts, so attempt on a clone and keep the
+  // original: failure falls back to the body as received.
+  try {
+    const stream = res.clone().body.pipeThrough(new DecompressionStream('gzip'));
+    const text = await new Response(stream).text();
+    return new Response(text, {
+      status: res.status,
+      statusText: res.statusText,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch {
+    return res;
+  }
+}
+
+/** Raw Response for a data URL: timeout + optional gzip, offline-stub agnostic. */
+export async function fetchDataResponse(url, { timeoutMs = FETCH_TIMEOUT_MS, signal } = {}) {
   const { signal: sig, cleanup } = timeoutSignal(timeoutMs, signal);
   try {
-    const res = await fetch(url, { signal: sig });
-    if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
-    const body = await res.json();
-    if (body && typeof body === 'object' && !Array.isArray(body) && body.error === 'offline') {
-      throw new Error(`Failed to fetch ${url}: offline stub`);
+    if (wantsGzip(url)) {
+      const gz = await fetch(`${url}.gz`, { signal: sig });
+      if (gz.ok) return decodeGzipResponse(gz);
+      // Host without prebuilt .gz: fall back to plain — but only on 404.
+      // Anything else (offline, 500, corrupt) throws through the normal path.
+      if (gz.status !== 404) {
+        return gz;
+      }
     }
-    return body;
+    return await fetch(url, { signal: sig });
   } finally {
     cleanup();
   }

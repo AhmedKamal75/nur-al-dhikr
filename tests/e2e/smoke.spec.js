@@ -15,6 +15,7 @@ const ROUTES = [
   'audio',
   'calendar',
   'settings',
+  'offline',
 ];
 
 test('smoke: core routes render with zero console errors', async ({ page }) => {

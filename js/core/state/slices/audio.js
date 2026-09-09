@@ -89,6 +89,38 @@ export function reduceAudio(state, action) {
       if (state.audioManager.batchRunning === action.running) return state;
       return { ...state, audioManager: { ...state.audioManager, batchRunning: action.running } };
 
+    case 'OFFLINE_PROGRESS_SET': {
+      // (v5.3.0) offline-library batch progress. Ephemeral; replaces the
+      // whole jobs object so throttled dispatches stay cheap. No-ops when
+      // nothing changed (a no-op dispatch must never re-render mid-batch).
+      const prev = state.offlineJobs || {};
+      const q = action.progress.quota;
+      const quota =
+        q && typeof q === 'object'
+          ? { usage: Math.max(0, Number(q.usage) || 0), quota: Math.max(0, Number(q.quota) || 0) }
+          : null;
+      const next = {
+        running: action.progress.running === true,
+        group: action.progress.group || null,
+        done: Math.max(0, Math.floor(Number(action.progress.done) || 0)),
+        total: Math.max(0, Math.floor(Number(action.progress.total) || 0)),
+        failed: Math.max(0, Math.floor(Number(action.progress.failed) || 0)),
+        quota,
+      };
+      if (
+        prev.running === next.running &&
+        prev.group === next.group &&
+        prev.done === next.done &&
+        prev.total === next.total &&
+        prev.failed === next.failed &&
+        prev.quota?.usage === next.quota?.usage &&
+        prev.quota?.quota === next.quota?.quota
+      ) {
+        return state;
+      }
+      return { ...state, offlineJobs: next };
+    }
+
     case 'SURAH_PLAYBACK_SET': {
       const patch =
         action.patch && typeof action.patch === 'object' && !Array.isArray(action.patch)

@@ -350,6 +350,7 @@ export function renderSettings(state) {
         ${dryRunLine(state, lang)}
       </div>
       <div class="btn-stack">
+        <a class="btn btn--primary" href="${buildHash(VIEWS.OFFLINE)}" data-action="navigate" data-view="${VIEWS.OFFLINE}">${icon('download', { size: 16 })} ${t('nav.offline', lang)}</a>
         <button type="button" class="btn btn--secondary" data-action="verify-backup">${icon('check', { size: 16 })} ${t('settings.dataVerify', lang)}</button>
         <button type="button" class="btn btn--secondary" data-action="export-backup">${icon('download', { size: 16 })} ${t('settings.exportBackup', lang)}</button>
         <button type="button" class="btn btn--secondary" data-action="import-backup">${icon('upload', { size: 16 })} ${t('settings.importBackup', lang)}</button>

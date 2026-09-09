@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 [![Vanilla JS](https://img.shields.io/badge/Vanilla-JS-yellow.svg)](ARCHITECTURE.md)
 [![PWA offline-first](https://img.shields.io/badge/PWA-offline--first-blue.svg)](USAGE.md)
-[![Tests](https://img.shields.io/badge/tests-993_passing-brightgreen.svg)](#tech)
+[![Tests](https://img.shields.io/badge/tests-1009_passing-brightgreen.svg)](#tech)
 
 An offline-first, installable web app for daily Islamic remembrance —
 Adhkar, the complete Qur'an, 34,239 Ahadeeth, prayer times, and worship

@@ -39,7 +39,7 @@ q0  : the start state                   — HOME, or the deep-linked route
 
 A concrete state is **`(route, layer)`** where:
 
-- **`route`** ∈ ROUTES (§2.1) — the 29 hash routes; it is what the URL says.
+- **`route`** ∈ ROUTES (§2.1) — the 30 hash routes; it is what the URL says.
 - **`layer`** ∈ `{ ∅, modal, drawer }` — transient overlays stacked ON TOP of
   the route (§2.2). At most one modal and one drawer at a time; a modal can
   re-open itself (settings panels) but never stacks a second panel.
@@ -86,7 +86,7 @@ tables below need to be precise we write them as `(mushaf, ∅, fullscreen)`.
 
 ## 2. Q — the states
 
-### 2.1 ROUTES (30) — grouped by region of the app
+### 2.1 ROUTES (31) — grouped by region of the app
 
 | Group   | Route              | Params         | Reached from                                | Back path (I1 owner)                 |
 | ------- | ------------------ | -------------- | ------------------------------------------- | ------------------------------------ |
@@ -119,6 +119,7 @@ tables below need to be precise we write them as `(mushaf, ∅, fullscreen)`.
 | Tools   | `statistics`       | —              | nav, settings                               | nav                                  |
 | Tools   | `certificate`      | —              | statistics, journal streak                  | back-link + nav                      |
 | Tools   | `audio`            | —              | reader links, mushaf sheet                  | back-link + nav                      |
+| Tools   | `offline`          | —              | settings data section, nav drawer           | **back-link → settings** + nav       |
 | Mine    | `settings`         | —              | topbar, nav, onboarding                     | topbar is fixed                      |
 | Kids    | `kids`             | —              | settings toggle (kids mode)                 | **hold-exit (2s) → home, mode off**  |
 | Mine    | `about`            | —              | settings, nav                               | back-link + nav                      |

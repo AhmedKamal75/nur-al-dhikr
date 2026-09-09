@@ -4,7 +4,7 @@
  */
 
 import { rt } from './rt.js';
-import { fetchJSON } from './net.js';
+import { fetchJSON, fetchDataResponse } from './net.js';
 
 import { HADITH_BOOK_URL, HADITH_INDEX_URL, VIEWS } from '../core/config.js';
 import { actions, store } from '../core/state.js';
@@ -105,7 +105,7 @@ async function parseLargeJSON(response) {
 
 /** fetchJSON for LARGE payloads: same contract, but parses via the worker. */
 async function fetchLargeJSON(url) {
-  const res = await fetch(url);
+  const res = await fetchDataResponse(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.status}`);
   return parseLargeJSON(res);
 }

@@ -65,6 +65,7 @@ import {
 import { clickHandlers as viewMenusClick } from './handlers/viewMenus.js';
 import { clickHandlers as journalClick } from './handlers/journal.js';
 import { clickHandlers as grammarClick } from './handlers/grammar.js';
+import { clickHandlers as offlineClick } from './handlers/offline.js';
 import { buildAyahQuickSheet } from '../views/quran.js';
 import { setFlipDirection } from '../views/mushafReader.js';
 import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
@@ -98,6 +99,7 @@ const clickHandlers = {
   ...viewMenusClick,
   ...journalClick,
   ...grammarClick,
+  ...offlineClick,
 };
 
 // (v4.3) test surface: the merged table and its source maps are exported so
@@ -122,6 +124,7 @@ export const handlerMaps = [
   ['viewMenus', viewMenusClick],
   ['journal', journalClick],
   ['grammar', grammarClick],
+  ['offline', offlineClick],
 ];
 export const mergedClickHandlers = clickHandlers;
 

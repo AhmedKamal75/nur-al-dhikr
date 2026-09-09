@@ -188,7 +188,9 @@ export function sanitizeSettings(raw) {
     kidsMode: asBool(s.kidsMode, d.kidsMode),
     homeOrder: sanitizeHomeOrder(s.homeOrder),
     hiddenHome: sanitizeHiddenHome(s.hiddenHome),
+    offline: sanitizeOfflineStatus(s.offline),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
+    compressedDownloads: asBool(s.compressedDownloads, d.compressedDownloads),
     hapticsEnabled: asBool(s.hapticsEnabled, d.hapticsEnabled),
     pageTurnSound: asBool(s.pageTurnSound, d.pageTurnSound),
     khatmaChimeSound: asBool(s.khatmaChimeSound, d.khatmaChimeSound),
@@ -264,6 +266,28 @@ function sanitizeHiddenHome(raw) {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     for (const [k, v] of Object.entries(raw)) {
       if (HOME_PANEL_ID_SET.has(k) && isSafeKey(k) && v === true) out[k] = true;
+    }
+  }
+  return out;
+}
+
+/** Offline-library group ids (mirrors domain/offline.js GROUPS — kept
+ *  literal here so core/config never imports app/domain layers). */
+const OFFLINE_GROUP_IDS = new Set(['quran', 'translations', 'mushaf', 'hadith', 'tafsir', 'words']);
+
+/** Offline completion registry: per-group { done, total, at }, all
+ *  clamped numbers — a crafted backup can only fake a status row, and
+ *  re-running the job overwrites it with measured truth. */
+function sanitizeOfflineStatus(raw) {
+  const out = {};
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    for (const [k, v] of Object.entries(raw)) {
+      if (!OFFLINE_GROUP_IDS.has(k) || !isSafeKey(k)) continue;
+      if (!v || typeof v !== 'object' || Array.isArray(v)) continue;
+      const done = Math.max(0, Math.min(100000, Math.floor(Number(v.done) || 0)));
+      const total = Math.max(0, Math.min(100000, Math.floor(Number(v.total) || 0)));
+      const at = Math.max(0, Math.min(Date.now(), Math.floor(Number(v.at) || 0)));
+      out[k] = { done, total, at };
     }
   }
   return out;

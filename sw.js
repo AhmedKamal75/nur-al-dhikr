@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.2.11';
+const VERSION = 'nur-al-dhikr-v5.2.13';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -56,6 +56,7 @@ const APP_SHELL = [
   'js/app/handlers/journal.js',
   'js/app/handlers/location.js',
   'js/app/handlers/navigation.js',
+  'js/app/handlers/offline.js',
   'js/app/handlers/quiz.js',
   'js/app/handlers/quran.js',
   'js/app/handlers/quranAudio.js',
@@ -68,6 +69,7 @@ const APP_SHELL = [
   'js/app/installPrompt.js',
   'js/app/lazyData.js',
   'js/app/net.js',
+  'js/app/offlineJobs.js',
   'js/app/practice.js',
   'js/app/quizDeck.js',
   'js/app/quranData.js',
@@ -128,6 +130,7 @@ const APP_SHELL = [
   'js/domain/moods.js',
   'js/domain/mutashabihat.js',
   'js/domain/nudge.js',
+  'js/domain/offline.js',
   'js/domain/onboarding.js',
   'js/domain/planExport.js',
   'js/domain/prayer.js',
@@ -210,6 +213,7 @@ const APP_SHELL = [
   'js/views/mushafBookmarks.js',
   'js/views/mushafReader.js',
   'js/views/mutashabihat.js',
+  'js/views/offline.js',
   'js/views/onboardingPanel.js',
   'js/views/playerBar.js',
   'js/views/prayer.js',
@@ -735,7 +739,10 @@ async function putWithEviction(cache, request, response) {
 }
 
 function isDataRequest(url) {
-  return url.pathname.includes('/data/') && url.pathname.endsWith('.json');
+  return (
+    url.pathname.includes('/data/') &&
+    (url.pathname.endsWith('.json') || url.pathname.endsWith('.json.gz'))
+  );
 }
 
 /**

@@ -183,6 +183,9 @@ export function initialState() {
     // Ephemeral download manager UI state (selected moshaf, search text,
     // and whether the catalog finished loading — flip once → one re-render).
     audioManager: { query: '', catalogReady: false, batchRunning: false },
+    // (v5.3.0) Offline-library batch jobs. Ephemeral: progress resets on
+    // reload; completion lands in settings.offline (persisted) per group.
+    offlineJobs: { running: false, group: null, done: 0, total: 0, failed: 0, quota: null },
     // Ahadeeth library (v3.9): lazy-loaded like the Qur'an corpus, never
     // persisted — the service worker caches the JSON files themselves, so a
     // fresh session refetches from cache at zero cost. `index` is the book

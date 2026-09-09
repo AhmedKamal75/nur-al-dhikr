@@ -9,6 +9,7 @@ import { ensureRecitersData, updateCompassLifecycle } from './audioEngine.js';
 import { refreshLibraryIndex } from './net.js';
 import { renderErrorScreen, closeNavDrawer } from './drawer.js';
 import { ensureHadithData, maybeScrollToFocusHadith } from './hadithData.js';
+import { ensureOfflineQuota } from './offlineJobs.js';
 import {
   ensureMushafData,
   ensureQuranData,
@@ -148,6 +149,7 @@ export function onStateChange(stateArg, action) {
     }
     if (state.activeView === VIEWS.AUDIO) ensureRecitersData(state);
     if (state.activeView === VIEWS.HADITH) ensureHadithData(state);
+    if (state.activeView === VIEWS.OFFLINE) ensureOfflineQuota();
     updateCompassLifecycle(state);
     updateRamadanLifecycle(state);
     updateHomeTickerLifecycle(state);

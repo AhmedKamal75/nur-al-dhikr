@@ -52,6 +52,7 @@ const NAV_GROUPS = [
       { view: VIEWS.GARDEN, icon: 'sprout', label: 'nav.garden' },
       { view: VIEWS.ZAKAT, icon: 'calculator', label: 'nav.zakat' },
       { view: VIEWS.STATISTICS, icon: 'stats', label: 'nav.statistics' },
+      { view: VIEWS.OFFLINE, icon: 'download', label: 'nav.offline' },
     ],
   },
   {

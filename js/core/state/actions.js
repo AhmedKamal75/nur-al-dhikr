@@ -239,6 +239,8 @@ export const actions = {
   setAudioManagerQuery: (query) => ({ type: 'AUDIO_MANAGER_QUERY', query }),
   // (v4.2) batch download lifecycle: flips the Download All button to Stop.
   setAudioBatchRunning: (running) => ({ type: 'AUDIO_BATCH_RUNNING', running }),
+  // (v5.3.0) offline-library batch progress (ephemeral; throttled).
+  setOfflineProgress: (progress) => ({ type: 'OFFLINE_PROGRESS_SET', progress }),
   setAudioCatalogReady: () => ({ type: 'AUDIO_CATALOG_READY' }),
   setRecitingAyah: (key) => ({ type: 'RECITATION_SET_ACTIVE', key }),
   toggleChecklistItem: (item, date) => ({ type: 'CHECKLIST_TOGGLE', item, date }),

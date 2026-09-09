@@ -2,6 +2,30 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.13 — compressed downloads option
+
+New storage mode in the Offline library: fetch data JSON as sibling
+`.json.gz` (built at packaging by `npm run compress-data`) and cache
+the small bytes — ~150 MB becomes ~27 MB on disk and wire, at gunzip
+CPU per file open. Transparent with plain fallback (404-only, so hosts
+without `.gz` and genuine failures behave exactly as before), shared by
+`fetchJSON` and hadith bulk fetches, SW route extended, toggle wipes
+the old encoding + resets measured rows. Pinned by
+`tests/offline-gzip.test.js` (10, incl. a live dumb-server proof).
+
+## v5.2.12 — offline library: one-tap full-text downloads
+
+New dedicated **Offline library** view (nav drawer → Tools, Settings →
+data section): one big button warms the service worker cache for every
+on-demand text corpus (~150 MB, ~2,000 files across Quran text,
+translations, Mushaf pages, 8 hadith books, bundled tafsir, word-study
+data), with per-group status rows, a live progress bar, stop/resume,
+storage meter, quota and offline preflights, and a pointer to
+per-reciter audio downloads (unchanged, in Audio). Bodies are fetched
+and discarded — state is never loaded — with a 3-wide pool, throttled
+progress, and per-group completion persisted to settings. Pinned by
+`tests/offline-library.test.js` + the e2e smoke walk.
+
 ## v5.2.11 — tajweed correctness: word taps, rules, palette
 
 1. **Word-tap pop-ups (P0).** Mushaf pages, classic docs, and grammar

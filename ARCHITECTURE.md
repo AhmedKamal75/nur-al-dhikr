@@ -160,14 +160,14 @@ js/
 │   │                      emptyState, skeleton, calendarModals,
 │   │                      recitationConsole (the ONE 13-chip console,
 │   │                      v5.2.5 — hosts pass classes + sleep in)
-└── views/                 38 pure string-template views (state → HTML)
+└── views/                 42 pure string-template views (state → HTML)
 
 assets/css/                9 files, strict load order:
                            variables → base → layout → components →
                            cards → quran → animations → desktop →
                            accessibility
 data/                      Content corpora (~157MB; see data/SOURCES.md)
-tests/                     84 test files + helpers / 993 tests (node --test)
+tests/                     86 test files + helpers / 1009 tests (node --test)
 sw.js                      Service worker (precache + SWR data + triggers)
 ```
 
@@ -371,7 +371,7 @@ layers are exactly what may be broken.
 
 ```
 npx eslint .             # zero errors (js, tests, sw.js — all linted)
-npm test                 # 993 tests, all green
+npm test                 # 1009 tests, all green
 npx prettier --check .   # whole tree (npm run check runs all three)
 ```
 
@@ -409,7 +409,9 @@ never "add it to the allowlist" — it's a real regression.
    import graph and refuses to emit a precache entry that isn't on disk.
 3. Update `data/SOURCES.md` / `CREDITS.md` for any new content.
 4. Package the zip: site files at the root, `node_modules/` excluded,
-   dotfiles preserved.
+   dotfiles preserved. Run `npm run compress-data` after staging `data/`
+   so deployments carry sibling `.json.gz` files (compressed downloads
+   404 onto plain JSON on hosts without them).
 5. Never claim a test/audit ran unless you ran it in this session.
 6. Docs numbers are regenerated from counts, never typed: test totals
    from `npm test`, test-file counts from `ls tests/*.test.js`.
