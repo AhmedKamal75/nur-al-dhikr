@@ -8,7 +8,7 @@
  * top (services/contentPrefs.js), so "the book" is never altered and a
  * fresh install always renders the canonical corpus.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, categoryDisplayName, escapeHTML } from '../core/utils.js';
@@ -169,7 +169,7 @@ export function renderCategory(state) {
   return `
   <section class="view view--category">
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon('chevronLeft', { size: 18 })} ${t('nav.library', lang)}</a>
+      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.library', lang)}</a>
       <div class="view-header--row">
         <h1 class="view__title">${escapeHTML(categoryDisplayName(cat, lang))}</h1>
         ${viewMenuButton('category', lang, { labelKey: 'viewMenu.category' })}

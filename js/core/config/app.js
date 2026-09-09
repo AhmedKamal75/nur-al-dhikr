@@ -13,16 +13,6 @@ export const DB_VERSION = 1;
 
 export const CATALOG_URL = 'data/catalog.json';
 
-/** (v4.4) Legal home-card themes (mirrors domain/dailyAyah.js DAILY_THEMES). */
-export const DAILY_AYAH_THEMES = new Set([
-  'any',
-  'mercy',
-  'patience',
-  'gratitude',
-  'guidance',
-  'paradise',
-]);
-
 /** (v4.4) Legal tasbih milestone pings (counts between pings). */
 export const TASBIH_MILESTONES = new Set([0, 10, 25, 33, 50, 100]);
 

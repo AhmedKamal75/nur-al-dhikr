@@ -182,7 +182,7 @@ export const en = {
   'mushaf.folderLabel': 'Folder',
   'nav.more': 'More',
   'nav.audio': 'Reciters & Audio',
-  'audio.title': 'Reciters & Offline Audio',
+  'audio.title': 'Reciters & Audio',
   'audio.subtitle':
     '314 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',
   'audio.searchPh': 'Search reciters (English or Arabic)…',
@@ -549,7 +549,7 @@ export const en = {
   'focus.exit': 'Exit Focus Mode',
   'focus.reset': 'Reset counter',
   'stats.today': 'Today',
-  'stats.week': 'This Week',
+  'stats.week': 'This week',
   'stats.month': 'This Month',
   'stats.lifetime': 'Lifetime',
   'stats.totalRecitations': 'Total Recitations',

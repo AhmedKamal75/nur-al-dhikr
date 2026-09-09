@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.2.13';
+const VERSION = 'nur-al-dhikr-v5.2.14';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -26,6 +26,7 @@ const APP_SHELL = [
   './',
   'index.html',
   'offline.html',
+  'favicon.ico',
   'manifest.json',
   'assets/css/variables.css',
   'assets/css/base.css',
@@ -87,6 +88,7 @@ const APP_SHELL = [
   'js/core/config/quran.js',
   'js/core/config/sanitize.js',
   'js/core/config/views.js',
+  'js/core/fetch.js',
   'js/core/i18n.js',
   'js/core/i18n/ar.js',
   'js/core/i18n/en.js',
@@ -117,7 +119,6 @@ const APP_SHELL = [
   'js/domain/celebrate.js',
   'js/domain/compass.js',
   'js/domain/contentLens.js',
-  'js/domain/dailyAyah.js',
   'js/domain/duaJournal.js',
   'js/domain/fasting.js',
   'js/domain/garden.js',
@@ -132,7 +133,6 @@ const APP_SHELL = [
   'js/domain/nudge.js',
   'js/domain/offline.js',
   'js/domain/onboarding.js',
-  'js/domain/planExport.js',
   'js/domain/prayer.js',
   'js/domain/prayerExport.js',
   'js/domain/prayerLog.js',
@@ -245,8 +245,8 @@ const APP_SHELL = [
   'assets/fonts/Amiri-Regular.woff2',
   'assets/fonts/Amiri-Bold.woff2',
   'assets/fonts/AmiriQuran.woff2',
-  'assets/fonts/ScheherazadeNew-Regular.ttf',
-  'assets/fonts/ScheherazadeNew-Bold.ttf',
+  'assets/fonts/ScheherazadeNew-Regular.woff2',
+  'assets/fonts/ScheherazadeNew-Bold.woff2',
   'assets/fonts/ScheherazadeNew-OFL.txt',
   'assets/fonts/OFL.txt',
   'assets/audio/adhan/adhan.mp3',

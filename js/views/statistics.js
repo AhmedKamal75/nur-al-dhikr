@@ -1,7 +1,7 @@
 /**
  * views/statistics.js
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { dateKey, escapeHTML, categoryDisplayName } from '../core/utils.js';
@@ -280,9 +280,9 @@ export function renderStatistics(state) {
       <div class="panel__header">
         <h2>${t('stats.heatmap', lang)}</h2>
         <span class="heatmap-month-nav">
-          <button type="button" class="icon-btn icon-btn--sm" data-action="stats-heatmap-shift" data-delta="-1" aria-label="${t('stats.monthPrev', lang)}" ${canGoPrev ? '' : 'disabled'}>${icon('chevronLeft', { size: 16 })}</button>
+          <button type="button" class="icon-btn icon-btn--sm" data-action="stats-heatmap-shift" data-delta="-1" aria-label="${t('stats.monthPrev', lang)}" ${canGoPrev ? '' : 'disabled'}>${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 16 })}</button>
           <span class="heatmap-month-nav__label">${monthLabel}</span>
-          <button type="button" class="icon-btn icon-btn--sm" data-action="stats-heatmap-shift" data-delta="1" aria-label="${t('stats.monthNext', lang)}" ${canGoNext ? '' : 'disabled'}>${icon('chevronRight', { size: 16 })}</button>
+          <button type="button" class="icon-btn icon-btn--sm" data-action="stats-heatmap-shift" data-delta="1" aria-label="${t('stats.monthNext', lang)}" ${canGoNext ? '' : 'disabled'}>${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16 })}</button>
         </span>
       </div>
       <div class="heatmap">

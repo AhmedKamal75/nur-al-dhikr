@@ -4,7 +4,7 @@
  * since v3.6, the entire Qur'an — Uthmani Arabic (diacritic-insensitive)
  * and the Sahih International translation — with jump-to-ayah results.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { selectors } from '../core/state.js';
@@ -30,7 +30,7 @@ function quranResultRow(state, hit, lang) {
   <a class="quran-hit" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
     <p class="quran-hit__arabic" dir="rtl" lang="ar">${escapeHTML(ayah.text)}</p>
     ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
-    <span class="quran-hit__ref">${refLabel} ${icon('chevronRight', { size: 12 })}</span>
+    <span class="quran-hit__ref">${refLabel} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 12 })}</span>
   </a>`;
 }
 

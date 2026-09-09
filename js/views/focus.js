@@ -3,7 +3,7 @@
  * Full-bleed, distraction-free reading/counting mode for one item at a time,
  * with previous/next navigation through the rest of its category.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
@@ -146,8 +146,8 @@ export function renderFocus(state) {
         ${icon('refresh', { size: 20 })}
       </button>
       <div class="focus__bar-arrows">
-        <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${prevItem ? escapeHTML(prevItem.id) : ''}" ${prevItem ? '' : 'disabled'} aria-label="${t('focus.previous', lang)}">${icon('chevronLeft', { size: 20 })}</button>
-        <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${nextItem ? escapeHTML(nextItem.id) : ''}" ${nextItem ? '' : 'disabled'} aria-label="${t('focus.next', lang)}">${icon('chevronRight', { size: 20 })}</button>
+        <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${prevItem ? escapeHTML(prevItem.id) : ''}" ${prevItem ? '' : 'disabled'} aria-label="${t('focus.previous', lang)}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 20 })}</button>
+        <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${nextItem ? escapeHTML(nextItem.id) : ''}" ${nextItem ? '' : 'disabled'} aria-label="${t('focus.next', lang)}">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 20 })}</button>
       </div>
       <button type="button" class="focus__counter${wasJustCompleted(item.id) ? ' is-just-completed' : ''}${focusDone ? ' is-done' : ''}" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: displayCount, target: counter.target })}">
         <svg class="focus__ring" viewBox="0 0 64 64" aria-hidden="true">

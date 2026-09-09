@@ -21,7 +21,7 @@ import {
   SHAPES,
   THEME_MODES,
 } from './views.js';
-import { DAILY_AYAH_THEMES, TASBIH_MILESTONES } from './app.js';
+import { TASBIH_MILESTONES } from './app.js';
 import { TAJWEED_FAMILY_ID_SET, TAJWEED_RULE_ID_SET, asTranslationEdition } from './quran.js';
 import { isSafeKey } from '../utils.js';
 
@@ -208,7 +208,6 @@ export function sanitizeSettings(raw) {
       s.tafsirCompareB == null || s.tafsirCompareB === ''
         ? null
         : asShortStr(s.tafsirCompareB, null, 40),
-    dailyAyahTheme: DAILY_AYAH_THEMES.has(s.dailyAyahTheme) ? s.dailyAyahTheme : d.dailyAyahTheme,
     tasbihMilestone: TASBIH_MILESTONES.has(Number(s.tasbihMilestone))
       ? Number(s.tasbihMilestone)
       : d.tasbihMilestone,

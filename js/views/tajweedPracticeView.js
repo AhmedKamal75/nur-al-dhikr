@@ -6,7 +6,7 @@
  * used for the flip direction and active tafsir tab, since a half-tapped
  * quiz round has no business being persisted or undo-able.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { TAJWEED_RULES, tajweedRule, wordUnits } from '../domain/tajweed.js';
@@ -27,7 +27,7 @@ export function buildPracticePicker(state) {
         <span class="practice-rule__name">${escapeHTML(pickLocale(rule.name, lang))}</span>
         <span class="practice-rule__acc">${acc == null ? t('practice.notYet', lang) : t('practice.accuracy', lang, { n: acc })}</span>
       </span>
-      ${icon('chevronLeft', { size: 16, className: 'practice-rule__chevron' })}
+      ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16, className: 'practice-rule__chevron' })}
     </button>`;
   };
 

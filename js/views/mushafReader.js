@@ -24,7 +24,7 @@
  * keyboard page-turns and a screen wake lock. The handler owns the side
  * effects; this module stays a pure string template.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { clamp, escapeHTML, pickLocale, toEasternArabicNumerals } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
@@ -261,7 +261,7 @@ export function renderMushaf(state) {
   const topbar = `
     <header class="mushaf-topbar">
       <a class="icon-btn" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}" aria-label="${t('nav.home', lang)}">
-        ${icon('chevronLeft', { size: 20 })}
+        ${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 20 })}
       </a>
       <button type="button" class="mushaf-topbar__title" data-action="mushaf-open-jump">
         ${escapeHTML(headerName)} \u00B7 ${juzLabel}

@@ -9,7 +9,7 @@
  * date windows). Cells with a custom note get a small indicator dot and
  * are tappable to view/add notes for that day.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, dateKey } from '../core/utils.js';
 import { toHijri, islamicEventsForYear, EVENT_LABELS, isWhiteDay } from '../domain/calendar.js';
@@ -256,12 +256,12 @@ export function renderCalendar(state) {
 
     <section class="panel">
       <div class="cal-nav">
-        <button type="button" class="icon-btn" data-action="navigate" data-view="calendar" data-month="${monthParamFor(prevMonth)}" aria-label="${t('calendar.prevMonth', lang)}">${icon('chevronLeft', { size: 18 })}</button>
+        <button type="button" class="icon-btn" data-action="navigate" data-view="calendar" data-month="${monthParamFor(prevMonth)}" aria-label="${t('calendar.prevMonth', lang)}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })}</button>
         <div class="cal-nav__label">
           <strong>${escapeHTML(monthLabel)}</strong>
           <span class="cal-nav__hijri">${hijriRangeLabel(dayCellsData, lang)}</span>
         </div>
-        <button type="button" class="icon-btn" data-action="navigate" data-view="calendar" data-month="${monthParamFor(nextMonth)}" aria-label="${t('calendar.nextMonth', lang)}">${icon('chevronRight', { size: 18 })}</button>
+        <button type="button" class="icon-btn" data-action="navigate" data-view="calendar" data-month="${monthParamFor(nextMonth)}" aria-label="${t('calendar.nextMonth', lang)}">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 18 })}</button>
         ${!isCurrentMonth ? `<button type="button" class="link-btn cal-nav__today" data-action="navigate" data-view="calendar">${t('calendar.today', lang)}</button>` : ''}
       </div>
       <div class="cal-grid cal-grid--dual">

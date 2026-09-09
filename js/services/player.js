@@ -162,19 +162,34 @@ export async function play(moshafId, surahNumber, url) {
   } catch {
     /* element already paused */
   }
+  // (F-001) declare play intent BEFORE the first await: a user pause()
+  // during the offline lookup flips intendPlay back to false, and every
+  // post-await checkpoint below honors it — the pause wins, silently.
+  intendPlay = true;
+
+  // Post-await unwind for a superseded or user-paused call: no src swap,
+  // no blob URL, no ghost error. Clears THIS swap's suppression so the
+  // pause propagates to the store exactly once.
+  const unwindSilent = (offline) => {
+    if (seq === playSeq) {
+      switching = false;
+      notifyState();
+    }
+    return { offline, error: false };
+  };
 
   let offline = false;
   try {
     const blob = await audioFetcher(moshafId, surahNumber);
     // Loser unwinds silently: no src swap, no blob URL, no ghost error.
-    if (seq !== playSeq) return { offline: false, error: false };
+    if (seq !== playSeq || !intendPlay) return unwindSilent(false);
     if (blob) {
       const objectUrl = URL.createObjectURL(blob);
       // Re-check after the sync URL creation: a swap may have landed while
       // we built the URL — revoke ours instead of leaking it (B1 leak).
-      if (seq !== playSeq) {
+      if (seq !== playSeq || !intendPlay) {
         URL.revokeObjectURL(objectUrl);
-        return { offline: false, error: false };
+        return unwindSilent(false);
       }
       currentObjectUrl = objectUrl;
       a.src = currentObjectUrl;
@@ -184,13 +199,13 @@ export async function play(moshafId, surahNumber, url) {
     }
     a.__nurSeq = seq;
     a.playbackRate = a.playbackRate || 1;
-    intendPlay = true;
     emit();
     try {
       await a.play();
     } catch (err) {
-      // A superseded call's abort is expected, never a user-facing failure.
-      if (seq !== playSeq) return { offline, error: false };
+      // A superseded call's abort — or the user's own pause aborting a
+      // pending play() — is expected, never a user-facing failure.
+      if (seq !== playSeq || !intendPlay) return unwindSilent(offline);
       console.error('[player] play() rejected', err);
       intendPlay = false;
       emit();
@@ -201,8 +216,9 @@ export async function play(moshafId, surahNumber, url) {
       return { offline, error: true };
     }
     // Late-resolving winner check: B's IDB read beat A's, A's src swap
-    // must not clobber B's newer track (B1 wrong-track).
-    if (seq !== playSeq) return { offline, error: false };
+    // must not clobber B's newer track (B1 wrong-track) — and a pause
+    // that landed while play() resolved must not be papered over.
+    if (seq !== playSeq || !intendPlay) return unwindSilent(offline);
     if (seq === playSeq) {
       switching = false;
       notifyState();

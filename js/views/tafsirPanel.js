@@ -334,7 +334,9 @@ export function formatArabicCommentary(raw) {
       idx = 1;
     }
     for (; idx < parts.length - 1; idx += 2) {
-      out += `<h4 class="tafsir-section-h">${parts[idx]}</h4>${paragraphize(parts[idx + 1])}`;
+      // (F-010) h3, not h4: these head sections under the modal's h2 —
+      // skipping a level breaks screen-reader heading navigation.
+      out += `<h3 class="tafsir-section-h">${parts[idx]}</h3>${paragraphize(parts[idx + 1])}`;
     }
     html = out;
   } else {

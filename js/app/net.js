@@ -11,12 +11,15 @@
  */
 
 import { CATALOG_URL } from '../core/config.js';
+import { fetchWithTimeout, FETCH_TIMEOUT_MS } from '../core/fetch.js';
 import { migrate } from '../core/migration.js';
 import { processDocument } from '../core/schema.js';
 import { isSafeKey } from '../core/utils.js';
 import { actions, store } from '../core/state.js';
 import { buildIndex } from '../domain/search.js';
 import { rt } from './rt.js';
+
+export { FETCH_TIMEOUT_MS, fetchWithTimeout };
 
 /**
  * Fetch and parse a JSON resource.
@@ -39,38 +42,6 @@ import { rt } from './rt.js';
  * forever, no error state, no Retry. A timeout turns the hang into the
  * thrown error the loadErrors machinery already handles.
  */
-export const FETCH_TIMEOUT_MS = 15000;
-
-function timeoutSignal(timeoutMs, external) {
-  // Manual controller (not AbortSignal.timeout): the platform primitive's
-  // internal timer does not hold the event loop in every runtime, and it
-  // is missing in older browsers — a ref'd setTimeout escapes a hung
-  // socket (B8) everywhere instead of pinning the lazyData in-flight
-  // latches on a skeleton forever.
-  const ctl = new AbortController();
-  const timer = setTimeout(() => {
-    try {
-      ctl.abort(new Error(`Timed out after ${timeoutMs}ms`));
-    } catch {
-      /* already aborted */
-    }
-  }, timeoutMs);
-  if (external) {
-    if (external.aborted) ctl.abort(external.reason);
-    else {
-      const onExternal = () => ctl.abort(external.reason);
-      external.addEventListener('abort', onExternal, { once: true });
-      return {
-        signal: ctl.signal,
-        cleanup: () => {
-          clearTimeout(timer);
-          external.removeEventListener('abort', onExternal);
-        },
-      };
-    }
-  }
-  return { signal: ctl.signal, cleanup: () => clearTimeout(timer) };
-}
 
 export async function fetchJSON(url, { timeoutMs = FETCH_TIMEOUT_MS, signal } = {}) {
   const res = await fetchDataResponse(url, { timeoutMs, signal });
@@ -122,21 +93,16 @@ async function decodeGzipResponse(res) {
 
 /** Raw Response for a data URL: timeout + optional gzip, offline-stub agnostic. */
 export async function fetchDataResponse(url, { timeoutMs = FETCH_TIMEOUT_MS, signal } = {}) {
-  const { signal: sig, cleanup } = timeoutSignal(timeoutMs, signal);
-  try {
-    if (wantsGzip(url)) {
-      const gz = await fetch(`${url}.gz`, { signal: sig });
-      if (gz.ok) return decodeGzipResponse(gz);
-      // Host without prebuilt .gz: fall back to plain — but only on 404.
-      // Anything else (offline, 500, corrupt) throws through the normal path.
-      if (gz.status !== 404) {
-        return gz;
-      }
+  if (wantsGzip(url)) {
+    const gz = await fetchWithTimeout(`${url}.gz`, { timeoutMs, signal });
+    if (gz.ok) return decodeGzipResponse(gz);
+    // Host without prebuilt .gz: fall back to plain — but only on 404.
+    // Anything else (offline, 500, corrupt) throws through the normal path.
+    if (gz.status !== 404) {
+      return gz;
     }
-    return await fetch(url, { signal: sig });
-  } finally {
-    cleanup();
   }
+  return fetchWithTimeout(url, { timeoutMs, signal });
 }
 
 export function buildItemIndex(documents, customContent) {

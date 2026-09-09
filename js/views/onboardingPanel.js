@@ -12,7 +12,7 @@
  *  - The panel disappears on its own once all steps are done.
  */
 
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
@@ -62,7 +62,7 @@ function stepRowHTML(step, lang, { installPromptReady }) {
         <span class="onboarding-step__label">${meta.label}</span>
         <span class="onboarding-step__hint">${meta.hint}</span>
       </span>
-      ${done ? '' : icon('chevronRight', { size: 14 })}
+      ${done ? '' : icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}
     </a>`;
   }
 

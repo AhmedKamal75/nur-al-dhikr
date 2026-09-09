@@ -5,7 +5,7 @@
  * existing asma.json library — this view only selects, shuffles, and scores;
  * it never invents or alters any of the underlying content.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
@@ -117,7 +117,7 @@ function renderQuestion(state, lang) {
       <p class="quiz-prompt__translit">${escapeHTML(item.transliteration)}</p>
       ${item.virtues?.[lang] ? `<p class="quiz-feedback__virtue">${escapeHTML(item.virtues[lang])}</p>` : ''}
       <button type="button" class="btn btn--primary" data-action="quiz-next">
-        ${index + 1 >= deck.length ? t('quiz.seeResults', lang) : t('quiz.next', lang)} ${icon('chevronRight', { size: 16 })}
+        ${index + 1 >= deck.length ? t('quiz.seeResults', lang) : t('quiz.next', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16 })}
       </button>
     </div>`
         : ''

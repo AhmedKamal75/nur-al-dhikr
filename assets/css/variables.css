@@ -411,7 +411,7 @@
   font-family: 'Scheherazade New';
   src:
     local('Scheherazade New'),
-    url('../fonts/ScheherazadeNew-Regular.ttf') format('truetype');
+    url('../fonts/ScheherazadeNew-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -421,7 +421,7 @@
   src:
     local('Scheherazade New Bold'),
     local('Scheherazade New'),
-    url('../fonts/ScheherazadeNew-Bold.ttf') format('truetype');
+    url('../fonts/ScheherazadeNew-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;

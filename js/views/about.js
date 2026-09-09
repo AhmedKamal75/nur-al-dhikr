@@ -6,7 +6,7 @@
  * install / backup). The "For AI assistants" section is retired — this
  * page speaks to the person holding the device.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { APP_VERSION, VIEWS } from '../core/config.js';
@@ -66,7 +66,7 @@ function guideRow(row, lang) {
       <span class="guide-row__title">${t(row.titleKey, lang)}</span>
       <span class="guide-row__desc">${t(row.descKey, lang)}</span>
     </span>
-    <span class="guide-row__go">${icon('chevronRight', { size: 16 })}</span>
+    <span class="guide-row__go">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16 })}</span>
   </a>`;
 }
 

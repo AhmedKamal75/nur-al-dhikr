@@ -11,6 +11,7 @@
  */
 
 import { formatBytes as canonicalFormatBytes } from '../core/utils.js';
+import { fetchWithTimeout } from '../core/fetch.js';
 
 const AUDIO_DB = 'nurAlDhikrAudio';
 const STORE = 'files'; // key -> { key, moshafId, surah, bytes, ts, blob }
@@ -133,10 +134,13 @@ export async function deleteMoshafAudio(moshafId) {
  * Download one surah for one moshaf into the store.
  * fetch → blob → save. Checks response is actually audio (CDNs return HTML
  * error pages with HTTP 200 on some CDNs' soft-404s).
+ * (F-004) through the timeout layer with a large-file budget: an
+ * unbounded download hangs a batch-pool slot forever on a stalled
+ * handoff; 120s terminates it and the missing-only retry recovers.
  */
 export async function downloadSurah(moshafId, surahNumber, url) {
   try {
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, { timeoutMs: 120000 });
     if (!res.ok) return { ok: false, error: `http-${res.status}` };
     const blob = await res.blob();
     if (!blob.size) return { ok: false, error: 'empty' };

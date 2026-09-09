@@ -26,13 +26,21 @@ const firedToday = new Set();
 // tiny localStorage-backed set keyed by fireKey survives reloads; entries
 // are kept only for the day they belong to, so it self-prunes daily.
 const DAY_DEDUP_STORAGE_KEY = 'nurAlDhikr:v2:notifDayFired';
+/** Exported for tests (cross-tab simulation needs the storage key). */
+export const DAY_DEDUP_KEY_FOR_TESTS = DAY_DEDUP_STORAGE_KEY;
 let dayFiredCache = null;
 let dayFiredDay = null;
 
 function loadDayFired(todayKey) {
   if (dayFiredCache && dayFiredDay === todayKey) return dayFiredCache;
+  dayFiredCache = freshDayFired(todayKey);
   dayFiredDay = todayKey;
-  dayFiredCache = {};
+  return dayFiredCache;
+}
+
+/** Parse today's persisted dedup straight from storage (no cache). */
+function freshDayFired(todayKey) {
+  const out = {};
   try {
     const raw =
       typeof localStorage !== 'undefined' ? localStorage.getItem(DAY_DEDUP_STORAGE_KEY) : null;
@@ -40,14 +48,30 @@ function loadDayFired(todayKey) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
         for (const [k, day] of Object.entries(parsed)) {
-          if (day === todayKey) dayFiredCache[k] = day;
+          if (day === todayKey) out[k] = day;
         }
       }
     }
   } catch {
     /* private mode / corrupt value — session dedup still applies */
   }
-  return dayFiredCache;
+  return out;
+}
+
+/**
+ * (F-007) cross-tab invalidation: the persisted dedup is shared storage,
+ * but each tab cached it once per day — a second open tab never saw the
+ * first tab's adhan and re-fired it. The storage event drops our cache
+ * the moment any tab writes, so the next tick re-reads.
+ */
+export function handleDayFiredStorageEvent(event) {
+  if (event && event.key === DAY_DEDUP_STORAGE_KEY) {
+    dayFiredCache = null;
+  }
+}
+
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('storage', handleDayFiredStorageEvent);
 }
 
 /** True when this fireKey already fired today, across reloads too. */
@@ -63,7 +87,12 @@ export function markDayFired(fireKey, todayKey) {
   store[fireKey] = todayKey;
   try {
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(DAY_DEDUP_STORAGE_KEY, JSON.stringify(store));
+      // Merge with whatever sibling tabs wrote since our last read —
+      // a blind overwrite would drop their keys (read-modify-write race).
+      const merged = { ...freshDayFired(todayKey), ...store };
+      localStorage.setItem(DAY_DEDUP_STORAGE_KEY, JSON.stringify(merged));
+      dayFiredCache = merged;
+      dayFiredDay = todayKey;
     }
   } catch {
     /* best effort — the in-memory set still covers this session */

@@ -284,9 +284,6 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // panel (null = single source). Edition id, validated against the loaded
   // catalog at render time — a stale id simply renders nothing.
   tafsirCompareB: null,
-  // (v4.4) Home "verse of the day" theme bias — 'any' or a theme id from
-  // domain/dailyAyah.js DAILY_THEMES.
-  dailyAyahTheme: 'any',
   // (v4.4) Tasbih milestone haptic/audible ping every N counts (0 = off).
   tasbihMilestone: 0,
   // (v4.4) The name printed on memorization certificates.

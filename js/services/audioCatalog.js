@@ -11,6 +11,7 @@
  */
 
 import { RECITERS_URL } from '../core/config.js';
+import { fetchWithTimeout, FETCH_TIMEOUT_MS } from '../core/fetch.js';
 import { actions, store } from '../core/state.js';
 
 let catalogCache = null; // { kind, reciters: [...] }
@@ -54,7 +55,12 @@ export async function loadCatalog() {
       // Fast path: already resolved successfully.
       if (catalogCache) return catalogCache;
       try {
-        const res = await fetch(RECITERS_URL, { cache: 'force-cache' });
+        // (F-004) through the shared timeout layer (keeps force-cache:
+        // the catalog is immutable release data, not SWR content).
+        const res = await fetchWithTimeout(RECITERS_URL, {
+          cache: 'force-cache',
+          timeoutMs: FETCH_TIMEOUT_MS,
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const doc = await res.json();
         catalogCache = Array.isArray(doc?.reciters) ? doc : { ...doc, reciters: [] };

@@ -167,7 +167,7 @@ assets/css/                9 files, strict load order:
                            cards → quran → animations → desktop →
                            accessibility
 data/                      Content corpora (~157MB; see data/SOURCES.md)
-tests/                     86 test files + helpers / 1009 tests (node --test)
+tests/                     91 test files + helpers / 1021 tests (node --test)
 sw.js                      Service worker (precache + SWR data + triggers)
 ```
 
@@ -371,7 +371,7 @@ layers are exactly what may be broken.
 
 ```
 npx eslint .             # zero errors (js, tests, sw.js — all linted)
-npm test                 # 1009 tests, all green
+npm test                 # 1021 tests (CI must pass)
 npx prettier --check .   # whole tree (npm run check runs all three)
 ```
 

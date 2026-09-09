@@ -9,7 +9,7 @@
  * Pure string templates, no listeners, no store access beyond the state
  * passed in — same rules as every other view.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
@@ -348,7 +348,13 @@ export function buildHadithBookSheet(state) {
           sheetRow('hadith-copy-book', 'hadith.sheet.copyBook', 'copy', lang, {
             dataset: { 'book-id': bookId },
           }),
-          sheetLinkRow('nav.back', 'chevronLeft', VIEWS.HADITH, {}, lang),
+          sheetLinkRow(
+            'nav.back',
+            isRTL(lang) ? 'chevronRight' : 'chevronLeft',
+            VIEWS.HADITH,
+            {},
+            lang
+          ),
         ],
       },
     ],

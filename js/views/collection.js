@@ -1,7 +1,7 @@
 /**
  * views/collection.js
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
@@ -23,7 +23,7 @@ export function renderCollection(state) {
   return `
   <section class="view view--collection">
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}">${icon('chevronLeft', { size: 18 })} ${t('nav.collections', lang)}</a>
+      <a class="back-link" href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.collections', lang)}</a>
       <div class="view-header--row">
         <h1 class="view__title">${escapeHTML(pickLocale(col.name, lang))}</h1>
         <button type="button" class="icon-btn" data-action="delete-collection" data-id="${escapeHTML(col.id)}" aria-label="${t('collections.delete', lang)}">${icon('trash', { size: 18 })}</button>

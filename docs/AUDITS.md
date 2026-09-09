@@ -85,7 +85,48 @@
 - [x] **Docs.** Release protocol gains "docs numbers are regenerated
       from counts, never typed" + the snapshot-shell step.
 
-# V5.2.13 — COMPRESSED DOWNLOADS OPTION (USER REQUEST, 2026-09-07)
+# V5.2.14 — HOSTILE-AUDIT WAVE, REPORT 2026-09-09 (CH)
+
+# `npm run check`: eslint 0, 1021/1021 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.13 → 5.2.14 + re-stamp (227).
+
+# Report in-repo: Nur-al-Dhikr-Audit-Report.docx. Every finding below
+
+# was re-verified against the tree (a CLAIMED pre-existing failing test
+
+# pair in §2.1 does not exist in the repo — equivalent tests written
+
+# here instead). Deviations from its blueprints are noted inline.
+
+- [x] **F-001 (P1) pause race.** Verified both windows; play intent now
+      declared before the first await and honored at every checkpoint
+      (BP-1 adapted — no seq bump in pause, so ended/autoplay survive).
+      `tests/player-pause.test.js` (2 fail loud on old code + 1 guard).
+- [x] **F-004.** New `core/fetch.js` kernel primitive (the report's
+      services→app import would violate layer rules — deviated
+      deliberately); adhan HEAD probe, surah downloads (120s budget),
+      catalog all ride it. Static gate: raw `fetch(` only in core.
+- [x] **F-005.** Deleted unread `dailyAyahTheme`, orphan
+      `dailyAyah.js`/`planExport.js`, precache entries. Reachability
+      gate: every shipped JS module walks from `js/app.js`.
+- [x] **F-002/F-006.** 21 icons mirrored (home CTAs via a helper,
+      back links, month shifters, focus pager); book-order, media,
+      CSS-mirrored sites pinned as exemptions.
+      `tests/rtl-mirror.test.js` (proven to bite on revert).
+- [x] **P3s.** Cross-tab dedup (event invalidation + merge-on-write,
+      `tests/notifications-dedup.test.js`); favicon precached; tafsir
+      h2→h3; audio title + This-Week unified; Scheherazade woff2
+      (786→208KB). Accepted with rationale: 32px chips (40px effective,
+      overlap risk), edge tap zones (labeled controls + arrows exist),
+      existing-user density (stored settings win by design).
+      Disputed with reason: "Memorize" is a mode verb, "Saved" is
+      persistence state, bookmarks are position markers — not drift.
+- [x] **F-003.** Count-free badge, no all-green claims (README +
+      ARCHITECTURE), `tests/docs-honesty.test.js`.
+- [ ] Deferred with rationale: F-013/F-015 (architectural — lazy views,
+      debounce/focus-trap dedupe need their own waves), ishmam/imalah
+      rules (unchanged), features/ strangler (unchanged).
 
 # `npm run check`: eslint 0, 1009/1009 green, prettier clean.
 

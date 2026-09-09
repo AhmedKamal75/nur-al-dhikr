@@ -17,7 +17,7 @@
  * the complete picture when the fetch lands. No DOM access here — same
  * render-model contract as every view.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { escapeHTML } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
@@ -205,7 +205,7 @@ function renderRootDetail(state, lang, root) {
 
   return `
   <section class="view view--roots">
-    <a class="roots-back" href="${buildHash(VIEWS.ROOTS, {})}">${icon('chevronLeft', { size: 14 })} ${t('roots.back', lang)}</a>
+    <a class="roots-back" href="${buildHash(VIEWS.ROOTS, {})}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('roots.back', lang)}</a>
     <h1 class="sr-only">${t('title.roots', lang)} — <span dir="rtl" lang="ar">${escapeHTML(root)}</span></h1>
     <div class="root-detail__head">
       <span class="root-detail__name" dir="rtl" lang="ar">${escapeHTML(root)}</span>

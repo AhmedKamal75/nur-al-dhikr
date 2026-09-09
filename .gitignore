@@ -10,3 +10,6 @@ coverage/
 *.local
 test-results/
 playwright-report/
+# Packaging artifacts (built by npm run compress-data, shipped in the zip)
+/data/**/*.gz
+*.gz

@@ -2,6 +2,37 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.14 — hostile-audit wave (report 2026-09-09)
+
+External audit, independently verified finding-by-finding; every fix
+lands with a regression test that fails on the old code.
+
+1. **Pause race (P1, F-001).** `pause()` during a resolving track or a
+   pending `play()` was overridden or misreported as failure. Play
+   intent is declared before the first await and honored at every
+   checkpoint — the pause wins, silently. `tests/player-pause.test.js`.
+2. **Fetch discipline (P2, F-004).** New `core/fetch.js` kernel
+   primitive (layer-honest: services never import app/*); the custom
+   adhan probe, surah downloads (120s large-file budget), and reciter
+   catalog ride it. Static gate: raw `fetch(` exists only there.
+3. **Dead code (P2, F-005).** Removed the unread `dailyAyahTheme`
+   setting, orphan `dailyAyah.js`/`planExport.js`, and their precache
+   entries. Precache-hygiene gate: every shipped JS module is
+   reachable from `js/app.js`.
+4. **RTL (P2, F-002/F-006).** 21 unmirrored directional icons fixed
+   (home CTAs, back links, month shifters, focus pager); book-order,
+   media-transport, and CSS-mirrored sites pinned as explicit
+   exemptions. `tests/rtl-mirror.test.js` (proven to bite on revert).
+5. **P3s.** Cross-tab adhan dedup (storage-event invalidation +
+   merge-on-write); favicon precached; tafsir h2→h3; audio title and
+   This-Week casing unified; Scheherazade TTF→woff2 (786→208KB).
+   Accepted with rationale: 32px player chips (40px effective via
+   hit-expansion; enlarging risks neighbor overlap), fullscreen edge
+   zones (labeled controls + arrow keys exist), existing-user Home
+   density (stored settings win by design).
+6. **Docs honesty (F-003).** Count-free badge; no all-green claims;
+   `tests/docs-honesty.test.js` pins both.
+
 ## v5.2.13 — compressed downloads option
 
 New storage mode in the Offline library: fetch data JSON as sibling

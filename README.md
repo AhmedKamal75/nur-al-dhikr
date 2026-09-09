@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 [![Vanilla JS](https://img.shields.io/badge/Vanilla-JS-yellow.svg)](ARCHITECTURE.md)
 [![PWA offline-first](https://img.shields.io/badge/PWA-offline--first-blue.svg)](USAGE.md)
-[![Tests](https://img.shields.io/badge/tests-1009_passing-brightgreen.svg)](#tech)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](#tech)
 
 An offline-first, installable web app for daily Islamic remembrance —
 Adhkar, the complete Qur'an, 34,239 Ahadeeth, prayer times, and worship
@@ -70,7 +70,7 @@ stale-while-revalidate so repeat visits are instant and offline-forever.
 
 ```bash
 npm install        # dev-only: eslint + prettier (+ playwright for e2e)
-npm run check      # lint + format:check + unit tests — all green
+npm run check      # lint + format:check + unit tests (CI must pass)
 npm run e2e        # browser smoke + race specs
 ```
 

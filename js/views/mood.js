@@ -5,7 +5,7 @@
  * pattern so every existing card affordance (count, favorite, listen,
  * focus mode, menu) works here unchanged.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
@@ -27,7 +27,7 @@ export function renderMood(state) {
   return `
   <section class="view view--mood">
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon('chevronLeft', { size: 18 })} ${t('moods.title', lang)}</a>
+      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('moods.title', lang)}</a>
       <h1 class="view__title">${icon(mood.icon, { size: 22 })} ${t(`mood.${mood.id}`, lang)}</h1>
       <p class="view__subtitle">${t('moods.subtitle', lang)}</p>
       <p class="view__meta">${t('collections.itemCount', lang, { n: entries.length })}</p>

@@ -6,6 +6,7 @@ import { go } from '../core/router.js';
 import { actions, store } from '../core/state.js';
 import { escapeHTML, uid } from '../core/utils.js';
 import { customMoshafId, surahUrl, validateCustomServer } from '../services/audioCatalog.js';
+import { fetchWithTimeout, FETCH_TIMEOUT_MS } from './net.js';
 import { clampPage } from '../services/mushaf.js';
 import { closeModal, openModal } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
@@ -383,8 +384,13 @@ export const formHandlers = {
     }
     showToast(t('audio.customChecking', lang));
     // Verify the server actually serves audio before accepting it.
+    // (F-004) HEAD probe through the timeout layer — a hung probe used
+    // to stall this flow with no error and no retry.
     try {
-      const res = await fetch(surahUrl(check.server, 1), { method: 'HEAD' });
+      const res = await fetchWithTimeout(surahUrl(check.server, 1), {
+        method: 'HEAD',
+        timeoutMs: FETCH_TIMEOUT_MS,
+      });
       const type = res.headers.get('content-type') || '';
       if (!res.ok || !/audio|octet|mpeg|mp3/i.test(type)) {
         showToast(t('audio.customNotAudio', lang));

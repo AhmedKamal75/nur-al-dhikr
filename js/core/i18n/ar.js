@@ -179,7 +179,7 @@ export const ar = {
   'mushaf.folderLabel': 'المجلد',
   'nav.more': 'المزيد',
   'nav.audio': 'القراء والصوتيات',
-  'audio.title': 'القراء والاستماع دون اتصال',
+  'audio.title': 'القراء والصوتيات',
   'audio.subtitle':
     '٣١٤ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',
   'audio.searchPh': 'ابحث عن قارئ بالعربية أو الإنجليزية…',

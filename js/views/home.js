@@ -1,7 +1,7 @@
 /**
  * views/home.js
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, dateKey, escapeHTML } from '../core/utils.js';
@@ -13,6 +13,9 @@ import { completedCount } from '../services/checklist.js';
 import { ramadanInfo } from '../domain/ramadan.js';
 import { resolveHomePanels } from '../domain/homePanels.js';
 import { toHijri } from '../domain/calendar.js';
+
+/** Forward/CTA chevron: points with the reading direction (U7 rule). */
+const goIcon = (lang, size) => icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size });
 import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
 import { calculateTimes, nextPrayer, formatClock } from '../domain/prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
@@ -86,7 +89,7 @@ export function worshipTodayCardHTML(state) {
     return `
       <a class="worship-row" href="${buildHash(views[r.id])}" data-action="navigate" data-view="${views[r.id]}">
         ${inner}
-        ${icon('chevronRight', { size: 13 })}
+        ${goIcon(lang, 13)}
       </a>`;
   };
 
@@ -131,7 +134,7 @@ export function nudgeCardHTML(state, today = new Date()) {
     <div class="panel--nudge__text">
       <p class="panel--nudge__title">${t(`nudge.title.${nudge.tier}`, lang)}</p>
       <p class="panel--nudge__line">${t(`nudge.line.${nudge.kind}`, lang)}</p>
-      <a class="panel--nudge__cta" href="${href}" data-action="navigate" data-view="${view}"${bookmarkPage != null ? ` data-page="${escapeHTML(String(bookmarkPage))}"` : ''}>${t(`nudge.cta.${nudge.kind}`, lang)} ${icon('chevronRight', { size: 12 })}</a>
+      <a class="panel--nudge__cta" href="${href}" data-action="navigate" data-view="${view}"${bookmarkPage != null ? ` data-page="${escapeHTML(String(bookmarkPage))}"` : ''}>${t(`nudge.cta.${nudge.kind}`, lang)} ${goIcon(lang, 12)}</a>
     </div>
     <button type="button" class="icon-btn icon-btn--sm panel--nudge__dismiss" data-action="nudge-dismiss" aria-label="${t('nudge.dismiss', lang)}" title="${t('nudge.dismiss', lang)}">${icon('close', { size: 13 })}</button>
   </aside>`;
@@ -206,7 +209,7 @@ function nextPrayerStrip(state, lang, times) {
       <span class="home-prayer-strip__icon">${icon('compass', { size: 20 })}</span>
       <span class="home-prayer-strip__text">
         <span class="home-prayer-strip__label">${t('home.setLocation', lang)}</span>
-        <span class="home-prayer-strip__cta">${t('home.setLocationAction', lang)} ${icon('chevronRight', { size: 14 })}</span>
+        <span class="home-prayer-strip__cta">${t('home.setLocationAction', lang)} ${goIcon(lang, 14)}</span>
       </span>
     </a>`;
   }
@@ -223,7 +226,7 @@ function nextPrayerStrip(state, lang, times) {
       <span class="home-prayer-strip__name">${t('prayer.' + next.name, lang)} · <span dir="ltr">${formatClock(times[next.name])}</span></span>
     </span>
     <span class="home-prayer-strip__countdown" dir="ltr" data-home-countdown>—</span>
-    ${icon('chevronRight', { size: 16 })}
+    ${goIcon(lang, 16)}
   </a>`;
 }
 
@@ -291,7 +294,7 @@ export function renderHome(state) {
         <span class="panel--ramadan-banner__label">${t('ramadan.bannerTitle', lang)}</span>
         <span class="panel--ramadan-banner__sub">${t('ramadan.bannerSub', lang, { n: hijri.day })}</span>
       </span>
-      ${icon('chevronRight', { size: 18 })}
+      ${goIcon(lang, 18)}
     </a>`
         : '';
     })(),
@@ -302,7 +305,7 @@ export function renderHome(state) {
         <span class="panel--checklist-summary-link__label">${t('checklist.title', lang)}</span>
         <span class="panel--checklist-summary-link__sub" dir="ltr">${completedCount(selectors.todayChecklist(state))} / ${CHECKLIST_ITEMS.length} ${t('checklist.today', lang)}</span>
       </span>
-      ${icon('chevronRight', { size: 18 })}
+      ${goIcon(lang, 18)}
     </a>`,
     continue: state.quranBookmark?.surah
       ? `
@@ -312,7 +315,7 @@ export function renderHome(state) {
         <span class="panel--quran-continue__label">${t('quran.continueReading', lang)}</span>
         <span class="panel--quran-continue__sub">${t('quran.surah', lang)} ${escapeHTML(String(state.quranBookmark.surah))}</span>
       </span>
-      ${icon('chevronRight', { size: 18 })}
+      ${goIcon(lang, 18)}
     </a>`
       : '',
     progress: `
@@ -350,7 +353,7 @@ export function renderHome(state) {
     <section class="panel">
       <div class="panel__header">
         <h2>${t('home.favorites', lang)}</h2>
-        <a href="${buildHash(VIEWS.FAVORITES)}" data-action="navigate" data-view="${VIEWS.FAVORITES}" aria-label="${t('home.viewAll.favorites', lang)}">${icon('chevronRight', { size: 16 })}</a>
+        <a href="${buildHash(VIEWS.FAVORITES)}" data-action="navigate" data-view="${VIEWS.FAVORITES}" aria-label="${t('home.viewAll.favorites', lang)}">${goIcon(lang, 16)}</a>
       </div>
       <div class="card-row">
         ${favEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: true, isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
@@ -362,7 +365,7 @@ export function renderHome(state) {
     <section class="panel">
       <div class="panel__header">
         <h2>${t('home.collections', lang)}</h2>
-        <a href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}" aria-label="${t('home.viewAll.collections', lang)}">${icon('chevronRight', { size: 16 })}</a>
+        <a href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}" aria-label="${t('home.viewAll.collections', lang)}">${goIcon(lang, 16)}</a>
       </div>
       <div class="chip-row">
         ${pinnedCollections.map((c) => `<a class="chip chip--collection" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">${escapeHTML(pickLocale(c.name, lang))} <span class="chip__count">${c.items.length}</span></a>`).join('')}
