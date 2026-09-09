@@ -12,7 +12,7 @@ import { computeFitr, computeZakat, hawlDueFor } from '../../domain/zakat.js';
 import { buildTextPrompt, buildConfirm } from '../../ui/menus.js';
 import { openModal, closeModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
-import { buildMushafBookmarks, setBookmarkFolderFilter } from '../../views/mushafReader.js';
+import { buildMushafBookmarks } from '../../views/mushafReader.js';
 
 export const clickHandlers = {
   /* ---------------- Zakat calculator ------------------ */
@@ -75,7 +75,8 @@ export const clickHandlers = {
   /* ---------------- Ayah bookmark folders/notes ---------------- */
 
   'bookmark-filter-folder': (ds) => {
-    setBookmarkFolderFilter(ds.folder);
+    // (v5.2.9) filter via the session (was setBookmarkFolderFilter).
+    store.dispatch(actions.setMushafSession({ bookmarkFilter: ds.folder || '__all__' }));
     openModal(buildMushafBookmarks(store.getState()), {
       labelledBy: 'modal-title-mushaf-bookmarks',
     });

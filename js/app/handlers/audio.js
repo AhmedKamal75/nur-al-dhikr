@@ -140,6 +140,17 @@ export const clickHandlers = {
   'quran-play-surah': (ds) => {
     const state = store.getState();
     const surah = parseInt(ds.surah, 10);
+    // (UX-7) the tile serves the ONE session: a verse session holding
+    // this surah owns the tap (pause/resume in place) whichever engine
+    // the glyph came from — no more "which engine will wake" guessing.
+    const sp = state.surahPlayback;
+    if (sp?.active && Number(sp.surah) === surah) {
+      const paused = sp.paused === true;
+      store.dispatch(
+        actions.setSurahPlayback(paused ? surahPlayback.resume() : surahPlayback.pause())
+      );
+      return;
+    }
     const p = state.player;
     // If this exact track is playing → pause; if paused on it → resume;
     // otherwise start it. Moshaf resolution (incl. loading the lazily

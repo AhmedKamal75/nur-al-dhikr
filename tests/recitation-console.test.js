@@ -124,6 +124,24 @@ test('E: echo banner only while waiting', () => {
   assert.ok(banner.includes('x-echo') && banner.includes('role="status"'));
 });
 
+test('E: icon-only buttons carry wide-viewport labels (UX-8)', () => {
+  const snap = consoleSnapshot(session(), settings, sleep, 'en');
+  const html = recitationChipsHTML(snap, 'en', CLS);
+  for (const action of [
+    'recite-ayah-prev',
+    'recite-ayah-next',
+    'recite-follow-toggle',
+    'recite-pause-toggle',
+  ]) {
+    const seg = html.split(`data-action="${action}"`)[1].split('</button>')[0];
+    assert.ok(seg.includes('rec-console-label'), `${action} has a label span`);
+    assert.ok(seg.includes('aria-hidden="true"'), `${action} label is decorative`);
+  }
+  // The stop square stays icon-only (universal glyph + aria-label).
+  const stopSeg = html.split('data-action="recite-stop"')[1].split('</button>')[0];
+  assert.ok(!stopSeg.includes('rec-console-label'));
+});
+
 test('E: reciterShortLabel falls back to the raw id', () => {
   assert.equal(reciterShortLabel('unknown-id', 'en'), 'unknown-id');
   assert.equal(reciterShortLabel('', 'en'), '');

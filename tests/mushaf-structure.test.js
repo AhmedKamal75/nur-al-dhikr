@@ -45,14 +45,15 @@ test('E: facade re-exports resolve to functions', async () => {
   for (const name of [
     'buildMushafTrack',
     'buildKhatmaPlanForm',
-    'setBookmarkFolderFilter',
     'buildMushafBookmarks',
-    'setActiveTafsirTab',
-    'getActiveTafsirTab',
     'buildMushafAyahDetail',
     'renderMushaf',
     'setFlipDirection',
   ]) {
     assert.equal(typeof m[name], 'function', `mushafReader.${name}`);
+  }
+  // (v5.2.9) the session setters are gone — state.mushafSession owns them.
+  for (const gone of ['setBookmarkFolderFilter', 'setActiveTafsirTab', 'getActiveTafsirTab']) {
+    assert.equal(m[gone], undefined, `mushafReader.${gone} removed`);
   }
 });

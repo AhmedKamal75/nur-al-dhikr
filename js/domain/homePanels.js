@@ -20,6 +20,32 @@ export const HOME_PANEL_IDS = Object.freeze([
   'collections',
 ]);
 
+/**
+ * (UX-1) fresh-install density cap. Hero + prayer strip + quick actions
+ * + nudge + onboarding are chrome (always rendered); of the 11 content
+ * panels only the next action (continue), today (progress), and two
+ * daily highlights (verse, hadith) show until the person opts in via the
+ * existing per-panel Settings toggles. Ramadan stays visible — it
+ * renders nothing off-season and must be there in-season. Stored
+ * settings always win (existing users keep exactly what they have).
+ */
+export const HOME_DEFAULT_VISIBLE = Object.freeze([
+  'ramadan',
+  'continue',
+  'progress',
+  'verse',
+  'hadith',
+]);
+
+/** hiddenHome for a fresh install: everything outside the default set. */
+export function defaultHiddenHome() {
+  const out = {};
+  for (const id of HOME_PANEL_IDS) {
+    if (!HOME_DEFAULT_VISIBLE.includes(id)) out[id] = true;
+  }
+  return out;
+}
+
 /** Effective panel order: saved order first (known ids only), then any
  *  missing panels in book order, minus hidden ones. */
 export function resolveHomePanels(order, hidden) {

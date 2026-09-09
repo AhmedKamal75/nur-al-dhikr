@@ -167,7 +167,7 @@ assets/css/                9 files, strict load order:
                            cards → quran → animations → desktop →
                            accessibility
 data/                      Content corpora (~157MB; see data/SOURCES.md)
-tests/                     81 test files + helpers / 972 tests (node --test)
+tests/                     84 test files + helpers / 993 tests (node --test)
 sw.js                      Service worker (precache + SWR data + triggers)
 ```
 
@@ -253,13 +253,14 @@ layers are exactly what may be broken.
   of a backup/localStorage payload; `dryRunRestore()` exercises the same
   sanitizer for the Settings health check so they can never drift.
   Session-only slices (player, modals, arm status) are stripped.
-- **Known compromise:** four Mushaf view transients (flip direction,
-  fullscreen anim direction, bookmark folder filter, active tafsir tab)
-  are documented single-use module state — flip/fullscreen in
-  `views/mushafReader.js`, the filter in `views/mushafBookmarks.js`,
-  the tab in `views/ayahStudy.js` (v5.2.6 split, Blueprint E step 2;
-  the filter no longer writes back mid-render). Do not add more; if you
-  touch those files, consider promoting them.
+- **Known compromise:** two Mushaf one-shot animation tokens (flip
+  direction, fullscreen anim direction) are documented single-use
+  module state in `views/mushafReader.js` — single writer, single
+  render consumer, no cross-module readers, so store promotion would
+  buy double-renders for zero probe value. The other two historical
+  transients (bookmark folder filter, active tafsir tab) were promoted
+  to `state.mushafSession` in v5.2.9. Do not add more module state; if
+  you touch those files, consider promoting what remains.
 - **(v4.4) Mushaf-first reading.** The Mushaf (paper-book view) is the
   app's default Qur'an experience; the classic list reader is a peer,
   reachable in one tap from either side. Generic "read the Qur'an"
@@ -370,7 +371,7 @@ layers are exactly what may be broken.
 
 ```
 npx eslint .             # zero errors (js, tests, sw.js — all linted)
-npm test                 # 972 tests, all green
+npm test                 # 993 tests, all green
 npx prettier --check .   # whole tree (npm run check runs all three)
 ```
 

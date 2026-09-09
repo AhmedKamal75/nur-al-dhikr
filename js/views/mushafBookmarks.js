@@ -10,30 +10,23 @@ import { escapeHTML, pickLocale } from '../core/utils.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 
 /** Saved per-ayah bookmarks list, opened from the Mushaf topbar.
- *  Bookmarks can be filed into user-made folders and carry a short note;
- *  the currently-selected folder filter is rebuilt into the modal each
- *  time it re-opens or an action re-renders it.
+ *  Bookmarks can be filed into user-made folders and carry a short note.
+ *  (v5.2.9) the folder filter lives in state.mushafSession — set by the
+ *  bookmark manager UI, read here. A deleted folder's id corrects to
+ *  __all__ read-only at render (B12: render never owns state).
  */
-let bookmarkFolderFilter = '__all__';
-
-export function setBookmarkFolderFilter(id) {
-  bookmarkFolderFilter = id || '__all__';
-}
-
 export function buildMushafBookmarks(state) {
   const lang = state.settings.language;
   const meta = state.mushaf.meta;
   const folders = state.ayahBookmarkFolders || [];
+  const chosen = state.mushafSession?.bookmarkFilter || '__all__';
   // (B12) a deleted folder's filter corrects to __all__ LOCALLY — the old
   // code wrote the correction back mid-render, so render owned state that
-  // only tests could reset. The module var keeps the last explicitly
-  // chosen id; every render derives the effective one.
+  // only tests could reset.
   const effectiveFilter =
-    bookmarkFolderFilter !== '__all__' &&
-    bookmarkFolderFilter !== '__unfiled__' &&
-    !folders.some((f) => f.id === bookmarkFolderFilter)
+    chosen !== '__all__' && chosen !== '__unfiled__' && !folders.some((f) => f.id === chosen)
       ? '__all__'
-      : bookmarkFolderFilter;
+      : chosen;
 
   const chip = (id, label, extra = '') => `
     <button type="button" class="chip chip--basis ${effectiveFilter === id ? 'chip--basis-active' : ''}" data-action="bookmark-filter-folder" data-folder="${escapeHTML(String(id))}" aria-pressed="${effectiveFilter === id}">

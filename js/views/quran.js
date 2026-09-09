@@ -11,6 +11,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { escapeHTML } from '../core/utils.js';
 import { VIEWS, TRANSLATION_EDITIONS } from '../core/config.js';
+import { selectors } from '../core/state.js';
 import { ayahTranslit } from '../domain/wordStudy.js';
 import { ayahAudioUrl } from '../services/mushaf.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
@@ -266,8 +267,22 @@ function surahListHTML(state) {
   });
 
   const tiles = surahs
-    .map(
-      (s) => `
+    .map((s) => {
+      // (UX-7) the tile renders the ONE session, not the player slice:
+      // a verse session holding this surah owns the glyph and the label.
+      const sess = selectors.audioSession(state);
+      const mine = sess.mode !== 'none' && sess.surah === s.number;
+      const sounding = mine && sess.sounding;
+      const labelKey =
+        mine && sess.mode === 'verse'
+          ? sess.sounding
+            ? 'audio.pauseRecitation'
+            : 'audio.resumeRecitation'
+          : sounding
+            ? 'audio.pause'
+            : 'audio.play';
+      const label = `${t(labelKey, lang)} — ${escapeHTML(s.nameTransliteration)}`;
+      return `
     <div class="surah-tile-wrap" data-roving-item>
       <a class="surah-tile" href="${buildHash(VIEWS.QURAN, { id: s.number })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${s.number}">
         <span class="surah-tile__num">${s.number}</span>
@@ -277,11 +292,11 @@ function surahListHTML(state) {
         </span>
         <span class="surah-tile__name-ar" dir="rtl">${escapeHTML(s.nameAr)}</span>
       </a>
-      <button type="button" class="icon-btn icon-btn--sm surah-tile__play ${state.player?.surah === s.number && state.player?.playing ? 'icon-btn--playing' : ''}" data-action="quran-play-surah" data-surah="${s.number}" aria-label="${t('audio.play', lang)} — ${escapeHTML(s.nameTransliteration)}" title="${t('audio.play', lang)}">
-        ${icon(state.player?.surah === s.number && state.player?.playing ? 'pause' : 'play', { size: 15 })}
+      <button type="button" class="icon-btn icon-btn--sm surah-tile__play ${sounding ? 'icon-btn--playing' : ''}" data-action="quran-play-surah" data-surah="${s.number}" aria-label="${label}" title="${label}">
+        ${icon(sounding ? 'pause' : 'play', { size: 15 })}
       </button>
-    </div>`
-    )
+    </div>`;
+    })
     .join('');
 
   return `

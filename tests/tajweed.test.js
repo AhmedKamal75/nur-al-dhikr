@@ -212,7 +212,7 @@ test('tafkhim: ra\u2019 mufakhkhamah (fatha/damma) fires; kasra and sukun do not
   assert.ok(!rulesOf('\u0627\u0644\u0652\u0642\u064e\u0645\u064e\u0631').includes('tafkhim')); // القَمَر final sukun ra — context rule, left uncolored
 });
 
-test("madd 'iwad: ayah-final fathah tanween is pink; mid-ayah tanween is not", () => {
+test("madd 'iwad: ayah-final fathah tanween is red; mid-ayah tanween is not", () => {
   // عَلِيمًا as the LAST word of an ayah → 'iwad
   assert.ok(
     rulesOf('\u0639\u064e\u0644\u0650\u064A\u0645\u064b\u0627', {
@@ -245,12 +245,12 @@ test('the standard chart palette: families match the reference chart colors', ()
   // qalqalah cyan, tafkhim blue
   assert.equal(colorOf('qalqalah'), '#00BCD4');
   assert.equal(colorOf('tafkhim'), '#2196F3');
-  // madd ladder: pink 2-count, orange separated, deep pink connected, red necessary
-  assert.equal(colorOf('madd_2'), '#F48FB1');
-  assert.equal(colorOf('madd_iwad'), '#F48FB1');
-  assert.equal(colorOf('madd_munfasil'), '#FF9800');
-  assert.equal(colorOf('madd_muttasil'), '#F06292');
-  assert.equal(colorOf('madd_6'), '#F44336');
+  // madd ladder: standard-chart reds (cumin → orange-red → blood → dark)
+  assert.equal(colorOf('madd_2'), '#D32F2F');
+  assert.equal(colorOf('madd_iwad'), '#D32F2F');
+  assert.equal(colorOf('madd_munfasil'), '#BF3600');
+  assert.equal(colorOf('madd_muttasil'), '#C62828');
+  assert.equal(colorOf('madd_6'), '#B71C1C');
   // the two rules the standard convention leaves uncolored
   assert.equal(colorOf('idgham_no_ghunnah'), null);
   assert.equal(colorOf('izhar_shafawi'), null);

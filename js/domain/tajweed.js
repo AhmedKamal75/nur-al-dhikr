@@ -34,6 +34,16 @@ const DAGGER_ALIF = '\u0670';
 const TATWEEL = '\u0640';
 const MADDA_ABOVE = '\u0653'; // combining madda — this Uthmani source marks madd points (incl. the muqatta'at letter-names) explicitly rather than leaving them to be inferred
 const IQLAB_MARK = '\u06E2'; // small high meem isolated form — marks a noon/tanween that has already undergone iqlab in the text itself
+const IQLAB_MARK_LOW = '\u06ED'; // small low meem — the same iqlab mark in a lower position
+const MADDA_SMALL_HIGH = '\u06E4'; // small high madda — the madda mark in its raised spelling (e.g. on a silah waw)
+// Corpus-attested tanween spellings beyond the three canonical marks:
+// subscript alef writes kasratan (رَجُلٖ), inverted damma and the
+// "fatha with two dots" write dammatan (جَمِيعٞ, شَرَابٞ). Without these,
+// the consonant reads "bare" and misfires qalqalah while the noon-family
+// rules never engage.
+const KASRATAN_SUB = '\u0656';
+const DAMMATAN_INV = '\u0657';
+const DAMMATAN_DISP = '\u065E';
 const DIACRITIC_CHARS = new Set([
   FATHA,
   KASRA,
@@ -46,8 +56,36 @@ const DIACRITIC_CHARS = new Set([
   DAMMATAN,
   MADDA_ABOVE,
   IQLAB_MARK,
+  IQLAB_MARK_LOW,
+  MADDA_SMALL_HIGH,
+  KASRATAN_SUB,
+  DAMMATAN_INV,
+  DAMMATAN_DISP,
+  // Attached-but-inert Quranic signs: waqf/pausal ligatures and marks
+  // (ۚۖۛ etc.), saktah (ۜ), ishmam/rawm (۬), imalah dot (ٜ), the sajdah
+  // place (۩), and the silent/pronounced zeros (۟۠). They ride on a letter
+  // without changing its pronunciation rule, so they attach silently.
+  '\u06D6',
+  '\u06D7',
+  '\u06D8',
+  '\u06DA',
+  '\u06DB',
+  '\u06DC',
+  '\u06EC',
+  '\u065C',
+  '\u06E9',
+  '\u06E0',
+  '\u06DF',
 ]);
 const TANWEEN_MARKS = new Set([FATHATAN, KASRATAN, DAMMATAN]);
+/** Canonical vowel/mark: variant spellings fold to the mark the rules test. */
+function canonMark(ch) {
+  if (ch === KASRATAN_SUB) return KASRATAN;
+  if (ch === DAMMATAN_INV || ch === DAMMATAN_DISP) return DAMMATAN;
+  if (ch === IQLAB_MARK_LOW) return IQLAB_MARK;
+  if (ch === MADDA_SMALL_HIGH) return MADDA_ABOVE;
+  return ch;
+}
 
 // Letters
 const ALIF = '\u0627';
@@ -119,7 +157,8 @@ const IKHFA_LETTERS = new Set([
  *   nasal (green)  — ghunnah + the whole noon/meem sakinah family
  *   qalqalah (cyan)
  *   heavy (blue)   — tafkhim
- *   madd (pink / orange / deep pink / red, by strength)
+ *   madd (red, orange-red, blood red, dark red, by strength — v5.3.0;
+ *   the standard chart's madd reds, replacing the earlier pink scale)
  *
  * Two rules the standard mushaf convention leaves UNMARKED (idgham bila
  * ghunnah, izhar shafawi) now carry color: null and render no color span
@@ -166,11 +205,11 @@ export const TAJWEED_FAMILIES = Object.freeze([
   },
   {
     id: 'madd',
-    color: '#F48FB1',
+    color: '#D32F2F',
     name: { en: 'Madd family (elongation)', ar: 'عائلة المد' },
     desc: {
-      en: 'Pink = 2 counts, orange = separated 2/4/6, deep pink = connected 4/5, red = obligatory 6.',
-      ar: 'وردي = حركتان، برتقالي = المنفصل، وردي غامق = المتصل، أحمر = اللازم ٦.',
+      en: 'Red = 2 counts, orange-red = separated 2/4/6, blood red = connected 4/5, dark red = obligatory 6.',
+      ar: 'أحمر = حركتان، أحمر برتقالي = المنفصل، أحمر داكن = المتصل، أحمر غامق = اللازم ٦.',
     },
   },
 ]);
@@ -298,14 +337,14 @@ export const TAJWEED_RULES = Object.freeze([
   },
   {
     id: 'madd_2',
-    color: '#F48FB1',
+    color: '#D32F2F',
     family: 'madd',
     name: { en: 'Madd (natural, 2 counts)', ar: 'المد الطبيعي' },
     desc: { en: 'A natural elongation of 2 counts.', ar: 'مد طبيعي بمقدار حركتين.' },
   },
   {
     id: 'madd_iwad',
-    color: '#F48FB1',
+    color: '#D32F2F',
     family: 'madd',
     name: { en: "Madd 'Iwad (compensating, at a stop)", ar: 'مد العِوَض' },
     desc: {
@@ -315,7 +354,7 @@ export const TAJWEED_RULES = Object.freeze([
   },
   {
     id: 'madd_badal',
-    color: '#F48FB1',
+    color: '#D32F2F',
     family: 'madd',
     name: { en: 'Madd Badal (2 counts)', ar: 'مد البدل' },
     desc: {
@@ -325,7 +364,7 @@ export const TAJWEED_RULES = Object.freeze([
   },
   {
     id: 'madd_246',
-    color: '#F48FB1',
+    color: '#D32F2F',
     family: 'madd',
     name: { en: "Madd 'Arid (at a stop, 2\u20136)", ar: 'المد العارض للسكون' },
     desc: {
@@ -335,7 +374,7 @@ export const TAJWEED_RULES = Object.freeze([
   },
   {
     id: 'madd_munfasil',
-    color: '#FF9800',
+    color: '#BF3600',
     family: 'madd',
     name: { en: 'Madd Munfasil (separated, 2\u20134\u20136)', ar: 'المد المنفصل' },
     desc: {
@@ -345,7 +384,7 @@ export const TAJWEED_RULES = Object.freeze([
   },
   {
     id: 'madd_silah',
-    color: '#FF9800',
+    color: '#BF3600',
     family: 'madd',
     name: { en: 'Madd as-Silah (\u0647 pronoun, 2\u20134\u20136)', ar: 'مد الصلة' },
     desc: {
@@ -355,7 +394,7 @@ export const TAJWEED_RULES = Object.freeze([
   },
   {
     id: 'madd_muttasil',
-    color: '#F06292',
+    color: '#C62828',
     family: 'madd',
     name: { en: 'Madd Muttasil (connected, 4\u20135)', ar: 'المد المتصل' },
     desc: {
@@ -365,7 +404,7 @@ export const TAJWEED_RULES = Object.freeze([
   },
   {
     id: 'madd_6',
-    color: '#F44336',
+    color: '#B71C1C',
     family: 'madd',
     name: { en: 'Madd Lazim (necessary, 6)', ar: 'المد اللازم' },
     desc: {
@@ -379,6 +418,9 @@ function isBaseLetter(ch) {
   return !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL && ch !== ' ';
 }
 
+const SMALL_HIGH_YEH = '\u06E7'; // consonantal small yeh (ٱلنَّبِيِّـۧنَ) — a yeh for rule purposes
+const SMALL_HIGH_NOON = '\u06E8'; // consonantal small noon (نُـۨجِي) — a noon for rule purposes
+
 /** Group a word's characters into {base, start, end, diacritics} units,
  *  skipping tatweel/spaces (purely cosmetic, never part of a rule). */
 function tokenizeUnits(word) {
@@ -386,11 +428,14 @@ function tokenizeUnits(word) {
   for (let i = 0; i < word.length; i += 1) {
     const ch = word[i];
     if (ch === TATWEEL) continue;
+    // Consonantal small marks spell real letters (the plural yeh, an
+    // assimilated noon) — fold them so the letter rules engage.
+    const base = ch === SMALL_HIGH_YEH ? YEH : ch === SMALL_HIGH_NOON ? NOON : ch;
     if (isBaseLetter(ch)) {
-      units.push({ base: ch, start: i, end: i + 1, diacritics: new Set() });
+      units.push({ base, start: i, end: i + 1, diacritics: new Set() });
     } else if (DIACRITIC_CHARS.has(ch) && units.length) {
       const u = units[units.length - 1];
-      u.diacritics.add(ch);
+      u.diacritics.add(canonMark(ch));
       u.end = i + 1;
     }
   }
@@ -431,6 +476,30 @@ function skeletonOf(word) {
   return [...String(word)].filter((ch) => !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL).join('');
 }
 
+/** One-letter prefix particles that can precede the article (و ف ب ك). */
+function isPrefixParticle(unit) {
+  return (
+    (unit.base === WAW || unit.base === '\u0641' || unit.base === BEH || unit.base === '\u0643') &&
+    unit.diacritics.size > 0
+  );
+}
+
+/** Consonants that can carry a lazim jazm (vowel letters excluded). */
+function isLazimConsonant(base) {
+  return !(
+    base === ALIF ||
+    base === ALIF_WASLA ||
+    base === ALIF_MADDA ||
+    base === WAW ||
+    base === YEH ||
+    base === ALEF_MAKSURA ||
+    base === SMALL_WAW ||
+    base === SMALL_YEH ||
+    base === DAGGER_ALIF ||
+    base === SMALL_HIGH_YEH
+  );
+}
+
 /**
  * Classify one word's tajweed rules. Returns spans {start, end, rule}
  * with indices relative to `word` itself (not the whole ayah) — the
@@ -461,13 +530,15 @@ export function classifyWordTajweed(
 
     if (
       u.base === LAM &&
-      i === 1 &&
       prev &&
       (prev.base === ALIF_WASLA || prev.base === ALIF) &&
       next &&
       SUN_LETTERS.has(next.base) &&
       next.diacritics.has(SHADDA) &&
-      !isDivineName(word)
+      !isDivineName(word) &&
+      // Bare ال (lam second) or ال after a one-letter prefix particle
+      // (وَٱلشَّمۡسِ، بِٱلۡحَقِّ) — anything longer is not the article.
+      (i === 1 || (i === 2 && units[0] && isPrefixParticle(units[0])))
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'lam_shamsiyyah' });
     }
@@ -520,7 +591,21 @@ export function classifyWordTajweed(
     // direct signal than inferring purely from hamza-adjacency, so it's
     // checked first; hamza-adjacency still resolves *which* signaled madd
     // (muttasil/munfasil/badal) once we know one applies.
-    const muqattaMadd = u.diacritics.has(MADDA_ABOVE) && !isMaddLetter(u, prev);
+    // Marked on a bare consonant -> a muqatta'at letter-name madd
+    // (لام، ميم، نون، سين، قاف، صاد، عين — the names with inherent
+    // 6-count madds). Restricted to exactly these: a madda on anything
+    // else (e.g. the small-high spelling on a silent plural alif like
+    // وَٱسۡجُدُواْۤ) is not a letter-name and must not go red.
+    const muqattaMadd =
+      u.diacritics.has(MADDA_ABOVE) &&
+      !isMaddLetter(u, prev) &&
+      (u.base === LAM ||
+        u.base === MEEM ||
+        u.base === NOON ||
+        u.base === '\u0633' ||
+        u.base === '\u0642' ||
+        u.base === '\u0635' ||
+        u.base === '\u0639');
     if (muqattaMadd) {
       // Marked on a bare consonant -> a muqatta'at letter-name madd.
       spans.push({ start: u.start, end: u.end, rule: 'madd_6' });
@@ -529,6 +614,19 @@ export function classifyWordTajweed(
       const isSilah = u.base === SMALL_WAW || u.base === SMALL_YEH;
       if (next && HAMZA_LETTERS.has(next.base)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
+      } else if (
+        next &&
+        (next.diacritics.has(SHADDA) ||
+          (isLazimConsonant(next.base) &&
+            (next.diacritics.has(SUKUN) || next.diacritics.has(SUKUN_ALT))))
+      ) {
+        // Madd lazim: a madd letter feeding a shaddah or a jazm (ٱلضَّآلِّينَ,
+        // ءَآلۡـَٔانَ) — 6 counts, never the badal the old fallback produced.
+        // (Hamza-adjacency above takes precedence: جاءَ stays muttasil.)
+        // The jazm half needs a real consonant: a sukun on alif/waw/yeh is
+        // orthographic silence (the plural alif in وَٱسۡجُدُواْۤ), not jazm —
+        // that waw stays a plain 2-count madd.
+        spans.push({ start: u.start, end: u.end, rule: 'madd_6' });
       } else if (!next && nextWordFirstBase && HAMZA_LETTERS.has(nextWordFirstBase)) {
         spans.push({ start: u.start, end: u.end, rule: isSilah ? 'madd_silah' : 'madd_munfasil' });
       } else if (isSilah) {
@@ -547,6 +645,18 @@ export function classifyWordTajweed(
       } else {
         spans.push({ start: u.start, end: u.end, rule: 'madd_2' });
       }
+    }
+
+    // (v5.3.0) Madd as-silah sughra: the text writes a BARE small
+    // waw/yeh on the ha-kinayah pronoun (بِهِۦ، لِرَبِّهِۦ) exactly where
+    // the 2-count connecting madd applies — the mark's presence IS the
+    // rule signal (the mushaf never writes it where silah doesn't
+    // apply), so no lookahead is needed. The madda-marked sibling
+    // (kubra) is handled in the madd-letter branch above — note the
+    // small-high madda folds to MADDA_ABOVE at tokenize time, so testing
+    // for MADDA_ABOVE alone covers both spellings.
+    if ((u.base === SMALL_WAW || u.base === SMALL_YEH) && !u.diacritics.has(MADDA_ABOVE)) {
+      spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
     }
 
     // Meem sakinah family (v3.7) — closes the gap TODO.md documented since
@@ -649,6 +759,131 @@ export function tajweedRule(id) {
   return TAJWEED_RULES.find((r) => r.id === id) || null;
 }
 
+/* ------------------------------------------------------------------ */
+/* Canonical word tokens (v5.3.0) — one index for every text source.    */
+/*                                                                     */
+/* The mushaf pages, the classic surah docs, and the grammar records   */
+/* disagree on whitespace tokenization in ~2,700 ayahs: standalone     */
+/* ornaments (۞, waqf marks ۚۖۙۘۛ, the sajdah ۩) count as "words" in    */
+/* one source but glue onto neighbors (or vanish) in another, so a raw */
+/* whitespace index tapped in one view points at the adjacent word in  */
+/* another. Canonical tokens drop letterless tokens and strip ornament */
+/* affixes; the survivors align 1:1 across all three sources in all    */
+/* but a handful of true spelling-split ayahs (37:164 etc.), where the */
+/* popup falls back to content-anchored resolution (see wordStudy).     */
+/* Display text is never altered — ornaments still render, they just   */
+/* don't consume an index.                                             */
+/* ------------------------------------------------------------------ */
+
+const WORD_ORNAMENT_CHARS = new Set([
+  '\u06DE', // rub el hizb
+  '\u06D6',
+  '\u06D7',
+  '\u06D8', // waqf ligatures (صلى قلى مـ)
+  '\u06DA',
+  '\u06DB', // waqf marks (jeem, three dots)
+  '\u06DC', // saktah seen (counts as ornament only when standalone)
+  '\u06E9', // sajdah place
+  '\u06EC', // ravm/ishmam stop (standalone only)
+  '\uFD3E',
+  '\uFD3F', // ornate parentheses
+  '(',
+  ')',
+]);
+const ORNAMENT_DIGITS = new Set([
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '٠',
+  '١',
+  '٢',
+  '٣',
+  '٤',
+  '٥',
+  '٦',
+  '٧',
+  '٨',
+  '٩',
+]);
+
+function stripOrnaments(tok) {
+  let s = String(tok || '');
+  let cut = true;
+  while (cut && s.length) {
+    cut = false;
+    if (WORD_ORNAMENT_CHARS.has(s[0]) || ORNAMENT_DIGITS.has(s[0])) {
+      s = s.slice(1);
+      cut = true;
+    }
+    if (
+      s.length &&
+      (WORD_ORNAMENT_CHARS.has(s[s.length - 1]) || ORNAMENT_DIGITS.has(s[s.length - 1]))
+    ) {
+      s = s.slice(0, -1);
+      cut = true;
+    }
+  }
+  return s;
+}
+
+const ARABIC_LETTER_RE = /[ء-غف-يٰ-ۓ]/u;
+
+/** 1-based canonical word list: [{ text, rawIndex }]. */
+export function canonicalWordTokens(text) {
+  const raw = String(text || '')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  const out = [];
+  raw.forEach((tok, rawIndex) => {
+    const core = stripOrnaments(tok);
+    if (core && ARABIC_LETTER_RE.test(core)) out.push({ text: core, rawIndex });
+  });
+  return out;
+}
+
+/** Surface-normalized comparison for the content-anchored fallback:
+ *  ornaments, tatweel, and inert marks don't distinguish words. */
+export function sameSurfaceWord(a, b) {
+  const norm = (s) =>
+    [...String(s || '')]
+      .filter(
+        (ch) =>
+          !WORD_ORNAMENT_CHARS.has(ch) &&
+          !ORNAMENT_DIGITS.has(ch) &&
+          ch !== TATWEEL &&
+          ch !== '\u06E0' &&
+          ch !== '\u06DF'
+      )
+      .join('');
+  return norm(a) !== '' && norm(a) === norm(b);
+}
+
+/** Substring anchor for glued/split spellings (وَمَا ↔ وَمَامِنَّا). */
+export function containsSurfaceWord(token, surface) {
+  const norm = (s) =>
+    [...String(s || '')]
+      .filter(
+        (ch) =>
+          !WORD_ORNAMENT_CHARS.has(ch) &&
+          !ORNAMENT_DIGITS.has(ch) &&
+          ch !== TATWEEL &&
+          ch !== '\u06E0' &&
+          ch !== '\u06DF'
+      )
+      .join('');
+  const a = norm(token);
+  const b = norm(surface);
+  return a.length >= 3 && b.length >= 3 && (a.includes(b) || b.includes(a));
+}
+
 /** Every letter-unit of a word (base + character span), with no rule
  *  classification attached — used by practice mode to render *every*
  *  letter as a tappable target, not just the ones a rule already flags. */
@@ -723,8 +958,8 @@ export const TAJWEED_COLOR_CHOICES = Object.freeze([
   '#4caf50',
   '#00bcd4',
   '#2196f3',
-  '#f48fb1',
-  '#f06292',
+  '#d32f2f',
+  '#c62828',
   '#ff9800',
   '#f44336',
   '#8e24aa',

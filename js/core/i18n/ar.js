@@ -238,6 +238,8 @@ export const ar = {
   'hifz.suggestHint': 'قرأتها كاملة — جاهزة للحفظ:',
   'audio.play': 'تشغيل',
   'audio.pause': 'إيقاف مؤقت',
+  'audio.pauseRecitation': 'إيقاف التلاوة مؤقتًا',
+  'audio.resumeRecitation': 'استئناف التلاوة',
   'audio.next': 'السورة التالية',
   'audio.prev': 'السورة السابقة',
   'audio.repeat': 'تكرار السورة',

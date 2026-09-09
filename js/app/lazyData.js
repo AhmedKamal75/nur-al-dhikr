@@ -30,11 +30,7 @@ import {
 import { openModal } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as soundDesign from '../services/soundDesign.js';
-import {
-  buildMushafAyahDetail,
-  getActiveTafsirTab,
-  setActiveTafsirTab,
-} from '../views/mushafReader.js';
+import { buildMushafAyahDetail } from '../views/mushafReader.js';
 
 /**
  * app/lazyData.js — every lazy data tier's fetch orchestration: Qur'an
@@ -433,8 +429,8 @@ export async function openAyahStudy(surah, ayah, page = null) {
   }
   await ensureTafsirEditions(store.getState());
   state = store.getState();
-  const defaultId = getActiveTafsirTab() || state.settings.mushafPrefs.defaultTafsir;
-  setActiveTafsirTab(defaultId);
+  const defaultId = state.mushafSession?.tafsirTab || state.settings.mushafPrefs.defaultTafsir;
+  store.dispatch(actions.setMushafSession({ tafsirTab: defaultId }));
   if (defaultId) await ensureTafsirText(store.getState(), defaultId, surah);
   // The compare column's bundled second source loads alongside the primary
   // tab — otherwise the picker would show a skeleton with no fetch behind

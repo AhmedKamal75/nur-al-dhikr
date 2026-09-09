@@ -1544,6 +1544,31 @@ body.modal-open {
   color: var(--color-primary-text);
 }
 
+/* (UX-8) the shared console's wide-viewport text labels: icon-only
+ * buttons (ayah prev/next, follow, pause) show their short label at
+ * desktop widths so touch users aren't left with title-tooltips that
+ * don't exist on touch. Hidden on phones — the row stays compact. */
+.rec-console-label {
+  display: none;
+}
+@media (min-width: 900px) {
+  .rec-console-label {
+    display: inline;
+    margin-inline-start: 4px;
+    white-space: nowrap;
+  }
+  /* Labeled buttons escape the fixed 44px icon grid (the label would
+   * overlap the glyph) while keeping the touch-target floor. */
+  .icon-btn:has(> .rec-console-label) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: var(--touch-target);
+    padding-inline: var(--space-2);
+  }
+}
+
 /* (v5.2.0) Echo-mode "your turn" banner inside the recitation console. */
 .player-bar__echo-wait {
   display: flex;

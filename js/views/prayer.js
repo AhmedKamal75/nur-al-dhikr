@@ -118,7 +118,7 @@ export function renderPrayer(state) {
     <div class="prayer-row ${isNext ? 'prayer-row--active' : ''} ${isFallback ? 'prayer-row--fallback' : ''}">
       <span class="prayer-row__icon">${icon(PRAYER_ICONS[name], { size: 18 })}</span>
       <span class="prayer-row__name">${t('prayer.' + name, lang)}${isFallback ? ' <span class="prayer-row__fallback-mark" aria-hidden="true">*</span>' : ''}</span>
-      <span class="prayer-row__time" dir="ltr"${isFallback ? ` title="${t('prayer.fallbackNote', lang)}"` : ''}>${formatClock(times[name], true, { am: t('common.am', lang), pm: t('common.pm', lang) })}</span>
+      <span class="prayer-row__time" dir="ltr"${isFallback ? ` title="${t('prayer.fallbackNote', lang)}" aria-describedby="prayer-fallback-note"` : ''}>${formatClock(times[name], true, { am: t('common.am', lang), pm: t('common.pm', lang) })}</span>
       ${logBtn}
       <button type="button" class="icon-btn icon-btn--sm ${alertOn ? 'icon-btn--active-bell' : ''}" data-action="toggle-prayer-alert" data-prayer="${name}" aria-pressed="${alertOn}" aria-label="${t(alertOn ? 'prayer.alertOn' : 'prayer.alertOff', lang)}" title="${t(alertOn ? 'prayer.alertOn' : 'prayer.alertOff', lang)}">
         ${icon('bell', { size: 15 })}
@@ -236,7 +236,7 @@ export function renderPrayer(state) {
       <div class="prayer-list">${rows}</div>
       ${
         fallbackNames.length
-          ? `<p class="panel__subtext prayer-fallback-note">${icon('info', { size: 14 })} ${t('prayer.polarNote', lang, { names: fallbackNames.map((n) => t('prayer.' + n, lang)).join(lang === 'ar' ? '، ' : ', ') })}</p>`
+          ? `<p class="panel__subtext prayer-fallback-note" id="prayer-fallback-note">${icon('info', { size: 14 })} ${t('prayer.polarNote', lang, { names: fallbackNames.map((n) => t('prayer.' + n, lang)).join(lang === 'ar' ? '، ' : ', ') })}</p>`
           : ''
       }
       ${

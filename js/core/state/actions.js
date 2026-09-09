@@ -72,6 +72,8 @@ export const actions = {
   setMushafFullscreen: (on) => ({ type: 'MUSHAF_FULLSCREEN_SET', on: on === true }),
   // (v4.5) Classic-reader immersive mode — see reducer READER_IMMERSIVE_SET.
   setReaderImmersive: (on) => ({ type: 'READER_IMMERSIVE_SET', on: on === true }),
+  // (v5.2.9) Mushaf session transients — see reducer MUSHAF_SESSION_SET.
+  setMushafSession: (patch) => ({ type: 'MUSHAF_SESSION_SET', patch }),
   setQuranWords: (number, words) => ({ type: 'QURAN_WORDS_LOADED', number: String(number), words }),
   setQuranRoots: (roots) => ({ type: 'QURAN_ROOTS_LOADED', roots }),
   setQuranRootsFull: (roots) => ({ type: 'QURAN_ROOTS_FULL_LOADED', roots }),
@@ -82,11 +84,12 @@ export const actions = {
     number: String(number),
     text,
   }),
-  openWordStudy: (surah, ayah, i) => ({
+  openWordStudy: (surah, ayah, i, surface = null) => ({
     type: 'WORD_STUDY_OPEN',
     surah: String(surah),
     ayah: String(ayah),
     i: Number(i),
+    surface: typeof surface === 'string' && surface ? surface.slice(0, 140) : null,
   }),
   closeWordStudy: () => ({ type: 'WORD_STUDY_CLOSE' }),
   setTajweedPool: (pool) => ({ type: 'TAJWEED_POOL_LOADED', pool }),

@@ -40,7 +40,6 @@ import {
   buildMushafPlayPick,
   buildMushafSheet,
   buildMushafTrack,
-  setActiveTafsirTab,
   setFlipDirection,
   setFullscreenAnim,
 } from '../../views/mushafReader.js';
@@ -206,15 +205,20 @@ export const clickHandlers = {
     const chapter = pageDoc?.chapters.find((c) => String(c.number) === String(ds.surah));
     const verse = chapter?.verses.find((v) => String(v.number) === String(ds.ayah));
     if (!verse) return;
-    setActiveTafsirTab(null); // fresh ayah -> fall back to the default tafsir source
+    // (v5.2.9) fresh ayah -> fall back to the default tafsir source.
+    store.dispatch(actions.setMushafSession({ tafsirTab: null }));
     await openAyahStudy(ds.surah, ds.ayah, pageNum);
   },
 
-  'word-tap': async (ds) => {
+  'word-tap': async (ds, e, target) => {
     const surah = ds.surah,
       ayah = ds.ayah,
       i = Number(ds.i);
-    store.dispatch(actions.openWordStudy(surah, ayah, i));
+    // (v5.3.0) the tapped surface anchors popup resolution for the
+    // handful of true spelling-split ayahs (37:164 etc.) where even
+    // canonical indices diverge between sources.
+    const surface = target?.textContent?.trim().slice(0, 140) || null;
+    store.dispatch(actions.openWordStudy(surah, ayah, i, surface));
     await ensureQuranWordsData(store.getState(), surah);
     await ensureQuranRoots(store.getState());
     // (v4.6.0) The tajweed section reads the official ayah text from the
@@ -233,7 +237,7 @@ export const clickHandlers = {
 
   'root-jump': async (ds) => {
     closeModal();
-    setActiveTafsirTab(null);
+    store.dispatch(actions.setMushafSession({ tafsirTab: null }));
     await openAyahStudy(ds.surah, ds.ayah, null);
   },
 
@@ -256,12 +260,12 @@ export const clickHandlers = {
     // starts from the default tafsir source. The word-study shortcut used
     // to inherit the previous ayah's tab — including possibly an unloaded
     // remote edition — while direct taps reset. One intent, one behavior.
-    setActiveTafsirTab(null);
+    store.dispatch(actions.setMushafSession({ tafsirTab: null }));
     await openAyahStudy(ds.surah, ds.ayah, null);
   },
 
   'tafsir-tab': async (ds) => {
-    setActiveTafsirTab(ds.edition);
+    store.dispatch(actions.setMushafSession({ tafsirTab: ds.edition }));
     await ensureTafsirText(store.getState(), ds.edition, ds.surah);
     await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
   },
@@ -282,7 +286,7 @@ export const clickHandlers = {
     const ok = await ensureTafsirText(store.getState(), ds.edition, ds.surah, true);
     showToast(t(ok ? 'tafsir.downloadDone' : 'tafsir.downloadFailed', lang));
     if (ok) {
-      setActiveTafsirTab(ds.edition);
+      store.dispatch(actions.setMushafSession({ tafsirTab: ds.edition }));
       await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
     }
   },

@@ -4,8 +4,15 @@
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { HOME_PANEL_IDS, resolveHomePanels, moveHomePanel } from '../js/domain/homePanels.js';
+import {
+  HOME_PANEL_IDS,
+  HOME_DEFAULT_VISIBLE,
+  resolveHomePanels,
+  moveHomePanel,
+  defaultHiddenHome,
+} from '../js/domain/homePanels.js';
 import { sanitizeSettings } from '../js/core/config.js';
+import { initialState } from '../js/core/state/initial.js';
 
 describe('resolveHomePanels', () => {
   test('book order by default, hides respected, stale ids ignored', () => {
@@ -42,5 +49,36 @@ describe('sanitizer', () => {
     assert.deepEqual(s.homeOrder, ['hifz']);
     assert.deepEqual(s.hiddenHome, { verse: true });
     assert.equal(sanitizeSettings({}).homeOrder, null);
+  });
+
+  test('stored hides survive verbatim (existing users keep their Home)', () => {
+    assert.deepEqual(sanitizeSettings({ hiddenHome: {} }).hiddenHome, {});
+    assert.deepEqual(sanitizeSettings({ hiddenHome: { worship: true } }).hiddenHome, {
+      worship: true,
+    });
+  });
+});
+
+describe('UX-1 fresh-install density cap', () => {
+  test('default set is next-action + progress + two highlights (+conditional ramadan)', () => {
+    assert.deepEqual(
+      [...HOME_DEFAULT_VISIBLE],
+      ['ramadan', 'continue', 'progress', 'verse', 'hadith']
+    );
+    const hidden = defaultHiddenHome();
+    assert.deepEqual(
+      Object.keys(hidden).sort(),
+      [...HOME_PANEL_IDS].filter((id) => !HOME_DEFAULT_VISIBLE.includes(id)).sort()
+    );
+    assert.deepEqual(resolveHomePanels(null, hidden), [...HOME_DEFAULT_VISIBLE]);
+  });
+
+  test('fresh initial state carries the cap; opting in is one delete', () => {
+    const { hiddenHome } = initialState().settings;
+    assert.deepEqual(resolveHomePanels(null, hiddenHome), [...HOME_DEFAULT_VISIBLE]);
+    // Settings toggle path: enabling worship removes its flag.
+    const opted = { ...hiddenHome };
+    delete opted.worship;
+    assert.ok(resolveHomePanels(null, opted).includes('worship'));
   });
 });

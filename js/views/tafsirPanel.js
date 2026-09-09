@@ -16,6 +16,9 @@ import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
 import {
   classifyAyahTajweed,
   classifyWordTajweed,
+  canonicalWordTokens,
+  sameSurfaceWord,
+  containsSurfaceWord,
   wordUnits,
   TAJWEED_RULES,
   TAJWEED_FAMILIES,
@@ -52,22 +55,28 @@ export function renderAyahWords(
   ayah,
   { tappable = true, underline = true, tajweed = false, prefs = null } = {}
 ) {
-  const tokens = String(officialText || '')
+  const rawTokens = String(officialText || '')
     .trim()
     .split(/\s+/)
     .filter(Boolean);
+  // (v5.3.0) data-i counts CANONICAL words (ornaments don't consume an
+  // index), so a tap resolves to the same word in the classic docs and
+  // the grammar records. Ornament-only tokens render plain and untappable.
+  const canon = canonicalWordTokens(officialText);
+  const canonIdxByRaw = new Map(canon.map((c, ci) => [c.rawIndex, ci]));
   const tajweedByWord = tajweed ? classifyAyahTajweed(officialText) : null;
 
-  return tokens
-    .map((tok, idx) => {
-      const i = idx + 1;
+  return rawTokens
+    .map((tok, rawIdx) => {
+      const canonIdx = canonIdxByRaw.get(rawIdx);
       const inner = tajweedByWord
-        ? colorizeWord(tok, tajweedByWord[idx]?.spans || [], prefs)
+        ? colorizeWord(tok, tajweedByWord[rawIdx]?.spans || [], prefs)
         : escapeHTML(tok);
       // (v4.6.0) a word is tappable even without grammar data — the tap
       // opens the study panel, which always answers the tajweed question
       // from the ayah text itself. `tappable` opts OUT (practice mode).
-      if (!tappable) return inner;
+      if (!tappable || canonIdx == null) return inner;
+      const i = canonIdx + 1;
       return `<span class="qword ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="0" role="button">${inner}</span>`;
     })
     .join(' ');
@@ -108,22 +117,56 @@ function colorizeWord(word, spans, prefs = null) {
  * ALWAYS answers the tajweed question — that is the tap's whole job when
  * grammar data hasn't loaded (the classic "mushaf words do nothing"
  * complaint).
+ *
+ * (v5.3.0) tokens are canonical (see canonicalWordTokens): the tapped
+ * index resolves against the classic text's canonical list, anchored by
+ * the tapped surface for the handful of spelling-split ayahs.
  */
+function resolvePopupToken(ayahText, wordIndex, surface) {
+  const canon = canonicalWordTokens(ayahText).map((c) => c.text);
+  const at = (k) => canon[k] || null;
+  if (!surface || !at(wordIndex - 1) || sameSurfaceWord(at(wordIndex - 1), surface)) {
+    const r = wordIndex - 1;
+    return { token: at(r), tokenIndex: r, nextToken: at(r + 1), isLast: r === canon.length - 1 };
+  }
+  const order = [0, 1, -1, 2, -2, 3, -3];
+  const match = (eq) => {
+    for (const d of order) {
+      const r = wordIndex - 1 + d;
+      if (r < 0 || r >= canon.length) continue;
+      const t = canon[r];
+      if (eq ? sameSurfaceWord(t, surface) : containsSurfaceWord(t, surface)) {
+        return { token: t, tokenIndex: r, nextToken: at(r + 1), isLast: r === canon.length - 1 };
+      }
+    }
+    return null;
+  };
+  return (
+    match(true) ||
+    match(false) || {
+      token: at(wordIndex - 1),
+      tokenIndex: wordIndex - 1,
+      nextToken: at(wordIndex),
+      isLast: wordIndex === canon.length,
+    }
+  );
+}
+
 function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
   const doc = state.quran.surahs[String(surah)];
   const ayahText = doc?.ayahs?.find((x) => String(x.number) === String(ayah))?.text;
   if (!ayahText) return '';
-  const tokens = ayahText.trim().split(/\s+/).filter(Boolean);
-  const token = tokens[wordIndex - 1];
+  const surface = state.activeWordStudy?.surface || null;
+  const resolved = resolvePopupToken(ayahText, wordIndex, surface);
+  const token = resolved.token;
   if (!token) return '';
   // Reading order: the first letter AFTER this word decides cross-word
   // rules; it comes from the same tokenizer the rules themselves use.
-  const nextToken = tokens[wordIndex];
-  const nextUnits = nextToken ? wordUnits(nextToken) : [];
+  const nextUnits = resolved.nextToken ? wordUnits(resolved.nextToken) : [];
   const prefs = tajweedPrefsOf(state);
   const allSpans = classifyWordTajweed(token, {
-    nextWordFirstBase: nextUnits[0] ? nextToken[nextUnits[0].start] : null,
-    isLastWordOfAyah: wordIndex === tokens.length,
+    nextWordFirstBase: nextUnits[0] ? resolved.nextToken[nextUnits[0].start] : null,
+    isLastWordOfAyah: resolved.isLast,
   });
   const spans = filterSpansByPrefs(allSpans, prefs);
   if (!spans.length) return '';
@@ -172,15 +215,16 @@ export function buildWordStudyPanel(state) {
   const ref = state.activeWordStudy;
   if (!ref) return '';
   const { surah, ayah, i } = ref;
-  const word = getWord(state.quranWords, surah, ayah, i);
+  const word = getWord(state.quranWords, surah, ayah, i, ref.surface || null);
 
   if (!word) {
     // (v4.6.0) No grammar data is not a dead end: the ayah text itself
     // still carries the tajweed answer. Show the token, colorized, with
     // every rule it contains — then the tafsir deep-link as before.
+    // (v5.3.0) canonical index + surface anchor, like the tajweed section.
     const doc = state.quran.surahs[String(surah)];
     const ayahText = doc?.ayahs?.find((x) => String(x.number) === String(ayah))?.text;
-    const token = ayahText ? ayahText.trim().split(/\s+/).filter(Boolean)[i - 1] : null;
+    const token = ayahText ? resolvePopupToken(ayahText, i, ref.surface || null).token : null;
     const tajweedHTML = token ? wordTajweedSection(state, surah, ayah, i, lang) : '';
     return `
     <div class="word-study">
@@ -312,8 +356,8 @@ function paragraphize(s) {
 
 /**
  * The tabbed panel: one tab per catalog edition. `activeId` is which tab
- * is currently selected (module-scoped transient state owned by the
- * caller, mirroring bookmarkFolderFilter in mushafReader.js).
+ * is currently selected (session state in state.mushafSession, set by the
+ * study-modal flows — the panel itself stays pure).
  */
 export function buildTafsirPanel(state, surah, ayah, activeId) {
   const lang = state.settings.language;

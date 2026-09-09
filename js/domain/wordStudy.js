@@ -7,11 +7,42 @@
  * same convention as mushaf.js and khatma.js.
  */
 
-/** Look up a single word's grammar record. Returns null if not (yet) loaded. */
-export function getWord(quranWords, surah, ayah, i) {
+import { sameSurfaceWord, containsSurfaceWord } from './tajweed.js';
+
+/** Look up a single word's grammar record. Returns null if not (yet) loaded.
+ *
+ *  (v5.3.0) optional `surface` (the tapped display text) anchors the
+ *  lookup for the handful of spelling-split ayahs (37:164 etc.) where a
+ *  bare index diverges: exact normalized match first (±3), then
+ *  containment, else the indexed record.
+ */
+export function getWord(quranWords, surah, ayah, i, surface = null) {
   const ayahWords = quranWords?.[String(surah)]?.[String(ayah)];
   if (!Array.isArray(ayahWords)) return null;
-  return ayahWords.find((w) => w.i === Number(i)) || null;
+  const n = Number(i);
+  const byIndex = ayahWords.find((w) => w.i === n) || null;
+  if (!surface) return byIndex;
+  if (byIndex && sameSurfaceWord(byIndex.text, surface)) return byIndex;
+  if (!byIndex) {
+    // No indexed record at n (glued/spelling-split sources disagree on
+    // numbering): anchor on the tapped surface across the whole ayah —
+    // exact first, then containment — instead of returning null.
+    return (
+      ayahWords.find((w) => sameSurfaceWord(w.text, surface)) ||
+      ayahWords.find((w) => containsSurfaceWord(w.text, surface)) ||
+      null
+    );
+  }
+  const at = (k) => ayahWords.find((w) => w.i === k) || null;
+  for (const d of [1, -1, 2, -2, 3, -3]) {
+    const w = at(n + d);
+    if (w && sameSurfaceWord(w.text, surface)) return w;
+  }
+  for (const d of [0, 1, -1, 2, -2, 3, -3]) {
+    const w = at(n + d);
+    if (w && containsSurfaceWord(w.text, surface)) return w;
+  }
+  return byIndex;
 }
 
 /**

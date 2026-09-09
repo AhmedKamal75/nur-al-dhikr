@@ -7,8 +7,13 @@ import { clone } from '../utils.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
 import { defaultFastingPrefs } from '../../domain/fasting.js';
 import { defaultNudgeState } from '../../domain/nudge.js';
+import { defaultHiddenHome } from '../../domain/homePanels.js';
 
 export function initialState() {
+  const settings = clone(DEFAULT_SETTINGS);
+  // (UX-1) fresh installs open on the capped Home (stored settings always
+  // win at hydrate, so existing users keep exactly what they have).
+  settings.hiddenHome = defaultHiddenHome();
   return {
     schemaVersion: SCHEMA_VERSION,
     booted: false,
@@ -20,7 +25,7 @@ export function initialState() {
       itemIndex: {}, // { itemId: { item, category, document } }
       order: [], // library ids in catalog order
     },
-    settings: clone(DEFAULT_SETTINGS),
+    settings,
     favorites: [],
     // (v5.2.0) Hadith bookmarks: ["<bookId>:<n>"] — the ayah-bookmark
     // equivalent for the hadith reader (hadith docs are ephemeral, so the
@@ -211,6 +216,15 @@ export function initialState() {
     // Mushaf's TRUE fullscreen. Ephemeral gesture, not a preference:
     // NAVIGATE resets it and PERSISTED_KEYS ignores it.
     readerImmersive: false,
+    // (v5.2.9) Mushaf session transients — the last multi-owner
+    // module-scope state (Blueprint E shadow layer): the bookmark folder
+    // filter and the study-modal tafsir tab. Ephemeral: visible to the
+    // reducer, the patch engine, and the tests; never persisted, never
+    // restored; survives in-app navigation like the module vars did.
+    // (The one-shot flip/fullscreen animation tokens stay module-scoped
+    // by design — single writer, single render consumer, no cross-module
+    // readers; see the known-compromise note in ARCHITECTURE.md.)
+    mushafSession: { bookmarkFilter: '__all__', tafsirTab: null },
     // Ephemeral — which "surah:ayah" key is currently playing recited audio,
     // if any. Mirrors speakingItemId's reactive-highlight purpose.
     recitingAyahKey: null,

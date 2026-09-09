@@ -85,6 +85,60 @@
 - [x] **Docs.** Release protocol gains "docs numbers are regenerated
       from counts, never typed" + the snapshot-shell step.
 
+# V5.2.11 — TAJWEED CORRECTNESS (USER REPORT, 2026-09-07)
+
+# `npm run check`: eslint 0, 993/993 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.10 → 5.2.11 + re-stamp.
+
+- [x] **Pop-up off-by-one (P0).** Canonical word index across mushaf
+      pages, classic docs, and grammar records (2722 divergences →
+      6 residuals) + content-anchored fallback (exact, containment) + tapped-surface plumbing (`openWordStudy` 4th field, sanitized).
+      `tests/tajweed-words.test.js` incl. the reported 100:5–9 case.
+- [x] **Engine coverage.** Variant tanween 0656/0657/065E, small-high
+      marks 06E4/06E7/06E8/06ED, inert attach 06E0/06DF/06DA/06DB/06DC/
+      06EC/065C/06E9/waqf ligatures; silah sughra; prefixed-ال;
+      lazim-via-shaddah-or-consonant-jazm (silent-alif excluded).
+- [x] **Palette.** Madd to Dar Al-Maarifah reds (AA-verified both
+      themes; dark heat ramp documented); legend/pickers follow.
+- [ ] Deliberately not done: ishmam (تَأۡمَ۬نَّا) and imalah
+      (مَجۡرٜىٰهَا) as colored rules — 2 ultra-rare marks needing new
+      legend/i18n surface; recorded as future work.
+
+# V5.2.8 — CAPPED HOME, UX-1 (2026-09-07)
+
+# `npm run check`: eslint 0, 979/979 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.7 → 5.2.8 + re-stamp.
+
+- [x] **UX-1.** Fresh installs show 5 content panels (ramadan,
+      continue, progress, verse, hadith) via
+      `domain/homePanels.js#defaultHiddenHome`, applied in
+      `initialState()` (sanctioned core→domain edge). Stored settings
+      win at hydrate — existing users untouched; Settings toggles are
+      the opt-in path (already listed all panels). The starter panel
+      and nudge were already first-run-scoped; no new UI built.
+      Tests: `homePanels.test.js` +3 (default set, fresh state,
+      stored-hides-verbatim).
+- [ ] Still open: features/ strangler (deferred — see v5.2.6 note).
+
+# V5.2.7 — ONE SESSION + TOUCH HONESTY, UX-7/UX-8 (2026-09-07)
+
+# `npm run check`: eslint 0, 976/976 green, prettier clean.
+
+# `npm run e2e`: 3/3 green. Markers 5.2.6 → 5.2.7 + re-stamp.
+
+- [x] **UX-7.** `selectors.audioSession` (verse wins when active);
+      surah tiles render session glyph + engine-named labels (new
+      `audio.pauseRecitation`/`resumeRecitation` keys, EN+AR);
+      `quran-play-surah` owns its surah (verse pause/resume in place).
+      Test: `tests/audio-session.test.js` (3).
+- [x] **UX-8.** Polar times `aria-describedby` the visible footnote;
+      console icon-only buttons gain ≥900px labels
+      (`.rec-console-label`, `:has()` width escape, touch floor kept).
+      Test: label spans pinned in `tests/recitation-console.test.js`.
+- [ ] Still open: UX-1 (Home density), features/ strangler (deferred).
+
 # V5.2.6 — MUSHAF SPLITS, BLUEPRINT E STEP 2 (2026-09-07)
 
 # `npm run check`: eslint 0, 972/972 green, prettier clean.

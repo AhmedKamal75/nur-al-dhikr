@@ -44,7 +44,7 @@ wiping them — so repeat visits are instant and offline-forever.
 ```bash
 npm install        # dev-only: eslint + prettier
 npx eslint .       # zero errors (js, tests, sw.js — all linted)
-npm test           # node --test tests/*.test.js — 972 tests
+npm test           # node --test tests/*.test.js — 993 tests
 npm run check      # lint + format:check + test, all green
 ```
 
@@ -121,8 +121,10 @@ light/dark/auto themes, high-contrast and reduced-motion modes.
 - Periodic-sync catch-up is arithmetically narrow where only
   `periodicsync` exists (12h browser cadence vs 15-min lateness window) —
   by design; the Prayer view's reliability row is the source of truth.
-- Rare Qur'anic annotation marks (small-high ya/noon) are not individually
-  interpreted by the tajweed engine.
+- Rare Qur'anic annotation marks (sajdah place, ishmam/rawm stop, imalah
+  dot, saktah seen) attach silently in the tajweed engine without their
+  own rule yet — none changes colored output today (saktah-inhibited
+  idgham and plain idgham render identically uncolored).
 - The search index follows the selected translation edition (not all five
   at once); tafsir text is not full-text-searched — deliberate memory
   trade-offs, revisit on request.

@@ -340,6 +340,7 @@ describe('v4.2 module inventory', () => {
       'audioManager',
       'editor',
       'loadErrors',
+      'mushafSession',
     ]) {
       assert.ok(!PERSISTED_KEYS.includes(k), `${k} must stay ephemeral`);
     }

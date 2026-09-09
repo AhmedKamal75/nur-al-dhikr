@@ -122,14 +122,14 @@
   --tw-ikhfa-shafawi: #4caf50;
   --tw-qalqalah: #00bcd4;
   --tw-tafkhim: #2196f3;
-  --tw-madd-normal: #f48fb1;
-  --tw-madd-iwad: #f48fb1;
-  --tw-madd-badal: #f48fb1;
-  --tw-madd-arid: #f48fb1;
-  --tw-madd-munfasil: #ff9800;
-  --tw-madd-silah: #ff9800;
-  --tw-madd-muttasil: #f06292;
-  --tw-madd-laazim: #f44336;
+  --tw-madd-normal: #d32f2f;
+  --tw-madd-iwad: #d32f2f;
+  --tw-madd-badal: #d32f2f;
+  --tw-madd-arid: #d32f2f;
+  --tw-madd-munfasil: #bf3600;
+  --tw-madd-silah: #bf3600;
+  --tw-madd-muttasil: #c62828;
+  --tw-madd-laazim: #b71c1c;
 
   /* ---- 5. Grade + map tokens ------------------------------------------ */
   --grade-quran: #0f766e;
@@ -301,9 +301,10 @@
   --cat-violet-text: #c4b5fd;
   --cat-yellow-text: #fde047;
 
-  /* Tajweed: each standard-chart hue lifted for dark surfaces (the
-     pink/orange/deep-pink madd ladder reads well as-is on dark; the rest
-     get +1 lightness step to stay clear of 3:1). */
+  /* Tajweed: each standard-chart hue lifted for dark surfaces. Deep
+     print reds go unreadable on dark, so the madd ladder becomes a heat
+     ramp (red → orange → light orange as strength rises) — every step
+     holds AA on dark, unlike the print originals. */
   --tw-hamza-wasl: #bdbdbd;
   --tw-lam-shamsiyah: #bdbdbd;
   --tw-ghunnah: #66bb6a;
@@ -314,14 +315,14 @@
   --tw-ikhfa-shafawi: #66bb6a;
   --tw-qalqalah: #4dd0e1;
   --tw-tafkhim: #64b5f6;
-  --tw-madd-normal: #f8a8c5;
-  --tw-madd-iwad: #f8a8c5;
-  --tw-madd-badal: #f8a8c5;
-  --tw-madd-arid: #f8a8c5;
-  --tw-madd-munfasil: #ffa726;
-  --tw-madd-silah: #ffa726;
-  --tw-madd-muttasil: #f77fb0;
-  --tw-madd-laazim: #ef5350;
+  --tw-madd-normal: #ef5350;
+  --tw-madd-iwad: #ef5350;
+  --tw-madd-badal: #ef5350;
+  --tw-madd-arid: #ef5350;
+  --tw-madd-munfasil: #ff7043;
+  --tw-madd-silah: #ff7043;
+  --tw-madd-muttasil: #ff8a65;
+  --tw-madd-laazim: #ffab91;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.32), 0 1px 4px rgba(0, 0, 0, 0.28);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.28), 0 10px 28px rgba(0, 0, 0, 0.36);

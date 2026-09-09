@@ -49,8 +49,10 @@ import {
   recitationEchoHTML,
 } from '../ui/recitationConsole.js';
 // (Blueprint E step 2) extracted view parts live in their own modules;
-// this file re-exports them so every existing importer keeps working.
-export { setBookmarkFolderFilter, buildMushafBookmarks } from './mushafBookmarks.js';
+// this file re-exports the builders so existing importers keep working.
+// Session transients moved to state.mushafSession (v5.2.9) and are set
+// via actions.setMushafSession — no module setters remain here.
+export { buildMushafBookmarks } from './mushafBookmarks.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonMushafPage, skeletonLines } from '../ui/skeleton.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
@@ -712,4 +714,4 @@ export function buildMushafSheet(state) {
 }
 
 export { buildMushafTrack, buildKhatmaPlanForm } from './khatma.js';
-export { setActiveTafsirTab, getActiveTafsirTab, buildMushafAyahDetail } from './ayahStudy.js';
+export { buildMushafAyahDetail } from './ayahStudy.js';

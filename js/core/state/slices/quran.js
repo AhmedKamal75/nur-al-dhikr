@@ -96,6 +96,41 @@ export function reduceQuran(state, action) {
         ? state
         : { ...state, readerImmersive: action.on === true };
 
+    // (v5.2.9) Mushaf session transients (bookmark folder filter, study
+    // tab). Hostile-payload rules: ids are short strings, tab nullable —
+    // anything else coerces to the default. Returns state on no-op so a
+    // redundant set never notifies or persists.
+    case 'MUSHAF_SESSION_SET': {
+      const patch =
+        action.patch && typeof action.patch === 'object' && !Array.isArray(action.patch)
+          ? action.patch
+          : {};
+      const prev = state.mushafSession || {};
+      const next = { ...prev };
+      let changed = false;
+      if ('bookmarkFilter' in patch) {
+        const v =
+          typeof patch.bookmarkFilter === 'string' && patch.bookmarkFilter.length <= 64
+            ? patch.bookmarkFilter
+            : '__all__';
+        if (v !== next.bookmarkFilter) {
+          next.bookmarkFilter = v;
+          changed = true;
+        }
+      }
+      if ('tafsirTab' in patch) {
+        const v =
+          typeof patch.tafsirTab === 'string' && patch.tafsirTab.length <= 64
+            ? patch.tafsirTab
+            : null;
+        if (v !== next.tafsirTab) {
+          next.tafsirTab = v;
+          changed = true;
+        }
+      }
+      return changed ? { ...state, mushafSession: next } : state;
+    }
+
     case 'QURAN_WORDS_LOADED':
       return {
         ...state,
@@ -120,7 +155,18 @@ export function reduceQuran(state, action) {
       };
 
     case 'WORD_STUDY_OPEN':
-      return { ...state, activeWordStudy: { surah: action.surah, ayah: action.ayah, i: action.i } };
+      return {
+        ...state,
+        activeWordStudy: {
+          surah: action.surah,
+          ayah: action.ayah,
+          i: action.i,
+          surface:
+            typeof action.surface === 'string' && action.surface
+              ? action.surface.slice(0, 140)
+              : null,
+        },
+      };
 
     case 'WORD_STUDY_CLOSE':
       return { ...state, activeWordStudy: null };

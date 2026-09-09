@@ -55,16 +55,22 @@ export function consoleSnapshot(sp, settings, sleep, lang) {
  * Quranic sequence doesn't mirror with UI language (UX-4 rule).
  */
 export function recitationChipsHTML(snap, lang, cls) {
+  // (UX-8) icon-only buttons carry no meaning on touch (title tooltips
+  // don't exist there). The short label shows on wide viewports via CSS
+  // (.rec-console-label, ≥900px); phones keep the compact row. The span
+  // is aria-hidden — the button's aria-label already announces.
+  const wideLabel = (text) =>
+    `<span class="rec-console-label" aria-hidden="true">${escapeHTML(text)}</span>`;
   const chip = (action, on, pressed, label, inner) =>
     `<button type="button" class="${cls.chip}${on ? ` ${cls.on}` : ''}" data-action="${action}"${pressed == null ? '' : ` aria-pressed="${pressed}"`} aria-label="${escapeHTML(label)}" title="${escapeHTML(label)}">${inner}</button>`;
-  const navBtn = (action, label, glyph) =>
-    `<button type="button" class="${cls.btn}" data-action="${action}" aria-label="${escapeHTML(label)}" title="${escapeHTML(label)}">${icon(glyph, { size: 16 })}</button>`;
+  const navBtn = (action, label, glyph, shortText) =>
+    `<button type="button" class="${cls.btn}" data-action="${action}" aria-label="${escapeHTML(label)}" title="${escapeHTML(label)}">${icon(glyph, { size: 16 })}${shortText ? wideLabel(shortText) : ''}</button>`;
   const voiceLabel = `${t('audio.chooseReciter', lang)} — ${snap.voiceALabel}${snap.voiceBLabel ? ` + ${snap.voiceBLabel}` : ''}`;
   return `
-      ${navBtn('recite-ayah-prev', t('audio.ayahPrev', lang), 'chevronRight')}
-      ${navBtn('recite-ayah-next', t('audio.ayahNext', lang), 'chevronLeft')}
+      ${navBtn('recite-ayah-prev', t('audio.ayahPrev', lang), 'chevronRight', t('audio.ayahPrev', lang))}
+      ${navBtn('recite-ayah-next', t('audio.ayahNext', lang), 'chevronLeft', t('audio.ayahNext', lang))}
       ${chip('recite-repeat-toggle', snap.rep !== 1, null, `${t('audio.repeatAyah', lang)} (${snap.repLabel})`, `${icon('repeat', { size: 13 })} ${snap.repLabel}`)}
-      ${chip('recite-follow-toggle', snap.follow, snap.follow, t('audio.follow', lang), icon(snap.follow ? 'eye' : 'eyeOff', { size: 14 }))}
+      ${chip('recite-follow-toggle', snap.follow, snap.follow, t('audio.follow', lang), `${icon(snap.follow ? 'eye' : 'eyeOff', { size: 14 })} ${wideLabel(t('audio.follow', lang))}`)}
       ${chip('recite-listen-toggle', snap.continuous, snap.continuous, t('audio.listenMode', lang), `${icon('play', { size: 13 })} ${t('audio.listen', lang)}`)}
       ${chip('recite-echo-toggle', snap.echo, snap.echo, t('audio.echoMode', lang), `${icon('volume', { size: 13 })} ${t('audio.echo', lang)}`)}
       ${chip('recite-sleep-cycle', snap.sleepEnabled, null, t('audio.sleepTimer', lang), `${icon('moon', { size: 13 })}${snap.sleepEnabled ? ` ${escapeHTML(snap.sleepLabel)}` : ''}`)}
@@ -72,7 +78,7 @@ export function recitationChipsHTML(snap, lang, cls) {
       ${chip('recite-compare-toggle', snap.compare, snap.compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
       ${chip('recite-loop-toggle', snap.loop !== 1, null, t('audio.loopMode', lang), `${icon('repeat', { size: 13 })} ${snap.loop === 1 ? t('audio.loop', lang) : `×${snap.loop}`}`)}
       ${chip('recite-speed-cycle', false, null, t('audio.speed', lang), `${snap.speed}×`)}
-      ${navBtn('recite-pause-toggle', t(snap.paused ? 'audio.play' : 'audio.pause', lang), snap.paused ? 'play' : 'pause')}
+      ${navBtn('recite-pause-toggle', t(snap.paused ? 'audio.play' : 'audio.pause', lang), snap.paused ? 'play' : 'pause', t(snap.paused ? 'audio.play' : 'audio.pause', lang))}
       ${navBtn('recite-stop', t('audio.reciteStop', lang), 'stop')}`;
 }
 

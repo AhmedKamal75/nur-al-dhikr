@@ -241,6 +241,8 @@ export const en = {
   'hifz.suggestHint': 'Fully read — ready to memorize:',
   'audio.play': 'Play',
   'audio.pause': 'Pause',
+  'audio.pauseRecitation': 'Pause recitation',
+  'audio.resumeRecitation': 'Resume recitation',
   'audio.next': 'Next surah',
   'audio.prev': 'Previous surah',
   'audio.repeat': 'Repeat this surah',

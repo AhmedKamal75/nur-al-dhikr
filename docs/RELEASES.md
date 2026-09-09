@@ -2,6 +2,79 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.11 — tajweed correctness: word taps, rules, palette
+
+1. **Word-tap pop-ups (P0).** Mushaf pages, classic docs, and grammar
+   records tokenized differently in 2,722 ayahs, so a tap answered the
+   adjacent word. `data-i` is now canonical (ornaments never consume an
+   index) across render, popup, and grammar, with a content-anchored
+   fallback for the 6 true spelling-split ayahs. Verified on 100:5–9.
+2. **Engine coverage.** Variant tanween (0656/0657/065E), small-high
+   marks (yeh/noon/madda/iqlab), inert waqf/saktah signs; madd
+   as-silah sughra on bare small waw/yeh; lam shamsiyyah after prefix
+   particles; madd lazim via following shaddah/jazm ( الضَّآلِّينَ was
+   miscolored badal). Silent-alif spellings excluded from lazim.
+3. **Standard madd reds.** Cumin → orange-red → blood → dark red per
+   the Dar Al-Maarifah chart (AA-verified both themes; dark uses a
+   documented heat ramp), replacing the pink scale. Legend follows
+   automatically.
+
+## v5.2.10 — change/input registries (Blueprint D) + word-study refinements
+
+1. **Declarative change/input (Blueprint D).** The ~40-arm
+   `if/else` chains in `app/events.js` are now feature-owned
+   `{ sel, run }` registries (27 change + 10 input arms across
+   audio/content/system/worship/location/items/quran/navigation/zakat),
+   dispatched first-match-wins through the same rejection boundary as
+   click handlers — an async throw inside an arm can no longer escape
+   as an unhandled rejection. File-import inputs stay app-wide in
+   `events.js`, now boundary-guarded too. Pinned by
+   `tests/event-registries.test.js` (7: completeness, shape,
+   uniqueness, first-match order, round-trips, rejection boundary).
+2. **Word-study refinements.** The tapped surface anchors popup
+   resolution for spelling-split ayahs (`openWordStudy` carries a
+   capped surface string); tafsir-tab call sites finish migrating to
+   the `mushafSession` dispatch; tajweed gains canonical-token
+   helpers for glued/split spellings.
+
+## v5.2.9 — session transients in the store (§6.2 shadow layer)
+
+The last multi-owner module state moves into `state.mushafSession`
+(bookmark folder filter, study tafsir tab): sanitized reducer patch,
+ephemeral (never persisted/restored), surviving in-app navigation like
+the module vars did. All setters deleted; seven call sites dispatch.
+The one-shot flip/fullscreen animation tokens stay module-scoped by
+design (single writer→single render; store promotion would cost double
+renders for zero probe value — see the ARCHITECTURE compromise note).
+Pinned by `tests/mushaf-session.test.js` (defaults, ephemerality,
+sanitize + no-op identity, view filtering, B12 no-write-back).
+
+## v5.2.8 — capped Home for fresh installs (UX-1)
+
+Fresh installs open on hero + prayer strip + quick actions + at most
+five content panels (Ramadan banner when in season, continue-reading,
+daily progress, verse and hadith of the day) instead of all eleven —
+the getting-started steps and nudge already cover first-run guidance.
+Everything else is one tap away in Settings (existing per-panel
+toggles, now the opt-in path). Stored settings always win, so existing
+users keep exactly the Home they already arranged. Pinned by new
+`homePanels.test.js` cases (default set, fresh initial state, stored
+hides verbatim).
+
+## v5.2.7 — one audio session, touch honesty (UX-7, UX-8)
+
+1. **One session (UX-7).** New `selectors.audioSession`: verse wins
+   when active, so a surah tile can never claim "paused" while the
+   other engine sounds. Tiles render the session glyph with
+   engine-named labels ("Pause/Resume recitation" vs "Play/Pause"),
+   and a tile tap owns its surah (verse pause/resume in place,
+   player toggle, or fresh start) — no more guessing which engine
+   wakes.
+2. **Touch affordances (UX-8).** Polar-fallback times link to the
+   footnote via `aria-describedby`; the console's icon-only buttons
+   (ayah prev/next, follow, pause) carry short labels shown at
+   ≥900px, phones unchanged.
+
 ## v5.2.6 — mushafReader decomposition (Blueprint E step 2)
 
 `views/mushafReader.js` 1058 → 715 lines: bookmarks + folders move to

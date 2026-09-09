@@ -41,15 +41,9 @@ function hifzRowFor(state, surahNumber, lang) {
  * translation (from the classic reader's already-loaded surah data, if
  * available), play/copy actions. `surahDoc` is `state.quran.surahs[surah]`
  * — the caller is responsible for making sure it's loaded first so this
- * stays a pure template function.
+ * stays a pure template function. The tafsir tab rides in
+ * state.mushafSession (v5.2.9).
  */
-let activeTafsirTab = null;
-export function setActiveTafsirTab(id) {
-  activeTafsirTab = id;
-}
-export function getActiveTafsirTab() {
-  return activeTafsirTab;
-}
 
 export function buildMushafAyahDetail(
   arabicText,
@@ -107,6 +101,6 @@ export function buildMushafAyahDetail(
       </button>
     </div>
     ${hifzRowFor(state, surahNumber, lang)}
-    ${buildAyahStudyExtras(state, surahNumber, ayahNumber, activeTafsirTab)}
+    ${buildAyahStudyExtras(state, surahNumber, ayahNumber, state.mushafSession?.tafsirTab ?? null)}
   </div>`;
 }
