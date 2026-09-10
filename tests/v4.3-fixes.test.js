@@ -32,10 +32,11 @@ import { fetchJSON } from '../js/app/net.js';
 import { routeWorkerReply } from '../js/app/hadithData.js';
 import { handlerMaps, mergedClickHandlers } from '../js/app/events.js';
 import {
-  currentWindow,
-  expandReaderWindow,
-  _resetReaderWindowForTests,
-} from '../js/views/quran.js';
+  computeReaderWindow,
+  expandWindow,
+  initialReaderWindow,
+  readWindow,
+} from '../js/domain/readerWindow.js';
 
 /* ------------------------------------------------------------------ */
 /* 1. longestDayStreak — DST-safe key arithmetic                       */
@@ -167,55 +168,68 @@ describe('v4.3 khatma completion: calendar days across DST', () => {
 /* ------------------------------------------------------------------ */
 
 describe('v4.3 quran reader window: bounds, recenter, slide-ahead, latch', () => {
+  // (v5.2.17) The window memory is a store slice now (B12); the module
+  // latch is gone, so these cases thread `prev` explicitly through the
+  // pure computeReaderWindow — same signals, same windows as before.
   const TOTAL = 286; // Al-Baqarah
-  const stateFor = (params, recitingKey) => ({
-    activeParams: params,
-    recitingAyahKey: recitingKey || null,
+  const sig = (ay, recitingAyah) => ({
+    key: '2',
+    ayParam: ay == null ? null : Number(ay),
+    recitingAyah: recitingAyah || 0,
+    total: TOTAL,
   });
 
   test('fresh open of a long surah renders the first 30 ayahs', () => {
-    _resetReaderWindowForTests();
-    const win = currentWindow(stateFor({}), '2', TOTAL);
+    const win = computeReaderWindow(initialReaderWindow(), sig(null, 0));
     assert.deepEqual([win.from, win.to], [1, 30]);
   });
 
   test('deep link ?ay=200 centers the window on 190–219', () => {
-    _resetReaderWindowForTests();
-    const win = currentWindow(stateFor({ ay: '200' }), '2', TOTAL);
+    const win = computeReaderWindow(initialReaderWindow(), sig('200', 0));
     assert.deepEqual([win.from, win.to], [190, 219]);
   });
 
   test('recitation slide-ahead: reciting ayah near the lower edge re-centers', () => {
-    _resetReaderWindowForTests();
-    currentWindow(stateFor({ ay: '200' }), '2', TOTAL); // window [190, 219]
+    const open = computeReaderWindow(initialReaderWindow(), sig('200', 0)); // [190, 219]
     // 212 is within 5 of the edge (219-5=214)? 212 <= 214 → no slide yet.
-    let win = currentWindow(stateFor({ ay: '200' }, '2:212'), '2', TOTAL);
-    assert.deepEqual([win.from, win.to], [190, 219]);
+    assert.equal(computeReaderWindow(open, sig('200', 212)), null);
     // 215 crosses the threshold → re-centered on 215.
-    win = currentWindow(stateFor({ ay: '200' }, '2:215'), '2', TOTAL);
+    const win = computeReaderWindow(open, sig('200', 215));
     assert.deepEqual([win.from, win.to], [205, 234]);
   });
 
   test('the same deep link does NOT re-center twice (latch); manual expand wins', () => {
-    _resetReaderWindowForTests();
-    currentWindow(stateFor({ ay: '200' }), '2', TOTAL); // [190, 219]
-    expandReaderWindow('down'); // manual extension to ~249
-    const win = currentWindow(stateFor({ ay: '200' }), '2', TOTAL); // same ay param
+    const open = computeReaderWindow(initialReaderWindow(), sig('200', 0)); // [190, 219]
+    const grown = expandWindow(open, 'down'); // manual extension to ~249
+    assert.equal(computeReaderWindow(grown, sig('200', 0)), null); // latch held
+    const win = readWindow(grown, TOTAL); // same ay param
     assert.equal(win.to, Math.min(TOTAL, 219 + 30));
-    assert.equal(win.from, 190); // latch held: not re-centered
+    assert.equal(win.from, 190); // not re-centered
   });
 
-  test('expandReaderWindow up clamps at ayah 1; short surahs render whole', () => {
-    _resetReaderWindowForTests();
-    expandReaderWindow('up');
-    expandReaderWindow('up');
-    const win = currentWindow(stateFor({}), '2', TOTAL);
+  test('expandWindow up clamps at ayah 1; short surahs render whole', () => {
+    const grown = expandWindow(expandWindow(initialReaderWindow(), 'up'), 'up');
+    const win = readWindow(grown, TOTAL);
     assert.equal(win.from, 1);
-    // A 17-ayah surah's window is bounded by its own total.
-    _resetReaderWindowForTests();
-    const short = currentWindow(stateFor({}), '108', 3);
+    // A 3-ayah surah's window is bounded by its own total.
+    const short = computeReaderWindow(initialReaderWindow(), {
+      key: '108',
+      ayParam: null,
+      recitingAyah: 0,
+      total: 3,
+    });
     assert.deepEqual([short.from, short.to], [1, 3]);
-    _resetReaderWindowForTests();
+  });
+
+  test('store slice: set + expand round-trip through real dispatches', () => {
+    const prev = store.getState().readerWindow;
+    store.dispatch(
+      actions.setReaderWindow(computeReaderWindow(initialReaderWindow(), sig('200', 0)))
+    );
+    store.dispatch(actions.expandReaderWindow('down'));
+    const win = readWindow(store.getState().readerWindow, TOTAL);
+    assert.deepEqual([win.from, win.to], [190, 249]);
+    store.dispatch(actions.setReaderWindow(prev));
   });
 });
 

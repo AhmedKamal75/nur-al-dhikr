@@ -58,9 +58,12 @@
 import { VIEWS, APP_NAME } from '../core/config.js';
 import { t } from '../core/i18n.js';
 import { buildHash, consumePopNavigation } from '../core/router.js';
+import { actions, store } from '../core/state.js';
 import { rt } from './rt.js';
 import { showToast } from '../ui/toast.js';
 import { renderTopBar, renderNav } from '../ui/shell.js';
+import { skeletonLines } from '../ui/skeleton.js';
+import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { renderHome } from '../views/home.js';
 import { renderLibrary } from '../views/library.js';
 import { renderCategory } from '../views/category.js';
@@ -75,25 +78,13 @@ import { renderTasbih } from '../views/tasbih.js';
 import { renderPrayer } from '../views/prayer.js';
 import { renderQibla } from '../views/qibla.js';
 import { renderChecklist } from '../views/checklist.js';
-import { renderQuiz } from '../views/quiz.js';
-import { renderMushaf } from '../views/mushafReader.js';
 import { renderCalendar } from '../views/calendar.js';
 import { renderRamadan } from '../views/ramadan.js';
 import { renderZakat } from '../views/zakat.js';
 import { renderAudio } from '../views/audioManager.js';
-import { renderOffline } from '../views/offline.js';
-import { renderQuran } from '../views/quran.js';
 import { renderRoots } from '../views/roots.js';
-import { renderHadith } from '../views/hadith.js';
 import { renderSettings } from '../views/settings.js';
-import { renderAbout } from '../views/about.js';
-import { renderAmbient } from '../views/ambient.js';
 import { renderEditor } from '../views/editor.js';
-import { renderGarden } from '../views/garden.js';
-import { renderMutashabihat } from '../views/mutashabihat.js';
-import { renderJournal } from '../views/journal.js';
-import { renderKids } from '../views/kids.js';
-import { renderCertificate } from '../views/certificate.js';
 import { renderPlayerBar } from '../views/playerBar.js';
 
 const VIEW_TABLE = {
@@ -111,26 +102,127 @@ const VIEW_TABLE = {
   [VIEWS.PRAYER]: renderPrayer,
   [VIEWS.QIBLA]: renderQibla,
   [VIEWS.CHECKLIST]: renderChecklist,
-  [VIEWS.QUIZ]: renderQuiz,
-  [VIEWS.MUSHAF]: renderMushaf,
   [VIEWS.CALENDAR]: renderCalendar,
   [VIEWS.RAMADAN]: renderRamadan,
   [VIEWS.ZAKAT]: renderZakat,
   [VIEWS.AUDIO]: renderAudio,
-  [VIEWS.OFFLINE]: renderOffline,
-  [VIEWS.QURAN]: renderQuran,
   [VIEWS.ROOTS]: renderRoots,
-  [VIEWS.HADITH]: renderHadith,
   [VIEWS.SETTINGS]: renderSettings,
-  [VIEWS.ABOUT]: renderAbout,
   [VIEWS.EDITOR]: renderEditor,
-  [VIEWS.MUTASHABIHAT]: renderMutashabihat,
-  [VIEWS.JOURNAL]: renderJournal,
-  [VIEWS.KIDS]: renderKids,
-  [VIEWS.CERTIFICATE]: renderCertificate,
-  [VIEWS.GARDEN]: renderGarden,
-  [VIEWS.AMBIENT]: renderAmbient,
 };
+
+/**
+ * (v5.2.15) Lazy leaf views, (v5.2.18) heavy views. These twelve routes
+ * are renderer-only in app code — editor stays static because
+ * handlers/editor.js and handlers/content.js import its builders, and
+ * the tafsir/tajweed panels stay static (their handler edges carry no
+ * view weight worth chasing). The nine leaves are small (68–250 lines);
+ * the Mushaf, classic reader, and hadith browser are the three largest
+ * view modules in the app. They load via dynamic import() on first
+ * visit; the SW precache still ships them (APP_SHELL entries unchanged),
+ * so offline works identically. The F-005 reachability gate follows
+ * dynamic import() specifiers, so it keeps passing.
+ *
+ * Contract: skeleton while loading (sr-announced, non-empty #main so the
+ * e2e smoke's not-to-be-empty assertion holds), error + Retry through the
+ * existing loadErrors machinery (tier `view-<name>`, same retry-load
+ * button every other tier uses — no new data-actions to gate).
+ */
+const LAZY_VIEW_LOADERS = {
+  [VIEWS.QUIZ]: () => import('../views/quiz.js').then((m) => m.renderQuiz),
+  [VIEWS.OFFLINE]: () => import('../views/offline.js').then((m) => m.renderOffline),
+  [VIEWS.ABOUT]: () => import('../views/about.js').then((m) => m.renderAbout),
+  [VIEWS.AMBIENT]: () => import('../views/ambient.js').then((m) => m.renderAmbient),
+  [VIEWS.GARDEN]: () => import('../views/garden.js').then((m) => m.renderGarden),
+  [VIEWS.MUTASHABIHAT]: () => import('../views/mutashabihat.js').then((m) => m.renderMutashabihat),
+  [VIEWS.JOURNAL]: () => import('../views/journal.js').then((m) => m.renderJournal),
+  [VIEWS.KIDS]: () => import('../views/kids.js').then((m) => m.renderKids),
+  [VIEWS.CERTIFICATE]: () => import('../views/certificate.js').then((m) => m.renderCertificate),
+  // (v5.2.18) Heavy views. The Mushaf, the classic reader, and the
+  // hadith browser are the three largest view modules; their last
+  // static app-layer edges (modal builders in forms/handlers, the
+  // long-press quick sheet in events.js) went dynamic in the same
+  // release, so nothing parses them before first visit anymore.
+  [VIEWS.MUSHAF]: () => import('../views/mushafReader.js').then((m) => m.renderMushaf),
+  [VIEWS.QURAN]: () => import('../views/quran.js').then((m) => m.renderQuran),
+  [VIEWS.HADITH]: () => import('../views/hadith.js').then((m) => m.renderHadith),
+};
+
+/** Lazy view keys, exported for the startup-budget gate. */
+export const LAZY_VIEW_KEYS = Object.keys(LAZY_VIEW_LOADERS);
+
+const lazyViewCache = new Map();
+const lazyViewPending = new Set();
+const lazyViewFailed = new Set();
+
+/** Test-only: drop lazy caches so cases isolate. */
+export function resetLazyViewsForTests() {
+  lazyViewCache.clear();
+  lazyViewPending.clear();
+  lazyViewFailed.clear();
+}
+
+function viewTierKey(view) {
+  return `view-${view}`;
+}
+
+function kickLazyViewLoad(view) {
+  if (lazyViewCache.has(view) || lazyViewPending.has(view)) return;
+  const loader = LAZY_VIEW_LOADERS[view];
+  if (!loader) return;
+  lazyViewPending.add(view);
+  loader().then(
+    (fn) => {
+      lazyViewPending.delete(view);
+      lazyViewFailed.delete(view);
+      lazyViewCache.set(view, fn);
+      if (store.getState().activeView === view) render(store.getState());
+    },
+    (err) => {
+      console.error('[renderer] lazy view failed', view, err);
+      lazyViewPending.delete(view);
+      lazyViewFailed.add(view);
+      store.dispatch(actions.setLoadError(viewTierKey(view), true));
+      if (store.getState().activeView === view) render(store.getState());
+    }
+  );
+}
+
+/**
+ * Resolve the render function for the active view, or null when a lazy
+ * view has not finished loading (the caller falls back to renderHome's
+ * slot only for genuinely unknown routes — lazy views render a skeleton
+ * or error state instead, via lazyPlaceholderHTML).
+ */
+function resolveViewFn(state) {
+  const staticFn = VIEW_TABLE[state.activeView];
+  if (staticFn) return staticFn;
+  if (!LAZY_VIEW_LOADERS[state.activeView]) return null;
+  if (lazyViewCache.has(state.activeView)) return lazyViewCache.get(state.activeView);
+  return null;
+}
+
+/**
+ * HTML for a lazy view that is not ready yet: skeleton while the import
+ * is in flight, error + Retry when it failed. A cleared loadErrors flag
+ * with a stale module failure means the person pressed Retry (the
+ * DATA_LOAD_RETRY dispatch always notifies): drop the stale failure and
+ * re-kick the import instead of showing the error again.
+ */
+function lazyPlaceholderHTML(state) {
+  const lang = state.settings.language;
+  const tierKey = viewTierKey(state.activeView);
+  if (lazyViewFailed.has(state.activeView)) {
+    if (!state.loadErrors?.[tierKey]) {
+      lazyViewFailed.delete(state.activeView);
+      kickLazyViewLoad(state.activeView);
+      return skeletonLines(lang);
+    }
+    return loadErrorStateHTML({ lang, tierKey, t });
+  }
+  kickLazyViewLoad(state.activeView);
+  return skeletonLines(lang);
+}
 
 let lastView = null;
 let lastViewKey = '';
@@ -472,8 +564,11 @@ export function render(state) {
   // Home silently with the bogus URL intact and no nav item active. Render
   // Home for now, then normalize the URL and say so — out of the render
   // path, so the dispatch can't re-enter this render.
-  const isKnownView = Object.prototype.hasOwnProperty.call(VIEW_TABLE, state.activeView);
-  const view = VIEW_TABLE[state.activeView] || renderHome;
+  const isKnownView =
+    Object.prototype.hasOwnProperty.call(VIEW_TABLE, state.activeView) ||
+    Object.prototype.hasOwnProperty.call(LAZY_VIEW_LOADERS, state.activeView);
+  const resolvedFn = resolveViewFn(state);
+  const view = resolvedFn || renderHome;
   if (!isKnownView) {
     const lang = state.settings.language;
     queueMicrotask(() => {
@@ -538,7 +633,13 @@ export function render(state) {
   // Capture the outgoing scroll position BEFORE the main patch replaces
   // content (content height changes after the patch).
   const outgoingScroll = mainEl ? mainEl.scrollTop : 0;
-  patchHTML(mainEl, view(state));
+  // A known lazy view whose module has not loaded yet renders the honest
+  // loading/error placeholder — never Home (Home is only the fallback for
+  // genuinely unknown routes, handled above).
+  patchHTML(
+    mainEl,
+    !resolvedFn && LAZY_VIEW_LOADERS[state.activeView] ? lazyPlaceholderHTML(state) : view(state)
+  );
 
   // Persistent player bar: rendered into its own mount AFTER the main view
   // so it survives view switches (it lives outside #main in body flow).

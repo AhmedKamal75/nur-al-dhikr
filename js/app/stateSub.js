@@ -34,8 +34,9 @@ import {
 import { scheduleTriggerArm } from './triggers.js';
 import { armFsControlsAfterEnter, updateAmbientWakeLifecycle } from './fullscreen.js';
 import { VIEWS } from '../core/config.js';
+import { computeReaderWindow } from '../domain/readerWindow.js';
 
-import { store } from '../core/state.js';
+import { actions, store } from '../core/state.js';
 import { applyTheme } from '../core/theme.js';
 import { closeModal, isModalOpen } from '../ui/modal.js';
 
@@ -57,6 +58,31 @@ function isSelfRenderedSettingsUpdate(action) {
   if (!action || action.type !== 'SETTINGS_UPDATE' || !action.patch) return false;
   const keys = Object.keys(action.patch);
   return keys.length > 0 && keys.every((k) => SELF_RENDERED_SETTING_KEYS.has(k));
+}
+
+/**
+ * Keep the ephemeral reader-window slice in sync with the volatile
+ * signals before a QURAN render. Returns true when it dispatched (the
+ * caller must re-read the state). Signals mirror views/quran.js exactly:
+ * the raw activeParams.id key, the ?ay= param, and the reciting key —
+ * data-gated on the loaded surah doc, so pre-load skeletons never arm
+ * a window for a surah with no ayahs yet.
+ */
+function syncReaderWindow(state) {
+  const number = state.activeParams?.id;
+  if (number == null || number === '') return false;
+  const surah = state.quran?.surahs?.[number];
+  const total = surah?.ayahs?.length;
+  if (!Number.isFinite(total) || total < 1) return false;
+  const key = String(number);
+  const ayParam = Number(state.activeParams?.ay) || null;
+  const recitingKey = state.recitingAyahKey;
+  const recitingAyah =
+    recitingKey && recitingKey.startsWith(`${key}:`) ? Number(recitingKey.split(':')[1]) || 0 : 0;
+  const next = computeReaderWindow(state.readerWindow, { key, ayParam, recitingAyah, total });
+  if (!next) return false;
+  store.dispatch(actions.setReaderWindow(next));
+  return true;
 }
 
 export function onStateChange(stateArg, action) {
@@ -174,6 +200,14 @@ export function onStateChange(stateArg, action) {
       scheduleTriggerArm();
     }
     rt.lastArmLang = state.settings.language;
+    // (v5.2.17) reader-window derivation (B12): the QURAN view reads the
+    // ephemeral state.readerWindow slice purely, so the subscriber keeps
+    // it in sync first — dispatch only on change (computeReaderWindow
+    // returns null when the window stands), then re-read; the nested
+    // notify already rendered the new window, so the outer render below
+    // is a patch-engine no-op. Quiet recitation ticks cost a few integer
+    // comparisons and no extra render.
+    if (state.activeView === VIEWS.QURAN && syncReaderWindow(state)) state = store.getState();
     if (!isSelfRenderedSettingsUpdate(action)) render(state);
     // Reading timer follows navigation (entering/leaving the two readers
     // starts/stops the clock; same-view param changes never disturb it).

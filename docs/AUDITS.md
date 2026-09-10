@@ -1,3 +1,139 @@
+# V5.2.19 — HONEST LAZY SHEETS, SELF-REVIEW (USER REQUEST, 2026-09-10)
+
+# `npm run check`: eslint 0, 1037/1037 green (1033 + 4 modal), prettier clean.
+
+# `npm run e2e`: 3/3 green + a temporary long-press probe (real
+
+# press-hold on a reader ayah opens the quick sheet; zero console
+
+# errors; probe removed after the run).
+
+# - [x] **Lazy honesty.** `openLazyModal` in ui/modal.js (failure toast,
+
+# optional viewGuard); converted forms ×2, events long-press
+
+# (QURAN guard), handlers/content viewSheets. Dropped two newly
+
+# unused openModal imports. `tests/lazy-modal.test.js` (4).
+
+# Markers 5.2.18 → 5.2.19 + re-stamp (230).
+
+# - [x] **Audit-trail check.** B6 (SWR recency) and B9 (meta single-flight)
+
+# re-verified live in-tree — both fixed with comments + tests, no
+
+# action. Every P1/P2/P3 with a reproduction across both audit
+
+# documents is now fixed and gated.
+
+# - [ ] Still open (explicit): F-015 dedupe, features/ strangler.
+
+# V5.2.18 — HEAVY VIEWS ON DEMAND, F-013 CORE (USER REQUEST, 2026-09-10)
+
+# `npm run check`: eslint 0, 1033/1033 green, prettier clean. (Count
+
+# re-verified at stamp time — see below.)
+
+# `npm run e2e`: 3/3 green + a temporary sheet probe (every converted
+
+# modal/sheet opened in a real browser, zero console errors; probe
+
+# removed after the run).
+
+# - [x] **F-013 core.** Renderer-lazy mushaf/quran/hadith + dynamic
+
+# builder edges (facade chunks; leaf retarget where the module
+
+# was already split). `hifzReviewCardHTML` → home.js,
+
+# `hadithCardHTML`/`dailyHadithCardHTML` → views/hadithCard.js
+
+# (both moved verbatim; one test import retargeted). Budget gate
+
+# now bans static lazy-view edges tree-wide. Markers 5.2.17 →
+
+# 5.2.18 + re-stamp (230).
+
+# - [ ] Still open: F-015 dedupe, features/ strangler (both explicitly
+
+# deferred — tested contracts, rewire risk exceeds return).
+
+# V5.2.17 — READER WINDOW TO THE STORE, B12 CLOSED (USER REQUEST, 2026-09-10)
+
+# `npm run check`: eslint 0, 1033/1033 green (1028 + 5 window), prettier clean.
+
+# `npm run e2e`: 3/3 green + a temporary reader probe (deep link, both
+
+# sentinels, recitation slide — real DOM windows, zero console errors;
+
+# probe removed after the run).
+
+# - [x] **B12.** `js/domain/readerWindow.js` (pure) + ephemeral slice +
+
+# validated reducer + stateSub derivation + pure view read.
+
+# Handler batches expand with its nudge (one notify). Ported v4.2
+
+# (§6) + v4.3 (§4) cases; new `tests/reader-window.test.js` (4).
+
+# Markers 5.2.16 → 5.2.17 + re-stamp (229).
+
+# - [ ] Still open: heavy-view laziness (unblocked — no view state left),
+
+# F-015 dedupe, features/ strangler.
+
+# V5.2.16 — NEUTRAL READING TOKENS, F-013 PREREQUISITE (USER REQUEST, 2026-09-10)
+
+# `npm run check`: eslint 0, 1028/1028 green (1025 + 3 boundary), prettier clean.
+
+# `npm run e2e`: 3/3 green (page-turn, fullscreen, and follow paths all
+
+# exercise the moved tokens in a real browser).
+
+# - [x] **Tokens.** `js/ui/readingTokens.js` owns flipDirection +
+
+# fullscreenAnim (set/consume-once); view re-exports setters,
+
+# consumes via readers — byte-identical renders. retargeted:
+
+# events.js, fullscreen.js, recitationFollow.js, handlers/quran.js.
+
+# `tests/view-boundary.test.js` (3) pins single ownership + the
+
+# decoupled edge. Markers 5.2.15 → 5.2.16 + re-stamp (227).
+
+# - [ ] Still open: heavy-view laziness (readerWindow store wave first),
+
+# readerWindow promotion, F-015 dedupe, features/ strangler.
+
+# V5.2.15 — LAZY LEAF VIEWS, F-013 FIRST CUT (USER REQUEST, 2026-09-10)
+
+# `npm run check`: eslint 0, 1025/1025 green (1021 + 4 budget), prettier clean.
+
+# `npm run e2e`: 3/3 green + a temporary 5-route lazy-resolve probe
+
+# (quiz/garden/about/journal/certificate reach real content, zero console
+
+# errors — probe removed after the run, like the U5 harness before it).
+
+# - [x] **F-013 first cut.** `js/app/renderer.js`: 9 renderer-only leaf
+
+# views go dynamic (skeleton + `view-<name>` error/Retry, no new
+
+# data-actions); editor stays static (handlers import it); heavy
+
+# views stay static (transient extraction is its own wave).
+
+# `tests/startup-budget.test.js` (4) pins the cap. Markers
+
+# 5.2.14 → 5.2.15 + re-stamp (227).
+
+# - [ ] Still open: heavy-view laziness (needs neutral transient module),
+
+# F-015 debounce/focus-trap dedupe (deferred — tested contracts,
+
+# rewire risk exceeds return), features/ strangler.
+
 # TODO — Digital Inquisitor Audit Findings (v5.1.0, 2026-09-04)
 
 # Status update 2026-09-04: all items fixed except U5 (needs a real device).

@@ -16,7 +16,7 @@
 
 import { actions, store } from '../../core/state.js';
 import { buildConfirm } from '../../ui/menus.js';
-import { closeModal, isModalOpen, openModal } from '../../ui/modal.js';
+import { closeModal, isModalOpen, openModal, openLazyModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import { t } from '../../core/i18n.js';
 import { buildHash } from '../../core/router.js';
@@ -409,11 +409,15 @@ export const clickHandlers = {
     const field = ds.field;
     const next = { ...current, [field]: !(current[field] !== false) };
     commit(setLibraryFieldToggles(state, ds.libraryId, next));
-    import('../../views/viewSheets.js').then(({ buildFieldTogglesSheet }) => {
-      openModal(buildFieldTogglesSheet(store.getState(), ds.libraryId), {
-        labelledBy: 'modal-title-view-sheet',
-      });
-    });
+    // (v5.2.19) on-demand sheet through the shared lazy-modal helper —
+    // a failed chunk toasts instead of stranding the tap silently.
+    openLazyModal(
+      () =>
+        import('../../views/viewSheets.js').then(({ buildFieldTogglesSheet }) =>
+          buildFieldTogglesSheet(store.getState(), ds.libraryId)
+        ),
+      { labelledBy: 'modal-title-view-sheet' }
+    );
   },
 
   /** Global (tab) field-visibility default toggle from Settings/Library sheet. */

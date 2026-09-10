@@ -30,7 +30,6 @@ import {
 import { openModal } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as soundDesign from '../services/soundDesign.js';
-import { buildMushafAyahDetail } from '../views/mushafReader.js';
 
 /**
  * app/lazyData.js — every lazy data tier's fetch orchestration: Qur'an
@@ -447,6 +446,9 @@ export async function openAyahStudy(surah, ayah, page = null) {
   state = store.getState();
   const surahDoc = state.quran.surahs[String(surah)];
   const arabicText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayah))?.text || '';
+  // (v5.2.18) the study panel loads on demand (static import pulled the
+  // whole book view into the boot parse).
+  const { buildMushafAyahDetail } = await import('../views/mushafReader.js');
   openModal(buildMushafAyahDetail(arabicText, surahDoc, surah, ayah, state, page), {
     labelledBy: 'modal-title-mushaf-ayah',
   });

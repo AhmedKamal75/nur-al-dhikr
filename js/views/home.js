@@ -19,8 +19,8 @@ const goIcon = (lang, size) => icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight'
 import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
 import { calculateTimes, nextPrayer, formatClock } from '../domain/prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
-import { dailyHadithCardHTML } from './hadith.js';
-import { hifzReviewCardHTML } from './quran.js';
+import { dailyHadithCardHTML } from './hadithCard.js';
+import { countMemorized, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
 import { worshipTodayRows } from '../domain/worship.js';
 import { computeNudge, shouldShowNudge } from '../domain/nudge.js';
 
@@ -432,5 +432,78 @@ export function renderHome(state) {
     </div>
 
     ${orderedHomePanels}
+  </section>`;
+}
+
+/**
+ * hifzReviewCardHTML — moved here from views/quran.js (v5.2.18).
+ * It is a Home panel, and Home importing it from the classic reader
+ * pulled the whole reader into the boot parse. Moved verbatim.
+ */
+/**
+ * v3.17 Home card: the hifz review queue. Due surahs (oldest first) link
+ * straight into memorize mode (#/quran/N?mem=1); when the Mushaf meta is
+ * already in memory, surahs fully READ via the khatma page-tracking but not
+ * yet memorized are offered as honest "ready to memorize" suggestions.
+ * Computed from persisted records only — zero network, zero boot cost; the
+ * card is silently absent until the person has actually marked something.
+ */
+export function hifzReviewCardHTML(state) {
+  const lang = state.settings.language;
+  const records = state.hifzRecords ?? {};
+  const memorized = countMemorized(records);
+  // (review v3.21): count BEFORE the display cap — with 7 surahs due the
+  // card used to claim “4 due for review”.
+  const dueAll = dueSurahs(records);
+  const due = dueAll.slice(0, 4);
+  const surahMetas = state.quran.meta?.surahs ?? null;
+  const nameOf = (n) => {
+    const s = surahMetas?.find((x) => Number(x.number) === n);
+    return s ? (lang === 'ar' ? s.nameAr : s.nameTransliteration) : `#${n}`;
+  };
+  const suggestions =
+    state.mushaf.meta?.ayahPages && surahMetas
+      ? suggestFromKhatma(
+          records,
+          state.mushafPagesRead,
+          state.mushaf.meta.ayahPages,
+          surahMetas,
+          3
+        )
+      : [];
+  if (!memorized && !suggestions.length) return '';
+
+  const dueChips = due
+    .map(
+      (d) => `
+      <a class="chip" href="${buildHash(VIEWS.QURAN, { id: d.surah, mem: '1' })}" title="${t('hifz.memorizedBadge', lang, { date: d.due })}">
+        ${escapeHTML(nameOf(d.surah))}
+        ${d.overdue > 0 ? `<span class="chip__count" dir="ltr">+${d.overdue}</span>` : ''}
+      </a>`
+    )
+    .join('');
+  const suggChips = suggestions
+    .map(
+      (s) => `
+      <a class="chip" href="${buildHash(VIEWS.QURAN, { id: s.surah })}">${escapeHTML(nameOf(s.surah))}</a>`
+    )
+    .join('');
+
+  return `
+  <section class="panel panel--hifz">
+    <div class="panel__header">
+      <h2>${icon('target', { size: 16 })} ${t('hifz.cardTitle', lang)}</h2>
+    </div>
+    <p class="panel__subtext">
+      ${t('hifz.memorizedCount', lang, { n: memorized })}${dueAll.length ? ` \u00b7 ${t('hifz.dueToday', lang, { n: dueAll.length })}` : ''}
+    </p>
+    ${dueChips ? `<div class="chip-row chip-row--scroll">${dueChips}</div>` : ''}
+    ${
+      suggChips
+        ? `
+    <p class="panel__subtext">${t('hifz.suggestHint', lang)}</p>
+    <div class="chip-row chip-row--scroll">${suggChips}</div>`
+        : ''
+    }
   </section>`;
 }

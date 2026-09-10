@@ -21,7 +21,7 @@ import {
   prevSpreadPage,
   setMushafWideLayout,
 } from '../services/mushaf.js';
-import { closeModal, openModal, isModalOpen } from '../ui/modal.js';
+import { closeModal, isModalOpen, openLazyModal } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as recitation from '../services/recitation.js';
 import {
@@ -66,8 +66,8 @@ import { clickHandlers as viewMenusClick } from './handlers/viewMenus.js';
 import { clickHandlers as journalClick } from './handlers/journal.js';
 import { clickHandlers as grammarClick } from './handlers/grammar.js';
 import { clickHandlers as offlineClick } from './handlers/offline.js';
-import { buildAyahQuickSheet } from '../views/quran.js';
-import { setFlipDirection } from '../views/mushafReader.js';
+
+import { setFlipDirection } from '../ui/readingTokens.js';
 import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
 
 /**
@@ -334,9 +334,16 @@ function armAyahLongPress() {
         const lang = store.getState().settings.language;
         if (store.getState().settings.hapticsEnabled) vibrate(10);
         rt.suppressClickUntil = Date.now() + 600;
-        openModal(buildAyahQuickSheet(anchor.surah, anchor.ayah, lang), {
-          labelledBy: 'modal-title-ayah-quick',
-        });
+        // (v5.2.18/19) the quick sheet loads on demand (static import
+        // pulled the whole classic reader into the boot parse); the
+        // QURAN guard drops the sheet when the press outlives its view.
+        openLazyModal(
+          () =>
+            import('../views/quran.js').then(({ buildAyahQuickSheet }) =>
+              buildAyahQuickSheet(anchor.surah, anchor.ayah, lang)
+            ),
+          { labelledBy: 'modal-title-ayah-quick', viewGuard: VIEWS.QURAN }
+        );
       }, LONG_PRESS_MS);
     },
     { passive: true }

@@ -26,7 +26,7 @@
  */
 import { actions, store } from '../core/state.js';
 import { VIEWS } from '../core/config.js';
-import { setFullscreenAnim } from '../views/mushafReader.js';
+import { setFullscreenAnim } from '../ui/readingTokens.js';
 
 let wakeLock = null;
 

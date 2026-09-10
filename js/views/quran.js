@@ -13,6 +13,7 @@ import { escapeHTML } from '../core/utils.js';
 import { VIEWS, TRANSLATION_EDITIONS } from '../core/config.js';
 import { selectors } from '../core/state.js';
 import { ayahTranslit } from '../domain/wordStudy.js';
+import { READER_WINDOW_SIZE, readWindow } from '../domain/readerWindow.js';
 import { ayahAudioUrl } from '../services/mushaf.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
 import {
@@ -24,73 +25,20 @@ import { renderAyahWords } from './tafsirPanel.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
 import { loadErrorStateHTML, notFoundStateHTML } from '../ui/emptyState.js';
-import { clozeAyahHTML, dueSurahs, countMemorized, suggestFromKhatma } from '../domain/hifz.js';
+import { clozeAyahHTML } from '../domain/hifz.js';
 import { keyToDate } from '../domain/review.js';
 
 const BISMILLAH_AR = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
 
 /* ------------------------------------------------------------------ */
 /* (v4.2) Ayah windowing — the reader renders a sliding window, not the  */
-/* whole surah.                                                          */
+/* whole surah (see domain/readerWindow.js for the rationale).           */
 /* ------------------------------------------------------------------ */
-// Al-Baqarah is 286 ayah cards ≈ 1.1MB of HTML (~1,144 inline SVGs), and
-// the string-render engine rebuilt + re-parsed ALL of it on every dispatch
-// — including one dispatch per ayah during continuous recitation: a
-// ~100-200ms main-thread stall on mid-range mobile, 286 times in a row.
-// The window keeps ~30 ayahs in the DOM; two honest "show more" buttons
-// extend it, the deep-link ?ay= centers it, and the reciting ayah slides
-// it forward automatically. Short surahs (the overwhelming majority —
-// median is 17 ayahs) render whole and never see a sentinel at all.
-const READER_WINDOW_SIZE = 30;
-let readerWindow = { surah: null, from: 1, to: 1, ayParam: null };
-
-/** Extend the window by one page of ayahs (up or down). Exported for the
- *  delegated click handler; re-renders through the standard nudge. */
-export function expandReaderWindow(dir) {
-  if (dir === 'up') readerWindow.from = Math.max(1, readerWindow.from - READER_WINDOW_SIZE);
-  else readerWindow.to = readerWindow.to + READER_WINDOW_SIZE;
-}
-
-/** Reset the window when its owning data changes (tests, restore). */
-export function _resetReaderWindowForTests() {
-  readerWindow = { surah: null, from: 1, to: 1, ayParam: null };
-}
-
-/** Compute the current window for (number, total) from the volatile
- *  signals in state — pure apart from the module latch it maintains.
- *  (v4.3) exported for the windowing regression tests: bounds, deep-link
- *  recenter, recitation slide-ahead, and the re-center-once latch. */
-export function currentWindow(state, number, total) {
-  const key = String(number);
-  const ayParam = Number(state.activeParams?.ay) || null;
-  const recitingKey = state.recitingAyahKey;
-  const recitingAyah =
-    recitingKey && recitingKey.startsWith(`${key}:`) ? Number(recitingKey.split(':')[1]) || 0 : 0;
-  const centerOn = (c) => {
-    const from = Math.max(1, Math.min(c - 10, Math.max(1, total - 9)));
-    readerWindow = {
-      surah: key,
-      from,
-      to: Math.min(total, from + READER_WINDOW_SIZE - 1),
-      ayParam,
-    };
-  };
-  if (readerWindow.surah !== key) {
-    centerOn(ayParam || 1);
-  } else if (ayParam !== null && ayParam !== readerWindow.ayParam) {
-    // A NEW deep link (or in-surah ay jump) re-centers exactly once.
-    centerOn(ayParam);
-  } else if (recitingAyah > 0) {
-    // Follow-along: slide ahead when the reciting ayah approaches either
-    // edge, so the highlight (and the auto-scroll target) always exists.
-    if (recitingAyah > readerWindow.to - 5 || recitingAyah < readerWindow.from)
-      centerOn(recitingAyah);
-  }
-  // Whatever window stands, the CURRENT ay param is now honored — a later
-  // manual "show more" must not be undone by the stale-param check above.
-  readerWindow.ayParam = ayParam;
-  return { from: Math.max(1, readerWindow.from), to: Math.min(total, readerWindow.to) };
-}
+// (v5.2.17) The window memory moved to the ephemeral state.readerWindow
+// slice (B12 — the last module-scoped view state): the transition math
+// is pure domain (computeReaderWindow), app/stateSub.js derives-then-
+// renders, and this view only ever READS. No module latch remains, so
+// _resetReaderWindowForTests is deleted — tests drive the store instead.
 
 /**
  * The v3.10 continuous-recitation toolbar for the classic reader:
@@ -330,8 +278,11 @@ function surahReaderHTML(state, number) {
   const prev = num > 1 ? num - 1 : null;
   const next = num < 114 ? num + 1 : null;
   const showBismillah = num !== 1 && num !== 9;
-  // (v4.2) which slice of the surah is in the DOM right now.
-  const win = surah ? currentWindow(state, number, surah.ayahs.length) : null;
+  // (v4.2, v5.2.17) which slice of the surah is in the DOM right now.
+  // Pure read of the derived state.readerWindow slice (stateSub keeps it
+  // in sync before every QURAN render); defensive clamping keeps the view
+  // renderable even with a hand-made state that lacks the slice.
+  const win = surah ? readWindow(state.readerWindow, surah.ayahs.length) : null;
   const prevHidden = win ? win.from - 1 : 0;
   const nextHidden = win ? surah.ayahs.length - win.to : 0;
   const loadUp =
@@ -621,72 +572,4 @@ export function buildAyahQuickSheet(surah, ayah, lang) {
       ${row('quran-range-open', 'audio.rangeTitle', 'target')}
     </div>
   </div>`;
-}
-
-/**
- * v3.17 Home card: the hifz review queue. Due surahs (oldest first) link
- * straight into memorize mode (#/quran/N?mem=1); when the Mushaf meta is
- * already in memory, surahs fully READ via the khatma page-tracking but not
- * yet memorized are offered as honest "ready to memorize" suggestions.
- * Computed from persisted records only — zero network, zero boot cost; the
- * card is silently absent until the person has actually marked something.
- */
-export function hifzReviewCardHTML(state) {
-  const lang = state.settings.language;
-  const records = state.hifzRecords ?? {};
-  const memorized = countMemorized(records);
-  // (review v3.21): count BEFORE the display cap — with 7 surahs due the
-  // card used to claim “4 due for review”.
-  const dueAll = dueSurahs(records);
-  const due = dueAll.slice(0, 4);
-  const surahMetas = state.quran.meta?.surahs ?? null;
-  const nameOf = (n) => {
-    const s = surahMetas?.find((x) => Number(x.number) === n);
-    return s ? (lang === 'ar' ? s.nameAr : s.nameTransliteration) : `#${n}`;
-  };
-  const suggestions =
-    state.mushaf.meta?.ayahPages && surahMetas
-      ? suggestFromKhatma(
-          records,
-          state.mushafPagesRead,
-          state.mushaf.meta.ayahPages,
-          surahMetas,
-          3
-        )
-      : [];
-  if (!memorized && !suggestions.length) return '';
-
-  const dueChips = due
-    .map(
-      (d) => `
-      <a class="chip" href="${buildHash(VIEWS.QURAN, { id: d.surah, mem: '1' })}" title="${t('hifz.memorizedBadge', lang, { date: d.due })}">
-        ${escapeHTML(nameOf(d.surah))}
-        ${d.overdue > 0 ? `<span class="chip__count" dir="ltr">+${d.overdue}</span>` : ''}
-      </a>`
-    )
-    .join('');
-  const suggChips = suggestions
-    .map(
-      (s) => `
-      <a class="chip" href="${buildHash(VIEWS.QURAN, { id: s.surah })}">${escapeHTML(nameOf(s.surah))}</a>`
-    )
-    .join('');
-
-  return `
-  <section class="panel panel--hifz">
-    <div class="panel__header">
-      <h2>${icon('target', { size: 16 })} ${t('hifz.cardTitle', lang)}</h2>
-    </div>
-    <p class="panel__subtext">
-      ${t('hifz.memorizedCount', lang, { n: memorized })}${dueAll.length ? ` \u00b7 ${t('hifz.dueToday', lang, { n: dueAll.length })}` : ''}
-    </p>
-    ${dueChips ? `<div class="chip-row chip-row--scroll">${dueChips}</div>` : ''}
-    ${
-      suggChips
-        ? `
-    <p class="panel__subtext">${t('hifz.suggestHint', lang)}</p>
-    <div class="chip-row chip-row--scroll">${suggChips}</div>`
-        : ''
-    }
-  </section>`;
 }

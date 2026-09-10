@@ -12,7 +12,15 @@ import { computeFitr, computeZakat, hawlDueFor } from '../../domain/zakat.js';
 import { buildTextPrompt, buildConfirm } from '../../ui/menus.js';
 import { openModal, closeModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
-import { buildMushafBookmarks } from '../../views/mushafReader.js';
+/**
+ * (v5.2.18) Mushaf builders load on demand: every static import of the
+ * book view pulled ~700 lines into the boot parse. Call sites below
+ * await this loader instead (async-handler rejections surface through
+ * the events.js boundary).
+ */
+async function mushafView() {
+  return import('../../views/mushafReader.js');
+}
 
 export const clickHandlers = {
   /* ---------------- Zakat calculator ------------------ */
@@ -74,7 +82,8 @@ export const clickHandlers = {
 
   /* ---------------- Ayah bookmark folders/notes ---------------- */
 
-  'bookmark-filter-folder': (ds) => {
+  'bookmark-filter-folder': async (ds) => {
+    const { buildMushafBookmarks } = await mushafView();
     // (v5.2.9) filter via the session (was setBookmarkFolderFilter).
     store.dispatch(actions.setMushafSession({ bookmarkFilter: ds.folder || '__all__' }));
     openModal(buildMushafBookmarks(store.getState()), {
@@ -111,7 +120,8 @@ export const clickHandlers = {
     );
   },
 
-  'bookmark-delete-folder-confirmed': (ds) => {
+  'bookmark-delete-folder-confirmed': async (ds) => {
+    const { buildMushafBookmarks } = await mushafView();
     closeModal();
     store.dispatch(actions.deleteBookmarkFolder(ds.folder));
     openModal(buildMushafBookmarks(store.getState()), {

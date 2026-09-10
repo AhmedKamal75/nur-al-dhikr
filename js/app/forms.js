@@ -8,12 +8,12 @@ import { escapeHTML, uid } from '../core/utils.js';
 import { customMoshafId, surahUrl, validateCustomServer } from '../services/audioCatalog.js';
 import { fetchWithTimeout, FETCH_TIMEOUT_MS } from './net.js';
 import { clampPage } from '../services/mushaf.js';
-import { closeModal, openModal } from '../ui/modal.js';
+import { closeModal, openLazyModal } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as editorApi from '../services/editor.js';
 import * as notifications from '../services/notifications.js';
 import { clickHandlers as quranAudioClick } from './handlers/quranAudio.js';
-import { buildMushafBookmarks, buildMushafTrack } from '../views/mushafReader.js';
+
 import {
   applyItemFields,
   applyCategoryFields,
@@ -114,7 +114,15 @@ export const formHandlers = {
     }
     store.dispatch(actions.setKhatmaPlan({ startDate, targetDate, dailyTarget }));
     closeModal();
-    openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
+    // (v5.2.18/19) the track panel loads on demand (static import pulled
+    // the whole book view into the boot parse).
+    openLazyModal(
+      () =>
+        import('../views/mushafReader.js').then(({ buildMushafTrack }) =>
+          buildMushafTrack(store.getState())
+        ),
+      { labelledBy: 'modal-title-mushaf-track' }
+    );
     showToast(t('khatma.planSaved', lang));
   },
 
@@ -456,9 +464,14 @@ export function handlePromptForm(form) {
     const id = uid('bmf');
     store.dispatch(actions.createBookmarkFolder(id, value));
     closeModal();
-    openModal(buildMushafBookmarks(store.getState()), {
-      labelledBy: 'modal-title-mushaf-bookmarks',
-    });
+    // (v5.2.18/19) the bookmarks panel loads on demand (see above).
+    openLazyModal(
+      () =>
+        import('../views/mushafReader.js').then(({ buildMushafBookmarks }) =>
+          buildMushafBookmarks(store.getState())
+        ),
+      { labelledBy: 'modal-title-mushaf-bookmarks' }
+    );
   } else if (action === 'submit-new-location-profile') {
     // (v4.4) Save the current place + method as a named location profile.
     store.dispatch(actions.saveLocationProfile(value));

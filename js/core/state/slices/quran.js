@@ -10,6 +10,7 @@
 
 import { MUSHAF_PAGE_COUNT } from '../../config.js';
 import { dateKey, uid } from '../../utils.js';
+import { sanitizeWindow, expandWindow } from '../../../domain/readerWindow.js';
 import { nextStats as nextTajweedPracticeStats } from '../../../domain/tajweedPractice.js';
 import {
   normalizeHifzLevel,
@@ -129,6 +130,35 @@ export function reduceQuran(state, action) {
         }
       }
       return changed ? { ...state, mushafSession: next } : state;
+    }
+
+    // (v5.2.17) Reader-window memory (B12 — the last module-scoped view
+    // state). Hostile-payload rules: finite ints, from ≥ 1, to ≥ from,
+    // magnitudes capped; surah/ayParam short and numeric. Returns state
+    // on no-op so quiet recitation ticks never notify or persist.
+    case 'READER_WINDOW_SET': {
+      const next = sanitizeWindow(action.window);
+      next.to = Math.min(next.to, 10000);
+      const prev = state.readerWindow || {};
+      if (
+        prev.surah === next.surah &&
+        prev.from === next.from &&
+        prev.to === next.to &&
+        prev.ayParam === next.ayParam
+      )
+        return state;
+      return { ...state, readerWindow: next };
+    }
+
+    case 'READER_WINDOW_EXPAND': {
+      // Strict enum: anything but up/down is a no-op (the old module
+      // mutator defaulted to down — the store validates enums instead).
+      if (action.dir !== 'up' && action.dir !== 'down') return state;
+      const prev = sanitizeWindow(state.readerWindow);
+      const next = expandWindow(prev, action.dir);
+      next.to = Math.min(next.to, 10000);
+      if (next.from === prev.from && next.to === prev.to) return state;
+      return { ...state, readerWindow: next };
     }
 
     case 'QURAN_WORDS_LOADED':

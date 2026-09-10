@@ -9,6 +9,7 @@
 import { t } from '../core/i18n.js';
 import { store } from '../core/state.js';
 import { icon } from '../core/icons.js';
+import { showToast } from './toast.js';
 
 let lastFocused = null;
 let trapHandler = null;
@@ -113,4 +114,38 @@ function trapFocus(e, panel) {
 
 export function isModalOpen() {
   return document.getElementById('modal-root')?.classList.contains('is-open');
+}
+
+/**
+ * (v5.2.19) Open a modal whose content chunk loads on demand. Two gaps
+ * it closes, both found in the v5.2.18 lazy wave's own wake:
+ *  1. fire-and-forget `import().then(openModal)` chains (forms, the
+ *     long-press quick sheet) had no rejection path — a failed chunk
+ *     was an unhandled rejection and the tap silently did nothing, the
+ *     exact class the events.js boundary was built to kill. Failures
+ *     now toast through the same generic error copy.
+ *  2. timer-deferred sheets (the 550ms long-press) could outlive their
+ *     view: press, navigate away within the window, and the sheet for
+ *     the abandoned surah opened over the new view (the v4.2
+ *     search-debounce lesson). `viewGuard` drops those stale opens.
+ * Resolves true when the modal opened, false otherwise. Never throws.
+ */
+export function openLazyModal(load, { labelledBy = null, viewGuard = null } = {}) {
+  return Promise.resolve()
+    .then(load)
+    .then((html) => {
+      if (typeof html !== 'string' || !html) return false;
+      if (viewGuard && store.getState().activeView !== viewGuard) return false;
+      openModal(html, { labelledBy });
+      return true;
+    })
+    .catch((err) => {
+      console.error('[modal] lazy sheet failed to load', err);
+      try {
+        showToast(t('common.error', store.getState().settings.language));
+      } catch {
+        /* toast needs a DOM — logging above is the floor */
+      }
+      return false;
+    });
 }

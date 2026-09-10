@@ -74,6 +74,9 @@ export const actions = {
   setReaderImmersive: (on) => ({ type: 'READER_IMMERSIVE_SET', on: on === true }),
   // (v5.2.9) Mushaf session transients — see reducer MUSHAF_SESSION_SET.
   setMushafSession: (patch) => ({ type: 'MUSHAF_SESSION_SET', patch }),
+  // (v5.2.17) Reader-window memory — see reducer READER_WINDOW_*.
+  setReaderWindow: (window) => ({ type: 'READER_WINDOW_SET', window }),
+  expandReaderWindow: (dir) => ({ type: 'READER_WINDOW_EXPAND', dir }),
   setQuranWords: (number, words) => ({ type: 'QURAN_WORDS_LOADED', number: String(number), words }),
   setQuranRoots: (roots) => ({ type: 'QURAN_ROOTS_LOADED', roots }),
   setQuranRootsFull: (roots) => ({ type: 'QURAN_ROOTS_FULL_LOADED', roots }),

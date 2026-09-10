@@ -20,7 +20,7 @@ import {
   pruneFiredMap,
 } from '../js/services/alertTriggers.js';
 import { wasDayFired, markDayFired, permissionState } from '../js/services/notifications.js';
-import { hifzReviewCardHTML } from '../js/views/quran.js';
+import { hifzReviewCardHTML } from '../js/views/home.js';
 import { worshipTodayCardHTML } from '../js/views/home.js';
 import { t, availableLanguages } from '../js/core/i18n.js';
 

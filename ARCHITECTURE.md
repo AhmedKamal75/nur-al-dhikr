@@ -255,12 +255,19 @@ layers are exactly what may be broken.
   Session-only slices (player, modals, arm status) are stripped.
 - **Known compromise:** two Mushaf one-shot animation tokens (flip
   direction, fullscreen anim direction) are documented single-use
-  module state in `views/mushafReader.js` — single writer, single
-  render consumer, no cross-module readers, so store promotion would
-  buy double-renders for zero probe value. The other two historical
+  module state in `ui/readingTokens.js` (v5.2.16 — moved out of
+  `views/mushafReader.js` so five app-layer setters no longer import
+  the whole book; the view re-exports the setters for compat and
+  consumes through consume-once readers, pinned by
+  `tests/view-boundary.test.js`). Single writer, single render
+  consumer, no cross-module readers, so store promotion would buy
+  double-renders for zero probe value. The other two historical
   transients (bookmark folder filter, active tafsir tab) were promoted
-  to `state.mushafSession` in v5.2.9. Do not add more module state; if
-  you touch those files, consider promoting what remains.
+  to `state.mushafSession` in v5.2.9, and the classic reader's
+  `readerWindow` followed in v5.2.17 (ephemeral slice + pure
+  `domain/readerWindow.js` + stateSub derivation — no module state
+  remains in any view). Do not add module state; the shadow layer is
+  closed.
 - **(v4.4) Mushaf-first reading.** The Mushaf (paper-book view) is the
   app's default Qur'an experience; the classic list reader is a peer,
   reachable in one tap from either side. Generic "read the Qur'an"
@@ -308,18 +315,19 @@ layers are exactly what may be broken.
   `net.js#retryLibraryLoad` — and the SW's offline stub is now HTTP 503 so
   `fetchJSON` actually throws into these paths instead of handing callers
   a 200-OK `{error:'offline'` error document.)
-- **Known perf trade-off (deliberate):** views load via STATIC imports —
-  all 180 modules arrive before first render. Lazy-loading `VIEW_TABLE`
-  would cut first-visit JS by roughly half, but 13 app-layer modules import
-  view builders/setters directly (modal builders, `setFlipDirection`,
-  `setActiveTafsirTab`, `bookmarkFolderFilter`), so the flip requires first
-  extracting the Mushaf/tafsir transient state into a neutral module. The
-  service worker precaches everything on first install, so the cost is
-  first-visit-only. Migration path documented here so the next refactor
-  starts from the right first step. (v4.3 exception: `services/shareCard.js`
-  — 553 lines of canvas rendering used only on explicit share taps — is a
-  genuine dynamic import; `gen_sw.py` walks dynamic imports too, so it
-  stays precached for offline.)
+- **Known perf trade-off (closed):** twelve views load via dynamic
+  `import()` on first visit with skeleton + error/Retry (`view-<name>`
+  loadErrors tier, no new data-actions) — the nine leaves (v5.2.15) and
+  the three heavy views, Mushaf / classic reader / hadith browser
+  (v5.2.18, with their modal-builder edges converted alongside).
+  Pinned by `tests/startup-budget.test.js` (static-import cap 22,
+  precache guarantee, tree-wide zero-static rule for lazy views).
+  Two Home cards were re-homed to keep it true (`hifzReviewCardHTML`
+  into home.js, hadith cards into the light leaf `hadithCard.js`).
+  The service worker precaches everything on first install, so the
+  remaining boot cost is the genuinely critical path. (Precedent:
+  `services/shareCard.js` — 553 lines of canvas rendering used only on
+  explicit share taps — was already a genuine dynamic import.)
 - **Reader windowing (v4.2):** the classic Qur'ān reader renders a
   30-ayah window (module-latch in `views/quran.js`) instead of the whole
   surah — Al-Baqarah is ~1.1MB of HTML per rebuild, and the string-render

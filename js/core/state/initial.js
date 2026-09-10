@@ -219,15 +219,20 @@ export function initialState() {
     // Mushaf's TRUE fullscreen. Ephemeral gesture, not a preference:
     // NAVIGATE resets it and PERSISTED_KEYS ignores it.
     readerImmersive: false,
-    // (v5.2.9) Mushaf session transients — the last multi-owner
-    // module-scope state (Blueprint E shadow layer): the bookmark folder
-    // filter and the study-modal tafsir tab. Ephemeral: visible to the
-    // reducer, the patch engine, and the tests; never persisted, never
-    // restored; survives in-app navigation like the module vars did.
-    // (The one-shot flip/fullscreen animation tokens stay module-scoped
-    // by design — single writer, single render consumer, no cross-module
-    // readers; see the known-compromise note in ARCHITECTURE.md.)
+    // (v5.2.9) Mushaf session transients — the bookmark folder filter
+    // and the study-modal tafsir tab. Ephemeral: visible to the reducer,
+    // the patch engine, and the tests; never persisted, never restored;
+    // survives in-app navigation like the module vars did. (The one-shot
+    // flip/fullscreen animation tokens live in ui/readingTokens.js since
+    // v5.2.16 — same ephemeral rationale, neutral module so app layers
+    // need not import the view; see ARCHITECTURE.md.)
     mushafSession: { bookmarkFilter: '__all__', tafsirTab: null },
+    // (v5.2.17) Classic-reader window memory (B12 — the last
+    // module-scoped view state). Ephemeral session slice: which surah
+    // the window belongs to, its bounds, and the honored ay param.
+    // Derived in app/stateSub.js before each QURAN render (dispatch
+    // only on change); never persisted, never restored.
+    readerWindow: { surah: null, from: 1, to: 30, ayParam: null },
     // Ephemeral — which "surah:ayah" key is currently playing recited audio,
     // if any. Mirrors speakingItemId's reactive-highlight purpose.
     recitingAyahKey: null,

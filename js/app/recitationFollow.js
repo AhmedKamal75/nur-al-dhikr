@@ -10,7 +10,7 @@ import {
   resolvePage as resolveMushafPage,
   spreadRightPage,
 } from '../services/mushaf.js';
-import { setFlipDirection } from '../views/mushafReader.js';
+import { setFlipDirection } from '../ui/readingTokens.js';
 
 /**
  * app/recitationFollow.js — follow-along effects for continuous

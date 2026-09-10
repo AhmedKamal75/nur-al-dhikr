@@ -96,26 +96,13 @@ function ayahCountPhrase(n, lang) {
 }
 
 /**
- * Which direction the page should animate in from, set by app.js right
- * before it dispatches a mushaf-prev/mushaf-next/swipe navigation. Read
- * (and consumed) exactly once by the next renderMushaf() call — the same
- * single-use transient-state pattern as the fullscreen animation below.
+ * (v5.2.16) One-shot animation tokens moved to ui/readingTokens.js — the
+ * neutral module both layers may import. Setters stay re-exported here
+ * so existing importers keep working untouched; renderMushaf() consumes
+ * through the same consume-once readers the setters pair with.
  */
-let flipDirection = null;
-export function setFlipDirection(dir) {
-  flipDirection = dir;
-}
-
-/**
- * (v4.4) One-shot fullscreen transition direction: 'in' when entering
- * fullscreen (the page blooms out to fill the viewport), 'out' when
- * leaving (it settles back into its windowed column). Consumed once per
- * render, exactly like flipDirection.
- */
-let fullscreenAnim = null;
-export function setFullscreenAnim(dir) {
-  fullscreenAnim = dir;
-}
+export { setFlipDirection, setFullscreenAnim } from '../ui/readingTokens.js';
+import { consumeFlipDirection, consumeFullscreenAnim } from '../ui/readingTokens.js';
 
 export function renderMushaf(state) {
   const lang = state.settings.language;
@@ -134,10 +121,8 @@ export function renderMushaf(state) {
   const mushafLineScale = clamp(Number(prefs.lineSpacing) || 1, 0.85, 1.3);
   // Bookmark lookup set — built once per render, O(1) per ayah.
   const bookmarkedKeys = new Set(state.ayahBookmarks.map((b) => b.key));
-  const dir = flipDirection;
-  flipDirection = null; // single-use: consumed by this render
-  const fsAnim = fullscreenAnim;
-  fullscreenAnim = null;
+  const dir = consumeFlipDirection(); // single-use: consumed by this render
+  const fsAnim = consumeFullscreenAnim();
 
   /* ---------------------------------------------------------------- */
   /* (v4.5) Double-page spread: on a wide viewport the book opens like  */

@@ -25,7 +25,7 @@ import {
   validateHadithDoc,
   _haystackBuildsForTests,
 } from '../js/services/hadith.js';
-import { expandReaderWindow, _resetReaderWindowForTests } from '../js/views/quran.js';
+import { initialReaderWindow } from '../js/domain/readerWindow.js';
 
 const XSS = '<img src=x onerror="alert(1)">';
 
@@ -291,16 +291,16 @@ describe('v4.2 filterHadiths: memoized haystacks, identical results', () => {
 describe('v4.2 quran reader windowing', () => {
   // (v4.3) the former no-throw smoke test asserted nothing about the
   // windowing semantics; the real bounds/recenter/slide/latch tests live
-  // in tests/v4.3-fixes.test.js §4. This remains as the cheap guard that
-  // expand + reset round-trips without state.
+  // in tests/v4.3-fixes.test.js §4. (v5.2.17) the module latch is a store
+  // slice now — this remains as the cheap guard that expand dispatches
+  // round-trip without a render.
   test('expandReaderWindow extends and never throws without a render', () => {
-    _resetReaderWindowForTests();
     assert.doesNotThrow(() => {
-      expandReaderWindow('down');
-      expandReaderWindow('up');
-      expandReaderWindow('down');
+      store.dispatch(actions.expandReaderWindow('down'));
+      store.dispatch(actions.expandReaderWindow('up'));
+      store.dispatch(actions.expandReaderWindow('down'));
     });
-    _resetReaderWindowForTests();
+    store.dispatch(actions.setReaderWindow(initialReaderWindow()));
   });
 });
 
@@ -341,6 +341,7 @@ describe('v4.2 module inventory', () => {
       'editor',
       'loadErrors',
       'mushafSession',
+      'readerWindow',
     ]) {
       assert.ok(!PERSISTED_KEYS.includes(k), `${k} must stay ephemeral`);
     }

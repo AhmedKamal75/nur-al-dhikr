@@ -20,7 +20,6 @@ import {
 } from '../../domain/reminderPresets.js';
 import { actions, dryRunRestore, persistedSnapshot, store } from '../../core/state.js';
 import { clampSliderNum } from '../inputs.js';
-import { buildMushafSheet } from '../../views/mushafReader.js';
 import { buildMushafSettingsPanel } from '../../views/tafsirPanel.js';
 import { buildReciterPick } from './quranAudio.js';
 import { dryRunVerdict } from '../../services/dataHealth.js';
@@ -316,7 +315,9 @@ export const changeHandlers = [
   },
   {
     sel: '[data-action="toggle-mushaf-pref"]',
-    run: (ds, el) => {
+    run: async (ds, el) => {
+      // (v5.2.18) the sheet builder loads on demand (see handlers/quran.js).
+      const { buildMushafSheet } = await import('../../views/mushafReader.js');
       store.dispatch(actions.updateMushafPrefs({ [ds.key]: el.checked }));
       // The legend only shows while tajweed coloring is on, and toggles in
       // general read better with instant feedback — refresh the originating

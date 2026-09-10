@@ -2,6 +2,78 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.19 — honest lazy sheets (v5.2.18 follow-up)
+
+Self-review of the lazy wave found its own gap: fire-and-forget
+`import().then(openModal)` chains (forms, the long-press quick sheet)
+had no rejection path — a failed chunk was an unhandled rejection and
+the tap silently died. New shared `ui/modal.js#openLazyModal`: chunk
+failures toast instead of stranding the tap, and an optional viewGuard
+drops timer-deferred sheets that outlived their view (the 550ms
+long-press vs the v4.2 search-debounce lesson). Converted all four
+sites (the pre-existing viewSheets chain included). Pinned by
+`tests/lazy-modal.test.js` (4: stale guard, rejected chunk, sync
+throw, empty content — all resolve false, never throw, DOM-optional).
+
+## v5.2.18 — heavy views on demand (F-013 core)
+
+The Mushaf, the classic reader, and the hadith browser load on first
+visit instead of before first paint (12/12 lazy views out of the boot
+graph: 184 → 179 static modules). Their last static app-layer edges
+went dynamic with them: Mushaf modal builders (forms, lazyData,
+handlers/quran, handlers/system, handlers/zakat) and the long-press
+quick sheet (events.js) — async handlers surface chunk failures
+through the existing rejection boundary. Two Home cards were
+mis-homed: `hifzReviewCardHTML` moved verbatim into views/home.js and
+the hadith cards into the new light leaf views/hadithCard.js (core/ui
+only, shared by Home at boot and the browser on demand). Pinned by the
+extended `tests/startup-budget.test.js` (static cap 22, whole-tree
+zero-static rule for all lazy views). Precache unchanged in spirit
+(+hadithCard.js); offline identical.
+
+## v5.2.17 — reader window promoted to the store (B12)
+
+The classic reader's window memory was the last module-scoped view
+state (render mutated it while rendering). It is an ephemeral
+`state.readerWindow` slice now: pure transition math in
+`js/domain/readerWindow.js`, validated `READER_WINDOW_SET` /
+`READER_WINDOW_EXPAND` reducer cases, derive-then-render in
+`app/stateSub.js` (dispatch only on change — quiet ticks cost a few
+integer comparisons), and a pure read in `views/quran.js`.
+`_resetReaderWindowForTests` is deleted; tests drive the store.
+Fixed en route: the sanitizer preserves a null ay param (`Number(null)`
+is 0 — a 0-vs-null latch mismatch would have derive-dispatched
+forever). Pinned by `tests/reader-window.test.js` (4: no latch, fixed
+point, hostile reducer inputs, bounded reads) plus ported v4.2/v4.3
+windowing cases.
+
+## v5.2.16 — neutral reading tokens (F-013 prerequisite)
+
+The two one-shot Mushaf animation tokens (flip direction, fullscreen
+transition) move from `views/mushafReader.js` module state to the
+neutral `js/ui/readingTokens.js` both layers may import. Five app-layer
+setters (events ×2, fullscreen, recitationFollow, handlers/quran) no
+longer import the whole book — the exact edge blocking lazy-loading
+the heaviest view. The view re-exports the setters for compat and
+consumes through consume-once readers; behavior is byte-identical.
+Pinned by `tests/view-boundary.test.js` (3: single ownership, no
+app→view token imports, consume-once semantics). Still module-scoped
+by design: the classic reader's `readerWindow` (needs its own store
+wave) — see ARCHITECTURE's known-compromise note.
+
+## v5.2.15 — lazy leaf views (F-013 first cut)
+
+Nine renderer-only leaf views (quiz, offline, about, ambient, garden,
+mutashabihat, journal, kids, certificate — ~1.3k lines) load via dynamic
+`import()` on first visit instead of before first paint. Skeleton while
+loading, error + Retry through the existing `view-<name>` loadErrors tier
+(no new data-actions). APP_SHELL entries unchanged, so offline is
+identical; the F-005 reachability gate follows dynamic specifiers.
+Pinned by `tests/startup-budget.test.js` (4: static-import cap,
+dynamic loaders, precache guarantee, no app-layer re-coupling). Editor
+stays static (handlers import its builders); heavy views (mushaf, quran,
+hadith) stay static until their transients move to a neutral module.
+
 ## v5.2.14 — hostile-audit wave (report 2026-09-09)
 
 External audit, independently verified finding-by-finding; every fix

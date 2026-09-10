@@ -33,18 +33,18 @@ import { buildPracticePicker } from '../../views/tajweedPracticeView.js';
 import * as player from '../../services/player.js';
 import * as recitation from '../../services/recitation.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
-import {
-  buildKhatmaPlanForm,
-  buildMushafBookmarks,
-  buildMushafJump,
-  buildMushafPlayPick,
-  buildMushafSheet,
-  buildMushafTrack,
-  setFlipDirection,
-  setFullscreenAnim,
-} from '../../views/mushafReader.js';
+import { setFlipDirection, setFullscreenAnim } from '../../ui/readingTokens.js';
+/**
+ * (v5.2.18) Mushaf builders load on demand: every static import of the
+ * book view pulled ~700 lines (+ tafsir console builders) into the boot
+ * parse. Call sites below await this loader instead; async-handler
+ * rejections surface through the events.js boundary, so a failed chunk
+ * toasts instead of stranding the tap silently.
+ */
+async function mushafView() {
+  return import('../../views/mushafReader.js');
+}
 import { requestMushafNativeFullscreen, releaseMushafNativeFullscreen } from '../fullscreen.js';
-import { expandReaderWindow } from '../../views/quran.js';
 import { buildMushafSettingsPanel, buildWordStudyPanel } from '../../views/tafsirPanel.js';
 import { buildTajweedSettingsPanel } from '../../views/tajweedSettings.js';
 import { TAJWEED_FAMILY_VARS, tajweedPrefsOf } from '../../domain/tajweed.js';
@@ -95,16 +95,20 @@ export const clickHandlers = {
   },
 
   // (v4.4) The Mushaf action sheet — the feature-parity drawer.
-  'mushaf-more': () => {
+  'mushaf-more': async () => {
+    const { buildMushafSheet } = await mushafView();
     openModal(buildMushafSheet(store.getState()), { labelledBy: 'modal-title-mushaf-sheet' });
   },
 
-  // (v4.2) classic-reader windowing: extend the visible ayah window by one
-  // page of ~30 and re-render. The cheap nudge action is the established
-  // pattern (same as the ticker rollovers).
+  // (v4.2, v5.2.17) classic-reader windowing: extend the visible ayah
+  // window by one page of ~30. Window memory is a store slice now, so the
+  // expand rides with the render-nudge dispatch in one batch — the tap
+  // re-renders exactly once.
   'quran-window-expand': (ds) => {
-    expandReaderWindow(ds.dir === 'up' ? 'up' : 'down');
-    store.dispatch(actions.setSpeakingItem(null));
+    store.batch(() => {
+      store.dispatch(actions.expandReaderWindow(ds.dir === 'up' ? 'up' : 'down'));
+      store.dispatch(actions.setSpeakingItem(null));
+    });
   },
   'mushaf-prev': () => {
     const state = store.getState();
@@ -132,13 +136,15 @@ export const clickHandlers = {
     go(VIEWS.MUSHAF, { page: String(dest) });
   },
 
-  'mushaf-open-jump': () => {
+  'mushaf-open-jump': async () => {
+    const { buildMushafJump } = await mushafView();
     openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
   },
 
   // Khatma progress lives in its own TRACK panel (opened from the ⋯ sheet),
   // never inside the Jump drawer — navigation stays pure navigation.
-  'mushaf-open-track': () => {
+  'mushaf-open-track': async () => {
+    const { buildMushafTrack } = await mushafView();
     openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
   },
 
@@ -298,7 +304,8 @@ export const clickHandlers = {
   },
 
   // Multi-surah page: pick which surah on these pages to recite.
-  'mushaf-play-pick': () => {
+  'mushaf-play-pick': async () => {
+    const { buildMushafPlayPick } = await mushafView();
     openModal(buildMushafPlayPick(store.getState()), {
       labelledBy: 'modal-title-mushaf-pick',
     });
@@ -443,31 +450,36 @@ export const clickHandlers = {
     showToast(t(wasMarked ? 'mushaf.bookmarkRemoved' : 'mushaf.bookmarkAdded', lang));
   },
 
-  'mushaf-open-bookmarks': () => {
+  'mushaf-open-bookmarks': async () => {
+    const { buildMushafBookmarks } = await mushafView();
     openModal(buildMushafBookmarks(store.getState()), {
       labelledBy: 'modal-title-mushaf-bookmarks',
     });
   },
 
-  'mushaf-remove-bookmark': (ds) => {
+  'mushaf-remove-bookmark': async (ds) => {
+    const { buildMushafBookmarks } = await mushafView();
     store.dispatch(actions.removeAyahBookmark(ds.key));
     openModal(buildMushafBookmarks(store.getState()), {
       labelledBy: 'modal-title-mushaf-bookmarks',
     });
   },
 
-  'mushaf-reset-progress': () => {
+  'mushaf-reset-progress': async () => {
+    const { buildMushafTrack } = await mushafView();
     const lang = store.getState().settings.language;
     store.dispatch(actions.resetMushafProgress());
     openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
     showToast(t('mushaf.khatmaResetDone', lang));
   },
 
-  'khatma-open-plan': () => {
+  'khatma-open-plan': async () => {
+    const { buildKhatmaPlanForm } = await mushafView();
     openModal(buildKhatmaPlanForm(store.getState()), { labelledBy: 'modal-title-khatma-plan' });
   },
 
-  'khatma-clear-plan': () => {
+  'khatma-clear-plan': async () => {
+    const { buildMushafTrack } = await mushafView();
     // Removing the schedule never touches reading progress — say so.
     store.dispatch(actions.clearKhatmaPlan());
     openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
@@ -506,7 +518,8 @@ export const clickHandlers = {
 export const changeHandlers = [
   {
     sel: '[data-bind="bookmark-folder"]',
-    run: (ds, el) => {
+    run: async (ds, el) => {
+      const { buildMushafBookmarks } = await mushafView();
       store.dispatch(actions.updateAyahBookmark(ds.key, { folderId: el.value || null }));
       openModal(buildMushafBookmarks(store.getState()), {
         labelledBy: 'modal-title-mushaf-bookmarks',
