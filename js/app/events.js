@@ -21,7 +21,7 @@ import {
   prevSpreadPage,
   setMushafWideLayout,
 } from '../services/mushaf.js';
-import { closeModal, isModalOpen, openLazyModal } from '../ui/modal.js';
+import { closeModal, isModalOpen, openLazyModal, cycleTabFocus } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as recitation from '../services/recitation.js';
 import {
@@ -631,18 +631,8 @@ export function bindGlobalEvents() {
       const drawer = document.querySelector('.nav-drawer');
       const focusables = drawer ? drawer.querySelectorAll('a[href], button:not([disabled])') : null;
       if (!focusables || !focusables.length) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      } else if (!drawer.contains(document.activeElement)) {
-        e.preventDefault();
-        first.focus();
-      }
+      // (v5.2.20, F-015) cycling math shared with the modal trap.
+      cycleTabFocus(e, drawer, focusables, document.activeElement);
     }
     if (e.target.matches('[data-bind="search-query"]') && e.key === 'Enter') {
       const value = e.target.value.trim();

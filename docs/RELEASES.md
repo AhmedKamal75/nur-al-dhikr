@@ -2,6 +2,32 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.21 — permanent browser specs (audit debt)
+
+The audits demanded kept-in-tree e2e and got temporary probes
+instead — four of them across v5.2.15–5.2.20. All four are permanent
+specs now (lazy-views, lazy-sheets, longpress, typing), plus the
+missing Esc-layer-order spec the unit suite cannot cover: modal over
+immersive reading takes two presses, one layer each (APP-FLOW I2),
+and the mobile drawer closes without leaving its route. Suite grows
+3 → 9 specs, all green first run. No app-code change in this release
+— version bump + re-stamp only, per the markers-in-lockstep rule.
+
+## v5.2.20 — F-015 first cut (safe slices)
+
+Three duplications converged without touching tested contracts: the
+modal trap and the drawer containment share `cycleTabFocus` (lists stay
+with the callers, cycling lives once, DOM-free and unit-tested); the
+two SW offline stubs are one `offlineStub()` builder (wire-identical,
+v4.3 gate now asserts shape-once + uses-twice); the three
+search-as-you-type navigations are one factory over their rt timer
+fields (delays, views, focus restore identical — stateSub invalidation
+untouched). Deliberately left: hadith/zakat/trigger debounces
+(documented different shapes), Esc ownership (tested order), the
+SW↔app stub split (separate scopes). Pinned by
+`tests/focus-cycle.test.js` (6) + a temporary typing probe (all three
+boxes navigate and keep focus; removed after the run).
+
 ## v5.2.19 — honest lazy sheets (v5.2.18 follow-up)
 
 Self-review of the lazy wave found its own gap: fire-and-forget

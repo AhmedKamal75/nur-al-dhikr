@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.2.19';
+const VERSION = 'nur-al-dhikr-v5.2.21';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -881,12 +881,22 @@ async function staleWhileRevalidate(request, event) {
     // got cached as real data, rendered as empty content, and the Retry
     // affordance built in v4.1 never appeared. A 503 makes fetchJSON throw,
     // which is exactly the path the loadErrors machinery was built for.
-    new Response(JSON.stringify({ error: 'offline' }), {
-      status: 503,
-      statusText: 'Offline',
-      headers: { 'Content-Type': 'application/json' },
-    })
+    offlineStub()
   );
+}
+
+/**
+ * (v5.2.20, F-015) The offline stub in one place: both SW fallbacks and
+ * the app's fetchJSON guard (which rejects the {error:'offline'} shape)
+ * agree on this exact body + status. Wire-identical to the two inline
+ * copies it replaces.
+ */
+function offlineStub() {
+  return new Response(JSON.stringify({ error: 'offline' }), {
+    status: 503,
+    statusText: 'Offline',
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 async function cacheFirstCrossOrigin(request) {
@@ -902,10 +912,6 @@ async function cacheFirstCrossOrigin(request) {
     return response;
   } catch {
     // (v4.3) 503 stub — same rationale as staleWhileRevalidate.
-    return new Response(JSON.stringify({ error: 'offline' }), {
-      status: 503,
-      statusText: 'Offline',
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return offlineStub();
   }
 }

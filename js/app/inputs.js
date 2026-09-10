@@ -19,51 +19,54 @@ export function playFlipSound() {
   soundDesign.playPageTurn(store.getState().settings.pageTurnSound);
 }
 
-export function debounceSearchNavigate(value) {
-  clearTimeout(rt.searchDebounceTimer);
-  rt.searchDebounceTimer = setTimeout(() => {
-    // Replace, don't push: typing shouldn't fill up browser history with one
-    // entry per keystroke pause (see product review #2).
-    replaceGo(VIEWS.SEARCH, value ? { q: value } : {});
-    requestAnimationFrame(() => {
-      const input = document.getElementById('search-input');
-      if (input) {
-        input.focus();
-        input.setSelectionRange(input.value.length, input.value.length);
-      }
-    });
-  }, 180);
+/**
+ * (v5.2.20, F-015) One factory for the three search-as-you-type
+ * navigations (app search, roots index, quran reader). They were three
+ * hand-rolled copies of the same 180ms replaceGo + caret-restore shape;
+ * the only differences are the rt timer field, the target view, and the
+ * input id. Timers stay in their rt.* fields (not in a closure) so the
+ * NAVIGATE invalidation in stateSub.js keeps clearing the same fields
+ * untouched. Deliberately NOT folded in: debounceHadithQuery (dispatch,
+ * no focus restore, 200ms) and the keyed zakat debounce below — both
+ * documented different shapes, not copies.
+ */
+function makeSearchDebounce(field, view, inputId) {
+  return (value) => {
+    clearTimeout(rt[field]);
+    rt[field] = setTimeout(() => {
+      // Replace, don't push: typing shouldn't fill up browser history with one
+      // entry per keystroke pause (see product review #2).
+      replaceGo(view, value ? { q: value } : {});
+      requestAnimationFrame(() => {
+        const input = document.getElementById(inputId);
+        if (input) {
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      });
+    }, 180);
+  };
 }
+
+export const debounceSearchNavigate = makeSearchDebounce(
+  'searchDebounceTimer',
+  VIEWS.SEARCH,
+  'search-input'
+);
 
 // v3.22.0: roots index search-as-you-type. Replace, don't push — one Back
 // press should leave the roots view, not step through partial queries
 // (same reasoning as the app-wide search box).
-export function debounceRootsSearchNavigate(value) {
-  clearTimeout(rt.rootsSearchTimer);
-  rt.rootsSearchTimer = setTimeout(() => {
-    replaceGo(VIEWS.ROOTS, value ? { q: value } : {});
-    requestAnimationFrame(() => {
-      const input = document.getElementById('roots-search-input');
-      if (input) {
-        input.focus();
-        input.setSelectionRange(input.value.length, input.value.length);
-      }
-    });
-  }, 180);
-}
-export function debounceQuranSearchNavigate(value) {
-  clearTimeout(rt.quranSearchDebounceTimer);
-  rt.quranSearchDebounceTimer = setTimeout(() => {
-    replaceGo(VIEWS.QURAN, value ? { q: value } : {});
-    requestAnimationFrame(() => {
-      const input = document.getElementById('quran-search-input');
-      if (input) {
-        input.focus();
-        input.setSelectionRange(input.value.length, input.value.length);
-      }
-    });
-  }, 180);
-}
+export const debounceRootsSearchNavigate = makeSearchDebounce(
+  'rootsSearchTimer',
+  VIEWS.ROOTS,
+  'roots-search-input'
+);
+export const debounceQuranSearchNavigate = makeSearchDebounce(
+  'quranSearchDebounceTimer',
+  VIEWS.QURAN,
+  'quran-search-input'
+);
 
 /** In-book hadith search: dispatch-only (no history churn — the book URL
  *  stays put), reset the page, and let the renderer's focus salvage keep

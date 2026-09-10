@@ -89,27 +89,46 @@ function onModalKeydown(e) {
   if (e.key === 'Escape') closeModal();
 }
 
+/**
+ * Shared Tab/Shift+Tab cycling math for overlay containers (F-015).
+ * The modal trap and the nav-drawer containment in app/events.js ran
+ * two hand-rolled copies of these exact three branches; both now call
+ * here with their own focusable lists (the modal filters invisible
+ * elements, the drawer is a flat always-visible list — list-building
+ * stays with the caller, cycling lives here exactly once).
+ * Pure apart from the focus() calls: the active element arrives as a
+ * parameter, so it is unit-testable without a DOM. Returns true when
+ * the key was consumed.
+ */
+export function cycleTabFocus(e, container, focusables, active) {
+  if (e.key !== 'Tab' || !container) return false;
+  const items = Array.from(focusables || []);
+  if (!items.length) return false;
+  const first = items[0];
+  const last = items[items.length - 1];
+  if (e.shiftKey && active === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && active === last) {
+    e.preventDefault();
+    first.focus();
+  } else if (!container.contains(active)) {
+    // Focus somehow left the container (e.g. programmatic blur) — pull in.
+    e.preventDefault();
+    first.focus();
+  } else {
+    return false;
+  }
+  return true;
+}
+
 /** Keep Tab/Shift+Tab cycling within the modal panel while it's open. */
 function trapFocus(e, panel) {
   if (e.key !== 'Tab' || !panel) return;
   const focusables = Array.from(panel.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
     (el) => el.offsetParent !== null
   );
-  if (!focusables.length) return;
-  const first = focusables[0];
-  const last = focusables[focusables.length - 1];
-
-  if (e.shiftKey && document.activeElement === first) {
-    e.preventDefault();
-    last.focus();
-  } else if (!e.shiftKey && document.activeElement === last) {
-    e.preventDefault();
-    first.focus();
-  } else if (!panel.contains(document.activeElement)) {
-    // Focus somehow left the panel (e.g. programmatic blur) — pull it back in.
-    e.preventDefault();
-    first.focus();
-  }
+  cycleTabFocus(e, panel, focusables, document.activeElement);
 }
 
 export function isModalOpen() {

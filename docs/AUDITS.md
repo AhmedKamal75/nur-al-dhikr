@@ -1,3 +1,49 @@
+# V5.2.21 — PERMANENT BROWSER SPECS, AUDIT DEBT (USER REQUEST, 2026-09-10)
+
+# `npm run check`: eslint 0, 1043/1043 green, prettier clean (no new
+
+# unit tests — this wave is e2e-only).
+
+# `npm run e2e`: 9/9 green first run (3 existing + 4 promoted probes +
+
+# 2 esc-order). The "temporary, removed after the run" pattern the
+
+# audits condemned ends here.
+
+# - [x] **Kept e2e.** tests/e2e/{lazy-views,lazy-sheets,longpress,
+
+# typing}.spec.js promoted verbatim from their probes;
+
+# esc-order.spec.js proves I2 (modal→immersive, drawer) in a real
+
+# browser at mobile + desktop widths. Markers 5.2.20 → 5.2.21 +
+
+# re-stamp (230, bytes unchanged).
+
+# - [ ] Still open (explicit): F-015 remainder, features/ strangler.
+
+# V5.2.20 — F-015 FIRST CUT, SAFE SLICES (USER REQUEST, 2026-09-10)
+
+# `npm run check`: eslint 0, 1043/1043 green (1037 + 6 focus), prettier clean.
+
+# `npm run e2e`: 3/3 green + a temporary typing probe (search/roots/
+
+# quran boxes navigate with q= and keep focus; probe removed after run).
+
+# - [x] **F-015.** Shared cycleTabFocus (modal + drawer), offlineStub()
+
+# builder (v4.3 gate updated to shape-once/uses-twice),
+
+# makeSearchDebounce factory (rt fields preserved). Left with
+
+# reason: hadith/zakat/trigger debounces, Esc ownership, SW↔app
+
+# split. `tests/focus-cycle.test.js` (6). Markers 5.2.19 → 5.2.20
+
+# + re-stamp (230).
+
+# - [ ] Still open (explicit): F-015 remainder (above), features/ strangler.
+
 # V5.2.19 — HONEST LAZY SHEETS, SELF-REVIEW (USER REQUEST, 2026-09-10)
 
 # `npm run check`: eslint 0, 1037/1037 green (1033 + 4 modal), prettier clean.

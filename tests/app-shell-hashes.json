@@ -1,10 +1,10 @@
 {
-  "version": "5.2.19",
+  "version": "5.2.21",
   "files": {
     "index.html": "20e80621c63745f111efcc499be1990ec89e743afbd4cbb116f8b080fcd5606f",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "fc823efe583905bdd813b04c5fea3cccee5680be173ee3b0ea64e324a0cab748",
-    "manifest.json": "8a296b27be1652ad5b3c207a8c63f705e46c90a7e92dadb3bb7d082a8bca0865",
+    "manifest.json": "d203769bf59350f7cbeab24e3e3a483087b669583a42a3736dc6a0a44da9f3af",
     "assets/css/variables.css": "76b8a96effa781a738d6e0ca070cc86820a3224191abace5b7a78e92ac5681cd",
     "assets/css/base.css": "5293ec6b955a9369439af214d9f82b42833e28d1f8279a331814b04d40bdf32e",
     "assets/css/layout.css": "43696f6103139a7ddfe0decfa38f3c0dcd7579e1102ed0b994426ece840cca8a",
@@ -19,7 +19,7 @@
     "js/app/boot.js": "e186c1d370eea8209616810494d9003d567e19977968a0cd1dd52b6ebe3317db",
     "js/app/compassRuntime.js": "46992b2b513b7063014c20adde72a72b0dbf15bda6e832467f48eab611237457",
     "js/app/drawer.js": "c97f5f822d36357a37f81572b09533f666a465fa0d3a583b5664c4023ddb9517",
-    "js/app/events.js": "68601bb77bc7ac21238431db3159d1b6af480a2a6609a227b047fc10db7665c0",
+    "js/app/events.js": "3582b5f76f8e39c1985ef122f93519adfe68cbf67373ad740c57fe3a1cc72f61",
     "js/app/fileImports.js": "e5720b6dc0111572f6135b5112c86cf86bfba9612b13e0f562bbe690753c38d7",
     "js/app/focusRuntime.js": "b2231da22d0eee19c4b721ad2c22f231daa024ac949dffac0781e9eec0e4ed45",
     "js/app/forms.js": "2c7ed84e824f75037ba52768aaa711f7287e5e091e936c89d5ac05f6aec5a0a2",
@@ -43,7 +43,7 @@
     "js/app/handlers/tasbih.js": "93f624de7432afcbbf1ce77d0e5f805cfb8bb1cca09dbef7b50f2a69861d53d3",
     "js/app/handlers/worship.js": "118b4107265a9aa5f7d8efa4854044bc727cf178b1d14338540ba1d7650f8e01",
     "js/app/handlers/zakat.js": "8142296b03d2b4308afbb2de6e37a53e44e0da8e0293d88bda4f63a4b74d4ea7",
-    "js/app/inputs.js": "d2c53c6188db482e18f201cdd0dd1414004dd26af2d0b925ccea5d9fcc434c55",
+    "js/app/inputs.js": "a19db16e5e4dc8e650d01c06ba478f469497f89c8283441037877a643fbe2764",
     "js/app/installPrompt.js": "5e27cc957e682fe9bc065f9eef55643df6a209e045dfb391c17096238b8f7d2a",
     "js/app/lazyData.js": "1f81662a62c1d0fe55dbd7773e6d6a1cbce405c1fe6872dc5fb5299eb358507e",
     "js/app/net.js": "967816c49f1d845546482683fef698167aaa2b9a37b184d750775dce75131a40",
@@ -60,7 +60,7 @@
     "js/app/stateSub.js": "47509b18b821d7f3349205ce337cbc400a983c0af3c15666348a2d70ed6c2cc4",
     "js/app/tickers.js": "1a2092b7f19ab0a57fa55b03708da79b805b87add3bc8b4df33ca8e8bb82816a",
     "js/app/triggers.js": "6b2186cbb1f0c163e5b69291ed5960f174bfd1a570955354ae6e33e28b78e664",
-    "js/core/config.js": "e3e6c30e905e8a88f81d097f172585bebb7a891c1e6b4eba1584fe5ba1aa29cd",
+    "js/core/config.js": "e1d309081f1c7be2c8357249114d02ef7b92e0a01d00dbdebd375ace7f6571ab",
     "js/core/config/app.js": "4760b07be267dde8df033a2f6b0190b6876d5b1a87c16e0a456530d0c26c8c25",
     "js/core/config/quran.js": "5e3d5e77c9e9803a9f8f32b02e031bdf5521219f22cfe923063bc483b1578bc1",
     "js/core/config/sanitize.js": "7e3c37474d3c93534a66fa554cc395832ddbbb0f37c6797c9c9e6fda7c860df1",
@@ -161,7 +161,7 @@
     "js/ui/card.js": "b3cbc9585255d3e002c4e53ce6f2b7cc25232b547ac405b2e9fe466e028da563",
     "js/ui/emptyState.js": "4c38da60bb139036466bfdbb86e68a523382c0b5f756a8b68c946f93daa163cd",
     "js/ui/menus.js": "539e84bba3fc3393a7e16f9bf33d94e17e8fe62c6fefbcaea1fa54d7cb24a4f6",
-    "js/ui/modal.js": "eaca0e8f6be4cf3a8d3769dbf834d45f90534edd2a964a4296b7569980b0d22d",
+    "js/ui/modal.js": "6f67385b280412e3f41223b616119f4772efb772b1b35a08c36b5df35247e137",
     "js/ui/readingTokens.js": "227cf654f536825e68b767827aa0db56cc7319fa36771880fe0f8e3107100042",
     "js/ui/recitationConsole.js": "5c1df8ed8682b400679b91ec136bb27f0aa54b87ed70726fa22bec07a2a39ebb",
     "js/ui/shell.js": "32e41a3a94a38cdde63f8b1d69af5e87dd68b7da6e5452de33b5581805447b81",
@@ -230,6 +230,6 @@
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
     "assets/audio/adhan/adhan.mp3": "95c386b0a62b9aae51847aa160472b1ea23d98e8f0bb78f7f990b65441b207ee",
-    "sw.js": "0545d2b42058d5ddc109d5ef4b77ffc865ee53aeff70aa17f1520a2fc137457b"
+    "sw.js": "1c9f0d1a6facf7bf215b8d640d775f6bf83bf6c55490a21bac470307e03f6e5e"
   }
 }

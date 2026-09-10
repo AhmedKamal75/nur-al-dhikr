@@ -433,9 +433,14 @@ describe('v4.3 sw.js: offline stub + precache discipline', () => {
   const sw = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
 
   test('the offline stub is served with HTTP 503, not 200', () => {
-    const stubs = sw.match(/new Response\(JSON\.stringify\(\{ error: 'offline' \}\)/g) || [];
-    assert.ok(stubs.length >= 2, 'both stub sites present');
-    assert.ok(/status: 503/.test(sw), 'stub carries status: 503');
+    // (v5.2.20, F-015) the stub body lives in offlineStub() exactly once;
+    // both fallback sites call it — same wire bytes, one definition.
+    assert.match(
+      sw,
+      /function offlineStub\(\)[\s\S]*?JSON\.stringify\(\{ error: 'offline' \}\)[\s\S]*?status: 503/s
+    );
+    const uses = (sw.match(/(?<!function )offlineStub\(\)/g) || []).length;
+    assert.ok(uses >= 2, 'both stub sites call the builder');
   });
 
   test('precache failure rethrows so install fails (old shell survives)', () => {
