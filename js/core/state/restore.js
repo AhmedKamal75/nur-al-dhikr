@@ -398,6 +398,10 @@ export function sanitizeRestoredPayload(payload) {
     // the tasbih dial, focus view, and every card's counter pill — a
     // crafted backup previously stored "<img src=x onerror=…>" in `count`
     // and it executed on the next render (stored XSS).
+    // (v5.2.25) `lastCompletedDay` rides along (strict YYYY-MM-DD) — the
+    // "done today" signal for the home feed and list indicators. Counts
+    // are restored FAITHFULLY here (security tests pin this); the fresh-
+    // session zeroing lives in freshSessionCounters, applied at boot.
     counters: (() => {
       const raw = asObject(p.counters);
       const clean = {};
@@ -405,10 +409,12 @@ export function sanitizeRestoredPayload(payload) {
         // (S3) isSafeKey: counter ids copy verbatim as keys below.
         if (!isSafeKey(id)) continue;
         if (!v || typeof v !== 'object' || Array.isArray(v)) continue;
+        const day = typeof v.lastCompletedDay === 'string' ? v.lastCompletedDay : null;
         clean[id] = {
           count: asCount(v.count),
           target: Math.max(1, Math.min(100000, asCount(v.target, 33) || 33)),
           completedCycles: asCount(v.completedCycles),
+          lastCompletedDay: /^\d{4}-\d{2}-\d{2}$/.test(day || '') ? day : null,
         };
       }
       return clean;
@@ -523,6 +529,25 @@ export function sanitizeRestoredPayload(payload) {
 
 export function persistedSnapshot(state) {
   return pickPersisted(state);
+}
+
+/**
+ * (v5.2.25) Fresh-session counters, applied at BOOT (Store.hydrate) —
+ * never in sanitizeRestoredPayload, which restores faithfully (security
+ * tests pin that). A reload restarts every target-bound routine at
+ * 0/target while lifetime cycles and the completion day survive. Free
+ * tasbih-dial keys (`tasbih:*`) keep their live count: the dial's
+ * "burst survives reload" gate depends on it, and a free counter has no
+ * target-completion semantics. Profile switches are untouched (a switch
+ * is a continuation, not a fresh session).
+ */
+export function freshSessionCounters(counters) {
+  const out = {};
+  for (const [id, v] of Object.entries(counters || {})) {
+    if (!v || typeof v !== 'object' || Array.isArray(v)) continue;
+    out[id] = { ...v, count: id.startsWith('tasbih:') ? v.count || 0 : 0 };
+  }
+  return out;
 }
 
 /**

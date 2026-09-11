@@ -8,7 +8,7 @@ import { normalizeCustomContentMap } from '../schema.js';
 import { loadState, saveState } from '../storage.js';
 import { initialState, pickPersisted, PERSISTED_KEYS } from './initial.js';
 import { reduce } from './reducer.js';
-import { sanitizeRestoredPayload } from './restore.js';
+import { sanitizeRestoredPayload, freshSessionCounters } from './restore.js';
 
 class Store {
   constructor() {
@@ -50,9 +50,14 @@ class Store {
   hydrate() {
     const result = loadState();
     if (result.success && result.value) {
+      const sanitized = sanitizeRestoredPayload(result.value);
       this.state = {
         ...this.state,
-        ...sanitizeRestoredPayload(result.value),
+        ...sanitized,
+        // (v5.2.25) a reload is a fresh routine: target-bound counts
+        // restart at 0 (cycles + completion day survive; dial keys keep
+        // their live count — see freshSessionCounters).
+        counters: freshSessionCounters(sanitized.counters),
         // FIX (review v3.3 B1/B4/B5): settings from storage are untrusted
         // (tampered localStorage, hostile/older backup imports). The old
         // shallow spread let crafted strings reach HTML attributes

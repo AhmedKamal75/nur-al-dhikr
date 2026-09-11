@@ -44,6 +44,7 @@ describe('v4.2 sanitizeRestoredPayload: allowlist + per-value coercion', () => {
       count: 0,
       target: 33,
       completedCycles: 0,
+      lastCompletedDay: null,
     });
   });
 

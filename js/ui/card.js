@@ -19,6 +19,7 @@ import { icon } from '../core/icons.js';
 import { t } from '../core/i18n.js';
 import { GRADE_LABELS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
+import { isDismissed, wasCompletedRecently } from '../domain/completedCards.js';
 
 /**
  * @param {object} item        normalized item
@@ -68,30 +69,36 @@ export function cardHTML(item, category, opts = {}) {
   const target = counter?.target || item.repetitions || 1;
   const count = counter?.count || 0;
   const cycles = counter?.completedCycles || 0;
-  // (v5.0.0) The pill's FIRST number is how many you've done: mid-count it
-  // is the live count; resting after a completed cycle it is the cycle
-  // count ("1 / 1 ✓" — never "0 / 1" with a stray ✓ elsewhere). The
-  // checkmark rides the END of the pill exactly once, carrying the cycle
-  // count only when it's above one; the done state itself shows whenever
-  // a cycle has been completed (even mid-way through the next one — the
-  // v3.4 W-2 contract, kept).
-  const restingDone = count === 0 && cycles > 0;
-  const displayCount = restingDone ? cycles : count;
-  const done = cycles > 0 || count >= target;
-  const progressPct = restingDone
-    ? 100
-    : Math.min(100, Math.round((count / Math.max(1, target)) * 100));
+  // (v5.2.25) separation of concerns: the pill shows ONLY live session
+  // progress (count / target — never the lifetime cycles, which used to
+  // render as "6 / 1 ✓" and read as a broken counter). Lifetime lives in
+  // the metadata badge below; the done ring lights on session completion.
+  const done = count >= target;
+  const progressPct = Math.min(100, Math.round((count / Math.max(1, target)) * 100));
+  const lifetimeBadge =
+    cycles > 0
+      ? `<span class="chip chip--muted" title="${escapeHTML(t('card.completedTimes', lang, { n: cycles }))}">✓ ${escapeHTML(String(cycles))}×</span>`
+      : '';
 
   const categoryChip = category
     ? `<a class="chip chip--${escapeHTML(category.color || 'slate')}" href="${buildHash('category', { id: category.id })}" data-action="navigate" data-view="category" data-id="${escapeHTML(category.id)}">${escapeHTML(pickLocale(category.name, lang))}</a>`
     : '';
 
+  // (v5.2.24) session dismissal: a card that completed its target this
+  // session renders nothing — the next supplication slides up in its
+  // place. A freshly completed card (inside the exit window) renders with
+  // the exit-animation class; the counter-tap handler removes the node
+  // when the animation lands and pins the dismissal.
+  if (isDismissed(item.id)) return '';
+  const exitingClass = wasCompletedRecently(item.id) ? ' card--exiting' : '';
+
   return `
-  <article class="card ${compact ? 'card--compact' : ''}" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}" data-action="counter-tap" data-target="${escapeHTML(String(target))}" ${cycles > 0 ? `title="${escapeHTML(t('card.completedTimes', lang, { n: cycles }))}"` : ''}>
+  <article class="card ${compact ? 'card--compact' : ''}${exitingClass}" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}" data-action="counter-tap" data-target="${escapeHTML(String(target))}" ${cycles > 0 ? `title="${escapeHTML(t('card.completedTimes', lang, { n: cycles }))}"` : ''}>
     <header class="card__top">
       <div class="card__meta">
         ${categoryChip}
         ${show.grade && item.grade ? `<span class="chip chip--grade chip--grade-${escapeHTML(item.grade.toLowerCase())}">${escapeHTML(gradeLabel)}</span>` : ''}
+        ${lifetimeBadge}
       </div>
       <div class="card__actions">
         ${
@@ -151,8 +158,7 @@ export function cardHTML(item, category, opts = {}) {
            (services/tasbih.js). -->
       <button type="button" class="counter-pill${done ? ' counter-pill--done' : ''}" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}" data-target="${escapeHTML(String(target))}">
         <span class="counter-pill__ring" style="--progress:${progressPct}%"></span>
-        <span class="counter-pill__label" dir="ltr">${escapeHTML(String(displayCount))} / ${escapeHTML(String(target))}</span>
-        ${done ? `<span class="counter-pill__cycles">✓${cycles > 1 ? escapeHTML(String(cycles)) : ''}</span>` : ''}
+        <span class="counter-pill__label" dir="ltr">${escapeHTML(String(count))} / ${escapeHTML(String(target))}</span>
       </button>
       <button type="button" class="btn btn--ghost btn--sm" data-action="open-focus" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}">
         ${t('card.openFocus', lang)}

@@ -58,8 +58,10 @@ export function renderOffline(state) {
         <span class="offline-row__name">${escapeHTML(t(`offline.group.${g.id}`, lang))}</span>
         <span class="offline-row__sub" dir="ltr">~${mb} MB</span>
       </span>
-      ${groupStatusHTML(status, g, lang)}
-      <button type="button" class="btn btn--secondary btn--sm" data-action="offline-download-group" data-group="${g.id}" ${running ? 'disabled' : ''}>${icon('download', { size: 14 })} ${escapeHTML(t('offline.downloadGroup', lang))}</button>
+      <div class="offline-row__actions">
+        ${groupStatusHTML(status, g, lang)}
+        <button type="button" class="btn btn--secondary btn--sm" data-action="offline-download-group" data-group="${g.id}" ${running ? 'disabled' : ''}>${icon('download', { size: 14 })} ${escapeHTML(t('offline.downloadGroup', lang))}</button>
+      </div>
     </div>`;
   }).join('');
 

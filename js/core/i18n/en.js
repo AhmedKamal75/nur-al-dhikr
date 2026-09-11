@@ -450,6 +450,7 @@ export const en = {
   'collections.create': 'Create Collection',
   'collections.namePrompt': 'Collection name',
   'collections.itemCount': '{n} items',
+  'category.progressToday': '{done} of {total} done today · {pct}%',
   'content.manage': 'Manage',
   'content.done': 'Done',
   'content.manageHint':
@@ -868,7 +869,6 @@ export const en = {
   'calendar.untilDateOptional': 'Until (optional \u2014 leave blank for no end date)',
   'calendar.setReminder': 'Remind me',
   'settings.title': 'Settings',
-  'settings.toc': 'Sections',
   'settings.language': 'Language',
   'settings.appearance': 'Appearance',
   'settings.theme': 'Theme',
@@ -1107,6 +1107,7 @@ export const en = {
   'hadith.noResults': 'No hadith matches this search or chapter.',
   'hadith.pageStatus': '{from}\u2013{to} of {total} · page {p}/{pages}',
   'hadith.dailyTitle': 'Hadith of the day',
+  'hadith.dailyShuffle': 'Show another hadith',
   'hadith.openBook': 'Open the book',
   'hadith.sourceNote':
     'Texts from the six canonical books — Sahih al-Bukhari, Sahih Muslim, Sunan Abu Dawud, Jami\u2019 at-Tirmidhi, Sunan an-Nasa\u2019i and Sunan Ibn Majah — plus the Forty Hadith of an-Nawawi and Forty Hadith Qudsi; classical public-domain collections (see About \u2192 Sources). Chapter headings are shown in English as published by the source dataset.',

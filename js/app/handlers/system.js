@@ -117,16 +117,6 @@ export const clickHandlers = {
     showToast(t('settings.profileDeleted', store.getState().settings.language));
   },
 
-  // (U14) Settings table-of-contents jump: scrolls to the panel without
-  // touching the hash router (a plain #anchor would be parsed as a route).
-  // The button keeps focus, so nothing is lost for keyboard users.
-  'settings-toc-go': (ds) => {
-    const el = typeof ds.target === 'string' ? document.getElementById(ds.target) : null;
-    if (!el) return;
-    const reduce = !!store.getState().settings.reduceMotion;
-    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  },
-
   /**
    * v4.1 — Retry a failed lazy-data tier. The reducer clears the failure
    * flag AND bumps a counter (guaranteeing a notify), so stateSub re-runs

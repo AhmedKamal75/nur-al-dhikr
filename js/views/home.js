@@ -23,6 +23,8 @@ import { dailyHadithCardHTML } from './hadithCard.js';
 import { countMemorized, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
 import { worshipTodayRows } from '../domain/worship.js';
 import { computeNudge, shouldShowNudge } from '../domain/nudge.js';
+import { dedupeEntries, isCompletedToday, nextFreshIndex } from '../domain/reflections.js';
+import { isDismissed } from '../domain/completedCards.js';
 
 /**
  * v3.19 combined "Today in worship" card: prayers, Qur'an reading (pages
@@ -157,17 +159,23 @@ function greetingKey() {
  * pairing with a complementary name and can read as jarring shown alone,
  * out of context, on the home screen. They're still fully browsable in
  * their own library.
+ *
+ * (v5.2.25) freshness: when the pick is already done today (or dismissed
+ * this session), the panel surfaces the next fresh entry around the ring
+ * instead of repeating a finished card.
  */
+function verseEligibleEntries(itemIndex) {
+  return Object.values(itemIndex).filter((entry) => entry.document?.metadata?.id !== 'asma');
+}
+
 function pickDailyItem(itemIndex) {
-  const eligible = Object.values(itemIndex).filter(
-    (entry) => entry.document?.metadata?.id !== 'asma'
-  );
+  const eligible = verseEligibleEntries(itemIndex);
   if (!eligible.length) return null;
   const seed = dateKey(new Date())
     .split('-')
     .reduce((a, c) => a + parseInt(c, 10), 0);
   const idx = seed % eligible.length;
-  return eligible[idx];
+  return { entry: eligible[idx], idx, eligible };
 }
 
 /**
@@ -254,7 +262,33 @@ export function renderHome(state) {
   const pct = Math.min(100, Math.round((today.recitations / Math.max(1, goal)) * 100));
   const streak = state.statistics.currentStreak || 0;
 
-  const daily = pickDailyItem(state.library.itemIndex);
+  const dailyPick = pickDailyItem(state.library.itemIndex);
+  // (v5.2.25) feed queue: done-today and session-dismissed items never
+  // repeat down the Home stream, and no item appears twice across the
+  // verse/recent/favorites panels (first occurrence wins).
+  const todayKey = dateKey(new Date());
+  const isStaleEntry = (entry) => {
+    const id = entry?.item?.id;
+    if (id == null) return true;
+    if (isDismissed(id)) return true;
+    return isCompletedToday(state.counters?.[id], todayKey);
+  };
+  let daily = dailyPick?.entry || null;
+  if (daily && isStaleEntry(daily) && dailyPick.eligible.length > 1) {
+    const fresh = nextFreshIndex(dailyPick.eligible, dailyPick.idx, isStaleEntry);
+    if (fresh >= 0) daily = dailyPick.eligible[fresh];
+  }
+  const shownIds = new Set(daily?.item?.id != null ? [daily.item.id] : []);
+  const takeFresh = (entries) => {
+    const out = [];
+    for (const entry of dedupeEntries(entries)) {
+      const id = entry?.item?.id;
+      if (id == null || shownIds.has(id) || isStaleEntry(entry)) continue;
+      shownIds.add(id);
+      out.push(entry);
+    }
+    return out;
+  };
   // Today's real prayer times, shared by the strip and the adhkar windows.
   const prayerTimes = todayPrayerTimes(state);
   // Which adhkar quick action deserves a "now" nudge: the actual sun-based
@@ -262,14 +296,18 @@ export function renderHome(state) {
   // (see js/adhkarTiming.js for the reasoning behind each range).
   const nowWindow = recommendedAdhkarWindow(new Date(), prayerTimes);
 
-  const recentEntries = state.history
-    .slice(0, 3)
-    .map((h) => state.library.itemIndex[h.itemId])
-    .filter(Boolean);
-  const favEntries = state.favorites
-    .slice(0, 3)
-    .map((id) => state.library.itemIndex[id])
-    .filter(Boolean);
+  const recentEntries = takeFresh(
+    state.history
+      .slice(0, 3)
+      .map((h) => state.library.itemIndex[h.itemId])
+      .filter(Boolean)
+  );
+  const favEntries = takeFresh(
+    state.favorites
+      .slice(0, 3)
+      .map((id) => state.library.itemIndex[id])
+      .filter(Boolean)
+  );
   const pinnedCollections = state.collections.slice(0, 3);
 
   // Active non-main profile rides the hero as a tappable chip (into

@@ -25,6 +25,47 @@ import { buildHash } from '../core/router.js';
 import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
 import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 
+/**
+ * (v5.2.24) Accordion memory, view-local on purpose. Toggling any switch
+ * re-renders the whole view from state — native <details> openness is DOM
+ * state, so a re-render used to collapse everything back to the default
+ * panel (the "switch closes my section" bug). The single open section id
+ * lives here, next to the template that reads it: every render re-opens
+ * exactly it, and the capture-phase toggle listener in app/events.js
+ * writes it (single-expansion: opening one closes the rest). Session
+ * memory only — a reload returns to the default section, which is the
+ * honest behavior for ephemeral UI state (never persisted, never synced).
+ */
+let openSectionId = 'settings-sec-language';
+
+/** The id of the currently open accordion section (or null when all closed). */
+export function getOpenSettingsSection() {
+  return openSectionId;
+}
+
+/** Pin the open accordion section; unknown ids collapse everything. */
+export function setOpenSettingsSection(id) {
+  openSectionId = typeof id === 'string' && /^settings-sec-[a-z]+$/.test(id) ? id : null;
+}
+
+/** All accordion section ids, in render order (for the toggle listener). */
+export function settingsSectionIds() {
+  return [
+    'settings-sec-language',
+    'settings-sec-appearance',
+    'settings-sec-content',
+    'settings-sec-cardfields',
+    'settings-sec-reciter',
+    'settings-sec-translation',
+    'settings-sec-compare',
+    'settings-sec-feedback',
+    'settings-sec-notifications',
+    'settings-sec-accessibility',
+    'settings-sec-profiles',
+    'settings-sec-data',
+  ];
+}
+
 const FIELD_LABELS = {
   transliteration: 'content.fieldTranslit',
   translation: 'content.fieldTranslation',
@@ -33,24 +74,6 @@ const FIELD_LABELS = {
   grade: 'content.fieldGrade',
   notes: 'content.fieldNotes',
 };
-
-/** (U14) In-page table of contents: [label-key, panel-id] pairs mirroring
- *  the panels below, in the same order. Labels reuse the panel headers
- *  so no extra dictionary keys are needed (only settings.toc is new). */
-const TOC_SECTIONS = [
-  ['settings.language', 'settings-sec-language'],
-  ['settings.appearance', 'settings-sec-appearance'],
-  ['settings.content', 'settings-sec-content'],
-  ['settings.cardFields', 'settings-sec-cardfields'],
-  ['settings.reciter', 'settings-sec-reciter'],
-  ['settings.translation', 'settings-sec-translation'],
-  ['settings.compareTranslation', 'settings-sec-compare'],
-  ['settings.feedback', 'settings-sec-feedback'],
-  ['settings.notifications', 'settings-sec-notifications'],
-  ['settings.accessibility', 'settings-sec-accessibility'],
-  ['settings.profiles', 'settings-sec-profiles'],
-  ['settings.data', 'settings-sec-data'],
-];
 
 /** Home panel order rows: up/down buttons + hide checkbox per panel.
  *  Shows every panel (visible in effective order, hidden ones last) so a
@@ -76,14 +99,18 @@ function homePanelRows(state, lang) {
     .join('');
 }
 
-/** A settings section header with an icon and an optional hint line. */
-function panelHeader(title, iconName, lang, hintKey) {
+/** (v5.2.22) A settings section header as a native <summary>: the whole
+ *  row is the expand/collapse control — zero JS, keyboard- and
+ *  screen-reader-operable, offline-safe. The chevron rotates via CSS. */
+function accHeader(title, iconName, lang, hintKey) {
   return `
-  <div class="panel__header panel__header--icon">
+  <summary class="settings-acc__summary">
     <span class="panel__icon">${icon(iconName, { size: 18 })}</span>
-    <h2>${escapeHTML(title)}</h2>
-  </div>
-  ${hintKey ? `<p class="panel__subtext">${t(hintKey, lang)}</p>` : ''}`;
+    <span class="settings-acc__title">${escapeHTML(title)}
+      ${hintKey ? `<span class="panel__subtext settings-acc__hint">${t(hintKey, lang)}</span>` : ''}
+    </span>
+    <span class="settings-acc__chevron" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
+  </summary>`;
 }
 
 /** A clickable toggle row for NON-settings-boolean state (the same switch
@@ -209,20 +236,13 @@ export function renderSettings(state) {
   <section class="view view--settings">
     <h1 class="view__title">${t('settings.title', lang)}</h1>
 
-    <nav class="settings-toc" aria-label="${escapeHTML(t('settings.toc', lang))}">
-      ${TOC_SECTIONS.map(
-        ([key, target]) => `
-      <button type="button" class="chip chip--sm" data-action="settings-toc-go" data-target="${target}">${t(key, lang)}</button>`
-      ).join('')}
-    </nav>
-
-    <section class="panel" id="settings-sec-language">
-      ${panelHeader(t('settings.language', lang), 'book-open', lang)}
+    <details class="panel settings-acc" id="settings-sec-language" ${openSectionId === 'settings-sec-language' ? 'open' : ''}>
+      ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-appearance">
-      ${panelHeader(t('settings.appearance', lang), 'sun', lang)}
+    <details class="panel settings-acc" id="settings-sec-appearance" ${openSectionId === 'settings-sec-appearance' ? 'open' : ''}>
+      ${accHeader(t('settings.appearance', lang), 'sun', lang)}
       <p class="field-label">${t('settings.theme', lang)}</p>
       <div class="segmented">${modeButtons}</div>
       <p class="field-label">${t('settings.palette', lang)}</p>
@@ -233,10 +253,10 @@ export function renderSettings(state) {
       <input type="range" class="slider" min="0.85" max="1.4" step="0.05" value="${Number(s.fontScale) || 1}" data-bind="fontScale" aria-labelledby="font-scale-label" />
       <p class="field-label" id="arabic-font-scale-label">${t('settings.arabicFontSize', lang)}</p>
       <input type="range" class="slider" min="0.85" max="1.6" step="0.05" value="${Number(s.arabicFontScale) || 1}" data-bind="arabicFontScale" aria-labelledby="arabic-font-scale-label" />
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-content">
-      ${panelHeader(t('settings.content', lang), 'list', lang)}
+    <details class="panel settings-acc" id="settings-sec-content" ${openSectionId === 'settings-sec-content' ? 'open' : ''}>
+      ${accHeader(t('settings.content', lang), 'list', lang)}
       ${toggleRow('showTransliteration', s.showTransliteration, t('settings.showTransliteration', lang))}
       ${toggleRow('showTranslation', s.showTranslation, t('settings.showTranslation', lang))}
       ${toggleRow('autoAdvanceFocus', s.autoAdvanceFocus, t('settings.autoAdvanceFocus', lang))}
@@ -245,36 +265,36 @@ export function renderSettings(state) {
       <p class="field-label">${t('settings.homePanels', lang)}</p>
       <p class="panel__subtext">${t('settings.homePanelsHint', lang)}</p>
       ${homePanelRows(state, lang)}
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-cardfields">
-      ${panelHeader(t('settings.cardFields', lang), 'grid', lang, 'settings.cardFieldsHint')}
+    <details class="panel settings-acc" id="settings-sec-cardfields" ${openSectionId === 'settings-sec-cardfields' ? 'open' : ''}>
+      ${accHeader(t('settings.cardFields', lang), 'grid', lang, 'settings.cardFieldsHint')}
       ${cardFieldRows}
       <button type="button" class="btn btn--secondary btn--sm" data-action="content-restore-all">${icon('refresh', { size: 14 })} ${t('library.sheet.restoreAll', lang)}</button>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-reciter">
-      ${panelHeader(t('settings.reciter', lang), 'volume', lang, 'settings.reciterHint')}
+    <details class="panel settings-acc" id="settings-sec-reciter" ${openSectionId === 'settings-sec-reciter' ? 'open' : ''}>
+      ${accHeader(t('settings.reciter', lang), 'volume', lang, 'settings.reciterHint')}
       <div class="reciter-list">${reciterRows}</div>
       <p class="field-label">${t('settings.reciterB', lang)}</p>
       <p class="panel__subtext">${t('settings.reciterBHint', lang)}</p>
       <div class="reciter-list">${reciterBRows}</div>
       ${toggleRow('reciterCompare', s.reciterCompare === true, t('settings.reciterCompare', lang))}
       <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.AUDIO)}" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 14 })} ${t('settings.audioManager', lang)}</a>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-translation">
-      ${panelHeader(t('settings.translation', lang), 'book', lang, 'settings.quranTranslationHint')}
+    <details class="panel settings-acc" id="settings-sec-translation" ${openSectionId === 'settings-sec-translation' ? 'open' : ''}>
+      ${accHeader(t('settings.translation', lang), 'book', lang, 'settings.quranTranslationHint')}
       <div class="reciter-list">${translationRows}</div>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-compare">
-      ${panelHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
+    <details class="panel settings-acc" id="settings-sec-compare" ${openSectionId === 'settings-sec-compare' ? 'open' : ''}>
+      ${accHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
       <div class="reciter-list">${compareRows}</div>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-feedback">
-      ${panelHeader(t('settings.feedback', lang), 'bead', lang, 'settings.feedbackHint')}
+    <details class="panel settings-acc" id="settings-sec-feedback" ${openSectionId === 'settings-sec-feedback' ? 'open' : ''}>
+      ${accHeader(t('settings.feedback', lang), 'bead', lang, 'settings.feedbackHint')}
       ${toggleRow('hapticsEnabled', s.hapticsEnabled, t('settings.haptics', lang))}
       ${toggleRow('soundEnabled', s.soundEnabled, t('settings.sound', lang))}
       ${toggleRow('tapRipple', s.tapRipple, t('settings.ripple', lang))}
@@ -290,10 +310,10 @@ export function renderSettings(state) {
           )
           .join('')}
       </div>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-notifications">
-      ${panelHeader(t('settings.notifications', lang), 'bell', lang)}
+    <details class="panel settings-acc" id="settings-sec-notifications" ${openSectionId === 'settings-sec-notifications' ? 'open' : ''}>
+      ${accHeader(t('settings.notifications', lang), 'bell', lang)}
       <div class="btn-stack">
         <button type="button" class="btn btn--secondary btn--sm" data-action="add-reminder">${icon('plus', { size: 14 })} ${t('settings.addReminder', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="schedule-open-manager">${icon('calendar', { size: 14 })} ${t('schedule.manager', lang)}</button>
@@ -301,10 +321,10 @@ export function renderSettings(state) {
         <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="dailyVerse">${icon('book', { size: 14 })} ${t('preset.dailyVerse', lang)}</button>
       </div>
       ${reminders || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-accessibility">
-      ${panelHeader(t('settings.accessibility', lang), 'hands', lang)}
+    <details class="panel settings-acc" id="settings-sec-accessibility" ${openSectionId === 'settings-sec-accessibility' ? 'open' : ''}>
+      ${accHeader(t('settings.accessibility', lang), 'hands', lang)}
       ${toggleRow('reduceMotion', s.reduceMotion, t('settings.reduceMotion', lang))}
       ${toggleRow('highContrast', s.highContrast, t('settings.highContrast', lang))}
       <label class="toggle-row">
@@ -321,10 +341,10 @@ export function renderSettings(state) {
           <span class="switch__track"></span>
         </span>
       </label>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-profiles">
-      ${panelHeader(t('settings.profiles', lang), 'folder', lang, 'settings.profilesHint')}
+    <details class="panel settings-acc" id="settings-sec-profiles" ${openSectionId === 'settings-sec-profiles' ? 'open' : ''}>
+      ${accHeader(t('settings.profiles', lang), 'folder', lang, 'settings.profilesHint')}
       <div class="chip-row" role="group" aria-label="${escapeHTML(t('settings.profiles', lang))}">
         <button type="button" class="chip ${state.activeProfile === 'main' ? 'chip--active' : ''}" data-action="profile-switch" data-id="main" aria-pressed="${state.activeProfile === 'main'}">${escapeHTML(t('settings.profileMain', lang))}</button>
         ${(state.profiles || [])
@@ -338,10 +358,10 @@ export function renderSettings(state) {
           .join('')}
         <button type="button" class="chip chip--add" data-action="profile-create">${icon('plus', { size: 12 })} ${t('settings.profileNew', lang)}</button>
       </div>
-    </section>
+    </details>
 
-    <section class="panel" id="settings-sec-data">
-      ${panelHeader(t('settings.data', lang), 'shield', lang)}
+    <details class="panel settings-acc" id="settings-sec-data" ${openSectionId === 'settings-sec-data' ? 'open' : ''}>
+      ${accHeader(t('settings.data', lang), 'shield', lang)}
       <!-- v3.26 data health check: three honest facts, zero servers -->
       <div class="data-health">
         <p class="panel__subtext" dir="ltr">${storageLine(state, lang)}</p>
@@ -356,7 +376,7 @@ export function renderSettings(state) {
         <button type="button" class="btn btn--secondary" data-action="import-backup">${icon('upload', { size: 16 })} ${t('settings.importBackup', lang)}</button>
         <button type="button" class="btn btn--danger" data-action="reset-all-data">${icon('trash', { size: 16 })} ${t('settings.resetData', lang)}</button>
       </div>
-    </section>
+    </details>
 
     <a class="btn btn--ghost" href="${buildHash(VIEWS.ABOUT)}" data-action="navigate" data-view="${VIEWS.ABOUT}">${icon('info', { size: 16 })} ${t('nav.about', lang)}</a>
   </section>`;

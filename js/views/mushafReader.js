@@ -411,6 +411,23 @@ function surahAyahCountLine(state, chapter, lang) {
  * prev/next, per-ayah repeat, follow, listen/continuous, echo, sleep,
  * voice picker, A/B compare, stop) so nothing is lost by going fullscreen.
  */
+/**
+ * (v5.2.23) Fullscreen session visibility, pure and unit-tested: the
+ * session console + position counter ride the WHOLE recitation session,
+ * not just the pages showing the recited surah (turning the page must
+ * never strand audio without controls — the player bar is CSS-hidden in
+ * fullscreen). recitingThis only decides the main play button's
+ * stop-this vs play-this reading.
+ */
+export function fsRecitationState(sp, visibleSurahNumbers) {
+  const sessionActive = sp?.active === true;
+  return {
+    sessionActive,
+    recitingThis:
+      sessionActive && (visibleSurahNumbers || []).some((n) => Number(n) === Number(sp.surah)),
+  };
+}
+
 function buildFullscreenControls(
   state,
   rightPage,
@@ -422,8 +439,15 @@ function buildFullscreenControls(
   lang
 ) {
   const sp = state.surahPlayback;
-  const recitingThis =
-    sp?.active && visibleSurahs.some((c) => Number(c.number) === Number(sp.surah));
+  // (v5.2.23) the SESSION outlives the visible page: turning away from the
+  // recited surah must never strand audio without controls (the player bar
+  // is CSS-hidden in fullscreen and the console used to vanish with the
+  // surah). sessionActive drives the console + counter; recitingThis only
+  // decides whether the main play button reads stop-this or play-this.
+  const { sessionActive, recitingThis } = fsRecitationState(
+    sp,
+    visibleSurahs.map((c) => c.number)
+  );
   const qPos =
     recitingThis &&
     Array.isArray(sp.queue) &&
@@ -460,9 +484,9 @@ function buildFullscreenControls(
         ${icon('chevronLeft', { size: 20 })}
       </button>
       ${playBtn}
-      ${recitingThis ? `<span class="mushaf-fs-controls__ayah" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}${escapeHTML(qPos)}</span>` : ''}
+      ${sessionActive ? `<span class="mushaf-fs-controls__ayah" dir="ltr">${recitingThis ? `${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}` : `${escapeHTML(String(sp.surah))}:${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}`}${escapeHTML(qPos)}</span>` : ''}
     </div>
-    ${recitingThis ? buildFullscreenConsole(state, lang) : ''}`;
+    ${sessionActive ? buildFullscreenConsole(state, lang) : ''}`;
 }
 
 /** The fullscreen console's second glass row — the windowed player bar's

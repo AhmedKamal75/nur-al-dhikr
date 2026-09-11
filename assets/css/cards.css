@@ -55,6 +55,12 @@
 .card__top {
   display: flex;
   align-items: flex-start;
+  /* (v5.2.24) long category chips (e.g. "Supplications of the Righteous")
+   * overflowed their flex row and painted UNDER the action buttons — the
+   * row now wraps so the actions get their own dedicated line instead of
+   * competing, and chips truncate as the last line of defense. */
+  flex-wrap: wrap;
+  row-gap: var(--space-2);
   gap: var(--space-2);
 }
 
@@ -63,14 +69,27 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-1_5);
-  flex: 1;
+  flex: 1 1 14ch;
   min-width: 0;
+}
+.card__meta > .chip {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card__actions {
   display: flex;
   align-items: center;
-  gap: 0;
+  /* (v5.2.22) adjacent icon buttons share the row with breathing room and
+   * wrap instead of bleeding over the category/grade chips on narrow
+   * cards (the v4.1 ayah-card rule, generalized). */
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 100%;
   margin-inline-start: auto;
   flex-shrink: 0;
 }
@@ -140,6 +159,8 @@
 .card__footer {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  row-gap: var(--space-2);
   gap: var(--space-3);
   padding-top: var(--space-3);
   border-top: 1px solid var(--color-border);
@@ -155,6 +176,7 @@
   padding: var(--space-2) var(--space-5);
   min-height: var(--touch-target);
   min-width: 132px;
+  max-width: 100%;
   border-radius: var(--radius-pill);
   border: 1px solid color-mix(in srgb, var(--color-primary) 32%, transparent);
   background: linear-gradient(
@@ -227,7 +249,13 @@
 .mini-card__title {
   font-size: var(--fs-sm);
   font-weight: 600;
-  flex-shrink: 0;
+  /* (v5.2.22) long titles truncate instead of squeezing the Arabic
+   * excerpt off the row. */
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .mini-card__arabic {
   font-family: var(--font-arabic);
@@ -1488,8 +1516,14 @@ body.is-ambient #main {
 }
 .focus__position {
   font-size: var(--fs-sm);
-  color: var(--color-text-muted);
+  font-weight: 700;
+  color: var(--color-text-secondary);
   font-variant-numeric: tabular-nums;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  white-space: nowrap;
 }
 .focus__top-actions {
   margin-inline-start: auto;
@@ -1521,6 +1555,18 @@ body.is-ambient #main {
 .focus__scroll p,
 .focus__scroll .chip {
   cursor: inherit;
+}
+/* (v5.2.24) the content column owns the breathing room: without it the
+   grade chip sat directly on the Arabic's tall diacritics and the two
+   painted as one collided block. Centered, gapped, full-width. */
+.focus__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 100%;
+  margin-block: auto;
 }
 .focus__arabic {
   font-family: var(--font-arabic);
@@ -1564,6 +1610,15 @@ body.is-ambient #main {
   font-weight: 600;
   animation: cycleComplete var(--dur-celebrate) var(--ease-spring);
 }
+/* (v5.2.25) lifetime completion badge: small, under the hint, far from
+   the tap number — the counter itself never carries lifetime data. */
+.focus__lifetime {
+  padding: 0 var(--space-4);
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
 .focus__bar {
   display: flex;
   align-items: center;
@@ -1589,8 +1644,10 @@ body.is-ambient #main {
   grid-template-areas:
     'num'
     'den';
-  width: 64px;
-  height: 64px;
+  /* (v5.2.24) the counter is the primary control — 72px target with
+     readable numerals, up from 64px. */
+  width: 72px;
+  height: 72px;
   margin-inline: auto;
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
@@ -1602,7 +1659,7 @@ body.is-ambient #main {
 }
 .focus__counter-num {
   grid-area: num;
-  font-size: 20px;
+  font-size: 1.375rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.05;
@@ -1645,6 +1702,51 @@ body.is-ambient #main {
 }
 .focus__counter.is-just-completed {
   animation: cycleComplete var(--dur-celebrate) var(--ease-spring);
+}
+
+/* (v5.2.24) item-change transitions: the incoming card slides + fades
+   from the reading direction — forward from inline-start, back from
+   inline-end — so prev/next/auto-advance read as a carousel, not a
+   blink. The class is stamped only when the item key changes (see
+   views/focus.js), so counting taps never replay it. */
+.focus--enter-next .focus__scroll {
+  animation: focus-enter-next 260ms var(--ease-standard);
+}
+.focus--enter-prev .focus__scroll {
+  animation: focus-enter-prev 260ms var(--ease-standard);
+}
+@keyframes focus-enter-next {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--space-6) * -1));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes focus-enter-prev {
+  from {
+    opacity: 0;
+    transform: translateX(var(--space-6));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .focus--enter-next .focus__scroll,
+  .focus--enter-prev .focus__scroll {
+    animation: none;
+  }
+}
+/* Forward always enters from the reading-start side: mirrored in RTL. */
+[dir='rtl'] .focus--enter-next .focus__scroll {
+  animation-name: focus-enter-prev;
+}
+[dir='rtl'] .focus--enter-prev .focus__scroll {
+  animation-name: focus-enter-next;
 }
 
 /* ==========================================================================
@@ -1949,6 +2051,8 @@ body.has-player .hadith-card {
 }
 .hadith-card__actions {
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
   justify-content: flex-end;
 }
 
@@ -1959,10 +2063,14 @@ body.has-player .hadith-card {
 }
 .hadith-jump {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-2);
 }
 .hadith-jump__input {
-  width: 110px;
+  flex: 1 1 7rem;
+  min-width: 0;
+  width: auto;
+  max-width: 11rem;
 }
 .hadith-pager {
   display: flex;
@@ -3419,6 +3527,33 @@ body.has-player .hadith-card {
   .count-ripple {
     animation: none;
     display: none;
+  }
+}
+
+/* ================================================================== */
+/* (v5.2.24) Completed-card exit — the counter-flow wave: a card that  */
+/* hits its target fades + slides out, then the handler removes the   */
+/* node and the next supplication takes its place. The removal timer   */
+/* (not animationend) owns the teardown, so reduced-motion and dropped */
+/* frames can never strand a half-transparent card.                   */
+/* ================================================================== */
+.card--exiting {
+  animation: card-exit 280ms var(--ease-standard) forwards;
+  pointer-events: none;
+}
+@keyframes card-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card--exiting {
+    animation-duration: 1ms;
   }
 }
 

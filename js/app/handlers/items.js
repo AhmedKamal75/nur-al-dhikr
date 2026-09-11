@@ -11,7 +11,7 @@ import { getItemEntry, itemClipboardText } from '../shared.js';
 import { asTranslationEdition, TRANSLATION_EDITIONS, VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
 import { go } from '../../core/router.js';
-import { actions, store } from '../../core/state.js';
+import { actions, selectors, store } from '../../core/state.js';
 import { escapeHTML, pickLocale, uid } from '../../core/utils.js';
 // (v4.3) shareCard.js (553 lines of canvas rendering) is imported lazily:
 // it is only ever needed on an explicit share/download tap, so every boot
@@ -27,6 +27,8 @@ import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import * as speech from '../../services/speech.js';
 import * as tasbih from '../../services/tasbih.js';
+import { pickRandomHadith } from '../../services/hadith.js';
+import { dismissCompleted, noteCompleted } from '../../domain/completedCards.js';
 
 /** (v5.0.0) The counting ripple: one span, radial bloom at the tap point,
  *  removed on animationend. The CSS (cards.css) honors
@@ -55,6 +57,11 @@ export const clickHandlers = {
 
   'counter-tap': (ds, e) => {
     const target = parseInt(ds.target, 10) || 1;
+    // (v5.2.24) exit-animation handoff: predict the completion BEFORE the
+    // synchronous re-render below, so the fresh card already carries
+    // .card--exiting and the animation plays instead of a snap.
+    const before = selectors.getCounter(store.getState(), ds.itemId);
+    if ((before?.count || 0) + 1 >= target) noteCompleted(ds.itemId);
     const result = tasbih.increment(ds.itemId, ds.categoryId || null, target);
     tasbih.playTick(result.cycleCompleted ? 'complete' : 'tick');
 
@@ -88,6 +95,26 @@ export const clickHandlers = {
       state.settings.autoAdvanceFocus
     ) {
       scheduleAutoAdvance();
+    }
+
+    // (v5.2.24) completed cards vanish once the exit lands: pin the
+    // session dismissal, then drop the live node wherever it is. View-
+    // agnostic and idempotent — a re-render that already dropped the node
+    // makes the removal a no-op while the pin still holds, and a
+    // navigation in between still converges on the next render. Skipped
+    // in Focus, where the auto-advance owns the transition.
+    if (result.cycleCompleted && state.activeView !== VIEWS.FOCUS) {
+      const itemId = ds.itemId;
+      const reduce = state.settings.reduceMotion;
+      setTimeout(
+        () => {
+          dismissCompleted(itemId);
+          if (typeof document !== 'undefined') {
+            document.querySelector(`article.card[data-item-id="${CSS.escape(itemId)}"]`)?.remove();
+          }
+        },
+        reduce ? 60 : 340
+      );
     }
   },
 
@@ -250,6 +277,26 @@ export const clickHandlers = {
     const was = (st.hadithBookmarks || []).includes(key);
     store.dispatch(actions.toggleHadithBookmark(bookId, n));
     showToast(t(was ? 'hadith.unbookmarked' : 'hadith.bookmarkedToast', st.settings.language));
+  },
+
+  // (v5.2.26) Home "Hadith of the day" refresh: shuffle to a different
+  // loaded hadith (bundled now, downloaded Sahihs once opened — never a
+  // fetch). Session state only: hadith.daily is already ephemeral, so a
+  // reload returns to the deterministic daily pick.
+  'hadith-daily-shuffle': () => {
+    const st = store.getState();
+    const lang = st.settings.language;
+    const cur = st.hadith?.daily;
+    const next = pickRandomHadith(
+      st.hadith?.docs,
+      cur ? `${cur.bookId}:${cur.n}` : null,
+      Math.random
+    );
+    if (!next) {
+      showToast(t('common.error', lang));
+      return;
+    }
+    store.dispatch(actions.setHadithDaily({ bookId: next.bookId, n: next.hadith.n }));
   },
 
   // By-heart dhikr mode: hide Arabic per category, grade per card on the

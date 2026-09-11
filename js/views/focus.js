@@ -21,6 +21,25 @@ function findCategory(state, categoryId) {
   return null;
 }
 
+/**
+ * (v5.2.24) Item-change transition memory, view-local on purpose. The
+ * renderer re-renders on every tap (the counter), but the slide must play
+ * ONLY when the item itself changes — so the last shown item key + index
+ * live here, next to the template that reads them. Same item, no class,
+ * no replay; new item, one directional slide. Session memory only.
+ */
+let lastFocusKey = null;
+let lastFocusIdx = -1;
+
+/**
+ * Pure directional-enter decision (unit-tested): forward slides from the
+ * reading-start side, back from the other. `last` is { key, idx } | null.
+ */
+export function focusEnterClass(key, idx, last) {
+  if (last && last.key === key) return '';
+  return idx >= (last?.idx ?? -1) ? ' focus--enter-next' : ' focus--enter-prev';
+}
+
 export function renderFocus(state) {
   const lang = state.settings.language;
   const categoryId = state.activeParams.id;
@@ -61,6 +80,12 @@ export function renderFocus(state) {
     .filter(Boolean)
     .join(' \u00B7 ');
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
+  // (v5.2.24) directional enter: forward slides from the reading-start
+  // side, back from the other — auto-advance (+1) always slides forward.
+  const focusKey = `${cat.id}:${item.id}`;
+  const enterClass = focusEnterClass(focusKey, idx, { key: lastFocusKey, idx: lastFocusIdx });
+  lastFocusKey = focusKey;
+  lastFocusIdx = idx;
   // By-heart mode: the focus stage hides Arabic + transliteration behind
   // the same reveal tap as the category cards, with recall grading below.
   // Listening is parked in this mode — hearing the Arabic IS the answer.
@@ -71,15 +96,14 @@ export function renderFocus(state) {
           due: state.byHeartRecords?.[item.id]?.due || '',
         }
       : null;
-  // (v5.0.0) Same "done / target ✓" contract as the card pill: resting
-  // after a completed cycle the dial shows the completed count (1 / 1 with
-  // the check), never 0 / 1.
-  const restingDone = counter.count === 0 && counter.completedCycles > 0;
-  const displayCount = restingDone ? counter.completedCycles : counter.count;
-  const focusDone = restingDone || counter.count >= counter.target;
+  // (v5.2.25) separation of concerns, same as the card pill: the
+  // counter shows ONLY live session progress — the lifetime cycles moved
+  // to the small badge under the hint, never into the tap number.
+  const focusDone = counter.count >= counter.target;
+  const lifetimeCycles = counter.completedCycles || 0;
 
   return `
-  <section class="focus" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}">
+  <section class="focus${enterClass}" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}">
     <h1 class="sr-only">${t('title.focus', lang)}</h1>
     <header class="focus__top">
       <button type="button" class="icon-btn" data-action="focus-exit" data-category-id="${escapeHTML(cat.id)}" aria-label="${t('focus.exit', lang)}">${icon('close', { size: 22 })}</button>
@@ -141,6 +165,7 @@ export function renderFocus(state) {
          64px progress counter, and the card menu. The stage above keeps
          ALL the room, and it scrolls (see the overflow fix in cards.css). -->
     <p class="focus__hint${wasJustCompleted(item.id) ? ' is-just-completed' : ''}">${t('focus.tapToCount', lang)}</p>
+    ${lifetimeCycles > 0 ? `<p class="focus__lifetime" title="${escapeHTML(t('card.completedTimes', lang, { n: lifetimeCycles }))}">✓ ${escapeHTML(String(lifetimeCycles))}×</p>` : ''}
     <footer class="focus__bar">
       <button type="button" class="icon-btn" data-action="focus-reset" data-item-id="${escapeHTML(item.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.reset', lang)}" title="${t('focus.reset', lang)}">
         ${icon('refresh', { size: 20 })}
@@ -149,12 +174,12 @@ export function renderFocus(state) {
         <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${prevItem ? escapeHTML(prevItem.id) : ''}" ${prevItem ? '' : 'disabled'} aria-label="${t('focus.previous', lang)}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 20 })}</button>
         <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${nextItem ? escapeHTML(nextItem.id) : ''}" ${nextItem ? '' : 'disabled'} aria-label="${t('focus.next', lang)}">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 20 })}</button>
       </div>
-      <button type="button" class="focus__counter${wasJustCompleted(item.id) ? ' is-just-completed' : ''}${focusDone ? ' is-done' : ''}" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: displayCount, target: counter.target })}">
+      <button type="button" class="focus__counter${wasJustCompleted(item.id) ? ' is-just-completed' : ''}${focusDone ? ' is-done' : ''}" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: counter.count, target: counter.target })}">
         <svg class="focus__ring" viewBox="0 0 64 64" aria-hidden="true">
           <circle cx="32" cy="32" r="27" class="focus__ring-track"/>
-          <circle cx="32" cy="32" r="27" class="focus__ring-fill" style="--pct:${restingDone ? 100 : pct}"/>
+          <circle cx="32" cy="32" r="27" class="focus__ring-fill" style="--pct:${pct}"/>
         </svg>
-        <span class="focus__counter-num" aria-hidden="true">${escapeHTML(String(displayCount))}${focusDone ? ' ✓' : ''}</span>
+        <span class="focus__counter-num" aria-hidden="true">${escapeHTML(String(counter.count))}${focusDone ? ' ✓' : ''}</span>
         <span class="focus__counter-den" aria-hidden="true">/ ${escapeHTML(String(counter.target))}</span>
       </button>
       <button type="button" class="icon-btn" data-action="open-card-menu" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" aria-label="${t('card.more', lang)}" title="${t('card.more', lang)}">

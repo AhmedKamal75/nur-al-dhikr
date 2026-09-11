@@ -7,7 +7,7 @@
  */
 
 import { store, actions } from '../core/state.js';
-import { vibrate } from '../core/utils.js';
+import { vibrate, dateKey } from '../core/utils.js';
 import { markCelebration, milestoneHit, wasCelebrated } from '../domain/celebrate.js';
 import { t } from '../core/i18n.js';
 import { getAudioContext } from './audioContext.js';
@@ -43,8 +43,18 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
   // v3.7 FIX: one tap used to mean THREE synchronous full-app re-renders
   // (counter → statistics → history each notified subscribers on its own).
   // Batching makes the whole tap one logical update — exactly one render.
+  // (v5.2.25) completions stamp the day: "completed today" (home feed
+  // dedup, category % indicator) reads this field, never the lifetime
+  // cycles. The COUNTER_SET merge preserves it on later taps.
   store.batch(() => {
-    store.dispatch(actions.setCounter(itemId, { count, target: effTarget, completedCycles }));
+    store.dispatch(
+      actions.setCounter(itemId, {
+        count,
+        target: effTarget,
+        completedCycles,
+        ...(cycleCompleted ? { lastCompletedDay: dateKey(new Date()) } : null),
+      })
+    );
     store.dispatch(actions.recordStatistic(itemId, categoryId, step, false));
     store.dispatch(actions.pushHistory(itemId, categoryId));
   });
@@ -55,7 +65,9 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
   // the tap that completes a cycle — that tap already gets the completion
   // pattern, and two patterns on one tap would blur together.
   const milestone = !cycleCompleted && milestoneHit(count, state.settings.tasbihMilestone);
-  if (state.settings.hapticsEnabled) {
+  // (v5.2.25) typeof-guards: unit tests drive increment() in node, where
+  // navigator/document don't exist — silence, never throw.
+  if (state.settings.hapticsEnabled && typeof navigator !== 'undefined' && navigator.vibrate) {
     if (cycleCompleted) vibrate([10, 40, 10]);
     else if (milestone) vibrate([20, 60, 20]);
     else vibrate(8);
@@ -96,6 +108,7 @@ export function wasJustCompleted(itemId) {
  * and screen readers treat updates to it as genuine live-region changes.
  */
 function announceCount(count, target, cycleCompleted, completedCycles) {
+  if (typeof document === 'undefined') return;
   const el = document.getElementById('counter-announcer');
   if (!el) return;
   const lang = store.getState().settings.language;

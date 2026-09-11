@@ -22,6 +22,8 @@ import {
   setMushafWideLayout,
 } from '../services/mushaf.js';
 import { closeModal, isModalOpen, openLazyModal, cycleTabFocus } from '../ui/modal.js';
+import { getOpenSettingsSection, setOpenSettingsSection } from '../views/settings.js';
+import { mushafSwipeTurn, isSwipeGuardTarget, isPlayerDismissSwipe } from '../domain/gestures.js';
 import { showToast } from '../ui/toast.js';
 import * as recitation from '../services/recitation.js';
 import {
@@ -683,11 +685,15 @@ export function bindGlobalEvents() {
     { passive: true }
   );
 
-  // Mushaf page-flip swipe. Unlike the focus-mode swipe above, this is
-  // *always* right-to-left reading order — it's emulating a physical Arabic
-  // book, so the gesture direction doesn't follow the app's own UI
-  // language the way focus mode's does. (v4.5) single touches only: a
-  // two-finger pinch is the ZOOM gesture, and it must never turn a page.
+  // Mushaf page-flip swipe. ALWAYS right-to-left book order — it emulates
+  // a physical Arabic book, so the gesture direction never follows the
+  // app's own UI language the way focus mode's does (the mapping lives in
+  // domain/gestures.js#mushafSwipeTurn, pinned by tests/gestures.test.js).
+  // (v4.5) single touches only: a two-finger pinch is the ZOOM gesture,
+  // and it must never turn a page. (v5.2.22) touches that BEGIN on a
+  // control surface (player bar, consoles, nav, any button/link/input)
+  // never arm a swipe — swiping over player controls used to turn the
+  // page underneath and steal button taps.
   let mushafTouchStartX = null;
   let mushafTouchStartY = null;
   let mushafPinch = null; // { startDist, startScale } while two fingers are down
@@ -696,6 +702,12 @@ export function bindGlobalEvents() {
     'touchstart',
     (e) => {
       if (store.getState().activeView !== VIEWS.MUSHAF) return;
+      const origin = e.target instanceof Element ? e.target : null;
+      if (origin && isSwipeGuardTarget(origin)) {
+        mushafTouchStartX = null;
+        mushafTouchStartY = null;
+        return;
+      }
       if (e.touches.length === 1) {
         mushafPinching = false;
         mushafTouchStartX = e.touches[0].clientX;
@@ -755,24 +767,91 @@ export function bindGlobalEvents() {
       const dy = e.changedTouches[0].clientY - mushafTouchStartY;
       mushafTouchStartX = null;
       mushafTouchStartY = null;
-      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return; // ignore short/mostly-vertical swipes (scrolling)
+      // (v5.2.22) the book-order mapping (dx < 0 = next page) is the pure
+      // mushafSwipeTurn helper — short and mostly-vertical swipes (scrolls)
+      // return null and fall through without turning.
+      const turn = mushafSwipeTurn(dx, dy);
+      if (!turn) return;
       const state = store.getState();
       const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
       // (v4.5) a spread turns two pages at once, from its right page.
       const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
       const right = spreadOn ? spreadRightPage(page) : page;
-      const dest = spreadOn
-        ? dx < 0
-          ? nextSpreadPage(right)
-          : prevSpreadPage(right)
-        : dx < 0
-          ? mushafNextPage(page)
-          : mushafPrevPage(page);
+      const dest =
+        turn === 'next'
+          ? spreadOn
+            ? nextSpreadPage(right)
+            : mushafNextPage(page)
+          : spreadOn
+            ? prevSpreadPage(right)
+            : mushafPrevPage(page);
       if (dest == null || dest === page) return;
-      setFlipDirection(dx < 0 ? 'next' : 'prev');
+      setFlipDirection(turn);
       playFlipSound();
       go(VIEWS.MUSHAF, { page: String(dest) });
     },
     { passive: true }
+  );
+
+  // (v5.2.22) mini-player swipe-down-to-dismiss: a mostly-vertical downward
+  // swipe that STARTS on the player bar clicks its dismiss control (the X),
+  // the same stop-and-unmount path as tapping it. Horizontal drags (seek)
+  // and upward swipes never dismiss — see isPlayerDismissSwipe.
+  let playerTouch = null;
+  document.addEventListener(
+    'touchstart',
+    (e) => {
+      const origin = e.target instanceof Element ? e.target : null;
+      const bar = origin?.closest?.('.player-bar[data-player-mounted]') ?? null;
+      if (!bar || e.touches.length !== 1) {
+        playerTouch = null;
+        return;
+      }
+      playerTouch = {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY,
+        bar,
+      };
+    },
+    { passive: true }
+  );
+  document.addEventListener(
+    'touchend',
+    (e) => {
+      if (!playerTouch) return;
+      const dx = e.changedTouches[0].clientX - playerTouch.x;
+      const dy = e.changedTouches[0].clientY - playerTouch.y;
+      const { bar } = playerTouch;
+      playerTouch = null;
+      if (!isPlayerDismissSwipe(dx, dy)) return;
+      const dismiss = bar.querySelector('[data-player-dismiss]');
+      if (dismiss && typeof dismiss.click === 'function') dismiss.click();
+    },
+    { passive: true }
+  );
+
+  // (v5.2.24) settings accordion memory + single-expansion. The `toggle`
+  // event does not bubble, so this listens in capture phase. Opening a
+  // section pins it (the next re-render re-opens exactly it — toggling a
+  // switch no longer collapses its section) and shuts the other eleven;
+  // closing the open section clears the pin so re-renders keep them shut.
+  // The pin is written before the siblings close: their own toggle events
+  // see open=false and only clear a pin that names them.
+  document.addEventListener(
+    'toggle',
+    (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      const panel = target?.closest?.('details.settings-acc') ?? null;
+      if (!panel || !panel.id) return;
+      if (panel.open) {
+        setOpenSettingsSection(panel.id);
+        for (const other of document.querySelectorAll('details.settings-acc[open]')) {
+          if (other !== panel) other.open = false;
+        }
+      } else if (getOpenSettingsSection() === panel.id) {
+        setOpenSettingsSection(null);
+      }
+    },
+    true
   );
 }

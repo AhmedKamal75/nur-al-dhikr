@@ -440,6 +440,7 @@ export const ar = {
   'collections.create': 'إنشاء مجموعة',
   'collections.namePrompt': 'اسم المجموعة',
   'collections.itemCount': '{n} عناصر',
+  'category.progressToday': 'أُنجز {done} من {total} اليوم · {pct}٪',
   'content.manage': 'ترتيب',
   'content.done': 'تم',
   'content.manageHint': 'أعد الترتيب أو أخفِ أو عدّل العدد — التغيير يسري هنا وفي وضع التركيز.',
@@ -851,7 +852,6 @@ export const ar = {
   'calendar.untilDateOptional': 'حتى (اختياري — اتركه فارغًا لعدم وجود تاريخ نهاية)',
   'calendar.setReminder': 'ذكّرني',
   'settings.title': 'الإعدادات',
-  'settings.toc': 'الأقسام',
   'settings.language': 'اللغة',
   'settings.appearance': 'المظهر',
   'settings.theme': 'السمة',
@@ -1082,6 +1082,7 @@ export const ar = {
   'hadith.noResults': 'لا يوجد حديث مطابق لهذا البحث أو الباب.',
   'hadith.pageStatus': '{from}–{to} من {total} · صفحة {p}/{pages}',
   'hadith.dailyTitle': 'حديث اليوم',
+  'hadith.dailyShuffle': 'اعرض حديثًا آخر',
   'hadith.openBook': 'افتح الكتاب',
   'hadith.sourceNote':
     'النصوص من الكتب الستة — صحيح البخاري وصحيح مسلم وسنن أبي داود وجامع الترمذي وسنن النسائي وسنن ابن ماجه — والأربعون النووية والأربعون قدسية؛ مجموعات كلاسيكية في الملك العام (انظر «حول → المصادر»). عناوين الأبواب معروضة بالإنجليزية كما وردت في مجموعة البيانات المصدر.',

@@ -197,7 +197,7 @@ export function pageForNumber(doc, n, section = 'all', query = '') {
 }
 
 /* ------------------------------------------------------------------ */
-/* Daily hadith — deterministic, offline-safe, zero randomness         */
+/* Daily hadith — deterministic per day, offline-safe                 */
 /* ------------------------------------------------------------------ */
 
 /**
@@ -214,10 +214,32 @@ export function daySeed(dateKey) {
 }
 
 /**
+ * Mulberry32 — the small seeded PRNG this app uses wherever "random but
+ * reproducible" is needed. Yes, we've heard of PRNGs (v5.2.26): the daily
+ * hadith used to walk `seed % length` with a seed that grows by exactly 1
+ * per day, so consecutive days marched lockstep through the list and the
+ * card felt frozen. Drawing through mulberry32 spreads picks across the
+ * pool while staying fully deterministic per day — same (date, data) →
+ * same hadith, still offline, still unit-testable, no Math.random in the
+ * daily path. Interactive shuffles pass their own entropy explicitly.
+ */
+export function mulberry32(seed) {
+  let a = Math.floor(Number(seed)) || 0;
+  return function next() {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+/**
  * Pick today's daily hadith source: a deterministic (book, hadith) pair over
  * the bundled small books only — so the Home card never forces a multi-MB
  * Sahih download just to greet you. Requires the book doc to be loaded;
- * returns null otherwise (callers ensure the load first).
+ * returns null otherwise (callers ensure the load first). Drawn through
+ * mulberry32 (not `seed % length`) so consecutive days scatter across the
+ * pool instead of marching lockstep — same day still picks identically.
  */
 export function pickDailyHadith(books, docs, dateKey) {
   const pool = (books || []).filter((b) => HADITH_DAILY_BOOKS.includes(b.id));
@@ -226,8 +248,29 @@ export function pickDailyHadith(books, docs, dateKey) {
     return doc && Array.isArray(doc.hadiths) && doc.hadiths.length;
   });
   if (!usable.length) return null;
-  const seed = daySeed(dateKey);
-  const book = usable[seed % usable.length];
+  const rnd = mulberry32(daySeed(dateKey));
+  const book = usable[Math.floor(rnd() * usable.length)];
   const doc = docs[book.id];
-  return { bookId: book.id, hadith: doc.hadiths[seed % doc.hadiths.length] };
+  return { bookId: book.id, hadith: doc.hadiths[Math.floor(rnd() * doc.hadiths.length)] };
+}
+
+/**
+ * Interactive shuffle for the Home card's refresh button: a uniform pick
+ * over every LOADED book doc (bundled now, downloaded Sahihs once opened
+ * — never forcing a fetch), excluding the currently shown one so a tap
+ * always changes the card. `rand` is injectable for tests; callers pass
+ * Math.random. Returns null when nothing is loaded.
+ */
+export function pickRandomHadith(docs, excludeKey = null, rand = Math.random) {
+  const entries = [];
+  for (const [bookId, doc] of Object.entries(docs || {})) {
+    if (!doc || !Array.isArray(doc.hadiths)) continue;
+    for (const h of doc.hadiths) {
+      if (h == null || h.n == null) continue;
+      const key = `${bookId}:${h.n}`;
+      if (key !== excludeKey) entries.push({ bookId, hadith: h });
+    }
+  }
+  if (!entries.length) return null;
+  return entries[Math.floor(rand() * entries.length)];
 }

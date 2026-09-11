@@ -280,20 +280,55 @@
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-2);
 }
-/* (v5.2, U14) Settings table of contents: sticky section-jump chips so
-   the 11-panel settings scroll stays navigable without memorization. */
-.settings-toc {
-  position: sticky;
-  top: var(--topbar-height);
-  z-index: var(--z-raised);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  padding-block: var(--space-2);
-  background: var(--color-surface);
-}
+/* (v5.2.23) the settings TOC jump chips were removed with the accordion:
+   one intent per collapsible panel, no second navigation to maintain. */
 .view--settings .panel {
   scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
+}
+/* (v5.2.22) Settings accordion: one intent per collapsible <details>
+ * panel. The <summary> row is the native expand control (no JS); the
+ * chevron points down closed, up open. */
+.settings-acc__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--radius-md);
+}
+.settings-acc__summary::-webkit-details-marker {
+  display: none;
+}
+.settings-acc__summary::marker {
+  content: '';
+}
+.settings-acc__summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.settings-acc__title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+.settings-acc__hint {
+  font-weight: 400;
+}
+.settings-acc__chevron {
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  transition: transform var(--dur-base) var(--ease-standard);
+}
+.settings-acc[open] .settings-acc__chevron {
+  transform: rotate(180deg);
 }
 .chip-row--scroll {
   flex-wrap: nowrap;
@@ -1131,6 +1166,11 @@ body.modal-open {
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
+/* (v5.2.25) fully-done-today lists read as achieved. */
+.view__meta--done {
+  color: var(--color-success-text);
+  font-weight: 700;
+}
 
 .back-link {
   display: inline-flex;
@@ -1608,7 +1648,28 @@ body.modal-open {
   text-align: end;
 }
 
-/* Recitation console variant */
+/* Recitation console variant: a compact status head (pause + dismiss
+ * always visible) over ONE horizontally-scrollable chip strip — the full
+ * 13-chip console without the 172px tall wrapped stack (v5.2.23). */
+.player-bar--recite .player-bar__head {
+  flex-wrap: nowrap;
+}
+.player-bar__console {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-block: 2px;
+  margin-inline: calc(var(--space-1) * -1);
+  padding-inline: var(--space-1);
+}
+.player-bar__console::-webkit-scrollbar {
+  display: none;
+}
+.player-bar__console > * {
+  flex: none;
+}
 .player-bar--recite .player-bar__pulse {
   width: 10px;
   height: 10px;
@@ -1786,13 +1847,19 @@ body.modal-open {
   font-size: var(--fs-sm);
 }
 
-/* Offline library rows (Offline view): icon + name/size + status + action. */
+/* Offline library rows (Offline view): icon + full-width name/size on row
+ * one, status + download action on row two. (v5.2.23) a single flex row
+ * crushed the title to a few characters between the status badge and the
+ * button on phones — the grid gives the title the whole line, so badge
+ * and button can never collide with it again. */
 .offline-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
   align-items: center;
-  gap: var(--space-2);
   min-height: var(--touch-target);
-  padding-block: var(--space-1);
+  padding-block: var(--space-2);
   border-bottom: 1px solid var(--color-border);
 }
 .offline-row:last-child {
@@ -1800,6 +1867,7 @@ body.modal-open {
 }
 .offline-row__icon {
   flex: none;
+  grid-row: 1 / -1;
   color: var(--color-text-secondary);
 }
 .offline-row__text {
@@ -1811,18 +1879,35 @@ body.modal-open {
 .offline-row__name {
   font-size: var(--fs-sm);
   font-weight: 600;
+  /* (v5.2.22) long corpus titles truncate instead of colliding with the
+   * status badge on narrow viewports. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .offline-row__sub {
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
 }
 .offline-row__status {
-  flex: none;
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.offline-row__actions {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 0;
 }
 .offline-row__status--done {
   color: var(--color-primary-text);
@@ -2166,7 +2251,7 @@ body.is-kids #main {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-surface);
-  min-width: 64px;
+  min-width: 4rem;
   cursor: pointer;
   transition:
     border-color var(--dur-base) var(--ease-standard),
@@ -2425,3 +2510,38 @@ a.view-sheet__row {
 .view-panel-modal {
   gap: var(--space-3);
 }
+
+/* ==========================================================================
+   (v5.2.22, bug wave) Structural overlap guards — the generalization rule.
+   Every flex row that pairs a text label with badges/actions follows the
+   same hygiene: the text holder gets min-width: 0 + ellipsis truncation,
+   action clusters stay shrink-proof and wrap instead of overlapping, and
+   no in-flow neighbor is ever positioned absolutely. Rows audited:
+   offline-row (title vs status badge), card__top/__actions (action icons
+   vs category/grade chips), mini-card (title vs Arabic excerpt),
+   reciter-row (already clean), reminder-row (already clean),
+   player-bar head/meta, settings accordion summary, hadith-card actions.
+   ========================================================================== */
+.player-bar__head > .icon-btn,
+.player-bar__head > .player-bar__chip {
+  flex-shrink: 0;
+}
+.settings-acc__summary > .panel__icon,
+.settings-acc__summary > .settings-acc__chevron {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   (v5.2.24) Responsive contract — the systematic rule behind the one-off
+   overlap fixes. Every row that pairs text with badges/actions MUST:
+   1. wrap (flex-wrap or grid with a second row) instead of squeezing text
+      against a fixed badge — never force single-line competition;
+   2. give text holders min-width: 0 + ellipsis truncation;
+   3. size text containers in relative units (rem/ch/%/min()) so root font
+      scaling and narrow viewports shrink them instead of overflowing.
+   Fixed px stays ONLY for iconography, touch targets, hairlines, and art
+   (all intentionally non-fluid). Audited clean: card__top/meta/actions,
+   card__footer/pill, offline-row grid, mini-card, reciter/reminder rows,
+   player-bar head/console, hadith-jump, mushaf-bookmark rows (560px
+   fallback), settings accordion summary.
+   ========================================================================== */

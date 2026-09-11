@@ -1123,3 +1123,89 @@ role="navigation">`. FIXED: both are now `<nav>` (class hooks unchanged,
 - Phase 4 limitation: no live browser in this environment — state
   transitions (patch engine, modal/drawer/fullscreen lifecycles, entry-link
   gate) verified against code + gates; U5 (real-device pass) still open.
+
+## Bug-report wave (v5.2.22, 2026-09-10) — 7 items, disposition
+
+1. RTL swipe direction: AUDITED, no behavior change. The Mushaf swipe
+   (events.js) already maps right-to-left travel → next page and
+   left-to-right → previous in every UI language — exactly the reported
+   expectation — matching the ArrowLeft=next keyboard rule. Pinned by
+   `mushafSwipeTurn` in new `js/domain/gestures.js` +
+   `tests/gestures.test.js` so keys/buttons/swipes can never disagree.
+2. Gesture conflict: FIXED. Mushaf touchstart now ignores touches
+   beginning on guarded control surfaces (player bar, consoles, nav,
+   buttons/links/inputs, modals, drawer) via `isSwipeGuardTarget` —
+   swiping over player controls no longer turns the page or steals taps.
+3. Settings layout: FIXED. 12 panels are native `<details>` accordions
+   (first open; TOC opens its target before scrolling). Zero JS,
+   keyboard- and screen-reader-operable.
+4. Azkar card overlap: FIXED. `.card__actions` wraps with gap instead of
+   gap:0; mini-card titles truncate; hadith-card actions wrap.
+5. Offline library overlap: FIXED. Row wraps; title truncates with
+   ellipsis; status badge holds the inline-end with truncation.
+6. Global overlap rule: ADDED. Documented guard block in
+   components.css (min-width:0 + ellipsis on text holders,
+   shrink-proof wrapping action clusters, no absolute in-flow
+   neighbors); reciter/reminder rows verified already clean.
+7. Mini-player dismiss: FIXED. Explicit X on the recitation bar wired to
+   the existing recite-stop path (engine stop → store mirror unmounts
+   the bar → media metadata cleared in boot.js), full-surah X tagged,
+   and swipe-down-to-dismiss via `data-player-dismiss` clicks the same
+   control (`isPlayerDismissSwipe`: downward + mostly-vertical only, so
+   seek and scroll never dismiss).
+
+## Follow-up wave (v5.2.23, 2026-09-10) — probe-verified in headless Chromium
+
+- Fullscreen "crash": NOT REPRODUCED — fs enter/exit + page turns
+  mid-recitation throw zero errors and the engine session survives
+  (an early probe scare was the probe's own wake-taps landing on
+  surah-banner play toggles). The real defect underneath was
+  control-less audio: page-turned-away sessions showed neither the
+  glass console nor the (CSS-hidden) player bar. Fixed via
+  `fsRecitationState` — console + `surah:ayah/total` counter ride the
+  session; verified live (controls persist on the foreign page).
+- Player size: measured 172px on a 390px viewport — now a compact head
+  (pause + X) over one scrollable 13-chip strip, 114px on pixels.
+- Settings TOC removed entirely per user call (redundant over the
+  accordion): markup, `settings-toc-go` handler, CSS, en+ar keys.
+- Offline rows reworked to a two-line grid after a real screenshot
+  showed titles crushed to ~5 chars ("Qur'a…") between badge and
+  button — truncation CSS alone was insufficient. Re-shot clean;
+  Azkar headers re-shot clean in English and RTL Arabic.
+
+## Follow-up wave (v5.2.24, 2026-09-11) — all five shot-verified
+
+- Accordion auto-close: reproduced by reasoning (details openness is
+  DOM state, settings re-renders from store) and fixed with view-local
+  memory + capture-phase toggle listener (single-expansion); verified
+  live, including the switch-toggle-keeps-open case.
+- Reflections overlap: SHOT — heart button painted over the category
+  chip text. Fixed with wrapping card__top (dedicated action row) +
+  chip ellipsis; re-shot clean.
+- Responsive: systematic rule documented in CSS; converted the genuine
+  text-container px risks (card footer, hadith jump, shape buttons),
+  kept icon/target/art px deliberately.
+- Counter vanish: session-local dismissal (domain/completedCards.js)
+  with exit animation; statistics/counters untouched; Focus excluded
+  (auto-advance owns it).
+- Focus rework: SHOT — grade chip collided with Arabic diacritics.
+  Gapped content column, position pill, 72px counter, directional
+  item-change slides (RTL-mirrored), tap renders replay-free.
+
+## Counter-standards wave (v5.2.25, 2026-09-11) — reproduced live
+
+- "6 / 1" + instant-vanish: the pill rendered lifetime cycles first
+  ("1 / 3" flashed right after completing 3/3). Probed 1/3 → 2/3 →
+  completion on the live app; threshold logic was already exact, the
+  DISPLAY conflated the numbers. Separated everywhere (pill, focus).
+- Dismissal still fires exactly at count == target (verified tap walk);
+  target-1 cards completing on one tap is the rule working, not a bug.
+- Boot zeroing exempts `tasbih:*` deliberately (dial reload gate).
+- "Done today" reads lastCompletedDay; feed dedup is first-wins
+  across verse/recent/favorites with a fresh-pick fallback.
+
+## Hadith-of-the-day wave (v5.2.26, 2026-09-11)
+
+- "Always the same": 2-book pool × `seed % len` with a +1/day seed —
+  lockstep by construction. Now mulberry32-scattered (same-day
+  stable), plus a session-only shuffle button over all loaded docs.

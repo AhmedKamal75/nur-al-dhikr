@@ -2,6 +2,114 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.26 — hadith of the day: real spread + shuffle button
+
+The card felt frozen for two compounding reasons: the pool is only
+two small books, and the pick walked `seed % length` with a seed that
+grows by exactly 1 per day — consecutive days marched lockstep. The
+daily draw now goes through mulberry32 (new pure PRNG in
+services/hadith.js): scattered across the pool, still identical all
+day, still offline, still unit-tested — yes, we had heard of PRNGs,
+the old walk was deliberate determinism, this keeps the determinism
+with better spread. Plus a refresh button on the card
+(`hadith-daily-shuffle`) that jumps to a different loaded hadith
+(bundled now, downloaded Sahihs once opened — never a fetch);
+session-only, so reloads return to the daily pick. Pinned by new
+hadith.test.js blocks (PRNG determinism/range, 14-day scatter,
+shuffle exclusion). Re-stamp 233.
+
+## v5.2.25 — counter standards: session vs lifetime, daily completion, feed dedup
+
+The reported "6 / 1" and instant-vanish behavior reproduced live: the
+old pill rendered lifetime cycles as the first number (a completed
+target-1 card showed cycles/target, and completions flashed
+"1 / 3"), so the fix separates the two numbers everywhere. The pill
+(and focus counter) now show ONLY live session progress; lifetime
+rides its own `✓ N×` badge with the translated tooltip. Reloads
+restore item counts to 0/target while cycles + completion day survive
+— free tasbih-dial keys (`tasbih:*`) keep their live count for the
+dial's reload gate. Completions stamp `lastCompletedDay`, which
+drives "done today" (never lifetime cycles): the Home verse falls
+through to the next fresh pick when done, verse/recent/favorites
+never repeat an item down one screen, and category headers gain a
+"done today" progress line (achieved styling at 100%). Dismissal
+still fires exactly at count == target with the exit animation.
+Pinned by `tests/counter-rules.test.js` (7); the old conflated-pill
+tests were updated to the new contract deliberately. Re-stamp 233.
+
+## v5.2.24 — accordion memory, card-header wrap, counter exit, focus polish
+
+Five follow-ups, all verified on pixels in headless Chromium (390px,
+zero console errors). (1) Settings accordion: toggling a switch
+re-rendered the view and collapsed the section (native details state
+is DOM state) — the open section id now lives view-local in
+views/settings.js, so re-renders re-open exactly it; a capture-phase
+toggle listener in app/events.js pins opens and enforces
+single-expansion (verified live: switch toggle keeps Content open,
+opening Appearance collapses it). (2) Home Reflections header: the
+long category chip overflowed under the action buttons (shot with the
+heart painted over "…the Righteous") — `.card__top` now wraps so
+actions take their own row, chips truncate as last defense (re-shot
+clean). (3) Responsive contract: footer/jump rows wrap, text
+containers move to relative units (icon/touch-target/art px kept
+deliberately), documented as the going rule in CSS. (4) Counter flow:
+completing a target plays a fade/slide exit (`.card--exiting`) then
+vanishes the card session-locally via new domain/completedCards.js —
+counters and statistics untouched, reload restores resting ✓ state;
+Focus keeps its auto-advance instead. (5) Focus rework: the grade chip
+collided with the Arabic's diacritics (shot) — content is now a
+gapped centered column; position becomes a "1 / 29" pill; counter
+grows to 72px with larger numerals; item changes slide directionally
+(RTL-mirrored, reduced-motion safe), stamped only on item change so
+count taps never replay. Pinned by new `tests/counter-flow.test.js`
+(7). Re-stamp 232.
+
+## v5.2.23 — fullscreen session unity, compact player, TOC removal, offline grid
+
+Follow-up wave, verified against the live app in headless Chromium
+(zero console errors throughout). (a) The reported fullscreen
+"crash" does not reproduce — entering/exiting fullscreen and turning
+pages mid-recitation throw nothing and the engine session survives —
+but the probe confirmed the real defect underneath: turning the page
+away from the recited surah left audio playing with NO controls (the
+player bar is CSS-hidden in fullscreen and the glass console vanished
+with the surah). The console + position counter now ride the whole
+session (`fsRecitationState` in views/mushafReader.js, unit-tested);
+only the main play button still reads the visible page. (b) The
+recitation bar measured 172px tall on a 390px phone — now a compact
+status head (pause + dismiss always visible) over one
+horizontally-scrollable chip strip, 114px, same 13 actions, no new
+contracts. (c) Settings TOC jump chips removed (markup, handler, CSS,
+both `settings.toc` keys) — redundant over the accordion. (d) The
+Offline rows were still crushing titles to ~5 characters between the
+status badge and the button (caught on a real screenshot, not by
+reading CSS): rows are a two-line grid now — full title line, status
+
+- action line — verified clean on pixels, as are the Azkar card
+  headers in English and RTL Arabic. Pinned by extended
+  `tests/gestures.test.js` (12). Re-stamp 231.
+
+## v5.2.22 — bug-report wave: RTL gestures, accordion settings, overlap guards, player dismiss
+
+Seven user-reported issues, one release. Swipe direction was audited
+and pinned (the Mushaf swipe already followed RTL book order —
+right-to-left is next, left-to-right is previous, in every UI
+language — and `tests/gestures.test.js` now locks it); the real
+gesture bug was conflict: swipes starting on the player bar, consoles,
+or any button used to turn the page underneath and steal taps. New
+pure `js/domain/gestures.js` (`mushafSwipeTurn`, `isSwipeGuardTarget`,
+`isPlayerDismissSwipe`) wired into `app/events.js`. Settings is a
+native `<details>` accordion (first panel open, TOC opens its target
+before jumping — zero JS, keyboard-operable). Azkar/offline/global
+overlap pass: card actions wrap with breathing room, offline titles
+truncate against their status badges (rows wrap on narrow screens),
+mini-card titles truncate, recite console wraps, plus a documented
+overlap-guard rule in CSS. The recitation mini-player gains an
+explicit dismiss X on the existing recite-stop path (stop + clear
+metadata + unmount) and swipe-down-to-dismiss via
+`data-player-dismiss`. Pinned by `tests/gestures.test.js` (10).
+Re-stamp 231.
+
 ## v5.2.21 — permanent browser specs (audit debt)
 
 The audits demanded kept-in-tree e2e and got temporary probes

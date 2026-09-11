@@ -11,7 +11,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { pickLocale, categoryDisplayName, escapeHTML } from '../core/utils.js';
+import { pickLocale, categoryDisplayName, dateKey, escapeHTML } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { VIEWS, QUIZ_LIBRARY_ID } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
@@ -25,6 +25,7 @@ import {
   contentPrefsOf,
 } from '../services/contentPrefs.js';
 import { itemIsCustomized, fieldTogglesFor } from '../domain/contentLens.js';
+import { listCompletion } from '../domain/reflections.js';
 
 function findCategory(state, categoryId) {
   const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
@@ -83,6 +84,16 @@ function manageRowHTML(item, { categoryId, lang, canUp, canDown, target, customi
       ${icon('eyeOff', { size: 16 })}
     </button>
   </div>`;
+}
+
+/**
+ * (v5.2.25) "done today" list indicator: how many visible items carry
+ * today's completion stamp. Full completion reads as achieved.
+ */
+function categoryProgressHTML(state, items, lang) {
+  const { done, total, pct } = listCompletion(items, state.counters, dateKey(new Date()));
+  if (!total) return '';
+  return `<p class="view__meta${pct === 100 ? ' view__meta--done' : ''}">${icon(pct === 100 ? 'check' : 'target', { size: 13 })} ${escapeHTML(t('category.progressToday', lang, { done, total, pct }))}</p>`;
 }
 
 export function renderCategory(state) {
@@ -176,6 +187,7 @@ export function renderCategory(state) {
       </div>
       ${cat.description?.[lang] ? `<p class="view__subtitle">${escapeHTML(pickLocale(cat.description, lang))}</p>` : ''}
       <p class="view__meta">${t('collections.itemCount', lang, { n: visibleItems.length })} \u2022 ${escapeHTML(pickLocale(doc.metadata.name, lang))}</p>
+      ${categoryProgressHTML(state, visibleItems, lang)}
       ${quizButton}
       ${byHeartButton}
       ${byHeartOn ? `<p class="panel__subtext">${t('byheart.hint', lang)}</p>` : ''}

@@ -15,7 +15,8 @@ import { renderZakat } from '../js/views/zakat.js';
 import { store } from '../js/core/state.js';
 
 /* ------------------------------------------------------------------ */
-/* W-2: the counter pill must show completed cycles                    */
+/* W-2 (v5.2.25 standard): session progress on the pill, lifetime in a  */
+/* separate metadata badge — never conflated into one number.           */
 /* ------------------------------------------------------------------ */
 
 const BASE_ITEM = {
@@ -27,30 +28,29 @@ const BASE_ITEM = {
   title: { en: 'Test item', ar: 'عنصر' },
 };
 
-test('cardHTML shows a completed-cycles badge once cycles exist', () => {
+test('cardHTML shows lifetime cycles in a metadata badge, not the pill', () => {
   const html = cardHTML(BASE_ITEM, null, { counter: { count: 0, target: 1, completedCycles: 4 } });
-  assert.match(html, /counter-pill--done/);
-  // (v4.3) /4/ matched ANY 4 anywhere in the card (widths, ids, svg paths);
-  // pin the digit to its actual home — the cycles badge's own text node
-  // (which renders as "✓ 4").
-  assert.match(html, /counter-pill__cycles[^>]*>[^<]*\b4\b/);
-  // title tooltip uses the translated label
+  // the pill reads resting session progress only — never "4 / 1"
+  assert.match(html, /counter-pill__label[^>]*>0 \/ 1</);
+  assert.doesNotMatch(html, /counter-pill__cycles/);
+  // lifetime rides its own chip with the translated tooltip
+  assert.match(html, /✓ 4×/);
   assert.match(html, /Completed 4 times/);
 });
 
-test('cardHTML omits the badge for a fresh counter (0 cycles)', () => {
+test('cardHTML omits the lifetime badge for a fresh counter (0 cycles)', () => {
   const html = cardHTML(BASE_ITEM, null, { counter: { count: 0, target: 1, completedCycles: 0 } });
   assert.doesNotMatch(html, /counter-pill--done/);
-  assert.doesNotMatch(html, /counter-pill__cycles/);
+  assert.doesNotMatch(html, /✓ \d+×/);
 });
 
-test('cardHTML renders the badge even mid-cycle for multi-count dhikr', () => {
+test('cardHTML renders live session progress mid-cycle', () => {
   const html = cardHTML({ ...BASE_ITEM, repetitions: 33 }, null, {
     counter: { count: 12, target: 33, completedCycles: 2 },
   });
   assert.match(html, /12 \/ 33/);
-  assert.match(html, /counter-pill--done/);
-  assert.match(html, /counter-pill__cycles[^>]*>.*2/s);
+  assert.doesNotMatch(html, /counter-pill--done/);
+  assert.match(html, /✓ 2×/);
 });
 
 /* ------------------------------------------------------------------ */

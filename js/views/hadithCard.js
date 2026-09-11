@@ -99,6 +99,7 @@ export function dailyHadithCardHTML(state) {
   <section class="panel panel--hadith-daily">
     <div class="panel__header">
       <h2>${t('hadith.dailyTitle', lang)}</h2>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="hadith-daily-shuffle" aria-label="${escapeHTML(t('hadith.dailyShuffle', lang))}" title="${escapeHTML(t('hadith.dailyShuffle', lang))}">${icon('refresh', { size: 15 })}</button>
       <a href="${buildHash(VIEWS.HADITH, { id: daily.bookId, n: String(h.n) })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-id="${escapeHTML(daily.bookId)}" data-n="${escapeHTML(String(h.n))}" aria-label="${t('hadith.openBook', lang)}">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16 })}</a>
     </div>
     <p class="panel__subtext">${escapeHTML(pickLocale(bookMeta?.name ?? { en: daily.bookId }, lang))}</p>

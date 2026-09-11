@@ -56,7 +56,7 @@ export function renderPlayerBar(state) {
         ${icon('repeat', { size: 14 })}
       </button>
       <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)} — ${rate}&times;">${rate}&times;</button>
-      <button type="button" class="icon-btn icon-btn--sm" data-action="player-close" aria-label="${t('common.close', lang)}">${icon('close', { size: 16 })}</button>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="player-close" data-player-dismiss="1" aria-label="${t('common.close', lang)}">${icon('close', { size: 16 })}</button>
     </div>
     <div class="player-bar__track">
       <span class="player-bar__time" data-player-time>0:00</span>
@@ -101,6 +101,10 @@ function recitationBarHTML(state, lang) {
         <span class="player-bar__reciter">${escapeHTML(t('audio.reciting', lang))} · ${escapeHTML(name)}</span>
         <span class="player-bar__ayah-counter" dir="ltr">${escapeHTML(String(sp.ayah))} / ${escapeHTML(String(sp.total))}${escapeHTML(qPos)}</span>
       </div>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-pause-toggle" aria-label="${escapeHTML(t(snap.paused ? 'audio.play' : 'audio.pause', lang))}" title="${escapeHTML(t(snap.paused ? 'audio.play' : 'audio.pause', lang))}">${icon(snap.paused ? 'play' : 'pause', { size: 16 })}</button>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="recite-stop" data-player-dismiss="1" aria-label="${escapeHTML(t('audio.reciteStop', lang))}" title="${escapeHTML(t('audio.reciteStop', lang))}">${icon('close', { size: 16 })}</button>
+    </div>
+    <div class="player-bar__console" role="group" aria-label="${escapeHTML(t('audio.player', lang))}">
       ${chips}
     </div>
     ${recitationEchoHTML(snap, lang, 'player-bar__echo-wait')}

@@ -11,7 +11,9 @@ import {
   clampPage,
   pageForNumber,
   daySeed,
+  mulberry32,
   pickDailyHadith,
+  pickRandomHadith,
 } from '../js/services/hadith.js';
 
 const ROOT = join(import.meta.dirname, '..');
@@ -224,6 +226,53 @@ describe('daySeed / pickDailyHadith', () => {
   test('returns null when nothing usable is loaded yet (never blocks Home)', () => {
     assert.equal(pickDailyHadith([{ id: 'nawawi', bundled: true }], {}, '2026-08-27'), null);
     assert.equal(pickDailyHadith([], {}, 'x'), null);
+  });
+
+  test('consecutive days scatter across the pool (no lockstep march)', () => {
+    const books = [
+      { id: 'nawawi', bundled: true, count: 42, order: 3 },
+      { id: 'qudsi', bundled: true, count: 40, order: 4 },
+    ];
+    const docs = { nawawi: DOC, qudsi: DOC };
+    const picks = [];
+    for (let d = 1; d <= 14; d += 1) {
+      const day = `2026-08-${String(d).padStart(2, '0')}`;
+      picks.push(pickDailyHadith(books, docs, day));
+    }
+    const keys = new Set(picks.map((p) => `${p.bookId}:${p.hadith.n}`));
+    assert.ok(keys.size >= 5, `14 days should scatter, got ${keys.size} distinct picks`);
+  });
+});
+
+describe('mulberry32 / pickRandomHadith (v5.2.26 shuffle)', () => {
+  test('mulberry32 is deterministic per seed and uniform in [0, 1)', () => {
+    const a = mulberry32(12345);
+    const b = mulberry32(12345);
+    const first = a();
+    assert.equal(first, b(), 'same seed, same stream');
+    assert.notEqual(a(), first, 'stream advances');
+    for (let i = 0; i < 200; i += 1) {
+      const v = mulberry32(i)();
+      assert.ok(v >= 0 && v < 1, 'output in range');
+    }
+  });
+
+  test('pickRandomHadith excludes the shown card and stays in loaded docs', () => {
+    const docs = {
+      nawawi: { hadiths: [{ n: 1 }, { n: 2 }] },
+      qudsi: { hadiths: [{ n: 1 }] },
+    };
+    for (let i = 0; i < 30; i += 1) {
+      const pick = pickRandomHadith(docs, 'nawawi:1', Math.random);
+      assert.notEqual(`${pick.bookId}:${pick.hadith.n}`, 'nawawi:1');
+    }
+    assert.equal(pickRandomHadith({}, null), null);
+    assert.equal(pickRandomHadith({ nawawi: { hadiths: [] } }, null), null);
+    assert.equal(
+      pickRandomHadith({ nawawi: { hadiths: [{ n: 1 }] } }, 'nawawi:1'),
+      null,
+      'a lone pool member excluded yields null'
+    );
   });
 });
 
