@@ -22,6 +22,7 @@ import { onboardingPanelHTML } from './onboardingPanel.js';
 import { dailyHadithCardHTML } from './hadithCard.js';
 import { countMemorized, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
 import { worshipTodayRows } from '../domain/worship.js';
+import { DAILY_THEMES, matchesTheme } from '../domain/dailyAyah.js';
 import { computeNudge, shouldShowNudge } from '../domain/nudge.js';
 import { dedupeEntries, isCompletedToday, nextFreshIndex } from '../domain/reflections.js';
 import { isDismissed } from '../domain/completedCards.js';
@@ -169,14 +170,23 @@ function verseEligibleEntries(itemIndex) {
   return Object.values(itemIndex).filter((entry) => entry.document?.metadata?.id !== 'asma');
 }
 
-function pickDailyItem(itemIndex) {
+function pickDailyItem(itemIndex, theme = 'any') {
   const eligible = verseEligibleEntries(itemIndex);
   if (!eligible.length) return null;
+  // (v4.4, restored v5.2.30) theme bias narrows the pool before the
+  // deterministic seed pick; an empty theme pool falls back to the full
+  // pool (a sparse theme must never blank the card), and the done-today
+  // fall-through below walks the narrowed pool so the card stays on-theme.
+  const pool =
+    DAILY_THEMES.includes(theme) && theme !== 'any'
+      ? eligible.filter((e) => matchesTheme(e, theme))
+      : eligible;
+  const use = pool.length ? pool : eligible;
   const seed = dateKey(new Date())
     .split('-')
     .reduce((a, c) => a + parseInt(c, 10), 0);
-  const idx = seed % eligible.length;
-  return { entry: eligible[idx], idx, eligible };
+  const idx = seed % use.length;
+  return { entry: use[idx], idx, eligible: use };
 }
 
 /**
@@ -263,7 +273,7 @@ export function renderHome(state) {
   const pct = Math.min(100, Math.round((today.recitations / Math.max(1, goal)) * 100));
   const streak = state.statistics.currentStreak || 0;
 
-  const dailyPick = pickDailyItem(state.library.itemIndex);
+  const dailyPick = pickDailyItem(state.library.itemIndex, state.settings.dailyAyahTheme);
   // (v5.2.25) feed queue: done-today and session-dismissed items never
   // repeat down the Home stream, and no item appears twice across the
   // verse/recent/favorites panels (first occurrence wins).
@@ -373,6 +383,12 @@ export function renderHome(state) {
     <section class="panel panel--reflection">
       <div class="panel__header"><h2>${t('home.verseOfTheDay', lang)}</h2></div>
       ${cardHTML(daily.item, daily.category, { lang, isFavorite: selectors.isFavorite(state, daily.item.id), isSpeaking: state.speakingItemId === daily.item.id, counter: selectors.getCounter(state, daily.item.id), showTransliteration: state.settings.showTransliteration, showTranslation: state.settings.showTranslation, compact: true })}
+      <div class="chip-row chip-row--scroll" role="group" aria-label="${escapeHTML(t('home.verseTheme', lang))}">
+        ${DAILY_THEMES.map(
+          (th) => `
+        <button type="button" class="chip chip--sm ${state.settings.dailyAyahTheme === th || (!state.settings.dailyAyahTheme && th === 'any') ? 'chip--active' : ''}" data-action="set-setting" data-key="dailyAyahTheme" data-value="${th}" aria-pressed="${state.settings.dailyAyahTheme === th || (!state.settings.dailyAyahTheme && th === 'any')}">${escapeHTML(t(`home.theme.${th}`, lang))}</button>`
+        ).join('')}
+      </div>
     </section>`
       : '',
     hadith: dailyHadithCardHTML(state),

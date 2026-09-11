@@ -286,6 +286,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   tafsirCompareB: null,
   // (v4.4) Tasbih milestone haptic/audible ping every N counts (0 = off).
   tasbihMilestone: 0,
+  // (v4.4, restored v5.2.30) Verse-of-the-day theme bias: the Home verse
+  // card prefers items about this theme ('any' = the unfiltered pool).
+  // Allowlisted in sanitize.js against the same six ids.
+  dailyAyahTheme: 'any',
   // (v4.4) The name printed on memorization certificates.
   profileName: '',
   autoAdvanceFocus: false,

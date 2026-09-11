@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.2.29';
+const VERSION = 'nur-al-dhikr-v5.2.30';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -120,6 +120,7 @@ const APP_SHELL = [
   'js/domain/completedCards.js',
   'js/domain/compass.js',
   'js/domain/contentLens.js',
+  'js/domain/dailyAyah.js',
   'js/domain/duaJournal.js',
   'js/domain/fasting.js',
   'js/domain/garden.js',

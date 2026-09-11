@@ -2,6 +2,23 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.30 — verse-of-the-day themes (B-4 buried-feature recovery)
+
+The last buried item on the ledger. `domain/dailyAyah.js` (theme-keyword
+pool narrowing, deleted as an F-005 orphan) is restored verbatim, and
+the Home verse card grows a six-chip theme picker (Any, Mercy,
+Patience, Gratitude, Guidance, Paradise) riding the generic
+`set-setting` path — no new handler. Narrowing happens before the
+deterministic seed pick, so a sparse theme falls back to the full pool
+instead of blanking the card, and the v5.2.25 done-today fall-through
+walks the narrowed pool so the card stays on-theme while skipping
+finished items. New `dailyAyahTheme` setting (default `'any'`),
+allowlisted in the sanitizer against an inline mirror of the domain
+list — config never imports domain (layer rule), and the two lists are
+pinned equal by test. Seven new EN+AR keys. Pinned by new
+`tests/dailyAyah.test.js` (4: list parity, matching, determinism +
+fallback, end-to-end render). Markers 5.2.29 → 5.2.30 + re-stamp.
+
 ## v5.2.29 — sadaqah editor (B-3) + plan sharing (B-5)
 
 Two more buried features recovered. **Sadaqah:** the v3.19 "full

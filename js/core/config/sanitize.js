@@ -41,6 +41,15 @@ const SAFE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent', 'hidden']);
 const MUSHAF_PAPER_IDS = new Set(MUSHAF_PAPERS.map((p) => p.id));
 const ADHAN_MODE_IDS = new Set(['adhan', 'tone', 'off']);
+/** (v4.4) Verse-of-the-day themes — mirror of domain/dailyAyah.js. */
+const DAILY_AYAH_THEME_IDS = new Set([
+  'any',
+  'mercy',
+  'patience',
+  'gratitude',
+  'guidance',
+  'paradise',
+]);
 const PALETTE_IDS = new Set(PALETTES.map((p) => p.id));
 const SHAPE_IDS = new Set(SHAPES.map((s) => s.id));
 
@@ -211,6 +220,12 @@ export function sanitizeSettings(raw) {
     tasbihMilestone: TASBIH_MILESTONES.has(Number(s.tasbihMilestone))
       ? Number(s.tasbihMilestone)
       : d.tasbihMilestone,
+    // (v4.4, restored v5.2.30) Mirror of domain/dailyAyah.js DAILY_THEMES —
+    // kept inline so config never imports domain (layer rule); the two
+    // lists are pinned equal by tests/dailyAyah.test.js.
+    dailyAyahTheme: DAILY_AYAH_THEME_IDS.has(s.dailyAyahTheme)
+      ? s.dailyAyahTheme
+      : d.dailyAyahTheme,
     profileName: asShortStr(s.profileName, d.profileName, 60),
     autoAdvanceFocus: asBool(s.autoAdvanceFocus, d.autoAdvanceFocus),
     dailyGoal: Math.round(asNumber(s.dailyGoal, d.dailyGoal, 1, 10000)),
