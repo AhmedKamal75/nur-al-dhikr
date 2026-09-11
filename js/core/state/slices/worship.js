@@ -178,9 +178,18 @@ export function reduceWorship(state, action) {
     case 'RAMADAN_PLANNER_TOGGLE': {
       // Shared by taraweeh / i'tikaf / last-ten checklist; `slice` is the
       // persisted map name, `key` the hijri year-month, `day` the day.
+      // Hostile-input clamped at the edge: unknown slices, malformed keys,
+      // and out-of-Ramadan days no-op (the view only ever emits 1..30).
+      const ALLOWED_PLANNER_SLICES = ['taraweehLog', 'itikafLog', 'lastTenLog'];
+      if (!ALLOWED_PLANNER_SLICES.includes(action.slice)) return state;
+      if (!/^\d{4,5}-\d{1,2}$/.test(String(action.key || ''))) return state;
+      const dayNum = parseInt(action.day, 10);
+      if (!Number.isInteger(dayNum) || dayNum < 1 || dayNum > 30) return state;
+      const day = String(dayNum);
       const map = state[action.slice] || {};
       const month = { ...(map[action.key] || {}) };
-      month[action.day] = !month[action.day];
+      if (month[day]) delete month[day];
+      else month[day] = true;
       return { ...state, [action.slice]: { ...map, [action.key]: month } };
     }
 

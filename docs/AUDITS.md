@@ -1,3 +1,41 @@
+# V5.2.28 — DOC-DRIFT CORRECTIONS + FIRST-CLASS REMINDER SETTINGS (2026-09-11)
+
+# - [x] **B-2.** `jumuahReminder` / `dailyVerseNotification` /
+
+# `zakatFitrReminder` (persisted + sanitized since v4.4, never read)
+
+# now fire through `services/notifications.js` (Friday-gated Jumu'ah,
+
+# daily verse with home deep link, 28-Ramadan Fitr morning — all silent
+
+# notifications with day-persisted dedup, no adhan audio) with Settings
+
+# toggles + clock-time inputs (`toggle-jumuah-reminder` /
+
+# `toggle-dailyverse-reminder` / `toggle-zakatfitr-reminder`,
+
+# `jumuah-reminder-time` / `dailyverse-reminder-time` change arms) and
+
+# 10 new EN+AR keys. Tests: `tests/reminder-settings.test.js` (4) +
+
+# change-registry count 27 → 29 in `tests/event-registries.test.js`.
+
+# - [x] **D-1.** `docs/APP-FLOW.md` route count corrected (30/31 → 33
+
+# routes, 34 table rows — the classic-reader list and `quran/:id`
+
+# share one VIEWS entry).
+
+# - [x] **D-8.** Six stale `- [ ]` duplicates below annotated as superseded
+
+# (long-press, Jumu'ah/daily-verse presets, playlists, timetable,
+
+# elderly mode, transliteration — all shipped with `[x]` above).
+
+# Genuinely open items (Uthmani/IndoPak + qira'at, shake-to-count,
+
+# DND, cross-device sync, reading insight, T7/Arabic backlogs) untouched.
+
 # V5.2.21 — PERMANENT BROWSER SPECS, AUDIT DEBT (USER REQUEST, 2026-09-10)
 
 # `npm run check`: eslint 0, 1043/1043 green, prettier clean (no new
@@ -860,7 +898,7 @@ fixing. Full suite 916/916 green + eslint/prettier clean after fixes.
 - [x] Time-of-day adhan volume schedule: day volume + quiet-hours window at its own
       volume (`effectiveAdhanVolume`, wraps midnight), applied to adhan + tones;
       OS notification sound stays system-controlled (documented in UI).
-- [ ] Long-press ayah quick actions.
+- [x] Long-press ayah quick actions — superseded (stale duplicate): shipped above as the 550ms hold sheet.
 - [ ] Uthmani vs IndoPak script toggle; multiple qira'at text (data project).
 - [x] Hadith bookmarks + personal notes (`hadithNotes`, per-card note button + note
       display + modal editor, persisted + restore-sanitized, capped).
@@ -871,9 +909,7 @@ fixing. Full suite 916/916 green + eslint/prettier clean after fixes.
       per-word romanization behind the existing toggle; Mushaf paper untouched).
 - [x] Monthly prayer timetable: modal table with month nav, month .ics download,
       print-only-timetable stylesheet.
-- [ ] Jumu'ah (Surah Al-Kahf) + daily-verse OS notification presets on the
-      existing reminder scheduler (`services/notifications.js` `makeReminder` supports
-      deep-link `targetView`).
+- [x] Jumu'ah (Surah Al-Kahf) + daily-verse OS notification presets — shipped (one-tap `add-preset` on the existing scheduler); v5.2.28 adds first-class Settings toggles on the same scheduler.
 - [ ] Shake-to-count (needs DeviceMotion permission UX + flakiness handling).
 - [ ] Contextual home-panel reorder; time-of-day reading insight from local stats.
 - [x] Kids' mode: Kids home route (Al-Fatiha + surahs 93–114 tiles, tasbih door,
@@ -889,12 +925,10 @@ fixing. Full suite 916/916 green + eslint/prettier clean after fixes.
 - [ ] Auto-silence/DND during prayer: NOT feasible on the web (no browser DND API) —
       document as native-wrapper-only.
 - [ ] Cross-device sync: needs a transport; explicitly out of scope for zero-server.
-- [ ] Recitation playlists/queue — saved named lists of (surah, from, to) ranges played
-      in order through the verse engine (research 2026-09-05: Quran.com/Muslim Pro parity).
-- [ ] Monthly prayer timetable export/print (daily .ics exists; add month grid + print CSS).
-- [ ] Elderly/low-vision one-tap mode (XL type + high-contrast + simplified nav preset).
-- [ ] Verse transliteration line under the Arabic in the classic reader (data check:
-      confirm per-ayah transliteration exists in `data/quran/` before building).
+- [x] Recitation playlists/queue — superseded (stale duplicate): shipped above (`state.playlists`, engine queue advance, Audio-view panel).
+- [x] Monthly prayer timetable export/print — superseded (stale duplicate): shipped above (month modal + .ics + print CSS).
+- [x] Elderly/low-vision one-tap mode — superseded (stale duplicate): shipped above (`body.is-elder`, Settings toggle).
+- [x] Verse transliteration line under the Arabic in the classic reader — superseded (stale duplicate): shipped above (bundled per-word romanization behind the toggle).
 
 ## Implemented 2026-09-04, part 2 (all tested)
 

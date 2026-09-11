@@ -320,6 +320,23 @@ export function renderSettings(state) {
         <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="jumuah">${icon('moon', { size: 14 })} ${t('preset.jumuah', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="dailyVerse">${icon('book', { size: 14 })} ${t('preset.dailyVerse', lang)}</button>
       </div>
+      ${(() => {
+        const jr =
+          s.jumuahReminder && typeof s.jumuahReminder === 'object'
+            ? s.jumuahReminder
+            : { enabled: false, time: '09:00' };
+        const dv =
+          s.dailyVerseNotification && typeof s.dailyVerseNotification === 'object'
+            ? s.dailyVerseNotification
+            : { enabled: false, time: '08:00' };
+        return `
+      ${clickToggleRow('toggle-jumuah-reminder', {}, t('settings.jumuahReminder', lang), jr.enabled === true)}
+      <label class="field">${escapeHTML(t('settings.jumuahReminderTime', lang))}<input type="time" class="input" value="${escapeHTML(jr.time || '09:00')}" data-bind="jumuah-reminder-time" /></label>
+      ${clickToggleRow('toggle-dailyverse-reminder', {}, t('settings.dailyVerseReminder', lang), dv.enabled === true)}
+      <label class="field">${escapeHTML(t('settings.dailyVerseReminderTime', lang))}<input type="time" class="input" value="${escapeHTML(dv.time || '08:00')}" data-bind="dailyverse-reminder-time" /></label>
+      ${clickToggleRow('toggle-zakatfitr-reminder', {}, t('settings.zakatFitrReminder', lang), s.zakatFitrReminder === true)}
+      <p class="panel__subtext">${escapeHTML(t('settings.zakatFitrHint', lang))}</p>`;
+      })()}
       ${reminders || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
     </details>
 

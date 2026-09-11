@@ -140,6 +140,30 @@ export const clickHandlers = {
     openModal(reminderFormHTML(lang), { labelledBy: 'modal-title-reminder' });
   },
 
+  // (v5.2.28) First-class clock settings behind the Settings toggles —
+  // the scheduler reads them directly (services/notifications.js). The
+  // one-tap presets above cover the same ground through generic
+  // reminders/notes; these are the discoverable always-there path.
+  'toggle-jumuah-reminder': () => {
+    const cur = store.getState().settings.jumuahReminder || { enabled: false, time: '09:00' };
+    store.dispatch(actions.updateSettings({ jumuahReminder: { ...cur, enabled: !cur.enabled } }));
+  },
+
+  'toggle-dailyverse-reminder': () => {
+    const cur = store.getState().settings.dailyVerseNotification || {
+      enabled: false,
+      time: '08:00',
+    };
+    store.dispatch(
+      actions.updateSettings({ dailyVerseNotification: { ...cur, enabled: !cur.enabled } })
+    );
+  },
+
+  'toggle-zakatfitr-reminder': () => {
+    const cur = store.getState().settings.zakatFitrReminder === true;
+    store.dispatch(actions.updateSettings({ zakatFitrReminder: !cur }));
+  },
+
   // (v5.2.0) One-tap notification presets on the existing scheduler —
   // Jumu'ah (recurring Friday calendar note) and daily verse (morning
   // reminder deep-linking home). Idempotent: re-tapping reports "already".
@@ -274,6 +298,29 @@ export const changeHandlers = [
       if (ds.key === 'reciterCompare' && surahPlayback.isActive()) {
         store.dispatch(actions.setSurahPlayback(surahPlayback.setCompare(el.checked)));
       }
+    },
+  },
+  {
+    // (v5.2.28) first-class clock-setting times (Jumu'ah, daily verse) —
+    // same clock-regex guard as the prayer quiet-hours arms in worship.js.
+    sel: '[data-bind="jumuah-reminder-time"]',
+    run: (ds, el) => {
+      if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(el.value)) return;
+      const cur = store.getState().settings.jumuahReminder || { enabled: false, time: '09:00' };
+      store.dispatch(actions.updateSettings({ jumuahReminder: { ...cur, time: el.value } }));
+    },
+  },
+  {
+    sel: '[data-bind="dailyverse-reminder-time"]',
+    run: (ds, el) => {
+      if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(el.value)) return;
+      const cur = store.getState().settings.dailyVerseNotification || {
+        enabled: false,
+        time: '08:00',
+      };
+      store.dispatch(
+        actions.updateSettings({ dailyVerseNotification: { ...cur, time: el.value } })
+      );
     },
   },
   {

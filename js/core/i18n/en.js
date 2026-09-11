@@ -83,6 +83,15 @@ export const en = {
   'ramadan.fastTrackerHint':
     'Tap today\u2019s circle to mark the fast as kept. Previous days stay as recorded — this is your private log.',
   'ramadan.fastDay': 'Day {n} of Ramadan',
+  'ramadan.plannerTitle': 'Taraweeh & night worship',
+  'ramadan.plannerHint':
+    'Your private night-worship log for this Ramadan. Tap an elapsed night to mark it — future nights unlock day by day.',
+  'ramadan.taraweeh': 'Taraweeh nights',
+  'ramadan.taraweehNight': 'Taraweeh night {n}',
+  'ramadan.itikaf': "I'tikaf days",
+  'ramadan.itikafDay': "I'tikaf day {n}",
+  'ramadan.lastTen': 'Last-ten nights worship',
+  'ramadan.lastTenDay': 'Night {n} of Ramadan',
   'ramadan.lastTenNights': 'Day {n} — the last ten nights have begun',
   'ramadan.qadrTonight': 'Tonight is an odd night — seek Laylat al-Qadr',
   'ramadan.notYet': 'Ramadan has not begun',
@@ -401,6 +410,8 @@ export const en = {
   'zakat.fitrTotal': 'Fitr total',
   'zakat.fitrNote':
     'Paid before the Eid prayer, one sa\u2019 (about 2.5–3 kg) of the local staple per person.',
+  'zakat.fitrReminderTitle': 'Zakat al-Fitr — due before Eid',
+  'zakat.fitrReminderBody': 'Pay one sa‘ of the local staple per person before the Eid prayer.',
   'zakat.historyTitle': 'Saved calculations',
   'zakat.disclaimer':
     'Estimates follow mainstream Hanafi practice (2.5%, lunar-year holding). Please confirm figures with a qualified scholar for your situation.',
@@ -920,6 +931,12 @@ export const en = {
   'settings.audioManager': 'Full surahs: 314 reciters & offline downloads',
   'settings.notifications': 'Notifications & Reminders',
   'settings.addReminder': 'Add Reminder',
+  'settings.jumuahReminder': 'Friday reminder (Surah Al-Kahf)',
+  'settings.jumuahReminderTime': 'Friday reminder time',
+  'settings.dailyVerseReminder': 'Daily verse notification',
+  'settings.dailyVerseReminderTime': 'Daily verse time',
+  'settings.zakatFitrReminder': 'Zakat al-Fitr reminder (28 Ramadan)',
+  'settings.zakatFitrHint': 'Fires once on the morning of 28 Ramadan each year.',
   'preset.jumuah': 'Friday: Surah Al-Kahf reminder',
   'preset.dailyVerse': 'Daily verse notification',
   'preset.jumuahTitle': 'Jumu‘ah: read Surah Al-Kahf',

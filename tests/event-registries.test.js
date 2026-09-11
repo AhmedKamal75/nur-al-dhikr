@@ -25,8 +25,8 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (27 change + 10 input)', () => {
-  assert.equal(changeRegistry.length, 27);
+test('D: every arm survived the move (29 change + 10 input)', () => {
+  assert.equal(changeRegistry.length, 29);
   assert.equal(inputRegistry.length, 10);
 });
 

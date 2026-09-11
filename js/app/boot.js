@@ -218,7 +218,9 @@ export async function boot() {
       () => store.getState().calendarNotes,
       () => store.getState().settings.prayer,
       () => store.getState().zakatHistory,
-      () => store.getState().fastingPrefs
+      () => store.getState().fastingPrefs,
+      // (v5.2.28) first-class clock settings (Jumu'ah, daily verse, Fitr).
+      () => store.getState().settings
     );
 
     // (review v3.21): a settings-change re-arm is debounced 250ms; a tab

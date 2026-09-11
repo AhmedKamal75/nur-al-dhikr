@@ -39,7 +39,9 @@ q0  : the start state                   — HOME, or the deep-linked route
 
 A concrete state is **`(route, layer)`** where:
 
-- **`route`** ∈ ROUTES (§2.1) — the 30 hash routes; it is what the URL says.
+- **`route`** ∈ ROUTES (§2.1) — the 33 hash routes (34 table rows: the
+  classic-reader list and `quran/:id` share one VIEWS entry); it is what
+  the URL says.
 - **`layer`** ∈ `{ ∅, modal, drawer }` — transient overlays stacked ON TOP of
   the route (§2.2). At most one modal and one drawer at a time; a modal can
   re-open itself (settings panels) but never stacks a second panel.
@@ -86,7 +88,7 @@ tables below need to be precise we write them as `(mushaf, ∅, fullscreen)`.
 
 ## 2. Q — the states
 
-### 2.1 ROUTES (31) — grouped by region of the app
+### 2.1 ROUTES (34) — grouped by region of the app
 
 | Group   | Route              | Params         | Reached from                                | Back path (I1 owner)                 |
 | ------- | ------------------ | -------------- | ------------------------------------------- | ------------------------------------ |

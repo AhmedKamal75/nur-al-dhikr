@@ -161,7 +161,11 @@ export function startScheduler(
   getCalendarNotes = () => [],
   getPrayerSettings = () => null,
   getZakatHistory = () => [],
-  getFastingPrefs = () => null
+  getFastingPrefs = () => null,
+  // (v5.2.28) first-class clock settings with their own scheduler blocks
+  // below (Jumu'ah, daily verse, Zakat al-Fitr) — persisted since v4.4 but
+  // unread until this wave. Accessor, like every other getter here.
+  getAppSettings = () => null
 ) {
   stopScheduler();
   // v3.8: warm the "does the user have custom adhan recordings?" cache once
@@ -180,7 +184,8 @@ export function startScheduler(
       getCalendarNotes(),
       getPrayerSettings(),
       getZakatHistory(),
-      getFastingPrefs()
+      getFastingPrefs(),
+      getAppSettings()
     );
   checkTimer = setInterval(tickFn, 30 * 1000);
   tickFn();
@@ -224,8 +229,16 @@ export function shouldFire(hhmm, now) {
   return Number.isFinite(since) && since >= 0 && since <= CATCHUP_MINUTES;
 }
 
-function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fastingPrefs) {
-  const now = new Date();
+function tick(
+  reminders,
+  lang,
+  calendarNotes,
+  prayerSettings,
+  zakatHistory,
+  fastingPrefs,
+  appSettings = null,
+  now = new Date()
+) {
   const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   const dayKey = `${now.toDateString()}|${hhmm.slice(0, 5)}`;
   const todayKey = dateKey(now);
@@ -403,6 +416,47 @@ function tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fast
     }
   }
 
+  // (v5.2.28) First-class clock settings (persisted since v4.4, unread
+  // until now — the one-tap presets cover the same ground through generic
+  // reminders/notes, but these toggles are the discoverable Settings path).
+  // Silent notifications only (no adhan audio): the generic reminder path
+  // they parallel never plays sound either.
+  const jumuah = appSettings?.jumuahReminder;
+  if (jumuah?.enabled === true && now.getDay() === 5 && shouldFire(jumuah.time, now)) {
+    const fireKey = `jumuah|${todayKey}`;
+    if (!wasDayFired(fireKey, todayKey)) {
+      markDayFired(fireKey, todayKey);
+      notify(t('preset.jumuahTitle', lang), t('preset.jumuahBody', lang), 'jumuah');
+    }
+  }
+
+  const dailyVerse = appSettings?.dailyVerseNotification;
+  if (dailyVerse?.enabled === true && shouldFire(dailyVerse.time, now)) {
+    const fireKey = `dailyVerse|${todayKey}`;
+    if (!wasDayFired(fireKey, todayKey)) {
+      markDayFired(fireKey, todayKey);
+      notify(
+        t('preset.dailyVerseLabel', lang),
+        t('preset.dailyVerseBody', lang),
+        'daily-verse',
+        '#/'
+      );
+    }
+  }
+
+  // Zakat al-Fitr: once on the morning of 28 Ramadan (day-granular like
+  // the fasting day-before block — after 08:00 local, first pass wins).
+  if (appSettings?.zakatFitrReminder === true) {
+    const hijriNow = toHijri(now);
+    if (hijriNow.month === 9 && hijriNow.day === 28 && minutesSince('08:00', now) >= 0) {
+      const fireKey = `zakat-fitr|${todayKey}`;
+      if (!wasDayFired(fireKey, todayKey)) {
+        markDayFired(fireKey, todayKey);
+        notify(t('zakat.fitrReminderTitle', lang), t('zakat.fitrReminderBody', lang), 'zakat-fitr');
+      }
+    }
+  }
+
   // prevent unbounded growth of the fired-set across a long-running tab.
   // (review v3.21): clear() re-fired every reminder still inside its
   // catch-up window 30s later — drop the oldest half instead (a Set
@@ -423,9 +477,20 @@ export function tickForTests(
   calendarNotes,
   prayerSettings,
   zakatHistory,
-  fastingPrefs
+  fastingPrefs,
+  appSettings = null,
+  now = new Date()
 ) {
-  return tick(reminders, lang, calendarNotes, prayerSettings, zakatHistory, fastingPrefs);
+  return tick(
+    reminders,
+    lang,
+    calendarNotes,
+    prayerSettings,
+    zakatHistory,
+    fastingPrefs,
+    appSettings,
+    now
+  );
 }
 
 /** Build a default reminder object for the editor UI.

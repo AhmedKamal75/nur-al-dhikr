@@ -233,6 +233,20 @@ export const clickHandlers = {
     if (state.settings.hapticsEnabled) vibrate(10);
   },
 
+  // (v5.2.27) Ramadan planner: taraweeh / i'tikaf / last-ten-night dots.
+  // Clamped at the handler edge like the fasting toggle's dataset values —
+  // a forged data-slice/key/day no-ops in the reducer instead of writing.
+  'ramadan-planner-toggle': (ds) => {
+    const allowed = ['taraweehLog', 'itikafLog', 'lastTenLog'];
+    if (!allowed.includes(ds.slice)) return;
+    if (!/^\d{4,5}-\d{1,2}$/.test(String(ds.key || ''))) return;
+    const day = parseInt(ds.day, 10);
+    if (!Number.isInteger(day) || day < 1 || day > 30) return;
+    store.dispatch(actions.ramadanPlannerToggle(ds.slice, ds.key, String(day)));
+    const state = store.getState();
+    if (state.settings.hapticsEnabled) vibrate(10);
+  },
+
   'toggle-ramadan-alert': (ds) => {
     const current = store.getState().settings.prayer.ramadanAlerts || {
       suhoor: false,

@@ -2,6 +2,46 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.28 — first-class reminder settings (B-2) + doc-drift corrections (D-1/D-8)
+
+`jumuahReminder`, `dailyVerseNotification`, and `zakatFitrReminder`
+were persisted and sanitized since v4.4 but never read and never shown —
+the one-tap presets covered the same ground through generic reminders
+and notes. All three now fire through `services/notifications.js` on
+the existing 30s tick: Friday-gated Jumu'ah (Surah Al-Kahf copy),
+any-morning daily verse (taps through to Home), and a once-per-year
+Zakat al-Fitr ping on the morning of 28 Ramadan — silent
+notifications with day-persisted dedup, no adhan audio (the generic
+reminder path they parallel never plays sound either). Settings →
+Notifications gains three toggles plus clock-time inputs for the two
+daily ones (`toggle-jumuah-reminder` / `toggle-dailyverse-reminder` /
+`toggle-zakatfitr-reminder` handlers, two new change-registry arms);
+`tick`/`tickForTests` take an `appSettings` accessor plus an injectable
+`now` seam, wired in `app/boot.js`. Ten new EN+AR keys. Pinned by new
+`tests/reminder-settings.test.js` (4: Friday fire + dedup, Saturday /
+disabled / garbage silence, verse fire + dedup, Fitr 28th-morning-only)
+and the change-registry count 27 → 29. Docs: `APP-FLOW.md` route count
+corrected to 33 routes / 34 rows, six stale `- [ ]` duplicates in
+`AUDITS.md` annotated as superseded. Markers 5.2.27 → 5.2.28 + re-stamp.
+
+## v5.2.27 — Ramadan planner UI (B-1 buried-feature recovery)
+
+The store has persisted `taraweehLog` / `itikafLog` / `lastTenLog`
+since v4.4 (actions, reducer, sanitizer, About-page copy) but no view
+ever rendered them — the About screen advertised "taraweeh and
+last-ten-nights logs" with no button anywhere. The Ramadan view now
+renders a planner section in-season (same dot-grid idiom as the fasting
+tracker, no new CSS): Taraweeh nights 1–30, I'tikaf days 1–30, and
+last-ten-nights worship 21–30, each with a kept/total badge; elapsed
+days backfill, future days stay disabled. New `ramadan-planner-toggle`
+handler (dataset-clamped at the edge like the fasting toggle) drives
+the pre-existing `RAMADAN_PLANNER_TOGGLE` action, whose reducer now
+validates slice/key/day instead of writing blindly (hostile inputs
+no-op, toggle-off deletes the key rather than storing false). Nine new
+EN+AR keys (`ramadan.planner*`, `taraweeh*`, `itikaf*`, `lastTen*`).
+Pinned by 4 new `tests/ramadan.test.js` blocks (sanitizer, counts,
+reducer validation, 70-dot render). Markers 5.2.26 → 5.2.27 + re-stamp.
+
 ## v5.2.26 — hadith of the day: real spread + shuffle button
 
 The card felt frozen for two compounding reasons: the pool is only

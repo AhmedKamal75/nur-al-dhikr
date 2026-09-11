@@ -30,6 +30,7 @@ import {
   keptFastCount,
   ramadanLogKey,
 } from '../domain/ramadan.js';
+import { monthEntry, taraweehCount, itikafCount } from '../domain/ramadanPlanner.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 
 /**
@@ -126,6 +127,59 @@ function trackerPanel(state, lang, hijri, times = null, totalDays = null) {
     </div>`
         : ''
     }
+  </section>`;
+}
+
+/**
+ * (v5.2.27) Ramadan planner — the taraweeh / i'tikaf / last-ten-nights
+ * logs the store has persisted since v4.4 (`domain/ramadanPlanner.js`,
+ * `RAMADAN_PLANNER_TOGGLE`) but no view ever rendered. Same dot-grid idiom
+ * as the fasting tracker (no new CSS): backfill allowed for elapsed days,
+ * future days disabled, per-section kept/total badge.
+ */
+export function plannerPanel(state, lang, hijri, total) {
+  const key = ramadanLogKey(hijri.year);
+  const taraweeh = monthEntry(state.taraweehLog, key);
+  const itikaf = monthEntry(state.itikafLog, key);
+  const lastTen = monthEntry(state.lastTenLog, key);
+  const taraweehKept = taraweehCount(key, state.taraweehLog);
+  const itikafKept = itikafCount(key, state.itikafLog);
+  const lastTenKept = Object.values(lastTen).filter(Boolean).length;
+  const lastTenTotal = Math.max(0, total - 20);
+
+  const loggable = (day) => day <= hijri.day;
+  const dots = (entry, slice, labelKey, from = 1, to = total) => {
+    const cells = [];
+    for (let d = from; d <= to; d += 1) {
+      const on = !!entry[String(d)];
+      cells.push(`
+      <button type="button" class="fast-dot ${on ? 'fast-dot--kept' : ''}"
+        data-action="ramadan-planner-toggle" data-slice="${slice}" data-key="${key}" data-day="${d}"
+        aria-pressed="${on}" aria-label="${t(labelKey, lang, { n: d })}"
+        ${loggable(d) ? '' : 'disabled'} title="${t(labelKey, lang, { n: d })}"></button>`);
+    }
+    return cells.join('');
+  };
+
+  return `
+  <section class="panel panel--ramadan-planner">
+    <div class="panel__header"><h2>${t('ramadan.plannerTitle', lang)}</h2></div>
+    <p class="panel__subtext">${t('ramadan.plannerHint', lang)}</p>
+    <div class="panel__header panel__header--sub">
+      <h3>${t('ramadan.taraweeh', lang)}</h3>
+      <span class="streak-badge">${icon('check', { size: 14 })} ${taraweehKept} / ${total}</span>
+    </div>
+    <div class="fast-dot-grid">${dots(taraweeh, 'taraweehLog', 'ramadan.taraweehNight')}</div>
+    <div class="panel__header panel__header--sub">
+      <h3>${t('ramadan.itikaf', lang)}</h3>
+      <span class="streak-badge">${icon('check', { size: 14 })} ${itikafKept} / ${total}</span>
+    </div>
+    <div class="fast-dot-grid">${dots(itikaf, 'itikafLog', 'ramadan.itikafDay')}</div>
+    <div class="panel__header panel__header--sub">
+      <h3>${t('ramadan.lastTen', lang)}</h3>
+      <span class="streak-badge">${icon('check', { size: 14 })} ${lastTenKept} / ${lastTenTotal}</span>
+    </div>
+    <div class="fast-dot-grid">${dots(lastTen, 'lastTenLog', 'ramadan.lastTenDay', 21, total)}</div>
   </section>`;
 }
 
@@ -264,6 +318,7 @@ export function renderRamadan(state) {
     </div>
 
     ${trackerPanel(state, lang, hijri, times, total)}
+    ${plannerPanel(state, lang, hijri, total)}
     ${alertsPanel(state, lang, times)}
     ${linksPanel(lang)}`;
   } else {

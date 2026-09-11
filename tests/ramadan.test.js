@@ -19,6 +19,15 @@ import {
   ramadanAlertTimes,
 } from '../js/domain/ramadan.js';
 import { toGregorian } from '../js/domain/calendar.js';
+import {
+  sanitizeHijriDayLog,
+  monthEntry,
+  taraweehCount,
+  itikafCount,
+  isLastTenNights,
+} from '../js/domain/ramadanPlanner.js';
+import { reduceWorship } from '../js/core/state/slices/worship.js';
+import { plannerPanel } from '../js/views/ramadan.js';
 
 test('ramadanInfo detects a known Ramadan date (1 Ramadan 1447 ≈ 19 Feb 2028 tabular)', () => {
   // Tabular-civil conversion, so derive the expected date instead of
@@ -137,4 +146,84 @@ test('ramadanAlertTimes: never negative, bad offset falls back to 30', () => {
   assert.equal(ramadanAlertTimes({ fajr: 0.2, maghrib: 18 }, 60).suhoor, 0);
   const weird = ramadanAlertTimes({ fajr: 5, maghrib: 18 }, 'nope');
   assert.equal(weird.suhoor, 4.5); // 30-minute default
+});
+
+/* (v5.2.27) Ramadan planner — the v4.4 logs with no UI until this wave. */
+
+test('planner domain: sanitize keeps only numeric day:true entries under valid keys', () => {
+  const out = sanitizeHijriDayLog({
+    '1447-9': { 1: true, 2: false, xx: true, 31: true },
+    nope: { 1: true },
+    '1447-9-extra': { 1: true },
+  });
+  assert.deepEqual(out, { '1447-9': { 1: true, 31: true } });
+  assert.deepEqual(monthEntry(out, '1447-9'), { 1: true, 31: true });
+  assert.deepEqual(monthEntry(out, '1448-9'), {});
+});
+
+test('planner domain: counts + last-ten gate', () => {
+  const key = ramadanLogKey(1447);
+  const taraweehLog = { [key]: { 1: true, 2: true } };
+  const itikafLog = { [key]: { 27: true } };
+  assert.equal(taraweehCount(key, taraweehLog), 2);
+  assert.equal(itikafCount(key, itikafLog), 1);
+  assert.equal(taraweehCount(key, {}), 0);
+  assert.equal(isLastTenNights({ month: 9, day: 20 }), false);
+  assert.equal(isLastTenNights({ month: 9, day: 21 }), true);
+  assert.equal(isLastTenNights({ month: 8, day: 27 }), false);
+});
+
+test('RAMADAN_PLANNER_TOGGLE: toggles one day off/on per slice, hostile inputs no-op', () => {
+  const base = { taraweehLog: {}, itikafLog: {}, lastTenLog: {} };
+  const key = '1447-9';
+  const on = reduceWorship(base, {
+    type: 'RAMADAN_PLANNER_TOGGLE',
+    slice: 'taraweehLog',
+    key,
+    day: '5',
+  });
+  assert.equal(on.taraweehLog[key]['5'], true);
+  assert.deepEqual(on.itikafLog, {});
+  const off = reduceWorship(on, {
+    type: 'RAMADAN_PLANNER_TOGGLE',
+    slice: 'taraweehLog',
+    key,
+    day: '5',
+  });
+  assert.equal(off.taraweehLog[key]['5'], undefined);
+  // Hostile: unknown slice, malformed key, out-of-range day — all no-ops.
+  for (const bad of [
+    { slice: 'settings', key, day: '5' },
+    { slice: '__proto__', key, day: '5' },
+    { slice: 'taraweehLog', key: '__proto__', day: '5' },
+    { slice: 'taraweehLog', key, day: '0' },
+    { slice: 'taraweehLog', key, day: '31' },
+    { slice: 'taraweehLog', key, day: 'abc' },
+  ]) {
+    assert.equal(reduceWorship(base, { type: 'RAMADAN_PLANNER_TOGGLE', ...bad }), base);
+  }
+});
+
+test('plannerPanel: renders three dot grids with the planner toggle action', () => {
+  const hijri = { year: 1447, day: 25 };
+  const html = plannerPanel({ taraweehLog: {}, itikafLog: {}, lastTenLog: {} }, 'en', hijri, 30);
+  assert.ok(html.includes('ramadan.plannerTitle') === false, 'titles are translated, not keys');
+  assert.ok(html.includes('data-action="ramadan-planner-toggle"'));
+  assert.ok(html.includes('data-slice="taraweehLog"'));
+  assert.ok(html.includes('data-slice="itikafLog"'));
+  assert.ok(html.includes('data-slice="lastTenLog"'));
+  // 30 taraweeh + 30 itikaf + 10 last-ten nights (21..30).
+  const dots = html.match(/ramadan-planner-toggle/g).length;
+  assert.equal(dots, 70);
+  // Future days disabled: day 26+ of the 30-day grids carry the attribute.
+  assert.ok(html.includes('data-day="26"'));
+  // A kept night renders pressed.
+  const key = ramadanLogKey(1447);
+  const kept = plannerPanel(
+    { taraweehLog: { [key]: { 1: true } }, itikafLog: {}, lastTenLog: {} },
+    'en',
+    hijri,
+    30
+  );
+  assert.ok(kept.includes('aria-pressed="true"'));
 });
