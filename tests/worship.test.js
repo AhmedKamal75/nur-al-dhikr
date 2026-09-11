@@ -6,9 +6,12 @@ import {
   prayersLoggedToday,
   sadaqahGivenToday,
   sanitizeSadaqahLog,
+  cleanSadaqahAmount,
   fastedToday,
   worshipTodayRows,
 } from '../js/domain/worship.js';
+import { reduceWorship } from '../js/core/state/slices/worship.js';
+import { buildSadaqahEditor } from '../js/views/home.js';
 import { toHijri } from '../js/domain/calendar.js';
 import { dateKey, addDays } from '../js/core/utils.js';
 
@@ -109,6 +112,75 @@ describe('sadaqah quick-log', () => {
     const many = Array.from({ length: 600 }, (_, i) => ({ id: `s${i}`, ts: i }));
     assert.equal(sanitizeSadaqahLog(many).length, 500);
     assert.deepEqual(sanitizeSadaqahLog(null), []);
+  });
+
+  test('amounts coerce to positive cents or null (never summed, never thrown)', () => {
+    assert.equal(cleanSadaqahAmount(null), null);
+    assert.equal(cleanSadaqahAmount(''), null);
+    assert.equal(cleanSadaqahAmount('xx'), null);
+    assert.equal(cleanSadaqahAmount(0), null);
+    assert.equal(cleanSadaqahAmount(-5), null);
+    assert.equal(cleanSadaqahAmount(10), 10);
+    assert.equal(cleanSadaqahAmount('2.5'), 2.5);
+    assert.equal(cleanSadaqahAmount(2.555), 2.56, 'rounded to cents');
+    const clean = sanitizeSadaqahLog([{ id: 'a', ts: 1, amount: '3.5', note: '' }]);
+    assert.equal(clean[0].amount, 3.5);
+    const junk = sanitizeSadaqahLog([{ id: 'a', ts: 1, amount: 'xx' }]);
+    assert.equal(junk[0].amount, null);
+    const legacy = sanitizeSadaqahLog([{ id: 'a', ts: 1, note: '' }]);
+    assert.equal(legacy[0].amount, null, 'pre-amount entries read as amount-less');
+  });
+
+  test('SADAQAH_LOG stores amount+note; SADAQAH_UPDATE patches hostile-safely', () => {
+    const base = { sadaqahLog: [] };
+    const logged = reduceWorship(base, {
+      type: 'SADAQAH_LOG',
+      note: 'food',
+      amount: '12.5',
+    });
+    assert.equal(logged.sadaqahLog.length, 1);
+    assert.equal(logged.sadaqahLog[0].amount, 12.5);
+    assert.equal(logged.sadaqahLog[0].note, 'food');
+    const id = logged.sadaqahLog[0].id;
+    const updated = reduceWorship(logged, {
+      type: 'SADAQAH_UPDATE',
+      id,
+      patch: { amount: '7', note: 'x'.repeat(500) },
+    });
+    assert.equal(updated.sadaqahLog[0].amount, 7);
+    assert.equal(updated.sadaqahLog[0].note.length, 200);
+    // Hostile: unknown id, missing id, empty patch, garbage amount.
+    assert.equal(reduceWorship(logged, { type: 'SADAQAH_UPDATE', id: 'nope', patch: {} }), logged);
+    assert.equal(reduceWorship(logged, { type: 'SADAQAH_UPDATE', patch: {} }), logged);
+    assert.equal(
+      reduceWorship(logged, { type: 'SADAQAH_UPDATE', id, patch: {} }),
+      logged,
+      'empty patch no-ops'
+    );
+    const nulled = reduceWorship(logged, {
+      type: 'SADAQAH_UPDATE',
+      id,
+      patch: { amount: 'junk' },
+    });
+    assert.equal(nulled.sadaqahLog[0].amount, null);
+    assert.equal(nulled.sadaqahLog[0].note, 'food', 'untouched fields survive');
+  });
+
+  test('sadaqah editor renders the form, history rows, and delete actions', () => {
+    const state = {
+      settings: { language: 'en' },
+      sadaqahLog: [{ id: 'a', ts: TODAY.getTime(), amount: 5, note: 'masjid' }],
+    };
+    const html = buildSadaqahEditor(state);
+    assert.ok(html.includes('data-form="sadaqah-entry"'));
+    assert.ok(html.includes('name="amount"'));
+    assert.ok(html.includes('name="note"'));
+    assert.ok(html.includes('masjid'));
+    assert.ok(html.includes('data-action="sadaqah-remove" data-id="a"'));
+    const empty = buildSadaqahEditor({ settings: { language: 'en' }, sadaqahLog: [] });
+    assert.ok(!empty.includes('sadaqah-remove'));
+    const ar = buildSadaqahEditor({ settings: { language: 'ar' }, sadaqahLog: [] });
+    assert.ok(ar.includes('id="modal-title-sadaqah"'));
   });
 });
 

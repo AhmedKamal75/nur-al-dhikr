@@ -36,6 +36,20 @@ export function downloadBackup(persistedState, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
+/** Trigger a browser download of an exported plan JSON (family sharing). */
+export function downloadPlan(planObj, filename) {
+  const blob = new Blob([JSON.stringify(planObj, null, 2)], { type: BACKUP_MIME });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = filename || `nur-al-dhikr-plan-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
 /** Parse and lightly validate an uploaded backup file's text content. */
 export function parseBackup(text) {
   let json;

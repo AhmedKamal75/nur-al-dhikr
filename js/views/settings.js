@@ -391,6 +391,8 @@ export function renderSettings(state) {
         <button type="button" class="btn btn--secondary" data-action="verify-backup">${icon('check', { size: 16 })} ${t('settings.dataVerify', lang)}</button>
         <button type="button" class="btn btn--secondary" data-action="export-backup">${icon('download', { size: 16 })} ${t('settings.exportBackup', lang)}</button>
         <button type="button" class="btn btn--secondary" data-action="import-backup">${icon('upload', { size: 16 })} ${t('settings.importBackup', lang)}</button>
+        <button type="button" class="btn btn--secondary" data-action="export-plan">${icon('share', { size: 16 })} ${t('settings.exportPlan', lang)}</button>
+        <button type="button" class="btn btn--secondary" data-action="import-plan">${icon('upload', { size: 16 })} ${t('settings.importPlan', lang)}</button>
         <button type="button" class="btn btn--danger" data-action="reset-all-data">${icon('trash', { size: 16 })} ${t('settings.resetData', lang)}</button>
       </div>
     </details>

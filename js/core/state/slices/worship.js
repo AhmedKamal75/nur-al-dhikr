@@ -12,6 +12,7 @@
 import { CHECKLIST_ITEMS } from '../../config.js';
 import { dateKey, uid } from '../../utils.js';
 import { FASTING_CATEGORIES } from '../../../domain/fasting.js';
+import { cleanSadaqahAmount } from '../../../domain/worship.js';
 import { PRAYER_KEYS, cycleState } from '../../../domain/prayerLog.js';
 import {
   addBacklog as addQadaBacklog,
@@ -54,15 +55,42 @@ export function reduceWorship(state, action) {
     }
 
     // Quick-log sadaqah (v3.19) — entries are timestamps with an optional
-    // note; "given today" counts entries, never amounts (no amount field).
+    // amount + note (v5.2.29 editor). "Given today" counts entries, never
+    // amounts: gifts may mix currencies, so a summed total would mislead.
     case 'SADAQAH_LOG':
       return {
         ...state,
         sadaqahLog: [
-          { id: uid('sadaqah'), ts: Date.now(), note: String(action.note || '').slice(0, 200) },
+          {
+            id: uid('sadaqah'),
+            ts: Date.now(),
+            amount: cleanSadaqahAmount(action.amount),
+            note: String(action.note || '').slice(0, 200),
+          },
           ...state.sadaqahLog,
         ].slice(0, 500),
       };
+    case 'SADAQAH_UPDATE': {
+      if (typeof action.id !== 'string' || !action.id) return state;
+      const patch = action.patch && typeof action.patch === 'object' ? action.patch : {};
+      if (!('amount' in patch) && !('note' in patch)) return state;
+      let touched = false;
+      const sadaqahLog = state.sadaqahLog.map((e) => {
+        if (!e || e.id !== action.id) return e;
+        touched = true;
+        return {
+          ...e,
+          amount: 'amount' in patch ? cleanSadaqahAmount(patch.amount) : (e.amount ?? null),
+          note:
+            'note' in patch
+              ? String(patch.note || '').slice(0, 200)
+              : typeof e.note === 'string'
+                ? e.note
+                : '',
+        };
+      });
+      return touched ? { ...state, sadaqahLog } : state;
+    }
     case 'SADAQAH_REMOVE':
       return { ...state, sadaqahLog: state.sadaqahLog.filter((e) => e.id !== action.id) };
 

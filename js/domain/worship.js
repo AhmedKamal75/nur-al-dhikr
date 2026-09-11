@@ -10,8 +10,10 @@
  *             MUSHAF_PAGE_VISITED dispatch that feeds the khatma — one
  *             write path, no second progress system)
  *  - Fasting: state.ramadanLog (the shared fasting log, v3.18)
- *  - Sadaqah: state.sadaqahLog (new, quick-log; a full amount/note editor
- *             is a recorded follow-up)
+ *  - Sadaqah: state.sadaqahLog (quick-log + amount/note editor, v3.19
+ *             extended v5.2.29 — entries carry an optional amount; totals
+ *             are never summed across entries, since gifts may mix
+ *             currencies and a summed number would pretend otherwise)
  *
  * Everything here is pure and DOM-free; hostile shapes degrade to zeros.
  */
@@ -21,6 +23,18 @@ import { PRAYER_KEYS, prayerState } from './prayerLog.js';
 import { toHijri } from './calendar.js';
 
 export const SADAQAH_LOG_CAP = 500;
+export const SADAQAH_AMOUNT_CAP = 1e12;
+
+/**
+ * Coerce a sadaqah amount: a positive finite number rounded to cents, or
+ * null for absent/garbage. Amounts are display-only per entry — never
+ * summed (mixed currencies make a total dishonest).
+ */
+export function cleanSadaqahAmount(raw) {
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.min(SADAQAH_AMOUNT_CAP, Math.round(n * 100) / 100);
+}
 
 /** Defensive page-count read from a dailyHistory entry. */
 function pagesOf(entry) {
@@ -82,6 +96,7 @@ export function sanitizeSadaqahLog(raw, cap = SADAQAH_LOG_CAP) {
     .map((e) => ({
       id: typeof e.id === 'string' && e.id ? e.id : `sadaqah-${e.ts}`,
       ts: e.ts,
+      amount: cleanSadaqahAmount(e.amount),
       note: typeof e.note === 'string' ? e.note.slice(0, 200) : '',
     }))
     .sort((a, b) => b.ts - a.ts)

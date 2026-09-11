@@ -72,6 +72,8 @@ export const rt = {
   hadithQueryTimer: null,
   pendingAutoAdvanceTimer: null,
   pendingImportPayload: null,
+  // (v5.2.29) family plan sharing: the sanitized plan awaiting confirm.
+  pendingPlanPayload: null,
   // Long-press ayah quick actions: pending timer id, press anchor, and the
   // timestamp until which click dispatch stays suppressed (the release
   // after a long-press must not also trigger the underlying control).

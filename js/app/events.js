@@ -1,6 +1,6 @@
 import { rt } from './rt.js';
 import { closeNavDrawer } from './drawer.js';
-import { handleAdhanImport, handleImportFile } from './fileImports.js';
+import { handleAdhanImport, handleImportFile, handleImportPlanFile } from './fileImports.js';
 import { handleFocusKeydown, navigateFocusAdjacent } from './focusRuntime.js';
 import { handlePromptForm, formHandlers } from './forms.js';
 import { playFlipSound } from './inputs.js';
@@ -473,6 +473,9 @@ export function bindGlobalEvents() {
     const target = e.target;
     if (target.id === 'backup-file-input' && target.files?.[0]) {
       dispatchPromise('backup-file-input', handleImportFile(target.files[0]));
+    }
+    if (target.id === 'plan-file-input' && target.files?.[0]) {
+      dispatchPromise('plan-file-input', handleImportPlanFile(target.files[0]));
     }
     if (target.id === 'adhan-file-input' && target.files?.[0]) {
       dispatchPromise(

@@ -81,6 +81,7 @@ export function worshipTodayCardHTML(state) {
       return `
       <div class="worship-row worship-row--actions">
         ${inner}
+        <button type="button" class="icon-btn icon-btn--sm" data-action="sadaqah-open-editor" aria-label="${t('worship.sadaqahEditor', lang)}" title="${t('worship.sadaqahEditor', lang)}">${icon('list', { size: 13 })}</button>
         ${
           sadaqah.done
             ? `<button type="button" class="icon-btn icon-btn--sm" data-action="sadaqah-remove" data-id="${escapeHTML(newestTodayId ?? '')}" aria-label="${t('worship.undo', lang)}" title="${t('worship.undo', lang)}" ${newestTodayId ? '' : 'disabled'}>${icon('close', { size: 13 })}</button>`
@@ -544,4 +545,53 @@ export function hifzReviewCardHTML(state) {
         : ''
     }
   </section>`;
+}
+
+/**
+ * (v5.2.29) Sadaqah amount/note editor — the recorded v3.19 follow-up.
+ * A modal form (amount + note, both optional) over the recent-gifts list;
+ * amounts are display-only per entry and never summed (gifts may mix
+ * currencies). Pure template — `sadaqah-entry` in app/forms.js logs,
+ * `sadaqah-remove` deletes (rebuilt in place when the modal is open).
+ */
+export function buildSadaqahEditor(state) {
+  const lang = state.settings.language;
+  const log = Array.isArray(state.sadaqahLog) ? state.sadaqahLog : [];
+  const fmtDay = (ts) => {
+    try {
+      return new Date(ts).toLocaleDateString(lang === 'ar' ? 'ar' : 'en-GB', {
+        day: 'numeric',
+        month: 'short',
+      });
+    } catch {
+      return '';
+    }
+  };
+  const rows = log
+    .slice(0, 20)
+    .map(
+      (e) => `
+      <div class="prayer-row">
+        <span class="prayer-row__icon">${icon('coins', { size: 18 })}</span>
+        <span class="prayer-row__name">${escapeHTML(fmtDay(e.ts))}${e.note ? ` · ${escapeHTML(e.note)}` : ''}</span>
+        ${e.amount != null ? `<span class="prayer-row__time" dir="ltr">${escapeHTML(String(e.amount))}</span>` : ''}
+        <button type="button" class="icon-btn icon-btn--sm" data-action="sadaqah-remove" data-id="${escapeHTML(e.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 15 })}</button>
+      </div>`
+    )
+    .join('');
+
+  return `
+  <div class="sadaqah-editor">
+    <h2 id="modal-title-sadaqah">${t('worship.sadaqahEditor', lang)}</h2>
+    <form class="editor-form" data-form="sadaqah-entry">
+      <label class="field">${escapeHTML(t('worship.sadaqahAmount', lang))}<input class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr" name="amount" placeholder="0.00" /></label>
+      <label class="field">${escapeHTML(t('worship.sadaqahNote', lang))}<input class="input" name="note" maxlength="200" placeholder="${escapeHTML(t('worship.sadaqahNotePlaceholder', lang))}" /></label>
+      <div class="editor-form__actions">
+        <button type="button" class="btn btn--ghost" data-action="modal-close">${t('editor.cancel', lang)}</button>
+        <button type="submit" class="btn btn--primary">${t('editor.save', lang)}</button>
+      </div>
+    </form>
+    <div class="panel__header panel__header--sub"><h3>${t('worship.sadaqahHistory', lang)}</h3></div>
+    ${rows || `<p class="empty-hint">${t('worship.sadaqahEmpty', lang)}</p>`}
+  </div>`;
 }

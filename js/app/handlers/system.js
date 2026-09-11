@@ -269,6 +269,36 @@ export const clickHandlers = {
     input.click();
   },
 
+  // (v5.2.29) Family plan sharing (B-5): export the khatma/daily-goal/
+  // tasbih-target plan as a small JSON file; import applies a shared file
+  // on top of this device's own data (PLAN_IMPORT merges plan keys only —
+  // logs and history are never touched). Dynamic imports keep the pure
+  // 80-line module out of the boot graph (shareCard precedent).
+  'export-plan': async () => {
+    const { buildPlan } = await import('../../domain/planExport.js');
+    backup.downloadPlan(buildPlan(store.getState()));
+    showToast(t('plan.exported', store.getState().settings.language));
+  },
+
+  'import-plan': () => {
+    const input = document.getElementById('plan-file-input');
+    if (!input) return;
+    input.value = ''; // allow re-selecting the same file
+    input.click();
+  },
+
+  'import-plan-confirmed': () => {
+    if (!rt.pendingPlanPayload) {
+      closeModal();
+      return;
+    }
+    const plan = rt.pendingPlanPayload;
+    rt.pendingPlanPayload = null;
+    store.dispatch(actions.importPlan(plan));
+    closeModal();
+    showToast(t('plan.importDone', store.getState().settings.language));
+  },
+
   'reset-all-data': () => {
     const lang = store.getState().settings.language;
     openModal(

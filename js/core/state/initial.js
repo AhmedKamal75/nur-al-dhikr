@@ -264,9 +264,10 @@ export function initialState() {
     // themselves share the ramadanLog map (month keys ≠ 9); only the
     // category/reminder preferences live here. See js/fasting.js.
     fastingPrefs: defaultFastingPrefs(),
-    // Quick-log sadaqah, v3.19 — PERSISTED. [{ id, ts, note }] newest-first,
-    // capped. The "given today" counter for the combined worship card; a
-    // full amount/note editor is a recorded follow-up (TODO residual).
+    // Quick-log sadaqah, v3.19 — PERSISTED. [{ id, ts, amount, note }]
+    // newest-first, capped. The "given today" counter for the combined
+    // worship card counts entries, never amounts; the v5.2.29 editor writes
+    // the optional amount/note per entry.
     sadaqahLog: [],
     // (v4.4) Sunnah prayer tracker — { 'YYYY-MM-DD': { tahajjud, duha,
     // rawatib, witr } }. Separate from dailyChecklist so the fard log and

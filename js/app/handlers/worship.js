@@ -78,9 +78,21 @@ export const clickHandlers = {
     if (state.settings.hapticsEnabled) vibrate(10);
   },
 
-  'sadaqah-remove': (ds) => {
+  // (v5.2.29) amount/note editor + recent-gifts history (the recorded
+  // v3.19 follow-up). Removing inside the modal rebuilds it in place —
+  // same pattern as the Ramadan sheet toggle above.
+  'sadaqah-open-editor': async () => {
+    const { buildSadaqahEditor } = await import('../../views/home.js');
+    openModal(buildSadaqahEditor(store.getState()), { labelledBy: 'modal-title-sadaqah' });
+  },
+
+  'sadaqah-remove': async (ds) => {
     if (!ds.id) return;
     store.dispatch(actions.removeSadaqah(ds.id));
+    if (isModalOpen()) {
+      const { buildSadaqahEditor } = await import('../../views/home.js');
+      openModal(buildSadaqahEditor(store.getState()), { labelledBy: 'modal-title-sadaqah' });
+    }
   },
 
   // v3.25 gentle nudge — dismissal hides the card for the session and

@@ -2,6 +2,25 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.29 — sadaqah editor (B-3) + plan sharing (B-5)
+
+Two more buried features recovered. **Sadaqah:** the v3.19 "full
+amount/note editor" follow-up is built — entries carry an optional
+amount (positive cents, null otherwise; never summed across entries,
+since gifts may mix currencies) alongside the note field the shape
+always had but no UI ever wrote. The Home worship card gains a details
+button opening an editor modal (amount + note form over the last 20
+gifts with per-entry delete, rebuilt in place); new `SADAQAH_UPDATE`
+reducer case and `sadaqah-entry` form, hostile-clamped at every edge.
+**Plan sharing:** `domain/planExport.js` restored verbatim from the
+F-005 deletion (pure `buildPlan`/`isPlanFile`/`sanitizePlan` — plan
+keys only, never logs or history) with Settings → Data export/import
+buttons, a confirm-then-`PLAN_IMPORT` file flow (non-destructive, so a
+calm confirm instead of the backup's danger styling), dynamic imports
+so the boot graph stays untouched, and its `sw.js` precache entry
+restored. Pinned by 3 new `tests/worship.test.js` blocks and new
+`tests/planExport.test.js` (5). Markers 5.2.28 → 5.2.29 + re-stamp.
+
 ## v5.2.28 — first-class reminder settings (B-2) + doc-drift corrections (D-1/D-8)
 
 `jumuahReminder`, `dailyVerseNotification`, and `zakatFitrReminder`

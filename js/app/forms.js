@@ -8,7 +8,7 @@ import { escapeHTML, uid } from '../core/utils.js';
 import { customMoshafId, surahUrl, validateCustomServer } from '../services/audioCatalog.js';
 import { fetchWithTimeout, FETCH_TIMEOUT_MS } from './net.js';
 import { clampPage } from '../services/mushaf.js';
-import { closeModal, openLazyModal } from '../ui/modal.js';
+import { closeModal, openLazyModal, openModal } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as editorApi from '../services/editor.js';
 import * as notifications from '../services/notifications.js';
@@ -430,6 +430,27 @@ export const formHandlers = {
     store.dispatch(actions.setHadithNote(key, text));
     const lang = store.getState().settings.language;
     showToast(t(text.trim() ? 'hadith.noteSaved' : 'hadith.noteDeleted', lang));
+  },
+
+  'sadaqah-entry': async (form) => {
+    // (v5.2.29) sadaqah amount/note editor: amount is optional (blank or
+    // garbage degrades to null in the reducer — never a throw, never a 0
+    // masquerading as a gift). The modal rebuilds in place so the new
+    // entry joins the history list immediately. The import is awaited
+    // inside try/catch because the submit listener has no rejection
+    // boundary — an async throw here would escape unhandled.
+    const fd = new FormData(form);
+    const rawAmount = String(fd.get('amount') ?? '').trim();
+    const note = String(fd.get('note') ?? '');
+    store.dispatch(actions.logSadaqah(note, rawAmount === '' ? null : Number(rawAmount)));
+    const lang = store.getState().settings.language;
+    showToast(t('worship.sadaqahLogged', lang));
+    try {
+      const { buildSadaqahEditor } = await import('../views/home.js');
+      openModal(buildSadaqahEditor(store.getState()), { labelledBy: 'modal-title-sadaqah' });
+    } catch {
+      closeModal();
+    }
   },
 };
 

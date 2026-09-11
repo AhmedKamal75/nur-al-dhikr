@@ -152,8 +152,9 @@ export const actions = {
   fastingToggleCategory: (cat) => ({ type: 'FASTING_TOGGLE_CATEGORY', cat }),
   fastingToggleRemind: (cat) => ({ type: 'FASTING_TOGGLE_REMIND', cat }),
   fastingSetRemindTime: (time) => ({ type: 'FASTING_SET_REMIND_TIME', time }),
-  // Quick-log sadaqah (v3.19)
-  logSadaqah: (note = '') => ({ type: 'SADAQAH_LOG', note }),
+  // Quick-log sadaqah (v3.19; amount/note editor v5.2.29)
+  logSadaqah: (note = '', amount = null) => ({ type: 'SADAQAH_LOG', note, amount }),
+  updateSadaqah: (id, patch) => ({ type: 'SADAQAH_UPDATE', id, patch }),
   removeSadaqah: (id) => ({ type: 'SADAQAH_REMOVE', id }),
   // (v4.4) Sunnah prayer tracker
   toggleSunnah: (id) => ({ type: 'SUNNAH_TOGGLE', id }),

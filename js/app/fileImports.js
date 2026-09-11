@@ -1,6 +1,7 @@
 /**
- * app/fileImports.js — user file imports: backup JSON (with confirm)
- * and custom Adhan audio (magic-byte validated).
+ * app/fileImports.js — user file imports: backup JSON (with confirm),
+ * shared family plans (with confirm), and custom Adhan audio
+ * (magic-byte validated).
  */
 
 import { rt } from './rt.js';
@@ -89,5 +90,46 @@ export async function handleImportFile(file) {
   } catch (err) {
     showToast(t('common.error', store.getState().settings.language));
     console.error('[import]', err);
+  }
+}
+
+/* (v5.2.29) Family plan sharing (B-5): a shared plan file lands ON TOP of
+ * this device's own data (PLAN_IMPORT merges plan keys only — the backup
+ * path above replaces everything, so the confirm copy says exactly that).
+ * Non-destructive, hence danger: false. The pure module loads on demand
+ * so the boot graph stays untouched. */
+export async function handleImportPlanFile(file) {
+  try {
+    const text = await backup.readFileAsText(file);
+    let json = null;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      json = null;
+    }
+    const { isPlanFile, sanitizePlan } = await import('../domain/planExport.js');
+    const lang = store.getState().settings.language;
+    if (!isPlanFile(json)) {
+      showToast(t('plan.badFile', lang));
+      return;
+    }
+    const plan = sanitizePlan(json);
+    if (!plan) {
+      showToast(t('plan.badFile', lang));
+      return;
+    }
+    rt.pendingPlanPayload = plan;
+    openModal(
+      buildConfirm({
+        message: t('plan.importConfirm', lang),
+        confirmAction: 'import-plan-confirmed',
+        lang,
+        danger: false,
+      }),
+      { labelledBy: 'modal-title-confirm' }
+    );
+  } catch (err) {
+    showToast(t('common.error', store.getState().settings.language));
+    console.error('[import-plan]', err);
   }
 }
