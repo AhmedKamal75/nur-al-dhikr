@@ -27,8 +27,14 @@ export function buildIndex(itemIndex) {
       pickLocale(item.translation, 'en'),
       pickLocale(item.translation, 'ar'),
       pickLocale(item.virtues, 'en'),
+      pickLocale(item.virtues, 'ar'),
       item.reference?.collection,
+      item.reference?.book,
+      item.reference?.chapter,
+      item.reference?.narrator,
+      item.reference?.grading,
       item.reference?.hadith,
+      item.notes,
       item.tags?.length ? (Array.isArray(item.tags) ? item.tags.join(' ') : String(item.tags)) : '',
       pickLocale(category?.name, 'en'),
       pickLocale(category?.name, 'ar'),
@@ -88,4 +94,37 @@ export function search(query, { limit = 50 } = {}) {
   return results
     .slice(0, limit)
     .map((r) => ({ ...itemLookup.get(r.itemId), itemId: r.itemId, score: r.score }));
+}
+
+/**
+ * Filter Quran surah metadata by number or name in any script. One shared
+ * implementation for the reader's surah list and the command palette —
+ * diacritic/alef/ta-marbuta insensitive via normalizeSearch (the old
+ * inline filter was raw includes() and missed vocalized input).
+ * Number match wins over name match; empty query returns all.
+ */
+export function searchSurahs(surahs, query) {
+  const list = Array.isArray(surahs) ? surahs : [];
+  const q = normalizeSearch(query);
+  if (!q) return list;
+  const terms = q.split(' ').filter(Boolean);
+  if (!terms.length) return list;
+  const scored = [];
+  for (const s of list) {
+    const hay = normalizeSearch(
+      `${s.number} ${s.nameEn || ''} ${s.nameTransliteration || ''} ${s.nameAr || ''}`
+    );
+    let score = 0;
+    let allMatch = true;
+    for (const term of terms) {
+      if (!hay.includes(term)) {
+        allMatch = false;
+        break;
+      }
+      score += String(s.number) === term ? 10 : hay.startsWith(term) ? 3 : 1;
+    }
+    if (allMatch) scored.push({ s, score });
+  }
+  scored.sort((a, b) => b.score - a.score || a.s.number - b.s.number);
+  return scored.map((r) => r.s);
 }

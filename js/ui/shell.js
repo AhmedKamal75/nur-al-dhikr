@@ -139,7 +139,7 @@ export function renderTopBar(state, opts = {}) {
       </a>
     </div>
     <div class="topbar__actions">
-      <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.SEARCH}" aria-label="${t('nav.search', lang)}">
+      <button type="button" class="icon-btn" data-action="open-palette" aria-label="${t('palette.open', lang)}" title="${t('palette.open', lang)}">
         ${icon('search', { size: 20 })}
       </button>
       <button type="button" class="icon-btn" data-action="quick-theme-toggle" aria-label="${t('a11y.themeToggle', lang)}">

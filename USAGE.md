@@ -47,6 +47,10 @@ own when done.
   count; **Focus mode** gives you one card at a time, full screen.
 - **Search** understands Arabic without diacritics. **Moods** files
   cards by how you feel (anxious, grateful, …).
+- **Quick search (Ctrl+K** or the topbar magnifier): one Spotlight-style
+  overlay over everything — destinations, surahs by name or number (“2”,
+  “baqarah”, “البقرة”), Quran verses, adhkar, reciters, hadith books,
+  and actions. ↑↓ + Enter, Esc closes.
 - ⭐ favorites, 📁 collections, 📤 share-as-image cards, 🔊 listen-aloud.
 - **Editor**: add your own adhkar, edit text, hide what you don't use —
   your edits layer over the bundled books and "restore defaults" always

@@ -26,6 +26,7 @@ import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
 import { loadErrorStateHTML, notFoundStateHTML } from '../ui/emptyState.js';
 import { clozeAyahHTML } from '../domain/hifz.js';
+import { searchSurahs } from '../domain/search.js';
 import { keyToDate } from '../domain/review.js';
 
 const BISMILLAH_AR = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
@@ -198,21 +199,12 @@ function hifzMcqPanelHTML(state, surahDoc, lang) {
 function surahListHTML(state) {
   const lang = state.settings.language;
   const meta = state.quran.meta;
-  const q = (state.activeParams.q || '').trim().toLowerCase();
 
   if (!meta) {
     return skeletonSurahList(lang);
   }
 
-  const surahs = meta.surahs.filter((s) => {
-    if (!q) return true;
-    return (
-      s.nameEn.toLowerCase().includes(q) ||
-      s.nameTransliteration.toLowerCase().includes(q) ||
-      s.nameAr.includes(q) ||
-      String(s.number).includes(q)
-    );
-  });
+  const surahs = searchSurahs(meta.surahs, state.activeParams.q || '');
 
   const tiles = surahs
     .map((s) => {

@@ -24,6 +24,7 @@ import {
 import { closeModal, isModalOpen, openLazyModal, cycleTabFocus } from '../ui/modal.js';
 import { getOpenSettingsSection, setOpenSettingsSection } from '../views/settings.js';
 import { mushafSwipeTurn, isSwipeGuardTarget, isPlayerDismissSwipe } from '../domain/gestures.js';
+import { armPaletteShortcut } from './palette.js';
 import { showToast } from '../ui/toast.js';
 import * as recitation from '../services/recitation.js';
 import {
@@ -424,6 +425,8 @@ export function bindGlobalEvents() {
   armAyahLongPress();
   // Kids-mode hold-to-exit (2s press on the exit button; taps never exit).
   armKidsExitHold();
+  // Command palette (Ctrl/⌘K) from anywhere.
+  armPaletteShortcut();
   document.addEventListener('click', (e) => {
     if (Date.now() < rt.suppressClickUntil) {
       e.preventDefault();

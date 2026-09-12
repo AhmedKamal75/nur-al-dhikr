@@ -7,7 +7,8 @@
 import { rt } from '../../app/rt.js';
 import { downloadOne, startAudioPlay } from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
-import { MUSHAF_META_URL, QURAN_META_URL } from '../../core/config.js';
+import { MUSHAF_META_URL, QURAN_META_URL, VIEWS } from '../../core/config.js';
+import { go } from '../../core/router.js';
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { formatCountdown } from '../../domain/ramadan.js';
@@ -27,6 +28,14 @@ import * as surahPlayback from '../../services/surahPlayback.js';
 export const clickHandlers = {
   'audio-select-moshaf': (ds) => {
     store.dispatch(actions.setAudioPrefs({ moshafId: ds.id }));
+  },
+
+  // Command-palette pick: select the voice AND land on the Audio view so
+  // the choice is visible (a bare select would close the palette onto
+  // whatever view was behind it with no feedback).
+  'audio-pick-moshaf': (ds) => {
+    if (ds.id) store.dispatch(actions.setAudioPrefs({ moshafId: ds.id }));
+    go(VIEWS.AUDIO, {});
   },
 
   'audio-download-surah': async (ds) => {

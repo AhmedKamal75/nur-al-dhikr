@@ -11,6 +11,7 @@
  */
 
 import { RECITERS_URL } from '../core/config.js';
+import { normalizeSearch } from '../core/utils.js';
 import { fetchWithTimeout, FETCH_TIMEOUT_MS } from '../core/fetch.js';
 import { actions, store } from '../core/state.js';
 
@@ -124,13 +125,10 @@ export function resetCatalogForTests() {
 
 /** Strip Arabic diacritics + unify alef/ya so Arabic search matches. */
 function normAr(s) {
-  return String(s || '')
-    .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
-    .replace(/[أإآٱا]/g, 'ا')
-    .replace(/ى/g, 'ي')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase();
+  // Single shared normalizer (ta-marbuta, hamza carriers, tatweel,
+  // punctuation and case all fold) — the old local regexes missed ة→ه
+  // and ؤ/ئ, diverging from every other search in the app.
+  return normalizeSearch(s);
 }
 
 /**

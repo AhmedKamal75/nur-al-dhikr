@@ -13,6 +13,7 @@ import {
 } from '../inputs.js';
 import { go } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
+import { openPalette } from '../palette.js';
 
 export const clickHandlers = {
   navigate: (ds) => {
@@ -84,6 +85,10 @@ export const clickHandlers = {
   'quick-theme-toggle': () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     store.dispatch(actions.updateSettings({ themeMode: isDark ? 'light' : 'dark' }));
+  },
+
+  'open-palette': () => {
+    openPalette();
   },
 };
 

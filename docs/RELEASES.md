@@ -2,6 +2,17 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.37 — command palette + unified search backends
+
+Ctrl/⌘K (or the topbar magnifier) opens a Spotlight-style overlay over
+everything: destinations, surahs by name/number in any script, Quran
+verses, adhkar, reciters, hadith books, actions — grouped, ↑↓/Enter/Esc,
+<mark> highlights, empty-query history. Underneath, all six searches now
+share one normalizer (audio's weaker regex retired), the global index
+gains virtues.ar + narrator/book/chapter/grading/notes, and the surah
+list uses the same scored `searchSurahs()` as the palette. Markers
+5.2.36 → 5.2.37 + re-stamp.
+
 ## v5.2.36 — one screen for every voice + translation-track badges
 
 The Audio view now lists the 5 verse-by-verse voices alongside the 314
