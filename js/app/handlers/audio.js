@@ -23,6 +23,7 @@ import {
 } from '../../services/moshafAvailability.js';
 import * as mediaSession from '../../services/mediaSession.js';
 import * as player from '../../services/player.js';
+import { SLEEP_TIMER_CHOICES } from '../../domain/sleepTimer.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
 
 export const clickHandlers = {
@@ -359,10 +360,47 @@ export const clickHandlers = {
 
   'player-close': () => {
     player.stop();
+    player.clearSleepTimer();
     mediaSession.clearMetadata();
     store.dispatch(
-      actions.setAudioPlayer({ moshafId: null, surah: null, playing: false, offline: false })
+      actions.setAudioPlayer({
+        moshafId: null,
+        surah: null,
+        playing: false,
+        offline: false,
+        sleepEnabled: false,
+        sleepMinutes: null,
+        sleepLabel: '',
+      })
     );
+  },
+
+  // Sleep timer for full-surah listening — same off → 15 → 30 → 45 → 60 →
+  // off ladder as the verse engine (domain/sleepTimer.js). The timer
+  // survives track changes; closing the player clears it.
+  'player-sleep-cycle': () => {
+    const lang = store.getState().settings.language;
+    const snap = player.sleepSnapshot();
+    const ladder = [null, ...SLEEP_TIMER_CHOICES];
+    const idx = snap.enabled ? ladder.indexOf(snap.minutes) : 0;
+    const next = ladder[(idx + 1) % ladder.length];
+    if (next == null) {
+      player.clearSleepTimer();
+      store.dispatch(
+        actions.setAudioPlayer({ sleepEnabled: false, sleepMinutes: null, sleepLabel: '' })
+      );
+      showToast(t('audio.sleepOff', lang));
+      return;
+    }
+    const armed = player.armSleepTimer(next);
+    store.dispatch(
+      actions.setAudioPlayer({
+        sleepEnabled: true,
+        sleepMinutes: armed.minutes,
+        sleepLabel: armed.label,
+      })
+    );
+    showToast(t('audio.sleepArmed', lang, { n: next }));
   },
 
   'player-next': () => {

@@ -2,6 +2,16 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.43 — sleep timer for full-surah listening
+
+The verse engine's fade-to-silence timer now covers the full-surah
+player: same off → 15 → 30 → 45 → 60 ladder, 90-second linear fade,
+pause (not stop) at zero so position is kept. Timer survives track
+changes; player close clears it. Countdown chip on the player bar with
+minute-granularity store sync; volume owned by the timer while armed
+(no full-loud blips on track swaps). Markers 5.2.42 → 5.2.43 +
+re-stamp.
+
 ## v5.2.42 — palette round 2: journal + settings providers
 
 The overlay now searches device-local journal duas/reflections (rows

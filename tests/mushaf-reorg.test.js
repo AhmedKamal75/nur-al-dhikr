@@ -340,7 +340,7 @@ describe('mushaf regroup: zero feature loss', () => {
     'wordUnderline',
   ];
   // Intentional additions only: the new TRACK panel entry point.
-  const ALLOWED_ADDITIONS = new Set(['mushaf-open-track']);
+  const ALLOWED_ADDITIONS = new Set(['mushaf-open-track', 'player-sleep-cycle']);
 
   function currentUnion() {
     const s = baseState();

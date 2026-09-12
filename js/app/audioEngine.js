@@ -156,6 +156,33 @@ export function wirePlayer() {
       store.dispatch(actions.setAudioPlayer({ playing }));
     }
   });
+  // Sleep-timer countdown: the 1s engine tick syncs the store only
+  // when the displayed minute changes (≤60 tiny bar patches per hour),
+  // plus the final off-state when the timer expires mid-fade.
+  let lastSleepMinute = undefined;
+  player.onSleepTick(() => {
+    const snap = player.sleepSnapshot();
+    if (!snap.enabled) {
+      if (lastSleepMinute !== null) {
+        lastSleepMinute = null;
+        store.dispatch(
+          actions.setAudioPlayer({ sleepEnabled: false, sleepMinutes: null, sleepLabel: '' })
+        );
+      }
+      return;
+    }
+    const minute = snap.label.replace(/:\d\d$/, '');
+    if (minute !== lastSleepMinute) {
+      lastSleepMinute = minute;
+      store.dispatch(
+        actions.setAudioPlayer({
+          sleepEnabled: true,
+          sleepMinutes: snap.minutes,
+          sleepLabel: snap.label,
+        })
+      );
+    }
+  });
   // FIX (review A2/R12): a mid-stream drop (tunnel Wi-Fi) reverts the UI
   // and tells the person — no silent lying bar.
   player.onPlayerError(() => {

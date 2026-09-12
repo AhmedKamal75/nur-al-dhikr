@@ -13,6 +13,7 @@
  */
 
 import { getAudio as defaultGetAudio } from './audioStore.js';
+import { SLEEP_TIMER_CHOICES, volumeAt, countdownLabel } from '../domain/sleepTimer.js';
 
 let audioEl = null;
 let patchFn = null; // (info) => void — DOM patch callback
@@ -199,6 +200,9 @@ export async function play(moshafId, surahNumber, url) {
     }
     a.__nurSeq = seq;
     a.playbackRate = a.playbackRate || 1;
+    // An armed sleep timer survives track changes: enter at the curve
+    // volume instead of blipping full-loud for a second.
+    a.volume = currentSleepVolume();
     emit();
     try {
       await a.play();
@@ -269,6 +273,76 @@ export function setRate(r) {
   const a = el();
   a.playbackRate = r;
   emit();
+}
+
+/** Direct volume (0..1) — the sleep timer owns it while armed. */
+export function setVolume(v) {
+  const a = el();
+  a.volume = Math.max(0, Math.min(1, Number(v) || 0));
+}
+
+/* Sleep timer — same contract as the verse engine's (surahPlayback):
+ * arm → 1s tick fades the last 90s → pause at zero (position kept, so a
+ * woken listener resumes where they drifted off). The timer survives
+ * track changes (auto-advance keeps fading); only an explicit close or
+ * clear stops it. Countdown labels reach the store via onSleepTick. */
+let sleep = null; // { endsAtMs, minutes }
+let sleepTick = null; // interval id
+let sleepTickFn = null; // () => void — minute-label sync in app/audioEngine.js
+
+function currentSleepVolume(nowMs = Date.now()) {
+  return volumeAt(sleep ? { enabled: true, endsAtMs: sleep.endsAtMs } : null, nowMs);
+}
+
+function applySleepVolume() {
+  const v = currentSleepVolume();
+  el().volume = v;
+  if (sleep && v <= 0) {
+    clearSleepTimer();
+    pause(); // position kept — a woken listener resumes in place
+  }
+  // After expiry above the snapshot reads cleared, so the store syncs
+  // the off-state on this same (final) tick — no stale chip.
+  sleepTickFn?.();
+}
+
+/** Arm the sleep timer (minutes from SLEEP_TIMER_CHOICES). */
+export function armSleepTimer(minutes) {
+  const m = SLEEP_TIMER_CHOICES.includes(minutes) ? minutes : 30;
+  sleep = { minutes: m, endsAtMs: Date.now() + m * 60_000 };
+  if (sleepTick) clearInterval(sleepTick);
+  sleepTick = setInterval(applySleepVolume, 1000);
+  applySleepVolume();
+  return sleepSnapshot();
+}
+
+/** Cancel the timer and restore full volume. Safe with no timer armed. */
+export function clearSleepTimer() {
+  sleep = null;
+  if (sleepTick) clearInterval(sleepTick);
+  sleepTick = null;
+  el().volume = 1;
+  return sleepSnapshot();
+}
+
+/** { enabled, minutes, label } for the UI — label computed live. */
+export function sleepSnapshot() {
+  if (!sleep) return { enabled: false, minutes: null, label: '' };
+  return {
+    enabled: true,
+    minutes: sleep.minutes,
+    label: countdownLabel({ enabled: true, endsAtMs: sleep.endsAtMs }, Date.now()),
+  };
+}
+
+/** Subscribe to per-second ticks (the app layer throttles store sync). */
+export function onSleepTick(fn) {
+  sleepTickFn = typeof fn === 'function' ? fn : null;
+}
+
+/** Test seam: drive one tick synchronously. */
+export function _sleepTickForTests() {
+  applySleepVolume();
 }
 
 export function stop() {

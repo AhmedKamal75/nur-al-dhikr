@@ -56,6 +56,9 @@ export function renderPlayerBar(state) {
         ${icon('repeat', { size: 14 })}
       </button>
       <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)} — ${rate}&times;">${rate}&times;</button>
+      <button type="button" class="player-bar__chip ${p.sleepEnabled ? 'player-bar__chip--on' : ''}" data-action="player-sleep-cycle" aria-pressed="${p.sleepEnabled === true}" aria-label="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}" title="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}">
+        ${icon('moon', { size: 14 })}${p.sleepEnabled && p.sleepLabel ? ` ${escapeHTML(p.sleepLabel)}` : ''}
+      </button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="player-close" data-player-dismiss="1" aria-label="${t('common.close', lang)}">${icon('close', { size: 16 })}</button>
     </div>
     <div class="player-bar__track">
