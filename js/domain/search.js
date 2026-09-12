@@ -128,3 +128,31 @@ export function searchSurahs(surahs, query) {
   scored.sort((a, b) => b.score - a.score || a.s.number - b.s.number);
   return scored.map((r) => r.s);
 }
+
+/**
+ * Filter library entries ({item} objects, e.g. favorites or a collection)
+ * by free text over titles, Arabic, transliteration and translations.
+ * Used by small list views that sit outside the global index path.
+ */
+export function filterEntries(entries, query) {
+  const q = normalizeSearch(query);
+  if (!q) return Array.isArray(entries) ? entries : [];
+  const terms = q.split(' ').filter(Boolean);
+  if (!terms.length) return Array.isArray(entries) ? entries : [];
+  return (Array.isArray(entries) ? entries : []).filter((entry) => {
+    const item = entry?.item || {};
+    const hay = normalizeSearch(
+      [
+        item.title?.en,
+        item.title?.ar,
+        item.arabic,
+        item.transliteration,
+        item.translation?.en,
+        item.translation?.ar,
+      ]
+        .filter(Boolean)
+        .join(' ')
+    );
+    return terms.every((term) => hay.includes(term));
+  });
+}

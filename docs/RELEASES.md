@@ -2,6 +2,15 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.41 — search the rest: settings, favorites, collections
+
+Every remaining list view filters: settings sections (bilingual title +
+hint match, non-matches hidden, matches auto-open), favorites and
+collection cards (shared `filterEntries()`, match highlights via the
+existing card path, honest empty states). Three debounced inputs join
+the registry (tab/collection-id preserving). Markers 5.2.40 → 5.2.41 +
+re-stamp.
+
 ## v5.2.40 — tafsir full-text search in the palette
 
 The last unsearchable library opens up: the default bundled tafsir

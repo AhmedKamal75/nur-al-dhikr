@@ -25,9 +25,9 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (29 change + 11 input)', () => {
+test('D: every arm survived the move (29 change + 14 input)', () => {
   assert.equal(changeRegistry.length, 29);
-  assert.equal(inputRegistry.length, 11);
+  assert.equal(inputRegistry.length, 14);
 });
 
 test('D: registry entries are well-formed with unique selectors', () => {

@@ -68,6 +68,32 @@ export const debounceQuranSearchNavigate = makeSearchDebounce(
   'quran-search-input'
 );
 
+export const debounceFavoritesSearchNavigate = makeSearchDebounce(
+  'favoritesSearchTimer',
+  VIEWS.FAVORITES,
+  'favorites-search-input'
+);
+export const debounceSettingsSearchNavigate = makeSearchDebounce(
+  'settingsSearchTimer',
+  VIEWS.SETTINGS,
+  'settings-search-input'
+);
+/** Collection filter: like the journal one, the collection id must survive typing. */
+export const debounceCollectionSearchNavigate = (value) => {
+  clearTimeout(rt.collectionSearchTimer);
+  rt.collectionSearchTimer = setTimeout(() => {
+    const id = store.getState().activeParams.id;
+    replaceGo(VIEWS.COLLECTION, { ...(id ? { id } : {}), ...(value ? { q: value } : {}) });
+    requestAnimationFrame(() => {
+      const input = document.getElementById('collection-search-input');
+      if (input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    });
+  }, 180);
+};
+
 /** Journal filter: debounced replace-navigation like the other searches,
  *  but preserving the active tab (the generic helper would drop it). */
 export const debounceJournalSearchNavigate = (value) => {

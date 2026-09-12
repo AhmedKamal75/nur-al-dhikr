@@ -6,11 +6,14 @@
 
 import { closeNavDrawer, openNavDrawer } from '../drawer.js';
 import {
+  debounceCollectionSearchNavigate,
+  debounceFavoritesSearchNavigate,
   debounceHadithQuery,
   debounceJournalSearchNavigate,
   debounceQuranSearchNavigate,
   debounceRootsSearchNavigate,
   debounceSearchNavigate,
+  debounceSettingsSearchNavigate,
 } from '../inputs.js';
 import { go } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
@@ -126,6 +129,24 @@ export const inputHandlers = [
     sel: '[data-bind="journal-search"]',
     run: (ds, el) => {
       debounceJournalSearchNavigate(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="favorites-search"]',
+    run: (ds, el) => {
+      debounceFavoritesSearchNavigate(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="collection-search"]',
+    run: (ds, el) => {
+      debounceCollectionSearchNavigate(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="settings-search"]',
+    run: (ds, el) => {
+      debounceSettingsSearchNavigate(el.value);
     },
   },
 ];

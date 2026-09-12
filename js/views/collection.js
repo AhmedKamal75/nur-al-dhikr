@@ -5,6 +5,7 @@ import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
+import { filterEntries } from '../domain/search.js';
 import { selectors } from '../core/state.js';
 import { VIEWS } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
@@ -18,7 +19,12 @@ export function renderCollection(state) {
     return `<section class="view">${notFoundStateHTML({ title: t('common.notFoundCollection', lang), lang, t })}</section>`;
   }
 
-  const entries = col.items.map((id) => state.library.itemIndex[id]).filter(Boolean);
+  const q = String(state.activeParams?.q || '');
+  const terms = q ? q.split(/\s+/) : [];
+  const entries = filterEntries(
+    col.items.map((id) => state.library.itemIndex[id]).filter(Boolean),
+    q
+  );
 
   return `
   <section class="view view--collection">
@@ -30,6 +36,12 @@ export function renderCollection(state) {
       </div>
       <p class="view__meta">${t('collections.itemCount', lang, { n: entries.length })}</p>
     </header>
+    <div class="search-bar">
+      <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
+      <input type="search" class="search-bar__input" id="collection-search-input"
+        placeholder="${t('collections.searchPh', lang)}" aria-label="${t('collections.searchPh', lang)}" value="${escapeHTML(state.activeParams?.q || '')}"
+        data-bind="collection-search" autocomplete="off" />
+    </div>
 
     ${
       entries.length
@@ -44,11 +56,12 @@ export function renderCollection(state) {
             counter: selectors.getCounter(state, e.item.id),
             showTransliteration: state.settings.showTransliteration,
             showTranslation: state.settings.showTranslation,
+            highlight: terms,
           })
         )
         .join('')}
     </div>`
-        : `<p class="empty-hint">${t('collections.empty', lang)}</p>`
+        : `<p class="empty-hint">${q ? t('search.noResults', lang) : t('collections.empty', lang)}</p>`
     }
   </section>`;
 }

@@ -298,3 +298,103 @@ describe('nav search item opens the palette', () => {
     assert.ok(html.includes('data-view="home"') && html.includes('data-action="navigate"'));
   });
 });
+
+describe('list filters: settings, favorites, collections', () => {
+  const entry = (id, titleEn, arabic) => ({
+    item: {
+      id,
+      category_id: 'c1',
+      title: { en: titleEn, ar: '' },
+      arabic,
+      transliteration: '',
+      translation: { en: '', ar: '' },
+      virtues: { en: '', ar: '' },
+      reference: {},
+      grade: 'Unknown',
+      repetitions: 1,
+      tags: [],
+    },
+    category: { id: 'c1', name: { en: 'Morning', ar: 'الصباح' } },
+  });
+
+  test('filterEntries matches titles and Arabic, empty query passes through', async () => {
+    const { filterEntries } = await import('../js/domain/search.js');
+    const entries = [entry('a', 'Morning Light', 'نور'), entry('b', 'Evening Calm', 'هدوء')];
+    assert.deepEqual(filterEntries(entries, ''), entries);
+    assert.deepEqual(
+      filterEntries(entries, 'light').map((e) => e.item.id),
+      ['a']
+    );
+    assert.deepEqual(
+      filterEntries(entries, 'هدوء').map((e) => e.item.id),
+      ['b']
+    );
+    assert.deepEqual(filterEntries(entries, 'zzz'), []);
+    assert.deepEqual(filterEntries(null, 'x'), []);
+  });
+
+  test('matchSettingsSection matches titles and hints in both languages', async () => {
+    const { SETTINGS_SECTIONS, matchSettingsSection } = await import('../js/views/settings.js');
+    assert.ok(SETTINGS_SECTIONS.length >= 12);
+    const reciter = SETTINGS_SECTIONS.find((s) => s.id === 'settings-sec-reciter');
+    assert.ok(matchSettingsSection(reciter, 'reciter'));
+    assert.ok(matchSettingsSection(reciter, 'قارئ'));
+    assert.ok(!matchSettingsSection(reciter, 'zakat'));
+    assert.ok(matchSettingsSection(reciter, ''));
+  });
+
+  test('renderSettings hides non-matching sections when filtering', async () => {
+    const { renderSettings } = await import('../js/views/settings.js');
+    const base = {
+      settings: {
+        language: 'en',
+        palette: 'emerald',
+        shape: 'round',
+        themeMode: 'light',
+        reciter: 'ar.alafasy',
+        quranTranslation: 'en-sahih',
+        reminders: [],
+        fontScale: 1,
+        arabicFontScale: 1,
+        dailyGoal: 100,
+      },
+      activeParams: { q: 'reciter' },
+      reminders: [],
+      backupMeta: {},
+      dataHealth: {},
+    };
+    const html = renderSettings(base);
+    assert.ok(html.includes('id="settings-search-input"'));
+    assert.ok(
+      !html.includes('id="settings-sec-zakat" hidden') || !html.includes('settings-sec-zakat')
+    );
+    assert.ok(html.includes('settings-sec-reciter'));
+    const hiddenCount = (html.match(/settings-acc" id="settings-sec-[a-z]+" hidden/g) || []).length;
+    assert.ok(hiddenCount >= 5, `most sections hidden, got ${hiddenCount}`);
+  });
+
+  test('favorites and collection filter cards with highlights', async () => {
+    const { renderFavorites } = await import('../js/views/favorites.js');
+    const { renderCollection } = await import('../js/views/collection.js');
+    const idx = { a: entry('a', 'Morning Light', 'نور'), b: entry('b', 'Evening Calm', 'هدوء') };
+    const core = {
+      favorites: [],
+      settings: { language: 'en', showTransliteration: true, showTranslation: true },
+      speakingItemId: null,
+      counters: {},
+      library: { itemIndex: idx },
+    };
+    const fav = renderFavorites({ ...core, favorites: ['a', 'b'], activeParams: { q: 'calm' } });
+    assert.ok(!fav.includes('Morning Light'));
+    assert.ok(fav.includes('<mark>Calm</mark>'));
+    const miss = renderFavorites({ ...core, favorites: ['a', 'b'], activeParams: { q: 'zzz' } });
+    assert.ok(!miss.includes('Morning Light') && !miss.includes('heart'));
+    const col = renderCollection({
+      ...core,
+      collections: [{ id: 'c1', name: { en: 'Mine', ar: '' }, items: ['a', 'b'] }],
+      activeParams: { id: 'c1', q: 'light' },
+    });
+    assert.ok(col.includes('<mark>Light</mark>'));
+    assert.ok(!col.includes('Evening Calm'));
+  });
+});

@@ -9,7 +9,7 @@
  */
 import { t, availableLanguages, languageLabel } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { escapeHTML, pickLocale } from '../core/utils.js';
+import { escapeHTML, normalizeSearch, pickLocale } from '../core/utils.js';
 import {
   PALETTES,
   SHAPES,
@@ -128,8 +128,54 @@ function clickToggleRow(action, dataset, label, on) {
   </button>`;
 }
 
+/** Filterable settings sections: title + hint keys matched in both
+ *  languages (exported for tests). */
+export const SETTINGS_SECTIONS = [
+  { id: 'settings-sec-language', title: 'settings.language' },
+  { id: 'settings-sec-appearance', title: 'settings.appearance' },
+  { id: 'settings-sec-content', title: 'settings.content' },
+  { id: 'settings-sec-cardfields', title: 'settings.cardFields', hint: 'settings.cardFieldsHint' },
+  { id: 'settings-sec-reciter', title: 'settings.reciter', hint: 'settings.reciterHint' },
+  {
+    id: 'settings-sec-translation',
+    title: 'settings.translation',
+    hint: 'settings.quranTranslationHint',
+  },
+  {
+    id: 'settings-sec-compare',
+    title: 'settings.compareTranslation',
+    hint: 'settings.compareHint',
+  },
+  { id: 'settings-sec-feedback', title: 'settings.feedback', hint: 'settings.feedbackHint' },
+  { id: 'settings-sec-notifications', title: 'settings.notifications' },
+  { id: 'settings-sec-accessibility', title: 'settings.accessibility' },
+  { id: 'settings-sec-profiles', title: 'settings.profiles', hint: 'settings.profilesHint' },
+  { id: 'settings-sec-data', title: 'settings.data' },
+];
+
+export function matchSettingsSection(sec, query) {
+  const q = normalizeSearch(query);
+  if (!q) return true;
+  const hay = normalizeSearch(
+    [
+      t(sec.title, 'en'),
+      t(sec.title, 'ar'),
+      sec.hint ? t(sec.hint, 'en') : '',
+      sec.hint ? t(sec.hint, 'ar') : '',
+    ].join(' ')
+  );
+  return q
+    .split(' ')
+    .filter(Boolean)
+    .every((term) => hay.includes(term));
+}
+
 export function renderSettings(state) {
   const lang = state.settings.language;
+  const filterQ = String(state.activeParams?.q || '');
+  const hideSettings = new Set(
+    SETTINGS_SECTIONS.filter((sec) => !matchSettingsSection(sec, filterQ)).map((sec) => sec.id)
+  );
   const s = state.settings;
 
   const paletteSwatches = PALETTES.map(
@@ -234,14 +280,20 @@ export function renderSettings(state) {
 
   return `
   <section class="view view--settings">
+    <div class="search-bar">
+      <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
+      <input type="search" class="search-bar__input" id="settings-search-input"
+        placeholder="${t('settings.searchPh', lang)}" aria-label="${t('settings.searchPh', lang)}" value="${escapeHTML(state.activeParams?.q || '')}"
+        data-bind="settings-search" autocomplete="off" />
+    </div>
     <h1 class="view__title">${t('settings.title', lang)}</h1>
 
-    <details class="panel settings-acc" id="settings-sec-language" ${openSectionId === 'settings-sec-language' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openSectionId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-appearance" ${openSectionId === 'settings-sec-appearance' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-appearance"${filterQ ? (hideSettings.has('settings-sec-appearance') ? ' hidden' : ' open') : openSectionId === 'settings-sec-appearance' ? ' open' : ''}>
       ${accHeader(t('settings.appearance', lang), 'sun', lang)}
       <p class="field-label">${t('settings.theme', lang)}</p>
       <div class="segmented">${modeButtons}</div>
@@ -255,7 +307,7 @@ export function renderSettings(state) {
       <input type="range" class="slider" min="0.85" max="1.6" step="0.05" value="${Number(s.arabicFontScale) || 1}" data-bind="arabicFontScale" aria-labelledby="arabic-font-scale-label" />
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-content" ${openSectionId === 'settings-sec-content' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-content"${filterQ ? (hideSettings.has('settings-sec-content') ? ' hidden' : ' open') : openSectionId === 'settings-sec-content' ? ' open' : ''}>
       ${accHeader(t('settings.content', lang), 'list', lang)}
       ${toggleRow('showTransliteration', s.showTransliteration, t('settings.showTransliteration', lang))}
       ${toggleRow('showTranslation', s.showTranslation, t('settings.showTranslation', lang))}
@@ -267,13 +319,13 @@ export function renderSettings(state) {
       ${homePanelRows(state, lang)}
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-cardfields" ${openSectionId === 'settings-sec-cardfields' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-cardfields"${filterQ ? (hideSettings.has('settings-sec-cardfields') ? ' hidden' : ' open') : openSectionId === 'settings-sec-cardfields' ? ' open' : ''}>
       ${accHeader(t('settings.cardFields', lang), 'grid', lang, 'settings.cardFieldsHint')}
       ${cardFieldRows}
       <button type="button" class="btn btn--secondary btn--sm" data-action="content-restore-all">${icon('refresh', { size: 14 })} ${t('library.sheet.restoreAll', lang)}</button>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-reciter" ${openSectionId === 'settings-sec-reciter' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-reciter"${filterQ ? (hideSettings.has('settings-sec-reciter') ? ' hidden' : ' open') : openSectionId === 'settings-sec-reciter' ? ' open' : ''}>
       ${accHeader(t('settings.reciter', lang), 'volume', lang, 'settings.reciterHint')}
       <div class="reciter-list">${reciterRows}</div>
       <p class="field-label">${t('settings.reciterB', lang)}</p>
@@ -283,17 +335,17 @@ export function renderSettings(state) {
       <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.AUDIO)}" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 14 })} ${t('settings.audioManager', lang)}</a>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-translation" ${openSectionId === 'settings-sec-translation' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-translation"${filterQ ? (hideSettings.has('settings-sec-translation') ? ' hidden' : ' open') : openSectionId === 'settings-sec-translation' ? ' open' : ''}>
       ${accHeader(t('settings.translation', lang), 'book', lang, 'settings.quranTranslationHint')}
       <div class="reciter-list">${translationRows}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-compare" ${openSectionId === 'settings-sec-compare' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openSectionId === 'settings-sec-compare' ? ' open' : ''}>
       ${accHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
       <div class="reciter-list">${compareRows}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-feedback" ${openSectionId === 'settings-sec-feedback' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-feedback"${filterQ ? (hideSettings.has('settings-sec-feedback') ? ' hidden' : ' open') : openSectionId === 'settings-sec-feedback' ? ' open' : ''}>
       ${accHeader(t('settings.feedback', lang), 'bead', lang, 'settings.feedbackHint')}
       ${toggleRow('hapticsEnabled', s.hapticsEnabled, t('settings.haptics', lang))}
       ${toggleRow('soundEnabled', s.soundEnabled, t('settings.sound', lang))}
@@ -312,7 +364,7 @@ export function renderSettings(state) {
       </div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-notifications" ${openSectionId === 'settings-sec-notifications' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-notifications"${filterQ ? (hideSettings.has('settings-sec-notifications') ? ' hidden' : ' open') : openSectionId === 'settings-sec-notifications' ? ' open' : ''}>
       ${accHeader(t('settings.notifications', lang), 'bell', lang)}
       <div class="btn-stack">
         <button type="button" class="btn btn--secondary btn--sm" data-action="add-reminder">${icon('plus', { size: 14 })} ${t('settings.addReminder', lang)}</button>
@@ -340,7 +392,7 @@ export function renderSettings(state) {
       ${reminders || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-accessibility" ${openSectionId === 'settings-sec-accessibility' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-accessibility"${filterQ ? (hideSettings.has('settings-sec-accessibility') ? ' hidden' : ' open') : openSectionId === 'settings-sec-accessibility' ? ' open' : ''}>
       ${accHeader(t('settings.accessibility', lang), 'hands', lang)}
       ${toggleRow('reduceMotion', s.reduceMotion, t('settings.reduceMotion', lang))}
       ${toggleRow('highContrast', s.highContrast, t('settings.highContrast', lang))}
@@ -360,7 +412,7 @@ export function renderSettings(state) {
       </label>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-profiles" ${openSectionId === 'settings-sec-profiles' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-profiles"${filterQ ? (hideSettings.has('settings-sec-profiles') ? ' hidden' : ' open') : openSectionId === 'settings-sec-profiles' ? ' open' : ''}>
       ${accHeader(t('settings.profiles', lang), 'folder', lang, 'settings.profilesHint')}
       <div class="chip-row" role="group" aria-label="${escapeHTML(t('settings.profiles', lang))}">
         <button type="button" class="chip ${state.activeProfile === 'main' ? 'chip--active' : ''}" data-action="profile-switch" data-id="main" aria-pressed="${state.activeProfile === 'main'}">${escapeHTML(t('settings.profileMain', lang))}</button>
@@ -377,7 +429,7 @@ export function renderSettings(state) {
       </div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-data" ${openSectionId === 'settings-sec-data' ? 'open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-data"${filterQ ? (hideSettings.has('settings-sec-data') ? ' hidden' : ' open') : openSectionId === 'settings-sec-data' ? ' open' : ''}>
       ${accHeader(t('settings.data', lang), 'shield', lang)}
       <!-- v3.26 data health check: three honest facts, zero servers -->
       <div class="data-health">
