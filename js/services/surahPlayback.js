@@ -362,8 +362,11 @@ function prefetchNext() {
 
 function failSession() {
   const { surah, ayah } = session ?? {};
-  stop();
+  // Error callbacks run BEFORE stop() resets state: handlers (e.g. the
+  // first-ayah full-surah fallback in app/boot.js) still see the live
+  // mirror (ayah === from) when deciding what to do.
   errorCb?.(surah, ayah);
+  stop();
 }
 
 export function isActive() {
@@ -396,11 +399,13 @@ export function snapshot() {
       qIndex: null,
       stopAt: null,
       paused: false,
+      from: null,
     };
   return {
     active: session.active,
     surah: session.surah,
     ayah: session.ayah,
+    from: session.from,
     total: session.end,
     end: session.end,
     repeat: session.repeat,

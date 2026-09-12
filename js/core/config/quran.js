@@ -91,6 +91,14 @@ export const RECITERS_URL = 'data/reciters.json';
 export const DEFAULT_RECITER = 'ar.alafasy';
 export const quranAudioUrl = (reciterId, globalAyahNumber, bitrate = 128) =>
   `https://cdn.islamic.network/quran/audio/${bitrate}/${encodeURIComponent(reciterId)}/${globalAyahNumber}.mp3`;
+/**
+ * Same CDN, per-surah files: the cross-engine fallback. When a moshaf
+ * server is unreachable the full-surah player retries once through this
+ * URL (default voice) instead of failing outright — same documented CDN
+ * family as quranAudioUrl, best-effort with honest failure states.
+ */
+export const quranAudioSurahUrl = (reciterId, surahNumber, bitrate = 128) =>
+  `https://cdn.islamic.network/quran/audio-surah/${bitrate}/${encodeURIComponent(reciterId)}/${Math.floor(Number(surahNumber))}.mp3`;
 
 /**
  * Per-word grammar (root, i'rab case, sarf/verb pattern, POS) for all

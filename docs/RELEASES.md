@@ -2,6 +2,21 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.34 — reciter unification: cross-engine audio fallbacks
+
+The 314 moshaf servers only host per-surah files, so verse-by-verse can
+never run on them — instead each engine now degrades onto the other.
+Full-surah streaming retries once through the verse CDN's per-surah
+files (`quranAudioSurahUrl`, default voice) with an honest
+`audio.fallbackVoice` toast and lock-screen name; downloads never fall
+back (a foreign voice under the moshaf's IDB key would poison offline).
+A verse session dying on its first ayah (voice/CDN outage) auto-starts
+the same surah full-surah with `audio.verseFallbackSurah`; mid-session
+failures keep the plain toast. Error callbacks fire before teardown so
+the fallback sees live state (pinned by test). Markers 5.2.33 → 5.2.34
+
+- re-stamp.
+
 ## v5.2.33 — reciter reliability: voice allowlists, Arabic catalog, lock-screen names
 
 Verse voices coerced to the 5-id CDN namespace in settings sanitizer and

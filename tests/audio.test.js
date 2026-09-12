@@ -90,6 +90,18 @@ test('rewayaAr covers every non-empty catalog riwaya, empty in → empty out', (
   assert.equal(rewayaAr('Some Future Riwaya'), '');
 });
 
+test('quranAudioSurahUrl builds the per-surah CDN fallback URL', async () => {
+  const { quranAudioSurahUrl } = await import('../js/core/config/quran.js');
+  assert.equal(
+    quranAudioSurahUrl('ar.alafasy', 1),
+    'https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/1.mp3'
+  );
+  assert.equal(
+    quranAudioSurahUrl('ar.alafasy', 114),
+    'https://cdn.islamic.network/quran/audio-surah/128/ar.alafasy/114.mp3'
+  );
+});
+
 test('sanitizeSettings coerces verse voices to the 5-id allowlist', async () => {
   const { sanitizeSettings } = await import('../js/core/config.js');
   assert.equal(sanitizeSettings({ reciter: 'ar.alafasy' }).reciter, 'ar.alafasy');

@@ -266,6 +266,8 @@ export const en = {
   'audio.reciteStartFailed': 'Could not start recitation — check your connection and try again.',
   'audio.reciteVerseFailed':
     'A verse failed to load, so the recitation stopped. Tap play to resume from where it stopped.',
+  'audio.fallbackVoice': 'Reciter server unreachable \u2014 playing {name} instead.',
+  'audio.verseFallbackSurah': 'Verse audio is unavailable \u2014 playing the full surah instead.',
   // v3.17 hifz: per-ayah repeat + skips on the recitation console
   'audio.repeatAyah': 'Repeat each ayah',
   'audio.ayahPrev': 'Previous ayah',

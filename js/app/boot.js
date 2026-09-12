@@ -118,6 +118,7 @@ export async function boot() {
           active: ayah != null,
           surah,
           ayah,
+          from: snap.from,
           repeat: snap.repeat,
           // (v5.2.0) echo mode + "your turn" pause ride the same mirror.
           listenRepeat: snap.listenRepeat === true,
@@ -209,7 +210,28 @@ export async function boot() {
     });
     surahPlayback.onError((surah, ayah) => {
       console.error('[surah-playback] verse failed', surah, ayah);
-      showToast(t('audio.reciteVerseFailed', store.getState().settings.language));
+      const lang = store.getState().settings.language;
+      // First-ayah failure = voice/CDN outage or offline (not one bad file):
+      // degrade to the full-surah stream of the same surah instead of
+      // silence. Mid-session failures keep the plain error toast (the
+      // session already delivered audio; auto-switching would be a surprise).
+      const sp = store.getState().surahPlayback;
+      const s = Math.floor(Number(surah));
+      const firstAyah =
+        Number.isFinite(s) &&
+        s >= 1 &&
+        s <= 114 &&
+        sp &&
+        sp.from != null &&
+        Number(sp.ayah) === Number(sp.from) &&
+        Number(ayah) === Number(sp.from);
+      if (firstAyah) {
+        const moshafId = store.getState().settings.audio?.moshafId || null;
+        wireAudioStart(moshafId, s);
+        showToast(t('audio.verseFallbackSurah', lang));
+      } else {
+        showToast(t('audio.reciteVerseFailed', lang));
+      }
     });
     notifications.startScheduler(
       () => store.getState().reminders,

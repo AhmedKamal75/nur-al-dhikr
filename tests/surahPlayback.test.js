@@ -150,6 +150,7 @@ describe('engine (fake driver)', () => {
       active: true,
       surah: 1,
       ayah: 1,
+      from: 1,
       total: 7,
       end: 7,
       repeat: 1,
@@ -239,6 +240,20 @@ describe('engine (fake driver)', () => {
     d.fail();
     assert.equal(isActive(), false, 'session does not hang on a failed verse');
     assert.equal(errs.at(-1)[0], 1);
+    configureDriver(null);
+  });
+
+  test('error callbacks fire before teardown so first-ayah fallback sees live state', () => {
+    const d = makeDriver();
+    configureDriver(d);
+    let seen = null;
+    onError(() => {
+      seen = snapshot();
+    });
+    start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    d.fail();
+    assert.ok(seen && seen.ayah === 1 && seen.from === 1, 'live mirror inside onError');
+    assert.equal(isActive(), false, 'torn down afterwards');
     configureDriver(null);
   });
 

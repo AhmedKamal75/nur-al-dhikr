@@ -7,6 +7,7 @@ import { startCompassIfNeeded, stopCompass } from './compassRuntime.js';
 import { formatCountdown } from '../domain/ramadan.js';
 
 import { VIEWS } from '../core/config.js';
+import { DEFAULT_RECITER, quranAudioSurahUrl, reciterDisplayName } from '../core/config/quran.js';
 import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
 import { findMoshaf, loadCatalog, searchReciters, surahUrl } from '../services/audioCatalog.js';
@@ -59,10 +60,32 @@ export async function startAudioPlay(moshafId, surah) {
     store.dispatch(actions.setAudioPrefs({ moshafId }));
   });
   try {
-    const { offline, error } = await player.play(moshafId, surah, surahUrl(moshaf.server, surah));
+    let res = await player.play(moshafId, surah, surahUrl(moshaf.server, surah));
+    let { offline, error } = res;
+    let fallbackVoice = '';
+    // Cross-engine fallback (one retry, streaming only): the moshaf server
+    // is unreachable and there is no offline copy — retry the same surah
+    // through the verse CDN's per-surah files (default voice) rather than
+    // failing outright. Downloads never fall back (a foreign voice under
+    // this moshaf's IDB key would poison the offline cache).
+    if (error && !offline) {
+      fallbackVoice = reciterDisplayName(DEFAULT_RECITER, state.settings.language);
+      res = await player.play(moshafId, surah, quranAudioSurahUrl(DEFAULT_RECITER, surah));
+      offline = res.offline;
+      error = res.error;
+      if (!error) {
+        const name = moshaf.nameEn || moshaf.nameAr || '';
+        mediaSession.syncMetadata(
+          mediaSession.fullSurahMetadata({ surah, reciter: fallbackVoice || name })
+        );
+        showToast(
+          t('audio.fallbackVoice', state.settings.language, { name: fallbackVoice || name })
+        );
+      }
+    }
     // Lock-screen metadata for the full-surah track (cleared on stop/close
     // by the recite-stop / player-close handlers via clearMetadata).
-    if (!error) {
+    if (!error && !fallbackVoice) {
       const name = moshaf.nameEn || moshaf.nameAr || '';
       mediaSession.syncMetadata(mediaSession.fullSurahMetadata({ surah, reciter: name }));
     }
