@@ -282,3 +282,19 @@ describe('journal text filter', () => {
     assert.ok(!miss.includes('Grateful'));
   });
 });
+
+describe('nav search item opens the palette', () => {
+  test('rail and drawer search entries carry open-palette; siblings navigate', async () => {
+    const { renderNav } = await import('../js/ui/shell.js');
+    const state = { settings: { language: 'en', navCollapsed: false }, activeView: 'home' };
+    const html = renderNav(state);
+    // data-action precedes data-view in each tag, so every chunk before a
+    // data-view="search" occurrence ends with that item's own opening tag.
+    const parts = html.split('data-view="search"');
+    assert.equal(parts.length - 1, 2, 'rail + drawer search entries');
+    for (const tag of [parts[0].split('<a').at(-1), parts[1].split('<a').at(-1)]) {
+      assert.ok(tag.includes('data-action="open-palette"'), `opens palette: ${tag.slice(-80)}`);
+    }
+    assert.ok(html.includes('data-view="home"') && html.includes('data-action="navigate"'));
+  });
+});

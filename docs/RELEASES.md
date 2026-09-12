@@ -2,6 +2,16 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.39 — nav search opens the palette
+
+The main-menu Search item (rail + drawer, Home…Settings group) now
+opens the command palette instead of jumping straight to the Search
+view: one launcher for everything, consistent with the topbar magnifier
+and Ctrl/⌘K. The full Search view is untouched and stays one pick away
+(palette destination row + history rows). Per-item action overrides in
+the nav renderer; opener shuts the drawer first. Markers 5.2.38 →
+5.2.39 + re-stamp.
+
 ## v5.2.38 — match highlights everywhere + journal search + palette history
 
 One shared `highlightMatch()` (literal-only `<mark>`, escape-first) now

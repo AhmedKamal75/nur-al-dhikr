@@ -28,7 +28,10 @@ const NAV_GROUPS = [
       { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
       { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
       { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
-      { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' },
+      // The nav search item opens the command palette (quick launcher);
+      // the full Search view stays one pick away (destination row +
+      // history rows inside the palette).
+      { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search', action: 'open-palette' },
     ],
   },
   {
@@ -79,9 +82,12 @@ function isActive(active, view) {
 
 function navItemHTML(n, active, lang, { drawer = false } = {}) {
   const label = t(n.label, lang);
+  // Per-item action override (the Search item opens the palette); the href
+  // stays a real destination as a no-JS fallback.
+  const action = n.action || (drawer ? 'nav-drawer-go' : 'navigate');
   return `
   <a class="nav__item ${isActive(active, n.view) ? 'nav__item--active' : ''}"
-     href="${buildHash(n.view)}" data-action="${drawer ? 'nav-drawer-go' : 'navigate'}" data-view="${n.view}"
+     href="${buildHash(n.view)}" data-action="${action}" data-view="${n.view}"
      title="${label}" aria-label="${label}" aria-current="${isActive(active, n.view) ? 'page' : 'false'}">
     ${icon(n.icon, { size: 24 })}
     <span class="nav__label">${label}</span>

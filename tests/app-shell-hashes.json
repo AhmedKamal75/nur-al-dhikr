@@ -1,10 +1,10 @@
 {
-  "version": "5.2.38",
+  "version": "5.2.39",
   "files": {
     "index.html": "5964b21913cc6fc1dfdf0e0b9b060c5675ddb0f674bda8babf72d0b7247eb0c9",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "fc823efe583905bdd813b04c5fea3cccee5680be173ee3b0ea64e324a0cab748",
-    "manifest.json": "cab94607b5c35ce513d0b655f652625be4a30105fbfb5c5b276fe75995cdb042",
+    "manifest.json": "0a7aa37719004aa324e541d3cb3e8042d0156124b623fed5d49e37ab7295e671",
     "assets/css/variables.css": "76b8a96effa781a738d6e0ca070cc86820a3224191abace5b7a78e92ac5681cd",
     "assets/css/base.css": "5293ec6b955a9369439af214d9f82b42833e28d1f8279a331814b04d40bdf32e",
     "assets/css/layout.css": "43696f6103139a7ddfe0decfa38f3c0dcd7579e1102ed0b994426ece840cca8a",
@@ -33,7 +33,7 @@
     "js/app/handlers/items.js": "498193a1237519eebaa670a2a9b0990f6ed923417c01acfc7d8915f1b43ff293",
     "js/app/handlers/journal.js": "10ad0f0c29aa9ced33a5d52e05f8b2204f38930a541ca238ad09964e40d3cd0d",
     "js/app/handlers/location.js": "951e438b48dc3ee68db41cc129887c797a0891062989507f10b70754c373e990",
-    "js/app/handlers/navigation.js": "4c810665ecc6d244aba5fcf5cd3f36ec2fe0a0321dff93e5f2537fb37374fdf4",
+    "js/app/handlers/navigation.js": "c4a6df40b771ec12e821ef1f6443b416e92eab4bd6da2378f40a6d08aedcb596",
     "js/app/handlers/offline.js": "505157925f1a9b3ef4daa8fe88c8e78711233107c063198f2d44760a8f587b64",
     "js/app/handlers/quiz.js": "a69b1e6d81861d582f922b53bfcfb70fe45505e79a0a7da6c8aaeb7774389de7",
     "js/app/handlers/quran.js": "cf78d46da4ed077ed98d7dd3afe1b87c0c0693c66971932c528bf091468e18c2",
@@ -61,7 +61,7 @@
     "js/app/stateSub.js": "47509b18b821d7f3349205ce337cbc400a983c0af3c15666348a2d70ed6c2cc4",
     "js/app/tickers.js": "1a2092b7f19ab0a57fa55b03708da79b805b87add3bc8b4df33ca8e8bb82816a",
     "js/app/triggers.js": "6b2186cbb1f0c163e5b69291ed5960f174bfd1a570955354ae6e33e28b78e664",
-    "js/core/config.js": "8152e7d5e8ce71674aa6a7fa2cb5703de79af1d52f0fa36125071be4e3520d66",
+    "js/core/config.js": "87e0e58663466577a4a9167ac42357928015386314595b703f6e5aba5fc75d70",
     "js/core/config/app.js": "4760b07be267dde8df033a2f6b0190b6876d5b1a87c16e0a456530d0c26c8c25",
     "js/core/config/quran.js": "cae70558dcb8ba9bf9e9ceb33e606d556041d18480814aa712e53d10cbde765a",
     "js/core/config/sanitize.js": "96a8e269a23752a118218dc1efa872a792c2f1435a9a0ea9c7d7801b7bacfbe3",
@@ -172,7 +172,7 @@
     "js/ui/modal.js": "6f67385b280412e3f41223b616119f4772efb772b1b35a08c36b5df35247e137",
     "js/ui/readingTokens.js": "227cf654f536825e68b767827aa0db56cc7319fa36771880fe0f8e3107100042",
     "js/ui/recitationConsole.js": "5c1df8ed8682b400679b91ec136bb27f0aa54b87ed70726fa22bec07a2a39ebb",
-    "js/ui/shell.js": "b33989ad0092868e9913845cc333ccdace8bf7b1c8c9d62b100e987484d2b09a",
+    "js/ui/shell.js": "96101ad80376f9cbd243d2e22665e323b91cbd872cdd4c8961ede593b3d30795",
     "js/ui/skeleton.js": "cfafb990fc1aabc0777aa3540d132e158db49aa74ccdb8c10708608c31b3ba81",
     "js/ui/toast.js": "0a85d47c99fd30e7fd4427c8f43af38cc21952e28db3c573a11123e7d794036d",
     "js/ui/viewSheet.js": "7b591a9a528f60c17881a6f6640ea0efcd77b783760d2b12c997ced0b64ecc96",
@@ -239,6 +239,6 @@
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
     "assets/audio/adhan/adhan.mp3": "95c386b0a62b9aae51847aa160472b1ea23d98e8f0bb78f7f990b65441b207ee",
-    "sw.js": "76b0d58cf092e17715e7ec2b56be82f5cc43127e4fcadb6535af3f1e8b636974"
+    "sw.js": "b1982875810c84ea8c79e98ab22e92bc3c3ebfd39ceeecdfe1dc6bfc6983244e"
   }
 }

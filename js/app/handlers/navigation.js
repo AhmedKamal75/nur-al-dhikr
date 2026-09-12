@@ -89,6 +89,9 @@ export const clickHandlers = {
   },
 
   'open-palette': () => {
+    // Also serves the nav-drawer item: shut the drawer first so the
+    // overlay opens onto the content, not behind the drawer.
+    closeNavDrawer();
     openPalette();
   },
 };
