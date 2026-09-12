@@ -398,3 +398,54 @@ describe('list filters: settings, favorites, collections', () => {
     assert.ok(!col.includes('Evening Calm'));
   });
 });
+
+describe('palette round 2: journal + settings providers', () => {
+  test('journal entries match text and land filtered', async () => {
+    const { buildPaletteGroups } = await import('../js/views/palette.js');
+    const { groups } = buildPaletteGroups({
+      query: 'mother',
+      lang: 'en',
+      libraryHits: [],
+      surahs: [],
+      ayahIndex: null,
+      reciters: [],
+      books: [],
+      history: [],
+      journal: [
+        { text: 'Heal my mother soon', sub: '2026-09-01', query: 'mother' },
+        { text: 'Pass the exam', sub: '2026-09-02', query: 'mother' },
+      ],
+    });
+    const j = groups.find((g) => g.key === 'journal');
+    assert.ok(j && j.rows.length === 1);
+    assert.equal(j.title, 'Journal');
+    assert.equal(j.rows[0].action, 'navigate');
+    assert.ok(j.rows[0].data.q === 'mother' && j.rows[0].href.includes('journal'));
+  });
+
+  test('settings sections match bilingually and open Settings', async () => {
+    const { buildPaletteGroups } = await import('../js/views/palette.js');
+    const forQ = (query) =>
+      buildPaletteGroups({
+        query,
+        lang: 'en',
+        libraryHits: [],
+        surahs: [],
+        ayahIndex: null,
+        reciters: [],
+        books: [],
+        history: [],
+        journal: [],
+        settingsSections: [
+          { id: 'a', titleKey: 'settings.reciter', hintKey: 'settings.reciterHint' },
+          { id: 'b', titleKey: 'settings.data' },
+        ],
+      });
+    const en = forQ('reciter').groups.find((g) => g.key === 'settings');
+    assert.ok(en && en.rows.length === 1);
+    assert.ok(en.rows[0].href.includes('settings'));
+    const ar = forQ('قارئ').groups.find((g) => g.key === 'settings');
+    assert.ok(ar && ar.rows.length === 1, 'Arabic hint/label match');
+    assert.ok(!forQ('zzz').groups.some((g) => g.key === 'settings'));
+  });
+});

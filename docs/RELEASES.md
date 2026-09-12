@@ -2,6 +2,13 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.42 — palette round 2: journal + settings providers
+
+The overlay now searches device-local journal duas/reflections (rows
+land on the filtered journal view) and settings sections (bilingual
+title + hint match, rows open Settings). No new data paths — both read
+what the views already render. Markers 5.2.41 → 5.2.42 + re-stamp.
+
 ## v5.2.41 — search the rest: settings, favorites, collections
 
 Every remaining list view filters: settings sections (bilingual title +

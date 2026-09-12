@@ -233,6 +233,8 @@ export const en = {
   'palette.book': 'Hadith books',
   'palette.action': 'Actions',
   'palette.tafsir': 'Tafsir',
+  'palette.journal': 'Journal',
+  'palette.settings': 'Settings',
   'palette.hint': '\u2191\u2193 to move \u00b7 Enter to open \u00b7 Esc to close',
   'audio.batchCancelled': 'Stopped — {n} surahs saved.',
   'audio.quota': 'Device storage is full — remove some downloads.',

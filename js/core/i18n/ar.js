@@ -230,6 +230,8 @@ export const ar = {
   'palette.book': 'كتب الحديث',
   'palette.action': 'إجراءات',
   'palette.tafsir': 'التفسير',
+  'palette.journal': 'اليوميات',
+  'palette.settings': 'الإعدادات',
   'palette.hint': '↑↓ للتنقل · Enter للفتح · Esc للإغلاق',
   'audio.batchCancelled': 'أُوقف التحميل — حُفظ {n} سورة.',
   'audio.quota': 'مساحة الجهاز ممتلئة — احذف بعض التحميلات.',

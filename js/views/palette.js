@@ -16,6 +16,7 @@ import { t } from '../core/i18n.js';
 import { search as searchLibrary, searchSurahs } from '../domain/search.js';
 import { searchQuran } from '../domain/quranSearch.js';
 import { searchReciters } from '../services/audioCatalog.js';
+import { SETTINGS_SECTIONS } from './settings.js';
 import { contentTitleFor } from '../domain/localeContent.js';
 
 /** Navigation destinations searchable from the palette. */
@@ -51,6 +52,14 @@ export function buildPaletteGroups(deps) {
   const q = normalizeSearch(query);
   const terms = q.split(' ').filter(Boolean);
   const groups = [];
+
+  const matchSettings = (titleKey, hintKey) => {
+    if (!q) return true;
+    return matchText(
+      `${t(titleKey, 'en')} ${hintKey ? t(hintKey, 'en') : ''}`,
+      `${t(titleKey, 'ar')} ${hintKey ? t(hintKey, 'ar') : ''}`
+    );
+  };
 
   const matchText = (en, ar) => {
     if (!q) return true;
@@ -206,6 +215,46 @@ export function buildPaletteGroups(deps) {
         href: buildHash(VIEWS.HADITH, { id: b.id }),
         action: 'navigate',
         data: { view: VIEWS.HADITH, id: b.id },
+      })),
+    });
+  }
+
+  // Journal entries (device-local duas + reflections) — rows land on
+  // the filtered journal view, so the match is one tap from full context.
+  const journalHits = (deps.journal || []).filter((j) => matchText(j.text, '')).slice(0, 4);
+  if (journalHits.length) {
+    groups.push({
+      key: 'journal',
+      title: t('palette.journal', lang),
+      rows: journalHits.map((j) => ({
+        kind: 'link',
+        icon: 'book',
+        primary: j.text.length > 100 ? `${j.text.slice(0, 100)}…` : j.text,
+        secondary: j.sub || '',
+        href: buildHash(VIEWS.JOURNAL, { q: String(j.query || '').slice(0, 60) }),
+        action: 'navigate',
+        data: { view: VIEWS.JOURNAL, q: String(j.query || '').slice(0, 60) },
+      })),
+    });
+  }
+
+  // Settings sections — rows open the Settings view (section memory keeps
+  // the last-opened accordion; the view's own filter narrows further).
+  const settingsHits = (deps.settingsSections || SETTINGS_SECTIONS)
+    .filter((sec) => matchSettings(sec.titleKey, sec.hintKey))
+    .slice(0, 3);
+  if (settingsHits.length) {
+    groups.push({
+      key: 'settings',
+      title: t('palette.settings', lang),
+      rows: settingsHits.map((sec) => ({
+        kind: 'link',
+        icon: 'settings',
+        primary: t(sec.titleKey, lang),
+        secondary: sec.hintKey ? t(sec.hintKey, lang) : '',
+        href: buildHash(VIEWS.SETTINGS),
+        action: 'navigate',
+        data: { view: VIEWS.SETTINGS },
       })),
     });
   }

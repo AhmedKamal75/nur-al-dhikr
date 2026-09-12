@@ -74,9 +74,25 @@ function collectDeps(query) {
       })),
     };
   }
+  const qTrim = query.trim();
+  const journal = qTrim
+    ? [
+        ...(store.getState().duaJournal || []).map((e) => ({
+          text: e.text || '',
+          sub: e.date || '',
+          query: qTrim,
+        })),
+        ...(store.getState().reflections || []).map((e) => ({
+          text: e.text || '',
+          sub: e.week || '',
+          query: qTrim,
+        })),
+      ]
+    : [];
   return {
     query,
     lang,
+    journal,
     tafsirIndex,
     libraryHits: query.trim() ? searchLibrary(query, { limit: 6 }) : [],
     surahs: state.quran.meta?.surahs || [],
