@@ -138,6 +138,23 @@ export function buildPaletteGroups(deps) {
     });
   }
 
+  // Tafsir (bundled edition only — remote editions never bulk-fetch).
+  if (deps.tafsirIndex?.hits?.length) {
+    groups.push({
+      key: 'tafsir',
+      title: t('palette.tafsir', lang),
+      rows: deps.tafsirIndex.hits.slice(0, 5).map((h) => ({
+        kind: 'link',
+        icon: 'book-open',
+        primary: h.text.length > 120 ? `${h.text.slice(0, 120)}…` : h.text,
+        secondary: `${deps.tafsirIndex.editionName || ''} · ${h.s}:${h.a}`.trim(),
+        href: buildHash(VIEWS.QURAN, { id: h.s, ay: String(h.a) }),
+        action: 'navigate',
+        data: { view: VIEWS.QURAN, id: String(h.s), ay: String(h.a) },
+      })),
+    });
+  }
+
   // Adhkar & duas (precomputed library hits from the app layer).
   const libHits = (deps.libraryHits || []).slice(0, 6);
   if (libHits.length) {

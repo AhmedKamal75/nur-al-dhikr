@@ -19,6 +19,8 @@ import {
   searchReciters,
 } from '../views/palette.js';
 import { isQuranSearchReady } from '../domain/quranSearch.js';
+import { isTafsirSearchReady, searchTafsir, tafsirIndexEdition } from '../domain/tafsirSearch.js';
+import { ensureTafsirSearchData } from './tafsirSearch.js';
 import { loadCatalog } from '../services/audioCatalog.js';
 import { ensureQuranSearchData } from './quranSearch.js';
 
@@ -57,9 +59,25 @@ function collectDeps(query) {
       }),
     };
   }
+  let tafsirIndex = null;
+  if (query.trim() && isTafsirSearchReady()) {
+    const ed = tafsirIndexEdition();
+    const texts = store.getState().tafsir?.[ed] || {};
+    const meta = store.getState().tafsirEditions?.editions || [];
+    const edDoc = meta.find((e) => e.id === ed);
+    tafsirIndex = {
+      editionName:
+        lang === 'ar' ? edDoc?.nameAr || edDoc?.nameEn || '' : edDoc?.nameEn || edDoc?.nameAr || '',
+      hits: searchTafsir(query, { limit: 5 }).map((h) => ({
+        ...h,
+        text: texts[String(h.s)]?.[String(h.a)] || '',
+      })),
+    };
+  }
   return {
     query,
     lang,
+    tafsirIndex,
     libraryHits: query.trim() ? searchLibrary(query, { limit: 6 }) : [],
     surahs: state.quran.meta?.surahs || [],
     ayahIndex,
@@ -157,6 +175,9 @@ export function openPalette() {
     if (document.getElementById('palette-input')) updatePalette();
   });
   ensureQuranSearchData().then(() => {
+    if (document.getElementById('palette-input')) updatePalette();
+  });
+  ensureTafsirSearchData().then(() => {
     if (document.getElementById('palette-input')) updatePalette();
   });
 }

@@ -229,6 +229,7 @@ export const ar = {
   'palette.reciter': 'القراء',
   'palette.book': 'كتب الحديث',
   'palette.action': 'إجراءات',
+  'palette.tafsir': 'التفسير',
   'palette.hint': '↑↓ للتنقل · Enter للفتح · Esc للإغلاق',
   'audio.batchCancelled': 'أُوقف التحميل — حُفظ {n} سورة.',
   'audio.quota': 'مساحة الجهاز ممتلئة — احذف بعض التحميلات.',

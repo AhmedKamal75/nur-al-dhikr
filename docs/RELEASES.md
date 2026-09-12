@@ -2,6 +2,15 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.40 — tafsir full-text search in the palette
+
+The last unsearchable library opens up: the default bundled tafsir
+edition (first bundled in catalog order) builds a 6,236-record index
+lazily in 24-file chunks, ranked like Quran search, deep-linking to the
+reader ayah. Remote editions are never bulk-fetched (their on-demand
+rule stands). Palette gains the Tafsir group with edition refs; reader
+cache doubles as index source. Markers 5.2.39 → 5.2.40 + re-stamp.
+
 ## v5.2.39 — nav search opens the palette
 
 The main-menu Search item (rail + drawer, Home…Settings group) now
