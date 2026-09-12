@@ -8,7 +8,9 @@
  * engine owns audio; this module only ADVERTISES it to the platform.
  */
 
-export function verseMetadata({ surah, ayah, total, reciter }) {
+import { reciterDisplayName } from '../core/config/quran.js';
+
+export function verseMetadata({ surah, ayah, total, reciter, lang = 'en' }) {
   const s = Math.floor(Number(surah));
   const a = Math.floor(Number(ayah));
   const t = Math.floor(Number(total));
@@ -17,7 +19,8 @@ export function verseMetadata({ surah, ayah, total, reciter }) {
       Number.isFinite(s) && Number.isFinite(a)
         ? `Surah ${s} · Ayah ${a}${Number.isFinite(t) && t > 0 ? `/${t}` : ''}`
         : 'Qur\u2019an recitation',
-    artist: typeof reciter === 'string' && reciter ? reciter : '',
+    // Display name, never the raw voice id (was 'ar.alafasy' on lock screens).
+    artist: reciterDisplayName(typeof reciter === 'string' ? reciter : '', lang),
     album: '',
   };
 }

@@ -16,12 +16,17 @@ import {
  */
 
 describe('media session metadata', () => {
-  test('verse titles carry surah · ayah/total with the reciter as artist', () => {
+  test('verse titles carry surah · ayah/total with the reciter display name as artist', () => {
     assert.deepEqual(verseMetadata({ surah: 2, ayah: 255, total: 286, reciter: 'ar.alafasy' }), {
       title: 'Surah 2 · Ayah 255/286',
-      artist: 'ar.alafasy',
+      artist: 'Mishary Alafasy',
       album: '',
     });
+    assert.equal(
+      verseMetadata({ surah: 2, ayah: 255, total: 286, reciter: 'ar.alafasy', lang: 'ar' }).artist,
+      'مشاري العفاسي'
+    );
+    assert.equal(verseMetadata({ surah: 1, ayah: 1, total: 7, reciter: 'bogus' }).artist, 'bogus');
   });
 
   test('verse metadata survives hostile input', () => {

@@ -22,7 +22,13 @@ import {
   THEME_MODES,
 } from './views.js';
 import { TASBIH_MILESTONES } from './app.js';
-import { TAJWEED_FAMILY_ID_SET, TAJWEED_RULE_ID_SET, asTranslationEdition } from './quran.js';
+import {
+  TAJWEED_FAMILY_ID_SET,
+  TAJWEED_RULE_ID_SET,
+  asTranslationEdition,
+  QURAN_RECITER_IDS,
+  DEFAULT_RECITER,
+} from './quran.js';
 import { isSafeKey } from '../utils.js';
 
 const CLOCK_SETTING_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -229,8 +235,16 @@ export function sanitizeSettings(raw) {
     profileName: asShortStr(s.profileName, d.profileName, 60),
     autoAdvanceFocus: asBool(s.autoAdvanceFocus, d.autoAdvanceFocus),
     dailyGoal: Math.round(asNumber(s.dailyGoal, d.dailyGoal, 1, 10000)),
-    reciter: asShortStr(s.reciter, d.reciter, 60),
-    reciterB: s.reciterB == null || s.reciterB === '' ? null : asShortStr(s.reciterB, null, 60),
+    // Verse voices live in a fixed 5-id CDN namespace — a stale/typo id
+    // would 404 at play time, so coerce unknown values to the default.
+    // (Moshaf ids stay free-form: 314 catalog + user customs, validated live.)
+    reciter: QURAN_RECITER_IDS.has(s.reciter) ? s.reciter : DEFAULT_RECITER,
+    reciterB:
+      s.reciterB == null || s.reciterB === ''
+        ? null
+        : QURAN_RECITER_IDS.has(s.reciterB)
+          ? s.reciterB
+          : null,
     reciterCompare: s.reciterCompare === true,
     navCollapsed: asBool(s.navCollapsed, d.navCollapsed),
     tapRipple: asBool(s.tapRipple, d.tapRipple),

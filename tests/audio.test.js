@@ -14,6 +14,7 @@ import {
   customMoshafId,
   validateCustomServer,
   searchReciters,
+  rewayaAr,
 } from '../js/services/audioCatalog.js';
 import { formatBytes, audioKey } from '../js/services/audioStore.js';
 import { formatCountdown } from '../js/domain/ramadan.js';
@@ -67,6 +68,61 @@ test('bundled catalog: 314 full mushafs, unique ids, all with servers', () => {
   assert.ok(doc.reciters.some((r) => r.nameEn.includes('Alafasi')));
   assert.ok(doc.reciters.some((r) => r.nameEn.includes('Husar') || r.nameEn.includes('Husary')));
   assert.ok(doc.reciters.some((r) => r.source === 'quranicaudio'));
+});
+
+test('bundled catalog: every row has an Arabic name and a clean server URL', () => {
+  const doc = JSON.parse(readFileSync(new URL('reciters.json', DIR), 'utf-8'));
+  for (const r of doc.reciters) {
+    assert.match(r.nameAr, /[؀-ۿ]/u, `${r.id} nameAr has Arabic script`);
+    const afterHost = r.server.split('://', 2)[1] || '';
+    assert.ok(!afterHost.includes('//'), `${r.id} server has no double slash`);
+  }
+});
+
+test('rewayaAr covers every non-empty catalog riwaya, empty in → empty out', () => {
+  const doc = JSON.parse(readFileSync(new URL('reciters.json', DIR), 'utf-8'));
+  const values = new Set(doc.reciters.map((r) => r.rewaya).filter(Boolean));
+  assert.ok(values.size > 0);
+  for (const v of values) {
+    assert.match(rewayaAr(v), /[؀-ۿ]/u, `rewaya maps to Arabic: ${v}`);
+  }
+  assert.equal(rewayaAr(''), '');
+  assert.equal(rewayaAr('Some Future Riwaya'), '');
+});
+
+test('sanitizeSettings coerces verse voices to the 5-id allowlist', async () => {
+  const { sanitizeSettings } = await import('../js/core/config.js');
+  assert.equal(sanitizeSettings({ reciter: 'ar.alafasy' }).reciter, 'ar.alafasy');
+  assert.equal(sanitizeSettings({ reciter: 'mp3-118-118' }).reciter, 'ar.alafasy');
+  assert.equal(sanitizeSettings({}).reciter, 'ar.alafasy');
+  assert.equal(sanitizeSettings({ reciterB: 'ar.husary' }).reciterB, 'ar.husary');
+  assert.equal(sanitizeSettings({ reciterB: '' }).reciterB, null);
+  assert.equal(sanitizeSettings({ reciterB: 'qa-97' }).reciterB, null);
+});
+
+test('verse engine coerces unknown voices instead of 404ing per ayah', async () => {
+  const engine = await import('../js/services/surahPlayback.js');
+  const { configureDriver } = await import('../js/services/recitation.js');
+  const played = [];
+  configureDriver({
+    play: (url, key) => void played.push(url),
+    stop: () => {},
+    onEnded: () => {},
+    onError: () => {},
+  });
+  try {
+    engine.start({
+      surah: 1,
+      total: 7,
+      reciterId: 'mp3-118-118',
+      surahsMeta: [{ number: 1, ayahCount: 7 }],
+    });
+    assert.equal(engine.snapshot().reciterId, 'ar.alafasy');
+    assert.ok(played.at(-1).includes('/ar.alafasy/'));
+    engine.stop();
+  } finally {
+    configureDriver(null);
+  }
 });
 
 test('searchReciters matches Arabic names diacritic-insensitively (after catalog load)', async () => {

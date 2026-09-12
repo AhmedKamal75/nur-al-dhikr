@@ -2,6 +2,18 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.33 — reciter reliability: voice allowlists, Arabic catalog, lock-screen names
+
+Verse voices coerced to the 5-id CDN namespace in settings sanitizer and
+engine (`start`/`setReciter`/`setReciterB`) — stale ids fall back to
+`ar.alafasy` instead of 404ing per ayah. All 314 catalog rows now carry
+Arabic names (38 `qa-*` backfilled) with a URL hygiene gate; riwaya
+labels mapped to Arabic via `rewayaAr()` (19/19 catalog values, unmapped
+omitted in AR). Lock-screen artist shows the voice display name, never
+the raw id. New gates in `tests/audio.test.js`. Markers 5.2.32 → 5.2.33
+
+- re-stamp.
+
 ## v5.2.32 — takeover-audit fixes: separation leaks, data flags, layer gates
 
 Closes all 11 findings of the v5.2.31 takeover audit. Separation

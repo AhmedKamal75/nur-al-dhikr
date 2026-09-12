@@ -180,3 +180,14 @@ export const QURAN_RECITERS = Object.freeze([
   { id: 'ar.abdurrahmaansudais', nameEn: 'Abdurrahman As-Sudais', nameAr: 'عبدالرحمن السديس' },
   { id: 'ar.mahermuaiqly', nameEn: 'Maher Al Muaiqly', nameAr: 'ماهر المعيقلي' },
 ]);
+
+/** Verse-voice allowlist: the CDN namespace only serves these five ids —
+ *  anything else 404s at play time, so settings coerce to it on load. */
+export const QURAN_RECITER_IDS = Object.freeze(new Set(QURAN_RECITERS.map((r) => r.id)));
+
+/** Display name for a verse voice (falls back to the raw id for unknown input). */
+export function reciterDisplayName(id, lang = 'en') {
+  const r = QURAN_RECITERS.find((v) => v.id === id);
+  if (!r) return String(id || '');
+  return lang === 'ar' ? r.nameAr : r.nameEn;
+}

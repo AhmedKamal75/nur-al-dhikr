@@ -15,7 +15,7 @@ import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { queueSignature } from '../services/surahPlayback.js';
-import { searchReciters, findMoshaf } from '../services/audioCatalog.js';
+import { searchReciters, findMoshaf, rewayaAr } from '../services/audioCatalog.js';
 import { formatBytes } from '../services/audioStore.js';
 import { skeletonReciterRows } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
@@ -38,11 +38,13 @@ export function renderAudio(state) {
     .slice(0, 60)
     .map((r) => {
       const active = r.id === selectedId;
+      // Riwaya renders localized in AR (unmapped Latin omitted, never leaked).
+      const rewaya = lang === 'ar' ? rewayaAr(r.rewaya) : String(r.rewaya || '');
       return `
     <div class="reciter-row ${active ? 'reciter-row--active' : ''}">
       <button type="button" class="reciter-row__main" data-action="audio-select-moshaf" data-id="${escapeHTML(r.id)}">
         <span class="reciter-row__name">${escapeHTML(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn)}</span>
-        <span class="reciter-row__sub">${escapeHTML(r.nameAr && r.nameEn && lang === 'ar' ? r.nameEn : r.nameAr || '')}${r.rewaya ? ` — ${escapeHTML(r.rewaya)}` : ''}</span>
+        <span class="reciter-row__sub">${escapeHTML(r.nameAr && r.nameEn && lang === 'ar' ? r.nameEn : r.nameAr || '')}${rewaya ? ` — ${escapeHTML(rewaya)}` : ''}</span>
       </button>
       ${r.source === 'custom' ? `<button type="button" class="icon-btn icon-btn--sm" data-action="audio-remove-custom" data-id="${escapeHTML(r.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 14 })}</button>` : ''}
     </div>`;

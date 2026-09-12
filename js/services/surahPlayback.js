@@ -20,6 +20,7 @@
  */
 
 import { ayahAudioUrl } from './mushaf.js';
+import { QURAN_RECITER_IDS, DEFAULT_RECITER } from '../core/config/quran.js';
 import {
   driverPlay,
   driverStop,
@@ -462,7 +463,8 @@ export function start({
     : Number.isFinite(e) && e >= 1 && e <= t
       ? Math.max(e, Number.isFinite(f) && f >= 1 ? f : 1)
       : t;
-  const b = typeof reciterIdB === 'string' && reciterIdB ? reciterIdB : null;
+  // Voice ids outside the verse CDN namespace would 404 per ayah — coerce.
+  const b = typeof reciterIdB === 'string' && QURAN_RECITER_IDS.has(reciterIdB) ? reciterIdB : null;
   const startAyah = Number.isFinite(f) && f >= 1 && f <= t ? f : 1;
   // Cross-surah stop: { surah, ayah } the session must not play past.
   // Same-surah folds into `end`; a later surah auto-enables listen mode so
@@ -491,7 +493,7 @@ export function start({
     // (A cross-surah stopAt is the exception: it auto-enables the roll.)
     ranged: stopPoint && stopPoint.surah > s ? false : finalEnd < t,
     stopAt: stopPoint,
-    reciterId: String(reciterId || ''),
+    reciterId: QURAN_RECITER_IDS.has(reciterId) ? reciterId : DEFAULT_RECITER,
     reciterIdB: b,
     compare: compare === true && !!b,
     comparePass: 0,
@@ -687,7 +689,7 @@ function advanceSurah() {
  */
 export function setReciter(reciterId) {
   if (!session) return snapshot();
-  const id = typeof reciterId === 'string' && reciterId ? reciterId : session.reciterId;
+  const id = QURAN_RECITER_IDS.has(reciterId) ? reciterId : session.reciterId;
   if (!id || id === session.reciterId) return snapshot();
   clearEchoWait();
   session.reciterId = id;
@@ -700,7 +702,7 @@ export function setReciter(reciterId) {
 /** Live-set voice B for compare mode (restarts the current ayah when comparing). */
 export function setReciterB(reciterIdB) {
   if (!session) return snapshot();
-  const b = typeof reciterIdB === 'string' && reciterIdB ? reciterIdB : null;
+  const b = typeof reciterIdB === 'string' && QURAN_RECITER_IDS.has(reciterIdB) ? reciterIdB : null;
   session.reciterIdB = b;
   if (!b) session.compare = false;
   clearEchoWait();

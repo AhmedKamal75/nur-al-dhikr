@@ -43,6 +43,44 @@ export function customMoshafId(server) {
 }
 
 /**
+ * Riwaya (transmission) labels ship in Latin transliteration in the catalog.
+ * This table renders the 20 distinct catalog values in Arabic; unmapped
+ * input returns '' so the AR UI omits rather than leaks Latin (same
+ * contract as domain/localeContent).
+ */
+const REWAYA_AR = new Map([
+  ["Hafs A'n Assem - Murattal", 'حفص عن عاصم - مرتل'],
+  ["Qalon A'n Nafi' - Murattal", 'قالون عن نافع - مرتل'],
+  ["Warsh A'n Nafi' - Murattal", 'ورش عن نافع - مرتل'],
+  ['Almusshaf Al Mojawwad - Almusshaf Al Mojawwad', 'المصحف المجود'],
+  ["Aldori A'n Abi Amr - Murattal", 'الدوري عن أبي عمرو - مرتل'],
+  ["Hafs A'n Assem - Featured Recitation", 'حفص عن عاصم - تلاوة مميزة'],
+  ["AlDorai A'n Al-Kisa'ai - Murattal", 'الدوري عن الكسائي - مرتل'],
+  ["Albizi A'n Ibn Katheer - Murattal", 'البزي عن ابن كثير - مرتل'],
+  ["Sho'bah A'n Asim - Murattal", 'شعبة عن عاصم - مرتل'],
+  ["Assosi A'n Abi Amr - Murattal", 'السوسي عن أبي عمرو - مرتل'],
+  ["Khalaf A'n Hamzah - Murattal", 'خلف عن حمزة - مرتل'],
+  ["Warsh A'n Nafi' Men Tariq Alazraq - Murattal", 'ورش عن نافع من طريق الأزرق - مرتل'],
+  ["Qunbol A'n Ibn Katheer - Murattal", 'قنبل عن ابن كثير - مرتل'],
+  [
+    "Warsh A'n Nafi' Men  Tariq Abi Baker Alasbahani - Murattal",
+    'ورش عن نافع من طريق أبي بكر الأصبهاني - مرتل',
+  ],
+  ["Albizi and Qunbol A'n Ibn Katheer - Murattal", 'البزي وقنبل عن ابن كثير - مرتل'],
+  ["Almusshaf Al Mo'lim - Almusshaf Al Mo'lim", 'المصحف المعلم'],
+  ["Ibn Thakwan A'n Ibn Amer - Murattal", 'ابن ذكوان عن ابن عامر - مرتل'],
+  ["Qalon A'n Nafi' Men Tariq Abi Nasheet - Murattal", 'قالون عن نافع من طريق أبي نشيط - مرتل'],
+  ["Rowis and Rawh A'n Yakoob Al Hadrami  - Murattal", 'رويس وروح عن يعقوب الحضرمي - مرتل'],
+]);
+
+/** Arabic riwaya label, or '' when unmapped/empty (caller omits it in AR). */
+export function rewayaAr(rewaya) {
+  const s = String(rewaya || '').trim();
+  if (!s) return '';
+  return REWAYA_AR.get(s) || '';
+}
+
+/**
  * Fetch the bundled catalog once; afterwards served from cache. Never
  * throws — on failure returns an empty list so the UI can still show
  * custom reciters and retry.

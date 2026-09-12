@@ -151,6 +151,7 @@ export async function boot() {
             ayah,
             total: snap.total,
             reciter: snap.reciterId,
+            lang: store.getState().settings.language,
           })
         );
       } else {
