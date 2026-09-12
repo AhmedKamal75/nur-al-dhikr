@@ -557,7 +557,7 @@ export function render(state) {
     consumePopNavigation();
   }
 
-  patchHTML(topbarEl, renderTopBar(state));
+  patchHTML(topbarEl, renderTopBar(state, { backDepth: rt.navBackStack?.length || 0 }));
   patchHTML(navEl, renderNav(state));
 
   // Unknown routes (a mistyped/shared deep link like #/xyz) used to render

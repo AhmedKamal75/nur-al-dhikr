@@ -383,17 +383,17 @@ describe('mushaf chrome numerals follow the interface language (v4.5.2)', () => 
 describe('topbar universal Back button (APP-FLOW I9, v4.5.2)', () => {
   test('hidden on a fresh boot (nothing to go back to), shown once a forward navigation happened', async () => {
     const { renderTopBar } = await import('../js/ui/shell.js');
-    const { rt } = await import('../js/app/rt.js');
-    rt.navBackStack = [];
     const topState = {
       settings: { ...DEFAULT_SETTINGS, language: 'en' },
       activeView: 'home',
       activeParams: {},
     };
-    const fresh = renderTopBar(topState);
+    const fresh = renderTopBar(topState, { backDepth: 0 });
     assert.ok(!fresh.includes('go-back'), 'no back button before any navigation');
-    rt.navBackStack = ['library|'];
-    const deep = renderTopBar({ ...topState, activeView: 'category', activeParams: { id: 'x' } });
+    const deep = renderTopBar(
+      { ...topState, activeView: 'category', activeParams: { id: 'x' } },
+      { backDepth: 1 }
+    );
     assert.ok(deep.includes('data-action="go-back"'), 'back button once a stack exists');
     assert.match(deep, /aria-label="Back"/);
   });

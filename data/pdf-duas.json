@@ -257,7 +257,7 @@
             "ar": "اللهم اهدني لصالح الأعمال والأخلاق..."
           },
           "reference": {
-            "collection": "Sunan an-Nasa'i",
+            "collection": "Sunan an-Nasa'i (al-Kubra)",
             "book": "Book of Supplications",
             "chapter": "",
             "hadith": "10338",
@@ -282,7 +282,8 @@
           ],
           "related": [],
           "notes": "Source: جوامع دعاء النبي",
-          "order": 6
+          "order": 6,
+          "review": "Scholar review: number 10338 is an al-Kubra number (exceeds Sunan as-Sughra range); collection corrected to al-Kubra, verify edition."
         },
         {
           "id": "pdf-joami-007",
@@ -298,7 +299,7 @@
             "ar": "اللهم إني أسألك الثبات في الأمر والعزيمة على الرشد..."
           },
           "reference": {
-            "collection": "Sunan an-Nasa'i",
+            "collection": "Sunan an-Nasa'i (al-Kubra)",
             "book": "Book of Supplications",
             "chapter": "",
             "hadith": "10339",
@@ -323,7 +324,8 @@
           ],
           "related": [],
           "notes": "Source: جوامع دعاء النبي",
-          "order": 7
+          "order": 7,
+          "review": "Scholar review: number 10339 is an al-Kubra number (exceeds Sunan as-Sughra range); collection corrected to al-Kubra, verify edition."
         },
         {
           "id": "pdf-joami-008",
@@ -480,7 +482,7 @@
             "ar": "اللهم إني أسألك يا الله الأحد الصمد..."
           },
           "reference": {
-            "collection": "Sunan an-Nasa'i",
+            "collection": "Sunan an-Nasa'i (al-Kubra)",
             "book": "Book of Supplications",
             "chapter": "",
             "hadith": "10340",
@@ -505,7 +507,8 @@
           ],
           "related": [],
           "notes": "Source: 100 دعاء من الكتاب والسنة، محمد صالح المنجد",
-          "order": 1
+          "order": 1,
+          "review": "Scholar review: number 10340 is an al-Kubra number (exceeds Sunan as-Sughra range); collection corrected to al-Kubra, verify edition."
         },
         {
           "id": "pdf-100-002",
@@ -2837,7 +2840,8 @@
             "home-001"
           ],
           "notes": "Source: Claude reference implementation (duas.json)",
-          "order": 29
+          "order": 29,
+          "review": "Scholar review: joint citation 'Sunan Abi Dawud & Tirmidhi' with number 5095 is ambiguous (exceeds Jami' at-Tirmidhi range); split per-collection numbers from a citable source."
         },
         {
           "id": "cu-132",

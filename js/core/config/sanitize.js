@@ -412,6 +412,16 @@ function sanitizeUserItem(raw) {
             narrator: asText(p.reference.narrator, '', 200),
             grading: asText(p.reference.grading, '', 200),
             notes: asText(p.reference.notes, '', 2000),
+            ...(p.reference.reference_ar && typeof p.reference.reference_ar === 'object'
+              ? {
+                  reference_ar: {
+                    collection: asText(p.reference.reference_ar.collection, '', 200),
+                    narrator: asText(p.reference.reference_ar.narrator, '', 200),
+                    grading: asText(p.reference.reference_ar.grading, '', 200),
+                    notes: asText(p.reference.reference_ar.notes, '', 2000),
+                  },
+                }
+              : {}),
           }
         : undefined,
     grade,
@@ -421,6 +431,7 @@ function sanitizeUserItem(raw) {
     tags: asTagList(p.tags),
     related: asIdList(p.related),
     notes: asText(p.notes, '', 2000),
+    review: asText(p.review, '', 500),
     order: Math.round(asNumber(p.order, 9999, 0, 999999)),
   };
   if (!item.reference || Object.values(item.reference).every((v) => !v)) delete item.reference;
@@ -483,8 +494,18 @@ function cleanItemOverrides(obj) {
           grading: asText(ov.reference.grading, '', 200),
           notes: asText(ov.reference.notes, '', 2000),
         };
+        if (ov.reference.reference_ar && typeof ov.reference.reference_ar === 'object') {
+          fields.reference.reference_ar = {
+            collection: asText(ov.reference.reference_ar.collection, '', 200),
+            narrator: asText(ov.reference.reference_ar.narrator, '', 200),
+            grading: asText(ov.reference.reference_ar.grading, '', 200),
+            notes: asText(ov.reference.reference_ar.notes, '', 2000),
+          };
+        }
       }
       if (typeof ov.grade === 'string' && GRADES.includes(ov.grade)) fields.grade = ov.grade;
+      const reviewText = asText(ov.review, '', 500);
+      if (reviewText) fields.review = reviewText;
       const reps = Math.round(asNumber(ov.repetitions, NaN, 1, 10000));
       if (Number.isFinite(reps)) fields.repetitions = reps;
       if (Array.isArray(ov.tags)) fields.tags = asTagList(ov.tags);

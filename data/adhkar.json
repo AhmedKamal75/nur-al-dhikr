@@ -390,7 +390,8 @@
           ],
           "related": [],
           "notes": "The old title ('Ahdhu Bihijabika') was misleading — this is the morning tashahhud remembrance.",
-          "order": 8
+          "order": 8,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         },
         {
           "id": "adh-mor-007",
@@ -858,7 +859,8 @@
             "adh-eve-015"
           ],
           "notes": "Narrated by Abdullah bin Mas'ud.",
-          "order": 19
+          "order": 19,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         },
         {
           "id": "adh-mor-020",
@@ -1272,7 +1274,8 @@
           ],
           "related": [],
           "notes": "",
-          "order": 29
+          "order": 29,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         }
       ]
     },
@@ -1602,7 +1605,8 @@
             "adh-mor-023"
           ],
           "notes": "",
-          "order": 7
+          "order": 7,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         },
         {
           "id": "adh-eve-002",
@@ -2107,7 +2111,8 @@
             "adh-mor-015"
           ],
           "notes": "",
-          "order": 19
+          "order": 19,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         },
         {
           "id": "adh-eve-004",
@@ -2430,7 +2435,8 @@
           ],
           "related": [],
           "notes": "",
-          "order": 27
+          "order": 27,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         }
       ]
     },
@@ -3784,7 +3790,8 @@
           ],
           "related": [],
           "notes": "Narrated by Amr bin Shu'aib.",
-          "order": 15
+          "order": 15,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         },
         {
           "id": "glm-topical-sl-005",
@@ -3922,7 +3929,8 @@
           ],
           "related": [],
           "notes": "",
-          "order": 2
+          "order": 2,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         },
         {
           "id": "adh-wak-002",
@@ -4991,7 +4999,8 @@
           ],
           "related": [],
           "notes": "",
-          "order": 18
+          "order": 18,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields."
         },
         {
           "id": "glm-gt-032",
@@ -5076,7 +5085,8 @@
           ],
           "related": [],
           "notes": "",
-          "order": 20
+          "order": 20,
+          "review": "Scholar review: grade chip is 'Hasan' but reference.grading is 'Sahih'; confirm citable source and align both fields. Citation Sunan Abi Dawud 5600 exceeds the shipped corpus range (max 5274); verify edition/numbering."
         }
       ]
     },

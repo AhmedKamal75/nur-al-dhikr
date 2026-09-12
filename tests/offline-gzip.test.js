@@ -17,7 +17,9 @@ import { clearTextCache } from '../js/app/offlineJobs.js';
 import { clickHandlers } from '../js/app/handlers/offline.js';
 import { renderOffline } from '../js/views/offline.js';
 import { initialState } from '../js/core/state/initial.js';
-import { compressDir } from '../scripts/compress-data.mjs';
+// No static import of scripts/: shipped archives may omit scripts/
+// (ARCHITECTURE.md packaging rule). The packaging test below loads it
+// dynamically and skips gracefully when absent.
 
 const DOC = { ok: true, ayahs: [{ number: 1 }] };
 const gzBytes = () => gzipSync(Buffer.from(JSON.stringify(DOC)));
@@ -162,7 +164,14 @@ test('gzip: view shows the storage-mode section with live state', () => {
   assert.ok(html.includes('~27 MB'));
 });
 
-test('gzip: compress-data script only zips JSON, recursively', async () => {
+test('gzip: compress-data script only zips JSON, recursively', async (t) => {
+  let compressDir;
+  try {
+    ({ compressDir } = await import('../scripts/compress-data.mjs'));
+  } catch {
+    t.skip('scripts/ not shipped in this packaging');
+    return;
+  }
   const dir = mkdtempSync(join(tmpdir(), 'gz-'));
   const big = JSON.stringify({
     ayahs: Array.from({ length: 200 }, (_, i) => ({

@@ -2131,7 +2131,7 @@
             "ar": "اللهم إني أسألك الرضا بعد القضاء..."
           },
           "reference": {
-            "collection": "Sunan an-Nasa'i",
+            "collection": "Sunan an-Nasa'i (al-Kubra)",
             "book": "Book of Supplications",
             "chapter": "",
             "hadith": "10341",
@@ -2157,7 +2157,8 @@
           ],
           "related": [],
           "notes": "Theme from Why Me? Understanding Qadar series (Yaqeen Institute).",
-          "order": 1
+          "order": 1,
+          "review": "Scholar review: number 10341 is an al-Kubra number; collection corrected to al-Kubra, verify edition."
         },
         {
           "id": "ref-qadar-002",

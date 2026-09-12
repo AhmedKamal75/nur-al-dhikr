@@ -23,6 +23,7 @@ import {
   playSound,
 } from '../../services/prayerSound.js';
 import { buildDayDetail, buildNoteForm } from '../../ui/calendarModals.js';
+import { notesForDate } from '../../services/calendarNotes.js';
 import { buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, isModalOpen, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -104,9 +105,18 @@ export const clickHandlers = {
   },
 
   'calendar-open-day': (ds) => {
-    openModal(buildDayDetail(ds.date, store.getState(), hijriForDateKey(ds.date)), {
-      labelledBy: 'modal-title-day',
-    });
+    const st = store.getState();
+    openModal(
+      buildDayDetail(
+        ds.date,
+        st,
+        hijriForDateKey(ds.date),
+        notesForDate(st.calendarNotes, ds.date)
+      ),
+      {
+        labelledBy: 'modal-title-day',
+      }
+    );
   },
 
   'calendar-new-note': (ds) => {

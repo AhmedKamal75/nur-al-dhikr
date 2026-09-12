@@ -8,7 +8,8 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
-import { escapeHTML, pickLocale } from '../core/utils.js';
+import { escapeHTML } from '../core/utils.js';
+import { pickStrict, showTransliterationFor } from '../domain/localeContent.js';
 import { wasCelebrated } from '../domain/celebrate.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS, QUIZ_LENGTH } from '../core/config.js';
@@ -67,7 +68,10 @@ function renderQuestion(state, lang) {
   const choiceButtons = q.choices
     .map((choiceId) => {
       const choiceEntry = state.library.itemIndex[choiceId];
-      const label = choiceEntry ? escapeHTML(pickLocale(choiceEntry.item.translation, lang)) : '';
+      // Strict separation: no cross-language fallback in quiz choices.
+      // pickLocale would leak the other language when one side is missing;
+      // asma translation.ar is complete today, so this is a landmine guard.
+      const label = choiceEntry ? escapeHTML(pickStrict(choiceEntry.item.translation, lang)) : '';
       let cls = 'quiz-choice';
       let marker = '';
       if (revealed) {
@@ -114,7 +118,7 @@ function renderQuestion(state, lang) {
         ? `
     <div class="quiz-feedback" role="status" aria-live="polite">
       <p class="quiz-feedback__verdict ${selectedId === q.itemId ? 'quiz-feedback__verdict--correct' : 'quiz-feedback__verdict--wrong'}">${icon(selectedId === q.itemId ? 'check' : 'close', { size: 15 })} ${t(selectedId === q.itemId ? 'quiz.correct' : 'quiz.wrong', lang)}</p>
-      <p class="quiz-prompt__translit">${escapeHTML(item.transliteration)}</p>
+      ${showTransliterationFor(lang) && item.transliteration ? `<p class="quiz-prompt__translit" lang="en" dir="ltr">${escapeHTML(item.transliteration)}</p>` : ''}
       ${item.virtues?.[lang] ? `<p class="quiz-feedback__virtue">${escapeHTML(item.virtues[lang])}</p>` : ''}
       <button type="button" class="btn btn--primary" data-action="quiz-next">
         ${index + 1 >= deck.length ? t('quiz.seeResults', lang) : t('quiz.next', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16 })}

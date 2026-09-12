@@ -16,7 +16,6 @@
  */
 
 import { icon } from '../core/icons.js';
-import { rt } from '../app/rt.js';
 import { isRTL, t } from '../core/i18n.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
@@ -99,7 +98,7 @@ function groupsHTML(active, lang, { drawer = false } = {}) {
   ).join('');
 }
 
-export function renderTopBar(state) {
+export function renderTopBar(state, opts = {}) {
   const lang = state.settings.language;
   // FIX (v4.0 hostile review B4): resolve the icon from state, not from the
   // DOM — reading <html data-theme> inside a render function made the output
@@ -117,7 +116,9 @@ export function renderTopBar(state) {
   // a forward navigation left somewhere to go back TO. It rides the real
   // browser history (I3), so it always lands where the user actually came
   // from — including out-of-app entries on a fresh tab.
-  const backDepth = typeof rt.navBackStack?.length === 'number' ? rt.navBackStack.length : 0;
+  // Layer rule: the depth arrives from the app layer (renderer reads rt and
+  // passes backDepth) so ui never imports app/.
+  const backDepth = typeof opts.backDepth === 'number' ? opts.backDepth : 0;
   // (U7) mirror the Back chevron in RTL — forward/back flips with direction.
   const backIcon = isRTL(lang) ? 'chevronRight' : 'chevronLeft';
   const backButton =

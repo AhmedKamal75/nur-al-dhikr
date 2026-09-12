@@ -2,6 +2,42 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.32 — takeover-audit fixes: separation leaks, data flags, layer gates
+
+Closes all 11 findings of the v5.2.31 takeover audit. Separation
+contract finished at the uncovered renderers: quiz feedback
+transliteration gated to EN, quiz choices strict-pick (no fallback),
+locale-safe title fallback centralized in `contentTitleFor()` (card,
+mini-card, category, editor), and the `The Qur'an` article prefix mapped
+(A1–A4, A6). Hadith reader distinguishes unknown book ids from network
+failures (B2, new `hadith.unknownBook` keys). Machine-readable `review`
+flags in data + `reference_ar` support in schema/sanitizer/localeContent
+(A5, B5; four al-Kubra citations corrected). Missing v5.2.31 notes added;
+lockstep test now covers `docs/RELEASES.md` (B4). Gzip test no longer
+statically imports `scripts/` (B6). Layer boundaries executable via
+eslint + `backDepth`/notes-in caller params (L1). New
+`tests/separation-renderers.test.js` (14). Markers 5.2.31 → 5.2.32 +
+re-stamp.
+
+## v5.2.31 — content & i18n audit: matn restoration + strict language separation
+
+Fifteen corrupted Quranic matn restored verbatim from the bundled corpus
+(`glm-quran-001…015` in `data/quranic.json` held Latin transliteration in
+the `arabic` field; rebuilt from `data/quran/<surah>.json`, dua-portion
+slices per the file's own convention — `004` ref corrected `14:39-40` →
+`3:38, 14:40`, `001` ref narrowed `1:1-7` → `1:6-7`). `glm-quran-013`
+rebuilt to its cited ref 23:97-98; its envy/evil-eye title still needs
+scholar review (flagged in the audit doc). New single choke point
+`js/domain/localeContent.js` (pure, unit-tested): transliteration and
+translation never render in AR, virtues/sources read the active language
+only, unmapped Latin sources omitted. Wired into five renderers
+(`ui/card.js`, `views/focus.js`, `services/shareCard.js`,
+`app/shared.js` clipboard, `views/hadithCard.js`) plus `pickStrict()` in
+`core/utils.js`. Nine hard matn-integrity gates + six regression
+baselines pinned in `tests/content-i18n-audit.test.js` (27 tests).
+`node scripts/audit-content.mjs` exits 0. Markers 5.2.30 → 5.2.31 +
+re-stamp. Full report: `docs/content-i18n-audit.md`.
+
 ## v5.2.30 — verse-of-the-day themes (B-4 buried-feature recovery)
 
 The last buried item on the ledger. `domain/dailyAyah.js` (theme-keyword

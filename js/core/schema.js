@@ -27,6 +27,11 @@ function normalizeReference(ref) {
   // explicit, type-checked fields rather than relying on an unchecked
   // spread, so a malformed/imported reference object can't smuggle a
   // non-string value through into rendering.
+  // reference_ar (optional): real Arabic source data that retires the
+  // mapper table in domain/localeContent.js. Same four localizable string
+  // fields; localeContent reads it first and falls back to the mapper.
+  // review (optional, item-level below): machine-readable scholar-review
+  // flag so audit findings live in data, not prose documents.
   const base = {
     collection: '',
     book: '',
@@ -37,11 +42,23 @@ function normalizeReference(ref) {
     url: '',
     notes: '',
   };
+  const baseAr = { collection: '', narrator: '', grading: '', notes: '' };
   if (ref == null) return base;
   if (typeof ref === 'string') return { ...base, collection: ref };
   const out = { ...base };
   for (const key of Object.keys(base)) {
     if (typeof ref[key] === 'string') out[key] = ref[key];
+  }
+  if (
+    ref.reference_ar &&
+    typeof ref.reference_ar === 'object' &&
+    !Array.isArray(ref.reference_ar)
+  ) {
+    const ar = {};
+    for (const key of Object.keys(baseAr)) {
+      if (typeof ref.reference_ar[key] === 'string') ar[key] = ref.reference_ar[key];
+    }
+    if (Object.values(ar).some(Boolean)) out.reference_ar = ar;
   }
   return out;
 }
@@ -71,6 +88,10 @@ export function normalizeItem(raw, categoryId) {
     // in most. Kept as a plain string, not localized, since it's metadata
     // about provenance rather than devotional content.
     notes: typeof item.notes === 'string' ? item.notes : '',
+    // Machine-readable scholar-review flag (audit findings A5/B5): a short
+    // reason string; empty means no review pending. Survives normalization
+    // so the flag lives in data, not in prose documents.
+    review: typeof item.review === 'string' ? item.review : '',
     order: Number.isFinite(item.order) ? item.order : 0,
   };
 }

@@ -225,6 +225,14 @@ describe('contract: version markers in lockstep', () => {
       `manifest.version ${manifest.version} != ${fromPkg}`
     );
   });
+
+  test('docs/RELEASES.md newest entry matches the code version', () => {
+    const pkg = JSON.parse(readProject('package.json'));
+    const releases = readProject('docs/RELEASES.md');
+    const headings = [...releases.matchAll(/^##\s+v(\d+\.\d+\.\d+)/gm)].map((m) => m[1]);
+    assert.ok(headings.length > 0, 'RELEASES.md has versioned entries');
+    assert.equal(headings[0], pkg.version, 'newest RELEASES.md entry matches package.json');
+  });
 });
 
 /* ------------------------------------------------------------------ */

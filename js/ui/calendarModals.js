@@ -11,7 +11,10 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
-import { notesForDate, RECURRENCE_TYPES } from '../services/calendarNotes.js';
+// Layer rule (ui imports core + ui only): recurrence ids are mirrored from
+// services/calendarNotes.js RECURRENCE_TYPES (app layer resolves notes via
+// notesForDate and passes them in — see buildDayDetail). Keep in sync.
+const RECURRENCE_TYPES = ['once', 'daily', 'interval', 'range'];
 
 const RECURRENCE_LABEL_KEY = {
   once: 'calendar.recurOnce',
@@ -19,6 +22,32 @@ const RECURRENCE_LABEL_KEY = {
   interval: 'calendar.recurInterval',
   range: 'calendar.recurRange',
 };
+
+/** Local mirror of services/calendarNotes appliesToDate/notesForDate for
+ *  the no-dayNotes fallback path (kept in sync; the app-layer caller
+ *  passes pre-resolved notes so this rarely runs). */
+function localNotesForDate(notes, dateKeyStr) {
+  const applies = (note) => {
+    if (!note || !note.startDate || dateKeyStr < note.startDate) return false;
+    switch (note.recurrence) {
+      case 'once':
+        return dateKeyStr === note.startDate;
+      case 'range':
+        return !!note.endDate && dateKeyStr <= note.endDate;
+      case 'daily':
+        return !note.endDate || dateKeyStr <= note.endDate;
+      case 'interval': {
+        const n = Math.max(1, note.intervalDays || 1);
+        if (note.endDate && dateKeyStr > note.endDate) return false;
+        const ms = new Date(dateKeyStr + 'T00:00:00') - new Date(note.startDate + 'T00:00:00');
+        return Math.round(ms / 86400000) % n === 0;
+      }
+      default:
+        return false;
+    }
+  };
+  return (notes || []).filter(applies).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+}
 
 function formatDateLabel(dateKeyStr, lang, hijri = null) {
   const d = new Date(dateKeyStr + 'T00:00:00');
@@ -47,11 +76,17 @@ function recurrenceSummary(note, lang) {
 }
 
 /** Day-detail modal: shows existing notes for the date + an Add Note button.
- *  `hijri` is the caller-computed toHijri() result for the same date. */
-export function buildDayDetail(dateKeyStr, state, hijri = null) {
+ *  `hijri` is the caller-computed toHijri() result for the same date.
+ *  `dayNotes` are caller-resolved via services/calendarNotes.notesForDate
+ *  (app layer may import services; ui may not). The fallback below mirrors
+ *  appliesToDate locally so direct callers without pre-resolved notes still
+ *  see recurring notes correctly. */
+export function buildDayDetail(dateKeyStr, state, hijri = null, dayNotes = null) {
   const lang = state.settings.language;
   const { g, hLabel } = formatDateLabel(dateKeyStr, lang, hijri);
-  const notes = notesForDate(state.calendarNotes, dateKeyStr);
+  const notes = Array.isArray(dayNotes)
+    ? dayNotes
+    : localNotesForDate(state.calendarNotes, dateKeyStr);
 
   const noteRows = notes
     .map(

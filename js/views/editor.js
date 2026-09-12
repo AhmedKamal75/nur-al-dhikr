@@ -8,6 +8,7 @@ import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML, pickLocale, categoryDisplayName } from '../core/utils.js';
+import { contentTitleFor } from '../domain/localeContent.js';
 import { GRADES, GRADE_LABELS } from '../core/config.js';
 import { DEFAULT_CUSTOM_LIBRARY_ID } from '../services/editor.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
@@ -24,7 +25,7 @@ export function renderEditor(state) {
             .map(
               (item) => `
         <div class="editor-item-row">
-          <span class="editor-item-row__title">${escapeHTML(pickLocale(item.title, lang) || item.transliteration || t('editor.untitled', lang))}</span>
+          <span class="editor-item-row__title">${escapeHTML(contentTitleFor(item, lang) || t('editor.untitled', lang))}</span>
           <span class="editor-item-row__grade">${escapeHTML(GRADE_LABELS[item.grade] ? pickLocale(GRADE_LABELS[item.grade], lang) : item.grade)}</span>
           <div class="editor-item-row__actions">
             <button type="button" class="icon-btn" data-action="editor-edit-item" data-library-id="${escapeHTML(doc.metadata.id)}" data-category-id="${escapeHTML(cat.id)}" data-item-id="${escapeHTML(item.id)}" aria-label="${t('editor.edit', lang)}">${icon('edit', { size: 15 })}</button>

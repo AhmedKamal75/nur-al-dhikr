@@ -76,6 +76,61 @@ export default [
       'no-return-await': 'off',
       'no-async-promise-executor': 'error',
       'no-await-in-loop': 'off',
+      // Layer boundaries live in the scoped blocks below (domain/ui/views).
+    },
+  },
+  {
+    files: ['js/domain/**/*.js'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../app/*', '../services/*', '../ui/*', '../views/*'],
+              message:
+                'domain/ is pure: core/* only (compass.js sensor access is the sanctioned exception).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['js/ui/**/*.js'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../domain/*'],
+              message:
+                'ui may import domain ONLY via localeContent/completedCards — add an eslint-disable comment naming the sanction (layer rule).',
+            },
+            {
+              group: ['../services/*'],
+              message: 'ui must not import services/ — resolve in the app layer and pass in.',
+            },
+            { group: ['../views/*'], message: 'ui must not import views/.' },
+            {
+              group: ['../app/*'],
+              message: 'ui must not import app/ — pass data via params (layer rule).',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['js/views/**/*.js'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [{ group: ['../app/*'], message: 'views must not import app/ (layer rule).' }],
+        },
+      ],
     },
   },
   {

@@ -20,7 +20,7 @@ import {
   showTransliterationFor,
   showTranslationFor,
   translationFor,
-  referencePartsFor,
+  referenceLineFor,
 } from '../domain/localeContent.js';
 import { GRADE_LABELS, PALETTES } from '../core/config.js';
 
@@ -128,7 +128,7 @@ function fontsReady() {
 }
 
 function referenceLine(item, lang = 'en') {
-  return referencePartsFor(item, lang, '').join(' · ').trim();
+  return referenceLineFor(item, lang, '').trim();
 }
 
 /**

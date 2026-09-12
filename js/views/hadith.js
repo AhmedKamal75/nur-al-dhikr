@@ -201,6 +201,21 @@ function renderBookReader(state, lang) {
     </header>`;
 
   if (!doc) {
+    // Unknown book id (deep link typo / stale bookmark) is not a network
+    // failure: when the catalog is loaded and has no such id, say so
+    // instead of the "check your connection" retry copy.
+    const catalog = state.hadith.index?.books || null;
+    const unknownBook = Array.isArray(catalog) && !catalog.some((b) => b.id === bookId);
+    if (unknownBook) {
+      return `
+      <section class="view view--hadith-book">
+        ${header}
+        <div class="panel hadith-loading">
+          <p class="empty-hint">${t('hadith.unknownBook', lang)}</p>
+          <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.HADITH)}" data-action="navigate" data-view="${VIEWS.HADITH}">${t('hadith.backToLibrary', lang)}</a>
+        </div>
+      </section>`;
+    }
     return `
     <section class="view view--hadith-book">
       ${header}

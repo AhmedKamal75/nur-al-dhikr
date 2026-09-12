@@ -15,18 +15,23 @@
  */
 
 import { escapeHTML, pickLocale } from '../core/utils.js';
+// SANCTIONED ui → domain edge (separation contract): card.js is the audited
+// consumer of localeContent + completedCards (ARCHITECTURE.md §2 exception).
+// eslint-disable-next-line no-restricted-imports
 import {
   showTransliterationFor,
   showTranslationFor,
   translationFor,
   virtueFor,
-  referencePartsFor,
+  contentTitleFor,
+  referenceLineFor,
   noteFor,
 } from '../domain/localeContent.js';
 import { icon } from '../core/icons.js';
 import { t } from '../core/i18n.js';
 import { GRADE_LABELS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
+// eslint-disable-next-line no-restricted-imports -- sanctioned (see above)
 import { isDismissed, wasCompletedRecently } from '../domain/completedCards.js';
 
 /**
@@ -63,9 +68,7 @@ export function cardHTML(item, category, opts = {}) {
   // Titles keep a graceful fallback (an empty header is worse than a
   // foreign one), but the fallback itself stays locale-safe: AR never
   // falls back to the Latin transliteration line.
-  const title =
-    pickLocale(item.title, lang) ||
-    (lang === 'ar' ? item.arabic : item.transliteration || item.arabic);
+  const title = contentTitleFor(item, lang);
   // Strict language separation: transliteration/translation render in EN
   // only (never in AR, regardless of toggles); virtue/reference/notes read
   // the active side exclusively with no cross-language fallback.
@@ -76,9 +79,8 @@ export function cardHTML(item, category, opts = {}) {
   const gradeLabel = GRADE_LABELS[item.grade]
     ? pickLocale(GRADE_LABELS[item.grade], lang)
     : item.grade;
-  const refParts = show.reference ? referencePartsFor(item, lang, t('card.narratedBy', lang)) : [];
-  const refLine = refParts.join(' · ');
-  const refNotes = show.reference ? noteFor(item.reference?.notes, lang) : '';
+  const refLine = show.reference ? referenceLineFor(item, lang, t('card.narratedBy', lang)) : '';
+  const refNotes = show.reference ? noteFor(item.reference?.notes, lang, item) : '';
   const notes = show.notes ? noteFor(item.notes, lang) : '';
   const target = counter?.target || item.repetitions || 1;
   const count = counter?.count || 0;
@@ -183,7 +185,9 @@ export function cardHTML(item, category, opts = {}) {
 
 /** A minimal one-line card used inside dense lists (search suggestions, collection pickers). */
 export function miniCardHTML(item, lang = 'en') {
-  const title = pickLocale(item.title, lang) || item.transliteration;
+  // Locale-safe fallback: AR never falls back to the Latin transliteration
+  // (matches cardHTML's title rule) — an empty title falls back to Arabic.
+  const title = contentTitleFor(item, lang);
   return `
   <button type="button" class="mini-card" data-action="open-focus" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(item.category_id)}">
     <span class="mini-card__title">${escapeHTML(title)}</span>

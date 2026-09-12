@@ -13476,7 +13476,8 @@
           ],
           "related": [],
           "notes": "Source: من يدعوني؟ by Dr. Turki al-Maiman, Chapter 3, page 20",
-          "order": 13
+          "order": 13,
+          "review": "Scholar review: grade chip is 'Sahih' but reference.grading is 'Hasan (al-Albani); also narrated by Ibn Hibban in his Sahih'; confirm citable source and align both fields."
         }
       ]
     },
@@ -16293,7 +16294,8 @@
           ],
           "related": [],
           "notes": "Source: من يدعوني؟ by Dr. Turki al-Maiman, Chapter 8, page 42",
-          "order": 12
+          "order": 12,
+          "review": "Scholar review: grade chip is 'Sahih' but reference.grading is 'Hasan (al-Albani, Sahih al-Jami 4777)'; confirm citable source and align both fields."
         },
         {
           "id": "my-08-013",
@@ -17196,7 +17198,8 @@
           ],
           "related": [],
           "notes": "Source: من يدعوني؟ by Dr. Turki al-Maiman, Chapter 11, page 52",
-          "order": 7
+          "order": 7,
+          "review": "Scholar review: grade chip is 'Sahih' but reference.grading is 'Hasan (al-Albani, Sahih at-Targhib wat-Tarhib 1821)'; confirm citable source and align both fields."
         },
         {
           "id": "my-11-008",
@@ -18390,7 +18393,8 @@
           ],
           "related": [],
           "notes": "Source: من يدعوني؟ by Dr. Turki al-Maiman, Chapter 13, page 62",
-          "order": 9
+          "order": 9,
+          "review": "Scholar review: grade chip is 'Sahih' but reference.grading is 'Hasan (al-Albani, Sahih Abi Dawud 2747)'; confirm citable source and align both fields."
         },
         {
           "id": "my-13-010",
@@ -18610,7 +18614,8 @@
           ],
           "related": [],
           "notes": "Source: من يدعوني؟ by Dr. Turki al-Maiman, Chapter 14, page 64",
-          "order": 3
+          "order": 3,
+          "review": "Scholar review: grade chip is 'Sahih' but reference.grading is 'Hasan gharib (at-Tirmidhi); Sahih chain (Ahmad Shakir)'; confirm citable source and align both fields."
         },
         {
           "id": "my-14-004",

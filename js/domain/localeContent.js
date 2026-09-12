@@ -48,6 +48,21 @@ export function translationFor(item, lang) {
   return typeof t.en === 'string' ? t.en : '';
 }
 
+/**
+ * Content title in the active language with a locale-safe fallback: an
+ * empty header is worse than a foreign one, but AR never falls back to
+ * the Latin transliteration line (it falls back to the Arabic matn).
+ * Returns '' when nothing is available — callers append their own last
+ * resort (item.id, untitled label).
+ */
+export function contentTitleFor(item, lang) {
+  return (
+    pickStrict(item?.title, lang) ||
+    (lang === 'ar' ? item?.arabic : item?.transliteration || item?.arabic) ||
+    ''
+  );
+}
+
 /** Virtue in the active language only — missing side renders nothing. */
 export function virtueFor(item, lang) {
   return pickStrict(item?.virtues, lang);
@@ -71,6 +86,8 @@ const COLLECTION_AR = [
   ['sunan ibn majah', 'سنن ابن ماجه'],
   ['sahih ibn majah', 'سنن ابن ماجه'],
   ["sunan an-nasa'i", 'سنن النسائي'],
+  ["sunan an-nasa'i (al-kubra)", 'سنن النسائي الكبرى'],
+  ['sunan an-nasai (al-kubra)', 'سنن النسائي الكبرى'],
   ['muwatta malik', 'موطأ مالك'],
   ['sunan mālik', 'موطأ مالك'],
   ['musnad ahmad', 'مسند أحمد'],
@@ -114,15 +131,17 @@ function mapSingleCollection(segment) {
   const lower = raw.toLowerCase();
   // 'Quran ...' / "Qur'an ..." / 'Surah ...' keep the verse reference only:
   // a transliterated surah name ('al-Baqarah') would otherwise leak Latin.
-  const quranMatch = lower.match(/^(qur'an|quran|surah)\b\s*(.*)$/s);
+  // The article form ("The Qur'an", as stored on glm-gt-025/027) maps too.
+  const quranMatch = lower.match(/^(?:the\s+)?(qur'an|quran|surah)\b\s*(.*)$/s);
   if (quranMatch) {
-    const rest = raw.slice(quranMatch[1].length);
+    const prefixLen = quranMatch[0].length - quranMatch[2].length;
+    const rest = raw.slice(prefixLen);
     const refNums = (rest.match(/\d+\s*:\s*\d+(?:\s*[-–]\s*\d+)?/g) || []).join('، ');
     const arabicBits = containsArabic(rest) ? rest.trim() : '';
     const keep = [arabicBits, refNums].filter(Boolean).join(' ');
     return keep ? `القرآن الكريم ${keep}` : 'القرآن الكريم';
   }
-  for (const [prefix, ar] of COLLECTION_AR) {
+  for (const [prefix, ar] of [...COLLECTION_AR].sort((a, b) => b[0].length - a[0].length)) {
     if (lower === prefix || lower.startsWith(`${prefix} `) || lower.startsWith(`${prefix},`)) {
       return ar + raw.slice(prefix.length);
     }
@@ -149,8 +168,11 @@ function mapCollectionPrefix(collection) {
 }
 
 /** Source collection in the active language. AR returns '' when the
- *  string cannot be localized (caller then omits it instead of leaking). */
+ *  string cannot be localized (caller then omits it instead of leaking).
+ *  Real Arabic source data (reference_ar.collection) wins over the mapper. */
 export function collectionFor(item, lang) {
+  const arColl = item?.reference?.reference_ar?.collection;
+  if (lang === 'ar' && typeof arColl === 'string' && arColl.trim()) return arColl.trim();
   const raw = String(item?.reference?.collection || '').trim();
   if (!raw) return '';
   if (lang === 'ar') return mapCollectionPrefix(raw);
@@ -208,8 +230,11 @@ const NARRATOR_AR = Object.entries({
   'al bara ibn azib': 'البراء بن عازب',
 }).map(([k, v]) => [narratorKey(k), v]);
 
-/** Narrator in the active language ('' in AR when unmapped — no Latin leak). */
+/** Narrator in the active language ('' in AR when unmapped — no Latin leak).
+ *  Real Arabic data (reference_ar.narrator) wins over the normalizer table. */
 export function narratorFor(item, lang) {
+  const arN = item?.reference?.reference_ar?.narrator;
+  if (lang === 'ar' && typeof arN === 'string' && arN.trim()) return arN.trim();
   const raw = String(item?.reference?.narrator || '').trim();
   if (!raw) return '';
   if (lang !== 'ar') return raw;
@@ -240,10 +265,21 @@ export function referencePartsFor(item, lang, narratedByLabel = '') {
 }
 
 /**
+ * Joined reference line in the active language (the four-line composition
+ * previously written out per renderer — card, focus, shareCard).
+ */
+export function referenceLineFor(item, lang, narratedByLabel = '') {
+  return referencePartsFor(item, lang, narratedByLabel).join(' · ');
+}
+
+/**
  * Free-text metadata (reference.notes, item.notes) ships in English only.
  * In AR it renders only when it actually contains Arabic script.
+ * Real Arabic data (reference_ar.notes) wins in AR.
  */
-export function noteFor(note, lang) {
+export function noteFor(note, lang, item = null) {
+  const arNote = item?.reference?.reference_ar?.notes;
+  if (lang === 'ar' && typeof arNote === 'string' && arNote.trim()) return arNote.trim();
   const s = String(note || '').trim();
   if (!s) return '';
   if (lang === 'ar' && !containsArabic(s)) return '';

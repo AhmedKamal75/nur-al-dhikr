@@ -12,7 +12,7 @@ import {
   showTranslationFor,
   translationFor,
   virtueFor,
-  referencePartsFor,
+  referenceLineFor,
   noteFor,
 } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
@@ -84,9 +84,8 @@ export function renderFocus(state) {
   const gradeLabel = GRADE_LABELS[item.grade]
     ? pickLocale(GRADE_LABELS[item.grade], lang)
     : item.grade;
-  const refParts = referencePartsFor(item, lang, t('card.narratedBy', lang));
-  const refLine = refParts.join(' · ');
-  const refNotes = noteFor(item.reference?.notes, lang);
+  const refLine = referenceLineFor(item, lang, t('card.narratedBy', lang));
+  const refNotes = noteFor(item.reference?.notes, lang, item);
   const notes = noteFor(item.notes, lang);
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
   // (v5.2.24) directional enter: forward slides from the reading-start

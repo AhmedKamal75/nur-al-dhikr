@@ -1106,6 +1106,8 @@ export const ar = {
   'hadith.loadingBook': 'جارٍ تحميل الكتاب…',
   'hadith.loadFailed':
     'تعذر التحميل — تحقق من الاتصال ثم أعد المحاولة. بعد التحميل الأولى يبقى الكتاب متاحاً دون اتصال.',
+  'hadith.unknownBook': 'لا يوجد كتاب بهذا المعرف في المكتبة — تحقق من الرابط.',
+  'hadith.backToLibrary': 'عودة إلى المكتبة',
   'hadith.offlineReady': 'يعمل دون اتصال',
   'hadith.onDemand': 'يُحمَّل عند أول فتح ثم يعمل دون اتصال',
   'hadith.bookCount': '{n} حديث · {c} باباً',

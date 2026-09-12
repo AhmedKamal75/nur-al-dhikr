@@ -1132,6 +1132,8 @@ export const en = {
   'hadith.loadingBook': 'Loading the book\u2026',
   'hadith.loadFailed':
     'Could not load \u2014 check your connection, then retry. Once loaded it stays available offline.',
+  'hadith.unknownBook': 'No such book in this library — check the link.',
+  'hadith.backToLibrary': 'Back to the library',
   'hadith.offlineReady': 'Offline',
   'hadith.onDemand': 'Loads on first open, then offline',
   'hadith.bookCount': '{n} hadith · {c} chapters',

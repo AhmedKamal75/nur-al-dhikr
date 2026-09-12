@@ -12,6 +12,7 @@ import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, categoryDisplayName, dateKey, escapeHTML } from '../core/utils.js';
+import { contentTitleFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { VIEWS, QUIZ_LIBRARY_ID } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
@@ -43,7 +44,7 @@ function findCategory(state, categoryId) {
  *  builtin edits route into the restorable override lens), and hide.
  *  One visual rhythm, 44px targets, no raw form controls on the page. */
 function manageRowHTML(item, { categoryId, lang, canUp, canDown, target, customized }) {
-  const titleFor = pickLocale(item.title, lang) || item.transliteration || item.id;
+  const titleFor = contentTitleFor(item, lang) || item.id;
   return `
   <div class="manage-row" data-manage-for="${escapeHTML(item.id)}">
     <div class="manage-seg" role="group" aria-label="${t('content.order', lang)}">
@@ -169,7 +170,7 @@ export function renderCategory(state) {
           .map(
             (it) => `
         <button type="button" class="unhide-bar__chip" data-action="content-unhide-item" data-item-id="${escapeHTML(it.id)}">
-          ${icon('eye', { size: 13 })} ${escapeHTML(pickLocale(it.title, lang) || it.transliteration || it.id)}
+          ${icon('eye', { size: 13 })} ${escapeHTML(contentTitleFor(it, lang) || it.id)}
         </button>`
           )
           .join('')}
