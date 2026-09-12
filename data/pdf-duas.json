@@ -962,10 +962,10 @@
             "url": "",
             "notes": "Devotional text from the book."
           },
-          "grade": "Unknown",
+          "grade": "Custom",
           "custom_grade": {
-            "en": "Devotional supplication",
-            "ar": "مناجاة"
+            "en": "Devotional munajat from its source book, not a Prophetic hadith — hadith grading does not apply.",
+            "ar": "مناجاة تعبدية من كتابها وليست حديثا نبويا، فلا ينطبق عليها التخريج الحديثي."
           },
           "repetitions": 1,
           "virtues": {
@@ -1046,10 +1046,10 @@
             "url": "",
             "notes": "Devotional text."
           },
-          "grade": "Unknown",
+          "grade": "Custom",
           "custom_grade": {
-            "en": "Devotional supplication",
-            "ar": "مناجاة"
+            "en": "Devotional munajat from its source book, not a Prophetic hadith — hadith grading does not apply.",
+            "ar": "مناجاة تعبدية من كتابها وليست حديثا نبويا، فلا ينطبق عليها التخريج الحديثي."
           },
           "repetitions": 1,
           "virtues": {
@@ -1088,10 +1088,10 @@
             "url": "",
             "notes": "Devotional text."
           },
-          "grade": "Unknown",
+          "grade": "Custom",
           "custom_grade": {
-            "en": "Devotional supplication",
-            "ar": "مناجاة"
+            "en": "Devotional munajat from its source book, not a Prophetic hadith — hadith grading does not apply.",
+            "ar": "مناجاة تعبدية من كتابها وليست حديثا نبويا، فلا ينطبق عليها التخريج الحديثي."
           },
           "repetitions": 1,
           "virtues": {
@@ -1173,10 +1173,10 @@
             "url": "",
             "notes": "Devotional text."
           },
-          "grade": "Unknown",
+          "grade": "Custom",
           "custom_grade": {
-            "en": "Devotional supplication",
-            "ar": "مناجاة"
+            "en": "Devotional munajat from its source book, not a Prophetic hadith — hadith grading does not apply.",
+            "ar": "مناجاة تعبدية من كتابها وليست حديثا نبويا، فلا ينطبق عليها التخريج الحديثي."
           },
           "repetitions": 1,
           "virtues": {
@@ -1299,10 +1299,10 @@
             "url": "",
             "notes": "Devotional text."
           },
-          "grade": "Unknown",
+          "grade": "Custom",
           "custom_grade": {
-            "en": "Devotional supplication",
-            "ar": "مناجاة"
+            "en": "Devotional munajat from its source book, not a Prophetic hadith — hadith grading does not apply.",
+            "ar": "مناجاة تعبدية من كتابها وليست حديثا نبويا، فلا ينطبق عليها التخريج الحديثي."
           },
           "repetitions": 1,
           "virtues": {
@@ -2007,7 +2007,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "A daily renewal of one's Islamic identity and creed.",
-            "ar": ""
+            "ar": "تجديد يومي للهوية الإسلامية والعقيدة."
           },
           "tags": [
             "morning",
@@ -2116,7 +2116,7 @@
           "repetitions": 3,
           "virtues": {
             "en": "Sufficient protection against every harm until morning.",
-            "ar": ""
+            "ar": "حماية كافية من كل ضر حتى الصباح."
           },
           "tags": [
             "evening",
@@ -2155,8 +2155,8 @@
           "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "An evening renewal of the covenant of fitrah, sincerity, and the way of Ibrahim. Whoever says it in the evening has renewed his Islam for that night.",
+            "ar": "تجديد لعهد الفطرة والإخلاص وملة إبراهيم في المساء، من قالها فقد جدد إسلامه لتلك الليلة."
           },
           "tags": [
             "evening",
@@ -2192,8 +2192,8 @@
           "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "Whoever says this in the evening has fulfilled the obligation of gratitude for that night.",
+            "ar": "من قالها في المساء فقد أدى شكر ليلته."
           },
           "tags": [
             "evening",
@@ -2230,7 +2230,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "A protector remains with the one who recites it, and Shaytan does not come near until morning.",
-            "ar": ""
+            "ar": "لا يزال عليه حافظ من الله ولا يقربه شيطان حتى يصبح."
           },
           "tags": [
             "sleep",
@@ -2268,7 +2268,7 @@
           "repetitions": 3,
           "virtues": {
             "en": "The Prophet ﷺ practiced this nightly before sleeping.",
-            "ar": ""
+            "ar": "كان النبي ﷺ يفعل هذا كل ليلة قبل النوم."
           },
           "tags": [
             "sleep",
@@ -2304,7 +2304,7 @@
           "repetitions": 100,
           "virtues": {
             "en": "Better than a servant to help with household work, as the Prophet ﷺ told Fatimah (RA).",
-            "ar": ""
+            "ar": "خير من خادم يعين على عمل البيت، كما قال النبي ﷺ لفاطمة رضي الله عنها."
           },
           "tags": [
             "sleep",
@@ -2338,8 +2338,8 @@
           "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "The Prophet ﷺ would say this when going to sleep, entrusting every matter to the Lord of all things.",
+            "ar": "كان النبي ﷺ يقولها عند النوم مفوضا كل أموره إلى رب كل شيء."
           },
           "tags": [
             "sleep",
@@ -2373,8 +2373,8 @@
           "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "The bedtime entrustment of the soul: if Allah takes it, mercy is asked; if He returns it, protection is asked.",
+            "ar": "تفويض النفس عند النوم: إن أمسكها الله سئلت لها الرحمة وإن أرسلها سئلت الحفظ."
           },
           "tags": [
             "sleep"
@@ -2408,7 +2408,7 @@
           "repetitions": 3,
           "virtues": {
             "en": "The first words the Prophet ﷺ said upon finishing prayer.",
-            "ar": ""
+            "ar": "أول ما كان يقوله النبي ﷺ إذا انصرف من الصلاة."
           },
           "tags": [
             "prayer",
@@ -2442,8 +2442,8 @@
           "grade": "Sahih",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "Said after every obligatory prayer, affirming that all peace comes from Allah alone.",
+            "ar": "تقال دبر كل صلاة مفروضة، إقرارا بأن السلام كله من الله وحده."
           },
           "tags": [
             "prayer"
@@ -2477,7 +2477,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "A million good deeds are recorded and a million sins erased for whoever says this in the marketplace.",
-            "ar": ""
+            "ar": "تكتب لقائلها في السوق ألف ألف حسنة وتمحى عنه ألف ألف سيئة."
           },
           "tags": [
             "prayer",
@@ -2512,7 +2512,7 @@
           "repetitions": 100,
           "virtues": {
             "en": "Whoever does this after every prayer, their sins are forgiven even if like the foam of the sea.",
-            "ar": ""
+            "ar": "من قالها دبر كل صلاة غفرت ذنوبه ولو كانت مثل زبد البحر."
           },
           "tags": [
             "prayer",
@@ -2547,7 +2547,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "The Prophet ﷺ practiced this nightly before sleeping.",
-            "ar": ""
+            "ar": "كان النبي ﷺ يفعل هذا كل ليلة قبل النوم."
           },
           "tags": [
             "prayer",
@@ -2582,7 +2582,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Recommended to say after completing wudu, as it is sealed with a seal not to be broken until the Day of Judgment.",
-            "ar": ""
+            "ar": "يستحب قولها بعد الوضوء، فإنها تختم بطابع لا يفك إلى يوم القيامة."
           },
           "tags": [
             "wudu"
@@ -2616,7 +2616,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Recited by the Prophet ﷺ each time he returned from a journey.",
-            "ar": ""
+            "ar": "كان النبي ﷺ يقولها كلما رجع من سفر."
           },
           "tags": [
             "travel"
@@ -2650,7 +2650,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "The statement of true faith in contrast to attributing rain to stars.",
-            "ar": ""
+            "ar": "إعلان الإيمان الحق مقابل نسبة المطر إلى النجوم."
           },
           "tags": [
             "rain",
@@ -2686,7 +2686,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "The Prophet ﷺ would recite this while visiting the sick.",
-            "ar": ""
+            "ar": "كان النبي ﷺ يقولها عند عيادة المريض."
           },
           "tags": [
             "illness",
@@ -2721,7 +2721,7 @@
           "repetitions": 7,
           "virtues": {
             "en": "Whoever visits a sick person not yet at the point of death and says this seven times, Allah will heal them.",
-            "ar": ""
+            "ar": "من عاد مريضا لم يحضر أجله فقالها سبعا شفاه الله."
           },
           "tags": [
             "illness",
@@ -2756,7 +2756,7 @@
           "repetitions": 3,
           "virtues": {
             "en": "The ruqyah of Jibril to the Prophet ﷺ.",
-            "ar": ""
+            "ar": "رقية جبريل عليه السلام للنبي ﷺ."
           },
           "tags": [
             "illness",
@@ -2792,7 +2792,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Then one should greet the household with salam.",
-            "ar": ""
+            "ar": "ثم يسلم على أهل البيت."
           },
           "tags": [
             "home"
@@ -2828,7 +2828,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Whoever says this is told: you are guided, sufficed, and protected, and Shaytan turns away from him.",
-            "ar": ""
+            "ar": "من قالها قيل له: هديت وكفيت ووقيت، وتنحى عنه الشيطان."
           },
           "tags": [
             "home"
@@ -2863,8 +2863,8 @@
           "grade": "Hasan",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "Said when marrying and taking hold of the forelock, asking for her goodness and seeking refuge from her harm.",
+            "ar": "تقال عند الزواج والأخذ بالناصية، سؤالا لخيرها واستعاذة من شرها."
           },
           "tags": [
             "home",
@@ -2899,7 +2899,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "A million good deeds are recorded and a million sins erased for whoever says this in the marketplace.",
-            "ar": ""
+            "ar": "تكتب لقائلها في السوق ألف ألف حسنة وتمحى عنه ألف ألف سيئة."
           },
           "tags": [
             "protection"
@@ -2933,7 +2933,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "A supplication for ease, clarity of speech, and confidence before a difficult task.",
-            "ar": ""
+            "ar": "دعاء التيسير وطلاق اللسان والثقة قبل المهمة الصعبة."
           },
           "tags": [
             "quran",
@@ -2967,8 +2967,8 @@
           "grade": "Quran",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "The opening plea of the closing verses of Al-Baqarah: Allah does not burden a soul beyond what it can bear.",
+            "ar": "فاتحة خواتيم البقرة: لا يكلف الله نفسا إلا وسعها."
           },
           "tags": [
             "quran",
@@ -3002,8 +3002,8 @@
           "grade": "Quran",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "The believers' plea joining faith with the request for forgiveness and protection from the Fire.",
+            "ar": "دعاء المؤمنين يجمع بين الإيمان وسؤال المغفرة والوقاية من النار."
           },
           "tags": [
             "quran",
@@ -3037,8 +3037,8 @@
           "grade": "Quran",
           "repetitions": 1,
           "virtues": {
-            "en": "",
-            "ar": ""
+            "en": "The believers' prayer for perfected light on the Day they walk through darkness toward Paradise.",
+            "ar": "دعاء المؤمنين بإتمام النور يوم يمشون في الظلمات إلى الجنة."
           },
           "tags": [
             "quran",

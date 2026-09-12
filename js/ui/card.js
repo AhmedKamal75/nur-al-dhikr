@@ -15,6 +15,14 @@
  */
 
 import { escapeHTML, pickLocale } from '../core/utils.js';
+import {
+  showTransliterationFor,
+  showTranslationFor,
+  translationFor,
+  virtueFor,
+  referencePartsFor,
+  noteFor,
+} from '../domain/localeContent.js';
 import { icon } from '../core/icons.js';
 import { t } from '../core/i18n.js';
 import { GRADE_LABELS } from '../core/config.js';
@@ -52,20 +60,26 @@ export function cardHTML(item, category, opts = {}) {
     notes: fields ? fields.notes !== false : true,
   };
 
-  const title = pickLocale(item.title, lang) || item.transliteration || item.arabic;
-  const translation = pickLocale(item.translation, lang);
-  const virtue = pickLocale(item.virtues, lang);
+  // Titles keep a graceful fallback (an empty header is worse than a
+  // foreign one), but the fallback itself stays locale-safe: AR never
+  // falls back to the Latin transliteration line.
+  const title =
+    pickLocale(item.title, lang) ||
+    (lang === 'ar' ? item.arabic : item.transliteration || item.arabic);
+  // Strict language separation: transliteration/translation render in EN
+  // only (never in AR, regardless of toggles); virtue/reference/notes read
+  // the active side exclusively with no cross-language fallback.
+  const showTranslit = showTransliterationFor(lang, show.transliteration);
+  const showTrans = showTranslationFor(lang, show.translation);
+  const translation = showTrans ? translationFor(item, lang) : '';
+  const virtue = show.virtues ? virtueFor(item, lang) : '';
   const gradeLabel = GRADE_LABELS[item.grade]
     ? pickLocale(GRADE_LABELS[item.grade], lang)
     : item.grade;
-  const refParts = [
-    item.reference?.collection,
-    item.reference?.hadith,
-    item.reference?.narrator ? `${t('card.narratedBy', lang)} ${item.reference.narrator}` : '',
-    item.reference?.grading,
-  ]
-    .filter(Boolean)
-    .join(' \u00B7 ');
+  const refParts = show.reference ? referencePartsFor(item, lang, t('card.narratedBy', lang)) : [];
+  const refLine = refParts.join(' · ');
+  const refNotes = show.reference ? noteFor(item.reference?.notes, lang) : '';
+  const notes = show.notes ? noteFor(item.notes, lang) : '';
   const target = counter?.target || item.repetitions || 1;
   const count = counter?.count || 0;
   const cycles = counter?.completedCycles || 0;
@@ -126,13 +140,13 @@ export function cardHTML(item, category, opts = {}) {
           ? `<p class="card__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
           : ''
     }
-    ${!byHeart && show.transliteration && item.transliteration ? `<p class="card__translit">${escapeHTML(item.transliteration)}</p>` : ''}
-    ${show.translation && translation ? `<p class="card__translation">${escapeHTML(translation)}</p>` : ''}
+    ${!byHeart && showTranslit && item.transliteration ? `<p class="card__translit">${escapeHTML(item.transliteration)}</p>` : ''}
+    ${showTrans && translation ? `<p class="card__translation">${escapeHTML(translation)}</p>` : ''}
 
     ${show.virtues && virtue ? `<p class="card__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${escapeHTML(virtue)}</p>` : ''}
-    ${show.reference && refParts ? `<p class="card__reference">${icon('book', { size: 14 })} ${escapeHTML(refParts)}</p>` : ''}
-    ${show.reference && item.reference?.notes ? `<p class="card__reference-note">${escapeHTML(item.reference.notes)}</p>` : ''}
-    ${show.notes && item.notes ? `<p class="card__attribution">${icon('info', { size: 12 })} ${escapeHTML(item.notes)}</p>` : ''}
+    ${show.reference && refLine ? `<p class="card__reference">${icon('book', { size: 14 })} ${escapeHTML(refLine)}</p>` : ''}
+    ${show.reference && refNotes ? `<p class="card__reference-note">${escapeHTML(refNotes)}</p>` : ''}
+    ${show.notes && notes ? `<p class="card__attribution">${icon('info', { size: 12 })} ${escapeHTML(notes)}</p>` : ''}
 
     ${
       byHeart

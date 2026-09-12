@@ -3,7 +3,11 @@
  */
 
 import { store } from '../core/state.js';
-import { pickLocale } from '../core/utils.js';
+import {
+  showTransliterationFor,
+  showTranslationFor,
+  translationFor,
+} from '../domain/localeContent.js';
 
 /* Shared lookups                                                      */
 /* ------------------------------------------------------------------ */
@@ -13,8 +17,13 @@ export function getItemEntry(itemId) {
 }
 
 export function itemClipboardText(item, lang) {
-  const parts = [item.arabic, item.transliteration, pickLocale(item.translation, lang)].filter(
-    Boolean
-  );
-  return parts.join('\n\n');
+  // Strict language separation: AR copies the Arabic matn only; EN copies
+  // matn + transliteration + English translation.
+  const parts = [item.arabic];
+  if (showTransliterationFor(lang) && item.transliteration) parts.push(item.transliteration);
+  if (showTranslationFor(lang)) {
+    const tr = translationFor(item, lang);
+    if (tr) parts.push(tr);
+  }
+  return parts.filter(Boolean).join('\n\n');
 }

@@ -70,7 +70,7 @@ export function hadithCardHTML(
       }
     </div>
     ${arabicBlock}
-    ${h.en && showTranslation ? `<p class="hadith-card__translation" dir="ltr">${escapeHTML(h.en)}</p>` : ''}
+    ${h.en && showTranslation && lang !== 'ar' ? `<p class="hadith-card__translation" dir="ltr">${escapeHTML(h.en)}</p>` : ''}
     ${hasNote ? `<p class="hadith-card__note" dir="auto"><span class="hadith-card__note-label">${t('hadith.note', lang)}</span> ${escapeHTML(note)}</p>` : ''}
     ${memRow}
     <div class="hadith-card__actions">

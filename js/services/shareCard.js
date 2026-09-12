@@ -16,6 +16,12 @@
  */
 
 import { pickLocale } from '../core/utils.js';
+import {
+  showTransliterationFor,
+  showTranslationFor,
+  translationFor,
+  referencePartsFor,
+} from '../domain/localeContent.js';
 import { GRADE_LABELS, PALETTES } from '../core/config.js';
 
 const CARD_WIDTH = 1080;
@@ -121,12 +127,8 @@ function fontsReady() {
     .catch(() => {});
 }
 
-function referenceLine(item) {
-  const ref = item?.reference || {};
-  return [ref.collection, ref.hadith]
-    .filter((s) => typeof s === 'string' && s.trim())
-    .join(' ')
-    .trim();
+function referenceLine(item, lang = 'en') {
+  return referencePartsFor(item, lang, '').join(' · ').trim();
 }
 
 /**
@@ -156,9 +158,13 @@ export async function renderDuaCardCanvas({
 
   const title = pickLocale(item.title, lang) || '';
   const arabic = item.arabic || '';
-  const translit = showTransliteration && item.transliteration ? item.transliteration : '';
-  const translation = showTranslation && item.translation ? pickLocale(item.translation, lang) : '';
-  const refLine = referenceLine(item);
+  // Strict language separation: the AR card carries matn + Arabic
+  // virtue/source only — transliteration/translation never render in AR.
+  const showTrlit = showTransliterationFor(lang, showTransliteration);
+  const showTr = showTranslationFor(lang, showTranslation);
+  const translit = showTrlit && item.transliteration ? item.transliteration : '';
+  const translation = showTr ? translationFor(item, lang) : '';
+  const refLine = referenceLine(item, lang);
   const gradeLabel = GRADE_LABELS[item.grade] ? pickLocale(GRADE_LABELS[item.grade], lang) : '';
 
   const titleLines = wrapText(title, CONTENT_W, measureWith(`700 40px ${UI}`));

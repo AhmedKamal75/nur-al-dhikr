@@ -857,8 +857,8 @@
             "en": "Al-Fatihah — The Greatest Supplication",
             "ar": "الفاتحة — أم الكتاب"
           },
-          "arabic": "Ihdinas-siratal mustaqeem, siratal-ladhina an'amta 'alayhim, ghayril-maghduubi 'alayhim wa lad-daaalleen.",
-          "transliteration": "Ihdinas-siratal mustaqeem...",
+          "arabic": "ٱهۡدِنَا ٱلصِّرَٰطَ ٱلۡمُسۡتَقِيمَ صِرَٰطَ ٱلَّذِينَ أَنۡعَمۡتَ عَلَيۡهِمۡ غَيۡرِ ٱلۡمَغۡضُوبِ عَلَيۡهِمۡ وَلَا ٱلضَّآلِّينَ",
+          "transliteration": "Ihdinas-siratal mustaqeem, siratal-ladhina an'amta 'alayhim, ghayril-maghduubi 'alayhim wa lad-daaalleen.",
           "translation": {
             "en": "Guide us to the straight path - the path of those upon whom You have bestowed favor, not of those who have earned [Your] anger or of those who are astray.",
             "ar": "اهدنا الصراط المستقيم صراط الذين أنعمت عليهم غير المغضوب عليهم ولا الضالين"
@@ -867,7 +867,7 @@
             "collection": "Quran",
             "book": "",
             "chapter": "",
-            "hadith": "1:1-7",
+            "hadith": "1:6-7",
             "narrator": "",
             "grading": "Quran",
             "url": "",
@@ -902,7 +902,7 @@
             "en": "The Supplication of Prophet Adam and Hawa",
             "ar": "دعاء آدم وحواء"
           },
-          "arabic": "Rabbana thalamna anfusana wa ilam taghfir lana wa tarhamna lanakunanna minal-khasireen.",
+          "arabic": "رَبَّنَا ظَلَمۡنَآ أَنفُسَنَا وَإِن لَّمۡ تَغۡفِرۡ لَنَا وَتَرۡحَمۡنَا لَنَكُونَنَّ مِنَ ٱلۡخَٰسِرِينَ",
           "transliteration": "Rabbana thalamna anfusana wa ilam taghfir lana wa tarhamna lanakunanna minal-khasireen.",
           "translation": {
             "en": "Our Lord, we have wronged ourselves, and if You do not forgive us and have mercy upon us, we will surely be among the losers.",
@@ -948,7 +948,7 @@
             "en": "The Supplication of Prophet Nuh",
             "ar": "دعاء نوح عليه السلام"
           },
-          "arabic": "Rabbi inni maghloobun fantasir.",
+          "arabic": "أَنِّي مَغۡلُوبٞ فَٱنتَصِرۡ",
           "transliteration": "Rabbi inni maghloobun fantasir.",
           "translation": {
             "en": "My Lord, indeed I am overpowered, so help.",
@@ -994,8 +994,8 @@
             "en": "The Comprehensive Dua of Prophet Ibrahim",
             "ar": "دعاء إبراهيم الشامل"
           },
-          "arabic": "Rabbi hab li min ladunka dhurriyyatan tayyibah, innaka sami'ud-du'a. Rabbi ij'alni muqeemas-salati wa min dhurriyyati rabbana wa taqabbal du'a.",
-          "transliteration": "Rabbi hab li min ladunka dhurriyyatan tayyibah, innaka sami'ud-du'a...",
+          "arabic": "رَبِّ هَبۡ لِي مِن لَّدُنكَ ذُرِّيَّةٗ طَيِّبَةًۖ إِنَّكَ سَمِيعُ ٱلدُّعَآءِ رَبِّ ٱجۡعَلۡنِي مُقِيمَ ٱلصَّلَوٰةِ وَمِن ذُرِّيَّتِيۚ رَبَّنَا وَتَقَبَّلۡ دُعَآءِ",
+          "transliteration": "Rabbi hab li min ladunka dhurriyyatan tayyibah, innaka sami'ud-du'a. Rabbi ij'alni muqeemas-salati wa min dhurriyyati rabbana wa taqabbal du'a.",
           "translation": {
             "en": "My Lord, grant me from Yourself a good offspring. Indeed, You are the Hearer of supplication. My Lord, make me an establisher of prayer, and [many] from my descendants. Our Lord, and accept my supplication.",
             "ar": "رب هب لي من لدنك ذرية طيبة إنك سميع الدعاء رب اجعلني مقيم الصلاة ومن ذريتي ربنا وتقبل دعاء"
@@ -1004,7 +1004,7 @@
             "collection": "Quran",
             "book": "",
             "chapter": "",
-            "hadith": "14:39-40",
+            "hadith": "3:38, 14:40",
             "narrator": "",
             "grading": "Quran",
             "url": "",
@@ -1040,7 +1040,7 @@
             "en": "Prophet Musa's Dua for Confidence",
             "ar": "دعاء موسى للثبات"
           },
-          "arabic": "Rabbi ishrah li sadri wa yassir li amri wauhlul 'uqdatan min lisani yafqahu qawli.",
+          "arabic": "رَبِّ ٱشۡرَحۡ لِي صَدۡرِي وَيَسِّرۡ لِيٓ أَمۡرِي وَٱحۡلُلۡ عُقۡدَةٗ مِّن لِّسَانِي يَفۡقَهُواْ قَوۡلِي",
           "transliteration": "Rabbi ishrah li sadri wa yassir li amri wauhlul 'uqdatan min lisani yafqahu qawli.",
           "translation": {
             "en": "My Lord, expand for me my breast [with assurance] and ease for me my task and untie the knot from my tongue so that they may understand my speech.",
@@ -1086,7 +1086,7 @@
             "en": "The Dua of Prophet Ayyub for Healing",
             "ar": "دعاء أيوب للشفاء"
           },
-          "arabic": "Annee massaniyad-durru wa anta arhamur-raahimeen.",
+          "arabic": "أَنِّي مَسَّنِيَ ٱلضُّرُّ وَأَنتَ أَرۡحَمُ ٱلرَّـٰحِمِينَ",
           "transliteration": "Annee massaniyad-durru wa anta arhamur-raahimeen.",
           "translation": {
             "en": "Indeed, adversity has touched me, and you are the Most Merciful of the merciful.",
@@ -1133,7 +1133,7 @@
             "en": "The Dua of Prophet Yunus — The Dua of the Distressed",
             "ar": "دعاء ذي النون — دعاء المكروب"
           },
-          "arabic": "La ilaha illa ant, subhanaka inni kuntu minadh-dhalimeen.",
+          "arabic": "أَن لَّآ إِلَٰهَ إِلَّآ أَنتَ سُبۡحَٰنَكَ إِنِّي كُنتُ مِنَ ٱلظَّـٰلِمِينَ",
           "transliteration": "La ilaha illa ant, subhanaka inni kuntu minadh-dhalimeen.",
           "translation": {
             "en": "There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.",
@@ -1180,8 +1180,8 @@
             "en": "The Believers' Dua for Protection from Evil",
             "ar": "دعاء المؤمنين من شرور النفس"
           },
-          "arabic": "Rabbana la tuzigh quloobana ba'da idh hadaytana wa hab lana min ladunka rahmah, innaka antal-wahhab.",
-          "transliteration": "Rabbana la tuzigh quloobana ba'da idz hadaytana wa hab lana min ladunka rahmah...",
+          "arabic": "رَبَّنَا لَا تُزِغۡ قُلُوبَنَا بَعۡدَ إِذۡ هَدَيۡتَنَا وَهَبۡ لَنَا مِن لَّدُنكَ رَحۡمَةًۚ إِنَّكَ أَنتَ ٱلۡوَهَّابُ",
+          "transliteration": "Rabbana la tuzigh quloobana ba'da idh hadaytana wa hab lana min ladunka rahmah, innaka antal-wahhab.",
           "translation": {
             "en": "Our Lord, let not our hearts deviate after You have guided us and grant us from Yourself mercy. Indeed, You are the Bestower.",
             "ar": "ربنا لا تزغ قلوبنا بعد إذ هديتنا وهب لنا من لدنك رحمة إنك أنت الوهاب"
@@ -1226,7 +1226,7 @@
             "en": "The Dua for Good in This World and the Next",
             "ar": "ربنا آتنا في الدنيا حسنة"
           },
-          "arabic": "Rabbana atina fid-dunya hasanah, wafil-akhirati hasanah, wa qina 'adhaban-nar.",
+          "arabic": "رَبَّنَآ ءَاتِنَا فِي ٱلدُّنۡيَا حَسَنَةٗ وَفِي ٱلۡأٓخِرَةِ حَسَنَةٗ وَقِنَا عَذَابَ ٱلنَّارِ",
           "transliteration": "Rabbana atina fid-dunya hasanah, wafil-akhirati hasanah, wa qina 'adhaban-nar.",
           "translation": {
             "en": "Our Lord, give us good in this world and good in the Hereafter, and protect us from the punishment of the Fire.",
@@ -1273,7 +1273,7 @@
             "en": "The Believers' Dua for Forgiveness and Mercy",
             "ar": "دعاء المؤمنين للمغفرة"
           },
-          "arabic": "Rabbana afaghfir lana dhunoobana wa israfina fi amrina wa thabbit aqdamana wa nsurna 'alal-qawmil-kafireen.",
+          "arabic": "رَبَّنَا ٱغۡفِرۡ لَنَا ذُنُوبَنَا وَإِسۡرَافَنَا فِيٓ أَمۡرِنَا وَثَبِّتۡ أَقۡدَامَنَا وَٱنصُرۡنَا عَلَى ٱلۡقَوۡمِ ٱلۡكَٰفِرِينَ",
           "transliteration": "Rabbana afaghfir lana dhunoobana wa israfina fi amrina wa thabbit aqdamana wa nsurna 'alal-qawmil-kafireen.",
           "translation": {
             "en": "Our Lord, forgive us our sins and the excess [committed] in our affair and plant firmly our feet and give us victory over the disbelieving people.",
@@ -1319,7 +1319,7 @@
             "en": "The Dua of Prophet Zakariya for a Child",
             "ar": "دعاء زكريا للولد"
           },
-          "arabic": "Rabbi hab li min ladunka dhurriyyatan tayyibah, innaka sami'ud-du'a.",
+          "arabic": "رَبِّ هَبۡ لِي مِن لَّدُنكَ ذُرِّيَّةٗ طَيِّبَةًۖ إِنَّكَ سَمِيعُ ٱلدُّعَآءِ",
           "transliteration": "Rabbi hab li min ladunka dhurriyyatan tayyibah, innaka sami'ud-du'a.",
           "translation": {
             "en": "My Lord, grant me from Yourself a good offspring. Indeed, You are the Hearer of supplication.",
@@ -1365,7 +1365,7 @@
             "en": "The Dua of the Youth of the Cave",
             "ar": "دعاء أصحاب الكهف"
           },
-          "arabic": "Rabbana atina min ladunka rahmatan wa hayyi' lana min amrina rashad.",
+          "arabic": "رَبَّنَآ ءَاتِنَا مِن لَّدُنكَ رَحۡمَةٗ وَهَيِّئۡ لَنَا مِنۡ أَمۡرِنَا رَشَدٗا",
           "transliteration": "Rabbana atina min ladunka rahmatan wa hayyi' lana min amrina rashad.",
           "translation": {
             "en": "Our Lord, grant us from Yourself mercy and prepare for us from our affair right guidance.",
@@ -1412,11 +1412,11 @@
             "en": "Seeking Refuge from Envy and the Evil Eye",
             "ar": "الاستعاذة من الحسد والعين"
           },
-          "arabic": "Wa idha hasada hasidun fal-yasta'idh bin-nasi wa yatawakkal 'alal-'azeezir-raheem.",
-          "transliteration": "Wa idha hasada hasidun fal-yasta'idh bin-nasi wa yatawakkal 'alal-'azeezir-raheem.",
+          "arabic": "وَقُل رَّبِّ أَعُوذُ بِكَ مِنۡ هَمَزَٰتِ ٱلشَّيَٰطِينِ وَأَعُوذُ بِكَ رَبِّ أَن يَحۡضُرُونِ",
+          "transliteration": "Wa qur rabbi a'udhu bika min hamazatish-shayatini, wa a'udhu bika rabbi an yahdurun.",
           "translation": {
-            "en": "And if an evil envious person should envy, let him seek refuge with Allah... and upon the Most Merciful let the envier rely.",
-            "ar": "وإذا حسد الحاسدون فليستعيذوا بالناس"
+            "en": "And say: \"My Lord, I seek refuge in You from the incitements of the devils, and I seek refuge in You, my Lord, lest they be present with me.\"",
+            "ar": "وقل: رب أعوذ بك من همزات الشياطين ووساوسهم، وأعوذ بك رب أن يحضروني"
           },
           "reference": {
             "collection": "Quran",
@@ -1458,7 +1458,7 @@
             "en": "Lord of the East and West — Control of All Affairs",
             "ar": "رب المشرق والمغرب"
           },
-          "arabic": "Rabbal-mashriqi wal-maghribi la ilaha illa huwa fattakhidhhu wakeela.",
+          "arabic": "رَّبُّ ٱلۡمَشۡرِقِ وَٱلۡمَغۡرِبِ لَآ إِلَٰهَ إِلَّا هُوَ فَٱتَّخِذۡهُ وَكِيلٗا",
           "transliteration": "Rabbal-mashriqi wal-maghribi la ilaha illa huwa fattakhidhhu wakeela.",
           "translation": {
             "en": "Lord of the east and the west - there is no deity except Him - so take Him as a Disposer of Affairs.",
@@ -1504,7 +1504,7 @@
             "en": "Our Lord, Forgive Our Parents and the Believers",
             "ar": "ربنا اغفر لي ولوالدي وللمؤمنين"
           },
-          "arabic": "Rabbighfir li wa liwalidayya wa lilmu'mineena yawma yaqumul-hisab.",
+          "arabic": "رَبَّنَا ٱغۡفِرۡ لِي وَلِوَٰلِدَيَّ وَلِلۡمُؤۡمِنِينَ يَوۡمَ يَقُومُ ٱلۡحِسَابُ",
           "transliteration": "Rabbighfir li wa liwalidayya wa lilmu'mineena yawma yaqumul-hisab.",
           "translation": {
             "en": "My Lord, forgive me and my parents and the believers the Day the account is established.",
@@ -2996,7 +2996,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Prophet Ibrahim made this prayer after leaving his family in the barren valley of Makkah. Allah answered it by making Makkah the most sacred city and providing its people with sustenance from all directions during Hajj.",
-            "ar": "Prophet Ibrahim made this prayer after leaving his family in the barren valley of Makkah. Allah answered it by making Makkah the most sacred city and providing its people with sustenance from all directions during Hajj."
+            "ar": "دعا به إبراهيم عليه السلام بعد أن ترك أهله بواد غير ذي زرع عند البيت الحرام، فاستجاب الله له فجعل مكة أقدس البقاع ورزق أهلها من الثمرات، لا سيما في موسم الحج."
           },
           "audio": null,
           "image": null,
@@ -3041,7 +3041,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This prayer of Ibrahim and Ismail while raising the foundations of the Kaaba shows the priority they gave to establishing prayer and leaving a legacy of worship. The dua concludes with asking Allah to accept the supplication.",
-            "ar": "This prayer of Ibrahim and Ismail while raising the foundations of the Kaaba shows the priority they gave to establishing prayer and leaving a legacy of worship. The dua concludes with asking Allah to accept the supplication."
+            "ar": "دعاء إبراهيم وإسماعيل عليهما السلام حال رفع قواعد الكعبة، يقدم إقامة الصلاة وترك ذرية عابدة، ويختم بسؤال القبول."
           },
           "audio": null,
           "image": null,
@@ -3086,7 +3086,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is the prayer of Ibrahim and Ismail as they built the Kaaba together. It teaches that the greatest legacy a parent can leave is a family submitted to Allah.",
-            "ar": "This is the prayer of Ibrahim and Ismail as they built the Kaaba together. It teaches that the greatest legacy a parent can leave is a family submitted to Allah."
+            "ar": "دعاء إبراهيم وإسماعيل عليهما السلام وهما يبنيان الكعبة، يعلم أن أعظم ميراث يتركه الوالد ذرية مسلمة لله."
           },
           "audio": null,
           "image": null,
@@ -3131,7 +3131,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This prayer is made by the oppressed who are unable to defend themselves against injustice. It is a powerful supplication for those who face persecution and seek Allah's intervention to establish truth and justice between them and their oppressors.",
-            "ar": "This prayer is made by the oppressed who are unable to defend themselves against injustice. It is a powerful supplication for those who face persecution and seek Allah's intervention to establish truth and justice between them and their oppressors."
+            "ar": "دعاء المظلومين الذين لا يملكون دفع الظلم عن أنفسهم، توسل إلى الله أن يحكم بينهم وبين ظالميهم بالحق والعدل."
           },
           "audio": null,
           "image": null,
@@ -3176,7 +3176,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is the dua of those who were tested by fighting and remained patient. It combines seeking forgiveness for sins and excesses, asking for steadfastness, and requesting victory — a complete prayer for the believer facing trials.",
-            "ar": "This is the dua of those who were tested by fighting and remained patient. It combines seeking forgiveness for sins and excesses, asking for steadfastness, and requesting victory — a complete prayer for the believer facing trials."
+            "ar": "دعاء من ابتلوا بالقتال فصبروا، يجمع بين الاستغفار من الذنوب والإسراف وسؤال الثبات والنصر، دعاء كامل للمؤمن في الشدائد."
           },
           "audio": null,
           "image": null,
@@ -3221,7 +3221,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is a continuation of the prayer of those who reflect upon Allah's creation. It includes one of the most beautiful requests: to die among the righteous. The scholars emphasize the importance of asking Allah for a good ending (husn al-khatimah).",
-            "ar": "This is a continuation of the prayer of those who reflect upon Allah's creation. It includes one of the most beautiful requests: to die among the righteous. The scholars emphasize the importance of asking Allah for a good ending (husn al-khatimah)."
+            "ar": "تتمة دعاء المتفكرين في خلق الله، وفيه من أجمل المطالب: الوفاة مع الأبرار، ويؤكد العلماء على سؤال الله حسن الخاتمة."
           },
           "audio": null,
           "image": null,
@@ -3266,7 +3266,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This dua is for those who are oppressed and living under unjust rule. It asks Allah for a protector and helper, recognizing that true support comes only from Allah. It is especially relevant for those facing persecution.",
-            "ar": "This dua is for those who are oppressed and living under unjust rule. It asks Allah for a protector and helper, recognizing that true support comes only from Allah. It is especially relevant for those facing persecution."
+            "ar": "دعاء المستضعفين تحت الحكم الجائر، يسألون الله وليا ونصيرا، إقرارا بأن النصر الحقيقي من عند الله وحده، وهو عزاء لكل مضطهد."
           },
           "audio": null,
           "image": null,
@@ -3311,7 +3311,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "While not a direct dua, this verse inspires the prayer to be just to orphans and the weak, treating them as one would want one's own vulnerable children to be treated. It serves as a reminder of our duty toward those under our care.",
-            "ar": "While not a direct dua, this verse inspires the prayer to be just to orphans and the weak, treating them as one would want one's own vulnerable children to be treated. It serves as a reminder of our duty toward those under our care."
+            "ar": "وإن لم تكن الآية دعاء مباشرا فهي تحض على العدل مع اليتامى والضعفاء ومعاملتهم كما يحب المرء أن يعامل ذريته الضعاف، وتذكير بالمسؤولية عمن تحت الأيدي."
           },
           "audio": null,
           "image": null,
@@ -3356,7 +3356,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This verse represents the ultimate declaration of a Muslim's complete submission to Allah. It encompasses every aspect of life — prayer, sacrifice, living, and dying — all dedicated solely to Allah. It is a powerful statement of pure tawheed and sincerity.",
-            "ar": "This verse represents the ultimate declaration of a Muslim's complete submission to Allah. It encompasses every aspect of life — prayer, sacrifice, living, and dying — all dedicated solely to Allah. It is a powerful statement of pure tawheed and sincerity."
+            "ar": "إعلان الاستسلام الكامل لله، يستغرق الحياة كلها: الصلاة والنسك والمحيا والممات لله وحده، وهو أبلغ عبارة في التوحيد الخالص والإخلاص."
           },
           "audio": null,
           "image": null,
@@ -3401,7 +3401,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This verse serves as both a warning and a reflection. It reminds that Allah's punishment, whether sudden or expected, only destroys the wrongdoers. It encourages the believer to reflect on their deeds and seek Allah's protection from being among the wrongdoers.",
-            "ar": "This verse serves as both a warning and a reflection. It reminds that Allah's punishment, whether sudden or expected, only destroys the wrongdoers. It encourages the believer to reflect on their deeds and seek Allah's protection from being among the wrongdoers."
+            "ar": "الآية وعيد وتذكرة معا: عذاب الله — باغتا كان أو منتظرا — لا يهلك إلا الظالمين، وحث للمؤمن على محاسبة نفسه والاستعاذة بالله من مصيرهم."
           },
           "audio": null,
           "image": null,
@@ -3446,7 +3446,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is the cry of the people on the Heights (Al-A'raf) — those whose deeds are balanced — calling out to Allah as they see the wrongdoers being turned away from Paradise. It is a prayer to be kept away from the company and fate of the unjust.",
-            "ar": "This is the cry of the people on the Heights (Al-A'raf) — those whose deeds are balanced — calling out to Allah as they see the wrongdoers being turned away from Paradise. It is a prayer to be kept away from the company and fate of the unjust."
+            "ar": "نداء أهل الأعراف الذين تساوت حسناتهم وسيئاتهم وهم يرون الظالمين يصرفون عن الجنة، يسألون الله ألا يجعلهم مع القوم الظالمين في الصحبة والمصير."
           },
           "audio": null,
           "image": null,
@@ -3491,7 +3491,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This was Musa's passionate request to see Allah. Though Allah informed him that he could not bear to see Him directly, this dua reveals the depth of Musa's longing and love for his Lord. The mountain crumbled at Allah's manifestation, showing the immense power of the Divine.",
-            "ar": "This was Musa's passionate request to see Allah. Though Allah informed him that he could not bear to see Him directly, this dua reveals the depth of Musa's longing and love for his Lord. The mountain crumbled at Allah's manifestation, showing the immense power of the Divine."
+            "ar": "سؤال موسى عليه السلام رؤية الله شوقا ومحبة، وإن أخبره الله أنه لن يطيق رؤيته في الدنيا، فدك الجبل لتجلي ربه دليل على عظمة القدرة الإلهية."
           },
           "audio": null,
           "image": null,
@@ -3536,7 +3536,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Musa made this prayer after the incident of the golden calf, asking forgiveness for himself and his brother Harun. It teaches the importance of interceding for family members and seeking Allah's vast mercy. It is a beautiful dua for sibling relationships.",
-            "ar": "Musa made this prayer after the incident of the golden calf, asking forgiveness for himself and his brother Harun. It teaches the importance of interceding for family members and seeking Allah's vast mercy. It is a beautiful dua for sibling relationships."
+            "ar": "دعا موسى عليه السلام بعد فتنة العجل مستغفرا لنفسه ولأخيه هارون، يعلم الشفاعة للأهل وسؤال رحمة الله الواسعة، وهو من أجمل الأدعية في الأخوة."
           },
           "audio": null,
           "image": null,
@@ -3581,7 +3581,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This was the dua of Musa before going to Pharaoh. It is one of the most beautiful duas for anyone facing a difficult task, public speaking, or a daunting mission. The Prophet (peace be upon him) used to recite this dua when something distressed him. Scholars recommend it for anyone experiencing anxiety or facing a challenge.",
-            "ar": "This was the dua of Musa before going to Pharaoh. It is one of the most beautiful duas for anyone facing a difficult task, public speaking, or a daunting mission. The Prophet (peace be upon him) used to recite this dua when something distressed him. Scholars recommend it for anyone experiencing anxiety or facing a challenge."
+            "ar": "دعاء موسى عليه السلام قبل مواجهة فرعون، من أجمل الأدعية لكل مقبل على مهمة صعبة أو كلام أمام الناس، وكان النبي ﷺ يدعو به عند الكرب، وينصح به العلماء كل قلق أو مهموم."
           },
           "audio": null,
           "image": null,
@@ -3626,7 +3626,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Musa made this prayer after killing a man unintentionally and fleeing the city. It expresses gratitude for Allah's blessings and a firm commitment to never support wrongdoing. It is a powerful dua for resolving to stand with truth and justice.",
-            "ar": "Musa made this prayer after killing a man unintentionally and fleeing the city. It expresses gratitude for Allah's blessings and a firm commitment to never support wrongdoing. It is a powerful dua for resolving to stand with truth and justice."
+            "ar": "دعا موسى عليه السلام بعد قتله الرجل خطأ وفراره من المدينة، حامدا نعم الله وعازما ألا يكون ظهيرا للمجرمين، وهو دعاء العزم على نصرة الحق والعدل."
           },
           "audio": null,
           "image": null,
@@ -3671,7 +3671,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is the dua of the believers who followed Musa, made as they were trapped between the sea and Pharaoh's army. It contains two crucial requests: not to be made a trial for the oppressors (i.e., not to be defeated in a way that emboldens them) and to be saved by Allah's mercy.",
-            "ar": "This is the dua of the believers who followed Musa, made as they were trapped between the sea and Pharaoh's army. It contains two crucial requests: not to be made a trial for the oppressors (i.e., not to be defeated in a way that emboldens them) and to be saved by Allah's mercy."
+            "ar": "دعاء المؤمنين أتباع موسى وهم محصورون بين البحر وجيش فرعون، وفيه مطلبان: ألا يجعلهم الله فتنة للظالمين فيغلبوا عليهم فيفتتنوا، وأن ينجيهم برحمته."
           },
           "audio": null,
           "image": null,
@@ -3716,7 +3716,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "While this verse is a statement rather than a direct supplication, it reflects the believer's conviction in following revelation. Scholars derive from it the importance of praying for certainty in faith and clarity of religion when one experiences doubt.",
-            "ar": "While this verse is a statement rather than a direct supplication, it reflects the believer's conviction in following revelation. Scholars derive from it the importance of praying for certainty in faith and clarity of religion when one experiences doubt."
+            "ar": "الآية إخبار لا دعاء مباشر، لكنها تعكس يقين المؤمن باتباع الوحي، ويستنبط منها العلماء مشروعية سؤال الله اليقين في الإيمان ووضوح الدين عند الشبهات."
           },
           "audio": null,
           "image": null,
@@ -3761,7 +3761,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is Ibrahim's prayer for his parents and all believers. It shows the importance of praying for one's parents and the wider Muslim community. The prayer is connected to the Day of Judgment, reminding us of the ultimate accountability.",
-            "ar": "This is Ibrahim's prayer for his parents and all believers. It shows the importance of praying for one's parents and the wider Muslim community. The prayer is connected to the Day of Judgment, reminding us of the ultimate accountability."
+            "ar": "دعاء إبراهيم عليه السلام لوالديه وللمؤمنين، يبين فضل الدعاء للوالدين ولعموم المسلمين، وارتباطه بيوم الحساب تذكير بالمسؤولية الكبرى."
           },
           "audio": null,
           "image": null,
@@ -3806,7 +3806,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Ibrahim's prayer combines asking for the security of Makkah with seeking protection for himself and his descendants from the greatest sin — associating partners with Allah. It shows that the most important thing to pray for regarding one's children is their faith and tawheed.",
-            "ar": "Ibrahim's prayer combines asking for the security of Makkah with seeking protection for himself and his descendants from the greatest sin — associating partners with Allah. It shows that the most important thing to pray for regarding one's children is their faith and tawheed."
+            "ar": "جمع إبراهيم عليه السلام بين سؤال أمن مكة والاستعاذة له ولذريته من أعظم الذنوب وهو الشرك، ليبين أن أهم ما يدعى به للذرية الإيمان والتوحيد."
           },
           "audio": null,
           "image": null,
@@ -3851,7 +3851,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is the dua of the Ashab al-Kahf (People of the Cave) — young believers who fled religious persecution and took refuge in a cave. This short but comprehensive dua asks for Allah's mercy and guidance in all affairs. The Prophet (peace be upon him) encouraged learning this surah and making this dua for guidance in difficult decisions.",
-            "ar": "This is the dua of the Ashab al-Kahf (People of the Cave) — young believers who fled religious persecution and took refuge in a cave. This short but comprehensive dua asks for Allah's mercy and guidance in all affairs. The Prophet (peace be upon him) encouraged learning this surah and making this dua for guidance in difficult decisions."
+            "ar": "دعاء فتية الكهف الذين فروا بدينهم من الاضطهاد إلى الغار، دعاء قصير جامع يسأل الرحمة والرشد في كل الأمور، وحث النبي ﷺ على تعلم السورة والدعاء به عند الحيرة."
           },
           "audio": null,
           "image": null,
@@ -3896,7 +3896,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Zakariya poured out his heart to Allah, describing his physical decline while affirming his unwavering trust in Allah's response to his prayers. This dua teaches that one should never lose hope in Allah, regardless of age or circumstances.",
-            "ar": "Zakariya poured out his heart to Allah, describing his physical decline while affirming his unwavering trust in Allah's response to his prayers. This dua teaches that one should never lose hope in Allah, regardless of age or circumstances."
+            "ar": "بث زكريا عليه السلام شكواه إلى الله واصفا وهن عظمه واشتعال شيبه مع ثقته المطلقة بإجابة دعائه، يعلم ألا ييأس أحد من الله مهما تقدم به العمر أو ضاقت به الأسباب."
           },
           "audio": null,
           "image": null,
@@ -3941,7 +3941,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is one of the most famous duas for knowledge. It was revealed to the Prophet (peace be upon him) and is considered the most comprehensive prayer for seeking knowledge. The scholars emphasize that even the most knowledgeable person should continue to ask Allah for more knowledge, as knowledge has no limit.",
-            "ar": "This is one of the most famous duas for knowledge. It was revealed to the Prophet (peace be upon him) and is considered the most comprehensive prayer for seeking knowledge. The scholars emphasize that even the most knowledgeable person should continue to ask Allah for more knowledge, as knowledge has no limit."
+            "ar": "من أشهر أدعية العلم، أنزله الله على نبيه ﷺ، وهو أجمع دعاء في طلب العلم، ويؤكد العلماء أن العالم مهما بلغ علمه لا يزال يسأل الله المزيد فالعلم لا حد له."
           },
           "audio": null,
           "image": null,
@@ -3986,7 +3986,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is Musa's complete prayer before his mission to Pharaoh. It includes asking for: an expanded heart (confidence), ease in the task, clarity of speech, a supportive companion, and shared responsibility. The Prophet (peace be upon him) would recite the first part when distressed.",
-            "ar": "This is Musa's complete prayer before his mission to Pharaoh. It includes asking for: an expanded heart (confidence), ease in the task, clarity of speech, a supportive companion, and shared responsibility. The Prophet (peace be upon him) would recite the first part when distressed."
+            "ar": "دعاء موسى الكامل قبل رسالته إلى فرعون: شرح الصدر، وتيسير الأمر، وطلاق اللسان، والرفيق المعين، وتشريكه في الأمر، وكان النبي ﷺ يدعو بشطره الأول عند الكرب."
           },
           "audio": null,
           "image": null,
@@ -4031,7 +4031,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This dua specifically seeks refuge from the devils' incitements and their presence. It is particularly powerful against waswas (whispers). The Prophet (peace be upon him) taught that the Shaytan flows through the son of Adam like blood, and this dua helps block those channels of whispering.",
-            "ar": "This dua specifically seeks refuge from the devils' incitements and their presence. It is particularly powerful against waswas (whispers). The Prophet (peace be upon him) taught that the Shaytan flows through the son of Adam like blood, and this dua helps block those channels of whispering."
+            "ar": "استعاذة مخصوصة من همزات الشياطين وحضورهم، وهي أنفع سلاح ضد الوسوسة، وقد علم النبي ﷺ أن الشيطان يجري من ابن آدم مجرى الدم وهذا الدعاء يسد عليه تلك المسالك."
           },
           "audio": null,
           "image": null,
@@ -4076,7 +4076,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This short but profound dua appears at the end of Surah Al-Mu'minun. It combines the two most essential requests — forgiveness and mercy — and acknowledges that Allah is the best of those who show mercy. The scholars note that ending one's daily worship with this dua is highly meritorious.",
-            "ar": "This short but profound dua appears at the end of Surah Al-Mu'minun. It combines the two most essential requests — forgiveness and mercy — and acknowledges that Allah is the best of those who show mercy. The scholars note that ending one's daily worship with this dua is highly meritorious."
+            "ar": "دعاء قصير عميق في خواتيم سورة المؤمنون، يجمع بين أعظم مطلوبين: المغفرة والرحمة، مع الإقرار بأن الله خير الراحمين، ويذكر العلماء فضل ختم العبادة اليومية به."
           },
           "audio": null,
           "image": null,
@@ -4121,7 +4121,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Nuh made this prayer after centuries of calling his people to Allah with only a handful of followers. It teaches that when one is patient in da'wah and faces rejection, turning to Allah for help is the response. Nuh was ultimately vindicated when the flood came upon the disbelievers.",
-            "ar": "Nuh made this prayer after centuries of calling his people to Allah with only a handful of followers. It teaches that when one is patient in da'wah and faces rejection, turning to Allah for help is the response. Nuh was ultimately vindicated when the flood came upon the disbelievers."
+            "ar": "دعا نوح عليه السلام بعد قرون من الدعوة لم يتبعه فيها إلا القليل، يعلم أن الصابر على الدعوة إذا ووجه بالتكذيب فزعه إلى الله، وقد نصره الله بالطوفان على المكذبين."
           },
           "audio": null,
           "image": null,
@@ -4166,7 +4166,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is one of the most expansive prayers for forgiveness in the Quran. Nuh prayed not only for himself and his parents but for every believer who entered his home and all believing men and women. The Prophet (peace be upon him) said that whoever prays for the believers receives a supplication from every believer on earth in return.",
-            "ar": "This is one of the most expansive prayers for forgiveness in the Quran. Nuh prayed not only for himself and his parents but for every believer who entered his home and all believing men and women. The Prophet (peace be upon him) said that whoever prays for the believers receives a supplication from every believer on earth in return."
+            "ar": "من أوسع أدعية الاستغفار في القرآن، دعا نوح عليه السلام لنفسه ولوالديه ولكل مؤمن دخل بيته وللمؤمنين والمؤمنات، وقال النبي ﷺ: من دعا للمؤمنين رد عليه كل مؤمن بدعاء."
           },
           "audio": null,
           "image": null,
@@ -4211,7 +4211,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is the statement of Prophet Hud to his people, expressing complete reliance on Allah. The imagery of Allah holding every creature by its forelock demonstrates His absolute control over all creation. This serves as a powerful reminder to place full trust in Allah.",
-            "ar": "This is the statement of Prophet Hud to his people, expressing complete reliance on Allah. The imagery of Allah holding every creature by its forelock demonstrates His absolute control over all creation. This serves as a powerful reminder to place full trust in Allah."
+            "ar": "قول هود عليه السلام لقومه معلنا كمال التوكل على الله، وصورة أخذ الله بناصية كل دابة تدل على إحاطته بكل مخلوق، وهي أعظم باعث على الثقة بالله."
           },
           "audio": null,
           "image": null,
@@ -4256,7 +4256,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Yusuf made this dua when faced with the ultimate test — the advances of the Aziz's wife. He chose prison over disobedience to Allah, asking Allah to protect him from their plot. This dua is a model for anyone facing temptation, teaching that seeking refuge in Allah is the path of the righteous.",
-            "ar": "Yusuf made this dua when faced with the ultimate test — the advances of the Aziz's wife. He chose prison over disobedience to Allah, asking Allah to protect him from their plot. This dua is a model for anyone facing temptation, teaching that seeking refuge in Allah is the path of the righteous."
+            "ar": "دعا يوسف عليه السلام حين واجه أعظم الفتن — مراودة امرأة العزيز — فاختار السجن على معصية الله سائلا الحماية من كيدهن، وهو قدوة لكل من واجه فتنة: الفرار إلى الله طريق الأبرار."
           },
           "audio": null,
           "image": null,
@@ -4301,7 +4301,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Yaqub (Jacob) made this statement while grieving the loss of his beloved son Yusuf. Despite his overwhelming sorrow and going blind from weeping, he directed all his complaints only to Allah. This teaches that while it is permissible to express grief, the believer's ultimate recourse is always to Allah alone.",
-            "ar": "Yaqub (Jacob) made this statement while grieving the loss of his beloved son Yusuf. Despite his overwhelming sorrow and going blind from weeping, he directed all his complaints only to Allah. This teaches that while it is permissible to express grief, the believer's ultimate recourse is always to Allah alone."
+            "ar": "شكا يعقوب عليه السلام حزنه على يوسف حتى ابيضت عيناه من البكاء، ومع ذلك لم يبث شكواه إلا إلى الله، يعلم أن الحزن مباح وأن المفزع الأخير للمؤمن إلى الله وحده."
           },
           "audio": null,
           "image": null,
@@ -4346,7 +4346,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Despite years of severe illness, loss of wealth, and family trials, Ayyub's prayer was remarkably brief — only acknowledging his affliction and Allah's mercy. Allah responded by curing him completely and replacing what he lost with even more. This dua teaches that the key to having prayers answered is recognizing Allah's mercy.",
-            "ar": "Despite years of severe illness, loss of wealth, and family trials, Ayyub's prayer was remarkably brief — only acknowledging his affliction and Allah's mercy. Allah responded by curing him completely and replacing what he lost with even more. This dua teaches that the key to having prayers answered is recognizing Allah's mercy."
+            "ar": "مع سنوات المرض الشديد وضياع المال وفراق الأهل جاء دعاء أيوب عليه السلام موجزا: إظهار الافتقار وذكر رحمة الله، فشفاه الله وعوضه خيرا مما فقد، والدرس أن مفتاح الإجابة استحضار رحمة الله."
           },
           "audio": null,
           "image": null,
@@ -4391,7 +4391,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "The Prophet (peace be upon him) said: \"No Muslim makes a supplication containing these words but Allah will answer it.\" This dua was made by Yunus in three layers of darkness: the darkness of the sea, the darkness of the whale, and the darkness of the night. It is the most powerful dua for relief from distress and is called \"Dhul-Nun.\"",
-            "ar": "The Prophet (peace be upon him) said: \"No Muslim makes a supplication containing these words but Allah will answer it.\" This dua was made by Yunus in three layers of darkness: the darkness of the sea, the darkness of the whale, and the darkness of the night. It is the most powerful dua for relief from distress and is called \"Dhul-Nun.\""
+            "ar": "قال النبي ﷺ: ما دعا بها مسلم في شيء قط إلا استجاب الله له. دعا بها يونس عليه السلام في ظلمات ثلاث: ظلمة البحر وظلمة بطن الحوت وظلمة الليل، وهي أقوى دعاء للكرب وتسمى دعوة ذي النون."
           },
           "audio": null,
           "image": null,
@@ -4436,7 +4436,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This was the prayer of the Prophet (peace be upon him) as recorded in the Quran, asking Allah to judge between him and his opponents. It is a dua for anyone facing opposition or injustice, placing the matter in Allah's hands and trusting in His perfect judgment.",
-            "ar": "This was the prayer of the Prophet (peace be upon him) as recorded in the Quran, asking Allah to judge between him and his opponents. It is a dua for anyone facing opposition or injustice, placing the matter in Allah's hands and trusting in His perfect judgment."
+            "ar": "دعاء النبي ﷺ كما ورد في القرآن يسأل ربه الحكم بينه وبين خصومه، وهو دعاء كل من واجه معارضة أو ظلما: تفويض الأمر إلى الله والثقة بعدله الكامل."
           },
           "audio": null,
           "image": null,
@@ -4481,7 +4481,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "The angels who carry the Throne and those around it make this prayer for the believers. The Prophet (peace be upon him) said that this dua will intercede for the person who recites it. It is one of the most powerful prayers for forgiveness, combining Allah's vast mercy and knowledge.",
-            "ar": "The angels who carry the Throne and those around it make this prayer for the believers. The Prophet (peace be upon him) said that this dua will intercede for the person who recites it. It is one of the most powerful prayers for forgiveness, combining Allah's vast mercy and knowledge."
+            "ar": "حملة العرش ومن حوله يدعون للمؤمنين، وقال النبي ﷺ إن هذا الدعاء يشفع لقائله، وهو من أقوى أدعية المغفرة جامعا بين سعة رحمة الله وعلمه."
           },
           "audio": null,
           "image": null,
@@ -4526,7 +4526,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This is the dua of Ibrahim and his followers when they declared disassociation from the idolaters. It expresses complete reliance on Allah, turning to Him in repentance, and recognizing that all things return to Him. It is a powerful declaration of tawakkul (trust in Allah).",
-            "ar": "This is the dua of Ibrahim and his followers when they declared disassociation from the idolaters. It expresses complete reliance on Allah, turning to Him in repentance, and recognizing that all things return to Him. It is a powerful declaration of tawakkul (trust in Allah)."
+            "ar": "دعاء إبراهيم عليه السلام وأتباعه حين تبرؤوا من المشركين، يعلن كمال التوكل على الله والإنابة إليه والإقرار بأن المصير إليه، وهو من أبلغ عبارات التوكل."
           },
           "audio": null,
           "image": null,
@@ -4571,7 +4571,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Maryam (Mary) made this statement when the angel appeared before her in the form of a man. It demonstrates the importance of seeking Allah's protection in situations of uncertainty. Scholars derive from this the permissibility of seeking refuge in Allah when one faces any concerning situation.",
-            "ar": "Maryam (Mary) made this statement when the angel appeared before her in the form of a man. It demonstrates the importance of seeking Allah's protection in situations of uncertainty. Scholars derive from this the permissibility of seeking refuge in Allah when one faces any concerning situation."
+            "ar": "استعاذت مريم عليها السلام بالله حين تمثل لها الملك بشرا سويا، تبين أهمية الاستعاذة بالله عند الريبة، ويستنبط منها العلماء مشروعية الاستعاذة عند كل أمر مريب."
           },
           "audio": null,
           "image": null,
@@ -4616,7 +4616,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "The angels in the heavens exalt Allah and seek forgiveness for those on earth. This verse reminds believers that the angels are constantly praying for them, which should increase their gratitude and motivation to worship. The connection between the angels' supplication and the believers' deeds is a source of hope and encouragement.",
-            "ar": "The angels in the heavens exalt Allah and seek forgiveness for those on earth. This verse reminds believers that the angels are constantly praying for them, which should increase their gratitude and motivation to worship. The connection between the angels' supplication and the believers' deeds is a source of hope and encouragement."
+            "ar": "ملائكة السماء يسبحون الله ويستغفرون لمن في الأرض، وهذه الآية تذكر المؤمنين بأن الملائكة لا تزال تدعو لهم، مما يزيد الشكر والهمة على العبادة، والصلة بين دعاء الملائكة وعمل المؤمنين باعث على الرجاء."
           },
           "audio": null,
           "image": null,
@@ -4661,7 +4661,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "Luqman's wisdom began with the command to be grateful to Allah. The verse makes clear that gratitude benefits the grateful person themselves. This teaches that gratitude is not merely a polite gesture but a transformative act that benefits one's own soul, faith, and worldly life.",
-            "ar": "Luqman's wisdom began with the command to be grateful to Allah. The verse makes clear that gratitude benefits the grateful person themselves. This teaches that gratitude is not merely a polite gesture but a transformative act that benefits one's own soul, faith, and worldly life."
+            "ar": "بدأت حكمة لقمان بالأمر بشكر الله، وبينت الآية أن الشكر يعود نفعه على الشاكر نفسه، فالشكر ليس مجاملة بل عمل يحول النفس والإيمان والحياة."
           },
           "audio": null,
           "image": null,
@@ -4706,7 +4706,7 @@
           "repetitions": 1,
           "virtues": {
             "en": "This surah was revealed after the conquest of Makkah. Despite this monumental victory, Allah commanded the Prophet (peace be upon him) to glorify Him and seek forgiveness. It teaches that at the height of success, a believer should remain humble, grateful, and seek forgiveness, never allowing worldly achievements to make them forget their dependence on Allah.",
-            "ar": "This surah was revealed after the conquest of Makkah. Despite this monumental victory, Allah commanded the Prophet (peace be upon him) to glorify Him and seek forgiveness. It teaches that at the height of success, a believer should remain humble, grateful, and seek forgiveness, never allowing worldly achievements to make them forget their dependence on Allah."
+            "ar": "نزلت السورة بعد فتح مكة، ومع هذا النصر العظيم أمر الله نبيه ﷺ بالتسبيح والاستغفار، تعلم المؤمن أن يبقى في ذروة النجاح متواضعا شاكرا مستغفرا لا تنسيه الدنيا افتقاره إلى الله."
           },
           "audio": null,
           "image": null,

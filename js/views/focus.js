@@ -7,6 +7,14 @@ import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
+import {
+  showTransliterationFor,
+  showTranslationFor,
+  translationFor,
+  virtueFor,
+  referencePartsFor,
+  noteFor,
+} from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { VIEWS, GRADE_LABELS } from '../core/config.js';
 import { wasJustCompleted } from '../services/tasbih.js';
@@ -66,19 +74,20 @@ export function renderFocus(state) {
   };
   const isFav = selectors.isFavorite(state, item.id);
   const isSpeaking = state.speakingItemId === item.id;
-  const translation = pickLocale(item.translation, lang);
-  const virtue = pickLocale(item.virtues, lang);
+  // Strict language separation (same contract as ui/card.js): AR shows the
+  // Arabic matn + Arabic virtue/source only; transliteration/translation
+  // render in EN only, with no cross-language fallback.
+  const showTranslit = showTransliterationFor(lang, state.settings.showTransliteration);
+  const showTrans = showTranslationFor(lang, state.settings.showTranslation);
+  const translation = showTrans ? translationFor(item, lang) : '';
+  const virtue = virtueFor(item, lang);
   const gradeLabel = GRADE_LABELS[item.grade]
     ? pickLocale(GRADE_LABELS[item.grade], lang)
     : item.grade;
-  const refParts = [
-    item.reference?.collection,
-    item.reference?.hadith,
-    item.reference?.narrator ? `${t('card.narratedBy', lang)} ${item.reference.narrator}` : '',
-    item.reference?.grading,
-  ]
-    .filter(Boolean)
-    .join(' \u00B7 ');
+  const refParts = referencePartsFor(item, lang, t('card.narratedBy', lang));
+  const refLine = refParts.join(' · ');
+  const refNotes = noteFor(item.reference?.notes, lang);
+  const notes = noteFor(item.notes, lang);
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
   // (v5.2.24) directional enter: forward slides from the reading-start
   // side, back from the other — auto-advance (+1) always slides forward.
@@ -137,8 +146,8 @@ export function renderFocus(state) {
             ? `<button type="button" class="hadith-card__cloze" data-action="byheart-reveal" data-item-id="${escapeHTML(item.id)}" aria-label="${t('hifz.reveal', lang)}">${t('hifz.reveal', lang)}</button>`
             : `<p class="focus__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
         }
-        ${!bh && state.settings.showTransliteration && item.transliteration ? `<p class="focus__translit">${escapeHTML(item.transliteration)}</p>` : ''}
-        ${state.settings.showTranslation && translation ? `<p class="focus__translation">${escapeHTML(translation)}</p>` : ''}
+        ${!bh && showTranslit && item.transliteration ? `<p class="focus__translit">${escapeHTML(item.transliteration)}</p>` : ''}
+        ${showTrans && translation ? `<p class="focus__translation">${escapeHTML(translation)}</p>` : ''}
         ${
           bh
             ? `
@@ -154,9 +163,9 @@ export function renderFocus(state) {
             : ''
         }
         ${virtue ? `<p class="focus__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${escapeHTML(virtue)}</p>` : ''}
-        ${refParts ? `<p class="focus__reference">${icon('book', { size: 14 })} ${escapeHTML(refParts)}</p>` : ''}
-        ${item.reference?.notes ? `<p class="focus__reference-note">${escapeHTML(item.reference.notes)}</p>` : ''}
-        ${item.notes ? `<p class="focus__attribution">${icon('info', { size: 12 })} ${escapeHTML(item.notes)}</p>` : ''}
+        ${refLine ? `<p class="focus__reference">${icon('book', { size: 14 })} ${escapeHTML(refLine)}</p>` : ''}
+        ${refNotes ? `<p class="focus__reference-note">${escapeHTML(refNotes)}</p>` : ''}
+        ${notes ? `<p class="focus__attribution">${icon('info', { size: 12 })} ${escapeHTML(notes)}</p>` : ''}
       </div>
     </div>
 

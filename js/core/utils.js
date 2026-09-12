@@ -106,6 +106,20 @@ export function pickLocale(field, lang = 'en') {
 }
 
 /**
+ * Strict locale pick: NO cross-language fallback. Returns the requested
+ * side only (or '' when absent). Renderers that must never leak one
+ * language into the other UI (virtues, translations under the strict
+ * language-separation contract) use this; pickLocale stays for chrome
+ * where a fallback is preferable to an empty label.
+ */
+export function pickStrict(field, lang = 'en') {
+  if (field == null) return '';
+  if (typeof field === 'string') return lang === 'en' ? field : '';
+  const v = field[lang];
+  return typeof v === 'string' ? v : '';
+}
+
+/**
  * (v4.5.2) The display name of a category — with a hard floor. The adhkar
  * library shipped nameless categories for months and the Library tiles +
  * the category header rendered EMPTY strings, which read as "someone
