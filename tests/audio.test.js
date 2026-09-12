@@ -235,3 +235,63 @@ test('audio grid disables learned-missing surahs instead of failing on tap', asy
   assert.ok(btn114.includes('disabled'), 'missing cell button disabled');
   avail._resetAvailabilityForTests();
 });
+
+test('translation tracks are labeled in data and searchable', async () => {
+  const { translationLabel } = await import('../js/services/audioCatalog.js');
+  const doc = JSON.parse(readFileSync(new URL('reciters.json', DIR), 'utf-8'));
+  const withTrans = doc.reciters.filter((r) => r.translation);
+  assert.equal(withTrans.length, 10);
+  for (const r of withTrans) {
+    assert.ok(r.translationAr, r.id);
+    assert.equal(translationLabel(r, 'en'), r.translation);
+    assert.equal(translationLabel(r, 'ar'), r.translationAr);
+  }
+  assert.equal(translationLabel({ id: 'x' }, 'en'), '');
+  // Searchable in both languages (customs stand in for the catalog, which
+  // needs a network fetch the unit suite never performs).
+  const { searchReciters } = await import('../js/services/audioCatalog.js');
+  const customs = [
+    {
+      id: 'c1',
+      nameEn: 'Test Reciter',
+      nameAr: 'قارئ',
+      server: 'https://x/',
+      translation: 'Urdu Translation',
+      translationAr: 'ترجمة أردية',
+    },
+  ];
+  assert.ok(searchReciters('urdu', customs).some((r) => r.id === 'c1'));
+  assert.ok(searchReciters('أردية', customs).some((r) => r.id === 'c1'));
+});
+
+test('audio view lists the 5 verse voices with translation badges', async () => {
+  const { renderAudio } = await import('../js/views/audioManager.js');
+  const state = {
+    settings: {
+      language: 'en',
+      reciter: 'ar.alafasy',
+      customReciters: [
+        {
+          id: 'c-tr',
+          nameEn: 'Test Reciter',
+          nameAr: 'قارئ',
+          server: 'https://x/',
+          rewaya: '',
+          source: 'custom',
+          translation: 'Pickthall Translation',
+          translationAr: 'ترجمة بيكثال',
+        },
+      ],
+      audio: { moshafId: null },
+    },
+    audioManager: { catalogReady: true },
+    audioDownloads: {},
+    audioDownloading: {},
+    quran: {},
+    loadErrors: {},
+  };
+  const html = renderAudio(state);
+  assert.ok(html.includes('Verse-by-verse voices'));
+  assert.ok(html.includes('data-key="reciter" data-value="ar.alafasy"'));
+  assert.ok(html.includes('Pickthall Translation'), 'translation badge on mashup rows');
+});

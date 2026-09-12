@@ -221,6 +221,9 @@ export const en = {
   'audio.batchDone': 'Downloaded {n} surahs.',
   'audio.batchDoneSkipped': 'Downloaded {n} surahs \u2014 {m} not on this server.',
   'audio.surahUnavailable': 'This surah is not available from this reciter.',
+  'audio.verseVoices': 'Verse-by-verse voices',
+  'audio.verseVoicesHint':
+    'These 5 voices play ayah by ayah in the reader. Voice B and compare mode live under Settings \u2192 Reciter.',
   'audio.batchCancelled': 'Stopped — {n} surahs saved.',
   'audio.quota': 'Device storage is full — remove some downloads.',
   'audio.deleted': 'Removed {n} files.',

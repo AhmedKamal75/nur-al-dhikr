@@ -13,9 +13,15 @@
 
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { escapeHTML } from '../core/utils.js';
+import { escapeHTML, pickLocale } from '../core/utils.js';
+import { QURAN_RECITERS } from '../core/config/quran.js';
 import { queueSignature } from '../services/surahPlayback.js';
-import { searchReciters, findMoshaf, rewayaAr } from '../services/audioCatalog.js';
+import {
+  searchReciters,
+  findMoshaf,
+  rewayaAr,
+  translationLabel,
+} from '../services/audioCatalog.js';
 import { isSurahMissing } from '../services/moshafAvailability.js';
 import { formatBytes } from '../services/audioStore.js';
 import { skeletonReciterRows } from '../ui/skeleton.js';
@@ -41,11 +47,17 @@ export function renderAudio(state) {
       const active = r.id === selectedId;
       // Riwaya renders localized in AR (unmapped Latin omitted, never leaked).
       const rewaya = lang === 'ar' ? rewayaAr(r.rewaya) : String(r.rewaya || '');
+      const trans = translationLabel(r, lang);
+      const subBits = [
+        r.nameAr && r.nameEn && lang === 'ar' ? r.nameEn : r.nameAr || '',
+        rewaya,
+        trans,
+      ].filter(Boolean);
       return `
     <div class="reciter-row ${active ? 'reciter-row--active' : ''}">
       <button type="button" class="reciter-row__main" data-action="audio-select-moshaf" data-id="${escapeHTML(r.id)}">
-        <span class="reciter-row__name">${escapeHTML(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn)}</span>
-        <span class="reciter-row__sub">${escapeHTML(r.nameAr && r.nameEn && lang === 'ar' ? r.nameEn : r.nameAr || '')}${rewaya ? ` — ${escapeHTML(rewaya)}` : ''}</span>
+        <span class="reciter-row__name">${escapeHTML(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn)}${trans ? ` <span class="chip chip--muted">${escapeHTML(trans)}</span>` : ''}</span>
+        ${subBits.length ? `<span class="reciter-row__sub">${escapeHTML(subBits.join(' — '))}</span>` : ''}
       </button>
       ${r.source === 'custom' ? `<button type="button" class="icon-btn icon-btn--sm" data-action="audio-remove-custom" data-id="${escapeHTML(r.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 14 })}</button>` : ''}
     </div>`;
@@ -58,6 +70,10 @@ export function renderAudio(state) {
     const totalBytes = Object.entries(downloads)
       .filter(([k]) => k.startsWith(`${selected.id}:`))
       .reduce((n, [, v]) => n + (v.bytes || 0), 0);
+    // Header metadata, localized: Arabic riwaya/translation labels in AR.
+    const selRewaya =
+      lang === 'ar' ? rewayaAr(selected.rewaya) || selected.rewaya : selected.rewaya;
+    const selTrans = translationLabel(selected, lang);
 
     const cells = [];
     for (let n = 1; n <= 114; n += 1) {
@@ -88,7 +104,7 @@ export function renderAudio(state) {
     grid = `
     <section class="panel panel--dl">
       <div class="panel__header">
-        <h2>${escapeHTML(lang === 'ar' && selected.nameAr ? selected.nameAr : selected.nameEn)}${selected.rewaya ? ` — ${escapeHTML(selected.rewaya)}` : ''}</h2>
+        <h2>${escapeHTML(lang === 'ar' && selected.nameAr ? selected.nameAr : selected.nameEn)}${selRewaya ? ` — ${escapeHTML(selRewaya)}` : ''}${selTrans ? ` <span class="chip chip--muted">${escapeHTML(selTrans)}</span>` : ''}</h2>
         <span class="chip__count">${doneCount} / 114 · ${formatBytes(totalBytes)}</span>
       </div>
       <div class="dl-actions">
@@ -109,6 +125,23 @@ export function renderAudio(state) {
       <div class="dl-grid">${cells.join('')}</div>
     </section>`;
   }
+
+  // One screen for every voice: the 5 verse-by-verse CDN voices ride
+  // along here (streaming-only — no per-surah files to download), so the
+  // Settings-5 vs Audio-314 picker split stops hiding them from each other.
+  const verseRows = QURAN_RECITERS.map(
+    (r) => `
+    <button type="button" class="reciter-row ${state.settings.reciter === r.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="reciter" data-value="${r.id}" aria-pressed="${state.settings.reciter === r.id}">
+      <span class="reciter-row__name">${escapeHTML(pickLocale({ en: r.nameEn, ar: r.nameAr }, lang))}</span>
+      ${state.settings.reciter === r.id ? icon('check', { size: 16 }) : ''}
+    </button>`
+  ).join('');
+  const verseSection = `
+  <section class="panel">
+    <div class="panel__header"><h2>${t('audio.verseVoices', lang)}</h2></div>
+    <p class="panel__subtext">${t('audio.verseVoicesHint', lang)}</p>
+    <div class="reciter-list">${verseRows}</div>
+  </section>`;
 
   const storageRow = `
   <section class="panel">
@@ -141,6 +174,7 @@ export function renderAudio(state) {
           ? skeletonReciterRows(lang, 6)
           : ''
     }
+    ${q ? '' : verseSection}
     ${rows ? `<div class="reciter-list">${rows}</div>` : state.audioManager?.catalogReady && !hits.length ? emptyStateHTML({ iconName: 'volume', title: t('search.noResults', lang), hint: t('audio.noResultsHint', lang) }) : ''}
     ${hits.length > 60 ? `<p class="empty-hint">${t('audio.moreResults', lang, { n: hits.length })}</p>` : ''}
 

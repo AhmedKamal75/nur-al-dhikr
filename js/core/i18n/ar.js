@@ -218,6 +218,9 @@ export const ar = {
   'audio.batchDone': 'تم تحميل {n} سورة.',
   'audio.batchDoneSkipped': 'تم تحميل {n} سورة — {m} غير متوفرة على هذا الخادم.',
   'audio.surahUnavailable': 'هذه السورة غير متوفرة لدى هذا القارئ.',
+  'audio.verseVoices': 'أصوات التلاوة آيةً بآية',
+  'audio.verseVoicesHint':
+    'هذه الأصوات الخمسة تُشغَّل آيةً بآية في القارئ. الصوت الثاني ووضع المقارنة في الإعدادات ← القارئ.',
   'audio.batchCancelled': 'أُوقف التحميل — حُفظ {n} سورة.',
   'audio.quota': 'مساحة الجهاز ممتلئة — احذف بعض التحميلات.',
   'audio.deleted': 'حُذف {n} ملفًا.',

@@ -2,6 +2,16 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.36 — one screen for every voice + translation-track badges
+
+The Audio view now lists the 5 verse-by-verse voices alongside the 314
+moshafs (streaming-only section, tap selects voice A through the global
+setting path), closing the Settings-5 vs Audio-314 picker split from
+both sides (Settings already linked here). The 10 recitation-plus-
+translation mashups carry explicit `translation`/`translationAr` fields
+(Saheeh/Pickthall/Muhsin Khan/Urdu) with badge + localized grid header
+and search in both languages. Markers 5.2.35 → 5.2.36 + re-stamp.
+
 ## v5.2.35 — learned per-surah availability for moshaf servers
 
 Translation/Taraweeh variants often lack surahs the catalog assumes

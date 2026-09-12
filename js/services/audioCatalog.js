@@ -149,9 +149,21 @@ export function searchReciters(query, customs = []) {
         (r) =>
           normAr(r.nameEn).includes(q) ||
           normAr(r.nameAr).includes(q) ||
-          normAr(r.rewaya).includes(q)
+          normAr(r.rewaya).includes(q) ||
+          normAr(r.translation).includes(q) ||
+          normAr(r.translationAr).includes(q)
       );
   return hits.sort((a, b) => (a.nameEn || '').localeCompare(b.nameEn || ''));
+}
+
+/**
+ * Translation-track label for mashup rows (recitation + translated
+ * narration): localized, '' for pure recitations. Lets the UI badge
+ * these rows honestly instead of burying the translator in the name.
+ */
+export function translationLabel(reciter, lang = 'en') {
+  const t = lang === 'ar' ? reciter?.translationAr : reciter?.translation;
+  return typeof t === 'string' ? t.trim() : '';
 }
 
 /** Find one moshaf entry by id across catalog + customs. */
