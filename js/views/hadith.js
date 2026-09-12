@@ -313,6 +313,7 @@ function renderBookReader(state, lang) {
         memorizing: memKey === key,
         memRevealed: memKey === key && memRevealed,
         memDue: memRecords[key]?.due || '',
+        highlight: String(view.query || '').split(/\s+/),
       });
     })
     .join('');

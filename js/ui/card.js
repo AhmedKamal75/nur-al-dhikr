@@ -14,7 +14,7 @@
  * the single delegated listener registered once in app.js.
  */
 
-import { escapeHTML, pickLocale } from '../core/utils.js';
+import { escapeHTML, highlightMatch, pickLocale } from '../core/utils.js';
 // SANCTIONED ui → domain edge (separation contract): card.js is the audited
 // consumer of localeContent + completedCards (ARCHITECTURE.md §2 exception).
 // eslint-disable-next-line no-restricted-imports
@@ -52,7 +52,9 @@ export function cardHTML(item, category, opts = {}) {
     compact = false,
     fields = null,
     byHeart = null,
+    highlight = [],
   } = opts;
+  const hl = Array.isArray(highlight) ? highlight : [];
 
   // (v5.0.0) Effective field visibility: banner-level toggles win, then
   // the legacy global show* settings, then "visible".
@@ -133,7 +135,7 @@ export function cardHTML(item, category, opts = {}) {
       </div>
     </header>
 
-    ${title ? `<h3 class="card__title">${escapeHTML(title)}</h3>` : ''}
+    ${title ? `<h3 class="card__title">${highlightMatch(title, hl)}</h3>` : ''}
 
     ${
       byHeart && !byHeart.revealed && item.arabic
@@ -142,10 +144,10 @@ export function cardHTML(item, category, opts = {}) {
           ? `<p class="card__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
           : ''
     }
-    ${!byHeart && showTranslit && item.transliteration ? `<p class="card__translit">${escapeHTML(item.transliteration)}</p>` : ''}
-    ${showTrans && translation ? `<p class="card__translation">${escapeHTML(translation)}</p>` : ''}
+    ${!byHeart && showTranslit && item.transliteration ? `<p class="card__translit">${highlightMatch(item.transliteration, hl)}</p>` : ''}
+    ${showTrans && translation ? `<p class="card__translation">${highlightMatch(translation, hl)}</p>` : ''}
 
-    ${show.virtues && virtue ? `<p class="card__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${escapeHTML(virtue)}</p>` : ''}
+    ${show.virtues && virtue ? `<p class="card__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${highlightMatch(virtue, hl)}</p>` : ''}
     ${show.reference && refLine ? `<p class="card__reference">${icon('book', { size: 14 })} ${escapeHTML(refLine)}</p>` : ''}
     ${show.reference && refNotes ? `<p class="card__reference-note">${escapeHTML(refNotes)}</p>` : ''}
     ${show.notes && notes ? `<p class="card__attribution">${icon('info', { size: 12 })} ${escapeHTML(notes)}</p>` : ''}

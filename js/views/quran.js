@@ -9,7 +9,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { escapeHTML } from '../core/utils.js';
+import { escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS, TRANSLATION_EDITIONS } from '../core/config.js';
 import { selectors } from '../core/state.js';
 import { ayahTranslit } from '../domain/wordStudy.js';
@@ -227,10 +227,10 @@ function surahListHTML(state) {
       <a class="surah-tile" href="${buildHash(VIEWS.QURAN, { id: s.number })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${s.number}">
         <span class="surah-tile__num">${s.number}</span>
         <span class="surah-tile__text">
-          <span class="surah-tile__name-en">${escapeHTML(s.nameTransliteration)}</span>
+          <span class="surah-tile__name-en">${highlightMatch(s.nameTransliteration, String(state.activeParams.q || '').split(/\s+/))}</span>
           <span class="surah-tile__meta">${t('quran.ayahCount', lang, { n: s.ayahCount })} \u2022 ${t(s.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</span>
         </span>
-        <span class="surah-tile__name-ar" dir="rtl">${escapeHTML(s.nameAr)}</span>
+        <span class="surah-tile__name-ar" dir="rtl">${highlightMatch(s.nameAr, String(state.activeParams.q || '').split(/\s+/))}</span>
       </a>
       <button type="button" class="icon-btn icon-btn--sm surah-tile__play ${sounding ? 'icon-btn--playing' : ''}" data-action="quran-play-surah" data-surah="${s.number}" aria-label="${label}" title="${label}">
         ${icon(sounding ? 'pause' : 'play', { size: 15 })}

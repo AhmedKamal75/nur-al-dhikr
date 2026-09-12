@@ -1375,6 +1375,7 @@ export const ar = {
   'journal.reflectionEmpty': 'لا خواطر بعد.',
   'journal.reflectionEmptyInput': 'اكتب شيئًا أولًا.',
   'journal.tabDuas': 'أدعيتي',
+  'journal.searchPh': 'ابحث في يومياتك\u2026',
   'journal.tabReflections': 'الخواطر',
   'journal.newDua': 'دعاء جديد',
   'journal.duaPlaceholder': 'اللهم…',

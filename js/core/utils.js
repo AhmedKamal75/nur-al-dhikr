@@ -314,3 +314,26 @@ export function vibrate(pattern = 10) {
     }
   }
 }
+
+/**
+ * Wrap literal (case-insensitive) occurrences of each raw term in <mark>.
+ * Escapes first, then decorates only what is visibly present — never
+ * invents highlights when normalization differs (e.g. folded alefs).
+ * Shared by the palette and every search-result template.
+ */
+export function highlightMatch(text, terms) {
+  let out = escapeHTML(String(text ?? ''));
+  const seen = new Set();
+  for (const raw of terms || []) {
+    const term = escapeHTML(String(raw || '').trim());
+    if (!term || seen.has(term.toLowerCase())) continue;
+    seen.add(term.toLowerCase());
+    const low = term.toLowerCase();
+    let idx = out.toLowerCase().indexOf(low);
+    while (idx !== -1) {
+      out = `${out.slice(0, idx)}<mark>${out.slice(idx, idx + term.length)}</mark>${out.slice(idx + term.length)}`;
+      idx = out.toLowerCase().indexOf(low, idx + 13 + term.length);
+    }
+  }
+  return out;
+}

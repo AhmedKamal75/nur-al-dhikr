@@ -7,6 +7,7 @@
 import { closeNavDrawer, openNavDrawer } from '../drawer.js';
 import {
   debounceHadithQuery,
+  debounceJournalSearchNavigate,
   debounceQuranSearchNavigate,
   debounceRootsSearchNavigate,
   debounceSearchNavigate,
@@ -116,6 +117,12 @@ export const inputHandlers = [
     sel: '[data-bind="hadith-query"]',
     run: (ds, el) => {
       debounceHadithQuery(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="journal-search"]',
+    run: (ds, el) => {
+      debounceJournalSearchNavigate(el.value);
     },
   },
 ];

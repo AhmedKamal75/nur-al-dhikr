@@ -7,7 +7,7 @@
 
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { escapeHTML } from '../core/utils.js';
+import { escapeHTML, highlightMatch, normalizeSearch } from '../core/utils.js';
 import { isoWeekKey, promptForDate, REFLECTION_PROMPTS } from '../domain/duaJournal.js';
 
 const isFriday = () => new Date().getDay() === 5;
@@ -16,10 +16,24 @@ function promptText(promptId, lang) {
   return t(`journal.prompt.${promptId}`, lang);
 }
 
+function journalTerms(state) {
+  const q = String(state.activeParams.q || '');
+  return { q, terms: q ? q.split(/\s+/) : [], norm: normalizeSearch(q) };
+}
+
 function duaRows(state) {
   const lang = state.settings.language;
-  const list = state.duaJournal.slice(0, 50);
-  if (!list.length) return `<p class="empty-hint">${t('journal.duaEmpty', lang)}</p>`;
+  const { q, terms, norm } = journalTerms(state);
+  const all = state.duaJournal;
+  const list = (
+    q
+      ? all.filter(
+          (e) => normalizeSearch(e.text).includes(norm) || (norm && e.date.includes(q.trim()))
+        )
+      : all
+  ).slice(0, 50);
+  if (!list.length)
+    return `<p class="empty-hint">${q ? t('search.noResults', lang) : t('journal.duaEmpty', lang)}</p>`;
   return `
   <div class="journal-list">
     ${list
@@ -37,7 +51,7 @@ function duaRows(state) {
           </button>
         </div>
       </header>
-      <p class="journal-entry__text" dir="auto">${escapeHTML(e.text)}</p>
+      <p class="journal-entry__text" dir="auto">${highlightMatch(e.text, terms)}</p>
       ${e.answered ? `<span class="chip chip--success">${t('journal.answered', lang)}</span>` : ''}
     </article>`
       )
@@ -47,8 +61,21 @@ function duaRows(state) {
 
 function reflectionRows(state) {
   const lang = state.settings.language;
-  const list = state.reflections.slice(0, 50);
-  if (!list.length) return `<p class="empty-hint">${t('journal.reflectionEmpty', lang)}</p>`;
+  const { q, terms, norm } = journalTerms(state);
+  const all = state.reflections;
+  const list = (
+    q
+      ? all.filter(
+          (e) =>
+            normalizeSearch(
+              `${e.text} ${e.promptId ? promptText(e.promptId, lang) : ''} ${e.week}`
+            ).includes(norm) ||
+            (norm && e.week.includes(q.trim()))
+        )
+      : all
+  ).slice(0, 50);
+  if (!list.length)
+    return `<p class="empty-hint">${q ? t('search.noResults', lang) : t('journal.reflectionEmpty', lang)}</p>`;
   return `
   <div class="journal-list">
     ${list
@@ -62,7 +89,7 @@ function reflectionRows(state) {
         </div>
       </header>
       ${e.promptId ? `<p class="journal-entry__prompt">${escapeHTML(promptText(e.promptId, lang))}</p>` : ''}
-      <p class="journal-entry__text" dir="auto">${escapeHTML(e.text)}</p>
+      <p class="journal-entry__text" dir="auto">${highlightMatch(e.text, terms)}</p>
     </article>`
       )
       .join('')}
@@ -93,6 +120,13 @@ export function renderJournal(state) {
     </section>`
         : ''
     }
+
+    <div class="search-bar">
+      <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
+      <input type="search" class="search-bar__input" id="journal-search-input"
+        placeholder="${t('journal.searchPh', lang)}" aria-label="${t('journal.searchPh', lang)}" value="${escapeHTML(state.activeParams.q || '')}"
+        data-bind="journal-search" autocomplete="off" />
+    </div>
 
     <div class="segmented" role="tablist" aria-label="${t('journal.title', lang)}">
       <a role="tab" aria-selected="${tab === 'duas'}" class="segmented__btn${tab === 'duas' ? ' segmented__btn--active' : ''}" href="#/journal" data-action="navigate" data-view="journal">${t('journal.tabDuas', lang)}</a>

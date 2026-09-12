@@ -13,7 +13,7 @@
 
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { escapeHTML, pickLocale } from '../core/utils.js';
+import { escapeHTML, highlightMatch, pickLocale } from '../core/utils.js';
 import { QURAN_RECITERS } from '../core/config/quran.js';
 import { queueSignature } from '../services/surahPlayback.js';
 import {
@@ -56,7 +56,7 @@ export function renderAudio(state) {
       return `
     <div class="reciter-row ${active ? 'reciter-row--active' : ''}">
       <button type="button" class="reciter-row__main" data-action="audio-select-moshaf" data-id="${escapeHTML(r.id)}">
-        <span class="reciter-row__name">${escapeHTML(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn)}${trans ? ` <span class="chip chip--muted">${escapeHTML(trans)}</span>` : ''}</span>
+        <span class="reciter-row__name">${highlightMatch(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn, String(q).split(/\s+/))}${trans ? ` <span class="chip chip--muted">${escapeHTML(trans)}</span>` : ''}</span>
         ${subBits.length ? `<span class="reciter-row__sub">${escapeHTML(subBits.join(' — '))}</span>` : ''}
       </button>
       ${r.source === 'custom' ? `<button type="button" class="icon-btn icon-btn--sm" data-action="audio-remove-custom" data-id="${escapeHTML(r.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 14 })}</button>` : ''}

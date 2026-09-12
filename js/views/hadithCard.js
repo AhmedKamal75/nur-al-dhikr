@@ -11,7 +11,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { pickLocale, escapeHTML } from '../core/utils.js';
+import { pickLocale, escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 
 /** One hadith card. `n` deep-link targeting highlights it via data attribute.
@@ -34,8 +34,10 @@ export function hadithCardHTML(
     memorizing = false,
     memRevealed = false,
     memDue = '',
+    highlight = [],
   }
 ) {
+  const hl = Array.isArray(highlight) ? highlight : [];
   const num = String(h.n);
   const hasNote = typeof note === 'string' && note.trim() !== '';
   // Memorize mode: the Arabic hides behind a reveal tap (the translation
@@ -44,7 +46,7 @@ export function hadithCardHTML(
     memorizing && !memRevealed
       ? `<button type="button" class="hadith-card__cloze" data-action="hadith-mem-reveal" aria-label="${t('hifz.reveal', lang)}">${t('hifz.reveal', lang)}</button>`
       : showArabic && h.ar
-        ? `<p class="hadith-card__arabic" dir="rtl" lang="ar">${escapeHTML(h.ar)}</p>`
+        ? `<p class="hadith-card__arabic" dir="rtl" lang="ar">${highlightMatch(h.ar, hl)}</p>`
         : '';
   const memRow = memorizing
     ? `
@@ -70,7 +72,7 @@ export function hadithCardHTML(
       }
     </div>
     ${arabicBlock}
-    ${h.en && showTranslation && lang !== 'ar' ? `<p class="hadith-card__translation" dir="ltr">${escapeHTML(h.en)}</p>` : ''}
+    ${h.en && showTranslation && lang !== 'ar' ? `<p class="hadith-card__translation" dir="ltr">${highlightMatch(h.en, hl)}</p>` : ''}
     ${hasNote ? `<p class="hadith-card__note" dir="auto"><span class="hadith-card__note-label">${t('hadith.note', lang)}</span> ${escapeHTML(note)}</p>` : ''}
     ${memRow}
     <div class="hadith-card__actions">

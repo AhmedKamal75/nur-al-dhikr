@@ -2617,6 +2617,26 @@ a.view-sheet__row {
   color: inherit;
   border-radius: 2px;
 }
+
+/* Search-result highlights everywhere else (cards, ayah/hadith rows,
+   reciter names, surah/root tiles): same wash, theme-safe. */
+.card__title mark,
+.card__translit mark,
+.card__translation mark,
+.card__virtue mark,
+.quran-hit__arabic mark,
+.quran-hit__translation mark,
+.hadith-card__arabic mark,
+.hadith-card__translation mark,
+.reciter-row__name mark,
+.surah-tile__name-en mark,
+.surah-tile__name-ar mark,
+.root-tile__name mark,
+.journal-entry__text mark {
+  background: color-mix(in srgb, #eab308 40%, transparent);
+  color: inherit;
+  border-radius: 2px;
+}
 .palette__hint {
   font-size: var(--fs-caption);
   color: var(--color-text-muted);

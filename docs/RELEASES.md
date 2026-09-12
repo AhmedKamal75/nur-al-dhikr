@@ -2,6 +2,16 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.38 — match highlights everywhere + journal search + palette history
+
+One shared `highlightMatch()` (literal-only `<mark>`, escape-first) now
+runs in every result template: library cards, Quran rows, hadith cards,
+reciter names, surah/root tiles, journal entries, and the palette. The
+journal gains a debounced text filter (tab-preserving, both tabs,
+generic empty state). Palette picks record their query into search
+history, so history reflects searches that led somewhere. Markers
+5.2.37 → 5.2.38 + re-stamp.
+
 ## v5.2.37 — command palette + unified search backends
 
 Ctrl/⌘K (or the topbar magnifier) opens a Spotlight-style overlay over

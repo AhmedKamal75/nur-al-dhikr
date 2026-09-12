@@ -68,6 +68,23 @@ export const debounceQuranSearchNavigate = makeSearchDebounce(
   'quran-search-input'
 );
 
+/** Journal filter: debounced replace-navigation like the other searches,
+ *  but preserving the active tab (the generic helper would drop it). */
+export const debounceJournalSearchNavigate = (value) => {
+  clearTimeout(rt.journalSearchTimer);
+  rt.journalSearchTimer = setTimeout(() => {
+    const tab = store.getState().activeParams.tab === 'reflections' ? 'reflections' : null;
+    replaceGo(VIEWS.JOURNAL, { ...(tab ? { tab } : {}), ...(value ? { q: value } : {}) });
+    requestAnimationFrame(() => {
+      const input = document.getElementById('journal-search-input');
+      if (input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    });
+  }, 180);
+};
+
 /** In-book hadith search: dispatch-only (no history churn — the book URL
  *  stays put), reset the page, and let the renderer's focus salvage keep
  *  the caret in the search box while the results re-render. */

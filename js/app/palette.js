@@ -7,7 +7,7 @@
  * the background (reciter catalog, Quran full-text index); groups appear
  * as their data lands and the list re-renders on the next keystroke.
  */
-import { store } from '../core/state.js';
+import { store, actions } from '../core/state.js';
 import { openModal, closeModal } from '../ui/modal.js';
 import {
   buildPaletteGroups,
@@ -122,6 +122,16 @@ function paletteClickCloser(e) {
   if (!document.getElementById('palette-input')) return; // cleaned by paletteChrome
   if (e.target?.closest?.('#palette-input')) return;
   if (e.target?.closest?.('[data-action]')) {
+    // A pick redeems the typed query: record it like any other search so
+    // history reflects searches that led somewhere (typing alone never did).
+    const q = currentQuery().trim().slice(0, 200);
+    if (q) {
+      try {
+        store.dispatch(actions.addSearchHistory(q));
+      } catch {
+        /* history is best-effort */
+      }
+    }
     // Let the delegated handler run first, then dismiss the overlay.
     setTimeout(() => closeModal(), 0);
   }

@@ -8,7 +8,7 @@
  * data (no store reads here); the app layer (app/palette.js) wires the
  * overlay, shortcut, and live updates.
  */
-import { escapeHTML, normalizeSearch } from '../core/utils.js';
+import { escapeHTML, normalizeSearch, highlightMatch } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { icon } from '../core/icons.js';
@@ -39,29 +39,6 @@ const PALETTE_ACTIONS = [
   { action: 'quick-theme-toggle', icon: 'moon', label: 'a11y.themeToggle' },
   { action: 'quiz-start', icon: 'star', label: 'quiz.start' },
 ];
-
-/**
- * Wrap literal (case-insensitive) occurrences of each raw term in <mark>.
- * Normalization-aware matching is the providers' job; this only decorates
- * what is visibly present, so it never invents highlights.
- */
-export function highlightMatch(text, terms) {
-  let out = escapeHTML(String(text ?? ''));
-  const seen = new Set();
-  for (const raw of terms || []) {
-    const term = escapeHTML(String(raw || '').trim());
-    if (!term || seen.has(term.toLowerCase())) continue;
-    seen.add(term.toLowerCase());
-    const low = out.toLowerCase();
-    let idx = low.indexOf(term.toLowerCase());
-    while (idx !== -1) {
-      out = `${out.slice(0, idx)}<mark>${out.slice(idx, idx + term.length)}</mark>${out.slice(idx + term.length)}`;
-      const next = out.toLowerCase().indexOf(term.toLowerCase(), idx + 13 + term.length);
-      idx = next;
-    }
-  }
-  return out;
-}
 
 /**
  * Build grouped palette results. All data arrives injected (deps) so this

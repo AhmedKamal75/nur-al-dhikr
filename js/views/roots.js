@@ -18,7 +18,7 @@
  * render-model contract as every view.
  */
 import { t, isRTL } from '../core/i18n.js';
-import { escapeHTML } from '../core/utils.js';
+import { escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
 import { icon } from '../core/icons.js';
@@ -131,7 +131,7 @@ function renderRootsIndex(state, lang) {
     .map(
       (r) => `
     <a class="root-tile" href="${buildHash(VIEWS.ROOTS, { id: r.root })}" data-action="navigate" data-view="${VIEWS.ROOTS}" data-id="${escapeHTML(r.root)}">
-      <span class="root-tile__name" dir="rtl" lang="ar">${escapeHTML(r.root)}</span>
+      <span class="root-tile__name" dir="rtl" lang="ar">${highlightMatch(r.root, String(q).split(/\s+/))}</span>
       <span class="root-tile__meta">${t('roots.statOccurrences', lang, { n: r.count })}</span>
     </a>`
     )

@@ -1405,6 +1405,7 @@ export const en = {
   'journal.reflectionEmpty': 'No reflections yet.',
   'journal.reflectionEmptyInput': 'Write something first.',
   'journal.tabDuas': 'My duas',
+  'journal.searchPh': 'Search your journal\u2026',
   'journal.tabReflections': 'Reflections',
   'journal.newDua': 'New dua',
   'journal.duaPlaceholder': 'Ya Allah, …',

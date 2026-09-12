@@ -6,7 +6,7 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { escapeHTML, pickLocale } from '../core/utils.js';
+import { escapeHTML, highlightMatch, pickLocale } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { search as runSearch } from '../domain/search.js';
 import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
@@ -20,7 +20,7 @@ import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 /** One ayah hit in the "From the Qur'an" block. Links straight to the
  *  classic reader at that surah; app.js scrolls to and highlights the
  *  target ayah once its element exists. */
-function quranResultRow(state, hit, lang) {
+function quranResultRow(state, hit, lang, terms = []) {
   const surahDoc = state.quran.surahs[String(hit.s)];
   const ayah = surahDoc?.ayahs?.find((a) => String(a.number) === String(hit.a));
   const meta = state.quran.meta?.surahs?.find((s) => s.number === hit.s);
@@ -28,8 +28,8 @@ function quranResultRow(state, hit, lang) {
   const refLabel = `${meta ? escapeHTML(pickLocale({ en: meta.nameTransliteration || meta.nameEn, ar: meta.nameAr }, lang)) : ''} · ${hit.s}:${hit.a}`;
   return `
   <a class="quran-hit" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
-    <p class="quran-hit__arabic" dir="rtl" lang="ar">${escapeHTML(ayah.text)}</p>
-    ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
+    <p class="quran-hit__arabic" dir="rtl" lang="ar">${highlightMatch(ayah.text, terms)}</p>
+    ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation" dir="auto">${highlightMatch(ayah.translation, terms)}</p>` : ''}
     <span class="quran-hit__ref">${refLabel} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 12 })}</span>
   </a>`;
 }
@@ -54,6 +54,7 @@ function quranSection(state, query, lang) {
   // 1000) just to count the hits.
   const all = searchQuran(query, { limit: 1000 });
   const hits = all.slice(0, 15);
+  const terms = String(query).split(/\s+/);
   const total = all.length;
   return `
   <section class="panel quran-search-panel">
@@ -63,7 +64,7 @@ function quranSection(state, query, lang) {
     </div>
     ${
       hits.length
-        ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang)).join('')}</div>`
+        ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang, terms)).join('')}</div>`
         : emptyStateHTML({
             iconName: 'search',
             title: t('search.noResults', lang),
@@ -87,6 +88,7 @@ export function renderSearch(state) {
   const lang = state.settings.language;
   const query = state.activeParams.q || '';
   const results = query ? runSearch(query, { limit: SEARCH_LIMIT }) : [];
+  const terms = query ? String(query).split(/\s+/) : [];
   const history = state.search.historyList;
   const suggestions = SUGGESTIONS[lang] || SUGGESTIONS.en;
 
@@ -162,6 +164,7 @@ export function renderSearch(state) {
               showTranslation: state.settings.showTranslation,
               fields: fieldTogglesFor(state, r.document?.metadata?.id),
               compact: true,
+              highlight: terms,
             })
           )
           .join('')}
