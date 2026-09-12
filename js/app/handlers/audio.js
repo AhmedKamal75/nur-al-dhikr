@@ -15,6 +15,11 @@ import { buildConfirm, buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import * as audioStore from '../../services/audioStore.js';
+import {
+  isSurahMissing,
+  markSurahMissing,
+  missingSurahs,
+} from '../../services/moshafAvailability.js';
 import * as mediaSession from '../../services/mediaSession.js';
 import * as player from '../../services/player.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
@@ -26,22 +31,37 @@ export const clickHandlers = {
 
   'audio-download-surah': async (ds) => {
     const lang = store.getState().settings.language;
-    const key = audioStore.audioKey(ds.moshaf, parseInt(ds.surah, 10));
+    const surah = parseInt(ds.surah, 10);
+    const key = audioStore.audioKey(ds.moshaf, surah);
     if (store.getState().audioDownloading[key]) return; // already in flight
+    // Known absent from this server: say so without spending the fetch.
+    if (isSurahMissing(ds.moshaf, surah)) {
+      showToast(t('audio.surahUnavailable', lang), { assertive: true });
+      return;
+    }
     store.dispatch(actions.markAudioDownloadStart(key));
     showToast(t('audio.downloading', lang));
     // v4.1: try/finally — a throw between Start/End used to wedge
     // audioDownloading[key] true forever, dead-ending the button.
     let res;
     try {
-      res = await downloadOne(ds.moshaf, parseInt(ds.surah, 10));
+      res = await downloadOne(ds.moshaf, surah);
     } finally {
       store.dispatch(actions.markAudioDownloadEnd(key));
     }
     // FIX (review A5/B6): say how it ended — silence after "Downloading…"
-    // left people guessing whether 2MB landed.
+    // left people guessing whether 2MB landed. A 404 is learned
+    // availability, reported honestly instead of as a generic failure.
+    if (!res.ok && res.error === 'missing') markSurahMissing(ds.moshaf, surah);
     showToast(
-      t(res.ok ? 'audio.downloadDone' : 'audio.downloadFailed', lang),
+      t(
+        res.ok
+          ? 'audio.downloadDone'
+          : res.error === 'missing'
+            ? 'audio.surahUnavailable'
+            : 'audio.downloadFailed',
+        lang
+      ),
       res.ok ? {} : { assertive: true }
     );
   },
@@ -59,8 +79,14 @@ export const clickHandlers = {
     rt.batchCancelled = false;
     const missing = [];
     for (let n = 1; n <= 114; n += 1) {
-      if (!state.audioDownloads[`${ds.moshaf}:${n}`]) missing.push(n);
+      if (!state.audioDownloads[`${ds.moshaf}:${n}`] && !isSurahMissing(ds.moshaf, n)) {
+        missing.push(n);
+      }
     }
+    const skippedKnown = missingSurahs(ds.moshaf).filter(
+      (n) => !state.audioDownloads[`${ds.moshaf}:${n}`]
+    ).length;
+    let skippedNew = 0;
     if (!missing.length) {
       showToast(t('audio.allDone', lang));
       return;
@@ -95,6 +121,11 @@ export const clickHandlers = {
           }
           if (res.ok) ok += 1;
           else if (res.error === 'quota') quotaHit = true;
+          else if (res.error === 'missing') {
+            const before = missingSurahs(ds.moshaf).length;
+            markSurahMissing(ds.moshaf, n);
+            if (missingSurahs(ds.moshaf).length > before) skippedNew += 1;
+          }
         }
       };
       await Promise.all([worker(), worker(), worker()]);
@@ -103,10 +134,13 @@ export const clickHandlers = {
       const cancelled = rt.batchCancelled;
       rt.batchCancelled = false;
       store.dispatch(actions.setAudioBatchRunning(false));
+      const skipped = skippedKnown + skippedNew;
       showToast(
         cancelled
           ? t('audio.batchCancelled', lang, { n: ok })
-          : t('audio.batchDone', lang, { n: ok })
+          : skipped > 0
+            ? t('audio.batchDoneSkipped', lang, { n: ok, m: skipped })
+            : t('audio.batchDone', lang, { n: ok })
       );
     }
   },

@@ -141,6 +141,9 @@ export async function deleteMoshafAudio(moshafId) {
 export async function downloadSurah(moshafId, surahNumber, url) {
   try {
     const res = await fetchWithTimeout(url, { timeoutMs: 120000 });
+    // A 404 is LEARNED availability (moshafAvailability), not a generic
+    // failure: translation/Taraweeh variants often lack surahs.
+    if (res.status === 404) return { ok: false, error: 'missing' };
     if (!res.ok) return { ok: false, error: `http-${res.status}` };
     const blob = await res.blob();
     if (!blob.size) return { ok: false, error: 'empty' };

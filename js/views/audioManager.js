@@ -16,6 +16,7 @@ import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { queueSignature } from '../services/surahPlayback.js';
 import { searchReciters, findMoshaf, rewayaAr } from '../services/audioCatalog.js';
+import { isSurahMissing } from '../services/moshafAvailability.js';
 import { formatBytes } from '../services/audioStore.js';
 import { skeletonReciterRows } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
@@ -66,14 +67,19 @@ export function renderAudio(state) {
       // tap is ignored by the handler), so a 2MB fetch never reads as a
       // dead button.
       const busy = !!(state.audioDownloading && state.audioDownloading[key]);
+      // Learned availability: surahs the server 404'd stay disabled with
+      // an honest label instead of failing on every tap.
+      const unavailable = !dl && isSurahMissing(selected.id, n);
       const label = lang === 'ar' ? t('quran.surah', lang) + ' ' + n : String(n);
+      const cellAction = dl ? 'audio-delete-surah' : 'audio-download-surah';
       cells.push(`
-      <div class="dl-cell ${dl ? 'dl-cell--done' : ''}${busy ? ' dl-cell--busy' : ''}">
-        <button type="button" class="dl-cell__btn" data-action="${dl ? 'audio-delete-surah' : 'audio-download-surah'}" data-moshaf="${escapeHTML(selected.id)}" data-surah="${n}"
-          title="${escapeHTML(surahName(state, n))}"
-          aria-label="${escapeHTML(surahName(state, n))} — ${dl ? t('audio.deleteFile', lang) : t('audio.downloadFile', lang)}">
+      <div class="dl-cell ${dl ? 'dl-cell--done' : ''}${busy ? ' dl-cell--busy' : ''}${unavailable ? ' dl-cell--missing' : ''}">
+        <button type="button" class="dl-cell__btn" data-action="${cellAction}" data-moshaf="${escapeHTML(selected.id)}" data-surah="${n}"
+          ${unavailable ? 'disabled aria-disabled="true"' : ''}
+          title="${escapeHTML(unavailable ? t('audio.surahUnavailable', lang) : surahName(state, n))}"
+          aria-label="${escapeHTML(unavailable ? `${surahName(state, n)} — ${t('audio.surahUnavailable', lang)}` : `${surahName(state, n)} — ${dl ? t('audio.deleteFile', lang) : t('audio.downloadFile', lang)}`)}">
           <span class="dl-cell__num">${label}</span>
-          <span class="dl-cell__state">${dl ? icon('check', { size: 13 }) : busy ? `<span class="dl-cell__spinner" role="status" aria-label="${t('common.loading', lang)}"></span>` : icon('download', { size: 13 })}</span>
+          <span class="dl-cell__state">${dl ? icon('check', { size: 13 }) : busy ? `<span class="dl-cell__spinner" role="status" aria-label="${t('common.loading', lang)}"></span>` : unavailable ? icon('close', { size: 13 }) : icon('download', { size: 13 })}</span>
         </button>
         ${dl ? `<span class="dl-cell__bytes">${formatBytes(dl.bytes)}</span>` : ''}
       </div>`);

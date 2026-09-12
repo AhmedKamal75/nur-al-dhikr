@@ -219,6 +219,8 @@ export const en = {
   'audio.batchStarted': 'Downloading {n} surahs — keep this tab open.',
   'audio.batchStop': 'Stop downloads',
   'audio.batchDone': 'Downloaded {n} surahs.',
+  'audio.batchDoneSkipped': 'Downloaded {n} surahs \u2014 {m} not on this server.',
+  'audio.surahUnavailable': 'This surah is not available from this reciter.',
   'audio.batchCancelled': 'Stopped — {n} surahs saved.',
   'audio.quota': 'Device storage is full — remove some downloads.',
   'audio.deleted': 'Removed {n} files.',

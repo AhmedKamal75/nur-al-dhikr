@@ -1801,6 +1801,14 @@ body.modal-open {
   opacity: 0.7;
   pointer-events: none;
 }
+/* Learned availability: the server 404'd this surah — disabled with an
+   honest title instead of failing on every tap. */
+.dl-cell--missing {
+  opacity: 0.45;
+}
+.dl-cell--missing .dl-cell__btn:disabled {
+  cursor: not-allowed;
+}
 .dl-cell__num {
   font-weight: 700;
   font-variant-numeric: tabular-nums;

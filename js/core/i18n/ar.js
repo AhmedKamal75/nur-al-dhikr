@@ -216,6 +216,8 @@ export const ar = {
   'audio.batchStarted': 'تحميل {n} سورة — أبقِ هذه الصفحة مفتوحة.',
   'audio.batchStop': 'إيقاف التحميل',
   'audio.batchDone': 'تم تحميل {n} سورة.',
+  'audio.batchDoneSkipped': 'تم تحميل {n} سورة — {m} غير متوفرة على هذا الخادم.',
+  'audio.surahUnavailable': 'هذه السورة غير متوفرة لدى هذا القارئ.',
   'audio.batchCancelled': 'أُوقف التحميل — حُفظ {n} سورة.',
   'audio.quota': 'مساحة الجهاز ممتلئة — احذف بعض التحميلات.',
   'audio.deleted': 'حُذف {n} ملفًا.',

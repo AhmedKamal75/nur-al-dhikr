@@ -11,6 +11,7 @@ import { DEFAULT_RECITER, quranAudioSurahUrl, reciterDisplayName } from '../core
 import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
 import { findMoshaf, loadCatalog, searchReciters, surahUrl } from '../services/audioCatalog.js';
+import { isSurahMissing } from '../services/moshafAvailability.js';
 import { showToast } from '../ui/toast.js';
 import * as compass from '../domain/compass.js';
 import * as audioStore from '../services/audioStore.js';
@@ -60,7 +61,15 @@ export async function startAudioPlay(moshafId, surah) {
     store.dispatch(actions.setAudioPrefs({ moshafId }));
   });
   try {
-    let res = await player.play(moshafId, surah, surahUrl(moshaf.server, surah));
+    // Known absent from this server: skip the doomed primary fetch and go
+    // straight to the CDN-voice fallback below (which still says honestly
+    // whose voice plays via the fallback toast). An offline copy always
+    // wins — learned rows can only predate a successful download.
+    const offlineKey = audioStore.audioKey(moshafId, surah);
+    const skipPrimary = isSurahMissing(moshafId, surah) && !state.audioDownloads?.[offlineKey];
+    let res = skipPrimary
+      ? { offline: false, error: true }
+      : await player.play(moshafId, surah, surahUrl(moshaf.server, surah));
     let { offline, error } = res;
     let fallbackVoice = '';
     // Cross-engine fallback (one retry, streaming only): the moshaf server

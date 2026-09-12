@@ -159,3 +159,79 @@ test('player bar clock math sanity (reuse of countdown formatter)', () => {
   assert.equal(formatCountdown(0), '0:00');
   assert.equal(formatCountdown(65000), '1:05');
 });
+
+test('learned availability: record/read/clear round-trip, hostile input safe', async () => {
+  const avail = await import('../js/services/moshafAvailability.js');
+  avail._resetAvailabilityForTests();
+  assert.deepEqual(avail.missingSurahs('probe-moshaf'), []);
+  assert.equal(avail.isSurahMissing('probe-moshaf', 114), false);
+  avail.markSurahMissing('probe-moshaf', 114);
+  avail.markSurahMissing('probe-moshaf', 114); // idempotent
+  avail.markSurahMissing('probe-moshaf', 0); // out of range ignored
+  avail.markSurahMissing('probe-moshaf', 115); // out of range ignored
+  avail.markSurahMissing('', 114); // bad id ignored
+  assert.deepEqual(avail.missingSurahs('probe-moshaf'), [114]);
+  assert.equal(avail.isSurahMissing('probe-moshaf', 114), true);
+  assert.equal(avail.isSurahMissing('probe-moshaf', 113), false);
+  avail.clearMoshafAvailability('probe-moshaf');
+  assert.deepEqual(avail.missingSurahs('probe-moshaf'), []);
+  avail._resetAvailabilityForTests();
+});
+
+test('downloadSurah maps HTTP 404 to learnable missing (never a generic error)', async () => {
+  const { downloadSurah } = await import('../js/services/audioStore.js');
+  const real = globalThis.fetch;
+  globalThis.fetch = async () => ({ ok: false, status: 404 });
+  try {
+    assert.deepEqual(await downloadSurah('probe-moshaf', 114, 'https://x/114.mp3'), {
+      ok: false,
+      error: 'missing',
+    });
+  } finally {
+    globalThis.fetch = real;
+  }
+  globalThis.fetch = async () => ({ ok: false, status: 500 });
+  try {
+    const res = await downloadSurah('probe-moshaf', 114, 'https://x/114.mp3');
+    assert.equal(res.ok, false);
+    assert.notEqual(res.error, 'missing');
+  } finally {
+    globalThis.fetch = real;
+  }
+});
+
+test('audio grid disables learned-missing surahs instead of failing on tap', async () => {
+  const avail = await import('../js/services/moshafAvailability.js');
+  const { renderAudio } = await import('../js/views/audioManager.js');
+  avail._resetAvailabilityForTests();
+  avail.markSurahMissing('custom-avail', 114);
+  const state = {
+    settings: {
+      language: 'en',
+      customReciters: [
+        {
+          id: 'custom-avail',
+          nameEn: 'Avail Voice',
+          nameAr: 'صوت',
+          server: 'https://x/',
+          rewaya: '',
+          source: 'custom',
+        },
+      ],
+      audio: { moshafId: 'custom-avail' },
+    },
+    audioManager: {},
+    audioDownloads: {},
+    audioDownloading: {},
+    quran: {},
+    loadErrors: {},
+  };
+  const html = renderAudio(state);
+  assert.ok(html.includes('dl-cell--missing'), 'missing cell marked');
+  const cell114 = html.split('data-surah="114"')[0].split('<div class="dl-cell').at(-1);
+  assert.ok(cell114.includes('dl-cell--missing'), 'surah 114 cell disabled');
+  assert.ok(html.includes('data-surah="114"'));
+  const btn114 = html.split('data-surah="114"')[1].split('>')[0];
+  assert.ok(btn114.includes('disabled'), 'missing cell button disabled');
+  avail._resetAvailabilityForTests();
+});

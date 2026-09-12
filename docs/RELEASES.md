@@ -2,6 +2,18 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.35 — learned per-surah availability for moshaf servers
+
+Translation/Taraweeh variants often lack surahs the catalog assumes
+present. Availability is now learned, not probed: a 404 surfaces as
+`missing` from `downloadSurah`, recorded per moshaf in
+`services/moshafAvailability.js` (memory + localStorage). Download-all
+skips known-missing and reports them (`audio.batchDoneSkipped`);
+single downloads say `audio.surahUnavailable` without spending the
+fetch; the grid disables missing cells (`.dl-cell--missing`); streaming
+a known-missing surah goes straight to the CDN-voice fallback (offline
+copies still win). Markers 5.2.34 → 5.2.35 + re-stamp.
+
 ## v5.2.34 — reciter unification: cross-engine audio fallbacks
 
 The 314 moshaf servers only host per-surah files, so verse-by-verse can
