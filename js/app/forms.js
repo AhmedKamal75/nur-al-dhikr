@@ -135,13 +135,15 @@ export const formHandlers = {
       translation: { en: fd.get('translationEn') || '', ar: '' },
       reference: {
         collection: fd.get('reference') || '',
-        book: '',
-        chapter: '',
+        book: fd.get('referenceBook') || '',
+        chapter: fd.get('referenceChapter') || '',
         hadith: fd.get('referenceHadith') || '',
         narrator: fd.get('referenceNarrator') || '',
         grading: fd.get('referenceGrading') || '',
-        url: '',
-        notes: '',
+        notes: fd.get('referenceNotes') || '',
+        // (v5.2.71) the Arabic source name rides the same form; omitted
+        // when empty so blank references still clean up downstream.
+        ...(fd.get('referenceAr') ? { reference_ar: { collection: fd.get('referenceAr') } } : {}),
       },
       grade: fd.get('grade') || 'Unknown',
       custom_grade: { en: fd.get('customGradeEn') || '', ar: '' },

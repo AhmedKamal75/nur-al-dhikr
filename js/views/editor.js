@@ -98,9 +98,13 @@ export function buildItemForm(item, { libraryId, categoryId, lang = 'en', scope 
     <label class="field">${t('editor.fieldTransliteration', lang)}<textarea class="textarea" name="transliteration" rows="2">${escapeHTML(item.transliteration || '')}</textarea></label>
     <label class="field">${t('editor.fieldTranslationEn', lang)}<textarea class="textarea" name="translationEn" rows="2">${escapeHTML(item.translation?.en || '')}</textarea></label>
     <label class="field">${t('editor.fieldReference', lang)}<input class="input" name="reference" value="${escapeHTML(item.reference?.collection || '')}" /></label>
+    <label class="field">${t('editor.fieldReferenceAr', lang)}<input class="input" name="referenceAr" dir="rtl" lang="ar" value="${escapeHTML(item.reference?.reference_ar?.collection || '')}" /></label>
+    <label class="field">${t('editor.fieldBook', lang)}<input class="input" name="referenceBook" value="${escapeHTML(item.reference?.book || '')}" /></label>
+    <label class="field">${t('editor.fieldChapter', lang)}<input class="input" name="referenceChapter" value="${escapeHTML(item.reference?.chapter || '')}" /></label>
     <label class="field">${t('editor.fieldHadithNumber', lang)}<input class="input" name="referenceHadith" value="${escapeHTML(item.reference?.hadith || '')}" /></label>
     <label class="field">${t('editor.fieldNarrator', lang)}<input class="input" name="referenceNarrator" value="${escapeHTML(item.reference?.narrator || '')}" /></label>
     <label class="field">${t('editor.fieldGrading', lang)}<input class="input" name="referenceGrading" value="${escapeHTML(item.reference?.grading || '')}" /></label>
+    <label class="field">${t('editor.fieldReferenceNotes', lang)}<input class="input" name="referenceNotes" value="${escapeHTML(item.reference?.notes || '')}" /></label>
     <label class="field">${t('editor.fieldGrade', lang)}<select class="select" name="grade">${gradeOptions}</select></label>
     <label class="field">${t('editor.fieldCustomGrade', lang)}<input class="input" name="customGradeEn" value="${escapeHTML(item.custom_grade?.en || '')}" /></label>
     <label class="field">${t('editor.fieldRepetitions', lang)}<input class="input" type="number" min="1" name="repetitions" value="${item.repetitions || 1}" /></label>

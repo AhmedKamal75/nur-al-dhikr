@@ -2,6 +2,18 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.71 — editor cites fully: book, chapter, notes, Arabic source
+
+Completes audit rank 7 (the sanitizer already passed everything —
+only the form was thin): the item editor gains book, chapter,
+reference-notes and Arabic-source-name inputs, prefilled like the
+rest, collected through the same save path (over-long dropped,
+hostile shapes sanitized, blank references still clean up) with the
+dead `url` write gone. The Arabic source rides into `reference_ar`,
+so user-added content gets the same choke-point preference in AR as
+shipped data. New `tests/editorReference.test.js` (5 tests). Markers
+5.2.70 → 5.2.71 plus re-stamp.
+
 ## v5.2.70 — reference_ar first light: folded matching, ten backfills, dead url dropped
 
 Audit §5.4, engineering track complete (schema/sanitizer/choke
