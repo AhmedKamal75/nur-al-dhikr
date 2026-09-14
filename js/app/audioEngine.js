@@ -19,6 +19,7 @@ import * as compass from '../domain/compass.js';
 import * as audioStore from '../services/audioStore.js';
 import * as mediaSession from '../services/mediaSession.js';
 import * as player from '../services/player.js';
+import { onAdhanStart } from '../services/prayerSound.js';
 import * as recitation from '../services/recitation.js';
 import * as surahPlayback from '../services/surahPlayback.js';
 
@@ -227,6 +228,16 @@ export function wirePlayer() {
   recitation.onPlaybackError(() => {
     if (surahPlayback.isActive()) return;
     showToast(t('audio.playFailed', store.getState().settings.language), { assertive: true });
+  });
+  // (v5.2.72) a real adhan owns the speaker: pause the full-surah track
+  // (docked, resumable), freeze a verse session in place, and stop a
+  // single-verse tap. No auto-resume — one tap resumes, never a surprise.
+  onAdhanStart(() => {
+    yieldFullSurahPlayer();
+    if (surahPlayback.isActive()) {
+      store.dispatch(actions.setSurahPlayback(surahPlayback.pause()));
+    }
+    recitation.stop();
   });
   player.onTrackEnded(() => {
     const state = store.getState();

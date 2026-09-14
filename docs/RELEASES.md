@@ -2,6 +2,17 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.72 — the adhan owns the speaker
+
+Real prayer alerts used to layer over Quran audio: a single-slot
+`onAdhanStart` hook in `services/prayerSound.js` (fired by `playAlert`
+after the silent-hours/mode-off early returns, never allowed to break
+the alert itself) now pauses the full-surah track (docked, resumable),
+freezes verse sessions in place, and stops single-verse taps via an
+`audioEngine` subscription — no auto-resume, one tap resumes. Previews
+ride the same hook. New `tests/adhanYield.test.js` (4 tests, incl. a
+live store+engine chain). Markers 5.2.71 → 5.2.72 plus re-stamp.
+
 ## v5.2.71 — editor cites fully: book, chapter, notes, Arabic source
 
 Completes audit rank 7 (the sanitizer already passed everything —

@@ -150,6 +150,16 @@ export function customAdhanFlags() {
 
 /* One HTMLAudio element at a time — starting a new alert always replaces
  * the previous one, and stopAdhan() is safe to call any time. */
+
+/* Single-slot alert-start hook (v5.2.72): the app layer pauses Quran
+ * audio (full-surah + verse) so a real adhan never layers over
+ * recitation. Services never import the store — the subscriber lives in
+ * app/audioEngine.js, like the player patch/error hooks. */
+let adhanStartFn = null;
+
+export function onAdhanStart(fn) {
+  adhanStartFn = typeof fn === 'function' ? fn : null;
+}
 let adhanAudio = null;
 let adhanObjectUrl = null;
 
@@ -218,6 +228,14 @@ export function playAlert(prefs, { fajr = false } = {}) {
   if (!resolved) return;
   const volume = effectiveAdhanVolume(prefs);
   if (volume <= 0) return; // explicit 0 = silent hours, honestly silent
+  // The adhan owns the speaker from here: let the app yield first so no
+  // recitation overlaps it (no auto-resume — waking to surprise audio is
+  // worse than one tap). Never lets a subscriber break the alert itself.
+  try {
+    adhanStartFn?.();
+  } catch {
+    /* a yielding subscriber must never silence the adhan */
+  }
   if (resolved.kind === 'tone') playSound(resolved.id, volume);
   else startAdhan(resolved.source, volume);
 }
