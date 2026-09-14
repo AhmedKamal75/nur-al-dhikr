@@ -1332,3 +1332,24 @@ modified; the tree stayed green throughout.
       content (translations, glosses, virtues) stays strictly gated.
 - [ ] **F5** remains flagged by rule (scholarship-adjacent, never
       machine-filled).
+
+## Audit follow-up — twin-backfill slice verified empty (2026-09-14)
+
+Rank 3/5's assumed-cheap first slice ("15 my-* items with verified
+twins") does not reproduce under exact-matn verification and is
+CLOSED as no-op, not deferred. Method: all four library datasets
+normalized (NFKD, diacritics stripped, alef/ta-marbuta unified),
+grouped by identical matn (91 groups, min length 20).
+
+- Zero my-* items missing `translation.en` have ANY translated twin —
+  not even a disagreeing one. The 194 missing translations are unique
+  matns (whole chapters: my-14, my-02, my-05…), fillable only by real
+  scholarship, never by copying.
+- Same-category virtue consensus and same-narration grading candidacy:
+  also zero.
+- Stronger reason to stop: 56 of the 91 twin groups carry DISAGREEING
+  translations (different translators, morning/evening wording splits
+  like the T3 asbahna/amsayna case). Picking one twin over another
+  would be an editorial ruling, not a mechanical backfill.
+  The scholarship queue (ranks 3–6) therefore stays rule-blocked with no
+  cheap slice remaining; F5 stands.
