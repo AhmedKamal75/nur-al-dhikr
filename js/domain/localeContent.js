@@ -124,26 +124,72 @@ const COLLECTION_AR = [
   ['sahih', 'صحيح'],
 ];
 
+/**
+ * Fold a collection segment for matching: lowercase + NFKD (Ṣaḥīḥ →
+ * Sahih, Aḥmad → Ahmad) + curly/arabic quote unification (’‘ʿʾ` → ').
+ * Whitespace survives so prefix-boundary checks keep working.
+ */
+function foldCollectionSegment(segment) {
+  return String(segment || '')
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[’‘ʿʾ`]/g, "'");
+}
+
+function foldCollectionChar(ch) {
+  if (/\s/.test(ch)) return ch;
+  return ch
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[’‘ʿʾ`]/g, "'");
+}
+
+/**
+ * Map a folded prefix length back to a raw-string offset: folding only
+ * ever deletes combining marks, so walk the raw text accumulating folded
+ * lengths. The remainder is sliced from RAW (never folded) — folding
+ * would strip Arabic maddas in mixed tails.
+ */
+function rawPrefixEnd(raw, foldedPrefixLen) {
+  let f = 0;
+  let i = 0;
+  const s = String(raw || '');
+  for (; i < s.length && f < foldedPrefixLen; i++) f += foldCollectionChar(s[i]).length;
+  return i;
+}
+
+// Prefix table folded once (diacritic/curly variants collapse onto the
+// same key — harmless duplicates), longest-first so full-string entries
+// like 'sunan an-nasa'i (al-kubra)' win over their bare prefix.
+const COLLECTION_FOLDED = COLLECTION_AR.map(([prefix, ar]) => [
+  foldCollectionSegment(prefix).trim(),
+  ar,
+]).sort((a, b) => b[0].length - a[0].length);
+
 function mapSingleCollection(segment) {
   const raw = String(segment || '').trim();
   if (!raw) return '';
   if (containsArabic(raw)) return raw;
-  const lower = raw.toLowerCase();
+  // Match on the folded form so 'Ṣaḥīḥ Muslim', "Jami’ at-Tirmidhi" and
+  // 'Qur’an' (curly) share their plain keys; slice remainders from RAW
+  // via rawPrefixEnd so mixed Arabic tails survive byte-identical.
+  const folded = foldCollectionSegment(raw).trim();
   // 'Quran ...' / "Qur'an ..." / 'Surah ...' keep the verse reference only:
   // a transliterated surah name ('al-Baqarah') would otherwise leak Latin.
   // The article form ("The Qur'an", as stored on glm-gt-025/027) maps too.
-  const quranMatch = lower.match(/^(?:the\s+)?(qur'an|quran|surah)\b\s*(.*)$/s);
+  const quranMatch = folded.match(/^(?:the\s+)?(qur'an|quran|surah)\b\s*(.*)$/s);
   if (quranMatch) {
-    const prefixLen = quranMatch[0].length - quranMatch[2].length;
-    const rest = raw.slice(prefixLen);
+    const rest = raw.slice(rawPrefixEnd(raw, quranMatch[0].length - quranMatch[2].length));
     const refNums = (rest.match(/\d+\s*:\s*\d+(?:\s*[-–]\s*\d+)?/g) || []).join('، ');
     const arabicBits = containsArabic(rest) ? rest.trim() : '';
     const keep = [arabicBits, refNums].filter(Boolean).join(' ');
     return keep ? `القرآن الكريم ${keep}` : 'القرآن الكريم';
   }
-  for (const [prefix, ar] of [...COLLECTION_AR].sort((a, b) => b[0].length - a[0].length)) {
-    if (lower === prefix || lower.startsWith(`${prefix} `) || lower.startsWith(`${prefix},`)) {
-      return ar + raw.slice(prefix.length);
+  for (const [prefix, ar] of COLLECTION_FOLDED) {
+    if (folded === prefix || folded.startsWith(`${prefix} `) || folded.startsWith(`${prefix},`)) {
+      return ar + raw.slice(rawPrefixEnd(raw, prefix.length));
     }
   }
   return '';

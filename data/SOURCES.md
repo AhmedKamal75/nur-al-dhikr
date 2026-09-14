@@ -158,3 +158,21 @@ app's Uthmani corpus, never the upstream's:
   times" virtues story; corrected to Abdullah ibn Mas'ud, citing Sahih
   Muslim 2723 + Sunan Abi Dawud 5071 (sahih per Albani), verified on
   sunnah.com (round-2 audit).
+
+## 2026-09 reference_ar backfill (v5.2.70, proper-noun Arabic only)
+
+Ten `duas.json` items whose collections are classical book titles gained
+`reference_ar.collection` with the standard Arabic title (transliteration
+of proper nouns — no rulings, grades or virtue texts touched):
+`my-05-003` الفرج بعد الشدة, `my-05-013`/`my-05-014`/`my-06-008` حلية
+الأولياء, `my-07-004` سير أعلام النبلاء, `my-07-006` إعلام الموقعين,
+`my-11-010` تاريخ دمشق, `my-12-011` مجمع الزوائد, `my-15-017` مدارج
+السالكين, `my-15-018` الداء والدواء. Each attribution is corroborated by
+the item's own notes field (author named in situ).
+Deliberately NOT backfilled: generic titles that name no unique work
+(`Kitab adh-Dhikr`, `Kitab al-Iman`, `ad-Du'at` ×4), editorial notes
+that are not sources at all (`Scholarly recommendation/practice`, `Fiqh
+consensus`, `Multiple Collections`, the Zaad al-Ma'aad method note), and
+`Sunan Malik` (non-standard naming, possible data error — left honestly
+unmapped rather than guessed). These keep rendering no Arabic source
+line, which is the honest state until scholar-sourced data arrives.

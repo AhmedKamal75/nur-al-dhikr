@@ -1,10 +1,10 @@
 {
-  "version": "5.2.69",
+  "version": "5.2.70",
   "files": {
     "index.html": "5964b21913cc6fc1dfdf0e0b9b060c5675ddb0f674bda8babf72d0b7247eb0c9",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "fc823efe583905bdd813b04c5fea3cccee5680be173ee3b0ea64e324a0cab748",
-    "manifest.json": "433a887f75ea7725352a6e102ed28e340d57d7c6f9186a21bc31bf3cd2075075",
+    "manifest.json": "0876c8a4a968999ccc24ab97c0efd3691aa830990636cc8573da2eef24f7a496",
     "assets/css/variables.css": "76b8a96effa781a738d6e0ca070cc86820a3224191abace5b7a78e92ac5681cd",
     "assets/css/base.css": "5293ec6b955a9369439af214d9f82b42833e28d1f8279a331814b04d40bdf32e",
     "assets/css/layout.css": "43696f6103139a7ddfe0decfa38f3c0dcd7579e1102ed0b994426ece840cca8a",
@@ -62,7 +62,7 @@
     "js/app/tafsirSearch.js": "db8b97ac19bd2cf7e8d4b2ffa9dfddf1b1de6c58758c9c0c6022f069c37efc46",
     "js/app/tickers.js": "1a2092b7f19ab0a57fa55b03708da79b805b87add3bc8b4df33ca8e8bb82816a",
     "js/app/triggers.js": "6b2186cbb1f0c163e5b69291ed5960f174bfd1a570955354ae6e33e28b78e664",
-    "js/core/config.js": "9cd4befb1b41c496318ef9f0818a8c28fcf8b16bb1fa7860adf8cab79c584512",
+    "js/core/config.js": "f6cf643399fa881b206f512a45052fb14fc8b0a51eef83159ebf0c83d4f3dab4",
     "js/core/config/app.js": "4760b07be267dde8df033a2f6b0190b6876d5b1a87c16e0a456530d0c26c8c25",
     "js/core/config/quran.js": "dfda8979467c7e58a9913b70a307c3f0881d80edb4a29c35393b87757937afee",
     "js/core/config/sanitize.js": "99a678e1fe485edc13bcef23e4113c45dbf506edce15af59b98df9b097bfca94",
@@ -74,7 +74,7 @@
     "js/core/icons.js": "c7d184f9e386cfe1121702eca6e34fdf211df944b35691df11b086d0a6c42717",
     "js/core/migration.js": "749f800f78bbf0c8b5872355c88ff30e447ecb5ee8c022cdff1601a15f7b8424",
     "js/core/router.js": "a2dafc2cc7916edf8934d2071cc42686da089dddb5932575afed881d365075ae",
-    "js/core/schema.js": "80eda833dd31f2d866724b20c6e981c7ba1b592676ab747a09543d6867de8eac",
+    "js/core/schema.js": "330f249fd1f1af4c7ba3ce1772f9ef9d325f2ca6a3431a693c261af8933ba5d0",
     "js/core/state.js": "e440a514139e58fd194c6040b64ed89edad4d2b54d04183d2435e68310971ee4",
     "js/core/state/actions.js": "df80f2357fb8c1d213b60a2012836239062f29ed8810bc6e60237d545bc925c8",
     "js/core/state/initial.js": "10c6877b627ce71b9d486d1fdf21c5b99ca1d06514f305b7ca7c3689b51cc722",
@@ -111,7 +111,7 @@
     "js/domain/hifz.js": "202037a81b1270047613b331f84c432460bb3ad0b04755f2d421dcc0469a3fae",
     "js/domain/khatma.js": "5e7087e58af71371d803c074bacef1cc91b1c53d1ee3ada8370518d7932f8365",
     "js/domain/launchIntents.js": "2f3fed49810affb36f0cac467af06bf8896e88c425b1fd9d8b0d3cd2ae99ec28",
-    "js/domain/localeContent.js": "6f871d1f42879c1b5aff5bca161b2573cb4a71051dd05074468ea32b9a957296",
+    "js/domain/localeContent.js": "5d0c34555c246d2a1c087303aaa2a4c576684dcb29fe8327661b5ed2bc6c1be9",
     "js/domain/locations.js": "7e73c22aa778e74d7ba47741c65a557d65af1317674ff7e60b60f8ff95244eab",
     "js/domain/milestones.js": "0f9f4b37e1346c60f18e15d001dc33fbab75d83603464bcf09d1235bf4708392",
     "js/domain/moods.js": "0b1c2405e0de936d00a5bc5e90aaa25b634c2e85e54b7922461d27217d690f36",
@@ -246,6 +246,6 @@
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
     "assets/audio/adhan/adhan.mp3": "95c386b0a62b9aae51847aa160472b1ea23d98e8f0bb78f7f990b65441b207ee",
-    "sw.js": "25a84f8ecfa93278c0b3e2626286b3d7339189fd3285420bcd4698f31c371b5e"
+    "sw.js": "5679fc909dca2250ecc093db2c474862807313d8e2bf5de2821c77a68462e69b"
   }
 }

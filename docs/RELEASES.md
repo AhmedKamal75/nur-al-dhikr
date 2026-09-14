@@ -2,6 +2,28 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.70 — reference_ar first light: folded matching, ten backfills, dead url dropped
+
+Audit §5.4, engineering track complete (schema/sanitizer/choke
+precedence already landed earlier). Collection matching now folds
+diacritics + curly quotes before the prefix table (Ṣaḥīḥ Muslim,
+Musnad Aḥmad, Jami’ at-Tirmidhi, Qur’an all share their plain keys;
+remainders slice from raw so mixed tails survive byte-identical),
+which retires ~17 unmappable sources with zero data invention. Ten
+`duas.json` classical titles gain real `reference_ar.collection`
+(proper-noun Arabic, each corroborated by the item's own notes;
+full list + deliberately-skipped ambiguous/generic/descriptive
+classes in data/SOURCES.md). Dead `reference.url` leaves the schema
+(empty in all shipped items, read by zero renderers). Process note:
+mid-work the coverage gate caught a grading+narrator loss on
+`my-11-010` (plus two narrators) from an over-broad data edit —
+restored from git, then machine-verified the final data diff is
+purely additive (10 reference_ar keys, zero field changes). Citation
+convergence (19/45/39 quranic shapes) deferred with rationale: no
+display-neutral convergence exists without renderer changes (EN would
+lose surah context). New `tests/referenceAr.test.js` (7 tests).
+Markers 5.2.69 → 5.2.70 plus re-stamp.
+
 ## v5.2.69 — hadith deep links fail honestly to the number
 
 Completes audit rank 8 (unknown-book half shipped in v5.2.32): a

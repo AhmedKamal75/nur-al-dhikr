@@ -32,6 +32,9 @@ function normalizeReference(ref) {
   // fields; localeContent reads it first and falls back to the mapper.
   // review (optional, item-level below): machine-readable scholar-review
   // flag so audit findings live in data, not prose documents.
+  // (v5.2.70) reference.url is gone: it was empty in all 1,192 shipped
+  // items, already dropped by the sanitizer whitelist, and read by zero
+  // renderers — a dead field that only suggested links the app never shows.
   const base = {
     collection: '',
     book: '',
@@ -39,7 +42,6 @@ function normalizeReference(ref) {
     hadith: '',
     narrator: '',
     grading: '',
-    url: '',
     notes: '',
   };
   const baseAr = { collection: '', narrator: '', grading: '', notes: '' };

@@ -14334,7 +14334,10 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "By Ibn Abi ad-Dunya"
+            "notes": "By Ibn Abi ad-Dunya",
+            "reference_ar": {
+              "collection": "الفرج بعد الشدة"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -14734,7 +14737,10 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "By Abu Nu'aim"
+            "notes": "By Abu Nu'aim",
+            "reference_ar": {
+              "collection": "حلية الأولياء"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -14774,7 +14780,10 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "By Abu Nu'aim"
+            "notes": "By Abu Nu'aim",
+            "reference_ar": {
+              "collection": "حلية الأولياء"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -15391,7 +15400,10 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "By Abu Nu'aim. The Prophet ﷺ said: 'When a person dies, his deeds are cut off except for three: ongoing charity, beneficial knowledge, or a righteous child who prays for him.' (Muslim 1635)"
+            "notes": "By Abu Nu'aim. The Prophet ﷺ said: 'When a person dies, his deeds are cut off except for three: ongoing charity, beneficial knowledge, or a righteous child who prays for him.' (Muslim 1635)",
+            "reference_ar": {
+              "collection": "حلية الأولياء"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -15688,7 +15700,10 @@
             "narrator": "Umar made this dua for a young boy (Abu Abdur-Rahman as the narration indicates)",
             "grading": "",
             "url": "",
-            "notes": "Reported in the biography of a young child the Companions used to supplicate for."
+            "notes": "Reported in the biography of a young child the Companions used to supplicate for.",
+            "reference_ar": {
+              "collection": "سير أعلام النبلاء"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -15768,7 +15783,10 @@
             "narrator": "Ibn Taymiyyah (and Ibn al-Qayyim reported it)",
             "grading": "",
             "url": "",
-            "notes": "Shaykh al-Islam Ibn Taymiyyah would say this when difficult questions arose. Also reported in al-'Uqud ad-Durriyyah 42."
+            "notes": "Shaykh al-Islam Ibn Taymiyyah would say this when difficult questions arose. Also reported in al-'Uqud ad-Durriyyah 42.",
+            "reference_ar": {
+              "collection": "إعلام الموقعين"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -17302,7 +17320,10 @@
             "narrator": "Abdullah bin Ja'far",
             "grading": "Hasan (Ibn Hajar al-'Asqalani, al-Matalib al-'Aliyah)",
             "url": "",
-            "notes": "The Prophet ﷺ passed by Abdullah bin Ja'far while he was a young boy playing with goods he was selling, and made this dua."
+            "notes": "The Prophet ﷺ passed by Abdullah bin Ja'far while he was a young boy playing with goods he was selling, and made this dua.",
+            "reference_ar": {
+              "collection": "تاريخ دمشق"
+            }
           },
           "grade": "Hasan",
           "repetitions": 1,
@@ -17799,7 +17820,10 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "By al-Haythami"
+            "notes": "By al-Haythami",
+            "reference_ar": {
+              "collection": "مجمع الزوائد"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -20386,7 +20410,10 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "By Ibn al-Qayyim"
+            "notes": "By Ibn al-Qayyim",
+            "reference_ar": {
+              "collection": "مدارج السالكين"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
@@ -20425,7 +20452,10 @@
             "narrator": "",
             "grading": "",
             "url": "",
-            "notes": "By Ibn al-Qayyim"
+            "notes": "By Ibn al-Qayyim",
+            "reference_ar": {
+              "collection": "الداء والدواء"
+            }
           },
           "grade": "Unknown",
           "repetitions": 1,
