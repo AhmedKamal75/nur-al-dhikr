@@ -4,10 +4,12 @@
  */
 
 import { startCompassIfNeeded, stopCompass } from './compassRuntime.js';
+import { rt } from './rt.js';
 import { formatCountdown } from '../domain/ramadan.js';
 
 import { VIEWS } from '../core/config.js';
 import { DEFAULT_RECITER, quranAudioSurahUrl, reciterDisplayName } from '../core/config/quran.js';
+import { resolveNextFullSurah } from '../domain/audioQueue.js';
 import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
 import { findMoshaf, loadCatalog, searchReciters, surahUrl } from '../services/audioCatalog.js';
@@ -22,6 +24,20 @@ import * as surahPlayback from '../services/surahPlayback.js';
 
 /* Full-surah audio: catalog + player + offline downloads              */
 /* ------------------------------------------------------------------ */
+
+/**
+ * One-voice yield (v5.2.67, item 23): pause a playing full-surah track so
+ * a verse queue, TTS narration or an alert preview takes the speaker.
+ * Returns true when it yielded. The track stays docked (position kept) —
+ * resuming is one tap, never a restart.
+ */
+export function yieldFullSurahPlayer() {
+  const p = store.getState().player;
+  if (!p?.moshafId || !p.playing) return false;
+  player.pause();
+  store.dispatch(actions.setAudioPlayer({ playing: false }));
+  return true;
+}
 
 export async function startAudioPlay(moshafId, surah) {
   const state = store.getState();
@@ -114,7 +130,18 @@ export async function startAudioPlay(moshafId, surah) {
     // so, instead of a player bar that mimes playing forever.
     if (error) {
       store.dispatch(actions.setAudioPlayer({ playing: false }));
+      // (v5.2.67) a failed track owns no lock-screen slot — without this
+      // the previous track's metadata lingers as if still playing.
+      mediaSession.clearMetadata();
       showToast(t('audio.playFailed', state.settings.language), { assertive: true });
+    } else {
+      // (v5.2.67) gapless-lite: warm the next track's offline lookup while
+      // this one plays, so ended→start skips the IDB latency. Bounded to
+      // one slot inside the engine; a failed warm falls back silently.
+      const next = resolveNextFullSurah(surah, state.settings.audio?.repeat);
+      if (next != null && moshaf) {
+        player.prefetchTrack(moshafId, next, surahUrl(moshaf.server, next));
+      }
     }
   } catch (err) {
     console.error('[app] startAudioPlay failed', err);
@@ -205,11 +232,10 @@ export function wirePlayer() {
     const state = store.getState();
     const p = state.player;
     if (!p?.moshafId || p.surah == null) return;
-    if (state.settings.audio.repeat === 'one') {
-      startAudioPlay(p.moshafId, p.surah);
-      return;
-    }
-    if (p.surah < 114) startAudioPlay(p.moshafId, p.surah + 1);
+    // (v5.2.67) one shared advance answer (domain/audioQueue.js): repeat
+    // one holds, repeat all wraps 114→1, off walks to a real end at 114.
+    const next = resolveNextFullSurah(p.surah, state.settings.audio?.repeat);
+    if (next != null) startAudioPlay(p.moshafId, next);
     else store.dispatch(actions.setAudioPlayer({ playing: false }));
   });
 }
@@ -220,6 +246,50 @@ export async function ensureRecitersData(state) {
   // Flip catalogReady exactly once: true state change → one re-render that
   // drops the loading hint. Reducer no-ops on every later call.
   if (doc) store.dispatch(actions.setAudioCatalogReady());
+}
+
+/**
+ * (v5.2.61) verse-pack status rescan: recount stored ayahs per surah for
+ * the active voice into the ephemeral cache. Runs on audio-view renders,
+ * once per voice (rt latch) — IDB is the truth, the cache just renders.
+ */
+export async function maybeSyncVerseStatus(state) {
+  if (state.activeView !== VIEWS.AUDIO) return;
+  const voice =
+    typeof state.settings.reciter === 'string' && state.settings.reciter
+      ? state.settings.reciter
+      : null;
+  if (!voice) return;
+  if (rt.lastVerseStatusVoice === voice) return;
+  rt.lastVerseStatusVoice = voice;
+  try {
+    const { ensureQuranMeta } = await import('./lazyData.js');
+    await ensureQuranMeta();
+    const meta = store.getState().quran.meta?.surahs;
+    if (!Array.isArray(meta)) return;
+    const stored = await audioStore.listVerseAyahs(voice);
+    const have = new Set(stored);
+    // Cumulative ayah counts bound each global number to its surah.
+    const bounds = [];
+    let run = 0;
+    for (const s of meta) {
+      const count = Math.floor(Number(s.ayahCount)) || 0;
+      run += count;
+      bounds.push({ surah: Number(s.number), end: run, total: count });
+    }
+    const packs = {};
+    for (const { surah, end, total } of bounds) {
+      if (!Number.isFinite(surah) || surah < 1 || surah > 114) continue;
+      let done = 0;
+      for (let g = end - total + 1; g <= end; g += 1) {
+        if (have.has(g)) done += 1;
+      }
+      if (done > 0) packs[surah] = { done, total };
+    }
+    store.dispatch(actions.setVersePackStatus({ voice, packs }));
+  } catch {
+    /* IDB/meta failure leaves the grid unmarked, never broken */
+  }
 }
 
 export async function downloadOne(moshafId, surah) {

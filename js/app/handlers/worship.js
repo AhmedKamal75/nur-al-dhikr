@@ -16,13 +16,15 @@ import { markCelebration } from '../../domain/celebrate.js';
 import { nextRemindTime } from '../../domain/fasting.js';
 import { ramadanKhatmaPreset } from '../../domain/khatma.js';
 import { dayComplete } from '../../domain/prayerLog.js';
+import { CONFIRM_STEPS } from '../../domain/onboarding.js';
+import { yieldFullSurahPlayer } from '../audioEngine.js';
 import {
   previewAlert,
   refreshCustomAdhanFlags,
   stopAdhan,
   playSound,
 } from '../../services/prayerSound.js';
-import { buildDayDetail, buildNoteForm } from '../../ui/calendarModals.js';
+import { buildDayDetail, buildNoteForm, BOUNDED_RECURRENCE } from '../../ui/calendarModals.js';
 import { notesForDate } from '../../services/calendarNotes.js';
 import { buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, isModalOpen, openModal } from '../../ui/modal.js';
@@ -194,6 +196,34 @@ export const clickHandlers = {
     store.dispatch(actions.dismissOnboarding());
   },
 
+  // (v5.2.52) wizard navigation + setup confirms + notification priming.
+  // Position is ephemeral (state.ui.onboardingStep, null = first
+  // incomplete); confirms persist seen-flags and release the position so
+  // the wizard follows the new first-incomplete step.
+  'onboarding-step': (ds) => {
+    const idx = Math.floor(Number(ds.idx));
+    store.dispatch(actions.setOnboardingStep(Number.isFinite(idx) && idx >= 0 ? idx : null));
+  },
+
+  'onboarding-confirm': (ds) => {
+    if (!CONFIRM_STEPS.includes(ds.step)) return;
+    store.batch(() => {
+      store.dispatch(actions.markOnboardingStepSeen(ds.step));
+      store.dispatch(actions.setOnboardingStep(null));
+    });
+    const state = store.getState();
+    if (state.settings.hapticsEnabled) vibrate(10);
+  },
+
+  'notifications-enable': async () => {
+    const lang = store.getState().settings.language;
+    const res = await requestPermission();
+    if (res === 'granted') showToast(t('prayer.notifGranted', lang));
+    else if (res === 'denied') showToast(t('ramadan.alertsDenied', lang));
+    // Re-render so the wizard step flips to done/blocked immediately.
+    store.dispatch(actions.updateSettings({}));
+  },
+
   'onboarding-install': async () => {
     if (!rt.deferredInstallPrompt) return;
     const prompt = rt.deferredInstallPrompt;
@@ -213,6 +243,9 @@ export const clickHandlers = {
     // v3.8: previews EXACTLY what a real prayer alert would do right now
     // (adhan source chain or the chosen tone), Fajr-flavored to show the
     // Fajr variant when one exists.
+    // (v5.2.67) one voice: the preview takes the speaker over a playing
+    // surah instead of layering on top of it.
+    yieldFullSurahPlayer();
     previewAlert(store.getState().settings.prayer, { fajr: true });
   },
 
@@ -465,7 +498,10 @@ export const changeHandlers = [
     run: (ds, el) => {
       const form = el.closest('form');
       form.querySelectorAll('[data-recurrence-group]').forEach((group) => {
-        group.hidden = group.dataset.recurrenceGroup !== el.value;
+        const key = group.dataset.recurrenceGroup;
+        // (v5.2.55) five capped types share the `bounded` end-date group.
+        group.hidden =
+          key === 'bounded' ? !BOUNDED_RECURRENCE.includes(el.value) : key !== el.value;
       });
     },
   },

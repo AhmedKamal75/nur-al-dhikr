@@ -8,6 +8,8 @@
 
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
+import { replaceGo } from '../../core/router.js';
+import { VIEWS } from '../../core/config.js';
 import { vibrate } from '../../core/utils.js';
 import { journalExportText } from '../../domain/duaJournal.js';
 import { buildDrillRound, buildSimilarPairs } from '../../domain/mutashabihat.js';
@@ -43,6 +45,19 @@ function downloadJournalExport() {
   setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 
+/* ---------------- In-place edit + pagination (v5.2.49) ---------------- */
+// Edit mode rides on `?edit=<id>` (no new state — Back exits it, reloads
+// never resurrect a half-typed draft). Paging rides on `?page=` via
+// replaceGo, the same no-history-spam discipline as the search box.
+
+/** Params for a journal replace-navigation: current tab + filter kept. */
+function journalNavParams(extra = {}) {
+  const params = store.getState().activeParams || {};
+  const tab = params.tab === 'reflections' ? 'reflections' : null;
+  const q = typeof params.q === 'string' && params.q ? params.q : null;
+  return { ...(tab ? { tab } : {}), ...(q ? { q } : {}), ...extra };
+}
+
 export const clickHandlers = {
   /* ---------------- Dua journal ---------------- */
 
@@ -70,6 +85,41 @@ export const clickHandlers = {
     store.dispatch(actions.removeDua(ds.id));
   },
 
+  'journal-edit-open': (ds) => {
+    if (!ds.id) return;
+    replaceGo(VIEWS.JOURNAL, journalNavParams({ edit: ds.id }));
+  },
+
+  'journal-edit-cancel': () => {
+    replaceGo(VIEWS.JOURNAL, journalNavParams());
+  },
+
+  'journal-page': (ds) => {
+    const page = Math.max(1, Math.floor(Number(ds.page)) || 1);
+    replaceGo(VIEWS.JOURNAL, journalNavParams(page > 1 ? { page: String(page) } : {}));
+  },
+
+  'dua-edit-save': () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const id = state.activeParams?.edit;
+    const entry = Array.isArray(state.duaJournal)
+      ? state.duaJournal.find((e) => e && e.id === id)
+      : null;
+    if (!entry) return;
+    const el = document.querySelector('[data-bind="journal-edit-text"]');
+    const text = String(el?.value || '').trim();
+    if (!text) {
+      showToast(t('journal.duaEmptyInput', lang));
+      return;
+    }
+    store.dispatch(actions.editDua(id, text));
+    replaceGo(VIEWS.JOURNAL, journalNavParams());
+    const after = store.getState();
+    if (after.settings.hapticsEnabled) vibrate(10);
+    showToast(t('journal.duaSaved', after.settings.language));
+  },
+
   /* ---------------- Weekly reflections ---------------- */
 
   'reflection-save': (ds) => {
@@ -85,6 +135,27 @@ export const clickHandlers = {
   'reflection-remove': (ds) => {
     if (!ds.id) return;
     store.dispatch(actions.removeReflection(ds.id));
+  },
+
+  'reflection-edit-save': () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const id = state.activeParams?.edit;
+    const entry = Array.isArray(state.reflections)
+      ? state.reflections.find((e) => e && e.id === id)
+      : null;
+    if (!entry) return;
+    const el = document.querySelector('[data-bind="journal-edit-text"]');
+    const text = String(el?.value || '').trim();
+    if (!text) {
+      showToast(t('journal.reflectionEmptyInput', lang));
+      return;
+    }
+    store.dispatch(actions.editReflection(id, text));
+    replaceGo(VIEWS.JOURNAL, journalNavParams());
+    const after = store.getState();
+    if (after.settings.hapticsEnabled) vibrate(10);
+    showToast(t('journal.reflectionSaved', after.settings.language));
   },
 
   'journal-export': () => {

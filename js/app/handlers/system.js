@@ -25,6 +25,7 @@ import { buildReciterPick } from './quranAudio.js';
 import { dryRunVerdict } from '../../services/dataHealth.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
 import { moveHomePanel } from '../../domain/homePanels.js';
+import { moveQuickTile } from '../../domain/quickTiles.js';
 import { buildConfirm, buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -69,6 +70,18 @@ export const clickHandlers = {
     const dir = Number(ds.dir) >= 0 ? 1 : -1;
     const next = moveHomePanel(store.getState().settings.homeOrder, ds.id, dir);
     store.dispatch(actions.updateSettings({ homeOrder: next }));
+  },
+
+  // (v5.2.54) quick-tile reorder/visibility: same pattern over the
+  // effective tile order (usage-driven until customized). Moving writes
+  // the explicit order, so the first manual move freezes the current
+  // favorite-driven arrangement.
+  'quick-tile-move': (ds) => {
+    if (!ds.id) return;
+    const dir = Number(ds.dir) >= 0 ? 1 : -1;
+    const s = store.getState();
+    const next = moveQuickTile(s.settings.quickOrder, s.tileVisits, ds.id, dir);
+    store.dispatch(actions.updateSettings({ quickOrder: next }));
   },
 
   // App-wide progress profiles (family sharing): create via text prompt,
@@ -232,14 +245,69 @@ export const clickHandlers = {
     go(VIEWS.HOME);
   },
 
-  'export-backup': () => {
+  'export-backup': async () => {
+    const lang = store.getState().settings.language;
+    const text = backup.backupFileText(persistedSnapshot(store.getState()));
+    // (v5.2.53) save-back: a linked File System Access file wins (no more
+    // duplicate downloads); a dead handle self-heals to the download path.
+    try {
+      const handle = await backup.loadBackupHandle();
+      if (handle) {
+        if (await backup.writeBackupToHandle(handle, text)) {
+          store.dispatch(actions.markBackupExported());
+          showToast(t('settings.backupFileSaved', lang));
+          return;
+        }
+        await backup.clearBackupHandle();
+      }
+    } catch {
+      /* fall through to the download path */
+    }
     backup.downloadBackup(persistedSnapshot(store.getState()));
     // FIX (review v3.3 A10): the browser's download bar was the only
     // acknowledgment — an in-app toast matching every other action here.
-    showToast(t('settings.backupExported', store.getState().settings.language));
+    showToast(t('settings.backupExported', lang));
     // v3.26 data health: stamp the export (the reducer writes its own
     // device clock, ignoring any payload).
     store.dispatch(actions.markBackupExported());
+  },
+
+  // (v5.2.53) link a file for direct saves (Chromium File System Access).
+  // The button only renders where supported, so this is picker-or-abort.
+  'backup-link-file': async () => {
+    const lang = store.getState().settings.language;
+    const stamp = new Date().toISOString().slice(0, 10);
+    const handle = await backup.pickBackupFile(`nur-al-dhikr-backup-${stamp}.json`);
+    if (!handle) return;
+    if (!(await backup.saveBackupHandle(handle))) return;
+    const text = backup.backupFileText(persistedSnapshot(store.getState()));
+    if (await backup.writeBackupToHandle(handle, text)) {
+      store.dispatch(actions.markBackupExported());
+      showToast(t('settings.backupFileSaved', lang));
+    } else {
+      await backup.clearBackupHandle();
+      backup.downloadBackup(persistedSnapshot(store.getState()));
+      showToast(t('settings.backupExported', store.getState().settings.language));
+      store.dispatch(actions.markBackupExported());
+    }
+  },
+
+  // (v5.2.53) restore the rolling auto-snapshot through the exact same
+  // confirm gate as a file import (replaces everything — no undo).
+  'restore-auto-backup': () => {
+    const lang = store.getState().settings.language;
+    const snap = backup.readAutoSnapshot();
+    if (!snap?.backup?.data) return;
+    rt.pendingImportPayload = snap.backup.data;
+    openModal(
+      buildConfirm({
+        message: t('backup.importConfirm', lang),
+        confirmAction: 'import-backup-confirmed',
+        lang,
+        danger: true,
+      }),
+      { labelledBy: 'modal-title-confirm' }
+    );
   },
 
   // v3.26 data health — the restore dry run: the same bytes an export
@@ -438,6 +506,17 @@ export const changeHandlers = [
       if (el.checked) delete hidden[id];
       else hidden[id] = true;
       store.dispatch(actions.updateSettings({ hiddenHome: hidden }));
+    },
+  },
+  {
+    // (v5.2.54) quick-tile visibility: same VISIBLE-checkbox contract.
+    sel: '[data-action="quick-tile-toggle"]',
+    run: (ds, el) => {
+      const id = String(ds.id || '');
+      const hidden = { ...(store.getState().settings.hiddenQuick || {}) };
+      if (el.checked) delete hidden[id];
+      else hidden[id] = true;
+      store.dispatch(actions.updateSettings({ hiddenQuick: hidden }));
     },
   },
 ];

@@ -140,3 +140,51 @@ export function intensityBucket(count, max) {
   if (ratio > 0.25) return 2;
   return 1;
 }
+
+const CSV_DAY_KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Strict day-key check (junk and rolled dates never reach the export). */
+function isCsvDayKey(key) {
+  if (typeof key !== 'string' || !CSV_DAY_KEY_RE.test(key)) return false;
+  const [y, m, d] = key.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+}
+
+/** Non-negative integer cell — hostile values coerce to 0. */
+function csvCell(entry, field) {
+  const n = Math.floor(Number(entry?.[field]));
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+/**
+ * Daily-grain CSV of the whole recorded history, oldest first:
+ * `date,recitations,sessions,pages,reading_seconds`. No trailing newline;
+ * header-only when nothing recorded. Pure string building, no DOM.
+ */
+export function buildStatsCSV(statistics) {
+  const raw =
+    statistics && typeof statistics.dailyHistory === 'object' && statistics.dailyHistory !== null
+      ? statistics.dailyHistory
+      : {};
+  const lines = ['date,recitations,sessions,pages,reading_seconds'];
+  for (const day of Object.keys(raw).filter(isCsvDayKey).sort()) {
+    const e = raw[day];
+    lines.push(
+      [
+        day,
+        csvCell(e, 'recitations'),
+        csvCell(e, 'sessions'),
+        csvCell(e, 'pages'),
+        csvCell(e, 'readingSec'),
+      ].join(',')
+    );
+  }
+  return lines.join('\n');
+}
+
+/** Export filename for today: nur-al-dhikr-stats-YYYY-MM-DD.csv */
+export function statsCSVFilename(now = new Date()) {
+  const d = now instanceof Date && !Number.isNaN(now.getTime()) ? now : new Date();
+  return `nur-al-dhikr-stats-${dateKey(d)}.csv`;
+}

@@ -185,6 +185,19 @@ export function reduceWorship(state, action) {
     case 'DUA_JOURNAL_REMOVE':
       return { ...state, duaJournal: state.duaJournal.filter((e) => e.id !== action.id) };
 
+    // (v5.2.49) in-place edit: text only (creation order/ts untouched, so
+    // entries never jump around); empty edits no-op (the handler toasts).
+    case 'DUA_JOURNAL_EDIT': {
+      const text = String(action.text || '')
+        .trim()
+        .slice(0, 4000);
+      if (!action.id || !text) return state;
+      return {
+        ...state,
+        duaJournal: state.duaJournal.map((e) => (e && e.id === action.id ? { ...e, text } : e)),
+      };
+    }
+
     case 'REFLECTION_ADD':
       return {
         ...state,
@@ -202,6 +215,18 @@ export function reduceWorship(state, action) {
 
     case 'REFLECTION_REMOVE':
       return { ...state, reflections: state.reflections.filter((e) => e.id !== action.id) };
+
+    // (v5.2.49) in-place edit — same contract as DUA_JOURNAL_EDIT (8000 cap).
+    case 'REFLECTION_EDIT': {
+      const text = String(action.text || '')
+        .trim()
+        .slice(0, 8000);
+      if (!action.id || !text) return state;
+      return {
+        ...state,
+        reflections: state.reflections.map((e) => (e && e.id === action.id ? { ...e, text } : e)),
+      };
+    }
 
     case 'RAMADAN_PLANNER_TOGGLE': {
       // Shared by taraweeh / i'tikaf / last-ten checklist; `slice` is the

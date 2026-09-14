@@ -108,6 +108,27 @@ export function juzEighth(juzFirstPage, page, juz, pageCount = MUSHAF_PAGE_COUNT
 }
 
 /**
+ * (v5.2.58) Hizb start pages (1..60) from the juz map: hizb H opens the
+ * juz ceil(H/2), first or second half. The EXACT breaks are ayah-based
+ * margin typesetting (no such data ships with the app, and it must never
+ * be invented) — like juzEighth, this is the honest page-position
+ * approximation, and the jump drawer labels it as such. Second halves
+ * round down so Hizb 2 never overtakes Juz 2's start.
+ */
+export function hizbStartPage(juzFirstPage, hizb, pageCount = MUSHAF_PAGE_COUNT) {
+  const h = Math.floor(Number(hizb));
+  if (!Number.isFinite(h) || h < 1 || h > 60) return null;
+  const juz = Math.ceil(h / 2);
+  const start = Number(juzFirstPage?.[String(juz)]);
+  if (!Number.isFinite(start)) return null;
+  const nextStart = Number(juzFirstPage?.[String(juz + 1)]);
+  const end = (Number.isFinite(nextStart) ? nextStart : pageCount + 1) - 1;
+  const span = Math.max(1, end - start + 1);
+  const half = h % 2 === 0 ? Math.floor(span / 2) : 0;
+  return clampPage(start + half);
+}
+
+/**
  * The Qur'an's 6,236 ayahs are numbered 1..6236 continuously across all 114
  * surahs (surah 1 ayah 1 = 1, surah 2 ayah 1 = 8, and so on). Verse-by-verse
  * audio CDNs (e.g. cdn.islamic.network) key files by this number rather than

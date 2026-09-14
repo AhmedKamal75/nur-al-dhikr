@@ -2,6 +2,356 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.67 — one voice, one queue: audio engines stop fighting
+
+The player/surahPlayback split-brain closes in four moves. One voice:
+a `yieldFullSurahPlayer()` helper (pause + dock, position kept) now
+runs where verse queues, TTS narration and adhan previews used to
+layer over a playing surah; deleting the voice that is playing stops
+the element (no more ghost audio from the store-only clear); and
+`player.stop()` clears the sleep timer so no stale fade ducks the next
+track. One queue: full-surah advance moves into the shared pure
+`domain/audioQueue.js` (repeat one holds, repeat all wraps 114→1, off
+ends at 114), the repeat chip cycles off → one → all with the active
+mode named (tooltip, screen reader, visible badge), and the player
+warms the next track's offline lookup into one bounded slot while the
+current track plays (gapless-lite — streaming tracks warm nothing, a
+failed warm falls back silently). Honest lock screens: the transport
+state derives from the store in one `stateSub` derivation (verse wins,
+echo waits count as paused) instead of going stale on toggles, and
+failed tracks clear their slot. Three new EN+AR strings. New
+`tests/audioQueue.test.js` (10 tests). Markers 5.2.66 → 5.2.67 plus
+re-stamp.
+
+## v5.2.66 — manifest handlers: share in, files open, links route
+
+The manifest leaves 2021 behind: a `share_target` (GET title/text/url)
+routes shared content at the app's own Search view with a
+`share.received` EN+AR toast, `file_handlers` opens `.json` backups
+straight into the existing import-confirm flow via `launchQueue`, and
+`protocol_handlers` (`web+nurdhikr:open?view=<id>`, bare
+`web+nurdhikr:<id>`) deep-links routes — all parsed by the pure
+`domain/launchIntents.js` (capped, trimmed, fail-closed to the normal
+boot route) and consumed once per load in `boot.js` (the one-shot query
+is stripped so reloads boot clean). `launch_handler: focus-existing`
+stops shortcut/share launches from duplicating windows. Everything
+degrades silently where unsupported (no launchQueue, no registration);
+no SW changes (GET intents need none). New
+`tests/launchIntents.test.js` (9 tests). Markers 5.2.65 → 5.2.66 plus
+re-stamp.
+
+## v5.2.65 — kids mode gets a real scope: Kids + Tasbih only
+
+Kids mode used to hide the bottom nav while leaving every destination
+one tap away (drawer, topbar brand, palette, deep links, shortcuts).
+Now the mode is a scope: a pure allowlist (`KIDS_ALLOWED_VIEWS` in
+`core/config/views.js`) owns the answer, the NAVIGATE reducer reroutes
+every out-of-scope route to the Kids home (covers deep links, history
+traversals and search-debounce navigations silently), tap paths
+(navigate, drawer, quick tiles, palette launcher) explain themselves
+with one new `kids.blocked` EN+AR toast, and the nav chrome (rail,
+drawer, mobile bar) offers only the Kids home and Tasbih. Entering and
+exiting are untouched (Settings toggle → Kids, hold-exit → Home, mode
+off). Also completes the v5.2.64 promise on the shared key twins:
+by-heart and hadith-memorize reducers, handlers and buttons grade all
+four grades (their two-grade clamps were item-21 fallout), with the
+three red baselines repaired. New `tests/kidsScope.test.js` (9 tests).
+Markers 5.2.64 → 5.2.65 plus re-stamp.
+
+## v5.2.64 — ayah-level hifz SRS with four grades
+
+Memorization drops to the ayah: per-ayah records (`s:a` keys in their
+own persisted map, so surah counts never see them) with mark + review,
+and all reviews — surah, ayah, and the shared key twins — grade
+Again/Hard/Good/Easy on one step math (restart+lapse, hold, climb one,
+climb two capped; Good inherits the old easy semantics). Ayah detail
+pages mark and grade single ayahs; the reader toolbar grades four-wide
+and grows a mistake heatmap strip bucketing per-ayah lapses (absent
+when clean). Five new EN+AR strings. Updated `hifz.test.js`, new
+`tests/hifzAyah.test.js` (17 tests). Markers 5.2.63 → 5.2.64 plus
+re-stamp.
+
+## v5.2.63 — English tafsir bundled: Al-Mukhtasar
+
+The tafsir library reads English now: the Tafsir Center's English
+Al-Mukhtasar (same already-attributed open source as every bundled
+edition) ships all 114 surahs, 6,236 ayahs, with catalog credits and
+SOURCES attribution. English bodies render LTR with plain paragraphs
+(the Arabic section pass would misfire on English punctuation) while
+Arabic editions render byte-identically; the loader already normalized
+both shapes, so no fetch changes. Zero new UI strings. New
+`tests/tafsirEnglish.test.js` (10 tests). Markers 5.2.62 → 5.2.63 plus
+re-stamp.
+
+## v5.2.62 — hadith standing: the Two Sahihs, honestly labeled
+
+Per-hadith grades, isnads and takhrij need a graded-data pipeline
+rebuild with sources that do not ship with the app — that gap is
+tracked, not filled (nothing here invents a grade). What ships is the
+uncontroversial part: collection-level standing for Sahih al-Bukhari
+and Sahih Muslim, badged in the library grid and the reader header and
+labeled as the collection's standing, never a hadith's; every other
+book honestly carries none. One new EN+AR string. New
+`tests/hadithStanding.test.js` (7 tests). Markers 5.2.61 → 5.2.62 plus
+re-stamp.
+
+## v5.2.61 — verse audio offline: packs, IDB-first playback, 10 voices
+
+Per-ayah audio leaves streaming-only behind: ayah files store in the
+existing IndexedDB beside full-surah blobs (no migration), the verse
+engine and single-verse taps play stored Blobs first with CDN fallback
+(sequence-guarded, object URLs revoked, prefetch skips local files),
+and the Audio view gains per-surah verse packs for the active voice
+with counts, delete, and an IDB-truth status rescan. No bulk download
+— 6,236 files is not one tap. Voices grow 5 → 10, every id verified
+live (edition list plus byte-serving HEADs; three 403s probed and
+excluded, which is why the allowlist exists). Three new EN+AR strings.
+New `tests/verseAudio.test.js` (13 tests). Markers 5.2.60 → 5.2.61
+plus re-stamp.
+
+## v5.2.60 — prayer alerts, honest path (no push infra)
+
+TimestampTrigger stays Chromium-only, and Web Push would need a
+backend, accounts, and secrets — against the offline-first rules. So
+instead of infrastructure: the tracked-but-never-rendered reliability
+state finally renders in the Prayer view (pre-scheduled count, tab-only
+reality, one-tap permission ask; silence when nothing is armed), the
+tab-mode row carries a calendar fallback (month ICS export now works
+bare, and every event ships an at-time VALARM so imported calendars
+actually alert), and the plan is recorded: push stays out unless
+self-hosted infra is ever chosen. One new EN+AR string. New
+`tests/prayerAlerts.test.js` (11 tests). Markers 5.2.59 → 5.2.60 plus
+re-stamp.
+
+## v5.2.59 — theming/a11y: contrast, transparency, reading comfort
+
+Accessibility closes four gaps: OS `prefers-contrast` now hardens the
+same borders and focus widths as the high-contrast setting (mirrored
+rules, test-pinned together — no JS needed, answers live), OS
+`prefers-reduced-transparency` resolves every frosted surface to
+opaque tokens with blurs killed, and two new Settings toggles cover
+dyslexia-friendly reading (legible stack, wider spacing — Arabic keeps
+rendering via per-glyph fallback) and roomier long-form rhythm (WCAG
+1.4.12 minima on reading surfaces). Two new EN+AR strings. New
+`tests/a11yPrefs.test.js` (9 tests). Markers 5.2.58 → 5.2.59 plus
+re-stamp.
+
+## v5.2.58 — Mushaf parity: Hizb index + ayah-to-page links
+
+The jump drawer gains a 60-entry Hizb index grouped by juz: exact
+breaks are ayah typesetting with no shipped data (never invented), so
+entries resolve by the established page-position rule and say so next
+to the index. Search ayah hits grow a Mushaf page chip beside the
+reader link (sibling anchors, resolved through the 6,236-entry map,
+absent when unresolvable). Four new EN+AR strings from attested
+vocabulary. New `tests/mushafHizb.test.js` (9 tests). Markers 5.2.57 →
+5.2.58 plus re-stamp.
+
+## v5.2.57 — cross-book hadith search
+
+The grid searches all eight books at once now: a ranked index over
+every loaded document (quranSearch honesty rules — AND terms, phrase
+bonus, both languages — with the hadith fold pipeline both sides, no
+alef elision), missing books loading in pairs behind an honest
+"N of M books" scope line while the query stands. Results page at 10
+with book labels and reader deep links; per-book substring search is
+untouched. Grades stay absent by data reality (the scholarship
+pipeline is separate work). Two new EN+AR strings from attested
+vocabulary. New `tests/hadithSearch.test.js` (11 tests). Markers
+5.2.56 → 5.2.57 plus re-stamp.
+
+## v5.2.56 — roots browser: previews, glosses, pagination
+
+Root families open up: occurrences whose surahs are already loaded
+show ayah preview cards (text with the occurrence word marked,
+per-word English gloss from the word data, translation behind the
+reader's pref, jump on tap — zero surprise fetches, the rest stay ref
+chips one tap away), ref chips cap at 12 per form behind a show-all
+expander so 300-occurrence roots stay light, and the index paginates
+past the old hard 60 with filter-preserving pages. Glosses are loaded
+data only, never synthesized; mismatched tokenizations render unmarked
+rather than mis-marked. Two new EN+AR strings from attested
+vocabulary. New `tests/rootsBrowse.test.js` (12 tests). Markers
+5.2.55 → 5.2.56 plus re-stamp.
+
+## v5.2.55 — calendar recurrence: weekly to White Days
+
+Notes repeat five more ways: weekly (start weekday), monthly
+(month-day, short months skip — a 31st never fires a phantom 28th),
+yearly (Feb 29 keeps leap years), Hijri-monthly (anchor Hijri day via
+the tabular converter), and White Days (13/14/15 through isWhiteDay) —
+all floored at startDate, all optionally end-capped through one shared
+end-date input, all flowing through the existing reminder scheduler
+untouched. The ui fallback mirror covers the Gregorian arms (it cannot
+import domain by layer law — documented at the site). Four new EN+AR
+strings from attested vocabulary; White Days reuses its label. New
+`tests/calendarRecurrence.test.js` (12 tests). Markers 5.2.54 → 5.2.55 plus re-stamp.
+
+## v5.2.54 — quick tiles editable + favorite-driven
+
+The 8 hardcoded home tiles are a registry now: with no saved order
+they sort by tap counts (stable ties keep the familiar layout), and
+any move/hide in Settings writes an explicit order that wins — same
+up/down/hide manager pattern as the home panels, reusing its strings.
+Tile taps record visits; NOW-window suggestions survive; unknown ids
+degrade to visible defaults. Zero new i18n keys. New
+`tests/quickTiles.test.js` (18 tests). Markers 5.2.53 → 5.2.54 +
+re-stamp.
+
+## v5.2.53 — backups: auto-snapshot, file save-back, stale nudge
+
+Manual JSON download/upload grows three companions: a rolling
+on-device auto-snapshot (boot heartbeat banks a valid backup file to
+localStorage for returning users past a 7-day interval, restorable
+through the same import confirm; best-effort and total — quota or
+failure never breaks startup), File System Access save-back (link a
+file once, Export writes back to it instead of piling up downloads;
+dead handles self-heal to the download path; non-Chromium keeps the
+classic download), and a stale-export nudge in the Data panel
+(returning users past 30 days or never get the export call-to-action
+inline — the on-device snapshot explicitly never counts). Seven new
+EN+AR strings from attested vocabulary. New `tests/backupAuto.test.js`
+(19 tests). Markers 5.2.52 → 5.2.53 + re-stamp.
+
+## v5.2.52 — onboarding wizard: six steps, permissions primed upfront
+
+The 4-row getting-started checklist is a stepped wizard now (one step
+at a time, Back/Next, position + done-count, dismiss intact):
+geolocation priming (why + one-tap enable reusing the prayer handler,
+manual entry beside it), notification priming (benefit copy, real
+prompt from the button, honest blocked/granted states), prayer setup
+(calculation method + Asr selects over the shared data-bind pipeline
+with an explicit confirm), daily-goal setup (same), then the existing
+install and first-reading steps. Setup confirms persist as seen-flags;
+the wizard position is ephemeral (reloads resume at the first
+incomplete step). Six new EN+AR strings from attested vocabulary; the
+palette's settings rows were already deep-link consumers. Updated
+`onboarding.test.js`, new `onboardingWizard.test.js` (13 tests).
+Markers 5.2.51 → 5.2.52 + re-stamp.
+
+## v5.2.51 — favorites bulk: sort, move, clear-all
+
+The flat favorites list manages itself now: a sort control (recent /
+A–Z / most-read — pure `sortFavorites`, locale titles for alpha,
+all-time read counts with stable ties, `?sort=` via replaceGo so
+paging never spams history and the search box preserves it), per-row
+move-to-collection (single-destination picker, then a guarded
+unfavorite completes the move; creating a collection mid-move moves
+too), and a confirmed unfavorite-all (new `FAVORITE_CLEAR`). Six new
+EN+AR strings from attested vocabulary. New `tests/favorites.test.js`
+(15 tests). Markers 5.2.50 → 5.2.51 + re-stamp.
+
+## v5.2.50 — collections manage: rename, reorder, share, bulk favorites
+
+Collections grow past create/delete: rename (wires the long-dead
+`COLLECTION_RENAME` path through the shared text prompt, prefilled),
+per-item up/down reorder (new `COLLECTION_MOVE_ITEM`, edges no-op,
+controls hide while filtering so invisible neighbors never move),
+share-as-text (name + numbered titles via the locale choke point, Web
+Share with clipboard fallback, honest toast when empty), and one-tap
+bulk import of missing favorites (new deduped `COLLECTION_ADD_ITEMS`,
+button shows only with news and counts them). Drive-by fix: restore
+used to blank `{en,ar}` collection names to `''` (it only kept legacy
+strings) — both shapes now survive, capped. Four new EN+AR strings
+from attested vocabulary. New `tests/collections.test.js` (14 tests).
+Markers 5.2.49 → 5.2.50 + re-stamp.
+
+## v5.2.49 — journal edit-in-place + pagination
+
+Duas and reflections both edit in place now: an edit control per row
+opens a prefilled editor (`?edit=<id>` — no new state, Back exits it,
+reloads never resurrect half-typed drafts), saving through new
+`DUA_JOURNAL_EDIT` / `REFLECTION_EDIT` actions that rewrite text only
+(creation order and timestamps untouched, entries never jump; empty
+edits no-op with the existing empty-input toasts). The hard
+`.slice(0, 50)` is gone — both tabs paginate at 10/page with a
+prev/status/next pager that preserves tab + filter via `replaceGo`
+(search-typing discipline: no history spam, URL stays deep-linkable,
+hostile pages clamp). One new EN+AR string (`journal.pageStatus`,
+mirroring the hadith pager); edit/save/cancel reuse existing keys.
+New `tests/journalEdit.test.js` (15 tests). Markers 5.2.48 → 5.2.49 +
+re-stamp.
+
+## v5.2.48 — settings accordion persistence + section deep links
+
+The open settings section survives reloads: it moved from session-only
+module memory to a persisted `settings.settingsSection` slug (sanitized,
+backed up, restored like any setting), so toggling a switch still
+re-renders onto exactly the open section. `#/settings/<slug>` deep
+links (all 12 slugs: language…data) open their section for the visit,
+persist on navigation, and degrade to the pin/default on unknown slugs
+— Back/forward and shared links land right. The palette's settings rows
+now emit those deep links, which also repairs a latent key mismatch
+(they read `titleKey` off entries that carry `title`, so non-empty
+queries never matched and empty ones rendered "undefined"). Slug lists
+in config + views are pinned equal by test. `counter-flow` accordion
+tests updated to the stored mechanism; new
+`tests/settingsSection.test.js` (11 tests). Markers 5.2.47 → 5.2.48 +
+re-stamp.
+
+## v5.2.47 — statistics CSV download + share
+
+The Statistics screen's data leaves the app: the ⋯ menu gains Export
+CSV (full-history daily grain — date, recitations, sessions, pages,
+reading seconds — as a date-stamped download) and Share CSV (file
+share where the platform allows, text share then clipboard otherwise —
+the ayah-card fallback ladder). Empty history gets an honest toast
+instead of a header-only file. The existing week-text share is
+untouched. Deliberately no PNG: the bars and heatmap are DOM divs, and
+re-drawing them on canvas would duplicate the charts to ship pixels —
+the CSV carries the underlying data instead. Four new EN+AR strings
+from attested UI vocabulary. New `tests/statsExport.test.js` (7
+tests). Markers 5.2.46 → 5.2.47 + re-stamp.
+
+## v5.2.46 — custom dhikr on the tasbih dial
+
+The tasbih screen is no longer limited to its 6 presets: a "Custom
+phrase" panel adds user-authored dhikr (free text + named goal, capped
+at 500 chars / 50 phrases) as chips beside the presets, each driving
+the same dial through the unchanged shared `increment()` on the generic
+`'tasbih:'+id` counter key. Customs persist, restore, and back up like
+the dua journal (new `tasbihCustom` slice + sanitize); deleting the
+active custom falls back to the first preset instead of stranding the
+dial. User text is stored verbatim and escaped at render (`dir="auto"`,
+no language assumption — the app never translates or annotates it).
+Five new EN+AR strings from existing UI vocabulary. New
+`tests/tasbihCustom.test.js` (15 tests). Markers 5.2.45 → 5.2.46 +
+re-stamp.
+
+## v5.2.45 — honest streaks: no idle-today inflation, goal-gated, one freeze
+
+`computeStreak` stops counting an idle today as active (the
+`|| key === todayKey` inflation): empty history reads 0 (was 1), a run
+ending yesterday reads its own length mid-day (was +1), and — like
+`prayerStreak`/`readingStreak` — an idle today anchors the walk on
+yesterday instead of breaking it. A streak day now meets the daily
+dhikr goal (or carries Qur'an pages/reading seconds); mere entry
+presence never counts, matching the review's presence≠activity
+doctrine. One isolated miss per run is frozen (adds no length); a
+second gap or two misses in a row ends it, both walks alike. The
+reducer passes `settings.dailyGoal` in and computes from the post-write
+history, so the persisted streak reflects the just-recorded tap instead
+of lagging one dispatch behind. The v5.2.44 badge reuses the same
+`isStreakDay` rule, so icon and engine agree on sub-goal days. Two
+pinned expectations updated for the intended semantics (v4.3 current
+4→3, v4.2 single-gap longest 1→2 frozen), new `tests/streak.test.js`
+(20 tests). Markers 5.2.44 → 5.2.45 + re-stamp.
+
+## v5.2.44 — app-icon badge: prayers left, streak at risk
+
+The installed app's icon now carries a live badge via the Badging API
+(`navigator.setAppBadge` / `clearAppBadge`, previously zero usage
+repo-wide): remaining fard prayers count down 5 → 1 as the day's log
+fills, a lone 1 flags a dhikr/Qur'an streak that dies at midnight once
+the prayers are done, and the badge clears when everything is done or
+no live streak needs protecting. Stale badges clear the moment the app
+opens; the fresh count syncs after hydrate, on every state change
+(change-deduped, so tasbih taps cost one integer compare), and on
+return-to-visible. Silent no-op where the API is missing (Firefox,
+desktop Safari, Node under test). New `js/services/appBadge.js` (pure
+count + guarded sync, mediaSession-style) precached in APP_SHELL, 18
+tests. Markers 5.2.43 → 5.2.44 + re-stamp.
+
 ## v5.2.43 — sleep timer for full-surah listening
 
 The verse engine's fade-to-silence timer now covers the full-surah

@@ -10,6 +10,7 @@ import { escapeHTML, highlightMatch, pickLocale } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { search as runSearch } from '../domain/search.js';
 import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
+import { resolvePage } from '../services/surahPlayback.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';
@@ -18,20 +19,32 @@ import { skeletonLines } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 
 /** One ayah hit in the "From the Qur'an" block. Links straight to the
- *  classic reader at that surah; app.js scrolls to and highlights the
- *  target ayah once its element exists. */
+ *  classic reader at that surah (app.js scrolls to and highlights the
+ *  target ayah once its element exists) — plus, when the mushaf map is
+ *  loaded, to the facsimile page holding the ayah. */
 function quranResultRow(state, hit, lang, terms = []) {
   const surahDoc = state.quran.surahs[String(hit.s)];
   const ayah = surahDoc?.ayahs?.find((a) => String(a.number) === String(hit.a));
   const meta = state.quran.meta?.surahs?.find((s) => s.number === hit.s);
   if (!ayah) return '';
   const refLabel = `${meta ? escapeHTML(pickLocale({ en: meta.nameTransliteration || meta.nameEn, ar: meta.nameAr }, lang)) : ''} · ${hit.s}:${hit.a}`;
+  // (v5.2.58) ayah→page: the mushaf-meta ayahPages map covers all 6,236
+  // ayahs; unloaded map (or unresolvable pair) renders no chip, never a
+  // dead link. (Sibling links, never nested — nested <a> is invalid HTML.)
+  const page = resolvePage(state.mushaf?.meta?.ayahPages, hit.s, hit.a);
+  const mushafLink =
+    page == null
+      ? ''
+      : `<a class="quran-hit__mushaf" href="${buildHash(VIEWS.MUSHAF, { page: String(page) })}" data-action="navigate" data-view="${VIEWS.MUSHAF}" data-page="${page}" aria-label="${t('mushaf.openInMushaf', lang)} — ${t('mushaf.pageLabel', lang)} ${page}">${icon('book', { size: 12 })} ${t('mushaf.pageShort', lang)} ${page}</a>`;
   return `
-  <a class="quran-hit" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
-    <p class="quran-hit__arabic" dir="rtl" lang="ar">${highlightMatch(ayah.text, terms)}</p>
-    ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation" dir="auto">${highlightMatch(ayah.translation, terms)}</p>` : ''}
-    <span class="quran-hit__ref">${refLabel} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 12 })}</span>
-  </a>`;
+  <div class="quran-hit">
+    <a class="quran-hit__reader" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
+      <p class="quran-hit__arabic" dir="rtl" lang="ar">${highlightMatch(ayah.text, terms)}</p>
+      ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation" dir="auto">${highlightMatch(ayah.translation, terms)}</p>` : ''}
+      <span class="quran-hit__ref">${refLabel} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 12 })}</span>
+    </a>
+    ${mushafLink}
+  </div>`;
 }
 
 function quranSection(state, query, lang) {

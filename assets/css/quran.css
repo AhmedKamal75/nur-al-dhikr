@@ -1471,6 +1471,32 @@ body.mushaf-fs-idle .mushaf-fs-echo {
   max-height: 320px;
   overflow-y: auto;
 }
+/* (v5.2.58) Hizb index: per-juz rows pairing two half-width jumps. */
+.mushaf-jump__hizb-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 320px;
+  overflow-y: auto;
+}
+.mushaf-jump__hizb-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.mushaf-jump__hizb-juz {
+  min-width: 4.5rem;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.mushaf-jump__hizb {
+  flex: 1;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+}
 .mushaf-jump__surah {
   display: flex;
   align-items: center;
@@ -1908,6 +1934,11 @@ body.has-player .reader-immersive-echo {
   text-align: start;
   font-size: var(--fs-base);
   line-height: var(--lh-arabic);
+}
+/* (v5.2.63) English editions render LTR with the normal rhythm. */
+.tafsir-panel__body[lang='en'] {
+  direction: ltr;
+  line-height: var(--lh-normal);
 }
 .tafsir-section-h {
   display: block;
@@ -2531,6 +2562,72 @@ body.has-player .reader-immersive-echo {
 }
 .root-ref {
   font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+/* (v5.2.64) mistake heatmap: per-ayah lapse cells reuse the statistics
+   heat buckets — only the strip layout is new. */
+.hifz-heatmap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding-block: var(--space-1);
+}
+.hifz-heatmap .heatmap__cell {
+  min-width: 2rem;
+  text-align: center;
+}
+
+/* Ayah previews (v5.2.56): loaded ayah text with the occurrence word
+   marked, gloss and jump — one card per occurrence, capped per group. */
+.root-previews {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.root-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border-inline-start: 3px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  color: inherit;
+  text-decoration: none;
+}
+.root-preview__ref {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.root-preview__text {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-md);
+  line-height: 2;
+}
+.root-preview__text mark {
+  background: color-mix(in srgb, #eab308 40%, transparent);
+  color: inherit;
+  border-radius: 2px;
+}
+.root-preview__gloss,
+.root-preview__trans {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+
+/* Roots index pager (v5.2.56): same centered rhythm as the other pagers. */
+.roots-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-block-start: var(--space-3);
+}
+.roots-pager__status {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
 

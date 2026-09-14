@@ -5,13 +5,16 @@
  */
 
 import { rt } from '../../app/rt.js';
-import { downloadOne, startAudioPlay } from '../audioEngine.js';
+import { downloadOne, startAudioPlay, yieldFullSurahPlayer } from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
 import { MUSHAF_META_URL, QURAN_META_URL, VIEWS } from '../../core/config.js';
+import { QURAN_RECITER_IDS, quranAudioUrl } from '../../core/config/quran.js';
+import { globalAyahNumber } from '../../services/mushaf.js';
 import { go } from '../../core/router.js';
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { formatCountdown } from '../../domain/ramadan.js';
+import { cycleRepeatMode } from '../../domain/audioQueue.js';
 import { buildConfirm, buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -81,6 +84,73 @@ export const clickHandlers = {
     store.dispatch(
       actions.markAudioDownload(audioStore.audioKey(ds.moshaf, parseInt(ds.surah, 10)), 0, true)
     );
+  },
+
+  // (v5.2.61) verse packs: per-surah ayah audio for one voice. Sequential
+  // (ayah files are ~100KB; politeness beats a pool here), existing files
+  // skipped, status cached incrementally at the end, honest toasts.
+  'verse-pack-download': async (ds) => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const voice = QURAN_RECITER_IDS.has(ds.voice) ? ds.voice : null;
+    const surah = Math.floor(Number(ds.surah));
+    if (!voice || !Number.isFinite(surah) || surah < 1 || surah > 114) return;
+    const key = `verse:${voice}:${surah}`;
+    if (store.getState().audioDownloading[key]) return; // already in flight
+    const { ensureQuranMeta } = await import('../lazyData.js');
+    await ensureQuranMeta();
+    const meta = store.getState().quran.meta?.surahs;
+    const total = Math.floor(Number(meta?.find((s) => Number(s.number) === surah)?.ayahCount)) || 0;
+    if (!total) {
+      showToast(t('audio.downloadFailed', lang), { assertive: true });
+      return;
+    }
+    const have = new Set(await audioStore.listVerseAyahs(voice));
+    const base = (globalAyahNumber(meta, surah, 1) ?? 1) - 1;
+    const missing = [];
+    for (let a = 1; a <= total; a += 1) {
+      if (!have.has(base + a)) missing.push({ ayah: a, globalN: base + a });
+    }
+    if (!missing.length) {
+      store.dispatch(actions.setVersePackStatus({ voice, surah, done: total, total }));
+      showToast(t('audio.allDone', lang));
+      return;
+    }
+    store.dispatch(actions.markAudioDownloadStart(key));
+    showToast(t('audio.downloading', lang));
+    let saved = 0;
+    let failed = 0;
+    try {
+      for (const { globalN } of missing) {
+        const res = await audioStore.downloadVerseFile(
+          voice,
+          globalN,
+          quranAudioUrl(voice, globalN)
+        );
+        if (res.ok) saved += 1;
+        else failed += 1;
+      }
+    } finally {
+      store.dispatch(actions.markAudioDownloadEnd(key));
+    }
+    const done = total - (missing.length - saved);
+    store.dispatch(actions.setVersePackStatus({ voice, surah, done, total }));
+    if (failed && !saved) showToast(t('audio.downloadFailed', lang), { assertive: true });
+    else if (failed) showToast(t('audio.versePackDone', lang, { n: done, m: total }));
+    else showToast(t('audio.downloadDone', lang));
+  },
+
+  'verse-pack-delete': async (ds) => {
+    const voice = QURAN_RECITER_IDS.has(ds.voice) ? ds.voice : null;
+    const surah = Math.floor(Number(ds.surah));
+    if (!voice || !Number.isFinite(surah) || surah < 1 || surah > 114) return;
+    const meta = store.getState().quran.meta?.surahs;
+    const total = Math.floor(Number(meta?.find((s) => Number(s.number) === surah)?.ayahCount)) || 0;
+    const base = (globalAyahNumber(meta, surah, 1) ?? 1) - 1;
+    for (let a = 1; a <= total; a += 1) {
+      await audioStore.deleteVerseAudio(voice, base + a);
+    }
+    store.dispatch(actions.setVersePackStatus({ voice, surah, done: 0, total }));
   },
 
   'audio-download-all': async (ds) => {
@@ -178,6 +248,10 @@ export const clickHandlers = {
   },
 
   'audio-remove-custom': (ds) => {
+    // (v5.2.67) deleting the voice that is playing stops the element too —
+    // the reducer clears the store shape, but only the engine owns sound.
+    const p = store.getState().player;
+    if (p?.moshafId === ds.id) player.stop();
     store.dispatch(actions.removeCustomReciter(ds.id));
   },
 
@@ -295,6 +369,9 @@ export const clickHandlers = {
         return;
       }
       const r = surahPlayback.resolveQueueItem(pl.items, idx, state.quran.meta.surahs);
+      // (v5.2.67) one voice: a playing full-surah track yields (paused,
+      // docked) instead of sounding under the verse queue.
+      yieldFullSurahPlayer();
       surahPlayback.start({
         surah: r.surah,
         from: r.from,
@@ -414,7 +491,9 @@ export const clickHandlers = {
   },
 
   'player-repeat': () => {
-    const cur = store.getState().settings.audio.repeat === 'one' ? 'off' : 'one';
+    // (v5.2.67) off → one → all: repeat-all wraps 114→1 in the shared
+    // advance (domain/audioQueue.js) instead of stopping at a real end.
+    const cur = cycleRepeatMode(store.getState().settings.audio?.repeat);
     store.dispatch(actions.setAudioPrefs({ repeat: cur }));
   },
 

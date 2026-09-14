@@ -157,11 +157,17 @@ export function cardHTML(item, category, opts = {}) {
         ? `
     <div class="hadith-card__mem">
       ${byHeart.due ? `<span class="hifz-due" dir="auto">${t('hifz.memorizedBadge', lang, { date: byHeart.due })}</span>` : ''}
-      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="easy">
-        ${icon('check', { size: 13 })} ${t('hifz.recalled', lang)}
+      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="again" title="${t('hifz.struggled', lang)}">
+        ${t('hifz.again', lang)}
       </button>
-      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="again">
-        ${icon('repeat', { size: 13 })} ${t('hifz.struggled', lang)}
+      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="hard" title="${t('hifz.hard', lang)}">
+        ${t('hifz.hard', lang)}
+      </button>
+      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="good" title="${t('hifz.recalled', lang)}">
+        ${t('hifz.good', lang)}
+      </button>
+      <button type="button" class="chip" data-action="byheart-review" data-item-id="${escapeHTML(item.id)}" data-grade="easy" title="${t('hifz.recalled', lang)}">
+        ${t('hifz.easy', lang)}
       </button>
     </div>`
         : ''

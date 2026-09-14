@@ -22,7 +22,7 @@ import {
   setMushafWideLayout,
 } from '../services/mushaf.js';
 import { closeModal, isModalOpen, openLazyModal, cycleTabFocus } from '../ui/modal.js';
-import { getOpenSettingsSection, setOpenSettingsSection } from '../views/settings.js';
+import { settingsSlugForSection } from '../views/settings.js';
 import { mushafSwipeTurn, isSwipeGuardTarget, isPlayerDismissSwipe } from '../domain/gestures.js';
 import { armPaletteShortcut } from './palette.js';
 import { showToast } from '../ui/toast.js';
@@ -836,26 +836,30 @@ export function bindGlobalEvents() {
     { passive: true }
   );
 
-  // (v5.2.24) settings accordion memory + single-expansion. The `toggle`
-  // event does not bubble, so this listens in capture phase. Opening a
-  // section pins it (the next re-render re-opens exactly it — toggling a
-  // switch no longer collapses its section) and shuts the other eleven;
-  // closing the open section clears the pin so re-renders keep them shut.
-  // The pin is written before the siblings close: their own toggle events
-  // see open=false and only clear a pin that names them.
+  // (v5.2.48) settings accordion memory (persisted) + single-expansion.
+  // The `toggle` event does not bubble, so this listens in capture phase.
+  // Opening a section stores its slug in settings (the next re-render
+  // re-opens exactly it — toggling a switch no longer collapses its
+  // section) and shuts the other eleven; closing the stored section clears
+  // the pin so re-renders keep them shut. The pin is compared before the
+  // siblings close: their own toggle events see open=false and only clear
+  // a pin that names them.
   document.addEventListener(
     'toggle',
     (e) => {
       const target = e.target instanceof Element ? e.target : null;
       const panel = target?.closest?.('details.settings-acc') ?? null;
       if (!panel || !panel.id) return;
+      const slug = settingsSlugForSection(panel.id);
       if (panel.open) {
-        setOpenSettingsSection(panel.id);
+        if (slug && store.getState().settings.settingsSection !== slug) {
+          store.dispatch(actions.updateSettings({ settingsSection: slug }));
+        }
         for (const other of document.querySelectorAll('details.settings-acc[open]')) {
           if (other !== panel) other.open = false;
         }
-      } else if (getOpenSettingsSection() === panel.id) {
-        setOpenSettingsSection(null);
+      } else if (slug && store.getState().settings.settingsSection === slug) {
+        store.dispatch(actions.updateSettings({ settingsSection: null }));
       }
     },
     true

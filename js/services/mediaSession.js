@@ -61,6 +61,47 @@ export function clearMetadata() {
   return syncMetadata(null);
 }
 
+/**
+ * Honest lock-screen transport state derived from the store (v5.2.67,
+ * item 23): the verse session wins when active — echo "your turn" pauses
+ * count as paused — else the full-surah track, else none. Pure, so the
+ * subscriber and unit tests share one answer.
+ */
+export function desiredPlayingState(state) {
+  const sp = state?.surahPlayback;
+  if (sp?.active) return sp.paused === true || sp.waiting === true ? 'paused' : 'playing';
+  const p = state?.player;
+  if (!p?.moshafId) return 'none';
+  return p.playing ? 'playing' : 'paused';
+}
+
+let lastPlayingState = null;
+
+/**
+ * Publish desiredPlayingState, touching the platform slot only on change
+ * (the subscriber runs on every dispatch — an unconditional assignment
+ * per keystroke would be pure platform chatter).
+ */
+export function syncPlayingState(state) {
+  const want = desiredPlayingState(state);
+  if (want === lastPlayingState) return want;
+  lastPlayingState = want;
+  const m = api();
+  if (m) {
+    try {
+      m.playbackState = want;
+    } catch {
+      /* hostile/partial implementation — the next change retries */
+    }
+  }
+  return want;
+}
+
+/** Reset the playback-state latch (tests only). */
+export function _resetPlayingStateForTests() {
+  lastPlayingState = null;
+}
+
 let handlersInstalled = false;
 
 /**

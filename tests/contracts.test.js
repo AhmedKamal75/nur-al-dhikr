@@ -150,6 +150,9 @@ describe('contract: every emitted data-action resolves to a handler', () => {
     // Home panel visibility checkbox (home-panel-toggle branch in the
     // events.js change listener).
     'home-panel-toggle',
+    // (v5.2.54) quick-tile visibility checkbox: same CHANGE pipeline as
+    // the home panels (quick-tile-toggle branch in system.js).
+    'quick-tile-toggle',
     // (v4.5.2) manage-mode target stepper: a number <input>, so it lives in
     // the CHANGE pipeline (the content-set-target branch in events.js).
     'content-set-target',

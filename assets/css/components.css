@@ -2642,3 +2642,18 @@ a.view-sheet__row {
   color: var(--color-text-muted);
   margin: 0;
 }
+
+/* Journal pager (v5.2.49): same centered prev/status/next rhythm as the
+   hadith pager, journal-named so templates stay readable. */
+.journal-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-block-start: var(--space-3);
+}
+.journal-pager__status {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}

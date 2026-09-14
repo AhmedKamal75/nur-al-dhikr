@@ -23,6 +23,29 @@ import { escapeHTML, dateKey, addDays, isSafeKey } from '../core/utils.js';
 /** Growing review intervals, in days. Index = record level. */
 export const HIFZ_INTERVALS = [1, 3, 7, 14, 30, 60, 120];
 
+/**
+ * (v5.2.64) review grades, Anki-style, mapped onto the fixed ladder:
+ *  - again: restart the ladder (level 0) + count a lapse;
+ *  - hard:  hold the rung (same interval again), no lapse;
+ *  - good:  climb one rung (the old 'easy' behavior, unchanged);
+ *  - easy:  climb two rungs (capped) — the trivial-recall fast lane.
+ */
+export const HIFZ_GRADES = ['again', 'hard', 'good', 'easy'];
+
+export function normalizeHifzGrade(grade) {
+  return HIFZ_GRADES.includes(grade) ? grade : null;
+}
+
+/** Next level + lapse increment for a grade (pure, shared by all tracks). */
+export function gradeStep(level, grade) {
+  const top = HIFZ_INTERVALS.length - 1;
+  const l = Math.min(top, Math.max(0, Math.floor(Number(level)) || 0));
+  if (grade === 'again') return { level: 0, lapse: 1 };
+  if (grade === 'hard') return { level: l, lapse: 0 };
+  if (grade === 'easy') return { level: Math.min(top, l + 2), lapse: 0 };
+  return { level: Math.min(top, l + 1), lapse: 0 }; // good
+}
+
 export const HIFZ_LEVELS = ['word', 'ayah'];
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -91,24 +114,23 @@ export function markMemorized(records, surah, today = dateKey()) {
   };
 }
 
-/** Log a review. grade 'easy' climbs the interval ladder; 'again' resets to
- *  the 1-day interval and counts a lapse. Unknown grade / unknown surah →
- *  records unchanged (pure no-op, never throws). */
+/** Log a review. Four grades (see gradeStep); unknown grade / unknown
+ *  surah → records unchanged (pure no-op, never throws). */
 export function logReview(records, surah, grade, today = dateKey()) {
   const key = String(Math.floor(Number(surah)));
   const rec = (records ?? {})[key];
   if (!rec || !ISO_DATE.test(String(today))) return records ?? {};
-  if (grade !== 'easy' && grade !== 'again') return records;
-  const level = grade === 'easy' ? Math.min(rec.level + 1, HIFZ_INTERVALS.length - 1) : 0;
+  if (!normalizeHifzGrade(grade)) return records;
+  const step = gradeStep(rec.level, grade);
   return {
     ...records,
     [key]: {
       ...rec,
-      level,
+      level: step.level,
       lastReviewed: today,
-      due: plusDays(today, HIFZ_INTERVALS[level]),
+      due: plusDays(today, HIFZ_INTERVALS[step.level]),
       reviews: rec.reviews + 1,
-      lapses: rec.lapses + (grade === 'again' ? 1 : 0),
+      lapses: rec.lapses + step.lapse,
     },
   };
 }
@@ -183,17 +205,17 @@ export function markMemorizedKey(records, key, kind = 'hadith', today = dateKey(
 export function logReviewKey(records, key, grade, today = dateKey()) {
   const rec = (records ?? {})[typeof key === 'string' ? key : ''];
   if (!rec || !ISO_DATE.test(String(today))) return records ?? {};
-  if (grade !== 'easy' && grade !== 'again') return records;
-  const level = grade === 'easy' ? Math.min(rec.level + 1, HIFZ_INTERVALS.length - 1) : 0;
+  if (!normalizeHifzGrade(grade)) return records;
+  const step = gradeStep(rec.level, grade);
   return {
     ...records,
     [key]: {
       ...rec,
-      level,
+      level: step.level,
       lastReviewed: today,
-      due: plusDays(today, HIFZ_INTERVALS[level]),
+      due: plusDays(today, HIFZ_INTERVALS[step.level]),
       reviews: rec.reviews + 1,
-      lapses: rec.lapses + (grade === 'again' ? 1 : 0),
+      lapses: rec.lapses + step.lapse,
     },
   };
 }
@@ -204,6 +226,143 @@ export function dueMemRecords(records, today = dateKey()) {
     .filter(([, r]) => r && typeof r === 'object' && !Array.isArray(r) && r.due <= today)
     .map(([k, r]) => ({ key: k, level: r.level, due: r.due, overdue: diffDays(r.due, today) }))
     .sort((a, b) => (a.due < b.due ? -1 : a.due > b.due ? 1 : 0));
+}
+
+/* ------------------------------------------------------------------ */
+/* Ayah-level track (v5.2.64): per-ayah SRS beside the surah ladder.  */
+/* Keys are "surah:ayah" ("2:255"). Ayah ranges cap at 286 (Al-Baqarah, */
+/* the longest surah) — deeper validation belongs to quran-meta, which  */
+/* this pure module never imports. Lapses double as the mistake signal */
+/* for the heatmap: no new fields, no second progress system.          */
+/* ------------------------------------------------------------------ */
+
+/** "s:a" with 1..114 / 1..286 ranges, or null. */
+export function normalizeAyahKey(surah, ayah) {
+  const s = Math.floor(Number(surah));
+  const a = Math.floor(Number(ayah));
+  if (
+    !Number.isFinite(s) ||
+    !Number.isFinite(a) ||
+    !(s >= 1 && s <= 114) ||
+    !(a >= 1 && a <= 286)
+  ) {
+    return null;
+  }
+  return `${s}:${a}`;
+}
+
+/** Mark one ayah memorized (level 0, due tomorrow). Re-marking restarts. */
+export function markAyahMemorized(records, surah, ayah, today = dateKey()) {
+  const key = normalizeAyahKey(surah, ayah);
+  if (!key || !ISO_DATE.test(String(today))) return records ?? {};
+  return {
+    ...(records ?? {}),
+    [key]: {
+      level: 0,
+      since: today,
+      lastReviewed: today,
+      due: plusDays(today, 1),
+      reviews: 0,
+      lapses: 0,
+    },
+  };
+}
+
+/** Log an ayah review (four grades, shared step math). Unknown ayah or
+ *  grade → records unchanged (pure no-op, never throws). */
+export function logAyahReview(records, surah, ayah, grade, today = dateKey()) {
+  const key = normalizeAyahKey(surah, ayah);
+  const rec = key ? (records ?? {})[key] : null;
+  if (!rec || !ISO_DATE.test(String(today))) return records ?? {};
+  if (!normalizeHifzGrade(grade)) return records;
+  const step = gradeStep(rec.level, grade);
+  return {
+    ...records,
+    [key]: {
+      ...rec,
+      level: step.level,
+      lastReviewed: today,
+      due: plusDays(today, HIFZ_INTERVALS[step.level]),
+      reviews: rec.reviews + 1,
+      lapses: rec.lapses + step.lapse,
+    },
+  };
+}
+
+/** Sanitize a restored/imported ayah-records map (same shape as surahs). */
+export function sanitizeAyahRecords(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const [k, v] of Object.entries(raw)) {
+    if (typeof k !== 'string' || k === '__proto__' || k === 'constructor' || k === 'prototype') {
+      continue;
+    }
+    const [s, a] = k.split(':');
+    if (normalizeAyahKey(s, a) !== k) continue;
+    const r = v && typeof v === 'object' && !Array.isArray(v) ? v : null;
+    if (!r) continue;
+    const iso = (x) => (typeof x === 'string' && ISO_DATE.test(x) ? x : null);
+    const since = iso(r.since);
+    const due = iso(r.due) ?? since;
+    if (!due) continue;
+    out[k] = {
+      level: Math.min(HIFZ_INTERVALS.length - 1, Math.max(0, Math.floor(Number(r.level)) || 0)),
+      due,
+      since: since ?? due,
+      lastReviewed: iso(r.lastReviewed),
+      reviews: Math.max(0, Math.floor(Number(r.reviews)) || 0),
+      lapses: Math.max(0, Math.floor(Number(r.lapses)) || 0),
+    };
+  }
+  if (Object.keys(out).length > 6236) {
+    // More records than ayahs exist — keep the most recently reviewed.
+    const keys = Object.keys(out).sort((x, y) =>
+      String(out[y].lastReviewed || '') < String(out[x].lastReviewed || '') ? -1 : 1
+    );
+    for (const drop of keys.slice(6236)) delete out[drop];
+  }
+  return out;
+}
+
+/** Ayahs due on/before `today`, oldest due first (mushaf order on ties). */
+export function dueAyahs(records, today = dateKey()) {
+  return Object.entries(records ?? {})
+    .filter(([, r]) => r && typeof r === 'object' && !Array.isArray(r) && r.due <= today)
+    .map(([k, r]) => {
+      const [s, a] = String(k).split(':').map(Number);
+      return {
+        key: k,
+        surah: s,
+        ayah: a,
+        level: r.level,
+        due: r.due,
+        overdue: diffDays(r.due, today),
+      };
+    })
+    .sort((x, y) =>
+      x.due < y.due ? -1 : x.due > y.due ? 1 : x.surah - y.surah || x.ayah - y.ayah
+    );
+}
+
+/**
+ * Mistake heat per ayah of one surah: { [ayah]: lapses }, seeded 0 for
+ * 1..ayahCount so the strip renders every cell. Cap counts at 99 (display
+ * honesty — heat buckets saturate long before that anyway).
+ */
+export function ayahMistakes(records, surah, ayahCount) {
+  const s = Math.floor(Number(surah));
+  const n = Math.floor(Number(ayahCount));
+  const out = {};
+  if (!(s >= 1 && s <= 114) || !(n >= 1)) return out;
+  for (let a = 1; a <= n; a += 1) out[a] = 0;
+  const map = records && typeof records === 'object' && !Array.isArray(records) ? records : {};
+  for (const [k, r] of Object.entries(map)) {
+    const [ks, ka] = String(k).split(':').map(Number);
+    if (ks !== s || !Number.isInteger(ka) || ka < 1 || ka > n) continue;
+    const lapses = Math.floor(Number(r?.lapses)) || 0;
+    if (lapses > 0) out[ka] = Math.min(99, lapses);
+  }
+  return out;
 }
 
 /** Surahs due for review on/before `today`, oldest due first. Defensive

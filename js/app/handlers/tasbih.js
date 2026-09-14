@@ -5,7 +5,10 @@
  */
 
 import { actions, store } from '../../core/state.js';
+import { t } from '../../core/i18n.js';
+import { vibrate } from '../../core/utils.js';
 import * as tasbih from '../../services/tasbih.js';
+import { showToast } from '../../ui/toast.js';
 import { triggerRipple } from './items.js';
 import { PRESETS as TASBIH_PRESETS } from '../../views/tasbih.js';
 
@@ -37,7 +40,13 @@ export const clickHandlers = {
 
   'tasbih-reset': (ds) => {
     const preset = TASBIH_PRESETS.find((p) => p.id === ds.phraseId);
-    tasbih.reset('tasbih:' + ds.phraseId, parseInt(ds.target, 10) || preset?.target || 33);
+    const customs = store.getState().tasbihCustom;
+    const custom =
+      !preset && Array.isArray(customs) ? customs.find((c) => c && c.id === ds.phraseId) : null;
+    tasbih.reset(
+      'tasbih:' + ds.phraseId,
+      parseInt(ds.target, 10) || preset?.target || custom?.target || 33
+    );
   },
 
   'tasbih-target-step': (ds) => {
@@ -57,5 +66,32 @@ export const clickHandlers = {
     const key = 'tasbih:' + ds.phraseId;
     const target = Math.max(1, Math.min(100000, parseInt(ds.target, 10) || 33));
     tasbih.setTarget(key, target);
+  },
+
+  // (v5.2.46) user-authored phrases: free text + named goal, same journal
+  // discipline (read the live inputs, clear them on save so a stale value
+  // never reads as a failed save). The counter rides the generic
+  // 'tasbih:'+id key through the shared increment().
+  'tasbih-custom-save': () => {
+    const lang = store.getState().settings.language;
+    const textEl = document.querySelector('[data-bind="tasbih-custom-text"]');
+    const targetEl = document.querySelector('[data-bind="tasbih-custom-target"]');
+    const text = String(textEl?.value || '').trim();
+    if (!text) {
+      showToast(t('tasbih.customEmpty', lang));
+      return;
+    }
+    const target = Math.min(100000, Math.max(1, parseInt(targetEl?.value, 10) || 33));
+    store.dispatch(actions.tasbihCustomAdd(text, target));
+    if (textEl) textEl.value = '';
+    if (targetEl) targetEl.value = '33';
+    const state = store.getState();
+    if (state.settings.hapticsEnabled) vibrate(10);
+    showToast(t('tasbih.customAdded', state.settings.language));
+  },
+
+  'tasbih-custom-remove': (ds) => {
+    if (!ds.id) return;
+    store.dispatch(actions.tasbihCustomRemove(ds.id));
   },
 };

@@ -152,7 +152,7 @@ describe('v4.2 computeStreak: DST-safe day comparison', () => {
     assert.equal(longestStreak, 4);
   });
 
-  test('gaps still break the run', () => {
+  test('a single isolated miss is frozen (v5.2.45); wider gaps still break', () => {
     const { longestStreak } = computeStreak(
       {
         dailyHistory: {
@@ -162,8 +162,21 @@ describe('v4.2 computeStreak: DST-safe day comparison', () => {
       },
       '2025-03-09'
     );
-    // one missed day severs the run — both islands are length 1
-    assert.equal(longestStreak, 1);
+    // (v5.2.45) one missed day per run is absorbed by the streak freeze —
+    // the frozen day adds no length, so the two streak days read 2 (was 1
+    // before the freeze: "one missed day severs the run").
+    assert.equal(longestStreak, 2);
+    // Two misses in a row still sever the run — both islands are length 1.
+    const broken = computeStreak(
+      {
+        dailyHistory: {
+          '2025-03-07': { recitations: 1 },
+          '2025-03-10': { recitations: 1 },
+        },
+      },
+      '2025-03-10'
+    );
+    assert.equal(broken.longestStreak, 1);
   });
 });
 

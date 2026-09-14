@@ -18,6 +18,7 @@ import { pickLocale, escapeHTML } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { hadithCardHTML } from './hadithCard.js';
 import { HADITH_PAGE_SIZE, filterHadiths, clampPage, pageCount } from '../services/hadith.js';
+import { hadithIndexStats, searchHadith } from '../domain/hadithSearch.js';
 import { contentPrefsOf } from '../services/contentPrefs.js';
 import { skeletonHadithCard } from '../ui/skeleton.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
@@ -31,6 +32,88 @@ function offlineBadge(book, lang) {
     return `<span class="hadith-tile__badge">${icon('download', { size: 12 })} ${t('hadith.offlineReady', lang)}</span>`;
   }
   return `<span class="hadith-tile__badge hadith-tile__badge--ondemand">${t('hadith.onDemand', lang)}</span>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Cross-book search (v5.2.57)                                           */
+/* ------------------------------------------------------------------ */
+
+/** Results per grid page (cards are heavy — 10, not the reader's 20). */
+const HADITH_GRID_PAGE_SIZE = 10;
+/** Ranked total cap: deep result sets page through the pager, not the DOM. */
+const HADITH_GRID_RESULT_CAP = 200;
+
+function gridSearchBox(lang, q) {
+  return `
+    <div class="search-bar">
+      <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
+      <input type="search" class="search-bar__input" id="hadith-grid-search-input"
+        placeholder="${t('hadith.searchAll', lang)}" aria-label="${t('hadith.searchAll', lang)}" value="${escapeHTML(q || '')}"
+        data-bind="hadith-grid-search" autocomplete="off" />
+    </div>`;
+}
+
+/** Ranked cross-book results for the grid query (pure over loaded docs). */
+function renderGridSearch(state, lang, q) {
+  const books = state.hadith.index?.books || [];
+  const docs = state.hadith.docs || {};
+  const stats = hadithIndexStats();
+  const terms = q.split(/\s+/);
+  const all = searchHadith(q, { limit: HADITH_GRID_RESULT_CAP });
+  const pages = Math.max(1, Math.ceil(all.length / HADITH_GRID_PAGE_SIZE));
+  const rawPage = Math.floor(Number(state.activeParams?.page));
+  const page = !Number.isFinite(rawPage) || rawPage < 1 ? 1 : Math.min(pages, rawPage);
+  const from = all.length ? (page - 1) * HADITH_GRID_PAGE_SIZE + 1 : 0;
+  const to = Math.min(page * HADITH_GRID_PAGE_SIZE, all.length);
+
+  const cards = all
+    .slice((page - 1) * HADITH_GRID_PAGE_SIZE, page * HADITH_GRID_PAGE_SIZE)
+    .map((hit) => {
+      const doc = docs[hit.bookId];
+      const h = doc?.hadiths?.find((x) => x && Number(x.n) === Number(hit.n));
+      if (!h) return '';
+      const meta = books.find((b) => b.id === hit.bookId);
+      const sectionName = doc.sections?.find((s) => s.id === h.b)?.name || '';
+      return `
+      <div class="hadith-hit">
+        <p class="hadith-hit__meta">
+          <a href="${buildHash(VIEWS.HADITH, { id: hit.bookId, n: String(hit.n) })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-id="${escapeHTML(hit.bookId)}" data-n="${escapeHTML(String(hit.n))}">${escapeHTML(pickLocale(meta?.name ?? doc?.name ?? { en: hit.bookId }, lang))} · #${escapeHTML(String(hit.n))}</a>
+        </p>
+        ${hadithCardHTML(h, {
+          lang,
+          sectionName,
+          showTranslation: state.settings.showTranslation,
+          showArabic: state.settings.showHadithArabic !== false,
+          bookId: hit.bookId,
+          highlight: terms,
+        })}
+      </div>`;
+    })
+    .join('');
+
+  // Honest scope: the index covers loaded books; the build trigger in
+  // stateSub keeps loading the rest while this query stands.
+  const scope =
+    books.length && stats.books.length < books.length
+      ? `<p class="panel__subtext">${t('hadith.searchScope', lang, { a: stats.books.length, b: books.length })}</p>`
+      : '';
+  const pager =
+    pages <= 1
+      ? ''
+      : `
+    <div class="hadith-pager" dir="ltr">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-grid-prev" ${page <= 1 ? 'disabled' : ''}>${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('common.prev', lang)}</button>
+      <span class="hadith-pager__status">${t('hadith.pageStatus', lang, { from, to, total: all.length, p: page, pages })}</span>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-grid-next" ${page >= pages ? 'disabled' : ''}>${t('common.next', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}</button>
+    </div>`;
+
+  return `
+    ${scope}
+    ${
+      all.length
+        ? `<div class="card-list hadith-list">${cards}</div>${pager}`
+        : `<p class="empty-hint">${t('hadith.noResults', lang)}</p>`
+    }`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -116,6 +199,11 @@ function renderBookGrid(state, lang) {
     ${manageBar}
     ${unhideBar}
 
+    ${gridSearchBox(lang, state.activeParams?.q || '')}
+    ${
+      String(state.activeParams?.q || '').trim()
+        ? renderGridSearch(state, lang, String(state.activeParams.q).trim())
+        : `
     <div class="hadith-grid" data-roving role="group" aria-label="${t('hadith.title', lang)}">
       ${visibleBooks
         .map((book, i) => {
@@ -137,6 +225,7 @@ function renderBookGrid(state, lang) {
             ${offlineBadge(book, lang)}
           </div>
           <span class="hadith-tile__name" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(pickLocale(book.name, lang))}</span>
+          ${book.standing === 'sahih' ? `<span class="chip chip--grade chip--grade-sahih">${t('hadith.standingSahih', lang)}</span>` : ''}
           <span class="hadith-tile__author">${escapeHTML(pickLocale(book.author, lang))}</span>
           <span class="hadith-tile__blurb">${escapeHTML(pickLocale(book.blurb, lang))}</span>
           <span class="hadith-tile__count">${t('hadith.bookCount', lang, { n: book.count, c: book.sectionCount })}${loaded ? ` · ${t('hadith.loaded', lang)}` : ''}</span>
@@ -145,7 +234,8 @@ function renderBookGrid(state, lang) {
         </div>`;
         })
         .join('')}
-    </div>
+    </div>`
+    }
 
     <p class="panel__subtext hadith-note">${t('hadith.sourceNote', lang)}</p>
   </section>`;
@@ -195,6 +285,7 @@ function renderBookReader(state, lang) {
       <a class="back-link" href="${buildHash(VIEWS.HADITH)}" data-action="navigate" data-view="${VIEWS.HADITH}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('hadith.title', lang)}</a>
       <div class="view-header--row">
         <h1 class="view__title" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(pickLocale(bookMeta?.name ?? doc?.name ?? { en: bookId }, lang))}</h1>
+        ${bookMeta?.standing === 'sahih' ? `<span class="chip chip--grade chip--grade-sahih">${t('hadith.standingSahih', lang)}</span>` : ''}
         ${viewMenuButton('hadith-book', lang, { labelKey: 'viewMenu.hadithBook' })}
       </div>
       ${bookMeta?.author || doc?.author ? `<p class="view__subtitle">${escapeHTML(pickLocale(bookMeta?.author ?? doc.author, lang))}</p>` : ''}

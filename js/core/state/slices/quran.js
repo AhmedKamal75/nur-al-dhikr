@@ -15,8 +15,11 @@ import { nextStats as nextTajweedPracticeStats } from '../../../domain/tajweedPr
 import {
   normalizeHifzLevel,
   normalizeHifzTest,
+  normalizeHifzGrade,
   markMemorized,
   logReview,
+  markAyahMemorized,
+  logAyahReview,
 } from '../../../domain/hifz.js';
 
 export function reduceQuran(state, action) {
@@ -454,12 +457,31 @@ export function reduceQuran(state, action) {
     case 'HIFZ_MARK_MEMORIZED':
       return { ...state, hifzRecords: markMemorized(state.hifzRecords, action.surah, dateKey()) };
     case 'HIFZ_REVIEW': {
-      const grade = action.grade === 'again' ? 'again' : action.grade === 'easy' ? 'easy' : null;
+      const grade = normalizeHifzGrade(action.grade);
       if (!grade) return state;
+      // An ayah id rides the same action (per-ayah track); without one
+      // the review lands on the surah record, exactly as before.
+      if (action.ayah != null) {
+        return {
+          ...state,
+          hifzAyahRecords: logAyahReview(
+            state.hifzAyahRecords,
+            action.surah,
+            action.ayah,
+            grade,
+            dateKey()
+          ),
+        };
+      }
       return {
         ...state,
         hifzRecords: logReview(state.hifzRecords, action.surah, grade, dateKey()),
       };
+    }
+    case 'HIFZ_AYAH_MARK': {
+      const next = markAyahMemorized(state.hifzAyahRecords, action.surah, action.ayah, dateKey());
+      if (next === state.hifzAyahRecords) return state;
+      return { ...state, hifzAyahRecords: next };
     }
 
     case 'HIFZ_PROFILE_SWITCH': {

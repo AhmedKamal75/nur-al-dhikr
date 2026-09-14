@@ -21,49 +21,54 @@ import {
   VIEWS,
 } from '../core/config.js';
 import { daysSinceBackup, formatBytes, dryRunVerdict } from '../services/dataHealth.js';
+import { backupStale, filePickerSupported } from '../services/backup.js';
+import { isReturningUser } from '../domain/onboarding.js';
 import { buildHash } from '../core/router.js';
 import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
 import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
+import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
 
 /**
- * (v5.2.24) Accordion memory, view-local on purpose. Toggling any switch
- * re-renders the whole view from state — native <details> openness is DOM
- * state, so a re-render used to collapse everything back to the default
- * panel (the "switch closes my section" bug). The single open section id
- * lives here, next to the template that reads it: every render re-opens
- * exactly it, and the capture-phase toggle listener in app/events.js
- * writes it (single-expansion: opening one closes the rest). Session
- * memory only — a reload returns to the default section, which is the
- * honest behavior for ephemeral UI state (never persisted, never synced).
+ * (v5.2.48) Accordion memory, persisted. The open section used to live in
+ * this module (session-only); it now lives in settings.settingsSection
+ * (sanitized slug or null — persisted, backed up, restored like any
+ * setting), so a reload returns to the section the person had open.
+ * Toggling a switch still re-renders the whole view, and the render
+ * re-opens exactly the stored section, so the "switch closes my section"
+ * fix survives the move. A `#/settings/<slug>` deep link overrides the
+ * stored pin for the visit (unknown slugs fall back, never a broken pin).
  */
-let openSectionId = 'settings-sec-language';
 
-/** The id of the currently open accordion section (or null when all closed). */
-export function getOpenSettingsSection() {
-  return openSectionId;
-}
-
-/** Pin the open accordion section; unknown ids collapse everything. */
-export function setOpenSettingsSection(id) {
-  openSectionId = typeof id === 'string' && /^settings-sec-[a-z]+$/.test(id) ? id : null;
-}
-
-/** All accordion section ids, in render order (for the toggle listener). */
+/** All accordion section ids, in render order (single source of truth). */
 export function settingsSectionIds() {
-  return [
-    'settings-sec-language',
-    'settings-sec-appearance',
-    'settings-sec-content',
-    'settings-sec-cardfields',
-    'settings-sec-reciter',
-    'settings-sec-translation',
-    'settings-sec-compare',
-    'settings-sec-feedback',
-    'settings-sec-notifications',
-    'settings-sec-accessibility',
-    'settings-sec-profiles',
-    'settings-sec-data',
-  ];
+  return SETTINGS_SECTIONS.map((sec) => sec.id);
+}
+
+/** Full section id → URL slug ('settings-sec-data' → 'data'), or null. */
+export function settingsSlugForSection(id) {
+  if (typeof id !== 'string' || !id.startsWith('settings-sec-')) return null;
+  const slug = id.slice('settings-sec-'.length);
+  return /^[a-z]+$/.test(slug) && settingsSectionIds().includes(id) ? slug : null;
+}
+
+/** URL slug → full section id ('data' → 'settings-sec-data'), or null. */
+export function settingsSectionForSlug(slug) {
+  if (typeof slug !== 'string' || !/^[a-z]+$/.test(slug)) return null;
+  const id = `settings-sec-${slug}`;
+  return settingsSectionIds().includes(id) ? id : null;
+}
+
+/** The section id a settings state opens: deep link, stored pin, default. */
+export function openSettingsSectionFor(state) {
+  const params =
+    state && typeof state.activeParams === 'object' && state.activeParams !== null
+      ? state.activeParams
+      : {};
+  const deep = settingsSectionForSlug(params.id);
+  if (deep) return deep;
+  const stored =
+    state && state.settings ? settingsSectionForSlug(state.settings.settingsSection) : null;
+  return stored || 'settings-sec-language';
 }
 
 const FIELD_LABELS = {
@@ -92,6 +97,35 @@ function homePanelRows(state, lang) {
       <button type="button" class="icon-btn icon-btn--sm" data-action="home-panel-move" data-id="${id}" data-dir="1" ${i === listed.length - 1 ? 'disabled' : ''} aria-label="${t('settings.moveDown', lang)}">${icon('chevronDown', { size: 15 })}</button>
       <label class="switch" title="${escapeHTML(t('settings.hidePanel', lang))}">
         <input type="checkbox" data-action="home-panel-toggle" data-id="${id}" ${hidden[id] ? '' : 'checked'} aria-label="${escapeHTML(t(`home.panel.${id}`, lang))}" />
+        <span class="switch__track"></span>
+      </label>
+    </div>`
+    )
+    .join('');
+}
+
+/** Quick-tile order rows (v5.2.54): same up/down + hide pattern as the
+ *  home panels, over the effective tile order (hidden tiles last so a
+ *  hidden tile can always be brought back). Labels reuse the tile
+ *  shortcuts — no new strings. */
+function quickTileRows(state, lang) {
+  const hidden = state.settings.hiddenQuick || {};
+  // Effective order (usage-driven until customized); hidden tiles keep
+  // their position, so unhiding restores them in place.
+  const listed = resolveQuickTiles({
+    order: state.settings.quickOrder,
+    hidden: {},
+    visits: state.tileVisits,
+  });
+  return listed
+    .map(
+      (id, i) => `
+    <div class="home-panel-row">
+      <span class="home-panel-row__label">${escapeHTML(t(QUICK_TILE_DEFS.find((d) => d.id === id)?.labelKey || 'nav.home', lang))}</span>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="quick-tile-move" data-id="${id}" data-dir="-1" ${i === 0 ? 'disabled' : ''} aria-label="${t('settings.moveUp', lang)}">${icon('chevronUp', { size: 15 })}</button>
+      <button type="button" class="icon-btn icon-btn--sm" data-action="quick-tile-move" data-id="${id}" data-dir="1" ${i === listed.length - 1 ? 'disabled' : ''} aria-label="${t('settings.moveDown', lang)}">${icon('chevronDown', { size: 15 })}</button>
+      <label class="switch" title="${escapeHTML(t('settings.hidePanel', lang))}">
+        <input type="checkbox" data-action="quick-tile-toggle" data-id="${id}" ${hidden[id] ? '' : 'checked'} aria-label="${escapeHTML(t(QUICK_TILE_DEFS.find((d) => d.id === id)?.labelKey || 'nav.home', lang))}" />
         <span class="switch__track"></span>
       </label>
     </div>`
@@ -177,6 +211,9 @@ export function renderSettings(state) {
     SETTINGS_SECTIONS.filter((sec) => !matchSettingsSection(sec, filterQ)).map((sec) => sec.id)
   );
   const s = state.settings;
+  // The open accordion: deep link wins, then the persisted pin, then the
+  // default section. (The search filter below opens matches instead.)
+  const openId = openSettingsSectionFor(state);
 
   const paletteSwatches = PALETTES.map(
     (p) => `
@@ -288,12 +325,12 @@ export function renderSettings(state) {
     </div>
     <h1 class="view__title">${t('settings.title', lang)}</h1>
 
-    <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openSectionId === 'settings-sec-language' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-appearance"${filterQ ? (hideSettings.has('settings-sec-appearance') ? ' hidden' : ' open') : openSectionId === 'settings-sec-appearance' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-appearance"${filterQ ? (hideSettings.has('settings-sec-appearance') ? ' hidden' : ' open') : openId === 'settings-sec-appearance' ? ' open' : ''}>
       ${accHeader(t('settings.appearance', lang), 'sun', lang)}
       <p class="field-label">${t('settings.theme', lang)}</p>
       <div class="segmented">${modeButtons}</div>
@@ -307,7 +344,7 @@ export function renderSettings(state) {
       <input type="range" class="slider" min="0.85" max="1.6" step="0.05" value="${Number(s.arabicFontScale) || 1}" data-bind="arabicFontScale" aria-labelledby="arabic-font-scale-label" />
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-content"${filterQ ? (hideSettings.has('settings-sec-content') ? ' hidden' : ' open') : openSectionId === 'settings-sec-content' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-content"${filterQ ? (hideSettings.has('settings-sec-content') ? ' hidden' : ' open') : openId === 'settings-sec-content' ? ' open' : ''}>
       ${accHeader(t('settings.content', lang), 'list', lang)}
       ${toggleRow('showTransliteration', s.showTransliteration, t('settings.showTransliteration', lang))}
       ${toggleRow('showTranslation', s.showTranslation, t('settings.showTranslation', lang))}
@@ -317,15 +354,17 @@ export function renderSettings(state) {
       <p class="field-label">${t('settings.homePanels', lang)}</p>
       <p class="panel__subtext">${t('settings.homePanelsHint', lang)}</p>
       ${homePanelRows(state, lang)}
+      <p class="field-label">${t('quran.quickActions', lang)}</p>
+      ${quickTileRows(state, lang)}
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-cardfields"${filterQ ? (hideSettings.has('settings-sec-cardfields') ? ' hidden' : ' open') : openSectionId === 'settings-sec-cardfields' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-cardfields"${filterQ ? (hideSettings.has('settings-sec-cardfields') ? ' hidden' : ' open') : openId === 'settings-sec-cardfields' ? ' open' : ''}>
       ${accHeader(t('settings.cardFields', lang), 'grid', lang, 'settings.cardFieldsHint')}
       ${cardFieldRows}
       <button type="button" class="btn btn--secondary btn--sm" data-action="content-restore-all">${icon('refresh', { size: 14 })} ${t('library.sheet.restoreAll', lang)}</button>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-reciter"${filterQ ? (hideSettings.has('settings-sec-reciter') ? ' hidden' : ' open') : openSectionId === 'settings-sec-reciter' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-reciter"${filterQ ? (hideSettings.has('settings-sec-reciter') ? ' hidden' : ' open') : openId === 'settings-sec-reciter' ? ' open' : ''}>
       ${accHeader(t('settings.reciter', lang), 'volume', lang, 'settings.reciterHint')}
       <div class="reciter-list">${reciterRows}</div>
       <p class="field-label">${t('settings.reciterB', lang)}</p>
@@ -335,17 +374,17 @@ export function renderSettings(state) {
       <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.AUDIO)}" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 14 })} ${t('settings.audioManager', lang)}</a>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-translation"${filterQ ? (hideSettings.has('settings-sec-translation') ? ' hidden' : ' open') : openSectionId === 'settings-sec-translation' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-translation"${filterQ ? (hideSettings.has('settings-sec-translation') ? ' hidden' : ' open') : openId === 'settings-sec-translation' ? ' open' : ''}>
       ${accHeader(t('settings.translation', lang), 'book', lang, 'settings.quranTranslationHint')}
       <div class="reciter-list">${translationRows}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openSectionId === 'settings-sec-compare' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openId === 'settings-sec-compare' ? ' open' : ''}>
       ${accHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
       <div class="reciter-list">${compareRows}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-feedback"${filterQ ? (hideSettings.has('settings-sec-feedback') ? ' hidden' : ' open') : openSectionId === 'settings-sec-feedback' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-feedback"${filterQ ? (hideSettings.has('settings-sec-feedback') ? ' hidden' : ' open') : openId === 'settings-sec-feedback' ? ' open' : ''}>
       ${accHeader(t('settings.feedback', lang), 'bead', lang, 'settings.feedbackHint')}
       ${toggleRow('hapticsEnabled', s.hapticsEnabled, t('settings.haptics', lang))}
       ${toggleRow('soundEnabled', s.soundEnabled, t('settings.sound', lang))}
@@ -364,7 +403,7 @@ export function renderSettings(state) {
       </div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-notifications"${filterQ ? (hideSettings.has('settings-sec-notifications') ? ' hidden' : ' open') : openSectionId === 'settings-sec-notifications' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-notifications"${filterQ ? (hideSettings.has('settings-sec-notifications') ? ' hidden' : ' open') : openId === 'settings-sec-notifications' ? ' open' : ''}>
       ${accHeader(t('settings.notifications', lang), 'bell', lang)}
       <div class="btn-stack">
         <button type="button" class="btn btn--secondary btn--sm" data-action="add-reminder">${icon('plus', { size: 14 })} ${t('settings.addReminder', lang)}</button>
@@ -392,10 +431,12 @@ export function renderSettings(state) {
       ${reminders || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-accessibility"${filterQ ? (hideSettings.has('settings-sec-accessibility') ? ' hidden' : ' open') : openSectionId === 'settings-sec-accessibility' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-accessibility"${filterQ ? (hideSettings.has('settings-sec-accessibility') ? ' hidden' : ' open') : openId === 'settings-sec-accessibility' ? ' open' : ''}>
       ${accHeader(t('settings.accessibility', lang), 'hands', lang)}
       ${toggleRow('reduceMotion', s.reduceMotion, t('settings.reduceMotion', lang))}
       ${toggleRow('highContrast', s.highContrast, t('settings.highContrast', lang))}
+      ${toggleRow('dyslexiaFriendly', s.dyslexiaFriendly, t('settings.dyslexiaFriendly', lang))}
+      ${toggleRow('roomySpacing', s.roomySpacing, t('settings.roomySpacing', lang))}
       <label class="toggle-row">
         <span class="toggle-row__label">${escapeHTML(t('settings.elderMode', lang))}<br /><span class="panel__subtext">${escapeHTML(t('settings.elderHint', lang))}</span></span>
         <span class="switch">
@@ -412,7 +453,7 @@ export function renderSettings(state) {
       </label>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-profiles"${filterQ ? (hideSettings.has('settings-sec-profiles') ? ' hidden' : ' open') : openSectionId === 'settings-sec-profiles' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-profiles"${filterQ ? (hideSettings.has('settings-sec-profiles') ? ' hidden' : ' open') : openId === 'settings-sec-profiles' ? ' open' : ''}>
       ${accHeader(t('settings.profiles', lang), 'folder', lang, 'settings.profilesHint')}
       <div class="chip-row" role="group" aria-label="${escapeHTML(t('settings.profiles', lang))}">
         <button type="button" class="chip ${state.activeProfile === 'main' ? 'chip--active' : ''}" data-action="profile-switch" data-id="main" aria-pressed="${state.activeProfile === 'main'}">${escapeHTML(t('settings.profileMain', lang))}</button>
@@ -429,12 +470,14 @@ export function renderSettings(state) {
       </div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-data"${filterQ ? (hideSettings.has('settings-sec-data') ? ' hidden' : ' open') : openSectionId === 'settings-sec-data' ? ' open' : ''}>
+    <details class="panel settings-acc" id="settings-sec-data"${filterQ ? (hideSettings.has('settings-sec-data') ? ' hidden' : ' open') : openId === 'settings-sec-data' ? ' open' : ''}>
       ${accHeader(t('settings.data', lang), 'shield', lang)}
       <!-- v3.26 data health check: three honest facts, zero servers -->
       <div class="data-health">
         <p class="panel__subtext" dir="ltr">${storageLine(state, lang)}</p>
         <p class="panel__subtext">${lastBackupLine(state, lang)}</p>
+        ${staleBackupBanner(state, lang)}
+        <p class="panel__subtext">${autoBackupLine(state, lang)}</p>
         <p class="panel__subtext" dir="ltr">${t('settings.dataAppVersion', lang, { v: APP_VERSION })}</p>
         ${dryRunLine(state, lang)}
       </div>
@@ -442,6 +485,8 @@ export function renderSettings(state) {
         <a class="btn btn--primary" href="${buildHash(VIEWS.OFFLINE)}" data-action="navigate" data-view="${VIEWS.OFFLINE}">${icon('download', { size: 16 })} ${t('nav.offline', lang)}</a>
         <button type="button" class="btn btn--secondary" data-action="verify-backup">${icon('check', { size: 16 })} ${t('settings.dataVerify', lang)}</button>
         <button type="button" class="btn btn--secondary" data-action="export-backup">${icon('download', { size: 16 })} ${t('settings.exportBackup', lang)}</button>
+        ${filePickerSupported() ? `<button type="button" class="btn btn--secondary" data-action="backup-link-file">${icon('folder', { size: 16 })} ${t('settings.dataLinkFile', lang)}</button>` : ''}
+        ${state.backupMeta?.lastAutoBackupAt ? `<button type="button" class="btn btn--secondary" data-action="restore-auto-backup">${icon('upload', { size: 16 })} ${t('settings.restoreAutoBackup', lang)}</button>` : ''}
         <button type="button" class="btn btn--secondary" data-action="import-backup">${icon('upload', { size: 16 })} ${t('settings.importBackup', lang)}</button>
         <button type="button" class="btn btn--secondary" data-action="export-plan">${icon('share', { size: 16 })} ${t('settings.exportPlan', lang)}</button>
         <button type="button" class="btn btn--secondary" data-action="import-plan">${icon('upload', { size: 16 })} ${t('settings.importPlan', lang)}</button>
@@ -471,6 +516,31 @@ function lastBackupLine(state, lang) {
   const days = daysSinceBackup(state.backupMeta?.lastBackupAt, new Date());
   if (days == null) return t('settings.dataLastBackupNever', lang);
   return t('settings.dataLastBackupDays', lang, { n: days });
+}
+
+/** Days since the rolling on-device snapshot — null means never. */
+function autoBackupLine(state, lang) {
+  const days = daysSinceBackup(state.backupMeta?.lastAutoBackupAt, new Date());
+  if (days == null) return t('settings.dataAutoNever', lang);
+  return t('settings.dataAutoLine', lang, { n: days });
+}
+
+/**
+ * (v5.2.53) stale-backup nudge: returning users with data worth
+ * protecting, whose last off-device export is old or never, get the
+ * export call-to-action inline. The on-device snapshot never counts —
+ * device loss still needs a manual export, and this says so by pointing
+ * at Export, not at the snapshot.
+ */
+function staleBackupBanner(state, lang) {
+  if (!isReturningUser(state)) return '';
+  if (!backupStale(state.backupMeta?.lastBackupAt)) return '';
+  const days = daysSinceBackup(state.backupMeta?.lastBackupAt, new Date());
+  const line =
+    days == null
+      ? t('settings.dataBackupNever', lang)
+      : t('settings.dataBackupStale', lang, { n: days });
+  return `<p class="panel__subtext">${icon('shield', { size: 13 })} ${line} <button type="button" class="link-btn link-btn--sm" data-action="export-backup">${t('settings.exportBackup', lang)}</button></p>`;
 }
 
 /** The restore dry-run verdict, rendered after the first "verify" tap. */

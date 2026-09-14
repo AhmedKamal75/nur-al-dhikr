@@ -357,6 +357,31 @@ function paragraphize(s) {
 }
 
 /**
+ * (v5.2.63) English commentary formatter: plain escaped paragraphs only.
+ * The Arabic section-header pass (`* Title:`) would misfire on English
+ * prose punctuation, so English never runs through it — same paragraph
+ * rhythm, no invented structure.
+ */
+export function formatEnglishCommentary(raw) {
+  if (!raw) return '';
+  return paragraphize(escapeHTML(raw));
+}
+
+/** True for catalog editions whose text reads left-to-right (English). */
+export function isEnglishEdition(edition) {
+  return !!edition && edition.lang === 'en';
+}
+
+/** Commentary body for an edition: direction, language and formatter
+ *  follow the edition, never the UI language. */
+export function editionBodyHTML(edition, text) {
+  if (isEnglishEdition(edition)) {
+    return `<div class="tafsir-panel__body" dir="ltr" lang="en">${formatEnglishCommentary(text)}</div>`;
+  }
+  return `<div class="tafsir-panel__body" dir="rtl" lang="ar">${formatArabicCommentary(text)}</div>`;
+}
+
+/**
  * The tabbed panel: one tab per catalog edition. `activeId` is which tab
  * is currently selected (session state in state.mushafSession, set by the
  * study-modal flows — the panel itself stays pure).
@@ -390,7 +415,7 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
     if (text) {
       body = `
         <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: activeEdition.authorEn, ar: activeEdition.authorAr }, lang))}</p>
-        <div class="tafsir-panel__body" dir="rtl" lang="ar">${formatArabicCommentary(text)}</div>`;
+        ${editionBodyHTML(activeEdition, text)}`;
     } else if (state.loadErrors?.['tafsir-text']) {
       // v4.1: the text fetch failed — Retry instead of a stuck skeleton.
       body = `<div class="tafsir-panel__loading">${loadErrorStateHTML({ lang, tierKey: 'tafsir-text', t })}</div>`;
@@ -457,7 +482,7 @@ function buildTafsirCompare(state, surah, ayah, editions, activeId, lang) {
     if (ed && text) {
       second = `
       <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: ed.authorEn, ar: ed.authorAr }, lang))}</p>
-      <div class="tafsir-panel__body" dir="rtl" lang="ar">${formatArabicCommentary(text)}</div>`;
+      ${editionBodyHTML(ed, text)}`;
     } else if (ed && cached(ed)) {
       second = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
     }

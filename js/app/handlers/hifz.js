@@ -5,7 +5,7 @@
  */
 
 import { actions, store } from '../../core/state.js';
-import { buildMcqOptions } from '../../domain/hifz.js';
+import { buildMcqOptions, normalizeHifzGrade } from '../../domain/hifz.js';
 
 export const clickHandlers = {
   'hifz-toggle': (ds) => {
@@ -53,12 +53,19 @@ export const clickHandlers = {
   },
 
   'hifz-review': (ds) => {
+    const grade = normalizeHifzGrade(ds.grade);
+    if (!grade) return;
     store.dispatch(
       actions.hifzReview({
         surah: Number(ds.surah),
-        grade: ds.grade === 'again' ? 'again' : 'easy',
+        ayah: ds.ayah != null && ds.ayah !== '' ? Number(ds.ayah) : null,
+        grade,
       })
     );
+  },
+
+  'hifz-ayah-mark': (ds) => {
+    store.dispatch(actions.hifzMarkAyah({ surah: Number(ds.surah), ayah: Number(ds.ayah) }));
   },
 
   // v3.18 voluntary fasting — prefs only; the fasts themselves reuse the

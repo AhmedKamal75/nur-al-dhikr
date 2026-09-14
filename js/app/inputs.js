@@ -9,6 +9,7 @@ import { VIEWS } from '../core/config.js';
 
 import { replaceGo } from '../core/router.js';
 import { actions, store } from '../core/state.js';
+import { FAVORITE_SORTS } from '../views/favorites.js';
 import * as soundDesign from '../services/soundDesign.js';
 
 /** v3.14 Phase C: soft paper sound for Mushaf page flips (opt-in via
@@ -68,11 +69,25 @@ export const debounceQuranSearchNavigate = makeSearchDebounce(
   'quran-search-input'
 );
 
-export const debounceFavoritesSearchNavigate = makeSearchDebounce(
-  'favoritesSearchTimer',
-  VIEWS.FAVORITES,
-  'favorites-search-input'
-);
+/** Favorites filter: like the journal one, the sort order must survive
+ *  typing (the generic helper would drop it back to the default). */
+export const debounceFavoritesSearchNavigate = (value) => {
+  clearTimeout(rt.favoritesSearchTimer);
+  rt.favoritesSearchTimer = setTimeout(() => {
+    const sort = store.getState().activeParams.sort;
+    replaceGo(VIEWS.FAVORITES, {
+      ...(FAVORITE_SORTS.includes(sort) ? { sort } : {}),
+      ...(value ? { q: value } : {}),
+    });
+    requestAnimationFrame(() => {
+      const input = document.getElementById('favorites-search-input');
+      if (input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    });
+  }, 180);
+};
 export const debounceSettingsSearchNavigate = makeSearchDebounce(
   'settingsSearchTimer',
   VIEWS.SETTINGS,
@@ -120,6 +135,22 @@ export function debounceHadithQuery(value) {
     store.dispatch(actions.setHadithView({ query: String(value || ''), page: 1 }));
   }, 200);
 }
+
+/** Hadith grid cross-book search: replaceGo (no history spam per
+ *  keystroke), page resets — typing a new query always starts on page 1. */
+export const debounceHadithGridQuery = (value) => {
+  clearTimeout(rt.hadithGridSearchTimer);
+  rt.hadithGridSearchTimer = setTimeout(() => {
+    replaceGo(VIEWS.HADITH, value ? { q: value } : {});
+    requestAnimationFrame(() => {
+      const input = document.getElementById('hadith-grid-search-input');
+      if (input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    });
+  }, 180);
+};
 
 /*
  * Zakat inputs: every keystroke dispatches into the store (one-way data

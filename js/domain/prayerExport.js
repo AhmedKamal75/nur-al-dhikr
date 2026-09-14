@@ -34,10 +34,25 @@ export function icsLocal(date) {
   );
 }
 
+/** At-time alarm lines for one event (shared by both builders — one
+ *  definition, so daily and month exports can never disagree). */
+function alarmLines(label) {
+  return [
+    'BEGIN:VALARM',
+    'TRIGGER:-PT0M',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:${icsEscape(label)}`,
+    'END:VALARM',
+  ];
+}
+
 /**
  * Build an .ics calendar with one event per prayer. Unreachable (polar
  * fallback) and non-finite entries are skipped, never exported as gospel.
- * `names` maps prayer keys to localized display names.
+ * `names` maps prayer keys to localized display names. (v5.2.60) every
+ * event carries an at-time VALARM so an imported calendar actually alerts
+ * — the file is the no-backend fallback for browsers that cannot
+ * pre-schedule notifications, and a silent event would be a dishonest one.
  */
 export function buildPrayerICS(times, baseDate, { place = '', names = {}, days = 1 } = {}) {
   const safeDays = Number.isInteger(days) && days >= 1 && days <= 7 ? days : 1;
@@ -62,6 +77,7 @@ export function buildPrayerICS(times, baseDate, { place = '', names = {}, days =
         `DTEND:${icsLocal(end)}`,
         `SUMMARY:${icsEscape(label)}`,
         place ? `LOCATION:${icsEscape(place)}` : null,
+        ...alarmLines(label),
         'END:VEVENT'
       );
     }
@@ -132,7 +148,8 @@ export function timetableCell(times, name) {
 /**
  * Month .ics from timetable rows: one 15-minute event per reachable prayer
  * per day. UIDs embed the date so re-importing a month never duplicates
- * against the single-day export (different UID namespace).
+ * against the single-day export (different UID namespace). At-time
+ * VALARMs included (same fallback contract as buildPrayerICS).
  */
 export function buildMonthICS(timetable, { place = '', names = {} } = {}) {
   const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NurAlDhikr//PrayerMonth//EN'];
@@ -145,14 +162,16 @@ export function buildMonthICS(timetable, { place = '', names = {} } = {}) {
       if (!Number.isFinite(h) || row.times?.unreachable?.[name]) continue;
       const start = decimalHoursToDate(day, h);
       const end = new Date(start.getTime() + 15 * 60 * 1000);
+      const label = names[name] || name;
       lines.push(
         'BEGIN:VEVENT',
         `UID:nur-month-${timetable.year}${p(timetable.month)}${p(row.day)}-${name}@nur-al-dhikr`,
         `DTSTAMP:${stamp}`,
         `DTSTART:${icsLocal(start)}`,
         `DTEND:${icsLocal(end)}`,
-        `SUMMARY:${icsEscape(names[name] || name)}`,
+        `SUMMARY:${icsEscape(label)}`,
         place ? `LOCATION:${icsEscape(place)}` : null,
+        ...alarmLines(label),
         'END:VEVENT'
       );
     }

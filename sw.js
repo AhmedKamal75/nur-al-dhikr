@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.2.43';
+const VERSION = 'nur-al-dhikr-v5.2.67';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -117,6 +117,7 @@ const APP_SHELL = [
   'js/core/theme.js',
   'js/core/utils.js',
   'js/domain/adhkarTiming.js',
+  'js/domain/audioQueue.js',
   'js/domain/calendar.js',
   'js/domain/celebrate.js',
   'js/domain/completedCards.js',
@@ -128,9 +129,11 @@ const APP_SHELL = [
   'js/domain/garden.js',
   'js/domain/gestures.js',
   'js/domain/grammarDrill.js',
+  'js/domain/hadithSearch.js',
   'js/domain/homePanels.js',
   'js/domain/hifz.js',
   'js/domain/khatma.js',
+  'js/domain/launchIntents.js',
   'js/domain/localeContent.js',
   'js/domain/locations.js',
   'js/domain/milestones.js',
@@ -146,6 +149,7 @@ const APP_SHELL = [
   'js/domain/prayerTimeline.js',
   'js/domain/qada.js',
   'js/domain/qibla.js',
+  'js/domain/quickTiles.js',
   'js/domain/quranSearch.js',
   'js/domain/ramadan.js',
   'js/domain/ramadanPlanner.js',
@@ -168,6 +172,7 @@ const APP_SHELL = [
   'js/domain/worship.js',
   'js/domain/zakat.js',
   'js/services/alertTriggers.js',
+  'js/services/appBadge.js',
   'js/services/contentPrefs.js',
   'js/services/audioCatalog.js',
   'js/services/audioContext.js',

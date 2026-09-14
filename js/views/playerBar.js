@@ -11,6 +11,7 @@ import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { findMoshaf } from '../services/audioCatalog.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
+import { normalizeRepeatMode } from '../domain/audioQueue.js';
 import {
   consoleSnapshot,
   recitationChipsHTML,
@@ -37,7 +38,10 @@ export function renderPlayerBar(state) {
     : `#${p.surah}`;
   const prefs = state.settings.audio || {};
   const rate = RATES.includes(prefs.rate) ? prefs.rate : 1;
-  const repeat = prefs.repeat === 'one' ? 'one' : 'off';
+  // (v5.2.67) three repeat modes: the chip names the active one (tooltip +
+  // screen reader) and badges repeat-all visibly — icon-only would lie.
+  const repeat = normalizeRepeatMode(prefs.repeat);
+  const repeatLabel = repeat === 'all' ? t('audio.repeatAll', lang) : t('audio.repeat', lang);
 
   return `
   <div class="player-bar" data-player-mounted="1">
@@ -52,8 +56,8 @@ export function renderPlayerBar(state) {
         <span class="player-bar__reciter">${escapeHTML(name)}${p.offline ? ` · ${icon('check', { size: 11 })} ${t('audio.offlineBadge', lang)}` : ''}</span>
       </div>
       <span class="player-bar__buffer" data-player-buffer hidden>${t('audio.buffering', lang)}</span>
-      <button type="button" class="player-bar__chip ${repeat !== 'off' ? 'player-bar__chip--on' : ''}" data-action="player-repeat" aria-pressed="${repeat !== 'off'}" aria-label="${t('audio.repeat', lang)}">
-        ${icon('repeat', { size: 14 })}
+      <button type="button" class="player-bar__chip ${repeat !== 'off' ? 'player-bar__chip--on' : ''}" data-action="player-repeat" aria-pressed="${repeat !== 'off'}" aria-label="${repeatLabel}" title="${repeatLabel}">
+        ${icon('repeat', { size: 14 })}${repeat === 'all' ? ` ${escapeHTML(t('audio.repeatAllShort', lang))}` : ''}
       </button>
       <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)} — ${rate}&times;">${rate}&times;</button>
       <button type="button" class="player-bar__chip ${p.sleepEnabled ? 'player-bar__chip--on' : ''}" data-action="player-sleep-cycle" aria-pressed="${p.sleepEnabled === true}" aria-label="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}" title="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}">

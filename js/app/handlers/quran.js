@@ -14,8 +14,9 @@ import { renderPracticeRound, startPracticeRound } from '../practice.js';
 
 import { MUSHAF_META_URL, VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
-import { go } from '../../core/router.js';
+import { go, replaceGo } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
+import { getVerseAudio } from '../../services/audioStore.js';
 import { buildAnswerKey, scoreRound } from '../../domain/tajweedPractice.js';
 import {
   clampPage,
@@ -26,6 +27,7 @@ import {
   spreadLeftPage,
   nextSpreadPage,
   prevSpreadPage,
+  globalAyahNumber,
 } from '../../services/mushaf.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -258,6 +260,30 @@ export const clickHandlers = {
   // (the deep-link scroll machinery picks the ayah up once it renders).
   'roots-jump': (ds) => {
     go(VIEWS.QURAN, { id: ds.surah, ay: ds.ayah });
+  },
+
+  // (v5.2.55) roots index paging: replaceGo keeps tab/q, drops page 1 —
+  // the search-typing discipline (no history spam, URL stays shareable).
+  'roots-page': (ds) => {
+    const page = Math.max(1, Math.floor(Number(ds.page)) || 1);
+    replaceGo(VIEWS.ROOTS, {
+      ...(ds.q ? { q: ds.q } : {}),
+      ...(page > 1 ? { page: String(page) } : {}),
+    });
+  },
+
+  // (v5.2.55) per-group ref overflow: pure DOM toggle (no nav, no state —
+  // expansion is a reading gesture, like the Mushaf control auto-fade).
+  'roots-expand': (ds, _e, target) => {
+    const root = target?.closest?.('.root-form');
+    const more = root?.querySelector?.('.root-form__more');
+    const label = target?.querySelector?.('.roots-expand__label');
+    if (!root || !more || !label) return;
+    const opening = more.hasAttribute('hidden');
+    if (opening) more.removeAttribute('hidden');
+    else more.setAttribute('hidden', '');
+    target.setAttribute('aria-expanded', String(opening));
+    label.textContent = opening ? target.dataset.labelLess || '' : target.dataset.labelMore || '';
   },
 
   'tafsir-open': async (ds) => {
@@ -496,8 +522,8 @@ export const clickHandlers = {
     }
   },
 
-  'play-ayah': (ds) => {
-    if (!ds.url) return;
+  'play-ayah': async (ds) => {
+    if (!ds.url && !ds.key) return;
     if (recitation.isPlaying(ds.key) || surahPlayback.isActive()) {
       surahPlayback.stop();
       if (recitation.isPlaying(ds.key)) recitation.stop();
@@ -509,7 +535,27 @@ export const clickHandlers = {
         player.pause();
         store.dispatch(actions.setAudioPlayer({ playing: false }));
       }
-      recitation.play(ds.url, ds.key);
+      // (v5.2.61) offline-first single verses: the key carries surah:ayah,
+      // so a stored Blob wins over the rendered CDN url (which stays the
+      // fallback when nothing is stored).
+      let url = ds.url;
+      const [s, a] = String(ds.key || '')
+        .split(':')
+        .map(Number);
+      if (Number.isFinite(s) && Number.isFinite(a)) {
+        const st = store.getState();
+        const g = globalAyahNumber(st.quran.meta?.surahs, s, a);
+        if (g != null) {
+          try {
+            const blob = await getVerseAudio(st.settings.reciter, g);
+            if (blob) url = URL.createObjectURL(blob);
+          } catch {
+            /* storage failure reads as streaming */
+          }
+        }
+      }
+      if (!url) return;
+      recitation.play(url, ds.key);
     }
   },
 };

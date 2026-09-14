@@ -593,6 +593,8 @@ export function buildStatisticsSheet(state) {
           sheetLinkRow('stats.sheet.garden', 'sprout', VIEWS.GARDEN, {}, lang),
           sheetLinkRow('stats.sheet.review', 'target', VIEWS.QURAN, { mem: '1' }, lang),
           sheetRow('statistics-share-week', 'stats.sheet.shareWeek', 'share', lang),
+          sheetRow('statistics-export-csv', 'stats.sheet.exportCsv', 'download', lang),
+          sheetRow('statistics-share-csv', 'stats.sheet.shareCsv', 'share', lang),
         ],
       },
       {

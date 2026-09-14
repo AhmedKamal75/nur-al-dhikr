@@ -97,6 +97,14 @@ function makeDriver() {
 
 const MEDIA_BASE = 'https://cdn.islamic.network/quran/audio/128/ar.alafasy/';
 
+/**
+ * (v5.2.61) the engine resolves each ayah's source (offline Blob or CDN)
+ * asynchronously before playing — flush the microtask queue after every
+ * action that triggers a play so assertions observe the settled state.
+ * Deterministic: setImmediate fires only after all microtasks drain.
+ */
+const tick = () => new Promise((resolve) => setImmediate(resolve));
+
 describe('pure helpers', () => {
   test('nextAyah advances within the surah and stops at the last ayah', () => {
     assert.equal(nextAyah(1, 7), 2);
@@ -130,12 +138,13 @@ describe('pure helpers', () => {
 });
 
 describe('engine (fake driver)', () => {
-  test('plays ayah 1 immediately and reports it', () => {
+  test('plays ayah 1 immediately and reports it', async () => {
     const d = makeDriver();
     configureDriver(d);
     const seen = [];
     onAyahChange((s, a) => seen.push([s, a]));
     start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
     assert.equal(d.played.length, 1);
     assert.ok(d.played[0].url.startsWith(`${MEDIA_BASE}1.mp3`), 'ayah 1 global number = 1');
     assert.equal(d.played[0].key, '1:1');
@@ -171,20 +180,23 @@ describe('engine (fake driver)', () => {
     configureDriver(null);
   });
 
-  test('auto-advances verse by verse and closes at the last ayah', () => {
+  test('auto-advances verse by verse and closes at the last ayah', async () => {
     const d = makeDriver();
     configureDriver(d);
     const seen = [];
     onAyahChange((s, a) => seen.push([s, a]));
     start({ surah: 114, total: 6, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
     d.end('114:1');
     d.end('114:2');
     d.end('114:3');
+    await tick();
     assert.equal(d.played.at(-1).key, '114:4');
     assert.equal(isActive(), true);
     d.end('114:4');
     d.end('114:5');
     d.end('114:6');
+    await tick();
     assert.equal(isActive(), false, 'session ends at the last ayah');
     assert.deepEqual(seen.at(-1), [null, null], 'closure notifies null');
     assert.equal(d.stopped >= 1, true, 'audio is stopped on close');
@@ -218,11 +230,12 @@ describe('engine (fake driver)', () => {
     configureDriver(null);
   });
 
-  test('restarting replaces the session cleanly (one voice, one engine)', () => {
+  test('restarting replaces the session cleanly (one voice, one engine)', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
     start({ surah: 2, total: 286, reciterId: 'x', surahsMeta: SURAHS });
+    await tick();
     assert.equal(snapshot().surah, 2);
     assert.equal(snapshot().ayah, 1);
     assert.equal(d.played.at(-1).key, '2:1');
@@ -257,10 +270,11 @@ describe('engine (fake driver)', () => {
     configureDriver(null);
   });
 
-  test('(v5.0.0) a range session plays from X to Y and stops at Y', () => {
+  test('(v5.0.0) a range session plays from X to Y and stops at Y', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, from: 2, to: 4, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
     assert.equal(d.played[0].key, '1:2');
     assert.equal(snapshot().end, 4);
     assert.equal(snapshot().total, 4);
@@ -295,51 +309,66 @@ describe('engine (fake driver)', () => {
 });
 
 describe('per-ayah repeat (v3.17 hifz)', () => {
-  test('repeat=3 plays each ayah three times before advancing', () => {
+  test('repeat=3 plays each ayah three times before advancing', async () => {
     const d = makeDriver();
     configureDriver(d);
     const seen = [];
     onAyahChange((s, a) => seen.push([s, a]));
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS, repeat: 3 });
+    await tick();
     assert.equal(d.played.filter((p) => p.key === '1:1').length, 1, 'first play');
     d.end('1:1'); // play 2 of 3
+    await tick();
     assert.equal(d.played.filter((p) => p.key === '1:1').length, 2);
     assert.equal(snapshot().ayah, 1, 'still on ayah 1');
     d.end('1:1'); // play 3 of 3
+    await tick();
     assert.equal(d.played.filter((p) => p.key === '1:1').length, 3);
     d.end('1:1'); // budget spent → advance
+    await tick();
     assert.equal(snapshot().ayah, 2);
     assert.equal(d.played.at(-1).key, '1:2');
     // the replay key is the SAME key, so a stale ended from ayah 1 arriving
     // after the advance can never trigger a bogus replay of ayah 2's budget
     d.end('1:1');
+    await tick();
     assert.equal(snapshot().ayah, 2);
-    // ayah 2 also gets a fresh ×3 budget
+    assert.equal(d.played.at(-1).key, '1:2');
+    // ayah 2 also gets a fresh ×3 budget (ticks between ends: each end
+    // consumes exactly one play, like real 'ended' events do)
     d.end('1:2');
+    await tick();
     d.end('1:2');
+    await tick();
     assert.equal(d.played.filter((p) => p.key === '1:2').length, 3);
     stop();
     configureDriver(null);
   });
 
-  test('repeat=-1 loops the current ayah until skipped', () => {
+  test('repeat=-1 loops the current ayah until skipped', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS, repeat: -1 });
-    for (let i = 0; i < 10; i++) d.end('1:1');
+    await tick();
+    for (let i = 0; i < 10; i++) {
+      d.end('1:1');
+      await tick();
+    }
     assert.equal(snapshot().ayah, 1, 'never advances on its own');
     assert.ok(d.played.length >= 11, 'looped many times');
     skip(1); // the exit hatch
+    await tick();
     assert.equal(snapshot().ayah, 2);
     assert.equal(d.played.at(-1).key, '1:2');
     stop();
     configureDriver(null);
   });
 
-  test('skip navigation clamps and ends past the last ayah', () => {
+  test('skip navigation clamps and ends past the last ayah', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 114, total: 6, reciterId: 'x', surahsMeta: SURAHS, repeat: 3 });
+    await tick();
     skip(-1); // at ayah 1, prev clamps (stays, replays)
     assert.equal(snapshot().ayah, 1);
     skip(2.9); // sign-based contract: any positive step = next ayah
@@ -359,18 +388,21 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('setRepeat mid-session resets the current ayah budget', () => {
+  test('setRepeat mid-session resets the current ayah budget', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS, repeat: 1 });
+    await tick();
     setRepeat(5);
     assert.equal(snapshot().repeat, 5);
     d.end('1:1');
     d.end('1:1');
     d.end('1:1');
+    await tick();
     assert.equal(snapshot().ayah, 1, 'budget active after live change');
     d.end('1:1');
     d.end('1:1');
+    await tick();
     assert.equal(snapshot().ayah, 2, '5 plays then advance');
     stop();
     configureDriver(null);
@@ -399,6 +431,7 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
+    await tick();
     setListenRepeat(true, 3000);
     assert.equal(snapshot().listenRepeat, true);
     d.end('1:1');
@@ -417,10 +450,12 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
+    await tick();
     setListenRepeat(true, 3000);
     d.end('1:1');
     assert.equal(snapshot().waiting, true);
     skip(1);
+    await tick();
     assert.equal(snapshot().ayah, 2, 'skip moves now');
     assert.equal(snapshot().waiting, false);
     const played = d.played.length;
@@ -431,10 +466,11 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('echo mode ends the session at the last ayah (no trailing pause)', () => {
+  test('echo mode ends the session at the last ayah (no trailing pause)', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 114, from: 6, total: 6, reciterId: 'x', surahsMeta: SURAHS });
+    await tick();
     setListenRepeat(true, 3000);
     d.end('114:6');
     assert.equal(isActive(), false, 'session closes at the surah end');
@@ -443,19 +479,22 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('continuous listen mode rolls into the next surah with fresh bounds', () => {
+  test('continuous listen mode rolls into the next surah with fresh bounds', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
     setContinuous(true);
     assert.equal(snapshot().continuous, true);
     for (let i = 1; i <= 7; i++) d.end(`1:${i}`);
+    await tick();
     assert.equal(snapshot().surah, 2, 'rolled into Al-Baqarah');
     assert.equal(snapshot().ayah, 1);
     assert.equal(snapshot().end, 286, 'end reset to the new surah total (was 7)');
     assert.equal(snapshot().total, 286);
     // …and it keeps playing past ayah 7 of the new surah.
     for (let i = 1; i <= 7; i++) d.end(`2:${i}`);
+    await tick();
     assert.equal(snapshot().surah, 2);
     assert.equal(snapshot().ayah, 8);
     assert.equal(isActive(), true);
@@ -476,12 +515,14 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('setReciter live-switches the voice and restarts the current ayah', () => {
+  test('setReciter live-switches the voice and restarts the current ayah', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
     const before = d.played.length;
     setReciter('ar.husary');
+    await tick();
     assert.equal(snapshot().reciterId, 'ar.husary');
     assert.equal(d.played.length, before + 1);
     assert.equal(d.played.at(-1).key, '1:1', 'same ayah, new voice');
@@ -490,7 +531,7 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('compare mode plays each ayah with A then the same ayah with B', () => {
+  test('compare mode plays each ayah with A then the same ayah with B', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({
@@ -500,15 +541,19 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
       reciterIdB: 'ar.husary',
       surahsMeta: SURAHS,
     });
+    await tick();
     assert.equal(setCompare(true).compare, true);
+    await tick();
     assert.equal(d.played.at(-1).key, '1:1', 'enabling restarts the ayah with A');
     assert.ok(d.played.at(-1).url.includes('ar.alafasy'));
     d.end('1:1'); // A finished → same ayah with B
+    await tick();
     assert.equal(snapshot().ayah, 1, 'no advance yet');
     assert.equal(d.played.at(-1).key, '1:1');
     assert.ok(d.played.at(-1).url.includes('ar.husary'), 'B voice for the second pass');
     assert.equal(currentReciterId(), 'ar.husary');
     d.end('1:1'); // B finished → advance with A
+    await tick();
     assert.equal(snapshot().ayah, 2);
     assert.ok(d.played.at(-1).url.includes('ar.alafasy'), 'back to A for the next ayah');
     stop();
@@ -527,18 +572,21 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('range loop ×N replays the bounds then closes', () => {
+  test('range loop ×N replays the bounds then closes', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, from: 2, to: 3, total: 7, reciterId: 'x', surahsMeta: SURAHS, loop: 2 });
+    await tick();
     assert.equal(snapshot().loop, 2);
     d.end('1:2');
     d.end('1:3'); // end of pass 1 → restart at `from`
+    await tick();
     assert.equal(isActive(), true);
     assert.equal(snapshot().ayah, 2, 'looped back to the range start');
     assert.equal(d.played.at(-1).key, '1:2');
     d.end('1:2');
     d.end('1:3'); // pass 2 spent → session closes
+    await tick();
     assert.equal(isActive(), false, 'loop budget exhausted');
     stop();
     configureDriver(null);
@@ -561,10 +609,11 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('verse speed applies per play and live-switches without restart', () => {
+  test('verse speed applies per play and live-switches without restart', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS, speed: 1.25 });
+    await tick();
     assert.equal(snapshot().speed, 1.25);
     assert.ok(d.rates.includes(1.25), 'rate applied on play');
     const played = d.played.length;
@@ -582,7 +631,7 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('queue rolls through ranges in order, skipping junk', () => {
+  test('queue rolls through ranges in order, skipping junk', async () => {
     const d = makeDriver();
     configureDriver(d);
     const queue = [
@@ -600,15 +649,18 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
       queue,
       qIndex: 0,
     });
+    await tick();
     assert.equal(snapshot().qIndex, 0);
     d.end('1:6');
     d.end('1:7'); // bounds end → next queue item (junk stripped at start)
+    await tick();
     assert.equal(snapshot().surah, 114, 'junk entry skipped');
     assert.equal(snapshot().ayah, 1);
     assert.equal(snapshot().qIndex, 1);
     assert.equal(d.played.at(-1).key, '114:1');
     d.end('114:1');
     d.end('114:2'); // queue spent → session closes
+    await tick();
     assert.equal(isActive(), false);
     stop();
     configureDriver(null);
@@ -713,10 +765,11 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('pause freezes mid-ayah; resume continues without restart', () => {
+  test('pause freezes mid-ayah; resume continues without restart', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
+    await tick();
     pause();
     assert.equal(snapshot().paused, true);
     assert.equal(d.paused, 1, 'driver paused once');
@@ -731,12 +784,14 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     configureDriver(null);
   });
 
-  test('new plays clear a stale pause; resume replays a played-through element', () => {
+  test('new plays clear a stale pause; resume replays a played-through element', async () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
+    await tick();
     pause();
     setReciter('ar.husary'); // voice switch restarts → must unpause
+    await tick();
     assert.equal(snapshot().paused, false);
     assert.equal(d.played.at(-1).key, '1:1');
     pause();
@@ -754,6 +809,7 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     const d = makeDriver();
     configureDriver(d);
     start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
+    await tick();
     setListenRepeat(true, 3000);
     d.end('1:1');
     assert.equal(snapshot().waiting, true);

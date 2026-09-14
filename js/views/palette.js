@@ -16,7 +16,7 @@ import { t } from '../core/i18n.js';
 import { search as searchLibrary, searchSurahs } from '../domain/search.js';
 import { searchQuran } from '../domain/quranSearch.js';
 import { searchReciters } from '../services/audioCatalog.js';
-import { SETTINGS_SECTIONS } from './settings.js';
+import { SETTINGS_SECTIONS, settingsSlugForSection } from './settings.js';
 import { contentTitleFor } from '../domain/localeContent.js';
 
 /** Navigation destinations searchable from the palette. */
@@ -238,24 +238,31 @@ export function buildPaletteGroups(deps) {
     });
   }
 
-  // Settings sections — rows open the Settings view (section memory keeps
-  // the last-opened accordion; the view's own filter narrows further).
+  // Settings sections — rows deep-link to `#/settings/<slug>` so the
+  // view opens on the matching accordion (the view's own filter narrows
+  // further when a query is present). Injected lists use titleKey/hintKey;
+  // the view's own SETTINGS_SECTIONS uses title/hint — both read here.
   const settingsHits = (deps.settingsSections || SETTINGS_SECTIONS)
-    .filter((sec) => matchSettings(sec.titleKey, sec.hintKey))
+    .filter((sec) => matchSettings(sec.title ?? sec.titleKey, sec.hint ?? sec.hintKey))
     .slice(0, 3);
   if (settingsHits.length) {
     groups.push({
       key: 'settings',
       title: t('palette.settings', lang),
-      rows: settingsHits.map((sec) => ({
-        kind: 'link',
-        icon: 'settings',
-        primary: t(sec.titleKey, lang),
-        secondary: sec.hintKey ? t(sec.hintKey, lang) : '',
-        href: buildHash(VIEWS.SETTINGS),
-        action: 'navigate',
-        data: { view: VIEWS.SETTINGS },
-      })),
+      rows: settingsHits.map((sec) => {
+        const titleKey = sec.title ?? sec.titleKey;
+        const hintKey = sec.hint ?? sec.hintKey;
+        const slug = settingsSlugForSection(sec.id);
+        return {
+          kind: 'link',
+          icon: 'settings',
+          primary: t(titleKey, lang),
+          secondary: hintKey ? t(hintKey, lang) : '',
+          href: slug ? buildHash(VIEWS.SETTINGS, { id: slug }) : buildHash(VIEWS.SETTINGS),
+          action: 'navigate',
+          data: slug ? { view: VIEWS.SETTINGS, id: slug } : { view: VIEWS.SETTINGS },
+        };
+      }),
     });
   }
 

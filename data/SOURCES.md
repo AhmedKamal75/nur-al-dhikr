@@ -40,6 +40,7 @@ app's tafsir panel. Bundled editions:
 |---|---|
 | al-Muyassar | Panel of scholars, King Fahd Complex |
 | al-Mukhtasar | Tafsir Center for Quranic Studies |
+| al-Mukhtasar (English) | Tafsir Center for Quranic Studies — the Center's English Mukhtasar (QUL), same spa5k/tafsir_api source (`en-tafsir-al-mukhtasar`) |
 | al-Jalalayn | Jalal ad-Din al-Mahalli & Jalal ad-Din as-Suyuti |
 | al-Jadwal fi I'rab al-Qur'an | Mahmoud Safi |
 | al-I'rab al-Muyassar | Panel of scholars |

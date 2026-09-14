@@ -78,9 +78,10 @@ describe('v4.3 computeStreak: idle today cannot inflate the longest run', () => 
     const { longestStreak, currentStreak } = computeStreak(stats, today);
     // The LONGEST run must not absorb an idle today (was 4 before v4.3).
     assert.equal(longestStreak, 3);
-    // The CURRENT streak convention (unchanged, documented in streak.js):
-    // today counts as "live" until midnight, so the run reads 3+1 = 4.
-    assert.equal(currentStreak, 4);
+    // (v5.2.45) the CURRENT streak no longer counts the idle today either
+    // (was 4 — the `|| key === todayKey` inflation): today is pending, so
+    // the run ending yesterday reads 3, at risk but intact.
+    assert.equal(currentStreak, 3);
   });
 
   test('an active today extends its own run', () => {

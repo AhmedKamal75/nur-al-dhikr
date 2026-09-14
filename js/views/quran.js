@@ -25,7 +25,8 @@ import { renderAyahWords } from './tafsirPanel.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
 import { loadErrorStateHTML, notFoundStateHTML } from '../ui/emptyState.js';
-import { clozeAyahHTML } from '../domain/hifz.js';
+import { clozeAyahHTML, ayahMistakes } from '../domain/hifz.js';
+import { intensityBucket } from '../domain/statistics.js';
 import { searchSurahs } from '../domain/search.js';
 import { keyToDate } from '../domain/review.js';
 
@@ -99,7 +100,7 @@ function joinTranslitLine(state, surah, ayah) {
  * surah memorized, or log today's review (recalled / struggled). The due
  * date shown is the record's honest next-review day from js/hifz.js.
  */
-function hifzToolbarHTML(state, number, lang) {
+export function hifzToolbarHTML(state, number, lang) {
   const sess = state.hifzSession ?? { mode: false, surah: null, level: 'word', revealed: {} };
   const active = sess.mode && Number(sess.surah) === Number(number);
   const rec = state.hifzRecords?.[String(number)];
@@ -119,19 +120,26 @@ function hifzToolbarHTML(state, number, lang) {
   const reviewGroup = rec
     ? `
     <span class="hifz-due" dir="auto">${t('hifz.memorizedBadge', lang, { date: dueLabel || rec.due })}</span>
-    <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="easy" title="${t('hifz.recalled', lang)}">
-      ${icon('check', { size: 13 })} ${t('hifz.recalled', lang)}
+    <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="again" title="${t('hifz.again', lang)}">
+      ${t('hifz.again', lang)}
     </button>
-    <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="again" title="${t('hifz.struggled', lang)}">
-      ${icon('repeat', { size: 13 })} ${t('hifz.struggled', lang)}
+    <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="hard" title="${t('hifz.hard', lang)}">
+      ${t('hifz.hard', lang)}
+    </button>
+    <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="good" title="${t('hifz.good', lang)}">
+      ${t('hifz.good', lang)}
+    </button>
+    <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="easy" title="${t('hifz.easy', lang)}">
+      ${t('hifz.easy', lang)}
     </button>`
     : `
     <button type="button" class="chip" data-action="hifz-mark" data-surah="${num}" title="${t('hifz.markMemorized', lang)}">
       ${icon('check', { size: 13 })} ${t('hifz.markMemorized', lang)}
     </button>`;
+  const heatmap = hifzHeatmapHTML(state, num, lang);
   if (!active) {
     return `
-      <div class="quran-reader__toolbar quran-reader__toolbar--hifz">${memorizeChip}${reviewGroup}</div>`;
+      <div class="quran-reader__toolbar quran-reader__toolbar--hifz">${memorizeChip}${reviewGroup}${heatmap}</div>`;
   }
   const lvl = sess.level;
   const test = sess.test || null;
@@ -147,7 +155,32 @@ function hifzToolbarHTML(state, number, lang) {
         ${testChip('firstword', 'hifz.testFirstword')}
         ${testChip('mcq', 'hifz.testMcq')}
         ${reviewGroup}
+        ${heatmap}
       </div>`;
+}
+
+/**
+ * (v5.2.64) mistake heatmap: per-ayah lapse intensity for one surah,
+ * reusing the statistics heat buckets. Renders only when at least one
+ * ayah carries lapses — no mistakes, no strip (honest absence).
+ */
+export function hifzHeatmapHTML(state, number, lang) {
+  const s = Math.floor(Number(number));
+  const count =
+    Math.floor(Number(state.quran?.meta?.surahs?.find((m) => Number(m.number) === s)?.ayahCount)) ||
+    0;
+  if (!(s >= 1 && s <= 114) || !count) return '';
+  const mistakes = ayahMistakes(state.hifzAyahRecords, s, count);
+  const max = Math.max(0, ...Object.values(mistakes));
+  if (max <= 0) return '';
+  const cells = [];
+  for (let a = 1; a <= count; a += 1) {
+    const bucket = intensityBucket(mistakes[a], max);
+    cells.push(
+      `<span class="heatmap__cell heatmap__cell--${bucket}" title="${a}: ${mistakes[a]}">${a}</span>`
+    );
+  }
+  return `<div class="hifz-heatmap" role="img" aria-label="${escapeHTML(t('hifz.mistakes', lang))}">${cells.join('')}</div>`;
 }
 
 /**

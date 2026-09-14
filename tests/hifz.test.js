@@ -62,19 +62,19 @@ describe('record lifecycle', () => {
     assert.deepEqual(markMemorized({}, 1, 'not-a-date'), {});
   });
 
-  test('easy reviews climb the growing interval ladder', () => {
+  test('good reviews climb the growing interval ladder (v5.2.64: the old easy semantics)', () => {
     let recs = markMemorized({}, 1, TODAY);
     let day = TODAY;
     const seenIntervals = [];
     for (let i = 0; i < 8; i++) {
       const before = recs['1'];
-      recs = logReview(recs, 1, 'easy', day);
+      recs = logReview(recs, 1, 'good', day);
       const after = recs['1'];
       seenIntervals.push(diffDays(day, after.due));
       assert.equal(after.reviews, before.reviews + 1);
       day = after.due;
     }
-    // each easy review promotes a level, so the intervals walk the ladder
+    // each good review promotes a level, so the intervals walk the ladder
     // from index 1; the 1-day interval is the lapse (again) destination
     assert.deepEqual(seenIntervals, [3, 7, 14, 30, 60, 120, 120, 120]);
     assert.equal(recs['1'].level, HIFZ_INTERVALS.length - 1, 'level caps at the ladder top');

@@ -31,6 +31,7 @@ export default [
         Worker: 'readonly',
         Blob: 'readonly',
         URL: 'readonly',
+        URLSearchParams: 'readonly',
         queueMicrotask: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',

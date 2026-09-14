@@ -30,6 +30,12 @@ import {
   rootStats,
   rootOccurrencesAll,
   rootList,
+  ROOTS_PAGE_SIZE,
+  ROOT_PREVIEW_CAP,
+  ROOT_GROUP_REF_CAP,
+  occurrenceGloss,
+  occurrenceAyah,
+  splitAyahWord,
 } from '../domain/roots.js';
 
 /** Index-mode stats line: how many roots and how many occurrences total. */
@@ -124,8 +130,16 @@ function renderRootsIndex(state, lang) {
   const q = state.activeParams?.q || '';
   const index = state.quranRoots;
   const { roots, occurrences } = totals(index);
-  const results = searchRoots(index, q, 60);
+  // Uncapped search for the true total; the page slices the render list
+  // (was a hard 60 with no way to see more).
+  const all = searchRoots(index, q, Number.MAX_SAFE_INTEGER);
+  const pages = Math.max(1, Math.ceil(all.length / ROOTS_PAGE_SIZE));
+  const rawPage = Math.floor(Number(state.activeParams?.page));
+  const page = !Number.isFinite(rawPage) || rawPage < 1 ? 1 : Math.min(pages, rawPage);
+  const results = all.slice((page - 1) * ROOTS_PAGE_SIZE, page * ROOTS_PAGE_SIZE);
   const filtering = Boolean(String(q).trim());
+  const from = all.length ? (page - 1) * ROOTS_PAGE_SIZE + 1 : 0;
+  const to = Math.min(page * ROOTS_PAGE_SIZE, all.length);
 
   const tiles = results
     .map(
@@ -138,8 +152,22 @@ function renderRootsIndex(state, lang) {
     .join('');
 
   const totalLine = filtering
-    ? t('roots.showing', lang, { n: results.length, total: roots })
+    ? t('roots.showing', lang, { n: results.length, total: all.length })
     : t('roots.indexStats', lang, { n: roots, m: occurrences });
+
+  const pager =
+    pages <= 1
+      ? ''
+      : `
+    <div class="roots-pager" dir="ltr">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="roots-page" data-page="${page - 1}" data-q="${escapeHTML(String(q))}" ${
+        page <= 1 ? 'disabled' : ''
+      }>${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('common.prev', lang)}</button>
+      <span class="roots-pager__status">${t('journal.pageStatus', lang, { from, to, total: all.length, p: page, pages })}</span>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="roots-page" data-page="${page + 1}" data-q="${escapeHTML(String(q))}" ${
+        page >= pages ? 'disabled' : ''
+      }>${t('common.next', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}</button>
+    </div>`;
 
   const drill = state.grammarDrill ? drillHTML(state, lang) : drillLauncherHTML(lang);
   return `
@@ -152,26 +180,70 @@ function renderRootsIndex(state, lang) {
     <div class="surah-grid">
       ${tiles || `<p class="empty-hint">${t('roots.empty', lang, { q: String(q) })}</p>`}
     </div>
+    ${pager}
   </section>`;
 }
 
-/** One word-form group: the vocalized form, its count, and every ref. */
-function formGroupHTML(g, lang) {
-  const refs = g.occ
-    .map(
-      (o) => `
+/**
+ * One ayah preview: the loaded ayah text with the occurrence word marked,
+ * its word-gloss, and a jump into the reader. Previews render only for
+ * surahs already loaded (zero surprise fetches); the ref chips below
+ * cover the rest one tap away.
+ */
+function previewHTML(o, ayah, gloss, lang, showTranslation) {
+  const split = splitAyahWord(ayah.text, o.i, o.t);
+  const text = split
+    ? `${escapeHTML(split.pre)}${split.pre ? ' ' : ''}<mark>${escapeHTML(split.word)}</mark>${split.post ? ` ${escapeHTML(split.post)}` : ''}`
+    : escapeHTML(ayah.text);
+  return `
+      <a class="root-preview" href="${buildHash(VIEWS.QURAN, { id: String(o.s), ay: String(o.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${escapeHTML(String(o.s))}" data-ay="${escapeHTML(String(o.a))}">
+        <span class="root-preview__ref" dir="ltr">${Number(o.s) || ''}:${Number(o.a) || ''}</span>
+        <span class="root-preview__text" dir="rtl" lang="ar">${text}</span>
+        ${gloss ? `<span class="root-preview__gloss" dir="auto">${escapeHTML(gloss)}</span>` : ''}
+        ${showTranslation && typeof ayah.translation === 'string' && ayah.translation ? `<span class="root-preview__trans" dir="auto">${escapeHTML(ayah.translation)}</span>` : ''}
+      </a>`;
+}
+
+/**
+ * One word-form group: the vocalized form, its count, ayah previews for
+ * loaded surahs (capped), and every ref chip (overflow behind an
+ * expander so 300-occurrence roots stay light).
+ */
+function formGroupHTML(g, lang, ctx) {
+  const shown = g.occ.slice(0, ROOT_GROUP_REF_CAP);
+  const extra = g.occ.slice(ROOT_GROUP_REF_CAP);
+  const refChip = (o) => `
       <button type="button" class="chip chip--basis root-ref" data-action="roots-jump" data-surah="${Number(o.s) || ''}" data-ayah="${Number(o.a) || ''}">
         <span dir="ltr">${Number(o.s) || ''}:${Number(o.a) || ''}</span>
-      </button>`
-    )
-    .join('');
+      </button>`;
+  const previews = [];
+  for (const o of g.occ) {
+    if (previews.length >= ROOT_PREVIEW_CAP) break;
+    const ayah = occurrenceAyah(ctx.surahs, o.s, o.a);
+    if (!ayah) continue;
+    previews.push(
+      previewHTML(
+        o,
+        ayah,
+        occurrenceGloss(ctx.quranWords, o.s, o.a, o.i),
+        lang,
+        ctx.showTranslation
+      )
+    );
+  }
   return `
-    <div class="root-form">
+    <div class="root-form" data-form-idx="${ctx.groupIdx}">
       <div class="root-form__head">
         <span class="root-form__text" dir="rtl" lang="ar">${escapeHTML(g.form)}</span>
         <span class="chip chip--basis">${t('roots.timesN', lang, { n: g.count })}</span>
       </div>
-      <div class="root-form__refs">${refs}</div>
+      ${previews.length ? `<div class="root-previews">${previews.join('')}</div>` : ''}
+      <div class="root-form__refs">${shown.map(refChip).join('')}<span class="root-form__more" ${extra.length ? 'hidden' : ''}>${extra.map(refChip).join('')}</span></div>
+      ${
+        extra.length
+          ? `<button type="button" class="btn btn--ghost btn--sm roots-expand" data-action="roots-expand" data-form-idx="${ctx.groupIdx}" aria-expanded="false" data-label-more="${escapeHTML(t('roots.showAll', lang, { n: extra.length }))}" data-label-less="${escapeHTML(t('roots.showLess', lang))}"><span class="roots-expand__label">${escapeHTML(t('roots.showAll', lang, { n: extra.length }))}</span></button>`
+          : ''
+      }
     </div>`;
 }
 
@@ -202,6 +274,12 @@ function renderRootDetail(state, lang, root) {
   ]
     .map((s) => `<span class="chip chip--basis">${escapeHTML(s)}</span>`)
     .join('');
+  const ctx = {
+    surahs: state.quran?.surahs,
+    quranWords: state.quranWords,
+    // Same gate as the classic reader: the user's explicit translation pref.
+    showTranslation: !!state.settings?.showTranslation,
+  };
 
   return `
   <section class="view view--roots">
@@ -216,7 +294,7 @@ function renderRootDetail(state, lang, root) {
           : ''
       }
     </div>
-    <div class="root-forms">${forms.map((g) => formGroupHTML(g, lang)).join('')}</div>
+    <div class="root-forms">${forms.map((g, gi) => formGroupHTML(g, lang, { ...ctx, groupIdx: gi })).join('')}</div>
   </section>`;
 }
 

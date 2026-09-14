@@ -143,6 +143,50 @@ export function renderAudio(state) {
     <div class="reciter-list">${verseRows}</div>
   </section>`;
 
+  // (v5.2.61) offline verse packs: per-surah ayah audio for the ACTIVE
+  // voice (no separate picker — packs always follow settings.reciter).
+  // Status rides the ephemeral audioVerse cache (IDB truth, rescanned on
+  // view open); busy spinners ride the shared audioDownloading registry.
+  const voice = typeof state.settings.reciter === 'string' ? state.settings.reciter : '';
+  const packs = (state.audioVerse && state.audioVerse[voice]) || {};
+  const voiceMeta = state.quran.meta?.surahs || [];
+  const ayahCountOf = (n) => voiceMeta.find((s) => Number(s.number) === n)?.ayahCount;
+  let packDone = 0;
+  let packTotal = 0;
+  const packCells = [];
+  for (let n = 1; n <= 114; n += 1) {
+    const total = Math.floor(Number(ayahCountOf(n))) || 0;
+    const done = Math.max(0, Math.floor(Number(packs[n]?.done)) || 0);
+    if (total > 0) {
+      packDone += Math.min(done, total);
+      packTotal += total;
+    }
+    const key = `verse:${voice}:${n}`;
+    const busy = !!(state.audioDownloading && state.audioDownloading[key]);
+    const complete = total > 0 && done >= total;
+    const label = lang === 'ar' ? t('quran.surah', lang) + ' ' + n : String(n);
+    const cellAction = complete ? 'verse-pack-delete' : 'verse-pack-download';
+    packCells.push(`
+      <div class="dl-cell ${complete ? 'dl-cell--done' : ''}${busy ? ' dl-cell--busy' : ''}">
+        <button type="button" class="dl-cell__btn" data-action="${cellAction}" data-voice="${escapeHTML(voice)}" data-surah="${n}"
+          title="${escapeHTML(surahName(state, n))}"
+          aria-label="${escapeHTML(surahName(state, n))} — ${complete ? t('audio.deleteFile', lang) : t('audio.downloadFile', lang)}">
+          <span class="dl-cell__num">${label}</span>
+          <span class="dl-cell__state">${complete ? icon('check', { size: 13 }) : busy ? `<span class="dl-cell__spinner" role="status" aria-label="${t('common.loading', lang)}"></span>` : icon('download', { size: 13 })}</span>
+        </button>
+        ${total > 0 ? `<span class="dl-cell__bytes">${Math.min(done, total)}/${total}</span>` : ''}
+      </div>`);
+  }
+  const versePacks = `
+  <section class="panel panel--dl">
+    <div class="panel__header">
+      <h2>${t('audio.versePacks', lang)}</h2>
+      <span class="chip__count">${packDone} / ${packTotal}</span>
+    </div>
+    <p class="panel__subtext">${t('audio.versePacksHint', lang)}</p>
+    <div class="dl-grid">${packCells.join('')}</div>
+  </section>`;
+
   const storageRow = `
   <section class="panel">
     <div class="panel__header"><h2>${t('audio.customTitle', lang)}</h2></div>
@@ -179,6 +223,7 @@ export function renderAudio(state) {
     ${hits.length > 60 ? `<p class="empty-hint">${t('audio.moreResults', lang, { n: hits.length })}</p>` : ''}
 
     ${grid}
+    ${q ? '' : versePacks}
     ${renderQueuePanel(state, lang)}
     ${storageRow}
     <p class="view__meta">${t('audio.note', lang)}</p>

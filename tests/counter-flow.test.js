@@ -1,10 +1,11 @@
 /**
  * counter-flow.test.js — v5.2.24 counter/accordion/focus wave, permanent.
  *
- * 1. Accordion memory: toggling a switch re-renders the view, so the open
- *    section id lives view-local in settings.js — a re-render re-opens
- *    exactly it (switches no longer collapse their section). Unknown ids
- *    collapse everything; the id list is stable and unique.
+ * 1. Accordion memory (v5.2.48: persisted settings.settingsSection +
+ *    `#/settings/<slug>` deep links): slug helpers round-trip, unknown
+ *    slugs collapse to null, and a re-render re-opens exactly the stored
+ *    section (switches no longer collapse their section); the id list is
+ *    stable and unique.
  * 2. Counter completion: a finished card renders the exit class inside its
  *    completion window and renders nothing once dismissed (session-only;
  *    counters/statistics untouched). The domain handoff is DOM-free.
@@ -15,9 +16,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  getOpenSettingsSection,
-  setOpenSettingsSection,
+  openSettingsSectionFor,
+  settingsSectionForSlug,
   settingsSectionIds,
+  settingsSlugForSection,
 } from '../js/views/settings.js';
 import { renderSettings } from '../js/views/settings.js';
 import {
@@ -30,33 +32,62 @@ import {
 import { cardHTML } from '../js/ui/card.js';
 import { focusEnterClass } from '../js/views/focus.js';
 
-test('accordion memory: pin survives, unknown ids collapse', () => {
-  setOpenSettingsSection('settings-sec-language');
-  assert.equal(getOpenSettingsSection(), 'settings-sec-language');
-  setOpenSettingsSection('settings-sec-content');
-  assert.equal(getOpenSettingsSection(), 'settings-sec-content');
-  setOpenSettingsSection('nope');
-  assert.equal(getOpenSettingsSection(), null);
-  setOpenSettingsSection(null);
-  assert.equal(getOpenSettingsSection(), null);
-  setOpenSettingsSection('settings-sec-language');
+test('accordion memory: slug helpers round-trip, unknown slugs collapse', () => {
+  assert.equal(settingsSlugForSection('settings-sec-language'), 'language');
+  assert.equal(settingsSectionForSlug('language'), 'settings-sec-language');
+  assert.equal(settingsSectionForSlug('nope'), null);
+  assert.equal(settingsSectionForSlug(null), null);
+  assert.equal(settingsSlugForSection('nope'), null);
+  assert.equal(settingsSlugForSection(null), null);
 });
 
-test('accordion memory: re-render re-opens exactly the pinned section', () => {
+test('accordion memory: re-render re-opens exactly the stored section', () => {
   const state = {
-    settings: { language: 'en' },
+    settings: { language: 'en', settingsSection: 'feedback' },
     reminders: [],
     profiles: [],
     activeProfile: 'main',
   };
-  setOpenSettingsSection('settings-sec-feedback');
   const html = renderSettings(state);
   const tags = html.match(/<details class="panel settings-acc"[^>]*>/g) || [];
   assert.equal(tags.length, 12);
   const openOnes = tags.filter((tag) => /\bopen\b/.test(tag));
   assert.equal(openOnes.length, 1, 'single-expansion survives the render');
-  assert.ok(openOnes[0].includes('id="settings-sec-feedback"'), 'the pinned section is open');
-  setOpenSettingsSection('settings-sec-language');
+  assert.ok(openOnes[0].includes('id="settings-sec-feedback"'), 'the stored section is open');
+});
+
+test('accordion memory: deep link wins, unknown slugs fall back', () => {
+  const base = {
+    settings: { language: 'en', settingsSection: 'feedback' },
+    reminders: [],
+    profiles: [],
+    activeProfile: 'main',
+  };
+  const deep = renderSettings({ ...base, activeParams: { id: 'data' } });
+  assert.ok(
+    deep
+      .match(/<details class="panel settings-acc"[^>]*>/g)
+      .filter((t) => /\bopen\b/.test(t))[0]
+      .includes('id="settings-sec-data"'),
+    'deep link opens its section'
+  );
+  const bogus = renderSettings({ ...base, activeParams: { id: 'nope' } });
+  assert.ok(
+    bogus
+      .match(/<details class="panel settings-acc"[^>]*>/g)
+      .filter((t) => /\bopen\b/.test(t))[0]
+      .includes('id="settings-sec-feedback"'),
+    'unknown slug falls back to the stored pin'
+  );
+  const fresh = renderSettings({ ...base, settings: { language: 'en' } });
+  assert.ok(
+    fresh
+      .match(/<details class="panel settings-acc"[^>]*>/g)
+      .filter((t) => /\bopen\b/.test(t))[0]
+      .includes('id="settings-sec-language"'),
+    'no pin opens the default section'
+  );
+  assert.equal(openSettingsSectionFor(null), 'settings-sec-language', 'hostile state degrades');
 });
 
 test('accordion memory: section id list is stable and unique', () => {

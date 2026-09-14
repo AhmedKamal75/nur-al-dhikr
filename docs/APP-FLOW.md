@@ -90,42 +90,42 @@ tables below need to be precise we write them as `(mushaf, ∅, fullscreen)`.
 
 ### 2.1 ROUTES (34) — grouped by region of the app
 
-| Group   | Route              | Params         | Reached from                                | Back path (I1 owner)                 |
-| ------- | ------------------ | -------------- | ------------------------------------------- | ------------------------------------ |
-| Home    | `home`             | —              | boot, logo, nav, everywhere                 | it IS the root                       |
-| Read    | `library`          | —              | nav, home cards                             | nav rail / bottom bar                |
-| Read    | `category/:id`     | id             | library, mood, search, card chips           | **back-link → library** + nav        |
-| Read    | `focus/:cat/:item` | id, subId      | card "Open focus", mini-cards, auto-advance | **focus-exit → category** (I1)       |
-| Read    | `mushaf`           | page, spread   | nav "Qur'an", reader link, bookmarks        | **topbar home + ⋯ sheet + fs bar**   |
-| Read    | `quran`            | q, id, ay, mem | mushaf sheet, home, search                  | **back-link → list / mushaf**        |
-| Read    | `quran/:id`        | —              | surah list, hifz card, deep link            | **back-link → list** + immersive bar |
-| Read    | `hadith`           | collection?    | nav, home                                   | back-link + nav                      |
-| Read    | `roots`            | —              | study panel, nav drawer                     | back-link + nav                      |
-| Read    | `mutashabihat`     | —              | study panel, nav                            | back-link + nav                      |
-| Find    | `search`           | q              | topbar 🔍, nav                              | topbar is fixed — always exitable    |
-| Find    | `favorites`        | —              | nav                                         | nav                                  |
-| Find    | `collections`      | —              | nav, card menu                              | nav                                  |
-| Find    | `collection/:id`   | id             | collections                                 | **back-link → collections**          |
-| Find    | `mood`             | —              | home                                        | back-link + nav                      |
-| Worship | `prayer`           | —              | nav, home                                   | nav                                  |
-| Worship | `ambient`          | —              | Prayer ⋯ menu                               | **exit ✕ → prayer** (I1) + nav       |
-| Worship | `qibla`            | —              | prayer card, nav                            | back-link + nav                      |
-| Worship | `ramadan`          | —              | nav                                         | nav                                  |
-| Worship | `calendar`         | —              | nav, ramadan                                | nav                                  |
-| Worship | `checklist`        | —              | nav, home                                   | back-link + nav                      |
-| Worship | `journal`          | date?          | nav, home                                   | back-link + nav                      |
-| Tools   | `tasbih`           | —              | nav, home                                   | nav                                  |
-| Tools   | `garden`           | —              | nav, statistics invite                      | nav (hub) + statistics link          |
-| Tools   | `zakat`            | —              | nav                                         | nav                                  |
-| Tools   | `quiz`             | —              | hadith cards, nav                           | back-link + nav                      |
-| Tools   | `statistics`       | —              | nav, settings                               | nav                                  |
-| Tools   | `certificate`      | —              | statistics, journal streak                  | back-link + nav                      |
-| Tools   | `audio`            | —              | reader links, mushaf sheet                  | back-link + nav                      |
-| Tools   | `offline`          | —              | settings data section, nav drawer           | **back-link → settings** + nav       |
-| Mine    | `settings`         | —              | topbar, nav, onboarding                     | topbar is fixed                      |
-| Kids    | `kids`             | —              | settings toggle (kids mode)                 | **hold-exit (2s) → home, mode off**  |
-| Mine    | `about`            | —              | settings, nav                               | back-link + nav                      |
-| Mine    | `editor`           | —              | topbar, library manage                      | back-link + nav                      |
+| Group   | Route              | Params         | Reached from                                | Back path (I1 owner)                                                                                                                                               |
+| ------- | ------------------ | -------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Home    | `home`             | —              | boot, logo, nav, everywhere                 | it IS the root                                                                                                                                                     |
+| Read    | `library`          | —              | nav, home cards                             | nav rail / bottom bar                                                                                                                                              |
+| Read    | `category/:id`     | id             | library, mood, search, card chips           | **back-link → library** + nav                                                                                                                                      |
+| Read    | `focus/:cat/:item` | id, subId      | card "Open focus", mini-cards, auto-advance | **focus-exit → category** (I1)                                                                                                                                     |
+| Read    | `mushaf`           | page, spread   | nav "Qur'an", reader link, bookmarks        | **topbar home + ⋯ sheet + fs bar**                                                                                                                                 |
+| Read    | `quran`            | q, id, ay, mem | mushaf sheet, home, search                  | **back-link → list / mushaf**                                                                                                                                      |
+| Read    | `quran/:id`        | —              | surah list, hifz card, deep link            | **back-link → list** + immersive bar                                                                                                                               |
+| Read    | `hadith`           | collection?    | nav, home                                   | back-link + nav                                                                                                                                                    |
+| Read    | `roots`            | —              | study panel, nav drawer                     | back-link + nav                                                                                                                                                    |
+| Read    | `mutashabihat`     | —              | study panel, nav                            | back-link + nav                                                                                                                                                    |
+| Find    | `search`           | q              | topbar 🔍, nav                              | topbar is fixed — always exitable                                                                                                                                  |
+| Find    | `favorites`        | —              | nav                                         | nav                                                                                                                                                                |
+| Find    | `collections`      | —              | nav, card menu                              | nav                                                                                                                                                                |
+| Find    | `collection/:id`   | id             | collections                                 | **back-link → collections**                                                                                                                                        |
+| Find    | `mood`             | —              | home                                        | back-link + nav                                                                                                                                                    |
+| Worship | `prayer`           | —              | nav, home                                   | nav                                                                                                                                                                |
+| Worship | `ambient`          | —              | Prayer ⋯ menu                               | **exit ✕ → prayer** (I1) + nav                                                                                                                                     |
+| Worship | `qibla`            | —              | prayer card, nav                            | back-link + nav                                                                                                                                                    |
+| Worship | `ramadan`          | —              | nav                                         | nav                                                                                                                                                                |
+| Worship | `calendar`         | —              | nav, ramadan                                | nav                                                                                                                                                                |
+| Worship | `checklist`        | —              | nav, home                                   | back-link + nav                                                                                                                                                    |
+| Worship | `journal`          | date?          | nav, home                                   | back-link + nav                                                                                                                                                    |
+| Tools   | `tasbih`           | —              | nav, home                                   | nav                                                                                                                                                                |
+| Tools   | `garden`           | —              | nav, statistics invite                      | nav (hub) + statistics link                                                                                                                                        |
+| Tools   | `zakat`            | —              | nav                                         | nav                                                                                                                                                                |
+| Tools   | `quiz`             | —              | hadith cards, nav                           | back-link + nav                                                                                                                                                    |
+| Tools   | `statistics`       | —              | nav, settings                               | nav                                                                                                                                                                |
+| Tools   | `certificate`      | —              | statistics, journal streak                  | back-link + nav                                                                                                                                                    |
+| Tools   | `audio`            | —              | reader links, mushaf sheet                  | back-link + nav                                                                                                                                                    |
+| Tools   | `offline`          | —              | settings data section, nav drawer           | **back-link → settings** + nav                                                                                                                                     |
+| Mine    | `settings`         | —              | topbar, nav, onboarding                     | topbar is fixed                                                                                                                                                    |
+| Kids    | `kids`             | —              | settings toggle (kids mode)                 | **hold-exit (2s) → home, mode off; scope: kids + tasbih only, all other routes reroute to kids (reducer) with a toast on taps, palette shut, nav chrome filtered** |
+| Mine    | `about`            | —              | settings, nav                               | back-link + nav                                                                                                                                                    |
+| Mine    | `editor`           | —              | topbar, library manage                      | back-link + nav                                                                                                                                                    |
 
 **Rule R1 — leaf routes own a back-link.** Every route whose name appears in
 the "Back path" column with a back-link renders `.view-header .back-link` as

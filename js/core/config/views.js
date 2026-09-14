@@ -49,6 +49,26 @@ export const VIEWS = Object.freeze({
 
 export const DEFAULT_VIEW = VIEWS.HOME;
 
+/**
+ * Kids-mode scope (item 22, v5.2.65): while settings.kidsMode is on the
+ * app is scoped to the Kids home plus the Tasbih counter. Every other
+ * destination reroutes to Kids (reducer backstop in state/slices/shell.js;
+ * tap paths explain themselves with a kids.blocked toast in
+ * app/handlers/navigation.js) and the nav chrome offers only the
+ * allowlist (ui/shell.js). Pure, so the reducer, the chrome and unit
+ * tests share one answer.
+ */
+export const KIDS_ALLOWED_VIEWS = Object.freeze([VIEWS.KIDS, VIEWS.TASBIH]);
+
+export function isKidsAllowedView(view) {
+  return KIDS_ALLOWED_VIEWS.includes(view);
+}
+
+export function resolveKidsView(view, kidsMode) {
+  if (!kidsMode) return view;
+  return isKidsAllowedView(view) ? view : VIEWS.KIDS;
+}
+
 /** Mushaf typeface choices. `family` feeds --font-arabic-mushaf directly. */
 export const MUSHAF_FONTS = Object.freeze([
   {
@@ -240,6 +260,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   arabicFontScale: 1,
   reduceMotion: false,
   highContrast: false,
+  // (v5.2.59) dyslexia-friendly reading (legible stack + wider spacing)
+  // and roomier long-form rhythm (WCAG 1.4.12 minima on text blocks).
+  dyslexiaFriendly: false,
+  roomySpacing: false,
   // Elderly one-tap mode: XL type + 52px targets via body.is-elder.
   // Enabling also bumps the two font scales once (kept afterwards — the
   // sliders stay the source of truth, the toggle only styles + presets).
@@ -252,6 +276,9 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // are ignored at render time so newer-version backups can't blank Home.
   homeOrder: null,
   hiddenHome: {},
+  // (v5.2.54) quick-tile order (null = usage-driven) + per-tile hides.
+  quickOrder: null,
+  hiddenQuick: {},
   // (v5.3.0) Offline-library completion registry: { [groupId]: { done,
   // total, at } } — explicit bulk downloads only (browsing warms the same
   // cache untracked). Sanitized like everything else in settings.
@@ -294,6 +321,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   profileName: '',
   autoAdvanceFocus: false,
   dailyGoal: 100,
+  // (v5.2.48) accordion memory — the open settings section slug (see
+  // settingsSectionIds in views/settings.js), or null for the default
+  // section. Deep links (#/settings/<slug>) override it per visit.
+  settingsSection: null,
   reciter: 'ar.alafasy',
   // Compare-two-reciters: voice B + whether new sessions start in compare
   // mode (each ayah with A, then the same ayah with B). Null = no B voice.

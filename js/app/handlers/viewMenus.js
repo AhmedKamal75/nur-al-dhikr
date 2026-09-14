@@ -24,6 +24,8 @@ import {
   activeDaysInLastDays,
   readingInLastDays,
   buildWeekSummary,
+  buildStatsCSV,
+  statsCSVFilename,
 } from '../../domain/statistics.js';
 import { openModal, closeModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -197,9 +199,13 @@ export const clickHandlers = {
     const state = store.getState();
     const lang = state.settings.language;
     const p = state.settings.prayer;
-    const y = parseInt(ds.y, 10);
-    const m = parseInt(ds.m, 10);
-    if (!Number.isFinite(y) || !Number.isFinite(m) || m < 1 || m > 12) return;
+    // (v5.2.60) bare calls (the prayer-view fallback CTA) export the
+    // current month — the modal flow passes explicit y/m.
+    const now = new Date();
+    const rawY = parseInt(ds.y, 10);
+    const rawM = parseInt(ds.m, 10);
+    const y = Number.isFinite(rawY) ? rawY : now.getFullYear();
+    const m = Number.isFinite(rawM) && rawM >= 1 && rawM <= 12 ? rawM : now.getMonth() + 1;
     if (p.latitude == null || p.longitude == null) {
       showToast(t('prayer.locationNeeded', lang));
       return;
@@ -261,6 +267,54 @@ export const clickHandlers = {
         await navigator.share({ text });
       } else {
         await navigator.clipboard.writeText(text);
+        showToast(t('card.copied', lang));
+      }
+    } catch {
+      /* user dismissed the share sheet — not an error */
+    }
+  },
+
+  // (v5.2.47) full-history CSV export: the daily grain behind the bars
+  // and heatmap, downloadable and shareable (same fallback ladder as the
+  // ayah-card share: file share → text share → clipboard).
+  'statistics-export-csv': () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const csv = buildStatsCSV(state.statistics);
+    if (csv.split('\n').length < 2) {
+      showToast(t('stats.exportEmpty', lang));
+      return;
+    }
+    downloadTextFile(csv, statsCSVFilename(), 'text/csv;charset=utf-8');
+    showToast(t('stats.exportedCsv', lang));
+  },
+
+  'statistics-share-csv': async () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const csv = buildStatsCSV(state.statistics);
+    if (csv.split('\n').length < 2) {
+      showToast(t('stats.exportEmpty', lang));
+      return;
+    }
+    const filename = statsCSVFilename();
+    let handled = false;
+    try {
+      const file = new File([csv], filename, { type: 'text/csv;charset=utf-8' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: t('stats.shareTitle', lang) });
+        handled = true;
+      }
+    } catch (err) {
+      // Dismissing the OS share sheet is not an error — abort cleanly.
+      if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) handled = true;
+    }
+    if (handled) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: t('stats.shareTitle', lang), text: csv });
+      } else {
+        await navigator.clipboard.writeText(csv);
         showToast(t('card.copied', lang));
       }
     } catch {

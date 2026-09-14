@@ -15,6 +15,7 @@ import {
   validateHadithDoc,
   validateHadithIndex,
 } from '../services/hadith.js';
+import { buildHadithIndex } from '../domain/hadithSearch.js';
 
 /* Ahadeeth library (v3.9)                                             */
 /* ------------------------------------------------------------------ */
@@ -256,4 +257,66 @@ export function scrollToHadithListTop() {
       .querySelector('.hadith-list')
       ?.scrollIntoView({ block: 'start', behavior: scrollBehavior() });
   });
+}
+
+/* Cross-book search index (v5.2.57)                                    */
+/* ------------------------------------------------------------------ */
+// The per-book reader filters its open book; the grid search ranks across
+// every LOADED book (quranSearch honesty rules, hadith fold pipeline).
+// Missing books load here in pairs (Sahihs are MBs — fail soft per book,
+// SW-cached after first use) and the index rebuilds whenever the loaded
+// doc set changes, so results track the library without a version bump.
+
+/** Fingerprint of the indexable doc set (loaded books with rows). */
+function searchDocsKey() {
+  const docs = store.getState().hadith.docs || {};
+  return Object.keys(docs)
+    .filter((id) => docs[id] && Array.isArray(docs[id].hadiths) && docs[id].hadiths.length)
+    .sort()
+    .join(',');
+}
+
+export async function ensureHadithSearchIndex() {
+  if (rt.hadithSearchFlight) return rt.hadithSearchFlight;
+  rt.hadithSearchFlight = (async () => {
+    try {
+      const books = store.getState().hadith.index?.books || [];
+      if (!books.length) {
+        await ensureHadithIndex();
+        return false;
+      }
+      const docs = store.getState().hadith.docs || {};
+      const missing = books.map((b) => b.id).filter((id) => !docs[id]);
+      for (let i = 0; i < missing.length; i += 2) {
+        await Promise.all(missing.slice(i, i + 2).map((id) => ensureHadithBook(id)));
+      }
+      const key = searchDocsKey();
+      if (key && key !== rt.lastHadithSearchDocs) {
+        rt.lastHadithSearchDocs = key;
+        buildHadithIndex(store.getState().hadith.docs);
+      }
+      return true;
+    } catch (err) {
+      console.error('[hadith-search] index build failed', err);
+      return false;
+    }
+  })();
+  try {
+    return await rt.hadithSearchFlight;
+  } finally {
+    rt.hadithSearchFlight = null;
+  }
+}
+
+/** Grid search typed: start (or resume) the cross-book build. Runs on
+ *  every grid render while a query stands — guarded inside, so the
+ *  steady state is one fingerprint compare per render. */
+export function maybeStartHadithSearchBuild(state) {
+  if (
+    state.activeView === VIEWS.HADITH &&
+    !state.activeParams?.id &&
+    (state.activeParams?.q || '').trim()
+  ) {
+    ensureHadithSearchIndex();
+  }
 }

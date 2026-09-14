@@ -5,10 +5,47 @@
  * own. Friday shows the week's reflection prompt at the top.
  */
 
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, highlightMatch, normalizeSearch } from '../core/utils.js';
 import { isoWeekKey, promptForDate, REFLECTION_PROMPTS } from '../domain/duaJournal.js';
+
+/** Entries per journal page (was: hard .slice(0, 50) with no way to see more). */
+export const JOURNAL_PAGE_SIZE = 10;
+
+/** Clamp any hostile/edge page input into [1, pageCount]. Exported for tests. */
+export function clampJournalPage(raw, total) {
+  const pages = Math.max(1, Math.ceil((Number(total) || 0) / JOURNAL_PAGE_SIZE));
+  const n = Math.floor(Number(raw));
+  if (!Number.isFinite(n) || n < 1) return 1;
+  return Math.min(pages, n);
+}
+
+/** The entry id in `?edit=` mode (in-place editing), or null. */
+function editingId(state) {
+  const id = state.activeParams?.edit;
+  return typeof id === 'string' && id ? id : null;
+}
+
+/** Prev/next pager preserving tab + filter (buttons drive replaceGo —
+ *  see handlers/journal.js — so paging never spams history and the URL
+ *  stays deep-linkable). Hidden on a single page. */
+function journalPagerHTML({ page, pages, from, to, total, lang, tab, q }) {
+  if (pages <= 1) return '';
+  const prevIcon = isRTL(lang) ? 'chevronRight' : 'chevronLeft';
+  const nextIcon = isRTL(lang) ? 'chevronLeft' : 'chevronRight';
+  const status = t('journal.pageStatus', lang, { from, to, total, p: page, pages });
+  return `
+  <div class="journal-pager" dir="ltr">
+    <button type="button" class="btn btn--secondary btn--sm" data-action="journal-page" data-tab="${tab}" data-q="${escapeHTML(q)}" data-page="${page - 1}" ${
+      page <= 1 ? 'disabled' : ''
+    }>${icon(prevIcon, { size: 14 })} ${t('common.prev', lang)}</button>
+    <span class="journal-pager__status">${escapeHTML(status)}</span>
+    <button type="button" class="btn btn--secondary btn--sm" data-action="journal-page" data-tab="${tab}" data-q="${escapeHTML(q)}" data-page="${page + 1}" ${
+      page >= pages ? 'disabled' : ''
+    }>${t('common.next', lang)} ${icon(nextIcon, { size: 14 })}</button>
+  </div>`;
+}
 
 const isFriday = () => new Date().getDay() === 5;
 
@@ -25,26 +62,45 @@ function duaRows(state) {
   const lang = state.settings.language;
   const { q, terms, norm } = journalTerms(state);
   const all = state.duaJournal;
-  const list = (
-    q
-      ? all.filter(
-          (e) => normalizeSearch(e.text).includes(norm) || (norm && e.date.includes(q.trim()))
-        )
-      : all
-  ).slice(0, 50);
-  if (!list.length)
+  const filtered = q
+    ? all.filter(
+        (e) => normalizeSearch(e.text).includes(norm) || (norm && e.date.includes(q.trim()))
+      )
+    : all;
+  const page = clampJournalPage(state.activeParams?.page, filtered.length);
+  const pages = Math.max(1, Math.ceil(filtered.length / JOURNAL_PAGE_SIZE));
+  const list = filtered.slice((page - 1) * JOURNAL_PAGE_SIZE, page * JOURNAL_PAGE_SIZE);
+  const edit = editingId(state);
+  const from = filtered.length ? (page - 1) * JOURNAL_PAGE_SIZE + 1 : 0;
+  const to = Math.min(page * JOURNAL_PAGE_SIZE, filtered.length);
+  if (!filtered.length)
     return `<p class="empty-hint">${q ? t('search.noResults', lang) : t('journal.duaEmpty', lang)}</p>`;
   return `
   <div class="journal-list">
     ${list
-      .map(
-        (e) => `
+      .map((e) =>
+        e.id === edit
+          ? `
+    <article class="journal-entry">
+      <header class="journal-entry__head">
+        <time datetime="${escapeHTML(e.date)}">${escapeHTML(e.date)}</time>
+      </header>
+      <textarea class="journal-textarea" rows="3" data-bind="journal-edit-text" dir="auto" aria-label="${t('editor.edit', lang)}">${escapeHTML(e.text)}</textarea>
+      <div class="panel__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="dua-edit-save">${t('common.save', lang)}</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="journal-edit-cancel">${t('common.cancel', lang)}</button>
+      </div>
+    </article>`
+          : `
     <article class="journal-entry${e.answered ? ' journal-entry--answered' : ''}">
       <header class="journal-entry__head">
         <time datetime="${escapeHTML(e.date)}">${escapeHTML(e.date)}</time>
         <div class="journal-entry__actions">
           <button type="button" class="icon-btn${e.answered ? ' icon-btn--active' : ''}" data-action="dua-toggle-answered" data-id="${escapeHTML(e.id)}" aria-pressed="${e.answered}" aria-label="${t('journal.markAnswered', lang)}" title="${t('journal.markAnswered', lang)}">
             ${icon(e.answered ? 'check' : 'heart', { size: 16 })}
+          </button>
+          <button type="button" class="icon-btn" data-action="journal-edit-open" data-id="${escapeHTML(e.id)}" aria-label="${t('editor.edit', lang)}" title="${t('editor.edit', lang)}">
+            ${icon('edit', { size: 16 })}
           </button>
           <button type="button" class="icon-btn" data-action="dua-remove" data-id="${escapeHTML(e.id)}" aria-label="${t('common.delete', lang)}">
             ${icon('trash', { size: 16 })}
@@ -56,35 +112,56 @@ function duaRows(state) {
     </article>`
       )
       .join('')}
-  </div>`;
+  </div>
+  ${journalPagerHTML({ page, pages, from, to, total: filtered.length, lang, tab: 'duas', q })}`;
 }
 
 function reflectionRows(state) {
   const lang = state.settings.language;
   const { q, terms, norm } = journalTerms(state);
   const all = state.reflections;
-  const list = (
-    q
-      ? all.filter(
-          (e) =>
-            normalizeSearch(
-              `${e.text} ${e.promptId ? promptText(e.promptId, lang) : ''} ${e.week}`
-            ).includes(norm) ||
-            (norm && e.week.includes(q.trim()))
-        )
-      : all
-  ).slice(0, 50);
-  if (!list.length)
+  const filtered = q
+    ? all.filter(
+        (e) =>
+          normalizeSearch(
+            `${e.text} ${e.promptId ? promptText(e.promptId, lang) : ''} ${e.week}`
+          ).includes(norm) ||
+          (norm && e.week.includes(q.trim()))
+      )
+    : all;
+  const page = clampJournalPage(state.activeParams?.page, filtered.length);
+  const pages = Math.max(1, Math.ceil(filtered.length / JOURNAL_PAGE_SIZE));
+  const list = filtered.slice((page - 1) * JOURNAL_PAGE_SIZE, page * JOURNAL_PAGE_SIZE);
+  const edit = editingId(state);
+  const from = filtered.length ? (page - 1) * JOURNAL_PAGE_SIZE + 1 : 0;
+  const to = Math.min(page * JOURNAL_PAGE_SIZE, filtered.length);
+  if (!filtered.length)
     return `<p class="empty-hint">${q ? t('search.noResults', lang) : t('journal.reflectionEmpty', lang)}</p>`;
   return `
   <div class="journal-list">
     ${list
-      .map(
-        (e) => `
+      .map((e) =>
+        e.id === edit
+          ? `
+    <article class="journal-entry">
+      <header class="journal-entry__head">
+        <time datetime="${escapeHTML(e.week)}">${escapeHTML(e.week)}</time>
+      </header>
+      ${e.promptId ? `<p class="journal-entry__prompt">${escapeHTML(promptText(e.promptId, lang))}</p>` : ''}
+      <textarea class="journal-textarea" rows="4" data-bind="journal-edit-text" dir="auto" aria-label="${t('editor.edit', lang)}">${escapeHTML(e.text)}</textarea>
+      <div class="panel__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="reflection-edit-save">${t('common.save', lang)}</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="journal-edit-cancel">${t('common.cancel', lang)}</button>
+      </div>
+    </article>`
+          : `
     <article class="journal-entry">
       <header class="journal-entry__head">
         <time datetime="${escapeHTML(e.week)}">${escapeHTML(e.week)}</time>
         <div class="journal-entry__actions">
+          <button type="button" class="icon-btn" data-action="journal-edit-open" data-id="${escapeHTML(e.id)}" aria-label="${t('editor.edit', lang)}" title="${t('editor.edit', lang)}">
+            ${icon('edit', { size: 16 })}
+          </button>
           <button type="button" class="icon-btn" data-action="reflection-remove" data-id="${escapeHTML(e.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 16 })}</button>
         </div>
       </header>
@@ -93,7 +170,8 @@ function reflectionRows(state) {
     </article>`
       )
       .join('')}
-  </div>`;
+  </div>
+  ${journalPagerHTML({ page, pages, from, to, total: filtered.length, lang, tab: 'reflections', q })}`;
 }
 
 export function renderJournal(state) {

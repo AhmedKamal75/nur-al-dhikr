@@ -71,6 +71,42 @@ export function reduceAudio(state, action) {
       return { ...state, audioDownloading: inFlight };
     }
 
+    // (v5.2.61) verse-pack status cache { [voice]: { [surah]: { done, total } } },
+    // ephemeral (IDB is the truth; rescanned when the audio view opens).
+    case 'VERSE_PACK_STATUS': {
+      const voice = typeof action.voice === 'string' && action.voice ? action.voice : null;
+      if (!voice) return state;
+      const prev = state.audioVerse && typeof state.audioVerse === 'object' ? state.audioVerse : {};
+      const packs = { ...(prev[voice] && typeof prev[voice] === 'object' ? prev[voice] : {}) };
+      if (action.reset) {
+        if (!Object.keys(packs).length) return state;
+        const next = { ...prev };
+        delete next[voice];
+        return { ...state, audioVerse: next };
+      }
+      // Bulk rescan form: { packs: { [surah]: { done, total } } }.
+      if (action.packs && typeof action.packs === 'object' && !Array.isArray(action.packs)) {
+        const bulk = {};
+        for (const [k, v] of Object.entries(action.packs)) {
+          const s = Math.floor(Number(k));
+          if (!Number.isFinite(s) || s < 1 || s > 114) continue;
+          bulk[s] = {
+            done: Math.max(0, Math.floor(Number(v?.done)) || 0),
+            total: Math.max(0, Math.floor(Number(v?.total)) || 0),
+          };
+        }
+        return { ...state, audioVerse: { ...prev, [voice]: bulk } };
+      }
+      const surah = Math.floor(Number(action.surah));
+      const done = Math.max(0, Math.floor(Number(action.done)) || 0);
+      const total = Math.max(0, Math.floor(Number(action.total)) || 0);
+      if (!Number.isFinite(surah) || surah < 1 || surah > 114) return state;
+      const prior = packs[surah];
+      if (prior && prior.done === done && prior.total === total) return state;
+      packs[surah] = { done, total };
+      return { ...state, audioVerse: { ...prev, [voice]: packs } };
+    }
+
     case 'AUDIO_CATALOG_READY':
       if (state.audioManager.catalogReady) return state;
       return { ...state, audioManager: { ...state.audioManager, catalogReady: true } };

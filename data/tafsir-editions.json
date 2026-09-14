@@ -22,6 +22,17 @@
    "authorEn": "Tafsir Center for Quranic Studies"
   },
   {
+   "id": "en-mukhtasar",
+   "slug": "en-tafsir-al-mukhtasar",
+   "category": "tafsir",
+   "bundled": true,
+   "lang": "en",
+   "nameAr": "المختصر في التفسير (إنجليزي)",
+   "nameEn": "Al-Mukhtasar (English)",
+   "authorAr": "مركز تفسير للدراسات القرآنية",
+   "authorEn": "Tafsir Center for Quranic Studies"
+  },
+  {
    "id": "jalalayn",
    "slug": "ar-tafsir-al-jalalayn",
    "category": "tafsir",

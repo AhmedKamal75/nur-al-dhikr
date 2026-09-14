@@ -102,7 +102,7 @@ test('quranAudioSurahUrl builds the per-surah CDN fallback URL', async () => {
   );
 });
 
-test('sanitizeSettings coerces verse voices to the 5-id allowlist', async () => {
+test('sanitizeSettings coerces verse voices to the 10-id allowlist', async () => {
   const { sanitizeSettings } = await import('../js/core/config.js');
   assert.equal(sanitizeSettings({ reciter: 'ar.alafasy' }).reciter, 'ar.alafasy');
   assert.equal(sanitizeSettings({ reciter: 'mp3-118-118' }).reciter, 'ar.alafasy');
@@ -129,6 +129,8 @@ test('verse engine coerces unknown voices instead of 404ing per ayah', async () 
       reciterId: 'mp3-118-118',
       surahsMeta: [{ number: 1, ayahCount: 7 }],
     });
+    // (v5.2.61) source resolution is async (offline lookup first).
+    await new Promise((resolve) => setImmediate(resolve));
     assert.equal(engine.snapshot().reciterId, 'ar.alafasy');
     assert.ok(played.at(-1).includes('/ar.alafasy/'));
     engine.stop();

@@ -7,8 +7,8 @@
  * to another slice (the dispatcher in ../reducer.js tries each in turn).
  */
 
-import { dateKey, isSafeKey } from '../../utils.js';
-import { markMemorizedKey, logReviewKey } from '../../../domain/hifz.js';
+import { dateKey, isSafeKey, uid } from '../../utils.js';
+import { markMemorizedKey, logReviewKey, normalizeHifzGrade } from '../../../domain/hifz.js';
 import { initialState } from '../initial.js';
 import { computeStreak } from '../streak.js';
 
@@ -48,6 +48,24 @@ export function reduceLibrary(state, action) {
         favorites: has
           ? state.favorites.filter((id) => id !== action.itemId)
           : [...state.favorites, action.itemId],
+      };
+    }
+
+    // (v5.2.51) unfavorite-all (confirmed in the UI before dispatch).
+    case 'FAVORITE_CLEAR':
+      return { ...state, favorites: [] };
+
+    // (v5.2.54) quick-tile tap counts (usage order until customized).
+    case 'TILE_VISITED': {
+      if (typeof action.tileId !== 'string' || !action.tileId) return state;
+      const visits =
+        state.tileVisits && typeof state.tileVisits === 'object' ? state.tileVisits : {};
+      return {
+        ...state,
+        tileVisits: {
+          ...visits,
+          [action.tileId]: (Math.floor(Number(visits[action.tileId])) || 0) + 1,
+        },
       };
     }
 
@@ -166,7 +184,8 @@ export function reduceLibrary(state, action) {
     }
 
     case 'HADITH_MEM_REVIEW': {
-      const grade = action.grade === 'again' ? 'again' : action.grade === 'easy' ? 'easy' : null;
+      // (v5.2.64) all four grades — the two-grade clamp was item-21 fallout.
+      const grade = normalizeHifzGrade(action.grade);
       if (!grade) return state;
       return {
         ...state,
@@ -209,7 +228,8 @@ export function reduceLibrary(state, action) {
       };
     }
     case 'BYHEART_REVIEW': {
-      const grade = action.grade === 'again' ? 'again' : action.grade === 'easy' ? 'easy' : null;
+      // (v5.2.64) all four grades — the two-grade clamp was item-21 fallout.
+      const grade = normalizeHifzGrade(action.grade);
       if (!grade) return state;
       return {
         ...state,
@@ -332,6 +352,51 @@ export function reduceLibrary(state, action) {
         ),
       };
 
+    // (v5.2.50) reorder: swap with the neighbor in `dir` (-1/+1); edges,
+    // unknown ids/collections and hostile dirs no-op.
+    case 'COLLECTION_MOVE_ITEM': {
+      const dir = Number(action.dir);
+      if (!Number.isFinite(dir) || dir === 0) return state;
+      const step = dir > 0 ? 1 : -1;
+      return {
+        ...state,
+        collections: state.collections.map((c) => {
+          if (c.id !== action.collectionId) return c;
+          const i = c.items.indexOf(action.itemId);
+          const j = i + step;
+          if (i < 0 || j < 0 || j >= c.items.length) return c;
+          const items = [...c.items];
+          [items[i], items[j]] = [items[j], items[i]];
+          return { ...c, items };
+        }),
+      };
+    }
+
+    // (v5.2.50) bulk add: append missing ids in order (favorites import);
+    // nothing new no-ops.
+    case 'COLLECTION_ADD_ITEMS': {
+      const ids = Array.isArray(action.itemIds)
+        ? action.itemIds.filter((id) => typeof id === 'string' && id)
+        : [];
+      if (!ids.length) return state;
+      return {
+        ...state,
+        collections: state.collections.map((c) => {
+          if (c.id !== action.collectionId) return c;
+          const have = new Set(c.items);
+          const fresh = [];
+          for (const id of ids) {
+            if (!have.has(id)) {
+              have.add(id);
+              fresh.push(id);
+            }
+          }
+          if (!fresh.length) return c;
+          return { ...c, items: [...c.items, ...fresh] };
+        }),
+      };
+    }
+
     case 'COUNTER_SET': {
       const existing = state.counters[action.itemId] || {
         count: 0,
@@ -408,13 +473,24 @@ export function reduceLibrary(state, action) {
       const favCat = { ...state.statistics.favoriteCategories };
       if (action.categoryId) favCat[action.categoryId] = (favCat[action.categoryId] || 0) + 1;
 
-      const { currentStreak, longestStreak } = computeStreak(state.statistics, key);
+      const nextHistory = { ...state.statistics.dailyHistory, [key]: nextToday };
+      // (v5.2.45) a streak day meets the daily dhikr goal (or carries
+      // Qur'an activity) — one isolated miss per run is frozen, an idle
+      // today anchors the walk on yesterday (see core/state/streak.js).
+      // Computed from the POST-write history: the just-recorded activity
+      // belongs to today, so the persisted streak reflects it in the same
+      // dispatch instead of lagging one tap behind.
+      const { currentStreak, longestStreak } = computeStreak(
+        { ...state.statistics, dailyHistory: nextHistory },
+        key,
+        state.settings.dailyGoal
+      );
 
       return {
         ...state,
         statistics: {
           ...state.statistics,
-          dailyHistory: { ...state.statistics.dailyHistory, [key]: nextToday },
+          dailyHistory: nextHistory,
           totalRecitations: state.statistics.totalRecitations + (action.count || 1),
           totalSessions: state.statistics.totalSessions + (action.newSession ? 1 : 0),
           favoriteCategories: favCat,
@@ -467,6 +543,37 @@ export function reduceLibrary(state, action) {
         ...state,
         tasbih: { activeItemId: action.itemId, activePhrase: action.phrase || null },
       };
+
+    // (v5.2.46) user-authored tasbih phrases: free text (trimmed, capped —
+    // user content, stored verbatim and escaped at render) each with its
+    // own named goal. Counter keys ride the generic 'tasbih:'+id path.
+    case 'TASBIH_CUSTOM_ADD': {
+      const text = String(action.text || '')
+        .trim()
+        .slice(0, 500);
+      if (!text) return state;
+      const rawTarget = Math.floor(Number(action.target));
+      const target = Number.isFinite(rawTarget) ? Math.min(100000, Math.max(1, rawTarget)) : 33;
+      const list = Array.isArray(state.tasbihCustom) ? state.tasbihCustom : [];
+      return {
+        ...state,
+        tasbihCustom: [...list, { id: uid('custom'), ts: Date.now(), text, target }].slice(-50),
+      };
+    }
+
+    case 'TASBIH_CUSTOM_REMOVE': {
+      if (!action.id) return state;
+      const list = Array.isArray(state.tasbihCustom) ? state.tasbihCustom : [];
+      const next = list.filter((c) => c && c.id !== action.id);
+      if (next.length === list.length) return state;
+      // Dropping the active phrase must not strand the dial on a ghost id
+      // (the view falls back to the first preset on null).
+      const tasbih =
+        state.tasbih && state.tasbih.activeItemId === action.id
+          ? { activeItemId: null, activePhrase: null }
+          : state.tasbih;
+      return { ...state, tasbihCustom: next, tasbih };
+    }
 
     case 'SPEECH_SET_ACTIVE':
       return { ...state, speakingItemId: action.itemId };

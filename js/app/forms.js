@@ -360,7 +360,9 @@ export const formHandlers = {
           ? fd.get('endDateRange') || null
           : recurrence === 'daily'
             ? fd.get('endDateDaily') || null
-            : null,
+            : ['weekly', 'monthly', 'yearly', 'hijri-monthly', 'whitedays'].includes(recurrence)
+              ? fd.get('endDateBounded') || null
+              : null,
       reminder: fd.get('reminder') === 'on',
       reminderTime: fd.get('reminder') === 'on' ? fd.get('reminderTime') || '08:00' : null,
       createdAt: form.dataset.noteId ? undefined : Date.now(),
@@ -471,6 +473,23 @@ export function handlePromptForm(form) {
     store.dispatch(actions.addToCollection(id, form.dataset.itemId));
     closeModal();
     showToast(t('common.done', store.getState().settings.language));
+  } else if (action === 'submit-new-collection-move') {
+    // (v5.2.51) move-flow create: new collection + item + unfavorite
+    // (guarded flip) so the favorite truly moves instead of copying.
+    const id = uid('col');
+    store.dispatch(actions.createCollection(id, { en: value, ar: value }));
+    store.dispatch(actions.addToCollection(id, form.dataset.itemId));
+    if (store.getState().favorites.includes(form.dataset.itemId)) {
+      store.dispatch(actions.toggleFavorite(form.dataset.itemId));
+    }
+    closeModal();
+    showToast(t('common.done', store.getState().settings.language));
+  } else if (action === 'submit-rename-collection') {
+    // (v5.2.50) rename wires the long-dead COLLECTION_RENAME path: the
+    // user's words land in both name slots, mirroring create-collection.
+    if (!form.dataset.id) return;
+    store.dispatch(actions.renameCollection(form.dataset.id, { en: value, ar: value }));
+    closeModal();
   } else if (action === 'submit-new-playlist') {
     const id = uid('plq');
     store.dispatch(actions.createPlaylist(id, value));

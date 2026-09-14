@@ -10,12 +10,35 @@
  *   'daily'    — every day from startDate onward (optionally capped by endDate)
  *   'interval' — every `intervalDays` days starting at startDate (optionally capped)
  *   'range'    — every day within [startDate, endDate] inclusive
+ *   'weekly'   — the startDate weekday, every week (optionally capped)
+ *   'monthly'  — the startDate month-day, every month (short months skip —
+ *                a 31st never fires a phantom 28th; optionally capped)
+ *   'yearly'   — the startDate month+day, every year (Feb 29 keeps leap
+ *                years only; optionally capped)
+ *   'hijri-monthly' — the startDate's Hijri day-of-month, every Hijri
+ *                month (optionally capped)
+ *   'whitedays' — Hijri 13/14/15 of every month (domain/calendar.js
+ *                isWhiteDay), from startDate (optionally capped)
  */
+
+import { toHijri, isWhiteDay } from '../domain/calendar.js';
 
 function daysBetween(aKey, bKey) {
   const a = new Date(aKey + 'T00:00:00');
   const b = new Date(bKey + 'T00:00:00');
   return Math.round((b - a) / 86400000);
+}
+
+/** Local-midnight Date for a day key (calendar fields, never clock math). */
+function dayDate(key) {
+  return new Date(key + 'T00:00:00');
+}
+
+/** Hijri day-of-month for a day key (NaN when unparseable — never matches). */
+function hijriDayOf(key) {
+  const d = dayDate(key);
+  if (Number.isNaN(d.getTime())) return NaN;
+  return toHijri(d).day;
 }
 
 /** Does `note` apply to the given YYYY-MM-DD date key? */
@@ -39,6 +62,33 @@ export function appliesToDate(note, dateKeyStr) {
       return daysBetween(note.startDate, dateKeyStr) % n === 0;
     }
 
+    case 'weekly': {
+      if (note.endDate && dateKeyStr > note.endDate) return false;
+      return dayDate(dateKeyStr).getDay() === dayDate(note.startDate).getDay();
+    }
+
+    case 'monthly': {
+      if (note.endDate && dateKeyStr > note.endDate) return false;
+      return dayDate(dateKeyStr).getDate() === dayDate(note.startDate).getDate();
+    }
+
+    case 'yearly': {
+      if (note.endDate && dateKeyStr > note.endDate) return false;
+      const d = dayDate(dateKeyStr);
+      const s = dayDate(note.startDate);
+      return d.getMonth() === s.getMonth() && d.getDate() === s.getDate();
+    }
+
+    case 'hijri-monthly': {
+      if (note.endDate && dateKeyStr > note.endDate) return false;
+      return hijriDayOf(dateKeyStr) === hijriDayOf(note.startDate);
+    }
+
+    case 'whitedays': {
+      if (note.endDate && dateKeyStr > note.endDate) return false;
+      return isWhiteDay(hijriDayOf(dateKeyStr));
+    }
+
     default:
       return false;
   }
@@ -60,4 +110,14 @@ export function datesWithNotesInRange(notes, dateKeys) {
   return result;
 }
 
-export const RECURRENCE_TYPES = Object.freeze(['once', 'daily', 'interval', 'range']);
+export const RECURRENCE_TYPES = Object.freeze([
+  'once',
+  'daily',
+  'interval',
+  'range',
+  'weekly',
+  'monthly',
+  'yearly',
+  'hijri-monthly',
+  'whitedays',
+]);

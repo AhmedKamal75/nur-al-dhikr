@@ -13,6 +13,10 @@ export const actions = {
   updatePrayerSettings: (patch) => ({ type: 'SETTINGS_UPDATE_PRAYER', patch }),
   setAlertTriggerStatus: (status) => ({ type: 'ALERT_TRIGGER_STATUS', status }),
   toggleFavorite: (itemId) => ({ type: 'FAVORITE_TOGGLE', itemId }),
+  // (v5.2.51) bulk favorites management: clear-all + the move half.
+  clearFavorites: () => ({ type: 'FAVORITE_CLEAR' }),
+  // (v5.2.54) quick-tile tap (drives the usage order until customized).
+  recordTileVisit: (tileId) => ({ type: 'TILE_VISITED', tileId }),
   createCollection: (id, name) => ({ type: 'COLLECTION_CREATE', id, name }),
   deleteCollection: (id) => ({ type: 'COLLECTION_DELETE', id }),
   renameCollection: (id, name) => ({ type: 'COLLECTION_RENAME', id, name }),
@@ -25,6 +29,18 @@ export const actions = {
     type: 'COLLECTION_REMOVE_ITEM',
     collectionId,
     itemId,
+  }),
+  // (v5.2.50) reorder (dir -1/+1) + bulk add (deduped) for the collection view.
+  moveCollectionItem: (collectionId, itemId, dir) => ({
+    type: 'COLLECTION_MOVE_ITEM',
+    collectionId,
+    itemId,
+    dir,
+  }),
+  addItemsToCollection: (collectionId, itemIds) => ({
+    type: 'COLLECTION_ADD_ITEMS',
+    collectionId,
+    itemIds,
   }),
   setCounter: (itemId, patch, target) => ({ type: 'COUNTER_SET', itemId, patch, target }),
   resetCounter: (itemId, target) => ({ type: 'COUNTER_RESET', itemId, target }),
@@ -48,6 +64,8 @@ export const actions = {
   upsertCustomLibrary: (library) => ({ type: 'CUSTOM_LIBRARY_UPSERT', library }),
   deleteCustomLibrary: (libraryId) => ({ type: 'CUSTOM_LIBRARY_DELETE', libraryId }),
   setTasbihActive: (itemId, phrase) => ({ type: 'TASBIH_SET_ACTIVE', itemId, phrase }),
+  tasbihCustomAdd: (text, target) => ({ type: 'TASBIH_CUSTOM_ADD', text, target }),
+  tasbihCustomRemove: (id) => ({ type: 'TASBIH_CUSTOM_REMOVE', id }),
   setSpeakingItem: (itemId) => ({ type: 'SPEECH_SET_ACTIVE', itemId }),
   setLibraryIndex: (itemIndex) => ({ type: 'LIBRARY_SET_INDEX', itemIndex }),
   contentManageToggle: () => ({ type: 'CONTENT_MANAGE_TOGGLE' }),
@@ -146,7 +164,8 @@ export const actions = {
   hifzReveal: ({ ayah, word = null }) => ({ type: 'HIFZ_REVEAL', ayah, word }),
   hifzRehide: () => ({ type: 'HIFZ_REHIDE' }),
   hifzMarkMemorized: ({ surah }) => ({ type: 'HIFZ_MARK_MEMORIZED', surah }),
-  hifzReview: ({ surah, grade }) => ({ type: 'HIFZ_REVIEW', surah, grade }),
+  hifzReview: ({ surah, grade, ayah = null }) => ({ type: 'HIFZ_REVIEW', surah, grade, ayah }),
+  hifzMarkAyah: ({ surah, ayah }) => ({ type: 'HIFZ_AYAH_MARK', surah, ayah }),
   // Voluntary fasting prefs (v3.18) — the fasts themselves reuse the
   // generic RAMADAN_FAST_TOGGLE on non-Ramadan month keys (shared log).
   fastingToggleCategory: (cat) => ({ type: 'FASTING_TOGGLE_CATEGORY', cat }),
@@ -176,6 +195,7 @@ export const actions = {
   addDua: (text) => ({ type: 'DUA_JOURNAL_ADD', text }),
   toggleDuaAnswered: (id) => ({ type: 'DUA_JOURNAL_TOGGLE_ANSWERED', id }),
   removeDua: (id) => ({ type: 'DUA_JOURNAL_REMOVE', id }),
+  editDua: (id, text) => ({ type: 'DUA_JOURNAL_EDIT', id, text }),
   addReflection: (text, week, promptId) => ({
     type: 'REFLECTION_ADD',
     text,
@@ -183,6 +203,7 @@ export const actions = {
     promptId,
   }),
   removeReflection: (id) => ({ type: 'REFLECTION_REMOVE', id }),
+  editReflection: (id, text) => ({ type: 'REFLECTION_EDIT', id, text }),
   // (v4.4) Ramadan planner (taraweeh / i'tikaf / last-ten checklist)
   ramadanPlannerToggle: (slice, key, day) => ({
     type: 'RAMADAN_PLANNER_TOGGLE',
@@ -201,6 +222,8 @@ export const actions = {
   dismissNudge: () => ({ type: 'NUDGE_DISMISS' }),
   // Data health (v3.26)
   markBackupExported: () => ({ type: 'BACKUP_EXPORTED' }),
+  // (v5.2.53) the rolling on-device snapshot landed.
+  markAutoBackupSaved: () => ({ type: 'BACKUP_AUTO_SAVED' }),
   setDataHealthStorage: (value) => ({ type: 'DATA_HEALTH_STORAGE', value }),
   setDataHealthDryRun: (value) => ({ type: 'DATA_HEALTH_DRYRUN', value }),
   recordTajweedPracticeResult: (ruleId, perfect) => ({
@@ -240,6 +263,9 @@ export const actions = {
   markAudioDownload: (key, bytes, remove) => ({ type: 'AUDIO_DOWNLOAD_DONE', key, bytes, remove }),
   markAudioDownloadStart: (key) => ({ type: 'AUDIO_DOWNLOAD_START', key }),
   markAudioDownloadEnd: (key) => ({ type: 'AUDIO_DOWNLOAD_END', key }),
+  // (v5.2.61) verse-pack status cache write ({voice, surah, done, total}
+  // or {voice, reset:true} to drop a voice).
+  setVersePackStatus: (patch) => ({ type: 'VERSE_PACK_STATUS', ...patch }),
   setAudioManagerQuery: (query) => ({ type: 'AUDIO_MANAGER_QUERY', query }),
   // (v4.2) batch download lifecycle: flips the Download All button to Stop.
   setAudioBatchRunning: (running) => ({ type: 'AUDIO_BATCH_RUNNING', running }),
@@ -262,6 +288,9 @@ export const actions = {
     baseRef,
   }),
   dismissOnboarding: () => ({ type: 'ONBOARDING_DISMISS' }),
+  // (v5.2.52) wizard: record a setup confirm; move the ephemeral position.
+  markOnboardingStepSeen: (stepId) => ({ type: 'ONBOARDING_STEP_SEEN', stepId }),
+  setOnboardingStep: (index) => ({ type: 'ONBOARDING_STEP_SET', index }),
   installPromptReady: () => ({ type: 'INSTALL_PROMPT_READY' }),
   installPromptClear: () => ({ type: 'INSTALL_PROMPT_CLEAR' }),
   markAppInstalled: () => ({ type: 'INSTALL_DONE' }),

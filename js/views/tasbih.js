@@ -48,11 +48,17 @@ const PRESETS = [
 
 export function renderTasbih(state) {
   const lang = state.settings.language;
+  const customs = Array.isArray(state.tasbihCustom) ? state.tasbihCustom.filter(Boolean) : [];
   const activeId = state.tasbih.activeItemId || 'subhanallah';
-  const activePreset = PRESETS.find((p) => p.id === activeId) || PRESETS[0];
-  const counter = selectors.getCounter(state, 'tasbih:' + activePreset.id) || {
+  const activePreset = PRESETS.find((p) => p.id === activeId);
+  // User-authored phrases share the dial: same counter-key path
+  // ('tasbih:'+id), same increment(), each with its own named goal.
+  const activeCustom = !activePreset ? customs.find((c) => c.id === activeId) : null;
+  const active = activePreset || activeCustom || PRESETS[0];
+  const isCustom = !activePreset && activeCustom != null;
+  const counter = selectors.getCounter(state, 'tasbih:' + active.id) || {
     count: 0,
-    target: activePreset.target,
+    target: active.target,
     completedCycles: 0,
   };
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
@@ -60,10 +66,28 @@ export function renderTasbih(state) {
 
   const chips = PRESETS.map(
     (p) => `
-    <button type="button" class="chip chip--phrase ${p.id === activePreset.id ? 'chip--phrase-active' : ''}" data-action="tasbih-select" data-phrase-id="${p.id}" data-target="${p.target}" aria-pressed="${p.id === activePreset.id}">
+    <button type="button" class="chip chip--phrase ${p.id === active.id ? 'chip--phrase-active' : ''}" data-action="tasbih-select" data-phrase-id="${p.id}" data-target="${p.target}" aria-pressed="${p.id === active.id}">
       ${escapeHTML(lang === 'ar' ? p.ar : p.en)}
     </button>`
   ).join('');
+  const customChips = customs
+    .map(
+      (c) => `
+    <span class="chip-row__group">
+      <button type="button" class="chip chip--phrase chip--custom ${c.id === active.id ? 'chip--phrase-active' : ''}" data-action="tasbih-select" data-phrase-id="${escapeHTML(c.id)}" data-target="${c.target}" aria-pressed="${c.id === active.id}">
+        ${escapeHTML(c.text)}
+      </button>
+      <button type="button" class="icon-btn" data-action="tasbih-custom-remove" data-id="${escapeHTML(c.id)}" aria-label="${t('tasbih.customRemove', lang)}" title="${t('tasbih.customRemove', lang)}">
+        ${icon('trash', { size: 16 })}
+      </button>
+    </span>`
+    )
+    .join('');
+  // Preset phrases ship Arabic + UI-language forms; a custom phrase is the
+  // user's own text in one field — rendered verbatim (escaped), dir="auto",
+  // with no language assumption.
+  const stageText = isCustom ? activeCustom.text : active.ar;
+  const stageAttrs = isCustom ? 'dir="auto"' : 'lang="ar" dir="rtl"';
 
   return `
   <section class="view view--tasbih">
@@ -72,15 +96,15 @@ export function renderTasbih(state) {
       ${viewMenuButton('tasbih', lang, { labelKey: 'viewMenu.tasbih' })}
     </div>
 
-    <div class="chip-row chip-row--scroll">${chips}</div>
+    <div class="chip-row chip-row--scroll">${chips}${customChips}</div>
 
     <!-- (v4.5, APP-FLOW I7) the whole tasbih stage counts — the dial is the
          progress visual first (and the keyboard/SR control); tapping the
          phrase, the ring, or anywhere in the stage increments, like the
          azkar card bodies. -->
-    <div class="tasbih-stage" data-action="tasbih-tap" data-phrase-id="${activePreset.id}" data-target="${escapeHTML(String(counter.target))}">
-      <p class="tasbih-stage__arabic" lang="ar" dir="rtl">${escapeHTML(activePreset.ar)}</p>
-      <button type="button" class="tasbih-dial" dir="ltr" data-action="tasbih-tap" data-phrase-id="${activePreset.id}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: counter.count, target: counter.target })}">
+    <div class="tasbih-stage" data-action="tasbih-tap" data-phrase-id="${active.id}" data-target="${escapeHTML(String(counter.target))}">
+      <p class="tasbih-stage__arabic" ${stageAttrs}>${escapeHTML(stageText)}</p>
+      <button type="button" class="tasbih-dial" dir="ltr" data-action="tasbih-tap" data-phrase-id="${active.id}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: counter.count, target: counter.target })}">
         <svg class="tasbih-dial__ring" viewBox="0 0 200 200" width="200" height="200" aria-hidden="true">
           <circle cx="100" cy="100" r="88" class="tasbih-dial__track"/>
           <circle cx="100" cy="100" r="88" class="tasbih-dial__fill" style="--pct:${pct}"/>
@@ -95,22 +119,33 @@ export function renderTasbih(state) {
     </div>
 
     <div class="tasbih-controls">
-      <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${activePreset.id}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
+      <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${active.id}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
       <div class="target-stepper">
         <span>${t('tasbih.target', lang)}</span>
-        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${activePreset.id}" data-delta="-1" aria-label="${t('tasbih.targetDown', lang)}">\u2212</button>
+        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${active.id}" data-delta="-1" aria-label="${t('tasbih.targetDown', lang)}">\u2212</button>
         <span class="target-stepper__value" aria-live="polite">${escapeHTML(String(counter.target))}</span>
-        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${activePreset.id}" data-delta="1" aria-label="${t('tasbih.targetUp', lang)}">+</button>
+        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${active.id}" data-delta="1" aria-label="${t('tasbih.targetUp', lang)}">+</button>
       </div>
       <div class="chip-row target-presets" role="group" aria-label="${t('tasbih.targetPresets', lang)}">
         ${[33, 100, 500, 1000]
           .map(
             (n) => `
-        <button type="button" class="chip${counter.target === n ? ' chip--active' : ''}" data-action="tasbih-target-set" data-phrase-id="${activePreset.id}" data-target="${n}" aria-pressed="${counter.target === n}">${n}</button>`
+        <button type="button" class="chip${counter.target === n ? ' chip--active' : ''}" data-action="tasbih-target-set" data-phrase-id="${active.id}" data-target="${n}" aria-pressed="${counter.target === n}">${n}</button>`
           )
           .join('')}
       </div>
     </div>
+
+    <section class="panel panel--tasbih-custom">
+      <div class="panel__header"><h2>${t('tasbih.customPhrase', lang)}</h2></div>
+      <label class="field-label" for="tasbih-custom-text">${t('tasbih.customPhrase', lang)}</label>
+      <input id="tasbih-custom-text" class="input" type="text" data-bind="tasbih-custom-text" maxlength="500" autocomplete="off" dir="auto" placeholder="${t('tasbih.customPlaceholder', lang)}">
+      <label class="field-label" for="tasbih-custom-target">${t('tasbih.target', lang)}</label>
+      <input id="tasbih-custom-target" class="input" type="number" data-bind="tasbih-custom-target" value="33" min="1" max="100000">
+      <div class="panel__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="tasbih-custom-save">${t('tasbih.customAdd', lang)}</button>
+      </div>
+    </section>
 
     <p class="tasbih-lifetime">${icon('stats', { size: 14 })} ${t('tasbih.lifetime', lang)}: ${lifetime}</p>
   </section>`;

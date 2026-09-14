@@ -522,6 +522,32 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Collection rows (v5.2.50): per-item reorder controls ride above the
+   card in a slim inline-end row, so card layout stays untouched. */
+.collection-row {
+  display: flex;
+  flex-direction: column;
+}
+.collection-row__order {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  margin-block-end: var(--space-1);
+}
+
+/* Favorite rows (v5.2.51): per-row move-to-collection above the card, same
+   slim rhythm as the collection reorder controls. */
+.favorite-row {
+  display: flex;
+  flex-direction: column;
+}
+.favorite-row__move {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  margin-block-end: var(--space-1);
+}
+
 /* Library sections */
 .library-section {
   display: flex;
@@ -2089,6 +2115,22 @@ body.has-player .hadith-card {
   color: var(--color-text-muted);
 }
 
+/* Cross-book hits (v5.2.57): book + number line above the reused card. */
+.hadith-hit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.hadith-hit__meta {
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.hadith-hit__meta a {
+  color: inherit;
+}
+
 /* ==========================================================================
    9. Search results
    ========================================================================== */
@@ -2144,6 +2186,31 @@ body.has-player .hadith-card {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+/* (v5.2.58) the hit card hosts two sibling links (reader + mushaf page):
+   the reader link keeps the card's stacked reading flow. */
+.quran-hit__reader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1_5);
+  color: inherit;
+  text-decoration: none;
+}
+.quran-hit__reader p {
+  margin: 0;
+}
+.quran-hit__mushaf {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  align-self: flex-start;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  text-decoration: none;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
 }
 
 /* ==========================================================================
@@ -3025,6 +3092,40 @@ body.has-player .hadith-card {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+}
+
+/* Wizard body/nav (v5.2.52): one step at a time under the current-step
+   card — priming copy, inline controls, and Back/Next. */
+.onboarding-step__pos {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: auto;
+}
+.onboarding-step__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2) var(--space-2);
+}
+.onboarding-step__prime {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  text-wrap: balance;
+}
+.onboarding-step__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+.onboarding-step__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-block-start: var(--space-1);
 }
 
 /* Dual calendar cells are slightly tighter than the single grid */

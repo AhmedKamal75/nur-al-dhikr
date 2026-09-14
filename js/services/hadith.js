@@ -23,6 +23,22 @@ import { normalizeSearch } from '../core/utils.js';
 /** Small precached books eligible for the daily hadith card. */
 export const HADITH_DAILY_BOOKS = ['nawawi', 'qudsi'];
 
+/**
+ * (v5.2.62) Collection-level authenticity standing — and ONLY that. Sahih
+ * al-Bukhari and Sahih Muslim are the Two Sahihs by scholarly consensus;
+ * every other shipped book mixes grades by design, and per-hadith grades,
+ * isnads and takhrij need a graded-data pipeline rebuild (scripts are
+ * gone, no graded source ships with the app). That gap is tracked, not
+ * filled: nothing here invents a grade, and the UI labels this badge as
+ * the collection's standing, never a hadith's.
+ */
+export const HADITH_SAHIH_COLLECTIONS = Object.freeze(['bukhari', 'muslim']);
+
+/** 'sahih' for the Two Sahihs, null for everything else (honest absence). */
+export function bookStanding(bookId) {
+  return HADITH_SAHIH_COLLECTIONS.includes(String(bookId || '')) ? 'sahih' : null;
+}
+
 /** Hadith cards per page in the book reader. */
 export const HADITH_PAGE_SIZE = 20;
 
@@ -60,6 +76,7 @@ export function validateHadithIndex(raw) {
       bundled: b.bundled === true,
       order: Number.isFinite(b.order) ? b.order : 99,
       file: typeof b.file === 'string' && b.file.startsWith('data/hadith/') ? b.file : null,
+      standing: bookStanding(b.id),
     }))
     .sort((a, b) => a.order - b.order);
   return books.length ? { books } : null;

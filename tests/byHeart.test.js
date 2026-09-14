@@ -29,14 +29,22 @@ describe('BYHEART session', () => {
 });
 
 describe('BYHEART_* records', () => {
-  test('mark + review climb the ladder; hostile keys refused', () => {
+  test('mark + four grades step the shared ladder; hostile keys refused', () => {
     let s = { ...initialState(), byHeartRecords: {} };
     s = reduce(s, actions.markByHeart('adh-mor-001'));
     assert.ok(s.byHeartRecords['adh-mor-001']);
+    // (v5.2.64) good inherits the old easy semantics: climbs one.
+    s = reduce(s, actions.reviewByHeart('adh-mor-001', 'good'));
+    assert.equal(s.byHeartRecords['adh-mor-001'].level, 1);
+    s = reduce(s, actions.reviewByHeart('adh-mor-001', 'hard'));
+    assert.equal(s.byHeartRecords['adh-mor-001'].level, 1, 'hard holds the level');
     s = reduce(s, actions.reviewByHeart('adh-mor-001', 'easy'));
-    assert.equal(s.byHeartRecords['adh-mor-001'].level, 1);
+    assert.equal(s.byHeartRecords['adh-mor-001'].level, 3, 'easy climbs two');
+    s = reduce(s, actions.reviewByHeart('adh-mor-001', 'again'));
+    assert.equal(s.byHeartRecords['adh-mor-001'].level, 0, 'again restarts');
+    assert.equal(s.byHeartRecords['adh-mor-001'].lapses, 1);
     s = reduce(s, actions.reviewByHeart('adh-mor-001', 'junk'));
-    assert.equal(s.byHeartRecords['adh-mor-001'].level, 1);
+    assert.equal(s.byHeartRecords['adh-mor-001'].level, 0);
     s = reduce(s, actions.markByHeart('__proto__'));
     assert.ok(!Object.hasOwn(s.byHeartRecords, '__proto__'), 'no own proto key stored');
     assert.equal({}.polluted, undefined);

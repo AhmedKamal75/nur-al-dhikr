@@ -8,6 +8,34 @@
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui"],
   "orientation": "any",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "./index.html",
+      "accept": {
+        "application/json": [".json"]
+      },
+      "launch_type": "single-client"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+nurdhikr",
+      "url": "./index.html?proto=%s"
+    }
+  ],
   "background_color": "#faf9f5",
   "theme_color": "#faf9f5",
   "lang": "en",
@@ -144,6 +172,6 @@
       "label": "The Qur'an reader with per-word study"
     }
   ],
-  "version": "5.2.43",
-  "version_name": "5.2.43"
+  "version": "5.2.67",
+  "version_name": "5.2.67"
 }

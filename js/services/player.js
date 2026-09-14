@@ -42,6 +42,54 @@ function releaseObjectUrl() {
   }
 }
 
+/* Next-track prefetch — gapless-lite (v5.2.67, item 23): one bounded slot.
+ * The app warms the NEXT track's offline lookup while the current one
+ * plays; play() consumes the slot on an exact key match and skips its own
+ * IDB lookup, so ended→start loses the lookup latency. Streaming tracks
+ * (no stored blob) resolve to nothing — play() assigns src directly, so
+ * there is nothing to warm and the slot goes unconsumed. Prefetch URLs
+ * are revoked on replace/stop/reset, never while live: a consumed URL
+ * transfers to currentObjectUrl and rides the existing release path. */
+let prefetchSlot = null; // { key, url, objectUrl } | null
+
+function dropPrefetch() {
+  if (prefetchSlot?.objectUrl) {
+    try {
+      URL.revokeObjectURL(prefetchSlot.objectUrl);
+    } catch {
+      /* accounting unavailable — the URL dies with the document */
+    }
+  }
+  prefetchSlot = null;
+}
+
+/**
+ * Warm the offline lookup for a track that will likely play next. Bounded
+ * to one slot (a long surah blob is MBs — never a whole queue) and never
+ * throws: a failed warm simply falls back to a fresh lookup at play().
+ */
+export function prefetchTrack(moshafId, surahNumber, url) {
+  dropPrefetch();
+  const s = Math.floor(Number(surahNumber));
+  if (!moshafId || !Number.isFinite(s) || s < 1 || s > 114) return;
+  const slot = (prefetchSlot = {
+    key: `${moshafId}:${s}`,
+    url: String(url || ''),
+    objectUrl: null,
+  });
+  audioFetcher(moshafId, s).then(
+    (blob) => {
+      if (prefetchSlot !== slot || !blob) return;
+      try {
+        slot.objectUrl = URL.createObjectURL(blob);
+      } catch {
+        /* fall back to a fresh lookup at play() time */
+      }
+    },
+    () => {}
+  );
+}
+
 export function onPlayerPatch(fn) {
   patchFn = fn;
 }
@@ -134,6 +182,7 @@ export function resetPlayerForTests() {
     /* ignore */
   }
   releaseObjectUrl();
+  dropPrefetch();
   audioEl = null;
   playSeq = 0;
   switching = false;
@@ -154,6 +203,11 @@ export async function play(moshafId, surahNumber, url) {
   // (B1) single-flight guard: every entry invalidates pending predecessors.
   const seq = ++playSeq;
   releaseObjectUrl();
+  // (v5.2.67) consume a prefetched next track on exact key match — its
+  // IDB lookup already ran while the previous track played.
+  const preKey = `${moshafId}:${Math.floor(Number(surahNumber))}`;
+  const pre = prefetchSlot && prefetchSlot.key === preKey ? prefetchSlot : null;
+  prefetchSlot = null;
   // Suppress element→store sync for THIS swap only; a stale exit must not
   // clear a newer swap's suppression (the old finally { switching = false } did).
   switching = true;
@@ -181,22 +235,38 @@ export async function play(moshafId, surahNumber, url) {
 
   let offline = false;
   try {
-    const blob = await audioFetcher(moshafId, surahNumber);
-    // Loser unwinds silently: no src swap, no blob URL, no ghost error.
-    if (seq !== playSeq || !intendPlay) return unwindSilent(false);
-    if (blob) {
-      const objectUrl = URL.createObjectURL(blob);
-      // Re-check after the sync URL creation: a swap may have landed while
-      // we built the URL — revoke ours instead of leaking it (B1 leak).
+    if (pre?.objectUrl) {
+      // Warmed blob: no lookup, no new URL. The guard below cannot fail
+      // (no await ran since entry) — the revoke is airtightness only.
       if (seq !== playSeq || !intendPlay) {
-        URL.revokeObjectURL(objectUrl);
+        try {
+          URL.revokeObjectURL(pre.objectUrl);
+        } catch {
+          /* ignore */
+        }
         return unwindSilent(false);
       }
-      currentObjectUrl = objectUrl;
+      currentObjectUrl = pre.objectUrl;
       a.src = currentObjectUrl;
       offline = true;
     } else {
-      a.src = url;
+      const blob = await audioFetcher(moshafId, surahNumber);
+      // Loser unwinds silently: no src swap, no blob URL, no ghost error.
+      if (seq !== playSeq || !intendPlay) return unwindSilent(false);
+      if (blob) {
+        const objectUrl = URL.createObjectURL(blob);
+        // Re-check after the sync URL creation: a swap may have landed while
+        // we built the URL — revoke ours instead of leaking it (B1 leak).
+        if (seq !== playSeq || !intendPlay) {
+          URL.revokeObjectURL(objectUrl);
+          return unwindSilent(false);
+        }
+        currentObjectUrl = objectUrl;
+        a.src = currentObjectUrl;
+        offline = true;
+      } else {
+        a.src = url;
+      }
     }
     a.__nurSeq = seq;
     a.playbackRate = a.playbackRate || 1;
@@ -355,6 +425,10 @@ export function stop() {
   a.load();
   a.__nurSeq = playSeq;
   releaseObjectUrl();
+  dropPrefetch();
+  // (v5.2.67) an armed timer must not duck the NEXT track's entry volume —
+  // only player-close used to clear it, so any other stop leaked the fade.
+  clearSleepTimer();
   emit();
 }
 

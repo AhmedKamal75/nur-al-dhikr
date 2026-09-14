@@ -89,6 +89,11 @@ function flagLoad(key, failed) {
   store.dispatch(actions.setLoadError(key, failed));
 }
 
+/** Meta-only ensure for surfaces needing ayah counts (verse packs). */
+export function ensureQuranMeta() {
+  return fetchQuranMetaShared();
+}
+
 export async function ensureQuranData(state) {
   if (!state.quran.meta) {
     await fetchQuranMetaShared({ announce: true });

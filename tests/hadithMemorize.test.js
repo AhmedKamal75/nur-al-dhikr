@@ -17,14 +17,19 @@ import {
 } from '../js/domain/hifz.js';
 
 describe('SRS key twins', () => {
-  test('mark + easy climbs, again resets, hostile no-ops', () => {
+  test('mark + four grades step the shared ladder; hostile no-ops', () => {
     let r = markMemorizedKey({}, 'bukhari:1', 'hadith', '2026-09-05');
     assert.equal(r['bukhari:1'].due, '2026-09-06');
     assert.equal(r['bukhari:1'].level, 0);
-    r = logReviewKey(r, 'bukhari:1', 'easy', '2026-09-06');
+    // (v5.2.64) good inherits the old easy semantics: climbs one.
+    r = logReviewKey(r, 'bukhari:1', 'good', '2026-09-06');
     assert.equal(r['bukhari:1'].level, 1);
     assert.equal(r['bukhari:1'].due, '2026-09-09', `+${HIFZ_INTERVALS[1]} days`);
-    r = logReviewKey(r, 'bukhari:1', 'again', '2026-09-09');
+    r = logReviewKey(r, 'bukhari:1', 'hard', '2026-09-09');
+    assert.equal(r['bukhari:1'].level, 1, 'hard holds the level');
+    r = logReviewKey(r, 'bukhari:1', 'easy', r['bukhari:1'].due);
+    assert.equal(r['bukhari:1'].level, 3, 'easy climbs two');
+    r = logReviewKey(r, 'bukhari:1', 'again', r['bukhari:1'].due);
     assert.equal(r['bukhari:1'].level, 0);
     assert.equal(r['bukhari:1'].lapses, 1);
     assert.deepEqual(markMemorizedKey(r, '__proto__:1', 'hadith'), r, 'proto refused');

@@ -39,6 +39,7 @@ import {
   nextSpreadPage,
   prevSpreadPage,
   juzEighth,
+  hizbStartPage,
 } from '../services/mushaf.js';
 import { VIEWS, MUSHAF_PAGE_COUNT, MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
@@ -614,6 +615,25 @@ export function buildMushafJump(state) {
     )
     .join('');
 
+  // (v5.2.58) Hizb index: 60 halves grouped by juz, jumping to the honest
+  // page-position approximation (exact breaks print in the page margins —
+  // the hint below says so). Buttons reuse the juz styling.
+  const hizbRows = [];
+  for (let juz = 1; juz <= 30; juz += 1) {
+    const halves = [juz * 2 - 1, juz * 2]
+      .map((h) => {
+        const page = hizbStartPage(meta.juzFirstPage, h);
+        if (page == null) return '';
+        const label = `${t('mushaf.hizb', lang)} ${numFor(lang, h)}`;
+        return `<button type="button" class="mushaf-jump__hizb" data-action="mushaf-jump-page" data-page="${page}" data-roving-item aria-label="${escapeHTML(label)} · ${t('mushaf.pageLabel', lang)} ${numFor(lang, page)}">${numFor(lang, h)}</button>`;
+      })
+      .join('');
+    if (!halves) continue;
+    hizbRows.push(
+      `<div class="mushaf-jump__hizb-row"><span class="mushaf-jump__hizb-juz">${t('mushaf.juz', lang)} ${numFor(lang, juz)}</span>${halves}</div>`
+    );
+  }
+
   return `
   <div class="mushaf-jump">
     <h2 id="modal-title-mushaf-jump">${t('mushaf.jumpTo', lang)}</h2>
@@ -628,6 +648,9 @@ export function buildMushafJump(state) {
     <div class="mushaf-jump__surah-list" role="group" aria-label="${t('mushaf.surahs', lang)}" data-roving>${surahButtons}</div>
     <h3 class="mushaf-jump__heading">${t('mushaf.juzSection', lang)}</h3>
     <div class="mushaf-jump__juz-list" role="group" aria-label="${t('mushaf.juzSection', lang)}" data-roving>${juzButtons}</div>
+    <h3 class="mushaf-jump__heading">${t('mushaf.hizbSection', lang)}</h3>
+    <p class="panel__subtext">${t('mushaf.hizbApprox', lang)}</p>
+    <div class="mushaf-jump__hizb-list" role="group" aria-label="${t('mushaf.hizbSection', lang)}" data-roving>${hizbRows.join('')}</div>
   </div>`;
 }
 

@@ -46,6 +46,31 @@ export const PRAYER_ICONS = {
   isha: 'moon',
 };
 
+/**
+ * (v5.2.60) Alert reliability status: the arm state the app already
+ * tracks (alertTriggerStatus) finally renders — modes 'off'/unknown say
+ * nothing (nothing armed, nothing to report):
+ *  - triggers: pre-scheduled with the browser, count shown;
+ *  - tab:      in-tab only (Safari/Firefox reality) + the calendar
+ *              fallback CTA (OS-level alerts, no backend);
+ *  - permission: one-tap enable.
+ * Pure over ({mode, count}, lang) — unit-tested.
+ */
+export function alertStatusHTML(status, lang) {
+  const mode = status && typeof status.mode === 'string' ? status.mode : 'unknown';
+  const count = Math.floor(Number(status?.count)) || 0;
+  if (mode === 'triggers' && count > 0) {
+    return `<p class="panel__subtext prayer-reliability">${icon('bell', { size: 14 })} ${t('prayer.reliabilityArmed', lang, { n: count })}</p>`;
+  }
+  if (mode === 'tab') {
+    return `<p class="panel__subtext prayer-reliability">${icon('bell', { size: 14 })} ${t('prayer.reliabilityTab', lang)} <button type="button" class="link-btn link-btn--sm" data-action="prayer-month-ics">${icon('calendar', { size: 13 })} ${t('prayer.addToCalendar', lang)}</button></p>`;
+  }
+  if (mode === 'permission') {
+    return `<p class="panel__subtext prayer-reliability">${icon('bell', { size: 14 })} ${t('prayer.reliabilityPermission', lang)} <button type="button" class="link-btn link-btn--sm" data-action="prayer-enable-notifications">${t('prayer.enableNotifications', lang)}</button></p>`;
+  }
+  return '';
+}
+
 export function renderPrayer(state) {
   const lang = state.settings.language;
   const p = state.settings.prayer;
@@ -234,6 +259,7 @@ export function renderPrayer(state) {
       </div>`;
       })()}
       <div class="prayer-list">${rows}</div>
+      ${alertStatusHTML(state.alertTriggerStatus, lang)}
       ${
         fallbackNames.length
           ? `<p class="panel__subtext prayer-fallback-note" id="prayer-fallback-note">${icon('info', { size: 14 })} ${t('prayer.polarNote', lang, { names: fallbackNames.map((n) => t('prayer.' + n, lang)).join(lang === 'ar' ? '، ' : ', ') })}</p>`

@@ -13,24 +13,46 @@ import { buildAyahStudyExtras } from './tafsirPanel.js';
  * (v4.5) Feature-parity hifz row for the ayah detail: the SAME spaced-
  * repetition actions the classic reader's toolbar carries (mark a surah
  * memorized, or log today's recall grade), one tap from the mushaf.
+ * (v5.2.64) plus the ayah's own track: mark + four recall grades for
+ * this exact ayah (data-ayah), feeding the surah mistake heatmap.
  */
-function hifzRowFor(state, surahNumber, lang) {
+function hifzRowFor(state, surahNumber, ayahNumber, lang) {
   const rec = state.hifzRecords?.[String(surahNumber)];
   const num = String(parseInt(surahNumber, 10) || 0);
+  const ayah = String(parseInt(ayahNumber, 10) || 0);
+  const ayahRec = state.hifzAyahRecords?.[`${num}:${ayah}`];
+  const gradeBtn = (grade) => `
+      <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="${grade}" title="${t(`hifz.${grade}`, lang)}">
+        ${t(`hifz.${grade}`, lang)}
+      </button>`;
+  const ayahGradeBtn = (grade) => `
+      <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-ayah="${ayah}" data-grade="${grade}" title="${t(`hifz.${grade}`, lang)}">
+        ${t(`hifz.${grade}`, lang)}
+      </button>`;
   return `
     <div class="mushaf-ayah-detail__hifz">
       ${
         rec
           ? `
-      <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="easy" title="${t('hifz.recalled', lang)}">
-        ${icon('check', { size: 13 })} ${t('hifz.recalled', lang)}
-      </button>
-      <button type="button" class="chip" data-action="hifz-review" data-surah="${num}" data-grade="again" title="${t('hifz.struggled', lang)}">
-        ${icon('repeat', { size: 13 })} ${t('hifz.struggled', lang)}
-      </button>`
+      ${gradeBtn('again')}
+      ${gradeBtn('hard')}
+      ${gradeBtn('good')}
+      ${gradeBtn('easy')}`
           : `
       <button type="button" class="chip" data-action="hifz-mark" data-surah="${num}" title="${t('hifz.markMemorized', lang)}">
         ${icon('check', { size: 13 })} ${t('hifz.markMemorized', lang)}
+      </button>`
+      }
+      ${
+        ayahRec
+          ? `
+      ${ayahGradeBtn('again')}
+      ${ayahGradeBtn('hard')}
+      ${ayahGradeBtn('good')}
+      ${ayahGradeBtn('easy')}`
+          : `
+      <button type="button" class="chip" data-action="hifz-ayah-mark" data-surah="${num}" data-ayah="${ayah}" title="${t('hifz.markMemorized', lang)}">
+        ${icon('check', { size: 13 })} ${t('hifz.markMemorized', lang)} ${ayah}
       </button>`
       }
     </div>`;
@@ -100,7 +122,7 @@ export function buildMushafAyahDetail(
         ${icon('list', { size: 16 })} ${t('mushaf.openInStudy', lang)}
       </button>
     </div>
-    ${hifzRowFor(state, surahNumber, lang)}
+    ${hifzRowFor(state, surahNumber, ayahNumber, lang)}
     ${buildAyahStudyExtras(state, surahNumber, ayahNumber, state.mushafSession?.tafsirTab ?? null)}
   </div>`;
 }

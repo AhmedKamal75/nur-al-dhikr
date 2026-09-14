@@ -56,6 +56,23 @@ const DAILY_AYAH_THEME_IDS = new Set([
   'guidance',
   'paradise',
 ]);
+/** (v5.2.48) Settings accordion slugs — mirror of settingsSectionIds() in
+ * views/settings.js (kept inline so config never imports views); the two
+ * lists are pinned equal by tests/settingsSection.test.js. */
+export const SETTINGS_SECTION_SLUGS = new Set([
+  'language',
+  'appearance',
+  'content',
+  'cardfields',
+  'reciter',
+  'translation',
+  'compare',
+  'feedback',
+  'notifications',
+  'accessibility',
+  'profiles',
+  'data',
+]);
 const PALETTE_IDS = new Set(PALETTES.map((p) => p.id));
 const SHAPE_IDS = new Set(SHAPES.map((s) => s.id));
 
@@ -199,10 +216,14 @@ export function sanitizeSettings(raw) {
     arabicFontScale: asNumber(s.arabicFontScale, d.arabicFontScale, 0.85, 1.6),
     reduceMotion: asBool(s.reduceMotion, d.reduceMotion),
     highContrast: asBool(s.highContrast, d.highContrast),
+    dyslexiaFriendly: asBool(s.dyslexiaFriendly, d.dyslexiaFriendly),
+    roomySpacing: asBool(s.roomySpacing, d.roomySpacing),
     elderMode: asBool(s.elderMode, d.elderMode),
     kidsMode: asBool(s.kidsMode, d.kidsMode),
     homeOrder: sanitizeHomeOrder(s.homeOrder),
     hiddenHome: sanitizeHiddenHome(s.hiddenHome),
+    quickOrder: sanitizeQuickOrder(s.quickOrder),
+    hiddenQuick: sanitizeHiddenQuick(s.hiddenQuick),
     offline: sanitizeOfflineStatus(s.offline),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
     compressedDownloads: asBool(s.compressedDownloads, d.compressedDownloads),
@@ -235,6 +256,12 @@ export function sanitizeSettings(raw) {
     profileName: asShortStr(s.profileName, d.profileName, 60),
     autoAdvanceFocus: asBool(s.autoAdvanceFocus, d.autoAdvanceFocus),
     dailyGoal: Math.round(asNumber(s.dailyGoal, d.dailyGoal, 1, 10000)),
+    // (v5.2.48) accordion memory — a section slug or null (default section
+    // renders on null); unknown slugs drop to null, never a broken pin.
+    settingsSection:
+      typeof s.settingsSection === 'string' && SETTINGS_SECTION_SLUGS.has(s.settingsSection)
+        ? s.settingsSection
+        : null,
     // Verse voices live in a fixed 5-id CDN namespace — a stale/typo id
     // would 404 at play time, so coerce unknown values to the default.
     // (Moshaf ids stay free-form: 314 catalog + user customs, validated live.)
@@ -294,6 +321,44 @@ function sanitizeHiddenHome(raw) {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     for (const [k, v] of Object.entries(raw)) {
       if (HOME_PANEL_ID_SET.has(k) && isSafeKey(k) && v === true) out[k] = true;
+    }
+  }
+  return out;
+}
+
+/**
+ * (v5.2.54) quick-tile ids — mirror of QUICK_TILE_IDS in
+ * domain/quickTiles.js (kept inline so config never imports domain);
+ * pinned behaviorally by tests/quickTiles.test.js.
+ */
+const QUICK_TILE_ID_SET = new Set([
+  'mushaf',
+  'morning',
+  'evening',
+  'tasbih',
+  'prayer',
+  'qibla',
+  'ramadan',
+  'zakat',
+]);
+
+/** Quick-tile order: known ids, deduped, or null (= usage-driven). */
+function sanitizeQuickOrder(raw) {
+  if (raw == null) return null;
+  if (!Array.isArray(raw)) return null;
+  const out = [];
+  for (const id of raw) {
+    if (typeof id === 'string' && QUICK_TILE_ID_SET.has(id) && !out.includes(id)) out.push(id);
+  }
+  return out.length ? out : null;
+}
+
+/** Quick-tile hides: literal-true flags on known ids only. */
+function sanitizeHiddenQuick(raw) {
+  const out = {};
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    for (const [k, v] of Object.entries(raw)) {
+      if (QUICK_TILE_ID_SET.has(k) && isSafeKey(k) && v === true) out[k] = true;
     }
   }
   return out;

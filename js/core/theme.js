@@ -29,6 +29,11 @@ export function applyTheme(settings) {
   root.setAttribute('data-shape', settings.shape);
   root.setAttribute('data-reduce-motion', String(!!settings.reduceMotion));
   root.setAttribute('data-high-contrast', String(!!settings.highContrast));
+  // (v5.2.59) reading-comfort flags ride the same attribute pipeline.
+  // OS prefers-contrast / prefers-reduced-transparency need no JS: pure
+  // CSS media queries in accessibility.css answer them live.
+  root.setAttribute('data-dyslexia', String(!!settings.dyslexiaFriendly));
+  root.setAttribute('data-roomy', String(!!settings.roomySpacing));
   root.setAttribute('lang', settings.language);
   root.setAttribute('dir', isRTL(settings.language) ? 'rtl' : 'ltr');
 

@@ -1,7 +1,8 @@
 /**
  * components/calendarModals.js
  * Modal content builders for the calendar's day-detail view and the
- * add/edit note form (recurrence: once / daily / every-N-days / range).
+ * add/edit note form (recurrence: once / daily / every-N-days / range /
+ * weekly / monthly / yearly / Hijri-monthly / White Days).
  *
  * (v4.3) layer-rule fix: this module used to import domain/calendar.js for
  * the day-detail's Hijri label — a ui → domain edge ARCHITECTURE.md §2
@@ -14,18 +15,41 @@ import { escapeHTML } from '../core/utils.js';
 // Layer rule (ui imports core + ui only): recurrence ids are mirrored from
 // services/calendarNotes.js RECURRENCE_TYPES (app layer resolves notes via
 // notesForDate and passes them in — see buildDayDetail). Keep in sync.
-const RECURRENCE_TYPES = ['once', 'daily', 'interval', 'range'];
+const RECURRENCE_TYPES = [
+  'once',
+  'daily',
+  'interval',
+  'range',
+  'weekly',
+  'monthly',
+  'yearly',
+  'hijri-monthly',
+  'whitedays',
+];
 
 const RECURRENCE_LABEL_KEY = {
   once: 'calendar.recurOnce',
   daily: 'calendar.recurDaily',
   interval: 'calendar.recurInterval',
   range: 'calendar.recurRange',
+  weekly: 'calendar.recurWeekly',
+  monthly: 'calendar.recurMonthly',
+  yearly: 'calendar.recurYearly',
+  'hijri-monthly': 'calendar.recurHijriMonthly',
+  whitedays: 'calendar.whiteDays',
 };
+
+/** Capped recurrence ids share one optional end-date input (see the
+ *  `bounded` conditional group in buildNoteForm + forms.js). Exported for
+ *  the app-layer visibility toggle (same group for five types). */
+export const BOUNDED_RECURRENCE = ['weekly', 'monthly', 'yearly', 'hijri-monthly', 'whitedays'];
 
 /** Local mirror of services/calendarNotes appliesToDate/notesForDate for
  *  the no-dayNotes fallback path (kept in sync; the app-layer caller
- *  passes pre-resolved notes so this rarely runs). */
+ *  passes pre-resolved notes so this rarely runs). Hijri-backed types
+ *  cannot run here (ui must not import domain) — the mirror covers the
+ *  Gregorian types; callers needing hijri-monthly/whitedays pass dayNotes.
+ *  Documented limitation, not drift: the Gregorian arms match exactly. */
 function localNotesForDate(notes, dateKeyStr) {
   const applies = (note) => {
     if (!note || !note.startDate || dateKeyStr < note.startDate) return false;
@@ -41,6 +65,16 @@ function localNotesForDate(notes, dateKeyStr) {
         if (note.endDate && dateKeyStr > note.endDate) return false;
         const ms = new Date(dateKeyStr + 'T00:00:00') - new Date(note.startDate + 'T00:00:00');
         return Math.round(ms / 86400000) % n === 0;
+      }
+      case 'weekly':
+      case 'monthly':
+      case 'yearly': {
+        if (note.endDate && dateKeyStr > note.endDate) return false;
+        const d = new Date(dateKeyStr + 'T00:00:00');
+        const s = new Date(note.startDate + 'T00:00:00');
+        if (note.recurrence === 'weekly') return d.getDay() === s.getDay();
+        if (note.recurrence === 'monthly') return d.getDate() === s.getDate();
+        return d.getMonth() === s.getMonth() && d.getDate() === s.getDate();
       }
       default:
         return false;
@@ -72,6 +106,10 @@ function recurrenceSummary(note, lang) {
   if (note.recurrence === 'interval')
     return t('calendar.recurIntervalSummary', lang, { n: note.intervalDays || 1 });
   if (note.recurrence === 'range') return `${note.startDate} \u2192 ${note.endDate}`;
+  if (BOUNDED_RECURRENCE.includes(note.recurrence)) {
+    const label = t(RECURRENCE_LABEL_KEY[note.recurrence], lang);
+    return note.endDate ? `${label} \u2192 ${note.endDate}` : label;
+  }
   return '';
 }
 
@@ -146,6 +184,10 @@ export function buildNoteForm(dateKeyStr, note, lang = 'en') {
 
     <div class="note-form__conditional" data-recurrence-group="daily" ${recurrence === 'daily' ? '' : 'hidden'}>
       <label class="field">${t('calendar.untilDateOptional', lang)}<input class="input" type="date" name="endDateDaily" value="${escapeHTML(String(note?.recurrence === 'daily' ? note?.endDate || '' : ''))}" /></label>
+    </div>
+
+    <div class="note-form__conditional" data-recurrence-group="bounded" ${BOUNDED_RECURRENCE.includes(recurrence) ? '' : 'hidden'}>
+      <label class="field">${t('calendar.untilDateOptional', lang)}<input class="input" type="date" name="endDateBounded" value="${escapeHTML(String(BOUNDED_RECURRENCE.includes(note?.recurrence) ? note?.endDate || '' : ''))}" /></label>
     </div>
 
     <div class="toggle-row">

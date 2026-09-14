@@ -30,6 +30,8 @@ export const rt = {
   ayahScrollAttempts: null,
   hifzParamConsumed: null,
   hadithIndexStarted: null,
+  hadithSearchFlight: null,
+  lastHadithSearchDocs: '',
   hadithBookViewLastId: null,
   hadithDeepRef: null,
   hadithDailyStarted: null,
@@ -70,6 +72,8 @@ export const rt = {
   audioSearchTimer: null,
   rootsSearchTimer: null,
   hadithQueryTimer: null,
+  hadithGridSearchTimer: null,
+  lastVerseStatusVoice: null,
   pendingAutoAdvanceTimer: null,
   pendingImportPayload: null,
   // (v5.2.29) family plan sharing: the sanitized plan awaiting confirm.

@@ -17,14 +17,30 @@ const AUDIO_DB = 'nurAlDhikrAudio';
 const STORE = 'files'; // key -> { key, moshafId, surah, bytes, ts, blob }
 let dbPromise = null;
 
+/** Reset the memoized connection (tests only — new globals need a fresh open). */
+export function _resetAudioStoreForTests() {
+  dbPromise = null;
+}
+
 function openDB() {
   if (dbPromise) return dbPromise;
   dbPromise = new Promise((resolve) => {
-    if (!('indexedDB' in window)) {
+    try {
+      if (typeof window === 'undefined' || !('indexedDB' in window)) {
+        resolve(null);
+        return;
+      }
+    } catch {
       resolve(null);
       return;
     }
-    const req = indexedDB.open(AUDIO_DB, 1);
+    let req;
+    try {
+      req = indexedDB.open(AUDIO_DB, 1);
+    } catch {
+      resolve(null);
+      return;
+    }
     req.onupgradeneeded = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains(STORE)) {
@@ -177,6 +193,125 @@ export async function storageEstimate() {
     /* unsupported */
   }
   return null;
+}
+
+/* ------------------------------------------------------------------ *
+ * v5.2.61 — Per-ayah verse audio.
+ * Same IndexedDB store, `v:`-prefixed keys (`v:<reciterId>:<globalAyah>`)
+ * beside the full-surah `moshafId:surah` keys: no version bump, no
+ * migration, and the moshafId index never sees them. One Blob per ayah;
+ * the verse engine plays them offline-first with CDN fallback.
+ * ------------------------------------------------------------------ */
+
+/** IDB key for one verse file (global ayah 1..6236). */
+export function verseKey(reciterId, globalAyah) {
+  return `v:${String(reciterId || '')}:${Math.floor(Number(globalAyah)) || 0}`;
+}
+
+/** Store one verse Blob. Returns { ok, bytes } or { ok:false, error }. */
+export async function saveVerseAudio(reciterId, globalAyah, blob) {
+  const db = await openDB();
+  if (!db) return { ok: false, error: 'no-idb' };
+  if (!blob || !blob.size) return { ok: false, error: 'empty' };
+  const key = verseKey(reciterId, globalAyah);
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).put({
+      key,
+      moshafId: `__verse__:${reciterId}`,
+      ayah: Math.floor(Number(globalAyah)),
+      bytes: blob.size,
+      ts: Date.now(),
+      blob,
+    });
+    await txDone(tx);
+    return { ok: true, bytes: blob.size };
+  } catch (err) {
+    console.error('[audioStore] verse save failed', err);
+    const name = err && err.name ? String(err.name).toLowerCase() : '';
+    return { ok: false, error: name.includes('quota') ? 'quota' : 'write' };
+  }
+}
+
+/** Get one stored verse Blob (or null when absent / unavailable). */
+export async function getVerseAudio(reciterId, globalAyah) {
+  const db = await openDB();
+  if (!db) return null;
+  return new Promise((resolve) => {
+    try {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).get(verseKey(reciterId, globalAyah));
+      req.onsuccess = () => resolve(req.result?.blob || null);
+      req.onerror = () => resolve(null);
+    } catch {
+      resolve(null);
+    }
+  });
+}
+
+/**
+ * Global ayah numbers stored for a voice ([] when unavailable). One
+ * getAllKeys scan — callers group per surah; rescan only on view open.
+ */
+export async function listVerseAyahs(reciterId) {
+  const db = await openDB();
+  if (!db) return [];
+  const prefix = `v:${String(reciterId || '')}:`;
+  return new Promise((resolve) => {
+    try {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAllKeys();
+      req.onsuccess = () => {
+        const out = [];
+        for (const k of req.result || []) {
+          if (typeof k === 'string' && k.startsWith(prefix)) {
+            const n = Math.floor(Number(k.slice(prefix.length)));
+            if (Number.isFinite(n) && n > 0) out.push(n);
+          }
+        }
+        resolve(out);
+      };
+      req.onerror = () => resolve([]);
+    } catch {
+      resolve([]);
+    }
+  });
+}
+
+/** Delete one stored verse file. */
+export async function deleteVerseAudio(reciterId, globalAyah) {
+  const db = await openDB();
+  if (!db) return false;
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).delete(verseKey(reciterId, globalAyah));
+    await txDone(tx);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Download one verse file into the store (fetch → audio-check → save).
+ * Same honesty contract as downloadSurah: 404 is learned 'missing',
+ * non-audio payloads refuse, timeouts terminate.
+ */
+export async function downloadVerseFile(reciterId, globalAyah, url) {
+  try {
+    const res = await fetchWithTimeout(url, { timeoutMs: 30000 });
+    if (res.status === 404) return { ok: false, error: 'missing' };
+    if (!res.ok) return { ok: false, error: `http-${res.status}` };
+    const blob = await res.blob();
+    if (!blob.size) return { ok: false, error: 'empty' };
+    const type = blob.type || '';
+    if (type && !/audio|octet|mpeg|mp3/i.test(type)) {
+      return { ok: false, error: 'not-audio' };
+    }
+    return saveVerseAudio(reciterId, globalAyah, blob);
+  } catch {
+    return { ok: false, error: 'network' };
+  }
 }
 
 /* ------------------------------------------------------------------ *

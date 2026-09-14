@@ -68,6 +68,38 @@ export function buildCollectionPicker(item, state) {
   </div>`;
 }
 
+/**
+ * (v5.2.51) Move-to-collection picker: one destination button per
+ * collection (single-select by design — a move lands in exactly one
+ * place, then the favorite is removed). Creating a brand-new collection
+ * here is add-only (the heart toggle stays one tap away).
+ */
+export function buildMovePicker(item, state) {
+  const lang = state.settings.language;
+  const rows = state.collections
+    .map((c) => {
+      const has = c.items.includes(item.id);
+      return `
+    <div class="picker-row">
+      <span>${escapeHTML(pickLocale(c.name, lang))}</span>
+      <span class="picker-row__count">${c.items.length}</span>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="move-to-collection" data-collection-id="${escapeHTML(c.id)}" data-item-id="${escapeHTML(item.id)}" ${has ? 'disabled' : ''}>
+        ${t('favorites.moveTo', lang)}
+      </button>
+    </div>`;
+    })
+    .join('');
+
+  return `
+  <div class="collection-picker">
+    <h2 id="modal-title-picker">${t('favorites.moveTo', lang)}</h2>
+    ${rows || `<p class="empty-hint">${t('collections.empty', lang)}</p>`}
+    <button type="button" class="btn btn--secondary btn--sm" data-action="create-collection-inline-move" data-item-id="${escapeHTML(item.id)}">
+      ${icon('plus', { size: 14 })} ${t('collections.new', lang)}
+    </button>
+  </div>`;
+}
+
 export function buildConfirm({
   message,
   confirmAction,
@@ -90,6 +122,7 @@ export function buildConfirm({
 export function buildTextPrompt({
   title,
   placeholder = '',
+  value = '',
   confirmAction,
   confirmData = {},
   lang = 'en',
@@ -98,7 +131,7 @@ export function buildTextPrompt({
   return `
   <form class="prompt-dialog" data-action="${confirmAction}" ${dataAttrs}>
     <h2 id="modal-title-prompt">${escapeHTML(title)}</h2>
-    <input class="input" name="value" placeholder="${escapeHTML(placeholder)}" aria-label="${escapeHTML(title)}" autofocus required />
+    <input class="input" name="value" value="${escapeHTML(value)}" placeholder="${escapeHTML(placeholder)}" aria-label="${escapeHTML(title)}" autofocus required />
     <div class="editor-form__actions">
       <button type="button" class="btn btn--ghost" data-action="modal-close">${t('common.cancel', lang)}</button>
       <button type="submit" class="btn btn--primary">${t('common.save', lang)}</button>

@@ -56,6 +56,96 @@ body.is-elder .panel__subtext {
 }
 
 /* ==========================================================================
+   (v5.2.59) OS prefers-contrast — the same border/focus hardening as the
+   setting above, answered live without JS. Token colors already hold AA
+   (cssDesign gates); borders and focus width are the delta. Kept as a
+   mirror on purpose: one rule change lands in both places or the
+   a11yPrefs pin fails the suite.
+   ========================================================================== */
+@media (prefers-contrast: more) {
+  .chip,
+  .btn--secondary,
+  .input,
+  .select,
+  .textarea,
+  .search-bar__input {
+    border-width: 2px;
+  }
+  .card,
+  .panel,
+  .stat-card,
+  .ayah-card,
+  .hadith-card {
+    border-width: 2px;
+  }
+  :focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* ==========================================================================
+   (v5.2.59) OS prefers-reduced-transparency — frosted chrome goes solid.
+   Every backdrop-filter site plus its translucent wash resolves to an
+   opaque token surface; no transparency remains for the compositor.
+   ========================================================================== */
+@media (prefers-reduced-transparency: reduce) {
+  .player-bar,
+  .prayer-list,
+  .home-hero__title,
+  .home-hero__hijri,
+  #topbar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .player-bar,
+  .prayer-list {
+    background: var(--color-surface);
+  }
+  #topbar {
+    background: var(--color-bg);
+  }
+  .home-hero__title,
+  .home-hero__hijri {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+}
+
+/* ==========================================================================
+   (v5.2.59) Dyslexia-friendly reading (setting-driven): a highly-legible
+   system stack with wider letter/word spacing and roomier lines. Arabic
+   keeps rendering correctly — per-glyph fallback walks past the Latin
+   faces to Arabic-capable ones. Opt-in, so the default aesthetic stands.
+   ========================================================================== */
+[data-dyslexia='true'] body {
+  font-family: Verdana, Geneva, 'Segoe UI', Tahoma, sans-serif;
+  letter-spacing: 0.035em;
+  word-spacing: 0.16em;
+  line-height: 1.7;
+}
+
+/* ==========================================================================
+   (v5.2.59) Roomier long-form rhythm (setting-driven): WCAG 1.4.12 minima
+   (1.5+ lines, paragraph gaps, wider running text) scoped to reading
+   surfaces so chrome density is untouched.
+   ========================================================================== */
+[data-roomy='true'] .card__translation,
+[data-roomy='true'] .card__virtue,
+[data-roomy='true'] .journal-entry__text,
+[data-roomy='true'] .ayah-card__translation,
+[data-roomy='true'] .hadith-card__translation,
+[data-roomy='true'] .hadith-card__arabic {
+  line-height: 1.8;
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+[data-roomy='true'] .journal-entry__text,
+[data-roomy='true'] .card__translation {
+  margin-block-end: 1em;
+}
+
+/* ==========================================================================
    Print — cards only; chrome and navigation never print.
    ========================================================================== */
 @media print {

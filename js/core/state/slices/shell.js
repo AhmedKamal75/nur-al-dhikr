@@ -8,10 +8,11 @@
  * dispatcher in ../reducer.js tries each slice in turn).
  */
 
-import { VIEWS, sanitizeSettings } from '../../config.js';
+import { VIEWS, resolveKidsView, sanitizeSettings } from '../../config.js';
 import { dateKey } from '../../utils.js';
 import { normalizeCustomContentMap } from '../../schema.js';
 import { defaultNudgeState } from '../../../domain/nudge.js';
+import { CONFIRM_STEPS } from '../../../domain/onboarding.js';
 import { initialState } from '../initial.js';
 import { sanitizeRestoredPayload } from '../restore.js';
 import { lensLibrary, prefsOf } from '../../../domain/contentLens.js';
@@ -33,17 +34,22 @@ export function reduceShell(state, action) {
     }
 
     case 'NAVIGATE': {
+      // (v5.2.65, item 22) kids-mode scope: outside the allowlist every
+      // route — taps, deep links, palette picks, history traversals —
+      // lands on the Kids home. Tap paths toast via handlers/navigation.js;
+      // the reducer stays pure and silent.
+      const view = resolveKidsView(action.view, state.settings?.kidsMode === true);
       const base = {
         ...state,
-        activeView: action.view,
+        activeView: view,
         activeParams: action.params || {},
         // (v4.4) fullscreen Mushaf is a reading gesture tied to THIS view —
         // leaving the Mushaf (to any other view, incl. back/forward history)
         // must restore the normal shell, exactly like focus-mode does.
-        mushafFullscreen: action.view === VIEWS.MUSHAF ? !!state.mushafFullscreen : false,
+        mushafFullscreen: view === VIEWS.MUSHAF ? !!state.mushafFullscreen : false,
         // (v4.5) reader immersive is likewise a reading gesture tied to
         // THIS view — leaving the classic reader restores the shell.
-        readerImmersive: action.view === VIEWS.QURAN ? !!state.readerImmersive : false,
+        readerImmersive: view === VIEWS.QURAN ? !!state.readerImmersive : false,
         // (v4.5.2) manage mode is a per-surface editing gesture — it never
         // survives navigation onto a different surface (same DFA hygiene
         // as the modes above).
@@ -52,7 +58,7 @@ export function reduceShell(state, action) {
       // The onboarding "Personalize" step completes the first time the
       // person actually opens Settings. Tracked here (not in a view) to
       // keep views pure and the fact observable from state alone.
-      if (action.view === VIEWS.SETTINGS && state.onboarding && !state.onboarding.settingsVisited) {
+      if (view === VIEWS.SETTINGS && state.onboarding && !state.onboarding.settingsVisited) {
         return { ...base, onboarding: { ...state.onboarding, settingsVisited: true } };
       }
       return base;
@@ -108,11 +114,28 @@ export function reduceShell(state, action) {
     // enter to reorder, hide, re-target or edit items directly on the
     // surface that shows them. Transient by design (see initial state).
     case 'CONTENT_MANAGE_TOGGLE':
-      return { ...state, ui: { contentManage: !state.ui?.contentManage } };
+      return { ...state, ui: { ...state.ui, contentManage: !state.ui?.contentManage } };
 
     case 'ONBOARDING_DISMISS':
       if (state.onboarding?.dismissed) return state;
       return { ...state, onboarding: { ...state.onboarding, dismissed: true } };
+
+    // (v5.2.52) wizard setup confirms (prayer, goals) + ephemeral position.
+    case 'ONBOARDING_STEP_SEEN': {
+      if (!CONFIRM_STEPS.includes(action.stepId)) return state;
+      const seen = state.onboarding?.stepsSeen;
+      const stepsSeen = seen && typeof seen === 'object' && !Array.isArray(seen) ? { ...seen } : {};
+      if (stepsSeen[action.stepId] === true) return state;
+      stepsSeen[action.stepId] = true;
+      return { ...state, onboarding: { ...state.onboarding, stepsSeen } };
+    }
+
+    case 'ONBOARDING_STEP_SET': {
+      const idx = action.index == null ? null : Math.floor(Number(action.index));
+      const next = idx == null || !Number.isFinite(idx) || idx < 0 ? null : idx;
+      if ((state.ui?.onboardingStep ?? null) === next) return state;
+      return { ...state, ui: { ...state.ui, onboardingStep: next } };
+    }
 
     case 'INSTALL_PROMPT_READY':
       if (state.install?.promptReady) return state;
@@ -202,7 +225,11 @@ export function reduceShell(state, action) {
     // fake an older (or future) backup. The dry-run/storage reports are
     // session readouts: enum-guarded shapes, junk degrades to null.
     case 'BACKUP_EXPORTED': {
-      return { ...state, backupMeta: { lastBackupAt: Date.now() } };
+      return { ...state, backupMeta: { ...state.backupMeta, lastBackupAt: Date.now() } };
+    }
+    // (v5.2.53) rolling auto-snapshot stamp (keeps the manual stamp intact).
+    case 'BACKUP_AUTO_SAVED': {
+      return { ...state, backupMeta: { ...state.backupMeta, lastAutoBackupAt: Date.now() } };
     }
     case 'DATA_HEALTH_STORAGE': {
       const s = action.value;

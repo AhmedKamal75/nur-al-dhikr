@@ -180,6 +180,11 @@ export const HADITH_BOOK_URL = (id) => `data/hadith/${encodeURIComponent(id)}.js
  * use: https://alquran.cloud/cdn). Playback happens straight from the
  * person's browser to that CDN; nothing is proxied or bundled by this app,
  * and nothing plays without the person tapping play.
+ *
+ * (v5.2.61) 5 → 10: every id below was verified live against the CDN's own
+ * edition list (type=versebyverse) plus a byte-serving HEAD per file —
+ * 403s (saoodshuraym, abdullahbasfar, parhizgar) were probed and excluded,
+ * which is exactly why the allowlist exists instead of free-form ids.
  */
 export const QURAN_RECITERS = Object.freeze([
   { id: 'ar.alafasy', nameEn: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
@@ -187,6 +192,11 @@ export const QURAN_RECITERS = Object.freeze([
   { id: 'ar.abdulbasitmurattal', nameEn: 'Abdul Basit (Murattal)', nameAr: 'عبد الباسط عبد الصمد' },
   { id: 'ar.abdurrahmaansudais', nameEn: 'Abdurrahman As-Sudais', nameAr: 'عبدالرحمن السديس' },
   { id: 'ar.mahermuaiqly', nameEn: 'Maher Al Muaiqly', nameAr: 'ماهر المعيقلي' },
+  { id: 'ar.husarymujawwad', nameEn: 'Husary (Mujawwad)', nameAr: 'محمود خليل الحصري (المجود)' },
+  { id: 'ar.muhammadayyoub', nameEn: 'Muhammad Ayyoub', nameAr: 'محمد أيوب' },
+  { id: 'ar.muhammadjibreel', nameEn: 'Muhammad Jibreel', nameAr: 'محمد جبريل' },
+  { id: 'ar.hudhaify', nameEn: 'Hudhaify', nameAr: 'علي بن عبدالرحمن الحذيفي' },
+  { id: 'ar.ahmedajamy', nameEn: 'Ahmed Ajamy', nameAr: 'أحمد العجمي' },
 ]);
 
 /** Verse-voice allowlist: the CDN namespace only serves these five ids —

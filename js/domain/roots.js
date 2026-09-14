@@ -169,3 +169,55 @@ export function rootStats(entry) {
 export function rootOccurrencesAll(index, root) {
   return entryOf(index, root).occ;
 }
+
+/** Render caps (v5.2.55): previews and ref chips per word-form group, and
+ *  index tiles per page. The caps bound DOM weight on large roots (some
+ *  have 300+ occurrences); counts stay exact everywhere. */
+export const ROOTS_PAGE_SIZE = 60;
+export const ROOT_PREVIEW_CAP = 3;
+export const ROOT_GROUP_REF_CAP = 12;
+
+/**
+ * English word-gloss for an occurrence from loaded per-word data
+ * (quran-words), '' when the surah/ayah/word isn't loaded. Data, never
+ * invented — absent data renders nothing, not a guess.
+ */
+export function occurrenceGloss(quranWords, s, a, i) {
+  const surah = quranWords?.[String(s)];
+  const words = surah?.[String(a)];
+  if (!Array.isArray(words)) return '';
+  const rec = words.find((w) => w && Number(w.i) === Number(i));
+  const g = rec && typeof rec.en === 'string' ? rec.en.trim() : '';
+  return g;
+}
+
+/**
+ * Loaded ayah record for an occurrence (surah docs from the reader),
+ * null when the surah isn't loaded. Callers link to the reader instead.
+ */
+export function occurrenceAyah(surahs, s, a) {
+  const doc = surahs?.[String(s)];
+  const ayahs = doc && Array.isArray(doc.ayahs) ? doc.ayahs : null;
+  if (!ayahs) return null;
+  const rec = ayahs.find((x) => x && Number(x.number) === Number(a));
+  return rec && typeof rec.text === 'string' ? rec : null;
+}
+
+/**
+ * Split an ayah text around its i-th (1-based) word for highlighting.
+ * Returns {pre, word, post} or null when the position is out of range or
+ * the word doesn't match the occurrence surface form (tokenization drift
+ * renders unmarked rather than mis-marked).
+ */
+export function splitAyahWord(text, i, surface) {
+  if (typeof text !== 'string') return null;
+  const words = text.split(' ');
+  const idx = Math.floor(Number(i)) - 1;
+  if (!Number.isInteger(idx) || idx < 0 || idx >= words.length) return null;
+  if (typeof surface === 'string' && surface && words[idx] !== surface) return null;
+  return {
+    pre: words.slice(0, idx).join(' '),
+    word: words[idx],
+    post: words.slice(idx + 1).join(' '),
+  };
+}

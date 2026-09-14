@@ -8,9 +8,11 @@ import { scheduleAutoAdvance } from '../focusRuntime.js';
 import { rt } from '../rt.js';
 import { ensureHadithBook, ensureHadithIndex, scrollToHadithListTop } from '../hadithData.js';
 import { getItemEntry, itemClipboardText } from '../shared.js';
+import { normalizeHifzGrade } from '../../domain/hifz.js';
+import { yieldFullSurahPlayer } from '../audioEngine.js';
 import { asTranslationEdition, TRANSLATION_EDITIONS, VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
-import { go } from '../../core/router.js';
+import { go, replaceGo } from '../../core/router.js';
 import { actions, selectors, store } from '../../core/state.js';
 import { escapeHTML, pickLocale, uid } from '../../core/utils.js';
 // (v4.3) shareCard.js (553 lines of canvas rendering) is imported lazily:
@@ -21,9 +23,12 @@ import {
   buildCardMenu,
   buildCollectionPicker,
   buildConfirm,
+  buildMovePicker,
   buildTextPrompt,
 } from '../../ui/menus.js';
+import { FAVORITE_SORTS } from '../../views/favorites.js';
 import { closeModal, openModal } from '../../ui/modal.js';
+import { buildCollectionShareText } from '../../views/collection.js';
 import { showToast } from '../../ui/toast.js';
 import * as speech from '../../services/speech.js';
 import * as tasbih from '../../services/tasbih.js';
@@ -318,7 +323,9 @@ export const clickHandlers = {
 
   'byheart-review': (ds) => {
     if (!ds.itemId) return;
-    const grade = ds.grade === 'again' ? 'again' : ds.grade === 'easy' ? 'easy' : null;
+    // (v5.2.64) the shared key twins grade all four grades, like the
+    // surah/ayah tracks — the two-grade clamp was item-21 fallout.
+    const grade = normalizeHifzGrade(ds.grade);
     if (!grade) return;
     const st = store.getState();
     store.batch(() => {
@@ -327,8 +334,10 @@ export const clickHandlers = {
     });
     const rec = store.getState().byHeartRecords?.[ds.itemId];
     showToast(
-      t(grade === 'easy' ? 'hifz.recalled' : 'hifz.struggled', st.settings.language) +
-        (rec?.due ? ` · ${rec.due}` : '')
+      t(
+        grade === 'again' || grade === 'hard' ? 'hifz.struggled' : 'hifz.recalled',
+        st.settings.language
+      ) + (rec?.due ? ` · ${rec.due}` : '')
     );
   },
 
@@ -403,7 +412,8 @@ export const clickHandlers = {
     const n = String(ds.n || '');
     if (!bookId || !n) return;
     const key = `${bookId}:${n}`;
-    const grade = ds.grade === 'again' ? 'again' : ds.grade === 'easy' ? 'easy' : null;
+    // (v5.2.64) four grades like every other track — see byheart-review.
+    const grade = normalizeHifzGrade(ds.grade);
     if (!grade) return;
     store.batch(() => {
       if (!st.hadithMemRecords?.[key]) store.dispatch(actions.markHadithMemorized(key));
@@ -412,8 +422,10 @@ export const clickHandlers = {
     });
     const rec = store.getState().hadithMemRecords?.[key];
     showToast(
-      t(grade === 'easy' ? 'hifz.recalled' : 'hifz.struggled', st.settings.language) +
-        (rec?.due ? ` · ${rec.due}` : '')
+      t(
+        grade === 'again' || grade === 'hard' ? 'hifz.struggled' : 'hifz.recalled',
+        st.settings.language
+      ) + (rec?.due ? ` · ${rec.due}` : '')
     );
   },
 
@@ -467,6 +479,25 @@ export const clickHandlers = {
   'hadith-page-next': () => {
     const page = (store.getState().hadith.bookView.page || 1) + 1;
     store.dispatch(actions.setHadithView({ page }));
+    scrollToHadithListTop();
+  },
+
+  // (v5.2.57) grid cross-book pager: replaceGo keeps the query, drops
+  // page 1 — the journal pager discipline (no history spam per flip).
+  'hadith-grid-prev': () => {
+    const params = store.getState().activeParams || {};
+    const page = Math.max(1, Math.floor(Number(params.page)) || 1) - 1;
+    replaceGo(VIEWS.HADITH, {
+      ...(params.q ? { q: params.q } : {}),
+      ...(page > 1 ? { page: String(page) } : {}),
+    });
+    scrollToHadithListTop();
+  },
+
+  'hadith-grid-next': () => {
+    const params = store.getState().activeParams || {};
+    const page = (Math.floor(Number(params.page)) || 1) + 1;
+    replaceGo(VIEWS.HADITH, { ...(params.q ? { q: params.q } : {}), page: String(page) });
     scrollToHadithListTop();
   },
 
@@ -537,6 +568,9 @@ export const clickHandlers = {
       closeModal();
       return;
     }
+    // (v5.2.67) one voice: narration over a playing surah is unintelligible
+    // overlap — the track yields (paused, docked) instead.
+    yieldFullSurahPlayer();
     store.dispatch(actions.setSpeakingItem(ds.itemId));
     speech.speakItem(entry.item, {
       onEnd: () => {
@@ -554,6 +588,65 @@ export const clickHandlers = {
     openModal(buildCollectionPicker(entry.item, store.getState()), {
       labelledBy: 'modal-title-picker',
     });
+  },
+
+  // (v5.2.51) favorites bulk management: sort (replaceGo, no history
+  // spam), move-to-collection (single destination + unfavorite), and a
+  // confirmed unfavorite-all.
+  'favorites-sort': (ds) => {
+    const sort = FAVORITE_SORTS.includes(ds.sort) ? ds.sort : null;
+    replaceGo(VIEWS.FAVORITES, {
+      ...(sort && sort !== 'recent' ? { sort } : {}),
+      ...(ds.q ? { q: ds.q } : {}),
+    });
+  },
+
+  'open-move-picker': (ds) => {
+    const entry = getItemEntry(ds.itemId);
+    if (!entry) return;
+    openModal(buildMovePicker(entry.item, store.getState()), {
+      labelledBy: 'modal-title-picker',
+    });
+  },
+
+  'move-to-collection': (ds) => {
+    if (!ds.collectionId || !ds.itemId) return;
+    store.dispatch(actions.addToCollection(ds.collectionId, ds.itemId));
+    // Complete the move — guarded: toggle is a flip, never assume favorited.
+    if (store.getState().favorites.includes(ds.itemId)) {
+      store.dispatch(actions.toggleFavorite(ds.itemId));
+    }
+    closeModal();
+  },
+
+  'create-collection-inline-move': (ds) => {
+    const lang = store.getState().settings.language;
+    openModal(
+      buildTextPrompt({
+        title: t('collections.namePrompt', lang),
+        confirmAction: 'submit-new-collection-move',
+        confirmData: { itemId: ds.itemId },
+        lang,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
+  },
+
+  'unfavorite-all': () => {
+    const lang = store.getState().settings.language;
+    openModal(
+      buildConfirm({
+        message: t('favorites.clearConfirm', lang),
+        confirmAction: 'confirm-unfavorite-all',
+        confirmData: {},
+        lang,
+      })
+    );
+  },
+
+  'confirm-unfavorite-all': () => {
+    store.dispatch(actions.clearFavorites());
+    closeModal();
   },
 
   'create-collection': () => {
@@ -603,6 +696,67 @@ export const clickHandlers = {
     store.dispatch(actions.deleteCollection(ds.id));
     closeModal();
     go(VIEWS.COLLECTIONS);
+  },
+
+  // (v5.2.50) collection management: rename (wires the long-dead
+  // COLLECTION_RENAME path through the shared text prompt, prefilled),
+  // share-as-text, per-item reorder, and bulk import of missing favorites.
+  'rename-collection': (ds) => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const col = selectors.getCollection(state, ds.id);
+    if (!col) return;
+    openModal(
+      buildTextPrompt({
+        title: t('collections.namePrompt', lang),
+        value: pickLocale(col.name, lang),
+        confirmAction: 'submit-rename-collection',
+        confirmData: { id: col.id },
+        lang,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
+  },
+
+  'share-collection': async (ds) => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const col = selectors.getCollection(state, ds.id);
+    const text = buildCollectionShareText(col, state.library.itemIndex, lang);
+    if (!text) {
+      showToast(t('collections.shareEmpty', lang));
+      return;
+    }
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        showToast(t('card.copied', lang));
+      }
+    } catch {
+      /* user dismissed the share sheet — not an error */
+    }
+  },
+
+  'collection-move': (ds) => {
+    if (!ds.id || !ds.item) return;
+    store.dispatch(actions.moveCollectionItem(ds.id, ds.item, Number(ds.dir)));
+  },
+
+  'collection-add-favorites': (ds) => {
+    if (!ds.id) return;
+    const state = store.getState();
+    const lang = state.settings.language;
+    const col = selectors.getCollection(state, ds.id);
+    if (!col) return;
+    const have = new Set(col.items);
+    const fresh = (Array.isArray(state.favorites) ? state.favorites : []).filter(
+      (id) => !have.has(id) && state.library.itemIndex[id]
+    );
+    if (!fresh.length) return;
+    store.dispatch(actions.addItemsToCollection(ds.id, fresh));
+    showToast(t('collections.itemCount', lang, { n: fresh.length }));
   },
 
   'run-search': (ds) => {

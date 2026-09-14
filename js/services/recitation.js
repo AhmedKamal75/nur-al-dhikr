@@ -113,6 +113,13 @@ export function play(url, key) {
 
 export function stop() {
   if (audioEl) {
+    // (v5.2.61) revoke spent Blob URLs (offline verse files) so repeated
+    // plays never accumulate object URLs; CDN urls are unaffected.
+    try {
+      if (audioEl.src && audioEl.src.startsWith('blob:')) URL.revokeObjectURL(audioEl.src);
+    } catch {
+      /* already gone */
+    }
     audioEl.pause();
     audioEl.removeAttribute('src');
   }

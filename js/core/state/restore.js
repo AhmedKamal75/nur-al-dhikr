@@ -4,9 +4,9 @@
 
 import { MUSHAF_PAGE_COUNT } from '../config.js';
 import { cleanObject, clone, isSafeKey } from '../utils.js';
-import { isReturningUser } from '../../domain/onboarding.js';
+import { isReturningUser, CONFIRM_STEPS } from '../../domain/onboarding.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
-import { sanitizeHifzRecords, sanitizeMemRecords } from '../../domain/hifz.js';
+import { sanitizeAyahRecords, sanitizeHifzRecords, sanitizeMemRecords } from '../../domain/hifz.js';
 import { sanitizeFastingPrefs } from '../../domain/fasting.js';
 import { sanitizeSadaqahLog } from '../../domain/worship.js';
 import { sanitizeSunnahLog } from '../../domain/sunnah.js';
@@ -138,13 +138,41 @@ function cleanProfiles(rawProfiles, rawStore, rawActive) {
 
 /** Defensively coerce a restored/imported backup marker (v3.26). A future
  *  timestamp is junk — a backup cannot happen ahead of the device — and
- *  would make "days since backup" go negative forever. */
+ *  would make "days since backup" go negative forever. (v5.2.53) the
+ *  on-device auto-snapshot stamp rides the same rule beside the manual one. */
 function sanitizeBackupMeta(raw, now = Date.now()) {
-  const d = { lastBackupAt: null };
+  const cleanTs = (v) => {
+    const ts = Number(v);
+    if (!Number.isFinite(ts) || ts <= 0 || ts > now) return null;
+    return Math.floor(ts);
+  };
+  const d = { lastBackupAt: null, lastAutoBackupAt: null };
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return d;
-  const ts = Number(raw.lastBackupAt);
-  if (!Number.isFinite(ts) || ts <= 0 || ts > now) return d;
-  return { lastBackupAt: Math.floor(ts) };
+  d.lastBackupAt = cleanTs(raw.lastBackupAt);
+  d.lastAutoBackupAt = cleanTs(raw.lastAutoBackupAt);
+  return d;
+}
+
+/** User-authored tasbih phrases (v5.2.46): text + named goal only, capped;
+ *  hostile entries drop silently rather than poison the dial. */
+function sanitizeTasbihCustom(raw, cap = 50) {
+  if (!Array.isArray(raw)) return [];
+  const out = [];
+  for (const e of raw) {
+    if (!e || typeof e !== 'object' || Array.isArray(e)) continue;
+    if (typeof e.id !== 'string' || !e.id || e.id.length > 80 || !isSafeKey(e.id)) continue;
+    const text = typeof e.text === 'string' ? e.text.trim().slice(0, 500) : '';
+    if (!text) continue;
+    const t = Math.floor(Number(e.target));
+    if (out.some((q) => q.id === e.id)) continue;
+    out.push({
+      id: e.id,
+      text,
+      target: Number.isFinite(t) ? Math.min(100000, Math.max(1, t)) : 33,
+      ts: Number.isFinite(Number(e.ts)) ? Math.floor(Number(e.ts)) : null,
+    });
+  }
+  return out.slice(-cap);
 }
 
 export function sanitizeRestoredPayload(payload) {
@@ -204,6 +232,8 @@ export function sanitizeRestoredPayload(payload) {
     // Hifz records (v3.17): only well-formed per-surah entries survive —
     // hostile shapes drop silently rather than poison a later render.
     hifzRecords: sanitizeHifzRecords(p.hifzRecords),
+    // (v5.2.64) per-ayah records ("s:a" keys, same shape, own map).
+    hifzAyahRecords: sanitizeAyahRecords(p.hifzAyahRecords),
     // Fasting prefs (v3.18): enum-guarded categories + a strict HH:MM clock.
     fastingPrefs: sanitizeFastingPrefs(p.fastingPrefs),
     // Sadaqah quick-log (v3.19): timestamped entries only.
@@ -217,6 +247,8 @@ export function sanitizeRestoredPayload(payload) {
     // (v4.4) Dua journal + reflections — text entries only.
     duaJournal: sanitizeDuaJournal(p.duaJournal),
     reflections: sanitizeReflections(p.reflections),
+    // (v5.2.46) user-authored tasbih phrases — text + named goal only.
+    tasbihCustom: sanitizeTasbihCustom(p.tasbihCustom),
     // (v4.4) Ramadan planner logs — hijri-keyed day-boolean maps.
     taraweehLog: sanitizeHijriDayLog(p.taraweehLog),
     itikafLog: sanitizeHijriDayLog(p.itikafLog),
@@ -249,6 +281,14 @@ export function sanitizeRestoredPayload(payload) {
     onboarding: {
       dismissed: typeof ob.dismissed === 'boolean' ? ob.dismissed : isReturningUser(p),
       settingsVisited: typeof ob.settingsVisited === 'boolean' ? ob.settingsVisited : false,
+      // (v5.2.52) wizard setup confirms — booleans for known steps only.
+      stepsSeen: (() => {
+        const raw = ob.stepsSeen;
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+        const out = {};
+        for (const id of CONFIRM_STEPS) if (raw[id] === true) out[id] = true;
+        return out;
+      })(),
     },
     // Khatma plan: a schedule layered over reading progress — never trust
     // imported shapes. Requires a valid startDate AND at least one of a
@@ -388,7 +428,18 @@ export function sanitizeRestoredPayload(payload) {
       .filter((c) => c && typeof c === 'object' && asId(c.id))
       .map((c) => ({
         ...c,
-        name: typeof c.name === 'string' ? c.name.slice(0, 120) : '',
+        // (v5.2.50) names are {en,ar} objects in live state (create/rename
+        // store the user's words in both slots); legacy string names still
+        // restore. Either way each side caps at 120 chars.
+        name:
+          c.name && typeof c.name === 'object' && !Array.isArray(c.name)
+            ? {
+                en: typeof c.name.en === 'string' ? c.name.en.slice(0, 120) : '',
+                ar: typeof c.name.ar === 'string' ? c.name.ar.slice(0, 120) : '',
+              }
+            : typeof c.name === 'string'
+              ? c.name.slice(0, 120)
+              : '',
         items: asArray(c.items)
           .filter((id) => typeof id === 'string')
           .slice(0, 500),
@@ -460,6 +511,19 @@ export function sanitizeRestoredPayload(payload) {
     search: {
       historyList: asArray(asObject(p.search).historyList).filter((q) => typeof q === 'string'),
     },
+    // (v5.2.54) quick-tile tap counts — safe keys with finite non-negative
+    // counts only (drives the default tile order, never rendered raw).
+    tileVisits: (() => {
+      const raw = p.tileVisits;
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+      const out = {};
+      for (const [k, v] of Object.entries(raw).slice(0, 50)) {
+        if (typeof k !== 'string' || !isSafeKey(k)) continue;
+        const n = Math.floor(Number(v));
+        if (Number.isFinite(n) && n > 0) out[k] = n;
+      }
+      return out;
+    })(),
     quranBookmark: {
       surah: validSurahBookmarkId(qb.surah),
       ts: Number.isFinite(qb.ts) ? qb.ts : null,

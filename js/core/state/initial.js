@@ -62,6 +62,9 @@ export function initialState() {
     grammarDrill: null,
     collections: [], // [{ id, name:{en,ar}, items:[ids], createdAt }]
     counters: {}, // { itemId: { count, target, completedCycles, lastUpdated } }
+    // (v5.2.54) quick-tile tap counts { tileId: n } — drives the default
+    // (usage) tile order until the person customizes it.
+    tileVisits: {},
     reminders: [], // [{ id, type, time, section, enabled }]
     calendarNotes: [], // [{ id, title, body, startDate, recurrence, intervalDays, endDate, reminder, reminderTime, createdAt }]
     statistics: {
@@ -78,9 +81,15 @@ export function initialState() {
     customContent: {}, // { libraryId: normalizedDocument } user-authored, mirrors library shape
     editor: { undoStack: [], redoStack: [] },
     // (v4.5.2) Transient UI state — deliberately NOT in PERSISTED_KEYS:
-    // manage mode is per-visit, never restored across reloads.
-    ui: { contentManage: false },
+    // manage mode is per-visit, never restored across reloads. (v5.2.52)
+    // the wizard position rides along: a reload restarts the wizard at the
+    // first incomplete step, which is the honest resume point.
+    ui: { contentManage: false, onboardingStep: null },
     tasbih: { activeItemId: null, activePhrase: null },
+    // (v5.2.46) user-authored dhikr for the tasbih dial:
+    // [{ id, text, target, ts }] oldest-first, capped. Counter keys ride the
+    // generic 'tasbih:'+id path, so increment() needs no changes.
+    tasbihCustom: [],
     // Complete Qur'an text/meta, fetched lazily (never at boot) and cached
     // here in memory only — it's large enough (2.4MB across 114 files) that
     // persisting it to localStorage on every dispatch would be wasteful;
@@ -177,6 +186,9 @@ export function initialState() {
     // per-surah grid can show a busy spinner instead of a dead-looking tap.
     // Ephemeral by design — a reload simply forgets what was mid-flight.
     audioDownloading: {},
+    // (v5.2.61) verse-pack status cache { [voice]: { [surah]: { done, total } } }.
+    // Ephemeral: IDB is the truth, rescanned when the audio view opens.
+    audioVerse: {},
     // Ephemeral full-surah player state (DOM-patched per tick; only coarse
     // changes dispatch through here).
     player: { moshafId: null, surah: null, playing: false, offline: false },
@@ -260,6 +272,9 @@ export function initialState() {
     // PERSISTED (small, user-earned progress; see js/hifz.js for the
     // interval ladder and the hostile-shape sanitize rules).
     hifzRecords: {},
+    // (v5.2.64) per-ayah hifz records ("s:a" keys) — same shape, own map
+    // so surah counts/queues never see ayah keys. PERSISTED likewise.
+    hifzAyahRecords: {},
     // Voluntary (sunnah) fasting prefs, v3.18 — PERSISTED. The fasts
     // themselves share the ramadanLog map (month keys ≠ 9); only the
     // category/reminder preferences live here. See js/fasting.js.
@@ -309,7 +324,7 @@ export function initialState() {
     // Data health (v3.26) — the timestamp of the last backup EXPORT (the
     // only honest "backed up" this zero-server app can know). PERSISTED;
     // sanitized in restore. Written by the export-backup action.
-    backupMeta: { lastBackupAt: null },
+    backupMeta: { lastBackupAt: null, lastAutoBackupAt: null },
     // Ephemeral (v3.26) — the Settings data-health readouts: the storage
     // estimate for this session's device and the last restore-dry-run
     // report. Describes this session, never persisted.
@@ -334,7 +349,8 @@ export function initialState() {
     // self-dismissing for returning users — see sanitizeRestoredPayload:
     // anyone upgrading from an earlier version with existing progress is
     // never shown it, so v2.7.0 users won't meet a first-run wizard.
-    onboarding: { dismissed: false, settingsVisited: false },
+    // (v5.2.52) stepsSeen records the two setup confirms (prayer, goals).
+    onboarding: { dismissed: false, settingsVisited: false, stepsSeen: {} },
     // Ephemeral — install-prompt state. beforeinstallprompt can only be
     // consumed once, so app.js stores the event itself and dispatches these
     // flags; the onboarding panel then re-renders reactively as the browser
@@ -371,6 +387,7 @@ export const PERSISTED_KEYS = [
   'playlists',
   'collections',
   'counters',
+  'tileVisits',
   'reminders',
   'calendarNotes',
   'statistics',
@@ -378,6 +395,7 @@ export const PERSISTED_KEYS = [
   'search',
   'customContent',
   'tasbih',
+  'tasbihCustom',
   'quranBookmark',
   'dailyChecklist',
   'quizStats',
@@ -394,6 +412,7 @@ export const PERSISTED_KEYS = [
   'khatmaHistory',
   'tajweedPracticeStats',
   'hifzRecords',
+  'hifzAyahRecords',
   'fastingPrefs',
   'sadaqahLog',
   'sunnahLog',

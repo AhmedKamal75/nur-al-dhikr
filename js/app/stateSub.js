@@ -5,10 +5,14 @@
  */
 
 import { rt } from './rt.js';
-import { ensureRecitersData, updateCompassLifecycle } from './audioEngine.js';
+import { ensureRecitersData, maybeSyncVerseStatus, updateCompassLifecycle } from './audioEngine.js';
 import { refreshLibraryIndex } from './net.js';
 import { renderErrorScreen, closeNavDrawer } from './drawer.js';
-import { ensureHadithData, maybeScrollToFocusHadith } from './hadithData.js';
+import {
+  ensureHadithData,
+  maybeScrollToFocusHadith,
+  maybeStartHadithSearchBuild,
+} from './hadithData.js';
 import { ensureOfflineQuota } from './offlineJobs.js';
 import {
   ensureMushafData,
@@ -32,6 +36,9 @@ import {
   updateRamadanLifecycle,
 } from './tickers.js';
 import { scheduleTriggerArm } from './triggers.js';
+import { settingsSectionForSlug } from '../views/settings.js';
+import { refreshAppBadge } from '../services/appBadge.js';
+import { syncPlayingState } from '../services/mediaSession.js';
 import { armFsControlsAfterEnter, updateAmbientWakeLifecycle } from './fullscreen.js';
 import { VIEWS } from '../core/config.js';
 import { computeReaderWindow } from '../domain/readerWindow.js';
@@ -111,6 +118,20 @@ export function onStateChange(stateArg, action) {
       clearTimeout(rt.quranSearchDebounceTimer);
       clearTimeout(rt.rootsSearchTimer);
       clearTimeout(rt.hadithQueryTimer);
+      // (v5.2.48) `#/settings/<slug>` deep links persist the open section
+      // (Back/forward and reloads keep landing on it); unknown slugs are
+      // ignored. Nested dispatch, same discipline as the reader-window
+      // sync below — the follow-up render is a patch-engine no-op.
+      if (action.view === VIEWS.SETTINGS) {
+        const slug =
+          action.params && typeof action.params === 'object'
+            ? settingsSectionForSlug(action.params.id)
+            : null;
+        if (slug && store.getState().settings.settingsSection !== slug) {
+          store.dispatch(actions.updateSettings({ settingsSection: slug }));
+          state = store.getState();
+        }
+      }
     }
     // (v4.4) entering TRUE fullscreen Mushaf arms the control-bar
     // auto-fade (and leaving disarms it — handled inside the reset fn).
@@ -174,6 +195,7 @@ export function onStateChange(stateArg, action) {
       ensureMushafData(state); // (v4.4) also arms the translation-tray fetch when the tray pref is on
     }
     if (state.activeView === VIEWS.AUDIO) ensureRecitersData(state);
+    if (state.activeView === VIEWS.AUDIO) maybeSyncVerseStatus(state);
     if (state.activeView === VIEWS.HADITH) ensureHadithData(state);
     if (state.activeView === VIEWS.OFFLINE) ensureOfflineQuota();
     updateCompassLifecycle(state);
@@ -183,7 +205,17 @@ export function onStateChange(stateArg, action) {
     updateAmbientWakeLifecycle(state);
     maybeMarkNudgeShown(state);
     maybeProbeStorage(state);
+    // (v5.2.44) icon badge follows every state change, change-deduped
+    // inside refreshAppBadge — prayer logs and dhikr counts move the
+    // number; anything else is a cheap integer compare, no platform call.
+    refreshAppBadge(() => store.getState());
+    // (v5.2.67) lock-screen play/pause follows every state change, deduped
+    // inside syncPlayingState — toggles, OS pauses, echo waits and session
+    // ends all flow through the store, so no call site needs its own
+    // platform update and the shade can never claim "playing" while paused.
+    syncPlayingState(state);
     maybeStartQuranSearchBuild(state);
+    maybeStartHadithSearchBuild(state);
     // v3.20: prayer settings changed through ANY path (bell toggles, location,
     // method, backup restore) → re-arm the next-24h trigger plan from the
     // fresh state. Fingerprint-checked inside, so identical plans don't

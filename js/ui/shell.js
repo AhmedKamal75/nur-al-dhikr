@@ -20,6 +20,16 @@ import { isRTL, t } from '../core/i18n.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 
+// (v5.2.65, item 22) kids-mode scope: the chrome offers only the allowlist
+// — the Kids home plus the Tasbih counter — so kids cannot wander by tap.
+// The reducer backstop still guards every non-chrome path (deep links,
+// history, palette) even if markup is bypassed.
+const KIDS_NAV_ITEMS = [
+  { view: VIEWS.KIDS, icon: 'star', label: 'kids.title' },
+  { view: VIEWS.TASBIH, icon: 'tasbih', label: 'nav.tasbih' },
+];
+const KIDS_NAV_GROUPS = [{ label: 'kids.title', items: KIDS_NAV_ITEMS }];
+
 const NAV_GROUPS = [
   {
     label: 'nav.group.read',
@@ -94,14 +104,16 @@ function navItemHTML(n, active, lang, { drawer = false } = {}) {
   </a>`;
 }
 
-function groupsHTML(active, lang, { drawer = false } = {}) {
-  return NAV_GROUPS.map(
-    (g) => `
+function groupsHTML(active, lang, { drawer = false } = {}, groups = NAV_GROUPS) {
+  return groups
+    .map(
+      (g) => `
   <div class="nav__group">
     <span class="nav__group-label">${t(g.label, lang)}</span>
     ${g.items.map((n) => navItemHTML(n, active, lang, { drawer })).join('')}
   </div>`
-  ).join('');
+    )
+    .join('');
 }
 
 export function renderTopBar(state, opts = {}) {
@@ -160,14 +172,20 @@ export function renderNav(state) {
   const lang = state.settings.language;
   const active = state.activeView;
   const collapsed = !!state.settings.navCollapsed;
+  const kidsScoped = state.settings.kidsMode === true;
+  const groups = kidsScoped ? KIDS_NAV_GROUPS : NAV_GROUPS;
 
   // Mobile bottom bar: four fixed destinations + More (opens the drawer).
-  const MOBILE_ITEMS = [
-    { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
-    { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
-    { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
-    { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
-  ];
+  // In the kids scope the bar mirrors the allowlist (CSS hides it anyway —
+  // the DOM stays honest for tests and assistive tech).
+  const MOBILE_ITEMS = kidsScoped
+    ? KIDS_NAV_ITEMS
+    : [
+        { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
+        { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
+        { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
+        { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
+      ];
   const mobileBar = `
     <nav class="nav-mobile-bar" aria-label="${t('a11y.mainNav', lang)}">
       ${MOBILE_ITEMS.map(
@@ -177,16 +195,20 @@ export function renderNav(state) {
         <span class="nav__label">${t(n.label, lang)}</span>
       </a>`
       ).join('')}
-      <button type="button" class="nav-mobile-bar__item" data-action="nav-toggle" aria-haspopup="dialog" aria-label="${t('nav.more', lang)}">
+      ${
+        kidsScoped
+          ? ''
+          : `<button type="button" class="nav-mobile-bar__item" data-action="nav-toggle" aria-haspopup="dialog" aria-label="${t('nav.more', lang)}">
         ${icon('menu', { size: 22 })}
         <span class="nav__label">${t('nav.more', lang)}</span>
-      </button>
+      </button>`
+      }
     </nav>`;
 
   return `
   <div class="nav__scroller" data-nav-collapsed="${collapsed ? 'true' : 'false'}">
     <nav class="nav__inner" aria-label="${t('a11y.mainNav', lang)}">
-      ${groupsHTML(active, lang)}
+      ${groupsHTML(active, lang, {}, groups)}
     </nav>
   </div>
   ${mobileBar}
@@ -198,6 +220,6 @@ export function renderNav(state) {
         ${icon('close', { size: 20 })}
       </button>
     </div>
-    <div class="nav-drawer__body">${groupsHTML(active, lang, { drawer: true })}</div>
+    <div class="nav-drawer__body">${groupsHTML(active, lang, { drawer: true }, groups)}</div>
   </div>`;
 }

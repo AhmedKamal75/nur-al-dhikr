@@ -8,6 +8,7 @@ import { closeNavDrawer, openNavDrawer } from '../drawer.js';
 import {
   debounceCollectionSearchNavigate,
   debounceFavoritesSearchNavigate,
+  debounceHadithGridQuery,
   debounceHadithQuery,
   debounceJournalSearchNavigate,
   debounceQuranSearchNavigate,
@@ -17,7 +18,24 @@ import {
 } from '../inputs.js';
 import { go } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
+import { VIEWS, resolveKidsView } from '../../core/config.js';
+import { t } from '../../core/i18n.js';
+import { showToast } from '../../ui/toast.js';
 import { openPalette } from '../palette.js';
+
+// (v5.2.65, item 22) kids-mode scope: taps outside the allowlist stay in
+// the kids world with an explanatory toast instead of opening the full
+// app. Returns true when the tap was absorbed. The reducer backstop
+// (NAVIGATE in state/slices/shell.js) covers the silent paths — deep
+// links, history traversals, search-debounce navigations.
+function kidsScopeGuard(view) {
+  const st = store.getState();
+  if (st.settings?.kidsMode !== true) return false;
+  if (resolveKidsView(view, true) === view) return false;
+  showToast(t('kids.blocked', st.settings.language));
+  if (st.activeView !== VIEWS.KIDS) go(VIEWS.KIDS);
+  return true;
+}
 
 export const clickHandlers = {
   navigate: (ds) => {
@@ -51,6 +69,18 @@ export const clickHandlers = {
         if (/^[A-Za-z]{1,16}$/.test(k) && v.length <= 200) params[k] = v;
       }
     }
+    if (kidsScopeGuard(ds.view)) return;
+    go(ds.view, params);
+  },
+
+  // (v5.2.54) quick tiles navigate like everything else, and additionally
+  // record the tap — usage order drives the default tile arrangement
+  // until the person customizes it in Settings.
+  'quick-tile': (ds) => {
+    if (kidsScopeGuard(ds.view)) return;
+    const params = {};
+    if (ds.id) params.id = ds.id;
+    if (ds.tile) store.dispatch(actions.recordTileVisit(ds.tile));
     go(ds.view, params);
   },
 
@@ -83,6 +113,7 @@ export const clickHandlers = {
 
   'nav-drawer-go': (ds) => {
     closeNavDrawer();
+    if (kidsScopeGuard(ds.view)) return;
     go(ds.view, {});
   },
 
@@ -95,6 +126,9 @@ export const clickHandlers = {
     // Also serves the nav-drawer item: shut the drawer first so the
     // overlay opens onto the content, not behind the drawer.
     closeNavDrawer();
+    // (v5.2.65, item 22) the palette is an all-access launcher — it stays
+    // shut in kids mode like every other out-of-scope destination.
+    if (kidsScopeGuard(VIEWS.SEARCH)) return;
     openPalette();
   },
 };
@@ -123,6 +157,12 @@ export const inputHandlers = [
     sel: '[data-bind="hadith-query"]',
     run: (ds, el) => {
       debounceHadithQuery(el.value);
+    },
+  },
+  {
+    sel: '[data-bind="hadith-grid-search"]',
+    run: (ds, el) => {
+      debounceHadithGridQuery(el.value);
     },
   },
   {

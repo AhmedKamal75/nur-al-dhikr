@@ -19,7 +19,8 @@
  *    (full-surah player, single-ayah play) stops the session — one voice.
  */
 
-import { ayahAudioUrl } from './mushaf.js';
+import { ayahAudioUrl, globalAyahNumber } from './mushaf.js';
+import { getVerseAudio } from './audioStore.js';
 import { QURAN_RECITER_IDS, DEFAULT_RECITER } from '../core/config/quran.js';
 import {
   driverPlay,
@@ -254,11 +255,65 @@ export function currentReciterId() {
 }
 
 function playCurrent() {
-  const url = ayahAudioUrl(session.surahsMeta, currentReciterId(), session.surah, session.ayah);
+  playCurrentSeq();
+}
+
+let playSeq = 0;
+let currentObjectUrl = null;
+
+/** Revoke the previous play's object URL (never the CDN URL in flight). */
+function dropObjectUrl() {
+  if (currentObjectUrl) {
+    try {
+      URL.revokeObjectURL(currentObjectUrl);
+    } catch {
+      /* already gone */
+    }
+    currentObjectUrl = null;
+  }
+}
+
+/**
+ * (v5.2.61) offline-first source resolution: a stored verse Blob wins and
+ * plays from an object URL; anything else streams the CDN URL exactly as
+ * before. Async with a sequence guard (player.js race discipline): a skip
+ * landing mid-lookup drops the stale result — revoking its URL when it
+ * created one — instead of double-playing.
+ */
+async function playCurrentSeq() {
+  const seq = ++playSeq;
+  const reciter = currentReciterId();
+  const cdnUrl = ayahAudioUrl(session.surahsMeta, reciter, session.surah, session.ayah);
+  let url = cdnUrl;
+  let owned = null;
+  const g = globalAyahNumber(session.surahsMeta, session.surah, session.ayah);
+  if (g != null && reciter) {
+    try {
+      const blob = await getVerseAudio(reciter, g);
+      if (blob) {
+        owned = URL.createObjectURL(blob);
+        url = owned;
+      }
+    } catch {
+      /* storage failure reads as streaming */
+    }
+  }
+  if (!session || seq !== playSeq) {
+    if (owned) {
+      try {
+        URL.revokeObjectURL(owned);
+      } catch {
+        /* already gone */
+      }
+    }
+    return;
+  }
   if (!url) {
     failSession();
     return;
   }
+  dropObjectUrl();
+  currentObjectUrl = owned;
   session.paused = false;
   driverSetRate(session.speed);
   driverPlay(url, ayahKey(session.surah, session.ayah));
@@ -314,50 +369,71 @@ function warmAudio(url) {
 
 /** The audio URL the engine will need NEXT (compare B-pass, repeat, or advance). */
 export function peekNextUrl() {
+  const t = peekNextTriple();
+  if (!t) return null;
+  return ayahAudioUrl(session.surahsMeta, t.reciter, t.surah, t.ayah);
+}
+
+/**
+ * (v5.2.61) the triple behind peekNextUrl ({reciter, surah, ayah} or
+ * null) — the offline-first prefetch needs the identity, not just the
+ * URL, to probe storage before warming.
+ */
+function peekNextTriple() {
   if (!session || !session.active) return null;
-  // Compare mode mid-ayah: the same ayah with voice B comes next.
   if (session.compare === true && session.comparePass === 0 && session.reciterIdB) {
-    return ayahAudioUrl(session.surahsMeta, session.reciterIdB, session.surah, session.ayah);
+    return { reciter: session.reciterIdB, surah: session.surah, ayah: session.ayah };
   }
-  // Repeat budget remaining (or infinite loop): same ayah, current voice.
   if (session.repeat === -1 || (session.repeat > 1 && session.repeatsLeft > 1)) {
-    return ayahAudioUrl(session.surahsMeta, currentReciterId(), session.surah, session.ayah);
+    return { reciter: currentReciterId(), surah: session.surah, ayah: session.ayah };
   }
   const next = nextAyah(session.ayah, session.end);
   if (next != null) {
-    return ayahAudioUrl(
-      session.surahsMeta,
-      session.compare === true && session.reciterIdB ? session.reciterId : currentReciterId(),
-      session.surah,
-      next
-    );
+    return {
+      reciter:
+        session.compare === true && session.reciterIdB ? session.reciterId : currentReciterId(),
+      surah: session.surah,
+      ayah: next,
+    };
   }
-  // End of surah with listen mode: first ayah of the next surah (when known).
-  // A cross-surah stopAt blocks the roll past its surah.
   const blockedPast = session.stopAt && session.surah + 1 > session.stopAt.surah;
   if (session.continuous === true && !session.ranged && session.surah < 114 && !blockedPast) {
     const meta = session.surahsMeta?.find((m) => Number(m.number) === session.surah + 1);
     const nextTotal = Math.floor(Number(meta?.ayahCount));
     if (Number.isFinite(nextTotal) && nextTotal >= 1) {
-      return ayahAudioUrl(session.surahsMeta, session.reciterId, session.surah + 1, 1);
+      return { reciter: session.reciterId, surah: session.surah + 1, ayah: 1 };
     }
   }
-  // Loop armed with passes left: the bounds restart at `from`.
   if (session.loop > 1 && session.loopsLeft > 1) {
-    return ayahAudioUrl(session.surahsMeta, session.reciterId, session.surah, session.from);
+    return { reciter: session.reciterId, surah: session.surah, ayah: session.from };
   }
-  // Queued range next: first resolvable item after the current one.
   if (Array.isArray(session.queue)) {
     for (let i = session.qIndex + 1; i < session.queue.length; i++) {
       const r = resolveQueueItem(session.queue, i, session.surahsMeta);
-      if (r) return ayahAudioUrl(session.surahsMeta, session.reciterId, r.surah, r.from);
+      if (r) return { reciter: session.reciterId, surah: r.surah, ayah: r.from };
     }
   }
   return null;
 }
 
 function prefetchNext() {
-  warmAudio(peekNextUrl());
+  const triple = peekNextTriple();
+  if (!triple) return;
+  const url = ayahAudioUrl(session.surahsMeta, triple.reciter, triple.surah, triple.ayah);
+  if (!url) return;
+  // (v5.2.61) offline-first prefetch: a stored next ayah needs no warming
+  // (local reads are instant) — warm the CDN URL only when nothing is
+  // stored, so no object URL is ever created just to prefetch.
+  const g = globalAyahNumber(session.surahsMeta, triple.surah, triple.ayah);
+  if (g == null || !triple.reciter) {
+    warmAudio(url);
+    return;
+  }
+  getVerseAudio(triple.reciter, g)
+    .then((blob) => {
+      if (!blob) warmAudio(url);
+    })
+    .catch(() => warmAudio(url));
 }
 
 function failSession() {
@@ -741,6 +817,7 @@ export function setCompare(on) {
 export function stop() {
   if (!session) return;
   clearEchoWait();
+  dropObjectUrl();
   const wasActive = session.active;
   session = null;
   // (B3) unregister the session handlers: with listener sets (not a

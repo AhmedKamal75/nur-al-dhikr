@@ -14,15 +14,19 @@ import { wireInstallPrompt } from './installPrompt.js';
 import { mountShell, render } from './renderer.js';
 import { onStateChange } from './stateSub.js';
 import { armPrayerTriggers, registerServiceWorker } from './triggers.js';
-import { APP_NAME } from '../core/config.js';
+import { APP_NAME, VIEWS } from '../core/config.js';
 import { t } from '../core/i18n.js';
-import { initRouter } from '../core/router.js';
+import { go, initRouter } from '../core/router.js';
 import { actions, store } from '../core/state.js';
 import { applyTheme, watchSystemTheme } from '../core/theme.js';
 import { applyTajweedColors } from './handlers/quran.js';
+import { handleImportFile } from './fileImports.js';
+import { isBackupFile, parseProtocolLaunch, parseShareTarget } from '../domain/launchIntents.js';
 import { loadLibraries, refreshLibraryIndex } from './net.js';
 import { showToast } from '../ui/toast.js';
 import { flushReading } from './readingTimer.js';
+import { clearAppBadge, refreshAppBadge } from '../services/appBadge.js';
+import { maybeAutoBackupNow } from '../services/backup.js';
 import * as notifications from '../services/notifications.js';
 import * as mediaSession from '../services/mediaSession.js';
 import * as recitation from '../services/recitation.js';
@@ -44,6 +48,15 @@ export async function boot() {
     // of the error screen every other boot failure gets.
     mountShell();
     store.hydrate();
+    // (v5.2.53) rolling auto-backup heartbeat (fire-and-forget, total):
+    // a returning user whose snapshot is older than a week banks a fresh
+    // on-device copy; first runs and failures resolve silently.
+    maybeAutoBackupNow();
+    // (v5.2.44) a stale icon badge (yesterday's remaining prayers, a dead
+    // streak warning) must not survive the app being opened — clear it
+    // before first paint; the fresh count syncs below once state is live.
+    // Fire-and-forget: the badge sync never throws or rejects.
+    clearAppBadge();
 
     // (v4.1) Theme + a static skeleton BEFORE the ~2.2MB library download:
     // the first meaningful paint used to wait for loadLibraries(), leaving
@@ -265,6 +278,10 @@ export async function boot() {
     wirePlayer();
     initRouter(); // dispatches the first NAVIGATE
     render(store.getState());
+    // (v5.2.66, item 24) OS launch entry points (share/file/protocol)
+    // override the boot route — after the first NAVIGATE so there is
+    // always a sane route underneath, silent everywhere unsupported.
+    consumeLaunchIntents();
 
     // Warm today's daily hadith (index + small bundled books — never the
     // multi-MB Sahihs). Fire-and-forget: the Home card appears when ready.
@@ -276,11 +293,74 @@ export async function boot() {
     // v3.20 prayer-alert reliability: re-arm on every return to the app so
     // an open-then-closed-then-reopened day always has a fresh 24h of
     // timestamped triggers (the TODO's "on each app open" requirement).
+    // (v5.2.44) the icon badge re-syncs on the same signal — a day that
+    // rolled over while the tab was hidden re-badges without a reload.
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') armPrayerTriggers();
+      if (document.visibilityState === 'visible') {
+        armPrayerTriggers();
+        refreshAppBadge(() => store.getState());
+      }
     });
+    // (v5.2.44) first fresh badge right after boot (the early clear above
+    // removed the stale one; this paints today's truth).
+    refreshAppBadge(() => store.getState());
   } catch (err) {
     renderErrorScreen(err);
+  }
+}
+
+/**
+ * Strip the one-shot launch query (?title/&text/&url=/proto=) while keeping
+ * the hash route, so a reload boots clean instead of re-firing the intent.
+ */
+function stripLaunchQuery() {
+  try {
+    window.history.replaceState(
+      window.history.state,
+      '',
+      window.location.pathname + window.location.hash
+    );
+  } catch {
+    /* opaque origins: the query stays, the intent still runs once per load */
+  }
+}
+
+/**
+ * (v5.2.66, item 24) consume OS launch intents: shared content searches
+ * the library, protocol deep-links route, and .json open-with files reuse
+ * the backup-import confirm flow. Every branch fails closed to the normal
+ * boot route on junk input or missing APIs.
+ */
+function consumeLaunchIntents() {
+  const search = window.location.search || '';
+  // File open-with works whether or not a query rides along — and on
+  // browsers without launchQueue the manifest file_handlers simply never
+  // fire, so this stays a silent no-op there.
+  const lq = window.launchQueue;
+  if (lq && typeof lq.setConsumer === 'function') {
+    lq.setConsumer(async (launchParams) => {
+      for (const handle of launchParams?.files ?? []) {
+        if (!handle || !isBackupFile(handle.name)) continue;
+        try {
+          handleImportFile(await handle.getFile());
+        } catch (err) {
+          console.error('[launch] open-with failed', err);
+          showToast(t('common.error', store.getState().settings.language));
+        }
+      }
+    });
+  }
+  const share = parseShareTarget(search);
+  if (share) {
+    stripLaunchQuery();
+    showToast(t('share.received', store.getState().settings.language));
+    go(VIEWS.SEARCH, { q: share.q });
+    return;
+  }
+  const proto = parseProtocolLaunch(search);
+  if (proto) {
+    stripLaunchQuery();
+    go(proto.view, proto.params);
   }
 }
 

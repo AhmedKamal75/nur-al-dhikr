@@ -12,6 +12,36 @@ import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { completedCount } from '../services/checklist.js';
 import { ramadanInfo } from '../domain/ramadan.js';
 import { resolveHomePanels } from '../domain/homePanels.js';
+import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
+
+/**
+ * (v5.2.54) quick-action tiles: registry-driven (order/visibility from
+ * settings, usage-driven until customized). Exported pure for tests —
+ * pass resolved ids, language and the current adhkar window ('morning' /
+ * 'evening' / null for the NOW suggestion).
+ */
+export function quickTilesHTML(tileIds, lang, nowWindow) {
+  const tiles = (Array.isArray(tileIds) ? tileIds : [])
+    .map((id) => QUICK_TILE_DEFS.find((tile) => tile.id === id))
+    .filter(Boolean);
+  return `
+    <div class="quick-actions">
+      ${tiles
+        .map((tile) => {
+          const suggested =
+            (tile.id === 'morning' && nowWindow === 'morning') ||
+            (tile.id === 'evening' && nowWindow === 'evening');
+          const params = tile.params ? { ...tile.params } : {};
+          return `
+      <a class="quick-action quick-action--${tile.accent}${suggested ? ' quick-action--suggested' : ''}" href="${buildHash(tile.view, params)}" data-action="quick-tile" data-tile="${tile.id}" data-view="${tile.view}"${params.id ? ` data-id="${params.id}"` : ''}>
+        ${icon(tile.icon, { size: 26 })}
+        <span>${t(tile.labelKey, lang)}</span>
+        ${suggested ? `<span class="quick-action__now">${t('home.nowBadge', lang)}</span>` : ''}
+      </a>`;
+        })
+        .join('')}
+    </div>`;
+}
 import { toHijri } from '../domain/calendar.js';
 
 /** Forward/CTA chevron: points with the reading direction (U7 rule). */
@@ -449,42 +479,15 @@ export function renderHome(state) {
 
     ${onboardingPanelHTML(state, lang)}
 
-    <div class="quick-actions">
-      <a class="quick-action quick-action--quran" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">
-        ${icon('quran', { size: 26 })}
-        <span>${t('quran.readShortcut', lang)}</span>
-      </a>
-      <a class="quick-action quick-action--sunrise ${nowWindow === 'morning' ? 'quick-action--suggested' : ''}" href="${buildHash(VIEWS.CATEGORY, { id: 'morning' })}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="morning">
-        ${icon('sunrise', { size: 26 })}
-        <span>${t('home.morningShortcut', lang)}</span>
-        ${nowWindow === 'morning' ? `<span class="quick-action__now">${t('home.nowBadge', lang)}</span>` : ''}
-      </a>
-      <a class="quick-action quick-action--sunset ${nowWindow === 'evening' ? 'quick-action--suggested' : ''}" href="${buildHash(VIEWS.CATEGORY, { id: 'evening' })}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="evening">
-        ${icon('sunset', { size: 26 })}
-        <span>${t('home.eveningShortcut', lang)}</span>
-        ${nowWindow === 'evening' ? `<span class="quick-action__now">${t('home.nowBadge', lang)}</span>` : ''}
-      </a>
-      <a class="quick-action quick-action--tasbih" href="${buildHash(VIEWS.TASBIH)}" data-action="navigate" data-view="${VIEWS.TASBIH}">
-        ${icon('tasbih', { size: 26 })}
-        <span>${t('nav.tasbih', lang)}</span>
-      </a>
-      <a class="quick-action quick-action--prayer" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">
-        ${icon('prayer-rug', { size: 26 })}
-        <span>${t('nav.prayer', lang)}</span>
-      </a>
-      <a class="quick-action quick-action--qibla" href="${buildHash(VIEWS.QIBLA)}" data-action="navigate" data-view="${VIEWS.QIBLA}">
-        ${icon('compass', { size: 26 })}
-        <span>${t('nav.qibla', lang)}</span>
-      </a>
-      <a class="quick-action quick-action--ramadan" href="${buildHash(VIEWS.RAMADAN)}" data-action="navigate" data-view="${VIEWS.RAMADAN}">
-        ${icon('moon', { size: 26 })}
-        <span>${t('nav.ramadan', lang)}</span>
-      </a>
-      <a class="quick-action quick-action--zakat" href="${buildHash(VIEWS.ZAKAT)}" data-action="navigate" data-view="${VIEWS.ZAKAT}">
-        ${icon('calculator', { size: 26 })}
-        <span>${t('nav.zakat', lang)}</span>
-      </a>
-    </div>
+    ${quickTilesHTML(
+      resolveQuickTiles({
+        order: state.settings.quickOrder,
+        hidden: state.settings.hiddenQuick,
+        visits: state.tileVisits,
+      }),
+      lang,
+      nowWindow
+    )}
 
     ${orderedHomePanels}
   </section>`;
