@@ -182,7 +182,10 @@ export const ROOT_GROUP_REF_CAP = 12;
  * (quran-words), '' when the surah/ayah/word isn't loaded. Data, never
  * invented — absent data renders nothing, not a guess.
  */
-export function occurrenceGloss(quranWords, s, a, i) {
+export function occurrenceGloss(quranWords, s, a, i, lang = 'en') {
+  // (v5.2.68) no Arabic gloss data ships — the Arabic UI omits the line
+  // (never English) while the view keeps its own lang gate as backstop.
+  if (lang === 'ar') return '';
   const surah = quranWords?.[String(s)];
   const words = surah?.[String(a)];
   if (!Array.isArray(words)) return '';

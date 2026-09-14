@@ -17,7 +17,16 @@ test('recovered: reminder toggles flip, plan buttons present, all persist', asyn
 
   await page.goto('#/settings');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await page.locator('#settings-sec-notifications summary').click();
+  // (v5.2.68, audit F1) the accordion restores its persisted open section
+  // across reloads — a blind summary click toggles a restored-open section
+  // shut. Expand-if-closed instead, here and after the reload below.
+  const ensureOpen = async (id) => {
+    const details = page.locator(`#${id}`);
+    if ((await details.getAttribute('open')) == null) {
+      await details.locator('summary').click();
+    }
+  };
+  await ensureOpen('settings-sec-notifications');
 
   const jumuah = page.locator('[data-action="toggle-jumuah-reminder"]');
   const verse = page.locator('[data-action="toggle-dailyverse-reminder"]');
@@ -35,7 +44,7 @@ test('recovered: reminder toggles flip, plan buttons present, all persist', asyn
   await expect(jumuah).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await page.locator('#settings-sec-notifications summary').click();
+  await ensureOpen('settings-sec-notifications');
   await expect(page.locator('[data-action="toggle-jumuah-reminder"]')).toHaveAttribute(
     'aria-pressed',
     'true'
@@ -48,7 +57,7 @@ test('recovered: reminder toggles flip, plan buttons present, all persist', asyn
   );
 
   // Plan sharing entry points live in Settings → Data.
-  await page.locator('#settings-sec-data summary').click();
+  await ensureOpen('settings-sec-data');
   await expect(page.locator('[data-action="export-plan"]')).toBeVisible();
   await expect(page.locator('[data-action="import-plan"]')).toBeVisible();
 

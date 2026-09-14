@@ -294,8 +294,8 @@ export function buildWordStudyPanel(state) {
     <h2 id="modal-title-word-study" class="sr-only">${t('wordStudy.title', lang)}</h2>
     <p class="word-study__ref" dir="ltr">${surah}:${ayah} \u00B7 ${t('wordStudy.wordN', lang, { n: i })}</p>
     <p class="word-study__arabic" dir="rtl" lang="ar">${escapeHTML(word.text || '')}</p>
-    ${word.translit ? `<p class="word-study__translit" dir="ltr">${escapeHTML(word.translit)}</p>` : ''}
-    ${word.en ? `<p class="word-study__gloss">${escapeHTML(word.en)}</p>` : ''}
+    ${lang !== 'ar' && word.translit ? `<p class="word-study__translit" dir="ltr">${escapeHTML(word.translit)}</p>` : ''}
+    ${lang !== 'ar' && word.en ? `<p class="word-study__gloss">${escapeHTML(word.en)}</p>` : ''}
     <p class="word-study__grammar">${escapeHTML(wordGrammarSummary(word, lang))}</p>
     ${tags.length ? `<div class="word-study__tags">${tags.map((tg) => `<span class="chip chip--basis chip--sm">${escapeHTML(tg)}</span>`).join('')}</div>` : ''}
     ${affixHtml(prefixes, 'wordStudy.prefix')}

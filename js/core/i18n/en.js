@@ -598,6 +598,8 @@ export const en = {
   'card.unfavorite': 'Remove favorite',
   'card.share': 'Share',
   'share.received': 'Shared content received — searching your library.',
+  'settings.tafsirDefault': 'Default tafsir',
+  'settings.tafsirDefaultHint': 'Which commentary opens first in the tafsir tabs.',
   'card.copy': 'Copy',
   'card.copied': 'Copied to clipboard',
   'card.copyFailed': 'Couldn\u2019t copy — try selecting the text instead',

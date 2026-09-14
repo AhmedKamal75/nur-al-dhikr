@@ -1243,3 +1243,92 @@ role="navigation">`. FIXED: both are now `<nav>` (class hooks unchanged,
 - "Always the same": 2-book pool × `seed % len` with a +1/day seed —
   lockstep by construction. Now mulberry32-scattered (same-day
   stable), plus a session-only shuffle button over all loaded docs.
+
+## Fresh audit — v5.2.67 takeover sweep (2026-09-14, read-only)
+
+Scope: baseline gates in handover order, release-protocol archaeology
+(v5.2.31 → v5.2.67), independent re-verification of the v5.2.31 audit
+claims, and a fresh-eyes separation + data pass. No app code or data
+modified; the tree stayed green throughout.
+
+### Baselines (all run, numbers quoted from execution)
+
+- Markers agree at 5.2.67: package.json, manifest.json (version +
+  version_name), sw.js VERSION, js/core/config.js APP_VERSION.
+- `node scripts/audit-content.mjs`: exit 0 (gap table unchanged).
+- `npm run check`: eslint 0, prettier clean, 1481/1481 unit green.
+- `npm run e2e`: 11/12 green on local Chromium. The one red is F1 below
+  (stale spec, not app behavior) — verified by isolating the spec.
+- `docs/RELEASES.md` covers every release 5.2.18 → 5.2.67 including the
+  previously-missing v5.2.31 entry (takeover finding B4: closed).
+
+### Re-verified v5.2.31 claims (all hold)
+
+- 15/15 restored matn (glm-quran-001…015, data/quranic.json) recomputed
+  from data/quran/: verbatim contiguous token slices of their cited
+  verses, zero Latin in any Arabic field.
+- content-i18n-audit: 27/27 green, six baselines at their pins.
+- v5.2.32 separation fixes (quiz feedback, mini-card, category, editor
+  titles): all four re-verified PASS in-tree and live-gated by tests.
+
+### Findings (no crashes, no data loss, no wrong worship data found)
+
+- [ ] **F1 (medium, test).** `tests/e2e/recovered.spec.js` fails on main:
+      after the reload the v5.2.48 accordion persistence restores the
+      notifications section OPEN, so the spec's blind summary click toggles
+      it CLOSED and the jumuah toggle times out invisible (30s). App
+      behavior is correct; the spec must expand-if-closed instead of
+      blind-clicking. Fixes e2e to 12/12 with no app bytes.
+- [ ] **F2 (medium, contract).** The out-of-box AR Quran experience
+      violates the advertised strict contract (suppressed regardless of
+      toggles): `showTranslation`/`showTransliteration` default true and
+      the Quran surfaces gate on prefs only — classic reader translit line
+  - translation (`views/quran.js` joinTranslitLine, :446 incl. compare
+    line), search hits (`views/search.js:43`), mutashabihat drill,
+    roots previews/gloss/drill (`views/roots.js`), mushaf translation
+    tray, word-study modal, audioManager queue rows + bilingual
+    `surahName()`. Either conjoin `lang !== 'ar'` (hadithCard.js:81
+    pattern) or amend the contract — current state advertises strict
+    and renders loose on the flagship surface.
+- [ ] **F3 (low-medium, contract).** Three renders ignore even the
+      prefs: ayah-study translation (`views/ayahStudy.js:94`), kids tile
+      Latin names (`views/kids.js:43`, incl. SR aria-label), palette
+      secondary (`views/palette.js:125`, explicitly Latin in AR).
+- [ ] **F4 (low-medium, needs a product call).** `views/audioManager.js:52`
+      subtitle shows nameEn in AR (and nameAr in EN) — if bilingual
+      proper-noun display is intended (like `surahName()`), bless it in
+      the separation doc; otherwise the ternary is inverted. Same class:
+      always-bilingual queue labels.
+- [ ] **F5 (low, data tradition).** The 30 non-restored quranic items
+      use simplified orthography vs the bundled Uthmani corpus
+      (shadda/kasra order, open-sukun, superscript-alef) — pre-existing,
+      not the Latin corruption v5.2.31 fixed, and outside its scope.
+      Options: rebuild like 001…015, normalize at render, or document the
+      boundary. Scholarship-adjacent: flag only, never machine-fill.
+
+### Verified-clean (do NOT "fix")
+
+- New v5.2.64–67 surfaces: playerBar repeat badge (localized), ayahStudy
+  grade chips, Hizb/Juz labels with Eastern-Arabic numerals, verse-voice
+  reciter names, kids exit flow, share/file/protocol launch intents
+  (fail-closed, silent where unsupported).
+- Precache covers both new modules (launchIntents, audioQueue);
+  layer gates green; no new data-actions; en-mukhtasar attributed in
+  data/SOURCES.md + catalog; hadith standing stays collection-level.
+- The mushaf-reorg `hifz-ayah-mark` allowlist entry is a planned
+  item-21 surface (ayah-study modal), not drift.
+
+## Audit follow-up — F1–F4 closed in v5.2.68 (2026-09-14)
+
+- [x] **F1.** Recovered e2e spec expands accordions if-closed
+      (`ensureOpen` helper, incl. the Data section); 3/3 green in-browser.
+- [x] **F2/F3.** Study surfaces render in the UI language (tafsir
+      picker, AR grammar, gated translit/names/gloss, ayah-study toggle
+      honor). Translation lines stay edition-driven by explicit user
+      choice — choice legitimizes display.
+- [x] **F4 (decision, not a code change).** Proper-noun bilingualism is
+      intended: reciter/surah names render in both scripts (same principle
+      as the edition pickers' never-translated native names). Sentence
+      content (translations, glosses, virtues) stays strictly gated.
+- [ ] **F5** remains flagged by rule (scholarship-adjacent, never
+      machine-filled).

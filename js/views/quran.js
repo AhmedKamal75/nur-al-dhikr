@@ -86,7 +86,10 @@ function recitationToolbarHTML(state, number, lang) {
  * romanization; shown only when the global transliteration toggle is on
  * AND this surah's word data has loaded, otherwise omitted silently.
  */
-function joinTranslitLine(state, surah, ayah) {
+export function joinTranslitLine(state, surah, ayah) {
+  // (v5.2.68) romanization is inherently Latin — never in the Arabic UI,
+  // regardless of the toggle (localeContent contract).
+  if (state.settings.language === 'ar') return '';
   if (state.settings.showTransliteration !== true) return '';
   const words = state.quranWords?.[String(surah)]?.[String(ayah)];
   const line = ayahTranslit(words);
@@ -254,13 +257,13 @@ function surahListHTML(state) {
           : sounding
             ? 'audio.pause'
             : 'audio.play';
-      const label = `${t(labelKey, lang)} — ${escapeHTML(s.nameTransliteration)}`;
+      const label = `${t(labelKey, lang)} — ${escapeHTML(lang === 'ar' ? s.nameAr : s.nameTransliteration)}`;
       return `
     <div class="surah-tile-wrap" data-roving-item>
       <a class="surah-tile" href="${buildHash(VIEWS.QURAN, { id: s.number })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${s.number}">
         <span class="surah-tile__num">${s.number}</span>
         <span class="surah-tile__text">
-          <span class="surah-tile__name-en">${highlightMatch(s.nameTransliteration, String(state.activeParams.q || '').split(/\s+/))}</span>
+          ${lang !== 'ar' ? `<span class="surah-tile__name-en">${highlightMatch(s.nameTransliteration, String(state.activeParams.q || '').split(/\s+/))}</span>` : ''}
           <span class="surah-tile__meta">${t('quran.ayahCount', lang, { n: s.ayahCount })} \u2022 ${t(s.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</span>
         </span>
         <span class="surah-tile__name-ar" dir="rtl">${highlightMatch(s.nameAr, String(state.activeParams.q || '').split(/\s+/))}</span>
@@ -332,7 +335,7 @@ function surahReaderHTML(state, number) {
     <header class="quran-reader__header">
       <p class="quran-reader__eyebrow">${t('quran.surah', lang)} ${surahMeta.number}</p>
       <h1 class="quran-reader__name-ar" dir="rtl">${escapeHTML(surahMeta.nameAr)}</h1>
-      <p class="quran-reader__name-en">${escapeHTML(surahMeta.nameTransliteration)}${escapeHTML(nameEn)}</p>
+      ${lang !== 'ar' ? `<p class="quran-reader__name-en">${escapeHTML(surahMeta.nameTransliteration)}${escapeHTML(nameEn)}</p>` : ''}
       <p class="quran-reader__meta">${t('quran.ayahCount', lang, { n: surahMeta.ayahCount })} \u2022 ${t(surahMeta.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</p>
       ${recitationToolbarHTML(state, number, lang)}
       ${hifzToolbarHTML(state, number, lang)}

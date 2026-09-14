@@ -24,6 +24,10 @@ export function collectDrillWords(wordsCache) {
         if (!w || typeof w !== 'object' || typeof w.text !== 'string' || !w.text) return;
         if (typeof w.posEn !== 'string' || !w.posEn) return;
         const feats = [w.caseEn, w.moodEn, w.verbPattern].filter((x) => typeof x === 'string' && x);
+        // (v5.2.68) Arabic-side features ride along so the drill renders
+        // in the UI language (posAr coverage is 100%; feats fall back to
+        // omission, never to English, per the separation contract).
+        const featsAr = [w.caseAr, w.moodAr].filter((x) => typeof x === 'string' && x);
         out.push({
           id: `${s}:${a}:${i}`,
           surah: s,
@@ -35,6 +39,7 @@ export function collectDrillWords(wordsCache) {
           gloss: typeof w.en === 'string' ? w.en : '',
           root: typeof w.root === 'string' ? w.root : '',
           feats,
+          featsAr,
         });
       });
     }

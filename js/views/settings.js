@@ -25,6 +25,7 @@ import { backupStale, filePickerSupported } from '../services/backup.js';
 import { isReturningUser } from '../domain/onboarding.js';
 import { buildHash } from '../core/router.js';
 import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
+import { splitEditions } from '../domain/wordStudy.js';
 import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
 
@@ -289,6 +290,20 @@ export function renderSettings(state) {
       )
       .join('');
 
+  // (v5.2.68) default tafsir source: which commentary opens first in the
+  // tafsir tabs. Bundled editions only (always offline, incl. English);
+  // same native-name contract as the translation picker. Empty while the
+  // catalog loads — the tabs fall back to book order meanwhile.
+  const tafsirDefaultRows = splitEditions(state.tafsirEditions)
+    .bundled.map(
+      (ed) => `
+    <button type="button" class="reciter-row ${s.mushafPrefs?.defaultTafsir === ed.id ? 'reciter-row--active' : ''}" data-action="mushaf-set-tafsir" data-edition="${escapeHTML(ed.id)}" dir="auto" aria-pressed="${s.mushafPrefs?.defaultTafsir === ed.id}">
+      <span class="reciter-row__name">${escapeHTML(pickLocale({ en: ed.nameEn, ar: ed.nameAr }, lang))}<span class="reciter-row__meta"> — ${escapeHTML(pickLocale({ en: ed.authorEn, ar: ed.authorAr }, lang))}</span></span>
+      ${s.mushafPrefs?.defaultTafsir === ed.id ? icon('check', { size: 16 }) : ''}
+    </button>`
+    )
+    .join('');
+
   const reminders = state.reminders
     .map(
       (r) => `
@@ -382,6 +397,9 @@ export function renderSettings(state) {
     <details class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openId === 'settings-sec-compare' ? ' open' : ''}>
       ${accHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
       <div class="reciter-list">${compareRows}</div>
+      <p class="field-label">${t('settings.tafsirDefault', lang)}</p>
+      <p class="panel__subtext">${t('settings.tafsirDefaultHint', lang)}</p>
+      <div class="reciter-list">${tafsirDefaultRows}</div>
     </details>
 
     <details class="panel settings-acc" id="settings-sec-feedback"${filterQ ? (hideSettings.has('settings-sec-feedback') ? ' hidden' : ' open') : openId === 'settings-sec-feedback' ? ' open' : ''}>

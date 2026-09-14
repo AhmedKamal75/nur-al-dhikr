@@ -77,7 +77,7 @@ function drillLauncherHTML(lang) {
 }
 
 /** Active drill session: flashcard front (guess the POS) → reveal → grade. */
-function drillHTML(state, lang) {
+export function drillHTML(state, lang) {
   const d = state.grammarDrill;
   const card = d.cards[d.index] || null;
   const total = d.cards.length;
@@ -96,19 +96,25 @@ function drillHTML(state, lang) {
   } else if (!d.revealed) {
     body = `
       <p class="grammar-word" dir="rtl" lang="ar">${escapeHTML(card.text)}</p>
-      ${card.translit ? `<p class="panel__subtext" dir="ltr">${escapeHTML(card.translit)}</p>` : ''}
+      ${lang !== 'ar' && card.translit ? `<p class="panel__subtext" dir="ltr">${escapeHTML(card.translit)}</p>` : ''}
       <p class="panel__subtext">${t('grammar.prompt', lang)} · <span dir="ltr">${card.surah}:${card.ayah}</span></p>
       <div class="editor-form__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="grammar-reveal">${t('grammar.reveal', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="grammar-exit">${t('grammar.exit', lang)}</button>
       </div>`;
   } else {
-    const feats = [card.posEn, ...card.feats].filter(Boolean);
+    // (v5.2.68) the revealed answer renders in the UI language: Arabic
+    // POS + Arabic features (omitted when unmapped, never English), and
+    // the English gloss stays English-UI-only (no Arabic gloss data ships).
+    const ar = lang === 'ar';
+    const pos = ar ? card.posAr : card.posEn;
+    // EN feats carry the POS at [0] (skipped below); AR feats are bare.
+    const featTail = ar ? card.featsAr || [] : [card.posEn, ...card.feats].filter(Boolean).slice(1);
     body = `
       <p class="grammar-word" dir="rtl" lang="ar">${escapeHTML(card.text)}</p>
-      <p class="grammar-answer" dir="auto"><strong>${escapeHTML(card.posEn)}</strong>${card.posAr ? ` · <span dir="rtl" lang="ar">${escapeHTML(card.posAr)}</span>` : ''}</p>
-      ${card.gloss ? `<p class="panel__subtext" dir="auto">“${escapeHTML(card.gloss)}”</p>` : ''}
-      ${feats.length > 1 ? `<p class="panel__subtext" dir="auto">${escapeHTML(feats.slice(1).join(' · '))}</p>` : ''}
+      ${pos ? `<p class="grammar-answer" dir="auto"><strong>${escapeHTML(pos)}</strong>${!ar && card.posAr ? ` · <span dir="rtl" lang="ar">${escapeHTML(card.posAr)}</span>` : ''}</p>` : ''}
+      ${!ar && card.gloss ? `<p class="panel__subtext" dir="auto">“${escapeHTML(card.gloss)}”</p>` : ''}
+      ${featTail.length ? `<p class="panel__subtext" dir="auto">${escapeHTML(featTail.join(' · '))}</p>` : ''}
       ${card.root ? `<p class="panel__subtext">${t('roots.title', lang)}: <span dir="rtl" lang="ar">${escapeHTML(card.root)}</span></p>` : ''}
       <div class="editor-form__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="grammar-grade" data-right="1">${icon('check', { size: 14 })} ${t('grammar.right', lang)}</button>
@@ -199,7 +205,7 @@ function previewHTML(o, ayah, gloss, lang, showTranslation) {
       <a class="root-preview" href="${buildHash(VIEWS.QURAN, { id: String(o.s), ay: String(o.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${escapeHTML(String(o.s))}" data-ay="${escapeHTML(String(o.a))}">
         <span class="root-preview__ref" dir="ltr">${Number(o.s) || ''}:${Number(o.a) || ''}</span>
         <span class="root-preview__text" dir="rtl" lang="ar">${text}</span>
-        ${gloss ? `<span class="root-preview__gloss" dir="auto">${escapeHTML(gloss)}</span>` : ''}
+        ${lang !== 'ar' && gloss ? `<span class="root-preview__gloss" dir="auto">${escapeHTML(gloss)}</span>` : ''}
         ${showTranslation && typeof ayah.translation === 'string' && ayah.translation ? `<span class="root-preview__trans" dir="auto">${escapeHTML(ayah.translation)}</span>` : ''}
       </a>`;
 }

@@ -122,7 +122,9 @@ export function buildPaletteGroups(deps) {
         kind: 'link',
         icon: 'quran',
         primary: `${s.number} · ${lang === 'ar' ? s.nameAr : s.nameTransliteration || s.nameEn}`,
-        secondary: lang === 'ar' ? s.nameTransliteration || s.nameEn : s.nameAr,
+        // (v5.2.68) the Arabic secondary aids script-crossing search in
+        // English UI; in Arabic UI it is omitted (never Latin there).
+        secondary: lang === 'ar' ? '' : s.nameAr,
         href: buildHash(VIEWS.QURAN, { id: s.number }),
         action: 'navigate',
         data: { view: VIEWS.QURAN, id: String(s.number) },

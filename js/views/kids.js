@@ -33,14 +33,16 @@ export function renderKids(state) {
     : KIDS_SURAHS.map((n) => {
         const m = meta.surahs?.find((x) => Number(x.number) === n);
         const nameAr = m?.nameAr || '';
-        const nameEn = m?.nameTransliteration || m?.nameEn || `#${n}`;
+        // (v5.2.68) the Latin name is English-UI-only (strict contract);
+        // the Arabic name is always present, so nothing is lost in AR.
+        const nameEn = lang === 'ar' ? '' : m?.nameTransliteration || m?.nameEn || `#${n}`;
         const playing = sp?.active && Number(sp.surah) === n;
         return `
       <div class="kids-tile-wrap">
-        <button type="button" class="kids-tile ${playing ? 'kids-tile--playing' : ''}" data-action="surah-play" data-surah="${n}" aria-label="${escapeHTML(nameEn)} — ${t(playing ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}" aria-pressed="${playing}">
+        <button type="button" class="kids-tile ${playing ? 'kids-tile--playing' : ''}" data-action="surah-play" data-surah="${n}" aria-label="${escapeHTML(nameEn || nameAr)} — ${t(playing ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}" aria-pressed="${playing}">
           <span class="kids-tile__play">${icon(playing ? 'stop' : 'play', { size: 30 })}</span>
           <span class="kids-tile__name-ar" dir="rtl">${escapeHTML(nameAr)}</span>
-          <span class="kids-tile__name-en">${escapeHTML(nameEn)}</span>
+          ${nameEn ? `<span class="kids-tile__name-en">${escapeHTML(nameEn)}</span>` : ''}
         </button>
       </div>`;
       }).join('');

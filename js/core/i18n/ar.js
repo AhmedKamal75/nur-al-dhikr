@@ -587,6 +587,8 @@ export const ar = {
   'card.unfavorite': 'إزالة من المفضلة',
   'card.share': 'مشاركة',
   'share.received': 'محتوى مشارك — ابحث عنه في المكتبة.',
+  'settings.tafsirDefault': 'التفسير الافتراضي',
+  'settings.tafsirDefaultHint': 'التفسير الذي يظهر أولًا في تبويبات التفسير.',
   'card.copy': 'نسخ',
   'card.copied': 'تم النسخ',
   'card.copyFailed': 'تعذر النسخ — جرّب تحديد النص يدويًا',

@@ -2,6 +2,28 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.68 — study in your language + audit fixes F1–F4
+
+Language choice stops being hardcoded. Settings → Compare gains a
+default-tafsir picker over the bundled editions (Arabic sources plus
+the English Mukhtasar, native names, offline-first — remote editions
+stay out) wired through a new `mushaf-set-tafsir` action into the
+existing tab fallback, so the commentary you chose is the tab that
+opens. Word study renders in the UI language: Arabic POS/case/mood
+(data-complete at 77,429/77,429) in Arabic UI, English gloss and
+romanization English-only (no Arabic gloss data ships — omitted, never
+invented). Same rule applied down the line: reader translit,
+surah/reader/kids tile names and palette secondaries carry no Latin in
+Arabic UI, and ayah detail honors the translation toggle. Translation
+lines keep following the chosen edition (Urdu/French/Turkish/Indonesian
+overlays ride the existing pipeline) — choice legitimizes display.
+Proper-noun bilingualism (reciter/surah names in both scripts, same
+principle as the edition pickers' native names) is kept deliberately
+and recorded in the audit trail. Also closes audit F1 (recovered e2e
+spec expands accordions if-closed instead of blind-clicking) with the
+F2–F4 fixes above. New `tests/studyLanguage.test.js` (15 tests).
+Markers 5.2.67 → 5.2.68 plus re-stamp.
+
 ## v5.2.67 — one voice, one queue: audio engines stop fighting
 
 The player/surahPlayback split-brain closes in four moves. One voice:

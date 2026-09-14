@@ -411,6 +411,14 @@ export const clickHandlers = {
     });
   },
 
+  // (v5.2.68) default tafsir source picker (Settings → Compare section).
+  // Hostile ids clamp to a short string; the tabs resolve unknown ids to
+  // book order at render, so a stale pick can never blank the panel.
+  'mushaf-set-tafsir': (ds) => {
+    const id = String(ds.edition || '').slice(0, 40);
+    if (!id) return;
+    store.dispatch(actions.updateMushafPrefs({ defaultTafsir: id }));
+  },
   /* ------- (v4.6.0) Tajweed rules & colors ------- */
 
   'tajweed-open-settings': () => {
