@@ -331,6 +331,14 @@ function renderBookReader(state, lang) {
     deepN != null && Number.isFinite(deepN) && String(view.consumedN ?? '') === String(deepN)
       ? deepN
       : null;
+  // (v5.2.69) a followed ?n= link whose number exists in NO hadith of this
+  // book (typo / renumbered edition) says so instead of landing silently
+  // with nothing highlighted. Checked against the raw doc, not the
+  // filtered list — a merely-hidden hadith still exists.
+  const deepMissed =
+    deepTarget != null && Array.isArray(doc.hadiths)
+      ? !doc.hadiths.some((h) => Number(h.n) === deepTarget)
+      : false;
 
   const filteredAll = filterHadiths(doc, {
     query: view.query,
@@ -413,6 +421,7 @@ function renderBookReader(state, lang) {
   <section class="view view--hadith-book">
     ${header}
     ${doc.blurb ? `<p class="view__meta">${escapeHTML(pickLocale(doc.blurb, lang))}</p>` : ''}
+    ${deepMissed ? `<div class="panel"><p class="empty-hint" role="status">${t('hadith.unknownNumber', lang, { n: deepTarget })}</p></div>` : ''}
 
     <div class="hadith-controls">
       <input

@@ -2,6 +2,17 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.69 — hadith deep links fail honestly to the number
+
+Completes audit rank 8 (unknown-book half shipped in v5.2.32): a
+followed `?n=` whose number exists in no hadith of the book now names
+the number in a `role="status"` notice (new `hadith.unknownNumber`
+EN+AR) instead of landing silently with nothing highlighted. Checked
+against the raw book, not the filtered list, so a merely-hidden hadith
+never false-alarms; unconsumed `?n=` stays silent. New
+`tests/hadithDeepLink.test.js` (3 tests, incl. the unknown-book
+regression pin). Markers 5.2.68 → 5.2.69 plus re-stamp.
+
 ## v5.2.68 — study in your language + audit fixes F1–F4
 
 Language choice stops being hardcoded. Settings → Compare gains a
