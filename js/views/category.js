@@ -250,5 +250,14 @@ export function renderCategory(state) {
               : ''
           }<p class="empty-hint">${t('editor.emptyState', lang)}</p>`
     }
+    ${
+      items.length > 6
+        ? `
+    <!-- (v5.2.89, P2) floating back-to-top: long card lists only. Hidden
+         until #main scrolls deep (body.is-scrolled-deep, toggled once at
+         boot) so short lists never pay for chrome they don't need. -->
+    <button type="button" class="category-top" data-action="category-top" aria-label="${t('category.backToTop', lang)}" title="${t('category.backToTop', lang)}">${icon('chevronUp', { size: 20 })}</button>`
+        : ''
+    }
   </section>`;
 }

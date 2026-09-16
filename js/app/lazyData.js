@@ -442,6 +442,7 @@ export async function ensureQuranRootsFull(state) {
 
 export async function ensureTafsirEditions(state) {
   if (state.tafsirEditions || rt.tafsirEditionsFetchStarted) return;
+  if (Date.now() < rt.tafsirEditionsCooldownUntil) return;
   rt.tafsirEditionsFetchStarted = true;
   try {
     const editions = await fetchJSON(TAFSIR_EDITIONS_URL);
@@ -449,14 +450,17 @@ export async function ensureTafsirEditions(state) {
     flagLoad('tafsir-editions', false);
   } catch (err) {
     if (isMissingResourceError(err)) console.warn('[tafsir] editions catalog not bundled', err);
+    else if (isTimeoutError(err)) console.warn('[tafsir] editions catalog timed out', err);
     else console.error('[tafsir] failed to load editions catalog', err);
     rt.tafsirEditionsFetchStarted = false;
+    rt.tafsirEditionsCooldownUntil = Date.now() + 30_000;
     flagLoad('tafsir-editions', true);
   }
 }
 
 export async function ensureTajweedPool(state) {
   if (state.tajweedPool || rt.tajweedPoolFetchStarted) return;
+  if (Date.now() < rt.tajweedPoolCooldownUntil) return;
   rt.tajweedPoolFetchStarted = true;
   try {
     const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
@@ -464,8 +468,10 @@ export async function ensureTajweedPool(state) {
     flagLoad('tajweed-pool', false);
   } catch (err) {
     if (isMissingResourceError(err)) console.warn('[tajweed] practice pool not bundled', err);
+    else if (isTimeoutError(err)) console.warn('[tajweed] practice pool timed out', err);
     else console.error('[tajweed] failed to load practice pool', err);
     rt.tajweedPoolFetchStarted = false;
+    rt.tajweedPoolCooldownUntil = Date.now() + 30_000;
     flagLoad('tajweed-pool', true);
   }
 }

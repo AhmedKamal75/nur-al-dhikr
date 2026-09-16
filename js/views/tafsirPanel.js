@@ -408,6 +408,24 @@ export function buildWordStudyPanel(state) {
 /* Multi-source tafsir panel                                           */
 /* ------------------------------------------------------------------ */
 
+/**
+ * (v5.2.89, P0-2) Waqf & portion marks of the Uthmani print, rendered as
+ * the Mushaf settings' reference legend. Codepoints mirror the ornament
+ * table in domain/tajweed.js (the same signs the canonical tokenizer
+ * treats as letterless): مـ U+06D8, صلى U+06D6, قلى U+06D7, ج U+06DA,
+ * ∴ U+06DB, ۞ U+06DE, ۩ U+06E9. The hizb/sajdah pair is deliberately
+ * adjacent here so the two never read as one set.
+ */
+const WAQF_MARKS = Object.freeze([
+  { mark: '\u06D8', nameKey: 'mushaf.waqf_lazim', descKey: 'mushaf.waqf_lazim_d' },
+  { mark: '\u06DA', nameKey: 'mushaf.waqf_jim', descKey: 'mushaf.waqf_jim_d' },
+  { mark: '\u06D6', nameKey: 'mushaf.waqf_sila', descKey: 'mushaf.waqf_sila_d' },
+  { mark: '\u06D7', nameKey: 'mushaf.waqf_qila', descKey: 'mushaf.waqf_qila_d' },
+  { mark: '\u06DB', nameKey: 'mushaf.waqf_murakhkhas', descKey: 'mushaf.waqf_murakhkhas_d' },
+  { mark: '\u06DE', nameKey: 'mushaf.waqf_hizb', descKey: 'mushaf.waqf_hizb_d' },
+  { mark: '\u06E9', nameKey: 'mushaf.waqf_sajdah', descKey: 'mushaf.waqf_sajdah_d' },
+]);
+
 /** Turn a raw tafsir string into readable HTML: recognizes the
  *  "* SectionName:" headers several grammar sources use (i'rab/sarf/
  *  balagha/fawaid), highlights ﴿word﴾-marked segments some sources use,
@@ -773,5 +791,20 @@ export function buildMushafSettingsPanel(state) {
     </div>`
         : ''
     }
+
+    <h3 class="mushaf-jump__heading">${t('mushaf.waqfLegend', lang)}</h3>
+    <p class="panel__subtext">${t('mushaf.waqfIntro', lang)}</p>
+    <div class="waqf-legend">
+      ${WAQF_MARKS.map(
+        (m) => `
+      <div class="waqf-legend__row">
+        <span class="waqf-mark" dir="rtl" lang="ar" aria-hidden="true">${m.mark}</span>
+        <div>
+          <div class="waqf-legend__name">${escapeHTML(t(m.nameKey, lang))}</div>
+          <div class="waqf-legend__desc">${escapeHTML(t(m.descKey, lang))}</div>
+        </div>
+      </div>`
+      ).join('')}
+    </div>
   </div>`;
 }

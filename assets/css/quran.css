@@ -359,6 +359,19 @@ body.has-player .ayah-card {
   text-underline-offset: 6px;
 }
 
+/* (v5.2.89, P0-2) waqf-legend mark glyphs: the bare Uthmani signs in
+   the Arabic face, gold like the printed page. Text (never background)
+   so forced-colors keeps every row readable with no extra fallback. */
+.waqf-mark {
+  font-family: var(--font-arabic);
+  font-size: var(--fs-lg);
+  line-height: 1;
+  min-inline-size: 28px;
+  text-align: center;
+  color: var(--mushaf-gold, #b98a1c);
+  flex-shrink: 0;
+}
+
 /* Tajweed coloring — tokens mirror domain/tajweed.js's rule table.
  * (v4.5.2) STANDARD PALETTE + the two new rules. idgham-no-ghunnah and
  * izhar-shafawi keep their class (the spans still exist — the inspector
@@ -2198,6 +2211,27 @@ body.has-player .reader-immersive-echo {
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
+}
+/* (v5.2.89, P0-2) the waqf legend reuses the tajweed row rhythm as its
+   own class set — the two reference charts must never read as one set
+   (same reason the hizb/sajdah rows sit adjacent but distinct inside). */
+.waqf-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.waqf-legend__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+.waqf-legend__name {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+}
+.waqf-legend__desc {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
 }
 .tajweed-legend__swatch {
   width: 14px;

@@ -245,6 +245,29 @@ function saveScrollMemory(key, value) {
 export function clearScrollMemory() {
   scrollMemory.clear();
 }
+
+/**
+ * (v5.2.89) THE scroller is the window, not #main: #app grows with
+ * content (min-height: 100dvh, #main unconstrained), so mainEl.scrollTop
+ * is permanently 0 and every scroll-memory read/write against it was a
+ * silent no-op (forward views opened at stale window offsets, Back never
+ * restored). These helpers centralize the real scroller so all scroll
+ * paths — memory, top-jumps, settings landings — agree. Exported for
+ * unit tests.
+ */
+export function readScrollTop() {
+  if (typeof window !== 'undefined' && Number.isFinite(window.scrollY)) return window.scrollY;
+  return 0;
+}
+
+export function writeScrollTop(top, behavior = 'auto') {
+  if (typeof window === 'undefined') return;
+  try {
+    window.scrollTo({ top: Math.max(0, Number(top) || 0), behavior });
+  } catch {
+    window.scrollTo(0, Math.max(0, Number(top) || 0));
+  }
+}
 let mainEl = null;
 let topbarEl = null;
 let navEl = null;
@@ -616,7 +639,7 @@ export function render(state) {
     // page turns, surah jumps): honor Back-restore instead of discarding
     // the pop flag. Forward saves outgoing + jumps top; Back restores.
     sameViewPop = consumePopNavigation();
-    if (!sameViewPop) saveScrollMemory(lastViewKey, mainEl ? mainEl.scrollTop : 0);
+    if (!sameViewPop) saveScrollMemory(lastViewKey, readScrollTop());
   } else {
     // Same-view re-render (no key change): the pop flag belongs to the
     // NEXT navigation — consume it here or the following genuine view
@@ -699,7 +722,7 @@ export function render(state) {
 
   // Capture the outgoing scroll position BEFORE the main patch replaces
   // content (content height changes after the patch).
-  const outgoingScroll = mainEl ? mainEl.scrollTop : 0;
+  const outgoingScroll = readScrollTop();
   // A known lazy view whose module has not loaded yet renders the honest
   // loading/error placeholder — never Home (Home is only the fallback for
   // genuinely unknown routes, handled above).
@@ -738,13 +761,10 @@ export function render(state) {
     const wasPop = wasPopNavigation;
     const saved = wasPop ? scrollMemory.get(nextKey) : null;
     if (saved != null) {
-      mainEl.scrollTop = saved;
+      writeScrollTop(saved);
     } else {
       scrollMemory.delete(nextKey);
-      mainEl.scrollTo({
-        top: 0,
-        behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto',
-      });
+      writeScrollTop(0, 'instant' in document.documentElement.style ? 'instant' : 'auto');
     }
     lastView = state.activeView;
     lastViewKey = nextKey;
@@ -779,10 +799,10 @@ export function render(state) {
     const nextKey = viewKeyOf(state.activeView, state.activeParams);
     const saved = sameViewPop ? scrollMemory.get(nextKey) : null;
     if (saved != null) {
-      mainEl.scrollTop = saved;
+      writeScrollTop(saved);
     } else if (!sameViewPop) {
       scrollMemory.delete(nextKey);
-      mainEl.scrollTo({ top: 0, behavior: 'auto' });
+      writeScrollTop(0);
     }
     lastViewKey = nextKey;
   } else if (state.activeView === VIEWS.SETTINGS) {

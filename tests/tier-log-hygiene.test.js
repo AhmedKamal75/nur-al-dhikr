@@ -125,7 +125,8 @@ describe('tier log hygiene: 404 warns, real failures error', () => {
   });
 
   test('roots-full retry cools down instead of spamming per dispatch', async () => {
-    const { ensureQuranRootsFull, ensureQuranRoots } = await import('../js/app/lazyData.js');
+    const { ensureQuranRootsFull, ensureQuranRoots, ensureTafsirEditions, ensureTajweedPool } =
+      await import('../js/app/lazyData.js');
     const { rt } = await import('../js/app/rt.js');
     const errors = [];
     const warns = [];
@@ -140,10 +141,18 @@ describe('tier log hygiene: 404 warns, real failures error', () => {
       rt.quranRootsFetchStarted = false;
       rt.quranRootsCooldownUntil = Date.now() + 60_000;
       await ensureQuranRoots({ quranRoots: null });
+      rt.tafsirEditionsFetchStarted = false;
+      rt.tafsirEditionsCooldownUntil = Date.now() + 60_000;
+      await ensureTafsirEditions({ tafsirEditions: null });
+      rt.tajweedPoolFetchStarted = false;
+      rt.tajweedPoolCooldownUntil = Date.now() + 60_000;
+      await ensureTajweedPool({ tajweedPool: null });
       assert.equal(errors.length, 0, 'cooldown: no error logged');
       assert.equal(warns.length, 0, 'cooldown: no warn logged either');
       assert.equal(rt.quranRootsFullFetchStarted, false, 'cooldown: no full fetch started');
       assert.equal(rt.quranRootsFetchStarted, false, 'cooldown: no capped fetch started');
+      assert.equal(rt.tafsirEditionsFetchStarted, false, 'cooldown: no editions fetch started');
+      assert.equal(rt.tajweedPoolFetchStarted, false, 'cooldown: no pool fetch started');
     } finally {
       console.error = origErr;
       console.warn = origWarn;
@@ -151,6 +160,10 @@ describe('tier log hygiene: 404 warns, real failures error', () => {
       rt.quranRootsFullCooldownUntil = 0;
       rt.quranRootsFetchStarted = false;
       rt.quranRootsCooldownUntil = 0;
+      rt.tafsirEditionsFetchStarted = false;
+      rt.tafsirEditionsCooldownUntil = 0;
+      rt.tajweedPoolFetchStarted = false;
+      rt.tajweedPoolCooldownUntil = 0;
     }
   });
 });

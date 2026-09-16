@@ -69,6 +69,12 @@ export const rt = {
   // (v5.2.87) same contract for the capped (~1MB) index: same per-notify
   // re-fire shape, same spam vector under load.
   quranRootsCooldownUntil: 0,
+  // (v5.2.89) cooldown parity for the remaining lazy tiers with the same
+  // fail-open retry shape (tafsir catalog, tajweed pool). Boot-critical
+  // metas (quran/mushaf) are deliberately excluded: their failure is a
+  // real defect signal, not load noise.
+  tafsirEditionsCooldownUntil: 0,
+  tajweedPoolCooldownUntil: 0,
   // (v5.2.88) bulk-build abort controllers: the SEARCH-view corpus builds
   // fetch in 24-wide chunks, and the v5.2.82 latch only stops SCHEDULING
   // between chunks — an in-flight chunk keeps saturating connections +

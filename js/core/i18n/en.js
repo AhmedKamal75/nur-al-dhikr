@@ -538,6 +538,27 @@ export const en = {
   'collections.namePrompt': 'Collection name',
   'collections.itemCount': '{n} items',
   'category.progressToday': '{done} of {total} done today · {pct}%',
+  // v5.2.89 floating back-to-top on long card lists (P2).
+  'category.backToTop': 'Back to top',
+  // v5.2.89 waqf & portion-marks legend in the Mushaf settings (P0-2).
+  // Standard Uthmani print signs (same reference class as the tajweed
+  // legend above): what each mark asks the reciter to do at the stop.
+  'mushaf.waqfLegend': 'Waqf & portion marks',
+  'mushaf.waqfIntro': 'Print signs of the Uthmani page — what to do at each stop.',
+  'mushaf.waqf_lazim': 'Lazim · must stop',
+  'mushaf.waqf_lazim_d': 'A required stop.',
+  'mushaf.waqf_jim': 'Ja’iz · either way',
+  'mushaf.waqf_jim_d': 'Stopping or continuing are equal.',
+  'mushaf.waqf_sila': 'Wasl awla · keep going',
+  'mushaf.waqf_sila_d': 'Continuing is better.',
+  'mushaf.waqf_qila': 'Waqf awla · stop here',
+  'mushaf.waqf_qila_d': 'Stopping is better.',
+  'mushaf.waqf_murakhkhas': 'Murakhkhas · licensed stop',
+  'mushaf.waqf_murakhkhas_d': 'Stopping is allowed either way.',
+  'mushaf.waqf_hizb': 'Hizb · portion mark',
+  'mushaf.waqf_hizb_d': 'Marks a Juz / Hizb division — not a prostration.',
+  'mushaf.waqf_sajdah': 'Sajdah · prostrate here',
+  'mushaf.waqf_sajdah_d': 'One of the fifteen prostration places.',
   'content.manage': 'Manage',
   'content.done': 'Done',
   'content.manageHint':

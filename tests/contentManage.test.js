@@ -210,6 +210,55 @@ describe('the views render the lens', () => {
     const nf = renderFocus({ ...state, activeParams: { id: 'morning', subId: ids[0] } });
     assert.match(nf, /notFound|empty-hint/);
   });
+
+  test('(v5.2.89, P2) long card lists grow a floating back-to-top button', () => {
+    const long = renderCategory(
+      stateWith({}, { activeView: 'category', activeParams: { id: 'morning' } })
+    );
+    assert.ok(
+      morning.items.length > 6,
+      `fixture has ${morning.items.length} items (needs >6 for the FAB)`
+    );
+    assert.match(long, /data-action="category-top"/, 'FAB renders on long lists');
+    assert.match(long, /aria-label="Back to top"/, 'EN label renders');
+    // Hiding down to ≤6 items drops the button (short lists need no chrome).
+    const ids = morning.items.map((i) => i.id);
+    const hidden = Object.fromEntries(
+      ids.slice(0, morning.items.length - 6).map((id) => [id, true])
+    );
+    const short = renderCategory(
+      stateWith(
+        { hiddenItems: hidden },
+        { activeView: 'category', activeParams: { id: 'morning' } }
+      )
+    );
+    assert.doesNotMatch(short, /data-action="category-top"/, 'no FAB on short lists');
+  });
+
+  test('(v5.2.89) scroll helpers target the window (the real scroller)', async () => {
+    const { readScrollTop, writeScrollTop } = await import('../js/app/renderer.js');
+    // No window in node: read 0, write silently no-ops (guards pinned).
+    assert.equal(readScrollTop(), 0);
+    assert.doesNotThrow(() => writeScrollTop(500));
+    // With a window: read scrollY, write clamps + forwards behavior.
+    const calls = [];
+    const hadWindow = 'window' in globalThis;
+    const prevWindow = globalThis.window;
+    globalThis.window = {
+      scrollY: 1234,
+      scrollTo: (...args) => calls.push(args),
+    };
+    try {
+      assert.equal(readScrollTop(), 1234);
+      writeScrollTop(500, 'smooth');
+      assert.deepEqual(calls[0], [{ top: 500, behavior: 'smooth' }]);
+      writeScrollTop(-40);
+      assert.deepEqual(calls[1], [{ top: 0, behavior: 'auto' }]);
+    } finally {
+      if (hadWindow) globalThis.window = prevWindow;
+      else delete globalThis.window;
+    }
+  });
 });
 
 function clone(x) {

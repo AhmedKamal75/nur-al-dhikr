@@ -417,6 +417,20 @@ export function bindGlobalEvents() {
     { passive: false }
   );
 
+  // (v5.2.89, P2) floating back-to-top visibility: the WINDOW is the
+  // scroller (#main never scrolls), so one passive window listener
+  // toggles the body flag the .category-top FAB's CSS keys off. Attached
+  // once at boot (never per view — Vector E); programmatic scrolls
+  // (renderer scroll memory, router top-jumps) fire scroll events too,
+  // so the flag self-corrects across navigations.
+  window.addEventListener(
+    'scroll',
+    () => {
+      document.body.classList.toggle('is-scrolled-deep', window.scrollY > 600);
+    },
+    { passive: true }
+  );
+
   // Long-press ayah quick actions (classic reader): holding ayah text
   // 550ms opens the quick sheet; the release click is suppressed so the
   // underlying control never double-fires. Interactive descendants

@@ -2,6 +2,32 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.89 — real scroll restoration + waqf legend + retry parity
+
+Scroll restoration actually works now: the window is the scroller
+(#app grows with content, #main never scrolls), so every scroll-memory
+read/write against `mainEl.scrollTop` was a silent no-op — forward
+views opened at stale offsets and Back never restored. New
+`readScrollTop`/`writeScrollTop` helpers centralize the real scroller
+for memory, top-jumps, settings landings and the router's same-hash
+tap. Measured: category opens at 0 after a deep scroll, Back restores
+2500 → 0 → 2500, zero errors.
+
+P0-2 closes: the Mushaf settings carry a waqf & portion-marks legend —
+all seven true Uthmani codepoints (مـ U+06D8, صلى U+06D6, قلى U+06D7,
+ج U+06DA, ∴ U+06DB, ۞ U+06DE, ۩ U+06E9) with EN+AR names, hizb/sajdah
+as deliberately distinct rows, text-glyph styling that survives
+forced-colors. Screenshot-verified at 390px, no tofu, no overlap.
+Per-typeface madd tuning stays device-gated: one shared 2.15×
+line-height serves all four fonts and blind per-font overrides risk
+more than they fix — the floor is pinned by test.
+
+P2: floating back-to-top FAB on long (>6) card lists — 48px circle,
+window-scroll listener attached once at boot, Back-restored offsets
+untouched. Retry parity: 30s cooldowns + timeout demotion for the
+tafsir catalog and tajweed pool (boot-critical metas stay loud).
+Markers 5.2.88 → 5.2.89 plus re-stamp.
+
 ## v5.2.88 — bulk-build abort on SEARCH exit + library jump chips
 
 SEARCH-exit now aborts in-flight bulk chunks immediately: the v5.2.82

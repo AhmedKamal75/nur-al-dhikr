@@ -573,6 +573,32 @@
 .library-jump .chip {
   flex-shrink: 0;
 }
+
+/* (v5.2.89, P2) floating back-to-top on long card lists: 48px circle,
+   fixed above the bottom chrome, hidden until #main scrolls deep
+   (body.is-scrolled-deep). inset-inline-end keeps it RTL-correct. */
+.category-top {
+  display: none;
+  position: fixed;
+  inset-inline-end: var(--space-4);
+  bottom: calc(var(--bottomnav-height) + var(--space-4));
+  z-index: var(--z-raised);
+  inline-size: 48px;
+  block-size: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-text);
+  place-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+body.is-scrolled-deep .category-top {
+  display: grid;
+}
+.category-top:hover {
+  background: var(--color-surface-alt);
+}
 .library-section__title {
   font-size: 1.05rem;
   font-weight: 800;

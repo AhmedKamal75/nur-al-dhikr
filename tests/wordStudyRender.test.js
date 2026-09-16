@@ -349,3 +349,21 @@ test('buildPracticeRound handles "mixed" mode (no single rule) without crashing'
   };
   assertClean(buildPracticeRound(baseState(), session), 'practice round (mixed)');
 });
+
+test('(v5.2.89, P0-2) Mushaf settings always carry the waqf-marks legend', () => {
+  for (const lang of ['en', 'ar']) {
+    const html = buildMushafSettingsPanel(baseState({ settings: { language: lang } }));
+    assertClean(html, `waqf legend (${lang})`);
+    // All seven true codepoints render as glyphs (escapes, never
+    // lookalike letters), with hizb/sajdah kept as distinct rows.
+    for (const cp of ['06D8', '06DA', '06D6', '06D7', '06DB', '06DE', '06E9']) {
+      assert.ok(
+        html.includes(String.fromCodePoint(parseInt(cp, 16))),
+        `waqf legend (${lang}) carries U+${cp}`
+      );
+    }
+    assert.match(html, /waqf-mark/);
+  }
+  // Legend is print reference, not coloring-gated: present with coloring off.
+  assert.match(buildMushafSettingsPanel(baseState()), /waqf-mark/);
+});

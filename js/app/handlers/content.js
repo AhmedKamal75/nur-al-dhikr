@@ -86,6 +86,18 @@ export const clickHandlers = {
     }
   },
 
+  // (v5.2.89, P2) floating back-to-top on long card lists. The window
+  // is the scroller (the router's own same-hash taps use it too);
+  // Back-restored offsets are owned by the renderer's scroll memory and
+  // untouched here.
+  'category-top': () => {
+    try {
+      window.scrollTo({ top: 0, behavior: scrollBehavior() });
+    } catch {
+      window.scrollTo(0, 0);
+    }
+  },
+
   'content-hide-item': (ds) => {
     commit(setItemHidden(store.getState(), ds.itemId, true));
   },

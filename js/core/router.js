@@ -120,12 +120,13 @@ export function go(view, params = {}) {
   const next = buildHash(view, params);
   // Same-hash taps push no entry and fire no hashchange — arming the flag
   // anyway used to eat the NEXT real browser Back (misclassified pop).
-  // (v5.2.77, BUG-07) instead of silent no-op, scroll #main to top so a
+  // (v5.2.77, BUG-07) instead of silent no-op, scroll to top so a
   // repeated nav tap gives visible feedback (never touches history).
+  // (v5.2.89) the window is the scroller (#main never scrolls) — the old
+  // main.scrollTo was a no-op here too.
   if (window.location.hash === next) {
-    const main = document.getElementById('main');
     try {
-      if (main) main.scrollTo({ top: 0, behavior: 'auto' });
+      window.scrollTo({ top: 0, behavior: 'auto' });
     } catch {
       /* best-effort; never break navigation */
     }
