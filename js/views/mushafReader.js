@@ -125,7 +125,10 @@ export function renderMushaf(state) {
   // store, but never interpolate a raw settings value into a style
   // attribute — coerce to a clamped number so even a future code path
   // that skips sanitization cannot break out of the attribute.
-  const mushafScale = clamp(Number(prefs.fontScale) || 1, 0.8, 1.6);
+  // (v5.2.87, P0-3) clamp widened 0.8–1.6 → 0.6–2.2: the store already
+  // sanitizes to this range and the fullscreen auto-fit engine settles
+  // anywhere inside it — the old clamp silently pinned fit results.
+  const mushafScale = clamp(Number(prefs.fontScale) || 1, 0.6, 2.2);
   const mushafLineScale = clamp(Number(prefs.lineSpacing) || 1, 0.85, 1.3);
   // Bookmark lookup set — built once per render, O(1) per ayah.
   const bookmarkedKeys = new Set(state.ayahBookmarks.map((b) => b.key));

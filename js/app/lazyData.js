@@ -1,5 +1,5 @@
 import { rt } from './rt.js';
-import { fetchJSON } from './net.js';
+import { fetchJSON, isMissingResourceError, isTimeoutError } from './net.js';
 import { dispatchSurahDoc, ensureTranslationBDoc, ensureTranslationCDoc } from './quranData.js';
 
 import {
@@ -314,7 +314,9 @@ export function ensureWordDict() {
       flagLoad('word-dict', false);
       return true;
     } catch (err) {
-      console.error('[wordStudy] failed to load dict', err);
+      // (v5.2.87, P1-1) missing-tier contract (see net.js): 404 warns.
+      if (isMissingResourceError(err)) console.warn('[wordStudy] dict not bundled', err);
+      else console.error('[wordStudy] failed to load dict', err);
       store.dispatch(actions.setWordDict(null));
       flagLoad('word-dict', true);
       return false;
@@ -376,7 +378,9 @@ export async function ensureQuranWordsData(state, surahNumber) {
     store.dispatch(actions.setQuranWords(id, words));
     flagLoad('quran-words', false);
   } catch (err) {
-    console.error('[wordStudy] failed to load word data', id, err);
+    // (v5.2.87, P1-1) same missing-tier contract as the hadith index above.
+    if (isMissingResourceError(err)) console.warn('[wordStudy] word data not bundled', id, err);
+    else console.error('[wordStudy] failed to load word data', id, err);
     flagLoad('quran-words', true);
   } finally {
     quranWordsFetchesInFlight.delete(id);
@@ -385,14 +389,21 @@ export async function ensureQuranWordsData(state, surahNumber) {
 
 export async function ensureQuranRoots(state) {
   if (state.quranRoots || rt.quranRootsFetchStarted) return;
+  // (v5.2.87) same retry-cooldown contract as the uncapped index below:
+  // the subscriber re-runs this per notify, and a struggling fetch must
+  // not multiply timeouts and error spam once per dispatch.
+  if (Date.now() < rt.quranRootsCooldownUntil) return;
   rt.quranRootsFetchStarted = true;
   try {
     const roots = await fetchJSON(QURAN_ROOTS_URL);
     store.dispatch(actions.setQuranRoots(roots));
     flagLoad('quran-roots', false);
   } catch (err) {
-    console.error('[wordStudy] failed to load root index', err);
+    if (isMissingResourceError(err)) console.warn('[wordStudy] root index not bundled', err);
+    else if (isTimeoutError(err)) console.warn('[wordStudy] root index timed out', err);
+    else console.error('[wordStudy] failed to load root index', err);
     rt.quranRootsFetchStarted = false;
+    rt.quranRootsCooldownUntil = Date.now() + 30_000;
     flagLoad('quran-roots', true);
   }
 }
@@ -404,14 +415,27 @@ export async function ensureQuranRoots(state) {
 // degraded capped index with no recovery path.
 export async function ensureQuranRootsFull(state) {
   if (state.quranRootsFull || rt.quranRootsFullFetchStarted) return;
+  // (v5.2.87) failed attempts cool down: the subscriber re-runs this on
+  // every notify, and hammering a struggling fetch once per dispatch only
+  // multiplies timeouts and error spam. Retry button + cooldown expiry
+  // re-arm honestly.
+  if (Date.now() < rt.quranRootsFullCooldownUntil) return;
   rt.quranRootsFullFetchStarted = true;
   try {
     const roots = await fetchJSON(QURAN_ROOTS_FULL_URL);
     store.dispatch(actions.setQuranRootsFull(roots));
     flagLoad('quran-roots-full', false);
   } catch (err) {
-    console.error('[roots] failed to load full root index', err);
+    // (v5.2.87) the uncapped index is a progressive enhancement over the
+    // capped one that already renders: a missing file warns (P1-1) and a
+    // timeout warns too — under load a slow 2.3MB fetch is not a defect
+    // signal, and this catch re-fires per dispatch (see the cooldown
+    // above). Malformed/5xx/offline still error.
+    if (isMissingResourceError(err)) console.warn('[roots] full root index not bundled', err);
+    else if (isTimeoutError(err)) console.warn('[roots] full root index timed out', err);
+    else console.error('[roots] failed to load full root index', err);
     rt.quranRootsFullFetchStarted = false;
+    rt.quranRootsFullCooldownUntil = Date.now() + 30_000;
     flagLoad('quran-roots-full', true);
   }
 }
@@ -424,7 +448,8 @@ export async function ensureTafsirEditions(state) {
     store.dispatch(actions.setTafsirEditions(editions));
     flagLoad('tafsir-editions', false);
   } catch (err) {
-    console.error('[tafsir] failed to load editions catalog', err);
+    if (isMissingResourceError(err)) console.warn('[tafsir] editions catalog not bundled', err);
+    else console.error('[tafsir] failed to load editions catalog', err);
     rt.tafsirEditionsFetchStarted = false;
     flagLoad('tafsir-editions', true);
   }
@@ -438,7 +463,8 @@ export async function ensureTajweedPool(state) {
     store.dispatch(actions.setTajweedPool(pool));
     flagLoad('tajweed-pool', false);
   } catch (err) {
-    console.error('[tajweed] failed to load practice pool', err);
+    if (isMissingResourceError(err)) console.warn('[tajweed] practice pool not bundled', err);
+    else console.error('[tajweed] failed to load practice pool', err);
     rt.tajweedPoolFetchStarted = false;
     flagLoad('tajweed-pool', true);
   }
@@ -471,7 +497,8 @@ export async function ensureTafsirText(state, editionId, surahNumber, allowRemot
     flagLoad('tafsir-text', false);
     return true;
   } catch (err) {
-    console.error('[tafsir] failed to load text', key, err);
+    if (isMissingResourceError(err)) console.warn('[tafsir] text not bundled', key, err);
+    else console.error('[tafsir] failed to load text', key, err);
     flagLoad('tafsir-text', true);
     return false;
   } finally {

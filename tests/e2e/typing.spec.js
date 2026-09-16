@@ -22,9 +22,14 @@ test('typing: debounced search navigates and keeps focus', async ({ page }) => {
     ['#/search', '#search-input', 'sabr'],
     // Roots carries a ~1MB index behind a cold SW precache (246 files) on
     // first visit: the data lands seconds after the skeleton on slow CI
-    // (observed 17s starvation vs the 15s fetch timeout + retry). The app
-    // self-heals via retry — give that path room instead of flaking.
-    ['#/roots', '#roots-search-input', 'ktb', 45000],
+    // (observed 17s starvation vs the 15s fetch timeout + retry, and 45s+
+    // behind a bulk search-corpus build on loaded machines — the search
+    // case's 24-wide chunks still contend through a same-document hash
+    // "navigation", v5.2.82's latch only stops scheduling between chunks).
+    // The app self-heals via retry — give that path room instead of
+    // flaking. App-side follow-up: AbortController through loadSurahDoc so
+    // in-flight bulk chunks release the new view immediately.
+    ['#/roots', '#roots-search-input', 'ktb', 60000],
     ['#/quran', '#quran-search-input', 'raid'],
   ];
   for (const [route, sel, text, timeoutMs] of cases) {

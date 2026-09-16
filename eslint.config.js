@@ -47,6 +47,7 @@ export default [
         FormData: 'readonly',
         structuredClone: 'readonly',
         getComputedStyle: 'readonly',
+        ResizeObserver: 'readonly',
         DeviceOrientationEvent: 'readonly',
         Audio: 'readonly',
         AbortController: 'readonly',

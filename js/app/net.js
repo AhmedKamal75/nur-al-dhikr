@@ -54,6 +54,31 @@ export async function fetchJSON(url, { timeoutMs = FETCH_TIMEOUT_MS, signal } = 
 }
 
 /**
+ * (v5.2.87, P1-1) True when a fetch failure is a *missing optional tier*
+ * (HTTP 404: seed/slim bundle, pruned install, not-yet-downloaded book).
+ * Those absences are expected states with honest error+Retry UI — callers
+ * log them as warnings so the e2e zero-console-error hygiene keeps
+ * catching real defects (same tolerant-loop contract as v5.2.84: warn on
+ * recovered skips, error on total failure). Timeouts, 5xx and the offline
+ * stub stay errors: they mean something is actually broken.
+ */
+export function isMissingResourceError(err) {
+  return err instanceof Error && /: 404$/.test(err.message);
+}
+
+/**
+ * (v5.2.87) True when a fetch died on the timeout guard (core/fetch.js
+ * aborts with `Timed out after <ms>ms`, which fetch surfaces as the
+ * rejection reason). Callers with a graceful fallback (capped index,
+ * partial content + Retry) warn on timeouts: under load a slow fetch is
+ * not a defect signal, and per-dispatch retries would spam the console
+ * the e2e hygiene gate watches.
+ */
+export function isTimeoutError(err) {
+  return err instanceof Error && /Timed out after \d+ms/.test(err.message);
+}
+
+/**
  * (v5.3.0) compressed downloads: when settings.compressedDownloads is on,
  * data JSON is fetched as sibling `.json.gz` files (built at packaging by
  * scripts/compress-data.mjs) and gunzipped here — transfer drops ~4× on

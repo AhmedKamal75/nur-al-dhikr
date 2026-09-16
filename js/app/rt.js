@@ -59,6 +59,16 @@ export const rt = {
   quranRootsFetchStarted: null,
   tafsirEditionsFetchStarted: null,
   quranRootsFullFetchStarted: null,
+  // (v5.2.87) retry cooldown for the uncapped roots index: a failure
+  // resets the started latch so Retry can work, but the subscriber calls
+  // ensure* on EVERY notify — without a cooldown each keystroke during a
+  // slow fetch outage fires another 15s attempt and another console error
+  // (observed: ~10 errors inside one typing test). Epoch-ms before which
+  // a failed full-index fetch must not be re-attempted.
+  quranRootsFullCooldownUntil: 0,
+  // (v5.2.87) same contract for the capped (~1MB) index: same per-notify
+  // re-fire shape, same spam vector under load.
+  quranRootsCooldownUntil: 0,
   tajweedPoolFetchStarted: null,
   practiceSession: null,
   swRegistration: null,

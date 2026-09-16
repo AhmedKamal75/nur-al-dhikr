@@ -2,6 +2,32 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.87 — fullscreen no-scroll auto-fit + quiet missing tiers
+
+P0-3. The Mushaf fullscreen auto-fit engine: while a fullscreen session
+is on, a debounced ResizeObserver measures every `.mushaf-page` box and
+settles the worst sheet through `updateMushafPrefs({ fontScale })` — the
+single source of truth, so pinch/ctrl+wheel and the slider stay
+consistent (manual edits re-anchor). The pure core
+(`js/domain/readerFit.js`) shrinks proportionally off the live
+measurement, restores toward the anchor only when the estimate proves it
+fits, and goes silent inside a 0.025 hysteresis band — at most 3
+dispatches to a fixed point, then nothing. The render clamp widened
+0.8–1.6 → 0.6–2.2 to match the store sanitizer (the old clamp silently
+pinned fit results); the slider already spanned the full range. Worst
+case a page still can't fit: the engine pins at 0.6 and stops — no worse
+than today, never a loop. Markers 5.2.86 → 5.2.87 plus re-stamp.
+
+P1-1. Missing optional tiers (seed bundle, pruned install) warn instead
+of erroring: `isMissingResourceError()` in `js/app/net.js` classifies
+the fetchJSON 404 shape, and all 9 prunable lazy-tier catches (hadith
+index/book, word data/dict, roots/full, tafsir editions/text, tajweed
+pool) demote to `console.warn` — the e2e zero-console-error hygiene
+catches real defects again on seeds. Core boot tiers (quran/mushaf
+meta+docs) still error: a 404 there means a corrupt install. The typing
+e2e roots allowance rises 45s → 60s (cold-SW + bulk-build contention on
+loaded machines; app-side AbortController follow-up filed).
+
 ## v5.2.86 — Agent-3 P0 slice: honest word meanings, sajdah-line accent, bounded tajweed memo
 
 P0-1. The word-study popup no longer goes silent when the word is known

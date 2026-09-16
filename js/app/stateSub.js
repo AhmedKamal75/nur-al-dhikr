@@ -42,7 +42,11 @@ import { scheduleTriggerArm } from './triggers.js';
 import { settingsSectionForSlug } from '../views/settings.js';
 import { refreshAppBadge } from '../services/appBadge.js';
 import { syncPlayingState } from '../services/mediaSession.js';
-import { armFsControlsAfterEnter, updateAmbientWakeLifecycle } from './fullscreen.js';
+import {
+  armFsControlsAfterEnter,
+  updateAmbientWakeLifecycle,
+  updateMushafFitLifecycle,
+} from './fullscreen.js';
 import { VIEWS } from '../core/config.js';
 import { computeReaderWindow } from '../domain/readerWindow.js';
 import { resetQuranIndex, setQuranIndexReady } from '../domain/quranSearch.js';
@@ -281,6 +285,8 @@ export function onStateChange(stateArg, action) {
     updateHomeTickerLifecycle(state);
     // (v5.2.0) ambient nightstand wake lock follows the route.
     updateAmbientWakeLifecycle(state);
+    // (v5.2.87, P0-3) fullscreen no-scroll auto-fit follows the route.
+    updateMushafFitLifecycle(state);
     maybeMarkNudgeShown(state);
     maybeProbeStorage(state);
     // (v5.2.44) icon badge follows every state change, change-deduped

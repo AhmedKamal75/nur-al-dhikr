@@ -4,7 +4,7 @@
  */
 
 import { rt } from './rt.js';
-import { fetchJSON, fetchDataResponse } from './net.js';
+import { fetchJSON, fetchDataResponse, isMissingResourceError } from './net.js';
 
 import { HADITH_BOOK_URL, HADITH_INDEX_URL, VIEWS } from '../core/config.js';
 import { actions, store } from '../core/state.js';
@@ -139,7 +139,10 @@ export async function ensureHadithIndex(force = false) {
     store.dispatch(actions.setHadithIndex(index));
     return true;
   } catch (err) {
-    console.error('[hadith] index load failed', err);
+    // (v5.2.87, P1-1) missing-tier 404 warns (seed bundle / pruned
+    // install renders error+Retry, nothing is broken); real failures error.
+    if (isMissingResourceError(err)) console.warn('[hadith] index not bundled', err);
+    else console.error('[hadith] index load failed', err);
     store.dispatch(actions.hadithIndexFailed());
     rt.hadithIndexStarted = false; // the Retry button calls again with force
     return false;
@@ -159,7 +162,9 @@ export async function ensureHadithBook(id, force = false) {
       store.dispatch(actions.setHadithBook(bookId, doc));
       return true;
     } catch (err) {
-      console.error('[hadith] book load failed', bookId, err);
+      // (v5.2.87, P1-1) missing-tier contract: 404 warns, real failure errors.
+      if (isMissingResourceError(err)) console.warn('[hadith] book not bundled', bookId, err);
+      else console.error('[hadith] book load failed', bookId, err);
       store.dispatch(actions.hadithBookFailed(bookId));
       hadithBookFetches.delete(bookId); // allow a retry
       return false;
