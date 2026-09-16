@@ -953,6 +953,9 @@ export const en = {
 
   'wordStudy.title': 'Word Study',
   'wordStudy.noData': "Grammar data isn't available for this word yet.",
+  // v5.2.86 honest meanings fallback (P0-1): the word IS known (grammar +
+  // root sections render) but the 54-lemma study dictionary has no entry.
+  'wordStudy.noMeanings': 'No dictionary entry for this word yet.',
   'wordStudy.tajweed': 'Tajweed in this word',
   'wordStudy.openTafsir': 'Tafsir & I\u02BFrab',
   // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).

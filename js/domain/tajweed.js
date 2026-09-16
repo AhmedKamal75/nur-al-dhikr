@@ -733,6 +733,14 @@ export function classifyWordTajweed(
  */
 const classifyMemo = new Map();
 
+/**
+ * (v5.2.86, P0-5) hard bound: the corpus is immutable at 6,236 ayahs, so
+ * the cache can never honestly need more entries than that. Evicts the
+ * oldest-inserted key first (Map preserves insertion order) — a slow-path
+ * re-classify, never a wrong answer.
+ */
+export const CLASSIFY_MEMO_CAP = 6236;
+
 /** Drop the classification cache (RESET_ALL hygiene — see PERF-03). */
 export function clearClassifyMemo() {
   classifyMemo.clear();
@@ -760,6 +768,12 @@ export function classifyAyahTajweed(ayahText) {
       }),
     };
   });
+  if (classifyMemo.size >= CLASSIFY_MEMO_CAP) {
+    // FIFO eviction: Map iterates in insertion order, so the first key is
+    // the stalest. One eviction per insert keeps the bound tight.
+    const oldest = classifyMemo.keys().next();
+    if (!oldest.done) classifyMemo.delete(oldest.value);
+  }
   classifyMemo.set(text, result);
   return result;
 }

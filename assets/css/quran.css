@@ -345,6 +345,19 @@ body.has-player .ayah-card {
   text-decoration-color: color-mix(in srgb, var(--color-primary-text) 45%, transparent);
   text-underline-offset: 6px;
 }
+/* (v5.2.86, P0-2) the printed sajdah line: سُجَّدًا in As-Sajdah:15 alone
+   carries a solid gold underline accent. Declared AFTER .qword--underline
+   so the accent wins the text-decoration shorthand on the one word that
+   carries both; 2px + 6px offset keeps it distinct from the tajweed
+   family's 3px-offset cues. text-decoration (not background/border)
+   survives forced-colors, so no separate fallback is needed. */
+.qword--sajda {
+  text-decoration: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--mushaf-gold, #b98a1c);
+  text-underline-offset: 6px;
+}
 
 /* Tajweed coloring — tokens mirror domain/tajweed.js's rule table.
  * (v4.5.2) STANDARD PALETTE + the two new rules. idgham-no-ghunnah and
@@ -1050,6 +1063,11 @@ body.has-player .ayah-card {
 .mushaf-bismillah {
   text-align: center;
   margin: var(--space-3) 0;
+  /* (v5.2.86, P0-4) proportional rhythm: 1.2x body. The Madinah print
+     edition above keeps its own 1.12em (higher-specificity selector) as
+     the print-convention exception. */
+  font-size: 1.2em;
+  line-height: var(--lh-arabic);
 }
 
 /* --- Page-number medallion (page foot) --------------------------------------
@@ -2077,6 +2095,7 @@ body.has-player .reader-immersive-echo {
 }
 .word-study__root-head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
 }

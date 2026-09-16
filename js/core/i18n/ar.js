@@ -936,6 +936,8 @@ export const ar = {
 
   'wordStudy.title': 'دراسة الكلمة',
   'wordStudy.noData': 'لا تتوفر بيانات نحوية لهذه الكلمة بعد.',
+  // v5.2.86 honest meanings fallback (P0-1) — parity with en.
+  'wordStudy.noMeanings': 'لا توجد مدخلة معجمية لهذه الكلمة بعد.',
   'wordStudy.tajweed': 'أحكام التجويد في هذه الكلمة',
   'wordStudy.openTafsir': 'التفسير والإعراب',
   // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).

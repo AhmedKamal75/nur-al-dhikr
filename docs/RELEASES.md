@@ -2,6 +2,39 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.86 — Agent-3 P0 slice: honest word meanings, sajdah-line accent, bounded tajweed memo
+
+P0-1. The word-study popup no longer goes silent when the word is known
+(grammar + root render) but the 54-lemma study dictionary has no entry:
+a one-line honest hint (`wordStudy.noMeanings`, EN+AR) via the
+sanctioned empty-hint idiom — `.word-study__meanings` keeps its
+"renders only with real content" contract. Root-head row wraps at 390px.
+
+P0-2. The prostration word سُجَّدًا in As-Sajdah:15 alone carries the
+printed sajdah-line accent (solid 2px gold underline, `qword--sajda`,
+text-decoration so forced-colors keeps it), scoped strictly to 32:15 —
+the same skeleton elsewhere stays unaccented. Distinct from the ۩
+sajdah-place mark the Mushaf reader already renders. Madd-collision
+guard pinned: Mushaf body line-height floor stays 2.15×.
+
+P0-4. Bismillah rhythm is proportional (1.2× body; Madinah print keeps
+its 1.12em convention via higher specificity).
+
+P0-5. The tajweed classifier memo is hard-capped at the 6,236-ayah
+corpus size with oldest-first eviction — bounded memory, identical
+answers. The drill pool now covers all 20 rules (tafkhim + madd_iwad
+were missing → `practice.noneAvailable` dead end): 25 classifier-derived
+entries each, plus 6 stale entries repaired (4 madd_badal, 1 madd_246,
+1 madd_6) where the classifier had drifted past the curation — every one
+of the 500 entries re-verified to genuinely contain its rule, so the
+quiz can never disagree with the coloring. Markers 5.2.85 → 5.2.86 plus
+re-stamp.
+
+Also: `data/SEED-README.md` pruning manifest + `npm run build-seed`
+reproducer for the audit slim bundle (strict subset: drops only
+data/tafsir, data/quran-words, data/hadith — everything the contract
+gates check stays).
+
 ## v5.2.85 — quiz remembers weak items across sessions
 
 UP-08 (SRS-lite). New persisted `quizMissRecords` (`{ [itemId]: { m, l } }`,

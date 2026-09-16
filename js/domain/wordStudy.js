@@ -197,3 +197,30 @@ export function wordBookmarkKey(surah, ayah, i) {
   if (!(s >= 1 && s <= 114 && a >= 1 && n >= 1)) return null;
   return `${s}:${a}:${n}`;
 }
+
+/**
+ * (v5.2.86, P0-2) True when a raw display token is the prostration word of
+ * As-Sajdah:15 (سُجَّدًا, plain spelling سجدوا). Strips the same
+ * combining marks/ornaments the tajweed tokenizer treats as inert and
+ * compares the bare letter skeleton — deterministic over the bundled
+ * Uthmani text, never guessed. Callers MUST additionally scope to
+ * surah 32 / ayah 15: other ayahs contain the same skeleton and must not
+ * gain the accent.
+ */
+export function isSajdaWord(token) {
+  const skeleton = [...String(token || '')]
+    .filter((ch) => {
+      const cp = ch.codePointAt(0);
+      // Arabic diacritics + Quranic annotation signs + tatweel/ornaments.
+      if (cp >= 0x064b && cp <= 0x065f) return false;
+      if (cp === 0x0670 || cp === 0x0640) return false;
+      if (cp >= 0x06d6 && cp <= 0x06dc) return false;
+      if (cp === 0x06df || cp === 0x06e0 || cp === 0x06e2 || cp === 0x06e4) return false;
+      if (cp === 0x06e7 || cp === 0x06e8 || cp === 0x06e9 || cp === 0x06ec) return false;
+      if (cp === 0x06ed || cp === 0x06e5 || cp === 0x06e6) return false;
+      if (cp === 0x06de || cp === 0xfd3e || cp === 0xfd3f) return false;
+      return true;
+    })
+    .join('');
+  return skeleton === 'سجدا';
+}

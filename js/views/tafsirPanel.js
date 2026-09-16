@@ -37,6 +37,7 @@ import {
   splitEditions,
   dictEntryFor,
   wordBookmarkKey,
+  isSajdaWord,
 } from '../domain/wordStudy.js';
 
 /* ------------------------------------------------------------------ */
@@ -82,6 +83,13 @@ export function renderAyahWords(
       // from the ayah text itself. `tappable` opts OUT (practice mode).
       if (!tappable || canonIdx == null) return inner;
       const i = canonIdx + 1;
+      // (v5.2.86, P0-2) the prostration-word accent: سُجَّدًا in 32:15
+      // alone carries a horizontal underline accent (the printed sajdah
+      // line), scoped strictly to this ayah — the same skeleton elsewhere
+      // must not gain it. Distinct from the ۩ sajdah-place mark, which the
+      // mushaf reader renders separately after the ayah-end marker.
+      const sajdaCls =
+        String(surah) === '32' && String(ayah) === '15' && isSajdaWord(tok) ? ' qword--sajda' : '';
       // (v5.2.74, BUG-05) Arabic runs carry lang="ar" so screen readers
       // use the Arabic voice (WCAG 3.1.2 Language of Parts).
       // (v5.2.74, BUG-06) roving tabindex: only the FIRST tappable word of
@@ -91,7 +99,7 @@ export function renderAyahWords(
       // movement lives in the events.js keydown handler.
       const tab = firstTappable === null ? '0' : '-1';
       if (firstTappable === null) firstTappable = rawIdx;
-      return `<span class="qword ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="${tab}" role="button" lang="ar" aria-label="${escapeHTML(tok)} — ${escapeHTML(t('wordStudy.open', lang))}">${inner}</span>`;
+      return `<span class="qword${sajdaCls} ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="${tab}" role="button" lang="ar" aria-label="${escapeHTML(tok)} — ${escapeHTML(t('wordStudy.open', lang))}">${inner}</span>`;
     })
     .join(' ');
 }
@@ -249,10 +257,17 @@ function wordActionsRow(state, lang, surah, ayah, i) {
  * gloss + EN gloss plus synonym/antonym chips. Empty when the lemma is
  * unknown or the tier hasn't loaded — the popup never shows a hollow
  * section.
+ *
+ * (v5.2.86, P0-1) "Empty" is now an honest inline hint instead of
+ * silence: the word IS known (grammar + root sections render above), so
+ * a missing dictionary entry says so in one line via the sanctioned
+ * empty-hint idiom — never inside .word-study__meanings, which keeps its
+ * "renders only with real content" contract.
  */
 function wordMeaningsHTML(state, lang, lemma) {
   const dict = dictEntryFor(state.wordDict, lemma);
-  if (!dict || (!dict.ar && !dict.en && !dict.syn.length && !dict.ant.length)) return '';
+  if (!dict || (!dict.ar && !dict.en && !dict.syn.length && !dict.ant.length))
+    return `<p class="empty-hint">${t('wordStudy.noMeanings', lang)}</p>`;
   const chips = (list, labelKey) =>
     list.length
       ? `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> ${list.map((s) => `<span class="chip chip--basis chip--sm" dir="rtl" lang="ar">${escapeHTML(s)}</span>`).join('')}</div>`
