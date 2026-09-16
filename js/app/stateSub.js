@@ -298,6 +298,24 @@ export function onStateChange(stateArg, action) {
     // ends all flow through the store, so no call site needs its own
     // platform update and the shade can never claim "playing" while paused.
     syncPlayingState(state);
+    // (v5.2.88) SEARCH exit aborts in-flight bulk chunks immediately. The
+    // v5.2.82 latch only stops inter-chunk scheduling; a same-document
+    // hash "navigation" never unloads the page, so without this the
+    // current 24-wide chunk drains first and starves the new view's own
+    // fetches (observed: roots index timing out behind the search build).
+    // Aborted chunks reject silently (isBulkAbortError) and both builds
+    // re-latch, so returning to Search resumes where it left off.
+    if (rt.bulkViewWasSearch && state.activeView !== VIEWS.SEARCH) {
+      if (rt.quranBulkAbort) {
+        rt.quranBulkAbort.abort();
+        rt.quranBulkAbort = null;
+      }
+      if (rt.tafsirBulkAbort) {
+        rt.tafsirBulkAbort.abort();
+        rt.tafsirBulkAbort = null;
+      }
+    }
+    rt.bulkViewWasSearch = state.activeView === VIEWS.SEARCH;
     maybeStartQuranSearchBuild(state);
     maybeStartTafsirSearchBuild(state);
     maybeStartHadithSearchBuild(state);

@@ -594,6 +594,9 @@ export const ar = {
   'schedule.group': 'الجدولات',
   'common.toggle': 'تبديل',
   'library.openEditor': 'افتح المحرر الكامل',
+  // v5.2.88 library section jump chips (P2) — parity with en.
+  'library.jump': 'انتقل إلى قسم',
+  'library.jumpToSection': 'انتقل إلى {name}',
   'collections.addTo': 'أضف إلى مجموعة',
   'collections.delete': 'حذف المجموعة',
   'collections.new': 'مجموعة جديدة',

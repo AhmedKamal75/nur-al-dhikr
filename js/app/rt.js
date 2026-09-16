@@ -69,6 +69,18 @@ export const rt = {
   // (v5.2.87) same contract for the capped (~1MB) index: same per-notify
   // re-fire shape, same spam vector under load.
   quranRootsCooldownUntil: 0,
+  // (v5.2.88) bulk-build abort controllers: the SEARCH-view corpus builds
+  // fetch in 24-wide chunks, and the v5.2.82 latch only stops SCHEDULING
+  // between chunks — an in-flight chunk keeps saturating connections +
+  // the main thread after a same-document hash "navigation" (which never
+  // unloads the page). Aborted on SEARCH exit so the new view's own
+  // fetches release immediately; builds re-latch and resume on return.
+  quranBulkAbort: null,
+  tafsirBulkAbort: null,
+  // (v5.2.88) previous-notify view for the bulk-abort exit hook: a
+  // same-document hash "navigation" never unloads the page, so the
+  // subscriber must notice SEARCH→else itself and abort in-flight chunks.
+  bulkViewWasSearch: null,
   tajweedPoolFetchStarted: null,
   practiceSession: null,
   swRegistration: null,

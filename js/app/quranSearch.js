@@ -5,7 +5,7 @@
 
 import { scrollBehavior } from '../core/utils.js';
 import { rt } from './rt.js';
-import { fetchJSON } from './net.js';
+import { fetchJSON, isBulkAbortError } from './net.js';
 import { loadSurahDoc } from './quranData.js';
 
 import { QURAN_META_URL, VIEWS } from '../core/config.js';
@@ -24,6 +24,11 @@ import { buildQuranIndex, isQuranSearchReady, setQuranIndexReady } from '../doma
 export async function ensureQuranSearchData() {
   if (rt.quranSearchBuildStarted || isQuranSearchReady()) return;
   rt.quranSearchBuildStarted = true;
+  // (v5.2.88) fresh abort scope per build: a superseded build's signal is
+  // already dead, and the exit hook below aborts the live one.
+  rt.quranBulkAbort?.abort();
+  rt.quranBulkAbort = new AbortController();
+  const signal = rt.quranBulkAbort.signal;
   try {
     if (!store.getState().quran.meta) {
       const meta = await fetchJSON(QURAN_META_URL);
@@ -45,21 +50,29 @@ export async function ensureQuranSearchData() {
       // left Search — starving the view they actually opened (observed:
       // #/roots index timing out behind 200+ in-flight corpus fetches).
       // The latch resets so returning to Search resumes the build.
-      if (store.getState().activeView !== VIEWS.SEARCH) {
+      // (v5.2.88) the exit hook aborts the signal too, so THIS chunk's
+      // in-flight fetches release immediately instead of draining first.
+      if (store.getState().activeView !== VIEWS.SEARCH || signal.aborted) {
         rt.quranSearchBuildStarted = false;
+        if (rt.quranBulkAbort) {
+          rt.quranBulkAbort.abort();
+          rt.quranBulkAbort = null;
+        }
         return;
       }
       const chunk = missing.slice(i, i + CHUNK);
       const docs = await Promise.all(
         chunk.map(async (n) => {
           try {
-            let doc = await loadSurahDoc(n);
+            let doc = await loadSurahDoc(n, signal);
             const want = store.getState().settings.quranTranslation || 'en-sahih';
             if ((doc.translationEdition || 'en-sahih') !== want) {
-              doc = await loadSurahDoc(n);
+              doc = await loadSurahDoc(n, signal);
             }
             return doc;
           } catch (err) {
+            // Intentional cancel: silent (see net.js isBulkAbortError).
+            if (isBulkAbortError(err)) return null;
             // Warn, not error: same tolerant-loop contract as the tafsir
             // build (skip + continue + retry-next-query).
             console.warn('[quran-search] failed to load surah', n, err);
@@ -71,6 +84,7 @@ export async function ensureQuranSearchData() {
         if (docs[j]) fetched[n] = docs[j];
       });
     }
+    rt.quranBulkAbort = null;
     // Re-read AFTER the fetch loop: an edition switch (or any surah load)
     // landing mid-build re-merges quran.surahs. Fresh state wins where it
     // has a doc (newest edition); just-fetched docs fill only the gaps —

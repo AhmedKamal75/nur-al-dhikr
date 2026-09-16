@@ -54,7 +54,7 @@ export function renderLibrary(state) {
 
   const moodsSection = moodChips
     ? `
-  <section class="library-section library-section--moods">
+  <section class="library-section library-section--moods" id="lib-section-moods">
     <h2 class="library-section__title">${t('moods.title', lang)}</h2>
     <p class="library-section__desc">${t('moods.subtitle', lang)}</p>
     <div class="mood-grid">${moodChips}</div>
@@ -168,7 +168,7 @@ export function renderLibrary(state) {
         : '';
 
       return `
-    <section class="library-section">
+    <section class="library-section" id="lib-section-${escapeHTML(libId)}">
       <h2 class="library-section__title">${escapeHTML(pickLocale(doc.metadata.name, lang))}</h2>
       ${doc.metadata.description?.[lang] ? `<p class="library-section__desc">${escapeHTML(pickLocale(doc.metadata.description, lang))}</p>` : ''}
       ${sectionManage}
@@ -230,6 +230,28 @@ export function renderLibrary(state) {
       }
       ${viewMenuButton('library', lang, { labelKey: 'viewMenu.library' })}
     </div>
+    ${(() => {
+      // (v5.2.88, P2) section jump chips: one per rendered section, sticky
+      // under the topbar so long libraries stay navigable. Buttons (not
+      // anchors) — an #hash href would hijack the app router.
+      const jumps = [];
+      if (moodsSection) jumps.push({ target: 'lib-section-moods', label: t('moods.title', lang) });
+      for (const doc of docs)
+        jumps.push({
+          target: `lib-section-${doc.metadata.id}`,
+          label: pickLocale(doc.metadata.name, lang),
+        });
+      if (jumps.length < 2) return '';
+      return `
+    <div class="library-jump" role="navigation" aria-label="${t('library.jump', lang)}">
+      ${jumps
+        .map(
+          (j) => `
+      <button type="button" class="chip chip--basis chip--sm" data-action="library-jump" data-target="${escapeHTML(j.target)}" aria-label="${t('library.jumpToSection', lang, { name: j.label })}">${escapeHTML(j.label)}</button>`
+        )
+        .join('')}
+    </div>`;
+    })()}
     ${
       // (v4.3) cold-start offline with zero content: the honest error +
       // Retry state instead of a bare page of nothing.

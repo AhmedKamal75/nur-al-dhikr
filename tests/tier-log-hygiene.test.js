@@ -47,6 +47,50 @@ describe('tier log hygiene: 404 warns, real failures error', () => {
     assert.equal(isTimeoutError(null), false);
   });
 
+  test('isBulkAbortError matches intentional cancels only', async () => {
+    const { isBulkAbortError } = await import('../js/app/net.js');
+    const abort = new DOMException('The operation was aborted', 'AbortError');
+    assert.equal(isBulkAbortError(abort), true);
+    assert.equal(isBulkAbortError(new Error('Timed out after 15000ms')), false);
+    assert.equal(isBulkAbortError(new Error('Failed to fetch data/x.json: 404')), false);
+    assert.equal(isBulkAbortError(null), false);
+    assert.equal(isBulkAbortError({ name: 'AbortError' }), true);
+  });
+
+  test('aborted signals reject fast with AbortError (bulk-cancel transport)', async () => {
+    // The bulk builders pass AbortSignals into fetchJSON: a pre-aborted
+    // signal must reject WITHOUT touching the network (no 15s timeout
+    // hang) so a SEARCH exit releases in-flight chunks immediately. An
+    // absolute URL proves no connection is attempted — rejection precedes
+    // DNS/dial. loadSurahDoc's own threading is pinned by source below.
+    const { fetchJSON } = await import('../js/app/net.js');
+    const ctl = new AbortController();
+    ctl.abort();
+    const t0 = Date.now();
+    await assert.rejects(
+      fetchJSON('http://127.0.0.1:9/unused.json', { signal: ctl.signal }),
+      (err) => {
+        assert.equal(err?.name, 'AbortError');
+        return true;
+      }
+    );
+    assert.ok(Date.now() - t0 < 5000, 'rejects fast, never waits out the timeout');
+  });
+
+  test('bulk builders thread the abort signal and swallow cancels silently', () => {
+    for (const [file, needs] of [
+      ['js/app/quranSearch.js', ['quranBulkAbort', 'loadSurahDoc(n, signal)', 'isBulkAbortError']],
+      [
+        'js/app/tafsirSearch.js',
+        ['tafsirBulkAbort', 'fetchJSON(TAFSIR_TEXT_URL(edition.id, n), { signal })'],
+      ],
+      ['js/app/stateSub.js', ['bulkViewWasSearch', 'quranBulkAbort', 'tafsirBulkAbort']],
+    ]) {
+      const src = readSrc(file);
+      for (const m of needs) assert.ok(src.includes(m), `${file}: contains "${m}"`);
+    }
+  });
+
   test('every prunable lazy-tier catch demotes 404 to warn', () => {
     // Call sites that MUST branch on isMissingResourceError (core boot
     // tiers — quran meta/surah, mushaf meta/page — are never pruned, so a

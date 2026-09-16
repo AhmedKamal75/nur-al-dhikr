@@ -15,6 +15,7 @@
  */
 
 import { actions, store } from '../../core/state.js';
+import { scrollBehavior } from '../../core/utils.js';
 import { buildConfirm } from '../../ui/menus.js';
 import { closeModal, isModalOpen, openModal, openLazyModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
@@ -64,6 +65,25 @@ function itemScope(itemId) {
 export const clickHandlers = {
   'content-manage-toggle': () => {
     store.dispatch(actions.contentManageToggle());
+  },
+
+  // (v5.2.88, P2) library section jump chips: scroll the target section
+  // under the sticky topbar (scroll-margin-top on .library-section does
+  // the offset) and move focus to it so screen readers announce the
+  // landing. Target ids are allowlisted — the delegated handler reads
+  // live DOM attributes, so anything outside our own id shape is ignored.
+  'library-jump': (ds) => {
+    const target = String(ds?.target || '');
+    if (!/^lib-section-[A-Za-z0-9_-]{1,64}$/.test(target)) return;
+    const el = document.getElementById(target);
+    if (!el) return;
+    el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+    el.setAttribute('tabindex', '-1');
+    try {
+      el.focus({ preventScroll: true });
+    } catch {
+      /* focus is a courtesy — the scroll already landed */
+    }
   },
 
   'content-hide-item': (ds) => {

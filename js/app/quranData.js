@@ -99,21 +99,24 @@ export async function ensureTranslationCDoc(surahId) {
   }
 }
 
-export async function fetchTranslationOverlay(edKey, n) {
+export async function fetchTranslationOverlay(edKey, n, signal = null) {
   const key = `${edKey}:${n}`;
   let tdoc = translationDocCache.get(key);
   if (!tdoc) {
-    tdoc = await fetchJSON(TRANSLATION_URL(edKey, n));
+    tdoc = await fetchJSON(TRANSLATION_URL(edKey, n), { signal });
     translationDocCache.set(key, tdoc);
   }
   return tdoc;
 }
 
-export async function loadSurahDoc(n) {
+export async function loadSurahDoc(n, signal = null) {
   const id = String(n);
   let doc = surahCorpusCache.get(id);
   if (!doc) {
-    doc = await fetchJSON(QURAN_SURAH_URL(id));
+    // (v5.2.88) bulk builds pass their abort signal so a SEARCH-exit
+    // cancels in-flight chunks immediately; single-reader loads pass
+    // nothing and are never abortable by the bulk lifecycle.
+    doc = await fetchJSON(QURAN_SURAH_URL(id), { signal });
     surahCorpusCache.set(id, doc);
   }
   // Edition freshness: the setting can change while the corpus/overlay
@@ -125,7 +128,7 @@ export async function loadSurahDoc(n) {
     const edKey = store.getState().settings.quranTranslation;
     if (!edKey || edKey === 'en-sahih') return { ...doc, translationEdition: 'en-sahih' };
     try {
-      const tdoc = await fetchTranslationOverlay(edKey, id);
+      const tdoc = await fetchTranslationOverlay(edKey, id, signal);
       const merged = overlayTranslation(doc, tdoc);
       if (store.getState().settings.quranTranslation === edKey) {
         if (merged !== doc) return { ...merged, translationEdition: edKey };

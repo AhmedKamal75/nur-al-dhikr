@@ -79,6 +79,17 @@ export function isTimeoutError(err) {
 }
 
 /**
+ * (v5.2.88) True for an intentional bulk-build cancel (SEARCH-exit abort).
+ * Aborted chunks reject with a bare AbortError — neither a missing tier
+ * nor a failure — so builders swallow them SILENTLY (even a warn here
+ * would spam 24 lines per cancelled build and trip the console-error
+ * hygiene the aborts exist to protect).
+ */
+export function isBulkAbortError(err) {
+  return !!err && err.name === 'AbortError';
+}
+
+/**
  * (v5.3.0) compressed downloads: when settings.compressedDownloads is on,
  * data JSON is fetched as sibling `.json.gz` files (built at packaging by
  * scripts/compress-data.mjs) and gunzipped here — transfer drops ~4× on

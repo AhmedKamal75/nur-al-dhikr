@@ -606,6 +606,9 @@ export const en = {
   'schedule.group': 'Schedules',
   'common.toggle': 'Toggle',
   'library.openEditor': 'Open full editor',
+  // v5.2.88 library section jump chips (P2).
+  'library.jump': 'Jump to a section',
+  'library.jumpToSection': 'Jump to {name}',
   'collections.addTo': 'Add to Collection',
   'collections.delete': 'Delete Collection',
   'collections.new': 'New Collection',

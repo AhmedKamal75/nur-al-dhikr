@@ -553,6 +553,25 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  /* (v5.2.88, P2) jump-chip landings stop under the sticky topbar. */
+  scroll-margin-top: calc(var(--topbar-height) + var(--space-3));
+}
+/* (v5.2.88, P2) section jump chips: sticky under the topbar so long
+   libraries stay navigable; single scrollable row, wraps nowhere. */
+.library-jump {
+  position: sticky;
+  top: var(--topbar-height);
+  z-index: var(--z-raised);
+  display: flex;
+  gap: var(--space-1_5);
+  overflow-x: auto;
+  padding-block: var(--space-2);
+  margin-block-end: var(--space-1);
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+.library-jump .chip {
+  flex-shrink: 0;
 }
 .library-section__title {
   font-size: 1.05rem;

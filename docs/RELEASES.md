@@ -2,6 +2,31 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.88 — bulk-build abort on SEARCH exit + library jump chips
+
+SEARCH-exit now aborts in-flight bulk chunks immediately: the v5.2.82
+latch only stopped inter-chunk scheduling, so a 24-wide chunk kept
+saturating connections + the main thread after a same-document hash
+"navigation" (observed: roots index timing out 15s+ behind the search
+build; typing e2e red). `loadSurahDoc`/`fetchTranslationOverlay` take an
+optional signal, both corpus builders run under per-build
+AbortControllers, the subscriber aborts on SEARCH→else, and aborted
+chunks reject silently (`isBulkAbortError` — even a warn would spam 24
+lines per cancel). Measured: roots lands in 325ms after leaving a live
+bulk build (was 15,250ms), zero console output. Same slice fixes the
+retry side: 30s cooldowns on both roots-index fetches (per-notify
+re-fire spammed ~10 timeout errors per typing run) with timeout demotion
+to warn; typing e2e green (42.8s), roots allowance 45s → 60s.
+
+P2: library section jump chips — one sticky row under the topbar (one
+chip per rendered section, buttons not anchors so the router is never
+hijacked), landing with the topbar offset (`scroll-margin-top`) and
+focus moved to the section. Measured: 10 chips, landing at 76px with
+focus, zero errors. Vector E closed with proof: 0 DOM mutations in 12s
+of idle fullscreen (tickers patch text nodes directly by design; the
+fit observer is silent once settled). Markers 5.2.87 → 5.2.88 plus
+re-stamp.
+
 ## v5.2.87 — fullscreen no-scroll auto-fit + quiet missing tiers
 
 P0-3. The Mushaf fullscreen auto-fit engine: while a fullscreen session
