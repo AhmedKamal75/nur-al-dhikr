@@ -13,12 +13,34 @@ import { showToast } from './toast.js';
 
 let lastFocused = null;
 let trapHandler = null;
+// (v5.2.75, UX-05) pending exit-teardown timer (animated close only).
+let closeTimer = null;
+const CLOSE_MS = 120;
 
 const FOCUSABLE_SELECTOR =
   'input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])';
 
-export function openModal(innerHTML, { labelledBy = null } = {}) {
+/** Reduced motion via the in-app toggle or the OS setting. */
+function reducedMotion() {
+  try {
+    if (document.documentElement?.getAttribute('data-reduce-motion') === 'true') return true;
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return true;
+    }
+  } catch {
+    /* DOM unavailable — treat as instant */
+  }
+  return false;
+}
+
+export function openModal(innerHTML, { labelledBy = null, focusSelector = null } = {}) {
   const root = document.getElementById('modal-root');
+  // A re-open during the animated exit's ghost window cancels its
+  // teardown — otherwise the timer below wipes the fresh content.
+  if (closeTimer) {
+    clearTimeout(closeTimer);
+    closeTimer = null;
+  }
   const reopening = root.classList.contains('is-open');
   // (v4.2) two lifecycle fixes for modal-on-modal re-opens (settings panels
   // re-rendered from inside themselves, tajweed drills re-opening on every
@@ -63,8 +85,18 @@ export function openModal(innerHTML, { labelledBy = null } = {}) {
   // Prefer the first focusable element *inside the body* (the actual form/menu
   // content) over the close button, which sits outside .modal__body precisely
   // so it's never the default focus target.
+  // (v5.2.75, UX-03) focusSelector overrides: re-opened surfaces (tafsir
+  // tabs) keep focus on the activating control instead of snapping it off.
+  let explicitTarget = null;
+  if (focusSelector) {
+    try {
+      explicitTarget = root.querySelector(focusSelector);
+    } catch {
+      explicitTarget = null;
+    }
+  }
   const body = root.querySelector('.modal__body');
-  const preferredTarget = body?.querySelector(FOCUSABLE_SELECTOR);
+  const preferredTarget = explicitTarget || body?.querySelector(FOCUSABLE_SELECTOR);
   (preferredTarget || panel)?.focus({ preventScroll: true });
 
   document.addEventListener('keydown', onModalKeydown);
@@ -74,8 +106,12 @@ export function openModal(innerHTML, { labelledBy = null } = {}) {
 
 export function closeModal() {
   const root = document.getElementById('modal-root');
-  root.classList.remove('is-open');
-  root.innerHTML = '';
+  if (closeTimer) {
+    clearTimeout(closeTimer);
+    closeTimer = null;
+  }
+  // Restore the opener FIRST: focus must never wait on the exit ghost
+  // below (and the leaving subtree is about to become inert anyway).
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onModalKeydown);
   if (trapHandler) {
@@ -83,6 +119,21 @@ export function closeModal() {
     trapHandler = null;
   }
   if (lastFocused && document.contains(lastFocused)) lastFocused.focus({ preventScroll: true });
+  const overlay = root.querySelector('.modal-overlay');
+  if (!overlay || reducedMotion()) {
+    root.classList.remove('is-open');
+    root.innerHTML = '';
+    return;
+  }
+  // (v5.2.75, UX-05) animated exit: the ghost fades/slides out over
+  // CLOSE_MS while the app underneath is already interactive. A re-open
+  // inside the window cancels this timer (see openModal).
+  overlay.classList.add('is-leaving');
+  closeTimer = setTimeout(() => {
+    closeTimer = null;
+    root.classList.remove('is-open');
+    root.innerHTML = '';
+  }, CLOSE_MS);
 }
 
 function onModalKeydown(e) {

@@ -59,6 +59,51 @@ this data is offered for personal study and convenience. It is not a
 replacement for consulting qualified scholars, especially for anything
 you intend to rely on religiously.
 
+## Zakat explainer notes (`data/zakat-notes.json`, v5.2.75)
+
+Authored in-app, not sourced: one generic, madhhab-neutral explainer per
+calculator line (plus the fitr staple-price hint). Mirrored into the
+`zakat.note.*` i18n keys, which is what the view renders; a contracts
+test pins JSON ↔ i18n equality so the two can never drift.
+
+## Prayer calculation methods (`data/prayer-methods.json`, v5.2.75)
+
+Angles mirror `METHODS` in `js/domain/prayer.js` (the standard published
+conventions); regions and explainer notes mirror the
+`prayer.methodRegion.*` / `prayer.methodNote.*` i18n keys, which is what
+the calc sheet renders. A contracts test pins JSON ↔ domain ↔ i18n
+equality so the three can never drift.
+
+## Qur'an lemma study notes (`data/quran-dict.json`, v5.2.75)
+
+Lemma keys and EN glosses derive from the bundled corpus
+(`data/quran-words/`: the `lemma` field verbatim; `en` is each lemma's
+most frequent quranwbw gloss in base form). AR glosses, synonyms and
+antonyms are app-authored study notes (generic, uncontroversial
+vocabulary) — not corpus data and not fatwa. An integrity test pins
+every key against the corpus and the entry shapes.
+
+## Hadith grades pipeline (`scripts/build-hadith.mjs`, v5.2.75)
+
+Per-hadith grades/narrators and Arabic chapter names ship with NO
+bundled source yet — and none is invented. When a graded source is
+available (e.g. sunnah.com grade fields), the pipeline merges
+`{bookId: {n: {grade, narrator}}}` plus `{bookId: {sectionId: arabic}}`
+overlays into the book files: unknown grades, bad narrators, and
+dangling references FAIL the build loudly instead of degrading
+silently. The app validator already passes enriched rows through
+(`HADITH_GRADES`), so merged files flow with no further code change;
+until they exist, the Two-Sahihs badge stays the only grade in the UI.
+
+## Qur'an lemma study notes (`data/quran-dict.json`, v5.2.75)
+
+Lemma keys and EN glosses derive from the bundled corpus
+(`data/quran-words/`: the `lemma` field verbatim; `en` is each lemma's
+most frequent quranwbw gloss in base form). AR glosses, synonyms and
+antonyms are app-authored study notes (generic, uncontroversial
+vocabulary) — not corpus data and not fatwa. An integrity test pins
+every key against the corpus and the entry shapes.
+
 ## Ahadeeth library (data/hadith/)
 
 The Ahadeeth texts (Arabic + English) are the public-domain collection

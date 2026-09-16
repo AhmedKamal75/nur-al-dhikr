@@ -8,7 +8,12 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, highlightMatch, normalizeSearch } from '../core/utils.js';
-import { isoWeekKey, promptForDate, REFLECTION_PROMPTS } from '../domain/duaJournal.js';
+import {
+  isoWeekKey,
+  promptForDate,
+  duaMonthStats,
+  REFLECTION_PROMPTS,
+} from '../domain/duaJournal.js';
 
 /** Entries per journal page (was: hard .slice(0, 50) with no way to see more). */
 export const JOURNAL_PAGE_SIZE = 10;
@@ -56,6 +61,15 @@ function promptText(promptId, lang) {
 function journalTerms(state) {
   const q = String(state.activeParams.q || '');
   return { q, terms: q ? q.split(/\s+/) : [], norm: normalizeSearch(q) };
+}
+
+/**
+ * (v5.2.75, UP-12) the journal surfaces its own stats: this month's dua
+ * count plus answered count. Counts only (no dates, no streaks).
+ */
+export function journalMonthFooter(state, lang) {
+  const { total, answered } = duaMonthStats(state.duaJournal);
+  return `<p class="panel__subtext">${t('journal.monthStats', lang, { n: total, m: answered })}</p>`;
 }
 
 function duaRows(state) {
@@ -227,6 +241,7 @@ export function renderJournal(state) {
         <button type="button" class="link-btn link-btn--sm" data-action="journal-export">${t('journal.export', lang)}</button>
       </div>
       ${duaRows(state)}
+      ${journalMonthFooter(state, lang)}
     </section>`
         : `
     <section class="panel">

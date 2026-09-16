@@ -163,6 +163,23 @@ export function reduceLibrary(state, action) {
       };
     }
 
+    // (v5.2.75, UP-11) move one range up/down inside its queue (no-ops at
+    // the ends and on hostile indexes — same discipline as REMOVE_ITEM).
+    case 'PLAYLIST_MOVE_ITEM': {
+      const pl = (state.playlists || []).find((p) => p.id === action.id);
+      const idx = Math.floor(Number(action.index));
+      const dir = Number(action.dir) >= 0 ? 1 : -1;
+      if (!pl || !Number.isFinite(idx) || idx < 0 || idx >= pl.items.length) return state;
+      const next = idx + dir;
+      if (next < 0 || next >= pl.items.length) return state;
+      const items = [...pl.items];
+      [items[idx], items[next]] = [items[next], items[idx]];
+      return {
+        ...state,
+        playlists: state.playlists.map((p) => (p.id === action.id ? { ...p, items } : p)),
+      };
+    }
+
     // Hadith memorization records — the hifz SRS ladder over hadith
     // keys (domain/hifz.js key-agnostic twins). Grades/keys validated in
     // the domain; unknown grade/key is a pure no-op.

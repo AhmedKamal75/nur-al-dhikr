@@ -256,6 +256,9 @@ function renderQueuePanel(state, lang) {
         <button type="button" class="btn ${playingId === p.id ? 'btn--primary' : 'btn--secondary'} btn--sm" data-action="playlist-play" data-id="${escapeHTML(p.id)}">
           ${icon(playingId === p.id ? 'stop' : 'play', { size: 14 })} ${t(playingId === p.id ? 'audio.reciteStop' : 'playlist.playQueue', lang)}
         </button>
+        <button type="button" class="icon-btn icon-btn--sm" data-action="playlist-rename" data-id="${escapeHTML(p.id)}" aria-label="${t('playlist.renameTitle', lang)}" title="${t('playlist.renameTitle', lang)}">
+          ${icon('edit', { size: 14 })}
+        </button>
         <button type="button" class="icon-btn icon-btn--sm" data-action="playlist-delete" data-id="${escapeHTML(p.id)}" aria-label="${t('common.delete', lang)}">
           ${icon('trash', { size: 14 })}
         </button>
@@ -267,6 +270,12 @@ function renderQueuePanel(state, lang) {
                 (it, i) => `
             <li class="queue-row__item">
               <span class="queue-row__item-label" dir="auto">${escapeHTML(itemLabel(it))}</span>
+              <button type="button" class="icon-btn icon-btn--sm" data-action="playlist-move-item" data-id="${escapeHTML(p.id)}" data-index="${i}" data-dir="-1" ${i === 0 ? 'disabled' : ''} aria-label="${t('settings.moveUp', lang)}" title="${t('settings.moveUp', lang)}">
+                ${icon('chevronUp', { size: 13 })}
+              </button>
+              <button type="button" class="icon-btn icon-btn--sm" data-action="playlist-move-item" data-id="${escapeHTML(p.id)}" data-index="${i}" data-dir="1" ${i === p.items.length - 1 ? 'disabled' : ''} aria-label="${t('settings.moveDown', lang)}" title="${t('settings.moveDown', lang)}">
+                ${icon('chevronDown', { size: 13 })}
+              </button>
               <button type="button" class="icon-btn icon-btn--sm" data-action="playlist-remove-item" data-id="${escapeHTML(p.id)}" data-index="${i}" aria-label="${t('common.delete', lang)}">
                 ${icon('close', { size: 13 })}
               </button>

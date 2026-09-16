@@ -274,21 +274,25 @@ export function renderSettings(state) {
   // (v5.2.0) Translation-compare: a second edition shown under the primary
   // one in the classic reader. Same set-setting pipeline (sanitizer maps
   // '' back to null = off); en-sahih excluded — it is already inline.
-  const compareRows =
+  // (v5.2.78, UP-06) third edition (C) with its own picker — skips primary
+  // + B + inline at render time.
+  const compareRowsFor = (key, current) =>
     `
-    <button type="button" class="reciter-row ${!s.quranTranslationB ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="quranTranslationB" data-value="" aria-pressed="${!s.quranTranslationB}">
+    <button type="button" class="reciter-row ${!current ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="${key}" data-value="" aria-pressed="${!current}">
       <span class="reciter-row__name">${escapeHTML(t('settings.compareOff', lang))}</span>
-      ${!s.quranTranslationB ? icon('check', { size: 16 }) : ''}
+      ${!current ? icon('check', { size: 16 }) : ''}
     </button>` +
     TRANSLATION_EDITIONS.filter((ed) => !ed.inline)
       .map(
         (ed) => `
-    <button type="button" class="reciter-row ${s.quranTranslationB === ed.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="quranTranslationB" data-value="${ed.id}" dir="auto" aria-pressed="${s.quranTranslationB === ed.id}">
+    <button type="button" class="reciter-row ${current === ed.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="${key}" data-value="${ed.id}" dir="auto" aria-pressed="${current === ed.id}">
       <span class="reciter-row__name">${escapeHTML(ed.native)}<span class="reciter-row__meta"> — ${escapeHTML(ed.author)}</span></span>
-      ${s.quranTranslationB === ed.id ? icon('check', { size: 16 }) : ''}
+      ${current === ed.id ? icon('check', { size: 16 }) : ''}
     </button>`
       )
       .join('');
+  const compareRows = compareRowsFor('quranTranslationB', s.quranTranslationB);
+  const compareCRows = compareRowsFor('quranTranslationC', s.quranTranslationC);
 
   // (v5.2.68) default tafsir source: which commentary opens first in the
   // tafsir tabs. Bundled editions only (always offline, incl. English);
@@ -397,6 +401,8 @@ export function renderSettings(state) {
     <details class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openId === 'settings-sec-compare' ? ' open' : ''}>
       ${accHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
       <div class="reciter-list">${compareRows}</div>
+      ${accHeader(t('settings.compareTranslationC', lang), 'book', lang, 'settings.compareHintC')}
+      <div class="reciter-list">${compareCRows}</div>
       <p class="field-label">${t('settings.tafsirDefault', lang)}</p>
       <p class="panel__subtext">${t('settings.tafsirDefaultHint', lang)}</p>
       <div class="reciter-list">${tafsirDefaultRows}</div>

@@ -42,6 +42,23 @@ function tone(freq, startTime, duration, gainPeak = 0.15, type = 'sine') {
 }
 
 /**
+ * PURE — true inside the quiet-hours window (midnight wrap supported).
+ * Garbage settings → false (never silence-by-surprise).
+ */
+export function isQuietNow(prefs, now = new Date()) {
+  if (prefs?.quietEnabled !== true) return false;
+  const toMin = (s) => {
+    const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(typeof s === 'string' ? s : '');
+    return m ? Number(m[1]) * 60 + Number(m[2]) : null;
+  };
+  const start = toMin(prefs.quietStart);
+  const end = toMin(prefs.quietEnd);
+  if (start == null || end == null || start === end) return false;
+  const t = now instanceof Date ? now.getHours() * 60 + now.getMinutes() : 0;
+  return start < end ? t >= start && t < end : t >= start || t < end;
+}
+
+/**
  * PURE — effective alert loudness 0..1 for the given prayer settings at a
  * moment in time. Day volume normally; the quiet-hours volume inside the
  * window (which may wrap past midnight, e.g. 22:00–06:00). Garbage in →
@@ -53,17 +70,8 @@ export function effectiveAdhanVolume(prefs, now = new Date()) {
     return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) / 100 : dflt / 100;
   };
   const day = clampVol(prefs?.adhanVolume, 80);
-  if (prefs?.quietEnabled !== true) return day;
-  const toMin = (s) => {
-    const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(typeof s === 'string' ? s : '');
-    return m ? Number(m[1]) * 60 + Number(m[2]) : null;
-  };
-  const start = toMin(prefs.quietStart);
-  const end = toMin(prefs.quietEnd);
-  if (start == null || end == null || start === end) return day;
-  const t = now instanceof Date ? now.getHours() * 60 + now.getMinutes() : 0;
-  const inside = start < end ? t >= start && t < end : t >= start || t < end;
-  return inside ? clampVol(prefs.quietVolume, 30) : day;
+  if (!isQuietNow(prefs, now)) return day;
+  return clampVol(prefs.quietVolume, 30);
 }
 
 const SOUNDS = {

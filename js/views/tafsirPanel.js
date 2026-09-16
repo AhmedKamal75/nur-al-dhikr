@@ -10,6 +10,7 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { clamp, escapeHTML, pickLocale } from '../core/utils.js';
+import { pairForAyah, buildSimilarPairs } from '../domain/mutashabihat.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
@@ -34,6 +35,8 @@ import {
   wordAffixLabels,
   rootOccurrences,
   splitEditions,
+  dictEntryFor,
+  wordBookmarkKey,
 } from '../domain/wordStudy.js';
 
 /* ------------------------------------------------------------------ */
@@ -53,7 +56,7 @@ export function renderAyahWords(
   wordRecords,
   surah,
   ayah,
-  { tappable = true, underline = true, tajweed = false, prefs = null } = {}
+  { tappable = true, underline = true, tajweed = false, prefs = null, lang = 'en' } = {}
 ) {
   const rawTokens = String(officialText || '')
     .trim()
@@ -66,6 +69,8 @@ export function renderAyahWords(
   const canonIdxByRaw = new Map(canon.map((c, ci) => [c.rawIndex, ci]));
   const tajweedByWord = tajweed ? classifyAyahTajweed(officialText) : null;
 
+  // (v5.2.74, BUG-06) roving-tabindex anchor: the first tappable word.
+  let firstTappable = null;
   return rawTokens
     .map((tok, rawIdx) => {
       const canonIdx = canonIdxByRaw.get(rawIdx);
@@ -77,7 +82,16 @@ export function renderAyahWords(
       // from the ayah text itself. `tappable` opts OUT (practice mode).
       if (!tappable || canonIdx == null) return inner;
       const i = canonIdx + 1;
-      return `<span class="qword ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="0" role="button">${inner}</span>`;
+      // (v5.2.74, BUG-05) Arabic runs carry lang="ar" so screen readers
+      // use the Arabic voice (WCAG 3.1.2 Language of Parts).
+      // (v5.2.74, BUG-06) roving tabindex: only the FIRST tappable word of
+      // the ayah is a tab stop (the rest are tabindex="-1" until arrowed
+      // onto) — ~500 stops per window collapse to ~30. The aria-label
+      // names the word-study action bare words never hint at; Left/Right
+      // movement lives in the events.js keydown handler.
+      const tab = firstTappable === null ? '0' : '-1';
+      if (firstTappable === null) firstTappable = rawIdx;
+      return `<span class="qword ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="${tab}" role="button" lang="ar" aria-label="${escapeHTML(tok)} — ${escapeHTML(t('wordStudy.open', lang))}">${inner}</span>`;
     })
     .join(' ');
 }
@@ -191,7 +205,7 @@ function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
         <div class="wti-row">
           <span class="wti-swatch" style="background:${color || 'transparent'}" aria-hidden="true"></span>
           <div class="wti-body">
-            <span class="wti-name">${escapeHTML(name)}<span dir="rtl" class="wti-name-alt">${escapeHTML(nameAlt)}</span></span>
+            <span class="wti-name">${escapeHTML(name)}<span dir="rtl" lang="ar" class="wti-name-alt">${escapeHTML(nameAlt)}</span></span>
             <span class="wti-desc">${escapeHTML(desc)}</span>
             <span class="wti-letters" dir="rtl" lang="ar">${escapeHTML(token.slice(sp.start, sp.end))}</span>
           </div>
@@ -210,11 +224,71 @@ function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
 /* Word grammar popover                                                */
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Word study popup actions (v5.2.75, UP-01): per-word listen / copy /    */
+/* share / bookmark. The handlers live in app/handlers/quran.js next to  */
+/* the other word-study actions; bookmark state rides the persisted      */
+/* wordBookmarks map.                                                    */
+/* ------------------------------------------------------------------ */
+function wordActionsRow(state, lang, surah, ayah, i) {
+  const bmKey = wordBookmarkKey(surah, ayah, i);
+  const marked = bmKey ? state.wordBookmarks?.[bmKey] === true : false;
+  const ds = `data-surah="${surah}" data-ayah="${ayah}" data-i="${i}"`;
+  const bmLabel = marked ? t('wordStudy.bookmarked', lang) : t('wordStudy.bookmark', lang);
+  return `
+  <div class="word-study__word-actions" role="group" aria-label="${t('wordStudy.title', lang)}">
+    <button type="button" class="icon-btn icon-btn--sm" data-action="word-speak" ${ds} aria-label="${t('wordStudy.speak', lang)}" title="${t('wordStudy.speak', lang)}">${icon('volume', { size: 15 })}</button>
+    <button type="button" class="icon-btn icon-btn--sm" data-action="word-copy" ${ds} aria-label="${t('wordStudy.copy', lang)}" title="${t('wordStudy.copy', lang)}">${icon('copy', { size: 15 })}</button>
+    <button type="button" class="icon-btn icon-btn--sm" data-action="word-share" ${ds} aria-label="${t('wordStudy.share', lang)}" title="${t('wordStudy.share', lang)}">${icon('share', { size: 15 })}</button>
+    <button type="button" class="icon-btn icon-btn--sm${marked ? ' icon-btn--active' : ''}" data-action="word-bookmark" ${ds} aria-pressed="${marked}" aria-label="${bmLabel}" title="${bmLabel}">${icon('bookmark', { size: 15 })}</button>
+  </div>`;
+}
+
+/**
+ * Meanings section from the lemma dictionary (v5.2.75, UP-01): the AR
+ * gloss + EN gloss plus synonym/antonym chips. Empty when the lemma is
+ * unknown or the tier hasn't loaded — the popup never shows a hollow
+ * section.
+ */
+function wordMeaningsHTML(state, lang, lemma) {
+  const dict = dictEntryFor(state.wordDict, lemma);
+  if (!dict || (!dict.ar && !dict.en && !dict.syn.length && !dict.ant.length)) return '';
+  const chips = (list, labelKey) =>
+    list.length
+      ? `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> ${list.map((s) => `<span class="chip chip--basis chip--sm" dir="rtl" lang="ar">${escapeHTML(s)}</span>`).join('')}</div>`
+      : '';
+  return `
+  <div class="word-study__meanings">
+    <span class="word-study__meanings-label">${t('wordStudy.meanings', lang)}</span>
+    ${dict.ar ? `<p class="word-study__dict-ar" dir="rtl" lang="ar">${escapeHTML(dict.ar)}</p>` : ''}
+    ${dict.en ? `<p class="word-study__dict-en" dir="auto">${escapeHTML(dict.en)}</p>` : ''}
+    ${chips(dict.syn, 'wordStudy.synonyms')}
+    ${chips(dict.ant, 'wordStudy.antonyms')}
+  </div>`;
+}
+
 export function buildWordStudyPanel(state) {
   const lang = state.settings.language;
   const ref = state.activeWordStudy;
   if (!ref) return '';
   const { surah, ayah, i } = ref;
+  // (v5.2.75, UP-09) "look-alike ayah?" chip when this ayah sits in a
+  // computed mutashabihat pair — opening the sibling's study, reusing
+  // the root-jump action. Needs loaded surah docs; otherwise silent.
+  let lookalike = '';
+  try {
+    const pair = pairForAyah(buildSimilarPairs(state.quran.surahs), surah, ayah);
+    if (pair) {
+      const sib =
+        `${pair.a.s}:${pair.a.a}` === `${Number(surah)}:${Number(ayah)}` ? pair.b : pair.a;
+      lookalike = `
+      <button type="button" class="chip chip--basis" data-action="root-jump" data-surah="${sib.s}" data-ayah="${sib.a}">
+        ${t('wordStudy.lookalike', lang, { ref: `${sib.s}:${sib.a}` })}
+      </button>`;
+    }
+  } catch {
+    lookalike = '';
+  }
   const word = getWord(state.quranWords, surah, ayah, i, ref.surface || null);
 
   if (!word) {
@@ -237,6 +311,8 @@ export function buildWordStudyPanel(state) {
       }
       ${tajweedHTML}
       ${token ? `<p class="panel__subtext">${t('wordStudy.tajweedOnly', lang)}</p>` : ''}
+      ${lookalike ? `<div class="word-study__lookalike">${lookalike}</div>` : ''}
+      ${wordActionsRow(state, lang, surah, ayah, i)}
       <div class="word-study__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
           ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)}
@@ -275,7 +351,7 @@ export function buildWordStudyPanel(state) {
           .map(
             (o) => `
           <button type="button" class="chip chip--basis" data-action="root-jump" data-surah="${o.s}" data-ayah="${o.a}">
-            <span dir="rtl">${escapeHTML(o.t || '')}</span>
+            <span dir="rtl" lang="ar">${escapeHTML(o.t || '')}</span>
             <span class="word-study__root-ref" dir="ltr">${o.s}:${o.a}</span>
           </button>`
           )
@@ -296,11 +372,14 @@ export function buildWordStudyPanel(state) {
     <p class="word-study__arabic" dir="rtl" lang="ar">${escapeHTML(word.text || '')}</p>
     ${lang !== 'ar' && word.translit ? `<p class="word-study__translit" dir="ltr">${escapeHTML(word.translit)}</p>` : ''}
     ${lang !== 'ar' && word.en ? `<p class="word-study__gloss">${escapeHTML(word.en)}</p>` : ''}
+    ${wordMeaningsHTML(state, lang, word.lemma)}
     <p class="word-study__grammar">${escapeHTML(wordGrammarSummary(word, lang))}</p>
     ${tags.length ? `<div class="word-study__tags">${tags.map((tg) => `<span class="chip chip--basis chip--sm">${escapeHTML(tg)}</span>`).join('')}</div>` : ''}
     ${affixHtml(prefixes, 'wordStudy.prefix')}
     ${affixHtml(suffixes, 'wordStudy.suffix')}
     ${rootHtml}
+    ${lookalike ? `<div class="word-study__lookalike">${lookalike}</div>` : ''}
+    ${wordActionsRow(state, lang, surah, ayah, i)}
     ${wordTajweedSection(state, surah, ayah, i, lang)}
     <div class="word-study__actions">
       <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
@@ -454,29 +533,31 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
 }
 
 /**
- * Tafsir compare: a second source beneath the active tab. The picker offers
- * bundled editions plus remote ones already cached for THIS surah (an
- * uncached remote would need its own download flow — the primary tab owns
- * that). The choice persists in settings.tafsirCompareB; a stale id renders
- * only the picker, never an error.
+ * Tafsir compare: extra sources beneath the active tab. Each picker offers
+ * every other edition — bundled, cached remote, and uncached remote (an
+ * uncached remote renders its own download button below instead of
+ * picker-only silence). Choices persist in settings.tafsirCompareB/C; a
+ * stale id renders only the picker, never an error.
+ * (v5.2.78, UP-06) two compare slots: B (second source) + C (third).
  */
-function buildTafsirCompare(state, surah, ayah, editions, activeId, lang) {
-  const picked = state.settings.tafsirCompareB || null;
+function buildTafsirCompareSlot(state, surah, ayah, editions, activeId, slotKey, labelKey, lang) {
+  const picked = state.settings[slotKey] || null;
+  const others = slotKey === 'tafsirCompareC' ? state.settings.tafsirCompareB : null;
   const cached = (ed) => ed.bundled || state.tafsir?.[ed.id]?.[String(surah)] != null;
-  const options = editions.filter((ed) => ed.id !== activeId && cached(ed));
+  const options = editions.filter((ed) => ed.id !== activeId && ed.id !== others);
   const chipFor = (id, label, on) => `
-    <button type="button" class="chip ${on ? 'chip--active' : ''}" data-action="tafsir-compare" data-edition="${escapeHTML(id)}" data-surah="${surah}" data-ayah="${ayah}" aria-pressed="${on}">
+    <button type="button" class="chip ${on ? 'chip--active' : ''}" data-action="tafsir-compare" data-slot="${slotKey === 'tafsirCompareC' ? 'C' : 'B'}" data-edition="${escapeHTML(id)}" data-surah="${surah}" data-ayah="${ayah}" aria-pressed="${on}">
       ${escapeHTML(label)}
     </button>`;
   const picker = `
     <div class="tafsir-compare__pick">
-      <span class="tafsir-compare__label">${t('tafsir.compare', lang)}</span>
+      <span class="tafsir-compare__label">${t(labelKey, lang)}</span>
       ${chipFor('', t('tafsir.compareOff', lang), !picked)}
       ${options.map((ed) => chipFor(ed.id, pickLocale({ en: ed.nameEn, ar: ed.nameAr }, lang), picked === ed.id)).join('')}
     </div>`;
 
   let second = '';
-  if (picked && picked !== activeId) {
+  if (picked && picked !== activeId && picked !== others) {
     const ed = editions.find((e) => e.id === picked);
     const text = ed ? state.tafsir?.[ed.id]?.[String(surah)]?.[String(ayah)] : null;
     if (ed && text) {
@@ -485,9 +566,18 @@ function buildTafsirCompare(state, surah, ayah, editions, activeId, lang) {
       ${editionBodyHTML(ed, text)}`;
     } else if (ed && cached(ed)) {
       second = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
+    } else if (ed && !ed.bundled) {
+      // (v5.2.74, UP-08) uncached remote second source: its own explicit
+      // download — the primary tab no longer owns this flow alone.
+      second = `
+      <div class="tafsir-panel__remote">
+        <p class="panel__subtext">${t('tafsir.remoteHint', lang)}</p>
+        <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-compare-download" data-edition="${escapeHTML(ed.id)}" data-surah="${surah}" data-ayah="${ayah}">
+          ${icon('download', { size: 15 })} ${t('tafsir.download', lang)}
+        </button>
+      </div>`;
     }
-    // Uncached remote / unknown id: picker only (above) — the text arrives
-    // via the primary tab's own download flow, then appears here.
+    // Unknown id: picker only (above) — never an error.
   }
   if (!options.length && !second) return '';
   return `
@@ -495,6 +585,31 @@ function buildTafsirCompare(state, surah, ayah, editions, activeId, lang) {
       ${picker}
       ${second ? `<div class="tafsir-compare__body">${second}</div>` : ''}
     </div>`;
+}
+
+function buildTafsirCompare(state, surah, ayah, editions, activeId, lang) {
+  return (
+    buildTafsirCompareSlot(
+      state,
+      surah,
+      ayah,
+      editions,
+      activeId,
+      'tafsirCompareB',
+      'tafsir.compare',
+      lang
+    ) +
+    buildTafsirCompareSlot(
+      state,
+      surah,
+      ayah,
+      editions,
+      activeId,
+      'tafsirCompareC',
+      'tafsir.compareC',
+      lang
+    )
+  );
 }
 
 /**

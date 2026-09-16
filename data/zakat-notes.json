@@ -1,0 +1,39 @@
+{
+  "_comment": "v5.2.75 (UP-13) per-line fiqhi explainers for the Zakat calculator. Authored in-app (generic, madhhab-neutral guidance — not fatwa); mirrored into the i18n zakat.note.* keys, which is what the view renders. A contracts test pins JSON <-> i18n equality so the two can never drift.",
+  "cash": {
+    "en": "Cash on hand and in accounts, held for a full lunar year.",
+    "ar": "النقد في اليد والحسابات المحتفظ به لسنة قمرية كاملة."
+  },
+  "goldGrams": {
+    "en": "Gold you own, in grams — jewelry included according to most scholars.",
+    "ar": "الذهب الذي تملكه بالغرامات — بما فيه الحلي عند جمهور العلماء."
+  },
+  "silverGrams": {
+    "en": "Silver you own, in grams.",
+    "ar": "الفضة التي تملكها بالغرامات."
+  },
+  "investments": {
+    "en": "Stocks and funds at current market value — details differ among scholars; ask locally about your case.",
+    "ar": "الأسهم والصناديق بقيمتها السوقية الحالية — وتفصيلها محل خلاف؛ فاسأل أهل العلم عن حالتك."
+  },
+  "businessGoods": {
+    "en": "Trade goods and inventory at wholesale value.",
+    "ar": "البضائع والمخزون التجاري بقيمة الجملة."
+  },
+  "receivables": {
+    "en": "Debts owed to you that you expect to recover.",
+    "ar": "الديون المستحقة لك التي ترجو تحصيلها."
+  },
+  "otherAssets": {
+    "en": "Other zakatable wealth not listed above.",
+    "ar": "أموال زكوية أخرى غير المذكورة أعلاه."
+  },
+  "liabilities": {
+    "en": "Debts due now — subtracted before the nisab check.",
+    "ar": "الديون الحالة الآن — تُخصم قبل حساب النصاب."
+  },
+  "fitrPer": {
+    "en": "The local price of one staple portion (e.g. rice or wheat) per person.",
+    "ar": "السعر المحلي لحصة طعام أساسية (كالأرز أو القمح) للفرد الواحد."
+  }
+}

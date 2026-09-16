@@ -26,7 +26,16 @@ export function ramadanTick() {
   if (!el) return;
 
   const p = state.settings.prayer;
-  if (p.latitude == null || p.longitude == null) return;
+  // (v5.2.77, BUG-03) no coordinates yet: replace the stale placeholder
+  // with an honest setup hint instead of leaving template text frozen.
+  if (p.latitude == null || p.longitude == null) {
+    const hint =
+      state.settings.language === 'ar'
+        ? 'حدّد موقعك لعرض العدّاد'
+        : 'Set location to show countdown';
+    if (el.textContent !== hint) el.textContent = hint;
+    return;
+  }
 
   const now = new Date();
   const tz = -now.getTimezoneOffset() / 60;
@@ -37,6 +46,7 @@ export function ramadanTick() {
     timezoneOffsetHours: tz,
     method: p.method,
     asr: p.asr,
+    offsets: p.offsets,
   });
   const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
   const tomorrowTimes = calculateTimes({
@@ -48,6 +58,7 @@ export function ramadanTick() {
     timezoneOffsetHours: -tomorrow.getTimezoneOffset() / 60,
     method: p.method,
     asr: p.asr,
+    offsets: p.offsets,
   });
 
   const phase = fastPhase(now, times, tomorrowTimes.fajr);
@@ -69,7 +80,7 @@ export function ramadanTick() {
   const targetKey = `${phase.phase}:${targetMs}`;
   if (rt.ramadanTickerTarget !== targetKey) {
     rt.ramadanTickerTarget = targetKey;
-    if (targetMs - nowMs > 1000) store.dispatch(actions.setSpeakingItem(null));
+    if (targetMs - nowMs > 1000) store.dispatch(actions.tickerNudge());
   }
 }
 
@@ -99,7 +110,16 @@ export function homeTick() {
   if (!el) return;
 
   const p = state.settings.prayer;
-  if (p.latitude == null || p.longitude == null) return;
+  // (v5.2.77, BUG-03) same honesty as ramadanTick: never leave a stale
+  // placeholder when the location is missing.
+  if (p.latitude == null || p.longitude == null) {
+    const hint =
+      state.settings.language === 'ar'
+        ? 'حدّد موقعك لعرض موعد الصلاة'
+        : 'Set location to show next prayer';
+    if (el.textContent !== hint) el.textContent = hint;
+    return;
+  }
 
   const now = new Date();
   const tz = -now.getTimezoneOffset() / 60;
@@ -110,6 +130,7 @@ export function homeTick() {
     timezoneOffsetHours: tz,
     method: p.method,
     asr: p.asr,
+    offsets: p.offsets,
   });
   if (!times) return;
   const next = nextPrayer(times, now);
@@ -132,7 +153,7 @@ export function homeTick() {
   // Fajr until some unrelated state change happened to re-render.
   if (rt.homeTickerTarget !== next.name) {
     rt.homeTickerTarget = next.name;
-    if (totalSec > 1) store.dispatch(actions.setSpeakingItem(null));
+    if (totalSec > 1) store.dispatch(actions.tickerNudge());
   }
 
   // (v4.2) day rollover: a PWA left open overnight kept rendering
@@ -144,7 +165,7 @@ export function homeTick() {
   if (rt.homeTickerDay !== dayKey) {
     const hadDay = rt.homeTickerDay != null;
     rt.homeTickerDay = dayKey;
-    if (hadDay) store.dispatch(actions.setSpeakingItem(null));
+    if (hadDay) store.dispatch(actions.tickerNudge());
   }
 }
 

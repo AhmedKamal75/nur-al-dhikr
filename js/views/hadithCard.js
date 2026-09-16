@@ -67,7 +67,7 @@ export function hadithCardHTML(
     </div>`
     : '';
   return `
-  <article class="hadith-card${isTarget ? ' hadith-card--target' : ''}" ${isTarget ? 'data-hadith-target' : ''} id="hadith-${escapeHTML(num)}">
+  <article class="hadith-card${isTarget ? ' hadith-card--target' : ''}" ${isTarget ? 'data-hadith-target' : ''} id="hadith-${escapeHTML(num)}" tabindex="-1">
     <div class="hadith-card__meta">
       <span class="hadith-card__number" dir="ltr">#${escapeHTML(num)}</span>
       ${sectionName ? `<span class="hadith-card__section">${escapeHTML(sectionName)}</span>` : ''}

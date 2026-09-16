@@ -41,6 +41,12 @@ export function reduceHadith(state, action) {
     case 'HADITH_DAILY_SET':
       return { ...state, hadith: { ...state.hadith, daily: action.daily } };
 
+    // (v5.2.75, BUG-09) cross-book search consent: bulk-fetching every
+    // missing book is user-initiated, never a keystroke side effect.
+    case 'HADITH_INDEX_ALL_CONFIRM':
+      if (state.hadith.indexAllConfirmed) return state;
+      return { ...state, hadith: { ...state.hadith, indexAllConfirmed: true } };
+
     case 'HADITH_VIEW_SET': {
       const patch =
         action.patch && typeof action.patch === 'object' && !Array.isArray(action.patch)

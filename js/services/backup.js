@@ -9,7 +9,7 @@
 import { APP_VERSION, SCHEMA_VERSION } from '../core/config.js';
 import { openDB } from '../core/idb/openDB.js';
 import { actions, store } from '../core/state.js';
-import { persistedSnapshot } from '../core/state/restore.js';
+import { isFuturePayload, persistedSnapshot } from '../core/state/restore.js';
 import { ok, fail } from '../core/utils.js';
 import { isReturningUser } from '../domain/onboarding.js';
 
@@ -70,9 +70,23 @@ export function parseBackup(text) {
   }
 
   // Accept either a wrapped backup payload or a bare persisted-state object (best-effort).
-  const data = json?.kind === 'nur-al-dhikr-backup' ? json.data : json;
+  const wrapped = json?.kind === 'nur-al-dhikr-backup';
+  // (v5.2.74, BUG-03) a future version's backup is refused with an honest
+  // message — never mangled through the allowlist below. Version-less
+  // legacy blobs still import.
+  if (wrapped && isFuturePayload(json)) {
+    return fail(
+      'This backup is from a newer version of Nūr al-Dhikr — update the app to import it.'
+    );
+  }
+  const data = wrapped ? json.data : json;
   if (!data || typeof data !== 'object') {
     return fail('That file does not look like a Nūr al-Dhikr backup.');
+  }
+  if (!wrapped && isFuturePayload(data)) {
+    return fail(
+      'This backup is from a newer version of Nūr al-Dhikr — update the app to import it.'
+    );
   }
 
   const required = ['settings', 'favorites', 'collections', 'counters', 'statistics'];

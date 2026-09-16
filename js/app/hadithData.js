@@ -28,6 +28,17 @@ import { buildHadithIndex } from '../domain/hadithSearch.js';
 const hadithBookFetches = new Map();
 
 /**
+ * (v5.2.73, BUG-02) drop cached book promises. After RESET_ALL /
+ * RESTORE_STATE the hadith docs are gone but this map still holds the old
+ * resolved promises — ensureHadithBook would return `true` without ever
+ * re-dispatching the document (eternal skeleton). Called from stateSub's
+ * guard-reset block whenever the docs are gone.
+ */
+export function resetHadithBookFetches() {
+  hadithBookFetches.clear();
+}
+
+/**
  * Parse a large hadith book OFF the main thread. Bukhari is ~13MB of JSON
  * and JSON.parse blocks for 100–300ms+ on mid-range Android — right at the
  * moment of navigation to the book. A blob-URL worker keeps the app
@@ -243,6 +254,12 @@ export function maybeScrollToFocusHadith(state) {
     if (el) {
       rt.pendingHadithScroll = null;
       el.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
+      // (v5.2.75, UX-02) announce the landing like the ayah path above.
+      try {
+        el.focus({ preventScroll: true });
+      } catch {
+        /* focus is best-effort; never let it break rendering */
+      }
     } else if (++rt.hadithScrollAttempts > 20) {
       rt.pendingHadithScroll = null;
     }
@@ -276,7 +293,7 @@ function searchDocsKey() {
     .join(',');
 }
 
-export async function ensureHadithSearchIndex() {
+export async function ensureHadithSearchIndex({ prefetchMissing = false } = {}) {
   if (rt.hadithSearchFlight) return rt.hadithSearchFlight;
   rt.hadithSearchFlight = (async () => {
     try {
@@ -287,6 +304,17 @@ export async function ensureHadithSearchIndex() {
       }
       const docs = store.getState().hadith.docs || {};
       const missing = books.map((b) => b.id).filter((id) => !docs[id]);
+      if (missing.length > 0 && !prefetchMissing && !store.getState().hadith.indexAllConfirmed) {
+        // (v5.2.75, BUG-09) no consent to bulk-fetch: rank loaded books
+        // only (the grid says exactly that), keeping the index fresh as
+        // books load through their own explicit taps.
+        const key = searchDocsKey();
+        if (key && key !== rt.lastHadithSearchDocs) {
+          rt.lastHadithSearchDocs = key;
+          buildHadithIndex(store.getState().hadith.docs);
+        }
+        return 'partial';
+      }
       for (let i = 0; i < missing.length; i += 2) {
         await Promise.all(missing.slice(i, i + 2).map((id) => ensureHadithBook(id)));
       }
@@ -310,7 +338,8 @@ export async function ensureHadithSearchIndex() {
 
 /** Grid search typed: start (or resume) the cross-book build. Runs on
  *  every grid render while a query stands — guarded inside, so the
- *  steady state is one fingerprint compare per render. */
+ *  steady state is one fingerprint compare per render. Without explicit
+ *  consent this ranks loaded books only (BUG-09: never bulk-fetches). */
 export function maybeStartHadithSearchBuild(state) {
   if (
     state.activeView === VIEWS.HADITH &&
@@ -319,4 +348,20 @@ export function maybeStartHadithSearchBuild(state) {
   ) {
     ensureHadithSearchIndex();
   }
+}
+
+/**
+ * (v5.2.75, BUG-09) explicit consent for bulk-fetching every missing
+ * book (Sahihs run ~13MB each): the grid's "index all" button records it
+ * in the ephemeral hadith slice (never persisted — RESET_ALL and restores
+ * re-arm the question), then the full build proceeds. Until then a query
+ * ranks loaded books only and the grid says exactly that.
+ */
+export function isHadithIndexAllConfirmed() {
+  return store.getState().hadith.indexAllConfirmed === true;
+}
+
+export async function confirmHadithIndexAll() {
+  store.dispatch(actions.confirmHadithIndexAll());
+  return ensureHadithSearchIndex({ prefetchMissing: true });
 }

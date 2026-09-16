@@ -340,7 +340,16 @@ describe('mushaf regroup: zero feature loss', () => {
     'wordUnderline',
   ];
   // Intentional additions only: the new TRACK panel entry point.
-  const ALLOWED_ADDITIONS = new Set(['mushaf-open-track', 'player-sleep-cycle', 'hifz-ayah-mark']);
+  const ALLOWED_ADDITIONS = new Set([
+    'mushaf-open-track',
+    'player-sleep-cycle',
+    'hifz-ayah-mark',
+    // v5.2.75, UP-01: per-word popup actions (ride the word-study panel).
+    'word-speak',
+    'word-copy',
+    'word-share',
+    'word-bookmark',
+  ]);
 
   function currentUnion() {
     const s = baseState();

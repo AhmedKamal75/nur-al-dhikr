@@ -41,7 +41,13 @@ import {
   juzEighth,
   hizbStartPage,
 } from '../services/mushaf.js';
-import { VIEWS, MUSHAF_PAGE_COUNT, MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
+import {
+  VIEWS,
+  MUSHAF_PAGE_COUNT,
+  MUSHAF_FONTS,
+  MUSHAF_PAPERS,
+  TRANSLATION_EDITIONS,
+} from '../core/config.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
 import { renderAyahWords } from './tafsirPanel.js';
 import {
@@ -55,6 +61,7 @@ import {
 // via actions.setMushafSession — no module setters remain here.
 export { buildMushafBookmarks } from './mushafBookmarks.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
+import { resolveCompareTexts } from '../domain/translationCompare.js';
 import { skeletonMushafPage, skeletonLines } from '../ui/skeleton.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
 
@@ -524,10 +531,21 @@ function buildTranslationTray(state, docs, lang) {
           pending += 1;
           continue;
         }
+        // (v5.2.74, UP-08) the compare second edition rides each tray row
+        // once its overlay has landed — same resolver as the reader.
+        // (v5.2.78, UP-06) up to two compare lines (B then C).
+        const cmps = resolveCompareTexts(state, TRANSLATION_EDITIONS, chapter.number, v.number);
+        const cmpHTML = cmps
+          .map(
+            (cmp) =>
+              `<p class="mushaf-tray__text mushaf-tray__text--compare" dir="${cmp.edition.dir === 'rtl' ? 'rtl' : 'auto'}" lang="${cmp.lang}"><span class="ayah-card__compare-label">${escapeHTML(cmp.edition.native)}</span> ${escapeHTML(cmp.text)}</p>`
+          )
+          .join('');
         rows.push(`
       <div class="mushaf-tray__row">
         <span class="mushaf-tray__ref" dir="ltr">${escapeHTML(String(chapter.number))}:${escapeHTML(String(v.number))}</span>
         <p class="mushaf-tray__text" dir="auto">${escapeHTML(translation)}</p>
+        ${cmpHTML}
         <button type="button" class="icon-btn icon-btn--sm" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" aria-label="${t('wordStudy.openTafsir', lang)}" title="${t('wordStudy.openTafsir', lang)}">
           ${icon('book', { size: 15 })}
         </button>

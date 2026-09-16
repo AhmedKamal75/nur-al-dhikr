@@ -138,6 +138,8 @@ describe('contract: every emitted data-action resolves to a handler', () => {
     // Quiet-hours switch in the Prayer adhan panel (toggle-prayer-quiet
     // branch in the same change listener).
     'toggle-prayer-quiet',
+    // (v5.2.75, UP-04) quiet-hours cancel switch: same CHANGE pipeline.
+    'toggle-prayer-quiet-cancel',
     // Elderly-mode switch in Settings → Accessibility (toggle-elder-mode
     // branch in the same change listener).
     'toggle-elder-mode',

@@ -67,6 +67,13 @@ export const actions = {
   tasbihCustomAdd: (text, target) => ({ type: 'TASBIH_CUSTOM_ADD', text, target }),
   tasbihCustomRemove: (id) => ({ type: 'TASBIH_CUSTOM_REMOVE', id }),
   setSpeakingItem: (itemId) => ({ type: 'SPEECH_SET_ACTIVE', itemId }),
+  // (v5.2.77, BUG-01) notify-only re-render nudge for per-second tickers.
+  // The old code abused setSpeakingItem(null) as a cheap pulse, which
+  // nulled a genuinely-speaking TTS item on every prayer/day/phase
+  // rollover. TICKER_NUDGE only bumps the ephemeral tickerSeq — it forces
+  // a notify + re-render without touching speech, player, or persisted
+  // slices (see reduceShell; tickerSeq is NOT in PERSISTED_KEYS).
+  tickerNudge: () => ({ type: 'TICKER_NUDGE' }),
   setLibraryIndex: (itemIndex) => ({ type: 'LIBRARY_SET_INDEX', itemIndex }),
   contentManageToggle: () => ({ type: 'CONTENT_MANAGE_TOGGLE' }),
   restoreState: (payload) => ({ type: 'RESTORE_STATE', payload }),
@@ -79,6 +86,12 @@ export const actions = {
   // (v5.2.0) Translation-compare: second-edition overlay text per surah.
   setQuranTranslationBDoc: (number, doc) => ({
     type: 'QURAN_TRANSLATION_B_LOADED',
+    number: String(number),
+    doc,
+  }),
+  // (v5.2.78, UP-06) third-edition overlay text per surah.
+  setQuranTranslationCDoc: (number, doc) => ({
+    type: 'QURAN_TRANSLATION_C_LOADED',
     number: String(number),
     doc,
   }),
@@ -113,6 +126,9 @@ export const actions = {
     surface: typeof surface === 'string' && surface ? surface.slice(0, 140) : null,
   }),
   closeWordStudy: () => ({ type: 'WORD_STUDY_CLOSE' }),
+  // (v5.2.75, UP-01) lemma-dict readiness + per-word bookmarks.
+  setWordDict: (index) => ({ type: 'WORD_STUDY_DICT_READY', index }),
+  toggleWordBookmark: (key) => ({ type: 'WORD_BOOKMARK_TOGGLE', key }),
   setTajweedPool: (pool) => ({ type: 'TAJWEED_POOL_LOADED', pool }),
   setHadithIndex: (index) => ({ type: 'HADITH_INDEX_LOADED', index }),
   hadithIndexFailed: () => ({ type: 'HADITH_INDEX_FAILED' }),
@@ -120,6 +136,8 @@ export const actions = {
   hadithBookFailed: (bookId) => ({ type: 'HADITH_BOOK_FAILED', bookId }),
   setHadithDaily: (daily) => ({ type: 'HADITH_DAILY_SET', daily }),
   setHadithView: (patch) => ({ type: 'HADITH_VIEW_SET', patch }),
+  // (v5.2.75, BUG-09) consent to bulk-fetch every missing book for search.
+  confirmHadithIndexAll: () => ({ type: 'HADITH_INDEX_ALL_CONFIRM' }),
   // (v5.2.0) Hadith bookmarks — key is "<bookId>:<n>".
   toggleHadithBookmark: (bookId, n) => ({
     type: 'HADITH_BOOKMARK_TOGGLE',
@@ -153,6 +171,8 @@ export const actions = {
   deletePlaylist: (id) => ({ type: 'PLAYLIST_DELETE', id }),
   addPlaylistItem: (id, item) => ({ type: 'PLAYLIST_ADD_ITEM', id, item }),
   removePlaylistItem: (id, index) => ({ type: 'PLAYLIST_REMOVE_ITEM', id, index }),
+  // (v5.2.75, UP-11) reorder one range up/down inside its queue.
+  movePlaylistItem: (id, index, dir) => ({ type: 'PLAYLIST_MOVE_ITEM', id, index, dir }),
   setSurahPlayback: (patch) => ({ type: 'SURAH_PLAYBACK_SET', patch }),
   // Hifz (memorization, v3.17)
   hifzSessionStart: ({ surah, level }) => ({ type: 'HIFZ_SESSION_START', surah, level }),
@@ -279,6 +299,8 @@ export const actions = {
   resetChecklistDay: (date) => ({ type: 'CHECKLIST_DAY_RESET', date }),
   cyclePrayerLog: (item) => ({ type: 'PRAYER_LOG_CYCLE', item }),
   startQuiz: (deck) => ({ type: 'QUIZ_START', deck }),
+  // (v5.2.75, UP-10) generalized deck preferences (library/direction/size).
+  setQuizPrefs: (patch) => ({ type: 'QUIZ_PREFS_SET', patch }),
   answerQuiz: (itemId) => ({ type: 'QUIZ_ANSWER', itemId }),
   nextQuiz: () => ({ type: 'QUIZ_NEXT' }),
   exitQuiz: () => ({ type: 'QUIZ_EXIT' }),

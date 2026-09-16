@@ -192,6 +192,14 @@ export function reduceShell(state, action) {
       return { ...state, loadErrors: next, loadRetryCount: state.loadRetryCount + 1 };
     }
 
+    case 'TICKER_NUDGE': {
+      // (v5.2.77, BUG-01) ephemeral notify-only bump. New root reference
+      // forces store notify + re-render; no persisted slice changes, so
+      // _persistedChanged stays false and localStorage is never touched.
+      // Never writes speech/player — tickers must not steal TTS state.
+      return { ...state, tickerSeq: (state.tickerSeq || 0) + 1 };
+    }
+
     // Gentle nudge (v3.25) — both actions write the DEVICE's own today and
     // ignore any action payload, so a forged dispatch cannot schedule,
     // rewind, or suppress future nudges. 'shown' is recorded by the app.js

@@ -2,7 +2,14 @@
  * core/state — package root docs live in core/state.js (the facade).
  */
 
-import { DEFAULT_SETTINGS, DEFAULT_VIEW, SCHEMA_VERSION } from '../config.js';
+import {
+  APP_VERSION,
+  DEFAULT_SETTINGS,
+  DEFAULT_VIEW,
+  SCHEMA_VERSION,
+  QUIZ_LENGTH,
+  QUIZ_LIBRARY_ID,
+} from '../config.js';
 import { clone } from '../utils.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
 import { defaultFastingPrefs } from '../../domain/fasting.js';
@@ -100,6 +107,9 @@ export function initialState() {
     // 'quran-meta', 'mushaf-page', 'tafsir-editions', …). Ephemeral.
     loadErrors: {},
     loadRetryCount: 0,
+    // (v5.2.77, BUG-01) ephemeral ticker notify counter — bumped by
+    // TICKER_NUDGE only. Never persisted, never restored.
+    tickerSeq: 0,
     // Mushaf (604-page book-style reader): meta is the compact page/juz/surah
     // index (mushaf-meta.json); pages caches individual page JSON as visited.
     // Both ephemeral — refetched (from cache-first storage.js/SW) each session.
@@ -110,6 +120,13 @@ export function initialState() {
     quranWords: {},
     // Root -> occurrences index (data/quran-roots.json), fetched once.
     quranRoots: null,
+    // (v5.2.75, UP-01) lemma dictionary (data/quran-dict.json, app-authored
+    // study notes): { entries: { [lemma]: { ar, en, syn[], ant[] } } }.
+    // Fetched once on first word-study open; ephemeral like quranRoots.
+    wordDict: { index: null, failed: false },
+    // (v5.2.75, UP-01) per-word bookmarks: { "surah:ayah:i": true }.
+    // Persisted + restore-sanitized like ayah bookmarks.
+    wordBookmarks: {},
     // Root-family browser index (v3.22.0, data/quran-roots-full.json):
     // UNCAPPED occurrence lists, fetched once on first open of the roots
     // view. Ephemeral like quranRoots — refetchable cached data, never
@@ -212,6 +229,10 @@ export function initialState() {
       errors: {},
       daily: null,
       bookView: { query: '', section: 'all', page: 1 },
+      // (v5.2.75, BUG-09) explicit consent to bulk-fetch every missing
+      // book for cross-book search. Ephemeral (never persisted/backed up):
+      // typing ranks loaded books until the person taps "index all".
+      indexAllConfirmed: false,
     },
     // Continuous surah recitation (v3.10): the "listen and follow along"
     // session driven by js/surahPlayback.js over the shared per-ayah audio
@@ -257,17 +278,27 @@ export function initialState() {
     // half-typed search does). `deck` is an array of
     // { itemId, choices: [itemId, itemId, itemId, itemId] } built once at
     // QUIZ_START time so the reducer itself never needs randomness.
+    // (v5.2.75, UP-10) quizPrefs: the generalized deck's library,
+    // direction and size. Ephemeral session memory, like the deck.
+    quizPrefs: { libraryId: QUIZ_LIBRARY_ID, direction: 'ar-en', size: QUIZ_LENGTH },
     quiz: {
       deck: [],
       index: 0,
       correctCount: 0,
       wrongCount: 0,
+      // (v5.2.80, UP-08) missed item ids in deck order — feeds the
+      // Review-mistakes round. Ephemeral like the deck itself.
+      wrongIds: [],
       revealed: false,
       selectedId: null,
       finished: false,
     },
     // Lifetime quiz stats — this part IS persisted, so "best score" survives reloads.
     quizStats: { bestScore: 0, totalAttempts: 0, totalCorrect: 0 },
+    // (v5.2.85, UP-08) cross-session weak-item memory: { [itemId]: { m, l } }.
+    // Persisted (small, capped, sanitized) — wrong answers accumulate here,
+    // correct answers clear. Powers "Practice weak items" on the start screen.
+    quizMissRecords: {},
     // Hifz (memorization, v3.17): per-surah spaced-repetition records —
     // PERSISTED (small, user-earned progress; see js/hifz.js for the
     // interval ladder and the hostile-shape sanitize rules).
@@ -313,7 +344,7 @@ export function initialState() {
     hifzActiveProfile: 'main',
     // Ephemeral (v4.4) — the look-alike (mutashabihat) drill session:
     // today's seed, the picked option, reveal flag, and the running score.
-    mutashabihat: { seed: null, picked: null, reveal: false, right: 0, wrong: 0 },
+    mutashabihat: { seed: null, picked: null, reveal: false, right: 0, wrong: 0, pool: 'all' },
     // (Removed: the v4.4 immersiveReader twin of readerImmersive was never
     // dispatched or read anywhere — one rename away from a real bug.)
     // Gentle "it's been a while" nudge (v3.25) — the day the card last
@@ -399,9 +430,11 @@ export const PERSISTED_KEYS = [
   'quranBookmark',
   'dailyChecklist',
   'quizStats',
+  'quizMissRecords',
   'mushafBookmark',
   'ayahBookmarks',
   'ayahBookmarkFolders',
+  'wordBookmarks',
   'mushafPagesRead',
   'ramadanLog',
   'zakat',
@@ -430,7 +463,11 @@ export const PERSISTED_KEYS = [
 ];
 
 export function pickPersisted(state) {
-  const out = {};
+  // (v5.2.74, BUG-03) every persisted snapshot carries its writer's
+  // version: hydrate and parseBackup refuse future schemaVersions instead
+  // of mangling future-shaped payloads through the allowlist. Legacy
+  // version-less blobs still hydrate (see isFuturePayload).
+  const out = { schemaVersion: SCHEMA_VERSION, appVersion: APP_VERSION };
   for (const key of PERSISTED_KEYS) out[key] = state[key];
   return out;
 }

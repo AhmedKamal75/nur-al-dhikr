@@ -26,6 +26,7 @@ import { setQuranIndexReady } from '../domain/quranSearch.js';
 const surahCorpusCache = new Map();
 const translationDocCache = new Map();
 const translationBInFlight = new Set();
+const translationCInFlight = new Set();
 
 /**
  * Pure: reduce an overlay file ({ ayahs: [{ number, translation }] })
@@ -64,6 +65,37 @@ export async function ensureTranslationBDoc(surahId) {
     return null;
   } finally {
     translationBInFlight.delete(id);
+  }
+}
+
+/**
+ * (v5.2.78, UP-06) third compare edition — mirrors ensureTranslationBDoc
+ * with its own in-flight set + translationC slice so B and C for the same
+ * surah never collide. Skips when unset, equal to primary/B, or inline.
+ */
+export async function ensureTranslationCDoc(surahId) {
+  const id = String(surahId);
+  const settings = store.getState().settings;
+  const edKey = settings.quranTranslationC;
+  const primary = settings.quranTranslation || 'en-sahih';
+  if (!edKey || edKey === primary || edKey === 'en-sahih' || edKey === settings.quranTranslationB)
+    return null;
+  const have = store.getState().quran.translationC?.[id];
+  if (have && have.edKey === edKey) return have;
+  if (translationCInFlight.has(id)) return null;
+  translationCInFlight.add(id);
+  try {
+    const tdoc = await fetchTranslationOverlay(edKey, id);
+    if (store.getState().settings.quranTranslationC !== edKey) return null;
+    const byAyah = translationBMap(tdoc);
+    if (!byAyah) return null;
+    const doc = { edKey, byAyah };
+    store.dispatch(actions.setQuranTranslationCDoc(id, doc));
+    return doc;
+  } catch {
+    return null;
+  } finally {
+    translationCInFlight.delete(id);
   }
 }
 

@@ -58,6 +58,7 @@
 import { VIEWS, APP_NAME } from '../core/config.js';
 import { t } from '../core/i18n.js';
 import { buildHash, consumePopNavigation } from '../core/router.js';
+import { scrollBehavior } from '../core/utils.js';
 import { actions, store } from '../core/state.js';
 import { rt } from './rt.js';
 import { showToast } from '../ui/toast.js';
@@ -83,7 +84,7 @@ import { renderRamadan } from '../views/ramadan.js';
 import { renderZakat } from '../views/zakat.js';
 import { renderAudio } from '../views/audioManager.js';
 import { renderRoots } from '../views/roots.js';
-import { renderSettings } from '../views/settings.js';
+import { renderSettings, settingsSectionForSlug } from '../views/settings.js';
 import { renderEditor } from '../views/editor.js';
 import { renderPlayerBar } from '../views/playerBar.js';
 
@@ -227,10 +228,31 @@ function lazyPlaceholderHTML(state) {
 let lastView = null;
 let lastViewKey = '';
 const scrollMemory = new Map();
+// (v5.2.77, BUG-06) cap: 604 mushaf pages + search/tab keys used to grow
+// without bound (cleared only on RESET_ALL). LRU-50 keeps Back-restore for
+// recent surfaces while bounding memory.
+const SCROLL_MEMORY_CAP = 50;
+function saveScrollMemory(key, value) {
+  if (scrollMemory.has(key)) scrollMemory.delete(key);
+  scrollMemory.set(key, value);
+  while (scrollMemory.size > SCROLL_MEMORY_CAP) {
+    const oldest = scrollMemory.keys().next().value;
+    scrollMemory.delete(oldest);
+  }
+}
+
+/** Drop the saved scroll offsets (RESET_ALL hygiene — see PERF-03). */
+export function clearScrollMemory() {
+  scrollMemory.clear();
+}
 let mainEl = null;
 let topbarEl = null;
 let navEl = null;
 let viewEnterTimer = null;
+// (v5.2.73, UP-02) the deep-link slug of the last same-view settings
+// arrival we already scrolled to — same-view slug→slug renders repeat on
+// every unrelated dispatch, and only a NEW slug should re-scroll.
+let lastSettingsSlugScroll = null;
 
 /** Scroll memory key: view + the params that change the scrollable
  *  surface (surah id, mushaf page, search/tab context) — all 604 mushaf
@@ -529,6 +551,42 @@ function restoreSelection(el, sel) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Settings deep-link arrival (v5.2.73, UP-02)                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Pure target resolution for a settings deep-link arrival: the section id
+ * to scroll to when `#/settings/<slug>` carries a known slug, else null.
+ * Exported for tests; the DOM work lives in scrollToSettingsSection().
+ */
+export function settingsSectionScrollTarget(state) {
+  if (!state || state.activeView !== VIEWS.SETTINGS) return null;
+  const params = state.activeParams;
+  const sectionId = params && typeof params === 'object' ? settingsSectionForSlug(params.id) : null;
+  return sectionId || null;
+}
+
+/**
+ * Post-render arrival: bring the deep-linked section to the viewport top
+ * (the existing `scroll-margin-top` clears the sticky topbar) and move
+ * focus to its <summary> so screen readers announce the section instead
+ * of only #main. rAF-defers past the patch so the node exists; reduced
+ * motion gets an instant jump via scrollBehavior().
+ */
+function scrollToSettingsSection(sectionId) {
+  requestAnimationFrame(() => {
+    const el = document.getElementById(sectionId);
+    if (!el) return;
+    el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+    try {
+      el.querySelector('summary')?.focus({ preventScroll: true });
+    } catch {
+      /* focus is best-effort; never let it break rendering */
+    }
+  });
+}
+
+/* ------------------------------------------------------------------ */
 /* Render                                                              */
 /* ------------------------------------------------------------------ */
 
@@ -542,7 +600,10 @@ export function render(state) {
   // navigation behind and effectively never appear. Capture the pop flag
   // here, once, and let the scroll-restore block below reuse it.
   const viewChanging = state.activeView !== lastView;
+  const nextKeyEarly = viewKeyOf(state.activeView, state.activeParams);
+  const keyChanging = nextKeyEarly !== lastViewKey;
   let wasPopNavigation = false;
+  let sameViewPop = false;
   if (viewChanging) {
     wasPopNavigation = consumePopNavigation();
     if (wasPopNavigation) {
@@ -550,10 +611,16 @@ export function render(state) {
     } else if (lastView) {
       rt.navBackStack.push(lastViewKey);
     }
+  } else if (keyChanging && lastView) {
+    // (v5.2.77, BUG-04) same-view traversal with a new scroll key (mushaf
+    // page turns, surah jumps): honor Back-restore instead of discarding
+    // the pop flag. Forward saves outgoing + jumps top; Back restores.
+    sameViewPop = consumePopNavigation();
+    if (!sameViewPop) saveScrollMemory(lastViewKey, mainEl ? mainEl.scrollTop : 0);
   } else {
-    // Same-view traversal (mushaf page turns, surah jumps): the pop flag
-    // belongs to THIS step, not the next one — consume it here or the
-    // following genuine view change misfires as a pop with stale scroll.
+    // Same-view re-render (no key change): the pop flag belongs to the
+    // NEXT navigation — consume it here or the following genuine view
+    // change misfires as a pop with stale scroll.
     consumePopNavigation();
   }
 
@@ -664,7 +731,7 @@ export function render(state) {
 
   if (viewChanging) {
     const nextKey = viewKeyOf(state.activeView, state.activeParams);
-    if (lastView) scrollMemory.set(lastViewKey, outgoingScroll);
+    if (lastView) saveScrollMemory(lastViewKey, outgoingScroll);
     // (v4.5.2, I9) the back-stack push/pop already ran at the TOP of this
     // render (before the topbar patch); wasPopNavigation is the flag it
     // captured. Scroll restore keeps using the same answer.
@@ -687,11 +754,45 @@ export function render(state) {
     // router's normalization) used to title the tab "title.xyz — Nūr
     // al-Dhikr" — t() falls back to the raw key. Fall back to Home's title
     // instead, mirroring the view the person actually sees.
-    const titleKey = 'title.' + state.activeView;
-    const lang = state.settings.language;
-    const titleText = t(titleKey, lang);
-    document.title = `${titleText === titleKey ? t('title.home', lang) : titleText} — ${APP_NAME}`;
-    // Move focus to the main region heading for screen reader / keyboard users on navigation.
-    mainEl.focus({ preventScroll: true });
+    {
+      const titleKey = 'title.' + state.activeView;
+      const lang = state.settings.language;
+      const titleText = t(titleKey, lang);
+      document.title = `${titleText === titleKey ? t('title.home', lang) : titleText} — ${APP_NAME}`;
+      // Move focus to the main region heading for screen reader / keyboard users on navigation.
+      mainEl.focus({ preventScroll: true });
+      // (v5.2.73, UP-02) settings deep-link arrival on a view change: the
+      // section renders open but the renderer otherwise lands at the very
+      // top. Scroll the target section up + focus its summary — unless this
+      // navigation restored a saved offset (Back), which wins.
+      if (state.activeView === VIEWS.SETTINGS && saved == null) {
+        const target = settingsSectionScrollTarget(state);
+        if (target) {
+          lastSettingsSlugScroll = target;
+          scrollToSettingsSection(target);
+        }
+      }
+    }
+  } else if (keyChanging && lastView) {
+    // (v5.2.77, BUG-04) same-view key change: Back restores the saved
+    // offset for this key, forward jumps to top.
+    const nextKey = viewKeyOf(state.activeView, state.activeParams);
+    const saved = sameViewPop ? scrollMemory.get(nextKey) : null;
+    if (saved != null) {
+      mainEl.scrollTop = saved;
+    } else if (!sameViewPop) {
+      scrollMemory.delete(nextKey);
+      mainEl.scrollTo({ top: 0, behavior: 'auto' });
+    }
+    lastViewKey = nextKey;
+  } else if (state.activeView === VIEWS.SETTINGS) {
+    // (v5.2.73, UP-02) same-view slug→slug arrival (no view change, so no
+    // scroll reset and no focus move above): a NEW slug still scrolls +
+    // focuses; unrelated re-renders of the standing slug stay put.
+    const target = settingsSectionScrollTarget(state);
+    if (target && target !== lastSettingsSlugScroll) {
+      lastSettingsSlugScroll = target;
+      scrollToSettingsSection(target);
+    }
   }
 }

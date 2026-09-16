@@ -17,7 +17,7 @@ import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML } from '../core/utils.js';
-import { qiblaBearing, distanceToKaabaKm, cardinalLabel } from '../domain/qibla.js';
+import { qiblaBearing, distanceToKaabaKm, cardinalLabel, angleDelta } from '../domain/qibla.js';
 import * as compass from '../domain/compass.js';
 import { declinationCached, declinationLabel } from '../domain/wmm.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
@@ -104,10 +104,23 @@ export function renderQibla(state) {
         <span class="qibla-fact__label">${t('qibla.bearing', lang)}</span>
         <span class="qibla-fact__value" dir="ltr">${Math.round(bearing)}\u00B0 ${cardinal}</span>
       </div>
+      <div class="qibla-fact" id="qibla-error-row" hidden>
+        <span class="qibla-fact__label">${t('qibla.headingError', lang)}</span>
+        <span class="qibla-fact__value" dir="ltr" id="qibla-error-value">—</span>
+      </div>
       <div class="qibla-fact">
         <span class="qibla-fact__label">${t('qibla.distance', lang)}</span>
         <span class="qibla-fact__value" dir="ltr">${Math.round(distanceKm).toLocaleString(locale)} km <span class="qibla-fact__value-sub">(${Math.round(distanceMi).toLocaleString(locale)} mi)</span></span>
       </div>
+      ${
+        Number.isFinite(Number(p.locationAccuracy)) && Number(p.locationAccuracy) >= 0
+          ? `
+      <div class="qibla-fact">
+        <span class="qibla-fact__label">${t('qibla.accuracy', lang, { m: Math.round(Number(p.locationAccuracy)) })}</span>
+        <span class="qibla-fact__value" dir="ltr">±${Math.round(Number(p.locationAccuracy))} m</span>
+      </div>`
+          : ''
+      }
       ${
         declLabel
           ? `
@@ -125,6 +138,15 @@ export function renderQibla(state) {
     <p class="view__meta">${t('qibla.declinationNote', lang)}</p>`
         : ''
     }
+
+    <details class="panel qibla-calibrate">
+      <summary class="qibla-calibrate__summary">${t('qibla.calibrateTitle', lang)}</summary>
+      <ol class="qibla-calibrate__steps">
+        <li>${t('qibla.calibrate1', lang)}</li>
+        <li>${t('qibla.calibrate2', lang)}</li>
+        <li>${t('qibla.calibrate3', lang)}</li>
+      </ol>
+    </details>
 
     <p class="view__meta">${escapeHTML(p.locationName || `${p.latitude.toFixed(2)}, ${p.longitude.toFixed(2)}`)}</p>
 
@@ -160,25 +182,47 @@ export function updateQiblaCompassDOM(bearing, heading, source, lang, declinatio
   const aligned = relative <= 6 || relative >= 354;
   needle.classList.toggle('qibla-compass__needle--aligned', aligned);
 
+  // (v5.2.75, UP-03) live heading-error readout ("off by 12° ↺") reusing
+  // the shared angle-delta helper. Change-guarded like the hint: the
+  // row appears with the first heading frame and stays silent otherwise.
+  const errorRow = document.getElementById('qibla-error-row');
+  const errorValue = document.getElementById('qibla-error-value');
+  if (errorRow && errorValue) {
+    const delta = angleDelta(effectiveHeading, bearing);
+    const errorText = `${t('qibla.offBy', lang, { n: Math.round(Math.abs(delta)) })} ${delta >= 0 ? '\u21BB' : '\u21BA'}`;
+    if (errorRow.hidden) errorRow.hidden = false;
+    if (errorValue.textContent !== errorText) errorValue.textContent = errorText;
+  }
+
   if (hintEl) {
+    let next;
+    let title = null;
     if (source === 'relative') {
-      hintEl.textContent = t('qibla.needleRelative', lang);
+      next = t('qibla.needleRelative', lang);
     } else if (source === 'magnetic' && Number.isFinite(declinationDeg)) {
-      hintEl.textContent = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
-      hintEl.title = t('qibla.needleCorrected', lang, {
+      next = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
+      title = t('qibla.needleCorrected', lang, {
         d: declinationLabel(declinationDeg) ?? '',
       });
     } else if (source === 'true') {
-      hintEl.textContent = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
-      hintEl.title = t('qibla.needleTrue', lang);
+      next = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
+      title = t('qibla.needleTrue', lang);
     } else if (source === 'magnetic') {
       // Magnetic sensor, no declination model value: the needle still
       // points, but uncorrected — say that plainly instead of implying a
       // sensor fault with the calibrate hint.
-      hintEl.textContent = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
-      hintEl.title = t('qibla.needleUncorrected', lang);
+      next = t(aligned ? 'qibla.aligned' : 'qibla.turnToAlign', lang);
+      title = t('qibla.needleUncorrected', lang);
     } else {
-      hintEl.textContent = t('qibla.calibrate', lang);
+      next = t('qibla.calibrate', lang);
     }
+    // (v5.2.75, UX-09) the sensor callback runs at 30–60Hz: only touch
+    // the live region when the sentence actually changes. Unconditional
+    // writes made screen readers chatter continuously and churned the DOM
+    // for nothing; change-only writes announce transitions (including
+    // arrival at alignment) exactly once.
+    if (hintEl.textContent !== next) hintEl.textContent = next;
+    if (title == null) hintEl.removeAttribute?.('title');
+    else if (hintEl.title !== title) hintEl.title = title;
   }
 }

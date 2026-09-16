@@ -31,12 +31,41 @@ export const HADITH_DAILY_BOOKS = ['nawawi', 'qudsi'];
  * gone, no graded source ships with the app). That gap is tracked, not
  * filled: nothing here invents a grade, and the UI labels this badge as
  * the collection's standing, never a hadith's.
+ * (v5.2.75, UP-07) the validator now PASSES THROUGH pipeline-enriched
+ * grade/narrator fields (strict vocabulary, unknown dropped) — so when
+ * graded files ship, they flow without another code change. Until then
+ * every shipped row still carries texts only, and the badge above stays
+ * the only grade in the UI.
  */
 export const HADITH_SAHIH_COLLECTIONS = Object.freeze(['bukhari', 'muslim']);
 
 /** 'sahih' for the Two Sahihs, null for everything else (honest absence). */
 export function bookStanding(bookId) {
   return HADITH_SAHIH_COLLECTIONS.includes(String(bookId || '')) ? 'sahih' : null;
+}
+
+/**
+ * (v5.2.75, UP-07) per-hadith grade vocabulary. The ONLY grades the
+ * validator passes through from enriched book files — anything else is
+ * dropped (validator) or fails the build (pipeline), never silently
+ * kept and never invented. Normalized lowercase; sunnah.com-style
+ * "Sahih"/"Hasan"/"Daif"/"Mawdu'" spellings fold in, variants don't.
+ */
+export const HADITH_GRADES = Object.freeze(['sahih', 'hasan', 'daif', 'mawdu']);
+
+/** Normalize a raw grade to the canonical vocabulary, or null. */
+export function normalizeHadithGrade(raw) {
+  if (typeof raw !== 'string') return null;
+  const g = raw.trim().toLowerCase();
+  return HADITH_GRADES.includes(g) ? g : null;
+}
+
+/** Normalize a narrator (rawi) name, or null when absent/hostile. */
+export function normalizeNarrator(raw) {
+  if (typeof raw !== 'string') return null;
+  const name = raw.trim().replace(/\s+/g, ' ');
+  if (!name || name.length > 200) return null;
+  return name;
 }
 
 /** Hadith cards per page in the book reader. */
@@ -84,9 +113,12 @@ export function validateHadithIndex(raw) {
 
 /**
  * Shape-check a fetched book document. Returns a normalized doc or null.
- * `hadiths` rows are kept as compact {n,b,ar,en}; rows missing BOTH texts
- * or a finite number are dropped; the array order is preserved (the books
- * ship in canonical order and pagination relies on that stability).
+ * `hadiths` rows are kept as compact {n,b,ar,en} plus, when an enriched
+ * pipeline file carries them, validated `grade`/`narrator` fields
+ * (v5.2.75, UP-07 — unknown grades never ride through); rows missing
+ * BOTH texts or a finite number are dropped; the array order is preserved
+ * (the books ship in canonical order and pagination relies on that
+ * stability).
  */
 export function validateHadithDoc(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
@@ -100,7 +132,12 @@ export function validateHadithDoc(raw) {
     const ar = typeof h.ar === 'string' ? h.ar : '';
     const en = typeof h.en === 'string' ? h.en : '';
     if (!ar && !en) continue;
-    hadiths.push({ n, b: String(h.b ?? ''), ar, en });
+    const row = { n, b: String(h.b ?? ''), ar, en };
+    const grade = normalizeHadithGrade(h.grade);
+    if (grade) row.grade = grade;
+    const narrator = normalizeNarrator(h.narrator);
+    if (narrator) row.narrator = narrator;
+    hadiths.push(row);
   }
   if (!hadiths.length) return null;
   const sections = Array.isArray(raw.sections)

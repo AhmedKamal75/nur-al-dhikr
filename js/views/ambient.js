@@ -42,6 +42,7 @@ export function renderAmbient(state) {
     timezoneOffsetHours: -now.getTimezoneOffset() / 60,
     method: p.method,
     asr: p.asr,
+    offsets: p.offsets,
   });
   const cd = nextPrayerCountdown(times, now);
   if (!cd) {

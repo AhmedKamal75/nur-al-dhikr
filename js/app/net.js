@@ -105,6 +105,21 @@ export async function fetchDataResponse(url, { timeoutMs = FETCH_TIMEOUT_MS, sig
   return fetchWithTimeout(url, { timeoutMs, signal });
 }
 
+/**
+ * (v5.2.73, BUG-01) libraries that failed to fetch this session. A failed
+ * library contributes NO documents, so its item ids are absent from the
+ * derived itemIndex — and must therefore never be treated as "provably
+ * deleted" by the dangling-ref prune below. Tracked here (not in the
+ * store) because it is session fetch state, not user data; cleared per
+ * library id as soon as that library loads successfully.
+ */
+export const failedLibraryIds = new Set();
+
+/** Test seam: drop all recorded failures (each test starts clean). */
+export function resetFailedLibrariesForTests() {
+  failedLibraryIds.clear();
+}
+
 export function buildItemIndex(documents, customContent) {
   const index = {};
   const allDocs = [...Object.values(documents), ...Object.values(customContent)];
@@ -141,20 +156,27 @@ export async function loadLibraries() {
           const result = processDocument(migrated);
           if (!result.success) {
             console.error(`[net] ${lib.id} failed validation:`, result.error);
-            return null;
+            return { id: lib.id, failed: true };
           }
           return { id: lib.id, doc: result.value };
         } catch (err) {
           console.error(`[net] Failed to load library "${lib.id}"`, err);
-          return null;
+          return { id: lib.id, failed: true };
         }
       })
     );
 
     for (const entry of results) {
-      if (!entry) continue;
+      if (!entry || entry.failed) {
+        // (v5.2.73, BUG-01) remember the failure so the prune below (and
+        // every later refreshLibraryIndex while the failure stands) skips
+        // rather than permanently deleting the library's favorites.
+        if (entry && entry.id && isSafeKey(entry.id)) failedLibraryIds.add(entry.id);
+        continue;
+      }
       // (S3) catalog ids become documents-map keys.
       if (!isSafeKey(entry.id)) continue;
+      failedLibraryIds.delete(entry.id);
       documents[entry.id] = entry.doc;
       order.push(entry.id);
     }
@@ -169,7 +191,7 @@ export async function loadLibraries() {
     libraryFailed = true;
   }
   store.dispatch(actions.setLoadError('library', libraryFailed));
-  return { documents, order };
+  return { documents, order, failedLibraryIds: [...failedLibraryIds] };
 }
 
 /**
@@ -199,6 +221,13 @@ export function refreshLibraryIndex() {
   // survive the deletion so "Restore defaults" brings the whole card back,
   // favorites included. Only genuinely-gone ids (not in any doc, not in the
   // deletedItems lens) get pruned.
+  // (v5.2.73, BUG-01) ...unless a library failed to load this session: its
+  // ids are absent from the index but NOT provably deleted, and favorites
+  // are persisted — pruning them is irreversible user-data loss. While any
+  // failure stands (or the library tier itself errored, e.g. catalog 503),
+  // refresh the index but skip the prune; the next successful load/retry
+  // re-arms it with a complete valid set.
+  if (failedLibraryIds.size > 0 || store.getState().loadErrors?.library) return;
   const deletedLens = new Set(Object.keys(state.settings?.contentPrefs?.deletedItems || {}));
   store.dispatch(actions.pruneDanglingRefs(new Set([...Object.keys(itemIndex), ...deletedLens])));
 }

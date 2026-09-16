@@ -14,7 +14,14 @@ import { VIEWS } from '../core/config.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML } from '../core/utils.js';
 import { wasCelebrated } from '../domain/celebrate.js';
-import { calculateTimes, formatClock, nextPrayer, METHODS, ASR_FACTORS } from '../domain/prayer.js';
+import {
+  calculateTimes,
+  formatClock,
+  nextPrayer,
+  METHODS,
+  ASR_FACTORS,
+  OFFSET_PRAYERS,
+} from '../domain/prayer.js';
 import { buildTimeline } from '../domain/prayerTimeline.js';
 import { SOUND_IDS, ADHAN_MODES, customAdhanFlags } from '../services/prayerSound.js';
 import { buildMonthTimetable, timetableCell, PRAYER_EXPORT_ORDER } from '../domain/prayerExport.js';
@@ -102,6 +109,7 @@ export function renderPrayer(state) {
     timezoneOffsetHours: tzOffsetHours,
     method: p.method,
     asr: p.asr,
+    offsets: p.offsets,
   });
   // (v4.3) polar honesty: at extreme latitudes some times are astronomical
   // fallbacks (the sun never reaches that position today). List them by
@@ -479,7 +487,15 @@ function volumeScheduleHTML(state, lang) {
         <label class="field">${t('prayer.quietEnd', lang)}<input type="time" class="input" value="${p.quietEnd || '06:00'}" data-bind="prayer-quiet-end" /></label>
         <label class="field">${t('prayer.quietVolume', lang)}<input type="number" class="input" min="0" max="100" step="5" value="${qVol}" data-bind="prayer-quiet-volume" /></label>
       </div>
-      <p class="panel__subtext">${t('prayer.quietHint', lang)}</p>`
+      <p class="panel__subtext">${t('prayer.quietHint', lang)}</p>
+      <label class="toggle-row">
+        <span class="toggle-row__label">${t('prayer.quietCancels', lang)}</span>
+        <span class="switch">
+          <input type="checkbox" data-action="toggle-prayer-quiet-cancel" ${p.quietCancels === true ? 'checked' : ''} />
+          <span class="switch__track"></span>
+        </span>
+      </label>
+      <p class="panel__subtext">${t('prayer.quietCancelsHint', lang)}</p>`
           : ''
       }
     </div>`;
@@ -500,6 +516,7 @@ export function buildMonthModal(state, year, month) {
     longitude: p.longitude,
     method: p.method,
     asr: p.asr,
+    offsets: p.offsets,
   });
   if (!table) return '';
   const monthName = new Date(year, month - 1, 1).toLocaleDateString(
@@ -548,22 +565,51 @@ export function buildMonthModal(state, year, month) {
 export function calcPanelHTML(state) {
   const lang = state.settings.language;
   const p = state.settings.prayer;
+  // (v5.2.75, UP-06) method names render localized — the raw English
+  // METHODS.name strings no longer leak into non-English UI.
+  const methodName = (id) => {
+    const key = `prayer.method.${id}`;
+    const s = t(key, lang);
+    return s === key ? METHODS[id]?.name || id : s;
+  };
   const methodOptions = Object.entries(METHODS)
     .map(
-      ([id, m]) =>
-        `<option value="${id}" ${p.method === id ? 'selected' : ''}>${escapeHTML(m.name)}</option>`
+      ([id]) =>
+        `<option value="${id}" ${p.method === id ? 'selected' : ''}>${escapeHTML(methodName(id))}</option>`
     )
     .join('');
   const asrOptions = Object.keys(ASR_FACTORS)
     .map((id) => `<option value="${id}" ${p.asr === id ? 'selected' : ''}>${id}</option>`)
     .join('');
+  // Explainer for the active method: defining angles + region + note.
+  const m = METHODS[p.method] || METHODS.MWL;
+  const methodId = METHODS[p.method] ? p.method : 'MWL';
+  const angleBits = [];
+  if (Number.isFinite(m.fajr)) angleBits.push(`${t('prayer.fajr', lang)} ${m.fajr}°`);
+  if (Number.isFinite(m.isha)) angleBits.push(`${t('prayer.isha', lang)} ${m.isha}°`);
+  else if (m.ishaMinutesAfterMaghrib)
+    angleBits.push(`${t('prayer.isha', lang)} +${m.ishaMinutesAfterMaghrib} min`);
+  if (m.maghribAngle) angleBits.push(`${t('prayer.maghrib', lang)} ${m.maghribAngle}°`);
+  // Manual minute offsets, one stepper per prayer (−60..+60).
+  const offsets = p.offsets && typeof p.offsets === 'object' ? p.offsets : {};
+  const offsetRows = OFFSET_PRAYERS.map(
+    (name) => `
+      <label class="field">${t(`prayer.${name}`, lang)}
+        <input class="input" type="number" min="-60" max="60" step="1" inputmode="numeric" dir="ltr" data-bind="prayer-offset" data-prayer="${name}" value="${Number.isFinite(Number(offsets[name])) ? Number(offsets[name]) : 0}" aria-label="${t(`prayer.${name}`, lang)}" />
+      </label>`
+  ).join('');
   return `
   <div class="panel view-panel-modal">
     <div class="panel__header"><h2 id="panel-calc-title">${t('prayer.sheet.calc', lang)}</h2></div>
     <label class="field-label" for="prayer-method-sheet">${t('prayer.method', lang)}</label>
     <select class="select" id="prayer-method-sheet" data-bind="prayer-method" aria-label="${t('prayer.method', lang)}">${methodOptions}</select>
+    <p class="panel__subtext">${angleBits.map(escapeHTML).join(' · ')}</p>
+    <p class="panel__subtext">${escapeHTML(t(`prayer.methodRegion.${methodId}`, lang))} — ${escapeHTML(t(`prayer.methodNote.${methodId}`, lang))}</p>
     <label class="field-label" for="prayer-asr-sheet">${t('prayer.asrMethod', lang)}</label>
     <select class="select" id="prayer-asr-sheet" data-bind="prayer-asr" aria-label="${t('prayer.asrMethod', lang)}">${asrOptions}</select>
+    <p class="field-label">${t('prayer.offsetsTitle', lang)}</p>
+    <div class="zakat-price-row">${offsetRows}</div>
+    <p class="panel__subtext">${t('prayer.offsetsHint', lang)}</p>
     <p class="panel__subtext">${t('prayer.sheet.calcHint', lang)}</p>
   </div>`;
 }

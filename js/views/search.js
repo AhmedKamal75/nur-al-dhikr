@@ -10,6 +10,7 @@ import { escapeHTML, highlightMatch, pickLocale } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { search as runSearch } from '../domain/search.js';
 import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
+import { searchTafsir, isTafsirSearchReady, tafsirIndexEdition } from '../domain/tafsirSearch.js';
 import { resolvePage } from '../services/surahPlayback.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
@@ -87,8 +88,60 @@ function quranSection(state, query, lang) {
   </section>`;
 }
 
-/** Evergreen suggestion chips for the no-query state (v4.4). Terms are
- * chosen to hit BOTH corpora — the adhkar/dua library and the Qur'an —
+/** One tafsir hit: the commentary excerpt, linked to the reader at the
+ *  ayah it explains (same deep link the palette's tafsir group uses). */
+function tafsirResultRow(state, hit, editionId, editionName, lang, terms = []) {
+  const text = state.tafsir?.[editionId]?.[String(hit.s)]?.[String(hit.a)] || '';
+  if (!text) return '';
+  const meta = state.quran.meta?.surahs?.find((s) => s.number === hit.s);
+  const refLabel = `${meta ? escapeHTML(pickLocale({ en: meta.nameTransliteration || meta.nameEn, ar: meta.nameAr }, lang)) : ''} · ${hit.s}:${hit.a}`;
+  return `
+  <div class="quran-hit">
+    <a class="quran-hit__reader" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
+      <p class="quran-hit__translation" dir="auto">${highlightMatch(text.length > 220 ? `${text.slice(0, 220)}…` : text, terms)}</p>
+      <span class="quran-hit__ref">${refLabel} ${editionName ? `· ${escapeHTML(editionName)}` : ''} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 12 })}</span>
+    </a>
+  </div>`;
+}
+
+/**
+ * (v5.2.74, UP-08) the palette-only tafsir full-text search, surfaced in
+ * the Search view. Gated on index readiness: until the background build
+ * finishes the view shows no group at all (never a dead section).
+ */
+function tafsirSection(state, query, lang) {
+  if (!query) return '';
+  if (state.loadErrors?.['tafsir-search-corpus']) {
+    return loadErrorStateHTML({ lang, tierKey: 'tafsir-search-corpus', t });
+  }
+  if (!isTafsirSearchReady()) return '';
+  const editionId = tafsirIndexEdition();
+  const edDoc = (state.tafsirEditions?.editions || []).find((e) => e.id === editionId);
+  const editionName =
+    (lang === 'ar' ? edDoc?.nameAr || edDoc?.nameEn : edDoc?.nameEn || edDoc?.nameAr) || '';
+  const all = searchTafsir(query, { limit: 1000 });
+  const hits = all.slice(0, 8);
+  const terms = String(query).split(/\s+/);
+  const total = all.length;
+  return `
+  <section class="panel quran-search-panel">
+    <div class="panel__header">
+      <h2>${t('search.tafsirResults', lang)}</h2>
+      <span class="view__meta">${t('search.tafsirCount', lang, { n: total })}</span>
+    </div>
+    ${
+      hits.length
+        ? `<div class="quran-hit-list">${hits.map((h) => tafsirResultRow(state, h, editionId, editionName, lang, terms)).join('')}</div>`
+        : emptyStateHTML({
+            iconName: 'search',
+            title: t('search.noResults', lang),
+            hint: t('search.noResultsHint', lang),
+          })
+    }
+  </section>`;
+}
+
+/** Evergreen suggestion chips for the no-query state (v4.4). Terms are * chosen to hit BOTH corpora — the adhkar/dua library and the Qur'an —
  * in each language, so the first tap always teaches what search covers. */
 const SUGGESTIONS = {
   en: ['mercy', 'patience', 'forgiveness', 'paradise', 'light', 'guidance'],
@@ -157,6 +210,8 @@ export function renderSearch(state) {
     }
 
     ${query ? quranSection(state, query, lang) : ''}
+
+    ${query ? tafsirSection(state, query, lang) : ''}
 
     ${
       query

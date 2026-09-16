@@ -8,7 +8,7 @@ import { normalizeCustomContentMap } from '../schema.js';
 import { loadState, saveState } from '../storage.js';
 import { initialState, pickPersisted, PERSISTED_KEYS } from './initial.js';
 import { reduce } from './reducer.js';
-import { sanitizeRestoredPayload, freshSessionCounters } from './restore.js';
+import { sanitizeRestoredPayload, freshSessionCounters, isFuturePayload } from './restore.js';
 
 class Store {
   constructor() {
@@ -50,6 +50,16 @@ class Store {
   hydrate() {
     const result = loadState();
     if (result.success && result.value) {
+      // (v5.2.74, BUG-03) a future writer's blob (e.g. localStorage shared
+      // across an app downgrade) is left on disk untouched and ignored —
+      // never mangled into live state. The next upgrade hydrates it again.
+      if (isFuturePayload(result.value)) {
+        console.warn(
+          '[state] ignoring persisted snapshot with future schemaVersion',
+          result.value.schemaVersion
+        );
+        return this.state;
+      }
       const sanitized = sanitizeRestoredPayload(result.value);
       this.state = {
         ...this.state,

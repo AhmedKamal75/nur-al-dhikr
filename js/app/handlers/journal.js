@@ -214,4 +214,18 @@ export const clickHandlers = {
       })
     );
   },
+
+  // (v5.2.75, UP-09) drill pool switch: all pairs vs. pairs touching
+  // ayahs with recorded lapses. A fresh seed starts the new pool's deck.
+  'mutashabihat-pool': (ds) => {
+    const pool = ds.pool === 'lapsed' ? 'lapsed' : 'all';
+    store.dispatch(
+      actions.updateMutashabihat({
+        pool,
+        seed: Date.now() % 100000,
+        picked: null,
+        reveal: false,
+      })
+    );
+  },
 };

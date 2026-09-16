@@ -168,8 +168,11 @@ function plantSVG(stageId) {
 export function renderGarden(state) {
   const lang = state.settings.language;
   const stats = state.statistics || {};
-  const garden = gardenState(stats.totalRecitations || 0);
-  const harvest = gardenAchievements(stats.totalRecitations || 0);
+  // (v5.2.75, UP-12) reading grows the garden alongside dhikr — a
+  // reader-only garden is no longer a permanent seed.
+  const pagesRead = Object.keys(state.mushafPagesRead || {}).length;
+  const garden = gardenState({ dhikr: stats.totalRecitations || 0, pages: pagesRead });
+  const harvest = gardenAchievements(garden.planted);
   const pct = Math.round(garden.progress * 100);
 
   const timelineNodes = GARDEN_STAGES.map((stage, i) => {
@@ -211,6 +214,7 @@ export function renderGarden(state) {
           <strong dir="ltr">${numFor(lang, garden.planted)}</strong>
           <span>${t('garden.seedsPlanted', lang)}</span>
         </p>
+        ${garden.reads > 0 ? `<p class="garden-hero__reads">${t('garden.readsCount', lang, { n: numFor(lang, garden.reads) })}</p>` : ''}
         ${
           garden.next
             ? `

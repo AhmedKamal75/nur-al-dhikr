@@ -59,6 +59,17 @@ export function reduceQuran(state, action) {
       };
     }
 
+    // (v5.2.78, UP-06) third-edition texts — mirrors translationB exactly.
+    case 'QURAN_TRANSLATION_C_LOADED': {
+      const key = String(action.number);
+      const prev = state.quran.translationC || {};
+      if (!action.doc || typeof action.doc !== 'object') return state;
+      return {
+        ...state,
+        quran: { ...state.quran, translationC: { ...prev, [key]: action.doc } },
+      };
+    }
+
     case 'QURAN_BOOKMARK_SET': {
       // (review v3.21): the bookmark id flows in from the raw URL hash and
       // out into HTML attributes + hrefs on Home — only a canonical surah
@@ -203,6 +214,26 @@ export function reduceQuran(state, action) {
 
     case 'WORD_STUDY_CLOSE':
       return { ...state, activeWordStudy: null };
+
+    // (v5.2.75, UP-01) lemma dictionary readiness (ephemeral) + per-word
+    // bookmarks (persisted; hostile keys/caps enforced like all toggles).
+    case 'WORD_STUDY_DICT_READY':
+      return { ...state, wordDict: { index: action.index, failed: action.index == null } };
+
+    case 'WORD_BOOKMARK_TOGGLE': {
+      const key =
+        typeof action.key === 'string' && /^\d{1,3}:\d{1,3}:\d{1,4}$/.test(action.key)
+          ? action.key
+          : null;
+      if (!key) return state;
+      const marks = { ...(state.wordBookmarks || {}) };
+      if (marks[key]) delete marks[key];
+      else {
+        if (Object.keys(marks).length >= 2000) return state;
+        marks[key] = true;
+      }
+      return { ...state, wordBookmarks: marks };
+    }
 
     case 'TAJWEED_POOL_LOADED':
       return { ...state, tajweedPool: action.pool };

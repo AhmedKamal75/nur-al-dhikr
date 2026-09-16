@@ -163,3 +163,37 @@ export function ayahTranslit(words) {
   }
   return parts.length ? parts.join(' ') : null;
 }
+
+/**
+ * (v5.2.75, UP-01) lemma-dict lookup for the popup's Meanings section.
+ * Returns a sanitized { ar, en, syn[], ant[] } or null (unknown lemma,
+ * unloaded/malformed index). Renderers escape everything again anyway.
+ */
+export function dictEntryFor(wordDict, lemma) {
+  const index = wordDict && typeof wordDict === 'object' ? wordDict.index : null;
+  if (!index || typeof index !== 'object' || typeof lemma !== 'string' || !lemma) return null;
+  const e = index[lemma];
+  if (!e || typeof e !== 'object' || Array.isArray(e)) return null;
+  const strings = (v) =>
+    Array.isArray(v)
+      ? v
+          .filter((s) => typeof s === 'string' && s.trim())
+          .map((s) => s.slice(0, 60))
+          .slice(0, 12)
+      : [];
+  return {
+    ar: typeof e.ar === 'string' ? e.ar.slice(0, 500) : '',
+    en: typeof e.en === 'string' ? e.en.slice(0, 200) : '',
+    syn: strings(e.syn),
+    ant: strings(e.ant),
+  };
+}
+
+/** Bookmark key for one word ("surah:ayah:i"), null on hostile input. */
+export function wordBookmarkKey(surah, ayah, i) {
+  const s = Math.floor(Number(surah));
+  const a = Math.floor(Number(ayah));
+  const n = Math.floor(Number(i));
+  if (!(s >= 1 && s <= 114 && a >= 1 && n >= 1)) return null;
+  return `${s}:${a}:${n}`;
+}

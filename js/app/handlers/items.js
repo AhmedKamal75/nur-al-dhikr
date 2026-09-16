@@ -6,7 +6,12 @@
 
 import { scheduleAutoAdvance } from '../focusRuntime.js';
 import { rt } from '../rt.js';
-import { ensureHadithBook, ensureHadithIndex, scrollToHadithListTop } from '../hadithData.js';
+import {
+  ensureHadithBook,
+  ensureHadithIndex,
+  confirmHadithIndexAll,
+  scrollToHadithListTop,
+} from '../hadithData.js';
 import { getItemEntry, itemClipboardText } from '../shared.js';
 import { normalizeHifzGrade } from '../../domain/hifz.js';
 import { yieldFullSurahPlayer } from '../audioEngine.js';
@@ -53,6 +58,83 @@ export function triggerRipple(surface, e) {
   // Safety net: if animations are disabled (reduced motion), animationend
   // never fires — reap the span after 700ms regardless.
   setTimeout(() => span.remove(), 700);
+}
+
+/**
+ * Share one ayah as a rendered card image (Web Share with files, PNG
+ * download, then text share — the button never dead-ends). Extracted
+ * from the 'ayah-share' handler so the word popup shares its containing
+ * ayah as context (v5.2.75, UP-01). Resolves true when something was
+ * shared/saved, false when there was nothing to share.
+ */
+export async function shareAyahCard(surahNum, ayahNum) {
+  const state = store.getState();
+  // FIX (review v3.26 F2): data-attribute lookups are hostile-input
+  // boundaries — coerce and range-check before indexing (a forged
+  // '__proto__' key used to be truthy here and crashed the lookup).
+  const sn = Math.floor(Number(surahNum));
+  const ay = Math.floor(Number(ayahNum));
+  if (!(sn >= 1 && sn <= 114) || !(ay >= 1 && ay <= 286)) return false;
+  const surah = Object.hasOwn(state.quran.surahs, String(sn))
+    ? state.quran.surahs[String(sn)]
+    : state.quran.surahs[sn];
+  if (!surah || !Array.isArray(surah.ayahs)) return false;
+  const ayah = surah.ayahs.find((a) => String(a.number) === String(ay));
+  if (!ayah) return false;
+  const lang = state.settings.language;
+  const edition = TRANSLATION_EDITIONS.find(
+    (e) => e.id === asTranslationEdition(state.settings.quranTranslation)
+  );
+  // (v4.3) lazy canvas-renderer load — see the import note at the top.
+  const { ayahCardFilename, buildAyahCardPayload, downloadBlob, generateAyahCardBlob } =
+    await import('../../services/shareCard.js');
+  const payload = buildAyahCardPayload({
+    surahNumber: surah.number,
+    ayahNumber: ayah.number,
+    surahName: lang === 'ar' ? surah.nameAr : surah.nameTransliteration || surah.nameEn,
+    surahNameAr: surah.nameAr,
+    arabic: ayah.text,
+    translation: ayah.translation,
+    editionName: edition ? edition.author : '',
+    editionDir: edition ? edition.dir : 'ltr',
+  });
+  if (!payload) return false;
+  const title = `${payload.surahName} ${payload.ref}`;
+  let handled = false;
+  try {
+    const blob = await generateAyahCardBlob(payload, state);
+    const file = new File([blob], ayahCardFilename(payload), { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title, text: payload.translation });
+      handled = true;
+    } else {
+      downloadBlob(blob, ayahCardFilename(payload));
+      showToast(t('card.imageSaved', lang));
+      handled = true;
+    }
+  } catch (err) {
+    // Dismissing the OS share sheet is not an error — abort cleanly.
+    if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) handled = true;
+  }
+  if (!handled) {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text: payload.translation });
+      } catch {
+        /* user cancelled */
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(
+          `${payload.arabic}\n\n${payload.translation}\n\n\u2014 ${payload.surahName} ${payload.ref}`
+        );
+        showToast(t('card.copied', lang));
+      } catch {
+        showToast(t('card.copyFailed', lang));
+      }
+    }
+  }
+  return true;
 }
 
 export const clickHandlers = {
@@ -180,73 +262,10 @@ export const clickHandlers = {
   // translation + edition attribution), Web Share with files when the
   // platform allows, PNG download as fallback, text share last so the
   // button never dead-ends. Mirrors the library item's share flow.
+  // (v5.2.75, UP-01) extracted for the word popup's share action, which
+  // shares the containing ayah as context for the word.
   'ayah-share': async (ds) => {
-    const state = store.getState();
-    // FIX (review v3.26 F2): data-attribute lookups are hostile-input
-    // boundaries — coerce and range-check before indexing (a forged
-    // '__proto__' key used to be truthy here and crashed the lookup).
-    const sn = Math.floor(Number(ds.surah));
-    const ay = Math.floor(Number(ds.ayah));
-    if (!(sn >= 1 && sn <= 114) || !(ay >= 1 && ay <= 286)) return;
-    const surah = Object.hasOwn(state.quran.surahs, String(sn))
-      ? state.quran.surahs[String(sn)]
-      : state.quran.surahs[sn];
-    if (!surah || !Array.isArray(surah.ayahs)) return;
-    const ayah = surah.ayahs.find((a) => String(a.number) === String(ay));
-    if (!ayah) return;
-    const lang = state.settings.language;
-    const edition = TRANSLATION_EDITIONS.find(
-      (e) => e.id === asTranslationEdition(state.settings.quranTranslation)
-    );
-    // (v4.3) lazy canvas-renderer load — see the import note at the top.
-    const { ayahCardFilename, buildAyahCardPayload, downloadBlob, generateAyahCardBlob } =
-      await import('../../services/shareCard.js');
-    const payload = buildAyahCardPayload({
-      surahNumber: surah.number,
-      ayahNumber: ayah.number,
-      surahName: lang === 'ar' ? surah.nameAr : surah.nameTransliteration || surah.nameEn,
-      surahNameAr: surah.nameAr,
-      arabic: ayah.text,
-      translation: ayah.translation,
-      editionName: edition ? edition.author : '',
-      editionDir: edition ? edition.dir : 'ltr',
-    });
-    if (!payload) return;
-    const title = `${payload.surahName} ${payload.ref}`;
-    let handled = false;
-    try {
-      const blob = await generateAyahCardBlob(payload, state);
-      const file = new File([blob], ayahCardFilename(payload), { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title, text: payload.translation });
-        handled = true;
-      } else {
-        downloadBlob(blob, ayahCardFilename(payload));
-        showToast(t('card.imageSaved', lang));
-        handled = true;
-      }
-    } catch (err) {
-      // Dismissing the OS share sheet is not an error — abort cleanly.
-      if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) handled = true;
-    }
-    if (!handled) {
-      if (navigator.share) {
-        try {
-          await navigator.share({ title, text: payload.translation });
-        } catch {
-          /* user cancelled */
-        }
-      } else {
-        try {
-          await navigator.clipboard.writeText(
-            `${payload.arabic}\n\n${payload.translation}\n\n\u2014 ${payload.surahName} ${payload.ref}`
-          );
-          showToast(t('card.copied', lang));
-        } catch {
-          showToast(t('card.copyFailed', lang));
-        }
-      }
-    }
+    await shareAyahCard(ds.surah, ds.ayah);
   },
 
   // ---- Ahadeeth (v3.9) ----
@@ -507,6 +526,12 @@ export const clickHandlers = {
 
   'hadith-retry-index': () => {
     ensureHadithIndex(true);
+  },
+
+  // (v5.2.75, BUG-09) cross-book search consent: the grid's "index all"
+  // button records consent, then the bulk build proceeds on explicit tap.
+  'hadith-index-all': () => {
+    confirmHadithIndexAll();
   },
 
   'share-item': async (ds) => {

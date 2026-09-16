@@ -275,6 +275,24 @@
   color: var(--color-danger-text);
 }
 
+/* (v5.2.77, UX-02) dense-button hit expansion: every visual 32–40px
+   control keeps its compact look but offers a ≥44px tap box via ::after.
+   Covers .btn--sm, .link-btn--sm and keyboard-focusable min-32 rows that
+   are not .chip/.icon-btn (those already expand above). */
+.btn--sm,
+.link-btn--sm,
+.min-32 {
+  position: relative;
+}
+.btn--sm::after,
+.link-btn--sm::after,
+.min-32::after {
+  content: '';
+  position: absolute;
+  inset-block: -6px;
+  inset-inline: -6px;
+}
+
 .chip-row {
   display: flex;
   flex-wrap: wrap;
@@ -822,6 +840,41 @@ body.modal-open {
   /* (v4.3) the z-scale's local-stacking token replaces the one raw
      z-index literal left in the design system. */
   z-index: var(--z-raised);
+}
+
+/* (v5.2.75, UX-05) modal/sheet exit: a short reverse so dismissal feels
+ * as choreographed as arrival (100ms — inside the toastOut family, never
+ * a wait). ui/modal.js restores opener focus BEFORE the ghost animates,
+ * cancels the teardown timer on re-open, and skips the animation entirely
+ * for reduced-motion users (the global kill in base.css covers the CSS;
+ * the JS checks before arming the timer). */
+.modal-overlay.is-leaving {
+  animation: fadeOut var(--dur-fast) var(--ease-standard) forwards;
+}
+.modal-overlay.is-leaving .modal {
+  animation: sheetOut var(--dur-fast) var(--ease-standard) forwards;
+}
+@media (min-width: 640px) {
+  .modal-overlay.is-leaving .modal {
+    animation-name: popOut;
+  }
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheetOut {
+  to {
+    transform: translateY(28px);
+    opacity: 0;
+  }
+}
+@keyframes popOut {
+  to {
+    transform: scale(0.94);
+    opacity: 0;
+  }
 }
 
 .modal__body {
@@ -1380,6 +1433,35 @@ body.modal-open {
   place-items: center;
   font-size: var(--fs-caption);
   color: var(--color-text-secondary);
+}
+/* (v5.2.75, UP-05) juz reading strip: 30 numbered cells, document
+ * direction governs flow (RTL interfaces run right-to-left). Finished
+ * parts fill; partial parts tint by quartile like the heatmap. */
+.juz-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.juz-chip {
+  min-width: 32px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-1);
+  border-radius: var(--radius-xs);
+  background: var(--color-surface-alt);
+  border: 1px solid transparent;
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+.juz-chip--started {
+  background: var(--heat-2);
+  color: var(--color-text);
+}
+.juz-chip--done {
+  background: var(--heat-4);
+  color: var(--color-on-primary);
 }
 /* Bucket 3 is a mid tint — dark ink in light mode, near-white in dark mode
    (both themes hold AA via --color-text). Bucket 4 is a 92% primary fill,

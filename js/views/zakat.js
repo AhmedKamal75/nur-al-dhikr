@@ -79,10 +79,15 @@ function nisabPanel(state, lang) {
 
 function inputsPanel(state, lang) {
   const inputs = state.zakat.inputs;
+  const noteFor = (id) => {
+    const text = t(`zakat.note.${id}`, lang);
+    if (!text || text === `zakat.note.${id}`) return '';
+    return ` <span class="zakat-note" title="${escapeHTML(text)}" aria-label="${escapeHTML(text)}">${icon('info', { size: 13 })}</span>`;
+  };
   const rows = ASSET_FIELDS.map(
     (f) => `
     <label class="field ${f.isLiability ? 'zakat-field--liability' : ''}">
-      <span>${t(f.label, lang)}</span>
+      <span>${t(f.label, lang)}${noteFor(f.id)}</span>
       <input class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr"
         data-bind="zakat-input" data-ref="in-${f.id}" data-field="${f.id}"
         value="${escapeHTML(String(inputs[f.id] || ''))}" placeholder="${f.unit === 'g' ? '0' : '0.00'}" />
@@ -150,6 +155,7 @@ function fitrPanel(state, lang) {
       <label class="field">${t('zakat.fitrPerPerson', lang)}
         <input class="input" type="number" min="0" step="any" inputmode="decimal" dir="ltr" data-bind="zakat-fitr-per" data-ref="fitr-per" value="${escapeHTML(String(per))}" placeholder="0.00" />
       </label>
+      <span class="panel__subtext">${t('zakat.note.fitrPer', lang)}</span>
       <label class="field">${t('zakat.fitrPeople', lang)}
         <input class="input" type="number" min="0" step="1" inputmode="numeric" dir="ltr" data-bind="zakat-fitr-people" data-ref="fitr-people" value="${escapeHTML(String(people))}" placeholder="0" />
       </label>

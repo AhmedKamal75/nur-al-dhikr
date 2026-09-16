@@ -16,6 +16,7 @@ import { actions, store } from '../core/state.js';
 import { t } from '../core/i18n.js';
 import { showToast } from '../ui/toast.js';
 import { rt } from './rt.js';
+import { audioCacheUsage } from '../services/audioStore.js';
 import {
   OFFLINE_GROUPS,
   quranUrls,
@@ -104,9 +105,16 @@ export async function ensureOfflineQuota() {
       usage: Number(estimate.usage) || 0,
       quota: Number(estimate.quota) || 0,
     };
-    const prev = store.getState().offlineJobs?.quota;
-    if (prev?.usage !== quota.usage || prev?.quota !== quota.quota) {
-      setProgress({ quota });
+    // (v5.2.75, PERF-02) the audio-cache budget rides the same meter so
+    // GB-scale reciter packs stay visible next to the device numbers.
+    const audioCache = await audioCacheUsage();
+    const prev = store.getState().offlineJobs;
+    if (
+      prev?.quota?.usage !== quota.usage ||
+      prev?.quota?.quota !== quota.quota ||
+      JSON.stringify(prev?.audioCache || null) !== JSON.stringify(audioCache)
+    ) {
+      setProgress({ quota, audioCache });
     }
   } catch {
     /* meter is best-effort */

@@ -104,6 +104,15 @@ body.is-elder .panel__subtext {
   #topbar {
     background: var(--color-bg);
   }
+  /* (v5.2.75, UX-08) the fullscreen glass bars go solid too — opaque
+     bar tokens, no blur wash left for the compositor. */
+  .mushaf-fs-controls,
+  .mushaf-fs-console,
+  .mushaf-fs-echo {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--fs-bar-bg);
+  }
   .home-hero__title,
   .home-hero__hijri {
     background: var(--color-surface);
@@ -123,6 +132,16 @@ body.is-elder .panel__subtext {
   letter-spacing: 0.035em;
   word-spacing: 0.16em;
   line-height: 1.7;
+}
+
+/* (v5.2.75, UX-07) dyslexia × RTL compose, not clobber: letter-spacing
+ * breaks Arabic cursive joining and Verdana drops Amiri metrics, so the
+ * Arabic UI (both flags live on <html> — see core/theme.js) keeps its
+ * Arabic face with joining-safe spacing. */
+html[data-dyslexia='true'][dir='rtl'] body {
+  font-family: var(--font-arabic);
+  letter-spacing: normal;
+  word-spacing: normal;
 }
 
 /* ==========================================================================
@@ -294,7 +313,12 @@ body.is-elder .panel__subtext {
   .search-bar__input,
   .swatch,
   .shape-btn,
-  .counter-pill {
+  .counter-pill,
+  /* (v5.2.75, UX-08) the fullscreen glass bars are the only chrome that
+     never followed the palette system — give them the same edge. */
+  .mushaf-fs-controls,
+  .mushaf-fs-console,
+  .mushaf-fs-echo {
     border: 1px solid ButtonText;
   }
 

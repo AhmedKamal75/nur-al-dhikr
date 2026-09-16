@@ -236,6 +236,16 @@ export const PALETTES = Object.freeze([
      surface-alt chips, and stone-500 measured 4.17:1 there — under AA.
      Picked by scripts/css-contrast-audit.mjs. */
   { id: 'ivory', name: { en: 'Ivory', ar: 'عاجي' }, primary: '#57534E', accent: '#A8A29E' },
+  /* (v5.2.75, UX-06) True Black room for OLED night reading: pure-black
+     surfaces (see variables.css [data-palette='amoled']), forced to dark
+     mode in applyTheme. The brand primary reuses emerald-700 so both AA
+     contrast gates keep passing unmodified. */
+  {
+    id: 'amoled',
+    name: { en: 'True Black', ar: 'أسود نقي' },
+    primary: '#0F766E',
+    accent: '#D4BD77',
+  },
 ]);
 
 export const SHAPES = Object.freeze([
@@ -307,10 +317,16 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // (v4.4) Compare view: the SECOND translation edition shown beneath the
   // primary one in the classic reader (null = compare off). Same allowlist.
   quranTranslationB: null,
+  // (v5.2.78, UP-06) third edition: a second compare line. Null = off.
+  // Excludes primary + B + inline at render time; sanitizer allowlists.
+  quranTranslationC: null,
   // Second tafsir source shown beneath the active tab in the ayah study
   // panel (null = single source). Edition id, validated against the loaded
   // catalog at render time — a stale id simply renders nothing.
   tafsirCompareB: null,
+  // (v5.2.78, UP-06) third tafsir source (null = off). Excludes the active
+  // tab + B at render time.
+  tafsirCompareC: null,
   // (v4.4) Tasbih milestone haptic/audible ping every N counts (0 = off).
   tasbihMilestone: 0,
   // (v4.4, restored v5.2.30) Verse-of-the-day theme bias: the Home verse
@@ -395,6 +411,8 @@ export const DEFAULT_SETTINGS = Object.freeze({
     longitude: null,
     timezone: null,
     locationName: '',
+    // (v5.2.77, UP-03) GPS fix accuracy in meters (null = manual/unknown).
+    locationAccuracy: null,
     // Smart Prayer Alerts: per-prayer toggle + a selectable alert tone.
     // Alerts are computed against *today's actual* prayer times (not a
     // fixed clock time), so they stay correct as sunrise/sunset drift
@@ -409,6 +427,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
     quietStart: '22:00',
     quietEnd: '06:00',
     quietVolume: 30,
+    // (v5.2.75, UP-04) quiet hours cancel alerts outright. Off by default.
+    quietCancels: false,
+    // (v5.2.75, UP-06) manual minute offsets per prayer (−60..60).
+    offsets: {},
     // Ramadan fasting alerts: Suhoor fires N minutes before Fajr (the offset,
     // in minutes), Iftar fires exactly at Maghrib. They only ever fire on
     // days that are actually in Ramadan (checked via the Hijri calendar at

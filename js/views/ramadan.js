@@ -30,7 +30,12 @@ import {
   keptFastCount,
   ramadanLogKey,
 } from '../domain/ramadan.js';
-import { monthEntry, taraweehCount, itikafCount } from '../domain/ramadanPlanner.js';
+import {
+  monthEntry,
+  taraweehCount,
+  itikafCount,
+  ramadanKhatmPlan,
+} from '../domain/ramadanPlanner.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 
 /**
@@ -183,6 +188,35 @@ export function plannerPanel(state, lang, hijri, total) {
   </section>`;
 }
 
+/**
+ * (v5.2.74, UP-08) Ramadan khatm pace: the dead-code ramadanKhatmPlan,
+ * fed by the khatma machinery's own mushafPagesRead — no second progress
+ * system. Renders only inside Ramadan (the planner returns null outside).
+ * Exported for tests (renderRamadan itself reads the live date).
+ */
+export function khatmPanel(state, lang, hijri, total) {
+  const pagesRead = Object.keys(state.mushafPagesRead || {}).length;
+  const plan = ramadanKhatmPlan({ hijri, ramadanLength: total, pagesReadInRamadan: pagesRead });
+  if (!plan) return '';
+  return `
+  <section class="panel panel--ramadan-khatm">
+    <div class="panel__header">
+      <h2>${t('ramadan.khatmTitle', lang)}</h2>
+      <span class="streak-badge">${icon(plan.onTrack ? 'check' : 'book', { size: 14 })} ${t(plan.onTrack ? 'ramadan.khatmOnTrack' : 'ramadan.khatmOffTrack', lang)}</span>
+    </div>
+    <p class="panel__subtext">${t('ramadan.khatmHint', lang)}</p>
+    <div class="ramadan-countdown-row">
+      ${countdownBlock(t('ramadan.khatmRead', lang), `${pagesRead} / 604`, '')}
+      ${countdownBlock(t('ramadan.khatmPerDay', lang), String(plan.perDayNeeded), '')}
+    </div>
+    <div class="quick-actions quick-actions--compact">
+      <a class="quick-action quick-action--quran" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">
+        ${icon('quran', { size: 22 })}<span>${t('ramadan.readQuran', lang)}</span>
+      </a>
+    </div>
+  </section>`;
+}
+
 function alertsPanel(state, lang, times) {
   const ra = state.settings.prayer.ramadanAlerts || {
     suhoor: false,
@@ -292,6 +326,7 @@ export function renderRamadan(state) {
       timezoneOffsetHours: tz,
       method: p.method,
       asr: p.asr,
+      offsets: p.offsets,
     });
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
     const tomorrowTimes = calculateTimes({
@@ -304,6 +339,7 @@ export function renderRamadan(state) {
       timezoneOffsetHours: -tomorrow.getTimezoneOffset() / 60,
       method: p.method,
       asr: p.asr,
+      offsets: p.offsets,
     });
 
     const total = ramadanLength(hijri.year);
@@ -318,6 +354,7 @@ export function renderRamadan(state) {
     </div>
 
     ${trackerPanel(state, lang, hijri, times, total)}
+    ${khatmPanel(state, lang, hijri, total)}
     ${plannerPanel(state, lang, hijri, total)}
     ${alertsPanel(state, lang, times)}
     ${linksPanel(lang)}`;

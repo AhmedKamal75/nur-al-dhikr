@@ -8,6 +8,9 @@
 import { test, expect } from '@playwright/test';
 
 test('typing: debounced search navigates and keeps focus', async ({ page }) => {
+  // The roots case allows 45s (cold SW precache + ~1MB index behind a
+  // 15s fetch timeout + retry), so the test budget must exceed it.
+  test.setTimeout(120000);
   const consoleErrors = [];
   const pageErrors = [];
   page.on('console', (msg) => {
@@ -17,12 +20,16 @@ test('typing: debounced search navigates and keeps focus', async ({ page }) => {
 
   const cases = [
     ['#/search', '#search-input', 'sabr'],
-    ['#/roots', '#roots-search-input', 'ktb'],
+    // Roots carries a ~1MB index behind a cold SW precache (246 files) on
+    // first visit: the data lands seconds after the skeleton on slow CI
+    // (observed 17s starvation vs the 15s fetch timeout + retry). The app
+    // self-heals via retry — give that path room instead of flaking.
+    ['#/roots', '#roots-search-input', 'ktb', 45000],
     ['#/quran', '#quran-search-input', 'raid'],
   ];
-  for (const [route, sel, text] of cases) {
+  for (const [route, sel, text, timeoutMs] of cases) {
     await page.goto(route);
-    await expect(page.locator(sel)).toBeVisible({ timeout: 20000 });
+    await expect(page.locator(sel)).toBeVisible({ timeout: timeoutMs || 20000 });
     await page.locator(sel).click();
     await page.keyboard.type(text, { delay: 40 });
     await page.waitForTimeout(600);

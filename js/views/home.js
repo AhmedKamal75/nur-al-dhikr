@@ -237,6 +237,7 @@ function todayPrayerTimes(state) {
     timezoneOffsetHours: tz,
     method: p.method,
     asr: p.asr,
+    offsets: p.offsets,
   });
 }
 

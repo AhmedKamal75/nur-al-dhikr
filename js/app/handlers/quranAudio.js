@@ -230,6 +230,26 @@ export const clickHandlers = {
     showToast(t(next ? 'audio.compareOn' : 'audio.compareOff', state.settings.language));
   },
 
+  // (v5.2.75, UP-11) compare A/B role swap: the voices exchange roles and
+  // the engine restarts on the voice changes (same path as the picker —
+  // setReciter(B) then setReciterB(A), one batch, one re-render).
+  'recite-compare-swap': () => {
+    const state = store.getState();
+    const a = state.settings.reciter;
+    const b = state.settings.reciterB;
+    if (!a || !b) {
+      showToast(t('audio.compareNeedB', state.settings.language));
+      return;
+    }
+    store.batch(() => {
+      store.dispatch(actions.updateSettings({ reciter: b, reciterB: a }));
+      if (surahPlayback.isActive()) {
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setReciter(b)));
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setReciterB(a)));
+      }
+    });
+  },
+
   // Switch voice B from inside the player (the picker rows dispatch
   // set-setting directly; this keeps the session + pref in one gesture).
   // An empty value clears voice B (compare off). The picker re-opens so

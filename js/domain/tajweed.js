@@ -733,6 +733,16 @@ export function classifyWordTajweed(
  */
 const classifyMemo = new Map();
 
+/** Drop the classification cache (RESET_ALL hygiene — see PERF-03). */
+export function clearClassifyMemo() {
+  classifyMemo.clear();
+}
+
+/** Cache size for tests. */
+export function classifyMemoSizeForTests() {
+  return classifyMemo.size;
+}
+
 export function classifyAyahTajweed(ayahText) {
   const text = String(ayahText || '');
   const cached = classifyMemo.get(text);

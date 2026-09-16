@@ -27,6 +27,8 @@ export const ar = {
   'garden.timeline': 'مسار النمو',
   'garden.harvest': 'ما نبت حتى الآن',
   'garden.seeStatistics': 'انظر الإحصاءات التي تنبت منها الحديقة',
+  // v5.2.75 reading grows the garden too (UP-12).
+  'garden.readsCount': 'قرأت {n} من صفحات المصحف',
   'garden.stage.seed': 'بذرة',
   'garden.stage.sprout': 'برعم',
   'garden.stage.sapling': 'شجيرة',
@@ -93,6 +95,13 @@ export const ar = {
   'ramadan.lastTen': 'عبادة العشر الأواخر',
   'ramadan.lastTenDay': 'الليلة {n} من رمضان',
   'ramadan.lastTenNights': 'اليوم {n} — بدأت العشر الأواخر',
+  // v5.2.74 Ramadan khatm pace panel (UP-08: wires ramadanKhatmPlan in).
+  'ramadan.khatmTitle': 'إيقاع ختم القرآن',
+  'ramadan.khatmHint': 'الصفحات المفتوحة في قارئ المصحف تُحتسب لختمة كاملة هذا الشهر.',
+  'ramadan.khatmRead': 'الصفحات المقروءة',
+  'ramadan.khatmPerDay': 'صفحات يوميًا للإتمام',
+  'ramadan.khatmOnTrack': 'على إيقاع الختم',
+  'ramadan.khatmOffTrack': 'نواصل القراءة — كل صفحة تُحتسب',
   'ramadan.qadrTonight': 'الليلة ليلة وتر — تحرَّ ليلة القدر',
   'ramadan.notYet': 'لم يبدأ رمضان بعد',
   'ramadan.untilRamadan': 'حتى أول رمضان',
@@ -260,6 +269,8 @@ export const ar = {
   'offline.downloadGroup': 'تحميل',
   'offline.storage': 'تخزين الجهاز',
   'offline.storageUnknown': 'تعذّرت معرفة التخزين على هذا الجهاز.',
+  // v5.2.75 audio-cache budget line (PERF-02).
+  'offline.audioCache': 'مخبأ الصوت',
   'offline.storageModeTitle': 'وضع التخزين',
   'offline.storageModeBody':
     'العادي يحفظ ملفات كاملة (فتح سريع، نحو 150 م.ب). المضغوط يحفظ ملفات مضغوطة (نحو 27 م.ب) ويفك ضغطها عند الفتح — أبطأ، وأرحم للتخزين والبيانات. يسري على التحميلات الجديدة؛ التبديل يمسح النصوص المحمّلة.',
@@ -408,6 +419,17 @@ export const ar = {
   'zakat.ph.grams': '0',
   'zakat.nisabThreshold': 'حد النصاب',
   'zakat.assetsTitle': 'أموالك',
+  // v5.2.75 per-line fiqhi explainers (UP-13) — mirrors data/zakat-notes.json.
+  'zakat.note.cash': 'النقد في اليد والحسابات المحتفظ به لسنة قمرية كاملة.',
+  'zakat.note.goldGrams': 'الذهب الذي تملكه بالغرامات — بما فيه الحلي عند جمهور العلماء.',
+  'zakat.note.silverGrams': 'الفضة التي تملكها بالغرامات.',
+  'zakat.note.investments':
+    'الأسهم والصناديق بقيمتها السوقية الحالية — وتفصيلها محل خلاف؛ فاسأل أهل العلم عن حالتك.',
+  'zakat.note.businessGoods': 'البضائع والمخزون التجاري بقيمة الجملة.',
+  'zakat.note.receivables': 'الديون المستحقة لك التي ترجو تحصيلها.',
+  'zakat.note.otherAssets': 'أموال زكوية أخرى غير المذكورة أعلاه.',
+  'zakat.note.liabilities': 'الديون الحالة الآن — تُخصم قبل حساب النصاب.',
+  'zakat.note.fitrPer': 'السعر المحلي لحصة طعام أساسية (كالأرز أو القمح) للفرد الواحد.',
   'zakat.cash': 'نقد ورصيد بنكي',
   'zakat.goldGrams': 'وزن الذهب',
   'zakat.silverGrams': 'وزن الفضة',
@@ -480,6 +502,9 @@ export const ar = {
   'search.quranResults': 'من القرآن',
   'search.loadingCorpus': 'يتم تحميل نص القرآن للبحث الكامل — وبعد التحميل يعمل دون اتصال للأبد.',
   'search.quranCount': '{n} آيات',
+  // v5.2.74 tafsir result group in the Search view (UP-08).
+  'search.tafsirResults': 'من التفسير',
+  'search.tafsirCount': '{n} مواضع',
   'search.resultsCount': '{n} نتيجة',
   'search.recent': 'عمليات بحث سابقة',
   'search.clearHistory': 'مسح السجل',
@@ -695,7 +720,37 @@ export const ar = {
   'prayer.quietVolume': 'مستوى صوت الهدوء ٪',
   'prayer.quietHint':
     'في ساعات الهدوء تُشغَّل التنبيهات بصوت خافت بدل الصوت الكامل. أما صوت إشعار الهاتف نفسه فيتبع صوت النظام — فالمتصفحات لا تسمح للصفحات بتغييره.',
+  // v5.2.75 quiet-hours cancel policy (UP-04): off preserves behavior.
+  'prayer.quietCancels': 'كتم تنبيهات الصلاة في ساعات الهدوء',
+  'prayer.quietCancelsHint':
+    'عند التفعيل، تُتخطَّى تنبيهات الصلاة تمامًا في ساعات الهدوء. وعند التعطيل، تُشغَّل بصوت خافت كما أعلاه.',
   'prayer.testSound': 'تجربة الصوت',
+  // v5.2.75 calculation transparency (UP-06): localized method names,
+  // regions and explainer notes (mirror data/prayer-methods.json).
+  'prayer.method.MWL': 'رابطة العالم الإسلامي',
+  'prayer.method.ISNA': 'الجمعية الإسلامية لأمريكا الشمالية',
+  'prayer.method.Egyptian': 'الهيئة المصرية العامة للمساحة',
+  'prayer.method.Karachi': 'جامعة العلوم الإسلامية كراتشي',
+  'prayer.method.UmmAlQura': 'أم القرى، مكة',
+  'prayer.method.Tehran': 'معهد الجيوفيزياء طهران',
+  'prayer.method.MoonsightingCommittee': 'لجنة رؤية الهلال (تقريبي)',
+  'prayer.methodRegion.MWL': 'الافتراضي العالمي',
+  'prayer.methodRegion.ISNA': 'أمريكا الشمالية',
+  'prayer.methodRegion.Egyptian': 'مصر والشام',
+  'prayer.methodRegion.Karachi': 'جنوب آسيا',
+  'prayer.methodRegion.UmmAlQura': 'السعودية',
+  'prayer.methodRegion.Tehran': 'إيران',
+  'prayer.methodRegion.MoonsightingCommittee': 'أمريكا الشمالية، مبسّط',
+  'prayer.methodNote.MWL': 'فجر 18° وعشاء 17° — الافتراضي العالمي.',
+  'prayer.methodNote.ISNA': 'شفق الدرجة الخامسة عشرة، مضبوط لخطوط العرض العالية.',
+  'prayer.methodNote.Egyptian': 'فجر 19.5° — أبكر فجر بين الطرق القياسية.',
+  'prayer.methodNote.Karachi': 'زوج متماثل 18° مستخدم في جنوب آسيا.',
+  'prayer.methodNote.UmmAlQura': 'العشاء بعد المغرب بالدقائق (120، أو 90 في رمضان) لا بالدرجات.',
+  'prayer.methodNote.Tehran': 'المغرب عند 4.5° تحت الأفق حسب العرف الإيراني.',
+  'prayer.methodNote.MoonsightingCommittee': 'تقريب مبسّط 18°/18° للطريقة الكاملة.',
+  'prayer.offsetsTitle': 'ضبط دقيق للأوقات (بالدقائق)',
+  'prayer.offsetsHint':
+    'أزح أي صلاة ±60 دقيقة — مثلًا لمطابقة مسجدك المحلي. يُطبَّق في كل مكان: الجدول والتنبيهات والصيام.',
   'prayer.alertSoundNote':
     'يعمل أثناء فتح التطبيق. إذا كان التطبيق مغلقًا أو في الخلفية، سيستخدم جهازك نغمة الإشعار الافتراضية الخاصة به بدلاً من ذلك.',
   // v3.20 prayer-alert reliability — the honest status row.
@@ -727,6 +782,7 @@ export const ar = {
   'qibla.subtitle': 'اتجاه القبلة الذي تستقبله في الصلاة، بناءً على موقعك.',
   'qibla.bearing': 'الاتجاه',
   'qibla.distance': 'المسافة إلى الكعبة',
+  'qibla.accuracy': 'دقة الموقع ±{m} م',
   'qibla.holdFlat': 'أمسك هاتفك بشكل أفقي ثابت، ثم استدر حتى يشير المؤشر للأعلى.',
   'qibla.noSensor': 'هذا الجهاز لا يدعم البوصلة المباشرة — استخدم الاتجاه أدناه مع بوصلة فعلية.',
   'qibla.enableCompass': 'تفعيل البوصلة',
@@ -735,6 +791,13 @@ export const ar = {
   'qibla.aligned': 'أنت متجه نحو القبلة.',
   'qibla.turnToAlign': 'استمر بالاستدارة باتجاه المؤشر.',
   'qibla.calibrate': 'إذا بدت النتيجة غير دقيقة، عايِر البوصلة بتحريك هاتفك على شكل رقم 8.',
+  // v5.2.75 live heading-error readout + calibration card (UP-03).
+  'qibla.headingError': 'خطأ الاتجاه',
+  'qibla.offBy': 'الانحراف {n}°',
+  'qibla.calibrateTitle': 'معايرة البوصلة',
+  'qibla.calibrate1': 'أمسك الهاتف مسطحًا والشاشة لأعلى.',
+  'qibla.calibrate2': 'أمله بحركة رقم 8، ثلاث مرات.',
+  'qibla.calibrate3': 'ابتعد عن المعادن والمغناطيس والأغلفة الممغنطة.',
   // v3.26 تلميح الانحراف المغناطيسي — نموذج WMM2025 الحقيقي مضمّن دون اتصال
   'qibla.declination': 'الانحراف المغناطيسي',
   'qibla.declinationModel': 'النموذج المغناطيسي العالمي 2025 — صالح حتى 2030',
@@ -769,16 +832,25 @@ export const ar = {
     'اختبار من {n} أسئلة متعددة الخيارات حول معاني أسماء الله الحسنى، مأخوذة من هذه المكتبة.',
   'quiz.start': 'ابدأ الاختبار',
   'quiz.tryAgain': 'حاول مرة أخرى',
+  'quiz.reviewMistakes': 'مراجعة الأخطاء ({n})',
+  'quiz.practiceWeak': 'مراجعة العناصر الضعيفة ({n})',
   'quiz.exit': 'العودة إلى الأسماء',
   'quiz.done': 'اكتمل الاختبار',
   'quiz.bestScore': 'الأفضل: {best} / {total}',
   'quiz.progress': 'السؤال {current} من {total}',
   'quiz.whatDoesItMean': 'ما معنى هذا الاسم؟',
+  // v5.2.75 generalized decks (UP-10): any library, either direction.
+  'quiz.whichName': 'أي اسم معناه هذا؟',
+  'quiz.pickLibrary': 'مكتبة الاختبار',
+  'quiz.direction': 'الاتجاه',
+  'quiz.directionArEn': 'سؤال عربي',
+  'quiz.directionEnAr': 'سؤال بالمعنى',
+  'quiz.size': 'الأسئلة',
   'quiz.correct': 'صحيح',
   'quiz.wrong': 'ليست الصحيحة',
   'quiz.next': 'التالي',
   'quiz.seeResults': 'عرض النتيجة',
-  'quiz.unavailable': 'يحتاج الاختبار إلى تحميل مكتبة الأسماء الحسنى — حاول مرة أخرى بعد قليل.',
+  'quiz.unavailable': 'يحتاج الاختبار إلى تحميل مكتبته — حاول مرة أخرى بعد قليل.',
 
   'mushaf.loading': 'جارٍ تحميل هذه الصفحة\u2026',
   'mushaf.juz': 'الجزء',
@@ -866,6 +938,19 @@ export const ar = {
   'wordStudy.noData': 'لا تتوفر بيانات نحوية لهذه الكلمة بعد.',
   'wordStudy.tajweed': 'أحكام التجويد في هذه الكلمة',
   'wordStudy.openTafsir': 'التفسير والإعراب',
+  // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).
+  'wordStudy.open': 'فتح دراسة الكلمة',
+  // v5.2.75 word-study meanings + per-word actions (UP-01).
+  'wordStudy.meanings': 'المعاني',
+  'wordStudy.synonyms': 'مرادفات',
+  'wordStudy.antonyms': 'أضداد',
+  'wordStudy.speak': 'استمع',
+  'wordStudy.copy': 'نسخ الكلمة',
+  'wordStudy.share': 'مشاركة الكلمة',
+  'wordStudy.bookmark': 'احفظ الكلمة',
+  'wordStudy.bookmarked': 'محفوظة',
+  'wordStudy.soundOff': 'الصوت متوقف — فعّله من الإعدادات لسماع الكلمات.',
+  'wordStudy.speechUnsupported': 'النطق غير متاح في هذا المتصفح',
   'wordStudy.root': 'الجذر',
   'wordStudy.rootCount': '{n} مرة في القرآن الكريم',
   'wordStudy.rootHint': 'نفس الجذر في مواضع أخرى من القرآن:',
@@ -887,7 +972,14 @@ export const ar = {
   'roots.sampleHint': 'يُعرض أول {n} من {m} موضعًا — يُحمَّل الفهرس الكامل.',
   'roots.showAll': 'عرض الكل ({n})',
   'roots.showLess': 'إخفاء',
+  // v5.2.75 roots ↔ mutashabihat cross-linking (UP-09).
+  'roots.tabForms': 'صيغ الكلمات',
+  'roots.tabConfusables': 'آيات مشابهة ({n})',
+  'roots.confusablesNeedCorpus':
+    'ابحث في القرآن مرة واحدة لبناء فهرس الأزواج — ستظهر الآيات المشابهة لهذا الجذر هنا بعد ذلك.',
   'wordStudy.wordN': 'الكلمة {n}',
+  // v5.2.75 look-alike chip in the word popup (UP-09).
+  'wordStudy.lookalike': 'آية مشابهة: {ref}',
   'wordStudy.prefix': 'سابقة',
   'wordStudy.suffix': 'لاحقة',
 
@@ -898,6 +990,7 @@ export const ar = {
     'هذا مصدر كلاسيكي كبير غير مضمّن مع التطبيق. نزّله مرة واحدة وسيبقى متاحًا دون اتصال بعد ذلك.',
   'tafsir.download': 'تنزيل للقراءة دون اتصال',
   'tafsir.compare': 'المقارنة مع مصدر ثانٍ',
+  'tafsir.compareC': 'المقارنة مع مصدر ثالث',
   'tafsir.compareOff': 'مصدر واحد',
   'tafsir.downloadDone': 'تم التنزيل — متاح الآن دون اتصال',
   'tafsir.downloadFailed': 'تعذّر التنزيل — تحقق من الاتصال وحاول مجددًا',
@@ -972,6 +1065,9 @@ export const ar = {
   'settings.compareTranslation': 'ترجمة للمقارنة',
   'settings.compareHint':
     'إظهار ترجمة ثانية تحت الترجمة الرئيسية في قارئ القرآن، للدراسة جنبًا إلى جنب.',
+  'settings.compareTranslationC': 'ترجمة مقارنة ثانية',
+  'settings.compareHintC':
+    'إظهار سطر ترجمة ثالث تحت سطر المقارنة الأول. يُتجاهل عندما يطابق الترجمة الرئيسية أو الأولى.',
   'settings.compareOff': 'إيقاف — ترجمة واحدة فقط',
   'settings.milestone': 'تنبيه الإنجاز كل N عدّة',
   'settings.milestoneHint':
@@ -1190,6 +1286,10 @@ export const ar = {
   'hadith.searchBook': 'ابحث داخل هذا الكتاب (عربي أو إنجليزي)…',
   'hadith.searchAll': 'ابحث في كل الكتب (عربي أو إنجليزي)…',
   'hadith.searchScope': 'البحث في {a} من {b} كتب',
+  // v5.2.75 cross-book search consent (BUG-09): bulk-fetching is explicit.
+  'hadith.indexAll': 'فهرسة الكتب الـ{b}',
+  'hadith.indexAllHint':
+    'النتائج الكاملة تحتاج كل الكتب — تنزيل كبير. الكتب المحمّلة تستمر في البحث.',
   'hadith.jump': 'انتقال',
   'hadith.jumpInvalid': 'أدخل رقم حديث (١ أو أكثر).',
   'hadith.jumpOutOfRange': 'هذا الكتاب يحتوي {n} حديثًا — أدخل رقمًا حتى {n}.',
@@ -1304,6 +1404,17 @@ export const ar = {
   'kids.exitDone': 'تم إيقاف وضع الأطفال',
   'kids.blocked': 'وضع الأطفال مفعّل — قرآن الأطفال وعداد التسبيح فقط.',
   'stats.avgPerDay': 'المعدل اليومي (٣٠ يومًا)',
+  // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
+  // follows the nudge tone rules: no dates, no counts, no shaming.
+  'stats.reviewDue': 'مراجعة مستحقة',
+  'stats.reviewDueLine': '{s} سور · {a} آيات',
+  'stats.reviewDueEmpty': 'لا شيء مستحق اليوم — أحسنت المتابعة.',
+  'stats.juzTitle': 'القراءة حسب الأجزاء',
+  'stats.juzCell': 'الجزء {n}: {r} من {t} صفحة',
+  'stats.khatmaProgress': 'تقدم الختمة',
+  'stats.khatmaLine': '{r} من {t} صفحة · {p}%',
+  // v5.2.75 certificate loop closure (UP-12).
+  'stats.viewCertificate': 'اعرض شهادتك',
   'stats.weekTotal': 'هذا الأسبوع',
   'stats.monthTotalLabel': 'الإجمالي',
   'stats.bestDay': 'أفضل يوم',
@@ -1409,6 +1520,9 @@ export const ar = {
   'qada.howMany': 'كم عدد',
   'qada.add': 'إضافة',
   'qada.added': 'أُضيف {n} للقضاء',
+  // v5.2.75 missed-prayer qada offer on un-logging (UP-13).
+  'qada.offerMissed': 'فاتتك {prayer}؟ سجّلها للقضاء.',
+  'qada.offerAdd': 'أضف للقضاء',
   'qada.doneOne': 'قُضيت واحدة، تقبّل الله.',
   'qada.cleared': 'تم إزالة قضاء هذه الصلاة',
   'qada.allClear': 'قُضي كل شيء، الحمد لله.',
@@ -1459,6 +1573,8 @@ export const ar = {
   'journal.duaEmptyInput': 'اكتب دعاءك أولًا.',
   'journal.markAnswered': 'وسم كمُستجاب',
   'journal.answered': 'مُستجاب',
+  // v5.2.75 journal self-stats footer (UP-12).
+  'journal.monthStats': '{n} مدخلات · {m} مُستجاب هذا الشهر',
   'journal.export': 'تصدير نصي',
   'journal.exportEmpty': 'لا شيء للتصدير بعد.',
 
@@ -1490,6 +1606,9 @@ export const ar = {
   'mutashabihat.incorrect': 'هي من سورة {surah}',
   'mutashabihat.sharedRunHint': 'الكلمات المظللة هي المقطع المشترك — الفخ الذي يسبب الالتباس.',
   'mutashabihat.next': 'الآية التالية',
+  // v5.2.75 lapse-weighted drill pool (UP-09).
+  'mutashabihat.poolAll': 'كل الأزواج',
+  'mutashabihat.poolLapsed': 'عثراتي ({n})',
   'mutashabihat.noPairs': 'لا أزواج متشابهة بعد.',
   'mutashabihat.backToQuran': 'عودة إلى القرآن',
 
@@ -1511,6 +1630,8 @@ export const ar = {
   'audio.compareOn': 'المقارنة مفعّلة — كل آية تُتلى بالصوتين',
   'audio.compareOff': 'إيقاف المقارنة',
   'audio.compareNeedB': 'اختر قارئًا ثانيًا (الصوت ب) أولًا',
+  // v5.2.75 compare A/B role swap (UP-11).
+  'audio.compareSwap': 'تبديل صوتي المقارنة',
   'audio.chooseReciter': 'اختيار القرّاء',
   'audio.voiceA': 'الصوت الأول — القارئ الأساسي',
   'audio.voiceB': 'الصوت الثاني — قارئ المقارنة',
@@ -1528,6 +1649,8 @@ export const ar = {
     'قوائم مسماة من نطاقات الآيات تُشغَّل بالترتيب. احفظ أي نطاق من منتقي النطاق في السورة، ثم شغّل القائمة كاملة هنا.',
   'playlist.create': 'قائمة جديدة',
   'playlist.createTitle': 'سمِّ قائمتك',
+  // v5.2.75 queue rename + reorder (UP-11).
+  'playlist.renameTitle': 'إعادة تسمية القائمة',
   'playlist.namePh': 'مثال: حفظ الصباح',
   'playlist.created': 'أُنشئت القائمة',
   'playlist.playQueue': 'تشغيل القائمة',

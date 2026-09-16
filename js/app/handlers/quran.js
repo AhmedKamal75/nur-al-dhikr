@@ -8,6 +8,7 @@ import {
   ensureQuranWordsData,
   ensureTafsirText,
   ensureTajweedPool,
+  ensureWordDict,
   openAyahStudy,
 } from '../lazyData.js';
 import { renderPracticeRound, startPracticeRound } from '../practice.js';
@@ -18,6 +19,9 @@ import { go, replaceGo } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
 import { getVerseAudio } from '../../services/audioStore.js';
 import { buildAnswerKey, scoreRound } from '../../domain/tajweedPractice.js';
+import { getWord, dictEntryFor, wordBookmarkKey } from '../../domain/wordStudy.js';
+import * as speech from '../../services/speech.js';
+import { shareAyahCard } from './items.js';
 import {
   clampPage,
   prevPage as mushafPrevPage,
@@ -76,6 +80,21 @@ export function applyTajweedColors(state) {
  * partial click-handler map (pure (dataset, element, event) functions);
  * app/events.js merges them into the single delegation table.
  */
+
+/**
+ * (v5.2.75, UP-01) resolve the tapped word exactly like the popup does
+ * (surface-anchored via getWord), so per-word actions never operate on a
+ * different word than the one shown. Returns { word, key } or null.
+ */
+function resolveTappedWord(ds, target) {
+  const key = wordBookmarkKey(ds.surah, ds.ayah, ds.i);
+  if (!key) return null;
+  const state = store.getState();
+  const surface = target?.textContent?.trim().slice(0, 140) || null;
+  const word = getWord(state.quranWords, ds.surah, ds.ayah, Number(ds.i), surface);
+  if (!word || typeof word.text !== 'string' || !word.text) return null;
+  return { word, key };
+}
 
 export const clickHandlers = {
   // (v4.4) TRUE fullscreen Mushaf: the book expands to fill the whole
@@ -229,6 +248,9 @@ export const clickHandlers = {
     store.dispatch(actions.openWordStudy(surah, ayah, i, surface));
     await ensureQuranWordsData(store.getState(), surah);
     await ensureQuranRoots(store.getState());
+    // (v5.2.75, UP-01) the lemma-dict tier rides the same open (one fetch
+    // per session; the popup omits Meanings until it lands).
+    await ensureWordDict();
     // (v4.6.0) The tajweed section reads the official ayah text from the
     // classic reader's surah docs — which the Mushaf never loads on its
     // own. Ensure them (idempotent, cached) so a word tap in the mushaf
@@ -241,6 +263,61 @@ export const clickHandlers = {
       }
     }
     openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
+  },
+
+  // (v5.2.75, UP-01) per-word actions for the study popup. All resolve
+  // the tapped word exactly like the popup does (surface-anchored), so
+  // an action never operates on a different word than the one shown.
+  'word-speak': (ds, e, target) => {
+    const st = store.getState();
+    const lang = st.settings.language;
+    if (st.settings.soundEnabled !== true) {
+      showToast(t('wordStudy.soundOff', lang));
+      return;
+    }
+    if (!speech.isSupported()) {
+      showToast(t('wordStudy.speechUnsupported', lang));
+      return;
+    }
+    const found = resolveTappedWord(ds, target);
+    if (!found) return;
+    // A pseudo-item so the speech service's toggle contract works
+    // unchanged (the hadith reader does the same for single hadiths).
+    speech.speakItem({ id: `word-${found.key}`, arabic: found.word.text, transliteration: '' }, {});
+  },
+
+  'word-copy': async (ds, e, target) => {
+    const st = store.getState();
+    const lang = st.settings.language;
+    const found = resolveTappedWord(ds, target);
+    if (!found) return;
+    const dict = dictEntryFor(st.wordDict, found.word.lemma);
+    const gloss = found.word.en || dict?.en || '';
+    const text = gloss
+      ? `${found.word.text} — ${gloss}\n\n\u2014 ${found.key}`
+      : `${found.word.text}\n\n\u2014 ${found.key}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(t('card.copied', lang));
+    } catch {
+      showToast(t('card.copyFailed', lang));
+    }
+  },
+
+  // Word share reuses the ayah-card canvas: the containing ayah is the
+  // honest shareable unit, giving the word its context.
+  'word-share': async (ds) => {
+    await shareAyahCard(ds.surah, ds.ayah);
+  },
+
+  'word-bookmark': (ds) => {
+    const key = wordBookmarkKey(ds.surah, ds.ayah, ds.i);
+    if (!key) return;
+    store.dispatch(actions.toggleWordBookmark(key));
+    const marked = store.getState().wordBookmarks?.[key] === true;
+    showToast(
+      t(marked ? 'wordStudy.bookmarked' : 'wordStudy.bookmark', store.getState().settings.language)
+    );
   },
 
   'root-jump': async (ds) => {
@@ -272,6 +349,17 @@ export const clickHandlers = {
     });
   },
 
+  // (v5.2.75, UP-09) root detail tabs (forms/confusables): replaceGo keeps
+  // the root id and drops the default tab — the roots-page no-history-
+  // spam discipline, with a shareable URL per the deep-link contract.
+  'roots-tab': (ds) => {
+    if (!ds.root) return;
+    replaceGo(VIEWS.ROOTS, {
+      id: ds.root,
+      ...(ds.tab && ds.tab !== 'forms' ? { tab: ds.tab } : {}),
+    });
+  },
+
   // (v5.2.55) per-group ref overflow: pure DOM toggle (no nav, no state —
   // expansion is a reading gesture, like the Mushaf control auto-fade).
   'roots-expand': (ds, _e, target) => {
@@ -299,16 +387,22 @@ export const clickHandlers = {
   'tafsir-tab': async (ds) => {
     store.dispatch(actions.setMushafSession({ tafsirTab: ds.edition }));
     await ensureTafsirText(store.getState(), ds.edition, ds.surah);
-    await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
+    // (v5.2.75, UX-03) the re-opened modal keeps focus on the active tab
+    // (WAI-ARIA tabs) instead of snapping it to the first body element.
+    await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah), {
+      focusSelector: `#tafsir-tab-${ds.edition}`,
+    });
   },
 
-  // Tafsir compare: a second source under the active tab. Tapping the
+  // Tafsir compare: an extra source under the active tab. Tapping the
   // active pick turns compare off. Re-opens the study modal in place so
   // the new column renders immediately (same pattern as tafsir-tab).
+  // (v5.2.78, UP-06) data-slot B (default, backward-compat) or C.
   'tafsir-compare': async (ds) => {
-    const cur = store.getState().settings.tafsirCompareB || null;
+    const slot = ds.slot === 'C' ? 'tafsirCompareC' : 'tafsirCompareB';
+    const cur = store.getState().settings[slot] || null;
     const next = ds.edition && ds.edition !== cur ? ds.edition : null;
-    store.dispatch(actions.updateSettings({ tafsirCompareB: next }));
+    store.dispatch(actions.updateSettings({ [slot]: next }));
     if (next) await ensureTafsirText(store.getState(), next, ds.surah);
     await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
   },
@@ -319,6 +413,18 @@ export const clickHandlers = {
     showToast(t(ok ? 'tafsir.downloadDone' : 'tafsir.downloadFailed', lang));
     if (ok) {
       store.dispatch(actions.setMushafSession({ tafsirTab: ds.edition }));
+      await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
+    }
+  },
+
+  // (v5.2.74, UP-08) compare-column download: an uncached remote second
+  // source fetches on explicit tap — the same on-demand rule as the
+  // primary tab's download, but the primary tab stays put.
+  'tafsir-compare-download': async (ds) => {
+    const lang = store.getState().settings.language;
+    const ok = await ensureTafsirText(store.getState(), ds.edition, ds.surah, true);
+    showToast(t(ok ? 'tafsir.downloadDone' : 'tafsir.downloadFailed', lang));
+    if (ok) {
       await openAyahStudy(ds.surah, ds.ayah, currentAyahDetailPage(ds.surah, ds.ayah));
     }
   },

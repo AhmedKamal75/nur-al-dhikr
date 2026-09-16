@@ -13,6 +13,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { escapeHTML, dateKey } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
+import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { skeletonSurahList } from '../ui/skeleton.js';
 
 /** The kids' surah list: Al-Fatiha + the short closing surahs. */
@@ -28,8 +29,12 @@ export function renderKids(state) {
   const stars = state.kidsStars && typeof state.kidsStars === 'object' ? state.kidsStars : {};
   const today = Number(stars.days?.[dateKey(new Date())]) || 0;
 
+  // (v5.2.74, BUG-04) same honesty as the surah list: a failed quran-meta
+  // fetch renders error + Retry instead of an infinite skeleton.
   const tiles = !meta
-    ? skeletonSurahList(lang)
+    ? state.loadErrors?.['quran-meta']
+      ? loadErrorStateHTML({ lang, tierKey: 'quran-meta', t })
+      : skeletonSurahList(lang)
     : KIDS_SURAHS.map((n) => {
         const m = meta.surahs?.find((x) => Number(x.number) === n);
         const nameAr = m?.nameAr || '';
@@ -41,7 +46,7 @@ export function renderKids(state) {
       <div class="kids-tile-wrap">
         <button type="button" class="kids-tile ${playing ? 'kids-tile--playing' : ''}" data-action="surah-play" data-surah="${n}" aria-label="${escapeHTML(nameEn || nameAr)} — ${t(playing ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}" aria-pressed="${playing}">
           <span class="kids-tile__play">${icon(playing ? 'stop' : 'play', { size: 30 })}</span>
-          <span class="kids-tile__name-ar" dir="rtl">${escapeHTML(nameAr)}</span>
+          <span class="kids-tile__name-ar" dir="rtl" lang="ar">${escapeHTML(nameAr)}</span>
           ${nameEn ? `<span class="kids-tile__name-en">${escapeHTML(nameEn)}</span>` : ''}
         </button>
       </div>`;

@@ -26,6 +26,7 @@ import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
 import { loadErrorStateHTML, notFoundStateHTML } from '../ui/emptyState.js';
 import { clozeAyahHTML, ayahMistakes } from '../domain/hifz.js';
+import { resolveCompareTexts } from '../domain/translationCompare.js';
 import { intensityBucket } from '../domain/statistics.js';
 import { searchSurahs } from '../domain/search.js';
 import { keyToDate } from '../domain/review.js';
@@ -237,7 +238,12 @@ function surahListHTML(state) {
   const meta = state.quran.meta;
 
   if (!meta) {
-    return skeletonSurahList(lang);
+    // (v5.2.74, BUG-04) a failed quran-meta fetch used to shimmer forever:
+    // the flag fired but no view rendered it. Show error + Retry (the
+    // generic retry-load pass re-runs ensureQuranData via stateSub).
+    return state.loadErrors?.['quran-meta']
+      ? loadErrorStateHTML({ lang, tierKey: 'quran-meta', t })
+      : skeletonSurahList(lang);
   }
 
   const surahs = searchSurahs(meta.surahs, state.activeParams.q || '');
@@ -266,7 +272,7 @@ function surahListHTML(state) {
           ${lang !== 'ar' ? `<span class="surah-tile__name-en">${highlightMatch(s.nameTransliteration, String(state.activeParams.q || '').split(/\s+/))}</span>` : ''}
           <span class="surah-tile__meta">${t('quran.ayahCount', lang, { n: s.ayahCount })} \u2022 ${t(s.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</span>
         </span>
-        <span class="surah-tile__name-ar" dir="rtl">${highlightMatch(s.nameAr, String(state.activeParams.q || '').split(/\s+/))}</span>
+        <span class="surah-tile__name-ar" dir="rtl" lang="ar">${highlightMatch(s.nameAr, String(state.activeParams.q || '').split(/\s+/))}</span>
       </a>
       <button type="button" class="icon-btn icon-btn--sm surah-tile__play ${sounding ? 'icon-btn--playing' : ''}" data-action="quran-play-surah" data-surah="${s.number}" aria-label="${label}" title="${label}">
         ${icon(sounding ? 'pause' : 'play', { size: 15 })}
@@ -290,6 +296,56 @@ function surahListHTML(state) {
       />
     </div>
     <div class="surah-grid" data-roving role="group" aria-label="${t('quran.title', lang)}">${tiles || `<p class="empty-hint">${t('search.noResults', lang)}</p>`}</div>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* Per-ayah card memo (v5.2.75, PERF-01)                                */
+/* ------------------------------------------------------------------ */
+// A changed dispatch rebuilt all ~30 window cards (~115KB of template +
+// tajweed classification each) for every ayah advance. Card inputs are
+// immutable doc objects + tiny flags, so REFERENCE equality is exact:
+// the memo reuses 29 cards and rebuilds the 1 that moved. Keyed by the
+// ayah record itself (WeakMap — entries vanish with dropped surah docs,
+// so no size cap or RESET_ALL hook is needed).
+
+/** Hit/miss counters for tests (the memo is otherwise unobservable). */
+export const ayahCardMemoStats = { hits: 0, misses: 0 };
+
+/** Test seam: zero the counters between cases. */
+export function resetAyahCardMemoForTests() {
+  ayahCardMemoStats.hits = 0;
+  ayahCardMemoStats.misses = 0;
+}
+
+const ayahCardCache = new WeakMap();
+
+/**
+ * The card's full input fingerprint as stable references. Every value the
+ * template reads below must appear here (or be derived from one that
+ * does): settings (language, reciter, prefs, toggles, compare edition),
+ * the word records, the compare overlay doc, the quran meta (audio URLs),
+ * reciting/focus flags, and the hifz session's live pieces.
+ */
+function ayahCardDeps(state, number, num, meta, a) {
+  const hifzSession = state.hifzSession;
+  const hifzActive = !!hifzSession?.mode && Number(hifzSession?.surah) === num;
+  return [
+    state.settings,
+    state.quranWords?.[String(number)]?.[String(a.number)],
+    state.quran.translationB?.[String(number)],
+    state.quran.translationC?.[String(number)],
+    meta,
+    state.recitingAyahKey === `${number}:${a.number}`,
+    String(state.activeParams?.ay || '') === String(a.number),
+    hifzActive,
+    hifzActive ? (hifzSession.level ?? null) : null,
+    hifzActive ? (hifzSession.test ?? null) : null,
+    hifzActive ? (hifzSession.revealed ?? null) : null,
+  ];
+}
+
+function sameMemoDeps(prev, next) {
+  return prev.length === next.length && prev.every((d, i) => d === next[i]);
 }
 
 function surahReaderHTML(state, number) {
@@ -334,7 +390,7 @@ function surahReaderHTML(state, number) {
     ? `
     <header class="quran-reader__header">
       <p class="quran-reader__eyebrow">${t('quran.surah', lang)} ${surahMeta.number}</p>
-      <h1 class="quran-reader__name-ar" dir="rtl">${escapeHTML(surahMeta.nameAr)}</h1>
+      <h1 class="quran-reader__name-ar" dir="rtl" lang="ar">${escapeHTML(surahMeta.nameAr)}</h1>
       ${lang !== 'ar' ? `<p class="quran-reader__name-en">${escapeHTML(surahMeta.nameTransliteration)}${escapeHTML(nameEn)}</p>` : ''}
       <p class="quran-reader__meta">${t('quran.ayahCount', lang, { n: surahMeta.ayahCount })} \u2022 ${t(surahMeta.revelationType === 'Meccan' ? 'quran.meccan' : 'quran.medinan', lang)}</p>
       ${recitationToolbarHTML(state, number, lang)}
@@ -344,12 +400,19 @@ function surahReaderHTML(state, number) {
 
   const body = surah
     ? `
-      ${showBismillah && state.settings.mushafPrefs.bismillahStyle !== 'hidden' ? `<p class="quran-bismillah bismillah--${state.settings.mushafPrefs.bismillahStyle}" dir="rtl">${BISMILLAH_AR}</p>` : ''}
+      ${showBismillah && state.settings.mushafPrefs.bismillahStyle !== 'hidden' ? `<p class="quran-bismillah bismillah--${state.settings.mushafPrefs.bismillahStyle}" dir="rtl" lang="ar">${BISMILLAH_AR}</p>` : ''}
       ${loadUp}
       <div class="ayah-list">
         ${surah.ayahs
           .filter((a) => a.number >= win.from && a.number <= win.to)
           .map((a) => {
+            const memoDeps = ayahCardDeps(state, number, num, meta, a);
+            const memoHit = ayahCardCache.get(a);
+            if (memoHit && sameMemoDeps(memoHit.deps, memoDeps)) {
+              ayahCardMemoStats.hits += 1;
+              return memoHit.html;
+            }
+            ayahCardMemoStats.misses += 1;
             const audioUrl = ayahAudioUrl(meta?.surahs, state.settings.reciter, number, a.number);
             const key = `${number}:${a.number}`;
             const reciting = state.recitingAyahKey === key;
@@ -402,26 +465,18 @@ function surahReaderHTML(state, number) {
               hifzActive && hifzSession.level === 'ayah' ? true : state.settings.showTranslation;
             // (v5.2.0) Translation-compare: the second edition's line under
             // the primary one, with its own direction + edition label. Only
-            // when the overlay doc for THIS surah+edition has landed.
-            const bKey = state.settings.quranTranslationB;
-            const bEd =
-              bKey && bKey !== (state.settings.quranTranslation || 'en-sahih')
-                ? TRANSLATION_EDITIONS.find((e) => e.id === bKey)
-                : null;
-            const bLang =
-              {
-                'en-sahih': 'en',
-                'ur-jalandhry': 'ur',
-                'fr-hamidullah': 'fr',
-                'tr-diyanet': 'tr',
-                'id-kemenag': 'id',
-              }[bKey] || 'en';
-            const bText =
-              bEd && state.quran.translationB?.[String(number)]?.edKey === bKey
-                ? state.quran.translationB[String(number)].byAyah?.[a.number]
-                : null;
-            return `
-          <div class="ayah-card${focus ? ' ayah-card--focus' : ''}${reciting ? ' ayah-card--reciting' : ''}${hifzActive ? ' ayah-card--hifz' : ''}" id="ayah-${a.number}">
+            // when the overlay doc for THIS surah+edition has landed
+            // (shared resolver with the study modal + mushaf tray).
+            // (v5.2.78, UP-06) up to two compare lines (B then C).
+            const cmps = resolveCompareTexts(state, TRANSLATION_EDITIONS, number, a.number);
+            const cmpHTML = cmps
+              .map(
+                (cmp) =>
+                  `<p class="ayah-card__translation ayah-card__translation--compare" dir="${cmp.edition.dir === 'rtl' ? 'rtl' : 'auto'}" lang="${cmp.lang}"><span class="ayah-card__compare-label">${escapeHTML(cmp.edition.native)}</span> ${escapeHTML(cmp.text)}</p>`
+              )
+              .join('');
+            const cardHTML = `
+          <div class="ayah-card${focus ? ' ayah-card--focus' : ''}${reciting ? ' ayah-card--reciting' : ''}${hifzActive ? ' ayah-card--hifz' : ''}" id="ayah-${a.number}" tabindex="-1">
             <div class="ayah-card__top">
               <span class="ayah-card__badge">${a.number}</span>
               <div class="ayah-card__actions">
@@ -444,15 +499,13 @@ function surahReaderHTML(state, number) {
                 </button>
               </div>
             </div>
-            <p class="ayah-card__arabic" dir="rtl">${arabicHTML}</p>
+            <p class="ayah-card__arabic" dir="rtl" lang="ar">${arabicHTML}</p>
             ${joinTranslitLine(state, number, a.number)}
             ${showTranslation ? `<p class="ayah-card__translation" dir="auto">${escapeHTML(a.translation)}</p>` : ''}
-            ${
-              showTranslation && typeof bText === 'string' && bText
-                ? `<p class="ayah-card__translation ayah-card__translation--compare" dir="${bEd.dir === 'rtl' ? 'rtl' : 'auto'}" lang="${bLang}"><span class="ayah-card__compare-label">${escapeHTML(bEd.native)}</span> ${escapeHTML(bText)}</p>`
-                : ''
-            }
+            ${showTranslation ? cmpHTML : ''}
           </div>`;
+            ayahCardCache.set(a, { deps: memoDeps, html: cardHTML });
+            return cardHTML;
           })
           .join('')}
       </div>

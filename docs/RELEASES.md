@@ -2,6 +2,197 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.2.85 — quiz remembers weak items across sessions
+
+UP-08 (SRS-lite). New persisted `quizMissRecords` (`{ [itemId]: { m, l } }`,
+capped 200, slug-shape + prototype-pollution sanitized like hifz maps):
+wrong answers upsert, later correct answers clear (re-learned). The quiz
+start screen shows Practice weak items (n) backed by a most-missed-first
+selector, building a review deck through the existing includeIds path
+(stale ids drop out, empty toasts). Shame-free copy throughout. Markers
+5.2.84 → 5.2.85 plus re-stamp.
+
+## v5.2.84 — tolerant bulk loops log warnings, not errors
+
+Follow-up to BUG-09: per-surah skips inside the two corpus builders are
+recovered inline (skip + continue + retry-next-query), so error-level
+logging per skip was both dishonest and self-defeating — it tripped the
+e2e console-error hygiene that exists to catch real defects. Both loops
+now warn; total build failure still errors. Markers 5.2.83 → 5.2.84 plus
+re-stamp.
+
+## v5.2.83 — background index builds cancel on navigation
+
+BUG-09 (found via the typing e2e): the Search-view corpus builders
+fetched up to 114 surahs + 114 tafsir files in 24-wide chunks with no
+cancellation — navigating away left ~200 requests saturating
+connections and the main thread, starving the view actually opened
+(roots index timing out behind the bulk job). Both loops now stop
+scheduling chunks off-search with the latch reset, so returning resumes
+where it left off; the tafsir latch is declared in rt.js (was an
+undeclared dynamic prop). Markers 5.2.82 → 5.2.83 plus re-stamp.
+
+## v5.2.82 — lock-screen artwork + honest reciter names
+
+UP-08 (audio). Media Session metadata gains precached local artwork
+(the app's own SW-cached 192/512 icons — offline-safe, no backend, no
+new assets) on both verse and full-surah sessions, and
+fullSurahMetadata resolves reciter ids through the display-name map
+with a lang passthrough (callers now pass the UI language), so lock
+screens never show raw voice ids. Markers 5.2.81 → 5.2.82 plus re-stamp.
+
+## v5.2.81 — quiz review-mistakes round
+
+UP-08. Missed answers stop evaporating: QUIZ_ANSWER records the deck
+item id into ephemeral `wrongIds` (deduped, deterministic — forged
+payloads can't inject), and the finish screen offers Review mistakes (n)
+whenever the list is non-empty. The round rebuilds through
+buildQuizDeck's new `includeIds` filter (quizReady-filtered, order kept,
+fresh distractors; stale ids drop out), dispatched as a normal
+QUIZ_START so the miss list resets for the new round. EN/AR key
+`quiz.reviewMistakes` with matching placeholder. Markers 5.2.80 → 5.2.81
+plus re-stamp.
+
+## v5.2.80 — statistics closes the loop: khatma % line
+
+UP-05. The statistics memorization panel grows a khatma progress line
+(read/total/pct reduced through the khatma machinery's own planStatus —
+no new math) linking back into the Mushaf at the bookmarked page, above
+the existing juz strip. Shame-free copy (counts of what was done, never
+of what was missed), EN/AR keys `stats.khatmaProgress/Line` with
+matching placeholders. Also: prettier-clean `scripts/build-hadith.mjs`
+(the last `prettier --check .` warn). Markers 5.2.79 → 5.2.80 plus
+re-stamp.
+
+## v5.2.79 — honest roots errors + flake-tolerant typing e2e
+
+BUG-02 completion: the newly-flagged roots tiers get their UI — the
+roots index shows error + Retry (`quran-roots` tier) instead of a
+forever skeleton, and the detail view's partial hint carries a Retry for
+`quran-roots-full`. The typing e2e allows 45s for the roots case (1MB
+index behind a cold 246-file SW precache can starve the first fetch
+past the 15s timeout; the app self-heals via retry). Markers 5.2.78 →
+5.2.79 plus re-stamp.
+
+## v5.2.78 — compare-N: third translation + third tafsir
+
+UP-06. Translation compare grows a second slot (C): up to two compare
+lines (B then C) in the classic reader, mushaf tray and ayah-study
+modal, each with its own direction/label and independent skip rules
+(unset/primary/B/inline). Own `translationC` slice + in-flight set so B
+and C never collide; card memo deps extended. Tafsir compare grows a
+matching third-source slot with mutual exclusion (C picker excludes the
+active tab + B). Settings gains a second compare picker; EN/AR keys
+`tafsir.compareC`, `settings.compareTranslationC/HintC`. Markers 5.2.77
+→ 5.2.78 plus re-stamp.
+
+## v5.2.77 — the 360° audit wave: no lost speech, honest loaders, bounded scroll
+
+Hostile-audit fixes. BUG-01: per-second tickers no longer abuse
+`setSpeakingItem(null)` as a render pulse — new ephemeral `TICKER_NUDGE`
+bumps `tickerSeq` only, so prayer/day/phase rollovers re-render without
+killing live TTS. BUG-03: home/Ramadan countdowns show an honest
+set-location hint instead of a frozen placeholder. BUG-02: word/roots/
+roots-full/tajweed-pool/word-dict tiers join the `loadErrors` + Retry
+machinery. BUG-05: reset/restore clears in-flight lazy-fetch Sets.
+BUG-04/06/07: same-view Back restores scroll, `scrollMemory` LRU-50,
+same-hash nav scrolls to top. UP-03: GPS accuracy badge on Qibla
+(`locationAccuracy`, sanitized, EN/AR). UX-02/07: dense-button 44px
+`::after` expansion + tajweed non-color underlines. Markers 5.2.76 →
+5.2.77 plus re-stamp.
+
+## v5.2.76 — the M/L wave: offsets, cross-links, quizzes, word depth, hadith pipeline
+
+Final overhaul wave from the v5.2.72 agent roadmap. UP-06: manual
+±60-minute prayer offsets (sanitized, applied at the single
+`calculateTimes` choke point so timetable/alerts/triggers/fasting
+inherit them), localized method names, per-method explainer
+(`data/prayer-methods.json`, triple-pinned to domain + i18n), offset
+steppers in the calc sheet. UP-09: roots ↔ mutashabihat cross-linking
+(confusables tab per root, deep-linkable; look-alike chip in the word
+popup) plus lapse-weighted drill pool from real hifz lapses. UP-10:
+quiz generalization — any loaded library, Arabic/meaning directions,
+configurable size, persisted picker prefs. UP-01: word-study 2.0 —
+54-lemma app-authored dict (`data/quran-dict.json`, every key pinned
+against the corpus) with Meanings + synonym/antonym sections, plus
+per-word listen/copy/share/bookmark (persisted, sanitized; share reuses
+the ayah canvas; TTS honors the sound toggle). UP-07: hadith pipeline
+unlock — validator passes enriched grade/narrator rows (strict
+vocabulary, unknown dropped), `scripts/build-hadith.mjs` merges grades
+
+- Arabic chapters and FAILS loudly on junk (nothing invented, ever);
+  grade-chip UI and per-book toggles wait on real graded data, stated
+  plainly. Markers 5.2.75 → 5.2.76 plus re-stamp.
+
+## v5.2.75 — the P2 wave: races, consent, honesty, polish, pace
+
+Second overhaul wave from the v5.2.72 agent roadmap. BUG-08: single-ayah
+`play()`/`resume()` carry a sequence guard (mirroring the continuous
+engine's `playSeq`) so a superseded tap stays silent; `stop()` retires
+pending rejections. BUG-09: cross-book hadith search ranks loaded books
+until an explicit "index all" tap records consent in the ephemeral
+hadith slice (RESET/restore re-arm the question). BUG-10: polar-fallback
+times never arm lock-screen triggers. PERF-02: the IDB audio cache gains
+a 2 GiB oldest-first budget (recordings exempt), a once-per-session
+`storage.persist()` probe, and a usage line in the Offline meter.
+BUG-11: the error-screen reset wipes state, auto-backup, notif dedup
+and the content IDB — matching its label. UX-04: 12px type floor.
+UX-02/03/05/06/07/08/09: deep-link focus landings, tafsir-tab focus
+retention, animated modal exit, True Black palette, dyslexia×RTL
+composition, tokenized glass bars with transparency/forced-colors
+fallbacks, change-guarded qibla live region. PERF-01: reference-keyed
+per-ayah card memo (an advance rebuilds only touched cards). UP-05:
+review-due digest + 30-cell juz strip in Statistics (reader-only users
+count). UP-03: qibla figure-8 card + live degrees-off readout. UP-04:
+opt-in quiet-hours alert cancel. UP-11: queue rename/reorder + compare
+voice swap. UP-12: garden counts pages, statistics links the
+certificate, journal footers its month. UP-13: per-line zakat explainers
+(`data/zakat-notes.json`, i18n-mirrored and contract-pinned) + qada
+offer when a logged prayer is un-logged. P3: kids Back reroute
+replacement, stale surah-flag clear, reset memo hygiene, BUG-14 verified
+already-fixed, doc re-stamp. New `tests/p2-roadmap-fixes.test.js`.
+Markers 5.2.74 → 5.2.75 plus re-stamp.
+
+## v5.2.74 — the P1 backlog: version gates, Arabic voices, one tab stop, honest skeletons, swipes that turn, buried features surfaced
+
+Second wave from the v5.2.72 agent overhaul roadmap. BUG-07: the
+`navigator` stub in `audioQueue.test.js` uses defineProperty so the gate
+stays green on Node ≥21. BUG-05: `lang="ar"` on every Arabic run (reader
+Arabic, surah names, bismillah, word spans, occurrence chips, kids
+tiles). BUG-06: roving tabindex on `.qword` (~500 stops collapse to one
+per ayah) with a named word-study action label (new `wordStudy.open`
+EN+AR) and Left/Right word walking in `events.js`. BUG-03: persisted
+snapshots are version-stamped and `parseBackup`/`hydrate` refuse
+future-schema payloads instead of mangling them (legacy version-less
+blobs still load). BUG-04: the surah list and Kids home render error +
+Retry when `quran-meta` fails. UX-01: the mushaf swipe guard exempts the
+`.mushaf-ayah`/`.qword` text column (true controls and overlays still
+win). UP-08: tafsir full-text hits gain a Search-view group (auto-built
+index, readiness-gated); compare-second-tafsir gets its own explicit
+download; translation-compare threads into the study modal and mushaf
+tray via one shared resolver with overlay prefetch; the dead-code
+`ramadanKhatmPlan` ships as a Ramadan khatm-pace panel fed by
+`mushafPagesRead`. New `tests/p1-roadmap-fixes.test.js` (24 tests).
+Markers 5.2.73 → 5.2.74 plus re-stamp.
+
+## v5.2.73 — the P0 overhaul backlog: no lost favorites, no bricked resets, settings links that land
+
+First three P0s from the v5.2.72 agent overhaul roadmap. BUG-01:
+`loadLibraries` tracks per-library fetch failures and
+`refreshLibraryIndex` refreshes the index but skips the dangling-ref
+prune while any failure stands (or the library tier errored) — favorites
+and collection refs can no longer be permanently deleted by a 503, and
+the next successful retry re-arms the prune with a complete valid set.
+BUG-02: `resetStaleFetchGuards` (extracted from `stateSub` for tests)
+also resets the hadith index, small roots index and Qur'an-search corpus
+guards — plus the cached hadith book promises and the domain search
+index — so RESET_ALL / RESTORE_STATE no longer bricks `#/hadith`,
+`#/roots` or Qur'an search until reload. UP-02: `#/settings/<slug>`
+arrivals scroll the target section under the sticky topbar and focus its
+summary (Back-restored offsets win; same-view slug changes re-scroll
+only on a new slug). New `tests/p0-roadmap-fixes.test.js` (6 tests).
+Markers 5.2.72 → 5.2.73 plus re-stamp.
+
 ## v5.2.72 — the adhan owns the speaker
 
 Real prayer alerts used to layer over Quran audio: a single-slot

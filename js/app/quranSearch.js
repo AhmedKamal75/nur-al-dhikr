@@ -39,6 +39,16 @@ export async function ensureQuranSearchData() {
     const CHUNK = 24;
     const fetched = {};
     for (let i = 0; i < missing.length; i += CHUNK) {
+      // (v5.2.82, BUG-09) navigation cancels the bulk build: this is a
+      // fire-and-forget background job, and its 24-wide chunks otherwise
+      // keep saturating connections + the main thread after the person
+      // left Search — starving the view they actually opened (observed:
+      // #/roots index timing out behind 200+ in-flight corpus fetches).
+      // The latch resets so returning to Search resumes the build.
+      if (store.getState().activeView !== VIEWS.SEARCH) {
+        rt.quranSearchBuildStarted = false;
+        return;
+      }
       const chunk = missing.slice(i, i + CHUNK);
       const docs = await Promise.all(
         chunk.map(async (n) => {
@@ -50,7 +60,9 @@ export async function ensureQuranSearchData() {
             }
             return doc;
           } catch (err) {
-            console.error('[quran-search] failed to load surah', n, err);
+            // Warn, not error: same tolerant-loop contract as the tafsir
+            // build (skip + continue + retry-next-query).
+            console.warn('[quran-search] failed to load surah', n, err);
             return null;
           }
         })
@@ -100,6 +112,14 @@ export function maybeScrollToFocusAyah(state) {
     if (el) {
       rt.pendingAyahScroll = null;
       el.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
+      // (v5.2.75, UX-02) deep links must announce, not just glow: move
+      // focus to the landed card (non-scrolling — already in view) so
+      // screen readers speak the target. tabindex="-1" rides the template.
+      try {
+        el.focus({ preventScroll: true });
+      } catch {
+        /* focus is best-effort; never let it break rendering */
+      }
     } else if (++rt.ayahScrollAttempts > 20) {
       rt.pendingAyahScroll = null; // give up silently — never wedge the app
     }

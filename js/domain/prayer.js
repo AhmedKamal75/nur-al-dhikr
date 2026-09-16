@@ -50,6 +50,31 @@ export const METHODS = Object.freeze({
 
 export const ASR_FACTORS = Object.freeze({ Standard: 1, Hanafi: 2 });
 
+/** Prayers carrying a manual minute offset (sunrise too — mosques shift it). */
+export const OFFSET_PRAYERS = Object.freeze(['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']);
+
+/**
+ * (v5.2.75, UP-06) apply manual minute offsets ({ name: −60..60 }) onto
+ * computed times. Out-of-range/hostile entries are ignored, never
+ * clamped into surprise — clamping lives in the settings handler and
+ * the restore sanitizer. Returns a new object; unreachable rides along.
+ */
+export function applyPrayerOffsets(times, offsets) {
+  if (!times || typeof times !== 'object') return times;
+  if (!offsets || typeof offsets !== 'object' || Array.isArray(offsets)) return times;
+  let touched = false;
+  const out = { ...times };
+  for (const name of OFFSET_PRAYERS) {
+    const m = Math.floor(Number(offsets[name]));
+    if (!Number.isFinite(m) || m === 0) continue;
+    if (!Number.isFinite(out[name])) continue;
+    if (m < -60 || m > 60) continue;
+    out[name] = out[name] + m / 60;
+    touched = true;
+  }
+  return touched ? out : times;
+}
+
 function sin(d) {
   return Math.sin(d * D2R);
 }
@@ -156,6 +181,7 @@ export function calculateTimes({
   timezoneOffsetHours,
   method = 'MWL',
   asr = 'Standard',
+  offsets = null,
 }) {
   if (latitude == null || longitude == null) return null;
   const jd =
@@ -196,24 +222,31 @@ export function calculateTimes({
   const fajr = fajrR.unreachable ? sunriseR.time - seventh : fajrR.time;
   const isha = ishaR.unreachable ? maghribR.time + seventh : ishaR.time;
 
-  return {
-    fajr,
-    sunrise: sunriseR.time,
-    dhuhr,
-    asr: asrT.time,
-    maghrib: maghribR.time,
-    isha,
-    // (v4.3) honesty surface for polar latitudes: which entries are
-    // fallbacks rather than measured positions. Sunrise/Maghrib/Asr are
-    // clamped transits; Fajr/Isha use the one-seventh-night convention.
-    unreachable: Object.freeze({
-      fajr: fajrR.unreachable,
-      sunrise: sunriseR.unreachable,
-      asr: asrT.unreachable,
-      maghrib: maghribR.unreachable,
-      isha: ishaR.unreachable,
-    }),
-  };
+  // (v5.2.75, UP-06) manual minute offsets land here — the single choke
+  // point, so the timetable, notifications, triggers, fasting and Ramadan
+  // all inherit them together. Applied AFTER the polar fallback so an
+  // offset shifts the displayed fallback, never the raw astronomy.
+  return applyPrayerOffsets(
+    {
+      fajr,
+      sunrise: sunriseR.time,
+      dhuhr,
+      asr: asrT.time,
+      maghrib: maghribR.time,
+      isha,
+      // (v4.3) honesty surface for polar latitudes: which entries are
+      // fallbacks rather than measured positions. Sunrise/Maghrib/Asr are
+      // clamped transits; Fajr/Isha use the one-seventh-night convention.
+      unreachable: Object.freeze({
+        fajr: fajrR.unreachable,
+        sunrise: sunriseR.unreachable,
+        asr: asrT.unreachable,
+        maghrib: maghribR.unreachable,
+        isha: ishaR.unreachable,
+      }),
+    },
+    offsets
+  );
 }
 
 /** Convert decimal hours -> { h, m } for display. Normalizes day-relative

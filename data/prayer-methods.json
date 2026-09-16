@@ -1,0 +1,73 @@
+{
+  "_comment": "v5.2.75 (UP-06) prayer calculation methods: angles mirror domain/prayer.js METHODS, regions/notes mirror the prayer.methodRegion.* / prayer.methodNote.* i18n keys (which is what views render). A contracts test pins JSON <-> domain <-> i18n equality so the three can never drift.",
+  "methods": [
+    {
+      "id": "MWL",
+      "angles": { "fajr": 18, "isha": 17 },
+      "region": { "en": "Worldwide default", "ar": "الافتراضي العالمي" },
+      "note": {
+        "en": "Fajr 18°, Isha 17° — the worldwide default.",
+        "ar": "فجر 18° وعشاء 17° — الافتراضي العالمي."
+      }
+    },
+    {
+      "id": "ISNA",
+      "angles": { "fajr": 15, "isha": 15 },
+      "region": { "en": "North America", "ar": "أمريكا الشمالية" },
+      "note": {
+        "en": "Fifteen-degree twilight, tuned for higher latitudes.",
+        "ar": "شفق الدرجة الخامسة عشرة، مضبوط لخطوط العرض العالية."
+      }
+    },
+    {
+      "id": "Egyptian",
+      "angles": { "fajr": 19.5, "isha": 17.5 },
+      "region": { "en": "Egypt and the Levant", "ar": "مصر والشام" },
+      "note": {
+        "en": "Fajr 19.5° — the earliest Fajr of the standard methods.",
+        "ar": "فجر 19.5° — أبكر فجر بين الطرق القياسية."
+      }
+    },
+    {
+      "id": "Karachi",
+      "angles": { "fajr": 18, "isha": 18 },
+      "region": { "en": "South Asia", "ar": "جنوب آسيا" },
+      "note": {
+        "en": "Matched 18° pair used across South Asia.",
+        "ar": "زوج متماثل 18° مستخدم في جنوب آسيا."
+      }
+    },
+    {
+      "id": "UmmAlQura",
+      "angles": {
+        "fajr": 18.5,
+        "isha": null,
+        "ishaMinutesAfterMaghrib": 120,
+        "ishaMinutesAfterMaghribRamadan": 90
+      },
+      "region": { "en": "Saudi Arabia", "ar": "السعودية" },
+      "note": {
+        "en": "Isha follows Maghrib by minutes (120, or 90 in Ramadan), not degrees.",
+        "ar": "العشاء بعد المغرب بالدقائق (120، أو 90 في رمضان) لا بالدرجات."
+      }
+    },
+    {
+      "id": "Tehran",
+      "angles": { "fajr": 17.7, "isha": 14, "maghribAngle": 4.5 },
+      "region": { "en": "Iran", "ar": "إيران" },
+      "note": {
+        "en": "Maghrib at 4.5° below the horizon, per Iranian convention.",
+        "ar": "المغرب عند 4.5° تحت الأفق حسب العرف الإيراني."
+      }
+    },
+    {
+      "id": "MoonsightingCommittee",
+      "angles": { "fajr": 18, "isha": 18 },
+      "region": { "en": "North America, simplified", "ar": "أمريكا الشمالية، مبسّط" },
+      "note": {
+        "en": "Simplified 18°/18° approximation of the full method.",
+        "ar": "تقريب مبسّط 18°/18° للطريقة الكاملة."
+      }
+    }
+  ]
+}

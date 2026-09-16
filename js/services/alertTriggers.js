@@ -78,6 +78,7 @@ export function buildTriggerPlan({ now, prayerSettings, lang = 'en', calcTimes =
         timezoneOffsetHours: -day.getTimezoneOffset() / 60,
         method: prayerSettings.method,
         asr: prayerSettings.asr,
+        offsets: prayerSettings.offsets,
       });
     } catch {
       times = null;
@@ -85,6 +86,10 @@ export function buildTriggerPlan({ now, prayerSettings, lang = 'en', calcTimes =
     if (!times) continue;
     for (const name of PRAYER_ORDER) {
       if (!alerts[name]) continue;
+      // (v5.2.75, BUG-10) polar-fallback entries are approximations the
+      // Prayer view marks and the in-tab path skips — lock-screen
+      // triggers must not arm them as real alerts either.
+      if (times?.unreachable?.[name]) continue;
       const ts = decimalHoursToDate(day, times[name]).getTime();
       if (ts <= startMs || ts > windowEnd) continue;
       const key = `prayer-${name}|${day.getFullYear()}-${day.getMonth() + 1}-${day.getDate()}`;

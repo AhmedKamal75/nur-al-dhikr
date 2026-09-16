@@ -566,6 +566,31 @@ export function bindGlobalEvents() {
       }
       return;
     }
+    // (v5.2.74, BUG-06) roving tabindex for ayah words: Tab lands on the
+    // first .qword of each ayah only; Left/Right walk the sibling words
+    // of the SAME ayah and move the single tab stop along. Word runs are
+    // always RTL Arabic, so Left advances visually-forward (next word)
+    // regardless of the UI language direction.
+    if (
+      (e.key === 'ArrowRight' || e.key === 'ArrowLeft') &&
+      e.target instanceof Element &&
+      e.target.matches('.qword[data-action="word-tap"]')
+    ) {
+      const scope = e.target.parentElement;
+      const words = scope
+        ? Array.from(scope.querySelectorAll('.qword[data-action="word-tap"]'))
+        : [];
+      const idx = words.indexOf(e.target);
+      if (idx >= 0 && words.length > 1) {
+        e.preventDefault();
+        const step = e.key === 'ArrowLeft' ? 1 : -1;
+        const next = words[(idx + step + words.length) % words.length];
+        e.target.setAttribute('tabindex', '-1');
+        next.setAttribute('tabindex', '0');
+        next.focus();
+      }
+      return;
+    }
     if (e.key === 'Escape') {
       // (v4.5, APP-FLOW I2) Esc unwinds EXACTLY ONE layer, top-first:
       // modal → drawer → mushaf-fullscreen → reader-immersive. The modal

@@ -19,6 +19,9 @@ import {
   monthTotal,
 } from '../domain/statistics.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
+import { dueCounts, dueSurahs, dueAyahs } from '../domain/hifz.js';
+import { planStatus } from '../domain/khatma.js';
+import { juzReadStates } from '../services/mushaf.js';
 
 function findCategoryMeta(state, categoryId) {
   const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
@@ -55,6 +58,88 @@ function monthRef(date) {
 function refDate(ref) {
   const [y, m] = ref.split('-').map(Number);
   return new Date(y, m - 1, 1);
+}
+
+/**
+ * (v5.2.75, UP-05) memorization digest + juz reading strip. The global
+ * "due today" counts (surah tracks + ayah tracks) deep-link into the
+ * reader at the first due surah; the 30-cell strip shows pages read per
+ * juz from the khatma machinery's own mushafPagesRead. Empty states keep
+ * the nudge tone (no dates, no counts, no shaming); the whole panel stays
+ * hidden until there is anything to digest or map.
+ */
+export function memorizationPanel(state, lang) {
+  const today = dateKey(new Date());
+  const due = dueCounts(state.hifzRecords, state.hifzAyahRecords, today);
+  const strips = juzReadStates(state.mushaf?.meta?.juzFirstPage, state.mushafPagesRead);
+  const hasHifz =
+    Object.keys(state.hifzRecords || {}).length > 0 ||
+    Object.keys(state.hifzAyahRecords || {}).length > 0;
+  const hasPages = Object.keys(state.mushafPagesRead || {}).length > 0;
+  if (!hasHifz && !hasPages) return '';
+
+  let dueRow = '';
+  if (hasHifz) {
+    if (due.surahs > 0 || due.ayahs > 0) {
+      const firstSurah =
+        dueSurahs(state.hifzRecords, today)[0]?.surah ??
+        dueAyahs(state.hifzAyahRecords, today)[0]?.surah ??
+        null;
+      const href =
+        firstSurah != null ? buildHash(VIEWS.QURAN, { id: firstSurah }) : buildHash(VIEWS.QURAN);
+      const data = firstSurah != null ? `data-id="${firstSurah}"` : '';
+      dueRow = `
+      <a class="stat-garden-link" href="${href}" data-action="navigate" data-view="${VIEWS.QURAN}" ${data}>
+        ${icon('book', { size: 18 })}
+        <span>${t('stats.reviewDue', lang)}: ${t('stats.reviewDueLine', lang, { s: due.surahs, a: due.ayahs })}</span>
+        ${icon('chevronRight', { size: 16 })}
+      </a>`;
+    } else {
+      dueRow = `<p class="panel__subtext">${t('stats.reviewDueEmpty', lang)}</p>`;
+    }
+  }
+
+  const strip =
+    strips.length > 0
+      ? `
+      <div class="panel__header panel__header--sub"><h3>${t('stats.juzTitle', lang)}</h3></div>
+      <div class="juz-strip" role="img" aria-label="${escapeHTML(t('stats.juzTitle', lang))}">
+        ${strips
+          .map((j) => {
+            const cls = j.done ? 'juz-chip--done' : j.read > 0 ? 'juz-chip--started' : '';
+            return `<span class="juz-chip ${cls}" title="${escapeHTML(t('stats.juzCell', lang, { n: j.juz, r: j.read, t: j.total }))}">${j.juz}</span>`;
+          })
+          .join('')}
+      </div>`
+      : '';
+
+  // (v5.2.80, UP-05) khatma % line: the same pagesRead the strip maps,
+  // reduced through the khatma machinery's own planStatus (no plan needed
+  // for the base read/total/pct). Links back into the Mushaf at the
+  // bookmark so the loop closes: statistics → continue reading.
+  let khatmaRow = '';
+  if (hasPages) {
+    const khatma = planStatus({ pagesRead: state.mushafPagesRead, plan: state.khatmaPlan });
+    // Hostile-input discipline: the bookmark is sanitized upstream, but the
+    // href still interpolates a clamped number only — never raw state.
+    const page = Math.min(604, Math.max(1, Math.floor(Number(state.mushafBookmark?.page)) || 1));
+    const href = buildHash(VIEWS.MUSHAF, { page: String(page) });
+    khatmaRow = `
+      <a class="stat-garden-link" href="${href}" data-action="navigate" data-view="${VIEWS.MUSHAF}" data-page="${escapeHTML(String(page))}">
+        ${icon('book', { size: 18 })}
+        <span>${t('stats.khatmaProgress', lang)}: ${t('stats.khatmaLine', lang, { r: khatma.read, t: khatma.total, p: khatma.pct })}</span>
+        ${icon('chevronRight', { size: 16 })}
+      </a>`;
+  }
+
+  if (!dueRow && !strip && !khatmaRow) return '';
+  return `
+    <section class="panel panel--memorization">
+      <div class="panel__header"><h2>${t(hasHifz ? 'stats.reviewDue' : 'stats.juzTitle', lang)}</h2></div>
+      ${dueRow}
+      ${khatmaRow}
+      ${strip}
+    </section>`;
 }
 
 /**
@@ -152,7 +237,13 @@ export function renderStatistics(state) {
   const maxMonth = Math.max(1, ...monthCells.filter(Boolean).map((c) => c.count));
   const focusTotal = monthTotal(stats, focusDate);
   const topCats = mostReadCategories(stats, 5);
-  const hasAnyData = stats.totalRecitations > 0;
+  // (v5.2.75, UP-05) reader- or memorizer-only users own progress too: the
+  // digest panel has something to say before the first tasbih tap.
+  const hasAnyData =
+    stats.totalRecitations > 0 ||
+    Object.keys(state.hifzRecords || {}).length > 0 ||
+    Object.keys(state.hifzAyahRecords || {}).length > 0 ||
+    Object.keys(state.mushafPagesRead || {}).length > 0;
 
   const weekBars = week
     .map((d, i) => {
@@ -267,6 +358,14 @@ export function renderStatistics(state) {
       <span>${t('garden.invite', lang)}</span>
       ${icon('chevronRight', { size: 16 })}
     </a>
+
+    <a class="stat-garden-link" href="${buildHash(VIEWS.CERTIFICATE)}" data-action="navigate" data-view="${VIEWS.CERTIFICATE}">
+      ${icon('award', { size: 18 })}
+      <span>${t('stats.viewCertificate', lang)}</span>
+      ${icon('chevronRight', { size: 16 })}
+    </a>
+
+    ${memorizationPanel(state, lang)}
 
     <section class="panel">
       <div class="panel__header">

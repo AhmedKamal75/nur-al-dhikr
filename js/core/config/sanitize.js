@@ -121,6 +121,18 @@ export function sanitizeMushafPrefs(raw) {
   };
 }
 
+/** Manual prayer minute offsets: per-prayer ints clamped to ±60, zeros dropped. */
+function sanitizePrayerOffsets(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const k of ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']) {
+    const n = Math.floor(Number(raw[k]));
+    if (!Number.isFinite(n) || n === 0) continue;
+    out[k] = Math.max(-60, Math.min(60, n));
+  }
+  return out;
+}
+
 function sanitizePrayer(raw) {
   const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
   const d = DEFAULT_SETTINGS.prayer;
@@ -137,6 +149,12 @@ function sanitizePrayer(raw) {
     longitude: p.longitude == null ? null : asCoords(p.longitude, null),
     timezone: asShortStr(p.timezone, d.timezone, 64),
     locationName: asShortStr(p.locationName, d.locationName, 80),
+    // (v5.2.77, UP-03) GPS fix accuracy in meters (null = manual/unknown).
+    // Finite, clamped 0–100000; junk degrades to null, never a crash.
+    locationAccuracy:
+      p.locationAccuracy == null || !Number.isFinite(Number(p.locationAccuracy))
+        ? null
+        : Math.max(0, Math.min(100000, Math.round(Number(p.locationAccuracy)))),
     travelerMode: p.travelerMode === true,
     alerts: {
       fajr: asBool(alerts.fajr, false),
@@ -154,6 +172,13 @@ function sanitizePrayer(raw) {
     quietStart: CLOCK_SETTING_RE.test(p.quietStart) ? p.quietStart : '22:00',
     quietEnd: CLOCK_SETTING_RE.test(p.quietEnd) ? p.quietEnd : '06:00',
     quietVolume: Math.round(asNumber(p.quietVolume, d.quietVolume ?? 30, 0, 100)),
+    // (v5.2.75, UP-04) quiet hours cancel (not just soften) alerts. Off by
+    // default — current behavior preserved unless explicitly opted in.
+    quietCancels: p.quietCancels === true,
+    // (v5.2.75, UP-06) manual minute offsets per prayer (−60..60, zeros
+    // dropped). Sanitized alongside method/asr; applied inside
+    // calculateTimes so every consumer inherits them together.
+    offsets: sanitizePrayerOffsets(p.offsets),
     ramadanAlerts: {
       suhoor: asBool(ra.suhoor, false),
       iftar: asBool(ra.iftar, false),
@@ -238,12 +263,20 @@ export function sanitizeSettings(raw) {
     // (v4.4) Compare view — null (off) or an allowlisted edition id.
     quranTranslationB:
       s.quranTranslationB == null ? null : asTranslationEdition(s.quranTranslationB, null),
+    // (v5.2.78, UP-06) third compare edition — same allowlist, null = off.
+    quranTranslationC:
+      s.quranTranslationC == null ? null : asTranslationEdition(s.quranTranslationC, null),
     // Second tafsir source id (null/'' = off); render-time checks the id
     // against the loaded catalog, so any string here is display-safe.
     tafsirCompareB:
       s.tafsirCompareB == null || s.tafsirCompareB === ''
         ? null
         : asShortStr(s.tafsirCompareB, null, 40),
+    // (v5.2.78, UP-06) third tafsir source — same 40-char guard.
+    tafsirCompareC:
+      s.tafsirCompareC == null || s.tafsirCompareC === ''
+        ? null
+        : asShortStr(s.tafsirCompareC, null, 40),
     tasbihMilestone: TASBIH_MILESTONES.has(Number(s.tasbihMilestone))
       ? Number(s.tasbihMilestone)
       : d.tasbihMilestone,

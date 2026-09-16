@@ -326,6 +326,26 @@ export const clickHandlers = {
     showToast(t('playlist.deleted', store.getState().settings.language));
   },
 
+  // (v5.2.75, UP-11) rename wires the long-present PLAYLIST_RENAME path
+  // (same prompt pattern as playlist-create, prefilled).
+  'playlist-rename': (ds) => {
+    if (!ds.id) return;
+    const st = store.getState();
+    const pl = (st.playlists || []).find((p) => p.id === ds.id);
+    if (!pl) return;
+    openModal(
+      buildTextPrompt({
+        title: t('playlist.renameTitle', st.settings.language),
+        placeholder: t('playlist.namePh', st.settings.language),
+        value: pl.name || '',
+        confirmAction: 'submit-rename-playlist',
+        confirmData: { id: ds.id },
+        lang: st.settings.language,
+      }),
+      { labelledBy: 'modal-title-prompt' }
+    );
+  },
+
   // Play a queue in order through the verse engine (first resolvable item
   // starts; the rest follow via the engine's queue advance). Empty or
   // fully-unresolvable queues say so instead of failing silently.
@@ -397,6 +417,12 @@ export const clickHandlers = {
   'playlist-remove-item': (ds) => {
     if (!ds.id || ds.index == null) return;
     store.dispatch(actions.removePlaylistItem(ds.id, parseInt(ds.index, 10)));
+  },
+
+  // (v5.2.75, UP-11) reorder one range up/down inside its queue.
+  'playlist-move-item': (ds) => {
+    if (!ds.id || ds.index == null) return;
+    store.dispatch(actions.movePlaylistItem(ds.id, parseInt(ds.index, 10), Number(ds.dir)));
   },
 
   // Save the range picker's current from/to into an existing queue.

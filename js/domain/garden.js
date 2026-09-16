@@ -38,7 +38,22 @@ export const GARDEN_STAGES = Object.freeze([
  *  - planted: the lifetime count, passed through for display
  */
 export function gardenState(totalRecitations = 0) {
-  const planted = Number.isFinite(totalRecitations) ? Math.max(0, totalRecitations) : 0;
+  // (v5.2.75, UP-12) reader-only users grow the garden too: pages read
+  // count alongside dhikr. Accepts the legacy bare number or
+  // { dhikr, pages } — hostile shapes (incl. {}) still degrade to seed.
+  let reads = 0;
+  let planted;
+  if (
+    totalRecitations &&
+    typeof totalRecitations === 'object' &&
+    !Array.isArray(totalRecitations)
+  ) {
+    const dhikr = Number(totalRecitations.dhikr);
+    reads = Math.max(0, Math.floor(Number(totalRecitations.pages)) || 0);
+    planted = (Number.isFinite(dhikr) ? Math.max(0, dhikr) : 0) + reads;
+  } else {
+    planted = Number.isFinite(totalRecitations) ? Math.max(0, totalRecitations) : 0;
+  }
   let stageIndex = 0;
   for (let i = 0; i < GARDEN_STAGES.length; i += 1) {
     if (planted >= GARDEN_STAGES[i].at) stageIndex = i;
@@ -54,6 +69,7 @@ export function gardenState(totalRecitations = 0) {
     toNext: next ? Math.max(0, next.at - planted) : null,
     progress,
     planted,
+    reads,
   };
 }
 

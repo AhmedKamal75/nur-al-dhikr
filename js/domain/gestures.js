@@ -57,11 +57,35 @@ export const SWIPE_GUARD_SELECTOR = [
   '.nav-drawer',
 ].join(', ');
 
+/**
+ * (v5.2.74, UX-01) the text column a full-page swipe naturally starts on.
+ * Every .mushaf-ayah/.qword span carries a data-action for CLICK
+ * delegation — the bare [data-action] guard above aborted swipe tracking
+ * for touches originating on the text itself, so turns only registered
+ * from margins and medallions. A drag never fires a click, so these
+ * surfaces are exempt from the data-action rule (true controls keep
+ * theirs — checked first in isSwipeGuardTarget).
+ */
+export const SWIPE_TEXT_SURFACE_SELECTOR = '.mushaf-ayah, .qword';
+
 /** True when a touch originates on a guarded control surface (see above). */
 export function isSwipeGuardTarget(el) {
   if (!el || typeof el.closest !== 'function') return false;
   try {
-    return el.closest(SWIPE_GUARD_SELECTOR) != null;
+    // True controls and overlays always win — even over the text-surface
+    // exemption below (a word-tap span inside a modal/sheet must never
+    // turn the page behind it).
+    if (
+      el.closest(
+        'button, a, input, select, textarea, [contenteditable="true"], ' +
+          '.player-bar, .mushaf-fs-console, .mushaf-fs-controls, .mushaf-nav, ' +
+          '.topbar, .modal, .sheet, .nav-drawer'
+      ) != null
+    ) {
+      return true;
+    }
+    if (el.closest(SWIPE_TEXT_SURFACE_SELECTOR) != null) return false;
+    return el.closest('[data-action]') != null;
   } catch {
     return false;
   }

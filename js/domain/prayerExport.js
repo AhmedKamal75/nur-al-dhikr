@@ -105,6 +105,7 @@ export function buildMonthTimetable({
   longitude,
   method = 'MWL',
   asr = 'Standard',
+  offsets = null,
 }) {
   const y = Math.floor(Number(year));
   const m = Math.floor(Number(month));
@@ -125,6 +126,7 @@ export function buildMonthTimetable({
         timezoneOffsetHours: -date.getTimezoneOffset() / 60,
         method,
         asr,
+        offsets,
       });
     } catch {
       times = null;

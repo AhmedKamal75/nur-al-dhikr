@@ -120,7 +120,17 @@ export function go(view, params = {}) {
   const next = buildHash(view, params);
   // Same-hash taps push no entry and fire no hashchange — arming the flag
   // anyway used to eat the NEXT real browser Back (misclassified pop).
-  if (window.location.hash === next) return;
+  // (v5.2.77, BUG-07) instead of silent no-op, scroll #main to top so a
+  // repeated nav tap gives visible feedback (never touches history).
+  if (window.location.hash === next) {
+    const main = document.getElementById('main');
+    try {
+      if (main) main.scrollTo({ top: 0, behavior: 'auto' });
+    } catch {
+      /* best-effort; never break navigation */
+    }
+    return;
+  }
   pushExpected = true; // see the popstate note above
   window.location.hash = next;
 }

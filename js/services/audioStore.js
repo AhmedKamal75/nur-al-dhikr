@@ -17,6 +17,45 @@ const AUDIO_DB = 'nurAlDhikrAudio';
 const STORE = 'files'; // key -> { key, moshafId, surah, bytes, ts, blob }
 let dbPromise = null;
 
+/**
+ * (v5.2.75, PERF-02) total-bytes budget for the audio cache. Full-Qur'an
+ * packs are GB-scale and the store used to grow unboundedly — under
+ * pressure the browser evicts best-effort origin data, which can include
+ * the localStorage app state, with no warning. Oldest-ts records evict
+ * first once the cap is crossed (user recordings never evict).
+ */
+export const AUDIO_CACHE_DEFAULT_MAX_BYTES = 2 * 1024 * 1024 * 1024; // 2 GiB
+let audioCacheMaxBytes = AUDIO_CACHE_DEFAULT_MAX_BYTES;
+
+/** Test seam: override the cap (pass the default constant to restore). */
+export function setAudioCacheCapForTests(bytes) {
+  const n = Math.floor(Number(bytes));
+  audioCacheMaxBytes = Number.isFinite(n) && n >= 0 ? n : AUDIO_CACHE_DEFAULT_MAX_BYTES;
+}
+
+/**
+ * Pure: oldest-ts keys to drop so `records` fit `maxBytes`. User adhan
+ * recordings are never evicted; malformed rows are ignored, never dropped.
+ */
+export function planCacheEviction(records, maxBytes) {
+  const rows = (Array.isArray(records) ? records : []).filter(
+    (r) => r && typeof r.key === 'string' && Number.isFinite(r.bytes) && r.bytes >= 0
+  );
+  let total = rows.reduce((a, r) => a + r.bytes, 0);
+  const cap = Math.floor(Number(maxBytes));
+  if (!Number.isFinite(cap) || total <= cap) return [];
+  const evictable = rows
+    .filter((r) => !String(r.moshafId || '').startsWith(ADHAN_MOSHAF_ID))
+    .sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  const out = [];
+  for (const r of evictable) {
+    if (total <= cap) break;
+    out.push(r.key);
+    total -= r.bytes;
+  }
+  return out;
+}
+
 /** Reset the memoized connection (tests only — new globals need a fresh open). */
 export function _resetAudioStoreForTests() {
   dbPromise = null;
@@ -82,6 +121,11 @@ export async function saveAudio(moshafId, surahNumber, blob) {
       blob,
     });
     await txDone(tx);
+    // (v5.2.75, PERF-02) protect the origin + bound worst-case growth:
+    // persist probe once, then oldest-ts eviction — neither ever fails
+    // the save itself.
+    ensurePersistentStorage();
+    enforceAudioCacheCap();
     return { ok: true, bytes: blob.size };
   } catch (err) {
     console.error('[audioStore] save failed', err);
@@ -195,6 +239,115 @@ export async function storageEstimate() {
   return null;
 }
 
+/**
+ * (v5.2.75, PERF-02) ask the browser to treat origin storage as
+ * persistent (no-op where unsupported). Called once per session after
+ * the first successful audio download — best-effort, never throws.
+ */
+let persistRequested = false;
+export function ensurePersistentStorage() {
+  if (persistRequested) return Promise.resolve(false);
+  persistRequested = true;
+  try {
+    const p = navigator?.storage?.persist?.();
+    if (p && typeof p.then === 'function')
+      return p.then(
+        () => true,
+        () => false
+      );
+  } catch {
+    /* unsupported */
+  }
+  return Promise.resolve(false);
+}
+
+/** Test seam: allow the persist probe to run again. */
+export function resetPersistForTests() {
+  persistRequested = false;
+}
+
+/** Lightweight rows for the whole cache ({key, moshafId, bytes, ts}). */
+async function listAudioRecords() {
+  const db = await openDB();
+  if (!db) return [];
+  return new Promise((resolve) => {
+    try {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = () =>
+        resolve(
+          (req.result || []).map((r) => ({
+            key: r?.key,
+            moshafId: r?.moshafId,
+            bytes: r?.bytes,
+            ts: r?.ts,
+          }))
+        );
+      req.onerror = () => resolve([]);
+    } catch {
+      resolve([]);
+    }
+  });
+}
+
+/** Delete one record by full key (covers verse + adhan slots too). */
+async function deleteAudioByKey(key) {
+  const db = await openDB();
+  if (!db) return false;
+  try {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).delete(String(key));
+    await txDone(tx);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Enforce the total-bytes budget (oldest-ts first). Fire-and-forget from
+ * the save paths — eviction must never fail a download. Deps injectable
+ * for tests (defaults read the live IDB). Returns the dropped keys.
+ */
+export async function enforceAudioCacheCap({
+  list = listAudioRecords,
+  remove = deleteAudioByKey,
+  cap = audioCacheMaxBytes,
+} = {}) {
+  try {
+    const drop = planCacheEviction(await list(), cap);
+    for (const key of drop) {
+      try {
+        await remove(key);
+      } catch {
+        /* keep evicting the rest */
+      }
+    }
+    return drop;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Cache usage for the Offline view quota meter ({bytes, cap, count} or
+ * null when IDB is unavailable). Read on view open, not per render.
+ */
+export async function audioCacheUsage() {
+  try {
+    const db = await openDB();
+    if (!db) return null;
+    const rows = await listAudioRecords();
+    return {
+      bytes: rows.reduce((a, r) => a + (Number.isFinite(r.bytes) ? r.bytes : 0), 0),
+      cap: audioCacheMaxBytes,
+      count: rows.length,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /* ------------------------------------------------------------------ *
  * v5.2.61 — Per-ayah verse audio.
  * Same IndexedDB store, `v:`-prefixed keys (`v:<reciterId>:<globalAyah>`)
@@ -225,6 +378,9 @@ export async function saveVerseAudio(reciterId, globalAyah, blob) {
       blob,
     });
     await txDone(tx);
+    // (v5.2.75, PERF-02) same origin-protection + budget as full-surah saves.
+    ensurePersistentStorage();
+    enforceAudioCacheCap();
     return { ok: true, bytes: blob.size };
   } catch (err) {
     console.error('[audioStore] verse save failed', err);

@@ -37,9 +37,15 @@
   --color-text-secondary: #57554b;
   --color-text-muted: #716d5c;
   --color-overlay: rgba(20, 20, 16, 0.48);
+  /* (v5.2.75, UX-08) fullscreen glass-bar chrome floats over the BOOK,
+     not the room, so it owns three fixed tokens instead of following
+     the palette system. */
+  --fs-bar-bg: #10201a;
+  --fs-bar-ink: #e8e3d3;
+  --fs-bar-gold: #d4bd77;
 
   /* ---- 2. Brand + semantic ------------------------------------------- */
-  /* theme.js injects the two -raw values per palette (10 bundled palettes). */
+  /* theme.js injects the two -raw values per palette (11 bundled palettes). */
   --color-primary-raw: #0f766e;
   --color-accent-raw: #10b981;
   --color-primary: var(--color-primary-raw);
@@ -209,9 +215,13 @@
   --font-scale: 1;
   --arabic-font-scale: 1;
 
-  /* Modular scale, ~1.25 (major third) — caption→2xl. */
-  --fs-caption: calc(0.75rem * var(--font-scale));
-  --fs-sm: calc(0.875rem * var(--font-scale));
+  /* Modular scale, ~1.25 (major third) — caption→2xl.
+   * (v5.2.75, UX-04) caption/sm never shrink past a 12px floor: the
+   * font-scale slider bottoms at 0.85 (10.2px/11.9px), harming exactly
+   * the low-vision users nudging scale down. WCAG 1.4.4 still lets users
+   * shrink everything else. */
+  --fs-caption: max(12px, calc(0.75rem * var(--font-scale)));
+  --fs-sm: max(12px, calc(0.875rem * var(--font-scale)));
   --fs-base: calc(1rem * var(--font-scale));
   --fs-md: calc(1.125rem * var(--font-scale));
   --fs-lg: calc(1.375rem * var(--font-scale));
@@ -366,6 +376,20 @@
 [data-high-contrast='true'][data-theme='dark'] {
   --color-bg: #000000;
   --color-surface: #0a0c0b;
+}
+
+/* (v5.2.75, UX-06) True Black room: pure-black OLED surfaces for the
+ * amoled palette (which applyTheme gates to dark mode). Placed after the
+ * dark + high-contrast blocks: equal specificity to [data-theme='dark'],
+ * so source order wins, while the (0,2,0) high-contrast+dark combo still
+ * wins when both are on. */
+[data-palette='amoled'] {
+  --color-bg: #000000;
+  --color-surface: #0a0a0a;
+  --color-surface-alt: #111111;
+  --color-surface-raised: #141414;
+  --color-border: #232323;
+  --color-border-strong: #333333;
 }
 
 /* ==========================================================================

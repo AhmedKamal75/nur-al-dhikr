@@ -48,6 +48,12 @@ export function renderOffline(state) {
     quota && quota.quota > 0
       ? `<p class="panel__subtext" dir="ltr">${escapeHTML(t('offline.storage', lang))}: ${escapeHTML(formatBytes(quota.usage))} / ${escapeHTML(formatBytes(quota.quota))}</p>`
       : `<p class="panel__subtext">${escapeHTML(t('offline.storageUnknown', lang))}</p>`;
+  // (v5.2.75, PERF-02) audio-cache budget beside the device meter.
+  const ac = jobs.audioCache;
+  const audioMeter =
+    ac && Number.isFinite(ac.bytes) && Number.isFinite(ac.cap) && ac.cap > 0
+      ? `<p class="panel__subtext" dir="ltr">${escapeHTML(t('offline.audioCache', lang))}: ${escapeHTML(formatBytes(ac.bytes))} / ${escapeHTML(formatBytes(ac.cap))}</p>`
+      : '';
 
   const rows = OFFLINE_GROUPS.map((g) => {
     const mb = compressed ? g.gzMB : g.sizeMB;
@@ -75,6 +81,7 @@ export function renderOffline(state) {
 
     <section class="panel">
       ${meter}
+      ${audioMeter}
       ${
         running
           ? `

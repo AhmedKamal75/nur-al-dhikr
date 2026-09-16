@@ -110,6 +110,11 @@ export const quranAudioSurahUrl = (reciterId, surahNumber, bitrate = 128) =>
 export const QURAN_WORDS_URL = (n) => `data/quran-words/${encodeURIComponent(n)}.json`;
 /** Root -> occurrences index (for "where else does this root appear" lookups). */
 export const QURAN_ROOTS_URL = 'data/quran-roots.json';
+/** (v5.2.75, UP-01) lemma study notes for the word popup (app-authored).
+ *  Not precached — fetched once on first word-study open and kept offline
+ *  by the SW's stale-while-revalidate /data strategy, like every corpus
+ *  tier above. */
+export const QURAN_DICT_URL = 'data/quran-dict.json';
 /** Root-family browser index (v3.22.0): UNCAPPED occurrence lists (~2.3 MB).
  *  Not precached — fetched once when the browser view is first opened and
  *  kept offline by the SW's stale-while-revalidate /data strategy. */

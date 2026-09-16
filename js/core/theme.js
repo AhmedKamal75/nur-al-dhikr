@@ -23,8 +23,12 @@ function resolveMode(mode) {
 export function applyTheme(settings) {
   const root = document.documentElement;
   const resolvedMode = resolveMode(settings.themeMode);
+  // (v5.2.75, UX-06) the True Black palette owns its surfaces: selecting
+  // it forces dark mode (a pure-black room under light chrome would be
+  // absurd, and the palette would stay undiscoverable otherwise).
+  const effectiveMode = settings.palette === 'amoled' ? 'dark' : resolvedMode;
 
-  root.setAttribute('data-theme', resolvedMode);
+  root.setAttribute('data-theme', effectiveMode);
   root.setAttribute('data-palette', settings.palette);
   root.setAttribute('data-shape', settings.shape);
   root.setAttribute('data-reduce-motion', String(!!settings.reduceMotion));

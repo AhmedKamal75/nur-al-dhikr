@@ -67,13 +67,67 @@ export function renderErrorScreen(err) {
   document
     .getElementById('error-reload-btn')
     ?.addEventListener('click', () => window.location.reload());
-  document.getElementById('error-reset-btn')?.addEventListener('click', () => {
-    try {
-      localStorage.removeItem(STATE_KEY);
-    } catch {
-      /* ignore */
-    }
+  document.getElementById('error-reset-btn')?.addEventListener('click', async () => {
+    await wipeAppDataForReset();
     window.location.hash = '';
     window.location.reload();
   });
+}
+
+/**
+ * (v5.2.75, BUG-11) the error screen's last-resort reset matches its
+ * label: app state, the rolling auto-backup, the notification day-dedup
+ * keys, and the IDB custom-content database — not just the state key.
+ * Best-effort everywhere (this runs when the rest of the app may be
+ * broken); the reload afterwards is the guarantee. Keys are mirrored as
+ * literals — see core/storage.js, services/backup.js, services/
+ * notifications.js — so this path never depends on the modules that may
+ * be throwing. Exported for tests; resolves { localRemoved, idbDeleted }.
+ */
+export async function wipeAppDataForReset() {
+  const localRemoved = [];
+  for (const key of [
+    STATE_KEY, // core/storage.js STORAGE_KEY
+    'nur-al-dhikr-auto-backup', // services/backup.js AUTO_BACKUP_KEY
+    'nurAlDhikr:v2:notifDayFired', // services/notifications.js day-dedup
+  ]) {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem(key);
+        localRemoved.push(key);
+      }
+    } catch {
+      /* storage already broken — the reload still lands clean */
+    }
+  }
+  const idbDeleted = [];
+  try {
+    if (typeof indexedDB !== 'undefined' && typeof indexedDB.deleteDatabase === 'function') {
+      await new Promise((resolve) => {
+        let done = false;
+        let timer = null;
+        const finish = () => {
+          if (!done) {
+            done = true;
+            if (timer) clearTimeout(timer);
+            resolve();
+          }
+        };
+        try {
+          // core/config.js DB_NAME (customLibraries + attachments).
+          const req = indexedDB.deleteDatabase('nurAlDhikrDB');
+          req.onsuccess = finish;
+          req.onerror = finish;
+          req.onblocked = finish;
+          timer = setTimeout(finish, 1500); // never wedge the last resort on a lock
+        } catch {
+          finish();
+        }
+      });
+      idbDeleted.push('nurAlDhikrDB');
+    }
+  } catch {
+    /* IDB already broken — nothing to wipe */
+  }
+  return { localRemoved, idbDeleted };
 }

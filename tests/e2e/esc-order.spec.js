@@ -9,6 +9,11 @@
  */
 import { test, expect } from '@playwright/test';
 
+// Cold SW precache (246 files) on a loaded box starves actionability
+// checks (visible+enabled+stable) the same way it starves first data
+// fetches (see typing.spec.js): strict assertions, generous budget.
+test.describe.configure({ timeout: 120000 });
+
 test.use({ viewport: { width: 390, height: 844 } });
 
 test('esc: modal closes, immersive reading survives, next esc leaves it', async ({ page }) => {

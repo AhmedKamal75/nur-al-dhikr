@@ -130,6 +130,60 @@ export function resetMutashabihatCache() {
   cacheKey = '';
 }
 
+/**
+ * (v5.2.75, UP-09) pairs touching any "s:a" key in `ayahKeys` (a Set or
+ * array) — the roots browser derives the set from a root's occurrences,
+ * so the two vocabulary tools finally share one computed source.
+ */
+export function confusablePairsFor(pairs, ayahKeys) {
+  if (!Array.isArray(pairs) || !ayahKeys) return [];
+  const keys = ayahKeys instanceof Set ? ayahKeys : new Set(ayahKeys);
+  if (!keys.size) return [];
+  return pairs.filter(
+    (p) => p && (keys.has(`${p.a?.s}:${p.a?.a}`) || keys.has(`${p.b?.s}:${p.b?.a}`))
+  );
+}
+
+/**
+ * (v5.2.75, UP-09) the pair containing one ayah ("s", "a") — the word
+ * popup's "look-alike ayah?" chip. Null when the ayah is in no pair.
+ */
+export function pairForAyah(pairs, s, a) {
+  if (!Array.isArray(pairs)) return null;
+  const key = `${Number(s)}:${Number(a)}`;
+  return (
+    pairs.find((p) => p && (`${p.a?.s}:${p.a?.a}` === key || `${p.b?.s}:${p.b?.a}` === key)) || null
+  );
+}
+
+/**
+ * (v5.2.75, UP-09) ayah keys ("s:a") with at least one recorded lapse —
+ * the lapse-weighted drill pool derives from actual hifz struggles.
+ */
+export function lapsedAyahKeys(hifzAyahRecords) {
+  const out = new Set();
+  const recs = hifzAyahRecords && typeof hifzAyahRecords === 'object' ? hifzAyahRecords : {};
+  for (const [k, r] of Object.entries(recs)) {
+    if (
+      /^\d{1,3}:\d{1,3}$/.test(k) &&
+      r &&
+      typeof r === 'object' &&
+      Math.floor(Number(r.lapses)) > 0
+    ) {
+      out.add(k);
+    }
+  }
+  return out;
+}
+
+/**
+ * (v5.2.75, UP-09) pairs touching a lapsed ayah. Empty when there is
+ * nothing to weight (the drill falls back to the full pool honestly).
+ */
+export function filterLapsedPairs(pairs, lapseKeys) {
+  return confusablePairsFor(pairs, lapseKeys);
+}
+
 /** Small deterministic PRNG so a day's deck is stable. */
 function seededShuffle(arr, seed) {
   const out = [...arr];
@@ -149,10 +203,21 @@ function seededShuffle(arr, seed) {
  * Build one drill round: the shown ayah, and 3 surah options (its own +
  * the sibling's + one distractor from elsewhere in the deck pool).
  * `seed` changes daily (dateKey sum, same convention as pickDailyItem).
+ * (v5.2.75, UP-09) `pool: 'lapsed'` drills only pairs touching a lapsed
+ * ayah (weighted by actual hifz struggles); falls back to the full pool
+ * when fewer than 3 lapsed pairs exist, so the round never breaks.
  */
-export function buildDrillRound(pairs, { seed = 1, surahNames = {} } = {}) {
+export function buildDrillRound(
+  pairs,
+  { seed = 1, surahNames = {}, pool = 'all', lapseKeys = null } = {}
+) {
   if (!Array.isArray(pairs) || pairs.length < 3) return null;
-  const deck = seededShuffle(pairs, seed);
+  let poolPairs = pairs;
+  if (pool === 'lapsed') {
+    const lapsed = filterLapsedPairs(pairs, lapseKeys);
+    if (lapsed.length >= 3) poolPairs = lapsed;
+  }
+  const deck = seededShuffle(poolPairs, seed);
   const pair = deck[0];
   // Distractor: a surah from a DIFFERENT pair, never equal to either option.
   let distractS = deck[deck.length - 1].b.s;

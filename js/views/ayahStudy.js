@@ -6,6 +6,8 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
+import { TRANSLATION_EDITIONS } from '../core/config.js';
+import { resolveCompareTexts } from '../domain/translationCompare.js';
 import { ayahAudioUrl } from '../services/mushaf.js';
 import { buildAyahStudyExtras } from './tafsirPanel.js';
 
@@ -85,6 +87,20 @@ export function buildMushafAyahDetail(
   );
   const key = `${surahNumber}:${ayahNumber}`;
   const isMarked = state.ayahBookmarks.some((b) => b.key === key);
+  // (v5.2.74, UP-08) the compare second edition rides the modal too —
+  // same resolver as the classic reader, rendered only with the primary
+  // translation and only once its overlay has landed.
+  // (v5.2.78, UP-06) up to two compare lines (B then C).
+  const cmps =
+    state.settings.showTranslation === true
+      ? resolveCompareTexts(state, TRANSLATION_EDITIONS, surahNumber, ayahNumber)
+      : [];
+  const cmpHTML = cmps
+    .map(
+      (cmp) =>
+        `<p class="mushaf-ayah-detail__translation mushaf-ayah-detail__translation--compare" dir="${cmp.edition.dir === 'rtl' ? 'rtl' : 'auto'}" lang="${cmp.lang}"><span class="ayah-card__compare-label">${escapeHTML(cmp.edition.native)}</span> ${escapeHTML(cmp.text)}</p>`
+    )
+    .join('');
 
   return `
   <div class="mushaf-ayah-detail">
@@ -92,6 +108,7 @@ export function buildMushafAyahDetail(
     <p class="mushaf-ayah-detail__ref" dir="ltr">${surahNumber}:${ayahNumber}${surahDoc ? ` \u2014 ${escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang))}` : ''}</p>
     <p class="mushaf-ayah-detail__arabic" dir="rtl" lang="ar">${escapeHTML(arabicText)}</p>
     ${state.settings.showTranslation === true && ayah?.translation ? `<p class="mushaf-ayah-detail__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
+    ${cmpHTML}
     <div class="mushaf-ayah-detail__actions">
       ${
         currentPage != null

@@ -163,6 +163,7 @@ export const clickHandlers = {
       timezoneOffsetHours: -now.getTimezoneOffset() / 60,
       method: p.method,
       asr: p.asr,
+      offsets: p.offsets,
     });
     const names = {};
     for (const n of PRAYER_EXPORT_ORDER) names[n] = t(`prayer.${n}`, lang);
@@ -217,6 +218,7 @@ export const clickHandlers = {
       longitude: p.longitude,
       method: p.method,
       asr: p.asr,
+      offsets: p.offsets,
     });
     const names = {};
     for (const n of PRAYER_EXPORT_ORDER) names[n] = t(`prayer.${n}`, lang);

@@ -12,6 +12,12 @@
 
 let audioEl = null;
 let currentKey = null; // e.g. "2:255" — lets a card ask "is *this* ayah playing?"
+// (v5.2.75, BUG-08) supersede guard: tapping play on ayah B while ayah
+// A's play() is still pending aborts A's load, whose .catch must NOT emit
+// A's error toast nor clear B's key. Every play/resume/stop mints a
+// sequence number; a rejection only lands when it is still the latest
+// (mirrors the continuous engine's playSeq).
+let playSeq = 0;
 // (B3) listener SETS, not single slots: two owners (the toast wiring and
 // the continuous engine) used to share one slot, so starting a verse
 // session silently clobbered single-ayah failure toasts forever after.
@@ -103,15 +109,18 @@ function emitError(key) {
 /** Start playing `url`, tagged with `key` for isPlaying()/UI reflection. */
 export function play(url, key) {
   const el = getAudioEl();
+  const seq = ++playSeq;
   el.src = url;
   setKey(key);
   el.play().catch(() => {
+    if (seq !== playSeq) return; // superseded — the newer play owns the element
     emitError(key);
     setKey(null);
   }); // e.g. autoplay policy or network failure
 }
 
 export function stop() {
+  ++playSeq; // pending play()/resume() rejections die silently below
   if (audioEl) {
     // (v5.2.61) revoke spent Blob URLs (offline verse files) so repeated
     // plays never accumulate object URLs; CDN urls are unaffected.
@@ -136,7 +145,9 @@ export function pause() {
 export function resume() {
   if (!audioEl || !audioEl.paused || !audioEl.currentSrc) return;
   const key = currentKey;
+  const seq = ++playSeq;
   audioEl.play().catch(() => {
+    if (seq !== playSeq) return; // superseded — the newer play owns the element
     emitError(key);
     setKey(null);
   });
@@ -262,4 +273,5 @@ export function resetRecitationForTests() {
   errorListeners.clear();
   endedListeners.clear();
   driver = null;
+  playSeq = 0;
 }

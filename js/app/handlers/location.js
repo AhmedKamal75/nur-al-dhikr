@@ -27,6 +27,12 @@ export const clickHandlers = {
             longitude: pos.coords.longitude,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             locationName: '',
+            // (v5.2.77, UP-03) keep the fix accuracy so Qibla can show an
+            // honest ±m badge; sanitizer clamps junk to null.
+            locationAccuracy:
+              Number.isFinite(pos.coords.accuracy) && pos.coords.accuracy >= 0
+                ? Math.round(pos.coords.accuracy)
+                : null,
           })
         );
       },

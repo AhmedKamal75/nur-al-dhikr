@@ -497,6 +497,11 @@ export function handlePromptForm(form) {
     store.dispatch(actions.createPlaylist(id, value));
     closeModal();
     showToast(t('playlist.created', store.getState().settings.language));
+  } else if (action === 'submit-rename-playlist') {
+    // (v5.2.75, UP-11) rename wires the long-present PLAYLIST_RENAME path.
+    if (!form.dataset.id) return;
+    store.dispatch(actions.renamePlaylist(form.dataset.id, value));
+    closeModal();
   } else if (action === 'submit-new-profile') {
     const id = uid('prof');
     store.dispatch(actions.createProfile(id, value));

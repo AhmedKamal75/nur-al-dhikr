@@ -15,7 +15,8 @@ import { toHijri } from '../../domain/calendar.js';
 import { markCelebration } from '../../domain/celebrate.js';
 import { nextRemindTime } from '../../domain/fasting.js';
 import { ramadanKhatmaPreset } from '../../domain/khatma.js';
-import { dayComplete } from '../../domain/prayerLog.js';
+import { OFFSET_PRAYERS } from '../../domain/prayer.js';
+import { dayComplete, prayerState } from '../../domain/prayerLog.js';
 import { CONFIRM_STEPS } from '../../domain/onboarding.js';
 import { yieldFullSurahPlayer } from '../audioEngine.js';
 import {
@@ -159,8 +160,10 @@ export const clickHandlers = {
     const state = store.getState();
     const todayKey = dateKey(new Date());
     const wasComplete = dayComplete(state.dailyChecklist[todayKey]);
+    const wasLogged = prayerState(state.dailyChecklist[todayKey], ds.prayer) != null;
     store.dispatch(actions.cyclePrayerLog(ds.prayer));
-    const nowComplete = dayComplete(store.getState().dailyChecklist[todayKey]);
+    const after = store.getState().dailyChecklist[todayKey];
+    const nowComplete = dayComplete(after);
     // v3.14 Phase C: haptic parity with the checklist toggle — a log tap
     // should be felt, not just seen. Kept AFTER the dispatch so the
     // vibration never lands on a rejected action.
@@ -170,6 +173,20 @@ export const clickHandlers = {
     if (nowComplete && !wasComplete) {
       markCelebration('plog-day');
       showToast(t('plog.allLoggedToast', state.settings.language), { duration: 3200 });
+    }
+    // (v5.2.75, UP-13) un-logging a logged prayer means it was missed:
+    // offer qada once, right there — a single tap logs one make-up.
+    if (wasLogged && prayerState(after, ds.prayer) == null) {
+      const lang = state.settings.language;
+      const prayerName = t(`prayer.${ds.prayer}`, lang);
+      showToast(t('qada.offerMissed', lang, { prayer: prayerName }), {
+        duration: 6000,
+        actionLabel: t('qada.offerAdd', lang),
+        onAction: () => {
+          store.dispatch(actions.qadaAdd(ds.prayer, 1));
+          showToast(t('qada.added', store.getState().settings.language, { n: 1 }));
+        },
+      });
     }
   },
 
@@ -452,6 +469,19 @@ export const changeHandlers = [
       store.dispatch(actions.updatePrayerSettings({ asr: el.value }));
     },
   },
+  // (v5.2.75, UP-06) manual minute offsets: clamped ±60 ints, zeros
+  // dropped so the persisted blob stays lean (sanitizer re-clamps).
+  {
+    sel: '[data-bind="prayer-offset"]',
+    run: (ds, el) => {
+      if (!OFFSET_PRAYERS.includes(ds.prayer)) return;
+      const v = Math.max(-60, Math.min(60, Math.floor(Number(el.value)) || 0));
+      const offsets = { ...(store.getState().settings.prayer.offsets || {}) };
+      if (v === 0) delete offsets[ds.prayer];
+      else offsets[ds.prayer] = v;
+      store.dispatch(actions.updatePrayerSettings({ offsets }));
+    },
+  },
   {
     sel: '[data-bind="prayer-alert-sound"]',
     run: (ds, el) => {
@@ -491,6 +521,12 @@ export const changeHandlers = [
     sel: '[data-action="toggle-prayer-quiet"]',
     run: (ds, el) => {
       store.dispatch(actions.updatePrayerSettings({ quietEnabled: el.checked }));
+    },
+  },
+  {
+    sel: '[data-action="toggle-prayer-quiet-cancel"]',
+    run: (ds, el) => {
+      store.dispatch(actions.updatePrayerSettings({ quietCancels: el.checked }));
     },
   },
   {

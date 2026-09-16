@@ -10,7 +10,7 @@
  */
 
 import { CHECKLIST_ITEMS } from '../../config.js';
-import { dateKey, uid } from '../../utils.js';
+import { dateKey, isSafeKey, uid } from '../../utils.js';
 import { FASTING_CATEGORIES } from '../../../domain/fasting.js';
 import { cleanSadaqahAmount } from '../../../domain/worship.js';
 import { PRAYER_KEYS, cycleState } from '../../../domain/prayerLog.js';
@@ -22,6 +22,7 @@ import {
   makeProfile as makeLocationProfile,
   profileToPrayerPatch,
 } from '../../../domain/locations.js';
+import { clearQuizMiss, isQuizItemId, recordQuizMiss } from '../../../domain/quiz.js';
 
 export function reduceWorship(state, action) {
   switch (action.type) {
@@ -346,24 +347,67 @@ export function reduceWorship(state, action) {
           index: 0,
           correctCount: 0,
           wrongCount: 0,
+          wrongIds: [],
           revealed: false,
           selectedId: null,
           finished: false,
         },
       };
 
+    // (v5.2.75, UP-10) generalized deck preferences. Sanitized here
+    // (hostile dispatches degrade to current/defaults, never throw):
+    // libraryId must be a safe key, direction is enum-guarded, size is
+    // clamped to a playable 1..50.
+    case 'QUIZ_PREFS_SET': {
+      const patch = action.patch && typeof action.patch === 'object' ? action.patch : {};
+      const prev = state.quizPrefs || {};
+      const libraryId =
+        typeof patch.libraryId === 'string' && isSafeKey(patch.libraryId)
+          ? patch.libraryId
+          : prev.libraryId || 'asma';
+      const direction = patch.direction === 'en-ar' ? 'en-ar' : 'ar-en';
+      const sizeRaw = Math.floor(Number(patch.size));
+      const size = Number.isFinite(sizeRaw) ? Math.max(1, Math.min(50, sizeRaw)) : prev.size || 10;
+      if (
+        prev.libraryId === libraryId &&
+        (prev.direction || 'ar-en') === direction &&
+        prev.size === size
+      ) {
+        return state;
+      }
+      return { ...state, quizPrefs: { libraryId, direction, size } };
+    }
+
     case 'QUIZ_ANSWER': {
       if (state.quiz.revealed || !state.quiz.deck.length) return state;
       const q = state.quiz.deck[state.quiz.index];
       const correct = q && action.itemId === q.itemId;
+      // (v5.2.80, UP-08) record the miss for Review-mistakes. Deterministic:
+      // the id comes from the current deck entry, deduped, never trusted
+      // from the payload alone (a forged itemId only affects correct/wrong).
+      const prevWrong = Array.isArray(state.quiz.wrongIds) ? state.quiz.wrongIds : [];
+      const wrongIds =
+        !correct && q && isQuizItemId(q.itemId) && !prevWrong.includes(q.itemId)
+          ? [...prevWrong, q.itemId]
+          : prevWrong;
+      // (v5.2.85, UP-08) cross-session memory: misses accumulate (bounded),
+      // correct answers clear the item (re-learned).
+      const quizMissRecords =
+        q && isQuizItemId(q.itemId)
+          ? correct
+            ? clearQuizMiss(state.quizMissRecords, q.itemId)
+            : recordQuizMiss(state.quizMissRecords, q.itemId)
+          : state.quizMissRecords;
       return {
         ...state,
+        quizMissRecords,
         quiz: {
           ...state.quiz,
           revealed: true,
           selectedId: action.itemId,
           correctCount: state.quiz.correctCount + (correct ? 1 : 0),
           wrongCount: state.quiz.wrongCount + (correct ? 0 : 1),
+          wrongIds,
         },
       };
     }
@@ -399,6 +443,7 @@ export function reduceWorship(state, action) {
           index: 0,
           correctCount: 0,
           wrongCount: 0,
+          wrongIds: [],
           revealed: false,
           selectedId: null,
           finished: false,

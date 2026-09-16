@@ -22,6 +22,7 @@ import { escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
 import { icon } from '../core/icons.js';
+import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import {
   sanitizeRootParam,
@@ -37,6 +38,7 @@ import {
   occurrenceAyah,
   splitAyahWord,
 } from '../domain/roots.js';
+import { buildSimilarPairs, confusablePairsFor } from '../domain/mutashabihat.js';
 
 /** Index-mode stats line: how many roots and how many occurrences total. */
 function totals(index) {
@@ -273,6 +275,38 @@ function renderRootDetail(state, lang, root) {
   const occ = rootOccurrencesAll(index, root);
   const partial = !hasFull && occ.length < stats.count;
 
+  // (v5.2.75, UP-09) look-alikes for this root, derived from the shared
+  // computed pair cache filtered by the root's own occurrences — the two
+  // vocabulary tools finally know each other. Deep-linkable via
+  // #/roots/<root>?tab=confusables.
+  const ayahKeys = new Set(
+    occ
+      .filter((o) => o && Number.isFinite(Number(o.s)) && Number.isFinite(Number(o.a)))
+      .map((o) => `${Number(o.s)}:${Number(o.a)}`)
+  );
+  const confusables = confusablePairsFor(buildSimilarPairs(state.quran?.surahs), ayahKeys);
+  const tab = state.activeParams?.tab === 'confusables' ? 'confusables' : 'forms';
+  const tabBtn = (id, label, pressed) => `
+    <button type="button" class="chip ${pressed ? 'chip--active' : ''}" data-action="roots-tab" data-root="${escapeHTML(root)}" data-tab="${id}" aria-pressed="${pressed}">${escapeHTML(label)}</button>`;
+  const confusablesBlock =
+    confusables.length > 0
+      ? `<div class="root-confusables">${confusables
+          .slice(0, 12)
+          .map(
+            (p) => `
+        <div class="root-confusable">
+          <p class="root-confusable__arabic" dir="rtl" lang="ar">${escapeHTML(p.a.text || '')}</p>
+          <p class="root-confusable__arabic" dir="rtl" lang="ar">${escapeHTML(p.b.text || '')}</p>
+          <div class="root-confusable__refs" dir="ltr">
+            <a href="${buildHash(VIEWS.QURAN, { id: p.a.s, ay: String(p.a.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${p.a.s}" data-ay="${escapeHTML(String(p.a.a))}">${p.a.s}:${escapeHTML(String(p.a.a))}</a>
+            <span aria-hidden="true">·</span>
+            <a href="${buildHash(VIEWS.QURAN, { id: p.b.s, ay: String(p.b.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${p.b.s}" data-ay="${escapeHTML(String(p.b.a))}">${p.b.s}:${escapeHTML(String(p.b.a))}</a>
+          </div>
+        </div>`
+          )
+          .join('')}</div>`
+      : `<p class="empty-hint">${t('roots.confusablesNeedCorpus', lang)} <a class="link-btn" href="${buildHash(VIEWS.SEARCH)}" data-action="navigate" data-view="${VIEWS.SEARCH}">${t('nav.search', lang)}</a></p>`;
+
   const statChips = [
     t('roots.statOccurrences', lang, { n: stats.count }),
     t('roots.statForms', lang, { n: stats.forms }),
@@ -296,11 +330,23 @@ function renderRootDetail(state, lang, root) {
       <div class="root-detail__stats">${statChips}</div>
       ${
         partial
-          ? `<p class="roots-partial-hint">${t('roots.sampleHint', lang, { n: occ.length, m: stats.count })}</p>`
+          ? `<p class="roots-partial-hint">${t('roots.sampleHint', lang, { n: occ.length, m: stats.count })}${
+              state.loadErrors?.['quran-roots-full']
+                ? ` <button type="button" class="link-btn link-btn--sm" data-action="retry-load" data-key="quran-roots-full">${escapeHTML(t('common.retry', lang))}</button>`
+                : ''
+            }</p>`
           : ''
       }
     </div>
-    <div class="root-forms">${forms.map((g, gi) => formGroupHTML(g, lang, { ...ctx, groupIdx: gi })).join('')}</div>
+    <div class="chip-row" role="group" aria-label="${escapeHTML(root)}">
+      ${tabBtn('forms', t('roots.tabForms', lang), tab !== 'confusables')}
+      ${tabBtn('confusables', t('roots.tabConfusables', lang, { n: confusables.length }), tab === 'confusables')}
+    </div>
+    ${
+      tab === 'confusables'
+        ? confusablesBlock
+        : `<div class="root-forms">${forms.map((g, gi) => formGroupHTML(g, lang, { ...ctx, groupIdx: gi })).join('')}</div>`
+    }
   </section>`;
 }
 
@@ -308,6 +354,17 @@ function renderRootDetail(state, lang, root) {
 export function renderRoots(state) {
   const lang = state.settings.language;
   if (!state.quranRoots) {
+    // (v5.2.78, BUG-02) the roots tier joins the loadErrors + Retry
+    // machinery: a timed-out/failed index shows error + Retry instead of a
+    // forever skeleton. Retry clears the flag, bumps loadRetryCount (which
+    // notifies stateSub), and the reset guard refetches.
+    if (state.loadErrors?.['quran-roots']) {
+      return `
+      <section class="view view--roots">
+        <h1 class="view__title">${t('roots.title', lang)}</h1>
+        ${loadErrorStateHTML({ lang, tierKey: 'quran-roots', t })}
+      </section>`;
+    }
     // First visit before the (precached) popover index lands — a moment,
     // but mirror the shape honestly like every other lazy surface.
     return `

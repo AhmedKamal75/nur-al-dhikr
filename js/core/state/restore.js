@@ -2,7 +2,7 @@
  * core/state — package root docs live in core/state.js (the facade).
  */
 
-import { MUSHAF_PAGE_COUNT } from '../config.js';
+import { MUSHAF_PAGE_COUNT, SCHEMA_VERSION } from '../config.js';
 import { cleanObject, clone, isSafeKey } from '../utils.js';
 import { isReturningUser, CONFIRM_STEPS } from '../../domain/onboarding.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
@@ -13,6 +13,7 @@ import { sanitizeSunnahLog } from '../../domain/sunnah.js';
 import { sanitizeQadaLog } from '../../domain/qada.js';
 import { sanitizeLocationProfiles } from '../../domain/locations.js';
 import { sanitizeDuaJournal, sanitizeReflections } from '../../domain/duaJournal.js';
+import { sanitizeQuizMissRecords } from '../../domain/quiz.js';
 import { sanitizeHijriDayLog } from '../../domain/ramadanPlanner.js';
 import { sanitizeNudgeState } from '../../domain/nudge.js';
 import { PERSISTED_KEYS, pickPersisted } from './initial.js';
@@ -374,10 +375,25 @@ export function sanitizeRestoredPayload(payload) {
       .filter((f) => f && typeof f === 'object' && asId(f.id))
       .map((f) => ({
         id: asId(f.id),
-        name: typeof f.name === 'string' ? f.name.slice(0, 80) : '',
+        name: typeof f.name === 'string' && f.name.trim() ? f.name.trim().slice(0, 80) : f.id,
         createdAt: Number.isFinite(f.createdAt) ? f.createdAt : null,
       }))
       .slice(0, 50),
+    // (v5.2.75, UP-01) per-word bookmarks: "surah:ayah:i" keys only,
+    // true values only, capped — hostile shapes drop silently.
+    wordBookmarks: (() => {
+      const raw = p.wordBookmarks;
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+      const out = {};
+      for (const [k, v] of Object.entries(raw)) {
+        if (Object.keys(out).length >= 2000) break;
+        if (!/^\d{1,3}:\d{1,3}:\d{1,4}$/.test(k)) continue;
+        const [s, a] = k.split(':').map(Number);
+        if (!(s >= 1 && s <= 114 && a >= 1)) continue;
+        if (v === true) out[k] = true;
+      }
+      return out;
+    })(),
     // (review v3.21): keys are mushaf pages — anything else (junk keys from
     // a corrupt/hostile backup) previously counted toward forged khatma
     // completions, since completion is keyed on the map's key count.
@@ -544,6 +560,9 @@ export function sanitizeRestoredPayload(payload) {
       totalAttempts: Number.isFinite(quizStats.totalAttempts) ? quizStats.totalAttempts : 0,
       totalCorrect: Number.isFinite(quizStats.totalCorrect) ? quizStats.totalCorrect : 0,
     },
+    // (v5.2.85, UP-08) cross-session weak-item memory — hostile-shape
+    // sanitized, capped; junk degrades to {}.
+    quizMissRecords: sanitizeQuizMissRecords(p.quizMissRecords),
     statistics: {
       // (v4.2) per-day entries: keys must be local dateKeys, counts must be
       // numbers — `${d.count}` renders straight into the heatmap and week
@@ -593,6 +612,17 @@ export function sanitizeRestoredPayload(payload) {
 
 export function persistedSnapshot(state) {
   return pickPersisted(state);
+}
+
+/**
+ * (v5.2.74, BUG-03) version gate: a payload stamped with a NEWER schema
+ * than this build understands must be refused, never mangled through the
+ * sanitizer allowlist. Version-less legacy blobs return false (they still
+ * hydrate); only a provably-future stamp refuses.
+ */
+export function isFuturePayload(payload) {
+  const v = Number(payload?.schemaVersion);
+  return Number.isFinite(v) && v > SCHEMA_VERSION;
 }
 
 /**

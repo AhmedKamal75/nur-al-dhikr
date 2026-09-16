@@ -76,6 +76,7 @@ export function recitationChipsHTML(snap, lang, cls) {
       ${chip('recite-sleep-cycle', snap.sleepEnabled, null, t('audio.sleepTimer', lang), `${icon('moon', { size: 13 })}${snap.sleepEnabled ? ` ${escapeHTML(snap.sleepLabel)}` : ''}`)}
       ${chip('recite-voice-open', false, null, voiceLabel, `${icon('volume', { size: 13 })} ${escapeHTML(snap.voiceALabel)}${snap.voiceBLabel ? `+${escapeHTML(snap.voiceBLabel)}` : ''}`)}
       ${chip('recite-compare-toggle', snap.compare, snap.compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
+      ${snap.voiceBLabel ? chip('recite-compare-swap', false, null, t('audio.compareSwap', lang), `${icon('refresh', { size: 13 })} ${wideLabel(t('audio.compareSwap', lang))}`) : ''}
       ${chip('recite-loop-toggle', snap.loop !== 1, null, t('audio.loopMode', lang), `${icon('repeat', { size: 13 })} ${snap.loop === 1 ? t('audio.loop', lang) : `×${snap.loop}`}`)}
       ${chip('recite-speed-cycle', false, null, t('audio.speed', lang), `${snap.speed}×`)}
       ${navBtn('recite-pause-toggle', t(snap.paused ? 'audio.play' : 'audio.pause', lang), snap.paused ? 'play' : 'pause', t(snap.paused ? 'audio.play' : 'audio.pause', lang))}

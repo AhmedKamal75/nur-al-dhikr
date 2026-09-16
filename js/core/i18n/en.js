@@ -27,6 +27,8 @@ export const en = {
   'garden.timeline': 'Growth timeline',
   'garden.harvest': 'Grown so far',
   'garden.seeStatistics': 'See the statistics behind the garden',
+  // v5.2.75 reading grows the garden too (UP-12).
+  'garden.readsCount': '{n} Qur’an pages read',
   'garden.stage.seed': 'Seed',
   'garden.stage.sprout': 'Sprout',
   'garden.stage.sapling': 'Sapling',
@@ -93,6 +95,14 @@ export const en = {
   'ramadan.lastTen': 'Last-ten nights worship',
   'ramadan.lastTenDay': 'Night {n} of Ramadan',
   'ramadan.lastTenNights': 'Day {n} — the last ten nights have begun',
+  // v5.2.74 Ramadan khatm pace panel (UP-08: wires ramadanKhatmPlan in).
+  'ramadan.khatmTitle': "Qur'an khatm pace",
+  'ramadan.khatmHint':
+    'Pages opened in the Mushaf reader count toward one full reading this month.',
+  'ramadan.khatmRead': 'Pages read',
+  'ramadan.khatmPerDay': 'Pages a day to finish',
+  'ramadan.khatmOnTrack': 'On pace for khatm',
+  'ramadan.khatmOffTrack': 'A page at a time — every one counts',
   'ramadan.qadrTonight': 'Tonight is an odd night — seek Laylat al-Qadr',
   'ramadan.notYet': 'Ramadan has not begun',
   'ramadan.untilRamadan': 'Until 1 Ramadan',
@@ -263,6 +273,8 @@ export const en = {
   'offline.downloadGroup': 'Download',
   'offline.storage': 'Device storage',
   'offline.storageUnknown': 'Storage info unavailable on this device.',
+  // v5.2.75 audio-cache budget line (PERF-02).
+  'offline.audioCache': 'Audio cache',
   'offline.storageModeTitle': 'Storage mode',
   'offline.storageModeBody':
     'Standard keeps full-size files (fast to open, ~150 MB). Compressed stores zipped files (~27 MB) and unzips on open — slower, kinder to storage and data. Applies to new downloads; switching clears downloaded text.',
@@ -414,6 +426,17 @@ export const en = {
   'zakat.ph.grams': '0',
   'zakat.nisabThreshold': 'Nisab threshold',
   'zakat.assetsTitle': 'Your wealth',
+  // v5.2.75 per-line fiqhi explainers (UP-13) — mirrors data/zakat-notes.json.
+  'zakat.note.cash': 'Cash on hand and in accounts, held for a full lunar year.',
+  'zakat.note.goldGrams': 'Gold you own, in grams — jewelry included according to most scholars.',
+  'zakat.note.silverGrams': 'Silver you own, in grams.',
+  'zakat.note.investments':
+    'Stocks and funds at current market value — details differ among scholars; ask locally about your case.',
+  'zakat.note.businessGoods': 'Trade goods and inventory at wholesale value.',
+  'zakat.note.receivables': 'Debts owed to you that you expect to recover.',
+  'zakat.note.otherAssets': 'Other zakatable wealth not listed above.',
+  'zakat.note.liabilities': 'Debts due now — subtracted before the nisab check.',
+  'zakat.note.fitrPer': 'The local price of one staple portion (e.g. rice or wheat) per person.',
   'zakat.cash': 'Cash & bank',
   'zakat.goldGrams': 'Gold weight',
   'zakat.silverGrams': 'Silver weight',
@@ -490,6 +513,9 @@ export const en = {
   'search.loadingCorpus':
     'Loading the Qur\u2019an text for full-text search \u2014 once loaded, this works offline forever.',
   'search.quranCount': '{n} ayahs',
+  // v5.2.74 tafsir result group in the Search view (UP-08).
+  'search.tafsirResults': 'From the tafsir',
+  'search.tafsirCount': '{n} passages',
   'search.resultsCount': '{n} results',
   'search.recent': 'Recent Searches',
   'search.clearHistory': 'Clear history',
@@ -709,7 +735,38 @@ export const en = {
   'prayer.quietVolume': 'Quiet volume %',
   'prayer.quietHint':
     'Inside quiet hours alerts play softly instead of full volume. Your phone’s own notification sound still follows the system volume — browsers don’t let pages change that.',
+  // v5.2.75 quiet-hours cancel policy (UP-04): off preserves behavior.
+  'prayer.quietCancels': 'Silence prayer alerts in quiet hours',
+  'prayer.quietCancelsHint':
+    'When on, prayer alerts are skipped entirely inside quiet hours. When off, they play softly as above.',
   'prayer.testSound': 'Test sound',
+  // v5.2.75 calculation transparency (UP-06): localized method names,
+  // regions and explainer notes (mirror data/prayer-methods.json).
+  'prayer.method.MWL': 'Muslim World League',
+  'prayer.method.ISNA': 'Islamic Society of North America',
+  'prayer.method.Egyptian': 'Egyptian General Authority',
+  'prayer.method.Karachi': 'Univ. of Islamic Sciences, Karachi',
+  'prayer.method.UmmAlQura': 'Umm al-Qura, Makkah',
+  'prayer.method.Tehran': 'Institute of Geophysics, Tehran',
+  'prayer.method.MoonsightingCommittee': 'Moonsighting Committee (approx.)',
+  'prayer.methodRegion.MWL': 'Worldwide default',
+  'prayer.methodRegion.ISNA': 'North America',
+  'prayer.methodRegion.Egyptian': 'Egypt and the Levant',
+  'prayer.methodRegion.Karachi': 'South Asia',
+  'prayer.methodRegion.UmmAlQura': 'Saudi Arabia',
+  'prayer.methodRegion.Tehran': 'Iran',
+  'prayer.methodRegion.MoonsightingCommittee': 'North America, simplified',
+  'prayer.methodNote.MWL': 'Fajr 18°, Isha 17° — the worldwide default.',
+  'prayer.methodNote.ISNA': 'Fifteen-degree twilight, tuned for higher latitudes.',
+  'prayer.methodNote.Egyptian': 'Fajr 19.5° — the earliest Fajr of the standard methods.',
+  'prayer.methodNote.Karachi': 'Matched 18° pair used across South Asia.',
+  'prayer.methodNote.UmmAlQura':
+    'Isha follows Maghrib by minutes (120, or 90 in Ramadan), not degrees.',
+  'prayer.methodNote.Tehran': 'Maghrib at 4.5° below the horizon, per Iranian convention.',
+  'prayer.methodNote.MoonsightingCommittee': 'Simplified 18°/18° approximation of the full method.',
+  'prayer.offsetsTitle': 'Fine-tune times (minutes)',
+  'prayer.offsetsHint':
+    'Shift any prayer ±60 minutes — e.g. to match your local mosque. Applies everywhere: the timetable, alerts and fasting.',
   'prayer.alertSoundNote':
     'Plays while the app is open. If the app is closed or in the background, your device uses its own default notification sound instead.',
   // v3.20 prayer-alert reliability — the honest status row.
@@ -741,6 +798,7 @@ export const en = {
   'qibla.subtitle': 'The direction to face for prayer, from your location.',
   'qibla.bearing': 'Direction',
   'qibla.distance': 'Distance to the Kaaba',
+  'qibla.accuracy': 'Location accuracy ±{m} m',
   'qibla.holdFlat': 'Hold your phone flat and turn until the marker points up.',
   'qibla.noSensor':
     "This device doesn't support a live compass — use the direction below with a physical compass.",
@@ -750,6 +808,13 @@ export const en = {
   'qibla.aligned': "You're facing the Qibla.",
   'qibla.turnToAlign': 'Keep turning toward the marker.',
   'qibla.calibrate': 'If this seems off, calibrate by moving your phone in a figure-8.',
+  // v5.2.75 live heading-error readout + calibration card (UP-03).
+  'qibla.headingError': 'Heading error',
+  'qibla.offBy': 'Off by {n}°',
+  'qibla.calibrateTitle': 'Calibrate the compass',
+  'qibla.calibrate1': 'Hold the phone flat, screen up.',
+  'qibla.calibrate2': 'Tilt it in a figure-8 motion, three times.',
+  'qibla.calibrate3': 'Step away from metal, magnets, and magnetic phone cases.',
   // v3.26 declination hint — real WMM2025 model, embedded offline.
   'qibla.declination': 'Magnetic declination',
   'qibla.declinationModel': 'World Magnetic Model 2025 — valid through 2030',
@@ -784,16 +849,25 @@ export const en = {
     'A {n}-question multiple-choice quiz on the meanings of the 99 Names of Allah, drawn from this library.',
   'quiz.start': 'Start Quiz',
   'quiz.tryAgain': 'Try Again',
+  'quiz.reviewMistakes': 'Review mistakes ({n})',
+  'quiz.practiceWeak': 'Practice weak items ({n})',
   'quiz.exit': 'Back to Names',
   'quiz.done': 'Quiz Complete',
   'quiz.bestScore': 'Best: {best} / {total}',
   'quiz.progress': 'Question {current} of {total}',
   'quiz.whatDoesItMean': 'What does this name mean?',
+  // v5.2.75 generalized decks (UP-10): any library, either direction.
+  'quiz.whichName': 'Which name means this?',
+  'quiz.pickLibrary': 'Quiz library',
+  'quiz.direction': 'Direction',
+  'quiz.directionArEn': 'Arabic prompt',
+  'quiz.directionEnAr': 'Meaning prompt',
+  'quiz.size': 'Questions',
   'quiz.correct': 'Correct',
   'quiz.wrong': 'Not quite',
   'quiz.next': 'Next',
   'quiz.seeResults': 'See Results',
-  'quiz.unavailable': 'The quiz needs the 99 Names library loaded — try again in a moment.',
+  'quiz.unavailable': 'The quiz needs its library loaded — try again in a moment.',
 
   'mushaf.loading': 'Loading this page\u2026',
   'mushaf.juz': 'Juz',
@@ -881,6 +955,19 @@ export const en = {
   'wordStudy.noData': "Grammar data isn't available for this word yet.",
   'wordStudy.tajweed': 'Tajweed in this word',
   'wordStudy.openTafsir': 'Tafsir & I\u02BFrab',
+  // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).
+  'wordStudy.open': 'Open word study',
+  // v5.2.75 word-study meanings + per-word actions (UP-01).
+  'wordStudy.meanings': 'Meanings',
+  'wordStudy.synonyms': 'Synonyms',
+  'wordStudy.antonyms': 'Antonyms',
+  'wordStudy.speak': 'Listen',
+  'wordStudy.copy': 'Copy word',
+  'wordStudy.share': 'Share word',
+  'wordStudy.bookmark': 'Save word',
+  'wordStudy.bookmarked': 'Saved',
+  'wordStudy.soundOff': 'Sound is off — enable it in Settings to hear words.',
+  'wordStudy.speechUnsupported': 'Speech is not available in this browser',
   'wordStudy.root': 'Root',
   'wordStudy.rootCount': '{n} occurrences in the Qur\u2019an',
   'wordStudy.rootHint': 'Same root elsewhere in the Qur\u2019an:',
@@ -903,7 +990,14 @@ export const en = {
   'roots.sampleHint': 'Showing the first {n} of {m} occurrences — the full index is still loading.',
   'roots.showAll': 'Show all ({n})',
   'roots.showLess': 'Show less',
+  // v5.2.75 roots ↔ mutashabihat cross-linking (UP-09).
+  'roots.tabForms': 'Word forms',
+  'roots.tabConfusables': 'Look-alikes ({n})',
+  'roots.confusablesNeedCorpus':
+    'Search the Qur’an once to build the pair index — look-alikes for this root appear here after that.',
   'wordStudy.wordN': 'Word {n}',
+  // v5.2.75 look-alike chip in the word popup (UP-09).
+  'wordStudy.lookalike': 'Look-alike: {ref}',
   'wordStudy.prefix': 'Prefix',
   'wordStudy.suffix': 'Suffix',
 
@@ -914,6 +1008,7 @@ export const en = {
     "This is a large classical work not bundled with the app. Download it once and it's saved offline from then on.",
   'tafsir.download': 'Download to read offline',
   'tafsir.compare': 'Compare with a second source',
+  'tafsir.compareC': 'Compare with a third source',
   'tafsir.compareOff': 'Single source',
   'tafsir.downloadDone': 'Downloaded — now available offline',
   'tafsir.downloadFailed': "Couldn't download — check your connection and try again",
@@ -989,6 +1084,9 @@ export const en = {
   'settings.compareTranslation': 'Compare translation',
   'settings.compareHint':
     'Show a second translation under the main one in the Qur’an reader, for side-by-side study.',
+  'settings.compareTranslationC': 'Second compare translation',
+  'settings.compareHintC':
+    'Show a third translation line under the first compare line. Skipped when it matches the main or first compare edition.',
   'settings.compareOff': 'Off — one translation only',
   'settings.milestone': 'Milestone ping every N counts',
   'settings.milestoneHint':
@@ -1216,6 +1314,10 @@ export const en = {
   'hadith.searchBook': 'Search within this book (Arabic or English)\u2026',
   'hadith.searchAll': 'Search all books (Arabic or English)\u2026',
   'hadith.searchScope': 'Searching {a} of {b} books',
+  // v5.2.75 cross-book search consent (BUG-09): bulk-fetching is explicit.
+  'hadith.indexAll': 'Index all {b} books',
+  'hadith.indexAllHint':
+    'Full results need every book — a large download. Loaded books keep searching meanwhile.',
   'hadith.jump': 'Go',
   'hadith.jumpInvalid': 'Enter a hadith number (1 or higher).',
   'hadith.jumpOutOfRange': 'This book has {n} hadiths — enter a number up to {n}.',
@@ -1332,6 +1434,17 @@ export const en = {
   'kids.exitDone': 'Kids mode off',
   'kids.blocked': 'Kids mode is on — only Kids Quran and Tasbih are available.',
   'stats.avgPerDay': 'Avg / Day (30d)',
+  // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
+  // follows the nudge tone rules: no dates, no counts, no shaming.
+  'stats.reviewDue': 'Review due',
+  'stats.reviewDueLine': '{s} surahs · {a} ayahs',
+  'stats.reviewDueEmpty': 'All caught up — nothing due today.',
+  'stats.juzTitle': 'Reading by juz',
+  'stats.juzCell': 'Part {n}: {r} of {t} pages',
+  'stats.khatmaProgress': 'Khatma progress',
+  'stats.khatmaLine': '{r} of {t} pages · {p}%',
+  // v5.2.75 certificate loop closure (UP-12).
+  'stats.viewCertificate': 'View your certificate',
   'stats.weekTotal': 'This week',
   'stats.monthTotalLabel': 'Total',
   'stats.bestDay': 'Best day',
@@ -1439,6 +1552,9 @@ export const en = {
   'qada.howMany': 'How many',
   'qada.add': 'Add',
   'qada.added': 'Added {n} to make up',
+  // v5.2.75 missed-prayer qada offer on un-logging (UP-13).
+  'qada.offerMissed': 'Missed {prayer}? Log it for make-up.',
+  'qada.offerAdd': 'Add to make-up',
   'qada.doneOne': 'One made up. May Allah accept it.',
   'qada.cleared': 'Cleared the backlog for this prayer',
   'qada.allClear': 'Everything is made up, alhamdulillah.',
@@ -1489,6 +1605,8 @@ export const en = {
   'journal.duaEmptyInput': 'Write your dua first.',
   'journal.markAnswered': 'Mark as answered',
   'journal.answered': 'Answered',
+  // v5.2.75 journal self-stats footer (UP-12).
+  'journal.monthStats': '{n} entries · {m} answered this month',
   'journal.export': 'Export as text',
   'journal.exportEmpty': 'Nothing to export yet.',
 
@@ -1522,6 +1640,9 @@ export const en = {
   'mutashabihat.sharedRunHint':
     'Highlighted words are the shared run — the trap that causes the mix-up.',
   'mutashabihat.next': 'Next ayah',
+  // v5.2.75 lapse-weighted drill pool (UP-09).
+  'mutashabihat.poolAll': 'All pairs',
+  'mutashabihat.poolLapsed': 'My lapses ({n})',
   'mutashabihat.noPairs': 'No look-alike pairs found yet.',
   'mutashabihat.backToQuran': "Back to the Qur'an",
 
@@ -1544,6 +1665,8 @@ export const en = {
   'audio.compareOn': 'Compare on — each ayah plays with both reciters',
   'audio.compareOff': 'Compare off',
   'audio.compareNeedB': 'Pick a second reciter (voice B) first',
+  // v5.2.75 compare A/B role swap (UP-11).
+  'audio.compareSwap': 'Swap compare voices',
   'audio.chooseReciter': 'Choose reciters',
   'audio.voiceA': 'Voice A — main reciter',
   'audio.voiceB': 'Voice B — compare reciter',
@@ -1561,6 +1684,8 @@ export const en = {
     'Named lists of ayah ranges played in order. Save any range from a surah’s Range picker, then play the whole queue here.',
   'playlist.create': 'New queue',
   'playlist.createTitle': 'Name your queue',
+  // v5.2.75 queue rename + reorder (UP-11).
+  'playlist.renameTitle': 'Rename queue',
   'playlist.namePh': 'e.g. Morning memorization',
   'playlist.created': 'Queue created',
   'playlist.playQueue': 'Play queue',

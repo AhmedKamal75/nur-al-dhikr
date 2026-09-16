@@ -97,6 +97,16 @@ function renderGridSearch(state, lang, q) {
     books.length && stats.books.length < books.length
       ? `<p class="panel__subtext">${t('hadith.searchScope', lang, { a: stats.books.length, b: books.length })}</p>`
       : '';
+  // (v5.2.75, BUG-09) large downloads are user-initiated: indexing the
+  // missing books waits for an explicit tap, and the grid says so.
+  const missingCount = books.filter((b) => !docs[b.id]).length;
+  const confirm =
+    missingCount > 0 && !state.hadith.indexAllConfirmed
+      ? `<div class="hadith-index-confirm">
+        <p class="panel__subtext">${t('hadith.indexAllHint', lang)}</p>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-index-all">${icon('download', { size: 14 })} ${t('hadith.indexAll', lang, { b: books.length })}</button>
+      </div>`
+      : '';
   const pager =
     pages <= 1
       ? ''
@@ -109,6 +119,7 @@ function renderGridSearch(state, lang, q) {
 
   return `
     ${scope}
+    ${confirm}
     ${
       all.length
         ? `<div class="card-list hadith-list">${cards}</div>${pager}`

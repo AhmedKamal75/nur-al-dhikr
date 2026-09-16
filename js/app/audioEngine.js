@@ -102,7 +102,11 @@ export async function startAudioPlay(moshafId, surah) {
       if (!error) {
         const name = moshaf.nameEn || moshaf.nameAr || '';
         mediaSession.syncMetadata(
-          mediaSession.fullSurahMetadata({ surah, reciter: fallbackVoice || name })
+          mediaSession.fullSurahMetadata({
+            surah,
+            reciter: fallbackVoice || name,
+            lang: state.settings.language,
+          })
         );
         showToast(
           t('audio.fallbackVoice', state.settings.language, { name: fallbackVoice || name })
@@ -113,7 +117,9 @@ export async function startAudioPlay(moshafId, surah) {
     // by the recite-stop / player-close handlers via clearMetadata).
     if (!error && !fallbackVoice) {
       const name = moshaf.nameEn || moshaf.nameAr || '';
-      mediaSession.syncMetadata(mediaSession.fullSurahMetadata({ surah, reciter: name }));
+      mediaSession.syncMetadata(
+        mediaSession.fullSurahMetadata({ surah, reciter: name, lang: state.settings.language })
+      );
     }
     // The stored speed survives track changes: a fresh <audio> element (or
     // a prior 1x default) would otherwise reset to 1x while the chip still

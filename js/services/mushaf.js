@@ -129,6 +129,45 @@ export function hizbStartPage(juzFirstPage, hizb, pageCount = MUSHAF_PAGE_COUNT)
 }
 
 /**
+ * (v5.2.75, UP-05) page ranges for all 30 juz from the juz→first-page
+ * map (same honest page-position convention as juzEighth/hizbStartPage).
+ * Hostile shapes degrade to [] — the strip simply doesn't render.
+ */
+export function juzPageRanges(juzFirstPage, pageCount = MUSHAF_PAGE_COUNT) {
+  if (!juzFirstPage || typeof juzFirstPage !== 'object') return [];
+  const out = [];
+  for (let j = 1; j <= 30; j++) {
+    const start = Number(juzFirstPage[String(j)]);
+    if (!Number.isFinite(start) || start < 1) return [];
+    const nextStart = Number(juzFirstPage[String(j + 1)]);
+    const end = Number.isFinite(nextStart) ? nextStart - 1 : pageCount;
+    if (!(end >= start)) return [];
+    out.push({ juz: j, from: start, to: Math.min(end, pageCount) });
+  }
+  return out;
+}
+
+/**
+ * (v5.2.75, UP-05) per-juz reading progress from mushafPagesRead:
+ * [{ juz, read, total, done }]. Page keys are the stringified numbers the
+ * khatma reducer writes; anything else is ignored, never counted.
+ */
+export function juzReadStates(juzFirstPage, pagesRead, pageCount = MUSHAF_PAGE_COUNT) {
+  const ranges = juzPageRanges(juzFirstPage, pageCount);
+  if (!ranges.length) return [];
+  const read =
+    pagesRead && typeof pagesRead === 'object' && !Array.isArray(pagesRead) ? pagesRead : {};
+  return ranges.map(({ juz, from, to }) => {
+    let n = 0;
+    for (let p = from; p <= to; p++) {
+      if (read[String(p)]) n += 1;
+    }
+    const total = to - from + 1;
+    return { juz, read: n, total, done: n >= total };
+  });
+}
+
+/**
  * The Qur'an's 6,236 ayahs are numbered 1..6236 continuously across all 114
  * surahs (surah 1 ayah 1 = 1, surah 2 ayah 1 = 8, and so on). Verse-by-verse
  * audio CDNs (e.g. cdn.islamic.network) key files by this number rather than

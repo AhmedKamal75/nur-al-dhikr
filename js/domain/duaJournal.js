@@ -18,6 +18,25 @@ export const REFLECTIONS_CAP = 500;
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
+/**
+ * (v5.2.75, UP-12) this month's dua footprint for the journal footer:
+ * { total, answered } over entries dated in the current month. Pure over
+ * the entry list; hostile rows never count.
+ */
+export function duaMonthStats(entries, now = new Date()) {
+  const list = Array.isArray(entries) ? entries : [];
+  const prefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  let total = 0;
+  let answered = 0;
+  for (const e of list) {
+    if (!e || typeof e !== 'object' || typeof e.date !== 'string') continue;
+    if (!e.date.startsWith(prefix)) continue;
+    total += 1;
+    if (e.answered === true) answered += 1;
+  }
+  return { total, answered };
+}
+
 /** Defensively coerce a restored/imported dua journal. */
 export function sanitizeDuaJournal(raw, cap = DUA_JOURNAL_CAP) {
   if (!Array.isArray(raw)) return [];

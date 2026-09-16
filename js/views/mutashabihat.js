@@ -16,7 +16,13 @@ import { escapeHTML, pickLocale } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { isQuranSearchReady } from '../domain/quranSearch.js';
-import { buildSimilarPairs, buildDrillRound, diffWords } from '../domain/mutashabihat.js';
+import {
+  buildSimilarPairs,
+  buildDrillRound,
+  diffWords,
+  lapsedAyahKeys,
+  filterLapsedPairs,
+} from '../domain/mutashabihat.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 
 function surahName(state, n) {
@@ -39,7 +45,12 @@ function drillBlock(state) {
   const seed = state.mutashabihat.seed ?? todaySeed();
   const names = {};
   for (let i = 1; i <= 114; i++) names[i] = surahName(state, i);
-  const round = buildDrillRound(pairs, { seed, surahNames: names });
+  // (v5.2.75, UP-09) lapse-weighted pool: drills draw from pairs touching
+  // ayahs with recorded lapses when the pool is selected (and non-trivial).
+  const pool = state.mutashabihat.pool === 'lapsed' ? 'lapsed' : 'all';
+  const lapseKeys = lapsedAyahKeys(state.hifzAyahRecords);
+  const lapsedCount = filterLapsedPairs(pairs, lapseKeys).length;
+  const round = buildDrillRound(pairs, { seed, surahNames: names, pool, lapseKeys });
   if (!round) return '';
   const { picked, reveal } = state.mutashabihat;
   const score = `${state.mutashabihat.right} / ${state.mutashabihat.right + state.mutashabihat.wrong}`;
@@ -51,6 +62,14 @@ function drillBlock(state) {
       <span class="view__meta" dir="ltr" role="status">${score}</span>
     </div>
     <p class="panel__subtext">${t('mutashabihat.drillHint', lang)}</p>
+    <div class="chip-row" role="group" aria-label="${t('mutashabihat.drill', lang)}">
+      <button type="button" class="chip ${pool !== 'lapsed' ? 'chip--active' : ''}" data-action="mutashabihat-pool" data-pool="all" aria-pressed="${pool !== 'lapsed'}">${t('mutashabihat.poolAll', lang)}</button>
+      ${
+        lapsedCount >= 3
+          ? `<button type="button" class="chip ${pool === 'lapsed' ? 'chip--active' : ''}" data-action="mutashabihat-pool" data-pool="lapsed" aria-pressed="${pool === 'lapsed'}">${t('mutashabihat.poolLapsed', lang, { n: lapsedCount })}</button>`
+          : ''
+      }
+    </div>
     <p class="drill__ayah" lang="ar" dir="rtl">${escapeHTML(round.question.text)}</p>
     ${
       state.settings.showTranslation && round.question.translation

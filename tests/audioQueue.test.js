@@ -245,15 +245,21 @@ describe('lock-screen transport state', () => {
   test('sync publishes only on change', () => {
     _resetPlayingStateForTests();
     const seen = [];
-    const hadNavigator = 'navigator' in globalThis;
-    const prevNavigator = globalThis.navigator;
-    globalThis.navigator = {
-      mediaSession: {
-        set playbackState(v) {
-          seen.push(v);
+    // (v5.2.74, BUG-07) Node ≥21 ships a getter-only global `navigator` —
+    // a plain assignment throws. Define the stub property instead and
+    // restore the exact original descriptor afterwards.
+    const prevDesc = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+    Object.defineProperty(globalThis, 'navigator', {
+      value: {
+        mediaSession: {
+          set playbackState(v) {
+            seen.push(v);
+          },
         },
       },
-    };
+      configurable: true,
+      writable: true,
+    });
     try {
       const on = { surahPlayback: {}, player: { moshafId: 'v', playing: true } };
       assert.equal(syncPlayingState(on), 'playing');
@@ -265,7 +271,7 @@ describe('lock-screen transport state', () => {
       );
       assert.deepEqual(seen, ['playing', 'paused']);
     } finally {
-      if (hadNavigator) globalThis.navigator = prevNavigator;
+      if (prevDesc) Object.defineProperty(globalThis, 'navigator', prevDesc);
       else delete globalThis.navigator;
       _resetPlayingStateForTests();
     }

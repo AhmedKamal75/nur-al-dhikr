@@ -37,3 +37,54 @@ export function translationBMap(tdoc) {
   }
   return byAyah;
 }
+
+/** BCP-47 voice for each overlay edition (mirrors the reader's mapping). */
+const EDITION_LANGS = {
+  'en-sahih': 'en',
+  'ur-jalandhry': 'ur',
+  'fr-hamidullah': 'fr',
+  'tr-diyanet': 'tr',
+  'id-kemenag': 'id',
+};
+
+/**
+ * (v5.2.74, UP-08) one shared resolver for every compare line (classic
+ * reader, ayah-study modal, mushaf translation tray). Pure over state +
+ * the edition catalog: null unless compare is on AND the overlay doc for
+ * THIS surah+edition has landed. Callers render
+ * `{ edition, lang, text }` with the edition's own direction.
+ */
+export function resolveCompareText(state, editions, surahNumber, ayahNumber) {
+  const list = resolveCompareTexts(state, editions, surahNumber, ayahNumber);
+  return list.length ? list[0] : null;
+}
+
+/**
+ * (v5.2.78, UP-06) resolve up to two compare lines (B then C). Each entry
+ * is `{ edition, lang, text }` with the edition's own direction. C is
+ * skipped when unset, equal to primary/B, or inline — same honesty rules
+ * as B, applied independently per slot.
+ */
+export function resolveCompareTexts(state, editions, surahNumber, ayahNumber) {
+  const out = [];
+  const primary = state?.settings?.quranTranslation || 'en-sahih';
+  const slots = [
+    { key: state?.settings?.quranTranslationB, store: state?.quran?.translationB },
+    { key: state?.settings?.quranTranslationC, store: state?.quran?.translationC },
+  ];
+  const seen = new Set([primary, 'en-sahih']);
+  for (const slot of slots) {
+    const bKey = slot.key;
+    if (!compareVisible(primary, bKey)) continue;
+    if (seen.has(bKey)) continue;
+    seen.add(bKey);
+    const bEd = (editions || []).find((e) => e.id === bKey);
+    if (!bEd) continue;
+    const overlay = slot.store?.[String(surahNumber)];
+    if (!overlay || overlay.edKey !== bKey) continue;
+    const text = overlay.byAyah?.[ayahNumber];
+    if (typeof text !== 'string' || !text) continue;
+    out.push({ edition: bEd, lang: EDITION_LANGS[bKey] || 'en', text });
+  }
+  return out;
+}

@@ -12,9 +12,11 @@ import {
   ensureHadithData,
   maybeScrollToFocusHadith,
   maybeStartHadithSearchBuild,
+  resetHadithBookFetches,
 } from './hadithData.js';
 import { ensureOfflineQuota } from './offlineJobs.js';
 import {
+  clearLazyInFlightFetches,
   ensureMushafData,
   ensureQuranData,
   ensureQuranRoots,
@@ -26,9 +28,10 @@ import {
   maybeStartHifzFromParam,
   maybeStartQuranSearchBuild,
 } from './quranSearch.js';
+import { maybeStartTafsirSearchBuild } from './tafsirSearch.js';
 import { maybeFollowRecitation } from './recitationFollow.js';
 import { syncReadingTimer } from './readingTimer.js';
-import { render } from './renderer.js';
+import { render, clearScrollMemory } from './renderer.js';
 import {
   maybeMarkNudgeShown,
   maybeProbeStorage,
@@ -42,10 +45,13 @@ import { syncPlayingState } from '../services/mediaSession.js';
 import { armFsControlsAfterEnter, updateAmbientWakeLifecycle } from './fullscreen.js';
 import { VIEWS } from '../core/config.js';
 import { computeReaderWindow } from '../domain/readerWindow.js';
+import { resetQuranIndex, setQuranIndexReady } from '../domain/quranSearch.js';
+import { clearClassifyMemo } from '../domain/tajweed.js';
 
 import { actions, store } from '../core/state.js';
 import { applyTheme } from '../core/theme.js';
 import { closeModal, isModalOpen } from '../ui/modal.js';
+import { buildHash } from '../core/router.js';
 
 /* FIX (review v3.3 A2): the Settings text-size sliders dispatched
  * SETTINGS_UPDATE on every `input` tick, and the full #main innerHTML swap
@@ -92,6 +98,72 @@ function syncReaderWindow(state) {
   return true;
 }
 
+/**
+ * (v5.2.75, BUG-12) kids-scope reroute hash: when kids mode rewrites a
+ * navigation, the requested view never renders — the caller replaces the
+ * doomed browser entry with this hash so Back never burns entries with
+ * no view change. Null when no reroute happened. Pure (exported for
+ * tests); the window guard lives with the caller.
+ */
+export function kidsRerouteHash(action, state) {
+  if (!action || action.type !== 'NAVIGATE') return null;
+  if (state?.settings?.kidsMode !== true) return null;
+  if (action.view === state.activeView) return null;
+  return buildHash(state.activeView, state.activeParams);
+}
+
+/**
+ * (v5.2.75, PERF-03) reset-path memo hygiene: bounded-but-never-cleared
+ * caches drop on RESET_ALL / RESTORE_STATE. (The qur'an search index
+ * already resets through the data-gone guard above.) Pure over the
+ * action; exported for tests.
+ */
+export function resetEphemeralCaches(action) {
+  if (action && (action.type === 'RESET_ALL' || action.type === 'RESTORE_STATE')) {
+    clearClassifyMemo();
+    clearScrollMemory();
+  }
+}
+
+/**
+ * (v5.2.73, BUG-02) reset every module-level fetch guard whose data is
+ * gone (RESTORE_STATE / RESET_ALL wipe ephemeral slices while the flags
+ * stay true — the next navigation would otherwise sit on an eternal
+ * skeleton). Pure over rt + the qur'an search index; exported for tests.
+ */
+export function resetStaleFetchGuards(state) {
+  if (!state.quran.meta) rt.quranMetaFetchStarted = false;
+  if (!state.mushaf.meta) rt.mushafMetaFetchStarted = false;
+  // FIX (review v3.26 F1): the roots browser's uncapped index, the
+  // tafsir editions catalog, and the tajweed practice pool are all
+  // ephemeral slices with module-level fetch guards — RESTORE_STATE /
+  // RESET_ALL wipe the slices, but the flags used to stay true, leaving
+  // those surfaces stuck on loading/partial until a full reload. Same
+  // lesson as the quran/mushaf guards above: whenever the data is gone,
+  // the guard is wrong — reset it so the next navigation refetches.
+  if (!state.quranRootsFull) rt.quranRootsFullFetchStarted = false;
+  if (!state.tafsirEditions) rt.tafsirEditionsFetchStarted = false;
+  if (!state.tajweedPool) rt.tajweedPoolFetchStarted = false;
+  // (v5.2.73, BUG-02) the three guards this block missed: the hadith
+  // index (+ its cached book promises, which would resolve `true` without
+  // ever re-dispatching the wiped documents), the small roots index, and
+  // the qur'an full-text search corpus (rt latch + domain index + ready
+  // flag — a stale "ready" with an empty corpus bricks search).
+  if (!state.hadith.index) {
+    rt.hadithIndexStarted = false;
+    resetHadithBookFetches();
+  }
+  if (!state.quranRoots) rt.quranRootsFetchStarted = false;
+  if (Object.keys(state.quran?.surahs || {}).length === 0) {
+    rt.quranSearchBuildStarted = false;
+    resetQuranIndex();
+    setQuranIndexReady(false);
+  }
+  // (v5.2.77, BUG-05) drop in-flight per-surah/page/word/tafsir markers so
+  // late resolves after a reset/restore cannot repopulate wiped slices.
+  clearLazyInFlightFetches();
+}
+
 export function onStateChange(stateArg, action) {
   try {
     let state = stateArg;
@@ -132,6 +204,21 @@ export function onStateChange(stateArg, action) {
           state = store.getState();
         }
       }
+      // (v5.2.75, BUG-12) kids-scope reroute leaves a doomed browser
+      // entry: the requested view never renders, so every Back burns an
+      // entry with no view change (and the topbar Back dead-ends once the
+      // logical stack is exhausted). Replace it with the resolved view's
+      // hash — Back then returns to the pre-tap page directly.
+      if (typeof window !== 'undefined') {
+        const rerouteHash = kidsRerouteHash(action, state);
+        if (rerouteHash) {
+          try {
+            window.history.replaceState(window.history.state, '', rerouteHash);
+          } catch {
+            /* opaque origins — the entry stays, Back still steps through it */
+          }
+        }
+      }
     }
     // (v4.4) entering TRUE fullscreen Mushaf arms the control-bar
     // auto-fade (and leaving disarms it — handled inside the reset fn).
@@ -161,18 +248,9 @@ export function onStateChange(stateArg, action) {
     // module-level and used to stay true — leaving the readers stuck on
     // "Loading…" for the rest of the session. Whenever the data is gone,
     // the guard is wrong: reset it so the next navigation refetches.
-    if (!state.quran.meta) rt.quranMetaFetchStarted = false;
-    if (!state.mushaf.meta) rt.mushafMetaFetchStarted = false;
-    // FIX (review v3.26 F1): the roots browser's uncapped index, the
-    // tafsir editions catalog, and the tajweed practice pool are all
-    // ephemeral slices with module-level fetch guards — RESTORE_STATE /
-    // RESET_ALL wipe the slices, but the flags used to stay true, leaving
-    // those surfaces stuck on loading/partial until a full reload. Same
-    // lesson as the quran/mushaf guards above: whenever the data is gone,
-    // the guard is wrong — reset it so the next navigation refetches.
-    if (!state.quranRootsFull) rt.quranRootsFullFetchStarted = false;
-    if (!state.tafsirEditions) rt.tafsirEditionsFetchStarted = false;
-    if (!state.tajweedPool) rt.tajweedPoolFetchStarted = false;
+    resetStaleFetchGuards(state);
+    // (v5.2.75, PERF-03) reset-path memo hygiene for the bounded caches.
+    resetEphemeralCaches(action);
     // v3.15: translation edition changed through ANY path (settings picker,
     // backup restore, reset) → re-merge loaded surah docs once, and reset
     // the search-index latch so the index re-warms in the new language.
@@ -215,6 +293,7 @@ export function onStateChange(stateArg, action) {
     // platform update and the shade can never claim "playing" while paused.
     syncPlayingState(state);
     maybeStartQuranSearchBuild(state);
+    maybeStartTafsirSearchBuild(state);
     maybeStartHadithSearchBuild(state);
     // v3.20: prayer settings changed through ANY path (bell toggles, location,
     // method, backup restore) → re-arm the next-24h trigger plan from the

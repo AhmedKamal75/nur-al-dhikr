@@ -10,6 +10,16 @@
 
 import { reciterDisplayName } from '../core/config/quran.js';
 
+/**
+ * (v5.2.81, UP-08) lock-screen artwork: the app's own precached icons
+ * (sw.js APP_SHELL + manifest, always offline). Relative URLs resolve
+ * against the document base; no network, no backend, no new assets.
+ */
+export const SESSION_ARTWORK = Object.freeze([
+  { src: 'assets/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+  { src: 'assets/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+]);
+
 export function verseMetadata({ surah, ayah, total, reciter, lang = 'en' }) {
   const s = Math.floor(Number(surah));
   const a = Math.floor(Number(ayah));
@@ -22,15 +32,20 @@ export function verseMetadata({ surah, ayah, total, reciter, lang = 'en' }) {
     // Display name, never the raw voice id (was 'ar.alafasy' on lock screens).
     artist: reciterDisplayName(typeof reciter === 'string' ? reciter : '', lang),
     album: '',
+    artwork: [...SESSION_ARTWORK],
   };
 }
 
-export function fullSurahMetadata({ surah, reciter }) {
+export function fullSurahMetadata({ surah, reciter, lang = 'en' }) {
   const s = Math.floor(Number(surah));
+  const raw = typeof reciter === 'string' ? reciter : '';
   return {
     title: Number.isFinite(s) ? `Surah ${s}` : 'Qur\u2019an recitation',
-    artist: typeof reciter === 'string' && reciter ? reciter : '',
+    // Callers pass a display name; ids that slip through resolve through
+    // the same display-name map as verse sessions (never raw on screens).
+    artist: reciterDisplayName(raw, lang) || raw,
     album: '',
+    artwork: [...SESSION_ARTWORK],
   };
 }
 

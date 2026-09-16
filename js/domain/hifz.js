@@ -383,6 +383,18 @@ export function countMemorized(records) {
   return Object.keys(records ?? {}).length;
 }
 
+/**
+ * (v5.2.75, UP-05) the global "due today" digest: due surah tracks +
+ * due ayah tracks, counted (not listed) for the Statistics row. Pure
+ * over the two record maps; DST-safe via the shared ISO-day math.
+ */
+export function dueCounts(hifzRecords, hifzAyahRecords, today = dateKey()) {
+  return {
+    surahs: dueSurahs(hifzRecords, today).length,
+    ayahs: dueAyahs(hifzAyahRecords, today).length,
+  };
+}
+
 /** Mushaf page range covering a whole surah, from the ayah→page index. */
 export function surahPageRange(ayahPages, surah, ayahCount) {
   if (!ayahPages || typeof ayahPages !== 'object') return null;

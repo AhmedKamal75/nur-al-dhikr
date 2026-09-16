@@ -1,11 +1,12 @@
 import { rt } from './rt.js';
 import { fetchJSON } from './net.js';
-import { dispatchSurahDoc, ensureTranslationBDoc } from './quranData.js';
+import { dispatchSurahDoc, ensureTranslationBDoc, ensureTranslationCDoc } from './quranData.js';
 
 import {
   MUSHAF_META_URL,
   MUSHAF_PAGE_COUNT,
   MUSHAF_PAGE_URL,
+  QURAN_DICT_URL,
   QURAN_META_URL,
   QURAN_ROOTS_FULL_URL,
   QURAN_ROOTS_URL,
@@ -102,6 +103,12 @@ export async function ensureQuranData(state) {
   const id = state.activeParams.id;
   if (!id) return;
 
+  // (v5.2.75, BUG-13) a failed/invalid id leaves a stale quran-surah flag
+  // that briefly paints retry state on the next slow surah — a fresh
+  // navigation to a VALID id clears it (a new failure re-sets it below).
+  const num = Math.floor(Number(id));
+  if (Number.isInteger(num) && num >= 1 && num <= 114) flagLoad('quran-surah', false);
+
   if (state.quranBookmark.surah !== id) {
     store.dispatch(actions.setQuranBookmark(id));
   }
@@ -127,8 +134,12 @@ export async function ensureQuranData(state) {
   // (v5.2.0) Translation-compare second edition rides the same pass —
   // fire-and-forget (the reader shows the primary edition first, the
   // compare line appears when the overlay lands and triggers its dispatch).
+  // (v5.2.78, UP-06) third edition rides alongside.
   if (state.settings.quranTranslationB) {
     ensureTranslationBDoc(id);
+  }
+  if (state.settings.quranTranslationC) {
+    ensureTranslationCDoc(id);
   }
 }
 
@@ -264,6 +275,55 @@ export async function ensureMushafData(state) {
 
 const quranWordsFetchesInFlight = new Set();
 const tafsirTextFetchesInFlight = new Set();
+let wordDictInFlight = null;
+
+/**
+ * (v5.2.77, BUG-05) drop every in-flight lazy-fetch marker so a late
+ * resolve after RESET_ALL / RESTORE_STATE cannot repopulate wiped
+ * ephemeral data. Called from stateSub.resetStaleFetchGuards().
+ * Promise-shared singletons (quranMeta, wordDict) resolve idempotently
+ * through their own guards; clearing the Sets is sufficient to stop
+ * stale per-surah/page/text writes because dispatchSurahDoc paths
+ * re-check state before writing (and stateSub resets guards).
+ */
+export function clearLazyInFlightFetches() {
+  quranSurahFetchesInFlight.clear();
+  mushafPageFetchesInFlight.clear();
+  quranWordsFetchesInFlight.clear();
+  tafsirTextFetchesInFlight.clear();
+}
+
+/**
+ * (v5.2.75, UP-01) lemma dictionary: fetched once (first word-study open
+ * of the session), cached in the ephemeral wordDict slice. Concurrent
+ * callers share one promise; failure flags the tier (the popup simply
+ * omits the Meanings section) and retries on the next open.
+ */
+export function ensureWordDict() {
+  const snap = store.getState().wordDict;
+  if (snap?.index) return Promise.resolve(true);
+  if (wordDictInFlight) return wordDictInFlight;
+  wordDictInFlight = (async () => {
+    try {
+      const raw = await fetchJSON(QURAN_DICT_URL);
+      const entries = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw.entries : null;
+      if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
+        throw new Error('malformed dict file');
+      }
+      store.dispatch(actions.setWordDict(entries));
+      flagLoad('word-dict', false);
+      return true;
+    } catch (err) {
+      console.error('[wordStudy] failed to load dict', err);
+      store.dispatch(actions.setWordDict(null));
+      flagLoad('word-dict', true);
+      return false;
+    } finally {
+      wordDictInFlight = null;
+    }
+  })();
+  return wordDictInFlight;
+}
 
 /**
  * (v4.4) Translation-tray data: the per-surah docs of every chapter on
@@ -296,6 +356,15 @@ export async function ensureMushafSurahDocs(state) {
       }
     }
   }
+  // (v5.2.74, UP-08) the tray's compare lines need the second edition's
+  // overlay for every chapter on the page — no-op when compare is off.
+  // (v5.2.78, UP-06) third edition rides alongside.
+  for (const pageDoc of docs) {
+    for (const chapter of pageDoc.chapters) {
+      ensureTranslationBDoc(chapter.number);
+      ensureTranslationCDoc(chapter.number);
+    }
+  }
 }
 
 export async function ensureQuranWordsData(state, surahNumber) {
@@ -305,8 +374,10 @@ export async function ensureQuranWordsData(state, surahNumber) {
   try {
     const words = await fetchJSON(QURAN_WORDS_URL(id));
     store.dispatch(actions.setQuranWords(id, words));
+    flagLoad('quran-words', false);
   } catch (err) {
     console.error('[wordStudy] failed to load word data', id, err);
+    flagLoad('quran-words', true);
   } finally {
     quranWordsFetchesInFlight.delete(id);
   }
@@ -318,25 +389,30 @@ export async function ensureQuranRoots(state) {
   try {
     const roots = await fetchJSON(QURAN_ROOTS_URL);
     store.dispatch(actions.setQuranRoots(roots));
+    flagLoad('quran-roots', false);
   } catch (err) {
     console.error('[wordStudy] failed to load root index', err);
     rt.quranRootsFetchStarted = false;
+    flagLoad('quran-roots', true);
   }
 }
 
 // The root-family browser's uncapped index (~2.3 MB): fetched once the
 // first time the roots view opens, then served offline by the SW's
-// stale-while-revalidate /data strategy. Failure is loud in the console
-// but never fatal — the view keeps rendering from the capped index.
+// stale-while-revalidate /data strategy. (v5.2.77, BUG-02) failure now
+// flags the tier so the view renders error + Retry instead of a forever
+// degraded capped index with no recovery path.
 export async function ensureQuranRootsFull(state) {
   if (state.quranRootsFull || rt.quranRootsFullFetchStarted) return;
   rt.quranRootsFullFetchStarted = true;
   try {
     const roots = await fetchJSON(QURAN_ROOTS_FULL_URL);
     store.dispatch(actions.setQuranRootsFull(roots));
+    flagLoad('quran-roots-full', false);
   } catch (err) {
     console.error('[roots] failed to load full root index', err);
     rt.quranRootsFullFetchStarted = false;
+    flagLoad('quran-roots-full', true);
   }
 }
 
@@ -360,9 +436,11 @@ export async function ensureTajweedPool(state) {
   try {
     const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
     store.dispatch(actions.setTajweedPool(pool));
+    flagLoad('tajweed-pool', false);
   } catch (err) {
     console.error('[tajweed] failed to load practice pool', err);
     rt.tajweedPoolFetchStarted = false;
+    flagLoad('tajweed-pool', true);
   }
 }
 
@@ -419,7 +497,7 @@ export function currentAyahDetailPage(surah, ayah) {
   return state.mushaf.meta?.surahFirstPage?.[String(surah)] || null;
 }
 
-export async function openAyahStudy(surah, ayah, page = null) {
+export async function openAyahStudy(surah, ayah, page = null, { focusSelector = null } = {}) {
   // (B9) join the shared meta fetch: never a duplicate request, never a
   // modal on empty Arabic without the load-failed toast behind it.
   await fetchQuranMetaShared({ announce: true });
@@ -436,6 +514,16 @@ export async function openAyahStudy(surah, ayah, page = null) {
   const defaultId = state.mushafSession?.tafsirTab || state.settings.mushafPrefs.defaultTafsir;
   store.dispatch(actions.setMushafSession({ tafsirTab: defaultId }));
   if (defaultId) await ensureTafsirText(store.getState(), defaultId, surah);
+  // (v5.2.74, UP-08) the study modal's compare line needs the second
+  // edition's overlay — fire-and-forget (the modal shows the primary
+  // edition first, the compare line appears when the overlay lands).
+  // (v5.2.78, UP-06) third edition + third tafsir ride alongside.
+  if (store.getState().settings.quranTranslationB) {
+    ensureTranslationBDoc(surah);
+  }
+  if (store.getState().settings.quranTranslationC) {
+    ensureTranslationCDoc(surah);
+  }
   // The compare column's bundled second source loads alongside the primary
   // tab — otherwise the picker would show a skeleton with no fetch behind
   // it. Remote editions stay on-demand via the primary tab's download flow.
@@ -448,6 +536,14 @@ export async function openAyahStudy(surah, ayah, page = null) {
       /* best effort — the panel degrades to picker-only */
     }
   }
+  const compareC = store.getState().settings.tafsirCompareC;
+  if (compareC && compareC !== defaultId && compareC !== compareB) {
+    try {
+      await ensureTafsirText(store.getState(), compareC, surah);
+    } catch {
+      /* best effort — the panel degrades to picker-only */
+    }
+  }
   state = store.getState();
   const surahDoc = state.quran.surahs[String(surah)];
   const arabicText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayah))?.text || '';
@@ -456,5 +552,6 @@ export async function openAyahStudy(surah, ayah, page = null) {
   const { buildMushafAyahDetail } = await import('../views/mushafReader.js');
   openModal(buildMushafAyahDetail(arabicText, surahDoc, surah, ayah, state, page), {
     labelledBy: 'modal-title-mushaf-ayah',
+    focusSelector,
   });
 }

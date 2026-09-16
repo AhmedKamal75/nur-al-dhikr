@@ -9,7 +9,7 @@
  */
 import { rt } from './rt.js';
 import { actions, store } from '../core/state.js';
-import { TAFSIR_TEXT_URL } from '../core/config.js';
+import { TAFSIR_TEXT_URL, VIEWS } from '../core/config.js';
 import { fetchJSON } from './net.js';
 import { ensureTafsirEditions } from './lazyData.js';
 import {
@@ -52,6 +52,13 @@ export async function ensureTafsirSearchData(editionId = null) {
     const CHUNK = 24;
     const fetched = {};
     for (let i = 0; i < missing.length; i += CHUNK) {
+      // (v5.2.82, BUG-09) same navigation-cancel contract as the Qur'an
+      // corpus build above: background chunks must never starve the view
+      // the person actually opened. Latch resets so Search resumes later.
+      if (store.getState().activeView !== VIEWS.SEARCH) {
+        rt.tafsirSearchBuildStarted = false;
+        return false;
+      }
       const chunk = missing.slice(i, i + CHUNK);
       const docs = await Promise.all(
         chunk.map(async (n) => {
@@ -59,7 +66,11 @@ export async function ensureTafsirSearchData(editionId = null) {
             const raw = await fetchJSON(TAFSIR_TEXT_URL(edition.id, n));
             return Array.isArray(raw) ? {} : raw;
           } catch (err) {
-            console.error('[tafsir-search] failed to load surah', edition.id, n, err);
+            // Warn, not error: one skipped surah doesn't fail the build
+            // (nulls drop out, the index covers what landed, next query
+            // retries) — error-level spam here defeats the console-error
+            // hygiene the e2e suite enforces for real defects.
+            console.warn('[tafsir-search] failed to load surah', edition.id, n, err);
             return null;
           }
         })
@@ -81,5 +92,21 @@ export async function ensureTafsirSearchData(editionId = null) {
     rt.tafsirSearchBuildStarted = false; // allow a retry on the next query
     store.dispatch(actions.setLoadError('tafsir-search-corpus', true));
     return false;
+  }
+}
+
+/**
+ * (v5.2.74, UP-08) Search-view typed: start (or resume) the tafsir index
+ * build. Runs on every Search render while a query stands — guarded
+ * inside, so the steady state is one flag check per render. The Tafsir
+ * result group renders once the index is ready.
+ */
+export function maybeStartTafsirSearchBuild(state) {
+  if (
+    state.activeView === VIEWS.SEARCH &&
+    (state.activeParams?.q || '').trim() &&
+    !isTafsirSearchReady()
+  ) {
+    ensureTafsirSearchData();
   }
 }

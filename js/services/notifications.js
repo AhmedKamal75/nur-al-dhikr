@@ -10,7 +10,7 @@ import { t } from '../core/i18n.js';
 import { appliesToDate } from './calendarNotes.js';
 import { dateKey } from '../core/utils.js';
 import { calculateTimes, formatClock } from '../domain/prayer.js';
-import { playAlert, refreshCustomAdhanFlags } from './prayerSound.js';
+import { playAlert, isQuietNow, refreshCustomAdhanFlags } from './prayerSound.js';
 import { toHijri } from '../domain/calendar.js';
 import { ramadanAlertTimes } from '../domain/ramadan.js';
 import { daysUntilHawl } from '../domain/zakat.js';
@@ -292,6 +292,7 @@ function tick(
         timezoneOffsetHours: tzOffsetHours,
         method: prayerSettings.method,
         asr: prayerSettings.asr,
+        offsets: prayerSettings.offsets,
       });
       for (const name of PRAYER_ORDER) {
         if (!prayerSettings.alerts[name]) continue;
@@ -299,6 +300,9 @@ function tick(
         // calendar day — the SW trigger path already skips them via
         // decimalHoursToDate; the in-tab path must not arm a folded clock.
         if (times?.unreachable?.[name]) continue;
+        // (v5.2.75, UP-04) quiet hours cancel (not just soften) alerts
+        // when opted in — off by default, current behavior preserved.
+        if (prayerSettings.quietCancels === true && isQuietNow(prayerSettings, now)) continue;
         if (!shouldFire(formatClock(times[name], false), now)) continue;
         const fireKey = `prayer-${name}|${todayKey}`;
         // A reload inside the 2-minute catch-up window used to fire a
@@ -335,6 +339,7 @@ function tick(
         timezoneOffsetHours: tzOffsetHours,
         method: prayerSettings.method,
         asr: prayerSettings.asr,
+        offsets: prayerSettings.offsets,
       });
       const alertTimes = ramadanAlertTimes(times, rAlerts.suhoorOffset);
       if (rAlerts.suhoor && shouldFire(formatClock(alertTimes.suhoor, false), now)) {
