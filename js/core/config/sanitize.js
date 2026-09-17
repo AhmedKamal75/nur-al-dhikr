@@ -105,6 +105,8 @@ export function sanitizeMushafPrefs(raw) {
     // drive this same slider value live, and a zoom-in reading session
     // legitimately wants more headroom than the fine-tune range did.
     fontScale: asNumber(p.fontScale, 1, 0.6, 2.2),
+    // (v5.9.0) fit-mode switch for fullscreen (auto fill vs manual zoom).
+    autoFit: asBool(p.autoFit, true),
     lineSpacing: asNumber(p.lineSpacing, 1, 0.85, 1.3),
     pageFlipAnimation: asBool(p.pageFlipAnimation, true),
     wordByWordStudy: asBool(p.wordByWordStudy, true),

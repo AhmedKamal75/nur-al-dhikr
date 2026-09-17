@@ -672,6 +672,12 @@ export function render(state) {
   // piece of chrome and lets the book claim the whole viewport. The
   // renderer owns body classes because views are pure string templates.
   document.body.classList.toggle('is-mushaf-fullscreen', state.mushafFullscreen === true);
+  // (v5.9.0) manual zoom in fullscreen: the text column scrolls
+  // internally (the old pinch-zoom contract) instead of fitting.
+  document.body.classList.toggle(
+    'is-mushaf-manual',
+    state.mushafFullscreen === true && state.settings?.mushafPrefs?.autoFit === false
+  );
   // Elderly mode: one body class scales type + targets app-wide (pure CSS
   // in accessibility.css); the renderer owns it like every body class.
   document.body.classList.toggle('is-elder', state.settings.elderMode === true);

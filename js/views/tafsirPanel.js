@@ -865,6 +865,7 @@ export function buildMushafSettingsPanel(state) {
     <h3 class="mushaf-jump__heading">${t('mushaf.behavior', lang)}</h3>
     ${toggle('spread', 'mushaf.spread')}
     ${toggle('pageFlipAnimation', 'mushaf.flipAnimation')}
+    ${toggle('autoFit', 'mushaf.autoFit')}
 
     <h3 class="mushaf-jump__heading">${t('mushaf.marksLegend', lang)}</h3>
     <ul class="mushaf-settings__marks">

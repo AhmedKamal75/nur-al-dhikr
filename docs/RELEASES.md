@@ -2,6 +2,22 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.9.0 — manual zoom returns, merged with auto-fill + slider control
+
+The old pinch-to-zoom is back, merged with the fill engine instead of
+replacing it. Fullscreen now has two honest modes under the persisted
+`mushafPrefs.autoFit` switch (default on): AUTO fills the page
+(unchanged v5.6.0 engine); MANUAL hands the scale to the person and
+the text column scrolls internally (the v5.2.87 contract). The first
+pinch, ctrl+wheel, or slider move in fullscreen flips to manual by
+itself (guarded transition, no gesture spam); the Mushaf settings
+toggle flips back, and the engine re-measures on the same dispatch.
+The existing text-size slider IS the zoom slider — in fullscreen it
+now visibly zooms via the same takeover. Pinch/ctrl+wheel ranges and
+sanitization unchanged; zoom still persists into windowed reading.
+
+Markers 5.8.0 → 5.9.0 plus re-stamp (248 files).
+
 ## v5.8.0 — syn/ant depth, reciprocal pairs, ARCHITECTURE catch-up
 
 Synonyms on 44 → reciprocal completion + validated pairs (antonyms

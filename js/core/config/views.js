@@ -455,6 +455,11 @@ export const DEFAULT_SETTINGS = Object.freeze({
     font: DEFAULT_MUSHAF_FONT,
     paper: DEFAULT_MUSHAF_PAPER,
     fontScale: 1, // 0.6 .. 2.2 (v4.5 widened for pinch/ctrl+wheel zoom)
+    // (v5.9.0) fullscreen fit mode: true = auto-fit fills the page
+    // (the engine owns the scale); false = manual zoom, the slider /
+    // pinch / ctrl+wheel own it and the text column scrolls. Flipped
+    // off automatically the first time the person zooms in fullscreen.
+    autoFit: true,
     lineSpacing: 1, // 0.85 .. 1.3 multiplier on the base 2.35 line-height
     pageFlipAnimation: true,
     wordByWordStudy: true, // tap a word for grammar/i'rab/sarf/meaning

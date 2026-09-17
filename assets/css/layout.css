@@ -608,6 +608,16 @@ body.is-mushaf-fullscreen .mushaf-page__text {
   overflow: hidden;
   flex: 1;
 }
+/* (v5.9.0) manual zoom: the text column scrolls internally (the v5.2.87
+   pinch-zoom contract) — the only axis that ever scrolls in fullscreen.
+   Pan vertically inside the text, flip pages horizontally. */
+body.is-mushaf-fullscreen.is-mushaf-manual .mushaf-page__text {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+body.is-mushaf-fullscreen.is-mushaf-manual .mushaf-page-wrap {
+  touch-action: pan-x pan-y;
+}
 
 /* v4.1 — landscape safe areas (notched phones in landscape keep the
    bottom nav and player clear of the sensor housing).

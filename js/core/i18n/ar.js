@@ -930,6 +930,8 @@ export const ar = {
   'mushaf.behavior': 'القراءة',
   'mushaf.studyAids': 'وسائل الدراسة',
   'mushaf.flipAnimation': 'حركة تقليب الصفحة',
+  // (v5.9.0) مفتاح الملاءمة التلقائية مقابل التكبير اليدوي.
+  'mushaf.autoFit': 'ملاءمة الصفحة تلقائيًا في ملء الشاشة',
   'mushaf.wordStudy': 'اضغط على كلمة لعرض إعرابها ومعناها',
   'mushaf.wordUnderline': 'تسطير الكلمات القابلة للضغط',
   'mushaf.tajweed': 'تلوين أحكام التجويد',

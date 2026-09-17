@@ -25,7 +25,8 @@ import { renderMushaf } from '../js/views/mushafReader.js';
 import { buildWordStudyPanel } from '../js/views/tafsirPanel.js';
 import { ornamentTokenKind, sameSurfaceWord } from '../js/domain/tajweed.js';
 import { wordIrabLine } from '../js/domain/wordStudy.js';
-import { computeFitScale, FIT_MIN, FIT_MAX } from '../js/app/autoFit.js';
+import { computeFitScale, FIT_MIN, FIT_MAX, takeoverManualZoom } from '../js/app/autoFit.js';
+import { actions, store } from '../js/core/state.js';
 import { MUSHAF_FONTS, MUSHAF_PAPERS, DEFAULT_SETTINGS } from '../js/core/config.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -262,6 +263,55 @@ describe('P0-3: fullscreen auto-fit engine', () => {
       layoutCss,
       /body\.is-mushaf-fullscreen \.mushaf-page-wrap \{[\s\S]*?overflow: hidden/,
       'no scroll'
+    );
+  });
+
+  test('(v5.9.0) manual zoom: takeover flips autoFit off in fullscreen only', () => {
+    store.dispatch(actions.updateMushafPrefs({ autoFit: true }));
+    store.dispatch(actions.setMushafFullscreen(false));
+    takeoverManualZoom();
+    assert.equal(
+      store.getState().settings.mushafPrefs.autoFit,
+      true,
+      'windowed gestures never touch the fit mode'
+    );
+    store.dispatch(actions.setMushafFullscreen(true));
+    try {
+      takeoverManualZoom();
+      assert.equal(
+        store.getState().settings.mushafPrefs.autoFit,
+        false,
+        'first fullscreen zoom takes manual control'
+      );
+      // Second gesture is a silent no-op (guarded transition, no spam).
+      takeoverManualZoom();
+      assert.equal(store.getState().settings.mushafPrefs.autoFit, false);
+    } finally {
+      store.dispatch(actions.setMushafFullscreen(false));
+      store.dispatch(actions.updateMushafPrefs({ autoFit: true }));
+    }
+  });
+
+  test('(v5.9.0) settings carry the auto-fit toggle; manual CSS scrolls the column', () => {
+    const state = {
+      settings: {
+        ...DEFAULT_SETTINGS,
+        language: 'en',
+        mushafPrefs: { font: 'amiriQuran', paper: 'ivory', autoFit: true },
+      },
+    };
+    const html = buildMushafSettingsPanel(state);
+    assert.match(html, /data-action="toggle-mushaf-pref" data-key="autoFit"/, 'toggle wired');
+    assert.match(html, /checked/, 'on by default');
+    assert.match(
+      layoutCss,
+      /body\.is-mushaf-fullscreen\.is-mushaf-manual \.mushaf-page__text \{[\s\S]*?overflow-y: auto/,
+      'manual column scrolls internally'
+    );
+    assert.match(
+      layoutCss,
+      /body\.is-mushaf-fullscreen\.is-mushaf-manual \.mushaf-page-wrap \{[\s\S]*?touch-action: pan-x pan-y/,
+      'manual pans both axes'
     );
   });
 });

@@ -99,6 +99,8 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
   // v4.5 adds spread (boolean, default true) — the two-page facing layout
   // on wide viewports — and widens fontScale's clamp to 0.6–2.2 so the
   // pinch-zoom/ctrl+wheel gestures share the slider's range.
+  // v5.9.0 adds autoFit (boolean, default true) — fullscreen auto-fill
+  // vs manual zoom.
   assert.deepEqual(p, {
     font: 'amiri',
     paper: 'sepia',
@@ -113,6 +115,7 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
     defaultTafsir: 'jalalayn',
     translationPanel: true,
     spread: false,
+    autoFit: true,
   });
 });
 
@@ -125,6 +128,13 @@ test('sanitizeMushafPrefs clamps the v4.5 zoom range and defaults spread on', ()
   assert.equal(p.spread, true);
   const low = sanitizeMushafPrefs({ fontScale: 0 });
   assert.equal(low.fontScale, 0.6);
+});
+
+test('(v5.9.0) autoFit defaults true, keeps false, drops hostile', () => {
+  assert.equal(sanitizeMushafPrefs({}).autoFit, true);
+  assert.equal(sanitizeMushafPrefs({ autoFit: false }).autoFit, false);
+  assert.equal(sanitizeMushafPrefs({ autoFit: 'yes' }).autoFit, true);
+  assert.equal(DEFAULT_SETTINGS.mushafPrefs.autoFit, true);
 });
 
 test('sanitizeMushafPrefs rejects hostile values for the v3.7 fields', () => {

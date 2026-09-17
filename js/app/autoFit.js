@@ -18,15 +18,15 @@
  *     of every text block inside, and binary-searches between renders
  *     (a handful of layout reads per fit, rAF-throttled). A spread
  *     fits its TIGHTEST page — one scale per wrap, min across texts.
- *  3. Fullscreen is a "fit the page" mode: the committed scale is the
- *     measured fill, clamped to [FIT_MIN, FIT_MAX] — NOT min() with the
- *     slider. (v5.4.0 capped the render at prefs.fontScale, so at the
- *     default slider the text could never grow past 1.0 and short pages
- *     sat half-empty by formula.) prefs.fontScale stays the single
- *     source of truth for INTENT in windowed mode (pinch / ctrl+wheel /
- *     the Settings slider all dispatch updateMushafPrefs({ fontScale }),
- *     applied the moment fullscreen exits); inside fullscreen the page
- *     owns the scale, exactly like a printed page owns its type size.
+ *  3. Fullscreen has two honest modes under prefs.autoFit (default true):
+ *     AUTO fills the page: the committed scale is the measured fill,
+ *     clamped to [FIT_MIN, FIT_MAX] — the slider only governs windowed
+ *     reading. MANUAL hands the scale back to the person: the engine
+ *     commits prefs.fontScale through the same var (pinch / ctrl+wheel /
+ *     the Settings slider all dispatch updateMushafPrefs({ fontScale })),
+ *     and the text column becomes vertically scrollable. The first
+ *     manual zoom gesture in fullscreen flips autoFit off by itself;
+ *     the Mushaf settings toggle flips it back.
  *
  * Side effects only here (view = pure template): a ResizeObserver on the
  * page wrap + resize/orientation listeners, all removed on deactivate;
@@ -34,6 +34,7 @@
  * on the mushaf view with a loaded page).
  */
 import { VIEWS } from '../core/config.js';
+import { actions, store } from '../core/state.js';
 
 export const FIT_MIN = 0.6;
 export const FIT_MAX = 2.2;
@@ -153,11 +154,20 @@ function fitOneWrap(wrap) {
 }
 
 /** Run the bounded bisection against the live DOM and commit each wrap's
- *  result as --mushaf-fit-scale (the CSS var the stylesheet prefers). */
+ *  result as --mushaf-fit-scale (the CSS var the stylesheet prefers).
+ *  Manual mode (prefs.autoFit === false) skips measuring and commits
+ *  the person's own slider scale to every wrap through the same var —
+ *  one render path, no branches in the stylesheet. */
 export function refreshMushafFit() {
   if (!active) return;
   const wraps = pageWrapEls();
   if (!wraps.length) return;
+  const prefs = store.getState().settings?.mushafPrefs || {};
+  if (prefs.autoFit === false) {
+    const manual = Math.min(FIT_MAX, Math.max(FIT_MIN, Number(prefs.fontScale) || 1));
+    for (const wrap of wraps) wrap.style.setProperty('--mushaf-fit-scale', String(manual));
+    return;
+  }
   for (const wrap of wraps) {
     // Re-observe the live node every pass: the string→DOM patch may have
     // replaced the sheet after our last run — observing a dead node
@@ -226,4 +236,18 @@ export function updateMushafAutoFitLifecycle(state) {
   const shouldRun = state.mushafFullscreen === true && state.activeView === VIEWS.MUSHAF;
   if (shouldRun) activateMushafAutoFit();
   else deactivateMushafAutoFit();
+}
+
+/**
+ * (v5.9.0) manual-zoom takeover: a live pinch / ctrl+wheel / slider zoom
+ * in fullscreen flips the fit engine out of auto-fill — from here the
+ * person's own scale wins until they re-enable auto-fit in Mushaf
+ * settings. Guarded (dispatches only on the transition) so gesture
+ * streams don't spam the store.
+ */
+export function takeoverManualZoom() {
+  const st = store.getState();
+  if (st.mushafFullscreen === true && st.settings?.mushafPrefs?.autoFit !== false) {
+    store.dispatch(actions.updateMushafPrefs({ autoFit: false }));
+  }
 }

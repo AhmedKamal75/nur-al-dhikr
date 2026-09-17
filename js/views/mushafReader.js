@@ -510,6 +510,9 @@ function buildFullscreenControls(
       <button type="button" class="icon-btn" data-action="mushaf-toggle-fullscreen" aria-label="${t('mushaf.fullscreenExit', lang)}" title="${t('mushaf.fullscreenExit', lang)}">
         ${icon('compress', { size: 18 })}
       </button>
+      <button type="button" class="icon-btn" data-action="mushaf-open-settings" aria-label="${t('mushaf.settingsTitle', lang)}" title="${t('mushaf.settingsTitle', lang)}">
+        ${icon('settings', { size: 18 })}
+      </button>
       <button type="button" class="icon-btn" data-action="mushaf-prev" ${canPrev ? '' : 'disabled'} aria-label="${t('mushaf.prevPage', lang)}">
         ${icon('chevronRight', { size: 20 })}
       </button>

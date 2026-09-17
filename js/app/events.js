@@ -11,6 +11,7 @@ import { t } from '../core/i18n.js';
 import { go } from '../core/router.js';
 import { actions, store } from '../core/state.js';
 import { vibrate, clamp } from '../core/utils.js';
+import { takeoverManualZoom } from './autoFit.js';
 import {
   clampPage,
   prevPage as mushafPrevPage,
@@ -412,6 +413,9 @@ export function bindGlobalEvents() {
       const next = clamp(current + (e.deltaY < 0 ? 0.08 : -0.08), 0.6, 2.2);
       if (next !== current) {
         store.dispatch(actions.updateMushafPrefs({ fontScale: Math.round(next * 100) / 100 }));
+        // (v5.9.0) zooming in fullscreen takes manual control: flip out
+        // of auto-fit so the engine stops overriding the gesture.
+        takeoverManualZoom();
       }
     },
     { passive: false }
@@ -790,6 +794,9 @@ export function bindGlobalEvents() {
       const next = clamp(mushafPinch.scale * (dist / mushafPinch.dist), 0.6, 2.2);
       if (Math.abs(next - current) >= 0.04) {
         store.dispatch(actions.updateMushafPrefs({ fontScale: Math.round(next * 100) / 100 }));
+        // (v5.9.0) same takeover as ctrl+wheel (below): a live pinch in
+        // fullscreen means manual zoom from here on.
+        takeoverManualZoom();
       }
     },
     { passive: false }

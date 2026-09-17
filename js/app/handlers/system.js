@@ -7,6 +7,7 @@
 import { rt } from '../../app/rt.js';
 import { reminderFormHTML } from '../forms.js';
 import { retryLibraryLoad } from '../net.js';
+import { takeoverManualZoom } from '../autoFit.js';
 import { ensureQuranData } from '../lazyData.js';
 import { VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
@@ -482,6 +483,9 @@ export const changeHandlers = [
     sel: '[data-bind="mushaf-font-scale"]',
     run: (ds, el) => {
       store.dispatch(actions.updateMushafPrefs({ fontScale: clampSliderNum(el.value, 0.6, 2.2) }));
+      // (v5.9.0) dragging the slider in fullscreen is a manual zoom:
+      // take over from auto-fill so the thumb does what it says.
+      takeoverManualZoom();
     },
   },
   {

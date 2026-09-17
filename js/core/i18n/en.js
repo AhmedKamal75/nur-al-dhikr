@@ -933,8 +933,7 @@ export const en = {
 
   'mushaf.settingsTitle': 'Mushaf Display',
   'mushaf.font': 'Font',
-  'mushaf.marksLegend': 'Page marks',
-  'mushaf.marksSajda': 'Place of prostration (sajdah) — the fifteen mawadi\u2019',
+  'mushaf.marksLegend': 'Page marks',  'mushaf.marksSajda': 'Place of prostration (sajdah) — the fifteen mawadi\u2019',
   'mushaf.marksHizb': 'Rub el-hizb — juz / hizb divider',
   'mushaf.marksWaqf': 'Stop marks (j\u0101, \u1e63al\u0101, qil\u0101, m\u016B)',
   'mushaf.bismillahStyle': 'Bismillah look',
@@ -949,6 +948,8 @@ export const en = {
   'mushaf.behavior': 'Reading',
   'mushaf.studyAids': 'Study aids',
   'mushaf.flipAnimation': 'Page-flip animation',
+  // (v5.9.0) fullscreen fit-mode switch: auto fill vs manual zoom.
+  'mushaf.autoFit': 'Auto-fit page in fullscreen',
   'mushaf.wordStudy': 'Tap a word for grammar & meaning',
   'mushaf.wordUnderline': 'Underline tappable words',
   'mushaf.tajweed': 'Tajweed color-coding',
