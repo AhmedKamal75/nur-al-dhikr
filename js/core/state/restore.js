@@ -320,8 +320,20 @@ export function sanitizeRestoredPayload(payload) {
         pages: Number.isFinite(h.pages) ? h.pages : MUSHAF_PAGE_COUNT,
       }))
       .slice(0, 20),
-    favorites: asArray(p.favorites).filter((id) => typeof id === 'string'),
-    // (v5.2.0) hadith bookmark keys are "<bookId>:<n>" slugs, capped so a
+    // (v5.6.0, B-4) juz milestone stamps: {[1..30]: ISO day}; junk keys,
+    // out-of-range juz and malformed days degrade to {}.
+    khatmaJuzDone: (() => {
+      const raw = asObject(p.khatmaJuzDone);
+      const clean = {};
+      for (const [k, v] of Object.entries(raw)) {
+        const j = Math.floor(Number(k));
+        if (!(j >= 1 && j <= 30)) continue;
+        if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) continue;
+        clean[j] = v;
+      }
+      return clean;
+    })(),
+    favorites: asArray(p.favorites).filter((id) => typeof id === 'string'), // (v5.2.0) hadith bookmark keys are "<bookId>:<n>" slugs, capped so a
     // hostile backup cannot bloat the persisted blob.
     hadithBookmarks: asArray(p.hadithBookmarks)
       .filter((k) => typeof k === 'string' && /^[A-Za-z0-9_-]{1,40}:\d{1,6}$/.test(k))
@@ -563,6 +575,9 @@ export function sanitizeRestoredPayload(payload) {
     // (v5.2.85, UP-08) cross-session weak-item memory — hostile-shape
     // sanitized, capped; junk degrades to {}.
     quizMissRecords: sanitizeQuizMissRecords(p.quizMissRecords),
+    // (v5.4.0, P0-5b) the tajweed drill's weak-rule memory rides the same
+    // {m,l} shape, id-grammar, cap and sanitizer as the 99-names quiz.
+    tajweedMissRecords: sanitizeQuizMissRecords(p.tajweedMissRecords),
     statistics: {
       // (v4.2) per-day entries: keys must be local dateKeys, counts must be
       // numbers — `${d.count}` renders straight into the heatmap and week

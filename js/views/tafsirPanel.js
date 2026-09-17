@@ -20,7 +20,9 @@ import {
   canonicalWordTokens,
   sameSurfaceWord,
   containsSurfaceWord,
+  matchesAccentWord,
   wordUnits,
+  ornamentTokenKind,
   TAJWEED_RULES,
   TAJWEED_FAMILIES,
   tajweedPrefsOf,
@@ -30,14 +32,14 @@ import {
 } from '../domain/tajweed.js';
 import {
   getWord,
-  wordGrammarSummary,
   wordDetailTags,
   wordAffixLabels,
+  wordIrabLine,
   rootOccurrences,
+  rootMeaningFor,
   splitEditions,
   dictEntryFor,
   wordBookmarkKey,
-  isSajdaWord,
 } from '../domain/wordStudy.js';
 
 /* ------------------------------------------------------------------ */
@@ -57,7 +59,14 @@ export function renderAyahWords(
   wordRecords,
   surah,
   ayah,
-  { tappable = true, underline = true, tajweed = false, prefs = null, lang = 'en' } = {}
+  {
+    tappable = true,
+    underline = true,
+    tajweed = false,
+    prefs = null,
+    lang = 'en',
+    accentWord = null,
+  } = {}
 ) {
   const rawTokens = String(officialText || '')
     .trim()
@@ -70,26 +79,48 @@ export function renderAyahWords(
   const canonIdxByRaw = new Map(canon.map((c, ci) => [c.rawIndex, ci]));
   const tajweedByWord = tajweed ? classifyAyahTajweed(officialText) : null;
 
+  // (v5.4.0, P0-2c — ported from the v5.3.0 audit) standalone ornament
+  // tokens (waqf letters, the rub el-hizb divider, the sajdah mark) wrap
+  // in a non-letter styled span so Sajdah marks and Hizb dividers stay
+  // two visual families (color + size), each token-colored from dedicated
+  // CSS variables with a forced-colors fallback. Display text is
+  // byte-identical.
+  const markSpan = (tok) => {
+    const kind = ornamentTokenKind(tok);
+    return kind && kind !== 'digits'
+      ? `<span class="mushaf-mark mushaf-mark--${kind}" aria-hidden="true">${escapeHTML(tok)}</span>`
+      : escapeHTML(tok);
+  };
+
   // (v5.2.74, BUG-06) roving-tabindex anchor: the first tappable word.
   let firstTappable = null;
   return rawTokens
     .map((tok, rawIdx) => {
       const canonIdx = canonIdxByRaw.get(rawIdx);
-      const inner = tajweedByWord
-        ? colorizeWord(tok, tajweedByWord[rawIdx]?.spans || [], prefs)
-        : escapeHTML(tok);
+      // (v5.4.0, P0-2b) the printed horizontal sajdah-line accent rides
+      // ONLY over سُجَّدًا in As-Sajdah 15 — matched harakat-folded (the
+      // Madani rasm orders shadda/fatha differently from the classic
+      // docs) via the accentWord option. The fifteen mawadi' keep their
+      // ۩ mark; this one ayah also carries the printed line-over-word
+      // convention. When the caller passes no accentWord, 32:15 defaults
+      // it in (so BOTH readers — classic list and Mushaf book — carry the
+      // accent with no per-call-site wiring); an explicit accentWord
+      // always wins, and the same skeleton elsewhere gains nothing.
+      const defaultAccent = String(surah) === '32' && String(ayah) === '15' ? 'سُجَّدًا' : null;
+      const effectiveAccent = accentWord != null ? accentWord : defaultAccent;
+      const isAccent = matchesAccentWord(tok, effectiveAccent);
+      const isMark = ornamentTokenKind(tok) && ornamentTokenKind(tok) !== 'digits';
+      const inner =
+        tajweedByWord && !isMark
+          ? colorizeWord(tok, tajweedByWord[rawIdx]?.spans || [], prefs)
+          : markSpan(tok);
       // (v4.6.0) a word is tappable even without grammar data — the tap
       // opens the study panel, which always answers the tajweed question
       // from the ayah text itself. `tappable` opts OUT (practice mode).
-      if (!tappable || canonIdx == null) return inner;
+      if (!tappable || canonIdx == null) {
+        return isAccent ? `<span class="mushaf-ayah__sajda-word">${inner}</span>` : inner;
+      }
       const i = canonIdx + 1;
-      // (v5.2.86, P0-2) the prostration-word accent: سُجَّدًا in 32:15
-      // alone carries a horizontal underline accent (the printed sajdah
-      // line), scoped strictly to this ayah — the same skeleton elsewhere
-      // must not gain it. Distinct from the ۩ sajdah-place mark, which the
-      // mushaf reader renders separately after the ayah-end marker.
-      const sajdaCls =
-        String(surah) === '32' && String(ayah) === '15' && isSajdaWord(tok) ? ' qword--sajda' : '';
       // (v5.2.74, BUG-05) Arabic runs carry lang="ar" so screen readers
       // use the Arabic voice (WCAG 3.1.2 Language of Parts).
       // (v5.2.74, BUG-06) roving tabindex: only the FIRST tappable word of
@@ -99,7 +130,7 @@ export function renderAyahWords(
       // movement lives in the events.js keydown handler.
       const tab = firstTappable === null ? '0' : '-1';
       if (firstTappable === null) firstTappable = rawIdx;
-      return `<span class="qword${sajdaCls} ${underline ? 'qword--underline' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="${tab}" role="button" lang="ar" aria-label="${escapeHTML(tok)} — ${escapeHTML(t('wordStudy.open', lang))}">${inner}</span>`;
+      return `<span class="qword ${underline ? 'qword--underline' : ''} ${isAccent ? 'mushaf-ayah__sajda-word' : ''}" data-action="word-tap" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" tabindex="${tab}" role="button" lang="ar" aria-label="${escapeHTML(tok)} — ${escapeHTML(t('wordStudy.open', lang))}">${inner}</span>`;
     })
     .join(' ');
 }
@@ -125,6 +156,40 @@ function colorizeWord(word, spans, prefs = null) {
   }
   out += escapeHTML(word.slice(cursor));
   return out;
+}
+
+/**
+ * (v5.5.0) the Bismillah as LIVE quranic text: the same four words open
+ * every surah header, rendered through renderAyahWords so each word is
+ * tappable with tajweed coloring exactly like any ayah — never a dead
+ * paragraph. Taps carry data-ayah="0" (the Bismillah is not a numbered
+ * ayah outside 1:1); the word-tap handler redirects them onto the real
+ * 1:1 grammar records — identical words, real i'rab/sarf/root, nothing
+ * invented. `style` mirrors the bismillahStyle pref ('hidden' renders
+ * nothing); `cls` picks the reader's own Bismillah class so each reader
+ * keeps its rhythm while sharing one live implementation.
+ */
+export const BISMILLAH_AYAH_REF = '0';
+
+export function buildBismillahHTML({
+  text,
+  surah,
+  style = 'auto',
+  cls = 'mushaf-bismillah',
+  lang = 'en',
+  underline = false,
+  tajweed = false,
+  prefs = null,
+}) {
+  if (style === 'hidden') return '';
+  const words = renderAyahWords(text, null, surah, BISMILLAH_AYAH_REF, {
+    tappable: true,
+    underline,
+    tajweed,
+    prefs,
+    lang,
+  });
+  return `<p class="${cls} bismillah--${style}" dir="rtl" lang="ar">${words}</p>`;
 }
 
 /** v3.7 — Tajweed inspector: what to DO at this specific word.
@@ -253,33 +318,104 @@ function wordActionsRow(state, lang, surah, ayah, i) {
 }
 
 /**
- * Meanings section from the lemma dictionary (v5.2.75, UP-01): the AR
- * gloss + EN gloss plus synonym/antonym chips. Empty when the lemma is
- * unknown or the tier hasn't loaded — the popup never shows a hollow
- * section.
- *
- * (v5.2.86, P0-1) "Empty" is now an honest inline hint instead of
- * silence: the word IS known (grammar + root sections render above), so
- * a missing dictionary entry says so in one line via the sanctioned
- * empty-hint idiom — never inside .word-study__meanings, which keeps its
- * "renders only with real content" contract.
+ * (v5.4.0, P0-1 — ported from the v5.3.0 audit) One labeled study block.
+ * Empty data renders an honest one-line hint — the popup never invents
+ * content and never hides a section silently. Blocks: definition,
+ * syn/ant, root, i'rab.
  */
-function wordMeaningsHTML(state, lang, lemma) {
-  const dict = dictEntryFor(state.wordDict, lemma);
-  if (!dict || (!dict.ar && !dict.en && !dict.syn.length && !dict.ant.length))
-    return `<p class="empty-hint">${t('wordStudy.noMeanings', lang)}</p>`;
+function wordStudyBlock({ labelKey, lang, bodyHTML, emptyKey = null, extraClass = '' }) {
+  const body = (bodyHTML || '').trim();
+  if (!body) {
+    return `
+    <div class="word-study__block word-study__block--empty">
+      <span class="word-study__block-label">${t(labelKey, lang)}</span>
+      <p class="empty-hint">${t(emptyKey || 'wordStudy.noIrabData', lang)}</p>
+    </div>`;
+  }
+  return `
+    <div class="word-study__block${extraClass ? ` ${extraClass}` : ''}">
+      <span class="word-study__block-label">${t(labelKey, lang)}</span>
+      ${body}
+    </div>`;
+}
+
+/** Definition block body: the lemma dictionary's contextual Arabic entry
+ *  + English gloss, else the corpus gloss. Empty when neither exists.
+ *  (v5.5.0) the corpus gloss renders in BOTH languages: suppressing it
+ *  in Arabic left the Definition block permanently empty for the ~88%
+ *  of words the 54-lemma study dictionary does not cover. */
+function wordDefinitionBody(state, lang, word) {
+  const dict = dictEntryFor(state.wordDict, word.lemma);
+  const parts = [];
+  if (dict?.ar)
+    parts.push(`<p class="word-study__dict-ar" dir="rtl" lang="ar">${escapeHTML(dict.ar)}</p>`);
+  if (dict?.en) parts.push(`<p class="word-study__dict-en" dir="auto">${escapeHTML(dict.en)}</p>`);
+  if (!parts.length && word.en) {
+    parts.push(`<p class="word-study__dict-en" dir="auto">${escapeHTML(word.en)}</p>`);
+  }
+  return parts.join('');
+}
+
+/** Synonym/antonym chips block body. Empty when the dict has neither. */
+function wordSynAntBody(state, lang, word) {
+  const dict = dictEntryFor(state.wordDict, word.lemma);
+  if (!dict || (!dict.syn.length && !dict.ant.length)) return '';
   const chips = (list, labelKey) =>
     list.length
       ? `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> ${list.map((s) => `<span class="chip chip--basis chip--sm" dir="rtl" lang="ar">${escapeHTML(s)}</span>`).join('')}</div>`
       : '';
+  return `${chips(dict.syn, 'wordStudy.synonyms')}${chips(dict.ant, 'wordStudy.antonyms')}`;
+}
+
+/** Root block body: root, its core conceptual meaning, count,
+ *  occurrences, and the #/roots deep link. */
+function wordRootBody(state, lang, word, surah, ayah) {
+  if (!word.root) return '';
+  const { count, sample } = rootOccurrences(state.quranRoots, word.root, surah, ayah, 8);
+  // (v5.6.0) the root's core meaning — the concept every derivative
+  // carries (branching, covering, turning…). Honest hint when the
+  // roots-meaning tier hasn't recorded this root yet.
+  const meaning = rootMeaningFor(state.rootsMeaning, word.root);
+  const meaningHtml = meaning
+    ? `${meaning.ar ? `<p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(meaning.ar)}</p>` : ''}${meaning.en ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(meaning.en)}</p>` : ''}`
+    : `<p class="empty-hint">${t('wordStudy.noRootMeaningData', lang)}</p>`;
   return `
-  <div class="word-study__meanings">
-    <span class="word-study__meanings-label">${t('wordStudy.meanings', lang)}</span>
-    ${dict.ar ? `<p class="word-study__dict-ar" dir="rtl" lang="ar">${escapeHTML(dict.ar)}</p>` : ''}
-    ${dict.en ? `<p class="word-study__dict-en" dir="auto">${escapeHTML(dict.en)}</p>` : ''}
-    ${chips(dict.syn, 'wordStudy.synonyms')}
-    ${chips(dict.ant, 'wordStudy.antonyms')}
-  </div>`;
+      <div class="word-study__root-head">
+        <span class="word-study__root-text" dir="rtl" lang="ar">${escapeHTML(word.root)}</span>
+        <span class="word-study__root-count">${t('wordStudy.rootCount', lang, { n: count })}</span>
+      </div>
+      ${meaningHtml}
+      ${
+        sample.length
+          ? `
+      <p class="word-study__root-hint">${t('wordStudy.rootHint', lang)}</p>
+      <div class="word-study__root-chips">
+        ${sample
+          .map(
+            (o) => `
+          <button type="button" class="chip chip--basis" data-action="root-jump" data-surah="${o.s}" data-ayah="${o.a}">
+            <span dir="rtl" lang="ar">${escapeHTML(o.t || '')}</span>
+            <span class="word-study__root-ref" dir="ltr">${o.s}:${o.a}</span>
+          </button>`
+          )
+          .join('')}
+      </div>`
+          : ''
+      }
+      <button type="button" class="btn btn--secondary btn--sm word-study__root-browse" data-action="roots-open" data-root="${escapeHTML(word.root)}">
+        ${t('wordStudy.rootBrowse', lang, { n: count })}
+      </button>`;
+}
+
+/** I'rab block body: the one-line i'rab + wrapped detail tags. */
+function wordIrabBody(word, lang) {
+  const line = wordIrabLine(word, lang);
+  const tags = wordDetailTags(word, lang);
+  const tagsHtml = tags.length
+    ? `<div class="word-study__tags">${tags.map((tg) => `<span class="chip chip--basis chip--sm">${escapeHTML(tg)}</span>`).join('')}</div>`
+    : '';
+  if (!line && !tagsHtml) return '';
+  return `${line ? `<p class="word-study__irab-line">${escapeHTML(line)}</p>` : ''}${tagsHtml}`;
 }
 
 export function buildWordStudyPanel(state) {
@@ -337,8 +473,6 @@ export function buildWordStudyPanel(state) {
   }
 
   const { prefixes, suffixes } = wordAffixLabels(word, lang);
-  const tags = wordDetailTags(word, lang);
-  const { count, sample } = rootOccurrences(state.quranRoots, word.root, surah, ayah, 8);
 
   const affixHtml = (list, labelKey) =>
     list.length
@@ -349,36 +483,42 @@ export function buildWordStudyPanel(state) {
     </div>`
       : '';
 
-  const rootHtml = word.root
-    ? `
-    <div class="word-study__root">
-      <div class="word-study__root-head">
-        <span class="word-study__root-label">${t('wordStudy.root', lang)}</span>
-        <span class="word-study__root-text" dir="rtl" lang="ar">${escapeHTML(word.root)}</span>
-        <span class="word-study__root-count">${t('wordStudy.rootCount', lang, { n: count })}</span>
-      </div>
-      ${
-        sample.length
-          ? `
-      <p class="word-study__root-hint">${t('wordStudy.rootHint', lang)}</p>
-      <div class="word-study__root-chips">
-        ${sample
-          .map(
-            (o) => `
-          <button type="button" class="chip chip--basis" data-action="root-jump" data-surah="${o.s}" data-ayah="${o.a}">
-            <span dir="rtl" lang="ar">${escapeHTML(o.t || '')}</span>
-            <span class="word-study__root-ref" dir="ltr">${o.s}:${o.a}</span>
-          </button>`
-          )
-          .join('')}
-      </div>`
-          : ''
-      }
-      <button type="button" class="btn btn--secondary btn--sm word-study__root-browse" data-action="roots-open" data-root="${escapeHTML(word.root)}">
-        ${t('wordStudy.rootBrowse', lang, { n: count })}
-      </button>
-    </div>`
-    : '';
+  // (v5.4.0, P0-1 — ported from the v5.3.0 audit) the four study blocks —
+  // definition, synonyms/antonyms, root, i'rab — each with an honest
+  // empty state when its data tier is missing. The legacy
+  // word-study__meanings anchor rides the definition block only when the
+  // dict tier actually has content (the UP-01 gate: no hollow meanings
+  // section without the tier).
+  const dictForLegacy = dictEntryFor(state.wordDict, word.lemma);
+  const hasMeanings = Boolean(
+    dictForLegacy &&
+    (dictForLegacy.ar || dictForLegacy.en || dictForLegacy.syn.length || dictForLegacy.ant.length)
+  );
+  const definitionBlock = wordStudyBlock({
+    labelKey: 'wordStudy.definition',
+    lang,
+    bodyHTML: wordDefinitionBody(state, lang, word),
+    emptyKey: 'wordStudy.noMeaningData',
+    extraClass: hasMeanings ? 'word-study__meanings' : '',
+  });
+  const synAntBlock = wordStudyBlock({
+    labelKey: 'wordStudy.synAnt',
+    lang,
+    bodyHTML: wordSynAntBody(state, lang, word),
+    emptyKey: 'wordStudy.noSynAntData',
+  });
+  const rootBlock = wordStudyBlock({
+    labelKey: 'wordStudy.root',
+    lang,
+    bodyHTML: wordRootBody(state, lang, word, surah, ayah),
+    emptyKey: 'wordStudy.noRootData',
+  });
+  const irabBlock = wordStudyBlock({
+    labelKey: 'wordStudy.irab',
+    lang,
+    bodyHTML: wordIrabBody(word, lang),
+    emptyKey: 'wordStudy.noIrabData',
+  });
 
   return `
   <div class="word-study">
@@ -386,13 +526,12 @@ export function buildWordStudyPanel(state) {
     <p class="word-study__ref" dir="ltr">${surah}:${ayah} \u00B7 ${t('wordStudy.wordN', lang, { n: i })}</p>
     <p class="word-study__arabic" dir="rtl" lang="ar">${escapeHTML(word.text || '')}</p>
     ${lang !== 'ar' && word.translit ? `<p class="word-study__translit" dir="ltr">${escapeHTML(word.translit)}</p>` : ''}
-    ${lang !== 'ar' && word.en ? `<p class="word-study__gloss">${escapeHTML(word.en)}</p>` : ''}
-    ${wordMeaningsHTML(state, lang, word.lemma)}
-    <p class="word-study__grammar">${escapeHTML(wordGrammarSummary(word, lang))}</p>
-    ${tags.length ? `<div class="word-study__tags">${tags.map((tg) => `<span class="chip chip--basis chip--sm">${escapeHTML(tg)}</span>`).join('')}</div>` : ''}
+    ${definitionBlock}
+    ${synAntBlock}
+    ${irabBlock}
     ${affixHtml(prefixes, 'wordStudy.prefix')}
     ${affixHtml(suffixes, 'wordStudy.suffix')}
-    ${rootHtml}
+    ${rootBlock}
     ${lookalike ? `<div class="word-study__lookalike">${lookalike}</div>` : ''}
     ${wordActionsRow(state, lang, surah, ayah, i)}
     ${wordTajweedSection(state, surah, ayah, i, lang)}
@@ -726,6 +865,13 @@ export function buildMushafSettingsPanel(state) {
     <h3 class="mushaf-jump__heading">${t('mushaf.behavior', lang)}</h3>
     ${toggle('spread', 'mushaf.spread')}
     ${toggle('pageFlipAnimation', 'mushaf.flipAnimation')}
+
+    <h3 class="mushaf-jump__heading">${t('mushaf.marksLegend', lang)}</h3>
+    <ul class="mushaf-settings__marks">
+      <li><span class="mushaf-mark mushaf-mark--sajdah" dir="rtl" lang="ar" aria-hidden="true">۩</span> ${t('mushaf.marksSajda', lang)}</li>
+      <li><span class="mushaf-mark mushaf-mark--hizb" dir="rtl" lang="ar" aria-hidden="true">۞</span> ${t('mushaf.marksHizb', lang)}</li>
+      <li><span class="mushaf-mark mushaf-mark--waqf" dir="rtl" lang="ar" aria-hidden="true">ۚ</span> ${t('mushaf.marksWaqf', lang)}</li>
+    </ul>
 
     <h3 class="mushaf-jump__heading">${t('mushaf.studyAids', lang)}</h3>
     ${toggle('wordByWordStudy', 'mushaf.wordStudy')}

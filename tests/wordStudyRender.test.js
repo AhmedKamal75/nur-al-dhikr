@@ -19,6 +19,7 @@ import {
   buildTafsirPanel,
   buildAyahStudyExtras,
   buildMushafSettingsPanel,
+  buildBismillahHTML,
   renderAyahWords,
   formatArabicCommentary,
 } from '../js/views/tafsirPanel.js';
@@ -366,4 +367,32 @@ test('(v5.2.89, P0-2) Mushaf settings always carry the waqf-marks legend', () =>
   }
   // Legend is print reference, not coloring-gated: present with coloring off.
   assert.match(buildMushafSettingsPanel(baseState()), /waqf-mark/);
+});
+
+test('(v5.5.0) Bismillah renders as live quranic words, not dead text', () => {
+  const html = buildBismillahHTML({
+    text: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ',
+    surah: 112,
+    style: 'auto',
+    cls: 'mushaf-bismillah',
+    lang: 'en',
+    tajweed: true,
+    prefs: null,
+  });
+  assertClean(html, 'bismillah live words');
+  // Exactly the four words, each tappable with the bismillah ref that the
+  // word-tap handler redirects onto the real 1:1 grammar records.
+  const taps = html.match(/data-action="word-tap"/g) || [];
+  assert.equal(taps.length, 4, 'four tappable words');
+  assert.match(html, /data-surah="112"/, 'carries the hosting surah');
+  assert.match(html, /data-ayah="0"/, 'bismillah ref (redirected to 1:1 on tap)');
+  assert.match(html, /mushaf-bismillah bismillah--auto/, 'reader class + style variant kept');
+  // Roving tabindex like every ayah: one stop, not four.
+  assert.equal((html.match(/tabindex="0"/g) || []).length, 1, 'single tab stop');
+  // 'hidden' renders nothing — the call sites also guard, belt and braces.
+  assert.equal(
+    buildBismillahHTML({ text: 'x', surah: 1, style: 'hidden' }),
+    '',
+    'hidden style renders nothing'
+  );
 });

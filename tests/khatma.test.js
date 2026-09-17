@@ -8,6 +8,8 @@ import {
   inclusiveDays,
   suggestDailyTarget,
   ramadanKhatmaPreset,
+  juzProgress,
+  justCompletedJuz,
 } from '../js/domain/khatma.js';
 
 const TOTAL = 604;
@@ -251,4 +253,36 @@ test('started plan: deadline math measures from today (unchanged behavior)', () 
   const s = planStatus({ pagesRead: pages(84), plan, today: at(2026, 8, 24) });
   assert.equal(s.daysRemaining, 30); // Aug 24 → Sep 22, measured from TODAY
   assert.equal(s.requiredPerDay, Math.ceil(520 / 30));
+});
+
+test('(v5.6.0, B-4) juzProgress: only fully-read juz count, next points ahead', () => {
+  // Juz 1 = pages 1..21 (juzFirstPage), juz 2 starts at 22.
+  const metaPages = [];
+  for (let p = 1; p <= 42; p += 1) metaPages.push({ page: p, juz: p < 22 ? 1 : 2 });
+  const readJuz1 = {};
+  for (let p = 1; p <= 21; p += 1) readJuz1[String(p)] = true;
+  assert.deepEqual(juzProgress(metaPages, readJuz1), { done: [1], total: 30, next: 2 });
+  // One page shy of juz 1 earns nothing.
+  const shy = { ...readJuz1 };
+  delete shy['21'];
+  assert.deepEqual(juzProgress(metaPages, shy), { done: [], total: 30, next: 1 });
+  // String and numeric page keys both count (restore shapes vary).
+  const numeric = {};
+  for (let p = 1; p <= 21; p += 1) numeric[p] = true;
+  assert.deepEqual(juzProgress(metaPages, numeric).done, [1]);
+  // Hostile meta/pages degrade to empty, never throw.
+  assert.deepEqual(juzProgress(null, readJuz1), { done: [], total: 30, next: 1 });
+  assert.deepEqual(juzProgress(metaPages, null), { done: [], total: 30, next: 1 });
+  assert.deepEqual(juzProgress([{ page: 'x', juz: 'y' }], readJuz1), {
+    done: [],
+    total: 30,
+    next: 1,
+  });
+});
+
+test('(v5.6.0, B-4) justCompletedJuz: only today-stamped juz bloom', () => {
+  const today = '2026-09-17';
+  assert.deepEqual(justCompletedJuz({ 3: today, 4: '2026-09-10', 31: today }, today), [3]);
+  assert.deepEqual(justCompletedJuz({}, today), []);
+  assert.deepEqual(justCompletedJuz(null, today), []);
 });

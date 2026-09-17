@@ -2,6 +2,178 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.8.0 — syn/ant depth, reciprocal pairs, ARCHITECTURE catch-up
+
+Synonyms on 44 → reciprocal completion + validated pairs (antonyms
+167 → 257): every symmetric relation now completes both sides, plus
+hand-checked pairs (هدى↔ضلال، نار↔جنة، حي↔ميت…). Fold-duplicate
+chips (باطل/باطِل) deduped across all arrays.
+
+Docs: ARCHITECTURE.md documents the word-study data tiers (dict /
+roots-meaning / grammar records), the absolute-fill engine (with its
+three measured traps), and the review digest + juz milestones.
+SEED-README counts corrected (dict size, roots-meaning tier, 151
+test files, 1,702 tests).
+
+Markers 5.7.0 → 5.8.0 plus re-stamp (248 files).
+
+## v5.7.0 — full word-study coverage: every lemma, every root
+
+Dictionary 625 → 4,763 entries (100% of corpus lemmas, 0 bad keys):
+all 51 function words with grammatical explanations, ~1,100
+hand-curated content senses, root-anchored transfer for inflected
+forms (same root + same POS + shared English stem guard), and
+root-derived senses for the long tail — composed only from covered
+data, never invented. Synonyms on 44, antonyms on 167+, every
+cross-reference byte-validated as a real corpus lemma. Coverage
+11.6% → 100% of tapped words.
+
+Roots 1,074 → 1,651 (100% of the index): every remaining root
+grounded in its actual occurrences first, polysemy kept honest
+(oath+blessings, Hud+Jews, war+prayer-niche, black+mastery).
+
+No word taps into missing data anymore: definition always resolves
+(dict → corpus gloss → root sense, structurally), i'rab from record
+fields, root meaning nearly always present. Remaining honest
+empties are syn/ant for words that genuinely have none recorded.
+
+Markers 5.6.0 → 5.7.0 plus re-stamp (248 files).
+
+## v5.6.0 — fullscreen truly fills, root meanings, review digest, juz milestones
+
+Fullscreen fit (measured per page at 390×844, zero console errors):
+the engine capped rendering at the slider default (short pages could
+never grow past 1.0) and the #main→view→wrap chain never actually
+filled the viewport (658px of 844px; dense pages grew the wrap to
+1571px and the fitter converged on its own runaway box). Three real
+fixes: (1) #main gets a definite `flex: 1 0 100dvh` + min-block 0 —
+a 0% flex-basis against the content-sized #app re-inflated everything;
+(2) the engine commits absolute fill, clamped [0.6, 2.2] — fullscreen
+is a "fit the page" mode, the slider keeps governing windowed reading;
+(3) the box is the text's own constrained clientHeight (wrap-minus-
+chrome over-counted ~50px of padding), with a viewport clamp and a
+one-step post-search undershoot instead of a tolerance band (which
+biased every trial to the floor — scrollHeight never reads below
+clientHeight). Verified: pages 1/416/604 fill 0.83 with 0px overflow.
+
+Word study: root blocks now carry the root's core conceptual meaning
+(AR+EN, e.g. branching/intertwining for ش-ج-ر) from a new curated
+140-root dataset (`data/quran-roots-meaning.json`, own lazy tier +
+honest empty state for uncovered roots). Dictionary 81 → 118 lemmas
+(coverage 27.3% → 32.5%, syn/ant on 38/52 entries, every
+cross-reference byte-validated as a real corpus lemma); floor test
+stays at 80.
+
+Roadmap gaps closed: B-1 review-due digest Home panel (hifz lapses +
+quiz misses + tajweed weak rules → one count with a deep link each,
+silent until anything is due, density-cap test updated); B-4 juz
+milestones (reducer stamps newly-completed juz with the day, Track
+panel blooms fresh ones once and counts the rest — "Juz X of 30");
+B-3 chunk-persistent corpus builds (each 24-wide chunk lands in the
+reader cache, so interrupted builds resume instead of re-scanning;
+tafsir already did this); B-5 offline heatmap PNG export (canvas
+redraw, theme-sampled colors, static fallback); R-3 sajdah-accent
+regression spec across all four typefaces with archived screenshots.
+
+Markers 5.5.0 → 5.6.0 plus re-stamp (248 files).
+
+## v5.5.0 — rectangle banner, live Bismillah, word-study truthfulness
+
+Surah banner (measured, not guessed): was 313×78px = 1.38 text lines
+at 390px with the frame inheriting the page font (ballooning further
+at high scales). Now a decoupled slim rectangle — 313×40px = 0.71
+lines, aspect 7.7:1 at default, capped with the band so it budgets
+~1 line at any scale. Slim 2px cartouche, compact rhythm, full-width
+hairline band kept. Pinned by CSS tests.
+
+Bismillah is live quranic text: both readers render the four words
+through `renderAyahWords` (tappable, tajweed-colored, one tab stop),
+sized and spaced exactly like the surrounding text (Mushaf: page
+size/rhythm; classic: ayah-card size/rhythm — Madinah 1.12em exception
+removed). Taps carry `data-ayah="0"` and redirect onto the real 1:1
+grammar records — identical words, genuine i'rab/sarf/root, nothing
+invented. No new study plumbing; the popup ref honestly reads 1:1.
+
+Word study: (1) the i'rab line ignored the record `subtype`, printing
+coarse "Noun" for proper nouns, participles, verbal nouns and missing
+adjectives — now subtype-first with the `adj` flag, same precedence
+as the grammar summary (which also let the popup drop its duplicated
+summary line). Particles/pronouns/particles-of-certainty etc. all read
+correctly now. (2) The syn/ant block mislabeled "Meanings" (المعاني)
+next to "Definition" (المعنى) — now "Synonyms & Antonyms /
+المرادفات والأضداد" with مرادفات/أضداد sub-labels; antonyms render
+whenever the entry has them (34 of 81 entries do). (3) The corpus
+gloss fallback was suppressed in Arabic, leaving Definition
+permanently empty for uncovered words — renders in both languages
+now. (4) Dictionary 54 → 81 curated lemmas (top corpus-frequency
+content words: اللَّه، قال، رب، جعل…), every syn/ant validated as a
+real corpus lemma, every key byte-matched to the Uthmani lemma order;
+hit rate 11.6% → 27.3%, floor pinned at 80. Remaining emptiness is
+honest: function words and rare lemmas have no entry, and the popup
+says so per block.
+
+Markers 5.4.0 → 5.5.0 plus re-stamp (248 files).
+
+## v5.4.0 — unification: v5.3.0-audit P0 × v5.2.89 local work, best of each
+
+Two lines of work unified with no bias — every contested feature
+measured against the other implementation and the winner taken:
+
+Word study (audit wins): the popup renders four labeled blocks —
+definition (dict AR+EN, corpus-gloss fallback), synonyms/antonyms,
+root (count + occurrences + #/roots deep link), i'rab (one line
+composed ONLY from structured grammar fields via `wordIrabLine`) —
+each with an honest dashed empty state. The UP-01 legacy
+`word-study__meanings` anchor rides the definition block only with
+real dict content. `wordStudy.noMeanings` retires into the four
+`*Data` keys (EN+AR parity-gated).
+
+Orthography (audit wins, two fixes): ornament tokens classify into
+three visual families (`ornamentTokenKind`: sajdah ۩ gold / hizb ۞
+primary-tint / waqf small soft-gold, forced-colors fallbacks) with a
+marks legend in Mushaf settings — kept ALONGSIDE the v5.2.89 waqf
+stop-meaning legend (different information, both print reference).
+The sajdah accent is the printed over-word line (`::before`), matched
+harakat-folded (`matchesAccentWord`) — with the fold widened for the
+full-corpus rasm (small-high madda U+06E4 et al.), which the audit's
+seed-only run never met, and default 32:15 scoping restored inside
+`renderAyahWords` so the classic reader keeps the accent the audit
+port dropped. Per-typeface line floors + ligature fixes land as
+audited; `flex-wrap` on the root head stays (audit dropped it —
+regression). The v5.2.86 `isSajdaWord`/`qword--sajda` retires;
+`CLASSIFY_MEMO_CAP` stays (audit dropped the bound — defense in
+depth, test-pinned).
+
+Auto-fit (audit wins): `js/app/autoFit.js` replaces the v5.2.87
+dispatch engine (`readerFit.js` deleted): effective scale =
+min(userScale, fitScale) committed as `--mushaf-fit-scale`, so the
+engine can never rewrite the person's own slider again; fullscreen
+is truly no-scroll (flex column, `touch-action: pan-x`). The 0.6–2.2
+clamp, SEARCH-exit bulk abort (now owner-aware: SEARCH and
+MUTASHABIHAT share the corpus build), tier-log hygiene, retry
+cooldowns, window-scroller restoration, library jump chips and the
+category FAB all stay — local wins, untouched.
+
+Tajweed drills (audit wins, pool corrected): 5-question rounds with
+HUD + streak, end-of-round summary, persisted weak-rule memory
+(`tajweedMissRecords`, same {m,l}/200-cap/sanitizer as the 99-names
+quiz) with most-missed-first Review, derived level badges
+(Learning/Steady/Strong). Two audit bugs fixed in port:
+`practice-this-ayah` gains `mode:'single'` (+results/roundStreak
+shape, so check/advance never branch on undefined) and the reducer
+skips the weak map for non-rule ids ('mixed'/'review' would have
+polluted it). DATA CORRECTION: the v5.2.86 pool's tafkhim (21/25)
+and madd_iwad (25/25) rows do not re-derive from the classifier —
+replaced with the audit's verified rows (50/50 re-derive).
+
+Also ported: mutashabihat partial-corpus render (no more infinite
+spinner) + `quran-corpus` retry branch, daily-hadith fallback to any
+bundled book, seed-mode test guards (inert on the full tree),
+`--mushaf-fit-scale` design token, `scripts` unchanged (the audit's
+tooling scripts never shipped in the seed archive). Pool file keeps
+its minified single-line shape; only the two corrected rule arrays
+changed. Markers 5.2.89 → 5.4.0 plus re-stamp (248 files).
+
 ## v5.2.89 — real scroll restoration + waqf legend + retry parity
 
 Scroll restoration actually works now: the window is the scroller

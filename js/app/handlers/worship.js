@@ -15,6 +15,7 @@ import { toHijri } from '../../domain/calendar.js';
 import { markCelebration } from '../../domain/celebrate.js';
 import { nextRemindTime } from '../../domain/fasting.js';
 import { ramadanKhatmaPreset } from '../../domain/khatma.js';
+import { monthWindow, intensityBucket } from '../../domain/statistics.js';
 import { OFFSET_PRAYERS } from '../../domain/prayer.js';
 import { dayComplete, prayerState } from '../../domain/prayerLog.js';
 import { CONFIRM_STEPS } from '../../domain/onboarding.js';
@@ -207,6 +208,117 @@ export const clickHandlers = {
     const now = new Date();
     const baseRef = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     store.dispatch(actions.shiftStatsHeatmapMonth(parseInt(ds.delta, 10) || 0, baseRef));
+  },
+
+  // (v5.6.0, B-5) heatmap PNG export: redraws the focused month grid on
+  // an offscreen canvas and downloads it — fully offline (no network,
+  // no library), colors sampled from the live DOM so the export matches
+  // the active theme, with a static fallback palette when sampled
+  // colors are unavailable (e.g. export from a background tab).
+  'stats-heatmap-export': () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const now = new Date();
+    const ref =
+      state.statsHeatmapRef ||
+      `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const [ry, rm] = ref.split('-').map(Number);
+    if (!(ry >= 2000 && ry <= 2100 && rm >= 1 && rm <= 12)) return;
+    const focusDate = new Date(ry, rm - 1, 1);
+    const stats = state.statistics || { dailyHistory: {} };
+    const cells = monthWindow(stats, focusDate);
+    const counts = cells.filter(Boolean).map((c) => c.count);
+    const max = Math.max(1, ...counts);
+    const total = counts.reduce((a, b) => a + b, 0);
+    const sample = (bucket) => {
+      try {
+        const el = document.querySelector(`.heatmap__cell--${bucket}`);
+        if (!el) return null;
+        const cs = getComputedStyle(el);
+        return { bg: cs.backgroundColor, fg: cs.color };
+      } catch {
+        return null;
+      }
+    };
+    const FALLBACK_BG = ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127'];
+    const FALLBACK_FG = '#1a1a1a';
+    const styleOf = (bucket) => {
+      const s = sample(bucket);
+      return {
+        bg: s?.bg && s.bg !== 'rgba(0, 0, 0, 0)' ? s.bg : FALLBACK_BG[bucket] || FALLBACK_BG[0],
+        fg: s?.fg ? s.fg : FALLBACK_FG,
+      };
+    };
+    const CELL = 44;
+    const GAP = 6;
+    const PAD = 28;
+    const rows = Math.ceil(cells.length / 7);
+    const W = PAD * 2 + 7 * CELL + 6 * GAP;
+    const H = PAD * 2 + 44 + 30 + rows * CELL + (rows - 1) * GAP + 30;
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    let appBg = '#ffffff';
+    try {
+      appBg = getComputedStyle(document.body).backgroundColor || appBg;
+    } catch {
+      /* fallback stands */
+    }
+    ctx.fillStyle = appBg;
+    ctx.fillRect(0, 0, W, H);
+    const monthLabel = focusDate.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+      month: 'long',
+      year: 'numeric',
+    });
+    ctx.fillStyle = styleOf(4).fg;
+    ctx.font = '600 22px system-ui, sans-serif';
+    ctx.textAlign = lang === 'ar' ? 'right' : 'left';
+    ctx.fillText(monthLabel, lang === 'ar' ? W - PAD : PAD, PAD + 22);
+    ctx.font = '400 14px system-ui, sans-serif';
+    ctx.fillText(
+      `${t('stats.monthTotalLabel', lang)}: ${total}`,
+      lang === 'ar' ? W - PAD : PAD,
+      PAD + 44
+    );
+    const gx = PAD;
+    const gy = PAD + 44 + 30;
+    cells.forEach((c, idx) => {
+      const col = idx % 7;
+      const row = Math.floor(idx / 7);
+      const x = gx + col * (CELL + GAP);
+      const y = gy + row * (CELL + GAP);
+      if (!c) return;
+      const bucket = intensityBucket(c.count, max);
+      const st = styleOf(bucket);
+      ctx.fillStyle = st.bg;
+      ctx.beginPath();
+      // roundRect is Chromium 99+/Safari 16+; fillRect keeps older
+      // devices exporting instead of throwing mid-draw.
+      if (typeof ctx.roundRect === 'function') {
+        ctx.roundRect(x, y, CELL, CELL, 8);
+      } else {
+        ctx.rect(x, y, CELL, CELL);
+      }
+      ctx.fill();
+      ctx.fillStyle = st.fg;
+      ctx.font = '600 15px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(String(c.date.getDate()), x + CELL / 2, y + CELL / 2 + 5);
+    });
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dhikr-heatmap-${ref}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      showToast(t('stats.heatmapSaved', lang));
+    }, 'image/png');
   },
 
   'onboarding-dismiss': () => {

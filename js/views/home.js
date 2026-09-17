@@ -50,7 +50,7 @@ import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
 import { calculateTimes, nextPrayer, formatClock } from '../domain/prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
 import { dailyHadithCardHTML } from './hadithCard.js';
-import { countMemorized, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
+import { countMemorized, dueCounts, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
 import { worshipTodayRows } from '../domain/worship.js';
 import { DAILY_THEMES, matchesTheme } from '../domain/dailyAyah.js';
 import { computeNudge, shouldShowNudge } from '../domain/nudge.js';
@@ -424,6 +424,7 @@ export function renderHome(state) {
       : '',
     hadith: dailyHadithCardHTML(state),
     hifz: hifzReviewCardHTML(state),
+    review: reviewDigestCardHTML(state),
     worship: worshipTodayCardHTML(state),
     recent: recentEntries.length
       ? `
@@ -564,6 +565,44 @@ export function hifzReviewCardHTML(state) {
     <div class="chip-row chip-row--scroll">${suggChips}</div>`
         : ''
     }
+  </section>`;
+}
+
+/**
+ * (v5.6.0, B-1) "Due for review" digest: one daily nudge aggregating the
+ * three persisted memories — hifz lapses (surah + ayah level), 99-names
+ * quiz misses, tajweed weak rules — into a single count with a deep link
+ * per row. Silent until anything is actually due. Counts only; the owning
+ * views keep the detail (this panel never duplicates them).
+ */
+export function reviewDigestCardHTML(state) {
+  const lang = state.settings.language;
+  const hifzDue = dueCounts(state.hifzRecords ?? {}, state.hifzAyahRecords ?? {});
+  const hifzN = (hifzDue.surahs || 0) + (hifzDue.ayahs || 0);
+  const quizN = Object.keys(state.quizMissRecords ?? {}).length;
+  const tajweedN = Object.keys(state.tajweedMissRecords ?? {}).length;
+  const total = hifzN + quizN + tajweedN;
+  if (!total) return '';
+
+  const dueList = dueSurahs(state.hifzRecords ?? {});
+  const hifzHref =
+    dueList.length > 0
+      ? buildHash(VIEWS.QURAN, { id: dueList[0].surah, mem: '1' })
+      : buildHash(VIEWS.QURAN);
+  const row = (inner) => `
+      <div class="review-digest__row">${inner}</div>`;
+  return `
+  <section class="panel panel--review-digest">
+    <div class="panel__header">
+      <h2>${icon('repeat', { size: 16 })} ${t('home.reviewTitle', lang)}</h2>
+      <span class="streak-badge" dir="ltr">${total}</span>
+    </div>
+    <p class="panel__subtext">${t('home.reviewTotal', lang, { n: total })}</p>
+    <div class="review-digest__rows">
+      ${hifzN ? row(`<a class="chip" href="${hifzHref}" data-action="navigate" data-view="${VIEWS.QURAN}">${escapeHTML(t('home.reviewHifz', lang))} <span class="chip__count" dir="ltr">${hifzN}</span></a>`) : ''}
+      ${quizN ? row(`<a class="chip" href="${buildHash(VIEWS.QUIZ)}" data-action="navigate" data-view="${VIEWS.QUIZ}">${escapeHTML(t('quiz.title', lang))} <span class="chip__count" dir="ltr">${quizN}</span></a>`) : ''}
+      ${tajweedN ? row(`<button type="button" class="chip" data-action="practice-start" data-rule="review">${icon('repeat', { size: 13 })} ${escapeHTML(t('practice.reviewMistakes', lang))} <span class="chip__count" dir="ltr">${tajweedN}</span></button>`) : ''}
+    </div>
   </section>`;
 }
 

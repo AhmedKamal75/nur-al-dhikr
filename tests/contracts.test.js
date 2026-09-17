@@ -31,6 +31,7 @@ import { ar } from '../js/core/i18n/ar.js';
 import { handlerMaps, mergedClickHandlers } from '../js/app/events.js';
 import { formHandlers } from '../js/app/forms.js';
 import { hashShell, loadSnapshot } from './helpers/shell-hash.mjs';
+import { skipIfSeed } from './helpers/seedMode.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 
@@ -287,7 +288,10 @@ describe('contract: APP_SHELL precaches the core shell', () => {
 /* ------------------------------------------------------------------ */
 
 describe('contract: Qur’an corpus matches quran-meta verse counts', () => {
-  test('all 114 surah files carry exactly ayahCount ayahs (bismillah rules included)', () => {
+  test('all 114 surah files carry exactly ayahCount ayahs (bismillah rules included)', (t) => {
+    // SEED MODE ships 8 full surahs; the 114/6,236 count gate cannot run
+    // on a pruned archive. Skipped LOUDLY here, never silently weakened.
+    if (skipIfSeed(t)) return;
     const meta = JSON.parse(readProject('data/quran-meta.json'));
     let total = 0;
     const problems = [];
@@ -303,6 +307,7 @@ describe('contract: Qur’an corpus matches quran-meta verse counts', () => {
   });
 
   test('mushaf-meta ayahPages covers exactly the 6,236 ayahs', () => {
+    // meta.json ships intact even in a seed archive — this gate runs there.
     const mushaf = JSON.parse(readProject('data/mushaf-meta.json'));
     const keys = Object.keys(mushaf.ayahPages || {});
     assert.equal(keys.length, 6236);

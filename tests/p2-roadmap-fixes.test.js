@@ -42,6 +42,7 @@ import { memorizationPanel } from '../js/views/statistics.js';
 import { isQuietNow, effectiveAdhanVolume } from '../js/services/prayerSound.js';
 import { sanitizeSettings } from '../js/core/config.js';
 import { t } from '../js/core/i18n.js';
+import { SEED_MODE } from './helpers/seedMode.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const readSrc = (rel) => readFileSync(path.join(ROOT, rel), 'utf8');
@@ -1142,10 +1143,20 @@ describe('UP-09: roots ↔ mutashabihat cross-linking + lapse drills', () => {
 });
 
 describe('UP-01: word study popup 2.0 (dict + actions + bookmarks)', () => {
-  test('dict file integrity: every key in the corpus, shapes clean', () => {
+  test('dict file integrity: every key in the corpus, shapes clean', (t) => {
     const dict = JSON.parse(readSrc('data/quran-dict.json'));
     const ids = Object.keys(dict.entries);
-    assert.ok(ids.length >= 50, 'a real seed ships');
+    // (v5.7.0) full coverage: every corpus lemma carries an entry —
+    // hand-curated senses up front, grammar-role notes for function
+    // words, root-derived senses for the tail. No word taps into
+    // emptiness by missing data anymore.
+    assert.ok(ids.length >= 4700, 'full lemma coverage ships');
+    // SEED MODE ships 4 quran-words files (seed ayahs only); the
+    // 114-file corpus scan + lemma coverage run in the full tree.
+    if (SEED_MODE) {
+      t.skip('SEED MODE: per-word corpus not bundled — lemma-coverage gate skipped loudly');
+      return;
+    }
     const files = readdirSync(path.join(ROOT, 'data/quran-words')).filter((f) =>
       f.endsWith('.json')
     );
@@ -1164,6 +1175,9 @@ describe('UP-01: word study popup 2.0 (dict + actions + bookmarks)', () => {
       assert.equal(typeof e.en, 'string', `${key} en gloss`);
       assert.ok(Array.isArray(e.syn) && Array.isArray(e.ant), `${key} chips arrays`);
       assert.equal(typeof e.freq, 'number', `${key} frequency`);
+    }
+    for (const lemma of lemmas) {
+      assert.ok(dict.entries[lemma], `corpus lemma covered: ${lemma}`);
     }
   });
 

@@ -124,6 +124,10 @@ export function initialState() {
     // study notes): { entries: { [lemma]: { ar, en, syn[], ant[] } } }.
     // Fetched once on first word-study open; ephemeral like quranRoots.
     wordDict: { index: null, failed: false },
+    // (v5.6.0) root core-meanings (data/quran-roots-meaning.json,
+    // app-authored one-line AR+EN senses): { entries: { [root]: {ar,en} } }.
+    // Fetched once on first word-study open; ephemeral like wordDict.
+    rootsMeaning: { index: null, failed: false },
     // (v5.2.75, UP-01) per-word bookmarks: { "surah:ayah:i": true }.
     // Persisted + restore-sanitized like ayah bookmarks.
     wordBookmarks: {},
@@ -143,6 +147,9 @@ export function initialState() {
     tajweedPool: null,
     // Persisted streak/accuracy stats for the drill mode.
     tajweedPracticeStats: defaultTajweedPracticeStats(),
+    // (v5.4.0, P0-5b) cross-session weak-rule memory for the drill —
+    // { ruleId: { m: misses, l: last-miss day } }, cap 200, sanitized.
+    tajweedMissRecords: {},
     // Last surah the reader opened, persisted so Home can offer a
     // "Continue Reading" shortcut back into the Qur'an, mirroring the
     // pattern already used for adhkar/dua reading history.
@@ -169,6 +176,11 @@ export function initialState() {
     // Completed khatmas, recorded automatically when the last page is read:
     // [{ id, completedAt, days, pages }]. Capped at 20 entries.
     khatmaHistory: [],
+    // (v5.6.0, B-4) Juz milestones: { [juz 1..30]: 'YYYY-MM-DD' } stamped
+    // by the dispatch that reads the juz's last unread page. The khatma
+    // panel blooms freshly-stamped juz' and counts the rest. Reset with
+    // progress (MUSHAF_PROGRESS_RESET) so a fresh khatma re-earns them.
+    khatmaJuzDone: {},
     // Ramadan fasting log: { '1447-9': { '1': true, '2': true, … } } —
     // hijriYear-month keyed so every Ramadan keeps its own record forever.
     ramadanLog: {},
@@ -443,7 +455,9 @@ export const PERSISTED_KEYS = [
   'onboarding',
   'khatmaPlan',
   'khatmaHistory',
+  'khatmaJuzDone',
   'tajweedPracticeStats',
+  'tajweedMissRecords',
   'hifzRecords',
   'hifzAyahRecords',
   'fastingPrefs',

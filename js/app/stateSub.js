@@ -42,11 +42,8 @@ import { scheduleTriggerArm } from './triggers.js';
 import { settingsSectionForSlug } from '../views/settings.js';
 import { refreshAppBadge } from '../services/appBadge.js';
 import { syncPlayingState } from '../services/mediaSession.js';
-import {
-  armFsControlsAfterEnter,
-  updateAmbientWakeLifecycle,
-  updateMushafFitLifecycle,
-} from './fullscreen.js';
+import { armFsControlsAfterEnter, updateAmbientWakeLifecycle } from './fullscreen.js';
+import { updateMushafAutoFitLifecycle, refreshMushafFit } from './autoFit.js';
 import { VIEWS } from '../core/config.js';
 import { computeReaderWindow } from '../domain/readerWindow.js';
 import { resetQuranIndex, setQuranIndexReady } from '../domain/quranSearch.js';
@@ -234,6 +231,18 @@ export function onStateChange(stateArg, action) {
     if (action && action.type === 'READER_IMMERSIVE_SET' && action.on === true) {
       armFsControlsAfterEnter();
     }
+    // (v5.4.0, P0-3) fullscreen auto-fit owns its own lifecycle; prefs or
+    // font changes re-fit through the same store → rAF path.
+    updateMushafAutoFitLifecycle(state);
+    if (
+      action &&
+      (action.type === 'SETTINGS_UPDATE_MUSHAF_PREFS' || action.type === 'NAVIGATE') &&
+      state.mushafFullscreen === true &&
+      state.activeView === VIEWS.MUSHAF
+    ) {
+      // Re-render replaces the text block; fit AFTER the DOM swap.
+      queueMicrotask(() => requestAnimationFrame(() => refreshMushafFit()));
+    }
     if (state.customContent !== rt.lastCustomContentRef) {
       rt.lastCustomContentRef = state.customContent;
       refreshLibraryIndex();
@@ -285,8 +294,10 @@ export function onStateChange(stateArg, action) {
     updateHomeTickerLifecycle(state);
     // (v5.2.0) ambient nightstand wake lock follows the route.
     updateAmbientWakeLifecycle(state);
-    // (v5.2.87, P0-3) fullscreen no-scroll auto-fit follows the route.
-    updateMushafFitLifecycle(state);
+    // (v5.4.0, P0-3) fullscreen no-scroll auto-fit follows the route
+    // (lifecycle already updated above; this keeps the engine in sync on
+    // notifications that carry no action).
+    updateMushafAutoFitLifecycle(state);
     maybeMarkNudgeShown(state);
     maybeProbeStorage(state);
     // (v5.2.44) icon badge follows every state change, change-deduped
@@ -305,7 +316,13 @@ export function onStateChange(stateArg, action) {
     // fetches (observed: roots index timing out behind the search build).
     // Aborted chunks reject silently (isBulkAbortError) and both builds
     // re-latch, so returning to Search resumes where it left off.
-    if (rt.bulkViewWasSearch && state.activeView !== VIEWS.SEARCH) {
+    // (v5.4.0) MUTASHABIHAT is the second legitimate owner of the corpus
+    // build (it drills computed pairs) — leaving Search for the drill
+    // must NOT abort the build it is about to consume, but leaving EITHER
+    // owner for anywhere else releases it immediately.
+    // rt.bulkViewWasSearch tracks "previous view owned the bulk build".
+    const ownsBulkBuild = (v) => v === VIEWS.SEARCH || v === VIEWS.MUTASHABIHAT;
+    if (rt.bulkViewWasSearch && !ownsBulkBuild(state.activeView)) {
       if (rt.quranBulkAbort) {
         rt.quranBulkAbort.abort();
         rt.quranBulkAbort = null;
@@ -315,7 +332,7 @@ export function onStateChange(stateArg, action) {
         rt.tafsirBulkAbort = null;
       }
     }
-    rt.bulkViewWasSearch = state.activeView === VIEWS.SEARCH;
+    rt.bulkViewWasSearch = ownsBulkBuild(state.activeView);
     maybeStartQuranSearchBuild(state);
     maybeStartTafsirSearchBuild(state);
     maybeStartHadithSearchBuild(state);

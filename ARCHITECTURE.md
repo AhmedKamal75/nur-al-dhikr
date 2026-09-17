@@ -281,6 +281,19 @@ layers are exactly what may be broken.
   chrome-hiding block — and `app/fullscreen.js` owns the platform side
   effects. The one-shot animation direction is the same single-use
   transient pattern as the page-flip direction.
+- **(v5.6.0) Fullscreen is a "fit the page" mode (absolute fill).**
+  `app/autoFit.js` binary-searches the largest scale in [0.6, 2.2] whose
+  measured content height fits each wrap's text box, committing
+  `--mushaf-fit-scale` per wrap (tightest page governs a spread) — never
+  `min()` with the slider, never writing prefs. Three measured traps it
+  defends: the `#main`→view→wrap chain is pinned to a definite
+  `flex: 1 0 100dvh` + `min-block-size: 0` (a 0% flex-basis against the
+  content-sized `#app` re-inflated everything to content height); the box
+  is the text's own constrained `clientHeight` (wrap-minus-chrome
+  over-counted ~50px of padding); and the commit undershoots one
+  bisection step, because `scrollHeight` can never read below
+  `clientHeight` so any tolerance subtracted from the box pins the
+  engine at the floor. Windowed mode keeps slider-owned sizing.
 - **(v4.5) Two-page spread is ONE decision, not a CSS state.** The gate
   lives in `services/mushaf.js` (`mushafSpreadActive(prefs)`): the
   persisted `mushafPrefs.spread` AND a module-level wide-layout flag that
@@ -339,6 +352,23 @@ layers are exactly what may be broken.
   serialize), keeps inline SVG's patch-engine safety (byte-identical
   children skip reconcile), and needs no new lifecycle. Short surahs
   (median 17 ayahs) render whole and never see a sentinel.
+- **Word-study data tiers (v5.5–v5.7).** The popup resolves four blocks
+  from three lazy tiers, all fetched once per session on first word tap
+  and ephemeral (never persisted): `wordDict` (4,763 lemma entries —
+  hand-curated senses, grammar-role notes, root-derived tail),
+  `rootsMeaning` (1,651 root core-senses, AR+EN), and the per-surah
+  `quran-words` grammar records. Definition renders dict → corpus
+  gloss → root sense; i'rab composes ONLY from record fields
+  (subtype-first); the Bismillah taps redirect by index onto the real
+  1:1 records (`data-ayah="0"`). Coverage is contract-pinned both
+  directions (every corpus lemma has an entry and vice versa).
+- **Review digest + juz milestones (v5.6.0).** Home's `review` panel
+  aggregates the three persisted weak memories (hifz lapses,
+  `quizMissRecords`, `tajweedMissRecords`) into one count with a deep
+  link each, silent until anything is due. Juz completion stamps
+  `khatmaJuzDone` in the page-read reducer (recomputed from full maps,
+  idempotent); the Track panel blooms fresh stamps once via the
+  `celebrate` class, same freshness contract as khatma completion.
 - **Hot-path memos (v4.2):** tajweed classification is memoized by ayah
   text (`domain/tajweed.js` — immutable corpus, WeakMap-free Map bounded
   by 6,236 entries); hadith search haystacks are pre-normalized once per

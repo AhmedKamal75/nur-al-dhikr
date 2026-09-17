@@ -26,7 +26,6 @@
  */
 import { actions, store } from '../core/state.js';
 import { VIEWS } from '../core/config.js';
-import { computeFitScale } from '../domain/readerFit.js';
 import { setFullscreenAnim } from '../ui/readingTokens.js';
 
 let wakeLock = null;
@@ -201,172 +200,11 @@ export function updateAmbientWakeLifecycle(state) {
 }
 
 /* ------------------------------------------------------------------ */
-/* (v5.2.87, P0-3) Fullscreen no-scroll auto-fit engine                  */
+/* (v5.4.0) Fullscreen auto-fit lives in app/autoFit.js: the engine      */
+/* commits a measured --mushaf-fit-scale CSS var and never rewrites the  */
+/* person's own prefs.fontScale (the v5.2.87 dispatch-based fitter that  */
+/* used to live here is retired — see docs/RELEASES.md).                */
 /* ------------------------------------------------------------------ */
-// The Mushaf page clips (overflow: hidden), so in fullscreen any content
-// taller than the page box is LOST, not scrolled. While a fullscreen
-// session is on, a debounced ResizeObserver measures every fullscreen
-// TEXT COLUMN box (.mushaf-page__text scrolls internally — the sheet
-// itself never overflows, so it would always report "fits") and
-// dispatches the fitted scale
-// through updateMushafPrefs({ fontScale }) — the single source of truth,
-// so pinch/ctrl+wheel and the slider stay consistent (a manual change
-// re-anchors the fit; see below).
-//
-// Loop safety (the re-render-storm Vector E guards against):
-//  - computeFitScale's STEP hysteresis means sub-step deltas never
-//    dispatch — measure→dispatch→re-render→measure converges silently;
-//  - a re-entry flag + 150ms debounce collapse observer bursts;
-//  - the session anchor resets on page change and on manual pref edits,
-//    so the fit never fights the person's own slider;
-//  - everything tears down (observer + timer) the moment fullscreen ends.
-
-const FIT_DEBOUNCE_MS = 150;
-
-let fitObserver = null;
-let fitTimer = null;
-let fitRunning = false;
-let fitWindowListening = false;
-// Session anchor: { pageKey, anchor, lastFit }. `anchor` is the person's
-// preferred scale; `lastFit` the last scale WE dispatched (so a store
-// scale that matches neither means a manual edit → re-anchor).
-let fitSession = null;
-
-function fitPageKey(state) {
-  return `p${state.activeParams?.page || state.mushafBookmark?.page || 1}s${
-    state.settings?.mushafPrefs?.spread === false ? '0' : '1'
-  }`;
-}
-
-/**
- * The measured boxes. In fullscreen the TEXT COLUMN scrolls internally
- * (.mushaf-page__text { overflow-y: auto }) while the sheet itself never
- * overflows — so the sheet is the wrong box and always reports "fits".
- * Measure the scrolling column; fall back to the sheet (windowed mode,
- * future markup) so a selector miss degrades to a no-op, never a throw.
- */
-function fitBoxes() {
-  const textCols = document.querySelectorAll('.view--mushaf-fullscreen .mushaf-page__text');
-  if (textCols.length) return textCols;
-  return document.querySelectorAll('.mushaf-page');
-}
-
-function stopMushafFit() {
-  if (fitTimer) clearTimeout(fitTimer);
-  fitTimer = null;
-  if (fitObserver) fitObserver.disconnect();
-  fitObserver = null;
-  fitSession = null;
-}
-
-function scheduleMushafFit() {
-  if (fitTimer) clearTimeout(fitTimer);
-  fitTimer = setTimeout(runMushafFit, FIT_DEBOUNCE_MS);
-}
-
-function runMushafFit() {
-  fitTimer = null;
-  if (fitRunning || !fitSession) return;
-  const state = store.getState();
-  if (state.mushafFullscreen !== true || state.activeView !== VIEWS.MUSHAF) return;
-  // Re-observe the live nodes every pass: the string→DOM patch may have
-  // replaced the sheets after our last dispatch — observing dead nodes
-  // would stall the loop one step from the fixed point.
-  if (fitObserver) {
-    fitObserver.disconnect();
-    for (const el of fitBoxes()) fitObserver.observe(el);
-  }
-  const pages = fitBoxes();
-  if (!pages.length) return;
-  fitRunning = true;
-  try {
-    const prefs = state.settings?.mushafPrefs || {};
-    const current = Number(prefs.fontScale) || 1;
-    // Manual slider/pinch edit since our last dispatch → it re-anchors.
-    if (current !== fitSession.anchor && current !== fitSession.lastFit) {
-      fitSession.anchor = current;
-    }
-    // Worst-box fit: every sheet (a spread shows two) must fit its own
-    // box, so one dispatch settles all of them — measure the max
-    // content/viewport ratio and feed the pure core a normalized box.
-    let worstRatio = 0;
-    let measurable = false;
-    for (const el of pages) {
-      const vh = el.clientHeight;
-      const ch = el.scrollHeight;
-      if (!(vh > 0) || !(ch > 0)) continue;
-      measurable = true;
-      if (ch / vh > worstRatio) worstRatio = ch / vh;
-    }
-    if (!measurable) return;
-    const { scale, changed } = computeFitScale({
-      viewportH: 1000,
-      contentH: 1000 * worstRatio,
-      current,
-      anchor: fitSession.anchor,
-    });
-    if (changed) {
-      fitSession.lastFit = scale;
-      store.dispatch(actions.updateMushafPrefs({ fontScale: scale }));
-    }
-  } finally {
-    fitRunning = false;
-  }
-}
-
-/**
- * Lifecycle for the fit engine — call from the store subscriber on every
- * notify (next to updateAmbientWakeLifecycle): entering fullscreen starts
- * observation, anything else (or a page/pref change handled inside the
- * runner) stops or re-arms it. Idempotent.
- */
-export function updateMushafFitLifecycle(state) {
-  const on = state.mushafFullscreen === true && state.activeView === VIEWS.MUSHAF;
-  if (!on) {
-    if (fitSession) stopMushafFit();
-    return;
-  }
-  const key = fitPageKey(state);
-  if (!fitSession) {
-    const anchor = Number(state.settings?.mushafPrefs?.fontScale) || 1;
-    fitSession = { pageKey: key, anchor, lastFit: anchor };
-    if (typeof ResizeObserver !== 'undefined') {
-      fitObserver = new ResizeObserver(() => scheduleMushafFit());
-      for (const el of fitBoxes()) fitObserver.observe(el);
-    }
-    if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
-      // Added once per page lifetime: the runner no-ops without a session,
-      // so repeat sessions must not stack duplicate listeners (Vector E).
-      if (!fitWindowListening) {
-        fitWindowListening = true;
-        window.addEventListener('resize', scheduleMushafFit);
-        window.addEventListener('orientationchange', scheduleMushafFit);
-      }
-    }
-    scheduleMushafFit();
-    return;
-  }
-  if (fitSession.pageKey !== key) {
-    // Page/spread flip: re-anchor on the person's current pref, observe
-    // the (possibly new) sheet nodes, re-fit.
-    const anchor = Number(state.settings?.mushafPrefs?.fontScale) || 1;
-    fitSession = { pageKey: key, anchor, lastFit: anchor };
-    if (fitObserver) {
-      fitObserver.disconnect();
-      for (const el of fitBoxes()) fitObserver.observe(el);
-    }
-    scheduleMushafFit();
-  }
-}
-
-/** Test seam: drop the fit session (each test starts clean). */
-export function resetMushafFitForTests() {
-  stopMushafFit();
-  if (typeof window !== 'undefined' && typeof window.removeEventListener === 'function') {
-    window.removeEventListener('resize', scheduleMushafFit);
-    window.removeEventListener('orientationchange', scheduleMushafFit);
-  }
-}
 
 /** Wire the one-time browser listeners. Called once from app/events.js
  *  at boot. fullscreenchange is the important one: the browser's own

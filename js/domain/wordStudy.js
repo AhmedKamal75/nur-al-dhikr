@@ -165,6 +165,40 @@ export function ayahTranslit(words) {
 }
 
 /**
+ * (v5.4.0, P0-1 — ported from the v5.3.0 audit) A one-line i'rab
+ * (الإعراب) composed ONLY from the word's own structured grammar
+ * fields — position tags, case/mood, verb form, person/gender/number,
+ * definiteness. Never a paraphrased commentary: if the corpus carries
+ * no grammar fields at all, the line is empty and the view shows an
+ * honest "no data" hint. Bilingual, deterministic.
+ */
+export function wordIrabLine(word, lang = 'en') {
+  if (!word) return '';
+  const ar = lang === 'ar';
+  const bits = [];
+  // (v5.5.0) the subtype refines the coarse pos: a Proper noun, Active
+  // participle or Verbal noun is NOT "just a noun" — same precedence as
+  // wordGrammarSummary so the two lines can never disagree.
+  if (word.subtype) {
+    bits.push(ar ? word.subtype.ar : word.subtype.en);
+  } else {
+    const posLabel = ar ? word.posAr : word.posEn;
+    if (posLabel) bits.push(posLabel);
+  }
+  if (word.adj) bits.push(ar ? 'نعت' : 'adjective (naʿt)');
+  if (word.verbForm) {
+    bits.push(ar ? `الوزن ${toArabicOrdinalForm(word.verbForm)}` : `Form ${word.verbForm}`);
+  }
+  const inflection = ar ? word.caseAr || word.moodAr : word.caseEn || word.moodEn;
+  if (inflection) bits.push(inflection);
+  const pgn = (word.pgn || []).map((p) => (ar ? p.ar : p.en)).filter(Boolean);
+  if (pgn.length) bits.push(pgn.join(ar ? '، ' : ', '));
+  if (word.definite) bits.push(ar ? 'معرفة' : 'definite');
+  else if (word.indef) bits.push(ar ? 'نكرة' : 'indefinite');
+  return bits.join(ar ? '، ' : ' · ');
+}
+
+/**
  * (v5.2.75, UP-01) lemma-dict lookup for the popup's Meanings section.
  * Returns a sanitized { ar, en, syn[], ant[] } or null (unknown lemma,
  * unloaded/malformed index). Renderers escape everything again anyway.
@@ -199,28 +233,18 @@ export function wordBookmarkKey(surah, ayah, i) {
 }
 
 /**
- * (v5.2.86, P0-2) True when a raw display token is the prostration word of
- * As-Sajdah:15 (سُجَّدًا, plain spelling سجدوا). Strips the same
- * combining marks/ornaments the tajweed tokenizer treats as inert and
- * compares the bare letter skeleton — deterministic over the bundled
- * Uthmani text, never guessed. Callers MUST additionally scope to
- * surah 32 / ayah 15: other ayahs contain the same skeleton and must not
- * gain the accent.
+ * (v5.6.0) root core-meaning lookup: the conceptual sense a root
+ * carries (e.g. ش-ج-ر branching/intertwining), from the app-authored
+ * roots-meaning tier. Returns a sanitized { ar, en } or null (unknown
+ * root, unloaded/malformed index). Renderers escape everything again.
  */
-export function isSajdaWord(token) {
-  const skeleton = [...String(token || '')]
-    .filter((ch) => {
-      const cp = ch.codePointAt(0);
-      // Arabic diacritics + Quranic annotation signs + tatweel/ornaments.
-      if (cp >= 0x064b && cp <= 0x065f) return false;
-      if (cp === 0x0670 || cp === 0x0640) return false;
-      if (cp >= 0x06d6 && cp <= 0x06dc) return false;
-      if (cp === 0x06df || cp === 0x06e0 || cp === 0x06e2 || cp === 0x06e4) return false;
-      if (cp === 0x06e7 || cp === 0x06e8 || cp === 0x06e9 || cp === 0x06ec) return false;
-      if (cp === 0x06ed || cp === 0x06e5 || cp === 0x06e6) return false;
-      if (cp === 0x06de || cp === 0xfd3e || cp === 0xfd3f) return false;
-      return true;
-    })
-    .join('');
-  return skeleton === 'سجدا';
+export function rootMeaningFor(rootsMeaning, root) {
+  const index = rootsMeaning && typeof rootsMeaning === 'object' ? rootsMeaning.index : null;
+  if (!index || typeof index !== 'object' || typeof root !== 'string' || !root) return null;
+  const e = index[root];
+  if (!e || typeof e !== 'object' || Array.isArray(e)) return null;
+  const ar = typeof e.ar === 'string' ? e.ar.slice(0, 200) : '';
+  const en = typeof e.en === 'string' ? e.en.slice(0, 120) : '';
+  if (!ar && !en) return null;
+  return { ar, en };
 }

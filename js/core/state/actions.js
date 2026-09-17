@@ -128,6 +128,8 @@ export const actions = {
   closeWordStudy: () => ({ type: 'WORD_STUDY_CLOSE' }),
   // (v5.2.75, UP-01) lemma-dict readiness + per-word bookmarks.
   setWordDict: (index) => ({ type: 'WORD_STUDY_DICT_READY', index }),
+  // (v5.6.0) root-meaning readiness (ephemeral, same tier as wordDict).
+  setRootsMeaning: (index) => ({ type: 'ROOTS_MEANING_READY', index }),
   toggleWordBookmark: (key) => ({ type: 'WORD_BOOKMARK_TOGGLE', key }),
   setTajweedPool: (pool) => ({ type: 'TAJWEED_POOL_LOADED', pool }),
   setHadithIndex: (index) => ({ type: 'HADITH_INDEX_LOADED', index }),

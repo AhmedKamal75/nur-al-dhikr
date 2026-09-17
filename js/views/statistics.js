@@ -379,6 +379,7 @@ export function renderStatistics(state) {
       <div class="panel__header">
         <h2>${t('stats.heatmap', lang)}</h2>
         <span class="heatmap-month-nav">
+          <button type="button" class="icon-btn icon-btn--sm" data-action="stats-heatmap-export" aria-label="${t('stats.heatmapExport', lang)}" title="${t('stats.heatmapExport', lang)}">${icon('download', { size: 16 })}</button>
           <button type="button" class="icon-btn icon-btn--sm" data-action="stats-heatmap-shift" data-delta="-1" aria-label="${t('stats.monthPrev', lang)}" ${canGoPrev ? '' : 'disabled'}>${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 16 })}</button>
           <span class="heatmap-month-nav__label">${monthLabel}</span>
           <button type="button" class="icon-btn icon-btn--sm" data-action="stats-heatmap-shift" data-delta="1" aria-label="${t('stats.monthNext', lang)}" ${canGoNext ? '' : 'disabled'}>${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16 })}</button>

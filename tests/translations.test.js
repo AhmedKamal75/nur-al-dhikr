@@ -17,6 +17,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { existsSync } from 'node:fs';
+import { SEED_MODE } from './helpers/seedMode.mjs';
 
 import {
   TRANSLATION_EDITIONS,
@@ -43,8 +45,12 @@ const FIRST_21 = {
 
 const corpusCounts = (() => {
   const map = new Map();
+  // SEED MODE: only the seed surahs ship — the map covers what exists so
+  // template tests can inject real docs.
   for (let s = 1; s <= 114; s++) {
-    const doc = JSON.parse(readFileSync(join(APP, 'data', 'quran', `${s}.json`), 'utf8'));
+    const p = join(APP, 'data', 'quran', `${s}.json`);
+    if (!existsSync(p)) continue;
+    const doc = JSON.parse(readFileSync(p, 'utf8'));
     map.set(s, doc.ayahs.length);
   }
   return map;
@@ -147,67 +153,73 @@ describe('overlayTranslation', () => {
   });
 });
 
-describe('bundled translation data integrity (G1-G8)', () => {
-  const EDITION_DIRS = TRANSLATION_EDITIONS.filter((e) => !e.inline).map((e) => e.id);
+describe(
+  'bundled translation data integrity (G1-G8)',
+  {
+    skip: SEED_MODE ? 'SEED MODE: overlay editions + full corpus not bundled' : false,
+  },
+  () => {
+    const EDITION_DIRS = TRANSLATION_EDITIONS.filter((e) => !e.inline).map((e) => e.id);
 
-  test('corpus reference itself is complete (6,236 ayahs)', () => {
-    let total = 0;
-    for (const n of corpusCounts.values()) total += n;
-    assert.equal(total, 6236);
-  });
-
-  for (const ed of EDITION_DIRS) {
-    test(`[${ed}] 114 files, 6,236 verses, 1:1 with corpus, clean texts`, () => {
+    test('corpus reference itself is complete (6,236 ayahs)', () => {
       let total = 0;
-      for (let s = 1; s <= 114; s++) {
-        const doc = JSON.parse(readFileSync(join(TRANSLATIONS_DIR, ed, `${s}.json`), 'utf8'));
-        assert.equal(doc.key, ed, `surah ${s}: key mismatch`);
-        assert.equal(doc.surah, s, `surah ${s}: number field mismatch`);
-        assert.equal(doc.ayahs.length, corpusCounts.get(s), `surah ${s}: count != corpus`);
-        for (let i = 0; i < doc.ayahs.length; i++) {
-          const row = doc.ayahs[i];
-          assert.equal(row.number, i + 1, `${ed} ${s}: verse number not sequential`);
-          const text = row.translation;
-          assert.equal(typeof text, 'string', `${ed} ${s}:${i + 1} not a string`);
-          assert.ok(text.trim().length > 0, `${ed} ${s}:${i + 1} empty`);
-          const trimmed = text.trimEnd();
-          assert.ok(
-            !(trimmed.endsWith('...') || trimmed.endsWith('…')),
-            `${ed} ${s}:${i + 1} ends truncated`
-          );
-          assert.ok(!/<[a-z!][^>]*>/i.test(text), `${ed} ${s}:${i + 1} contains HTML`);
-        }
-        total += doc.ayahs.length;
-      }
-      assert.equal(total, 6236, `${ed}: total verse count`);
+      for (const n of corpusCounts.values()) total += n;
+      assert.equal(total, 6236);
     });
 
-    test(`[${ed}] 2:1 muqatta'at sanity (bismillah-bleed detector)`, () => {
-      const doc = JSON.parse(readFileSync(join(TRANSLATIONS_DIR, ed, '2.json'), 'utf8'));
-      const got = doc.ayahs[0].translation.trim();
-      assert.ok(
-        got.startsWith(FIRST_21[ed]),
-        `${ed} 2:1 = "${got.slice(0, 30)}", expected start "${FIRST_21[ed]}"`
-      );
-    });
-
-    test(`[${ed}] overlay merges 1:1 onto the real corpus doc`, () => {
-      // spot surahs: opener, longest, final
-      for (const s of [1, 2, 114]) {
-        const corpus = JSON.parse(readFileSync(join(APP, 'data', 'quran', `${s}.json`), 'utf8'));
-        const tdoc = JSON.parse(readFileSync(join(TRANSLATIONS_DIR, ed, `${s}.json`), 'utf8'));
-        const merged = overlayTranslation(corpus, tdoc);
-        assert.equal(merged.ayahs.length, corpus.ayahs.length, `surah ${s}`);
-        assert.notEqual(merged, corpus, 'overlay must not mutate or return the corpus doc');
-        for (let i = 0; i < merged.ayahs.length; i++) {
-          assert.ok(merged.ayahs[i].translation.length > 0, `${ed} ${s}:${i + 1} blanked`);
-          assert.equal(
-            merged.ayahs[i].text,
-            corpus.ayahs[i].text,
-            `surah ${s} arabic text altered`
-          );
+    for (const ed of EDITION_DIRS) {
+      test(`[${ed}] 114 files, 6,236 verses, 1:1 with corpus, clean texts`, () => {
+        let total = 0;
+        for (let s = 1; s <= 114; s++) {
+          const doc = JSON.parse(readFileSync(join(TRANSLATIONS_DIR, ed, `${s}.json`), 'utf8'));
+          assert.equal(doc.key, ed, `surah ${s}: key mismatch`);
+          assert.equal(doc.surah, s, `surah ${s}: number field mismatch`);
+          assert.equal(doc.ayahs.length, corpusCounts.get(s), `surah ${s}: count != corpus`);
+          for (let i = 0; i < doc.ayahs.length; i++) {
+            const row = doc.ayahs[i];
+            assert.equal(row.number, i + 1, `${ed} ${s}: verse number not sequential`);
+            const text = row.translation;
+            assert.equal(typeof text, 'string', `${ed} ${s}:${i + 1} not a string`);
+            assert.ok(text.trim().length > 0, `${ed} ${s}:${i + 1} empty`);
+            const trimmed = text.trimEnd();
+            assert.ok(
+              !(trimmed.endsWith('...') || trimmed.endsWith('…')),
+              `${ed} ${s}:${i + 1} ends truncated`
+            );
+            assert.ok(!/<[a-z!][^>]*>/i.test(text), `${ed} ${s}:${i + 1} contains HTML`);
+          }
+          total += doc.ayahs.length;
         }
-      }
-    });
+        assert.equal(total, 6236, `${ed}: total verse count`);
+      });
+
+      test(`[${ed}] 2:1 muqatta'at sanity (bismillah-bleed detector)`, () => {
+        const doc = JSON.parse(readFileSync(join(TRANSLATIONS_DIR, ed, '2.json'), 'utf8'));
+        const got = doc.ayahs[0].translation.trim();
+        assert.ok(
+          got.startsWith(FIRST_21[ed]),
+          `${ed} 2:1 = "${got.slice(0, 30)}", expected start "${FIRST_21[ed]}"`
+        );
+      });
+
+      test(`[${ed}] overlay merges 1:1 onto the real corpus doc`, () => {
+        // spot surahs: opener, longest, final
+        for (const s of [1, 2, 114]) {
+          const corpus = JSON.parse(readFileSync(join(APP, 'data', 'quran', `${s}.json`), 'utf8'));
+          const tdoc = JSON.parse(readFileSync(join(TRANSLATIONS_DIR, ed, `${s}.json`), 'utf8'));
+          const merged = overlayTranslation(corpus, tdoc);
+          assert.equal(merged.ayahs.length, corpus.ayahs.length, `surah ${s}`);
+          assert.notEqual(merged, corpus, 'overlay must not mutate or return the corpus doc');
+          for (let i = 0; i < merged.ayahs.length; i++) {
+            assert.ok(merged.ayahs[i].translation.length > 0, `${ed} ${s}:${i + 1} blanked`);
+            assert.equal(
+              merged.ayahs[i].text,
+              corpus.ayahs[i].text,
+              `surah ${s} arabic text altered`
+            );
+          }
+        }
+      });
+    }
   }
-});
+);

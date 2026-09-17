@@ -873,6 +873,89 @@ export function canonicalWordTokens(text) {
   return out;
 }
 
+/**
+ * (v5.4.0, P0-2c — ported from the v5.3.0 audit) Ornament token
+ * classification for the waqf-mark system: a token that is ONLY
+ * ornament/digits gets one kind, so the render layer can wrap it in a
+ * styled (non-letter) span:
+ *   'sajdah' — ۩ and the sajdah-place mark U+06E9: the FIFTEEN places of
+ *              prostration, one visual family;
+ *   'hizb'   — ۞ rub el hizb (U+06DE): the Juz/Hizb divider set, always
+ *              visually distinct from the sajdah mark (color + shape);
+ *   'waqf'   — the stop letters/ligatures (ج صلى قلى مـ ۚۖۙۘۛ …);
+ *   'digits' — ayah-end numerals;
+ *   null     — a real word (or an empty string).
+ * Pure and deterministic — the same token classifies identically in the
+ * classic reader and the Mushaf, which is what makes the legend in
+ * Settings truthful.
+ */
+export function ornamentTokenKind(tok) {
+  const s = String(tok || '').trim();
+  if (!s) return null;
+  const chars = [...s];
+  const hasLetter = chars.some((ch) => ARABIC_LETTER_RE.test(ch));
+  if (hasLetter) return null;
+  if (s.includes('۩')) return 'sajdah'; // sajdah place mark (U+06E9)
+  if (s.includes('۞')) return 'hizb'; // rub el hizb divider (U+06DE)
+  const isWaqf = chars.every(
+    (ch) => WORD_ORNAMENT_CHARS.has(ch) && ch !== '۩' && ch !== '۞' && ch !== '﴾' && ch !== '﴿'
+  );
+  const isDigits = chars.every((ch) => ORNAMENT_DIGITS.has(ch));
+  if (isWaqf && s.length) return 'waqf';
+  if (isDigits) return 'digits';
+  return null;
+}
+
+/**
+ * (v5.4.0, P0-2b — ported from the v5.3.0 audit, fold widened for the
+ * full corpus rasm) Harakat-folded surface comparison: strips
+ * vocalization (fatha/damma/kasra/shadda/tanween) whose ORDER differs
+ * between the classic docs rasm and the Madani mushaf rasm — the WORD
+ * is the same. ALSO strips the small-high Quranic annotation signs
+ * (madda U+06E4 et al.): the classic-docs layer glues a raised madda
+ * onto سُجَّدًا (سُجَّدٗاۤ) that the Madani layer orders differently,
+ * and the v5.2.86 skeleton matcher this replaces treated them as
+ * inert too. Used for the sajdah-line accent match only; never alters
+ * any text. Callers MUST additionally scope to surah 32 / ayah 15:
+ * other ayahs contain the same skeleton and must not gain the accent.
+ */
+const HARAKAT = new Set([
+  ...'\u0610\u0611\u0612\u0613\u0614\u0615\u0616\u0617\u0618\u0619\u061A\u064B\u064C\u064D\u064E\u064F\u0650\u0651\u0652\u0653\u0654\u0655\u0656\u0657\u0658\u0659\u065A\u065B\u065C\u065D\u065E\u065F\u0670',
+]);
+
+// Small-high annotation signs the tokenizer treats as inert letterless
+// marks (cf. sameSurfaceWord's 06E0/06DF pair + MADDA_SMALL_HIGH): they
+// ride ON words without changing which word it is.
+const ACCENT_INERT = new Set([
+  '\u06DF',
+  '\u06E0',
+  '\u06E2',
+  '\u06E4',
+  '\u06E5',
+  '\u06E6',
+  '\u06E7',
+  '\u06E8',
+  '\u06ED',
+  TATWEEL,
+]);
+
+export function matchesAccentWord(token, accent) {
+  if (!accent) return false;
+  const fold = (s) =>
+    [...String(s || '')]
+      .filter(
+        (ch) =>
+          !WORD_ORNAMENT_CHARS.has(ch) &&
+          !ORNAMENT_DIGITS.has(ch) &&
+          !HARAKAT.has(ch) &&
+          !ACCENT_INERT.has(ch)
+      )
+      .join('');
+  const a = fold(token);
+  const b = fold(accent);
+  return a !== '' && a === b;
+}
+
 /** Surface-normalized comparison for the content-anchored fallback:
  *  ornaments, tatweel, and inert marks don't distinguish words. */
 export function sameSurfaceWord(a, b) {

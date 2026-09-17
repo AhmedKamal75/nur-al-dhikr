@@ -7,6 +7,7 @@
 import { rt } from '../../app/rt.js';
 import { reminderFormHTML } from '../forms.js';
 import { retryLibraryLoad } from '../net.js';
+import { ensureQuranData } from '../lazyData.js';
 import { VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
 import { go } from '../../core/router.js';
@@ -143,6 +144,14 @@ export const clickHandlers = {
   'retry-load': (ds) => {
     if (ds.key === 'library') {
       retryLibraryLoad();
+      return;
+    }
+    // (v5.4.0) the mutashabihat view's corpus tier: clear the flag AND
+    // re-kick the lazy corpus loaders, or the retry button is a no-op.
+    if (ds.key === 'quran-corpus') {
+      store.dispatch(actions.retryDataLoad('quran-corpus'));
+      store.dispatch(actions.retryDataLoad('quran-surah'));
+      ensureQuranData(store.getState());
       return;
     }
     if (typeof ds.key === 'string' && ds.key) store.dispatch(actions.retryDataLoad(ds.key));

@@ -85,7 +85,9 @@ export const rt = {
   tafsirBulkAbort: null,
   // (v5.2.88) previous-notify view for the bulk-abort exit hook: a
   // same-document hash "navigation" never unloads the page, so the
-  // subscriber must notice SEARCH→else itself and abort in-flight chunks.
+  // subscriber must notice owner→else itself and abort in-flight chunks.
+  // (v5.4.0) "owner" is SEARCH or MUTASHABIHAT (both consume the corpus
+  // build); the name stays for continuity.
   bulkViewWasSearch: null,
   tajweedPoolFetchStarted: null,
   practiceSession: null,

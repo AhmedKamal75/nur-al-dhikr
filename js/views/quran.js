@@ -21,7 +21,7 @@ import {
   recitationChipsHTML,
   recitationEchoHTML,
 } from '../ui/recitationConsole.js';
-import { renderAyahWords } from './tafsirPanel.js';
+import { renderAyahWords, buildBismillahHTML } from './tafsirPanel.js';
 import { tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
 import { loadErrorStateHTML, notFoundStateHTML } from '../ui/emptyState.js';
@@ -400,7 +400,7 @@ function surahReaderHTML(state, number) {
 
   const body = surah
     ? `
-      ${showBismillah && state.settings.mushafPrefs.bismillahStyle !== 'hidden' ? `<p class="quran-bismillah bismillah--${state.settings.mushafPrefs.bismillahStyle}" dir="rtl" lang="ar">${BISMILLAH_AR}</p>` : ''}
+      ${showBismillah && state.settings.mushafPrefs.bismillahStyle !== 'hidden' ? buildBismillahHTML({ text: BISMILLAH_AR, surah: number, style: state.settings.mushafPrefs.bismillahStyle, cls: 'quran-bismillah', lang, underline: state.settings.mushafPrefs.wordByWordStudy && state.settings.mushafPrefs.wordUnderline, tajweed: state.settings.mushafPrefs.tajweedColoring, prefs: tajweedPrefsOf(state) }) : ''}
       ${loadUp}
       <div class="ayah-list">
         ${surah.ayahs

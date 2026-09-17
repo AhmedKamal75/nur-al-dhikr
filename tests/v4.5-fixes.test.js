@@ -11,7 +11,7 @@
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -46,8 +46,14 @@ const words1 = readJSON('data/quran-words/1.json');
 const words2 = readJSON('data/quran-words/2.json');
 const pageDocs = {};
 for (const n of [1, 2, 3, 4, 199, 200, 603, 604]) {
-  pageDocs[n] = readJSON(`data/mushaf/${n}.json`);
+  // SEED MODE: only pages touching seed surahs ship; missing pages
+  // simply don't land in pageDocs, and the leak-probe page falls back
+  // to a rich seed page below.
+  if (existsSync(path.join(ROOT, 'data/mushaf', `${n}.json`))) {
+    pageDocs[n] = readJSON(`data/mushaf/${n}.json`);
+  }
 }
+const probePage = pageDocs[199] ? 199 : 4;
 
 function baseState(overrides = {}) {
   const { settings: settingsOverride, ...rest } = overrides;
@@ -249,9 +255,9 @@ describe('renderMushaf (v4.5)', () => {
 
   test('no leaked undefined/NaN anywhere in either layout', () => {
     setMushafWideLayout(false);
-    const single = renderMushaf(baseState({ activeParams: { page: 199 } }));
+    const single = renderMushaf(baseState({ activeParams: { page: probePage } }));
     withWideLayout(() => {
-      const spread = renderMushaf(baseState({ activeParams: { page: 199 } }));
+      const spread = renderMushaf(baseState({ activeParams: { page: probePage } }));
       for (const [html, label] of [
         [single, 'single'],
         [spread, 'spread'],

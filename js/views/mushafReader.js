@@ -49,7 +49,7 @@ import {
   TRANSLATION_EDITIONS,
 } from '../core/config.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
-import { renderAyahWords } from './tafsirPanel.js';
+import { renderAyahWords, buildBismillahHTML } from './tafsirPanel.js';
 import {
   consoleSnapshot,
   recitationChipsHTML,
@@ -73,6 +73,17 @@ import { loadErrorStateHTML } from '../ui/emptyState.js';
  *  number, the surah cartouche count) stay Eastern always, because they
  *  ARE the mushaf, whatever language its reader speaks. */
 const numFor = (lang, n) => (lang === 'ar' ? toEasternArabicNumerals(n) : String(n));
+
+/**
+ * (v5.4.0, P0-2b — ported from the v5.3.0 audit) the printed horizontal
+ * sajdah-line accent rides ONLY over سُجَّدًا in As-Sajdah 15 — the
+ * fifteen mawadi' keep their ۩ mark; this one ayah also carries the
+ * printed line-over-word convention. Module scope (not function scope)
+ * so the chapter closure below can never read them before init.
+ */
+const SAJDA_ACCENT_SURAH = 32;
+const SAJDA_ACCENT_AYAH = 15;
+const SAJDA_ACCENT_WORD = 'سُجَّدًا';
 
 /** Distinct surah chapters across the visible page docs, in book order —
  *  the source for the multi-surah recitation picker (a page often holds
@@ -192,7 +203,7 @@ export function renderMushaf(state) {
         </span>
         <span class="mushaf-surah-banner__flank" aria-hidden="true">◆</span>
       </button>
-      ${showBismillah && prefs.bismillahStyle !== 'hidden' ? `<p class="mushaf-bismillah bismillah--${prefs.bismillahStyle}">\u0628ِ\u0633\u0652\u0645ِ \u0627\u0644\u0644\u0651\u064e\u0647ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u064e\u0670\u0646ِ \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645ِ</p>` : ''}
+      ${showBismillah && prefs.bismillahStyle !== 'hidden' ? buildBismillahHTML({ text: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ', surah: chapter.number, style: prefs.bismillahStyle, cls: 'mushaf-bismillah', lang, underline: prefs.wordByWordStudy && prefs.wordUnderline, tajweed: prefs.tajweedColoring, prefs: tajweedPrefsOf(state) }) : ''}
     `
           : '';
 
@@ -212,6 +223,15 @@ export function renderMushaf(state) {
               underline: prefs.wordByWordStudy && prefs.wordUnderline,
               tajweed: prefs.tajweedColoring,
               prefs: tajweedPrefsOf(state),
+              // (v5.4.0, P0-2b) the printed horizontal sajdah-line accent
+              // rides ONLY over سُجَّدًا in As-Sajdah 15 — matched
+              // harakat-folded inside renderAyahWords; the fifteen
+              // mawadi' keep their ۩ mark (sajdaMark below).
+              accentWord:
+                Number(chapter.number) === SAJDA_ACCENT_SURAH &&
+                Number(v.number) === SAJDA_ACCENT_AYAH
+                  ? SAJDA_ACCENT_WORD
+                  : null,
             });
             // One tab stop per ayah: in reading mode the ayah itself is the
             // button and the marker is decorative; in word-study mode each
@@ -281,8 +301,11 @@ export function renderMushaf(state) {
      inside the RTL book container, so it lands on the physical right; a
      still-loading facing page holds its place as a pending paper sheet. */
   const pageStyleVars = `--mushaf-font-family:${font.family};--mushaf-font-scale:${mushafScale};--mushaf-line-scale:${mushafLineScale};`;
+  // (v5.4.0, P0-3) the auto-fit engine reads this hook; CSS may target the
+  // active typeface per page wrap (orthography per typeface, P0-2a).
+  const fontAttr = ` data-mushaf-font="${font.id}"`;
   const pageArticle = (pageNum, doc) => `
-      <article class="mushaf-page ${dir ? `mushaf-page--flip-${dir}` : ''} ${fsAnim ? `mushaf-page--fs-${fsAnim}` : ''} ${prefs.pageFlipAnimation ? '' : 'mushaf-page--no-anim'} ${doc ? '' : 'mushaf-page--pending'}" dir="rtl" lang="ar" style="${pageStyleVars}">
+      <article class="mushaf-page ${dir ? `mushaf-page--flip-${dir}` : ''} ${fsAnim ? `mushaf-page--fs-${fsAnim}` : ''} ${prefs.pageFlipAnimation ? '' : 'mushaf-page--no-anim'} ${doc ? '' : 'mushaf-page--pending'}" dir="rtl" lang="ar" style="${pageStyleVars}"${fontAttr}>
         <div class="mushaf-page__frame" aria-hidden="true">
           <span class="mushaf-page__lattice" aria-hidden="true"></span>
           <span class="mushaf-page__corner mushaf-page__corner--tl"></span>

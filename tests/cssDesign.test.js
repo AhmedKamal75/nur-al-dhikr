@@ -50,6 +50,7 @@ const JS_SET = new Set([
   '--hero-pattern',
   '--mushaf-font-family',
   '--mushaf-font-scale',
+  '--mushaf-fit-scale', // (v5.4.0, P0-3) auto-fit engine output (wrap-inline)
   '--mushaf-line-scale',
   '--mushaf-paper-bg',
   '--mushaf-paper-ink',

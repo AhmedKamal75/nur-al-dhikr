@@ -15,7 +15,6 @@ import { t } from '../core/i18n.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
-import { isQuranSearchReady } from '../domain/quranSearch.js';
 import {
   buildSimilarPairs,
   buildDrillRound,
@@ -23,7 +22,7 @@ import {
   lapsedAyahKeys,
   filterLapsedPairs,
 } from '../domain/mutashabihat.js';
-import { emptyStateHTML } from '../ui/emptyState.js';
+import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 
 function surahName(state, n) {
   const meta = state.quran.meta?.surahs?.find((s) => s.number === Number(n));
@@ -137,17 +136,35 @@ function drillBlock(state) {
 
 export function renderMutashabihat(state) {
   const lang = state.settings.language;
-  if (!isQuranSearchReady() && Object.keys(state.quran.surahs || {}).length < 114) {
+  // (v5.4.0 — ported from the v5.3.0 audit) the old gate demanded ALL 114
+  // surah docs (or the full-text search index) before rendering anything
+  // — on a partial bundle, or while a bulk preload fails offline, the
+  // view sat on "Loading the Qur'an corpus…" forever: an offline-honesty
+  // violation (APP-FLOW Law 4: never an infinite spinner, never a silent
+  // fail). The drill only needs the docs ALREADY in memory — it computes
+  // its pairs from them — so render whatever portion is loaded and say so.
+  const loadedCount = Object.keys(state.quran.surahs || {}).length;
+  if (loadedCount === 0) {
+    const failed = Boolean(state.loadErrors?.['quran-corpus'] || state.loadErrors?.['quran-surah']);
     return `
     <section class="view view--mutashabihat">
       <h1 class="view__title">${t('mutashabihat.title', lang)}</h1>
-      <p class="empty-hint">${t('mutashabihat.loadingCorpus', lang)}</p>
+      ${
+        failed
+          ? loadErrorStateHTML({ lang, tierKey: 'quran-corpus', t })
+          : `<p class="empty-hint">${t('mutashabihat.loadingCorpus', lang)}</p>`
+      }
     </section>`;
   }
 
   return `
   <section class="view view--mutashabihat">
     <h1 class="view__title">${t('mutashabihat.title', lang)}</h1>
+    ${
+      loadedCount < 114
+        ? `<p class="panel__subtext">${t('mutashabihat.partial', lang, { n: loadedCount })}</p>`
+        : ''
+    }
     <p class="view__subtitle">${t('mutashabihat.subtitle', lang)}</p>
     ${drillBlock(state) || emptyStateHTML({ iconName: 'quran', title: t('mutashabihat.noPairs', lang) })}
     <p class="panel__subtext">

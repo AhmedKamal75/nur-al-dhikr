@@ -10,8 +10,14 @@
 
 import { MUSHAF_PAGE_COUNT } from '../../config.js';
 import { dateKey, uid } from '../../utils.js';
+import { juzProgress } from '../../../domain/khatma.js';
 import { sanitizeWindow, expandWindow } from '../../../domain/readerWindow.js';
-import { nextStats as nextTajweedPracticeStats } from '../../../domain/tajweedPractice.js';
+import {
+  nextStats as nextTajweedPracticeStats,
+  tajweedMissRecord,
+  tajweedMissClear,
+  isTajweedRuleId,
+} from '../../../domain/tajweedPractice.js';
 import {
   normalizeHifzLevel,
   normalizeHifzTest,
@@ -220,6 +226,9 @@ export function reduceQuran(state, action) {
     case 'WORD_STUDY_DICT_READY':
       return { ...state, wordDict: { index: action.index, failed: action.index == null } };
 
+    case 'ROOTS_MEANING_READY':
+      return { ...state, rootsMeaning: { index: action.index, failed: action.index == null } };
+
     case 'WORD_BOOKMARK_TOGGLE': {
       const key =
         typeof action.key === 'string' && /^\d{1,3}:\d{1,3}:\d{1,4}$/.test(action.key)
@@ -239,6 +248,12 @@ export function reduceQuran(state, action) {
       return { ...state, tajweedPool: action.pool };
 
     case 'TAJWEED_PRACTICE_RESULT':
+      // (v5.4.0, P0-5b) one dispatch, two memories: stats (streak/accuracy)
+      // and the weak-rule map — a miss upserts {m,l}, a clean question
+      // clears the rule (re-learned). Same bounded {m,l} grammar as the
+      // 99-names quiz. 'mixed'/'review'/single-context sessions are NOT
+      // rule ids: stats still accrue (existing semantics) but the weak
+      // map stays clean of pseudo-keys.
       return {
         ...state,
         tajweedPracticeStats: nextTajweedPracticeStats(
@@ -246,6 +261,11 @@ export function reduceQuran(state, action) {
           action.ruleId,
           action.perfect
         ),
+        tajweedMissRecords: isTajweedRuleId(action.ruleId)
+          ? action.perfect
+            ? tajweedMissClear(state.tajweedMissRecords, action.ruleId)
+            : tajweedMissRecord(state.tajweedMissRecords, action.ruleId, dateKey(new Date()))
+          : state.tajweedMissRecords,
       };
 
     case 'AYAH_BOOKMARK_TOGGLE': {
@@ -340,6 +360,26 @@ export function reduceQuran(state, action) {
         },
       };
       const next = { ...state, mushafPagesRead: pagesRead, statistics: nextStats };
+      // (v5.6.0, B-4) Juz milestones: stamp the juz' this dispatch newly
+      // completes. Deterministic and idempotent — recomputed from the full
+      // maps, so only genuinely-new completions stamp; re-reads and
+      // restores never re-stamp.
+      try {
+        const metaPages = state.mushaf?.meta?.pages;
+        if (isNewEverPage && Array.isArray(metaPages)) {
+          const before = new Set(juzProgress(metaPages, state.mushafPagesRead).done);
+          const after = juzProgress(metaPages, pagesRead).done;
+          const fresh = after.filter((j) => !before.has(j));
+          if (fresh.length) {
+            const day = dateKey(new Date());
+            const stamped = { ...(state.khatmaJuzDone || {}) };
+            for (const j of fresh) stamped[j] = day;
+            next.khatmaJuzDone = stamped;
+          }
+        }
+      } catch {
+        /* milestone stamping never breaks page tracking */
+      }
       // Khatma completion: recorded exactly once — only the dispatch that
       // ADDS A NEW ever-read page can push the count across 604; per-day
       // re-visits no-op above or re-use the same pagesRead map, and after
@@ -380,7 +420,7 @@ export function reduceQuran(state, action) {
       return state.khatmaPlan ? { ...state, khatmaPlan: null } : state;
 
     case 'MUSHAF_PROGRESS_RESET':
-      return { ...state, mushafPagesRead: {} };
+      return { ...state, mushafPagesRead: {}, khatmaJuzDone: {} };
 
     // Hifz (memorization, v3.17) — session cases are guards around the
     // ephemeral slice; record cases delegate to the pure js/hifz.js rules.

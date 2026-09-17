@@ -296,11 +296,21 @@ export function mulberry32(seed) {
  * pool instead of marching lockstep — same day still picks identically.
  */
 export function pickDailyHadith(books, docs, dateKey) {
-  const pool = (books || []).filter((b) => HADITH_DAILY_BOOKS.includes(b.id));
-  const usable = pool.filter((b) => {
-    const doc = docs?.[b.id];
-    return doc && Array.isArray(doc.hadiths) && doc.hadiths.length;
-  });
+  const usableOf = (pool) =>
+    (pool || []).filter((b) => {
+      const doc = docs?.[b.id];
+      return doc && Array.isArray(doc.hadiths) && doc.hadiths.length;
+    });
+  let pool = (books || []).filter((b) => HADITH_DAILY_BOOKS.includes(b.id));
+  let usable = usableOf(pool);
+  // (v5.4.0 — ported from the v5.3.0 audit) partial bundles ship no
+  // canonical daily book (both are honest lazy tiers there) — the card
+  // then draws from whichever bundled book IS loaded instead of
+  // vanishing.
+  if (!usable.length) {
+    pool = (books || []).filter((b) => b.bundled === true);
+    usable = usableOf(pool);
+  }
   if (!usable.length) return null;
   const rnd = mulberry32(daySeed(dateKey));
   const book = usable[Math.floor(rnd() * usable.length)];

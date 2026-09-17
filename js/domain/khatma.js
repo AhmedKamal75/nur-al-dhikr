@@ -224,3 +224,51 @@ export function justCompletedKhatma(state, nowMs = Date.now()) {
     nowMs - first.completedAt < KHATMA_CELEBRATION_MS
   );
 }
+
+/**
+ * (v5.6.0, B-4) Juz milestones: which of the 30 juz' are fully read.
+ * `metaPages` is the mushaf-meta `pages` list ([{page, juz}, …]);
+ * `pagesRead` the mushafPagesRead map. Pure — returns the sorted done
+ * list plus the next incomplete juz (null when all 30 are done). A juz
+ * counts only when EVERY one of its pages is read (partial juz' earn
+ * nothing — the milestone is the boundary, not the progress).
+ */
+export function juzProgress(metaPages, pagesRead) {
+  const byJuz = new Map();
+  if (Array.isArray(metaPages)) {
+    for (const p of metaPages) {
+      const juz = Math.floor(Number(p?.juz));
+      const page = Math.floor(Number(p?.page));
+      if (!(juz >= 1 && juz <= 30 && page >= 1 && page <= MUSHAF_PAGE_COUNT)) continue;
+      if (!byJuz.has(juz)) byJuz.set(juz, []);
+      byJuz.get(juz).push(page);
+    }
+  }
+  const read = pagesRead && typeof pagesRead === 'object' ? pagesRead : {};
+  const done = [];
+  for (let j = 1; j <= 30; j += 1) {
+    const pages = byJuz.get(j) || [];
+    if (pages.length && pages.every((pg) => read[pg] || read[String(pg)])) done.push(j);
+  }
+  return { done, total: 30, next: done.length >= 30 ? null : done.length + 1 };
+}
+
+/**
+ * Juz numbers stamped fresh today (the khatmaJuzDone map { [juz]: ISO
+ * day }) — the view blooms exactly these with the one-shot `celebrate`
+ * class, same freshness contract as justCompletedKhatma. Pure;
+ * `todayISO` injectable for tests.
+ */
+export function justCompletedJuz(juzDone, todayISO = null) {
+  const today =
+    todayISO ||
+    (() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    })();
+  if (!juzDone || typeof juzDone !== 'object') return [];
+  return Object.entries(juzDone)
+    .filter(([j, day]) => Number(j) >= 1 && Number(j) <= 30 && day === today)
+    .map(([j]) => Number(j))
+    .sort((a, b) => a - b);
+}

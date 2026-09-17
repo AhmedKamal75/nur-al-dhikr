@@ -2,6 +2,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { SEED_MODE } from './helpers/seedMode.mjs';
 import {
   HADITH_PAGE_SIZE,
   validateHadithIndex,
@@ -283,7 +284,29 @@ describe('mulberry32 / pickRandomHadith (v5.2.26 shuffle)', () => {
 describe('shipped hadith data integrity', () => {
   const index = JSON.parse(readFileSync(join(ROOT, 'data/hadith/index.json'), 'utf8'));
 
-  test('index lists the eight books with correct bundled flags', () => {
+  test('index lists the eight books with correct bundled flags', (t) => {
+    // SEED MODE: the seed index carries the eight canonical books PLUS
+    // the bundled seed-samples book, and the canonical books are
+    // bundled:false (accurate — their data packages are not in a pruned
+    // archive). The full-tree assertion below runs unchanged otherwise.
+    if (SEED_MODE) {
+      const byId = Object.fromEntries(index.books.map((b) => [b.id, b]));
+      for (const id of [
+        'bukhari',
+        'muslim',
+        'nawawi',
+        'qudsi',
+        'abudawud',
+        'tirmidhi',
+        'nasai',
+        'ibnmajah',
+      ]) {
+        assert.ok(byId[id], `canonical book ${id} still listed in the seed index`);
+        assert.equal(byId[id].bundled, false, `${id} is honest about not shipping in the seed`);
+      }
+      assert.equal(byId['seed-samples']?.bundled, true, 'the seed book ships bundled');
+      return;
+    }
     assert.deepEqual(
       index.books.map((b) => b.id),
       ['bukhari', 'muslim', 'nawawi', 'qudsi', 'abudawud', 'tirmidhi', 'nasai', 'ibnmajah']
@@ -300,12 +323,33 @@ describe('shipped hadith data integrity', () => {
     // 15,022 (two Sahihs + the two Forties) + 19,217 (the four Sunans,
     // restored in v3.16.0: abudawud 5,272 + tirmidhi 3,926 + nasai 5,679 +
     // ibnmajah 4,340) — gates the whole library against silent content loss.
-    const total = index.books.reduce((a, b) => a + b.count, 0);
+    // SEED MODE: the seed book is a real, additional sample book, so the
+    // CANONICAL EIGHT must still sum to the pinned union on their own.
+    const canonical = [
+      'bukhari',
+      'muslim',
+      'nawawi',
+      'qudsi',
+      'abudawud',
+      'tirmidhi',
+      'nasai',
+      'ibnmajah',
+    ];
+    const total = index.books
+      .filter((b) => (SEED_MODE ? canonical.includes(b.id) : true))
+      .reduce((a, b) => a + b.count, 0);
     assert.equal(total, 34239);
   });
 
   for (const b of index.books) {
-    test(`book ${b.id}: file parses, matches its index entry, has no empty/blank rows`, () => {
+    test(`book ${b.id}: file parses, matches its index entry, has no empty/blank rows`, (t) => {
+      // SEED MODE ships only the seed book; canonical books are honest
+      // lazy tiers. Each SHIPPED book still fully validates through the
+      // runtime validator right here.
+      if (SEED_MODE && b.id !== 'seed-samples') {
+        t.skip('SEED MODE: canonical book data packages not in this archive (lazy tier)');
+        return;
+      }
       const doc = JSON.parse(readFileSync(join(ROOT, 'data/hadith', `${b.id}.json`), 'utf8'));
       const checked = validateHadithDoc(doc);
       assert.ok(checked, 'must pass the runtime validator');

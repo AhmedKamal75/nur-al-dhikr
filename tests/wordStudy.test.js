@@ -197,3 +197,39 @@ test('ayahTranslit joins per-word romanization, null when absent', async () => {
   assert.equal(ayahTranslit([{ text: 'x' }]), null);
   assert.equal(ayahTranslit('junk'), null);
 });
+
+describe('(v5.6.0) rootMeaningFor: root core-meaning lookup', () => {
+  test('hit returns sanitized {ar,en}; miss/hostile give null', async () => {
+    const { rootMeaningFor } = await import('../js/domain/wordStudy.js');
+    const index = { سمو: { ar: 'العلو والارتفاع', en: 'loftiness', extra: 1 } };
+    assert.deepEqual(rootMeaningFor({ index }, 'سمو'), {
+      ar: 'العلو والارتفاع',
+      en: 'loftiness',
+    });
+    assert.equal(rootMeaningFor({ index }, 'شجر'), null);
+    assert.equal(rootMeaningFor({ index: null, failed: true }, 'سمو'), null);
+    assert.equal(rootMeaningFor(null, 'سمو'), null);
+    assert.equal(rootMeaningFor({ index }, ''), null);
+    assert.equal(rootMeaningFor({ index }, null), null);
+    assert.equal(rootMeaningFor({ index: { سمو: null } }, 'سمو'), null);
+    assert.equal(rootMeaningFor({ index: { سمو: { ar: '', en: '' } } }, 'سمو'), null);
+  });
+});
+
+describe('(v5.7.0) roots-meaning full coverage', () => {
+  test('every corpus root carries a core meaning', async () => {
+    const { readFileSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const path = (await import('node:path')).dirname(fileURLToPath(import.meta.url));
+    const roots = JSON.parse(readFileSync(path + '/../data/quran-roots.json', 'utf8'));
+    const meanings = JSON.parse(
+      readFileSync(path + '/../data/quran-roots-meaning.json', 'utf8')
+    ).entries;
+    for (const key of Object.keys(roots)) {
+      const e = meanings[key];
+      assert.ok(e, `root covered: ${key}`);
+      assert.equal(typeof e.ar, 'string', `${key} ar sense`);
+      assert.equal(typeof e.en, 'string', `${key} en sense`);
+    }
+  });
+});

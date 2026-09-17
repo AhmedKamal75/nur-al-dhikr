@@ -479,6 +479,10 @@ export const ar = {
   'home.morningShortcut': 'أذكار الصباح',
   'home.eveningShortcut': 'أذكار المساء',
   'home.dailyProgress': 'تقدم اليوم',
+  // (v5.6.0, B-1) ملخص المستحق للمراجعة.
+  'home.reviewTitle': 'المستحق للمراجعة',
+  'home.reviewTotal': '{n} بانتظارك — دقائق قليلة تُبقيها حاضرة.',
+  'home.reviewHifz': 'الحفظ',
   'home.favorites': 'المفضلة',
   'home.collections': 'المجموعات المثبتة',
   'home.recent': 'النشاط الأخير',
@@ -910,6 +914,10 @@ export const ar = {
 
   'mushaf.settingsTitle': 'عرض المصحف',
   'mushaf.font': 'الخط',
+  'mushaf.marksLegend': 'علامات الصفحة',
+  'mushaf.marksSajda': 'موضع السجدة — المواضع الخمسة عشر',
+  'mushaf.marksHizb': 'الجزء والحزب — فاصل الأجزاء',
+  'mushaf.marksWaqf': 'علامات الوقف (ج، صلى، قلى، م)',
   'mushaf.bismillahStyle': 'مظهر البسملة',
   'mushaf.bismillah_auto': 'تلقائي (متوافق مع الخلفية)',
   'mushaf.bismillah_gold': 'ذهبي',
@@ -953,13 +961,28 @@ export const ar = {
   'practice.legendWrong': 'ليس هذا',
   'practice.noneAvailable': 'لا توجد آيات تدريب لهذا الحكم بعد.',
   'practice.loadFailed': 'تعذّر تحميل هذه الآية — تحقق من الاتصال وحاول مجددًا.',
+  // (v5.4.0, P0-5b) جولات التدريب — المراحل والملخص والمراجعة.
+  'practice.questionOf': 'السؤال {n} من {total}',
+  'practice.streakOn': '{n} على التوالي',
+  'practice.seeSummary': 'ملخص الجولة',
+  'practice.roundDone': 'اكتملت الجولة',
+  'practice.roundScore': '{n} من {total} آيات وجدتَ فيها كل الأحكام.',
+  'practice.summaryFlawless': 'جولة بلا أخطاء — الأحكام تستقر في القلب.',
+  'practice.summaryEncourage':
+    'كل خطأ يعلّم العين ما تبحث عنه. راجِعها متى شئت — بلا عجلة ولا درجات.',
+  'practice.reviewMistakes': 'مراجعة الأخطاء',
+  'practice.again': 'جولة أخرى',
+  'practice.reviewHint': 'جولة قصيرة من الأحكام التي فاتت — الأكثر تكرارًا أولًا.',
+  'practice.instructionsReview': 'ابحث عن كل حكم مُعلَّم في هذه الآية — هذه أحكام فاتتك سابقًا.',
+  'practice.nothingToReview': 'لا يوجد ما يُراجع الآن — كل ما فاتك قد أُعيد تعلّمه.',
+  'practice.level1': 'متعلم',
+  'practice.level2': 'متدرّب',
+  'practice.level3': 'متقن',
   'practice.thisAyah': 'تدرّب على هذه الآية',
   'practice.nothingHere': 'لا توجد أحكام تجويد مُعلَّمة في هذه الآية للتدريب — جرّب آية أخرى.',
 
   'wordStudy.title': 'دراسة الكلمة',
   'wordStudy.noData': 'لا تتوفر بيانات نحوية لهذه الكلمة بعد.',
-  // v5.2.86 honest meanings fallback (P0-1) — parity with en.
-  'wordStudy.noMeanings': 'لا توجد مدخلة معجمية لهذه الكلمة بعد.',
   'wordStudy.tajweed': 'أحكام التجويد في هذه الكلمة',
   'wordStudy.openTafsir': 'التفسير والإعراب',
   // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).
@@ -979,6 +1002,18 @@ export const ar = {
   'wordStudy.rootCount': '{n} مرة في القرآن الكريم',
   'wordStudy.rootHint': 'نفس الجذر في مواضع أخرى من القرآن:',
   'wordStudy.rootBrowse': 'استعرض كل المواضع ({n})',
+  // (v5.4.0, P0-1) الأقسام الأربعة وحالاتها الصادقة عند غياب البيانات.
+  'wordStudy.definition': 'المعنى',
+  // (v5.5.0) قسم المرادفات والأضداد بتسمية مستقلة — 'المعاني' كانت
+  // تُقرأ نسخة مكررة من 'المعنى'.
+  'wordStudy.synAnt': 'المرادفات والأضداد',
+  'wordStudy.irab': 'الإعراب',
+  'wordStudy.noMeaningData':
+    'لا يوجد مدخل في المعجم لهذه الكلمة بعد — الوصف أعلاه هو ما يأتي مع المدونة.',
+  'wordStudy.noSynAntData': 'لا توجد مرادفات أو مضادات مسجّلة لهذه الكلمة بعد.',
+  'wordStudy.noRootData': 'لا يوجد جذر مسجّل لهذه الكلمة في فهرس المدونة.',
+  'wordStudy.noRootMeaningData': 'لا يوجد معنى أصلي مسجّل لهذا الجذر بعد.',
+  'wordStudy.noIrabData': 'لا توجد حقول إعرابية مسجّلة لهذه الكلمة بعد.',
   // v3.22.0 root-family browser
   'roots.title': 'الجذور القرآنية',
   'roots.subtitle': 'كل مواضع كل جذر، مجمّعة حسب صيغ الكلمة — بناء المعرفة من القرآن نفسه.',
@@ -1443,6 +1478,9 @@ export const ar = {
   'stats.monthTotalLabel': 'الإجمالي',
   'stats.bestDay': 'أفضل يوم',
   'stats.monthPrev': 'الشهر السابق',
+  // (v5.6.0, B-5) تصدير الخريطة كصورة دون إنترنت.
+  'stats.heatmapExport': 'حفظ الخريطة كصورة',
+  'stats.heatmapSaved': 'حُفظت صورة الخريطة',
   'stats.monthNext': 'الشهر التالي',
   'onboarding.title': 'ابدأ من هنا',
   'onboarding.progress': 'أُنجزت {done} من {total} خطوات',
@@ -1485,6 +1523,8 @@ export const ar = {
   'khatma.behind': 'متأخر بـ{n} صفحة عن هدف اليوم',
   'khatma.behindSchedule': 'متأخر عن الجدول — جدول يومي بسيط يعيدك إلى المسار.',
   'khatma.completeBanner': 'أتممت الختمة — تقبّل الله منك.',
+  // (v5.6.0, B-4) سطر مراحل الأجزاء.
+  'khatma.juzDone': 'أتممت {done} من {total} جزءًا',
   'khatma.completeToast': 'أتممت الختمة — تقبّل الله منك.',
   'khatma.history': 'أتممت الختمة {n} مرة',
   'khatma.lastDays': 'الأخيرة في {n} يومًا',
@@ -1622,6 +1662,7 @@ export const ar = {
   /* ===== (إكمال v4.4) المتشابهات ===== */
   'mutashabihat.title': 'المتشابهات',
   'mutashabihat.subtitle': 'درّب نفسك على الآيات المتشابهة — أشهر مصدر للخطأ في الحفظ.',
+  'mutashabihat.partial': 'تم تحميل {n} من أصل 114 سورة — يغطي هذا التدريب الجزء المتوفر.',
   'mutashabihat.loadingCorpus': 'يجري تحميل نص القرآن…',
   'mutashabihat.drill': 'من أي سورة هذه الآية؟',
   'mutashabihat.drillHint': 'اختر السورة التي تنتمي إليها الآية.',

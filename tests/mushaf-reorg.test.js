@@ -457,3 +457,38 @@ describe('mushaf regroup: zero feature loss', () => {
     assert.deepEqual(missing, [], `lost pref toggles: ${missing.join(', ')}`);
   });
 });
+
+/* ------------------------------------------------------------------ */
+/* (v5.6.0, B-4) juz milestones in the Track panel                      */
+/* ------------------------------------------------------------------ */
+
+describe('khatma track: juz milestone row', () => {
+  // Juz 1 = mushaf pages 1..21 (juzFirstPage).
+  const readJuz1 = () => {
+    const o = {};
+    for (let p = 1; p <= 21; p += 1) o[String(p)] = true;
+    return o;
+  };
+  const todayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+
+  test('silent until the first juz completes; then counts with a fresh bloom', () => {
+    const partial = buildMushafTrack(baseState());
+    assert.doesNotMatch(partial, /mushaf-khatma__juz/, 'no juz row with one page read');
+    const done = buildMushafTrack(
+      baseState({ mushafPagesRead: readJuz1(), khatmaJuzDone: { 1: todayISO() } })
+    );
+    assert.match(done, /mushaf-khatma__juz celebrate/, 'fresh juz blooms once');
+    assert.match(done, /Juz 1 of 30 complete/, 'milestone count renders');
+  });
+
+  test('stale stamps count without blooming', () => {
+    const html = buildMushafTrack(
+      baseState({ mushafPagesRead: readJuz1(), khatmaJuzDone: { 1: '2020-01-01' } })
+    );
+    assert.match(html, /mushaf-khatma__juz/, 'row persists');
+    assert.doesNotMatch(html, /mushaf-khatma__juz celebrate/, 'no re-bloom on later renders');
+  });
+});

@@ -9,9 +9,15 @@ import {
   ensureTafsirText,
   ensureTajweedPool,
   ensureWordDict,
+  ensureRootsMeaning,
   openAyahStudy,
 } from '../lazyData.js';
-import { renderPracticeRound, startPracticeRound } from '../practice.js';
+import {
+  renderPracticeRound,
+  startPracticeRound,
+  advancePracticeRound,
+  openPracticePicker,
+} from '../practice.js';
 
 import { MUSHAF_META_URL, VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
@@ -35,7 +41,6 @@ import {
 } from '../../services/mushaf.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
-import { buildPracticePicker } from '../../views/tajweedPracticeView.js';
 import * as player from '../../services/player.js';
 import * as recitation from '../../services/recitation.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
@@ -238,6 +243,29 @@ export const clickHandlers = {
   },
 
   'word-tap': async (ds, e, target) => {
+    // (v5.5.0) Bismillah taps (data-ayah="0") redirect onto the real
+    // 1:1 grammar records — the four words are identical, so the popup
+    // answers with genuine i'rab/sarf/root instead of an empty token
+    // shell. Index-clamped at the edge like every other tap path.
+    if (String(ds.ayah) === '0') {
+      const bi = Number(ds.i);
+      if (!(bi >= 1 && bi <= 4)) return;
+      const surface = target?.textContent?.trim().slice(0, 140) || null;
+      store.dispatch(actions.openWordStudy(1, 1, bi, surface));
+      await ensureQuranWordsData(store.getState(), 1);
+      await ensureQuranRoots(store.getState());
+      await ensureWordDict();
+      await ensureRootsMeaning();
+      if (!store.getState().quran.surahs['1']) {
+        try {
+          await dispatchSurahDoc('1');
+        } catch (err) {
+          console.error('[wordStudy] failed to load surah text', 1, err);
+        }
+      }
+      openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
+      return;
+    }
     const surah = ds.surah,
       ayah = ds.ayah,
       i = Number(ds.i);
@@ -251,6 +279,9 @@ export const clickHandlers = {
     // (v5.2.75, UP-01) the lemma-dict tier rides the same open (one fetch
     // per session; the popup omits Meanings until it lands).
     await ensureWordDict();
+    // (v5.6.0) the root-meaning tier rides alongside (one fetch per
+    // session; the root block shows an honest hint until it lands).
+    await ensureRootsMeaning();
     // (v4.6.0) The tajweed section reads the official ayah text from the
     // classic reader's surah docs — which the Mushaf never loads on its
     // own. Ensure them (idempotent, cached) so a word tap in the mushaf
@@ -445,7 +476,7 @@ export const clickHandlers = {
 
   'practice-open': async () => {
     await ensureTajweedPool(store.getState());
-    openModal(buildPracticePicker(store.getState()), { labelledBy: 'modal-title-practice' });
+    openPracticePicker();
   },
 
   'practice-start': async (ds) => {
@@ -462,16 +493,29 @@ export const clickHandlers = {
 
   'practice-check': () => {
     if (!rt.practiceSession || rt.practiceSession.checked) return;
-    const result = scoreRound(rt.practiceSession.targets, rt.practiceSession.selected);
-    rt.practiceSession.checked = true;
-    rt.practiceSession.result = result;
-    store.dispatch(actions.recordTajweedPracticeResult(rt.practiceSession.ruleId, result.perfect));
+    const session = rt.practiceSession;
+    const result = scoreRound(session.targets, session.selected);
+    session.checked = true;
+    session.result = result;
+    // (v5.4.0, P0-5b) one dispatch records BOTH memories: stats
+    // (streak/accuracy) and — for real rule ids only — the weak-rule map
+    // (miss upsert / re-learned clear; the reducer skips 'mixed'/'review'
+    // since neither is a TAJWEED_RULES id). The round HUD rides the
+    // session's own results/roundStreak (single mode carries them too,
+    // so the ack path never branches on shape).
+    store.dispatch(actions.recordTajweedPracticeResult(session.ruleId, result.perfect));
+    if (Array.isArray(session.results)) session.results.push({ perfect: result.perfect });
+    session.roundStreak = result.perfect ? (session.roundStreak || 0) + 1 : 0;
     renderPracticeRound();
   },
 
   'practice-next': async () => {
     if (!rt.practiceSession) return;
-    await startPracticeRound(rt.practiceSession.ruleId);
+    await advancePracticeRound();
+  },
+
+  'practice-review': async () => {
+    await startPracticeRound('review');
   },
 
   'practice-this-ayah': async (ds) => {
@@ -492,6 +536,7 @@ export const clickHandlers = {
     }
     rt.practiceSession = {
       ruleId: 'mixed',
+      mode: 'single',
       surah,
       ayah,
       text: ayahText,
@@ -499,6 +544,8 @@ export const clickHandlers = {
       checked: false,
       targets,
       result: null,
+      results: [],
+      roundStreak: 0,
     };
     renderPracticeRound();
   },

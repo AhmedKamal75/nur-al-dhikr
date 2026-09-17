@@ -489,6 +489,10 @@ export const en = {
   'home.morningShortcut': 'Morning Adhkar',
   'home.eveningShortcut': 'Evening Adhkar',
   'home.dailyProgress': 'Today\u2019s Progress',
+  // (v5.6.0, B-1) review-due digest — shame-free nudge copy.
+  'home.reviewTitle': 'Due for review',
+  'home.reviewTotal': '{n} waiting — a few minutes keeps them fresh.',
+  'home.reviewHifz': 'Hifz',
   'home.favorites': 'Favorites',
   'home.collections': 'Pinned Collections',
   'home.recent': 'Recent Activity',
@@ -929,6 +933,10 @@ export const en = {
 
   'mushaf.settingsTitle': 'Mushaf Display',
   'mushaf.font': 'Font',
+  'mushaf.marksLegend': 'Page marks',
+  'mushaf.marksSajda': 'Place of prostration (sajdah) — the fifteen mawadi\u2019',
+  'mushaf.marksHizb': 'Rub el-hizb — juz / hizb divider',
+  'mushaf.marksWaqf': 'Stop marks (j\u0101, \u1e63al\u0101, qil\u0101, m\u016B)',
   'mushaf.bismillahStyle': 'Bismillah look',
   'mushaf.bismillah_auto': 'Auto (contrast-safe)',
   'mushaf.bismillah_gold': 'Gilded',
@@ -972,14 +980,29 @@ export const en = {
   'practice.legendWrong': 'Not this one',
   'practice.noneAvailable': 'No practice ayahs available for this rule yet.',
   'practice.loadFailed': "Couldn't load this ayah — check your connection and try again.",
+  // (v5.4.0, P0-5b) gamified rounds — levels, HUD, summary, review.
+  'practice.questionOf': 'Question {n} of {total}',
+  'practice.streakOn': '{n} in a row',
+  'practice.seeSummary': 'Round Summary',
+  'practice.roundDone': 'Round complete',
+  'practice.roundScore': '{n} of {total} verses with every rule found.',
+  'practice.summaryFlawless': 'A clean round — the rules are settling in.',
+  'practice.summaryEncourage':
+    'Every miss teaches the eye what to look for. Review them whenever you like — no rush, no grades.',
+  'practice.reviewMistakes': 'Review mistakes',
+  'practice.again': 'Practice another round',
+  'practice.reviewHint': 'A short round drawn from the rules that slipped — most-missed first.',
+  'practice.instructionsReview':
+    'Find every marked rule in this ayah — these are the rules that slipped before.',
+  'practice.nothingToReview': 'Nothing to review right now — every miss has been re-learned.',
+  'practice.level1': 'Learning',
+  'practice.level2': 'Steady',
+  'practice.level3': 'Strong',
   'practice.thisAyah': 'Practice This Ayah',
   'practice.nothingHere': 'This ayah has no marked tajweed rules to practice — try another.',
 
   'wordStudy.title': 'Word Study',
   'wordStudy.noData': "Grammar data isn't available for this word yet.",
-  // v5.2.86 honest meanings fallback (P0-1): the word IS known (grammar +
-  // root sections render) but the 54-lemma study dictionary has no entry.
-  'wordStudy.noMeanings': 'No dictionary entry for this word yet.',
   'wordStudy.tajweed': 'Tajweed in this word',
   'wordStudy.openTafsir': 'Tafsir & I\u02BFrab',
   // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).
@@ -999,6 +1022,18 @@ export const en = {
   'wordStudy.rootCount': '{n} occurrences in the Qur\u2019an',
   'wordStudy.rootHint': 'Same root elsewhere in the Qur\u2019an:',
   'wordStudy.rootBrowse': 'Browse all {n} occurrences',
+  // (v5.4.0, P0-1) the four study blocks + their honest empty states.
+  'wordStudy.definition': 'Definition',
+  // (v5.5.0) the syn/ant block carries its own label now — 'Meanings'
+  // read as a duplicate of 'Definition' (المعنى vs المعاني).
+  'wordStudy.synAnt': 'Synonyms & Antonyms',
+  'wordStudy.irab': 'Grammar (i\u02BFrab)',
+  'wordStudy.noMeaningData':
+    'No dictionary entry for this word yet — the gloss above is what ships with the corpus.',
+  'wordStudy.noSynAntData': 'No synonyms or antonyms recorded for this word yet.',
+  'wordStudy.noRootData': 'No root recorded for this word in the corpus index.',
+  'wordStudy.noRootMeaningData': 'No recorded core meaning for this root yet.',
+  'wordStudy.noIrabData': 'No grammar fields recorded for this word yet.',
   // v3.22.0 root-family browser
   'roots.title': 'Qur\u2019an Root Families',
   'roots.subtitle':
@@ -1477,6 +1512,9 @@ export const en = {
   'stats.bestDay': 'Best day',
   'stats.monthPrev': 'Previous month',
   'stats.monthNext': 'Next month',
+  // (v5.6.0, B-5) offline PNG export of the heatmap card.
+  'stats.heatmapExport': 'Save heatmap as image',
+  'stats.heatmapSaved': 'Heatmap image saved',
   'onboarding.title': 'Getting started',
   'onboarding.progress': '{done} of {total} steps done',
   'onboarding.dismiss': 'Maybe later',
@@ -1518,6 +1556,8 @@ export const en = {
   'khatma.behind': '{n} pages behind today’s target',
   'khatma.behindSchedule': 'Behind schedule — a small daily catch-up will bring it back.',
   'khatma.completeBanner': 'Khatma complete — may Allah accept it from you.',
+  // (v5.6.0, B-4) juz milestone row.
+  'khatma.juzDone': 'Juz {done} of {total} complete',
   'khatma.completeToast': 'Khatma complete — may Allah accept it from you.',
   'khatma.history': '{n} khatma completed',
   'khatma.lastDays': 'last one in {n} days',
@@ -1658,6 +1698,7 @@ export const en = {
   /* ===== (v4.4 completion) Mutashabihat drill ===== */
   'mutashabihat.title': 'Look-alike Ayat',
   'mutashabihat.subtitle': 'Train the classic hifz confusion: passages that look alike.',
+  'mutashabihat.partial': '{n} of 114 surahs loaded — this drill covers the loaded portion.',
   'mutashabihat.loadingCorpus': 'Loading the Qur’an corpus…',
   'mutashabihat.drill': 'Which surah is this?',
   'mutashabihat.drillHint': 'Pick the surah the ayah belongs to.',

@@ -551,9 +551,62 @@ body.is-mushaf-fullscreen #main {
   max-width: none;
   padding: 0;
   overflow: hidden;
+  /* (v5.6.0) the view must STRETCH to the viewport: block-size:100% on
+     the view resolves against #main's HEIGHT (not its min-height), so
+     without an explicit flex column here the book measured 658px of an
+     844px viewport and the fit engine filled a box that was never the
+     screen. FIXED (not min) height: content taller than the viewport
+     must clip inside the text block (overflow:hidden there) — if #main
+     is allowed to grow, the wrap grows with it and the engine converges
+     on filling its own runaway box instead of the screen. */
+  block-size: 100dvh;
+  /* (v5.6.0) min-block-size:0: #main is a flex item of #app, and flex
+     items floor at min-height:auto (their content size) — without this
+     the 966px of page content overrode the 844px fixed height above and
+     every descendant box (plus the fit engine) measured the overflow.
+     DEFINITE basis: with an indefinite (content-sized) #app above,
+     the base `flex:1` (=1 1 0%) resolves its 0% basis against content,
+     which re-inflates the whole chain to 966px. A definite 100dvh basis
+     pins the hypothetical size so free space computes to zero. */
+  min-block-size: 0;
+  flex: 1 0 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 body.is-mushaf-fullscreen {
   overflow: hidden;
+}
+/* (v5.4.0, P0-3) fullscreen is a PAGE, not a scroller: vertical overflow
+   is eliminated by the auto-fit engine (js/app/autoFit.js), and any
+   residual overflow is physically unscrollable — RTL horizontal
+   page-flip (swipe / arrows / keyboard) is the only navigation. */
+body.is-mushaf-fullscreen .view--mushaf-fullscreen {
+  overflow: hidden;
+  block-size: 100%;
+  /* (v5.6.0) stretch with #main's flex column (see above): the 100%
+     alone never resolved and the page floated short. */
+  flex: 1;
+  min-block-size: 0;
+}
+body.is-mushaf-fullscreen .mushaf-page-wrap {
+  overflow: hidden;
+  touch-action: pan-x;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  /* (v5.6.0) the wrap is the flex item that must own the freed space. */
+  flex: 1;
+  min-block-size: 0;
+}
+body.is-mushaf-fullscreen .mushaf-page {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+}
+body.is-mushaf-fullscreen .mushaf-page__text {
+  min-block-size: 0;
+  overflow: hidden;
+  flex: 1;
 }
 
 /* v4.1 — landscape safe areas (notched phones in landscape keep the

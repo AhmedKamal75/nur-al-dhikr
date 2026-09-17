@@ -11,6 +11,7 @@ import {
   QURAN_ROOTS_FULL_URL,
   QURAN_ROOTS_URL,
   QURAN_WORDS_URL,
+  ROOTS_MEANING_URL,
   TAFSIR_EDITIONS_URL,
   TAFSIR_REMOTE_URL,
   TAFSIR_TEXT_URL,
@@ -325,6 +326,42 @@ export function ensureWordDict() {
     }
   })();
   return wordDictInFlight;
+}
+
+let rootsMeaningInFlight = null;
+
+/**
+ * (v5.6.0) root core-meanings: fetched once (first word-study open of
+ * the session), cached in the ephemeral rootsMeaning slice. Same
+ * singleton-promise shape as ensureWordDict; failure flags the tier
+ * (the root block simply omits the meaning line) and retries on the
+ * next open.
+ */
+export function ensureRootsMeaning() {
+  const snap = store.getState().rootsMeaning;
+  if (snap?.index) return Promise.resolve(true);
+  if (rootsMeaningInFlight) return rootsMeaningInFlight;
+  rootsMeaningInFlight = (async () => {
+    try {
+      const raw = await fetchJSON(ROOTS_MEANING_URL);
+      const entries = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw.entries : null;
+      if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
+        throw new Error('malformed roots-meaning file');
+      }
+      store.dispatch(actions.setRootsMeaning(entries));
+      flagLoad('roots-meaning', false);
+      return true;
+    } catch (err) {
+      if (isMissingResourceError(err)) console.warn('[wordStudy] roots-meaning not bundled', err);
+      else console.error('[wordStudy] failed to load roots-meaning', err);
+      store.dispatch(actions.setRootsMeaning(null));
+      flagLoad('roots-meaning', true);
+      return false;
+    } finally {
+      rootsMeaningInFlight = null;
+    }
+  })();
+  return rootsMeaningInFlight;
 }
 
 /**

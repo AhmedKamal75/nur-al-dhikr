@@ -52,7 +52,11 @@ export async function ensureQuranSearchData() {
       // The latch resets so returning to Search resumes the build.
       // (v5.2.88) the exit hook aborts the signal too, so THIS chunk's
       // in-flight fetches release immediately instead of draining first.
-      if (store.getState().activeView !== VIEWS.SEARCH || signal.aborted) {
+      // (v5.4.0) MUTASHABIHAT is the second legitimate owner of this
+      // build — the drill computes its pairs from corpus docs, so the
+      // build continues while either owner is active.
+      const view = store.getState().activeView;
+      if ((view !== VIEWS.SEARCH && view !== VIEWS.MUTASHABIHAT) || signal.aborted) {
         rt.quranSearchBuildStarted = false;
         if (rt.quranBulkAbort) {
           rt.quranBulkAbort.abort();
@@ -83,6 +87,14 @@ export async function ensureQuranSearchData() {
       chunk.forEach((n, j) => {
         if (docs[j]) fetched[n] = docs[j];
       });
+      // (v5.6.0, B-3) persist each chunk into the reader cache as it
+      // lands: the store itself becomes the resume cursor — an aborted
+      // or interrupted build resumes from chunk N+1 instead of
+      // re-scanning 1..114 and re-fetching what already landed. One
+      // dispatch per 24-wide chunk keeps re-renders bounded.
+      if (Object.keys(fetched).length) {
+        store.dispatch(actions.setQuranSurahsBulk({ ...fetched }));
+      }
     }
     rt.quranBulkAbort = null;
     // Re-read AFTER the fetch loop: an edition switch (or any surah load)
@@ -168,11 +180,15 @@ export function maybeStartHifzFromParam(state) {
 }
 
 export function maybeStartQuranSearchBuild(state) {
-  if (
-    state.activeView === VIEWS.SEARCH &&
-    (state.activeParams?.q || '').trim() &&
-    !isQuranSearchReady()
-  ) {
+  if (isQuranSearchReady()) return;
+  // (v5.4.0) the mutashabihat drill needs corpus docs to compute its
+  // pairs — entering the view kicks the same bulk build. The view itself
+  // renders from whatever docs are already loaded (no infinite spinner).
+  if (state.activeView === VIEWS.MUTASHABIHAT) {
+    ensureQuranSearchData();
+    return;
+  }
+  if (state.activeView === VIEWS.SEARCH && (state.activeParams?.q || '').trim()) {
     ensureQuranSearchData();
   }
 }

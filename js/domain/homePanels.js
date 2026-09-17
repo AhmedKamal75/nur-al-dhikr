@@ -14,6 +14,9 @@ export const HOME_PANEL_IDS = Object.freeze([
   'verse',
   'hadith',
   'hifz',
+  // (v5.6.0, B-1) one daily "due for review" nudge aggregating the three
+  // persisted memories (hifz lapses, quiz misses, tajweed weak rules).
+  'review',
   'worship',
   'recent',
   'favorites',
@@ -35,6 +38,10 @@ export const HOME_DEFAULT_VISIBLE = Object.freeze([
   'progress',
   'verse',
   'hadith',
+  // (v5.6.0, B-1) the digest renders nothing until something is actually
+  // due, so it costs fresh installs zero density and is there the first
+  // morning anything lapses.
+  'review',
 ]);
 
 /** hiddenHome for a fresh install: everything outside the default set. */

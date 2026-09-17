@@ -115,6 +115,9 @@ export const QURAN_ROOTS_URL = 'data/quran-roots.json';
  *  by the SW's stale-while-revalidate /data strategy, like every corpus
  *  tier above. */
 export const QURAN_DICT_URL = 'data/quran-dict.json';
+/** (v5.6.0) root core-meanings for the word popup (app-authored, one
+ *  line per root, AR+EN). Same fetch-once tier as the lemma dict. */
+export const ROOTS_MEANING_URL = 'data/quran-roots-meaning.json';
 /** Root-family browser index (v3.22.0): UNCAPPED occurrence lists (~2.3 MB).
  *  Not precached — fetched once when the browser view is first opened and
  *  kept offline by the SW's stale-while-revalidate /data strategy. */

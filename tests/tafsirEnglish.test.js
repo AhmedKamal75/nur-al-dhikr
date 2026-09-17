@@ -20,6 +20,7 @@ import {
   formatEnglishCommentary,
   isEnglishEdition,
 } from '../js/views/tafsirPanel.js';
+import { SEED_MODE, SEED_SKIP_MSG } from './helpers/seedMode.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
@@ -51,7 +52,13 @@ describe('catalog: en-mukhtasar entry', () => {
 });
 
 describe('bundled files: 114 surahs, 6,236 ayahs', () => {
-  test('every file parses as a non-empty [{ayah, text}] list', () => {
+  test('every file parses as a non-empty [{ayah, text}] list', (t) => {
+    // SEED MODE ships the bundled editions for the seed surahs only. The
+    // full-corpus coverage gate lives in the full repo. Skipped loudly.
+    if (SEED_MODE) {
+      t.skip(SEED_SKIP_MSG);
+      return;
+    }
     const files = readdirSync(path.join(ROOT, 'data/tafsir/en-mukhtasar')).filter((f) =>
       f.endsWith('.json')
     );
@@ -69,7 +76,11 @@ describe('bundled files: 114 surahs, 6,236 ayahs', () => {
     assert.equal(total, 6236, 'the whole Qur’an is covered');
   });
 
-  test('per-surah ayah keys run 1..N per quran-meta', () => {
+  test('per-surah ayah keys run 1..N per quran-meta', (t) => {
+    if (SEED_MODE) {
+      t.skip(SEED_SKIP_MSG);
+      return;
+    }
     const meta = readJSON('data/quran-meta.json');
     for (const s of meta.surahs) {
       const rows = readJSON(`data/tafsir/en-mukhtasar/${s.number}.json`);

@@ -6,7 +6,12 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { MUSHAF_PAGE_COUNT } from '../core/config.js';
-import { planStatus, justCompletedKhatma } from '../domain/khatma.js';
+import {
+  planStatus,
+  justCompletedKhatma,
+  juzProgress,
+  justCompletedJuz,
+} from '../domain/khatma.js';
 
 export function buildMushafTrack(state) {
   const lang = state.settings.language;
@@ -110,11 +115,29 @@ export function buildMushafTrack(state) {
         <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
       </div>
       <p class="mushaf-khatma__sub" dir="ltr">${readCount} / ${MUSHAF_PAGE_COUNT} · ${pct}%</p>
+      ${juzMilestoneRow(state, lang)}
       ${planRows}
       ${planButtons}
       ${historyLine}
     </div>
   </div>`;
+}
+
+/**
+ * (v5.6.0, B-4) Juz milestone row: "Juz X of 30" progress with a star
+ * burst blooming on juz' stamped fresh today (same one-shot `celebrate`
+ * contract as the khatma completion banner — later re-renders stay
+ * silent). Silent until the first juz completes.
+ */
+export function juzMilestoneRow(state, lang) {
+  const metaPages = state.mushaf?.meta?.pages;
+  if (!Array.isArray(metaPages)) return '';
+  const { done, total } = juzProgress(metaPages, state.mushafPagesRead);
+  if (!done.length) return '';
+  const fresh = new Set(justCompletedJuz(state.khatmaJuzDone));
+  const last = done[done.length - 1];
+  return `
+      <p class="mushaf-khatma__juz${fresh.has(last) ? ' celebrate' : ''}" dir="ltr">${icon('star', { size: 13 })} ${t('khatma.juzDone', lang, { done: done.length, total })}</p>`;
 }
 
 /** Khatma plan editor, opened from the progress panel. Pure template — the
