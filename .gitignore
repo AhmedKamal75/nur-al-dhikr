@@ -15,3 +15,7 @@ playwright-report/
 *.gz
 # Seed/slim bundles (built by npm run build-seed, never committed)
 *.zip
+# Reviewer-side clutter: external audit docs + OS zone markers.
+# Never committed, never bundled (build-seed honors --exclude-standard).
+AUDIT-REPORT*
+*:Zone.Identifier
