@@ -23,8 +23,8 @@ and prunes only the large corpora no gate pins:
 | `data/mushaf/` — all 604 pages + `.gz` | `data/quran-words/` — per-word grammar (~44 MB) |
 | `data/quran-meta.json`, `data/mushaf-meta.json` | `data/hadith/` — 9 books (~60 MB) |
 | `data/translations/` (4 overlay langs) | — |
-| `data/quran-dict.json` (54-lemma study notes), `data/quran-roots*.json`, `data/tajweed-practice.json`, adhkar/duas/asma catalogs | — |
-| full `js/`, `assets/css/`, `tests/` (146 unit files) + `playwright.config.js`, all `docs/`, `scripts/` | `node_modules/`, `.git/`, `test-results/`, `playwright-report/`, `*.log`, `*.zip` |
+| `data/quran-dict.json` (4,763-lemma study notes — full corpus coverage), `data/quran-roots*.json` (incl. `quran-roots-meaning.json`, 1,651 root core-senses), `data/tajweed-practice.json`, adhkar/duas/asma catalogs | — |
+| full `js/`, `assets/css/`, `tests/` (151 unit files) + `playwright.config.js`, all `docs/`, `scripts/` | `node_modules/`, `.git/`, `test-results/`, `playwright-report/`, `*.log`, `*.zip` |
 
 Result at v5.2.85: **12.8 MB zip, 26.5 MB uncompressed, 2,868 entries**
 — under the 50 MB ceiling with headroom.
@@ -47,7 +47,7 @@ a silent spinner and never invented content:
 
 ## What `npm test` needs
 
-`npm test` (1,633 unit tests at v5.2.85) requires the **full tree**:
+`npm test` (1,702 unit tests at v5.7.0) requires the **full tree**:
 `wordStudyRender.test.js` reads `data/quran-words/` + `data/tafsir/`
 straight from disk and fails with ENOENT on the slim — loudly, at file
 read, not as a silent skip. E2E (`playwright test`, chromium) boots the

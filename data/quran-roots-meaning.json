@@ -1,0 +1,6609 @@
+{
+ "_comment": "v5.6.0 root core-meanings for the word-study popup. APP-AUTHORED study notes (generic classical senses: Lisān/Lane core meanings in one line) — not corpus data, not fatwa. Keys match data/quran-roots.json bare-letter roots verbatim; the view falls back to an honest empty state for uncovered roots.",
+ "entries": {
+  "أله": {
+   "ar": "الألوهية والعبادة",
+   "en": "godhood, worship"
+  },
+  "قول": {
+   "ar": "النطق والكلام",
+   "en": "speech, saying"
+  },
+  "كون": {
+   "ar": "الوجود والحدوث",
+   "en": "being, becoming"
+  },
+  "ربب": {
+   "ar": "التربية والملك والسيادة",
+   "en": "nurturing, lordship"
+  },
+  "أمن": {
+   "ar": "الطمأنينة وزوال الخوف؛ والتصديق",
+   "en": "safety; belief"
+  },
+  "علم": {
+   "ar": "إدراك الشيء بحقيقته",
+   "en": "knowledge"
+  },
+  "قوم": {
+   "ar": "القيام والنهوض؛ والجماعة القائمة",
+   "en": "standing; people"
+  },
+  "أيي": {
+   "ar": "الآية والعلامة",
+   "en": "sign, verse, miracle"
+  },
+  "أتي": {
+   "ar": "المجيء والحضور",
+   "en": "coming"
+  },
+  "بين": {
+   "ar": "الفراق والوضوح؛ والوسط",
+   "en": "separation, clarity; between"
+  },
+  "كفر": {
+   "ar": "الستر والتغطية؛ ومنه الجحود",
+   "en": "covering; disbelief"
+  },
+  "شيأ": {
+   "ar": "المشيئة؛ ومنه الشيء الموجود",
+   "en": "will; thing, being"
+  },
+  "رسل": {
+   "ar": "البعث بتكليف",
+   "en": "sending with a mission"
+  },
+  "يوم": {
+   "ar": "اليوم والزمن",
+   "en": "day, time"
+  },
+  "أرض": {
+   "ar": "الأرض والقرار",
+   "en": "earth, ground"
+  },
+  "سمو": {
+   "ar": "العلو والارتفاع؛ ومنه الاسم",
+   "en": "loftiness; name"
+  },
+  "كلل": {
+   "ar": "الإحاطة والتمام",
+   "en": "totality, allness"
+  },
+  "عذب": {
+   "ar": "العذوبة؛ والعذاب الألم",
+   "en": "sweetness; torment"
+  },
+  "عمل": {
+   "ar": "الفعل بقصد",
+   "en": "deed, work"
+  },
+  "جعل": {
+   "ar": "التصيير والوضع",
+   "en": "making, appointing"
+  },
+  "رحم": {
+   "ar": "الرقة والعطف؛ والرحم موضع الجنين",
+   "en": "mercy; womb"
+  },
+  "أنس": {
+   "ar": "الأنس والظهور؛ والإنسان",
+   "en": "familiarity; man"
+  },
+  "كتب": {
+   "ar": "الجمع والضم؛ ومنه الكتابة",
+   "en": "gathering; writing, decree"
+  },
+  "هدي": {
+   "ar": "الرشاد والدلالة على الخير",
+   "en": "guidance"
+  },
+  "ظلم": {
+   "ar": "مجاوزة الحد ووضع الشيء في غير موضعه",
+   "en": "injustice, wrongdoing"
+  },
+  "نفس": {
+   "ar": "الذات والروح",
+   "en": "self, soul"
+  },
+  "قبل": {
+   "ar": "الجهة المتقدمة؛ والقبول",
+   "en": "before, front; acceptance"
+  },
+  "رأي": {
+   "ar": "الإبصار بالعين أو القلب",
+   "en": "seeing, perceiving"
+  },
+  "نزل": {
+   "ar": "الهبوط من علو",
+   "en": "descending, sending down"
+  },
+  "ذكر": {
+   "ar": "الحضور في القلب أو اللسان ضد النسيان",
+   "en": "remembrance"
+  },
+  "حقق": {
+   "ar": "الثبوت والوجوب",
+   "en": "truth, established right"
+  },
+  "كذب": {
+   "ar": "خلاف الصدق",
+   "en": "lying, denial"
+  },
+  "جيأ": {
+   "ar": "المجيء",
+   "en": "coming"
+  },
+  "عبد": {
+   "ar": "الخضوع والتذلل؛ العبودية",
+   "en": "servitude, worship"
+  },
+  "أخذ": {
+   "ar": "التناول والحوز",
+   "en": "taking, seizing"
+  },
+  "خلق": {
+   "ar": "الإيجاد على تقدير",
+   "en": "creating"
+  },
+  "وقي": {
+   "ar": "الحفظ والصون من المكروه",
+   "en": "protection, God-consciousness"
+  },
+  "أخر": {
+   "ar": "التأخر؛ والآخرة دار البقاء",
+   "en": "being last; the Hereafter"
+  },
+  "أمر": {
+   "ar": "الطلب؛ والشأن والحال",
+   "en": "command; matter"
+  },
+  "بعد": {
+   "ar": "خلاف القبل؛ والبعد",
+   "en": "after; distance"
+  },
+  "غفر": {
+   "ar": "الستر؛ المغفرة",
+   "en": "covering; forgiveness"
+  },
+  "ولي": {
+   "ar": "القرب؛ والولاية والنصرة",
+   "en": "nearness; guardianship"
+  },
+  "دعو": {
+   "ar": "النداء والطلب",
+   "en": "calling, invoking"
+  },
+  "حكم": {
+   "ar": "المنع من الظلم؛ القضاء والحكمة",
+   "en": "judgment, wisdom"
+  },
+  "ملك": {
+   "ar": "حيازة الشيء والتصرف فيه",
+   "en": "ownership, kingship"
+  },
+  "جنن": {
+   "ar": "الستر؛ ومنه الجنة والجن",
+   "en": "covering; garden, jinn"
+  },
+  "عند": {
+   "ar": "الحضور والقرب",
+   "en": "presence, with"
+  },
+  "خير": {
+   "ar": "الخير ضد الشر؛ والاختيار",
+   "en": "goodness; choice"
+  },
+  "نور": {
+   "ar": "الضوء والإشراق",
+   "en": "light"
+  },
+  "حسن": {
+   "ar": "الجمال ضد القبح؛ والإحسان",
+   "en": "beauty, goodness"
+  },
+  "ضلل": {
+   "ar": "الذهاب عن الطريق",
+   "en": "straying"
+  },
+  "حيي": {
+   "ar": "الحياة ضد الموت؛ والحياء",
+   "en": "life; modesty"
+  },
+  "سمع": {
+   "ar": "إدراك المسموع",
+   "en": "hearing"
+  },
+  "بني": {
+   "ar": "البناء؛ ومنه الابن",
+   "en": "building; son"
+  },
+  "خرج": {
+   "ar": "الظهور من الداخل",
+   "en": "emerging"
+  },
+  "صلح": {
+   "ar": "ضد الفساد",
+   "en": "righteousness, soundness"
+  },
+  "سبل": {
+   "ar": "الطريق",
+   "en": "path, way"
+  },
+  "تبع": {
+   "ar": "السير خلف الشيء",
+   "en": "following"
+  },
+  "مثل": {
+   "ar": "الشبه والنظير؛ والمثل للعبرة",
+   "en": "likeness, parable"
+  },
+  "قلب": {
+   "ar": "التقليب والتحول؛ والقلب لتقلبه",
+   "en": "turning; heart"
+  },
+  "قتل": {
+   "ar": "إزهاق الروح",
+   "en": "killing"
+  },
+  "كثر": {
+   "ar": "الزيادة",
+   "en": "abundance, multitude"
+  },
+  "سوأ": {
+   "ar": "القبح والسوء",
+   "en": "evil, badness"
+  },
+  "شرك": {
+   "ar": "جعل شريك",
+   "en": "associating partners (with Allah)"
+  },
+  "موت": {
+   "ar": "ضد الحياة",
+   "en": "death"
+  },
+  "كبر": {
+   "ar": "العظم؛ والكبر والتكبر",
+   "en": "greatness; arrogance"
+  },
+  "شهد": {
+   "ar": "الحضور والمعاينة؛ الشهادة",
+   "en": "witnessing, testimony"
+  },
+  "بعض": {
+   "ar": "الجزء",
+   "en": "part, some"
+  },
+  "نصر": {
+   "ar": "العون على العدو",
+   "en": "help, victory"
+  },
+  "نبأ": {
+   "ar": "الخبر العظيم",
+   "en": "momentous news"
+  },
+  "صدق": {
+   "ar": "مطابقة الخبر للواقع",
+   "en": "truthfulness"
+  },
+  "وعد": {
+   "ar": "الإخبار بخير أو شر آت",
+   "en": "promise, threat"
+  },
+  "بصر": {
+   "ar": "إدراك المبصَر؛ البصيرة",
+   "en": "sight, insight"
+  },
+  "غير": {
+   "ar": "التبديل والتحول؛ والغيرية",
+   "en": "change; otherness"
+  },
+  "لقي": {
+   "ar": "الاجتماع والمواجهة",
+   "en": "meeting, encountering"
+  },
+  "رود": {
+   "ar": "الإرادة والطلب",
+   "en": "wanting, seeking"
+  },
+  "دون": {
+   "ar": "خلاف الفوق؛ والحقارة",
+   "en": "below; inferiority"
+  },
+  "نعم": {
+   "ar": "الطيب واللين؛ النعمة",
+   "en": "pleasantness; blessing"
+  },
+  "سلم": {
+   "ar": "السلامة من الآفات؛ والانقياد",
+   "en": "soundness; submission"
+  },
+  "دنو": {
+   "ar": "القرب",
+   "en": "nearness"
+  },
+  "قدر": {
+   "ar": "التقدير والقياس؛ والقدرة",
+   "en": "measure, decree; power"
+  },
+  "نذر": {
+   "ar": "الإعلام بالتخويف",
+   "en": "warning"
+  },
+  "جمع": {
+   "ar": "الضم إلى بعض",
+   "en": "gathering"
+  },
+  "نظر": {
+   "ar": "تأمل العين؛ والانتظار",
+   "en": "looking; waiting"
+  },
+  "سأل": {
+   "ar": "الطلب والسؤال",
+   "en": "asking"
+  },
+  "طوع": {
+   "ar": "الانقياد ضد الكره",
+   "en": "willing obedience"
+  },
+  "عظم": {
+   "ar": "الكبر",
+   "en": "greatness, might"
+  },
+  "خلف": {
+   "ar": "المجيء بعد الشيء؛ الخلافة",
+   "en": "coming after; succession"
+  },
+  "أهل": {
+   "ar": "الأنس والألفة؛ أهل الشيء أصحابه",
+   "en": "familiarity; family, people"
+  },
+  "دخل": {
+   "ar": "الولوج إلى الداخل",
+   "en": "entering"
+  },
+  "أول": {
+   "ar": "التقدم والابتداء",
+   "en": "firstness, beginning"
+  },
+  "خوف": {
+   "ar": "الفزع ضد الأمن",
+   "en": "fear"
+  },
+  "رزق": {
+   "ar": "العطاء الجاري",
+   "en": "provision, sustenance"
+  },
+  "بشر": {
+   "ar": "ظهور البشرة؛ والبشرى؛ والبشر الإنسان",
+   "en": "surface; glad tidings; human"
+  },
+  "يدي": {
+   "ar": "اليد؛ والعطاء والنعمة",
+   "en": "hand; favor"
+  },
+  "عزز": {
+   "ar": "القوة والغلبة ضد الذل",
+   "en": "might, honor"
+  },
+  "جزي": {
+   "ar": "المكافأة على العمل",
+   "en": "recompense"
+  },
+  "أمم": {
+   "ar": "القصد والجهة؛ والأمة الجماعة",
+   "en": "direction; nation"
+  },
+  "أبو": {
+   "ar": "الأبوة",
+   "en": "fatherhood"
+  },
+  "نهر": {
+   "ar": "السعة والجريان؛ النهر",
+   "en": "flowing water; river"
+  },
+  "نفق": {
+   "ar": "الخروج والنفاد؛ والإنفاق",
+   "en": "being spent; spending"
+  },
+  "أكل": {
+   "ar": "تناول الطعام",
+   "en": "eating"
+  },
+  "فعل": {
+   "ar": "إحداث الشيء",
+   "en": "doing"
+  },
+  "أجر": {
+   "ar": "العوض على العمل",
+   "en": "reward, wage"
+  },
+  "وجد": {
+   "ar": "الإصابة والحصول",
+   "en": "finding, attaining"
+  },
+  "عدو": {
+   "ar": "التجاوز؛ والعداوة",
+   "en": "transgression; enmity"
+  },
+  "رجع": {
+   "ar": "العود إلى ما كان",
+   "en": "returning"
+  },
+  "فضل": {
+   "ar": "الزيادة؛ والفضل والإحسان",
+   "en": "surplus; grace"
+  },
+  "أذن": {
+   "ar": "الاستماع؛ والإذن الإباحة",
+   "en": "listening; permission"
+  },
+  "صبر": {
+   "ar": "الحبس على المكروه",
+   "en": "patience, restraint"
+  },
+  "شدد": {
+   "ar": "القوة ضد اللين",
+   "en": "strength, intensity"
+  },
+  "دين": {
+   "ar": "الجزاء والطاعة؛ والدين",
+   "en": "recompense; religion"
+  },
+  "ولد": {
+   "ar": "النتاج",
+   "en": "offspring, begetting"
+  },
+  "حسب": {
+   "ar": "الظن والعد؛ والحسب الكفاية",
+   "en": "reckoning; sufficiency"
+  },
+  "صلو": {
+   "ar": "الدعاء؛ والصلاة",
+   "en": "supplication; prayer"
+  },
+  "صحب": {
+   "ar": "الملازمة والمعاشرة",
+   "en": "companionship"
+  },
+  "أخو": {
+   "ar": "المشاركة؛ الأخوة",
+   "en": "brotherhood"
+  },
+  "بغي": {
+   "ar": "مجاوزة الحد؛ والظلم",
+   "en": "excess; oppression"
+  },
+  "قرب": {
+   "ar": "الدنو ضد البعد؛ والقربان",
+   "en": "nearness; offering"
+  },
+  "حبب": {
+   "ar": "الود والميل",
+   "en": "love"
+  },
+  "سبح": {
+   "ar": "المرور السريع؛ والتسبيح تنزيه الله",
+   "en": "swift movement; glorification"
+  },
+  "ليل": {
+   "ar": "ظلمة الليل ضد النهار",
+   "en": "night"
+  },
+  "سجد": {
+   "ar": "الخضوع والتطامن",
+   "en": "prostration, submission"
+  },
+  "شطن": {
+   "ar": "البعد عن الخير",
+   "en": "remoteness from good (Satan)"
+  },
+  "قرأ": {
+   "ar": "الجمع والضم؛ والقراءة",
+   "en": "gathering; reciting"
+  },
+  "خلد": {
+   "ar": "البقاء الدائم",
+   "en": "eternity, abiding"
+  },
+  "توب": {
+   "ar": "الرجوع عن الذنب",
+   "en": "repentance, return"
+  },
+  "مول": {
+   "ar": "الولاية؛ المولى السيد والناصر",
+   "en": "guardianship; master, helper"
+  },
+  "أحد": {
+   "ar": "الوحدة ضد الكثرة",
+   "en": "oneness"
+  },
+  "نجو": {
+   "ar": "السر؛ والنجاة",
+   "en": "secret counsel; salvation"
+  },
+  "سوي": {
+   "ar": "الاستواء والاعتدال",
+   "en": "evenness, uprightness"
+  },
+  "كيف": {
+   "ar": "السؤال عن الحال",
+   "en": "how (of state)"
+  },
+  "حرم": {
+   "ar": "المنع؛ والحرمة",
+   "en": "prohibition; sanctity"
+  },
+  "زوج": {
+   "ar": "الاقتران",
+   "en": "pairing; spouse, pair"
+  },
+  "عقب": {
+   "ar": "آخر الشيء؛ العاقبة",
+   "en": "end, consequence"
+  },
+  "عرض": {
+   "ar": "الظهور والاتساع",
+   "en": "manifestation, width"
+  },
+  "وجه": {
+   "ar": "الجهة؛ والوجه",
+   "en": "direction, face"
+  },
+  "وحي": {
+   "ar": "الإشارة السريعة؛ والوحي",
+   "en": "swift signaling; revelation"
+  },
+  "صوب": {
+   "ar": "الإصابة والقصد؛ الصواب",
+   "en": "hitting the mark; rightness"
+  },
+  "بلغ": {
+   "ar": "الوصول إلى الغاية",
+   "en": "reaching, conveying"
+  },
+  "قلل": {
+   "ar": "التقليل ضد التكثير",
+   "en": "decrease, scantiness"
+  },
+  "ألم": {
+   "ar": "الوجع",
+   "en": "pain"
+  },
+  "كلم": {
+   "ar": "الكلام؛ والكلم الجرح",
+   "en": "speech; wound"
+  },
+  "شكر": {
+   "ar": "الاعتراف بالنعمة والثناء",
+   "en": "gratitude"
+  },
+  "ضرر": {
+   "ar": "الأذى",
+   "en": "harm"
+  },
+  "بأس": {
+   "ar": "الشدة في الحرب؛ والبأس العذاب",
+   "en": "might in war; punishment"
+  },
+  "ليس": {
+   "ar": "النفي",
+   "en": "'is not' (negative copula)"
+  },
+  "بيت": {
+   "ar": "المسكن",
+   "en": "house, dwelling"
+  },
+  "رجل": {
+   "ar": "المشي؛ والرجل الذكر",
+   "en": "walking; man"
+  },
+  "غني": {
+   "ar": "ضد الفقر",
+   "en": "richness (vs poverty)"
+  },
+  "فرق": {
+   "ar": "الفصل بين شيئين",
+   "en": "separation, distinction"
+  },
+  "رضو": {
+   "ar": "القبول والرضا",
+   "en": "contentment, approval"
+  },
+  "عرف": {
+   "ar": "العلم بالشيء؛ والمعروف",
+   "en": "knowing; kindness, custom"
+  },
+  "يمن": {
+   "ar": "اليمين ضد الشمال؛ واليُمن البركة",
+   "en": "right side; blessedness"
+  },
+  "متع": {
+   "ar": "التمتيع والانتفاع إلى حين",
+   "en": "enjoyment for a while"
+  },
+  "علو": {
+   "ar": "الارتفاع",
+   "en": "height, exaltedness"
+  },
+  "وكل": {
+   "ar": "التفويض والاعتماد",
+   "en": "entrusting, reliance"
+  },
+  "سكن": {
+   "ar": "الثبات؛ والسكن المسكن",
+   "en": "stillness; dwelling"
+  },
+  "ظنن": {
+   "ar": "الاعتقاد؛ والظن",
+   "en": "opinion, supposition"
+  },
+  "حمد": {
+   "ar": "الثناء بالجميل",
+   "en": "praise"
+  },
+  "وحد": {
+   "ar": "الانفراد",
+   "en": "oneness, solitude"
+  },
+  "كسب": {
+   "ar": "التحصيل بالعمل",
+   "en": "earning"
+  },
+  "وفي": {
+   "ar": "التمام؛ والوفاء",
+   "en": "completeness; faithfulness"
+  },
+  "بعث": {
+   "ar": "الإرسال؛ والبعث الإحياء",
+   "en": "sending; resurrection"
+  },
+  "هلك": {
+   "ar": "الفناء",
+   "en": "perishing, destruction"
+  },
+  "جرم": {
+   "ar": "القطع؛ والجرم الذنب",
+   "en": "cutting; crime"
+  },
+  "خسر": {
+   "ar": "النقص؛ الخسران",
+   "en": "loss"
+  },
+  "عين": {
+   "ar": "عضو الإبصار؛ وينبوع الماء",
+   "en": "eye; spring"
+  },
+  "جري": {
+   "ar": "الجريان",
+   "en": "flowing, running"
+  },
+  "حمل": {
+   "ar": "رفع الثقيل؛ والحمل الجنين",
+   "en": "carrying; pregnancy"
+  },
+  "موه": {
+   "ar": "الماء",
+   "en": "water"
+  },
+  "تلو": {
+   "ar": "الاتباع والقراءة",
+   "en": "following; reciting"
+  },
+  "قضي": {
+   "ar": "الحكم والفصل",
+   "en": "decreeing, judging"
+  },
+  "عود": {
+   "ar": "الرجوع",
+   "en": "returning"
+  },
+  "ذوق": {
+   "ar": "إدراك الطعم؛ والتجربة",
+   "en": "tasting; experiencing"
+  },
+  "زيد": {
+   "ar": "الزيادة",
+   "en": "increase"
+  },
+  "مسس": {
+   "ar": "المس",
+   "en": "touching"
+  },
+  "سحر": {
+   "ar": "صرف الشيء عن حقيقته",
+   "en": "magic, bewitchment"
+  },
+  "غيب": {
+   "ar": "ما غاب عن الحس",
+   "en": "unseen, hidden"
+  },
+  "فتن": {
+   "ar": "الاختبار؛ الفتنة",
+   "en": "trial; temptation, strife"
+  },
+  "زكو": {
+   "ar": "النماء والطهارة",
+   "en": "growth, purity; alms"
+  },
+  "نسو": {
+   "ar": "الترك؛ النسيان",
+   "en": "abandonment; forgetfulness"
+  },
+  "ظهر": {
+   "ar": "البروز؛ والظهر",
+   "en": "appearing; back, noon"
+  },
+  "ردد": {
+   "ar": "الإعادة",
+   "en": "repetition, return"
+  },
+  "فري": {
+   "ar": "القطع والاختلاق",
+   "en": "cutting; fabrication"
+  },
+  "عدد": {
+   "ar": "الإحصاء",
+   "en": "counting, number"
+  },
+  "ضرب": {
+   "ar": "الضرب؛ والسير",
+   "en": "striking; traveling"
+  },
+  "قري": {
+   "ar": "الجمع؛ والقرية",
+   "en": "gathering; town"
+  },
+  "روح": {
+   "ar": "النسيم والحياة",
+   "en": "breath, life; spirit"
+  },
+  "ذهب": {
+   "ar": "المضي؛ والذهب المعدن",
+   "en": "going; gold"
+  },
+  "أجل": {
+   "ar": "المدة المضروبة",
+   "en": "appointed term"
+  },
+  "دور": {
+   "ar": "الدوران",
+   "en": "rotation, circulation"
+  },
+  "نهي": {
+   "ar": "المنع",
+   "en": "prohibition"
+  },
+  "فسق": {
+   "ar": "الخروج عن الطاعة",
+   "en": "rebelliousness"
+  },
+  "ندي": {
+   "ar": "النداء؛ والمجلس",
+   "en": "calling; assembly"
+  },
+  "خبر": {
+   "ar": "العلم؛ والخبر",
+   "en": "knowledge; news"
+  },
+  "ضعف": {
+   "ar": "ضد القوة",
+   "en": "weakness"
+  },
+  "تحت": {
+   "ar": "أسفل الشيء",
+   "en": "beneath, below"
+  },
+  "حلل": {
+   "ar": "فك العقدة؛ والحلال",
+   "en": "untying; lawful"
+  },
+  "فسد": {
+   "ar": "ضد الصلاح",
+   "en": "corruption"
+  },
+  "طيب": {
+   "ar": "ضد الخبث",
+   "en": "goodness, pleasantness"
+  },
+  "نفع": {
+   "ar": "ضد الضر",
+   "en": "benefit"
+  },
+  "عقل": {
+   "ar": "الإمساك؛ والعقل",
+   "en": "restraint; intellect"
+  },
+  "سوع": {
+   "ar": "الوقت المعين؛ الساعة",
+   "en": "appointed time; hour"
+  },
+  "أثم": {
+   "ar": "البطء؛ والإثم الذنب",
+   "en": "slowness; sin"
+  },
+  "قدم": {
+   "ar": "التقدم؛ والقدم",
+   "en": "precedence; foot"
+  },
+  "طعم": {
+   "ar": "تذوق الطعام؛ والطعام",
+   "en": "tasting; food"
+  },
+  "خشي": {
+   "ar": "الخوف مع التعظيم",
+   "en": "reverent fear"
+  },
+  "كرم": {
+   "ar": "الشرف؛ والكرم",
+   "en": "nobility, generosity"
+  },
+  "عهد": {
+   "ar": "الوصية والميثاق",
+   "en": "covenant, pledge"
+  },
+  "عجل": {
+   "ar": "السرعة",
+   "en": "haste"
+  },
+  "زين": {
+   "ar": "التحسين",
+   "en": "adornment, beauty"
+  },
+  "صدر": {
+   "ar": "مقدمة الشيء؛ والصدر",
+   "en": "front; chest"
+  },
+  "صرط": {
+   "ar": "الطريق الواضح",
+   "en": "clear path"
+  },
+  "نسي": {
+   "ar": "الترك؛ النسيان",
+   "en": "abandonment; forgetfulness"
+  },
+  "صبح": {
+   "ar": "أول النهار",
+   "en": "morning"
+  },
+  "سرر": {
+   "ar": "الفرح؛ والسرير",
+   "en": "joy; couch"
+  },
+  "يسر": {
+   "ar": "ضد العسر",
+   "en": "ease"
+  },
+  "وذر": {
+   "ar": "الترك",
+   "en": "leaving"
+  },
+  "حفظ": {
+   "ar": "الصيانة؛ والحفظ",
+   "en": "guarding, memorization"
+  },
+  "دبر": {
+   "ar": "آخر الشيء؛ والتدبير",
+   "en": "end; planning"
+  },
+  "فوق": {
+   "ar": "العلو",
+   "en": "above"
+  },
+  "بدل": {
+   "ar": "التغيير والتعويض",
+   "en": "exchange, substitution"
+  },
+  "جوب": {
+   "ar": "النفوذ والقطع؛ ومنه الإجابة",
+   "en": "piercing through; answer"
+  },
+  "حشر": {
+   "ar": "الجمع والسوق",
+   "en": "gathering, mustering"
+  },
+  "فصل": {
+   "ar": "التمييز؛ والفصل",
+   "en": "separation; decisive judgment"
+  },
+  "مكر": {
+   "ar": "صرف الغير بحيلة",
+   "en": "scheming, plotting"
+  },
+  "ترك": {
+   "ar": "التخلية",
+   "en": "leaving, abandoning"
+  },
+  "حزن": {
+   "ar": "الغم",
+   "en": "grief, sorrow"
+  },
+  "بحر": {
+   "ar": "الماء الكثير",
+   "en": "sea"
+  },
+  "قوي": {
+   "ar": "ضد الضعف",
+   "en": "strength"
+  },
+  "سخر": {
+   "ar": "التذليل؛ والسخرية",
+   "en": "subjugation; mockery"
+  },
+  "صدد": {
+   "ar": "المنع والصرف",
+   "en": "hindering, turning away"
+  },
+  "لعن": {
+   "ar": "الطرد والإبعاد",
+   "en": "curse, expulsion"
+  },
+  "طوف": {
+   "ar": "الدوران حول الشيء",
+   "en": "circumambulation"
+  },
+  "كره": {
+   "ar": "ضد الحب",
+   "en": "hatred, aversion"
+  },
+  "جهد": {
+   "ar": "المشقة والطاقة",
+   "en": "effort, striving"
+  },
+  "جبل": {
+   "ar": "الارتفاع العظيم من الأرض",
+   "en": "mountain"
+  },
+  "فلح": {
+   "ar": "الشق؛ والفلاح الفوز",
+   "en": "splitting; success"
+  },
+  "شعر": {
+   "ar": "الإحساس الدقيق؛ ومنه الشعر",
+   "en": "fine perception; hair, poetry"
+  },
+  "ملأ": {
+   "ar": "الامتلاء",
+   "en": "fullness, filling"
+  },
+  "طغي": {
+   "ar": "مجاوزة الحد",
+   "en": "transgression, excess"
+  },
+  "شرب": {
+   "ar": "تناول الماء",
+   "en": "drinking"
+  },
+  "ذنب": {
+   "ar": "الجرم؛ والذنب",
+   "en": "sin; tail"
+  },
+  "سلط": {
+   "ar": "القهر؛ والسلطان",
+   "en": "dominance; authority"
+  },
+  "بلو": {
+   "ar": "الاختبار",
+   "en": "testing, trial"
+  },
+  "فتح": {
+   "ar": "إزالة الإغلاق؛ والنصر",
+   "en": "opening; victory"
+  },
+  "هوي": {
+   "ar": "السقوط؛ والهوى ميل النفس",
+   "en": "falling; caprice"
+  },
+  "مرأ": {
+   "ar": "الإنسان المرء",
+   "en": "the human person"
+  },
+  "ذرر": {
+   "ar": "الدقة؛ والذرية",
+   "en": "minuteness; offspring, atom"
+  },
+  "قرر": {
+   "ar": "الثبات والاستقرار",
+   "en": "stability, settling"
+  },
+  "سبق": {
+   "ar": "التقدم",
+   "en": "precedence, outstripping"
+  },
+  "نكر": {
+   "ar": "الجهل بالشيء؛ والمنكر",
+   "en": "unfamiliarity; wrong"
+  },
+  "ريب": {
+   "ar": "الشك",
+   "en": "doubt, suspicion"
+  },
+  "قطع": {
+   "ar": "الفصل",
+   "en": "cutting, severing"
+  },
+  "أوي": {
+   "ar": "اللجوء والانضمام",
+   "en": "seeking shelter, resorting"
+  },
+  "قرن": {
+   "ar": "الجمع؛ والقرن",
+   "en": "joining; generation, horn"
+  },
+  "حين": {
+   "ar": "الوقت",
+   "en": "time, moment"
+  },
+  "عفو": {
+   "ar": "المحو؛ والعفو",
+   "en": "effacement; pardon"
+  },
+  "غفل": {
+   "ar": "السهو",
+   "en": "heedlessness"
+  },
+  "مرر": {
+   "ar": "المضي؛ والمرور",
+   "en": "passing by"
+  },
+  "ورث": {
+   "ar": "انتقال المال؛ والميراث",
+   "en": "inheritance"
+  },
+  "كيد": {
+   "ar": "الحيلة",
+   "en": "plotting, stratagem"
+  },
+  "حدث": {
+   "ar": "الوقوع؛ والحديث",
+   "en": "occurring; narration"
+  },
+  "هزأ": {
+   "ar": "السخرية",
+   "en": "mockery, derision"
+  },
+  "وثق": {
+   "ar": "الإحكام؛ والثقة",
+   "en": "firmness; trust"
+  },
+  "بطل": {
+   "ar": "ضد الحق",
+   "en": "falsehood, vanity"
+  },
+  "جنح": {
+   "ar": "الميل",
+   "en": "inclining, leaning"
+  },
+  "خفي": {
+   "ar": "ضد الظهور",
+   "en": "hiddenness"
+  },
+  "عمي": {
+   "ar": "العمى ضد البصر",
+   "en": "blindness"
+  },
+  "ظلل": {
+   "ar": "الستر والتغطية؛ والظل",
+   "en": "shading, covering; shade"
+  },
+  "كفي": {
+   "ar": "الكفاية",
+   "en": "sufficiency"
+  },
+  "شمس": {
+   "ar": "الشمس",
+   "en": "sun"
+  },
+  "عرش": {
+   "ar": "السرير العظيم",
+   "en": "throne"
+  },
+  "جنب": {
+   "ar": "الجانب؛ والاجتناب",
+   "en": "side; avoidance"
+  },
+  "قسم": {
+   "ar": "التجزئة؛ والقسم اليمين",
+   "en": "dividing; oath"
+  },
+  "برر": {
+   "ar": "الصدق والطاعة",
+   "en": "righteousness, piety"
+  },
+  "وري": {
+   "ar": "الإخفاء؛ والإيراء الإيقاد",
+   "en": "concealment; kindling"
+  },
+  "وسع": {
+   "ar": "ضد الضيق",
+   "en": "spaciousness, capacity"
+  },
+  "ثلث": {
+   "ar": "العدد ثلاثة",
+   "en": "three; third"
+  },
+  "نصب": {
+   "ar": "الإقامة؛ والنصب التعب",
+   "en": "erecting; fatigue"
+  },
+  "برك": {
+   "ar": "الثبات؛ والبركة النماء",
+   "en": "steadfastness; blessing"
+  },
+  "مدد": {
+   "ar": "الزيادة والبسط",
+   "en": "extension, supply"
+  },
+  "طهر": {
+   "ar": "ضد النجاسة",
+   "en": "purity"
+  },
+  "بدو": {
+   "ar": "الظهور؛ والبادية",
+   "en": "appearing; desert"
+  },
+  "حيث": {
+   "ar": "المكان",
+   "en": "where (place)"
+  },
+  "شفع": {
+   "ar": "الضم إلى المثل؛ والشفاعة",
+   "en": "pairing; intercession"
+  },
+  "برأ": {
+   "ar": "الخلق؛ والبراءة",
+   "en": "creating; innocence"
+  },
+  "عصي": {
+   "ar": "الامتناع؛ والعصا",
+   "en": "resistance; staff"
+  },
+  "حجج": {
+   "ar": "البرهان؛ والحج",
+   "en": "proof; pilgrimage"
+  },
+  "خلص": {
+   "ar": "الصفاء؛ والخلاص",
+   "en": "purity; deliverance"
+  },
+  "قعد": {
+   "ar": "الجلوس ضد القيام",
+   "en": "sitting"
+  },
+  "وصي": {
+   "ar": "العهد؛ والوصية",
+   "en": "bequest, commandment"
+  },
+  "هجر": {
+   "ar": "الترك والاعتزال",
+   "en": "abandonment, emigration"
+  },
+  "غلب": {
+   "ar": "القهر",
+   "en": "overcoming, prevailing"
+  },
+  "لبث": {
+   "ar": "المكث",
+   "en": "staying, tarrying"
+  },
+  "سعي": {
+   "ar": "المشي السريع؛ والسعي",
+   "en": "swift walking; striving"
+  },
+  "صرف": {
+   "ar": "التحويل",
+   "en": "turning away, diverting"
+  },
+  "قصص": {
+   "ar": "التتبع؛ والقصص",
+   "en": "tracing; narration"
+  },
+  "أنث": {
+   "ar": "خلاف الذكر",
+   "en": "female (vs male)"
+  },
+  "عسي": {
+   "ar": "الرجاء",
+   "en": "hope, perhaps"
+  },
+  "شرر": {
+   "ar": "التفرق؛ والشر",
+   "en": "dispersion; evil"
+  },
+  "غشو": {
+   "ar": "التغطية",
+   "en": "covering, veil"
+  },
+  "ثني": {
+   "ar": "العطف والطي",
+   "en": "folding, doubling"
+  },
+  "رفع": {
+   "ar": "ضد الوضع",
+   "en": "raising, exaltation"
+  },
+  "صير": {
+   "ar": "التحول والصيرورة",
+   "en": "becoming, transformation"
+  },
+  "جند": {
+   "ar": "العسكر",
+   "en": "soldiers, hosts"
+  },
+  "طير": {
+   "ar": "الطيران؛ والطير",
+   "en": "flight; bird"
+  },
+  "فوز": {
+   "ar": "النجاة والظفر",
+   "en": "triumph, salvation"
+  },
+  "دري": {
+   "ar": "العلم",
+   "en": "knowing"
+  },
+  "أفك": {
+   "ar": "القلب؛ والإفك الكذب",
+   "en": "overturning; lie"
+  },
+  "يقن": {
+   "ar": "الثبات؛ واليقين",
+   "en": "certainty"
+  },
+  "خلو": {
+   "ar": "الفراغ",
+   "en": "emptiness, solitude"
+  },
+  "حوط": {
+   "ar": "الإحاطة",
+   "en": "encompassing"
+  },
+  "سبع": {
+   "ar": "العدد سبعة",
+   "en": "seven"
+  },
+  "عدل": {
+   "ar": "الاستواء؛ والعدل",
+   "en": "evenness; justice"
+  },
+  "شقق": {
+   "ar": "الصدع والانشقاق",
+   "en": "splitting, cleaving"
+  },
+  "أبد": {
+   "ar": "الدوام",
+   "en": "perpetuity"
+  },
+  "ودد": {
+   "ar": "الحب",
+   "en": "love, affection"
+  },
+  "ثوب": {
+   "ar": "الرجوع؛ والثوب اللباس",
+   "en": "return; garment"
+  },
+  "جدل": {
+   "ar": "شدة الخصومة",
+   "en": "disputation"
+  },
+  "رجو": {
+   "ar": "الأمل",
+   "en": "hope, expectation"
+  },
+  "ثقل": {
+   "ar": "ضد الخفة",
+   "en": "heaviness, weight"
+  },
+  "نشأ": {
+   "ar": "الابتداء والتربية",
+   "en": "origination, upbringing"
+  },
+  "شجر": {
+   "ar": "التشابك والتداخل؛ والشجر",
+   "en": "intertwining, branching; tree"
+  },
+  "منن": {
+   "ar": "الإنعام",
+   "en": "bestowal, favor"
+  },
+  "بوب": {
+   "ar": "المدخل؛ والباب",
+   "en": "entrance; door"
+  },
+  "عشر": {
+   "ar": "العدد عشرة؛ والمعاشرة",
+   "en": "ten; companionship"
+  },
+  "غرر": {
+   "ar": "الخطر والخداع",
+   "en": "risk, deception; vanity"
+  },
+  "سير": {
+   "ar": "المضي؛ والسيرة",
+   "en": "going; conduct"
+  },
+  "وزر": {
+   "ar": "الثقل؛ والوزر",
+   "en": "burden; sin"
+  },
+  "قمر": {
+   "ar": "القمر",
+   "en": "moon"
+  },
+  "مدن": {
+   "ar": "الاستقرار؛ والمدينة",
+   "en": "settlement; city"
+  },
+  "نبت": {
+   "ar": "الخروج من الأرض",
+   "en": "sprouting; plants"
+  },
+  "خزي": {
+   "ar": "الهوان والفضيحة",
+   "en": "disgrace, shame"
+  },
+  "هون": {
+   "ar": "ضد العز",
+   "en": "abasement, ignominy"
+  },
+  "جحم": {
+   "ar": "شدة التوقد",
+   "en": "blazing; Hellfire"
+  },
+  "مسك": {
+   "ar": "الإمساك؛ والمسك الطيب",
+   "en": "holding; musk"
+  },
+  "وضع": {
+   "ar": "الخفض والوضع",
+   "en": "lowering, placing"
+  },
+  "شري": {
+   "ar": "البيع والشراء",
+   "en": "selling and buying"
+  },
+  "حول": {
+   "ar": "التغير؛ والحول السنة",
+   "en": "change; year"
+  },
+  "سقي": {
+   "ar": "إعطاء الماء للشرب",
+   "en": "giving drink"
+  },
+  "وعظ": {
+   "ar": "التذكير بالخير",
+   "en": "admonition, exhortation"
+  },
+  "حضر": {
+   "ar": "ضد الغيبة",
+   "en": "presence (vs absence)"
+  },
+  "فلك": {
+   "ar": "الدوران؛ والفلك",
+   "en": "rotation; ship, orbit"
+  },
+  "بطن": {
+   "ar": "ضد الظهر",
+   "en": "belly, interior"
+  },
+  "حدد": {
+   "ar": "التعيين؛ والحد",
+   "en": "delimitation; limit"
+  },
+  "بسط": {
+   "ar": "ضد القبض",
+   "en": "spreading, expanse"
+  },
+  "قسط": {
+   "ar": "العدل؛ والنصيب",
+   "en": "justice; share"
+  },
+  "وهب": {
+   "ar": "العطاء بلا عوض",
+   "en": "free granting, gift"
+  },
+  "لسن": {
+   "ar": "اللسان",
+   "en": "tongue, language"
+  },
+  "صلي": {
+   "ar": "الدعاء؛ والاصطلاء",
+   "en": "supplication; burning"
+  },
+  "عجز": {
+   "ar": "ضد القدرة",
+   "en": "incapability, weakness"
+  },
+  "غضب": {
+   "ar": "ضد الرضا",
+   "en": "anger"
+  },
+  "مرض": {
+   "ar": "ضد الصحة",
+   "en": "sickness, disease"
+  },
+  "كود": {
+   "ar": "المقاربة",
+   "en": "nearing, almost"
+  },
+  "ثمر": {
+   "ar": "النتاج",
+   "en": "fruit, yield"
+  },
+  "فجر": {
+   "ar": "الانشقاق؛ والفجر",
+   "en": "splitting; dawn"
+  },
+  "ذلل": {
+   "ar": "التذليل والتسهيل",
+   "en": "making easy, subduing"
+  },
+  "جهل": {
+   "ar": "ضد العلم",
+   "en": "ignorance"
+  },
+  "عمر": {
+   "ar": "طول البقاء والعمران",
+   "en": "long life; flourishing"
+  },
+  "فحش": {
+   "ar": "مجاوزة الحد في القبح",
+   "en": "indecency, abomination"
+  },
+  "رقب": {
+   "ar": "الانتظار والحفظ",
+   "en": "watching, guarding"
+  },
+  "أذي": {
+   "ar": "الضرر اليسير",
+   "en": "slight harm, hurt"
+  },
+  "عجب": {
+   "ar": "الاستغراب",
+   "en": "wonder, amazement"
+  },
+  "وقع": {
+   "ar": "السقوط والحدوث",
+   "en": "falling; occurring"
+  },
+  "مشي": {
+   "ar": "السير",
+   "en": "walking"
+  },
+  "لبس": {
+   "ar": "التغطية؛ والاشتباه",
+   "en": "clothing; ambiguity"
+  },
+  "غرق": {
+   "ar": "الغوص في الماء",
+   "en": "drowning"
+  },
+  "يتم": {
+   "ar": "الانفراد؛ واليتم",
+   "en": "solitude; orphanhood"
+  },
+  "سرع": {
+   "ar": "ضد البطء",
+   "en": "speed, haste"
+  },
+  "نكح": {
+   "ar": "العقد؛ والنكاح",
+   "en": "marriage contract"
+  },
+  "طلق": {
+   "ar": "الإرسال؛ والطلاق",
+   "en": "releasing; divorce"
+  },
+  "سرف": {
+   "ar": "مجاوزة الحد",
+   "en": "excess, extravagance"
+  },
+  "وزن": {
+   "ar": "التقدير بالميزان",
+   "en": "weighing, measure"
+  },
+  "ربع": {
+   "ar": "العدد أربعة؛ والربع",
+   "en": "four; quarter"
+  },
+  "خطأ": {
+   "ar": "ضد الصواب",
+   "en": "mistake, error"
+  },
+  "مني": {
+   "ar": "التمني والتقدير",
+   "en": "wishing, ordaining"
+  },
+  "ألف": {
+   "ar": "الألفة؛ والألف عدد",
+   "en": "familiarity; thousand"
+  },
+  "تمم": {
+   "ar": "الإكمال",
+   "en": "completion, perfection"
+  },
+  "غوي": {
+   "ar": "الضلال",
+   "en": "straying, error"
+  },
+  "ترب": {
+   "ar": "التراب؛ والمقاربة",
+   "en": "dust; contemporaneity"
+  },
+  "فرح": {
+   "ar": "ضد الحزن",
+   "en": "joy, rejoicing"
+  },
+  "عرب": {
+   "ar": "البيان؛ والعرب",
+   "en": "clarity; Arabs"
+  },
+  "حذر": {
+   "ar": "التحرز",
+   "en": "caution, wariness"
+  },
+  "حجر": {
+   "ar": "المنع؛ والحجر الصخر",
+   "en": "prevention; stone"
+  },
+  "كتم": {
+   "ar": "الإخفاء",
+   "en": "concealment, hiding"
+  },
+  "شهر": {
+   "ar": "الإعلان؛ والشهر",
+   "en": "declaration; month"
+  },
+  "حلم": {
+   "ar": "الأناة؛ والحلم",
+   "en": "forbearance; dream"
+  },
+  "بقي": {
+   "ar": "الدوام؛ والبقية",
+   "en": "lasting; remnant"
+  },
+  "سنن": {
+   "ar": "الطريقة؛ والسنة",
+   "en": "way, established practice"
+  },
+  "فتي": {
+   "ar": "الشباب؛ والفتوى",
+   "en": "youth; legal opinion"
+  },
+  "أثر": {
+   "ar": "البقية والعلامة",
+   "en": "trace, remnant"
+  },
+  "حمم": {
+   "ar": "القرب الشديد؛ والحميم",
+   "en": "intense closeness; intimate, scalding"
+  },
+  "نشر": {
+   "ar": "البسط؛ والنشور",
+   "en": "spreading; resurrection"
+  },
+  "سنو": {
+   "ar": "اللمعان؛ والسنة",
+   "en": "radiance; year"
+  },
+  "درج": {
+   "ar": "الصعود درجة درجة",
+   "en": "ascending step by step; rank"
+  },
+  "ربو": {
+   "ar": "الزيادة",
+   "en": "increase, growth"
+  },
+  "نخل": {
+   "ar": "التصفية؛ والنخل",
+   "en": "sifting; palm trees"
+  },
+  "نزع": {
+   "ar": "القلع والجذب",
+   "en": "pulling out, stripping"
+  },
+  "نفخ": {
+   "ar": "دفع الهواء؛ والنفخ",
+   "en": "blowing; Blast"
+  },
+  "فقه": {
+   "ar": "الفهم الدقيق",
+   "en": "deep understanding"
+  },
+  "صنع": {
+   "ar": "الإجادة؛ والصنعة",
+   "en": "skilled making, craft"
+  },
+  "حزب": {
+   "ar": "الجماعة",
+   "en": "party, group"
+  },
+  "لعب": {
+   "ar": "ضد الجد",
+   "en": "play, amusement"
+  },
+  "فطر": {
+   "ar": "الشق والابتداء؛ والفطرة",
+   "en": "cleaving, origination; disposition"
+  },
+  "كشف": {
+   "ar": "إزالة الغطاء",
+   "en": "uncovering, disclosure"
+  },
+  "ثمن": {
+   "ar": "العوض",
+   "en": "price, value"
+  },
+  "غرب": {
+   "ar": "البعد؛ والغرب",
+   "en": "distance; west"
+  },
+  "بلد": {
+   "ar": "الإقامة؛ والبلد",
+   "en": "settlement; town, land"
+  },
+  "مري": {
+   "ar": "الجدال",
+   "en": "disputation"
+  },
+  "رشد": {
+   "ar": "ضد الغي",
+   "en": "right guidance, maturity"
+  },
+  "صور": {
+   "ar": "التشكيل؛ والصورة",
+   "en": "forming; image"
+  },
+  "سعر": {
+   "ar": "الاشتعال؛ والسعر",
+   "en": "blazing; price"
+  },
+  "فكه": {
+   "ar": "التلذذ؛ والفاكهة",
+   "en": "delight; fruit"
+  },
+  "فرض": {
+   "ar": "التقدير والإيجاب",
+   "en": "ordaining, obligation"
+  },
+  "ملل": {
+   "ar": "الدأب؛ والملة",
+   "en": "perseverance; creed"
+  },
+  "دبب": {
+   "ar": "الدبيب؛ والدابة",
+   "en": "crawling; creature"
+  },
+  "رأس": {
+   "ar": "المقدمة؛ والرأس",
+   "en": "head, chief part"
+  },
+  "خصم": {
+   "ar": "المنازعة؛ والخصم",
+   "en": "dispute; adversary"
+  },
+  "فكر": {
+   "ar": "إعمال العقل",
+   "en": "thinking, reflection"
+  },
+  "ثبت": {
+   "ar": "ضد الزوال",
+   "en": "firmness, stability"
+  },
+  "لدن": {
+   "ar": "عند",
+   "en": "at, with"
+  },
+  "طلع": {
+   "ar": "الظهور والبزوغ",
+   "en": "rising, appearing"
+  },
+  "حصن": {
+   "ar": "المنع؛ والحصن",
+   "en": "prevention; fortress, chastity"
+  },
+  "نفر": {
+   "ar": "النفور والانطلاق",
+   "en": "aversion; setting forth"
+  },
+  "مكن": {
+   "ar": "التمكين؛ والمكان",
+   "en": "establishing; place"
+  },
+  "نوب": {
+   "ar": "النزول؛ والنوبة",
+   "en": "befalling; turn"
+  },
+  "سور": {
+   "ar": "الإحاطة؛ والسورة",
+   "en": "encompassing; chapter"
+  },
+  "خشع": {
+   "ar": "التذلل والخضوع",
+   "en": "humility, submissiveness"
+  },
+  "بوأ": {
+   "ar": "الإنزال والتمكين",
+   "en": "settling, lodging"
+  },
+  "عوذ": {
+   "ar": "الالتجاء والاعتصام",
+   "en": "seeking refuge"
+  },
+  "خفف": {
+   "ar": "ضد الثقل",
+   "en": "lightness, alleviation"
+  },
+  "منع": {
+   "ar": "الحيلولة",
+   "en": "prevention, withholding"
+  },
+  "شرق": {
+   "ar": "الطلوع؛ والمشرق",
+   "en": "rising; east"
+  },
+  "ربص": {
+   "ar": "الانتظار والترقب",
+   "en": "waiting in expectation"
+  },
+  "نقم": {
+   "ar": "الإنكار بالعقوبة",
+   "en": "retribution"
+  },
+  "أوب": {
+   "ar": "الرجوع",
+   "en": "returning"
+  },
+  "زعم": {
+   "ar": "القول بلا علم",
+   "en": "baseless claim"
+  },
+  "سوق": {
+   "ar": "الحث؛ والسوق",
+   "en": "driving; market"
+  },
+  "جهر": {
+   "ar": "الإعلان ضد الإسرار",
+   "en": "openness, loudness"
+  },
+  "علن": {
+   "ar": "الظهور",
+   "en": "manifestness, publicity"
+  },
+  "لبب": {
+   "ar": "الخالص؛ واللب",
+   "en": "essence; intellect"
+  },
+  "خون": {
+   "ar": "الغدر",
+   "en": "treachery, betrayal"
+  },
+  "مهد": {
+   "ar": "التهيئة؛ والمهد",
+   "en": "preparation; cradle"
+  },
+  "حبط": {
+   "ar": "البطلان",
+   "en": "nullification"
+  },
+  "خبث": {
+   "ar": "ضد الطيب",
+   "en": "foulness, impurity"
+  },
+  "غدو": {
+   "ar": "أول النهار",
+   "en": "morning; going early"
+  },
+  "غلل": {
+   "ar": "التقييد؛ والغل",
+   "en": "shackling; rancor"
+  },
+  "عتد": {
+   "ar": "الإعداد والحضور",
+   "en": "preparation; readiness"
+  },
+  "سطر": {
+   "ar": "الكتابة؛ والسطر",
+   "en": "writing; line"
+  },
+  "لهو": {
+   "ar": "الشغل الملهي",
+   "en": "distraction; amusement"
+  },
+  "فأد": {
+   "ar": "التوقد؛ والفؤاد",
+   "en": "burning; heart"
+  },
+  "كيل": {
+   "ar": "التقدير بالكيل",
+   "en": "measuring"
+  },
+  "صمم": {
+   "ar": "السد؛ والصمم",
+   "en": "blocking; deafness"
+  },
+  "سوم": {
+   "ar": "العرض؛ والمساومة",
+   "en": "offering; bargaining"
+  },
+  "صفو": {
+   "ar": "ضد الكدر",
+   "en": "clarity, purity"
+  },
+  "حرر": {
+   "ar": "الإطلاق؛ والحر",
+   "en": "freeing; heat, freeness"
+  },
+  "كفف": {
+   "ar": "المنع والكف",
+   "en": "restraint"
+  },
+  "ركب": {
+   "ar": "العلو؛ والركوب",
+   "en": "mounting; riding"
+  },
+  "بيع": {
+   "ar": "المبادلة؛ والبيع",
+   "en": "exchange; sale, pledge"
+  },
+  "مسح": {
+   "ar": "الإمرار؛ والمسح",
+   "en": "passing; wiping"
+  },
+  "حرج": {
+   "ar": "الضيق؛ والحرج",
+   "en": "straitness; difficulty"
+  },
+  "مطر": {
+   "ar": "النزول؛ والمطر",
+   "en": "descending; rain"
+  },
+  "شكك": {
+   "ar": "التردد؛ والشك",
+   "en": "hesitation; doubt"
+  },
+  "بدأ": {
+   "ar": "الابتداء",
+   "en": "beginning, originating"
+  },
+  "حرث": {
+   "ar": "الشق للزرع؛ والحرث",
+   "en": "plowing; crop"
+  },
+  "صوم": {
+   "ar": "الإمساك",
+   "en": "abstention, fasting"
+  },
+  "فقر": {
+   "ar": "الحاجة؛ والفقر",
+   "en": "need; poverty"
+  },
+  "ولج": {
+   "ar": "الدخول",
+   "en": "entering"
+  },
+  "رجم": {
+   "ar": "الرمي بالحجارة؛ والرجم",
+   "en": "stoning; conjecture"
+  },
+  "عشو": {
+   "ar": "ضعف البصر ليلا؛ والعشاء",
+   "en": "night-blindness; evening"
+  },
+  "ثوي": {
+   "ar": "الإقامة",
+   "en": "residing, abiding"
+  },
+  "لوم": {
+   "ar": "العذل",
+   "en": "reproach; blame"
+  },
+  "وصف": {
+   "ar": "الذكر بالحل؛ والوصف",
+   "en": "mentioning traits; description"
+  },
+  "زرع": {
+   "ar": "البذر؛ والزرع",
+   "en": "sowing; crop"
+  },
+  "رسو": {
+   "ar": "الثبات؛ والرسو",
+   "en": "firmness; anchoring"
+  },
+  "عطو": {
+   "ar": "التناول؛ والعطاء",
+   "en": "taking; giving"
+  },
+  "صفف": {
+   "ar": "الترتيب؛ والصف",
+   "en": "arranging; rank, row"
+  },
+  "أبي": {
+   "ar": "الامتناع",
+   "en": "refusal"
+  },
+  "ركع": {
+   "ar": "الانحناء",
+   "en": "bowing"
+  },
+  "فدي": {
+   "ar": "البذل للخلاص",
+   "en": "sacrifice for release; ransom"
+  },
+  "قنت": {
+   "ar": "الطاعة؛ والقنوت",
+   "en": "obedience, devotion"
+  },
+  "رأف": {
+   "ar": "الرحمة",
+   "en": "mercy, compassion"
+  },
+  "وقت": {
+   "ar": "التحديد؛ والوقت",
+   "en": "fixing; time"
+  },
+  "قرض": {
+   "ar": "القطع؛ والقرض",
+   "en": "cutting; loan"
+  },
+  "خلل": {
+   "ar": "الفرجة؛ والخلة",
+   "en": "gap; close friendship"
+  },
+  "طمأن": {
+   "ar": "السكون؛ والطمأنينة",
+   "en": "stillness; tranquility"
+  },
+  "صغر": {
+   "ar": "ضد الكبر",
+   "en": "smallness"
+  },
+  "شهو": {
+   "ar": "ميل النفس",
+   "en": "inclination; desire"
+  },
+  "غلم": {
+   "ar": "الشباب؛ والغلام",
+   "en": "youth; boy"
+  },
+  "حور": {
+   "ar": "شدة البياض",
+   "en": "intense whiteness"
+  },
+  "عصم": {
+   "ar": "المنع والحفظ",
+   "en": "prevention, protection"
+  },
+  "فوه": {
+   "ar": "الفم",
+   "en": "mouth"
+  },
+  "غلظ": {
+   "ar": "ضد الرقة",
+   "en": "thickness, harshness"
+  },
+  "جور": {
+   "ar": "الميل؛ والجوار",
+   "en": "deviation; neighborhood"
+  },
+  "جلد": {
+   "ar": "الضرب؛ والجلد",
+   "en": "lashing; skin, endurance"
+  },
+  "حلف": {
+   "ar": "القسم",
+   "en": "oath, swearing"
+  },
+  "يأس": {
+   "ar": "انقطاع الرجاء",
+   "en": "despair, loss of hope"
+  },
+  "بغت": {
+   "ar": "المفاجأة",
+   "en": "surprise; suddenness"
+  },
+  "خزن": {
+   "ar": "الحفظ والادخار",
+   "en": "storing; treasuries"
+  },
+  "نجم": {
+   "ar": "الظهور؛ والنجم",
+   "en": "appearing; star"
+  },
+  "ضيق": {
+   "ar": "ضد السعة",
+   "en": "narrowness, distress"
+  },
+  "نصح": {
+   "ar": "الإخلاص في المشورة",
+   "en": "sincere counsel"
+  },
+  "صيح": {
+   "ar": "الصوت الشديد؛ والصيحة",
+   "en": "loud cry; the Shout"
+  },
+  "عون": {
+   "ar": "المساعدة",
+   "en": "help, aid"
+  },
+  "شبه": {
+   "ar": "المماثلة والالتباس",
+   "en": "likeness, ambiguity"
+  },
+  "وصل": {
+   "ar": "الضم والبلوغ",
+   "en": "joining; arriving"
+  },
+  "رهب": {
+   "ar": "الخوف؛ والرهبة",
+   "en": "fear; awe"
+  },
+  "عصو": {
+   "ar": "العصا",
+   "en": "staff"
+  },
+  "بكر": {
+   "ar": "الأولية؛ والبكرة",
+   "en": "firstness; morning"
+  },
+  "نبذ": {
+   "ar": "الطرح والرمي",
+   "en": "casting away, rejection"
+  },
+  "نيل": {
+   "ar": "الإدراك والبلوغ",
+   "en": "attaining"
+  },
+  "حنف": {
+   "ar": "الميل عن الضلال",
+   "en": "inclining away from error"
+  },
+  "حسر": {
+   "ar": "الكشف؛ والحسرة",
+   "en": "uncovering; regret"
+  },
+  "لحم": {
+   "ar": "اللحم",
+   "en": "flesh, meat"
+  },
+  "سفر": {
+   "ar": "الانتقال؛ والسفر",
+   "en": "journeying; travel"
+  },
+  "عسر": {
+   "ar": "ضد اليسر",
+   "en": "hardship, difficulty"
+  },
+  "بيض": {
+   "ar": "ضد السواد",
+   "en": "whiteness"
+  },
+  "خطب": {
+   "ar": "الكلام؛ والخطب",
+   "en": "speech; grave matter"
+  },
+  "كنن": {
+   "ar": "الستر؛ والكن",
+   "en": "covering; shelter"
+  },
+  "طين": {
+   "ar": "الطين",
+   "en": "clay, mud"
+  },
+  "جبي": {
+   "ar": "الجمع والاختيار",
+   "en": "gathering, choosing"
+  },
+  "بخل": {
+   "ar": "ضد الكرم",
+   "en": "stinginess, miserliness"
+  },
+  "درك": {
+   "ar": "اللحاق؛ والدرك",
+   "en": "catching up; depth"
+  },
+  "ودي": {
+   "ar": "الدية والفداء؛ والوادي",
+   "en": "blood-money, ransom; valley"
+  },
+  "خوض": {
+   "ar": "الدخول في الماء أو الكلام",
+   "en": "wading (into water or speech)"
+  },
+  "جحد": {
+   "ar": "الإنكار مع العلم",
+   "en": "denial despite knowledge"
+  },
+  "شيع": {
+   "ar": "الانتشار؛ والشيعة",
+   "en": "spreading; faction"
+  },
+  "شمل": {
+   "ar": "الجمع والاحتواء",
+   "en": "encompassing, inclusion"
+  },
+  "خرر": {
+   "ar": "السقوط",
+   "en": "falling down"
+  },
+  "عذر": {
+   "ar": "الحجة؛ والمعذرة",
+   "en": "excuse, plea"
+  },
+  "شقو": {
+   "ar": "التعاسة",
+   "en": "misery"
+  },
+  "سجن": {
+   "ar": "الحبس",
+   "en": "imprisonment"
+  },
+  "سلك": {
+   "ar": "الدخول والسير",
+   "en": "entering, traversing"
+  },
+  "نطف": {
+   "ar": "القطرة؛ والنطفة",
+   "en": "drop; semen-drop"
+  },
+  "نطق": {
+   "ar": "الكلام",
+   "en": "speech, utterance"
+  },
+  "سفه": {
+   "ar": "ضد الحكمة",
+   "en": "folly, foolishness"
+  },
+  "وقد": {
+   "ar": "الاشتعال؛ والوقود",
+   "en": "kindling; fuel"
+  },
+  "صعق": {
+   "ar": "الصدمة؛ والصاعقة",
+   "en": "shock; thunderbolt"
+  },
+  "غمم": {
+   "ar": "التغطية؛ والغم",
+   "en": "covering; grief, clouds"
+  },
+  "طور": {
+   "ar": "الحد؛ والطور",
+   "en": "limit; mount, stage"
+  },
+  "أيد": {
+   "ar": "التقوية",
+   "en": "strengthening, support"
+  },
+  "سحب": {
+   "ar": "الجر؛ والسحاب",
+   "en": "dragging; clouds"
+  },
+  "سبب": {
+   "ar": "الحبل؛ والسبب",
+   "en": "rope; cause, means"
+  },
+  "لغو": {
+   "ar": "الكلام الذي لا فائدة فيه",
+   "en": "vain, idle speech"
+  },
+  "رضع": {
+   "ar": "الرضاعة",
+   "en": "nursing, breastfeeding"
+  },
+  "فأي": {
+   "ar": "الجماعة؛ والفئة",
+   "en": "group, band"
+  },
+  "عنب": {
+   "ar": "العنب",
+   "en": "grapes"
+  },
+  "يمم": {
+   "ar": "القصد؛ والتيمم",
+   "en": "intending; dry ablution"
+  },
+  "حرب": {
+   "ar": "الحرب؛ والمحراب",
+   "en": "war; prayer niche"
+  },
+  "غيظ": {
+   "ar": "شدة الغضب",
+   "en": "rage"
+  },
+  "طرف": {
+   "ar": "الحد؛ والطرف",
+   "en": "edge, extremity"
+  },
+  "زبر": {
+   "ar": "الكتابة؛ والزبور",
+   "en": "inscribing; scripture"
+  },
+  "قصر": {
+   "ar": "التقصير؛ والقصر",
+   "en": "shortening; palace"
+  },
+  "طبع": {
+   "ar": "الختم؛ والطبع",
+   "en": "sealing; nature"
+  },
+  "طرق": {
+   "ar": "الطريق؛ والطريقة",
+   "en": "path; way, method"
+  },
+  "جمل": {
+   "ar": "الجمال؛ والجمل",
+   "en": "beauty; camel"
+  },
+  "ورد": {
+   "ar": "الإتيان على الماء؛ والورد",
+   "en": "coming to water; portion"
+  },
+  "وكأ": {
+   "ar": "الاتكاء",
+   "en": "reclining, leaning"
+  },
+  "حصي": {
+   "ar": "الإحصاء والإحاطة",
+   "en": "counting, encompassing"
+  },
+  "فرر": {
+   "ar": "الهرب",
+   "en": "fleeing"
+  },
+  "دمو": {
+   "ar": "الدم",
+   "en": "blood"
+  },
+  "قدس": {
+   "ar": "الطهارة؛ والقدس",
+   "en": "purity; holiness"
+  },
+  "رجز": {
+   "ar": "العذاب",
+   "en": "punishment, impurity"
+  },
+  "رعي": {
+   "ar": "الرعاية والانتباه",
+   "en": "care, heed"
+  },
+  "ضيع": {
+   "ar": "الفقد؛ والضياع",
+   "en": "loss; ruin"
+  },
+  "نقص": {
+   "ar": "ضد الزيادة",
+   "en": "decrease, deficiency"
+  },
+  "سود": {
+   "ar": "السواد؛ والسيادة",
+   "en": "blackness; mastery"
+  },
+  "زيل": {
+   "ar": "الزوال",
+   "en": "ceasing"
+  },
+  "عزل": {
+   "ar": "الاعتزال والانفراد",
+   "en": "withdrawal, isolation"
+  },
+  "مأي": {
+   "ar": "العدد مائة",
+   "en": "hundred"
+  },
+  "ملو": {
+   "ar": "الإملاء والإمهال",
+   "en": "dictating; granting respite"
+  },
+  "سفل": {
+   "ar": "ضد العلو",
+   "en": "lowness"
+  },
+  "حيق": {
+   "ar": "الإحاطة والنزول",
+   "en": "encompassing, befalling"
+  },
+  "عتو": {
+   "ar": "الاستكبار",
+   "en": "defiant rebellion"
+  },
+  "شفق": {
+   "ar": "الخوف والشفقة",
+   "en": "fear, compassion"
+  },
+  "نقض": {
+   "ar": "نقض العهد",
+   "en": "breaking (covenants)"
+  },
+  "لون": {
+   "ar": "اللون",
+   "en": "color"
+  },
+  "عكف": {
+   "ar": "اللزوم والاعتكاف",
+   "en": "devotion, seclusion"
+  },
+  "بثث": {
+   "ar": "النشر والتفريق",
+   "en": "spreading, scattering"
+  },
+  "فيض": {
+   "ar": "السيلان والتدفق",
+   "en": "flowing, pouring forth"
+  },
+  "عزم": {
+   "ar": "عقد النية",
+   "en": "resolve, determination"
+  },
+  "قبض": {
+   "ar": "الأخذ والقبض",
+   "en": "grasping, withholding"
+  },
+  "عوم": {
+   "ar": "العوم والسباحة",
+   "en": "swimming, floating"
+  },
+  "عبر": {
+   "ar": "الاعتبار؛ والعبرة",
+   "en": "taking lesson"
+  },
+  "فضض": {
+   "ar": "الفضة",
+   "en": "silver"
+  },
+  "خيل": {
+   "ar": "الخيل",
+   "en": "horses"
+  },
+  "دوم": {
+   "ar": "الدوام",
+   "en": "lasting, permanence"
+  },
+  "عوج": {
+   "ar": "ضد الاستقامة",
+   "en": "crookedness"
+  },
+  "همم": {
+   "ar": "القصد",
+   "en": "intending, plotting"
+  },
+  "وهن": {
+   "ar": "الضعف",
+   "en": "weakness"
+  },
+  "طول": {
+   "ar": "الامتداد؛ والطول",
+   "en": "length; bounty"
+  },
+  "غنم": {
+   "ar": "الغنيمة؛ والغنم",
+   "en": "spoils; sheep"
+  },
+  "وقر": {
+   "ar": "الثقل؛ والوقر",
+   "en": "heaviness; deafness"
+  },
+  "حلي": {
+   "ar": "الزينة؛ والحلي",
+   "en": "adornment; jewelry"
+  },
+  "دفع": {
+   "ar": "الدفع",
+   "en": "repelling, payment"
+  },
+  "كفل": {
+   "ar": "الكفالة",
+   "en": "suretyship, guarantee"
+  },
+  "جبر": {
+   "ar": "القهر؛ والجبار",
+   "en": "compulsion; tyrant, mighty"
+  },
+  "طمع": {
+   "ar": "الرجاء؛ والطمع",
+   "en": "hope; greed"
+  },
+  "رجس": {
+   "ar": "الخبث؛ والرجس",
+   "en": "filth; abomination"
+  },
+  "قهر": {
+   "ar": "الغلبة؛ والقاهر",
+   "en": "overpowering; Subduer"
+  },
+  "دمر": {
+   "ar": "الإهلاك",
+   "en": "destruction, ruin"
+  },
+  "بطش": {
+   "ar": "الأخذ بقوة",
+   "en": "seizing with might"
+  },
+  "أصل": {
+   "ar": "العشي؛ والآصال",
+   "en": "evening time"
+  },
+  "ضحك": {
+   "ar": "الضحك",
+   "en": "laughter"
+  },
+  "رهق": {
+   "ar": "الغشيان والمشقة",
+   "en": "overwhelming; hardship"
+  },
+  "زلف": {
+   "ar": "القرب؛ والزلفى",
+   "en": "nearness"
+  },
+  "جدد": {
+   "ar": "الاستئناف؛ والجديد",
+   "en": "renewal; new"
+  },
+  "تجر": {
+   "ar": "التعامل؛ والتجارة",
+   "en": "dealing; trade"
+  },
+  "ذبح": {
+   "ar": "الذبح",
+   "en": "slaughter, sacrifice"
+  },
+  "سبت": {
+   "ar": "السبت",
+   "en": "Sabbath, Saturday"
+  },
+  "بقر": {
+   "ar": "البقر",
+   "en": "cattle, cow"
+  },
+  "برز": {
+   "ar": "الظهور",
+   "en": "emerging, appearing"
+  },
+  "نوم": {
+   "ar": "النوم",
+   "en": "sleep"
+  },
+  "حرق": {
+   "ar": "الإحراق",
+   "en": "burning"
+  },
+  "زيغ": {
+   "ar": "الميل عن الحق",
+   "en": "deviation from truth"
+  },
+  "صعد": {
+   "ar": "الصعود",
+   "en": "ascending"
+  },
+  "رمي": {
+   "ar": "الرمي",
+   "en": "throwing, casting"
+  },
+  "سرق": {
+   "ar": "الأخذ خفية",
+   "en": "stealing"
+  },
+  "عنق": {
+   "ar": "الرقبة",
+   "en": "neck"
+  },
+  "كنز": {
+   "ar": "الجمع والادخار",
+   "en": "hoarding, treasure"
+  },
+  "عرج": {
+   "ar": "الصعود؛ والعرج",
+   "en": "ascending; lameness"
+  },
+  "زني": {
+   "ar": "الفاحشة",
+   "en": "adultery, fornication"
+  },
+  "قذف": {
+   "ar": "الرمي",
+   "en": "throwing, casting (accusation)"
+  },
+  "صحف": {
+   "ar": "الكتب؛ والصحف",
+   "en": "books; scriptures, pages"
+  },
+  "فرج": {
+   "ar": "الانفراج؛ والفرج",
+   "en": "relief; chastity, private part"
+  },
+  "ختم": {
+   "ar": "الطبع والإغلاق",
+   "en": "sealing, closure"
+  },
+  "هبط": {
+   "ar": "النزول",
+   "en": "descending"
+  },
+  "صفح": {
+   "ar": "التجاوز؛ والصفح",
+   "en": "overlooking; pardon"
+  },
+  "برهن": {
+   "ar": "الحجة؛ والبرهان",
+   "en": "proof, evidence"
+  },
+  "كلف": {
+   "ar": "التحميل فوق الطاقة",
+   "en": "burdening beyond capacity"
+  },
+  "بهت": {
+   "ar": "الدهشة؛ والبهتان",
+   "en": "bewilderment; slander"
+  },
+  "وبل": {
+   "ar": "المطر الشديد",
+   "en": "heavy rain"
+  },
+  "سلف": {
+   "ar": "المضي؛ والسلف",
+   "en": "passing; predecessors"
+  },
+  "عقر": {
+   "ar": "القطع؛ والعقر",
+   "en": "hamstringing; barrenness"
+  },
+  "أني": {
+   "ar": "الساعات؛ والآناء",
+   "en": "hours, portions (of night)"
+  },
+  "خمس": {
+   "ar": "العدد خمسة؛ والخمس",
+   "en": "five; fifth"
+  },
+  "خول": {
+   "ar": "الإعطاء؛ والخالة",
+   "en": "granting; maternal aunt"
+  },
+  "صلب": {
+   "ar": "الشدة؛ والصلب",
+   "en": "firmness; loins, crucifixion"
+  },
+  "فرط": {
+   "ar": "التقصير؛ والإفراط",
+   "en": "negligence; excess"
+  },
+  "ضرع": {
+   "ar": "التذلل والدعاء",
+   "en": "humble supplication"
+  },
+  "سقط": {
+   "ar": "السقوط",
+   "en": "falling"
+  },
+  "خضر": {
+   "ar": "الخضرة",
+   "en": "greenness"
+  },
+  "لطف": {
+   "ar": "الرفق؛ واللطف",
+   "en": "gentleness; subtle kindness"
+  },
+  "عيش": {
+   "ar": "الحياة؛ والمعيشة",
+   "en": "life; livelihood"
+  },
+  "دلل": {
+   "ar": "الإرشاد؛ والدلالة",
+   "en": "guiding; proof, evidence"
+  },
+  "حجب": {
+   "ar": "الستر؛ والحجاب",
+   "en": "veiling; barrier, veil"
+  },
+  "ستت": {
+   "ar": "العدد ستة",
+   "en": "six"
+  },
+  "رجف": {
+   "ar": "الاضطراب؛ والرجفة",
+   "en": "trembling; quake"
+  },
+  "غبر": {
+   "ar": "البقاء؛ والغابر",
+   "en": "remaining; those who stayed behind"
+  },
+  "قبر": {
+   "ar": "القبر",
+   "en": "grave"
+  },
+  "سري": {
+   "ar": "السير ليلا",
+   "en": "night journey"
+  },
+  "ترف": {
+   "ar": "التنعم",
+   "en": "luxurious ease"
+  },
+  "خسف": {
+   "ar": "الغوص؛ والخسف",
+   "en": "sinking; eclipse, caving in"
+  },
+  "صوت": {
+   "ar": "الصوت",
+   "en": "voice, sound"
+  },
+  "عمه": {
+   "ar": "التحير",
+   "en": "bewilderment, wandering blindly"
+  },
+  "برق": {
+   "ar": "اللمعان؛ والبرق",
+   "en": "flashing; lightning"
+  },
+  "خطف": {
+   "ar": "الأخذ بسرعة",
+   "en": "snatching swiftly"
+  },
+  "قسو": {
+   "ar": "الغلظة؛ والقسوة",
+   "en": "harshness, hardness (of heart)"
+  },
+  "نسك": {
+   "ar": "العبادة؛ والمناسك",
+   "en": "worship; rites"
+  },
+  "رغب": {
+   "ar": "الميل والطلب",
+   "en": "inclining, desiring"
+  },
+  "خمر": {
+   "ar": "التغطية؛ والخمر",
+   "en": "covering; wine"
+  },
+  "فيأ": {
+   "ar": "الرجوع؛ والفيء",
+   "en": "return; shade, spoils"
+  },
+  "بعل": {
+   "ar": "الزوج",
+   "en": "husband"
+  },
+  "سرح": {
+   "ar": "الإرسال؛ والتسريح",
+   "en": "sending; release (divorce)"
+  },
+  "عقد": {
+   "ar": "الربط؛ والعقدة",
+   "en": "tying; knot, tie"
+  },
+  "نصف": {
+   "ar": "التنصيف",
+   "en": "halving; half"
+  },
+  "غرف": {
+   "ar": "الأخذ؛ والغرفة",
+   "en": "scooping; chamber"
+  },
+  "بخس": {
+   "ar": "النقص والظلم",
+   "en": "shortchanging, wronging"
+  },
+  "حبل": {
+   "ar": "الربط؛ والحبل",
+   "en": "binding; rope, covenant"
+  },
+  "حظظ": {
+   "ar": "النصيب",
+   "en": "share, fortune"
+  },
+  "سكر": {
+   "ar": "الغيبوبة؛ والسكر",
+   "en": "stupor; intoxication"
+  },
+  "برج": {
+   "ar": "الظهور؛ والبرج",
+   "en": "prominence; tower, constellation"
+  },
+  "عمد": {
+   "ar": "القصد",
+   "en": "deliberateness"
+  },
+  "علق": {
+   "ar": "التعلق",
+   "en": "suspension; clinging clot"
+  },
+  "أسو": {
+   "ar": "الحزن",
+   "en": "grief"
+  },
+  "ندم": {
+   "ar": "الندم",
+   "en": "regret"
+  },
+  "زيت": {
+   "ar": "الزيتون",
+   "en": "olives"
+  },
+  "نوق": {
+   "ar": "الناقة",
+   "en": "she-camel"
+  },
+  "ضحو": {
+   "ar": "الضحى",
+   "en": "forenoon"
+  },
+  "نكث": {
+   "ar": "نقض العهد",
+   "en": "breaking (pledges)"
+  },
+  "دكك": {
+   "ar": "الدك والتسوية",
+   "en": "crushing, leveling"
+  },
+  "بكي": {
+   "ar": "البكاء",
+   "en": "weeping"
+  },
+  "عصف": {
+   "ar": "شدة الريح",
+   "en": "violent wind"
+  },
+  "موج": {
+   "ar": "الموج",
+   "en": "waves"
+  },
+  "بضع": {
+   "ar": "البضاعة؛ والبضع",
+   "en": "goods; a few"
+  },
+  "وعي": {
+   "ar": "الوعاء؛ والوعي",
+   "en": "vessel; awareness"
+  },
+  "مكث": {
+   "ar": "البقاء",
+   "en": "remaining, staying"
+  },
+  "تسع": {
+   "ar": "العدد تسعة",
+   "en": "nine"
+  },
+  "ضوأ": {
+   "ar": "الإضاءة",
+   "en": "illumination"
+  },
+  "بكم": {
+   "ar": "الخرس",
+   "en": "muteness"
+  },
+  "فرش": {
+   "ar": "البسط؛ والفراش",
+   "en": "spreading; bed, furnishing"
+  },
+  "ندد": {
+   "ar": "المثل والنظير",
+   "en": "equals, rivals"
+  },
+  "أون": {
+   "ar": "الوقت الحاضر",
+   "en": "present time; now"
+  },
+  "حرف": {
+   "ar": "التحريف",
+   "en": "distortion"
+  },
+  "أسر": {
+   "ar": "الأسر",
+   "en": "captivity"
+  },
+  "كرر": {
+   "ar": "العودة؛ والكرة",
+   "en": "return; turn"
+  },
+  "أدي": {
+   "ar": "الإيصال؛ والأداء",
+   "en": "delivering; performance"
+  },
+  "ثقف": {
+   "ar": "الظفر والإدراك",
+   "en": "seizing, finding"
+  },
+  "حصر": {
+   "ar": "المنع والحصار",
+   "en": "prevention, siege"
+  },
+  "زلزل": {
+   "ar": "الاضطراب الشديد",
+   "en": "violent shaking, earthquake"
+  },
+  "خلط": {
+   "ar": "الخلط",
+   "en": "mixing"
+  },
+  "فرغ": {
+   "ar": "الصب؛ والفراغ",
+   "en": "pouring; emptiness"
+  },
+  "حمر": {
+   "ar": "الحمار؛ والحمرة",
+   "en": "donkey; redness"
+  },
+  "دأب": {
+   "ar": "العادة والملازمة",
+   "en": "wont, habit"
+  },
+  "حسس": {
+   "ar": "الإحساس",
+   "en": "sensing, perceiving"
+  },
+  "درس": {
+   "ar": "الدراسة",
+   "en": "studying"
+  },
+  "صرر": {
+   "ar": "الصرير؛ والإصرار",
+   "en": "squeaking; persistence"
+  },
+  "كظم": {
+   "ar": "كظم الغيظ",
+   "en": "restraining anger"
+  },
+  "لحق": {
+   "ar": "الإدراك والاتباع",
+   "en": "catching up, joining"
+  },
+  "سدد": {
+   "ar": "الاستقامة؛ والسد",
+   "en": "uprightness; barrier"
+  },
+  "مقت": {
+   "ar": "البغض الشديد",
+   "en": "intense hatred"
+  },
+  "ميل": {
+   "ar": "الميل",
+   "en": "inclining, leaning"
+  },
+  "فخر": {
+   "ar": "التباهي",
+   "en": "boasting, pride"
+  },
+  "صيد": {
+   "ar": "الصيد",
+   "en": "hunting, game"
+  },
+  "ردي": {
+   "ar": "الإهلاك",
+   "en": "destruction, ruin"
+  },
+  "كلب": {
+   "ar": "الكلب",
+   "en": "dog"
+  },
+  "حبر": {
+   "ar": "العالم",
+   "en": "scholar"
+  },
+  "قصد": {
+   "ar": "الاستقامة والقصد",
+   "en": "uprightness; heading"
+  },
+  "حمي": {
+   "ar": "الحماية؛ والإحماء",
+   "en": "protection; heating"
+  },
+  "ذرأ": {
+   "ar": "الخلق والنشر",
+   "en": "creating, scattering"
+  },
+  "حصد": {
+   "ar": "الحصاد",
+   "en": "harvest"
+  },
+  "تبر": {
+   "ar": "التدمير",
+   "en": "destruction"
+  },
+  "لوح": {
+   "ar": "اللوح",
+   "en": "tablet, slate"
+  },
+  "لحد": {
+   "ar": "الميل عن الحق",
+   "en": "deviation; heresy"
+  },
+  "نزغ": {
+   "ar": "الوسوسة والنخس",
+   "en": "incitement, provocation"
+  },
+  "رصد": {
+   "ar": "الترقب؛ والمرصد",
+   "en": "watchfulness; ambush"
+  },
+  "شفي": {
+   "ar": "الشفاء",
+   "en": "healing, cure"
+  },
+  "وطأ": {
+   "ar": "الموافقة والوطء",
+   "en": "conformity; treading"
+  },
+  "غرم": {
+   "ar": "الدين؛ والغرامة",
+   "en": "debt; fine, loss"
+  },
+  "ضيف": {
+   "ar": "الضيف",
+   "en": "guest"
+  },
+  "قمص": {
+   "ar": "القميص",
+   "en": "shirt"
+  },
+  "قنط": {
+   "ar": "اليأس",
+   "en": "despair"
+  },
+  "كهف": {
+   "ar": "الكهف",
+   "en": "cave"
+  },
+  "زور": {
+   "ar": "الميل؛ والزور",
+   "en": "inclining; falsehood"
+  },
+  "مهل": {
+   "ar": "الإمهال؛ والمهل",
+   "en": "respite; molten metal"
+  },
+  "فزع": {
+   "ar": "الخوف الشديد",
+   "en": "terror, fright"
+  },
+  "لؤلؤ": {
+   "ar": "اللؤلؤ",
+   "en": "pearls"
+  },
+  "مرج": {
+   "ar": "الإرسال؛ والمرج",
+   "en": "letting flow; confusion"
+  },
+  "حطم": {
+   "ar": "التكسير؛ والحطام",
+   "en": "crushing; debris"
+  },
+  "زجر": {
+   "ar": "المنع بصوت",
+   "en": "driving back, rebuke"
+  },
+  "كأس": {
+   "ar": "الكأس",
+   "en": "cup, goblet"
+  },
+  "خدع": {
+   "ar": "الخداع",
+   "en": "deception"
+  },
+  "عثو": {
+   "ar": "الفساد",
+   "en": "corruption, mischief"
+  },
+  "مصر": {
+   "ar": "مصر",
+   "en": "Egypt"
+  },
+  "نكل": {
+   "ar": "العقوبة الرادعة",
+   "en": "deterrent punishment"
+  },
+  "صفر": {
+   "ar": "الصفرة",
+   "en": "yellowness"
+  },
+  "ثور": {
+   "ar": "الإثارة",
+   "en": "stirring up"
+  },
+  "درأ": {
+   "ar": "الدفع والمدارأة",
+   "en": "repelling; disputing"
+  },
+  "قفو": {
+   "ar": "الاتباع",
+   "en": "following after"
+  },
+  "حرص": {
+   "ar": "شدة الرغبة",
+   "en": "eagerness, avidity"
+  },
+  "حسد": {
+   "ar": "الحسد",
+   "en": "envy"
+  },
+  "سبط": {
+   "ar": "القبيلة؛ والسبط",
+   "en": "tribe, grandson"
+  },
+  "وسط": {
+   "ar": "الوسط",
+   "en": "middle"
+  },
+  "شطر": {
+   "ar": "النصف؛ والجهة",
+   "en": "half; direction"
+  },
+  "جوع": {
+   "ar": "الجوع",
+   "en": "hunger"
+  },
+  "خطو": {
+   "ar": "الخطوة",
+   "en": "step"
+  },
+  "خنزر": {
+   "ar": "الخنزير",
+   "en": "pig, swine"
+  },
+  "هلل": {
+   "ar": "رفع الصوت؛ والهلال",
+   "en": "raising voice; crescent"
+  },
+  "كمل": {
+   "ar": "الإتمام",
+   "en": "completion"
+  },
+  "عنت": {
+   "ar": "المشقة",
+   "en": "hardship, burden"
+  },
+  "كسو": {
+   "ar": "اللباس؛ والكسوة",
+   "en": "clothing"
+  },
+  "قتر": {
+   "ar": "الضيق في العيش",
+   "en": "straitened means"
+  },
+  "جوز": {
+   "ar": "المجاوزة",
+   "en": "passing beyond"
+  },
+  "خوي": {
+   "ar": "الفراغ والخراب",
+   "en": "emptiness, ruin"
+  },
+  "نشز": {
+   "ar": "الارتفاع؛ والنشوز",
+   "en": "raising; recalcitrance"
+  },
+  "سنبل": {
+   "ar": "السنبلة",
+   "en": "ear of grain"
+  },
+  "عصر": {
+   "ar": "العصر؛ والإعصار",
+   "en": "pressing; whirlwind"
+  },
+  "لوي": {
+   "ar": "اللي والتحريف",
+   "en": "twisting, distorting"
+  },
+  "نقذ": {
+   "ar": "التخليص",
+   "en": "rescue, salvation"
+  },
+  "بغض": {
+   "ar": "البغض",
+   "en": "hatred"
+  },
+  "خيب": {
+   "ar": "الخيبة",
+   "en": "failure, disappointment"
+  },
+  "رعب": {
+   "ar": "الخوف الشديد",
+   "en": "terror"
+  },
+  "فوت": {
+   "ar": "الفوات",
+   "en": "missing, elapsing"
+  },
+  "لين": {
+   "ar": "اللين ضد الغلظة",
+   "en": "gentleness"
+  },
+  "ربط": {
+   "ar": "الشد والثبات",
+   "en": "binding fast, steadfastness"
+  },
+  "سدس": {
+   "ar": "العدد ستة؛ والسدس",
+   "en": "six; sixth"
+  },
+  "عمم": {
+   "ar": "العمومة",
+   "en": "paternal kinship"
+  },
+  "لمس": {
+   "ar": "اللمس",
+   "en": "touching"
+  },
+  "طمس": {
+   "ar": "المحو",
+   "en": "effacement, obliteration"
+  },
+  "رفق": {
+   "ar": "الصحبة؛ والرفق",
+   "en": "companionship; gentleness"
+  },
+  "مرد": {
+   "ar": "العتو والتمرد",
+   "en": "defiance, rebellion"
+  },
+  "حيص": {
+   "ar": "المهرب",
+   "en": "escape, refuge"
+  },
+  "شحح": {
+   "ar": "البخل الشديد",
+   "en": "avarice, stinginess"
+  },
+  "شرع": {
+   "ar": "الطريق؛ والشريعة",
+   "en": "way; sacred law"
+  },
+  "ميد": {
+   "ar": "المائدة",
+   "en": "table (spread)"
+  },
+  "بلس": {
+   "ar": "اليأس؛ وإبليس",
+   "en": "despair; Iblis"
+  },
+  "صدف": {
+   "ar": "الإعراض",
+   "en": "turning away"
+  },
+  "طرد": {
+   "ar": "الطرد والإبعاد",
+   "en": "driving away"
+  },
+  "صنم": {
+   "ar": "الصنم",
+   "en": "idol"
+  },
+  "كوكب": {
+   "ar": "الكوكب",
+   "en": "planet, star"
+  },
+  "فرد": {
+   "ar": "الانفراد",
+   "en": "solitude, singleness"
+  },
+  "قرف": {
+   "ar": "الاكتساب؛ والاقتراف",
+   "en": "acquiring; committing (sins)"
+  },
+  "خرص": {
+   "ar": "التخمين",
+   "en": "conjecture, guessing"
+  },
+  "شرح": {
+   "ar": "التوسعة والبيان",
+   "en": "expansion, explanation"
+  },
+  "وسوس": {
+   "ar": "الوسوسة",
+   "en": "whispering (evil suggestion)"
+  },
+  "جثم": {
+   "ar": "البروك",
+   "en": "crouching; lying lifeless"
+  },
+  "جلو": {
+   "ar": "الظهور والانكشاف",
+   "en": "manifestation"
+  },
+  "أسف": {
+   "ar": "الحزن الشديد",
+   "en": "deep grief"
+  },
+  "حوت": {
+   "ar": "الحوت",
+   "en": "fish, whale"
+  },
+  "وجل": {
+   "ar": "الخوف",
+   "en": "fear"
+  },
+  "غوث": {
+   "ar": "الاستغاثة",
+   "en": "crying for help"
+  },
+  "مضي": {
+   "ar": "المضي والذهاب",
+   "en": "passing, going"
+  },
+  "قصو": {
+   "ar": "البعد؛ والأقصى",
+   "en": "distance; farthest"
+  },
+  "ذمم": {
+   "ar": "العهد والذمة",
+   "en": "covenant, protection"
+  },
+  "زهق": {
+   "ar": "الزهوق والبطلان",
+   "en": "perishing; vanity"
+  },
+  "ذرع": {
+   "ar": "الوسع؛ والذراع",
+   "en": "scope; forearm"
+  },
+  "عصب": {
+   "ar": "الشدة؛ والعصبة",
+   "en": "severity; band, group"
+  },
+  "قدد": {
+   "ar": "الشق والقطع",
+   "en": "tearing, cutting"
+  },
+  "قرع": {
+   "ar": "الضرب الشديد؛ والقارعة",
+   "en": "striking; calamity"
+  },
+  "صرخ": {
+   "ar": "الصياح؛ والاستغاثة",
+   "en": "shouting; crying for help"
+  },
+  "بور": {
+   "ar": "الهلاك؛ والبوار",
+   "en": "ruin, perdition"
+  },
+  "قطر": {
+   "ar": "السيلان؛ والقطر",
+   "en": "flowing; molten metal, region"
+  },
+  "شهب": {
+   "ar": "اللهب؛ والشهاب",
+   "en": "flame; meteor"
+  },
+  "صدع": {
+   "ar": "الشق؛ والصدع",
+   "en": "splitting; proclamation"
+  },
+  "عتب": {
+   "ar": "اللوم؛ والاستعتاب",
+   "en": "reproach; seeking to make amends"
+  },
+  "نفد": {
+   "ar": "الفناء؛ والنفاد",
+   "en": "exhaustion"
+  },
+  "حصب": {
+   "ar": "الرمي بالحصباء",
+   "en": "pelting with stones"
+  },
+  "كسف": {
+   "ar": "القطع؛ والكسف",
+   "en": "cutting; fragments"
+  },
+  "ثبر": {
+   "ar": "الهلاك؛ والثبور",
+   "en": "destruction; woe"
+  },
+  "أرك": {
+   "ar": "الأريكة",
+   "en": "couch, throne-like seat"
+  },
+  "هزز": {
+   "ar": "الهز والتحريك",
+   "en": "shaking"
+  },
+  "طوي": {
+   "ar": "الطي",
+   "en": "folding"
+  },
+  "شتت": {
+   "ar": "التفرق",
+   "en": "dispersion, diversity"
+  },
+  "نسف": {
+   "ar": "التذرية والاقتلاع",
+   "en": "scattering, uprooting"
+  },
+  "برد": {
+   "ar": "ضد الحر",
+   "en": "coldness"
+  },
+  "صبب": {
+   "ar": "الصب",
+   "en": "pouring"
+  },
+  "دهن": {
+   "ar": "الطلاء؛ والدهن",
+   "en": "painting; oil, grease"
+  },
+  "وزع": {
+   "ar": "الجمع والكف؛ والإلهام",
+   "en": "mustering; inspiration"
+  },
+  "فوج": {
+   "ar": "الجماعة؛ والفوج",
+   "en": "group, troop"
+  },
+  "زلل": {
+   "ar": "التزليق؛ والزلل",
+   "en": "causing to slip; lapse"
+  },
+  "خسأ": {
+   "ar": "الطرد بصغار",
+   "en": "driving away in disgrace"
+  },
+  "خصص": {
+   "ar": "التخصيص",
+   "en": "specification, particularization"
+  },
+  "نسخ": {
+   "ar": "الرفع والتبديل؛ والنسخ",
+   "en": "abrogation; copying"
+  },
+  "هات": {
+   "ar": "الإتيان",
+   "en": "bringing (imperative: bring!)"
+  },
+  "بدع": {
+   "ar": "الاختراع؛ والبديع",
+   "en": "origination; Originator, marvelous"
+  },
+  "طوق": {
+   "ar": "الطاقة",
+   "en": "capacity, power"
+  },
+  "دلو": {
+   "ar": "الإدلاء",
+   "en": "letting down, offering"
+  },
+  "نسل": {
+   "ar": "الخروج بسرعة؛ والنسل",
+   "en": "hastening forth; progeny"
+  },
+  "حيض": {
+   "ar": "الحيض",
+   "en": "menstruation"
+  },
+  "شور": {
+   "ar": "التشاور",
+   "en": "mutual consultation"
+  },
+  "عفف": {
+   "ar": "التعفف",
+   "en": "chastity, restraint"
+  },
+  "قنطر": {
+   "ar": "القنطار",
+   "en": "great weight (qintar)"
+  },
+  "أمد": {
+   "ar": "المدة",
+   "en": "span, term"
+  },
+  "قلم": {
+   "ar": "القلم",
+   "en": "pen"
+  },
+  "هيأ": {
+   "ar": "التهيئة",
+   "en": "preparation, configuration"
+  },
+  "نمل": {
+   "ar": "النمل",
+   "en": "ants"
+  },
+  "فشل": {
+   "ar": "الفشل",
+   "en": "failure"
+  },
+  "فور": {
+   "ar": "العجلة؛ والفور",
+   "en": "haste; immediate"
+  },
+  "سخط": {
+   "ar": "السخط",
+   "en": "wrath, displeasure"
+  },
+  "ميز": {
+   "ar": "التمييز",
+   "en": "distinguishing, sifting"
+  },
+  "هنأ": {
+   "ar": "الهناءة",
+   "en": "bliss, pleasantness"
+  },
+  "سفح": {
+   "ar": "السفح",
+   "en": "pouring; hillside (illicit: fornication sense in context)"
+  },
+  "وفق": {
+   "ar": "التوفيق",
+   "en": "accordance; divine facilitation"
+  },
+  "غسل": {
+   "ar": "الغسل",
+   "en": "washing"
+  },
+  "نقر": {
+   "ar": "النقر",
+   "en": "pecking; speck"
+  },
+  "سلح": {
+   "ar": "السلاح",
+   "en": "weapons"
+  },
+  "قلد": {
+   "ar": "القلادة",
+   "en": "necklace, garland"
+  },
+  "جرح": {
+   "ar": "الجرح؛ والجوارح",
+   "en": "wound; predatory limbs"
+  },
+  "كعب": {
+   "ar": "الكعب",
+   "en": "ankle; Kaaba (cube)"
+  },
+  "سحت": {
+   "ar": "الكسب الحرام",
+   "en": "illicit gain"
+  },
+  "درر": {
+   "ar": "الدرور",
+   "en": "copious flowing"
+  },
+  "وقف": {
+   "ar": "الوقوف",
+   "en": "standing, halting"
+  },
+  "ورق": {
+   "ar": "الورق؛ والورقة",
+   "en": "silver; leaf, paper"
+  },
+  "يبس": {
+   "ar": "اليبس",
+   "en": "dryness"
+  },
+  "كرب": {
+   "ar": "الشدة؛ والكرب",
+   "en": "severity; distress"
+  },
+  "أفل": {
+   "ar": "الغروب",
+   "en": "setting"
+  },
+  "غمر": {
+   "ar": "الغمرة",
+   "en": "overwhelming depth, agony"
+  },
+  "فلق": {
+   "ar": "الشق؛ والفلق",
+   "en": "splitting; dawn"
+  },
+  "ودع": {
+   "ar": "الإيداع؛ والمستودع",
+   "en": "depositing; repository"
+  },
+  "زخرف": {
+   "ar": "الزخرفة",
+   "en": "ornamentation"
+  },
+  "دحر": {
+   "ar": "الطرد",
+   "en": "driving away"
+  },
+  "سمم": {
+   "ar": "السم؛ والسموم",
+   "en": "poison; scorching wind"
+  },
+  "طلب": {
+   "ar": "الطلب",
+   "en": "seeking, request"
+  },
+  "نحت": {
+   "ar": "النحت",
+   "en": "carving"
+  },
+  "جسد": {
+   "ar": "الجسد",
+   "en": "body"
+  },
+  "نفل": {
+   "ar": "الزيادة؛ والأنفال",
+   "en": "surplus; spoils"
+  },
+  "رحب": {
+   "ar": "السعة",
+   "en": "spaciousness"
+  },
+  "غور": {
+   "ar": "الغار",
+   "en": "cave"
+  },
+  "لمز": {
+   "ar": "اللمز والعيب",
+   "en": "scoffing, mockery"
+  },
+  "جدر": {
+   "ar": "الجدارة؛ والجدار",
+   "en": "worthiness; wall"
+  },
+  "شأن": {
+   "ar": "الشأن",
+   "en": "matter, affair"
+  },
+  "رذل": {
+   "ar": "الحقارة",
+   "en": "lowness, vileness"
+  },
+  "نصي": {
+   "ar": "مقدمة الرأس",
+   "en": "forelock"
+  },
+  "شيخ": {
+   "ar": "الشيخ",
+   "en": "old man, elder"
+  },
+  "مجد": {
+   "ar": "المجد",
+   "en": "glory"
+  },
+  "ركن": {
+   "ar": "الاعتماد؛ والركن",
+   "en": "reliance; support, corner"
+  },
+  "سجل": {
+   "ar": "السجل؛ والسجيل",
+   "en": "register; baked clay (stones)"
+  },
+  "تبب": {
+   "ar": "الهلاك",
+   "en": "ruin, perdition"
+  },
+  "سول": {
+   "ar": "التزيين",
+   "en": "making fair-seeming"
+  },
+  "سمن": {
+   "ar": "السمن",
+   "en": "fatness"
+  },
+  "غيث": {
+   "ar": "الغيث",
+   "en": "rain"
+  },
+  "بول": {
+   "ar": "الحال؛ والبال",
+   "en": "state; mind"
+  },
+  "جهز": {
+   "ar": "الإعداد؛ والجهاز",
+   "en": "preparation; equipment"
+  },
+  "رحل": {
+   "ar": "الرحل",
+   "en": "saddlebag, baggage"
+  },
+  "سرب": {
+   "ar": "الذهاب؛ والسرب",
+   "en": "going; tunnel, flow"
+  },
+  "سيل": {
+   "ar": "السيل",
+   "en": "torrent, flood"
+  },
+  "زول": {
+   "ar": "الزوال",
+   "en": "passing away"
+  },
+  "صلصل": {
+   "ar": "الصلصال",
+   "en": "dry clay"
+  },
+  "حمأ": {
+   "ar": "الحمأة",
+   "en": "black mud"
+  },
+  "خفض": {
+   "ar": "الخفض",
+   "en": "lowering"
+  },
+  "سقف": {
+   "ar": "السقف",
+   "en": "roof"
+  },
+  "دخر": {
+   "ar": "الصغار",
+   "en": "abasement"
+  },
+  "لزم": {
+   "ar": "اللزوم",
+   "en": "inseparability, necessity"
+  },
+  "غسق": {
+   "ar": "الظلمة؛ والغساق",
+   "en": "darkness; scalding discharge"
+  },
+  "رقي": {
+   "ar": "الصعود",
+   "en": "ascending"
+  },
+  "دحض": {
+   "ar": "الإبطال",
+   "en": "refutation"
+  },
+  "سفن": {
+   "ar": "السفينة",
+   "en": "ship"
+  },
+  "سمر": {
+   "ar": "السامري",
+   "en": "the Samiri"
+  },
+  "طفل": {
+   "ar": "الطفل",
+   "en": "child"
+  },
+  "عقم": {
+   "ar": "العقم",
+   "en": "barrenness"
+  },
+  "لجج": {
+   "ar": "التمادي؛ واللجة",
+   "en": "persistence; fathomless deep"
+  },
+  "غضض": {
+   "ar": "الغض والخفض",
+   "en": "lowering"
+  },
+  "عور": {
+   "ar": "العورة",
+   "en": "private parts, vulnerability"
+  },
+  "رتل": {
+   "ar": "الترتيل",
+   "en": "measured recitation"
+  },
+  "سرج": {
+   "ar": "السراج",
+   "en": "lamp"
+  },
+  "صرح": {
+   "ar": "الصرح",
+   "en": "lofty edifice, palace"
+  },
+  "مهن": {
+   "ar": "الحقارة",
+   "en": "despicableness"
+  },
+  "مزق": {
+   "ar": "التمزيق",
+   "en": "tearing apart"
+  },
+  "سدر": {
+   "ar": "السدر",
+   "en": "lote tree"
+  },
+  "نعج": {
+   "ar": "النعجة",
+   "en": "ewe"
+  },
+  "كوب": {
+   "ar": "الكوب",
+   "en": "cup, goblet"
+  },
+  "طبق": {
+   "ar": "الطباق",
+   "en": "layers"
+  },
+  "رغد": {
+   "ar": "العيش الرغد",
+   "en": "ease, plenty"
+  },
+  "سلو": {
+   "ar": "السلوى",
+   "en": "quails (and solace)"
+  },
+  "صبأ": {
+   "ar": "الصابئة",
+   "en": "Sabians"
+  },
+  "قرد": {
+   "ar": "القرد",
+   "en": "ape"
+  },
+  "صبغ": {
+   "ar": "الصبغ؛ والدين",
+   "en": "dyeing; (Allah's) religion"
+  },
+  "لفو": {
+   "ar": "الوجدان",
+   "en": "finding"
+  },
+  "خيط": {
+   "ar": "الخيط",
+   "en": "thread"
+  },
+  "حلق": {
+   "ar": "الحلق",
+   "en": "shaving"
+  },
+  "هزم": {
+   "ar": "الهزيمة",
+   "en": "routing, defeat"
+  },
+  "عرو": {
+   "ar": "العروة؛ والاعتراء",
+   "en": "handhold; befalling"
+  },
+  "جزأ": {
+   "ar": "الجزء",
+   "en": "part, portion"
+  },
+  "سأم": {
+   "ar": "السآمة والملل",
+   "en": "weariness"
+  },
+  "رهن": {
+   "ar": "الرهن",
+   "en": "pledge, mortgage"
+  },
+  "أصر": {
+   "ar": "الثقل؛ والإصر",
+   "en": "burden; covenant-burden"
+  },
+  "كبت": {
+   "ar": "الكبت والقمع",
+   "en": "suppression"
+  },
+  "قرح": {
+   "ar": "القرح",
+   "en": "wound"
+  },
+  "ضجع": {
+   "ar": "المضجع",
+   "en": "bed, resting place"
+  },
+  "خذل": {
+   "ar": "الخذلان",
+   "en": "forsaking, abandonment"
+  },
+  "فتل": {
+   "ar": "الفتيل",
+   "en": "date-fibril (least thing)"
+  },
+  "حرض": {
+   "ar": "الحث والتحريض",
+   "en": "urging, exhortation"
+  },
+  "نكف": {
+   "ar": "الاستنكاف",
+   "en": "disdain"
+  },
+  "بهم": {
+   "ar": "البهيمة",
+   "en": "beast, animal"
+  },
+  "شنأ": {
+   "ar": "الشنآن",
+   "en": "hatred, enmity"
+  },
+  "نقب": {
+   "ar": "النقيب",
+   "en": "chief"
+  },
+  "عزر": {
+   "ar": "التعظيم والنصرة",
+   "en": "honoring, supporting"
+  },
+  "فتر": {
+   "ar": "الانقطاع؛ والفترة",
+   "en": "pause, interval"
+  },
+  "أنف": {
+   "ar": "الأنف",
+   "en": "nose"
+  },
+  "طفأ": {
+   "ar": "الإطفاء",
+   "en": "extinguishing"
+  },
+  "نأي": {
+   "ar": "البعد والإعراض",
+   "en": "distance; turning away"
+  },
+  "رمن": {
+   "ar": "الرمان",
+   "en": "pomegranate"
+  },
+  "خرق": {
+   "ar": "الشق؛ والخرق",
+   "en": "rending"
+  },
+  "أبل": {
+   "ar": "الإبل",
+   "en": "camels"
+  },
+  "طفق": {
+   "ar": "الشروع",
+   "en": "beginning (to do)"
+  },
+  "لقف": {
+   "ar": "الالتقاط بسرعة",
+   "en": "snatching up"
+  },
+  "سلخ": {
+   "ar": "النزع",
+   "en": "stripping off"
+  },
+  "متن": {
+   "ar": "القوة",
+   "en": "firmness; Firm"
+  },
+  "حفو": {
+   "ar": "العناية",
+   "en": "care, solicitude"
+  },
+  "ردف": {
+   "ar": "الاتباع",
+   "en": "following after"
+  },
+  "ركم": {
+   "ar": "التراكم",
+   "en": "heaping up, accumulation"
+  },
+  "سيح": {
+   "ar": "السياحة",
+   "en": "traveling"
+  },
+  "لجأ": {
+   "ar": "الملجأ",
+   "en": "refuge, shelter"
+  },
+  "أسس": {
+   "ar": "التأسيس",
+   "en": "founding, establishing"
+  },
+  "ظمأ": {
+   "ar": "الظمأ",
+   "en": "thirst"
+  },
+  "لفت": {
+   "ar": "الصرف والالتفات",
+   "en": "turning away; looking back"
+  },
+  "خبت": {
+   "ar": "الخضوع والطمأنينة",
+   "en": "humility, tranquility"
+  },
+  "وجس": {
+   "ar": "الإحساس المفاجئ",
+   "en": "sudden apprehension"
+  },
+  "نضد": {
+   "ar": "التنضيد",
+   "en": "layering, arraying"
+  },
+  "زفر": {
+   "ar": "الزفير",
+   "en": "exhalation, moaning"
+  },
+  "ذأب": {
+   "ar": "الذئب",
+   "en": "wolf"
+  },
+  "صبو": {
+   "ar": "الميل؛ والصبا",
+   "en": "inclining; youth"
+  },
+  "ضغث": {
+   "ar": "الحزمة؛ والأضغاث",
+   "en": "bundle; jumbled dreams"
+  },
+  "حوج": {
+   "ar": "الحاجة",
+   "en": "need"
+  },
+  "عير": {
+   "ar": "القافلة؛ والعير",
+   "en": "caravan"
+  },
+  "فقد": {
+   "ar": "الفقد",
+   "en": "missing, loss"
+  },
+  "برح": {
+   "ar": "المفارقة",
+   "en": "leaving, parting"
+  },
+  "شكو": {
+   "ar": "الشكوى؛ والمشكاة",
+   "en": "complaint; niche"
+  },
+  "زجو": {
+   "ar": "السوق؛ والمزجاة",
+   "en": "driving; paltry"
+  },
+  "زبد": {
+   "ar": "الزبد",
+   "en": "froth, scum"
+  },
+  "محو": {
+   "ar": "المحو",
+   "en": "effacement"
+  },
+  "سوغ": {
+   "ar": "الاستساغة",
+   "en": "ease of swallowing"
+  },
+  "هطع": {
+   "ar": "الإسراع",
+   "en": "hastening"
+  },
+  "سربل": {
+   "ar": "السرابيل",
+   "en": "garments"
+  },
+  "جأر": {
+   "ar": "الجؤار",
+   "en": "loud crying"
+  },
+  "عجم": {
+   "ar": "العجمة",
+   "en": "non-Arabness"
+  },
+  "أفف": {
+   "ar": "التضجر",
+   "en": "annoyance; ugh"
+  },
+  "بذر": {
+   "ar": "التبذير",
+   "en": "squandering"
+  },
+  "مرح": {
+   "ar": "الفرح المفرط",
+   "en": "exultation"
+  },
+  "ستر": {
+   "ar": "الستر",
+   "en": "veiling, cover"
+  },
+  "فزز": {
+   "ar": "الاستفزاز",
+   "en": "provocation"
+  },
+  "لفف": {
+   "ar": "الالتفاف؛ واللفيف",
+   "en": "wrapping; crowd"
+  },
+  "ذقن": {
+   "ar": "الذقن",
+   "en": "chin"
+  },
+  "خفت": {
+   "ar": "المخافتة",
+   "en": "whispering"
+  },
+  "رقم": {
+   "ar": "الكتابة؛ والرقيم",
+   "en": "writing; inscription"
+  },
+  "شطط": {
+   "ar": "مجاوزة الحد",
+   "en": "excess"
+  },
+  "وصد": {
+   "ar": "الإيصاد",
+   "en": "closing"
+  },
+  "ذرو": {
+   "ar": "التذرية",
+   "en": "winnowing, scattering"
+  },
+  "صخر": {
+   "ar": "الصخر",
+   "en": "rock"
+  },
+  "شيب": {
+   "ar": "الشيب",
+   "en": "white hair, old age"
+  },
+  "جذع": {
+   "ar": "الجذع",
+   "en": "trunk"
+  },
+  "جثو": {
+   "ar": "الجثو",
+   "en": "kneeling"
+  },
+  "قبس": {
+   "ar": "القبس",
+   "en": "firebrand"
+  },
+  "عري": {
+   "ar": "العري؛ والعراء",
+   "en": "nakedness; open land"
+  },
+  "ركض": {
+   "ar": "الركض",
+   "en": "running"
+  },
+  "فجج": {
+   "ar": "الفج",
+   "en": "mountain pass"
+  },
+  "نكس": {
+   "ar": "القلب؛ والانتكاس",
+   "en": "overturning; relapse"
+  },
+  "مضغ": {
+   "ar": "المضغة",
+   "en": "chewed lump"
+  },
+  "بهج": {
+   "ar": "البهجة",
+   "en": "joy, splendor"
+  },
+  "وثن": {
+   "ar": "الوثن",
+   "en": "idol"
+  },
+  "سلل": {
+   "ar": "الانسلال؛ والسلالة",
+   "en": "slipping away; lineage"
+  },
+  "وتر": {
+   "ar": "التتابع؛ والوتر",
+   "en": "succession"
+  },
+  "همز": {
+   "ar": "الهمز",
+   "en": "poking; slander, whispering"
+  },
+  "برزخ": {
+   "ar": "البرزخ",
+   "en": "barrier, isthmus"
+  },
+  "نسب": {
+   "ar": "النسب",
+   "en": "lineage"
+  },
+  "جيب": {
+   "ar": "الجيب",
+   "en": "bosom, opening (of garment)"
+  },
+  "نثر": {
+   "ar": "النثر",
+   "en": "scattering"
+  },
+  "فرت": {
+   "ar": "الفرات",
+   "en": "sweet water"
+  },
+  "أجج": {
+   "ar": "الأجاج",
+   "en": "bitterness, saltiness"
+  },
+  "شحن": {
+   "ar": "الشحن",
+   "en": "loading, freight"
+  },
+  "حدق": {
+   "ar": "الحديقة",
+   "en": "garden, orchard"
+  },
+  "جدث": {
+   "ar": "الجدث",
+   "en": "grave"
+  },
+  "لذذ": {
+   "ar": "اللذة",
+   "en": "pleasure"
+  },
+  "زقم": {
+   "ar": "الزقوم",
+   "en": "Zaqqum"
+  },
+  "روغ": {
+   "ar": "الروغان",
+   "en": "turning stealthily"
+  },
+  "وتد": {
+   "ar": "الوتد",
+   "en": "peg, stake"
+  },
+  "كور": {
+   "ar": "التكوير",
+   "en": "wrapping, coiling"
+  },
+  "أزف": {
+   "ar": "القرب؛ والآزفة",
+   "en": "nearness; the Imminent"
+  },
+  "سلسل": {
+   "ar": "السلسلة",
+   "en": "chain"
+  },
+  "سجر": {
+   "ar": "التسجير",
+   "en": "kindling, filling"
+  },
+  "صرصر": {
+   "ar": "الصرصر",
+   "en": "furious cold wind"
+  },
+  "نحس": {
+   "ar": "النحس",
+   "en": "ominousness, ill luck"
+  },
+  "أفق": {
+   "ar": "الأفق",
+   "en": "horizon"
+  },
+  "مور": {
+   "ar": "المور",
+   "en": "swaying, commotion"
+  },
+  "دعع": {
+   "ar": "الدفع بعنف",
+   "en": "thrusting violently"
+  },
+  "نفذ": {
+   "ar": "النفوذ",
+   "en": "passing through"
+  },
+  "شأم": {
+   "ar": "المشأمة",
+   "en": "left (of doom)"
+  },
+  "ثلل": {
+   "ar": "الثلة",
+   "en": "company, band"
+  },
+  "فسح": {
+   "ar": "الإفساح",
+   "en": "making room"
+  },
+  "صرم": {
+   "ar": "القطع؛ والصريم",
+   "en": "cutting off"
+  },
+  "حضض": {
+   "ar": "الحض",
+   "en": "urging"
+  },
+  "عبس": {
+   "ar": "العبوس",
+   "en": "frowning"
+  },
+  "نضر": {
+   "ar": "النضارة",
+   "en": "radiance, bloom"
+  },
+  "مزج": {
+   "ar": "المزج",
+   "en": "blending, tempering"
+  },
+  "لهب": {
+   "ar": "اللهب",
+   "en": "flame"
+  },
+  "رعد": {
+   "ar": "الرعد",
+   "en": "thunder"
+  },
+  "صبع": {
+   "ar": "الإصبع",
+   "en": "finger"
+  },
+  "سفك": {
+   "ar": "السفك",
+   "en": "shedding (blood)"
+  },
+  "حطط": {
+   "ar": "الحطة",
+   "en": "(word of) relief"
+  },
+  "غلف": {
+   "ar": "الغلفة",
+   "en": "coveredness"
+  },
+  "زحزح": {
+   "ar": "الزحزحة",
+   "en": "shifting away"
+  },
+  "خرب": {
+   "ar": "الخراب",
+   "en": "ruin, destruction"
+  },
+  "جنف": {
+   "ar": "الميل",
+   "en": "inclining (to wrong)"
+  },
+  "رفث": {
+   "ar": "الرفث",
+   "en": "lewdness"
+  },
+  "زود": {
+   "ar": "التزود",
+   "en": "taking provision"
+  },
+  "لدد": {
+   "ar": "شدة الخصومة",
+   "en": "fierce disputation"
+  },
+  "أمو": {
+   "ar": "الأمة",
+   "en": "bondwoman"
+  },
+  "عضل": {
+   "ar": "التضييق والمنع",
+   "en": "constraining"
+  },
+  "جسم": {
+   "ar": "الجسم",
+   "en": "body"
+  },
+  "كرس": {
+   "ar": "الكرسي",
+   "en": "Kursi, Seat"
+  },
+  "محق": {
+   "ar": "المحق",
+   "en": "obliteration"
+  },
+  "رسخ": {
+   "ar": "الرسوخ",
+   "en": "firm rootedness"
+  },
+  "كهل": {
+   "ar": "الكهولة",
+   "en": "middle age"
+  },
+  "كمه": {
+   "ar": "العمى الخلقي",
+   "en": "congenital blindness"
+  },
+  "برص": {
+   "ar": "البرص",
+   "en": "leprosy, vitiligo"
+  },
+  "شفو": {
+   "ar": "الشفا",
+   "en": "brink, edge"
+  },
+  "حفر": {
+   "ar": "الحفرة؛ والحافرة",
+   "en": "pit; former state"
+  },
+  "خبل": {
+   "ar": "الخبال",
+   "en": "confusion, harm"
+  },
+  "عضض": {
+   "ar": "العض",
+   "en": "biting"
+  },
+  "دول": {
+   "ar": "المداولة",
+   "en": "alternation"
+  },
+  "محص": {
+   "ar": "التمحيص",
+   "en": "purification, testing"
+  },
+  "كين": {
+   "ar": "الاستكانة",
+   "en": "humble submission"
+  },
+  "نعس": {
+   "ar": "النعاس",
+   "en": "drowsiness"
+  },
+  "نحل": {
+   "ar": "العطاء؛ والنحل",
+   "en": "giving; bees"
+  },
+  "خدن": {
+   "ar": "المصاحبة",
+   "en": "companionship; close friend"
+  },
+  "غوط": {
+   "ar": "المنخفض؛ والغائط",
+   "en": "lowland; excrement"
+  },
+  "طعن": {
+   "ar": "الطعن",
+   "en": "stabbing; reviling"
+  },
+  "شيد": {
+   "ar": "الرفع؛ والمشيد",
+   "en": "raising high; lofty edifice"
+  },
+  "قوت": {
+   "ar": "القوت",
+   "en": "sustenance; Guardian"
+  },
+  "ركس": {
+   "ar": "القلب",
+   "en": "overturning"
+  },
+  "حوذ": {
+   "ar": "الغلبة والاستيلاء",
+   "en": "gaining mastery"
+  },
+  "كسل": {
+   "ar": "الكسل",
+   "en": "laziness"
+  },
+  "غلو": {
+   "ar": "مجاوزة الحد",
+   "en": "excess"
+  },
+  "زلم": {
+   "ar": "الأزلام",
+   "en": "divining arrows"
+  },
+  "خمص": {
+   "ar": "الجوع؛ والمخمصة",
+   "en": "hunger; famine"
+  },
+  "غرو": {
+   "ar": "الإغراء",
+   "en": "incitement"
+  },
+  "وسل": {
+   "ar": "الوسيلة",
+   "en": "means of nearness"
+  },
+  "همن": {
+   "ar": "الهيمنة",
+   "en": "guardianship, dominance"
+  },
+  "دمع": {
+   "ar": "الدمع",
+   "en": "tears"
+  },
+  "حبس": {
+   "ar": "الحبس",
+   "en": "detention"
+  },
+  "عثر": {
+   "ar": "الاطلاع؛ والعثور",
+   "en": "discovering; stumbling upon"
+  },
+  "قرطس": {
+   "ar": "القرطاس",
+   "en": "parchment"
+  },
+  "رطب": {
+   "ar": "الرطوبة",
+   "en": "freshness, moisture"
+  },
+  "بسل": {
+   "ar": "التسليم للهلاك",
+   "en": "consigning to ruin"
+  },
+  "بزغ": {
+   "ar": "البزوغ",
+   "en": "rising"
+  },
+  "قدو": {
+   "ar": "الاقتداء",
+   "en": "emulation, following"
+  },
+  "صغو": {
+   "ar": "الميل",
+   "en": "inclining"
+  },
+  "ظفر": {
+   "ar": "الظفر",
+   "en": "nail; victory"
+  },
+  "حوي": {
+   "ar": "الاحتواء؛ والحوايا",
+   "en": "containing; entrails"
+  },
+  "هلم": {
+   "ar": "الدعوة للمجيء",
+   "en": "calling to come"
+  },
+  "ملق": {
+   "ar": "الفقر",
+   "en": "poverty"
+  },
+  "قيل": {
+   "ar": "القول؛ والمقيل",
+   "en": "saying; resting place"
+  },
+  "خصف": {
+   "ar": "الترقيع",
+   "en": "patching"
+  },
+  "ثعب": {
+   "ar": "الثعبان",
+   "en": "serpent"
+  },
+  "جرد": {
+   "ar": "الجراد",
+   "en": "locusts"
+  },
+  "خور": {
+   "ar": "الخوار",
+   "en": "lowing"
+  },
+  "لهث": {
+   "ar": "اللهث",
+   "en": "panting"
+  },
+  "نصت": {
+   "ar": "الإنصات",
+   "en": "silent listening"
+  },
+  "بنن": {
+   "ar": "البنان",
+   "en": "fingertips"
+  },
+  "صدي": {
+   "ar": "التصفيق؛ والتصدي",
+   "en": "clapping; attending"
+  },
+  "بطر": {
+   "ar": "الطغيان بالنعمة",
+   "en": "insolence in bounty"
+  },
+  "نكص": {
+   "ar": "النكوص",
+   "en": "turning back"
+  },
+  "ثخن": {
+   "ar": "الإثخان",
+   "en": "dealing heavy wounds"
+  },
+  "ألل": {
+   "ar": "العهد والقرابة",
+   "en": "covenant, kinship"
+  },
+  "عيل": {
+   "ar": "الفقر؛ والعيلة",
+   "en": "poverty"
+  },
+  "نسأ": {
+   "ar": "التأخير؛ والنسء",
+   "en": "postponement; staff"
+  },
+  "هور": {
+   "ar": "الانهيار",
+   "en": "collapsing"
+  },
+  "أوه": {
+   "ar": "التأوه",
+   "en": "sighing, tenderness"
+  },
+  "عزب": {
+   "ar": "الغيبة",
+   "en": "escaping notice"
+  },
+  "بدن": {
+   "ar": "البدن",
+   "en": "body; sacrificial camel"
+  },
+  "غيض": {
+   "ar": "النقصان",
+   "en": "diminution"
+  },
+  "جود": {
+   "ar": "الجودي؛ والجياد",
+   "en": "Judi; steeds"
+  },
+  "هرع": {
+   "ar": "الإسراع",
+   "en": "hurrying"
+  },
+  "رهط": {
+   "ar": "الرهط",
+   "en": "kin, group"
+  },
+  "رفد": {
+   "ar": "العطاء",
+   "en": "giving"
+  },
+  "سعد": {
+   "ar": "السعادة",
+   "en": "happiness"
+  },
+  "شهق": {
+   "ar": "الشهيق",
+   "en": "gasping, braying"
+  },
+  "جذذ": {
+   "ar": "القطع",
+   "en": "cutting off"
+  },
+  "جبب": {
+   "ar": "الجب",
+   "en": "well, pit"
+  },
+  "لقط": {
+   "ar": "الالتقاط",
+   "en": "picking up"
+  },
+  "حوش": {
+   "ar": "التنزيه",
+   "en": "declaring free; far be it"
+  },
+  "عجف": {
+   "ar": "الهزال",
+   "en": "leanness"
+  },
+  "بعر": {
+   "ar": "البعير",
+   "en": "camel"
+  },
+  "صنو": {
+   "ar": "الصنو",
+   "en": "twin, counterpart"
+  },
+  "جزع": {
+   "ar": "الجزع",
+   "en": "impatience, panic"
+  },
+  "شخص": {
+   "ar": "التحديق",
+   "en": "fixed staring"
+  },
+  "قنع": {
+   "ar": "الرفع؛ والقناعة",
+   "en": "raising; contentment"
+  },
+  "صفد": {
+   "ar": "الأصفاد",
+   "en": "fetters, shackles"
+  },
+  "أمل": {
+   "ar": "الأمل",
+   "en": "hope"
+  },
+  "وسم": {
+   "ar": "العلامة؛ والوسم",
+   "en": "mark; branding"
+  },
+  "طرو": {
+   "ar": "الطراوة",
+   "en": "freshness"
+  },
+  "مخر": {
+   "ar": "الشق؛ والمواخر",
+   "en": "cleaving; plowing ships"
+  },
+  "وصب": {
+   "ar": "الدوام",
+   "en": "perpetuity"
+  },
+  "لبن": {
+   "ar": "اللبن",
+   "en": "milk"
+  },
+  "لمح": {
+   "ar": "اللمح",
+   "en": "glance, blink"
+  },
+  "أثث": {
+   "ar": "الأثاث",
+   "en": "furniture"
+  },
+  "حظر": {
+   "ar": "المنع؛ والحظر",
+   "en": "prevention, prohibition"
+  },
+  "كلو": {
+   "ar": "كلا",
+   "en": "both"
+  },
+  "قسطس": {
+   "ar": "القسطاس",
+   "en": "balance, scale"
+  },
+  "رفت": {
+   "ar": "الرفات",
+   "en": "crumbled bones"
+  },
+  "جلب": {
+   "ar": "الجلب؛ والجلباب",
+   "en": "bringing; cloak"
+  },
+  "تور": {
+   "ar": "التارة",
+   "en": "time, turn"
+  },
+  "شكل": {
+   "ar": "الشاكلة",
+   "en": "way, manner"
+  },
+  "نبع": {
+   "ar": "الينبوع",
+   "en": "spring, fountain"
+  },
+  "بخع": {
+   "ar": "الإهلاك حزنا",
+   "en": "killing oneself with grief"
+  },
+  "جرز": {
+   "ar": "الجرز",
+   "en": "barren land"
+  },
+  "رقد": {
+   "ar": "الرقود",
+   "en": "sleep"
+  },
+  "شوي": {
+   "ar": "الشي؛ والشوى",
+   "en": "roasting; scalp"
+  },
+  "حفف": {
+   "ar": "الإحاطة؛ والحفاف",
+   "en": "surrounding"
+  },
+  "زلق": {
+   "ar": "الزلق",
+   "en": "slipperiness"
+  },
+  "هشم": {
+   "ar": "الهشيم",
+   "en": "crushed stubble"
+  },
+  "غدر": {
+   "ar": "الترك؛ والغدر",
+   "en": "leaving out; treachery"
+  },
+  "عضد": {
+   "ar": "العضد",
+   "en": "upper arm; support"
+  },
+  "وبق": {
+   "ar": "الهلاك",
+   "en": "ruin"
+  },
+  "حقب": {
+   "ar": "الحقب",
+   "en": "long age, eon"
+  },
+  "غطو": {
+   "ar": "الغطاء",
+   "en": "cover"
+  },
+  "جني": {
+   "ar": "الجني",
+   "en": "freshly picked"
+  },
+  "أزز": {
+   "ar": "التحريك والإزعاج",
+   "en": "stirring, incitement"
+  },
+  "أرب": {
+   "ar": "الحاجة؛ والمأرب",
+   "en": "need"
+  },
+  "ضمم": {
+   "ar": "الضم",
+   "en": "drawing together"
+  },
+  "أزر": {
+   "ar": "القوة؛ والمؤازرة",
+   "en": "strength; support"
+  },
+  "قوع": {
+   "ar": "القاع",
+   "en": "barren plain"
+  },
+  "هضم": {
+   "ar": "الهضم",
+   "en": "digestion; wrong"
+  },
+  "خمد": {
+   "ar": "الخمود",
+   "en": "lifelessness, extinction"
+  },
+  "خردل": {
+   "ar": "الخردل",
+   "en": "mustard seed"
+  },
+  "نفش": {
+   "ar": "الانتشار؛ والنفش",
+   "en": "spreading; teasing"
+  },
+  "غوص": {
+   "ar": "الغوص",
+   "en": "diving"
+  },
+  "صهر": {
+   "ar": "الصهر",
+   "en": "melting; in-law kinship"
+  },
+  "عتق": {
+   "ar": "العتق",
+   "en": "antiquity, manumission"
+  },
+  "سحق": {
+   "ar": "البعد؛ والسحق",
+   "en": "remoteness; crushing"
+  },
+  "عرر": {
+   "ar": "التعرض؛ والمعرة",
+   "en": "exposure; annoyance"
+  },
+  "عطل": {
+   "ar": "التعطيل",
+   "en": "abandonment, suspension"
+  },
+  "ذبب": {
+   "ar": "الذباب",
+   "en": "fly"
+  },
+  "غثو": {
+   "ar": "الغثاء",
+   "en": "scum, rubbish"
+  },
+  "نكب": {
+   "ar": "الميل؛ والمناكب",
+   "en": "deviating; tracts"
+  },
+  "عبث": {
+   "ar": "العبث",
+   "en": "vanity, idle play"
+  },
+  "زجج": {
+   "ar": "الزجاجة",
+   "en": "glass"
+  },
+  "ودق": {
+   "ar": "الودق",
+   "en": "rain"
+  },
+  "هبو": {
+   "ar": "الهباء",
+   "en": "fine dust"
+  },
+  "رسس": {
+   "ar": "الرس",
+   "en": "(people of) Ar-Rass"
+  },
+  "ملح": {
+   "ar": "الملح",
+   "en": "salt"
+  },
+  "خضع": {
+   "ar": "الخضوع",
+   "en": "humility, submission"
+  },
+  "قلي": {
+   "ar": "البغض",
+   "en": "hatred"
+  },
+  "هيم": {
+   "ar": "الهيام",
+   "en": "wandering; raging thirst"
+  },
+  "سبأ": {
+   "ar": "سبأ",
+   "en": "Sheba"
+  },
+  "حجز": {
+   "ar": "الحاجز",
+   "en": "barrier"
+  },
+  "كبب": {
+   "ar": "الكب",
+   "en": "throwing down"
+  },
+  "شطأ": {
+   "ar": "الشاطئ؛ والشطء",
+   "en": "bank; shoot"
+  },
+  "سرمد": {
+   "ar": "السرمد",
+   "en": "eternity"
+  },
+  "عنكب": {
+   "ar": "العنكبوت",
+   "en": "spider"
+  },
+  "روض": {
+   "ar": "الروضة",
+   "en": "meadow, garden"
+  },
+  "خدد": {
+   "ar": "الخد؛ والأخدود",
+   "en": "cheek; trench"
+  },
+  "سبغ": {
+   "ar": "الإسباغ",
+   "en": "ample bestowal"
+  },
+  "حنجر": {
+   "ar": "الحنجرة",
+   "en": "throat"
+  },
+  "وطر": {
+   "ar": "الوطر",
+   "en": "need, purpose"
+  },
+  "لغب": {
+   "ar": "اللغوب",
+   "en": "weariness"
+  },
+  "شغل": {
+   "ar": "الشغل",
+   "en": "occupation, business"
+  },
+  "رمم": {
+   "ar": "الرميم",
+   "en": "decayed bones"
+  },
+  "ثقب": {
+   "ar": "الثقب",
+   "en": "piercing"
+  },
+  "نزف": {
+   "ar": "النفاد",
+   "en": "exhaustion"
+  },
+  "سقم": {
+   "ar": "السقم",
+   "en": "sickness"
+  },
+  "حنث": {
+   "ar": "الحنث",
+   "en": "oath-breaking"
+  },
+  "قحم": {
+   "ar": "الاقتحام",
+   "en": "plunging"
+  },
+  "هيج": {
+   "ar": "الهيجان",
+   "en": "raging"
+  },
+  "زمر": {
+   "ar": "الزمرة",
+   "en": "group, company"
+  },
+  "دخن": {
+   "ar": "الدخان",
+   "en": "smoke"
+  },
+  "قيض": {
+   "ar": "التقييض",
+   "en": "appointment"
+  },
+  "كمم": {
+   "ar": "الكم",
+   "en": "sheath, sleeve"
+  },
+  "برم": {
+   "ar": "الإبرام",
+   "en": "firm resolution"
+  },
+  "غلي": {
+   "ar": "الغليان",
+   "en": "boiling"
+  },
+  "عتل": {
+   "ar": "الجر بعنف",
+   "en": "dragging violently"
+  },
+  "دهر": {
+   "ar": "الدهر",
+   "en": "time, age"
+  },
+  "ضغن": {
+   "ar": "الضغن",
+   "en": "rancor, spite"
+  },
+  "محن": {
+   "ar": "الامتحان",
+   "en": "testing"
+  },
+  "شعب": {
+   "ar": "الشعب",
+   "en": "people, nation"
+  },
+  "سهو": {
+   "ar": "السهو",
+   "en": "heedlessness"
+  },
+  "كهن": {
+   "ar": "الكهانة",
+   "en": "soothsaying"
+  },
+  "لمم": {
+   "ar": "اللمم",
+   "en": "minor sins"
+  },
+  "أشر": {
+   "ar": "الأشر",
+   "en": "arrogance, insolence"
+  },
+  "جلل": {
+   "ar": "الجلال",
+   "en": "majesty"
+  },
+  "طمث": {
+   "ar": "الطمث",
+   "en": "touching (deflowering)"
+  },
+  "رجج": {
+   "ar": "الرج",
+   "en": "violent shaking"
+  },
+  "بسس": {
+   "ar": "البس",
+   "en": "crumbling"
+  },
+  "وجف": {
+   "ar": "الإيجاف؛ والوجف",
+   "en": "urging; throbbing"
+  },
+  "قطف": {
+   "ar": "القطوف",
+   "en": "clusters (of fruit)"
+  },
+  "عهن": {
+   "ar": "العهن",
+   "en": "wool"
+  },
+  "حطب": {
+   "ar": "الحطب",
+   "en": "firewood"
+  },
+  "لبد": {
+   "ar": "الكثير؛ واللبد",
+   "en": "abundance"
+  },
+  "بتل": {
+   "ar": "التبتل",
+   "en": "devotion"
+  },
+  "بسر": {
+   "ar": "العبوس",
+   "en": "frowning"
+  },
+  "نشط": {
+   "ar": "النشاط",
+   "en": "briskness, activity"
+  },
+  "خنس": {
+   "ar": "الخنوس",
+   "en": "retreating, slinking"
+  },
+  "بعثر": {
+   "ar": "البعثرة",
+   "en": "scattering"
+  },
+  "كدح": {
+   "ar": "الكدح",
+   "en": "toiling"
+  },
+  "وسق": {
+   "ar": "الجمع؛ والاتساق",
+   "en": "gathering; completeness"
+  },
+  "فكك": {
+   "ar": "الفك",
+   "en": "freeing; separation"
+  },
+  "ربح": {
+   "ar": "الربح",
+   "en": "profit"
+  },
+  "بقل": {
+   "ar": "البقل",
+   "en": "herbs, greens"
+  },
+  "قثأ": {
+   "ar": "القثاء",
+   "en": "cucumbers"
+  },
+  "فوم": {
+   "ar": "الثوم",
+   "en": "garlic (or wheat)"
+  },
+  "عدس": {
+   "ar": "العدس",
+   "en": "lentils"
+  },
+  "بصل": {
+   "ar": "البصل",
+   "en": "onions"
+  },
+  "فقع": {
+   "ar": "الفقوع",
+   "en": "shocking brightness"
+  },
+  "وشي": {
+   "ar": "الشية",
+   "en": "blemish, fleck"
+  },
+  "مرو": {
+   "ar": "المروة",
+   "en": "Marwa"
+  },
+  "نعق": {
+   "ar": "النعيق",
+   "en": "shouting (at flock)"
+  },
+  "رمض": {
+   "ar": "رمضان",
+   "en": "Ramadan"
+  },
+  "وسن": {
+   "ar": "السنة",
+   "en": "slumber"
+  },
+  "أود": {
+   "ar": "الإثقال",
+   "en": "burdening"
+  },
+  "فصم": {
+   "ar": "الانفصام",
+   "en": "separation, breaking"
+  },
+  "سنه": {
+   "ar": "التسنه",
+   "en": "undergoing change"
+  },
+  "صلد": {
+   "ar": "الصلد",
+   "en": "smooth hardness"
+  },
+  "طلل": {
+   "ar": "الطل",
+   "en": "dew, light rain"
+  },
+  "غمض": {
+   "ar": "التغميض",
+   "en": "closing eyes (to)"
+  },
+  "لحف": {
+   "ar": "الإلحاف",
+   "en": "importunate begging"
+  },
+  "خبط": {
+   "ar": "التخبط",
+   "en": "confounding"
+  },
+  "رمز": {
+   "ar": "الرمز",
+   "en": "gesture, sign"
+  },
+  "ذخر": {
+   "ar": "الادخار",
+   "en": "storing"
+  },
+  "بهل": {
+   "ar": "الابتهال",
+   "en": "invocation (of curse)"
+  },
+  "دنر": {
+   "ar": "الدينار",
+   "en": "dinar"
+  },
+  "غزو": {
+   "ar": "الغزو",
+   "en": "raiding"
+  },
+  "فظظ": {
+   "ar": "الفظاظة",
+   "en": "harshness"
+  },
+  "حوب": {
+   "ar": "الحوب",
+   "en": "sin"
+  },
+  "عول": {
+   "ar": "الميل؛ والعول",
+   "en": "inclining; dependence"
+  },
+  "بدر": {
+   "ar": "المبادرة",
+   "en": "hastening"
+  },
+  "فضو": {
+   "ar": "الإفضاء",
+   "en": "consummation, joining"
+  },
+  "جبت": {
+   "ar": "الجبت",
+   "en": "idol, sorcery"
+  },
+  "نضج": {
+   "ar": "النضج",
+   "en": "ripening"
+  },
+  "ثبي": {
+   "ar": "الثبة",
+   "en": "squadron, band"
+  },
+  "بطأ": {
+   "ar": "التباطؤ",
+   "en": "lagging behind"
+  },
+  "ذيع": {
+   "ar": "الإذاعة",
+   "en": "spreading (news)"
+  },
+  "نبط": {
+   "ar": "الاستنباط",
+   "en": "derivation, deduction"
+  },
+  "رغم": {
+   "ar": "المراغم",
+   "en": "refuge, escape"
+  },
+  "بتك": {
+   "ar": "التبتيك",
+   "en": "slitting"
+  },
+  "ذبذب": {
+   "ar": "الذبذبة",
+   "en": "wavering"
+  },
+  "خنق": {
+   "ar": "الخنق",
+   "en": "strangling"
+  },
+  "وقذ": {
+   "ar": "الوقذ",
+   "en": "beating to death"
+  },
+  "نطح": {
+   "ar": "النطح",
+   "en": "goring"
+  },
+  "ذكو": {
+   "ar": "التذكية",
+   "en": "due slaughter"
+  },
+  "تيه": {
+   "ar": "التيه",
+   "en": "wandering"
+  },
+  "بحث": {
+   "ar": "البحث",
+   "en": "searching"
+  },
+  "نفي": {
+   "ar": "النفي",
+   "en": "exile, banishment"
+  },
+  "نهج": {
+   "ar": "المنهاج",
+   "en": "open way, method"
+  },
+  "قسس": {
+   "ar": "القسيس",
+   "en": "priest"
+  },
+  "رمح": {
+   "ar": "الرمح",
+   "en": "spear"
+  },
+  "سيب": {
+   "ar": "السائبة",
+   "en": "released (camel)"
+  },
+  "حير": {
+   "ar": "الحيرة",
+   "en": "bewilderment"
+  },
+  "نوي": {
+   "ar": "النوى",
+   "en": "date-stones"
+  },
+  "قنو": {
+   "ar": "القنو",
+   "en": "cluster (of dates)"
+  },
+  "ينع": {
+   "ar": "الينع",
+   "en": "ripening"
+  },
+  "ضأن": {
+   "ar": "الضأن",
+   "en": "sheep"
+  },
+  "معز": {
+   "ar": "المعز",
+   "en": "goats"
+  },
+  "شحم": {
+   "ar": "الشحم",
+   "en": "fat, grease"
+  },
+  "ذأم": {
+   "ar": "الذأم",
+   "en": "blame, rejection"
+  },
+  "ريش": {
+   "ar": "الريش",
+   "en": "feathers, adornment"
+  },
+  "حثث": {
+   "ar": "الحث",
+   "en": "urging on, swiftness"
+  },
+  "نكد": {
+   "ar": "النكد",
+   "en": "scantiness, grudging"
+  },
+  "سهل": {
+   "ar": "السهل",
+   "en": "plain"
+  },
+  "قمل": {
+   "ar": "القمل",
+   "en": "lice"
+  },
+  "ضفدع": {
+   "ar": "الضفادع",
+   "en": "frogs"
+  },
+  "جرر": {
+   "ar": "الجر",
+   "en": "dragging"
+  },
+  "شمت": {
+   "ar": "الشماتة",
+   "en": "gloating"
+  },
+  "سكت": {
+   "ar": "السكوت",
+   "en": "falling silent"
+  },
+  "بجس": {
+   "ar": "الانبجاس",
+   "en": "gushing forth"
+  },
+  "نتق": {
+   "ar": "النتق",
+   "en": "raising, shaking"
+  },
+  "صمت": {
+   "ar": "الصمت",
+   "en": "silence"
+  },
+  "شوك": {
+   "ar": "الشوكة",
+   "en": "sting, might"
+  },
+  "زحف": {
+   "ar": "الزحف",
+   "en": "marching"
+  },
+  "حوز": {
+   "ar": "التحيز",
+   "en": "tactical withdrawal"
+  },
+  "مكو": {
+   "ar": "المكاء",
+   "en": "whistling"
+  },
+  "شرد": {
+   "ar": "التشريد",
+   "en": "dispersal"
+  },
+  "كسد": {
+   "ar": "الكساد",
+   "en": "stagnation"
+  },
+  "وطن": {
+   "ar": "الموطن",
+   "en": "battlefield, homeland"
+  },
+  "نجس": {
+   "ar": "النجاسة",
+   "en": "impurity"
+  },
+  "ضهأ": {
+   "ar": "المضاهاة",
+   "en": "imitation"
+  },
+  "كوي": {
+   "ar": "الكي",
+   "en": "branding"
+  },
+  "جبه": {
+   "ar": "الجبهة",
+   "en": "forehead"
+  },
+  "ثبط": {
+   "ar": "التثبيط",
+   "en": "holding back"
+  },
+  "جمح": {
+   "ar": "الجموح",
+   "en": "bolting"
+  },
+  "جرف": {
+   "ar": "الجرف",
+   "en": "crumbling bank"
+  },
+  "زري": {
+   "ar": "الازدراء",
+   "en": "despising"
+  },
+  "بلع": {
+   "ar": "البلع",
+   "en": "swallowing"
+  },
+  "قلع": {
+   "ar": "الإقلاع",
+   "en": "holding back"
+  },
+  "حنذ": {
+   "ar": "الحنيذ",
+   "en": "roasted"
+  },
+  "روع": {
+   "ar": "الروع",
+   "en": "terror"
+  },
+  "طرح": {
+   "ar": "الطرح",
+   "en": "casting"
+  },
+  "رتع": {
+   "ar": "الرتع",
+   "en": "grazing freely"
+  },
+  "درهم": {
+   "ar": "الدرهم",
+   "en": "dirham"
+  },
+  "زهد": {
+   "ar": "الزهد",
+   "en": "asceticism"
+  },
+  "غلق": {
+   "ar": "التغليق",
+   "en": "bolting shut"
+  },
+  "هيت": {
+   "ar": "الدعوة للمجيء",
+   "en": "calling to come"
+  },
+  "شغف": {
+   "ar": "الشغف",
+   "en": "consuming love"
+  },
+  "خبز": {
+   "ar": "الخبز",
+   "en": "bread"
+  },
+  "حصحص": {
+   "ar": "الظهور بعد الخفاء",
+   "en": "becoming manifest"
+  },
+  "مير": {
+   "ar": "الميرة",
+   "en": "provisioning"
+  },
+  "صوع": {
+   "ar": "الصواع",
+   "en": "drinking cup"
+  },
+  "فتأ": {
+   "ar": "الفتوء",
+   "en": "ceasing"
+  },
+  "ثرب": {
+   "ar": "التثريب",
+   "en": "reproach"
+  },
+  "فند": {
+   "ar": "التفنيد",
+   "en": "deeming senile"
+  },
+  "محل": {
+   "ar": "المحال",
+   "en": "Might"
+  },
+  "جفأ": {
+   "ar": "الجفاء",
+   "en": "scum, froth"
+  },
+  "جرع": {
+   "ar": "التجرع",
+   "en": "gulping"
+  },
+  "رمد": {
+   "ar": "الرماد",
+   "en": "ashes"
+  },
+  "فرع": {
+   "ar": "الفرع",
+   "en": "branch"
+  },
+  "جثث": {
+   "ar": "الاجتثاث",
+   "en": "uprooting"
+  },
+  "لقح": {
+   "ar": "اللقاح",
+   "en": "fertilization"
+  },
+  "فضح": {
+   "ar": "الفضح",
+   "en": "disgracing"
+  },
+  "عضو": {
+   "ar": "التعضية",
+   "en": "dividing into parts"
+  },
+  "دفأ": {
+   "ar": "الدفء",
+   "en": "warmth"
+  },
+  "بغل": {
+   "ar": "البغل",
+   "en": "mule"
+  },
+  "دسس": {
+   "ar": "الدس",
+   "en": "burying, hiding"
+  },
+  "فرث": {
+   "ar": "الفرث",
+   "en": "digesta"
+  },
+  "حفد": {
+   "ar": "الحفدة",
+   "en": "grandchildren, attendants"
+  },
+  "جوو": {
+   "ar": "الجو",
+   "en": "air, atmosphere"
+  },
+  "ظعن": {
+   "ar": "الظعن",
+   "en": "moving, migration"
+  },
+  "صوف": {
+   "ar": "الصوف",
+   "en": "wool"
+  },
+  "وبر": {
+   "ar": "الوبر",
+   "en": "fur, soft hair"
+  },
+  "وكد": {
+   "ar": "التوكيد",
+   "en": "confirmation"
+  },
+  "غزل": {
+   "ar": "الغزل",
+   "en": "spinning"
+  },
+  "جوس": {
+   "ar": "الجوس",
+   "en": "ranging through"
+  },
+  "نغض": {
+   "ar": "الإنغاض",
+   "en": "shaking (head)"
+  },
+  "حنك": {
+   "ar": "الاحتناك",
+   "en": "bridling, controlling"
+  },
+  "وفر": {
+   "ar": "الوفرة",
+   "en": "ampleness"
+  },
+  "قصف": {
+   "ar": "القصف",
+   "en": "destruction (by wind)"
+  },
+  "دلك": {
+   "ar": "الدلوك",
+   "en": "declining"
+  },
+  "هجد": {
+   "ar": "التهجد",
+   "en": "night vigil"
+  },
+  "خبو": {
+   "ar": "الخبو",
+   "en": "subsiding"
+  },
+  "فجو": {
+   "ar": "الفجوة",
+   "en": "gap, opening"
+  },
+  "يقظ": {
+   "ar": "اليقظة",
+   "en": "wakefulness"
+  },
+  "سردق": {
+   "ar": "السرادق",
+   "en": "pavilion"
+  },
+  "بيد": {
+   "ar": "البيد",
+   "en": "perishing"
+  },
+  "وأل": {
+   "ar": "الموئل",
+   "en": "refuge"
+  },
+  "قضض": {
+   "ar": "الانقضاض",
+   "en": "tumbling down"
+  },
+  "عيب": {
+   "ar": "العيب",
+   "en": "defect, damage"
+  },
+  "غصب": {
+   "ar": "الغصب",
+   "en": "force, usurpation"
+  },
+  "ردم": {
+   "ar": "الردم",
+   "en": "barrier, rampart"
+  },
+  "شعل": {
+   "ar": "الاشتعال",
+   "en": "blazing"
+  },
+  "حنن": {
+   "ar": "الحنان",
+   "en": "tenderness"
+  },
+  "مخض": {
+   "ar": "المخاض",
+   "en": "labor pains"
+  },
+  "حتم": {
+   "ar": "الحتم",
+   "en": "decisiveness"
+  },
+  "ضدد": {
+   "ar": "الضد",
+   "en": "opposition"
+  },
+  "وفد": {
+   "ar": "الوفد",
+   "en": "delegation"
+  },
+  "أدد": {
+   "ar": "الإد",
+   "en": "monstrosity"
+  },
+  "هدد": {
+   "ar": "الهد",
+   "en": "collapse"
+  },
+  "ركز": {
+   "ar": "الركز",
+   "en": "faint sound"
+  },
+  "ثري": {
+   "ar": "الثرى",
+   "en": "moist earth"
+  },
+  "خلع": {
+   "ar": "الخلع",
+   "en": "removing"
+  },
+  "نعل": {
+   "ar": "النعل",
+   "en": "sandal"
+  },
+  "هشش": {
+   "ar": "الهش",
+   "en": "beating down"
+  },
+  "سحل": {
+   "ar": "الساحل",
+   "en": "shore, coast"
+  },
+  "وني": {
+   "ar": "الفتور",
+   "en": "flagging, languor"
+  },
+  "لحي": {
+   "ar": "اللحية",
+   "en": "beard"
+  },
+  "زرق": {
+   "ar": "الزرقة",
+   "en": "blueness"
+  },
+  "صفصف": {
+   "ar": "الصفصف",
+   "en": "level plain"
+  },
+  "أمت": {
+   "ar": "الأمت",
+   "en": "crookedness"
+  },
+  "همس": {
+   "ar": "الهمس",
+   "en": "whisper"
+  },
+  "عنو": {
+   "ar": "الخضوع",
+   "en": "submission"
+  },
+  "ضنك": {
+   "ar": "الضنك",
+   "en": "straitened life"
+  },
+  "زهر": {
+   "ar": "الزهرة",
+   "en": "splendor, blossom"
+  },
+  "قصم": {
+   "ar": "القصم",
+   "en": "shattering"
+  },
+  "دمغ": {
+   "ar": "الدمغ",
+   "en": "crushing"
+  },
+  "رتق": {
+   "ar": "الرتق",
+   "en": "joinedness"
+  },
+  "فتق": {
+   "ar": "الفتق",
+   "en": "cleaving"
+  },
+  "كلأ": {
+   "ar": "الكلاءة",
+   "en": "guarding"
+  },
+  "نفح": {
+   "ar": "النفحة",
+   "en": "breath, blast"
+  },
+  "فهم": {
+   "ar": "التفهيم",
+   "en": "giving understanding"
+  },
+  "نون": {
+   "ar": "النون",
+   "en": "Nun (letter/fish)"
+  },
+  "حدب": {
+   "ar": "الحدب",
+   "en": "mound, hump"
+  },
+  "ذهل": {
+   "ar": "الذهول",
+   "en": "shocked forgetfulness"
+  },
+  "همد": {
+   "ar": "الهمود",
+   "en": "lifelessness"
+  },
+  "عطف": {
+   "ar": "العطف",
+   "en": "turning aside (arrogantly)"
+  },
+  "مجس": {
+   "ar": "المجوس",
+   "en": "Magians"
+  },
+  "قمع": {
+   "ar": "المقمعة",
+   "en": "mace, hammer"
+  },
+  "ضمر": {
+   "ar": "الضمور",
+   "en": "leanness"
+  },
+  "عمق": {
+   "ar": "العمق",
+   "en": "depth, distance"
+  },
+  "تفث": {
+   "ar": "التفث",
+   "en": "unkemptness (of pilgrim)"
+  },
+  "وجب": {
+   "ar": "السقوط؛ والوجوب",
+   "en": "falling; obligation"
+  },
+  "هدم": {
+   "ar": "الهدم",
+   "en": "demolition"
+  },
+  "صمع": {
+   "ar": "الصومعة",
+   "en": "cloister, cell"
+  },
+  "بأر": {
+   "ar": "البئر",
+   "en": "well"
+  },
+  "سطو": {
+   "ar": "السطو",
+   "en": "assault"
+  },
+  "سلب": {
+   "ar": "السلب",
+   "en": "taking away"
+  },
+  "لفح": {
+   "ar": "اللفح",
+   "en": "scorching"
+  },
+  "كلح": {
+   "ar": "الكلوح",
+   "en": "gloominess"
+  },
+  "أيم": {
+   "ar": "الأيم",
+   "en": "unmarried state"
+  },
+  "ذعن": {
+   "ar": "الإذعان",
+   "en": "submission"
+  },
+  "حيف": {
+   "ar": "الحيف",
+   "en": "injustice"
+  },
+  "لوذ": {
+   "ar": "اللواذ",
+   "en": "stealth"
+  },
+  "فلن": {
+   "ar": "فلان",
+   "en": "so-and-so"
+  },
+  "فسر": {
+   "ar": "التفسير",
+   "en": "explanation"
+  },
+  "عبأ": {
+   "ar": "الاكتراث",
+   "en": "caring"
+  },
+  "ضير": {
+   "ar": "الضرر",
+   "en": "harm"
+  },
+  "شرذم": {
+   "ar": "الشرذمة",
+   "en": "small band"
+  },
+  "طود": {
+   "ar": "الطود",
+   "en": "towering mountain"
+  },
+  "كبكب": {
+   "ar": "الكبكبة",
+   "en": "hurling headlong"
+  },
+  "ريع": {
+   "ar": "الريع",
+   "en": "high place, elevation"
+  },
+  "فره": {
+   "ar": "الفراهة",
+   "en": "skillfulness"
+  },
+  "بسم": {
+   "ar": "التبسم",
+   "en": "smiling"
+  },
+  "هدهد": {
+   "ar": "الهدهد",
+   "en": "hoopoe"
+  },
+  "خبأ": {
+   "ar": "الخبء",
+   "en": "hidden thing"
+  },
+  "عفر": {
+   "ar": "العفريت",
+   "en": "stalwart"
+  },
+  "جمد": {
+   "ar": "الجمود",
+   "en": "rigidity"
+  },
+  "تقن": {
+   "ar": "الإتقان",
+   "en": "perfection"
+  },
+  "وكز": {
+   "ar": "الوكز",
+   "en": "striking (with fist)"
+  },
+  "ذود": {
+   "ar": "الذود",
+   "en": "keeping back, defending"
+  },
+  "جذو": {
+   "ar": "الجذوة",
+   "en": "firebrand"
+  },
+  "بقع": {
+   "ar": "البقعة",
+   "en": "spot, place"
+  },
+  "فصح": {
+   "ar": "الفصاحة",
+   "en": "eloquence"
+  },
+  "ردأ": {
+   "ar": "الردء",
+   "en": "support"
+  },
+  "قبح": {
+   "ar": "القبح",
+   "en": "loathsomeness"
+  },
+  "نوأ": {
+   "ar": "النوء",
+   "en": "weighing down"
+  },
+  "خطط": {
+   "ar": "الخط",
+   "en": "writing"
+  },
+  "مسو": {
+   "ar": "المساء",
+   "en": "evening"
+  },
+  "صعر": {
+   "ar": "التصعير",
+   "en": "turning away (cheek)"
+  },
+  "ختر": {
+   "ar": "الختر",
+   "en": "treachery"
+  },
+  "جفو": {
+   "ar": "التجافي",
+   "en": "forsaking"
+  },
+  "جوف": {
+   "ar": "الجوف",
+   "en": "inside, belly"
+  },
+  "عوق": {
+   "ar": "التعويق",
+   "en": "hindering"
+  },
+  "سلق": {
+   "ar": "السلق",
+   "en": "smiting (with tongues)"
+  },
+  "نحب": {
+   "ar": "النحب",
+   "en": "vow; death"
+  },
+  "صيص": {
+   "ar": "الصيصة",
+   "en": "fortress"
+  },
+  "سرد": {
+   "ar": "السرد",
+   "en": "linking (mail)"
+  },
+  "جفن": {
+   "ar": "الجفنة",
+   "en": "bowl"
+  },
+  "عرم": {
+   "ar": "العرم",
+   "en": "dam"
+  },
+  "خمط": {
+   "ar": "الخمط",
+   "en": "bitter fruit"
+  },
+  "أثل": {
+   "ar": "الأثل",
+   "en": "tamarisk"
+  },
+  "نوش": {
+   "ar": "التناوش",
+   "en": "grasping"
+  },
+  "قطمر": {
+   "ar": "القطمير",
+   "en": "date-stone membrane"
+  },
+  "قمح": {
+   "ar": "الإقماح",
+   "en": "raising the head"
+  },
+  "عرجن": {
+   "ar": "العرجون",
+   "en": "date-stalk"
+  },
+  "مسخ": {
+   "ar": "المسخ",
+   "en": "transformation"
+  },
+  "لزب": {
+   "ar": "اللزوب",
+   "en": "adhesiveness"
+  },
+  "غول": {
+   "ar": "الغول",
+   "en": "intoxication harm"
+  },
+  "شوب": {
+   "ar": "الشوب",
+   "en": "mixture"
+  },
+  "زفف": {
+   "ar": "الزفيف",
+   "en": "hastening"
+  },
+  "تلل": {
+   "ar": "التل",
+   "en": "throwing down"
+  },
+  "جبن": {
+   "ar": "الجبين",
+   "en": "forehead, side"
+  },
+  "أبق": {
+   "ar": "الإباق",
+   "en": "fleeing"
+  },
+  "سهم": {
+   "ar": "المساهمة",
+   "en": "casting lots"
+  },
+  "لقم": {
+   "ar": "الالتقام",
+   "en": "swallowing"
+  },
+  "سوح": {
+   "ar": "الساحة",
+   "en": "courtyard"
+  },
+  "لوت": {
+   "ar": "مضي الوقت",
+   "en": "passing of time"
+  },
+  "نوص": {
+   "ar": "المناص",
+   "en": "escape"
+  },
+  "قطط": {
+   "ar": "القط",
+   "en": "record, share"
+  },
+  "صفن": {
+   "ar": "الصفون",
+   "en": "pawing (the ground)"
+  },
+  "رخو": {
+   "ar": "الرخاء",
+   "en": "gentleness"
+  },
+  "قشعر": {
+   "ar": "القشعريرة",
+   "en": "shivering"
+  },
+  "شكس": {
+   "ar": "التشاكس",
+   "en": "quarreling"
+  },
+  "شمز": {
+   "ar": "الاشمئزاز",
+   "en": "aversion"
+  },
+  "فوض": {
+   "ar": "التفويض",
+   "en": "entrusting"
+  },
+  "ركد": {
+   "ar": "الركود",
+   "en": "motionlessness"
+  },
+  "رهو": {
+   "ar": "الرهو",
+   "en": "stagnancy"
+  },
+  "حقف": {
+   "ar": "الأحقاف",
+   "en": "winding sand hills"
+  },
+  "عيي": {
+   "ar": "العي",
+   "en": "inability to express"
+  },
+  "تعس": {
+   "ar": "التعس",
+   "en": "downfall, misery"
+  },
+  "أسن": {
+   "ar": "الأسن",
+   "en": "stagnancy"
+  },
+  "عسل": {
+   "ar": "العسل",
+   "en": "honey"
+  },
+  "معي": {
+   "ar": "الأمعاء",
+   "en": "bowels"
+  },
+  "شرط": {
+   "ar": "الأشراط",
+   "en": "portents"
+  },
+  "قفل": {
+   "ar": "القفل",
+   "en": "lock"
+  },
+  "لحن": {
+   "ar": "اللحن",
+   "en": "tone, implication"
+  },
+  "نبز": {
+   "ar": "التنابز",
+   "en": "nicknaming"
+  },
+  "لقب": {
+   "ar": "اللقب",
+   "en": "nickname"
+  },
+  "جسس": {
+   "ar": "التجسس",
+   "en": "spying"
+  },
+  "ليت": {
+   "ar": "الليت",
+   "en": "diminishing"
+  },
+  "بسق": {
+   "ar": "البسوق",
+   "en": "tallness"
+  },
+  "لفظ": {
+   "ar": "اللفظ",
+   "en": "utterance"
+  },
+  "حيد": {
+   "ar": "الحيد",
+   "en": "deviation"
+  },
+  "حبك": {
+   "ar": "الحبك",
+   "en": "pathways"
+  },
+  "هجع": {
+   "ar": "الهجوع",
+   "en": "sleeping"
+  },
+  "صكك": {
+   "ar": "الصك",
+   "en": "striking"
+  },
+  "رقق": {
+   "ar": "الرق",
+   "en": "parchment"
+  },
+  "ألت": {
+   "ar": "الليت",
+   "en": "diminishing"
+  },
+  "قوب": {
+   "ar": "القاب",
+   "en": "span, distance"
+  },
+  "قوس": {
+   "ar": "القوس",
+   "en": "bow"
+  },
+  "ضيز": {
+   "ar": "الضيزى",
+   "en": "unjust division"
+  },
+  "كدي": {
+   "ar": "الإكداء",
+   "en": "stinting"
+  },
+  "قني": {
+   "ar": "الإقناء",
+   "en": "sufficing"
+  },
+  "سمد": {
+   "ar": "السمود",
+   "en": "heedless amusement"
+  },
+  "همر": {
+   "ar": "الانهمار",
+   "en": "pouring"
+  },
+  "دسر": {
+   "ar": "الدسر",
+   "en": "nails, pegs"
+  },
+  "قعر": {
+   "ar": "الانقعار",
+   "en": "uprooting"
+  },
+  "دهي": {
+   "ar": "الداهية",
+   "en": "calamity"
+  },
+  "أنم": {
+   "ar": "الأنام",
+   "en": "creatures"
+  },
+  "فني": {
+   "ar": "الفناء",
+   "en": "perishing"
+  },
+  "شوظ": {
+   "ar": "الشواظ",
+   "en": "flame"
+  },
+  "فنن": {
+   "ar": "الفنن",
+   "en": "branch"
+  },
+  "دهم": {
+   "ar": "الدهمة",
+   "en": "dark greenness"
+  },
+  "نضخ": {
+   "ar": "النضخ",
+   "en": "gushing"
+  },
+  "خيم": {
+   "ar": "الخيمة",
+   "en": "tent"
+  },
+  "رفرف": {
+   "ar": "الرفرف",
+   "en": "cushion"
+  },
+  "عبقر": {
+   "ar": "العبقري",
+   "en": "rich carpet"
+  },
+  "وضن": {
+   "ar": "الوضن",
+   "en": "weaving"
+  },
+  "خضد": {
+   "ar": "الخضد",
+   "en": "thornlessness"
+  },
+  "طلح": {
+   "ar": "الطلح",
+   "en": "banana (acacia)"
+  },
+  "سكب": {
+   "ar": "السكب",
+   "en": "pouring"
+  },
+  "مزن": {
+   "ar": "المزن",
+   "en": "clouds"
+  },
+  "جلس": {
+   "ar": "المجلس",
+   "en": "assembly"
+  },
+  "رصص": {
+   "ar": "الرص",
+   "en": "compactness"
+  },
+  "خشب": {
+   "ar": "الخشب",
+   "en": "timber"
+  },
+  "سند": {
+   "ar": "الإسناد",
+   "en": "propping"
+  },
+  "غبن": {
+   "ar": "التغابن",
+   "en": "mutual loss"
+  },
+  "ثيب": {
+   "ar": "الثيب",
+   "en": "matron"
+  },
+  "نمم": {
+   "ar": "النميمة",
+   "en": "slander"
+  },
+  "زنم": {
+   "ar": "الزنيم",
+   "en": "ignoble"
+  },
+  "خرطم": {
+   "ar": "الخرطوم",
+   "en": "snout, trunk"
+  },
+  "حرد": {
+   "ar": "الحرد",
+   "en": "intent, purpose"
+  },
+  "حسم": {
+   "ar": "الحسوم",
+   "en": "uninterrupted succession"
+  },
+  "صرع": {
+   "ar": "الصرع",
+   "en": "falling prostrate"
+  },
+  "وهي": {
+   "ar": "الوهي",
+   "en": "flimsiness"
+  },
+  "هاء": {
+   "ar": "التناول",
+   "en": "giving; here-take"
+  },
+  "وتن": {
+   "ar": "الوتين",
+   "en": "aorta"
+  },
+  "هلع": {
+   "ar": "الهلع",
+   "en": "anxiety"
+  },
+  "عزو": {
+   "ar": "الجماعات المتفرقة",
+   "en": "separate groups"
+  },
+  "وفض": {
+   "ar": "الإيفاض",
+   "en": "hastening"
+  },
+  "نسر": {
+   "ar": "نسر",
+   "en": "Nasr (idol)"
+  },
+  "حرس": {
+   "ar": "الحرس",
+   "en": "guards"
+  },
+  "هرب": {
+   "ar": "الهرب",
+   "en": "flight"
+  },
+  "حري": {
+   "ar": "التحري",
+   "en": "seeking (truth)"
+  },
+  "غدق": {
+   "ar": "الغدق",
+   "en": "abundance"
+  },
+  "زمل": {
+   "ar": "التزمل",
+   "en": "enwrapment"
+  },
+  "غصص": {
+   "ar": "الغصة",
+   "en": "choking"
+  },
+  "كثب": {
+   "ar": "الكثيب",
+   "en": "sand heap"
+  },
+  "هيل": {
+   "ar": "الهيل",
+   "en": "pouring (sand)"
+  },
+  "دثر": {
+   "ar": "التدثر",
+   "en": "enwrapment"
+  },
+  "قسر": {
+   "ar": "القسوة",
+   "en": "—"
+  },
+  "حرك": {
+   "ar": "التحريك",
+   "en": "moving"
+  },
+  "ترق": {
+   "ar": "التراقي",
+   "en": "collarbones"
+  },
+  "مطو": {
+   "ar": "التمطي",
+   "en": "strutting"
+  },
+  "سدي": {
+   "ar": "السدى",
+   "en": "purposelessness"
+  },
+  "مشج": {
+   "ar": "الأمشاج",
+   "en": "mingled fluid"
+  },
+  "قمطر": {
+   "ar": "القمطرير",
+   "en": "austerity"
+  },
+  "زمهر": {
+   "ar": "الزمهرير",
+   "en": "bitter cold"
+  },
+  "كفت": {
+   "ar": "الكفات",
+   "en": "gathering"
+  },
+  "شمخ": {
+   "ar": "الشموخ",
+   "en": "loftiness"
+  },
+  "وهج": {
+   "ar": "الوهج",
+   "en": "blazing"
+  },
+  "ثجج": {
+   "ar": "الثجاج",
+   "en": "pouring"
+  },
+  "دهق": {
+   "ar": "الدهاق",
+   "en": "brimfulness"
+  },
+  "نخر": {
+   "ar": "النخر",
+   "en": "decay"
+  },
+  "سهر": {
+   "ar": "الساهرة",
+   "en": "wakeful plain"
+  },
+  "سمك": {
+   "ar": "السمك",
+   "en": "canopy, ceiling"
+  },
+  "غطش": {
+   "ar": "الإغطاش",
+   "en": "darkening"
+  },
+  "ألو": {
+   "ar": "اليمين؛ والآلاء",
+   "en": "oath; blessings"
+  },
+  "هود": {
+   "ar": "هود عليه السلام؛ واليهود",
+   "en": "Hud; Jews"
+  },
+  "أدم": {
+   "ar": "آدم عليه السلام",
+   "en": "Adam"
+  },
+  "دحو": {
+   "ar": "البسط",
+   "en": "spreading out"
+  },
+  "طمم": {
+   "ar": "الطامة",
+   "en": "overwhelming calamity"
+  },
+  "قضب": {
+   "ar": "القضب",
+   "en": "green fodder, vegetables"
+  },
+  "أبب": {
+   "ar": "الأب",
+   "en": "pasture, herbage"
+  },
+  "صخخ": {
+   "ar": "الصاخة",
+   "en": "deafening Blast"
+  },
+  "كدر": {
+   "ar": "الانكدار",
+   "en": "plunging, falling (stars)"
+  },
+  "وحش": {
+   "ar": "الوحوش",
+   "en": "wild beasts"
+  },
+  "وأد": {
+   "ar": "الوأد",
+   "en": "burying alive (infanticide)"
+  },
+  "كشط": {
+   "ar": "الكشط",
+   "en": "stripping off"
+  },
+  "كنس": {
+   "ar": "الكنس",
+   "en": "retreating (stars)"
+  },
+  "عسعس": {
+   "ar": "العسعسة",
+   "en": "receding (night)"
+  },
+  "ضنن": {
+   "ar": "الضنة",
+   "en": "stinginess (with unseen)"
+  },
+  "طفف": {
+   "ar": "التطفيف",
+   "en": "giving short measure"
+  },
+  "رين": {
+   "ar": "الرين",
+   "en": "rust (on hearts)"
+  },
+  "رحق": {
+   "ar": "الرحيق",
+   "en": "pure wine"
+  },
+  "سنم": {
+   "ar": "التسنيم",
+   "en": "Tasneem (heavenly spring)"
+  },
+  "غمز": {
+   "ar": "الغمز",
+   "en": "winking (in mockery)"
+  },
+  "دفق": {
+   "ar": "الدفق",
+   "en": "gushing forth"
+  },
+  "هزل": {
+   "ar": "الهزل",
+   "en": "jest, unseriousness"
+  },
+  "نمرق": {
+   "ar": "النمارق",
+   "en": "cushions"
+  },
+  "زرب": {
+   "ar": "الزرابي",
+   "en": "rich carpets"
+  },
+  "سطح": {
+   "ar": "التسطيح",
+   "en": "flattening, leveling"
+  },
+  "سوط": {
+   "ar": "السوط",
+   "en": "whip, scourge"
+  },
+  "جمم": {
+   "ar": "الجم",
+   "en": "abundance"
+  },
+  "كبد": {
+   "ar": "الكبد",
+   "en": "toil, hardship"
+  },
+  "شفه": {
+   "ar": "الشفتان",
+   "en": "lips"
+  },
+  "نجد": {
+   "ar": "النجدان",
+   "en": "two highways (good/evil)"
+  },
+  "سغب": {
+   "ar": "المسغبة",
+   "en": "hunger, famine"
+  },
+  "طحو": {
+   "ar": "الطحو",
+   "en": "spreading out"
+  },
+  "لهم": {
+   "ar": "الإلهام",
+   "en": "inspiration"
+  },
+  "دسو": {
+   "ar": "التدسية",
+   "en": "burying, debasing"
+  },
+  "دمدم": {
+   "ar": "الدمدمة",
+   "en": "crushing destruction"
+  },
+  "لظي": {
+   "ar": "التلظي",
+   "en": "flaming"
+  },
+  "سجو": {
+   "ar": "السجو",
+   "en": "stillness (of night)"
+  },
+  "تين": {
+   "ar": "التين",
+   "en": "fig"
+  },
+  "سفع": {
+   "ar": "السفع",
+   "en": "seizing (by forelock)"
+  },
+  "زبن": {
+   "ar": "الزبانية",
+   "en": "guards (of Hell)"
+  },
+  "ضبح": {
+   "ar": "الضبح",
+   "en": "panting"
+  },
+  "قدح": {
+   "ar": "القدح",
+   "en": "striking (fire)"
+  },
+  "نقع": {
+   "ar": "النقع",
+   "en": "dust (of battle)"
+  },
+  "كند": {
+   "ar": "الكنود",
+   "en": "ingratitude"
+  },
+  "حصل": {
+   "ar": "التحصيل",
+   "en": "gathering, obtaining"
+  },
+  "فيل": {
+   "ar": "الفيل",
+   "en": "elephant"
+  },
+  "قرش": {
+   "ar": "قريش",
+   "en": "Quraysh"
+  },
+  "شتو": {
+   "ar": "الشتاء",
+   "en": "winter"
+  },
+  "صيف": {
+   "ar": "الصيف",
+   "en": "summer"
+  },
+  "نحر": {
+   "ar": "النحر",
+   "en": "sacrifice, slaughter"
+  },
+  "بتر": {
+   "ar": "البتر",
+   "en": "cutting off"
+  },
+  "جيد": {
+   "ar": "الجيد",
+   "en": "neck"
+  },
+  "مسد": {
+   "ar": "المسد",
+   "en": "palm fiber (rope)"
+  },
+  "صمد": {
+   "ar": "الصمد",
+   "en": "Eternal, Absolute"
+  },
+  "كفأ": {
+   "ar": "الكفء",
+   "en": "equal, match"
+  },
+  "وقب": {
+   "ar": "الوقوب",
+   "en": "settling (darkness)"
+  },
+  "نفث": {
+   "ar": "النفث",
+   "en": "blowing (spells)"
+  }
+ }
+}
