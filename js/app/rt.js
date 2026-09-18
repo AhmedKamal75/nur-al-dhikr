@@ -103,6 +103,10 @@ export const rt = {
   // (v4.2) bookmark-note edits in the ayah-study modal: debounced dispatch.
   bookmarkNoteTimer: null,
   audioSearchTimer: null,
+  // (v5.10.8) unified voice-picker moshaf search: debounced query +
+  // timer, ephemeral per modal open (cleared by recite-voice-open).
+  reciterPickQuery: '',
+  reciterPickTimer: null,
   rootsSearchTimer: null,
   hadithQueryTimer: null,
   hadithGridSearchTimer: null,

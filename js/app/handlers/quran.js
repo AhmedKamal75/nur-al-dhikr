@@ -44,6 +44,7 @@ import { showToast } from '../../ui/toast.js';
 import * as player from '../../services/player.js';
 import * as recitation from '../../services/recitation.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
+import { verseAudioCandidates } from '../../services/surahPlayback.js';
 import { setFlipDirection, setFullscreenAnim } from '../../ui/readingTokens.js';
 /**
  * (v5.2.18) Mushaf builders load on demand: every static import of the
@@ -483,6 +484,21 @@ export const clickHandlers = {
     await startPracticeRound(ds.rule);
   },
 
+  // (v5.10.1) guided rule lesson: validate the id, ensure the pool, and
+  // open the lesson modal with pool-drawn examples (never invented refs).
+  'practice-lesson': async (ds) => {
+    const { tajweedLessonRule, tajweedLessonExamples } =
+      await import('../../domain/tajweedLessons.js');
+    const rule = tajweedLessonRule(ds.rule);
+    if (!rule) return;
+    await ensureTajweedPool(store.getState());
+    const { buildPracticeLesson } = await import('../../views/tajweedPracticeView.js');
+    const examples = tajweedLessonExamples(store.getState().tajweedPool, rule.id);
+    openModal(buildPracticeLesson(store.getState(), rule.id, examples), {
+      labelledBy: 'modal-title-practice',
+    });
+  },
+
   'practice-tap': (ds) => {
     if (!rt.practiceSession || rt.practiceSession.checked) return;
     const key = `${ds.word}:${ds.start}:${ds.end}`;
@@ -529,7 +545,33 @@ export const clickHandlers = {
     const surahDoc = state.quran.surahs[String(surah)];
     const ayahText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayah))?.text;
     if (!ayahText) return;
-    const targets = buildAnswerKey(ayahText, 'mixed');
+    // (v5.9.0) nearest-ayah fallback: a rule-less ayah no longer dead-ends
+    // with a toast — the round starts on the closest ayah in the SAME
+    // surah that carries marked rules (outward scan, nearer wins, earlier
+    // wins ties), and the toast names the substitute honestly. A surah
+    // with no marked rules anywhere keeps the original toast.
+    let useAyah = ayah;
+    let useText = ayahText;
+    let targets = buildAnswerKey(ayahText, 'mixed');
+    if (!targets.length && Array.isArray(surahDoc?.ayahs)) {
+      const textByNum = new Map(surahDoc.ayahs.map((a) => [String(a.number), a.text]));
+      for (let d = 1; d < surahDoc.ayahs.length && !targets.length; d += 1) {
+        for (const cand of [ayah - d, ayah + d]) {
+          const txt = textByNum.get(String(cand));
+          if (!txt) continue;
+          const tg = buildAnswerKey(txt, 'mixed');
+          if (tg.length) {
+            useAyah = cand;
+            useText = txt;
+            targets = tg;
+            break;
+          }
+        }
+      }
+      if (targets.length) {
+        showToast(t('practice.nearestAyah', state.settings.language, { s: surah, a: useAyah }));
+      }
+    }
     if (!targets.length) {
       showToast(t('practice.nothingHere', state.settings.language));
       return;
@@ -538,8 +580,8 @@ export const clickHandlers = {
       ruleId: 'mixed',
       mode: 'single',
       surah,
-      ayah,
-      text: ayahText,
+      ayah: useAyah,
+      text: useText,
       selected: new Set(),
       checked: false,
       targets,
@@ -699,7 +741,12 @@ export const clickHandlers = {
       // (v5.2.61) offline-first single verses: the key carries surah:ayah,
       // so a stored Blob wins over the rendered CDN url (which stays the
       // fallback when nothing is stored).
-      let url = ds.url;
+      // (v5.10.4) mirror walk: the rendered data-url is ONE primary-CDN
+      // file — on a flaky connection that single file's death was the
+      // whole story ("تعذّر التشغيل" on every tap). Build the full
+      // ordered candidate list and let recitation.play() walk it silently,
+      // toasting only when every mirror is spent.
+      let urls = [];
       const [s, a] = String(ds.key || '')
         .split(':')
         .map(Number);
@@ -709,14 +756,22 @@ export const clickHandlers = {
         if (g != null) {
           try {
             const blob = await getVerseAudio(st.settings.reciter, g);
-            if (blob) url = URL.createObjectURL(blob);
+            if (blob) urls = [URL.createObjectURL(blob)];
           } catch {
             /* storage failure reads as streaming */
           }
         }
+        if (!urls.length) {
+          const st2 = store.getState();
+          const g2 = globalAyahNumber(st2.quran.meta?.surahs, s, a);
+          urls = verseAudioCandidates(st2.settings.reciter, s, a, g2);
+          if (ds.url && !urls.includes(ds.url)) urls.push(ds.url);
+        }
+      } else if (ds.url) {
+        urls = [ds.url];
       }
-      if (!url) return;
-      recitation.play(url, ds.key);
+      if (!urls.length) return;
+      recitation.play(urls, ds.key);
     }
   },
 };

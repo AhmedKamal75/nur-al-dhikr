@@ -349,6 +349,13 @@ describe('mushaf regroup: zero feature loss', () => {
     'word-copy',
     'word-share',
     'word-bookmark',
+    // v5.10.1: guided tajweed lesson shortcut on each practice rule row.
+    'practice-lesson',
+    // v5.10.5: playback-mode toggle chips (verse console ↔ file player).
+    'recite-mode-surah',
+    'recite-mode-ayah',
+    // v5.10.6: console overflow panel toggle (transport row declutter).
+    'recite-more-toggle',
   ]);
 
   function currentUnion() {

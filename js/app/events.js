@@ -48,7 +48,10 @@ import {
   changeHandlers as quranChange,
   inputHandlers as quranInput,
 } from './handlers/quran.js';
-import { clickHandlers as quranAudioClick } from './handlers/quranAudio.js';
+import {
+  clickHandlers as quranAudioClick,
+  inputHandlers as quranAudioInput,
+} from './handlers/quranAudio.js';
 import { clickHandlers as hifzClick } from './handlers/hifz.js';
 import {
   clickHandlers as worshipClick,
@@ -156,6 +159,7 @@ export const inputRegistry = [
   ...navigationInput,
   ...zakatInput,
   ...quranInput,
+  ...quranAudioInput,
 ];
 
 function matchRegistry(registry, el) {

@@ -2,6 +2,162 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.10.9 — console layout repair, 16 ayah voices, unified 312 picker
+
+Three screenshot-driven repairs: (1) the consoles were horizontal flex
+rows, squeezing transport + settings side by side into a giant blob —
+all three hosts are vertical bottom sheets now, with the settings list
+scrolling inside; (2) word labels are gone everywhere (shape carries
+meaning, aria keeps announcing; voice names and ×N counts stay as
+identity); (3) the verse bar's ayah counter no longer duplicates the
+header counter. Voices grow 10 → 16 from the CDN's own census
+(Minshawi, Shatri, Shuraym, Hani Rifai, Sowaid, Basfar — every rung +
+mirror HEAD-verified), with per-voice bitrate ladders that skip missing
+rungs instead of burning doomed fetches. The voice picker unifies both
+worlds: 16 ayah voices plus a live-searched 312-moshaf section —
+picking either flips the playback mode to match, announced by toast,
+so no pick ever looks broken.
+
+## v5.10.8 — follow-along proof + file-mode honesty
+
+Page-turn follow verified live in-browser (reciting across 2:5 → 2:6
+flips mushaf page 2 → 3, zero errors) and pinned by a dedicated e2e
+spec so it can never silently regress. Clarified for the surah default:
+the whole-surah file carries no ayah position by construction, so
+follow/highlight/repeat/compare need ayah mode — the file bar says so
+in one line with the toggle right beside it. Study actions (recite
+buttons, ranges, drills) always use the ayah engine regardless of the
+pref, so follow keeps working wherever study happens.
+
+## v5.10.7 — surah-file default, honest file notes, Sadaf player port,
+
+prime-to-parked, k∈[2,8]
+
+Default playback is now the whole-surah file (one request, zero
+handoffs, every voice) with ayah mode one toggle tap away. Timing
+investigation, stated plainly: NO keyless source publishes per-ayah
+offsets inside surah files (mp3quran/quranicaudio/islamic.network all
+checked; quran.com word-segments exist only for ayah-files of its own
+recitations) — so file mode ships without fake highlighting, with an
+honest one-line note pointing to ayah mode, and nothing ayah-dependent
+breaks (study actions route to the ayah engine by design). Buffering:
+lookahead seed 5 / bounds [2,8] (a bigger stampede would throttle the
+audible file on ~6-connection pools), plus prime-to-parked playback —
+buffered spares play muted and park at ~0, so promotion resumes a hot
+pipeline (iOS falls back to buffered swap silently). Player visuals
+ported from the winning external design onto the real DOM/tokens
+(monochrome transport, file-bar wrap fix, seek restyle, focus rings),
+and fullscreen consoles go icon-only (shape carries meaning).
+
+## v5.10.6 — starve-proof buffering (k=5, fast-up, prune), audio-first dispatch, pro console
+
+The remaining pause lived where measurement said: a sagging network
+outruns any fixed lookahead, and each handoff paid for two full renders
+plus a render-blocked play call. Now: the buffer pool holds up to 5
+with a k=5 startup seed (a continuing session consumes every warmed
+file — zero waste on the common path); a swap-miss fast-forwards the
+estimator immediately (one stall max, never a series) while quiet
+networks glide back down via k-smoothing; skips prune stale prefetches
+instead of burning quota. Every advance path dispatches audio before
+the store mirror, and the mirror carries the card key in the same
+batch — one render per ayah, deterministic. Proven under a forced
+12s-per-file delay on short ayahs: gaps [3,3,2]ms with exactly 4
+requests for 4 ayahs (before: a 12.3s stall). The player console is
+restructured professionally everywhere at once (shared builder):
+transport row (prev, hero play/pause, stop, next, speed, reciter) plus
+a "more" overflow for repeat/loop/follow/listen/echo/sleep/compare/
+file-mode — same actions, same handlers, zero dead buttons.
+
+## v5.10.5 — playback-mode toggle (ayah engine vs surah file) + smoothed lookahead
+
+Two ways to listen, one visible toggle in both players: ayah-by-ayah
+(highlight follow, repeat, compare, echo) or one continuous file per
+surah (zero gaps by construction, 312 voices). Plain play taps follow
+the persisted pref; study actions always use the ayah engine, which is
+also what ayah-level features require. Research verdict: this mirrors
+the industry (Quran.com documents chapter-vs-verse audio for exactly
+these two use cases; the Flutter quran_audio package runs both behind
+one facade). Lookahead k now smooths directly — k = α·k_prev +
+(1−α)·target — so band-edge noise glides instead of flapping; cap
+stays 3 (measured sufficient to a 12s/file regime; each unit is real
+quota).
+
+## v5.10.4 — gapless recitation: pooled spares, adaptive lookahead, single-ayah mirrors
+
+Continuous recitation paused between ayahs because every handoff
+re-fetched, re-decoded and re-spun the pipeline on one shared element.
+The driver now alternates pooled elements: while one ayah plays, upcoming
+ayahs buffer on spares, and each advance swaps onto already-loaded media
+(volume/rate carried over). The next file is requested before the store
+dispatch + re-render, so heavy views can never hold the handoff hostage.
+Lookahead depth adapts to measured throughput — no synthetic speed test,
+no quota waste: every preload reports its preload-start → canplaythrough
+time (zero extra requests), folded into an EWMA against played ayah
+durations; fast networks settle at k=1, slow ones hold up to 3 files
+ahead (pool cap 3, dropped on stop). Proven under a forced 12s-per-file
+delay on short ayahs: gaps stay ~60–110ms with exactly 4 requests for 4
+ayahs (before: a 12.3s stall). Same surgery fixes the per-ayah استماع
+button: it played ONE primary-CDN URL with no fallback, so one hiccup
+meant «تعذّر التشغيل» — it now walks the full mirror chain silently,
+toasting only when every mirror is spent.
+
+## v5.10.2 — reciter playback repairs: verse-pack CORS rescue, catalog triage, one-button cells
+
+Streaming always worked (<audio> needs no CORS) but every verse-pack
+download failed: the primary verse CDN sends no Access-Control-Allow-Origin,
+so fetch() died with net::ERR_FAILED on all 6,236 files. Downloads now
+lead with the CORS-open EveryAyah mirror (same files, verified ACAO: *),
+proven live in-browser (5×200, zero failures, pack cell flips to done).
+Full-catalog triage: all 314 moshaf servers HEAD-checked — 309 alive, 3
+repaired (Jibreen subpath, Saad/Ghamdi remapped to live mp3quran servers),
+2 dead rows removed (312 total). Audio-grid cells are one-button now: a
+downloaded surah plays on tap (unified toggle, offline-blob aware) with
+delete kept as the trailing button.
+
+## v5.10.1 — depth upgrades: kids, nightstand, prayer, statistics, hadith, tajweed
+
+Six thin areas grow real depth. Kids mode gains levels (Seed → Crown),
+a surah-name memory quiz that earns stars, per-surah stars, and a parent
+dashboard (week chart + per-surah breakdown). The nightstand adds three
+display modes (countdown, verse of the day, rotating dhikr) switched
+in place. Prayer rows show iqama waits (display-only, per fard prayer)
+and the log panel adds 30-day insights (completion rate, jamaah share,
+most-missed prayer, best streak). Statistics gains a daily-goal panel,
+streak coaching toward 7/30/100/365-day milestones, and a most-read
+surahs breakdown derived from the mushaf page log. Hadith cards show
+narrator lines (75% corpus coverage, high-confidence patterns only —
+ambiguous rows show none rather than a wrong name), enriched grade chips
+when graded files ship, and every book carries a grade-vocabulary guide.
+Tajweed drill rows gain Learn buttons opening guided lessons: the rule's
+definition plus pool-drawn example ayahs that deep-link into the reader.
+
+## v5.10.0 — ayah-audio mirrors, tajweed-underline toggle, search pagination
+
+P0 Mushaf/audio: the verse engine walks an ordered mirror chain per ayah
+(128kbps primary → 64kbps same-CDN mirror → EveryAyah for mapped voices)
+before admitting failure, with per-hop logging; full-surah fallback stays
+a caller decision after every ayah mirror is spent. New persisted
+`mushafPrefs.tajweedUnderlines` toggle (Settings → Study aids) drops the
+per-family tajweed underlines for a plain page while keeping colors; the
+dotted word-tap underline now yields via CSS `:has()` wherever a tajweed
+underline already marks the word. The surah banner gains SVG diamond
+flank ornaments, a double-ruled frame and a compacted band; fullscreen
+CSS now matches the layout/auto-fit no-vertical-scroll contract (manual
+zoom is the sole scrolling mode); idle fullscreen bars re-reveal on
+keyboard focus; narrow-phone (390px) rules keep bars, banner and tray
+unclipped.
+
+P1 search: no hard truncation — Qur'an/Tafsir/Library groups paginate via
+Load More triggers with "Showing x of n" counters, counts ride the URL
+(qn/tn/ln, shareable, never persisted), and a per-corpus match breakdown
+(Qur'an · Tafsir · Library) heads the results. Deep-link jump +
+keyword highlight behavior unchanged.
+
+P2: Settings gains stateless section-shortcut chips (shared pin state,
+smooth-scroll to top); "Practice this ayah" falls back to the nearest
+same-surah ayah with marked rules instead of dead-ending; the mushaf
+page store is LRU-capped at 48 docs with explicit recency order.
+
 ## v5.9.0 — manual zoom returns, merged with auto-fill + slider control
 
 The old pinch-to-zoom is back, merged with the fill engine instead of

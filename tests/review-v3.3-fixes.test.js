@@ -7,7 +7,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync, statSync, readdirSync } from 'node:fs';
 import { dirname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -101,6 +101,8 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
   // pinch-zoom/ctrl+wheel gestures share the slider's range.
   // v5.9.0 adds autoFit (boolean, default true) — fullscreen auto-fill
   // vs manual zoom.
+  // v5.10.0 adds tajweedUnderlines (boolean, default true) — the
+  // per-family tajweed underline cue toggle.
   assert.deepEqual(p, {
     font: 'amiri',
     paper: 'sepia',
@@ -111,6 +113,7 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
     wordUnderline: true,
     tajweedColoring: false,
     tajweedInspector: true,
+    tajweedUnderlines: true,
     bismillahStyle: 'auto',
     defaultTafsir: 'jalalayn',
     translationPanel: true,
@@ -215,6 +218,37 @@ test('every ES module imported by the app is in the SW precache list', () => {
     missing,
     [],
     `These modules are imported but NOT precached — a first-visit offline install would fail to boot: ${missing.join(', ')}`
+  );
+});
+
+/* ------------------------------------------------------------------ */
+/* v5.10.2 — full-tree precache gate: the import-graph walk above only */
+/* sees static from-edges from js/app.js, so a lazy view's own static  */
+/* imports (and dynamic handler chunks) slipped through —              */
+/* domain/ambient.js + domain/tajweedLessons.js shipped unprecached    */
+/* and would 404 on first offline use. Every file under js/ must be    */
+/* listed, full stop.                                                  */
+/* ------------------------------------------------------------------ */
+
+function allJsFiles(dir, out = []) {
+  for (const f of readdirSync(join(ROOT, dir))) {
+    const p = join(dir, f);
+    if (statSync(join(ROOT, p)).isDirectory()) allJsFiles(p, out);
+    else if (f.endsWith('.js')) out.push(p.replace(/\\/g, '/'));
+  }
+  return out;
+}
+
+test('every js module in the tree is precached (no lazy-only gaps)', () => {
+  const sw = readFileSync(join(ROOT, 'sw.js'), 'utf8');
+  const match = sw.match(/const APP_SHELL = \[(.*?)\];/s);
+  assert.ok(match, 'APP_SHELL list must exist in sw.js');
+  const precache = new Set([...match[1].matchAll(/'([^']+)'/g)].map((m) => m[1]));
+  const missing = allJsFiles('js').filter((f) => !precache.has(f));
+  assert.deepEqual(
+    missing,
+    [],
+    `js modules missing from APP_SHELL — they would 404 offline: ${missing.join(', ')}`
   );
 });
 

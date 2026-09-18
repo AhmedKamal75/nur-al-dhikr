@@ -60,6 +60,13 @@ export const DEFAULT_VIEW = VIEWS.HOME;
  */
 export const KIDS_ALLOWED_VIEWS = Object.freeze([VIEWS.KIDS, VIEWS.TASBIH]);
 
+/**
+ * (v5.10.1) Nightstand display modes: the prayer countdown (default),
+ * a full-screen verse of the day, or a rotating short dhikr. Allowlisted
+ * in sanitize.js; the ambient view owns the switcher.
+ */
+export const AMBIENT_MODES = Object.freeze(['countdown', 'verse', 'dhikr']);
+
 export function isKidsAllowedView(view) {
   return KIDS_ALLOWED_VIEWS.includes(view);
 }
@@ -342,6 +349,14 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // section. Deep links (#/settings/<slug>) override it per visit.
   settingsSection: null,
   reciter: 'ar.alafasy',
+  // (v5.10.5) Playback mode for plain play taps (surah tiles, player):
+  // 'ayah' = verse-by-verse engine (highlight follow, repeat, compare,
+  // echo), 'surah' = one continuous file per surah (zero gaps by
+  // construction, 312 voices). Study actions (recite-from-here, ranges,
+  // drills) always use the ayah engine — they cannot work on a file.
+  // (v5.10.7) Default 'surah': one request, zero handoffs, every voice.
+  // Ayah-level features stay one toggle tap away in both players.
+  reciteMode: 'surah',
   // Compare-two-reciters: voice B + whether new sessions start in compare
   // mode (each ayah with A, then the same ayah with B). Null = no B voice.
   reciterB: null,
@@ -429,8 +444,14 @@ export const DEFAULT_SETTINGS = Object.freeze({
     quietVolume: 30,
     // (v5.2.75, UP-04) quiet hours cancel alerts outright. Off by default.
     quietCancels: false,
+    // (v5.10.1) nightstand display mode: 'countdown' | 'verse' | 'dhikr'.
+    ambientMode: 'countdown',
     // (v5.2.75, UP-06) manual minute offsets per prayer (−60..60).
     offsets: {},
+    // (v5.10.1) iqama waits: minutes after adhan per fard prayer (0..60,
+    // zeros dropped). Display-only congregational help — never shifts the
+    // computed times or the alert schedule, only annotates each row.
+    iqama: {},
     // Ramadan fasting alerts: Suhoor fires N minutes before Fajr (the offset,
     // in minutes), Iftar fires exactly at Maghrib. They only ever fire on
     // days that are actually in Ramadan (checked via the Hijri calendar at
@@ -465,6 +486,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
     wordByWordStudy: true, // tap a word for grammar/i'rab/sarf/meaning
     wordUnderline: true, // subtle per-word affordance dots/underline
     tajweedColoring: false, // color-code Qalqalah/Ghunnah/Madd/etc. — off by default so first-time readers see plain text
+    tajweedUnderlines: true, // non-color cue: distinct underline per tajweed family (toggleable for a plain page)
     tajweedInspector: true, // v3.7: tapping a word lists its rules + what to do (word-study popover)
     bismillahStyle: 'auto', // v3.7: 'auto' (paper-contrast ink) | 'gold' | 'accent' | 'hidden'
     defaultTafsir: 'muyassar',

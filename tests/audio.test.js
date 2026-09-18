@@ -54,12 +54,16 @@ test('validateCustomServer accepts only sane http(s) folders', () => {
   assert.equal(validateCustomServer('https://x.com/a b/').ok, false); // spaces
 });
 
-test('bundled catalog: 314 full mushafs, unique ids, all with servers', () => {
+test('bundled catalog: 312 full mushafs, unique ids, all with servers', () => {
   const doc = JSON.parse(readFileSync(new URL('reciters.json', DIR), 'utf-8'));
-  assert.equal(doc.total, 314);
-  assert.equal(doc.reciters.length, 314);
+  // (v5.10.2) 314 → 312: two dead quranicaudio rows removed (qa-51 duped
+  // qa-52's reciter, qa-75's mujawwad files are gone upstream) and three
+  // repaired (qa-31/qa-105 remapped to live mp3quran servers, qa-56
+  // subpath stripped) — every row live-verified with HEAD checks.
+  assert.equal(doc.total, 312);
+  assert.equal(doc.reciters.length, 312);
   const ids = new Set(doc.reciters.map((r) => r.id));
-  assert.equal(ids.size, 314);
+  assert.equal(ids.size, 312);
   for (const r of doc.reciters) {
     assert.ok(r.server.startsWith('https://'), r.id);
     assert.ok(r.nameEn && r.nameAr, r.id);
@@ -110,6 +114,39 @@ test('sanitizeSettings coerces verse voices to the 10-id allowlist', async () =>
   assert.equal(sanitizeSettings({ reciterB: 'ar.husary' }).reciterB, 'ar.husary');
   assert.equal(sanitizeSettings({ reciterB: '' }).reciterB, null);
   assert.equal(sanitizeSettings({ reciterB: 'qa-97' }).reciterB, null);
+});
+
+test('sanitizeSettings pins reciteMode to ayah|surah (v5.10.5, default surah v5.10.7)', async () => {
+  const { sanitizeSettings } = await import('../js/core/config.js');
+  assert.equal(sanitizeSettings({ reciteMode: 'surah' }).reciteMode, 'surah');
+  assert.equal(sanitizeSettings({ reciteMode: 'ayah' }).reciteMode, 'ayah');
+  assert.equal(sanitizeSettings({}).reciteMode, 'surah', 'default is whole-surah file');
+  assert.equal(sanitizeSettings({ reciteMode: 'file' }).reciteMode, 'surah');
+  assert.equal(sanitizeSettings({ reciteMode: 42 }).reciteMode, 'surah');
+});
+
+test('both consoles carry the playback-mode toggle (v5.10.5)', async () => {
+  const { recitationChipsHTML, consoleSnapshot } = await import('../js/ui/recitationConsole.js');
+  const { renderPlayerBar } = await import('../js/views/playerBar.js');
+  const { initialState } = await import('../js/core/state/initial.js');
+  const st = initialState();
+  const settings = { ...st.settings, language: 'en' };
+  const snap = consoleSnapshot(
+    { active: true, surah: 2, ayah: 5, total: 286, repeat: 1, loop: 1, speed: 1 },
+    settings,
+    null,
+    'en'
+  );
+  const chips = recitationChipsHTML(snap, 'en', { chip: 'c', on: 'on', btn: 'b' });
+  assert.ok(chips.includes('data-action="recite-mode-surah"'), 'verse console offers file mode');
+  const bar = renderPlayerBar({
+    ...st,
+    settings,
+    surahPlayback: { active: false },
+    player: { moshafId: 'mp3-4-4', surah: 1, playing: true },
+    quran: { meta: null },
+  });
+  assert.ok(bar.includes('data-action="recite-mode-ayah"'), 'file bar offers ayah mode');
 });
 
 test('verse engine coerces unknown voices instead of 404ing per ayah', async () => {
@@ -296,4 +333,37 @@ test('audio view lists the 5 verse voices with translation badges', async () => 
   assert.ok(html.includes('Verse-by-verse voices'));
   assert.ok(html.includes('data-key="reciter" data-value="ar.alafasy"'));
   assert.ok(html.includes('Pickthall Translation'), 'translation badge on mashup rows');
+});
+
+test('unified voice picker: ayah voices + searchable moshafs (v5.10.8)', async () => {
+  const { buildReciterPick } = await import('../js/app/handlers/quranAudio.js');
+  const { initialState } = await import('../js/core/state/initial.js');
+  const base = initialState();
+  const state = {
+    ...base,
+    settings: { ...base.settings, language: 'en', customReciters: [] },
+  };
+  const html = buildReciterPick(state);
+  // 16 ayah voices × (A + B rows).
+  assert.equal((html.match(/data-key="reciter"/g) || []).length, 16, 'voice A rows');
+  assert.ok(html.includes('data-action="recite-voice-b"'), 'voice B rows');
+  // Moshaf section: catalog unloaded in node → empty note, no crash.
+  assert.ok(html.includes('data-bind="reciter-pick-search"'), 'moshaf search box');
+  assert.ok(html.includes('#/audio'), 'browse-all fallback link');
+  // A custom moshaf renders as a pickable row even with no catalog.
+  const customs = [
+    {
+      id: 'custom-abc',
+      nameEn: 'My Sheikh',
+      nameAr: 'شيخي',
+      rewaya: '',
+      server: 'https://x/',
+    },
+  ];
+  const html2 = buildReciterPick({
+    ...state,
+    settings: { ...state.settings, customReciters: customs },
+  });
+  assert.ok(html2.includes('data-action="recite-pick-moshaf"'), 'custom moshaf row');
+  assert.ok(html2.includes('My Sheikh'), 'custom name renders');
 });

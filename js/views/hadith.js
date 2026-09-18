@@ -256,6 +256,34 @@ function renderBookGrid(state, lang) {
 /* Book reader                                                         */
 /* ------------------------------------------------------------------ */
 
+/**
+ * (v5.10.1) collection grade guide: an honest one-screen explainer pinned
+ * under the book header. The Two Sahihs carry the sahih-collection note;
+ * every other book is labeled mixed by design (per-hadith grades need the
+ * graded pipeline that has never shipped — tracked, never invented).
+ * The four-grade vocabulary doubles as the legend for enriched grade
+ * chips whenever graded files arrive.
+ */
+function gradeGuideHTML(isSahihCollection, lang) {
+  const grades = ['sahih', 'hasan', 'daif', 'mawdu'];
+  return `
+  <details class="hadith-grade-guide">
+    <summary>${t('hadith.gradeGuide', lang)}</summary>
+    <p class="panel__subtext">${t(isSahihCollection ? 'hadith.standingNote' : 'hadith.mixedNote', lang)}</p>
+    <dl class="hadith-grade-guide__list">
+      ${grades
+        .map(
+          (g) => `
+        <div class="hadith-grade-guide__row">
+          <dt><span class="chip chip--grade chip--grade-${g}">${t(`hadith.grade.${g}Short`, lang)}</span></dt>
+          <dd>${t(`hadith.grade.${g}`, lang)}</dd>
+        </div>`
+        )
+        .join('')}
+    </dl>
+  </details>`;
+}
+
 function sectionChipRow(doc, active, lang, bookmarkCount = 0) {
   const chips = [
     `<button type="button" class="chip ${active === 'all' ? 'chip--active' : ''}" data-action="hadith-section" data-id="all" aria-pressed="${active === 'all'}">${t('hadith.allChapters', lang)}</button>`,
@@ -432,6 +460,7 @@ function renderBookReader(state, lang) {
   <section class="view view--hadith-book">
     ${header}
     ${doc.blurb ? `<p class="view__meta">${escapeHTML(pickLocale(doc.blurb, lang))}</p>` : ''}
+    ${gradeGuideHTML(bookMeta?.standing === 'sahih', lang)}
     ${deepMissed ? `<div class="panel"><p class="empty-hint" role="status">${t('hadith.unknownNumber', lang, { n: deepTarget })}</p></div>` : ''}
 
     <div class="hadith-controls">

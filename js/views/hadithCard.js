@@ -13,6 +13,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
+import { hadithNarrator } from '../domain/hadithStudy.js';
 
 /** One hadith card. `n` deep-link targeting highlights it via data attribute.
  *  (v4.6.0) cards carry the same action trio the azkar cards do: copy,
@@ -40,6 +41,18 @@ export function hadithCardHTML(
   const hl = Array.isArray(highlight) ? highlight : [];
   const num = String(h.n);
   const hasNote = typeof note === 'string' && note.trim() !== '';
+  // (v5.10.1) study aids: the derived narrator line (high-confidence
+  // patterns only — absent when ambiguous) and the enriched grade chip
+  // (validator pass-through; shipped rows carry none, so this is idle
+  // until graded files ship — never invented).
+  const narrator = hadithNarrator(h, lang);
+  const narratorLine = narrator
+    ? `<p class="hadith-card__narrator" dir="auto">${t('hadith.narratedBy', lang, { name: narrator })}</p>`
+    : '';
+  const gradeChip =
+    typeof h.grade === 'string' && ['sahih', 'hasan', 'daif', 'mawdu'].includes(h.grade)
+      ? `<span class="chip chip--grade chip--grade-${h.grade}" title="${t(`hadith.grade.${h.grade}`, lang)}">${t(`hadith.grade.${h.grade}Short`, lang)}</span>`
+      : '';
   // Memorize mode: the Arabic hides behind a reveal tap (the translation
   // stays as the recall prompt); grading chips log the SRS review.
   const arabicBlock =
@@ -71,12 +84,14 @@ export function hadithCardHTML(
     <div class="hadith-card__meta">
       <span class="hadith-card__number" dir="ltr">#${escapeHTML(num)}</span>
       ${sectionName ? `<span class="hadith-card__section">${escapeHTML(sectionName)}</span>` : ''}
+      ${gradeChip}
       ${
         manageable
           ? `<button type="button" class="icon-btn icon-btn--sm hadith-card__hide" data-action="hadith-hide-item" data-book-id="${escapeHTML(bookId)}" data-n="${escapeHTML(num)}" aria-label="${t('content.hideItem', lang)}" title="${t('content.hideItem', lang)}">${icon('eyeOff', { size: 14 })}</button>`
           : ''
       }
     </div>
+    ${narratorLine}
     ${arabicBlock}
     ${h.en && showTranslation && lang !== 'ar' ? `<p class="hadith-card__translation" dir="ltr">${highlightMatch(h.en, hl)}</p>` : ''}
     ${hasNote ? `<p class="hadith-card__note" dir="auto"><span class="hadith-card__note-label">${t('hadith.note', lang)}</span> ${escapeHTML(note)}</p>` : ''}

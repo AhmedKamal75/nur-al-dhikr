@@ -347,6 +347,32 @@ body.has-player .ayah-card {
   text-decoration-color: color-mix(in srgb, var(--color-primary-text) 45%, transparent);
   text-underline-offset: 6px;
 }
+/* (v5.9.0) de-duplication: a word that already carries a tajweed
+   underline cue drops the dotted tap-affordance underline — two
+   underlines at different offsets (6px vs 3px) read as visual noise and
+   can collide with the madd mark stack. Words with color-ONLY tajweed
+   spans (plain madd, uncolored-by-convention rules) keep the dotted cue,
+   and turning "Show tajweed underlines" off restores every dotted cue.
+   :has() degrades gracefully where unsupported (both lines, as before). */
+body:not(.tajweed-underlines-off)
+  .qword--underline:has(
+    > .tajweed--qalqalah,
+    > .tajweed--ghunnah,
+    > .tajweed--ikhfa,
+    > .tajweed--iqlab,
+    > .tajweed--idgham_ghunnah,
+    > .tajweed--idgham_shafawi,
+    > .tajweed--ikhfa_shafawi,
+    > .tajweed--madd_munfasil,
+    > .tajweed--madd_silah,
+    > .tajweed--madd_muttasil,
+    > .tajweed--madd_6,
+    > .tajweed--hamzat_wasl,
+    > .tajweed--lam_shamsiyyah,
+    > .tajweed--tafkhim
+  ) {
+  text-decoration: none;
+}
 /* (v5.2.89, P0-2) waqf-legend mark glyphs: the bare Uthmani signs in
    the Arabic face, gold like the printed page. Text (never background)
    so forced-colors keeps every row readable with no extra fallback. */
@@ -433,6 +459,12 @@ body.has-player .ayah-card {
 .tajweed--tafkhim {
   text-decoration: underline dashed;
   text-underline-offset: 3px;
+}
+/* (v5.9.0) "Show tajweed underlines" pref (Settings → Study aids):
+   off keeps every family COLOR but drops the underline cue for a plain
+   page. Class owned by app/renderer.js like every body class. */
+body.tajweed-underlines-off .tajweed {
+  text-decoration: none;
 }
 
 /* Hifz cloze blanks */
@@ -1087,7 +1119,9 @@ body.has-player .ayah-card {
   justify-content: center;
   gap: var(--space-2);
   width: 100%;
-  margin: var(--space-1) 0;
+  /* (v5.9.0) compact band: the header must never eat a third of the
+     viewport — 2px rhythm + the capped decoupled type size below. */
+  margin: 2px 0;
   /* (v5.5.0) the banner owns its own type size: it used to inherit the
      page font (font: inherit), so at high page scales the frame, flanks
      and meta line ballooned with the text. Decoupled and capped —
@@ -1144,6 +1178,17 @@ body.has-player .ayah-card {
   border-radius: 2px;
   background: color-mix(in srgb, var(--mushaf-gold) 7%, transparent);
   box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--mushaf-gold) 12%, transparent);
+  /* (v5.9.0) outer hairline ring — the double-ruled surah panel of the
+     printed page (frame + offset outline, no extra markup). */
+  outline: 1px solid color-mix(in srgb, var(--mushaf-gold) 34%, transparent);
+  outline-offset: 2px;
+}
+/* The SVG flank ornaments (inline in the banner markup): drawn in the
+   illumination gold, sized off the band so they cap with it. */
+.mushaf-surah-banner__flank svg {
+  display: block;
+  width: 0.85em;
+  height: 0.85em;
 }
 .mushaf-surah-banner__name {
   font-family: var(--mushaf-font-family, var(--font-arabic));
@@ -1291,16 +1336,24 @@ body.has-player .ayah-card {
   border: none;
   box-shadow: none;
 }
-/* In fullscreen the text column itself scrolls — the frame, medallions and
-   page number stay pinned like the printed page while long pages flow. */
+/* In fullscreen the text column never scrolls vertically — the auto-fit
+   engine (js/app/autoFit.js) scales the type so the whole page fits the
+   viewport, and RTL horizontal page-flip (swipe / arrows / keyboard) is
+   the only navigation. The frame, medallions and page number stay pinned
+   like the printed page. Manual-zoom mode (body.is-mushaf-manual, owned
+   by app/renderer.js) is the SOLE exception: the zoomed column scrolls
+   internally per the pinch-zoom contract. */
 .view--mushaf-fullscreen .mushaf-page__text {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   scrollbar-width: thin;
   scrollbar-gutter: stable;
   padding-inline: clamp(var(--space-4), 4vw, var(--space-7));
   overscroll-behavior: contain;
+}
+body.is-mushaf-fullscreen.is-mushaf-manual .view--mushaf-fullscreen .mushaf-page__text {
+  overflow-y: auto;
 }
 
 /* The floating control bar: translucent glass over the book, auto-fading
@@ -1358,6 +1411,15 @@ body.mushaf-fs-idle .mushaf-fs-echo {
   transform: translateY(10px);
   pointer-events: none;
 }
+/* (v5.9.0, a11y) keyboard focus always re-reveals the bars: tabbing into
+   an auto-hidden control restores it visually (pointer/key activity
+   already resets the idle timer in app/fullscreen.js). */
+body.mushaf-fs-idle .mushaf-fs-controls:focus-within,
+body.mushaf-fs-idle .mushaf-fs-console:focus-within {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
 
 /* Fullscreen console second row: the windowed recitation chips re-homed
    over the book. Horizontally scrollable so small phones keep every chip
@@ -1367,20 +1429,24 @@ body.mushaf-fs-idle .mushaf-fs-echo {
   inset-inline: 0;
   bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 52px);
   margin-inline: auto;
-  width: fit-content;
-  max-width: calc(100vw - var(--space-6));
+  /* (v5.10.8) a bottom SHEET, not a pill: the console stacks progress +
+     transport + settings vertically and never covers more than half the
+     page. The old horizontal pill squeezed them side by side. */
+  width: min(560px, calc(100vw - var(--space-6)));
+  max-height: 46vh;
+  overflow-y: auto;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-pill);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
   border: 1px solid color-mix(in srgb, var(--fs-bar-ink) 16%, transparent);
   background: color-mix(in srgb, var(--fs-bar-bg) 76%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: var(--shadow-lg);
   z-index: var(--z-nav);
-  overflow-x: auto;
   scrollbar-width: none;
   transition:
     opacity var(--dur-slow) var(--ease-standard),
@@ -1504,6 +1570,26 @@ body.mushaf-fs-idle .mushaf-fs-echo {
 @media (hover: hover) {
   .mushaf-fs-tap:hover {
     color: rgba(232, 227, 211, 0.5);
+  }
+}
+/* (v5.9.0) narrow-phone rigor (390px): the floating bars scroll
+   internally instead of clipping, the banner band caps tighter, and the
+   translation-tray rows collapse to two columns so labels never clip. */
+@media (max-width: 390px) {
+  .mushaf-fs-controls,
+  .mushaf-fs-console {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .mushaf-fs-controls::-webkit-scrollbar,
+  .mushaf-fs-console::-webkit-scrollbar {
+    display: none;
+  }
+  .mushaf-surah-banner {
+    font-size: calc(0.85rem * min(var(--mushaf-font-scale, 1), 1.15));
+  }
+  .mushaf-tray__row {
+    grid-template-columns: auto 1fr;
   }
 }
 
@@ -1982,26 +2068,27 @@ body.has-player .reader-immersive-echo {
 
 /* Immersive console second row + echo banner: the windowed recitation
    chips re-homed over the reading column. Same glass treatment, same
-   idle auto-fade, horizontally scrollable for small phones. */
+   idle auto-fade; vertical sheet like the mushaf console (v5.10.8). */
 .reader-immersive-console {
   position: fixed;
   inset-inline: 0;
   bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 52px);
   margin-inline: auto;
-  width: fit-content;
-  max-width: calc(100vw - var(--space-6));
+  width: min(560px, calc(100vw - var(--space-6)));
+  max-height: 44vh;
+  overflow-y: auto;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-pill);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
   background: color-mix(in srgb, var(--color-surface) 84%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: var(--shadow-lg);
   z-index: var(--z-nav);
-  overflow-x: auto;
   scrollbar-width: none;
   transition:
     opacity var(--dur-slow) var(--ease-standard),
@@ -2638,6 +2725,67 @@ body.has-player .reader-immersive-echo {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+/* (v5.10.1) rule row pairs the drill button with a lesson shortcut. */
+.practice-rule-row {
+  display: flex;
+  gap: var(--space-1_5);
+  align-items: stretch;
+}
+.practice-rule-row .practice-rule {
+  flex: 1;
+  min-width: 0;
+}
+.practice-rule__learn {
+  flex-shrink: 0;
+  align-self: center;
+}
+/* (v5.10.1) guided lesson modal: definition, example links, drill CTA. */
+.practice-lesson {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.practice-lesson__family {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+.practice-lesson__heading {
+  font-size: var(--fs-base);
+  font-weight: 800;
+  margin: 0;
+}
+.practice-lesson__desc {
+  margin: 0;
+  line-height: var(--lh-normal);
+}
+.practice-lesson__examples {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1_5);
+}
+.practice-lesson__example {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: var(--touch-target);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-decoration: none;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.practice-lesson__example:hover {
+  border-color: var(--color-primary);
 }
 .practice-rule {
   display: flex;

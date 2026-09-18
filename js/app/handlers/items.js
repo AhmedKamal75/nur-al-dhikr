@@ -32,6 +32,7 @@ import {
   buildTextPrompt,
 } from '../../ui/menus.js';
 import { FAVORITE_SORTS } from '../../views/favorites.js';
+import { KIDS_SURAHS, kidsQuizRound } from '../../domain/kids.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { buildCollectionShareText } from '../../views/collection.js';
 import { showToast } from '../../ui/toast.js';
@@ -789,8 +790,65 @@ export const clickHandlers = {
     go(VIEWS.SEARCH, { q: ds.query });
   },
 
+  // (v5.9.0) search pagination: bump one scope's shown-count (page sizes
+  // mirror views/search.js MORE_DEFAULTS) via replaceGo — the URL holds
+  // the counts (shareable, never persisted, no history spam), and a new
+  // query resets them.
+  'search-more': (ds) => {
+    const params = store.getState().activeParams || {};
+    const q = params.q || '';
+    if (!q) return;
+    const scope = ['quran', 'tafsir', 'library'].includes(ds.scope) ? ds.scope : 'library';
+    const key = scope === 'quran' ? 'qn' : scope === 'tafsir' ? 'tn' : 'ln';
+    const step = scope === 'library' ? 40 : scope === 'tafsir' ? 8 : 15;
+    const cur = Math.floor(Number(params[key])) || step;
+    replaceGo(VIEWS.SEARCH, { ...params, [key]: String(cur + step) });
+  },
+
   'clear-search-history': () => {
     store.dispatch(actions.clearSearchHistory());
+  },
+
+  // (v5.10.1) kids memory quiz: build the round from live meta names (the
+  // view only offers Start once meta is loaded, this is the backstop), and
+  // answer taps award a star on a correct first answer. All session state
+  // is ephemeral (kidsQuiz, never persisted); stars persist like the
+  // listening stars through the same KIDS_AWARD_STAR path.
+  'kids-quiz-start': () => {
+    const st = store.getState();
+    const meta = st.quran.meta;
+    if (!meta) return;
+    const pool = KIDS_SURAHS.map((n) => {
+      const m = meta.surahs?.find((x) => Number(x.number) === n);
+      return { n, nameAr: m?.nameAr || '', nameEn: m?.nameTransliteration || m?.nameEn || '' };
+    }).filter((s) => s.nameAr);
+    const round = kidsQuizRound(pool);
+    if (round) store.dispatch(actions.kidsQuizStart(round));
+  },
+
+  'kids-quiz-answer': (ds) => {
+    const st = store.getState();
+    const q = st.kidsQuiz;
+    if (!q || q.answered != null) return;
+    const sn = Math.floor(Number(ds.surah));
+    if (!Number.isFinite(sn)) return;
+    store.dispatch(actions.kidsQuizAnswer(sn));
+    if (sn === q.target) {
+      store.dispatch(actions.awardKidsStar(q.target));
+      showToast(t('kids.quizWin', st.settings.language));
+    }
+  },
+
+  'kids-quiz-exit': () => {
+    store.dispatch(actions.kidsQuizExit());
+  },
+
+  // (v5.10.1) nightstand display-mode switcher (in-place, no navigation).
+  // Hostile modes fall off via the sanitizer allowlist on restore and the
+  // includes-guard here; the view also guards on render.
+  'ambient-mode': (ds) => {
+    if (!['countdown', 'verse', 'dhikr'].includes(ds.mode)) return;
+    store.dispatch(actions.updatePrayerSettings({ ambientMode: ds.mode }));
   },
 };
 

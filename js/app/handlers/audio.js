@@ -8,7 +8,7 @@ import { rt } from '../../app/rt.js';
 import { downloadOne, startAudioPlay, yieldFullSurahPlayer } from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
 import { MUSHAF_META_URL, QURAN_META_URL, VIEWS } from '../../core/config.js';
-import { QURAN_RECITER_IDS, quranAudioUrl } from '../../core/config/quran.js';
+import { QURAN_RECITER_IDS } from '../../core/config/quran.js';
 import { globalAyahNumber } from '../../services/mushaf.js';
 import { go } from '../../core/router.js';
 import { t } from '../../core/i18n.js';
@@ -121,11 +121,14 @@ export const clickHandlers = {
     let saved = 0;
     let failed = 0;
     try {
-      for (const { globalN } of missing) {
+      for (const { ayah, globalN } of missing) {
+        // (v5.10.2) download-ordered candidates: the CORS-open EveryAyah
+        // mirror leads because fetch() to the primary CDN fails CORS
+        // (net::ERR_FAILED on every ayah) while <audio> streaming is fine.
         const res = await audioStore.downloadVerseFile(
           voice,
           globalN,
-          quranAudioUrl(voice, globalN)
+          surahPlayback.verseDownloadCandidates(voice, surah, ayah, globalN)
         );
         if (res.ok) saved += 1;
         else failed += 1;
@@ -255,7 +258,7 @@ export const clickHandlers = {
     store.dispatch(actions.removeCustomReciter(ds.id));
   },
 
-  'quran-play-surah': (ds) => {
+  'quran-play-surah': async (ds) => {
     const state = store.getState();
     const surah = parseInt(ds.surah, 10);
     // (UX-7) the tile serves the ONE session: a verse session holding
@@ -284,6 +287,15 @@ export const clickHandlers = {
       return;
     }
     surahPlayback.stop();
+    // (v5.10.5) playback-mode pref: fresh taps follow it — 'ayah' starts
+    // the verse engine (highlight follow, repeat, compare, echo), 'surah'
+    // the continuous file (zero gaps, 312 voices). Toggles on an ACTIVE
+    // session above never yank it; study actions always use ayah mode.
+    if (store.getState().settings.reciteMode === 'ayah') {
+      const { startVerseSurah } = await import('./quranAudio.js');
+      await startVerseSurah(surah, {});
+      return;
+    }
     startAudioPlay(state.settings.audio.moshafId, surah);
   },
 

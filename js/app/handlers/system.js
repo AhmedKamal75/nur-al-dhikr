@@ -21,6 +21,7 @@ import {
   jumuahNote,
 } from '../../domain/reminderPresets.js';
 import { actions, dryRunRestore, persistedSnapshot, store } from '../../core/state.js';
+import { scrollBehavior } from '../../core/utils.js';
 import { clampSliderNum } from '../inputs.js';
 import { buildMushafSettingsPanel } from '../../views/tafsirPanel.js';
 import { buildReciterPick } from './quranAudio.js';
@@ -35,7 +36,16 @@ import * as backup from '../../services/backup.js';
 
 export const clickHandlers = {
   'set-setting': (ds) => {
-    store.dispatch(actions.updateSettings({ [ds.key]: ds.value }));
+    // (v5.10.8) picking an ayah-by-ayah voice also selects its engine:
+    // with the whole-surah default, a bare voice pick would otherwise
+    // seem to do nothing on the next tap. Announced only on change.
+    const flipMode =
+      (ds.key === 'reciter' || ds.key === 'reciterB') &&
+      store.getState().settings.reciteMode !== 'ayah';
+    store.dispatch(
+      actions.updateSettings({ [ds.key]: ds.value, ...(flipMode ? { reciteMode: 'ayah' } : {}) })
+    );
+    if (flipMode) showToast(t('audio.voiceModeAyah', store.getState().settings.language));
     // Live-apply reciter voices to a running recitation session — otherwise
     // picking a new reciter mid-listen does nothing until the next manual
     // play (the "always the same reciter" complaint).
@@ -57,6 +67,19 @@ export const clickHandlers = {
     }
   },
 
+  // (v5.9.0) settings section shortcuts: pin the section (same
+  // persistence as a manual accordion open) and smooth-scroll it to the
+  // top of the viewport. rAF re-queries after the re-render's DOM patch.
+  'settings-jump': (ds) => {
+    const id = String(ds.sec || '');
+    if (!/^settings-sec-[a-z]+$/.test(id)) return;
+    if (!document.getElementById(id)) return;
+    store.dispatch(actions.updateSettings({ settingsSection: id.slice('settings-sec-'.length) }));
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+    });
+  },
+  // switching the mode off returns home with the full app restored.
   // Kids mode exit (fired by the 2s hold timer in events.js, never by tap):
   // switching the mode off returns home with the full app restored.
   'kids-exit': () => {

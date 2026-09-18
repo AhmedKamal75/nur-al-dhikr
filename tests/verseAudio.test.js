@@ -4,11 +4,11 @@
  *     IndexedDB (no-idb / null / false / []);
  *  2. save/get/list/delete round-trip through a minimal fake IDB, and
  *     downloadVerseFile validates (404/audio-mime/network) into it;
- *  3. the allowlist holds the 10 verified voices (403-probed ids stay
+ *  3. the allowlist holds the 16 verified voices (unsupported ids stay
  *     out) and sanitize keeps them;
  *  4. the engine plays stored Blobs (blob: URLs) with CDN fallback;
  *  5. VERSE_PACK_STATUS caches single/bulk/reset shapes, hostile-safe;
- *  6. the audio view renders 10 voices + the 114-cell packs grid with
+ *  6. the audio view renders 16 voices + the 114-cell packs grid with
  *     counts; handlers + strings are wired.
  */
 import { test, describe, after } from 'node:test';
@@ -187,12 +187,46 @@ describe('verse round-trip through fake IDB', () => {
       globalThis.fetch = realFetch;
     }
   });
+
+  test('downloadVerseFile walks a candidate list: first success wins (v5.10.2)', async () => {
+    const realFetch = globalThis.fetch;
+    const seen = [];
+    const audioBlob = () => new Blob(['z'.repeat(60)], { type: 'audio/mpeg' });
+    try {
+      globalThis.fetch = async (url) => {
+        seen.push(String(url));
+        if (String(url).includes('no-cors-here')) throw new Error('CORS fail');
+        return { status: 200, ok: true, blob: audioBlob };
+      };
+      // Primary (no CORS) throws, mirror saves — the verse-pack rescue.
+      const res = await downloadVerseFile('ar.alafasy', 102, [
+        'https://no-cors-here/1.mp3',
+        'https://everyayah-mirror/001001.mp3',
+      ]);
+      assert.equal(res.ok, true);
+      assert.deepEqual(seen, ['https://no-cors-here/1.mp3', 'https://everyayah-mirror/001001.mp3']);
+      assert.equal((await getVerseAudio('ar.alafasy', 102))?.size, 60);
+      // All 404 → learned missing, not a network error.
+      globalThis.fetch = async () => ({ status: 404, ok: false });
+      assert.deepEqual(
+        await downloadVerseFile('ar.alafasy', 103, ['https://a/1.mp3', 'https://b/1.mp3']),
+        { ok: false, error: 'missing' }
+      );
+      // Empty list degrades to network, never throws.
+      assert.deepEqual(await downloadVerseFile('ar.alafasy', 104, []), {
+        ok: false,
+        error: 'network',
+      });
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
 });
 
-describe('allowlist: ten verified voices', () => {
+describe('allowlist: sixteen verified voices', () => {
   test('exactly the probed-live ids, 403s excluded', () => {
     const ids = QURAN_RECITERS.map((r) => r.id);
-    assert.equal(ids.length, 10);
+    assert.equal(ids.length, 16);
     for (const id of [
       'ar.alafasy',
       'ar.husary',
@@ -204,11 +238,19 @@ describe('allowlist: ten verified voices', () => {
       'ar.muhammadjibreel',
       'ar.hudhaify',
       'ar.ahmedajamy',
+      // (v5.10.8) six CDN-census additions — every ladder rung + every
+      // EveryAyah tertiary HEAD-probed live before allowlisting.
+      'ar.minshawi',
+      'ar.shaatree',
+      'ar.saoodshuraym',
+      'ar.hanirifai',
+      'ar.aymanswoaid',
+      'ar.abdullahbasfar',
     ]) {
       assert.ok(ids.includes(id), `allowlisted: ${id}`);
     }
-    for (const id of ['ar.saoodshuraym', 'ar.abdullahbasfar', 'ar.parhizgar']) {
-      assert.ok(!ids.includes(id), `403-probed, excluded: ${id}`);
+    for (const id of ['ar.parhizgar', 'ar.minshawimujawwad']) {
+      assert.ok(!ids.includes(id), `excluded: ${id}`);
     }
     assert.deepEqual([...QURAN_RECITER_IDS].sort(), [...ids].sort(), 'set mirrors the list');
     for (const r of QURAN_RECITERS) {
@@ -218,9 +260,10 @@ describe('allowlist: ten verified voices', () => {
 
   test('sanitize keeps the new voices', () => {
     assert.equal(sanitizeSettings({ reciter: 'ar.hudhaify' }).reciter, 'ar.hudhaify');
-    assert.equal(sanitizeSettings({ reciter: 'ar.ahmedajamy' }).reciter, 'ar.ahmedajamy');
+    assert.equal(sanitizeSettings({ reciter: 'ar.minshawi' }).reciter, 'ar.minshawi');
+    assert.equal(sanitizeSettings({ reciter: 'ar.saoodshuraym' }).reciter, 'ar.saoodshuraym');
     assert.equal(sanitizeSettings({ reciter: 'bogus' }).reciter, 'ar.alafasy');
-    assert.equal(sanitizeSettings({ reciter: 'ar.shaatree' }).reciter, 'ar.alafasy');
+    assert.equal(sanitizeSettings({ reciter: 'ar.parhizgar' }).reciter, 'ar.alafasy');
   });
 });
 
@@ -285,7 +328,7 @@ describe('VERSE_PACK_STATUS: ephemeral per-voice cache', () => {
   });
 });
 
-describe('audio view: ten voices plus packs grid', () => {
+describe('audio view: sixteen voices plus packs grid', () => {
   function audioState(over = {}) {
     return {
       settings: {
@@ -312,10 +355,10 @@ describe('audio view: ten voices plus packs grid', () => {
     };
   }
 
-  test('voices list all ten; packs grid renders 114 cells', async () => {
+  test('voices list all sixteen; packs grid renders 114 cells', async () => {
     const { renderAudio } = await import('../js/views/audioManager.js');
     const html = renderAudio(audioState());
-    assert.equal((html.match(/data-key="reciter"/g) || []).length, 10, 'ten voice rows');
+    assert.equal((html.match(/data-key="reciter"/g) || []).length, 16, 'sixteen voice rows');
     assert.equal(
       (html.match(/data-action="verse-pack-download"/g) || []).length,
       114,

@@ -47,6 +47,8 @@ const SAFE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent', 'hidden']);
 const MUSHAF_PAPER_IDS = new Set(MUSHAF_PAPERS.map((p) => p.id));
 const ADHAN_MODE_IDS = new Set(['adhan', 'tone', 'off']);
+/** (v5.10.1) nightstand display modes — mirror of config/views.js AMBIENT_MODES. */
+const AMBIENT_MODE_IDS = new Set(['countdown', 'verse', 'dhikr']);
 /** (v4.4) Verse-of-the-day themes — mirror of domain/dailyAyah.js. */
 const DAILY_AYAH_THEME_IDS = new Set([
   'any',
@@ -113,6 +115,8 @@ export function sanitizeMushafPrefs(raw) {
     tajweedInspector: asBool(p.tajweedInspector, true),
     wordUnderline: asBool(p.wordUnderline, true),
     tajweedColoring: asBool(p.tajweedColoring, false),
+    // (v5.9.0) tajweed underline cue toggle — hostile values coerce to on.
+    tajweedUnderlines: asBool(p.tajweedUnderlines, true),
     defaultTafsir: asShortStr(p.defaultTafsir, 'muyassar', 40),
     translationPanel: asBool(p.translationPanel, false),
     // (v4.5) two-page spread: only ever takes effect on wide viewports
@@ -131,6 +135,22 @@ function sanitizePrayerOffsets(raw) {
     const n = Math.floor(Number(raw[k]));
     if (!Number.isFinite(n) || n === 0) continue;
     out[k] = Math.max(-60, Math.min(60, n));
+  }
+  return out;
+}
+
+/**
+ * (v5.10.1) Iqama waits: per-FARD-prayer ints clamped to 0..60, zeros
+ * dropped. Sunrise is deliberately excluded (no iqama); hostile keys and
+ * negatives fall off, never in.
+ */
+function sanitizePrayerIqama(raw) {
+  const out = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+  for (const k of ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha']) {
+    const n = Math.floor(Number(raw[k]));
+    if (!Number.isFinite(n) || n <= 0) continue;
+    out[k] = Math.max(0, Math.min(60, n));
   }
   return out;
 }
@@ -168,6 +188,9 @@ function sanitizePrayer(raw) {
     },
     alertSound: asShortStr(p.alertSound, d.alertSound, 24),
     adhanMode: asEnum(p.adhanMode, ADHAN_MODE_IDS, d.adhanMode),
+    // (v5.10.1) nightstand display mode. Unknown → countdown (current
+    // behavior preserved for old backups that predate the switcher).
+    ambientMode: asEnum(p.ambientMode, AMBIENT_MODE_IDS, d.ambientMode),
     // Loudness schedule: volumes clamp 0–100, quiet times must be HH:MM.
     adhanVolume: Math.round(asNumber(p.adhanVolume, d.adhanVolume ?? 80, 0, 100)),
     quietEnabled: p.quietEnabled === true,
@@ -181,6 +204,8 @@ function sanitizePrayer(raw) {
     // dropped). Sanitized alongside method/asr; applied inside
     // calculateTimes so every consumer inherits them together.
     offsets: sanitizePrayerOffsets(p.offsets),
+    // (v5.10.1) iqama waits (display-only, see sanitizePrayerIqama).
+    iqama: sanitizePrayerIqama(p.iqama),
     ramadanAlerts: {
       suhoor: asBool(ra.suhoor, false),
       iftar: asBool(ra.iftar, false),
@@ -301,6 +326,9 @@ export function sanitizeSettings(raw) {
     // would 404 at play time, so coerce unknown values to the default.
     // (Moshaf ids stay free-form: 314 catalog + user customs, validated live.)
     reciter: QURAN_RECITER_IDS.has(s.reciter) ? s.reciter : DEFAULT_RECITER,
+    // (v5.10.5) playback mode: strict two-value allowlist.
+    // (v5.10.7) unknown → 'surah' (the default, including pre-pref backups).
+    reciteMode: s.reciteMode === 'ayah' ? 'ayah' : 'surah',
     reciterB:
       s.reciterB == null || s.reciterB === ''
         ? null

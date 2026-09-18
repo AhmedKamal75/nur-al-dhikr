@@ -581,7 +581,7 @@ function buildReaderImmersiveConsole(state, lang) {
   const snap = consoleSnapshot(state.surahPlayback, state.settings, sleepSnapshot(), lang);
   return `
     <div class="reader-immersive-console" data-reader-fs-controls>
-      ${recitationChipsHTML(snap, lang, { chip: 'reader-immersive-chip', on: 'reader-immersive-chip--on', btn: 'icon-btn' })}
+      ${recitationChipsHTML(snap, lang, { chip: 'reader-immersive-chip', on: 'reader-immersive-chip--on', btn: 'icon-btn' }, { moreOpen: state.ui?.reciteMore === true })}
     </div>
     ${recitationEchoHTML(snap, lang, 'reader-immersive-echo')}`;
 }

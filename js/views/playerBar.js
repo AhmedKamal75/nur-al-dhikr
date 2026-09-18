@@ -54,6 +54,7 @@ export function renderPlayerBar(state) {
       <div class="player-bar__meta">
         <span class="player-bar__surah">${escapeHTML(surahName)}</span>
         <span class="player-bar__reciter">${escapeHTML(name)}${p.offline ? ` · ${icon('check', { size: 11 })} ${t('audio.offlineBadge', lang)}` : ''}</span>
+        <span class="player-bar__mode-note">${escapeHTML(t('audio.fileModeNote', lang))}</span>
       </div>
       <span class="player-bar__buffer" data-player-buffer hidden>${t('audio.buffering', lang)}</span>
       <button type="button" class="player-bar__chip ${repeat !== 'off' ? 'player-bar__chip--on' : ''}" data-action="player-repeat" aria-pressed="${repeat !== 'off'}" aria-label="${repeatLabel}" title="${repeatLabel}">
@@ -62,6 +63,9 @@ export function renderPlayerBar(state) {
       <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)} — ${rate}&times;">${rate}&times;</button>
       <button type="button" class="player-bar__chip ${p.sleepEnabled ? 'player-bar__chip--on' : ''}" data-action="player-sleep-cycle" aria-pressed="${p.sleepEnabled === true}" aria-label="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}" title="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}">
         ${icon('moon', { size: 14 })}${p.sleepEnabled && p.sleepLabel ? ` ${escapeHTML(p.sleepLabel)}` : ''}
+      </button>
+      <button type="button" class="player-bar__chip" data-action="recite-mode-ayah" aria-label="${t('audio.modeAyah', lang)}" title="${t('audio.modeAyah', lang)}">
+        ${icon('list', { size: 14 })}
       </button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="player-close" data-player-dismiss="1" aria-label="${t('common.close', lang)}">${icon('close', { size: 16 })}</button>
     </div>
@@ -81,14 +85,19 @@ export function renderPlayerBar(state) {
  */
 function recitationBarHTML(state, lang) {
   const sp = state.surahPlayback;
-  // The 13 controls come from the single shared builder (UX-5) — this bar
+  // The controls come from the single shared builder (UX-5) — this bar
   // only owns the header/counter chrome around them.
   const snap = consoleSnapshot(sp, state.settings, sleepSnapshot(), lang);
-  const chips = recitationChipsHTML(snap, lang, {
-    chip: 'player-bar__chip',
-    on: 'player-bar__chip--on',
-    btn: 'icon-btn icon-btn--sm',
-  });
+  const chips = recitationChipsHTML(
+    snap,
+    lang,
+    {
+      chip: 'player-bar__chip',
+      on: 'player-bar__chip--on',
+      btn: 'icon-btn icon-btn--sm',
+    },
+    { moreOpen: state.ui?.reciteMore === true }
+  );
   // Queue position ("2/5") when a saved queue is playing.
   const qPos =
     Array.isArray(sp.queue) && sp.queue.length > 1 && Number.isFinite(Number(sp.qIndex))

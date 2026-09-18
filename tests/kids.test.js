@@ -24,11 +24,19 @@ describe('KIDS_AWARD_STAR', () => {
 
   test('restore keeps sane counts only', () => {
     const out = sanitizeRestoredPayload({
-      kidsStars: { total: 'x', days: { '2026-09-05': 3, nope: 9, '2026-13-99': 2 } },
+      kidsStars: {
+        total: 'x',
+        days: { '2026-09-05': 3, nope: 9, '2026-13-99': 2 },
+        bySurah: { 114: 2, 999: 5, nope: 1 },
+      },
     });
-    assert.deepEqual(out.kidsStars, { total: 0, days: { '2026-09-05': 3 } });
+    assert.deepEqual(out.kidsStars, {
+      total: 0,
+      days: { '2026-09-05': 3 },
+      bySurah: { 114: 2 },
+    });
     const out2 = sanitizeRestoredPayload({ kidsStars: null });
-    assert.deepEqual(out2.kidsStars, { total: 0, days: {} });
+    assert.deepEqual(out2.kidsStars, { total: 0, days: {}, bySurah: {} });
   });
 
   test('kidsMode sanitizes to boolean', () => {

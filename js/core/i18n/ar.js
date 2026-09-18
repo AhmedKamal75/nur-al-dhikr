@@ -206,7 +206,7 @@ export const ar = {
   'nav.audio': 'القراء والصوتيات',
   'audio.title': 'القراء والصوتيات',
   'audio.subtitle':
-    '٣١٤ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',
+    '٣١٢ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',
   'audio.searchPh': 'ابحث عن قارئ بالعربية أو الإنجليزية…',
   'audio.moreResults': 'أول ٦٠ من {n} نتيجة — واصل الكتابة لتضييق البحث.',
   'audio.noResultsHint': 'جرّب كتابة مختلفة — أو أضف قارئك الخاص بالأسفل.',
@@ -229,7 +229,7 @@ export const ar = {
   'audio.surahUnavailable': 'هذه السورة غير متوفرة لدى هذا القارئ.',
   'audio.verseVoices': 'أصوات التلاوة آيةً بآية',
   'audio.verseVoicesHint':
-    'هذه الأصوات العشرة تُشغَّل آيةً بآية في القارئ — من الذاكرة عند تنزيلها أدناه، وإلا فبالبث المباشر. الصوت الثاني ووضع المقارنة في الإعدادات ← القارئ.',
+    'هذه الأصوات الستة عشر تُشغَّل آيةً بآية في القارئ — من الذاكرة عند تنزيلها أدناه، وإلا فبالبث المباشر. الصوت الثاني ووضع المقارنة في الإعدادات ← القارئ.',
   'audio.versePacks': 'حزم الآيات دون اتصال',
   'audio.versePacksHint':
     'آيات كل سورة بالصوت المختار — تُشغَّل دون اتصال في القارئ. تُحدَّث الأعداد عند فتح هذه الشاشة.',
@@ -328,6 +328,23 @@ export const ar = {
   'hifz.suggestHint': 'قرأتها كاملة — جاهزة للحفظ:',
   'audio.play': 'تشغيل',
   'audio.pause': 'إيقاف مؤقت',
+  // (v5.10.5) مفتاح وضع التشغيل: محرك الآيات مقابل ملف السورة.
+  'audio.modeAyah': 'آية بآية',
+  'audio.modeSurah': 'السورة كاملة',
+  // (v5.10.7) أمانة وضع الملف: لا توقيتات مع ملفات السور.
+  'audio.fileModeNote':
+    'ملف السورة كاملة: وضع آية بآية يضيف التظليل وتقليب الصفحات والتكرار والمقارنة.',
+  // (v5.10.8) نافذة اختيار القارئ الموحدة.
+  'audio.voiceModeAyah': 'تم اختيار الصوت — وضع آية بآية',
+  'audio.voiceModeSurah': 'تم اختيار المصحف — وضع السورة كاملة',
+  'audio.fileVoices': 'أصوات السور الكاملة',
+  'audio.moshafShown': 'عرض {x} من {n} — واصل الكتابة للتضييق.',
+  'audio.browseAllMoshafs': 'تصفح الكل في الصوتيات',
+  // (v5.10.6) وحدة التحكم الاحترافية: صف النقل + الإعدادات الإضافية.
+  'audio.transport': 'أزرار التشغيل',
+  'audio.moreSettings': 'إعدادات أكثر',
+  // (v5.10.7) شريط تقدم الجلسة النحيف.
+  'audio.sessionProgress': 'تقدم الجلسة',
   'audio.pauseRecitation': 'إيقاف التلاوة مؤقتًا',
   'audio.resumeRecitation': 'استئناف التلاوة',
   'audio.next': 'السورة التالية',
@@ -510,6 +527,13 @@ export const ar = {
   'search.tafsirResults': 'من التفسير',
   'search.tafsirCount': '{n} مواضع',
   'search.resultsCount': '{n} نتيجة',
+  // (v5.9.0) ترقيم الصفحات + عدّادات المطابقات لكل مدونة.
+  'search.loadMore': 'عرض المزيد',
+  'search.showingOf': 'عرض {x} من {n}',
+  'search.breakdown': 'القرآن: {q} · التفسير: {t} · المكتبة: {l}',
+  // (v5.10.1) انظر التعليق الإنجليزي أعلاه: الحديث مدونة مستقلة، والرابط
+  // ينقل الاستعلام نفسه إلى صفحة الحديث بدل عدّه صفرًا.
+  'search.searchHadith': 'ابحث في الحديث عن «{q}»',
   'search.recent': 'عمليات بحث سابقة',
   'search.clearHistory': 'مسح السجل',
   'search.suggestions': 'جرّب بحثًا',
@@ -777,6 +801,11 @@ export const ar = {
   'prayer.offsetsTitle': 'ضبط دقيق للأوقات (بالدقائق)',
   'prayer.offsetsHint':
     'أزح أي صلاة ±60 دقيقة — مثلًا لمطابقة مسجدك المحلي. يُطبَّق في كل مكان: الجدول والتنبيهات والصيام.',
+  // (v5.10.1) مهلة الإقامة: دقائق عرض فقط بعد الأذان لكل صلاة.
+  'prayer.iqamaTitle': 'مهلة الإقامة (بالدقائق)',
+  'prayer.iqamaHint':
+    'مدة انتظار مسجدك بعد الأذان — يظهر وقت الإقامة تحت الصلاة. للعرض فقط: الأوقات والتنبيهات لا تتغير.',
+  'prayer.iqamaAt': 'الإقامة {time}',
   'prayer.alertSoundNote':
     'يعمل أثناء فتح التطبيق. إذا كان التطبيق مغلقًا أو في الخلفية، سيستخدم جهازك نغمة الإشعار الافتراضية الخاصة به بدلاً من ذلك.',
   // v3.20 prayer-alert reliability — the honest status row.
@@ -935,6 +964,7 @@ export const ar = {
   'mushaf.wordStudy': 'اضغط على كلمة لعرض إعرابها ومعناها',
   'mushaf.wordUnderline': 'تسطير الكلمات القابلة للضغط',
   'mushaf.tajweed': 'تلوين أحكام التجويد',
+  'mushaf.tajweedUnderlines': 'إظهار تسطير التجويد',
   'mushaf.tajweedLegend': 'دليل ألوان التجويد',
   'mushaf.tajweedUncolored': 'بلا لون عمدًا',
   'mushaf.tajweedCoverage':
@@ -973,6 +1003,14 @@ export const ar = {
   'practice.summaryEncourage':
     'كل خطأ يعلّم العين ما تبحث عنه. راجِعها متى شئت — بلا عجلة ولا درجات.',
   'practice.reviewMistakes': 'مراجعة الأخطاء',
+  // (v5.10.1) دروس القواعد الموجّهة.
+  'practice.lesson': 'تعلّم',
+  'practice.lessonWhat': 'القاعدة',
+  'practice.lessonExamples': 'شاهدها في القرآن',
+  'practice.lessonEmpty': 'تظهر الأمثلة مع تحميل بنك التدريب — درّب القاعدة مرة وستجدها هنا.',
+  'practice.drillRule': 'درّب هذه القاعدة',
+  'practice.backToRules': 'عودة إلى القواعد',
+  'practice.exampleRef': 'سورة {s}، آية {a}',
   'practice.again': 'جولة أخرى',
   'practice.reviewHint': 'جولة قصيرة من الأحكام التي فاتت — الأكثر تكرارًا أولًا.',
   'practice.instructionsReview': 'ابحث عن كل حكم مُعلَّم في هذه الآية — هذه أحكام فاتتك سابقًا.',
@@ -982,6 +1020,8 @@ export const ar = {
   'practice.level3': 'متقن',
   'practice.thisAyah': 'تدرّب على هذه الآية',
   'practice.nothingHere': 'لا توجد أحكام تجويد مُعلَّمة في هذه الآية للتدريب — جرّب آية أخرى.',
+  // (v5.9.0) بديل أقرب آية: يبدأ التدريب على أقرب آية فيها أحكام مع التنبيه.
+  'practice.nearestAyah': 'لا توجد أحكام هنا — نتدرب على أقرب آية فيها أحكام ({s}:{a}).',
 
   'wordStudy.title': 'دراسة الكلمة',
   'wordStudy.noData': 'لا تتوفر بيانات نحوية لهذه الكلمة بعد.',
@@ -1143,7 +1183,7 @@ export const ar = {
   'settings.reciterBHint':
     'الصوت الثاني لوضع المقارنة: كل آية تُتلى بالقارئ الأساسي ثم نفس الآية بهذا الصوت.',
   'settings.reciterCompare': 'بدء الجلسات في وضع المقارنة',
-  'settings.audioManager': 'سور كاملة: ٣١٤ قارئًا وتحميل دون اتصال',
+  'settings.audioManager': 'سور كاملة: ٣١٢ قارئًا وتحميل دون اتصال',
   'settings.notifications': 'التذكيرات والإشعارات',
   'settings.addReminder': 'إضافة تذكير',
   'settings.jumuahReminder': 'تذكير الجمعة (سورة الكهف)',
@@ -1343,6 +1383,20 @@ export const ar = {
   'hadith.bookCount': '{n} حديث · {c} باباً',
   'hadith.loaded': 'محمل',
   'hadith.standingSahih': 'مجموعة صحيحة',
+  // (v5.10.1) سطور الرواة وشارات الدرجات ودليل درجات الكتاب.
+  'hadith.narratedBy': 'رواه {name}',
+  'hadith.gradeGuide': 'عن درجات هذا الكتاب',
+  'hadith.standingNote': 'كل حديث هنا اجتاز تمحيص الصحيح — الصحيحان متفق على صحتهما عند أهل العلم.',
+  'hadith.mixedNote':
+    'هذا الكتاب متنوع الدرجات — صحيح وحسن وضعيف جنبًا إلى جنب. لا توجد درجة لكل حديث في التطبيق بعد، فاقرأ بتمحيص وراجع أهل العلم عند الحاجة.',
+  'hadith.grade.sahih': 'صحيح: سند متصل بنقلة عدول ضابطين، سالم من الشذوذ والعلة.',
+  'hadith.grade.sahihShort': 'صحيح',
+  'hadith.grade.hasan': 'حسن: سند موثوق دون صرامة الصحيح — يُعمل به عند العلماء.',
+  'hadith.grade.hasanShort': 'حسن',
+  'hadith.grade.daif': 'ضعيف: خلل في راوٍ أو انقطاع — لا يُحتج به وحده.',
+  'hadith.grade.daifShort': 'ضعيف',
+  'hadith.grade.mawdu': 'موضوع: مكذوب منسوب — لا يُروى كحديث أبدًا.',
+  'hadith.grade.mawduShort': 'موضوع',
   'hadith.allChapters': 'كل الأبواب',
   'hadith.searchBook': 'ابحث داخل هذا الكتاب (عربي أو إنجليزي)…',
   'hadith.searchAll': 'ابحث في كل الكتب (عربي أو إنجليزي)…',
@@ -1464,6 +1518,29 @@ export const ar = {
   'kids.exitHow': 'النقر لا يخرج — اضغط مطوّلًا حتى يمتلئ الشريط.',
   'kids.exitDone': 'تم إيقاف وضع الأطفال',
   'kids.blocked': 'وضع الأطفال مفعّل — قرآن الأطفال وعداد التسبيح فقط.',
+  // (v5.10.1) تقدّم الأطفال: المستويات واختبار الذاكرة ولوحة الأهل.
+  'kids.level': 'المستوى',
+  'kids.level.seed': 'بذرة',
+  'kids.level.sprout': 'برعم',
+  'kids.level.explorer': 'مستكشف',
+  'kids.level.star': 'نجم',
+  'kids.level.moon': 'قمر',
+  'kids.level.crown': 'تاج',
+  'kids.toNext': '{n} نجوم إلى {level}',
+  'kids.maxLevel': 'أعلى مستوى — ما شاء الله!',
+  'kids.quiz': 'اختبار السور',
+  'kids.quizHint': 'استمع ثم خمّن اسم السورة لتكسب نجمة!',
+  'kids.quizStart': 'ابدأ اللعب',
+  'kids.quizQuestion': 'المس سورة {name}',
+  'kids.quizWin': 'صحيح! كسبت نجمة!',
+  'kids.quizMiss': 'محاولة جيدة! كانت {name}.',
+  'kids.quizAgain': 'العب مجددًا',
+  'kids.quizClose': 'إغلاق',
+  'kids.parent': 'للأهل',
+  'kids.parentHint': 'نشاط هذا الأسبوع وتوزيع النجوم على السور.',
+  'kids.weekTitle': 'نجوم هذا الأسبوع',
+  'kids.bySurah': 'النجوم لكل سورة',
+  'kids.noStarsYet': 'لا نجوم بعد — ابدأ بالاستماع!',
   'stats.avgPerDay': 'المعدل اليومي (٣٠ يومًا)',
   // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
   // follows the nudge tone rules: no dates, no counts, no shaming.
@@ -1476,6 +1553,15 @@ export const ar = {
   'stats.khatmaLine': '{r} من {t} صفحة · {p}%',
   // v5.2.75 certificate loop closure (UP-12).
   'stats.viewCertificate': 'اعرض شهادتك',
+  // (v5.10.1) لوحة الهدف اليومي وتدريب السلسلة والعمق القرائي للسور.
+  'stats.goalTitle': 'الهدف اليومي',
+  'stats.goalMet': 'تحقق الهدف — بارك الله فيك!',
+  'stats.goalLeft': 'بقي {n}',
+  'stats.streakCoachTitle': 'تدريب السلسلة',
+  'stats.streakToGo': '{n} أيام إلى إنجاز {m} يومًا',
+  'stats.streakTop': 'كل الإنجازات محققة — حافظ على الشعلة.',
+  'stats.topSurahs': 'السور الأكثر قراءة',
+  'stats.pagesRead': '{n} صفحات',
   'stats.weekTotal': 'هذا الأسبوع',
   'stats.monthTotalLabel': 'الإجمالي',
   'stats.bestDay': 'أفضل يوم',
@@ -1539,6 +1625,11 @@ export const ar = {
     'اضغط الدائرة بجانب الصلاة لتسجيلها — مرة للصلاة، ومرتين للجماعة. سجل خاص لليوم فقط.',
   'plog.streak': 'سلسلة {n} يوم',
   'plog.monthCount': '{n} صلاة هذا الشهر',
+  // (v5.10.1) رؤى سجل 30 يومًا.
+  'plog.rate30': '{n}٪ من الصلوات مسجلة في آخر 30 يومًا',
+  'plog.jamaahRate': '{n}٪ من الصلوات المسجلة جماعة',
+  'plog.mostMissed': 'الأكثر فواتًا: {prayer} ({n})',
+  'plog.bestStreak': 'أفضل سلسلة: {n} يوم',
   'plog.state.prayed': 'صُلّيت',
   'plog.state.jamaah': 'صُلّيت جماعة',
   'plog.logAction': 'تسجيل الصلاة',
@@ -1627,6 +1718,8 @@ export const ar = {
   'journal.reflectionEmptyInput': 'اكتب شيئًا أولًا.',
   'journal.tabDuas': 'أدعيتي',
   'settings.searchPh': 'ابحث في الإعدادات\u2026',
+  // (v5.9.0) اختصارات الأقسام فوق القوائم.
+  'settings.sections': 'الأقسام',
   'favorites.searchPh': 'ابحث في المفضلة\u2026',
   'collections.searchPh': 'ابحث في هذه المجموعة\u2026',
   'journal.searchPh': 'ابحث في يومياتك\u2026',
@@ -1820,6 +1913,12 @@ export const ar = {
   'title.garden': 'الحديقة',
   'title.kids': 'قرآن الأطفال',
   'ambient.exit': 'خروج من شاشة المنضدة',
+  // (v5.10.1) أوضاع شاشة المنضدة والشرائح المتناوبة.
+  'ambient.displayMode': 'وضع العرض',
+  'ambient.modeCountdown': 'العد التنازلي',
+  'ambient.modeVerse': 'آية',
+  'ambient.modeDhikr': 'ذكر',
+  'ambient.emptyCorpus': 'المكتبة ما زالت تُحمّل — يُعرض العد التنازلي حتى تصل.',
   'prayer.exportedIcs': 'نُزّلت المواقيت — استورد الملف في تطبيق التقويم',
   /* (v5.1.0) أقسام صفحة الصلاة */
   'prayer.timesTitle': 'مواقيت الصلاة اليوم',

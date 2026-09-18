@@ -19,6 +19,32 @@ import { cardHTML } from '../ui/card.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 
+/* (v5.9.0) pagination: shown-counts per scope ride in the URL params
+   (qn/tn/ln — shareable, back-button friendly, never persisted). A new
+   query resets them; the 'search-more' handler (app/handlers/items.js)
+   bumps one scope via replaceGo, so no result list is ever
+   hard-truncated. */
+const MORE_DEFAULTS = { quran: 15, tafsir: 8, library: 40 };
+function moreFor(params) {
+  const n = (v, d) => {
+    const k = Math.floor(Number(v));
+    return Number.isFinite(k) && k > 0 ? Math.min(k, 1000) : d;
+  };
+  return {
+    quran: n(params?.qn, MORE_DEFAULTS.quran),
+    tafsir: n(params?.tn, MORE_DEFAULTS.tafsir),
+    library: n(params?.ln, MORE_DEFAULTS.library),
+  };
+}
+/** "Showing x of n" + Load More trigger for one scope. */
+function loadMoreHTML(lang, scope, shown, total) {
+  if (!(total > shown)) return '';
+  return `<div class="search-more">
+    <p class="empty-hint">${t('search.showingOf', lang, { x: shown, n: total })}</p>
+    <button type="button" class="btn btn--secondary btn--sm" data-action="search-more" data-scope="${scope}">${t('search.loadMore', lang)}</button>
+  </div>`;
+}
+
 /** One ayah hit in the "From the Qur'an" block. Links straight to the
  *  classic reader at that surah (app.js scrolls to and highlights the
  *  target ayah once its element exists) — plus, when the mushaf map is
@@ -48,14 +74,14 @@ function quranResultRow(state, hit, lang, terms = []) {
   </div>`;
 }
 
-function quranSection(state, query, lang) {
+function quranSection(state, query, lang, all) {
   if (!query) return '';
   // v4.1: a corpus build that failed gets an error + Retry — the shimmer
   // used to run forever with a "Loading corpus…" caption.
   if (state.loadErrors?.['quran-search-corpus']) {
     return loadErrorStateHTML({ lang, tierKey: 'quran-search-corpus', t });
   }
-  if (!isQuranSearchReady()) {
+  if (!isQuranSearchReady() || !all) {
     return `
     <section class="panel quran-search-panel">
       <div class="panel__header"><h2>${t('search.quranResults', lang)}</h2></div>
@@ -63,11 +89,11 @@ function quranSection(state, query, lang) {
       ${skeletonLines(lang, [92, 84, 88, 62])}
     </section>`;
   }
-  // FIX (v4.0 hostile review B6): one index pass, sliced for display — the
-  // old code ran the identical query twice per keystroke (limit 15 + limit
-  // 1000) just to count the hits.
-  const all = searchQuran(query, { limit: 1000 });
-  const hits = all.slice(0, 15);
+  // (v5.9.0) paginated: the index still runs once (limit 1000, same as
+  // v4.0's single-pass contract — `all` is computed by renderSearch), and
+  // the Load More trigger pages the display window instead of truncating.
+  const shown = moreFor(state.activeParams).quran;
+  const hits = all.slice(0, shown);
   const terms = String(query).split(/\s+/);
   const total = all.length;
   return `
@@ -78,7 +104,7 @@ function quranSection(state, query, lang) {
     </div>
     ${
       hits.length
-        ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang, terms)).join('')}</div>`
+        ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang, terms)).join('')}</div>${loadMoreHTML(lang, 'quran', hits.length, total)}`
         : emptyStateHTML({
             iconName: 'search',
             title: t('search.noResults', lang),
@@ -109,18 +135,19 @@ function tafsirResultRow(state, hit, editionId, editionName, lang, terms = []) {
  * the Search view. Gated on index readiness: until the background build
  * finishes the view shows no group at all (never a dead section).
  */
-function tafsirSection(state, query, lang) {
+function tafsirSection(state, query, lang, all) {
   if (!query) return '';
   if (state.loadErrors?.['tafsir-search-corpus']) {
     return loadErrorStateHTML({ lang, tierKey: 'tafsir-search-corpus', t });
   }
-  if (!isTafsirSearchReady()) return '';
+  if (!isTafsirSearchReady() || !all) return '';
   const editionId = tafsirIndexEdition();
   const edDoc = (state.tafsirEditions?.editions || []).find((e) => e.id === editionId);
   const editionName =
     (lang === 'ar' ? edDoc?.nameAr || edDoc?.nameEn : edDoc?.nameEn || edDoc?.nameAr) || '';
-  const all = searchTafsir(query, { limit: 1000 });
-  const hits = all.slice(0, 8);
+  // (v5.9.0) paginated like the Qur'an group (see quranSection).
+  const shown = moreFor(state.activeParams).tafsir;
+  const hits = all.slice(0, shown);
   const terms = String(query).split(/\s+/);
   const total = all.length;
   return `
@@ -131,7 +158,7 @@ function tafsirSection(state, query, lang) {
     </div>
     ${
       hits.length
-        ? `<div class="quran-hit-list">${hits.map((h) => tafsirResultRow(state, h, editionId, editionName, lang, terms)).join('')}</div>`
+        ? `<div class="quran-hit-list">${hits.map((h) => tafsirResultRow(state, h, editionId, editionName, lang, terms)).join('')}</div>${loadMoreHTML(lang, 'tafsir', hits.length, total)}`
         : emptyStateHTML({
             iconName: 'search',
             title: t('search.noResults', lang),
@@ -148,12 +175,22 @@ const SUGGESTIONS = {
   ar: ['رحمة', 'الصبر', 'مغفرة', 'الجنة', 'نور', 'هداية'],
 };
 
-const SEARCH_LIMIT = 40;
-
 export function renderSearch(state) {
   const lang = state.settings.language;
   const query = state.activeParams.q || '';
-  const results = query ? runSearch(query, { limit: SEARCH_LIMIT }) : [];
+  // (v5.9.0) one index pass per corpus per render (the v4.0 single-pass
+  // contract): the lists feed BOTH the sections and the match-breakdown
+  // counters, so counting never costs a second pass.
+  const quranAll =
+    query && isQuranSearchReady() && !state.loadErrors?.['quran-search-corpus']
+      ? searchQuran(query, { limit: 1000 })
+      : null;
+  const tafsirAll =
+    query && isTafsirSearchReady() && !state.loadErrors?.['tafsir-search-corpus']
+      ? searchTafsir(query, { limit: 1000 })
+      : null;
+  const libAll = query ? runSearch(query, { limit: 1000 }) : [];
+  const libShown = query ? libAll.slice(0, moreFor(state.activeParams).library) : [];
   const terms = query ? String(query).split(/\s+/) : [];
   const history = state.search.historyList;
   const suggestions = SUGGESTIONS[lang] || SUGGESTIONS.en;
@@ -209,19 +246,20 @@ export function renderSearch(state) {
         : ''
     }
 
-    ${query ? quranSection(state, query, lang) : ''}
+    ${query ? quranSection(state, query, lang, quranAll) : ''}
 
-    ${query ? tafsirSection(state, query, lang) : ''}
+    ${query ? tafsirSection(state, query, lang, tafsirAll) : ''}
 
     ${
       query
         ? `
-      <p class="search-results-count" role="status">${t('search.resultsCount', lang, { n: results.length >= SEARCH_LIMIT ? `${SEARCH_LIMIT}+` : results.length })}</p>
+      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll ? quranAll.length : 0, t: tafsirAll ? tafsirAll.length : 0, l: libAll.length })}</p>
+      <p class="search-hadith-link"><a href="${buildHash(VIEWS.HADITH, { q: query })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-q="${escapeHTML(query)}">${icon('book', { size: 13 })} ${t('search.searchHadith', lang, { q: query })}</a></p>
       ${
-        results.length
+        libShown.length
           ? `
       <div class="card-list">
-        ${results
+        ${libShown
           .map((r) =>
             cardHTML(r.item, r.category, {
               lang,
@@ -236,7 +274,7 @@ export function renderSearch(state) {
             })
           )
           .join('')}
-      </div>`
+      </div>${loadMoreHTML(lang, 'library', libShown.length, libAll.length)}`
           : emptyStateHTML({
               iconName: 'search',
               title: t('search.noResults', lang),

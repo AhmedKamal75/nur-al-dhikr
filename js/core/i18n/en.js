@@ -210,7 +210,7 @@ export const en = {
   'nav.audio': 'Reciters & Audio',
   'audio.title': 'Reciters & Audio',
   'audio.subtitle':
-    '314 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',
+    '312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',
   'audio.searchPh': 'Search reciters (English or Arabic)…',
   'audio.moreResults': 'Showing first 60 of {n} matches — keep typing to narrow.',
   'audio.noResultsHint': 'Try a different spelling — or add your own reciter below.',
@@ -233,7 +233,7 @@ export const en = {
   'audio.surahUnavailable': 'This surah is not available from this reciter.',
   'audio.verseVoices': 'Verse-by-verse voices',
   'audio.verseVoicesHint':
-    'These 10 voices play ayah by ayah in the reader — from memory when downloaded below, streaming otherwise. Voice B and compare mode live under Settings \u2192 Reciter.',
+    'These 16 voices play ayah by ayah in the reader — from memory when downloaded below, streaming otherwise. Voice B and compare mode live under Settings \u2192 Reciter.',
   'audio.versePacks': 'Offline verse packs',
   'audio.versePacksHint':
     'Ayah audio per surah for the selected voice — the reader plays it offline. Counts refresh when this screen opens.',
@@ -332,6 +332,26 @@ export const en = {
   'hifz.suggestHint': 'Fully read — ready to memorize:',
   'audio.play': 'Play',
   'audio.pause': 'Pause',
+  // (v5.10.5) playback-mode toggle: ayah-by-ayah engine vs whole-surah file.
+  'audio.modeAyah': 'Ayah-by-ayah',
+  'audio.modeSurah': 'Whole surah',
+  // (v5.10.7) file-mode honesty: no ayah timings ship with surah files
+  // (verified across mp3quran/quranicaudio/islamic.network — timings
+  // exist only for ayah-files of quran.com's own recitations), so live
+  // highlight/repeat/compare need ayah mode, one tap away.
+  'audio.fileModeNote':
+    'Whole-surah file: Ayah-by-ayah mode adds highlighting, page turns, repeat & compare.',
+  // (v5.10.8) unified voice picker: ayah voices + searchable file moshafs.
+  'audio.voiceModeAyah': 'Voice set — ayah-by-ayah mode',
+  'audio.voiceModeSurah': 'Moshaf set — whole-surah mode',
+  'audio.fileVoices': 'Whole-surah voices',
+  'audio.moshafShown': 'Showing {x} of {n} — keep typing to narrow.',
+  'audio.browseAllMoshafs': 'Browse all in Audio view',
+  // (v5.10.6) professional console: transport row + overflow settings.
+  'audio.transport': 'Playback controls',
+  'audio.moreSettings': 'More settings',
+  // (v5.10.7) slim session progress bar.
+  'audio.sessionProgress': 'Session progress',
   'audio.pauseRecitation': 'Pause recitation',
   'audio.resumeRecitation': 'Resume recitation',
   'audio.next': 'Next surah',
@@ -521,6 +541,14 @@ export const en = {
   'search.tafsirResults': 'From the tafsir',
   'search.tafsirCount': '{n} passages',
   'search.resultsCount': '{n} results',
+  // (v5.9.0) pagination + per-corpus match breakdown.
+  'search.loadMore': 'Load more',
+  'search.showingOf': 'Showing {x} of {n}',
+  'search.breakdown': 'Qur’an: {q} · Tafsir: {t} · Library: {l}',
+  // (v5.10.1) the global index covers Qur'an/Tafsir/Library — hadith lives
+  // in its own corpus with its own pager, so the breakdown links straight
+  // into it carrying the same query instead of miscounting it as zero.
+  'search.searchHadith': 'Search hadith for “{q}”',
   'search.recent': 'Recent Searches',
   'search.clearHistory': 'Clear history',
   'search.suggestions': 'Try a search',
@@ -795,6 +823,11 @@ export const en = {
   'prayer.offsetsTitle': 'Fine-tune times (minutes)',
   'prayer.offsetsHint':
     'Shift any prayer ±60 minutes — e.g. to match your local mosque. Applies everywhere: the timetable, alerts and fasting.',
+  // (v5.10.1) iqama waits: display-only minutes after adhan per fard prayer.
+  'prayer.iqamaTitle': 'Iqama wait (minutes)',
+  'prayer.iqamaHint':
+    'How long your mosque waits after adhan — the row shows the iqama time beneath. Display only: times and alerts never move.',
+  'prayer.iqamaAt': 'Iqama {time}',
   'prayer.alertSoundNote':
     'Plays while the app is open. If the app is closed or in the background, your device uses its own default notification sound instead.',
   // v3.20 prayer-alert reliability — the honest status row.
@@ -933,7 +966,8 @@ export const en = {
 
   'mushaf.settingsTitle': 'Mushaf Display',
   'mushaf.font': 'Font',
-  'mushaf.marksLegend': 'Page marks',  'mushaf.marksSajda': 'Place of prostration (sajdah) — the fifteen mawadi\u2019',
+  'mushaf.marksLegend': 'Page marks',
+  'mushaf.marksSajda': 'Place of prostration (sajdah) — the fifteen mawadi\u2019',
   'mushaf.marksHizb': 'Rub el-hizb — juz / hizb divider',
   'mushaf.marksWaqf': 'Stop marks (j\u0101, \u1e63al\u0101, qil\u0101, m\u016B)',
   'mushaf.bismillahStyle': 'Bismillah look',
@@ -953,6 +987,7 @@ export const en = {
   'mushaf.wordStudy': 'Tap a word for grammar & meaning',
   'mushaf.wordUnderline': 'Underline tappable words',
   'mushaf.tajweed': 'Tajweed color-coding',
+  'mushaf.tajweedUnderlines': 'Show tajweed underlines',
   'mushaf.tajweedLegend': 'Tajweed Legend',
   'mushaf.tajweedUncolored': 'Deliberately uncolored',
   'mushaf.tajweedCoverage':
@@ -991,6 +1026,15 @@ export const en = {
   'practice.summaryEncourage':
     'Every miss teaches the eye what to look for. Review them whenever you like — no rush, no grades.',
   'practice.reviewMistakes': 'Review mistakes',
+  // (v5.10.1) guided rule lessons: definition + pool-drawn examples + drill.
+  'practice.lesson': 'Learn',
+  'practice.lessonWhat': 'The rule',
+  'practice.lessonExamples': 'See it in the Quran',
+  'practice.lessonEmpty':
+    'Examples load with the drill pool — drill the rule once and they appear here.',
+  'practice.drillRule': 'Drill this rule',
+  'practice.backToRules': 'Back to rules',
+  'practice.exampleRef': 'Surah {s}, ayah {a}',
   'practice.again': 'Practice another round',
   'practice.reviewHint': 'A short round drawn from the rules that slipped — most-missed first.',
   'practice.instructionsReview':
@@ -1001,6 +1045,10 @@ export const en = {
   'practice.level3': 'Strong',
   'practice.thisAyah': 'Practice This Ayah',
   'practice.nothingHere': 'This ayah has no marked tajweed rules to practice — try another.',
+  // (v5.9.0) nearest-ayah fallback: the round starts on the closest ayah
+  // in the same surah that carries marked rules, and says so honestly.
+  'practice.nearestAyah':
+    'No marked rules here — practicing the nearest ayah with rules ({s}:{a}).',
 
   'wordStudy.title': 'Word Study',
   'wordStudy.noData': "Grammar data isn't available for this word yet.",
@@ -1164,7 +1212,7 @@ export const en = {
   'settings.reciterBHint':
     'Voice B for compare mode: each ayah plays with the main reciter, then the same ayah with this voice.',
   'settings.reciterCompare': 'Start sessions in compare mode',
-  'settings.audioManager': 'Full surahs: 314 reciters & offline downloads',
+  'settings.audioManager': 'Full surahs: 312 reciters & offline downloads',
   'settings.notifications': 'Notifications & Reminders',
   'settings.addReminder': 'Add Reminder',
   'settings.jumuahReminder': 'Friday reminder (Surah Al-Kahf)',
@@ -1373,6 +1421,22 @@ export const en = {
   'hadith.bookCount': '{n} hadith · {c} chapters',
   'hadith.loaded': 'loaded',
   'hadith.standingSahih': 'Sahih collection',
+  // (v5.10.1) narrator lines, enriched grade chips, collection grade guide.
+  'hadith.narratedBy': 'Narrated by {name}',
+  'hadith.gradeGuide': 'About grading in this book',
+  'hadith.standingNote':
+    'Every hadith here passed Sahih-grade scrutiny — the Two Sahihs are authentic by scholarly consensus.',
+  'hadith.mixedNote':
+    'This collection mixes grades by design — authentic, good and weak reports side by side. No per-hadith grade ships with this app yet, so read critically and check with a scholar when it matters.',
+  'hadith.grade.sahih':
+    'Authentic: an unbroken chain of precise, trustworthy narrators, free of defects.',
+  'hadith.grade.sahihShort': 'Sahih',
+  'hadith.grade.hasan': 'Good: a reliable chain below sahih rigor — acted upon by scholars.',
+  'hadith.grade.hasanShort': 'Hasan',
+  'hadith.grade.daif': 'Weak: a narrator or break fails the test — not proof on its own.',
+  'hadith.grade.daifShort': "Da'if",
+  'hadith.grade.mawdu': 'Fabricated: falsely attributed — never quoted as hadith.',
+  'hadith.grade.mawduShort': "Mawdu'",
   'hadith.allChapters': 'All chapters',
   'hadith.searchBook': 'Search within this book (Arabic or English)\u2026',
   'hadith.searchAll': 'Search all books (Arabic or English)\u2026',
@@ -1496,6 +1560,29 @@ export const en = {
   'kids.exitHow': 'Tapping does not exit — press AND HOLD the button until the bar fills.',
   'kids.exitDone': 'Kids mode off',
   'kids.blocked': 'Kids mode is on — only Kids Quran and Tasbih are available.',
+  // (v5.10.1) kids progression: levels, memory quiz, parent dashboard.
+  'kids.level': 'Level',
+  'kids.level.seed': 'Seed',
+  'kids.level.sprout': 'Sprout',
+  'kids.level.explorer': 'Explorer',
+  'kids.level.star': 'Star',
+  'kids.level.moon': 'Moon',
+  'kids.level.crown': 'Crown',
+  'kids.toNext': '{n} stars to {level}',
+  'kids.maxLevel': 'Top level — mashaAllah!',
+  'kids.quiz': 'Surah quiz',
+  'kids.quizHint': 'Listen, then guess the surah name to earn a star!',
+  'kids.quizStart': 'Start playing',
+  'kids.quizQuestion': 'Tap the surah of {name}',
+  'kids.quizWin': 'Correct! You earned a star!',
+  'kids.quizMiss': 'Good try! It was {name}.',
+  'kids.quizAgain': 'Play again',
+  'kids.quizClose': 'Close',
+  'kids.parent': 'For parents',
+  'kids.parentHint': 'This week’s activity and stars per surah.',
+  'kids.weekTitle': 'Stars this week',
+  'kids.bySurah': 'Stars per surah',
+  'kids.noStarsYet': 'No stars yet — start by listening!',
   'stats.avgPerDay': 'Avg / Day (30d)',
   // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
   // follows the nudge tone rules: no dates, no counts, no shaming.
@@ -1508,6 +1595,15 @@ export const en = {
   'stats.khatmaLine': '{r} of {t} pages · {p}%',
   // v5.2.75 certificate loop closure (UP-12).
   'stats.viewCertificate': 'View your certificate',
+  // (v5.10.1) daily-goal panel, streak coaching, per-surah reading depth.
+  'stats.goalTitle': 'Daily goal',
+  'stats.goalMet': 'Goal met — barakallahu feek!',
+  'stats.goalLeft': '{n} to go',
+  'stats.streakCoachTitle': 'Streak coaching',
+  'stats.streakToGo': '{n} days to your {m}-day milestone',
+  'stats.streakTop': 'Every milestone cleared — guard the flame.',
+  'stats.topSurahs': 'Most-read surahs',
+  'stats.pagesRead': '{n} pages',
   'stats.weekTotal': 'This week',
   'stats.monthTotalLabel': 'Total',
   'stats.bestDay': 'Best day',
@@ -1572,6 +1668,11 @@ export const en = {
     'Tap the circle beside a prayer to log it — once for prayed, twice for in congregation. A private record, today only.',
   'plog.streak': '{n}-day streak',
   'plog.monthCount': '{n} prayers this month',
+  // (v5.10.1) 30-day log insights (positive framing, same anti-guilt rule).
+  'plog.rate30': '{n}% of prayers logged in the last 30 days',
+  'plog.jamaahRate': '{n}% of logged prayers in congregation',
+  'plog.mostMissed': 'Most often missed: {prayer} ({n})',
+  'plog.bestStreak': 'Best streak: {n} days',
   'plog.state.prayed': 'Prayed',
   'plog.state.jamaah': 'In congregation',
   'plog.logAction': 'Log prayer',
@@ -1661,6 +1762,8 @@ export const en = {
   'journal.reflectionEmptyInput': 'Write something first.',
   'journal.tabDuas': 'My duas',
   'settings.searchPh': 'Search settings\u2026',
+  // (v5.9.0) section shortcut chips above the accordions.
+  'settings.sections': 'Sections',
   'favorites.searchPh': 'Search favorites\u2026',
   'collections.searchPh': 'Search this collection\u2026',
   'journal.searchPh': 'Search your journal\u2026',
@@ -1856,6 +1959,12 @@ export const en = {
   'title.garden': 'Garden',
   'title.kids': 'Kids Quran',
   'ambient.exit': 'Exit nightstand display',
+  // (v5.10.1) nightstand display modes + slow-rotation slides.
+  'ambient.displayMode': 'Display mode',
+  'ambient.modeCountdown': 'Countdown',
+  'ambient.modeVerse': 'Verse',
+  'ambient.modeDhikr': 'Dhikr',
+  'ambient.emptyCorpus': 'Library still loading — showing the countdown until it arrives.',
   'prayer.exportedIcs': 'Prayer times downloaded — import the file into your calendar app',
   /* (v5.1.0) Prayer page blocks */
   'prayer.timesTitle': "Today's prayer times",

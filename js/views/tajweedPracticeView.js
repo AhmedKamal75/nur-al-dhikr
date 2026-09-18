@@ -14,8 +14,10 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
+import { buildHash } from '../core/router.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
-import { TAJWEED_RULES, tajweedRule, wordUnits } from '../domain/tajweed.js';
+import { VIEWS } from '../core/config.js';
+import { TAJWEED_RULES, TAJWEED_FAMILIES, tajweedRule, wordUnits } from '../domain/tajweed.js';
 import { accuracyFor, practiceLevel, PRACTICE_ROUND_SIZE } from '../domain/tajweedPractice.js';
 
 const LEVEL_I18N = { 1: 'practice.level1', 2: 'practice.level2', 3: 'practice.level3' };
@@ -32,15 +34,18 @@ export function buildPracticePicker(state) {
     const acc = accuracyFor(stats, rule.id);
     const level = practiceLevel(stats, rule.id);
     return `
-    <button type="button" class="practice-rule" data-action="practice-start" data-rule="${rule.id}">
-      <span class="practice-rule__swatch" style="background:${rule.color}"></span>
-      <span class="practice-rule__text">
-        <span class="practice-rule__name">${escapeHTML(pickLocale(rule.name, lang))}</span>
-        <span class="practice-rule__acc">${acc == null ? t('practice.notYet', lang) : t('practice.accuracy', lang, { n: acc })}</span>
-      </span>
-      <span class="practice-rule__level practice-rule__level--${level}">${t(LEVEL_I18N[level], lang)}</span>
-      ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16, className: 'practice-rule__chevron' })}
-    </button>`;
+    <div class="practice-rule-row">
+      <button type="button" class="practice-rule" data-action="practice-start" data-rule="${rule.id}">
+        <span class="practice-rule__swatch" style="background:${rule.color}"></span>
+        <span class="practice-rule__text">
+          <span class="practice-rule__name">${escapeHTML(pickLocale(rule.name, lang))}</span>
+          <span class="practice-rule__acc">${acc == null ? t('practice.notYet', lang) : t('practice.accuracy', lang, { n: acc })}</span>
+        </span>
+        <span class="practice-rule__level practice-rule__level--${level}">${t(LEVEL_I18N[level], lang)}</span>
+        ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 16, className: 'practice-rule__chevron' })}
+      </button>
+      <button type="button" class="icon-btn icon-btn--sm practice-rule__learn" data-action="practice-lesson" data-rule="${rule.id}" aria-label="${t('practice.lesson', lang)} — ${escapeHTML(pickLocale(rule.name, lang))}" title="${t('practice.lesson', lang)}">${icon('book', { size: 15 })}</button>
+    </div>`;
   };
 
   return `
@@ -197,6 +202,51 @@ export function buildPracticeSummary(state, session) {
       <button type="button" class="btn btn--primary" data-action="practice-start" data-rule="${session.ruleId === 'review' ? 'mixed' : session.ruleId}">${t('practice.again', lang)}</button>
       ${missed ? `<button type="button" class="btn btn--secondary" data-action="practice-start" data-rule="review">${t('practice.reviewMistakes', lang)}</button>` : ''}
       <button type="button" class="btn btn--secondary btn--sm" data-action="practice-open">${t('practice.changeRule', lang)}</button>
+    </div>
+  </div>`;
+}
+
+/**
+ * (v5.10.1) Guided rule lesson: the rule's own definition, its family
+ * color, example ayahs drawn from the loaded drill pool (deep links the
+ * reader jumps to and highlights), and the drill button. Pure template —
+ * the handler loads the pool and passes validated examples.
+ */
+export function buildPracticeLesson(state, ruleId, examples = []) {
+  const lang = state.settings.language;
+  const rule = tajweedRule(ruleId);
+  if (!rule) return '';
+  const list = Array.isArray(examples) ? examples : [];
+  const meta = state.quran.meta?.surahs || [];
+  const family = (TAJWEED_FAMILIES || []).find((f) => f.id === rule.family);
+  const familyName = family ? pickLocale(family.name, lang) : rule.family;
+  const surahName = (s) => {
+    const m = meta.find((x) => Number(x?.number) === Number(s));
+    return m ? pickLocale({ en: m.nameTransliteration || m.nameEn, ar: m.nameAr }, lang) : `#${s}`;
+  };
+  return `
+  <div class="tajweed-practice practice-lesson">
+    <h2 id="modal-title-practice">${escapeHTML(pickLocale(rule.name, lang))}</h2>
+    <p class="practice-lesson__family"><span class="practice-rule__swatch" style="background:${rule.color}"></span> ${escapeHTML(familyName)}</p>
+    <h3 class="practice-lesson__heading">${t('practice.lessonWhat', lang)}</h3>
+    <p class="practice-lesson__desc" dir="auto">${escapeHTML(pickLocale(rule.desc, lang))}</p>
+    <h3 class="practice-lesson__heading">${t('practice.lessonExamples', lang)}</h3>
+    ${
+      list.length
+        ? `<div class="practice-lesson__examples">${list
+            .map(
+              (e) => `
+          <a class="practice-lesson__example" href="${buildHash(VIEWS.QURAN, { id: e.s, ay: String(e.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${e.s}" data-ay="${e.a}">
+            <span dir="auto">${escapeHTML(surahName(e.s))} · ${t('practice.exampleRef', lang, { s: e.s, a: e.a })}</span>
+            ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}
+          </a>`
+            )
+            .join('')}</div>`
+        : `<p class="panel__subtext">${t('practice.lessonEmpty', lang)}</p>`
+    }
+    <div class="practice-summary__actions">
+      <button type="button" class="btn btn--primary" data-action="practice-start" data-rule="${rule.id}">${icon('play', { size: 15 })} ${t('practice.drillRule', lang)}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="practice-open">${t('practice.backToRules', lang)}</button>
     </div>
   </div>`;
 }

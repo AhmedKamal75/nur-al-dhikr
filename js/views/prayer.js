@@ -32,6 +32,7 @@ import {
   prayerState,
   loggedCount,
   prayerStreak,
+  prayerInsights,
   prayerWeek,
   prayerMonthCount,
 } from '../domain/prayerLog.js';
@@ -134,6 +135,10 @@ export function renderPrayer(state) {
   // Prayer log (v3.0): tri-state cycle button per fard prayer, riding the
   // same dailyChecklist storage the habit checklist uses (see js/prayerLog.js).
   const todayLog = selectors.todayChecklist(state);
+  // (v5.10.1) iqama waits: display-only minutes after adhan per fard
+  // prayer (sanitized 0..60). The row shows the iqama clock time beneath
+  // the adhan time wherever a wait is set — times and alerts never move.
+  const iqama = p.iqama && typeof p.iqama === 'object' ? p.iqama : {};
 
   const rows = PRAYER_ORDER.map((name) => {
     const isNext = name === next.name;
@@ -141,6 +146,11 @@ export function renderPrayer(state) {
     const isFard = name !== 'sunrise';
     const pstate = isFard ? prayerState(todayLog, name) : null;
     const isFallback = fallbackNames.includes(name);
+    const iq = isFard ? Math.floor(Number(iqama[name])) || 0 : 0;
+    const iqamaLine =
+      iq > 0 && Number.isFinite(Number(times[name]))
+        ? `<span class="prayer-row__iqama">${t('prayer.iqamaAt', lang, { time: formatClock(Number(times[name]) + iq / 60, true, { am: t('common.am', lang), pm: t('common.pm', lang) }) })}</span>`
+        : '';
     const logBtn = !isFard
       ? ''
       : `
@@ -152,6 +162,7 @@ export function renderPrayer(state) {
       <span class="prayer-row__icon">${icon(PRAYER_ICONS[name], { size: 18 })}</span>
       <span class="prayer-row__name">${t('prayer.' + name, lang)}${isFallback ? ' <span class="prayer-row__fallback-mark" aria-hidden="true">*</span>' : ''}</span>
       <span class="prayer-row__time" dir="ltr"${isFallback ? ` title="${t('prayer.fallbackNote', lang)}" aria-describedby="prayer-fallback-note"` : ''}>${formatClock(times[name], true, { am: t('common.am', lang), pm: t('common.pm', lang) })}</span>
+      ${iqamaLine}
       ${logBtn}
       <button type="button" class="icon-btn icon-btn--sm ${alertOn ? 'icon-btn--active-bell' : ''}" data-action="toggle-prayer-alert" data-prayer="${name}" aria-pressed="${alertOn}" aria-label="${t(alertOn ? 'prayer.alertOn' : 'prayer.alertOff', lang)}" title="${t(alertOn ? 'prayer.alertOn' : 'prayer.alertOff', lang)}">
         ${icon('bell', { size: 15 })}
@@ -164,6 +175,28 @@ export function renderPrayer(state) {
   const streak = prayerStreak(state.dailyChecklist, now);
   const monthCount = prayerMonthCount(state.dailyChecklist, now);
   const loggedToday = loggedCount(todayLog);
+  // (v5.10.1) 30-day insights: completion rate, jamaah share, most-missed
+  // prayer, best streak. Renders only once two days carry any log — a
+  // single tap is not a pattern, and empty zeros would read as judgment.
+  const insights = prayerInsights(state.dailyChecklist, 30, now);
+  const insightsHTML =
+    insights.days >= 2
+      ? `
+      <div class="plog-insights">
+        <p class="plog-insights__row">${icon('stats', { size: 15 })} ${t('plog.rate30', lang, { n: Math.round(insights.rate * 100) })}</p>
+        <p class="plog-insights__row">${icon('mosque', { size: 15 })} ${t('plog.jamaahRate', lang, { n: Math.round(insights.jamaahRate * 100) })}</p>
+        ${
+          insights.mostMissed
+            ? `<p class="plog-insights__row">${icon('info', { size: 15 })} ${t('plog.mostMissed', lang, { prayer: t(`prayer.${insights.mostMissed}`, lang), n: insights.missedByPrayer[insights.mostMissed] })}</p>`
+            : ''
+        }
+        ${
+          insights.bestStreak > 0
+            ? `<p class="plog-insights__row">${icon('award', { size: 15 })} ${t('plog.bestStreak', lang, { n: insights.bestStreak })}</p>`
+            : ''
+        }
+      </div>`
+      : '';
 
   const weekCells = week
     .map(
@@ -294,6 +327,7 @@ export function renderPrayer(state) {
       </div>
       <p class="panel__subtext" dir="ltr">${loggedToday} / ${PRAYER_KEYS.length} ${t('checklist.today', lang)}${monthCount ? ` · ${t('plog.monthCount', lang, { n: monthCount })}` : ''}</p>
       <div class="plog-week">${weekCells}</div>
+      ${insightsHTML}
       <p class="panel__subtext">${t('plog.hint', lang)}</p>
     </section>
 
@@ -598,6 +632,15 @@ export function calcPanelHTML(state) {
         <input class="input" type="number" min="-60" max="60" step="1" inputmode="numeric" dir="ltr" data-bind="prayer-offset" data-prayer="${name}" value="${Number.isFinite(Number(offsets[name])) ? Number(offsets[name]) : 0}" aria-label="${t(`prayer.${name}`, lang)}" />
       </label>`
   ).join('');
+  // (v5.10.1) iqama waits, one stepper per fard prayer (0..60 minutes).
+  // Same pattern as offsets; sunrise has no iqama and is excluded.
+  const iqamaPrefs = p.iqama && typeof p.iqama === 'object' ? p.iqama : {};
+  const iqamaRows = PRAYER_KEYS.map(
+    (name) => `
+      <label class="field">${t(`prayer.${name}`, lang)}
+        <input class="input" type="number" min="0" max="60" step="1" inputmode="numeric" dir="ltr" data-bind="prayer-iqama" data-prayer="${name}" value="${Number.isFinite(Number(iqamaPrefs[name])) ? Number(iqamaPrefs[name]) : 0}" aria-label="${t('prayer.iqamaTitle', lang)} — ${t(`prayer.${name}`, lang)}" />
+      </label>`
+  ).join('');
   return `
   <div class="panel view-panel-modal">
     <div class="panel__header"><h2 id="panel-calc-title">${t('prayer.sheet.calc', lang)}</h2></div>
@@ -610,6 +653,9 @@ export function calcPanelHTML(state) {
     <p class="field-label">${t('prayer.offsetsTitle', lang)}</p>
     <div class="zakat-price-row">${offsetRows}</div>
     <p class="panel__subtext">${t('prayer.offsetsHint', lang)}</p>
+    <p class="field-label">${t('prayer.iqamaTitle', lang)}</p>
+    <div class="zakat-price-row">${iqamaRows}</div>
+    <p class="panel__subtext">${t('prayer.iqamaHint', lang)}</p>
     <p class="panel__subtext">${t('prayer.sheet.calcHint', lang)}</p>
   </div>`;
 }

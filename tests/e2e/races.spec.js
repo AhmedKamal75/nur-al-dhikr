@@ -49,6 +49,9 @@ test('race: double-tap across surahs leaves one track, no ghost error', async ({
 
   await rows.nth(0).click();
   await expect(bar).toBeVisible({ timeout: 20000 });
+  // (v5.10.7) plain taps default to the whole-surah file, so the bar is
+  // the file player straight away — race its tracks exactly as before.
+  await expect(surahLabel).toBeVisible({ timeout: 20000 });
   const first = await surahLabel.textContent();
   // Synchronous multi-tap in ONE task: every handler reaches the player's
   // IndexedDB await together, forcing the interleave that spaced-out

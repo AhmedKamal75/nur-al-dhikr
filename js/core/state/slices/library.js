@@ -254,19 +254,59 @@ export function reduceLibrary(state, action) {
       };
     }
 
-    // Kids-mode stars: one per naturally finished recitation. Date math
-    // via dateKey (local day) like every other daily counter here.
+    // Kids-mode stars: one per naturally finished recitation (or quiz
+    // win). Date math via dateKey (local day) like every other daily
+    // counter here. The optional surah feeds the parent dashboard's
+    // per-surah breakdown — hostile values fall off, never in.
     case 'KIDS_AWARD_STAR': {
       const key = dateKey(new Date());
       const cur = state.kidsStars && typeof state.kidsStars === 'object' ? state.kidsStars : {};
       const days = cur.days && typeof cur.days === 'object' ? cur.days : {};
+      const bySurah =
+        cur.bySurah && typeof cur.bySurah === 'object' && !Array.isArray(cur.bySurah)
+          ? cur.bySurah
+          : {};
+      const sn = Math.floor(Number(action.surah));
+      const nextBySurah =
+        Number.isFinite(sn) && sn >= 1 && sn <= 114
+          ? { ...bySurah, [sn]: Math.min((Math.floor(Number(bySurah[sn])) || 0) + 1, 10000) }
+          : bySurah;
       return {
         ...state,
         kidsStars: {
           total: (Number(cur.total) || 0) + 1,
           days: { ...days, [key]: (Number(days[key]) || 0) + 1 },
+          bySurah: nextBySurah,
         },
       };
+    }
+
+    // Kids memory-quiz session (ephemeral): prebuilt round only — the
+    // reducer validates shape and walks the session, never shuffles.
+    case 'KIDS_QUIZ_START': {
+      const r = action.round && typeof action.round === 'object' ? action.round : null;
+      const target = Math.floor(Number(r?.target?.n));
+      const options = Array.isArray(r?.options)
+        ? r.options
+            .filter((o) => o && Number.isFinite(Math.floor(Number(o?.n))))
+            .slice(0, 4)
+            .map((o) => ({ n: Math.floor(Number(o.n)), nameAr: String(o.nameAr || '') }))
+        : [];
+      if (!Number.isFinite(target) || options.length < 2) return state;
+      if (!options.some((o) => o.n === target)) return state;
+      return { ...state, kidsQuiz: { target, options, answered: null } };
+    }
+    case 'KIDS_QUIZ_ANSWER': {
+      const q = state.kidsQuiz;
+      if (!q || q.answered != null) return state;
+      const sn = Math.floor(Number(action.surah));
+      if (!Number.isFinite(sn)) return state;
+      if (!q.options.some((o) => o.n === sn)) return state;
+      return { ...state, kidsQuiz: { ...q, answered: sn } };
+    }
+    case 'KIDS_QUIZ_EXIT': {
+      if (!state.kidsQuiz) return state;
+      return { ...state, kidsQuiz: null };
     }
 
     // App-wide progress profiles: favorites/counters/statistics/history

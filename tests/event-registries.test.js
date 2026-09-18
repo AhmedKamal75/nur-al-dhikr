@@ -25,9 +25,9 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (32 change + 15 input)', () => {
-  assert.equal(changeRegistry.length, 32);
-  assert.equal(inputRegistry.length, 15);
+test('D: every arm survived the move (33 change + 16 input)', () => {
+  assert.equal(changeRegistry.length, 33);
+  assert.equal(inputRegistry.length, 16);
 });
 
 test('D: registry entries are well-formed with unique selectors', () => {
@@ -67,6 +67,20 @@ test('D: prayer-method change round-trips through the registry', () => {
   assert.equal(store.getState().settings.prayer.method, 'ISNA');
   store.dispatch(actions.updatePrayerSettings({ method: before }));
   assert.equal(store.getState().settings.prayer.method, before);
+});
+
+test('D: prayer-iqama change clamps 0..60, drops zeros and sunrise', () => {
+  const entry = changeRegistry.find((e) => e.sel === '[data-bind="prayer-iqama"]');
+  assert.ok(entry);
+  const before = store.getState().settings.prayer.iqama;
+  entry.run({ prayer: 'fajr' }, { ...fakeEl(), value: '99' });
+  assert.equal(store.getState().settings.prayer.iqama.fajr, 60);
+  entry.run({ prayer: 'fajr' }, { ...fakeEl(), value: '0' });
+  assert.equal(store.getState().settings.prayer.iqama.fajr, undefined);
+  entry.run({ prayer: 'sunrise' }, { ...fakeEl(), value: '10' });
+  assert.equal(store.getState().settings.prayer.iqama.sunrise, undefined);
+  entry.run({ prayer: 'nope' }, { ...fakeEl(), value: '10' });
+  store.dispatch(actions.updatePrayerSettings({ iqama: before || {} }));
 });
 
 test('D: home-panel-toggle hides and re-shows', () => {

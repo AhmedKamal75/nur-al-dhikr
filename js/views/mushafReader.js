@@ -196,12 +196,12 @@ export function renderMushaf(state) {
         const banner = showBanner
           ? `
       <button type="button" class="mushaf-surah-banner" data-action="surah-play" data-surah="${chapter.number}" aria-label="${escapeHTML(chapter.titleAr)} — ${t(recitingBanner ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}" title="${t(recitingBanner ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}">
-        <span class="mushaf-surah-banner__flank" aria-hidden="true">◆</span>
+        <span class="mushaf-surah-banner__flank" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/></svg></span>
         <span class="mushaf-surah-banner__frame">
           <span class="mushaf-surah-banner__name">${escapeHTML(chapter.titleAr)}</span>
           ${surahAyahCountLine(state, chapter, lang)}
         </span>
-        <span class="mushaf-surah-banner__flank" aria-hidden="true">◆</span>
+        <span class="mushaf-surah-banner__flank" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/></svg></span>
       </button>
       ${showBismillah && prefs.bismillahStyle !== 'hidden' ? buildBismillahHTML({ text: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ', surah: chapter.number, style: prefs.bismillahStyle, cls: 'mushaf-bismillah', lang, underline: prefs.wordByWordStudy && prefs.wordUnderline, tajweed: prefs.tajweedColoring, prefs: tajweedPrefsOf(state) }) : ''}
     `
@@ -533,7 +533,7 @@ function buildFullscreenConsole(state, lang) {
   const snap = consoleSnapshot(state.surahPlayback, state.settings, sleepSnapshot(), lang);
   return `
     <div class="mushaf-fs-console" data-fs-controls>
-      ${recitationChipsHTML(snap, lang, { chip: 'mushaf-fs-chip', on: 'mushaf-fs-chip--on', btn: 'icon-btn' })}
+      ${recitationChipsHTML(snap, lang, { chip: 'mushaf-fs-chip', on: 'mushaf-fs-chip--on', btn: 'icon-btn' }, { moreOpen: state.ui?.reciteMore === true })}
     </div>
     ${recitationEchoHTML(snap, lang, 'mushaf-fs-echo')}`;
 }

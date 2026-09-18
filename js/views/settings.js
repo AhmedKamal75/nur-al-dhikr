@@ -343,6 +343,17 @@ export function renderSettings(state) {
         data-bind="settings-search" autocomplete="off" />
     </div>
     <h1 class="view__title">${t('settings.title', lang)}</h1>
+    ${
+      filterQ
+        ? ''
+        : `
+    <nav class="settings-jump" aria-label="${t('settings.sections', lang)}">
+      ${SETTINGS_SECTIONS.map(
+        (sec) => `
+      <button type="button" class="chip chip--query" data-action="settings-jump" data-sec="${sec.id}">${t(sec.title, lang)}</button>`
+      ).join('')}
+    </nav>`
+    }
 
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}

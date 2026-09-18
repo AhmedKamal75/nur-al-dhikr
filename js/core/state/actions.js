@@ -76,6 +76,8 @@ export const actions = {
   tickerNudge: () => ({ type: 'TICKER_NUDGE' }),
   setLibraryIndex: (itemIndex) => ({ type: 'LIBRARY_SET_INDEX', itemIndex }),
   contentManageToggle: () => ({ type: 'CONTENT_MANAGE_TOGGLE' }),
+  // (v5.10.6) recitation console "more" panel: ephemeral, never persisted.
+  reciteMoreToggle: () => ({ type: 'RECITE_MORE_TOGGLE' }),
   restoreState: (payload) => ({ type: 'RESTORE_STATE', payload }),
   resetAll: () => ({ type: 'RESET_ALL' }),
   setQuranMeta: (meta) => ({ type: 'QURAN_META_LOADED', meta }),
@@ -145,8 +147,14 @@ export const actions = {
     type: 'HADITH_BOOKMARK_TOGGLE',
     key: `${String(bookId)}:${String(n)}`,
   }),
-  // Kids-mode star for a naturally finished recitation.
-  awardKidsStar: () => ({ type: 'KIDS_AWARD_STAR' }),
+  // Kids-mode star for a naturally finished recitation (surah optional —
+  // the parent dashboard breaks stars down per surah when it knows which).
+  awardKidsStar: (surah = null) => ({ type: 'KIDS_AWARD_STAR', surah }),
+  // Kids memory-quiz session (ephemeral): prebuilt round only, the
+  // reducer never shuffles — same contract as GRAMMAR_DRILL_START.
+  kidsQuizStart: (round) => ({ type: 'KIDS_QUIZ_START', round }),
+  kidsQuizAnswer: (surah) => ({ type: 'KIDS_QUIZ_ANSWER', surah }),
+  kidsQuizExit: () => ({ type: 'KIDS_QUIZ_EXIT' }),
   // App-wide progress profiles (family sharing).
   createProfile: (id, name) => ({ type: 'PROFILE_CREATE', id, name }),
   switchProfile: (id) => ({ type: 'PROFILE_SWITCH', id }),

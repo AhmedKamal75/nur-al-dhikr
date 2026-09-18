@@ -111,3 +111,77 @@ export function prayerMonthCount(dailyChecklist, refDate = new Date()) {
   }
   return n;
 }
+
+/**
+ * (v5.10.1) Longest-ever run of fully-logged five-prayer days. Scans the
+ * sorted calendar keys (capped — a hostile blob with 10k keys costs one
+ * bounded pass, never a hang); gaps and partial days reset the run.
+ */
+export function prayerBestStreak(dailyChecklist) {
+  const map = dailyChecklist && typeof dailyChecklist === 'object' ? dailyChecklist : {};
+  const keys = Object.keys(map)
+    .filter((k) => {
+      const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(k);
+      return (
+        m && Number(m[2]) >= 1 && Number(m[2]) <= 12 && Number(m[3]) >= 1 && Number(m[3]) <= 31
+      );
+    })
+    .sort()
+    .slice(-3700);
+  let best = 0;
+  let run = 0;
+  let prev = null;
+  for (const k of keys) {
+    const d = new Date(`${k}T12:00:00`);
+    const consecutive = prev != null && d - prev === 86400000;
+    if (dayComplete(map[k]) && (prev == null || consecutive)) run += 1;
+    else if (dayComplete(map[k]))
+      run = 1; // complete day after a gap restarts
+    else run = 0; // partial day resets
+    if (run > best) best = run;
+    prev = d;
+  }
+  return best;
+}
+
+/**
+ * (v5.10.1) 30-day insights for the Prayer view: completion rate, jamaah
+ * share, per-prayer miss counts (most-missed first), and the best streak.
+ * All counts derive from the same tri-state storage — no new state.
+ */
+export function prayerInsights(dailyChecklist, days = 30, today = new Date()) {
+  const map = dailyChecklist && typeof dailyChecklist === 'object' ? dailyChecklist : {};
+  const base = today instanceof Date && !Number.isNaN(today.getTime()) ? today : new Date();
+  const missedByPrayer = { fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 };
+  let logged = 0;
+  let jamaah = 0;
+  let daysSeen = 0;
+  for (let i = days - 1; i >= 0; i -= 1) {
+    const key = dateKey(addDays(base, -i));
+    const entry = map[key];
+    if (!entry || typeof entry !== 'object') continue;
+    daysSeen += 1;
+    for (const k of PRAYER_KEYS) {
+      const st = prayerState(entry, k);
+      if (st) {
+        logged += 1;
+        if (st === 'jamaah') jamaah += 1;
+      } else {
+        missedByPrayer[k] += 1;
+      }
+    }
+  }
+  const total = daysSeen * PRAYER_KEYS.length;
+  const mostMissed = [...PRAYER_KEYS].sort((a, b) => missedByPrayer[b] - missedByPrayer[a])[0];
+  return {
+    days: daysSeen,
+    logged,
+    total,
+    rate: total ? logged / total : 0,
+    jamaah,
+    jamaahRate: logged ? jamaah / logged : 0,
+    missedByPrayer,
+    mostMissed: daysSeen ? mostMissed : null,
+    bestStreak: prayerBestStreak(map),
+  };
+}

@@ -92,6 +92,25 @@ export const DEFAULT_RECITER = 'ar.alafasy';
 export const quranAudioUrl = (reciterId, globalAyahNumber, bitrate = 128) =>
   `https://cdn.islamic.network/quran/audio/${bitrate}/${encodeURIComponent(reciterId)}/${globalAyahNumber}.mp3`;
 /**
+ * (v5.10.8) Per-voice bitrate ladders, derived from the CDN's own
+ * by-ayah listing (full 6236-file census): voices that only ship 64kbps
+ * (Sudais, Abdulbasit, Shuraym, Hani, Sowaid, Basfar) or only 128kbps
+ * (Ayyoub, Jibreel, Minshawi) skip their missing rung instead of burning
+ * a doomed 404 fetch on every ayah — noticeable on slow networks.
+ * Unlisted voices keep the default [128, 64] pair.
+ */
+export const VERSE_BITRATES = Object.freeze({
+  'ar.abdulbasitmurattal': [64],
+  'ar.abdurrahmaansudais': [64],
+  'ar.muhammadayyoub': [128],
+  'ar.muhammadjibreel': [128],
+  'ar.minshawi': [128],
+  'ar.saoodshuraym': [64],
+  'ar.hanirifai': [64],
+  'ar.aymanswoaid': [64],
+  'ar.abdullahbasfar': [64],
+});
+/**
  * Same CDN, per-surah files: the cross-engine fallback. When a moshaf
  * server is unreachable the full-surah player retries once through this
  * URL (default voice) instead of failing outright — same documented CDN
@@ -205,6 +224,15 @@ export const QURAN_RECITERS = Object.freeze([
   { id: 'ar.muhammadjibreel', nameEn: 'Muhammad Jibreel', nameAr: 'محمد جبريل' },
   { id: 'ar.hudhaify', nameEn: 'Hudhaify', nameAr: 'علي بن عبدالرحمن الحذيفي' },
   { id: 'ar.ahmedajamy', nameEn: 'Ahmed Ajamy', nameAr: 'أحمد العجمي' },
+  // (v5.10.8) six more CDN-verified voices (full 6236-file coverage at the
+  // listed bitrates, EveryAyah mirrors HEAD-checked) — the "only 10"
+  // restriction is gone; the picker groups them with the incumbents.
+  { id: 'ar.minshawi', nameEn: 'Minshawi (Murattal)', nameAr: 'محمد صديق المنشاوي' },
+  { id: 'ar.shaatree', nameEn: 'Abu Bakr Al-Shatri', nameAr: 'أبو بكر الشاطري' },
+  { id: 'ar.saoodshuraym', nameEn: 'Saood Ash-Shuraym', nameAr: 'سعود الشريم' },
+  { id: 'ar.hanirifai', nameEn: 'Hani Ar-Rifai', nameAr: 'هاني الرفاعي' },
+  { id: 'ar.aymanswoaid', nameEn: 'Ayman Sowaid', nameAr: 'أيمن سويد' },
+  { id: 'ar.abdullahbasfar', nameEn: 'Abdullah Basfar', nameAr: 'عبد الله بصفر' },
 ]);
 
 /** Verse-voice allowlist: the CDN namespace only serves these five ids —

@@ -118,7 +118,14 @@ export async function boot() {
     // into the store so any card/button showing that ayah re-renders with
     // the right "now playing" affordance, the same way speakingItemId does
     // for text-to-speech.
-    recitation.onPlaybackChange((key) => store.dispatch(actions.setRecitingAyah(key)));
+    // (v5.10.6) single render per advance: while a verse session is active
+    // its own mirror below already carries the key (batched into the same
+    // dispatch) — a second render here would double every handoff's main-
+    // thread bill. Single-ayah taps (no session) still flow through here.
+    recitation.onPlaybackChange((key) => {
+      if (surahPlayback.isActive()) return;
+      store.dispatch(actions.setRecitingAyah(key));
+    });
     // Continuous recitation: the engine owns the audio; this mirrors its
     // progress into the store so every view (reader, Mushaf, player bar)
     // renders the moving highlight reactively.
@@ -126,36 +133,43 @@ export async function boot() {
       // carry the live repeat budget too, so the recitation console's chip
       // renders from state rather than going stale between ayah changes
       const snap = surahPlayback.snapshot();
-      store.dispatch(
-        actions.setSurahPlayback({
-          active: ayah != null,
-          surah,
-          ayah,
-          from: snap.from,
-          repeat: snap.repeat,
-          // (v5.2.0) echo mode + "your turn" pause ride the same mirror.
-          listenRepeat: snap.listenRepeat === true,
-          waiting: snap.waiting === true,
-          // FIX (v5.2.1): the mirror used to drop total/end, so every
-          // counter in the app ("1 / 0" in the player bar AND the
-          // fullscreen glass bar) read zero. The engine owns them.
-          total: snap.total,
-          end: snap.end,
-          // FIX: the mirror also dropped listen mode + voices, so enabling
-          // continuous/compare then advancing one ayah silently lost them
-          // (continuous "didn't work"; a reciter change never stuck).
-          continuous: snap.continuous === true,
-          reciterId: snap.reciterId,
-          reciterIdB: snap.reciterIdB,
-          compare: snap.compare === true,
-          loop: snap.loop,
-          speed: snap.speed,
-          queue: snap.queue,
-          qIndex: snap.qIndex,
-          stopAt: snap.stopAt,
-          paused: snap.paused === true,
-        })
-      );
+      // (v5.10.6) one dispatch for the whole advance: the card highlight
+      // key rides WITH the session mirror, so each ayah costs exactly one
+      // render instead of two back-to-back full rebuilds.
+      const recitingKey = ayah != null && surah != null ? `${surah}:${ayah}` : null;
+      store.batch(() => {
+        store.dispatch(
+          actions.setSurahPlayback({
+            active: ayah != null,
+            surah,
+            ayah,
+            from: snap.from,
+            repeat: snap.repeat,
+            // (v5.2.0) echo mode + "your turn" pause ride the same mirror.
+            listenRepeat: snap.listenRepeat === true,
+            waiting: snap.waiting === true,
+            // FIX (v5.2.1): the mirror used to drop total/end, so every
+            // counter in the app ("1 / 0" in the player bar AND the
+            // fullscreen glass bar) read zero. The engine owns them.
+            total: snap.total,
+            end: snap.end,
+            // FIX: the mirror also dropped listen mode + voices, so enabling
+            // continuous/compare then advancing one ayah silently lost them
+            // (continuous "didn't work"; a reciter change never stuck).
+            continuous: snap.continuous === true,
+            reciterId: snap.reciterId,
+            reciterIdB: snap.reciterIdB,
+            compare: snap.compare === true,
+            loop: snap.loop,
+            speed: snap.speed,
+            queue: snap.queue,
+            qIndex: snap.qIndex,
+            stopAt: snap.stopAt,
+            paused: snap.paused === true,
+          })
+        );
+        store.dispatch(actions.setRecitingAyah(recitingKey));
+      });
       // Lock-screen / headset metadata follows the reciting ayah (cleared
       // when the session closes) — best-effort, silent where unsupported.
       if (ayah != null) {
@@ -176,7 +190,7 @@ export async function boot() {
       // flag is single-read, so a star can never double-count.
       const finished = surahPlayback.consumeLastFinish();
       if (finished != null && store.getState().settings.kidsMode === true) {
-        store.dispatch(actions.awardKidsStar());
+        store.dispatch(actions.awardKidsStar(finished));
         showToast(t('kids.starEarned', store.getState().settings.language));
       }
     });

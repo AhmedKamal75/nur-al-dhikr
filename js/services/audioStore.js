@@ -452,22 +452,45 @@ export async function deleteVerseAudio(reciterId, globalAyah) {
  * Download one verse file into the store (fetch → audio-check → save).
  * Same honesty contract as downloadSurah: 404 is learned 'missing',
  * non-audio payloads refuse, timeouts terminate.
+ * (v5.10.2) `url` accepts a single URL or an ordered candidate list —
+ * the first success wins and the walk stops, so the CORS-open mirror
+ * rescue costs one extra attempt only when the primary fails. A string
+ * keeps the old single-URL behavior exactly.
  */
 export async function downloadVerseFile(reciterId, globalAyah, url) {
-  try {
-    const res = await fetchWithTimeout(url, { timeoutMs: 30000 });
-    if (res.status === 404) return { ok: false, error: 'missing' };
-    if (!res.ok) return { ok: false, error: `http-${res.status}` };
-    const blob = await res.blob();
-    if (!blob.size) return { ok: false, error: 'empty' };
-    const type = blob.type || '';
-    if (type && !/audio|octet|mpeg|mp3/i.test(type)) {
-      return { ok: false, error: 'not-audio' };
+  const urls = Array.isArray(url) ? url.filter((u) => typeof u === 'string' && u) : [url];
+  if (!urls.length) return { ok: false, error: 'network' };
+  const errors = [];
+  for (const u of urls) {
+    try {
+      const res = await fetchWithTimeout(u, { timeoutMs: 30000 });
+      if (res.status === 404) {
+        errors.push('missing');
+        continue;
+      }
+      if (!res.ok) {
+        errors.push(`http-${res.status}`);
+        continue;
+      }
+      const blob = await res.blob();
+      if (!blob.size) {
+        errors.push('empty');
+        continue;
+      }
+      const type = blob.type || '';
+      if (type && !/audio|octet|mpeg|mp3/i.test(type)) {
+        errors.push('not-audio');
+        continue;
+      }
+      return saveVerseAudio(reciterId, globalAyah, blob);
+    } catch {
+      errors.push('network');
     }
-    return saveVerseAudio(reciterId, globalAyah, blob);
-  } catch {
-    return { ok: false, error: 'network' };
   }
+  // Every candidate 404'd → the file genuinely doesn't exist anywhere
+  // (learned 'missing'); otherwise report the last failure.
+  if (errors.length && errors.every((e) => e === 'missing')) return { ok: false, error: 'missing' };
+  return { ok: false, error: errors[errors.length - 1] || 'network' };
 }
 
 /* ------------------------------------------------------------------ *

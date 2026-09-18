@@ -17,6 +17,10 @@ import {
   averagePerDay,
   activeDays,
   monthTotal,
+  goalProgress,
+  streakCoaching,
+  surahPageCounts,
+  topSurahsByPages,
 } from '../domain/statistics.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 import { dueCounts, dueSurahs, dueAyahs } from '../domain/hifz.js';
@@ -237,6 +241,15 @@ export function renderStatistics(state) {
   const maxMonth = Math.max(1, ...monthCells.filter(Boolean).map((c) => c.count));
   const focusTotal = monthTotal(stats, focusDate);
   const topCats = mostReadCategories(stats, 5);
+  // (v5.10.1) goal + streak coaching + per-surah reading depth. The surah
+  // breakdown derives from the mushaf page log (no new recording), so old
+  // histories gain it for free; unknown meta renders #N, never blank.
+  const goal = goalProgress(stats, state.settings.dailyGoal);
+  const coach = streakCoaching(stats.currentStreak, stats.longestStreak);
+  const topSurahs = topSurahsByPages(
+    surahPageCounts(state.mushafPagesRead, state.mushaf?.meta?.ayahPages),
+    state.quran?.meta?.surahs
+  );
   // (v5.2.75, UP-05) reader- or memorizer-only users own progress too: the
   // digest panel has something to say before the first tasbih tap.
   const hasAnyData =
@@ -364,6 +377,43 @@ export function renderStatistics(state) {
       <span>${t('stats.viewCertificate', lang)}</span>
       ${icon('chevronRight', { size: 16 })}
     </a>
+
+    <section class="panel">
+      <div class="panel__header"><h2>${t('stats.goalTitle', lang)}</h2></div>
+      <p class="stat-goal__line" dir="ltr">${goal.today} / ${goal.goal}</p>
+      <div class="stat-goal__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${goal.pct}" aria-label="${t('stats.goalTitle', lang)}">
+        <span class="stat-goal__bar-fill" style="--fill:${goal.pct}%"></span>
+      </div>
+      <p class="panel__subtext">${goal.met ? t('stats.goalMet', lang) : t('stats.goalLeft', lang, { n: goal.remaining })}</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel__header"><h2>${t('stats.streakCoachTitle', lang)}</h2></div>
+      <p class="panel__subtext">${
+        coach.nextMilestone
+          ? t('stats.streakToGo', lang, { n: coach.toGo, m: coach.nextMilestone })
+          : t('stats.streakTop', lang)
+      }</p>
+    </section>
+
+    ${
+      topSurahs.length
+        ? `
+    <section class="panel">
+      <div class="panel__header"><h2>${t('stats.topSurahs', lang)}</h2></div>
+      <div class="ranked-list">${topSurahs
+        .map(
+          (s) => `
+      <div class="ranked-row">
+        <span class="ranked-row__label" dir="rtl" lang="ar">${escapeHTML(s.nameAr)}</span>
+        ${s.nameEn && lang !== 'ar' ? `<span class="ranked-row__sub">${escapeHTML(s.nameEn)}</span>` : ''}
+        <span class="ranked-row__value" dir="ltr">${t('stats.pagesRead', lang, { n: s.pages })}</span>
+      </div>`
+        )
+        .join('')}</div>
+    </section>`
+        : ''
+    }
 
     ${memorizationPanel(state, lang)}
 

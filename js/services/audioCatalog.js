@@ -1,6 +1,6 @@
 /**
  * audioCatalog.js
- * The full-reciter catalog: 314 mushafs from mp3quran.net + quranicaudio.com
+ * The full-reciter catalog: 312 mushafs from mp3quran.net + quranicaudio.com
  * (both CORS-open, both serving per-surah files 001.mp3…114.mp3), loaded
  * lazily from data/reciters.json, plus user-added custom reciters (persisted
  * in settings) so *any* server following the same URL pattern can be added —

@@ -190,9 +190,39 @@ describe('engine (fake driver)', () => {
     d.end('114:1');
     d.end('114:2');
     d.end('114:3');
-    await tick();
+    // Settle on STATE, not tick counts: the audio-first mirror notifies
+    // after the async offline probe + play dispatch, which spans a
+    // load-dependent number of macrotask hops — a fixed tick count
+    // under-waits on loaded runners and over-waits everywhere else.
+    for (let i = 0; i < 50 && seen.filter(([s]) => s != null).length < 2; i++) {
+      await tick();
+    }
     assert.equal(d.played.at(-1).key, '114:4');
     assert.equal(isActive(), true);
+    // (v5.10.6) advances mirror to listeners (audio-first ordering must
+    // not swallow the highlight). Rapid-fire ends collapse by design —
+    // only the surviving advance notifies — so the pin below walks ends
+    // one at a time instead.
+    assert.deepEqual(
+      seen.filter(([s]) => s != null),
+      [
+        [114, 1],
+        [114, 4],
+      ]
+    );
+    d.end('114:4');
+    for (let i = 0; i < 50 && seen.filter(([s]) => s != null).length < 3; i++) {
+      await tick();
+    }
+    assert.deepEqual(
+      seen.filter(([s]) => s != null),
+      [
+        [114, 1],
+        [114, 4],
+        [114, 5],
+      ],
+      'a settled advance mirrors exactly once'
+    );
     d.end('114:4');
     d.end('114:5');
     d.end('114:6');
@@ -244,19 +274,38 @@ describe('engine (fake driver)', () => {
     configureDriver(null);
   });
 
-  test('verse failure tears the session down and reports the error', () => {
+  // (v5.10.0) the engine walks the ayah-mirror chain before admitting
+  // failure: a dead primary retries the same ayah on the next mirror,
+  // and only a spent chain tears the session down.
+  test('verse failure walks the mirror chain, then tears down and reports', async () => {
     const d = makeDriver();
     configureDriver(d);
     const errs = [];
     onError((s, a) => errs.push([s, a]));
-    start({ surah: 1, total: 7, reciterId: 'x', surahsMeta: SURAHS });
-    d.fail();
-    assert.equal(isActive(), false, 'session does not hang on a failed verse');
+    start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
+    await tick();
+    assert.equal(d.played.length, 1);
+    d.fail(); // primary dies → 64kbps mirror, same ayah
+    await tick();
+    await tick();
+    assert.equal(isActive(), true, 'session survives a dead primary');
+    assert.equal(d.played.length, 2);
+    assert.equal(d.played[1].key, '1:1');
+    d.fail(); // 64kbps dies → EveryAyah mirror
+    await tick();
+    await tick();
+    assert.equal(isActive(), true, 'session survives a dead second mirror');
+    assert.equal(d.played.length, 3);
+    d.fail(); // chain spent → honest teardown
+    await tick();
+    await tick();
+    assert.equal(isActive(), false, 'session does not hang once mirrors are spent');
     assert.equal(errs.at(-1)[0], 1);
     configureDriver(null);
   });
 
-  test('error callbacks fire before teardown so first-ayah fallback sees live state', () => {
+  test('error callbacks fire before teardown so first-ayah fallback sees live state', async () => {
     const d = makeDriver();
     configureDriver(d);
     let seen = null;
@@ -264,7 +313,17 @@ describe('engine (fake driver)', () => {
       seen = snapshot();
     });
     start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
+    await tick();
     d.fail();
+    await tick();
+    await tick();
+    d.fail();
+    await tick();
+    await tick();
+    d.fail();
+    await tick();
+    await tick();
     assert.ok(seen && seen.ayah === 1 && seen.from === 1, 'live mirror inside onError');
     assert.equal(isActive(), false, 'torn down afterwards');
     configureDriver(null);

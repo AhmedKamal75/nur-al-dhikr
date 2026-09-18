@@ -1,7 +1,7 @@
 /**
  * views/audioManager.js
  * Reciters & offline downloads:
- *  - searchable catalog of 314 mushafs (mp3quran + quranicaudio) + the
+ *  - searchable catalog of 312 mushafs (mp3quran + quranicaudio) + the
  *    user's custom reciters,
  *  - per-surah download grid for the selected moshaf with Download All,
  *    per-file delete, moshaf wipe, storage usage bar,
@@ -87,17 +87,26 @@ export function renderAudio(state) {
       // an honest label instead of failing on every tap.
       const unavailable = !dl && isSurahMissing(selected.id, n);
       const label = lang === 'ar' ? t('quran.surah', lang) + ' ' + n : String(n);
-      const cellAction = dl ? 'audio-delete-surah' : 'audio-download-surah';
+      // (v5.10.2) one-button cells: a downloaded surah PLAYS on tap (the
+      // unified quran-play-surah toggle — pause/resume in place, offline
+      // blob aware), with delete kept as the small trailing button; an
+      // undownloaded cell downloads exactly as before.
+      const cellAction = dl ? 'quran-play-surah' : 'audio-download-surah';
       cells.push(`
       <div class="dl-cell ${dl ? 'dl-cell--done' : ''}${busy ? ' dl-cell--busy' : ''}${unavailable ? ' dl-cell--missing' : ''}">
         <button type="button" class="dl-cell__btn" data-action="${cellAction}" data-moshaf="${escapeHTML(selected.id)}" data-surah="${n}"
           ${unavailable ? 'disabled aria-disabled="true"' : ''}
           title="${escapeHTML(unavailable ? t('audio.surahUnavailable', lang) : surahName(state, n))}"
-          aria-label="${escapeHTML(unavailable ? `${surahName(state, n)} — ${t('audio.surahUnavailable', lang)}` : `${surahName(state, n)} — ${dl ? t('audio.deleteFile', lang) : t('audio.downloadFile', lang)}`)}">
+          aria-label="${escapeHTML(unavailable ? `${surahName(state, n)} — ${t('audio.surahUnavailable', lang)}` : `${surahName(state, n)} — ${dl ? t('audio.play', lang) : t('audio.downloadFile', lang)}`)}">
           <span class="dl-cell__num">${label}</span>
-          <span class="dl-cell__state">${dl ? icon('check', { size: 13 }) : busy ? `<span class="dl-cell__spinner" role="status" aria-label="${t('common.loading', lang)}"></span>` : unavailable ? icon('close', { size: 13 }) : icon('download', { size: 13 })}</span>
+          <span class="dl-cell__state">${dl ? icon('play', { size: 13 }) : busy ? `<span class="dl-cell__spinner" role="status" aria-label="${t('common.loading', lang)}"></span>` : unavailable ? icon('close', { size: 13 }) : icon('download', { size: 13 })}</span>
         </button>
-        ${dl ? `<span class="dl-cell__bytes">${formatBytes(dl.bytes)}</span>` : ''}
+        ${
+          dl
+            ? `<span class="dl-cell__bytes">${formatBytes(dl.bytes)}</span>
+        <button type="button" class="dl-cell__delete" data-action="audio-delete-surah" data-moshaf="${escapeHTML(selected.id)}" data-surah="${n}" aria-label="${escapeHTML(`${surahName(state, n)} — ${t('audio.deleteFile', lang)}`)}" title="${escapeHTML(t('audio.deleteFile', lang))}">${icon('trash', { size: 11 })}</button>`
+            : ''
+        }
       </div>`);
     }
 
@@ -126,9 +135,9 @@ export function renderAudio(state) {
     </section>`;
   }
 
-  // One screen for every voice: the 5 verse-by-verse CDN voices ride
+  // One screen for every voice: the 16 verse-by-verse CDN voices ride
   // along here (streaming-only — no per-surah files to download), so the
-  // Settings-5 vs Audio-314 picker split stops hiding them from each other.
+  // verse-voice vs full-mushaf picker split stops hiding them from each other.
   const verseRows = QURAN_RECITERS.map(
     (r) => `
     <button type="button" class="reciter-row ${state.settings.reciter === r.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="reciter" data-value="${r.id}" aria-pressed="${state.settings.reciter === r.id}">

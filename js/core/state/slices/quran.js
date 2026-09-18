@@ -91,11 +91,23 @@ export function reduceQuran(state, action) {
     case 'MUSHAF_META_LOADED':
       return { ...state, mushaf: { ...state.mushaf, meta: action.meta } };
 
-    case 'MUSHAF_PAGE_LOADED':
-      return {
-        ...state,
-        mushaf: { ...state.mushaf, pages: { ...state.mushaf.pages, [action.page]: action.doc } },
-      };
+    case 'MUSHAF_PAGE_LOADED': {
+      // (v5.9.0) bounded page cache: the DOM only ever holds 1 spread, but
+      // the store accumulated all 604 page docs on a cover-to-cover read.
+      // pageOrder keeps the 48 most-recently-loaded (re-setting a page
+      // refreshes its recency); anything older is dropped and re-fetches
+      // through the SW cache — a cache hit, never a network loss.
+      const pages = { ...state.mushaf.pages, [action.page]: action.doc };
+      const prev = Array.isArray(state.mushaf.pageOrder)
+        ? state.mushaf.pageOrder
+        : Object.keys(state.mushaf.pages);
+      const order = [...prev.filter((k) => k !== action.page), action.page].slice(-48);
+      const keep = new Set(order);
+      for (const k of Object.keys(pages)) {
+        if (!keep.has(k)) delete pages[k];
+      }
+      return { ...state, mushaf: { ...state.mushaf, pages, pageOrder: order } };
+    }
 
     case 'MUSHAF_BOOKMARK_SET':
       return { ...state, mushafBookmark: { page: action.page, ts: Date.now() } };

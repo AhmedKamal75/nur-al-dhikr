@@ -21,7 +21,12 @@
 
 import { ayahAudioUrl, globalAyahNumber } from './mushaf.js';
 import { getVerseAudio } from './audioStore.js';
-import { QURAN_RECITER_IDS, DEFAULT_RECITER } from '../core/config/quran.js';
+import {
+  QURAN_RECITER_IDS,
+  DEFAULT_RECITER,
+  quranAudioUrl,
+  VERSE_BITRATES,
+} from '../core/config/quran.js';
 import {
   driverPlay,
   driverStop,
@@ -34,6 +39,10 @@ import {
   driverPause,
   driverResume,
   driverHasEnded,
+  driverPreload,
+  onPreloadSample,
+  lastPlaySwapped,
+  prunePool,
 } from './recitation.js';
 import { SLEEP_TIMER_CHOICES, volumeAt, countdownLabel } from '../domain/sleepTimer.js';
 
@@ -60,6 +69,87 @@ export function resolvePage(ayahPages, surah, ayah) {
 
 /** Stable key for an ayah, same shape recitation.js uses everywhere. */
 export const ayahKey = (surah, ayah) => `${surah}:${ayah}`;
+
+/* ------------------------------------------------------------------ */
+/* (v5.9.0) Ayah-audio mirror chain                                    */
+/*                                                                     */
+/* A single CDN file can 404 (removed encoding) or fail CORS while     */
+/* its siblings are fine — so each ayah resolves to an ORDERED         */
+/* candidate list instead of one URL, and the engine walks it before   */
+/* ever admitting failure:                                             */
+/*   1. primary verse CDN @128kbps (cdn.islamic.network),              */
+/*   2. same-CDN @64kbps mirror (a different encoding file),           */
+/*   3. EveryAyah per-ayah mp3s (SSSAAA zero-padded) for mapped voices.*/
+/* The EveryAyah subdir map is best-effort (verify live when touched): */
+/* a wrong tertiary URL simply 404s and falls through to an honest     */
+/* failure — it can never misroute audio, only cost one extra attempt. */
+/* Full-surah audio is NOT in this chain: the verse session only falls */
+/* back to a full-surah file when every ayah-level mirror has failed   */
+/* (decided by the caller via onError, e.g. app/boot.js).              */
+/* ------------------------------------------------------------------ */
+
+const EVERAYAH_SUBDIR = Object.freeze({
+  'ar.alafasy': 'Alafasy_128kbps',
+  'ar.husary': 'Husary_128kbps',
+  'ar.abdulbasitmurattal': 'Abdul_Basit_Murattal_192kbps',
+  'ar.abdurrahmaansudais': 'Abdurrahmaan_As-Sudais_192kbps',
+  'ar.mahermuaiqly': 'Maher_AlMuaiqly_64kbps',
+  'ar.husarymujawwad': 'Husary_Mujawwad_128kbps',
+  'ar.muhammadayyoub': 'Muhammad_Ayyoub_128kbps',
+  'ar.muhammadjibreel': 'Muhammad_Jibreel_128kbps',
+  'ar.hudhaify': 'Hudhaify_128kbps',
+  'ar.ahmedajamy': 'Ahmed_ibn_Ali_al-Ajamy_128kbps',
+  // (v5.10.8) tertiary mirrors HEAD-verified per voice (002255.mp3 probe).
+  'ar.minshawi': 'Minshawy_Murattal_128kbps',
+  'ar.shaatree': 'Abu_Bakr_Ash-Shaatree_128kbps',
+  'ar.saoodshuraym': 'Saood_ash-Shuraym_128kbps',
+  'ar.hanirifai': 'Hani_Rifai_192kbps',
+  'ar.aymanswoaid': 'Ayman_Sowaid_64kbps',
+  'ar.abdullahbasfar': 'Abdullah_Basfar_192kbps',
+});
+
+const pad3 = (n) => String(Math.floor(Number(n))).padStart(3, '0');
+
+/**
+ * Ordered streaming URLs for one ayah (primary → mirrors). Pure — the
+ * engine and unit tests share this exact chain. Offline Blob playback
+ * bypasses it (a stored file needs no mirror).
+ */
+export function verseAudioCandidates(reciterId, surah, ayah, globalNum) {
+  const out = [];
+  const g = Math.floor(Number(globalNum));
+  if (Number.isFinite(g) && g >= 1) {
+    const id = QURAN_RECITER_IDS.has(reciterId) ? reciterId : DEFAULT_RECITER;
+    // (v5.10.8) per-voice bitrate ladder — voices missing a rung skip it
+    // instead of burning a doomed fetch per ayah.
+    const ladder = VERSE_BITRATES[id] || [128, 64];
+    for (const b of ladder) out.push(quranAudioUrl(id, g, b));
+  }
+  const sub = EVERAYAH_SUBDIR[reciterId];
+  const s = Math.floor(Number(surah));
+  const a = Math.floor(Number(ayah));
+  if (sub && s >= 1 && s <= 114 && a >= 1 && a <= 286) {
+    out.push(`https://everyayah.com/data/${sub}/${pad3(s)}${pad3(a)}.mp3`);
+  }
+  return out;
+}
+
+/**
+ * (v5.10.2) Download-ordered candidates for one ayah. Streaming
+ * (verseAudioCandidates) leads with the primary CDN because the <audio>
+ * element needs no CORS — but fetch() downloads DO, and the primary CDN
+ * sends no Access-Control-Allow-Origin (every verse-pack fetch failed
+ * with net::ERR_FAILED in a real browser). Downloads therefore lead
+ * with the CORS-open EveryAyah mirror (verified `ACAO: *`) and keep the
+ * primary URLs as fallback for contexts where CORS is open. Same
+ * pure-in/pure-out contract as the streaming chain.
+ */
+export function verseDownloadCandidates(reciterId, surah, ayah, globalNum) {
+  const stream = verseAudioCandidates(reciterId, surah, ayah, globalNum);
+  const everyayah = stream.filter((u) => u.includes('everyayah.com'));
+  const primary = stream.filter((u) => !u.includes('everyayah.com'));
+  return [...everyayah, ...primary];
+}
 
 /**
  * Resolve queue item `queue[idx]` against the surah meta into playable
@@ -192,6 +282,106 @@ export const ECHO_PAUSE_MIN_MS = 3000;
 export const ECHO_PAUSE_MAX_MS = 30000;
 export const ECHO_PAUSE_DEFAULT_MS = 8000;
 
+/* ------------------------------------------------------------------ */
+/* (v5.10.4) Adaptive lookahead: how many upcoming ayahs to buffer.    */
+/* One spare starves whenever a fetch outlasts the ayah being played   */
+/* (measured live: a 12s stall on short ayahs). Instead of a           */
+/* quota-eating synthetic speed test, the controller learns passively: */
+/* every preload reports its preload-start → canplaythrough time (zero */
+/* extra requests — the timing rides prefetches the player needed      */
+/* anyway), folded into an EWMA; ayah durations come from the          */
+/* session's own ended timestamps, and k itself is EWMA-smoothed       */
+/* (k = α·k_prev + (1−α)·target: jumps up instantly on pain, glides    */
+/* down gently on plenty).                                             */
+/*   (v5.10.7) Bounds are now [2, 8], seed 5 — rationale, honestly:    */
+/*   below 2 the controller cannot observe anything; above 8 the cure  */
+/*   becomes the disease (each pooled fetch competes for the browser's */
+/*   ~6 per-host connections, so a stampede throttles the AUDIBLE      */
+/*   file, and ~150KB × N speculative buffers is real quota). Startup  */
+/*   seeds 5 = main fetch + 5 spares saturating exactly a full         */
+/*   connection window without queueing the first sound behind         */
+/*   prefetches. The EWMA + smoothing do the adapting between.         */
+/* ------------------------------------------------------------------ */
+export const MAX_LOOKAHEAD = 8;
+export const MIN_LOOKAHEAD = 2;
+export const SEED_LOOKAHEAD = 5;
+const NET_ALPHA = 0.3; // EWMA weight per preload sample
+const AYAH_ALPHA = 0.2; // EWMA weight per played ayah
+let netEwmaMs = null; // measured time-to-bufferable per file
+let ayahEwmaMs = 6000; // measured play duration per ayah (neutral seed)
+let playStampMs = 0; // when the current ayah started sounding
+let samplesSubscribed = false;
+
+/** EWMA step: pure, so tests pin the weighting exactly. */
+export function ewmaUpdate(avg, sample, alpha) {
+  const s = Math.floor(Number(sample));
+  if (!Number.isFinite(s) || s < 0) return avg;
+  // Null/undefined seeds from the sample; hostile avgs (NaN, negatives,
+  // and null — Number(null) is 0, so == null must come first) reseed too.
+  const a = avg == null || !Number.isFinite(Number(avg)) || avg < 0 ? s : avg;
+  const w = Math.min(1, Math.max(0, Number(alpha)));
+  return Math.round(a + w * (s - a));
+}
+
+/**
+ * Lookahead depth from the fetch/ayah ratio. Unlearned network (no samples
+ * yet — every session start) seeds SEED_LOOKAHEAD: the first sample only
+ * arrives after the first spare completes, and short early ayahs starve
+ * before that on slow links (measured live). Worst case the seed spends
+ * ~4 extra files (~600KB) when the user stops within one ayah; a
+ * continuing session consumes every warmed file, so there is no waste at
+ * all on the common path. The EWMA takes over (usually down) as soon as
+ * real samples land. Pure — tests pin the bands.
+ */
+export function lookaheadFor(netEwma, ayahEwma) {
+  if (!Number.isFinite(Number(netEwma)) || netEwma <= 0) return SEED_LOOKAHEAD;
+  const ayah = Number.isFinite(Number(ayahEwma)) && ayahEwma > 0 ? ayahEwma : 6000;
+  // Depth follows need: each ayah consumes `ratio` ayahs-worth of fetch
+  // time, so the buffer must hold more than `ratio` files to stay ahead.
+  const ratio = netEwma / ayah;
+  if (ratio > 4) return MAX_LOOKAHEAD;
+  if (ratio > 2.5) return 5;
+  if (ratio > 1.2) return 3;
+  if (ratio > 0.5) return 2;
+  return 1;
+}
+
+let kFloat = SEED_LOOKAHEAD; // smoothed depth — seeds 5, glides with samples
+const K_SMOOTH_ALPHA = 0.5;
+
+/**
+ * (v5.10.5) Smooth k itself — k = α·k_prev + (1−α)·target — instead of
+ * jumping band to band. Same EWMA family as the estimators, applied one
+ * level up: when the measured ratio hovers on a band edge, the depth
+ * glides instead of flapping 2↔3 every ayah (each flap pointlessly
+ * re-warms and evicts). Converges in ~2 samples at α=0.5, so genuine
+ * network shifts still track fast. Pure — tests pin convergence exactly.
+ */
+export function smoothK(prevK, target, alpha = K_SMOOTH_ALPHA) {
+  const t = Math.max(1, Math.min(MAX_LOOKAHEAD, Math.floor(Number(target)) || 1));
+  // Unseeded (null/undefined) takes the target; other hostile prevs clamp
+  // through the float math below (null coerces to 0 via Number(), so the
+  // == null check must come first — same trap ewmaUpdate had).
+  const pk = prevK == null || !Number.isFinite(Number(prevK)) ? t : prevK;
+  const w = Number.isFinite(Number(alpha)) ? Math.min(1, Math.max(0, Number(alpha))) : 0.5;
+  return Math.max(1, Math.min(MAX_LOOKAHEAD, pk + w * (t - pk)));
+}
+
+/** Passive sample in (preload → canplaythrough ms). Exported for tests. */
+export function notePreloadSample(ms) {
+  netEwmaMs =
+    netEwmaMs == null ? Math.floor(Number(ms)) || 0 : ewmaUpdate(netEwmaMs, ms, NET_ALPHA);
+}
+
+/** Test seam: reset the learned estimators between cases. */
+export function resetPlaybackNetStatsForTests() {
+  netEwmaMs = null;
+  ayahEwmaMs = 6000;
+  playStampMs = 0;
+  kFloat = SEED_LOOKAHEAD;
+  samplesSubscribed = false;
+}
+
 /** Clamp an echo pause into the sane window; garbage → default. */
 export function normalizeEchoPause(ms) {
   const n = Math.floor(Number(ms));
@@ -254,8 +444,8 @@ export function currentReciterId() {
   return session.reciterId;
 }
 
-function playCurrent() {
-  playCurrentSeq();
+function playCurrent(afterDispatch) {
+  playCurrentSeq(afterDispatch);
 }
 
 let playSeq = 0;
@@ -280,13 +470,14 @@ function dropObjectUrl() {
  * landing mid-lookup drops the stale result — revoking its URL when it
  * created one — instead of double-playing.
  */
-async function playCurrentSeq() {
+async function playCurrentSeq(afterDispatch) {
   const seq = ++playSeq;
   const reciter = currentReciterId();
-  const cdnUrl = ayahAudioUrl(session.surahsMeta, reciter, session.surah, session.ayah);
+  const g = globalAyahNumber(session.surahsMeta, session.surah, session.ayah);
+  const mirrors = verseAudioCandidates(reciter, session.surah, session.ayah, g);
+  const cdnUrl = mirrors[0] || null;
   let url = cdnUrl;
   let owned = null;
-  const g = globalAyahNumber(session.surahsMeta, session.surah, session.ayah);
   if (g != null && reciter) {
     try {
       const blob = await getVerseAudio(reciter, g);
@@ -308,6 +499,19 @@ async function playCurrentSeq() {
     }
     return;
   }
+  // A new ayah or a new voice always restarts from the primary mirror;
+  // repeats/echoes of the same ayah+voice keep the working mirror.
+  const playKey = ayahKey(session.surah, session.ayah);
+  if (session.lastPlayKey !== playKey || session.lastPlayReciter !== reciter) {
+    session.mirrorIdx = 0;
+    session.lastPlayKey = playKey;
+    session.lastPlayReciter = reciter;
+  }
+  // Streaming (no offline copy): walk the mirror chain from the session's
+  // current position — a retry after a dead primary resumes mid-chain.
+  if (!owned) {
+    url = mirrors[Math.min(session.mirrorIdx || 0, mirrors.length - 1)] || null;
+  }
   if (!url) {
     failSession();
     return;
@@ -315,8 +519,26 @@ async function playCurrentSeq() {
   dropObjectUrl();
   currentObjectUrl = owned;
   session.paused = false;
+  session.streamUrl = owned ? null : url;
   driverSetRate(session.speed);
+  // (v5.10.4) duration stamp for the ayah EWMA (gap controller input):
+  // taken at dispatch, so render + lookup overhead never inflates it.
+  playStampMs = Date.now();
+  // (v5.10.6) dispatched-play counter: the fast-up rule needs to tell a
+  // session's first cold start (expected miss) from mid-session misses.
+  session.plays = (session.plays || 0) + 1;
   driverPlay(url, ayahKey(session.surah, session.ayah));
+  // (v5.10.6) deterministic audio-first: the highlight/store mirror runs
+  // only AFTER the play call is dispatched, so no render can ever delay
+  // the handoff. Callers without a mirror pass nothing (replays whose
+  // key never changes, cold starts that want instant visual feedback).
+  if (typeof afterDispatch === 'function') {
+    try {
+      afterDispatch();
+    } catch (err) {
+      console.error('[surah-playback] post-dispatch hook failed', err);
+    }
+  }
   prefetchNext();
 }
 
@@ -349,23 +571,13 @@ export function resume() {
 }
 
 /**
- * Gapless handoff: while the current ayah plays, warm the NEXT audio file
- * so the browser has it (DNS + first bytes) before the 'ended' event fires.
- * Best-effort only — never throws, never plays. The pure URL half lives in
- * peekNextUrl() so tests can assert the prefetch target without an Audio device.
+ * Gapless handoff: while the current ayah plays, buffer the NEXT audio
+ * file on the driver's hot spare so the advance swaps onto already-loaded
+ * media — no fetch, no decode wait, no pipeline spin-up at the boundary.
+ * Best-effort only — never throws, never plays. Drivers without a preload
+ * slot (unit-test fakes) skip warming silently; the pure URL half lives in
+ * peekNextUrl() so tests still assert the prefetch target without audio.
  */
-function warmAudio(url) {
-  try {
-    if (!url || typeof Audio === 'undefined') return;
-    if (!warmAudio.el) {
-      warmAudio.el = new Audio();
-      warmAudio.el.preload = 'auto';
-    }
-    if (warmAudio.el.src !== url) warmAudio.el.src = url;
-  } catch {
-    /* prefetch must never break playback */
-  }
-}
 
 /** The audio URL the engine will need NEXT (compare B-pass, repeat, or advance). */
 export function peekNextUrl() {
@@ -416,9 +628,91 @@ function peekNextTriple() {
   return null;
 }
 
+/**
+ * (v5.10.4) The next-k triples for adaptive lookahead — plain sequential
+ * listening ONLY (same surah bounds, plus the continuous roll). Repeat,
+ * compare, queue, loop and echo modes keep the single-triple behavior
+ * (their futures branch — warming guesses would waste quota), signaled
+ * by returning [] so the caller falls back to peekNextTriple().
+ */
+export function peekNextTriples(k) {
+  const want = Math.max(1, Math.min(MAX_LOOKAHEAD, Math.floor(Number(k)) || 1));
+  if (!session || !session.active) return [];
+  if (
+    session.compare === true ||
+    session.repeat !== 1 ||
+    Array.isArray(session.queue) ||
+    session.loop > 1 ||
+    session.listenRepeat === true
+  )
+    return [];
+  const out = [];
+  let s = session.surah;
+  let a = session.ayah;
+  const end = session.end;
+  for (let i = 0; i < want; i++) {
+    const nx = nextAyah(a, end);
+    if (nx != null) {
+      a = nx;
+    } else {
+      // End of bounds: roll only under the exact advanceSurah gates.
+      if (!(session.continuous === true && !session.ranged && s < 114)) break;
+      if (session.stopAt && s + 1 > session.stopAt.surah) break;
+      const meta = session.surahsMeta?.find((m) => Number(m.number) === s + 1);
+      const t = Math.floor(Number(meta?.ayahCount));
+      if (!Number.isFinite(t) || t < 1) break;
+      s += 1;
+      a = 1;
+    }
+    // Never warm past a cross-surah stop point.
+    if (
+      session.stopAt &&
+      (s > session.stopAt.surah || (s === session.stopAt.surah && a > session.stopAt.ayah))
+    )
+      break;
+    out.push({ reciter: currentReciterId(), surah: s, ayah: a });
+  }
+  return out;
+}
+
 function prefetchNext() {
-  const triple = peekNextTriple();
-  if (!triple) return;
+  // (v5.10.6) fast-up on starvation: the just-dispatched play missed the
+  // pool on a streaming file past the session's first ayah — the network
+  // sagged faster than samples can report it. Assume fetch ≥ 1.5× ayah
+  // NOW instead of re-stalling to learn it (one stall max, never a
+  // series). Blob plays and first-ayah cold starts are not congestion.
+  if (session?.active && !lastPlaySwapped()) {
+    const blobPlay = !session.streamUrl && !!currentObjectUrl;
+    if (!blobPlay && (session.plays || 0) > 1) {
+      const floor = Math.round(ayahEwmaMs * 1.5);
+      if (!Number.isFinite(netEwmaMs) || netEwmaMs < floor) netEwmaMs = floor;
+    }
+  }
+  // (v5.10.7) lower bound 2: below it the controller cannot observe
+  // anything (no spare ever completes to sample from). Complex sessions
+  // keep their single triple below — their futures branch, so warming
+  // guesses there would burn quota for nothing.
+  const target = lookaheadFor(netEwmaMs, ayahEwmaMs);
+  const alpha = target > kFloat ? 1 : 0.5;
+  kFloat = smoothK(kFloat, target, alpha);
+  const k = Math.max(MIN_LOOKAHEAD, Math.min(MAX_LOOKAHEAD, Math.round(kFloat)));
+  let triples = k > 1 ? peekNextTriples(k) : [];
+  if (!triples.length) {
+    const single = peekNextTriple();
+    triples = single ? [single] : [];
+  }
+  for (const triple of triples) warmTriple(triple);
+  // Evict anything the new horizon no longer needs (skips/seeks must not
+  // leave stale fetches burning quota).
+  try {
+    prunePool(triples.map((t) => ayahAudioUrl(session.surahsMeta, t.reciter, t.surah, t.ayah)));
+  } catch {
+    /* best-effort */
+  }
+}
+
+/** Warm one upcoming triple (offline probe first — stored needs nothing). */
+function warmTriple(triple) {
   const url = ayahAudioUrl(session.surahsMeta, triple.reciter, triple.surah, triple.ayah);
   if (!url) return;
   // (v5.2.61) offline-first prefetch: a stored next ayah needs no warming
@@ -426,14 +720,14 @@ function prefetchNext() {
   // stored, so no object URL is ever created just to prefetch.
   const g = globalAyahNumber(session.surahsMeta, triple.surah, triple.ayah);
   if (g == null || !triple.reciter) {
-    warmAudio(url);
+    driverPreload(url);
     return;
   }
   getVerseAudio(triple.reciter, g)
     .then((blob) => {
-      if (!blob) warmAudio(url);
+      if (!blob) driverPreload(url);
     })
-    .catch(() => warmAudio(url));
+    .catch(() => driverPreload(url));
 }
 
 function failSession() {
@@ -587,6 +881,11 @@ export function start({
     queue: normalizeQueue(queue),
     qIndex: Number.isFinite(Math.floor(Number(qIndex))) ? Math.floor(Number(qIndex)) : 0,
     paused: false,
+    // (v5.9.0) mirror-chain position for the CURRENT ayah's streaming
+    // URLs — reset to the primary on every ayah/voice change, advanced
+    // by onVerseFailed until the chain is spent.
+    mirrorIdx: 0,
+    streamUrl: null,
     // Cross-surah stopAt rolls surah-to-surah on its own — listen mode is
     // implied so the session actually travels there.
     continuous: !!(stopPoint && stopPoint.surah > s),
@@ -600,6 +899,13 @@ export function start({
   // (tests inject fakes; production always uses the real audio element).
   driverOnEnded(onVerseEnded);
   driverOnError(onVerseFailed);
+  // (v5.10.4) passive throughput learning, once per module lifetime:
+  // preload timings feed the lookahead EWMA. Real elements only ever
+  // report; test fakes never fire canplaythrough, so suites stay silent.
+  if (!samplesSubscribed) {
+    samplesSubscribed = true;
+    onPreloadSample(notePreloadSample);
+  }
   notify(s, session.ayah);
   playCurrent();
   return snapshot();
@@ -679,8 +985,7 @@ function advanceQueue() {
     session.repeatsLeft = session.repeat;
     session.loopsLeft = session.loop;
     session.comparePass = 0;
-    notify(r.surah, r.from);
-    playCurrent();
+    playCurrent(() => notify(r.surah, r.from));
     return true;
   }
   return false;
@@ -699,8 +1004,7 @@ function advanceAyah() {
       session.ayah = session.from;
       session.repeatsLeft = session.repeat;
       session.comparePass = 0;
-      notify(session.surah, session.from);
-      playCurrent();
+      playCurrent(() => notify(session.surah, session.from));
       return;
     }
     // A queued range list rolls into its next resolvable item.
@@ -709,11 +1013,14 @@ function advanceAyah() {
     stop(); // surah-scoped: last ayah ends the session (notifies null)
     return;
   }
+  // (v5.10.4) audio-first: kick off the next file BEFORE the store
+  // dispatch + full re-render, so a heavy view rebuild can never hold
+  // the handoff hostage. Sound leads the highlight by milliseconds —
+  // imperceptible, and strictly better than the reverse.
   session.ayah = next;
   session.repeatsLeft = session.repeat;
   session.comparePass = 0;
-  notify(session.surah, next);
-  playCurrent();
+  playCurrent(() => notify(session.surah, next));
 }
 
 /** Advance the session to the next surah (listen mode + skip-past-end). */
@@ -757,8 +1064,7 @@ function advanceSurah() {
   session.repeatsLeft = session.repeat;
   // In listen mode the loop budget applies per surah, then rolls on.
   session.loopsLeft = session.loop;
-  notify(nextS, 1);
-  playCurrent();
+  playCurrent(() => notify(nextS, 1));
   return true;
 }
 
@@ -775,8 +1081,7 @@ export function setReciter(reciterId) {
   clearEchoWait();
   session.reciterId = id;
   session.comparePass = 0;
-  notify(session.surah, session.ayah);
-  playCurrent();
+  playCurrent(() => notify(session.surah, session.ayah));
   return snapshot();
 }
 
@@ -789,8 +1094,7 @@ export function setReciterB(reciterIdB) {
   clearEchoWait();
   session.comparePass = 0;
   if (session.active) {
-    notify(session.surah, session.ayah);
-    playCurrent();
+    playCurrent(() => notify(session.surah, session.ayah));
   }
   return snapshot();
 }
@@ -807,8 +1111,7 @@ export function setCompare(on) {
   session.compare = next;
   session.comparePass = 0;
   if (session.active) {
-    notify(session.surah, session.ayah);
-    playCurrent();
+    playCurrent(() => notify(session.surah, session.ayah));
   }
   return snapshot();
 }
@@ -850,8 +1153,7 @@ export function setRepeat(r) {
   if (wasWaiting) {
     // A budget change mid-pause restarts the current ayah immediately —
     // leaving the session parked in silence with no timer would strand it.
-    notify(session.surah, session.ayah);
-    playCurrent();
+    playCurrent(() => notify(session.surah, session.ayah));
   }
   return snapshot();
 }
@@ -877,8 +1179,7 @@ export function skip(delta) {
   session.ayah = Math.max(1, target);
   session.repeatsLeft = session.repeat;
   session.comparePass = 0;
-  notify(session.surah, session.ayah);
-  playCurrent();
+  playCurrent(() => notify(session.surah, session.ayah));
   return snapshot();
 }
 
@@ -893,6 +1194,12 @@ export function onError(cb) {
 function onVerseEnded(finishedKey) {
   if (!session || !session.active) return;
   if (finishedKey !== ayahKey(session.surah, session.ayah)) return; // stale ended
+  // (v5.10.4) ayah-duration sample for the EWMA: natural ends only (the
+  // key guard above already excludes stale/foreign ends), noise-clamped.
+  if (playStampMs > 0) {
+    const dur = Date.now() - playStampMs;
+    if (dur >= 300 && dur <= 300000) ayahEwmaMs = ewmaUpdate(ayahEwmaMs, dur, AYAH_ALPHA);
+  }
   // Compare mode: voice A just finished → the SAME ayah with voice B plays
   // next (no budget consumed); voice B just finished → fall through to the
   // repeat/advance logic below with a fresh A-pass.
@@ -938,5 +1245,29 @@ function onVerseEnded(finishedKey) {
 
 function onVerseFailed() {
   if (!session || !session.active) return;
+  // (v5.9.0) mirror walk: the failed URL is dead (404/CORS/drop) — try
+  // the next candidate for the SAME ayah before admitting failure. The
+  // offline Blob path never reaches here (a stored file cannot 404), so
+  // mirrorIdx only advances over streaming URLs.
+  if (!currentObjectUrl) {
+    const reciter = currentReciterId();
+    const g = globalAyahNumber(session.surahsMeta, session.surah, session.ayah);
+    const mirrors = verseAudioCandidates(reciter, session.surah, session.ayah, g);
+    const next = (session.mirrorIdx || 0) + 1;
+    if (next < mirrors.length) {
+      session.mirrorIdx = next;
+      console.warn('[surahPlayback] ayah mirror fallback', {
+        ayah: ayahKey(session.surah, session.ayah),
+        mirror: next,
+        url: mirrors[next],
+      });
+      playCurrent();
+      return;
+    }
+    console.error('[surahPlayback] all ayah mirrors failed', {
+      ayah: ayahKey(session.surah, session.ayah),
+      tried: mirrors.length,
+    });
+  }
   failSession();
 }

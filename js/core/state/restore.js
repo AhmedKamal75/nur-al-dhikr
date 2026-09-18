@@ -360,8 +360,22 @@ export function sanitizeRestoredPayload(payload) {
         const c = Math.floor(Number(n));
         if (Number.isFinite(c) && c > 0) days[d] = Math.min(c, 10000);
       }
+      // Per-surah breakdown for the parent dashboard: surah ints 1..114,
+      // positive counts only; quiz wins without a surah simply omit it.
+      const bySurah = {};
+      const bsrc = k.bySurah && typeof k.bySurah === 'object' ? k.bySurah : {};
+      for (const [s, n] of Object.entries(bsrc).slice(0, 114)) {
+        const sn = Math.floor(Number(s));
+        const c = Math.floor(Number(n));
+        if (Number.isFinite(sn) && sn >= 1 && sn <= 114 && Number.isFinite(c) && c > 0)
+          bySurah[sn] = Math.min(c, 10000);
+      }
       const total = Math.floor(Number(k.total));
-      return { total: Number.isFinite(total) && total > 0 ? Math.min(total, 1000000) : 0, days };
+      return {
+        total: Number.isFinite(total) && total > 0 ? Math.min(total, 1000000) : 0,
+        days,
+        bySurah,
+      };
     })(),
     // Recitation queues: capped counts, safe ids, clamped range ints.
     playlists: cleanPlaylists(p.playlists),

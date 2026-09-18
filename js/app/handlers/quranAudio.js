@@ -10,12 +10,80 @@ import { MUSHAF_META_URL, QURAN_META_URL, QURAN_RECITERS } from '../../core/conf
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { escapeHTML } from '../../core/utils.js';
+import { icon } from '../../core/icons.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import { SLEEP_TIMER_CHOICES } from '../../domain/sleepTimer.js';
+import { rt } from '../rt.js';
 import * as mediaSession from '../../services/mediaSession.js';
 import * as player from '../../services/player.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
+import { loadCatalog, searchReciters } from '../../services/audioCatalog.js';
+
+/**
+ * (v5.10.5) Start a verse-by-verse session for a surah, ensuring metadata
+ * first. Extracted from the 'surah-play' handler so the mode toggle
+ * (recite-mode-ayah) and other callers start the identical session —
+ * one code path, no drift.
+ */
+export async function startVerseSurah(
+  surah,
+  { from = 1, to = null, surahTo = NaN, loop = 1 } = {}
+) {
+  if (!Number.isFinite(surah) || surah < 1 || surah > 114) return;
+  // Starting playback from a picker modal (multi-surah page, voice list)
+  // dismisses it — otherwise the session plays behind a stale overlay.
+  // closeModal() is a safe no-op when nothing is open (toolbar taps).
+  closeModal();
+  // The engine needs surah ayahCounts (quran-meta) and, for Mushaf page
+  // following, the ayahPages index (mushaf-meta) — both lazily loaded.
+  let state = store.getState();
+  try {
+    if (!state.quran.meta) {
+      const meta = await fetchJSON(QURAN_META_URL);
+      store.dispatch(actions.setQuranMeta(meta));
+      state = store.getState();
+    }
+    if (!state.mushaf.meta) {
+      const meta = await fetchJSON(MUSHAF_META_URL);
+      store.dispatch(actions.setMushafMeta(meta));
+      state = store.getState();
+    }
+    // One voice: the full-surah player yields to recitation.
+    const p = state.player;
+    if (p?.moshafId && p.playing) {
+      player.pause();
+      store.dispatch(actions.setAudioPlayer({ playing: false }));
+    }
+    // (v5.0.0) an ayah RANGE (data-from / data-to) bounds the session:
+    // "play 1–10" ends at 10; absent both = the whole surah (v4 behavior).
+    // data-surah-to past the start surah becomes a cross-surah stopAt.
+    const endSurahTo = Math.floor(Number(surahTo));
+    const stopAt =
+      Number.isFinite(endSurahTo) && endSurahTo > surah
+        ? { surah: Math.min(endSurahTo, 114), ayah: Math.floor(Number(to)) || 1 }
+        : Number.isFinite(endSurahTo) && endSurahTo === surah
+          ? { surah, ayah: Math.floor(Number(to)) || 1 }
+          : null;
+    surahPlayback.start({
+      surah,
+      from: Math.floor(Number(from)) || 1,
+      to: to == null ? null : Math.floor(Number(to)),
+      stopAt,
+      total: state.quran.meta.surahs.find((x) => Number(x.number) === surah)?.ayahCount,
+      reciterId: state.settings.reciter,
+      reciterIdB: state.settings.reciterB,
+      compare: state.settings.reciterCompare === true,
+      surahsMeta: state.quran.meta.surahs,
+      repeat: state.settings.audio?.ayahRepeat,
+      loop: Math.floor(Number(loop)) || 1,
+      speed: state.settings.audio?.verseRate ?? 1,
+    });
+  } catch (err) {
+    console.error('[surah-playback] failed to start', err);
+    showToast(t('audio.reciteStartFailed', store.getState().settings.language));
+  }
+}
 
 export const clickHandlers = {
   'surah-play': async (ds) => {
@@ -26,58 +94,50 @@ export const clickHandlers = {
       surahPlayback.stop();
       return;
     }
-    // Starting playback from a picker modal (multi-surah page, voice list)
-    // dismisses it — otherwise the session plays behind a stale overlay.
-    // closeModal() is a safe no-op when nothing is open (toolbar taps).
+    await startVerseSurah(surah, {
+      from: parseInt(ds.ayah, 10) || parseInt(ds.from, 10) || 1,
+      to: ds.to ? parseInt(ds.to, 10) : null,
+      surahTo: parseInt(ds.surahTo, 10),
+      loop: parseInt(ds.loop, 10) || 1,
+    });
+  },
+
+  // (v5.10.5) playback-mode switch: persist the pref AND start the other
+  // engine for the current surah immediately, so the toggle is audible,
+  // not just a setting. Study features (repeat/compare/echo/follow) live
+  // and die with the ayah engine — switching to the file explains itself
+  // by what the other console offers.
+  'recite-mode-surah': async () => {
+    store.dispatch(actions.updateSettings({ reciteMode: 'surah' }));
+    const st = store.getState();
+    const surah = Math.floor(Number(st.surahPlayback?.surah));
     closeModal();
-    // The engine needs surah ayahCounts (quran-meta) and, for Mushaf page
-    // following, the ayahPages index (mushaf-meta) — both lazily loaded.
-    let state = store.getState();
-    try {
-      if (!state.quran.meta) {
-        const meta = await fetchJSON(QURAN_META_URL);
-        store.dispatch(actions.setQuranMeta(meta));
-        state = store.getState();
-      }
-      if (!state.mushaf.meta) {
-        const meta = await fetchJSON(MUSHAF_META_URL);
-        store.dispatch(actions.setMushafMeta(meta));
-        state = store.getState();
-      }
-      // One voice: the full-surah player yields to recitation.
-      const p = state.player;
-      if (p?.moshafId && p.playing) {
-        player.pause();
-        store.dispatch(actions.setAudioPlayer({ playing: false }));
-      }
-      // (v5.0.0) an ayah RANGE (data-from / data-to) bounds the session:
-      // "play 1–10" ends at 10; absent both = the whole surah (v4 behavior).
-      // data-surah-to past the start surah becomes a cross-surah stopAt.
-      const endSurahTo = parseInt(ds.surahTo, 10);
-      const stopAt =
-        Number.isFinite(endSurahTo) && endSurahTo > surah
-          ? { surah: Math.min(endSurahTo, 114), ayah: parseInt(ds.to, 10) || 1 }
-          : Number.isFinite(endSurahTo) && endSurahTo === surah
-            ? { surah, ayah: parseInt(ds.to, 10) || 1 }
-            : null;
-      surahPlayback.start({
-        surah,
-        from: parseInt(ds.ayah, 10) || parseInt(ds.from, 10) || 1,
-        to: ds.to ? parseInt(ds.to, 10) : null,
-        stopAt,
-        total: state.quran.meta.surahs.find((x) => Number(x.number) === surah)?.ayahCount,
-        reciterId: state.settings.reciter,
-        reciterIdB: state.settings.reciterB,
-        compare: state.settings.reciterCompare === true,
-        surahsMeta: state.quran.meta.surahs,
-        repeat: state.settings.audio?.ayahRepeat,
-        loop: parseInt(ds.loop, 10) || 1,
-        speed: state.settings.audio?.verseRate ?? 1,
-      });
-    } catch (err) {
-      console.error('[surah-playback] failed to start', err);
-      showToast(t('audio.reciteStartFailed', store.getState().settings.language));
+    surahPlayback.stop();
+    if (Number.isFinite(surah) && surah >= 1 && surah <= 114) {
+      const { startAudioPlay } = await import('../audioEngine.js');
+      await startAudioPlay(st.settings.audio.moshafId, surah);
     }
+  },
+
+  'recite-mode-ayah': async () => {
+    store.dispatch(actions.updateSettings({ reciteMode: 'ayah' }));
+    const st = store.getState();
+    const surah = Math.floor(Number(st.player?.surah));
+    const p = st.player;
+    if (p?.moshafId) {
+      player.pause();
+      store.dispatch(actions.setAudioPlayer({ playing: false }));
+    }
+    if (Number.isFinite(surah) && surah >= 1 && surah <= 114) {
+      await startVerseSurah(surah, {});
+    }
+  },
+
+  // (v5.10.6) console overflow panel: pure UI toggle (ephemeral state),
+  // so the transport row stays clean while every setting stays one tap
+  // away. The dispatch re-renders with the panel open/closed.
+  'recite-more-toggle': () => {
+    store.dispatch(actions.reciteMoreToggle());
   },
 
   /* (v5.0.0) The ayah-range picker — "play from ayah X to ayah Y", with an
@@ -148,7 +208,11 @@ export const clickHandlers = {
   // Reciter picker from inside the player console (both voices): voice A
   // restarts the current ayah immediately; voice B arms compare mode's
   // second pass. Same allowlisted QURAN_RECITERS set as Settings.
-  'recite-voice-open': () => {
+  'recite-voice-open': async () => {
+    // Fresh query per open; the catalog is idempotent, cached, and never
+    // throws — the moshaf section below renders from whatever is loaded.
+    rt.reciterPickQuery = '';
+    await loadCatalog();
     openModal(buildReciterPick(store.getState()), { labelledBy: 'modal-title-reciter' });
   },
 
@@ -257,13 +321,39 @@ export const clickHandlers = {
   'recite-voice-b': (ds) => {
     if (ds.value == null) return;
     const b = ds.value === '' ? null : ds.value;
+    const lang = store.getState().settings.language;
+    const flipMode = store.getState().settings.reciteMode !== 'ayah';
     store.batch(() => {
-      store.dispatch(actions.updateSettings({ reciterB: b, reciterCompare: false }));
+      store.dispatch(
+        actions.updateSettings({
+          reciterB: b,
+          reciterCompare: false,
+          ...(flipMode ? { reciteMode: 'ayah' } : {}),
+        })
+      );
       if (surahPlayback.isActive())
         store.dispatch(actions.setSurahPlayback(surahPlayback.setReciterB(b)));
     });
+    if (flipMode) showToast(t('audio.voiceModeAyah', lang));
     if (ds.refresh === 'recite-voice-open')
       openModal(buildReciterPick(store.getState()), { labelledBy: 'modal-title-reciter' });
+  },
+
+  // (v5.10.8) whole-surah voice pick from the unified picker: the moshaf
+  // becomes the file voice AND the mode follows it to 'surah' (an
+  // ayah-engine session could never use a per-surah file — leaving the
+  // mode behind would make the pick look broken). Announced only when
+  // the mode actually changes; the modal refreshes its check marks.
+  'recite-pick-moshaf': (ds) => {
+    if (!ds.id) return;
+    const lang = store.getState().settings.language;
+    const flipMode = store.getState().settings.reciteMode !== 'surah';
+    store.batch(() => {
+      store.dispatch(actions.setAudioPrefs({ moshafId: ds.id }));
+      if (flipMode) store.dispatch(actions.updateSettings({ reciteMode: 'surah' }));
+    });
+    if (flipMode) showToast(t('audio.voiceModeSurah', lang));
+    openModal(buildReciterPick(store.getState()), { labelledBy: 'modal-title-reciter' });
   },
 
   // (v5.2.0) Echo mode — listen-and-repeat: after each ayah the engine
@@ -357,6 +447,25 @@ export function buildReciterPick(state) {
         ${b === r.id ? check : ''}
       </button>`
     ).join('');
+  // (v5.10.8) section C — the whole 312-moshaf catalog, searchable in
+  // place. Picking a moshaf sets the file voice AND follows the mode to
+  // 'surah' (announced), mirroring the ayah-voice behavior above.
+  const customs = state.settings.customReciters || [];
+  const q = String(rt.reciterPickQuery || '');
+  const hits = searchReciters(q, customs);
+  const selectedId = state.settings.audio?.moshafId;
+  const shown = hits.slice(0, 30);
+  const moshafRows = shown
+    .map((r) => {
+      const active = r.id === selectedId;
+      const name = lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn;
+      return `
+      <button type="button" class="reciter-row ${active ? 'reciter-row--active' : ''}" data-action="recite-pick-moshaf" data-id="${escapeHTML(r.id)}" aria-pressed="${active}">
+        <span class="reciter-row__name">${escapeHTML(name)}</span>
+        ${active ? check : ''}
+      </button>`;
+    })
+    .join('');
   return `
       <div class="reciter-pick">
         <h2 id="modal-title-reciter">${t('audio.chooseReciter', lang)}</h2>
@@ -364,5 +473,54 @@ export function buildReciterPick(state) {
         <div class="reciter-list" data-voice="a">${listA}</div>
         <p class="panel__subtext">${escapeHTML(t('audio.voiceB', lang))}</p>
         <div class="reciter-list" data-voice="b">${listB}</div>
+        <p class="panel__subtext">${escapeHTML(t('audio.fileVoices', lang))}</p>
+        <div class="search-bar">
+          <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
+          <input
+            type="search"
+            class="search-bar__input"
+            id="reciter-pick-input"
+            placeholder="${t('audio.searchPh', lang)}"
+            aria-label="${t('audio.searchPh', lang)}"
+            value="${escapeHTML(q)}"
+            data-bind="reciter-pick-search"
+            autocomplete="off"
+          />
+        </div>
+        ${
+          hits.length
+            ? `<div class="reciter-list" data-voice="moshaf">${moshafRows}</div>
+        <p class="empty-hint">${t('audio.moshafShown', lang, { x: shown.length, n: hits.length })}</p>`
+            : `<p class="empty-hint">${t('search.noResults', lang)}</p>`
+        }
+        <a class="link-btn" href="#/audio" data-action="navigate" data-view="audio">${t('audio.browseAllMoshafs', lang)}</a>
       </div>`;
 }
+
+/**
+ * change/input registries (Blueprint D): the unified picker search types
+ * into ephemeral rt state and rebuilds the modal in place (same debounce
+ * + focus-restore pattern as the Audio view's own search).
+ */
+export const changeHandlers = [];
+
+export const inputHandlers = [
+  {
+    sel: '[data-bind="reciter-pick-search"]',
+    run: (ds, el) => {
+      const v = el.value;
+      clearTimeout(rt.reciterPickTimer);
+      rt.reciterPickTimer = setTimeout(() => {
+        rt.reciterPickQuery = v;
+        openModal(buildReciterPick(store.getState()), { labelledBy: 'modal-title-reciter' });
+        requestAnimationFrame(() => {
+          const input = document.getElementById('reciter-pick-input');
+          if (input && document.activeElement !== input) {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+          }
+        });
+      }, 180);
+    },
+  },
+];

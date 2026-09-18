@@ -17,7 +17,7 @@ import { nextRemindTime } from '../../domain/fasting.js';
 import { ramadanKhatmaPreset } from '../../domain/khatma.js';
 import { monthWindow, intensityBucket } from '../../domain/statistics.js';
 import { OFFSET_PRAYERS } from '../../domain/prayer.js';
-import { dayComplete, prayerState } from '../../domain/prayerLog.js';
+import { PRAYER_KEYS, dayComplete, prayerState } from '../../domain/prayerLog.js';
 import { CONFIRM_STEPS } from '../../domain/onboarding.js';
 import { yieldFullSurahPlayer } from '../audioEngine.js';
 import {
@@ -592,6 +592,19 @@ export const changeHandlers = [
       if (v === 0) delete offsets[ds.prayer];
       else offsets[ds.prayer] = v;
       store.dispatch(actions.updatePrayerSettings({ offsets }));
+    },
+  },
+  // (v5.10.1) iqama waits: clamped 0..60 ints over the five fard keys,
+  // zeros dropped (sanitizer re-clamps; sunrise can never carry one).
+  {
+    sel: '[data-bind="prayer-iqama"]',
+    run: (ds, el) => {
+      if (!PRAYER_KEYS.includes(ds.prayer)) return;
+      const v = Math.max(0, Math.min(60, Math.floor(Number(el.value)) || 0));
+      const iqama = { ...(store.getState().settings.prayer.iqama || {}) };
+      if (v === 0) delete iqama[ds.prayer];
+      else iqama[ds.prayer] = v;
+      store.dispatch(actions.updatePrayerSettings({ iqama }));
     },
   },
   {

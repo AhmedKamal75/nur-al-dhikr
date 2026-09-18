@@ -116,6 +116,11 @@ export function reduceShell(state, action) {
     case 'CONTENT_MANAGE_TOGGLE':
       return { ...state, ui: { ...state.ui, contentManage: !state.ui?.contentManage } };
 
+    // (v5.10.6) recitation console overflow panel. Ephemeral like manage
+    // mode (per-visit, never restored, never persisted).
+    case 'RECITE_MORE_TOGGLE':
+      return { ...state, ui: { ...state.ui, reciteMore: !state.ui?.reciteMore } };
+
     case 'ONBOARDING_DISMISS':
       if (state.onboarding?.dismissed) return state;
       return { ...state, onboarding: { ...state.onboarding, dismissed: true } };
@@ -167,6 +172,10 @@ export function reduceShell(state, action) {
     }
 
     case 'RECITATION_SET_ACTIVE':
+      // (v5.10.6) same-key writes are no-ops: the batched session mirror
+      // re-sets an identical key every advance, and a redundant object
+      // would force a render that changes nothing.
+      if (state.recitingAyahKey === action.key) return state;
       return { ...state, recitingAyahKey: action.key };
 
     case 'LIBRARY_SET_INDEX':

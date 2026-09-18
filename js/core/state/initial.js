@@ -50,9 +50,13 @@ export function initialState() {
     hadithMemRecords: {},
     // By-heart dhikr records: { "<itemId>": SRS record }, same ladder.
     byHeartRecords: {},
-    // Kids-mode stars: { total, days: { 'YYYY-MM-DD': n } }. Awarded for
-    // finishing a recitation naturally while kids mode is on.
+    // Kids-mode stars: { total, days: { 'YYYY-MM-DD': n }, bySurah: { n: count } }.
+    // Awarded for finishing a recitation naturally while kids mode is on,
+    // or for winning a memory-quiz round. bySurah feeds the parent dashboard.
     kidsStars: { total: 0, days: {} },
+    // Kids memory-quiz session (ephemeral): { target, options, answered }
+    // or null when idle. Deliberately NOT in PERSISTED_KEYS — a reload
+    // restarts the round instead of resuming a stale question.
     // App-wide profiles (family sharing one device): named progress
     // identities. Only the PROGRESS slices travel (favorites, counters,
     // statistics, history) — settings stay device-global, exactly like the
@@ -64,6 +68,7 @@ export function initialState() {
     // By-heart mode session (ephemeral): which category hides its Arabic
     // behind reveal taps + which items are currently revealed.
     byHeart: null,
+    kidsQuiz: null,
     // Grammar-flashcard drill session (ephemeral): shuffled word cards from
     // the bundled morphology, self-graded Right/Wrong. Null when idle.
     grammarDrill: null,
@@ -91,7 +96,7 @@ export function initialState() {
     // manage mode is per-visit, never restored across reloads. (v5.2.52)
     // the wizard position rides along: a reload restarts the wizard at the
     // first incomplete step, which is the honest resume point.
-    ui: { contentManage: false, onboardingStep: null },
+    ui: { contentManage: false, onboardingStep: null, reciteMore: false },
     tasbih: { activeItemId: null, activePhrase: null },
     // (v5.2.46) user-authored dhikr for the tasbih dial:
     // [{ id, text, target, ts }] oldest-first, capped. Counter keys ride the
@@ -113,7 +118,10 @@ export function initialState() {
     // Mushaf (604-page book-style reader): meta is the compact page/juz/surah
     // index (mushaf-meta.json); pages caches individual page JSON as visited.
     // Both ephemeral — refetched (from cache-first storage.js/SW) each session.
-    mushaf: { meta: null, pages: {} },
+    // pageOrder tracks load recency for the bounded cache (v5.9.0) —
+    // object keys sort integer-like page numbers numerically, so recency
+    // cannot ride on key order.
+    mushaf: { meta: null, pages: {}, pageOrder: [] },
     // Per-word grammar (root/i'rab/sarf/POS) + English gloss, one entry per
     // surah, fetched lazily the first time word study is opened for that
     // surah. { [surahNumber]: { [ayahNumber]: [wordRecord, ...] } }

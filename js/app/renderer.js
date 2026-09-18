@@ -678,6 +678,13 @@ export function render(state) {
     'is-mushaf-manual',
     state.mushafFullscreen === true && state.settings?.mushafPrefs?.autoFit === false
   );
+  // (v5.9.0) tajweed underline cue: off keeps the colors but drops the
+  // per-family underlines for a plain page. Renderer-owned like every
+  // body class — views stay pure string templates.
+  document.body.classList.toggle(
+    'tajweed-underlines-off',
+    state.settings?.mushafPrefs?.tajweedUnderlines === false
+  );
   // Elderly mode: one body class scales type + targets app-wide (pure CSS
   // in accessibility.css); the renderer owns it like every body class.
   document.body.classList.toggle('is-elder', state.settings.elderMode === true);

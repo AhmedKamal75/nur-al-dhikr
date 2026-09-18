@@ -878,6 +878,7 @@ export function buildMushafSettingsPanel(state) {
     ${toggle('wordByWordStudy', 'mushaf.wordStudy')}
     ${toggle('wordUnderline', 'mushaf.wordUnderline', true)}
     ${toggle('tajweedColoring', 'mushaf.tajweed')}
+    ${toggle('tajweedUnderlines', 'mushaf.tajweedUnderlines', true)}
     ${toggle('tajweedInspector', 'mushaf.tajweedInspector')}
 
     <div class="mushaf-settings__study-links">

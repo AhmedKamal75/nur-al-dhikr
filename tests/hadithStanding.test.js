@@ -119,8 +119,14 @@ describe('badges render on sahih books only', () => {
           },
         })
       );
-    assert.ok(reader('bukhari', 'B').includes('chip--grade-sahih'), 'reader badge for Bukhari');
-    assert.ok(!reader('nawawi', 'N').includes('chip--grade-sahih'), 'no badge without standing');
+    // (v5.10.1) the grade-guide legend carries all four grade chips, so the
+    // badge assertion keys on the header label, not the chip class.
+    assert.ok(reader('bukhari', 'B').includes('Sahih collection'), 'reader badge for Bukhari');
+    assert.ok(!reader('nawawi', 'N').includes('Sahih collection'), 'no badge without standing');
+    assert.ok(
+      reader('nawawi', 'N').includes('hadith-grade-guide'),
+      'mixed book still gets the grade guide'
+    );
   });
 
   test('AR labels render without undefined', () => {

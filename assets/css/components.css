@@ -300,6 +300,16 @@
 }
 /* (v5.2.23) the settings TOC jump chips were removed with the accordion:
    one intent per collapsible panel, no second navigation to maintain. */
+/* (v5.9.0) …and restored as stateless shortcuts: the chips share the
+   accordion's own pin/deep-link state (no second navigation to drift —
+   the v5.2.23 concern) and smooth-scroll the opened section to the top
+   of the viewport. Hidden while filtering (matches open themselves). */
+.settings-jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1_5);
+  margin-block: var(--space-2) var(--space-3);
+}
 .view--settings .panel {
   scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
 }
@@ -546,6 +556,9 @@
 }
 .chip--grade-daif {
   background: var(--grade-daif);
+}
+.chip--grade-mawdu {
+  background: var(--grade-mawdu);
 }
 .chip--grade-athar {
   background: var(--grade-athar);
@@ -1530,6 +1543,33 @@ body.modal-open {
   color: var(--color-primary-text);
   font-variant-numeric: tabular-nums;
 }
+/* (v5.10.1) statistics goal bar + surah rows (English gloss under Arabic). */
+.stat-goal__line {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.stat-goal__bar {
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+  overflow: hidden;
+}
+.stat-goal__bar-fill {
+  display: block;
+  height: 100%;
+  width: var(--fill, 0%);
+  background: var(--color-primary);
+  border-radius: var(--radius-pill);
+}
+.ranked-row__sub {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* Year-in-review windows */
 .review-window {
@@ -1583,6 +1623,18 @@ body.modal-open {
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
+  flex-wrap: wrap;
+}
+.player-bar__head > button {
+  flex-shrink: 0;
+}
+@media (min-width: 720px) {
+  .player-bar__head {
+    flex-wrap: nowrap;
+  }
+  .player-bar__meta {
+    flex: 0 1 auto;
+  }
 }
 
 .player-bar__play {
@@ -1592,28 +1644,25 @@ body.modal-open {
   height: var(--touch-target);
   flex-shrink: 0;
   border-radius: var(--radius-pill);
-  background: linear-gradient(145deg, var(--color-primary) 0%, var(--color-primary-deep) 100%);
+  border: none;
+  background: var(--color-primary);
   color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 4px 12px rgba(8, 51, 47, 0.3);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
   transition:
     transform var(--dur-fast) var(--ease-standard),
-    background-color var(--dur-base) var(--ease-standard),
+    filter var(--dur-base) var(--ease-standard),
     box-shadow var(--dur-base) var(--ease-standard);
 }
 .player-bar__play:hover {
-  background: linear-gradient(
-    145deg,
-    color-mix(in srgb, var(--color-primary) 94%, black),
-    color-mix(in srgb, var(--color-primary-deep) 94%, black)
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 6px 16px rgba(8, 51, 47, 0.35);
+  filter: brightness(1.08);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-primary) 50%, transparent);
 }
 .player-bar__play:active {
   transform: scale(0.94);
+}
+.player-bar__play:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
 }
 
 .player-bar__meta {
@@ -1630,6 +1679,14 @@ body.modal-open {
   text-overflow: ellipsis;
 }
 .player-bar__reciter {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* (v5.10.7) one-line file-mode honesty note under the reciter. */
+.player-bar__mode-note {
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
   white-space: nowrap;
@@ -1666,32 +1723,122 @@ body.modal-open {
   color: var(--color-primary-text);
 }
 
-/* (UX-8) the shared console's wide-viewport text labels: icon-only
- * buttons (ayah prev/next, follow, pause) show their short label at
- * desktop widths so touch users aren't left with title-tooltips that
- * don't exist on touch. Hidden on phones — the row stays compact. */
+/* (UX-8, retired v5.10.8) wide-viewport text labels inside console
+ * buttons: the owner ruled that shape carries meaning (aria-labels keep
+ * announcing everything) — labels stay in the DOM for tests + screen
+ * readers' verbose modes but never paint. Voice names and ×N counts are
+ * separate spans and stay visible: identity, not decoration. */
 .rec-console-label {
-  display: none;
-}
-@media (min-width: 900px) {
-  .rec-console-label {
-    display: inline;
-    margin-inline-start: 4px;
-    white-space: nowrap;
-  }
-  /* Labeled buttons escape the fixed 44px icon grid (the label would
-   * overlap the glyph) while keeping the touch-target floor. */
-  .icon-btn:has(> .rec-console-label) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    min-width: var(--touch-target);
-    padding-inline: var(--space-2);
-  }
+  display: none !important;
 }
 
-/* (v5.2.0) Echo-mode "your turn" banner inside the recitation console. */
+/* (v5.10.6) Professional recitation console: a transport row (hero
+   play/pause ringed like a real player, flanked by prev/next + stop,
+   with speed/reciter/more docked right) over a collapsible settings row.
+   Shared by every host (player bar, mushaf fullscreen, immersive
+   reader) through the single chips builder — one stylesheet restyles
+   them all, in both themes via tokens.
+   (v5.10.7) Modern-player pass: monochrome glyphs, hairline frame,
+   airy 12px rhythm, 64px play disc, slim session progress with counter
+   — the reference look, still fully token-driven for both themes. */
+.rec-console-progress {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-text) 14%, transparent);
+  overflow: hidden;
+  margin-block-end: var(--space-1);
+}
+.rec-console-progress__fill {
+  display: block;
+  height: 100%;
+  background: var(--color-text);
+  border-radius: var(--radius-pill);
+  transition: width var(--dur-base) var(--ease-standard);
+}
+.rec-console-count {
+  margin: 0 0 var(--space-1);
+  text-align: center;
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+.rec-console-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  border: 1px solid var(--color-border);
+}
+.rec-console-transport .icon-btn,
+.rec-console-transport .mushaf-fs-chip,
+.rec-console-transport .reader-immersive-chip,
+.rec-console-transport .player-bar__chip {
+  color: var(--color-text);
+}
+/* (v5.10.7, Sadaf port) visible keyboard focus everywhere in the console. */
+.rec-console-transport button:focus-visible,
+.rec-console-more button:focus-visible,
+.rec-console-play:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+.rec-console-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 64px;
+  height: 64px;
+  padding-inline: var(--space-3);
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  background: var(--color-primary);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  flex-shrink: 0;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+.rec-console-play:hover {
+  filter: brightness(1.08);
+}
+.rec-console-play:active {
+  transform: scale(0.96);
+}
+.rec-console-more {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: var(--space-1_5);
+  padding-block-start: var(--space-2);
+}
+.rec-console-more[hidden] {
+  display: none;
+}
+/* (v5.10.8) inside bottom sheets the settings list scrolls on its own so
+   the transport row is never pushed off-screen on short viewports. */
+.mushaf-fs-console .rec-console-more,
+.reader-immersive-console .rec-console-more {
+  max-height: 22vh;
+  overflow-y: auto;
+}
+.rec-console-more > * {
+  justify-content: flex-start;
+  min-inline-size: 0;
+}
+/* (v5.10.7) fullscreen consoles go icon-only: words inside buttons
+   ("إيقاف مؤقت", reciter names) eat the glass bar alive on phones.
+   Shape carries the meaning; aria-labels keep announcing everything. */
+.mushaf-fs-console .rec-console-label,
+.reader-immersive-console .rec-console-label,
+.mushaf-fs-console .rec-chip__text,
+.reader-immersive-console .rec-chip__text {
+  display: none;
+}
 .player-bar__echo-wait {
   display: flex;
   align-items: center;
@@ -1709,16 +1856,64 @@ body.modal-open {
   color: var(--color-text-muted);
 }
 
-.player-bar__seek {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
+/* (v5.10.7, Sadaf port) seek row: times pinned at both ends (tabular),
+   slim 3px track with a 12px thumb — the reference-player look, in both
+   themes via tokens. Class roles corrected: the TRACK is the grid row,
+   the SEEK is the range input itself. */
 .player-bar__track {
-  flex: 1;
-  height: 32px;
-  accent-color: var(--color-primary);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+input.player-bar__seek {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: 100%;
+  block-size: var(--touch-target);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
   cursor: pointer;
+  accent-color: var(--color-primary);
+}
+input.player-bar__seek::-webkit-slider-runnable-track {
+  block-size: 3px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-text) 16%, transparent);
+}
+input.player-bar__seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: 12px;
+  block-size: 12px;
+  margin-block-start: -4.5px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-text);
+}
+input.player-bar__seek::-moz-range-track {
+  block-size: 3px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-text) 16%, transparent);
+}
+input.player-bar__seek::-moz-range-progress {
+  block-size: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-text);
+}
+input.player-bar__seek::-moz-range-thumb {
+  inline-size: 12px;
+  block-size: 12px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-text);
+}
+input.player-bar__seek:focus-visible {
+  outline: 2px solid var(--color-text);
+  outline-offset: 4px;
+  border-radius: var(--radius-pill);
 }
 .player-bar__time {
   font-size: var(--fs-caption);
@@ -1738,15 +1933,19 @@ body.modal-open {
 }
 .player-bar__console {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: var(--space-1);
-  overflow-x: auto;
-  scrollbar-width: none;
   padding-block: 2px;
-  margin-inline: calc(var(--space-1) * -1);
-  padding-inline: var(--space-1);
 }
-.player-bar__console::-webkit-scrollbar {
+/* (v5.10.8) the verse bar stacks like every other console — the old
+   horizontal scroll strip laid transport + settings side by side. */
+.player-bar__console > * {
+  flex: none;
+}
+/* (v5.10.8) the verse bar is a bottom sheet now, not a scroll strip —
+   the old horizontal scroller is gone with the row layout. */
+.player-bar--recite .rec-console-count {
   display: none;
 }
 .player-bar__console > * {
@@ -1898,6 +2097,23 @@ body.modal-open {
 .dl-cell__bytes {
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
+}
+/* (v5.10.2) downloaded cells play on tap — per-file delete survives as
+   the small trailing button under the size readout. */
+.dl-cell__delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target);
+  min-height: var(--touch-target);
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+.dl-cell__delete:hover {
+  color: var(--color-danger-text, var(--color-text));
 }
 .dl-cell__state {
   display: grid;
@@ -2096,6 +2312,107 @@ body.is-kids #bottomnav {
   align-items: baseline;
   justify-content: center;
   gap: var(--space-2);
+}
+/* (v5.10.1) kids progression: level banner mirrors the stars panel, the
+   week chart is a 7-bar row that wraps safely on 390px viewports. */
+.panel--kids-level {
+  align-items: center;
+  text-align: center;
+}
+.kids-level__icon {
+  color: var(--cat-gold-text);
+}
+.kids-level__name {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+}
+.kids-level__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.kids-level__bar {
+  width: 100%;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
+  overflow: hidden;
+}
+.kids-level__bar-fill {
+  display: block;
+  height: 100%;
+  width: var(--fill, 0%);
+  background: var(--cat-gold-text);
+  border-radius: var(--radius-pill);
+}
+.kids-quiz__question,
+.kids-quiz__result {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  text-align: center;
+}
+.kids-quiz__actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.kids-parent__subtitle {
+  font-size: var(--fs-base);
+  font-weight: 700;
+  margin-block-start: var(--space-3);
+}
+.kids-week {
+  display: flex;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.kids-week__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+  min-width: 0;
+}
+.kids-week__bar {
+  display: block;
+  width: 100%;
+  max-width: 34px;
+  height: var(--bar-h, 4px);
+  min-height: 4px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-primary) 65%, var(--color-surface));
+}
+.kids-week__key,
+.kids-week__count {
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.kids-bysurah {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1_5);
+}
+.kids-bysurah li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--fs-base);
+}
+.kids-bysurah__count {
+  font-weight: 700;
+  color: var(--cat-gold-text);
+  font-variant-numeric: tabular-nums;
 }
 .kids-grid {
   display: grid;

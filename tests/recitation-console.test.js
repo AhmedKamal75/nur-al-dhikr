@@ -25,6 +25,8 @@ const ACTIONS = [
   'recite-compare-toggle',
   'recite-loop-toggle',
   'recite-speed-cycle',
+  'recite-mode-surah',
+  'recite-more-toggle',
   'recite-pause-toggle',
   'recite-stop',
 ];
@@ -56,7 +58,7 @@ function actionsIn(html) {
   return [...html.matchAll(/data-action="([^"]+)"/g)].map((m) => m[1]);
 }
 
-test('E: all 13 actions render exactly once with labels', () => {
+test('E: all 15 actions render exactly once with labels', () => {
   const snap = consoleSnapshot(session(), settings, sleep, 'en');
   const html = recitationChipsHTML(snap, 'en', CLS);
   const found = actionsIn(html).filter((a) => a.startsWith('recite-'));
@@ -145,4 +147,19 @@ test('E: icon-only buttons carry wide-viewport labels (UX-8)', () => {
 test('E: reciterShortLabel falls back to the raw id', () => {
   assert.equal(reciterShortLabel('unknown-id', 'en'), 'unknown-id');
   assert.equal(reciterShortLabel('', 'en'), '');
+});
+
+test('E: transport layout — progress, hero play, collapsed more (v5.10.7)', () => {
+  const snap = consoleSnapshot(session(), settings, sleep, 'en');
+  assert.equal(snap.progressPct, 2, '5/286 → 2%');
+  const shut = recitationChipsHTML(snap, 'en', CLS);
+  assert.ok(shut.includes('rec-console-transport'), 'transport row');
+  assert.ok(shut.includes('rec-console-play'), 'hero play button');
+  assert.ok(shut.includes('rec-console-progress__fill" style="width:2%'), 'determinate fill');
+  assert.ok(shut.includes('>5 / 286<'), 'x/y counter');
+  assert.match(shut, /rec-console-more" hidden/, 'more panel shut by default');
+  assert.ok(shut.includes('data-action="recite-more-toggle"'), 'more toggle present');
+  const open = recitationChipsHTML(snap, 'en', CLS, { moreOpen: true });
+  assert.doesNotMatch(open, /rec-console-more" hidden/, 'more panel opens');
+  assert.ok(open.includes('data-action="recite-repeat-toggle"'), 'settings survive regroup');
 });
