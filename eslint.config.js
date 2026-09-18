@@ -48,6 +48,7 @@ export default [
         structuredClone: 'readonly',
         getComputedStyle: 'readonly',
         ResizeObserver: 'readonly',
+        PerformanceObserver: 'readonly',
         DeviceOrientationEvent: 'readonly',
         Audio: 'readonly',
         AbortController: 'readonly',

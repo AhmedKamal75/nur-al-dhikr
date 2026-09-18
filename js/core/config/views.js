@@ -285,6 +285,9 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // Enabling also bumps the two font scales once (kept afterwards — the
   // sliders stay the source of truth, the toggle only styles + presets).
   elderMode: false,
+  // (v5.11.0 C) follow-gap telemetry: opt-in, local-only measurement of
+  // recitation-advance → on-screen-follow delay (see services/gapTelemetry.js).
+  gapTelemetry: false,
   // Kids mode: the app skins down to the Kids home (big tiles, short
   // surahs, stars). Parents toggle it in Settings; kids leave via the
   // hold-to-exit button (2s press).

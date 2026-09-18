@@ -675,19 +675,14 @@ export function peekNextTriples(k) {
   return out;
 }
 
-function prefetchNext() {
-  // (v5.10.6) fast-up on starvation: the just-dispatched play missed the
-  // pool on a streaming file past the session's first ayah — the network
-  // sagged faster than samples can report it. Assume fetch ≥ 1.5× ayah
-  // NOW instead of re-stalling to learn it (one stall max, never a
-  // series). Blob plays and first-ayah cold starts are not congestion.
-  if (session?.active && !lastPlaySwapped()) {
-    const blobPlay = !session.streamUrl && !!currentObjectUrl;
-    if (!blobPlay && (session.plays || 0) > 1) {
-      const floor = Math.round(ayahEwmaMs * 1.5);
-      if (!Number.isFinite(netEwmaMs) || netEwmaMs < floor) netEwmaMs = floor;
-    }
-  }
+/**
+ * (v5.11.0) The warm horizon for the current session position: the k
+ * triples the engine wants buffered, from the smoothed depth controller.
+ * Updates kFloat as a side effect (same EWMA step prefetchNext always
+ * did) — pure in everything except that float. Exported for tests and
+ * for the tap-parallel warm in start().
+ */
+export function computeWarmTriples() {
   // (v5.10.7) lower bound 2: below it the controller cannot observe
   // anything (no spare ever completes to sample from). Complex sessions
   // keep their single triple below — their futures branch, so warming
@@ -701,14 +696,34 @@ function prefetchNext() {
     const single = peekNextTriple();
     triples = single ? [single] : [];
   }
+  return triples;
+}
+
+/** Dispatch preloads for triples and evict anything past the horizon
+ *  (skips/seeks must not leave stale fetches burning quota). */
+function warmTriples(triples) {
   for (const triple of triples) warmTriple(triple);
-  // Evict anything the new horizon no longer needs (skips/seeks must not
-  // leave stale fetches burning quota).
   try {
     prunePool(triples.map((t) => ayahAudioUrl(session.surahsMeta, t.reciter, t.surah, t.ayah)));
   } catch {
     /* best-effort */
   }
+}
+
+function prefetchNext() {
+  // (v5.10.6) fast-up on starvation: the just-dispatched play missed the
+  // pool on a streaming file past the session's first ayah — the network
+  // sagged faster than samples can report it. Assume fetch ≥ 1.5× ayah
+  // NOW instead of re-stalling to learn it (one stall max, never a
+  // series). Blob plays and first-ayah cold starts are not congestion.
+  if (session?.active && !lastPlaySwapped()) {
+    const blobPlay = !session.streamUrl && !!currentObjectUrl;
+    if (!blobPlay && (session.plays || 0) > 1) {
+      const floor = Math.round(ayahEwmaMs * 1.5);
+      if (!Number.isFinite(netEwmaMs) || netEwmaMs < floor) netEwmaMs = floor;
+    }
+  }
+  warmTriples(computeWarmTriples());
 }
 
 /** Warm one upcoming triple (offline probe first — stored needs nothing). */
@@ -906,6 +921,15 @@ export function start({
     samplesSubscribed = true;
     onPreloadSample(notePreloadSample);
   }
+  // (v5.11.0) tap-parallel warm: fire the horizon's storage probes +
+  // preloads NOW, concurrent with the first ayah's own probe+dispatch in
+  // playCurrent() below — previously the warms waited behind the
+  // IndexedDB probe (tens of ms cold) before any network moved. Same
+  // URLs, same caps, pool-deduped against the post-dispatch prefetch, so
+  // quota is unchanged: 1 audible file + at most 5 warms still fits the
+  // ~6-connection window. The audible file itself is never pre-warmed —
+  // when a stored Blob exists that fetch would be pure waste.
+  warmTriples(computeWarmTriples());
   notify(s, session.ayah);
   playCurrent();
   return snapshot();

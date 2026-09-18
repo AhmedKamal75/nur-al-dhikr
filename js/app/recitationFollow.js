@@ -1,6 +1,7 @@
 import { scrollBehavior } from '../core/utils.js';
 import { rt } from './rt.js';
 import { playFlipSound } from './inputs.js';
+import * as gapTelemetry from '../services/gapTelemetry.js';
 
 import { VIEWS } from '../core/config.js';
 import { go } from '../core/router.js';
@@ -25,6 +26,16 @@ import { setFlipDirection } from '../ui/readingTokens.js';
 // ayah into view. Fires only on ayah CHANGES — never on every render — so
 // the person can still scroll freely between verses.
 
+function perfNow() {
+  try {
+    if (typeof performance !== 'undefined' && typeof performance.now === 'function')
+      return performance.now();
+  } catch {
+    /* fall through */
+  }
+  return Date.now();
+}
+
 export function maybeFollowRecitation(state) {
   const sp = state.surahPlayback;
   if (!sp.active || !sp.ayah) {
@@ -35,6 +46,17 @@ export function maybeFollowRecitation(state) {
   const key = `${sp.surah}:${sp.ayah}`;
   if (key === rt.lastFollowedAyahKey) return;
   rt.lastFollowedAyahKey = key;
+  // (v5.11.0 C) follow-effect cost: time the sync decision work; the
+  // applied mark lands at each completion point below. Both no-op unless
+  // gap telemetry is opted in. The gap deliberately stops at effect
+  // EXECUTION, not paint (see gapTelemetry.js).
+  const measure = gapTelemetry.isEnabled();
+  const t0 = measure ? perfNow() : 0;
+  const done = () => {
+    if (!measure) return;
+    gapTelemetry.recordEffect(perfNow() - t0);
+    gapTelemetry.markApplied(key);
+  };
 
   if (
     state.activeView === VIEWS.QURAN &&
@@ -44,6 +66,7 @@ export function maybeFollowRecitation(state) {
       document
         .getElementById(`ayah-${CSS.escape(String(sp.ayah))}`)
         ?.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
+      done();
     });
     return;
   }
@@ -64,12 +87,14 @@ export function maybeFollowRecitation(state) {
       setFlipDirection(target > shown ? 'next' : 'prev');
       playFlipSound();
       go(VIEWS.MUSHAF, { page: String(page) });
+      done();
       return;
     }
     requestAnimationFrame(() => {
       document
         .querySelector(`.mushaf-ayah[data-surah="${sp.surah}"][data-ayah="${sp.ayah}"]`)
         ?.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
+      done();
     });
   }
 }

@@ -2,6 +2,36 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.11.0 — tap-parallel warm, word-follow spike verdict, gap telemetry
+
+A. Session-start latency: the lookahead horizon now warms at tap time,
+concurrent with the first ayah's own storage probe, instead of waiting
+behind it — same URLs, same caps, pool-deduped, so quota is unchanged
+(1 audible file + at most 5 warms still fits the ~6-connection window).
+The audible first ayah itself is never pre-warmed: when a stored Blob
+exists that fetch would be pure waste. Physics floor stands: nothing
+can buffer before the tap.
+
+B. Word-level follow spike (run: `node scripts/spike-word-follow.mjs`):
+FEASIBLE with conditions — probed live with no credentials anywhere.
+api.quran.com serves words + per-word segments keyless and CORS-open;
+audio.qurancdn.com serves the matching ayah files keyless, CORS-open,
+and Range-capable (audio.quran.com itself is dead — the cdn host is the
+live one). All 12 sampled recitations carry segments with 4/4 coverage
+on spot-checked verses, overlapping verse voices (Sudais, Shatri,
+Rifai, Husary, Alafasy, Minshawi, Shuraym). Conditions, all load-bearing:
+play quran.com files ONLY with their own segments (timings are measured
+per encoding and must never drive another CDN's bytes), restrict voices
+to segment-backed recitations, and bundle segments as a data pack
+(offline-first) instead of hot-querying thousands of endpoints. The old
+"auth wall" premise is retired — verified, not assumed.
+
+C. Follow-gap telemetry (Statistics, opt-in, local-only): per-advance
+dispatch → follow-effect delay, effect cost, and longtask counts, with
+p50/p95 readouts and one-tap clear. Default off, samples never leave
+the device. The gap stops at effect execution, not paint — stated in
+the panel, not oversold.
+
 ## v5.10.9 — console layout repair, 16 ayah voices, unified 312 picker
 
 Three screenshot-driven repairs: (1) the consoles were horizontal flex

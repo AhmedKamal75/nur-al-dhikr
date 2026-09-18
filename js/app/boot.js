@@ -32,6 +32,7 @@ import * as mediaSession from '../services/mediaSession.js';
 import * as recitation from '../services/recitation.js';
 import * as speech from '../services/speech.js';
 import * as surahPlayback from '../services/surahPlayback.js';
+import * as gapTelemetry from '../services/gapTelemetry.js';
 
 /* Boot                                                                */
 /* ------------------------------------------------------------------ */
@@ -137,6 +138,9 @@ export async function boot() {
       // key rides WITH the session mirror, so each ayah costs exactly one
       // render instead of two back-to-back full rebuilds.
       const recitingKey = ayah != null && surah != null ? `${surah}:${ayah}` : null;
+      // (v5.11.0 C) gap-telemetry dispatch stamp — the service no-ops
+      // unless the user opted in, so this stays unconditional here.
+      gapTelemetry.markDispatch(recitingKey);
       store.batch(() => {
         store.dispatch(
           actions.setSurahPlayback({

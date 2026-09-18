@@ -271,6 +271,8 @@ export function sanitizeSettings(raw) {
     dyslexiaFriendly: asBool(s.dyslexiaFriendly, d.dyslexiaFriendly),
     roomySpacing: asBool(s.roomySpacing, d.roomySpacing),
     elderMode: asBool(s.elderMode, d.elderMode),
+    // (v5.11.0 C) gap-telemetry opt-in — strict boolean, default off.
+    gapTelemetry: asBool(s.gapTelemetry, d.gapTelemetry),
     kidsMode: asBool(s.kidsMode, d.kidsMode),
     homeOrder: sanitizeHomeOrder(s.homeOrder),
     hiddenHome: sanitizeHiddenHome(s.hiddenHome),

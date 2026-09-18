@@ -26,6 +26,7 @@ import { viewMenuButton } from '../ui/viewSheet.js';
 import { dueCounts, dueSurahs, dueAyahs } from '../domain/hifz.js';
 import { planStatus } from '../domain/khatma.js';
 import { juzReadStates } from '../services/mushaf.js';
+import { stats as gapStats } from '../services/gapTelemetry.js';
 
 function findCategoryMeta(state, categoryId) {
   const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
@@ -221,6 +222,54 @@ function reviewPanelHTML(state) {
       ${streakCards}
       <h3 class="review-window__title">${t('review.kept', lang)}</h3>
       ${allTimeCards}
+    </section>`;
+}
+
+/** (v5.11.0 C) opt-in, local-only follow-gap telemetry panel: the toggle
+ *  rides the shared toggle-setting change arm (no new handler), the
+ *  samples render from the service (node-safe: memory only). */
+function gapPanelHTML(state, lang) {
+  const on = state.settings.gapTelemetry === true;
+  const s = gapStats();
+  const ms = (v) => (v == null ? '—' : `${v} ms`);
+  const body = !on
+    ? ''
+    : s.count === 0
+      ? `<p class="panel__subtext">${t('stats.gapEmpty', lang)}</p>`
+      : `
+      <div class="ranked-list">
+        <div class="ranked-row">
+          <span class="ranked-row__label">${t('stats.gapSamples', lang, { n: s.count })}</span>
+          <span class="ranked-row__value" dir="ltr">p95 ${ms(s.gap.p95)}</span>
+        </div>
+        <div class="ranked-row">
+          <span class="ranked-row__label">${t('stats.gapHandoff', lang)}</span>
+          <span class="ranked-row__value" dir="ltr">p50 ${ms(s.gap.p50)} · max ${ms(s.gap.max)}</span>
+        </div>
+        <div class="ranked-row">
+          <span class="ranked-row__label">${t('stats.gapEffect', lang)}</span>
+          <span class="ranked-row__value" dir="ltr">p50 ${ms(s.effect.p50)}</span>
+        </div>
+        <div class="ranked-row">
+          <span class="ranked-row__label">${t('stats.gapLongtasks', lang)}</span>
+          <span class="ranked-row__value" dir="ltr">${s.longtasks.count} · ${ms(s.longtasks.totalMs)}</span>
+        </div>
+      </div>
+      <p><button type="button" class="btn btn--ghost btn--sm" data-action="gap-telemetry-clear">${icon('trash', { size: 14 })} ${t('stats.gapClear', lang)}</button></p>`;
+  return `
+    <section class="panel" aria-labelledby="gap-panel-title">
+      <div class="panel__header"><h2 id="gap-panel-title">${t('stats.gapTitle', lang)}</h2></div>
+      <p class="panel__subtext">${t('stats.gapHint', lang)}</p>
+      <p class="panel__subtext">${t('stats.gapLocalOnly', lang)}</p>
+      <label class="toggle-row">
+        <span class="toggle-row__label">${escapeHTML(t('stats.gapEnable', lang))}</span>
+        <span class="switch">
+          <input type="checkbox" data-action="toggle-setting" data-key="gapTelemetry" ${on ? 'checked' : ''} />
+          <span class="switch__track"></span>
+        </span>
+      </label>
+      ${on && s.unsupported ? `<p class="panel__subtext">${t('stats.gapUnsupported', lang)}</p>` : ''}
+      ${body}
     </section>`;
 }
 
@@ -465,5 +514,6 @@ export function renderStatistics(state) {
     `
         : emptyStateHTML({ iconName: 'stats', title: t('stats.noData', lang) })
     }
+    ${gapPanelHTML(state, lang)}
   </section>`;
 }

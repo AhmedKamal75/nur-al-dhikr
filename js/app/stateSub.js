@@ -30,6 +30,7 @@ import {
 } from './quranSearch.js';
 import { maybeStartTafsirSearchBuild } from './tafsirSearch.js';
 import { maybeFollowRecitation } from './recitationFollow.js';
+import { setEnabled as setGapTelemetry } from '../services/gapTelemetry.js';
 import { syncReadingTimer } from './readingTimer.js';
 import { render, clearScrollMemory } from './renderer.js';
 import {
@@ -366,6 +367,9 @@ export function onStateChange(stateArg, action) {
     syncReadingTimer(state, action);
     maybeScrollToFocusAyah(state);
     maybeScrollToFocusHadith(state);
+    // (v5.11.0 C) mirror the opt-in flag into the telemetry service
+    // (idempotent — observer starts/stops only on change).
+    setGapTelemetry(state.settings.gapTelemetry === true);
     maybeFollowRecitation(state);
     maybeStartHifzFromParam(state);
   } catch (err) {

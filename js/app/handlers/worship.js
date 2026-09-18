@@ -31,6 +31,7 @@ import { notesForDate } from '../../services/calendarNotes.js';
 import { buildTextPrompt } from '../../ui/menus.js';
 import { closeModal, isModalOpen, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
+import { clear as clearGapSamples } from '../../services/gapTelemetry.js';
 import { buildRamadanSheet } from '../../views/viewSheets.js';
 
 import * as notifications from '../../services/notifications.js';
@@ -208,6 +209,15 @@ export const clickHandlers = {
     const now = new Date();
     const baseRef = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     store.dispatch(actions.shiftStatsHeatmapMonth(parseInt(ds.delta, 10) || 0, baseRef));
+  },
+
+  // (v5.11.0 C) gap-telemetry clear: drop local samples + counters (the
+  // service owns persistence), then re-render into the empty state
+  // (same clear-then-render shape as prayer-adhan-clear above).
+  'gap-telemetry-clear': () => {
+    clearGapSamples();
+    showToast(t('stats.gapCleared', store.getState().settings.language));
+    render(store.getState());
   },
 
   // (v5.6.0, B-5) heatmap PNG export: redraws the focused month grid on
