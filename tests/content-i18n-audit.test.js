@@ -15,7 +15,7 @@
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -283,7 +283,11 @@ const BASELINES = {
     missingTranslationEn: 194,
     missingVirtueEn: 195,
     missingVirtueAr: 195,
-    gradeUnknown: 98,
+    // (v5.12.0 hostile review) 98 → 126: 28 collection-inferred "Sahih"
+    // grades (no per-hadith reference.grading) were withdrawn to Unknown.
+    // Provenance survives in reference.source — only the ruling claim was
+    // removed. A scholar backfill lowers this again, never raises it.
+    gradeUnknown: 126,
     missingGrading: 162,
   },
   'asma.json': { missingVirtueAr: 99 },
@@ -318,4 +322,86 @@ describe('datasets: coverage must not regress below the audit baselines', () => 
       }
     });
   }
+});
+
+/* ------------------------------------------------------------------ */
+/* Part 4 — dictionary parity + orphan keys (sweep: the about.forAI*   */
+/* family shipped in both dicts with zero renderers — dead strings     */
+/* referencing a nonexistent AGENTS.md — and no gate noticed).         */
+/* ------------------------------------------------------------------ */
+
+describe('dict: en/ar parity, no orphan keys', () => {
+  test('every key exists in BOTH languages', async () => {
+    const { en } = await import('../js/core/i18n/en.js');
+    const { ar } = await import('../js/core/i18n/ar.js');
+    const enKeys = new Set(Object.keys(en));
+    const arKeys = new Set(Object.keys(ar));
+    assert.deepEqual(
+      [...enKeys].filter((k) => !arKeys.has(k)),
+      [],
+      'keys missing in ar'
+    );
+    assert.deepEqual(
+      [...arKeys].filter((k) => !enKeys.has(k)),
+      [],
+      'keys missing in en'
+    );
+  });
+
+  test('every key is rendered somewhere (quoted, config, or dynamic family)', async () => {
+    const { en } = await import('../js/core/i18n/en.js');
+    const { ar } = await import('../js/core/i18n/ar.js');
+    const jsFiles = [];
+    const walk = (dir) => {
+      for (const f of readdirSync(dir, { withFileTypes: true })) {
+        const p = join(dir, f.name);
+        if (f.isDirectory()) walk(p);
+        // The dicts define every key — only consumers count.
+        else if (p.endsWith('.js') && !p.includes('i18n')) jsFiles.push(p);
+      }
+    };
+    walk(join(ROOT, 'js'));
+    const src = jsFiles.map((f) => readFileSync(f, 'utf8')).join('\n');
+    // Dynamic families verified live in-tree (each prefix has ≥1 t() site
+    // building keys by interpolation, concat, or a prefixed variable like
+    // renderer's titleKey = 'title.' + view). Broad on purpose for concat
+    // families like prayer.* — the gate still catches fully-dead families
+    // (about.forAI*, the ~70 legacy keys pruned in the sweep).
+    const DYNAMIC_PREFIXES = [
+      'ambient.mode',
+      'fasting.cat.',
+      'garden.stage.',
+      'hadith.grade.',
+      'hifz.',
+      'home.panel.',
+      'home.theme.',
+      'journal.prompt.',
+      'kids.level.',
+      'mood.',
+      'mushaf.bismillah_',
+      'nudge.cta.',
+      'nudge.line.',
+      'nudge.title.',
+      'offline.group.',
+      'prayer.',
+      'prayer.alertMode_',
+      'prayer.methodNote.',
+      'prayer.methodRegion.',
+      'prayer.sound.',
+      'profiles.save_',
+      'settings.themeMode.',
+      'sunnah.',
+      'title.',
+      'worship.',
+      'worship.row.',
+      'zakat.note.',
+    ];
+    const orphans = [...new Set([...Object.keys(en), ...Object.keys(ar)])].filter(
+      (k) =>
+        !src.includes(`'${k}'`) &&
+        !src.includes(`"${k}"`) &&
+        !DYNAMIC_PREFIXES.some((p) => k.startsWith(p))
+    );
+    assert.deepEqual(orphans, [], `orphan i18n keys (no renderer): ${orphans.join(', ')}`);
+  });
 });

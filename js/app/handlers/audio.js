@@ -5,7 +5,7 @@
  */
 
 import { rt } from '../../app/rt.js';
-import { downloadOne, startAudioPlay, yieldFullSurahPlayer } from '../audioEngine.js';
+import { downloadOne, startAudioPlay, toggleAudioMute, yieldFullSurahPlayer } from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
 import { MUSHAF_META_URL, QURAN_META_URL, VIEWS } from '../../core/config.js';
 import { QURAN_RECITER_IDS } from '../../core/config/quran.js';
@@ -26,8 +26,33 @@ import {
 } from '../../services/moshafAvailability.js';
 import * as mediaSession from '../../services/mediaSession.js';
 import * as player from '../../services/player.js';
-import { SLEEP_TIMER_CHOICES } from '../../domain/sleepTimer.js';
+import { SLEEP_TIMER_CHOICES, nextSleepRung } from '../../domain/sleepTimer.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
+
+/**
+ * (v5.12.0) File-engine sleep setter shared by the cycle chip (which
+ * walks the ladder first) and the Audio-view select (direct pick).
+ * null = off. One store/engine sync + one toast, never a partial write.
+ */
+function applyFileSleep(next, lang) {
+  if (next == null) {
+    player.clearSleepTimer();
+    store.dispatch(
+      actions.setAudioPlayer({ sleepEnabled: false, sleepMinutes: null, sleepLabel: '' })
+    );
+    showToast(t('audio.sleepOff', lang));
+    return;
+  }
+  const armed = player.armSleepTimer(next);
+  store.dispatch(
+    actions.setAudioPlayer({
+      sleepEnabled: true,
+      sleepMinutes: armed.minutes,
+      sleepLabel: armed.label,
+    })
+  );
+  showToast(t('audio.sleepArmed', lang, { n: next }));
+}
 
 export const clickHandlers = {
   'audio-select-moshaf': (ds) => {
@@ -281,8 +306,14 @@ export const clickHandlers = {
         player.pause();
         store.dispatch(actions.setAudioPlayer({ playing: false }));
       } else {
-        player.toggle();
+        // (v5.12.0 hostile review) optimistic-revert, same as player-toggle.
+        const outcome = player.toggle();
         store.dispatch(actions.setAudioPlayer({ playing: true }));
+        if (outcome && typeof outcome.then === 'function') {
+          outcome.then((playing) => {
+            if (playing !== true) store.dispatch(actions.setAudioPlayer({ playing: false }));
+          });
+        }
       }
       return;
     }
@@ -461,6 +492,18 @@ export const clickHandlers = {
 
   /* ---------------- Player bar ---------------- */
 
+  // (v5.12.0) minimize/restore the player bar (both engines): pure chrome
+  // toggle — audio keeps playing, position is untouched.
+  'player-min-toggle': () => {
+    store.dispatch(actions.playerMinToggle());
+  },
+
+  // (v5.12.0) element mute (M key / mute chips, both engines): the ui
+  // flag mirrors the rendered chips, the engines own the elements.
+  'audio-mute-toggle': () => {
+    store.dispatch(actions.audioMutedSet(toggleAudioMute()));
+  },
+
   'player-toggle': () => {
     const p = store.getState().player;
     if (!p?.moshafId) return;
@@ -468,8 +511,15 @@ export const clickHandlers = {
       player.pause();
       store.dispatch(actions.setAudioPlayer({ playing: false }));
     } else {
-      player.toggle();
+      // (v5.12.0 hostile review) optimistic playing:true, but the toggle
+      // outcome promise reverts it on a blocked play() — no false icon.
+      const outcome = player.toggle();
       store.dispatch(actions.setAudioPlayer({ playing: true }));
+      if (outcome && typeof outcome.then === 'function') {
+        outcome.then((playing) => {
+          if (playing !== true) store.dispatch(actions.setAudioPlayer({ playing: false }));
+        });
+      }
     }
   },
 
@@ -490,32 +540,15 @@ export const clickHandlers = {
     );
   },
 
-  // Sleep timer for full-surah listening — same off → 15 → 30 → 45 → 60 →
-  // off ladder as the verse engine (domain/sleepTimer.js). The timer
-  // survives track changes; closing the player clears it.
+  // Sleep timer for full-surah listening — the shared domain ladder
+  // (off → 5 → 15 → 30 → 45 → 60 → off). The timer survives track
+  // changes; closing the player clears it.
   'player-sleep-cycle': () => {
-    const lang = store.getState().settings.language;
     const snap = player.sleepSnapshot();
-    const ladder = [null, ...SLEEP_TIMER_CHOICES];
-    const idx = snap.enabled ? ladder.indexOf(snap.minutes) : 0;
-    const next = ladder[(idx + 1) % ladder.length];
-    if (next == null) {
-      player.clearSleepTimer();
-      store.dispatch(
-        actions.setAudioPlayer({ sleepEnabled: false, sleepMinutes: null, sleepLabel: '' })
-      );
-      showToast(t('audio.sleepOff', lang));
-      return;
-    }
-    const armed = player.armSleepTimer(next);
-    store.dispatch(
-      actions.setAudioPlayer({
-        sleepEnabled: true,
-        sleepMinutes: armed.minutes,
-        sleepLabel: armed.label,
-      })
+    applyFileSleep(
+      nextSleepRung(snap.enabled, snap.minutes),
+      store.getState().settings.language
     );
-    showToast(t('audio.sleepArmed', lang, { n: next }));
   },
 
   'player-next': () => {
@@ -536,11 +569,21 @@ export const clickHandlers = {
   },
 
   'player-rate': () => {
-    const RATES = [1, 1.25, 1.5, 0.75];
+    // Canonical ladder (services/surahPlayback.js) — no local copy.
     const cur = store.getState().settings.audio.rate || 1;
-    const next = RATES[(RATES.indexOf(cur) + 1) % RATES.length];
+    const next = surahPlayback.nextSpeed(cur);
     player.setRate(next);
     store.dispatch(actions.setAudioPrefs({ rate: next }));
+  },
+
+  // (v5.12.0) fine seek for touch users: the same ±10s step the arrow
+  // keys use (app/audioEngine.js) — the range thumb alone can't hit it.
+  'player-seek-back': () => {
+    player.seekBy(-10);
+  },
+
+  'player-seek-fwd': () => {
+    player.seekBy(10);
   },
 };
 
@@ -557,6 +600,67 @@ export const changeHandlers = [
       player.seek((pct / 100) * player.duration());
     },
   },
+  {
+    // (v5.12.0) Audio-view playback defaults: direct picks for the same
+    // settings the player chips cycle (repeat default, live loop, file
+    // sleep). Hostile values no-op — never a partial write.
+    sel: '[data-audio-pref]',
+    run: (ds, el) => {
+      const pref = el.dataset?.pref;
+      const lang = store.getState().settings.language;
+      if (pref === 'ayahRepeat') {
+        const v = parseInt(el.value, 10);
+        if (!surahPlayback.REPEAT_CYCLE.includes(v)) return;
+        const echoOn = store.getState().surahPlayback?.listenRepeat === true;
+        const live = surahPlayback.isActive();
+        store.batch(() => {
+          store.dispatch(
+            actions.updateSettings({
+              audio: { ...store.getState().settings.audio, ayahRepeat: v },
+            })
+          );
+          if (live) store.dispatch(actions.setSurahPlayback(surahPlayback.setRepeat(v)));
+          // Same ∞-echo yield as the cycle chip (handlers/quranAudio.js).
+          if (v === -1 && echoOn && live) {
+            store.dispatch(actions.setSurahPlayback(surahPlayback.setListenRepeat(false)));
+            showToast(t('audio.echoNeedsRepeat', lang));
+          }
+        });
+        return;
+      }
+      if (pref === 'loop') {
+        const v = parseInt(el.value, 10);
+        if (!surahPlayback.LOOP_CYCLE.includes(v)) return;
+        if (!surahPlayback.isActive()) {
+          showToast(t('audio.loopNeedsSession', lang));
+          return;
+        }
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setLoop(v)));
+        showToast(t(v === 1 ? 'audio.loopOff' : 'audio.loopOn', lang, { n: v }));
+        return;
+      }
+      if (pref === 'sleep') {
+        if (el.value === '' || el.value == null) {
+          applyFileSleep(null, lang);
+          return;
+        }
+        const m = parseInt(el.value, 10);
+        if (!SLEEP_TIMER_CHOICES.includes(m)) return;
+        applyFileSleep(m, lang);
+      }
+    },
+  },
+  {
+    // (v5.12.0) volume commits on release (change) — the live drag rides
+    // the input registry below, so streaming isn't re-rendered per tick.
+    sel: '[data-player-volume]',
+    run: (ds, el) => {
+      const v = Math.max(0, Math.min(100, parseFloat(el.value) || 0)) / 100;
+      player.setVolume(v);
+      const cur = store.getState().settings.audio || {};
+      if (cur.fileVolume !== v) store.dispatch(actions.setAudioPrefs({ fileVolume: v }));
+    },
+  },
 ];
 
 export const inputHandlers = [
@@ -564,8 +668,7 @@ export const inputHandlers = [
     // Live time preview while dragging the seek range — the seek itself
     // still commits on change (release), so streaming isn't thrashed.
     sel: '[data-player-seek]',
-    run: (ds, el) => {
-      const dur = player.duration();
+    run: (ds, el) => {      const dur = player.duration();
       const bar = document.querySelector('.player-bar');
       const timeEl = bar?.querySelector('[data-player-time]');
       if (timeEl && dur > 0) {
@@ -573,6 +676,14 @@ export const inputHandlers = [
         const n = Math.max(0, Math.floor((pct / 100) * dur));
         timeEl.textContent = formatCountdown(n * 1000);
       }
+    },
+  },
+  {
+    // Live loudness while dragging — persistence waits for change
+    // (release), mirroring the seek input/change split above.
+    sel: '[data-player-volume]',
+    run: (ds, el) => {
+      player.setVolume(Math.max(0, Math.min(100, parseFloat(el.value) || 0)) / 100);
     },
   },
   {

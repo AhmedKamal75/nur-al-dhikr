@@ -13,7 +13,7 @@ import { escapeHTML } from '../../core/utils.js';
 import { icon } from '../../core/icons.js';
 import { closeModal, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
-import { SLEEP_TIMER_CHOICES } from '../../domain/sleepTimer.js';
+import { nextSleepRung } from '../../domain/sleepTimer.js';
 import { rt } from '../rt.js';
 import * as mediaSession from '../../services/mediaSession.js';
 import * as player from '../../services/player.js';
@@ -83,6 +83,20 @@ export async function startVerseSurah(
     console.error('[surah-playback] failed to start', err);
     showToast(t('audio.reciteStartFailed', store.getState().settings.language));
   }
+}
+
+/**
+ * (v5.12.0) Echo-pause <option> list for the range picker — pure over
+ * (savedMs, lang) so tests pin the selected marking without a modal.
+ */
+export function echoPauseOptions(savedMs, lang) {
+  const cur = surahPlayback.ECHO_PAUSE_CHOICES.includes(savedMs)
+    ? savedMs
+    : surahPlayback.ECHO_PAUSE_DEFAULT_MS;
+  return surahPlayback.ECHO_PAUSE_CHOICES.map(
+    (ms) =>
+      `<option value="${ms}"${ms === cur ? ' selected' : ''}>${escapeHTML(t('audio.echoPauseOpt', lang, { n: ms / 1000 }))}</option>`
+  ).join('');
 }
 
 export const clickHandlers = {
@@ -181,6 +195,9 @@ export const clickHandlers = {
               `<option value="${n}" ${n === 1 ? 'selected' : ''}>${n === 1 ? t('audio.loopOnce', lang) : `×${n}`}</option>`
           ).join('')}
         </select></label>
+        <label class="field">${t('audio.echoPause', lang)}<select class="select" name="echoPause">
+          ${echoPauseOptions(state.settings.audio?.echoPauseMs, lang)}
+        </select><span class="editor-form__note">${escapeHTML(t('audio.echoPauseHint', lang))}</span></label>
         ${buildRangeSaveRow(state, lang)}
         <div class="editor-form__actions">
           <button type="button" class="btn btn--ghost" data-action="modal-close">${t('editor.cancel', lang)}</button>
@@ -231,6 +248,10 @@ export const clickHandlers = {
   'recite-repeat-toggle': () => {
     const cur = store.getState().settings.audio?.ayahRepeat ?? 1;
     const next = surahPlayback.nextRepeat(cur);
+    // (v5.12.0 hostile review) echo is dead under infinite repeat — arming
+    // ∞ with echo on would strand a live-looking chip, so echo yields with
+    // the reason said out loud instead of dying silently underneath.
+    const echoOn = store.getState().surahPlayback?.listenRepeat === true;
     store.batch(() => {
       store.dispatch(
         actions.updateSettings({
@@ -238,6 +259,10 @@ export const clickHandlers = {
         })
       );
       store.dispatch(actions.setSurahPlayback(surahPlayback.setRepeat(next)));
+      if (next === -1 && echoOn) {
+        store.dispatch(actions.setSurahPlayback(surahPlayback.setListenRepeat(false)));
+        showToast(t('audio.echoNeedsRepeat', store.getState().settings.language));
+      }
     });
   },
 
@@ -358,10 +383,20 @@ export const clickHandlers = {
 
   // (v5.2.0) Echo mode — listen-and-repeat: after each ayah the engine
   // holds a silence for the listener to recite it back, then advances.
+  // (v5.12.0) the pause length rides the persisted echoPauseMs pref (range
+  // picker) instead of the hardcoded default.
   'recite-echo-toggle': () => {
-    const next = !(store.getState().surahPlayback?.listenRepeat === true);
-    store.dispatch(actions.setSurahPlayback(surahPlayback.setListenRepeat(next)));
-    showToast(t(next ? 'audio.echoOn' : 'audio.echoOff', store.getState().settings.language));
+    const state = store.getState();
+    const next = !(state.surahPlayback?.listenRepeat === true);
+    // (v5.12.0 hostile review) refuse ON under infinite repeat — the engine
+    // returns before the echo gate there, so enabling would be a lie.
+    if (next === true && state.surahPlayback?.repeat === -1) {
+      showToast(t('audio.echoNeedsRepeat', state.settings.language));
+      return;
+    }
+    const pauseMs = state.settings.audio?.echoPauseMs ?? surahPlayback.ECHO_PAUSE_DEFAULT_MS;
+    store.dispatch(actions.setSurahPlayback(surahPlayback.setListenRepeat(next, pauseMs)));
+    showToast(t(next ? 'audio.echoOn' : 'audio.echoOff', state.settings.language));
   },
 
   // (v4.4) Listen mode — continuous multi-surah playback: when the current
@@ -375,16 +410,14 @@ export const clickHandlers = {
     showToast(t(next ? 'audio.listenOn' : 'audio.listenOff', store.getState().settings.language));
   },
 
-  // (v4.4) Sleep timer for listen mode — cycles off → 15 → 30 → 45 → 60 →
-  // off (the same ladder as SLEEP_TIMER_CHOICES). A tap while the timer is
+  // (v4.4) Sleep timer for listen mode — cycles off → 5 → 15 → 30 → 45 →
+  // 60 → off (the same ladder as SLEEP_TIMER_CHOICES). A tap while the timer is
   // armed moves to the NEXT rung, so shrinking an armed 60-minute timer
   // never requires turning it off first. Volume ramps down over the final
   // 90 seconds (domain/sleepTimer.js) instead of a cliff-edge stop.
   'recite-sleep-cycle': () => {
     const snap = surahPlayback.sleepSnapshot();
-    const ladder = [null, ...SLEEP_TIMER_CHOICES];
-    const idx = snap.enabled ? ladder.indexOf(snap.minutes) : 0;
-    const next = ladder[(idx + 1) % ladder.length];
+    const next = nextSleepRung(snap.enabled, snap.minutes);
     if (next == null) {
       surahPlayback.clearSleepTimer();
       // Mirror the cleared timer into state — without this the chip keeps

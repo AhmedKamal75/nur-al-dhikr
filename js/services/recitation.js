@@ -35,6 +35,10 @@
 
 let frontEl = null; // the audible element — every function below uses this
 const spares = new Map(); // url -> { el, bad, t0 } — hot buffer pool
+// (v5.12.0) element mute (M key / mute chip): `muted`, not volume — the
+// verse sleep fade owns volume while armed. Carried onto promotions and
+// fresh fronts so voice/mode switches never unmute behind the user's back.
+let mutedFlag = false;
 // (v5.10.7) pool cap 10: engine lookahead caps at 8, plus headroom for a
 // demotion in flight. ~150KB per entry worst case — bounded by design.
 // (Why not unbounded: every pooled fetch competes for the browser's ~6
@@ -72,6 +76,11 @@ function getFront() {
     frontEl = new Audio();
     frontEl.preload = 'none';
     frontEl.__key = null;
+    try {
+      frontEl.muted = mutedFlag;
+    } catch {
+      /* element defaults stand */
+    }
     attachListeners(frontEl);
   }
   return frontEl;
@@ -196,10 +205,6 @@ export function onPreloadSample(callback) {
   if (typeof callback === 'function') preloadSampleListeners.add(callback);
 }
 
-export function offPreloadSample(callback) {
-  preloadSampleListeners.delete(callback);
-}
-
 function onElementEnded(el) {
   if (el !== frontEl) return; // pooled spares never play — ignore stray ends
   const finished = el.__key;
@@ -261,13 +266,26 @@ function setKey(key) {
   }
 }
 
+/** Mute switch (element.muted — the sleep fade owns volume, see above). */
+export function setMuted(on) {
+  mutedFlag = on === true;
+  if (frontEl) {
+    try {
+      frontEl.muted = mutedFlag;
+    } catch {
+      /* element defaults stand */
+    }
+  }
+  return mutedFlag;
+}
+
+export function isMuted() {
+  return mutedFlag;
+}
+
 /** Register a listener that's called whenever the playing ayah key changes. */
 export function onPlaybackChange(callback) {
   if (typeof callback === 'function') keyListeners.add(callback);
-}
-
-export function offPlaybackChange(callback) {
-  keyListeners.delete(callback);
 }
 
 /** Register a listener for verse-playback failures, so the UI can say why
@@ -340,6 +358,7 @@ function promoteSpare(url, spare, key, attempt) {
   try {
     spare.volume = vol;
     spare.playbackRate = rate;
+    spare.muted = mutedFlag;
   } catch {
     /* element defaults stand */
   }
@@ -498,11 +517,6 @@ export function resume() {
   });
 }
 
-/** True while an ayah is paused mid-stream (source still loaded). */
-export function isPaused() {
-  return !!frontEl && !!frontEl.currentSrc && frontEl.paused && currentKey != null;
-}
-
 /** True when the element already played through (resume would no-op). */
 export function hasEnded() {
   return !!frontEl && !!frontEl.currentSrc && frontEl.ended;
@@ -582,11 +596,6 @@ export function driverResume() {
   else resume();
 }
 
-export function driverIsPaused() {
-  if (driver?.isPaused) return driver.isPaused();
-  return isPaused();
-}
-
 export function driverHasEnded() {
   if (typeof driver?.ended === 'boolean') return driver.ended;
   return hasEnded();
@@ -638,6 +647,7 @@ export function resetRecitationForTests() {
   driver = null;
   customDriver = false;
   lastSwapped = false;
+  mutedFlag = false;
   playSeq = 0;
   currentAttempt = null;
   currentKey = null;

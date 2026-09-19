@@ -2,6 +2,61 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.12.0 — one player every side: minimize, idle fade, shortcuts, from-here
+
+Minimize: the player bar (both engines) collapses to a slim pill via the
+chevron next to quit — audio and position untouched, restore beside it.
+The fullscreen consoles carry the same chevron (swipe-down works on the
+whole glass cluster), and the pill overlays the book while the rows yield,
+so exactly one chrome shows. Swipe-down on the bar minimizes instead of
+killing playback (an accidental scroll used to stop the audio; quitting
+stays on the explicit X). Idle fade: while any audio plays, 5s without
+pointer/key/touch activity fades the bar to a ghost (opacity only — still
+operable, screen-reader visible); any activity wakes it. The minimized
+pill never fades.
+
+Unify: the consoles were already one builder over one engine — the hole
+was the whole-surah player going control-less in mushaf fullscreen (bar
+hidden, verse console absent), which read as "the player is gone" and
+ended in restarts-from-1. Fullscreen now renders a file transport row in
+the same glass host (play/pause, prev/next, quit) with the engine
+untouched. Reader-immersive already kept its bar; verified, unchanged.
+
+From-here: the mushaf ayah sheet gains "Recite from here" (continuous
+session from the tapped ayah); the multi-surah picker and the fullscreen
+play button start from the page's first ayah when it opens mid-surah
+(same-surah stop toggle preserved — an active row still stops). The
+classic reader already had it via long-press; the windowed surah banner
+keeps whole-surah-from-1, matching its label.
+
+Shortcuts (audio context only — quiet reading keeps Space/arrows for
+scroll): Space play/pause, M mute (element.muted, so the sleep fade never
+fights it; chip in both bars with aria-keyshortcuts), ArrowLeft/Right
+next/prev ayah in verse mode (matching the console's chevron icons) and
+∓10s seek in file mode. Typing, buttons, sliders, and modifier chords
+are never hijacked. Honest remainder: mode toggles still restart (file
+bytes carry no ayah offsets — physics, not UI).
+
+Hostile-review hardening (same version, uncommitted tree): verse sleep
+expiry now pauses keeping position like the file engine (one
+mornings-after contract, pinned by a fake-driver session test); verse
+stop() clears an armed timer so no fade leaks onto the next session;
+echo refuses ∞-repeat with the reason said out loud (chip note +
+handler guard + auto-off when repeat reaches ∞); blocked play()
+reverts the optimistic icon at all four toggle sites; the 5s ghost
+yields to fullscreen/immersive sessions (single wake path) and rests at
+0.55 instead of 0.08; fs idle chrome rests at 0.12 instead of invisible;
+the immersive bar gains minimize (yielding to the pill like the mushaf
+console); minimize buttons advertise swipe-down; ayah/word/drill arrows
+yield the player drills while focused (no more double action); mushaf
+ayahs and drill units rove to one tab stop per page/round; focused
+buttons survive re-renders via unique-match focus salvage; the skip link
+localizes on boot; book-order chevrons announce their rule in LTR
+accessible names; tasbih restore rejects non-slug ids (second XSS layer
+behind the render escapes); 46 collection-inferred "Sahih" grades
+(28 duas + 18 adhkar, no per-hadith citation) withdrawn to Unknown with
+provenance kept in reference.source.
+
 ## v5.11.0 — tap-parallel warm, word-follow spike verdict, gap telemetry
 
 A. Session-start latency: the lookahead horizon now warms at tap time,

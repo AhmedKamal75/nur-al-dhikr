@@ -147,6 +147,8 @@ export const PATHS = {
   // (v4.5) The Mushaf overflow sheet ("everything else this book does"),
   // drawn as the classic three-dot horizontal.
   more: '<circle cx="5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.1" fill="currentColor" stroke="none"/>',
+  // (v5.12.0) playback speed rows (player sheet, Audio defaults).
+  gauge: '<path d="M4 15.5a8 8 0 1 1 16 0"/><path d="M12 15.5l4.5-5.5"/>',
   // (v4.5.2) The Garden — growth icons for the lifetime-dhikr garden.
   seed: '<path d="M12 16.5c-3 0-5.5-1.2-5.5-2.7 0-2 2.5-6.3 5.5-6.3s5.5 4.3 5.5 6.3c0 1.5-2.5 2.7-5.5 2.7Z"/><path d="M12 7.5v9"/><path d="M4 19.5h16"/>',
   sprout:

@@ -15,7 +15,14 @@ import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, highlightMatch, pickLocale } from '../core/utils.js';
 import { QURAN_RECITERS } from '../core/config/quran.js';
-import { queueSignature } from '../services/surahPlayback.js';
+import {
+  queueSignature,
+  normalizeRepeat,
+  normalizeLoop,
+  REPEAT_CYCLE,
+  LOOP_CYCLE,
+} from '../services/surahPlayback.js';
+import { SLEEP_TIMER_CHOICES } from '../domain/sleepTimer.js';
 import {
   searchReciters,
   findMoshaf,
@@ -228,6 +235,7 @@ export function renderAudio(state) {
           : ''
     }
     ${q ? '' : verseSection}
+    ${q ? '' : buildPlaybackDefaults(state, lang)}
     ${rows ? `<div class="reciter-list">${rows}</div>` : state.audioManager?.catalogReady && !hits.length ? emptyStateHTML({ iconName: 'volume', title: t('search.noResults', lang), hint: t('audio.noResultsHint', lang) }) : ''}
     ${hits.length > 60 ? `<p class="empty-hint">${t('audio.moreResults', lang, { n: hits.length })}</p>` : ''}
 
@@ -236,6 +244,46 @@ export function renderAudio(state) {
     ${renderQueuePanel(state, lang)}
     ${storageRow}
     <p class="view__meta">${t('audio.note', lang)}</p>
+  </section>`;
+}
+
+/**
+ * (v5.12.0) Playback defaults: direct picks for the per-ayah repeat
+ * default, the live range loop, and file-mode sleep — the same settings
+ * the player chips cycle, without the tapping. No new data-actions: one
+ * [data-audio-pref] change arm (handlers/audio.js) serves all three.
+ */
+function buildPlaybackDefaults(state, lang) {
+  const audio = state.settings.audio || {};
+  const rep = normalizeRepeat(audio.ayahRepeat);
+  const repOpts = REPEAT_CYCLE.map(
+    (n) =>
+      `<option value="${n}"${n === rep ? ' selected' : ''}>${n === -1 ? '∞' : `×${n}`}</option>`
+  ).join('');
+  const live = state.surahPlayback?.active === true;
+  const loop = normalizeLoop(state.surahPlayback?.loop);
+  const loopOpts = LOOP_CYCLE.map(
+    (n) =>
+      `<option value="${n}"${n === loop ? ' selected' : ''}>${n === 1 ? escapeHTML(t('audio.loopOnce', lang)) : `×${n}`}</option>`
+  ).join('');
+  const sleeping = state.player?.sleepEnabled === true ? state.player.sleepMinutes : '';
+  const sleepOpts =
+    `<option value=""${sleeping === '' ? ' selected' : ''}>${escapeHTML(t('audio.sleepOff', lang))}</option>` +
+    SLEEP_TIMER_CHOICES.map(
+      (m) =>
+        `<option value="${m}"${m === sleeping ? ' selected' : ''}>${escapeHTML(t('units.m', lang, { n: m }))}</option>`
+    ).join('');
+  return `
+  <section class="panel">
+    <div class="panel__header"><h2>${t('audio.playbackDefaults', lang)}</h2></div>
+    <p class="panel__subtext">${t('audio.playbackDefaultsHint', lang)}</p>
+    <div class="editor-form">
+      <label class="field">${t('audio.repeatAyah', lang)}<select class="select" data-audio-pref="ayahRepeat">${repOpts}</select></label>
+      <label class="field">${t('audio.rangeLoop', lang)}<select class="select" data-audio-pref="loop"${live ? '' : ' disabled aria-disabled="true"'}>${loopOpts}</select>
+        <span class="editor-form__note">${escapeHTML(live ? t('audio.loopMode', lang) : t('audio.loopNeedsSession', lang))}</span></label>
+      <label class="field">${t('audio.sleepTimer', lang)}<select class="select" data-audio-pref="sleep">${sleepOpts}</select>
+        <span class="editor-form__note">${escapeHTML(t('audio.sleepFileHint', lang))}</span></label>
+    </div>
   </section>`;
 }
 

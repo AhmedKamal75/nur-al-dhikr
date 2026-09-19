@@ -29,7 +29,7 @@ listen-aloud, and a full editor for your own content.
 typefaces, double-page spread, pinch zoom, true fullscreen, translation
 tray) plus a classic reader with 5 translations, per-word grammar, root
 browser, tabbed tafsir, tajweed color-coding with drill mode, hifz SRS,
-314-reciter audio with follow-along and offline downloads.
+312-reciter audio with follow-along and offline downloads.
 
 **Worship.** Astronomical prayer times (7 methods, high-latitude
 fallback) with adhan alerts, Qibla compass, Hijri calendar with notes

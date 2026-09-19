@@ -219,4 +219,28 @@ describe('tasbih view: customs render + authoring form', () => {
     assert.doesNotMatch(html, /<img src=x/);
     assert.ok(html.includes('&lt;img'), 'escaped text survives visibly');
   });
+
+  test('hostile custom id drops at restore (slug gate, defense in depth)', () => {
+    // Stored-XSS path: a crafted backup carries a quote-breaking id.
+    // restore now rejects non-slug ids (isSafeKey + slug regex), so the
+    // payload never reaches the stage; the render escape below stays as
+    // the second layer for ids already live in state.
+    const hostile = 'x" onmouseover="alert(1)';
+    const restored = sanitizeRestoredPayload({
+      tasbihCustom: [{ id: hostile, text: 'hello', target: 33, ts: 1700000000000 }],
+    });
+    assert.equal(restored.tasbihCustom.length, 0, 'hostile id drops at restore');
+    const legit = sanitizeRestoredPayload({
+      tasbihCustom: [{ id: 'custom-m1abc-xyz1234', text: 'hello', target: 33, ts: 1700000000000 }],
+    });
+    assert.equal(legit.tasbihCustom.length, 1, 'uid-shaped id survives restore');
+    const html = renderTasbih(
+      viewState({
+        tasbihCustom: [{ id: hostile, text: 'hello', target: 33 }],
+        tasbih: { activeItemId: hostile, activePhrase: null },
+      })
+    );
+    assert.doesNotMatch(html, /onmouseover="alert\(1\)"/);
+    assert.ok(html.includes('x&quot; onmouseover=&quot;alert(1)'), 'id escaped in stage attrs');
+  });
 });

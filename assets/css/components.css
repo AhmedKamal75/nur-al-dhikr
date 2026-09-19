@@ -1762,6 +1762,14 @@ body.modal-open {
   font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
 }
+/* (v5.12.0 hostile review) the echo/repeat-∞ conflict note: honest
+   caption, centered, logical margins — visible on every console host. */
+.rec-console-note {
+  margin: var(--space-1) 0 0;
+  text-align: center;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
 .rec-console-transport {
   display: flex;
   align-items: center;
@@ -1921,6 +1929,22 @@ input.player-bar__seek:focus-visible {
   font-variant-numeric: tabular-nums;
   min-width: 4ch;
 }
+/* (v5.12.0) file-mode volume row: the seek range styling is shared via
+   .player-bar__seek — this wrapper only caps the width (a full-width
+   second slider would read as a second seek bar) and dims the yielded
+   state while the sleep timer owns the volume. Logical properties only. */
+.player-bar__volume {
+  display: grid;
+  grid-template-columns: auto minmax(0, 9rem);
+  align-items: center;
+  gap: var(--space-3);
+  margin-block-start: var(--space-2);
+  color: var(--color-text-muted);
+}
+input.player-bar__seek:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 .player-bar__time--dur {
   text-align: end;
 }
@@ -1963,6 +1987,57 @@ input.player-bar__seek:focus-visible {
   font-size: var(--fs-sm);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+}
+
+/* (v5.12.0) minimized pill: one slim row — transport, label, restore,
+   quit. The full bar's console/track/meta never render in this mode (the
+   template swaps, not CSS), so these rules only shape the pill itself. */
+.player-bar--min {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+}
+.player-bar__play--sm {
+  width: var(--touch-target);
+  height: var(--touch-target);
+}
+.player-bar__meta--min {
+  flex: 1;
+}
+
+/* (v5.12.0) 5s idle auto-fade: opacity only — the ghost bar stays
+   operable and screen-reader visible, and any hover/focus restores it
+   even before the activity timer fires. The minimized pill never fades.
+   (v5.12.0 hostile review H2) the floor was 0.08 — operable but
+   effectively invisible, a WCAG 1.4.3 failure for sighted low-vision and
+   magnification users. 0.55 keeps the ghost readable as chrome while
+   still yielding the screen to the text. */
+.player-bar {
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+body.player-idle .player-bar:not(.player-bar--min) {
+  opacity: 0.55;
+}
+body.player-idle .player-bar:not(.player-bar--min):hover,
+body.player-idle .player-bar:not(.player-bar--min):focus-within {
+  opacity: 1;
+}
+
+/* (sweep) the minimized pill is the one chrome allowed over the
+   fullscreen book: layout.css hides #playerbar in mushaf fullscreen, but
+   a minimized session keeps its slim restorable pill (same fixed dock,
+   above the book's own glass controls) instead of stranding the
+   listener. The fs consoles yield to the pill (see mushafPlayer.js), so
+   exactly one chrome shows. */
+body.is-mushaf-fullscreen #playerbar:has(.player-bar--min) {
+  display: block !important;
+}
+
+/* (sweep) the fs verse console's minimize reads as the sheet's collapse
+   handle: centered under the chips, never stretched by the column. */
+.mushaf-fs-min {
+  align-self: center;
 }
 
 /* ==========================================================================

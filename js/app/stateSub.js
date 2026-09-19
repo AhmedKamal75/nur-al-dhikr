@@ -5,7 +5,7 @@
  */
 
 import { rt } from './rt.js';
-import { ensureRecitersData, maybeSyncVerseStatus, updateCompassLifecycle } from './audioEngine.js';
+import { ensureRecitersData, maybeSyncVerseStatus, updateCompassLifecycle, syncPlayerIdleArmed } from './audioEngine.js';
 import { refreshLibraryIndex } from './net.js';
 import { renderErrorScreen, closeNavDrawer } from './drawer.js';
 import {
@@ -370,6 +370,9 @@ export function onStateChange(stateArg, action) {
     // (v5.11.0 C) mirror the opt-in flag into the telemetry service
     // (idempotent — observer starts/stops only on change).
     setGapTelemetry(state.settings.gapTelemetry === true);
+    // (v5.12.0) arm the player idle fade on audio start / clear on stop
+    // (never resets a running timer — only user activity does).
+    syncPlayerIdleArmed();
     maybeFollowRecitation(state);
     maybeStartHifzFromParam(state);
   } catch (err) {

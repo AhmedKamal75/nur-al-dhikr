@@ -12,6 +12,7 @@ import { closeModal, openLazyModal, openModal } from '../ui/modal.js';
 import { showToast } from '../ui/toast.js';
 import * as editorApi from '../services/editor.js';
 import * as notifications from '../services/notifications.js';
+import { ECHO_PAUSE_CHOICES } from '../services/surahPlayback.js';
 import { clickHandlers as quranAudioClick } from './handlers/quranAudio.js';
 
 import {
@@ -298,12 +299,18 @@ export const formHandlers = {
     // existing surah-play handler with from/to bounds (+ loop passes).
     // An end surah past the start surah becomes a cross-surah stopAt; the
     // engine clamps the ayah, so the 286-wide `to` list needs no JS here.
+    // (v5.12.0) the echo-pause pick persists as the default for echo mode.
     const fd = new FormData(form);
     const startSurah = parseInt(form.dataset.surah, 10) || 1;
     const from = Math.max(1, parseInt(fd.get('from'), 10) || 1);
     let to = Math.max(1, parseInt(fd.get('to'), 10) || 1);
     const endSurah = parseInt(fd.get('surahTo'), 10) || startSurah;
     if (endSurah === startSurah && to < from) to = from;
+    const echoPauseMs = parseInt(fd.get('echoPause'), 10);
+    if (ECHO_PAUSE_CHOICES.includes(echoPauseMs)) {
+      const cur = store.getState().settings.audio || {};
+      store.dispatch(actions.updateSettings({ audio: { ...cur, echoPauseMs } }));
+    }
     closeModal();
     quranAudioClick['surah-play']({
       surah: form.dataset.surah,

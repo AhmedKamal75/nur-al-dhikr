@@ -356,6 +356,13 @@ describe('mushaf regroup: zero feature loss', () => {
     'recite-mode-ayah',
     // v5.10.6: console overflow panel toggle (transport row declutter).
     'recite-more-toggle',
+    // v5.12.0: player minimize pill (chrome-only toggle, both engines).
+    'player-min-toggle',
+    // v5.12.0: element mute chip (M key mirror, both engines).
+    'audio-mute-toggle',
+    // v5.12.0: file-mode ±10s step chips flanking the seek range.
+    'player-seek-back',
+    'player-seek-fwd',
   ]);
 
   function currentUnion() {
@@ -463,6 +470,36 @@ describe('mushaf regroup: zero feature loss', () => {
     const missing = BASELINE_KEYS.filter((k) => !keys.has(k));
     assert.deepEqual(missing, [], `lost pref toggles: ${missing.join(', ')}`);
   });
+
+  // (v5.12.0 sweep) the multi-surah branch of the fullscreen play button
+  // emits 'mushaf-play-pick', but no rendered surface in currentUnion()
+  // reaches that branch — the zero-loss gate is blind to it. Pin the
+  // emission + handler wiring directly so a rename on either side fails
+  // loudly instead of orphaning the picker.
+  test('multi-surah play-pick stays emitted and handled', async () => {
+    const { fsPlayButtonHTML } = await import('../js/views/mushafPlayer.js');
+    const multi = fsPlayButtonHTML({
+      recitingThis: false,
+      multiSurah: true,
+      surahNumber: 2,
+      pageFrom: null,
+      lang: 'en',
+    });
+    assert.ok(multi.includes('data-action="mushaf-play-pick"'), 'picker opens from multi-surah spreads');
+    assert.ok(
+      typeof mergedClickHandlers['mushaf-play-pick'] === 'function',
+      'picker action resolves to a handler'
+    );
+    const single = fsPlayButtonHTML({
+      recitingThis: false,
+      multiSurah: false,
+      surahNumber: 2,
+      pageFrom: 5,
+      lang: 'en',
+    });
+    assert.ok(single.includes('data-action="surah-play"'), 'single-surah keeps direct play');
+    assert.ok(single.includes('data-from="5"'), 'mid-surah pages start from-here');
+  });
 });
 
 /* ------------------------------------------------------------------ */
@@ -497,5 +534,82 @@ describe('khatma track: juz milestone row', () => {
     );
     assert.match(html, /mushaf-khatma__juz/, 'row persists');
     assert.doesNotMatch(html, /mushaf-khatma__juz celebrate/, 'no re-bloom on later renders');
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Roving tabindex: one Tab stop per page / drill, arrows walk the run  */
+/* (v5.12.0 hostile review M1 — a 15-ayah page used to cost 15 stops)   */
+/* ------------------------------------------------------------------ */
+
+describe('mushaf ayah roving: one tab stop per page', () => {
+  // Word runs keep their own older roving (one stop per ayah, BUG-06) —
+  // these pins cover the AYAH spans/markers only.
+  test('reading mode: each page holds exactly one stop, rest are -1', () => {
+    // (word-study is the default — the span stops only exist with it off)
+    const html = renderMushaf(
+      baseState({
+        settings: {
+          ...DEFAULT_SETTINGS,
+          language: 'en',
+          audio: { ayahFollow: true },
+          mushafPrefs: { ...DEFAULT_SETTINGS.mushafPrefs, wordByWordStudy: false },
+        },
+      })
+    );
+    const pages = html.split('<article class="mushaf-page');
+    assert.ok(pages.length > 1, 'pages render');
+    let totalZero = 0;
+    let totalMinus = 0;
+    for (const seg of pages.slice(1)) {
+      const zeros = (
+        seg.match(/<span class="mushaf-ayah[ "][^>]*tabindex="0"/g) || []
+      ).length;
+      assert.ok(zeros <= 1, `at most one stop per page (found ${zeros})`);
+      totalZero += zeros;
+      totalMinus += (
+        seg.match(/<span class="mushaf-ayah[ "][^>]*tabindex="-1"/g) || []
+      ).length;
+    }
+    assert.ok(totalZero >= 1, 'the first ayah holds the stop');
+    assert.ok(totalMinus > totalZero, 'the rest of the page roves at -1');
+  });
+
+  test('word-study mode: markers rove the same way', () => {
+    const html = renderMushaf(
+      baseState({
+        settings: {
+          ...DEFAULT_SETTINGS,
+          language: 'en',
+          audio: { ayahFollow: true },
+          mushafPrefs: { ...DEFAULT_SETTINGS.mushafPrefs, wordByWordStudy: true },
+        },
+      })
+    );
+    const zeros = (
+      html.match(/<span class="mushaf-ayah__marker"[^>]*tabindex="0"/g) || []
+    ).length;
+    const minus = (
+      html.match(/<span class="mushaf-ayah__marker"[^>]*tabindex="-1"/g) || []
+    ).length;
+    assert.ok(zeros >= 1, 'first marker holds the stop');
+    assert.ok(minus > 0, 'other markers rove at -1');
+  });
+});
+
+describe('practice drill roving: one tab stop per round', () => {
+  test('first letter unit holds the stop, rest are -1', () => {
+    const html = buildPracticeRound(baseState(), {
+      ruleId: 'mixed',
+      text: 'بسم الله الرحمن',
+      surah: 1,
+      ayah: 1,
+      selected: new Set(),
+      checked: false,
+    });
+    const zeros = (html.match(/tabindex="0" role="button"/g) || []).length;
+    const minus = (html.match(/tabindex="-1" role="button"/g) || []).length;
+    assert.equal(zeros, 1, 'exactly one stop per drill');
+    assert.ok(minus > 0, 'remaining units rove at -1');
   });
 });

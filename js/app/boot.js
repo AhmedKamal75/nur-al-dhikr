@@ -234,8 +234,15 @@ export async function boot() {
           fullSurahPlayer.pause();
           store.dispatch(actions.setAudioPlayer({ playing: false }));
         } else {
-          fullSurahPlayer.toggle();
+          // (v5.12.0 hostile review) optimistic-revert, same as player-toggle.
+          const outcome = fullSurahPlayer.toggle();
           store.dispatch(actions.setAudioPlayer({ playing: true }));
+          if (outcome && typeof outcome.then === 'function') {
+            outcome.then((playing) => {
+              if (playing !== true)
+                store.dispatch(actions.setAudioPlayer({ playing: false }));
+            });
+          }
         }
       },
     });

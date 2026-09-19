@@ -24,6 +24,8 @@ test('E: mushafReader.js imports only layers + its extracted parts', () => {
     './khatma.js',
     './mushafBookmarks.js',
     './ayahStudy.js',
+    // (v5.12.0) player surfaces part (from-here math + fs file row).
+    './mushafPlayer.js',
   ];
   const offenders = importsOf(src('js/views/mushafReader.js')).filter(
     (spec) => !allowedPrefixes.some((p) => spec.startsWith(p)) && !allowedViews.includes(spec)
@@ -49,6 +51,10 @@ test('E: facade re-exports resolve to functions', async () => {
     'buildMushafAyahDetail',
     'renderMushaf',
     'setFlipDirection',
+    // (sweep) the play picker + page math moved to the player part —
+    // the facade re-export keeps the modal handler untouched.
+    'buildMushafPlayPick',
+    'pageChapters',
   ]) {
     assert.equal(typeof m[name], 'function', `mushafReader.${name}`);
   }

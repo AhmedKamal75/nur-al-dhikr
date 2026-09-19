@@ -418,16 +418,41 @@ export function matchChildrenDeep(curExact, incExact, curStruct, incStruct) {
 }
 
 /**
- * Identity selector for focus salvage: how to FIND this field again in the
- * freshly patched mount. Only resolvable, reasonably unique identities are
- * honoured (id, data-bind, name) — everything else declines.
+ * Identity selector for focus salvage: how to FIND this control again in
+ * the freshly patched mount. Only resolvable, reasonably unique identities
+ * are honoured (id, data-bind, name — plus data-action buttons pinned by
+ * their stable dataset, e.g. the player play button across icon flips).
+ * Everything else declines.
+ * (v5.12.0 hostile review) buttons lost focus on every bar re-render
+ * (play → pause icon swap replaces the node), so the NEXT Space went
+ * global instead of landing on the button just used. data-action controls
+ * now salvage like fields — the restore below only fires on a UNIQUE
+ * match, so a wrong twin can never steal focus.
  */
-function focusSignature(el) {
+const FOCUS_DATA_KEYS = ['action', 'id', 'key', 'surah', 'ayah', 'view', 'menu', 'edition'];
+// Exported for unit tests (renderPatch.test.js) — the restore site above
+// is the only production caller.
+export function focusSignature(el) {
   if (!el || typeof el.matches !== 'function') return null;
-  if (!el.matches('input, textarea, select')) return null;
-  if (el.id) return `#${CSS.escape(el.id)}`;
-  if (el.dataset?.bind) return `[data-bind="${CSS.escape(el.dataset.bind)}"]`;
-  if (el.name) return `${el.tagName.toLowerCase()}[name="${CSS.escape(el.name)}"]`;
+  if (el.matches('input, textarea, select')) {
+    if (el.id) return `#${CSS.escape(el.id)}`;
+    if (el.dataset?.bind) return `[data-bind="${CSS.escape(el.dataset.bind)}"]`;
+    if (el.name) return `${el.tagName.toLowerCase()}[name="${CSS.escape(el.name)}"]`;
+    return null;
+  }
+  // Buttons, links, and role=button spans with a data-action: pin by the
+  // action plus every stable data discriminator they carry. Volatile
+  // attributes (classes, aria-pressed, titles) are excluded on purpose —
+  // the signature must survive the very re-render that moved focus.
+  if (el.matches('button[data-action], a[data-action], [role="button"][data-action]')) {
+    const ds = el.dataset || {};
+    if (!ds.action) return null;
+    let sel = `${el.tagName.toLowerCase()}[data-action="${CSS.escape(ds.action)}"]`;
+    for (const k of FOCUS_DATA_KEYS.slice(1)) {
+      if (ds[k] != null && ds[k] !== '') sel += `[data-${k}="${CSS.escape(ds[k])}"]`;
+    }
+    return sel;
+  }
   return null;
 }
 
@@ -540,7 +565,17 @@ export function patchHTML(el, html) {
   el.__html = html;
 
   if (salvage && salvage.sig) {
-    const again = el.querySelector(salvage.sig);
+    // (v5.12.0 hostile review) UNIQUE match only: with data-action buttons
+    // now salvageable, focusing the first of several twins (two minimize
+    // buttons, repeated tiles) would teleport focus somewhere wrong —
+    // decline instead. Best-effort as before, never breaks rendering.
+    let again = null;
+    try {
+      again = el.querySelectorAll(salvage.sig);
+      again = again.length === 1 ? again[0] : null;
+    } catch {
+      again = null;
+    }
     if (again && document.activeElement !== again) {
       try {
         again.focus();
@@ -649,6 +684,16 @@ export function render(state) {
 
   patchHTML(topbarEl, renderTopBar(state, { backDepth: rt.navBackStack?.length || 0 }));
   patchHTML(navEl, renderNav(state));
+
+  // (v5.12.0 hostile review H1) the static shell's skip link shipped
+  // hardcoded English — localize it on every render so AR keyboard and
+  // screen-reader users meet their own language on first Tab. The static
+  // English text in index.html remains the no-JS fallback only.
+  const skipLink = document.querySelector('.skip-link');
+  if (skipLink) {
+    const skipText = t('common.skipToContent', state.settings.language);
+    if (skipLink.textContent !== skipText) skipLink.textContent = skipText;
+  }
 
   // Unknown routes (a mistyped/shared deep link like #/xyz) used to render
   // Home silently with the bogus URL intact and no nav item active. Render

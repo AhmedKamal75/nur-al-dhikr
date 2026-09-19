@@ -161,7 +161,11 @@ function sanitizeTasbihCustom(raw, cap = 50) {
   const out = [];
   for (const e of raw) {
     if (!e || typeof e !== 'object' || Array.isArray(e)) continue;
+    // (S3+v5.12.0) ids become map keys AND land in HTML attrs: isSafeKey
+    // alone still passes quote-breaking display strings, so enforce the
+    // slug shape too (legit ids are uid('custom') → custom-<b36>-<b36>).
     if (typeof e.id !== 'string' || !e.id || e.id.length > 80 || !isSafeKey(e.id)) continue;
+    if (!/^[A-Za-z0-9_-]{1,80}$/.test(e.id)) continue;
     const text = typeof e.text === 'string' ? e.text.trim().slice(0, 500) : '';
     if (!text) continue;
     const t = Math.floor(Number(e.target));

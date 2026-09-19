@@ -39,6 +39,9 @@ import {
   queueSignature,
   pause,
   resume,
+  armSleepTimer,
+  sleepSnapshot,
+  _expireSleepForTests,
 } from '../js/services/surahPlayback.js';
 import { configureDriver } from '../js/services/recitation.js';
 
@@ -680,12 +683,14 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     assert.equal(snapshot().speed, 1.5);
     assert.equal(d.played.length, played, 'no restart on speed change');
     assert.equal(d.rates.at(-1), 1.5, 'rate pushed live to the element');
-    assert.deepEqual(VERSE_RATES, [1, 1.25, 1.5, 0.75]);
+    assert.deepEqual(VERSE_RATES, [0.5, 0.75, 1, 1.25, 1.5, 2]);
     assert.equal(normalizeSpeed('junk'), 1);
     assert.equal(normalizeSpeed(99), 2, 'clamped');
     assert.equal(normalizeSpeed(0.1), 0.5, 'clamped');
     assert.equal(nextSpeed(1), 1.25);
-    assert.equal(nextSpeed(0.75), 1, 'cycle wraps');
+    assert.equal(nextSpeed(2), 0.5, 'cycle wraps at the top');
+    assert.equal(nextSpeed(0.75), 1);
+    assert.equal(nextSpeed(0.6), 0.5, 'off-ladder restarts at the slowest rung');
     stop();
     configureDriver(null);
   });
@@ -879,6 +884,31 @@ describe('per-ayah repeat (v3.17 hifz)', () => {
     await new Promise((r) => setTimeout(r, 3300));
     assert.equal(d.played.length, played, 'cancelled pause stays silent');
     assert.equal(snapshot().ayah, 1, 'still parked on the ayah');
+    stop();
+    configureDriver(null);
+  });
+
+  test('sleep expiry pauses (position kept), never destroys the session', async () => {
+    // (v5.12.0 hostile review) the verse engine used to stop() at zero
+    // while the file engine pauses — one mornings-after contract now:
+    // pause, session and ayah intact, timer cleared.
+    const d = makeDriver();
+    configureDriver(d);
+    start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
+    await tick();
+    assert.equal(isActive(), true);
+    armSleepTimer(15);
+    assert.equal(sleepSnapshot().enabled, true);
+    _expireSleepForTests();
+    assert.deepEqual(
+      sleepSnapshot(),
+      { enabled: false, minutes: null, label: '' },
+      'timer cleared, no stale fade onto the next session'
+    );
+    assert.equal(isActive(), true, 'session survives the night');
+    assert.equal(snapshot().paused, true, 'parked in place');
+    assert.equal(snapshot().ayah, 1, 'position kept — resume continues here');
+    assert.equal(d.paused, 1, 'element frozen via the driver');
     stop();
     configureDriver(null);
   });

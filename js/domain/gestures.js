@@ -92,12 +92,36 @@ export function isSwipeGuardTarget(el) {
 }
 
 /**
- * True for a mostly-vertical DOWNWARD swipe that dismisses the persistent
- * mini player (tap the X does the same via data-player-dismiss). Upward
- * and horizontal drags return false — seeking and scrolling stay intact.
+ * True for a mostly-vertical DOWNWARD swipe that minimizes the persistent
+ * player bar (tap the chevron does the same via player-min-toggle; the X
+ * stays the explicit quit). Upward and horizontal drags return false —
+ * seeking and scrolling stay intact.
  */
 export function isPlayerDismissSwipe(dx, dy) {
   if (!Number.isFinite(dx) || !Number.isFinite(dy)) return false;
   if (dy < PLAYER_DISMISS_MIN_DY) return false;
   return Math.abs(dy) > Math.abs(dx);
+}
+
+/**
+ * (sweep) the minimize control for a swipe-origin bar: the bar's own
+ * chevron, or — for the fullscreen transport row, which carries page
+ * controls but no player buttons — the sibling console row's. Null-safe
+ * for hostile input; the caller no-ops on null, so quiet surfaces
+ * (transport with no console) never minimize from a swipe. Stub-friendly:
+ * needs only querySelector/parentElement, like the guard above.
+ */
+export function resolveMinControl(bar) {
+  if (!bar || typeof bar.querySelector !== 'function') return null;
+  try {
+    return (
+      bar.querySelector('[data-action="player-min-toggle"]') ??
+      bar.parentElement?.querySelector(
+        '.mushaf-fs-console [data-action="player-min-toggle"]'
+      ) ??
+      null
+    );
+  } catch {
+    return null;
+  }
 }

@@ -74,8 +74,12 @@
 
       <nav class="bottomnav" id="bottomnav" aria-label="Primary"></nav>
       <!-- playerBar.js sets role="region" + a localized aria-label on mount;
-           a bare aria-label on a role-less div is ignored by assistive tech. -->
-      <div id="playerbar"></div>
+           a bare aria-label on a role-less div is ignored by assistive tech.
+           (v5.12.0 hostile review L1) the static shell now carries the
+           region + English fallback label so first-paint / slow-boot screen
+           readers get a landmark before JS mounts; the renderer replaces
+           the label with the localized one on every render. -->
+      <div id="playerbar" role="region" aria-label="Audio player"></div>
     </div>
 
     <!-- Modals announce themselves via dialog semantics + focus movement;

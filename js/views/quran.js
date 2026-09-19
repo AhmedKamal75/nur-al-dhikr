@@ -558,14 +558,15 @@ function buildReaderImmersiveBar(state, surahNum, lang) {
       <button type="button" class="icon-btn" data-action="quran-toggle-immersive" aria-label="${t('quran.immersiveExit', lang)}" title="${t('quran.immersiveExit', lang)}">
         ${icon('compress', { size: 18 })}
       </button>
-      ${prev ? `<button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${prev}" aria-label="${t('quran.prevSurah', lang)}" title="${t('quran.prevSurah', lang)}">${icon('chevronRight', { size: 18 })}</button>` : ''}
+      ${prev ? `<button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${prev}" aria-label="${isRTL(lang) ? t('quran.prevSurah', lang) : `${t('quran.prevSurah', lang)}. ${t('mushaf.bookOrderNote', lang)}`}" title="${t('quran.prevSurah', lang)}">${icon('chevronRight', { size: 18 })}</button>` : ''}
       <button type="button" class="reader-immersive-exit__label" data-action="navigate" data-view="${VIEWS.QURAN}" aria-label="${t('quran.backToList', lang)}" title="${t('quran.backToList', lang)}">
         ${t('quran.backToList', lang)}
       </button>
-      ${next ? `<button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${next}" aria-label="${t('quran.nextSurah', lang)}" title="${t('quran.nextSurah', lang)}">${icon('chevronLeft', { size: 18 })}</button>` : ''}
+      ${next ? `<button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${next}" aria-label="${isRTL(lang) ? t('quran.nextSurah', lang) : `${t('quran.nextSurah', lang)}. ${t('mushaf.bookOrderNote', lang)}`}" title="${t('quran.nextSurah', lang)}">${icon('chevronLeft', { size: 18 })}</button>` : ''}
       <button type="button" class="icon-btn ${recitingThis ? 'icon-btn--playing' : ''}" data-action="surah-play" data-surah="${num}" aria-label="${t(recitingThis ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}" title="${t(recitingThis ? 'audio.reciteStop' : 'audio.reciteSurah', lang)}">
         ${icon(recitingThis ? 'stop' : 'play', { size: 17 })}
       </button>
+      ${recitingThis ? `<button type="button" class="icon-btn" data-action="player-min-toggle" aria-label="${t('audio.playerMinimize', lang)}" title="${t('audio.minimizeHint', lang)}">${icon('chevronDown', { size: 18 })}</button>` : ''}
       ${recitingThis ? `<span class="reader-immersive-exit__count" dir="ltr">${escapeHTML(String(sp.ayah))}/${escapeHTML(String(sp.total))}${escapeHTML(qPos)}</span>` : ''}
     </div>
     ${recitingThis ? buildReaderImmersiveConsole(state, lang) : ''}`;
@@ -578,7 +579,13 @@ function buildReaderImmersiveBar(state, surahNum, lang) {
  * session must never strand the listener without their controls.
  */
 function buildReaderImmersiveConsole(state, lang) {
-  const snap = consoleSnapshot(state.surahPlayback, state.settings, sleepSnapshot(), lang);
+  // (v5.12.0 hostile review) minimized sessions yield to the pill — the
+  // same contract as the mushaf fullscreen console — restored from the
+  // pill itself, so exactly one chrome shows.
+  if (state.ui?.playerMin === true) return '';
+  const snap = consoleSnapshot(state.surahPlayback, state.settings, sleepSnapshot(), lang, {
+    muted: state.ui?.audioMuted === true,
+  });
   return `
     <div class="reader-immersive-console" data-reader-fs-controls>
       ${recitationChipsHTML(snap, lang, { chip: 'reader-immersive-chip', on: 'reader-immersive-chip--on', btn: 'icon-btn' }, { moreOpen: state.ui?.reciteMore === true })}

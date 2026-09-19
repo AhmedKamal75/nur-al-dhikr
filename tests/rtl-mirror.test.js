@@ -25,8 +25,13 @@ function walkJs(dir, out = []) {
 const ALLOWLIST = [
   { file: 'js/views/mushafReader.js', hook: 'mushaf-prev', reason: 'book-order page turn' },
   { file: 'js/views/mushafReader.js', hook: 'mushaf-next', reason: 'book-order page turn' },
-  { file: 'js/views/playerBar.js', hook: 'player-prev', reason: 'media transport glyph' },
-  { file: 'js/views/playerBar.js', hook: 'player-next', reason: 'media transport glyph' },
+  // (v5.12.0) windowed file bar joined the book-order rule (UX-4): same
+  // glyphs as the fullscreen file row below, one exemption reason.
+  { file: 'js/views/playerBar.js', hook: 'player-prev', reason: 'surah sequence in mushaf order' },
+  { file: 'js/views/playerBar.js', hook: 'player-next', reason: 'surah sequence in mushaf order' },
+  // (v5.12.0) fullscreen file row: same transport glyphs, same exemption.
+  { file: 'js/views/mushafPlayer.js', hook: 'player-prev', reason: 'surah sequence in mushaf order' },
+  { file: 'js/views/mushafPlayer.js', hook: 'player-next', reason: 'surah sequence in mushaf order' },
   { file: 'js/views/quran.js', hook: 'quran.prevSurah', reason: 'surah sequence in mushaf order' },
   { file: 'js/views/quran.js', hook: 'quran.nextSurah', reason: 'surah sequence in mushaf order' },
   {

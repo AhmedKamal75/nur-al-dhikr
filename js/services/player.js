@@ -16,6 +16,10 @@ import { getAudio as defaultGetAudio } from './audioStore.js';
 import { SLEEP_TIMER_CHOICES, volumeAt, countdownLabel } from '../domain/sleepTimer.js';
 
 let audioEl = null;
+// (v5.12.0) element mute (M key / mute chip): the `muted` property, not
+// volume — the sleep timer owns volume while armed and must never fight
+// the mute. Re-applied in el() so track swaps keep it.
+let mutedFlag = false;
 let patchFn = null; // (info) => void — DOM patch callback
 let endedHandler = null; // configured by app.js for repeat/autoplay logic
 let errorFn = null; // notified when the element itself errors mid-stream
@@ -31,6 +35,11 @@ function el() {
   if (!audioEl) {
     audioEl = new Audio();
     audioEl.preload = 'auto';
+    try {
+      audioEl.muted = mutedFlag;
+    } catch {
+      /* element defaults stand */
+    }
   }
   return audioEl;
 }
@@ -170,10 +179,6 @@ export function setAudioFetcher(fn) {
   if (fn) audioFetcher = fn;
 }
 
-export function resetAudioFetcher() {
-  audioFetcher = defaultGetAudio;
-}
-
 /** Test-only: drop the singleton element + sequence so cases isolate. */
 export function resetPlayerForTests() {
   try {
@@ -187,6 +192,8 @@ export function resetPlayerForTests() {
   playSeq = 0;
   switching = false;
   intendPlay = false;
+  mutedFlag = false;
+  baseVolume = 1;
   audioFetcher = defaultGetAudio;
 }
 
@@ -272,7 +279,7 @@ export async function play(moshafId, surahNumber, url) {
     a.playbackRate = a.playbackRate || 1;
     // An armed sleep timer survives track changes: enter at the curve
     // volume instead of blipping full-loud for a second.
-    a.volume = currentSleepVolume();
+    a.volume = sleep ? currentSleepVolume() : baseVolume;
     emit();
     try {
       await a.play();
@@ -317,12 +324,27 @@ export function toggle() {
   const a = el();
   if (a.paused) {
     intendPlay = true;
-    a.play().catch(() => {
-      emit();
-      notifyState();
-    });
-  } else a.pause();
+    // (v5.12.0 hostile review) the handler used to dispatch playing:true
+    // optimistically with no way to know a blocked play() failed — return
+    // the outcome so the store reverts promptly instead of blipping a
+    // false pause-icon until a later correction pass notices.
+    return a.play().then(
+      () => {
+        emit();
+        notifyState();
+        return true;
+      },
+      () => {
+        intendPlay = false;
+        emit();
+        notifyState();
+        return false;
+      }
+    );
+  }
+  a.pause();
   emit();
+  return Promise.resolve(false);
 }
 
 export function pause() {
@@ -339,16 +361,59 @@ export function seek(seconds) {
   emit();
 }
 
+/**
+ * (v5.12.0) relative seek for the arrow keys: clamped into [0, duration]
+ * (unknown duration clamps at 0 only — never NaN). Hostile deltas no-op.
+ */
+export function seekBy(delta) {
+  const d = Number(delta);
+  if (!Number.isFinite(d) || d === 0) return;
+  const a = el();
+  const cur = Number.isFinite(a.currentTime) ? a.currentTime : 0;
+  const dur = a.duration;
+  const next = cur + d;
+  a.currentTime =
+    Number.isFinite(dur) && dur > 0 ? Math.max(0, Math.min(next, dur)) : Math.max(0, next);
+  emit();
+}
+
+/** Mute switch (element.muted — see the flag above for why not volume). */
+export function setMuted(on) {
+  mutedFlag = on === true;
+  if (audioEl) {
+    try {
+      audioEl.muted = mutedFlag;
+    } catch {
+      /* element defaults stand */
+    }
+  }
+  return mutedFlag;
+}
+
+export function isMuted() {
+  return mutedFlag;
+}
+
 export function setRate(r) {
   const a = el();
   a.playbackRate = r;
   emit();
 }
 
+/** User loudness (0..1, default full) — the sleep timer owns the element
+ *  while armed, so track starts and sleep clears fall back to this. */
+let baseVolume = 1;
+
 /** Direct volume (0..1) — the sleep timer owns it while armed. */
 export function setVolume(v) {
   const a = el();
-  a.volume = Math.max(0, Math.min(1, Number(v) || 0));
+  baseVolume = Math.max(0, Math.min(1, Number(v) || 0));
+  a.volume = baseVolume;
+}
+
+/** User loudness the engine falls back to (track starts, sleep clears). */
+export function userVolume() {
+  return baseVolume;
 }
 
 /* Sleep timer — same contract as the verse engine's (surahPlayback):
@@ -386,12 +451,12 @@ export function armSleepTimer(minutes) {
   return sleepSnapshot();
 }
 
-/** Cancel the timer and restore full volume. Safe with no timer armed. */
+/** Cancel the timer and restore the user's volume. Safe with no timer armed. */
 export function clearSleepTimer() {
   sleep = null;
   if (sleepTick) clearInterval(sleepTick);
   sleepTick = null;
-  el().volume = 1;
+  el().volume = baseVolume;
   return sleepSnapshot();
 }
 

@@ -10,6 +10,7 @@ import { formatCountdown } from '../domain/ramadan.js';
 import { VIEWS } from '../core/config.js';
 import { DEFAULT_RECITER, quranAudioSurahUrl, reciterDisplayName } from '../core/config/quran.js';
 import { resolveNextFullSurah } from '../domain/audioQueue.js';
+import { shortcutActionForKey } from '../domain/playerShortcuts.js';
 import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
 import { findMoshaf, loadCatalog, searchReciters, surahUrl } from '../services/audioCatalog.js';
@@ -124,9 +125,12 @@ export async function startAudioPlay(moshafId, surah) {
     // The stored speed survives track changes: a fresh <audio> element (or
     // a prior 1x default) would otherwise reset to 1x while the chip still
     // claims 1.5x. Re-assert the preference on every track start.
+    // (v5.12.0) same for the stored file volume (setVolume clamps).
     if (!error) {
       const rate = Number(state.settings.audio?.rate);
       if (Number.isFinite(rate) && rate !== 1) player.setRate(rate);
+      const vol = Number(state.settings.audio?.fileVolume);
+      if (Number.isFinite(vol)) player.setVolume(vol);
     }
     // (v4.2) dispatch only on an actual change — the common case (online
     // → online) was a third full re-render for nothing.
@@ -158,6 +162,8 @@ export async function startAudioPlay(moshafId, surah) {
 }
 
 export function wirePlayer() {
+  wireAudioShortcuts();
+  wirePlayerIdle();
   player.onPlayerPatch((info) => {
     // DOM patches only — never the store — while audio is running.
     const bar = document.querySelector('.player-bar');
@@ -255,6 +261,179 @@ export function wirePlayer() {
     if (next != null) startAudioPlay(p.moshafId, next);
     else store.dispatch(actions.setAudioPlayer({ playing: false }));
   });
+}
+
+/* Player-bar idle fade (v5.12.0)                                        */
+/* ------------------------------------------------------------------ */
+
+// While any audio plays, the bar fades to a ghost after 5s without user
+// activity (pointer/key/touch/wheel) so nothing but the text holds the
+// screen; any activity brings it straight back. Opacity only — the faded
+// bar stays operable and screen-reader visible, and the minimized pill
+// never fades (it is already the compact form). The timer arms from the
+// state pump (syncPlayerIdleArmed, never resetting) and resets on real
+// activity — store dispatches must NOT reset it, or every ayah advance
+// would keep the bar awake forever.
+// (v5.12.0 hostile review) the ghost yields to fullscreen/immersive
+// sessions: their own 3s timer owns every fade there, so the two systems
+// can never stage a double fade (console at 3s, bar at 5s) again.
+export const PLAYER_IDLE_MS = 5000;
+let playerIdleTimer = null;
+
+function setPlayerIdle(idle) {
+  if (typeof document === 'undefined') return;
+  document.body.classList.toggle('player-idle', idle === true);
+}
+
+function playerIdleEligible() {
+  const st = store.getState();
+  const audioActive = st.player?.playing === true || surahPlayback.isActive();
+  // (v5.12.0 hostile review) one wake path per context: while a
+  // fullscreen/immersive session governs the chrome, its own 3s timer owns
+  // every fade — the 5s bar ghost must not stage a second fade behind it.
+  // (The mushaf-fs dock hides the full bar anyway; the pill never fades.)
+  const fsGoverns =
+    (st.mushafFullscreen === true && st.activeView === VIEWS.MUSHAF) ||
+    (st.readerImmersive === true && st.activeView === VIEWS.QURAN);
+  return audioActive && st.ui?.playerMin !== true && !fsGoverns;
+}
+
+/** Pump hook (every notify): arm when audio starts, clear when it stops.
+ *  Never resets a running timer — only user activity does that. */
+export function syncPlayerIdleArmed() {
+  if (typeof document === 'undefined') return;
+  if (!playerIdleEligible()) {
+    if (playerIdleTimer) clearTimeout(playerIdleTimer);
+    playerIdleTimer = null;
+    setPlayerIdle(false);
+    return;
+  }
+  if (playerIdleTimer || document.body.classList.contains('player-idle')) return;
+  playerIdleTimer = setTimeout(() => {
+    playerIdleTimer = null;
+    // Re-check at fire time: a stop inside the window must not fade.
+    if (playerIdleEligible()) setPlayerIdle(true);
+  }, PLAYER_IDLE_MS);
+}
+
+/** User activity: un-fade and re-arm (no-op without active audio). */
+export function resetPlayerIdleTimer() {
+  if (typeof document === 'undefined') return;
+  if (!playerIdleEligible()) return;
+  setPlayerIdle(false);
+  if (playerIdleTimer) clearTimeout(playerIdleTimer);
+  playerIdleTimer = setTimeout(() => {
+    playerIdleTimer = null;
+    if (playerIdleEligible()) setPlayerIdle(true);
+  }, PLAYER_IDLE_MS);
+}
+
+function wirePlayerIdle() {
+  if (typeof window === 'undefined') return;
+  for (const evt of ['pointermove', 'pointerdown', 'keydown', 'touchstart', 'wheel']) {
+    window.addEventListener(evt, () => resetPlayerIdleTimer(), { passive: true });
+  }
+}
+
+/* Keyboard drills + mute (v5.12.0)                                      */
+/* ------------------------------------------------------------------ */
+
+/** Arrow-key seek step for file mode (YouTube's 10s). */
+export const SHORTCUT_SEEK_SEC = 10;
+
+// Element-level mute mirror (the services own their element flags for
+// future elements; this owns the toggle intent + UI mirror).
+let audioMuted = false;
+
+export function isAudioMuted() {
+  return audioMuted;
+}
+
+export function setAudioMuted(on) {
+  audioMuted = on === true;
+  recitation.setMuted(audioMuted);
+  player.setMuted(audioMuted);
+  return audioMuted;
+}
+
+/** Flip mute on both engines + toast. Returns the new state. */
+export function toggleAudioMute() {
+  const next = setAudioMuted(!audioMuted);
+  const lang = store.getState().settings.language;
+  showToast(t(next ? 'audio.mute' : 'audio.unmute', lang));
+  return next;
+}
+
+function shortcutTogglePlay() {
+  const st = store.getState();
+  if (surahPlayback.isActive()) {
+    const paused = st.surahPlayback?.paused === true;
+    store.dispatch(
+      actions.setSurahPlayback(paused ? surahPlayback.resume() : surahPlayback.pause())
+    );
+    return true;
+  }
+  const p = st.player;
+  if (p?.moshafId && p.surah != null) {
+    if (p.playing) {
+      player.pause();
+      store.dispatch(actions.setAudioPlayer({ playing: false }));
+    } else {
+      // (v5.12.0 hostile review) same optimistic-revert as the bar toggle:
+      // a blocked play() reverts instead of blipping a false icon.
+      const outcome = player.toggle();
+      store.dispatch(actions.setAudioPlayer({ playing: true }));
+      if (outcome && typeof outcome.then === 'function') {
+        outcome.then((playing) => {
+          if (playing !== true) store.dispatch(actions.setAudioPlayer({ playing: false }));
+        });
+      }
+    }
+    return true;
+  }
+  return false;
+}
+
+function shortcutStep(left) {
+  const st = store.getState();
+  if (surahPlayback.isActive()) {
+    // ArrowLeft answers the console's left-chevron "next" button (mushaf
+    // order); ArrowRight the right-chevron "prev" — same icons, same keys.
+    surahPlayback.skip(left ? 1 : -1);
+    return true;
+  }
+  const p = st.player;
+  if (p?.moshafId && p.surah != null) {
+    player.seekBy(left ? -SHORTCUT_SEEK_SEC : SHORTCUT_SEEK_SEC);
+    return true;
+  }
+  return false;
+}
+
+function onShortcutKey(e) {
+  const action = shortcutActionForKey(e);
+  if (!action) return;
+  if (action === 'mute') {
+    e.preventDefault();
+    const next = toggleAudioMute();
+    store.dispatch(actions.audioMutedSet(next));
+    return;
+  }
+  const acted = action === 'toggle' ? shortcutTogglePlay() : shortcutStep(action === 'arrowLeft');
+  // No audio context (quiet reading): leave the key alone so Space still
+  // scrolls and arrows still scroll — shortcuts must never break reading.
+  if (acted) e.preventDefault();
+}
+
+/** Global keydown for the player drills (wired once with the player). */
+export function wireAudioShortcuts() {
+  if (typeof window === 'undefined') return;
+  window.addEventListener('keydown', onShortcutKey);
+}
+
+export function unwireAudioShortcutsForTests() {
+  if (typeof window === 'undefined') return;
+  window.removeEventListener('keydown', onShortcutKey);
 }
 
 export async function ensureRecitersData(state) {

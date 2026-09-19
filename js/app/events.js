@@ -24,7 +24,7 @@ import {
 } from '../services/mushaf.js';
 import { closeModal, isModalOpen, openLazyModal, cycleTabFocus } from '../ui/modal.js';
 import { settingsSlugForSection } from '../views/settings.js';
-import { mushafSwipeTurn, isSwipeGuardTarget, isPlayerDismissSwipe } from '../domain/gestures.js';
+import { mushafSwipeTurn, isSwipeGuardTarget, isPlayerDismissSwipe, resolveMinControl } from '../domain/gestures.js';
 import { armPaletteShortcut } from './palette.js';
 import { showToast } from '../ui/toast.js';
 import * as recitation from '../services/recitation.js';
@@ -613,6 +613,77 @@ export function bindGlobalEvents() {
       }
       return;
     }
+    // (v5.12.0 hostile review) roving tabindex for tajweed drill units:
+    // same book-order walk as the mushaf ayahs below, scoped to the
+    // round's .practice-ayah container (letters are RTL Arabic flow).
+    if (
+      (e.key === 'ArrowRight' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'Home' ||
+        e.key === 'End') &&
+      e.target instanceof Element &&
+      e.target.matches('.pu[data-action="practice-tap"]')
+    ) {
+      const scope = e.target.closest('.practice-ayah');
+      const stops = scope
+        ? Array.from(scope.querySelectorAll('.pu[data-action="practice-tap"]'))
+        : [];
+      const idx = stops.indexOf(e.target);
+      if (idx >= 0 && stops.length > 1) {
+        e.preventDefault();
+        let next = null;
+        if (e.key === 'Home') next = stops[0];
+        else if (e.key === 'End') next = stops[stops.length - 1];
+        else {
+          const step = e.key === 'ArrowLeft' ? 1 : -1;
+          next = stops[(idx + step + stops.length) % stops.length];
+        }
+        if (next) {
+          e.target.setAttribute('tabindex', '-1');
+          next.setAttribute('tabindex', '0');
+          next.focus();
+        }
+      }
+      return;
+    }
+    // (v5.12.0 hostile review) roving tabindex for mushaf ayahs: Tab lands
+    // on the page's first ayah only; Left/Right walk the page's ayahs in
+    // book order (DOM order — Left advances, same visual-forward rule as
+    // the word runs above, since ayah flow is RTL) and move the single tab
+    // stop along; Home/End jump to the page ends. Enter/Space activation
+    // rides the role=button path above, untouched.
+    if (
+      (e.key === 'ArrowRight' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'Home' ||
+        e.key === 'End') &&
+      e.target instanceof Element &&
+      e.target.matches('.mushaf-ayah[tabindex], .mushaf-ayah__marker[tabindex]')
+    ) {
+      const scope = e.target.closest('.mushaf-page');
+      const stops = scope
+        ? Array.from(
+            scope.querySelectorAll('.mushaf-ayah[tabindex], .mushaf-ayah__marker[tabindex]')
+          )
+        : [];
+      const idx = stops.indexOf(e.target);
+      if (idx >= 0 && stops.length > 1) {
+        e.preventDefault();
+        let next = null;
+        if (e.key === 'Home') next = stops[0];
+        else if (e.key === 'End') next = stops[stops.length - 1];
+        else {
+          const step = e.key === 'ArrowLeft' ? 1 : -1;
+          next = stops[(idx + step + stops.length) % stops.length];
+        }
+        if (next) {
+          e.target.setAttribute('tabindex', '-1');
+          next.setAttribute('tabindex', '0');
+          next.focus();
+        }
+      }
+      return;
+    }
     if (e.key === 'Escape') {
       // (v4.5, APP-FLOW I2) Esc unwinds EXACTLY ONE layer, top-first:
       // modal → drawer → mushaf-fullscreen → reader-immersive. The modal
@@ -849,16 +920,27 @@ export function bindGlobalEvents() {
     { passive: true }
   );
 
-  // (v5.2.22) mini-player swipe-down-to-dismiss: a mostly-vertical downward
-  // swipe that STARTS on the player bar clicks its dismiss control (the X),
-  // the same stop-and-unmount path as tapping it. Horizontal drags (seek)
-  // and upward swipes never dismiss — see isPlayerDismissSwipe.
+  // (v5.12.0) mini-player swipe-down-to-MINIMIZE: a mostly-vertical
+  // downward swipe that STARTS on the full player bar clicks its minimize
+  // control — audio keeps playing behind a slim pill. (sweep) the mushaf
+  // fullscreen consoles are the bar's stand-in over the book (the docked
+  // bar is hidden there), so swipes starting on them minimize the same
+  // way. Killing playback from an accidental scroll gesture was the old
+  // behavior; quitting stays on the explicit X (data-player-dismiss, tap
+  // only). Horizontal drags (seek) and upward swipes never minimize —
+  // see isPlayerDismissSwipe.
   let playerTouch = null;
   document.addEventListener(
     'touchstart',
     (e) => {
       const origin = e.target instanceof Element ? e.target : null;
-      const bar = origin?.closest?.('.player-bar[data-player-mounted]') ?? null;
+      // The fullscreen transport row (page controls) carries no player
+      // buttons — a swipe starting there belongs to the sibling console
+      // row (resolved at touchend), so the whole glass cluster minimizes.
+      const bar =
+        origin?.closest?.(
+          '.player-bar[data-player-mounted], .mushaf-fs-console, .mushaf-fs-controls'
+        ) ?? null;
       if (!bar || e.touches.length !== 1) {
         playerTouch = null;
         return;
@@ -880,8 +962,11 @@ export function bindGlobalEvents() {
       const { bar } = playerTouch;
       playerTouch = null;
       if (!isPlayerDismissSwipe(dx, dy)) return;
-      const dismiss = bar.querySelector('[data-player-dismiss]');
-      if (dismiss && typeof dismiss.click === 'function') dismiss.click();
+      // Already a pill: a downward swipe restores nothing and quits
+      // nothing — only the full bar minimizes from this gesture.
+      if (bar.classList.contains('player-bar--min')) return;
+      const min = resolveMinControl(bar);
+      if (min && typeof min.click === 'function') min.click();
     },
     { passive: true }
   );

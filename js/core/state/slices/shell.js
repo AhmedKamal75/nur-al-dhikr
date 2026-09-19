@@ -121,6 +121,20 @@ export function reduceShell(state, action) {
     case 'RECITE_MORE_TOGGLE':
       return { ...state, ui: { ...state.ui, reciteMore: !state.ui?.reciteMore } };
 
+    // (v5.12.0) player minimize. Ephemeral like manage mode — a reload
+    // restores the full bar, which is the honest default.
+    case 'PLAYER_MIN_TOGGLE':
+      return { ...state, ui: { ...state.ui, playerMin: !state.ui?.playerMin } };
+
+    case 'PLAYER_MIN_SET':
+      if ((state.ui?.playerMin ?? false) === (action.on === true)) return state;
+      return { ...state, ui: { ...state.ui, playerMin: action.on === true } };
+
+    // (v5.12.0) mute mirror for the player chips (ephemeral, like minimize).
+    case 'AUDIO_MUTED_SET':
+      if ((state.ui?.audioMuted ?? false) === (action.on === true)) return state;
+      return { ...state, ui: { ...state.ui, audioMuted: action.on === true } };
+
     case 'ONBOARDING_DISMISS':
       if (state.onboarding?.dismissed) return state;
       return { ...state, onboarding: { ...state.onboarding, dismissed: true } };

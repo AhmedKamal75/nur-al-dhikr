@@ -78,6 +78,13 @@ export const actions = {
   contentManageToggle: () => ({ type: 'CONTENT_MANAGE_TOGGLE' }),
   // (v5.10.6) recitation console "more" panel: ephemeral, never persisted.
   reciteMoreToggle: () => ({ type: 'RECITE_MORE_TOGGLE' }),
+  // (v5.12.0) player minimize: ephemeral (per-visit, never persisted) —
+  // the bar collapses to a slim pill, audio keeps playing.
+  playerMinToggle: () => ({ type: 'PLAYER_MIN_TOGGLE' }),
+  playerMinSet: (on) => ({ type: 'PLAYER_MIN_SET', on: on === true }),
+  // (v5.12.0) element mute mirror (M key / mute chip): ephemeral — the
+  // services own the element flags, this owns the rendered chip state.
+  audioMutedSet: (on) => ({ type: 'AUDIO_MUTED_SET', on: on === true }),
   restoreState: (payload) => ({ type: 'RESTORE_STATE', payload }),
   resetAll: () => ({ type: 'RESET_ALL' }),
   setQuranMeta: (meta) => ({ type: 'QURAN_META_LOADED', meta }),

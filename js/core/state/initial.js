@@ -96,7 +96,7 @@ export function initialState() {
     // manage mode is per-visit, never restored across reloads. (v5.2.52)
     // the wizard position rides along: a reload restarts the wizard at the
     // first incomplete step, which is the honest resume point.
-    ui: { contentManage: false, onboardingStep: null, reciteMore: false },
+    ui: { contentManage: false, onboardingStep: null, reciteMore: false, playerMin: false, audioMuted: false },
     tasbih: { activeItemId: null, activePhrase: null },
     // (v5.2.46) user-authored dhikr for the tasbih dial:
     // [{ id, text, target, ts }] oldest-first, capped. Counter keys ride the

@@ -16,6 +16,7 @@ import {
   clearTimer,
   volumeAt,
   countdownLabel,
+  nextSleepRung,
 } from '../js/domain/sleepTimer.js';
 
 describe('sleepTimer domain math', () => {
@@ -27,6 +28,7 @@ describe('sleepTimer domain math', () => {
       lastTickMs: null,
     });
     assert.equal(armTimer(initialTimerState(), 99, 0).minutes, 30);
+    assert.equal(armTimer(initialTimerState(), 5, 0).minutes, 5, '5-minute rung arms');
     assert.deepEqual(clearTimer(), initialTimerState());
   });
 
@@ -45,7 +47,14 @@ describe('sleepTimer domain math', () => {
     assert.equal(countdownLabel(armTimer(initialTimerState(), 15, 0), 0), '15:00');
     assert.equal(countdownLabel(armTimer(initialTimerState(), 15, 0), 61_000), '13:59');
     assert.equal(countdownLabel(null), '');
-    assert.deepEqual(SLEEP_TIMER_CHOICES, [15, 30, 45, 60]);
+    assert.deepEqual(SLEEP_TIMER_CHOICES, [5, 15, 30, 45, 60]);
+  });
+
+  test('nextSleepRung walks off → 5 → … → 60 → off (v5.12.0)', () => {
+    assert.equal(nextSleepRung(false, null), 5, 'off arms the first rung');
+    assert.equal(nextSleepRung(true, 5), 15);
+    assert.equal(nextSleepRung(true, 60), null, 'top wraps to off');
+    assert.equal(nextSleepRung(true, 99), null, 'hostile behaves as off');
   });
 });
 
@@ -92,6 +101,33 @@ describe('full-surah player sleep wiring', () => {
     }
   });
 
+  test('sleep clear restores the user volume, not full blast (v5.12.0)', async () => {
+    const seen = [];
+    globalThis.Audio = class {
+      constructor() {
+        this.paused = true;
+        this.volume = 1;
+        this._listeners = {};
+        seen.push(this);
+      }
+      addEventListener(t, fn) {
+        (this._listeners[t] ||= []).push(fn);
+      }
+    };
+    const player = await import('../js/services/player.js');
+    try {
+      player.resetPlayerForTests();
+      player.setVolume(0.4);
+      player.armSleepTimer(15);
+      player.clearSleepTimer();
+      assert.equal(player.userVolume(), 0.4, 'user loudness remembered');
+      assert.equal(seen[0].volume, 0.4, 'element restored to user loudness');
+    } finally {
+      player.resetPlayerForTests();
+      delete globalThis.Audio;
+    }
+  });
+
   test('player bar shows the armed countdown chip', async () => {
     const { renderPlayerBar } = await import('../js/views/playerBar.js');
     const html = renderPlayerBar({
@@ -118,5 +154,24 @@ describe('full-surah player sleep wiring', () => {
     });
     assert.ok(off.includes('data-action="player-sleep-cycle"'));
     assert.ok(!off.includes('14:59'));
+  });
+});
+
+describe('verse engine sleep wiring', () => {
+  test('stop clears an armed sleep timer (no leak past session)', async () => {
+    const vp = await import('../js/services/surahPlayback.js');
+    try {
+      const snap = vp.armSleepTimer(15);
+      assert.equal(snap.enabled, true);
+      assert.equal(vp.sleepSnapshot().enabled, true);
+      vp.stop();
+      assert.deepEqual(
+        vp.sleepSnapshot(),
+        { enabled: false, minutes: null, label: '' },
+        'no stale fade onto the next session'
+      );
+    } finally {
+      vp.clearSleepTimer();
+    }
   });
 });

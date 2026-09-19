@@ -27,6 +27,7 @@ import { buildMushafSettingsPanel } from '../../views/tafsirPanel.js';
 import { buildReciterPick } from './quranAudio.js';
 import { dryRunVerdict } from '../../services/dataHealth.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
+import { setAudioMuted } from '../audioEngine.js';
 import { moveHomePanel } from '../../domain/homePanels.js';
 import { moveQuickTile } from '../../domain/quickTiles.js';
 import { buildConfirm, buildTextPrompt } from '../../ui/menus.js';
@@ -413,6 +414,9 @@ export const clickHandlers = {
 
   'confirm-reset-all': () => {
     store.dispatch(actions.resetAll());
+    // (v5.12.0) the reset restores the unmuted chip — the elements must
+    // follow, or the UI would lie about sounding audio.
+    setAudioMuted(false);
     closeModal();
     go(VIEWS.HOME);
   },

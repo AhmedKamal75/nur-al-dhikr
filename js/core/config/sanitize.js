@@ -220,13 +220,18 @@ function sanitizeAudio(raw) {
   return {
     moshafId: p.moshafId == null ? null : asShortStr(p.moshafId, null, 80),
     rate: asNumber(p.rate, d.rate, 0.5, 2),
-    repeat: p.repeat === 'one' ? 'one' : 'off',
+    // (v5.12.0) 'all' survives restore — the file bar renders a third
+    // repeat-all mode the old allowlist silently coerced to 'off'.
+    repeat: p.repeat === 'one' ? 'one' : p.repeat === 'all' ? 'all' : 'off',
     ayahFollow: asBool(p.ayahFollow, d.ayahFollow ?? true),
     // Hifz repeat budget (v3.17): per-ayah loop count for the recitation
     // session — 1/3/5/10 plays, or -1 = loop until skipped.
     ayahRepeat: [1, 3, 5, 10, -1].includes(p.ayahRepeat) ? p.ayahRepeat : 1,
     // Verse-by-verse playback speed (the full-surah player's `rate` twin).
     verseRate: asNumber(p.verseRate, d.verseRate ?? 1, 0.5, 2),
+    // (v5.12.0) echo pause + file volume (player console upgrades).
+    echoPauseMs: [3000, 8000, 15000].includes(p.echoPauseMs) ? p.echoPauseMs : 8000,
+    fileVolume: asNumber(p.fileVolume, d.fileVolume ?? 1, 0, 1),
   };
 }
 

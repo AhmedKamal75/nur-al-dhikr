@@ -125,6 +125,44 @@ test('sanitizeSettings pins reciteMode to ayah|surah (v5.10.5, default surah v5.
   assert.equal(sanitizeSettings({ reciteMode: 42 }).reciteMode, 'surah');
 });
 
+test('sanitizeSettings guards the player-console audio prefs (v5.12.0)', async () => {
+  const { sanitizeSettings } = await import('../js/core/config.js');
+  const { REPEAT_CYCLE } = await import('../js/services/surahPlayback.js');
+  const audio = (a) => sanitizeSettings({ audio: a }).audio;
+  // repeat-all survives restore (was coerced to 'off').
+  assert.equal(audio({ repeat: 'all' }).repeat, 'all');
+  assert.equal(audio({ repeat: 'one' }).repeat, 'one');
+  assert.equal(audio({ repeat: 'many' }).repeat, 'off');
+  // ayahRepeat allowlist never drifts from the engine cycle (core may
+  // not import services — this test is the sync pin).
+  for (const r of REPEAT_CYCLE) assert.equal(audio({ ayahRepeat: r }).ayahRepeat, r);
+  assert.equal(audio({ ayahRepeat: 99 }).ayahRepeat, 1);
+  // echo pause: the three UI steps pass, everything else falls to 8s.
+  assert.equal(audio({ echoPauseMs: 3000 }).echoPauseMs, 3000);
+  assert.equal(audio({ echoPauseMs: 15000 }).echoPauseMs, 15000);
+  assert.equal(audio({ echoPauseMs: 20000 }).echoPauseMs, 8000);
+  assert.equal(audio({ echoPauseMs: 'junk' }).echoPauseMs, 8000);
+  assert.equal(audio({}).echoPauseMs, 8000, 'default 8s');
+  // file volume: clamped 0..1, default full.
+  assert.equal(audio({ fileVolume: 0.4 }).fileVolume, 0.4);
+  assert.equal(audio({ fileVolume: 9 }).fileVolume, 1);
+  assert.equal(audio({ fileVolume: -2 }).fileVolume, 0);
+  assert.equal(audio({}).fileVolume, 1, 'default full volume');
+});
+
+test('echo-pause options mark the saved step, hostile falls to 8s (v5.12.0)', async () => {
+  const { echoPauseOptions } = await import('../js/app/handlers/quranAudio.js');
+  const { ECHO_PAUSE_CHOICES } = await import('../js/services/surahPlayback.js');
+  assert.deepEqual(ECHO_PAUSE_CHOICES, [3000, 8000, 15000]);
+  const en = echoPauseOptions(15000, 'en');
+  assert.ok(en.includes('<option value="15000" selected>'), 'saved step selected');
+  assert.ok(en.includes('15 seconds'), 'EN option text resolves');
+  assert.ok(!en.includes('audio.echoPauseOpt'), 'no raw key leaks (EN)');
+  const ar = echoPauseOptions(999, 'ar');
+  assert.ok(ar.includes('<option value="8000" selected>'), 'hostile falls to 8s');
+  assert.ok(ar.includes('8 ث'), 'AR option text resolves');
+});
+
 test('both consoles carry the playback-mode toggle (v5.10.5)', async () => {
   const { recitationChipsHTML, consoleSnapshot } = await import('../js/ui/recitationConsole.js');
   const { renderPlayerBar } = await import('../js/views/playerBar.js');
@@ -303,8 +341,7 @@ test('translation tracks are labeled in data and searchable', async () => {
   assert.ok(searchReciters('أردية', customs).some((r) => r.id === 'c1'));
 });
 
-test('audio view lists the 5 verse voices with translation badges', async () => {
-  const { renderAudio } = await import('../js/views/audioManager.js');
+test('audio view lists the 5 verse voices with translation badges', async () => {  const { renderAudio } = await import('../js/views/audioManager.js');
   const state = {
     settings: {
       language: 'en',
@@ -366,4 +403,79 @@ test('unified voice picker: ayah voices + searchable moshafs (v5.10.8)', async (
   });
   assert.ok(html2.includes('data-action="recite-pick-moshaf"'), 'custom moshaf row');
   assert.ok(html2.includes('My Sheikh'), 'custom name renders');
+});
+
+test('audio defaults panel renders direct picks, loop gated (v5.12.0)', async () => {
+  const { renderAudio } = await import('../js/views/audioManager.js');
+  const state = (lang, audio, extra = {}) => ({
+    settings: { language: lang, reciter: 'ar.alafasy', customReciters: [], audio },
+    audioManager: { catalogReady: true },
+    audioDownloads: {},
+    audioDownloading: {},
+    quran: {},
+    loadErrors: {},
+    surahPlayback: { active: false },
+    player: null,
+    ...extra,
+  });
+  const html = renderAudio(state('en', { ayahRepeat: 5 }));
+  assert.ok(html.includes('Recitation defaults'), 'panel title');
+  assert.ok(html.includes('data-audio-pref="ayahRepeat"'), 'repeat select');
+  assert.ok(html.includes('<option value="5" selected>×5</option>'), 'saved repeat picked');
+  assert.ok(html.includes('<option value="-1">∞</option>'), 'infinity is a direct pick');
+  assert.ok(html.includes('data-audio-pref="loop" disabled'), 'loop gated with no session');
+  assert.ok(html.includes('Start a recitation first'), 'gate reason named');
+  assert.ok(html.includes('data-audio-pref="sleep"'), 'sleep select');
+  assert.ok(html.includes('<option value="5">5m</option>'), '5-minute rung is a direct pick');
+  assert.ok(!html.includes('audio.playbackDefaults'), 'no raw key leaks (EN)');
+  assert.ok(!html.includes('audio.repeatAyah') || html.includes('Repeat each ayah'), 'repeatAyah reused');
+  const ar = renderAudio(state('ar', { ayahRepeat: -1 }));
+  assert.ok(ar.includes('إعدادات التلاوة الافتراضية'), 'AR title resolves');
+  assert.ok(ar.includes('<option value="-1" selected>∞</option>'), 'AR saved repeat picked');
+  assert.ok(!ar.includes('audio.loopNeedsSession'), 'no raw key leaks (AR)');
+});
+
+test('audio-pref change arm sets repeat/loop/sleep directly (v5.12.0)', async () => {
+  const { changeRegistry } = await import('../js/app/events.js');
+  const { actions, store } = await import('../js/core/state.js');
+  const player = await import('../js/services/player.js');
+  const entry = changeRegistry.find((e) => e.sel === '[data-audio-pref]');
+  assert.ok(entry, 'select arm registered');
+  const el = (pref, value) => ({ value, dataset: { pref } });
+  globalThis.document = { getElementById: () => null };
+  globalThis.Audio = class {
+    constructor() {
+      this.volume = 1;
+    }
+  };
+  const beforeRepeat = store.getState().settings.audio?.ayahRepeat;
+  try {
+    player.resetPlayerForTests();
+    // Hostile repeat no-ops — never a partial write.
+    entry.run({}, el('ayahRepeat', '99'));
+    assert.equal(store.getState().settings.audio?.ayahRepeat, beforeRepeat);
+    // Valid repeat persists as the default (no session → no engine touch).
+    entry.run({}, el('ayahRepeat', '3'));
+    assert.equal(store.getState().settings.audio.ayahRepeat, 3);
+    // Loop with no session explains instead of arming.
+    entry.run({}, el('loop', '3'));
+    // Sleep direct-pick arms the file engine, '' clears it.
+    entry.run({}, el('sleep', '30'));
+    assert.equal(store.getState().player.sleepEnabled, true);
+    assert.equal(store.getState().player.sleepMinutes, 30);
+    entry.run({}, el('sleep', ''));
+    assert.equal(store.getState().player.sleepEnabled, false);
+    entry.run({}, el('sleep', '99'));
+    assert.equal(store.getState().player.sleepEnabled, false, 'hostile sleep no-ops');
+  } finally {
+    player.clearSleepTimer();
+    player.resetPlayerForTests();
+    store.dispatch(
+      actions.updateSettings({
+        audio: { ...store.getState().settings.audio, ayahRepeat: beforeRepeat ?? 1 },
+      })
+    );
+    delete globalThis.Audio;
+    delete globalThis.document;
+  }
 });

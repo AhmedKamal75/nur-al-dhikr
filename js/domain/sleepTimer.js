@@ -11,7 +11,7 @@
  * makes the fade inaudible almost immediately at these durations.
  */
 
-export const SLEEP_TIMER_CHOICES = Object.freeze([15, 30, 45, 60]);
+export const SLEEP_TIMER_CHOICES = Object.freeze([5, 15, 30, 45, 60]);
 export const FADE_SECONDS = 90;
 
 /** A fresh, inert timer state. */
@@ -23,6 +23,17 @@ export function initialTimerState() {
 export function armTimer(state, minutes, nowMs = Date.now()) {
   const m = SLEEP_TIMER_CHOICES.includes(minutes) ? minutes : 30;
   return { ...initialTimerState(), enabled: true, minutes: m, endsAtMs: nowMs + m * 60_000 };
+}
+
+/**
+ * (v5.12.0) Next ladder rung for the sleep cycle chips AND the Audio-view
+ * select's off-toggle: off (null) → first choice → … → last → off (null).
+ * Hostile minutes behave as off (indexOf −1 + 1 wraps to the null head).
+ */
+export function nextSleepRung(enabled, minutes) {
+  const ladder = [null, ...SLEEP_TIMER_CHOICES];
+  const idx = enabled ? ladder.indexOf(minutes) : 0;
+  return ladder[(idx + 1) % ladder.length];
 }
 
 /** Clear the timer. */

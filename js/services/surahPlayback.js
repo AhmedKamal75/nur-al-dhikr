@@ -237,9 +237,11 @@ export function nextLoop(n) {
   return LOOP_CYCLE[(i + 1) % LOOP_CYCLE.length];
 }
 
-/** Verse playback speed ladder (shared with the full-surah player's RATES).
+/** Verse playback speed ladder — THE canonical ladder: the full-surah
+ *  player (views/playerBar.js, handlers/audio.js) imports this instead of
+ *  keeping its own copy (a triple fork that already drifted once).
  *  Anything finite clamps into 0.5–2 (the platform's sane range). */
-export const VERSE_RATES = [1, 1.25, 1.5, 0.75];
+export const VERSE_RATES = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 export function normalizeSpeed(v) {
   const n = Number(v);
@@ -281,6 +283,9 @@ let waitToken = 0;
 export const ECHO_PAUSE_MIN_MS = 3000;
 export const ECHO_PAUSE_MAX_MS = 30000;
 export const ECHO_PAUSE_DEFAULT_MS = 8000;
+// (v5.12.0) the UI-exposed echo-pause steps (range-picker select) —
+// normalizeEchoPause still clamps anything into the wider window above.
+export const ECHO_PAUSE_CHOICES = [3000, 8000, 15000];
 
 /* ------------------------------------------------------------------ */
 /* (v5.10.4) Adaptive lookahead: how many upcoming ayahs to buffer.    */
@@ -399,7 +404,11 @@ function applyVolumeNow() {
   driverSetVolume(v);
   if (sleep && v <= 0) {
     clearSleepTimer();
-    stop();
+    // (v5.12.0 hostile review) pause — not stop — so the session and its
+    // position survive the night exactly like the file engine
+    // (player.js: pause() // position kept). A woken listener resumes in
+    // place; both engines now share one mornings-after contract.
+    pause();
   }
 }
 
@@ -419,6 +428,16 @@ export function clearSleepTimer() {
   if (sleepTick) clearInterval(sleepTick);
   sleepTick = null;
   driverSetVolume(1);
+  return sleepSnapshot();
+}
+
+/** Test seam: force the armed timer past expiry and run the tick once, so
+ *  tests pin the mornings-after contract (pause, position kept) without a
+ *  15-minute wait. No-ops with no timer armed. */
+export function _expireSleepForTests() {
+  if (!sleep) return sleepSnapshot();
+  sleep.endsAtMs = Date.now() - 1;
+  applyVolumeNow();
   return sleepSnapshot();
 }
 
@@ -1142,6 +1161,11 @@ export function setCompare(on) {
 
 /** Stop the session (user tap, other audio starting, engine failure). */
 export function stop() {
+  // (v5.12.0) an armed timer must not fade the NEXT session early — the
+  // file engine already clears on stop (player.js), the verse engine did
+  // not. Clear before the no-session early return so a stray arm can never
+  // outlive its session. Idempotent: safe when called from applyVolumeNow.
+  clearSleepTimer();
   if (!session) return;
   clearEchoWait();
   dropObjectUrl();

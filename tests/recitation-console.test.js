@@ -11,7 +11,10 @@ import {
   recitationChipsHTML,
   recitationEchoHTML,
   reciterShortLabel,
+  REPEAT_CYCLE_UI,
+  LOOP_CYCLE_UI,
 } from '../js/ui/recitationConsole.js';
+import { REPEAT_CYCLE, LOOP_CYCLE } from '../js/services/surahPlayback.js';
 
 const ACTIONS = [
   'recite-ayah-prev',
@@ -116,6 +119,36 @@ test('E: snapshot normalizes hostile session values', () => {
   assert.equal(snap.speed, 1);
   const inf = consoleSnapshot(session({ repeat: -1 }), settings, sleep, 'en');
   assert.equal(inf.repLabel, '∞');
+});
+
+test('E: repeat/loop chips name the current AND next rung', () => {
+  const mid = consoleSnapshot(session({ repeat: 3, loop: 5 }), settings, sleep, 'en');
+  assert.equal(mid.repNext, 5);
+  assert.equal(mid.repNextLabel, '×5');
+  assert.equal(mid.loopNext, 10);
+  assert.equal(mid.loopNextLabel, '×10');
+  const edge = consoleSnapshot(session({ repeat: 10, loop: 10 }), settings, sleep, 'en');
+  assert.equal(edge.repNextLabel, '∞', '10 → ∞');
+  assert.equal(edge.loopNext, 1, 'loop wraps to off');
+  const inf = consoleSnapshot(session({ repeat: -1 }), settings, sleep, 'en');
+  assert.equal(inf.repNextLabel, '×1', '∞ wraps to off');
+  const html = recitationChipsHTML(mid, 'en', CLS);
+  assert.ok(
+    html.includes('aria-label="Repeat each ayah: ×3 — next tap: ×5"'),
+    'repeat chip announces next rung'
+  );
+  assert.ok(
+    html.includes('aria-label="Range loop: ×5 — next tap: ×10"'),
+    'loop chip announces next rung'
+  );
+  const htmlAr = recitationChipsHTML(mid, 'ar', CLS);
+  assert.ok(htmlAr.includes('تكرار كل آية: ×3'), 'AR repeat label resolves');
+  assert.ok(!htmlAr.includes('audio.repeatNext'), 'no raw key leaks (AR)');
+});
+
+test('E: ui cycle mirrors never drift from the engine canonicals', () => {
+  assert.deepEqual(REPEAT_CYCLE_UI, REPEAT_CYCLE);
+  assert.deepEqual(LOOP_CYCLE_UI, LOOP_CYCLE);
 });
 
 test('E: echo banner only while waiting', () => {

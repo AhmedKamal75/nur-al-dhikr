@@ -25,6 +25,7 @@ import {
   mushafSwipeTurn,
   isSwipeGuardTarget,
   isPlayerDismissSwipe,
+  resolveMinControl,
 } from '../js/domain/gestures.js';
 import { renderPlayerBar } from '../js/views/playerBar.js';
 import { renderSettings } from '../js/views/settings.js';
@@ -169,4 +170,31 @@ test('mini-player: compact head (pause + dismiss) over a chip strip', () => {
   const headSeg = html.split('player-bar__console')[0];
   assert.ok(headSeg.includes('data-action="recite-pause-toggle"'), 'pause lives in the head');
   assert.ok(headSeg.includes('data-player-dismiss="1"'), 'dismiss X lives in the head');
+});
+
+test('swipe minimize: resolves the bar chevron, the fs sibling, or null', () => {
+  const chevron = { clicked: 0, click() { this.clicked += 1; } };
+  // Windowed bar / fs console rows carry their own chevron.
+  const bar = { querySelector: () => chevron, parentElement: null };
+  assert.equal(resolveMinControl(bar), chevron, 'own chevron wins');
+  // The fs transport row carries none — the sibling console's answers.
+  const sib = {};
+  const transport = {
+    querySelector: () => null,
+    parentElement: {
+      querySelector: (sel) => (sel.includes('.mushaf-fs-console') ? sib : null),
+    },
+  };
+  assert.equal(resolveMinControl(transport), sib, 'transport falls to sibling console');
+  // Quiet fullscreen (no console): null, so the caller no-ops.
+  const quiet = { querySelector: () => null, parentElement: { querySelector: () => null } };
+  assert.equal(resolveMinControl(quiet), null, 'quiet transport never minimizes');
+  assert.equal(resolveMinControl(null), null);
+  assert.equal(resolveMinControl(undefined), null);
+  assert.equal(resolveMinControl({}), null, 'no querySelector, no crash');
+  assert.equal(
+    resolveMinControl({ querySelector: () => { throw new Error('hostile'); } }),
+    null,
+    'throwing querySelector, no crash'
+  );
 });

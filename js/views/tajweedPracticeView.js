@@ -98,6 +98,10 @@ export function buildPracticeRound(state, session) {
     : t('practice.instructions', lang, { rule: title });
 
   const words = session.text.trim().split(/\s+/).filter(Boolean);
+  // (v5.12.0 hostile review) roving: only the round's FIRST letter unit
+  // holds the tab stop — arrows walk the units (events.js), Tab crosses
+  // the drill in one stop instead of one per letter.
+  let unitIdx = 0;
   const wordsHtml = words
     .map((word, idx) => {
       const wIndex = idx + 1;
@@ -108,7 +112,8 @@ export function buildPracticeRound(state, session) {
           const text = escapeHTML(word.slice(u.start, u.end));
           if (!session.checked) {
             const selected = session.selected.has(key);
-            return `<span class="pu ${selected ? 'pu--selected' : ''}" data-action="practice-tap" data-word="${wIndex}" data-start="${u.start}" data-end="${u.end}" tabindex="0" role="button">${text}</span>`;
+            const tab = unitIdx++ === 0 ? '0' : '-1';
+            return `<span class="pu ${selected ? 'pu--selected' : ''}" data-action="practice-tap" data-word="${wIndex}" data-start="${u.start}" data-end="${u.end}" tabindex="${tab}" role="button">${text}</span>`;
           }
           const isTarget = session.targets.some(
             (tg) => tg.word === wIndex && tg.start === u.start && tg.end === u.end

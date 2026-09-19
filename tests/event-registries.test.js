@@ -25,9 +25,9 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (33 change + 16 input)', () => {
-  assert.equal(changeRegistry.length, 33);
-  assert.equal(inputRegistry.length, 16);
+test('D: every arm survived the move (35 change + 17 input)', () => {
+  assert.equal(changeRegistry.length, 35);
+  assert.equal(inputRegistry.length, 17);
 });
 
 test('D: registry entries are well-formed with unique selectors', () => {
@@ -100,6 +100,34 @@ test('D: fontScale input round-trips through the registry', () => {
   entry.run({}, { ...fakeEl(), value: '1.5' });
   assert.equal(store.getState().settings.fontScale, 1.5);
   store.dispatch(actions.updateSettings({ fontScale: before }));
+});
+
+test('D: file volume commits through change, previews through input (v5.12.0)', () => {
+  globalThis.Audio = class {
+    constructor() {
+      this.volume = 1;
+    }
+    addEventListener() {}
+  };
+  try {
+    const change = changeRegistry.find((e) => e.sel === '[data-player-volume]');
+    const input = inputRegistry.find((e) => e.sel === '[data-player-volume]');
+    assert.ok(change && input, 'both arms registered');
+    const before = store.getState().settings.audio?.fileVolume;
+    change.run({}, { ...fakeEl(), value: '40' });
+    assert.equal(store.getState().settings.audio.fileVolume, 0.4, 'change persists 0..1');
+    change.run({}, { ...fakeEl(), value: 'junk' });
+    assert.equal(store.getState().settings.audio.fileVolume, 0, 'hostile commits silence, never NaN');
+    input.run({}, { ...fakeEl(), value: '80' });
+    assert.equal(
+      store.getState().settings.audio.fileVolume,
+      0,
+      'input previews without persisting'
+    );
+    store.dispatch(actions.setAudioPrefs({ fileVolume: before ?? 1 }));
+  } finally {
+    delete globalThis.Audio;
+  }
 });
 
 test('D: a throwing run surfaces through the boundary instead of escaping', () => {

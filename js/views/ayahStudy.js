@@ -123,6 +123,9 @@ export function buildMushafAyahDetail(
           ? `
       <button type="button" class="btn btn--secondary btn--sm" data-action="play-ayah" data-url="${escapeHTML(audioUrl)}" data-key="${escapeHTML(key)}">
         ${icon('volume', { size: 16 })} ${t('mushaf.listen', lang)}
+      </button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="surah-play" data-surah="${surahNumber}" data-ayah="${ayahNumber}">
+        ${icon('play', { size: 16 })} ${t('audio.reciteFromHere', lang)}
       </button>`
           : ''
       }

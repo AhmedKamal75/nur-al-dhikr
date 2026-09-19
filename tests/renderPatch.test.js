@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { matchChildren, nodeKey, structuralKey, matchChildrenDeep } from '../js/app/renderer.js';
+import { matchChildren, nodeKey, structuralKey, matchChildrenDeep, focusSignature } from '../js/app/renderer.js';
 
 /**
  * The patch engine's matcher is pure (keys in, matches out) so the ordering
@@ -223,5 +223,77 @@ describe('matchChildrenDeep (two-pass matcher)', () => {
     assert.deepEqual(matchChildrenDeep([big], [big + '!'], [big], [big]), [0]);
     // Different exact HTML AND different structure: never binds.
     assert.deepEqual(matchChildrenDeep([big], [big + 'x'], [big], [big + '!']), [-1]);
+  });
+});
+
+describe('focusSignature (focus salvage across re-renders)', () => {
+  // CSS.escape is browser-only — stub the single method the builder uses.
+  const withCSS = () => {
+    const prev = globalThis.CSS;
+    globalThis.CSS = { escape: (s) => String(s).replace(/["\\]/g, '\\$&') };
+    return () => {
+      if (prev === undefined) delete globalThis.CSS;
+      else globalThis.CSS = prev;
+    };
+  };
+  const field = (extra = {}) => ({
+    tagName: 'INPUT',
+    id: '',
+    name: '',
+    dataset: {},
+    matches: (sel) => sel === 'input, textarea, select',
+    ...extra,
+  });
+  const button = (dataset) => ({
+    tagName: 'BUTTON',
+    dataset,
+    matches: (sel) =>
+      sel === 'button[data-action], a[data-action], [role="button"][data-action]',
+  });
+
+  test('fields keep their old identities; others decline', () => {
+    const restore = withCSS();
+    try {
+      assert.equal(focusSignature(field({ id: 'q' })), '#q');
+      assert.equal(focusSignature(field({ dataset: { bind: 'b' } })), '[data-bind="b"]');
+      assert.equal(
+        focusSignature(field({ tagName: 'TEXTAREA', name: 'n' })),
+        'textarea[name="n"]'
+      );
+      assert.equal(
+        focusSignature(null),
+        null
+      );
+      assert.equal(
+        focusSignature({ tagName: 'DIV', matches: () => false }),
+        null,
+        'plain divs decline'
+      );
+    } finally {
+      restore();
+    }
+  });
+
+  test('data-action buttons pin by action + stable dataset', () => {
+    const restore = withCSS();
+    try {
+      assert.equal(
+        focusSignature(button({ action: 'player-toggle' })),
+        'button[data-action="player-toggle"]'
+      );
+      assert.equal(
+        focusSignature(button({ action: 'surah-play', surah: '112' })),
+        'button[data-action="surah-play"][data-surah="112"]'
+      );
+      // Volatile attributes (classes, aria-pressed) never enter the
+      // signature — it must survive the re-render that moved focus.
+      assert.equal(
+        focusSignature(button({ action: 'x', foo: 'bar' })),
+        'button[data-action="x"]'
+      );
+      assert.equal(focusSignature(button({})), null, 'actionless declines');
+    } finally {
+      restore();
+    }
   });
 });

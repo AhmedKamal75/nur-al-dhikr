@@ -1407,7 +1407,11 @@ body.is-mushaf-fullscreen.is-mushaf-manual .view--mushaf-fullscreen .mushaf-page
 body.mushaf-fs-idle .mushaf-fs-controls,
 body.mushaf-fs-idle .mushaf-fs-console,
 body.mushaf-fs-idle .mushaf-fs-echo {
-  opacity: 0;
+  /* (v5.12.0 hostile review M2) was opacity:0 — keyboard focus re-reveals,
+     and any pointer/key activity resets the timer, but touch and SR-browse
+     users got zero affordance. 0.12 keeps the reading line clean while the
+     chrome stays findable; any tap restores it fully. */
+  opacity: 0.12;
   transform: translateY(10px);
   pointer-events: none;
 }
@@ -1696,6 +1700,13 @@ body.mushaf-fs-idle .mushaf-fs-console:focus-within {
 }
 .mushaf-sheet__label {
   flex: 1;
+}
+/* (v5.12.0) live values on sheet action rows (speed ×N, sleep countdown)
+   — pushed to the row's far end in both directions. */
+.mushaf-sheet__value {
+  margin-inline-start: auto;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
 }
 .mushaf-sheet__row--toggle .switch {
   flex-shrink: 0;
@@ -2044,7 +2055,9 @@ body.mushaf-fs-idle .mushaf-fs-console:focus-within {
 body.reader-fs-idle .reader-immersive-exit,
 body.reader-fs-idle .reader-immersive-console,
 body.reader-fs-idle .reader-immersive-echo {
-  opacity: 0;
+  /* (v5.12.0 hostile review M2) same 0.12 affordance floor as the mushaf
+     bar above — invisible chrome strands touch users. */
+  opacity: 0.12;
   transform: translateY(10px);
   pointer-events: none;
 }

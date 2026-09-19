@@ -40,7 +40,6 @@ export const en = {
   'nav.calendar': 'Calendar',
   'nav.settings': 'Settings',
   'nav.about': 'About',
-  'nav.editor': 'Editor',
   'nav.quran': "Qur'an",
   'nav.hadith': 'Ahadeeth',
   'nav.qibla': 'Qibla',
@@ -53,9 +52,7 @@ export const en = {
   'quran.showNext': 'Show {n} more verses',
   'quran.meccan': 'Meccan',
   'quran.medinan': 'Medinan',
-  'quran.loading': "Loading the Mus'haf\u2026",
   'quran.surah': 'Surah',
-  'quran.verse': 'Verse {n}',
   'quran.prevSurah': 'Previous Surah',
   'quran.shareAyah': 'Share as image',
   'quran.nextSurah': 'Next Surah',
@@ -65,8 +62,6 @@ export const en = {
   'quran.viewInMushaf': 'Mushaf View',
   'quran.continueReading': "Continue Reading Qur'an",
   'quran.readShortcut': "Read the Qur'an",
-  'quran.juzLabel': 'Juz {n}',
-  'quran.revelationOrder': 'Revelation',
   'nav.ramadan': 'Ramadan',
   'nav.zakat': 'Zakat',
   'ramadan.title': 'Ramadan Companion',
@@ -303,6 +298,9 @@ export const en = {
   'audio.verseFallbackSurah': 'Verse audio is unavailable \u2014 playing the full surah instead.',
   // v3.17 hifz: per-ayah repeat + skips on the recitation console
   'audio.repeatAyah': 'Repeat each ayah',
+  // (v5.12.0) blind-cycle cure: chips name the current AND next rung.
+  'audio.repeatNext': 'Repeat each ayah: {cur} — next tap: {next}',
+  'audio.loopNext': 'Range loop: {cur} — next tap: {next}',
   'audio.ayahPrev': 'Previous ayah',
   'audio.ayahNext': 'Next ayah',
   // v3.17 hifz: memorize mode + spaced-repetition review
@@ -361,6 +359,9 @@ export const en = {
   'audio.repeatAllShort': 'all',
   'audio.speed': 'Playback speed',
   'audio.seek': 'Seek',
+  // (v5.12.0) ±10s step chips flanking the file-mode seek range.
+  'audio.seekBack': 'Back 10 seconds',
+  'audio.seekFwd': 'Forward 10 seconds',
   'audio.customTitle': 'Add a custom reciter',
   'audio.customName': 'Reciter name',
   'audio.customNamePh': 'e.g. Alaa Aql',
@@ -408,8 +409,18 @@ export const en = {
   'title.editor': 'Editor',
 
   'audio.player': 'Audio player',
+  // (v5.12.0) minimize + mute (M key).
+  'audio.playerMinimize': 'Minimize player',
+  // (v5.12.0 hostile review) swipe-down minimize is touch-only and was
+  // undiscoverable — the minimize buttons now advertise it.
+  'audio.minimizeHint': 'Minimize — or swipe down on the bar',
+  'audio.playerRestore': 'Restore player',
+  'audio.mute': 'Mute',
+  'audio.unmute': 'Unmute',
+  // (v5.12.0) file-mode volume slider (mute stays the verse-mode control).
+  'audio.volume': 'Volume',
+  'audio.volumeSleep': 'Sleep timer controls volume',
   'mushaf.title': 'Mushaf — the 604-page book reader',
-  'focus.title': 'Focus Mode',
   'units.h': '{n}h',
   'units.m': '{n}m',
   'common.am': 'AM',
@@ -492,7 +503,6 @@ export const en = {
     'Paid before the Eid prayer, one sa\u2019 (about 2.5–3 kg) of the local staple per person.',
   'zakat.fitrReminderTitle': 'Zakat al-Fitr — due before Eid',
   'zakat.fitrReminderBody': 'Pay one sa‘ of the local staple per person before the Eid prayer.',
-  'zakat.historyTitle': 'Saved calculations',
   'zakat.disclaimer':
     'Estimates follow mainstream Hanafi practice (2.5%, lunar-year holding). Please confirm figures with a qualified scholar for your situation.',
   'mushaf.bookmarks': 'Ayah bookmarks',
@@ -515,7 +525,6 @@ export const en = {
   'home.reviewHifz': 'Hifz',
   'home.favorites': 'Favorites',
   'home.collections': 'Pinned Collections',
-  'home.recent': 'Recent Activity',
   'home.verseOfTheDay': 'Reflection',
   'home.verseTheme': 'Verse theme',
   'home.theme.any': 'Any',
@@ -540,7 +549,6 @@ export const en = {
   // v5.2.74 tafsir result group in the Search view (UP-08).
   'search.tafsirResults': 'From the tafsir',
   'search.tafsirCount': '{n} passages',
-  'search.resultsCount': '{n} results',
   // (v5.9.0) pagination + per-corpus match breakdown.
   'search.loadMore': 'Load more',
   'search.showingOf': 'Showing {x} of {n}',
@@ -591,12 +599,9 @@ export const en = {
   'mushaf.waqf_hizb_d': 'Marks a Juz / Hizb division — not a prostration.',
   'mushaf.waqf_sajdah': 'Sajdah · prostrate here',
   'mushaf.waqf_sajdah_d': 'One of the fifteen prostration places.',
-  'content.manage': 'Manage',
   'content.done': 'Done',
   'content.manageHint':
     'Reorder, hide or re-target any dhikr — changes apply here and in focus mode.',
-  'content.manageHintOff': 'Reorder, hide, and set repetition counts.',
-  'content.manageHintCustom': 'Your library: add, edit, duplicate or delete entries freely.',
   'content.moveUp': 'Move up',
   'content.moveDown': 'Move down',
   'content.target': 'Count',
@@ -662,7 +667,6 @@ export const en = {
   // v5.2.88 library section jump chips (P2).
   'library.jump': 'Jump to a section',
   'library.jumpToSection': 'Jump to {name}',
-  'collections.addTo': 'Add to Collection',
   'collections.delete': 'Delete Collection',
   'collections.new': 'New Collection',
   'collections.suggestions': 'Quick Start',
@@ -670,12 +674,8 @@ export const en = {
   'collections.share': 'Share',
   'collections.addFavorites': 'Add favorites',
   'collections.shareEmpty': 'Nothing to share yet.',
-  'card.reference': 'Reference',
-  'card.grade': 'Grade',
   'card.virtue': 'Virtue',
   'card.narratedBy': 'narrated by',
-  'card.repeat': 'Repeat',
-  'card.times': 'times',
   'card.favorite': 'Favorite',
   'card.unfavorite': 'Remove favorite',
   'card.share': 'Share',
@@ -688,23 +688,18 @@ export const en = {
   'card.listen': 'Listen',
   'card.stop': 'Stop',
   'card.addToCollection': 'Add to collection',
-  'card.notes': 'Notes',
   'card.more': 'More',
   'card.openFocus': 'Open in Focus Mode',
   'card.completedTimes': 'Completed {n} times',
   'focus.tapToCount': 'Tap anywhere to count',
   'focus.progress': '{count} of {target}',
-  'focus.complete': 'Completed',
   'focus.next': 'Next',
   'focus.previous': 'Previous',
   'focus.exit': 'Exit Focus Mode',
   'focus.reset': 'Reset counter',
-  'stats.today': 'Today',
   'stats.week': 'This week',
   'stats.month': 'This Month',
-  'stats.lifetime': 'Lifetime',
   'stats.totalRecitations': 'Total Recitations',
-  'stats.totalSessions': 'Sessions',
   'stats.currentStreak': 'Current Streak',
   'stats.longestStreak': 'Longest Streak',
   'stats.mostRead': 'Most Read',
@@ -738,7 +733,6 @@ export const en = {
   'review.mushafPages': 'Mushaf pages read',
   'tasbih.target': 'Target',
   'tasbih.targetPresets': 'Target presets',
-  'tasbih.setTarget': 'Set target',
   'tasbih.reset': 'Reset',
   'tasbih.dailyGoal': 'Daily Goal',
   'tasbih.lifetime': 'Lifetime Count',
@@ -930,13 +924,15 @@ export const en = {
   'quiz.seeResults': 'See Results',
   'quiz.unavailable': 'The quiz needs its library loaded — try again in a moment.',
 
-  'mushaf.loading': 'Loading this page\u2026',
   'mushaf.juz': 'Juz',
-  'mushaf.backToList': 'Back to Qur\u2019an',
   'mushaf.jumpTo': 'Jump To',
   'mushaf.jumpInvalid': 'Enter a page number between 1 and 604.',
   'mushaf.prevPage': 'Previous page',
   'mushaf.nextPage': 'Next page',
+  // (v5.12.0 hostile review) book-order chevrons point right-to-left even
+  // in English UI — the nav groups announce the rule once, sr-only, instead
+  // of leaving every EN user to reverse-engineer it.
+  'mushaf.bookOrderNote': 'Pages and ayahs follow mushaf order — right to left in both languages',
   'mushaf.swipeHint': 'Swipe or use the arrows to turn the page',
   'mushaf.pageLabel': 'Page (1\u2013604)',
   'mushaf.go': 'Go',
@@ -956,7 +952,6 @@ export const en = {
   'mushaf.fullscreenExit': 'Leave fullscreen',
   'mushaf.more': 'More',
   'mushaf.translation': 'Translation',
-  'mushaf.ayahCount': '{n} ayahs',
   'mushaf.spread': 'Two-page spread',
   'mushaf.openInStudy': 'Open in study reader',
   'mushaf.memorizeSurah': 'Memorize this surah',
@@ -1004,7 +999,6 @@ export const en = {
   'practice.currentStreak': 'Current streak',
   'practice.bestStreak': 'Best streak',
   'practice.instructions': 'Find every {rule} in this ayah.',
-  'practice.instructionsMixed': 'Find every marked rule in this ayah — any rule counts.',
   'practice.check': 'Check Answer',
   'practice.next': 'Next Ayah',
   'practice.changeRule': 'Change Rule',
@@ -1014,7 +1008,6 @@ export const en = {
   'practice.legendCorrect': 'Correct',
   'practice.legendMissed': 'Missed',
   'practice.legendWrong': 'Not this one',
-  'practice.noneAvailable': 'No practice ayahs available for this rule yet.',
   'practice.loadFailed': "Couldn't load this ayah — check your connection and try again.",
   // (v5.4.0, P0-5b) gamified rounds — levels, HUD, summary, review.
   'practice.questionOf': 'Question {n} of {total}',
@@ -1057,7 +1050,6 @@ export const en = {
   // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).
   'wordStudy.open': 'Open word study',
   // v5.2.75 word-study meanings + per-word actions (UP-01).
-  'wordStudy.meanings': 'Meanings',
   'wordStudy.synonyms': 'Synonyms',
   'wordStudy.antonyms': 'Antonyms',
   'wordStudy.speak': 'Listen',
@@ -1112,7 +1104,6 @@ export const en = {
   'wordStudy.prefix': 'Prefix',
   'wordStudy.suffix': 'Suffix',
 
-  'tafsir.loading': 'Loading\u2026',
   'tafsir.title': 'Tafsir sources',
   'tafsir.pickSource': 'Choose a source above.',
   'tafsir.remoteHint':
@@ -1128,16 +1119,10 @@ export const en = {
   'reminder.deleteConfirm':
     'Delete this reminder? It will no longer wake you. This cannot be undone.',
   'reminder.labelPlaceholder': 'Morning Adhkar',
-  'calendar.hijri': 'Hijri Date',
   'calendar.ah': 'AH',
   'calendar.gregorian': 'Gregorian Date',
   'calendar.today': 'Today',
   'calendar.events': 'Islamic Events',
-  'calendar.ramadan': 'Ramadan',
-  'calendar.eidFitr': 'Eid al-Fitr',
-  'calendar.eidAdha': 'Eid al-Adha',
-  'calendar.ashura': 'Ashura',
-  'calendar.arafah': 'Day of Arafah',
   'calendar.whiteDays': 'White Days (13\u201315)',
   'calendar.hasNotes': 'Has a note',
   'calendar.noNotes': 'No notes for this day yet.',
@@ -1181,15 +1166,11 @@ export const en = {
   'settings.feedbackHint':
     'How a tap answers you: vibration on supporting devices, a soft tick sound, and the ripple bloom.',
   'settings.translation': 'Qur\u2019an translation',
-  'settings.soundHaptics': 'Sound & Haptics',
   'settings.pageTurn': 'Mushaf page-turn sound',
   'settings.khatmaChime': 'Khatma completion chime',
-  'settings.soundHint':
-    'Soft sounds are synthesized on your device and stay off unless you turn them on. Haptics depend on the device; sounds need one interaction with the app first (browser rule).',
   'settings.content': 'Content Display',
   'settings.showTransliteration': 'Show Transliteration',
   'settings.showTranslation': 'Show Translation',
-  'settings.quranTranslation': 'Qur’an Translation',
   'settings.quranTranslationHint':
     'Each edition loads as you open it and then works offline; full-text search follows the edition you are reading. Urdu reads right-to-left.',
   'settings.compareTranslation': 'Compare translation',
@@ -1265,7 +1246,6 @@ export const en = {
   'settings.resetData': 'Reset All Data',
   'settings.resetConfirm':
     'This will permanently erase all favorites, statistics, and settings on this device. This cannot be undone. Continue?',
-  'settings.storageUsed': 'Storage Used',
   'settings.themeMode.light': 'Light',
   'settings.themeMode.dark': 'Dark',
   'settings.themeMode.auto': 'Auto',
@@ -1335,9 +1315,6 @@ export const en = {
   'editor.fieldColor': 'Color',
   'editor.save': 'Save',
   'editor.cancel': 'Cancel',
-  'editor.undo': 'Undo',
-  'editor.redo': 'Redo',
-  'editor.preview': 'Preview',
   'editor.validationError': 'Please fix the highlighted fields before saving.',
   'editor.untitled': '(untitled)',
   'editor.categoryNotFound': 'That category no longer exists — refresh and try again.',
@@ -1363,8 +1340,6 @@ export const en = {
   'editor.fieldTags': 'Tags (comma separated)',
   'editor.fieldAttribution': 'Attribution (optional)',
   'editor.fieldAttributionPlaceholder': 'e.g. Featured in a lecture by...',
-  'editor.fieldCategory': 'Category',
-  'editor.myContent': 'My Custom Content',
   'editor.emptyState': 'No custom content yet. Create your first item to get started.',
   'common.close': 'Close',
   'common.notFoundCategory': 'Category not found.',
@@ -1372,7 +1347,6 @@ export const en = {
   'common.notFoundItem': 'Item not found.',
   'tasbih.targetDown': 'Decrease target',
   'quran.loadFailed': 'Could not load the Qur\u2019an text. Check your connection and try again.',
-  'mushaf.loadFailed': 'Could not load this Mushaf page. Check your connection and try again.',
   'tasbih.targetUp': 'Increase target',
   'checklist.progress': 'Daily checklist progress',
   'mushaf.khatmaProgress': 'Khatma reading progress',
@@ -1384,7 +1358,6 @@ export const en = {
   'common.save': 'Save',
   'common.delete': 'Delete',
   'common.confirm': 'Confirm',
-  'common.back': 'Back',
   'common.done': 'Done',
   'common.loading': 'Loading\u2026',
   'common.retry': 'Retry',
@@ -1409,8 +1382,6 @@ export const en = {
   'hadith.title': 'Ahadeeth',
   'hadith.subtitle':
     '{n} authentic sayings of the Prophet ﷺ from the most trusted collections in Islam.',
-  'hadith.loading': 'Opening the library\u2026',
-  'hadith.loadingBook': 'Loading the book\u2026',
   'hadith.loadFailed':
     'Could not load \u2014 check your connection, then retry. Once loaded it stays available offline.',
   'hadith.unknownBook': 'No such book in this library — check the link.',
@@ -1458,23 +1429,7 @@ export const en = {
     'Texts from the six canonical books — Sahih al-Bukhari, Sahih Muslim, Sunan Abu Dawud, Jami\u2019 at-Tirmidhi, Sunan an-Nasa\u2019i and Sunan Ibn Majah — plus the Forty Hadith of an-Nawawi and Forty Hadith Qudsi; classical public-domain collections (see About \u2192 Sources). Chapter headings are shown in English as published by the source dataset.',
   'about.hadithSources':
     'Ahadeeth library: the six canonical books (the two Sahihs and the four Sunans) plus the Forty of an-Nawawi and Forty Hadith Qudsi — 34,239 hadith of public-domain texts, obtained via the CC0 hadith-api dataset (full provenance in data/SOURCES.md).',
-  'about.forAI': 'For AI assistants',
-  'about.forAIBody':
-    'If an AI assistant is used to work on this app, the standing system command is AGENTS.md at the repository root. Its non-negotiables, in short:',
-  'about.forAIPoint1': 'Nothing ever leaves the device — no accounts, no servers, no analytics.',
-  'about.forAIPoint2':
-    'Religious content comes only from named, trusted sources, complete and untruncated, in canonical order — never fabricated, paraphrased, or "fixed" from memory.',
-  'about.forAIPoint3':
-    'Every change passes lint, the full test suite, corpus-wide data gates, and the release protocol before it ships.',
-  'about.forAIFile':
-    'Full text: AGENTS.md at the repo root (also readable at /AGENTS.md on the deployed site).',
   'common.error': 'Something went wrong.',
-  'common.searchPlaceholder': 'Search\u2026',
-  'common.selectAll': 'Select all',
-  'common.export': 'Export',
-  'common.import': 'Import',
-  'common.enabled': 'Enabled',
-  'common.disabled': 'Disabled',
   'common.skipToContent': 'Skip to content',
   'a11y.mainNav': 'Main navigation',
   'a11y.themeToggle': 'Toggle color theme',
@@ -1606,7 +1561,6 @@ export const en = {
   'stats.pagesRead': '{n} pages',
   'stats.weekTotal': 'This week',
   'stats.monthTotalLabel': 'Total',
-  'stats.bestDay': 'Best day',
   'stats.monthPrev': 'Previous month',
   'stats.monthNext': 'Next month',
   // (v5.6.0, B-5) offline PNG export of the heatmap card.
@@ -1630,8 +1584,6 @@ export const en = {
   'onboarding.dismiss': 'Maybe later',
   'onboarding.location': 'Set your location',
   'onboarding.locationHint': 'For accurate prayer times',
-  'onboarding.appearance': 'Personalize the app',
-  'onboarding.appearanceHint': 'Theme, palette, and text size',
   'onboarding.install': 'Install the app',
   'onboarding.installHint': 'Works fully offline',
   'onboarding.installAction': 'Install',
@@ -1691,7 +1643,6 @@ export const en = {
   'plog.logAction': 'Log prayer',
   'plog.allLoggedToast': 'All five prayers logged — barakallahu feek.',
   'card.imageSaved': 'Image saved to your downloads.',
-  'card.imageFailed': 'Could not create the image — shared as text instead.',
   'moods.title': 'Browse by need',
   'moods.subtitle':
     'Duas and adhkar for how you’re feeling right now — gathered from every library.',
@@ -1840,10 +1791,23 @@ export const en = {
   'audio.echoMode': 'Listen-and-repeat — pause after each ayah so you can recite it back',
   'audio.echoOn': 'Echo mode on — recite each ayah back in the pause',
   'audio.echoOff': 'Echo mode off',
+  // (v5.12.0) echo-pause length, picked in the range picker.
+  'audio.echoPause': 'Echo pause',
+  'audio.echoPauseHint': 'Silence after each ayah so you can recite it back.',
+  'audio.echoPauseOpt': '{n} seconds',
+  // (v5.12.0 hostile review) echo is silently dead under infinite repeat —
+  // the console refuses the combination and names the reason out loud.
+  'audio.echoNeedsRepeat': 'Echo needs a repeat count — silent while repeat is ∞',
   'audio.yourTurn': 'Your turn — recite it back',
   'audio.sleepTimer': 'Sleep timer',
   'audio.sleepArmed': 'Sleep timer: {n} minutes',
   'audio.sleepOff': 'Sleep timer off',
+  // (v5.12.0) Audio-view playback-defaults panel (direct picks, no tapping).
+  'audio.playbackDefaults': 'Recitation defaults',
+  'audio.playbackDefaultsHint':
+    'Repeat and sleep, picked directly — the same settings as the player chips, without the tapping.',
+  'audio.loopNeedsSession': 'Start a recitation first — the loop applies live to the running session.',
+  'audio.sleepFileHint': 'Pauses whole-surah playback when the time is up.',
   'audio.compare': 'Compare',
   'audio.compareMode':
     'Compare two reciters — each ayah with voice A, then the same ayah with voice B',
@@ -1856,7 +1820,6 @@ export const en = {
   'audio.voiceA': 'Voice A — main reciter',
   'audio.voiceB': 'Voice B — compare reciter',
   'audio.noSecondVoice': 'No second voice',
-  'audio.nowPlaying': 'Now playing',
   'audio.reciteFromHere': 'Recite from here',
   'audio.rangeLoop': 'Repeat range',
   'audio.loopOnce': 'Once',
@@ -1924,7 +1887,6 @@ export const en = {
 
   /* Library / section sheets */
   'library.sheet.manage': 'Manage sections',
-  'library.sheet.manageHint': 'Hide, show and reorder sections',
   'library.sheet.newLibrary': 'Create your own library',
   'library.sheet.import': 'Import content (JSON)',
   'library.sheet.backup': 'Export a backup',
@@ -1941,7 +1903,6 @@ export const en = {
   'library.sheet.translation': 'Translations',
   'library.sheet.translit': 'Transliteration',
   'category.sheet.manage': 'Manage this section',
-  'category.sheet.newItem': 'Add a dhikr',
   'content.resetCategory': 'Reset this section',
 
   /* Hadith sheet */
@@ -1989,7 +1950,6 @@ export const en = {
   'qibla.sheet.compass': 'Enable the compass',
   'qibla.sheet.times': 'Prayer times',
   'qibla.sheet.location': 'Set location',
-  'qibla.sheet.nearby': 'Nearby mosques',
 
   /* Ramadan sheet */
   'ramadan.sheet.qada': "Make-up (Qada') log",
@@ -2015,8 +1975,6 @@ export const en = {
   /* Zakat sheet */
   'zakat.sheet.clear': 'Clear the inputs',
   'zakat.sheet.snapshot': 'Save this calculation',
-  'zakat.sheet.hawl': 'Hawl reminder',
-  'zakat.sheet.fitr': 'Zakat al-Fitr',
 
   /* Statistics sheet */
   'stats.sheet.garden': 'The Garden',
@@ -2042,7 +2000,6 @@ export const en = {
   'tajweed.rulesHint':
     'Turn rules on or off and pick each family\u2019s color. All rules are active by default.',
   'tajweed.familyColor': '{family} color',
-  'tajweed.ruleOn': '{rule} active',
   'tajweed.reset': 'Reset to the standard chart',
   'tajweed.resetDone': 'Standard colors restored',
   'tajweed.disabledNote': 'Off — not colored or listed',

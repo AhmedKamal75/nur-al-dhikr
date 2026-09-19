@@ -102,9 +102,9 @@ export function renderTasbih(state) {
          progress visual first (and the keyboard/SR control); tapping the
          phrase, the ring, or anywhere in the stage increments, like the
          azkar card bodies. -->
-    <div class="tasbih-stage" data-action="tasbih-tap" data-phrase-id="${active.id}" data-target="${escapeHTML(String(counter.target))}">
+    <div class="tasbih-stage" data-action="tasbih-tap" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}">
       <p class="tasbih-stage__arabic" ${stageAttrs}>${escapeHTML(stageText)}</p>
-      <button type="button" class="tasbih-dial" dir="ltr" data-action="tasbih-tap" data-phrase-id="${active.id}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: counter.count, target: counter.target })}">
+      <button type="button" class="tasbih-dial" dir="ltr" data-action="tasbih-tap" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: counter.count, target: counter.target })}">
         <svg class="tasbih-dial__ring" viewBox="0 0 200 200" width="200" height="200" aria-hidden="true">
           <circle cx="100" cy="100" r="88" class="tasbih-dial__track"/>
           <circle cx="100" cy="100" r="88" class="tasbih-dial__fill" style="--pct:${pct}"/>
@@ -119,18 +119,18 @@ export function renderTasbih(state) {
     </div>
 
     <div class="tasbih-controls">
-      <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${active.id}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
+      <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
       <div class="target-stepper">
         <span>${t('tasbih.target', lang)}</span>
-        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${active.id}" data-delta="-1" aria-label="${t('tasbih.targetDown', lang)}">\u2212</button>
+        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${escapeHTML(active.id)}" data-delta="-1" aria-label="${t('tasbih.targetDown', lang)}">−</button>
         <span class="target-stepper__value" aria-live="polite">${escapeHTML(String(counter.target))}</span>
-        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${active.id}" data-delta="1" aria-label="${t('tasbih.targetUp', lang)}">+</button>
+        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${escapeHTML(active.id)}" data-delta="1" aria-label="${t('tasbih.targetUp', lang)}">+</button>
       </div>
       <div class="chip-row target-presets" role="group" aria-label="${t('tasbih.targetPresets', lang)}">
         ${[33, 100, 500, 1000]
           .map(
             (n) => `
-        <button type="button" class="chip${counter.target === n ? ' chip--active' : ''}" data-action="tasbih-target-set" data-phrase-id="${active.id}" data-target="${n}" aria-pressed="${counter.target === n}">${n}</button>`
+        <button type="button" class="chip${counter.target === n ? ' chip--active' : ''}" data-action="tasbih-target-set" data-phrase-id="${escapeHTML(active.id)}" data-target="${n}" aria-pressed="${counter.target === n}">${n}</button>`
           )
           .join('')}
       </div>

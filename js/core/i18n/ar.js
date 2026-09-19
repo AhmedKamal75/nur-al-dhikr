@@ -40,7 +40,6 @@ export const ar = {
   'nav.calendar': 'التقويم',
   'nav.settings': 'الإعدادات',
   'nav.about': 'حول التطبيق',
-  'nav.editor': 'المحرر',
   'nav.quran': 'القرآن',
   'nav.hadith': 'الأحاديث',
   'nav.qibla': 'القبلة',
@@ -53,9 +52,7 @@ export const ar = {
   'quran.showNext': 'إظهار {n} آية أخرى',
   'quran.meccan': 'مكية',
   'quran.medinan': 'مدنية',
-  'quran.loading': 'جارٍ تحميل المصحف…',
   'quran.surah': 'سورة',
-  'quran.verse': 'الآية {n}',
   'quran.prevSurah': 'السورة السابقة',
   'quran.shareAyah': 'مشاركة كصورة',
   'quran.nextSurah': 'السورة التالية',
@@ -65,8 +62,6 @@ export const ar = {
   'quran.viewInMushaf': 'عرض المصحف',
   'quran.continueReading': 'متابعة قراءة القرآن',
   'quran.readShortcut': 'اقرأ القرآن الكريم',
-  'quran.juzLabel': 'الجزء {n}',
-  'quran.revelationOrder': 'الترتيب',
   'nav.ramadan': 'رمضان',
   'nav.zakat': 'الزكاة',
   'ramadan.title': 'رفيق رمضان',
@@ -299,6 +294,9 @@ export const ar = {
   'audio.verseFallbackSurah': 'تعذر تشغيل التلاوة آيةً بآية — يتم تشغيل السورة كاملة بدلاً من ذلك.',
   // v3.17: تكرار كل آية والتنقل بين الآيات في وحدة التلاوة
   'audio.repeatAyah': 'تكرار كل آية',
+  // (v5.12.0) علاج الأزرار العمياء: تسمية الدرجة الحالية والتالية.
+  'audio.repeatNext': 'تكرار كل آية: {cur} — الضغطة التالية: {next}',
+  'audio.loopNext': 'تكرار النطاق: {cur} — الضغطة التالية: {next}',
   'audio.ayahPrev': 'الآية السابقة',
   'audio.ayahNext': 'الآية التالية',
   // v3.17: وضع الحفظ ومراجعة الحفظ المتباعدة
@@ -354,6 +352,9 @@ export const ar = {
   'audio.repeatAllShort': 'الكل',
   'audio.speed': 'سرعة التشغيل',
   'audio.seek': 'التقديم',
+  // (v5.12.0) زرّا الخطو ±١٠ ثوانٍ حول شريط التقديم في وضع الملف.
+  'audio.seekBack': 'رجوع ١٠ ثوانٍ',
+  'audio.seekFwd': 'تقديم ١٠ ثوانٍ',
   'audio.customTitle': 'إضافة قارئ مخصص',
   'audio.customName': 'اسم القارئ',
   'audio.customNamePh': 'مثال: علاء عقل',
@@ -399,8 +400,18 @@ export const ar = {
   'title.editor': 'المحرر',
 
   'audio.player': 'المشغّل الصوتي',
+  // (v5.12.0) minimize + mute (M key).
+  'audio.playerMinimize': 'تصغير المشغّل',
+  // (v5.12.0 hostile review) swipe-down minimize is touch-only and was
+  // undiscoverable — the minimize buttons now advertise it.
+  'audio.minimizeHint': 'تصغير — أو اسحب الشريط لأسفل',
+  'audio.playerRestore': 'استعادة المشغّل',
+  'audio.mute': 'كتم الصوت',
+  'audio.unmute': 'إلغاء الكتم',
+  // (v5.12.0) منزلق مستوى الصوت في وضع الملف (الكتم يبقى أداة وضع الآيات).
+  'audio.volume': 'مستوى الصوت',
+  'audio.volumeSleep': 'مؤقت النوم يتحكم في الصوت',
   'mushaf.title': 'المصحف — قارئ الكتاب من ٦٠٤ صفحات',
-  'focus.title': 'وضع التركيز',
   'units.h': '{n} س',
   'units.m': '{n} د',
   'common.am': 'ص',
@@ -479,7 +490,6 @@ export const ar = {
   'zakat.fitrNote': 'تُؤدى قبل صلاة العيد، صاعًا (نحو 2.5–3 كغ) من قوت البلد عن كل فرد.',
   'zakat.fitrReminderTitle': 'زكاة الفطر — تُؤدى قبل العيد',
   'zakat.fitrReminderBody': 'أدِّ صاعًا من قوت البلد عن كل فرد قبل صلاة العيد.',
-  'zakat.historyTitle': 'حسابات محفوظة',
   'zakat.disclaimer':
     'تقديرات وفق المشهور الحنفي (2.5٪ وحولان الحول القمري). يُرجى مراجعة عالم مؤهل لوضعك الخاص.',
   'mushaf.bookmarks': 'علامات الآيات',
@@ -502,7 +512,6 @@ export const ar = {
   'home.reviewHifz': 'الحفظ',
   'home.favorites': 'المفضلة',
   'home.collections': 'المجموعات المثبتة',
-  'home.recent': 'النشاط الأخير',
   'home.verseOfTheDay': 'تأمل',
   'home.verseTheme': 'موضوع الآية',
   'home.theme.any': 'الكل',
@@ -526,7 +535,6 @@ export const ar = {
   // v5.2.74 tafsir result group in the Search view (UP-08).
   'search.tafsirResults': 'من التفسير',
   'search.tafsirCount': '{n} مواضع',
-  'search.resultsCount': '{n} نتيجة',
   // (v5.9.0) ترقيم الصفحات + عدّادات المطابقات لكل مدونة.
   'search.loadMore': 'عرض المزيد',
   'search.showingOf': 'عرض {x} من {n}',
@@ -574,11 +582,8 @@ export const ar = {
   'mushaf.waqf_hizb_d': 'علامة تقسيم الجزء والحزب — ليست موضع سجود.',
   'mushaf.waqf_sajdah': 'سجدة · موضع السجود',
   'mushaf.waqf_sajdah_d': 'أحد مواضع السجود الخمسة عشر.',
-  'content.manage': 'ترتيب',
   'content.done': 'تم',
   'content.manageHint': 'أعد الترتيب أو أخفِ أو عدّل العدد — التغيير يسري هنا وفي وضع التركيز.',
-  'content.manageHintOff': 'أعد الترتيب أو أخفِ أو عدّل عدد التكرار.',
-  'content.manageHintCustom': 'مكتبتك: أضف وحرّر وكرّر واحذف بحرية.',
   'content.moveUp': 'أعلى',
   'content.moveDown': 'أسفل',
   'content.target': 'العدد',
@@ -644,7 +649,6 @@ export const ar = {
   // v5.2.88 library section jump chips (P2) — parity with en.
   'library.jump': 'انتقل إلى قسم',
   'library.jumpToSection': 'انتقل إلى {name}',
-  'collections.addTo': 'أضف إلى مجموعة',
   'collections.delete': 'حذف المجموعة',
   'collections.new': 'مجموعة جديدة',
   'collections.suggestions': 'بداية سريعة',
@@ -652,12 +656,8 @@ export const ar = {
   'collections.share': 'مشاركة',
   'collections.addFavorites': 'إضافة المفضلة',
   'collections.shareEmpty': 'لا شيء للمشاركة بعد.',
-  'card.reference': 'المرجع',
-  'card.grade': 'الدرجة',
   'card.virtue': 'الفضل',
   'card.narratedBy': 'رواه',
-  'card.repeat': 'التكرار',
-  'card.times': 'مرات',
   'card.favorite': 'إضافة للمفضلة',
   'card.unfavorite': 'إزالة من المفضلة',
   'card.share': 'مشاركة',
@@ -670,23 +670,18 @@ export const ar = {
   'card.listen': 'استماع',
   'card.stop': 'إيقاف',
   'card.addToCollection': 'أضف إلى مجموعة',
-  'card.notes': 'ملاحظات',
   'card.more': 'المزيد',
   'card.openFocus': 'فتح في وضع التركيز',
   'card.completedTimes': 'تمّ {n} مرة',
   'focus.tapToCount': 'اضغط في أي مكان للعد',
   'focus.progress': '{count} من {target}',
-  'focus.complete': 'اكتمل',
   'focus.next': 'التالي',
   'focus.previous': 'السابق',
   'focus.exit': 'الخروج من وضع التركيز',
   'focus.reset': 'إعادة تعيين العداد',
-  'stats.today': 'اليوم',
   'stats.week': 'هذا الأسبوع',
   'stats.month': 'هذا الشهر',
-  'stats.lifetime': 'الإجمالي',
   'stats.totalRecitations': 'إجمالي التسبيحات',
-  'stats.totalSessions': 'الجلسات',
   'stats.currentStreak': 'التتابع الحالي',
   'stats.longestStreak': 'أطول تتابع',
   'stats.mostRead': 'الأكثر قراءة',
@@ -718,7 +713,6 @@ export const ar = {
   'review.mushafPages': 'صفحات المصحف المقروءة',
   'tasbih.target': 'الهدف',
   'tasbih.targetPresets': 'أهداف جاهزة',
-  'tasbih.setTarget': 'تعيين الهدف',
   'tasbih.reset': 'إعادة تعيين',
   'tasbih.dailyGoal': 'الهدف اليومي',
   'tasbih.lifetime': 'العدد الإجمالي',
@@ -907,13 +901,15 @@ export const ar = {
   'quiz.seeResults': 'عرض النتيجة',
   'quiz.unavailable': 'يحتاج الاختبار إلى تحميل مكتبته — حاول مرة أخرى بعد قليل.',
 
-  'mushaf.loading': 'جارٍ تحميل هذه الصفحة\u2026',
   'mushaf.juz': 'الجزء',
-  'mushaf.backToList': 'العودة إلى القرآن',
   'mushaf.jumpTo': 'الانتقال إلى',
   'mushaf.jumpInvalid': 'أدخل رقم صفحة بين ١ و٦٠٤.',
   'mushaf.prevPage': 'الصفحة السابقة',
   'mushaf.nextPage': 'الصفحة التالية',
+  // (v5.12.0 hostile review) book-order chevrons point right-to-left even
+  // in English UI — the nav groups announce the rule once, sr-only, instead
+  // of leaving every EN user to reverse-engineer it.
+  'mushaf.bookOrderNote': 'الصفحات والآيات بترتيب المصحف — من اليمين إلى اليسار في اللغتين',
   'mushaf.swipeHint': 'اسحب أو استخدم الأسهم لتقليب الصفحة',
   'mushaf.pageLabel': 'الصفحة (١–٦٠٤)',
   'mushaf.go': 'انتقال',
@@ -933,7 +929,6 @@ export const ar = {
   'mushaf.fullscreenExit': 'الخروج من ملء الشاشة',
   'mushaf.more': 'المزيد',
   'mushaf.translation': 'الترجمة',
-  'mushaf.ayahCount': '{n} آيات',
   'mushaf.spread': 'عرض صفحتين',
   'mushaf.openInStudy': 'افتح في القارئ الدراسي',
   'mushaf.memorizeSurah': 'حفظ هذه السورة',
@@ -981,7 +976,6 @@ export const ar = {
   'practice.currentStreak': 'التتابع الحالي',
   'practice.bestStreak': 'أفضل تتابع',
   'practice.instructions': 'ابحث عن كل موضع لحكم {rule} في هذه الآية.',
-  'practice.instructionsMixed': 'ابحث عن كل حكم مُعلَّم في هذه الآية — أي حكم يُحتسب.',
   'practice.check': 'تحقق من الإجابة',
   'practice.next': 'الآية التالية',
   'practice.changeRule': 'تغيير الحكم',
@@ -991,7 +985,6 @@ export const ar = {
   'practice.legendCorrect': 'صحيح',
   'practice.legendMissed': 'فائت',
   'practice.legendWrong': 'ليس هذا',
-  'practice.noneAvailable': 'لا توجد آيات تدريب لهذا الحكم بعد.',
   'practice.loadFailed': 'تعذّر تحميل هذه الآية — تحقق من الاتصال وحاول مجددًا.',
   // (v5.4.0, P0-5b) جولات التدريب — المراحل والملخص والمراجعة.
   'practice.questionOf': 'السؤال {n} من {total}',
@@ -1030,7 +1023,6 @@ export const ar = {
   // v5.2.74 word-study action label (roving-tabindex aria-labels on .qword).
   'wordStudy.open': 'فتح دراسة الكلمة',
   // v5.2.75 word-study meanings + per-word actions (UP-01).
-  'wordStudy.meanings': 'المعاني',
   'wordStudy.synonyms': 'مرادفات',
   'wordStudy.antonyms': 'أضداد',
   'wordStudy.speak': 'استمع',
@@ -1084,7 +1076,6 @@ export const ar = {
   'wordStudy.prefix': 'سابقة',
   'wordStudy.suffix': 'لاحقة',
 
-  'tafsir.loading': 'جارٍ التحميل\u2026',
   'tafsir.title': 'مصادر التفسير',
   'tafsir.pickSource': 'اختر مصدرًا من الأعلى.',
   'tafsir.remoteHint':
@@ -1099,16 +1090,10 @@ export const ar = {
   'reminder.time': 'الوقت',
   'reminder.deleteConfirm': 'حذف هذا التذكير؟ لن ينبّهك بعدها. لا يمكن التراجع.',
   'reminder.labelPlaceholder': 'أذكار الصباح',
-  'calendar.hijri': 'التاريخ الهجري',
   'calendar.ah': 'هـ',
   'calendar.gregorian': 'التاريخ الميلادي',
   'calendar.today': 'اليوم',
   'calendar.events': 'المناسبات الإسلامية',
-  'calendar.ramadan': 'رمضان',
-  'calendar.eidFitr': 'عيد الفطر',
-  'calendar.eidAdha': 'عيد الأضحى',
-  'calendar.ashura': 'عاشوراء',
-  'calendar.arafah': 'يوم عرفة',
   'calendar.whiteDays': 'الأيام البيض (١٣–١٥)',
   'calendar.hasNotes': 'يحتوي على ملاحظة',
   'calendar.noNotes': 'لا توجد ملاحظات لهذا اليوم بعد.',
@@ -1152,15 +1137,11 @@ export const ar = {
   'settings.feedbackHint':
     'كيف يجيبك اللمس: اهتزاز على الأجهزة الداعمة، وصوت نقرة خفيف، وموجة تتفتح عند اللمس.',
   'settings.translation': 'ترجمة القرآن',
-  'settings.soundHaptics': 'الصوت والاهتزاز',
   'settings.pageTurn': 'صوت قلب صفحات المصحف',
   'settings.khatmaChime': 'نغمة إتمام الختمة',
-  'settings.soundHint':
-    'الأصوات الناعمة تُصنَّع على جهازك وتبقى مغلقة إلا إذا فعّلتها. الاهتزاز يعتمد على الجهاز؛ وتحتاج الأصوات إلى تفاعلك مع التطبيق مرة واحدة أولًا (قاعدة المتصفح).',
   'settings.content': 'عرض المحتوى',
   'settings.showTransliteration': 'إظهار النطق',
   'settings.showTranslation': 'إظهار الترجمة',
-  'settings.quranTranslation': 'ترجمة القرآن',
   'settings.quranTranslationHint':
     'تُحمَّل كل ترجمة عند فتحها ثم تعمل دون اتصال، ويبحث النص الكامل داخل الترجمة المختارة. الترجمة الأردية تُقرأ من اليمين إلى اليسار.',
   'settings.compareTranslation': 'ترجمة للمقارنة',
@@ -1233,7 +1214,6 @@ export const ar = {
   'settings.resetData': 'إعادة تعيين جميع البيانات',
   'settings.resetConfirm':
     'سيؤدي هذا إلى مسح جميع المفضلة والإحصائيات والإعدادات نهائيًا من هذا الجهاز. لا يمكن التراجع عن هذا. متابعة؟',
-  'settings.storageUsed': 'المساحة المستخدمة',
   'settings.themeMode.light': 'فاتح',
   'settings.themeMode.dark': 'داكن',
   'settings.themeMode.auto': 'تلقائي',
@@ -1298,9 +1278,6 @@ export const ar = {
   'editor.deleteConfirm': 'حذف هذا العنصر؟ لا يمكن التراجع عن هذا.',
   'editor.save': 'حفظ',
   'editor.cancel': 'إلغاء',
-  'editor.undo': 'تراجع',
-  'editor.redo': 'إعادة',
-  'editor.preview': 'معاينة',
   'editor.validationError': 'يرجى تصحيح الحقول المميزة قبل الحفظ.',
   'editor.untitled': '(بدون عنوان)',
   'editor.categoryNotFound': 'هذا التصنيف لم يعد موجودًا — حدّث الصفحة وحاول مجددًا.',
@@ -1326,8 +1303,6 @@ export const ar = {
   'editor.fieldTags': 'الوسوم (مفصولة بفواصل)',
   'editor.fieldAttribution': 'الإسناد (اختياري)',
   'editor.fieldAttributionPlaceholder': 'مثال: ورد في محاضرة لـ...',
-  'editor.fieldCategory': 'القسم',
-  'editor.myContent': 'محتواي المخصص',
   'editor.emptyState': 'لا يوجد محتوى مخصص بعد. أنشئ أول عنصر للبدء.',
   'common.close': 'إغلاق',
   'common.notFoundCategory': 'القسم غير موجود.',
@@ -1335,7 +1310,6 @@ export const ar = {
   'common.notFoundItem': 'العنصر غير موجود.',
   'tasbih.targetDown': 'إنقاص الهدف',
   'quran.loadFailed': 'تعذّر تحميل نص القرآن. تحقق من الاتصال وحاول مرة أخرى.',
-  'mushaf.loadFailed': 'تعذّر تحميل هذه الصفحة من المصحف. تحقق من الاتصال وحاول مرة أخرى.',
   'tasbih.targetUp': 'زيادة الهدف',
   'checklist.progress': 'تقدم قائمة اليوم',
   'mushaf.khatmaProgress': 'تقدم الختمة',
@@ -1347,7 +1321,6 @@ export const ar = {
   'common.save': 'حفظ',
   'common.delete': 'حذف',
   'common.confirm': 'تأكيد',
-  'common.back': 'رجوع',
   'common.done': 'تم',
   'common.loading': 'جارٍ التحميل…',
   'common.retry': 'إعادة المحاولة',
@@ -1371,8 +1344,6 @@ export const ar = {
   'hadith.sheet.arabic': 'النص العربي',
   'hadith.title': 'الأحاديث',
   'hadith.subtitle': '{n} حديثاً صحيحاً عن النبي ﷺ من أصح مجموعات الأحاديث في الإسلام.',
-  'hadith.loading': 'جارٍ فتح المكتبة…',
-  'hadith.loadingBook': 'جارٍ تحميل الكتاب…',
   'hadith.loadFailed':
     'تعذر التحميل — تحقق من الاتصال ثم أعد المحاولة. بعد التحميل الأولى يبقى الكتاب متاحاً دون اتصال.',
   'hadith.unknownBook': 'لا يوجد كتاب بهذا المعرف في المكتبة — تحقق من الرابط.',
@@ -1418,23 +1389,7 @@ export const ar = {
     'النصوص من الكتب الستة — صحيح البخاري وصحيح مسلم وسنن أبي داود وجامع الترمذي وسنن النسائي وسنن ابن ماجه — والأربعون النووية والأربعون قدسية؛ مجموعات كلاسيكية في الملك العام (انظر «حول → المصادر»). عناوين الأبواب معروضة بالإنجليزية كما وردت في مجموعة البيانات المصدر.',
   'about.hadithSources':
     'مكتبة الأحاديث: الكتب الستة (الصحيحان والأربع السنن) والأربعون النووية والأربعون قدسية — 34,239 حديثاً في الملك العام، عبر مجموعة hadith-api المخصصة للملك العام (التفاصيل الكاملة في data/SOURCES.md).',
-  'about.forAI': 'للمساعدات الذكية (LLM)',
-  'about.forAIBody':
-    'إذا استُعمل مساعد ذكي للعمل على هذا التطبيق، فالأمر النظامي الدائم هو ملف AGENTS.md في جذر المستودع. ووجيزةً هذه القيم غير القابلة للتفاوض:',
-  'about.forAIPoint1': 'لا شيء يترك جهازك أبداً — بلا حسابات، بلا خوادم، بلا تتبع.',
-  'about.forAIPoint2':
-    'المحتوى الشرعي يأتي فقط من مصادر موثوقة مسماة، كاملاً بلا اقتباس ناقص وبترتيبه المعتمد — ولا يُختلق أو يُعاد صياغته أو يُصحح من الذاكرة أبداً.',
-  'about.forAIPoint3':
-    'كل تعديل يجتاز الفحص والاختبارات الكاملة وبوابات جودة البيانات وبروتوكول الإصدار قبل أن يُسلَّم.',
-  'about.forAIFile':
-    'النص الكامل: AGENTS.md في جذر المستودع (ومتاح على /AGENTS.md في الموقع المنشور).',
   'common.error': 'حدث خطأ ما.',
-  'common.searchPlaceholder': 'بحث…',
-  'common.selectAll': 'تحديد الكل',
-  'common.export': 'تصدير',
-  'common.import': 'استيراد',
-  'common.enabled': 'مفعّل',
-  'common.disabled': 'معطّل',
   'common.skipToContent': 'تخطَّ إلى المحتوى',
   'a11y.mainNav': 'التنقل الرئيسي',
   'a11y.themeToggle': 'تبديل السمة اللونية',
@@ -1564,7 +1519,6 @@ export const ar = {
   'stats.pagesRead': '{n} صفحات',
   'stats.weekTotal': 'هذا الأسبوع',
   'stats.monthTotalLabel': 'الإجمالي',
-  'stats.bestDay': 'أفضل يوم',
   'stats.monthPrev': 'الشهر السابق',
   // (v5.6.0, B-5) تصدير الخريطة كصورة دون إنترنت.
   'stats.heatmapExport': 'حفظ الخريطة كصورة',
@@ -1588,8 +1542,6 @@ export const ar = {
   'onboarding.dismiss': 'لاحقًا',
   'onboarding.location': 'حدّد موقعك',
   'onboarding.locationHint': 'للحصول على مواقيت صلاة دقيقة',
-  'onboarding.appearance': 'خصّص التطبيق',
-  'onboarding.appearanceHint': 'السمة والألوان وحجم الخط',
   'onboarding.install': 'ثبّت التطبيق',
   'onboarding.installHint': 'يعمل دون اتصال بالكامل',
   'onboarding.installAction': 'تثبيت',
@@ -1648,7 +1600,6 @@ export const ar = {
   'plog.logAction': 'تسجيل الصلاة',
   'plog.allLoggedToast': 'سجّلت الصلوات الخمس — بارك الله فيك.',
   'card.imageSaved': 'حُفظت الصورة في التنزيلات.',
-  'card.imageFailed': 'تعذّر إنشاء الصورة — جرت المشاركة نصًّا.',
   'moods.title': 'تصفّح حسب حاجتك',
   'moods.subtitle': 'أدعية وأذكار لحاجتك في هذه اللحظة — من كل المكتبات.',
   'moods.notFound': 'غير موجود.',
@@ -1794,10 +1745,23 @@ export const ar = {
   'audio.echoMode': 'وضع الاستماع والترديد — وقفة بعد كل آية لترديدها',
   'audio.echoOn': 'وضع الترديد مفعّل — ردّد كل آية في الوقفة',
   'audio.echoOff': 'إيقاف وضع الترديد',
+  // (v5.12.0) مدة وقفة الترديد، تُختار من منتقي النطاق.
+  'audio.echoPause': 'وقفة الترديد',
+  'audio.echoPauseHint': 'سكتة بعد كل آية لترديدها قبل المتابعة.',
+  'audio.echoPauseOpt': '{n} ث',
+  // (v5.12.0 hostile review) echo is silently dead under infinite repeat —
+  // the console refuses the combination and names the reason out loud.
+  'audio.echoNeedsRepeat': 'الترديد يحتاج عدد تكرار — يبقى صامتًا أثناء التكرار اللانهائي',
   'audio.yourTurn': 'دورك — ردّد الآية',
   'audio.sleepTimer': 'مؤقت النوم',
   'audio.sleepArmed': 'مؤقت النوم: {n} دقيقة',
   'audio.sleepOff': 'أُلغي مؤقت النوم',
+  // (v5.12.0) لوحة الإعدادات الافتراضية في عرض الصوت (اختيار مباشر).
+  'audio.playbackDefaults': 'إعدادات التلاوة الافتراضية',
+  'audio.playbackDefaultsHint':
+    'التكرار ومؤقت النوم بالاختيار المباشر — نفس إعدادات أزرار المشغّل دون تنقّل.',
+  'audio.loopNeedsSession': 'ابدأ التلاوة أولًا — يُطبَّق التكرار فورًا على الجلسة الجارية.',
+  'audio.sleepFileHint': 'يوقف تشغيل السورة كاملة عند انتهاء المدة.',
   'audio.compare': 'مقارنة',
   'audio.compareMode': 'مقارنة قارئين — كل آية بالصوت الأول ثم نفس الآية بالصوت الثاني',
   'audio.compareOn': 'المقارنة مفعّلة — كل آية تُتلى بالصوتين',
@@ -1809,7 +1773,6 @@ export const ar = {
   'audio.voiceA': 'الصوت الأول — القارئ الأساسي',
   'audio.voiceB': 'الصوت الثاني — قارئ المقارنة',
   'audio.noSecondVoice': 'بدون صوت ثانٍ',
-  'audio.nowPlaying': 'يُتلى الآن',
   'audio.reciteFromHere': 'تلاوة من هنا',
   'audio.rangeLoop': 'تكرار النطاق',
   'audio.loopOnce': 'مرة واحدة',
@@ -1878,7 +1841,6 @@ export const ar = {
 
   /* أوراق المكتبة والأقسام */
   'library.sheet.manage': 'إدارة الأقسام',
-  'library.sheet.manageHint': 'إخفاء الأقسام وإظهارها وإعادة ترتيبها',
   'library.sheet.newLibrary': 'أنشئ مكتبتك الخاصة',
   'library.sheet.import': 'استيراد محتوى (JSON)',
   'library.sheet.backup': 'تصدير نسخة احتياطية',
@@ -1895,7 +1857,6 @@ export const ar = {
   'library.sheet.translation': 'الترجمات',
   'library.sheet.translit': 'النطق الصوتي',
   'category.sheet.manage': 'إدارة هذا القسم',
-  'category.sheet.newItem': 'إضافة ذكر',
   'content.resetCategory': 'تصفير هذا القسم',
 
   /* ورقة الأحاديث */
@@ -1943,7 +1904,6 @@ export const ar = {
   'qibla.sheet.compass': 'تشغيل البوصلة',
   'qibla.sheet.times': 'مواقيت الصلاة',
   'qibla.sheet.location': 'تحديد الموقع',
-  'qibla.sheet.nearby': 'المساجد القريبة',
 
   /* ورقة رمضان */
   'ramadan.sheet.qada': 'سجل القضاء',
@@ -1969,8 +1929,6 @@ export const ar = {
   /* ورقة الزكاة */
   'zakat.sheet.clear': 'تفريغ المدخلات',
   'zakat.sheet.snapshot': 'حفظ هذه الحسبة',
-  'zakat.sheet.hawl': 'تذكير الحول',
-  'zakat.sheet.fitr': 'زكاة الفطر',
 
   /* ورقة الإحصاءات */
   'stats.sheet.garden': 'الحديقة',
@@ -1995,7 +1953,6 @@ export const ar = {
   'tajweed.rulesTitle': 'قواعد التجويد وألوانه',
   'tajweed.rulesHint': 'شغّل القواعد أو أوقفها واختر لون كل عائلة. كل القواعد مفعّلة افتراضيًا.',
   'tajweed.familyColor': 'لون {family}',
-  'tajweed.ruleOn': '{rule} مفعّلة',
   'tajweed.reset': 'إعادة المخطط المعياري',
   'tajweed.resetDone': 'أُعيدت الألوان المعيارية',
   'tajweed.disabledNote': 'معطّلة — بلا تلوين ولا إدراج',
