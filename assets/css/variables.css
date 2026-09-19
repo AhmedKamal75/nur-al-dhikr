@@ -175,6 +175,10 @@
   --radius-md: calc(var(--radius-card) * 0.7);
   --radius-lg: var(--radius-card);
   --radius-pill: 999px;
+  /* (v5.12.1 UX audit S10) one radius for every tinted icon-badge box
+     (tile icons, row icons, sheet svgs, surah numerals): shape-driven like
+     the rest of the system instead of an 11–16px literal ladder. */
+  --radius-badge: var(--radius-md);
 
   /* Modern calm elevation: soft, wide, low-opacity. Cards float on paper;
      the hero and sheets sit one level above. Dark theme deepens both. */
@@ -186,6 +190,10 @@
   --ring-primary: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent);
   --ring-accent: 0 0 0 2px color-mix(in srgb, var(--color-accent) 45%, transparent);
   --ring-inset-primary: inset 0 0 0 1px var(--color-primary);
+  /* (v5.12.1 UX audit S10) one glow for every primary play control
+     (player-bar play, console hero play, recitation play): the old trio
+     differed only in 45/50% opacity across three rules. */
+  --glow-primary: 0 2px 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
 
   /* Stacking scale — one layer per concern, nothing between. */
   --z-raised: 1; /* local stacking above a sibling (e.g. modal close over body) */

@@ -113,6 +113,30 @@ body.is-elder .panel__subtext {
     -webkit-backdrop-filter: none;
     background: var(--fs-bar-bg);
   }
+  /* (v5.12.1 UX audit S9) the four sites the original kill missed — each
+     resolves to its opaque token (no color-mix wash survives here). */
+  #bottomnav,
+  .focus__bar,
+  .library-jump {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  #bottomnav {
+    background: var(--color-bg);
+  }
+  .focus__bar {
+    background: var(--color-surface);
+  }
+  .library-jump {
+    background: var(--color-bg);
+  }
+  .reader-immersive-exit,
+  .reader-immersive-console,
+  .reader-immersive-echo {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--color-surface);
+  }
   .home-hero__title,
   .home-hero__hijri {
     background: var(--color-surface);
@@ -381,6 +405,37 @@ html[data-dyslexia='true'][dir='rtl'] body {
      outlines; the toast action button keeps its button face. */
   .cal-cell--today {
     border: 2px solid Highlight;
+  }
+  /* (v5.12.1 UX audit S16) the gaps the original block missed: switch
+     tracks/knobs, slider thumbs, the tasbih progress ring, and the
+     console/player progress fills — state via system colors, not tint. */
+  .switch__track {
+    border: 1px solid ButtonText;
+  }
+  .switch__track::after {
+    background: ButtonText;
+  }
+  .switch input:checked + .switch__track {
+    background: Highlight;
+  }
+  .switch input:checked + .switch__track::after {
+    background: HighlightText;
+  }
+  input[type='range']::-webkit-slider-thumb {
+    border: 1px solid ButtonText;
+  }
+  input[type='range']::-moz-range-thumb {
+    border: 1px solid ButtonText;
+  }
+  .tasbih-dial__track {
+    stroke: ButtonText;
+  }
+  .tasbih-dial__fill {
+    stroke: Highlight;
+  }
+  .rec-console-progress__fill,
+  .progress-bar__fill {
+    background: Highlight;
   }
   .toast-action {
     border: 1px solid ButtonText;

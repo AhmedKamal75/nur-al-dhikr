@@ -207,8 +207,10 @@ describe('the views render the lens', () => {
     assert.match(html, new RegExp(`data-target="100"`));
     assert.match(html, /1 \/ \d+/);
     // opening focus on the hidden item falls to the not-found state
+    // (v5.12.1: the shared notFoundStateHTML recovery block, same as
+    // category/mood — Go home included).
     const nf = renderFocus({ ...state, activeParams: { id: 'morning', subId: ids[0] } });
-    assert.match(nf, /notFound|empty-hint/);
+    assert.match(nf, /notFound|empty-hint|empty-state/);
   });
 
   test('(v5.2.89, P2) long card lists grow a floating back-to-top button', () => {

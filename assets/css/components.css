@@ -3,6 +3,11 @@
    player bar, skeletons, panels, charts. Fourth load.
    Touch-target contract (test-gated): standalone controls ≥44px; dense
    inline targets expand their hit area via ::after.
+   Motion contract (v5.12.1 UX audit S15): this file carries NO file-local
+   prefers-reduced-motion rule on purpose — every transition/animation here
+   dies under the two global kills (base.css + animations.css, test-gated
+   in tests/motion.test.js). Add a local rule only for motion that must
+   ALSO stop when the global kill is somehow absent.
    ========================================================================== */
 
 /* ==========================================================================
@@ -190,11 +195,8 @@
   color: var(--color-primary-text);
 }
 
-/* The recite-follow chip-eye state. */
-.icon-btn--recite-follow {
-  color: var(--color-primary-text);
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
-}
+/* (v5.12.1 UX audit S10) .icon-btn--recite-follow removed: byte-duplicate
+   of --playing with zero emitters in js/ (grep, v5.12.0). */
 
 /* ==========================================================================
    3. Chips — hit-area expansion contract: relative + ::after ≥44px block
@@ -432,6 +434,19 @@
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: var(--color-on-primary);
+}
+/* (v5.12.1 UX audit S4) phantom-chip aliases: views emit --basis and
+   --success but no rule ever defined them, so they painted as plain chips
+   while carrying distinct semantics. Each aliases to its existing token
+   twin. (--custom is a JS hook marker only, intentionally unstyled;
+   --started/--done are not emitted anywhere — grep v5.12.0.) */
+.chip--basis {
+  background: var(--color-surface);
+}
+.chip--success {
+  background: var(--color-success-bg);
+  border-color: color-mix(in srgb, var(--color-success) 35%, transparent);
+  color: var(--color-success-text);
 }
 
 /* Category-tinted chips — tinted ground + strong text (AA both themes). */
@@ -808,6 +823,8 @@
   align-items: flex-end;
   justify-content: center;
   padding: var(--space-3);
+  /* (v5.12.1 UX audit S6) sheets clear the home indicator; 0px elsewhere. */
+  padding-block-end: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
   background: var(--color-overlay);
   pointer-events: auto;
   animation: fadeIn var(--dur-base) var(--ease-standard);
@@ -902,7 +919,7 @@ body.modal-open {
    ========================================================================== */
 #toast-root {
   position: fixed;
-  bottom: calc(var(--bottomnav-height) + var(--space-5));
+  bottom: calc(var(--bottomnav-height) + var(--space-5) + env(safe-area-inset-bottom, 0px));
   inset-inline: var(--space-4);
   z-index: var(--z-toast);
   display: flex;
@@ -989,8 +1006,10 @@ body.modal-open {
 .action-sheet__item svg {
   width: 38px;
   height: 38px;
-  padding: 9px;
-  border-radius: 12px;
+  /* (v5.12.1 UX audit S10) 9px → 8px: same 36–38px icon-box job as the
+     view-sheet svg below; one padding for both. */
+  padding: 8px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
   color: var(--color-primary-text);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
@@ -1456,6 +1475,9 @@ body.modal-open {
   gap: 4px;
 }
 .juz-chip {
+  /* (v5.12.1 UX audit S2) position anchors the ::after hit expansion below:
+     the visual stays a compact 32px cell, the tap box reaches the token. */
+  position: relative;
   min-width: 32px;
   min-height: 32px;
   display: inline-flex;
@@ -1467,6 +1489,12 @@ body.modal-open {
   border: 1px solid transparent;
   font-size: var(--fs-caption);
   color: var(--color-text-secondary);
+}
+.juz-chip::after {
+  content: '';
+  position: absolute;
+  inset-block: -6px;
+  inset-inline: -6px;
 }
 .juz-chip--started {
   background: var(--heat-2);
@@ -1592,7 +1620,8 @@ body.modal-open {
    ========================================================================== */
 #playerbar {
   position: fixed;
-  bottom: calc(var(--bottomnav-height) + var(--space-2));
+  /* (v5.12.1 UX audit S6) home-indicator clearance; 0px fallback off-notch. */
+  bottom: calc(var(--bottomnav-height) + var(--space-2) + env(safe-area-inset-bottom, 0px));
   inset-inline: var(--space-3);
   z-index: var(--z-player);
 }
@@ -1647,7 +1676,7 @@ body.modal-open {
   border: none;
   background: var(--color-primary);
   color: #ffffff;
-  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  box-shadow: var(--glow-primary);
   transition:
     transform var(--dur-fast) var(--ease-standard),
     filter var(--dur-base) var(--ease-standard),
@@ -1714,8 +1743,10 @@ body.modal-open {
 .player-bar__chip::after {
   content: '';
   position: absolute;
-  inset-block: -4px;
-  inset-inline: -2px;
+  /* (v5.12.1 UX audit S2) effective 40px → 44px: 32px visual + 12px
+     expansion reaches the token without moving the bar's rhythm. */
+  inset-block: -6px;
+  inset-inline: -3px;
 }
 .player-bar__chip--on {
   border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
@@ -1807,7 +1838,7 @@ body.modal-open {
   cursor: pointer;
   color: #ffffff;
   background: var(--color-primary);
-  box-shadow: 0 2px 10px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  box-shadow: var(--glow-primary);
   flex-shrink: 0;
   font-size: var(--fs-sm);
   font-weight: 700;
@@ -1821,7 +1852,9 @@ body.modal-open {
 .rec-console-more {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: var(--space-1_5);
+  /* (v5.12.1 UX audit S8) 6px → 8px: the sheet grid holds 44px chips;
+     same inter-target floor as every row. */
+  gap: var(--space-2);
   padding-block-start: var(--space-2);
 }
 .rec-console-more[hidden] {
@@ -2942,7 +2975,7 @@ a.view-sheet__row {
   width: 36px;
   height: 36px;
   padding: 8px;
-  border-radius: 11px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
   color: var(--color-primary-text);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
@@ -3059,6 +3092,9 @@ a.view-sheet__row {
   align-items: center;
   gap: 0.6rem;
   width: 100%;
+  /* (v5.12.1 UX audit S2) 39px → 44px: the token floor, same as every
+     other row control. Padding unchanged — the min-height does the work. */
+  min-height: var(--touch-target);
   text-align: start;
   padding: 0.45rem 0.6rem;
   border-radius: var(--radius-md);

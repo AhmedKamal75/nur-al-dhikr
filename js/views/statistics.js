@@ -184,14 +184,23 @@ function reviewPanelHTML(state) {
     return `
     <section class="panel">
       <div class="panel__header"><h2>${t('review.title', lang)}</h2></div>
-      ${emptyStateHTML({ iconName: 'book', title: t('review.empty', lang) })}
+      ${emptyStateHTML({
+        iconName: 'book',
+        title: t('review.empty', lang),
+        // (v5.12.1 UX audit S13) hint-less dead end → next move (existing
+        // quiz view, plain navigate — no new action).
+        actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.QUIZ)}" data-action="navigate" data-view="${VIEWS.QUIZ}">${escapeHTML(t('quiz.start', lang))}</a>`,
+      })}
     </section>`;
   }
   const since = review.sinceKey
-    ? keyToDate(review.sinceKey).toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+    ? // (v5.12.1 UX audit S11) pin Latin digits: the surrounding streak/cards
+      // numerals are Western String() on both UI languages.
+      keyToDate(review.sinceKey).toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
+        numberingSystem: 'latn',
       })
     : null;
   const streakCards = `
@@ -512,7 +521,13 @@ export function renderStatistics(state) {
         : ''
     }
     `
-        : emptyStateHTML({ iconName: 'stats', title: t('stats.noData', lang) })
+        : emptyStateHTML({
+            iconName: 'stats',
+            title: t('stats.noData', lang),
+            // (v5.12.1 UX audit S13) the title already hints the move; the
+            // panel now offers it as a button (existing library view).
+            actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${escapeHTML(t('nav.library', lang))}</a>`,
+          })
     }
     ${gapPanelHTML(state, lang)}
   </section>`;

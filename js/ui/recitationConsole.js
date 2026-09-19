@@ -98,10 +98,10 @@ export function consoleSnapshot(sp, settings, sleep, lang, extra = {}) {
  * regroup only moves markup, so all handlers keep working untouched.
  */
 export function recitationChipsHTML(snap, lang, cls, opts = {}) {
-  // (UX-8) icon-only buttons carry no meaning on touch (title tooltips
-  // don't exist there). The short label shows on wide viewports via CSS
-  // (.rec-console-label, ≥900px); phones keep the compact row. The span
-  // is aria-hidden — the button's aria-label already announces.
+  // (UX-8, retired v5.10.8) icon-only buttons: shape carries the meaning and
+  // every button keeps its aria-label + title. .rec-console-label never
+  // paints at any width (components.css) — the spans stay in the DOM for
+  // tests + screen-reader verbose modes only, and are aria-hidden.
   const wideLabel = (text) =>
     `<span class="rec-console-label" aria-hidden="true">${escapeHTML(text)}</span>`;
   const chip = (action, on, pressed, label, inner) =>

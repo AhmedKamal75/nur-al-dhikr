@@ -49,6 +49,9 @@ export function renderCollections(state) {
             iconName: 'bookmark',
             title: t('collections.empty', lang),
             hint: t('collections.emptyHint', lang),
+            // (v5.12.1 UX audit S13) the empty block carries its own next
+            // move now (existing create-collection handler, no new action).
+            actionHTML: `<button type="button" class="btn btn--primary btn--sm" data-action="create-collection">${icon('plus', { size: 14 })} ${t('collections.create', lang)}</button>`,
           })
     }
 

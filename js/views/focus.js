@@ -16,6 +16,7 @@ import {
   noteFor,
 } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
+import { notFoundStateHTML } from '../ui/emptyState.js';
 import { VIEWS, GRADE_LABELS } from '../core/config.js';
 import { wasJustCompleted } from '../services/tasbih.js';
 import { visibleCategoryItems, itemTargetOf } from '../services/contentPrefs.js';
@@ -56,7 +57,9 @@ export function renderFocus(state) {
   const item = visibleCategoryItems(state, cat).find((i) => i.id === itemId);
 
   if (!cat || !item) {
-    return `<section class="view"><p class="empty-hint">${t('common.notFoundItem', lang)}</p></section>`;
+    // (v5.12.1 UX audit S13) the last bare not-found in the app: same shared
+    // recovery state (Go home) as category/mood/collection.
+    return `<section class="view">${notFoundStateHTML({ title: t('common.notFoundItem', lang), lang, t })}</section>`;
   }
 
   // (v4.5.2) Focus follows the manage lens: hidden items are skipped and

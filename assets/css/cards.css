@@ -310,7 +310,7 @@
   place-items: center;
   width: 46px;
   height: 46px;
-  border-radius: 15px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--tile-cat, var(--cat-emerald)) 13%, var(--color-surface));
   color: var(--tile-cat-text, var(--cat-emerald-text));
   box-shadow: inset 0 0 0 1px
@@ -452,7 +452,7 @@
   place-items: center;
   width: 46px;
   height: 46px;
-  border-radius: 15px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
   color: var(--color-primary-text);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 20%, transparent);
@@ -505,7 +505,7 @@
   place-items: center;
   width: 46px;
   height: 46px;
-  border-radius: 15px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
   color: var(--color-primary-text);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 20%, transparent);
@@ -569,6 +569,21 @@
   margin-block-end: var(--space-1);
   background: color-mix(in srgb, var(--color-bg) 88%, transparent);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(
+    12px
+  ); /* (v5.12.1 UX audit S10) Safari parity: every other glass site has it. */
+  /* (v5.12.1 UX audit S7) same 28px inline-end fade as .chip-row--scroll:
+     a hidden scrollbar plus clipped chips reads as cut-off buttons. */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  scrollbar-width: none;
+}
+[dir='rtl'] .library-jump {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent);
+}
+.library-jump::-webkit-scrollbar {
+  display: none;
 }
 .library-jump .chip {
   flex-shrink: 0;
@@ -763,7 +778,7 @@ body.is-scrolled-deep .category-top {
   place-items: center;
   width: 52px;
   height: 52px;
-  border-radius: 16px;
+  border-radius: var(--radius-badge);
   background: linear-gradient(145deg, var(--color-primary) 0%, var(--color-primary-deep) 100%);
   color: #ffffff;
   box-shadow:
@@ -859,7 +874,7 @@ body.is-scrolled-deep .category-top {
   height: 46px;
   flex-shrink: 0;
   padding: 11px;
-  border-radius: 14px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--qa-color, var(--color-primary)) 13%, var(--color-surface));
   color: var(--qa-color, var(--color-primary-text));
   box-shadow: inset 0 0 0 1px
@@ -984,7 +999,7 @@ body.is-scrolled-deep .category-top {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 13px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
   color: var(--color-primary-text);
@@ -995,7 +1010,7 @@ body.is-scrolled-deep .category-top {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 13px;
+  border-radius: var(--radius-badge);
   background: var(--color-success-bg);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-success) 30%, transparent);
   color: var(--color-success-text);
@@ -1173,7 +1188,7 @@ a.worship-row:hover {
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 13px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
   color: var(--color-primary-text);
@@ -1430,7 +1445,7 @@ body.is-ambient #main {
   place-items: center;
   width: 44px;
   height: 44px;
-  border-radius: 14px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
   color: var(--color-primary-text);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
@@ -2058,7 +2073,7 @@ body.is-ambient #main {
   place-items: center;
   width: 46px;
   height: 46px;
-  border-radius: 15px;
+  border-radius: var(--radius-badge);
   background: color-mix(in srgb, var(--cat-emerald) 13%, var(--color-surface));
   color: var(--cat-emerald-text);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cat-emerald) 22%, transparent);
@@ -2669,7 +2684,7 @@ body.has-player .hadith-card {
   place-items: center;
   width: 52px;
   height: 52px;
-  border-radius: 16px;
+  border-radius: var(--radius-badge);
   background: rgba(255, 255, 255, 0.14);
   border: 1px solid rgba(255, 255, 255, 0.24);
   color: var(--color-gold-soft);
@@ -3688,7 +3703,9 @@ body.has-player .hadith-card {
   display: inline-grid;
   place-items: center;
   width: 44px;
-  min-height: 36px;
+  /* (v5.12.1 UX audit S2) 36px → 44px: the token floor. Same pill look,
+     six pixels taller — no layout contract change (inline-grid in a row). */
+  min-height: var(--touch-target);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
@@ -4020,6 +4037,9 @@ button.toggle-row {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  /* (v5.12.1 UX audit S2) all:unset above wiped the .toggle-row 52px floor,
+     leaving 48px rows. Restored to the same floor as the label rows. */
+  min-height: 52px;
   padding: var(--space-2) 0;
 }
 

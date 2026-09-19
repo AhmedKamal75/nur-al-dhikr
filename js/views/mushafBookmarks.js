@@ -63,6 +63,9 @@ export function buildMushafBookmarks(state) {
         iconName: 'bookmark',
         title: t('mushaf.noBookmarks', lang),
         hint: t('mushaf.noBookmarksHint', lang),
+        // (v5.12.1 UX audit S13) the hint already names the move; the modal
+        // now also offers it as a button (existing modal-close handler).
+        actionHTML: `<button type="button" class="btn btn--primary btn--sm" data-action="modal-close">${t('common.close', lang)}</button>`,
       })}
     </div>`;
   }

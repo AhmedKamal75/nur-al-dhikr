@@ -49,6 +49,10 @@ export function renderQibla(state) {
   const distanceMi = distanceKm * 0.621371;
   const cardinal = cardinalLabel(bearing, lang);
   const locale = lang === 'ar' ? 'ar' : 'en-US';
+  // (v5.12.1 UX audit S11) pin Latin digits: bare toLocaleString('ar') is
+  // engine-dependent (small-ICU → 123, full-ICU → ١٢٣) while the bearing,
+  // accuracy and countdown on this same screen are always Western String().
+  const digitOpt = { numberingSystem: 'latn' };
 
   const sensorSupported = compass.isSupported();
   const needsPermission = compass.needsPermission();
@@ -110,7 +114,7 @@ export function renderQibla(state) {
       </div>
       <div class="qibla-fact">
         <span class="qibla-fact__label">${t('qibla.distance', lang)}</span>
-        <span class="qibla-fact__value" dir="ltr">${Math.round(distanceKm).toLocaleString(locale)} km <span class="qibla-fact__value-sub">(${Math.round(distanceMi).toLocaleString(locale)} mi)</span></span>
+        <span class="qibla-fact__value" dir="ltr">${Math.round(distanceKm).toLocaleString(locale, digitOpt)} km <span class="qibla-fact__value-sub">(${Math.round(distanceMi).toLocaleString(locale, digitOpt)} mi)</span></span>
       </div>
       ${
         Number.isFinite(Number(p.locationAccuracy)) && Number(p.locationAccuracy) >= 0

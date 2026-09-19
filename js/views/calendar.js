@@ -70,7 +70,7 @@ function fastingPanelHTML(state, lang, today) {
             .join('');
           return `
         <div class="event-row">
-          <span class="event-row__date" dir="ltr">${u.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+          <span class="event-row__date" dir="ltr">${u.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric', numberingSystem: 'latn' })}</span>
           <span class="event-row__label">${escapeHTML(u.hijri.day + ' ' + (u.hijri.monthName[lang] || u.hijri.monthName.en))} ${cats}</span>
         </div>`;
         })
@@ -84,7 +84,7 @@ function fastingPanelHTML(state, lang, today) {
           .map(
             (r) => `
         <button type="button" class="chip" data-action="ramadan-toggle-fast" data-log-key="${r.logKey}" data-day="${r.day}" title="${t('fasting.undoHint', lang)}" aria-label="${t('fasting.undoHint', lang)}">
-          ${r.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { month: 'short', day: 'numeric' })}
+          ${r.date.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { month: 'short', day: 'numeric', numberingSystem: 'latn' })}
         </button>`
           )
           .join('')}

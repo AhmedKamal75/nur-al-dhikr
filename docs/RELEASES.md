@@ -2,6 +2,28 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.12.1 — UI/UX design audit fixes (touch, glass, empty states, numerals)
+
+Token/CSS-only sweep from the design audit, no layout-contract breaks. Touch:
+palette rows 39→44px, juz cells gain a 44px hit box (32px visual kept),
+player chips reach 44px effective, `button.toggle-row` regains its 52px
+floor, mushaf nav buttons stop squeezing to 41px, console stack gaps rise
+to the 8px inter-target floor, manage actions 36→44px. Glass: library-jump
+gains the missing `-webkit-` prefix; the reduced-transparency kill now
+covers bottomnav, focus bar, reader bars and library-jump (opaque tokens).
+Scroll: library-jump and the ≤390px mushaf bars gain the 28px scroll-fade
+hint. Type: `--radius-badge` replaces the 11–16px icon-radius ladder;
+`--glow-primary` merges the twin play glows; dead `.icon-btn--recite-follow`
+rule removed; action-sheet icon padding 9→8px. Numerals: qibla distance,
+calendar and review dates pin `numberingSystem: 'latn'` (engine-independent
+digits matching the Western chrome). Empty states: focus dead-id migrates
+to the shared recovery block; collections, bookmarks, review, stats and
+mutashabihat empties gain CTAs from existing handlers/views/keys. Motion:
+idle auto-fade holds steady under reduced-motion; components/layout carry
+an explicit motion-contract note. Forced-colors: switch, slider, dial and
+progress fills gain system-color edges. Hadith retry confirmed already
+present (no change). Gates: unit + lint green, shell re-stamped.
+
 ## v5.12.0 — one player every side: minimize, idle fade, shortcuts, from-here
 
 Minimize: the player bar (both engines) collapses to a slim pill via the

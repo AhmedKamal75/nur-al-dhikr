@@ -166,9 +166,15 @@ export function renderMutashabihat(state) {
         : ''
     }
     <p class="view__subtitle">${t('mutashabihat.subtitle', lang)}</p>
-    ${drillBlock(state) || emptyStateHTML({ iconName: 'quran', title: t('mutashabihat.noPairs', lang) })}
-    <p class="panel__subtext">
-      <a class="link-btn" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">${t('mutashabihat.backToQuran', lang)}</a>
-    </p>
+    ${
+      drillBlock(state) ||
+      emptyStateHTML({
+        iconName: 'quran',
+        title: t('mutashabihat.noPairs', lang),
+        // (v5.12.1 UX audit S13) the back-to-Quran link lived outside the
+        // empty block; folded in as its action (existing mushaf view).
+        actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">${t('mutashabihat.backToQuran', lang)}</a>`,
+      })
+    }
   </section>`;
 }
