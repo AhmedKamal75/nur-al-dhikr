@@ -678,6 +678,15 @@ body.tajweed-underlines-off .tajweed {
   animation: none;
   will-change: auto;
 }
+/* (v5.17.4) finger-following paper drag: while the finger pulls, the book
+   tracks it with no transition (inline transform, set per touchmove);
+   touchend either commits (inline style cleared instantly, the entrance
+   keyframes above take over) or eases back via the inline 180ms
+   transition. touch-action stays untouched — the browser keeps owning
+   the vertical scroll throughout the pull. */
+.mushaf-book--drag {
+  will-change: transform;
+}
 .mushaf-page--fs-in {
   animation: mushafFsIn var(--dur-celebrate) var(--ease-spring);
   will-change: transform, opacity;

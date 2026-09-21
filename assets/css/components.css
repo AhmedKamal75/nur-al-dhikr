@@ -610,7 +610,12 @@
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
   color: var(--color-text);
-  font-size: var(--fs-sm);
+  /* (v5.17.4, real-phone pass) form text follows --fs-base (16px at the
+     default scale): iOS Safari auto-zooms on focus for anything smaller,
+     which used to yank the viewport on every search/settings field. The
+     user's own text-size scale still applies — only the 14px default is
+     gone. */
+  font-size: var(--fs-base);
   transition:
     border-color var(--dur-base) var(--ease-standard),
     box-shadow var(--dur-base) var(--ease-standard);

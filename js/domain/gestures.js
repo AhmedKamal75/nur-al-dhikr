@@ -92,6 +92,55 @@ export function isSwipeGuardTarget(el) {
 }
 
 /**
+ * Find the touch with the tracked identifier in a TouchList (or array).
+ * Multi-touch safety: a second finger's touchend must never be measured
+ * against the first finger's touchstart — that mismatch produced phantom
+ * page turns and phantom player minimizes on real phones. Returns the
+ * Touch or null. Null-safe for hostile input.
+ */
+export function findTouch(touches, identifier) {
+  if (touches == null || identifier == null) return null;
+  try {
+    // Real TouchList: length + item(), NO namedItem (that check rejected
+    // every real list — phantom no-turns). Strict identifier lookup, no
+    // item(0) fallback.
+    if (typeof touches.length === 'number' && typeof touches.item === 'function') {
+      for (let i = 0; i < touches.length; i += 1) {
+        if (touches.item(i)?.identifier === identifier) return touches.item(i);
+      }
+      return null;
+    }
+    if (Array.isArray(touches)) return touches.find((tt) => tt?.identifier === identifier) ?? null;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Finger-following paper drag (v5.17.4, real-phone pass). The book follows
+ * the finger while a page-turn swipe is in flight — translateX tracks dx
+ * one-to-one (direction-agnostic, always under the finger) with a small
+ * scale dip for lift-off-the-page feel. Pure numbers: the caller owns the
+ * DOM writes (direct style, no store churn at 60Hz) and the gating
+ * (guarded origin, pinch, vertical scroll, reduced-motion, animation pref).
+ *
+ * @param {number} dx drag distance in px (signed, screen coords)
+ * @param {number} pageWidth layout width of the dragged book in px
+ * @returns {{x:number,scale:number,progress:number}|null} null for junk input
+ */
+export const MUSHAF_DRAG_CLAMP_RATIO = 0.45;
+export const MUSHAF_DRAG_LIFT = 0.985;
+
+export function mushafDragStyle(dx, pageWidth) {
+  if (!Number.isFinite(dx) || !Number.isFinite(pageWidth) || pageWidth <= 0) return null;
+  const max = pageWidth * MUSHAF_DRAG_CLAMP_RATIO;
+  const x = Math.max(-max, Math.min(max, dx));
+  const progress = Math.abs(x) / max; // 0..1
+  return { x, scale: 1 - (1 - MUSHAF_DRAG_LIFT) * progress, progress };
+}
+
+/**
  * True for a mostly-vertical DOWNWARD swipe that minimizes the persistent
  * player bar (tap the chevron does the same via player-min-toggle; the X
  * stays the explicit quit). Upward and horizontal drags return false —

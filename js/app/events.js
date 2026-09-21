@@ -29,6 +29,8 @@ import {
   isSwipeGuardTarget,
   isPlayerDismissSwipe,
   resolveMinControl,
+  findTouch,
+  mushafDragStyle,
 } from '../domain/gestures.js';
 import { armPaletteShortcut } from './palette.js';
 import { showToast } from '../ui/toast.js';
@@ -811,11 +813,13 @@ export function bindGlobalEvents() {
   });
 
   let touchStartX = null;
+  let touchStartId = null;
   document.addEventListener(
     'touchstart',
     (e) => {
       if (!document.body.classList.contains('is-focus-mode')) return;
       touchStartX = e.touches[0].clientX;
+      touchStartId = e.touches[0].identifier ?? null;
     },
     { passive: true }
   );
@@ -823,8 +827,14 @@ export function bindGlobalEvents() {
     'touchend',
     (e) => {
       if (touchStartX == null || !document.body.classList.contains('is-focus-mode')) return;
-      const dx = e.changedTouches[0].clientX - touchStartX;
+      // (v5.17.4) match the tracked finger — a second finger's touchend
+      // must not be measured against the first finger's start.
+      const touch =
+        touchStartId == null ? e.changedTouches[0] : findTouch(e.changedTouches, touchStartId);
+      const dx = touch ? touch.clientX - touchStartX : NaN;
       touchStartX = null;
+      touchStartId = null;
+      if (!touch) return;
       if (Math.abs(dx) < 60) return;
       const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
       // In LTR, swiping left means "forward" (next). In RTL, reading and
@@ -848,25 +858,80 @@ export function bindGlobalEvents() {
   // page underneath and steal button taps.
   let mushafTouchStartX = null;
   let mushafTouchStartY = null;
+  let mushafTouchId = null;
   let mushafPinch = null; // { startDist, startScale } while two fingers are down
   let mushafPinching = false;
+  // (v5.17.4) finger-following paper drag: while a page-turn swipe is in
+  // flight the book tracks the finger (direct style writes, no store churn
+  // at 60Hz). mushafDragOn flips once the drag is clearly horizontal so
+  // vertical scrolls never drag the book sideways.
+  let mushafDragOn = false;
+  let mushafDragResetTimer = null;
+
+  /** Paper drag is a delight, not a right: the animation pref and the OS
+   *  reduced-motion setting both veto it (the swipe turn itself still works). */
+  function mushafDragAllowed() {
+    if (store.getState().settings.mushafPrefs?.pageFlipAnimation === false) return false;
+    try {
+      if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return false;
+    } catch {
+      /* motion queries unavailable — drag is safe to allow */
+    }
+    return true;
+  }
+
+  /** Clear the in-flight drag transform. Commits clear instantly (the
+   *  entrance animation takes over); cancels ease back over 180ms. */
+  function clearMushafDrag(snapBack) {
+    const book = document.querySelector('.mushaf-book');
+    if (mushafDragResetTimer) {
+      clearTimeout(mushafDragResetTimer);
+      mushafDragResetTimer = null;
+    }
+    if (!book) {
+      mushafDragOn = false;
+      return;
+    }
+    book.classList.remove('mushaf-book--drag');
+    if (snapBack && mushafDragOn) {
+      book.style.transition = 'transform 180ms ease-out';
+      book.style.transform = '';
+      const el = book;
+      mushafDragResetTimer = setTimeout(() => {
+        el.style.transition = '';
+        mushafDragResetTimer = null;
+      }, 200);
+    } else {
+      book.style.transition = '';
+      book.style.transform = '';
+    }
+    mushafDragOn = false;
+  }
+
+  function disarmMushafTouch(snapBack) {
+    mushafTouchStartX = null;
+    mushafTouchStartY = null;
+    mushafTouchId = null;
+    clearMushafDrag(snapBack);
+  }
   document.addEventListener(
     'touchstart',
     (e) => {
       if (store.getState().activeView !== VIEWS.MUSHAF) return;
       const origin = e.target instanceof Element ? e.target : null;
       if (origin && isSwipeGuardTarget(origin)) {
-        mushafTouchStartX = null;
-        mushafTouchStartY = null;
+        disarmMushafTouch(false);
         return;
       }
       if (e.touches.length === 1) {
         mushafPinching = false;
         mushafTouchStartX = e.touches[0].clientX;
         mushafTouchStartY = e.touches[0].clientY;
+        // (v5.17.4) track which finger armed the swipe — a second finger's
+        // touchend must never be measured against this start.
+        mushafTouchId = e.touches[0].identifier ?? null;
       } else {
-        mushafTouchStartX = null;
-        mushafTouchStartY = null;
+        disarmMushafTouch(false);
       }
     },
     { passive: true }
@@ -904,6 +969,45 @@ export function bindGlobalEvents() {
     },
     { passive: false }
   );
+  // (v5.17.4) paper drag, part 1: while one finger pulls horizontally the
+  // book follows it (translate + a breath of lift). Passive — the browser
+  // keeps owning the vertical scroll; we only paint the horizontal pull.
+  // Pinch, guarded origins, vertical drags, reduced-motion and the
+  // animation-off pref all skip it; the turn decision still lives in
+  // touchend below, so the gesture contract is unchanged.
+  document.addEventListener(
+    'touchmove',
+    (e) => {
+      if (
+        mushafTouchStartX == null ||
+        mushafPinching ||
+        store.getState().activeView !== VIEWS.MUSHAF
+      ) {
+        return;
+      }
+      if (e.touches.length !== 1 || !mushafDragAllowed()) return;
+      const touch = mushafTouchId == null ? e.touches[0] : findTouch(e.touches, mushafTouchId);
+      if (!touch) return;
+      const dx = touch.clientX - mushafTouchStartX;
+      const dy = touch.clientY - mushafTouchStartY;
+      const book = document.querySelector('.mushaf-book');
+      if (!book) return;
+      if (!mushafDragOn) {
+        if (Math.abs(dx) < 12 || Math.abs(dx) <= Math.abs(dy)) return;
+        mushafDragOn = true;
+        if (mushafDragResetTimer) {
+          clearTimeout(mushafDragResetTimer);
+          mushafDragResetTimer = null;
+        }
+        book.classList.add('mushaf-book--drag');
+        book.style.transition = 'none';
+      }
+      const style = mushafDragStyle(dx, book.clientWidth || window.innerWidth);
+      if (!style) return;
+      book.style.transform = `translateX(${style.x}px) scale(${style.scale})`;
+    },
+    { passive: true }
+  );
   document.addEventListener(
     'touchend',
     (e) => {
@@ -914,19 +1018,37 @@ export function bindGlobalEvents() {
         store.getState().activeView !== VIEWS.MUSHAF
       ) {
         if (e.touches.length === 0) mushafPinching = false;
-        mushafTouchStartX = null;
-        mushafTouchStartY = null;
+        disarmMushafTouch(true);
         return;
       }
-      const dx = e.changedTouches[0].clientX - mushafTouchStartX;
-      const dy = e.changedTouches[0].clientY - mushafTouchStartY;
+      // (v5.17.4) measure the tracked finger, not whoever lifted last.
+      const touch =
+        mushafTouchId == null ? e.changedTouches[0] : findTouch(e.changedTouches, mushafTouchId);
+      const wasDragging = mushafDragOn;
+      const startX = mushafTouchStartX;
+      const startY = mushafTouchStartY;
       mushafTouchStartX = null;
       mushafTouchStartY = null;
+      mushafTouchId = null;
+      if (!touch) {
+        clearMushafDrag(true);
+        return;
+      }
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
       // (v5.2.22) the book-order mapping (dx < 0 = next page) is the pure
       // mushafSwipeTurn helper — short and mostly-vertical swipes (scrolls)
       // return null and fall through without turning.
       const turn = mushafSwipeTurn(dx, dy);
-      if (!turn) return;
+      if (!turn) {
+        // Paper drag part 2: a below-threshold pull eases back onto the
+        // spine instead of snapping; a non-drag just clears the state.
+        clearMushafDrag(wasDragging);
+        return;
+      }
+      // Commit: drop the drag transform instantly — the entrance animation
+      // on the incoming page takes over from the finger's position.
+      clearMushafDrag(false);
       const state = store.getState();
       const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
       // (v4.5) a spread turns two pages at once, from its right page.
@@ -944,6 +1066,21 @@ export function bindGlobalEvents() {
       setFlipDirection(turn);
       playFlipSound();
       go(VIEWS.MUSHAF, { page: String(dest) });
+    },
+    { passive: true }
+  );
+
+  // (v5.17.4) a cancelled touch (incoming call, browser gesture takeover,
+  // palm rejection) is NOT a swipe end: disarm every tracker so the next
+  // touchend can't measure a new finger against a stale start — that stale
+  // pairing was a source of phantom page turns on real phones.
+  document.addEventListener(
+    'touchcancel',
+    () => {
+      touchStartX = null;
+      touchStartId = null;
+      disarmMushafTouch(true);
+      playerTouch = null;
     },
     { passive: true }
   );
@@ -976,6 +1113,8 @@ export function bindGlobalEvents() {
       playerTouch = {
         x: e.touches[0].clientX,
         y: e.touches[0].clientY,
+        // (v5.17.4) track the finger — see the mushaf note above.
+        id: e.touches[0].identifier ?? null,
         bar,
       };
     },
@@ -985,10 +1124,12 @@ export function bindGlobalEvents() {
     'touchend',
     (e) => {
       if (!playerTouch) return;
-      const dx = e.changedTouches[0].clientX - playerTouch.x;
-      const dy = e.changedTouches[0].clientY - playerTouch.y;
-      const { bar } = playerTouch;
+      const { bar, id, x, y } = playerTouch;
       playerTouch = null;
+      const touch = id == null ? e.changedTouches[0] : findTouch(e.changedTouches, id);
+      if (!touch) return;
+      const dx = touch.clientX - x;
+      const dy = touch.clientY - y;
       if (!isPlayerDismissSwipe(dx, dy)) return;
       // Already a pill: a downward swipe restores nothing and quits
       // nothing — only the full bar minimizes from this gesture.

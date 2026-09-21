@@ -2,6 +2,21 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.4 — real-phone touch pass (paper drag, touch identity, input zoom)
+
+From real-phone reports. The Mushaf swipe now feels like paper: the book
+follows the finger mid-pull (translate + lift, direct style writes, no
+store churn) and either commits into the turn or eases back onto the
+spine — gated by the flip-animation pref and reduced-motion, and skipped
+for pinches, guarded controls and vertical scrolls. Touch identity is
+tracked end to end (a `touchcancel` disarms everything): a second
+finger's touchend can no longer measure against the first finger's start,
+killing a whole class of phantom page turns and minimizes. The compass
+gate resolves true where no prompt exists (Android proceeds to start
+instead of showing a false "denied"). Form fields return to 16px so iOS
+stops auto-zooming on focus. Gates: `mushaf-drag.spec.js` (follow +
+snap-back), touch-identity and drag-math unit tests, compass gate tests.
+
 ## v5.17.3 — axe-clean accessibility (zero critical/serious)
 
 Runs axe-core over home / reader / mushaf / settings in light AND dark

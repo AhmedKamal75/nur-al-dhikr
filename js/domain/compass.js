@@ -31,9 +31,15 @@ export function needsPermission() {
   );
 }
 
-/** Resolves true if permission was granted, false otherwise. Never throws. */
+/** Resolves true if permission was granted, false otherwise. Never throws.
+ *  (v5.17.4, real-phone pass) platforms without a permission gate (Android
+ *  Chrome et al: the API exists but requestPermission is not a function)
+ *  resolve TRUE — there is nothing to ask, so callers proceed to start().
+ *  Missing API resolves false as before. */
 export async function requestPermission() {
   try {
+    if (typeof DeviceOrientationEvent === 'undefined') return false;
+    if (typeof DeviceOrientationEvent.requestPermission !== 'function') return true;
     const result = await DeviceOrientationEvent.requestPermission();
     return result === 'granted';
   } catch {
