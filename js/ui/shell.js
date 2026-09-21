@@ -186,8 +186,11 @@ export function renderNav(state) {
         { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
         { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
       ];
+  // (v5.17.3, axe) these wrappers are plain divs, not nested <nav>
+  // landmarks: #bottomnav already owns the single "Main navigation"
+  // landmark, and duplicate same-name navs fail `landmark-unique`.
   const mobileBar = `
-    <nav class="nav-mobile-bar" aria-label="${t('a11y.mainNav', lang)}">
+    <div class="nav-mobile-bar">
       ${MOBILE_ITEMS.map(
         (n) => `
       <a class="nav-mobile-bar__item ${isActive(active, n.view) ? 'nav-mobile-bar__item--active' : ''}" href="${buildHash(n.view)}" data-action="navigate" data-view="${n.view}" aria-current="${isActive(active, n.view) ? 'page' : 'false'}">
@@ -203,13 +206,13 @@ export function renderNav(state) {
         <span class="nav__label">${t('nav.more', lang)}</span>
       </button>`
       }
-    </nav>`;
+    </div>`;
 
   return `
   <div class="nav__scroller" data-nav-collapsed="${collapsed ? 'true' : 'false'}">
-    <nav class="nav__inner" aria-label="${t('a11y.mainNav', lang)}">
+    <div class="nav__inner">
       ${groupsHTML(active, lang, {}, groups)}
-    </nav>
+    </div>
   </div>
   ${mobileBar}
   <div class="nav-drawer-overlay" data-action="nav-drawer-close"></div>

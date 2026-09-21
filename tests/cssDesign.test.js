@@ -193,6 +193,101 @@ test('contrast: dark-mode brand foreground (50% white mix) holds AA for EVERY pa
   }
 });
 
+test('contrast: light primary-text holds AA on surface AND its own active tint (v5.17.3 axe)', () => {
+  // Raw brand color sits at ~4.50:1 on its own 14% active tint (axe fail).
+  // The token must darken the palette raw toward ink; this test resolves
+  // the ACTUAL token (not a restated formula) and checks every palette on
+  // both the plain surface and the tinted active/chip backgrounds.
+  const token = root['--color-primary-text'];
+  const m =
+    /color-mix\(in srgb,\s*var\(--color-primary-raw\)\s*([\d.]+)%,\s*(#[0-9a-fA-F]{6})\)/.exec(
+      token
+    );
+  assert.ok(m, `--color-primary-text must darken --color-primary-raw via color-mix, got: ${token}`);
+  const pct = Number(m[1]);
+  const ink = m[2];
+  const surface = root['--color-surface'];
+  for (const p of PALETTES) {
+    const text = mix(p.primary, ink, pct);
+    const tint = mix(p.primary, surface, 14);
+    assert.ok(
+      ratio(text, surface) >= 4.5,
+      `palette ${p.id}: primary-text ${text} on surface = ${ratio(text, surface).toFixed(2)} (need 4.5)`
+    );
+    assert.ok(
+      ratio(text, tint) >= 4.5,
+      `palette ${p.id}: primary-text ${text} on 14% tint ${tint} = ${ratio(text, tint).toFixed(2)} (need 4.5)`
+    );
+  }
+});
+
+test('contrast: dark category -text variants are brightened, not clobbered by :root order (v5.17.3 axe)', () => {
+  // A later bare `:root` block once re-pinned every --cat-*-text to its
+  // strong base at equal specificity, silently deleting the dark-mode
+  // brightened variants (dark chips rendered base-on-dark at ~3:1).
+  // This test resolves the cascade the way the browser does — matching
+  // rules in (specificity, source order) — instead of assuming the dark
+  // block always wins. A merged-roots-then-dark shortcut would PASS on
+  // the buggy CSS; this one fails on it (verified).
+  const src = CSS['variables.css'].replace(/\/\*[\s\S]*?\*\//g, '');
+  const specOf = (sel) => {
+    const s = sel.replace(/:not\(([^)]*)\)/g, ' $1');
+    return (
+      (s.match(/#[a-zA-Z0-9_-]+/g) || []).length * 100 +
+      ((s.match(/\.[a-zA-Z0-9_-]+/g) || []).length +
+        (s.match(/\[[^\]]+\]/g) || []).length +
+        (s.match(/:(?!:)[a-zA-Z-]+/g) || []).length) *
+        10
+    );
+  };
+  // A rule participates in the dark-mode cascade unless it explicitly
+  // excludes dark (e.g. :root:not([data-theme='dark'])).
+  const matchesDark = (sel) => !/:not\([^)]*data-theme=['"]dark['"]/.test(sel);
+  const rules = [];
+  for (const m of src.matchAll(/([^{}]+)\{([\s\S]*?)\n\}/g)) {
+    const sel = m[1].trim();
+    if (!/--cat-[a-z-]+:\s*[^;]+;/.test(m[2])) continue;
+    if (!matchesDark(sel)) continue;
+    const vars = {};
+    for (const mm of m[2].matchAll(/--([a-z0-9_-]+):\s*([^;]+);/gi))
+      vars[`--${mm[1]}`] = mm[2].trim();
+    rules.push({ sel, spec: specOf(sel), order: m.index, vars });
+  }
+  assert.ok(rules.length >= 2, 'expected :root + dark rules defining category tokens');
+  rules.sort((a, b) => a.spec - b.spec || a.order - b.order);
+  const darkResolved = Object.assign({}, ...rules.map((r) => r.vars));
+  const families = Object.keys(darkResolved)
+    .filter((k) => /^--cat-[a-z]+$/.test(k))
+    .map((k) => k.slice(6));
+  assert.ok(families.length >= 15, `expected category families, got ${families.length}`);
+  const darkSurfaces = [darkResolved['--color-bg'], darkResolved['--color-surface']];
+  for (const fam of families) {
+    const base = darkResolved[`--cat-${fam}`];
+    const text = darkResolved[`--cat-${fam}-text`];
+    assert.ok(/^#[0-9a-fA-F]{6}$/.test(base), `${fam}: base must be a hex, got ${base}`);
+    assert.ok(
+      /^#[0-9a-fA-F]{6}$/.test(text),
+      `${fam}: dark -text must resolve to a hex, got ${text}`
+    );
+    assert.notEqual(
+      text.toLowerCase(),
+      base.toLowerCase(),
+      `${fam}: dark -text must be brightened, not the base`
+    );
+    for (const bg of darkSurfaces) {
+      assert.ok(
+        ratio(text, bg) >= 4.5,
+        `${fam}: dark -text ${text} on ${bg} = ${ratio(text, bg).toFixed(2)} (need 4.5)`
+      );
+      const tint = mix(base, bg, 12);
+      assert.ok(
+        ratio(text, tint) >= 4.5,
+        `${fam}: dark -text ${text} on 12% tint ${tint} = ${ratio(text, tint).toFixed(2)} (need 4.5)`
+      );
+    }
+  }
+});
+
 test('contrast: on-primary text holds AA on every palette primary fill (light theme)', () => {
   for (const p of PALETTES) {
     assert.ok(

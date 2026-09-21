@@ -1420,6 +1420,7 @@ export const ar = {
   'common.error': 'حدث خطأ ما.',
   'common.skipToContent': 'تخطَّ إلى المحتوى',
   'a11y.mainNav': 'التنقل الرئيسي',
+  'a11y.fileImports': 'عناصر استيراد الملفات',
   'a11y.themeToggle': 'تبديل السمة اللونية',
   'a11y.counterProgress': '{count} من {target}',
   'a11y.counterComplete': 'اكتمل. الدورة {n}.',

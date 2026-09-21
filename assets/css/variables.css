@@ -73,8 +73,11 @@
   --color-warning-bg: #fffbeb;
 
   /* Foreground variants: identical in light mode; brightened in dark mode
-     so every brand/semantic FOREGROUND holds WCAG AA on every surface. */
-  --color-primary-text: var(--color-primary);
+     so every brand/semantic FOREGROUND holds WCAG AA on every surface.
+     (v5.17.3, axe) light primary-text is darkened 78% toward ink: raw
+     #0F766E sits at ~4.50:1 on its own 14% active tint (axe fail); the
+     mix holds ≥5.8 on surface and tint for every bundled palette. */
+  --color-primary-text: color-mix(in srgb, var(--color-primary-raw) 78%, #06201c);
   --color-accent-text: var(--color-accent);
   --color-danger-text: var(--color-danger);
   --color-success-text: var(--color-success);
@@ -349,8 +352,11 @@
   --sk-sheen: rgba(255, 255, 255, 0.08);
 }
 
-/* Light-mode category -text variants = the strong bases themselves. */
-:root {
+/* Light-mode category -text variants = the strong bases themselves.
+   (v5.17.3, axe) scoped :not(dark): as bare :root this block sat LATER
+   than [data-theme='dark'] at equal specificity and silently clobbered
+   every brightened dark variant — dark chips rendered base-on-dark. */
+:root:not([data-theme='dark']) {
   --cat-amber-text: var(--cat-amber);
   --cat-blue-text: var(--cat-blue);
   --cat-cyan-text: var(--cat-cyan);

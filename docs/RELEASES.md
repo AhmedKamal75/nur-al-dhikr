@@ -2,6 +2,20 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.3 — axe-clean accessibility (zero critical/serious)
+
+Runs axe-core over home / reader / mushaf / settings in light AND dark
+themes and fixes everything it found — no rule disabled, no exclusion
+list. The three programmatic file inputs gain a named region and the
+same labels as the buttons that drive them (re-localized every render);
+the nav keeps a single "Main navigation" landmark (the inner wrappers
+are plain divs now — nested same-name navs failed `landmark-unique`);
+light `--color-primary-text` darkens 78% toward ink so it holds ≥5.8:1
+on surface and on its own active tint for every bundled palette
+(raw sat at ~4.50:1, an axe fail). New gates: `tests/e2e/a11y-axe.spec.js`
+(axe + keyboard traversal, both themes) in the CI `accessibility` job,
+and a token test pinning tinted-surface contrast per palette.
+
 ## v5.17.2 — Omniview audit follow-ups (provenance, storage, evidence CI)
 
 Builds the six audit proposals into the tree: a lexical provenance schema

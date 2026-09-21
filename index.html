@@ -88,22 +88,37 @@
     <div id="toast-root" role="status" aria-live="polite"></div>
     <div id="counter-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
-    <!-- Hidden file inputs driven by the delegated change handler. -->
-    <input
-      type="file"
-      id="backup-file-input"
-      accept="application/json"
-      class="sr-only"
-      tabindex="-1"
-    />
-    <input
-      type="file"
-      id="plan-file-input"
-      accept="application/json"
-      class="sr-only"
-      tabindex="-1"
-    />
-    <input type="file" id="adhan-file-input" accept="audio/*" class="sr-only" tabindex="-1" />
+    <!-- Hidden file inputs driven by the delegated change handler.
+         (v5.17.3, axe) they sit in a named region with the same labels as
+         the buttons that drive them (renderer re-localizes on every
+         render): unlabeled, landmark-less inputs fail `label` critical
+         and `region` moderate. -->
+    <div id="file-imports" role="region" aria-label="File import controls">
+      <input
+        type="file"
+        id="backup-file-input"
+        accept="application/json"
+        class="sr-only"
+        tabindex="-1"
+        aria-label="Import Backup"
+      />
+      <input
+        type="file"
+        id="plan-file-input"
+        accept="application/json"
+        class="sr-only"
+        tabindex="-1"
+        aria-label="Import Shared Plan"
+      />
+      <input
+        type="file"
+        id="adhan-file-input"
+        accept="audio/*"
+        class="sr-only"
+        tabindex="-1"
+        aria-label="Import your own recording"
+      />
+    </div>
 
     <noscript>
       <div

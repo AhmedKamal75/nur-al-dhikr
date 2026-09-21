@@ -1460,6 +1460,7 @@ export const en = {
   'common.error': 'Something went wrong.',
   'common.skipToContent': 'Skip to content',
   'a11y.mainNav': 'Main navigation',
+  'a11y.fileImports': 'File import controls',
   'a11y.themeToggle': 'Toggle color theme',
   'a11y.counterProgress': '{count} of {target}',
   'a11y.counterComplete': 'Completed. Cycle {n}.',

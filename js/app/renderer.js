@@ -811,6 +811,21 @@ export function render(state) {
     !!(state.player?.moshafId || state.surahPlayback?.active)
   );
 
+  // (v5.17.3, axe) the programmatic file inputs carry the same labels as
+  // the buttons that drive them; the shell ships English fallbacks and
+  // every render re-localizes (Arabic chrome must not announce English).
+  const fileInputLabels = {
+    'backup-file-input': 'settings.importBackup',
+    'plan-file-input': 'settings.importPlan',
+    'adhan-file-input': 'prayer.adhanImport',
+  };
+  for (const [id, key] of Object.entries(fileInputLabels)) {
+    document.getElementById(id)?.setAttribute('aria-label', t(key, state.settings.language));
+  }
+  document
+    .getElementById('file-imports')
+    ?.setAttribute('aria-label', t('a11y.fileImports', state.settings.language));
+
   if (viewChanging) {
     const nextKey = viewKeyOf(state.activeView, state.activeParams);
     if (lastView) saveScrollMemory(lastViewKey, outgoingScroll);
