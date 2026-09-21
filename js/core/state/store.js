@@ -49,43 +49,60 @@ class Store {
 
   hydrate() {
     const result = loadState();
-    if (result.success && result.value) {
-      // (v5.2.74, BUG-03) a future writer's blob (e.g. localStorage shared
-      // across an app downgrade) is left on disk untouched and ignored —
-      // never mangled into live state. The next upgrade hydrates it again.
-      if (isFuturePayload(result.value)) {
-        console.warn(
-          '[state] ignoring persisted snapshot with future schemaVersion',
-          result.value.schemaVersion
-        );
-        return this.state;
+    if (!result.success || !result.value) {
+      // (v5.13.0, V1) fresh install: honor the OS language once. An
+      // Arabic-only grandmother is otherwise stranded in English chrome
+      // with no way to find Settings. Runs only when nothing is stored;
+      // an explicit choice always wins afterwards.
+      try {
+        const nav = typeof navigator !== 'undefined' ? navigator : null;
+        const first = nav?.languages?.[0] || nav?.language || '';
+        if (typeof first === 'string' && first.toLowerCase().startsWith('ar')) {
+          this.state = {
+            ...this.state,
+            settings: { ...this.state.settings, language: 'ar' },
+          };
+        }
+      } catch {
+        /* detection never breaks boot */
       }
-      const sanitized = sanitizeRestoredPayload(result.value);
-      this.state = {
-        ...this.state,
-        ...sanitized,
-        // (v5.2.25) a reload is a fresh routine: target-bound counts
-        // restart at 0 (cycles + completion day survive; dial keys keep
-        // their live count — see freshSessionCounters).
-        counters: freshSessionCounters(sanitized.counters),
-        // FIX (review v3.3 B1/B4/B5): settings from storage are untrusted
-        // (tampered localStorage, hostile/older backup imports). The old
-        // shallow spread let crafted strings reach HTML attributes
-        // (stored XSS) and dropped every default key a partial payload
-        // lacked, silently disabling features. sanitizeSettings validates
-        // every field, clamps numbers, checks enums, and deep-merges the
-        // nested objects (prayer / audio / mushafPrefs) over their
-        // defaults.
-        settings: sanitizeSettings(result.value.settings),
-        // Defense-in-depth: localStorage can end up holding malformed custom
-        // content from a bad import, manual tampering, or a bug in an older
-        // version of this app. Normalize on every load so a single corrupted
-        // field can never crash boot — see the "type confusion" incident in
-        // the product review (a string where an array was expected crashed
-        // the entire app on every subsequent load until storage was wiped).
-        customContent: normalizeCustomContentMap(result.value.customContent),
-      };
+      return this.state;
     }
+    // (v5.2.74, BUG-03) a future writer's blob (e.g. localStorage shared
+    // across an app downgrade) is left on disk untouched and ignored —
+    // never mangled into live state. The next upgrade hydrates it again.
+    if (isFuturePayload(result.value)) {
+      console.warn(
+        '[state] ignoring persisted snapshot with future schemaVersion',
+        result.value.schemaVersion
+      );
+      return this.state;
+    }
+    const sanitized = sanitizeRestoredPayload(result.value);
+    this.state = {
+      ...this.state,
+      ...sanitized,
+      // (v5.2.25) a reload is a fresh routine: target-bound counts
+      // restart at 0 (cycles + completion day survive; dial keys keep
+      // their live count — see freshSessionCounters).
+      counters: freshSessionCounters(sanitized.counters),
+      // FIX (review v3.3 B1/B4/B5): settings from storage are untrusted
+      // (tampered localStorage, hostile/older backup imports). The old
+      // shallow spread let crafted strings reach HTML attributes
+      // (stored XSS) and dropped every default key a partial payload
+      // lacked, silently disabling features. sanitizeSettings validates
+      // every field, clamps numbers, checks enums, and deep-merges the
+      // nested objects (prayer / audio / mushafPrefs) over their
+      // defaults.
+      settings: sanitizeSettings(result.value.settings),
+      // Defense-in-depth: localStorage can end up holding malformed custom
+      // content from a bad import, manual tampering, or a bug in an older
+      // version of this app. Normalize on every load so a single corrupted
+      // field can never crash boot — see the "type confusion" incident in
+      // the product review (a string where an array was expected crashed
+      // the entire app on every subsequent load until storage was wiped).
+      customContent: normalizeCustomContentMap(result.value.customContent),
+    };
     return this.state;
   }
 

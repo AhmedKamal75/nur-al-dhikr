@@ -13,7 +13,6 @@ import {
   normalizeCategory,
   validateDocument,
   blankItem,
-  blankCategory,
 } from '../core/schema.js';
 import { clone, uid } from '../core/utils.js';
 
@@ -40,11 +39,6 @@ function pushUndo(prevDoc) {
   const undoStack = [...state.editor.undoStack, prevDoc].slice(-25);
   // NOTE: editor undo/redo stack is intentionally not persisted (ephemeral, in-memory only).
   store.state.editor = { undoStack, redoStack: [] };
-}
-
-/** List every custom library document as an array. */
-export function listCustomLibraries() {
-  return Object.values(store.getState().customContent);
 }
 
 export function getCustomLibrary(libraryId = DEFAULT_CUSTOM_LIBRARY_ID) {
@@ -168,8 +162,5 @@ export function undo() {
 
 export function blankItemTemplate(categoryId) {
   return blankItem(categoryId);
-}
-export function blankCategoryTemplate(libraryId) {
-  return blankCategory(libraryId);
 }
 export { DEFAULT_CUSTOM_LIBRARY_ID };

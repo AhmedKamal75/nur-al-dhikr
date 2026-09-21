@@ -39,6 +39,8 @@ import {
 import { SUNNAH_ITEMS, sunnahToday, sunnahWeek, witrStreak } from '../domain/sunnah.js';
 import { qadaSummary, pendingByPrayer } from '../domain/qada.js';
 import {
+  CITY_PRESETS,
+  CITY_REGIONS,
   LOCATION_PROFILES_PRESETS,
   profileMatchesActive,
   nearbyMosqueMapUrl,
@@ -94,9 +96,24 @@ export function renderPrayer(state) {
       ${emptyStateHTML({
         iconName: 'compass',
         title: t('prayer.locationNeeded', lang),
+        hint: t('prayer.chooseCity', lang),
         actionHTML: `
       <button type="button" class="btn btn--primary" data-action="prayer-request-location">${icon('location', { size: 16 })} ${t('prayer.enableLocation', lang)}</button>
       <button type="button" class="link-btn" data-action="prayer-manual-location">${t('prayer.manualLocation', lang)}</button>`,
+        extraHTML: CITY_REGIONS.map(
+          (r) => `
+        <details class="city-group">
+          <summary>${escapeHTML(t(`prayer.region.${r}`, lang))}</summary>
+          <div class="chip-row" role="group" aria-label="${escapeHTML(t(`prayer.region.${r}`, lang))}">${CITY_PRESETS.filter(
+            (c) => c.region === r
+          )
+            .map(
+              (c) =>
+                `<button type="button" class="chip" data-action="prayer-use-city" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${escapeHTML(lang === 'ar' ? c.ar : c.en)}">${escapeHTML(lang === 'ar' ? c.ar : c.en)}</button>`
+            )
+            .join('')}</div>
+        </details>`
+        ).join(''),
       })}
     </section>`;
   }
@@ -321,7 +338,7 @@ export function renderPrayer(state) {
         <h2>${t('plog.title', lang)}</h2>
         ${
           streak > 0
-            ? `<span class="streak-badge${wasCelebrated('plog-day') ? ' celebrate' : ''}">${icon('flame', { size: 15 })} ${t('plog.streak', lang, { n: streak })}</span>`
+            ? `<span class="streak-badge${wasCelebrated('plog-day') ? ' celebrate' : ''}">${icon('moon', { size: 15 })} ${t('plog.streak', lang, { n: streak })}</span>`
             : ''
         }
       </div>
@@ -409,33 +426,6 @@ export function qadaPanelHTML(state) {
       <button type="button" class="btn btn--primary btn--sm" data-action="qada-add">${icon('plus', { size: 14 })} ${t('qada.add', lang)}</button>
     </div>
     <p class="panel__subtext">${t('qada.hint', lang)}</p>
-  </div>`;
-}
-
-export function travelerPanelHTML(state) {
-  const lang = state.settings.language;
-  const traveler = state.settings.prayer.travelerMode === true;
-  return `
-  <div class="panel panel--traveler view-panel-modal">
-    <div class="panel__header"><h2 id="panel-traveler-title">${t('traveler.title', lang)}</h2></div>
-    <label class="settings-switch">
-      <input type="checkbox" data-action="toggle-traveler-mode" ${traveler ? 'checked' : ''} />
-      <span class="settings-switch__text">
-        <span class="settings-switch__label">${icon('plane', { size: 15 })} ${t('traveler.title', lang)}</span>
-        <span class="settings-switch__hint">${t('traveler.hint', lang)}</span>
-      </span>
-    </label>
-    ${
-      traveler
-        ? `<div class="traveler-note">
-            <p class="panel__subtext">${t('traveler.qasrNote', lang)}</p>
-            <ul class="traveler-qasr-list">
-              ${['dhuhr', 'asr', 'isha'].map((k) => `<li><span>${t('prayer.' + k, lang)}</span><span class="view__meta" dir="ltr">4 → 2</span></li>`).join('')}
-            </ul>
-            <p class="panel__subtext">${t('traveler.jamNote', lang)}</p>
-          </div>`
-        : ''
-    }
   </div>`;
 }
 

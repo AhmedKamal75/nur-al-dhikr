@@ -33,6 +33,18 @@ const NAV_TARGETS = [
   { view: VIEWS.CALENDAR, icon: 'calendar', label: 'nav.calendar' },
   { view: VIEWS.FAVORITES, icon: 'heart', label: 'nav.favorites' },
   { view: VIEWS.SETTINGS, icon: 'settings', label: 'nav.settings' },
+  // (v5.14.0, V9) orphan views: every leaf reachable only by deep-link
+  // joins the palette via its existing title.* label — no new i18n keys,
+  // no chrome change; the palette is the all-access launcher by design.
+  { view: VIEWS.MOOD, icon: 'hands', label: 'title.mood' },
+  { view: VIEWS.FOCUS, icon: 'eye', label: 'title.focus' },
+  { view: VIEWS.QUIZ, icon: 'star', label: 'title.quiz' },
+  { view: VIEWS.ROOTS, icon: 'list', label: 'title.roots' },
+  { view: VIEWS.MUTASHABIHAT, icon: 'copy', label: 'title.mutashabihat' },
+  { view: VIEWS.JOURNAL, icon: 'book', label: 'title.journal' },
+  { view: VIEWS.CERTIFICATE, icon: 'shield', label: 'title.certificate' },
+  { view: VIEWS.AMBIENT, icon: 'moon', label: 'title.ambient' },
+  { view: VIEWS.EDITOR, icon: 'edit', label: 'title.editor' },
 ];
 
 /** Global actions offered from the palette. */

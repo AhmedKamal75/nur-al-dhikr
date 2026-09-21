@@ -49,6 +49,14 @@ export async function boot() {
     // of the error screen every other boot failure gets.
     mountShell();
     store.hydrate();
+    // (v5.14.0, V10b) restored audio budget applies before any download —
+    // otherwise a 50 MiB pref would idle behind the 200 MiB default.
+    try {
+      const { applyAudioCacheCapFromSettings } = await import('../services/audioStore.js');
+      applyAudioCacheCapFromSettings(store.getState().settings);
+    } catch {
+      /* default cap stands; the slider repairs it on next visit */
+    }
     // (v5.2.53) rolling auto-backup heartbeat (fire-and-forget, total):
     // a returning user whose snapshot is older than a week banks a fresh
     // on-device copy; first runs and failures resolve silently.
@@ -239,8 +247,7 @@ export async function boot() {
           store.dispatch(actions.setAudioPlayer({ playing: true }));
           if (outcome && typeof outcome.then === 'function') {
             outcome.then((playing) => {
-              if (playing !== true)
-                store.dispatch(actions.setAudioPlayer({ playing: false }));
+              if (playing !== true) store.dispatch(actions.setAudioPlayer({ playing: false }));
             });
           }
         }

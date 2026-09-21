@@ -47,8 +47,9 @@ describe('search pagination + breakdown', () => {
       const first = renderSearch(searchState({}));
       assert.match(first, /data-action="search-more" data-scope="quran"/, 'quran Load More');
       assert.match(first, /Showing 15 of 20/, 'showing counter');
-      assert.match(first, /Qur’an: 20/, 'breakdown carries the quran total');
-      assert.match(first, /Library: 0/, 'breakdown carries the library total');
+      assert.match(first, /Quran: 20/, 'breakdown carries the quran total');
+      assert.match(first, /Hadith: 0/, 'breakdown carries the hadith total');
+      assert.match(first, /Azkar: 0/, 'breakdown carries the azkar total');
       const rows = (first.match(/class="quran-hit"/g) || []).length;
       assert.equal(rows, 15, 'default window is 15');
 

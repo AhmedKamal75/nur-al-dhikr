@@ -36,9 +36,10 @@ import {
   wordAffixLabels,
   wordIrabLine,
   rootOccurrences,
-  rootMeaningFor,
+  rootStudyEntryFor,
   splitEditions,
   dictEntryFor,
+  materializeWordStudy,
   wordBookmarkKey,
 } from '../domain/wordStudy.js';
 
@@ -106,7 +107,8 @@ export function renderAyahWords(
       // it in (so BOTH readers — classic list and Mushaf book — carry the
       // accent with no per-call-site wiring); an explicit accentWord
       // always wins, and the same skeleton elsewhere gains nothing.
-      const defaultAccent = String(surah) === '32' && String(ayah) === '15' ? 'سُجَّدًا' : null;
+      const defaultAccent =
+        String(surah) === '32' && String(ayah) === '15' ? ['سُجَّدًا', 'سَجَدُوا'] : null;
       const effectiveAccent = accentWord != null ? accentWord : defaultAccent;
       const isAccent = matchesAccentWord(tok, effectiveAccent);
       const isMark = ornamentTokenKind(tok) && ornamentTokenKind(tok) !== 'digits';
@@ -346,42 +348,62 @@ function wordStudyBlock({ labelKey, lang, bodyHTML, emptyKey = null, extraClass 
  *  of words the 54-lemma study dictionary does not cover. */
 function wordDefinitionBody(state, lang, word) {
   const dict = dictEntryFor(state.wordDict, word.lemma);
+  const study = materializeWordStudy(word, word.study, dict);
+  const contextual = study?.contextualMeaning || null;
   const parts = [];
-  if (dict?.ar)
+  if (contextual?.ar) {
+    parts.push(`<p class="word-study__study-label">${t('wordStudy.contextualMeaning', lang)}</p>`);
+    parts.push(
+      `<p class="word-study__dict-ar" dir="rtl" lang="ar">${escapeHTML(contextual.ar)}</p>`
+    );
+  } else if (dict?.ar) {
     parts.push(`<p class="word-study__dict-ar" dir="rtl" lang="ar">${escapeHTML(dict.ar)}</p>`);
-  if (dict?.en) parts.push(`<p class="word-study__dict-en" dir="auto">${escapeHTML(dict.en)}</p>`);
-  if (!parts.length && word.en) {
-    parts.push(`<p class="word-study__dict-en" dir="auto">${escapeHTML(word.en)}</p>`);
+  }
+  const en = study?.englishTranslation || contextual?.en || dict?.en || word.en || '';
+  if (en) {
+    parts.push(`<p class="word-study__study-label">${t('wordStudy.englishTranslation', lang)}</p>`);
+    parts.push(`<p class="word-study__dict-en" dir="auto">${escapeHTML(en)}</p>`);
   }
   return parts.join('');
 }
 
-/** Synonym/antonym chips block body. Empty when the dict has neither. */
+/** Synonym/antonym chips block body. Empty only if neither tier has content. */
 function wordSynAntBody(state, lang, word) {
   const dict = dictEntryFor(state.wordDict, word.lemma);
-  if (!dict || (!dict.syn.length && !dict.ant.length)) return '';
+  const study = materializeWordStudy(word, word.study, dict);
+  const synonyms = dict?.syn || [];
+  const antonyms = Array.isArray(study?.antonyms?.ar) ? study.antonyms.ar : dict?.ant || [];
+  const antonymTierCovered = study?.antonyms?.covered !== false;
+  const noteAr = antonymTierCovered ? study?.antonyms?.noteAr || '' : '';
+  const noteEn = antonymTierCovered ? study?.antonyms?.noteEn || '' : '';
+  if (!synonyms.length && !antonyms.length && !noteAr && !noteEn) return '';
   const chips = (list, labelKey) =>
     list.length
-      ? `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> ${list.map((s) => `<span class="chip chip--basis chip--sm" dir="rtl" lang="ar">${escapeHTML(s)}</span>`).join('')}</div>`
+      ? `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> ${list.map((x) => `<span class="chip chip--basis chip--sm" dir="rtl" lang="ar">${escapeHTML(x)}</span>`).join('')}</div>`
       : '';
-  return `${chips(dict.syn, 'wordStudy.synonyms')}${chips(dict.ant, 'wordStudy.antonyms')}`;
+  const note =
+    noteAr || noteEn
+      ? `<p class="word-study__antonym-note" dir="${lang === 'ar' ? 'rtl' : 'auto'}">${escapeHTML(lang === 'ar' ? noteAr : noteEn)}</p>`
+      : '';
+  return `${chips(synonyms, 'wordStudy.synonyms')}${chips(antonyms, 'wordStudy.antonyms')}${note}`;
 }
 
 /** Root block body: root, its core conceptual meaning, count,
  *  occurrences, and the #/roots deep link. */
 function wordRootBody(state, lang, word, surah, ayah) {
-  if (!word.root) return '';
+  if (!word.root && !word.study?.etymology) return '';
   const { count, sample } = rootOccurrences(state.quranRoots, word.root, surah, ayah, 8);
-  // (v5.6.0) the root's core meaning — the concept every derivative
-  // carries (branching, covering, turning…). Honest hint when the
-  // roots-meaning tier hasn't recorded this root yet.
-  const meaning = rootMeaningFor(state.rootsMeaning, word.root);
-  const meaningHtml = meaning
-    ? `${meaning.ar ? `<p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(meaning.ar)}</p>` : ''}${meaning.en ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(meaning.en)}</p>` : ''}`
+  const meaning = rootStudyEntryFor(state.rootsMeaning, word.root);
+  const study = materializeWordStudy(word, word.study, null, meaning);
+  const et = study?.etymology || null;
+  const rootLabel = et?.root || word.root || '—';
+  const rootData = et || meaning;
+  const meaningHtml = rootData
+    ? `${rootData.rootLetters?.length ? `<p class="word-study__root-letters" dir="rtl" lang="ar">${escapeHTML(rootData.rootLetters.join(' · '))}</p>` : ''}${rootData.classicalUsageAr ? `<p class="word-study__study-label">${t('wordStudy.classicalUsage', lang)}</p><p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.classicalUsageAr)}</p>` : rootData.ar ? `<p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.ar)}</p>` : ''}${rootData.classicalUsageEn ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(rootData.classicalUsageEn)}</p>` : rootData.en ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(rootData.en)}</p>` : ''}${rootData.quranicBridgeAr ? `<p class="word-study__study-label">${t('wordStudy.quranicBridge', lang)}</p><p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.quranicBridgeAr)}</p>` : ''}${rootData.quranicBridgeEn ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(rootData.quranicBridgeEn)}</p>` : ''}`
     : `<p class="empty-hint">${t('wordStudy.noRootMeaningData', lang)}</p>`;
   return `
       <div class="word-study__root-head">
-        <span class="word-study__root-text" dir="rtl" lang="ar">${escapeHTML(word.root)}</span>
+        <span class="word-study__root-text" dir="rtl" lang="ar">${escapeHTML(rootLabel)}</span>
         <span class="word-study__root-count">${t('wordStudy.rootCount', lang, { n: count })}</span>
       </div>
       ${meaningHtml}
@@ -409,7 +431,7 @@ function wordRootBody(state, lang, word, surah, ayah) {
 
 /** I'rab block body: the one-line i'rab + wrapped detail tags. */
 function wordIrabBody(word, lang) {
-  const line = wordIrabLine(word, lang);
+  const line = word.study?.irab?.[lang === 'ar' ? 'ar' : 'en'] || wordIrabLine(word, lang);
   const tags = wordDetailTags(word, lang);
   const tagsHtml = tags.length
     ? `<div class="word-study__tags">${tags.map((tg) => `<span class="chip chip--basis chip--sm">${escapeHTML(tg)}</span>`).join('')}</div>`
@@ -851,7 +873,7 @@ export function buildMushafSettingsPanel(state) {
 
     <h3 class="mushaf-jump__heading">${t('mushaf.bismillahStyle', lang)}</h3>
     <div class="mushaf-settings__bismillah">
-      ${['auto', 'gold', 'accent', 'hidden']
+      ${['auto', 'gold', 'accent']
         .map(
           (st) => `
       <button type="button" class="mushaf-settings__bismillah-chip ${prefs.bismillahStyle === st ? 'mushaf-settings__bismillah-chip--active' : ''}" data-action="mushaf-set-bismillah" data-style="${st}">
@@ -863,6 +885,7 @@ export function buildMushafSettingsPanel(state) {
     </div>
 
     <h3 class="mushaf-jump__heading">${t('mushaf.behavior', lang)}</h3>
+    <p class="panel__subtext" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(t('mushaf.wuduNote', lang))}</p>
     ${toggle('spread', 'mushaf.spread')}
     ${toggle('pageFlipAnimation', 'mushaf.flipAnimation')}
     ${toggle('autoFit', 'mushaf.autoFit')}

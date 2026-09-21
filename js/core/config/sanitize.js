@@ -44,7 +44,7 @@ function sanitizeClockSetting(raw, dflt) {
 const MUSHAF_FONT_IDS = new Set(MUSHAF_FONTS.map((f) => f.id));
 /** (v5.0.0) Module-level id pattern shared by the contentPrefs sanitizers. */
 const SAFE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
-export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent', 'hidden']);
+export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent']);
 const MUSHAF_PAPER_IDS = new Set(MUSHAF_PAPERS.map((p) => p.id));
 const ADHAN_MODE_IDS = new Set(['adhan', 'tone', 'off']);
 /** (v5.10.1) nightstand display modes — mirror of config/views.js AMBIENT_MODES. */
@@ -232,6 +232,10 @@ function sanitizeAudio(raw) {
     // (v5.12.0) echo pause + file volume (player console upgrades).
     echoPauseMs: [3000, 8000, 15000].includes(p.echoPauseMs) ? p.echoPauseMs : 8000,
     fileVolume: asNumber(p.fileVolume, d.fileVolume ?? 1, 0, 1),
+    // (v5.15.0, V5) verse-session base loudness 0..1 (sleep fade multiplies).
+    verseVolume: asNumber(p.verseVolume, d.verseVolume ?? 1, 0, 1),
+    // (v5.14.0) audio IDB budget MiB — hostile numbers clamp, never 0/NaN.
+    audioCacheMB: Math.round(asNumber(p.audioCacheMB, d.audioCacheMB ?? 200, 50, 500)),
   };
 }
 
@@ -253,7 +257,17 @@ function sanitizeCustomReciters(raw) {
       // a crafted backup could point audio fetches at an attacker's host.
       // Mirrors services/audioCatalog.validateCustomServer (core may not
       // import services — layer rule), without the trailing-slash rewrite.
-      .filter((r) => !r.server || /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(r.server))
+      // (v5.13.0, V3) http:// WAN rejected — MITM swap + cleartext IP leak.
+      .filter((r) => {
+        if (!r.server) return true;
+        if (!/^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(r.server)) return false;
+        if (/^http:\/\//i.test(r.server)) {
+          return /^(http:\/\/(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.))/i.test(
+            r.server
+          );
+        }
+        return true;
+      })
   );
 }
 

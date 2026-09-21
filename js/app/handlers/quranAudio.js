@@ -78,6 +78,7 @@ export async function startVerseSurah(
       repeat: state.settings.audio?.ayahRepeat,
       loop: Math.floor(Number(loop)) || 1,
       speed: state.settings.audio?.verseRate ?? 1,
+      baseVolume: state.settings.audio?.verseVolume ?? 1,
     });
   } catch (err) {
     console.error('[surah-playback] failed to start', err);
@@ -535,7 +536,22 @@ export function buildReciterPick(state) {
  * into ephemeral rt state and rebuilds the modal in place (same debounce
  * + focus-restore pattern as the Audio view's own search).
  */
-export const changeHandlers = [];
+export const changeHandlers = [
+  {
+    // (v5.15.0, V5) verse loudness commits on release — the live engine
+    // gets the value instantly; the pref persists for the next session.
+    sel: '[data-bind="recite-volume"]',
+    run: (ds, el) => {
+      const v = Math.max(0, Math.min(100, parseFloat(el.value) || 0)) / 100;
+      store.dispatch(actions.setAudioPrefs({ verseVolume: v }));
+      try {
+        surahPlayback.setBaseVolume(v);
+      } catch {
+        /* no live session — the pref still lands for the next start */
+      }
+    },
+  },
+];
 
 export const inputHandlers = [
   {

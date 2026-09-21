@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "1.0",
+  "tokenCount": 77429,
+  "surahs": 114,
+  "files": 114,
+  "tokenFields": [
+    "contextualMeaning.ar",
+    "contextualMeaning.source",
+    "irab.ar",
+    "irab.en",
+    "irab.source"
+  ],
+  "sharedEtymology": "data/quran-roots-meaning.json",
+  "sharedAntonyms": "data/quran-dict.json",
+  "note": "English word translation remains in data/quran-words/*.json; root and antonym metadata are shared by lemma/root indexes."
+}

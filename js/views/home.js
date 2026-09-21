@@ -8,7 +8,7 @@ import { pickLocale, dateKey, escapeHTML } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { VIEWS, CHECKLIST_ITEMS } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
-import { loadErrorStateHTML } from '../ui/emptyState.js';
+import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 import { completedCount } from '../services/checklist.js';
 import { ramadanInfo } from '../domain/ramadan.js';
 import { resolveHomePanels } from '../domain/homePanels.js';
@@ -402,7 +402,7 @@ export function renderHome(state) {
     <section class="panel panel--progress">
       <div class="panel__header">
         <h2>${t('home.dailyProgress', lang)}</h2>
-        <span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
+        <span class="streak-badge">${icon('moon', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
       </div>
       <div class="progress-bar" role="progressbar" aria-label="${t('home.dailyProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
         <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
@@ -434,7 +434,12 @@ export function renderHome(state) {
         ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
       </div>
     </section>`
-      : `<p class="empty-hint">${t('home.noRecent', lang)}</p>`,
+      : emptyStateHTML({
+          iconName: 'book',
+          title: t('home.blankPage', lang),
+          hint: t('home.noRecent', lang),
+          actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${escapeHTML(t('nav.library', lang))}</a>`,
+        }),
     favorites: favEntries.length
       ? `
     <section class="panel">
@@ -471,6 +476,7 @@ export function renderHome(state) {
       <h1 class="home-hero__title">${t('app.name', lang)}</h1>
       <p class="home-hero__tagline">${t('app.tagline', lang)}</p>
       ${profileChip}
+      ${state.statistics?.totalRecitations === 1 ? `<p class="home-hero__seed" dir="auto">${escapeHTML(t('home.firstSeed', lang))}</p>` : ''}
     </div>
 
     ${nextPrayerStrip(state, lang, prayerTimes)}

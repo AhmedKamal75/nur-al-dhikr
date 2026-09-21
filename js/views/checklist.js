@@ -65,7 +65,7 @@ export function renderChecklist(state) {
       </div>
       <div class="checklist-summary__row">
         <p class="panel__subtext" dir="ltr">${done} / ${total} ${t('checklist.today', lang)}</p>
-        ${streak > 0 ? `<span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('checklist.dayStreak', lang)}</span>` : ''}
+        ${streak > 0 ? `<span class="streak-badge">${icon('moon', { size: 16 })} ${streak} ${t('checklist.dayStreak', lang)}</span>` : ''}
       </div>
     </section>
 

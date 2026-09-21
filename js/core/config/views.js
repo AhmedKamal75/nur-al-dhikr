@@ -418,7 +418,22 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // ayahFollow: continuous recitation keeps the view synced — highlight
   // + auto-scroll (classic reader) and page flips (Mushaf). Persisted so
   // "I read with my eyes on the page" survives reloads.
-  audio: { moshafId: null, rate: 1, repeat: 'off', ayahFollow: true, ayahRepeat: 1, verseRate: 1, echoPauseMs: 8000, fileVolume: 1 },
+  audio: {
+    moshafId: null,
+    rate: 1,
+    repeat: 'off',
+    ayahFollow: true,
+    ayahRepeat: 1,
+    verseRate: 1,
+    echoPauseMs: 8000,
+    fileVolume: 1,
+    // (v5.15.0, V5) verse-session base loudness. The sleep fade multiplies
+    // on top (fade owns the curve); the slider yields while sleep is armed.
+    verseVolume: 1,
+    // (v5.14.0) audio IDB budget in MiB (50–500, default 200) — surfaces
+    // as a slider in the Offline library next to the usage meter.
+    audioCacheMB: 200,
+  },
   // User-added reciters: [{ id, nameEn, nameAr, rewaya, server }]. Lets a
   // person wire in ANY server following the 001.mp3..114.mp3 pattern.
   customReciters: [],

@@ -11,6 +11,7 @@ import {
   QURAN_ROOTS_FULL_URL,
   QURAN_ROOTS_URL,
   QURAN_WORDS_URL,
+  QURAN_WORD_STUDY_URL,
   ROOTS_MEANING_URL,
   TAFSIR_EDITIONS_URL,
   TAFSIR_REMOTE_URL,
@@ -411,8 +412,38 @@ export async function ensureQuranWordsData(state, surahNumber) {
   if (state.quranWords[id] || quranWordsFetchesInFlight.has(id)) return;
   quranWordsFetchesInFlight.add(id);
   try {
-    const words = await fetchJSON(QURAN_WORDS_URL(id));
-    store.dispatch(actions.setQuranWords(id, words));
+    const [words, study] = await Promise.all([
+      fetchJSON(QURAN_WORDS_URL(id)),
+      fetchJSON(QURAN_WORD_STUDY_URL(id)),
+    ]);
+    // Keep the base morphology/gloss corpus byte-for-byte lean on disk;
+    // materialize the token-level contextual/i'rab tier in memory only.
+    // Every canonical word is expected to have a matching study row.
+    const materialized = {};
+    for (const [ayah, rows] of Object.entries(words || {})) {
+      const studyRows = Array.isArray(study?.[ayah]) ? study[ayah] : [];
+      const byIndex = new Map(studyRows.map((row) => [Number(row?.i), row]));
+      materialized[ayah] = (rows || []).map((word) => {
+        const row = byIndex.get(Number(word?.i));
+        if (!row) return { ...word };
+        return {
+          ...word,
+          study: {
+            contextualMeaning: {
+              ar: typeof row.mA === 'string' ? row.mA : '',
+              source: typeof row.mSrc === 'string' ? row.mSrc : '',
+            },
+            irab: {
+              ar: typeof row.iA === 'string' ? row.iA : '',
+              en: typeof row.iE === 'string' ? row.iE : '',
+              source: typeof row.iSrc === 'string' ? row.iSrc : '',
+            },
+            coverage: 'quran-token',
+          },
+        };
+      });
+    }
+    store.dispatch(actions.setQuranWords(id, materialized));
     flagLoad('quran-words', false);
   } catch (err) {
     // (v5.2.87, P1-1) same missing-tier contract as the hadith index above.

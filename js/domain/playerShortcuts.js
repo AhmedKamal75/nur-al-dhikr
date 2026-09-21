@@ -38,8 +38,7 @@ function isInteractiveTarget(t) {
   const tag = String(t.tagName || '').toUpperCase();
   if (tag === 'BUTTON' || tag === 'A' || tag === 'AUDIO' || tag === 'VIDEO') return true;
   try {
-    if (typeof t.closest === 'function' && t.closest('[role="button"], audio, video'))
-      return true;
+    if (typeof t.closest === 'function' && t.closest('[role="button"], audio, video')) return true;
   } catch {
     /* hostile target — treat as plain */
   }
@@ -52,8 +51,7 @@ function ownsArrows(t) {
   if (tag === 'SELECT' || tag === 'TEXTAREA') return true;
   if (tag === 'INPUT') return true; // ranges, numbers, text: native keys win
   try {
-    if (typeof t.closest === 'function' && t.closest('input[type="range"], select'))
-      return true;
+    if (typeof t.closest === 'function' && t.closest('input[type="range"], select')) return true;
   } catch {
     /* hostile target — treat as plain */
   }
@@ -64,7 +62,9 @@ function ownsArrows(t) {
   try {
     if (
       typeof t.closest === 'function' &&
-      t.closest('.mushaf-ayah[tabindex], .mushaf-ayah__marker[tabindex], .qword[data-action="word-tap"], .pu[data-action="practice-tap"]')
+      t.closest(
+        '.mushaf-ayah[tabindex], .mushaf-ayah__marker[tabindex], .qword[data-action="word-tap"], .pu[data-action="practice-tap"]'
+      )
     )
       return true;
   } catch {

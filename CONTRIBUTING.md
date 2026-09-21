@@ -35,10 +35,16 @@ inputs — don't commit them.
 4. **Never claim a test/audit ran unless you ran it in this session.**
    Numbers you quote (test counts, file counts) must come from actual
    runs — docs numbers are regenerated from counts, never typed.
-5. **Version bumps are lockstep**: `package.json`, `APP_VERSION` in
+5. **Version bumps are lockstep — and a version isn't real until it's
+   committed**: `package.json`, `APP_VERSION` in
    `js/core/config.js`, `VERSION` in `sw.js`, `version` + `version_name`
    in `manifest.json`, a `docs/RELEASES.md` entry — then
    `npm run snapshot-shell` (the contract gate enforces all of it).
+   The bump rides in its release commit, made in the same session that
+   produced it, with the version first in the message (`v5.17.2 …`).
+   File edits alone are not a release: v5.13–v5.17 once lived only as
+   uncommitted edits while the files claimed v5.17.2 and the history
+   still said v5.12.1. Agents: commit while you are working.
 
 ## Pull requests
 

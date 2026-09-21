@@ -26,6 +26,9 @@ function fakeEl(sel) {
 }
 
 test('D: every arm survived the move (35 change + 17 input)', () => {
+  // 35 = 34 inherited + offline audio-cache arm (v5.14.0); the orphaned
+  // traveler checkbox arm died with travelerPanelHTML (v5.15.0 kill) —
+  // its toggle rides the view-sheet switch instead.
   assert.equal(changeRegistry.length, 35);
   assert.equal(inputRegistry.length, 17);
 });
@@ -117,7 +120,11 @@ test('D: file volume commits through change, previews through input (v5.12.0)', 
     change.run({}, { ...fakeEl(), value: '40' });
     assert.equal(store.getState().settings.audio.fileVolume, 0.4, 'change persists 0..1');
     change.run({}, { ...fakeEl(), value: 'junk' });
-    assert.equal(store.getState().settings.audio.fileVolume, 0, 'hostile commits silence, never NaN');
+    assert.equal(
+      store.getState().settings.audio.fileVolume,
+      0,
+      'hostile commits silence, never NaN'
+    );
     input.run({}, { ...fakeEl(), value: '80' });
     assert.equal(
       store.getState().settings.audio.fileVolume,
@@ -128,6 +135,19 @@ test('D: file volume commits through change, previews through input (v5.12.0)', 
   } finally {
     delete globalThis.Audio;
   }
+});
+
+test('D: audio-cache-limit change clamps 50..500 and persists', () => {
+  const entry = changeRegistry.find((e) => e.sel === '[data-bind="audio-cache-limit"]');
+  assert.ok(entry, 'offline cache arm registered');
+  const before = store.getState().settings.audio.audioCacheMB;
+  entry.run({}, { ...fakeEl(), value: '9999' });
+  assert.equal(store.getState().settings.audio.audioCacheMB, 500);
+  entry.run({}, { ...fakeEl(), value: '10' });
+  assert.equal(store.getState().settings.audio.audioCacheMB, 50);
+  entry.run({}, { ...fakeEl(), value: '150' });
+  assert.equal(store.getState().settings.audio.audioCacheMB, 150);
+  store.dispatch(actions.setAudioPrefs({ audioCacheMB: before ?? 200 }));
 });
 
 test('D: a throwing run surfaces through the boundary instead of escaping', () => {

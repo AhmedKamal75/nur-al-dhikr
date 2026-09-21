@@ -398,7 +398,9 @@ export const formHandlers = {
     const name = String(fd.get('name') || '').trim();
     const check = validateCustomServer(fd.get('server'));
     if (!name || !check.ok) {
-      showToast(t('audio.customInvalid', lang));
+      showToast(
+        t(check.reason === 'http-blocked' ? 'audio.customHttpBlocked' : 'audio.customInvalid', lang)
+      );
       return;
     }
     showToast(t('audio.customChecking', lang));

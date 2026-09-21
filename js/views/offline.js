@@ -54,6 +54,16 @@ export function renderOffline(state) {
     ac && Number.isFinite(ac.bytes) && Number.isFinite(ac.cap) && ac.cap > 0
       ? `<p class="panel__subtext" dir="ltr">${escapeHTML(t('offline.audioCache', lang))}: ${escapeHTML(formatBytes(ac.bytes))} / ${escapeHTML(formatBytes(ac.cap))}</p>`
       : '';
+  // (v5.14.0, V10b) user-set budget slider (50–500 MiB) under the meter.
+  const cacheMB = (() => {
+    const n = Math.round(Number(state.settings.audio?.audioCacheMB));
+    return Number.isFinite(n) && n >= 50 && n <= 500 ? n : 200;
+  })();
+  const cacheSlider = `
+      <label class="field">${escapeHTML(t('offline.cacheLimit', lang))} · <span dir="ltr">${cacheMB} MB</span>
+        <input type="range" class="slider" min="50" max="500" step="50" value="${cacheMB}" dir="ltr" data-bind="audio-cache-limit" aria-label="${escapeHTML(t('offline.cacheLimit', lang))}" />
+      </label>
+      <p class="panel__subtext">${escapeHTML(t('offline.cacheLimitHint', lang))}</p>`;
 
   const rows = OFFLINE_GROUPS.map((g) => {
     const mb = compressed ? g.gzMB : g.sizeMB;
@@ -82,6 +92,7 @@ export function renderOffline(state) {
     <section class="panel">
       ${meter}
       ${audioMeter}
+      ${cacheSlider}
       ${
         running
           ? `
@@ -103,6 +114,8 @@ export function renderOffline(state) {
     <section class="panel">
       <div class="panel__header"><h2>${t('offline.storageModeTitle', lang)}</h2></div>
       <p class="panel__subtext">${t('offline.storageModeBody', lang)}</p>
+      <p class="panel__subtext">${t('offline.clearStudyBody', lang)}</p>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="offline-clear-study" ${running ? 'disabled' : ''}>${icon('trash', { size: 14 })} ${escapeHTML(t('offline.clearStudy', lang))}</button>
       <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
         <span class="mushaf-sheet__label">${t('offline.compressedLabel', lang)}</span>
         <span class="switch">

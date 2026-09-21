@@ -60,9 +60,7 @@ describe('tap-parallel warm at session start', () => {
     try {
       start({ surah: 1, total: 7, reciterId: 'ar.alafasy', surahsMeta: SURAHS });
       await settle();
-      const want = [2, 3, 4, 5, 6].map((a) =>
-        ayahAudioUrl(SURAHS, 'ar.alafasy', 1, a)
-      );
+      const want = [2, 3, 4, 5, 6].map((a) => ayahAudioUrl(SURAHS, 'ar.alafasy', 1, a));
       const unique = [...new Set(d.preloaded)];
       assert.deepEqual(unique, want, 'horizon preloads the next ayahs in order');
     } finally {

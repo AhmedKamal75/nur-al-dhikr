@@ -281,6 +281,12 @@ export function reduceLibrary(state, action) {
       };
     }
 
+    // (v5.15.0, V12) parent wipe: stars back to the initial shape. The
+    // quiz session is ephemeral (never persisted) so nothing else to clear.
+    case 'KIDS_ERASE_STARS': {
+      return { ...state, kidsStars: { total: 0, days: {} } };
+    }
+
     // Kids memory-quiz session (ephemeral): prebuilt round only — the
     // reducer validates shape and walks the session, never shuffles.
     case 'KIDS_QUIZ_START': {

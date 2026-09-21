@@ -21,7 +21,6 @@ import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
-import { VIEWS } from '../core/config.js';
 
 /** The small ⋯ button every view header can carry. `menuId` selects which
  *  sheet the handler opens (data-menu attribute). */
@@ -83,11 +82,6 @@ export function viewSheet({ titleKey, lang, labelledBy, groups, footnote = '', i
     </div>`
       )
       .join('')}
-    ${footnote ? `<p class="view-sheet__footnote">${footnote}</p>` : ''}
+     ${footnote ? `<p class="view-sheet__footnote">${footnote}</p>` : ''}
   </div>`;
 }
-
-/** The Editor route stays deep-linkable; this row is how power users reach
- *  it now that the nav tab is gone. */
-export const EDITOR_ROUTE_ROW = (lang) =>
-  sheetLinkRow('library.openEditor', 'edit', VIEWS.EDITOR, {}, lang);

@@ -173,7 +173,12 @@ test('mini-player: compact head (pause + dismiss) over a chip strip', () => {
 });
 
 test('swipe minimize: resolves the bar chevron, the fs sibling, or null', () => {
-  const chevron = { clicked: 0, click() { this.clicked += 1; } };
+  const chevron = {
+    clicked: 0,
+    click() {
+      this.clicked += 1;
+    },
+  };
   // Windowed bar / fs console rows carry their own chevron.
   const bar = { querySelector: () => chevron, parentElement: null };
   assert.equal(resolveMinControl(bar), chevron, 'own chevron wins');
@@ -193,7 +198,11 @@ test('swipe minimize: resolves the bar chevron, the fs sibling, or null', () => 
   assert.equal(resolveMinControl(undefined), null);
   assert.equal(resolveMinControl({}), null, 'no querySelector, no crash');
   assert.equal(
-    resolveMinControl({ querySelector: () => { throw new Error('hostile'); } }),
+    resolveMinControl({
+      querySelector: () => {
+        throw new Error('hostile');
+      },
+    }),
     null,
     'throwing querySelector, no crash'
   );

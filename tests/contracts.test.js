@@ -424,4 +424,11 @@ describe('contract: cache-first bytes change only with a version bump', () => {
         'bump the five markers and run npm run snapshot-shell'
     );
   });
+
+  test('data/manifest.json lists every bundled corpus file (V14)', () => {
+    const manifest = JSON.parse(readProject('data/manifest.json'));
+    assert.ok(Array.isArray(manifest.files) && manifest.files.length > 10);
+    const missing = manifest.files.filter((f) => !existsSync(`${ROOT}data/${f}`));
+    assert.deepEqual(missing, [], `manifest lists missing files: ${missing.join(', ')}`);
+  });
 });

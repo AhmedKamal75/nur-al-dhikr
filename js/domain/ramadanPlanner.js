@@ -87,21 +87,3 @@ export function ramadanKhatmPlan({ hijri, ramadanLength = 30, pagesReadInRamadan
     onTrack: pagesReadInRamadan >= Math.round((604 / ramadanLength) * day),
   };
 }
-
-/**
- * The next fasting-boundary event: suhoor ends at Fajr, iftar at Maghrib.
- * `times` is the day-relative prayer-times map (decimal hours); returns
- * { kind:'suhoor'|'iftar', hours } where hours is day-relative (may exceed
- * 24 for tomorrow's Fajr — the same convention the v4.3 prayer engine
- * uses), or null. The view derives the clock label and the countdown.
- */
-export function nextBoundary(times, now = new Date()) {
-  if (!times || typeof times !== 'object') return null;
-  const fajr = Number(times.fajr);
-  const maghrib = Number(times.maghrib);
-  if (!Number.isFinite(fajr) || !Number.isFinite(maghrib)) return null;
-  const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-  if (nowHours < fajr) return { kind: 'suhoor', hours: fajr };
-  if (nowHours < maghrib) return { kind: 'iftar', hours: maghrib };
-  return { kind: 'suhoor', hours: fajr + 24 };
-}

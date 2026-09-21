@@ -22,7 +22,10 @@ test('player fs minimize: pill overlays the book, restore returns', async ({ pag
   await page.locator('[data-action="mushaf-toggle-fullscreen"]').first().click();
   await expect(page.locator('body.is-mushaf-fullscreen')).toBeAttached({ timeout: 8000 });
   // Start a verse session from the fullscreen play button.
-  await page.locator('.mushaf-fs-controls [data-action="surah-play"]').first().click({ force: true });
+  await page
+    .locator('.mushaf-fs-controls [data-action="surah-play"]')
+    .first()
+    .click({ force: true });
   await expect(page.locator('.mushaf-fs-console')).toBeVisible({ timeout: 20000 });
   // The fs console carries minimize.
   const fsMin = page.locator('.mushaf-fs-console [data-action="player-min-toggle"]').first();

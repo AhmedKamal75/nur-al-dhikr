@@ -47,6 +47,26 @@ export const clickHandlers = {
     openModal(manualLocationFormHTML(lang, p), { labelledBy: 'modal-title-location' });
   },
 
+  // (v5.14.0, V2) one-tap city preset: city-center coordinates, honest
+  // approximate. Manual entry + GPS remain; this only unlocks the times.
+  'prayer-use-city': (ds) => {
+    const lang = store.getState().settings.language;
+    const lat = Number(ds.lat);
+    const lng = Number(ds.lng);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90) return;
+    if (lng < -180 || lng > 180) return;
+    store.dispatch(
+      actions.updatePrayerSettings({
+        latitude: lat,
+        longitude: lng,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        locationName: String(ds.name || '').slice(0, 80),
+        locationAccuracy: null,
+      })
+    );
+    showToast(t('prayer.locationSet', lang));
+  },
+
   'qibla-enable-compass': async () => {
     const granted = await compass.requestPermission();
     const lang = store.getState().settings.language;
@@ -58,16 +78,8 @@ export const clickHandlers = {
   },
 };
 
-/** change registry (Blueprint D): { sel, run(ds, el, e) }. */
-export const changeHandlers = [
-  {
-    sel: '[data-action="toggle-traveler-mode"]',
-    run: (ds, el) => {
-      const next = el.checked === true;
-      store.dispatch(actions.updatePrayerSettings({ travelerMode: next }));
-      showToast(
-        t(next ? 'traveler.enabled' : 'traveler.disabled', store.getState().settings.language)
-      );
-    },
-  },
-];
+/** change registry (Blueprint D): { sel, run(ds, el, e) }. No arms: the
+ *  traveler toggle rides the view-sheet switch (`view-toggle-traveler` in
+ *  handlers/viewMenus.js) — the checkbox arm died with travelerPanelHTML
+ *  (v5.15.0 kill) and is kept empty so the registry shape stays stable. */
+export const changeHandlers = [];

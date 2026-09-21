@@ -139,6 +139,21 @@ describe('P0-2: orthography, sajdah accent, waqf system', () => {
   test('P0-2b: the sajdah line accent renders on 32:15 only, bytes unchanged', () => {
     const meta = readJSON('data/quran-meta.json');
     const sajdah32 = meta.surahs.find((s) => s.number === 32);
+    const annotations = readJSON('data/mushaf-annotations.json');
+    const exactSajdah = annotations.sajdah.find(
+      (entry) => entry.surah === 32 && entry.ayah === 15 && entry.word === 'سَجَدُوا'
+    );
+    assert.ok(
+      exactSajdah?.overline === true,
+      'exact سَجَدُوا annotation carries sajdah overline metadata'
+    );
+    assert.ok(
+      exactSajdah.displayForms.includes('سُجَّدًا'),
+      'annotation also understands the bundled Uthmani surface'
+    );
+    assert.ok(annotations.tajweed.doubleUnderlineRules.includes('madd_2'));
+    assert.ok(annotations.tajweed.doubleUnderlineRules.includes('madd_munfasil'));
+    assert.equal(annotations.tajweed.doubleUnderlineEnabledByDefault, true);
     const page = readJSON('data/mushaf-meta.json').ayahPages['32:15'];
     assert.equal(page, 416, 'the corpus still puts 32:15 on mushaf page 416');
     const doc = readJSON(`data/mushaf/${page}.json`);

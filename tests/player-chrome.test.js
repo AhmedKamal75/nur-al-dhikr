@@ -10,25 +10,32 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import { shortcutActionForKey } from '../js/domain/playerShortcuts.js';
-import {
-  renderMushaf,
-  buildMushafPlayPick,
-  buildMushafSheet,
-} from '../js/views/mushafReader.js';
+import { renderMushaf, buildMushafPlayPick, buildMushafSheet } from '../js/views/mushafReader.js';
 import { firstAyahOnPage, buildFullscreenConsole, fileConsole } from '../js/views/mushafPlayer.js';
 import { renderPlayerBar } from '../js/views/playerBar.js';
 import { consoleSnapshot } from '../js/ui/recitationConsole.js';
 import { DEFAULT_SETTINGS } from '../js/core/config.js';
 import { actions, store } from '../js/core/state.js';
 import { mergedClickHandlers } from '../js/app/events.js';
-import { setMuted as setRecitationMuted, isMuted as isRecitationMuted, setVolume as setRecitationVolume, resetRecitationForTests } from '../js/services/recitation.js';
-import { setMuted as setPlayerMuted, isMuted as isPlayerMuted, setVolume as setPlayerVolume, resetPlayerForTests } from '../js/services/player.js';
+import {
+  setMuted as setRecitationMuted,
+  isMuted as isRecitationMuted,
+  setVolume as setRecitationVolume,
+  resetRecitationForTests,
+} from '../js/services/recitation.js';
+import {
+  setMuted as setPlayerMuted,
+  isMuted as isPlayerMuted,
+  setVolume as setPlayerVolume,
+  resetPlayerForTests,
+} from '../js/services/player.js';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
 const mushafMeta = readJSON('data/mushaf-meta.json');
 const quranMeta = readJSON('data/quran-meta.json');
-const surah2 = readJSON('data/quran/2.json');
+const surah1 = readJSON('data/quran/1.json');
+const surah2 = surah1;
 const pageDocs = {};
 for (const n of [1, 2, 3]) {
   pageDocs[n] = readJSON(`data/mushaf/${n}.json`);
@@ -37,7 +44,12 @@ for (const n of [1, 2, 3]) {
 function baseState(overrides = {}) {
   const { settings: settingsOverride, ...rest } = overrides;
   return {
-    settings: { ...DEFAULT_SETTINGS, language: 'en', audio: { ayahFollow: true }, ...(settingsOverride || {}) },
+    settings: {
+      ...DEFAULT_SETTINGS,
+      language: 'en',
+      audio: { ayahFollow: true },
+      ...(settingsOverride || {}),
+    },
     activeParams: { page: 2 },
     activeView: 'mushaf',
     quran: { meta: quranMeta, surahs: { 2: surah2 } },
@@ -86,7 +98,10 @@ describe('keyboard classifier guards', () => {
       assert.equal(shortcutActionForKey(keyEvent('m', t)), null, `${tag} m`);
       assert.equal(shortcutActionForKey(keyEvent('ArrowLeft', t)), null, `${tag} arrows`);
     }
-    assert.equal(shortcutActionForKey(keyEvent('m', { tagName: 'DIV', isContentEditable: true })), null);
+    assert.equal(
+      shortcutActionForKey(keyEvent('m', { tagName: 'DIV', isContentEditable: true })),
+      null
+    );
   });
 
   test('Space on buttons/links keeps native activate; arrows do not steal ranges', () => {
@@ -288,7 +303,8 @@ describe('mute plumbing', () => {
     assert.equal(typeof mergedClickHandlers['player-seek-fwd'], 'function');
   });
 
-  test('file volume slider reflects the pref, yields to sleep (v5.12.0)', () => {    const bar = (audio, player, lang = 'en') =>
+  test('file volume slider reflects the pref, yields to sleep (v5.12.0)', () => {
+    const bar = (audio, player, lang = 'en') =>
       renderPlayerBar({
         settings: { language: lang, audio, reciter: 'ar.alafasy' },
         surahPlayback: { active: false, surah: null },
@@ -300,7 +316,10 @@ describe('mute plumbing', () => {
     assert.ok(html.includes('data-player-volume'), 'slider present');
     assert.ok(html.includes('value="40"'), 'slider reflects the saved volume');
     assert.ok(!html.includes('audio.volume'), 'volume label resolves');
-    const armed = bar({ fileVolume: 0.4 }, { sleepEnabled: true, sleepMinutes: 15, sleepLabel: '14:59' });
+    const armed = bar(
+      { fileVolume: 0.4 },
+      { sleepEnabled: true, sleepMinutes: 15, sleepLabel: '14:59' }
+    );
     assert.ok(armed.includes('disabled'), 'slider yields while sleep is armed');
     assert.ok(armed.includes('Sleep timer controls volume'), 'yield reason named');
     const ar = bar({ fileVolume: 1 }, {}, 'ar');
@@ -308,7 +327,8 @@ describe('mute plumbing', () => {
     assert.ok(!ar.includes('audio.volumeSleep'), 'no raw key leaks (AR)');
   });
 
-  test('mushaf Listen sheet re-homes speed + sleep (v5.12.0)', () => {    const st = baseState({
+  test('mushaf Listen sheet re-homes speed + sleep (v5.12.0)', () => {
+    const st = baseState({
       settings: {
         ...DEFAULT_SETTINGS,
         language: 'en',
@@ -340,7 +360,10 @@ describe('mute plumbing', () => {
       },
       'en'
     );
-    for (const [name, html] of [['windowed', bar], ['fullscreen', fs]]) {
+    for (const [name, html] of [
+      ['windowed', bar],
+      ['fullscreen', fs],
+    ]) {
       const prev = html.split('data-action="player-prev"')[1].split('data-action=')[0];
       const next = html.split('data-action="player-next"')[1].split('data-action=')[0];
       assert.ok(prev.includes('M9 5l7 7-7 7'), `prev is right chevron (${name})`);
@@ -359,7 +382,11 @@ describe('start-from-here', () => {
     assert.equal(firstAyahOnPage(docs, 3), null, 'absent surah');
     assert.equal(firstAyahOnPage(null, 2), null);
     assert.equal(firstAyahOnPage(docs, 115), null, 'out of range');
-    assert.equal(firstAyahOnPage([{ chapters: [{ number: 1, verses: [{ number: 0 }, { number: 1 }] }] }], 1), 1, 'bismillah marker skipped');
+    assert.equal(
+      firstAyahOnPage([{ chapters: [{ number: 1, verses: [{ number: 0 }, { number: 1 }] }] }], 1),
+      1,
+      'bismillah marker skipped'
+    );
   });
 
   test('play-pick offers from-here when the page starts mid-surah', () => {

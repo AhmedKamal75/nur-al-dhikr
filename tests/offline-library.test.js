@@ -3,6 +3,7 @@
  * progress-slice discipline, sanitizer boundary, and view rendering.
  */
 import test from 'node:test';
+import { skipIfSeed } from './helpers/seedMode.mjs';
 import assert from 'node:assert/strict';
 
 import {
@@ -20,7 +21,8 @@ import { initialState } from '../js/core/state/initial.js';
 import { sanitizeSettings } from '../js/core/config.js';
 import { renderOffline } from '../js/views/offline.js';
 
-test('inventory: six groups with honest file counts', () => {
+test('inventory: six groups with honest file counts', (t) => {
+  if (skipIfSeed(t)) return;
   assert.deepEqual(
     [...OFFLINE_GROUP_IDS],
     ['quran', 'translations', 'mushaf', 'hadith', 'tafsir', 'words']
@@ -135,4 +137,23 @@ test('view: running renders progress + stop; done rows check out', () => {
     offlineState({ settings: { offline: { hadith: { done: 9, total: 9, at: 1 } } } })
   );
   assert.ok(done.includes('offline-row__status--done'));
+});
+
+test('view: storage panel offers explicit study-data cleanup (audit F-04)', () => {
+  const html = renderOffline(offlineState());
+  assert.ok(html.includes('data-action="offline-clear-study"'), 'clear button present');
+  const running = renderOffline(
+    offlineState({ offlineJobs: { running: true, done: 1, total: 2, failed: 0, quota: null } })
+  );
+  assert.ok(
+    /data-action="offline-clear-study"[^>]*disabled/.test(running),
+    'clear disabled mid-batch'
+  );
+});
+
+test('handlers: offline-clear-study is wired to a study-data reset', async () => {
+  const { clickHandlers } = await import('../js/app/handlers/offline.js');
+  assert.equal(typeof clickHandlers['offline-clear-study'], 'function');
+  const { clearStudyData } = await import('../js/app/offlineJobs.js');
+  assert.equal(typeof clearStudyData, 'function');
 });

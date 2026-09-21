@@ -63,9 +63,11 @@ export function isTafsirSearchReady() {
 }
 
 export function searchTafsir(query, { limit = 24 } = {}) {
+  const resultLimit = limit == null ? Infinity : Number(limit);
+  const safeLimit = Number.isFinite(resultLimit) ? Math.max(0, resultLimit) : Infinity;
   const raw = String(query ?? '');
   if (!raw.trim() || !tafsirRecords.length) return [];
-  if (lastSearch.query === raw && lastSearch.limit === limit && lastSearch.results) {
+  if (lastSearch.query === raw && lastSearch.limit === safeLimit && lastSearch.results) {
     return lastSearch.results;
   }
   const q = normalizeSearch(raw);
@@ -88,7 +90,7 @@ export function searchTafsir(query, { limit = 24 } = {}) {
     results.push({ s: rec.s, a: rec.a, score });
   }
   results.sort((a, b) => b.score - a.score || a.s - b.s || a.a - b.a);
-  const out = results.slice(0, limit);
-  lastSearch = { query: raw, limit, results: out };
+  const out = results.slice(0, safeLimit);
+  lastSearch = { query: raw, limit: safeLimit, results: out };
   return out;
 }

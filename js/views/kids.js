@@ -175,6 +175,7 @@ export function renderKids(state) {
         .join('')}</ul>`
           : ''
       }
+      ${total > 0 ? `<button type="button" class="btn btn--ghost btn--sm" data-action="kids-erase">${t('kids.erase', lang)}</button>` : ''}
     </section>
 
     <a class="kids-tasbih" href="${buildHash(VIEWS.TASBIH)}" data-action="navigate" data-view="${VIEWS.TASBIH}">

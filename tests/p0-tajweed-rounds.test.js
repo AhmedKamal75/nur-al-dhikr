@@ -14,6 +14,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { SEED_MODE } from './helpers/seedMode.mjs';
 import path from 'node:path';
 
 import { classifyAyahTajweed, TAJWEED_RULES } from '../js/domain/tajweed.js';
@@ -23,7 +24,6 @@ import {
   pickRoundEntries,
   PRACTICE_ROUND_SIZE,
   PRACTICE_POOL_MIN,
-  PRACTICE_POOL_CAP,
 } from '../js/domain/tajweedPractice.js';
 import { recordQuizMiss, sanitizeQuizMissRecords } from '../js/domain/quiz.js';
 import { actions, store } from '../js/core/state.js';
@@ -40,14 +40,29 @@ const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'))
 const pool = readJSON('data/tajweed-practice.json');
 
 describe('P0-5a: practice pool covers every rule with real rows', () => {
-  test('every TAJWEED_RULES id has at least PRACTICE_POOL_MIN pool rows', () => {
+  test('every TAJWEED_RULES id has its complete shipped Quranic corpus coverage', () => {
     for (const rule of TAJWEED_RULES) {
       const rows = pool.byRule[rule.id] || [];
+      const expectedAyahs = Number(pool.coverage?.[rule.id]?.ayahs || 0);
+      if (SEED_MODE && expectedAyahs === 0) continue;
+      const requiredMin = SEED_MODE
+        ? Math.min(PRACTICE_POOL_MIN, expectedAyahs)
+        : PRACTICE_POOL_MIN;
       assert.ok(
-        rows.length >= PRACTICE_POOL_MIN,
-        `rule ${rule.id} has only ${rows.length} rows (min ${PRACTICE_POOL_MIN})`
+        rows.length >= requiredMin,
+        `rule ${rule.id} has only ${rows.length} rows (min ${requiredMin})`
       );
-      assert.ok(rows.length <= PRACTICE_POOL_CAP, `rule ${rule.id} exceeds cap`);
+      assert.equal(rows.length, expectedAyahs, `rule ${rule.id} rows must equal shipped coverage`);
+      for (const level of ['1', '2', '3']) {
+        const levelRows = pool.levels?.[level]?.[rule.id] || [];
+        assert.ok(levelRows.length > 0, `rule ${rule.id} missing level ${level}`);
+        if (level === '3')
+          assert.equal(
+            levelRows.length,
+            rows.length,
+            `rule ${rule.id} level 3 is not full coverage`
+          );
+      }
     }
   });
 

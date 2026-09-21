@@ -86,26 +86,24 @@ describe('restore: seen-flags sanitize, position stays ephemeral', () => {
 });
 
 describe('wizard panel: one step at a time', () => {
-  test('fresh users meet location first, with position + progress', () => {
+  test('fresh users meet language first, with position + progress', () => {
     const html = onboardingPanelHTML(wizardState(), 'en');
-    assert.ok(html.includes('Set your location'), 'step title');
-    assert.ok(html.includes('data-action="prayer-request-location"'), 'geolocation priming action');
-    assert.ok(html.includes('Enable Location'), 'priming button label');
-    assert.ok(html.includes('Enter manually'), 'manual fallback link');
-    assert.ok(html.includes('1 / 6'), 'bare position indicator');
-    assert.ok(html.includes('0 of 6 steps done'), 'progress line');
+    assert.ok(html.includes('Choose your language'), 'step title');
+    assert.ok(html.includes('data-action="onboarding-language"'), 'language pick actions');
+    assert.ok(html.includes('1 / 8'), 'bare position indicator');
+    assert.ok(html.includes('0 of 8 steps done'), 'progress line');
     assert.ok(html.includes('data-action="onboarding-step"'), 'Next control');
     assert.ok(!html.match(/data-idx="-1"/), 'no Back on the first step');
     assert.ok(html.includes('data-action="onboarding-dismiss"'), 'dismiss survives');
   });
 
   test('explicit position overrides; Back appears past the first step', () => {
-    const s = { ...wizardState(), ui: { contentManage: false, onboardingStep: 4 } };
+    const s = { ...wizardState(), ui: { contentManage: false, onboardingStep: 6 } };
     const html = onboardingPanelHTML(s, 'en');
     assert.ok(html.includes('Install the app'), 'override shows install');
-    assert.ok(html.includes('5 / 6'), 'position follows the override');
-    assert.ok(html.includes('data-idx="3"'), 'Back control');
-    assert.ok(html.includes('data-idx="5"'), 'Next control');
+    assert.ok(html.includes('7 / 8'), 'position follows the override');
+    assert.ok(html.includes('data-idx="5"'), 'Back control');
+    assert.ok(html.includes('data-idx="7"'), 'Next control');
   });
 
   test('position follows the first incomplete step', () => {
@@ -114,11 +112,15 @@ describe('wizard panel: one step at a time', () => {
         ...wizardState().settings,
         prayer: { latitude: 30, longitude: 31, method: 'MWL', asr: 'Standard' },
       },
-      onboarding: { dismissed: false, settingsVisited: false, stepsSeen: {} },
+      onboarding: {
+        dismissed: false,
+        settingsVisited: false,
+        stepsSeen: { language: true, comfort: true },
+      },
     });
     const html = onboardingPanelHTML(s, 'en', { notificationsGranted: false });
     assert.ok(html.includes('Prayer alerts'), 'location done → notifications');
-    assert.ok(html.includes('2 / 6'), 'position advances');
+    assert.ok(html.includes('4 / 8'), 'position advances');
     assert.ok(html.includes('data-action="notifications-enable"'), 'priming action');
   });
 
@@ -127,6 +129,11 @@ describe('wizard panel: one step at a time', () => {
       settings: {
         ...wizardState().settings,
         prayer: { latitude: 30, longitude: 31, method: 'MWL', asr: 'Standard' },
+      },
+      onboarding: {
+        dismissed: false,
+        settingsVisited: false,
+        stepsSeen: { language: true, comfort: true },
       },
     });
     const html = onboardingPanelHTML(s, 'en', { notificationsGranted: true });
@@ -143,6 +150,11 @@ describe('wizard panel: one step at a time', () => {
           ...wizardState().settings,
           prayer: { latitude: 30, longitude: 31, method: 'MWL', asr: 'Standard' },
         },
+        onboarding: {
+          dismissed: false,
+          settingsVisited: false,
+          stepsSeen: { language: true, comfort: true },
+        },
       });
       const html = onboardingPanelHTML(s, 'en');
       assert.ok(html.includes('blocked for this site'), 'denied note renders');
@@ -157,7 +169,7 @@ describe('wizard panel: one step at a time', () => {
   });
 
   test('prayer step carries live method/Asr controls plus confirm', () => {
-    const s = { ...wizardState(), ui: { contentManage: false, onboardingStep: 2 } };
+    const s = { ...wizardState(), ui: { contentManage: false, onboardingStep: 4 } };
     const html = onboardingPanelHTML(s, 'en');
     assert.ok(html.includes('data-bind="prayer-method"'), 'method select reuses the pipeline');
     assert.ok(html.includes('Muslim World League'), 'all seven methods listed');
@@ -169,7 +181,7 @@ describe('wizard panel: one step at a time', () => {
   });
 
   test('goals step carries the daily-goal input plus confirm', () => {
-    const s = { ...wizardState(), ui: { contentManage: false, onboardingStep: 3 } };
+    const s = { ...wizardState(), ui: { contentManage: false, onboardingStep: 5 } };
     const html = onboardingPanelHTML(s, 'en');
     assert.ok(html.includes('data-bind="dailyGoal"'), 'goal input reuses the pipeline');
     assert.ok(
@@ -178,16 +190,27 @@ describe('wizard panel: one step at a time', () => {
     );
   });
 
+  test('language step offers both languages; comfort offers text size', () => {
+    const first = onboardingPanelHTML(wizardState(), 'en');
+    assert.ok(first.includes('data-action="onboarding-language" data-lang="ar"'), 'Arabic pick');
+    assert.ok(first.includes('data-action="onboarding-language" data-lang="en"'), 'English pick');
+    const s = { ...wizardState(), ui: { contentManage: false, onboardingStep: 1 } };
+    const html = onboardingPanelHTML(s, 'en');
+    assert.ok(html.includes('data-action="onboarding-comfort" data-big="1"'), 'big-text yes');
+    assert.ok(html.includes('data-action="onboarding-comfort" data-big="0"'), 'big-text no');
+    assert.ok(html.includes('2 / 8'), 'comfort position');
+  });
+
   test('seen setup steps are skipped; last step has no Next', () => {
     const s = wizardState({
       onboarding: {
         dismissed: false,
         settingsVisited: false,
-        stepsSeen: { prayer: true, goals: true },
+        stepsSeen: { language: true, comfort: true, prayer: true, goals: true },
       },
     });
     const html = onboardingPanelHTML(s, 'en', { notificationsGranted: true, appInstalled: true });
-    // location + install + firstReading remain; install done via flag.
+    // language/comfort/prayer/goals seen; location + install + firstReading remain.
     const full = wizardState({
       settings: {
         ...wizardState().settings,
@@ -196,7 +219,7 @@ describe('wizard panel: one step at a time', () => {
       onboarding: {
         dismissed: false,
         settingsVisited: false,
-        stepsSeen: { prayer: true, goals: true },
+        stepsSeen: { language: true, comfort: true, prayer: true, goals: true },
       },
       statistics: { ...wizardState().statistics, totalRecitations: 0 },
     });
@@ -205,8 +228,8 @@ describe('wizard panel: one step at a time', () => {
       appInstalled: true,
     });
     assert.ok(last.includes('Read your first adhkar'), 'finale is first reading');
-    assert.ok(last.includes('6 / 6'), 'last position');
-    assert.ok(!last.includes('data-action="onboarding-step" data-idx="6"'), 'no Next past the end');
+    assert.ok(last.includes('8 / 8'), 'last position');
+    assert.ok(!last.includes('data-action="onboarding-step" data-idx="8"'), 'no Next past the end');
     assert.ok(html.includes('Set your location'), 'unseen location still leads');
   });
 
@@ -220,7 +243,7 @@ describe('wizard panel: one step at a time', () => {
       onboarding: {
         dismissed: false,
         settingsVisited: false,
-        stepsSeen: { prayer: true, goals: true },
+        stepsSeen: { language: true, comfort: true, prayer: true, goals: true },
       },
       statistics: { ...wizardState().statistics, totalRecitations: 9 },
     });
@@ -229,7 +252,7 @@ describe('wizard panel: one step at a time', () => {
       ''
     );
     const ar = onboardingPanelHTML(wizardState(), 'ar');
-    assert.ok(ar.includes('حدّد موقعك'), 'AR renders the localized step');
+    assert.ok(ar.includes('اختر لغتك'), 'AR renders the localized step');
     assert.doesNotMatch(ar, /undefined/);
   });
 });
@@ -238,7 +261,13 @@ describe('wizard wiring: handlers registered', () => {
   const handlers = readFileSync(new URL('../js/app/handlers/worship.js', import.meta.url), 'utf8');
 
   test('step, confirm and enable keys exist', () => {
-    for (const key of ['onboarding-step', 'onboarding-confirm', 'notifications-enable']) {
+    for (const key of [
+      'onboarding-step',
+      'onboarding-confirm',
+      'onboarding-language',
+      'onboarding-comfort',
+      'notifications-enable',
+    ]) {
       assert.ok(handlers.includes(`'${key}'`), `handler missing: ${key}`);
     }
   });

@@ -227,6 +227,7 @@ function lazyPlaceholderHTML(state) {
 
 let lastView = null;
 let lastViewKey = '';
+let lastTitleLang = null;
 const scrollMemory = new Map();
 // (v5.2.77, BUG-06) cap: 604 mushaf pages + search/tab keys used to grow
 // without bound (cleared only on RESET_ALL). LRU-50 keeps Back-restore for
@@ -832,11 +833,14 @@ export function render(state) {
     // router's normalization) used to title the tab "title.xyz — Nūr
     // al-Dhikr" — t() falls back to the raw key. Fall back to Home's title
     // instead, mirroring the view the person actually sees.
+    // (v5.13.0, V21) recompute on language change too — switching to AR
+    // without navigating left an English tab title behind.
     {
       const titleKey = 'title.' + state.activeView;
       const lang = state.settings.language;
       const titleText = t(titleKey, lang);
       document.title = `${titleText === titleKey ? t('title.home', lang) : titleText} — ${APP_NAME}`;
+      lastTitleLang = lang;
       // Move focus to the main region heading for screen reader / keyboard users on navigation.
       mainEl.focus({ preventScroll: true });
       // (v5.2.73, UP-02) settings deep-link arrival on a view change: the
@@ -872,5 +876,13 @@ export function render(state) {
       lastSettingsSlugScroll = target;
       scrollToSettingsSection(target);
     }
+  }
+  // (v5.13.0, V21) language switch without navigation: re-title the tab.
+  if (!viewChanging && lastTitleLang !== state.settings.language && lastView) {
+    const titleKey = 'title.' + state.activeView;
+    const lang = state.settings.language;
+    const titleText = t(titleKey, lang);
+    document.title = `${titleText === titleKey ? t('title.home', lang) : titleText} — ${APP_NAME}`;
+    lastTitleLang = lang;
   }
 }

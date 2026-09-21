@@ -843,6 +843,26 @@ export const clickHandlers = {
     store.dispatch(actions.kidsQuizExit());
   },
 
+  // (v5.15.0, V12) parent wipe, danger-confirmed: stars back to zero.
+  'kids-erase': () => {
+    const lang = store.getState().settings.language;
+    openModal(
+      buildConfirm({
+        message: t('kids.eraseConfirm', lang),
+        confirmAction: 'kids-erase-confirmed',
+        lang,
+        danger: true,
+      }),
+      { labelledBy: 'modal-title-confirm' }
+    );
+  },
+
+  'kids-erase-confirmed': () => {
+    store.dispatch(actions.eraseKidsStars());
+    closeModal();
+    showToast(t('kids.eraseDone', store.getState().settings.language));
+  },
+
   // (v5.10.1) nightstand display-mode switcher (in-place, no navigation).
   // Hostile modes fall off via the sanitizer allowlist on restore and the
   // includes-guard here; the view also guards on render.

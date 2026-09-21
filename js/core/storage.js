@@ -1,13 +1,18 @@
 /**
  * storage.js
- * The only module allowed to touch localStorage / IndexedDB directly.
+ * The only module allowed to touch localStorage directly.
  * Everything returns a Result ({ success, value, error }) and never throws
  * during normal operation.
+ *
+ * (v5.15.0) the IndexedDB custom-content backend (idbPut/idbDelete/
+ * idbClear + estimateStorageBytes) is gone with zero callers: custom
+ * content persists inside the localStorage snapshot (PERSISTED_KEYS),
+ * audio blobs live in the audio store's own database, and the reset
+ * path wipes nurAlDhikrDB by name. Dead code is a liability, not an asset.
  */
 
-import { STORAGE_KEY, DB_NAME, DB_VERSION } from './config.js';
+import { STORAGE_KEY } from './config.js';
 import { ok, fail, storageAvailable } from './utils.js';
-import { openDB, withStore } from './idb/openDB.js';
 
 const memoryFallback = new Map();
 const hasLocalStorage = storageAvailable('localStorage');
@@ -37,54 +42,4 @@ export function saveState(state) {
   } catch (err) {
     return fail(err);
   }
-}
-
-export function estimateStorageBytes() {
-  try {
-    const raw = hasLocalStorage
-      ? localStorage.getItem(STORAGE_KEY)
-      : memoryFallback.get(STORAGE_KEY);
-    return ok(raw ? new Blob([raw]).size : 0);
-  } catch (err) {
-    return fail(err);
-  }
-}
-
-/* ------------------------------------------------------------------ */
-/* IndexedDB: custom content documents (larger, structured records)    */
-/* ------------------------------------------------------------------ */
-
-const STORES = ['customLibraries', 'attachments'];
-
-function upgradeDb(db) {
-  for (const store of STORES) {
-    if (!db.objectStoreNames.contains(store)) {
-      db.createObjectStore(store, { keyPath: 'id' });
-    }
-  }
-}
-
-async function db() {
-  return openDB(DB_NAME, DB_VERSION, upgradeDb);
-}
-
-export async function idbPut(storeName, record) {
-  const d = await db();
-  if (!d) return fail('IndexedDB unavailable');
-  const r = await withStore(d, storeName, 'readwrite', (s) => s.put(record));
-  return r.success ? ok(record) : r;
-}
-
-export async function idbDelete(storeName, id) {
-  const d = await db();
-  if (!d) return fail('IndexedDB unavailable');
-  const r = await withStore(d, storeName, 'readwrite', (s) => s.delete(id));
-  return r.success ? ok(true) : r;
-}
-
-export async function idbClear(storeName) {
-  const d = await db();
-  if (!d) return fail('IndexedDB unavailable');
-  const r = await withStore(d, storeName, 'readwrite', (s) => s.clear());
-  return r.success ? ok(true) : r;
 }

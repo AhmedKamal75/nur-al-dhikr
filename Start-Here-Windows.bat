@@ -6,6 +6,7 @@ echo.
 echo   Starting Nur al-Dhikr...
 echo   Keep this window open while you use the app.
 echo   (Closing it stops the app; your data lives in your browser.)
+echo   Local server only (no HTTPS/install) - for sharing, use a static host.
 echo.
 where py >nul 2>nul
 if %errorlevel%==0 (

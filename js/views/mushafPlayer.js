@@ -189,7 +189,9 @@ export function fsPlayButtonHTML({ recitingThis, multiSurah, surahNumber, pageFr
       </button>`;
   }
   const label =
-    pageFrom != null ? t('audio.reciteFromHere', lang) : t(recitingThis ? 'audio.reciteStop' : 'audio.reciteSurah', lang);
+    pageFrom != null
+      ? t('audio.reciteFromHere', lang)
+      : t(recitingThis ? 'audio.reciteStop' : 'audio.reciteSurah', lang);
   return `<button type="button" class="icon-btn ${recitingThis ? 'icon-btn--playing' : ''}" data-action="surah-play" data-surah="${surahNumber}"${pageFrom != null ? ` data-from="${pageFrom}"` : ''} aria-label="${label}" title="${label}">
         ${icon(recitingThis ? 'stop' : 'play', { size: 18 })}
       </button>`;

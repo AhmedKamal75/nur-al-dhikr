@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.12.1';
+const VERSION = 'nur-al-dhikr-v5.17.2';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -698,7 +698,13 @@ self.addEventListener('activate', (event) => {
  * on bad connections, directly contradicting the "cached offline forever"
  * promise. Before deleting old caches, copy their data entries forward into
  * the new DATA_CACHE (SWR refreshes content freshness afterwards).
+ *
+ * (v5.17.2, audit F-05) bounded migration: at most MIGRATE_ENTRY_CAP
+ * entries per old cache are copied (low-storage devices must never spike
+ * past quota mid-upgrade), and an old cache is deleted ONLY when every
+ * entry landed — a partial copy keeps the source so no ayah is lost.
  */
+const MIGRATE_ENTRY_CAP = 3000;
 async function migrateDataCache() {
   let keys;
   try {
@@ -727,12 +733,25 @@ async function migrateDataCache() {
     } catch {
       continue;
     }
+    let failed = 0;
+    let settled = 0;
     for (const req of requests) {
+      if (settled >= MIGRATE_ENTRY_CAP) break;
+      settled += 1;
       try {
         const response = await old.match(req);
         if (response) await target.put(req, response);
       } catch {
-        /* quota or eviction — keep as many entries as fit */
+        failed += 1;
+      }
+    }
+    // Fully migrated (or empty) source: drop the duplicate so the upgrade
+    // never costs 2x storage. Partial copies keep the old cache intact.
+    if (failed === 0 && settled >= requests.length) {
+      try {
+        await caches.delete(key);
+      } catch {
+        /* orphaned old cache: quota-safe, cleaned next activate */
       }
     }
   }

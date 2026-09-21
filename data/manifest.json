@@ -1,0 +1,27 @@
+{
+  "version": "5.17.1",
+  "note": "Corpus inventory (v5.17.1, V14). Every bundled JSON corpus must be listed here; tests/contracts.test.js fails when a listed file is missing. Per-file sha256 + schema_version to follow.",
+  "files": [
+    "adhkar.json",
+    "asma.json",
+    "catalog.json",
+    "daily-sunnah.json",
+    "duas.json",
+    "mushaf-meta.json",
+    "pdf-duas.json",
+    "prayer-methods.json",
+    "prophet-duas.json",
+    "quran-dict.json",
+    "quran-meta.json",
+    "quran-roots.json",
+    "quran-roots-full.json",
+    "quran-roots-meaning.json",
+    "quranic.json",
+    "reciters.json",
+    "reflections.json",
+    "special-days.json",
+    "tafsir-editions.json",
+    "tajweed-practice.json",
+    "zakat-notes.json"
+  ]
+}

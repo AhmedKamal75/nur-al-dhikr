@@ -10,7 +10,7 @@ import { t } from '../core/i18n.js';
 
 import { go } from '../core/router.js';
 import { actions, store } from '../core/state.js';
-import { vibrate, clamp } from '../core/utils.js';
+import { vibrate, clamp, escapeHTML } from '../core/utils.js';
 import { takeoverManualZoom } from './autoFit.js';
 import {
   clampPage,
@@ -22,9 +22,14 @@ import {
   prevSpreadPage,
   setMushafWideLayout,
 } from '../services/mushaf.js';
-import { closeModal, isModalOpen, openLazyModal, cycleTabFocus } from '../ui/modal.js';
+import { closeModal, isModalOpen, openLazyModal, openModal, cycleTabFocus } from '../ui/modal.js';
 import { settingsSlugForSection } from '../views/settings.js';
-import { mushafSwipeTurn, isSwipeGuardTarget, isPlayerDismissSwipe, resolveMinControl } from '../domain/gestures.js';
+import {
+  mushafSwipeTurn,
+  isSwipeGuardTarget,
+  isPlayerDismissSwipe,
+  resolveMinControl,
+} from '../domain/gestures.js';
 import { armPaletteShortcut } from './palette.js';
 import { showToast } from '../ui/toast.js';
 import * as recitation from '../services/recitation.js';
@@ -72,7 +77,10 @@ import {
 import { clickHandlers as viewMenusClick } from './handlers/viewMenus.js';
 import { clickHandlers as journalClick } from './handlers/journal.js';
 import { clickHandlers as grammarClick } from './handlers/grammar.js';
-import { clickHandlers as offlineClick } from './handlers/offline.js';
+import {
+  clickHandlers as offlineClick,
+  changeHandlers as offlineChange,
+} from './handlers/offline.js';
 
 import { setFlipDirection } from '../ui/readingTokens.js';
 import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
@@ -151,6 +159,7 @@ export const changeRegistry = [
   ...locationChange,
   ...itemsChange,
   ...quranChange,
+  ...offlineChange,
 ];
 
 export const inputRegistry = [
@@ -264,7 +273,7 @@ function cancelKidsExitHold() {
   paintKidsExitStep(btn, 0);
 }
 
-function startKidsExitHold(btn, e) {
+function startKidsExitHold(btn) {
   cancelKidsExitHold();
   btn.classList.remove('is-holding');
   void btn.offsetWidth; // restart the stepped fill on re-press
@@ -283,9 +292,34 @@ function startKidsExitHold(btn, e) {
     }
     btn.classList.remove('is-holding');
     if (store.getState().settings.hapticsEnabled) vibrate(20);
-    const handler = clickHandlers['kids-exit'];
-    if (handler) dispatchHandler('kids-exit', {}, e, btn);
+    openParentGate();
   }, KIDS_EXIT_HOLD_MS);
+}
+
+/**
+ * (v5.14.0, V12b) parent gate: the 2s hold proved a press, not a person —
+ * a 7-year-old can hold a button. One 2-digit addition stands between a
+ * sibling and the full app; a grown-up answers in seconds. Wrong answers
+ * never exit; the modal simply stays for another try.
+ */
+export function openParentGate() {
+  const lang = store.getState().settings.language;
+  const a = 11 + Math.floor(Math.random() * 9);
+  const b = 6 + Math.floor(Math.random() * 4);
+  const correct = a + b;
+  const options = [correct, correct + 1, correct - 2].sort(() => Math.random() - 0.5);
+  openModal(
+    `<div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title-gate">
+      <h2 id="modal-title-gate">${escapeHTML(t('kids.gateTitle', lang))}</h2>
+      <p class="panel__subtext">${escapeHTML(t('kids.gateHint', lang))}</p>
+      <p dir="ltr" aria-label="${a} + ${b}"><strong>${a} + ${b} = ?</strong></p>
+      <div class="editor-form__actions">
+        ${options.map((n) => `<button type="button" class="btn btn--secondary" data-action="kids-gate-answer" data-correct="${n === correct ? '1' : '0'}" dir="ltr">${n}</button>`).join('')}
+        <button type="button" class="btn btn--ghost" data-action="modal-close">${escapeHTML(t('common.cancel', lang))}</button>
+      </div>
+    </div>`,
+    { labelledBy: 'modal-title-gate' }
+  );
 }
 
 /** Hold-to-exit for Kids mode: a full 2s press fires 'kids-exit' (a plain
@@ -301,7 +335,7 @@ function armKidsExitHold() {
       if (e.button != null && e.button !== 0) return;
       const btn = e.target?.closest?.('[data-action="kids-exit-hold"]');
       if (!btn) return;
-      startKidsExitHold(btn, e);
+      startKidsExitHold(btn);
     },
     { passive: true }
   );
@@ -312,7 +346,7 @@ function armKidsExitHold() {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const btn = e.target?.closest?.('[data-action="kids-exit-hold"]');
     if (!btn || rt.kidsExitTimer) return;
-    startKidsExitHold(btn, e);
+    startKidsExitHold(btn);
   });
   document.addEventListener('keyup', (e) => {
     if (e.key === 'Enter' || e.key === ' ') cancelKidsExitHold();
@@ -617,10 +651,7 @@ export function bindGlobalEvents() {
     // same book-order walk as the mushaf ayahs below, scoped to the
     // round's .practice-ayah container (letters are RTL Arabic flow).
     if (
-      (e.key === 'ArrowRight' ||
-        e.key === 'ArrowLeft' ||
-        e.key === 'Home' ||
-        e.key === 'End') &&
+      (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'Home' || e.key === 'End') &&
       e.target instanceof Element &&
       e.target.matches('.pu[data-action="practice-tap"]')
     ) {
@@ -653,10 +684,7 @@ export function bindGlobalEvents() {
     // stop along; Home/End jump to the page ends. Enter/Space activation
     // rides the role=button path above, untouched.
     if (
-      (e.key === 'ArrowRight' ||
-        e.key === 'ArrowLeft' ||
-        e.key === 'Home' ||
-        e.key === 'End') &&
+      (e.key === 'ArrowRight' || e.key === 'ArrowLeft' || e.key === 'Home' || e.key === 'End') &&
       e.target instanceof Element &&
       e.target.matches('.mushaf-ayah[tabindex], .mushaf-ayah__marker[tabindex]')
     ) {

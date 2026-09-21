@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "1.0",
+  "note": "Lexical provenance schema (v5.17.2, audit F-02/F-03 follow-up). No bundled entry may present an authored gloss, synonym, antonym, or root-etymology claim as classically sourced unless it carries an exact citation in this shape. Entries WITHOUT a citation are valid and MUST be rendered with the explicit unknown/no-attested state — never back-filled.",
+  "citation": {
+    "type": "object",
+    "required": ["sourceId", "work", "author", "edition"],
+    "optional": ["location", "url"],
+    "properties": {
+      "sourceId": "Stable id of the lexical source edition (e.g. 'lisan-al-arab-bulaq').",
+      "work": "Short work title.",
+      "author": "Author/editor as credited in that edition.",
+      "edition": "Edition string (publisher, place, year or e-version).",
+      "location": "Volume/page or root-entry locator inside the edition.",
+      "url": "Optional public locator (must not be an analytics/tracking URL)."
+    }
+  },
+  "appliesTo": {
+    "quran-dict.json": "Optional per-lemma `src` object for authored AR gloss / synonym / antonym lists.",
+    "quran-roots-meaning.json": "Optional per-root `src` object replacing the generic bundled label per grouped source edition."
+  },
+  "allowedGenericLabels": [
+    "bundled-root-core-meaning",
+    "no-independent-root-policy",
+    "no-attested-direct-antonym"
+  ],
+  "rules": [
+    "Every public semantic claim is either cited with the shape above or explicitly labelled unknown/no-attested.",
+    "Antonym lists MUST NOT be fabricated to raise coverage: 271/4763 attested is honest.",
+    "Root entries sharing one source edition MUST name that edition per entry (no silent grouping)."
+  ]
+}

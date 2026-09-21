@@ -354,6 +354,35 @@ export const clickHandlers = {
     if (state.settings.hapticsEnabled) vibrate(10);
   },
 
+  // (v5.15.0, V1) first-wizard language pick: set + record + release, so
+  // the whole session follows from the first tap. Sanitizer clamps to ar/en.
+  'onboarding-language': (ds) => {
+    store.batch(() => {
+      store.dispatch(actions.updateSettings({ language: ds.lang === 'ar' ? 'ar' : 'en' }));
+      store.dispatch(actions.markOnboardingStepSeen('language'));
+      store.dispatch(actions.setOnboardingStep(null));
+    });
+  },
+
+  // (v5.15.0, V21) elder comfort card: big text on yes, standard on no —
+  // either way the step completes (a choice, never a trap). Mirrors the
+  // settings toggle arm's one-time font bump (handlers/system.js).
+  'onboarding-comfort': (ds) => {
+    const on = ds.big === '1';
+    const patch = { elderMode: on };
+    if (on) {
+      const s = store.getState().settings;
+      patch.fontScale = Math.max(Number(s.fontScale) || 1, 1.25);
+      patch.arabicFontScale = Math.max(Number(s.arabicFontScale) || 1, 1.5);
+      patch.highContrast = true;
+    }
+    store.batch(() => {
+      store.dispatch(actions.updateSettings(patch));
+      store.dispatch(actions.markOnboardingStepSeen('comfort'));
+      store.dispatch(actions.setOnboardingStep(null));
+    });
+  },
+
   'notifications-enable': async () => {
     const lang = store.getState().settings.language;
     const res = await requestPermission();

@@ -24,13 +24,31 @@ let dbPromise = null;
  * the localStorage app state, with no warning. Oldest-ts records evict
  * first once the cap is crossed (user recordings never evict).
  */
-export const AUDIO_CACHE_DEFAULT_MAX_BYTES = 2 * 1024 * 1024 * 1024; // 2 GiB
+export const AUDIO_CACHE_DEFAULT_MAX_BYTES = 200 * 1024 * 1024; // 200 MiB (v5.13.0, V10: 2 GiB was 10x a 200MB-free phone)
 let audioCacheMaxBytes = AUDIO_CACHE_DEFAULT_MAX_BYTES;
 
 /** Test seam: override the cap (pass the default constant to restore). */
 export function setAudioCacheCapForTests(bytes) {
   const n = Math.floor(Number(bytes));
   audioCacheMaxBytes = Number.isFinite(n) && n >= 0 ? n : AUDIO_CACHE_DEFAULT_MAX_BYTES;
+}
+
+/**
+ * (v5.14.0, V10b) apply the user's budget from settings
+ * (`settings.audio.audioCacheMB`, 50–500 MiB). Pure read, never throws;
+ * hostile values fall back to the default. Returns the applied bytes.
+ */
+export function applyAudioCacheCapFromSettings(settings) {
+  try {
+    const mb = Math.round(Number(settings?.audio?.audioCacheMB));
+    audioCacheMaxBytes =
+      Number.isFinite(mb) && mb >= 50 && mb <= 500
+        ? mb * 1024 * 1024
+        : AUDIO_CACHE_DEFAULT_MAX_BYTES;
+  } catch {
+    audioCacheMaxBytes = AUDIO_CACHE_DEFAULT_MAX_BYTES;
+  }
+  return audioCacheMaxBytes;
 }
 
 /**
@@ -224,19 +242,6 @@ export async function downloadSurah(moshafId, surahNumber, url) {
 export function formatBytes(bytes) {
   const n = typeof bytes === 'number' && Number.isFinite(bytes) ? bytes : 0;
   return canonicalFormatBytes(n);
-}
-
-/** Browser storage estimate (may be unavailable — returns null then). */
-export async function storageEstimate() {
-  try {
-    if (navigator.storage?.estimate) {
-      const est = await navigator.storage.estimate();
-      if (est && Number.isFinite(est.usage) && Number.isFinite(est.quota)) return est;
-    }
-  } catch {
-    /* unsupported */
-  }
-  return null;
 }
 
 /**

@@ -157,6 +157,9 @@ export const actions = {
   // Kids-mode star for a naturally finished recitation (surah optional —
   // the parent dashboard breaks stars down per surah when it knows which).
   awardKidsStar: (surah = null) => ({ type: 'KIDS_AWARD_STAR', surah }),
+  // (v5.15.0, V12) parent wipe: clear earned stars (fresh start, new
+  // sibling, shared device) behind a danger confirm — never silent.
+  eraseKidsStars: () => ({ type: 'KIDS_ERASE_STARS' }),
   // Kids memory-quiz session (ephemeral): prebuilt round only, the
   // reducer never shuffles — same contract as GRAMMAR_DRILL_START.
   kidsQuizStart: (round) => ({ type: 'KIDS_QUIZ_START', round }),

@@ -184,13 +184,6 @@ export function lensLibrary(rawDocuments, rawOrder, prefs) {
   return { documents, order };
 }
 
-/** Convenience: apply the lens to a full state's library slice. */
-export function lensStateLibrary(state) {
-  const raw = state?.library?.raw;
-  if (!raw) return null;
-  return lensLibrary(raw.documents, raw.order, prefsOf(state));
-}
-
 /* ------------------------------------------------------------------ */
 /* Field visibility (tab level, cascading down)                        */
 /* ------------------------------------------------------------------ */
@@ -240,11 +233,6 @@ export function fieldTogglesFor(state, libraryId) {
 /* ------------------------------------------------------------------ */
 /* Restore-to-default key math (all four levels)                       */
 /* ------------------------------------------------------------------ */
-
-/** All override keys touching one item. */
-export function itemOverrideKeys(itemId) {
-  return { itemId };
-}
 
 /** Strip every prefs entry that touches a category's items (but not the
  *  category itself — restoreCategory handles the whole section). */

@@ -11,6 +11,7 @@ import { selectors } from '../core/state.js';
 import { search as runSearch } from '../domain/search.js';
 import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
 import { searchTafsir, isTafsirSearchReady, tafsirIndexEdition } from '../domain/tafsirSearch.js';
+import { searchHadith } from '../domain/hadithSearch.js';
 import { resolvePage } from '../services/surahPlayback.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
@@ -28,7 +29,7 @@ const MORE_DEFAULTS = { quran: 15, tafsir: 8, library: 40 };
 function moreFor(params) {
   const n = (v, d) => {
     const k = Math.floor(Number(v));
-    return Number.isFinite(k) && k > 0 ? Math.min(k, 1000) : d;
+    return Number.isFinite(k) && k > 0 ? k : d;
   };
   return {
     quran: n(params?.qn, MORE_DEFAULTS.quran),
@@ -89,7 +90,7 @@ function quranSection(state, query, lang, all) {
       ${skeletonLines(lang, [92, 84, 88, 62])}
     </section>`;
   }
-  // (v5.9.0) paginated: the index still runs once (limit 1000, same as
+  // (v5.9.0) paginated: the index still runs once (uncapped, same as
   // v4.0's single-pass contract — `all` is computed by renderSearch), and
   // the Load More trigger pages the display window instead of truncating.
   const shown = moreFor(state.activeParams).quran;
@@ -183,13 +184,15 @@ export function renderSearch(state) {
   // counters, so counting never costs a second pass.
   const quranAll =
     query && isQuranSearchReady() && !state.loadErrors?.['quran-search-corpus']
-      ? searchQuran(query, { limit: 1000 })
+      ? searchQuran(query, { limit: Infinity })
       : null;
   const tafsirAll =
     query && isTafsirSearchReady() && !state.loadErrors?.['tafsir-search-corpus']
-      ? searchTafsir(query, { limit: 1000 })
+      ? searchTafsir(query, { limit: Infinity })
       : null;
-  const libAll = query ? runSearch(query, { limit: 1000 }) : [];
+  const libAll = query ? runSearch(query, { limit: Infinity }) : [];
+  const hadithAll = query ? searchHadith(query, { limit: Infinity }) : [];
+  const azkarAll = query ? libAll.filter((r) => r.document?.metadata?.id === 'adhkar') : [];
   const libShown = query ? libAll.slice(0, moreFor(state.activeParams).library) : [];
   const terms = query ? String(query).split(/\s+/) : [];
   const history = state.search.historyList;
@@ -253,7 +256,7 @@ export function renderSearch(state) {
     ${
       query
         ? `
-      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll ? quranAll.length : 0, t: tafsirAll ? tafsirAll.length : 0, l: libAll.length })}</p>
+      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll ? quranAll.length : 0, h: hadithAll.length, z: azkarAll.length })}</p>
       <p class="search-hadith-link"><a href="${buildHash(VIEWS.HADITH, { q: query })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-q="${escapeHTML(query)}">${icon('book', { size: 13 })} ${t('search.searchHadith', lang, { q: query })}</a></p>
       ${
         libShown.length

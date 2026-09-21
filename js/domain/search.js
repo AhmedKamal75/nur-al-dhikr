@@ -68,6 +68,8 @@ export function buildIndex(itemIndex) {
  * ranked by relevance (title/exact matches first).
  */
 export function search(query, { limit = 50 } = {}) {
+  const resultLimit = limit == null ? Infinity : Number(limit);
+  const safeLimit = Number.isFinite(resultLimit) ? Math.max(0, resultLimit) : Infinity;
   const q = normalizeSearch(query);
   if (!q) return [];
   const terms = q.split(' ').filter(Boolean);
@@ -92,7 +94,7 @@ export function search(query, { limit = 50 } = {}) {
 
   results.sort((a, b) => b.score - a.score);
   return results
-    .slice(0, limit)
+    .slice(0, safeLimit)
     .map((r) => ({ ...itemLookup.get(r.itemId), itemId: r.itemId, score: r.score }));
 }
 

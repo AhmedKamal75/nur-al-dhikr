@@ -13,8 +13,9 @@ import {
   reciterShortLabel,
   REPEAT_CYCLE_UI,
   LOOP_CYCLE_UI,
+  SPEED_CYCLE_UI,
 } from '../js/ui/recitationConsole.js';
-import { REPEAT_CYCLE, LOOP_CYCLE } from '../js/services/surahPlayback.js';
+import { REPEAT_CYCLE, LOOP_CYCLE, VERSE_RATES } from '../js/services/surahPlayback.js';
 
 const ACTIONS = [
   'recite-ayah-prev',
@@ -149,6 +150,17 @@ test('E: repeat/loop chips name the current AND next rung', () => {
 test('E: ui cycle mirrors never drift from the engine canonicals', () => {
   assert.deepEqual(REPEAT_CYCLE_UI, REPEAT_CYCLE);
   assert.deepEqual(LOOP_CYCLE_UI, LOOP_CYCLE);
+  assert.deepEqual(SPEED_CYCLE_UI, VERSE_RATES);
+});
+
+test('E: verse volume slider renders with persisted level, yields under sleep', () => {
+  const awake = consoleSnapshot(session(), settings, sleep, 'en');
+  const html = recitationChipsHTML(awake, 'en', { chip: 'c', on: 'on', btn: 'b' }, {});
+  assert.ok(html.includes('data-bind="recite-volume"'), 'slider on every host');
+  assert.ok(!html.includes('disabled'), 'enabled when awake');
+  const asleep = consoleSnapshot(session(), settings, { enabled: true, label: '30m' }, 'en');
+  const html2 = recitationChipsHTML(asleep, 'en', { chip: 'c', on: 'on', btn: 'b' }, {});
+  assert.ok(html2.includes('disabled'), 'yields while sleep owns the curve');
 });
 
 test('E: echo banner only while waiting', () => {

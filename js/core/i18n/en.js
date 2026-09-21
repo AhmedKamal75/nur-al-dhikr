@@ -270,10 +270,17 @@ export const en = {
   'offline.storageUnknown': 'Storage info unavailable on this device.',
   // v5.2.75 audio-cache budget line (PERF-02).
   'offline.audioCache': 'Audio cache',
+  'offline.cacheLimit': 'Audio storage limit',
+  'offline.cacheLimitHint':
+    'Oldest downloads are removed first when full. Your own adhan recordings are never removed.',
   'offline.storageModeTitle': 'Storage mode',
   'offline.storageModeBody':
     'Standard keeps full-size files (fast to open, ~150 MB). Compressed stores zipped files (~27 MB) and unzips on open — slower, kinder to storage and data. Applies to new downloads; switching clears downloaded text.',
   'offline.compressedLabel': 'Store downloads compressed',
+  'offline.clearStudy': 'Clear downloaded study data',
+  'offline.clearStudyBody':
+    'Frees text-corpus downloads (Qur’an, Hadith, Tafsir, word study). Audio and settings are untouched.',
+  'offline.clearStudyDone': 'Study downloads cleared.',
   'offline.audioTitle': 'Reciter voices?',
   'offline.audioBody':
     'Audio stays separate: pick a reciter in Audio and download the full mushaf there (about 1–2 GB).',
@@ -301,6 +308,7 @@ export const en = {
   // (v5.12.0) blind-cycle cure: chips name the current AND next rung.
   'audio.repeatNext': 'Repeat each ayah: {cur} — next tap: {next}',
   'audio.loopNext': 'Range loop: {cur} — next tap: {next}',
+  'audio.speedNext': 'Playback speed: {cur}× — next tap: {next}×',
   'audio.ayahPrev': 'Previous ayah',
   'audio.ayahNext': 'Next ayah',
   // v3.17 hifz: memorize mode + spaced-repetition review
@@ -339,6 +347,7 @@ export const en = {
   // highlight/repeat/compare need ayah mode, one tap away.
   'audio.fileModeNote':
     'Whole-surah file: Ayah-by-ayah mode adds highlighting, page turns, repeat & compare.',
+  'audio.riwayaNote': 'Voice is {rewaya} — on-screen text is Hafs.',
   // (v5.10.8) unified voice picker: ayah voices + searchable file moshafs.
   'audio.voiceModeAyah': 'Voice set — ayah-by-ayah mode',
   'audio.voiceModeSurah': 'Moshaf set — whole-surah mode',
@@ -369,6 +378,7 @@ export const en = {
   'audio.customHint':
     'Works with any server that serves files named 001.mp3 … 114.mp3 (per surah). The app verifies the server actually serves audio before saving.',
   'audio.customInvalid': 'Enter a name and a valid http(s) URL.',
+  'audio.customHttpBlocked': 'Use an https:// address — http:// can be tampered with.',
   'audio.customChecking': 'Checking the server…',
   'audio.customNotAudio': 'That address did not serve audio — check the URL.',
   'audio.note':
@@ -535,6 +545,8 @@ export const en = {
   'home.theme.paradise': 'Paradise',
   'home.streak': 'Day Streak',
   'home.noRecent': 'Nothing read yet today. Open a category to begin.',
+  'home.blankPage': 'A blank page, waiting warmly',
+  'home.firstSeed': 'The garden grows its first seed — may Allah bless you.',
   'home.greeting.morning': 'Good morning',
   'home.greeting.afternoon': 'Good afternoon',
   'home.greeting.evening': 'Good evening',
@@ -552,7 +564,7 @@ export const en = {
   // (v5.9.0) pagination + per-corpus match breakdown.
   'search.loadMore': 'Load more',
   'search.showingOf': 'Showing {x} of {n}',
-  'search.breakdown': 'Qur’an: {q} · Tafsir: {t} · Library: {l}',
+  'search.breakdown': 'Quran: {q} · Hadith: {h} · Azkar: {z}',
   // (v5.10.1) the global index covers Qur'an/Tafsir/Library — hadith lives
   // in its own corpus with its own pager, so the breakdown links straight
   // into it carrying the same query instead of miscounting it as zero.
@@ -758,6 +770,13 @@ export const en = {
   'prayer.method': 'Calculation Method',
   'prayer.asrMethod': 'Asr Juristic Method',
   'prayer.manualLocation': 'Enter coordinates manually',
+  'prayer.chooseCity': 'Or pick your city — approximate times until exact location is set',
+  'prayer.region.me': 'Middle East',
+  'prayer.region.africa': 'Africa',
+  'prayer.region.europe': 'Europe',
+  'prayer.region.asia': 'Asia',
+  'prayer.region.oceania': 'Oceania',
+  'prayer.region.americas': 'Americas',
   'prayer.alertOn': 'Alert on for this prayer',
   'prayer.alertOff': 'Turn on alert',
   'prayer.alertMode': 'Prayer alert',
@@ -844,6 +863,7 @@ export const en = {
   'prayer.longitude': 'Longitude',
   'prayer.locationUnavailable': 'Location unavailable on this device',
   'prayer.locationDenied': 'Location permission denied',
+  'prayer.locationSet': 'Location set — times are approximate until exact coordinates are entered',
   'prayer.tzMismatch':
     'These times follow the sun at your saved coordinates but are shown on this device’s clock. If you entered coordinates for a place in another time zone, pray by the local times there, not by this clock.',
   'prayer.polarNote':
@@ -970,6 +990,8 @@ export const en = {
   'mushaf.bismillah_gold': 'Gilded',
   'mushaf.bismillah_accent': 'Accent color',
   'mushaf.bismillah_hidden': 'Hidden',
+  'mushaf.wuduNote':
+    'From adab: wudu before touching the printed Mushaf; screens follow your scholar — recite with presence.',
   'mushaf.tajweedInspector': 'Tajweed word-inspector',
   'mushaf.paper': 'Paper Color',
   'mushaf.textSize': 'Text Size',
@@ -1043,6 +1065,10 @@ export const en = {
   'practice.nearestAyah':
     'No marked rules here — practicing the nearest ayah with rules ({s}:{a}).',
 
+  'wordStudy.contextualMeaning': 'Contextual meaning (in this ayah)',
+  'wordStudy.englishTranslation': 'English translation',
+  'wordStudy.classicalUsage': 'Classical lexical usage / root core',
+  'wordStudy.quranicBridge': 'Qur’anic semantic bridge',
   'wordStudy.title': 'Word Study',
   'wordStudy.noData': "Grammar data isn't available for this word yet.",
   'wordStudy.tajweed': 'Tajweed in this word',
@@ -1429,6 +1455,8 @@ export const en = {
     'Texts from the six canonical books — Sahih al-Bukhari, Sahih Muslim, Sunan Abu Dawud, Jami\u2019 at-Tirmidhi, Sunan an-Nasa\u2019i and Sunan Ibn Majah — plus the Forty Hadith of an-Nawawi and Forty Hadith Qudsi; classical public-domain collections (see About \u2192 Sources). Chapter headings are shown in English as published by the source dataset.',
   'about.hadithSources':
     'Ahadeeth library: the six canonical books (the two Sahihs and the four Sunans) plus the Forty of an-Nawawi and Forty Hadith Qudsi — 34,239 hadith of public-domain texts, obtained via the CC0 hadith-api dataset (full provenance in data/SOURCES.md).',
+  'about.scopeSunni':
+    'Scope: this library follows the Sunni canonical collections; Shia collections are out of scope for v5.x.',
   'common.error': 'Something went wrong.',
   'common.skipToContent': 'Skip to content',
   'a11y.mainNav': 'Main navigation',
@@ -1515,6 +1543,9 @@ export const en = {
   'kids.exitHow': 'Tapping does not exit — press AND HOLD the button until the bar fills.',
   'kids.exitDone': 'Kids mode off',
   'kids.blocked': 'Kids mode is on — only Kids Quran and Tasbih are available.',
+  'kids.gateTitle': 'Grown-ups only',
+  'kids.gateHint': 'Answer to leave kids mode — little ones, hand the device to a grown-up.',
+  'kids.gateWrong': 'Not quite — try again, or stay and keep listening.',
   // (v5.10.1) kids progression: levels, memory quiz, parent dashboard.
   'kids.level': 'Level',
   'kids.level.seed': 'Seed',
@@ -1538,6 +1569,9 @@ export const en = {
   'kids.weekTitle': 'Stars this week',
   'kids.bySurah': 'Stars per surah',
   'kids.noStarsYet': 'No stars yet — start by listening!',
+  'kids.erase': 'Clear stars',
+  'kids.eraseConfirm': 'Clear all earned stars? This cannot be undone.',
+  'kids.eraseDone': 'Stars cleared — a fresh sky.',
   'stats.avgPerDay': 'Avg / Day (30d)',
   // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
   // follows the nudge tone rules: no dates, no counts, no shaming.
@@ -1556,7 +1590,8 @@ export const en = {
   'stats.goalLeft': '{n} to go',
   'stats.streakCoachTitle': 'Streak coaching',
   'stats.streakToGo': '{n} days to your {m}-day milestone',
-  'stats.streakTop': 'Every milestone cleared — guard the flame.',
+  'stats.streakEve': 'One morning left to your {m}-day milestone — God willing.',
+  'stats.streakTop': 'Every milestone cleared — may Allah keep your light firm.',
   'stats.topSurahs': 'Most-read surahs',
   'stats.pagesRead': '{n} pages',
   'stats.weekTotal': 'This week',
@@ -1568,7 +1603,8 @@ export const en = {
   'stats.heatmapSaved': 'Heatmap image saved',
   // (v5.11.0 C) opt-in, local-only follow-gap telemetry.
   'stats.gapTitle': 'Follow-gap telemetry',
-  'stats.gapHint': 'Measures the delay between recitation advances and on-screen follow on this device.',
+  'stats.gapHint':
+    'Measures the delay between recitation advances and on-screen follow on this device.',
   'stats.gapEnable': 'Record follow-gap samples',
   'stats.gapEmpty': 'No samples yet — recite in ayah mode with follow on.',
   'stats.gapSamples': '{n} samples',
@@ -1582,6 +1618,12 @@ export const en = {
   'onboarding.title': 'Getting started',
   'onboarding.progress': '{done} of {total} steps done',
   'onboarding.dismiss': 'Maybe later',
+  'onboarding.language': 'Choose your language',
+  'onboarding.languageHint': 'Everything — every button, every explanation — in your language.',
+  'onboarding.comfort': 'Comfortable to read?',
+  'onboarding.comfortHint': 'Large text and roomy targets for tired eyes and big fingers.',
+  'onboarding.bigTextYes': 'Yes, large text',
+  'onboarding.bigTextNo': 'No, standard size',
   'onboarding.location': 'Set your location',
   'onboarding.locationHint': 'For accurate prayer times',
   'onboarding.install': 'Install the app',
@@ -1665,6 +1707,11 @@ export const en = {
   'backup.importConfirm':
     'Importing replaces everything currently on this device — favorites, streaks, statistics, and settings — with the backup\u2019s contents. This cannot be undone. Continue?',
   'backup.importDone': 'Backup imported.',
+  'backup.invalidJson': 'That file is not valid JSON.',
+  'backup.futureVersion':
+    'This backup is from a newer version of Nūr al-Dhikr — update the app to import it.',
+  'backup.noData': 'That file does not look like a Nūr al-Dhikr backup.',
+  'backup.emptyFile': 'That file does not contain any recognizable app data.',
   'storage.persistFailed':
     'Could not save your data — storage is full or unavailable. Changes this session may be lost.',
 
@@ -1806,7 +1853,8 @@ export const en = {
   'audio.playbackDefaults': 'Recitation defaults',
   'audio.playbackDefaultsHint':
     'Repeat and sleep, picked directly — the same settings as the player chips, without the tapping.',
-  'audio.loopNeedsSession': 'Start a recitation first — the loop applies live to the running session.',
+  'audio.loopNeedsSession':
+    'Start a recitation first — the loop applies live to the running session.',
   'audio.sleepFileHint': 'Pauses whole-surah playback when the time is up.',
   'audio.compare': 'Compare',
   'audio.compareMode':
@@ -1850,7 +1898,7 @@ export const en = {
 
   /* ===== (v4.4 completion) Journal reflection prompts ===== */
   'journal.prompt.gratitude': 'What are three blessings I took for granted this week?',
-  'journal.prompt.patience': 'Where did I practice patience this week — and where did I fail it?',
+  'journal.prompt.patience': 'Where did I practice patience this week — and where can I grow next?',
   'journal.prompt.istighfar': 'What do I most need to ask forgiveness for this week?',
   'journal.prompt.knowledge': 'What did I learn this week that brought me closer to Allah?',
   'journal.prompt.family': 'How did I serve my family this week?',

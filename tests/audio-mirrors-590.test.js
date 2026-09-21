@@ -20,6 +20,9 @@ import {
 } from '../js/services/surahPlayback.js';
 import { configureDriver, resetRecitationForTests } from '../js/services/recitation.js';
 import { sanitizeMushafPrefs } from '../js/core/config.js';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const SURAHS = [
   { number: 1, ayahCount: 7 },
@@ -198,5 +201,24 @@ describe('tajweedUnderlines pref plumbing', () => {
     assert.equal(sanitizeMushafPrefs({}).tajweedUnderlines, true);
     assert.equal(sanitizeMushafPrefs({ tajweedUnderlines: false }).tajweedUnderlines, false);
     assert.equal(sanitizeMushafPrefs({ tajweedUnderlines: 'yes' }).tajweedUnderlines, true);
+  });
+});
+
+describe('audio provider manifest: ayah-first fallback contract', () => {
+  test('provider data is explicit: browser runtime order + backend-only v4 provider', () => {
+    const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+    const data = JSON.parse(readFileSync(path.join(root, 'data/audio-providers.json'), 'utf8'));
+    assert.deepEqual(data.fallbackOrder, [
+      'ayah:islamic-network-cdn',
+      'ayah:everyayah',
+      'surah:islamic-network-surah',
+      'surah:everyayah-surah',
+    ]);
+    assert.deepEqual(data.backendOnlyAyahProviders, ['quran-foundation-v4']);
+    const ayahProviders = Object.fromEntries(data.ayahProviders.map((p) => [p.id, p]));
+    const surahProviders = Object.fromEntries(data.surahFallbackProviders.map((p) => [p.id, p]));
+    assert.ok(ayahProviders['quran-foundation-v4']?.requiresAuth);
+    assert.match(ayahProviders.everyayah.template, /everyayah\.com/);
+    assert.match(surahProviders['islamic-network-surah'].template, /audio-surah/);
   });
 });

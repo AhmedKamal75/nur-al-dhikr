@@ -89,6 +89,8 @@ export const MUSHAF_PAGE_URL = (n) => `data/mushaf/${encodeURIComponent(n)}.json
 export const MUSHAF_PAGE_COUNT = 604;
 export const RECITERS_URL = 'data/reciters.json';
 export const DEFAULT_RECITER = 'ar.alafasy';
+/** Offline-readable provider manifest for ayah-first audio fallback policy. */
+export const AUDIO_PROVIDERS_URL = 'data/audio-providers.json';
 export const quranAudioUrl = (reciterId, globalAyahNumber, bitrate = 128) =>
   `https://cdn.islamic.network/quran/audio/${bitrate}/${encodeURIComponent(reciterId)}/${globalAyahNumber}.mp3`;
 /**
@@ -127,6 +129,8 @@ export const quranAudioSurahUrl = (reciterId, surahNumber, bitrate = 128) =>
  * word-by-word translation dataset (see data/SOURCES.md for attribution).
  */
 export const QURAN_WORDS_URL = (n) => `data/quran-words/${encodeURIComponent(n)}.json`;
+/** Full token-level contextual study layer: concise Arabic context meaning + i'rab for all 77,429 corpus words. */
+export const QURAN_WORD_STUDY_URL = (n) => `data/quran-word-study/${encodeURIComponent(n)}.json`;
 /** Root -> occurrences index (for "where else does this root appear" lookups). */
 export const QURAN_ROOTS_URL = 'data/quran-roots.json';
 /** (v5.2.75, UP-01) lemma study notes for the word popup (app-authored).

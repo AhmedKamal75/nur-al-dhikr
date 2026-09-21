@@ -345,10 +345,6 @@ export const SHORTCUT_SEEK_SEC = 10;
 // future elements; this owns the toggle intent + UI mirror).
 let audioMuted = false;
 
-export function isAudioMuted() {
-  return audioMuted;
-}
-
 export function setAudioMuted(on) {
   audioMuted = on === true;
   recitation.setMuted(audioMuted);

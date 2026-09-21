@@ -2,6 +2,104 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.2 — Omniview audit follow-ups (provenance, storage, evidence CI)
+
+Builds the six audit proposals into the tree: a lexical provenance schema
+(`data/lexical-provenance-schema.json`) pinning cited-vs-honestly-unknown
+semantics for lemma/root tiers without fabricating scholarship; an explicit
+"clear downloaded study data" budget action beside the storage meter (text
+corpora only — audio and settings survive); a bounded service-worker cache
+migration (3,000-entry cap, old caches dropped only after a complete copy);
+a 4-viewport browser-evidence CI matrix with retained traces; accessibility
+static budget gates (44px targets, visible focus, reduced-motion, RTL,
+named player controls); and a 7-scenario chaos harness with no-white-screen
+and no-data-loss invariants. Includes the audit's own FIX-01 (truthful
+audio fallback manifest) and FIX-02 (SOURCES dedup).
+
+First matrix run (112 browser tests: 28 specs × 4 viewports) paid for
+itself immediately: in the 960–~1250px band the docked player bar slid
+under the 264px side rail — `components.css`'s `inset-inline` shorthand
+was clobbering `layout.css`'s rail offset — so the rail's links swallowed
+the bar's own mode chips on tablet (desktop survived only by accident of
+max-width centering). The bar now keeps explicit rail-clearing longhands
+plus the collapsed-rail variant. Spec-side: the long-press probe centers
+its card before holding (a card resting under the phone bottom nav takes
+the press on the nav, correctly ignored — no sheet), three fixed-sleep
+flows (`follow`, `lazy-sheets`, `player-chrome`) take `test.slow()` under
+matrix load, and the matrix web server is threaded (`ThreadingHTTPServer`:
+single-threaded `http.server` serialized 4 parallel browsers into phone
+timeouts). Matrix: **112/112 green**; unit **1883/0**; lint clean.
+
+## v5.17.1 — Quran corpus, study coverage, Tajweed and offline search
+
+Completes the Quran word-study layer across all 77,429 token rows using compact
+per-ayah study files plus shared lemma/root tiers, including contextual meaning,
+i'rab, antonym state, English glosses, and root etymology/ Qur'anic bridges.
+Adds full-corpus Tajweed quiz pools with three levels, restores the exact
+32:15 sajdah annotation and configurable Madd double underlines, adds ayah-first
+audio provider/fallback metadata, and upgrades search with uncapped counts,
+pagination/load-more state, and Quran/Hadith/Azkar breakdowns. The seed build
+is now a deliberately small 3-surah/15-adhkar/sample-hadith offline fixture.
+
+## v5.17.0 — Inquisition round 5 (city directory)
+
+The one-tap directory grows 29→72 cities with EN+AR names, grouped by
+6 regions in native disclosures (zero JS, zero state — works for the
+grandmother on first paint), pinned by a coordinate-validity gate plus a
+real-browser smoke pin (6 groups, 72 city buttons, disclosure opens).
+Hijri ±1d disclaimer verified prominent; prayer estimate disclaimers
+hold. No commits by the inquisitor — owner commits.
+
+## v5.16.0 — Inquisition round 4 (e2e proof, wider cities)
+
+First real-browser e2e evidence: 26/27 Chromium (the 1 timeout is a
+CDN-dependent flake — the pristine baseline fails identically, proven
+via stash). City presets 12→29 across the Muslim world. Prayer alert
+reliability row verified wired per-mode (triggers/tab/permission +
+calendar fallback); the native bridge itself stays impossible in a
+static PWA and is documented as such. No commits by the inquisitor —
+owner commits.
+
+## v5.15.0 — Inquisition round 3 (kills, volume, wizard, honesty)
+
+Killed 13 dead exports + the unwired IDB backend + an orphaned traveler
+arm (~200 lines net-negative). Verse sessions gain a loudness slider in
+the shared console (all hosts; yields under sleep, persists
+`audio.verseVolume`). Wizard grows language-first + elder-comfort steps
+(8 steps; OS-detect from v5.13 still covers non-wizard entry). Kids stars
+gain a danger-confirmed parent wipe; milestone-eve lantern delight;
+streak badges swap flame→moon. Data honesty: asma-003 0:00 typo gone,
+SOURCES no longer cites a nonexistent build script, `npm run measure`
+prints canonical numbers. Report-evidence disputes documented below —
+several verdicts don't reproduce on the full tree (slim-zip artifacts).
+No commits by the inquisitor — owner commits.
+
+## v5.14.0 — Inquisition round 2 (budget, city, discovery, parent gate)
+
+Audio budget slider (50–500 MiB) in the Offline library with live cap +
+eviction; 12 one-tap city presets with honest approximate-times label;
+palette now lists all 9 orphan leaf views (mood, focus, quiz, roots,
+mutashabihat, journal, certificate, ambient, editor); kids exit gains an
+arithmetic parent gate after the 2s hold; hosting honesty (local server
+is dev-only) in README + launchers. .ics export verified pre-existing.
+No commits by the inquisitor — owner commits.
+
+## v5.13.0 — Omniview inquisition fixes (trust, adab, honesty)
+
+Small, safe, tested. Language: fresh installs honor the OS language once
+(Arabic-detected → Arabic chrome). Backup errors speak the reader's
+language (no more English leak on corrupt restores). Kids sandbox refuses
+imports. Reset-all now wipes IDB + auto-backup keys (no more partial
+wipe). Custom audio servers require https (localhost/LAN exempt).
+Audio cache cap 2 GiB → 200 MiB. Echo + infinite-repeat dead cell closed
+at the engine layer. Bismillah `hidden` retired (no textless mushaf).
+Streak copy de-gamified, patience prompt de-shamed, wudu adab line added,
+Sunni scope disclosed, tab title follows language switches, loop chip
+gains its own glyph, speed chip names its next rung, blank-page empty
+state invites instead of hinting, first-seed delight, orphan-action
+registry test, corpus manifest. No commits by the inquisitor — owner
+commits.
+
 ## v5.12.1 — UI/UX design audit fixes (touch, glass, empty states, numerals)
 
 Token/CSS-only sweep from the design audit, no layout-contract breaks. Touch:

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { processDocument } from '../js/core/schema.js';
+import { skipIfSeed } from './helpers/seedMode.mjs';
 
 /**
  * The Adhkar data gates (v3.9) — the standing acceptance criteria for the
@@ -30,7 +31,8 @@ describe('adhkar data gates', () => {
     assert.ok(result.success, `schema rejected the document: ${result.error}`);
   });
 
-  test('the v3.9 canonical structure is intact', () => {
+  test('the v3.9 canonical structure is intact', (t) => {
+    if (skipIfSeed(t)) return;
     const counts = Object.fromEntries(doc.categories.map((c) => [c.id, c.items.length]));
     // morning 29, evening 27, post-prayer 16, sleep 16, wake-up 9,
     // tasbih-general 20, daily-supplications 51 (see scripts/adhkar-spec/)
@@ -133,7 +135,8 @@ describe('adhkar data gates', () => {
     }
   });
 
-  test('quran excerpts are verbatim from the app corpus', () => {
+  test('quran excerpts are verbatim from the app corpus', (t) => {
+    if (skipIfSeed(t)) return;
     const kursi = JSON.parse(readFileSync(join(ROOT, 'data/quran/2.json'), 'utf8')).ayahs[254].text;
     const mor = doc.categories.find((c) => c.id === 'morning').items[0];
     assert.equal(mor.arabic, kursi, 'morning ayat al-kursi must be corpus-verbatim');

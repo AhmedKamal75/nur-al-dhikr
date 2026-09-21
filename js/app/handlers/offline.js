@@ -7,8 +7,14 @@
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { showToast } from '../../ui/toast.js';
-import { runOfflineBatch, stopOfflineBatch, clearTextCache } from '../offlineJobs.js';
+import {
+  runOfflineBatch,
+  stopOfflineBatch,
+  clearTextCache,
+  clearStudyData,
+} from '../offlineJobs.js';
 import { OFFLINE_GROUP_IDS } from '../../domain/offline.js';
+import { applyAudioCacheCapFromSettings, enforceAudioCacheCap } from '../../services/audioStore.js';
 
 export const clickHandlers = {
   'offline-download-all': () => {
@@ -35,4 +41,29 @@ export const clickHandlers = {
     store.dispatch(actions.updateSettings({ offline: {} }));
     showToast(t(on ? 'offline.compressedOn' : 'offline.compressedOff', lang));
   },
+  // (v5.17.2, audit F-04) explicit "clear downloaded study data" budget:
+  // text corpora only — audio and settings survive.
+  'offline-clear-study': async () => {
+    const lang = store.getState().settings.language;
+    await clearStudyData();
+    showToast(t('offline.clearStudyDone', lang));
+  },
 };
+
+export const changeHandlers = [
+  {
+    // (v5.14.0, V10b) audio-budget slider (50–500 MiB): persist, apply to
+    // the live IDB cap, and evict down to it — never silently over budget.
+    sel: '[data-bind="audio-cache-limit"]',
+    run: (ds, el) => {
+      const v = Math.min(500, Math.max(50, Math.round(Number(el.value) || 200)));
+      store.dispatch(actions.setAudioPrefs({ audioCacheMB: v }));
+      try {
+        applyAudioCacheCapFromSettings(store.getState().settings);
+        enforceAudioCacheCap();
+      } catch {
+        /* cap applies on next save; the pref already landed */
+      }
+    },
+  },
+];

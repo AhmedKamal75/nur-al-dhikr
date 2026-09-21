@@ -42,10 +42,6 @@ function builders() {
   };
 }
 
-export function offlineTotals() {
-  return OFFLINE_GROUPS.map((g) => ({ ...g }));
-}
-
 function setProgress(patch) {
   store.dispatch(actions.setOfflineProgress({ ...store.getState().offlineJobs, ...patch }));
 }
@@ -94,6 +90,25 @@ export async function clearTextCache() {
   } catch {
     return 0;
   }
+}
+
+/**
+ * (v5.17.2, audit F-04) explicit study-data budget action: drop text-corpus
+ * downloads + measured rows, report the before/after estimate for the
+ * storage panel. Audio (IndexedDB) and settings are untouched.
+ */
+export async function clearStudyData() {
+  let before = null;
+  try {
+    before = (await navigator.storage?.estimate?.()) || null;
+  } catch {
+    before = null;
+  }
+  const cachesCleared = await clearTextCache();
+  store.dispatch(actions.updateSettings({ offline: {} }));
+  setProgress({ quota: null });
+  await ensureOfflineQuota();
+  return { cachesCleared, before };
 }
 
 /** Refresh the storage meter (called when the Offline view opens). */

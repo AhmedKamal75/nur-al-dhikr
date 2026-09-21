@@ -19,7 +19,7 @@
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -37,6 +37,12 @@ const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'))
 const quranMeta = readJSON('data/quran-meta.json');
 const mushafMeta = readJSON('data/mushaf-meta.json');
 const surah1 = readJSON('data/quran/1.json');
+const seedSurah18 = existsSync(path.join(ROOT, 'data/quran/18.json'))
+  ? readJSON('data/quran/18.json')
+  : surah1;
+const seedSurah114 = existsSync(path.join(ROOT, 'data/quran/114.json'))
+  ? readJSON('data/quran/114.json')
+  : surah1;
 const page1 = readJSON('data/mushaf/1.json');
 
 /* ------------------------------------------------------------------ */
@@ -155,7 +161,7 @@ describe('I1: reader immersive bar carries the whole nav contract', () => {
     activeView: 'quran',
     activeParams: { id: 18 },
     settings: { ...DEFAULT_SETTINGS, language: 'en' },
-    quran: { meta: quranMeta, surahs: { 18: readJSON('data/quran/18.json') } },
+    quran: { meta: quranMeta, surahs: { 18: seedSurah18 } },
     quranWords: {},
     mushaf: { meta: null, pages: {} },
     hifzSession: { mode: false, surah: null, level: 'word', revealed: {} },
@@ -204,7 +210,7 @@ describe('I1: reader immersive bar carries the whole nav contract', () => {
     const last = renderQuran({
       ...base,
       activeParams: { id: 114 },
-      quran: { meta: quranMeta, surahs: { 114: readJSON('data/quran/114.json') } },
+      quran: { meta: quranMeta, surahs: { 114: seedSurah114 } },
     });
     assert.doesNotMatch(last, /data-id="115"/, 'no next link on An-Nas');
     assert.match(last, /data-id="113"/, 'prev link present');

@@ -341,7 +341,8 @@ test('translation tracks are labeled in data and searchable', async () => {
   assert.ok(searchReciters('أردية', customs).some((r) => r.id === 'c1'));
 });
 
-test('audio view lists the 5 verse voices with translation badges', async () => {  const { renderAudio } = await import('../js/views/audioManager.js');
+test('audio view lists the 5 verse voices with translation badges', async () => {
+  const { renderAudio } = await import('../js/views/audioManager.js');
   const state = {
     settings: {
       language: 'en',
@@ -428,7 +429,10 @@ test('audio defaults panel renders direct picks, loop gated (v5.12.0)', async ()
   assert.ok(html.includes('data-audio-pref="sleep"'), 'sleep select');
   assert.ok(html.includes('<option value="5">5m</option>'), '5-minute rung is a direct pick');
   assert.ok(!html.includes('audio.playbackDefaults'), 'no raw key leaks (EN)');
-  assert.ok(!html.includes('audio.repeatAyah') || html.includes('Repeat each ayah'), 'repeatAyah reused');
+  assert.ok(
+    !html.includes('audio.repeatAyah') || html.includes('Repeat each ayah'),
+    'repeatAyah reused'
+  );
   const ar = renderAudio(state('ar', { ayahRepeat: -1 }));
   assert.ok(ar.includes('إعدادات التلاوة الافتراضية'), 'AR title resolves');
   assert.ok(ar.includes('<option value="-1" selected>∞</option>'), 'AR saved repeat picked');

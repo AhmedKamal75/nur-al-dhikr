@@ -30,8 +30,16 @@ const ALLOWLIST = [
   { file: 'js/views/playerBar.js', hook: 'player-prev', reason: 'surah sequence in mushaf order' },
   { file: 'js/views/playerBar.js', hook: 'player-next', reason: 'surah sequence in mushaf order' },
   // (v5.12.0) fullscreen file row: same transport glyphs, same exemption.
-  { file: 'js/views/mushafPlayer.js', hook: 'player-prev', reason: 'surah sequence in mushaf order' },
-  { file: 'js/views/mushafPlayer.js', hook: 'player-next', reason: 'surah sequence in mushaf order' },
+  {
+    file: 'js/views/mushafPlayer.js',
+    hook: 'player-prev',
+    reason: 'surah sequence in mushaf order',
+  },
+  {
+    file: 'js/views/mushafPlayer.js',
+    hook: 'player-next',
+    reason: 'surah sequence in mushaf order',
+  },
   { file: 'js/views/quran.js', hook: 'quran.prevSurah', reason: 'surah sequence in mushaf order' },
   { file: 'js/views/quran.js', hook: 'quran.nextSurah', reason: 'surah sequence in mushaf order' },
   {

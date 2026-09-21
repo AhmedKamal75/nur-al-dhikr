@@ -85,7 +85,7 @@ const numFor = (lang, n) => (lang === 'ar' ? toEasternArabicNumerals(n) : String
  */
 const SAJDA_ACCENT_SURAH = 32;
 const SAJDA_ACCENT_AYAH = 15;
-const SAJDA_ACCENT_WORD = 'سُجَّدًا';
+const SAJDA_ACCENT_WORD = ['سُجَّدًا', 'سَجَدُوا'];
 
 /** Distinct surah chapters + the multi-surah recitation picker live in
  *  the player part (mushafPlayer.js) — re-exported here so the modal
@@ -233,9 +233,7 @@ export function renderMushaf(state) {
             // page in a single stop like the tafsir word runs.
             const rovIdx = rov.n++;
             const firstStop = rovIdx === 0 ? '0' : '-1';
-            const focusAttrs = prefs.wordByWordStudy
-              ? ''
-              : `tabindex="${firstStop}" role="button"`;
+            const focusAttrs = prefs.wordByWordStudy ? '' : `tabindex="${firstStop}" role="button"`;
             const markerAttrs = prefs.wordByWordStudy
               ? `tabindex="${firstStop}" role="button"`
               : 'aria-hidden="true"';

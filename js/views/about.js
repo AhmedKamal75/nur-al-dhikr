@@ -122,6 +122,7 @@ export function renderAbout(state) {
       <div class="panel__header"><h2>${t('about.sources', lang)}</h2></div>
       <ul class="source-list">${sources}</ul>
       <p class="panel__subtext">${t('about.hadithSources', lang)}</p>
+      <p class="panel__subtext">${t('about.scopeSunni', lang)}</p>
       <p class="panel__subtext">${t('about.verifyNote', lang)}</p>
     </section>
 

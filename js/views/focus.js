@@ -5,7 +5,6 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
 import {
   showTransliterationFor,
@@ -204,8 +203,4 @@ export function renderFocus(state) {
       </button>
     </footer>
   </section>`;
-}
-
-export function focusUrl(categoryId, itemId) {
-  return buildHash(VIEWS.FOCUS, { id: categoryId, subId: itemId });
 }

@@ -95,15 +95,6 @@ silently. The app validator already passes enriched rows through
 (`HADITH_GRADES`), so merged files flow with no further code change;
 until they exist, the Two-Sahihs badge stays the only grade in the UI.
 
-## Qur'an lemma study notes (`data/quran-dict.json`, v5.2.75)
-
-Lemma keys and EN glosses derive from the bundled corpus
-(`data/quran-words/`: the `lemma` field verbatim; `en` is each lemma's
-most frequent quranwbw gloss in base form). AR glosses, synonyms and
-antonyms are app-authored study notes (generic, uncontroversial
-vocabulary) — not corpus data and not fatwa. An integrity test pins
-every key against the corpus and the entry shapes.
-
 ## Ahadeeth library (data/hadith/)
 
 The Ahadeeth texts (Arabic + English) are the public-domain collection
@@ -135,10 +126,12 @@ themselves are 13th-century-and-earlier works in the public domain.
 ## Adhkar rebuild (data/adhkar.json, v5)
 
 - **Texts** retained verbatim from the vetted Hisn-al-Muslim core records;
-  **Qur'an excerpts are extracted byte-identically from the app's own
-  Qur'an corpus** (data/quran/) by scripts/build-adhkar.mjs — Ayat
-  al-Kursi, the three surahs, al-Kafirun, al-Mulk (complete), and the
-  last two verses of al-Baqarah.
+  **Qur'an excerpts match the app's own Qur'an corpus** (data/quran/)
+  byte-identically — Ayat al-Kursi, the three surahs, al-Kafirun,
+  al-Mulk (complete), and the last two verses of al-Baqarah — pinned by
+  the `quran excerpts are verbatim from the app corpus` gate in
+  tests/adhkar-gates.test.js (no build script; the excerpts are authored
+  data, the test is the guarantee).
 - **Ordering** follows the canonical sequence of *Hisn al-Muslim*
   (Fortress of the Muslim) by Sa'id ibn Ali ibn Wahf al-Qahtani for the
   morning, evening, post-prayer, sleep and wake-up categories; tasbih

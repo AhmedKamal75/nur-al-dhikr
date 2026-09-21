@@ -172,13 +172,22 @@ export function findMoshaf(id, customs = []) {
 
 /**
  * Validate a user-supplied custom server:
- *  - must be http(s) and end with '/' (we append 001.mp3)
+ *  - must be https (or http localhost/LAN for tests) and end with '/'
  *  - must contain no spaces
  * The caller may then HEAD {server}001.mp3 to confirm it really serves audio.
+ * (v5.13.0, V3) http:// WAN servers allowed a MITM swap of Qur'an audio +
+ * cleartext IP leak — require https outside localhost/LAN.
  */
 export function validateCustomServer(raw) {
   const s = String(raw || '').trim();
   if (!/^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(s)) return { ok: false, reason: 'invalid-url' };
+  const isHttp = /^http:\/\//i.test(s);
+  if (
+    isHttp &&
+    !/^(http:\/\/(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.))/i.test(s)
+  ) {
+    return { ok: false, reason: 'http-blocked' };
+  }
   const base = s.endsWith('/') ? s : `${s}/`;
   return { ok: true, server: base };
 }

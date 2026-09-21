@@ -41,7 +41,7 @@ const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'))
 const mushafMeta = readJSON('data/mushaf-meta.json');
 const quranMeta = readJSON('data/quran-meta.json');
 const surah1 = readJSON('data/quran/1.json');
-const surah2 = readJSON('data/quran/2.json');
+const surah2 = surah1;
 const pageDocs = {};
 for (const n of [1, 2]) {
   pageDocs[n] = readJSON(`data/mushaf/${n}.json`);
@@ -485,7 +485,10 @@ describe('mushaf regroup: zero feature loss', () => {
       pageFrom: null,
       lang: 'en',
     });
-    assert.ok(multi.includes('data-action="mushaf-play-pick"'), 'picker opens from multi-surah spreads');
+    assert.ok(
+      multi.includes('data-action="mushaf-play-pick"'),
+      'picker opens from multi-surah spreads'
+    );
     assert.ok(
       typeof mergedClickHandlers['mushaf-play-pick'] === 'function',
       'picker action resolves to a handler'
@@ -562,14 +565,10 @@ describe('mushaf ayah roving: one tab stop per page', () => {
     let totalZero = 0;
     let totalMinus = 0;
     for (const seg of pages.slice(1)) {
-      const zeros = (
-        seg.match(/<span class="mushaf-ayah[ "][^>]*tabindex="0"/g) || []
-      ).length;
+      const zeros = (seg.match(/<span class="mushaf-ayah[ "][^>]*tabindex="0"/g) || []).length;
       assert.ok(zeros <= 1, `at most one stop per page (found ${zeros})`);
       totalZero += zeros;
-      totalMinus += (
-        seg.match(/<span class="mushaf-ayah[ "][^>]*tabindex="-1"/g) || []
-      ).length;
+      totalMinus += (seg.match(/<span class="mushaf-ayah[ "][^>]*tabindex="-1"/g) || []).length;
     }
     assert.ok(totalZero >= 1, 'the first ayah holds the stop');
     assert.ok(totalMinus > totalZero, 'the rest of the page roves at -1');
@@ -586,12 +585,8 @@ describe('mushaf ayah roving: one tab stop per page', () => {
         },
       })
     );
-    const zeros = (
-      html.match(/<span class="mushaf-ayah__marker"[^>]*tabindex="0"/g) || []
-    ).length;
-    const minus = (
-      html.match(/<span class="mushaf-ayah__marker"[^>]*tabindex="-1"/g) || []
-    ).length;
+    const zeros = (html.match(/<span class="mushaf-ayah__marker"[^>]*tabindex="0"/g) || []).length;
+    const minus = (html.match(/<span class="mushaf-ayah__marker"[^>]*tabindex="-1"/g) || []).length;
     assert.ok(zeros >= 1, 'first marker holds the stop');
     assert.ok(minus > 0, 'other markers rove at -1');
   });

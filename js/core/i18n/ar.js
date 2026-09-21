@@ -266,10 +266,17 @@ export const ar = {
   'offline.storageUnknown': 'تعذّرت معرفة التخزين على هذا الجهاز.',
   // v5.2.75 audio-cache budget line (PERF-02).
   'offline.audioCache': 'مخبأ الصوت',
+  'offline.cacheLimit': 'حد تخزين الصوت',
+  'offline.cacheLimitHint':
+    'عند الامتلاء تُحذف أقدم التحميلات أولًا. تسجيلات الأذان الخاصة بك لا تُحذف أبدًا.',
   'offline.storageModeTitle': 'وضع التخزين',
   'offline.storageModeBody':
     'العادي يحفظ ملفات كاملة (فتح سريع، نحو 150 م.ب). المضغوط يحفظ ملفات مضغوطة (نحو 27 م.ب) ويفك ضغطها عند الفتح — أبطأ، وأرحم للتخزين والبيانات. يسري على التحميلات الجديدة؛ التبديل يمسح النصوص المحمّلة.',
   'offline.compressedLabel': 'تخزين التحميلات مضغوطة',
+  'offline.clearStudy': 'مسح بيانات الدراسة المحمّلة',
+  'offline.clearStudyBody':
+    'يحرّر تحميلات المتون (القرآن والحديث والتفسير ودراسة الكلمات). الصوت والإعدادات لا تُمس.',
+  'offline.clearStudyDone': 'مُسحت تحميلات الدراسة.',
   'offline.audioTitle': 'أصوات القرّاء؟',
   'offline.audioBody':
     'الصوت منفصل: اختر قارئًا في الصوت وحمّل المصحف كاملًا هناك (نحو 1-2 غيغابايت).',
@@ -297,6 +304,7 @@ export const ar = {
   // (v5.12.0) علاج الأزرار العمياء: تسمية الدرجة الحالية والتالية.
   'audio.repeatNext': 'تكرار كل آية: {cur} — الضغطة التالية: {next}',
   'audio.loopNext': 'تكرار النطاق: {cur} — الضغطة التالية: {next}',
+  'audio.speedNext': 'سرعة التشغيل: {cur}× — الضغطة التالية: {next}×',
   'audio.ayahPrev': 'الآية السابقة',
   'audio.ayahNext': 'الآية التالية',
   // v3.17: وضع الحفظ ومراجعة الحفظ المتباعدة
@@ -332,6 +340,7 @@ export const ar = {
   // (v5.10.7) أمانة وضع الملف: لا توقيتات مع ملفات السور.
   'audio.fileModeNote':
     'ملف السورة كاملة: وضع آية بآية يضيف التظليل وتقليب الصفحات والتكرار والمقارنة.',
+  'audio.riwayaNote': 'الصوت برواية {rewaya} — والنص المعروض حفص.',
   // (v5.10.8) نافذة اختيار القارئ الموحدة.
   'audio.voiceModeAyah': 'تم اختيار الصوت — وضع آية بآية',
   'audio.voiceModeSurah': 'تم اختيار المصحف — وضع السورة كاملة',
@@ -362,6 +371,7 @@ export const ar = {
   'audio.customHint':
     'يعمل مع أي خادم يقدّم ملفات باسم 001.mp3 حتى 114.mp3 (لكل سورة). يتحقق التطبيق أن الخادم يقدّم صوتًا فعلاً قبل الحفظ.',
   'audio.customInvalid': 'أدخل اسمًا ورابطًا صحيحًا يبدأ بـ http(s).',
+  'audio.customHttpBlocked': 'استخدم عنوان https:// — فعنوان http:// قد يُعترض ويُبدّل.',
   'audio.customChecking': 'جارٍ التحقق من الخادم…',
   'audio.customNotAudio': 'هذا العنوان لا يقدّم صوتًا — تأكد من الرابط.',
   'audio.note':
@@ -522,6 +532,8 @@ export const ar = {
   'home.theme.paradise': 'الجنة',
   'home.streak': 'أيام متتالية',
   'home.noRecent': 'لم تقرأ شيئًا اليوم بعد. افتح قسمًا للبدء.',
+  'home.blankPage': 'صفحة بيضاء تنتظرك بودّ',
+  'home.firstSeed': 'البستان ينبت أول بذرة — بارك الله فيك.',
   'home.greeting.morning': 'صباح الخير',
   'home.greeting.afternoon': 'مساء الخير',
   'home.greeting.evening': 'مساء الخير',
@@ -538,7 +550,7 @@ export const ar = {
   // (v5.9.0) ترقيم الصفحات + عدّادات المطابقات لكل مدونة.
   'search.loadMore': 'عرض المزيد',
   'search.showingOf': 'عرض {x} من {n}',
-  'search.breakdown': 'القرآن: {q} · التفسير: {t} · المكتبة: {l}',
+  'search.breakdown': 'القرآن: {q} · الحديث: {h} · الأذكار: {z}',
   // (v5.10.1) انظر التعليق الإنجليزي أعلاه: الحديث مدونة مستقلة، والرابط
   // ينقل الاستعلام نفسه إلى صفحة الحديث بدل عدّه صفرًا.
   'search.searchHadith': 'ابحث في الحديث عن «{q}»',
@@ -737,6 +749,13 @@ export const ar = {
   'prayer.method': 'طريقة الحساب',
   'prayer.asrMethod': 'مذهب حساب العصر',
   'prayer.manualLocation': 'إدخال الإحداثيات يدويًا',
+  'prayer.chooseCity': 'أو اختر مدينتك — مواقيت تقريبية حتى تُدخل موقعك الدقيق',
+  'prayer.region.me': 'الشرق الأوسط',
+  'prayer.region.africa': 'أفريقيا',
+  'prayer.region.europe': 'أوروبا',
+  'prayer.region.asia': 'آسيا',
+  'prayer.region.oceania': 'أوقيانوسيا',
+  'prayer.region.americas': 'الأمريكتان',
   'prayer.alertOn': 'التنبيه مفعّل لهذه الصلاة',
   'prayer.alertOff': 'تفعيل التنبيه',
   'prayer.alertMode': 'تنبيه الصلاة',
@@ -822,6 +841,7 @@ export const ar = {
   'prayer.longitude': 'خط الطول',
   'prayer.locationUnavailable': 'الموقع غير متاح على هذا الجهاز',
   'prayer.locationDenied': 'تم رفض إذن الموقع',
+  'prayer.locationSet': 'تم تحديد الموقع — المواقيت تقريبية حتى تُدخل الإحداثيات الدقيقة',
   'prayer.tzMismatch':
     'هذه المواقيت محسوبة لشمس الإحداثيات التي حفظتها لكنها معروضة بتوقيت هذا الجهاز. إذا أدخلت إحداثيات لمكان في نطاق زمني آخر، فصلّ بمواقيت ذلك المكان لا بهذا التوقيت.',
   'prayer.polarNote':
@@ -947,6 +967,8 @@ export const ar = {
   'mushaf.bismillah_gold': 'ذهبي',
   'mushaf.bismillah_accent': 'لون التطبيق',
   'mushaf.bismillah_hidden': 'مخفية',
+  'mushaf.wuduNote':
+    'من الآداب: الوضوء قبل مسّ المصحف الورقي؛ والشاشات على قول عالمك — واقرأ بحضور قلب.',
   'mushaf.tajweedInspector': 'مُفتّش التجويد للكلمات',
   'mushaf.paper': 'لون الورق',
   'mushaf.textSize': 'حجم الخط',
@@ -1016,6 +1038,10 @@ export const ar = {
   // (v5.9.0) بديل أقرب آية: يبدأ التدريب على أقرب آية فيها أحكام مع التنبيه.
   'practice.nearestAyah': 'لا توجد أحكام هنا — نتدرب على أقرب آية فيها أحكام ({s}:{a}).',
 
+  'wordStudy.contextualMeaning': 'المعنى الدقيق في الآية',
+  'wordStudy.englishTranslation': 'الترجمة الإنجليزية',
+  'wordStudy.classicalUsage': 'الاستعمال اللغوي القديم وأصل الجذر',
+  'wordStudy.quranicBridge': 'صلة الأصل بالمعنى القرآني',
   'wordStudy.title': 'دراسة الكلمة',
   'wordStudy.noData': 'لا تتوفر بيانات نحوية لهذه الكلمة بعد.',
   'wordStudy.tajweed': 'أحكام التجويد في هذه الكلمة',
@@ -1389,6 +1415,8 @@ export const ar = {
     'النصوص من الكتب الستة — صحيح البخاري وصحيح مسلم وسنن أبي داود وجامع الترمذي وسنن النسائي وسنن ابن ماجه — والأربعون النووية والأربعون قدسية؛ مجموعات كلاسيكية في الملك العام (انظر «حول → المصادر»). عناوين الأبواب معروضة بالإنجليزية كما وردت في مجموعة البيانات المصدر.',
   'about.hadithSources':
     'مكتبة الأحاديث: الكتب الستة (الصحيحان والأربع السنن) والأربعون النووية والأربعون قدسية — 34,239 حديثاً في الملك العام، عبر مجموعة hadith-api المخصصة للملك العام (التفاصيل الكاملة في data/SOURCES.md).',
+  'about.scopeSunni':
+    'النطاق: تتبع هذه المكتبة المجموعات السنية المعتمدة؛ والمجموعات الشيعية خارج النطاق في v5.x.',
   'common.error': 'حدث خطأ ما.',
   'common.skipToContent': 'تخطَّ إلى المحتوى',
   'a11y.mainNav': 'التنقل الرئيسي',
@@ -1473,6 +1501,9 @@ export const ar = {
   'kids.exitHow': 'النقر لا يخرج — اضغط مطوّلًا حتى يمتلئ الشريط.',
   'kids.exitDone': 'تم إيقاف وضع الأطفال',
   'kids.blocked': 'وضع الأطفال مفعّل — قرآن الأطفال وعداد التسبيح فقط.',
+  'kids.gateTitle': 'للكبار فقط',
+  'kids.gateHint': 'أجب للخروج من وضع الأطفال — يا صغار، أعطوا الجهاز لأحد الكبار.',
+  'kids.gateWrong': 'ليست صحيحة — حاول مجددًا، أو ابقَ واستمع.',
   // (v5.10.1) تقدّم الأطفال: المستويات واختبار الذاكرة ولوحة الأهل.
   'kids.level': 'المستوى',
   'kids.level.seed': 'بذرة',
@@ -1496,6 +1527,9 @@ export const ar = {
   'kids.weekTitle': 'نجوم هذا الأسبوع',
   'kids.bySurah': 'النجوم لكل سورة',
   'kids.noStarsYet': 'لا نجوم بعد — ابدأ بالاستماع!',
+  'kids.erase': 'مسح النجوم',
+  'kids.eraseConfirm': 'مسح كل النجوم المكتسبة؟ لا يمكن التراجع.',
+  'kids.eraseDone': 'مُسحت النجوم — سماء جديدة.',
   'stats.avgPerDay': 'المعدل اليومي (٣٠ يومًا)',
   // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
   // follows the nudge tone rules: no dates, no counts, no shaming.
@@ -1514,7 +1548,8 @@ export const ar = {
   'stats.goalLeft': 'بقي {n}',
   'stats.streakCoachTitle': 'تدريب السلسلة',
   'stats.streakToGo': '{n} أيام إلى إنجاز {m} يومًا',
-  'stats.streakTop': 'كل الإنجازات محققة — حافظ على الشعلة.',
+  'stats.streakEve': 'بقي صباح واحد على إنجاز {m} يومًا — إن شاء الله.',
+  'stats.streakTop': 'كل الإنجازات محققة — ثبّت الله نورك.',
   'stats.topSurahs': 'السور الأكثر قراءة',
   'stats.pagesRead': '{n} صفحات',
   'stats.weekTotal': 'هذا الأسبوع',
@@ -1540,6 +1575,12 @@ export const ar = {
   'onboarding.title': 'ابدأ من هنا',
   'onboarding.progress': 'أُنجزت {done} من {total} خطوات',
   'onboarding.dismiss': 'لاحقًا',
+  'onboarding.language': 'اختر لغتك',
+  'onboarding.languageHint': 'كل شيء — كل زر وكل شرح — بلغتك.',
+  'onboarding.comfort': 'هل القراءة مريحة؟',
+  'onboarding.comfortHint': 'خط كبير وأزرار واسعة للعيون المتعبة والأصابع الكبيرة.',
+  'onboarding.bigTextYes': 'نعم، خط كبير',
+  'onboarding.bigTextNo': 'لا، حجم عادي',
   'onboarding.location': 'حدّد موقعك',
   'onboarding.locationHint': 'للحصول على مواقيت صلاة دقيقة',
   'onboarding.install': 'ثبّت التطبيق',
@@ -1621,6 +1662,10 @@ export const ar = {
   'backup.importConfirm':
     'الاستيراد يستبدل كل ما على هذا الجهاز — المفضلة والسلاسل والإحصاءات والإعدادات — بمحتوى النسخة الاحتياطية. لا يمكن التراجع. هل تريد المتابعة؟',
   'backup.importDone': 'تم استيراد النسخة الاحتياطية.',
+  'backup.invalidJson': 'هذا الملف ليس بصيغة JSON صالحة.',
+  'backup.futureVersion': 'هذه النسخة من إصدار أحدث من نور الذكر — حدّث التطبيق لاستيرادها.',
+  'backup.noData': 'هذا الملف لا يبدو كنسخة احتياطية من نور الذكر.',
+  'backup.emptyFile': 'هذا الملف لا يحتوي على بيانات معروفة للتطبيق.',
   'storage.persistFailed':
     'تعذّر حفظ بياناتك — مساحة التخزين ممتلئة أو غير متاحة. قد تُفقد التغييرات في هذه الجلسة.',
 
@@ -1803,7 +1848,7 @@ export const ar = {
 
   /* ===== (إكمال v4.4) خواطر الأسبوع ===== */
   'journal.prompt.gratitude': 'ما ثلاث نعم قابلتها هذا الأسبوع بلا شكر؟',
-  'journal.prompt.patience': 'أين صبرت هذا الأسبوع — وأين فاتني الصبر؟',
+  'journal.prompt.patience': 'أين صبرت هذا الأسبوع — وأين أرجو أن أنمو أكثر؟',
   'journal.prompt.istighfar': 'ما الذي أحتاج الاستغفار منه أكثر هذا الأسبوع؟',
   'journal.prompt.knowledge': 'ماذا تعلمت هذا الأسبوع فقرّبني من الله؟',
   'journal.prompt.family': 'كيف خدمت أهلي هذا الأسبوع؟',

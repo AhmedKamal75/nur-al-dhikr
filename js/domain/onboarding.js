@@ -42,6 +42,8 @@ export function isReturningUser(payload) {
  * confirm (their seen-flags persist in state.onboarding.stepsSeen).
  */
 export const WIZARD_STEP_IDS = [
+  'language',
+  'comfort',
   'location',
   'notifications',
   'prayer',
@@ -51,7 +53,7 @@ export const WIZARD_STEP_IDS = [
 ];
 
 /** Steps whose completion is a recorded confirm (persisted seen-flags). */
-export const CONFIRM_STEPS = ['prayer', 'goals'];
+export const CONFIRM_STEPS = ['language', 'comfort', 'prayer', 'goals'];
 
 /**
  * Build the ordered list of onboarding steps with their done flags.
@@ -69,6 +71,8 @@ export function buildOnboardingSteps(
   const seen = state.onboarding?.stepsSeen;
   const seenMap = seen && typeof seen === 'object' && !Array.isArray(seen) ? seen : {};
   return [
+    { id: 'language', done: seenMap.language === true },
+    { id: 'comfort', done: seenMap.comfort === true },
     {
       id: 'location',
       done:

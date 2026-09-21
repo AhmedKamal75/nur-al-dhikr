@@ -5,7 +5,12 @@
  */
 
 import { rt } from '../../app/rt.js';
-import { downloadOne, startAudioPlay, toggleAudioMute, yieldFullSurahPlayer } from '../audioEngine.js';
+import {
+  downloadOne,
+  startAudioPlay,
+  toggleAudioMute,
+  yieldFullSurahPlayer,
+} from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
 import { MUSHAF_META_URL, QURAN_META_URL, VIEWS } from '../../core/config.js';
 import { QURAN_RECITER_IDS } from '../../core/config/quran.js';
@@ -447,6 +452,7 @@ export const clickHandlers = {
         repeat: state.settings.audio?.ayahRepeat,
         loop: 1,
         speed: state.settings.audio?.verseRate ?? 1,
+        baseVolume: state.settings.audio?.verseVolume ?? 1,
         queue: pl.items,
         qIndex: idx,
       });
@@ -545,10 +551,7 @@ export const clickHandlers = {
   // changes; closing the player clears it.
   'player-sleep-cycle': () => {
     const snap = player.sleepSnapshot();
-    applyFileSleep(
-      nextSleepRung(snap.enabled, snap.minutes),
-      store.getState().settings.language
-    );
+    applyFileSleep(nextSleepRung(snap.enabled, snap.minutes), store.getState().settings.language);
   },
 
   'player-next': () => {
@@ -668,7 +671,8 @@ export const inputHandlers = [
     // Live time preview while dragging the seek range — the seek itself
     // still commits on change (release), so streaming isn't thrashed.
     sel: '[data-player-seek]',
-    run: (ds, el) => {      const dur = player.duration();
+    run: (ds, el) => {
+      const dur = player.duration();
       const bar = document.querySelector('.player-bar');
       const timeEl = bar?.querySelector('[data-player-time]');
       if (timeEl && dur > 0) {

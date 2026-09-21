@@ -105,9 +105,11 @@ export function quranIndexSize() {
 let lastSearch = { query: null, limit: 0, results: null };
 
 export function searchQuran(query, { limit = 24 } = {}) {
+  const resultLimit = limit == null ? Infinity : Number(limit);
+  const safeLimit = Number.isFinite(resultLimit) ? Math.max(0, resultLimit) : Infinity;
   const raw = String(query ?? '');
   if (!raw.trim() || !quranRecords.length) return [];
-  if (lastSearch.query === raw && lastSearch.limit === limit && lastSearch.results)
+  if (lastSearch.query === raw && lastSearch.limit === safeLimit && lastSearch.results)
     return lastSearch.results;
   // Query side goes through the SAME pipeline as the records (annotations
   // stripped, diacritics folded, alefs elided), so pasted-in ayah
@@ -158,8 +160,8 @@ export function searchQuran(query, { limit = 24 } = {}) {
   }
 
   results.sort((x, y) => y.score - x.score || x.s - y.s || x.a - y.a);
-  const out = results.slice(0, limit);
-  lastSearch = { query: raw, limit, results: out };
+  const out = results.slice(0, safeLimit);
+  lastSearch = { query: raw, limit: safeLimit, results: out };
   return out;
 }
 

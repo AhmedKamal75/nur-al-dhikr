@@ -5,7 +5,12 @@
  */
 
 import { rt } from './rt.js';
-import { ensureRecitersData, maybeSyncVerseStatus, updateCompassLifecycle, syncPlayerIdleArmed } from './audioEngine.js';
+import {
+  ensureRecitersData,
+  maybeSyncVerseStatus,
+  updateCompassLifecycle,
+  syncPlayerIdleArmed,
+} from './audioEngine.js';
 import { refreshLibraryIndex } from './net.js';
 import { renderErrorScreen, closeNavDrawer } from './drawer.js';
 import {

@@ -363,6 +363,10 @@ body:not(.tajweed-underlines-off)
     > .tajweed--idgham_ghunnah,
     > .tajweed--idgham_shafawi,
     > .tajweed--ikhfa_shafawi,
+    > .tajweed--madd_2,
+    > .tajweed--madd_iwad,
+    > .tajweed--madd_badal,
+    > .tajweed--madd_246,
     > .tajweed--madd_munfasil,
     > .tajweed--madd_silah,
     > .tajweed--madd_muttasil,
@@ -447,6 +451,10 @@ body:not(.tajweed-underlines-off)
   text-decoration: underline solid;
   text-underline-offset: 3px;
 }
+.tajweed--madd_2,
+.tajweed--madd_iwad,
+.tajweed--madd_badal,
+.tajweed--madd_246,
 .tajweed--madd_munfasil,
 .tajweed--madd_silah,
 .tajweed--madd_muttasil,
@@ -1429,9 +1437,13 @@ body.mushaf-fs-idle .mushaf-fs-echo {
 }
 /* (v5.9.0, a11y) keyboard focus always re-reveals the bars: tabbing into
    an auto-hidden control restores it visually (pointer/key activity
-   already resets the idle timer in app/fullscreen.js). */
+   already resets the idle timer in app/fullscreen.js). (v5.13.0, V19)
+   hover joins focus — a mouse user hovering the ghost gets readable
+   chrome, not a 0.12 whisper. */
 body.mushaf-fs-idle .mushaf-fs-controls:focus-within,
-body.mushaf-fs-idle .mushaf-fs-console:focus-within {
+body.mushaf-fs-idle .mushaf-fs-console:focus-within,
+body.mushaf-fs-idle .mushaf-fs-controls:hover,
+body.mushaf-fs-idle .mushaf-fs-console:hover {
   opacity: 1;
   transform: none;
   pointer-events: auto;
@@ -2389,6 +2401,22 @@ body.has-player .reader-immersive-echo {
 }
 /* (v5.6.0) the root's core conceptual meaning: Arabic sense first,
    English gloss beneath — the idea every derivative carries. */
+.word-study__study-label {
+  margin: 0.45rem 0 0.15rem;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  opacity: 0.8;
+}
+.word-study__root-letters {
+  margin: 0.2rem 0;
+  font-family: var(--font-arabic);
+  letter-spacing: 0.08em;
+}
+.word-study__antonym-note {
+  margin: 0.35rem 0 0;
+  font-size: var(--fs-sm);
+  opacity: 0.78;
+}
 .word-study__root-meaning {
   font-family: var(--font-arabic);
   font-size: var(--fs-md);

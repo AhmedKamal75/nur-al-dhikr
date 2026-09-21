@@ -238,7 +238,66 @@ export function wordBookmarkKey(surah, ayah, i) {
  * roots-meaning tier. Returns a sanitized { ar, en } or null (unknown
  * root, unloaded/malformed index). Renderers escape everything again.
  */
-export function rootMeaningFor(rootsMeaning, root) {
+/**
+ * Materialize the complete per-token study contract from its compact tiers.
+ * The disk format deliberately de-duplicates lemma/root data; this helper
+ * exposes one stable record to renderers/tests without copying that metadata
+ * into all 77,429 token rows.
+ */
+export function materializeWordStudy(word, tokenStudy = null, dict = null, root = null) {
+  if (!word || typeof word !== 'object') return null;
+  const contextualMeaning = tokenStudy?.contextualMeaning || {};
+  const irab = tokenStudy?.irab || {};
+  const antonyms = Array.isArray(dict?.ant) ? dict.ant : [];
+  const noDirectAntonym = antonyms.length === 0;
+  const etymology = root
+    ? { ...root }
+    : {
+        root: null,
+        rootLetters: [],
+        lexicalCoreAr:
+          'لا جذر معجمي مستقل مُسجَّل لهذا العنصر الوظيفي في طبقة الدراسة؛ يُشرح بوظيفته النحوية والسياقية.',
+        lexicalCoreEn:
+          'No independent lexical root is recorded for this grammatical/function token; it is explained by grammatical and contextual function.',
+        classicalUsageAr:
+          'عنصر وظيفي/ضميري لا يُنسب إلى جذر اشتقاقي مستقل في بيانات الدراسة المضمّنة.',
+        classicalUsageEn:
+          'A function-word/pronominal token without an independent derivational root in the bundled study data.',
+        quranicBridgeAr: 'يُفهم معناه من وظيفته في السياق القرآني لا من اشتقاق جذري مستقل.',
+        quranicBridgeEn:
+          'Its Qur’anic sense is determined by its contextual grammatical function rather than an independent lexical derivation.',
+        source: 'no-independent-root-policy',
+      };
+  return {
+    schemaVersion: '1.0',
+    coverage: 'quran-token',
+    contextualMeaning: {
+      ar: typeof contextualMeaning.ar === 'string' ? contextualMeaning.ar : '',
+      en: typeof word.en === 'string' ? word.en : '',
+      source: typeof contextualMeaning.source === 'string' ? contextualMeaning.source : '',
+    },
+    englishTranslation: typeof word.en === 'string' ? word.en : '',
+    antonyms: {
+      ar: antonyms,
+      covered: Boolean(dict && typeof dict === 'object'),
+      hasDirectAntonym: !noDirectAntonym,
+      noteAr: noDirectAntonym
+        ? 'لا يوجد مضاد عربي مباشر مُثبت في طبقة الدراسة المضمّنة؛ لم يُخترع مضاد.'
+        : '',
+      noteEn: noDirectAntonym
+        ? 'No attested direct Arabic antonym is recorded in the bundled study tier; none was invented.'
+        : '',
+    },
+    irab: {
+      ar: typeof irab.ar === 'string' ? irab.ar : '',
+      en: typeof irab.en === 'string' ? irab.en : '',
+      source: typeof irab.source === 'string' ? irab.source : '',
+    },
+    etymology,
+  };
+}
+
+export function rootStudyEntryFor(rootsMeaning, root) {
   const index = rootsMeaning && typeof rootsMeaning === 'object' ? rootsMeaning.index : null;
   if (!index || typeof index !== 'object' || typeof root !== 'string' || !root) return null;
   const e = index[root];
@@ -246,5 +305,28 @@ export function rootMeaningFor(rootsMeaning, root) {
   const ar = typeof e.ar === 'string' ? e.ar.slice(0, 200) : '';
   const en = typeof e.en === 'string' ? e.en.slice(0, 120) : '';
   if (!ar && !en) return null;
-  return { ar, en };
+  return {
+    ...e,
+    ar,
+    en,
+    root: typeof e.root === 'string' ? e.root : root,
+    rootLetters: Array.isArray(e.rootLetters)
+      ? e.rootLetters.filter((x) => typeof x === 'string')
+      : [],
+    classicalUsageAr:
+      typeof e.classicalUsageAr === 'string' ? e.classicalUsageAr.slice(0, 500) : '',
+    classicalUsageEn:
+      typeof e.classicalUsageEn === 'string' ? e.classicalUsageEn.slice(0, 300) : '',
+    lexicalCoreAr: typeof e.lexicalCoreAr === 'string' ? e.lexicalCoreAr.slice(0, 300) : '',
+    lexicalCoreEn: typeof e.lexicalCoreEn === 'string' ? e.lexicalCoreEn.slice(0, 200) : '',
+    quranicBridgeAr: typeof e.quranicBridgeAr === 'string' ? e.quranicBridgeAr.slice(0, 600) : '',
+    quranicBridgeEn: typeof e.quranicBridgeEn === 'string' ? e.quranicBridgeEn.slice(0, 400) : '',
+    source: typeof e.source === 'string' ? e.source : '',
+  };
+}
+
+/** Backward-compatible core-meaning API: returns only the original {ar,en} contract. */
+export function rootMeaningFor(rootsMeaning, root) {
+  const e = rootStudyEntryFor(rootsMeaning, root);
+  return e ? { ar: e.ar, en: e.en } : null;
 }

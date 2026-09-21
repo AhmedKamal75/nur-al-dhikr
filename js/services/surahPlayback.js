@@ -401,7 +401,10 @@ let sleepTick = null; // interval id
 
 function applyVolumeNow() {
   const v = volumeAt(sleep ? { enabled: true, endsAtMs: sleep.endsAtMs } : null, Date.now());
-  driverSetVolume(v);
+  // (v5.15.0, V5) user base loudness × sleep-fade curve — the slider owns
+  // the floor, the fade owns the curve; neither fights the other.
+  const base = session && Number.isFinite(session.baseVolume) ? session.baseVolume : 1;
+  driverSetVolume(base * v);
   if (sleep && v <= 0) {
     clearSleepTimer();
     // (v5.12.0 hostile review) pause — not stop — so the session and its
@@ -422,12 +425,13 @@ export function armSleepTimer(minutes) {
   return sleepSnapshot();
 }
 
-/** Cancel the sleep timer and restore full volume. */
+/** Cancel the sleep timer and restore user (not full) volume. */
 export function clearSleepTimer() {
   sleep = null;
   if (sleepTick) clearInterval(sleepTick);
   sleepTick = null;
-  driverSetVolume(1);
+  const base = session && Number.isFinite(session.baseVolume) ? session.baseVolume : 1;
+  driverSetVolume(base);
   return sleepSnapshot();
 }
 
@@ -847,6 +851,7 @@ export function start({
   repeat = 1,
   loop = 1,
   speed = 1,
+  baseVolume = 1,
   queue = null,
   qIndex = 0,
   stopAt = null,
@@ -927,8 +932,15 @@ export function start({
     listenRepeat: false,
     waiting: false,
     echoPauseMs: ECHO_PAUSE_DEFAULT_MS,
+    // (v5.15.0, V5) user base loudness — the sleep fade multiplies on top.
+    baseVolume: Number.isFinite(Number(baseVolume))
+      ? Math.min(1, Math.max(0, Number(baseVolume)))
+      : 1,
   };
   session.repeatsLeft = session.repeat;
+  // Fresh sessions open at the user's loudness, not full blast: the fade
+  // tick only corrects once per second, and sleep may not even be armed.
+  driverSetVolume(session.baseVolume);
   // Register on the CURRENT driver each start — the driver can be swapped
   // (tests inject fakes; production always uses the real audio element).
   driverOnEnded(onVerseEnded);
@@ -971,6 +983,13 @@ export function setContinuous(enabled) {
 export function setListenRepeat(on, pauseMs = ECHO_PAUSE_DEFAULT_MS) {
   if (!session) return snapshot();
   clearEchoWait();
+  // (v5.13.0, V13) refuse echo under infinite repeat — the budget gate
+  // would swallow it silently. Caller toasts audio.echoDisarmedForLoop.
+  if (on === true && session.repeat === -1) {
+    session.listenRepeat = false;
+    session.waiting = false;
+    return snapshot();
+  }
   session.listenRepeat = on === true;
   session.waiting = false;
   if (on === true) session.echoPauseMs = normalizeEchoPause(pauseMs);
@@ -1005,6 +1024,21 @@ export function setSpeed(v) {
   session.speed = normalizeSpeed(v);
   driverSetRate(session.speed);
   prefetchNext();
+  return snapshot();
+}
+
+/**
+ * (v5.15.0, V5) live-set the base loudness (0–1). Applies instantly;
+ * while sleep is armed the fade tick re-applies base × curve within a
+ * second, so the slider never fights the fade — same yield contract as
+ * the file bar (playerBar.js), which disables its slider under sleep.
+ */
+export function setBaseVolume(v) {
+  const n = Number.isFinite(Number(v)) ? Math.min(1, Math.max(0, Number(v))) : 1;
+  if (!session) return snapshot();
+  session.baseVolume = n;
+  const fade = volumeAt(sleep ? { enabled: true, endsAtMs: sleep.endsAtMs } : null, Date.now());
+  driverSetVolume(n * fade);
   return snapshot();
 }
 
@@ -1196,6 +1230,10 @@ export function setRepeat(r) {
   const wasWaiting = session.waiting === true;
   clearEchoWait();
   session.repeat = normalizeRepeat(r);
+  // (v5.13.0, V13) echo + infinite-repeat was a dead cell: onVerseEnded
+  // returns before the echo gate when repeat===-1, so echo silently died
+  // while the UI still showed it armed. Disarm echo on entry to ∞.
+  if (session.repeat === -1) session.listenRepeat = false;
   session.repeatsLeft = session.repeat;
   session.comparePass = 0;
   if (wasWaiting) {

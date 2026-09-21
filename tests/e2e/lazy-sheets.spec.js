@@ -7,6 +7,9 @@
 import { test, expect } from '@playwright/test';
 
 test('sheets: drill from more-sheet through track to plan, plus study', async ({ page }) => {
+  // (v5.17.2, matrix) same rationale as follow.spec.js: a long drill with
+  // fixed sleeps across four routes. Triple the budget; assertions intact.
+  test.slow();
   const consoleErrors = [];
   const pageErrors = [];
   page.on('console', (msg) => {

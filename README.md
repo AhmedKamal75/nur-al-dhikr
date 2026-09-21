@@ -18,7 +18,7 @@ device.**
 
 ## Features
 
-**Remembrance.** 1,192 Adhkar and Duas across nine libraries (morning,
+**Remembrance.** 1,069 Adhkar and Duas across seven libraries (morning,
 evening, post-prayer, sleep, tasbihat, 41-category Duas, Qur'anic and
 Prophets' duas, 99 Names, reflections, Daily Sunnah), with references,
 honest authenticity gradings, diacritic-insensitive Arabic search,
@@ -52,6 +52,12 @@ python3 -m http.server 8080
 
 Easier: double-click the `Start-Here-*` launcher for your system, or
 drop the folder on any static host (Netlify Drop, GitHub Pages).
+
+> `python3 -m http.server` is for local use only: no gzip, no cache
+> headers, no HTTPS (so no install prompt, no LAN install). For real
+> hosting, serve the folder from any static host with gzip enabled and
+> long-lived caching on the precached shell (`sw.js` already
+> version-stamps every release, so immutable caching is safe).
 
 ## Privacy
 

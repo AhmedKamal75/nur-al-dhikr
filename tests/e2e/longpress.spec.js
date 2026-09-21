@@ -17,6 +17,12 @@ test('long-press: hold on ayah text opens the quick sheet', async ({ page }) => 
   await page.goto('#/quran?id=112');
   const arabic = page.locator('.ayah-card__arabic').first();
   await expect(arabic).toBeVisible({ timeout: 20000 });
+  // (v5.17.2, matrix) small viewports dock a fixed bottom nav: a card low
+  // in the viewport can sit underneath it, and the press then lands on
+  // the nav (correctly ignored — no sheet). Center the card first so the
+  // press point is tappable ayah text on every viewport.
+  await arabic.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  await page.waitForTimeout(400);
   const box = await arabic.boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();

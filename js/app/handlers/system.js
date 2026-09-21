@@ -89,6 +89,20 @@ export const clickHandlers = {
     go(VIEWS.HOME);
   },
 
+  // (v5.14.0, V12b) parent-gate answer: the hold proved a press, this
+  // proves a grown-up. Right → exit; wrong → stay (warm, never shaming).
+  'kids-gate-answer': (ds) => {
+    const lang = store.getState().settings.language;
+    if (ds.correct === '1') {
+      closeModal();
+      store.dispatch(actions.updateSettings({ kidsMode: false }));
+      showToast(t('kids.exitDone', lang));
+      go(VIEWS.HOME);
+    } else {
+      showToast(t('kids.gateWrong', lang));
+    }
+  },
+
   // Home panel reorder: move one panel up/down in the saved order (the
   // domain starts from the book order when nothing is saved yet).
   'home-panel-move': (ds) => {
@@ -417,6 +431,14 @@ export const clickHandlers = {
     // (v5.12.0) the reset restores the unmuted chip — the elements must
     // follow, or the UI would lie about sounding audio.
     setAudioMuted(false);
+    // (v5.13.0, V7) reset-all used to wipe state slices but leave IDB
+    // (audio cache, custom libraries, attachments) + auto-backup keys —
+    // "Reset all data" lied by omission (GDPR right-to-erasure gap).
+    try {
+      import('../drawer.js').then((m) => m.wipeAppDataForReset?.());
+    } catch {
+      /* state reset already landed; IDB wipe is best-effort */
+    }
     closeModal();
     go(VIEWS.HOME);
   },

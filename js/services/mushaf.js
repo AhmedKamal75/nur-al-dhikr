@@ -45,9 +45,6 @@ let wideLayout = false;
 export function setMushafWideLayout(v) {
   wideLayout = v === true;
 }
-export function getMushafWideLayout() {
-  return wideLayout;
-}
 
 /** Is the two-page spread active for this render/navigation decision?
  *  Requires BOTH the persisted preference AND a wide enough viewport —

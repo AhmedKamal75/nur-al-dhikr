@@ -2,7 +2,7 @@
  * tests/helpers/seedMode.mjs — seed-bundle detection for the corpus gates.
  *
  * The seed archive (built by scripts/build-seed-bundle.mjs, documented in
- * data/SEED-README.md) ships 8 full surahs + seed sample libraries instead
+ * data/SEED-README.md) ships 3 full surahs + seed sample libraries instead
  * of the full 114/6,236 corpora. Gates that count the FULL corpus cannot
  * run there; they must skip LOUDLY with an explicit message rather than
  * fail with ENOENT noise or, worse, silently pass a weakened assertion.

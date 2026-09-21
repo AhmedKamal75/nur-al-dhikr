@@ -6,6 +6,9 @@
 import { test, expect } from '@playwright/test';
 
 test('player chrome: minimize, keys, idle fade keep one session', async ({ page }) => {
+  // (v5.17.2, matrix) fixed sleeps alone total ~9s plus long polls; triple
+  // the budget for loaded matrix workers. Assertions unchanged.
+  test.slow();
   const pageErrors = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
   await page.goto('#/mushaf?page=2');
@@ -34,16 +37,20 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
   const before = await counter.textContent();
   // Space pauses and resumes.
   await page.keyboard.press(' ');
-  await expect(page.locator('.player-bar--recite [data-action="recite-pause-toggle"]').first()).toHaveAttribute('aria-label', /Play|تشغيل/, { timeout: 10000 });
+  await expect(
+    page.locator('.player-bar--recite [data-action="recite-pause-toggle"]').first()
+  ).toHaveAttribute('aria-label', /Play|تشغيل/, { timeout: 10000 });
   await page.keyboard.press(' ');
   // ArrowLeft steps to the next ayah (mushaf order).
   await page.keyboard.press('ArrowLeft');
-  await expect
-    .poll(async () => counter.textContent(), { timeout: 15000 })
-    .not.toBe(before);
+  await expect.poll(async () => counter.textContent(), { timeout: 15000 }).not.toBe(before);
   // M mutes (chip presses in).
   await page.keyboard.press('m');
-  await expect(page.locator('[data-action="audio-mute-toggle"]').first()).toHaveAttribute('aria-pressed', 'true', { timeout: 10000 });
+  await expect(page.locator('[data-action="audio-mute-toggle"]').first()).toHaveAttribute(
+    'aria-pressed',
+    'true',
+    { timeout: 10000 }
+  );
   await page.keyboard.press('m');
 
   // Idle fade: 5s of quiet dims the bar; motion wakes it.

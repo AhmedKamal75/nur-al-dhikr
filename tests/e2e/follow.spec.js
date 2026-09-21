@@ -6,6 +6,11 @@
 import { test, expect } from '@playwright/test';
 
 test('follow: mushaf flips to the reciting ayahs page', async ({ page }) => {
+  // (v5.17.2, matrix) a fixed-sleep multi-step flow (≈10s of sleeps plus
+  // mushaf/audio load): triple the budget so parallel matrix workers on
+  // small viewports don't starve it. Assertions are unchanged — a broken
+  // flip still fails, just with room to breathe.
+  test.slow();
   const pageErrors = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
   await page.goto('#/mushaf?page=2');

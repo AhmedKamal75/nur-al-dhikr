@@ -33,6 +33,9 @@ export function reciterShortLabel(reciterId, lang) {
  */
 export const REPEAT_CYCLE_UI = [1, 3, 5, 10, -1];
 export const LOOP_CYCLE_UI = [1, 2, 3, 5, 10];
+// (v5.13.0, V5) speed ladder mirror — services/surahPlayback VERSE_RATES
+// owns the canonical rungs; pinned equal by recitation-console.test.js.
+export const SPEED_CYCLE_UI = [0.5, 0.75, 1, 1.25, 1.5, 2];
 const nextIn = (cycle, cur) => cycle[(cycle.indexOf(cur) + 1) % cycle.length];
 const cycleLabel = (v) => (v === -1 ? '∞' : `×${v}`);
 
@@ -71,6 +74,12 @@ export function consoleSnapshot(sp, settings, sleep, lang, extra = {}) {
     loopNext: nextIn(LOOP_CYCLE_UI, loop),
     loopNextLabel: cycleLabel(nextIn(LOOP_CYCLE_UI, loop)),
     speed: Number(sp.speed) || 1,
+    speedNext: nextIn(
+      SPEED_CYCLE_UI,
+      SPEED_CYCLE_UI.includes(Number(sp.speed)) ? Number(sp.speed) : 1
+    ),
+    // (v5.15.0, V5) base loudness for the slider (0–100 display).
+    volumePct: Math.max(0, Math.min(100, Math.round(Number(audio.verseVolume ?? 1) * 100))),
     sleepEnabled: !!sleep?.enabled,
     sleepLabel: sleep?.label || '',
     paused: sp.paused === true,
@@ -119,7 +128,17 @@ export function recitationChipsHTML(snap, lang, cls, opts = {}) {
     cur: cycleLabel(snap.loop),
     next: snap.loopNextLabel,
   });
+  const speedLabel = t('audio.speedNext', lang, { cur: snap.speed, next: snap.speedNext });
   const voiceLabel = `${t('audio.chooseReciter', lang)} — ${snap.voiceALabel}${snap.voiceBLabel ? ` + ${snap.voiceBLabel}` : ''}`;
+  // (v5.15.0, V5) verse loudness slider: continuous loudness stays a
+  // slider while discrete hifz budgets stay chips (L2 steelman). Yields
+  // under sleep — the fade tick owns the curve (same contract as the
+  // file bar's disabled slider).
+  const volTitle = snap.sleepEnabled ? t('audio.volumeSleep', lang) : t('audio.volume', lang);
+  const volumeSlider = `
+      <span class="rec-console-volume" role="group" aria-label="${escapeHTML(volTitle)}">${icon('volume', { size: 13 })}
+        <input type="range" min="0" max="100" step="5" value="${snap.volumePct}" dir="ltr" data-bind="recite-volume" aria-label="${escapeHTML(volTitle)}" title="${escapeHTML(volTitle)}"${snap.sleepEnabled ? ' disabled aria-disabled="true"' : ''} />
+      </span>`;
   const moreOpen = opts.moreOpen === true;
   // (v5.12.0 hostile review) book-order chevrons point right-to-left even
   // in English UI (UX-4 rule). RTL users need no explanation; LTR screen
@@ -145,7 +164,7 @@ export function recitationChipsHTML(snap, lang, cls, opts = {}) {
       <button type="button" class="rec-console-play" data-action="recite-pause-toggle" aria-label="${t(snap.paused ? 'audio.play' : 'audio.pause', lang)}" title="${t(snap.paused ? 'audio.play' : 'audio.pause', lang)}">${icon(snap.paused ? 'play' : 'pause', { size: 24 })}${wideLabel(t(snap.paused ? 'audio.play' : 'audio.pause', lang))}</button>
       ${navBtn('recite-stop', t('audio.reciteStop', lang), 'stop')}
       ${navBtn('recite-ayah-next', orderName(t('audio.ayahNext', lang)), 'chevronLeft', t('audio.ayahNext', lang), t('audio.ayahNext', lang))}
-      ${chip('recite-speed-cycle', false, null, t('audio.speed', lang), `${snap.speed}×`)}
+      ${chip('recite-speed-cycle', false, null, speedLabel, `${snap.speed}×`)}
       ${chip('recite-voice-open', false, null, voiceLabel, `${icon('volume', { size: 13 })} <span class="rec-chip__text">${escapeHTML(snap.voiceALabel)}${snap.voiceBLabel ? `+${escapeHTML(snap.voiceBLabel)}` : ''}</span>`)}
       ${chip('recite-more-toggle', moreOpen, moreOpen, t('audio.moreSettings', lang), `${icon('menu', { size: 16 })} ${wideLabel(t('audio.moreSettings', lang))}`)}
   </div>
@@ -156,10 +175,11 @@ export function recitationChipsHTML(snap, lang, cls, opts = {}) {
       ${chip('recite-echo-toggle', snap.echo, snap.echo, snap.echoBlocked ? `${t('audio.echoMode', lang)} — ${t('audio.echoNeedsRepeat', lang)}` : t('audio.echoMode', lang), `${icon('volume', { size: 13 })} ${t('audio.echo', lang)}`)}
       ${snap.echoBlocked ? `<p class="rec-console-note" role="note">${escapeHTML(t('audio.echoNeedsRepeat', lang))}</p>` : ''}
       ${muteChip}
+      ${volumeSlider}
       ${chip('recite-sleep-cycle', snap.sleepEnabled, null, t('audio.sleepTimer', lang), `${icon('moon', { size: 13 })}${snap.sleepEnabled ? ` <span class="rec-chip__text">${escapeHTML(snap.sleepLabel)}</span>` : ''}`)}
       ${chip('recite-compare-toggle', snap.compare, snap.compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
       ${snap.voiceBLabel ? chip('recite-compare-swap', false, null, t('audio.compareSwap', lang), `${icon('refresh', { size: 13 })} ${wideLabel(t('audio.compareSwap', lang))}`) : ''}
-      ${chip('recite-loop-toggle', snap.loop !== 1, null, loopLabel, `${icon('repeat', { size: 13 })} ${snap.loop === 1 ? t('audio.loop', lang) : `×${snap.loop}`}`)}
+      ${chip('recite-loop-toggle', snap.loop !== 1, null, loopLabel, `${icon('list', { size: 13 })} ${snap.loop === 1 ? t('audio.loop', lang) : `×${snap.loop}`}`)}
       ${chip('recite-mode-surah', false, null, t('audio.modeSurah', lang), `${icon('book', { size: 13 })} ${wideLabel(t('audio.modeSurah', lang))}`)}
   </div>`;
 }

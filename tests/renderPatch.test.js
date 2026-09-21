@@ -1,6 +1,12 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { matchChildren, nodeKey, structuralKey, matchChildrenDeep, focusSignature } from '../js/app/renderer.js';
+import {
+  matchChildren,
+  nodeKey,
+  structuralKey,
+  matchChildrenDeep,
+  focusSignature,
+} from '../js/app/renderer.js';
 
 /**
  * The patch engine's matcher is pure (keys in, matches out) so the ordering
@@ -247,8 +253,7 @@ describe('focusSignature (focus salvage across re-renders)', () => {
   const button = (dataset) => ({
     tagName: 'BUTTON',
     dataset,
-    matches: (sel) =>
-      sel === 'button[data-action], a[data-action], [role="button"][data-action]',
+    matches: (sel) => sel === 'button[data-action], a[data-action], [role="button"][data-action]',
   });
 
   test('fields keep their old identities; others decline', () => {
@@ -256,14 +261,8 @@ describe('focusSignature (focus salvage across re-renders)', () => {
     try {
       assert.equal(focusSignature(field({ id: 'q' })), '#q');
       assert.equal(focusSignature(field({ dataset: { bind: 'b' } })), '[data-bind="b"]');
-      assert.equal(
-        focusSignature(field({ tagName: 'TEXTAREA', name: 'n' })),
-        'textarea[name="n"]'
-      );
-      assert.equal(
-        focusSignature(null),
-        null
-      );
+      assert.equal(focusSignature(field({ tagName: 'TEXTAREA', name: 'n' })), 'textarea[name="n"]');
+      assert.equal(focusSignature(null), null);
       assert.equal(
         focusSignature({ tagName: 'DIV', matches: () => false }),
         null,
@@ -287,10 +286,7 @@ describe('focusSignature (focus salvage across re-renders)', () => {
       );
       // Volatile attributes (classes, aria-pressed) never enter the
       // signature — it must survive the re-render that moved focus.
-      assert.equal(
-        focusSignature(button({ action: 'x', foo: 'bar' })),
-        'button[data-action="x"]'
-      );
+      assert.equal(focusSignature(button({ action: 'x', foo: 'bar' })), 'button[data-action="x"]');
       assert.equal(focusSignature(button({})), null, 'actionless declines');
     } finally {
       restore();

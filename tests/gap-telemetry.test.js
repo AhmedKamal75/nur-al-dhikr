@@ -32,10 +32,13 @@ function stubStorage() {
   };
   const prev = globalThis.localStorage;
   globalThis.localStorage = fake;
-  return { fake, restore: () => {
-    if (prev === undefined) delete globalThis.localStorage;
-    else globalThis.localStorage = prev;
-  } };
+  return {
+    fake,
+    restore: () => {
+      if (prev === undefined) delete globalThis.localStorage;
+      else globalThis.localStorage = prev;
+    },
+  };
 }
 
 beforeEach(() => resetGapTelemetryForTests());

@@ -55,3 +55,14 @@ test('smoke: tasbih burst counts and survives reload', async ({ page }) => {
     timeout: 20000,
   });
 });
+
+test('smoke: prayer empty state offers grouped city directory', async ({ page }) => {
+  await page.goto('#/prayer');
+  await expect(page.locator('.city-group').first()).toBeAttached({ timeout: 20000 });
+  await expect(page.locator('.city-group')).toHaveCount(6);
+  await expect(page.locator('[data-action="prayer-use-city"]')).toHaveCount(72);
+  await page.locator('.city-group summary').first().click();
+  await expect(
+    page.locator('.city-group').first().locator('[data-action="prayer-use-city"]').first()
+  ).toBeVisible();
+});

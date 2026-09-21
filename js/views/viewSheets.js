@@ -372,6 +372,11 @@ export function buildPrayerSheet(state) {
     titleKey: 'viewMenu.prayer',
     lang,
     labelledBy: 'modal-title-view-sheet',
+    // (v5.15.0) the qasr/jam notes lost their panel with travelerPanelHTML
+    // — the sheet footnote carries them when traveler mode is on.
+    footnote: traveler
+      ? `${t('traveler.hint', lang)} ${t('traveler.qasrNote', lang)} ${t('traveler.jamNote', lang)}`
+      : '',
     groups: [
       {
         labelKey: 'viewMenu.group.tracking',

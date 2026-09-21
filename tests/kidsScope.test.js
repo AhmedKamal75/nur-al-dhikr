@@ -104,6 +104,13 @@ describe('kids scope: strings', () => {
     assert.ok(AR_STRINGS['kids.blocked'], 'AR kids.blocked');
   });
 
+  test('parent-gate strings exist in EN + AR', () => {
+    for (const k of ['kids.gateTitle', 'kids.gateHint', 'kids.gateWrong']) {
+      assert.ok(EN_STRINGS[k], `EN ${k}`);
+      assert.ok(AR_STRINGS[k], `AR ${k}`);
+    }
+  });
+
   test('handlers guard tap paths with a toast (source-pinned)', () => {
     const src = readFileSync(new URL('../js/app/handlers/navigation.js', import.meta.url), 'utf8');
     assert.ok(src.includes('kidsScopeGuard'), 'guard helper present');

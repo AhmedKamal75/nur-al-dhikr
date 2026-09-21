@@ -164,10 +164,6 @@ export function isEnabled() {
   return enabled;
 }
 
-export function longtaskSupported() {
-  return !longtaskUnsupported;
-}
-
 /**
  * The engine advanced to `key` ("S:A"). Null (session over) drops pending
  * stamps — a stopped session must never credit its stop to the next tap.

@@ -80,9 +80,11 @@ let lastSearch = { query: null, limit: 0, results: null };
  * Empty/whitespace queries and empty indexes return [] (never the corpus).
  */
 export function searchHadith(query, { limit = 10 } = {}) {
+  const resultLimit = limit == null ? Infinity : Number(limit);
+  const safeLimit = Number.isFinite(resultLimit) ? Math.max(0, resultLimit) : Infinity;
   const raw = String(query ?? '');
   if (!raw.trim() || !hadithRecords.length) return [];
-  if (lastSearch.query === raw && lastSearch.limit === limit && lastSearch.results) {
+  if (lastSearch.query === raw && lastSearch.limit === safeLimit && lastSearch.results) {
     return lastSearch.results;
   }
   const terms = normalizeSearch(raw).split(' ').filter(Boolean);
@@ -113,7 +115,7 @@ export function searchHadith(query, { limit = 10 } = {}) {
     (x, y) =>
       y.score - x.score || (x.bookId < y.bookId ? -1 : x.bookId > y.bookId ? 1 : 0) || x.n - y.n
   );
-  const out = results.slice(0, limit);
-  lastSearch = { query: raw, limit, results: out };
+  const out = results.slice(0, safeLimit);
+  lastSearch = { query: raw, limit: safeLimit, results: out };
   return out;
 }

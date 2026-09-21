@@ -59,8 +59,10 @@ export function renderPlayerBar(state) {
   return `
   <div class="player-bar" data-player-mounted="1">
     <div class="player-bar__head">
-      ${'' /* (v5.12.0) book-order transport: prev = right chevron, next = left —
-        same as the fullscreen file row and every surah/ayah nav (UX-4). */}
+      ${
+        '' /* (v5.12.0) book-order transport: prev = right chevron, next = left —
+        same as the fullscreen file row and every surah/ayah nav (UX-4). */
+      }
       <button type="button" class="icon-btn icon-btn--sm" data-action="player-prev" aria-label="${t('audio.prev', lang)}">${icon('chevronRight', { size: 18 })}</button>
       <button type="button" class="player-bar__play" data-action="player-toggle" aria-label="${t(p.playing ? 'audio.pause' : 'audio.play', lang)}">
         ${icon(p.playing ? 'pause' : 'play', { size: 20 })}
@@ -70,6 +72,7 @@ export function renderPlayerBar(state) {
         <span class="player-bar__surah">${escapeHTML(surahName)}</span>
         <span class="player-bar__reciter">${escapeHTML(name)}${p.offline ? ` · ${icon('check', { size: 11 })} ${t('audio.offlineBadge', lang)}` : ''}</span>
         <span class="player-bar__mode-note">${escapeHTML(t('audio.fileModeNote', lang))}</span>
+        ${moshaf?.rewaya && !/hafs/i.test(String(moshaf.rewaya)) ? `<span class="player-bar__mode-note" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(t('audio.riwayaNote', lang, { rewaya: String(moshaf.rewaya) }))}</span>` : ''}
       </div>
       <span class="player-bar__buffer" data-player-buffer hidden>${t('audio.buffering', lang)}</span>
       <button type="button" class="player-bar__chip ${repeat !== 'off' ? 'player-bar__chip--on' : ''}" data-action="player-repeat" aria-pressed="${repeat !== 'off'}" aria-label="${repeatLabel}" title="${repeatLabel}">
@@ -170,9 +173,7 @@ function miniBarHTML(state, lang) {
   const toggle = isRecite ? 'recite-pause-toggle' : 'player-toggle';
   const quit = isRecite ? 'recite-stop' : 'player-close';
   const playing = isRecite ? sp.paused !== true : p.playing === true;
-  const label = isRecite
-    ? `${sp.surah}:${sp.ayah} / ${sp.total}`
-    : `#${p.surah}`;
+  const label = isRecite ? `${sp.surah}:${sp.ayah} / ${sp.total}` : `#${p.surah}`;
   const surah = state.quran.meta?.surahs?.find(
     (x) => String(x.number) === String(isRecite ? sp.surah : p.surah)
   );
@@ -180,7 +181,7 @@ function miniBarHTML(state, lang) {
     surah != null
       ? lang === 'ar'
         ? surah.nameAr
-        : (surah.nameTransliteration || surah.nameEn || `#${isRecite ? sp.surah : p.surah}`)
+        : surah.nameTransliteration || surah.nameEn || `#${isRecite ? sp.surah : p.surah}`
       : `#${isRecite ? sp.surah : p.surah}`;
   return `
   <div class="player-bar player-bar--min" data-player-mounted="1">

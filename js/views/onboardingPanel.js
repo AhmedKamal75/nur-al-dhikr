@@ -28,6 +28,8 @@ import { METHODS, ASR_FACTORS } from '../domain/prayer.js';
 import { buildOnboardingSteps, wizardStepIndex } from '../domain/onboarding.js';
 
 export const STEP_ICONS = {
+  language: 'book-open',
+  comfort: 'eye',
   location: 'location',
   notifications: 'bell',
   prayer: 'prayer-rug',
@@ -85,6 +87,22 @@ function asrOptions(p) {
 function stepBodyHTML(step, state, lang, ctx) {
   const p = state.settings.prayer;
   switch (step.id) {
+    case 'language':
+      return `
+      <p class="onboarding-step__prime">${t('onboarding.languageHint', lang)}</p>
+      <div class="onboarding-step__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-language" data-lang="ar" lang="ar" dir="rtl">العربية</button>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="onboarding-language" data-lang="en" lang="en" dir="ltr">English</button>
+      </div>`;
+
+    case 'comfort':
+      return `
+      <p class="onboarding-step__prime">${t('onboarding.comfortHint', lang)}</p>
+      <div class="onboarding-step__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-comfort" data-big="1">${t('onboarding.bigTextYes', lang)}</button>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="onboarding-comfort" data-big="0">${t('onboarding.bigTextNo', lang)}</button>
+      </div>`;
+
     case 'location':
       return `
       <p class="onboarding-step__prime">${t('onboarding.locationHint', lang)}</p>
@@ -147,6 +165,8 @@ function stepBodyHTML(step, state, lang, ctx) {
 }
 
 const STEP_TITLES = {
+  language: 'onboarding.language',
+  comfort: 'onboarding.comfort',
   location: 'onboarding.location',
   notifications: 'onboarding.notifications',
   prayer: 'onboarding.prayerSetup',

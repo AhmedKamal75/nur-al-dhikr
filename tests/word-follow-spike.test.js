@@ -17,10 +17,16 @@ import {
 
 describe('parseSegments', () => {
   test('normalizes [seq, pos1, startMs, endMs] rows', () => {
-    assert.deepEqual(parseSegments([[0, 1, 1150, 2030], [1, 2, 2040, 3730]]), [
-      { pos: 1, startMs: 1150, endMs: 2030 },
-      { pos: 2, startMs: 2040, endMs: 3730 },
-    ]);
+    assert.deepEqual(
+      parseSegments([
+        [0, 1, 1150, 2030],
+        [1, 2, 2040, 3730],
+      ]),
+      [
+        { pos: 1, startMs: 1150, endMs: 2030 },
+        { pos: 2, startMs: 2040, endMs: 3730 },
+      ]
+    );
   });
 
   test('drops hostile rows instead of repairing them', () => {

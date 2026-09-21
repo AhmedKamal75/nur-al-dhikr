@@ -1628,9 +1628,19 @@ body.modal-open {
 @media (min-width: 960px) {
   #playerbar {
     bottom: var(--space-4);
-    inset-inline: var(--space-4);
+    /* (v5.17.2) the inset-inline shorthand used to clobber layout.css's
+       side-rail offset, so in the 960–~1250px band the docked bar slid
+       under the 264px rail and the rail's links swallowed the bar's own
+       chips (matrix: tablet). Explicit longhands keep the rail clear;
+       the collapsed-rail variant tracks layout.css. Wide desktops are
+       unchanged: the auto start-margin still absorbs the slack. */
+    inset-inline-end: var(--space-4);
+    inset-inline-start: calc(var(--sidenav-width) + var(--space-4));
     max-width: calc(var(--content-max-width) - var(--space-8));
     margin-inline-start: auto;
+  }
+  html[data-nav-collapsed='true'] #playerbar {
+    inset-inline-start: calc(var(--sidenav-width-collapsed) + var(--space-4));
   }
 }
 

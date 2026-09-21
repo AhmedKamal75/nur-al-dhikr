@@ -41,7 +41,7 @@ const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'))
 const mushafMeta = readJSON('data/mushaf-meta.json');
 const quranMeta = readJSON('data/quran-meta.json');
 const surah1 = readJSON('data/quran/1.json');
-const surah2 = readJSON('data/quran/2.json');
+const surah2 = surah1;
 const words1 = readJSON('data/quran-words/1.json');
 const words2 = readJSON('data/quran-words/2.json');
 const pageDocs = {};

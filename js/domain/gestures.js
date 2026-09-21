@@ -116,9 +116,7 @@ export function resolveMinControl(bar) {
   try {
     return (
       bar.querySelector('[data-action="player-min-toggle"]') ??
-      bar.parentElement?.querySelector(
-        '.mushaf-fs-console [data-action="player-min-toggle"]'
-      ) ??
+      bar.parentElement?.querySelector('.mushaf-fs-console [data-action="player-min-toggle"]') ??
       null
     );
   } catch {

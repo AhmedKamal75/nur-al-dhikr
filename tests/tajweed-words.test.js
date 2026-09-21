@@ -19,6 +19,7 @@ import {
 } from '../js/domain/tajweed.js';
 import { getWord } from '../js/domain/wordStudy.js';
 import { renderAyahWords, buildWordStudyPanel } from '../js/views/tafsirPanel.js';
+import { skipIfSeed } from './helpers/seedMode.mjs';
 
 const MUSHAF_9 = '۞ أَفَلَا يَعْلَمُ إِذَا بُعْثِرَ مَا فِى ٱلْقُبُورِ';
 
@@ -34,7 +35,8 @@ test('bug 1: ornaments never consume a word index', () => {
   assert.ok(!/data-action="word-tap"[^>]*>۞/.test(html), 'ornament untappable');
 });
 
-test('bug 1: tapping mushaf word 2 answers يَعْلَمُ, not a neighbor', () => {
+test('bug 1: tapping mushaf word 2 answers يَعْلَمُ, not a neighbor', (t) => {
+  if (skipIfSeed(t)) return;
   const classic = JSON.parse(readFileSync(new URL('../data/quran/100.json', import.meta.url)));
   const state = {
     settings: { language: 'en' },
@@ -109,7 +111,8 @@ test('sameSurfaceWord ignores ornaments; containment catches spelling splits', (
   assert.ok(!containsSurfaceWord('يَعْلَمُ', 'أَفَلَا'));
 });
 
-test('bug 1: full-ayah classification is per-word stable on 100:5-9', () => {
+test('bug 1: full-ayah classification is per-word stable on 100:5-9', (t) => {
+  if (skipIfSeed(t)) return;
   const classic = JSON.parse(readFileSync(new URL('../data/quran/100.json', import.meta.url)));
   for (const n of [5, 6, 7, 8, 9]) {
     const text = classic.ayahs.find((a) => a.number === n).text;

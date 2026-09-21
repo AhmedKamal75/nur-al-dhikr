@@ -952,8 +952,12 @@ export function matchesAccentWord(token, accent) {
       )
       .join('');
   const a = fold(token);
-  const b = fold(accent);
-  return a !== '' && a === b;
+  if (!a) return false;
+  const candidates = Array.isArray(accent) ? accent : [accent];
+  return candidates.some((candidate) => {
+    const b = fold(candidate);
+    return b !== '' && a === b;
+  });
 }
 
 /** Surface-normalized comparison for the content-anchored fallback:

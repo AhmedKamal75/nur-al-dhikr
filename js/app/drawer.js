@@ -114,7 +114,7 @@ export async function wipeAppDataForReset() {
           }
         };
         try {
-          // core/config.js DB_NAME (customLibraries + attachments).
+          // legacy custom-content database (customLibraries + attachments).
           const req = indexedDB.deleteDatabase('nurAlDhikrDB');
           req.onsuccess = finish;
           req.onerror = finish;

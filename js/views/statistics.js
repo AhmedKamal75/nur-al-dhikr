@@ -449,7 +449,9 @@ export function renderStatistics(state) {
       <div class="panel__header"><h2>${t('stats.streakCoachTitle', lang)}</h2></div>
       <p class="panel__subtext">${
         coach.nextMilestone
-          ? t('stats.streakToGo', lang, { n: coach.toGo, m: coach.nextMilestone })
+          ? coach.toGo === 1
+            ? t('stats.streakEve', lang, { m: coach.nextMilestone })
+            : t('stats.streakToGo', lang, { n: coach.toGo, m: coach.nextMilestone })
           : t('stats.streakTop', lang)
       }</p>
     </section>
