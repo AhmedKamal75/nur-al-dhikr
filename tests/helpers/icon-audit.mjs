@@ -19,6 +19,9 @@
  *     first arguments across all js source files;
  *   - `icon: 'name'` object-map values across all js source files (nav
  *     items, moods, checklist items, category defaults…);
+ *   - `iconName: 'name'` row/field descriptors (about guide rows, sheet
+ *     field maps, mushaf sheet rows) — these reach icon() through a
+ *     variable, so the call-site regexes above can never see them;
  *   - the exported icon maps PRAYER_ICONS / STEP_ICONS (their keys aren't
  *     `icon:`, so the regex pass can't see them);
  *   - `"icon": "name"` fields in data JSON (top level only — the large
@@ -46,6 +49,7 @@ import { fileURLToPath } from 'node:url';
 import { PATHS, ALIASES } from '../../js/core/icons.js';
 import { PRAYER_ICONS } from '../../js/views/prayer.js';
 import { STEP_ICONS } from '../../js/views/onboardingPanel.js';
+import { FIELD_ICONS } from '../../js/views/viewSheets.js';
 
 const APP_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -82,10 +86,28 @@ export function auditIcons(appRoot = APP_ROOT) {
     for (const m of src.matchAll(new RegExp(`\\bicon\\s*:\\s*${NAME}`, 'g'))) {
       referenced.add(m[1]);
     }
+    // (KILL-01) row/field descriptors that reach icon() through a
+    // variable: iconName: 'x' (about guide rows, sheet row builders).
+    // The v5.17.7 audit missed these and wrongly reported feather/gauge
+    // as unused — both are live.
+    for (const m of src.matchAll(new RegExp(`\\biconName\\s*:\\s*${NAME}`, 'g'))) {
+      referenced.add(m[1]);
+    }
+    // Row builders take the glyph as their 3rd positional literal:
+    // row/linkRow/toggleRow (mushaf sheet), sheetRow/sheetLinkRow/
+    // sheetToggleRow (view sheets). Catches 'gauge' in the speed row.
+    for (const m of src.matchAll(
+      new RegExp(
+        `\\b(?:row|linkRow|toggleRow|sheetRow|sheetLinkRow|sheetToggleRow)\\(\\s*'[^']*'\\s*,\\s*'[^']*'\\s*,\\s*${NAME}`,
+        'g'
+      )
+    )) {
+      referenced.add(m[1]);
+    }
   }
 
   // exported maps whose keys aren't literally `icon:`
-  for (const map of [PRAYER_ICONS, STEP_ICONS]) {
+  for (const map of [PRAYER_ICONS, STEP_ICONS, FIELD_ICONS]) {
     for (const v of Object.values(map)) referenced.add(v);
   }
 

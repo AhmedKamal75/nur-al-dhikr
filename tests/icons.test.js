@@ -53,6 +53,6 @@ describe('icon system integrity', () => {
     // "food" and "rain" are aliases; they must draw the canonical glyphs.
     assert.equal(icon('food'), icon('utensils'));
     assert.equal(icon('rain'), icon('cloud-rain'));
-    assert.notEqual(icon('sun'), icon('moon'));
+    assert.notEqual(icon('sun'), icon('sunset'));
   });
 });

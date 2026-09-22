@@ -45,7 +45,9 @@ const FIELD_LABELS = {
   grade: 'content.fieldGrade',
   notes: 'content.fieldNotes',
 };
-const FIELD_ICONS = {
+// Exported for the icon audit (tests/helpers/icon-audit.mjs): the values
+// reach icon() through FIELD_ICONS[k], invisible to every call-site regex.
+export const FIELD_ICONS = {
   transliteration: 'feather',
   translation: 'list',
   virtues: 'sparkle',
