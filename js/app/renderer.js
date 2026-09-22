@@ -74,7 +74,6 @@ import { renderSearch } from '../views/search.js';
 import { renderFavorites } from '../views/favorites.js';
 import { renderCollections } from '../views/collections.js';
 import { renderCollection } from '../views/collection.js';
-import { renderStatistics } from '../views/statistics.js';
 import { renderTasbih } from '../views/tasbih.js';
 import { renderPrayer } from '../views/prayer.js';
 import { renderQibla } from '../views/qibla.js';
@@ -82,8 +81,6 @@ import { renderChecklist } from '../views/checklist.js';
 import { renderCalendar } from '../views/calendar.js';
 import { renderRamadan } from '../views/ramadan.js';
 import { renderZakat } from '../views/zakat.js';
-import { renderAudio } from '../views/audioManager.js';
-import { renderRoots } from '../views/roots.js';
 import { renderSettings, settingsSectionForSlug } from '../views/settings.js';
 import { renderEditor } from '../views/editor.js';
 import { renderPlayerBar } from '../views/playerBar.js';
@@ -98,7 +95,6 @@ const VIEW_TABLE = {
   [VIEWS.FAVORITES]: renderFavorites,
   [VIEWS.COLLECTIONS]: renderCollections,
   [VIEWS.COLLECTION]: renderCollection,
-  [VIEWS.STATISTICS]: renderStatistics,
   [VIEWS.TASBIH]: renderTasbih,
   [VIEWS.PRAYER]: renderPrayer,
   [VIEWS.QIBLA]: renderQibla,
@@ -106,18 +102,17 @@ const VIEW_TABLE = {
   [VIEWS.CALENDAR]: renderCalendar,
   [VIEWS.RAMADAN]: renderRamadan,
   [VIEWS.ZAKAT]: renderZakat,
-  [VIEWS.AUDIO]: renderAudio,
-  [VIEWS.ROOTS]: renderRoots,
   [VIEWS.SETTINGS]: renderSettings,
   [VIEWS.EDITOR]: renderEditor,
 };
 
 /**
- * (v5.2.15) Lazy leaf views, (v5.2.18) heavy views. These twelve routes
- * are renderer-only in app code — editor stays static because
- * handlers/editor.js and handlers/content.js import its builders, and
- * the tafsir/tajweed panels stay static (their handler edges carry no
- * view weight worth chasing). The nine leaves are small (68–250 lines);
+ * (v5.2.15) Lazy leaf views, (v5.2.18) heavy views, (PERF-01A) deferred
+ * hub views. These fifteen routes are renderer-only in app code — editor
+ * stays static because handlers/editor.js and handlers/content.js import
+ * its builders, settings/prayer/tasbih stay static (events.js, stateSub.js
+ * and handlers import their helpers), and the tafsir/tajweed panels stay
+ * static (their handler edges carry no view weight worth chasing). The nine leaves are small (68–250 lines);
  * the Mushaf, classic reader, and hadith browser are the three largest
  * view modules in the app. They load via dynamic import() on first
  * visit; the SW precache still ships them (APP_SHELL entries unchanged),
@@ -144,6 +139,12 @@ const LAZY_VIEW_LOADERS = {
   // static app-layer edges (modal builders in forms/handlers, the
   // long-press quick sheet in events.js) went dynamic in the same
   // release, so nothing parses them before first visit anymore.
+  // (PERF-01A) Statistics, the audio manager and the roots study view
+  // joined the lazy set: renderer-only modules (no handler imports
+  // their builders) on infrequently-first-visited routes.
+  [VIEWS.STATISTICS]: () => import('../views/statistics.js').then((m) => m.renderStatistics),
+  [VIEWS.AUDIO]: () => import('../views/audioManager.js').then((m) => m.renderAudio),
+  [VIEWS.ROOTS]: () => import('../views/roots.js').then((m) => m.renderRoots),
   [VIEWS.MUSHAF]: () => import('../views/mushafReader.js').then((m) => m.renderMushaf),
   [VIEWS.QURAN]: () => import('../views/quran.js').then((m) => m.renderQuran),
   [VIEWS.HADITH]: () => import('../views/hadith.js').then((m) => m.renderHadith),

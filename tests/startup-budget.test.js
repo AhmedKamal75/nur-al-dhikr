@@ -5,9 +5,10 @@
  * `views/*` import in js/app/renderer.js is parsed before first paint.
  * Nine renderer-only leaf views (quiz, offline, about, ambient, garden,
  * mutashabihat, journal, kids, certificate) plus the three heavy views
- * (mushafReader, quran, hadith) load via dynamic import() on first visit
+ * (mushafReader, quran, hadith) plus three deferred hub views (statistics,
+ * audioManager, roots) load via dynamic import() on first visit
  * instead. This gate pins that:
- * 1. renderer.js keeps at most 22 static view imports (34 at v5.2.14);
+ * 1. renderer.js keeps at most 19 static view imports (34 at v5.2.14, 22 at v5.2.18);
  * 2. each lazy view has a dynamic loader AND stays in APP_SHELL
  *    (lazy must never mean offline-broken);
  * 3. no app-layer module statically imports a lazy view behind the
@@ -38,9 +39,13 @@ const LAZY_VIEWS = [
 // now, so the ban below covers the whole tree, not just the renderer.
 const HEAVY_VIEWS = ['mushafReader', 'quran', 'hadith'];
 
-const ALL_LAZY = [...LAZY_VIEWS, ...HEAVY_VIEWS];
+// (PERF-01A) Deferred hub views: renderer-only modules on
+// infrequently-first-visited routes (no handler imports their builders).
+const DEFERRED_VIEWS = ['statistics', 'audioManager', 'roots'];
 
-const MAX_STATIC_VIEW_IMPORTS = 22;
+const ALL_LAZY = [...LAZY_VIEWS, ...HEAVY_VIEWS, ...DEFERRED_VIEWS];
+
+const MAX_STATIC_VIEW_IMPORTS = 19;
 
 function stripComments(src) {
   return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"\\])\/\/.*$/gm, '$1');
@@ -117,4 +122,12 @@ test('startup budget: no module anywhere statically re-couples a lazy view', () 
     [],
     `lazy views statically re-coupled to startup: ${offenders.join(', ')}`
   );
+});
+
+test('startup budget (PERF-01A): Mushaf-only font stays off the critical path', () => {
+  // @font-face uses font-display:swap, so the book loads AmiriQuran on
+  // first use — preloading it taxed every cold Home visit (~62KB).
+  const html = readProject('index.html');
+  assert.ok(!html.includes('AmiriQuran.woff2'), 'AmiriQuran must not be preloaded');
+  assert.ok(html.includes('Amiri-Regular.woff2'), 'Home Arabic keeps its preload');
 });

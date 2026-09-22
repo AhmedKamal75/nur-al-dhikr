@@ -39,15 +39,9 @@
       href="assets/fonts/Amiri-Regular.woff2"
       crossorigin
     />
-    <!-- Amiri Quran is the default Mushaf font (core/config.js) — the
-         flagship view's first paint needs it, so it gets the same priority. -->
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="assets/fonts/AmiriQuran.woff2"
-      crossorigin
-    />
+    <!-- Amiri Quran (the Mushaf typeface) is intentionally NOT preloaded:
+         @font-face uses font-display:swap, so the book loads it on first
+         use instead of taxing every cold Home visit (PERF-01A). -->
 
     <!-- Design system: strict load order (tokens → base → layout →
          components → cards → quran → motion → accessibility). -->

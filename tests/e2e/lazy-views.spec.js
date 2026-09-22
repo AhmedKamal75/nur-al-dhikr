@@ -17,7 +17,16 @@ test('lazy views resolve to real content', async ({ page }) => {
   await page.goto('#/home');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
 
-  for (const route of ['quiz', 'garden', 'about', 'journal', 'certificate']) {
+  for (const route of [
+    'quiz',
+    'garden',
+    'about',
+    'journal',
+    'certificate',
+    'statistics',
+    'roots',
+    'audio',
+  ]) {
     await page.goto(`#/${route}`);
     await page.waitForTimeout(1500);
     const html = await page.locator('#main').innerHTML();
