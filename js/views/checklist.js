@@ -8,7 +8,8 @@
  */
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { CHECKLIST_ITEMS } from '../core/config.js';
+import { CHECKLIST_ITEMS, VIEWS } from '../core/config.js';
+import { buildHash } from '../core/router.js';
 import { selectors } from '../core/state.js';
 import { completedCount, checklistStreak, recentHistory } from '../services/checklist.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
@@ -67,6 +68,15 @@ export function renderChecklist(state) {
         <p class="panel__subtext" dir="ltr">${done} / ${total} ${t('checklist.today', lang)}</p>
         ${streak > 0 ? `<span class="streak-badge">${icon('moon', { size: 16 })} ${streak} ${t('checklist.dayStreak', lang)}</span>` : ''}
       </div>
+      ${
+        done === total && total > 0
+          ? `
+      <div class="checklist-calm" role="status">
+        <p class="checklist-calm__text">${t('checklist.completeCalm', lang)}</p>
+        <a class="btn btn--ghost btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${t('home.panel.continue', lang)}</a>
+      </div>`
+          : ''
+      }
     </section>
 
     <section class="panel">

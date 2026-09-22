@@ -918,6 +918,9 @@ export const en = {
   'checklist.morningAdhkar': 'Morning Adhkar',
   'checklist.eveningAdhkar': 'Evening Adhkar',
   'checklist.quran': "Qur'an reading",
+  // (GROWTH-01 delight 1) calm completion — no score, streak, confetti or
+  // competitive framing; one quiet sentence plus a continue-reading action.
+  'checklist.completeCalm': 'Your daily portion is complete.',
 
   'quiz.title': '99 Names Quiz',
   'quiz.intro':

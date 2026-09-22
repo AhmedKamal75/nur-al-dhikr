@@ -31,6 +31,7 @@ import {
   prevSpreadPage,
 } from '../services/mushaf.js';
 import { openModal } from '../ui/modal.js';
+import { sessionValue } from '../domain/sessionFlags.js';
 import { showToast } from '../ui/toast.js';
 import * as soundDesign from '../services/soundDesign.js';
 
@@ -612,7 +613,14 @@ export async function openAyahStudy(surah, ayah, page = null, { focusSelector = 
   }
   await ensureTafsirEditions(store.getState());
   state = store.getState();
-  const defaultId = state.mushafSession?.tafsirTab || state.settings.mushafPrefs.defaultTafsir;
+  // (GROWTH-01 delight 3) quiet study acknowledgement: when this ayah had
+  // a panel picked earlier this session, reopen it silently instead of the
+  // global default. No new setting, no persistence — just continuity.
+  const remembered = sessionValue(`study-tab:${surah}:${ayah}`);
+  const defaultId =
+    (typeof remembered === 'string' && remembered) ||
+    state.mushafSession?.tafsirTab ||
+    state.settings.mushafPrefs.defaultTafsir;
   store.dispatch(actions.setMushafSession({ tafsirTab: defaultId }));
   if (defaultId) await ensureTafsirText(store.getState(), defaultId, surah);
   // (v5.2.74, UP-08) the study modal's compare line needs the second

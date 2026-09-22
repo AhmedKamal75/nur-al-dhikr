@@ -6,6 +6,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, dateKey, escapeHTML } from '../core/utils.js';
 import { selectors } from '../core/state.js';
+import { sessionFlag } from '../domain/sessionFlags.js';
 import { VIEWS, CHECKLIST_ITEMS } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
@@ -387,8 +388,12 @@ export function renderHome(state) {
       </span>
       ${goIcon(lang, 18)}
     </a>`,
-    continue: state.quranBookmark?.surah
-      ? `
+    // (GROWTH-01 delight 2) one-shot return-to-recitation: the card shows
+    // only while a valid bookmark exists AND this session hasn't resumed
+    // it yet (sessionFlags CONTINUE_RESUMED, set by mushaf-open-at-surah).
+    continue:
+      state.quranBookmark?.surah && !sessionFlag('continueResumed')
+        ? `
     <a class="panel panel--quran-continue" href="${buildHash(VIEWS.MUSHAF)}" data-action="mushaf-open-at-surah" data-surah="${escapeHTML(String(state.quranBookmark.surah))}">
       <span class="panel--quran-continue__icon">${icon('quran', { size: 22 })}</span>
       <span class="panel--quran-continue__text">

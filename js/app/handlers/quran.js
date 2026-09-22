@@ -25,6 +25,7 @@ import { go, replaceGo } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
 import { getVerseAudio } from '../../services/audioStore.js';
 import { buildAnswerKey, scoreRound } from '../../domain/tajweedPractice.js';
+import { setSessionFlag, setSessionValue } from '../../domain/sessionFlags.js';
 import { getWord, dictEntryFor, wordBookmarkKey } from '../../domain/wordStudy.js';
 import * as speech from '../../services/speech.js';
 import { shareAyahCard } from './items.js';
@@ -214,6 +215,10 @@ export const clickHandlers = {
       state = store.getState();
     }
     const page = state.mushaf.meta?.surahFirstPage?.[String(ds.surah)] || 1;
+    // (GROWTH-01 delight 2) one-shot resume: opening the bookmarked surah
+    // retires the Home continue card for this session (session flag, never
+    // persisted — the bookmark itself is untouched).
+    if (String(ds.surah) === String(state.quranBookmark?.surah)) setSessionFlag('continueResumed');
     go(VIEWS.MUSHAF, { page: String(page) });
   },
 
@@ -418,6 +423,10 @@ export const clickHandlers = {
 
   'tafsir-tab': async (ds) => {
     store.dispatch(actions.setMushafSession({ tafsirTab: ds.edition }));
+    // (GROWTH-01 delight 3) remember this ayah's panel for the session.
+    if (ds.surah != null && ds.ayah != null && typeof ds.edition === 'string') {
+      setSessionValue(`study-tab:${ds.surah}:${ds.ayah}`, ds.edition);
+    }
     await ensureTafsirText(store.getState(), ds.edition, ds.surah);
     // (v5.2.75, UX-03) the re-opened modal keeps focus on the active tab
     // (WAI-ARIA tabs) instead of snapping it to the first body element.

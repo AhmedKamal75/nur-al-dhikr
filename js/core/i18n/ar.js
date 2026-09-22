@@ -895,6 +895,8 @@ export const ar = {
   'checklist.morningAdhkar': 'أذكار الصباح',
   'checklist.eveningAdhkar': 'أذكار المساء',
   'checklist.quran': 'قراءة القرآن',
+  // (GROWTH-01 delight 1) calm completion — see en.js.
+  'checklist.completeCalm': 'اكتمل وردك اليومي',
 
   'quiz.title': 'اختبار الأسماء الحسنى',
   'quiz.intro':
