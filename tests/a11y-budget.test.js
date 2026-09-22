@@ -64,4 +64,21 @@ describe('accessibility budget (static)', () => {
       `views missing h1/h2: ${without.join(', ')}`
     );
   });
+
+  test('compact visuals keep a >=44px effective hit area via ::after aprons', () => {
+    // A11Y-01 contract: .icon-btn--sm is 36px visual + 6px ::after apron
+    // per side (48px effective); .chip is 40px min-height + 6px per side
+    // (52px effective). These rules are intentional accessibility
+    // affordances — removing or shrinking them is a release-blocking
+    // regression even though the visuals stay compact.
+    const css = read('assets/css/components.css');
+    const sm = /\.icon-btn--sm::after\s*\{[^}]*inset-block:\s*-6px[^}]*inset-inline:\s*-6px/s.exec(
+      css
+    );
+    assert.ok(sm, '.icon-btn--sm::after must expand 6px per side (36 -> 48px effective)');
+    const chip = /\.chip::after\s*\{[^}]*inset-block:\s*-6px/s.exec(css);
+    assert.ok(chip, '.chip::after must expand 6px vertically (40 -> 52px effective)');
+    // The base icon button itself must be full-size, not compact.
+    assert.match(css, /\.icon-btn\s*\{[^}]*width:\s*var\(--touch-target\)/s);
+  });
 });

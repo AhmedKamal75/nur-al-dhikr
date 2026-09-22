@@ -86,3 +86,40 @@ test('routes-extended: views expose a heading for screen readers', async ({ page
       .toBe(true);
   }
 });
+
+test('routes-extended: BIF-01 tablet 1024x768 RTL has no horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.goto('#/settings');
+  await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+  // Enter RTL through the real settings control (same path a user takes).
+  await page.locator('[data-action="set-setting"][data-key="language"][data-value="ar"]').click();
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl', { timeout: 10000 });
+
+  for (const route of ['home', 'library', 'settings', 'statistics', 'search', 'quran']) {
+    await page.goto(`#/${route}`);
+    await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+    const geo = await page.evaluate(() => {
+      const main = document.getElementById('main');
+      const r = main ? main.getBoundingClientRect() : null;
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        mainLeft: r ? r.left : null,
+        mainRight: r ? r.right : null,
+        innerWidth: window.innerWidth,
+      };
+    });
+    expect(
+      geo.scrollWidth,
+      `${route} overflows: scrollWidth ${geo.scrollWidth} > clientWidth ${geo.clientWidth}`
+    ).toBeLessThanOrEqual(geo.clientWidth);
+    expect(
+      geo.mainLeft,
+      `${route}: #main starts off-screen (left ${geo.mainLeft})`
+    ).toBeGreaterThanOrEqual(-0.5);
+    expect(
+      geo.mainRight,
+      `${route}: #main ends off-screen (right ${geo.mainRight} > ${geo.innerWidth})`
+    ).toBeLessThanOrEqual(geo.innerWidth + 0.5);
+  }
+});
