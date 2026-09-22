@@ -2,6 +2,97 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.8 — Inquisition fix-plan implementation (identity, overflow, grades, lazy views)
+
+Implements the 2026-09-22 Inquisition fix plan (`PLAN-Nur-al-Dhikr-Inquisition-Fix-Plan-2026-09-22.md`):
+
+- Identity (SYM-01): the PWA icon family (all PNG sizes, maskables,
+  apple-touch, favicon) is regenerated as the plain rayah banner on the
+  product teal — zero crescent/star identity instances remain. The live
+  topbar brand routes through the canonical `rayah` glyph instead of the
+  inline crescent SVG. Pinned by `tests/symbols.test.js`. Scholarly
+  sign-off on the replacement family is still recorded as a handoff.
+- Startup (PERF-01A): statistics, audio manager and roots join the lazy
+  view registry (renderer-only, no handler edges); the Mushaf-only
+  AmiriQuran font no longer preloads on cold Home. Pinned by
+  `tests/startup-budget.test.js`. Full data-library deferral (PERF-01B)
+  and the bilingual-dictionary tradeoff stay tracked follow-ups.
+- Tablet (BIF-01): `#main` stops combining `width:100%` with the desktop
+  rail margin in RTL — it is now the flexing content region
+  (`flex:1, width:auto, min-width:0`), killing the 93px overflow at
+  1024×768. Pinned by the RTL geometry spec in
+  `tests/e2e/routes-extended.spec.js`.
+- Touch targets (A11Y-01): the `::after` hit-area aprons become an
+  explicit contract (static gate) plus a pointer-level
+  `elementFromPoint` e2e (`tests/e2e/touch-targets.spec.js`).
+- Volume (VOL-01): the owner-reported slider path is locked by
+  `tests/e2e/volume-regression.spec.js` (55 → native 0.55 → persisted
+  → reload restores 55).
+- Grades (DATA-01/02): `js/domain/grades.js` renders chips only for
+  source-backed values (`Unknown` stays visibly "Unverified",
+  missing/malformed render nothing); `audit-content.mjs` gains a
+  machine-readable per-field provenance report with N/A separated.
+- Data payload (PERF-01B): `compressedDownloads` defaults ON for fresh
+  installs (stored opt-outs untouched, plain-JSON fallback intact).
+  Measured cold Home in real Chromium: 225 resources / 3.28MB total vs
+  the 5.24MB evidence baseline; the 9 catalog libraries land as
+  458KB gzipped instead of 2.32MB raw. The 500KB budget stays a
+  documented exception — reaching it needs per-route library deferral,
+  which conflicts with Home's full-corpus verse-of-day and instant
+  search index by current product design.
+- Offline/cross-engine (OFFLINE-01/CROSS-01): transition-matrix e2e plus
+  a `CROSS_ENGINE=1` Chromium/Firefox/WebKit CI job over the
+  prioritized suite.
+- Icons (KILL-01): `moon` removed after the audit learned to follow
+  `iconName:` descriptors, row-builder positionals and FIELD_ICONS —
+  which proved `feather`/`gauge` live (journal row, translit toggle,
+  mushaf speed row), so they stay.
+- Delights (GROWTH-01): calm checklist completion, one-shot
+  return-to-recitation, per-ayah study-tab memory — each independently
+  removable, ≤50 lines, no gamified or symbolic chrome.
+
+## v5.17.7 — every crescent out (rayah / star / bed take over)
+
+The last crescent-moon glyphs leave the UI: night prayers (Isha,
+tahajjud, witr, qiyam, odd nights) and the night-phase hero use
+`star`; the sleep timer everywhere uses `bed`; the suhoor row uses
+`utensils`; the dark-mode toggle uses `star`; the ambient feature
+uses `rayah`; the icon picker no longer offers the crescent; the two
+remaining `moon`-iconed collections (`munajat`, `the-other-side`)
+move to `star`/`sunset`. The glyph stays defined but unreferenced
+(the kids `moon` level id is data-only and renders a trophy).
+
+## v5.17.6 — Shahada banner atop Home
+
+A black Rayah-style strip carrying the fixed Arabic wording (never
+translated — it is quoted, not UI chrome) now opens the Home view,
+above the hero. Ivory Amiri between two thin gold rules;
+theme-independent and ~15:1 by construction, so no high-contrast
+override needed. The wording, RTL/Lang/role contract is pinned by
+`tests/shahada-banner.test.js`.
+
+## v5.17.5 — verse-volume slider actually works + rayah banner (no crescent-as-symbol)
+
+From a real-device report: the recitation console's loudness slider
+rendered but did nothing. Root cause was a dropped merge —
+`quranAudio.js` exported its `changeHandlers` (the `[data-bind=
+"recite-volume"]` commit arm) but `events.js` never spread it into the
+change registry, so release events matched nothing. The arm is merged
+now, and the slider also live-applies through a new input arm
+(`surahPlayback.setBaseVolume`, zero dispatches per tick — the thumb
+can't die to a mid-drag re-render), while persistence still waits for
+release. The registry gate pins the new counts (36 change + 18 input)
+and a new completeness test compares every feature module's exports
+against the merged registries by selector, so a dropped merge fails
+loudly instead of shipping another dead control.
+
+Also: the crescent moon no longer poses as a religious symbol. A new
+`rayah` glyph (the plain banner of the Prophet's ﷺ time) replaces it
+on identity surfaces — Ramadan nav/tile/banner, Jumu'ah preset,
+Sunnah tiles, khatma preset, streak badges (now `flame`), zakat
+silver (now `coins`) — while literal-night usages (Isha, tahajjud/
+witr, suhoor, sleep timer, dark mode) keep the moon.
+
 ## v5.17.4 — real-phone touch pass (paper drag, touch identity, input zoom)
 
 From real-phone reports. The Mushaf swipe now feels like paper: the book
