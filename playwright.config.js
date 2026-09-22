@@ -11,6 +11,11 @@ import { defineConfig, devices } from '@playwright/test';
  * traces retained — the CI `browser-evidence` job archives them per finding.
  */
 const EVIDENCE_MATRIX = process.env.EVIDENCE_MATRIX === '1';
+// (CROSS-01) CROSS_ENGINE=1 runs the prioritized suite (smoke, audio,
+// accessibility-critical routes) on Chromium + Firefox + WebKit. Full
+// triple-engine runs stay opt-in: the whole 20+ spec suite × 3 engines
+// would triple CI time for routes with no engine-specific surface.
+const CROSS_ENGINE = process.env.CROSS_ENGINE === '1';
 export default defineConfig({
   testDir: 'tests/e2e',
   testMatch: '**/*.spec.js',
@@ -20,14 +25,20 @@ export default defineConfig({
     baseURL: 'http://127.0.0.1:8080',
     trace: EVIDENCE_MATRIX ? 'on' : 'retain-on-failure',
   },
-  projects: EVIDENCE_MATRIX
+  projects: CROSS_ENGINE
     ? [
-        { name: 'desktop', use: { viewport: { width: 1440, height: 900 } } },
-        { name: 'phone', use: { ...devices['Pixel 5'] } },
-        { name: 'phone-landscape', use: { viewport: { width: 844, height: 390 } } },
-        { name: 'tablet', use: { viewport: { width: 1024, height: 768 } } },
+        { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+        { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+        { name: 'webkit', use: { ...devices['Desktop Safari'] } },
       ]
-    : [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+    : EVIDENCE_MATRIX
+      ? [
+          { name: 'desktop', use: { viewport: { width: 1440, height: 900 } } },
+          { name: 'phone', use: { ...devices['Pixel 5'] } },
+          { name: 'phone-landscape', use: { viewport: { width: 844, height: 390 } } },
+          { name: 'tablet', use: { viewport: { width: 1024, height: 768 } } },
+        ]
+      : [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     // (v5.17.2, matrix) threaded: `python3 -m http.server` is
     // single-threaded, so 4 parallel matrix browsers serialize on data

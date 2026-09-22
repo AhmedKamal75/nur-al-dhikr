@@ -53,6 +53,25 @@ jobs:
           path: test-results/
           retention-days: 30
 
+  cross-engine:
+    name: cross-engine release matrix (smoke/audio/a11y)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run compress-data
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: >-
+          CROSS_ENGINE=1 npx playwright test tests/e2e/smoke.spec.js
+          tests/e2e/player-chrome.spec.js tests/e2e/volume-regression.spec.js
+          tests/e2e/a11y-axe.spec.js tests/e2e/routes-extended.spec.js
+        env:
+          CI: true
+
   accessibility:
     name: accessibility static gates
     runs-on: ubuntu-latest
