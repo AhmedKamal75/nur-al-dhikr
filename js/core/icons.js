@@ -70,7 +70,11 @@ export const PATHS = {
   close: '<path d="M6 6l12 12M18 6 6 18"/>',
   check: '<path d="M5 13l4.5 4.5L19 7"/>',
   sun: '<circle cx="12" cy="12" r="4.5"/><path d="M12 3v2.2M12 18.8V21M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M3 12h2.2M18.8 12H21M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"/>',
-  moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/>',
+  // (KILL-01) the `moon` glyph was removed: the fixed icon audit (which
+  // now follows iconName: descriptors, row-builder positionals and
+  // FIELD_ICONS) confirms no icon() call site resolves it. Lunar-month
+  // CONTENT is untouched — this was only the line-art glyph. The kids
+  // `moon` level id (domain/kids.js) is a translation key, not an icon.
   sunrise:
     '<path d="M12 3v5"/><path d="m6 10 1.5 1.5M18 10l-1.5 1.5"/><circle cx="12" cy="14" r="4"/><path d="M3 20.5h18"/>',
   sunset:
@@ -87,6 +91,13 @@ export const PATHS = {
   bed: '<path d="M3 19v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"/><path d="M3 19v2M21 19v2M3 14h18"/><rect x="5" y="8" width="6" height="4" rx="1"/>',
   mosque:
     '<path d="M12 3.5a3 3 0 0 1 3 3v1.5H9V6.5a3 3 0 0 1 3-3Z"/><path d="M4 20.5v-7a8 8 0 0 1 16 0v7"/><path d="M4 20.5h16M9 20.5v-5a3 3 0 0 1 6 0v5"/><path d="M12 2v1.2"/>',
+  // (v5.17.5) The rayah — the plain banner of the Prophet's ﷺ time, the
+  // closest thing early Muslims had to a shared mark: a cloth banner on a
+  // pole (the black Rayah carried the Shahada). Used wherever the app
+  // needs an IDENTITY glyph (Ramadan, Jumu'ah, Sunnah collections) so the
+  // crescent moon is never posed as a religious symbol — it only ever
+  // means literal night (Isha, sleep timer, suhoor, dark mode).
+  rayah: '<path d="M6 3.5V21"/><path d="M6 4.5h12l-3 3.5 3 3.5H6"/>',
   ocean:
     '<path d="M3 15.5c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M3 19.5c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0"/><path d="M12 4v8"/><path d="m8.5 8 3.5 4 3.5-4"/>',
   shirt: '<path d="M8 4 4 7l2 3 2-1.3V20h8V8.7L18 10l2-3-4-3-2 1.5h-4L8 4Z"/>',
