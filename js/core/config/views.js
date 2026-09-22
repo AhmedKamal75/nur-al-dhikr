@@ -306,7 +306,11 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // (v5.3.0) Offline-library compression: fetch data JSON as sibling
   // .json.gz (built at packaging) and cache the small bytes. Saves
   // ~120MB disk + transfer at the cost of gunzip CPU per file open.
-  compressedDownloads: false,
+  // (PERF-01B, v5.17.8) default ON for fresh installs: the 9 catalog
+  // libraries measure 2.32MB raw vs 425KB gzipped (5.5x), and the fetch
+  // path falls back to plain JSON transparently. Stored prefs are
+  // untouched — an explicit false stays false (sanitize preserves it).
+  compressedDownloads: true,
   soundEnabled: true,
   hapticsEnabled: true,
   // v3.14 Phase C: optional soft sounds — off by default (the owner-facing

@@ -6,7 +6,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { gzipSync } from 'node:zlib';
-import { mkdtempSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -118,11 +118,26 @@ test('gzip: pref off fetches plain once', async () => {
   }
 });
 
-test('gzip: setting sanitizes to boolean, default off', () => {
-  assert.equal(sanitizeSettings({}).compressedDownloads, false);
+test('gzip: setting sanitizes to boolean, default on (PERF-01B)', () => {
+  assert.equal(sanitizeSettings({}).compressedDownloads, true);
   assert.equal(sanitizeSettings({ compressedDownloads: true }).compressedDownloads, true);
-  assert.equal(sanitizeSettings({ compressedDownloads: 'yes' }).compressedDownloads, false);
-  assert.equal(initialState().settings.compressedDownloads, false);
+  // Stored explicit opt-outs survive: the default flip must never
+  // re-enable compression for an existing install that turned it off.
+  assert.equal(sanitizeSettings({ compressedDownloads: false }).compressedDownloads, false);
+  assert.equal(sanitizeSettings({ compressedDownloads: 'yes' }).compressedDownloads, true);
+  assert.equal(initialState().settings.compressedDownloads, true);
+});
+
+test('gzip: every catalog library ships a .json.gz sibling (default-on gate)', () => {
+  // Fresh installs fetch url + '.gz' first: a missing sibling costs a
+  // wasted 404 round-trip per library (the plain fallback still works,
+  // so this is a packaging gate, not a correctness one).
+  const root = new URL('..', import.meta.url).pathname;
+  const catalog = JSON.parse(readFileSync(join(root, 'data/catalog.json'), 'utf8'));
+  const missing = (catalog.libraries || [])
+    .map((l) => l.file)
+    .filter((f) => f && !existsSync(join(root, `${f}.gz`)));
+  assert.deepEqual(missing, [], `libraries without a prebuilt .json.gz: ${missing.join(', ')}`);
 });
 
 test('gzip: toggle flips pref, wipes data caches, resets statuses', async () => {
