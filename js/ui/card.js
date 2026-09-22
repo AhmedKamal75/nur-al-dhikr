@@ -29,7 +29,10 @@ import {
 } from '../domain/localeContent.js';
 import { icon } from '../core/icons.js';
 import { t } from '../core/i18n.js';
-import { GRADE_LABELS } from '../core/config.js';
+// SANCTIONED (DATA-01): grades.js is pure (core/config + core/utils only,
+// no state/services), same class as localeContent above.
+// eslint-disable-next-line no-restricted-imports
+import { gradeChipHTML } from '../domain/grades.js';
 import { buildHash } from '../core/router.js';
 // eslint-disable-next-line no-restricted-imports -- sanctioned (see above)
 import { isDismissed, wasCompletedRecently } from '../domain/completedCards.js';
@@ -78,9 +81,10 @@ export function cardHTML(item, category, opts = {}) {
   const showTrans = showTranslationFor(lang, show.translation);
   const translation = showTrans ? translationFor(item, lang) : '';
   const virtue = show.virtues ? virtueFor(item, lang) : '';
-  const gradeLabel = GRADE_LABELS[item.grade]
-    ? pickLocale(GRADE_LABELS[item.grade], lang)
-    : item.grade;
+  // (DATA-01) honest grades: only source-backed values render a chip;
+  // Unknown renders the uncertain "Unverified" chip, missing/malformed
+  // render nothing — never an authoritative-looking raw string.
+  const gradeChip = show.grade ? gradeChipHTML(item.grade, lang) : '';
   const refLine = show.reference ? referenceLineFor(item, lang, t('card.narratedBy', lang)) : '';
   const refNotes = show.reference ? noteFor(item.reference?.notes, lang, item) : '';
   const notes = show.notes ? noteFor(item.notes, lang) : '';
@@ -115,7 +119,7 @@ export function cardHTML(item, category, opts = {}) {
     <header class="card__top">
       <div class="card__meta">
         ${categoryChip}
-        ${show.grade && item.grade ? `<span class="chip chip--grade chip--grade-${escapeHTML(item.grade.toLowerCase())}">${escapeHTML(gradeLabel)}</span>` : ''}
+        ${gradeChip}
         ${lifetimeBadge}
       </div>
       <div class="card__actions">

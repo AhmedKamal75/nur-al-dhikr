@@ -101,10 +101,22 @@ function auditFile(path) {
     missingTitleAr: [],
     missingTitleEn: [],
     gradeUnknown: [],
+    gradeMissing: [],
     emptyReference: [],
     missingGrading: [],
     leakLatinInAr: [],
     leakArabicInEn: [],
+    // (DATA-02) provenance completeness: per-field coverage with
+    // not-applicable separated from missing. Grading is N/A for Quran
+    // (divine text, never graded) and Custom (devotional note, explained
+    // in custom_grade); every other item must carry a source-backed grade
+    // or stay explicitly Unknown. No scores are invented here — counts only.
+    provenance: {
+      source: { covered: 0, missing: 0, na: 0 },
+      grade: { covered: 0, unknown: 0, missing: 0, na: 0 },
+      translation: { covered: 0, missing: 0, na: 0 },
+      virtue: { covered: 0, missing: 0, na: 0 },
+    },
   };
   const seen = new Set();
   const duplicates = [];
@@ -127,8 +139,27 @@ function auditFile(path) {
     if (isBlank(vi.ar)) gaps.missingVirtueAr.push(it.id);
     if (isBlank(ti.ar)) gaps.missingTitleAr.push(it.id);
     if (isBlank(ti.en)) gaps.missingTitleEn.push(it.id);
-    if (!it.grade || it.grade === 'Unknown') gaps.gradeUnknown.push(it.id);
+    if (!it.grade || String(it.grade).trim() === '') {
+      gaps.gradeMissing.push(it.id);
+    } else if (it.grade === 'Unknown') {
+      gaps.gradeUnknown.push(it.id);
+    }
     const ref = it.reference || {};
+    const prov = gaps.provenance;
+    // source: every item must cite a collection; no N/A class.
+    if (isBlank(ref.collection)) prov.source.missing += 1;
+    else prov.source.covered += 1;
+    // grade: Quran/Custom are N/A; the rest need a source-backed grade.
+    if (it.grade === 'Quran' || it.grade === 'Custom') prov.grade.na += 1;
+    else if (it.grade === 'Unknown') prov.grade.unknown += 1;
+    else if (!it.grade || String(it.grade).trim() === '') prov.grade.missing += 1;
+    else prov.grade.covered += 1;
+    // translation: English translation expected for every item.
+    if (isBlank(tr.en)) prov.translation.missing += 1;
+    else prov.translation.covered += 1;
+    // virtue: covered when either language carries it.
+    if (isBlank(vi.en) && isBlank(vi.ar)) prov.virtue.missing += 1;
+    else prov.virtue.covered += 1;
     if (isBlank(ref.collection)) gaps.emptyReference.push(it.id);
     // Custom devotional items carry their explanation in custom_grade —
     // hadith-style reference.grading does not apply to them.
@@ -176,6 +207,7 @@ if (asJson) {
     ['missingVirtueEn', 'noViEn'],
     ['missingVirtueAr', 'noViAr'],
     ['gradeUnknown', 'unkGr'],
+    ['gradeMissing', 'missGr'],
     ['emptyReference', 'noRef'],
     ['missingGrading', 'noGrd'],
   ];
@@ -204,6 +236,7 @@ if (asJson) {
       'missingTitleAr',
       'missingTitleEn',
       'gradeUnknown',
+      'gradeMissing',
       'emptyReference',
       'missingGrading',
       'leakLatinInAr',
@@ -216,6 +249,20 @@ if (asJson) {
           `- ${k} (${g[k].length}): ${g[k].slice(0, 12).join(', ')}${g[k].length > 12 ? ' …' : ''}`
       );
     if (lines.length) console.log(`### ${g.file} (n=${g.items})\n${lines.join('\n')}\n`);
+  }
+  console.log('\n## Provenance (per-field coverage; na = not applicable, never missing)\n');
+  console.log(
+    '| dataset | source covered/missing | grade covered/unknown/missing/na | translation | virtue |'
+  );
+  console.log('|---|---|---|---|---|');
+  for (const g of report.libraries) {
+    const p = g.provenance;
+    console.log(
+      `| ${g.file} | ${p.source.covered}/${p.source.missing} | ` +
+        `${p.grade.covered}/${p.grade.unknown}/${p.grade.missing}/${p.grade.na} | ` +
+        `${p.translation.covered}/${p.translation.missing} | ` +
+        `${p.virtue.covered}/${p.virtue.missing} |`
+    );
   }
   console.log(
     'Notes: `leakArabicInEn` ignores short honorifics (صلى الله عليه وسلم / عليه السلام). ' +
@@ -244,6 +291,7 @@ const anyGap = report.libraries.some((g) =>
     'missingTitleAr',
     'missingTitleEn',
     'gradeUnknown',
+    'gradeMissing',
     'emptyReference',
     'missingGrading',
   ].some((k) => g[k].length > 0)

@@ -5,7 +5,7 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { pickLocale, escapeHTML } from '../core/utils.js';
+import { escapeHTML } from '../core/utils.js';
 import {
   showTransliterationFor,
   showTranslationFor,
@@ -16,7 +16,8 @@ import {
 } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
-import { VIEWS, GRADE_LABELS } from '../core/config.js';
+import { VIEWS } from '../core/config.js';
+import { gradeChipHTML } from '../domain/grades.js';
 import { wasJustCompleted } from '../services/tasbih.js';
 import { visibleCategoryItems, itemTargetOf } from '../services/contentPrefs.js';
 
@@ -83,9 +84,8 @@ export function renderFocus(state) {
   const showTrans = showTranslationFor(lang, state.settings.showTranslation);
   const translation = showTrans ? translationFor(item, lang) : '';
   const virtue = virtueFor(item, lang);
-  const gradeLabel = GRADE_LABELS[item.grade]
-    ? pickLocale(GRADE_LABELS[item.grade], lang)
-    : item.grade;
+  // (DATA-01) honest grades — see ui/card.js.
+  const gradeChip = gradeChipHTML(item.grade, lang);
   const refLine = referenceLineFor(item, lang, t('card.narratedBy', lang));
   const refNotes = noteFor(item.reference?.notes, lang, item);
   const notes = noteFor(item.notes, lang);
@@ -141,7 +141,7 @@ export function renderFocus(state) {
          click, so scrolling to re-read never mis-counts. -->
     <div class="focus__scroll" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}">
       <div class="focus__content">
-        ${item.grade ? `<span class="chip chip--grade chip--grade-${escapeHTML(item.grade.toLowerCase())}">${escapeHTML(gradeLabel)}</span>` : ''}
+        ${gradeChip}
         ${
           bh && !bh.revealed
             ? `<button type="button" class="hadith-card__cloze" data-action="byheart-reveal" data-item-id="${escapeHTML(item.id)}" aria-label="${t('hifz.reveal', lang)}">${t('hifz.reveal', lang)}</button>`
