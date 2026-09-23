@@ -1,0 +1,642 @@
+{
+  "generatedAt": "2026-09-23T09:15:01.554Z",
+  "version": "5.17.8",
+  "defined": 77,
+  "aliases": {
+    "food": "utensils",
+    "rain": "cloud-rain",
+    "cloudOff": "cloud-rain",
+    "refresh": "repeat"
+  },
+  "unlabeledIconButtons": [],
+  "unlabeledIconButtonCount": 0,
+  "directionalGlyphs": [
+    "chevronLeft",
+    "chevronRight",
+    "chevronUp",
+    "chevronDown",
+    "repeat",
+    "upload",
+    "download",
+    "back"
+  ],
+  "census": [
+    {
+      "icon": "award",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [15, 18, 26],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "bead",
+      "referenced": true,
+      "callSites": 2,
+      "sizes": [34],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "bed",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [13, 14],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "bell",
+      "referenced": true,
+      "callSites": 14,
+      "sizes": [11, 14, 15, 16, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "book",
+      "referenced": true,
+      "callSites": 27,
+      "sizes": [12, 13, 14, 15, 16, 18, 22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "book-open",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "bookmark",
+      "referenced": true,
+      "callSites": 8,
+      "sizes": [13, 15, 16, 18, 22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "briefcase",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "calculator",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "calendar",
+      "referenced": true,
+      "callSites": 5,
+      "sizes": [13, 14],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "check",
+      "referenced": true,
+      "callSites": 31,
+      "sizes": [11, 13, 14, 15, 16, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "chevronDown",
+      "referenced": true,
+      "callSites": 15,
+      "sizes": [13, 14, 15, 16, 17, 18],
+      "rtlSensitive": true,
+      "aliasFor": null
+    },
+    {
+      "icon": "chevronLeft",
+      "referenced": true,
+      "callSites": 7,
+      "sizes": [16, 18, 20, 22],
+      "rtlSensitive": true,
+      "aliasFor": null
+    },
+    {
+      "icon": "chevronRight",
+      "referenced": true,
+      "callSites": 11,
+      "sizes": [16, 18, 20, 22],
+      "rtlSensitive": true,
+      "aliasFor": null
+    },
+    {
+      "icon": "chevronUp",
+      "referenced": true,
+      "callSites": 11,
+      "sizes": [13, 14, 15, 16, 17, 20],
+      "rtlSensitive": true,
+      "aliasFor": null
+    },
+    {
+      "icon": "close",
+      "referenced": true,
+      "callSites": 21,
+      "sizes": [13, 14, 15, 16, 18, 20, 22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "cloud-rain",
+      "referenced": false,
+      "callSites": 0,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": "rain"
+    },
+    {
+      "icon": "coins",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [14, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "compass",
+      "referenced": true,
+      "callSites": 9,
+      "sizes": [16, 20, 22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "compress",
+      "referenced": true,
+      "callSites": 2,
+      "sizes": [18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "copy",
+      "referenced": true,
+      "callSites": 8,
+      "sizes": [15, 16, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "download",
+      "referenced": true,
+      "callSites": 19,
+      "sizes": [11, 12, 13, 14, 15, 16],
+      "rtlSensitive": true,
+      "aliasFor": null
+    },
+    {
+      "icon": "droplet",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "edit",
+      "referenced": true,
+      "callSites": 13,
+      "sizes": [14, 15, 16, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "expand",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "eye",
+      "referenced": true,
+      "callSites": 5,
+      "sizes": [13, 14],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "eyeOff",
+      "referenced": true,
+      "callSites": 6,
+      "sizes": [13, 14, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "feather",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "flame",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [15, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "folder",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [13, 14, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "gauge",
+      "referenced": true,
+      "callSites": 0,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "grid",
+      "referenced": true,
+      "callSites": 2,
+      "sizes": [13, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "hands",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [15, 22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "heart",
+      "referenced": true,
+      "callSites": 8,
+      "sizes": [14],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "heart-filled",
+      "referenced": true,
+      "callSites": 0,
+      "sizes": [18, 20],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "heart-pulse",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "home",
+      "referenced": true,
+      "callSites": 5,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "info",
+      "referenced": true,
+      "callSites": 8,
+      "sizes": [12, 13, 14, 15, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "library",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "list",
+      "referenced": true,
+      "callSites": 6,
+      "sizes": [13, 14, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "location",
+      "referenced": true,
+      "callSites": 9,
+      "sizes": [13, 14, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "menu",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [16, 22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "more",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [18, 20],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "mosque",
+      "referenced": true,
+      "callSites": 11,
+      "sizes": [15, 20],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "ocean",
+      "referenced": true,
+      "callSites": 0,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "pause",
+      "referenced": true,
+      "callSites": 0,
+      "sizes": [15, 18, 20, 24],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "plane",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "play",
+      "referenced": true,
+      "callSites": 10,
+      "sizes": [13, 14, 15, 16, 18, 24],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "plus",
+      "referenced": true,
+      "callSites": 19,
+      "sizes": [12, 14, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "prayer-rug",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "printer",
+      "referenced": true,
+      "callSites": 2,
+      "sizes": [14, 15],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "quran",
+      "referenced": true,
+      "callSites": 14,
+      "sizes": [13, 22, 30],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "rayah",
+      "referenced": true,
+      "callSites": 10,
+      "sizes": [14, 21, 22, 28],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "repeat",
+      "referenced": true,
+      "callSites": 8,
+      "sizes": [13, 14, 16],
+      "rtlSensitive": true,
+      "aliasFor": "refresh"
+    },
+    {
+      "icon": "rosette",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [11],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "search",
+      "referenced": true,
+      "callSites": 18,
+      "sizes": [16, 18, 20],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "seed",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "settings",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "share",
+      "referenced": true,
+      "callSites": 8,
+      "sizes": [15, 16, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "shield",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [13],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "shirt",
+      "referenced": true,
+      "callSites": 0,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "sparkle",
+      "referenced": true,
+      "callSites": 6,
+      "sizes": [15, 16, 40],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "sprout",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "star",
+      "referenced": true,
+      "callSites": 16,
+      "sizes": [13, 14, 16, 30],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "stats",
+      "referenced": true,
+      "callSites": 6,
+      "sizes": [14, 15, 16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "stop",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [14, 16, 17, 18, 20, 30],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "sun",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [16, 20, 22, 28, 40],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "sunrise",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [20],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "sunset",
+      "referenced": true,
+      "callSites": 4,
+      "sizes": [18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "target",
+      "referenced": true,
+      "callSites": 10,
+      "sizes": [14, 15, 16, 22],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "tasbih",
+      "referenced": true,
+      "callSites": 5,
+      "sizes": [16],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "trash",
+      "referenced": true,
+      "callSites": 25,
+      "sizes": [11, 13, 14, 15, 16, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "tree",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "upload",
+      "referenced": true,
+      "callSites": 3,
+      "sizes": [16],
+      "rtlSensitive": true,
+      "aliasFor": null
+    },
+    {
+      "icon": "utensils",
+      "referenced": true,
+      "callSites": 1,
+      "sizes": [18],
+      "rtlSensitive": false,
+      "aliasFor": "food"
+    },
+    {
+      "icon": "volume",
+      "referenced": true,
+      "callSites": 17,
+      "sizes": [13, 14, 15, 16, 18],
+      "rtlSensitive": false,
+      "aliasFor": null
+    },
+    {
+      "icon": "volume-x",
+      "referenced": true,
+      "callSites": 0,
+      "sizes": [13, 14],
+      "rtlSensitive": false,
+      "aliasFor": null
+    }
+  ],
+  "note": "RTL correctness of each directional use + 5-second recognition need human review (ORG-05 gate); family/stroke consistency is by construction (single icon() wrapper)."
+}

@@ -1,0 +1,1300 @@
+{
+  "generatedAt": "2026-09-23T09:15:01.554Z",
+  "version": "5.17.8",
+  "totals": {
+    "en": 1811,
+    "ar": 1811
+  },
+  "orphans": {
+    "missingInAr": [],
+    "missingInEn": []
+  },
+  "duplicateEnTexts": [
+    {
+      "text": "Listen",
+      "keys": [
+        "card.listen",
+        "mushaf.listen",
+        "wordStudy.speak",
+        "audio.listen",
+        "mushaf.sectionListen",
+        "hadith.cardListen"
+      ]
+    },
+    {
+      "text": "Favorites",
+      "keys": ["nav.favorites", "title.favorites", "home.favorites", "home.panel.favorites"]
+    },
+    {
+      "text": "Statistics",
+      "keys": ["nav.statistics", "title.statistics", "tasbih.sheet.stats", "garden.sheet.stats"]
+    },
+    {
+      "text": "Settings",
+      "keys": ["nav.settings", "palette.settings", "title.settings", "settings.title"]
+    },
+    {
+      "text": "Collections",
+      "keys": ["nav.collections", "title.collections", "home.panel.collections"]
+    },
+    {
+      "text": "Back",
+      "keys": ["nav.back", "common.prev", "certificate.back"]
+    },
+    {
+      "text": "Ahadeeth",
+      "keys": ["nav.hadith", "title.hadith", "hadith.title"]
+    },
+    {
+      "text": "Off",
+      "keys": ["fasting.off", "prayer.alertMode_off", "settings.milestoneOff"]
+    },
+    {
+      "text": "More",
+      "keys": ["nav.more", "card.more", "mushaf.more"]
+    },
+    {
+      "text": "Reciters & Audio",
+      "keys": ["nav.audio", "audio.title", "title.audio"]
+    },
+    {
+      "text": "Reciters",
+      "keys": ["palette.reciter", "mushaf.reciters", "quran.recitersLink"]
+    },
+    {
+      "text": "Translations",
+      "keys": [
+        "offline.group.translations",
+        "library.sheet.translation",
+        "hadith.sheet.translation"
+      ]
+    },
+    {
+      "text": "Morning Adhkar",
+      "keys": ["home.morningShortcut", "checklist.morningAdhkar", "reminder.labelPlaceholder"]
+    },
+    {
+      "text": "Transliteration",
+      "keys": ["content.fieldTranslit", "editor.fieldTransliteration", "library.sheet.translit"]
+    },
+    {
+      "text": "Share",
+      "keys": ["collections.share", "card.share", "hadith.cardShare"]
+    },
+    {
+      "text": "Next",
+      "keys": ["focus.next", "quiz.next", "common.next"]
+    },
+    {
+      "text": "Juz",
+      "keys": ["mushaf.juz", "mushaf.juzSection", "certificate.juz"]
+    },
+    {
+      "text": "Go",
+      "keys": ["mushaf.go", "hadith.jump", "mushaf.sectionGo"]
+    },
+    {
+      "text": "Previous month",
+      "keys": ["calendar.prevMonth", "stats.monthPrev", "prayer.prevMonth"]
+    },
+    {
+      "text": "Next month",
+      "keys": ["calendar.nextMonth", "stats.monthNext", "prayer.nextMonth"]
+    },
+    {
+      "text": "Home",
+      "keys": ["nav.home", "title.home"]
+    },
+    {
+      "text": "Library",
+      "keys": ["nav.library", "title.library"]
+    },
+    {
+      "text": "Search",
+      "keys": ["nav.search", "title.search"]
+    },
+    {
+      "text": "Garden",
+      "keys": ["nav.garden", "title.garden"]
+    },
+    {
+      "text": "Seed",
+      "keys": ["garden.stage.seed", "kids.level.seed"]
+    },
+    {
+      "text": "Sprout",
+      "keys": ["garden.stage.sprout", "kids.level.sprout"]
+    },
+    {
+      "text": "Prayer",
+      "keys": ["nav.prayer", "title.prayer"]
+    },
+    {
+      "text": "Calendar",
+      "keys": ["nav.calendar", "title.calendar"]
+    },
+    {
+      "text": "About",
+      "keys": ["nav.about", "title.about"]
+    },
+    {
+      "text": "Qur'an",
+      "keys": ["nav.quran", "title.quran"]
+    },
+    {
+      "text": "Qibla",
+      "keys": ["nav.qibla", "title.qibla"]
+    },
+    {
+      "text": "Checklist",
+      "keys": ["nav.checklist", "title.checklist"]
+    },
+    {
+      "text": "Ramadan",
+      "keys": ["nav.ramadan", "title.ramadan"]
+    },
+    {
+      "text": "Zakat",
+      "keys": ["nav.zakat", "title.zakat"]
+    },
+    {
+      "text": "Enable notifications",
+      "keys": ["ramadan.enableNotifications", "prayer.enableNotifications"]
+    },
+    {
+      "text": "Prayers",
+      "keys": ["worship.row.prayers", "checklist.groupPrayer"]
+    },
+    {
+      "text": "Qur'an reading",
+      "keys": ["worship.row.quran", "checklist.quran"]
+    },
+    {
+      "text": "Dhikr",
+      "keys": ["worship.row.dhikr", "ambient.modeDhikr"]
+    },
+    {
+      "text": "{n} today",
+      "keys": ["worship.countToday", "kids.todayStars"]
+    },
+    {
+      "text": "{n}-day streak",
+      "keys": ["worship.streak", "plog.streak"]
+    },
+    {
+      "text": "Not yet",
+      "keys": ["worship.notYet", "grammar.wrong"]
+    },
+    {
+      "text": "Downloading…",
+      "keys": ["audio.downloading", "offline.downloading"]
+    },
+    {
+      "text": "Surahs",
+      "keys": ["palette.surah", "mushaf.surahs"]
+    },
+    {
+      "text": "Tafsir",
+      "keys": ["palette.tafsir", "offline.group.tafsir"]
+    },
+    {
+      "text": "Journal",
+      "keys": ["palette.journal", "title.journal"]
+    },
+    {
+      "text": "Stop",
+      "keys": ["offline.stop", "card.stop"]
+    },
+    {
+      "text": "Next ayah",
+      "keys": ["audio.ayahNext", "mutashabihat.next"]
+    },
+    {
+      "text": "Reveal",
+      "keys": ["hifz.reveal", "grammar.reveal"]
+    },
+    {
+      "text": "Hifz review",
+      "keys": ["hifz.cardTitle", "home.panel.hifz"]
+    },
+    {
+      "text": "Tools",
+      "keys": ["nav.group.tools", "viewMenu.group.tools"]
+    },
+    {
+      "text": "99 Names Quiz",
+      "keys": ["title.quiz", "quiz.title"]
+    },
+    {
+      "text": "Qur’an Root Families",
+      "keys": ["title.roots", "roots.title"]
+    },
+    {
+      "text": "Zakat due",
+      "keys": ["zakat.nisabMetShort", "zakat.dueLabel"]
+    },
+    {
+      "text": "Save this calculation",
+      "keys": ["zakat.saveSnapshot", "zakat.sheet.snapshot"]
+    },
+    {
+      "text": "Bookmarked",
+      "keys": ["mushaf.bookmarked", "hadith.bookmarked"]
+    },
+    {
+      "text": "Bookmark removed",
+      "keys": ["mushaf.bookmarkRemoved", "hadith.unbookmarked"]
+    },
+    {
+      "text": "Khatma progress",
+      "keys": ["mushaf.khatma", "stats.khatmaProgress"]
+    },
+    {
+      "text": "Reset",
+      "keys": ["mushaf.khatmaReset", "tasbih.reset"]
+    },
+    {
+      "text": "Evening Adhkar",
+      "keys": ["home.eveningShortcut", "checklist.eveningAdhkar"]
+    },
+    {
+      "text": "Done",
+      "keys": ["content.done", "common.done"]
+    },
+    {
+      "text": "Move up",
+      "keys": ["content.moveUp", "settings.moveUp"]
+    },
+    {
+      "text": "Move down",
+      "keys": ["content.moveDown", "settings.moveDown"]
+    },
+    {
+      "text": "Translation",
+      "keys": ["content.fieldTranslation", "mushaf.translation"]
+    },
+    {
+      "text": "Reference",
+      "keys": ["content.fieldReference", "editor.fieldReference"]
+    },
+    {
+      "text": "Grade",
+      "keys": ["content.fieldGrade", "editor.fieldGrade"]
+    },
+    {
+      "text": "Schedule",
+      "keys": ["schedule.title", "schedule.short"]
+    },
+    {
+      "text": "Schedules",
+      "keys": ["schedule.manager", "schedule.group"]
+    },
+    {
+      "text": "Copy",
+      "keys": ["card.copy", "common.copy"]
+    },
+    {
+      "text": "{count} of {target}",
+      "keys": ["focus.progress", "a11y.counterProgress"]
+    },
+    {
+      "text": "This week",
+      "keys": ["stats.week", "stats.weekTotal"]
+    },
+    {
+      "text": "In congregation",
+      "keys": ["review.jamaah", "plog.state.jamaah"]
+    },
+    {
+      "text": "Fajr",
+      "keys": ["prayer.fajr", "checklist.fajr"]
+    },
+    {
+      "text": "Dhuhr",
+      "keys": ["prayer.dhuhr", "checklist.dhuhr"]
+    },
+    {
+      "text": "Asr",
+      "keys": ["prayer.asr", "checklist.asr"]
+    },
+    {
+      "text": "Maghrib",
+      "keys": ["prayer.maghrib", "checklist.maghrib"]
+    },
+    {
+      "text": "Isha",
+      "keys": ["prayer.isha", "checklist.isha"]
+    },
+    {
+      "text": "Direction",
+      "keys": ["qibla.bearing", "quiz.direction"]
+    },
+    {
+      "text": "Correct",
+      "keys": ["quiz.correct", "practice.legendCorrect"]
+    },
+    {
+      "text": "Hizb",
+      "keys": ["mushaf.hizb", "mushaf.hizbSection"]
+    },
+    {
+      "text": "Practice Tajweed",
+      "keys": ["practice.launchFromSettings", "mushaf.tajweedPractice"]
+    },
+    {
+      "text": "Speech is not available in this browser",
+      "keys": ["wordStudy.speechUnsupported", "hadith.speechUnsupported"]
+    },
+    {
+      "text": "{n} surahs",
+      "keys": ["roots.statSurahs", "certificate.surahCount"]
+    },
+    {
+      "text": "AH",
+      "keys": ["calendar.ah", "home.hijriOn"]
+    },
+    {
+      "text": "Daily verse notification",
+      "keys": ["settings.dailyVerseReminder", "preset.dailyVerse"]
+    },
+    {
+      "text": "Verse of the day",
+      "keys": ["preset.dailyVerseLabel", "home.panel.verse"]
+    },
+    {
+      "text": "Delete",
+      "keys": ["editor.delete", "common.delete"]
+    },
+    {
+      "text": "Save",
+      "keys": ["editor.save", "common.save"]
+    },
+    {
+      "text": "Cancel",
+      "keys": ["editor.cancel", "common.cancel"]
+    },
+    {
+      "text": "Close",
+      "keys": ["common.close", "kids.quizClose"]
+    },
+    {
+      "text": "{from}–{to} of {total} · page {p}/{pages}",
+      "keys": ["hadith.pageStatus", "journal.pageStatus"]
+    },
+    {
+      "text": "Set location",
+      "keys": ["home.setLocationAction", "qibla.sheet.location"]
+    },
+    {
+      "text": "Continue reading",
+      "keys": ["nudge.cta.quran", "home.panel.continue"]
+    },
+    {
+      "text": "Nothing to export yet.",
+      "keys": ["stats.exportEmpty", "journal.exportEmpty"]
+    },
+    {
+      "text": "Daily checklist",
+      "keys": ["home.panel.checklist", "ramadan.sheet.checklist"]
+    },
+    {
+      "text": "Kids Quran",
+      "keys": ["kids.title", "title.kids"]
+    },
+    {
+      "text": "Khatma complete — may Allah accept it from you.",
+      "keys": ["khatma.completeBanner", "khatma.completeToast"]
+    },
+    {
+      "text": "Prayed",
+      "keys": ["plog.state.prayed", "qada.prayed"]
+    },
+    {
+      "text": "Display",
+      "keys": ["viewMenu.group.display", "mushaf.sectionDisplay"]
+    },
+    {
+      "text": "Import content (JSON)",
+      "keys": ["library.sheet.import", "editor.sheet.import"]
+    },
+    {
+      "text": "Export a backup",
+      "keys": ["library.sheet.backup", "editor.sheet.backup"]
+    },
+    {
+      "text": "Tajweed rules & colors",
+      "keys": ["tajweed.rulesTitle", "mushaf.tajweedSettings"]
+    }
+  ],
+  "duplicateEnTextCount": 101,
+  "jargonCandidates": [
+    {
+      "key": "worship.streak",
+      "en": "{n}-day streak",
+      "terms": ["streak"],
+      "ar": "سلسلة القراءة: {n}"
+    },
+    {
+      "key": "audio.subtitle",
+      "en": "312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download su",
+      "terms": ["offline"],
+      "ar": "٣١٢ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور "
+    },
+    {
+      "key": "audio.downloadDone",
+      "en": "Downloaded — available offline.",
+      "terms": ["offline"],
+      "ar": "تم التنزيل — متاح دون اتصال."
+    },
+    {
+      "key": "audio.versePacks",
+      "en": "Offline verse packs",
+      "terms": ["offline"],
+      "ar": "حزم الآيات دون اتصال"
+    },
+    {
+      "key": "audio.versePacksHint",
+      "en": "Ayah audio per surah for the selected voice — the reader plays it offline. Counts refresh ",
+      "terms": ["offline"],
+      "ar": "آيات كل سورة بالصوت المختار — تُشغَّل دون اتصال في القارئ. تُحدَّث الأعداد عند فتح هذه الش"
+    },
+    {
+      "key": "audio.offlineBadge",
+      "en": "offline",
+      "terms": ["offline"],
+      "ar": "دون اتصال"
+    },
+    {
+      "key": "nav.offline",
+      "en": "Offline library",
+      "terms": ["offline"],
+      "ar": "المكتبة دون اتصال"
+    },
+    {
+      "key": "offline.downloadAll",
+      "en": "Download everything (~{mb} MB)",
+      "terms": ["MB"],
+      "ar": "تحميل الكل (نحو {mb} م.ب)"
+    },
+    {
+      "key": "offline.audioCache",
+      "en": "Audio cache",
+      "terms": ["cache"],
+      "ar": "مخبأ الصوت"
+    },
+    {
+      "key": "offline.storageModeBody",
+      "en": "Standard keeps full-size files (fast to open, ~150 MB). Compressed stores zipped files (~2",
+      "terms": ["MB"],
+      "ar": "العادي يحفظ ملفات كاملة (فتح سريع، نحو 150 م.ب). المضغوط يحفظ ملفات مضغوطة (نحو 27 م.ب) وي"
+    },
+    {
+      "key": "offline.audioBody",
+      "en": "Audio stays separate: pick a reciter in Audio and download the full mushaf there (about 1–",
+      "terms": ["GB"],
+      "ar": "الصوت منفصل: اختر قارئًا في الصوت وحمّل المصحف كاملًا هناك (نحو 1-2 غيغابايت)."
+    },
+    {
+      "key": "offline.done",
+      "en": "All downloaded — ready for offline.",
+      "terms": ["offline"],
+      "ar": "تم التحميل — جاهز دون اتصال."
+    },
+    {
+      "key": "audio.customServer",
+      "en": "Audio server URL (folder ending with /)",
+      "terms": ["URL"],
+      "ar": "رابط مجلد الصوتيات (ينتهي بـ /)"
+    },
+    {
+      "key": "audio.customInvalid",
+      "en": "Enter a name and a valid http(s) URL.",
+      "terms": ["URL"],
+      "ar": "أدخل اسمًا ورابطًا صحيحًا يبدأ بـ http(s)."
+    },
+    {
+      "key": "audio.customNotAudio",
+      "en": "That address did not serve audio — check the URL.",
+      "terms": ["URL"],
+      "ar": "هذا العنوان لا يقدّم صوتًا — تأكد من الرابط."
+    },
+    {
+      "key": "a11y.navToggle",
+      "en": "Toggle navigation menu",
+      "terms": ["toggle"],
+      "ar": "إظهار/إخفاء قائمة التنقل"
+    },
+    {
+      "key": "zakat.subtitle",
+      "en": "Work out your annual zakat and Zakat al-Fitr — fully offline, on this device only.",
+      "terms": ["offline"],
+      "ar": "احسب زكاة المال وزكاة الفطر — يعمل دون اتصال وعلى جهازك فقط."
+    },
+    {
+      "key": "home.streak",
+      "en": "Day Streak",
+      "terms": ["streak"],
+      "ar": "أيام متتالية"
+    },
+    {
+      "key": "search.loadingCorpus",
+      "en": "Loading the Qur’an text for full-text search — once loaded, this works offline forever.",
+      "terms": ["offline"],
+      "ar": "يتم تحميل نص القرآن للبحث الكامل — وبعد التحميل يعمل دون اتصال للأبد."
+    },
+    {
+      "key": "common.toggle",
+      "en": "Toggle",
+      "terms": ["toggle"],
+      "ar": "تبديل"
+    },
+    {
+      "key": "stats.currentStreak",
+      "en": "Current Streak",
+      "terms": ["streak"],
+      "ar": "التتابع الحالي"
+    },
+    {
+      "key": "stats.longestStreak",
+      "en": "Longest Streak",
+      "terms": ["streak"],
+      "ar": "أطول تتابع"
+    },
+    {
+      "key": "review.longestDhikr",
+      "en": "Longest dhikr streak",
+      "terms": ["streak"],
+      "ar": "أطول تتابع للأذكار"
+    },
+    {
+      "key": "review.longestReading",
+      "en": "Longest reading streak",
+      "terms": ["streak"],
+      "ar": "أطول تتابع للقراءة"
+    },
+    {
+      "key": "review.currentReading",
+      "en": "Current reading streak",
+      "terms": ["streak"],
+      "ar": "تتابع القراءة الحالي"
+    },
+    {
+      "key": "prayer.adhanTooLarge",
+      "en": "That file is over 8 MB — please pick a shorter recording.",
+      "terms": ["MB"],
+      "ar": "الملف أكبر من 8 ميغابايت — اختر تسجيلًا أقصر."
+    },
+    {
+      "key": "checklist.dayStreak",
+      "en": "day streak",
+      "terms": ["streak"],
+      "ar": "أيام متتالية"
+    },
+    {
+      "key": "practice.currentStreak",
+      "en": "Current streak",
+      "terms": ["streak"],
+      "ar": "التتابع الحالي"
+    },
+    {
+      "key": "practice.bestStreak",
+      "en": "Best streak",
+      "terms": ["streak"],
+      "ar": "أفضل تتابع"
+    },
+    {
+      "key": "tafsir.remoteHint",
+      "en": "This is a large classical work not bundled with the app. Download it once and it's saved o",
+      "terms": ["offline"],
+      "ar": "هذا مصدر كلاسيكي كبير غير مضمّن مع التطبيق. نزّله مرة واحدة وسيبقى متاحًا دون اتصال بعد ذل"
+    },
+    {
+      "key": "tafsir.download",
+      "en": "Download to read offline",
+      "terms": ["offline"],
+      "ar": "تنزيل للقراءة دون اتصال"
+    },
+    {
+      "key": "tafsir.downloadDone",
+      "en": "Downloaded — now available offline",
+      "terms": ["offline"],
+      "ar": "تم التنزيل — متاح الآن دون اتصال"
+    },
+    {
+      "key": "settings.quranTranslationHint",
+      "en": "Each edition loads as you open it and then works offline; full-text search follows the edi",
+      "terms": ["offline"],
+      "ar": "تُحمَّل كل ترجمة عند فتحها ثم تعمل دون اتصال، ويبحث النص الكامل داخل الترجمة المختارة. الت"
+    },
+    {
+      "key": "settings.reciterHint",
+      "en": "Used for the Listen button in the Qur’an reader and Mushaf view. Audio streams from a publ",
+      "terms": ["CDN"],
+      "ar": "يُستخدم في زر الاستماع بقارئ القرآن وعرض المصحف. يتم بث الصوت من خدمة قرآنية عامة عند الضغ"
+    },
+    {
+      "key": "settings.audioManager",
+      "en": "Full surahs: 312 reciters & offline downloads",
+      "terms": ["offline"],
+      "ar": "سور كاملة: ٣١٢ قارئًا وتحميل دون اتصال"
+    },
+    {
+      "key": "about.whatItIsBody",
+      "en": "Nūr al-Dhikr is a quiet companion for your daily remembrance — adhkar for every part of yo",
+      "terms": ["offline"],
+      "ar": "نور الذكر رفيق هادئ لذكرك اليومي — أذكار كل أوقاتك، والقرآن كاملًا بمصحف يقرأ كالمطبوع، وا"
+    },
+    {
+      "key": "about.capProgress",
+      "en": "Watch your streaks, heatmap and the Garden grow as you keep coming back — gently, never gu",
+      "terms": ["heatmap"],
+      "ar": "شاهد تتابعك وخريطة نشاطك وحديقة تنمو مع عودتك — برفق، دون لوم أبدًا."
+    },
+    {
+      "key": "about.gd.hadith",
+      "en": "Eight books, 34,239 narrations, offline search, bookmarks, copy and listen.",
+      "terms": ["offline"],
+      "ar": "ثمانية كتب، ٣٤٢٣٩ حديثًا، بحث دون اتصال، علامات، نسخ واستماع."
+    },
+    {
+      "key": "about.gd.prayer",
+      "en": "Astronomical prayer times, next-prayer countdown, full-day timeline, .ics export.",
+      "terms": ["ICS"],
+      "ar": "مواقيت فلكية، عدّاد للصلاة القادمة، شريط اليوم الكامل، تصدير .ics."
+    },
+    {
+      "key": "about.gd.statistics",
+      "en": "Streaks, heatmap, reading pace and khatma projection — all on-device.",
+      "terms": ["heatmap"],
+      "ar": "التتابع، وخريطة النشاط، وسرعة القراءة وتوقع الختمة — كلها على جهازك."
+    },
+    {
+      "key": "about.offline",
+      "en": "Offline & yours forever",
+      "terms": ["offline"],
+      "ar": "يعمل دون اتصال، ولك إلى الأبد"
+    },
+    {
+      "key": "about.mission",
+      "en": "A quiet, offline-first companion for daily remembrance of Allah.",
+      "terms": ["offline"],
+      "ar": "رفيق هادئ يعمل بلا اتصال لذكر الله اليومي."
+    },
+    {
+      "key": "hadith.loadFailed",
+      "en": "Could not load — check your connection, then retry. Once loaded it stays available offline",
+      "terms": ["offline"],
+      "ar": "تعذر التحميل — تحقق من الاتصال ثم أعد المحاولة. بعد التحميل الأولى يبقى الكتاب متاحاً دون "
+    },
+    {
+      "key": "hadith.offlineReady",
+      "en": "Offline",
+      "terms": ["offline"],
+      "ar": "يعمل دون اتصال"
+    },
+    {
+      "key": "hadith.onDemand",
+      "en": "Loads on first open, then offline",
+      "terms": ["offline"],
+      "ar": "يُحمَّل عند أول فتح ثم يعمل دون اتصال"
+    },
+    {
+      "key": "about.hadithSources",
+      "en": "Ahadeeth library: the six canonical books (the two Sahihs and the four Sunans) plus the Fo",
+      "terms": ["API"],
+      "ar": "مكتبة الأحاديث: الكتب الستة (الصحيحان والأربع السنن) والأربعون النووية والأربعون قدسية — 3"
+    },
+    {
+      "key": "a11y.themeToggle",
+      "en": "Toggle color theme",
+      "terms": ["toggle"],
+      "ar": "تبديل السمة اللونية"
+    },
+    {
+      "key": "sw.precacheFailed",
+      "en": "Offline files could not be downloaded — the app works online for now. Retry when your conn",
+      "terms": ["offline", "online"],
+      "ar": "تعذّر تنزيل ملفات العمل دون اتصال — سيعمل التطبيق متصلًا بالإنترنت في الوقت الحالي. أعد ال"
+    },
+    {
+      "key": "stats.sheet.exportCsv",
+      "en": "Export CSV",
+      "terms": ["CSV"],
+      "ar": "تصدير CSV"
+    },
+    {
+      "key": "stats.sheet.shareCsv",
+      "en": "Share CSV",
+      "terms": ["CSV"],
+      "ar": "مشاركة CSV"
+    },
+    {
+      "key": "stats.exportedCsv",
+      "en": "Statistics CSV saved to downloads.",
+      "terms": ["CSV"],
+      "ar": "حُفظ ملف الإحصاءات في التنزيلات."
+    },
+    {
+      "key": "stats.streakCoachTitle",
+      "en": "Streak coaching",
+      "terms": ["streak"],
+      "ar": "تدريب السلسلة"
+    },
+    {
+      "key": "stats.heatmapExport",
+      "en": "Save heatmap as image",
+      "terms": ["heatmap"],
+      "ar": "حفظ الخريطة كصورة"
+    },
+    {
+      "key": "stats.heatmapSaved",
+      "en": "Heatmap image saved",
+      "terms": ["heatmap"],
+      "ar": "حُفظت صورة الخريطة"
+    },
+    {
+      "key": "onboarding.installHint",
+      "en": "Works fully offline",
+      "terms": ["offline"],
+      "ar": "يعمل دون اتصال بالكامل"
+    },
+    {
+      "key": "plog.streak",
+      "en": "{n}-day streak",
+      "terms": ["streak"],
+      "ar": "سلسلة {n} يوم"
+    },
+    {
+      "key": "plog.bestStreak",
+      "en": "Best streak: {n} days",
+      "terms": ["streak"],
+      "ar": "أفضل سلسلة: {n} يوم"
+    },
+    {
+      "key": "backup.invalidJson",
+      "en": "That file is not valid JSON.",
+      "terms": ["JSON"],
+      "ar": "هذا الملف ليس بصيغة JSON صالحة."
+    },
+    {
+      "key": "sunnah.witrStreak",
+      "en": "{n}-day witr streak",
+      "terms": ["streak"],
+      "ar": "سلسلة وتر {n} يومًا"
+    },
+    {
+      "key": "library.sheet.import",
+      "en": "Import content (JSON)",
+      "terms": ["JSON"],
+      "ar": "استيراد محتوى (JSON)"
+    },
+    {
+      "key": "prayer.sheet.exportIcs",
+      "en": "Export today's times (.ics)",
+      "terms": ["ICS"],
+      "ar": "تصدير مواقيت اليوم (.ics)"
+    },
+    {
+      "key": "prayer.sheet.exportIcsMonth",
+      "en": "Download month (.ics)",
+      "terms": ["ICS"],
+      "ar": "تنزيل الشهر (.ics)"
+    },
+    {
+      "key": "editor.sheet.import",
+      "en": "Import content (JSON)",
+      "terms": ["JSON"],
+      "ar": "استيراد محتوى (JSON)"
+    },
+    {
+      "key": "grammar.hint",
+      "en": "Ten random Qur’anic words per round — guess the part of speech, reveal, grade yourself. Wo",
+      "terms": ["offline"],
+      "ar": "عشر كلمات قرآنية عشوائية في كل جولة — خمّن نوع الكلمة، اكشفها، قيّم نفسك. الكلمات من بيانا"
+    }
+  ],
+  "jargonCandidateCount": 64,
+  "longLabels": [
+    {
+      "key": "ramadan.fastTrackerHint",
+      "len": 103,
+      "en": "Tap today’s circle to mark the fast as kept. Previous days stay as recorded — this is your private log."
+    },
+    {
+      "key": "ramadan.plannerHint",
+      "len": 115,
+      "en": "Your private night-worship log for this Ramadan. Tap an elapsed night to mark it — future nights unlock day by"
+    },
+    {
+      "key": "ramadan.hijriNote",
+      "len": 162,
+      "en": "Hijri dates are computed from a fixed arithmetic calendar and may differ by a day from local moon-sighting. If"
+    },
+    {
+      "key": "ramadan.alertsNote",
+      "len": 146,
+      "en": "Alerts fire only on days that are actually in Ramadan, using your prayer-times method. They fire while the app"
+    },
+    {
+      "key": "ramadan.alertsDenied",
+      "len": 93,
+      "en": "Notifications are blocked for this site — enable them in your browser settings to get alerts."
+    },
+    {
+      "key": "fasting.sharedLogNote",
+      "len": 157,
+      "en": "Kept in the same fasting log as Ramadan (Ramadan days count only in the Ramadan tracker). Tabular Hijri dates "
+    },
+    {
+      "key": "ramadan.alertIftarBody",
+      "len": 126,
+      "en": "Maghrib has entered — break your fast. “Thirst is gone, the veins are moistened, and the reward is confirmed, "
+    },
+    {
+      "key": "zakat.hawlNote",
+      "len": 200,
+      "en": "The hawl is one lunar year (~354 days) from the assessment date. When it completes on wealth still at or above"
+    },
+    {
+      "key": "zakat.hawlAlertBody",
+      "len": 106,
+      "en": "One lunar year has passed since your saved zakat assessment — time to re-assess and pay this year’s zakat."
+    },
+    {
+      "key": "audio.subtitle",
+      "len": 140,
+      "en": "312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushaf"
+    },
+    {
+      "key": "audio.verseVoicesHint",
+      "len": 161,
+      "en": "These 16 voices play ayah by ayah in the reader — from memory when downloaded below, streaming otherwise. Voic"
+    },
+    {
+      "key": "audio.versePacksHint",
+      "len": 113,
+      "en": "Ayah audio per surah for the selected voice — the reader plays it offline. Counts refresh when this screen ope"
+    },
+    {
+      "key": "offline.storageModeBody",
+      "len": 212,
+      "en": "Standard keeps full-size files (fast to open, ~150 MB). Compressed stores zipped files (~27 MB) and unzips on "
+    },
+    {
+      "key": "offline.clearStudyBody",
+      "len": 99,
+      "en": "Frees text-corpus downloads (Qur’an, Hadith, Tafsir, word study). Audio and settings are untouched."
+    },
+    {
+      "key": "offline.audioBody",
+      "len": 96,
+      "en": "Audio stays separate: pick a reciter in Audio and download the full mushaf there (about 1–2 GB)."
+    },
+    {
+      "key": "audio.reciteVerseFailed",
+      "len": 92,
+      "en": "A verse failed to load, so the recitation stopped. Tap play to resume from where it stopped."
+    },
+    {
+      "key": "audio.customHint",
+      "len": 141,
+      "en": "Works with any server that serves files named 001.mp3 … 114.mp3 (per surah). The app verifies the server actua"
+    },
+    {
+      "key": "audio.note",
+      "len": 186,
+      "en": "Streams and downloads come directly from mp3quran.net / quranicaudio.com to your device; nothing is proxied an"
+    },
+    {
+      "key": "error.screen.body",
+      "len": 246,
+      "en": "This usually means saved data on this device became corrupted (for example, from a bad backup import). Your fa"
+    },
+    {
+      "key": "zakat.note.investments",
+      "len": 102,
+      "en": "Stocks and funds at current market value — details differ among scholars; ask locally about your case."
+    },
+    {
+      "key": "zakat.disclaimer",
+      "len": 139,
+      "en": "Estimates follow mainstream Hanafi practice (2.5%, lunar-year holding). Please confirm figures with a qualifie"
+    },
+    {
+      "key": "collections.emptyHint",
+      "len": 96,
+      "en": "Group ayahs, hadith and adhkar the way you actually use them — start from the suggestions below."
+    },
+    {
+      "key": "content.restoreSectionConfirm",
+      "len": 156,
+      "en": "Restore this whole section to the bundled defaults? Every edit, hide, delete, order and count you made to its "
+    },
+    {
+      "key": "content.restoreLibraryConfirm",
+      "len": 148,
+      "en": "Restore this whole banner (every section and card in it) to the bundled defaults? All your edits, additions, d"
+    },
+    {
+      "key": "content.restoreAllConfirm",
+      "len": 192,
+      "en": "Restore EVERYTHING to the bundled defaults? All card edits, additions, deletions, ordering and visibility chan"
+    },
+    {
+      "key": "content.deleteLibraryConfirm",
+      "len": 95,
+      "en": "Delete this whole banner from the Library? You can bring it back any time from the manage view."
+    },
+    {
+      "key": "schedule.note",
+      "len": 142,
+      "en": "Fires daily at the chosen time while the app is installed (in-tab while open; a system notification otherwise)"
+    },
+    {
+      "key": "prayer.adhanNote",
+      "len": 218,
+      "en": "Plays a real call to prayer when a prayer time arrives while the app is open. Fajr uses your imported Fajr rec"
+    },
+    {
+      "key": "prayer.quietHint",
+      "len": 169,
+      "en": "Inside quiet hours alerts play softly instead of full volume. Your phone’s own notification sound still follow"
+    },
+    {
+      "key": "prayer.quietCancelsHint",
+      "len": 100,
+      "en": "When on, prayer alerts are skipped entirely inside quiet hours. When off, they play softly as above."
+    },
+    {
+      "key": "prayer.offsetsHint",
+      "len": 118,
+      "en": "Shift any prayer ±60 minutes — e.g. to match your local mosque. Applies everywhere: the timetable, alerts and "
+    },
+    {
+      "key": "prayer.iqamaHint",
+      "len": 121,
+      "en": "How long your mosque waits after adhan — the row shows the iqama time beneath. Display only: times and alerts "
+    },
+    {
+      "key": "prayer.alertSoundNote",
+      "len": 132,
+      "en": "Plays while the app is open. If the app is closed or in the background, your device uses its own default notif"
+    },
+    {
+      "key": "prayer.reliabilityArmed",
+      "len": 99,
+      "en": "The next {n} adhan alerts are pre-scheduled with the browser — they fire even if the app is closed."
+    },
+    {
+      "key": "prayer.reliabilityTab",
+      "len": 102,
+      "en": "Adhan alerts fire only while the app is open. This browser cannot pre-schedule them in the background."
+    },
+    {
+      "key": "prayer.tzMismatch",
+      "len": 201,
+      "en": "These times follow the sun at your saved coordinates but are shown on this device’s clock. If you entered coor"
+    },
+    {
+      "key": "prayer.polarNote",
+      "len": 209,
+      "en": "At your latitude the sun does not reach the position that defines {names} today — the marked times are best-ef"
+    },
+    {
+      "key": "qibla.noSensor",
+      "len": 93,
+      "en": "This device doesn't support a live compass — use the direction below with a physical compass."
+    },
+    {
+      "key": "qibla.declinationNote",
+      "len": 261,
+      "en": "The direction above is true north. A magnetic needle (like a physical compass or this device’s, where noted) p"
+    },
+    {
+      "key": "qibla.needleRelative",
+      "len": 103,
+      "en": "This device’s sensor has no absolute anchor — treat the needle as an aid and trust the direction above."
+    },
+    {
+      "key": "qibla.disclaimer",
+      "len": 238,
+      "en": "A phone's compass sensor can be thrown off by metal, magnets, or nearby electronics. The direction and distanc"
+    },
+    {
+      "key": "checklist.subtitle",
+      "len": 102,
+      "en": "A private, on-this-device reminder for your prayers and adhkar — not a substitute for praying on time."
+    },
+    {
+      "key": "quiz.intro",
+      "len": 102,
+      "en": "A {n}-question multiple-choice quiz on the meanings of the 99 Names of Allah, drawn from this library."
+    },
+    {
+      "key": "mushaf.wuduNote",
+      "len": 103,
+      "en": "From adab: wudu before touching the printed Mushaf; screens follow your scholar — recite with presence."
+    },
+    {
+      "key": "mushaf.tajweedCoverage",
+      "len": 194,
+      "en": "Rules that need live recitation context (a sukun ra, madd al-‘iwad’s riwayah variants, makharij/sifat) stay un"
+    },
+    {
+      "key": "practice.intro",
+      "len": 103,
+      "en": "Tap the letters where a rule applies, then check your answer. Repetition is how a rule actually sticks."
+    },
+    {
+      "key": "practice.summaryEncourage",
+      "len": 96,
+      "en": "Every miss teaches the eye what to look for. Review them whenever you like — no rush, no grades."
+    },
+    {
+      "key": "roots.subtitle",
+      "len": 119,
+      "en": "Every occurrence of every root, grouped by the word-forms it takes — a vocabulary builder built from the Qur’a"
+    },
+    {
+      "key": "roots.notFound",
+      "len": 97,
+      "en": "That root doesn’t appear in the index. It may be misspelled — check it in a word’s popover first."
+    },
+    {
+      "key": "roots.confusablesNeedCorpus",
+      "len": 98,
+      "en": "Search the Qur’an once to build the pair index — look-alikes for this root appear here after that."
+    },
+    {
+      "key": "tafsir.remoteHint",
+      "len": 110,
+      "en": "This is a large classical work not bundled with the app. Download it once and it's saved offline from then on."
+    },
+    {
+      "key": "settings.cardFieldsHint",
+      "len": 94,
+      "en": "Which fields every dhikr card shows by default. A banner can override these from its own menu."
+    },
+    {
+      "key": "settings.feedbackHint",
+      "len": 96,
+      "en": "How a tap answers you: vibration on supporting devices, a soft tick sound, and the ripple bloom."
+    },
+    {
+      "key": "settings.quranTranslationHint",
+      "len": 137,
+      "en": "Each edition loads as you open it and then works offline; full-text search follows the edition you are reading"
+    },
+    {
+      "key": "settings.compareHintC",
+      "len": 118,
+      "en": "Show a third translation line under the first compare line. Skipped when it matches the main or first compare "
+    },
+    {
+      "key": "settings.milestoneHint",
+      "len": 95,
+      "en": "A stronger buzz and a higher tick every Nth tap during long counting sessions. Off disables it."
+    },
+    {
+      "key": "settings.reciterHint",
+      "len": 157,
+      "en": "Used for the Listen button in the Qur’an reader and Mushaf view. Audio streams from a public Qur’an CDN when y"
+    },
+    {
+      "key": "settings.reciterBHint",
+      "len": 100,
+      "en": "Voice B for compare mode: each ayah plays with the main reciter, then the same ayah with this voice."
+    },
+    {
+      "key": "settings.dataVerifyClean",
+      "len": 113,
+      "en": "Restore check passed — {kept} of {total} entries survive the restore cleaning. Your backup would restore clean"
+    },
+    {
+      "key": "settings.dataVerifyLossy",
+      "len": 110,
+      "en": "Restore check: {kept} of {total} entries survive — what was dropped is exactly what a real restore would drop."
+    },
+    {
+      "key": "settings.resetConfirm",
+      "len": 116,
+      "en": "This will permanently erase all favorites, statistics, and settings on this device. This cannot be undone. Con"
+    },
+    {
+      "key": "about.whatItIsBody",
+      "len": 359,
+      "en": "Nūr al-Dhikr is a quiet companion for your daily remembrance — adhkar for every part of your day, the whole Qu"
+    },
+    {
+      "key": "about.capQuran",
+      "len": 122,
+      "en": "Read the Qur’an page by page like a printed mushaf, listen to any reciter, follow along, study word by word, a"
+    },
+    {
+      "key": "about.capAdhkar",
+      "len": 110,
+      "en": "Open the right adhkar at the right time of day, count them with a tap, and read them one by one in Focus mode."
+    },
+    {
+      "key": "about.capManage",
+      "len": 153,
+      "en": "Make it yours: edit any card, reorder or remove sections, add your own, and set exactly what each card shows —"
+    },
+    {
+      "key": "about.capProgress",
+      "len": 97,
+      "en": "Watch your streaks, heatmap and the Garden grow as you keep coming back — gently, never guiltily."
+    },
+    {
+      "key": "about.gd.quran",
+      "len": 91,
+      "en": "Study reader: word-by-word tags, tafsir, translation compare, recitation with follow-along."
+    },
+    {
+      "key": "about.verifyNote",
+      "len": 180,
+      "en": "Content is drawn from well-known published sources and kept verbatim — but this app is a companion, not a scho"
+    },
+    {
+      "key": "about.offlineBody",
+      "len": 236,
+      "en": "Install it from your browser menu (\"Add to Home Screen\") and it keeps working with no connection. Your bookmar"
+    },
+    {
+      "key": "about.privacyBody",
+      "len": 112,
+      "en": "Nothing you do in this app ever leaves your device. There is no analytics, no tracking, and no account require"
+    },
+    {
+      "key": "about.builtWith",
+      "len": 91,
+      "en": "Built with vanilla HTML, CSS, and JavaScript — no frameworks, no dependencies, no tracking."
+    },
+    {
+      "key": "editor.builtinNote",
+      "len": 130,
+      "en": "Your edits are saved as personal overrides — the original stays on file, and “Restore defaults” brings it back"
+    },
+    {
+      "key": "calendar.estimateNote",
+      "len": 100,
+      "en": "estimates based on the tabular calendar; may differ by a day from local moon-sighting announcements."
+    },
+    {
+      "key": "hadith.restoreAllConfirm",
+      "len": 99,
+      "en": "Restore every book and every hadith you hid or deleted? All Ahadeeth management changes are undone."
+    },
+    {
+      "key": "hadith.loadFailed",
+      "len": 91,
+      "en": "Could not load — check your connection, then retry. Once loaded it stays available offline."
+    },
+    {
+      "key": "hadith.standingNote",
+      "len": 100,
+      "en": "Every hadith here passed Sahih-grade scrutiny — the Two Sahihs are authentic by scholarly consensus."
+    },
+    {
+      "key": "hadith.mixedNote",
+      "len": 193,
+      "en": "This collection mixes grades by design — authentic, good and weak reports side by side. No per-hadith grade sh"
+    },
+    {
+      "key": "hadith.sourceNote",
+      "len": 334,
+      "en": "Texts from the six canonical books — Sahih al-Bukhari, Sahih Muslim, Sunan Abu Dawud, Jami’ at-Tirmidhi, Sunan"
+    },
+    {
+      "key": "about.hadithSources",
+      "len": 247,
+      "en": "Ahadeeth library: the six canonical books (the two Sahihs and the four Sunans) plus the Forty of an-Nawawi and"
+    },
+    {
+      "key": "about.scopeSunni",
+      "len": 104,
+      "en": "Scope: this library follows the Sunni canonical collections; Shia collections are out of scope for v5.x."
+    },
+    {
+      "key": "sw.precacheFailed",
+      "len": 104,
+      "en": "Offline files could not be downloaded — the app works online for now. Retry when your connection allows."
+    },
+    {
+      "key": "settings.homePanelsHint",
+      "len": 107,
+      "en": "Reorder the home screen and hide what you never use. Unchecked panels stay here so you can bring them back."
+    },
+    {
+      "key": "settings.profilesHint",
+      "len": 140,
+      "en": "Each person keeps their own favorites, counters, streaks and history on this device. Settings (language, recit"
+    },
+    {
+      "key": "settings.elderHint",
+      "len": 96,
+      "en": "One tap: extra-large type, bigger touch targets, high contrast. Turning it off keeps your sizes."
+    },
+    {
+      "key": "settings.kidsHint",
+      "len": 100,
+      "en": "Big tiles, short surahs, stars for finished listens. Children leave only by holding the exit button."
+    },
+    {
+      "key": "khatma.planHint",
+      "len": 101,
+      "en": "Set a finish date, a daily page goal, or both. Changing the plan never touches your reading progress."
+    },
+    {
+      "key": "plog.hint",
+      "len": 116,
+      "en": "Tap the circle beside a prayer to log it — once for prayed, twice for in congregation. A private record, today"
+    },
+    {
+      "key": "backup.importConfirm",
+      "len": 164,
+      "en": "Importing replaces everything currently on this device — favorites, streaks, statistics, and settings — with t"
+    },
+    {
+      "key": "storage.persistFailed",
+      "len": 92,
+      "en": "Could not save your data — storage is full or unavailable. Changes this session may be lost."
+    },
+    {
+      "key": "traveler.jamNote",
+      "len": 135,
+      "en": "Combining (Jam') — Asr with Dhuhr, or Isha with Maghrib — is allowed for travelers per the Maliki/Shafi'i posi"
+    },
+    {
+      "key": "audio.playbackDefaultsHint",
+      "len": 95,
+      "en": "Repeat and sleep, picked directly — the same settings as the player chips, without the tapping."
+    },
+    {
+      "key": "playlist.hint",
+      "len": 119,
+      "en": "Named lists of ayah ranges played in order. Save any range from a surah’s Range picker, then play the whole qu"
+    },
+    {
+      "key": "garden.sheet.howBody",
+      "len": 185,
+      "en": "Every dhikr you count anywhere in the app plants a seed here — the tasbih, the adhkar, the duas. One recitatio"
+    },
+    {
+      "key": "mushaf.trackHint",
+      "len": 94,
+      "en": "Your plan and reading progress live here — changing the plan never touches what you have read."
+    },
+    {
+      "key": "byheart.hint",
+      "len": 132,
+      "en": "Arabic hides behind a tap — recall each dhikr from its meaning, then grade yourself. Reviews resurface on the "
+    },
+    {
+      "key": "grammar.hint",
+      "len": 129,
+      "en": "Ten random Qur’anic words per round — guess the part of speech, reveal, grade yourself. Words load from the of"
+    }
+  ],
+  "note": "Clarity/ambiguous verdicts need human (Grandmother-lens) review; duplicates and jargon lists above are the mechanical input."
+}

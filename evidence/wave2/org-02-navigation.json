@@ -1,0 +1,4526 @@
+{
+  "generatedAt": "2026-09-23",
+  "method": "live Chromium probe at 390x844 and 1440x900 (throwaway spec, deleted after capture)",
+  "mobile": {
+    "home": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 3639,
+      "foldDepth": 4.31,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": true,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 34,
+      "aboveFoldCount": 4,
+      "firstActions": [
+        {
+          "tag": "A",
+          "text": "SET YOUR LOCATION TO SEE TODAY’S PRAYER TIMES\nSet ",
+          "action": "navigate",
+          "rect": {
+            "x": 16,
+            "y": 412,
+            "w": 358,
+            "h": 109
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Maybe later",
+          "action": "onboarding-dismiss",
+          "rect": {
+            "x": 255,
+            "y": 562,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "العربية",
+          "action": "onboarding-language",
+          "rect": {
+            "x": 45,
+            "y": 772,
+            "w": 50,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "English",
+          "action": "onboarding-language",
+          "rect": {
+            "x": 107,
+            "y": 772,
+            "w": 75,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "counter-tap",
+        "hadith-bookmark",
+        "hadith-copy",
+        "hadith-daily-shuffle",
+        "hadith-memorize",
+        "hadith-note-open",
+        "hadith-share",
+        "hadith-speak",
+        "navigate",
+        "onboarding-dismiss",
+        "onboarding-language",
+        "onboarding-step",
+        "open-card-menu",
+        "open-focus",
+        "quick-tile",
+        "set-setting",
+        "toggle-favorite",
+        "toggle-speech"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "library": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 9733,
+      "foldDepth": 11.53,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": true,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 104,
+      "aboveFoldCount": 17,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Library options",
+          "action": "view-menu",
+          "rect": {
+            "x": 330,
+            "y": 85,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Browse by need",
+          "action": "library-jump",
+          "rect": {
+            "x": 16,
+            "y": 157,
+            "w": 114,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Adhkar",
+          "action": "library-jump",
+          "rect": {
+            "x": 136,
+            "y": 157,
+            "w": 60,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Duas",
+          "action": "library-jump",
+          "rect": {
+            "x": 202,
+            "y": 157,
+            "w": 48,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Quranic Duas",
+          "action": "library-jump",
+          "rect": {
+            "x": 257,
+            "y": 157,
+            "w": 99,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Duas of the Prophets",
+          "action": "library-jump",
+          "rect": {
+            "x": 362,
+            "y": 157,
+            "w": 144,
+            "h": 40
+          }
+        }
+      ],
+      "actions": ["library-jump", "navigate", "view-menu"],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "mushaf?page=2": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 1056,
+      "foldDepth": 1.25,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": true,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 59,
+      "aboveFoldCount": 57,
+      "firstActions": [
+        {
+          "tag": "A",
+          "text": "Home",
+          "action": "navigate",
+          "rect": {
+            "x": 16,
+            "y": 89,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Al-Baqara · Juz 1 · 1/8",
+          "action": "mushaf-open-jump",
+          "rect": {
+            "x": 64,
+            "y": 85,
+            "w": 118,
+            "h": 51
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Jump To",
+          "action": "mushaf-open-jump",
+          "rect": {
+            "x": 186,
+            "y": 89,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Recite surah",
+          "action": "surah-play",
+          "rect": {
+            "x": 234,
+            "y": 89,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Fullscreen reading",
+          "action": "mushaf-toggle-fullscreen",
+          "rect": {
+            "x": 282,
+            "y": 89,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "More",
+          "action": "mushaf-more",
+          "rect": {
+            "x": 330,
+            "y": 89,
+            "w": 44,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "mushaf-ayah-tap",
+        "mushaf-more",
+        "mushaf-next",
+        "mushaf-open-jump",
+        "mushaf-prev",
+        "mushaf-toggle-fullscreen",
+        "navigate",
+        "surah-play",
+        "word-tap"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "quran?id=112": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 1788,
+      "foldDepth": 2.12,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": true,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 46,
+      "aboveFoldCount": 21,
+      "firstActions": [
+        {
+          "tag": "A",
+          "text": "All Surahs",
+          "action": "navigate",
+          "rect": {
+            "x": 16,
+            "y": 85,
+            "w": 61,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Mushaf View",
+          "action": "mushaf-open-at-surah",
+          "rect": {
+            "x": 76,
+            "y": 85,
+            "w": 136,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Reciters",
+          "action": "navigate",
+          "rect": {
+            "x": 218,
+            "y": 85,
+            "w": 106,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Immersive reading",
+          "action": "quran-toggle-immersive",
+          "rect": {
+            "x": 330,
+            "y": 85,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Recite surah",
+          "action": "surah-play",
+          "rect": {
+            "x": 25,
+            "y": 362,
+            "w": 133,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Range",
+          "action": "quran-range-open",
+          "rect": {
+            "x": 166,
+            "y": 362,
+            "w": 91,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "ayah-share",
+        "copy-ayah",
+        "hifz-mark",
+        "hifz-toggle",
+        "mushaf-open-at-surah",
+        "navigate",
+        "play-ayah",
+        "quran-range-open",
+        "quran-toggle-immersive",
+        "recite-follow-toggle",
+        "surah-play",
+        "tafsir-open",
+        "word-tap"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "audio": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 8594,
+      "foldDepth": 10.18,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 0,
+      "interactiveTotal": 198,
+      "aboveFoldCount": 8,
+      "firstActions": [
+        {
+          "tag": "INPUT",
+          "text": "Search reciters (English or Arabic)…",
+          "action": null,
+          "rect": {
+            "x": 16,
+            "y": 251,
+            "w": 358,
+            "h": 52
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Mishary Alafasy",
+          "action": "set-setting",
+          "rect": {
+            "x": 37,
+            "y": 510,
+            "w": 316,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Mahmoud Al-Husary",
+          "action": "set-setting",
+          "rect": {
+            "x": 37,
+            "y": 558,
+            "w": 316,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Abdul Basit (Murattal)",
+          "action": "set-setting",
+          "rect": {
+            "x": 37,
+            "y": 606,
+            "w": 316,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Abdurrahman As-Sudais",
+          "action": "set-setting",
+          "rect": {
+            "x": 37,
+            "y": 654,
+            "w": 316,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Maher Al Muaiqly",
+          "action": "set-setting",
+          "rect": {
+            "x": 37,
+            "y": 702,
+            "w": 316,
+            "h": 44
+          }
+        }
+      ],
+      "actions": ["audio-select-moshaf", "playlist-create", "set-setting", "verse-pack-download"],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "settings": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 2569,
+      "foldDepth": 3.04,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 0,
+      "interactiveTotal": 197,
+      "aboveFoldCount": 15,
+      "firstActions": [
+        {
+          "tag": "INPUT",
+          "text": "Search settings…",
+          "action": null,
+          "rect": {
+            "x": 16,
+            "y": 85,
+            "w": 358,
+            "h": 52
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Language",
+          "action": "settings-jump",
+          "rect": {
+            "x": 16,
+            "y": 215,
+            "w": 95,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Appearance",
+          "action": "settings-jump",
+          "rect": {
+            "x": 117,
+            "y": 215,
+            "w": 110,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Content Display",
+          "action": "settings-jump",
+          "rect": {
+            "x": 233,
+            "y": 215,
+            "w": 138,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Card fields (defaults)",
+          "action": "settings-jump",
+          "rect": {
+            "x": 16,
+            "y": 261,
+            "w": 173,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Qur’an Reciter",
+          "action": "settings-jump",
+          "rect": {
+            "x": 195,
+            "y": 261,
+            "w": 127,
+            "h": 40
+          }
+        }
+      ],
+      "actions": [
+        "add-preset",
+        "add-reminder",
+        "backup-link-file",
+        "content-field-toggle-global",
+        "content-restore-all",
+        "export-backup",
+        "export-plan",
+        "home-panel-move",
+        "home-panel-toggle",
+        "import-backup",
+        "import-plan",
+        "navigate",
+        "profile-create",
+        "profile-switch",
+        "quick-tile-move",
+        "quick-tile-toggle",
+        "reset-all-data",
+        "schedule-open-manager",
+        "set-setting",
+        "settings-jump",
+        "toggle-dailyverse-reminder",
+        "toggle-elder-mode",
+        "toggle-jumuah-reminder",
+        "toggle-kids-mode",
+        "toggle-setting",
+        "toggle-zakatfitr-reminder",
+        "verify-backup"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "tasbih": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 1285,
+      "foldDepth": 1.52,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 0,
+      "interactiveTotal": 19,
+      "aboveFoldCount": 16,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Tasbih options",
+          "action": "view-menu",
+          "rect": {
+            "x": 330,
+            "y": 85,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "SubhanAllah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 16,
+            "y": 149,
+            "w": 114,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Alhamdulillah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 138,
+            "y": 149,
+            "w": 121,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Allahu Akbar",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 267,
+            "y": 149,
+            "w": 115,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Astaghfirullah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 390,
+            "y": 149,
+            "w": 123,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "La hawla wa la quwwata illa billah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 522,
+            "y": 149,
+            "w": 265,
+            "h": 40
+          }
+        }
+      ],
+      "actions": [
+        "tasbih-custom-save",
+        "tasbih-reset",
+        "tasbih-select",
+        "tasbih-tap",
+        "tasbih-target-set",
+        "tasbih-target-step",
+        "view-menu"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "prayer": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 925,
+      "foldDepth": 1.1,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 0,
+      "interactiveTotal": 75,
+      "aboveFoldCount": 36,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Prayer options",
+          "action": "view-menu",
+          "rect": {
+            "x": 330,
+            "y": 85,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 140,
+            "y": 469,
+            "w": 62,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 140,
+            "y": 517,
+            "w": 71,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 140,
+            "y": 565,
+            "w": 77,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 140,
+            "y": 613,
+            "w": 95,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 140,
+            "y": 661,
+            "w": 80,
+            "h": 40
+          }
+        }
+      ],
+      "actions": [
+        "prayer-manual-location",
+        "prayer-request-location",
+        "prayer-use-city",
+        "view-menu"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "search": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 844,
+      "foldDepth": 1,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 0,
+      "interactiveTotal": 7,
+      "aboveFoldCount": 7,
+      "firstActions": [
+        {
+          "tag": "INPUT",
+          "text": "Search adhkar, duas, names, references…",
+          "action": null,
+          "rect": {
+            "x": 16,
+            "y": 85,
+            "w": 358,
+            "h": 52
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "mercy",
+          "action": "run-search",
+          "rect": {
+            "x": 16,
+            "y": 188,
+            "w": 70,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "patience",
+          "action": "run-search",
+          "rect": {
+            "x": 94,
+            "y": 188,
+            "w": 87,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "forgiveness",
+          "action": "run-search",
+          "rect": {
+            "x": 188,
+            "y": 188,
+            "w": 107,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "paradise",
+          "action": "run-search",
+          "rect": {
+            "x": 16,
+            "y": 236,
+            "w": 86,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "light",
+          "action": "run-search",
+          "rect": {
+            "x": 110,
+            "y": 236,
+            "w": 57,
+            "h": 40
+          }
+        }
+      ],
+      "actions": ["run-search"],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "statistics": {
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dir": "ltr",
+      "scrollHeight": 4707,
+      "foldDepth": 5.58,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 6,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 82,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 158,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 234,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "More",
+          "active": false,
+          "rect": {
+            "x": 310,
+            "y": 782,
+            "w": 74,
+            "h": 60
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 0,
+      "interactiveTotal": 8,
+      "aboveFoldCount": 1,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Statistics options",
+          "action": "view-menu",
+          "rect": {
+            "x": 330,
+            "y": 85,
+            "w": 44,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "navigate",
+        "stats-heatmap-export",
+        "stats-heatmap-shift",
+        "toggle-setting",
+        "view-menu"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    }
+  },
+  "desktop": {
+    "home": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 2743,
+      "foldDepth": 3.05,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 34,
+      "aboveFoldCount": 5,
+      "firstActions": [
+        {
+          "tag": "A",
+          "text": "SET YOUR LOCATION TO SEE TODAY’S PRAYER TIMES\nSet ",
+          "action": "navigate",
+          "rect": {
+            "x": 280,
+            "y": 425,
+            "w": 1144,
+            "h": 90
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Maybe later",
+          "action": "onboarding-dismiss",
+          "rect": {
+            "x": 519,
+            "y": 556,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "العربية",
+          "action": "onboarding-language",
+          "rect": {
+            "x": 309,
+            "y": 744,
+            "w": 50,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "English",
+          "action": "onboarding-language",
+          "rect": {
+            "x": 371,
+            "y": 744,
+            "w": 75,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Next",
+          "action": "onboarding-step",
+          "rect": {
+            "x": 741,
+            "y": 804,
+            "w": 80,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "counter-tap",
+        "hadith-bookmark",
+        "hadith-copy",
+        "hadith-daily-shuffle",
+        "hadith-memorize",
+        "hadith-note-open",
+        "hadith-share",
+        "hadith-speak",
+        "navigate",
+        "onboarding-dismiss",
+        "onboarding-language",
+        "onboarding-step",
+        "open-card-menu",
+        "open-focus",
+        "quick-tile",
+        "set-setting",
+        "toggle-favorite",
+        "toggle-speech"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "library": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 5394,
+      "foldDepth": 5.99,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 104,
+      "aboveFoldCount": 23,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Library options",
+          "action": "view-menu",
+          "rect": {
+            "x": 1380,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Browse by need",
+          "action": "library-jump",
+          "rect": {
+            "x": 280,
+            "y": 156,
+            "w": 114,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Adhkar",
+          "action": "library-jump",
+          "rect": {
+            "x": 400,
+            "y": 156,
+            "w": 60,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Duas",
+          "action": "library-jump",
+          "rect": {
+            "x": 466,
+            "y": 156,
+            "w": 48,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Quranic Duas",
+          "action": "library-jump",
+          "rect": {
+            "x": 521,
+            "y": 156,
+            "w": 99,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Duas of the Prophets",
+          "action": "library-jump",
+          "rect": {
+            "x": 626,
+            "y": 156,
+            "w": 144,
+            "h": 40
+          }
+        }
+      ],
+      "actions": ["library-jump", "navigate", "view-menu"],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "mushaf?page=2": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 901,
+      "foldDepth": 1,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 107,
+      "aboveFoldCount": 107,
+      "firstActions": [
+        {
+          "tag": "A",
+          "text": "Home",
+          "action": "navigate",
+          "rect": {
+            "x": 280,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Al-Fatiha · Juz 1 · 1/8",
+          "action": "mushaf-open-jump",
+          "rect": {
+            "x": 328,
+            "y": 91,
+            "w": 904,
+            "h": 30
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Jump To",
+          "action": "mushaf-open-jump",
+          "rect": {
+            "x": 1236,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Recite a surah on this page",
+          "action": "mushaf-play-pick",
+          "rect": {
+            "x": 1284,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Fullscreen reading",
+          "action": "mushaf-toggle-fullscreen",
+          "rect": {
+            "x": 1332,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "More",
+          "action": "mushaf-more",
+          "rect": {
+            "x": 1380,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "mushaf-ayah-tap",
+        "mushaf-more",
+        "mushaf-next",
+        "mushaf-open-jump",
+        "mushaf-play-pick",
+        "mushaf-prev",
+        "mushaf-toggle-fullscreen",
+        "navigate",
+        "surah-play",
+        "word-tap"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "quran?id=112": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 1787,
+      "foldDepth": 1.99,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 46,
+      "aboveFoldCount": 21,
+      "firstActions": [
+        {
+          "tag": "A",
+          "text": "All Surahs",
+          "action": "navigate",
+          "rect": {
+            "x": 436,
+            "y": 84,
+            "w": 104,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Mushaf View",
+          "action": "mushaf-open-at-surah",
+          "rect": {
+            "x": 970,
+            "y": 84,
+            "w": 136,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Reciters",
+          "action": "navigate",
+          "rect": {
+            "x": 1112,
+            "y": 84,
+            "w": 106,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Immersive reading",
+          "action": "quran-toggle-immersive",
+          "rect": {
+            "x": 1224,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Recite surah",
+          "action": "surah-play",
+          "rect": {
+            "x": 445,
+            "y": 361,
+            "w": 133,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Range",
+          "action": "quran-range-open",
+          "rect": {
+            "x": 586,
+            "y": 361,
+            "w": 91,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "ayah-share",
+        "copy-ayah",
+        "hifz-mark",
+        "hifz-toggle",
+        "mushaf-open-at-surah",
+        "navigate",
+        "play-ayah",
+        "quran-range-open",
+        "quran-toggle-immersive",
+        "recite-follow-toggle",
+        "surah-play",
+        "tafsir-open",
+        "word-tap"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "audio": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 7150,
+      "foldDepth": 7.94,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 0,
+      "interactiveTotal": 198,
+      "aboveFoldCount": 10,
+      "firstActions": [
+        {
+          "tag": "INPUT",
+          "text": "Search reciters (English or Arabic)…",
+          "action": null,
+          "rect": {
+            "x": 280,
+            "y": 210,
+            "w": 1144,
+            "h": 52
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Mishary Alafasy",
+          "action": "set-setting",
+          "rect": {
+            "x": 301,
+            "y": 425,
+            "w": 640,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Mahmoud Al-Husary",
+          "action": "set-setting",
+          "rect": {
+            "x": 301,
+            "y": 473,
+            "w": 640,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Abdul Basit (Murattal)",
+          "action": "set-setting",
+          "rect": {
+            "x": 301,
+            "y": 521,
+            "w": 640,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Abdurrahman As-Sudais",
+          "action": "set-setting",
+          "rect": {
+            "x": 301,
+            "y": 569,
+            "w": 640,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Maher Al Muaiqly",
+          "action": "set-setting",
+          "rect": {
+            "x": 301,
+            "y": 617,
+            "w": 640,
+            "h": 44
+          }
+        }
+      ],
+      "actions": ["audio-select-moshaf", "playlist-create", "set-setting", "verse-pack-download"],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "settings": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 2071,
+      "foldDepth": 2.3,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 197,
+      "aboveFoldCount": 41,
+      "firstActions": [
+        {
+          "tag": "INPUT",
+          "text": "Search settings…",
+          "action": null,
+          "rect": {
+            "x": 280,
+            "y": 84,
+            "w": 1144,
+            "h": 52
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Language",
+          "action": "settings-jump",
+          "rect": {
+            "x": 280,
+            "y": 216,
+            "w": 95,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Appearance",
+          "action": "settings-jump",
+          "rect": {
+            "x": 381,
+            "y": 216,
+            "w": 110,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Content Display",
+          "action": "settings-jump",
+          "rect": {
+            "x": 497,
+            "y": 216,
+            "w": 138,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Card fields (defaults)",
+          "action": "settings-jump",
+          "rect": {
+            "x": 641,
+            "y": 216,
+            "w": 173,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Qur’an Reciter",
+          "action": "settings-jump",
+          "rect": {
+            "x": 820,
+            "y": 216,
+            "w": 127,
+            "h": 40
+          }
+        }
+      ],
+      "actions": [
+        "add-preset",
+        "add-reminder",
+        "backup-link-file",
+        "content-field-toggle-global",
+        "content-restore-all",
+        "export-backup",
+        "export-plan",
+        "home-panel-move",
+        "home-panel-toggle",
+        "import-backup",
+        "import-plan",
+        "navigate",
+        "profile-create",
+        "profile-switch",
+        "quick-tile-move",
+        "quick-tile-toggle",
+        "reset-all-data",
+        "schedule-open-manager",
+        "set-setting",
+        "settings-jump",
+        "toggle-dailyverse-reminder",
+        "toggle-elder-mode",
+        "toggle-jumuah-reminder",
+        "toggle-kids-mode",
+        "toggle-setting",
+        "toggle-zakatfitr-reminder",
+        "verify-backup"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "tasbih": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 1308,
+      "foldDepth": 1.45,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 19,
+      "aboveFoldCount": 16,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Tasbih options",
+          "action": "view-menu",
+          "rect": {
+            "x": 1160,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "SubhanAllah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 603,
+            "y": 148,
+            "w": 114,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Alhamdulillah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 725,
+            "y": 148,
+            "w": 121,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Allahu Akbar",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 854,
+            "y": 148,
+            "w": 115,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Astaghfirullah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 977,
+            "y": 148,
+            "w": 123,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "La hawla wa la quwwata illa billah",
+          "action": "tasbih-select",
+          "rect": {
+            "x": 588,
+            "y": 196,
+            "w": 265,
+            "h": 40
+          }
+        }
+      ],
+      "actions": [
+        "tasbih-custom-save",
+        "tasbih-reset",
+        "tasbih-select",
+        "tasbih-tap",
+        "tasbih-target-set",
+        "tasbih-target-step",
+        "view-menu"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    },
+    "prayer": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 900,
+      "foldDepth": 1,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 75,
+      "aboveFoldCount": 44,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Prayer options",
+          "action": "view-menu",
+          "rect": {
+            "x": 1208,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 797,
+            "y": 438,
+            "w": 62,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 797,
+            "y": 486,
+            "w": 71,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 797,
+            "y": 534,
+            "w": 77,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 797,
+            "y": 582,
+            "w": 95,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "",
+          "action": "prayer-use-city",
+          "rect": {
+            "x": 797,
+            "y": 630,
+            "w": 80,
+            "h": 40
+          }
+        }
+      ],
+      "actions": [
+        "prayer-manual-location",
+        "prayer-request-location",
+        "prayer-use-city",
+        "view-menu"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "search": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 900,
+      "foldDepth": 1,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 7,
+      "aboveFoldCount": 7,
+      "firstActions": [
+        {
+          "tag": "INPUT",
+          "text": "Search adhkar, duas, names, references…",
+          "action": null,
+          "rect": {
+            "x": 280,
+            "y": 84,
+            "w": 1144,
+            "h": 52
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "mercy",
+          "action": "run-search",
+          "rect": {
+            "x": 280,
+            "y": 187,
+            "w": 70,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "patience",
+          "action": "run-search",
+          "rect": {
+            "x": 358,
+            "y": 187,
+            "w": 87,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "forgiveness",
+          "action": "run-search",
+          "rect": {
+            "x": 452,
+            "y": 187,
+            "w": 107,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "paradise",
+          "action": "run-search",
+          "rect": {
+            "x": 567,
+            "y": 187,
+            "w": 86,
+            "h": 40
+          }
+        },
+        {
+          "tag": "BUTTON",
+          "text": "light",
+          "action": "run-search",
+          "rect": {
+            "x": 662,
+            "y": 187,
+            "w": 57,
+            "h": 40
+          }
+        }
+      ],
+      "actions": ["run-search"],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": true
+    },
+    "statistics": {
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dir": "ltr",
+      "scrollHeight": 4022,
+      "foldDepth": 4.47,
+      "navItems": [
+        {
+          "label": "Home",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 101,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 145,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qur'an",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 189,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ahadeeth",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 233,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Search",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 277,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Prayer",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 362,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Qibla",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 406,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Ramadan",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 450,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Calendar",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 494,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Checklist",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 538,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Tasbih",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 622,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": false
+        },
+        {
+          "label": "Garden",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 666,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Zakat",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 710,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Statistics",
+          "active": true,
+          "rect": {
+            "x": 8,
+            "y": 754,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Offline library",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 798,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Favorites",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 883,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "Settings",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 927,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        },
+        {
+          "label": "About",
+          "active": false,
+          "rect": {
+            "x": 8,
+            "y": 971,
+            "w": 247,
+            "h": 44
+          },
+          "labeled": true,
+          "thumbEasy": true
+        }
+      ],
+      "activeCount": 1,
+      "interactiveTotal": 8,
+      "aboveFoldCount": 1,
+      "firstActions": [
+        {
+          "tag": "BUTTON",
+          "text": "Statistics options",
+          "action": "view-menu",
+          "rect": {
+            "x": 1380,
+            "y": 84,
+            "w": 44,
+            "h": 44
+          }
+        }
+      ],
+      "actions": [
+        "navigate",
+        "stats-heatmap-export",
+        "stats-heatmap-shift",
+        "toggle-setting",
+        "view-menu"
+      ],
+      "hasSheet": true,
+      "hasSkeleton": false,
+      "hasEmpty": false
+    }
+  }
+}
