@@ -120,6 +120,7 @@ const APP_SHELL = [
   'js/domain/adhkarTiming.js',
   'js/domain/ambient.js',
   'js/domain/audioQueue.js',
+  'js/domain/audioBatch.js',
   'js/domain/calendar.js',
   'js/domain/celebrate.js',
   'js/domain/completedCards.js',
