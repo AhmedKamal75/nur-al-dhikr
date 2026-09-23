@@ -1,0 +1,211 @@
+{
+  "generatedAt": "2026-09-23T09:02:52.885Z",
+  "version": "5.17.8",
+  "count": 33,
+  "views": [
+    {
+      "key": "HOME",
+      "route": "home",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "LIBRARY",
+      "route": "library",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "CATEGORY",
+      "route": "category",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "MOOD",
+      "route": "mood",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "FOCUS",
+      "route": "focus",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "SEARCH",
+      "route": "search",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "FAVORITES",
+      "route": "favorites",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "COLLECTIONS",
+      "route": "collections",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "COLLECTION",
+      "route": "collection",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "STATISTICS",
+      "route": "statistics",
+      "loading": "lazy",
+      "lazyModule": "../views/statistics.js"
+    },
+    {
+      "key": "TASBIH",
+      "route": "tasbih",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "PRAYER",
+      "route": "prayer",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "QIBLA",
+      "route": "qibla",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "CHECKLIST",
+      "route": "checklist",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "QUIZ",
+      "route": "quiz",
+      "loading": "lazy",
+      "lazyModule": "../views/quiz.js"
+    },
+    {
+      "key": "CALENDAR",
+      "route": "calendar",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "RAMADAN",
+      "route": "ramadan",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "ZAKAT",
+      "route": "zakat",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "AUDIO",
+      "route": "audio",
+      "loading": "lazy",
+      "lazyModule": "../views/audioManager.js"
+    },
+    {
+      "key": "QURAN",
+      "route": "quran",
+      "loading": "lazy",
+      "lazyModule": "../views/quran.js"
+    },
+    {
+      "key": "ROOTS",
+      "route": "roots",
+      "loading": "lazy",
+      "lazyModule": "../views/roots.js"
+    },
+    {
+      "key": "HADITH",
+      "route": "hadith",
+      "loading": "lazy",
+      "lazyModule": "../views/hadith.js"
+    },
+    {
+      "key": "MUSHAF",
+      "route": "mushaf",
+      "loading": "lazy",
+      "lazyModule": "../views/mushafReader.js"
+    },
+    {
+      "key": "SETTINGS",
+      "route": "settings",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "ABOUT",
+      "route": "about",
+      "loading": "lazy",
+      "lazyModule": "../views/about.js"
+    },
+    {
+      "key": "EDITOR",
+      "route": "editor",
+      "loading": "static",
+      "lazyModule": null
+    },
+    {
+      "key": "MUTASHABIHAT",
+      "route": "mutashabihat",
+      "loading": "lazy",
+      "lazyModule": "../views/mutashabihat.js"
+    },
+    {
+      "key": "JOURNAL",
+      "route": "journal",
+      "loading": "lazy",
+      "lazyModule": "../views/journal.js"
+    },
+    {
+      "key": "CERTIFICATE",
+      "route": "certificate",
+      "loading": "lazy",
+      "lazyModule": "../views/certificate.js"
+    },
+    {
+      "key": "GARDEN",
+      "route": "garden",
+      "loading": "lazy",
+      "lazyModule": "../views/garden.js"
+    },
+    {
+      "key": "AMBIENT",
+      "route": "ambient",
+      "loading": "lazy",
+      "lazyModule": "../views/ambient.js"
+    },
+    {
+      "key": "KIDS",
+      "route": "kids",
+      "loading": "lazy",
+      "lazyModule": "../views/kids.js"
+    },
+    {
+      "key": "OFFLINE",
+      "route": "offline",
+      "loading": "lazy",
+      "lazyModule": "../views/offline.js"
+    }
+  ],
+  "routerNotes": {
+    "unknownRouteFallback": true,
+    "defaultView": "home",
+    "hasQueryParams": true
+  },
+  "routerFileFirstLines": "/**\n * router.js\n * Minimal hash router. URL shape: #/view/seg1/seg2?q=foo"
+}

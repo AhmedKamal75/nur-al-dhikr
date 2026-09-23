@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-09-23T09:02:52.885Z",
+  "version": "5.17.8",
+  "desktopRailGroups": [
+    "nav.group.read",
+    "nav.group.worship",
+    "nav.group.tools",
+    "nav.group.mine"
+  ],
+  "desktopRailEntries": 18,
+  "desktopRail": [
+    {
+      "view": "HOME",
+      "icon": "home",
+      "label": "nav.home"
+    },
+    {
+      "view": "LIBRARY",
+      "icon": "library",
+      "label": "nav.library"
+    },
+    {
+      "view": "MUSHAF",
+      "icon": "quran",
+      "label": "nav.quran"
+    },
+    {
+      "view": "HADITH",
+      "icon": "mosque",
+      "label": "nav.hadith"
+    },
+    {
+      "view": "SEARCH",
+      "icon": "search",
+      "label": "nav.search"
+    },
+    {
+      "view": "PRAYER",
+      "icon": "prayer-rug",
+      "label": "nav.prayer"
+    },
+    {
+      "view": "QIBLA",
+      "icon": "compass",
+      "label": "nav.qibla"
+    },
+    {
+      "view": "RAMADAN",
+      "icon": "rayah",
+      "label": "nav.ramadan"
+    },
+    {
+      "view": "CALENDAR",
+      "icon": "calendar",
+      "label": "nav.calendar"
+    },
+    {
+      "view": "CHECKLIST",
+      "icon": "target",
+      "label": "nav.checklist"
+    },
+    {
+      "view": "TASBIH",
+      "icon": "tasbih",
+      "label": "nav.tasbih"
+    },
+    {
+      "view": "GARDEN",
+      "icon": "sprout",
+      "label": "nav.garden"
+    },
+    {
+      "view": "ZAKAT",
+      "icon": "calculator",
+      "label": "nav.zakat"
+    },
+    {
+      "view": "STATISTICS",
+      "icon": "stats",
+      "label": "nav.statistics"
+    },
+    {
+      "view": "OFFLINE",
+      "icon": "download",
+      "label": "nav.offline"
+    },
+    {
+      "view": "FAVORITES",
+      "icon": "heart",
+      "label": "nav.favorites"
+    },
+    {
+      "view": "SETTINGS",
+      "icon": "settings",
+      "label": "nav.settings"
+    },
+    {
+      "view": "ABOUT",
+      "icon": "info",
+      "label": "nav.about"
+    }
+  ],
+  "mobileBar": [
+    "HOME",
+    "LIBRARY",
+    "MUSHAF",
+    "HADITH"
+  ],
+  "topbarActions": [
+    "${action}",
+    "go-back",
+    "nav-toggle",
+    "navigate",
+    "open-palette",
+    "quick-theme-toggle",
+    "nav-drawer-close"
+  ]
+}

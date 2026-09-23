@@ -1,0 +1,892 @@
+{
+  "generatedAt": "2026-09-23T09:02:52.885Z",
+  "version": "5.17.8",
+  "views": {
+    "about": {
+      "dataActionUses": 1,
+      "distinctActions": [
+        "navigate"
+      ],
+      "buttons": 0,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "ambient": {
+      "dataActionUses": 3,
+      "distinctActions": [
+        "ambient-mode",
+        "navigate"
+      ],
+      "buttons": 1,
+      "inputs": 0,
+      "selects": 0,
+      "links": 2
+    },
+    "audioManager": {
+      "dataActionUses": 19,
+      "distinctActions": [
+        "${cellAction}",
+        "audio-batch-dismiss",
+        "audio-batch-stop",
+        "audio-delete-moshaf",
+        "audio-delete-surah",
+        "audio-download-all",
+        "audio-play-moshaf",
+        "audio-remove-custom",
+        "audio-select-moshaf",
+        "playlist-create",
+        "playlist-delete",
+        "playlist-move-item",
+        "playlist-play",
+        "playlist-remove-item",
+        "playlist-rename",
+        "set-setting"
+      ],
+      "buttons": 20,
+      "inputs": 3,
+      "selects": 3,
+      "links": 0
+    },
+    "ayahStudy": {
+      "dataActionUses": 12,
+      "distinctActions": [
+        "ayah-share",
+        "hifz-ayah-mark",
+        "hifz-mark",
+        "hifz-review",
+        "mushaf-copy-ayah",
+        "mushaf-open-in-study",
+        "mushaf-toggle-bookmark",
+        "navigate",
+        "play-ayah",
+        "practice-this-ayah",
+        "surah-play"
+      ],
+      "buttons": 11,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "calendar": {
+      "dataActionUses": 10,
+      "distinctActions": [
+        "calendar-open-day",
+        "fasting-cycle-remind-time",
+        "fasting-toggle-category",
+        "fasting-toggle-remind",
+        "navigate",
+        "ramadan-enable-notifications",
+        "ramadan-toggle-fast"
+      ],
+      "buttons": 10,
+      "inputs": 0,
+      "selects": 0,
+      "links": 0
+    },
+    "category": {
+      "dataActionUses": 23,
+      "distinctActions": [
+        "${byHeartOn ? 'byheart-exit' : 'byheart-start'}",
+        "category-top",
+        "content-delete-category",
+        "content-delete-item",
+        "content-duplicate-item",
+        "content-edit-category",
+        "content-edit-item",
+        "content-hide-item",
+        "content-manage-toggle",
+        "content-move-item",
+        "content-new-item",
+        "content-reset-category",
+        "content-restore-item",
+        "content-schedule",
+        "content-set-target",
+        "content-target-step",
+        "content-unhide-item",
+        "navigate",
+        "quiz-start"
+      ],
+      "buttons": 21,
+      "inputs": 1,
+      "selects": 0,
+      "links": 1
+    },
+    "certificate": {
+      "dataActionUses": 3,
+      "distinctActions": [
+        "certificate-print",
+        "navigate"
+      ],
+      "buttons": 1,
+      "inputs": 0,
+      "selects": 0,
+      "links": 2
+    },
+    "checklist": {
+      "dataActionUses": 2,
+      "distinctActions": [
+        "checklist-toggle",
+        "navigate"
+      ],
+      "buttons": 0,
+      "inputs": 1,
+      "selects": 0,
+      "links": 1
+    },
+    "collection": {
+      "dataActionUses": 7,
+      "distinctActions": [
+        "collection-add-favorites",
+        "collection-move",
+        "delete-collection",
+        "navigate",
+        "rename-collection",
+        "share-collection"
+      ],
+      "buttons": 6,
+      "inputs": 1,
+      "selects": 0,
+      "links": 1
+    },
+    "collections": {
+      "dataActionUses": 4,
+      "distinctActions": [
+        "create-collection",
+        "create-collection-suggested",
+        "navigate"
+      ],
+      "buttons": 3,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "editor": {
+      "dataActionUses": 12,
+      "distinctActions": [
+        "editor-delete-category",
+        "editor-delete-item",
+        "editor-duplicate-item",
+        "editor-edit-item",
+        "editor-new-category",
+        "editor-new-item",
+        "editor-new-library",
+        "modal-close"
+      ],
+      "buttons": 16,
+      "inputs": 23,
+      "selects": 3,
+      "links": 0
+    },
+    "favorites": {
+      "dataActionUses": 4,
+      "distinctActions": [
+        "favorites-sort",
+        "navigate",
+        "open-move-picker",
+        "unfavorite-all"
+      ],
+      "buttons": 3,
+      "inputs": 1,
+      "selects": 0,
+      "links": 1
+    },
+    "focus": {
+      "dataActionUses": 14,
+      "distinctActions": [
+        "byheart-reveal",
+        "byheart-review",
+        "counter-tap",
+        "focus-exit",
+        "focus-reset",
+        "navigate",
+        "open-card-menu",
+        "toggle-favorite",
+        "toggle-speech"
+      ],
+      "buttons": 13,
+      "inputs": 0,
+      "selects": 0,
+      "links": 0
+    },
+    "garden": {
+      "dataActionUses": 1,
+      "distinctActions": [
+        "navigate"
+      ],
+      "buttons": 0,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "hadith": {
+      "dataActionUses": 20,
+      "distinctActions": [
+        "${deletedBooks[b.id] ? 'hadith-restore-book' : 'hadith-unhide-book'}",
+        "hadith-book-move",
+        "hadith-delete-book",
+        "hadith-grid-next",
+        "hadith-grid-prev",
+        "hadith-hide-book",
+        "hadith-index-all",
+        "hadith-page-next",
+        "hadith-page-prev",
+        "hadith-retry",
+        "hadith-retry-index",
+        "hadith-section",
+        "hadith-unhide-item",
+        "navigate"
+      ],
+      "buttons": 17,
+      "inputs": 3,
+      "selects": 0,
+      "links": 4
+    },
+    "hadithCard": {
+      "dataActionUses": 14,
+      "distinctActions": [
+        "hadith-bookmark",
+        "hadith-copy",
+        "hadith-daily-shuffle",
+        "hadith-hide-item",
+        "hadith-mem-reveal",
+        "hadith-mem-review",
+        "hadith-memorize",
+        "hadith-note-open",
+        "hadith-share",
+        "hadith-speak",
+        "navigate"
+      ],
+      "buttons": 13,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "home": {
+      "dataActionUses": 23,
+      "distinctActions": [
+        "modal-close",
+        "mushaf-open-at-surah",
+        "navigate",
+        "nudge-dismiss",
+        "practice-start",
+        "quick-tile",
+        "sadaqah-log",
+        "sadaqah-open-editor",
+        "sadaqah-remove",
+        "set-setting"
+      ],
+      "buttons": 9,
+      "inputs": 2,
+      "selects": 0,
+      "links": 17
+    },
+    "journal": {
+      "dataActionUses": 17,
+      "distinctActions": [
+        "dua-edit-save",
+        "dua-remove",
+        "dua-save",
+        "dua-toggle-answered",
+        "journal-edit-cancel",
+        "journal-edit-open",
+        "journal-export",
+        "journal-page",
+        "navigate",
+        "reflection-edit-save",
+        "reflection-remove",
+        "reflection-save"
+      ],
+      "buttons": 15,
+      "inputs": 1,
+      "selects": 0,
+      "links": 2
+    },
+    "khatma": {
+      "dataActionUses": 4,
+      "distinctActions": [
+        "khatma-clear-plan",
+        "khatma-open-plan",
+        "khatma-ramadan-preset",
+        "mushaf-reset-progress"
+      ],
+      "buttons": 5,
+      "inputs": 3,
+      "selects": 0,
+      "links": 0
+    },
+    "kids": {
+      "dataActionUses": 9,
+      "distinctActions": [
+        "kids-erase",
+        "kids-exit-hold",
+        "kids-quiz-answer",
+        "kids-quiz-exit",
+        "kids-quiz-start",
+        "navigate",
+        "surah-play"
+      ],
+      "buttons": 8,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "library": {
+      "dataActionUses": 21,
+      "distinctActions": [
+        "confirm-content-restore-library",
+        "content-delete-category",
+        "content-delete-library",
+        "content-edit-category",
+        "content-edit-library",
+        "content-hide-category",
+        "content-hide-library",
+        "content-manage-toggle",
+        "content-move-category",
+        "content-move-library",
+        "content-new-category",
+        "content-restore-library",
+        "content-schedule",
+        "content-unhide-category",
+        "content-unhide-library",
+        "library-field-toggles",
+        "library-jump",
+        "navigate"
+      ],
+      "buttons": 19,
+      "inputs": 0,
+      "selects": 0,
+      "links": 2
+    },
+    "mood": {
+      "dataActionUses": 1,
+      "distinctActions": [
+        "navigate"
+      ],
+      "buttons": 0,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "mushafBookmarks": {
+      "dataActionUses": 6,
+      "distinctActions": [
+        "bookmark-delete-folder",
+        "bookmark-filter-folder",
+        "bookmark-new-folder",
+        "modal-close",
+        "mushaf-jump-page",
+        "mushaf-remove-bookmark"
+      ],
+      "buttons": 6,
+      "inputs": 1,
+      "selects": 1,
+      "links": 0
+    },
+    "mushafPlayer": {
+      "dataActionUses": 10,
+      "distinctActions": [
+        "mushaf-play-pick",
+        "player-close",
+        "player-min-toggle",
+        "player-next",
+        "player-prev",
+        "player-toggle",
+        "quran-range-open",
+        "surah-play"
+      ],
+      "buttons": 10,
+      "inputs": 0,
+      "selects": 0,
+      "links": 0
+    },
+    "mushafReader": {
+      "dataActionUses": 25,
+      "distinctActions": [
+        "${action}",
+        "mushaf-ayah-tap",
+        "mushaf-jump-page",
+        "mushaf-more",
+        "mushaf-next",
+        "mushaf-open-jump",
+        "mushaf-open-settings",
+        "mushaf-play-pick",
+        "mushaf-prev",
+        "mushaf-toggle-fullscreen",
+        "navigate",
+        "surah-play",
+        "toggle-mushaf-pref"
+      ],
+      "buttons": 21,
+      "inputs": 2,
+      "selects": 0,
+      "links": 2
+    },
+    "mutashabihat": {
+      "dataActionUses": 5,
+      "distinctActions": [
+        "mutashabihat-next",
+        "mutashabihat-pick",
+        "mutashabihat-pool",
+        "navigate"
+      ],
+      "buttons": 4,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "offline": {
+      "dataActionUses": 7,
+      "distinctActions": [
+        "navigate",
+        "offline-clear-study",
+        "offline-download-all",
+        "offline-download-group",
+        "offline-stop",
+        "offline-toggle-compressed"
+      ],
+      "buttons": 4,
+      "inputs": 2,
+      "selects": 0,
+      "links": 2
+    },
+    "onboardingPanel": {
+      "dataActionUses": 14,
+      "distinctActions": [
+        "navigate",
+        "notifications-enable",
+        "onboarding-comfort",
+        "onboarding-confirm",
+        "onboarding-dismiss",
+        "onboarding-install",
+        "onboarding-language",
+        "onboarding-step",
+        "prayer-request-location"
+      ],
+      "buttons": 12,
+      "inputs": 1,
+      "selects": 2,
+      "links": 2
+    },
+    "palette": {
+      "dataActionUses": 2,
+      "distinctActions": [
+        "${escapeHTML(row.action)}"
+      ],
+      "buttons": 1,
+      "inputs": 1,
+      "selects": 0,
+      "links": 1
+    },
+    "playerBar": {
+      "dataActionUses": 18,
+      "distinctActions": [
+        "${quit}",
+        "${toggle}",
+        "audio-mute-toggle",
+        "player-close",
+        "player-min-toggle",
+        "player-next",
+        "player-prev",
+        "player-rate",
+        "player-repeat",
+        "player-seek-back",
+        "player-seek-fwd",
+        "player-sleep-cycle",
+        "player-toggle",
+        "recite-mode-ayah",
+        "recite-pause-toggle",
+        "recite-stop"
+      ],
+      "buttons": 18,
+      "inputs": 2,
+      "selects": 0,
+      "links": 0
+    },
+    "prayer": {
+      "dataActionUses": 28,
+      "distinctActions": [
+        "${action}",
+        "location-profile-apply",
+        "location-profile-save",
+        "navigate",
+        "prayer-adhan-clear",
+        "prayer-adhan-import",
+        "prayer-enable-notifications",
+        "prayer-log-cycle",
+        "prayer-manual-location",
+        "prayer-month-ics",
+        "prayer-month-nav",
+        "prayer-month-print",
+        "prayer-request-location",
+        "prayer-set-alert-mode",
+        "prayer-test-sound",
+        "prayer-use-city",
+        "qada-add",
+        "qada-clear-prayer",
+        "qada-complete",
+        "sunnah-toggle",
+        "toggle-prayer-alert",
+        "toggle-prayer-quiet",
+        "toggle-prayer-quiet-cancel"
+      ],
+      "buttons": 24,
+      "inputs": 10,
+      "selects": 4,
+      "links": 2
+    },
+    "qibla": {
+      "dataActionUses": 4,
+      "distinctActions": [
+        "prayer-manual-location",
+        "prayer-request-location",
+        "qibla-enable-compass"
+      ],
+      "buttons": 4,
+      "inputs": 0,
+      "selects": 0,
+      "links": 0
+    },
+    "quiz": {
+      "dataActionUses": 12,
+      "distinctActions": [
+        "quiz-answer",
+        "quiz-direction",
+        "quiz-exit-link",
+        "quiz-library",
+        "quiz-next",
+        "quiz-practice-weak",
+        "quiz-review-mistakes",
+        "quiz-size",
+        "quiz-start"
+      ],
+      "buttons": 10,
+      "inputs": 0,
+      "selects": 0,
+      "links": 2
+    },
+    "quran": {
+      "dataActionUses": 38,
+      "distinctActions": [
+        "${action}",
+        "ayah-share",
+        "copy-ayah",
+        "hifz-level",
+        "hifz-mark",
+        "hifz-mcq-new",
+        "hifz-mcq-pick",
+        "hifz-rehide",
+        "hifz-review",
+        "hifz-test",
+        "hifz-toggle",
+        "mushaf-open-at-surah",
+        "navigate",
+        "play-ayah",
+        "player-min-toggle",
+        "quran-play-surah",
+        "quran-range-open",
+        "quran-toggle-immersive",
+        "quran-window-expand",
+        "recite-follow-toggle",
+        "surah-play",
+        "tafsir-open"
+      ],
+      "buttons": 34,
+      "inputs": 1,
+      "selects": 0,
+      "links": 4
+    },
+    "ramadan": {
+      "dataActionUses": 13,
+      "distinctActions": [
+        "navigate",
+        "prayer-manual-location",
+        "prayer-request-location",
+        "ramadan-enable-notifications",
+        "ramadan-planner-toggle",
+        "ramadan-toggle-fast",
+        "toggle-ramadan-alert"
+      ],
+      "buttons": 7,
+      "inputs": 0,
+      "selects": 1,
+      "links": 6
+    },
+    "roots": {
+      "dataActionUses": 18,
+      "distinctActions": [
+        "grammar-exit",
+        "grammar-grade",
+        "grammar-restart",
+        "grammar-reveal",
+        "grammar-start",
+        "navigate",
+        "retry-load",
+        "roots-expand",
+        "roots-jump",
+        "roots-page",
+        "roots-tab"
+      ],
+      "buttons": 13,
+      "inputs": 1,
+      "selects": 0,
+      "links": 7
+    },
+    "search": {
+      "dataActionUses": 8,
+      "distinctActions": [
+        "clear-search-history",
+        "navigate",
+        "run-search",
+        "search-more"
+      ],
+      "buttons": 4,
+      "inputs": 1,
+      "selects": 0,
+      "links": 5
+    },
+    "settings": {
+      "dataActionUses": 46,
+      "distinctActions": [
+        "${action}",
+        "add-preset",
+        "add-reminder",
+        "backup-link-file",
+        "content-restore-all",
+        "delete-reminder",
+        "export-backup",
+        "export-plan",
+        "home-panel-move",
+        "home-panel-toggle",
+        "import-backup",
+        "import-plan",
+        "mushaf-set-tafsir",
+        "navigate",
+        "profile-create",
+        "profile-delete",
+        "profile-switch",
+        "quick-tile-move",
+        "quick-tile-toggle",
+        "reset-all-data",
+        "restore-auto-backup",
+        "schedule-open-manager",
+        "set-setting",
+        "settings-jump",
+        "toggle-elder-mode",
+        "toggle-kids-mode",
+        "toggle-reminder",
+        "toggle-setting",
+        "verify-backup"
+      ],
+      "buttons": 37,
+      "inputs": 12,
+      "selects": 0,
+      "links": 3
+    },
+    "statistics": {
+      "dataActionUses": 11,
+      "distinctActions": [
+        "gap-telemetry-clear",
+        "navigate",
+        "stats-heatmap-export",
+        "stats-heatmap-shift",
+        "toggle-setting"
+      ],
+      "buttons": 4,
+      "inputs": 1,
+      "selects": 0,
+      "links": 6
+    },
+    "tafsirPanel": {
+      "dataActionUses": 20,
+      "distinctActions": [
+        "mushaf-set-bismillah",
+        "mushaf-set-font",
+        "mushaf-set-paper",
+        "practice-open",
+        "root-jump",
+        "roots-open",
+        "tafsir-compare",
+        "tafsir-compare-download",
+        "tafsir-download",
+        "tafsir-open",
+        "tafsir-tab",
+        "tajweed-open-settings",
+        "toggle-mushaf-pref",
+        "word-bookmark",
+        "word-copy",
+        "word-share",
+        "word-speak",
+        "word-tap"
+      ],
+      "buttons": 18,
+      "inputs": 3,
+      "selects": 0,
+      "links": 0
+    },
+    "tajweedPracticeView": {
+      "dataActionUses": 14,
+      "distinctActions": [
+        "navigate",
+        "practice-check",
+        "practice-lesson",
+        "practice-next",
+        "practice-open",
+        "practice-start",
+        "practice-tap"
+      ],
+      "buttons": 12,
+      "inputs": 0,
+      "selects": 0,
+      "links": 1
+    },
+    "tajweedSettings": {
+      "dataActionUses": 3,
+      "distinctActions": [
+        "tajweed-reset",
+        "tajweed-set-color",
+        "tajweed-toggle-rule"
+      ],
+      "buttons": 3,
+      "inputs": 0,
+      "selects": 0,
+      "links": 0
+    },
+    "tasbih": {
+      "dataActionUses": 10,
+      "distinctActions": [
+        "tasbih-custom-remove",
+        "tasbih-custom-save",
+        "tasbih-reset",
+        "tasbih-select",
+        "tasbih-tap",
+        "tasbih-target-set",
+        "tasbih-target-step"
+      ],
+      "buttons": 9,
+      "inputs": 2,
+      "selects": 0,
+      "links": 0
+    },
+    "viewSheets": {
+      "dataActionUses": 3,
+      "distinctActions": [
+        "${action}",
+        "schedule-delete",
+        "schedule-toggle"
+      ],
+      "buttons": 4,
+      "inputs": 0,
+      "selects": 0,
+      "links": 0
+    },
+    "zakat": {
+      "dataActionUses": 6,
+      "distinctActions": [
+        "zakat-clear-inputs",
+        "zakat-delete-snapshot",
+        "zakat-save-snapshot",
+        "zakat-set-basis",
+        "zakat-toggle-hawl-remind"
+      ],
+      "buttons": 6,
+      "inputs": 6,
+      "selects": 0,
+      "links": 0
+    }
+  },
+  "sharedUi": {
+    "calendarModals": {
+      "dataActionUses": 4,
+      "distinctActions": [
+        "calendar-delete-note",
+        "calendar-edit-note",
+        "calendar-new-note",
+        "modal-close"
+      ]
+    },
+    "card": {
+      "dataActionUses": 13,
+      "distinctActions": [
+        "byheart-reveal",
+        "byheart-review",
+        "counter-tap",
+        "navigate",
+        "open-card-menu",
+        "open-focus",
+        "toggle-favorite",
+        "toggle-speech"
+      ]
+    },
+    "emptyState": {
+      "dataActionUses": 2,
+      "distinctActions": [
+        "navigate",
+        "retry-load"
+      ]
+    },
+    "menus": {
+      "dataActionUses": 12,
+      "distinctActions": [
+        "${confirmAction}",
+        "collection-picker-toggle",
+        "copy-item",
+        "create-collection-inline",
+        "create-collection-inline-move",
+        "modal-close",
+        "move-to-collection",
+        "open-collection-picker",
+        "share-item",
+        "toggle-speech"
+      ]
+    },
+    "modal": {
+      "dataActionUses": 2,
+      "distinctActions": [
+        "modal-close",
+        "modal-close-overlay"
+      ]
+    },
+    "readingTokens": {
+      "dataActionUses": 0,
+      "distinctActions": []
+    },
+    "recitationConsole": {
+      "dataActionUses": 4,
+      "distinctActions": [
+        "${action}",
+        "audio-mute-toggle",
+        "recite-pause-toggle"
+      ]
+    },
+    "shell": {
+      "dataActionUses": 10,
+      "distinctActions": [
+        "${action}",
+        "go-back",
+        "nav-drawer-close",
+        "nav-toggle",
+        "navigate",
+        "open-palette",
+        "quick-theme-toggle"
+      ]
+    },
+    "skeleton": {
+      "dataActionUses": 0,
+      "distinctActions": []
+    },
+    "toast": {
+      "dataActionUses": 0,
+      "distinctActions": []
+    },
+    "viewSheet": {
+      "dataActionUses": 4,
+      "distinctActions": [
+        "${action}",
+        "navigate",
+        "toggle-setting",
+        "view-menu"
+      ]
+    }
+  }
+}
