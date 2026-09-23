@@ -40,6 +40,21 @@ Implements the 2026-09-22 Inquisition fix plan (`PLAN-Nur-al-Dhikr-Inquisition-F
   documented exception — reaching it needs per-route library deferral,
   which conflicts with Home's full-corpus verse-of-day and instant
   search index by current product design.
+- Route CSS (PERF-02-ARCH): `quran.css` (~100KB, zero matching rules
+  outside mushaf/reader/roots, probed live) loads on first route entry
+  via the renderer instead of every cold boot; `desktop.css` is
+  media-gated to ≥960px (all its rules already are). Measured cold
+  Home: 3.28 → 3.18MB. Deeper JS code-splitting needs a bundler and
+  stays an architectural exception.
+- Resumable audio batches (NF03-RESUME): Download All persists its
+  pending queue to a new IDB store before work starts and rewrites it
+  per finished file; reloads rehydrate an honest Resume/Dismiss prompt
+  on the Audio view. Quota stops stay resumable; moshaf wipe clears
+  the queue.
+- Study Mode surface (NF01-STUDY): the ayah study modal is explicitly
+  named and gains a Hadith section of honest text matches (scope line
+  always visible, results link to the browser). No semantic
+  ayah↔hadith relation is claimed — no such source dataset exists.
 - Offline/cross-engine (OFFLINE-01/CROSS-01): transition-matrix e2e plus
   a `CROSS_ENGINE=1` Chromium/Firefox/WebKit CI job over the
   prioritized suite.
