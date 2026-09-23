@@ -383,7 +383,7 @@ export function buildPrayerSheet(state) {
       {
         labelKey: 'viewMenu.group.tracking',
         rows: [
-          sheetRow('prayer-open-sunnah', 'prayer.sheet.sunnah', 'moon', lang),
+          sheetRow('prayer-open-sunnah', 'prayer.sheet.sunnah', 'rayah', lang),
           sheetRow('prayer-open-qada', 'prayer.sheet.qada', 'refresh', lang),
         ],
       },
@@ -392,7 +392,7 @@ export function buildPrayerSheet(state) {
         rows: [
           sheetRow('prayer-open-adhan', 'prayer.sheet.adhan', 'volume', lang),
           sheetRow('prayer-open-calc', 'prayer.sheet.calc', 'calculator', lang),
-          sheetLinkRow('prayer.sheet.ambient', 'moon', VIEWS.AMBIENT, {}, lang),
+          sheetLinkRow('prayer.sheet.ambient', 'rayah', VIEWS.AMBIENT, {}, lang),
           sheetSwitchRow('view-toggle-traveler', 'traveler.title', 'plane', lang, traveler),
         ],
       },

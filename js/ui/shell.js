@@ -56,7 +56,7 @@ const NAV_GROUPS = [
       // pairing (prayer=compass, qibla=mosque) read backwards.
       { view: VIEWS.PRAYER, icon: 'prayer-rug', label: 'nav.prayer' },
       { view: VIEWS.QIBLA, icon: 'compass', label: 'nav.qibla' },
-      { view: VIEWS.RAMADAN, icon: 'moon', label: 'nav.ramadan' },
+      { view: VIEWS.RAMADAN, icon: 'rayah', label: 'nav.ramadan' },
       { view: VIEWS.CALENDAR, icon: 'calendar', label: 'nav.calendar' },
       { view: VIEWS.CHECKLIST, icon: 'target', label: 'nav.checklist' },
     ],
@@ -161,7 +161,7 @@ export function renderTopBar(state, opts = {}) {
         ${icon('search', { size: 20 })}
       </button>
       <button type="button" class="icon-btn" data-action="quick-theme-toggle" aria-label="${t('a11y.themeToggle', lang)}">
-        ${icon(isDark ? 'sun' : 'moon', { size: 20 })}
+        ${icon(isDark ? 'sun' : 'star', { size: 20 })}
       </button>
       ${backButton}
     </div>

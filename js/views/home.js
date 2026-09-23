@@ -370,7 +370,7 @@ export function renderHome(state) {
       return inRamadan
         ? `
     <a class="panel panel--ramadan-banner" href="${buildHash(VIEWS.RAMADAN)}" data-action="navigate" data-view="${VIEWS.RAMADAN}">
-      <span class="panel--ramadan-banner__icon">${icon('moon', { size: 22 })}</span>
+      <span class="panel--ramadan-banner__icon">${icon('rayah', { size: 22 })}</span>
       <span class="panel--ramadan-banner__text">
         <span class="panel--ramadan-banner__label">${t('ramadan.bannerTitle', lang)}</span>
         <span class="panel--ramadan-banner__sub">${t('ramadan.bannerSub', lang, { n: hijri.day })}</span>
@@ -402,12 +402,12 @@ export function renderHome(state) {
       </span>
       ${goIcon(lang, 18)}
     </a>`
-      : '',
+        : '',
     progress: `
     <section class="panel panel--progress">
       <div class="panel__header">
         <h2>${t('home.dailyProgress', lang)}</h2>
-        <span class="streak-badge">${icon('moon', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
+        <span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
       </div>
       <div class="progress-bar" role="progressbar" aria-label="${t('home.dailyProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
         <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>

@@ -7406,7 +7406,7 @@
         "ar": "أدعية رمضان والصيام"
       },
       "order": 14,
-      "icon": "moon",
+      "icon": "rayah",
       "color": "amber",
       "items": [
         {
@@ -11361,7 +11361,7 @@
         "ar": "أدعية الموت والقبر والآخرة"
       },
       "order": 17,
-      "icon": "moon",
+      "icon": "sunset",
       "color": "slate",
       "items": [
         {
