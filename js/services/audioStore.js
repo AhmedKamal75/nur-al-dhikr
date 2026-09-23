@@ -15,6 +15,8 @@ import { fetchWithTimeout } from '../core/fetch.js';
 
 const AUDIO_DB = 'nurAlDhikrAudio';
 const STORE = 'files'; // key -> { key, moshafId, surah, bytes, ts, blob }
+// (NF03-RESUME) pending batch items per moshaf: { moshaf, pending:[surah], ts }.
+const QUEUE_STORE = 'batchQueue';
 let dbPromise = null;
 
 /**
@@ -93,7 +95,10 @@ function openDB() {
     }
     let req;
     try {
-      req = indexedDB.open(AUDIO_DB, 1);
+      // (NF03-RESUME) version 2 adds the batchQueue store (pending audio
+      // batch items per moshaf). Guarded creation upgrades v1 databases
+      // in place; the files store is untouched.
+      req = indexedDB.open(AUDIO_DB, 2);
     } catch {
       resolve(null);
       return;
@@ -103,6 +108,9 @@ function openDB() {
       if (!db.objectStoreNames.contains(STORE)) {
         const st = db.createObjectStore(STORE, { keyPath: 'key' });
         st.createIndex('moshafId', 'moshafId', { unique: false });
+      }
+      if (!db.objectStoreNames.contains(QUEUE_STORE)) {
+        db.createObjectStore(QUEUE_STORE, { keyPath: 'moshaf' });
       }
     };
     req.onsuccess = () => resolve(req.result);
@@ -558,4 +566,90 @@ export async function deleteAdhanAudio(kind) {
   const slot = ADHAN_KIND_SLOTS[kind];
   if (!slot) return false;
   return deleteAudio(ADHAN_MOSHAF_ID, slot);
+}
+
+/* ------------------------------------------------------------------ */
+/* NF03-RESUME — persistent batch queue (one record per moshaf)        */
+/*                                                                     */
+/* A "Download All" batch persists its pending surah list BEFORE work  */
+/* starts and rewrites it as files land, so a reload/crash/quit leaves */
+/* an honest resume prompt instead of silent amnesia. Learned-404      */
+/* surahs never enter the queue (permanent classification, not work).  */
+/* Every function degrades to null/false without IDB.                  */
+/* ------------------------------------------------------------------ */
+
+/** Persist the pending surah list for a moshaf (overwrites). Empty arrays clear it. */
+export async function saveBatchQueue(moshafId, pending) {
+  const db = await openDB();
+  if (!db || typeof moshafId !== 'string' || !moshafId) return false;
+  const list = Array.isArray(pending)
+    ? [
+        ...new Set(pending.map(Number).filter((n) => Number.isFinite(n) && n >= 1 && n <= 114)),
+      ].sort((a, b) => a - b)
+    : [];
+  try {
+    // A v1 database (or a host that refused the v2 upgrade) has no queue
+    // store: fall back to memory-only failure rather than throwing, so the
+    // batch itself keeps working and only resumability degrades.
+    if (!db.objectStoreNames.contains(QUEUE_STORE)) return false;
+    if (!list.length) {
+      const del = db.transaction(QUEUE_STORE, 'readwrite');
+      del.objectStore(QUEUE_STORE).delete(moshafId);
+      await txDone(del);
+      return true;
+    }
+    const tx = db.transaction(QUEUE_STORE, 'readwrite');
+    tx.objectStore(QUEUE_STORE).put({ moshaf: moshafId, pending: list, ts: Date.now() });
+    await txDone(tx);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Load the pending surah list for a moshaf, or null when none/unavailable. */
+export async function loadBatchQueue(moshafId) {
+  const db = await openDB();
+  if (!db || typeof moshafId !== 'string' || !moshafId) return null;
+  try {
+    if (!db.objectStoreNames.contains(QUEUE_STORE)) return null;
+    const tx = db.transaction(QUEUE_STORE, 'readonly');
+    const rec = await new Promise((resolve) => {
+      const req = tx.objectStore(QUEUE_STORE).get(moshafId);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => resolve(null);
+    });
+    if (!rec || !Array.isArray(rec.pending)) return null;
+    const list = [
+      ...new Set(rec.pending.map(Number).filter((n) => Number.isFinite(n) && n >= 1 && n <= 114)),
+    ].sort((a, b) => a - b);
+    return list.length ? list : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Drop the queue record for a moshaf. Never throws. */
+export async function clearBatchQueue(moshafId) {
+  return saveBatchQueue(moshafId, []);
+}
+
+/** Every stored queue record ({ moshaf, pending, ts }). Never throws. */
+export async function loadAllBatchQueues() {
+  const db = await openDB();
+  if (!db) return [];
+  try {
+    if (!db.objectStoreNames.contains(QUEUE_STORE)) return [];
+    const tx = db.transaction(QUEUE_STORE, 'readonly');
+    const rows = await new Promise((resolve) => {
+      const req = tx.objectStore(QUEUE_STORE).getAll();
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => resolve([]);
+    });
+    return rows
+      .filter((r) => r && typeof r.moshaf === 'string' && Array.isArray(r.pending))
+      .map((r) => ({ moshaf: r.moshaf, pending: r.pending, ts: r.ts || 0 }));
+  } catch {
+    return [];
+  }
 }

@@ -211,6 +211,12 @@ export const clickHandlers = {
     // starting a 114-file (~1–2GB) batch had NO stop affordance.
     store.dispatch(actions.setAudioBatchRunning(true));
     showToast(t('audio.batchStarted', lang, { n: missing.length }));
+    // (NF03-RESUME) persist the pending list BEFORE work starts; rewrite
+    // it as files land so a reload/crash/quit leaves a resume prompt.
+    // A stale prompt from an older batch is cleared first via the empty
+    // completion below when nothing remains.
+    await audioStore.saveBatchQueue(ds.moshaf, missing);
+    store.dispatch(actions.setAudioBatchResume(null));
     let ok = 0;
     let quotaHit = false;
     try {
@@ -220,11 +226,20 @@ export const clickHandlers = {
       // staying polite to mobile data. Stop/quota flags are checked before
       // each NEW file starts; files already saved stay saved.
       const queue = [...missing];
+      const persistRemaining = () => {
+        // Crash-safe: the surviving workers' shifts already happened, so
+        // the snapshot is the true remainder. Fire-and-forget by design —
+        // persistence must never stall the pool.
+        audioStore.saveBatchQueue(ds.moshaf, queue);
+      };
       const worker = async () => {
         while (queue.length && !rt.batchCancelled && !quotaHit) {
           const n = queue.shift();
           const fileKey = audioStore.audioKey(ds.moshaf, n);
-          if (store.getState().audioDownloading[fileKey]) continue;
+          if (store.getState().audioDownloading[fileKey]) {
+            persistRemaining();
+            continue;
+          }
           store.dispatch(actions.markAudioDownloadStart(fileKey));
           let res;
           try {
@@ -239,10 +254,18 @@ export const clickHandlers = {
             markSurahMissing(ds.moshaf, n);
             if (missingSurahs(ds.moshaf).length > before) skippedNew += 1;
           }
+          // Finished (saved or permanently classified): it is no longer
+          // pending. Quota-stopped items stay queued for an explicit resume.
+          if (res.ok || res.error === 'missing') persistRemaining();
         }
       };
       await Promise.all([worker(), worker(), worker()]);
       if (quotaHit) showToast(t('audio.quota', lang), { assertive: true });
+      // Fully drained (not cancelled, not quota-stopped): nothing left to
+      // resume — drop the record so no stale prompt survives.
+      if (!queue.length && !rt.batchCancelled && !quotaHit) {
+        await audioStore.clearBatchQueue(ds.moshaf);
+      }
     } finally {
       const cancelled = rt.batchCancelled;
       rt.batchCancelled = false;
@@ -265,8 +288,18 @@ export const clickHandlers = {
     rt.batchCancelled = true;
   },
 
+  // (NF03-RESUME) dismiss an interrupted batch: forget the pending queue
+  // (stopping is separate — a stopped batch stays resumable until this).
+  'audio-batch-dismiss': async (ds) => {
+    if (ds?.moshaf) await audioStore.clearBatchQueue(ds.moshaf);
+    store.dispatch(actions.setAudioBatchResume(null));
+  },
+
   'audio-delete-moshaf': async (ds) => {
     const n = await audioStore.deleteMoshafAudio(ds.moshaf);
+    // (NF03-RESUME) wiping the files also drops its queue record — there
+    // is nothing left to resume.
+    await audioStore.clearBatchQueue(ds.moshaf);
     // (v4.3) one batched mutation instead of 114 dispatches: every dispatch
     // used to notify subscribers (a full re-render of the 114-cell download
     // grid) AND schedule a persist — a one-gesture delete cost >100
@@ -274,6 +307,9 @@ export const clickHandlers = {
     store.batch(() => {
       for (let s = 1; s <= 114; s += 1) {
         store.dispatch(actions.markAudioDownload(audioStore.audioKey(ds.moshaf, s), 0, true));
+      }
+      if (store.getState().audioManager.batchResume?.moshaf === ds.moshaf) {
+        store.dispatch(actions.setAudioBatchResume(null));
       }
     });
     const lang = store.getState().settings.language;

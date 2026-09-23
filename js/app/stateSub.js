@@ -8,6 +8,7 @@ import { rt } from './rt.js';
 import {
   ensureRecitersData,
   maybeSyncVerseStatus,
+  maybeSyncBatchResume,
   updateCompassLifecycle,
   syncPlayerIdleArmed,
 } from './audioEngine.js';
@@ -293,6 +294,7 @@ export function onStateChange(stateArg, action) {
     }
     if (state.activeView === VIEWS.AUDIO) ensureRecitersData(state);
     if (state.activeView === VIEWS.AUDIO) maybeSyncVerseStatus(state);
+    if (state.activeView === VIEWS.AUDIO) maybeSyncBatchResume(state);
     if (state.activeView === VIEWS.HADITH) ensureHadithData(state);
     if (state.activeView === VIEWS.OFFLINE) ensureOfflineQuota();
     updateCompassLifecycle(state);

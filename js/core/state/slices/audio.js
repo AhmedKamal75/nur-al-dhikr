@@ -125,6 +125,19 @@ export function reduceAudio(state, action) {
       if (state.audioManager.batchRunning === action.running) return state;
       return { ...state, audioManager: { ...state.audioManager, batchRunning: action.running } };
 
+    case 'AUDIO_BATCH_RESUME': {
+      // (NF03-RESUME) ephemeral resume prompt rehydrated from the IDB
+      // queue. Deep-compare: the sync runs on audio-view renders and must
+      // no-op when nothing changed or every dispatch re-renders mid-batch.
+      const prev = state.audioManager.batchResume;
+      const next = action.resume;
+      const same =
+        (prev == null && next == null) ||
+        (prev != null && next != null && prev.moshaf === next.moshaf && prev.left === next.left);
+      if (same) return state;
+      return { ...state, audioManager: { ...state.audioManager, batchResume: next } };
+    }
+
     case 'OFFLINE_PROGRESS_SET': {
       // (v5.3.0) offline-library batch progress. Ephemeral; replaces the
       // whole jobs object so throttled dispatches stay cheap. No-ops when

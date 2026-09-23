@@ -40,6 +40,30 @@ function surahName(state, n) {
   return s ? `${s.nameTransliteration} · ${s.nameAr}` : `#${n}`;
 }
 
+/**
+ * (NF03-RESUME) interrupted-batch banner: shows only when the rehydrated
+ * resume prompt names the SELECTED moshaf and no batch is running.
+ * Resume reuses Download All (it recomputes the missing set); Dismiss
+ * forgets the queue. Exported for unit tests.
+ */
+export function resumeBannerHTML(state, selected, lang) {
+  const resume = state.audioManager?.batchResume;
+  if (!resume || resume.moshaf !== selected?.id || state.audioManager?.batchRunning) return '';
+  if (!Number.isFinite(Number(resume.left)) || Number(resume.left) <= 0) return '';
+  return `
+      <div class="dl-resume" role="status">
+        <p class="dl-resume__text">${escapeHTML(t('audio.batchResume', lang, { n: resume.left }))}</p>
+        <div class="dl-resume__actions">
+          <button type="button" class="btn btn--primary btn--sm" data-action="audio-download-all" data-moshaf="${escapeHTML(selected.id)}">
+            ${icon('download', { size: 14 })} ${escapeHTML(t('audio.batchResumeGo', lang))}
+          </button>
+          <button type="button" class="btn btn--ghost btn--sm" data-action="audio-batch-dismiss" data-moshaf="${escapeHTML(selected.id)}">
+            ${escapeHTML(t('common.close', lang))}
+          </button>
+        </div>
+      </div>`;
+}
+
 export function renderAudio(state) {
   const lang = state.settings.language;
   const q = state.audioManager?.query || '';
@@ -123,6 +147,7 @@ export function renderAudio(state) {
         <h2>${escapeHTML(lang === 'ar' && selected.nameAr ? selected.nameAr : selected.nameEn)}${selRewaya ? ` — ${escapeHTML(selRewaya)}` : ''}${selTrans ? ` <span class="chip chip--muted">${escapeHTML(selTrans)}</span>` : ''}</h2>
         <span class="chip__count">${doneCount} / 114 · ${formatBytes(totalBytes)}</span>
       </div>
+      ${resumeBannerHTML(state, selected, lang)}
       <div class="dl-actions">
         ${
           state.audioManager?.batchRunning

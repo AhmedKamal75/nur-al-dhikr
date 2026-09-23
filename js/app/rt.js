@@ -111,6 +111,9 @@ export const rt = {
   hadithQueryTimer: null,
   hadithGridSearchTimer: null,
   lastVerseStatusVoice: null,
+  // (NF03-RESUME) batch-resume rehydrate latch (selection + download +
+  // missing fingerprint — IDB reads are not per-render cheap).
+  lastBatchResumeLatch: null,
   pendingAutoAdvanceTimer: null,
   pendingImportPayload: null,
   // (v5.2.29) family plan sharing: the sanitized plan awaiting confirm.

@@ -221,6 +221,9 @@ export const ar = {
   'audio.batchStop': 'إيقاف التحميل',
   'audio.batchDone': 'تم تحميل {n} سورة.',
   'audio.batchDoneSkipped': 'تم تحميل {n} سورة — {m} غير متوفرة على هذا الخادم.',
+  // (NF03-RESUME) interrupted-batch prompt — see en.js.
+  'audio.batchResume': 'تحميل متقطع — تبقى {n} سور.',
+  'audio.batchResumeGo': 'استئناف',
   'audio.surahUnavailable': 'هذه السورة غير متوفرة لدى هذا القارئ.',
   'audio.verseVoices': 'أصوات التلاوة آيةً بآية',
   'audio.verseVoicesHint':

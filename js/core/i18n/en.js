@@ -225,6 +225,9 @@ export const en = {
   'audio.batchStop': 'Stop downloads',
   'audio.batchDone': 'Downloaded {n} surahs.',
   'audio.batchDoneSkipped': 'Downloaded {n} surahs \u2014 {m} not on this server.',
+  // (NF03-RESUME) interrupted-batch prompt: resume reuses Download All.
+  'audio.batchResume': 'Interrupted download \u2014 {n} surahs left.',
+  'audio.batchResumeGo': 'Resume',
   'audio.surahUnavailable': 'This surah is not available from this reciter.',
   'audio.verseVoices': 'Verse-by-verse voices',
   'audio.verseVoicesHint':

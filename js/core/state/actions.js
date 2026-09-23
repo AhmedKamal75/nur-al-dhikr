@@ -309,6 +309,9 @@ export const actions = {
   setAudioManagerQuery: (query) => ({ type: 'AUDIO_MANAGER_QUERY', query }),
   // (v4.2) batch download lifecycle: flips the Download All button to Stop.
   setAudioBatchRunning: (running) => ({ type: 'AUDIO_BATCH_RUNNING', running }),
+  // (NF03-RESUME) rehydrated resume prompt ({ moshaf, left } or null).
+  // Ephemeral like batchRunning: the queue itself persists in IDB.
+  setAudioBatchResume: (resume) => ({ type: 'AUDIO_BATCH_RESUME', resume }),
   // (v5.3.0) offline-library batch progress (ephemeral; throttled).
   setOfflineProgress: (progress) => ({ type: 'OFFLINE_PROGRESS_SET', progress }),
   setAudioCatalogReady: () => ({ type: 'AUDIO_CATALOG_READY' }),

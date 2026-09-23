@@ -237,7 +237,7 @@ export function initialState() {
     player: { moshafId: null, surah: null, playing: false, offline: false },
     // Ephemeral download manager UI state (selected moshaf, search text,
     // and whether the catalog finished loading — flip once → one re-render).
-    audioManager: { query: '', catalogReady: false, batchRunning: false },
+    audioManager: { query: '', catalogReady: false, batchRunning: false, batchResume: null },
     // (v5.3.0) Offline-library batch jobs. Ephemeral: progress resets on
     // reload; completion lands in settings.offline (persisted) per group.
     offlineJobs: { running: false, group: null, done: 0, total: 0, failed: 0, quota: null },

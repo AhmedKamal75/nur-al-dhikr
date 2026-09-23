@@ -14,7 +14,8 @@ import { shortcutActionForKey } from '../domain/playerShortcuts.js';
 import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
 import { findMoshaf, loadCatalog, searchReciters, surahUrl } from '../services/audioCatalog.js';
-import { isSurahMissing } from '../services/moshafAvailability.js';
+import { isSurahMissing, missingSurahs } from '../services/moshafAvailability.js';
+import { reconcilePending, hasResumableWork } from '../domain/audioBatch.js';
 import { showToast } from '../ui/toast.js';
 import * as compass from '../domain/compass.js';
 import * as audioStore from '../services/audioStore.js';
@@ -481,6 +482,52 @@ export async function maybeSyncVerseStatus(state) {
     store.dispatch(actions.setVersePackStatus({ voice, packs }));
   } catch {
     /* IDB/meta failure leaves the grid unmarked, never broken */
+  }
+}
+
+/**
+ * (NF03-RESUME) batch-resume rehydrate: on Audio-view renders, reconcile
+ * the persisted IDB queue of the SELECTED moshaf against downloaded files
+ * and learned-missing surahs. A non-empty remainder becomes the resume
+ * prompt; an empty one clears any stale prompt. Latch: reruns only when
+ * the selection, download set, or missing set changes (IDB reads are not
+ * per-render cheap). Never throws — resumability degrades, playback never
+ * breaks.
+ */
+export async function maybeSyncBatchResume(state) {
+  if (state.activeView !== VIEWS.AUDIO) return;
+  const moshafId = state.settings.audio?.moshafId;
+  if (typeof moshafId !== 'string' || !moshafId) {
+    if (store.getState().audioManager.batchResume) {
+      store.dispatch(actions.setAudioBatchResume(null));
+    }
+    return;
+  }
+  if (state.audioManager?.batchRunning) return;
+  const dlCount = Object.keys(state.audioDownloads || {}).length;
+  const missCount = missingSurahs(moshafId).length;
+  const latch = `${moshafId}|${dlCount}|${missCount}`;
+  if (rt.lastBatchResumeLatch === latch) return;
+  rt.lastBatchResumeLatch = latch;
+  try {
+    const queued = await audioStore.loadBatchQueue(moshafId);
+    if (!queued) {
+      store.dispatch(actions.setAudioBatchResume(null));
+      return;
+    }
+    const pending = reconcilePending(
+      queued,
+      moshafId,
+      Object.keys(store.getState().audioDownloads || {}),
+      missingSurahs(moshafId)
+    );
+    store.dispatch(
+      actions.setAudioBatchResume(
+        hasResumableWork(pending) ? { moshaf: moshafId, left: pending.length } : null
+      )
+    );
+  } catch {
+    /* IDB failure leaves no prompt, never a broken view */
   }
 }
 
