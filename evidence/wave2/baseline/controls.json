@@ -4,9 +4,7 @@
   "views": {
     "about": {
       "dataActionUses": 1,
-      "distinctActions": [
-        "navigate"
-      ],
+      "distinctActions": ["navigate"],
       "buttons": 0,
       "inputs": 0,
       "selects": 0,
@@ -14,10 +12,7 @@
     },
     "ambient": {
       "dataActionUses": 3,
-      "distinctActions": [
-        "ambient-mode",
-        "navigate"
-      ],
+      "distinctActions": ["ambient-mode", "navigate"],
       "buttons": 1,
       "inputs": 0,
       "selects": 0,
@@ -114,10 +109,7 @@
     },
     "certificate": {
       "dataActionUses": 3,
-      "distinctActions": [
-        "certificate-print",
-        "navigate"
-      ],
+      "distinctActions": ["certificate-print", "navigate"],
       "buttons": 1,
       "inputs": 0,
       "selects": 0,
@@ -125,10 +117,7 @@
     },
     "checklist": {
       "dataActionUses": 2,
-      "distinctActions": [
-        "checklist-toggle",
-        "navigate"
-      ],
+      "distinctActions": ["checklist-toggle", "navigate"],
       "buttons": 0,
       "inputs": 1,
       "selects": 0,
@@ -151,11 +140,7 @@
     },
     "collections": {
       "dataActionUses": 4,
-      "distinctActions": [
-        "create-collection",
-        "create-collection-suggested",
-        "navigate"
-      ],
+      "distinctActions": ["create-collection", "create-collection-suggested", "navigate"],
       "buttons": 3,
       "inputs": 0,
       "selects": 0,
@@ -180,12 +165,7 @@
     },
     "favorites": {
       "dataActionUses": 4,
-      "distinctActions": [
-        "favorites-sort",
-        "navigate",
-        "open-move-picker",
-        "unfavorite-all"
-      ],
+      "distinctActions": ["favorites-sort", "navigate", "open-move-picker", "unfavorite-all"],
       "buttons": 3,
       "inputs": 1,
       "selects": 0,
@@ -211,9 +191,7 @@
     },
     "garden": {
       "dataActionUses": 1,
-      "distinctActions": [
-        "navigate"
-      ],
+      "distinctActions": ["navigate"],
       "buttons": 0,
       "inputs": 0,
       "selects": 0,
@@ -360,9 +338,7 @@
     },
     "mood": {
       "dataActionUses": 1,
-      "distinctActions": [
-        "navigate"
-      ],
+      "distinctActions": ["navigate"],
       "buttons": 0,
       "inputs": 0,
       "selects": 0,
@@ -470,9 +446,7 @@
     },
     "palette": {
       "dataActionUses": 2,
-      "distinctActions": [
-        "${escapeHTML(row.action)}"
-      ],
+      "distinctActions": ["${escapeHTML(row.action)}"],
       "buttons": 1,
       "inputs": 1,
       "selects": 0,
@@ -634,12 +608,7 @@
     },
     "search": {
       "dataActionUses": 8,
-      "distinctActions": [
-        "clear-search-history",
-        "navigate",
-        "run-search",
-        "search-more"
-      ],
+      "distinctActions": ["clear-search-history", "navigate", "run-search", "search-more"],
       "buttons": 4,
       "inputs": 1,
       "selects": 0,
@@ -742,11 +711,7 @@
     },
     "tajweedSettings": {
       "dataActionUses": 3,
-      "distinctActions": [
-        "tajweed-reset",
-        "tajweed-set-color",
-        "tajweed-toggle-rule"
-      ],
+      "distinctActions": ["tajweed-reset", "tajweed-set-color", "tajweed-toggle-rule"],
       "buttons": 3,
       "inputs": 0,
       "selects": 0,
@@ -770,11 +735,7 @@
     },
     "viewSheets": {
       "dataActionUses": 3,
-      "distinctActions": [
-        "${action}",
-        "schedule-delete",
-        "schedule-toggle"
-      ],
+      "distinctActions": ["${action}", "schedule-delete", "schedule-toggle"],
       "buttons": 4,
       "inputs": 0,
       "selects": 0,
@@ -820,10 +781,7 @@
     },
     "emptyState": {
       "dataActionUses": 2,
-      "distinctActions": [
-        "navigate",
-        "retry-load"
-      ]
+      "distinctActions": ["navigate", "retry-load"]
     },
     "menus": {
       "dataActionUses": 12,
@@ -842,10 +800,7 @@
     },
     "modal": {
       "dataActionUses": 2,
-      "distinctActions": [
-        "modal-close",
-        "modal-close-overlay"
-      ]
+      "distinctActions": ["modal-close", "modal-close-overlay"]
     },
     "readingTokens": {
       "dataActionUses": 0,
@@ -853,11 +808,7 @@
     },
     "recitationConsole": {
       "dataActionUses": 4,
-      "distinctActions": [
-        "${action}",
-        "audio-mute-toggle",
-        "recite-pause-toggle"
-      ]
+      "distinctActions": ["${action}", "audio-mute-toggle", "recite-pause-toggle"]
     },
     "shell": {
       "dataActionUses": 10,
@@ -881,12 +832,7 @@
     },
     "viewSheet": {
       "dataActionUses": 4,
-      "distinctActions": [
-        "${action}",
-        "navigate",
-        "toggle-setting",
-        "view-menu"
-      ]
+      "distinctActions": ["${action}", "navigate", "toggle-setting", "view-menu"]
     }
   }
 }

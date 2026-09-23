@@ -1,0 +1,236 @@
+{
+  "generatedAt": "2026-09-23",
+  "method": "live Chromium walkthrough, throwaway spec, fresh context per viewport; taps from #/home unless setup noted; scrolling free; target <=4 taps, no dead ends",
+  "target": {
+    "taps": "<=4",
+    "deadEnds": 0
+  },
+  "results": [
+    {
+      "viewport": "mobile-390x844",
+      "goal": "start-al-fatihah",
+      "taps": 4,
+      "tapSeq": ["nav-toggle", "nav-drawer-go", "mushaf-open-jump", "mushaf-jump-page"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "find-fajr",
+      "note": "cities live in collapsed region groups",
+      "taps": 4,
+      "tapSeq": ["nav-toggle", "nav-drawer-go", "?", "prayer-use-city"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "count-33-tasbih",
+      "count": 0,
+      "taps": 35,
+      "tapSeq": [
+        "nav-toggle",
+        "nav-drawer-go",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap"
+      ],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "learn-ghunna",
+      "viaModal": true,
+      "taps": 5,
+      "tapSeq": ["nav-toggle", "nav-drawer-go", "mushaf-more", "practice-open", "practice-lesson"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "return-to-reading",
+      "setup": "bookmark via #/quran?id=5",
+      "taps": 1,
+      "tapSeq": ["mushaf-open-at-surah"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "change-reciter",
+      "taps": 3,
+      "tapSeq": ["open-palette", "navigate", "audio-select-moshaf"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "download-surah",
+      "taps": 4,
+      "tapSeq": ["open-palette", "navigate", "audio-select-moshaf", "audio-download-surah"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "share-ayah",
+      "note": "OS sheet is environment-handled",
+      "taps": 6,
+      "tapSeq": ["nav-toggle", "nav-drawer-go", "word-tap", "tafsir-open", "ayah-share", "A"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "adjust-volume",
+      "slider": "55",
+      "setup": "moshaf selected + playing",
+      "taps": 0,
+      "tapSeq": [],
+      "routes": ["#/audio"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "mobile-390x844",
+      "goal": "read-tafsir",
+      "viaModal": true,
+      "taps": 4,
+      "tapSeq": ["nav-toggle", "nav-drawer-go", "word-tap", "tafsir-open"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "start-al-fatihah",
+      "taps": 3,
+      "tapSeq": ["navigate", "mushaf-open-jump", "mushaf-jump-page"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "find-fajr",
+      "note": "cities live in collapsed region groups",
+      "taps": 3,
+      "tapSeq": ["navigate", "?", "prayer-use-city"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "count-33-tasbih",
+      "count": 0,
+      "taps": 34,
+      "tapSeq": [
+        "navigate",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap",
+        "tasbih-tap"
+      ],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "learn-ghunna",
+      "viaModal": true,
+      "taps": 4,
+      "tapSeq": ["navigate", "mushaf-more", "practice-open", "practice-lesson"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "return-to-reading",
+      "setup": "bookmark via #/quran?id=5",
+      "taps": 1,
+      "tapSeq": ["mushaf-open-at-surah"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "change-reciter",
+      "taps": 3,
+      "tapSeq": ["open-palette", "navigate", "audio-select-moshaf"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "download-surah",
+      "taps": 4,
+      "tapSeq": ["open-palette", "navigate", "audio-select-moshaf", "audio-download-surah"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "share-ayah",
+      "note": "OS sheet is environment-handled",
+      "taps": 5,
+      "tapSeq": ["navigate", "word-tap", "tafsir-open", "ayah-share", "A"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "adjust-volume",
+      "slider": "55",
+      "setup": "moshaf selected + playing",
+      "taps": 0,
+      "tapSeq": [],
+      "routes": ["#/audio"],
+      "backtracks": 0,
+      "deadEnd": false
+    },
+    {
+      "viewport": "desktop-1440x900",
+      "goal": "read-tafsir",
+      "viaModal": true,
+      "taps": 3,
+      "tapSeq": ["navigate", "word-tap", "tafsir-open"],
+      "routes": ["#/home"],
+      "backtracks": 0,
+      "deadEnd": false
+    }
+  ]
+}

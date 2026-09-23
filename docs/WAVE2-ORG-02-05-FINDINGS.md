@@ -91,3 +91,60 @@ Evidence: `evidence/wave2/org-02-navigation.json`,
 - NN/g gates restated for ORG-06: visible labels already present;
   recognition/interpretation of the custom glyphs (rayah, prayer-rug,
   tasbih, quran) needs human 5-second testing — not asserted here.
+
+## ORG-06 — cognitive walkthrough (ten goals, target ≤4 taps, no dead ends)
+
+Live Chromium, fresh profile per viewport, taps counted from `#/home`
+(scrolling free; setup steps noted, not counted). Full records:
+`evidence/wave2/org-06-walkthrough.json`.
+
+| Goal              | Mobile 390×844                             | Desktop 1440×900   | Verdict                                                              |
+| ----------------- | ------------------------------------------ | ------------------ | -------------------------------------------------------------------- |
+| Start Al-Fatihah  | 4 (drawer+2)                               | 3                  | PASS (mobile at target)                                              |
+| Find Fajr         | 4 (rail/drawer+region+city)                | 3                  | PASS — cities hide in collapsed region groups (scroll+expand needed) |
+| Count 33 tasbih   | 1 nav + 33 counted                         | 1 nav + 33 counted | PASS (counting IS the task)                                          |
+| Learn Ghunna      | **5** (drawer+more+practice+lesson)        | 4                  | **FAIL mobile**                                                      |
+| Return to reading | 1 (continue card)                          | 1                  | PASS (bookmark setup excluded)                                       |
+| Change reciter    | 3 (palette path, AUDIO unchromed)          | 3                  | PASS                                                                 |
+| Download a surah  | 4 (incl. moshaf select)                    | 4                  | PASS (at target)                                                     |
+| Share an ayah     | **6** (drawer+ayah+popup+modal+share+link) | **5**              | **FAIL both**                                                        |
+| Adjust volume     | gesture (setup excluded)                   | gesture            | PASS                                                                 |
+| Read tafsir       | 4                                          | 3                  | PASS                                                                 |
+
+- Dead ends: **zero** in all 20 runs. Backtracking: zero (no route
+  revisits). Unexpected menus: none beyond the planned drawer/sheet/
+  modal steps.
+- Concrete ORG fixes (proposed, validate before applying):
+  1. share-ayah: surface Share on the word popup directly (saves
+     modal+link taps: 6→4 mobile, 5→4 desktop);
+  2. learn-ghunna mobile: pin the practice entry in the mushaf More
+     sheet top section (5→4);
+  3. find-fajr: keep collapsed regions (correct disclosure) but the
+     walkthrough proves 4 taps only _with_ scrolling — no change,
+     documented as designed.
+- Methodology gaps (honest): route-revisit tracking never recorded
+  (init-script limitation — backtracking read from tap sequences
+  instead); tasbih count readout hit an Eastern-numeral read artifact
+  (tap execution proven by the passing smoke burst test); OS share
+  sheet is environment-handled (tap dispatched, no page error).
+
+## ORG-07 — desktop/mobile parity
+
+Per-goal mobile-vs-desktop deltas: +1 drawer tax on fatihah, fajr,
+ghunna, share, tafsir; identical elsewhere (resume, reciter, download,
+volume, tasbih). No feature is correct-on-one and awkward/broken on
+the other. **Parity gate: PASS** with the standing +1 drawer-tax note.
+
+## 2A release-gate check (from the plan)
+
+- every route accounted for: YES (33, ORG-01).
+- no orphaned views: YES (none found).
+- no duplicate chrome destinations: **NO — open** (MUSHAF/QURAN,
+  SEARCH split carried for ORG-02 decision).
+- all labels bilingual: YES mechanically (1811/1811, zero orphans).
+- all icons audited: YES mechanically (human recognition pending).
+- all ten goals ≤4 taps: **NO — 2 goals fail** (share both, ghunna
+  mobile) with fixes proposed above.
+- mobile/desktop consistent: YES (parity PASS).
+- bottom-nav decision evidence-backed: YES (ORG-02 measurements).
+- progressive disclosure audit complete: YES (ORG-03 census).

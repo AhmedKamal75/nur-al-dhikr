@@ -1,12 +1,7 @@
 {
   "generatedAt": "2026-09-23T09:02:52.885Z",
   "version": "5.17.8",
-  "desktopRailGroups": [
-    "nav.group.read",
-    "nav.group.worship",
-    "nav.group.tools",
-    "nav.group.mine"
-  ],
+  "desktopRailGroups": ["nav.group.read", "nav.group.worship", "nav.group.tools", "nav.group.mine"],
   "desktopRailEntries": 18,
   "desktopRail": [
     {
@@ -100,12 +95,7 @@
       "label": "nav.about"
     }
   ],
-  "mobileBar": [
-    "HOME",
-    "LIBRARY",
-    "MUSHAF",
-    "HADITH"
-  ],
+  "mobileBar": ["HOME", "LIBRARY", "MUSHAF", "HADITH"],
   "topbarActions": [
     "${action}",
     "go-back",
