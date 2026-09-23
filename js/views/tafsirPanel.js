@@ -315,6 +315,7 @@ function wordActionsRow(state, lang, surah, ayah, i) {
     <button type="button" class="icon-btn icon-btn--sm" data-action="word-speak" ${ds} aria-label="${t('wordStudy.speak', lang)}" title="${t('wordStudy.speak', lang)}">${icon('volume', { size: 15 })}</button>
     <button type="button" class="icon-btn icon-btn--sm" data-action="word-copy" ${ds} aria-label="${t('wordStudy.copy', lang)}" title="${t('wordStudy.copy', lang)}">${icon('copy', { size: 15 })}</button>
     <button type="button" class="icon-btn icon-btn--sm" data-action="word-share" ${ds} aria-label="${t('wordStudy.share', lang)}" title="${t('wordStudy.share', lang)}">${icon('share', { size: 15 })}</button>
+    <button type="button" class="icon-btn icon-btn--sm" data-action="ayah-share" data-surah="${surah}" data-ayah="${ayah}" aria-label="${t('quran.shareAyah', lang)}" title="${t('quran.shareAyah', lang)}">${icon('image', { size: 15 })}</button>
     <button type="button" class="icon-btn icon-btn--sm${marked ? ' icon-btn--active' : ''}" data-action="word-bookmark" ${ds} aria-pressed="${marked}" aria-label="${bmLabel}" title="${bmLabel}">${icon('bookmark', { size: 15 })}</button>
   </div>`;
 }

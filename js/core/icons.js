@@ -61,6 +61,11 @@ export const PATHS = {
   list: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/>',
   share:
     '<circle cx="18" cy="5" r="2.3"/><circle cx="6" cy="12" r="2.3"/><circle cx="18" cy="19" r="2.3"/><path d="m8.1 10.8 7.8-4.1M8.1 13.2l7.8 4.1"/>',
+  // (ORG-06 fix) share-as-image card: mountains-and-sun, the near-
+  // universal picture glyph. Distinct from `share` (text share) on
+  // purpose — adjacent twin share icons would fail ORG-05 clarity.
+  image:
+    '<rect x="4" y="5" width="16" height="14" rx="1.5"/><circle cx="9" cy="10" r="1.4"/><path d="M4 16.5 10 12l3 3 2-2 5 4"/>',
   play: '<path d="M8 5.5v13l11-6.5-11-6.5Z" fill="currentColor" stroke="none"/>',
   stop: '<rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none"/>',
   chevronLeft: '<path d="M15 5 8 12l7 7"/>',
