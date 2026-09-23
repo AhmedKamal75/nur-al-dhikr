@@ -6,8 +6,11 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
-import { TRANSLATION_EDITIONS } from '../core/config.js';
+import { TRANSLATION_EDITIONS, VIEWS } from '../core/config.js';
+import { buildHash } from '../core/router.js';
 import { resolveCompareTexts } from '../domain/translationCompare.js';
+import { searchHadith, hadithIndexStats, studyHadithQuery } from '../domain/hadithSearch.js';
+import { hadithCardHTML } from './hadithCard.js';
 import { ayahAudioUrl } from '../services/mushaf.js';
 import { buildAyahStudyExtras } from './tafsirPanel.js';
 
@@ -61,6 +64,50 @@ function hifzRowFor(state, surahNumber, ayahNumber, lang) {
 }
 
 /**
+ * (NF01-STUDY) Hadith tab of the Study Mode surface: honest TEXT matches
+ * for the ayah's distinctive words across LOADED hadith books only.
+ * There is no source-backed ayah↔hadith relation map, so the scope line
+ * always says how many books were searched, and results link to the
+ * full browser. Returns '' when the ayah yields no query.
+ * Exported for unit tests.
+ */
+export function buildStudyHadithSection(state, surahNumber, ayahNumber, arabicText, lang) {
+  const query = studyHadithQuery(arabicText);
+  if (!query) return '';
+  const docs = state.hadith?.docs || {};
+  const stats = hadithIndexStats();
+  const totalBooks = state.hadith?.index?.books?.length || 0;
+  const hits = searchHadith(query, { limit: 5 });
+  const cards = hits
+    .map((hit) => {
+      const doc = docs[hit.bookId];
+      const h = doc?.hadiths?.find((x) => x && Number(x.n) === Number(hit.n));
+      if (!h) return '';
+      const sectionName = doc.sections?.find((s) => s.id === h.b)?.name || '';
+      return hadithCardHTML(h, {
+        lang,
+        sectionName,
+        showTranslation: state.settings.showTranslation,
+        showArabic: state.settings.showHadithArabic !== false,
+        bookId: hit.bookId,
+        highlight: query.split(/\s+/),
+      });
+    })
+    .join('');
+  return `
+    <section class="mushaf-ayah-detail__study-hadith" aria-label="${escapeHTML(t('study.hadithTitle', lang))}">
+      <h3 class="mushaf-ayah-detail__study-heading">${escapeHTML(t('study.hadithTitle', lang))}</h3>
+      <p class="panel__subtext">${escapeHTML(t('study.hadithScope', lang, { a: stats.books.length, b: totalBooks }))}</p>
+      <p class="panel__subtext">${escapeHTML(t('study.hadithNote', lang))}</p>
+      ${
+        cards ||
+        `<p class="panel__subtext">${escapeHTML(t('study.hadithNone', lang))}</p>
+      <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.HADITH)}" data-action="navigate" data-view="${VIEWS.HADITH}">${escapeHTML(t('study.openHadith', lang))}</a>`
+      }
+    </section>`;
+}
+
+/**
  * Per-ayah detail modal: Arabic (already on hand from the page data),
  * translation (from the classic reader's already-loaded surah data, if
  * available), play/copy actions. `surahDoc` is `state.quran.surahs[surah]`
@@ -105,6 +152,7 @@ export function buildMushafAyahDetail(
   return `
   <div class="mushaf-ayah-detail">
     <h2 id="modal-title-mushaf-ayah" class="sr-only">${surahDoc ? escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang)) : ''} ${surahNumber}:${ayahNumber}</h2>
+    <p class="mushaf-ayah-detail__mode">${escapeHTML(t('study.title', lang))}</p>
     <p class="mushaf-ayah-detail__ref" dir="ltr">${surahNumber}:${ayahNumber}${surahDoc ? ` \u2014 ${escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang))}` : ''}</p>
     <p class="mushaf-ayah-detail__arabic" dir="rtl" lang="ar">${escapeHTML(arabicText)}</p>
     ${state.settings.showTranslation === true && ayah?.translation ? `<p class="mushaf-ayah-detail__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
@@ -144,5 +192,6 @@ export function buildMushafAyahDetail(
     </div>
     ${hifzRowFor(state, surahNumber, ayahNumber, lang)}
     ${buildAyahStudyExtras(state, surahNumber, ayahNumber, state.mushafSession?.tafsirTab ?? null)}
+    ${buildStudyHadithSection(state, surahNumber, ayahNumber, arabicText, lang)}
   </div>`;
 }

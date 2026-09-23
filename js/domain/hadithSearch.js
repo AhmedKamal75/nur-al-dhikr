@@ -119,3 +119,20 @@ export function searchHadith(query, { limit = 10 } = {}) {
   lastSearch = { query: raw, limit: safeLimit, results: out };
   return out;
 }
+
+/**
+ * (NF01-STUDY) Derive an honest text-search query from an ayah's Arabic:
+ * the up-to-3 longest distinctive tokens (4+ Arabic letters, deduped).
+ * Returns '' when nothing distinctive exists. Callers MUST label results
+ * as text matches — there is no source-backed ayah↔hadith relation map.
+ */
+export function studyHadithQuery(arabicText) {
+  const tokens = String(arabicText || '')
+    .replace(/[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s]/g, ' ')
+    .split(/\s+/)
+    // Length counts bare letters: tashkeel must not inflate a 2-letter
+    // word into a "distinctive" query term.
+    .filter((w) => w.replace(/[\u064B-\u0652\u0670\u0640]/g, '').length >= 4);
+  const unique = [...new Set(tokens)].sort((a, b) => b.length - a.length);
+  return unique.slice(0, 3).join(' ');
+}

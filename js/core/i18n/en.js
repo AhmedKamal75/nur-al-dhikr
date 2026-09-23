@@ -980,6 +980,14 @@ export const en = {
   'mushaf.translation': 'Translation',
   'mushaf.spread': 'Two-page spread',
   'mushaf.openInStudy': 'Open in study reader',
+  // (NF01-STUDY) named Study Mode surface + honest hadith text matches.
+  'study.title': 'Study Mode',
+  'study.hadithTitle': 'Hadith — text matches',
+  'study.hadithScope': 'Searched {a} of {b} loaded books.',
+  'study.hadithNote':
+    'These share words with the verse; they are text matches, not scholarly-linked narrations.',
+  'study.hadithNone': 'No text matches in the loaded books.',
+  'study.openHadith': 'Open Hadith browser',
   'mushaf.memorizeSurah': 'Memorize this surah',
   'mushaf.reciters': 'Reciters',
   'quran.searchShortcut': 'Search the Qur\u2019an',

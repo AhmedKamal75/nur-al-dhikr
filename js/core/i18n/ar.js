@@ -956,6 +956,13 @@ export const ar = {
   'mushaf.translation': 'الترجمة',
   'mushaf.spread': 'عرض صفحتين',
   'mushaf.openInStudy': 'افتح في القارئ الدراسي',
+  // (NF01-STUDY) named Study Mode surface + honest hadith text matches.
+  'study.title': 'وضع الدراسة',
+  'study.hadithTitle': 'الأحاديث — تطابقات نصية',
+  'study.hadithScope': 'تم البحث في {a} من {b} من الكتب المحملة.',
+  'study.hadithNote': 'هذه تشترك في ألفاظ مع الآية؛ وهي تطابقات نصية وليست أحاديث مرتبطة علميا.',
+  'study.hadithNone': 'لا توجد تطابقات نصية في الكتب المحملة.',
+  'study.openHadith': 'افتح متصفح الأحاديث',
   'mushaf.memorizeSurah': 'حفظ هذه السورة',
   'mushaf.reciters': 'القرّاء',
   'quran.searchShortcut': 'البحث في القرآن',

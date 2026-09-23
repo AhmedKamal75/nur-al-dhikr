@@ -2012,6 +2012,25 @@ body.mushaf-fs-idle .mushaf-fs-console:hover {
   flex-direction: column;
   gap: var(--space-3);
 }
+/* (NF01-STUDY) named Study Mode surface: quiet eyebrow + hadith section. */
+.mushaf-ayah-detail__mode {
+  margin: 0;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.mushaf-ayah-detail__study-heading {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+.mushaf-ayah-detail__study-hadith {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
 .mushaf-ayah-detail__ref {
   font-size: var(--fs-caption);
   font-weight: 700;
