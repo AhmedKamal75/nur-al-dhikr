@@ -35,9 +35,9 @@ export function sanitizeHijriDayLog(raw, cap = 24) {
 
 /** The last-ten-nights checklist items (ids are i18n keys). */
 export const LAST_TEN_ITEMS = Object.freeze([
-  { id: 'oddNight', icon: 'moon' },
+  { id: 'oddNight', icon: 'star' },
   { id: 'salah', icon: 'mosque' },
-  { id: 'qiyam', icon: 'moon' },
+  { id: 'qiyam', icon: 'star' },
   { id: 'istighfar', icon: 'heart' },
   { id: 'quran', icon: 'quran' },
   { id: 'charity', icon: 'heart' },

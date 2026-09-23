@@ -176,7 +176,7 @@ export function recitationChipsHTML(snap, lang, cls, opts = {}) {
       ${snap.echoBlocked ? `<p class="rec-console-note" role="note">${escapeHTML(t('audio.echoNeedsRepeat', lang))}</p>` : ''}
       ${muteChip}
       ${volumeSlider}
-      ${chip('recite-sleep-cycle', snap.sleepEnabled, null, t('audio.sleepTimer', lang), `${icon('moon', { size: 13 })}${snap.sleepEnabled ? ` <span class="rec-chip__text">${escapeHTML(snap.sleepLabel)}</span>` : ''}`)}
+      ${chip('recite-sleep-cycle', snap.sleepEnabled, null, t('audio.sleepTimer', lang), `${icon('bed', { size: 13 })}${snap.sleepEnabled ? ` <span class="rec-chip__text">${escapeHTML(snap.sleepLabel)}</span>` : ''}`)}
       ${chip('recite-compare-toggle', snap.compare, snap.compare, t('audio.compareMode', lang), `${icon('grid', { size: 13 })} ${t('audio.compare', lang)}`)}
       ${snap.voiceBLabel ? chip('recite-compare-swap', false, null, t('audio.compareSwap', lang), `${icon('refresh', { size: 13 })} ${wideLabel(t('audio.compareSwap', lang))}`) : ''}
       ${chip('recite-loop-toggle', snap.loop !== 1, null, loopLabel, `${icon('list', { size: 13 })} ${snap.loop === 1 ? t('audio.loop', lang) : `×${snap.loop}`}`)}

@@ -37,7 +37,7 @@ export const CHECKLIST_ITEMS = Object.freeze([
   { id: 'dhuhr', group: 'prayer', icon: 'sun', label: 'checklist.dhuhr' },
   { id: 'asr', group: 'prayer', icon: 'sun', label: 'checklist.asr' },
   { id: 'maghrib', group: 'prayer', icon: 'sunset', label: 'checklist.maghrib' },
-  { id: 'isha', group: 'prayer', icon: 'moon', label: 'checklist.isha' },
+  { id: 'isha', group: 'prayer', icon: 'star', label: 'checklist.isha' },
   { id: 'morningAdhkar', group: 'adhkar', icon: 'sunrise', label: 'checklist.morningAdhkar' },
   { id: 'eveningAdhkar', group: 'adhkar', icon: 'sunset', label: 'checklist.eveningAdhkar' },
   { id: 'quran', group: 'adhkar', icon: 'quran', label: 'checklist.quran' },

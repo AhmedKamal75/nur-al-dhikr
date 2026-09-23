@@ -80,7 +80,7 @@ export const QUICK_TILE_DEFS = Object.freeze([
     id: 'ramadan',
     view: VIEWS.RAMADAN,
     params: null,
-    icon: 'moon',
+    icon: 'rayah',
     labelKey: 'nav.ramadan',
     accent: 'ramadan',
   },

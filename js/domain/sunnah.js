@@ -15,10 +15,10 @@ import { dateKey, addDays } from '../core/utils.js';
 
 /** The tracked sunnah prayers, display order. ids are i18n keys. */
 export const SUNNAH_ITEMS = Object.freeze([
-  { id: 'tahajjud', icon: 'moon' },
+  { id: 'tahajjud', icon: 'star' },
   { id: 'duha', icon: 'sun' },
   { id: 'rawatib', icon: 'mosque' },
-  { id: 'witr', icon: 'moon' },
+  { id: 'witr', icon: 'star' },
 ]);
 
 const SUNNAH_IDS = new Set(SUNNAH_ITEMS.map((i) => i.id));
