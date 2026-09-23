@@ -9,6 +9,10 @@
 export const en = {
   'app.name': 'Nūr al-Dhikr',
   'app.tagline': 'Read. Remember. Reflect. Act.',
+  // (v5.17.6) the Shahada banner strip atop Home. The wording itself is
+  // fixed Arabic (never translated); only its accessible label localizes.
+  'banner.shahadaLabel':
+    'The Shahada — There is no god but Allah, and Muhammad is the Messenger of Allah',
   'nav.home': 'Home',
   'nav.library': 'Library',
   'nav.search': 'Search',

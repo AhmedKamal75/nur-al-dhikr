@@ -47,6 +47,23 @@ import { toHijri } from '../domain/calendar.js';
 
 /** Forward/CTA chevron: points with the reading direction (U7 rule). */
 const goIcon = (lang, size) => icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size });
+
+/**
+ * (v5.17.6) The Shahada banner: a black Rayah-style strip carrying the
+ * fixed Arabic wording (never translated — it is quoted revelation, not
+ * UI chrome). Pure template; the wording is pinned by
+ * tests/shahada-banner.test.js so no edit, theme, or translation pass
+ * can silently alter a single letter.
+ */
+export const SHAHADA_TEXT = 'لا إله إلا الله محمد رسول الله';
+export function shahadaBannerHTML(lang) {
+  return `
+    <div class="shahada-banner" role="img" aria-label="${escapeHTML(t('banner.shahadaLabel', lang))}">
+      <span class="shahada-banner__rule" aria-hidden="true"></span>
+      <p class="shahada-banner__text" dir="rtl" lang="ar">${SHAHADA_TEXT}</p>
+      <span class="shahada-banner__rule" aria-hidden="true"></span>
+    </div>`;
+}
 import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
 import { calculateTimes, nextPrayer, formatClock } from '../domain/prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
@@ -476,6 +493,7 @@ export function renderHome(state) {
 
   return `
   <section class="view view--home">
+    ${shahadaBannerHTML(lang)}
     <div class="home-hero">
       <p class="home-hero__greeting">${t(greetingKey(), lang)}${hijriChipHTML(lang)}</p>
       <h1 class="home-hero__title">${t('app.name', lang)}</h1>

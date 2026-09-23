@@ -638,6 +638,43 @@ body.is-scrolled-deep .category-top {
 /* ==========================================================================
    3. Home
    ========================================================================== */
+/* (v5.17.6) The Shahada banner: a black Rayah-style strip with the fixed
+   Arabic wording in ivory Amiri between two thin gold rules. Deliberately
+   theme-independent — black cloth with light writing reads in light AND
+   dark mode, and the contrast (~15:1) needs no high-contrast override. */
+.shahada-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: calc(var(--radius-lg) + 6px);
+  background: #111110;
+  border: 1px solid rgba(232, 212, 139, 0.35);
+  box-shadow: var(--shadow-hero);
+}
+.shahada-banner__rule {
+  flex: 1 1 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-gold-soft) 30%,
+    var(--color-gold) 50%,
+    var(--color-gold-soft) 70%,
+    transparent
+  );
+  opacity: 0.9;
+}
+.shahada-banner__text {
+  margin: 0;
+  font-family: 'Amiri Quran', 'Amiri', 'Traditional Arabic', serif;
+  font-size: clamp(1.15rem, 4.6vw, 1.6rem);
+  font-weight: 700;
+  line-height: 2;
+  color: #f7f3e6;
+  text-align: center;
+  text-wrap: balance;
+}
 .home-hero {
   display: flex;
   flex-direction: column;
