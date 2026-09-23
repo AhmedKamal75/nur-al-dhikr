@@ -443,7 +443,7 @@ export function renderSettings(state) {
       <div class="btn-stack">
         <button type="button" class="btn btn--secondary btn--sm" data-action="add-reminder">${icon('plus', { size: 14 })} ${t('settings.addReminder', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="schedule-open-manager">${icon('calendar', { size: 14 })} ${t('schedule.manager', lang)}</button>
-        <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="jumuah">${icon('moon', { size: 14 })} ${t('preset.jumuah', lang)}</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="jumuah">${icon('rayah', { size: 14 })} ${t('preset.jumuah', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="add-preset" data-preset="dailyVerse">${icon('book', { size: 14 })} ${t('preset.dailyVerse', lang)}</button>
       </div>
       ${(() => {

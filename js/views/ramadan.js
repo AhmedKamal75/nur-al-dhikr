@@ -77,7 +77,7 @@ function phaseCard(state, lang, times, tomorrowFajr) {
   return `
   <section class="ramadan-hero ${isFasting ? 'ramadan-hero--fasting' : 'ramadan-hero--night'}">
     <div class="ramadan-hero__head">
-      <span class="ramadan-hero__icon">${icon(isFasting ? 'sun' : 'moon', { size: 28 })}</span>
+      <span class="ramadan-hero__icon">${icon(isFasting ? 'sun' : 'star', { size: 28 })}</span>
       <div class="ramadan-hero__labels">
         <span class="ramadan-hero__phase">${t(isFasting ? 'ramadan.fastingNow' : 'ramadan.nightNow', lang)}</span>
         <span class="ramadan-hero__target">${t(isFasting ? 'ramadan.iftarAt' : 'ramadan.suhoorEndsAt', lang)} <bdi dir="ltr">${targetClock}</bdi></span>
@@ -243,7 +243,7 @@ function alertsPanel(state, lang, times) {
     <div class="panel__header"><h2>${t('ramadan.alertsTitle', lang)}</h2></div>
     ${permBanner}
     <div class="prayer-row">
-      <span class="prayer-row__icon">${icon('moon', { size: 18 })}</span>
+      <span class="prayer-row__icon">${icon('utensils', { size: 18 })}</span>
       <span class="prayer-row__name">${t('ramadan.suhoorAlert', lang)}</span>
       <span class="prayer-row__time" dir="ltr">${formatClock(Math.max(0, times.fajr - (ra.suhoorOffset || 30) / 60))}</span>
       <button type="button" class="icon-btn icon-btn--sm ${ra.suhoor ? 'icon-btn--active-bell' : ''}" data-action="toggle-ramadan-alert" data-alert="suhoor" aria-pressed="${ra.suhoor}" aria-label="${t('ramadan.suhoorAlert', lang)}">
@@ -310,7 +310,7 @@ export function renderRamadan(state) {
     // (v4.2) shared empty-state builder — the hand-rolled twins of this
     // block (prayer/qibla/ramadan) had already drifted once before.
     main = emptyStateHTML({
-      iconName: 'moon',
+      iconName: 'rayah',
       title: t('ramadan.locationNeeded', lang),
       actionHTML: `
       <button type="button" class="btn btn--primary" data-action="prayer-request-location">${icon('location', { size: 16 })} ${t('prayer.enableLocation', lang)}</button>
@@ -373,7 +373,7 @@ export function renderRamadan(state) {
     main = `
     <section class="ramadan-hero ramadan-hero--waiting">
       <div class="ramadan-hero__head">
-        <span class="ramadan-hero__icon">${icon('moon', { size: 28 })}</span>
+        <span class="ramadan-hero__icon">${icon('rayah', { size: 28 })}</span>
         <div class="ramadan-hero__labels">
           <span class="ramadan-hero__phase">${t('ramadan.notYet', lang)}</span>
           <span class="ramadan-hero__target">${hijriDateLabel}</span>

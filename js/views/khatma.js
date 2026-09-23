@@ -153,7 +153,7 @@ export function buildKhatmaPlanForm(state) {
     <form class="editor-form" data-form="khatma-plan">
       <div class="khatma-plan__presets">
         <button type="button" class="btn btn--secondary btn--sm" data-action="khatma-ramadan-preset">
-          ${icon('moon', { size: 14 })} ${t('khatma.ramadanPreset', lang)}
+          ${icon('rayah', { size: 14 })} ${t('khatma.ramadanPreset', lang)}
         </button>
         <span class="panel__subtext">${t('khatma.ramadanPresetHint', lang)}</span>
       </div>

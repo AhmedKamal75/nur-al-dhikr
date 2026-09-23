@@ -122,7 +122,7 @@ const CATEGORY_COLORS = ['slate', 'emerald', 'amber', 'rose', 'sky', 'violet', '
 const CATEGORY_ICONS = [
   'sunrise',
   'sunset',
-  'moon',
+  'rayah',
   'star',
   'book',
   'book-open',

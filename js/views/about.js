@@ -35,7 +35,7 @@ const GUIDE_ROWS = [
   { view: 'PRAYER', titleKey: 'nav.prayer', iconName: 'mosque', descKey: 'about.gd.prayer' },
   { view: 'QIBLA', titleKey: 'nav.qibla', iconName: 'compass', descKey: 'about.gd.qibla' },
   { view: 'TASBIH', titleKey: 'nav.tasbih', iconName: 'bead', descKey: 'about.gd.tasbih' },
-  { view: 'RAMADAN', titleKey: 'nav.ramadan', iconName: 'moon', descKey: 'about.gd.ramadan' },
+  { view: 'RAMADAN', titleKey: 'nav.ramadan', iconName: 'rayah', descKey: 'about.gd.ramadan' },
   { view: 'ZAKAT', titleKey: 'nav.zakat', iconName: 'calculator', descKey: 'about.gd.zakat' },
   {
     view: 'JOURNAL',

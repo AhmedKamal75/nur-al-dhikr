@@ -53,7 +53,7 @@ export const PRAYER_ICONS = {
   dhuhr: 'sun',
   asr: 'sun',
   maghrib: 'sunset',
-  isha: 'moon',
+  isha: 'star',
 };
 
 /**
@@ -258,7 +258,7 @@ export function renderPrayer(state) {
     <section class="panel panel--prayer-tools">
       <div class="panel__header"><h2>${t('prayer.toolsTitle', lang)}</h2></div>
       <div class="quick-actions quick-actions--compact">
-        ${toolTile('prayer-open-sunnah', 'prayer.sheet.sunnah', 'moon')}
+        ${toolTile('prayer-open-sunnah', 'prayer.sheet.sunnah', 'rayah')}
         ${toolTile('prayer-open-qada', 'prayer.sheet.qada', 'refresh')}
         ${toolTile('prayer-open-adhan', 'prayer.sheet.adhan', 'volume')}
         ${toolTile('prayer-open-calc', 'prayer.sheet.calc', 'calculator')}
@@ -338,7 +338,7 @@ export function renderPrayer(state) {
         <h2>${t('plog.title', lang)}</h2>
         ${
           streak > 0
-            ? `<span class="streak-badge${wasCelebrated('plog-day') ? ' celebrate' : ''}">${icon('moon', { size: 15 })} ${t('plog.streak', lang, { n: streak })}</span>`
+            ? `<span class="streak-badge${wasCelebrated('plog-day') ? ' celebrate' : ''}">${icon('flame', { size: 15 })} ${t('plog.streak', lang, { n: streak })}</span>`
             : ''
         }
       </div>
@@ -375,7 +375,7 @@ export function sunnahPanelHTML(state) {
   <div class="panel panel--sunnah view-panel-modal">
     <div class="panel__header">
       <h2 id="panel-sunnah-title">${t('sunnah.title', lang)}</h2>
-      ${wStr > 0 ? `<span class="streak-badge">${icon('moon', { size: 14 })} ${t('sunnah.witrStreak', lang, { n: wStr })}</span>` : ''}
+      ${wStr > 0 ? `<span class="streak-badge">${icon('star', { size: 14 })} ${t('sunnah.witrStreak', lang, { n: wStr })}</span>` : ''}
     </div>
     <div class="sunnah-row-list">
       ${SUNNAH_ITEMS.map(

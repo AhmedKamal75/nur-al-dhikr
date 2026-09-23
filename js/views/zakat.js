@@ -59,7 +59,7 @@ function nisabPanel(state, lang) {
         ${icon('star', { size: 14 })} ${t('zakat.goldStandard', lang)}
       </button>
       <button type="button" class="chip chip--basis ${basis === 'silver' ? 'chip--basis-active' : ''}" data-action="zakat-set-basis" data-basis="silver" aria-pressed="${basis === 'silver'}">
-        ${icon('moon', { size: 14 })} ${t('zakat.silverStandard', lang)}
+        ${icon('coins', { size: 14 })} ${t('zakat.silverStandard', lang)}
       </button>
     </div>
     <div class="zakat-price-row">

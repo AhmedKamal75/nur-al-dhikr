@@ -747,7 +747,7 @@ export function buildMushafSheet(state) {
             'audio.speed',
             'gauge',
             `<span class="mushaf-sheet__value" dir="ltr">×${escapeHTML(String(speedRate))}</span>`
-          ) + row('recite-sleep-cycle', 'audio.sleepTimer', 'moon', napExtra)
+          ) + row('recite-sleep-cycle', 'audio.sleepTimer', 'bed', napExtra)
         );
       })()}
       ${linkRow('mushaf.reciters', 'volume', VIEWS.AUDIO)}

@@ -83,7 +83,7 @@ export function renderPlayerBar(state) {
         ${icon(muted ? 'volume-x' : 'volume', { size: 14 })}
       </button>
       <button type="button" class="player-bar__chip ${p.sleepEnabled ? 'player-bar__chip--on' : ''}" data-action="player-sleep-cycle" aria-pressed="${p.sleepEnabled === true}" aria-label="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}" title="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}">
-        ${icon('moon', { size: 14 })}${p.sleepEnabled && p.sleepLabel ? ` ${escapeHTML(p.sleepLabel)}` : ''}
+        ${icon('bed', { size: 14 })}${p.sleepEnabled && p.sleepLabel ? ` ${escapeHTML(p.sleepLabel)}` : ''}
       </button>
       <button type="button" class="player-bar__chip" data-action="recite-mode-ayah" aria-label="${t('audio.modeAyah', lang)}" title="${t('audio.modeAyah', lang)}">
         ${icon('list', { size: 14 })}

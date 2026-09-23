@@ -43,13 +43,13 @@ const NAV_TARGETS = [
   { view: VIEWS.MUTASHABIHAT, icon: 'copy', label: 'title.mutashabihat' },
   { view: VIEWS.JOURNAL, icon: 'book', label: 'title.journal' },
   { view: VIEWS.CERTIFICATE, icon: 'shield', label: 'title.certificate' },
-  { view: VIEWS.AMBIENT, icon: 'moon', label: 'title.ambient' },
+  { view: VIEWS.AMBIENT, icon: 'rayah', label: 'title.ambient' },
   { view: VIEWS.EDITOR, icon: 'edit', label: 'title.editor' },
 ];
 
 /** Global actions offered from the palette. */
 const PALETTE_ACTIONS = [
-  { action: 'quick-theme-toggle', icon: 'moon', label: 'a11y.themeToggle' },
+  { action: 'quick-theme-toggle', icon: 'star', label: 'a11y.themeToggle' },
   { action: 'quiz-start', icon: 'star', label: 'quiz.start' },
 ];
 
