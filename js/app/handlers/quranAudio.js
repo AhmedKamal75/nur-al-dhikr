@@ -555,6 +555,21 @@ export const changeHandlers = [
 
 export const inputHandlers = [
   {
+    // (v5.17.5) live verse loudness while dragging — the engine gets the
+    // value instantly with zero dispatches, so the thumb never dies to a
+    // mid-drag re-render; persistence waits for change (release), mirroring
+    // the file bar's [data-player-volume] input/change split.
+    sel: '[data-bind="recite-volume"]',
+    run: (ds, el) => {
+      const v = Math.max(0, Math.min(100, parseFloat(el.value) || 0)) / 100;
+      try {
+        surahPlayback.setBaseVolume(v);
+      } catch {
+        /* no live session — the change arm persists for the next start */
+      }
+    },
+  },
+  {
     sel: '[data-bind="reciter-pick-search"]',
     run: (ds, el) => {
       const v = el.value;

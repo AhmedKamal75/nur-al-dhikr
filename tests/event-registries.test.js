@@ -25,12 +25,15 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (35 change + 17 input)', () => {
-  // 35 = 34 inherited + offline audio-cache arm (v5.14.0); the orphaned
-  // traveler checkbox arm died with travelerPanelHTML (v5.15.0 kill) —
-  // its toggle rides the view-sheet switch instead.
-  assert.equal(changeRegistry.length, 35);
-  assert.equal(inputRegistry.length, 17);
+test('D: every arm survived the move (36 change + 18 input)', () => {
+  // 36 = 34 inherited + offline audio-cache arm (v5.14.0) + verse-volume
+  // arm (v5.17.5 — its changeHandlers export sat unmerged, leaving the
+  // recitation console slider dead); the orphaned traveler checkbox arm
+  // died with travelerPanelHTML (v5.15.0 kill) — its toggle rides the
+  // view-sheet switch instead.
+  // 18 = 17 inherited + verse-volume live input (v5.17.5).
+  assert.equal(changeRegistry.length, 36);
+  assert.equal(inputRegistry.length, 18);
 });
 
 test('D: registry entries are well-formed with unique selectors', () => {
@@ -135,6 +138,78 @@ test('D: file volume commits through change, previews through input (v5.12.0)', 
   } finally {
     delete globalThis.Audio;
   }
+});
+
+test('D: verse volume commits through change, previews through input (v5.17.5)', () => {
+  globalThis.Audio = class {
+    constructor() {
+      this.volume = 1;
+    }
+    addEventListener() {}
+  };
+  try {
+    const change = changeRegistry.find((e) => e.sel === '[data-bind="recite-volume"]');
+    const input = inputRegistry.find((e) => e.sel === '[data-bind="recite-volume"]');
+    assert.ok(change && input, 'both verse-volume arms registered');
+    const before = store.getState().settings.audio?.verseVolume;
+    change.run({}, { ...fakeEl(), value: '40' });
+    assert.equal(store.getState().settings.audio.verseVolume, 0.4, 'change persists 0..1');
+    change.run({}, { ...fakeEl(), value: 'junk' });
+    assert.equal(
+      store.getState().settings.audio.verseVolume,
+      0,
+      'hostile commits silence, never NaN'
+    );
+    input.run({}, { ...fakeEl(), value: '80' });
+    assert.equal(
+      store.getState().settings.audio.verseVolume,
+      0,
+      'input previews without persisting'
+    );
+    store.dispatch(actions.setAudioPrefs({ verseVolume: before ?? 1 }));
+  } finally {
+    delete globalThis.Audio;
+  }
+});
+
+test('D: every feature-owned arm is merged (no silent dead controls)', () => {
+  // v5.17.5 lesson: quranAudio.js exported changeHandlers for a year while
+  // events.js never spread it — the verse slider rendered but did nothing,
+  // and the count-pinning test above kept passing. This guard compares each
+  // module's exports against the merged registries by selector, so a
+  // dropped merge fails loudly instead of shipping a dead control.
+  const mods = {
+    audio: () => import('../js/app/handlers/audio.js'),
+    content: () => import('../js/app/handlers/content.js'),
+    items: () => import('../js/app/handlers/items.js'),
+    location: () => import('../js/app/handlers/location.js'),
+    navigation: () => import('../js/app/handlers/navigation.js'),
+    offline: () => import('../js/app/handlers/offline.js'),
+    quran: () => import('../js/app/handlers/quran.js'),
+    quranAudio: () => import('../js/app/handlers/quranAudio.js'),
+    system: () => import('../js/app/handlers/system.js'),
+    worship: () => import('../js/app/handlers/worship.js'),
+    zakat: () => import('../js/app/handlers/zakat.js'),
+  };
+  return (async () => {
+    const mergedChange = new Set(changeRegistry.map((e) => e.sel));
+    const mergedInput = new Set(inputRegistry.map((e) => e.sel));
+    for (const [name, load] of Object.entries(mods)) {
+      const mod = await load();
+      for (const arm of mod.changeHandlers || []) {
+        assert.ok(
+          mergedChange.has(arm.sel),
+          `${name} change arm "${arm.sel}" is exported but not merged`
+        );
+      }
+      for (const arm of mod.inputHandlers || []) {
+        assert.ok(
+          mergedInput.has(arm.sel),
+          `${name} input arm "${arm.sel}" is exported but not merged`
+        );
+      }
+    }
+  })();
 });
 
 test('D: audio-cache-limit change clamps 50..500 and persists', () => {

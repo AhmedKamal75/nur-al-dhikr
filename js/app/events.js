@@ -57,6 +57,7 @@ import {
 } from './handlers/quran.js';
 import {
   clickHandlers as quranAudioClick,
+  changeHandlers as quranAudioChange,
   inputHandlers as quranAudioInput,
 } from './handlers/quranAudio.js';
 import { clickHandlers as hifzClick } from './handlers/hifz.js';
@@ -161,6 +162,7 @@ export const changeRegistry = [
   ...locationChange,
   ...itemsChange,
   ...quranChange,
+  ...quranAudioChange,
   ...offlineChange,
 ];
 
