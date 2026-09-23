@@ -137,8 +137,9 @@ the other. **Parity gate: PASS** with the standing +1 drawer-tax note.
 
 - every route accounted for: YES (33, ORG-01).
 - no orphaned views: YES (none found).
-- no duplicate chrome destinations: **NO — open** (MUSHAF/QURAN,
-  SEARCH split carried for ORG-02 decision).
+- no duplicate chrome destinations: **RESOLVED by owner ruling**
+  (keep both, relabel — rail now shows Mushaf + Reader distinctly;
+  SEARCH split kept deliberately).
 - all labels bilingual: YES mechanically (1811/1811, zero orphans).
 - all icons audited: YES mechanically (human recognition pending).
 - all ten goals ≤4 taps: **19 of 20 viewport-goals pass**; the

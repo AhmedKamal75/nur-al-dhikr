@@ -37,6 +37,10 @@ const NAV_GROUPS = [
       { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
       { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
       { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
+      // (ORG-02 ruling) the classic reader is its own chrome entry
+      // instead of hiding behind the Mushaf label — same book, two
+      // discoverable doors; active states split accordingly below.
+      { view: VIEWS.QURAN, icon: 'book-open', label: 'nav.reader' },
       { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
       // The nav search item opens the command palette (quick launcher);
       // the full Search view stays one pick away (destination row +
@@ -81,10 +85,6 @@ const NAV_GROUPS = [
 function isActive(active, view) {
   if (active === view) return true;
   if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
-  // (v4.4) the Qur'an nav item now opens the MUSHAF by default; keep it
-  // lit while the person switches into the classic reader from there —
-  // both views are the same book.
-  if (view === VIEWS.MUSHAF) return active === VIEWS.QURAN;
   return (
     view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
   );

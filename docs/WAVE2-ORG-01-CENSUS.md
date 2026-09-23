@@ -27,41 +27,41 @@ route itself serves OS share intents and typed URLs.
 
 ## Per-view verdicts
 
-| View         | Route          | In rail?                    | Entry points (beyond rail/URL)                                            | Verdict      |
-| ------------ | -------------- | --------------------------- | ------------------------------------------------------------------------- | ------------ |
-| HOME         | home           | Yes                         | — (default)                                                               | KEEP         |
-| LIBRARY      | library        | Yes                         | category/mood/focus returns, home, checklist, quiz                        | KEEP         |
-| CATEGORY     | category/:id   | No                          | library tiles, palette rows, ramadan, focus flows                         | KEEP         |
-| MOOD         | mood/:id       | No                          | library                                                                   | KEEP         |
-| FOCUS        | focus          | No                          | card/focus buttons, ramadan                                               | KEEP         |
-| SEARCH       | search         | Yes (palette override)      | boot share intents, items, roots, href fallback                           | KEEP + note¹ |
-| FAVORITES    | favorites      | Yes                         | home                                                                      | KEEP         |
-| COLLECTIONS  | collections    | No                          | home, items, collection (back)                                            | KEEP         |
-| COLLECTION   | collection/:id | No                          | collections, home, items, forms                                           | KEEP         |
-| STATISTICS   | statistics     | Yes                         | garden                                                                    | KEEP         |
-| TASBIH       | tasbih         | Yes                         | kids allowlist                                                            | KEEP         |
-| PRAYER       | prayer         | Yes                         | home, ambient, onboarding, ramadan                                        | KEEP         |
-| QIBLA        | qibla          | Yes                         | prayer tool tile, quick tiles                                             | KEEP         |
-| RAMADAN      | ramadan        | Yes (rayah)                 | home                                                                      | KEEP         |
-| CHECKLIST    | checklist      | Yes                         | home                                                                      | KEEP         |
-| QUIZ         | quiz           | No                          | home, statistics, self                                                    | KEEP         |
-| CALENDAR     | calendar       | Yes                         | home fasting map, ramadan sheet, palette                                  | KEEP         |
-| ZAKAT        | zakat          | Yes                         | ramadan                                                                   | KEEP         |
-| AUDIO        | audio          | **No**                      | settings, offline view, palette, player bar (actions, not nav)            | **SURFACE**² |
-| QURAN        | quran          | **No (label opens MUSHAF)** | home, palette, roots, search, statistics, tajweed flows, quran self-links | **MERGE?**³  |
-| ROOTS        | roots          | No                          | quran view, self                                                          | KEEP         |
-| HADITH       | hadith         | Yes                         | ayah-study, content/forms, cards, palette, search                         | KEEP         |
-| MUSHAF       | mushaf         | Yes                         | home, quran toggle, mutashabihat, ramadan, recitation flows, certificate  | KEEP         |
-| SETTINGS     | settings       | Yes                         | home, offline, palette                                                    | KEEP         |
-| ABOUT        | about          | Yes                         | settings                                                                  | KEEP         |
-| EDITOR       | editor         | No                          | library sheet, palette                                                    | KEEP         |
-| MUTASHABIHAT | mutashabihat   | No                          | mushaf sheet, palette                                                     | KEEP         |
-| JOURNAL      | journal        | No                          | **palette only**                                                          | **SURFACE**⁴ |
-| CERTIFICATE  | certificate    | No                          | statistics                                                                | KEEP         |
-| GARDEN       | garden         | Yes                         | statistics                                                                | KEEP         |
-| AMBIENT      | ambient        | No                          | prayer sheet, palette                                                     | KEEP         |
-| KIDS         | kids           | No (mode scope)             | settings, nav guard; kidsMode scopes chrome to KIDS+TASBIH                | KEEP         |
-| OFFLINE      | offline        | Yes                         | settings                                                                  | KEEP         |
+| View         | Route          | In rail?                             | Entry points (beyond rail/URL)                                            | Verdict                                   |
+| ------------ | -------------- | ------------------------------------ | ------------------------------------------------------------------------- | ----------------------------------------- |
+| HOME         | home           | Yes                                  | — (default)                                                               | KEEP                                      |
+| LIBRARY      | library        | Yes                                  | category/mood/focus returns, home, checklist, quiz                        | KEEP                                      |
+| CATEGORY     | category/:id   | No                                   | library tiles, palette rows, ramadan, focus flows                         | KEEP                                      |
+| MOOD         | mood/:id       | No                                   | library                                                                   | KEEP                                      |
+| FOCUS        | focus          | No                                   | card/focus buttons, ramadan                                               | KEEP                                      |
+| SEARCH       | search         | Yes (palette override)               | boot share intents, items, roots, href fallback                           | KEEP + note¹                              |
+| FAVORITES    | favorites      | Yes                                  | home                                                                      | KEEP                                      |
+| COLLECTIONS  | collections    | No                                   | home, items, collection (back)                                            | KEEP                                      |
+| COLLECTION   | collection/:id | No                                   | collections, home, items, forms                                           | KEEP                                      |
+| STATISTICS   | statistics     | Yes                                  | garden                                                                    | KEEP                                      |
+| TASBIH       | tasbih         | Yes                                  | kids allowlist                                                            | KEEP                                      |
+| PRAYER       | prayer         | Yes                                  | home, ambient, onboarding, ramadan                                        | KEEP                                      |
+| QIBLA        | qibla          | Yes                                  | prayer tool tile, quick tiles                                             | KEEP                                      |
+| RAMADAN      | ramadan        | Yes (rayah)                          | home                                                                      | KEEP                                      |
+| CHECKLIST    | checklist      | Yes                                  | home                                                                      | KEEP                                      |
+| QUIZ         | quiz           | No                                   | home, statistics, self                                                    | KEEP                                      |
+| CALENDAR     | calendar       | Yes                                  | home fasting map, ramadan sheet, palette                                  | KEEP                                      |
+| ZAKAT        | zakat          | Yes                                  | ramadan                                                                   | KEEP                                      |
+| AUDIO        | audio          | **No**                               | settings, offline view, palette, player bar (actions, not nav)            | **SURFACE**²                              |
+| QURAN        | quran          | **Yes — nav.reader (ORG-02 ruling)** | home, palette, roots, search, statistics, tajweed flows, quran self-links | **KEEP (resolved by relabel, not merge)** |
+| ROOTS        | roots          | No                                   | quran view, self                                                          | KEEP                                      |
+| HADITH       | hadith         | Yes                                  | ayah-study, content/forms, cards, palette, search                         | KEEP                                      |
+| MUSHAF       | mushaf         | Yes                                  | home, quran toggle, mutashabihat, ramadan, recitation flows, certificate  | KEEP                                      |
+| SETTINGS     | settings       | Yes                                  | home, offline, palette                                                    | KEEP                                      |
+| ABOUT        | about          | Yes                                  | settings                                                                  | KEEP                                      |
+| EDITOR       | editor         | No                                   | library sheet, palette                                                    | KEEP                                      |
+| MUTASHABIHAT | mutashabihat   | No                                   | mushaf sheet, palette                                                     | KEEP                                      |
+| JOURNAL      | journal        | No                                   | **palette only**                                                          | **SURFACE**⁴                              |
+| CERTIFICATE  | certificate    | No                                   | statistics                                                                | KEEP                                      |
+| GARDEN       | garden         | Yes                                  | statistics                                                                | KEEP                                      |
+| AMBIENT      | ambient        | No                                   | prayer sheet, palette                                                     | KEEP                                      |
+| KIDS         | kids           | No (mode scope)                      | settings, nav guard; kidsMode scopes chrome to KIDS+TASBIH                | KEEP                                      |
+| OFFLINE      | offline        | Yes                                  | settings                                                                  | KEEP                                      |
 
 Notes:
 
@@ -71,10 +71,11 @@ Notes:
 2. AUDIO is the only hub-scale view outside the chrome (player,
    downloads, verse voices, playlists) — the natural anchor of a
    "Listen" tab if ORG-02 goes there. No code changed here.
-3. MUSHAF + QURAN are two Quran books behind one chrome label
-   (nav.quran → MUSHAF). Users cannot discover the classic reader
-   from the chrome. MERGE-vs-CLARIFY is ORG-02's call with usage
-   evidence — not assumed here.
+3. RESOLVED by owner ruling (keep both, relabel): the rail now
+   exposes MUSHAF (nav.quran) and QURAN (nav.reader, book-open glyph)
+   as distinct entries with split active states; mobile keeps 4 + More
+   (Reader via drawer). SEARCH split likewise ruled KEEP (rail opens
+   the palette; the route serves intents/URLs).
 4. JOURNAL is palette-only; either surface it or justify hiding.
    COLLECTIONS vs FAVORITES overlap is flagged for ORG-02 with usage
    data, not verdict-merged here.

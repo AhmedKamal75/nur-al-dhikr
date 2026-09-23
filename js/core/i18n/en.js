@@ -41,6 +41,8 @@ export const en = {
   'nav.settings': 'Settings',
   'nav.about': 'About',
   'nav.quran': "Qur'an",
+  // (ORG-02 ruling) distinct chrome entry for the classic reader.
+  'nav.reader': 'Reader',
   'nav.hadith': 'Ahadeeth',
   'nav.qibla': 'Qibla',
   'nav.checklist': 'Checklist',

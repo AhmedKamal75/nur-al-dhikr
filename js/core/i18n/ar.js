@@ -41,6 +41,8 @@ export const ar = {
   'nav.settings': 'الإعدادات',
   'nav.about': 'حول التطبيق',
   'nav.quran': 'القرآن',
+  // (ORG-02 ruling) distinct chrome entry for the classic reader.
+  'nav.reader': 'القارئ',
   'nav.hadith': 'الأحاديث',
   'nav.qibla': 'القبلة',
   'nav.checklist': 'القائمة اليومية',
