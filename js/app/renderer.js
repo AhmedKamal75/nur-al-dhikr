@@ -310,6 +310,26 @@ export function mountShell() {
   navEl = document.getElementById('bottomnav');
 }
 
+/**
+ * (PERF-02-ARCH) Routes whose DOM actually matches quran.css rules,
+ * probed live (mushaf 40, quran 27, roots 8; every other route 0).
+ * Exported for unit tests; the injection itself is e2e-covered.
+ */
+export const QURAN_CSS_ROUTES = new Set([VIEWS.MUSHAF, VIEWS.QURAN, VIEWS.ROOTS]);
+
+/** Inject the book stylesheet once per session, on first entry to a route that needs it. */
+export function ensureQuranCss(view) {
+  if (!QURAN_CSS_ROUTES.has(view)) return false;
+  if (typeof document === 'undefined') return false;
+  if (document.querySelector('link[data-route-css="quran"]')) return true;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'assets/css/quran.css';
+  link.dataset.routeCss = 'quran';
+  document.head.appendChild(link);
+  return true;
+}
+
 /* ------------------------------------------------------------------ */
 /* Patch engine                                                        */
 /* ------------------------------------------------------------------ */
@@ -652,6 +672,9 @@ function scrollToSettingsSection(sectionId) {
 
 export function render(state) {
   if (!mainEl) mountShell();
+  // (PERF-02-ARCH) the route-lazy book stylesheet goes in before the
+  // view patch so first entry paints styled as soon as it arrives.
+  ensureQuranCss(state.activeView);
 
   // (v4.5.2, I9) BACK-STACK BOOKKEEPING RUNS FIRST. The topbar patch a few
   // lines below reads rt.navBackStack to decide whether the Back button

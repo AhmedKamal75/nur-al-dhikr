@@ -50,9 +50,16 @@
     <link rel="stylesheet" href="assets/css/layout.css" />
     <link rel="stylesheet" href="assets/css/components.css" />
     <link rel="stylesheet" href="assets/css/cards.css" />
-    <link rel="stylesheet" href="assets/css/quran.css" />
+    <!-- (PERF-02-ARCH) quran.css is route-lazy: 0 of its ~500 rules match
+         anything outside the mushaf/reader/roots routes (probed live), so
+         the renderer injects it on first entry instead of taxing every
+         cold visit. It stays in the SW precache, so offline is intact. -->
     <link rel="stylesheet" href="assets/css/animations.css" />
-    <link rel="stylesheet" href="assets/css/desktop.css" />
+    <!-- (PERF-02-ARCH) every rule in desktop.css already sits inside a
+         min-width:960px (or nested motion) block, so gating the link
+         itself lets phones skip the 12KB download with zero behavior
+         change. -->
+    <link rel="stylesheet" href="assets/css/desktop.css" media="(min-width: 960px)" />
     <link rel="stylesheet" href="assets/css/accessibility.css" />
   </head>
   <body>

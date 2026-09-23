@@ -131,3 +131,29 @@ test('startup budget (PERF-01A): Mushaf-only font stays off the critical path', 
   assert.ok(!html.includes('AmiriQuran.woff2'), 'AmiriQuran must not be preloaded');
   assert.ok(html.includes('Amiri-Regular.woff2'), 'Home Arabic keeps its preload');
 });
+
+test('startup budget (PERF-02-ARCH): book CSS is route-lazy, desktop layer media-gated', () => {
+  // 0 of ~500 quran.css rules match anything outside the
+  // mushaf/reader/roots routes (probed live) — it must not ride index.html.
+  const html = readProject('index.html');
+  assert.ok(
+    !html.includes('assets/css/quran.css'),
+    'quran.css must be renderer-injected, not linked'
+  );
+  assert.match(
+    html,
+    /href="assets\/css\/desktop\.css" media="\(min-width: 960px\)"/,
+    'desktop.css link must be media-gated (all its rules already are)'
+  );
+  const renderer = readProject('js/app/renderer.js');
+  for (const route of ['VIEWS.MUSHAF', 'VIEWS.QURAN', 'VIEWS.ROOTS']) {
+    assert.ok(
+      renderer.includes(route) && renderer.includes('QURAN_CSS_ROUTES'),
+      `${route} must be in the route-css set`
+    );
+  }
+  assert.ok(
+    renderer.includes('ensureQuranCss(state.activeView)'),
+    'render() must ensure the book stylesheet before patching the view'
+  );
+});
