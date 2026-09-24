@@ -264,6 +264,92 @@ export function nextStats(stats, ruleId, perfect) {
   };
 }
 
+/* ------------------------------------------------------------------ */
+/* (TAJ-QUIZ-01) unified educational quiz modes on the SAME classifier   */
+/* engine — no second quiz system. Modes:                               */
+/*  1. 'find-spans' — tap the marked units (existing drill);            */
+/*  2. 'find-word' — tap the word(s) carrying the rule (word-level);    */
+/*  3. 'classify' — given the ayah, choose the rule from options;       */
+/*  4. 'review' — re-drill most-missed rules (existing weak memory).    */
+/* Every question carries: rule id, source ayah, correct answer,        */
+/* distractor provenance, explanation, scholar-review state. A question  */
+/* is NEVER built from an unsourced rule definition: distractors and    */
+/* answers come only from TAJWEED_RULES ids + classifier output on a    */
+/* real corpus ayah.                                                     */
+/* ------------------------------------------------------------------ */
+
+export const TAJWEED_QUIZ_MODES = Object.freeze(['find-spans', 'find-word', 'classify', 'review']);
+
+/** Word-level answer key: 1-based word indices carrying `ruleId`. */
+export function buildWordAnswerKey(ayahText, ruleId) {
+  const perWord = classifyAyahTajweed(ayahText);
+  const words = [];
+  for (const { wordIndex, spans } of perWord) {
+    if (spans.some((s) => ruleId === 'mixed' || s.rule === ruleId)) words.push(wordIndex);
+  }
+  return words;
+}
+
+/** Score a find-word round: selected = iterable of word indices. */
+export function scoreWordRound(targetWords, selected) {
+  const targets = new Set((targetWords || []).map(Number));
+  const picked = new Set([...(selected || [])].map(Number));
+  const correct = [...picked].filter((w) => targets.has(w));
+  const wrong = [...picked].filter((w) => !targets.has(w));
+  const missed = [...targets].filter((w) => !picked.has(w));
+  return {
+    correct,
+    wrong,
+    missed,
+    perfect: targets.size > 0 && wrong.length === 0 && missed.length === 0,
+    targetCount: targets.size,
+  };
+}
+
+/**
+ * Build a classify question for a real corpus ayah. The correct answer is
+ * the rule actually present (verified by the classifier); distractors are
+ * the next rule ids in TAJWEED_RULES order (deterministic, provenance:
+ * 'tajweed-rule-index'). Returns null when the ayah carries no marked
+ * rule or the rule id is unsourced — never a guessed question.
+ */
+export function buildClassifyQuestion(ayahText, { surah = null, ayah = null, options = 4 } = {}) {
+  const perWord = classifyAyahTajweed(String(ayahText || ''));
+  const present = [];
+  for (const { spans } of perWord) {
+    for (const s of spans) {
+      if (s && s.rule && !present.includes(s.rule)) present.push(s.rule);
+    }
+  }
+  if (!present.length) return null;
+  const correctId = present[0];
+  const rule = TAJWEED_RULES.find((r) => r.id === correctId);
+  if (!rule) return null;
+  const n = Math.max(2, Math.min(6, Math.floor(Number(options)) || 4));
+  const idx = TAJWEED_RULES.findIndex((r) => r.id === correctId);
+  const distractors = [];
+  for (let i = 1; distractors.length < n - 1 && i < TAJWEED_RULES.length + 1; i += 1) {
+    const cand = TAJWEED_RULES[(idx + i) % TAJWEED_RULES.length];
+    if (cand && cand.id !== correctId && !distractors.includes(cand.id)) distractors.push(cand.id);
+  }
+  // Deterministic option order: rotate so the correct answer is not
+  // always first, but identically for the same rule id.
+  const all = [correctId, ...distractors];
+  const rot = correctId.length % all.length;
+  const ordered = all.map((_, i) => all[(i + rot) % all.length]);
+  return {
+    mode: 'classify',
+    ruleId: correctId,
+    sourceAyah: surah != null && ayah != null ? { s: Number(surah), a: Number(ayah) } : null,
+    ayahText: String(ayahText),
+    correctAnswer: correctId,
+    options: ordered,
+    distractorProvenance: 'tajweed-rule-index',
+    explanation: rule.desc || null,
+    reviewStatus: 'CURATED',
+  };
+}
+
 /** Accuracy percentage for a rule (or overall with ruleId=null), rounded
  *  to the nearest whole percent. Null when there's no data yet, so the
  *  view can show "not practiced yet" instead of a misleading 0%. */

@@ -1,0 +1,402 @@
+{
+  "generatedAt": "2026-09-24T11:22:47.572Z",
+  "routeCount": 33,
+  "results": [
+    {
+      "lang": "en",
+      "route": "home",
+      "path": "#/home",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "library",
+      "path": "#/library",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "category",
+      "path": "#/category",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "mood",
+      "path": "#/mood",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "focus",
+      "path": "#/focus",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "search",
+      "path": "#/search",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "favorites",
+      "path": "#/favorites",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "collections",
+      "path": "#/collections",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "collection",
+      "path": "#/collection",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "statistics",
+      "path": "#/statistics",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "tasbih",
+      "path": "#/tasbih",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "prayer",
+      "path": "#/prayer",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "qibla",
+      "path": "#/qibla",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "checklist",
+      "path": "#/checklist",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "quiz",
+      "path": "#/quiz",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "calendar",
+      "path": "#/calendar",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "ramadan",
+      "path": "#/ramadan",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "zakat",
+      "path": "#/zakat",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "audio",
+      "path": "#/audio",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "quran",
+      "path": "#/quran",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "roots",
+      "path": "#/roots",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "hadith",
+      "path": "#/hadith",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "mushaf",
+      "path": "#/mushaf",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "settings",
+      "path": "#/settings",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "about",
+      "path": "#/about",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "editor",
+      "path": "#/editor",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "mutashabihat",
+      "path": "#/mutashabihat",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "journal",
+      "path": "#/journal",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "certificate",
+      "path": "#/certificate",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "garden",
+      "path": "#/garden",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "ambient",
+      "path": "#/ambient",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "kids",
+      "path": "#/kids",
+      "empty": false
+    },
+    {
+      "lang": "en",
+      "route": "offline",
+      "path": "#/offline",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "home",
+      "path": "#/home",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "library",
+      "path": "#/library",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "category",
+      "path": "#/category",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "mood",
+      "path": "#/mood",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "focus",
+      "path": "#/focus",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "search",
+      "path": "#/search",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "favorites",
+      "path": "#/favorites",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "collections",
+      "path": "#/collections",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "collection",
+      "path": "#/collection",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "statistics",
+      "path": "#/statistics",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "tasbih",
+      "path": "#/tasbih",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "prayer",
+      "path": "#/prayer",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "qibla",
+      "path": "#/qibla",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "checklist",
+      "path": "#/checklist",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "quiz",
+      "path": "#/quiz",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "calendar",
+      "path": "#/calendar",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "ramadan",
+      "path": "#/ramadan",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "zakat",
+      "path": "#/zakat",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "audio",
+      "path": "#/audio",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "quran",
+      "path": "#/quran",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "roots",
+      "path": "#/roots",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "hadith",
+      "path": "#/hadith",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "mushaf",
+      "path": "#/mushaf",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "settings",
+      "path": "#/settings",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "about",
+      "path": "#/about",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "editor",
+      "path": "#/editor",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "mutashabihat",
+      "path": "#/mutashabihat",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "journal",
+      "path": "#/journal",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "certificate",
+      "path": "#/certificate",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "garden",
+      "path": "#/garden",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "ambient",
+      "path": "#/ambient",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "kids",
+      "path": "#/kids",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "offline",
+      "path": "#/offline",
+      "empty": false
+    }
+  ]
+}

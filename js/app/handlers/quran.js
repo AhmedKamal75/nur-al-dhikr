@@ -10,6 +10,7 @@ import {
   ensureTajweedPool,
   ensureWordDict,
   ensureRootsMeaning,
+  ensureMushafNavigationPages,
   openAyahStudy,
 } from '../lazyData.js';
 import {
@@ -83,6 +84,44 @@ export function applyTajweedColors(state) {
 }
 
 /**
+ * Shared Mushaf page-turn path for buttons, keyboard and touch. The old
+ * callers all computed the destination independently and navigated
+ * immediately, which made a fast swipe/arrow race the lazy page fetch and
+ * briefly render the loading/black page. This helper establishes one
+ * invariant: never route to a page until every page required by the current
+ * spread is resident.
+ */
+export async function navigateMushafPage(direction) {
+  const state = store.getState();
+  if (state.activeView !== VIEWS.MUSHAF) return false;
+  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+  const right = spreadOn ? spreadRightPage(page) : page;
+  const dest =
+    direction === 'next'
+      ? spreadOn
+        ? nextSpreadPage(right)
+        : mushafNextPage(page)
+      : spreadOn
+        ? prevSpreadPage(right)
+        : mushafPrevPage(page);
+  if (dest == null || dest === page) return false;
+
+  try {
+    await ensureMushafNavigationPages(dest);
+  } catch (err) {
+    console.error('[mushaf] navigation page load failed', dest, err);
+    showToast(t('mushaf.loadFailed', store.getState().settings.language));
+    return false;
+  }
+
+  setFlipDirection(direction);
+  playFlipSound();
+  go(VIEWS.MUSHAF, { page: String(dest) });
+  return true;
+}
+
+/**
  * app/handlers — feature-scoped controller modules. Each exports a
  * partial click-handler map (pure (dataset, element, event) functions);
  * app/events.js merges them into the single delegation table.
@@ -138,31 +177,9 @@ export const clickHandlers = {
       store.dispatch(actions.setSpeakingItem(null));
     });
   },
-  'mushaf-prev': () => {
-    const state = store.getState();
-    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
-    // (v4.5) a spread turns TWO pages at once, from its right page; a
-    // single page turns one. null = already at the book's start.
-    const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
-    const right = spreadOn ? spreadRightPage(page) : page;
-    const dest = spreadOn ? prevSpreadPage(right) : mushafPrevPage(page);
-    if (dest == null) return;
-    setFlipDirection('prev');
-    playFlipSound();
-    go(VIEWS.MUSHAF, { page: String(dest) });
-  },
+  'mushaf-prev': () => navigateMushafPage('prev'),
 
-  'mushaf-next': () => {
-    const state = store.getState();
-    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
-    const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
-    const right = spreadOn ? spreadRightPage(page) : page;
-    const dest = spreadOn ? nextSpreadPage(right) : mushafNextPage(page);
-    if (dest == null) return;
-    setFlipDirection('next');
-    playFlipSound();
-    go(VIEWS.MUSHAF, { page: String(dest) });
-  },
+  'mushaf-next': () => navigateMushafPage('next'),
 
   'mushaf-open-jump': async () => {
     const { buildMushafJump } = await mushafView();

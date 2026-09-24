@@ -14,6 +14,7 @@ import * as editorApi from '../services/editor.js';
 import * as notifications from '../services/notifications.js';
 import { ECHO_PAUSE_CHOICES } from '../services/surahPlayback.js';
 import { clickHandlers as quranAudioClick } from './handlers/quranAudio.js';
+import { CITY_PRESETS, CITY_REGIONS } from '../domain/locations.js';
 
 import {
   applyItemFields,
@@ -37,9 +38,28 @@ export function reminderFormHTML(lang) {
 }
 
 export function manualLocationFormHTML(lang, p) {
+  const selectedName = String(p.locationName || '').trim().toLowerCase();
+  const cityOptions = CITY_REGIONS.map((region) => {
+    const cities = CITY_PRESETS.filter((city) => city.region === region);
+    if (!cities.length) return '';
+    return `<optgroup label="${escapeHTML(t(`prayer.region.${region}`, lang))}">
+      ${cities
+        .map(
+          (city) =>
+            `<option value="${city.id}" data-lat="${city.lat}" data-lng="${city.lng}" data-name="${escapeHTML(lang === 'ar' ? city.ar : city.en)}" ${selectedName === city.id || selectedName === city.en.toLowerCase() || selectedName === city.ar.toLowerCase() ? 'selected' : ''}>${escapeHTML(lang === 'ar' ? city.ar : city.en)}</option>`
+        )
+        .join('')}
+    </optgroup>`;
+  }).join('');
   return `
   <form class="editor-form" data-form="prayer-location">
     <h2 id="modal-title-location">${t('prayer.manualLocation', lang)}</h2>
+    <label class="field">${t('prayer.chooseCityShort', lang)}
+      <select class="input" name="cityPreset">
+        <option value="">${t('prayer.chooseCityPlaceholder', lang)}</option>
+        ${cityOptions}
+      </select>
+    </label>
     <label class="field">${t('prayer.locationName', lang)}<input class="input" name="locationName" value="${escapeHTML(p.locationName || '')}" placeholder="${t('prayer.locationExample', lang)}" /></label>
     <label class="field">${t('prayer.latitude', lang)}<input class="input" type="number" step="any" min="-90" max="90" name="latitude" value="${p.latitude ?? ''}" required /></label>
     <label class="field">${t('prayer.longitude', lang)}<input class="input" type="number" step="any" min="-180" max="180" name="longitude" value="${p.longitude ?? ''}" required /></label>
@@ -48,6 +68,24 @@ export function manualLocationFormHTML(lang, p) {
       <button type="submit" class="btn btn--primary">${t('editor.save', lang)}</button>
     </div>
   </form>`;
+}
+
+export function locationPermissionGuidanceHTML(lang) {
+  return `
+  <section class="confirm-dialog location-permission-help">
+    <h2 id="modal-title-location-help">${t('prayer.locationHelpTitle', lang)}</h2>
+    <p class="panel__subtext">${t('prayer.locationHelpIntro', lang)}</p>
+    <ol class="location-permission-help__steps">
+      <li>${t('prayer.locationHelpStep1', lang)}</li>
+      <li>${t('prayer.locationHelpStep2', lang)}</li>
+      <li>${t('prayer.locationHelpStep3', lang)}</li>
+      <li>${t('prayer.locationHelpStep4', lang)}</li>
+    </ol>
+    <div class="editor-form__actions">
+      <button type="button" class="btn btn--ghost" data-action="modal-close">${t('common.close', lang)}</button>
+      <button type="button" class="btn btn--primary" data-action="prayer-manual-location">${t('prayer.useManualLocation', lang)}</button>
+    </div>
+  </section>`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -333,8 +371,19 @@ export const formHandlers = {
 
   'prayer-location': (form) => {
     const fd = new FormData(form);
-    const lat = parseFloat(fd.get('latitude'));
-    const lng = parseFloat(fd.get('longitude'));
+    const lang = store.getState().settings.language;
+    let lat = parseFloat(fd.get('latitude'));
+    let lng = parseFloat(fd.get('longitude'));
+    let locationName = String(fd.get('locationName') || '').trim();
+    const presetId = String(fd.get('cityPreset') || '');
+    if (presetId) {
+      const preset = CITY_PRESETS.find((city) => city.id === presetId);
+      if (preset) {
+        lat = preset.lat;
+        lng = preset.lng;
+        locationName = lang === 'ar' ? preset.ar : preset.en;
+      }
+    }
     if (Number.isNaN(lat) || Number.isNaN(lng)) {
       showToast(t('common.error', store.getState().settings.language));
       return;
@@ -343,7 +392,7 @@ export const formHandlers = {
       actions.updatePrayerSettings({
         latitude: lat,
         longitude: lng,
-        locationName: fd.get('locationName') || '',
+        locationName,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       })
     );

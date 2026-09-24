@@ -16,33 +16,34 @@ import { resolvePage } from '../services/surahPlayback.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';
+import { paginate } from '../domain/searchPagination.js';
 import { cardHTML } from '../ui/card.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 
-/* (v5.9.0) pagination: shown-counts per scope ride in the URL params
-   (qn/tn/ln — shareable, back-button friendly, never persisted). A new
-   query resets them; the 'search-more' handler (app/handlers/items.js)
-   bumps one scope via replaceGo, so no result list is ever
-   hard-truncated. */
-const MORE_DEFAULTS = { quran: 15, tafsir: 8, library: 40 };
-function moreFor(params) {
-  const n = (v, d) => {
-    const k = Math.floor(Number(v));
-    return Number.isFinite(k) && k > 0 ? k : d;
-  };
-  return {
-    quran: n(params?.qn, MORE_DEFAULTS.quran),
-    tafsir: n(params?.tn, MORE_DEFAULTS.tafsir),
-    library: n(params?.ln, MORE_DEFAULTS.library),
-  };
-}
-/** "Showing x of n" + Load More trigger for one scope. */
-function loadMoreHTML(lang, scope, shown, total) {
-  if (!(total > shown)) return '';
+/* (SEARCH-01) explicit page-number pagination: page state rides in the
+   URL params (qp/tp/lp — shareable, back-button friendly, never
+   persisted). Legacy qn/tn/ln shown-counts convert to their covering
+   page (domain/searchPagination.js). A new query resets them; the
+   'search-page' handler (app/handlers/items.js) moves one scope via
+   replaceGo. Indexing still runs once per corpus per render. */
+/**
+ * Explicit pager for one scope: "Page X of Y" + per-scope counts +
+ * Previous/Next. Single-page result sets render the counter without
+ * buttons (no dead controls, keyboard/SR explicit via nav aria-label).
+ */
+function pageHTML(lang, scope, page, pageCount, shown, total) {
+  if (!total) return '';
+  const counter = `<p class="empty-hint" role="status">${t('search.pageOf', lang, { x: page, n: Math.max(pageCount, 1) })} · ${t('search.showingOf', lang, { x: shown, n: total })}</p>`;
+  if (pageCount <= 1) return `<div class="search-more">${counter}</div>`;
+  const prevDisabled = page <= 1 ? ' disabled aria-disabled="true"' : '';
+  const nextDisabled = page >= pageCount ? ' disabled aria-disabled="true"' : '';
   return `<div class="search-more">
-    <p class="empty-hint">${t('search.showingOf', lang, { x: shown, n: total })}</p>
-    <button type="button" class="btn btn--secondary btn--sm" data-action="search-more" data-scope="${scope}">${t('search.loadMore', lang)}</button>
+    ${counter}
+    <nav class="search-pager" aria-label="${t('search.pageOf', lang, { x: page, n: pageCount })}">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="search-page" data-scope="${scope}" data-page="${page - 1}"${prevDisabled}>${t('search.previous', lang)}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="search-page" data-scope="${scope}" data-page="${page + 1}"${nextDisabled}>${t('search.next', lang)}</button>
+    </nav>
   </div>`;
 }
 
@@ -90,13 +91,10 @@ function quranSection(state, query, lang, all) {
       ${skeletonLines(lang, [92, 84, 88, 62])}
     </section>`;
   }
-  // (v5.9.0) paginated: the index still runs once (uncapped, same as
-  // v4.0's single-pass contract — `all` is computed by renderSearch), and
-  // the Load More trigger pages the display window instead of truncating.
-  const shown = moreFor(state.activeParams).quran;
-  const hits = all.slice(0, shown);
+  // (SEARCH-01) explicit pages: the index still runs once (uncapped —
+  // `all` is computed by renderSearch), the pager slices the window.
+  const { items: hits, page, pageCount, total } = paginate(all, state.activeParams, 'quran');
   const terms = String(query).split(/\s+/);
-  const total = all.length;
   return `
   <section class="panel quran-search-panel">
     <div class="panel__header">
@@ -105,7 +103,7 @@ function quranSection(state, query, lang, all) {
     </div>
     ${
       hits.length
-        ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang, terms)).join('')}</div>${loadMoreHTML(lang, 'quran', hits.length, total)}`
+        ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang, terms)).join('')}</div>${pageHTML(lang, 'quran', page, pageCount, hits.length, total)}`
         : emptyStateHTML({
             iconName: 'search',
             title: t('search.noResults', lang),
@@ -146,11 +144,9 @@ function tafsirSection(state, query, lang, all) {
   const edDoc = (state.tafsirEditions?.editions || []).find((e) => e.id === editionId);
   const editionName =
     (lang === 'ar' ? edDoc?.nameAr || edDoc?.nameEn : edDoc?.nameEn || edDoc?.nameAr) || '';
-  // (v5.9.0) paginated like the Qur'an group (see quranSection).
-  const shown = moreFor(state.activeParams).tafsir;
-  const hits = all.slice(0, shown);
+  // (SEARCH-01) explicit pages like the Qur'an group (see quranSection).
+  const { items: hits, page, pageCount, total } = paginate(all, state.activeParams, 'tafsir');
   const terms = String(query).split(/\s+/);
-  const total = all.length;
   return `
   <section class="panel quran-search-panel">
     <div class="panel__header">
@@ -159,7 +155,7 @@ function tafsirSection(state, query, lang, all) {
     </div>
     ${
       hits.length
-        ? `<div class="quran-hit-list">${hits.map((h) => tafsirResultRow(state, h, editionId, editionName, lang, terms)).join('')}</div>${loadMoreHTML(lang, 'tafsir', hits.length, total)}`
+        ? `<div class="quran-hit-list">${hits.map((h) => tafsirResultRow(state, h, editionId, editionName, lang, terms)).join('')}</div>${pageHTML(lang, 'tafsir', page, pageCount, hits.length, total)}`
         : emptyStateHTML({
             iconName: 'search',
             title: t('search.noResults', lang),
@@ -193,7 +189,8 @@ export function renderSearch(state) {
   const libAll = query ? runSearch(query, { limit: Infinity }) : [];
   const hadithAll = query ? searchHadith(query, { limit: Infinity }) : [];
   const azkarAll = query ? libAll.filter((r) => r.document?.metadata?.id === 'adhkar') : [];
-  const libShown = query ? libAll.slice(0, moreFor(state.activeParams).library) : [];
+  const libPage = query ? paginate(libAll, state.activeParams, 'library') : null;
+  const libShown = libPage ? libPage.items : [];
   const terms = query ? String(query).split(/\s+/) : [];
   const history = state.search.historyList;
   const suggestions = SUGGESTIONS[lang] || SUGGESTIONS.en;
@@ -277,7 +274,7 @@ export function renderSearch(state) {
             })
           )
           .join('')}
-      </div>${loadMoreHTML(lang, 'library', libShown.length, libAll.length)}`
+      </div>${pageHTML(lang, 'library', libPage.page, libPage.pageCount, libShown.length, libAll.length)}`
           : emptyStateHTML({
               iconName: 'search',
               title: t('search.noResults', lang),

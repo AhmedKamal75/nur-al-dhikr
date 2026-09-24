@@ -365,28 +365,48 @@ function wordDefinitionBody(state, lang, word) {
     parts.push(`<p class="word-study__study-label">${t('wordStudy.englishTranslation', lang)}</p>`);
     parts.push(`<p class="word-study__dict-en" dir="auto">${escapeHTML(en)}</p>`);
   }
+  // (LEX-03) contextual tier is CORPUS unless an explicit tafsir source lands.
+  const ctxState = study?.contextualMeaning?.provenanceState || 'NOT_ATTESTED';
+  if (ctxState === 'CORPUS') {
+    parts.push(
+      `<p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(t('wordStudy.sourceCorpus', lang))}</p>`
+    );
+  }
   return parts.join('');
 }
 
-/** Synonym/antonym chips block body. Empty only if neither tier has content. */
+/**
+ * (LEX-05) Synonym/antonym block with field-aware applicability states.
+ * Lists render as chips; NOT_ATTESTED / NOT_APPLICABLE render as explicit
+ * provenance notes — never blank, never invented.
+ */
 function wordSynAntBody(state, lang, word) {
   const dict = dictEntryFor(state.wordDict, word.lemma);
+  // Truly data-less word (no lemma to evaluate, no tier record): stay
+  // silent so the block renders its honest empty state. Every other case
+  // gets explicit applicability states below — never blank, never invented.
+  if (!dict && !word.lemma) return '';
   const study = materializeWordStudy(word, word.study, dict);
-  const synonyms = dict?.syn || [];
+  const synonyms = Array.isArray(study?.synonyms?.ar) ? study.synonyms.ar : dict?.syn || [];
   const antonyms = Array.isArray(study?.antonyms?.ar) ? study.antonyms.ar : dict?.ant || [];
-  const antonymTierCovered = study?.antonyms?.covered !== false;
-  const noteAr = antonymTierCovered ? study?.antonyms?.noteAr || '' : '';
-  const noteEn = antonymTierCovered ? study?.antonyms?.noteEn || '' : '';
-  if (!synonyms.length && !antonyms.length && !noteAr && !noteEn) return '';
-  const chips = (list, labelKey) =>
+  const synState = study?.synonyms?.state || 'NOT_ATTESTED';
+  const antState = study?.antonyms?.state || 'NOT_ATTESTED';
+  const synNote = lang === 'ar' ? study?.synonyms?.noteAr || '' : study?.synonyms?.noteEn || '';
+  const antNote = lang === 'ar' ? study?.antonyms?.noteAr || '' : study?.antonyms?.noteEn || '';
+  const stateNote = (listState) =>
+    listState === 'NOT_APPLICABLE'
+      ? t('wordStudy.stateNotApplicable', lang)
+      : listState === 'NOT_ATTESTED'
+        ? t('wordStudy.stateNotAttested', lang)
+        : '';
+  const chips = (list, labelKey, listState, note) =>
     list.length
       ? `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> ${list.map((x) => `<span class="chip chip--basis chip--sm" dir="rtl" lang="ar">${escapeHTML(x)}</span>`).join('')}</div>`
-      : '';
-  const note =
-    noteAr || noteEn
-      ? `<p class="word-study__antonym-note" dir="${lang === 'ar' ? 'rtl' : 'auto'}">${escapeHTML(lang === 'ar' ? noteAr : noteEn)}</p>`
-      : '';
-  return `${chips(synonyms, 'wordStudy.synonyms')}${chips(antonyms, 'wordStudy.antonyms')}${note}`;
+      : `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> <span class="word-study__state-hint">${escapeHTML(note || stateNote(listState))}</span></div>`;
+  const provenance = dict?.src
+    ? `<p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(String(dict.src.work || dict.src.sourceId || ''))} — ${escapeHTML(String(dict.src.edition || ''))}</p>`
+    : `<p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(t('wordStudy.sourceCorpus', lang))}</p>`;
+  return `${chips(synonyms, 'wordStudy.synonyms', synState, synNote)}${chips(antonyms, 'wordStudy.antonyms', antState, antNote)}${provenance}`;
 }
 
 /** Root block body: root, its core conceptual meaning, count,
@@ -427,7 +447,8 @@ function wordRootBody(state, lang, word, surah, ayah) {
       }
       <button type="button" class="btn btn--secondary btn--sm word-study__root-browse" data-action="roots-open" data-root="${escapeHTML(word.root)}">
         ${t('wordStudy.rootBrowse', lang, { n: count })}
-      </button>`;
+      </button>
+      <p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(meaning?.src ? String(meaning.src.work || meaning.src.sourceId || '') : t('wordStudy.sourceCorpus', lang))}</p>`;
 }
 
 /** I'rab block body: the one-line i'rab + wrapped detail tags. */

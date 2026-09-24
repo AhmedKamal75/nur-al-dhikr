@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "note": "LEX scholar-review queue. Engineering owns schema/validation/rendering; the records below are PENDING scholarly curation — no unsourced interpretation is presented as authoritative content.",
+  "queue": [
+    {
+      "id": "CTX-67-19-saffat",
+      "kind": "contextual-meaning",
+      "ref": "67:19 token صَافَّاتٍ",
+      "status": "PENDING",
+      "task": "Attach a tafsir-sourced (Ibn Kathir / Qurtubi edition) contextual gloss for صَافَّاتٍ (birds spreading wings) with exact edition citation. Do not invent prose.",
+      "candidateSources": ["tafsir:ibn-kathir", "tafsir:qurtubi"],
+      "currentTier": "CORPUS",
+      "currentTextAr": "من معنى الجذر: الترتيب؛ والصف"
+    },
+    {
+      "id": "CTX-67-19-yaqbidna",
+      "kind": "contextual-meaning",
+      "ref": "67:19 token وَيَقْبِضْنَ",
+      "status": "PENDING",
+      "task": "Attach a tafsir-sourced contextual gloss for وَيَقْبِضْنَ (folding/withholding wings) with exact edition citation.",
+      "candidateSources": ["tafsir:ibn-kathir", "tafsir:qurtubi"],
+      "currentTier": "CORPUS",
+      "currentTextAr": "ويَضْمُمْنَ أجْنِحَتَها."
+    },
+    {
+      "id": "CLASSICAL-ETYMOLOGY-BATCH-1",
+      "kind": "classical-etymology",
+      "ref": "Top-frequency roots without cited classical entries",
+      "status": "PENDING",
+      "task": "Replace bundled-root-core-meaning notes with per-entry classical-dictionary citations (sourceId/work/author/edition/location). One root at a time, reviewed.",
+      "candidateSources": ["classical-lexicon:lisan", "classical-lexicon:qamus", "corpus:qac"],
+      "currentTier": "CORPUS"
+    }
+  ]
+}

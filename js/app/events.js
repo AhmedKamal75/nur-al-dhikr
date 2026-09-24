@@ -3,7 +3,6 @@ import { closeNavDrawer } from './drawer.js';
 import { handleAdhanImport, handleImportFile, handleImportPlanFile } from './fileImports.js';
 import { handleFocusKeydown, navigateFocusAdjacent } from './focusRuntime.js';
 import { handlePromptForm, formHandlers } from './forms.js';
-import { playFlipSound } from './inputs.js';
 
 import { VIEWS } from '../core/config.js';
 import { t } from '../core/i18n.js';
@@ -14,12 +13,6 @@ import { vibrate, clamp, escapeHTML } from '../core/utils.js';
 import { takeoverManualZoom } from './autoFit.js';
 import {
   clampPage,
-  prevPage as mushafPrevPage,
-  nextPage as mushafNextPage,
-  mushafSpreadActive,
-  spreadRightPage,
-  nextSpreadPage,
-  prevSpreadPage,
   setMushafWideLayout,
 } from '../services/mushaf.js';
 import { closeModal, isModalOpen, openLazyModal, openModal, cycleTabFocus } from '../ui/modal.js';
@@ -55,6 +48,7 @@ import {
   changeHandlers as quranChange,
   inputHandlers as quranInput,
 } from './handlers/quran.js';
+import { navigateMushafPage } from './handlers/quran.js';
 import {
   clickHandlers as quranAudioClick,
   changeHandlers as quranAudioChange,
@@ -85,8 +79,11 @@ import {
   changeHandlers as offlineChange,
 } from './handlers/offline.js';
 
-import { setFlipDirection } from '../ui/readingTokens.js';
-import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
+import {
+  initFullscreenSync,
+  resetFsControlsIdleTimer,
+  toggleFsControlsVisibility,
+} from './fullscreen.js';
 
 /**
  * app/events.js — THE single delegated event listener. Click, change,
@@ -513,7 +510,20 @@ export function bindGlobalEvents() {
     }
 
     const target = e.target.closest('[data-action]');
-    if (!target) return;
+    if (!target) {
+      // In Mushaf fullscreen a tap on the paper itself is the explicit
+      // immersive chrome toggle. Word/ayah controls are data-action surfaces
+      // and therefore never enter this branch.
+      if (
+        store.getState().mushafFullscreen &&
+        e.target.closest?.('.view--mushaf-fullscreen, .mushaf-page') &&
+        !e.target.closest?.('button, a, input, select, textarea, [data-action]')
+      ) {
+        e.preventDefault();
+        toggleFsControlsVisibility();
+      }
+      return;
+    }
     const action = target.dataset.action;
     if (action === 'modal-close-overlay') return;
     // Kids exit has no tap handler on purpose — but repeated taps mean a
@@ -761,25 +771,9 @@ export function bindGlobalEvents() {
         )
       )
     ) {
-      const state = store.getState();
-      const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
       const toNext = e.key === 'ArrowLeft'; // RTL book: leftward is forward
-      // (v4.5) a spread turns two pages at once, from its right page.
-      const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
-      const right = spreadOn ? spreadRightPage(page) : page;
-      const dest = spreadOn
-        ? toNext
-          ? nextSpreadPage(right)
-          : prevSpreadPage(right)
-        : toNext
-          ? mushafNextPage(page)
-          : mushafPrevPage(page);
-      if (dest != null && dest !== page) {
-        e.preventDefault();
-        setFlipDirection(toNext ? 'next' : 'prev');
-        playFlipSound();
-        go(VIEWS.MUSHAF, { page: String(dest) });
-      }
+      e.preventDefault();
+      dispatchPromise('mushaf-key-turn', navigateMushafPage(toNext ? 'next' : 'prev'));
       return;
     }
     // Basic focus containment for the mobile nav drawer: Tab cycles inside
@@ -1051,23 +1045,7 @@ export function bindGlobalEvents() {
       // Commit: drop the drag transform instantly — the entrance animation
       // on the incoming page takes over from the finger's position.
       clearMushafDrag(false);
-      const state = store.getState();
-      const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
-      // (v4.5) a spread turns two pages at once, from its right page.
-      const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
-      const right = spreadOn ? spreadRightPage(page) : page;
-      const dest =
-        turn === 'next'
-          ? spreadOn
-            ? nextSpreadPage(right)
-            : mushafNextPage(page)
-          : spreadOn
-            ? prevSpreadPage(right)
-            : mushafPrevPage(page);
-      if (dest == null || dest === page) return;
-      setFlipDirection(turn);
-      playFlipSound();
-      go(VIEWS.MUSHAF, { page: String(dest) });
+      dispatchPromise('mushaf-swipe-turn', navigateMushafPage(turn));
     },
     { passive: true }
   );

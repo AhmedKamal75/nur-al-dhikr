@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-09-24T11:24:52.873Z",
+  "report": [
+    {
+      "viewport": "mobile-portrait",
+      "tajweed": false,
+      "scrollW": 390,
+      "innerW": 390,
+      "pages": 1,
+      "shot": "mushaf-mobile-portrait-tajweed-off.png"
+    },
+    {
+      "viewport": "mobile-portrait",
+      "tajweed": true,
+      "scrollW": 390,
+      "innerW": 390,
+      "pages": 1,
+      "shot": "mushaf-mobile-portrait-tajweed-on.png"
+    },
+    {
+      "viewport": "mobile-landscape",
+      "tajweed": false,
+      "scrollW": 844,
+      "innerW": 844,
+      "pages": 1,
+      "shot": "mushaf-mobile-landscape-tajweed-off.png"
+    },
+    {
+      "viewport": "mobile-landscape",
+      "tajweed": true,
+      "scrollW": 844,
+      "innerW": 844,
+      "pages": 1,
+      "shot": "mushaf-mobile-landscape-tajweed-on.png"
+    },
+    {
+      "viewport": "tablet",
+      "tajweed": false,
+      "scrollW": 1024,
+      "innerW": 1024,
+      "pages": 2,
+      "shot": "mushaf-tablet-tajweed-off.png"
+    },
+    {
+      "viewport": "tablet",
+      "tajweed": true,
+      "scrollW": 1024,
+      "innerW": 1024,
+      "pages": 2,
+      "shot": "mushaf-tablet-tajweed-on.png"
+    },
+    {
+      "viewport": "desktop",
+      "tajweed": false,
+      "scrollW": 1440,
+      "innerW": 1440,
+      "pages": 2,
+      "shot": "mushaf-desktop-tajweed-off.png"
+    },
+    {
+      "viewport": "desktop",
+      "tajweed": true,
+      "scrollW": 1440,
+      "innerW": 1440,
+      "pages": 2,
+      "shot": "mushaf-desktop-tajweed-on.png"
+    }
+  ]
+}

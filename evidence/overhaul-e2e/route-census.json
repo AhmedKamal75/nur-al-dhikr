@@ -1,0 +1,177 @@
+{
+  "generatedAt": "2026-09-24T11:14:29.057Z",
+  "source": "js/core/config/views.js",
+  "routeCount": 33,
+  "routes": [
+    {
+      "key": "HOME",
+      "path": "#/home",
+      "view": "home"
+    },
+    {
+      "key": "LIBRARY",
+      "path": "#/library",
+      "view": "library"
+    },
+    {
+      "key": "CATEGORY",
+      "path": "#/category",
+      "view": "category"
+    },
+    {
+      "key": "MOOD",
+      "path": "#/mood",
+      "view": "mood"
+    },
+    {
+      "key": "FOCUS",
+      "path": "#/focus",
+      "view": "focus"
+    },
+    {
+      "key": "SEARCH",
+      "path": "#/search",
+      "view": "search"
+    },
+    {
+      "key": "FAVORITES",
+      "path": "#/favorites",
+      "view": "favorites"
+    },
+    {
+      "key": "COLLECTIONS",
+      "path": "#/collections",
+      "view": "collections"
+    },
+    {
+      "key": "COLLECTION",
+      "path": "#/collection",
+      "view": "collection"
+    },
+    {
+      "key": "STATISTICS",
+      "path": "#/statistics",
+      "view": "statistics"
+    },
+    {
+      "key": "TASBIH",
+      "path": "#/tasbih",
+      "view": "tasbih"
+    },
+    {
+      "key": "PRAYER",
+      "path": "#/prayer",
+      "view": "prayer"
+    },
+    {
+      "key": "QIBLA",
+      "path": "#/qibla",
+      "view": "qibla"
+    },
+    {
+      "key": "CHECKLIST",
+      "path": "#/checklist",
+      "view": "checklist"
+    },
+    {
+      "key": "QUIZ",
+      "path": "#/quiz",
+      "view": "quiz"
+    },
+    {
+      "key": "CALENDAR",
+      "path": "#/calendar",
+      "view": "calendar"
+    },
+    {
+      "key": "RAMADAN",
+      "path": "#/ramadan",
+      "view": "ramadan"
+    },
+    {
+      "key": "ZAKAT",
+      "path": "#/zakat",
+      "view": "zakat"
+    },
+    {
+      "key": "AUDIO",
+      "path": "#/audio",
+      "view": "audio"
+    },
+    {
+      "key": "QURAN",
+      "path": "#/quran",
+      "view": "quran"
+    },
+    {
+      "key": "ROOTS",
+      "path": "#/roots",
+      "view": "roots"
+    },
+    {
+      "key": "HADITH",
+      "path": "#/hadith",
+      "view": "hadith"
+    },
+    {
+      "key": "MUSHAF",
+      "path": "#/mushaf",
+      "view": "mushaf"
+    },
+    {
+      "key": "SETTINGS",
+      "path": "#/settings",
+      "view": "settings"
+    },
+    {
+      "key": "ABOUT",
+      "path": "#/about",
+      "view": "about"
+    },
+    {
+      "key": "EDITOR",
+      "path": "#/editor",
+      "view": "editor"
+    },
+    {
+      "key": "MUTASHABIHAT",
+      "path": "#/mutashabihat",
+      "view": "mutashabihat"
+    },
+    {
+      "key": "JOURNAL",
+      "path": "#/journal",
+      "view": "journal"
+    },
+    {
+      "key": "CERTIFICATE",
+      "path": "#/certificate",
+      "view": "certificate"
+    },
+    {
+      "key": "GARDEN",
+      "path": "#/garden",
+      "view": "garden"
+    },
+    {
+      "key": "AMBIENT",
+      "path": "#/ambient",
+      "view": "ambient"
+    },
+    {
+      "key": "KIDS",
+      "path": "#/kids",
+      "view": "kids"
+    },
+    {
+      "key": "OFFLINE",
+      "path": "#/offline",
+      "view": "offline"
+    }
+  ],
+  "kidsAllowed": [
+    "KIDS",
+    "TASBIH"
+  ],
+  "notes": "Count re-derived from the checkout; do not copy a stale number."
+}

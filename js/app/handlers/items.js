@@ -790,19 +790,42 @@ export const clickHandlers = {
     go(VIEWS.SEARCH, { q: ds.query });
   },
 
-  // (v5.9.0) search pagination: bump one scope's shown-count (page sizes
-  // mirror views/search.js MORE_DEFAULTS) via replaceGo — the URL holds
-  // the counts (shareable, never persisted, no history spam), and a new
-  // query resets them.
+  // (SEARCH-01) explicit pages: 'search-page' moves one scope to an
+  // exact page (qp/tp/lp via replaceGo — shareable, never persisted, no
+  // history spam). 'search-more' is the legacy shown-count alias: it
+  // converts one step forward into the covering page so old clients and
+  // tests keep working without a second code path.
+  'search-page': (ds) => {
+    const params = store.getState().activeParams || {};
+    const q = params.q || '';
+    if (!q) return;
+    const scope = ['quran', 'tafsir', 'library'].includes(ds.scope) ? ds.scope : 'library';
+    const key = scope === 'quran' ? 'qp' : scope === 'tafsir' ? 'tp' : 'lp';
+    const legacyKey = scope === 'quran' ? 'qn' : scope === 'tafsir' ? 'tn' : 'ln';
+    const want = Math.floor(Number(ds.page));
+    const page = Number.isFinite(want) && want >= 1 ? Math.min(want, 10000) : 1;
+    const next = { ...params, [key]: String(page) };
+    delete next[legacyKey];
+    replaceGo(VIEWS.SEARCH, next);
+  },
   'search-more': (ds) => {
     const params = store.getState().activeParams || {};
     const q = params.q || '';
     if (!q) return;
     const scope = ['quran', 'tafsir', 'library'].includes(ds.scope) ? ds.scope : 'library';
-    const key = scope === 'quran' ? 'qn' : scope === 'tafsir' ? 'tn' : 'ln';
-    const step = scope === 'library' ? 40 : scope === 'tafsir' ? 8 : 15;
-    const cur = Math.floor(Number(params[key])) || step;
-    replaceGo(VIEWS.SEARCH, { ...params, [key]: String(cur + step) });
+    const key = scope === 'quran' ? 'qp' : scope === 'tafsir' ? 'tp' : 'lp';
+    const legacyKey = scope === 'quran' ? 'qn' : scope === 'tafsir' ? 'tn' : 'ln';
+    const size = scope === 'library' ? 40 : scope === 'tafsir' ? 8 : 15;
+    const legacyShown = Math.floor(Number(params[legacyKey]));
+    const curPage = Math.floor(Number(params[key]));
+    const cur = Number.isFinite(curPage) && curPage >= 1
+      ? curPage
+      : Number.isFinite(legacyShown) && legacyShown >= 1
+        ? Math.ceil(legacyShown / size)
+        : 1;
+    const next = { ...params, [key]: String(cur + 1) };
+    delete next[legacyKey];
+    replaceGo(VIEWS.SEARCH, next);
   },
 
   'clear-search-history': () => {

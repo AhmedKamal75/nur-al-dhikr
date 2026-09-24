@@ -1,0 +1,571 @@
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/assets/css/quran.css /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/assets/css/quran.css
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/assets/css/quran.css	2026-09-23 08:00:32.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/assets/css/quran.css	2026-09-24 10:51:55.318022407 +0000
+@@ -1424,12 +1424,12 @@
+ body.mushaf-fs-idle .mushaf-fs-controls,
+ body.mushaf-fs-idle .mushaf-fs-console,
+ body.mushaf-fs-idle .mushaf-fs-echo {
+-  /* (v5.12.0 hostile review M2) was opacity:0 — keyboard focus re-reveals,
+-     and any pointer/key activity resets the timer, but touch and SR-browse
+-     users got zero affordance. 0.12 keeps the reading line clean while the
+-     chrome stays findable; any tap restores it fully. */
+-  opacity: 0.12;
+-  transform: translateY(10px);
++  /* True immersive state: remove the reading chrome from the viewport,
++     rather than leaving a translucent strip over sacred text. A plain tap
++     on the paper reveals it again; keyboard focus still restores it. */
++  opacity: 0;
++  visibility: hidden;
++  transform: translateY(calc(100% + env(safe-area-inset-bottom, 0px) + 24px));
+   pointer-events: none;
+ }
+ /* (v5.12.1 UX audit S15) the idle auto-fade is ambient motion on a reading
+@@ -1441,6 +1441,7 @@
+   body.mushaf-fs-idle .mushaf-fs-console,
+   body.mushaf-fs-idle .mushaf-fs-echo {
+     opacity: 1;
++    visibility: visible;
+     transform: none;
+   }
+ }
+@@ -1454,6 +1455,7 @@
+ body.mushaf-fs-idle .mushaf-fs-controls:hover,
+ body.mushaf-fs-idle .mushaf-fs-console:hover {
+   opacity: 1;
++  visibility: visible;
+   transform: none;
+   pointer-events: auto;
+ }
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/events.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/events.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/events.js	2026-09-22 12:36:09.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/events.js	2026-09-24 10:51:49.042098468 +0000
+@@ -3,7 +3,6 @@
+ import { handleAdhanImport, handleImportFile, handleImportPlanFile } from './fileImports.js';
+ import { handleFocusKeydown, navigateFocusAdjacent } from './focusRuntime.js';
+ import { handlePromptForm, formHandlers } from './forms.js';
+-import { playFlipSound } from './inputs.js';
+ 
+ import { VIEWS } from '../core/config.js';
+ import { t } from '../core/i18n.js';
+@@ -14,12 +13,6 @@
+ import { takeoverManualZoom } from './autoFit.js';
+ import {
+   clampPage,
+-  prevPage as mushafPrevPage,
+-  nextPage as mushafNextPage,
+-  mushafSpreadActive,
+-  spreadRightPage,
+-  nextSpreadPage,
+-  prevSpreadPage,
+   setMushafWideLayout,
+ } from '../services/mushaf.js';
+ import { closeModal, isModalOpen, openLazyModal, openModal, cycleTabFocus } from '../ui/modal.js';
+@@ -55,6 +48,7 @@
+   changeHandlers as quranChange,
+   inputHandlers as quranInput,
+ } from './handlers/quran.js';
++import { navigateMushafPage } from './handlers/quran.js';
+ import {
+   clickHandlers as quranAudioClick,
+   changeHandlers as quranAudioChange,
+@@ -85,8 +79,11 @@
+   changeHandlers as offlineChange,
+ } from './handlers/offline.js';
+ 
+-import { setFlipDirection } from '../ui/readingTokens.js';
+-import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
++import {
++  initFullscreenSync,
++  resetFsControlsIdleTimer,
++  toggleFsControlsVisibility,
++} from './fullscreen.js';
+ 
+ /**
+  * app/events.js — THE single delegated event listener. Click, change,
+@@ -513,7 +510,20 @@
+     }
+ 
+     const target = e.target.closest('[data-action]');
+-    if (!target) return;
++    if (!target) {
++      // In Mushaf fullscreen a tap on the paper itself is the explicit
++      // immersive chrome toggle. Word/ayah controls are data-action surfaces
++      // and therefore never enter this branch.
++      if (
++        store.getState().mushafFullscreen &&
++        e.target.closest?.('.view--mushaf-fullscreen, .mushaf-page') &&
++        !e.target.closest?.('button, a, input, select, textarea, [data-action]')
++      ) {
++        e.preventDefault();
++        toggleFsControlsVisibility();
++      }
++      return;
++    }
+     const action = target.dataset.action;
+     if (action === 'modal-close-overlay') return;
+     // Kids exit has no tap handler on purpose — but repeated taps mean a
+@@ -761,25 +771,9 @@
+         )
+       )
+     ) {
+-      const state = store.getState();
+-      const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+       const toNext = e.key === 'ArrowLeft'; // RTL book: leftward is forward
+-      // (v4.5) a spread turns two pages at once, from its right page.
+-      const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+-      const right = spreadOn ? spreadRightPage(page) : page;
+-      const dest = spreadOn
+-        ? toNext
+-          ? nextSpreadPage(right)
+-          : prevSpreadPage(right)
+-        : toNext
+-          ? mushafNextPage(page)
+-          : mushafPrevPage(page);
+-      if (dest != null && dest !== page) {
+-        e.preventDefault();
+-        setFlipDirection(toNext ? 'next' : 'prev');
+-        playFlipSound();
+-        go(VIEWS.MUSHAF, { page: String(dest) });
+-      }
++      e.preventDefault();
++      dispatchPromise('mushaf-key-turn', navigateMushafPage(toNext ? 'next' : 'prev'));
+       return;
+     }
+     // Basic focus containment for the mobile nav drawer: Tab cycles inside
+@@ -1051,23 +1045,7 @@
+       // Commit: drop the drag transform instantly — the entrance animation
+       // on the incoming page takes over from the finger's position.
+       clearMushafDrag(false);
+-      const state = store.getState();
+-      const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+-      // (v4.5) a spread turns two pages at once, from its right page.
+-      const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+-      const right = spreadOn ? spreadRightPage(page) : page;
+-      const dest =
+-        turn === 'next'
+-          ? spreadOn
+-            ? nextSpreadPage(right)
+-            : mushafNextPage(page)
+-          : spreadOn
+-            ? prevSpreadPage(right)
+-            : mushafPrevPage(page);
+-      if (dest == null || dest === page) return;
+-      setFlipDirection(turn);
+-      playFlipSound();
+-      go(VIEWS.MUSHAF, { page: String(dest) });
++      dispatchPromise('mushaf-swipe-turn', navigateMushafPage(turn));
+     },
+     { passive: true }
+   );
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/forms.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/forms.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/forms.js	2026-09-21 04:32:03.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/forms.js	2026-09-24 10:51:27.666098519 +0000
+@@ -14,6 +14,7 @@
+ import * as notifications from '../services/notifications.js';
+ import { ECHO_PAUSE_CHOICES } from '../services/surahPlayback.js';
+ import { clickHandlers as quranAudioClick } from './handlers/quranAudio.js';
++import { CITY_PRESETS, CITY_REGIONS } from '../domain/locations.js';
+ 
+ import {
+   applyItemFields,
+@@ -37,9 +38,28 @@
+ }
+ 
+ export function manualLocationFormHTML(lang, p) {
++  const selectedName = String(p.locationName || '').trim().toLowerCase();
++  const cityOptions = CITY_REGIONS.map((region) => {
++    const cities = CITY_PRESETS.filter((city) => city.region === region);
++    if (!cities.length) return '';
++    return `<optgroup label="${escapeHTML(t(`prayer.region.${region}`, lang))}">
++      ${cities
++        .map(
++          (city) =>
++            `<option value="${city.id}" data-lat="${city.lat}" data-lng="${city.lng}" data-name="${escapeHTML(lang === 'ar' ? city.ar : city.en)}" ${selectedName === city.id || selectedName === city.en.toLowerCase() || selectedName === city.ar.toLowerCase() ? 'selected' : ''}>${escapeHTML(lang === 'ar' ? city.ar : city.en)}</option>`
++        )
++        .join('')}
++    </optgroup>`;
++  }).join('');
+   return `
+   <form class="editor-form" data-form="prayer-location">
+     <h2 id="modal-title-location">${t('prayer.manualLocation', lang)}</h2>
++    <label class="field">${t('prayer.chooseCityShort', lang)}
++      <select class="input" name="cityPreset">
++        <option value="">${t('prayer.chooseCityPlaceholder', lang)}</option>
++        ${cityOptions}
++      </select>
++    </label>
+     <label class="field">${t('prayer.locationName', lang)}<input class="input" name="locationName" value="${escapeHTML(p.locationName || '')}" placeholder="${t('prayer.locationExample', lang)}" /></label>
+     <label class="field">${t('prayer.latitude', lang)}<input class="input" type="number" step="any" min="-90" max="90" name="latitude" value="${p.latitude ?? ''}" required /></label>
+     <label class="field">${t('prayer.longitude', lang)}<input class="input" type="number" step="any" min="-180" max="180" name="longitude" value="${p.longitude ?? ''}" required /></label>
+@@ -50,6 +70,24 @@
+   </form>`;
+ }
+ 
++export function locationPermissionGuidanceHTML(lang) {
++  return `
++  <section class="confirm-dialog location-permission-help">
++    <h2 id="modal-title-location-help">${t('prayer.locationHelpTitle', lang)}</h2>
++    <p class="panel__subtext">${t('prayer.locationHelpIntro', lang)}</p>
++    <ol class="location-permission-help__steps">
++      <li>${t('prayer.locationHelpStep1', lang)}</li>
++      <li>${t('prayer.locationHelpStep2', lang)}</li>
++      <li>${t('prayer.locationHelpStep3', lang)}</li>
++      <li>${t('prayer.locationHelpStep4', lang)}</li>
++    </ol>
++    <div class="editor-form__actions">
++      <button type="button" class="btn btn--ghost" data-action="modal-close">${t('common.close', lang)}</button>
++      <button type="button" class="btn btn--primary" data-action="prayer-manual-location">${t('prayer.useManualLocation', lang)}</button>
++    </div>
++  </section>`;
++}
++
+ /* ------------------------------------------------------------------ */
+ /* Form submit handlers                                                */
+ /* ------------------------------------------------------------------ */
+@@ -333,8 +371,19 @@
+ 
+   'prayer-location': (form) => {
+     const fd = new FormData(form);
+-    const lat = parseFloat(fd.get('latitude'));
+-    const lng = parseFloat(fd.get('longitude'));
++    const lang = store.getState().settings.language;
++    let lat = parseFloat(fd.get('latitude'));
++    let lng = parseFloat(fd.get('longitude'));
++    let locationName = String(fd.get('locationName') || '').trim();
++    const presetId = String(fd.get('cityPreset') || '');
++    if (presetId) {
++      const preset = CITY_PRESETS.find((city) => city.id === presetId);
++      if (preset) {
++        lat = preset.lat;
++        lng = preset.lng;
++        locationName = lang === 'ar' ? preset.ar : preset.en;
++      }
++    }
+     if (Number.isNaN(lat) || Number.isNaN(lng)) {
+       showToast(t('common.error', store.getState().settings.language));
+       return;
+@@ -343,7 +392,7 @@
+       actions.updatePrayerSettings({
+         latitude: lat,
+         longitude: lng,
+-        locationName: fd.get('locationName') || '',
++        locationName,
+         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+       })
+     );
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/fullscreen.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/fullscreen.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/fullscreen.js	2026-09-16 13:36:37.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/fullscreen.js	2026-09-24 10:51:48.404012989 +0000
+@@ -68,6 +68,28 @@
+   fsIdleTimer = setTimeout(() => setFsControlsVisible(false), FS_CONTROLS_IDLE_MS);
+ }
+ 
++/** Toggle the reading chrome without leaving Mushaf fullscreen. A plain tap
++ * on the paper can therefore act as the immersive show/hide affordance:
++ * hidden -> reveal, visible -> hide. Interactive descendants keep their own
++ * semantics and are filtered by the delegated click handler.
++ */
++export function toggleFsControlsVisibility() {
++  const state = store.getState();
++  const active =
++    (state.mushafFullscreen && state.activeView === VIEWS.MUSHAF) ||
++    (state.readerImmersive && state.activeView === VIEWS.QURAN);
++  if (!active) return false;
++  const hidden = document.body.classList.contains('mushaf-fs-idle');
++  if (hidden) {
++    resetFsControlsIdleTimer();
++    return true;
++  }
++  if (fsIdleTimer) clearTimeout(fsIdleTimer);
++  fsIdleTimer = null;
++  setFsControlsVisible(false);
++  return true;
++}
++
+ /** Arm the timer right after ENTERING either fullscreen mode (the
+  *  renderer's subscribe callback fires before the patched DOM paints, so
+  *  a microtask defers to the next frame). Called from the state
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/handlers/location.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/handlers/location.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/handlers/location.js	2026-09-21 04:32:03.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/handlers/location.js	2026-09-24 10:51:28.357766362 +0000
+@@ -5,7 +5,7 @@
+  */
+ 
+ import { startCompassIfNeeded } from '../compassRuntime.js';
+-import { manualLocationFormHTML } from '../forms.js';
++import { locationPermissionGuidanceHTML, manualLocationFormHTML } from '../forms.js';
+ import { t } from '../../core/i18n.js';
+ import { actions, store } from '../../core/state.js';
+ import { openModal } from '../../ui/modal.js';
+@@ -36,7 +36,9 @@
+           })
+         );
+       },
+-      () => showToast(t('prayer.locationDenied', lang)),
++      () => {
++        openModal(locationPermissionGuidanceHTML(lang), { labelledBy: 'modal-title-location-help' });
++      },
+       { enableHighAccuracy: false, timeout: 10000 }
+     );
+   },
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/handlers/quran.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/handlers/quran.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/handlers/quran.js	2026-09-22 12:37:44.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/handlers/quran.js	2026-09-24 10:50:30.966371915 +0000
+@@ -10,6 +10,7 @@
+   ensureTajweedPool,
+   ensureWordDict,
+   ensureRootsMeaning,
++  ensureMushafNavigationPages,
+   openAyahStudy,
+ } from '../lazyData.js';
+ import {
+@@ -83,6 +84,44 @@
+ }
+ 
+ /**
++ * Shared Mushaf page-turn path for buttons, keyboard and touch. The old
++ * callers all computed the destination independently and navigated
++ * immediately, which made a fast swipe/arrow race the lazy page fetch and
++ * briefly render the loading/black page. This helper establishes one
++ * invariant: never route to a page until every page required by the current
++ * spread is resident.
++ */
++export async function navigateMushafPage(direction) {
++  const state = store.getState();
++  if (state.activeView !== VIEWS.MUSHAF) return false;
++  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
++  const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
++  const right = spreadOn ? spreadRightPage(page) : page;
++  const dest =
++    direction === 'next'
++      ? spreadOn
++        ? nextSpreadPage(right)
++        : mushafNextPage(page)
++      : spreadOn
++        ? prevSpreadPage(right)
++        : mushafPrevPage(page);
++  if (dest == null || dest === page) return false;
++
++  try {
++    await ensureMushafNavigationPages(dest);
++  } catch (err) {
++    console.error('[mushaf] navigation page load failed', dest, err);
++    showToast(t('mushaf.loadFailed', store.getState().settings.language));
++    return false;
++  }
++
++  setFlipDirection(direction);
++  playFlipSound();
++  go(VIEWS.MUSHAF, { page: String(dest) });
++  return true;
++}
++
++/**
+  * app/handlers — feature-scoped controller modules. Each exports a
+  * partial click-handler map (pure (dataset, element, event) functions);
+  * app/events.js merges them into the single delegation table.
+@@ -138,31 +177,9 @@
+       store.dispatch(actions.setSpeakingItem(null));
+     });
+   },
+-  'mushaf-prev': () => {
+-    const state = store.getState();
+-    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+-    // (v4.5) a spread turns TWO pages at once, from its right page; a
+-    // single page turns one. null = already at the book's start.
+-    const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+-    const right = spreadOn ? spreadRightPage(page) : page;
+-    const dest = spreadOn ? prevSpreadPage(right) : mushafPrevPage(page);
+-    if (dest == null) return;
+-    setFlipDirection('prev');
+-    playFlipSound();
+-    go(VIEWS.MUSHAF, { page: String(dest) });
+-  },
++  'mushaf-prev': () => navigateMushafPage('prev'),
+ 
+-  'mushaf-next': () => {
+-    const state = store.getState();
+-    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+-    const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+-    const right = spreadOn ? spreadRightPage(page) : page;
+-    const dest = spreadOn ? nextSpreadPage(right) : mushafNextPage(page);
+-    if (dest == null) return;
+-    setFlipDirection('next');
+-    playFlipSound();
+-    go(VIEWS.MUSHAF, { page: String(dest) });
+-  },
++  'mushaf-next': () => navigateMushafPage('next'),
+ 
+   'mushaf-open-jump': async () => {
+     const { buildMushafJump } = await mushafView();
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/lazyData.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/lazyData.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/app/lazyData.js	2026-09-22 12:36:09.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/app/lazyData.js	2026-09-24 10:50:22.318554122 +0000
+@@ -51,6 +51,71 @@
+ 
+ const quranSurahFetchesInFlight = new Set();
+ const mushafPageFetchesInFlight = new Set();
++
++/**
++ * Ensure the exact page(s) a Mushaf navigation is about to display are
++ * resident before the router changes the URL.  The normal render lifecycle
++ * intentionally loads pages lazily and prefetches neighbors on a best-effort
++ * basis; that is good for cold reads but unsafe as the final navigation
++ * guard because a fast finger/arrow can beat the prefetch and briefly render
++ * an empty book.  Navigation uses this stronger, awaitable contract.
++ *
++ * @param {number} page requested page/anchor
++ * @returns {Promise<Set<string>>} loaded page keys
++ */
++export async function ensureMushafNavigationPages(page) {
++  const numeric = clampPage(page);
++  let state = store.getState();
++
++  if (!state.mushaf.meta && !rt.mushafMetaFetchStarted) {
++    rt.mushafMetaFetchStarted = true;
++    try {
++      const meta = await fetchJSON(MUSHAF_META_URL);
++      store.dispatch(actions.setMushafMeta(meta));
++      flagLoad('mushaf-meta', false);
++    } catch (err) {
++      rt.mushafMetaFetchStarted = false;
++      flagLoad('mushaf-meta', true);
++      throw err;
++    }
++  }
++
++  state = store.getState();
++  const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
++  const right = spreadOn ? spreadRightPage(numeric) : numeric;
++  const left = spreadOn ? spreadLeftPage(right) : null;
++  const needed = left == null ? [right] : [right, left];
++
++  for (const loadPage of needed) {
++    const key = String(loadPage);
++    if (store.getState().mushaf.pages[key]) continue;
++    if (mushafPageFetchesInFlight.has(key)) {
++      // There is no per-page promise registry, so wait briefly by polling the
++      // store rather than starting a duplicate request. The bounded loop is
++      // intentionally small and is only used on an explicit page turn.
++      for (let attempt = 0; attempt < 200 && !store.getState().mushaf.pages[key]; attempt += 1) {
++        await new Promise((resolve) => setTimeout(resolve, 10));
++      }
++      if (store.getState().mushaf.pages[key]) continue;
++      throw new Error(`Mushaf page ${key} remained in-flight without resolving`);
++    }
++    mushafPageFetchesInFlight.add(key);
++    try {
++      const doc = await fetchJSON(MUSHAF_PAGE_URL(key));
++      store.dispatch(actions.setMushafPage(key, doc));
++      flagLoad('mushaf-page', false);
++    } catch (err) {
++      flagLoad('mushaf-page', true);
++      throw err;
++    } finally {
++      mushafPageFetchesInFlight.delete(key);
++    }
++  }
++
++  const missing = needed.filter((p) => !store.getState().mushaf.pages[String(p)]);
++  if (missing.length) throw new Error(`Mushaf navigation pages missing: ${missing.join(',')}`);
++  return new Set(needed.map(String));
++}
+ let quranMetaInFlight = null;
+ 
+ /**
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/core/i18n/ar.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/core/i18n/ar.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/core/i18n/ar.js	2026-09-23 10:57:18.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/core/i18n/ar.js	2026-09-24 10:52:01.947310766 +0000
+@@ -518,6 +518,7 @@
+   'mushaf.bookmarkAdded': 'تم وضع العلامة على الآية',
+   'mushaf.bookmarkRemoved': 'أُزيلت العلامة',
+   'mushaf.pageShort': 'ص',
++  'mushaf.loadFailed': 'تعذّر تحميل صفحة المصحف التالية. تحقّق من الاتصال ثم حاول مرة أخرى.',
+   'mushaf.khatma': 'تقدم الختمة',
+   'mushaf.khatmaReset': 'تصفير',
+   'mushaf.khatmaResetDone': 'تم تصفير تقدم الختمة',
+@@ -849,6 +850,15 @@
+   'prayer.longitude': 'خط الطول',
+   'prayer.locationUnavailable': 'الموقع غير متاح على هذا الجهاز',
+   'prayer.locationDenied': 'تم رفض إذن الموقع',
++  'prayer.locationHelpTitle': 'تم حجب الوصول إلى الموقع',
++  'prayer.locationHelpIntro': 'يمكنك السماح للموقع من أذونات هذا الموقع في المتصفح، أو اختيار مدينة تقريبية بدلًا من ذلك.',
++  'prayer.locationHelpStep1': 'افتح معلومات الموقع أو رمز القفل بجانب عنوان هذه الصفحة.',
++  'prayer.locationHelpStep2': 'افتح الأذونات أو إعدادات الموقع ثم ابحث عن إذن الموقع.',
++  'prayer.locationHelpStep3': 'غيّر إذن الموقع إلى سماح، ثم ارجع إلى نور الذكر وحاول مرة أخرى.',
++  'prayer.locationHelpStep4': 'إن لم ترغب في منح إذن الموقع، اختر مدينة من القائمة. إحداثيات المدن تقريبية.',
++  'prayer.chooseCityShort': 'اختر مدينة',
++  'prayer.chooseCityPlaceholder': 'اختر مدينة (اختياري)',
++  'prayer.useManualLocation': 'استخدم مدينة أو أدخل الإحداثيات',
+   'prayer.locationSet': 'تم تحديد الموقع — المواقيت تقريبية حتى تُدخل الإحداثيات الدقيقة',
+   'prayer.tzMismatch':
+     'هذه المواقيت محسوبة لشمس الإحداثيات التي حفظتها لكنها معروضة بتوقيت هذا الجهاز. إذا أدخلت إحداثيات لمكان في نطاق زمني آخر، فصلّ بمواقيت ذلك المكان لا بهذا التوقيت.',
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/core/i18n/en.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/core/i18n/en.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/js/core/i18n/en.js	2026-09-23 10:57:18.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/js/core/i18n/en.js	2026-09-24 10:52:01.947040840 +0000
+@@ -532,6 +532,7 @@
+   'mushaf.bookmarkAdded': 'Ayah bookmarked',
+   'mushaf.bookmarkRemoved': 'Bookmark removed',
+   'mushaf.pageShort': 'p.',
++  'mushaf.loadFailed': 'The next Mushaf page could not be loaded. Check your connection and try again.',
+   'mushaf.khatma': 'Khatma progress',
+   'mushaf.khatmaReset': 'Reset',
+   'mushaf.khatmaResetDone': 'Khatma progress reset',
+@@ -872,6 +873,15 @@
+   'prayer.longitude': 'Longitude',
+   'prayer.locationUnavailable': 'Location unavailable on this device',
+   'prayer.locationDenied': 'Location permission denied',
++  'prayer.locationHelpTitle': 'Location access was blocked',
++  'prayer.locationHelpIntro': 'You can enable location in this site’s browser permissions, or use an approximate city instead.',
++  'prayer.locationHelpStep1': 'Open the browser site information or lock icon for this page.',
++  'prayer.locationHelpStep2': 'Open Permissions (or Site settings) and find Location.',
++  'prayer.locationHelpStep3': 'Change Location to Allow, then return to Nur al-Dhikr and try again.',
++  'prayer.locationHelpStep4': 'If you prefer not to grant location access, choose a city below. City coordinates are approximate.',
++  'prayer.chooseCityShort': 'Choose a city',
++  'prayer.chooseCityPlaceholder': 'Select a city (optional)',
++  'prayer.useManualLocation': 'Use a city or enter coordinates',
+   'prayer.locationSet': 'Location set — times are approximate until exact coordinates are entered',
+   'prayer.tzMismatch':
+     'These times follow the sun at your saved coordinates but are shown on this device’s clock. If you entered coordinates for a place in another time zone, pray by the local times there, not by this clock.',
+Binary files /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/nur-al-dhikr-seed-v5.17.8.zip and /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/nur-al-dhikr-seed-v5.17.8.zip differ
+diff -ruN /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/tests/overhaulP0Contract.test.js /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/tests/overhaulP0Contract.test.js
+--- /mnt/data/nur-al-dhikr-original-2026-09-24/nur-al-dhikr/tests/overhaulP0Contract.test.js	1970-01-01 00:00:00.000000000 +0000
++++ /mnt/data/nur-al-dhikr-overhaul-2026-09-24/nur-al-dhikr/tests/overhaulP0Contract.test.js	2026-09-24 10:53:48.895987659 +0000
+@@ -0,0 +1,37 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFile } from 'node:fs/promises';
++
++const read = (path) => readFile(path, 'utf8');
++
++test('P0 fullscreen controls leave the viewport when idle', async () => {
++  const css = await read('assets/css/quran.css');
++  const idle = css.slice(css.indexOf('body.mushaf-fs-idle .mushaf-fs-controls'));
++  assert.match(idle, /opacity:\s*0;/);
++  assert.match(idle, /visibility:\s*hidden;/);
++  assert.match(idle, /translateY\(calc\(100%/);
++});
++
++test('P0 location denial has recovery guidance and manual city fallback', async () => {
++  const handler = await read('js/app/handlers/location.js');
++  const forms = await read('js/app/forms.js');
++  const en = await read('js/core/i18n/en.js');
++  const ar = await read('js/core/i18n/ar.js');
++  assert.match(handler, /locationPermissionGuidanceHTML/);
++  assert.match(forms, /name="cityPreset"/);
++  assert.match(forms, /CITY_PRESETS/);
++  for (const source of [en, ar]) {
++    assert.match(source, /locationHelpTitle/);
++    assert.match(source, /locationHelpStep1/);
++    assert.match(source, /useManualLocation/);
++  }
++});
++
++test('P0 Mushaf navigation routes only through the awaitable page-ready guard', async () => {
++  const quran = await read('js/app/handlers/quran.js');
++  const events = await read('js/app/events.js');
++  assert.match(quran, /export async function navigateMushafPage/);
++  assert.match(quran, /ensureMushafNavigationPages\(dest\)/);
++  assert.match(events, /navigateMushafPage\(toNext \? 'next' : 'prev'\)/);
++  assert.match(events, /navigateMushafPage\(turn\)/);
++});

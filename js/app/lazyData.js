@@ -51,6 +51,71 @@ import * as soundDesign from '../services/soundDesign.js';
 
 const quranSurahFetchesInFlight = new Set();
 const mushafPageFetchesInFlight = new Set();
+
+/**
+ * Ensure the exact page(s) a Mushaf navigation is about to display are
+ * resident before the router changes the URL.  The normal render lifecycle
+ * intentionally loads pages lazily and prefetches neighbors on a best-effort
+ * basis; that is good for cold reads but unsafe as the final navigation
+ * guard because a fast finger/arrow can beat the prefetch and briefly render
+ * an empty book.  Navigation uses this stronger, awaitable contract.
+ *
+ * @param {number} page requested page/anchor
+ * @returns {Promise<Set<string>>} loaded page keys
+ */
+export async function ensureMushafNavigationPages(page) {
+  const numeric = clampPage(page);
+  let state = store.getState();
+
+  if (!state.mushaf.meta && !rt.mushafMetaFetchStarted) {
+    rt.mushafMetaFetchStarted = true;
+    try {
+      const meta = await fetchJSON(MUSHAF_META_URL);
+      store.dispatch(actions.setMushafMeta(meta));
+      flagLoad('mushaf-meta', false);
+    } catch (err) {
+      rt.mushafMetaFetchStarted = false;
+      flagLoad('mushaf-meta', true);
+      throw err;
+    }
+  }
+
+  state = store.getState();
+  const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
+  const right = spreadOn ? spreadRightPage(numeric) : numeric;
+  const left = spreadOn ? spreadLeftPage(right) : null;
+  const needed = left == null ? [right] : [right, left];
+
+  for (const loadPage of needed) {
+    const key = String(loadPage);
+    if (store.getState().mushaf.pages[key]) continue;
+    if (mushafPageFetchesInFlight.has(key)) {
+      // There is no per-page promise registry, so wait briefly by polling the
+      // store rather than starting a duplicate request. The bounded loop is
+      // intentionally small and is only used on an explicit page turn.
+      for (let attempt = 0; attempt < 200 && !store.getState().mushaf.pages[key]; attempt += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+      if (store.getState().mushaf.pages[key]) continue;
+      throw new Error(`Mushaf page ${key} remained in-flight without resolving`);
+    }
+    mushafPageFetchesInFlight.add(key);
+    try {
+      const doc = await fetchJSON(MUSHAF_PAGE_URL(key));
+      store.dispatch(actions.setMushafPage(key, doc));
+      flagLoad('mushaf-page', false);
+    } catch (err) {
+      flagLoad('mushaf-page', true);
+      throw err;
+    } finally {
+      mushafPageFetchesInFlight.delete(key);
+    }
+  }
+
+  const missing = needed.filter((p) => !store.getState().mushaf.pages[String(p)]);
+  if (missing.length) throw new Error(`Mushaf navigation pages missing: ${missing.join(',')}`);
+  return new Set(needed.map(String));
+}
 let quranMetaInFlight = null;
 
 /**

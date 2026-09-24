@@ -1424,12 +1424,12 @@ body.is-mushaf-fullscreen.is-mushaf-manual .view--mushaf-fullscreen .mushaf-page
 body.mushaf-fs-idle .mushaf-fs-controls,
 body.mushaf-fs-idle .mushaf-fs-console,
 body.mushaf-fs-idle .mushaf-fs-echo {
-  /* (v5.12.0 hostile review M2) was opacity:0 — keyboard focus re-reveals,
-     and any pointer/key activity resets the timer, but touch and SR-browse
-     users got zero affordance. 0.12 keeps the reading line clean while the
-     chrome stays findable; any tap restores it fully. */
-  opacity: 0.12;
-  transform: translateY(10px);
+  /* True immersive state: remove the reading chrome from the viewport,
+     rather than leaving a translucent strip over sacred text. A plain tap
+     on the paper reveals it again; keyboard focus still restores it. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(calc(100% + env(safe-area-inset-bottom, 0px) + 24px));
   pointer-events: none;
 }
 /* (v5.12.1 UX audit S15) the idle auto-fade is ambient motion on a reading
@@ -1441,6 +1441,7 @@ body.mushaf-fs-idle .mushaf-fs-echo {
   body.mushaf-fs-idle .mushaf-fs-console,
   body.mushaf-fs-idle .mushaf-fs-echo {
     opacity: 1;
+    visibility: visible;
     transform: none;
   }
 }
@@ -1454,6 +1455,7 @@ body.mushaf-fs-idle .mushaf-fs-console:focus-within,
 body.mushaf-fs-idle .mushaf-fs-controls:hover,
 body.mushaf-fs-idle .mushaf-fs-console:hover {
   opacity: 1;
+  visibility: visible;
   transform: none;
   pointer-events: auto;
 }

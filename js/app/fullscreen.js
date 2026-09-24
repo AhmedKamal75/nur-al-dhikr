@@ -68,6 +68,28 @@ export function resetFsControlsIdleTimer() {
   fsIdleTimer = setTimeout(() => setFsControlsVisible(false), FS_CONTROLS_IDLE_MS);
 }
 
+/** Toggle the reading chrome without leaving Mushaf fullscreen. A plain tap
+ * on the paper can therefore act as the immersive show/hide affordance:
+ * hidden -> reveal, visible -> hide. Interactive descendants keep their own
+ * semantics and are filtered by the delegated click handler.
+ */
+export function toggleFsControlsVisibility() {
+  const state = store.getState();
+  const active =
+    (state.mushafFullscreen && state.activeView === VIEWS.MUSHAF) ||
+    (state.readerImmersive && state.activeView === VIEWS.QURAN);
+  if (!active) return false;
+  const hidden = document.body.classList.contains('mushaf-fs-idle');
+  if (hidden) {
+    resetFsControlsIdleTimer();
+    return true;
+  }
+  if (fsIdleTimer) clearTimeout(fsIdleTimer);
+  fsIdleTimer = null;
+  setFsControlsVisible(false);
+  return true;
+}
+
 /** Arm the timer right after ENTERING either fullscreen mode (the
  *  renderer's subscribe callback fires before the patched DOM paints, so
  *  a microtask defers to the next frame). Called from the state

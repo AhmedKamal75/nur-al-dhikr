@@ -8,6 +8,7 @@
  */
 
 import { sameSurfaceWord, containsSurfaceWord } from './tajweed.js';
+import { isFunctionToken } from './lexicalProvenance.js';
 
 /** Look up a single word's grammar record. Returns null if not (yet) loaded.
  *
@@ -202,6 +203,8 @@ export function wordIrabLine(word, lang = 'en') {
  * (v5.2.75, UP-01) lemma-dict lookup for the popup's Meanings section.
  * Returns a sanitized { ar, en, syn[], ant[] } or null (unknown lemma,
  * unloaded/malformed index). Renderers escape everything again anyway.
+ * (LEX-02) also carries the raw `src` citation through (when present) so
+ * the popup can render provenance without re-reading the data tier.
  */
 export function dictEntryFor(wordDict, lemma) {
   const index = wordDict && typeof wordDict === 'object' ? wordDict.index : null;
@@ -215,12 +218,14 @@ export function dictEntryFor(wordDict, lemma) {
           .map((s) => s.slice(0, 60))
           .slice(0, 12)
       : [];
-  return {
+  const out = {
     ar: typeof e.ar === 'string' ? e.ar.slice(0, 500) : '',
     en: typeof e.en === 'string' ? e.en.slice(0, 200) : '',
     syn: strings(e.syn),
     ant: strings(e.ant),
   };
+  if (e.src && typeof e.src === 'object' && !Array.isArray(e.src)) out.src = e.src;
+  return out;
 }
 
 /** Bookmark key for one word ("surah:ayah:i"), null on hostile input. */
@@ -248,8 +253,21 @@ export function materializeWordStudy(word, tokenStudy = null, dict = null, root 
   if (!word || typeof word !== 'object') return null;
   const contextualMeaning = tokenStudy?.contextualMeaning || {};
   const irab = tokenStudy?.irab || {};
+  // (LEX-01/02) field-aware synonym/antonym states. Function tokens resolve
+  // to NOT_APPLICABLE, applicable-but-unrecorded tokens to NOT_ATTESTED.
+  // No list is ever invented here.
+  const synonymList = Array.isArray(dict?.syn)
+    ? dict.syn.filter((s) => typeof s === 'string' && s.trim()).slice(0, 12)
+    : [];
   const antonyms = Array.isArray(dict?.ant) ? dict.ant : [];
   const noDirectAntonym = antonyms.length === 0;
+  // (LEX-01) single applicability source: domain/lexicalProvenance.js.
+  const functionToken = isFunctionToken(word);
+  const synonymState = synonymList.length
+    ? 'CURATED_LIST'
+    : functionToken
+      ? 'NOT_APPLICABLE'
+      : 'NOT_ATTESTED';
   const etymology = root
     ? { ...root }
     : {
@@ -275,17 +293,46 @@ export function materializeWordStudy(word, tokenStudy = null, dict = null, root 
       ar: typeof contextualMeaning.ar === 'string' ? contextualMeaning.ar : '',
       en: typeof word.en === 'string' ? word.en : '',
       source: typeof contextualMeaning.source === 'string' ? contextualMeaning.source : '',
+      // (LEX-03) bundled study rows are CORPUS tier, never presented as
+      // classical/tafsir authority unless an explicit tafsir source lands.
+      provenanceState:
+        typeof contextualMeaning.ar === 'string' && contextualMeaning.ar.trim()
+          ? 'CORPUS'
+          : 'NOT_ATTESTED',
     },
     englishTranslation: typeof word.en === 'string' ? word.en : '',
+    synonyms: {
+      ar: synonymList,
+      state: synonymState,
+      covered: Boolean(dict && typeof dict === 'object'),
+      hasDirectSynonym: synonymList.length > 0,
+      noteAr:
+        synonymState === 'NOT_APPLICABLE'
+          ? 'لا تنطبق المرادفات على هذا العنصر الوظيفي؛ لم يُخترع بديل.'
+          : synonymState === 'NOT_ATTESTED'
+            ? 'لا يوجد مرادف عربي مُثبت في طبقة الدراسة المضمّنة؛ لم يُخترع مرادف.'
+            : '',
+      noteEn:
+        synonymState === 'NOT_APPLICABLE'
+          ? 'Synonyms do not apply to this function token; none was invented.'
+          : synonymState === 'NOT_ATTESTED'
+            ? 'No attested Arabic synonym is recorded in the bundled study tier; none was invented.'
+            : '',
+    },
     antonyms: {
       ar: antonyms,
+      state: antonyms.length ? 'CURATED_LIST' : functionToken ? 'NOT_APPLICABLE' : 'NOT_ATTESTED',
       covered: Boolean(dict && typeof dict === 'object'),
       hasDirectAntonym: !noDirectAntonym,
       noteAr: noDirectAntonym
-        ? 'لا يوجد مضاد عربي مباشر مُثبت في طبقة الدراسة المضمّنة؛ لم يُخترع مضاد.'
+        ? functionToken
+          ? 'لا تنطبق الأضداد على هذا العنصر الوظيفي؛ لم يُخترع مضاد.'
+          : 'لا يوجد مضاد عربي مباشر مُثبت في طبقة الدراسة المضمّنة؛ لم يُخترع مضاد.'
         : '',
       noteEn: noDirectAntonym
-        ? 'No attested direct Arabic antonym is recorded in the bundled study tier; none was invented.'
+        ? functionToken
+          ? 'Antonyms do not apply to this function token; none was invented.'
+          : 'No attested direct Arabic antonym is recorded in the bundled study tier; none was invented.'
         : '',
     },
     irab: {
@@ -294,6 +341,29 @@ export function materializeWordStudy(word, tokenStudy = null, dict = null, root 
       source: typeof irab.source === 'string' ? irab.source : '',
     },
     etymology,
+    // (LEX-02/LEX-04) lemma/root provenance carried alongside the
+    // materialized record so renderers never guess authority. Uncited
+    // bundled tiers resolve to CORPUS; cited src resolves upstream.
+    provenance: {
+      lemma:
+        dict && typeof dict === 'object'
+          ? {
+              state: dict.src ? 'CLASSICAL_LEXICON' : 'CORPUS',
+              sourceId:
+                typeof dict.src?.sourceId === 'string' ? dict.src.sourceId : 'bundled-quran-dict',
+            }
+          : { state: 'NOT_ATTESTED', sourceId: '' },
+      root: root
+        ? {
+            state: root.src
+              ? 'CLASSICAL_LEXICON'
+              : root.source === 'no-independent-root-policy'
+                ? 'NOT_APPLICABLE'
+                : 'CORPUS',
+            sourceId: typeof root.source === 'string' ? root.source : '',
+          }
+        : { state: 'NOT_APPLICABLE', sourceId: 'no-independent-root-policy' },
+    },
   };
 }
 

@@ -5,7 +5,7 @@
  */
 
 import { startCompassIfNeeded } from '../compassRuntime.js';
-import { manualLocationFormHTML } from '../forms.js';
+import { locationPermissionGuidanceHTML, manualLocationFormHTML } from '../forms.js';
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { openModal } from '../../ui/modal.js';
@@ -36,7 +36,9 @@ export const clickHandlers = {
           })
         );
       },
-      () => showToast(t('prayer.locationDenied', lang)),
+      () => {
+        openModal(locationPermissionGuidanceHTML(lang), { labelledBy: 'modal-title-location-help' });
+      },
       { enableHighAccuracy: false, timeout: 10000 }
     );
   },

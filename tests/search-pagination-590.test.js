@@ -1,9 +1,11 @@
 /**
- * search-pagination-590.test.js — (v5.9.0) search pagination contracts.
+ * search-pagination-590.test.js — (v5.9.0 origins, SEARCH-01 rework)
+ * explicit page-number contracts.
  *
- * No hard truncation: over-limit scopes render a Load More trigger with
- * a "Showing x of n" counter, URL params (qn/tn/ln) widen the window,
- * and every view carries the per-corpus match breakdown.
+ * No hard truncation: over-limit scopes render "Page X of Y" with
+ * Previous/Next, URL page params (qp/tp/lp; legacy qn/tn/ln convert to
+ * their covering page), and every view carries the per-corpus match
+ * breakdown.
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
@@ -39,28 +41,25 @@ function searchState(params) {
 }
 
 describe('search pagination + breakdown', () => {
-  test('over-limit scope shows Load More + breakdown; params widen it', () => {
+  test('over-limit scope shows pager + breakdown; params move pages', () => {
     resetQuranIndex();
     buildQuranIndex(SURAH_DOCS);
     setQuranIndexReady(true);
     try {
       const first = renderSearch(searchState({}));
-      assert.match(first, /data-action="search-more" data-scope="quran"/, 'quran Load More');
+      assert.match(first, /data-action="search-page" data-scope="quran" data-page="2"/, 'quran Next');
+      assert.match(first, /Page 1 of 2/, 'page counter');
       assert.match(first, /Showing 15 of 20/, 'showing counter');
       assert.match(first, /Quran: 20/, 'breakdown carries the quran total');
       assert.match(first, /Hadith: 0/, 'breakdown carries the hadith total');
       assert.match(first, /Azkar: 0/, 'breakdown carries the azkar total');
       const rows = (first.match(/class="quran-hit"/g) || []).length;
-      assert.equal(rows, 15, 'default window is 15');
+      assert.equal(rows, 15, 'default page size is 15');
 
       const wider = renderSearch(searchState({ qn: '30' }));
       const rows2 = (wider.match(/class="quran-hit"/g) || []).length;
-      assert.equal(rows2, 20, 'qn param widens the window');
-      assert.doesNotMatch(
-        wider,
-        /data-action="search-more" data-scope="quran"/,
-        'no trigger at full coverage'
-      );
+      assert.equal(rows2, 5, 'legacy qn lands on its covering page (page 2)');
+      assert.match(wider, /Page 2 of 2/, 'legacy qn converts to page 2');
 
       const hostile = renderSearch(searchState({ qn: 'not-a-number' }));
       const rows3 = (hostile.match(/class="quran-hit"/g) || []).length;
