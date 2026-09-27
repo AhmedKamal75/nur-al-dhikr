@@ -29,9 +29,9 @@ Last verified: **v5.17.11**, `npm run check` green, Chromium E2E green.
    Local commits are authorised and expected; the message is the only durable
    record of why, so one logical change per commit, no `wip`/`fixes`, both
    gates green first. Never push, never amend, never force.
-5a. **"Scholar-gated" means unattributed, not unwritten.** (Owner ruling,
-   2026-09-27.) Religious content may be taken from any *verifiable public
-   source* — a classical text, an institution, an open textbook, a published
+   5a. **"Scholar-gated" means unattributed, not unwritten.** (Owner ruling,
+   2026-09-27.) Religious content may be taken from any _verifiable public
+   source_ — a classical text, an institution, an open textbook, a published
    curriculum — if you name it, quote rather than paraphrase into authority,
    carry provenance structurally, surface disagreement instead of picking a
    side, and keep a review state until signed off. The gate is **attribution,

@@ -27,10 +27,10 @@ what you were told, say so instead of proceeding.
    tafsir attribution or scripture text from memory or from a plausible pattern.
    Verified source, or an honest `Unknown`/empty state. This is not a
    style preference — it is the product.
-1a. **"Scholar-gated" means unattributed, not unwritten.** (Owner ruling,
+   1a. **"Scholar-gated" means unattributed, not unwritten.** (Owner ruling,
    2026-09-27.) Content that needs authority does not have to wait for a
-   human to type it into a box. It may be taken from any *verifiable public
-   source* — a published classical text, an institutional ruling body, a
+   human to type it into a box. It may be taken from any _verifiable public
+   source_ — a published classical text, an institutional ruling body, a
    university/open-source project, an open textbook, a published curriculum —
    provided all five of these hold:
 
@@ -45,7 +45,7 @@ what you were told, say so instead of proceeding.
    4. **Disagreement is surfaced, not resolved by us.** Where authorities
       differ — makharij are counted 17, 16 or 14 — show the spread and name
       the sources. Picking a side silently is the failure mode.
-   5. **Retrieved ≠ certified.** Online material is a *source*, not an
+   5. **Retrieved ≠ certified.** Online material is a _source_, not an
       authority we own. Anything machine-collected keeps a review state and
       the app's existing honest-absence copy until it is signed off.
 
@@ -54,9 +54,10 @@ what you were told, say so instead of proceeding.
    and presenting it as sourced. The gate is **attribution**, not authorship.
    If you cannot cite it, it stays `Unknown` — the speed of the internet does
    not lower the bar, it raises the obligation to cite.
+
 2. **Commit your work, with a real message.** (Owner ruling, 2026-09-27.)
    You are authorised to `git commit`. A commit message is the only durable
-   record of *why* a change happened, so:
+   record of _why_ a change happened, so:
    - **Never** write `update`, `fixes`, `wip`, `asdf`, or a bare version bump.
      Say what changed and, when it is not obvious, why.
    - **One logical change per commit.** If a commit needs the word "and" twice
