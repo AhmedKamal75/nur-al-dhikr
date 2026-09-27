@@ -15,7 +15,7 @@ import { test, expect } from '@playwright/test';
 test('touch-targets: compact controls catch pointers beyond their visual box', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('#/home');
-  await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+  await expect(page.locator('#main .view--home')).toBeVisible({ timeout: 20000 });
 
   const results = await page.evaluate(() => {
     const out = [];

@@ -14,6 +14,7 @@ const census = JSON.parse(
 );
 
 test('E2E-01 route matrix: all census routes render clean (en + ar)', async ({ browser }) => {
+  test.setTimeout(120000);
   const results = [];
   for (const lang of ['en', 'ar']) {
     const context = await browser.newContext();
@@ -29,7 +30,9 @@ test('E2E-01 route matrix: all census routes render clean (en + ar)', async ({ b
     // Enter the language through the real settings control (same path a user takes).
     await page.goto('#/settings');
     await expect(page.locator('#main')).not.toBeEmpty({ timeout: 30000 });
-    await page.locator(`[data-action="set-setting"][data-key="language"][data-value="${lang}"]`).click();
+    await page
+      .locator(`[data-action="set-setting"][data-key="language"][data-value="${lang}"]`)
+      .click();
     if (lang === 'ar') {
       await expect(page.locator('html')).toHaveAttribute('dir', 'rtl', { timeout: 10000 });
     } else {
@@ -49,10 +52,10 @@ test('E2E-01 route matrix: all census routes render clean (en + ar)', async ({ b
   }
   writeFileSync(
     path.join(process.cwd(), 'evidence/overhaul-e2e/route-matrix.json'),
-    JSON.stringify(
+    `${JSON.stringify(
       { generatedAt: new Date().toISOString(), routeCount: census.routeCount, results },
       null,
       2
-    )
+    )}\n`
   );
 });

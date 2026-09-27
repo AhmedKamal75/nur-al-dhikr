@@ -24,6 +24,19 @@ export default defineConfig({
   use: {
     baseURL: 'http://127.0.0.1:8080',
     trace: EVIDENCE_MATRIX ? 'on' : 'retain-on-failure',
+    // (v5.17.17) The app prefetches ~1,400 corpus files 15s after boot. For a
+    // reader that is invisible and happens once. For this suite it ran in
+    // EVERY context, so specs that outlive the 15s mark saturated the one
+    // static server between them — three specs failed on timing, and the
+    // honest cause was background work, not the specs.
+    //
+    // So the prefetch is off by default HERE, in the harness, and
+    // tests/e2e/offline-essentials.spec.js opts back in because proving the
+    // prefetch is its whole job. Nothing in js/ reads this; a reader never
+    // sees it. No spec asserts an empty localStorage, and the per-spec
+    // addInitScript seeds in this suite merge rather than replace, so
+    // seeding one pref here is compatible with them.
+    storageState: 'tests/e2e/.state/no-background-prefetch.json',
   },
   projects: CROSS_ENGINE
     ? [

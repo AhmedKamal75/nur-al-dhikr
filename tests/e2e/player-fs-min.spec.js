@@ -22,13 +22,16 @@ test('player fs minimize: pill overlays the book, restore returns', async ({ pag
   await page.locator('[data-action="mushaf-toggle-fullscreen"]').first().click();
   await expect(page.locator('body.is-mushaf-fullscreen')).toBeAttached({ timeout: 8000 });
   // Start a verse session from the fullscreen play button.
-  await page
-    .locator('.mushaf-fs-controls [data-action="surah-play"]')
-    .first()
-    .click({ force: true });
-  await expect(page.locator('.mushaf-fs-console')).toBeVisible({ timeout: 20000 });
+  await page.mouse.move(195, 400);
+  const fsPlay = page.locator('.mushaf-fs-controls [data-action="surah-play"]').first();
+  await expect(fsPlay).toBeVisible({ timeout: 8000 });
+  await fsPlay.click();
+  const fsConsole = page.locator('.mushaf-fs-console');
+  await expect(fsConsole).toBeAttached({ timeout: 20000 });
+  await page.mouse.move(200, 400);
+  await expect(fsConsole).toBeVisible({ timeout: 8000 });
   // The fs console carries minimize.
-  const fsMin = page.locator('.mushaf-fs-console [data-action="player-min-toggle"]').first();
+  const fsMin = fsConsole.locator('[data-action="player-min-toggle"]').first();
   await expect(fsMin).toBeVisible({ timeout: 8000 });
   await fsMin.click();
   // Pill overlays the book; the full rows yield (exactly one chrome).

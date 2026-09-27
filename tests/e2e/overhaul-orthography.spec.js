@@ -63,6 +63,6 @@ test('ORTH-01 mushaf orthography sweep: no overflow, screenshots kept', async ({
   }
   writeFileSync(
     path.join(dir, 'orthography-report.json'),
-    JSON.stringify({ generatedAt: new Date().toISOString(), report }, null, 2)
+    `${JSON.stringify({ generatedAt: new Date().toISOString(), report }, null, 2)}\n`
   );
 });

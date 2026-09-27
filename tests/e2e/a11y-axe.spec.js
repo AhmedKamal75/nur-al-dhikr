@@ -97,8 +97,15 @@ test('keyboard: skip link, player controls and modal focus', async ({ page }) =>
   await page.waitForTimeout(1500);
   await page.locator('#main [data-action="mushaf-more"]').first().click();
   await expect(page.locator('.modal__body')).not.toBeEmpty({ timeout: 8000 });
-  const focusInModal = await page.evaluate(() => !!document.activeElement?.closest?.('.modal'));
-  expect(focusInModal, 'focus must move inside the opened sheet').toBe(true);
+  // The focus trap lands a frame AFTER the sheet paints, so this must be
+  // polled, not sampled. Reading activeElement the instant .modal__body
+  // exists races the trap and was the suite's intermittent red under load.
+  await expect
+    .poll(() => page.evaluate(() => !!document.activeElement?.closest?.('.modal')), {
+      timeout: 8000,
+      message: 'focus must move inside the opened sheet',
+    })
+    .toBe(true);
 
   expect(pageErrors).toEqual([]);
 });

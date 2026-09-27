@@ -25,7 +25,11 @@ test('route css: cold home ships no book stylesheet; book routes pull it once', 
 
   // First book-route entry injects it exactly once.
   await page.goto('#/mushaf?page=2');
+  // The cold mushaf route paints a skeleton first (meta + page JSON), and
+  // the skeleton satisfies "main is not empty" — wait for real mushaf
+  // content, which is what this assertion is actually about.
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+  await expect(page.locator('.mushaf-ayah').first()).toBeVisible({ timeout: 20000 });
   await expect(page.locator(QURAN_LINK)).toHaveCount(1, { timeout: 15000 });
   const matched = await page.evaluate(() => {
     let n = 0;
