@@ -2,6 +2,227 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.17 — "Works offline" becomes true, and a switch that was never a switch
+
+- **The About screen stopped overclaiming.** It says "Everything lives on
+  your device and works offline." That was false for the corpus people
+  actually recite from: the only route to the data was a Download button on
+  a screen nobody had been told about, so a worshipper opening the app in a
+  field with no prior signal got a dead Qur'an. The Qur'an text and all 604
+  mushaf pages — 2.7 MB gzipped, measured — now download once by default.
+  - **It is not a precache.** Adding 1,436 corpus files to the service
+    worker's install-time `addAll` would be all-or-nothing, so one flaky
+    fetch would fail the entire app install. This reuses the existing
+    tolerant, cancellable, per-group-counted batch engine, so a group's
+    "downloaded" row is measured the same way whether it was tapped or
+    automatic.
+  - **The reader can see it and turn it off.** Offline → Storage mode, with
+    the measured size in both languages. Big study corpora (hadith, tafsir,
+    word study) stay opt-in — that choice was always honest; it was only
+    the headline corpus that was missing.
+  - **Bandwidth is never spent unasked.** Skipped when offline, when a
+    batch is already running, when `save-data` is on, and on a 2G link. A
+    partly-finished batch resumes; a finished one is left alone.
+- **Fixed: a settings switch that did nothing.** "Store downloads compressed"
+  had never worked. The delegated click listener calls `preventDefault()`
+  before dispatching — correct for links and buttons, but on a checkbox it
+  _cancels the native state toggle_. The handler then read its own
+  pre-toggle value, wrote the same value back, and the switch sat inert.
+  Nothing threw, no test was red, and it looked correct in every screenshot.
+  - Both storage switches now live in the change pipeline, which reads
+    `el.checked` after the browser has toggled it — the pattern the other
+    eleven switches in this app already use.
+  - The click pipeline no longer cancels a toggle's own state change, so the
+    failure cannot silently repeat.
+  - `tests/checkbox-pipeline.test.js` audits **every** checkbox and radio in
+    the app for ownership by the change pipeline, so a thirteenth dead
+    switch fails the gate instead of shipping.
+
+## v5.17.16 — Arabic typeface choice, and an independent score of 8.0
+
+- **The reader can finally choose the Arabic typeface.** The Mushaf has always
+  had one; the adhkar, the duas, the reader and the tasbih stage did not — Arabic
+  reading text outside the Mushaf was locked to a single Amiri-first stack, so
+  a reader who prefers a Medina-print Naskh or a modern face had no way to say
+  so. Four choices now sit beside the Arabic size slider: **Amiri** (the
+  default), **Amiri Quran**, **Scheherazade New**, and **the device's own
+  font** for the clean modern look.
+  - **Zero new bytes.** Every family is already bundled (all OFL, already in
+    APP_SHELL) or is the device's own — a new typeface would cost install size
+    on a 3G phone for a preference.
+  - **The Mushaf is untouched.** It always sets its own family and `quran.css`
+    prefers it, so a page of the Qur'an can never inherit this choice.
+  - **The default changes nothing.** It reproduces the previously hard-coded
+    stack exactly, so an upgrade is visually a no-op.
+  - It is an **enum in the sanitizer**, not a raw family string: a crafted
+    settings blob trying to inject a font stack (`Cairo; } body {…`) is
+    rejected and falls back to the default.
+  - Thirteen surfaces follow automatically by overriding one custom property
+    from a root `data-arabic-font` attribute, so there is no per-view plumbing
+    to keep in sync.
+- **An independent scoring agent put the app at 8.0/10** (±0.6), measured by
+  execution against azkar.me as the benchmark: look and feel 7.5, feature depth
+  8.5, data honesty 9.0, offline truth 7.0, accessibility 7.0, bilingual 8.5.
+  Its five findings are recorded in `docs/OPEN-ISSUES.md` — including the
+  correction that the "missing manual minute offset" is in fact shipped and
+  pinned, while the real gap is methodology _depth_ (7 methods against 23, two
+  Asr rules against four madhab conventions).
+
+## v5.17.15 — The counter becomes the hero, and a floating window for it
+
+- **The counter was redesigned against a measurement, not a taste.** Ours was a
+  10px ring around a 41.6px numeral: the ring dominated and the number did not
+  read as the thing being counted. Measured against azkar.me's counter (a
+  hairline ring, a 72px/700 numeral, almost no other chrome), the dial is now
+  240px with a **72px/800 tabular numeral sized as a third of the dial** — so
+  the 200% type scale can never push the numeral out of its own ring — and the
+  ring is a **6px hairline whose tip carries a faint halo**, so the eye follows
+  the leading edge of the progress.
+- **A tap now feels like a bead moving.** The numeral punches on press
+  (`scale(1.08)`) and a soft bloom lifts behind it, both pure CSS so they can
+  never drift out of sync with the count the way a scripted animation would.
+  The dial also gained an inner highlight and its own shadow, so it reads as a
+  physical medallion rather than a flat outline. Under `prefers-reduced-motion`
+  — and under the app's own `data-reduce-motion` switch — the punch and the
+  bloom are removed while the ring fill and the number change remain, so less
+  motion costs no feedback.
+- **The ring's geometry now has one source of truth.** The SVG draws at a fixed
+  200-unit viewBox and is scaled by CSS, so changing `--tasbih-dial-size` moves
+  the ring, the bloom and the numeral together instead of leaving a stale
+  200px ring inside a 240px dial.
+- **The counter can now be a floating window** — the one competitor feature we
+  cannot ship natively (no build step, no app store) but can match on the web.
+  Document Picture-in-Picture puts the count and target in an always-on-top
+  window with **no permission prompt and no native code**. The affordance is
+  feature-gated: on a browser without the API there is no button at all rather
+  than a dead one, and a refused request is reported instead of swallowed. The
+  window follows the count, the target and the phrase from the state
+  subscription — it is never a second, stale source of truth — and one control
+  both opens and closes it.
+- **The counter's feel is now a test, not a screenshot review.** A feel nobody
+  re-checks is a feel that quietly regresses: `tests/counter-feel.test.js` pins
+  the numeral's scale and weight, the ring's weight and halo, the punch, the
+  bloom, the reduced-motion behaviour and the single-source geometry. The 200%
+  type spec now walks the tasbih route too, since the dial grew.
+
+## v5.17.14 — The audio-resume spec now waits on the app's own signals, and the azkar.me goal is written down
+
+- **`tests/e2e/audio-resume.spec.js` was reporting a product failure that was
+  not one.** It polled a raw `.dl-cell--done` count against a 120s budget and
+  failed at 86/114 under parallel e2e workers. Two intermediate fixes were also
+  wrong, and the reasons are now in the spec so nobody repeats them: the view
+  renders **two** `.panel--dl` grids by design (114 surah files + 114 verse
+  packs, so `.dl-cell` is 228 and is not the surah total), and the resume banner
+  clears when the batch **starts** — it is suppressed by `batchRunning` — so it
+  is not a completion signal. The spec now waits on the two signals the app
+  actually owns: the Stop button appearing while a batch runs and disappearing
+  when it ends, then the panel's own `114 / 114` counter. It is a stronger test
+  than before (it now also proves a running batch can be stopped) and takes 30s
+  instead of timing out at 90s.
+- **The azkar.me capability-parity goal is now a written plan.**
+  `docs/CAPABILITY-PARITY.md` holds a measured like-for-like comparison against
+  the live site, the five things we are genuinely behind on (prayer madhab and
+  manual minute offset, per-city prayer pages, native distribution, a floating
+  counter, install friction), and the two we decline to copy — their
+  leaderboard and their logged-in paid AI assistant — with the principle each
+  refusal protects. Linked from `docs/ROADMAP.md`, `docs/OPEN-ISSUES.md` and
+  `docs/PROJECT-PICTURE.md`.
+
+## v5.17.13 — Two more stale claims closed, and the last of the "hidden" Bismillah
+
+- **The riwaya mismatch note was already shipped and now has a test.** When the
+  chosen moshaf's catalog entry states a `rewaya` that is not Hafs, the player
+  says so, in both languages, naming the actual riwaya — because the on-screen
+  mushaf text is Hafs. It stays silent for a Hafs voice _and_ for the 110
+  catalog entries that state no riwaya at all: unknown is not a mismatch, and
+  guessing one would be inventing religious data. `tests/recitation-honesty.test.js`
+  now pins all three cases plus the data premise.
+- **The last of the "hidden" Bismillah style is gone.** The preference enum had
+  already dropped it, so the option was unreachable — but two views still
+  branched on a state the sanitizer cannot produce, a comment still advertised
+  it, and an orphaned `mushaf.bismillah_hidden` string pair sat in both
+  languages. All four are removed. Whether a Bismillah appears at all is now
+  solely the caller's decision, and At-Tawbah still correctly carries none. A
+  legacy stored `hidden` falls back to `auto`, so nobody can be left looking at
+  a textless page.
+
+## v5.17.12 — 200% text, and the layout fixes that made it real
+
+- **The in-app type scale can now reach 200%.** The slider stopped at 140%, so
+  WCAG 1.4.4 was only reachable through browser zoom — a real failure for a
+  low-vision reader, not a preference. The sanitizer clamp and the slider both
+  move to 2.0. The mushaf's own scale was already wider and is untouched.
+- **Raising the ceiling exposed three layout defects, which is why it was
+  raised honestly rather than quietly.** At 200% the home quick-action grid
+  pushed the document 98px sideways (grid tracks could not shrink below their
+  min-content width), long section names spilled out of their library tiles
+  instead of wrapping, a row of worship action chips refused to wrap, and a
+  few pixels leaked from the library route's own scrollers. Each is fixed at
+  the layer that caused it, and a new browser spec walks seven core surfaces
+  at 200% on a 390px phone asserting zero document overflow — with the
+  detection deliberately ignoring elements inside horizontal scrollers, since
+  a chip row that scrolls is supposed to be wider than the screen.
+- Two claims that audits kept reporting as open were verified by execution and
+  were **already shipped**: the `http://` custom-audio gate
+  (`js/services/audioCatalog.js` blocks cleartext servers outside localhost and
+  LAN) and Elder Mode's first-run prompt (the onboarding "bigger text?" step
+  sets Elder Mode, a 1.25× type floor, a 1.5× Arabic scale and high contrast).
+  Both are now in `docs/OPEN-ISSUES.md`'s stale list with their evidence, so
+  nobody spends time on them again.
+
+## v5.17.11 — Memory, honest backup errors, and the project's own documentation
+
+- **Backup failures now carry a code, not an English sentence.** Restoring a
+  corrupt or future-version backup used to be translated by matching the English
+  wording of the error — so rewording a message silently sent raw English to an
+  Arabic-only reader again. `parseBackup()` now returns a stable code alongside
+  the human sentence, and the UI maps that code to a translation. The sentence
+  remains as a fallback for any caller that renders it directly, and an unknown
+  failure degrades to the generic error rather than leaking anything.
+- **The first-launch language behaviour is now pinned by execution, not by
+  claim.** The OS language has been honored on a fresh install since v5.13.0;
+  it had no test, and an earlier audit wrongly reported it as missing. Five
+  cases now prove it: a fresh install on an Arabic OS starts in Arabic, a
+  non-Arabic OS stays English, and a returning reader's explicit choice wins in
+  both directions. The test runs the store in a child process, because the
+  storage layer memoizes its localStorage probe at import time and an in-process
+  fake would silently prove nothing.
+- **The project gained a memory, and the documentation set it was missing.**
+  `MEMORY.md` records what this project is, the decisions that are settled, and
+  the traps — so a compacted or lost session can recover from disk instead of
+  from conversation history. `AGENTS.md` states the machine-readable contract
+  for any agent or new maintainer. `docs/PROJECT-PICTURE.md` holds the macro and
+  micro picture of who the product is for and what was asked for and rejected.
+- **New documentation, in the shapes the ecosystem actually uses:** an ADR
+  directory recording the seven decisions that are expensive to reverse (zero
+  account, no build step, the content lens, one voice two engines, honest
+  absence, opt-in pagination, AI-assistance disclosure), plus `docs/OPEN-ISSUES.md`
+  (what is open and what it is blocked on), `docs/RUNBOOK.md` (releasing,
+  rollback, data-corruption repair, reset paths), `docs/TESTING.md`,
+  `docs/STYLEGUIDE.md`, `docs/ACCESSIBILITY.md`, `docs/PERFORMANCE.md`,
+  `docs/DATA-SCHEMA.md`, `docs/GLOSSARY.md`, `docs/ROADMAP.md`, `CHANGELOG.md`,
+  `CODE_OF_CONDUCT.md`, `SUPPORT.md`, and `CLAUDE.md` as a pointer to the
+  vendor-neutral rules.
+
+## v5.17.10 — Fix wave: scripture repair, Tajweed coherence, content authority, honest states
+
+- **Scripture integrity (P0):** repairs all 180 U+FFFD characters that had crept into 14 Mushaf pages (recovered from the bundled Qur'an corpus with per-verse alignment checks) and 75 Hadeeth rows (recovered from `fawazahmed0/hadith-api`, cross-checked against sunnah.com, with English-number alignment verified first). Adds `scripts/repair-scripted-text.mjs` plus a permanent gate that no shipped scripture carries a replacement or control character and that every `.gz` twin matches its plain JSON byte for byte.
+- **Tajweed coherence:** one shared rule-family/colour registry across the Mushaf, the classic reader, the ayah detail modal, the legend, settings and practice/lesson swatches; the previously unreachable plain-text rules are now toggleable; rule classification reads the raw token (diacritics included) and overlap is resolved deterministically instead of double-wrapping; the corpus Basmalah and its variants share one constant; the dead `tajweedInspector` setting is removed rather than silently ignored.
+- **Content authority:** banner and section reordering now spans the bundled/custom boundary (a custom library can move, and the last bundled banner can move below it); the card editor merges onto the stored item, so an English-only edit no longer blanks the Arabic translation, virtues or custom grade nor drops audio/notes/tags; the library view no longer re-sorts a user's chosen order away; per-library field toggles cascade to Home, Moods, Favorites, Collections and Focus.
+- **Honest states:** a missing gold price no longer reports "no zakat due"; prayer and ambient countdowns run on one lifecycle with real data; the offline Words inventory includes word-study, dictionary and root-meaning files; audio cache eviction is awaited and reported instead of silently dropping downloads; the "verse of the day" pool is an allowlist of devotional libraries, so study and calendar material can never leak onto the card.
+- **Interactions:** Focus ignores keys and swipes aimed at interactive controls, overlays and modals; one tap is one haptic and one tick; the ripple lands on the effective count target; cards opt out of double-tap zoom and text selection; reduced motion restores the reader and Mushaf idle controls; the certificate never claims "0 surahs" and counts a page only after it loads.
+- **Search:** `highlightMatch` matches the original text in one pass, so multi-term queries can no longer match the `<mark>` markup they generated a moment earlier (and regex metacharacters are literal).
+- **Labels:** per-item review wording and the corpus-level AI-assistance disclosure are honest about what the data can and cannot prove, in `data/SOURCES.md`, `CREDITS.md` and About.
+
+## v5.17.9 — Word-study UX and data-integrity hardening
+
+- Rebuilds the word-study card around a visible header, verse context, ordered sections, consolidated source disclosure, and a responsive sticky continuation action.
+- Routes materialized word-study fields through shared provenance resolvers, rejects incomplete citations as authoritative, preserves tafsir metadata, and exposes bilingual source/review labels.
+- Makes cold word-study opens visible and stale-open-safe, shares word text separately from ayah images, keeps bookmark state live, and distinguishes empty tafsir from loading.
+- Fills trusted city coordinates and curated city timezones on selection, cancels stale Mushaf turns, shares in-flight page/data promises, and wipes all app IDB stores during reset.
+- Keeps a fullscreen exit reachable while idle, makes search pagination Back/Forward-safe, removes the redundant Settings TOC, adds a saved-word browser, and exposes find-word/review Tajweed practice.
+- Adds a versioned full/seed data manifest with sorted SHA-256 and byte-size integrity checks, plus localized pending-scholarly-review warnings that never expose internal review notes.
+
 ## v5.17.8 — Inquisition fix-plan implementation (identity, overflow, grades, lazy views)
 
 Implements the 2026-09-22 Inquisition fix plan (`PLAN-Nur-al-Dhikr-Inquisition-Fix-Plan-2026-09-22.md`):

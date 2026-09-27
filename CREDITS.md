@@ -49,6 +49,10 @@ recording is credited in `assets/audio/adhan/CREDITS.md`.
   Abu Dawud, Tirmidhi, Nasa'i, Ibn Majah, Ahmad), a published "100 Duas
   from the Qur'an and Sunnah" collection (Al-Munajjid), and other named
   Islamic literature sources cited per-item where available.
+- Translations, explanatory material and review metadata were prepared with
+  AI assistance and automated integrity checks. Items whose attribution is
+  not yet confirmed are labelled in-app and must be verified against a
+  citable source before religious reliance.
 
 ## Fonts & audio
 

@@ -530,7 +530,7 @@
       deliberately — chrome mirrors, content order doesn't.
 - [x] **UX-6 dead row.** The calendar sheet's self-link is now
       `calendar-goto-fasting`: closes the sheet, scrolls to
-      `#calendar-fasting` (settings-toc-go pattern). New `data-action`
+      `#calendar-fasting` (the existing settings section landing pattern). New `data-action`
       resolves (dead-action gate green).
 - [x] **UX-9 H1.** Home hero H1 is the app name; the tagline is a styled
       paragraph (`.home-hero__tagline`, `--fs-base` token).
@@ -1059,12 +1059,10 @@ cleanAddedItems/cleanAddedCategories/cleanFieldToggles` (+ `cleanHadithPrefs`
       11 panels (10 palettes, 8 shapes, sliders, reciter + 2 translation lists,
       6 card-field toggles, notifications, data). No memorization forced, but
       high cognitive load for low-vision/motor-impaired users.
-      FIXED: sticky in-page table of contents (11 section-jump chips reusing the
-      panel headers + 1 new `settings.toc` key EN/AR, panels carry
-      `settings-sec-*` ids with scroll-margin, `settings-toc-go` handler
-      scrolls without touching the hash router and respects reduceMotion).
-      Files: `views/settings.js`, `app/handlers/system.js`,
-      `assets/css/components.css` (`.settings-toc`), `core/i18n/{en,ar}.js`.
+      FIXED: the settings view uses 12 native accordion panels as its single
+      navigation surface. The redundant in-page table of contents, its
+      handler, CSS, and translation keys were removed; deep links still open
+      and focus the requested `settings-sec-*` panel.
 
 ## 🟡 Minor (polish)
 
@@ -1201,7 +1199,7 @@ role="navigation">`. FIXED: both are now `<nav>` (class hooks unchanged,
 - Player size: measured 172px on a 390px viewport — now a compact head
   (pause + X) over one scrollable 13-chip strip, 114px on pixels.
 - Settings TOC removed entirely per user call (redundant over the
-  accordion): markup, `settings-toc-go` handler, CSS, en+ar keys.
+  accordion): markup, handler, CSS, and en+ar keys.
 - Offline rows reworked to a two-line grid after a real screenshot
   showed titles crushed to ~5 chars ("Qur'a…") between badge and
   button — truncation CSS alone was insufficient. Re-shot clean;

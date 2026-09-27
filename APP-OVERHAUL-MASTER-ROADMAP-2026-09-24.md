@@ -37,19 +37,19 @@ The largest remaining issue is **lexicon semantics**, not token coverage. The re
 
 ## 2.1 Baseline package facts
 
-| Item | Verified result | Verdict |
-|---|---:|---|
-| Repository package version | 5.17.8 | PASS |
-| Original supplied ZIP | ~60 MB | ABOVE requested 20–30 MB seed target |
-| Extracted working tree | ~241 MB | Expected for full corpus |
-| `data/quran-words` | ~44 MB | Full corpus |
-| `data/quran-word-study` | ~19 MB | Full study corpus |
-| `data/tafsir` | ~62 MB | Full commentary corpus |
-| `data/hadith` | ~60 MB | Full hadith corpus |
-| Full Node test run | Timed out before final summary in this environment | UNVERIFIED |
-| Targeted Node suites | 58 tests passed, 0 failed | PASS |
-| Browser E2E | Browser environment unavailable for the final run | UNVERIFIED |
-| Cross-engine | Not executable here | HARDWARE/ENV GAP |
+| Item                       |                                    Verified result | Verdict                              |
+| -------------------------- | -------------------------------------------------: | ------------------------------------ |
+| Repository package version |                                             5.17.8 | PASS                                 |
+| Original supplied ZIP      |                                             ~60 MB | ABOVE requested 20–30 MB seed target |
+| Extracted working tree     |                                            ~241 MB | Expected for full corpus             |
+| `data/quran-words`         |                                             ~44 MB | Full corpus                          |
+| `data/quran-word-study`    |                                             ~19 MB | Full study corpus                    |
+| `data/tafsir`              |                                             ~62 MB | Full commentary corpus               |
+| `data/hadith`              |                                             ~60 MB | Full hadith corpus                   |
+| Full Node test run         | Timed out before final summary in this environment | UNVERIFIED                           |
+| Targeted Node suites       |                          58 tests passed, 0 failed | PASS                                 |
+| Browser E2E                |  Browser environment unavailable for the final run | UNVERIFIED                           |
+| Cross-engine               |                                Not executable here | HARDWARE/ENV GAP                     |
 
 ## 2.2 Seed-builder audit
 
@@ -225,10 +225,10 @@ The current dictionary layer contains **4,763 lemma entries**, but token-level d
 
 Current token-level availability is much lower:
 
-| Field | Token occurrences covered |
-|---|---:|
-| Synonyms | 10,601 / 77,429 = 13.69% |
-| Antonyms | 15,441 / 77,429 = 19.94% |
+| Field    | Token occurrences covered |
+| -------- | ------------------------: |
+| Synonyms |  10,601 / 77,429 = 13.69% |
+| Antonyms |  15,441 / 77,429 = 19.94% |
 
 This must **not** be solved by bulk-generating arbitrary antonyms/synonyms.
 
@@ -261,7 +261,7 @@ Token
 
 **Do not manufacture an antonym for a particle merely to make a coverage counter reach 100%.**
 
-"Complete coverage" means complete *applicable* coverage.
+"Complete coverage" means complete _applicable_ coverage.
 
 ## 3.3 `صَافَّاتٍ` acceptance example
 
@@ -594,14 +594,14 @@ The existing project has already started this architecture with lazy Mushaf impo
 
 # 8. Six Audit Vectors — Final Action Matrix
 
-| Vector | Current state | Next action |
-|---|---|---|
-| A — E2E/PWA | Extensive tests; final browser matrix unverified | Full Chromium route matrix, then Firefox/WebKit |
-| B — Features | Many requested capabilities already exist | Audit before adding duplicates |
-| C — UI/UX | Mature component structure but organization needs measurement | Route/chrome/control census |
-| D — Responsive | CSS contains many mobile paths; visual proof incomplete | 390/844/landscape/tablet screenshot sweep |
-| E — DOM/Memory | Long-session guardrails exist in code | Heap + listener + detached-node test |
-| F — Accessibility/RTL | Significant ARIA/roving/focus work exists | axe + screen-reader + RTL interaction sweep |
+| Vector                | Current state                                                 | Next action                                     |
+| --------------------- | ------------------------------------------------------------- | ----------------------------------------------- |
+| A — E2E/PWA           | Extensive tests; final browser matrix unverified              | Full Chromium route matrix, then Firefox/WebKit |
+| B — Features          | Many requested capabilities already exist                     | Audit before adding duplicates                  |
+| C — UI/UX             | Mature component structure but organization needs measurement | Route/chrome/control census                     |
+| D — Responsive        | CSS contains many mobile paths; visual proof incomplete       | 390/844/landscape/tablet screenshot sweep       |
+| E — DOM/Memory        | Long-session guardrails exist in code                         | Heap + listener + detached-node test            |
+| F — Accessibility/RTL | Significant ARIA/roving/focus work exists                     | axe + screen-reader + RTL interaction sweep     |
 
 ---
 
@@ -610,6 +610,7 @@ The existing project has already started this architecture with lazy Mushaf impo
 ## P0 — already fixed in this audit
 
 ### OVER-01 — Awaitable Mushaf navigation
+
 **Status:** IMPLEMENTED
 
 Files:
@@ -624,6 +625,7 @@ Gate:
 - live Chromium swipe/arrow trace when environment permits.
 
 ### OVER-02 — True fullscreen hide/reveal
+
 **Status:** IMPLEMENTED
 
 Files:
@@ -640,6 +642,7 @@ Gate:
 - keyboard focus trace.
 
 ### OVER-03 — Location-denial recovery
+
 **Status:** IMPLEMENTED
 
 Files:
@@ -661,36 +664,43 @@ Gate:
 ## P0 — next Agent-1 data/verification tasks
 
 ### LEX-01 — Field-aware lexicon schema
+
 **Dependency:** none
 
 Define `NOT_APPLICABLE`, `NOT_ATTESTED`, `CURATED`, `CORPUS`, `TAFSIR`, `CLASSICAL_LEXICON` provenance states.
 
 ### LEX-02 — Source-backed lemma layer
+
 **Dependency:** LEX-01
 
 Expand lemma semantics without fabricating synonym/antonym data.
 
 ### LEX-03 — Contextual-meaning layer
+
 **Dependency:** LEX-02
 
 Add explicit verse-context meaning where the generic lemma gloss is insufficient.
 
 ### LEX-04 — Classical etymology layer
+
 **Dependency:** LEX-01
 
 Replace generic root notes with source-identified classical lexical records.
 
 ### LEX-05 — Popup provenance renderer
+
 **Dependency:** LEX-01 through LEX-04
 
 Expose source labels and applicability states in the word modal.
 
 ### ORTH-01 — Device orthography sweep
+
 **Dependency:** none
 
 Fonts × viewport × scale × Tajweed state.
 
 ### AUDIO-01 — Real fallback trace
+
 **Dependency:** none
 
 Route-intercept first/second mirrors and prove the third path loads.

@@ -106,8 +106,8 @@ js/
 │   │   ├── views.js       routes, Mushaf type/paper, grades, themes, defaults
 │   │   └── sanitize.js    sanitizeSettings/sanitizeMushafPrefs (XSS boundary)
 │   ├── i18n/              UI-chrome dictionary, split per language (v4.2)
-│   │   ├── en.js          1793 English keys (contract-gated against ar)
-│   │   ├── ar.js          1793 Arabic keys
+│   │   ├── en.js          Localized UI keys (contract-gated against ar)
+│   │   ├── ar.js          Matching Arabic key set
 │   │   └── (i18n.js       The loader + t()/isRTL() at core/i18n.js — both
 │   │       stays at       languages load synchronously so t() never
 │   │       core/ root)    awaits and a language switch never flashes)
@@ -167,7 +167,7 @@ assets/css/                9 files, strict load order:
                            cards → quran → animations → desktop →
                            accessibility
 data/                      Content corpora (~190MB; see data/SOURCES.md)
-tests/                     169 test files + helpers / 1863 tests (node --test)
+tests/                     Node test files + helpers (run `npm test` for the live count)
 sw.js                      Service worker (precache + SWR data + triggers)
 ```
 
@@ -409,7 +409,7 @@ layers are exactly what may be broken.
 
 ```
 npx eslint .             # zero errors (js, tests, sw.js — all linted)
-npm test                 # 1863 tests (CI must pass)
+npm test                 # run the complete Node suite (CI must pass)
 npx prettier --check .   # whole tree (npm run check runs all three)
 ```
 
