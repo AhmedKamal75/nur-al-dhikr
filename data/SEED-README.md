@@ -1,64 +1,52 @@
-# Seed / slim bundle — pruning manifest
+# Seed / slim bundle
 
-This file documents what the `nur-al-dhikr-audit-slim-v*.zip` minimal
-bundle keeps, what it drops, and why. Reproduce it any time with:
+`npm run build-seed` creates a runnable offline project containing a deliberately small, semantically complete seed corpus. It does not modify the full working tree.
 
 ```sh
-npm run build-seed   # writes nur-al-dhikr-audit-slim-v<version>.zip
+npm run build-seed
+# writes nur-al-dhikr-seed-v<version>.zip
 ```
 
-## Design decision (deliberate deviation from the "3-surah seed" sketch)
+## Contents
 
-An early sketch proposed keeping only 2–3 full surahs and stubbing the
-rest. That was **rejected** because `tests/contracts.test.js` pins the
-full corpus (all 114 `data/quran/*.json` files with exactly
-`ayahCount` ayahs each, 6,236 total; `mushaf-meta` covering all 6,236
-ayahs on 604 pages). A 3-surah seed would turn the contract gate red on
-purpose. The slim bundle instead keeps **every file any gate checks**
-and prunes only the large corpora no gate pins:
+- Qur’an surahs `1`, `32`, and `112` in the Quran, word-study, and word-token tiers.
+- 15 representative adhkar items.
+- Six Nawawi hadith samples; the canonical catalog remains available and other books stay remote.
+- Three-surah samples for every bundled tafsir/grammar edition.
+- Tajweed practice rows whose ayahs exist in the three seed surahs.
+- The application code, assets, documentation, scripts, and tests needed to run the seed.
 
-| Kept (gates depend on it) | Pruned (no gate pins it) |
-|---|---|
-| `data/quran/` — all 114 surahs + `.gz` | `data/tafsir/` — 7 editions × 114 surahs (~62 MB) |
-| `data/mushaf/` — all 604 pages + `.gz` | `data/quran-words/` — per-word grammar (~44 MB) |
-| `data/quran-meta.json`, `data/mushaf-meta.json` | `data/hadith/` — 9 books (~60 MB) |
-| `data/translations/` (4 overlay langs) | — |
-| `data/quran-dict.json` (4,763-lemma study notes — full corpus coverage), `data/quran-roots*.json` (incl. `quran-roots-meaning.json`, 1,651 root core-senses), `data/tajweed-practice.json`, adhkar/duas/asma catalogs | — |
-| full `js/`, `assets/css/`, `tests/` (151 unit files) + `playwright.config.js`, all `docs/`, `scripts/` | `node_modules/`, `.git/`, `test-results/`, `playwright-report/`, `*.log`, `*.zip` |
+The stage also contains a `data/manifest.json` with `mode: "seed"`, raw byte sizes, and SHA-256 hashes for every eligible staged JSON file. The full release has a separate `mode: "full"` manifest at `data/manifest.json`.
 
-Result at v5.2.85: **12.8 MB zip, 26.5 MB uncompressed, 2,868 entries**
-— under the 50 MB ceiling with headroom.
+## Design decision
 
-## Honest-degradation contract on seeds
+The seed is intentionally smaller than the full corpus. Full-corpus contract tests remain available in the project and use the seed marker to skip only checks that require absent tiers; seed-specific tests verify the staged Quran, hadith, tafsir, word-study, and manifest contents.
 
-Pruned tiers surface the standard `skeleton → error + Retry` path, never
-a silent spinner and never invented content:
+The archive is compressed and currently measures about 8 MB for v5.17.9, below the 50 MB hard ceiling. Compression is an implementation detail; the semantic contract is the list above, not a target byte floor.
 
-- Hadith views (`#/hadith`): catalog fetch 404s → `loadErrorStateHTML`
-  with Retry (same component as the offline tier errors).
-- Tafsir tabs in the ayah-study panel: `tafsir-editions.json` IS bundled
-  (small), but per-surah edition files 404 → inline error + Retry.
-- Word-study popover: `quran-words/` missing → `getWord()` returns null
-  → tajweed-only fallback panel + tafsir deep-link (existing v4.6.0
-  behavior, covered by `wordStudyRender.test.js` "degrades gracefully").
-- Tajweed coloring/practice: pure classifier over bundled `data/quran/`
-  text + bundled `data/tajweed-practice.json` pool — **fully functional
-  on seeds**, including every rule pool (≥25 entries/rule).
+## Honest degradation
 
-## What `npm test` needs
+Pruned or unavailable tiers use the standard loading/error/Retry surfaces. They do not silently invent content:
 
-`npm test` (1,702 unit tests at v5.7.0) requires the **full tree**:
-`wordStudyRender.test.js` reads `data/quran-words/` + `data/tafsir/`
-straight from disk and fails with ENOENT on the slim — loudly, at file
-read, not as a silent skip. E2E (`playwright test`, chromium) boots the
-slim fine: Home renders with zero network; seed surahs 1/32/112 read
-and color correctly.
+- Hadith views can show the catalog and an honest unavailable state for remote books.
+- Tafsir can show its bundled catalog and an error/Retry state for an unshipped surah.
+- Word study can fall back to the tajweed-only panel when its optional tier is unavailable.
+- Tajweed coloring and practice use the bundled Quran text and seed pool.
 
-## Sources
+## Verification
 
-Pruned files come from the same citable sources as the full tree; see
-`data/SOURCES.md` (per-word grammar: Quranic Arabic Corpus via
-mustafa0x/quran-morphology; glosses: quranwbw; tafsir: spa5k/tafsir_api
-mirror) and `CREDITS.md`. Nothing in the slim is re-generated or
-re-worded — it is a strict subset of the full tree plus generated
-`.gz` siblings (see `scripts/compress-data.mjs`).
+From the repository root:
+
+```sh
+npm run manifest:check
+npm test
+npm run build-seed
+```
+
+To verify an extracted seed explicitly:
+
+```sh
+node scripts/data-manifest.mjs --root /path/to/extracted-seed --mode seed --check
+```
+
+See `data/SOURCES.md` and `CREDITS.md` for corpus provenance. The seed does not rewrite religious content; it selects existing data and generates only packaging metadata.

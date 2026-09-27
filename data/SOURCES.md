@@ -59,6 +59,17 @@ this data is offered for personal study and convenience. It is not a
 replacement for consulting qualified scholars, especially for anything
 you intend to rely on religiously.
 
+## AI assistance and editorial verification
+
+Parts of the English/Arabic translations, explanatory notes, search metadata
+and machine review notes were prepared with AI assistance and checked with
+automated integrity tests. AI assistance is not religious certification.
+Where an attribution, citation or grade still carries an open editorial
+check, the item is labelled "Unconfirmed attribution" in every surface and
+the internal review reason stays in the data for maintainers. No flagged
+attribution should be relied on religiously without verification against a
+citable source and, where appropriate, a qualified teacher.
+
 ## Zakat explainer notes (`data/zakat-notes.json`, v5.2.75)
 
 Authored in-app, not sourced: one generic, madhhab-neutral explainer per
