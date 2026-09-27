@@ -22,8 +22,9 @@ import {
 } from './hadithData.js';
 import { ensureOfflineQuota } from './offlineJobs.js';
 import {
-  clearLazyInFlightFetches,
+  invalidateLazyFetches,
   ensureMushafData,
+  ensureMushafMeta,
   ensureQuranData,
   ensureQuranRoots,
   ensureQuranRootsFull,
@@ -37,12 +38,16 @@ import {
 import { maybeStartTafsirSearchBuild } from './tafsirSearch.js';
 import { maybeFollowRecitation } from './recitationFollow.js';
 import { setEnabled as setGapTelemetry } from '../services/gapTelemetry.js';
+import * as floatingCounter from '../services/floatingCounter.js';
+import { PRESETS as TASBIH_PRESETS } from '../views/tasbih.js';
 import { syncReadingTimer } from './readingTimer.js';
 import { render, clearScrollMemory } from './renderer.js';
 import {
   maybeMarkNudgeShown,
   maybeProbeStorage,
   updateHomeTickerLifecycle,
+  updatePrayerTickerLifecycle,
+  updateAmbientTickerLifecycle,
   updateRamadanLifecycle,
 } from './tickers.js';
 import { scheduleTriggerArm } from './triggers.js';
@@ -55,6 +60,7 @@ import { VIEWS } from '../core/config.js';
 import { computeReaderWindow } from '../domain/readerWindow.js';
 import { resetQuranIndex, setQuranIndexReady } from '../domain/quranSearch.js';
 import { clearClassifyMemo } from '../domain/tajweed.js';
+import { applyAudioCacheCapFromSettings } from '../services/audioStore.js';
 
 import { actions, store } from '../core/state.js';
 import { applyTheme } from '../core/theme.js';
@@ -159,6 +165,10 @@ export function resetStaleFetchGuards(state) {
   // flag — a stale "ready" with an empty corpus bricks search).
   if (!state.hadith.index) {
     rt.hadithIndexStarted = false;
+    rt.hadithIndexFetch = null;
+    rt.hadithDailyStarted = null;
+    rt.hadithSearchFlight = null;
+    rt.lastHadithSearchDocs = '';
     resetHadithBookFetches();
   }
   if (!state.quranRoots) rt.quranRootsFetchStarted = false;
@@ -167,9 +177,6 @@ export function resetStaleFetchGuards(state) {
     resetQuranIndex();
     setQuranIndexReady(false);
   }
-  // (v5.2.77, BUG-05) drop in-flight per-surah/page/word/tafsir markers so
-  // late resolves after a reset/restore cannot repopulate wiped slices.
-  clearLazyInFlightFetches();
 }
 
 export function onStateChange(stateArg, action) {
@@ -184,6 +191,7 @@ export function onStateChange(stateArg, action) {
     // any NAVIGATE now closes whatever is open. All existing call sites
     // already closeModal() before go(); this is the safety net for the
     // navigation paths that bypass handlers (history, deep links).
+    if (action && action.type === 'NAVIGATE') rt.mushafNavigationIntent += 1;
     if (action && action.type === 'NAVIGATE' && isModalOpen()) closeModal();
     // The mobile "More" drawer belongs to its view too: Back-button and
     // deep-link navigations bypass tap handlers, so close it here (idempotent).
@@ -250,6 +258,32 @@ export function onStateChange(stateArg, action) {
       // Re-render replaces the text block; fit AFTER the DOM swap.
       queueMicrotask(() => requestAnimationFrame(() => refreshMushafFit()));
     }
+    // (v5.17.15) keep an open floating counter honest. The window is a
+    // second surface showing the SAME counter, so it must never lag behind
+    // the app — a window reading "12 / 33" while the dial reads 20 is worse
+    // than no window. Pushed from the one state subscription rather than from
+    // the tap handler, so target changes and phrase switches land too.
+    if (floatingCounter.isOpen()) {
+      const activeId = state.tasbih?.activeItemId;
+      const key = 'tasbih:' + (activeId || 'subhanallah');
+      const counter = state.counters?.[key];
+      if (counter) {
+        const customs = Array.isArray(state.tasbihCustom) ? state.tasbihCustom : [];
+        const preset = TASBIH_PRESETS.find((p) => p.id === activeId);
+        const custom = customs.find((c) => c && c.id === activeId);
+        const lang = state.settings.language;
+        floatingCounter.updateFloatingCounter({
+          label: preset
+            ? String(lang === 'ar' ? preset.ar : preset.en || '')
+            : custom
+              ? String(custom.text || '')
+              : '',
+          count: counter.count || 0,
+          target: counter.target || 33,
+          lang,
+        });
+      }
+    }
     if (state.customContent !== rt.lastCustomContentRef) {
       rt.lastCustomContentRef = state.customContent;
       refreshLibraryIndex();
@@ -269,6 +303,10 @@ export function onStateChange(stateArg, action) {
     // "Loading…" for the rest of the session. Whenever the data is gone,
     // the guard is wrong: reset it so the next navigation refetches.
     resetStaleFetchGuards(state);
+    if (action && (action.type === 'RESET_ALL' || action.type === 'RESTORE_STATE')) {
+      invalidateLazyFetches();
+      applyAudioCacheCapFromSettings(state.settings);
+    }
     // (v5.2.75, PERF-03) reset-path memo hygiene for the bounded caches.
     resetEphemeralCaches(action);
     // v3.15: translation edition changed through ANY path (settings picker,
@@ -292,6 +330,9 @@ export function onStateChange(stateArg, action) {
     if (state.activeView === VIEWS.MUSHAF) {
       ensureMushafData(state); // (v4.4) also arms the translation-tray fetch when the tray pref is on
     }
+    if (state.activeView === VIEWS.STATISTICS || state.activeView === VIEWS.CERTIFICATE) {
+      ensureMushafMeta();
+    }
     if (state.activeView === VIEWS.AUDIO) ensureRecitersData(state);
     if (state.activeView === VIEWS.AUDIO) maybeSyncVerseStatus(state);
     if (state.activeView === VIEWS.AUDIO) maybeSyncBatchResume(state);
@@ -300,6 +341,8 @@ export function onStateChange(stateArg, action) {
     updateCompassLifecycle(state);
     updateRamadanLifecycle(state);
     updateHomeTickerLifecycle(state);
+    updatePrayerTickerLifecycle(state);
+    updateAmbientTickerLifecycle(state);
     // (v5.2.0) ambient nightstand wake lock follows the route.
     updateAmbientWakeLifecycle(state);
     // (v5.4.0, P0-3) fullscreen no-scroll auto-fit follows the route

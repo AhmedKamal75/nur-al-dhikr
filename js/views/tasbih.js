@@ -6,6 +6,7 @@ import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
+import { isSupported as floatingCounterSupported } from '../services/floatingCounter.js';
 
 const PRESETS = [
   {
@@ -105,10 +106,15 @@ export function renderTasbih(state) {
     <div class="tasbih-stage" data-action="tasbih-tap" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}">
       <p class="tasbih-stage__arabic" ${stageAttrs}>${escapeHTML(stageText)}</p>
       <button type="button" class="tasbih-dial" dir="ltr" data-action="tasbih-tap" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: counter.count, target: counter.target })}">
-        <svg class="tasbih-dial__ring" viewBox="0 0 200 200" width="200" height="200" aria-hidden="true">
+        <!-- (v5.17.15) The ring is drawn at 200-unit scale and scaled to the
+             dial by CSS, so the geometry lives in ONE place: change
+             --tasbih-dial-size and the ring, the bloom and the numeral all
+             follow. Keeping the viewBox fixed is what makes that possible. -->
+        <svg class="tasbih-dial__ring" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
           <circle cx="100" cy="100" r="88" class="tasbih-dial__track"/>
           <circle cx="100" cy="100" r="88" class="tasbih-dial__fill" style="--pct:${pct}"/>
         </svg>
+        <span class="tasbih-dial__bloom" aria-hidden="true"></span>
         <!-- No aria-live here: every tap is announced once by the global
              #counter-announcer (services/tasbih.js) — a second live region
              on the count made each tap double-announced. -->
@@ -120,6 +126,14 @@ export function renderTasbih(state) {
 
     <div class="tasbih-controls">
       <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
+      ${
+        // (v5.17.15) The floating counter is only OFFERED where the browser
+        // can do it. A button that cannot work is worse than no button — and
+        // on Safari/Firefox it would be permanently dead.
+        floatingCounterSupported()
+          ? `<button type="button" class="btn btn--ghost" data-action="tasbih-float" data-phrase-id="${escapeHTML(active.id)}" aria-pressed="${state.ui?.tasbihFloat === true}">${icon('expand', { size: 14 })} ${t('tasbih.float', lang)}</button>`
+          : ''
+      }
       <div class="target-stepper">
         <span>${t('tasbih.target', lang)}</span>
         <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${escapeHTML(active.id)}" data-delta="-1" aria-label="${t('tasbih.targetDown', lang)}">−</button>

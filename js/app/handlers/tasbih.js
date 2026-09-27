@@ -4,13 +4,28 @@
  * app/events.js merges them into the single delegation table.
  */
 
-import { actions, store } from '../../core/state.js';
+import { actions, selectors, store } from '../../core/state.js';
 import { t } from '../../core/i18n.js';
 import { vibrate } from '../../core/utils.js';
 import * as tasbih from '../../services/tasbih.js';
 import { showToast } from '../../ui/toast.js';
 import { triggerRipple } from './items.js';
 import { PRESETS as TASBIH_PRESETS } from '../../views/tasbih.js';
+import * as floating from '../../services/floatingCounter.js';
+
+/**
+ * The reader-facing name of a tasbih phrase, for the floating window's label.
+ * Presets carry both scripts ({ ar, en }); a user-authored phrase is free
+ * text and is shown as the reader typed it.
+ */
+function tasbihPhraseLabel(state, phraseId) {
+  const lang = state.settings.language;
+  const preset = TASBIH_PRESETS.find((p) => p.id === phraseId);
+  if (preset) return String(lang === 'ar' ? preset.ar : preset.en || '');
+  const customs = Array.isArray(state.tasbihCustom) ? state.tasbihCustom : [];
+  const custom = customs.find((c) => c && c.id === phraseId);
+  return custom ? String(custom.text || '') : t('nav.tasbih', lang);
+}
 
 export const clickHandlers = {
   'tasbih-select': (ds) => {
@@ -19,20 +34,15 @@ export const clickHandlers = {
 
   'tasbih-tap': (ds, e) => {
     const target = parseInt(ds.target, 10) || 33;
-    const result = tasbih.increment('tasbih:' + ds.phraseId, 'tasbih-dhikr', target);
-    tasbih.playTick(result.cycleCompleted ? 'complete' : 'tick');
-    // (v5.0.0) the same counting-feedback trio as the azkar cards.
+    tasbih.increment('tasbih:' + ds.phraseId, 'tasbih-dhikr', target);
     const state = store.getState();
-    if (state.settings.hapticsEnabled && navigator.vibrate) {
-      navigator.vibrate(result.cycleCompleted ? [12, 40, 18] : 10);
-    }
     if (state.settings.tapRipple && e) {
       // (see items.js — the re-render detaches the tapped node; defer)
       const phraseId = ds.phraseId;
       requestAnimationFrame(() => {
-        const fresh =
-          document.querySelector(`[data-phrase-id="${CSS.escape(phraseId)}"]`) ||
-          document.querySelector('.tasbih-stage');
+        const fresh = document.querySelector(
+          `.tasbih-stage[data-phrase-id="${CSS.escape(phraseId)}"]`
+        );
         if (fresh) triggerRipple(fresh, e);
       });
     }
@@ -93,5 +103,41 @@ export const clickHandlers = {
   'tasbih-custom-remove': (ds) => {
     if (!ds.id) return;
     store.dispatch(actions.tasbihCustomRemove(ds.id));
+  },
+
+  /**
+   * (v5.17.15) pop the counter into a floating window so it can be counted
+   * while doing something else — a reader working, walking or cooking should
+   * not have to keep the tab in front. Backed by Document Picture-in-Picture
+   * (no permission, no native code); see services/floatingCounter.js for why
+   * the affordance is feature-gated rather than always shown.
+   */
+  'tasbih-float': async (ds) => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    const key = 'tasbih:' + ds.phraseId;
+    const counter = selectors.getCounter(state, key) || { count: 0, target: 33 };
+    const phrase = tasbihPhraseLabel(state, ds.phraseId);
+    if (floating.isOpen()) {
+      // Second tap closes it: one control, both directions, and no second
+      // orphan window to leave floating with a stale count.
+      floating.closeFloatingCounter();
+      store.dispatch(actions.tasbihFloatSet(false));
+      return;
+    }
+    const result = await floating.openFloatingCounter({
+      label: phrase,
+      count: counter.count || 0,
+      target: counter.target || 33,
+      lang,
+    });
+    store.dispatch(actions.tasbihFloatSet(result.ok));
+    if (!result.ok) {
+      // Honest failure. 'unsupported' cannot normally happen (the view hides
+      // the button) but a race with a browser update must not be silent.
+      showToast(
+        t(result.reason === 'unsupported' ? 'tasbih.floatUnsupported' : 'tasbih.floatFailed', lang)
+      );
+    }
   },
 };

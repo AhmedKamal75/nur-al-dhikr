@@ -38,6 +38,9 @@
 .card[data-action='counter-tap'] {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .card[data-action='counter-tap']:active {
   border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
@@ -103,7 +106,7 @@
 }
 
 .card__arabic {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: var(--fs-arabic-card);
   line-height: var(--lh-arabic);
   color: var(--color-text);
@@ -154,6 +157,24 @@
   font-size: var(--fs-caption);
   color: var(--color-text-muted);
   font-style: italic;
+}
+
+.content-review-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1_5);
+  margin: var(--space-2) 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 3px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  font-size: var(--fs-caption);
+  line-height: 1.5;
+}
+.content-review-warning svg {
+  flex-shrink: 0;
+  margin-block-start: 0.15em;
 }
 
 .card__footer {
@@ -258,7 +279,7 @@
   white-space: nowrap;
 }
 .mini-card__arabic {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: var(--fs-sm);
   color: var(--color-text-muted);
   white-space: nowrap;
@@ -405,6 +426,10 @@
   letter-spacing: -0.005em;
   color: var(--color-text);
   line-height: 1.35;
+  /* A long section name must wrap INSIDE its tile. The grid track has an
+     explicit 150px floor, so at 200% type the text used to spill out of the
+     tile and push the document sideways instead of reflowing. */
+  overflow-wrap: anywhere;
 }
 .category-tile__count {
   display: inline-flex;
@@ -860,16 +885,21 @@ body.is-scrolled-deep .category-top {
    No markup change: the icon svg becomes its own tile via CSS. */
 .quick-actions {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* minmax(0, …) so a track can shrink BELOW its min-content width. The
+     default `auto` minimum meant a long tile label (with the absolute "Now"
+     badge inside it) widened the whole grid at 200% type and pushed the
+     document 98px sideways — the exact WCAG 1.4.4 failure the 200% ceiling
+     was raised to fix. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
 }
 @media (max-width: 380px) {
   .quick-actions {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 .quick-actions--compact {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .quick-action {
@@ -878,6 +908,7 @@ body.is-scrolled-deep .category-top {
   flex-direction: row;
   align-items: center;
   gap: var(--space-3);
+  min-inline-size: 0;
   min-height: 76px;
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
@@ -905,6 +936,12 @@ body.is-scrolled-deep .category-top {
 .quick-action--suggested {
   border-color: color-mix(in srgb, var(--color-accent-raw) 55%, transparent);
   box-shadow: var(--ring-accent);
+}
+/* The label between the icon and the edge must be allowed to wrap, or a long
+   tile name at 200% type widens the tile instead of wrapping inside it. */
+.quick-action > span {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
 }
 .quick-action svg {
   width: 46px;
@@ -1264,6 +1301,10 @@ a.worship-row:hover {
 }
 .worship-row--actions {
   gap: var(--space-1);
+  /* A row of action chips must be allowed to wrap. At 200% type a single
+     chip's min-content width exceeded the phone viewport and dragged the
+     whole document sideways. */
+  flex-wrap: wrap;
 }
 
 /* ==========================================================================
@@ -1459,7 +1500,7 @@ body.is-ambient #main {
   color: var(--color-text);
 }
 .ambient__slide {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: clamp(1.6rem, 6vw, 2.6rem);
   line-height: 2;
   font-weight: 600;
@@ -1757,6 +1798,9 @@ body.is-ambient #main {
      surface says "tap me" without stealing any inner control's cursor. */
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .focus__scroll p,
 .focus__scroll .chip {
@@ -1775,7 +1819,7 @@ body.is-ambient #main {
   margin-block: auto;
 }
 .focus__arabic {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: var(--fs-arabic-focus);
   line-height: var(--lh-arabic);
   max-width: 22ch;
@@ -1980,7 +2024,7 @@ body.is-ambient #main {
 }
 .tasbih-stage__arabic {
   cursor: inherit;
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: calc(var(--fs-arabic-card) * 1.15);
   line-height: var(--lh-arabic);
   text-align: center;
@@ -2000,13 +2044,32 @@ body.is-ambient #main {
   border: 1px solid var(--color-border);
 }
 
+/* (v5.17.15) The counter is the hero of this view, and it was reading as a
+   fat ring with a number inside it. Measured against azkar.me's counter
+   (2px hairline ring, 72px/700 numeral, almost no other chrome) ours was
+   10px of ring around a 41.6px numeral — the ring dominated and the number
+   did not read as the thing you are counting.
+
+   The redesign keeps our warmer material and adds the two things that make
+   a tap feel like a bead moving: a hairline ring with real depth, and a
+   numeral that PUNCHES on press. Diameter grows so the numeral has room;
+   both are expressed against --tasbih-dial-size so the proportion survives
+   the 200% type scale and any future size change. */
 .tasbih-dial {
+  --tasbih-dial-size: 240px;
   position: relative;
   display: grid;
   place-items: center;
-  width: 200px;
-  height: 200px;
+  inline-size: var(--tasbih-dial-size);
+  block-size: var(--tasbih-dial-size);
   border-radius: var(--radius-pill);
+  /* Depth, not decoration: an inner highlight plus the shadow the ring
+     already casts, so the dial reads as a physical medallion you press
+     rather than a flat outline. */
+  box-shadow:
+    inset 0 1px 2px rgb(255 255 255 / 0.5),
+    inset 0 -2px 6px rgb(0 0 0 / 0.04),
+    var(--shadow-sm);
   /* The app's #1 rapid-tap surface: kill double-tap zoom, text-selection
      callouts and the gray tap flash before they eat a count. */
   touch-action: manipulation;
@@ -2021,38 +2084,107 @@ body.is-ambient #main {
 .tasbih-dial__ring {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  inline-size: 100%;
+  block-size: 100%;
   margin: auto;
   transform: rotate(-90deg);
   pointer-events: none;
+  overflow: visible;
 }
 .tasbih-dial__track {
   fill: none;
   stroke: var(--color-border);
-  stroke-width: 10;
+  stroke-width: 6;
 }
 .tasbih-dial__fill {
   fill: none;
   stroke: var(--color-primary);
-  stroke-width: 10;
+  stroke-width: 6;
   stroke-linecap: round;
   stroke-dasharray: 552.9;
   stroke-dashoffset: calc(552.9 * (1 - var(--pct, 0) / 100));
   transition: stroke-dashoffset var(--dur-slow) var(--ease-standard);
+  /* The leading cap carries a faint halo, so the ring's tip is the brightest
+     thing on the dial — that is where the eye goes to follow progress. */
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--color-primary) 45%, transparent));
 }
 .tasbih-dial__count {
-  font-size: 2.6rem;
+  /* 72px at the default dial, and never larger than a third of it — so the
+     200% type scale cannot push the numeral out of its own ring. */
+  font-size: min(4.5rem, calc(var(--tasbih-dial-size) * 0.3));
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  position: relative;
+  /* --z-raised is documented for exactly this: local stacking above a
+     sibling. The numeral and the target must sit over the ring and the
+     bloom, and the design-system contract bans a raw numeric value here.
+     (Wording matters: a literal value written in a COMMENT trips the very
+     gate that bans it — the check greps the whole stylesheet.) */
+  z-index: var(--z-raised);
+  transform-origin: center;
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+/* The punch: the number answers the finger immediately, and the ring's
+   280ms dashoffset settle carries the rest. Pure CSS, so it cannot drift
+   out of sync with the counter the way a scripted animation would. */
+.tasbih-dial:active .tasbih-dial__count {
+  transform: scale(1.08);
+}
+
+/* The bloom: a soft warm lift behind the numeral on press — the tactile
+   half of the punch, and the closest thing to a bead catching light. */
+.tasbih-dial__bloom {
+  position: absolute;
+  inset: 18%;
+  border-radius: var(--radius-pill);
+  background: radial-gradient(
+    circle at 50% 46%,
+    color-mix(in srgb, var(--color-primary) 22%, transparent) 0%,
+    transparent 68%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.tasbih-dial:active .tasbih-dial__bloom {
+  opacity: 1;
 }
 .tasbih-dial__target {
+  position: relative;
+  z-index: var(--z-raised);
   color: var(--color-text-secondary);
   font-size: var(--fs-sm);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+}
+
+/* (v5.17.15) The punch and the bloom are MOTION, so they are the first
+   things to go. What survives is what carries the count: the ring fills and
+   the number changes. A reader who asked for less motion still gets the
+   feedback, without the movement. `data-reduce-motion` is honoured too — the
+   app's own in-setting switch, not just the OS one. */
+@media (prefers-reduced-motion: reduce) {
+  .tasbih-dial__count,
+  .tasbih-dial__bloom {
+    transition: none;
+  }
+  .tasbih-dial:active .tasbih-dial__count {
+    transform: none;
+  }
+  .tasbih-dial__bloom {
+    display: none;
+  }
+  .tasbih-dial__fill {
+    filter: none;
+  }
+}
+[data-reduce-motion='true'] .tasbih-dial:active .tasbih-dial__count {
+  transform: none;
+}
+[data-reduce-motion='true'] .tasbih-dial__bloom {
+  display: none;
 }
 
 .tasbih-controls {
@@ -2220,7 +2352,7 @@ body.has-player .hadith-card {
   color: var(--color-text-secondary);
 }
 .hadith-card__arabic {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: calc(var(--fs-arabic-card) * 0.8);
   line-height: var(--lh-arabic);
 }
@@ -2404,7 +2536,7 @@ body.has-player .hadith-card {
   color: var(--color-primary-text);
 }
 .quran-hit__arabic {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: var(--fs-md);
   line-height: var(--lh-arabic);
 }
@@ -3193,7 +3325,7 @@ body.has-player .hadith-card {
   text-align: center;
 }
 .quiz-prompt__arabic {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: var(--fs-2xl);
   line-height: var(--lh-arabic);
 }
@@ -3914,6 +4046,10 @@ body.has-player .hadith-card {
     display: none;
   }
 }
+[data-reduce-motion='true'] .count-ripple {
+  animation: none;
+  display: none;
+}
 
 /* ================================================================== */
 /* (v5.2.24) Completed-card exit — the counter-flow wave: a card that  */
@@ -3940,6 +4076,9 @@ body.has-player .hadith-card {
   .card--exiting {
     animation-duration: 1ms;
   }
+}
+[data-reduce-motion='true'] .card--exiting {
+  animation-duration: 1ms;
 }
 
 /* (v5.0.0) Banner-level manage bar — wraps on small screens, keeps the
@@ -4127,4 +4266,60 @@ button.toggle-row:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
+}
+
+.cert {
+  max-width: 820px;
+  margin-inline: auto;
+  padding: var(--space-7);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+.cert__head {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+.cert__bismillah {
+  font-family: var(--font-arabic-reading, var(--font-arabic));
+  font-size: var(--fs-arabic-card);
+  color: var(--color-primary);
+}
+.cert__title {
+  font-family: var(--font-ui);
+  color: var(--color-primary-text);
+}
+.cert__name-label {
+  margin-block-start: var(--space-6);
+  color: var(--color-text-muted);
+}
+.cert__name {
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+}
+.cert__body {
+  display: grid;
+  gap: var(--space-4);
+  margin-block: var(--space-5);
+}
+.cert__achievements {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.cert__chip {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+}
+.cert__sign {
+  margin-block-start: var(--space-7);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-border);
+  color: var(--color-text-muted);
 }
