@@ -17,26 +17,46 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
-import { TAJWEED_RULES, TAJWEED_FAMILIES, tajweedRule, wordUnits } from '../domain/tajweed.js';
-import { accuracyFor, practiceLevel, PRACTICE_ROUND_SIZE } from '../domain/tajweedPractice.js';
+import {
+  TAJWEED_RULES,
+  TAJWEED_FAMILIES,
+  effectiveRuleColor,
+  ruleEnabled,
+  tajweedPrefsOf,
+  tajweedRule,
+  wordUnits,
+} from '../domain/tajweed.js';
+import {
+  accuracyFor,
+  normalizeTajweedAnswerMode,
+  practiceLevel,
+  weakTajweedRules,
+  PRACTICE_ROUND_SIZE,
+} from '../domain/tajweedPractice.js';
 
 const LEVEL_I18N = { 1: 'practice.level1', 2: 'practice.level2', 3: 'practice.level3' };
 
 /** The entry screen: pick a rule to drill, or "Mixed," with stats, level
  *  badges and — when the weak-rule memory is non-empty — a Review path. */
-export function buildPracticePicker(state) {
+export function buildPracticePicker(state, answerMode = 'find-spans') {
   const lang = state.settings.language;
+  const mode = normalizeTajweedAnswerMode(answerMode) || 'find-spans';
+  const prefs = tajweedPrefsOf(state);
   const stats = state.tajweedPracticeStats;
   const overall = accuracyFor(stats);
-  const missedRules = Object.keys(state.tajweedMissRecords || {}).length;
+  const missedRules = weakTajweedRules(state.tajweedMissRecords).length;
+  const modeButton = (value, labelKey) => `
+    <button type="button" class="btn btn--secondary btn--sm${mode === value ? ' practice-mode--active' : ''}" data-action="practice-mode" data-mode="${value}" aria-pressed="${mode === value}">${t(labelKey, lang)}</button>`;
 
   const ruleRow = (rule) => {
     const acc = accuracyFor(stats, rule.id);
     const level = practiceLevel(stats, rule.id);
+    const color = effectiveRuleColor(prefs, rule);
+    const on = ruleEnabled(prefs, rule.id);
     return `
     <div class="practice-rule-row">
-      <button type="button" class="practice-rule" data-action="practice-start" data-rule="${rule.id}">
-        <span class="practice-rule__swatch" style="background:${rule.color}"></span>
+      <button type="button" class="practice-rule" data-action="practice-start" data-rule="${rule.id}" data-mode="${mode}">
+        <span class="practice-rule__swatch"${color ? ` style="background:${color}"` : ' style="border-style:dashed"'} title="${on ? '' : escapeHTML(t('tajweed.disabledNote', lang))}"></span>
         <span class="practice-rule__text">
           <span class="practice-rule__name">${escapeHTML(pickLocale(rule.name, lang))}</span>
           <span class="practice-rule__acc">${acc == null ? t('practice.notYet', lang) : t('practice.accuracy', lang, { n: acc })}</span>
@@ -52,6 +72,10 @@ export function buildPracticePicker(state) {
   <div class="tajweed-practice">
     <h2 id="modal-title-practice">${t('practice.title', lang)}</h2>
     <p class="panel__subtext">${t('practice.intro', lang)}</p>
+    <div class="practice-mode-switch" role="group" aria-label="${t('practice.mode', lang)}">
+      ${modeButton('find-spans', 'practice.findSpans')}
+      ${modeButton('find-word', 'practice.findWord')}
+    </div>
 
     ${
       stats.totalAttempts > 0
@@ -64,14 +88,14 @@ export function buildPracticePicker(state) {
         : ''
     }
 
-    <button type="button" class="btn btn--primary practice-mixed-btn" data-action="practice-start" data-rule="mixed">
+    <button type="button" class="btn btn--primary practice-mixed-btn" data-action="practice-start" data-rule="mixed" data-mode="${mode}">
       ${icon('sparkle', { size: 16 })} ${t('practice.mixed', lang)}
     </button>
 
     ${
       missedRules
         ? `
-    <button type="button" class="btn btn--secondary practice-review-btn" data-action="practice-start" data-rule="review">
+    <button type="button" class="btn btn--secondary practice-review-btn" data-action="practice-start" data-rule="review" data-mode="${mode}">
       ${icon('repeat', { size: 16 })} ${t('practice.reviewMistakes', lang)}
       <span class="practice-review-count">${missedRules}</span>
     </button>
@@ -88,23 +112,50 @@ export function buildPracticePicker(state) {
  *  (P0-5b) rounds carry a "question n of N" HUD + live streak counter. */
 export function buildPracticeRound(state, session) {
   const lang = state.settings.language;
+  const answerMode = session.answerMode === 'find-word' ? 'find-word' : 'find-spans';
   const isReview = session.ruleId === 'review';
-  const rule = session.ruleId === 'mixed' || isReview ? null : tajweedRule(session.ruleId);
-  const title = rule
-    ? escapeHTML(pickLocale(rule.name, lang))
-    : t(isReview ? 'practice.reviewMistakes' : 'practice.mixed', lang);
+  const targetRuleId = session.targetRuleId || (isReview ? 'mixed' : session.ruleId);
+  const rule = targetRuleId === 'mixed' ? null : tajweedRule(targetRuleId);
+  const ruleName = rule ? pickLocale(rule.name, lang) : '';
+  const title =
+    isReview && ruleName
+      ? escapeHTML(t('practice.reviewRule', lang, { rule: ruleName }))
+      : ruleName
+        ? escapeHTML(ruleName)
+        : t(isReview ? 'practice.reviewMistakes' : 'practice.mixed', lang);
   const instructions = isReview
-    ? t('practice.instructionsReview', lang)
-    : t('practice.instructions', lang, { rule: title });
+    ? t(
+        answerMode === 'find-word'
+          ? 'practice.instructionsReviewWord'
+          : 'practice.instructionsReviewRule',
+        lang
+      )
+    : t(answerMode === 'find-word' ? 'practice.instructionsWord' : 'practice.instructions', lang, {
+        rule: title,
+      });
 
   const words = session.text.trim().split(/\s+/).filter(Boolean);
-  // (v5.12.0 hostile review) roving: only the round's FIRST letter unit
-  // holds the tab stop — arrows walk the units (events.js), Tab crosses
-  // the drill in one stop instead of one per letter.
   let unitIdx = 0;
   const wordsHtml = words
     .map((word, idx) => {
       const wIndex = idx + 1;
+      if (answerMode === 'find-word') {
+        const selected = session.selected.has(wIndex);
+        if (!session.checked) {
+          const tab = unitIdx++ === 0 ? '0' : '-1';
+          return `<span class="practice-word pu${selected ? ' pu--selected' : ''}" data-action="practice-tap" data-word="${wIndex}" tabindex="${tab}" role="button" aria-pressed="${selected}">${escapeHTML(word)}</span>`;
+        }
+        const isTarget = (session.targetWords || []).includes(wIndex);
+        const cls =
+          isTarget && selected
+            ? ' pu--correct'
+            : isTarget
+              ? ' pu--missed'
+              : selected
+                ? ' pu--wrong'
+                : '';
+        return `<span class="practice-word pu${cls}">${escapeHTML(word)}</span>`;
+      }
       const units = wordUnits(word);
       const letters = units
         .map((u) => {
@@ -139,7 +190,7 @@ export function buildPracticeRound(state, session) {
         <span><span class="pu-dot pu-dot--missed"></span> ${t('practice.legendMissed', lang)}</span>
         <span><span class="pu-dot pu-dot--wrong"></span> ${t('practice.legendWrong', lang)}</span>
       </div>
-      <p class="sr-only">${t('practice.scoreSr', lang, { hit: session.result.correct.length, total: session.result.targetCount })}</p>
+      <p class="sr-only">${t(answerMode === 'find-word' ? 'practice.scoreSrWords' : 'practice.scoreSr', lang, { hit: session.result.correct.length, total: session.result.targetCount })}</p>
     </div>`
     : '';
 
@@ -190,10 +241,18 @@ export function buildPracticeRound(state, session) {
  *  round's best streak, and the Review path when anything was missed. */
 export function buildPracticeSummary(state, session) {
   const lang = state.settings.language;
+  const mode = session.answerMode === 'find-word' ? 'find-word' : 'find-spans';
   const total = session.results.length;
   const clean = session.results.filter((r) => r.perfect).length;
   const best = session.roundStreak;
   const missed = total - clean;
+  const reviewable = weakTajweedRules(state.tajweedMissRecords).length > 0;
+  const againRule =
+    session.ruleId === 'review'
+      ? reviewable
+        ? 'review'
+        : session.targetRuleId || 'mixed'
+      : session.ruleId;
   return `
   <div class="tajweed-practice practice-summary">
     <h2 id="modal-title-practice">${t('practice.roundDone', lang)}</h2>
@@ -204,8 +263,8 @@ export function buildPracticeSummary(state, session) {
     ${best > 1 ? `<p class="practice-summary__streak">${t('practice.streakOn', lang, { n: best })}</p>` : ''}
     <p class="panel__subtext">${t(missed ? 'practice.summaryEncourage' : 'practice.summaryFlawless', lang)}</p>
     <div class="practice-summary__actions">
-      <button type="button" class="btn btn--primary" data-action="practice-start" data-rule="${session.ruleId === 'review' ? 'mixed' : session.ruleId}">${t('practice.again', lang)}</button>
-      ${missed ? `<button type="button" class="btn btn--secondary" data-action="practice-start" data-rule="review">${t('practice.reviewMistakes', lang)}</button>` : ''}
+      <button type="button" class="btn btn--primary" data-action="practice-start" data-rule="${againRule}" data-mode="${mode}">${t('practice.again', lang)}</button>
+      ${missed && reviewable ? `<button type="button" class="btn btn--secondary" data-action="practice-start" data-rule="review" data-mode="${mode}">${t('practice.reviewMistakes', lang)}</button>` : ''}
       <button type="button" class="btn btn--secondary btn--sm" data-action="practice-open">${t('practice.changeRule', lang)}</button>
     </div>
   </div>`;
@@ -225,6 +284,7 @@ export function buildPracticeLesson(state, ruleId, examples = []) {
   const meta = state.quran.meta?.surahs || [];
   const family = (TAJWEED_FAMILIES || []).find((f) => f.id === rule.family);
   const familyName = family ? pickLocale(family.name, lang) : rule.family;
+  const color = effectiveRuleColor(tajweedPrefsOf(state), rule);
   const surahName = (s) => {
     const m = meta.find((x) => Number(x?.number) === Number(s));
     return m ? pickLocale({ en: m.nameTransliteration || m.nameEn, ar: m.nameAr }, lang) : `#${s}`;
@@ -232,7 +292,7 @@ export function buildPracticeLesson(state, ruleId, examples = []) {
   return `
   <div class="tajweed-practice practice-lesson">
     <h2 id="modal-title-practice">${escapeHTML(pickLocale(rule.name, lang))}</h2>
-    <p class="practice-lesson__family"><span class="practice-rule__swatch" style="background:${rule.color}"></span> ${escapeHTML(familyName)}</p>
+    <p class="practice-lesson__family"><span class="practice-rule__swatch"${color ? ` style="background:${color}"` : ' style="border-style:dashed"'}></span> ${escapeHTML(familyName)}</p>
     <h3 class="practice-lesson__heading">${t('practice.lessonWhat', lang)}</h3>
     <p class="practice-lesson__desc" dir="auto">${escapeHTML(pickLocale(rule.desc, lang))}</p>
     <h3 class="practice-lesson__heading">${t('practice.lessonExamples', lang)}</h3>

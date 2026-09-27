@@ -7,12 +7,12 @@
  * views/quran.js (classic list reader) and views/mushafReader.js (604-page
  * book reader) so the two reading modes share one implementation.
  */
-import { t } from '../core/i18n.js';
+import { isRTL, t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { clamp, escapeHTML, pickLocale } from '../core/utils.js';
 import { pairForAyah, buildSimilarPairs } from '../domain/mutashabihat.js';
 import { skeletonLines } from '../ui/skeleton.js';
-import { loadErrorStateHTML } from '../ui/emptyState.js';
+import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
 import {
   classifyAyahTajweed,
@@ -151,9 +151,7 @@ function colorizeWord(word, spans, prefs = null) {
   for (const s of sorted) {
     if (s.start < cursor) continue; // rules should never overlap, but never let one clobber the last
     out += escapeHTML(word.slice(cursor, s.start));
-    const rule = TAJWEED_RULES.find((r) => r.id === s.rule);
-    const color = effectiveRuleColor(prefs, rule);
-    out += `<span class="tajweed tajweed--${s.rule}"${color ? ` style="color:${color}"` : ''}>${escapeHTML(word.slice(s.start, s.end))}</span>`;
+    out += `<span class="tajweed tajweed--${s.rule}">${escapeHTML(word.slice(s.start, s.end))}</span>`;
     cursor = s.end;
   }
   out += escapeHTML(word.slice(cursor));
@@ -167,9 +165,12 @@ function colorizeWord(word, spans, prefs = null) {
  * paragraph. Taps carry data-ayah="0" (the Bismillah is not a numbered
  * ayah outside 1:1); the word-tap handler redirects them onto the real
  * 1:1 grammar records — identical words, real i'rab/sarf/root, nothing
- * invented. `style` mirrors the bismillahStyle pref ('hidden' renders
- * nothing); `cls` picks the reader's own Bismillah class so each reader
- * keeps its rhythm while sharing one live implementation.
+ * invented. `style` mirrors the bismillahStyle pref, which is limited to
+ * auto / gold / accent — there is deliberately no "hidden" style, because
+ * omitting the Bismillah normalizes a textless page. Whether a Bismillah
+ * appears at all is the caller's decision (At-Tawbah carries none).
+ * `cls` picks the reader's own Bismillah class so each reader keeps its
+ * rhythm while sharing one live implementation.
  */
 export const BISMILLAH_AYAH_REF = '0';
 
@@ -212,20 +213,32 @@ export function buildBismillahHTML({
  * the tapped surface for the handful of spelling-split ayahs.
  */
 function resolvePopupToken(ayahText, wordIndex, surface) {
-  const canon = canonicalWordTokens(ayahText).map((c) => c.text);
+  const canon = canonicalWordTokens(ayahText);
   const at = (k) => canon[k] || null;
-  if (!surface || !at(wordIndex - 1) || sameSurfaceWord(at(wordIndex - 1), surface)) {
+  if (!surface || !at(wordIndex - 1) || sameSurfaceWord(at(wordIndex - 1).text, surface)) {
     const r = wordIndex - 1;
-    return { token: at(r), tokenIndex: r, nextToken: at(r + 1), isLast: r === canon.length - 1 };
+    return {
+      token: at(r)?.raw || null,
+      tokenIndex: r,
+      nextToken: at(r + 1)?.raw || null,
+      isLast: r === canon.length - 1,
+    };
   }
   const order = [0, 1, -1, 2, -2, 3, -3];
   const match = (eq) => {
     for (const d of order) {
       const r = wordIndex - 1 + d;
       if (r < 0 || r >= canon.length) continue;
-      const t = canon[r];
-      if (eq ? sameSurfaceWord(t, surface) : containsSurfaceWord(t, surface)) {
-        return { token: t, tokenIndex: r, nextToken: at(r + 1), isLast: r === canon.length - 1 };
+      const candidate = canon[r];
+      if (
+        eq ? sameSurfaceWord(candidate.text, surface) : containsSurfaceWord(candidate.text, surface)
+      ) {
+        return {
+          token: candidate.raw,
+          tokenIndex: r,
+          nextToken: at(r + 1)?.raw || null,
+          isLast: r === canon.length - 1,
+        };
       }
     }
     return null;
@@ -233,9 +246,9 @@ function resolvePopupToken(ayahText, wordIndex, surface) {
   return (
     match(true) ||
     match(false) || {
-      token: at(wordIndex - 1),
+      token: at(wordIndex - 1)?.raw || null,
       tokenIndex: wordIndex - 1,
-      nextToken: at(wordIndex),
+      nextToken: at(wordIndex)?.raw || null,
       isLast: wordIndex === canon.length,
     }
   );
@@ -289,7 +302,7 @@ function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
     .join('');
   return `
     <div class="word-study__tajweed">
-      <p class="word-study__tajweed-label">${t('wordStudy.tajweed', lang)}</p>
+      <h3 class="word-study__tajweed-label">${t('wordStudy.tajweed', lang)}</h3>
       <div class="word-study__tajweed-arabic" dir="rtl" lang="ar">${colorizeWord(token, spans, prefs)}</div>
       ${rows}
     </div>`;
@@ -317,6 +330,19 @@ function wordActionsRow(state, lang, surah, ayah, i) {
     <button type="button" class="icon-btn icon-btn--sm" data-action="word-share" ${ds} aria-label="${t('wordStudy.share', lang)}" title="${t('wordStudy.share', lang)}">${icon('share', { size: 15 })}</button>
     <button type="button" class="icon-btn icon-btn--sm" data-action="ayah-share" data-surah="${surah}" data-ayah="${ayah}" aria-label="${t('quran.shareAyah', lang)}" title="${t('quran.shareAyah', lang)}">${icon('image', { size: 15 })}</button>
     <button type="button" class="icon-btn icon-btn--sm${marked ? ' icon-btn--active' : ''}" data-action="word-bookmark" ${ds} aria-pressed="${marked}" aria-label="${bmLabel}" title="${bmLabel}">${icon('bookmark', { size: 15 })}</button>
+    <button type="button" class="icon-btn icon-btn--sm" data-action="word-bookmarks-open" aria-label="${t('wordStudy.savedWords', lang)}" title="${t('wordStudy.savedWords', lang)}">${icon('bookmark', { size: 15 })}</button>
+  </div>`;
+}
+
+function wordFallbackActionsRow(state, lang, surah, ayah, i) {
+  const bmKey = wordBookmarkKey(surah, ayah, i);
+  const marked = bmKey ? state.wordBookmarks?.[bmKey] === true : false;
+  const bmLabel = marked ? t('wordStudy.bookmarked', lang) : t('wordStudy.bookmark', lang);
+  return `
+  <div class="word-study__word-actions" role="group" aria-label="${t('wordStudy.title', lang)}">
+    <button type="button" class="icon-btn icon-btn--sm" data-action="ayah-share" data-surah="${surah}" data-ayah="${ayah}" aria-label="${t('quran.shareAyah', lang)}" title="${t('quran.shareAyah', lang)}">${icon('image', { size: 15 })}</button>
+    <button type="button" class="icon-btn icon-btn--sm${marked ? ' icon-btn--active' : ''}" data-action="word-bookmark" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" aria-pressed="${marked}" aria-label="${bmLabel}" title="${bmLabel}">${icon('bookmark', { size: 15 })}</button>
+    <button type="button" class="icon-btn icon-btn--sm" data-action="word-bookmarks-open" aria-label="${t('wordStudy.savedWords', lang)}" title="${t('wordStudy.savedWords', lang)}">${icon('bookmark', { size: 15 })}</button>
   </div>`;
 }
 
@@ -331,15 +357,198 @@ function wordStudyBlock({ labelKey, lang, bodyHTML, emptyKey = null, extraClass 
   if (!body) {
     return `
     <div class="word-study__block word-study__block--empty">
-      <span class="word-study__block-label">${t(labelKey, lang)}</span>
+      <h3 class="word-study__block-label">${t(labelKey, lang)}</h3>
       <p class="empty-hint">${t(emptyKey || 'wordStudy.noIrabData', lang)}</p>
     </div>`;
   }
   return `
     <div class="word-study__block${extraClass ? ` ${extraClass}` : ''}">
-      <span class="word-study__block-label">${t(labelKey, lang)}</span>
+      <h3 class="word-study__block-label">${t(labelKey, lang)}</h3>
       ${body}
     </div>`;
+}
+
+function wordStudyHeader(state, lang, surah, ayah, i) {
+  const doc = state.quran?.surahs?.[String(surah)];
+  const surahName = doc
+    ? lang === 'ar'
+      ? doc.nameAr
+      : doc.nameEn
+    : `${t('quran.surah', lang)} ${surah}`;
+  return `
+    <header class="word-study__header">
+      <p class="word-study__kicker">${t('wordStudy.kicker', lang)}</p>
+      <h2 id="modal-title-word-study" class="word-study__title">${t('wordStudy.title', lang)}</h2>
+      <div class="word-study__header-meta">
+        <span>${escapeHTML(String(surahName || ''))} · ${escapeHTML(String(surah))}:${escapeHTML(String(ayah))}</span>
+        <span>${t('wordStudy.wordN', lang, { n: i })}</span>
+      </div>
+    </header>`;
+}
+
+function wordContextHTML(state, lang, surah, ayah, i, word, surface) {
+  const text = state.quran?.surahs?.[String(surah)]?.ayahs?.find(
+    (row) => String(row.number) === String(ayah)
+  )?.text;
+  if (!text) return '';
+  const resolved = resolvePopupToken(text, Number(i), surface || word?.text || null);
+  const token = resolved.token;
+  const rawTokens = [...text.matchAll(/\S+/g)];
+  const target = canonicalWordTokens(text)[resolved.tokenIndex];
+  const match = target ? rawTokens[target.rawIndex] : null;
+  const at = match?.index ?? -1;
+  const markedToken = match?.[0] || token || '';
+  const body =
+    at >= 0 && markedToken
+      ? `${escapeHTML(text.slice(0, at))}<mark class="word-study__context-mark">${escapeHTML(markedToken)}</mark>${escapeHTML(text.slice(at + markedToken.length))}`
+      : escapeHTML(text);
+  return `<p class="word-study__context-text" dir="rtl" lang="ar">${body}</p>`;
+}
+
+function wordStudyHero(state, lang, word, ref, surah, ayah) {
+  const surface = ref?.surface || word?.text || '';
+  const context = wordContextHTML(state, lang, surah, ayah, ref?.i, word, surface);
+  const translit =
+    lang !== 'ar' && word?.translit
+      ? `<p class="word-study__translit" dir="ltr" lang="en">${escapeHTML(word.translit)}</p>`
+      : '';
+  return `
+    <section class="word-study__hero" aria-label="${t('wordStudy.heroLabel', lang)}">
+      <div id="word-study-selected-word" class="word-study__arabic" dir="rtl" lang="ar">${escapeHTML(surface || '—')}</div>
+      ${translit}
+      ${context ? `<div class="word-study__context"><span class="word-study__context-label">${t('wordStudy.verseContext', lang)}</span>${context}</div>` : ''}
+    </section>`;
+}
+
+export function buildSavedWordsPanel(state) {
+  const lang = state?.settings?.language || 'en';
+  const marks =
+    state?.wordBookmarks && typeof state.wordBookmarks === 'object' ? state.wordBookmarks : {};
+  const entries = Object.entries(marks)
+    .filter(([key, value]) => value === true && /^\d{1,3}:\d{1,3}:\d{1,4}$/.test(key))
+    .map(([key]) => {
+      const [surah, ayah, i] = key.split(':').map(Number);
+      return { key, surah, ayah, i };
+    })
+    .filter(
+      ({ surah, ayah, i }) => surah >= 1 && surah <= 114 && ayah >= 1 && ayah <= 286 && i >= 1
+    )
+    .sort((a, b) => a.surah - b.surah || a.ayah - b.ayah || a.i - b.i);
+  if (!entries.length) {
+    return `
+    <div class="word-bookmarks">
+      <h2 id="modal-title-word-bookmarks">${t('wordStudy.savedWords', lang)}</h2>
+      ${emptyStateHTML({
+        iconName: 'bookmark',
+        title: t('wordStudy.noSavedWords', lang),
+        hint: t('wordStudy.noSavedWordsHint', lang),
+        actionHTML: `<button type="button" class="btn btn--primary btn--sm" data-action="modal-close">${t('common.close', lang)}</button>`,
+      })}
+    </div>`;
+  }
+  const rows = entries
+    .map(({ key, surah, ayah, i }) => {
+      const word = getWord(state?.quranWords, surah, ayah, i);
+      const label = word?.text ? escapeHTML(word.text) : `${surah}:${ayah}:${i}`;
+      return `
+      <div class="word-bookmark-row">
+        <button type="button" class="word-bookmark-row__main" data-action="word-bookmark-open" data-key="${escapeHTML(key)}" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" aria-label="${escapeHTML(`${t('wordStudy.open', lang)} ${surah}:${ayah}:${i}`)}">
+          <span class="word-bookmark-row__word" dir="rtl" lang="ar">${label}</span>
+          <span class="word-bookmark-row__ref" dir="ltr">${surah}:${ayah} · ${escapeHTML(t('wordStudy.wordN', lang, { n: i }))}</span>
+        </button>
+        <button type="button" class="icon-btn icon-btn--sm" data-action="word-bookmark-remove" data-key="${escapeHTML(key)}" aria-label="${escapeHTML(`${t('common.delete', lang)} ${surah}:${ayah}:${i}`)}" title="${escapeHTML(t('common.delete', lang))}">${icon('trash', { size: 14 })}</button>
+      </div>`;
+    })
+    .join('');
+  return `
+  <div class="word-bookmarks">
+    <h2 id="modal-title-word-bookmarks">${t('wordStudy.savedWords', lang)} <span class="chip__count">${entries.length}</span></h2>
+    <div class="word-bookmark-list">${rows}</div>
+  </div>`;
+}
+
+export function buildWordStudyLoadingPanel(state) {
+  const lang = state?.settings?.language || 'en';
+  const ref = state?.activeWordStudy || {};
+  return `
+    <div class="word-study word-study--loading" aria-busy="true" aria-label="${escapeHTML(t('wordStudy.loading', lang))}">
+      ${wordStudyHeader(state, lang, ref.surah, ref.ayah, ref.i)}
+      <section class="word-study__hero" aria-label="${t('wordStudy.heroLabel', lang)}">
+        <div class="word-study__arabic" dir="rtl" lang="ar">${escapeHTML(ref.surface || '…')}</div>
+        <p class="word-study__loading-hint" role="status">${t('wordStudy.loadingHint', lang)}</p>
+        <div class="word-study__loading-lines" aria-hidden="true"><span></span><span></span><span></span></div>
+      </section>
+    </div>`;
+}
+
+function provenanceStateLabel(record, lang) {
+  if (record?.state === 'TAFSIR') return t('wordStudy.sourceTafsir', lang);
+  if (record?.state === 'CLASSICAL_LEXICON') return t('wordStudy.sourceClassical', lang);
+  if (record?.state === 'CURATED') return t('wordStudy.sourceCurated', lang);
+  if (record?.state === 'NOT_APPLICABLE') return t('wordStudy.stateNotApplicable', lang);
+  if (record?.state === 'NOT_ATTESTED') return t('wordStudy.stateNotAttested', lang);
+  return t('wordStudy.sourceCorpus', lang);
+}
+
+function provenanceReviewLabel(status, lang) {
+  const key =
+    {
+      CURATED: 'wordStudy.reviewCurated',
+      CITED: 'wordStudy.reviewCited',
+      UNCITED: 'wordStudy.reviewUncited',
+      PENDING: 'wordStudy.reviewPending',
+      PENDING_REVIEW: 'wordStudy.reviewPending',
+      'N/A': 'wordStudy.reviewNotApplicable',
+      INVALID_CITATION: 'wordStudy.reviewInvalidCitation',
+    }[status] || 'wordStudy.reviewPending';
+  return t(key, lang);
+}
+
+function provenanceText(record, lang) {
+  if (!record || typeof record !== 'object') return '';
+  const parts = [provenanceStateLabel(record, lang)];
+  if (record.work) parts.push(`${t('wordStudy.sourceWork', lang)}: ${record.work}`);
+  if (record.author) parts.push(`${t('wordStudy.sourceAuthor', lang)}: ${record.author}`);
+  if (record.edition) parts.push(`${t('wordStudy.sourceEdition', lang)}: ${record.edition}`);
+  if (record.reference) parts.push(`${t('wordStudy.sourceReference', lang)}: ${record.reference}`);
+  if (record.url) parts.push(`${t('wordStudy.sourceUrl', lang)}: ${record.url}`);
+  if (record.reviewStatus) {
+    parts.push(
+      `${t('wordStudy.sourceReview', lang)}: ${provenanceReviewLabel(record.reviewStatus, lang)}`
+    );
+  }
+  return `${t('wordStudy.provenance', lang)}: ${parts.join(' · ')}`;
+}
+
+function provenanceHTML(record, lang) {
+  const text = provenanceText(record, lang);
+  return text ? `<p class="word-study__provenance">${escapeHTML(text)}</p>` : '';
+}
+
+function wordSourcesHTML(study, lang) {
+  const tiers = [
+    ['wordStudy.contextualMeaning', study?.provenance?.contextual],
+    ['wordStudy.definition', study?.provenance?.lemma],
+    ['wordStudy.root', study?.provenance?.root],
+    ['wordStudy.irab', study?.provenance?.irab],
+  ];
+  const seen = new Set();
+  const rows = [];
+  for (const [labelKey, record] of tiers) {
+    if (!record || typeof record !== 'object') continue;
+    const key = [record.state, record.sourceId, record.work, record.reviewStatus].join('|');
+    if (seen.has(key)) continue;
+    seen.add(key);
+    rows.push(
+      `<li class="word-study__source-row"><span class="word-study__source-tier">${t(labelKey, lang)}</span>${provenanceHTML(record, lang)}</li>`
+    );
+  }
+  if (!rows.length) return '';
+  return `
+    <details class="word-study__sources">
+      <summary><span>${t('wordStudy.sources', lang)}</span><span class="word-study__source-count">${rows.length}</span></summary>
+      <ul class="word-study__source-list">${rows.join('')}</ul>
+    </details>`;
 }
 
 /** Definition block body: the lemma dictionary's contextual Arabic entry
@@ -353,7 +562,11 @@ function wordDefinitionBody(state, lang, word) {
   const contextual = study?.contextualMeaning || null;
   const parts = [];
   if (contextual?.ar) {
-    parts.push(`<p class="word-study__study-label">${t('wordStudy.contextualMeaning', lang)}</p>`);
+    const labelKey =
+      contextual.provenance?.state === 'TAFSIR'
+        ? 'wordStudy.contextualMeaning'
+        : 'wordStudy.corpusMeaning';
+    parts.push(`<p class="word-study__study-label">${t(labelKey, lang)}</p>`);
     parts.push(
       `<p class="word-study__dict-ar" dir="rtl" lang="ar">${escapeHTML(contextual.ar)}</p>`
     );
@@ -363,14 +576,7 @@ function wordDefinitionBody(state, lang, word) {
   const en = study?.englishTranslation || contextual?.en || dict?.en || word.en || '';
   if (en) {
     parts.push(`<p class="word-study__study-label">${t('wordStudy.englishTranslation', lang)}</p>`);
-    parts.push(`<p class="word-study__dict-en" dir="auto">${escapeHTML(en)}</p>`);
-  }
-  // (LEX-03) contextual tier is CORPUS unless an explicit tafsir source lands.
-  const ctxState = study?.contextualMeaning?.provenanceState || 'NOT_ATTESTED';
-  if (ctxState === 'CORPUS') {
-    parts.push(
-      `<p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(t('wordStudy.sourceCorpus', lang))}</p>`
-    );
+    parts.push(`<p class="word-study__dict-en" dir="auto" lang="en">${escapeHTML(en)}</p>`);
   }
   return parts.join('');
 }
@@ -382,13 +588,10 @@ function wordDefinitionBody(state, lang, word) {
  */
 function wordSynAntBody(state, lang, word) {
   const dict = dictEntryFor(state.wordDict, word.lemma);
-  // Truly data-less word (no lemma to evaluate, no tier record): stay
-  // silent so the block renders its honest empty state. Every other case
-  // gets explicit applicability states below — never blank, never invented.
-  if (!dict && !word.lemma) return '';
   const study = materializeWordStudy(word, word.study, dict);
-  const synonyms = Array.isArray(study?.synonyms?.ar) ? study.synonyms.ar : dict?.syn || [];
-  const antonyms = Array.isArray(study?.antonyms?.ar) ? study.antonyms.ar : dict?.ant || [];
+  if (!dict && !word.lemma && study?.synonyms?.state !== 'NOT_APPLICABLE') return '';
+  const synonyms = Array.isArray(study?.synonyms?.ar) ? study.synonyms.ar : [];
+  const antonyms = Array.isArray(study?.antonyms?.ar) ? study.antonyms.ar : [];
   const synState = study?.synonyms?.state || 'NOT_ATTESTED';
   const antState = study?.antonyms?.state || 'NOT_ATTESTED';
   const synNote = lang === 'ar' ? study?.synonyms?.noteAr || '' : study?.synonyms?.noteEn || '';
@@ -403,29 +606,29 @@ function wordSynAntBody(state, lang, word) {
     list.length
       ? `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> ${list.map((x) => `<span class="chip chip--basis chip--sm" dir="rtl" lang="ar">${escapeHTML(x)}</span>`).join('')}</div>`
       : `<div class="word-study__synrow"><span class="word-study__syn-label">${t(labelKey, lang)}</span> <span class="word-study__state-hint">${escapeHTML(note || stateNote(listState))}</span></div>`;
-  const provenance = dict?.src
-    ? `<p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(String(dict.src.work || dict.src.sourceId || ''))} — ${escapeHTML(String(dict.src.edition || ''))}</p>`
-    : `<p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(t('wordStudy.sourceCorpus', lang))}</p>`;
-  return `${chips(synonyms, 'wordStudy.synonyms', synState, synNote)}${chips(antonyms, 'wordStudy.antonyms', antState, antNote)}${provenance}`;
+  return `${chips(synonyms, 'wordStudy.synonyms', synState, synNote)}${chips(antonyms, 'wordStudy.antonyms', antState, antNote)}`;
 }
 
-/** Root block body: root, its core conceptual meaning, count,
- *  occurrences, and the #/roots deep link. */
+function rootMeaningBody(rootData, lang, cited) {
+  if (!rootData) return `<p class="empty-hint">${t('wordStudy.noRootMeaningData', lang)}</p>`;
+  const labelKey = cited ? 'wordStudy.classicalUsage' : 'wordStudy.rootCore';
+  return `${rootData.rootLetters?.length ? `<p class="word-study__root-letters" dir="rtl" lang="ar">${escapeHTML(rootData.rootLetters.join(' · '))}</p>` : ''}${rootData.classicalUsageAr ? `<p class="word-study__study-label">${t(labelKey, lang)}</p><p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.classicalUsageAr)}</p>` : rootData.ar ? `<p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.ar)}</p>` : ''}${rootData.classicalUsageEn ? `<p class="word-study__root-meaning-en" dir="ltr" lang="en">${escapeHTML(rootData.classicalUsageEn)}</p>` : rootData.en ? `<p class="word-study__root-meaning-en" dir="ltr" lang="en">${escapeHTML(rootData.en)}</p>` : ''}${rootData.quranicBridgeAr ? `<p class="word-study__study-label">${t('wordStudy.quranicBridge', lang)}</p><p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.quranicBridgeAr)}</p>` : ''}${rootData.quranicBridgeEn ? `<p class="word-study__root-meaning-en" dir="ltr" lang="en">${escapeHTML(rootData.quranicBridgeEn)}</p>` : ''}`;
+}
+
 function wordRootBody(state, lang, word, surah, ayah) {
-  if (!word.root && !word.study?.etymology) return '';
   const { count, sample } = rootOccurrences(state.quranRoots, word.root, surah, ayah, 8);
   const meaning = rootStudyEntryFor(state.rootsMeaning, word.root);
   const study = materializeWordStudy(word, word.study, null, meaning);
   const et = study?.etymology || null;
-  const rootLabel = et?.root || word.root || '—';
+  if (!word.root && !et) return '';
+  const rootLabel = et?.root || word.root || t('wordStudy.rootNotApplicable', lang);
   const rootData = et || meaning;
-  const meaningHtml = rootData
-    ? `${rootData.rootLetters?.length ? `<p class="word-study__root-letters" dir="rtl" lang="ar">${escapeHTML(rootData.rootLetters.join(' · '))}</p>` : ''}${rootData.classicalUsageAr ? `<p class="word-study__study-label">${t('wordStudy.classicalUsage', lang)}</p><p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.classicalUsageAr)}</p>` : rootData.ar ? `<p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.ar)}</p>` : ''}${rootData.classicalUsageEn ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(rootData.classicalUsageEn)}</p>` : rootData.en ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(rootData.en)}</p>` : ''}${rootData.quranicBridgeAr ? `<p class="word-study__study-label">${t('wordStudy.quranicBridge', lang)}</p><p class="word-study__root-meaning" dir="rtl" lang="ar">${escapeHTML(rootData.quranicBridgeAr)}</p>` : ''}${rootData.quranicBridgeEn ? `<p class="word-study__root-meaning-en" dir="auto">${escapeHTML(rootData.quranicBridgeEn)}</p>` : ''}`
-    : `<p class="empty-hint">${t('wordStudy.noRootMeaningData', lang)}</p>`;
+  const cited = study?.provenance?.root?.state === 'CLASSICAL_LEXICON';
+  const meaningHtml = rootMeaningBody(rootData, lang, cited);
   return `
       <div class="word-study__root-head">
         <span class="word-study__root-text" dir="rtl" lang="ar">${escapeHTML(rootLabel)}</span>
-        <span class="word-study__root-count">${t('wordStudy.rootCount', lang, { n: count })}</span>
+        ${word.root ? `<span class="word-study__root-count">${t('wordStudy.rootCount', lang, { n: count })}</span>` : ''}
       </div>
       ${meaningHtml}
       ${
@@ -445,13 +648,13 @@ function wordRootBody(state, lang, word, surah, ayah) {
       </div>`
           : ''
       }
-      <button type="button" class="btn btn--secondary btn--sm word-study__root-browse" data-action="roots-open" data-root="${escapeHTML(word.root)}">
-        ${t('wordStudy.rootBrowse', lang, { n: count })}
-      </button>
-      <p class="word-study__provenance">${escapeHTML(t('wordStudy.provenance', lang))}: ${escapeHTML(meaning?.src ? String(meaning.src.work || meaning.src.sourceId || '') : t('wordStudy.sourceCorpus', lang))}</p>`;
+      ${
+        word.root
+          ? `<button type="button" class="btn btn--secondary btn--sm word-study__root-browse" data-action="roots-open" data-root="${escapeHTML(word.root)}">${t('wordStudy.rootBrowse', lang, { n: count })}</button>`
+          : `<p class="word-study__state-hint">${t('wordStudy.stateNotApplicable', lang)}</p>`
+      }`;
 }
 
-/** I'rab block body: the one-line i'rab + wrapped detail tags. */
 function wordIrabBody(word, lang) {
   const line = word.study?.irab?.[lang === 'ar' ? 'ar' : 'en'] || wordIrabLine(word, lang);
   const tags = wordDetailTags(word, lang);
@@ -485,38 +688,34 @@ export function buildWordStudyPanel(state) {
     lookalike = '';
   }
   const word = getWord(state.quranWords, surah, ayah, i, ref.surface || null);
+  const header = wordStudyHeader(state, lang, surah, ayah, i);
+  const hero = wordStudyHero(state, lang, word, ref, surah, ayah);
 
   if (!word) {
-    // (v4.6.0) No grammar data is not a dead end: the ayah text itself
-    // still carries the tajweed answer. Show the token, colorized, with
-    // every rule it contains — then the tafsir deep-link as before.
-    // (v5.3.0) canonical index + surface anchor, like the tajweed section.
     const doc = state.quran.surahs[String(surah)];
     const ayahText = doc?.ayahs?.find((x) => String(x.number) === String(ayah))?.text;
     const token = ayahText ? resolvePopupToken(ayahText, i, ref.surface || null).token : null;
     const tajweedHTML = token ? wordTajweedSection(state, surah, ayah, i, lang) : '';
     return `
-    <div class="word-study">
-      <h2 id="modal-title-word-study" class="sr-only">${t('wordStudy.title', lang)}</h2>
-      ${
-        token
-          ? `<p class="word-study__ref" dir="ltr">${surah}:${ayah} \u00B7 ${t('wordStudy.wordN', lang, { n: i })}</p>
-      <p class="word-study__arabic word-study__arabic--solo" dir="rtl" lang="ar">${escapeHTML(token)}</p>`
-          : `<p class="empty-hint">${t('wordStudy.noData', lang)}</p>`
-      }
+    <div class="word-study word-study--fallback">
+      ${header}
+      ${hero}
+      ${wordFallbackActionsRow(state, lang, surah, ayah, i)}
+      ${token ? `<p class="word-study__fallback-note">${t('wordStudy.tajweedOnly', lang)}</p>` : `<p class="empty-hint">${t('wordStudy.noData', lang)}</p>`}
       ${tajweedHTML}
-      ${token ? `<p class="panel__subtext">${t('wordStudy.tajweedOnly', lang)}</p>` : ''}
       ${lookalike ? `<div class="word-study__lookalike">${lookalike}</div>` : ''}
-      ${wordActionsRow(state, lang, surah, ayah, i)}
-      <div class="word-study__actions">
+      <div class="word-study__cta">
         <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
-          ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)}
+          ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 15 })}
         </button>
       </div>
     </div>`;
   }
 
   const { prefixes, suffixes } = wordAffixLabels(word, lang);
+  const dictForCard = dictEntryFor(state.wordDict, word.lemma);
+  const rootMeaningForCard = rootStudyEntryFor(state.rootsMeaning, word.root);
+  const studyForCard = materializeWordStudy(word, word.study, dictForCard, rootMeaningForCard);
 
   const affixHtml = (list, labelKey) =>
     list.length
@@ -533,10 +732,9 @@ export function buildWordStudyPanel(state) {
   // word-study__meanings anchor rides the definition block only when the
   // dict tier actually has content (the UP-01 gate: no hollow meanings
   // section without the tier).
-  const dictForLegacy = dictEntryFor(state.wordDict, word.lemma);
   const hasMeanings = Boolean(
-    dictForLegacy &&
-    (dictForLegacy.ar || dictForLegacy.en || dictForLegacy.syn.length || dictForLegacy.ant.length)
+    dictForCard &&
+    (dictForCard.ar || dictForCard.en || dictForCard.syn.length || dictForCard.ant.length)
   );
   const definitionBlock = wordStudyBlock({
     labelKey: 'wordStudy.definition',
@@ -566,22 +764,21 @@ export function buildWordStudyPanel(state) {
 
   return `
   <div class="word-study">
-    <h2 id="modal-title-word-study" class="sr-only">${t('wordStudy.title', lang)}</h2>
-    <p class="word-study__ref" dir="ltr">${surah}:${ayah} \u00B7 ${t('wordStudy.wordN', lang, { n: i })}</p>
-    <p class="word-study__arabic" dir="rtl" lang="ar">${escapeHTML(word.text || '')}</p>
-    ${lang !== 'ar' && word.translit ? `<p class="word-study__translit" dir="ltr">${escapeHTML(word.translit)}</p>` : ''}
+    ${header}
+    ${hero}
+    ${wordActionsRow(state, lang, surah, ayah, i)}
     ${definitionBlock}
     ${synAntBlock}
     ${irabBlock}
     ${affixHtml(prefixes, 'wordStudy.prefix')}
     ${affixHtml(suffixes, 'wordStudy.suffix')}
     ${rootBlock}
-    ${lookalike ? `<div class="word-study__lookalike">${lookalike}</div>` : ''}
-    ${wordActionsRow(state, lang, surah, ayah, i)}
     ${wordTajweedSection(state, surah, ayah, i, lang)}
-    <div class="word-study__actions">
+    ${wordSourcesHTML(studyForCard, lang)}
+    ${lookalike ? `<div class="word-study__lookalike">${lookalike}</div>` : ''}
+    <div class="word-study__cta">
       <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
-        ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)}
+        ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 15 })}
       </button>
     </div>
   </div>`;
@@ -693,26 +890,37 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
     return `<div class="tafsir-panel">${skeletonLines(lang, [46, 94, 90, 66])}</div>`;
   }
   const { bundled, remote } = splitEditions(editions);
-  const active = activeId || state.settings.mushafPrefs.defaultTafsir || bundled[0]?.id;
-  const activeEdition = [...bundled, ...remote].find((e) => e.id === active);
+  const allEditions = [...bundled, ...remote];
+  const requested = activeId || state.settings.mushafPrefs.defaultTafsir;
+  const active = allEditions.some((edition) => edition.id === requested)
+    ? requested
+    : bundled[0]?.id || allEditions[0]?.id;
+  const activeEdition = allEditions.find((edition) => edition.id === active);
 
-  const tabBtn = (ed) => `
-    <button type="button" role="tab" id="tafsir-tab-${ed.id}" aria-controls="tafsir-panel-content" aria-selected="${active === ed.id}" tabindex="${active === ed.id ? '0' : '-1'}" class="tafsir-tab ${active === ed.id ? 'tafsir-tab--active' : ''}" data-action="tafsir-tab" data-edition="${ed.id}" data-surah="${surah}" data-ayah="${ayah}">
-      ${escapeHTML(pickLocale({ en: ed.nameEn, ar: ed.nameAr }, lang))}
+  const tabBtn = (ed) => {
+    const categoryKey =
+      ed.category === 'grammar' ? 'tafsir.categoryGrammar' : 'tafsir.categoryTafsir';
+    return `
+    <button type="button" role="tab" id="tafsir-tab-${ed.id}" aria-controls="tafsir-panel-content" aria-selected="${active === ed.id}" tabindex="${active === ed.id ? '0' : '-1'}" class="tafsir-tab ${active === ed.id ? 'tafsir-tab--active' : ''}" data-action="tafsir-tab" data-edition="${escapeHTML(ed.id)}" data-surah="${surah}" data-ayah="${ayah}">
+      <span class="tafsir-tab__name">${escapeHTML(pickLocale({ en: ed.nameEn, ar: ed.nameAr }, lang))}</span>
+      <span class="tafsir-tab__category">${t(categoryKey, lang)}</span>
       ${!ed.bundled ? `<span class="tafsir-tab__cloud">${icon('download', { size: 11 })}</span>` : ''}
     </button>`;
+  };
 
   let body;
   if (!activeEdition) {
     body = `<p class="panel__subtext">${t('tafsir.pickSource', lang)}</p>`;
   } else {
-    const text = state.tafsir?.[activeEdition.id]?.[String(surah)]?.[String(ayah)];
-    if (text) {
+    const cachedSurah = state.tafsir?.[activeEdition.id]?.[String(surah)];
+    const text = cachedSurah?.[String(ayah)];
+    if (typeof text === 'string' && text.trim()) {
       body = `
         <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: activeEdition.authorEn, ar: activeEdition.authorAr }, lang))}</p>
         ${editionBodyHTML(activeEdition, text)}`;
+    } else if (cachedSurah && typeof cachedSurah === 'object') {
+      body = `<p class="tafsir-panel__empty">${t('tafsir.emptyAyah', lang)}</p>`;
     } else if (state.loadErrors?.['tafsir-text']) {
-      // v4.1: the text fetch failed — Retry instead of a stuck skeleton.
       body = `<div class="tafsir-panel__loading">${loadErrorStateHTML({ lang, tierKey: 'tafsir-text', t })}</div>`;
     } else if (activeEdition.bundled) {
       body = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
@@ -728,14 +936,7 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
   }
 
   const activeTabId = activeEdition ? `tafsir-tab-${activeEdition.id}` : '';
-  const compareBlock = buildTafsirCompare(
-    state,
-    surah,
-    ayah,
-    [...bundled, ...remote],
-    activeEdition?.id,
-    lang
-  );
+  const compareBlock = buildTafsirCompare(state, surah, ayah, allEditions, activeEdition?.id, lang);
 
   return `
   <div class="tafsir-panel">
@@ -759,14 +960,13 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
 function buildTafsirCompareSlot(state, surah, ayah, editions, activeId, slotKey, labelKey, lang) {
   const picked = state.settings[slotKey] || null;
   const others = slotKey === 'tafsirCompareC' ? state.settings.tafsirCompareB : null;
-  const cached = (ed) => ed.bundled || state.tafsir?.[ed.id]?.[String(surah)] != null;
   const options = editions.filter((ed) => ed.id !== activeId && ed.id !== others);
   const chipFor = (id, label, on) => `
     <button type="button" class="chip ${on ? 'chip--active' : ''}" data-action="tafsir-compare" data-slot="${slotKey === 'tafsirCompareC' ? 'C' : 'B'}" data-edition="${escapeHTML(id)}" data-surah="${surah}" data-ayah="${ayah}" aria-pressed="${on}">
       ${escapeHTML(label)}
     </button>`;
   const picker = `
-    <div class="tafsir-compare__pick">
+    <div class="tafsir-compare__pick" role="group" aria-label="${t(labelKey, lang)}">
       <span class="tafsir-compare__label">${t(labelKey, lang)}</span>
       ${chipFor('', t('tafsir.compareOff', lang), !picked)}
       ${options.map((ed) => chipFor(ed.id, pickLocale({ en: ed.nameEn, ar: ed.nameAr }, lang), picked === ed.id)).join('')}
@@ -780,7 +980,13 @@ function buildTafsirCompareSlot(state, surah, ayah, editions, activeId, slotKey,
       second = `
       <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: ed.authorEn, ar: ed.authorAr }, lang))}</p>
       ${editionBodyHTML(ed, text)}`;
-    } else if (ed && cached(ed)) {
+    } else if (
+      ed &&
+      state.tafsir?.[ed.id]?.[String(surah)] &&
+      typeof state.tafsir[ed.id][String(surah)] === 'object'
+    ) {
+      second = `<p class="tafsir-panel__empty">${t('tafsir.emptyAyah', lang)}</p>`;
+    } else if (ed && ed.bundled) {
       second = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
     } else if (ed && !ed.bundled) {
       // (v5.2.74, UP-08) uncached remote second source: its own explicit
@@ -847,6 +1053,7 @@ export function buildAyahStudyExtras(state, surah, ayah, activeTafsirId) {
 export function buildMushafSettingsPanel(state) {
   const lang = state.settings.language;
   const prefs = state.settings.mushafPrefs;
+  const tPrefs = tajweedPrefsOf(state);
   // Defense-in-depth (review v3.3 B1): sanitized upstream, but the slider
   // value attributes still interpolate prefs — emit clamped numbers only.
   // (v4.5) the range widened to match the new pinch-zoom / ctrl+wheel span.
@@ -924,7 +1131,6 @@ export function buildMushafSettingsPanel(state) {
     ${toggle('wordUnderline', 'mushaf.wordUnderline', true)}
     ${toggle('tajweedColoring', 'mushaf.tajweed')}
     ${toggle('tajweedUnderlines', 'mushaf.tajweedUnderlines', true)}
-    ${toggle('tajweedInspector', 'mushaf.tajweedInspector')}
 
     <div class="mushaf-settings__study-links">
       <button type="button" class="btn btn--secondary practice-launch-btn" data-action="practice-open">
@@ -946,7 +1152,7 @@ export function buildMushafSettingsPanel(state) {
         // swatches (the page leaves them uncolored). Defaults alone used
         // to render here, so any customization made this chart disagree
         // with the colored text.
-        const override = prefs.colors?.[family.id];
+        const override = tPrefs.colors?.[family.id];
         const familyColor =
           typeof override === 'string' && /^#[0-9a-fA-F]{6}$/.test(override)
             ? override
@@ -954,14 +1160,14 @@ export function buildMushafSettingsPanel(state) {
         return `
         <div class="tajweed-legend__family">
           <div class="tajweed-legend__family-head">
-            <span class="tajweed-legend__swatch" style="background:${familyColor}"></span>
+            <span class="tajweed-legend__swatch${familyColor ? '' : ' tajweed-legend__swatch--plain'}"${familyColor ? ` style="background:${familyColor}"` : ''}></span>
             <span class="tajweed-legend__family-name">${escapeHTML(pickLocale(family.name, lang))}</span>
           </div>
           <p class="tajweed-legend__family-desc">${escapeHTML(pickLocale(family.desc, lang))}</p>
           ${TAJWEED_RULES.filter((r) => r.family === family.id)
             .map((r) => {
-              const on = ruleEnabled(prefs, r.id);
-              const rc = on ? effectiveRuleColor(prefs, r) : null;
+              const on = ruleEnabled(tPrefs, r.id);
+              const rc = on ? effectiveRuleColor(tPrefs, r) : null;
               return `
           <div class="tajweed-legend__row">
             <span class="tajweed-legend__swatch tajweed-legend__swatch--${rc ? 'solid' : 'plain'}" ${rc ? `style="background:${rc}"` : ''} title="${escapeHTML(t('mushaf.tajweedUncolored', lang))}"></span>
@@ -974,13 +1180,7 @@ export function buildMushafSettingsPanel(state) {
             .join('')}
         </div>`;
       }).join('')}
-      <div class="tajweed-legend__row tajweed-legend__row--plain">
-        <span class="tajweed-legend__swatch tajweed-legend__swatch--plain"></span>
-        <div>
-          <div class="tajweed-legend__name">${escapeHTML(t('mushaf.tajweedUncolored', lang))}</div>
-          <div class="tajweed-legend__desc">${escapeHTML(t('mushaf.tajweedCoverage', lang))}</div>
-        </div>
-      </div>
+      <p class="tajweed-legend__coverage">${escapeHTML(t('mushaf.tajweedCoverage', lang))}</p>
     </div>`
         : ''
     }

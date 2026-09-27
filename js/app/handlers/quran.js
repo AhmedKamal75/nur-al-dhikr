@@ -25,11 +25,15 @@ import { t } from '../../core/i18n.js';
 import { go, replaceGo } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
 import { getVerseAudio } from '../../services/audioStore.js';
-import { buildAnswerKey, scoreRound } from '../../domain/tajweedPractice.js';
+import {
+  buildAnswerKey,
+  buildWordAnswerKey,
+  scoreRound,
+  scoreWordRound,
+} from '../../domain/tajweedPractice.js';
 import { setSessionFlag, setSessionValue } from '../../domain/sessionFlags.js';
 import { getWord, dictEntryFor, wordBookmarkKey } from '../../domain/wordStudy.js';
 import * as speech from '../../services/speech.js';
-import { shareAyahCard } from './items.js';
 import {
   clampPage,
   prevPage as mushafPrevPage,
@@ -41,7 +45,7 @@ import {
   prevSpreadPage,
   globalAyahNumber,
 } from '../../services/mushaf.js';
-import { closeModal, openModal } from '../../ui/modal.js';
+import { closeModal, getModalGeneration, isModalOpen, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import * as player from '../../services/player.js';
 import * as recitation from '../../services/recitation.js';
@@ -59,7 +63,12 @@ async function mushafView() {
   return import('../../views/mushafReader.js');
 }
 import { requestMushafNativeFullscreen, releaseMushafNativeFullscreen } from '../fullscreen.js';
-import { buildMushafSettingsPanel, buildWordStudyPanel } from '../../views/tafsirPanel.js';
+import {
+  buildMushafSettingsPanel,
+  buildWordStudyLoadingPanel,
+  buildWordStudyPanel,
+  buildSavedWordsPanel,
+} from '../../views/tafsirPanel.js';
 import { buildTajweedSettingsPanel } from '../../views/tajweedSettings.js';
 import { TAJWEED_FAMILY_VARS, tajweedPrefsOf } from '../../domain/tajweed.js';
 
@@ -92,6 +101,7 @@ export function applyTajweedColors(state) {
  * spread is resident.
  */
 export async function navigateMushafPage(direction) {
+  const generation = rt.lazyDataGeneration;
   const state = store.getState();
   if (state.activeView !== VIEWS.MUSHAF) return false;
   const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
@@ -106,12 +116,25 @@ export async function navigateMushafPage(direction) {
         ? prevSpreadPage(right)
         : mushafPrevPage(page);
   if (dest == null || dest === page) return false;
+  const intent = (rt.mushafNavigationIntent || 0) + 1;
+  rt.mushafNavigationIntent = intent;
 
   try {
     await ensureMushafNavigationPages(dest);
+    if (generation !== rt.lazyDataGeneration) return false;
   } catch (err) {
     console.error('[mushaf] navigation page load failed', dest, err);
     showToast(t('mushaf.loadFailed', store.getState().settings.language));
+    return false;
+  }
+
+  const current = store.getState();
+  const currentPage = clampPage(current.activeParams.page || current.mushafBookmark.page || 1);
+  if (
+    rt.mushafNavigationIntent !== intent ||
+    current.activeView !== state.activeView ||
+    currentPage !== page
+  ) {
     return false;
   }
 
@@ -136,10 +159,67 @@ function resolveTappedWord(ds, target) {
   const key = wordBookmarkKey(ds.surah, ds.ayah, ds.i);
   if (!key) return null;
   const state = store.getState();
-  const surface = target?.textContent?.trim().slice(0, 140) || null;
+  const active = state.activeWordStudy;
+  const activeSurface =
+    active &&
+    String(active.surah) === String(ds.surah) &&
+    String(active.ayah) === String(ds.ayah) &&
+    String(active.i) === String(ds.i)
+      ? active.surface
+      : null;
+  const surface = activeSurface || target?.textContent?.trim().slice(0, 140) || null;
   const word = getWord(state.quranWords, ds.surah, ds.ayah, Number(ds.i), surface);
   if (!word || typeof word.text !== 'string' || !word.text) return null;
   return { word, key };
+}
+
+function wordStudyRequestIsCurrent(request) {
+  const state = store.getState();
+  const active = state.activeWordStudy;
+  return (
+    request.requestId === rt.wordStudyRequestId &&
+    state.activeView === request.view &&
+    active &&
+    String(active.surah) === String(request.surah) &&
+    String(active.ayah) === String(request.ayah) &&
+    String(active.i) === String(request.i) &&
+    (active.surface || null) === (request.surface || null)
+  );
+}
+
+async function openWordStudy(request) {
+  const requestId = rt.wordStudyRequestId + 1;
+  rt.wordStudyRequestId = requestId;
+  const trackedRequest = { ...request, requestId };
+  const initial = store.getState();
+  const hasWord = Boolean(
+    getWord(initial.quranWords, request.surah, request.ayah, request.i, request.surface || null)
+  );
+  if (hasWord) {
+    openModal(buildWordStudyPanel(initial), { labelledBy: 'modal-title-word-study' });
+  } else {
+    openModal(buildWordStudyLoadingPanel(initial), { labelledBy: 'modal-title-word-study' });
+  }
+  const modalGeneration = getModalGeneration();
+  const surahReady = store.getState().quran.surahs[String(request.surah)]
+    ? Promise.resolve()
+    : dispatchSurahDoc(String(request.surah)).catch((err) => {
+        console.error('[wordStudy] failed to load surah text', request.surah, err);
+      });
+  await Promise.allSettled([
+    ensureQuranWordsData(store.getState(), request.surah),
+    ensureQuranRoots(store.getState()),
+    ensureWordDict(),
+    ensureRootsMeaning(),
+    surahReady,
+  ]);
+  if (
+    !wordStudyRequestIsCurrent(trackedRequest) ||
+    getModalGeneration() !== modalGeneration ||
+    !isModalOpen()
+  )
+    return;
+  openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
 }
 
 export const clickHandlers = {
@@ -193,7 +273,7 @@ export const clickHandlers = {
     openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
   },
 
-  'mushaf-jump-page': (ds) => {
+  'mushaf-jump-page': async (ds) => {
     closeModal();
     const state = store.getState();
     const page = clampPage(ds.page);
@@ -201,6 +281,13 @@ export const clickHandlers = {
     // right page whose spread contains it — page 200 is the LEFT page of
     // the 199|200 spread.
     const dest = mushafSpreadActive(state.settings.mushafPrefs) ? spreadRightPage(page) : page;
+    try {
+      await ensureMushafNavigationPages(dest);
+    } catch (err) {
+      console.error('[mushaf] jump page load failed', dest, err);
+      showToast(t('mushaf.loadFailed', store.getState().settings.language));
+      return;
+    }
     go(VIEWS.MUSHAF, { page: String(dest) });
   },
 
@@ -236,6 +323,13 @@ export const clickHandlers = {
     // retires the Home continue card for this session (session flag, never
     // persisted — the bookmark itself is untouched).
     if (String(ds.surah) === String(state.quranBookmark?.surah)) setSessionFlag('continueResumed');
+    try {
+      await ensureMushafNavigationPages(page);
+    } catch (err) {
+      console.error('[mushaf] surah page load failed', page, err);
+      showToast(t('mushaf.loadFailed', store.getState().settings.language));
+      return;
+    }
     go(VIEWS.MUSHAF, { page: String(page) });
   },
 
@@ -274,19 +368,9 @@ export const clickHandlers = {
       const bi = Number(ds.i);
       if (!(bi >= 1 && bi <= 4)) return;
       const surface = target?.textContent?.trim().slice(0, 140) || null;
+      const view = store.getState().activeView;
       store.dispatch(actions.openWordStudy(1, 1, bi, surface));
-      await ensureQuranWordsData(store.getState(), 1);
-      await ensureQuranRoots(store.getState());
-      await ensureWordDict();
-      await ensureRootsMeaning();
-      if (!store.getState().quran.surahs['1']) {
-        try {
-          await dispatchSurahDoc('1');
-        } catch (err) {
-          console.error('[wordStudy] failed to load surah text', 1, err);
-        }
-      }
-      openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
+      await openWordStudy({ view, surah: 1, ayah: 1, i: bi, surface });
       return;
     }
     const surah = ds.surah,
@@ -296,27 +380,9 @@ export const clickHandlers = {
     // handful of true spelling-split ayahs (37:164 etc.) where even
     // canonical indices diverge between sources.
     const surface = target?.textContent?.trim().slice(0, 140) || null;
+    const view = store.getState().activeView;
     store.dispatch(actions.openWordStudy(surah, ayah, i, surface));
-    await ensureQuranWordsData(store.getState(), surah);
-    await ensureQuranRoots(store.getState());
-    // (v5.2.75, UP-01) the lemma-dict tier rides the same open (one fetch
-    // per session; the popup omits Meanings until it lands).
-    await ensureWordDict();
-    // (v5.6.0) the root-meaning tier rides alongside (one fetch per
-    // session; the root block shows an honest hint until it lands).
-    await ensureRootsMeaning();
-    // (v4.6.0) The tajweed section reads the official ayah text from the
-    // classic reader's surah docs — which the Mushaf never loads on its
-    // own. Ensure them (idempotent, cached) so a word tap in the mushaf
-    // shows tajweed rules immediately instead of silently omitting them.
-    if (!store.getState().quran.surahs[String(surah)]) {
-      try {
-        await dispatchSurahDoc(String(surah));
-      } catch (err) {
-        console.error('[wordStudy] failed to load surah text', surah, err);
-      }
-    }
-    openModal(buildWordStudyPanel(store.getState()), { labelledBy: 'modal-title-word-study' });
+    await openWordStudy({ view, surah, ayah, i, surface });
   },
 
   // (v5.2.75, UP-01) per-word actions for the study popup. All resolve
@@ -358,10 +424,34 @@ export const clickHandlers = {
     }
   },
 
-  // Word share reuses the ayah-card canvas: the containing ayah is the
-  // honest shareable unit, giving the word its context.
-  'word-share': async (ds) => {
-    await shareAyahCard(ds.surah, ds.ayah);
+  'word-share': async (ds, e, target) => {
+    const st = store.getState();
+    const lang = st.settings.language;
+    const found = resolveTappedWord(ds, target);
+    if (!found) return;
+    const dict = dictEntryFor(st.wordDict, found.word.lemma);
+    const contextual = found.word.study?.contextualMeaning;
+    const meaning =
+      lang === 'ar'
+        ? dict?.ar || (typeof contextual?.ar === 'string' ? contextual.ar : '')
+        : found.word.en || dict?.en || (typeof contextual?.en === 'string' ? contextual.en : '');
+    const text = `${found.word.text}${meaning ? ` — ${meaning}` : ''}\n\n— ${found.key}`;
+    try {
+      if (typeof navigator.share === 'function') {
+        await navigator.share({ title: t('wordStudy.title', lang), text });
+      } else {
+        await navigator.clipboard.writeText(text);
+        showToast(t('card.copied', lang));
+      }
+    } catch (err) {
+      if (err?.name === 'AbortError') return;
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(t('card.copied', lang));
+      } catch {
+        showToast(t('common.error', lang));
+      }
+    }
   },
 
   'word-bookmark': (ds) => {
@@ -369,9 +459,53 @@ export const clickHandlers = {
     if (!key) return;
     store.dispatch(actions.toggleWordBookmark(key));
     const marked = store.getState().wordBookmarks?.[key] === true;
-    showToast(
-      t(marked ? 'wordStudy.bookmarked' : 'wordStudy.bookmark', store.getState().settings.language)
+    const label = t(
+      marked ? 'wordStudy.bookmarked' : 'wordStudy.bookmark',
+      store.getState().settings.language
     );
+    if (typeof document !== 'undefined') {
+      const button = [...document.querySelectorAll('[data-action="word-bookmark"]')].find(
+        (el) =>
+          el.dataset.surah === String(ds.surah) &&
+          el.dataset.ayah === String(ds.ayah) &&
+          el.dataset.i === String(ds.i)
+      );
+      if (button) {
+        button.classList.toggle('icon-btn--active', marked);
+        button.setAttribute('aria-pressed', String(marked));
+        button.setAttribute('aria-label', label);
+        button.setAttribute('title', label);
+      }
+    }
+    showToast(label);
+  },
+
+  'word-bookmarks-open': () => {
+    openModal(buildSavedWordsPanel(store.getState()), {
+      labelledBy: 'modal-title-word-bookmarks',
+    });
+  },
+
+  'word-bookmark-open': async (ds) => {
+    const key = String(ds.key || '');
+    const state = store.getState();
+    if (state.wordBookmarks?.[key] !== true || !/^\d{1,3}:\d{1,3}:\d{1,4}$/.test(key)) return;
+    const [surah, ayah, i] = key.split(':').map(Number);
+    if (surah < 1 || surah > 114 || ayah < 1 || ayah > 286 || i < 1) return;
+    const view = state.activeView;
+    closeModal();
+    store.dispatch(actions.openWordStudy(surah, ayah, i, null));
+    await openWordStudy({ view, surah, ayah, i, surface: null });
+  },
+
+  'word-bookmark-remove': (ds) => {
+    const key = String(ds.key || '');
+    const existed = store.getState().wordBookmarks?.[key] === true;
+    if (existed) store.dispatch(actions.removeWordBookmark(key));
+    openModal(buildSavedWordsPanel(store.getState()), {
+      labelledBy: 'modal-title-word-bookmarks',
+    });
+    if (existed) showToast(t('wordStudy.savedWordRemoved', store.getState().settings.language));
   },
 
   'root-jump': async (ds) => {
@@ -435,7 +569,9 @@ export const clickHandlers = {
     // to inherit the previous ayah's tab — including possibly an unloaded
     // remote edition — while direct taps reset. One intent, one behavior.
     store.dispatch(actions.setMushafSession({ tafsirTab: null }));
-    await openAyahStudy(ds.surah, ds.ayah, null);
+    await openAyahStudy(ds.surah, ds.ayah, null, {
+      focusSelector: '#tafsir-panel-content',
+    });
   },
 
   'tafsir-tab': async (ds) => {
@@ -506,8 +642,14 @@ export const clickHandlers = {
     openPracticePicker();
   },
 
+  'practice-mode': (ds) => {
+    if (!['find-spans', 'find-word'].includes(ds.mode)) return;
+    rt.practicePickerMode = ds.mode;
+    openPracticePicker();
+  },
+
   'practice-start': async (ds) => {
-    await startPracticeRound(ds.rule);
+    await startPracticeRound(ds.rule, ds.mode || rt.practicePickerMode);
   },
 
   // (v5.10.1) guided rule lesson: validate the id, ensure the pool, and
@@ -527,26 +669,39 @@ export const clickHandlers = {
 
   'practice-tap': (ds) => {
     if (!rt.practiceSession || rt.practiceSession.checked) return;
-    const key = `${ds.word}:${ds.start}:${ds.end}`;
-    if (rt.practiceSession.selected.has(key)) rt.practiceSession.selected.delete(key);
-    else rt.practiceSession.selected.add(key);
+    const session = rt.practiceSession;
+    if (session.answerMode === 'find-word') {
+      const word = Number(ds.word);
+      const count = session.text.trim().split(/\s+/).filter(Boolean).length;
+      if (!Number.isInteger(word) || word < 1 || word > count) return;
+      if (session.selected.has(word)) session.selected.delete(word);
+      else session.selected.add(word);
+    } else {
+      const key = `${ds.word}:${ds.start}:${ds.end}`;
+      if (session.selected.has(key)) session.selected.delete(key);
+      else session.selected.add(key);
+    }
     renderPracticeRound();
   },
 
   'practice-check': () => {
     if (!rt.practiceSession || rt.practiceSession.checked) return;
     const session = rt.practiceSession;
-    const result = scoreRound(session.targets, session.selected);
+    const result =
+      session.answerMode === 'find-word'
+        ? scoreWordRound(session.targetWords, session.selected)
+        : scoreRound(session.targets, session.selected);
     session.checked = true;
     session.result = result;
-    // (v5.4.0, P0-5b) one dispatch records BOTH memories: stats
-    // (streak/accuracy) and — for real rule ids only — the weak-rule map
-    // (miss upsert / re-learned clear; the reducer skips 'mixed'/'review'
-    // since neither is a TAJWEED_RULES id). The round HUD rides the
-    // session's own results/roundStreak (single mode carries them too,
-    // so the ack path never branches on shape).
-    store.dispatch(actions.recordTajweedPracticeResult(session.ruleId, result.perfect));
-    if (Array.isArray(session.results)) session.results.push({ perfect: result.perfect });
+    store.dispatch(
+      actions.recordTajweedPracticeResult(session.targetRuleId || session.ruleId, result.perfect)
+    );
+    if (Array.isArray(session.results)) {
+      session.results.push({
+        perfect: result.perfect,
+        ruleId: session.targetRuleId || session.ruleId,
+      });
+    }
     session.roundStreak = result.perfect ? (session.roundStreak || 0) + 1 : 0;
     renderPracticeRound();
   },
@@ -556,8 +711,8 @@ export const clickHandlers = {
     await advancePracticeRound();
   },
 
-  'practice-review': async () => {
-    await startPracticeRound('review');
+  'practice-review': async (ds) => {
+    await startPracticeRound('review', ds?.mode || rt.practicePickerMode);
   },
 
   'practice-this-ayah': async (ds) => {
@@ -604,6 +759,8 @@ export const clickHandlers = {
     }
     rt.practiceSession = {
       ruleId: 'mixed',
+      answerMode: 'find-spans',
+      targetRuleId: 'mixed',
       mode: 'single',
       surah,
       ayah: useAyah,
@@ -611,6 +768,7 @@ export const clickHandlers = {
       selected: new Set(),
       checked: false,
       targets,
+      targetWords: buildWordAnswerKey(useText, 'mixed'),
       result: null,
       results: [],
       roundStreak: 0,

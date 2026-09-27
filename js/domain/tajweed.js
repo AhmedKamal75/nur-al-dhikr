@@ -102,6 +102,11 @@ const MEEM = '\u0645';
 const BEH = '\u0628';
 const RA = '\u0631';
 
+/** The corpus Basmala, byte-identical to Qur'an 1:1. Reader headers and
+ *  the Tajweed settings sample all render this one spelling. */
+export const BISMILLAH_AR =
+  '\u0628\u0650\u0633\u06E1\u0645\u0650 \u0671\u0644\u0644\u0651\u064E\u0647\u0650 \u0671\u0644\u0631\u0651\u064E\u062D\u06E1\u0645\u064E\u0670\u0646\u0650 \u0671\u0644\u0631\u0651\u064E\u062D\u0650\u064A\u0645\u0650';
+
 const HAMZA_LETTERS = new Set(['\u0621', '\u0623', '\u0625', '\u0624', '\u0626', ALIF_MADDA]);
 const SUN_LETTERS = new Set([
   '\u062A',
@@ -210,6 +215,16 @@ export const TAJWEED_FAMILIES = Object.freeze([
     desc: {
       en: 'Red = 2 counts, orange-red = separated 2/4/6, blood red = connected 4/5, dark red = obligatory 6.',
       ar: 'أحمر = حركتان، أحمر برتقالي = المنفصل، أحمر داكن = المتصل، أحمر غامق = اللازم ٦.',
+    },
+  },
+  {
+    id: 'plain',
+    color: null,
+    recolorable: false,
+    name: { en: 'Uncolored by convention', ar: 'بلا لون بحكم العُرف' },
+    desc: {
+      en: 'Two rules that the standard chart deliberately leaves uncolored, shown here so every rule stays reachable.',
+      ar: 'قاعدتان تتركهما المخطوطة المعيارية بلا لون، معروضتان هنا حتى تبقى كل القواعد ميسرة.',
     },
   },
 ]);
@@ -859,7 +874,9 @@ function stripOrnaments(tok) {
 
 const ARABIC_LETTER_RE = /[ء-غف-يٰ-ۓ]/u;
 
-/** 1-based canonical word list: [{ text, rawIndex }]. */
+/** 1-based canonical word list: [{ text, raw, rawIndex }]. `text` is the
+ *  ornament-stripped grammar key; `raw` is the exact printed token, which
+ *  is what the page colors and the word inspector must both classify. */
 export function canonicalWordTokens(text) {
   const raw = String(text || '')
     .trim()
@@ -868,7 +885,7 @@ export function canonicalWordTokens(text) {
   const out = [];
   raw.forEach((tok, rawIndex) => {
     const core = stripOrnaments(tok);
-    if (core && ARABIC_LETTER_RE.test(core)) out.push({ text: core, rawIndex });
+    if (core && ARABIC_LETTER_RE.test(core)) out.push({ text: core, raw: tok, rawIndex });
   });
   return out;
 }
@@ -1056,10 +1073,24 @@ export function effectiveRuleColor(prefs, rule) {
     : rule.color;
 }
 
-/** Filter a word's spans down to the active rules (render-side lens). */
+/** Filter a word's spans down to the active, paintable rules. The painter
+ *  and the word inspector both consume this result, so overlapping rule
+ *  matches can never be listed in the inspector while being skipped on the
+ *  page. */
 export function filterSpansByPrefs(spans, prefs) {
-  if (!Array.isArray(spans) || !prefs?.rules) return spans || [];
-  return spans.filter((sp) => ruleEnabled(prefs, sp.rule));
+  if (!Array.isArray(spans)) return [];
+  const sorted = spans
+    .filter((sp) => ruleEnabled(prefs, sp.rule))
+    .slice()
+    .sort((a, b) => a.start - b.start || a.end - b.end);
+  const out = [];
+  let cursor = -1;
+  for (const span of sorted) {
+    if (span.start < cursor) continue;
+    out.push(span);
+    cursor = span.end;
+  }
+  return out;
 }
 
 /** A curated swatch palette for the color pickers — readable against both

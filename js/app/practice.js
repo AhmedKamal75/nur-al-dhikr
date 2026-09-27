@@ -18,6 +18,10 @@ import { t } from '../core/i18n.js';
 import { store, actions } from '../core/state.js';
 import {
   buildAnswerKey,
+  buildWordAnswerKey,
+  firstWeakRuleForAyah,
+  isTajweedRuleId,
+  normalizeTajweedAnswerMode,
   pickRoundEntries,
   backfillTajweedPool,
   weakTajweedRules,
@@ -53,7 +57,7 @@ export function renderPracticeSummary() {
 /** Load one pool entry's surah doc, tolerant of offline tiers: a doc that
  *  cannot load is skipped (the pool has other rows) — the round never
  *  shows a broken question. Returns the question record or null. */
-async function loadQuestion(entry) {
+async function loadQuestion(entry, targetRuleId, answerMode, weakRules = null) {
   const state = store.getState();
   let surahDoc = state.quran.surahs[String(entry.s)];
   if (!surahDoc) {
@@ -67,10 +71,26 @@ async function loadQuestion(entry) {
   }
   const ayahText = surahDoc?.ayahs?.find((a) => String(a.number) === String(entry.a))?.text;
   if (!ayahText) return null;
-  return { s: entry.s, a: entry.a, text: ayahText };
+  const ruleId =
+    targetRuleId === 'review' ? firstWeakRuleForAyah(ayahText, weakRules) : targetRuleId;
+  if (!ruleId) return null;
+  const targets = buildAnswerKey(ayahText, ruleId);
+  const targetWords = buildWordAnswerKey(ayahText, ruleId);
+  if (answerMode === 'find-word' && !targetWords.length) return null;
+  if (answerMode === 'find-spans' && !targets.length) return null;
+  return {
+    s: entry.s,
+    a: entry.a,
+    text: ayahText,
+    targetRuleId: ruleId,
+    targets,
+    targetWords,
+  };
 }
 
-export async function startPracticeRound(ruleId) {
+export async function startPracticeRound(ruleId, answerMode = 'find-spans') {
+  const mode = normalizeTajweedAnswerMode(answerMode);
+  if (!mode || (ruleId !== 'mixed' && ruleId !== 'review' && !isTajweedRuleId(ruleId))) return;
   const state = store.getState();
   await ensureTajweedPool(state);
   const pool = store.getState().tajweedPool;
@@ -80,10 +100,6 @@ export async function startPracticeRound(ruleId) {
     showToast(t('practice.nothingToReview', state.settings.language));
     return;
   }
-  // Ordered candidates: the shipped pool first (weak-first for review),
-  // walking the WHOLE rule list before giving up — on a seed bundle most
-  // curated rows point at surahs that aren't bundled, so an honest round
-  // needs every loadable row plus a classifier top-up from memory.
   const candidates = pickRoundEntries(pool, ruleId, PRACTICE_POOL_CAP, null, weak);
   const wanted = PRACTICE_ROUND_SIZE;
   const pickedKeys = new Set();
@@ -92,34 +108,28 @@ export async function startPracticeRound(ruleId) {
     if (questions.length >= wanted) break;
     const key = `${entry.s}:${entry.a}`;
     if (pickedKeys.has(key)) continue;
-    const q = await loadQuestion(entry);
+    const q = await loadQuestion(entry, ruleId, mode, weak);
     if (q) {
       questions.push(q);
       pickedKeys.add(key);
     }
   }
-  // Short round: top the pool up from docs ALREADY in memory with the same
-  // deterministic classifier the drill scores with (never invented rows),
-  // persist the richer pool for the session, then load the additions.
-  if (questions.length < wanted && pool) {
+  if (questions.length < wanted && pool && !isReview) {
     const { pool: filled, addedByRule } = backfillTajweedPool(pool, store.getState().quran.surahs, {
-      only: ruleId === 'mixed' || isReview ? null : [ruleId],
+      only: ruleId === 'mixed' ? null : [ruleId],
     });
     if (Object.keys(addedByRule).length) {
       store.dispatch(actions.setTajweedPool(filled));
-      const fresh = [];
       for (const [rid, n] of Object.entries(addedByRule)) {
-        const list = filled.byRule[rid] || [];
-        fresh.push(...list.slice(-n));
-      }
-      for (const entry of fresh) {
-        if (questions.length >= wanted) break;
-        const key = `${entry.s}:${entry.a}`;
-        if (pickedKeys.has(key)) continue;
-        const q = await loadQuestion(entry);
-        if (q) {
-          questions.push(q);
-          pickedKeys.add(key);
+        for (const entry of (filled.byRule[rid] || []).slice(-n)) {
+          if (questions.length >= wanted) break;
+          const key = `${entry.s}:${entry.a}`;
+          if (pickedKeys.has(key)) continue;
+          const q = await loadQuestion(entry, ruleId, mode, weak);
+          if (q) {
+            questions.push(q);
+            pickedKeys.add(key);
+          }
         }
       }
     }
@@ -131,6 +141,7 @@ export async function startPracticeRound(ruleId) {
   const first = questions[0];
   rt.practiceSession = {
     ruleId,
+    answerMode: mode,
     mode: 'round',
     questions,
     qIndex: 0,
@@ -139,7 +150,9 @@ export async function startPracticeRound(ruleId) {
     text: first.text,
     selected: new Set(),
     checked: false,
-    targets: buildAnswerKey(first.text, ruleId === 'review' ? 'mixed' : ruleId),
+    targetRuleId: first.targetRuleId,
+    targets: first.targets,
+    targetWords: first.targetWords,
     result: null,
     results: [],
     roundStreak: 0,
@@ -167,14 +180,15 @@ export async function advancePracticeRound() {
   session.text = next.text;
   session.selected = new Set();
   session.checked = false;
-  session.targets = buildAnswerKey(
-    next.text,
-    session.ruleId === 'review' ? 'mixed' : session.ruleId
-  );
+  session.targetRuleId = next.targetRuleId;
+  session.targets = next.targets;
+  session.targetWords = next.targetWords;
   session.result = null;
   renderPracticeRound();
 }
 
 export function openPracticePicker() {
-  openModal(buildPracticePicker(store.getState()), { labelledBy: 'modal-title-practice' });
+  openModal(buildPracticePicker(store.getState(), rt.practicePickerMode), {
+    labelledBy: 'modal-title-practice',
+  });
 }

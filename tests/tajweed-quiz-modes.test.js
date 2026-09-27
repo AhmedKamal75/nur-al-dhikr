@@ -36,7 +36,10 @@ describe('TAJ-QUIZ-01 quiz modes', () => {
     // Every word in the key really carries the rule.
     for (const w of words) {
       const spans = perWord.find((x) => x.wordIndex === w)?.spans || [];
-      assert.ok(spans.some((s) => s.rule === ruleWithHit), `word ${w} must carry ${ruleWithHit}`);
+      assert.ok(
+        spans.some((s) => s.rule === ruleWithHit),
+        `word ${w} must carry ${ruleWithHit}`
+      );
     }
     const scored = scoreWordRound(words, words);
     assert.equal(scored.perfect, true);
@@ -50,12 +53,18 @@ describe('TAJ-QUIZ-01 quiz modes', () => {
     const q = buildClassifyQuestion(text, { surah: 113, ayah: 2, options: 4 });
     assert.ok(q, 'classify question builds from a real marked ayah');
     assert.equal(q.mode, 'classify');
-    assert.ok(TAJWEED_RULES.some((r) => r.id === q.ruleId), 'answer is a sourced rule id');
+    assert.ok(
+      TAJWEED_RULES.some((r) => r.id === q.ruleId),
+      'answer is a sourced rule id'
+    );
     assert.ok(q.options.includes(q.correctAnswer), 'options contain the answer');
     assert.equal(q.options.length, 4);
     assert.equal(new Set(q.options).size, 4, 'no duplicated options');
     for (const o of q.options) {
-      assert.ok(TAJWEED_RULES.some((r) => r.id === o), `distractor ${o} must be a sourced rule id`);
+      assert.ok(
+        TAJWEED_RULES.some((r) => r.id === o),
+        `distractor ${o} must be a sourced rule id`
+      );
     }
     assert.equal(q.distractorProvenance, 'tajweed-rule-index');
     assert.ok(q.explanation, 'explanation travels with the question');
@@ -81,7 +90,10 @@ describe('TAJ-QUIZ-01 quiz modes', () => {
     const key = buildAnswerKey(text, 'mixed');
     assert.ok(key.length > 0);
     for (const k of key) {
-      assert.ok(TAJWEED_RULES.some((r) => r.id === k.rule), 'span rule is sourced');
+      assert.ok(
+        TAJWEED_RULES.some((r) => r.id === k.rule),
+        'span rule is sourced'
+      );
     }
   });
 });

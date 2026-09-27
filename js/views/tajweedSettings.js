@@ -13,6 +13,7 @@ import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import {
+  BISMILLAH_AR,
   TAJWEED_FAMILIES,
   TAJWEED_RULES,
   TAJWEED_COLOR_CHOICES,
@@ -20,6 +21,7 @@ import {
   ruleEnabled,
   effectiveRuleColor,
 } from '../domain/tajweed.js';
+import { renderAyahWords } from './tafsirPanel.js';
 
 export function buildTajweedSettingsPanel(state) {
   const lang = state.settings.language;
@@ -28,15 +30,19 @@ export function buildTajweedSettingsPanel(state) {
   const familyColor = (familyId) => {
     const override = prefs.colors?.[familyId];
     if (typeof override === 'string' && /^#[0-9a-fA-F]{6}$/.test(override)) return override;
-    return TAJWEED_FAMILIES.find((f) => f.id === familyId)?.color || '#9e9e9e';
+    return TAJWEED_FAMILIES.find((f) => f.id === familyId)?.color || null;
   };
 
   const familyBlocks = TAJWEED_FAMILIES.map((family) => {
     const rules = TAJWEED_RULES.filter((r) => r.family === family.id);
-    const swatches = TAJWEED_COLOR_CHOICES.map(
-      (hex) => `
-      <button type="button" class="tajpick__swatch ${familyColor(family.id) === hex ? 'tajpick__swatch--active' : ''}" style="background:${hex}" data-action="tajweed-set-color" data-family="${family.id}" data-color="${hex}" aria-label="${t('tajweed.familyColor', lang, { family: pickLocale(family.name, lang) })}: ${hex}" title="${hex}"></button>`
-    ).join('');
+    const currentColor = familyColor(family.id);
+    const recolorable = family.recolorable !== false && family.color;
+    const swatches = recolorable
+      ? TAJWEED_COLOR_CHOICES.map(
+          (hex) => `
+      <button type="button" class="tajpick__swatch ${String(currentColor).toLowerCase() === hex ? 'tajpick__swatch--active' : ''}" style="background:${hex}" data-action="tajweed-set-color" data-family="${family.id}" data-color="${hex}" aria-label="${t('tajweed.familyColor', lang, { family: pickLocale(family.name, lang) })}: ${hex}" title="${hex}"></button>`
+        ).join('')
+      : '';
 
     const ruleRows = rules
       .map((r) => {
@@ -59,12 +65,14 @@ export function buildTajweedSettingsPanel(state) {
     return `
     <section class="tajpick__family">
       <div class="tajpick__family-head">
-        <span class="tajpick__family-swatch" style="background:${familyColor(family.id)}" aria-hidden="true"></span>
+        <span class="tajpick__family-swatch${currentColor ? '' : ' tajpick__family-swatch--plain'}"${currentColor ? ` style="background:${currentColor}"` : ''} aria-hidden="true"></span>
         <span class="tajpick__family-name">${escapeHTML(pickLocale(family.name, lang))}</span>
       </div>
-      <div class="tajpick__swatches" role="group" aria-label="${t('tajweed.familyColor', lang, { family: pickLocale(family.name, lang) })}">
-        ${swatches}
-      </div>
+      ${
+        recolorable
+          ? `<div class="tajpick__swatches" role="group" aria-label="${t('tajweed.familyColor', lang, { family: pickLocale(family.name, lang) })}">${swatches}</div>`
+          : ''
+      }
       ${ruleRows}
     </section>`;
   }).join('');
@@ -74,7 +82,7 @@ export function buildTajweedSettingsPanel(state) {
     <h2 id="modal-title-tajweed-settings">${t('tajweed.rulesTitle', lang)}</h2>
     <p class="view-sheet__intro">${t('tajweed.rulesHint', lang)}</p>
 
-    <p class="tajpick__sample tajweed-sample" dir="rtl" lang="ar" aria-hidden="true">${t('tajweed.sample', lang)}</p>
+    <p class="tajpick__sample tajweed-sample" dir="rtl" lang="ar" aria-hidden="true">${renderAyahWords(BISMILLAH_AR, null, 1, 0, { tappable: false, tajweed: true, prefs })}</p>
 
     ${familyBlocks}
 

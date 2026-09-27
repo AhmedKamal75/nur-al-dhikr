@@ -28,7 +28,7 @@ export function tajweedMissClear(records, ruleId) {
 }
 
 export function weakTajweedRules(records, limit = 10) {
-  return weakQuizIds(records, limit);
+  return weakQuizIds(records, limit).filter(isTajweedRuleId);
 }
 
 /* ------------------------------------------------------------------ */
@@ -65,8 +65,9 @@ export function backfillTajweedPool(
   const onlySet = Array.isArray(only) && only.length ? new Set(only) : null;
   const addedByRule = {};
   for (const rule of TAJWEED_RULES) {
+    if (onlySet && !onlySet.has(rule.id)) continue;
     const list = byRule[rule.id] || [];
-    if (list.length >= min && !(onlySet && onlySet.has(rule.id))) continue;
+    if (list.length >= min && !onlySet) continue;
     // One ayah can legitimately exercise MANY rules — dedupe is per rule,
     // never global, or the first rule processed would starve the rest.
     const seen = new Set(list.map((e) => (e ? `${e.s}:${e.a}` : '')));
@@ -279,6 +280,11 @@ export function nextStats(stats, ruleId, perfect) {
 /* ------------------------------------------------------------------ */
 
 export const TAJWEED_QUIZ_MODES = Object.freeze(['find-spans', 'find-word', 'classify', 'review']);
+export const TAJWEED_ANSWER_MODES = Object.freeze(['find-spans', 'find-word']);
+
+export function normalizeTajweedAnswerMode(mode) {
+  return TAJWEED_ANSWER_MODES.includes(mode) ? mode : null;
+}
 
 /** Word-level answer key: 1-based word indices carrying `ruleId`. */
 export function buildWordAnswerKey(ayahText, ruleId) {
@@ -288,6 +294,13 @@ export function buildWordAnswerKey(ayahText, ruleId) {
     if (spans.some((s) => ruleId === 'mixed' || s.rule === ruleId)) words.push(wordIndex);
   }
   return words;
+}
+
+export function firstWeakRuleForAyah(ayahText, weakRules) {
+  for (const ruleId of Array.isArray(weakRules) ? weakRules : []) {
+    if (isTajweedRuleId(ruleId) && buildAnswerKey(ayahText, ruleId).length) return ruleId;
+  }
+  return null;
 }
 
 /** Score a find-word round: selected = iterable of word indices. */

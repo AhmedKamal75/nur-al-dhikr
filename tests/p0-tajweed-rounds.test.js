@@ -268,6 +268,29 @@ describe('P0-5b: round templates render (EN + AR)', () => {
     assert.match(html, /متعلم|متدرّب|متقن/, 'level badge Arabic');
   });
 
+  test('picker offers only span/word modes and carries the selected mode', () => {
+    const html = buildPracticePicker(baseState(), 'find-word');
+    assert.match(html, /data-action="practice-mode" data-mode="find-spans"/);
+    assert.match(html, /data-action="practice-mode" data-mode="find-word"/);
+    assert.match(html, /data-action="practice-start" data-rule="mixed" data-mode="find-word"/);
+    assert.doesNotMatch(html, /data-mode="classify"/);
+  });
+
+  test('find-word round renders whole-word targets with one roving stop', () => {
+    const html = buildPracticeRound(baseState(), {
+      ...session,
+      answerMode: 'find-word',
+      targetRuleId: 'ghunnah',
+      targetWords: [1],
+      selected: new Set(),
+      checked: false,
+    });
+    assert.match(html, /data-action="practice-tap" data-word="1"/);
+    assert.doesNotMatch(html, /data-start="\d+" data-end="\d+"/);
+    assert.equal((html.match(/data-action="practice-tap" data-word="\d+"/g) || []).length, 5);
+    assert.equal((html.match(/tabindex="0"/g) || []).length, 1);
+  });
+
   test('round HUD shows question-of and streak', () => {
     const html = buildPracticeRound(baseState(), session);
     assert.match(html, /Question 3 of/, 'question counter');
