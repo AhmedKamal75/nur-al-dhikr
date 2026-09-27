@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-24T11:14:29.057Z",
+  "generatedAt": "2026-09-25T14:28:30.211Z",
   "source": "js/core/config/views.js",
   "routeCount": 33,
   "routes": [
@@ -169,9 +169,6 @@
       "view": "offline"
     }
   ],
-  "kidsAllowed": [
-    "KIDS",
-    "TASBIH"
-  ],
+  "kidsAllowed": ["KIDS", "TASBIH"],
   "notes": "Count re-derived from the checkout; do not copy a stale number."
 }
