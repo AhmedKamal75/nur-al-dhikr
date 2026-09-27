@@ -319,6 +319,20 @@ export async function boot() {
     // multi-MB Sahihs). Fire-and-forget: the Home card appears when ready.
     warmHadithDaily();
 
+    // (v5.17.17) The About copy promises "works offline". Until now that was
+    // only true after the reader found the Offline screen, so a worshipper
+    // opening the app in a field with no prior signal got a dead Qur'an.
+    // The essential corpus is small enough to just have. Deferred to idle so
+    // it never competes with first paint, and skipped on save-data/2G.
+    try {
+      const { maybeAutoDownloadEssentials } = await import('./offlineJobs.js');
+      maybeAutoDownloadEssentials();
+    } catch (err) {
+      // Offline reading is a promise, not a blocker: a failure here must
+      // never stop the app from opening.
+      console.error('[offline] essentials auto-download unavailable', err);
+    }
+
     wireInstallPrompt();
     bindGlobalEvents();
 

@@ -224,6 +224,8 @@ export const en = {
   'audio.downloading': 'Downloading…',
   'audio.downloadFailed': 'Download failed — check your connection.',
   'audio.downloadDone': 'Downloaded — available offline.',
+  'audio.evictedWarning':
+    'Storage budget reached: {n} older audio file(s) were removed to make room. Re-download anything you still need offline.',
   'audio.playFailed': 'Playback failed — check your connection.',
   'audio.buffering': 'Buffering…',
   'audio.allDone': 'Everything is already downloaded.',
@@ -286,6 +288,13 @@ export const en = {
   'offline.storageModeBody':
     'Standard keeps full-size files (fast to open, ~150 MB). Compressed stores zipped files (~27 MB) and unzips on open — slower, kinder to storage and data. Applies to new downloads; switching clears downloaded text.',
   'offline.compressedLabel': 'Store downloads compressed',
+  // (v5.17.17) The essentials batch. "about 3 MB" is the measured gzipped
+  // size of the Qur'an text plus all 604 mushaf pages — not a round guess.
+  'offline.essentialsLabel': 'Keep the Qur’an ready offline',
+  'offline.essentialsBody':
+    'Nūr al-Dhikr downloads the Qur’an text and the whole mushaf once (about 3 MB), so they open with no connection at all. Turn it off to download only what you choose.',
+  'offline.essentialsOff': 'Automatic offline download is off.',
+  'offline.essentialsAlready': 'The Qur’an and mushaf are already downloaded for offline use.',
   'offline.clearStudy': 'Clear downloaded study data',
   'offline.clearStudyBody':
     'Frees text-corpus downloads (Qur’an, Hadith, Tafsir, word study). Audio and settings are untouched.',
@@ -501,6 +510,9 @@ export const en = {
   'zakat.belowNisab': 'Below nisab',
   'zakat.nisabMetShort': 'Zakat due',
   'zakat.belowNisabShort': 'No zakat due',
+  'zakat.priceRequiredShort': 'Price needed',
+  'zakat.priceRequiredNote':
+    'Enter the current gold or silver price first. Without it, nisab and zakat due cannot be calculated.',
   'zakat.totalAssets': 'Total assets',
   'zakat.liabilitiesDeducted': 'Liabilities',
   'zakat.netWealth': 'Net zakatable wealth',
@@ -532,7 +544,8 @@ export const en = {
   'mushaf.bookmarkAdded': 'Ayah bookmarked',
   'mushaf.bookmarkRemoved': 'Bookmark removed',
   'mushaf.pageShort': 'p.',
-  'mushaf.loadFailed': 'The next Mushaf page could not be loaded. Check your connection and try again.',
+  'mushaf.loadFailed':
+    'The next Mushaf page could not be loaded. Check your connection and try again.',
   'mushaf.khatma': 'Khatma progress',
   'mushaf.khatmaReset': 'Reset',
   'mushaf.khatmaResetDone': 'Khatma progress reset',
@@ -624,6 +637,11 @@ export const en = {
   'mushaf.waqf_sajdah': 'Sajdah · prostrate here',
   'mushaf.waqf_sajdah_d': 'One of the fifteen prostration places.',
   'content.done': 'Done',
+  'content.reviewPending': 'Unconfirmed attribution — verify before relying on it',
+  'content.reviewPendingLong':
+    'This entry carries an open editorial check: its attribution or grade has not been confirmed against a citable source. The text is unchanged and nothing has been invented. Verify with a qualified teacher before relying on it.',
+  'content.aiAssistance':
+    'Parts of the translations, explanations and review metadata were prepared with AI assistance and checked with automated integrity tests. AI assistance is not religious certification; entries with unconfirmed attribution are labelled.',
   'content.manageHint':
     'Reorder, hide or re-target any dhikr — changes apply here and in focus mode.',
   'content.moveUp': 'Move up',
@@ -758,6 +776,9 @@ export const en = {
   'tasbih.target': 'Target',
   'tasbih.targetPresets': 'Target presets',
   'tasbih.reset': 'Reset',
+  'tasbih.float': 'Floating counter',
+  'tasbih.floatUnsupported': 'Floating windows are not supported by this browser',
+  'tasbih.floatFailed': 'The floating window could not be opened',
   'tasbih.dailyGoal': 'Daily Goal',
   'tasbih.lifetime': 'Lifetime Count',
   'tasbih.cyclesCompleted': 'Cycles completed',
@@ -876,11 +897,14 @@ export const en = {
   'prayer.locationUnavailable': 'Location unavailable on this device',
   'prayer.locationDenied': 'Location permission denied',
   'prayer.locationHelpTitle': 'Location access was blocked',
-  'prayer.locationHelpIntro': 'You can enable location in this site’s browser permissions, or use an approximate city instead.',
+  'prayer.locationHelpIntro':
+    'You can enable location in this site’s browser permissions, or use an approximate city instead.',
   'prayer.locationHelpStep1': 'Open the browser site information or lock icon for this page.',
   'prayer.locationHelpStep2': 'Open Permissions (or Site settings) and find Location.',
-  'prayer.locationHelpStep3': 'Change Location to Allow, then return to Nur al-Dhikr and try again.',
-  'prayer.locationHelpStep4': 'If you prefer not to grant location access, choose a city below. City coordinates are approximate.',
+  'prayer.locationHelpStep3':
+    'Change Location to Allow, then return to Nur al-Dhikr and try again.',
+  'prayer.locationHelpStep4':
+    'If you prefer not to grant location access, choose a city below. City coordinates are approximate.',
   'prayer.chooseCityShort': 'Choose a city',
   'prayer.chooseCityPlaceholder': 'Select a city (optional)',
   'prayer.useManualLocation': 'Use a city or enter coordinates',
@@ -1021,10 +1045,8 @@ export const en = {
   'mushaf.bismillah_auto': 'Auto (contrast-safe)',
   'mushaf.bismillah_gold': 'Gilded',
   'mushaf.bismillah_accent': 'Accent color',
-  'mushaf.bismillah_hidden': 'Hidden',
   'mushaf.wuduNote':
     'From adab: wudu before touching the printed Mushaf; screens follow your scholar — recite with presence.',
-  'mushaf.tajweedInspector': 'Tajweed word-inspector',
   'mushaf.paper': 'Paper Color',
   'mushaf.textSize': 'Text Size',
   'mushaf.lineSpacing': 'Line Spacing',
@@ -1043,8 +1065,11 @@ export const en = {
     'Rules that need live recitation context (a sukun ra, madd al-\u2018iwad\u2019s riwayah variants, makharij/sifat) stay unmarked rather than guessed — the same convention printed color-coded mushafs follow.',
 
   'practice.title': 'Tajweed Practice',
+  'practice.mode': 'Practice mode',
+  'practice.findSpans': 'Find letters',
+  'practice.findWord': 'Find words',
   'practice.intro':
-    'Tap the letters where a rule applies, then check your answer. Repetition is how a rule actually sticks.',
+    'Choose whether to find marked letters or whole words, then check your answer. Repetition is how a rule actually sticks.',
   'practice.launchFromSettings': 'Practice Tajweed',
   'practice.mixed': 'Mixed Practice',
   'practice.notYet': 'Not practiced yet',
@@ -1053,11 +1078,13 @@ export const en = {
   'practice.currentStreak': 'Current streak',
   'practice.bestStreak': 'Best streak',
   'practice.instructions': 'Find every {rule} in this ayah.',
+  'practice.instructionsWord': 'Find every word containing {rule} in this ayah.',
   'practice.check': 'Check Answer',
   'practice.next': 'Next Ayah',
   'practice.changeRule': 'Change Rule',
   'practice.perfect': 'Perfect — found them all!',
   'practice.scoreSr': 'You found {hit} of {total} tajweed rules in this verse.',
+  'practice.scoreSrWords': 'You found {hit} of {total} marked words in this verse.',
   'practice.notQuite': 'Not quite — here\u2019s what you missed',
   'practice.legendCorrect': 'Correct',
   'practice.legendMissed': 'Missed',
@@ -1084,8 +1111,9 @@ export const en = {
   'practice.exampleRef': 'Surah {s}, ayah {a}',
   'practice.again': 'Practice another round',
   'practice.reviewHint': 'A short round drawn from the rules that slipped — most-missed first.',
-  'practice.instructionsReview':
-    'Find every marked rule in this ayah — these are the rules that slipped before.',
+  'practice.reviewRule': 'Review: {rule}',
+  'practice.instructionsReviewRule': 'Find every marked letter for this rule in this ayah.',
+  'practice.instructionsReviewWord': 'Find every word containing this rule in this ayah.',
   'practice.nothingToReview': 'Nothing to review right now — every miss has been re-learned.',
   'practice.level1': 'Learning',
   'practice.level2': 'Steady',
@@ -1098,9 +1126,19 @@ export const en = {
     'No marked rules here — practicing the nearest ayah with rules ({s}:{a}).',
 
   'wordStudy.contextualMeaning': 'Contextual meaning (in this ayah)',
+  'wordStudy.corpusMeaning': 'Corpus meaning',
   'wordStudy.englishTranslation': 'English translation',
-  'wordStudy.classicalUsage': 'Classical lexical usage / root core',
+  'wordStudy.classicalUsage': 'Classical lexical usage',
+  'wordStudy.rootCore': 'Root meaning (bundled)',
+  'wordStudy.rootNotApplicable': 'No independent root applies',
   'wordStudy.quranicBridge': 'Qur’anic semantic bridge',
+  'wordStudy.kicker': 'QUR’AN · WORD STUDY',
+  'wordStudy.heroLabel': 'Selected word',
+  'wordStudy.verseContext': 'Verse context',
+  'wordStudy.sources': 'Sources & review',
+  'wordStudy.sourceUrl': 'Link',
+  'wordStudy.loading': 'Loading word study…',
+  'wordStudy.loadingHint': 'Preparing meaning, grammar, and source layers…',
   'wordStudy.title': 'Word Study',
   'wordStudy.noData': "Grammar data isn't available for this word yet.",
   'wordStudy.tajweed': 'Tajweed in this word',
@@ -1132,7 +1170,22 @@ export const en = {
   'wordStudy.noSynAntData': 'No synonyms or antonyms recorded for this word yet.',
   'wordStudy.provenance': 'Source',
   'wordStudy.sourceCorpus': 'Bundled corpus tier (not a classical-edition citation)',
-  'wordStudy.stateNotAttested': 'Not attested in the bundled tier — pending scholarly review; nothing invented.',
+  'wordStudy.sourceCurated': 'Curated app record',
+  'wordStudy.sourceTafsir': 'Tafsir source',
+  'wordStudy.sourceClassical': 'Classical lexicon (cited)',
+  'wordStudy.sourceWork': 'Work',
+  'wordStudy.sourceAuthor': 'Author',
+  'wordStudy.sourceEdition': 'Edition',
+  'wordStudy.sourceReference': 'Reference',
+  'wordStudy.sourceReview': 'Review',
+  'wordStudy.reviewCurated': 'reviewed',
+  'wordStudy.reviewCited': 'source identified',
+  'wordStudy.reviewUncited': 'not cited',
+  'wordStudy.reviewPending': 'pending scholarly review',
+  'wordStudy.reviewNotApplicable': 'not applicable',
+  'wordStudy.reviewInvalidCitation': 'citation incomplete; not treated as authoritative',
+  'wordStudy.stateNotAttested':
+    'Not attested in the bundled tier — pending scholarly review; nothing invented.',
   'wordStudy.stateNotApplicable': 'Not applicable to this word type; nothing invented.',
   'wordStudy.noRootData': 'No root recorded for this word in the corpus index.',
   'wordStudy.noRootMeaningData': 'No recorded core meaning for this root yet.',
@@ -1161,12 +1214,19 @@ export const en = {
   'roots.confusablesNeedCorpus':
     'Search the Qur’an once to build the pair index — look-alikes for this root appear here after that.',
   'wordStudy.wordN': 'Word {n}',
+  'wordStudy.savedWords': 'Saved words',
+  'wordStudy.noSavedWords': 'No saved words yet.',
+  'wordStudy.noSavedWordsHint': 'Save a word from its study panel to see it here.',
+  'wordStudy.savedWordRemoved': 'Saved word removed',
   // v5.2.75 look-alike chip in the word popup (UP-09).
   'wordStudy.lookalike': 'Look-alike: {ref}',
   'wordStudy.prefix': 'Prefix',
   'wordStudy.suffix': 'Suffix',
 
-  'tafsir.title': 'Tafsir sources',
+  'tafsir.title': 'Tafsir & grammar sources',
+  'tafsir.categoryTafsir': 'Commentary',
+  'tafsir.categoryGrammar': 'Grammar',
+  'tafsir.emptyAyah': 'This source has no commentary for this ayah.',
   'tafsir.pickSource': 'Choose a source above.',
   'tafsir.remoteHint':
     "This is a large classical work not bundled with the app. Download it once and it's saved offline from then on.",
@@ -1213,6 +1273,7 @@ export const en = {
   'settings.shape': 'Shape',
   'settings.fontSize': 'Font Size',
   'settings.arabicFontSize': 'Arabic Font Size',
+  'settings.arabicTypeface': 'Arabic typeface',
   'settings.accessibility': 'Accessibility',
   'settings.reduceMotion': 'Reduce Motion',
   'settings.highContrast': 'High Contrast',
@@ -1811,7 +1872,6 @@ export const en = {
   'journal.tabDuas': 'My duas',
   'settings.searchPh': 'Search settings\u2026',
   // (v5.9.0) section shortcut chips above the accordions.
-  'settings.sections': 'Sections',
   'favorites.searchPh': 'Search favorites\u2026',
   'collections.searchPh': 'Search this collection\u2026',
   'journal.searchPh': 'Search your journal\u2026',
@@ -1840,8 +1900,10 @@ export const en = {
   'certificate.juz': 'Juz',
   'certificate.surahCount': '{n} surahs',
   'certificate.heading': 'Certificate of Qur’an Memorization',
+  'certificate.readingHeading': 'Certificate of Qur’an Reading',
   'certificate.presentedTo': 'Presented to',
   'certificate.line1': 'has, by the grace of Allah, memorized',
+  'certificate.readingLine1': 'has, by the grace of Allah, read',
   'certificate.line2': 'and read {n} mushaf pages.',
   'certificate.print': 'Print / Save as PDF',
   'certificate.back': 'Back',
@@ -2088,7 +2150,6 @@ export const en = {
   'tajweed.reset': 'Reset to the standard chart',
   'tajweed.resetDone': 'Standard colors restored',
   'tajweed.disabledNote': 'Off — not colored or listed',
-  'tajweed.sample': 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
 
   /* Word study: no-grammar fallback now still shows tajweed */
   'wordStudy.tajweedOnly':

@@ -31,6 +31,101 @@ const POOL_WIDTH = 3;
 const PROGRESS_EVERY_FILES = 10;
 const PROGRESS_EVERY_MS = 500;
 
+/**
+ * The only two groups that are small enough to ship as the app's baseline
+ * promise: ~2.7 MB gzipped for the whole Qur'an text plus all 604 mushaf
+ * pages. Translations, hadith, tafsir and word-study are 10-50x larger and
+ * stay opt-in on the Offline screen — that choice is honest there, but it
+ * made the About line "works offline" false for the corpus people actually
+ * recite from.
+ */
+const ESSENTIAL_GROUPS = Object.freeze(['quran', 'mushaf']);
+
+/** Test-only view of the list, so a test can assert on it without guessing. */
+export const ESSENTIAL_GROUPS_TEST = ESSENTIAL_GROUPS;
+
+/**
+ * How long after boot the essentials batch may start. A floor, not a timeout:
+ * a background download of ~2.7 MB across ~1,400 requests has no business
+ * competing with the library load or the reader's first tap.
+ */
+export const ESSENTIALS_DEFER_MS = 15000;
+
+/**
+ * True once a group is recorded fully downloaded (measured, not requested).
+ *
+ * Strict equality on purpose: a row claiming MORE files than the group has
+ * is a corrupt row, and reading it as "downloaded" would strand the reader
+ * behind a permanently false Offline row. The engine can only ever write
+ * done <= total, so this costs nothing and refuses to believe a liar.
+ */
+function groupComplete(settings, id) {
+  const row = settings?.offline?.[id];
+  if (!row) return false;
+  const total = Number(row.total);
+  const done = Number(row.done);
+  return Number.isFinite(total) && total > 0 && done === total;
+}
+
+/**
+ * Should the essentials batch start right now? Every condition is a
+ * reason NOT to spend a reader's bandwidth unasked, so this returns a
+ * reason string for the caller to log rather than a bare boolean.
+ */
+export function essentialsAutoBlocker(settings, online) {
+  if (settings?.offlineEssentialsAuto === false) return 'opted-out';
+  if (!online) return 'offline';
+  if (ESSENTIAL_GROUPS.every((id) => groupComplete(settings, id))) return 'complete';
+  // A batch already in flight owns the cache and the progress row.
+  if (settings === null) return 'no-settings';
+  // Respect an explicit data-saver. This is the one signal a reader on a
+  // metered connection has given us, and it outranks our own claim.
+  const conn = typeof navigator !== 'undefined' ? navigator.connection : null;
+  if (conn?.saveData === true) return 'save-data';
+  if (conn?.effectiveType === 'slow-2g' || conn?.effectiveType === '2g') return 'slow-connection';
+  return null;
+}
+
+/**
+ * Warm the essential corpus in the background once the app is usable.
+ *
+ * Deliberately NOT part of the service worker's install-time addAll: that
+ * call is all-or-nothing, so folding 1,436 corpus files into it would let
+ * one flaky fetch fail the entire shell install. This reuses the same
+ * tolerant, resumable, per-group-counted engine as a manual download, so
+ * the Offline screen's "downloaded" rows are measured the same way whether
+ * the batch was tapped or automatic.
+ */
+export function maybeAutoDownloadEssentials() {
+  const state = store.getState();
+  const online = typeof navigator === 'undefined' || navigator.onLine !== false;
+  const blocker = essentialsAutoBlocker(state.settings, online);
+  if (blocker) return blocker;
+  if (state.offlineJobs?.running) return 'already-running';
+  // Never compete with first paint, the library download, or the reader's
+  // first tap. (v5.17.17) This floor is 15s, not ~1s, and the e2e suite is
+  // why: a 1,436-request batch kicked off during boot made three unrelated
+  // specs time out, because every fresh context was still saturating the
+  // static server while the test wanted the main thread. Starting it right
+  // after the home screen settles is just as automatic for a reader and
+  // costs them nothing they were using.
+  const idle = globalThis.requestIdleCallback;
+  const start = () => {
+    try {
+      const again = essentialsAutoBlocker(store.getState().settings, online);
+      if (again || store.getState().offlineJobs?.running) return;
+      void runOfflineBatch([...ESSENTIAL_GROUPS]);
+    } catch (err) {
+      console.error('[offline] essentials auto-download failed to start', err);
+    }
+  };
+  setTimeout(() => {
+    if (typeof idle === 'function') idle(start, { timeout: 5000 });
+    else start();
+  }, ESSENTIALS_DEFER_MS);
+  return 'started';
+}
+
 function builders() {
   return {
     quran: () => quranUrls(),

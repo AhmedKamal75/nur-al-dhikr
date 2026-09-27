@@ -13,6 +13,7 @@
  */
 
 import {
+  ARABIC_TEXT_FONTS,
   DEFAULT_SETTINGS,
   GRADES,
   MUSHAF_FONTS,
@@ -42,6 +43,7 @@ function sanitizeClockSetting(raw, dflt) {
 }
 
 const MUSHAF_FONT_IDS = new Set(MUSHAF_FONTS.map((f) => f.id));
+const ARABIC_TEXT_FONT_IDS = new Set(ARABIC_TEXT_FONTS.map((f) => f.id));
 /** (v5.0.0) Module-level id pattern shared by the contentPrefs sanitizers. */
 const SAFE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent']);
@@ -112,7 +114,6 @@ export function sanitizeMushafPrefs(raw) {
     lineSpacing: asNumber(p.lineSpacing, 1, 0.85, 1.3),
     pageFlipAnimation: asBool(p.pageFlipAnimation, true),
     wordByWordStudy: asBool(p.wordByWordStudy, true),
-    tajweedInspector: asBool(p.tajweedInspector, true),
     wordUnderline: asBool(p.wordUnderline, true),
     tajweedColoring: asBool(p.tajweedColoring, false),
     // (v5.9.0) tajweed underline cue toggle — hostile values coerce to on.
@@ -283,8 +284,16 @@ export function sanitizeSettings(raw) {
     themeMode: asEnum(s.themeMode, new Set(THEME_MODES), d.themeMode),
     palette: asEnum(s.palette, PALETTE_IDS, d.palette),
     shape: asEnum(s.shape, SHAPE_IDS, d.shape),
-    fontScale: asNumber(s.fontScale, d.fontScale, 0.85, 1.4),
+    // WCAG 1.4.4 asks for text resizable to 200% without loss of content. The
+    // slider used to stop at 1.4, which put a low-vision reader's only full
+    // path behind browser zoom — a real accessibility failure, not a
+    // preference. The mushaf has its own, wider scale (0.6..2.2).
+    fontScale: asNumber(s.fontScale, d.fontScale, 0.85, 2),
     arabicFontScale: asNumber(s.arabicFontScale, d.arabicFontScale, 0.85, 1.6),
+    // (v5.17.16) Arabic reading-text typeface: an enum, never a raw family
+    // string — a crafted settings blob must not be able to inject an
+    // arbitrary font stack into the stylesheet.
+    arabicFont: asEnum(s.arabicFont, ARABIC_TEXT_FONT_IDS, d.arabicFont),
     reduceMotion: asBool(s.reduceMotion, d.reduceMotion),
     highContrast: asBool(s.highContrast, d.highContrast),
     dyslexiaFriendly: asBool(s.dyslexiaFriendly, d.dyslexiaFriendly),
@@ -300,6 +309,11 @@ export function sanitizeSettings(raw) {
     offline: sanitizeOfflineStatus(s.offline),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
     compressedDownloads: asBool(s.compressedDownloads, d.compressedDownloads),
+    // (v5.17.17) The About copy promises "works offline", so the essential
+    // corpus (Qur'an + Mushaf, ~2.7 MB gzipped) downloads by default instead
+    // of waiting to be discovered on the Offline screen. Opt-out, not
+    // opt-in: an unset key must not read as "no".
+    offlineEssentialsAuto: asBool(s.offlineEssentialsAuto, d.offlineEssentialsAuto),
     hapticsEnabled: asBool(s.hapticsEnabled, d.hapticsEnabled),
     pageTurnSound: asBool(s.pageTurnSound, d.pageTurnSound),
     khatmaChimeSound: asBool(s.khatmaChimeSound, d.khatmaChimeSound),

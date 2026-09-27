@@ -105,6 +105,67 @@ export const MUSHAF_FONTS = Object.freeze([
 ]);
 export const DEFAULT_MUSHAF_FONT = 'amiriQuran';
 
+/**
+ * (v5.17.16) Typeface choice for the ARABIC READING TEXT — the adhkar, the
+ * dua cards, the reader, the tasbih stage. Until now Arabic text outside the
+ * Mushaf was locked to one Amiri-first stack, so a reader who prefers a
+ * Medina-print Naskh or a modern face had no way to choose.
+ *
+ * Two deliberate constraints:
+ *
+ *  1. **Zero new bytes.** Every family here is already bundled (Amiri, Amiri
+ *     Quran, Scheherazade New — all OFL, already in APP_SHELL) or is the
+ *     device's own font. Shipping a new typeface would cost install size on
+ *     a 3G phone for a preference.
+ *  2. **The Mushaf is NOT affected.** The mushaf keeps its own separate font
+ *     preference (`mushafPrefs.font`) and always sets --mushaf-font-family,
+ *     so this choice can never disturb a page of the Qur'an.
+ *
+ * The default reproduces the previous hard-coded stack exactly, so an upgrade
+ * changes nothing for anyone who does not touch the setting.
+ */
+export const ARABIC_TEXT_FONTS = Object.freeze([
+  {
+    id: 'amiri',
+    name: { en: 'Amiri (default)', ar: 'أميري (الافتراضي)' },
+    sub: {
+      en: 'Classic Naskh — warm, round, highly readable',
+      ar: 'نسخ كلاسيكي — دافئ ومريح للقراءة',
+    },
+    family:
+      "'Amiri', 'Traditional Arabic', 'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif",
+  },
+  {
+    id: 'amiriQuran',
+    name: { en: 'Amiri Quran', ar: 'أميري قرآن' },
+    sub: {
+      en: 'The Mushaf’s own Naskh, for dhikr that sits beside the Qur’an',
+      ar: 'نسخ المصحف نفسه، للأذكار المجاورة للقرآن',
+    },
+    family: "'Amiri Quran', 'Amiri', 'Traditional Arabic', serif",
+  },
+  {
+    id: 'scheherazade',
+    name: { en: 'Scheherazade New', ar: 'شهرزاد الجديد' },
+    sub: {
+      en: 'Closest free Naskh to the Medina print',
+      ar: 'أقرب خط نسخ حر إلى طبعة المدينة',
+    },
+    family: "'Scheherazade New', 'Amiri Quran', 'Traditional Arabic', serif",
+  },
+  {
+    id: 'system',
+    name: { en: 'Device font', ar: 'خط الجهاز' },
+    sub: {
+      en: 'Your device’s own Arabic face — the clean, modern look',
+      ar: 'الخط العربي في جهازك — مظهر حديث نظيف',
+    },
+    family:
+      "system-ui, -apple-system, 'Segoe UI', 'Noto Naskh Arabic', 'Geeza Pro', 'Al Bayan', 'Damascus', sans-serif",
+  },
+]);
+export const DEFAULT_ARABIC_TEXT_FONT = 'amiri';
+
 /** Mushaf "paper" color themes — independent of the app's light/dark theme,
  *  the way a physical Mushaf's paper stays the same regardless of the room
  *  lighting. Each defines the page background, ink (text) color, a border
@@ -275,6 +336,9 @@ export const DEFAULT_SETTINGS = Object.freeze({
   shape: 'rounded',
   fontScale: 1,
   arabicFontScale: 1,
+  // (v5.17.16) Arabic reading-text typeface. Default reproduces the
+  // previously hard-coded Amiri stack, so upgrading changes nothing.
+  arabicFont: 'amiri',
   reduceMotion: false,
   highContrast: false,
   // (v5.2.59) dyslexia-friendly reading (legible stack + wider spacing)
@@ -311,6 +375,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // path falls back to plain JSON transparently. Stored prefs are
   // untouched — an explicit false stays false (sanitize preserves it).
   compressedDownloads: true,
+  // (v5.17.17) See sanitize.js: default-ON so the "works offline" claim in
+  // About is true on a first visit, not after the reader finds the Offline
+  // screen. Set false to opt out entirely.
+  offlineEssentialsAuto: true,
   soundEnabled: true,
   hapticsEnabled: true,
   // v3.14 Phase C: optional soft sounds — off by default (the owner-facing
@@ -509,8 +577,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
     wordUnderline: true, // subtle per-word affordance dots/underline
     tajweedColoring: false, // color-code Qalqalah/Ghunnah/Madd/etc. — off by default so first-time readers see plain text
     tajweedUnderlines: true, // non-color cue: distinct underline per tajweed family (toggleable for a plain page)
-    tajweedInspector: true, // v3.7: tapping a word lists its rules + what to do (word-study popover)
-    bismillahStyle: 'auto', // v3.7: 'auto' (paper-contrast ink) | 'gold' | 'accent' | 'hidden'
+    bismillahStyle: 'auto', // v3.7: 'auto' (paper-contrast ink) | 'gold' | 'accent' — no 'hidden': omitting the Bismillah normalizes a textless page
     defaultTafsir: 'muyassar',
     // (v4.4) The translation tray under the Mushaf page: a strip of this
     // page's ayah translations for people who read the Arabic page and

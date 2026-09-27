@@ -14,7 +14,17 @@ import { fetchJSON } from '../js/app/net.js';
 import { actions, store } from '../js/core/state.js';
 import { sanitizeSettings } from '../js/core/config.js';
 import { clearTextCache } from '../js/app/offlineJobs.js';
-import { clickHandlers } from '../js/app/handlers/offline.js';
+import { changeHandlers } from '../js/app/handlers/offline.js';
+
+// (v5.17.17) The storage switches are change handlers, not click handlers: a
+// click-dispatched checkbox has its native toggle cancelled by preventDefault,
+// which is why this toggle shipped inert. resolve() reaches them by the same
+// sel the delegated listener matches on.
+const resolve = (action) => {
+  const entry = changeHandlers.find((h) => h.sel.includes(`[data-action="${action}"]`));
+  assert.ok(entry, `no change handler owns ${action}`);
+  return entry.run;
+};
 import { renderOffline } from '../js/views/offline.js';
 import { initialState } from '../js/core/state/initial.js';
 // No static import of scripts/: shipped archives may omit scripts/
@@ -152,11 +162,11 @@ test('gzip: toggle flips pref, wipes data caches, resets statuses', async () => 
   };
   prefOff();
   try {
-    await clickHandlers['offline-toggle-compressed']({}, {}, { checked: true });
+    await resolve('offline-toggle-compressed')({}, { checked: true });
     assert.equal(store.getState().settings.compressedDownloads, true);
     assert.deepEqual(deleted, ['nur-al-dhikr-v9-data']);
     assert.deepEqual(store.getState().settings.offline, {});
-    await clickHandlers['offline-toggle-compressed']({}, {}, { checked: false });
+    await resolve('offline-toggle-compressed')({}, { checked: false });
     assert.equal(store.getState().settings.compressedDownloads, false);
   } finally {
     delete globalThis.document;

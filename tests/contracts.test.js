@@ -28,10 +28,11 @@ import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 
 import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
-import { handlerMaps, mergedClickHandlers } from '../js/app/events.js';
+import { changeRegistry, handlerMaps, mergedClickHandlers } from '../js/app/events.js';
 import { formHandlers } from '../js/app/forms.js';
 import { hashShell, loadSnapshot } from './helpers/shell-hash.mjs';
-import { skipIfSeed } from './helpers/seedMode.mjs';
+import { checkDataManifest } from './helpers/data-manifest.mjs';
+import { SEED_MODE, skipIfSeed } from './helpers/seedMode.mjs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 
@@ -163,6 +164,16 @@ describe('contract: every emitted data-action resolves to a handler', () => {
 
   function registeredActions() {
     const registered = new Set([...Object.keys(mergedClickHandlers), ...Object.keys(formHandlers)]);
+    // (v5.17.17) A checkbox/radio is owned by the CHANGE pipeline, matched by a
+    // sel like '[data-action="offline-toggle-compressed"]' rather than a table
+    // key. Those are real registered handlers, so read them from their sels —
+    // otherwise moving a switch off the click table looks like deleting it,
+    // which is exactly how a dead switch hides from this gate.
+    for (const entry of changeRegistry) {
+      for (const m of String(entry.sel || '').matchAll(/\[data-action="([a-z0-9-]+)"\]/g)) {
+        registered.add(m[1]);
+      }
+    }
     // buildConfirm/buildTextPrompt emit data-action="${confirmAction}" — the
     // string lives at the CALL SITE, so harvest it from source.
     for (const f of walkJs('js/app/handlers')) {
@@ -425,10 +436,15 @@ describe('contract: cache-first bytes change only with a version bump', () => {
     );
   });
 
-  test('data/manifest.json lists every bundled corpus file (V14)', () => {
-    const manifest = JSON.parse(readProject('data/manifest.json'));
-    assert.ok(Array.isArray(manifest.files) && manifest.files.length > 10);
-    const missing = manifest.files.filter((f) => !existsSync(`${ROOT}data/${f}`));
-    assert.deepEqual(missing, [], `manifest lists missing files: ${missing.join(', ')}`);
+  test('data/manifest.json matches the bundled corpus bytes and mode', () => {
+    const pkg = JSON.parse(readProject('package.json'));
+    const result = checkDataManifest(ROOT, {
+      mode: SEED_MODE ? 'seed' : 'full',
+      version: pkg.version,
+    });
+    assert.equal(result.valid, true, result.errors.join('; '));
+    assert.equal(result.stored.mode, SEED_MODE ? 'seed' : 'full');
+    assert.equal(result.stored.version, pkg.version);
+    assert.ok(result.current.files.length > 10);
   });
 });

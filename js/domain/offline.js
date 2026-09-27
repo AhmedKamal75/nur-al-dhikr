@@ -19,6 +19,9 @@ import {
   TAFSIR_EDITIONS_URL,
   TAFSIR_TEXT_URL,
   QURAN_WORDS_URL,
+  QURAN_WORD_STUDY_URL,
+  QURAN_DICT_URL,
+  ROOTS_MEANING_URL,
   QURAN_ROOTS_URL,
   QURAN_ROOTS_FULL_URL,
   TAJWEED_PRACTICE_POOL_URL,
@@ -36,7 +39,7 @@ export const OFFLINE_GROUPS = Object.freeze([
   { id: 'mushaf', sizeMB: 3, gzMB: 1 },
   { id: 'hadith', sizeMB: 50, gzMB: 12 },
   { id: 'tafsir', sizeMB: 51, gzMB: 7 },
-  { id: 'words', sizeMB: 45, gzMB: 4 },
+  { id: 'words', sizeMB: 65, gzMB: 7 },
 ]);
 
 export const OFFLINE_GROUP_IDS = Object.freeze(OFFLINE_GROUPS.map((g) => g.id));
@@ -59,8 +62,10 @@ export function wordsUrls() {
   return [
     QURAN_ROOTS_URL,
     QURAN_ROOTS_FULL_URL,
+    ROOTS_MEANING_URL,
+    QURAN_DICT_URL,
     TAJWEED_PRACTICE_POOL_URL,
-    ...SURAH_NUMBERS.map((n) => QURAN_WORDS_URL(n)),
+    ...SURAH_NUMBERS.flatMap((n) => [QURAN_WORDS_URL(n), QURAN_WORD_STUDY_URL(n)]),
   ];
 }
 

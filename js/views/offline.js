@@ -40,6 +40,12 @@ export function renderOffline(state) {
   const status = state.settings.offline || {};
   const running = jobs.running === true;
   const compressed = state.settings.compressedDownloads === true;
+  // (v5.17.17) Absent means ON: the essentials batch is default-on, so this
+  // must read `!== false` or an un-upgraded install would show it disabled.
+  // Deliberately NOT disabled while a batch runs: this pref only decides
+  // what the NEXT batch does, so flipping it mid-download is harmless and
+  // greying it out just makes the screen feel stuck.
+  const essentialsAuto = state.settings.offlineEssentialsAuto !== false;
   const pct = jobs.total > 0 ? Math.min(100, Math.round((jobs.done / jobs.total) * 100)) : 0;
   const totalMB = OFFLINE_GROUPS.reduce((n, g) => n + (compressed ? g.gzMB : g.sizeMB), 0);
 
@@ -120,6 +126,14 @@ export function renderOffline(state) {
         <span class="mushaf-sheet__label">${t('offline.compressedLabel', lang)}</span>
         <span class="switch">
           <input type="checkbox" data-action="offline-toggle-compressed" ${compressed ? 'checked' : ''} ${running ? 'disabled' : ''} />
+          <span class="switch__track"></span>
+        </span>
+      </label>
+      <p class="panel__subtext">${t('offline.essentialsBody', lang)}</p>
+      <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
+        <span class="mushaf-sheet__label">${t('offline.essentialsLabel', lang)}</span>
+        <span class="switch">
+          <input type="checkbox" data-action="offline-toggle-essentials-auto" ${essentialsAuto ? 'checked' : ''} />
           <span class="switch__track"></span>
         </span>
       </label>

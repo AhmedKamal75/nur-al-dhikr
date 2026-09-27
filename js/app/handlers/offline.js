@@ -12,6 +12,7 @@ import {
   stopOfflineBatch,
   clearTextCache,
   clearStudyData,
+  maybeAutoDownloadEssentials,
 } from '../offlineJobs.js';
 import { OFFLINE_GROUP_IDS } from '../../domain/offline.js';
 import { applyAudioCacheCapFromSettings, enforceAudioCacheCap } from '../../services/audioStore.js';
@@ -30,17 +31,6 @@ export const clickHandlers = {
     stopOfflineBatch();
   },
 
-  // Storage-mode toggle: flip the encoding pref, drop the old-encoding
-  // cache + measured rows (they describe bytes that no longer exist),
-  // and say plainly that the next download applies the new mode.
-  'offline-toggle-compressed': async (ds, e, target) => {
-    const on = target?.checked === true;
-    const lang = store.getState().settings.language;
-    store.dispatch(actions.updateSettings({ compressedDownloads: on }));
-    await clearTextCache();
-    store.dispatch(actions.updateSettings({ offline: {} }));
-    showToast(t(on ? 'offline.compressedOn' : 'offline.compressedOff', lang));
-  },
   // (v5.17.2, audit F-04) explicit "clear downloaded study data" budget:
   // text corpora only — audio and settings survive.
   'offline-clear-study': async () => {
@@ -51,6 +41,44 @@ export const clickHandlers = {
 };
 
 export const changeHandlers = [
+  {
+    // (v5.17.17) BOTH storage switches live here, not in clickHandlers, and
+    // that placement is the whole bug. The delegated click listener calls
+    // e.preventDefault() before dispatching (events.js:529) so links and
+    // buttons behave — but on a checkbox preventDefault CANCELS the native
+    // state toggle. The handler then read target.checked BEFORE the toggle,
+    // dispatched it straight back, and the switch sat there doing nothing.
+    // Shipped broken: "Store downloads compressed" never worked. A checkbox
+    // belongs to the change pipeline, which reads el.checked after the fact.
+    sel: '[data-action="offline-toggle-compressed"]',
+    run: async (ds, el) => {
+      const on = el.checked === true;
+      const lang = store.getState().settings.language;
+      store.dispatch(actions.updateSettings({ compressedDownloads: on }));
+      await clearTextCache();
+      store.dispatch(actions.updateSettings({ offline: {} }));
+      showToast(t(on ? 'offline.compressedOn' : 'offline.compressedOff', lang));
+    },
+  },
+  {
+    // Opt out of the automatic essentials download. Turning it back on
+    // starts the batch immediately — a reader who re-enables it should not
+    // wait a whole boot cycle for nothing to happen.
+    sel: '[data-action="offline-toggle-essentials-auto"]',
+    run: async (ds, el) => {
+      const on = el.checked === true;
+      const lang = store.getState().settings.language;
+      store.dispatch(actions.updateSettings({ offlineEssentialsAuto: on }));
+      if (!on) {
+        showToast(t('offline.essentialsOff', lang));
+        return;
+      }
+      const outcome = maybeAutoDownloadEssentials();
+      // 'complete' or a live batch means there is nothing left to fetch, so
+      // saying "automatic download is off" here would be a lie.
+      if (outcome !== 'started') showToast(t('offline.essentialsAlready', lang));
+    },
+  },
   {
     // (v5.14.0, V10b) audio-budget slider (50–500 MiB): persist, apply to
     // the live IDB cap, and evict down to it — never silently over budget.

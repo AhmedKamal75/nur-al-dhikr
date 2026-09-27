@@ -25,14 +25,12 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (36 change + 18 input)', () => {
-  // 36 = 34 inherited + offline audio-cache arm (v5.14.0) + verse-volume
-  // arm (v5.17.5 — its changeHandlers export sat unmerged, leaving the
-  // recitation console slider dead); the orphaned traveler checkbox arm
-  // died with travelerPanelHTML (v5.15.0 kill) — its toggle rides the
-  // view-sheet switch instead.
-  // 18 = 17 inherited + verse-volume live input (v5.17.5).
-  assert.equal(changeRegistry.length, 36);
+test('D: every arm survived the move (39 change + 18 input)', () => {
+  // 39 = 36 inherited + city-preset change arm + the two storage switches,
+  // which moved OFF the click table in v5.17.17 because a click-dispatched
+  // checkbox has its native toggle cancelled; 18 = 17 inherited +
+  // verse-volume live input (v5.17.5).
+  assert.equal(changeRegistry.length, 39);
   assert.equal(inputRegistry.length, 18);
 });
 
@@ -87,6 +85,21 @@ test('D: prayer-iqama change clamps 0..60, drops zeros and sunrise', () => {
   assert.equal(store.getState().settings.prayer.iqama.sunrise, undefined);
   entry.run({ prayer: 'nope' }, { ...fakeEl(), value: '10' });
   store.dispatch(actions.updatePrayerSettings({ iqama: before || {} }));
+});
+
+test('D: city preset change fills trusted coordinates', () => {
+  const entry = changeRegistry.find((e) => e.sel === 'select[name="cityPreset"]');
+  assert.ok(entry);
+  const fields = {
+    '[name="latitude"]': { value: '' },
+    '[name="longitude"]': { value: '' },
+    '[name="locationName"]': { value: '' },
+  };
+  const form = { querySelector: (selector) => fields[selector] || null };
+  entry.run({}, { value: 'cairo', closest: () => form });
+  assert.equal(fields['[name="latitude"]'].value, '30.0444');
+  assert.equal(fields['[name="longitude"]'].value, '31.2357');
+  assert.ok(fields['[name="locationName"]'].value);
 });
 
 test('D: home-panel-toggle hides and re-shows', () => {

@@ -7,18 +7,15 @@ import { handlePromptForm, formHandlers } from './forms.js';
 import { VIEWS } from '../core/config.js';
 import { t } from '../core/i18n.js';
 
-import { go } from '../core/router.js';
 import { actions, store } from '../core/state.js';
 import { vibrate, clamp, escapeHTML } from '../core/utils.js';
 import { takeoverManualZoom } from './autoFit.js';
-import {
-  clampPage,
-  setMushafWideLayout,
-} from '../services/mushaf.js';
+import { clampPage, setMushafWideLayout } from '../services/mushaf.js';
 import { closeModal, isModalOpen, openLazyModal, openModal, cycleTabFocus } from '../ui/modal.js';
 import { settingsSlugForSection } from '../views/settings.js';
 import {
   mushafSwipeTurn,
+  focusSwipeTurn,
   isSwipeGuardTarget,
   isPlayerDismissSwipe,
   resolveMinControl,
@@ -47,8 +44,8 @@ import {
   clickHandlers as quranClick,
   changeHandlers as quranChange,
   inputHandlers as quranInput,
+  navigateMushafPage,
 } from './handlers/quran.js';
-import { navigateMushafPage } from './handlers/quran.js';
 import {
   clickHandlers as quranAudioClick,
   changeHandlers as quranAudioChange,
@@ -79,11 +76,7 @@ import {
   changeHandlers as offlineChange,
 } from './handlers/offline.js';
 
-import {
-  initFullscreenSync,
-  resetFsControlsIdleTimer,
-  toggleFsControlsVisibility,
-} from './fullscreen.js';
+import { initFullscreenSync, resetFsControlsIdleTimer } from './fullscreen.js';
 
 /**
  * app/events.js — THE single delegated event listener. Click, change,
@@ -511,16 +504,16 @@ export function bindGlobalEvents() {
 
     const target = e.target.closest('[data-action]');
     if (!target) {
-      // In Mushaf fullscreen a tap on the paper itself is the explicit
-      // immersive chrome toggle. Word/ayah controls are data-action surfaces
-      // and therefore never enter this branch.
+      // In Mushaf fullscreen a tap on the paper itself reveals the reading
+      // chrome. Word/ayah controls are data-action surfaces and therefore
+      // never enter this branch.
       if (
         store.getState().mushafFullscreen &&
         e.target.closest?.('.view--mushaf-fullscreen, .mushaf-page') &&
         !e.target.closest?.('button, a, input, select, textarea, [data-action]')
       ) {
         e.preventDefault();
-        toggleFsControlsVisibility();
+        resetFsControlsIdleTimer();
       }
       return;
     }
@@ -533,7 +526,15 @@ export function bindGlobalEvents() {
 
     const handler = clickHandlers[action];
     if (handler) {
-      e.preventDefault();
+      // (v5.17.17) A checkbox/radio's default action IS its state toggle, and
+      // preventDefault() cancels it. Dispatching through the click table with
+      // preventDefault meant the handler read the pre-toggle `checked` and
+      // wrote the same value back — the switch silently did nothing (this is
+      // how the storage-mode toggle shipped broken). Checkboxes belong to the
+      // change pipeline; if one is handled here anyway, let the native toggle
+      // happen so the handler at least sees the post-click value.
+      const isToggle = target.matches?.('input[type="checkbox"], input[type="radio"]');
+      if (!isToggle) e.preventDefault();
       dispatchHandler(action, target.dataset, e, target);
     }
   });
@@ -809,12 +810,27 @@ export function bindGlobalEvents() {
   });
 
   let touchStartX = null;
+  let touchStartY = null;
   let touchStartId = null;
   document.addEventListener(
     'touchstart',
     (e) => {
-      if (!document.body.classList.contains('is-focus-mode')) return;
+      if (
+        !document.body.classList.contains('is-focus-mode') ||
+        isModalOpen() ||
+        e.touches.length !== 1 ||
+        e.target?.closest?.(
+          'button, a, input, select, textarea, [contenteditable="true"], .modal, .sheet'
+        ) ||
+        !e.target?.closest?.('.focus__scroll')
+      ) {
+        touchStartX = null;
+        touchStartY = null;
+        touchStartId = null;
+        return;
+      }
       touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
       touchStartId = e.touches[0].identifier ?? null;
     },
     { passive: true }
@@ -828,17 +844,14 @@ export function bindGlobalEvents() {
       const touch =
         touchStartId == null ? e.changedTouches[0] : findTouch(e.changedTouches, touchStartId);
       const dx = touch ? touch.clientX - touchStartX : NaN;
+      const dy = touch ? touch.clientY - touchStartY : NaN;
       touchStartX = null;
+      touchStartY = null;
       touchStartId = null;
-      if (!touch) return;
-      if (Math.abs(dx) < 60) return;
+      if (!touch || isModalOpen()) return;
       const isRTL = document.documentElement.getAttribute('dir') === 'rtl';
-      // In LTR, swiping left means "forward" (next). In RTL, reading and
-      // navigation flow the opposite way, so the same physical swipe should
-      // move in the opposite logical direction.
-      const swipedTowardStart = dx < 0; // physically swiped leftward
-      const dir = isRTL ? (swipedTowardStart ? -1 : 1) : swipedTowardStart ? 1 : -1;
-      navigateFocusAdjacent(dir);
+      const turn = focusSwipeTurn(dx, dy, isRTL);
+      if (turn) navigateFocusAdjacent(turn === 'next' ? 1 : -1);
     },
     { passive: true }
   );
