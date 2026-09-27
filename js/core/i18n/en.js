@@ -1070,6 +1070,8 @@ export const en = {
   'practice.findWord': 'Find words',
   'practice.intro':
     'Choose whether to find marked letters or whole words, then check your answer. Repetition is how a rule actually sticks.',
+  'mushaf.tajweedSource': 'Source',
+  'mushaf.tajweedUncited': 'No source recorded for this rule yet.',
   'practice.launchFromSettings': 'Practice Tajweed',
   'practice.mixed': 'Mixed Practice',
   'practice.notYet': 'Not practiced yet',

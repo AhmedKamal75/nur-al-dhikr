@@ -2,6 +2,37 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.18 — Every rule now says where it came from
+
+- **A false attribution, removed.** The tajweed palette was described in five
+  places as "the standard chart", and two of those were user-facing strings
+  in the legend and Settings. A research pass
+  (`docs/TAJWEED-RESEARCH-DOSSIER.md`, 141 URLs, every claim marked
+  verified / contested / unverified) found that **no authority publishes a
+  rule→colour table under that name** — the widely circulated "KFGQPC colour
+  legend" is a third-party font's scheme, and the Complex publishes no such
+  table. The colours stay: they are familiar and defensible. The claim does
+  not, because a reader told these are standard colours will trust them for
+  something they are not. The app now says the palette is its own.
+- **All 20 rules carry a citation.** `data/tajweed-sources.json` cites each
+  rule to Tuḥfat al-Aṭfāl or Ibn al-Jazārī's al-Muqaddima al-Jazariyya with a
+  verse-level locator, so a reader can check the line — and so the app can
+  honestly say where its rule descriptions come from. This satisfies the
+  sourcing rule without rewriting wording that was already correct.
+- **Disagreement is shown, not resolved.** Six of the twenty entries are
+  marked `contested` and render the disagreement in the legend: qalqalah's
+  five-or-six letters with all three named expansions, the four madd lāẓim
+  types against a `madd_6` id that no matn supports, and where texts differ
+  on whether ʿiwāḍ and ṣilah belong to the lāẓim class. The app has no
+  standing to pick, so it shows the spread.
+- Two claims the research corrected in our own favour: ghunnah has **one**
+  articulation point (al-khaysum) — the figure 15 counts ikhfāʾ letters — and
+  the palette convention that _is_ citable is Indonesia's LPMQ _Pedoman
+  Tajwid Sistem Warna_ (2011), a government standard with exact CMYK values.
+- `tests/tajweed-sources.test.js` fails if a rule ships without a citation, if
+  a citation points at an undefined work, if the runtime mirror drifts from
+  the canonical JSON, or if a "standard chart" claim reappears anywhere.
+
 ## v5.17.17 — "Works offline" becomes true, and a switch that was never a switch
 
 - **The About screen stopped overclaiming.** It says "Everything lives on

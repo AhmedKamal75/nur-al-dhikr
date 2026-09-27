@@ -162,8 +162,18 @@ const IKHFA_LETTERS = new Set([
  *   nasal (green)  — ghunnah + the whole noon/meem sakinah family
  *   qalqalah (cyan)
  *   heavy (blue)   — tafkhim
- *   madd (red, orange-red, blood red, dark red, by strength — v5.3.0;
- *   the standard chart's madd reds, replacing the earlier pink scale)
+ *   madd (red, orange-red, blood red, dark red, by strength — v5.3.0,
+ *   replacing the earlier pink scale)
+ *
+ * (v5.17.18) These colours are this app's OWN convention, not a published
+ * standard. A research pass (docs/TAJWEED-RESEARCH-DOSSIER.md) found that no
+ * authority publishes a rule->colour chart under the name the comments here
+ * used to claim — the widely circulated "KFGQPC colour legend" is a
+ * third-party font's scheme, and the Complex publishes no such table. The
+ * palette is defensible and familiar, so it stays; the false attribution
+ * goes, because a user who is told these are "standard" colours will trust
+ * them for something they are not. The one genuinely citable convention
+ * found is Indonesia's LPMQ Pedoman Tajwid Sistem Warna (2011).
  *
  * Two rules the standard mushaf convention leaves UNMARKED (idgham bila
  * ghunnah, izhar shafawi) now carry color: null and render no color span
@@ -177,8 +187,8 @@ export const TAJWEED_FAMILIES = Object.freeze([
     color: '#9E9E9E',
     name: { en: 'Silent letters', ar: 'الحروف الصامتة' },
     desc: {
-      en: 'Written but not pronounced when joining (gray in the standard chart).',
-      ar: 'حروف تُكتب ولا تُنطق عند الوصل (الرمادي في المخطط المعياري).',
+      en: 'Written but not pronounced when joining (gray in this app\u2019s palette).',
+      ar: 'حروف تُكتب ولا تُنطق عند الوصل (الرمادي في ألوان هذا التطبيق).',
     },
   },
   {
@@ -223,8 +233,8 @@ export const TAJWEED_FAMILIES = Object.freeze([
     recolorable: false,
     name: { en: 'Uncolored by convention', ar: 'بلا لون بحكم العُرف' },
     desc: {
-      en: 'Two rules that the standard chart deliberately leaves uncolored, shown here so every rule stays reachable.',
-      ar: 'قاعدتان تتركهما المخطوطة المعيارية بلا لون، معروضتان هنا حتى تبقى كل القواعد ميسرة.',
+      en: 'Two rules left uncoloured in the printed mushaf tradition, shown here so every rule stays reachable. The colour scheme below is this app\u2019s own, not an official standard.',
+      ar: 'قاعدتان تُركان بلا اللون في تقاليد المصاحف المطبوعة، معروضتان هنا حتى تبقى كل القواعد ميسرة. نظام الألوان أدناه خاص بهذا التطبيق، وليس معيارًا رسميًا.',
     },
   },
 ]);
@@ -1021,7 +1031,7 @@ export function wordUnits(word) {
 
 /* ------------------------------------------------------------------ */
 /* (v4.6.0) User rule preferences: which rules are ON, and what color   */
-/* each family wears. Absent = the standard chart (everything on, the   */
+/* each family wears. Absent = our own defaults (everything on, the    */
 /* default palette). Settings live at settings.tajweedPrefs:            */
 /*   { rules: { ruleId: false }, colors: { familyId: '#rrggbb' } }      */
 /* ------------------------------------------------------------------ */
@@ -1094,7 +1104,7 @@ export function filterSpansByPrefs(spans, prefs) {
 }
 
 /** A curated swatch palette for the color pickers — readable against both
- *  light and dark surfaces, harmonious with the standard chart. */
+ *  light and dark surfaces, harmonious within our own palette. */
 export const TAJWEED_COLOR_CHOICES = Object.freeze([
   '#9e9e9e',
   '#4caf50',

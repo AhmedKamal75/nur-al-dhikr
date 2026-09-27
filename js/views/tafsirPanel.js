@@ -30,6 +30,7 @@ import {
   effectiveRuleColor,
   filterSpansByPrefs,
 } from '../domain/tajweed.js';
+import { tajweedCitation } from '../domain/tajweedSources.js';
 import {
   getWord,
   wordDetailTags,
@@ -1009,6 +1010,34 @@ function buildTafsirCompareSlot(state, surah, ayah, editions, activeId, slotKey,
     </div>`;
 }
 
+/**
+ * One rule's citation, as a reader sees it in the legend: the work, the line
+ * reference, and — when authorities disagree — the disagreement itself.
+ *
+ * A contested rule shows the spread rather than a verdict, because the app
+ * has no standing to pick between them: six of the twenty madd and qalqalah
+ * entries are contested, which is the honest state of the material.
+ */
+function tajweedSourceLine(ruleId, lang) {
+  const c = tajweedCitation(ruleId, lang);
+  if (!c) {
+    // Deliberately not silent. An uncited rule is a defect, and hiding it
+    // here would hide it from the tests too.
+    return `<div class="tajweed-legend__source tajweed-legend__source--missing">${escapeHTML(
+      t('mushaf.tajweedUncited', lang)
+    )}</div>`;
+  }
+  const parts = [
+    `<div class="tajweed-legend__source">${escapeHTML(t('mushaf.tajweedSource', lang))}: ${escapeHTML(c.title)} ${escapeHTML(c.lines)}</div>`,
+  ];
+  if (c.review === 'contested' && c.caveat) {
+    parts.push(
+      `<div class="tajweed-legend__caveat">${escapeHTML(c.caveat[lang] || c.caveat.en)}</div>`
+    );
+  }
+  return parts.join('');
+}
+
 function buildTafsirCompare(state, surah, ayah, editions, activeId, lang) {
   return (
     buildTafsirCompareSlot(
@@ -1174,6 +1203,7 @@ export function buildMushafSettingsPanel(state) {
             <div>
               <div class="tajweed-legend__name">${escapeHTML(pickLocale(r.name, lang))}</div>
               <div class="tajweed-legend__desc">${escapeHTML(pickLocale(r.desc, lang))}</div>
+              ${tajweedSourceLine(r.id, lang)}
             </div>
           </div>`;
             })

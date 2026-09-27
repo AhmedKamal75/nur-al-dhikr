@@ -1040,6 +1040,8 @@ export const ar = {
   'practice.findWord': 'ابحث عن الكلمات',
   'practice.intro':
     'اختر البحث عن الحروف أو الكلمات العَلَامة، ثم تحقق من إجابتك. التكرار هو ما يجعل الحكم يرسخ فعلاً.',
+  'mushaf.tajweedSource': 'المصدر',
+  'mushaf.tajweedUncited': 'لم يُسجَّل مصدر لهذه القاعدة بعد.',
   'practice.launchFromSettings': 'تدريب التجويد',
   'practice.mixed': 'تدريب متنوع',
   'practice.notYet': 'لم تتدرب بعد',

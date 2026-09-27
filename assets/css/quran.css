@@ -3819,3 +3819,26 @@ body.has-player .reader-immersive-echo {
 .tajpick__reset {
   align-self: center;
 }
+
+/* v5.17.18 — a rule's citation, in the legend. A rule description is
+   religious teaching, so the source travels with it: the work, the line
+   reference, and where authorities disagree, the disagreement itself. */
+.tajweed-legend__source {
+  margin-block-start: 2px;
+  font-size: 0.72em;
+  opacity: 0.68;
+}
+
+.tajweed-legend__caveat {
+  margin-block-start: 3px;
+  font-size: 0.72em;
+  font-style: italic;
+  opacity: 0.74;
+}
+
+/* An uncited rule must be visible, not tidy. Honest absence over a blank
+   line that reads as "nothing to see here". */
+.tajweed-legend__source--missing {
+  opacity: 0.9;
+  font-style: italic;
+}
