@@ -127,6 +127,10 @@ const VIEW_TABLE = {
 const LAZY_VIEW_LOADERS = {
   [VIEWS.QUIZ]: () => import('../views/quiz.js').then((m) => m.renderQuiz),
   [VIEWS.OFFLINE]: () => import('../views/offline.js').then((m) => m.renderOffline),
+  // (v5.17.19) Lazy on purpose: the renderer is at its 19 static view-import
+  // cap, so a new view must never be a static import.
+  [VIEWS.TAJWEED_COURSE]: () =>
+    import('../views/tajweedCourseView.js').then((m) => m.renderTajweedCourse),
   [VIEWS.ABOUT]: () => import('../views/about.js').then((m) => m.renderAbout),
   [VIEWS.AMBIENT]: () => import('../views/ambient.js').then((m) => m.renderAmbient),
   [VIEWS.GARDEN]: () => import('../views/garden.js').then((m) => m.renderGarden),

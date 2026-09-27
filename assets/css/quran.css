@@ -3842,3 +3842,144 @@ body.has-player .reader-immersive-echo {
   opacity: 0.9;
   font-style: italic;
 }
+
+/* v5.17.19 — the tajweed course screen. A stage ladder rather than a list:
+   the reader should see where they are, what is next, and what is still
+   shut. Locked rows say why they are shut, because a dimmed row with no
+   reason reads as broken. */
+.taj-course__stage {
+  margin-block-end: 1.5rem;
+}
+
+.taj-course__stage-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__stage-count {
+  margin-inline-start: auto;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.taj-course__sessions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.taj-course__session {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  background: var(--color-surface-alt);
+}
+
+.taj-course__session--next {
+  border-color: var(--color-accent);
+}
+
+.taj-course__session--locked {
+  opacity: 0.62;
+}
+
+.taj-course__session-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__session-order {
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8em;
+}
+
+.taj-course__badge {
+  font-size: 0.72em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.taj-course__badge--next {
+  background: var(--color-surface-raised);
+}
+
+.taj-course__rules {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.taj-course__rule-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  inline-size: 100%;
+  text-align: start;
+  background: none;
+  border: 0;
+  padding: 0.25rem 0.2rem;
+  border-radius: 8px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.taj-course__rule-btn:disabled {
+  cursor: default;
+}
+
+.taj-course__rule-src {
+  font-size: 0.72em;
+  opacity: 0.68;
+}
+
+.taj-course__rule-src--missing {
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.taj-course__modes {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.taj-course__actions {
+  margin-block-start: 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__continue {
+  border: 1px solid var(--color-accent);
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  margin-block: 0.9rem;
+}

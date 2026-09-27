@@ -271,6 +271,10 @@ export function reduceQuran(state, action) {
     case 'TAJWEED_POOL_LOADED':
       return { ...state, tajweedPool: action.pool };
 
+    case 'TAJWEED_COURSE_PROGRESS':
+      // Progress is a lens over the course spine, never an edit to it.
+      return { ...state, tajweedCourseProgress: action.progress || {} };
+
     case 'TAJWEED_PRACTICE_RESULT':
       // (v5.4.0, P0-5b) one dispatch, two memories: stats (streak/accuracy)
       // and the weak-rule map — a miss upserts {m,l}, a clean question

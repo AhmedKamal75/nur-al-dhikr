@@ -1,0 +1,373 @@
+{
+ "schemaVersion": "1.0",
+ "attribution": {
+  "shape": "The stage -> session -> skill shape, the madd-first opening, and the one-session-a-day rhythm follow Arabic101's published 30-day Tajweed programme (https://www.youtube.com/Arabic101, https://arabic101.org/), whose intermediate course is described as six stages and thirty lessons at one lesson a day. That programme is credited for its PEDAGOGY here.",
+  "content": "No stage or session text in this file is copied from any course, and no religious prose is authored here. Every session points at rule ids whose bilingual name, description and citation already live in data/tajweed-sources.json (Tuhfat al-Atfal, al-Jazariyya), and at stage citations into those same matns. Drills are generated at run time by the app's own classifier over the app's own Uthmani text, so no exercise or answer key is written by hand.",
+  "corroboration": "The madd-first order is not idiosyncratic. The free intermediate curriculum of Imam Muhammad ibn Saud Islamic University follows the same classical gradient, and the same sequence appears in the 16 sections of al-Jazariyya and the 61 verses of Tuhfat al-Atfal. Research: docs/TAJWEED-RESEARCH-DOSSIER.md.",
+  "notClaimed": "This is NOT a reproduction of Arabic101's syllabus. Their exact stage names were not verifiable from a public source, so the stage grouping here is the matn gradient arranged in the shape they publish, and is attributed accordingly."
+ },
+ "stages": [
+  {
+   "id": "madd",
+   "order": 1,
+   "title": {
+    "en": "Madd — holding the vowel",
+    "ar": "المدّ — إطالة الصوت"
+   },
+   "why": {
+    "en": "Madd is where a beginner's recitation is most audible, and most often wrong. It comes first here because everything later is easier to hear once the counts are right.",
+    "ar": "المدّ أوضح ما يُسمَع في تلاوة المبتدئ، وأكثره خطأً. ويأتي أولًا هنا لأن ما بعده يصير أسهل على السمع متى ضبطت العدّات."
+   },
+   "citation": {
+    "work": "tuhfat-al-atfal",
+    "lines": "35-58"
+   },
+   "sessions": [
+    {
+     "id": "madd-natural",
+     "order": 1,
+     "title": {
+      "en": "Natural madd",
+      "ar": "المد الطبيعي"
+     },
+     "focus": [
+      "madd_2"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "35-41"
+     },
+     "also": [
+      {
+       "work": "jazariyya",
+       "lines": "68-71"
+      }
+     ],
+     "mixed": false
+    },
+    {
+     "id": "madd-connected",
+     "order": 2,
+     "title": {
+      "en": "Connected and separated madd",
+      "ar": "المد المتصل والمنفصل"
+     },
+     "focus": [
+      "madd_muttasil",
+      "madd_munfasil"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "42-47"
+     },
+     "also": [
+      {
+       "work": "jazariyya",
+       "lines": "68-71"
+      }
+     ],
+     "mixed": false
+    },
+    {
+     "id": "madd-paused",
+     "order": 3,
+     "title": {
+      "en": "Madd at a pause",
+      "ar": "المد عند الوقف"
+     },
+     "focus": [
+      "madd_246"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "42-47"
+     },
+     "mixed": false
+    },
+    {
+     "id": "madd-obligatory",
+     "order": 4,
+     "title": {
+      "en": "Obligatory madd",
+      "ar": "المد اللازمة"
+     },
+     "focus": [
+      "madd_6",
+      "madd_iwad",
+      "madd_badal",
+      "madd_silah"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "47-58"
+     },
+     "mixed": false
+    }
+   ]
+  },
+  {
+   "id": "qalqalah",
+   "order": 2,
+   "title": {
+    "en": "Qalqalah and the weight of letters",
+    "ar": "القلقلة وصفات الحروف"
+   },
+   "why": {
+    "en": "Qalqalah and heavy/light letters change how a page sounds without changing its meaning, so they are learned by ear and repetition rather than by definition.",
+    "ar": "القلقلة وصفات الحروف تغيّر صوت الصفحة دون أن تغيّر معناها، فتُتعلَّم بالأذن والتكرار لا بالحفظ."
+   },
+   "citation": {
+    "work": "jazariyya",
+    "lines": "23, 34-56"
+   },
+   "sessions": [
+    {
+     "id": "qalqalah-rule",
+     "order": 1,
+     "title": {
+      "en": "The bounce",
+      "ar": "القلقلة"
+     },
+     "focus": [
+      "qalqalah"
+     ],
+     "citation": {
+      "work": "jazariyya",
+      "lines": "23, 37-39"
+     },
+     "mixed": false
+    },
+    {
+     "id": "tafkhim",
+     "order": 2,
+     "title": {
+      "en": "Heavy and light",
+      "ar": "التفخيم والترقيق"
+     },
+     "focus": [
+      "tafkhim"
+     ],
+     "citation": {
+      "work": "jazariyya",
+      "lines": "34-56"
+     },
+     "mixed": false
+    }
+   ]
+  },
+  {
+   "id": "noon",
+   "order": 3,
+   "title": {
+    "en": "Noon sakinah and tanween",
+    "ar": "أحكام النون الساكنة والتنوين"
+   },
+   "why": {
+    "en": "The largest single block of rules, and the one that most changes how an ordinary page sounds. It also appears most often in the text, so it rewards the most drilling.",
+    "ar": "أكبر كتلة من القواعد، وأكثرها أثرًا في صوت الصفحة المعتادة، وأكثرها ورودًا في النص، فهي الأكثر استحقاقًا للتكرار."
+   },
+   "citation": {
+    "work": "tuhfat-al-atfal",
+    "lines": "6-17"
+   },
+   "sessions": [
+    {
+     "id": "noon-izhar",
+     "order": 1,
+     "title": {
+      "en": "Clear noon",
+      "ar": "الإظهار الحلقي"
+     },
+     "focus": [
+      "izhar_shafawi",
+      "ghunnah"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "6-13"
+     },
+     "mixed": false
+    },
+    {
+     "id": "noon-idgham",
+     "order": 2,
+     "title": {
+      "en": "Merging noon",
+      "ar": "الإدغام"
+     },
+     "focus": [
+      "idgham_ghunnah",
+      "idgham_no_ghunnah"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "6-13"
+     },
+     "mixed": false
+    },
+    {
+     "id": "noon-iqlab",
+     "order": 3,
+     "title": {
+      "en": "Noon into meem",
+      "ar": "الإقلاب"
+     },
+     "focus": [
+      "iqlab"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "6-13"
+     },
+     "mixed": false
+    },
+    {
+     "id": "noon-ikhfa",
+     "order": 4,
+     "title": {
+      "en": "Hidden noon",
+      "ar": "الإخفاء"
+     },
+     "focus": [
+      "ikhfa"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "14-17"
+     },
+     "mixed": false
+    }
+   ]
+  },
+  {
+   "id": "meem",
+   "order": 4,
+   "title": {
+    "en": "Meem sakinah",
+    "ar": "أحكام الميم الساكنة"
+   },
+   "why": {
+    "en": "Three cases, fewer branches than the noon rules, and the same shape — which is the point: having just learned one set, this one is a variation, not new material.",
+    "ar": "ثلاثة أحكام، أقل تفصيلًا من أحكام النون، وبنفس الصورة — وهذا هو المقصود: بعد تعلّم مجموعة صارت هذه 변화 لا مادة جديدة."
+   },
+   "citation": {
+    "work": "tuhfat-al-atfal",
+    "lines": "18-23"
+   },
+   "sessions": [
+    {
+     "id": "meem-three",
+     "order": 1,
+     "title": {
+      "en": "The three rulings",
+      "ar": "الأحكام الثلاثة"
+     },
+     "focus": [
+      "ikhfa_shafawi",
+      "idgham_shafawi",
+      "izhar_shafawi"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "18-23"
+     },
+     "mixed": false
+    }
+   ]
+  },
+  {
+   "id": "lam",
+   "order": 5,
+   "title": {
+    "en": "Lām, and the letters that change shape",
+    "ar": "اللام، والحروف التي يتغير شكلها"
+   },
+   "why": {
+    "en": "Two different things that Arabic101's structure and the classical texts both place late: the sun-letter lām, and the two hamzahs, where written form and recited form diverge.",
+    "ar": "م شيئان مختلفان يضعهما كلٌّ من بنية Arabic101 والمتون المتأخرة: لام الشمس، والهمزتان حيث يختلف الخط عن النطق."
+   },
+   "citation": {
+    "work": "tuhfat-al-atfal",
+    "lines": "24-29"
+   },
+   "sessions": [
+    {
+     "id": "lam-shamsiyyah",
+     "order": 1,
+     "title": {
+      "en": "The sun letters",
+      "ar": "لام الشمس"
+     },
+     "focus": [
+      "lam_shamsiyyah"
+     ],
+     "citation": {
+      "work": "tuhfat-al-atfal",
+      "lines": "24-29"
+     },
+     "also": [
+      {
+       "work": "jazariyya",
+       "lines": "28, 43"
+      }
+     ],
+     "mixed": false
+    },
+    {
+     "id": "hamzat-wasl",
+     "order": 2,
+     "title": {
+      "en": "Wasl and qaṭʿ",
+      "ar": "الوصل والقطع"
+     },
+     "focus": [
+      "hamzat_wasl"
+     ],
+     "citation": {
+      "work": "jazariyya",
+      "lines": "100-103"
+     },
+     "also": [
+      {
+       "work": "tamhid",
+       "lines": "ch. 5"
+      }
+     ],
+     "mixed": false
+    }
+   ]
+  },
+  {
+   "id": "mixed",
+   "order": 6,
+   "title": {
+    "en": "Mixed recitation",
+    "ar": "التلاوة المختلطة"
+   },
+   "why": {
+    "en": "No new rule. This stage exists because isolated rules are easier than connected text, and the connected text is the point.",
+    "ar": "لا قاعدة جديدة. هذه المرحلة موجودة لأن الأحكام المنفردة أيسر من النص المتصل، والنص المتصل هو المقصود."
+   },
+   "citation": {
+    "work": "jazariyya",
+    "lines": "9-19"
+   },
+   "sessions": [
+    {
+     "id": "mixed-drill",
+     "order": 1,
+     "title": {
+      "en": "All rules together",
+      "ar": "جميع القواعد"
+     },
+     "focus": [],
+     "mixed": true,
+     "citation": {
+      "work": "jazariyya",
+      "lines": "9-19"
+     }
+    }
+   ]
+  }
+ ]
+}

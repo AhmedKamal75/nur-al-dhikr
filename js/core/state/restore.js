@@ -14,6 +14,7 @@ import { sanitizeQadaLog } from '../../domain/qada.js';
 import { sanitizeLocationProfiles } from '../../domain/locations.js';
 import { sanitizeDuaJournal, sanitizeReflections } from '../../domain/duaJournal.js';
 import { sanitizeQuizMissRecords } from '../../domain/quiz.js';
+import { sanitizeTajweedCourseProgress } from '../../domain/tajweedCourse.js';
 import { sanitizeHijriDayLog } from '../../domain/ramadanPlanner.js';
 import { sanitizeNudgeState } from '../../domain/nudge.js';
 import { PERSISTED_KEYS, pickPersisted } from './initial.js';
@@ -596,6 +597,7 @@ export function sanitizeRestoredPayload(payload) {
     // (v5.4.0, P0-5b) the tajweed drill's weak-rule memory rides the same
     // {m,l} shape, id-grammar, cap and sanitizer as the 99-names quiz.
     tajweedMissRecords: sanitizeQuizMissRecords(p.tajweedMissRecords),
+    tajweedCourseProgress: sanitizeTajweedCourseProgress(p.tajweedCourseProgress),
     statistics: {
       // (v4.2) per-day entries: keys must be local dateKeys, counts must be
       // numbers — `${d.count}` renders straight into the heatmap and week

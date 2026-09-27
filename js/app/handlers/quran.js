@@ -1,4 +1,5 @@
 import { rt } from '../../app/rt.js';
+import * as COURSE from '../../domain/tajweedCourse.js';
 import { fetchJSON } from '../net.js';
 import { playFlipSound } from '../inputs.js';
 import { dispatchSurahDoc } from '../quranData.js';
@@ -652,6 +653,39 @@ export const clickHandlers = {
     await startPracticeRound(ds.rule, ds.mode || rt.practicePickerMode);
   },
 
+  // (v5.17.19) Tajweed course. The spine is pure data; these four actions
+  // are the whole bridge to it, and every one validates its input rather
+  // than trusting a data-attribute from a crafted DOM.
+  'tajweed-course-toggle-done': (ds) => {
+    const { findSession, sanitizeTajweedCourseProgress } = COURSE;
+    const session = findSession(String(ds.session || ''));
+    if (!session) return;
+    const current = sanitizeTajweedCourseProgress(store.getState().tajweedCourseProgress);
+    const next = { ...current };
+    if (next[session.id]) delete next[session.id];
+    else next[session.id] = { at: Date.now() };
+    store.dispatch(actions.setTajweedCourseProgress(next));
+  },
+  'tajweed-course-drill-rule': async (ds) => {
+    // The rule chip is the precise action: one chip, one rule, one round.
+    const rule = String(ds.rule || '');
+    await startPracticeRound(rule, rt.practicePickerMode || 'find-spans');
+  },
+  'tajweed-course-drill': async (ds) => {
+    // Session-level drill, only offered where a session maps to ONE round.
+    // A mixed session uses the mixed pool; anything else would be silently
+    // choosing one of several rules, so the handler refuses instead.
+    const session = COURSE.findSession(String(ds.session || ''));
+    if (!session) return;
+    const focus = session.focus || [];
+    if (session.mixed) {
+      await startPracticeRound('mixed', rt.practicePickerMode || 'find-spans');
+      return;
+    }
+    if (focus.length !== 1) return;
+    await startPracticeRound(focus[0], rt.practicePickerMode || 'find-spans');
+  },
+
   // (v5.10.1) guided rule lesson: validate the id, ensure the pool, and
   // open the lesson modal with pool-drawn examples (never invented refs).
   'practice-lesson': async (ds) => {
@@ -962,6 +996,20 @@ export const clickHandlers = {
 
 /** change/input registries (Blueprint D): { sel, run(ds, el, e) }. */
 export const changeHandlers = [
+  {
+    // (v5.17.19) Guided vs open access. A change handler, not a click handler:
+    // a radio's value lives on the element, and the change pipeline is where
+    // the app reads el.value after the browser has actually toggled it. Read
+    // from `ds` this stays undefined and the switch silently does nothing.
+    sel: '[data-action="tajweed-course-mode"]',
+    run: (ds, el) => {
+      const mode = String(el?.value || '');
+      if (mode !== 'guided' && mode !== 'open') return;
+      // A preference, not a capability gate: switching never touches progress.
+      store.dispatch(actions.updateSettings({ tajweedPathMode: mode }));
+    },
+  },
+
   {
     sel: '[data-bind="bookmark-folder"]',
     run: async (ds, el) => {

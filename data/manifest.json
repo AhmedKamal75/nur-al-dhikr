@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.18",
+  "version": "5.17.19",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
@@ -9458,6 +9458,11 @@
       "path": "tafsir/tahlil-kalimat/99.json",
       "bytes": 4466,
       "sha256": "ed20a43103df5b3e0fbafdb30fb1e52c48eda08223f2b1a9b918b0937204a5b8"
+    },
+    {
+      "path": "tajweed-course.json",
+      "bytes": 9982,
+      "sha256": "3ba94fc183b45de7026e3120a32546f62f39a10da71b6176a16881d6cc866233"
     },
     {
       "path": "tajweed-practice.json",

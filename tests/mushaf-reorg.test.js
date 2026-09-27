@@ -343,6 +343,12 @@ describe('mushaf regroup: zero feature loss', () => {
   ];
   // Intentional additions only: the new TRACK panel entry point.
   const ALLOWED_ADDITIONS = new Set([
+    // v5.17.19: the tajweed course. A new data-action needs a handler AND an
+    // entry here, which is why these are listed rather than discovered.
+    'tajweed-course-drill',
+    'tajweed-course-drill-rule',
+    'tajweed-course-toggle-done',
+    'tajweed-course-mode',
     'mushaf-open-track',
     'player-sleep-cycle',
     'hifz-ayah-mark',

@@ -165,6 +165,9 @@ export function initialState() {
     // (v5.4.0, P0-5b) cross-session weak-rule memory for the drill —
     // { ruleId: { m: misses, l: last-miss day } }, cap 200, sanitized.
     tajweedMissRecords: {},
+    // (v5.17.19) { [sessionId]: { at } } — a mark of having studied a session,
+    // not an exam result. The course is teaching, not testing the student.
+    tajweedCourseProgress: {},
     // Last surah the reader opened, persisted so Home can offer a
     // "Continue Reading" shortcut back into the Qur'an, mirroring the
     // pattern already used for adhkar/dua reading history.
@@ -473,6 +476,7 @@ export const PERSISTED_KEYS = [
   'khatmaJuzDone',
   'tajweedPracticeStats',
   'tajweedMissRecords',
+  'tajweedCourseProgress',
   'hifzRecords',
   'hifzAyahRecords',
   'fastingPrefs',

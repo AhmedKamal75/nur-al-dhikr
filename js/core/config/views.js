@@ -45,6 +45,7 @@ export const VIEWS = Object.freeze({
   // (v5.3.0) Offline library: one-tap bulk download of every on-demand
   // text corpus for offline use (views/offline.js).
   OFFLINE: 'offline',
+  TAJWEED_COURSE: 'tajweed-course',
 });
 
 export const DEFAULT_VIEW = VIEWS.HOME;
@@ -393,6 +394,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // (v4.6.0) Tajweed rule preferences: which rules are ON (all by default)
   // and each family's color. Empty object = the standard chart exactly.
   tajweedPrefs: {},
+  // (v5.17.19) 'guided' walks the stages in order; 'open' lets a reader jump
+  // straight to any session. A preference, never a capability gate — and
+  // switching between them must not touch progress.
+  tajweedPathMode: 'guided',
   // v3.15: which Qur'an translation edition both readers show. Allowlist-
   // sanitized (garbage/unknown → en-sahih); overlay files load lazily.
   quranTranslation: 'en-sahih',

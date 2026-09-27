@@ -9,11 +9,12 @@
  */
 import { isRTL, t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
+import { buildHash } from '../core/router.js';
 import { clamp, escapeHTML, pickLocale } from '../core/utils.js';
 import { pairForAyah, buildSimilarPairs } from '../domain/mutashabihat.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
-import { MUSHAF_FONTS, MUSHAF_PAPERS } from '../core/config.js';
+import { MUSHAF_FONTS, MUSHAF_PAPERS, VIEWS } from '../core/config.js';
 import {
   classifyAyahTajweed,
   classifyWordTajweed,
@@ -1162,6 +1163,9 @@ export function buildMushafSettingsPanel(state) {
     ${toggle('tajweedUnderlines', 'mushaf.tajweedUnderlines', true)}
 
     <div class="mushaf-settings__study-links">
+      <a class="btn btn--secondary practice-launch-btn" href="${buildHash(VIEWS.TAJWEED_COURSE)}" data-action="navigate" data-view="${VIEWS.TAJWEED_COURSE}">
+        ${icon('book-open', { size: 15 })} ${t('tajweedCourse.title', lang)}
+      </a>
       <button type="button" class="btn btn--secondary practice-launch-btn" data-action="practice-open">
         ${icon('sparkle', { size: 15 })} ${t('practice.launchFromSettings', lang)}
       </button>

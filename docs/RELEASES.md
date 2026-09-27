@@ -2,6 +2,46 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.19 — A tajweed course, in six stages, with a plan or free access
+
+- **There is a course now.** Six stages, fourteen sessions, ordered the way
+  Arabic101's published 30-day programme orders them — madd first, because
+  madd is the most audible thing in a beginner's recitation and the
+  foundation the rest builds on. The same gradient is independently the one
+  the classical texts use, and the one Imam Muhammad ibn Saud Islamic
+  University's free intermediate curriculum follows.
+  - **No religious prose was written to build it.** The course is order and
+    progress over material that was already sourced: every session points at
+    rule ids whose bilingual name, description and citation live in
+    `data/tajweed-sources.json`, and every drill is generated at run time by
+    the app's own classifier over the app's own Uthmani text. No exercise or
+    answer key is hand-written anywhere in it.
+  - **Arabic101 is credited for the pedagogy, not the syllabus.** Their exact
+    stage names were never verifiable from a public source, so the grouping
+    here is the matn gradient arranged in the shape they publish, and the
+    data file says exactly that rather than implying a reproduction.
+- **Two ways to follow it, and the reader picks.** _Guided_ unlocks sessions
+  in order, so the rules accumulate; _open access_ opens everything at once,
+  for someone who came for ikhfa and should not have to walk a ladder to
+  reach it. It is a preference, not a capability gate: switching between them
+  never touches progress, and a finished course never locks itself out of
+  revision.
+- **Search over sessions by rule.** Knowing you want a rule is the common
+  case; not remembering which stage it lives in should not stop you. The
+  query lives in the route, so a search is a link you can send someone.
+- **A rule chip is the precise action.** The practice engine drills one rule
+  per round, so a session with several rules shows a chip per rule instead of
+  quietly picking one and calling it the session. A session-level button
+  appears only where a session honestly maps to a single round.
+- Locked sessions say what unlocks them rather than just dimming, because a
+  greyed row with no reason reads as broken.
+- Two bugs found and fixed on the way, both the same class as the dead
+  storage switch: the mode radios were click-handled, so the handler read
+  `ds.value` — an HTML attribute, not a dataset key — and the switch silently
+  did nothing. And one browser assertion was passing against the boot
+  skeleton rather than the lazy view, which had turned a real check into a
+  false pass; it now waits for a course-specific element.
+
 ## v5.17.18 — Every rule now says where it came from
 
 - **A false attribution, removed.** The tajweed palette was described in five

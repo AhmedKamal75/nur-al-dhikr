@@ -146,6 +146,9 @@ export const actions = {
   toggleWordBookmark: (key) => ({ type: 'WORD_BOOKMARK_TOGGLE', key }),
   removeWordBookmark: (key) => ({ type: 'WORD_BOOKMARK_REMOVE', key }),
   setTajweedPool: (pool) => ({ type: 'TAJWEED_POOL_LOADED', pool }),
+  // (v5.17.19) Which course sessions have been studied. A mark of having
+  // studied, not an exam result — the course teaches, it does not test.
+  setTajweedCourseProgress: (progress) => ({ type: 'TAJWEED_COURSE_PROGRESS', progress }),
   setHadithIndex: (index) => ({ type: 'HADITH_INDEX_LOADED', index }),
   hadithIndexFailed: () => ({ type: 'HADITH_INDEX_FAILED' }),
   setHadithBook: (bookId, doc) => ({ type: 'HADITH_BOOK_LOADED', bookId, doc }),

@@ -44,6 +44,10 @@ function sanitizeClockSetting(raw, dflt) {
 
 const MUSHAF_FONT_IDS = new Set(MUSHAF_FONTS.map((f) => f.id));
 const ARABIC_TEXT_FONT_IDS = new Set(ARABIC_TEXT_FONTS.map((f) => f.id));
+// Kept here rather than imported from domain/tajweedCourse.js because config
+// loads before domain — the same lockstep reason TAJWEED_RULE_ID_SET is
+// duplicated in core/config/quran.js.
+const TAJWEED_PATH_MODES = ['guided', 'open'];
 /** (v5.0.0) Module-level id pattern shared by the contentPrefs sanitizers. */
 const SAFE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent']);
@@ -321,6 +325,11 @@ export function sanitizeSettings(raw) {
     showTranslation: asBool(s.showTranslation, d.showTranslation),
     showHadithArabic: asBool(s.showHadithArabic, d.showHadithArabic),
     tajweedPrefs: sanitizeTajweedPrefs(s.tajweedPrefs),
+    // Enum, not a boolean: 'open' and 'guided' are both first-class and a
+    // junk value must fall back to the plan rather than to "no restrictions".
+    tajweedPathMode: TAJWEED_PATH_MODES.includes(s.tajweedPathMode)
+      ? s.tajweedPathMode
+      : d.tajweedPathMode,
     quranTranslation: asTranslationEdition(s.quranTranslation, d.quranTranslation),
     // (v4.4) Compare view — null (off) or an allowlisted edition id.
     quranTranslationB:

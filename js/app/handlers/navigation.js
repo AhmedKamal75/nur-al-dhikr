@@ -12,6 +12,7 @@ import {
   debounceHadithQuery,
   debounceJournalSearchNavigate,
   debounceQuranSearchNavigate,
+  debounceTajweedCourseSearchNavigate,
   debounceRootsSearchNavigate,
   debounceSearchNavigate,
   debounceSettingsSearchNavigate,
@@ -145,6 +146,15 @@ export const inputHandlers = [
     sel: '[data-bind="quran-search"]',
     run: (ds, el) => {
       debounceQuranSearchNavigate(el.value);
+    },
+  },
+  {
+    // (v5.17.19) Course search: replace, not push, for the same reason as the
+    // other search boxes — one Back press should leave the course, not walk
+    // back through partial queries.
+    sel: '[data-bind="tajweed-course-search"]',
+    run: (ds, el) => {
+      debounceTajweedCourseSearchNavigate(el.value);
     },
   },
   {

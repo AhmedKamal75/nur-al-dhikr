@@ -2207,4 +2207,36 @@ export const en = {
   'grammar.restart': 'New round',
   'grammar.exit': 'Exit drill',
   'hadith.speechUnsupported': 'Speech is not available in this browser',
+  'tajweedCourse.title': 'Tajweed course',
+  'tajweedCourse.intro':
+    'Six stages in order, or pick any session. Every rule links to the text it is defined in.',
+  'tajweedCourse.progress': 'Course progress',
+  'tajweedCourse.stage': 'Stage',
+  'tajweedCourse.source': 'Source',
+  'tajweedCourse.uncited': 'No source recorded yet',
+  'tajweedCourse.done': 'Studied',
+  'tajweedCourse.nextUp': 'Next up',
+  'tajweedCourse.locked': 'Locked',
+  'tajweedCourse.mixed': 'All rules',
+  'tajweedCourse.lockedBecause':
+    'Finish the session before this one to unlock it, or switch to open access below.',
+  'tajweedCourse.practice': 'Practise',
+  'tajweedCourse.markDone': 'Mark as studied',
+  'tajweedCourse.markUndone': 'Mark as not studied',
+  'tajweedCourse.continueLabel': 'Continue where you left off',
+  'tajweedCourse.start': 'Start this session',
+  'tajweedCourse.allDone':
+    'You have worked through every session. Keep the rules alive with mixed practice.',
+  'tajweedCourse.keepGoing': 'Mixed practice',
+  'tajweedCourse.pathLabel': 'How to follow the course',
+  'tajweedCourse.mode.guided': 'Guided',
+  'tajweedCourse.mode.open': 'Open access',
+  'tajweedCourse.modeHint.guided':
+    'Sessions unlock one after another, so the rules build on each other in order.',
+  'tajweedCourse.modeHint.open':
+    'Every session is open from the start. Use this when you came for one specific rule.',
+  'tajweedCourse.searchLabel': 'Search sessions',
+  'tajweedCourse.searchPlaceholder': 'Search a rule or stage, e.g. ikhfa',
+  'tajweedCourse.noResults':
+    'No session matches that. Try a rule name such as ikhfa, or a stage such as madd.',
 };

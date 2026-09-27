@@ -68,6 +68,13 @@ export const debounceQuranSearchNavigate = makeSearchDebounce(
   VIEWS.QURAN,
   'quran-search-input'
 );
+// (v5.17.19) The course's own search. In the route, not ephemeral state, so a
+// search for "ikhfa" is a link a reader can send to someone else.
+export const debounceTajweedCourseSearchNavigate = makeSearchDebounce(
+  'tajweedCourseSearchDebounceTimer',
+  VIEWS.TAJWEED_COURSE,
+  'tajweed-course-search-input'
+);
 
 /** Favorites filter: like the journal one, the sort order must survive
  *  typing (the generic helper would drop it back to the default). */
