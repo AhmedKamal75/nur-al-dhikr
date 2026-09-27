@@ -9,6 +9,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -33,7 +37,7 @@ body {
 
 /* Arabic body direction (theme.js sets <html dir>) — switch the UI face. */
 [dir='rtl'] body {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
 }
 
 h1,

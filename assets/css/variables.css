@@ -221,6 +221,16 @@
     'Amiri Arabic Fallback';
   --font-arabic:
     'Amiri', 'Traditional Arabic', 'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif;
+  /* (v5.17.16) The Arabic reading-text typeface is the reader's choice, and
+     it is applied by OVERRIDING --font-arabic on the root element — so every
+     one of the 13 surfaces that already read that token (adhkar cards, the
+     reader, the tasbih stage, the mushaf fallback) follows automatically,
+     with no per-view plumbing.
+
+     The Mushaf is deliberately unaffected: mushafReader always sets
+     --mushaf-font-family, and quran.css prefers it, so a mushaf page never
+     inherits this choice. A page of the Qur'an keeps its own typeface. */
+  --font-arabic-reading: var(--font-arabic);
   --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
   /* Two independent multipliers (UI + Arabic), set by theme.js. */
@@ -492,4 +502,26 @@
   font-style: normal;
   font-display: swap;
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200F;
+}
+
+/* ==========================================================================
+   Arabic reading-text typeface (v5.17.16) — the reader's choice.
+   Set by theme.js from `settings.arabicFont`; every id here must exist in
+   ARABIC_TEXT_FONTS (js/core/config/views.js) and survive the sanitizer, or a
+   crafted settings blob could inject an arbitrary font stack.
+   ========================================================================== */
+[data-arabic-font='amiri'] {
+  --font-arabic-reading:
+    'Amiri', 'Traditional Arabic', 'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif;
+}
+[data-arabic-font='amiriQuran'] {
+  --font-arabic-reading: 'Amiri Quran', 'Amiri', 'Traditional Arabic', serif;
+}
+[data-arabic-font='scheherazade'] {
+  --font-arabic-reading: 'Scheherazade New', 'Amiri Quran', 'Traditional Arabic', serif;
+}
+[data-arabic-font='system'] {
+  --font-arabic-reading:
+    system-ui, -apple-system, 'Segoe UI', 'Noto Naskh Arabic', 'Geeza Pro', 'Al Bayan', 'Damascus',
+    sans-serif;
 }

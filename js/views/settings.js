@@ -11,6 +11,7 @@ import { t, availableLanguages, languageLabel } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, normalizeSearch, pickLocale } from '../core/utils.js';
 import {
+  ARABIC_TEXT_FONTS,
   PALETTES,
   SHAPES,
   THEME_MODES,
@@ -343,18 +344,6 @@ export function renderSettings(state) {
         data-bind="settings-search" autocomplete="off" />
     </div>
     <h1 class="view__title">${t('settings.title', lang)}</h1>
-    ${
-      filterQ
-        ? ''
-        : `
-    <nav class="settings-jump" aria-label="${t('settings.sections', lang)}">
-      ${SETTINGS_SECTIONS.map(
-        (sec) => `
-      <button type="button" class="chip chip--query" data-action="settings-jump" data-sec="${sec.id}">${t(sec.title, lang)}</button>`
-      ).join('')}
-    </nav>`
-    }
-
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>
@@ -369,9 +358,23 @@ export function renderSettings(state) {
       <p class="field-label">${t('settings.shape', lang)}</p>
       <div class="shape-row">${shapeButtons}</div>
       <p class="field-label" id="font-scale-label">${t('settings.fontSize', lang)}</p>
-      <input type="range" class="slider" min="0.85" max="1.4" step="0.05" value="${Number(s.fontScale) || 1}" data-bind="fontScale" aria-labelledby="font-scale-label" />
+      <input type="range" class="slider" min="0.85" max="2" step="0.05" value="${Number(s.fontScale) || 1}" data-bind="fontScale" aria-labelledby="font-scale-label" />
       <p class="field-label" id="arabic-font-scale-label">${t('settings.arabicFontSize', lang)}</p>
       <input type="range" class="slider" min="0.85" max="1.6" step="0.05" value="${Number(s.arabicFontScale) || 1}" data-bind="arabicFontScale" aria-labelledby="arabic-font-scale-label" />
+      <!-- (v5.17.16) The Arabic reading-text typeface. The Mushaf keeps its
+           OWN separate font control further down this view; this one is for
+           the adhkar, the duas and the reader, and cannot disturb a page of
+           the Qur'an. -->
+      <p class="field-label" id="arabic-typeface-label">${t('settings.arabicTypeface', lang)}</p>
+      <div class="swatch-row" role="radiogroup" aria-labelledby="arabic-typeface-label">
+        ${ARABIC_TEXT_FONTS.map(
+          (f) => `
+        <button type="button" class="swatch ${s.arabicFont === f.id ? 'swatch--active' : ''}" data-action="set-setting" data-key="arabicFont" data-value="${escapeHTML(f.id)}" role="radio" aria-checked="${s.arabicFont === f.id}" title="${escapeHTML(f.sub[lang] || f.sub.en)}">
+          <span class="swatch__preview" lang="ar" dir="rtl" style="font-family:${escapeHTML(f.family)}">سُبْحَانَ</span>
+          <span class="swatch__name">${escapeHTML(f.name[lang] || f.name.en)}</span>
+        </button>`
+        ).join('')}
+      </div>
     </details>
 
     <details class="panel settings-acc" id="settings-sec-content"${filterQ ? (hideSettings.has('settings-sec-content') ? ' hidden' : ' open') : openId === 'settings-sec-content' ? ' open' : ''}>

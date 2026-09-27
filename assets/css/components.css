@@ -111,7 +111,7 @@
   background: none;
   border: none;
   padding: var(--space-1) 0;
-  min-height: 40px; /* v4.1: standalone controls hold a comfortable target */
+  min-height: var(--touch-target);
   color: var(--color-primary-text);
   font-size: var(--fs-sm);
   font-weight: 600;
@@ -299,18 +299,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2) var(--space-2);
-}
-/* (v5.2.23) the settings TOC jump chips were removed with the accordion:
-   one intent per collapsible panel, no second navigation to maintain. */
-/* (v5.9.0) …and restored as stateless shortcuts: the chips share the
-   accordion's own pin/deep-link state (no second navigation to drift —
-   the v5.2.23 concern) and smooth-scroll the opened section to the top
-   of the viewport. Hidden while filtering (matches open themselves). */
-.settings-jump {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1_5);
-  margin-block: var(--space-2) var(--space-3);
 }
 .view--settings .panel {
   scroll-margin-top: calc(var(--topbar-height) + var(--space-4));
@@ -848,6 +836,7 @@ body.modal-open {
 }
 
 .modal {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -2564,7 +2553,7 @@ body.is-kids #bottomnav {
   color: var(--color-primary-text);
 }
 .kids-tile__name-ar {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: 1.5rem;
   font-weight: 700;
 }
@@ -2627,7 +2616,7 @@ body.is-kids #main {
   gap: var(--space-2);
 }
 .grammar-word {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: calc(var(--fs-arabic-card) * 0.9);
   line-height: var(--lh-arabic);
   text-align: center;

@@ -163,7 +163,7 @@ body.is-elder .panel__subtext {
  * Arabic UI (both flags live on <html> — see core/theme.js) keeps its
  * Arabic face with joining-safe spacing. */
 html[data-dyslexia='true'][dir='rtl'] body {
-  font-family: var(--font-arabic);
+  font-family: var(--font-arabic-reading, var(--font-arabic));
   letter-spacing: normal;
   word-spacing: normal;
 }
@@ -206,6 +206,7 @@ html[data-dyslexia='true'][dir='rtl'] body {
   .hadith-card__actions,
   .btn,
   .icon-btn,
+  .no-print,
   .back-link {
     display: none !important;
   }
@@ -228,6 +229,20 @@ html[data-dyslexia='true'][dir='rtl'] body {
   .card__arabic,
   .ayah-card__arabic {
     color: #000000 !important;
+  }
+  .cert {
+    max-width: none;
+    padding: 12mm;
+    border: 2px solid #000000;
+    border-radius: 0;
+    box-shadow: none;
+    color: #000000;
+  }
+  .cert__title,
+  .cert__name,
+  .cert__chip,
+  .cert__bismillah {
+    color: #000000;
   }
   /* Monthly timetable: print ONLY the open modal's table (the handler
      sets body.print-timetable around window.print()). */

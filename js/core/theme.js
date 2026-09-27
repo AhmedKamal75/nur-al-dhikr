@@ -6,7 +6,7 @@
  * this module never writes raw color values, only selects a palette id.
  */
 
-import { PALETTES, SHAPES } from './config.js';
+import { ARABIC_TEXT_FONTS, PALETTES, SHAPES } from './config.js';
 import { isRTL, t } from './i18n.js';
 
 let mediaQuery = null;
@@ -38,6 +38,15 @@ export function applyTheme(settings) {
   // CSS media queries in accessibility.css answer them live.
   root.setAttribute('data-dyslexia', String(!!settings.dyslexiaFriendly));
   root.setAttribute('data-roomy', String(!!settings.roomySpacing));
+  // (v5.17.16) The Arabic reading-text typeface rides the same attribute
+  // pipeline, and CSS keys the override off it. Guarded against the id set
+  // here as well as in the sanitizer: theme.js runs on every state change, so
+  // an unexpected value must degrade to the default rather than leave the
+  // root element pointing at a family that does not exist.
+  const arabicFontId = ARABIC_TEXT_FONTS.some((f) => f.id === settings.arabicFont)
+    ? settings.arabicFont
+    : 'amiri';
+  root.setAttribute('data-arabic-font', arabicFontId);
   root.setAttribute('lang', settings.language);
   root.setAttribute('dir', isRTL(settings.language) ? 'rtl' : 'ltr');
 
