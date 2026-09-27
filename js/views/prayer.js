@@ -109,7 +109,7 @@ export function renderPrayer(state) {
           )
             .map(
               (c) =>
-                `<button type="button" class="chip" data-action="prayer-use-city" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${escapeHTML(lang === 'ar' ? c.ar : c.en)}">${escapeHTML(lang === 'ar' ? c.ar : c.en)}</button>`
+                `<button type="button" class="chip" data-action="prayer-use-city" data-city-id="${c.id}" data-lat="${c.lat}" data-lng="${c.lng}" data-name="${escapeHTML(lang === 'ar' ? c.ar : c.en)}">${escapeHTML(lang === 'ar' ? c.ar : c.en)}</button>`
             )
             .join('')}</div>
         </details>`
@@ -278,7 +278,7 @@ export function renderPrayer(state) {
       <div class="next-prayer-card__main">
         <span class="next-prayer-card__label">${t('prayer.next', lang)}</span>
         <span class="next-prayer-card__name">${icon(PRAYER_ICONS[next.name] || 'sun', { size: 22 })} ${t('prayer.' + next.name, lang)}</span>
-        <span class="next-prayer-card__countdown">${t('prayer.in', lang)} <span dir="ltr">${hrsUntil > 0 ? t('units.h', lang, { n: hrsUntil }) + ' ' : ''}${t('units.m', lang, { n: remMins })}</span></span>
+        <span class="next-prayer-card__countdown">${t('prayer.in', lang)} <span data-prayer-countdown dir="ltr">${hrsUntil > 0 ? t('units.h', lang, { n: hrsUntil }) + ' ' : ''}${t('units.m', lang, { n: remMins })}</span></span>
       </div>
       <div class="next-prayer-card__place">
         ${icon('location', { size: 13 })}

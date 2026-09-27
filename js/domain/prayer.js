@@ -189,7 +189,11 @@ export function calculateTimes({
   const { equation } = sunPosition(jd);
   const transit = 12 + timezoneOffsetHours - longitude / 15 - equation;
 
-  const cfg = METHODS[method] || METHODS.MWL;
+  // (v5.17.14) A hostile `method` in a crafted backup used to resolve through
+  // the prototype chain: METHODS['__proto__'] is Object.prototype (truthy), so
+  // `|| METHODS.MWL` never fired and every angle came back undefined, yielding
+  // plausible-looking but meaningless times. Own-property lookup only.
+  const cfg = Object.hasOwn(METHODS, method) ? METHODS[method] : METHODS.MWL;
   const lat = latitude;
 
   const fajrR = sunAngleTime(cfg.fajr, jd, lat, -1, transit);
