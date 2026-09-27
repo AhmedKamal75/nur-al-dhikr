@@ -15,6 +15,7 @@ import { cardHTML } from '../ui/card.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
+import { fieldTogglesFor } from '../domain/contentLens.js';
 
 /** Sort orders, in control order. Unknown `?sort=` falls back to recent. */
 export const FAVORITE_SORTS = ['recent', 'alpha', 'read'];
@@ -122,6 +123,7 @@ export function renderFavorites(state) {
           counter: selectors.getCounter(state, e.item.id),
           showTransliteration: state.settings.showTransliteration,
           showTranslation: state.settings.showTranslation,
+          fields: fieldTogglesFor(state, e.document?.metadata?.id),
           highlight: terms,
         })} 
       </div>`

@@ -10,7 +10,7 @@ import { armPrayerTriggers } from '../triggers.js';
 import { t } from '../../core/i18n.js';
 
 import { actions, store } from '../../core/state.js';
-import { dateKey, vibrate } from '../../core/utils.js';
+import { dateKey, scrollBehavior, vibrate } from '../../core/utils.js';
 import { toHijri } from '../../domain/calendar.js';
 import { markCelebration } from '../../domain/celebrate.js';
 import { nextRemindTime } from '../../domain/fasting.js';
@@ -49,14 +49,13 @@ function hijriForDateKey(dateKeyStr) {
 
 export const clickHandlers = {
   // (UX-6) the calendar sheet's fasting row: close the sheet, then jump
-  // to the fasting panel on the page beneath (settings-toc-go pattern —
+  // to the fasting panel on the page beneath (section-landing pattern —
   // a plain #anchor would be parsed as a route).
   'calendar-goto-fasting': () => {
     closeModal();
     const el = document.getElementById('calendar-fasting');
     if (!el) return;
-    const reduce = !!store.getState().settings.reduceMotion;
-    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
   },
 
   'fasting-toggle-category': (ds) => {

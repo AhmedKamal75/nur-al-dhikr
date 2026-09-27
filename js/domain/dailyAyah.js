@@ -21,6 +21,31 @@ export const DAILY_THEMES = Object.freeze([
   'paradise',
 ]);
 
+/**
+ * The libraries the "verse of the day" card may draw from: complete
+ * devotional texts that read standalone. The Names of Allah are excluded
+ * (several carry theological nuance tied to their traditional pairing and
+ * read as jarring out of context); so are study material (reflections),
+ * the hadith digest (daily-sunnah) and the calendar overlays — none of
+ * them are recitations. Those libraries stay fully browsable on their own.
+ */
+export const DAILY_POOL_LIBRARIES = Object.freeze([
+  'adhkar',
+  'duas',
+  'quranic',
+  'prophet-duas',
+  'pdf-duas',
+]);
+
+/** Entries eligible for the daily card (pool by library id, not by
+ *  exclusion — a new bundled library must opt IN, never appear by
+ *  accident). */
+export function dailyEligibleEntries(itemIndex) {
+  return Object.values(itemIndex || {}).filter((entry) =>
+    DAILY_POOL_LIBRARIES.includes(entry?.document?.metadata?.id)
+  );
+}
+
 const KEYWORDS = Object.freeze({
   mercy: [
     'merciful',
@@ -85,9 +110,7 @@ export function matchesTheme(entry, theme) {
  * corpus day must never blank the card).
  */
 export function pickDailyItemThemed(itemIndex, theme = 'any', today = new Date()) {
-  const all = Object.values(itemIndex || {}).filter(
-    (entry) => entry?.document?.metadata?.id !== 'asma'
-  );
+  const all = dailyEligibleEntries(itemIndex);
   if (!all.length) return null;
   const pool =
     DAILY_THEMES.includes(theme) && theme !== 'any'

@@ -342,7 +342,11 @@ function tick(
         offsets: prayerSettings.offsets,
       });
       const alertTimes = ramadanAlertTimes(times, rAlerts.suhoorOffset);
-      if (rAlerts.suhoor && shouldFire(formatClock(alertTimes.suhoor, false), now)) {
+      if (
+        rAlerts.suhoor &&
+        !times?.unreachable?.fajr &&
+        shouldFire(formatClock(alertTimes.suhoor, false), now)
+      ) {
         const fireKey = `ramadan-suhoor|${todayKey}`;
         // (B5) day-persisted dedup like the prayer block above: the
         // in-memory Set alone re-fired a full-volume adhan on reload
@@ -360,7 +364,11 @@ function tick(
           if (document.visibilityState === 'visible') playAlert(prayerSettings, { fajr: true });
         }
       }
-      if (rAlerts.iftar && shouldFire(formatClock(alertTimes.iftar, false), now)) {
+      if (
+        rAlerts.iftar &&
+        !times?.unreachable?.maghrib &&
+        shouldFire(formatClock(alertTimes.iftar, false), now)
+      ) {
         const fireKey = `ramadan-iftar|${todayKey}`;
         if (!wasDayFired(fireKey, todayKey)) {
           markDayFired(fireKey, todayKey);

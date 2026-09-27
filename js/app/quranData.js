@@ -25,8 +25,13 @@ import { setQuranIndexReady } from '../domain/quranSearch.js';
 
 const surahCorpusCache = new Map();
 const translationDocCache = new Map();
-const translationBInFlight = new Set();
-const translationCInFlight = new Set();
+const translationBInFlight = new Map();
+const translationCInFlight = new Map();
+
+export function clearQuranDataFetches() {
+  translationBInFlight.clear();
+  translationCInFlight.clear();
+}
 
 /**
  * Pure: reduce an overlay file ({ ayahs: [{ number, translation }] })
@@ -52,9 +57,11 @@ export async function ensureTranslationBDoc(surahId) {
   const have = store.getState().quran.translationB?.[id];
   if (have && have.edKey === edKey) return have;
   if (translationBInFlight.has(id)) return null;
-  translationBInFlight.add(id);
+  const generation = rt.lazyDataGeneration;
+  translationBInFlight.set(id, generation);
   try {
     const tdoc = await fetchTranslationOverlay(edKey, id);
+    if (generation !== rt.lazyDataGeneration) return null;
     if (store.getState().settings.quranTranslationB !== edKey) return null;
     const byAyah = translationBMap(tdoc);
     if (!byAyah) return null;
@@ -64,7 +71,7 @@ export async function ensureTranslationBDoc(surahId) {
   } catch {
     return null;
   } finally {
-    translationBInFlight.delete(id);
+    if (translationBInFlight.get(id) === generation) translationBInFlight.delete(id);
   }
 }
 
@@ -83,9 +90,11 @@ export async function ensureTranslationCDoc(surahId) {
   const have = store.getState().quran.translationC?.[id];
   if (have && have.edKey === edKey) return have;
   if (translationCInFlight.has(id)) return null;
-  translationCInFlight.add(id);
+  const generation = rt.lazyDataGeneration;
+  translationCInFlight.set(id, generation);
   try {
     const tdoc = await fetchTranslationOverlay(edKey, id);
+    if (generation !== rt.lazyDataGeneration) return null;
     if (store.getState().settings.quranTranslationC !== edKey) return null;
     const byAyah = translationBMap(tdoc);
     if (!byAyah) return null;
@@ -95,7 +104,7 @@ export async function ensureTranslationCDoc(surahId) {
   } catch {
     return null;
   } finally {
-    translationCInFlight.delete(id);
+    if (translationCInFlight.get(id) === generation) translationCInFlight.delete(id);
   }
 }
 
@@ -154,11 +163,13 @@ export async function loadSurahDoc(n, signal = null) {
  * blocked, worst case it shows the bundled Sahih text for one surah.
  */
 export async function dispatchSurahDoc(id) {
+  const generation = rt.lazyDataGeneration;
   let doc = await loadSurahDoc(id);
   const want = store.getState().settings.quranTranslation || 'en-sahih';
   if ((doc.translationEdition || 'en-sahih') !== want) {
     doc = await loadSurahDoc(id);
   }
+  if (generation !== rt.lazyDataGeneration) return doc;
   store.dispatch(actions.setQuranSurah(String(id), doc));
   return doc;
 }

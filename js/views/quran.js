@@ -22,7 +22,7 @@ import {
   recitationEchoHTML,
 } from '../ui/recitationConsole.js';
 import { renderAyahWords, buildBismillahHTML } from './tafsirPanel.js';
-import { tajweedPrefsOf } from '../domain/tajweed.js';
+import { BISMILLAH_AR, tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
 import { loadErrorStateHTML, notFoundStateHTML } from '../ui/emptyState.js';
 import { clozeAyahHTML, ayahMistakes } from '../domain/hifz.js';
@@ -30,8 +30,6 @@ import { resolveCompareTexts } from '../domain/translationCompare.js';
 import { intensityBucket } from '../domain/statistics.js';
 import { searchSurahs } from '../domain/search.js';
 import { keyToDate } from '../domain/review.js';
-
-const BISMILLAH_AR = 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';
 
 /* ------------------------------------------------------------------ */
 /* (v4.2) Ayah windowing — the reader renders a sliding window, not the  */
@@ -77,6 +75,13 @@ function recitationToolbarHTML(state, number, lang) {
         <button type="button" class="chip ${follow ? 'chip--active' : ''}" data-action="recite-follow-toggle" aria-pressed="${follow}" title="${t('audio.follow', lang)}">
           ${icon(follow ? 'eye' : 'eyeOff', { size: 13 })}
           ${t('audio.follow', lang)}
+        </button>
+        <button type="button" class="chip ${state.settings.mushafPrefs.tajweedColoring ? 'chip--active' : ''}" data-action="toggle-mushaf-pref" data-key="tajweedColoring" aria-pressed="${state.settings.mushafPrefs.tajweedColoring}" title="${t('mushaf.tajweed', lang)}">
+          ${t('mushaf.tajweed', lang)}
+        </button>
+        <button type="button" class="chip" data-action="tajweed-open-settings" title="${t('mushaf.tajweedSettings', lang)}">
+          ${icon('sparkle', { size: 13 })}
+          ${t('mushaf.tajweedSettings', lang)}
         </button>
       </div>`;
 }
@@ -400,7 +405,7 @@ function surahReaderHTML(state, number) {
 
   const body = surah
     ? `
-      ${showBismillah && state.settings.mushafPrefs.bismillahStyle !== 'hidden' ? buildBismillahHTML({ text: BISMILLAH_AR, surah: number, style: state.settings.mushafPrefs.bismillahStyle, cls: 'quran-bismillah', lang, underline: state.settings.mushafPrefs.wordByWordStudy && state.settings.mushafPrefs.wordUnderline, tajweed: state.settings.mushafPrefs.tajweedColoring, prefs: tajweedPrefsOf(state) }) : ''}
+      ${showBismillah ? buildBismillahHTML({ text: BISMILLAH_AR, surah: number, style: state.settings.mushafPrefs.bismillahStyle, cls: 'quran-bismillah', lang, underline: state.settings.mushafPrefs.wordByWordStudy && state.settings.mushafPrefs.wordUnderline, tajweed: state.settings.mushafPrefs.tajweedColoring, prefs: tajweedPrefsOf(state) }) : ''}
       ${loadUp}
       <div class="ayah-list">
         ${surah.ayahs
@@ -459,6 +464,7 @@ function surahReaderHTML(state, number) {
                       state.settings.mushafPrefs.wordUnderline,
                     tajweed: state.settings.mushafPrefs.tajweedColoring,
                     prefs: tajweedPrefsOf(state),
+                    lang,
                   }
                 );
             const showTranslation =

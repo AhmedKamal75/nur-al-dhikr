@@ -87,15 +87,15 @@ export function renderCertificate(state) {
       <header class="cert__head">
         <span class="cert__mark">${icon('quran', { size: 30 })}</span>
         <p class="cert__bismillah" lang="ar" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
-        <h2 class="cert__title">${t('certificate.heading', lang)}</h2>
+        <h2 class="cert__title">${t(data.surahCount > 0 ? 'certificate.heading' : 'certificate.readingHeading', lang)}</h2>
       </header>
       <p class="cert__name-label">${t('certificate.presentedTo', lang)}</p>
       <p class="cert__name">${escapeHTML(name)}</p>
       <div class="cert__body">
-        <p>${t('certificate.line1', lang)}</p>
+        <p>${t(data.surahCount > 0 ? 'certificate.line1' : 'certificate.readingLine1', lang)}</p>
         <p class="cert__achievements">
           ${juzLabel ? `<span class="cert__chip">${escapeHTML(juzLabel)}</span>` : ''}
-          <span class="cert__chip">${escapeHTML(surahLabel)}</span>
+          ${data.surahCount > 0 ? `<span class="cert__chip">${escapeHTML(surahLabel)}</span>` : ''}
         </p>
         <p>${t('certificate.line2', lang, { n: data.pagesRead })}</p>
       </div>

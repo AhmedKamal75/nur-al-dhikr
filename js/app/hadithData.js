@@ -122,7 +122,7 @@ async function fetchLargeJSON(url) {
   return parseLargeJSON(res);
 }
 
-export async function ensureHadithIndex(force = false) {
+export async function ensureHadithIndex() {
   // (v4.2) remove leftover instrumentation from the v4.1 worker fix: the
   // 'dbg' key grew unboundedly in the same ~5MB localStorage quota the
   // state persistence needs, and eventually broke saveState outright.
@@ -130,22 +130,28 @@ export async function ensureHadithIndex(force = false) {
     localStorage.removeItem('dbg');
   } catch {}
   if (store.getState().hadith.index) return true;
-  if (rt.hadithIndexStarted && !force) return false;
+  if (rt.hadithIndexFetch) return rt.hadithIndexFetch;
   rt.hadithIndexStarted = true;
+  const flight = (async () => {
+    try {
+      const raw = await fetchJSON(HADITH_INDEX_URL);
+      const index = validateHadithIndex(raw);
+      if (!index) throw new Error('malformed hadith index');
+      store.dispatch(actions.setHadithIndex(index));
+      return true;
+    } catch (err) {
+      if (isMissingResourceError(err)) console.warn('[hadith] index not bundled', err);
+      else console.error('[hadith] index load failed', err);
+      store.dispatch(actions.hadithIndexFailed());
+      rt.hadithIndexStarted = false;
+      return false;
+    }
+  })();
+  rt.hadithIndexFetch = flight;
   try {
-    const raw = await fetchJSON(HADITH_INDEX_URL);
-    const index = validateHadithIndex(raw);
-    if (!index) throw new Error('malformed hadith index');
-    store.dispatch(actions.setHadithIndex(index));
-    return true;
-  } catch (err) {
-    // (v5.2.87, P1-1) missing-tier 404 warns (seed bundle / pruned
-    // install renders error+Retry, nothing is broken); real failures error.
-    if (isMissingResourceError(err)) console.warn('[hadith] index not bundled', err);
-    else console.error('[hadith] index load failed', err);
-    store.dispatch(actions.hadithIndexFailed());
-    rt.hadithIndexStarted = false; // the Retry button calls again with force
-    return false;
+    return await flight;
+  } finally {
+    if (rt.hadithIndexFetch === flight) rt.hadithIndexFetch = null;
   }
 }
 
@@ -222,7 +228,10 @@ export async function warmHadithDaily() {
   rt.hadithDailyStarted = true;
   try {
     const gotIndex = await ensureHadithIndex();
-    if (!gotIndex) return;
+    if (!gotIndex) {
+      rt.hadithDailyStarted = false;
+      return;
+    }
     const bundled = (store.getState().hadith.index?.books || []).filter((b) => b.bundled);
     await Promise.all(bundled.map((b) => ensureHadithBook(b.id)));
     const st = store.getState();
@@ -314,7 +323,7 @@ export async function ensureHadithSearchIndex({ prefetchMissing = false } = {}) 
         // only (the grid says exactly that), keeping the index fresh as
         // books load through their own explicit taps.
         const key = searchDocsKey();
-        if (key && key !== rt.lastHadithSearchDocs) {
+        if (key !== rt.lastHadithSearchDocs) {
           rt.lastHadithSearchDocs = key;
           buildHadithIndex(store.getState().hadith.docs);
         }
@@ -324,7 +333,7 @@ export async function ensureHadithSearchIndex({ prefetchMissing = false } = {}) 
         await Promise.all(missing.slice(i, i + 2).map((id) => ensureHadithBook(id)));
       }
       const key = searchDocsKey();
-      if (key && key !== rt.lastHadithSearchDocs) {
+      if (key !== rt.lastHadithSearchDocs) {
         rt.lastHadithSearchDocs = key;
         buildHadithIndex(store.getState().hadith.docs);
       }

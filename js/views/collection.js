@@ -11,6 +11,7 @@ import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
 import { filterEntries } from '../domain/search.js';
 import { contentTitleFor } from '../domain/localeContent.js';
+import { fieldTogglesFor, hasPendingScholarlyReview } from '../domain/contentLens.js';
 import { selectors } from '../core/state.js';
 import { VIEWS } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
@@ -28,7 +29,13 @@ export function buildCollectionShareText(collection, itemIndex, lang = 'en') {
     const entry = itemIndex?.[id];
     if (!entry || !entry.item) continue;
     const title = contentTitleFor(entry.item, lang);
-    if (title) titles.push(title);
+    if (title) {
+      titles.push(
+        hasPendingScholarlyReview(entry.item)
+          ? `${title} — ${t('content.reviewPending', lang)}`
+          : title
+      );
+    }
   }
   if (!titles.length) return '';
   const lines = titles.map((title, i) => `${i + 1}. ${title}`);
@@ -103,6 +110,7 @@ export function renderCollection(state) {
             counter: selectors.getCounter(state, e.item.id),
             showTransliteration: state.settings.showTransliteration,
             showTranslation: state.settings.showTranslation,
+            fields: fieldTogglesFor(state, e.document?.metadata?.id),
             highlight: terms,
           });
           if (!orderable) return card;

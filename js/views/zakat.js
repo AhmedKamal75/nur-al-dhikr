@@ -109,19 +109,24 @@ function resultPanel(state, lang) {
   const r = computeZakat(state.zakat.inputs, prefs);
   const cur = prefs.currency || '';
   const pct = Math.min(100, r.nisab > 0 ? Math.round((r.netWealth / r.nisab) * 100) : 0);
+  const statusChip = r.priceMissing
+    ? `<span class="chip chip--amber">${t('zakat.priceRequiredShort', lang)}</span>`
+    : r.nisabMet
+      ? `<span class="chip chip--ok">${icon('check', { size: 13 })} ${t('zakat.nisabMet', lang)}</span>`
+      : `<span class="chip chip--muted">${t('zakat.belowNisab', lang)}</span>`;
 
   return `
-  <section class="panel zakat-result ${r.nisabMet ? 'zakat-result--due' : 'zakat-result--none'}">
+  <section class="panel zakat-result ${r.nisabMet ? 'zakat-result--due' : r.priceMissing ? 'zakat-result--unknown' : 'zakat-result--none'}">
     <div class="panel__header">
       <h2>${t('zakat.resultTitle', lang)}</h2>
-      ${r.nisabMet ? `<span class="chip chip--ok">${icon('check', { size: 13 })} ${t('zakat.nisabMet', lang)}</span>` : `<span class="chip chip--muted">${t('zakat.belowNisab', lang)}</span>`}
+      ${statusChip}
     </div>
 
     <dl class="zakat-breakdown">
       <div><dt>${t('zakat.totalAssets', lang)}</dt><dd dir="ltr">${formatAmount(r.totalAssets, cur)}</dd></div>
       ${r.liabilities > 0 ? `<div><dt>${t('zakat.liabilitiesDeducted', lang)}</dt><dd dir="ltr">− ${formatAmount(r.liabilities, cur)}</dd></div>` : ''}
       <div><dt>${t('zakat.netWealth', lang)}</dt><dd dir="ltr">${formatAmount(r.netWealth, cur)}</dd></div>
-      <div><dt>${t('zakat.nisab', lang)} (${r.nisabBasis === 'gold' ? t('zakat.goldStandardShort', lang) : t('zakat.silverStandardShort', lang)})</dt><dd dir="ltr">${formatAmount(r.nisab, cur)}</dd></div>
+      <div><dt>${t('zakat.nisab', lang)} (${r.nisabBasis === 'gold' ? t('zakat.goldStandardShort', lang) : t('zakat.silverStandardShort', lang)})</dt><dd dir="ltr">${r.priceMissing ? '—' : formatAmount(r.nisab, cur)}</dd></div>
     </dl>
 
     <div class="progress-bar" role="progressbar" aria-label="${t('zakat.nisabProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
@@ -131,11 +136,17 @@ function resultPanel(state, lang) {
 
     <div class="zakat-due">
       <span class="zakat-due__label">${t('zakat.dueLabel', lang)} (2.5%)</span>
-      <span class="zakat-due__amount" dir="ltr">${formatAmount(r.due, cur)}</span>
+      <span class="zakat-due__amount" dir="ltr">${r.priceMissing ? '—' : formatAmount(r.due, cur)}</span>
     </div>
-    ${!r.nisabMet ? `<p class="panel__subtext">${t('zakat.noDueNote', lang)}</p>` : `<p class="panel__subtext">${t('zakat.roundUpNote', lang)}</p>`}
+    ${
+      r.priceMissing
+        ? `<p class="panel__subtext">${t('zakat.priceRequiredNote', lang)}</p>`
+        : !r.nisabMet
+          ? `<p class="panel__subtext">${t('zakat.noDueNote', lang)}</p>`
+          : `<p class="panel__subtext">${t('zakat.roundUpNote', lang)}</p>`
+    }
 
-    <button type="button" class="btn btn--primary" data-action="zakat-save-snapshot" ${r.netWealth <= 0 ? 'disabled' : ''}>
+    <button type="button" class="btn btn--primary" data-action="zakat-save-snapshot" ${r.netWealth <= 0 || r.priceMissing ? 'disabled' : ''}>
       ${icon('download', { size: 15 })} ${t('zakat.saveSnapshot', lang)}
     </button>
   </section>`;

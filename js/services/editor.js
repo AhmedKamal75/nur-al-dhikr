@@ -16,14 +16,15 @@ import {
 } from '../core/schema.js';
 import { clone, uid } from '../core/utils.js';
 
-const DEFAULT_CUSTOM_LIBRARY_ID = 'custom';
+export const DEFAULT_CUSTOM_LIBRARY_ID = 'custom';
 
 function ensureCustomLibrary(libraryId = DEFAULT_CUSTOM_LIBRARY_ID) {
+  const id = libraryId || DEFAULT_CUSTOM_LIBRARY_ID;
   const state = store.getState();
-  if (state.customContent[libraryId]) return state.customContent[libraryId];
+  if (state.customContent[id]) return state.customContent[id];
   const doc = normalizeDocument({
     metadata: {
-      id: libraryId,
+      id,
       name: { en: 'My Content', ar: 'محتواي' },
       description: { en: 'Custom items you\u2019ve added', ar: '' },
       version: '1.0.0',
@@ -86,6 +87,37 @@ export function addCategory(libraryId, { nameEn, nameAr, icon = 'book', color = 
   return cat;
 }
 
+export function updateCategory(libraryId, categoryId, fields) {
+  const doc = clone(getCustomLibrary(libraryId));
+  if (!doc) return null;
+  const cat = doc.categories.find((c) => c.id === categoryId);
+  if (!cat) return null;
+  pushUndo(doc);
+  if (fields.name) cat.name = { en: fields.name.en || '', ar: fields.name.ar || '' };
+  if (fields.description) {
+    cat.description = { en: fields.description.en || '', ar: fields.description.ar || '' };
+  }
+  if (fields.icon) cat.icon = fields.icon;
+  if (fields.color) cat.color = fields.color;
+  store.dispatch(actions.upsertCustomLibrary(doc));
+  return cat;
+}
+
+export function updateLibrary(libraryId, fields) {
+  const doc = clone(getCustomLibrary(libraryId));
+  if (!doc) return null;
+  pushUndo(doc);
+  if (fields.name) doc.metadata.name = { en: fields.name.en || '', ar: fields.name.ar || '' };
+  if (fields.description) {
+    doc.metadata.description = {
+      en: fields.description.en || '',
+      ar: fields.description.ar || '',
+    };
+  }
+  store.dispatch(actions.upsertCustomLibrary(doc));
+  return doc;
+}
+
 export function deleteCategory(libraryId, categoryId) {
   const doc = clone(getCustomLibrary(libraryId));
   if (!doc) return;
@@ -102,9 +134,21 @@ export function saveItem(libraryId, categoryId, fields, itemId = null) {
   if (!cat) return { success: false, error: 'Category not found' };
 
   const id = itemId || uid('item');
-  const normalized = normalizeItem({ ...fields, id, category_id: categoryId }, categoryId);
-
   const existingIdx = cat.items.findIndex((it) => it.id === id);
+  const existing = existingIdx >= 0 ? cat.items[existingIdx] : null;
+  const source = existing
+    ? {
+        ...existing,
+        ...fields,
+        title: { ...existing.title, ...fields.title },
+        translation: { ...existing.translation, ...fields.translation },
+        virtues: { ...existing.virtues, ...fields.virtues },
+        custom_grade: { ...existing.custom_grade, ...fields.custom_grade },
+        reference: { ...existing.reference, ...fields.reference },
+      }
+    : fields;
+  const normalized = normalizeItem({ ...source, id, category_id: categoryId }, categoryId);
+
   if (existingIdx >= 0) cat.items[existingIdx] = normalized;
   else cat.items.push(normalized);
 
@@ -163,4 +207,3 @@ export function undo() {
 export function blankItemTemplate(categoryId) {
   return blankItem(categoryId);
 }
-export { DEFAULT_CUSTOM_LIBRARY_ID };

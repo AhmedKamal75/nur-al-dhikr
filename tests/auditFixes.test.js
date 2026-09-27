@@ -62,6 +62,18 @@ describe('scroll memory keys separate surfaces', () => {
   test('mushaf pages and journal tabs key independently', () => {
     assert.notEqual(viewKeyOf('mushaf', { page: '3' }), viewKeyOf('mushaf', { page: '4' }));
     assert.notEqual(viewKeyOf('quran', { id: '2' }), viewKeyOf('quran', { id: '3' }));
+    assert.notEqual(
+      viewKeyOf('search', { q: 'mercy', lp: '1' }),
+      viewKeyOf('search', { q: 'mercy', lp: '2' })
+    );
+    assert.notEqual(
+      viewKeyOf('search', { q: 'mercy', qp: '2', tp: '1' }),
+      viewKeyOf('search', { q: 'mercy', qp: '1', tp: '2' })
+    );
+    assert.notEqual(
+      viewKeyOf('search', { q: 'mercy', qn: '30' }),
+      viewKeyOf('search', { q: 'mercy', qn: '15' })
+    );
     assert.equal(viewKeyOf('home', {}), viewKeyOf('home', {}), 'stable');
   });
 });

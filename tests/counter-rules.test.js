@@ -30,7 +30,11 @@ const ITEM = {
   id: 'rule-item-1',
   title: { en: 'Rule item' },
   arabic: 'نص',
-  repetitions: 3,
+  // The pill test is about session-vs-lifetime separation, not about which
+  // of two DIFFERENT targets wins: this fixture's item target matches the
+  // counter snapshot so the "0 / 1" readout is unambiguous. Target
+  // precedence itself is pinned in focus-interactions.test.js.
+  repetitions: 1,
 };
 const CAT = { id: 'cat-rule', name: { en: 'Rule' }, color: 'emerald' };
 

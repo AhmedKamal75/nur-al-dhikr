@@ -13,6 +13,7 @@ import { pickStrict, showTransliterationFor } from '../domain/localeContent.js';
 import { wasCelebrated } from '../domain/celebrate.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS, QUIZ_LENGTH, QUIZ_CHOICE_COUNT } from '../core/config.js';
+import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
 const QUIZ_SIZES = [5, 10, 20];
 
@@ -169,6 +170,7 @@ function renderQuestion(state, lang) {
 
     <div class="quiz-prompt">
       ${promptHTML}
+      ${hasPendingScholarlyReview(item) ? `<p class="content-review-warning" role="note">${icon('info', { size: 14 })} ${escapeHTML(t('content.reviewPending', lang))}</p>` : ''}
       <p class="quiz-prompt__hint">${t(dir === 'en-ar' ? 'quiz.whichName' : 'quiz.whatDoesItMean', lang)}</p>
     </div>
 

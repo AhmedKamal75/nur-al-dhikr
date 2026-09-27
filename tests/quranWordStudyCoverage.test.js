@@ -71,14 +71,18 @@ test(`Quran word-study coverage: ${SEED_MODE ? 'seed corpus' : 'all 77,429 token
           materialized?.irab?.ar && materialized?.irab?.en,
           `${s}:${a}:${word.i} materialized i'rab missing`
         );
-        assert.ok(
-          materialized?.etymology?.classicalUsageAr && materialized?.etymology?.classicalUsageEn,
-          `${s}:${a}:${word.i} etymology/rootless policy missing`
-        );
-        assert.ok(
-          materialized?.etymology?.quranicBridgeAr && materialized?.etymology?.quranicBridgeEn,
-          `${s}:${a}:${word.i} Quranic bridge/rootless policy missing`
-        );
+        if (materialized?.etymology) {
+          assert.ok(
+            materialized.etymology.classicalUsageAr && materialized.etymology.classicalUsageEn,
+            `${s}:${a}:${word.i} etymology/rootless policy missing`
+          );
+          assert.ok(
+            materialized.etymology.quranicBridgeAr && materialized.etymology.quranicBridgeEn,
+            `${s}:${a}:${word.i} Quranic bridge/rootless policy missing`
+          );
+        } else {
+          assert.equal(materialized.provenance.root.state, 'NOT_ATTESTED');
+        }
         assert.equal(materialized.antonyms.hasDirectAntonym, Boolean(dictEntry?.ant?.length));
         assert.ok(
           materialized.antonyms.hasDirectAntonym || materialized.antonyms.noteAr,

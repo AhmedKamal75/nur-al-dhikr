@@ -47,7 +47,11 @@ describe('search pagination + breakdown', () => {
     setQuranIndexReady(true);
     try {
       const first = renderSearch(searchState({}));
-      assert.match(first, /data-action="search-page" data-scope="quran" data-page="2"/, 'quran Next');
+      assert.match(
+        first,
+        /data-action="search-page" data-scope="quran" data-page="2"/,
+        'quran Next'
+      );
       assert.match(first, /Page 1 of 2/, 'page counter');
       assert.match(first, /Showing 15 of 20/, 'showing counter');
       assert.match(first, /Quran: 20/, 'breakdown carries the quran total');

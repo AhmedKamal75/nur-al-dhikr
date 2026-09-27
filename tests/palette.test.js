@@ -21,6 +21,30 @@ describe('highlightMatch: literal <mark> decoration only', () => {
     assert.equal(highlightMatch('nothing here', ['zzz']), 'nothing here');
     assert.equal(highlightMatch('abc', []), 'abc');
   });
+
+  test('multi-term queries never match generated mark markup', () => {
+    assert.equal(
+      highlightMatch('The mark of the Prophet', ['the', 'mark']),
+      '<mark>The</mark> <mark>mark</mark> of <mark>the</mark> Prophet'
+    );
+    // Every occurrence, one pass, no nesting — the old escape-then-decorate
+    // walk produced '<<mark>mark</mark>>The</<mark>mark</mark>>…'.
+    assert.equal(
+      highlightMatch('The mark of the Prophet', ['a', 'k']),
+      'The m<mark>a</mark>r<mark>k</mark> of the Prophet'
+    );
+    assert.equal(
+      highlightMatch('a b a b', ['a', 'b']),
+      '<mark>a</mark> <mark>b</mark> <mark>a</mark> <mark>b</mark>'
+    );
+    assert.equal(
+      highlightMatch('<mark>literal</mark>', ['mark']),
+      '&lt;<mark>mark</mark>&gt;literal&lt;/<mark>mark</mark>&gt;'
+    );
+    // regex metacharacters in a term are literal, never a pattern
+    assert.equal(highlightMatch('a.b axb', ['a.b']), '<mark>a.b</mark> axb');
+    assert.equal(highlightMatch('cost (x) [y]', ['(x)']), 'cost <mark>(x)</mark> [y]');
+  });
 });
 
 describe('searchSurahs: names in every script + number', () => {

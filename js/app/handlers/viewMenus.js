@@ -103,7 +103,19 @@ export const clickHandlers = {
   },
 
   'library-sheet-reset-hidden': () => {
-    store.dispatch(actions.updateSettings({ contentPrefs: {} }));
+    const prefs = store.getState().settings.contentPrefs || {};
+    store.dispatch(
+      actions.updateSettings({
+        contentPrefs: {
+          ...prefs,
+          hiddenItems: {},
+          hiddenCategories: {},
+          hiddenLibraries: {},
+          categoryOrderOverrides: {},
+          libraryOrderOverrides: null,
+        },
+      })
+    );
     const lang = store.getState().settings.language;
     closeModal();
     showToast(t('library.sheet.resetHiddenDone', lang));

@@ -18,7 +18,20 @@ test('city directory: unique ids, finite in-range coordinates, known regions', (
     assert.ok(c.en && c.ar, `${c.id} named in both languages`);
     assert.ok(Number.isFinite(c.lat) && c.lat >= -90 && c.lat <= 90, `${c.id} lat`);
     assert.ok(Number.isFinite(c.lng) && c.lng >= -180 && c.lng <= 180, `${c.id} lng`);
+    assert.ok(c.timezone, `${c.id} timezone`);
+    assert.doesNotThrow(
+      () => new Intl.DateTimeFormat('en', { timeZone: c.timezone }),
+      `${c.id} timezone is IANA-compatible`
+    );
     assert.ok(CITY_REGIONS.includes(c.region), `${c.id} region known`);
+  }
+  for (const [id, timezone] of Object.entries({
+    cairo: 'Africa/Cairo',
+    london: 'Europe/London',
+    newyork: 'America/New_York',
+    tehran: 'Asia/Tehran',
+  })) {
+    assert.equal(CITY_PRESETS.find((city) => city.id === id)?.timezone, timezone);
   }
   for (const r of CITY_REGIONS) {
     assert.ok(

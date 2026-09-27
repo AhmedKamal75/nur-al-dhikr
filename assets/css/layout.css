@@ -116,6 +116,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+  /* A view is the boundary for its own children's horizontal scrollers (chip
+     rows, the library jump strip). `clip` contains their edge without
+     creating a scroll container, so `position: sticky` inside keeps working
+     — `hidden` would have silently broken the sticky top strip. Without it,
+     200% type leaked ~11px of document-wide sideways scroll on the library
+     route (WCAG 1.4.10 Reflow). */
+  overflow-x: clip;
 }
 .view--home {
   gap: var(--space-4);

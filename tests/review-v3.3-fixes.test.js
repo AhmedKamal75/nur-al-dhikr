@@ -14,6 +14,8 @@ import { fileURLToPath } from 'node:url';
 import { sanitizeSettings, sanitizeMushafPrefs, DEFAULT_SETTINGS } from '../js/core/config.js';
 import { formatAmount } from '../js/domain/zakat.js';
 import { safeDecode } from '../js/core/router.js';
+import { renderSettings } from '../js/views/settings.js';
+import { initialState } from '../js/core/state/initial.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -51,9 +53,23 @@ test('sanitizeSettings deep-merges defaults so partial payloads keep features on
 
 test('sanitizeSettings clamps numeric settings into their slider ranges', () => {
   const s = sanitizeSettings({ fontScale: 99, arabicFontScale: 'not-a-number', dailyGoal: -5 });
-  assert.ok(s.fontScale <= 1.4 && s.fontScale >= 0.85);
+  // 2.0, not the old 1.4: WCAG 1.4.4 asks for 200% text resizing, and a
+  // slider that stops at 140% pushes a low-vision reader to browser zoom.
+  assert.ok(s.fontScale <= 2 && s.fontScale >= 0.85);
+  assert.equal(s.fontScale, 2, 'a hostile 99 clamps to the new ceiling, not past it');
   assert.equal(s.arabicFontScale, DEFAULT_SETTINGS.arabicFontScale);
   assert.equal(s.dailyGoal, 1);
+});
+
+test('the in-app type scale can actually reach WCAG 200%', () => {
+  // The gap the audit called out: the CEILING was fine, the SLIDER was not.
+  const at200 = sanitizeSettings({ fontScale: 2 });
+  assert.equal(at200.fontScale, 2, 'sanitizer keeps 200%');
+  const base = initialState();
+  const settings = renderSettings({ ...base, settings: { ...base.settings, fontScale: 2 } });
+  const slider = (settings.match(/<input[^>]*data-bind="fontScale"[^>]*>/) || [''])[0];
+  assert.match(slider, /max="2"/, 'the slider offers 200% in-app, so nobody needs browser zoom');
+  assert.match(slider, /value="2"/, 'and the chosen scale is reflected back');
 });
 
 test('sanitizeSettings validates enum-ish fields', () => {
@@ -92,8 +108,7 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
   });
   // v3.5.0 added tajweedColoring (default false) to the mushaf prefs —
   // the merged sanitizer keeps that key with a safe boolean default.
-  // v3.7 adds bismillahStyle (enum, default 'auto') and tajweedInspector
-  // (boolean, default true) to the sanitized prefs shape.
+  // v3.7 adds bismillahStyle (enum, default 'auto') to the sanitized prefs shape.
   // v4.4 adds translationPanel (boolean, default false) — the translation
   // tray under the Mushaf page.
   // v4.5 adds spread (boolean, default true) — the two-page facing layout
@@ -112,7 +127,6 @@ test('sanitizeMushafPrefs accepts valid values unchanged', () => {
     wordByWordStudy: false,
     wordUnderline: true,
     tajweedColoring: false,
-    tajweedInspector: true,
     tajweedUnderlines: true,
     bismillahStyle: 'auto',
     defaultTafsir: 'jalalayn',
@@ -143,10 +157,9 @@ test('(v5.9.0) autoFit defaults true, keeps false, drops hostile', () => {
 test('sanitizeMushafPrefs rejects hostile values for the v3.7 fields', () => {
   const p = sanitizeMushafPrefs({
     bismillahStyle: '"><script>alert(1)</script>',
-    tajweedInspector: 'on',
   });
   assert.equal(p.bismillahStyle, 'auto');
-  assert.equal(p.tajweedInspector, true);
+  assert.equal('tajweedInspector' in p, false);
 });
 
 /* ------------------------------------------------------------------ */

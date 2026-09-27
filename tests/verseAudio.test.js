@@ -19,11 +19,13 @@ import { QURAN_RECITERS, QURAN_RECITER_IDS } from '../js/core/config/quran.js';
 import { sanitizeSettings } from '../js/core/config.js';
 import {
   _resetAudioStoreForTests,
+  AUDIO_CACHE_DEFAULT_MAX_BYTES,
   deleteVerseAudio,
   downloadVerseFile,
   getVerseAudio,
   listVerseAyahs,
   saveVerseAudio,
+  setAudioCacheCapForTests,
   verseKey,
 } from '../js/services/audioStore.js';
 import { reduce } from '../js/core/state/reducer.js';
@@ -72,6 +74,15 @@ function installFakeIDB() {
           const req = {};
           queueMicrotask(() => {
             req.result = [...t.keys()];
+            req.onsuccess?.();
+            complete();
+          });
+          return req;
+        },
+        getAll() {
+          const req = {};
+          queueMicrotask(() => {
+            req.result = [...t.values()];
             req.onsuccess?.();
             complete();
           });
@@ -139,8 +150,16 @@ describe('verse round-trip through fake IDB', () => {
   test('save/get/list/delete', async () => {
     installFakeIDB();
     const blob = new Blob(['audio-bytes'], { type: 'audio/mpeg' });
-    assert.deepEqual(await saveVerseAudio('ar.alafasy', 1, blob), { ok: true, bytes: 11 });
-    assert.deepEqual(await saveVerseAudio('ar.alafasy', 8, blob), { ok: true, bytes: 11 });
+    assert.deepEqual(await saveVerseAudio('ar.alafasy', 1, blob), {
+      ok: true,
+      bytes: 11,
+      evicted: [],
+    });
+    assert.deepEqual(await saveVerseAudio('ar.alafasy', 8, blob), {
+      ok: true,
+      bytes: 11,
+      evicted: [],
+    });
     const got = await getVerseAudio('ar.alafasy', 1);
     assert.equal(got?.size, 11);
     assert.deepEqual(await listVerseAyahs('ar.alafasy'), [1, 8]);
@@ -221,6 +240,22 @@ describe('verse round-trip through fake IDB', () => {
       globalThis.fetch = realFetch;
     }
   });
+
+  test('a save reports the keys the cache cap dropped (honest eviction)', async () => {
+    installFakeIDB();
+    const blob = new Blob(['x'.repeat(60)], { type: 'audio/mpeg' });
+    setAudioCacheCapForTests(100);
+    try {
+      await saveVerseAudio('ar.alafasy', 200, blob);
+      const second = await saveVerseAudio('ar.alafasy', 201, blob);
+      assert.equal(second.ok, true, 'the save itself still succeeds');
+      assert.deepEqual(second.evicted, ['v:ar.alafasy:200'], 'the oldest record is reported');
+      assert.equal(await getVerseAudio('ar.alafasy', 200), null, 'and it is really gone');
+      assert.equal((await getVerseAudio('ar.alafasy', 201))?.size, 60, 'the new record stays');
+    } finally {
+      setAudioCacheCapForTests(AUDIO_CACHE_DEFAULT_MAX_BYTES);
+    }
+  });
 });
 
 describe('allowlist: sixteen verified voices', () => {
@@ -269,6 +304,10 @@ describe('allowlist: sixteen verified voices', () => {
 
 describe('engine plays stored Blobs with CDN fallback', () => {
   test('offline Blob wins; missing streams', async () => {
+    // Own the storage fixture: the fake IDB is shared with the round-trip
+    // suite above, whose leftovers would make the "missing verse" arm
+    // resolve to a stored Blob instead of the CDN.
+    installFakeIDB();
     const engine = await import('../js/services/surahPlayback.js');
     const played = [];
     const { configureDriver } = await import('../js/services/recitation.js');

@@ -25,14 +25,26 @@ import {
 export function renderLibrary(state) {
   const lang = state.settings.language;
   const prefs = contentPrefsOf(state);
+  const manage = !!state.ui?.contentManage;
   const deletedLibs = prefs.deletedLibraries || {};
   const hiddenLibs = prefs.hiddenLibraries || {};
-  const customDocs = Object.values(state.customContent);
+  const customDocs = Object.values(state.customContent).filter(
+    (doc) => manage || !hiddenLibs[doc.metadata.id]
+  );
   // The LENSED documents (deleted libraries already filtered by the lens)
-  // + custom libraries, in the user's chosen banner order.
+  // + custom libraries, in the user's chosen banner order. The banner
+  // override is applied here (not only inside the lens) because it also
+  // carries custom library ids, which never pass through the lens.
   const lensedDocs = state.library.order.map((id) => state.library.documents[id]).filter(Boolean);
-  const docs = [...lensedDocs, ...customDocs];
-  const manage = !!state.ui?.contentManage;
+  const libRank = new Map((prefs.libraryOrderOverrides || []).map((id, i) => [id, i]));
+  const docs = [...lensedDocs, ...customDocs]
+    .map((doc, i) => ({ doc, i }))
+    .sort(
+      (a, b) =>
+        (libRank.get(a.doc.metadata.id) ?? 1e9) - (libRank.get(b.doc.metadata.id) ?? 1e9) ||
+        a.i - b.i
+    )
+    .map((entry) => entry.doc);
 
   // "Browse by need": curated cross-library moods, each linking to the
   // mood view. Rendered only once the content index exists (the library
@@ -64,7 +76,19 @@ export function renderLibrary(state) {
   const sections = docs
     .map((doc, docIndex) => {
       const libId = doc.metadata.id;
-      const allCats = [...doc.categories].sort((a, b) => a.order - b.order);
+      // Section order: the lens already sorted bundled libraries by the
+      // override, but custom libraries bypass the lens — apply the same
+      // rank map to both so reordering works everywhere.
+      const catRank = new Map(
+        (prefs.categoryOrderOverrides?.[libId] || []).map((id, i) => [id, i])
+      );
+      const allCats = catRank.size
+        ? [...doc.categories].sort(
+            (a, b) =>
+              (catRank.get(a.id) ?? 1e9) - (catRank.get(b.id) ?? 1e9) ||
+              (a.order || 0) - (b.order || 0)
+          )
+        : [...doc.categories].sort((a, b) => a.order - b.order);
       const shownCats = allCats.filter(
         (cat) =>
           manage || (!isCategoryHidden(state, cat.id) && !(prefs.deletedCategories || {})[cat.id])

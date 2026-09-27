@@ -19,7 +19,9 @@ const mercyEntry = (id) => ({
     translation: { en: 'Our Lord, grant us mercy from Yourself' },
   },
   category: { id: 'c1' },
-  document: { metadata: { id: 'lib1' } },
+  // (fix wave) the daily pool is an allowlist of devotional libraries — the
+  // fixture must name a real one or it is (correctly) filtered out.
+  document: { metadata: { id: 'adhkar' } },
 });
 
 const plainEntry = (id) => ({
@@ -29,7 +31,9 @@ const plainEntry = (id) => ({
     translation: { en: 'And establish prayer' },
   },
   category: { id: 'c1' },
-  document: { metadata: { id: 'lib1' } },
+  // (fix wave) the daily pool is an allowlist of devotional libraries — the
+  // fixture must name a real one or it is (correctly) filtered out.
+  document: { metadata: { id: 'adhkar' } },
 });
 
 test('theme ids: domain list and sanitizer allowlist agree, hostile falls back', () => {

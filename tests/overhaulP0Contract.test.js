@@ -4,12 +4,16 @@ import { readFile } from 'node:fs/promises';
 
 const read = (path) => readFile(path, 'utf8');
 
-test('P0 fullscreen controls leave the viewport when idle', async () => {
+test('P0 fullscreen controls leave the viewport when idle but exit remains reachable', async () => {
   const css = await read('assets/css/quran.css');
+  const reader = await read('js/views/mushafReader.js');
   const idle = css.slice(css.indexOf('body.mushaf-fs-idle .mushaf-fs-controls'));
   assert.match(idle, /opacity:\s*0;/);
   assert.match(idle, /visibility:\s*hidden;/);
   assert.match(idle, /translateY\(calc\(100%/);
+  assert.match(css, /\.mushaf-fs-exit\s*\{/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*pointer-events:\s*auto;/);
+  assert.match(reader, /class="icon-btn mushaf-fs-exit" data-action="mushaf-toggle-fullscreen"/);
 });
 
 test('P0 location denial has recovery guidance and manual city fallback', async () => {
@@ -18,6 +22,7 @@ test('P0 location denial has recovery guidance and manual city fallback', async 
   const en = await read('js/core/i18n/en.js');
   const ar = await read('js/core/i18n/ar.js');
   assert.match(handler, /locationPermissionGuidanceHTML/);
+  assert.match(handler, /select\[name="cityPreset"\]/);
   assert.match(forms, /name="cityPreset"/);
   assert.match(forms, /CITY_PRESETS/);
   for (const source of [en, ar]) {
@@ -32,6 +37,15 @@ test('P0 Mushaf navigation routes only through the awaitable page-ready guard', 
   const events = await read('js/app/events.js');
   assert.match(quran, /export async function navigateMushafPage/);
   assert.match(quran, /ensureMushafNavigationPages\(dest\)/);
+  assert.match(quran, /mushafNavigationIntent/);
   assert.match(events, /navigateMushafPage\(toNext \? 'next' : 'prev'\)/);
   assert.match(events, /navigateMushafPage\(turn\)/);
+  assert.match(quran, /'mushaf-jump-page': async/);
+  assert.match(quran, /ensureMushafNavigationPages\(dest\)/);
+  assert.match(quran, /ensureMushafNavigationPages\(page\)/);
+  const lazy = await read('js/app/lazyData.js');
+  const modal = await read('js/ui/modal.js');
+  assert.match(lazy, /invalidateLazyFetches/);
+  assert.match(lazy, /getModalGeneration/);
+  assert.match(modal, /export function getModalGeneration/);
 });

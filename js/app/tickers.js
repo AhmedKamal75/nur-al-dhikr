@@ -8,7 +8,9 @@ import { rt } from './rt.js';
 import { VIEWS } from '../core/config.js';
 import { actions, store } from '../core/state.js';
 import { dateKey } from '../core/utils.js';
+import { t } from '../core/i18n.js';
 import { calculateTimes, nextPrayer } from '../domain/prayer.js';
+import { nextPrayerCountdown } from '../domain/prayerTimeline.js';
 import { fastPhase, formatCountdown } from '../domain/ramadan.js';
 
 /* Ramadan: live Suhoor/Iftar countdown                                */
@@ -177,6 +179,77 @@ export function updateHomeTickerLifecycle(state) {
   } else if (!onHome && rt.homeTickerHandle != null) {
     clearInterval(rt.homeTickerHandle);
     rt.homeTickerHandle = null;
+  }
+}
+
+function livePrayerCountdown(state) {
+  const p = state.settings.prayer;
+  if (p.latitude == null || p.longitude == null) return null;
+  const now = new Date();
+  const times = calculateTimes({
+    date: now,
+    latitude: p.latitude,
+    longitude: p.longitude,
+    timezoneOffsetHours: -now.getTimezoneOffset() / 60,
+    method: p.method,
+    asr: p.asr,
+    offsets: p.offsets,
+  });
+  const countdown = nextPrayerCountdown(times, now);
+  return countdown ? { countdown, lang: state.settings.language } : null;
+}
+
+export function prayerTick() {
+  const state = store.getState();
+  if (state.activeView !== VIEWS.PRAYER) return;
+  const el = document.querySelector('[data-prayer-countdown]');
+  const live = livePrayerCountdown(state);
+  if (!el || !live) return;
+  const { countdown, lang } = live;
+  el.textContent =
+    countdown.h > 0
+      ? `${t('units.h', lang, { n: countdown.h })} ${t('units.m', lang, { n: countdown.m })}`
+      : t('units.m', lang, { n: countdown.m });
+  if (rt.prayerTickerTarget !== countdown.name) {
+    rt.prayerTickerTarget = countdown.name;
+    if (countdown.totalSec > 1) store.dispatch(actions.tickerNudge());
+  }
+}
+
+export function ambientTick() {
+  const state = store.getState();
+  if (state.activeView !== VIEWS.AMBIENT) return;
+  const el = document.querySelector('[data-ambient-countdown]');
+  const live = livePrayerCountdown(state);
+  if (!el || !live) return;
+  const { countdown, lang } = live;
+  const clock = `${countdown.h}:${String(countdown.m).padStart(2, '0')}:${String(countdown.totalSec % 60).padStart(2, '0')}`;
+  if (el.textContent !== clock) el.textContent = clock;
+  el.setAttribute(
+    'aria-label',
+    `${t('prayer.' + countdown.name, lang)} ${t('prayer.in', lang)} ${countdown.h} ${t('units.h', lang, { n: countdown.h })} ${countdown.m} ${t('units.m', lang, { n: countdown.m })}`
+  );
+}
+
+export function updatePrayerTickerLifecycle(state) {
+  const active = state.activeView === VIEWS.PRAYER;
+  if (active && rt.prayerTickerHandle == null) {
+    prayerTick();
+    rt.prayerTickerHandle = setInterval(prayerTick, 1000);
+  } else if (!active && rt.prayerTickerHandle != null) {
+    clearInterval(rt.prayerTickerHandle);
+    rt.prayerTickerHandle = null;
+  }
+}
+
+export function updateAmbientTickerLifecycle(state) {
+  const active = state.activeView === VIEWS.AMBIENT;
+  if (active && rt.ambientTickerHandle == null) {
+    ambientTick();
+    rt.ambientTickerHandle = setInterval(ambientTick, 1000);
+  } else if (!active && rt.ambientTickerHandle != null) {
+    clearInterval(rt.ambientTickerHandle);
+    rt.ambientTickerHandle = null;
   }
 }
 

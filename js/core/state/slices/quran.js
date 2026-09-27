@@ -256,6 +256,18 @@ export function reduceQuran(state, action) {
       return { ...state, wordBookmarks: marks };
     }
 
+    case 'WORD_BOOKMARK_REMOVE': {
+      const key =
+        typeof action.key === 'string' && /^\d{1,3}:\d{1,3}:\d{1,4}$/.test(action.key)
+          ? action.key
+          : null;
+      const marks = state.wordBookmarks;
+      if (!key || !marks || marks[key] !== true) return state;
+      const next = { ...marks };
+      delete next[key];
+      return { ...state, wordBookmarks: next };
+    }
+
     case 'TAJWEED_POOL_LOADED':
       return { ...state, tajweedPool: action.pool };
 

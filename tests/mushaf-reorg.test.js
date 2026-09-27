@@ -117,6 +117,8 @@ describe('mushaf regroup: Jump drawer is pure navigation', () => {
   test('every track action resolves to a registered click handler', () => {
     for (const a of [
       'mushaf-open-track',
+      // v5.17.15: pop the tasbih counter into a floating window.
+      'tasbih-float',
       'khatma-open-plan',
       'khatma-clear-plan',
       'mushaf-reset-progress',
@@ -211,7 +213,7 @@ describe('mushaf regroup: display settings stay complete and grouped', () => {
       })
     );
 
-  test('all six pref toggles still emitted, translationPanel still absent', () => {
+  test('all remaining pref toggles still emitted, translationPanel still absent', () => {
     const keys = keysOf(settingsHTML());
     for (const k of [
       'spread',
@@ -219,7 +221,7 @@ describe('mushaf regroup: display settings stay complete and grouped', () => {
       'wordByWordStudy',
       'wordUnderline',
       'tajweedColoring',
-      'tajweedInspector',
+      'tajweedUnderlines',
     ]) {
       assert.ok(keys.has(k), `settings keep ${k}`);
     }
@@ -240,7 +242,7 @@ describe('mushaf regroup: display settings stay complete and grouped', () => {
     assert.ok(reading.includes('data-key="spread"'), 'spread is Reading');
     assert.ok(reading.includes('data-key="pageFlipAnimation"'), 'flip animation is Reading');
     assert.ok(!reading.includes('data-key="tajweedColoring"'), 'tajweed is not Reading');
-    for (const k of ['wordByWordStudy', 'wordUnderline', 'tajweedColoring', 'tajweedInspector']) {
+    for (const k of ['wordByWordStudy', 'wordUnderline', 'tajweedColoring', 'tajweedUnderlines']) {
       assert.ok(study.includes(`data-key="${k}"`), `${k} is Study aids`);
     }
   });
@@ -334,7 +336,7 @@ describe('mushaf regroup: zero feature loss', () => {
     'pageFlipAnimation',
     'spread',
     'tajweedColoring',
-    'tajweedInspector',
+    'tajweedUnderlines',
     'translationPanel',
     'wordByWordStudy',
     'wordUnderline',
@@ -349,6 +351,8 @@ describe('mushaf regroup: zero feature loss', () => {
     'word-copy',
     'word-share',
     'word-bookmark',
+    'word-bookmarks-open',
+    'practice-mode',
     // v5.10.1: guided tajweed lesson shortcut on each practice rule row.
     'practice-lesson',
     // v5.10.5: playback-mode toggle chips (verse console ↔ file player).

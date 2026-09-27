@@ -26,7 +26,7 @@ import { renderStatistics } from '../js/views/statistics.js';
 import { dateKey, addDays } from '../js/core/utils.js';
 import { toHijri, toGregorian } from '../js/domain/calendar.js';
 
-const TODAY = new Date();
+const TODAY = new Date(2026, 8, 25, 12);
 const keyDaysAgo = (n) => dateKey(addDays(TODAY, -n));
 
 /* ---- 1. key parsing / first tracked day -------------------------------- */
@@ -131,7 +131,7 @@ function baseReviewState() {
         [`${h.year}-${h.month}`]: { [h.day]: true },
         [`${h100.year}-${h100.month}`]: { [h100.day]: true },
         [`${hPrevRamadanYear}-9`]: { 1: true, 2: true },
-        [`${h.year}-1`]: { 33: true, 0: true },
+        '9999-1': { 33: true, 0: true },
       };
     })(),
     sadaqahLog: [
@@ -176,7 +176,7 @@ describe('worshipReview', () => {
 
   test('fasts: total includes Ramadan; junk day numbers skipped', () => {
     // Structural count: today-fast + 100d-fast + 2 Ramadan days = 4;
-    // the '1448-1' key contributes 0 (days 33 and 0 are both junk).
+    // the '9999-1' key contributes 0 (days 33 and 0 are both junk).
     assert.equal(review.fasts.all, 4);
     // Window membership computed through the app's own converters.
     const h = toHijri(TODAY);
@@ -196,7 +196,7 @@ describe('worshipReview', () => {
 
   test('voluntary split excludes Ramadan (month 9) — fasting.js rules', () => {
     // Non-9 keys with valid days: today-fast (1) + 100d-fast (1) = 2;
-    // '1448-1' contributes 0 (junk days), Ramadan key excluded entirely.
+    // '9999-1' contributes 0 (junk days), Ramadan key excluded entirely.
     assert.equal(review.voluntary.total, 2);
     // Both voluntary fasts fall in the hijri year only if their converted
     // gregorian dates do — compute through the converter, not by hand.

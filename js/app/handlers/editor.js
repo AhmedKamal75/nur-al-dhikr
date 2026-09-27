@@ -20,7 +20,8 @@ export const clickHandlers = {
 
   'editor-new-category': (ds) => {
     const lang = store.getState().settings.language;
-    openModal(buildCategoryForm({ libraryId: ds.libraryId, lang }), {
+    const libraryId = ds.libraryId || editorApi.DEFAULT_CUSTOM_LIBRARY_ID;
+    openModal(buildCategoryForm({ libraryId, lang, scope: 'custom' }), {
       labelledBy: 'modal-title-category',
     });
   },

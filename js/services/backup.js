@@ -10,10 +10,46 @@ import { APP_VERSION, SCHEMA_VERSION } from '../core/config.js';
 import { openDB } from '../core/idb/openDB.js';
 import { actions, store } from '../core/state.js';
 import { isFuturePayload, persistedSnapshot } from '../core/state/restore.js';
-import { ok, fail } from '../core/utils.js';
+import { ok } from '../core/utils.js';
 import { isReturningUser } from '../domain/onboarding.js';
 
 const BACKUP_MIME = 'application/json';
+
+/**
+ * Machine-readable parse failures.
+ *
+ * The UI must never decide what went wrong by matching an English
+ * sentence — reword one message and an Arabic-only reader gets raw
+ * English again. Every refusal therefore carries BOTH a stable `code`
+ * (mapped to an i18n key at the edge) and a human English sentence in
+ * `error` (so a future caller that renders `error` raw degrades to
+ * English rather than to a token like `backup/invalid-json`).
+ */
+export const BACKUP_ERRORS = Object.freeze({
+  invalidJson: 'backup/invalid-json',
+  futureVersion: 'backup/future-version',
+  noData: 'backup/no-data',
+  emptyFile: 'backup/empty-file',
+});
+
+/** A failed parse: English sentence + stable code, never a throw. */
+function failWithCode(code) {
+  return {
+    success: false,
+    value: null,
+    error: BACKUP_ERROR_MESSAGES[code] || 'That file could not be imported.',
+    code,
+  };
+}
+
+/** The English sentence per code — the raw-display fallback, not the API. */
+const BACKUP_ERROR_MESSAGES = Object.freeze({
+  [BACKUP_ERRORS.invalidJson]: 'That file is not valid JSON.',
+  [BACKUP_ERRORS.futureVersion]:
+    'This backup is from a newer version of Nūr al-Dhikr — update the app to import it.',
+  [BACKUP_ERRORS.noData]: 'That file does not look like a Nūr al-Dhikr backup.',
+  [BACKUP_ERRORS.emptyFile]: 'That file does not contain any recognizable app data.',
+});
 
 /** Rolling on-device snapshot cadence + off-device staleness threshold. */
 export const AUTO_BACKUP_DAYS = 7;
@@ -66,7 +102,7 @@ export function parseBackup(text) {
   try {
     json = JSON.parse(text);
   } catch {
-    return fail('That file is not valid JSON.');
+    return failWithCode(BACKUP_ERRORS.invalidJson);
   }
 
   // Accept either a wrapped backup payload or a bare persisted-state object (best-effort).
@@ -75,24 +111,23 @@ export function parseBackup(text) {
   // message — never mangled through the allowlist below. Version-less
   // legacy blobs still import.
   if (wrapped && isFuturePayload(json)) {
-    return fail(
-      'This backup is from a newer version of Nūr al-Dhikr — update the app to import it.'
-    );
+    return failWithCode(BACKUP_ERRORS.futureVersion);
   }
   const data = wrapped ? json.data : json;
+  if (isFuturePayload(data)) {
+    return failWithCode(BACKUP_ERRORS.futureVersion);
+  }
   if (!data || typeof data !== 'object') {
-    return fail('That file does not look like a Nūr al-Dhikr backup.');
+    return failWithCode(BACKUP_ERRORS.noData);
   }
   if (!wrapped && isFuturePayload(data)) {
-    return fail(
-      'This backup is from a newer version of Nūr al-Dhikr — update the app to import it.'
-    );
+    return failWithCode(BACKUP_ERRORS.futureVersion);
   }
 
   const required = ['settings', 'favorites', 'collections', 'counters', 'statistics'];
   const missing = required.filter((k) => !(k in data));
   if (missing.length === required.length) {
-    return fail('That file does not contain any recognizable app data.');
+    return failWithCode(BACKUP_ERRORS.emptyFile);
   }
 
   return ok(data);

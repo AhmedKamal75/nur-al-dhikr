@@ -18,6 +18,7 @@ import { searchQuran } from '../domain/quranSearch.js';
 import { searchReciters } from '../services/audioCatalog.js';
 import { SETTINGS_SECTIONS, settingsSlugForSection } from './settings.js';
 import { contentTitleFor } from '../domain/localeContent.js';
+import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
 /** Navigation destinations searchable from the palette. */
 const NAV_TARGETS = [
@@ -190,7 +191,7 @@ export function buildPaletteGroups(deps) {
           kind: 'button',
           icon: 'book',
           primary: title,
-          secondary: h.category ? String(h.category.name?.[lang] || h.category.name?.en || '') : '',
+          secondary: `${h.category ? String(h.category.name?.[lang] || h.category.name?.en || '') : ''}${hasPendingScholarlyReview(h.item) ? `${h.category ? ' · ' : ''}${t('content.reviewPending', lang)}` : ''}`,
           action: 'open-focus',
           data: { categoryId: h.item?.category_id || '', itemId: h.itemId },
         };

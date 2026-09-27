@@ -62,7 +62,7 @@ import { sleepSnapshot } from '../services/surahPlayback.js';
 // Session transients moved to state.mushafSession (v5.2.9) and are set
 // via actions.setMushafSession — no module setters remain here.
 export { buildMushafBookmarks } from './mushafBookmarks.js';
-import { tajweedPrefsOf } from '../domain/tajweed.js';
+import { BISMILLAH_AR, tajweedPrefsOf } from '../domain/tajweed.js';
 import { resolveCompareTexts } from '../domain/translationCompare.js';
 import { skeletonMushafPage, skeletonLines } from '../ui/skeleton.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
@@ -192,7 +192,7 @@ export function renderMushaf(state) {
         </span>
         <span class="mushaf-surah-banner__flank" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><path d="M8 1.5 14.5 8 8 14.5 1.5 8Z" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/></svg></span>
       </button>
-      ${showBismillah && prefs.bismillahStyle !== 'hidden' ? buildBismillahHTML({ text: 'بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ', surah: chapter.number, style: prefs.bismillahStyle, cls: 'mushaf-bismillah', lang, underline: prefs.wordByWordStudy && prefs.wordUnderline, tajweed: prefs.tajweedColoring, prefs: tajweedPrefsOf(state) }) : ''}
+        ${showBismillah ? buildBismillahHTML({ text: BISMILLAH_AR, surah: chapter.number, style: prefs.bismillahStyle, cls: 'mushaf-bismillah', lang, underline: prefs.wordByWordStudy && prefs.wordUnderline, tajweed: prefs.tajweedColoring, prefs: tajweedPrefsOf(state) }) : ''}
     `
           : '';
 
@@ -212,6 +212,7 @@ export function renderMushaf(state) {
               underline: prefs.wordByWordStudy && prefs.wordUnderline,
               tajweed: prefs.tajweedColoring,
               prefs: tajweedPrefsOf(state),
+              lang,
               // (v5.4.0, P0-2b) the printed horizontal sajdah-line accent
               // rides ONLY over سُجَّدًا in As-Sajdah 15 — matched
               // harakat-folded inside renderAyahWords; the fifteen
@@ -510,10 +511,10 @@ function buildFullscreenControls(
   const orderName = (label) =>
     isRTL(lang) ? label : `${label}. ${t('mushaf.bookOrderNote', lang)}`;
   return `
+    <button type="button" class="icon-btn mushaf-fs-exit" data-action="mushaf-toggle-fullscreen" aria-label="${t('mushaf.fullscreenExit', lang)}" title="${t('mushaf.fullscreenExit', lang)}">
+      ${icon('compress', { size: 18 })}
+    </button>
     <div class="mushaf-fs-controls" data-fs-controls>
-      <button type="button" class="icon-btn" data-action="mushaf-toggle-fullscreen" aria-label="${t('mushaf.fullscreenExit', lang)}" title="${t('mushaf.fullscreenExit', lang)}">
-        ${icon('compress', { size: 18 })}
-      </button>
       <button type="button" class="icon-btn" data-action="mushaf-open-settings" aria-label="${t('mushaf.settingsTitle', lang)}" title="${t('mushaf.settingsTitle', lang)}">
         ${icon('settings', { size: 18 })}
       </button>
@@ -703,8 +704,9 @@ export function buildMushafSheet(state) {
     <div class="mushaf-sheet__group">
       <h3 class="mushaf-jump__heading">${t('mushaf.sectionGo', lang)}</h3>
       ${row('mushaf-open-jump', 'mushaf.jumpTo', 'grid')}
-      ${row('mushaf-open-bookmarks', 'mushaf.bookmarks', 'bookmark')}
-      ${linkRow('quran.searchShortcut', 'search', VIEWS.SEARCH)}
+       ${row('mushaf-open-bookmarks', 'mushaf.bookmarks', 'bookmark')}
+       ${row('word-bookmarks-open', 'wordStudy.savedWords', 'bookmark')}
+       ${linkRow('quran.searchShortcut', 'search', VIEWS.SEARCH)}
       ${linkRow('quran.viewInReader', 'list', VIEWS.QURAN)}
     </div>
     <div class="mushaf-sheet__group">

@@ -15,10 +15,14 @@
  * present so the seed is a real runnable project rather than a data-only zip.
  */
 import { existsSync, readFileSync, readdirSync, statSync, mkdirSync, cpSync, rmSync, writeFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
+import {
+  checkDataManifest,
+  writeDataManifest,
+  buildDataManifest,
+} from '../tests/helpers/data-manifest.mjs';
 
 const ROOT = resolve(new URL('..', import.meta.url).pathname);
 const SEED_SURAHS = [1, 32, 112];
@@ -234,6 +238,11 @@ const manifest = {
 };
 writeJson(join(stage, 'data/seed.json'), manifest);
 writeFileSync(join(stage, 'data/SEED-README.md'), `# Seed bundle\n\nThis archive intentionally ships only Qur'an surahs ${SEED_SURAHS.join(', ')}, 15 adhkar, six Nawawi hadith samples, three-surah bundled tafsir/grammar, and the matching word-study/tajweed sample layers. The full release remains unchanged outside this staged bundle.\n`);
+
+const seedDataManifest = buildDataManifest(join(stage, 'data'), { mode: 'seed', version: pkg.version });
+writeDataManifest(join(stage, 'data'), seedDataManifest);
+const seedManifestCheck = checkDataManifest(join(stage, 'data'), { mode: 'seed', version: pkg.version });
+if (!seedManifestCheck.valid) throw new Error(`seed data manifest invalid: ${seedManifestCheck.errors.join('; ')}`);
 
 // Refresh seed marker's fileCount after writing the marker/README.
 const finalFiles = [];

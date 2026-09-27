@@ -22,6 +22,7 @@ import {
   applyLibraryFields,
   addItemToCategory,
   addCategoryToLibrary,
+  findCategoryById,
 } from '../services/contentPrefs.js';
 
 export function reminderFormHTML(lang) {
@@ -38,7 +39,9 @@ export function reminderFormHTML(lang) {
 }
 
 export function manualLocationFormHTML(lang, p) {
-  const selectedName = String(p.locationName || '').trim().toLowerCase();
+  const selectedName = String(p.locationName || '')
+    .trim()
+    .toLowerCase();
   const cityOptions = CITY_REGIONS.map((region) => {
     const cities = CITY_PRESETS.filter((city) => city.region === region);
     if (!cities.length) return '';
@@ -61,8 +64,8 @@ export function manualLocationFormHTML(lang, p) {
       </select>
     </label>
     <label class="field">${t('prayer.locationName', lang)}<input class="input" name="locationName" value="${escapeHTML(p.locationName || '')}" placeholder="${t('prayer.locationExample', lang)}" /></label>
-    <label class="field">${t('prayer.latitude', lang)}<input class="input" type="number" step="any" min="-90" max="90" name="latitude" value="${p.latitude ?? ''}" required /></label>
-    <label class="field">${t('prayer.longitude', lang)}<input class="input" type="number" step="any" min="-180" max="180" name="longitude" value="${p.longitude ?? ''}" required /></label>
+    <label class="field">${t('prayer.latitude', lang)}<input class="input" type="number" step="any" min="-90" max="90" name="latitude" value="${p.latitude ?? ''}" inputmode="decimal" /></label>
+    <label class="field">${t('prayer.longitude', lang)}<input class="input" type="number" step="any" min="-180" max="180" name="longitude" value="${p.longitude ?? ''}" inputmode="decimal" /></label>
     <div class="editor-form__actions">
       <button type="button" class="btn btn--ghost" data-action="modal-close">${t('editor.cancel', lang)}</button>
       <button type="submit" class="btn btn--primary">${t('editor.save', lang)}</button>
@@ -167,11 +170,17 @@ export const formHandlers = {
 
   item: (form) => {
     const fd = new FormData(form);
+    const existing = form.dataset.itemId
+      ? store.getState().library.itemIndex?.[form.dataset.itemId]?.item
+      : null;
     const fields = {
-      title: { en: fd.get('titleEn') || '', ar: fd.get('titleAr') || '' },
+      title: { en: fd.get('titleEn') || '', ar: fd.get('titleAr') || existing?.title?.ar || '' },
       arabic: fd.get('arabic') || '',
       transliteration: fd.get('transliteration') || '',
-      translation: { en: fd.get('translationEn') || '', ar: '' },
+      translation: {
+        en: fd.get('translationEn') || '',
+        ar: existing?.translation?.ar || '',
+      },
       reference: {
         collection: fd.get('reference') || '',
         book: fd.get('referenceBook') || '',
@@ -185,9 +194,15 @@ export const formHandlers = {
         ...(fd.get('referenceAr') ? { reference_ar: { collection: fd.get('referenceAr') } } : {}),
       },
       grade: fd.get('grade') || 'Unknown',
-      custom_grade: { en: fd.get('customGradeEn') || '', ar: '' },
+      custom_grade: {
+        en: fd.get('customGradeEn') || '',
+        ar: existing?.custom_grade?.ar || '',
+      },
       repetitions: parseInt(fd.get('repetitions'), 10) || 1,
-      virtues: { en: fd.get('virtuesEn') || '', ar: '' },
+      virtues: {
+        en: fd.get('virtuesEn') || '',
+        ar: existing?.virtues?.ar || '',
+      },
       tags: (fd.get('tags') || '')
         .split(',')
         .map((s) => s.trim())
@@ -239,6 +254,10 @@ export const formHandlers = {
 
   category: (form) => {
     const fd = new FormData(form);
+    const found = form.dataset.categoryId
+      ? findCategoryById(store.getState(), form.dataset.categoryId)
+      : null;
+    const descriptionAr = found?.cat?.description?.ar || '';
     // (v5.0.0) builtin scope: create a user section inside a bundled
     // library (addedCategories lens) or edit a section's metadata
     // (categoryOverrides lens). Custom libraries keep the editor path.
@@ -248,7 +267,7 @@ export const formHandlers = {
           actions.updateSettings({
             contentPrefs: applyCategoryFields(store.getState(), form.dataset.categoryId, {
               name: { en: fd.get('nameEn') || '', ar: fd.get('nameAr') || '' },
-              description: { en: fd.get('descEn') || '', ar: '' },
+              description: { en: fd.get('descEn') || '', ar: descriptionAr },
               ...(fd.get('icon') ? { icon: fd.get('icon') } : {}),
               ...(fd.get('color') ? { color: fd.get('color') } : {}),
             }),
@@ -257,7 +276,7 @@ export const formHandlers = {
       } else {
         const { prefs } = addCategoryToLibrary(store.getState(), form.dataset.libraryId, {
           name: { en: fd.get('nameEn') || '', ar: fd.get('nameAr') || '' },
-          description: { en: fd.get('descEn') || '', ar: '' },
+          description: { en: fd.get('descEn') || '', ar: descriptionAr },
           icon: fd.get('icon') || 'book',
           color: fd.get('color') || 'slate',
         });
@@ -266,15 +285,29 @@ export const formHandlers = {
       closeModal();
       return;
     }
-    editorApi.addCategory(form.dataset.libraryId, {
-      nameEn: fd.get('nameEn'),
-      nameAr: fd.get('nameAr'),
-    });
+    if (form.dataset.categoryId) {
+      editorApi.updateCategory(form.dataset.libraryId, form.dataset.categoryId, {
+        name: { en: fd.get('nameEn') || '', ar: fd.get('nameAr') || '' },
+        description: { en: fd.get('descEn') || '', ar: '' },
+        icon: fd.get('icon') || 'book',
+        color: fd.get('color') || 'slate',
+      });
+    } else {
+      editorApi.addCategory(form.dataset.libraryId, {
+        nameEn: fd.get('nameEn'),
+        nameAr: fd.get('nameAr'),
+      });
+    }
     closeModal();
   },
 
   library: (form) => {
     const fd = new FormData(form);
+    const existing = form.dataset.libraryId
+      ? store.getState().library.documents[form.dataset.libraryId] ||
+        store.getState().customContent[form.dataset.libraryId]
+      : null;
+    const descriptionAr = existing?.metadata?.description?.ar || '';
     // (v5.0.0) builtin banner edit → libraryOverrides lens; creating a
     // new library keeps the custom editor path.
     if (form.dataset.scope === 'builtin' && form.dataset.libraryId) {
@@ -282,14 +315,21 @@ export const formHandlers = {
         actions.updateSettings({
           contentPrefs: applyLibraryFields(store.getState(), form.dataset.libraryId, {
             name: { en: fd.get('nameEn') || '', ar: fd.get('nameAr') || '' },
-            description: { en: fd.get('descEn') || '', ar: '' },
+            description: { en: fd.get('descEn') || '', ar: descriptionAr },
           }),
         })
       );
       closeModal();
       return;
     }
-    editorApi.createLibrary({ nameEn: fd.get('nameEn'), nameAr: fd.get('nameAr') });
+    if (form.dataset.libraryId) {
+      editorApi.updateLibrary(form.dataset.libraryId, {
+        name: { en: fd.get('nameEn') || '', ar: fd.get('nameAr') || '' },
+        description: { en: fd.get('descEn') || '', ar: descriptionAr },
+      });
+    } else {
+      editorApi.createLibrary({ nameEn: fd.get('nameEn'), nameAr: fd.get('nameAr') });
+    }
     closeModal();
   },
 
@@ -375,6 +415,7 @@ export const formHandlers = {
     let lat = parseFloat(fd.get('latitude'));
     let lng = parseFloat(fd.get('longitude'));
     let locationName = String(fd.get('locationName') || '').trim();
+    let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const presetId = String(fd.get('cityPreset') || '');
     if (presetId) {
       const preset = CITY_PRESETS.find((city) => city.id === presetId);
@@ -382,9 +423,17 @@ export const formHandlers = {
         lat = preset.lat;
         lng = preset.lng;
         locationName = lang === 'ar' ? preset.ar : preset.en;
+        timezone = preset.timezone;
       }
     }
-    if (Number.isNaN(lat) || Number.isNaN(lng)) {
+    if (
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lng) ||
+      lat < -90 ||
+      lat > 90 ||
+      lng < -180 ||
+      lng > 180
+    ) {
       showToast(t('common.error', store.getState().settings.language));
       return;
     }
@@ -393,7 +442,7 @@ export const formHandlers = {
         latitude: lat,
         longitude: lng,
         locationName,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        timezone,
       })
     );
     closeModal();

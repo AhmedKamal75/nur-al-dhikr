@@ -81,6 +81,17 @@ export function _resetAudioStoreForTests() {
   dbPromise = null;
 }
 
+export async function closeAudioStoreForReset() {
+  const pending = dbPromise;
+  dbPromise = null;
+  try {
+    const db = await pending;
+    db?.close?.();
+  } catch {
+    /* unavailable audio connection */
+  }
+}
+
 function openDB() {
   if (dbPromise) return dbPromise;
   dbPromise = new Promise((resolve) => {
@@ -115,6 +126,7 @@ function openDB() {
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => resolve(null);
+    req.onblocked = () => resolve(null);
   });
   return dbPromise;
 }
@@ -151,8 +163,8 @@ export async function saveAudio(moshafId, surahNumber, blob) {
     // persist probe once, then oldest-ts eviction — neither ever fails
     // the save itself.
     ensurePersistentStorage();
-    enforceAudioCacheCap();
-    return { ok: true, bytes: blob.size };
+    const evicted = await enforceAudioCacheCap();
+    return { ok: true, bytes: blob.size, evicted };
   } catch (err) {
     console.error('[audioStore] save failed', err);
     const name = err && err.name ? String(err.name).toLowerCase() : '';
@@ -318,9 +330,11 @@ async function deleteAudioByKey(key) {
 }
 
 /**
- * Enforce the total-bytes budget (oldest-ts first). Fire-and-forget from
- * the save paths — eviction must never fail a download. Deps injectable
- * for tests (defaults read the live IDB). Returns the dropped keys.
+ * Enforce the total-bytes budget (oldest-ts first). The save paths AWAIT it
+ * so the caller learns which keys the cap dropped (an eviction the user is
+ * never told about reads as "my download vanished"). Eviction itself still
+ * never fails a save. Deps injectable for tests (defaults read the live
+ * IDB). Returns the dropped keys.
  */
 export async function enforceAudioCacheCap({
   list = listAudioRecords,
@@ -393,8 +407,8 @@ export async function saveVerseAudio(reciterId, globalAyah, blob) {
     await txDone(tx);
     // (v5.2.75, PERF-02) same origin-protection + budget as full-surah saves.
     ensurePersistentStorage();
-    enforceAudioCacheCap();
-    return { ok: true, bytes: blob.size };
+    const evicted = await enforceAudioCacheCap();
+    return { ok: true, bytes: blob.size, evicted };
   } catch (err) {
     console.error('[audioStore] verse save failed', err);
     const name = err && err.name ? String(err.name).toLowerCase() : '';

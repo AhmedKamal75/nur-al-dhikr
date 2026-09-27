@@ -30,7 +30,10 @@ test('inventory: six groups with honest file counts', (t) => {
   assert.equal(quranUrls().length, 116);
   assert.equal(translationUrls().length, 456);
   assert.equal(mushafUrls().length, 605);
-  assert.equal(wordsUrls().length, 117);
+  assert.equal(wordsUrls().length, 233);
+  assert.ok(wordsUrls().includes('data/quran-word-study/114.json'));
+  assert.ok(wordsUrls().includes('data/quran-dict.json'));
+  assert.ok(wordsUrls().includes('data/quran-roots-meaning.json'));
   for (const url of [...quranUrls(), ...mushafUrls(), ...wordsUrls()]) {
     assert.ok(url.startsWith('data/'), `${url} is same-origin (SW-cacheable)`);
   }

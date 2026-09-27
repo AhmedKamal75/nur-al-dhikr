@@ -37,7 +37,6 @@ function installStubs() {
   }
   globalThis.Notification = FakeNotification;
   globalThis.window = { Notification: FakeNotification, focus: () => {} };
-  // Adhan audio never plays in the test: hidden tab skips playAlert.
   globalThis.document = { visibilityState: 'hidden' };
   return shown;
 }
@@ -89,7 +88,6 @@ test('B5: suhoor adhan fires once across a reload in the catch-up window', async
     ramadanAlerts: { suhoor: true, iftar: false, suhoorOffset: 30 },
   };
 
-  // Compute the suhoor wall clock with the same engine the scheduler uses.
   const times = calculateTimes({
     date: new Date(Date.UTC(y, m, d, 12, 0)),
     latitude: prayerBase.latitude,
@@ -108,12 +106,46 @@ test('B5: suhoor adhan fires once across a reload in the catch-up window', async
     modA.tickForTests([], 'en', [], prayerBase, [], null);
     assert.equal(shown.length, 1);
 
-    // "Reload": a fresh module instance (empty in-memory Set) sharing the
-    // same persisted localStorage, same minute.
     clock.set(atSuhoor + 30 * 1000);
     const modB = await import('../js/services/notifications.js?b5-b');
     modB.tickForTests([], 'en', [], prayerBase, [], null);
     assert.equal(shown.length, 1);
+  } finally {
+    clock.restore();
+    delete globalThis.localStorage;
+    delete globalThis.Notification;
+    delete globalThis.window;
+    delete globalThis.document;
+  }
+});
+
+test('polar Ramadan Suhoor fallback never becomes a notification', async () => {
+  const shown = installStubs();
+  const noon = new Date(Date.UTC(2020, 3, 24, 12, 0));
+  const prayerBase = {
+    latitude: 70,
+    longitude: 0,
+    method: 'MWL',
+    asr: 'Standard',
+    alerts: {},
+    ramadanAlerts: { suhoor: true, iftar: false, suhoorOffset: 30 },
+  };
+  const times = calculateTimes({
+    date: noon,
+    latitude: prayerBase.latitude,
+    longitude: prayerBase.longitude,
+    timezoneOffsetHours: 0,
+    method: prayerBase.method,
+    asr: prayerBase.asr,
+  });
+  assert.equal(times.unreachable.fajr, true, 'fixture has a polar Fajr fallback');
+  const suhoor = formatClock(ramadanAlertTimes(times, 30).suhoor, false);
+  const [hh, mm] = suhoor.split(':').map(Number);
+  const clock = installFakeDate(Date.UTC(2020, 3, 24, hh, mm, 0));
+  try {
+    const mod = await import('../js/services/notifications.js?polar-ramadan');
+    mod.tickForTests([], 'en', [], prayerBase, [], null);
+    assert.equal(shown.length, 0);
   } finally {
     clock.restore();
     delete globalThis.localStorage;

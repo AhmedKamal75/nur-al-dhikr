@@ -16,6 +16,8 @@
  */
 
 import { pickLocale } from '../core/utils.js';
+import { t } from '../core/i18n.js';
+import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 import {
   showTransliterationFor,
   showTranslationFor,
@@ -171,6 +173,8 @@ export async function renderDuaCardCanvas({
   const arabicLines = wrapText(arabic, CONTENT_W, measureWith(ARABIC_FONT));
   const translitLines = wrapText(translit, CONTENT_W - 60, measureWith(`italic 400 31px ${UI}`));
   const translationLines = wrapText(translation, CONTENT_W - 40, measureWith(`400 33px ${UI}`));
+  const reviewWarning = hasPendingScholarlyReview(item) ? t('content.reviewPending', lang) : '';
+  const reviewLines = wrapText(reviewWarning, CONTENT_W - 40, measureWith(`600 24px ${UI}`));
   const refLines = refLine ? wrapText(refLine, CONTENT_W, measureWith(`600 26px ${UI}`)) : [];
 
   /* ---- measure-first layout: height follows content ---- */
@@ -189,6 +193,8 @@ export async function renderDuaCardCanvas({
   y += Math.max(arabicLines.length * ARABIC_LINE, arabicLines.length ? ARABIC_LINE : 0) + 26;
   if (translitLines.length) y += translitLines.length * 45 + 24;
   if (translationLines.length) y += translationLines.length * 47 + 10;
+  const reviewY = y;
+  if (reviewLines.length) y += reviewLines.length * 36 + 20;
   y += 34;
   const refY = y;
   y += refLines.length ? refLines.length * 38 : 0;
@@ -268,6 +274,14 @@ export async function renderDuaCardCanvas({
     ctx.fillStyle = INK;
     translationLines.forEach((ln, i) => ctx.fillText(ln, center, cursor + 33 + i * 47));
     cursor += translationLines.length * 47 + 10;
+  }
+
+  if (reviewLines.length) {
+    ctx.font = `600 24px ${UI}`;
+    ctx.fillStyle = MUTED;
+    ctx.direction = lang === 'ar' ? 'rtl' : 'ltr';
+    reviewLines.forEach((ln, i) => ctx.fillText(ln, center, reviewY + 24 + i * 36));
+    ctx.direction = 'ltr';
   }
 
   /* ---- reference + grade chip ---- */

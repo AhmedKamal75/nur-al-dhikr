@@ -32,6 +32,7 @@ import {
   noteFor,
 } from '../js/domain/localeContent.js';
 import { cardHTML } from '../js/ui/card.js';
+import { applyItemOverrides, hasPendingScholarlyReview } from '../js/domain/contentLens.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -209,6 +210,29 @@ describe('cardHTML: strict language separation', () => {
     const item = { ...BILINGUAL_ITEM, virtues: { en: 'English only virtue', ar: '' } };
     const html = cardHTML(item, null, { lang: 'ar' });
     assert.ok(!html.includes('English only virtue'));
+  });
+
+  test('review metadata is source-owned and cannot be cleared by an item override', () => {
+    const item = { id: 'review-demo', review: 'Needs scholarly review' };
+    const lensed = applyItemOverrides(item, {
+      'review-demo': { review: '', title: { en: 'Changed' } },
+    });
+    assert.equal(lensed.review, item.review);
+    assert.equal(hasPendingScholarlyReview(lensed), true);
+    assert.equal(hasPendingScholarlyReview({ review: '   ' }), false);
+  });
+
+  test('pending scholarly review is localized and remains visible when notes are hidden', () => {
+    const item = {
+      ...BILINGUAL_ITEM,
+      review: 'Internal English editorial note that must not be rendered.',
+    };
+    const en = cardHTML(item, null, { lang: 'en', fields: { notes: false } });
+    const ar = cardHTML(item, null, { lang: 'ar', fields: { notes: false } });
+    assert.match(en, /Unconfirmed attribution/);
+    assert.match(ar, /نسبة غير محقَّقة/);
+    assert.doesNotMatch(en, /Internal English editorial note/);
+    assert.doesNotMatch(ar, /Internal English editorial note/);
   });
 });
 

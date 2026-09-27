@@ -19,7 +19,7 @@ import { asTranslationEdition, TRANSLATION_EDITIONS, VIEWS } from '../../core/co
 import { t } from '../../core/i18n.js';
 import { go, replaceGo } from '../../core/router.js';
 import { actions, selectors, store } from '../../core/state.js';
-import { escapeHTML, pickLocale, uid } from '../../core/utils.js';
+import { escapeHTML, pickLocale, scrollBehavior, uid } from '../../core/utils.js';
 // (v4.3) shareCard.js (553 lines of canvas rendering) is imported lazily:
 // it is only ever needed on an explicit share/download tap, so every boot
 // used to pay for code nobody opened. Both callers are async handlers, so
@@ -151,18 +151,11 @@ export const clickHandlers = {
     const before = selectors.getCounter(store.getState(), ds.itemId);
     if ((before?.count || 0) + 1 >= target) noteCompleted(ds.itemId);
     const result = tasbih.increment(ds.itemId, ds.categoryId || null, target);
-    tasbih.playTick(result.cycleCompleted ? 'complete' : 'tick');
 
-    // (v5.0.0) Counting feedback — the full trio:
-    //   1. vibration (settings.hapticsEnabled; no-op where unsupported)
-    //   2. the tick sound above (settings.soundEnabled, inside playTick)
-    //   3. the tap ripple — a one-shot radial bloom at the tap point on
-    //      the tapped card (settings.tapRipple; reduced-motion kills it
-    //      via CSS, same as every other animation).
+    // (v5.0.0) services/tasbih.js owns the single tick + haptic pair for
+    // every counting surface. The handler only adds the tap ripple, which
+    // needs the re-queried post-render node.
     const state = store.getState();
-    if (state.settings.hapticsEnabled && navigator.vibrate) {
-      navigator.vibrate(result.cycleCompleted ? [12, 40, 18] : 10);
-    }
     if (state.settings.tapRipple && e) {
       // The increment above re-renders #main synchronously — the tapped
       // node is detached by then. Defer one frame so the ripple lands on
@@ -193,12 +186,14 @@ export const clickHandlers = {
     // in Focus, where the auto-advance owns the transition.
     if (result.cycleCompleted && state.activeView !== VIEWS.FOCUS) {
       const itemId = ds.itemId;
-      const reduce = state.settings.reduceMotion;
+      const reduce = scrollBehavior() === 'auto';
       setTimeout(
         () => {
           dismissCompleted(itemId);
           if (typeof document !== 'undefined') {
-            document.querySelector(`article.card[data-item-id="${CSS.escape(itemId)}"]`)?.remove();
+            document
+              .querySelectorAll(`article.card[data-item-id="${CSS.escape(itemId)}"]`)
+              .forEach((node) => node.remove());
           }
         },
         reduce ? 60 : 340
@@ -272,7 +267,7 @@ export const clickHandlers = {
   // ---- Ahadeeth (v3.9) ----
   'hadith-copy': async (ds) => {
     const st = store.getState();
-    const bookId = String(st.activeParams?.id || '');
+    const bookId = String(ds.bookId || st.activeParams?.id || '');
     const doc = st.hadith.docs[bookId];
     const h = doc?.hadiths.find((x) => String(x.n) === String(ds.n));
     if (!h) return;
@@ -454,7 +449,7 @@ export const clickHandlers = {
   // Arabic text). Same doc lookup as hadith-copy.
   'hadith-share': async (ds) => {
     const st = store.getState();
-    const bookId = String(st.activeParams?.id || '');
+    const bookId = String(ds.bookId || st.activeParams?.id || '');
     const doc = st.hadith.docs[bookId];
     const h = doc?.hadiths.find((x) => String(x.n) === String(ds.n));
     if (!h) return;
@@ -476,7 +471,7 @@ export const clickHandlers = {
 
   'hadith-speak': (ds) => {
     const st = store.getState();
-    const bookId = String(st.activeParams?.id || '');
+    const bookId = String(ds.bookId || st.activeParams?.id || '');
     const doc = st.hadith.docs[bookId];
     const h = doc?.hadiths.find((x) => String(x.n) === String(ds.n));
     if (!h?.ar) return;
@@ -791,10 +786,9 @@ export const clickHandlers = {
   },
 
   // (SEARCH-01) explicit pages: 'search-page' moves one scope to an
-  // exact page (qp/tp/lp via replaceGo — shareable, never persisted, no
-  // history spam). 'search-more' is the legacy shown-count alias: it
-  // converts one step forward into the covering page so old clients and
-  // tests keep working without a second code path.
+  // exact page (qp/tp/lp via a pushed history entry). 'search-more' is the
+  // legacy shown-count alias: it converts one step forward into the covering
+  // page so old clients and tests keep working without a second code path.
   'search-page': (ds) => {
     const params = store.getState().activeParams || {};
     const q = params.q || '';
@@ -806,7 +800,7 @@ export const clickHandlers = {
     const page = Number.isFinite(want) && want >= 1 ? Math.min(want, 10000) : 1;
     const next = { ...params, [key]: String(page) };
     delete next[legacyKey];
-    replaceGo(VIEWS.SEARCH, next);
+    go(VIEWS.SEARCH, next);
   },
   'search-more': (ds) => {
     const params = store.getState().activeParams || {};
@@ -818,14 +812,15 @@ export const clickHandlers = {
     const size = scope === 'library' ? 40 : scope === 'tafsir' ? 8 : 15;
     const legacyShown = Math.floor(Number(params[legacyKey]));
     const curPage = Math.floor(Number(params[key]));
-    const cur = Number.isFinite(curPage) && curPage >= 1
-      ? curPage
-      : Number.isFinite(legacyShown) && legacyShown >= 1
-        ? Math.ceil(legacyShown / size)
-        : 1;
+    const cur =
+      Number.isFinite(curPage) && curPage >= 1
+        ? curPage
+        : Number.isFinite(legacyShown) && legacyShown >= 1
+          ? Math.ceil(legacyShown / size)
+          : 1;
     const next = { ...params, [key]: String(cur + 1) };
     delete next[legacyKey];
-    replaceGo(VIEWS.SEARCH, next);
+    go(VIEWS.SEARCH, next);
   },
 
   'clear-search-history': () => {

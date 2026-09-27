@@ -28,7 +28,7 @@ function bar(width, mod = '') {
 
 /** A vertical stack of shimmer bars mirroring a text block. */
 export function skeletonLines(lang, widths = [92, 78, 85]) {
-  return `<div class="sk-block" aria-hidden="false">${srLoading(lang)}${widths.map((w) => bar(w)).join('')}</div>`;
+  return `<div class="sk-block" role="status" aria-live="polite" aria-busy="true">${srLoading(lang)}${widths.map((w) => bar(w)).join('')}</div>`;
 }
 
 /** The 114-surah picker grid: rows of tiles (badge + two text lines). */

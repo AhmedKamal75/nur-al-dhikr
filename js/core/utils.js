@@ -317,23 +317,32 @@ export function vibrate(pattern = 10) {
 
 /**
  * Wrap literal (case-insensitive) occurrences of each raw term in <mark>.
- * Escapes first, then decorates only what is visibly present — never
- * invents highlights when normalization differs (e.g. folded alefs).
+ * Matches the ORIGINAL text once, then escapes text and match separately —
+ * generated <mark> markup can never be matched by a later search term.
  * Shared by the palette and every search-result template.
  */
 export function highlightMatch(text, terms) {
-  let out = escapeHTML(String(text ?? ''));
+  const source = String(text ?? '');
   const seen = new Set();
+  const needles = [];
   for (const raw of terms || []) {
-    const term = escapeHTML(String(raw || '').trim());
-    if (!term || seen.has(term.toLowerCase())) continue;
-    seen.add(term.toLowerCase());
-    const low = term.toLowerCase();
-    let idx = out.toLowerCase().indexOf(low);
-    while (idx !== -1) {
-      out = `${out.slice(0, idx)}<mark>${out.slice(idx, idx + term.length)}</mark>${out.slice(idx + term.length)}`;
-      idx = out.toLowerCase().indexOf(low, idx + 13 + term.length);
-    }
+    const term = String(raw || '').trim();
+    const key = term.toLowerCase();
+    if (!term || seen.has(key)) continue;
+    seen.add(key);
+    needles.push(term);
   }
-  return out;
+  if (!needles.length) return escapeHTML(source);
+  needles.sort((a, b) => b.length - a.length);
+  const pattern = needles.map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+  const matcher = new RegExp(pattern, 'giu');
+  let out = '';
+  let cursor = 0;
+  for (const match of source.matchAll(matcher)) {
+    const start = match.index;
+    out += escapeHTML(source.slice(cursor, start));
+    out += `<mark>${escapeHTML(match[0])}</mark>`;
+    cursor = start + match[0].length;
+  }
+  return out + escapeHTML(source.slice(cursor));
 }

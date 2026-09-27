@@ -92,6 +92,21 @@ export function openDB(name, version, upgrade) {
   return p;
 }
 
+export async function closeLiveDatabases() {
+  const pending = [...live.values()];
+  live.clear();
+  await Promise.all(
+    pending.map(async (p) => {
+      try {
+        const db = await p;
+        db?.close?.();
+      } catch {
+        /* unavailable connection */
+      }
+    })
+  );
+}
+
 /** Run one transaction; resolves ok/fail — never throws. */
 export function withStore(db, storeName, mode, op) {
   return new Promise((resolve) => {

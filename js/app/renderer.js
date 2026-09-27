@@ -284,7 +284,19 @@ let lastSettingsSlugScroll = null;
  *  pages used to share one entry and restore unrelated offsets. Exported
  *  for unit tests. */
 export function viewKeyOf(view, params) {
-  return [view, params?.id || '', params?.page || '', params?.q || '', params?.tab || ''].join('|');
+  return [
+    view,
+    params?.id || '',
+    params?.page || '',
+    params?.q || '',
+    params?.tab || '',
+    params?.qp || '',
+    params?.tp || '',
+    params?.lp || '',
+    params?.qn || '',
+    params?.tn || '',
+    params?.ln || '',
+  ].join('|');
 }
 
 /** How long the view-enter animation state ([data-view-enter]) stays on

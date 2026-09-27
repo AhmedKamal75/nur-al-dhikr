@@ -20,6 +20,7 @@ import { VIEWS } from '../core/config.js';
 import { gradeChipHTML } from '../domain/grades.js';
 import { wasJustCompleted } from '../services/tasbih.js';
 import { visibleCategoryItems, itemTargetOf } from '../services/contentPrefs.js';
+import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
 function findCategory(state, categoryId) {
   const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
@@ -89,6 +90,7 @@ export function renderFocus(state) {
   const refLine = referenceLineFor(item, lang, t('card.narratedBy', lang));
   const refNotes = noteFor(item.reference?.notes, lang, item);
   const notes = noteFor(item.notes, lang);
+  const reviewWarning = hasPendingScholarlyReview(item);
   const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
   // (v5.2.24) directional enter: forward slides from the reading-start
   // side, back from the other — auto-advance (+1) always slides forward.
@@ -142,6 +144,7 @@ export function renderFocus(state) {
     <div class="focus__scroll" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}">
       <div class="focus__content">
         ${gradeChip}
+        ${reviewWarning ? `<p class="content-review-warning" role="note">${icon('info', { size: 14 })} ${escapeHTML(t('content.reviewPending', lang))}</p>` : ''}
         ${
           bh && !bh.revealed
             ? `<button type="button" class="hadith-card__cloze" data-action="byheart-reveal" data-item-id="${escapeHTML(item.id)}" aria-label="${t('hifz.reveal', lang)}">${t('hifz.reveal', lang)}</button>`

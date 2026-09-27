@@ -49,7 +49,10 @@ describe('SEARCH-01 explicit pagination', () => {
     assert.deepEqual(p1.items, all.slice(0, 15));
     const p2 = paginate(all, { qp: '2' }, 'quran');
     assert.deepEqual(p2.items, all.slice(15));
-    assert.deepEqual([...p1.items, ...p2.items].sort((a, b) => a - b), all);
+    assert.deepEqual(
+      [...p1.items, ...p2.items].sort((a, b) => a - b),
+      all
+    );
     // Hostile page clamps to the last page, never an empty list.
     const hostile = paginate(all, { qp: '999' }, 'quran');
     assert.equal(hostile.page, 2);
@@ -66,7 +69,11 @@ describe('SEARCH-01 explicit pagination', () => {
     try {
       const first = renderSearch(searchState({}));
       assert.match(first, /Page 1 of 2/, 'page counter');
-      assert.match(first, /data-action="search-page" data-scope="quran" data-page="2"/, 'next button');
+      assert.match(
+        first,
+        /data-action="search-page" data-scope="quran" data-page="2"/,
+        'next button'
+      );
       assert.match(first, /Quran: 20/, 'breakdown carries the quran total');
       assert.match(first, /Hadith: 0/, 'breakdown carries the hadith total');
       assert.match(first, /Azkar: 0/, 'breakdown carries the azkar total');
@@ -78,7 +85,9 @@ describe('SEARCH-01 explicit pagination', () => {
       assert.equal((second.match(/class="quran-hit"/g) || []).length, 5);
       // No duplicated ayah rows across the two pages (data-ay carries the ayah number).
       const rowsOf = (html) =>
-        [...html.matchAll(/data-ay="(\d+)"/g)].map((m) => m[1]).sort((a, b) => Number(a) - Number(b));
+        [...html.matchAll(/data-ay="(\d+)"/g)]
+          .map((m) => m[1])
+          .sort((a, b) => Number(a) - Number(b));
       const r1 = rowsOf(first);
       const r2 = rowsOf(second);
       assert.equal(r1.length, 15);

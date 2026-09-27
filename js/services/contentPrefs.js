@@ -200,8 +200,13 @@ export function applyLibraryFields(state, libraryId, fields) {
 export function moveCategory(state, libraryId, categoryId, dir = 1) {
   const prefs = contentPrefsOf(state);
   const rawDoc = state?.library?.raw?.documents?.[libraryId];
+  // Custom libraries never appear in `library.raw` — their sections live in
+  // customContent, and the order lens still has to see them as a valid pool.
+  const baseCats = rawDoc
+    ? rawDoc.categories || []
+    : state?.customContent?.[libraryId]?.categories || [];
   const added = prefs.addedCategories?.[libraryId] || [];
-  const all = [...(rawDoc?.categories || []).map((c) => c.id), ...added.map((c) => c.id)].filter(
+  const all = [...baseCats.map((c) => c.id), ...added.map((c) => c.id)].filter(
     (id) => !prefs.deletedCategories?.[id]
   );
   const current = prefs.categoryOrderOverrides?.[libraryId];
@@ -216,14 +221,26 @@ export function moveCategory(state, libraryId, categoryId, dir = 1) {
   };
 }
 
-/** Move a library/banner one slot in the Library tab order. */
+/** Move a library/banner one slot in the Library tab order.
+ *  The visible list is bundled (lensed) order FOLLOWED BY custom libraries,
+ *  so the override pool has to include custom ids too — otherwise the last
+ *  bundled banner can never be moved below a custom one. */
 export function moveLibrary(state, libraryId, dir = 1) {
   const prefs = contentPrefsOf(state);
-  const raw = state?.library?.raw;
+  const deleted = prefs.deletedLibraries || {};
+  const base = [
+    ...(state?.library?.order || []),
+    ...Object.keys(state?.customContent || {}).filter((id) => !deleted[id]),
+  ];
+  const current = prefs.libraryOrderOverrides;
   const order =
-    Array.isArray(prefs.libraryOrderOverrides) && prefs.libraryOrderOverrides.length
-      ? [...prefs.libraryOrderOverrides]
-      : [...(raw?.order || [])];
+    Array.isArray(current) && current.length
+      ? // Re-seed from the live pool so newly added libraries join the order.
+        [
+          ...current.filter((id) => base.includes(id)),
+          ...base.filter((id) => !current.includes(id)),
+        ]
+      : base;
   const at = order.indexOf(libraryId);
   const to = at + dir;
   if (at < 0 || to < 0 || to >= order.length) return prefs;

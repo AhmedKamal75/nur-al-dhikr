@@ -14,6 +14,7 @@ import { completedCount } from '../services/checklist.js';
 import { ramadanInfo } from '../domain/ramadan.js';
 import { resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
+import { fieldTogglesFor } from '../domain/contentLens.js';
 
 /**
  * (v5.2.54) quick-action tiles: registry-driven (order/visibility from
@@ -70,7 +71,7 @@ import { onboardingPanelHTML } from './onboardingPanel.js';
 import { dailyHadithCardHTML } from './hadithCard.js';
 import { countMemorized, dueCounts, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
 import { worshipTodayRows } from '../domain/worship.js';
-import { DAILY_THEMES, matchesTheme } from '../domain/dailyAyah.js';
+import { DAILY_THEMES, dailyEligibleEntries, matchesTheme } from '../domain/dailyAyah.js';
 import { computeNudge, shouldShowNudge } from '../domain/nudge.js';
 import { dedupeEntries, isCompletedToday, nextFreshIndex } from '../domain/reflections.js';
 import { isDismissed } from '../domain/completedCards.js';
@@ -215,7 +216,7 @@ function greetingKey() {
  * instead of repeating a finished card.
  */
 function verseEligibleEntries(itemIndex) {
-  return Object.values(itemIndex).filter((entry) => entry.document?.metadata?.id !== 'asma');
+  return dailyEligibleEntries(itemIndex);
 }
 
 function pickDailyItem(itemIndex, theme = 'any') {
@@ -435,7 +436,7 @@ export function renderHome(state) {
       ? `
     <section class="panel panel--reflection">
       <div class="panel__header"><h2>${t('home.verseOfTheDay', lang)}</h2></div>
-      ${cardHTML(daily.item, daily.category, { lang, isFavorite: selectors.isFavorite(state, daily.item.id), isSpeaking: state.speakingItemId === daily.item.id, counter: selectors.getCounter(state, daily.item.id), showTransliteration: state.settings.showTransliteration, showTranslation: state.settings.showTranslation, compact: true })}
+      ${cardHTML(daily.item, daily.category, { lang, isFavorite: selectors.isFavorite(state, daily.item.id), isSpeaking: state.speakingItemId === daily.item.id, counter: selectors.getCounter(state, daily.item.id), showTransliteration: state.settings.showTransliteration, showTranslation: state.settings.showTranslation, compact: true, fields: fieldTogglesFor(state, daily.document?.metadata?.id) })}
       <div class="chip-row chip-row--scroll" role="group" aria-label="${escapeHTML(t('home.verseTheme', lang))}">
         ${DAILY_THEMES.map(
           (th) => `
@@ -453,7 +454,7 @@ export function renderHome(state) {
     <section class="panel">
       <div class="panel__header"><h2>${t('home.panel.recent', lang)}</h2></div>
       <div class="card-row">
-        ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
+        ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false, fields: fieldTogglesFor(state, e.document?.metadata?.id) })).join('')}
       </div>
     </section>`
       : emptyStateHTML({
@@ -470,7 +471,7 @@ export function renderHome(state) {
         <a href="${buildHash(VIEWS.FAVORITES)}" data-action="navigate" data-view="${VIEWS.FAVORITES}" aria-label="${t('home.viewAll.favorites', lang)}">${goIcon(lang, 16)}</a>
       </div>
       <div class="card-row">
-        ${favEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: true, isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false })).join('')}
+        ${favEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: true, isSpeaking: state.speakingItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false, fields: fieldTogglesFor(state, e.document?.metadata?.id) })).join('')}
       </div>
     </section>`
       : '',

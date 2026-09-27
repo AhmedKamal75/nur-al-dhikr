@@ -22,6 +22,9 @@
  */
 
 import { clone, isSafeKey } from '../core/utils.js';
+import { hasPendingScholarlyReview } from './localeContent.js';
+
+export { hasPendingScholarlyReview };
 
 const EMPTY = {};
 

@@ -26,7 +26,7 @@ import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
    persisted). Legacy qn/tn/ln shown-counts convert to their covering
    page (domain/searchPagination.js). A new query resets them; the
    'search-page' handler (app/handlers/items.js) moves one scope via
-   replaceGo. Indexing still runs once per corpus per render. */
+   a pushed history entry. Indexing still runs once per corpus per render. */
 /**
  * Explicit pager for one scope: "Page X of Y" + per-scope counts +
  * Previous/Next. Single-page result sets render the counter without

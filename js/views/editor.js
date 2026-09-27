@@ -9,6 +9,7 @@ import { icon } from '../core/icons.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML, pickLocale, categoryDisplayName } from '../core/utils.js';
 import { contentTitleFor } from '../domain/localeContent.js';
+import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 import { GRADES, GRADE_LABELS } from '../core/config.js';
 import { DEFAULT_CUSTOM_LIBRARY_ID } from '../services/editor.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
@@ -92,6 +93,7 @@ export function buildItemForm(item, { libraryId, categoryId, lang = 'en', scope 
   <form class="editor-form" data-form="item" data-scope="${escapeHTML(scope)}" data-library-id="${escapeHTML(libraryId)}" data-category-id="${escapeHTML(categoryId)}" data-item-id="${escapeHTML(item.id || '')}">
     <h2 id="modal-title-item">${item.id ? t('editor.edit', lang) : t('editor.newItem', lang)}</h2>
     ${scope === 'builtin' ? `<p class="editor-form__note">${t('editor.builtinNote', lang)}</p>` : ''}
+    ${hasPendingScholarlyReview(item) ? `<p class="content-review-warning" role="note">${icon('info', { size: 14 })} ${escapeHTML(t('content.reviewPending', lang))}</p>` : ''}
     <label class="field">${t('editor.fieldTitleEn', lang)}<input class="input" name="titleEn" value="${escapeHTML(item.title?.en || '')}" required /></label>
     <label class="field">${t('editor.fieldTitleAr', lang)}<input class="input" name="titleAr" dir="rtl" lang="ar" value="${escapeHTML(item.title?.ar || '')}" /></label>
     <label class="field">${t('editor.fieldArabic', lang)}<textarea class="textarea" name="arabic" dir="rtl" lang="ar" rows="3">${escapeHTML(item.arabic || '')}</textarea></label>

@@ -1,6 +1,6 @@
 {
   "name": "nur-al-dhikr",
-  "version": "5.17.8",
+  "version": "5.17.17",
   "description": "An offline-first, installable web app for daily Islamic remembrance — Adhkar, Duas, the 99 Names of Allah, prayer times, a Hijri calendar, a tasbih counter, the complete Qur'an with per-word study, and per-tab options menus.",
   "type": "module",
   "private": true,
@@ -16,8 +16,10 @@
     "snapshot-shell": "node scripts/snapshot-shell.mjs",
     "build-seed": "node scripts/build-seed.mjs",
     "compress-data": "node scripts/compress-data.mjs",
+    "manifest:generate": "node scripts/data-manifest.mjs --write",
+    "manifest:check": "node scripts/data-manifest.mjs --check",
     "measure": "node scripts/measure.mjs",
-    "check": "npm run lint && npm run format:check && npm test"
+    "check": "npm run lint && npm run format:check && npm run manifest:check && npm test"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

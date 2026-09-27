@@ -498,7 +498,7 @@ export function buildCalendarSheet(state) {
         rows: [
           // (UX-6) was a self-link to the Calendar the sheet is opened
           // from — a dead end. Now closes the sheet and scrolls to the
-          // fasting panel below (same pattern as settings-toc-go).
+          // fasting panel below (same pattern as a section landing).
           sheetRow('calendar-goto-fasting', 'calendar.sheet.fasting', 'sun', lang),
           sheetLinkRow('calendar.sheet.special', 'star', VIEWS.LIBRARY, {}, lang),
         ],

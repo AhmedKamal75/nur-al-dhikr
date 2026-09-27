@@ -11,6 +11,7 @@ import { actions, store } from '../../core/state.js';
 import { openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
 import * as compass from '../../domain/compass.js';
+import { CITY_PRESETS } from '../../domain/locations.js';
 
 export const clickHandlers = {
   'prayer-request-location': () => {
@@ -37,7 +38,9 @@ export const clickHandlers = {
         );
       },
       () => {
-        openModal(locationPermissionGuidanceHTML(lang), { labelledBy: 'modal-title-location-help' });
+        openModal(locationPermissionGuidanceHTML(lang), {
+          labelledBy: 'modal-title-location-help',
+        });
       },
       { enableHighAccuracy: false, timeout: 10000 }
     );
@@ -53,16 +56,24 @@ export const clickHandlers = {
   // approximate. Manual entry + GPS remain; this only unlocks the times.
   'prayer-use-city': (ds) => {
     const lang = store.getState().settings.language;
-    const lat = Number(ds.lat);
-    const lng = Number(ds.lng);
+    const cityId = String(ds.cityId || '');
+    const preset = cityId ? CITY_PRESETS.find((city) => city.id === cityId) : null;
+    if (cityId && !preset) return;
+    const lat = preset ? preset.lat : Number(ds.lat);
+    const lng = preset ? preset.lng : Number(ds.lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90) return;
     if (lng < -180 || lng > 180) return;
     store.dispatch(
       actions.updatePrayerSettings({
         latitude: lat,
         longitude: lng,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        locationName: String(ds.name || '').slice(0, 80),
+        timezone: preset?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+        locationName: (preset
+          ? lang === 'ar'
+            ? preset.ar
+            : preset.en
+          : String(ds.name || '')
+        ).slice(0, 80),
         locationAccuracy: null,
       })
     );
@@ -80,8 +91,22 @@ export const clickHandlers = {
   },
 };
 
-/** change registry (Blueprint D): { sel, run(ds, el, e) }. No arms: the
- *  traveler toggle rides the view-sheet switch (`view-toggle-traveler` in
- *  handlers/viewMenus.js) — the checkbox arm died with travelerPanelHTML
- *  (v5.15.0 kill) and is kept empty so the registry shape stays stable. */
-export const changeHandlers = [];
+export const changeHandlers = [
+  {
+    sel: 'select[name="cityPreset"]',
+    run: (_ds, element) => {
+      const form = element.closest?.('form');
+      if (!form) return;
+      const city = CITY_PRESETS.find((entry) => entry.id === element.value);
+      if (!city) return;
+      const lang = store.getState().settings.language;
+      const set = (name, value) => {
+        const field = form.querySelector(`[name="${name}"]`);
+        if (field) field.value = value;
+      };
+      set('latitude', String(city.lat));
+      set('longitude', String(city.lng));
+      set('locationName', lang === 'ar' ? city.ar : city.en);
+    },
+  },
+];

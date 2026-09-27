@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import {
+  buildWordStudyLoadingPanel,
   buildWordStudyPanel,
   buildTafsirPanel,
   buildAyahStudyExtras,
@@ -83,6 +84,53 @@ test('buildWordStudyPanel renders for a real word, both languages', () => {
   assertClean(buildWordStudyPanel(baseState({ settings: { language: 'ar' } })), 'word study (ar)');
 });
 
+test('word card exposes a visible hierarchy and consolidated sources', () => {
+  const html = buildWordStudyPanel(baseState());
+  assert.match(html, /<h2 id="modal-title-word-study" class="word-study__title">/);
+  assert.match(html, /class="word-study__hero"/);
+  assert.match(html, /class="word-study__context-mark"/);
+  assert.match(html, /class="word-study__sources"/);
+  assert.equal((html.match(/<h3 class="word-study__block-label">/g) || []).length, 4);
+  assert.match(html, /data-action="word-share"/);
+  assert.match(html, /data-action="ayah-share"/);
+  assert.doesNotMatch(html, />gharib</);
+  assert.doesNotMatch(html, />structured-morphology</);
+});
+
+test('word card highlights the selected occurrence in repeated verse context', () => {
+  const text = 'كلمة ثم كلمة';
+  const state = baseState({
+    activeWordStudy: { surah: 1, ayah: 1, i: 3, surface: 'كلمة' },
+    quran: {
+      meta: quranMeta,
+      surahs: { 1: { nameAr: 'الفاتحة', nameEn: 'Al-Fatihah', ayahs: [{ number: 1, text }] } },
+    },
+    quranWords: {
+      1: {
+        1: [
+          { i: 1, text: 'كلمة', lemma: 'كلمة', root: 'كل', pos: 'N' },
+          { i: 2, text: 'ثم', lemma: 'ثم', root: 'ثم', pos: 'N' },
+          { i: 3, text: 'كلمة', lemma: 'كلمة', root: 'كل', pos: 'N' },
+        ],
+      },
+    },
+  });
+  const html = buildWordStudyPanel(state);
+  assert.match(html, /ثم <mark class="word-study__context-mark">كلمة<\/mark>/);
+  assert.doesNotMatch(html, /<mark class="word-study__context-mark">كلمة<\/mark> ثم/);
+});
+
+test('word study loading shell is announced before lazy tiers settle', () => {
+  const html = buildWordStudyLoadingPanel(
+    baseState({ activeWordStudy: { surah: 1, ayah: 1, i: 2, surface: 'اللَّهِ' } })
+  );
+  assertClean(html, 'word study loading');
+  assert.match(html, /aria-busy="true"/);
+  assert.match(html, /role="status"/);
+  assert.match(html, /اللَّهِ/);
+  assert.doesNotMatch(html, /data-action="word-speak"/);
+});
+
 test('buildWordStudyPanel embeds the v3.7 Tajweed inspector with bilingual rows', () => {
   // Surah 1 opens with rule-dense words; word 3 of 1:4 (d-deen's diin?) ->
   // use 1:4 word 4 (aldin) — final noon sakinah at ayah end has no following
@@ -113,6 +161,8 @@ test('buildWordStudyPanel degrades gracefully when the word is not found', () =>
   );
   assertClean(html, 'word study (missing)');
   assert.match(html, /tafsir-open/);
+  assert.match(html, /data-action="ayah-share"/);
+  assert.match(html, /data-action="word-bookmark"/);
 });
 
 test('buildWordStudyPanel shows root occurrences excluding the current ayah', () => {
@@ -129,6 +179,16 @@ test('buildTafsirPanel: bundled + loaded, bundled + not-yet-fetched, remote, sec
   const jadwalHtml = buildTafsirPanel(baseState(), 1, 5, 'jadwal');
   assertClean(jadwalHtml, 'tafsir (jadwal, sectioned)');
   assert.match(jadwalHtml, /tafsir-section-h/); // i'rab/sarf/balagha headers must render as real sections
+});
+
+test('tafsir panel falls back from an unknown source and distinguishes an empty ayah', () => {
+  const state = baseState({ activeParams: {} });
+  state.tafsir = { muyassar: { 1: {} } };
+  const unknown = buildTafsirPanel(state, 1, 1, 'missing-source');
+  assert.match(unknown, /id="tafsir-tab-muyassar"[^>]*tabindex="0"/);
+  assert.match(unknown, /This source has no commentary for this ayah/);
+  assert.match(unknown, /Commentary/);
+  assert.match(unknown, /Grammar/);
 });
 
 test('buildTafsirPanel tolerates a catalog that has not loaded yet', () => {

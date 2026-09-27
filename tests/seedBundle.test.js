@@ -18,6 +18,18 @@ if (SEED_MODE) {
     assert.equal(seed.hadithSamples, 6);
   });
 
+  test('seed data manifest covers only the staged JSON corpus', () => {
+    const manifest = readJSON('data/manifest.json');
+    const paths = manifest.files.map((file) => file.path);
+    assert.equal(manifest.mode, 'seed');
+    for (const n of seedSurahs) {
+      assert.ok(paths.includes(`quran/${n}.json`), `quran/${n}.json`);
+    }
+    assert.equal(paths.includes('quran/2.json'), false);
+    assert.equal(paths.includes('hadith/bukhari.json'), false);
+    assert.ok(paths.every((path) => !path.endsWith('.json.gz')));
+  });
+
   test('only seed Quran, word, and word-study surahs are shipped', () => {
     for (const dir of ['data/quran', 'data/quran-words', 'data/quran-word-study']) {
       const files = readdirSync(path.join(ROOT, dir)).filter((f) => /^\d+\.json$/.test(f));

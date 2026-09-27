@@ -5,6 +5,8 @@
 
 import { rt } from './rt.js';
 import { t } from '../core/i18n.js';
+import { closeLiveDatabases } from '../core/idb/openDB.js';
+import { closeAudioStoreForReset } from '../services/audioStore.js';
 
 /** The state storage key (mirrors core/storage.js — read directly here
  * because this path runs precisely when the rest of the app may not). */
@@ -77,7 +79,8 @@ export function renderErrorScreen(err) {
 /**
  * (v5.2.75, BUG-11) the error screen's last-resort reset matches its
  * label: app state, the rolling auto-backup, the notification day-dedup
- * keys, and the IDB custom-content database — not just the state key.
+ * keys, and the app's custom-content, audio-cache, and backup-handle IDB
+ * databases — not just the state key.
  * Best-effort everywhere (this runs when the rest of the app may be
  * broken); the reload afterwards is the guarantee. Keys are mirrored as
  * literals — see core/storage.js, services/backup.js, services/
@@ -90,6 +93,8 @@ export async function wipeAppDataForReset() {
     STATE_KEY, // core/storage.js STORAGE_KEY
     'nur-al-dhikr-auto-backup', // services/backup.js AUTO_BACKUP_KEY
     'nurAlDhikr:v2:notifDayFired', // services/notifications.js day-dedup
+    'nur.gapTelemetry.v1',
+    'nur-moshaf-availability-v1',
   ]) {
     try {
       if (typeof localStorage !== 'undefined') {
@@ -101,33 +106,67 @@ export async function wipeAppDataForReset() {
     }
   }
   const idbDeleted = [];
+  const idbBlocked = [];
+  try {
+    await closeLiveDatabases();
+    await closeAudioStoreForReset();
+  } catch {
+    /* an unavailable connection must not prevent the deletion attempt */
+  }
   try {
     if (typeof indexedDB !== 'undefined' && typeof indexedDB.deleteDatabase === 'function') {
-      await new Promise((resolve) => {
-        let done = false;
-        let timer = null;
-        const finish = () => {
-          if (!done) {
-            done = true;
-            if (timer) clearTimeout(timer);
-            resolve();
-          }
-        };
-        try {
-          // legacy custom-content database (customLibraries + attachments).
-          const req = indexedDB.deleteDatabase('nurAlDhikrDB');
-          req.onsuccess = finish;
-          req.onerror = finish;
-          req.onblocked = finish;
-          timer = setTimeout(finish, 1500); // never wedge the last resort on a lock
-        } catch {
-          finish();
-        }
-      });
-      idbDeleted.push('nurAlDhikrDB');
+      const names = ['nurAlDhikrDB', 'nurAlDhikrAudio', 'nur-al-dhikr', 'nur-alerts'];
+      const results = await Promise.all(
+        names.map(
+          (name) =>
+            new Promise((resolve) => {
+              let done = false;
+              let blocked = false;
+              let timer = null;
+              const finish = (status) => {
+                if (done) return;
+                done = true;
+                if (timer) clearTimeout(timer);
+                resolve({ name, status });
+              };
+              try {
+                const req = indexedDB.deleteDatabase(name);
+                req.onsuccess = () => finish('deleted');
+                req.onerror = () => finish('failed');
+                req.onblocked = () => {
+                  blocked = true;
+                };
+                timer = setTimeout(() => finish(blocked ? 'blocked' : 'timeout'), 1500);
+              } catch {
+                finish('failed');
+              }
+            })
+        )
+      );
+      idbDeleted.push(...results.filter((r) => r.status === 'deleted').map((r) => r.name));
+      idbBlocked.push(...results.filter((r) => r.status === 'blocked').map((r) => r.name));
     }
   } catch {
     /* IDB already broken — nothing to wipe */
   }
-  return { localRemoved, idbDeleted };
+  const cacheStore = globalThis.caches;
+  const cacheDeleted = [];
+  if (cacheStore?.keys && cacheStore?.delete) {
+    try {
+      const names = await cacheStore.keys();
+      await Promise.all(
+        names
+          .filter((name) => name.endsWith('-data'))
+          .map(async (name) => {
+            if (await cacheStore.delete(name)) cacheDeleted.push(name);
+          })
+      );
+    } catch {
+      /* Cache storage already broken — state reset still stands */
+    }
+  }
+  const result = { localRemoved, idbDeleted };
+  if (idbBlocked.length) result.idbBlocked = idbBlocked;
+  if (cacheDeleted.length) result.cacheDeleted = cacheDeleted;
+  return result;
 }

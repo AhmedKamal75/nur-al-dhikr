@@ -26,6 +26,7 @@ import {
   contentTitleFor,
   referenceLineFor,
   noteFor,
+  hasPendingScholarlyReview,
 } from '../domain/localeContent.js';
 import { icon } from '../core/icons.js';
 import { t } from '../core/i18n.js';
@@ -88,7 +89,14 @@ export function cardHTML(item, category, opts = {}) {
   const refLine = show.reference ? referenceLineFor(item, lang, t('card.narratedBy', lang)) : '';
   const refNotes = show.reference ? noteFor(item.reference?.notes, lang, item) : '';
   const notes = show.notes ? noteFor(item.notes, lang) : '';
-  const target = counter?.target || item.repetitions || 1;
+  const reviewWarning = hasPendingScholarlyReview(item);
+  // The EFFECTIVE item target is authoritative (the user's manage-mode
+  // override already rides `item.repetitions` — views map items through
+  // withEffectiveTargets), so a counter record left stale by an older
+  // build or a restored backup can never quietly shrink the target the
+  // person set. The pill readout and the article's data-target below share
+  // this ONE value, so what the card says is what a tap counts toward.
+  const target = item.repetitions || counter?.target || 1;
   const count = counter?.count || 0;
   const cycles = counter?.completedCycles || 0;
   // (v5.2.25) separation of concerns: the pill shows ONLY live session
@@ -140,6 +148,11 @@ export function cardHTML(item, category, opts = {}) {
     </header>
 
     ${title ? `<h3 class="card__title">${highlightMatch(title, hl)}</h3>` : ''}
+    ${
+      reviewWarning
+        ? `<p class="content-review-warning" role="note">${icon('info', { size: 14 })} ${escapeHTML(t('content.reviewPending', lang))}</p>`
+        : ''
+    }
 
     ${
       byHeart && !byHeart.revealed && item.arabic

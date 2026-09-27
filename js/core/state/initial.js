@@ -102,6 +102,7 @@ export function initialState() {
       reciteMore: false,
       playerMin: false,
       audioMuted: false,
+      tasbihFloat: false,
     },
     tasbih: { activeItemId: null, activePhrase: null },
     // (v5.2.46) user-authored dhikr for the tasbih dial:

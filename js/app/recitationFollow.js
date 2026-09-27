@@ -1,6 +1,7 @@
 import { scrollBehavior } from '../core/utils.js';
 import { rt } from './rt.js';
 import { playFlipSound } from './inputs.js';
+import { ensureMushafNavigationPages } from './lazyData.js';
 import * as gapTelemetry from '../services/gapTelemetry.js';
 
 import { VIEWS } from '../core/config.js';
@@ -36,7 +37,8 @@ function perfNow() {
   return Date.now();
 }
 
-export function maybeFollowRecitation(state) {
+export async function maybeFollowRecitation(state) {
+  const generation = rt.lazyDataGeneration;
   const sp = state.surahPlayback;
   if (!sp.active || !sp.ayah) {
     rt.lastFollowedAyahKey = null;
@@ -63,6 +65,7 @@ export function maybeFollowRecitation(state) {
     String(state.activeParams?.id || '') === String(sp.surah)
   ) {
     requestAnimationFrame(() => {
+      if (generation !== rt.lazyDataGeneration) return;
       document
         .getElementById(`ayah-${CSS.escape(String(sp.ayah))}`)
         ?.scrollIntoView({ block: 'center', behavior: scrollBehavior() });
@@ -84,6 +87,12 @@ export function maybeFollowRecitation(state) {
     const target = spreadOn ? spreadRightPage(page) : page;
     const shown = spreadOn ? spreadRightPage(current) : current;
     if (target !== shown) {
+      try {
+        await ensureMushafNavigationPages(page);
+      } catch {
+        return;
+      }
+      if (generation !== rt.lazyDataGeneration) return;
       setFlipDirection(target > shown ? 'next' : 'prev');
       playFlipSound();
       go(VIEWS.MUSHAF, { page: String(page) });
@@ -91,6 +100,7 @@ export function maybeFollowRecitation(state) {
       return;
     }
     requestAnimationFrame(() => {
+      if (generation !== rt.lazyDataGeneration) return;
       document
         .querySelector(`.mushaf-ayah[data-surah="${sp.surah}"][data-ayah="${sp.ayah}"]`)
         ?.scrollIntoView({ block: 'center', behavior: scrollBehavior() });

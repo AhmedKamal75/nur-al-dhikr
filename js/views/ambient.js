@@ -20,6 +20,7 @@ import { calculateTimes } from '../domain/prayer.js';
 import { nextPrayerCountdown } from '../domain/prayerTimeline.js';
 import { ambientVerse, ambientDhikr } from '../domain/ambient.js';
 import { PRAYER_ICONS } from './prayer.js';
+import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
 export function renderAmbient(state) {
   const lang = state.settings.language;
@@ -81,6 +82,7 @@ export function renderAmbient(state) {
       <p class="ambient__kicker">${t(mode === 'verse' ? 'ambient.modeVerse' : 'ambient.modeDhikr', lang)}</p>
       <p class="ambient__slide" dir="rtl" lang="ar">${escapeHTML(item.arabic)}</p>
       ${item.translation && lang !== 'ar' ? `<p class="ambient__slide-sub" dir="auto">${escapeHTML(item.translation)}</p>` : ''}
+      ${hasPendingScholarlyReview(item) ? `<p class="content-review-warning" role="note">${escapeHTML(t('content.reviewPending', lang))}</p>` : ''}
       ${renderCountdownLine(lang, p, now, cd, true)}
     </section>`;
     }
@@ -117,7 +119,7 @@ function renderCountdownLine(lang, p, now, cd, compact) {
     (cd.h > 0 ? `${cd.h}:` : '') +
     `${String(cd.m).padStart(2, '0')}:${String(cd.totalSec % 60).padStart(2, '0')}`;
   return `
-    <p class="ambient__clock${compact ? ' ambient__clock--compact' : ''}" dir="ltr" role="timer" aria-label="${escapeHTML(`${t('prayer.' + cd.name, lang)} ${t('prayer.in', lang)} ${cd.h} ${t('units.h', lang, { n: cd.h })} ${cd.m} ${t('units.m', lang, { n: cd.m })}`)}">${clock}</p>
+    <p class="ambient__clock${compact ? ' ambient__clock--compact' : ''}" dir="ltr" role="timer" data-ambient-countdown aria-label="${escapeHTML(`${t('prayer.' + cd.name, lang)} ${t('prayer.in', lang)} ${cd.h} ${t('units.h', lang, { n: cd.h })} ${cd.m} ${t('units.m', lang, { n: cd.m })}`)}">${clock}</p>
     <p class="ambient__place">${icon('location', { size: 14 })} ${escapeHTML(placeName)}</p>
     <p class="ambient__date">${escapeHTML(now.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' }))}</p>`;
 }

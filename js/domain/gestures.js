@@ -17,6 +17,9 @@
 /** Minimum horizontal travel before a touch counts as a page-turn swipe. */
 export const MUSHAF_SWIPE_MIN_PX = 60;
 
+/** Minimum horizontal travel before a Focus-mode swipe changes dhikr. */
+export const FOCUS_SWIPE_MIN_PX = 60;
+
 /** Minimum downward travel before a touch counts as a player dismiss. */
 export const PLAYER_DISMISS_MIN_DY = 64;
 
@@ -30,6 +33,20 @@ export function mushafSwipeTurn(dx, dy) {
   if (Math.abs(dx) < Math.abs(dy)) return null;
   // RTL book order: leftward travel is forward, rightward is back.
   return dx < 0 ? 'next' : 'prev';
+}
+
+/**
+ * 'next' | 'prev' | null for a Focus-mode swipe. Unlike the Mushaf's
+ * physical-book order, Focus follows the interface reading direction, so
+ * Arabic mirrors the mapping. Mostly-vertical travel is a scroll and never
+ * changes the dhikr.
+ */
+export function focusSwipeTurn(dx, dy, rtl = false) {
+  if (!Number.isFinite(dx) || !Number.isFinite(dy)) return null;
+  if (Math.abs(dx) < FOCUS_SWIPE_MIN_PX) return null;
+  if (Math.abs(dx) < Math.abs(dy)) return null;
+  const forward = rtl ? dx > 0 : dx < 0;
+  return forward ? 'next' : 'prev';
 }
 
 /**

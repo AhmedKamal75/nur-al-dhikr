@@ -12,7 +12,8 @@ import { resolveCompareTexts } from '../domain/translationCompare.js';
 import { searchHadith, hadithIndexStats, studyHadithQuery } from '../domain/hadithSearch.js';
 import { hadithCardHTML } from './hadithCard.js';
 import { ayahAudioUrl } from '../services/mushaf.js';
-import { buildAyahStudyExtras } from './tafsirPanel.js';
+import { buildAyahStudyExtras, renderAyahWords } from './tafsirPanel.js';
+import { tajweedPrefsOf } from '../domain/tajweed.js';
 
 /**
  * (v4.5) Feature-parity hifz row for the ayah detail: the SAME spaced-
@@ -149,12 +150,31 @@ export function buildMushafAyahDetail(
     )
     .join('');
 
+  // Word-level study + Tajweed coloring ride the SAME mushaf prefs the
+  // reader does; a partial state (cold modal, restored session) must
+  // degrade to plain text, never blank the whole detail.
+  const mushafPrefs = state.settings.mushafPrefs || {};
+  const tajweedPrefs = tajweedPrefsOf(state);
+  const arabicHTML = renderAyahWords(
+    arabicText,
+    state.quranWords?.[String(surahNumber)]?.[String(ayahNumber)],
+    surahNumber,
+    ayahNumber,
+    {
+      tappable: false,
+      underline: !!(mushafPrefs.wordByWordStudy && mushafPrefs.wordUnderline),
+      tajweed: !!mushafPrefs.tajweedColoring,
+      prefs: tajweedPrefs,
+      lang,
+    }
+  );
+
   return `
   <div class="mushaf-ayah-detail">
     <h2 id="modal-title-mushaf-ayah" class="sr-only">${surahDoc ? escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang)) : ''} ${surahNumber}:${ayahNumber}</h2>
     <p class="mushaf-ayah-detail__mode">${escapeHTML(t('study.title', lang))}</p>
     <p class="mushaf-ayah-detail__ref" dir="ltr">${surahNumber}:${ayahNumber}${surahDoc ? ` \u2014 ${escapeHTML(pickLocale({ en: surahDoc.nameEn, ar: surahDoc.nameAr }, lang))}` : ''}</p>
-    <p class="mushaf-ayah-detail__arabic" dir="rtl" lang="ar">${escapeHTML(arabicText)}</p>
+    <p class="mushaf-ayah-detail__arabic" dir="rtl" lang="ar">${arabicHTML}</p>
     ${state.settings.showTranslation === true && ayah?.translation ? `<p class="mushaf-ayah-detail__translation" dir="auto">${escapeHTML(ayah.translation)}</p>` : ''}
     ${cmpHTML}
     <div class="mushaf-ayah-detail__actions">

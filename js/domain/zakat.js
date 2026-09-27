@@ -88,7 +88,8 @@ export function computeZakat(inputs, prefs) {
   const netWealth = Math.max(0, totalAssets - liabilities);
 
   const { basis, threshold } = computeNisab(prefs);
-  const nisabMet = netWealth >= threshold && threshold > 0;
+  const priceMissing = threshold <= 0;
+  const nisabMet = !priceMissing && netWealth >= threshold;
   const rawDue = nisabMet ? netWealth * ZAKAT_RATE : 0;
 
   return {
@@ -102,6 +103,7 @@ export function computeZakat(inputs, prefs) {
     netWealth,
     nisab: threshold,
     nisabBasis: basis,
+    priceMissing,
     nisabMet,
     rate: ZAKAT_RATE,
     due: roundUpToUnit(rawDue),

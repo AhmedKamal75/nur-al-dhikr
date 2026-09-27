@@ -13,6 +13,7 @@ import { selectors } from '../core/state.js';
 import { cardHTML } from '../ui/card.js';
 import { moodById, itemsForMood } from '../domain/moods.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
+import { fieldTogglesFor } from '../domain/contentLens.js';
 
 export function renderMood(state) {
   const lang = state.settings.language;
@@ -46,6 +47,7 @@ export function renderMood(state) {
             counter: selectors.getCounter(state, e.item.id),
             showTransliteration: state.settings.showTransliteration,
             showTranslation: state.settings.showTranslation,
+            fields: fieldTogglesFor(state, e.document?.metadata?.id),
           })
         )
         .join('')}

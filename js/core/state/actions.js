@@ -85,6 +85,10 @@ export const actions = {
   // (v5.12.0) element mute mirror (M key / mute chip): ephemeral — the
   // services own the element flags, this owns the rendered chip state.
   audioMutedSet: (on) => ({ type: 'AUDIO_MUTED_SET', on: on === true }),
+  // (v5.17.15) the floating-counter button's pressed state. Ephemeral like
+  // the rest of state.ui: a reload has no floating window open, so a
+  // persisted "on" would render a dead control.
+  tasbihFloatSet: (on) => ({ type: 'TASBIH_FLOAT_SET', on: on === true }),
   restoreState: (payload) => ({ type: 'RESTORE_STATE', payload }),
   resetAll: () => ({ type: 'RESET_ALL' }),
   setQuranMeta: (meta) => ({ type: 'QURAN_META_LOADED', meta }),
@@ -140,6 +144,7 @@ export const actions = {
   // (v5.6.0) root-meaning readiness (ephemeral, same tier as wordDict).
   setRootsMeaning: (index) => ({ type: 'ROOTS_MEANING_READY', index }),
   toggleWordBookmark: (key) => ({ type: 'WORD_BOOKMARK_TOGGLE', key }),
+  removeWordBookmark: (key) => ({ type: 'WORD_BOOKMARK_REMOVE', key }),
   setTajweedPool: (pool) => ({ type: 'TAJWEED_POOL_LOADED', pool }),
   setHadithIndex: (index) => ({ type: 'HADITH_INDEX_LOADED', index }),
   hadithIndexFailed: () => ({ type: 'HADITH_INDEX_FAILED' }),

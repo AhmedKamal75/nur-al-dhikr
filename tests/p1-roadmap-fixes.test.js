@@ -75,6 +75,13 @@ describe('BUG-05: lang="ar" on Arabic scripture', () => {
     assert.match(s2, /<p class="quran-bismillah[^>]*dir="rtl" lang="ar">/);
   });
 
+  test('real reader call sites localize the word-study action label', () => {
+    const html = renderQuran(
+      baseState({ settings: { language: 'ar' }, activeParams: { id: '1' } })
+    );
+    assert.match(html, /فتح دراسة الكلمة/);
+  });
+
   test('every tappable word span carries lang="ar"', () => {
     const html = renderAyahWords(surah1.ayahs[0].text, words1['1'], 1, 1, { tappable: true });
     const spans = wordTapSpans(html);
@@ -167,6 +174,13 @@ describe('BUG-03: future-version gate + snapshot stamp', () => {
     const refused = parseBackup(future);
     assert.equal(refused.success, false, 'future wrapped backup refused');
     assert.match(refused.error, /newer version/);
+    const innerFuture = JSON.stringify({
+      kind: 'nur-al-dhikr-backup',
+      appVersion: APP_VERSION,
+      schemaVersion: SCHEMA_VERSION,
+      data: { ...minimalData(), schemaVersion: 99 },
+    });
+    assert.equal(parseBackup(innerFuture).success, false, 'future inner data refused');
     const futureBare = JSON.stringify({ ...minimalData(), schemaVersion: 99 });
     assert.equal(parseBackup(futureBare).success, false, 'future bare snapshot refused');
     const current = JSON.stringify({

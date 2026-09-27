@@ -1,6 +1,11 @@
 import { rt } from './rt.js';
 import { fetchJSON, isMissingResourceError, isTimeoutError } from './net.js';
-import { dispatchSurahDoc, ensureTranslationBDoc, ensureTranslationCDoc } from './quranData.js';
+import {
+  clearQuranDataFetches,
+  dispatchSurahDoc,
+  ensureTranslationBDoc,
+  ensureTranslationCDoc,
+} from './quranData.js';
 
 import {
   MUSHAF_META_URL,
@@ -30,7 +35,7 @@ import {
   nextSpreadPage,
   prevSpreadPage,
 } from '../services/mushaf.js';
-import { openModal } from '../ui/modal.js';
+import { getModalGeneration, openModal } from '../ui/modal.js';
 import { sessionValue } from '../domain/sessionFlags.js';
 import { showToast } from '../ui/toast.js';
 import * as soundDesign from '../services/soundDesign.js';
@@ -50,7 +55,43 @@ import * as soundDesign from '../services/soundDesign.js';
 // in state.quran for the rest of the session.
 
 const quranSurahFetchesInFlight = new Set();
-const mushafPageFetchesInFlight = new Set();
+const mushafPageFetchesInFlight = new Map();
+const quranWordsFetchesInFlight = new Map();
+const tafsirTextFetchesInFlight = new Map();
+let lazyDataGeneration = 0;
+let quranMetaInFlight = null;
+let mushafMetaInFlight = null;
+let wordDictInFlight = null;
+let rootsMeaningInFlight = null;
+let quranRootsInFlight = null;
+let quranRootsFullInFlight = null;
+let tafsirEditionsInFlight = null;
+let tajweedPoolInFlight = null;
+
+function isCurrentGeneration(generation) {
+  return generation === lazyDataGeneration;
+}
+
+function ensureMushafPage(key) {
+  if (store.getState().mushaf.pages[key]) return Promise.resolve(true);
+  const existing = mushafPageFetchesInFlight.get(key);
+  if (existing) return existing;
+  const generation = lazyDataGeneration;
+  const request = fetchJSON(MUSHAF_PAGE_URL(key))
+    .then((doc) => {
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setMushafPage(key, doc));
+      flagLoad('mushaf-page', false);
+      return true;
+    })
+    .finally(() => {
+      if (mushafPageFetchesInFlight.get(key) === request) {
+        mushafPageFetchesInFlight.delete(key);
+      }
+    });
+  mushafPageFetchesInFlight.set(key, request);
+  return request;
+}
 
 /**
  * Ensure the exact page(s) a Mushaf navigation is about to display are
@@ -64,21 +105,19 @@ const mushafPageFetchesInFlight = new Set();
  * @returns {Promise<Set<string>>} loaded page keys
  */
 export async function ensureMushafNavigationPages(page) {
+  const generation = lazyDataGeneration;
   const numeric = clampPage(page);
   let state = store.getState();
 
-  if (!state.mushaf.meta && !rt.mushafMetaFetchStarted) {
-    rt.mushafMetaFetchStarted = true;
+  if (!state.mushaf.meta) {
     try {
-      const meta = await fetchJSON(MUSHAF_META_URL);
-      store.dispatch(actions.setMushafMeta(meta));
-      flagLoad('mushaf-meta', false);
+      await ensureMushafMeta();
     } catch (err) {
-      rt.mushafMetaFetchStarted = false;
-      flagLoad('mushaf-meta', true);
+      if (!isCurrentGeneration(generation)) return new Set();
       throw err;
     }
   }
+  if (!isCurrentGeneration(generation)) return new Set();
 
   state = store.getState();
   const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
@@ -88,27 +127,12 @@ export async function ensureMushafNavigationPages(page) {
 
   for (const loadPage of needed) {
     const key = String(loadPage);
-    if (store.getState().mushaf.pages[key]) continue;
-    if (mushafPageFetchesInFlight.has(key)) {
-      // There is no per-page promise registry, so wait briefly by polling the
-      // store rather than starting a duplicate request. The bounded loop is
-      // intentionally small and is only used on an explicit page turn.
-      for (let attempt = 0; attempt < 200 && !store.getState().mushaf.pages[key]; attempt += 1) {
-        await new Promise((resolve) => setTimeout(resolve, 10));
-      }
-      if (store.getState().mushaf.pages[key]) continue;
-      throw new Error(`Mushaf page ${key} remained in-flight without resolving`);
-    }
-    mushafPageFetchesInFlight.add(key);
     try {
-      const doc = await fetchJSON(MUSHAF_PAGE_URL(key));
-      store.dispatch(actions.setMushafPage(key, doc));
-      flagLoad('mushaf-page', false);
+      await ensureMushafPage(key);
+      if (!isCurrentGeneration(generation)) return new Set();
     } catch (err) {
       flagLoad('mushaf-page', true);
       throw err;
-    } finally {
-      mushafPageFetchesInFlight.delete(key);
     }
   }
 
@@ -116,7 +140,6 @@ export async function ensureMushafNavigationPages(page) {
   if (missing.length) throw new Error(`Mushaf navigation pages missing: ${missing.join(',')}`);
   return new Set(needed.map(String));
 }
-let quranMetaInFlight = null;
 
 /**
  * (B9) the single owner of the quran-meta fetch. The reader pass, the
@@ -130,25 +153,55 @@ let quranMetaInFlight = null;
 function fetchQuranMetaShared({ announce = false } = {}) {
   if (store.getState().quran.meta) return Promise.resolve(true);
   if (!quranMetaInFlight) {
+    const generation = lazyDataGeneration;
     rt.quranMetaFetchStarted = true;
-    quranMetaInFlight = (async () => {
+    const request = (async () => {
       try {
         const meta = await fetchJSON(QURAN_META_URL);
+        if (!isCurrentGeneration(generation)) return false;
         store.dispatch(actions.setQuranMeta(meta));
         flagLoad('quran-meta', false);
         return true;
       } catch (err) {
+        if (!isCurrentGeneration(generation)) return false;
         console.error('[quran] failed to load meta', err);
-        rt.quranMetaFetchStarted = false; // allow a retry on the next navigation
+        rt.quranMetaFetchStarted = false;
         flagLoad('quran-meta', true);
         if (announce) showToast(t('quran.loadFailed', store.getState().settings.language));
         return false;
       } finally {
-        quranMetaInFlight = null;
+        if (quranMetaInFlight === request) quranMetaInFlight = null;
       }
     })();
+    quranMetaInFlight = request;
   }
   return quranMetaInFlight;
+}
+
+export function ensureMushafMeta() {
+  if (store.getState().mushaf.meta) return Promise.resolve(true);
+  if (mushafMetaInFlight) return mushafMetaInFlight;
+  const generation = lazyDataGeneration;
+  rt.mushafMetaFetchStarted = true;
+  const request = (async () => {
+    try {
+      const meta = await fetchJSON(MUSHAF_META_URL);
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setMushafMeta(meta));
+      flagLoad('mushaf-meta', false);
+      return true;
+    } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
+      console.error('[mushaf] failed to load page index', err);
+      rt.mushafMetaFetchStarted = false;
+      flagLoad('mushaf-meta', true);
+      throw err;
+    } finally {
+      if (mushafMetaInFlight === request) mushafMetaInFlight = null;
+    }
+  })();
+  mushafMetaInFlight = request;
+  return request;
 }
 
 /** Record a tier's fetch outcome in the store so views can swap their
@@ -164,8 +217,10 @@ export function ensureQuranMeta() {
 }
 
 export async function ensureQuranData(state) {
+  const generation = lazyDataGeneration;
   if (!state.quran.meta) {
     await fetchQuranMetaShared({ announce: true });
+    if (!isCurrentGeneration(generation)) return;
   }
 
   const id = state.activeParams.id;
@@ -185,8 +240,10 @@ export async function ensureQuranData(state) {
     quranSurahFetchesInFlight.add(id);
     try {
       await dispatchSurahDoc(id);
+      if (!isCurrentGeneration(generation)) return;
       flagLoad('quran-surah', false);
     } catch (err) {
+      if (!isCurrentGeneration(generation)) return;
       console.error('[quran] failed to load surah', id, err);
       flagLoad('quran-surah', true);
       showToast(t('quran.loadFailed', store.getState().settings.language));
@@ -212,6 +269,7 @@ export async function ensureQuranData(state) {
 }
 
 export async function ensureMushafData(state) {
+  const generation = lazyDataGeneration;
   // The ayah-detail audio button needs quran-meta.json's per-surah ayah
   // counts to compute the global ayah number the recitation CDN keys audio
   // by. Only the classic reader normally triggers that fetch (via
@@ -220,6 +278,7 @@ export async function ensureMushafData(state) {
   // the Listen button unable to resolve a URL.
   if (!state.quran.meta) {
     await fetchQuranMetaShared();
+    if (!isCurrentGeneration(generation)) return;
   }
 
   // (v4.4) the translation tray (mushafPrefs.translationPanel) reads the
@@ -228,19 +287,17 @@ export async function ensureMushafData(state) {
   // so the meta fetch above has already resolved by the time it runs.
   if (state.settings.mushafPrefs?.translationPanel) {
     await ensureMushafSurahDocs(state);
+    if (!isCurrentGeneration(generation)) return;
   }
 
-  if (!state.mushaf.meta && !rt.mushafMetaFetchStarted) {
-    rt.mushafMetaFetchStarted = true;
+  if (!state.mushaf.meta) {
     try {
-      const meta = await fetchJSON(MUSHAF_META_URL);
-      store.dispatch(actions.setMushafMeta(meta));
-      flagLoad('mushaf-meta', false);
+      await ensureMushafMeta();
     } catch (err) {
+      if (!isCurrentGeneration(generation)) return;
       console.error('[mushaf] failed to load page index', err);
-      rt.mushafMetaFetchStarted = false; // allow a retry on the next navigation
-      flagLoad('mushaf-meta', true);
     }
+    if (!isCurrentGeneration(generation)) return;
   }
 
   // (v4.5) a spread reads from its right-hand (odd) page: normalize the
@@ -257,41 +314,38 @@ export async function ensureMushafData(state) {
     store.dispatch(actions.setMushafBookmark(rightPage));
   }
 
-  // Khatma progress: opening a page counts as having read it. Idempotent
-  // (the reducer no-ops when already marked), so it's safe on every render.
+  // Khatma progress is recorded only after every page on this spread has
+  // loaded successfully, so a failed or blank fetch never becomes a
+  // completed page, juz milestone or certificate achievement.
   const pagesOnThisSpread = leftPage != null ? [rightPage, leftPage] : [rightPage];
-  for (const readPage of pagesOnThisSpread) {
-    const readKey = String(readPage);
-    if (!state.mushafPagesRead[readKey]) {
-      store.dispatch(actions.markMushafPageVisited(readKey));
-      // The reducer just recorded a khatma completion if this was the final
-      // page — celebrate once, here, where side effects belong.
-      if (Object.keys(store.getState().mushafPagesRead).length >= MUSHAF_PAGE_COUNT) {
-        showToast(t('khatma.completeToast', store.getState().settings.language), {
-          duration: 6000,
-        });
-        // v3.14 Phase C: optional (off-by-default) completion chime — see
-        // js/soundDesign.js. Fires in the same once-only window as the toast.
-        soundDesign.playKhatmaChime(store.getState().settings.khatmaChimeSound);
+
+  for (const loadPage of pagesOnThisSpread) {
+    const loadKey = String(loadPage);
+    if (!state.mushaf.pages[loadKey]) {
+      try {
+        await ensureMushafPage(loadKey);
+        if (!isCurrentGeneration(generation)) return;
+      } catch (err) {
+        if (!isCurrentGeneration(generation)) return;
+        console.error('[mushaf] failed to load page', loadKey, err);
+        flagLoad('mushaf-page', true);
       }
     }
   }
 
-  for (const loadPage of pagesOnThisSpread) {
-    const loadKey = String(loadPage);
-    if (!state.mushaf.pages[loadKey] && !mushafPageFetchesInFlight.has(loadKey)) {
-      mushafPageFetchesInFlight.add(loadKey);
-      try {
-        const doc = await fetchJSON(MUSHAF_PAGE_URL(loadKey));
-        store.dispatch(actions.setMushafPage(loadKey, doc));
-        flagLoad('mushaf-page', false);
-      } catch (err) {
-        console.error('[mushaf] failed to load page', loadKey, err);
-        flagLoad('mushaf-page', true);
-      } finally {
-        mushafPageFetchesInFlight.delete(loadKey);
-      }
-    }
+  const loaded = store.getState().mushaf.pages || {};
+  const readCountBefore = Object.keys(state.mushafPagesRead).length;
+  for (const readPage of pagesOnThisSpread) {
+    const readKey = String(readPage);
+    if (!loaded[readKey] || state.mushafPagesRead[readKey]) continue;
+    store.dispatch(actions.markMushafPageVisited(readKey));
+  }
+  const readCountAfter = Object.keys(store.getState().mushafPagesRead).length;
+  if (readCountBefore < MUSHAF_PAGE_COUNT && readCountAfter >= MUSHAF_PAGE_COUNT) {
+    showToast(t('khatma.completeToast', store.getState().settings.language), {
+      duration: 6000,
+    });
+    soundDesign.playKhatmaChime(store.getState().settings.khatmaChimeSound);
   }
 
   // Prefetch the adjacent spread(s) too, so tapping next/prev (or
@@ -310,16 +364,11 @@ export async function ensureMushafData(state) {
         adjKey !== key &&
         adjPage >= 1 &&
         adjPage <= MUSHAF_PAGE_COUNT &&
-        !state.mushaf.pages[adjKey] &&
-        !mushafPageFetchesInFlight.has(adjKey)
+        !state.mushaf.pages[adjKey]
       ) {
-        mushafPageFetchesInFlight.add(adjKey);
-        fetchJSON(MUSHAF_PAGE_URL(adjKey))
-          .then((doc) => store.dispatch(actions.setMushafPage(adjKey, doc)))
-          .catch(() => {
-            /* best-effort prefetch; a real navigation there will retry */
-          })
-          .finally(() => mushafPageFetchesInFlight.delete(adjKey));
+        ensureMushafPage(adjKey).catch(() => {
+          /* best-effort prefetch; a real navigation there will retry */
+        });
       }
     }
   }
@@ -341,10 +390,6 @@ export async function ensureMushafData(state) {
 /* Word study + tafsir: lazy data loading                              */
 /* ------------------------------------------------------------------ */
 
-const quranWordsFetchesInFlight = new Set();
-const tafsirTextFetchesInFlight = new Set();
-let wordDictInFlight = null;
-
 /**
  * (v5.2.77, BUG-05) drop every in-flight lazy-fetch marker so a late
  * resolve after RESET_ALL / RESTORE_STATE cannot repopulate wiped
@@ -361,6 +406,27 @@ export function clearLazyInFlightFetches() {
   tafsirTextFetchesInFlight.clear();
 }
 
+export function invalidateLazyFetches() {
+  lazyDataGeneration += 1;
+  rt.lazyDataGeneration = lazyDataGeneration;
+  clearLazyInFlightFetches();
+  clearQuranDataFetches();
+  quranMetaInFlight = null;
+  mushafMetaInFlight = null;
+  wordDictInFlight = null;
+  rootsMeaningInFlight = null;
+  quranRootsInFlight = null;
+  quranRootsFullInFlight = null;
+  tafsirEditionsInFlight = null;
+  tajweedPoolInFlight = null;
+  rt.quranMetaFetchStarted = false;
+  rt.mushafMetaFetchStarted = false;
+  rt.quranRootsFetchStarted = false;
+  rt.quranRootsFullFetchStarted = false;
+  rt.tafsirEditionsFetchStarted = false;
+  rt.tajweedPoolFetchStarted = false;
+}
+
 /**
  * (v5.2.75, UP-01) lemma dictionary: fetched once (first word-study open
  * of the session), cached in the ephemeral wordDict slice. Concurrent
@@ -371,31 +437,32 @@ export function ensureWordDict() {
   const snap = store.getState().wordDict;
   if (snap?.index) return Promise.resolve(true);
   if (wordDictInFlight) return wordDictInFlight;
-  wordDictInFlight = (async () => {
+  const generation = lazyDataGeneration;
+  const request = (async () => {
     try {
       const raw = await fetchJSON(QURAN_DICT_URL);
       const entries = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw.entries : null;
       if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
         throw new Error('malformed dict file');
       }
+      if (!isCurrentGeneration(generation)) return false;
       store.dispatch(actions.setWordDict(entries));
       flagLoad('word-dict', false);
       return true;
     } catch (err) {
-      // (v5.2.87, P1-1) missing-tier contract (see net.js): 404 warns.
+      if (!isCurrentGeneration(generation)) return false;
       if (isMissingResourceError(err)) console.warn('[wordStudy] dict not bundled', err);
       else console.error('[wordStudy] failed to load dict', err);
       store.dispatch(actions.setWordDict(null));
       flagLoad('word-dict', true);
       return false;
     } finally {
-      wordDictInFlight = null;
+      if (wordDictInFlight === request) wordDictInFlight = null;
     }
   })();
-  return wordDictInFlight;
+  wordDictInFlight = request;
+  return request;
 }
-
-let rootsMeaningInFlight = null;
 
 /**
  * (v5.6.0) root core-meanings: fetched once (first word-study open of
@@ -408,27 +475,31 @@ export function ensureRootsMeaning() {
   const snap = store.getState().rootsMeaning;
   if (snap?.index) return Promise.resolve(true);
   if (rootsMeaningInFlight) return rootsMeaningInFlight;
-  rootsMeaningInFlight = (async () => {
+  const generation = lazyDataGeneration;
+  const request = (async () => {
     try {
       const raw = await fetchJSON(ROOTS_MEANING_URL);
       const entries = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw.entries : null;
       if (!entries || typeof entries !== 'object' || Array.isArray(entries)) {
         throw new Error('malformed roots-meaning file');
       }
+      if (!isCurrentGeneration(generation)) return false;
       store.dispatch(actions.setRootsMeaning(entries));
       flagLoad('roots-meaning', false);
       return true;
     } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
       if (isMissingResourceError(err)) console.warn('[wordStudy] roots-meaning not bundled', err);
       else console.error('[wordStudy] failed to load roots-meaning', err);
       store.dispatch(actions.setRootsMeaning(null));
       flagLoad('roots-meaning', true);
       return false;
     } finally {
-      rootsMeaningInFlight = null;
+      if (rootsMeaningInFlight === request) rootsMeaningInFlight = null;
     }
   })();
-  return rootsMeaningInFlight;
+  rootsMeaningInFlight = request;
+  return request;
 }
 
 /**
@@ -438,6 +509,7 @@ export function ensureRootsMeaning() {
  * skeleton row and a retry happens on the next render/navigation.
  */
 export async function ensureMushafSurahDocs(state) {
+  const generation = lazyDataGeneration;
   const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
   // (v4.5) the tray lists every ayah of the SPREAD — both facing pages.
   const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
@@ -455,7 +527,9 @@ export async function ensureMushafSurahDocs(state) {
       quranSurahFetchesInFlight.add(id);
       try {
         await dispatchSurahDoc(id);
+        if (!isCurrentGeneration(generation)) return;
       } catch (err) {
+        if (!isCurrentGeneration(generation)) return;
         console.error('[mushaf-tray] failed to load surah', id, err);
       } finally {
         quranSurahFetchesInFlight.delete(id);
@@ -475,71 +549,91 @@ export async function ensureMushafSurahDocs(state) {
 
 export async function ensureQuranWordsData(state, surahNumber) {
   const id = String(surahNumber);
-  if (state.quranWords[id] || quranWordsFetchesInFlight.has(id)) return;
-  quranWordsFetchesInFlight.add(id);
-  try {
-    const [words, study] = await Promise.all([
-      fetchJSON(QURAN_WORDS_URL(id)),
-      fetchJSON(QURAN_WORD_STUDY_URL(id)),
-    ]);
-    // Keep the base morphology/gloss corpus byte-for-byte lean on disk;
-    // materialize the token-level contextual/i'rab tier in memory only.
-    // Every canonical word is expected to have a matching study row.
-    const materialized = {};
-    for (const [ayah, rows] of Object.entries(words || {})) {
-      const studyRows = Array.isArray(study?.[ayah]) ? study[ayah] : [];
-      const byIndex = new Map(studyRows.map((row) => [Number(row?.i), row]));
-      materialized[ayah] = (rows || []).map((word) => {
-        const row = byIndex.get(Number(word?.i));
-        if (!row) return { ...word };
-        return {
-          ...word,
-          study: {
-            contextualMeaning: {
-              ar: typeof row.mA === 'string' ? row.mA : '',
-              source: typeof row.mSrc === 'string' ? row.mSrc : '',
+  if (state.quranWords[id]) return true;
+  const existing = quranWordsFetchesInFlight.get(id);
+  if (existing) return existing;
+  const generation = lazyDataGeneration;
+  const request = (async () => {
+    try {
+      const [words, study] = await Promise.all([
+        fetchJSON(QURAN_WORDS_URL(id)),
+        fetchJSON(QURAN_WORD_STUDY_URL(id)),
+      ]);
+      if (!isCurrentGeneration(generation)) return false;
+      const materialized = {};
+      for (const [ayah, rows] of Object.entries(words || {})) {
+        const studyRows = Array.isArray(study?.[ayah]) ? study[ayah] : [];
+        const byIndex = new Map(studyRows.map((row) => [Number(row?.i), row]));
+        materialized[ayah] = (rows || []).map((word) => {
+          const row = byIndex.get(Number(word?.i));
+          if (!row) return { ...word };
+          const contextualCitation = row.mCitation || row.contextualCitation || row.citation;
+          const irabCitation = row.iCitation || row.irabCitation;
+          return {
+            ...word,
+            study: {
+              contextualMeaning: {
+                ar: typeof row.mA === 'string' ? row.mA : '',
+                source: typeof row.mSrc === 'string' ? row.mSrc : '',
+                ...(contextualCitation != null ? { citation: contextualCitation } : {}),
+              },
+              irab: {
+                ar: typeof row.iA === 'string' ? row.iA : '',
+                en: typeof row.iE === 'string' ? row.iE : '',
+                source: typeof row.iSrc === 'string' ? row.iSrc : '',
+                ...(irabCitation != null ? { citation: irabCitation } : {}),
+              },
+              coverage: 'quran-token',
             },
-            irab: {
-              ar: typeof row.iA === 'string' ? row.iA : '',
-              en: typeof row.iE === 'string' ? row.iE : '',
-              source: typeof row.iSrc === 'string' ? row.iSrc : '',
-            },
-            coverage: 'quran-token',
-          },
-        };
-      });
+          };
+        });
+      }
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setQuranWords(id, materialized));
+      flagLoad('quran-words', false);
+      return true;
+    } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
+      if (isMissingResourceError(err)) console.warn('[wordStudy] word data not bundled', id, err);
+      else console.error('[wordStudy] failed to load word data', id, err);
+      flagLoad('quran-words', true);
+      return false;
+    } finally {
+      if (quranWordsFetchesInFlight.get(id) === request) quranWordsFetchesInFlight.delete(id);
     }
-    store.dispatch(actions.setQuranWords(id, materialized));
-    flagLoad('quran-words', false);
-  } catch (err) {
-    // (v5.2.87, P1-1) same missing-tier contract as the hadith index above.
-    if (isMissingResourceError(err)) console.warn('[wordStudy] word data not bundled', id, err);
-    else console.error('[wordStudy] failed to load word data', id, err);
-    flagLoad('quran-words', true);
-  } finally {
-    quranWordsFetchesInFlight.delete(id);
-  }
+  })();
+  quranWordsFetchesInFlight.set(id, request);
+  return request;
 }
 
 export async function ensureQuranRoots(state) {
-  if (state.quranRoots || rt.quranRootsFetchStarted) return;
-  // (v5.2.87) same retry-cooldown contract as the uncapped index below:
-  // the subscriber re-runs this per notify, and a struggling fetch must
-  // not multiply timeouts and error spam once per dispatch.
-  if (Date.now() < rt.quranRootsCooldownUntil) return;
+  if (state.quranRoots) return true;
+  if (quranRootsInFlight) return quranRootsInFlight;
+  if (Date.now() < rt.quranRootsCooldownUntil) return false;
+  const generation = lazyDataGeneration;
   rt.quranRootsFetchStarted = true;
-  try {
-    const roots = await fetchJSON(QURAN_ROOTS_URL);
-    store.dispatch(actions.setQuranRoots(roots));
-    flagLoad('quran-roots', false);
-  } catch (err) {
-    if (isMissingResourceError(err)) console.warn('[wordStudy] root index not bundled', err);
-    else if (isTimeoutError(err)) console.warn('[wordStudy] root index timed out', err);
-    else console.error('[wordStudy] failed to load root index', err);
-    rt.quranRootsFetchStarted = false;
-    rt.quranRootsCooldownUntil = Date.now() + 30_000;
-    flagLoad('quran-roots', true);
-  }
+  const request = (async () => {
+    try {
+      const roots = await fetchJSON(QURAN_ROOTS_URL);
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setQuranRoots(roots));
+      flagLoad('quran-roots', false);
+      return true;
+    } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
+      if (isMissingResourceError(err)) console.warn('[wordStudy] root index not bundled', err);
+      else if (isTimeoutError(err)) console.warn('[wordStudy] root index timed out', err);
+      else console.error('[wordStudy] failed to load root index', err);
+      rt.quranRootsFetchStarted = false;
+      rt.quranRootsCooldownUntil = Date.now() + 30_000;
+      flagLoad('quran-roots', true);
+      return false;
+    } finally {
+      if (quranRootsInFlight === request) quranRootsInFlight = null;
+    }
+  })();
+  quranRootsInFlight = request;
+  return request;
 }
 
 // The root-family browser's uncapped index (~2.3 MB): fetched once the
@@ -548,66 +642,93 @@ export async function ensureQuranRoots(state) {
 // flags the tier so the view renders error + Retry instead of a forever
 // degraded capped index with no recovery path.
 export async function ensureQuranRootsFull(state) {
-  if (state.quranRootsFull || rt.quranRootsFullFetchStarted) return;
-  // (v5.2.87) failed attempts cool down: the subscriber re-runs this on
-  // every notify, and hammering a struggling fetch once per dispatch only
-  // multiplies timeouts and error spam. Retry button + cooldown expiry
-  // re-arm honestly.
-  if (Date.now() < rt.quranRootsFullCooldownUntil) return;
+  if (state.quranRootsFull) return true;
+  if (quranRootsFullInFlight) return quranRootsFullInFlight;
+  if (Date.now() < rt.quranRootsFullCooldownUntil) return false;
+  const generation = lazyDataGeneration;
   rt.quranRootsFullFetchStarted = true;
-  try {
-    const roots = await fetchJSON(QURAN_ROOTS_FULL_URL);
-    store.dispatch(actions.setQuranRootsFull(roots));
-    flagLoad('quran-roots-full', false);
-  } catch (err) {
-    // (v5.2.87) the uncapped index is a progressive enhancement over the
-    // capped one that already renders: a missing file warns (P1-1) and a
-    // timeout warns too — under load a slow 2.3MB fetch is not a defect
-    // signal, and this catch re-fires per dispatch (see the cooldown
-    // above). Malformed/5xx/offline still error.
-    if (isMissingResourceError(err)) console.warn('[roots] full root index not bundled', err);
-    else if (isTimeoutError(err)) console.warn('[roots] full root index timed out', err);
-    else console.error('[roots] failed to load full root index', err);
-    rt.quranRootsFullFetchStarted = false;
-    rt.quranRootsFullCooldownUntil = Date.now() + 30_000;
-    flagLoad('quran-roots-full', true);
-  }
+  const request = (async () => {
+    try {
+      const roots = await fetchJSON(QURAN_ROOTS_FULL_URL);
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setQuranRootsFull(roots));
+      flagLoad('quran-roots-full', false);
+      return true;
+    } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
+      if (isMissingResourceError(err)) console.warn('[roots] full root index not bundled', err);
+      else if (isTimeoutError(err)) console.warn('[roots] full root index timed out', err);
+      else console.error('[roots] failed to load full root index', err);
+      rt.quranRootsFullFetchStarted = false;
+      rt.quranRootsFullCooldownUntil = Date.now() + 30_000;
+      flagLoad('quran-roots-full', true);
+      return false;
+    } finally {
+      if (quranRootsFullInFlight === request) quranRootsFullInFlight = null;
+    }
+  })();
+  quranRootsFullInFlight = request;
+  return request;
 }
 
 export async function ensureTafsirEditions(state) {
-  if (state.tafsirEditions || rt.tafsirEditionsFetchStarted) return;
-  if (Date.now() < rt.tafsirEditionsCooldownUntil) return;
+  if (state.tafsirEditions) return true;
+  if (tafsirEditionsInFlight) return tafsirEditionsInFlight;
+  if (Date.now() < rt.tafsirEditionsCooldownUntil) return false;
+  const generation = lazyDataGeneration;
   rt.tafsirEditionsFetchStarted = true;
-  try {
-    const editions = await fetchJSON(TAFSIR_EDITIONS_URL);
-    store.dispatch(actions.setTafsirEditions(editions));
-    flagLoad('tafsir-editions', false);
-  } catch (err) {
-    if (isMissingResourceError(err)) console.warn('[tafsir] editions catalog not bundled', err);
-    else if (isTimeoutError(err)) console.warn('[tafsir] editions catalog timed out', err);
-    else console.error('[tafsir] failed to load editions catalog', err);
-    rt.tafsirEditionsFetchStarted = false;
-    rt.tafsirEditionsCooldownUntil = Date.now() + 30_000;
-    flagLoad('tafsir-editions', true);
-  }
+  const request = (async () => {
+    try {
+      const editions = await fetchJSON(TAFSIR_EDITIONS_URL);
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setTafsirEditions(editions));
+      flagLoad('tafsir-editions', false);
+      return true;
+    } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
+      if (isMissingResourceError(err)) console.warn('[tafsir] editions catalog not bundled', err);
+      else if (isTimeoutError(err)) console.warn('[tafsir] editions catalog timed out', err);
+      else console.error('[tafsir] failed to load editions catalog', err);
+      rt.tafsirEditionsFetchStarted = false;
+      rt.tafsirEditionsCooldownUntil = Date.now() + 30_000;
+      flagLoad('tafsir-editions', true);
+      return false;
+    } finally {
+      if (tafsirEditionsInFlight === request) tafsirEditionsInFlight = null;
+    }
+  })();
+  tafsirEditionsInFlight = request;
+  return request;
 }
 
 export async function ensureTajweedPool(state) {
-  if (state.tajweedPool || rt.tajweedPoolFetchStarted) return;
-  if (Date.now() < rt.tajweedPoolCooldownUntil) return;
+  if (state.tajweedPool) return true;
+  if (tajweedPoolInFlight) return tajweedPoolInFlight;
+  if (Date.now() < rt.tajweedPoolCooldownUntil) return false;
+  const generation = lazyDataGeneration;
   rt.tajweedPoolFetchStarted = true;
-  try {
-    const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
-    store.dispatch(actions.setTajweedPool(pool));
-    flagLoad('tajweed-pool', false);
-  } catch (err) {
-    if (isMissingResourceError(err)) console.warn('[tajweed] practice pool not bundled', err);
-    else if (isTimeoutError(err)) console.warn('[tajweed] practice pool timed out', err);
-    else console.error('[tajweed] failed to load practice pool', err);
-    rt.tajweedPoolFetchStarted = false;
-    rt.tajweedPoolCooldownUntil = Date.now() + 30_000;
-    flagLoad('tajweed-pool', true);
-  }
+  const request = (async () => {
+    try {
+      const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setTajweedPool(pool));
+      flagLoad('tajweed-pool', false);
+      return true;
+    } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
+      if (isMissingResourceError(err)) console.warn('[tajweed] practice pool not bundled', err);
+      else if (isTimeoutError(err)) console.warn('[tajweed] practice pool timed out', err);
+      else console.error('[tajweed] failed to load practice pool', err);
+      rt.tajweedPoolFetchStarted = false;
+      rt.tajweedPoolCooldownUntil = Date.now() + 30_000;
+      flagLoad('tajweed-pool', true);
+      return false;
+    } finally {
+      if (tajweedPoolInFlight === request) tajweedPoolInFlight = null;
+    }
+  })();
+  tajweedPoolInFlight = request;
+  return request;
 }
 
 /** Bundled editions fetch from the app's own data/ folder; on-demand
@@ -616,34 +737,42 @@ export async function ensureTajweedPool(state) {
 export async function ensureTafsirText(state, editionId, surahNumber, allowRemote = false) {
   const id = String(surahNumber);
   const key = `${editionId}:${id}`;
-  if (state.tafsir?.[editionId]?.[id] || tafsirTextFetchesInFlight.has(key)) return true;
+  if (state.tafsir?.[editionId]?.[id]) return true;
+  const existing = tafsirTextFetchesInFlight.get(key);
+  if (existing) return existing;
   const edition = (state.tafsirEditions?.editions || []).find((e) => e.id === editionId);
   if (!edition) return false;
   if (!edition.bundled && !allowRemote) return false;
-  tafsirTextFetchesInFlight.add(key);
-  try {
-    const url = edition.bundled
-      ? TAFSIR_TEXT_URL(editionId, id)
-      : TAFSIR_REMOTE_URL(edition.slug, id);
-    const raw = await fetchJSON(url);
-    // The remote spa5k/tafsir_api shape is an array of {text, ayah, surah};
-    // the bundled shape is already {ayah: text}. Normalize once here.
-    const text = Array.isArray(raw)
-      ? Object.fromEntries(
-          raw.filter((r) => r.ayah != null && r.text).map((r) => [String(r.ayah), r.text.trim()])
-        )
-      : raw;
-    store.dispatch(actions.setTafsirText(editionId, id, text));
-    flagLoad('tafsir-text', false);
-    return true;
-  } catch (err) {
-    if (isMissingResourceError(err)) console.warn('[tafsir] text not bundled', key, err);
-    else console.error('[tafsir] failed to load text', key, err);
-    flagLoad('tafsir-text', true);
-    return false;
-  } finally {
-    tafsirTextFetchesInFlight.delete(key);
-  }
+  const generation = lazyDataGeneration;
+  const request = (async () => {
+    try {
+      const url = edition.bundled
+        ? TAFSIR_TEXT_URL(editionId, id)
+        : TAFSIR_REMOTE_URL(edition.slug, id);
+      const raw = await fetchJSON(url);
+      const text = Array.isArray(raw)
+        ? Object.fromEntries(
+            raw
+              .filter((r) => r.ayah != null && r.text)
+              .map((r) => [String(r.ayah), String(r.text).trim()])
+          )
+        : raw;
+      if (!isCurrentGeneration(generation)) return false;
+      store.dispatch(actions.setTafsirText(editionId, id, text));
+      flagLoad('tafsir-text', false);
+      return true;
+    } catch (err) {
+      if (!isCurrentGeneration(generation)) return false;
+      if (isMissingResourceError(err)) console.warn('[tafsir] text not bundled', key, err);
+      else console.error('[tafsir] failed to load text', key, err);
+      flagLoad('tafsir-text', true);
+      return false;
+    } finally {
+      if (tafsirTextFetchesInFlight.get(key) === request) tafsirTextFetchesInFlight.delete(key);
+    }
+  })();
+  tafsirTextFetchesInFlight.set(key, request);
+  return request;
 }
 
 /** Open the shared ayah-detail + tafsir modal from anywhere (Mushaf tap,
@@ -665,9 +794,14 @@ export function currentAyahDetailPage(surah, ayah) {
 }
 
 export async function openAyahStudy(surah, ayah, page = null, { focusSelector = null } = {}) {
+  const generation = rt.lazyDataGeneration;
+  const modalGeneration = getModalGeneration();
+  const current = () =>
+    generation === rt.lazyDataGeneration && modalGeneration === getModalGeneration();
   // (B9) join the shared meta fetch: never a duplicate request, never a
   // modal on empty Arabic without the load-failed toast behind it.
   await fetchQuranMetaShared({ announce: true });
+  if (!current()) return;
   let state = store.getState();
   if (!state.quran.surahs[String(surah)]) {
     try {
@@ -676,7 +810,9 @@ export async function openAyahStudy(surah, ayah, page = null, { focusSelector = 
       /* best effort */
     }
   }
+  if (!current()) return;
   await ensureTafsirEditions(store.getState());
+  if (!current()) return;
   state = store.getState();
   // (GROWTH-01 delight 3) quiet study acknowledgement: when this ayah had
   // a panel picked earlier this session, reopen it silently instead of the
@@ -686,8 +822,10 @@ export async function openAyahStudy(surah, ayah, page = null, { focusSelector = 
     (typeof remembered === 'string' && remembered) ||
     state.mushafSession?.tafsirTab ||
     state.settings.mushafPrefs.defaultTafsir;
+  if (!current()) return;
   store.dispatch(actions.setMushafSession({ tafsirTab: defaultId }));
   if (defaultId) await ensureTafsirText(store.getState(), defaultId, surah);
+  if (!current()) return;
   // (v5.2.74, UP-08) the study modal's compare line needs the second
   // edition's overlay — fire-and-forget (the modal shows the primary
   // edition first, the compare line appears when the overlay lands).
@@ -718,12 +856,14 @@ export async function openAyahStudy(surah, ayah, page = null, { focusSelector = 
       /* best effort — the panel degrades to picker-only */
     }
   }
+  if (!current()) return;
   state = store.getState();
   const surahDoc = state.quran.surahs[String(surah)];
   const arabicText = surahDoc?.ayahs?.find((a) => String(a.number) === String(ayah))?.text || '';
   // (v5.2.18) the study panel loads on demand (static import pulled the
   // whole book view into the boot parse).
   const { buildMushafAyahDetail } = await import('../views/mushafReader.js');
+  if (!current()) return;
   openModal(buildMushafAyahDetail(arabicText, surahDoc, surah, ayah, state, page), {
     labelledBy: 'modal-title-mushaf-ayah',
     focusSelector,

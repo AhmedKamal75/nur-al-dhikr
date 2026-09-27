@@ -193,7 +193,14 @@ export const TAJWEED_RULE_ID_SET = new Set([
   'madd_muttasil',
   'madd_6',
 ]);
-export const TAJWEED_FAMILY_ID_SET = new Set(['silent', 'nasal', 'qalqalah', 'heavy', 'madd']);
+export const TAJWEED_FAMILY_ID_SET = new Set([
+  'silent',
+  'nasal',
+  'qalqalah',
+  'heavy',
+  'madd',
+  'plain',
+]);
 
 /**
  * Ahadeeth library (v3.9): one compact JSON per book + an index, built by

@@ -265,5 +265,10 @@ export function refreshLibraryIndex() {
   // re-arms it with a complete valid set.
   if (failedLibraryIds.size > 0 || store.getState().loadErrors?.library) return;
   const deletedLens = new Set(Object.keys(state.settings?.contentPrefs?.deletedItems || {}));
-  store.dispatch(actions.pruneDanglingRefs(new Set([...Object.keys(itemIndex), ...deletedLens])));
+  const preservedRefs = Object.keys(state.settings?.contentPrefs?.preservedItemIds || {});
+  store.dispatch(
+    actions.pruneDanglingRefs(
+      new Set([...Object.keys(itemIndex), ...deletedLens, ...preservedRefs])
+    )
+  );
 }

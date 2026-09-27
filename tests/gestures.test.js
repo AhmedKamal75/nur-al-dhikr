@@ -21,9 +21,11 @@ import assert from 'node:assert/strict';
 
 import {
   MUSHAF_SWIPE_MIN_PX,
+  FOCUS_SWIPE_MIN_PX,
   PLAYER_DISMISS_MIN_DY,
   MUSHAF_DRAG_CLAMP_RATIO,
   mushafSwipeTurn,
+  focusSwipeTurn,
   isSwipeGuardTarget,
   isPlayerDismissSwipe,
   resolveMinControl,
@@ -51,6 +53,16 @@ test('mushaf swipe: short drags and scroll-like vertical drags never turn', () =
   assert.equal(mushafSwipeTurn(-120, 121), null, 'diagonal past 45° is a scroll');
   assert.equal(mushafSwipeTurn(NaN, 0), null);
   assert.equal(mushafSwipeTurn(120, Number.NaN), null);
+});
+
+test('focus swipe follows reading direction and ignores vertical travel', () => {
+  assert.equal(focusSwipeTurn(-120, 0, false), 'next');
+  assert.equal(focusSwipeTurn(120, 0, false), 'prev');
+  assert.equal(focusSwipeTurn(120, 0, true), 'next');
+  assert.equal(focusSwipeTurn(-120, 0, true), 'prev');
+  assert.equal(focusSwipeTurn(-(FOCUS_SWIPE_MIN_PX - 1), 0, false), null);
+  assert.equal(focusSwipeTurn(-70, 200, false), null);
+  assert.equal(focusSwipeTurn(NaN, 0, false), null);
 });
 
 test('swipe guard: controls own their gesture, page text does not', () => {

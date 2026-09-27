@@ -31,8 +31,17 @@ test('B10: duplicate worker replies invoke onResult exactly once', async () => {
     const reply = { type: 'schedule-prayer-triggers-result', supported: true, armed: 2 };
     workerPort.postMessage(reply);
     workerPort.postMessage(reply);
+    // Wait for the first reply to actually land, THEN keep waiting: a fixed
+    // sleep can only ever prove the guard held for that long, and it is the
+    // shape of assertion that made this file the suite's one intermittent red
+    // under a loaded box. Polling for the first call, then draining a second
+    // settle window, is what genuinely demonstrates "later duplicates are
+    // ignored" — a duplicate that arrives late is the interesting case.
+    const deadline = Date.now() + 2000;
+    while (calls.length === 0 && Date.now() < deadline) await flush();
+    assert.equal(calls.length, 1, 'first reply wins');
     await flush();
-    assert.equal(calls.length, 1);
+    assert.equal(calls.length, 1, 'the later duplicate must be ignored');
     assert.deepEqual(calls[0], reply);
   } finally {
     rt.swRegistration = prev;

@@ -236,6 +236,8 @@ describe('renderMushaf (v4.5)', () => {
       assert.ok(fs.includes('mushaf-fs-tap--prev'));
       assert.ok(fs.includes('mushaf-fs-tap--next'));
       assert.ok(fs.includes('1–2 / 604'), 'spread range in the page counter (EN digits)');
+      assert.equal((fs.match(/data-action="mushaf-toggle-fullscreen"/g) || []).length, 1);
+      assert.ok(fs.indexOf('mushaf-fs-exit') < fs.indexOf('mushaf-fs-controls'));
     });
     setMushafWideLayout(false);
     const single = renderMushaf(baseState({ activeParams: { page: 1 }, mushafFullscreen: true }));

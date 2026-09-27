@@ -478,32 +478,44 @@ describe('PERF-02: audio-cache budget + persistence probe', () => {
 });
 
 describe('BUG-11: error-screen reset wipes every local store', () => {
-  test('wipe covers state, auto-backup, dedup keys and the IDB database', async () => {
+  test('wipe covers state, auto-backup, dedup keys and all app IDB databases', async () => {
     const removed = [];
     const deletedDbs = [];
-    let pendingReq = null;
+    const requests = [];
     const realLS = globalThis.localStorage;
     const realIDB = globalThis.indexedDB;
     globalThis.localStorage = { removeItem: (k) => removed.push(k) };
     globalThis.indexedDB = {
       deleteDatabase: (name) => {
         deletedDbs.push(name);
-        pendingReq = {};
-        return pendingReq;
+        const request = {};
+        requests.push(request);
+        return request;
       },
     };
     try {
       const p = wipeAppDataForReset();
-      pendingReq.onsuccess();
+      for (let i = 0; i < 10 && requests.length < 4; i += 1) await Promise.resolve();
+      for (const request of requests) request.onsuccess();
       const result = await p;
       assert.deepEqual(
         [...removed].sort(),
-        ['nur-al-dhikr-auto-backup', 'nurAlDhikr:v2:notifDayFired', 'nurAlDhikr:v2:state'].sort(),
-        'all three localStorage keys cleared'
+        [
+          'nur-al-dhikr-auto-backup',
+          'nur-moshaf-availability-v1',
+          'nur.gapTelemetry.v1',
+          'nurAlDhikr:v2:notifDayFired',
+          'nurAlDhikr:v2:state',
+        ].sort(),
+        'all app localStorage keys cleared'
       );
       assert.deepEqual(result.localRemoved, removed);
-      assert.deepEqual(deletedDbs, ['nurAlDhikrDB'], 'custom-content IDB dropped');
-      assert.deepEqual(result.idbDeleted, ['nurAlDhikrDB']);
+      assert.deepEqual(
+        deletedDbs,
+        ['nurAlDhikrDB', 'nurAlDhikrAudio', 'nur-al-dhikr', 'nur-alerts'],
+        'custom-content, audio, handle, and alert IDBs dropped'
+      );
+      assert.deepEqual(result.idbDeleted, deletedDbs);
     } finally {
       if (realLS === undefined) delete globalThis.localStorage;
       else globalThis.localStorage = realLS;
@@ -1210,6 +1222,11 @@ describe('UP-01: word study popup 2.0 (dict + actions + bookmarks)', () => {
     assert.deepEqual(s.wordBookmarks, { '2:255:3': true }, 'toggle adds');
     s = reduce(s, actions.toggleWordBookmark('2:255:3'));
     assert.deepEqual(s.wordBookmarks, {}, 'toggle removes');
+    s = reduce(s, actions.toggleWordBookmark('2:255:3'));
+    s = reduce(s, actions.removeWordBookmark('2:255:3'));
+    assert.deepEqual(s.wordBookmarks, {}, 'explicit remove removes');
+    const absent = reduce(s, actions.removeWordBookmark('2:255:3'));
+    assert.equal(absent, s, 'absent explicit remove is a no-op');
     const before = s;
     s = reduce(s, actions.toggleWordBookmark('__proto__'));
     assert.equal(s, before, 'hostile key no-ops');

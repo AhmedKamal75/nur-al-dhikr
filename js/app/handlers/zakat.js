@@ -37,6 +37,10 @@ export const clickHandlers = {
   'zakat-save-snapshot': () => {
     const state = store.getState();
     const r = computeZakat(state.zakat.inputs, state.zakat.prefs);
+    if (r.priceMissing) {
+      showToast(t('zakat.priceRequiredNote', state.settings.language));
+      return;
+    }
     const f = computeFitr(state.zakat.prefs.fitrPer || 0, state.zakat.prefs.fitrPeople || 0);
     const ts = Date.now();
     const snapshot = {

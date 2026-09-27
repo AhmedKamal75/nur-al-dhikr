@@ -54,6 +54,12 @@ import { buildScheduleManagerSheet } from '../../views/viewSheets.js';
 const commit = (prefs) => store.dispatch(actions.updateSettings({ contentPrefs: prefs }));
 const lang = () => store.getState().settings.language;
 
+function preserveItemReferences(prefs, ids) {
+  const preserved = { ...(prefs.preservedItemIds || {}) };
+  for (const id of ids || []) if (typeof id === 'string' && id) preserved[id] = true;
+  return { ...prefs, preservedItemIds: preserved };
+}
+
 /** Where an item lives: builtin (lens) vs custom (editor service). */
 function itemScope(itemId) {
   const state = store.getState();
@@ -130,6 +136,16 @@ export const clickHandlers = {
     const next = Math.min(10000, Math.max(1, current + dir));
     if (next === current) return;
     commit(setItemTarget(state, ds.itemId, next));
+    const counter = state.counters[ds.itemId];
+    if (counter) {
+      store.dispatch(
+        actions.setCounter(ds.itemId, {
+          count: counter.count || 0,
+          target: next,
+          completedCycles: counter.completedCycles || 0,
+        })
+      );
+    }
   },
 
   'content-reset-category': (ds) => {
@@ -168,6 +184,7 @@ export const clickHandlers = {
   },
 
   'content-new-item': (ds) => {
+    const isCustom = !!store.getState().customContent[ds.libraryId];
     openModal(
       buildItemForm(
         { title: { en: '', ar: '' }, arabic: '', repetitions: 3 },
@@ -175,7 +192,7 @@ export const clickHandlers = {
           libraryId: ds.libraryId,
           categoryId: ds.categoryId,
           lang: lang(),
-          scope: 'builtin',
+          scope: isCustom ? 'custom' : 'builtin',
         }
       ),
       { labelledBy: 'modal-title-item' }
@@ -265,7 +282,7 @@ export const clickHandlers = {
     openModal(
       buildCategoryForm({
         libraryId: ds.libraryId,
-        scope: 'builtin',
+        scope: store.getState().customContent[ds.libraryId] ? 'custom' : 'builtin',
         lang: lang(),
       }),
       { labelledBy: 'modal-title-category' }
@@ -297,7 +314,16 @@ export const clickHandlers = {
   },
 
   'confirm-content-delete-category': (ds) => {
-    commit(setCategoryDeleted(store.getState(), ds.categoryId, true));
+    const state = store.getState();
+    const found = findCategoryById(state, ds.categoryId);
+    let prefs = setCategoryDeleted(state, ds.categoryId, true);
+    if (found && !found.isCustom) {
+      prefs = preserveItemReferences(
+        prefs,
+        (found.cat.items || []).map((item) => item.id)
+      );
+    }
+    commit(prefs);
     closeModal();
     showToast(t('content.sectionDeleted', lang()));
     // The section is gone — land somewhere honest.
@@ -379,7 +405,16 @@ export const clickHandlers = {
   },
 
   'confirm-content-delete-library': (ds) => {
-    commit(setLibraryDeleted(store.getState(), ds.libraryId, true));
+    const state = store.getState();
+    const doc = state.library.documents[ds.libraryId];
+    let prefs = setLibraryDeleted(state, ds.libraryId, true);
+    if (doc) {
+      prefs = preserveItemReferences(
+        prefs,
+        (doc.categories || []).flatMap((category) => (category.items || []).map((item) => item.id))
+      );
+    }
+    commit(prefs);
     closeModal();
     showToast(t('content.libraryDeleted', lang()));
   },

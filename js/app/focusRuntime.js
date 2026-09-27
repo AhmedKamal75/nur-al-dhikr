@@ -19,6 +19,12 @@ export function handleFocusKeydown(e) {
   // the category — and the arrows silently moved the background view while
   // the dialog was up. Same rule the drawer already follows.
   if (isModalOpen()) return;
+  // Real controls own Enter/Space. The stage-level counter shortcut used to
+  // hijack every button in Focus, so keyboard users counted instead of
+  // exiting, favouriting, opening the menu or grading a by-heart card.
+  if (e.target?.closest?.('button, a[href], input, select, textarea, [contenteditable="true"]')) {
+    return;
+  }
   if (e.key === 'ArrowRight') navigateFocusAdjacent(1);
   else if (e.key === 'ArrowLeft') navigateFocusAdjacent(-1);
   else if (e.key === ' ' || e.key === 'Enter') {
@@ -67,6 +73,7 @@ export function scheduleAutoAdvance() {
   rt.pendingAutoAdvanceTimer = setTimeout(() => {
     rt.pendingAutoAdvanceTimer = null;
     const now = store.getState();
+    if (isModalOpen()) return;
     if (now.activeView !== from.view) return;
     if (String(now.activeParams?.id ?? '') !== from.id) return;
     if (String(now.activeParams?.subId ?? '') !== from.subId) return;

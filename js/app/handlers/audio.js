@@ -150,6 +150,7 @@ export const clickHandlers = {
     showToast(t('audio.downloading', lang));
     let saved = 0;
     let failed = 0;
+    let evicted = 0;
     try {
       for (const { ayah, globalN } of missing) {
         // (v5.10.2) download-ordered candidates: the CORS-open EveryAyah
@@ -160,14 +161,21 @@ export const clickHandlers = {
           globalN,
           surahPlayback.verseDownloadCandidates(voice, surah, ayah, globalN)
         );
-        if (res.ok) saved += 1;
-        else failed += 1;
+        if (res.ok) {
+          saved += 1;
+          evicted += Array.isArray(res.evicted) ? res.evicted.length : 0;
+        } else failed += 1;
       }
     } finally {
       store.dispatch(actions.markAudioDownloadEnd(key));
     }
     const done = total - (missing.length - saved);
     store.dispatch(actions.setVersePackStatus({ voice, surah, done, total }));
+    if (evicted) {
+      rt.lastVerseStatusVoice = null;
+      store.dispatch(actions.tickerNudge());
+    }
+    if (evicted) showToast(t('audio.evictedWarning', lang, { n: evicted }), { assertive: true });
     if (failed && !saved) showToast(t('audio.downloadFailed', lang), { assertive: true });
     else if (failed) showToast(t('audio.versePackDone', lang, { n: done, m: total }));
     else showToast(t('audio.downloadDone', lang));
@@ -219,6 +227,7 @@ export const clickHandlers = {
     store.dispatch(actions.setAudioBatchResume(null));
     let ok = 0;
     let quotaHit = false;
+    const evictedKeys = [];
     try {
       // (v4.3) 3-wide download pool: the batch used to run strictly
       // sequentially, so one slow CDN response stalled the whole 114-file
@@ -247,8 +256,10 @@ export const clickHandlers = {
           } finally {
             store.dispatch(actions.markAudioDownloadEnd(fileKey));
           }
-          if (res.ok) ok += 1;
-          else if (res.error === 'quota') quotaHit = true;
+          if (res.ok) {
+            ok += 1;
+            if (Array.isArray(res.evicted)) evictedKeys.push(...res.evicted);
+          } else if (res.error === 'quota') quotaHit = true;
           else if (res.error === 'missing') {
             const before = missingSurahs(ds.moshaf).length;
             markSurahMissing(ds.moshaf, n);
@@ -278,6 +289,15 @@ export const clickHandlers = {
             ? t('audio.batchDoneSkipped', lang, { n: ok, m: skipped })
             : t('audio.batchDone', lang, { n: ok })
       );
+      if (evictedKeys.length) {
+        for (const key of new Set(evictedKeys)) {
+          store.dispatch(actions.markAudioDownload(key, 0, true));
+        }
+        rt.lastVerseStatusVoice = null;
+        showToast(t('audio.evictedWarning', lang, { n: new Set(evictedKeys).size }), {
+          assertive: true,
+        });
+      }
     }
   },
 

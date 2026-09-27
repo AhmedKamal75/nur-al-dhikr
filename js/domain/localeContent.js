@@ -26,6 +26,10 @@ export function containsArabic(s) {
   return ARABIC_SCRIPT_RE.test(String(s || ''));
 }
 
+export function hasPendingScholarlyReview(item) {
+  return typeof item?.review === 'string' && item.review.trim() !== '';
+}
+
 /**
  * Transliteration is an English-locale pronunciation aid: visible only in
  * EN when the field toggle allows it. The AR UI must never show it.

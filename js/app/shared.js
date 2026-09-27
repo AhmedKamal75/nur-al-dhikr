@@ -3,6 +3,8 @@
  */
 
 import { store } from '../core/state.js';
+import { t } from '../core/i18n.js';
+import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 import {
   showTransliterationFor,
   showTranslationFor,
@@ -25,5 +27,6 @@ export function itemClipboardText(item, lang) {
     const tr = translationFor(item, lang);
     if (tr) parts.push(tr);
   }
+  if (hasPendingScholarlyReview(item)) parts.push(t('content.reviewPending', lang));
   return parts.filter(Boolean).join('\n\n');
 }

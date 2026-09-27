@@ -21,7 +21,6 @@ import {
   jumuahNote,
 } from '../../domain/reminderPresets.js';
 import { actions, dryRunRestore, persistedSnapshot, store } from '../../core/state.js';
-import { scrollBehavior } from '../../core/utils.js';
 import { clampSliderNum } from '../inputs.js';
 import { buildMushafSettingsPanel } from '../../views/tafsirPanel.js';
 import { buildReciterPick } from './quranAudio.js';
@@ -68,18 +67,6 @@ export const clickHandlers = {
     }
   },
 
-  // (v5.9.0) settings section shortcuts: pin the section (same
-  // persistence as a manual accordion open) and smooth-scroll it to the
-  // top of the viewport. rAF re-queries after the re-render's DOM patch.
-  'settings-jump': (ds) => {
-    const id = String(ds.sec || '');
-    if (!/^settings-sec-[a-z]+$/.test(id)) return;
-    if (!document.getElementById(id)) return;
-    store.dispatch(actions.updateSettings({ settingsSection: id.slice('settings-sec-'.length) }));
-    requestAnimationFrame(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
-    });
-  },
   // switching the mode off returns home with the full app restored.
   // Kids mode exit (fired by the 2s hold timer in events.js, never by tap):
   // switching the mode off returns home with the full app restored.
@@ -346,7 +333,19 @@ export const clickHandlers = {
     const lang = store.getState().settings.language;
     const snap = backup.readAutoSnapshot();
     if (!snap?.backup?.data) return;
-    rt.pendingImportPayload = snap.backup.data;
+    const parsed = backup.parseBackup(JSON.stringify(snap.backup));
+    if (!parsed.success) {
+      showToast(
+        t(
+          parsed.code === backup.BACKUP_ERRORS.futureVersion
+            ? 'backup.futureVersion'
+            : 'common.error',
+          lang
+        )
+      );
+      return;
+    }
+    rt.pendingImportPayload = parsed.value;
     openModal(
       buildConfirm({
         message: t('backup.importConfirm', lang),
@@ -426,18 +425,14 @@ export const clickHandlers = {
     );
   },
 
-  'confirm-reset-all': () => {
+  'confirm-reset-all': async () => {
     store.dispatch(actions.resetAll());
-    // (v5.12.0) the reset restores the unmuted chip — the elements must
-    // follow, or the UI would lie about sounding audio.
     setAudioMuted(false);
-    // (v5.13.0, V7) reset-all used to wipe state slices but leave IDB
-    // (audio cache, custom libraries, attachments) + auto-backup keys —
-    // "Reset all data" lied by omission (GDPR right-to-erasure gap).
     try {
-      import('../drawer.js').then((m) => m.wipeAppDataForReset?.());
+      const module = await import('../drawer.js');
+      await module.wipeAppDataForReset?.();
     } catch {
-      /* state reset already landed; IDB wipe is best-effort */
+      /* state reset already landed; storage wipe is best-effort */
     }
     closeModal();
     go(VIEWS.HOME);

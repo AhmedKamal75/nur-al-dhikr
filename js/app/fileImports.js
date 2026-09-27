@@ -15,18 +15,24 @@ import { refreshCustomAdhanFlags } from '../services/prayerSound.js';
 import { showToast } from '../ui/toast.js';
 
 /**
- * (v5.13.0, V2) backup errors used to leak English to an Arabic-only
- * reader on her worst day (corrupt backup, lost progress). Map the four
- * known parseBackup() messages to i18n keys; unknown strings fall back
- * to the generic error.
+ * (v5.13.0, V2 → v5.17.11) backup errors used to leak English to an
+ * Arabic-only reader on her worst day (corrupt backup, lost progress).
+ * The first fix mapped them by MATCHING THE ENGLISH SENTENCE, which
+ * breaks the moment a message is reworded. parseBackup() now returns a
+ * stable `code` (BACKUP_ERRORS) and this maps that code to an i18n key —
+ * no string matching anywhere in the path.
  */
-export function backupErrorText(error, lang) {
-  const s = String(error || '');
-  if (s.includes('not valid JSON')) return t('backup.invalidJson', lang);
-  if (s.includes('newer version')) return t('backup.futureVersion', lang);
-  if (s.includes('does not look like')) return t('backup.noData', lang);
-  if (s.includes('recognizable app data')) return t('backup.emptyFile', lang);
-  return t('common.error', lang);
+const BACKUP_ERROR_KEYS = {
+  [backup.BACKUP_ERRORS.invalidJson]: 'backup.invalidJson',
+  [backup.BACKUP_ERRORS.futureVersion]: 'backup.futureVersion',
+  [backup.BACKUP_ERRORS.noData]: 'backup.noData',
+  [backup.BACKUP_ERRORS.emptyFile]: 'backup.emptyFile',
+};
+
+/** Localized text for a failed parse result (or any unknown failure). */
+export function backupErrorText(result, lang) {
+  const key = BACKUP_ERROR_KEYS[result?.code];
+  return t(key || 'common.error', lang);
 }
 
 /* v3.8: import a user-provided adhan recording (standard or Fajr) into the
@@ -91,7 +97,7 @@ export async function handleImportFile(file) {
     const result = backup.parseBackup(text);
     if (!result.success) {
       const lang = store.getState().settings.language;
-      showToast(backupErrorText(result.error, lang));
+      showToast(backupErrorText(result, lang));
       return;
     }
     // FIX (review v3.1 A2/B1): importing replaces EVERYTHING on this device

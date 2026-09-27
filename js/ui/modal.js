@@ -15,6 +15,7 @@ let lastFocused = null;
 let trapHandler = null;
 // (v5.2.75, UX-05) pending exit-teardown timer (animated close only).
 let closeTimer = null;
+let generation = 0;
 const CLOSE_MS = 120;
 
 const FOCUSABLE_SELECTOR =
@@ -34,6 +35,7 @@ function reducedMotion() {
 }
 
 export function openModal(innerHTML, { labelledBy = null, focusSelector = null } = {}) {
+  generation += 1;
   const root = document.getElementById('modal-root');
   // A re-open during the animated exit's ghost window cancels its
   // teardown — otherwise the timer below wipes the fresh content.
@@ -105,6 +107,7 @@ export function openModal(innerHTML, { labelledBy = null, focusSelector = null }
 }
 
 export function closeModal() {
+  generation += 1;
   const root = document.getElementById('modal-root');
   if (closeTimer) {
     clearTimeout(closeTimer);
@@ -184,6 +187,10 @@ function trapFocus(e, panel) {
 
 export function isModalOpen() {
   return document.getElementById('modal-root')?.classList.contains('is-open');
+}
+
+export function getModalGeneration() {
+  return generation;
 }
 
 /**
