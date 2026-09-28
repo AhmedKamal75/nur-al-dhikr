@@ -349,5 +349,17 @@ export const actions = {
   setOnboardingStep: (index) => ({ type: 'ONBOARDING_STEP_SET', index }),
   installPromptReady: () => ({ type: 'INSTALL_PROMPT_READY' }),
   installPromptClear: () => ({ type: 'INSTALL_PROMPT_CLEAR' }),
+  // (v5.17.31) prompt deferral: hide the offer without consuming the
+  // stashed event (the deferral memory itself rides persisted settings).
+  installPromptDefer: () => ({ type: 'INSTALL_PROMPT_DEFER' }),
+  // (v5.17.31) re-offer after the deferral cooldown: re-surface the offer
+  // for the still-stashed event.
+  installPromptReoffer: () => ({ type: 'INSTALL_PROMPT_REOFFER' }),
+  // (v5.17.31) the browser dialog's own answer — only the two literal
+  // userChoice outcomes mean anything (hostile values are dropped by the
+  // reducer, never trusted).
+  installPromptDone: (outcome) => ({ type: 'INSTALL_PROMPT_DONE', outcome }),
+  // (v5.17.31) the shell precache landed — the app is offline-ready.
+  shellOfflineReady: () => ({ type: 'SHELL_OFFLINE_READY' }),
   markAppInstalled: () => ({ type: 'INSTALL_DONE' }),
 };

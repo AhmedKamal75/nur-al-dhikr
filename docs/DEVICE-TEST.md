@@ -36,6 +36,17 @@ physical phone before any release claim. Check off with date + device.
       error state with a working Retry (never a blank page or stuck
       skeleton).
 
+## Install path (v5.17.31 — BLOCKED:device, no headless equivalent)
+
+- [ ] Android/Chrome: the onboarding step offers Install; accepting the
+      real browser dialog installs and completes the step, dismissing it
+      hides the offer and stamps the deferral (re-offered after 7 days).
+- [ ] "Not now" defers without consuming the dialog; "Show install again"
+      resurfaces it after the cooldown.
+- [ ] iPhone/iPad: the iOS Share → Add to Home Screen steps end on the
+      home screen; airplane-mode relaunch from the icon boots fully
+      offline with the offline-ready badge shown.
+
 ## Sign-off
 
 Date: ________ Device: ________ OS/browser: ________ Tester: ________

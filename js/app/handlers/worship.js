@@ -19,6 +19,14 @@ import { monthWindow, intensityBucket } from '../../domain/statistics.js';
 import { OFFSET_PRAYERS } from '../../domain/prayer.js';
 import { PRAYER_KEYS, dayComplete, prayerState } from '../../domain/prayerLog.js';
 import { CONFIRM_STEPS } from '../../domain/onboarding.js';
+import {
+  detectInstallPlatform,
+  installStepsKey,
+  recordInstallDeferral,
+  runInstallPrompt,
+  shouldReofferInstall,
+} from '../../domain/install.js';
+import { liveUA } from '../../views/installRow.js';
 import { yieldFullSurahPlayer } from '../audioEngine.js';
 import {
   previewAlert,
@@ -392,18 +400,62 @@ export const clickHandlers = {
   },
 
   'onboarding-install': async () => {
-    if (!rt.deferredInstallPrompt) return;
     const prompt = rt.deferredInstallPrompt;
+    if (!prompt) return;
+    // Consume the one-shot event FIRST: whatever the dialog answers, the
+    // browser will not offer it twice.
     rt.deferredInstallPrompt = null;
     store.dispatch(actions.installPromptClear());
-    try {
-      await prompt.prompt();
-      // userChoice resolves after the person answers the browser dialog;
-      // 'appinstalled' (wired above) flips the done flag on acceptance.
-      await prompt.userChoice?.catch?.(() => {});
-    } catch {
-      /* the browser may refuse the second prompt — nothing to do */
+    // userChoice resolves after the person answers the browser dialog —
+    // accepted and dismissed are different facts (see domain/install.js).
+    const outcome = await runInstallPrompt(prompt);
+    const lang = store.getState().settings.language;
+    if (outcome) store.dispatch(actions.installPromptDone(outcome));
+    if (outcome === 'accepted') {
+      // 'appinstalled' (wired in installPrompt.js) flips the installed
+      // flag on acceptance; the toast bridges the dialog-to-event gap.
+      showToast(t('onboarding.installAccepted', lang));
+    } else if (outcome === 'dismissed') {
+      store.dispatch(
+        actions.updateSettings({
+          installDeferral: recordInstallDeferral(store.getState().settings.installDeferral),
+        })
+      );
+      showToast(t('onboarding.installDeferred', lang));
     }
+  },
+
+  // (v5.17.31) "Not now": stamp deferral memory and hide the offer WITHOUT
+  // consuming the stashed event — the re-offer path picks it back up after
+  // the cooldown (see shouldReofferInstall).
+  'install-later': () => {
+    store.dispatch(
+      actions.updateSettings({
+        installDeferral: recordInstallDeferral(store.getState().settings.installDeferral),
+      })
+    );
+    store.dispatch(actions.installPromptDefer());
+    showToast(t('onboarding.installDeferred', store.getState().settings.language));
+  },
+
+  // (v5.17.31) re-offer after the cooldown: re-surface the still-stashed
+  // event when there is one; fall back to this platform's honest manual
+  // steps when there is not (e.g. after a reload on a browser that only
+  // fires the event once per session).
+  'install-reoffer': () => {
+    const state = store.getState();
+    const lang = state.settings.language;
+    if (!shouldReofferInstall(state.settings.installDeferral)) {
+      showToast(t('onboarding.installDeferred', lang));
+      return;
+    }
+    if (rt.deferredInstallPrompt) {
+      store.dispatch(actions.installPromptReoffer());
+      return;
+    }
+    showToast(t(installStepsKey(detectInstallPlatform({ ua: liveUA() })), lang), {
+      duration: 6000,
+    });
   },
 
   'prayer-test-sound': () => {

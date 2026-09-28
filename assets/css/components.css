@@ -2337,6 +2337,51 @@ body.is-mushaf-fullscreen #playerbar:has(.player-bar--min) {
   color: var(--color-primary-text);
 }
 
+/* (v5.17.31) persistent install row (About + Settings, same copy as the
+ * wizard step): the offline-row grid shape, no new tokens — every value
+ * below already resolves (see cssDesign token gate). */
+.install-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
+  align-items: center;
+  padding-block: var(--space-2);
+}
+.install-row__icon {
+  flex: none;
+  grid-row: 1 / -1;
+  color: var(--color-text-secondary);
+}
+.install-row__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.install-row__title {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.install-row__desc {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.install-row__ready {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-primary-text);
+}
+.install-row__actions {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
 /* Monthly prayer timetable modal: scrollable table, full grid. */
 .prayer-month {
   display: flex;

@@ -1695,7 +1695,17 @@ export const ar = {
   'onboarding.install': 'ثبّت التطبيق',
   'onboarding.installHint': 'يعمل دون اتصال بالكامل',
   'onboarding.installAction': 'تثبيت',
-  'onboarding.installManual': 'من قائمة المتصفح اختر «إضافة إلى الشاشة الرئيسية» أو «تثبيت».',
+  // (v5.17.31) خطوات التثبيت لكل منصة — انظر التعليق المقابل في en.js.
+  'onboarding.installIosSteps':
+    'على iPhone أو iPad: اضغط زر المشاركة ثم «إضافة إلى الشاشة الرئيسية».',
+  'onboarding.installAndroidSteps':
+    'من قائمة المتصفح اضغط «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».',
+  'onboarding.installDesktopSteps': 'من شريط العنوان أو قائمة المتصفح اختر «تثبيت».',
+  'onboarding.installLater': 'ليس الآن',
+  'onboarding.installReoffer': 'إظهار التثبيت مجددًا',
+  'onboarding.installAccepted': 'تم قبول التثبيت — أكمله من رسالة المتصفح.',
+  'onboarding.installDeferred': 'حسنًا — سيُعرض التثبيت عليك مجددًا لاحقًا.',
+  'sw.shellReady': 'جاهز دون اتصال — حُفظت واجهة التطبيق على هذا الجهاز.',
   'onboarding.firstReading': 'اقرأ أول أذكارك',
   'onboarding.firstReadingHint': 'أذكار الصباح أو المساء',
   'onboarding.notifications': 'تنبيهات الصلاة',

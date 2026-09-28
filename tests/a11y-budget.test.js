@@ -57,9 +57,12 @@ describe('accessibility budget (static)', () => {
   test('views keep heading structure (screen-reader landmarks)', () => {
     const views = readdirSync(path.join(root, 'js/views')).filter((f) => f.endsWith('.js'));
     const without = views.filter((f) => !/<h[12][\s>]/.test(read(`js/views/${f}`)));
-    // Player bar is a toolbar (aria-labelled), not a document view.
+    // Player bar is a toolbar (aria-labelled), not a document view; the
+    // install row is a shared partial (About + Settings + wizard), not a
+    // view either — both are exempt from the per-view heading rule.
+    const PARTIALS = new Set(['playerBar.js', 'installRow.js']);
     assert.deepEqual(
-      without.filter((f) => f !== 'playerBar.js'),
+      without.filter((f) => !PARTIALS.has(f)),
       [],
       `views missing h1/h2: ${without.join(', ')}`
     );

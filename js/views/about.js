@@ -11,6 +11,7 @@ import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { APP_VERSION, VIEWS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
+import { installRowHTML } from './installRow.js';
 
 /** A "what you can do" row — icon + plain sentence. */
 function capabilityRow(iconName, textKey, lang) {
@@ -70,7 +71,7 @@ function guideRow(row, lang) {
   </a>`;
 }
 
-export function renderAbout(state) {
+export function renderAbout(state, flags = {}) {
   const lang = state.settings.language;
   const docs = Object.values(state.library.documents);
   const sources = docs
@@ -131,6 +132,7 @@ export function renderAbout(state) {
     <section class="panel">
       <div class="panel__header"><h2>${t('about.offline', lang)}</h2></div>
       <p>${t('about.offlineBody', lang)}</p>
+      ${installRowHTML(state, lang, flags.install || {})}
     </section>
 
     <p class="about-builtwith">${t('about.builtWith', lang)}</p>

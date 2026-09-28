@@ -67,5 +67,7 @@ the guard prints a visible skip reason for exactly that reason.
 
 Headless Chromium cannot verify: real haptics, adhan audibility, screen-reader
 output, sunlight readability, 3G install time, or the actual audible gap between
-ayahs. Those live in `docs/DEVICE-TEST.md` and stay open until a phone says
+ayahs. The install path adds three more: the real `beforeinstallprompt`
+dialog's accepted/dismissed answer, the iOS Share → Add-to-Home-Screen
+sheet, and the airplane-mode relaunch. Those live in `docs/DEVICE-TEST.md` and stay open until a phone says
 otherwise.

@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.17.30';
+const VERSION = 'nur-al-dhikr-v5.17.31';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -139,6 +139,7 @@ const APP_SHELL = [
   'js/domain/homePanels.js',
   'js/domain/hifz.js',
   'js/domain/khatma.js',
+  'js/domain/install.js',
   'js/domain/kids.js',
   'js/domain/launchIntents.js',
   'js/domain/localeContent.js',
@@ -242,6 +243,7 @@ const APP_SHELL = [
   'js/views/hadith.js',
   'js/views/hadithCard.js',
   'js/views/home.js',
+  'js/views/installRow.js',
   'js/views/journal.js',
   'js/views/khatma.js',
   'js/views/kids.js',
@@ -332,6 +334,15 @@ async function precacheShell() {
   const requests = APP_SHELL.map((url) => new Request(url, { cache: 'reload' }));
   try {
     await cache.addAll(requests);
+    // (v5.17.31) success signal to go with the precache-failed one below:
+    // the page turns it into the install.shellReady flag (silent success —
+    // a toast on every fresh install would be noise).
+    try {
+      const clientList = await self.clients.matchAll({ includeUncontrolled: true });
+      for (const client of clientList) client.postMessage({ type: 'precache-complete' });
+    } catch {
+      /* no clients to notify */
+    }
     return;
   } catch (err) {
     console.warn('[sw] precache failed — retrying once', err);

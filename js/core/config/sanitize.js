@@ -311,6 +311,9 @@ export function sanitizeSettings(raw) {
     quickOrder: sanitizeQuickOrder(s.quickOrder),
     hiddenQuick: sanitizeHiddenQuick(s.hiddenQuick),
     offline: sanitizeOfflineStatus(s.offline),
+    // (v5.17.31) install deferral memory — PERSISTED on purpose (see
+    // domain/install.js): the re-offer cooldown must survive reloads.
+    installDeferral: sanitizeInstallDeferral(s.installDeferral),
     soundEnabled: asBool(s.soundEnabled, d.soundEnabled),
     compressedDownloads: asBool(s.compressedDownloads, d.compressedDownloads),
     // (v5.17.17) The About copy promises "works offline", so the essential
@@ -474,6 +477,20 @@ function sanitizeHiddenQuick(raw) {
 /** Offline-library group ids (mirrors domain/offline.js GROUPS — kept
  *  literal here so core/config never imports app/domain layers). */
 const OFFLINE_GROUP_IDS = new Set(['quran', 'translations', 'mushaf', 'hadith', 'tafsir', 'words']);
+/** (v5.17.31) Install-prompt deferral memory { at, count }: mirror of
+ *  sanitizeInstallDeferral in domain/install.js — kept inline so config
+ *  never imports domain (layer rule). `at` is the last "not now" stamp
+ *  (never the future); `count` accumulates dismissals up to the cap. */
+function sanitizeInstallDeferral(raw) {
+  const p = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  const now = Date.now();
+  const at = Math.floor(Number(p.at) || 0);
+  const count = Math.floor(Number(p.count) || 0);
+  return {
+    at: at > 0 && at <= now ? at : null,
+    count: Number.isFinite(count) ? Math.max(0, Math.min(1000, count)) : 0,
+  };
+}
 
 /** Offline completion registry: per-group { done, total, at }, all
  *  clamped numbers — a crafted backup can only fake a status row, and

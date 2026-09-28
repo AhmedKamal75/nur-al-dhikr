@@ -7,6 +7,7 @@
 import { rt } from './rt.js';
 import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
+import { swInstallMessageAction } from '../domain/install.js';
 import {
   buildTriggerPlan,
   planFingerprint,
@@ -198,6 +199,13 @@ export function registerServiceWorker() {
   // the install itself fails (see sw.js), so the OLD worker keeps serving,
   // and the retry asks the failing worker to fill its shell again.
   navigator.serviceWorker.addEventListener('message', (event) => {
+    // (v5.17.31) the shell precache landing is a state flag, not a toast:
+    // success is silent, the About/Settings install rows read it from
+    // state.install.shellReady instead.
+    if (swInstallMessageAction(event.data) === 'SHELL_OFFLINE_READY') {
+      store.dispatch(actions.shellOfflineReady());
+      return;
+    }
     if (event.data && event.data.type === 'precache-failed') {
       console.warn('[sw] offline precache failed — updates will retry on next launch');
       const lang = store.getState().settings.language;
@@ -224,6 +232,17 @@ export function registerServiceWorker() {
         // install activates immediately; updates wait — arming targets
         // .active only, so re-check on controllerchange).
         rt.swRegistration = registration;
+        // (v5.17.31) shell-ready boot signal: a controlling or active
+        // worker means the precached shell is serving this page, so the
+        // install rows can honestly claim offline-ready from first paint
+        // (the worker also posts precache-complete on fresh installs).
+        try {
+          if (navigator.serviceWorker.controller || registration.active) {
+            store.dispatch(actions.shellOfflineReady());
+          }
+        } catch {
+          /* service-worker state unreadable — the flag simply stays off */
+        }
         const armWhenActive = () => {
           if (registration.active) armPrayerTriggers(true);
           else

@@ -380,6 +380,11 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // About is true on a first visit, not after the reader finds the Offline
   // screen. Set false to opt out entirely.
   offlineEssentialsAuto: true,
+  // (v5.17.31) Install-prompt deferral memory { at, count }: the last
+  // "not now" stamp plus how many times the offer was deferred. Persisted
+  // (sanitized in sanitize.js) so the re-offer cooldown survives reloads —
+  // the ephemeral install slice deliberately cannot remember this.
+  installDeferral: { at: null, count: 0 },
   soundEnabled: true,
   hapticsEnabled: true,
   // v3.14 Phase C: optional soft sounds — off by default (the owner-facing

@@ -2,6 +2,36 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.31 — The install path a reader actually walks
+
+- **Prompt deferral with a memory.** "Not now" (`install-later`) and a
+  dismissed browser dialog stamp `{ at, count }` into persisted
+  `settings.installDeferral` (sanitized, capped, future-proof) and hide
+  the offer without consuming the one-shot `beforeinstallprompt` event —
+  the re-offer path (`install-reoffer`) resurfaces it after a 7-day
+  cooldown. Accepted vs dismissed are recorded distinctly from
+  `userChoice`; a fresh install clears the memory. Pure logic in
+  `js/domain/install.js`, flags in `state.install`
+  (`promptReady/installed/outcome/shellReady`, still ephemeral).
+- **Per-platform instructions, both languages.** iOS Safari gets its
+  Share → Add to Home Screen steps, Android its menu steps, desktop its
+  address-bar steps (new `onboarding.install*` keys, parity-gated) —
+  replacing the one generic line (removed; the i18n audit gates orphans).
+- **One persistent install row** (`js/views/installRow.js`) on About and
+  in Settings → Data, reusing the wizard copy, so the offer survives
+  past first-run.
+- **An offline-ready signal.** The worker posts `precache-complete`
+  beside `precache-failed`; the page latches `install.shellReady`
+  (silent — no toast on every fresh install) and the rows badge it.
+- **Stale comment fixed:** `initial.js` now names `rt.js` as the event
+  owner, not `app.js`.
+- Pinned by `tests/install-path.test.js` (deferral maths, platform
+  matrix, reducer idempotence, panel/row variants, fake-prompt runs,
+  live-handler consumption, parity) and
+  `tests/e2e/install-path.spec.js` (manifest/SW/offline asserts). The
+  real dialog, the iOS sheet, and the airplane relaunch need a physical
+  phone — `BLOCKED:device` in `docs/DEVICE-TEST.md`, not claimed here.
+
 ## v5.17.30 — Per-dhikr audio infra, with zero clips on purpose
 
 - **The player is ready; the clips are honestly absent** (OPEN-ISSUES #15

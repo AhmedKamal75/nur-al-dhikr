@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.30**. Last updated against a green `npm run check` and
+> Current version: **v5.17.31**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---

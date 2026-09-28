@@ -29,6 +29,7 @@ import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
 import { splitEditions } from '../domain/wordStudy.js';
 import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
+import { installRowHTML } from './installRow.js';
 
 /**
  * (v5.2.48) Accordion memory, persisted. The open section used to live in
@@ -206,7 +207,7 @@ export function matchSettingsSection(sec, query) {
     .every((term) => hay.includes(term));
 }
 
-export function renderSettings(state) {
+export function renderSettings(state, flags = {}) {
   const lang = state.settings.language;
   const filterQ = String(state.activeParams?.q || '');
   const hideSettings = new Set(
@@ -510,6 +511,9 @@ export function renderSettings(state) {
 
     <details class="panel settings-acc" id="settings-sec-data"${filterQ ? (hideSettings.has('settings-sec-data') ? ' hidden' : ' open') : openId === 'settings-sec-data' ? ' open' : ''}>
       ${accHeader(t('settings.data', lang), 'shield', lang)}
+      <!-- (v5.17.31) the persistent install row: same copy as About and the
+           wizard step, so the offer survives past first-run. -->
+      ${installRowHTML(state, lang, flags.install || {})}
       <!-- v3.26 data health check: three honest facts, zero servers -->
       <div class="data-health">
         <p class="panel__subtext" dir="ltr">${storageLine(state, lang)}</p>

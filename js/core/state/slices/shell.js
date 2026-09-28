@@ -169,6 +169,36 @@ export function reduceShell(state, action) {
       if (!state.install?.promptReady) return state;
       return { ...state, install: { ...state.install, promptReady: false } };
 
+    // (v5.17.31) deferral: the offer hides but the stashed browser event
+    // survives in rt (see app/installPrompt.js) for the re-offer path.
+    case 'INSTALL_PROMPT_DEFER':
+      if (!state.install?.promptReady) return state;
+      return { ...state, install: { ...state.install, promptReady: false } };
+
+    // (v5.17.31) re-offer after the deferral cooldown — a no-op when
+    // already installed or already offering (idempotent like the rest).
+    case 'INSTALL_PROMPT_REOFFER':
+      if (state.install?.installed || state.install?.promptReady) return state;
+      return { ...state, install: { ...state.install, promptReady: true } };
+
+    // (v5.17.31) the dialog's own answer: accepted vs dismissed are
+    // different facts (a dismissal stamps deferral memory in settings via
+    // the handler; the reducer only records which one happened).
+    case 'INSTALL_PROMPT_DONE': {
+      const outcome =
+        action.outcome === 'accepted' || action.outcome === 'dismissed' ? action.outcome : null;
+      if (!outcome) return state;
+      if (state.install?.outcome === outcome && !state.install?.promptReady) return state;
+      return { ...state, install: { ...state.install, promptReady: false, outcome } };
+    }
+
+    // (v5.17.31) shell precache-complete signal from the service worker
+    // (see app/triggers.js): the app shell is on-device. Ephemeral — it
+    // describes this session's worker, re-announced every boot.
+    case 'SHELL_OFFLINE_READY':
+      if (state.install?.shellReady) return state;
+      return { ...state, install: { ...state.install, shellReady: true } };
+
     case 'INSTALL_DONE':
       if (state.install?.installed) return state;
       return { ...state, install: { ...state.install, installed: true, promptReady: false } };

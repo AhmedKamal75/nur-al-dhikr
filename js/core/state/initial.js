@@ -419,10 +419,16 @@ export function initialState() {
     // (v5.2.52) stepsSeen records the two setup confirms (prayer, goals).
     onboarding: { dismissed: false, settingsVisited: false, stepsSeen: {} },
     // Ephemeral — install-prompt state. beforeinstallprompt can only be
-    // consumed once, so app.js stores the event itself and dispatches these
-    // flags; the onboarding panel then re-renders reactively as the browser
-    // makes (or uses up) the prompt available.
-    install: { promptReady: false, installed: false },
+    // consumed once, so the event itself lives in the runtime context
+    // (app/rt.js, wired by app/installPrompt.js); the store carries only
+    // the reactive flags so surfaces re-render as the browser makes (or
+    // uses up) the prompt available. `outcome` is the dialog's own last
+    // answer (accepted/dismissed/null); `shellReady` flips when the
+    // service worker reports its shell precache complete. The "not now"
+    // memory ({ at, count }) is the one persisted half and lives in
+    // settings.installDeferral, not here — a reload must not reset the
+    // re-offer cooldown.
+    install: { promptReady: false, installed: false, outcome: null, shellReady: false },
     // Ephemeral — the month the Statistics heatmap is focused on, as
     // 'YYYY-MM'. Defaults to the current month on boot; shifting it re-renders
     // the heatmap for browsing history. Never persisted: re-opening the app

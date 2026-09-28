@@ -375,6 +375,13 @@ describe('mushaf regroup: zero feature loss', () => {
     // v5.12.0: file-mode ±10s step chips flanking the seek range.
     'player-seek-back',
     'player-seek-fwd',
+    // v5.17.31: the install-path actions. They render in the onboarding
+    // wizard + the About/Settings install rows (never on a Mushaf
+    // surface), but any new data-action needs a handler AND an entry here
+    // so a rename on either side fails loudly instead of going dead.
+    'onboarding-install',
+    'install-later',
+    'install-reoffer',
   ]);
 
   function currentUnion() {

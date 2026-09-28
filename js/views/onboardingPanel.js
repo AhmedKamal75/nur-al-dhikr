@@ -13,9 +13,11 @@
  *  - Setup steps (method/Asr, daily goal) commit live through the shared
  *    data-bind pipeline; Confirm records the choice, defaults included.
  *  - Every unfinished action step also links straight to where it happens.
- *  - The install step degrades gracefully: an Install button when the
- *    browser offered beforeinstallprompt, an honest manual hint otherwise
- *    (iOS Safari & friends), and a quiet done row once standalone.
+ *  - The install step degrades gracefully: an Install + Not-now pair when
+ *    the browser offered beforeinstallprompt (a dismissal stamps deferral
+ *    memory and re-offers after the cooldown), per-platform manual steps
+ *    otherwise (iOS Share, Android menu, desktop address bar), and a quiet
+ *    done row once standalone.
  *  - The panel disappears on its own once all steps are done.
  */
 
@@ -26,6 +28,8 @@ import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { METHODS, ASR_FACTORS } from '../domain/prayer.js';
 import { buildOnboardingSteps, wizardStepIndex } from '../domain/onboarding.js';
+import { detectInstallPlatform, installStepsKey, shouldReofferInstall } from '../domain/install.js';
+import { liveUA } from './installRow.js';
 
 export const STEP_ICONS = {
   language: 'book-open',
@@ -144,12 +148,31 @@ function stepBodyHTML(step, state, lang, ctx) {
 
     case 'install': {
       if (step.done) return '';
-      const action = ctx.installPromptReady
-        ? `<button type="button" class="btn btn--primary btn--sm" data-action="onboarding-install">${icon('download', { size: 14 })} ${t('onboarding.installAction', lang)}</button>`
-        : `<span class="onboarding-step__manual">${t('onboarding.installManual', lang)}</span>`;
+      // A live browser dialog: Install now, or "not now" (stamps deferral
+      // memory without consuming the stashed event). No dialog on this
+      // visit: the honest per-platform manual steps — never the dead
+      // generic line — plus a re-offer attempt once a past deferral has
+      // cooled down.
+      if (ctx.installPromptReady) {
+        return `
+      <p class="onboarding-step__prime">${t('onboarding.installHint', lang)}</p>
+      <div class="onboarding-step__actions">
+        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-install">${icon('download', { size: 14 })} ${t('onboarding.installAction', lang)}</button>
+        <button type="button" class="btn btn--secondary btn--sm" data-action="install-later">${t('onboarding.installLater', lang)}</button>
+      </div>`;
+      }
+      const deferral = state.settings?.installDeferral;
+      const reoffer =
+        deferral &&
+        typeof deferral === 'object' &&
+        (deferral.count || 0) > 0 &&
+        shouldReofferInstall(deferral)
+          ? `<button type="button" class="btn btn--secondary btn--sm" data-action="install-reoffer">${t('onboarding.installReoffer', lang)}</button>`
+          : '';
       return `
       <p class="onboarding-step__prime">${t('onboarding.installHint', lang)}</p>
-      <div class="onboarding-step__actions">${action}</div>`;
+      <p class="onboarding-step__manual">${t(installStepsKey(ctx.installPlatform), lang)}</p>
+      ${reoffer ? `<div class="onboarding-step__actions">${reoffer}</div>` : ''}`;
     }
 
     case 'firstReading':
@@ -178,7 +201,7 @@ const STEP_TITLES = {
 /**
  * @param {object} state app state
  * @param {string} lang active UI language
- * @param {{appInstalled?: boolean, notificationsGranted?: boolean, installPromptReady?: boolean}} [flags]
+ * @param {{appInstalled?: boolean, notificationsGranted?: boolean, installPromptReady?: boolean, installPlatform?: string}} [flags]
  *        test/SSR overrides — explicit booleans win over live probes.
  * @returns {string} HTML for the panel, or '' when it shouldn't render.
  */
@@ -195,6 +218,11 @@ export function onboardingPanelHTML(state, lang, flags = {}) {
   const doneCount = steps.filter((s) => s.done).length;
   const ctx = {
     installPromptReady: flags.installPromptReady ?? !!state.install?.promptReady,
+    // The wizard step is never reached installed (done → ''), so the
+    // platform probe only routes the no-dialog manual steps here.
+    installPlatform:
+      flags.installPlatform ??
+      detectInstallPlatform({ installed: false, promptReady: false, ua: liveUA() }),
     permissionDenied: step.id === 'notifications' && !step.done ? liveNotificationsDenied() : false,
   };
 

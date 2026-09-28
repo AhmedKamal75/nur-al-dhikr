@@ -1745,7 +1745,17 @@ export const en = {
   'onboarding.install': 'Install the app',
   'onboarding.installHint': 'Works fully offline',
   'onboarding.installAction': 'Install',
-  'onboarding.installManual': 'From your browser menu, choose “Add to Home Screen” or “Install”.',
+  // (v5.17.31) per-platform install steps — these replaced the one
+  // generic installManual line (removed: the audit gates orphan keys).
+  'onboarding.installIosSteps': 'On iPhone or iPad: tap Share, then “Add to Home Screen”.',
+  'onboarding.installAndroidSteps':
+    'From the browser menu, tap “Install app” or “Add to Home Screen”.',
+  'onboarding.installDesktopSteps': 'From the address bar or the browser menu, choose “Install”.',
+  'onboarding.installLater': 'Not now',
+  'onboarding.installReoffer': 'Show install again',
+  'onboarding.installAccepted': 'Install accepted — finish it in the browser dialog.',
+  'onboarding.installDeferred': 'Understood — install will be offered again later.',
+  'sw.shellReady': 'Offline-ready — the app shell is saved on this device.',
   'onboarding.firstReading': 'Read your first adhkar',
   'onboarding.firstReadingHint': 'Morning or evening remembrance',
   'onboarding.notifications': 'Prayer alerts',
