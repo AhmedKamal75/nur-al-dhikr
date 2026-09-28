@@ -374,6 +374,110 @@ without falsely claiming every item is AI-authored. The **Sunni kutub sittah
 scope is disclosed, not hidden**. Where a grade is unknown, the UI says
 `Unknown` rather than guessing.
 
+## 5d. High-level visual design — build from this, don't re-derive it
+
+`docs/STYLEGUIDE.md` covers **code** style. This is **visual** direction, at
+the level of decisions rather than CSS, so a designer or an agent can execute
+without guessing. **247 design tokens already exist** in
+`assets/css/variables.css` — build on them, do not invent a parallel system,
+and do not hardcode a colour that a token already names.
+
+### The design position
+
+**A worship instrument, not a wellness app.** Restrained, warm, printed-page
+adjacent. The reference points are mature music players and good print
+typography, never a consumer social app. The failure mode to avoid is the
+"dashboard": cards floating on grey, everything competing for attention, the
+Qur'an treated as one widget among many. The text is the interface — chrome
+bows to it.
+
+Three qualities carry everything: **warmth** (paper, not screen), **restraint**
+(gold and deep green as accents on cream, never as fills), and **legibility at
+arm's length in dim light** (the 70-year-old Arabic-only reader is the
+release gate).
+
+### Palette
+
+| Role    | Token                 | Value     | Use                                                  |
+| ------- | --------------------- | --------- | ---------------------------------------------------- |
+| Page    | `--color-bg`          | `#f6f4ec` | Warm cream. Never pure white, never grey.            |
+| Surface | `--color-surface`     | `#ffffff` | Cards and sheets sit _on_ the cream.                 |
+| Primary | `--color-primary-raw` | `#0f766e` | Deep teal-green. Actions, active state.              |
+| Accent  | `--color-accent-raw`  | `#10b981` | Sparingly. Progress, completion.                     |
+| Gold    | `--color-gold`        | `#c9a227` | The gilt. Mushaf furniture, judgements, the shahada. |
+| Ink     | `--color-text`        | `#1e1c15` | Warm near-black, never `#000`.                       |
+| Danger  | `--color-danger`      | `#b91c1c` | Destructive only.                                    |
+
+**Dark mode is one coherent system, not an inversion** — warm dark surfaces,
+desaturated gold, and contrast that is _measured_ (a 1.19:1 Journal failure is
+the kind of regression that must not recur). Every surface ships in both.
+
+### Typography
+
+Three roles, and they do not mix:
+
+- **Scripture** — Uthmani, its own scale, its own leading, never the UI scale.
+  The mushaf's typeface is deliberately decoupled from the app-wide reading
+  face so app-wide scaling cannot break the line grid.
+- **UI** — one family, one scale ramp, tight leading for chrome, generous for
+  body.
+- **Numerals** — the counter's 72px/800 numerals are a distinct treatment, not
+  a heading.
+
+`roomySpacing` widens the **real reading surfaces** (translations, virtues,
+Arabic body, journal, hadith), with an **Arabic letter-spacing exemption** — the
+feature must never degrade Arabic typography — and an **explained mushaf
+exclusion**.
+
+### Space, shape, and depth
+
+- An 8pt-based ramp via `--space-*`. Dense chrome, airy body.
+- Radii are restrained: `--radius-md` on interactive surfaces, `--radius-pill`
+  only for genuine pills and the counter ring.
+- Depth is **quiet**: hairline `--color-border` first, shadow only to lift a
+  true overlay. The counter's physical depth is the deliberate exception.
+- **Motion is short and functional** (150–250ms), and fully disabled under
+  `prefers-reduced-motion`.
+
+### Surface-by-surface direction
+
+**The mushaf page.** A sheet of paper on a desk, not a card. Ornamental frame,
+corner pieces, juz medallion in gilt, a roundel on every paper, page furniture
+that is _drawn_ rather than iconified. The 15-line grid governs the text
+block absolutely. The Basmala carries its own typographic voice and is printed
+**once** where it is also a numbered ayah. Amiri Quran, `--mushaf-gold` for
+furniture, generous margins, and **no UI overlapping the page** — controls
+recede on idle and return on interaction.
+
+**An adhkar card.** Arabic is the body; translation and virtue are supporting
+type, never competing. The counter is the single focal point. Provenance is
+present but quiet. `Unknown` grade reads as an honest uncertain chip, not an
+error.
+
+**The player.** Chrome that behaves as **one object** inside and outside
+fullscreen — never lose progress by switching surfaces. Manual minimize plus a
+timed auto-fade, waking on any interaction. Keyboard-first: Space, M, arrows,
+drills. The transport row is pinned `direction: ltr` so it never mirrors in
+RTL, and its icons are never flipped.
+
+**The tajweed course.** A teaching surface with a clear left-to-right sense of
+_progress_ even in RTL: a stage rail, session cards with real padding, border
+and radius, and rule surfaces that are **self-contained** — the rule, its
+example, and its drill on one screen, never a link out to another page.
+
+**The counter.** Deliberately designed: 240px dial, 72px/800 numerals, physical
+depth, ring, bloom and tap feedback, and a reduced-motion variant that still
+reads.
+
+### Rules that apply everywhere
+
+- **No expanding panel** that consumes the page; no settings that vanish from
+  one context and appear in another.
+- **44px minimum targets** in default, more in Elder Mode. Zero under 24px.
+- **No English text or a moon** in place of Islamic iconography.
+- Every surface must survive **both themes** and **200% text**.
+- Arabic and English are **equally first-class**; neither is a fallback.
+
 ## 6. Who it is for, in priority order
 
 1. **The 70-year-old Arabic-only reader. She is the release gate.** If she
