@@ -346,3 +346,25 @@ export function highlightMatch(text, terms) {
   }
   return out + escapeHTML(source.slice(cursor));
 }
+
+/**
+ * Counted-noun phrase for aayah counts.
+ *
+ * Arabic grammar does not have English's "1 vs many" split: the plural covers
+ * 3–10, and 11 and above take the SINGULAR ACCUSATIVE (١١ آيةً, not ١١
+ * آيات) because the number above ten is read as a unit. English needs 1
+ * singular, 0 and everything else plural.
+ *
+ * Extracted from mushafReader.js, which had this rule inline and privately.
+ * The search screen was still using a bare "{n} ayahs" template, so searching
+ * for a single word rendered "From the Qur'an 1 ayahs".
+ */
+export function ayahCountPhrase(n, lang) {
+  const count = Number(n);
+  if (!Number.isFinite(count)) return String(n ?? '');
+  if (lang === 'ar') {
+    const word = count >= 3 && count <= 10 ? 'آيات' : 'آية';
+    return `${toEasternArabicNumerals(count)} ${word}`;
+  }
+  return count === 1 ? '1 ayah' : `${count} ayahs`;
+}

@@ -26,7 +26,13 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { clamp, escapeHTML, pickLocale, toEasternArabicNumerals } from '../core/utils.js';
+import {
+  ayahCountPhrase,
+  clamp,
+  escapeHTML,
+  pickLocale,
+  toEasternArabicNumerals,
+} from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import {
   isFirstPage,
@@ -94,17 +100,6 @@ const SAJDA_ACCENT_WORD = ['سُجَّدًا', 'سَجَدُوا'];
  *  the player part (mushafPlayer.js) — re-exported here so the modal
  *  handler and every test keep importing from the facade untouched. */
 export { pageChapters, buildMushafPlayPick } from './mushafPlayer.js';
-
-/** (v4.5.2) Arabic plural grammar for the ayah-count lines: 3–10 takes
- *  the plural (آيات), everything above takes the singular (آية) — “١١٠
- *  آيات” was wrong Arabic on 100+ surah headers. */
-function ayahCountPhrase(n, lang) {
-  if (lang === 'ar') {
-    const word = n >= 3 && n <= 10 ? 'آيات' : 'آية';
-    return `${toEasternArabicNumerals(n)} ${word}`;
-  }
-  return `${n} ayahs`;
-}
 
 /**
  * (v5.2.16) One-shot animation tokens moved to ui/readingTokens.js — the

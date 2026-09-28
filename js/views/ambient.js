@@ -34,6 +34,12 @@ export function renderAmbient(state) {
     return `
     <section class="view view--ambient">
       ${exit}
+      <!-- (v5.17.23) This branch had no heading at all — a paragraph and a
+           link, 66 characters, which axe reports as page-has-heading-one and
+           which a screen reader announces with no name for the page. The
+           nightstand view still needs a name even when it has nothing to
+           count down to. -->
+      <h1 class="ambient__name">${t('ambient.title', lang)}</h1>
       <p class="ambient__empty">${t('prayer.locationNeeded', lang)}</p>
       <a class="btn btn--primary" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">${t('nav.prayer', lang)}</a>
     </section>`;

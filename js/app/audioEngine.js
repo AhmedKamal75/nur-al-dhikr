@@ -145,7 +145,18 @@ export async function startAudioPlay(moshafId, surah) {
       // (v5.2.67) a failed track owns no lock-screen slot — without this
       // the previous track's metadata lingers as if still playing.
       mediaSession.clearMetadata();
-      showToast(t('audio.playFailed', state.settings.language), { assertive: true });
+      // (v5.17.23) With a Retry action. The action-bearing toast API has
+      // existed all along (3 of 243 call sites used it), so this was never
+      // blocked on a missing capability — the audio-failure path simply used
+      // none of it. Without it, a reader whose file will not load has exactly
+      // one recourse: find the play button and tap it again by hand.
+      showToast(t('audio.playFailed', state.settings.language), {
+        assertive: true,
+        actionLabel: t('common.retry', state.settings.language),
+        onAction: () => {
+          void startAudioPlay(moshafId, surah);
+        },
+      });
     } else {
       // (v5.2.67) gapless-lite: warm the next track's offline lookup while
       // this one plays, so ended→start skips the IDB latency. Bounded to
@@ -230,7 +241,17 @@ export function wirePlayer() {
     const p = store.getState().player;
     if (p?.moshafId && p.playing) {
       store.dispatch(actions.setAudioPlayer({ playing: false }));
-      showToast(t('audio.playFailed', store.getState().settings.language), { assertive: true });
+      const lang = store.getState().settings.language;
+      // Retry here too, and retry the surah that was playing, not whatever is
+      // selected now: a mid-stream drop is the case where a reader most wants
+      // to resume the ayah they were on.
+      showToast(t('audio.playFailed', lang), {
+        assertive: true,
+        actionLabel: t('common.retry', lang),
+        onAction: () => {
+          void startAudioPlay(p.moshafId, p.surah);
+        },
+      });
     }
   });
   // FIX (review A7/B8): verse playback failures are spoken, not swallowed.

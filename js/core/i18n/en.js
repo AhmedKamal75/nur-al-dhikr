@@ -580,7 +580,6 @@ export const en = {
   'search.quranResults': "From the Qur'an",
   'search.loadingCorpus':
     'Loading the Qur\u2019an text for full-text search \u2014 once loaded, this works offline forever.',
-  'search.quranCount': '{n} ayahs',
   // v5.2.74 tafsir result group in the Search view (UP-08).
   'search.tafsirResults': 'From the tafsir',
   'search.tafsirCount': '{n} passages',
@@ -1508,7 +1507,7 @@ export const en = {
   'hadith.sheet.arabic': 'Arabic text',
   'hadith.title': 'Ahadeeth',
   'hadith.subtitle':
-    '{n} authentic sayings of the Prophet ﷺ from the most trusted collections in Islam.',
+    '{n} narrations from the canonical collections — each carrying its own scholarly standing.',
   'hadith.loadFailed':
     'Could not load \u2014 check your connection, then retry. Once loaded it stays available offline.',
   'hadith.unknownBook': 'No such book in this library — check the link.',
@@ -1523,7 +1522,7 @@ export const en = {
   'hadith.narratedBy': 'Narrated by {name}',
   'hadith.gradeGuide': 'About grading in this book',
   'hadith.standingNote':
-    'Every hadith here passed Sahih-grade scrutiny — the Two Sahihs are authentic by scholarly consensus.',
+    'Grades differ by book and by narration. The Two Sahihs are Sahih by scholarly consensus; across the four Sunans many narrations are Hasan and some are Daif.',
   'hadith.mixedNote':
     'This collection mixes grades by design — authentic, good and weak reports side by side. No per-hadith grade ships with this app yet, so read critically and check with a scholar when it matters.',
   'hadith.grade.sahih':
@@ -2086,6 +2085,7 @@ export const en = {
   'title.garden': 'Garden',
   'title.kids': 'Kids Quran',
   'ambient.exit': 'Exit nightstand display',
+  'ambient.title': 'Nightstand display',
   // (v5.10.1) nightstand display modes + slow-rotation slides.
   'ambient.displayMode': 'Display mode',
   'ambient.modeCountdown': 'Countdown',

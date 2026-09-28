@@ -5,10 +5,10 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-09-28 against the tree at v5.17.21**, by parsing this file's own
+> **Counted 2026-09-28 against the tree at v5.17.23**, by parsing this file's own
 > status column — not by hand, and not copied from any earlier header: **43 rows —
-> 11 OPEN, 7 PROPOSED, 2 DEFERRED, 2 DECIDED-NO, 8 RESOLVED, 1 STANDING
-> CONSTRAINT, 7 BLOCKED:scholar, 5 BLOCKED:device.**
+> 11 OPEN, 7 PROPOSED, 2 DEFERRED, 2 DECIDED-NO, 9 RESOLVED, 1 STANDING
+> CONSTRAINT, 6 BLOCKED:scholar, 5 BLOCKED:device.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
@@ -80,15 +80,15 @@ Source IDs: `V#` = Omniview verdict · `C#` = contested · `P#` = proposal ·
 
 ## Blocked on a scholar — never machine-fill
 
-| #   | Item                                                                | Status          | Note                                                                                                                                          |
-| --- | ------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| 32  | Grades for `pdf-duas` (61), `daily-sunnah` (67), `reflections` (20) | BLOCKED:scholar | They display as `Unknown`, which is the honest state. Filling them is a ruling, not a build.                                                  |
-| 33  | 30 quranic items in simplified orthography                          | BLOCKED:scholar | Audit F5. The same exact-matn verification closed an earlier backfill attempt as a no-op.                                                     |
-| 34  | Whether to advise wudu before recitation                            | BLOCKED:scholar | Defensible under majority fatwa for digital screens. The app currently ships an adab note (`mushaf.wuduNote`) without ruling on the question. |
-| 35  | Bismillah as interactive, countable-looking text                    | BLOCKED:scholar | Innovative and defended; the scholar should confirm it does not reclassify the Bismillah as an ayah.                                          |
-| 36  | Qalqalah colour convention                                          | BLOCKED:scholar | Cyan here, red in some conventions. Defensible; should be confirmed for students.                                                             |
-| 37  | Whether per-reciter adhkar audio is permissible                     | BLOCKED:scholar | Rival apps ship it. Open question.                                                                                                            |
-| 38  | Corpus scope wording (Sunni kutub sittah disclosure)                | BLOCKED:scholar | Disclosed in-app already; the exact wording is a scholarly call.                                                                              |
+| #   | Item                                                           | Status              | Note                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| --- | -------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 32  | Grade provenance for `pdf-duas`, `daily-sunnah`, `reflections` | RESOLVED (verified) | **CORRECTED v5.17.23 — this row was wrong.** It claimed these three libraries display as `Unknown`. They do not: parsed from the corpus, `pdf-duas` is 45 Sahih / 16 Hasan / 9 Quran / 5 Custom, `daily-sunnah` 53 / 14 / 2, `reflections` 38 / 10 / 19 / 1 Athar, with **zero** Unknown in any of the three. The Unknown grades are elsewhere: `data/adhkar.json` carries 18 beside 93 Sahih, 34 Quran and 23 Hasan. The honest-absence claim was attached to the wrong libraries. Those 18 remain open, and filling them is still a ruling, not a build. |
+| 33  | 30 quranic items in simplified orthography                     | BLOCKED:scholar     | Audit F5. The same exact-matn verification closed an earlier backfill attempt as a no-op.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| 34  | Whether to advise wudu before recitation                       | BLOCKED:scholar     | Defensible under majority fatwa for digital screens. The app currently ships an adab note (`mushaf.wuduNote`) without ruling on the question.                                                                                                                                                                                                                                                                                                                                                                                                              |
+| 35  | Bismillah as interactive, countable-looking text               | BLOCKED:scholar     | Innovative and defended; the scholar should confirm it does not reclassify the Bismillah as an ayah.                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| 36  | Qalqalah colour convention                                     | BLOCKED:scholar     | Cyan here, red in some conventions. Defensible; should be confirmed for students.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| 37  | Whether per-reciter adhkar audio is permissible                | BLOCKED:scholar     | Rival apps ship it. Open question.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 38  | Corpus scope wording (Sunni kutub sittah disclosure)           | BLOCKED:scholar     | Disclosed in-app already; the exact wording is a scholarly call.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 ## Blocked on hardware — see `docs/DEVICE-TEST.md`
 
@@ -132,21 +132,23 @@ re-investigates them.
 
 Counted from the table above, not estimated:
 
-| Bucket                                               | Count  |
-| ---------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                        | **20** |
-| **PROPOSED** (costed, needs an owner yes)            | **7**  |
-| **BLOCKED:scholar** (must never be machine-filled)   | **7**  |
-| **BLOCKED:device** (needs real hardware)             | **5**  |
-| **DEFERRED** / **DECIDED-NO** (deliberate)           | **4**  |
-| **Reported open but already fixed** (the stale list) | **19** |
+| Bucket                                             | Count  |
+| -------------------------------------------------- | ------ |
+| **OPEN** (nobody has done it)                      | **11** |
+| **PROPOSED** (costed, needs an owner yes)          | **7**  |
+| **BLOCKED:scholar** (must never be machine-filled) | **6**  |
+| **BLOCKED:device** (needs real hardware)           | **5**  |
+| **DEFERRED** / **DECIDED-NO** (deliberate)         | **4**  |
+| **RESOLVED after re-verification**                 | **9**  |
+| **STANDING CONSTRAINT** (not a defect)             | **1**  |
 
 - **~55 distinct issues** were extractable from the audit material and the
-  owner's own reports. **27** still need work; **19** were already done and were
-  being re-investigated.
-- Of the 27, two are release-gating: **Elder Mode discoverability** and **the
-  in-app type scale that cannot reach WCAG 200%**. Both strand the 70-year-old
-  Arabic-only reader this app exists for.
-- The single highest-risk one is **`http://` custom audio servers**: a cleartext
-  audio source for Qur'an recitation is a man-in-the-middle waiting to happen,
-  and there is no gate at all today.
+  owner's own reports. **18** still need work (11 open, 7 proposed); **9** were
+  already done and had been re-investigated as still-open.
+- **Three "release-gating" items named here are now resolved**, and this file
+  said otherwise until v5.17.23: Elder Mode discoverability (the wizard did
+  offer it; only the wording was wrong), the 200% type scale (clamp 0.85–2,
+  proven in a browser), and the `http://` audio-server gate (it has existed
+  since v5.13.0 — `audioCatalog.js` requires https outside localhost/LAN).
+- **What is actually release-gating now** is listed in the table, not in a
+  prose paragraph that can drift from it. Read the table.

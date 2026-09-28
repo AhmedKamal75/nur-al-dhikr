@@ -2,6 +2,67 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.23 — The second review's ten findings, closed
+
+A second independent review scored 8.8 and raised ten points. This closes
+them. The two most severe were ours again.
+
+- **The tajweed course rendered six EMPTY stage headings.** The bilingual
+  titles and rationales existed in `data/tajweed-course.json` and did not
+  exist in the runtime mirror the view reads — so a reader saw "Stage 1 …
+  Stage 6" with no names, in either language, on a six-stage course. The
+  mirror-parity test compared `id`, `order`, `focus` and `citation` and **not
+  the text**, so it stayed green throughout. Parity now covers every field,
+  and a second test asserts the rendered symptom.
+- **The mushaf deep link's mark was invisible.** My own stylesheet refactor
+  had swept every "tajweed" rule out of `quran.css` into a course stylesheet
+  that is injected on the tajweed course route **alone** — so on the mushaf,
+  the only surface that uses `.mushaf-ayah--target`, the rule simply did not
+  exist. The element was in the DOM with a transparent background: the reader
+  was told to open 2:255 and shown a page with nothing marked. The rule is back
+  in the sheet the mushaf loads, with the reason recorded at the top, and a
+  browser test asserts the mark is _painted_, not merely present. The reveal
+  also waited for the real page instead of consuming its token on the skeleton,
+  and focuses a real tab stop.
+  - One finding here is **not** a defect and is left as is: turning the page
+    drops the mark, because the verse is no longer on screen. Carrying the
+    params through a page turn would fight a reader who moved on. A test pins
+    the intended behaviour.
+- **The Ahadeeth header overclaimed.** It read "{n} authentic sayings of the
+  Prophet ﷺ from the most trusted collections" over a corpus where 19,217 of
+  34,239 narrations come from the four Sunans — books the app itself grades
+  Hasan and Daif. That is the most religious sentence in the app making a
+  claim its own data contradicts. Both languages now say the accurate thing,
+  and a test reads the corpus to prove the old wording was false.
+- **A recitation failure offered no way back.** The action-bearing toast API
+  has existed all along (3 of 243 call sites used it), so `OPEN-ISSUES` row 7's
+  stated reason — that no such API exists — was **false**. The audio path used
+  none of it. Both the pre-playback failure and the mid-stream drop now carry
+  a Retry that replays the surah that was playing.
+- **The course was three taps deep** — mushaf, action sheet, Settings, Study
+  aids. It is in the palette now, which is the app's all-access launcher.
+- **A page heading read "The …".** The Qur'an view's H1 rendered 229px of text
+  in a 98px box at 390px, so both sighted and screen-reader users got a
+  truncated page name and a screenshot looked fine. It wraps now, and
+  `heading-clipping.spec.js` sweeps ten routes for the whole class.
+- **The nightstand view had no heading at all** without a location — a
+  paragraph and a link, 66 characters. It has a name now.
+- **`search.quranCount` had no plural.** "1 ayahs" was reachable by searching
+  any single word. The Arabic rule the mushaf kept privately is now a shared
+  helper: the plural covers 3–10 and 11+ takes the singular accusative, which
+  is Arabic grammar rather than a template.
+- **The ledger disagreed with itself**, and a review found it: the summary
+  claimed 20 open where the header said 11, named three resolved items as
+  "release-gating", and attached an honest-absence claim to three libraries
+  that contain **zero** Unknown grades — the real 18 are in `adhkar.json`.
+  `tests/open-issues-ledger.test.js` now fails if the header, the summary and
+  the table ever disagree, or if a gate that already exists is named as
+  highest-risk again.
+- **Not changed, deliberately:** the 200%-type scale still does not reach the
+  mushaf's Arabic. The mushaf owns its typography, has its own slider and
+  pinch, and Elder Mode now does reach it. Letting the app-wide scale fight
+  the mushaf's own control would make neither predictable.
+
 ## v5.17.22 — A hostile review found four things, and three of them were mine
 
 An independent review at v5.17.21 scored 8.2/10 and was right about every

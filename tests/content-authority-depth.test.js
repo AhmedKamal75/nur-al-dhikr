@@ -20,7 +20,9 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { readdirSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 import { moveLibrary, moveCategory, moveItem } from '../js/services/contentPrefs.js';
 import { renderLibrary } from '../js/views/library.js';
@@ -275,4 +277,63 @@ describe('the daily card pool is an allowlist', () => {
     assert.equal(dailyEligibleEntries(only).length, 0);
     assert.equal(pickDailyItemThemed(only, 'any'), null);
   });
+});
+
+test('the Ahadeeth header does not overclaim what the corpus contains', () => {
+  // (v5.17.23) The tab subtitle read "{n} authentic sayings of the Prophet
+  // ﷺ" over a corpus where 19,217 of 34,239 narrations come from the four
+  // Sunans — books the app itself grades Hasan and Daif. That is the most
+  // religious sentence in the app making a claim the app's own data
+  // contradicts.
+  const read = (f) =>
+    readFileSync(join(dirname(dirname(fileURLToPath(import.meta.url))), f), 'utf8');
+  const en = read('js/core/i18n/en.js');
+  const ar = read('js/core/i18n/ar.js');
+  const grab = (src, key) => {
+    const m = new RegExp(`'${key.replace('.', '\\.')}':\\s*\\n?\\s*'([^']*)'`).exec(src);
+    return m ? m[1] : '';
+  };
+
+  // The subject of the claim. NOT per-narration grades — this app ships
+  // none, and says so in hadith.mixedNote. The claim is about the BOOKS: the
+  // four Sunans are graded works containing Hasan and Daif, so "34,239
+  // authentic sayings" is false whatever the individual rows say.
+  const books = {};
+  for (const f of readdirSync(
+    join(dirname(dirname(fileURLToPath(import.meta.url))), 'data/hadith')
+  )) {
+    if (!f.endsWith('.json')) continue;
+    const d = JSON.parse(read(`data/hadith/${f}`));
+    const n = (d.hadiths || []).length;
+    if (n) books[f.replace('.json', '')] = n;
+  }
+  const total = Object.values(books).reduce((a, b) => a + b, 0);
+  const sunan = ['abudawud', 'tirmidhi', 'nasai', 'ibnmajah']
+    .map((k) => books[k] || 0)
+    .reduce((a, b) => a + b, 0);
+  assert.ok(total > 0, 'the corpus must be readable for this claim to have a subject');
+  assert.ok(
+    sunan / total > 0.4,
+    `the four Sunans must be a large share of the corpus, else this is moot (${sunan}/${total})`
+  );
+
+  for (const [key, banned] of [
+    ['hadith.subtitle', /authentic sayings/i],
+    ['hadith.standingNote', /every hadith here passed sahih-grade scrutiny/i],
+  ]) {
+    const enText = grab(en, key);
+    assert.ok(enText, `${key} must exist`);
+    assert.equal(banned.test(enText), false, `${key} still overclaims: ${enText.slice(0, 80)}`);
+  }
+  // Arabic carried the same claim ("صحيحاً" over the whole corpus).
+  const arSub = grab(ar, 'hadith.subtitle');
+  assert.equal(
+    /كل حديث|كلها صحيحة/.test(arSub),
+    false,
+    `AR subtitle still overclaims: ${arSub.slice(0, 80)}`
+  );
+
+  // And the copy must still say something useful, not merely be vaguer.
+  assert.match(grab(en, 'hadith.subtitle'), /standing/i);
+  void total;
 });

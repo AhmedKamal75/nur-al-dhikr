@@ -60,6 +60,15 @@ test('the runtime spine mirrors the canonical JSON', () => {
   for (const docStage of courseDoc.stages) {
     const mod = findStage(docStage.id);
     assert.ok(mod, `${docStage.id} missing from the module`);
+    // (v5.17.23) The mirror-parity loop checked id/order/focus/citation and
+    // NOT the text, so a mirror without a single title or rationale stayed
+    // green while the screen rendered six empty <h2>s — "Stage 1 … Stage 6"
+    // with no names, in either language, on the feature the last two
+    // releases were built around. Parity means parity.
+    assert.deepEqual(mod.title, docStage.title, `${docStage.id} title drifted`);
+    assert.deepEqual(mod.why, docStage.why, `${docStage.id} rationale drifted`);
+    assert.ok(mod.title?.en && mod.title?.ar, `${docStage.id} title must be bilingual`);
+    assert.ok(mod.why?.en && mod.why?.ar, `${docStage.id} rationale must be bilingual`);
     assert.equal(mod.sessions.length, docStage.sessions.length, `${docStage.id} session count`);
     for (const docSession of docStage.sessions) {
       const ms = findSession(docSession.id);
@@ -210,6 +219,23 @@ test('search finds a session by the rule the reader remembers', () => {
     searchSessions('noon').some((s) => s.stageId === 'noon'),
     'stage id is searchable too'
   );
+});
+
+test('every stage the reader sees carries a name and a reason', () => {
+  // The rendered symptom, not the data symptom: an unnamed stage heading is
+  // an accessibility failure (axe `empty-heading`) before it is a design one.
+  for (const stage of COURSE_STAGES) {
+    assert.ok(
+      String(stage.title?.en || '').trim().length > 0,
+      `${stage.id} has no English title — the heading would render empty`
+    );
+    assert.ok(String(stage.title?.ar || '').trim().length > 0, `${stage.id} has no Arabic title`);
+    assert.ok(
+      String(stage.why?.en || '').trim().length > 0,
+      `${stage.id} has no English rationale`
+    );
+    assert.ok(String(stage.why?.ar || '').trim().length > 0, `${stage.id} has no Arabic rationale`);
+  }
 });
 
 test('bilingual everywhere, with no English leaking into Arabic', () => {

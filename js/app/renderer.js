@@ -706,18 +706,36 @@ export function settingsSectionScrollTarget(state) {
 function revealMushafTarget() {
   const target = consumeMushafTarget();
   if (!target) return;
-  requestAnimationFrame(() => {
-    const el = document.querySelector(
-      `.mushaf-ayah--target[data-surah="${target.surah}"][data-ayah="${target.ayah}"]`
-    );
-    if (!el) return;
+  const sel = `.mushaf-ayah--target[data-surah="${target.surah}"][data-ayah="${target.ayah}"]`;
+  // The mushaf renders a SKELETON while the page document loads, and the
+  // token was being consumed on that pass — so the real page arrived with
+  // nothing left to act on, and the reader got no scroll and no focus. The
+  // reviewer measured the target sitting at 736px inside a 720px viewport
+  // with scrollY still 0. So: wait for the element across a bounded number
+  // of frames rather than betting on one render.
+  let tries = 0;
+  const attempt = () => {
+    const el = document.querySelector(sel);
+    if (!el) {
+      if (tries < 40) {
+        tries += 1;
+        requestAnimationFrame(attempt);
+      }
+      return;
+    }
     el.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
     try {
-      el.focus?.({ preventScroll: true });
+      // focus({preventScroll}) is a no-op without a tab stop, and in
+      // word-study mode the ayah body deliberately has none (the marker
+      // carries it) — so focus the nearest focusable thing on the ayah.
+      const target =
+        el.matches('[tabindex]') || el.tabIndex >= 0 ? el : el.querySelector('[tabindex]') || el;
+      target.focus?.({ preventScroll: true });
     } catch {
       /* focus is best-effort; never let it break rendering */
     }
-  });
+  };
+  requestAnimationFrame(attempt);
 }
 
 function scrollToSettingsSection(sectionId) {

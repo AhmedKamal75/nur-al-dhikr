@@ -6,7 +6,7 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { escapeHTML, highlightMatch, pickLocale } from '../core/utils.js';
+import { escapeHTML, highlightMatch, pickLocale, ayahCountPhrase } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { search as runSearch } from '../domain/search.js';
 import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
@@ -99,7 +99,7 @@ function quranSection(state, query, lang, all) {
   <section class="panel quran-search-panel">
     <div class="panel__header">
       <h2>${t('search.quranResults', lang)}</h2>
-      <span class="view__meta">${t('search.quranCount', lang, { n: total })}</span>
+      <span class="view__meta">${ayahCountPhrase(total, lang)}</span>
     </div>
     ${
       hits.length

@@ -39,6 +39,10 @@ const NAV_TARGETS = [
   // no chrome change; the palette is the all-access launcher by design.
   { view: VIEWS.MOOD, icon: 'hands', label: 'title.mood' },
   { view: VIEWS.FOCUS, icon: 'eye', label: 'title.focus' },
+  // (v5.17.23) The tajweed course was three taps deep: mushaf, then the
+  // action sheet, then Settings, then Study aids. It is a flagship surface
+  // and the palette is the all-access launcher.
+  { view: VIEWS.TAJWEED_COURSE, icon: 'sparkle', label: 'tajweedCourse.title' },
   { view: VIEWS.QUIZ, icon: 'star', label: 'title.quiz' },
   { view: VIEWS.ROOTS, icon: 'list', label: 'title.roots' },
   { view: VIEWS.MUTASHABIHAT, icon: 'copy', label: 'title.mutashabihat' },

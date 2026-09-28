@@ -30,6 +30,13 @@ export const COURSE_STAGES = Object.freeze([
     id: 'madd',
     order: 1,
     citation: { work: 'tuhfat-al-atfal', lines: '35-58' },
+    title: Object.freeze({ en: 'Madd — holding the vowel', ar: 'المدّ — إطالة الصوت' }),
+    // Why this stage sits here. Bilingual, and deliberately short: the
+    // teaching itself is the rules' own sourced descriptions.
+    why: Object.freeze({
+      en: "Madd is where a beginner's recitation is most audible, and most often wrong. It comes first here because everything later is easier to hear once the counts are right.",
+      ar: 'المدّ أوضح ما يُسمَع في تلاوة المبتدئ، وأكثره خطأً. ويأتي أولًا هنا لأن ما بعده يصير أسهل على السمع متى ضبطت العدّات.',
+    }),
     sessions: [
       {
         id: 'madd-natural',
@@ -65,6 +72,13 @@ export const COURSE_STAGES = Object.freeze([
     id: 'qalqalah',
     order: 2,
     citation: { work: 'jazariyya', lines: '23, 34-56' },
+    title: Object.freeze({ en: 'Qalqalah and the weight of letters', ar: 'القلقلة وصفات الحروف' }),
+    // Why this stage sits here. Bilingual, and deliberately short: the
+    // teaching itself is the rules' own sourced descriptions.
+    why: Object.freeze({
+      en: 'Qalqalah and heavy/light letters change how a page sounds without changing its meaning, so they are learned by ear and repetition rather than by definition.',
+      ar: 'القلقلة وصفات الحروف تغيّر صوت الصفحة دون أن تغيّر معناها، فتُتعلَّم بالأذن والتكرار لا بالحفظ.',
+    }),
     sessions: [
       {
         id: 'qalqalah-rule',
@@ -86,6 +100,13 @@ export const COURSE_STAGES = Object.freeze([
     id: 'noon',
     order: 3,
     citation: { work: 'tuhfat-al-atfal', lines: '6-17' },
+    title: Object.freeze({ en: 'Noon sakinah and tanween', ar: 'أحكام النون الساكنة والتنوين' }),
+    // Why this stage sits here. Bilingual, and deliberately short: the
+    // teaching itself is the rules' own sourced descriptions.
+    why: Object.freeze({
+      en: 'The largest single block of rules, and the one that most changes how an ordinary page sounds. It also appears most often in the text, so it rewards the most drilling.',
+      ar: 'أكبر كتلة من القواعد، وأكثرها أثرًا في صوت الصفحة المعتادة، وأكثرها ورودًا في النص، فهي الأكثر استحقاقًا للتكرار.',
+    }),
     sessions: [
       {
         id: 'noon-izhar',
@@ -121,6 +142,13 @@ export const COURSE_STAGES = Object.freeze([
     id: 'meem',
     order: 4,
     citation: { work: 'tuhfat-al-atfal', lines: '18-23' },
+    title: Object.freeze({ en: 'Meem sakinah', ar: 'أحكام الميم الساكنة' }),
+    // Why this stage sits here. Bilingual, and deliberately short: the
+    // teaching itself is the rules' own sourced descriptions.
+    why: Object.freeze({
+      en: 'Three cases, fewer branches than the noon rules, and the same shape — which is the point: having just learned one set, this one is a variation, not new material.',
+      ar: 'ثلاثة أحكام، أقل تفصيلًا من أحكام النون، وبنفس الصورة — وهذا هو المقصود: بعد تعلّم مجموعة صارت هذه 변화 لا مادة جديدة.',
+    }),
     sessions: [
       {
         id: 'meem-three',
@@ -135,6 +163,16 @@ export const COURSE_STAGES = Object.freeze([
     id: 'lam',
     order: 5,
     citation: { work: 'tuhfat-al-atfal', lines: '24-29' },
+    title: Object.freeze({
+      en: 'Lām, and the letters that change shape',
+      ar: 'اللام، والحروف التي يتغير شكلها',
+    }),
+    // Why this stage sits here. Bilingual, and deliberately short: the
+    // teaching itself is the rules' own sourced descriptions.
+    why: Object.freeze({
+      en: "Two different things that Arabic101's structure and the classical texts both place late: the sun-letter lām, and the two hamzahs, where written form and recited form diverge.",
+      ar: 'م شيئان مختلفان يضعهما كلٌّ من بنية Arabic101 والمتون المتأخرة: لام الشمس، والهمزتان حيث يختلف الخط عن النطق.',
+    }),
     sessions: [
       {
         id: 'lam-shamsiyyah',
@@ -156,6 +194,13 @@ export const COURSE_STAGES = Object.freeze([
     id: 'mixed',
     order: 6,
     citation: { work: 'jazariyya', lines: '9-19' },
+    title: Object.freeze({ en: 'Mixed recitation', ar: 'التلاوة المختلطة' }),
+    // Why this stage sits here. Bilingual, and deliberately short: the
+    // teaching itself is the rules' own sourced descriptions.
+    why: Object.freeze({
+      en: 'No new rule. This stage exists because isolated rules are easier than connected text, and the connected text is the point.',
+      ar: 'لا قاعدة جديدة. هذه المرحلة موجودة لأن الأحكام المنفردة أيسر من النص المتصل، والنص المتصل هو المقصود.',
+    }),
     sessions: [
       {
         id: 'mixed-drill',

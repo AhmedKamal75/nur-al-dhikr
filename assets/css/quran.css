@@ -110,11 +110,25 @@
   align-items: center;
   gap: var(--space-2);
   min-width: 0;
+  /* (v5.17.23) Wraps instead of clipping. An 18-route clipping census at
+     390px found the Quran view's H1 — the page's accessible name — rendered
+     as "The …" inside a 98px box: scrollWidth 229, clientWidth 98. A heading
+     that reads "The …" is not a heading, and it is what a screen reader and
+     a sighted reader both get. The chips drop to the next line rather than
+     the title disappearing into one. */
+  flex-wrap: wrap;
 }
 .quran-topbar__start .view__title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Let the title claim the line it needs before the chips give up space. */
+  flex: 1 1 auto;
+  min-width: max-content;
+}
+.quran-topbar__start .chip,
+.quran-topbar__start .badge {
+  flex: 0 0 auto;
 }
 .quran-topbar__actions {
   display: flex;
@@ -3845,4 +3859,48 @@ body.has-player .reader-immersive-echo {
 .tajweed-legend__source--missing {
   opacity: 0.9;
   font-style: italic;
+}
+
+/* (v5.17.23) MOVED BACK HERE, deliberately. The deep-link mark lived in
+   tajweed-course.css for one release because a refactor swept every
+   "tajweed" rule out of this file. That file is injected on the tajweed
+   course route ALONE, so on the mushaf — the only surface that uses this
+   class — the rule simply did not exist: the target ayah was in the DOM with
+   a transparent background, no scroll, and no focus. The reader was told to
+   open 2:255 and shown a page with nothing marked. A rule belongs with the
+   view that renders it, and this view renders on a route that loads THIS
+   sheet. A test asserts the mushaf route does not load the course sheet. */
+/* v5.17.21 — the ayah you asked for. "Open the mushaf at 2:255" is the most
+   used deep-link shape in any serious mushaf app and in a printed mushaf's
+   index, and the app could not express it: every mushaf link carried a page
+   and nothing else, so you landed at the top of a page with the ayah below
+   the fold and no sign it was there. A calm wash, never a blink — this is a
+   bookmark, not an alert. */
+.mushaf-ayah--target {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mushaf-ayah--target {
+    /* 280ms, inside the project's 300ms motion contract. This is meant to
+       catch the eye, not entertain it; a longer settle would be a
+       distraction on a page whose whole purpose is stillness. */
+    animation: mushaf-target-settle 280ms ease-out 1;
+  }
+  @keyframes mushaf-target-settle {
+    from {
+      background: color-mix(in srgb, var(--color-primary) 34%, transparent);
+    }
+    to {
+      background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .mushaf-ayah--target {
+    outline: 2px solid Highlight;
+  }
 }

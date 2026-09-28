@@ -219,38 +219,3 @@
     outline-offset: -2px;
   }
 }
-
-/* v5.17.21 — the ayah you asked for. "Open the mushaf at 2:255" is the most
-   used deep-link shape in any serious mushaf app and in a printed mushaf's
-   index, and the app could not express it: every mushaf link carried a page
-   and nothing else, so you landed at the top of a page with the ayah below
-   the fold and no sign it was there. A calm wash, never a blink — this is a
-   bookmark, not an alert. */
-.mushaf-ayah--target {
-  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent);
-  border-radius: 4px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .mushaf-ayah--target {
-    /* 280ms, inside the project's 300ms motion contract. This is meant to
-       catch the eye, not entertain it; a longer settle would be a
-       distraction on a page whose whole purpose is stillness. */
-    animation: mushaf-target-settle 280ms ease-out 1;
-  }
-  @keyframes mushaf-target-settle {
-    from {
-      background: color-mix(in srgb, var(--color-primary) 34%, transparent);
-    }
-    to {
-      background: color-mix(in srgb, var(--color-primary) 14%, transparent);
-    }
-  }
-}
-
-@media (forced-colors: active) {
-  .mushaf-ayah--target {
-    outline: 2px solid Highlight;
-  }
-}
