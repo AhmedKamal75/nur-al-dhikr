@@ -7,7 +7,13 @@
  * to another slice (the dispatcher in ../reducer.js tries each in turn).
  */
 
-import { dateKey, isSafeKey, uid } from '../../utils.js';
+import {
+  dateKey,
+  isSafeKey,
+  uid,
+  MAX_COMPLETED_CYCLES,
+  MAX_TOTAL_RECITATIONS,
+} from '../../utils.js';
 import { markMemorizedKey, logReviewKey, normalizeHifzGrade } from '../../../domain/hifz.js';
 import { initialState } from '../initial.js';
 import { computeStreak } from '../streak.js';
@@ -466,11 +472,22 @@ export function reduceLibrary(state, action) {
         target: action.target || 1,
         completedCycles: 0,
       };
+      // (OPEN-ISSUES #19) a crafted/forged patch must not lodge an unbounded
+      // completedCycles in live state — clamp it here (the write path's twin
+      // is the restore clamp in core/state/restore.js). Values under the cap
+      // pass through untouched, so every legit caller is unaffected.
+      const patch = { ...action.patch };
+      if (patch.completedCycles != null) {
+        const n = Math.floor(Number(patch.completedCycles));
+        patch.completedCycles = Number.isFinite(n)
+          ? Math.min(MAX_COMPLETED_CYCLES, Math.max(0, n))
+          : (existing.completedCycles ?? 0);
+      }
       return {
         ...state,
         counters: {
           ...state.counters,
-          [action.itemId]: { ...existing, ...action.patch, lastUpdated: Date.now() },
+          [action.itemId]: { ...existing, ...patch, lastUpdated: Date.now() },
         },
       };
     }
@@ -525,9 +542,14 @@ export function reduceLibrary(state, action) {
       // Spread first: sibling writers (khatma pages, reading seconds) add
       // their own keys to the same day entry — rebuilding it from scratch
       // used to wipe them on every dhikr count.
+      // (OPEN-ISSUES #19) lifetime and day recitation totals saturate at
+      // MAX_TOTAL_RECITATIONS instead of growing unbounded.
       const nextToday = {
         ...today,
-        recitations: (today.recitations || 0) + (action.count || 1),
+        recitations: Math.min(
+          MAX_TOTAL_RECITATIONS,
+          (today.recitations || 0) + (action.count || 1)
+        ),
         sessions: (today.sessions || 0) + (action.newSession ? 1 : 0),
         itemIds: (today.itemIds || []).includes(action.itemId)
           ? today.itemIds
@@ -554,7 +576,10 @@ export function reduceLibrary(state, action) {
         statistics: {
           ...state.statistics,
           dailyHistory: nextHistory,
-          totalRecitations: state.statistics.totalRecitations + (action.count || 1),
+          totalRecitations: Math.min(
+            MAX_TOTAL_RECITATIONS,
+            state.statistics.totalRecitations + (action.count || 1)
+          ),
           totalSessions: state.statistics.totalSessions + (action.newSession ? 1 : 0),
           favoriteCategories: favCat,
           lastActiveDate: key,

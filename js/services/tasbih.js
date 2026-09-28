@@ -7,7 +7,7 @@
  */
 
 import { store, actions } from '../core/state.js';
-import { vibrate, dateKey } from '../core/utils.js';
+import { vibrate, dateKey, MAX_COMPLETED_CYCLES } from '../core/utils.js';
 import { markCelebration, milestoneHit, wasCelebrated } from '../domain/celebrate.js';
 import { t } from '../core/i18n.js';
 import { getAudioContext } from './audioContext.js';
@@ -31,11 +31,17 @@ export function increment(itemId, categoryId, target = 1, step = 1) {
         ? Math.floor(Number(existing.target))
         : 1;
   let count = existing.count + step;
-  let completedCycles = existing.completedCycles;
+  // (OPEN-ISSUES #19) the lifetime cycle count saturates instead of growing
+  // without bound — and the coerce-first also heals a stored record whose
+  // completedCycles arrived hostile/missing (elsewhere-clamped patches keep
+  // it finite, but increment must never be the place NaN is born).
+  let completedCycles = Number.isFinite(Number(existing.completedCycles))
+    ? Math.min(MAX_COMPLETED_CYCLES, Math.max(0, Math.floor(Number(existing.completedCycles))))
+    : 0;
   let cycleCompleted = false;
 
   if (count >= effTarget) {
-    completedCycles += 1;
+    completedCycles = Math.min(MAX_COMPLETED_CYCLES, completedCycles + 1);
     count = 0;
     cycleCompleted = true;
   }

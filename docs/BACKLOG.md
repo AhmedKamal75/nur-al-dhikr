@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.24**. Last updated against a green `npm run check` and
+> Current version: **v5.17.25**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -98,7 +98,6 @@ Recorded so "not done" is a decision with a reason rather than an omission.
 | **Row 19 — tasbih cycle counters are unbounded**                                  | A long session grows the counter without a floor. Small, but it needs a decided limit, not an arbitrary one.                                                                                 |
 | **Row 22 — iOS storage eviction and push limits are not in the README**           | Documentation debt about a real platform behaviour. Cheap, and nobody has written it down.                                                                                                   |
 | **Row 26 — iOS cannot be relied on for prayer-time wake-ups**                     | A platform limit, not a bug. `BLOCKED:device`.                                                                                                                                               |
-| **Row 8 — `adhan.mp3` is 2.4 MB of the precache**                                 | Deliberate for now: adhan must work offline for a prayer trigger. A real install-size decision, not an oversight.                                                                            |
 
 ---
 

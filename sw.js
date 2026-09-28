@@ -11,7 +11,7 @@
  *    network. offline.html is the last-resort fallback.
  */
 
-const VERSION = 'nur-al-dhikr-v5.17.24';
+const VERSION = 'nur-al-dhikr-v5.17.25';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 // The handful of *extra* tafsir/i'rab editions too large to bundle on-device
@@ -288,8 +288,10 @@ const APP_SHELL = [
   'assets/fonts/ScheherazadeNew-Bold.woff2',
   'assets/fonts/ScheherazadeNew-OFL.txt',
   'assets/fonts/OFL.txt',
-  'assets/audio/adhan/adhan.mp3',
 ];
+// NOTE: assets/audio/adhan/adhan.mp3 (~2.4MB) is intentionally NOT precached —
+// it is cached cache-first on first play (isAdhanRequest below), so install
+// stays lean while repeat alerts work offline (OPEN-ISSUES #8).
 // NOTE: /data/*.json is intentionally NOT precached — every data request is
 // served (and cached) by staleWhileRevalidate into DATA_CACHE at runtime,
 // so precached copies in SHELL_CACHE would be unreachable dead weight
@@ -804,6 +806,15 @@ function isDataRequest(url) {
 }
 
 /**
+ * (v5.17.25, OPEN-ISSUES #8) the bundled adhan recording (~2.4MB) is NOT
+ * precached — matching by path suffix so it keeps working under any scope
+ * the app is served from.
+ */
+function isAdhanRequest(url) {
+  return url.pathname.endsWith('assets/audio/adhan/adhan.mp3');
+}
+
+/**
  * (B6) refresh recency on a hit: delete + re-insert moves the entry to
  * the end of cache.keys() insertion order, turning the eviction policy
  * into least-recently-SERVED (see putWithEviction). Re-inserts whatever
@@ -835,6 +846,15 @@ self.addEventListener('fetch', (event) => {
 
   if (isDataRequest(url)) {
     event.respondWith(staleWhileRevalidate(request, event));
+    return;
+  }
+
+  if (isAdhanRequest(url)) {
+    // Cache-on-first-use: the first alert fetches from the network and
+    // cacheFirst stores the full 200 response (a 206 range slice is never
+    // stored — see the status guard in cacheFirst); every later alert,
+    // online or offline, plays from the shell cache.
+    event.respondWith(cacheFirst(request));
     return;
   }
 

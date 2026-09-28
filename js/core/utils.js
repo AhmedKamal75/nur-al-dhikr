@@ -172,6 +172,20 @@ export function clamp(n, min, max) {
 }
 
 /**
+ * (OPEN-ISSUES #19) Saturating ceilings for the tasbih lifetime counters.
+ * `count` is bounded by its target, but `completedCycles` and
+ * `totalRecitations` used to grow without bound — a mashed dial (or a
+ * crafted backup/dispatch) could push them past 1e6 toward
+ * Number.MAX_SAFE_INTEGER, where float precision, the `✓ N×` badge, and
+ * localStorage health all degrade. Both saturate (Math.min) instead of
+ * wrapping or resetting, so counting just stops growing — no UX change.
+ * MAX_TOTAL_RECITATIONS matches the restore-time `asCount` ceiling in
+ * core/state/restore.js so live state and restored state agree.
+ */
+export const MAX_COMPLETED_CYCLES = 999999;
+export const MAX_TOTAL_RECITATIONS = 1e9;
+
+/**
  * Human-readable byte size — the ONE formatter for both display contexts
  * (v4.1 dedup; the app previously shipped two private copies with
  * divergent semantics). Options pick the context:

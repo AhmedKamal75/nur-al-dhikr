@@ -107,8 +107,8 @@ import { getAdhanAudio, validateAdhanFile, looksLikeAudio } from './audioStore.j
 import { getAudioContext } from './audioContext.js';
 
 export const ADHAN_MODES = Object.freeze(['adhan', 'tone', 'off']);
-/** Served from the app shell (SW-precached, works offline). CC0 — see
- *  assets/audio/adhan/CREDITS.md. */
+/** Cached on first play (SW cache-first, works offline after one alert).
+ *  CC0 — see assets/audio/adhan/CREDITS.md. */
 export const BUNDLED_ADHAN_URL = 'assets/audio/adhan/adhan.mp3';
 
 /**

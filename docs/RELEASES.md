@@ -2,6 +2,22 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.25 — The adhan leaves the precache
+
+- **`assets/audio/adhan/adhan.mp3` (~2.4MB) is no longer precached**
+  (OPEN-ISSUES #8). It was roughly 40% of the install for a file only
+  needed when a prayer alert fires. The service worker now caches it
+  cache-first on first play (`isAdhanRequest` in `sw.js` routes it to the
+  same `cacheFirst` — with the same store-only-200 guard, so a 206 range
+  slice can never poison the entry): install stays lean, the first alert
+  fetches it, and every later alert plays from cache, offline included.
+  - `tests/adhan-cache.test.js` pins all three halves: not in `APP_SHELL`,
+    not in the committed shell snapshot, an explicit runtime path to
+    `cacheFirst`, and playback still resolving to the bundled file that
+    still ships on disk.
+  - The ledger row closes as **RESOLVED (verified)**; the backlog's open
+    table loses it.
+
 ## v5.17.24 — The backlog becomes a real artefact, and stops lying
 
 - **`docs/BACKLOG.md` exists.** The owner's goals, where each one stands, the

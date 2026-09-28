@@ -3,7 +3,13 @@
  */
 
 import { MUSHAF_PAGE_COUNT, SCHEMA_VERSION } from '../config.js';
-import { cleanObject, clone, isSafeKey } from '../utils.js';
+import {
+  cleanObject,
+  clone,
+  isSafeKey,
+  MAX_COMPLETED_CYCLES,
+  MAX_TOTAL_RECITATIONS,
+} from '../utils.js';
 import { isReturningUser, CONFIRM_STEPS } from '../../domain/onboarding.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
 import { sanitizeAyahRecords, sanitizeHifzRecords, sanitizeMemRecords } from '../../domain/hifz.js';
@@ -511,7 +517,10 @@ export function sanitizeRestoredPayload(payload) {
         clean[id] = {
           count: asCount(v.count),
           target: Math.max(1, Math.min(100000, asCount(v.target, 33) || 33)),
-          completedCycles: asCount(v.completedCycles),
+          // (OPEN-ISSUES #19) asCount already ceilings at 1e9; cycles clamp
+          // further to the display-bounded lifetime cap the live increment
+          // saturates at, so restored state and live state agree.
+          completedCycles: Math.min(MAX_COMPLETED_CYCLES, asCount(v.completedCycles)),
           lastCompletedDay: /^\d{4}-\d{2}-\d{2}$/.test(day || '') ? day : null,
         };
       }
@@ -623,7 +632,7 @@ export function sanitizeRestoredPayload(payload) {
         }
         return clean;
       })(),
-      totalRecitations: asCount(stats.totalRecitations),
+      totalRecitations: Math.min(MAX_TOTAL_RECITATIONS, asCount(stats.totalRecitations)),
       totalSessions: asCount(stats.totalSessions),
       longestStreak: asCount(stats.longestStreak),
       currentStreak: asCount(stats.currentStreak),
