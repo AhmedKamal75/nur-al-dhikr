@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.21",
+  "version": "5.17.22",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
@@ -66,13 +66,13 @@
     },
     {
       "path": "hadith/nawawi.json",
-      "bytes": 74639,
-      "sha256": "bfd03c39f7f3ab31977dc0319a1f8ecd1a88fa424a6cea71efb901d335703733"
+      "bytes": 75789,
+      "sha256": "e4618a6b1226eda59a4faf130c8bf26558113c16ae85bd1589c13c094bab3c38"
     },
     {
       "path": "hadith/qudsi.json",
-      "bytes": 86510,
-      "sha256": "50cb7621a3998240ecd8e53f2b163383134219c5342f53cd366fee63b0161d6d"
+      "bytes": 87564,
+      "sha256": "d0be149f059ec58bd0cc4625b49dbb4918d6e93ffed7d111f9b1871bbc0171fb"
     },
     {
       "path": "hadith/tirmidhi.json",

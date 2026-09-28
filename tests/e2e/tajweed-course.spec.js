@@ -101,6 +101,33 @@ test.describe('tajweed course', () => {
     await expect(page.locator('#main')).toContainText('No session matches', { timeout: 10000 });
   });
 
+  test('the course is actually styled, and loads only its own sheet', async ({ page }) => {
+    // (v5.17.22) This screen shipped for a release rendering as BARE TEXT.
+    // Its rules had been written into quran.css, which the renderer injects
+    // only for the mushaf, the reader and the roots route — so the course got
+    // none of them. A headline feature that looked like a broken prototype.
+    await page.goto('./#/tajweed-course');
+    await courseReady(page);
+
+    const styled = await page.evaluate(() => {
+      const el = document.querySelector('.taj-course__session');
+      const cs = getComputedStyle(el);
+      return {
+        padding: cs.paddingTop,
+        border: cs.borderTopWidth,
+        radius: cs.borderRadius,
+        sheets: [...document.querySelectorAll('link[data-route-css]')].map(
+          (l) => l.dataset.routeCss
+        ),
+      };
+    });
+    expect(parseFloat(styled.padding), 'the session card must have padding').toBeGreaterThan(0);
+    expect(styled.border, 'the session card must have a visible border').toBe('1px');
+    expect(parseFloat(styled.radius), 'and a rounded corner').toBeGreaterThan(0);
+    // Its own sheet only: a course visitor should not download the book.
+    expect(styled.sheets).toContain('tajweedCourse');
+  });
+
   test('the course is bilingual', async ({ page }) => {
     await page.goto('./#/tajweed-course');
     await courseReady(page);

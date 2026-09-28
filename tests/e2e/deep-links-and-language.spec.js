@@ -71,6 +71,9 @@ test.describe('language switch', () => {
       '#/prayer',
       '#/tasbih',
       '#/tajweed-course',
+      '#/journal',
+      '#/mood',
+      '#/focus',
     ];
     for (const route of routes) {
       await page.goto(`./${route}`);
@@ -94,6 +97,19 @@ test.describe('language switch', () => {
     await page.locator('[data-action="quick-language-toggle"]').click();
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr', { timeout: 10000 });
     await expect(page.locator('html')).toHaveAttribute('lang', 'en', { timeout: 10000 });
+  });
+
+  test('the picker inside the shell keeps its chrome', async ({ page }) => {
+    // A bare #/focus is a picker, not an immersive reading mode, and it used
+    // to hide the topbar — taking the language switch with it, measured at
+    // 0x0. Focus MODE now needs a focus TARGET; the picker keeps its chrome.
+    await page.goto('./#/focus');
+    await ready(page);
+    const sw = page.locator('[data-action="quick-language-toggle"]');
+    await expect(sw).toBeVisible({ timeout: 10000 });
+    const box = await sw.boundingBox();
+    expect(box.width, 'the picker must not render a 0-width control').toBeGreaterThanOrEqual(44);
+    expect(box.height).toBeGreaterThanOrEqual(44);
   });
 
   test('the button announces the language it switches TO', async ({ page }) => {

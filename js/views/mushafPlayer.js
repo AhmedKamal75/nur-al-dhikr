@@ -10,7 +10,7 @@ import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { findMoshaf } from '../services/audioCatalog.js';
 import {
-  clampPage,
+  mushafRoutePage,
   mushafSpreadActive,
   spreadRightPage,
   spreadLeftPage,
@@ -134,7 +134,12 @@ export function pageChapters(docs) {
  */
 export function buildMushafPlayPick(state) {
   const lang = state.settings.language;
-  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  // (v5.17.21) The picker must offer the surahs on the page the READER
+  // renders, not the one the URL happens to carry. On a `?s=2&ay=255` deep
+  // link the URL names no page at all, so this used to read the bookmark and
+  // list Al-Fatihah while the book sat open at Ayat al-Kursi — the reader
+  // was told to recite a surah that was not on the page in front of them.
+  const page = mushafRoutePage(state).page;
   const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
   const right = spreadOn ? spreadRightPage(page) : page;
   const left = spreadOn ? spreadLeftPage(right) : null;

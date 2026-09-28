@@ -29,7 +29,6 @@ import { icon } from '../core/icons.js';
 import { clamp, escapeHTML, pickLocale, toEasternArabicNumerals } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import {
-  clampPage,
   isFirstPage,
   isLastPage,
   isSajdaAyah,
@@ -55,6 +54,10 @@ import {
   fsPlayButtonHTML,
   pageChapters,
 } from './mushafPlayer.js';
+// (v5.17.21, FIXED) The route's page resolution lives in the navigation part
+// so the book and the jump drawer's "you are here" cannot drift apart — see
+// mushafRoutePage() there.
+import { mushafRoutePage } from './mushafJump.js';
 import { renderAyahWords, buildBismillahHTML } from './tafsirPanel.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
 // (Blueprint E step 2) extracted view parts live in their own modules;
@@ -114,16 +117,17 @@ import { consumeFlipDirection, consumeFullscreenAnim } from '../ui/readingTokens
 
 export function renderMushaf(state) {
   const lang = state.settings.language;
-  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
-  // (v5.17.21) `ay` — "open the mushaf at 2:255". Every one of the 13 mushaf
-  // links in the app used to carry a page and nothing else, so search's
-  // "open in mushaf" and a shared link both dropped the reader at the TOP of
-  // a page, with the ayah they asked for somewhere below the fold and no
-  // indication it was even there. data/mushaf-meta.json already holds all
-  // 6,236 ayah->page entries; the route simply could not express the target.
-  const wantSurah = Number(state.activeParams.s) || null;
-  const wantAyah = Number(state.activeParams.ay) || null;
   const meta = state.mushaf.meta;
+  // (v5.17.21, FIXED) `s`/`ay` resolve the PAGE, not merely the marker. The
+  // deep link shipped reading them for a highlight and then still deriving the
+  // page from the URL alone, so `#/mushaf?s=2&ay=255` opened Al-Fatihah 1
+  // with nothing marked anywhere — a silent wrong answer about scripture
+  // position, which in a mushaf is the worst kind of wrong. The map was
+  // already loaded (mushaf-meta.json carries all 6,236 ayahPages entries);
+  // mushafRoutePage() reads it, and the jump drawer resolves "you are here"
+  // through the same call, so no two surfaces can disagree about where an
+  // ayah is. `page` still wins when the URL carries one.
+  const { page, surah: wantSurah, ayah: wantAyah } = mushafRoutePage(state);
   const pageDoc = state.mushaf.pages[String(page)];
   const prefs = state.settings.mushafPrefs;
   const font = MUSHAF_FONTS.find((f) => f.id === prefs.font) || MUSHAF_FONTS[0];
@@ -136,7 +140,15 @@ export function renderMushaf(state) {
   // (v5.2.87, P0-3) clamp widened 0.8–1.6 → 0.6–2.2: the store already
   // sanitizes to this range and the fullscreen auto-fit engine settles
   // anywhere inside it — the old clamp silently pinned fit results.
-  const mushafScale = clamp(Number(prefs.fontScale) || 1, 0.6, 2.2);
+  // (v5.17.22) Elder Mode reaches the mushaf. A mushaf owning its own
+  // typography is correct — it has its own size control, and the fullscreen
+  // auto-fit needs a scale it can drive. But owning it silently meant the
+  // app's accessibility promise lapsed on the one screen that matters most:
+  // a hostile review measured mushaf chrome at 9.4px and IDENTICAL under
+  // Elder Mode and 200%. So Elder Mode now raises the mushaf's own scale by
+  // the same step the rest of the app uses, instead of being ignored.
+  const elderStep = state.settings?.elderMode === true ? 1.18 : 1;
+  const mushafScale = clamp((Number(prefs.fontScale) || 1) * elderStep, 0.6, 2.2);
   const mushafLineScale = clamp(Number(prefs.lineSpacing) || 1, 0.85, 1.3);
   // Bookmark lookup set — built once per render, O(1) per ayah.
   const bookmarkedKeys = new Set(state.ayahBookmarks.map((b) => b.key));
@@ -628,7 +640,10 @@ function buildTranslationTray(state, docs, lang) {
 export function buildMushafSheet(state) {
   const lang = state.settings.language;
   const prefs = state.settings.mushafPrefs;
-  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  // (v5.17.21, FIXED) Same route resolution as the page above: on a
+  // `?s=&ay=` arrival the URL names no page, and "Memorise this surah" used
+  // to offer Al-Fatihah while the book was open at 2:255.
+  const { page } = mushafRoutePage(state);
   const pageDoc = state.mushaf.pages[String(page)];
   const surah = pageDoc?.chapters?.[0]?.number || null;
   const follow = state.settings.audio?.ayahFollow ?? true;
@@ -723,7 +738,11 @@ export function buildMushafSheet(state) {
 // (v5.17.21) The jump drawer now lives in its own module because this file
 // crossed its 800-line cap. Re-exported so every existing importer — the
 // handler, the tests — keeps importing from the facade unchanged.
-export { buildMushafJump } from './mushafJump.js';
+// (v5.17.21, FIXED) mushafRoutePage rides the facade too: the app layer
+// resolves the mushaf route's page through this module (handlers/quran.js
+// awaits the mushaf chunk for it), and a static import of the view from the
+// app layer is exactly the boot-parse edge this lazy loader exists to avoid.
+export { buildMushafJump, mushafRoutePage } from './mushafJump.js';
 
 export { buildMushafTrack, buildKhatmaPlanForm } from './khatma.js';
 export { buildMushafAyahDetail } from './ayahStudy.js';

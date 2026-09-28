@@ -262,3 +262,54 @@ export function resolvePage(ayahPages, surah, ayah) {
   const page = ayahPages[`${s}:${a}`];
   return Number.isFinite(page) ? clampPage(page) : null;
 }
+
+/**
+ * (v5.17.21) The ONE page a mushaf route resolves to.
+ *
+ * The route may name a page (`?page=42`), an ayah (`?s=2&ay=255`) or
+ * neither, and EVERY layer has to agree: a reader that renders the
+ * skeleton for page 42 forever while the loader fetches page 1 is not a
+ * cosmetic disagreement, it is an app that cannot open a shared link at
+ * all. It lives here, beside the clampPage/resolvePage it composes, for
+ * the same reason those two are here: the app layer resolves the mushaf
+ * route on every render (lazyData fetches the page it must show, the
+ * follow-along reciter compares against it, a breakpoint crossing
+ * re-bookmarks it) and those modules must not statically import a view —
+ * that edge is exactly what keeps the 740-line book out of the boot
+ * parse. The view side re-exports it, so the reader, the jump drawer
+ * and the ⋯ sheet read the same function (see views/mushafJump.js).
+ *
+ * Precedence: an explicit `page` wins whenever the URL carries one — the
+ * spread, page-turn, jump and follow-along-recitation paths pass a page
+ * and nothing else, and search's mushaf chip passes both. Otherwise a
+ * resolvable ayah decides, through resolvePage(), the single reader of
+ * mushaf-meta.json's 6,236 ayahPages entries. Otherwise the last-read
+ * bookmark, exactly as before.
+ *
+ * `surah`/`ayah` come back null unless the corpus could PLACE the pair, so
+ * a hand-typed `?s=2&ay=9999` (or a bare `?s=2`) renders an ordinary page
+ * and marks nothing — and because a marker can only ever match an ayah
+ * that is actually rendered, an ayah that is not on the resolved page
+ * cannot mark anything either.
+ *
+ * Takes the whole state (rather than three arguments) so every call site
+ * is a one-liner over the snapshot it already holds; it reads four fields
+ * and never writes, so it stays as unit-testable as its neighbours.
+ */
+export function mushafRoutePage(state) {
+  const params = state?.activeParams || {};
+  const surah = Number(params.s);
+  const ayah = Number(params.ay);
+  const askedPage =
+    Number.isInteger(surah) && surah > 0 && Number.isInteger(ayah) && ayah > 0
+      ? resolvePage(state.mushaf?.meta?.ayahPages, surah, ayah)
+      : null;
+  const asked = Number(params.page);
+  return {
+    page: clampPage(
+      Number.isInteger(asked) && asked > 0 ? asked : (askedPage ?? state.mushafBookmark?.page ?? 1)
+    ),
+    surah: askedPage ? surah : null,
+    ayah: askedPage ? ayah : null,
+  };
+}

@@ -2,6 +2,64 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.22 — A hostile review found four things, and three of them were mine
+
+An independent review at v5.17.21 scored 8.2/10 and was right about every
+number it gave. Four findings needed work, and three were regressions this
+project shipped earlier.
+
+- **The mushaf deep link silently showed the wrong surah.** `?s=2&ay=255`
+  opened Al-Fatihah. The `s`/`ay` params were read and used to add a CSS
+  class, but **nothing resolved the page from them** — the reader still read
+  `activeParams.page` alone. A silent wrong answer about scripture position,
+  which is the one failure class this product exists to avoid. The same
+  one-line rule was stale in three more places (the data loader, the
+  recitation picker, the sheet), so the fix had to reach the app layer, not
+  only the view. The resolver now lives in `js/services/mushaf.js` beside the
+  `clampPage`/`resolvePage` it composes, and nine sites call it.
+  - **The test for it could not fail.** The v5.17.21 commit asserted only
+    `{ page: 1 }`, so the feature was untested in the one way that mattered —
+    in a commit whose own message said "a test that cannot fail while the app
+    is wrong is worse than no test." Twelve cases now, each reading the real
+    `ayahPages` map, and each verified to fail when the fix is reverted.
+- **The tajweed course shipped for a release rendering as bare text.** Its CSS
+  had been written into `quran.css`, which the renderer injects only for the
+  mushaf, the reader and the roots route — so a headline feature looked like a
+  broken prototype. Its rules now live in their own `tajweed-course.css`,
+  loaded on that route alone: a course visitor downloads a ladder, not a book.
+- **The journal was invisible in dark mode at 1.19:1.** Its textareas carried
+  `class="journal-textarea"`, which matched **no rule in any stylesheet**, so
+  they fell back to the browser's white background while the app sets light
+  text. The reader's own words, unreadable, on the one screen where they
+  write them. They now sit on the shared `.input` base like every other field.
+- **Thirty-one hadith strings printed `<br>` inside the Arabic.** An upstream
+  line-break convention met the app's (correct) escaping of scripture-derived
+  text, so four characters were visible in the middle of the Arabic on the
+  home screen. The mark is not deleted — it is a real line break in the
+  printed source — so it becomes a newline and the stylesheet renders it.
+- **Elder Mode and 200% type were ignored by the mushaf.** A mushaf owning its
+  typography is correct, but owning it _silently_ meant the app's
+  accessibility promise lapsed on its most important screen: chrome measured
+  9.4px and did not move at all. Elder Mode now raises the mushaf's own scale
+  by the same step the rest of the app uses, and the smallest mushaf text has
+  a real floor.
+- **`roomySpacing` was a control that did nothing where it mattered.** It
+  reached translations, virtues and the journal — the supplementary text —
+  and left the main reading surfaces byte-identical, which is the signature of
+  a dead switch. It now reaches the reader, the tray, tasbih phrases and
+  field labels. The mushaf is deliberately excluded: it has its own
+  line-spacing control, and two settings fighting over one line box leaves the
+  reader unable to predict which wins. Arabic gets word-spacing only —
+  letter-spacing would break the joins.
+- **The paramless `#/focus` picker was hiding the topbar**, taking the
+  language switch with it (measured at 0x0). Focus _mode_ now needs a focus
+  _target_; the picker keeps its chrome. Ambient stays chrome-free: it is a
+  nightstand clock.
+- `docs/CAPABILITY-PARITY.md` had G1 and G2 as open gaps. Both shipped long
+  ago. They are now marked shipped **with the evidence that re-verified
+  them**, because a comparison document that is confidently wrong is worse
+  than no comparison document at all.
+
 ## v5.17.21 — The mushaf: a link that can name a verse, a jump drawer that knows where you are
 
 - **"Open the mushaf at 2:255" now exists.** All 13 mushaf links in the app

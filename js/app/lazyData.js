@@ -27,6 +27,7 @@ import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
 import {
   clampPage,
+  mushafRoutePage,
   prevPage as mushafPrevPage,
   nextPage as mushafNextPage,
   mushafSpreadActive,
@@ -298,14 +299,24 @@ export async function ensureMushafData(state) {
       console.error('[mushaf] failed to load page index', err);
     }
     if (!isCurrentGeneration(generation)) return;
+    // (v5.17.21) The re-read is load-bearing, not tidiness: the route's
+    // ayah→page map only exists in the state the fetch just produced, and
+    // the snapshot handed to this function still says `meta: null`. Resolving
+    // the page from the stale snapshot is what made a cold `?s=2&ay=255`
+    // arrival load page 1 while the reader rendered page 42's skeleton.
+    state = store.getState();
   }
 
   // (v4.5) a spread reads from its right-hand (odd) page: normalize the
   // requested page to it, then load BOTH facing pages. The khatma marks
   // cover the whole spread — a displayed page is a read page, and the
   // person reading two-at-a-time shouldn't have to tap each sheet.
+  // (v5.17.21) Through mushafRoutePage, the SAME resolution the reader
+  // renders with: a deep link names a page the URL never carried, and a
+  // loader that answered the route its own way made the skeleton wait
+  // forever for a page nobody was ever going to render.
   const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
-  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  const page = mushafRoutePage(state).page;
   const rightPage = spreadOn ? spreadRightPage(page) : page;
   const leftPage = spreadOn ? spreadLeftPage(rightPage) : null;
   const key = String(rightPage);
@@ -510,7 +521,11 @@ export function ensureRootsMeaning() {
  */
 export async function ensureMushafSurahDocs(state) {
   const generation = lazyDataGeneration;
-  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  // (v5.17.21) Same route resolution as the page loader above: on a
+  // `?s=&ay=` arrival the URL carries no page, so reading it directly
+  // armed the tray for page 1's surahs while the book was open at 2:255 —
+  // a translation of the wrong ayah's surah, next to the right one.
+  const page = mushafRoutePage(state).page;
   // (v4.5) the tray lists every ayah of the SPREAD — both facing pages.
   const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
   const right = spreadOn ? spreadRightPage(page) : page;

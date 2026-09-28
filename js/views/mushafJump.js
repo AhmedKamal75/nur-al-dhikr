@@ -12,12 +12,24 @@
 
 import { t } from '../core/i18n.js';
 import { escapeHTML, pickLocale, toEasternArabicNumerals } from '../core/utils.js';
-import { clampPage, hizbStartPage } from '../services/mushaf.js';
+import { hizbStartPage, mushafRoutePage } from '../services/mushaf.js';
 import { MUSHAF_PAGE_COUNT } from '../core/config.js';
 import { skeletonLines } from '../ui/skeleton.js';
 
 /** Eastern numerals for the mushaf chrome in Arabic, Western in English. */
 const numFor = (lang, n) => (lang === 'ar' ? toEasternArabicNumerals(n) : String(n));
+
+/**
+ * (v5.17.21) The ONE page a mushaf route resolves to — it LIVES in
+ * services/mushaf.js now, next to the clampPage/resolvePage it composes,
+ * because the app layer resolves the same route on every render (the lazy
+ * loader fetches the page the book will show, follow-along compares
+ * against it, a breakpoint crossing re-bookmarks it) and an app module
+ * must never statically import a view. This re-export keeps the reader,
+ * this drawer, the ⋯ sheet and every existing importer pointed at the
+ * one function, so no two surfaces can disagree about where an ayah is.
+ */
+export { mushafRoutePage };
 
 /** (v4.5) "{n} ayahs" for the surah rows — same source of truth
  *  (quran-meta) as the banner's count line, elided while it loads. */
@@ -42,9 +54,11 @@ export function buildMushafJump(state) {
   // in a list this long, and the active class is the same fact for everyone
   // else. Derived from the same first-page maps the buttons already use, so
   // it cannot disagree with where a jump would actually land.
-  // Defensive: a view must not throw on a missing param bag. buildMushafSheet
-  // already reads state.activeParams?.page for exactly this reason.
-  const here = clampPage(state.activeParams?.page || state.mushafBookmark?.page || 1);
+  // (v5.17.21, FIXED) "You are here" resolves the page the SAME way the
+  // reader does — a `?s=&ay=` deep link names a page the URL never carried,
+  // and a drawer that disagreed with the book would be a second wrong answer
+  // about position. Defensive: a view must not throw on a missing param bag.
+  const { page: here } = mushafRoutePage(state);
   const contains = (startMap, key) => {
     let current = null;
     for (const [k, v] of Object.entries(startMap)) {

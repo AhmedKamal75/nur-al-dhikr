@@ -99,7 +99,7 @@ function duaRows(state) {
       <header class="journal-entry__head">
         <time datetime="${escapeHTML(e.date)}">${escapeHTML(e.date)}</time>
       </header>
-      <textarea class="journal-textarea" rows="3" data-bind="journal-edit-text" dir="auto" aria-label="${t('editor.edit', lang)}">${escapeHTML(e.text)}</textarea>
+      <textarea class="input journal-textarea" rows="3" data-bind="journal-edit-text" dir="auto" aria-label="${t('editor.edit', lang)}">${escapeHTML(e.text)}</textarea>
       <div class="panel__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="dua-edit-save">${t('common.save', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="journal-edit-cancel">${t('common.cancel', lang)}</button>
@@ -162,7 +162,7 @@ function reflectionRows(state) {
         <time datetime="${escapeHTML(e.week)}">${escapeHTML(e.week)}</time>
       </header>
       ${e.promptId ? `<p class="journal-entry__prompt">${escapeHTML(promptText(e.promptId, lang))}</p>` : ''}
-      <textarea class="journal-textarea" rows="4" data-bind="journal-edit-text" dir="auto" aria-label="${t('editor.edit', lang)}">${escapeHTML(e.text)}</textarea>
+      <textarea class="input journal-textarea" rows="4" data-bind="journal-edit-text" dir="auto" aria-label="${t('editor.edit', lang)}">${escapeHTML(e.text)}</textarea>
       <div class="panel__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="reflection-edit-save">${t('common.save', lang)}</button>
         <button type="button" class="btn btn--ghost btn--sm" data-action="journal-edit-cancel">${t('common.cancel', lang)}</button>
@@ -205,7 +205,7 @@ export function renderJournal(state) {
     <section class="panel panel--prompt">
       <div class="panel__header"><h2>${t('journal.weeklyPrompt', lang)}</h2><span class="view__meta" dir="ltr">${escapeHTML(week)}</span></div>
       <p class="prompt__text">${escapeHTML(promptText(promptId, lang))}</p>
-      <textarea class="journal-textarea" rows="4" data-bind="reflection-text" aria-label="${t('journal.writeHere', lang)}" placeholder="${t('journal.writeHere', lang)}"></textarea>
+      <textarea class="input journal-textarea" rows="4" data-bind="reflection-text" aria-label="${t('journal.writeHere', lang)}" placeholder="${t('journal.writeHere', lang)}"></textarea>
       <div class="panel__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="reflection-save" data-week="${escapeHTML(week)}" data-prompt="${escapeHTML(promptId)}">${t('journal.saveReflection', lang)}</button>
       </div>
@@ -230,7 +230,7 @@ export function renderJournal(state) {
         ? `
     <section class="panel">
       <div class="panel__header"><h2>${t('journal.newDua', lang)}</h2></div>
-      <textarea class="journal-textarea" rows="3" data-bind="dua-text" aria-label="${t('journal.duaPlaceholder', lang)}" placeholder="${t('journal.duaPlaceholder', lang)}"></textarea>
+      <textarea class="input journal-textarea" rows="3" data-bind="dua-text" aria-label="${t('journal.duaPlaceholder', lang)}" placeholder="${t('journal.duaPlaceholder', lang)}"></textarea>
       <div class="panel__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="dua-save">${t('journal.saveDua', lang)}</button>
       </div>

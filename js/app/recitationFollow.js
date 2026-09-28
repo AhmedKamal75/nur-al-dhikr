@@ -7,7 +7,7 @@ import * as gapTelemetry from '../services/gapTelemetry.js';
 import { VIEWS } from '../core/config.js';
 import { go } from '../core/router.js';
 import {
-  clampPage,
+  mushafRoutePage,
   mushafSpreadActive,
   resolvePage as resolveMushafPage,
   spreadRightPage,
@@ -78,11 +78,16 @@ export async function maybeFollowRecitation(state) {
     const meta = state.mushaf.meta;
     const page = meta ? resolveMushafPage(meta.ayahPages, sp.surah, sp.ayah) : null;
     if (!page) return;
-    const current = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    const current = mushafRoutePage(state).page;
     // In a two-page spread both facing pages are already on screen — only
     // turn when the ayah's spread differs from the visible one. Comparing
     // raw pages here flipped pointlessly (and pushed a history entry) every
     // time recitation crossed from the right to the left facing page.
+    // (v5.17.21) `current` is the ROUTE's page, not the URL's. On a
+    // `?s=2&ay=255` arrival the URL names no page, so the old read compared
+    // the first recited ayah against the bookmark: a redundant page flip
+    // plus a pushed history entry for a book that was already open on the
+    // right page — and Back then walked the reader back to page 1.
     const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
     const target = spreadOn ? spreadRightPage(page) : page;
     const shown = spreadOn ? spreadRightPage(current) : current;

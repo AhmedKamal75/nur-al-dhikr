@@ -334,17 +334,39 @@ export function mountShell() {
  */
 export const QURAN_CSS_ROUTES = new Set([VIEWS.MUSHAF, VIEWS.QURAN, VIEWS.ROOTS]);
 
-/** Inject the book stylesheet once per session, on first entry to a route that needs it. */
-export function ensureQuranCss(view) {
-  if (!QURAN_CSS_ROUTES.has(view)) return false;
+/**
+ * (v5.17.22) Route → stylesheet, so a second one does not need a second
+ * near-identical injector. The tajweed course was written into quran.css and
+ * therefore rendered unstyled: it is neither the mushaf nor the reader, and
+ * making course visitors download 500 unrelated rules to fix that would have
+ * been the wrong trade in the other direction.
+ */
+export const ROUTE_CSS = Object.freeze({
+  quran: { routes: QURAN_CSS_ROUTES, href: 'assets/css/quran.css' },
+  tajweedCourse: { routes: new Set([VIEWS.TAJWEED_COURSE]), href: 'assets/css/tajweed-course.css' },
+});
+
+/** Inject a route's stylesheet once per session, on first entry to a route that needs it. */
+function injectRouteCss(key, view) {
+  const entry = ROUTE_CSS[key];
+  if (!entry || !entry.routes.has(view)) return false;
   if (typeof document === 'undefined') return false;
-  if (document.querySelector('link[data-route-css="quran"]')) return true;
+  if (document.querySelector(`link[data-route-css="${key}"]`)) return true;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
-  link.href = 'assets/css/quran.css';
-  link.dataset.routeCss = 'quran';
+  link.href = entry.href;
+  link.dataset.routeCss = key;
   document.head.appendChild(link);
   return true;
+}
+
+/** Inject the book stylesheet once per session, on first entry to a route that needs it. */
+export function ensureQuranCss(view) {
+  // A route can need more than one sheet, so try them all rather than
+  // returning on the first match.
+  let injected = false;
+  for (const key of Object.keys(ROUTE_CSS)) injected = injectRouteCss(key, view) || injected;
+  return injected;
 }
 
 /* ------------------------------------------------------------------ */
@@ -781,7 +803,14 @@ export function render(state) {
       showToast(t('common.error', lang));
     });
   }
-  const isFocus = state.activeView === VIEWS.FOCUS;
+  // (v5.17.22) Focus MODE needs a focus TARGET. A bare #/focus is the picker
+  // — a normal screen in the shell — and it was hiding the topbar, which
+  // took the always-present language switch with it: a hostile review
+  // measured that control at 0x0 there. So the immersive chrome-hiding only
+  // engages once an actual dhikr is being focused. The picker keeps its
+  // chrome; focusing something still goes full-bleed.
+  const isFocus =
+    state.activeView === VIEWS.FOCUS && !!state.activeParams?.id && !!state.activeParams?.subId;
   document.body.classList.toggle('is-focus-mode', isFocus);
   // (v4.4) TRUE fullscreen Mushaf: the body-level class that hides every
   // piece of chrome and lets the book claim the whole viewport. The

@@ -109,7 +109,15 @@ export async function navigateMushafPage(direction) {
   const generation = rt.lazyDataGeneration;
   const state = store.getState();
   if (state.activeView !== VIEWS.MUSHAF) return false;
-  const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  // (v5.17.21, FIXED) The page you are turning FROM comes from the same
+  // resolution the reader renders with (mushafRoutePage). A `?s=2&ay=255`
+  // arrival carries no `page` at all, so reading the page off the URL sent
+  // the turn to page 1|2 while the book was open at 42 — one "next" and the
+  // reader jumped backwards through half of Al-Baqarah. The re-read below
+  // uses it too, or that staleness guard would fire on every turn from an
+  // ayah deep link and refuse to turn at all.
+  const { mushafRoutePage } = await mushafView();
+  const page = mushafRoutePage(state).page;
   const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
   const right = spreadOn ? spreadRightPage(page) : page;
   const dest =
@@ -134,7 +142,7 @@ export async function navigateMushafPage(direction) {
   }
 
   const current = store.getState();
-  const currentPage = clampPage(current.activeParams.page || current.mushafBookmark.page || 1);
+  const currentPage = mushafRoutePage(current).page;
   if (
     rt.mushafNavigationIntent !== intent ||
     current.activeView !== state.activeView ||
@@ -340,7 +348,13 @@ export const clickHandlers = {
 
   'mushaf-ayah-tap': async (ds) => {
     const state = store.getState();
-    const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+    // (v5.17.21, FIXED) Same route resolution as the reader: on a
+    // `?s=&ay=` arrival the URL names no page, and deriving the facing-page
+    // candidates from the bookmark instead made an ayah on page 42 look for
+    // a home on pages 1|2 — the study popup then opened with no verse found
+    // and a bookmark pointing at a page that does not carry it.
+    const { mushafRoutePage } = await mushafView();
+    const page = mushafRoutePage(state).page;
     // (v4.5) in a spread the tapped ayah may sit on EITHER facing page —
     // find which one carries it so its bookmark records the true page.
     const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);

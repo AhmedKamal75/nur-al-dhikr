@@ -173,14 +173,40 @@ html[data-dyslexia='true'][dir='rtl'] body {
    (1.5+ lines, paragraph gaps, wider running text) scoped to reading
    surfaces so chrome density is untouched.
    ========================================================================== */
+/* (v5.17.22) The long-form rule reached only translations, virtues and the
+   journal — the SUPPLEMENTARY text. A hostile review measured a
+   computed-style signature across 40 elements on home, library and tasbih
+   and found it byte-identical with the setting on and off, which is the
+   signature of a control that does nothing. So the main reading surfaces
+   are in scope now: the reader's ayah text and the tasbih stage.
+
+   The mushaf is deliberately NOT here. It has its own line-spacing control
+   (mushafPrefs.lineSpacing -> --mushaf-line-scale), and two settings
+   fighting over one line box would leave the reader unable to predict
+   which one is winning. */
 [data-roomy='true'] .card__translation,
 [data-roomy='true'] .card__virtue,
 [data-roomy='true'] .journal-entry__text,
 [data-roomy='true'] .ayah-card__translation,
+[data-roomy='true'] .ayah-card__arabic,
 [data-roomy='true'] .hadith-card__translation,
-[data-roomy='true'] .hadith-card__arabic {
+[data-roomy='true'] .hadith-card__arabic,
+[data-roomy='true'] .ayah-card__reference,
+[data-roomy='true'] .mushaf-tray__text,
+[data-roomy='true'] .chip--phrase,
+[data-roomy='true'] .field-label,
+[data-roomy='true'] .panel__subtext {
   line-height: 1.8;
   letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+
+/* Arabic only gets word-spacing. Letter-spacing would BREAK THE JOINS —
+   the script's letters connect, and pulling them apart is a rendering bug,
+   not a style. This is not negotiable for Arabic. */
+[data-roomy='true'] .ayah-card__arabic,
+[data-roomy='true'] .hadith-card__arabic {
+  letter-spacing: 0;
   word-spacing: 0.16em;
 }
 [data-roomy='true'] .journal-entry__text,

@@ -10,7 +10,7 @@ import { t } from '../core/i18n.js';
 import { actions, store } from '../core/state.js';
 import { vibrate, clamp, escapeHTML } from '../core/utils.js';
 import { takeoverManualZoom } from './autoFit.js';
-import { clampPage, setMushafWideLayout } from '../services/mushaf.js';
+import { mushafRoutePage, setMushafWideLayout } from '../services/mushaf.js';
 import { closeModal, isModalOpen, openLazyModal, openModal, cycleTabFocus } from '../ui/modal.js';
 import { settingsSlugForSection } from '../views/settings.js';
 import {
@@ -418,11 +418,13 @@ export function bindGlobalEvents() {
         setMushafWideLayout(ev.matches);
         const state = store.getState();
         if (state.activeView === VIEWS.MUSHAF) {
-          store.dispatch(
-            actions.setMushafBookmark(
-              clampPage(state.activeParams.page || state.mushafBookmark.page || 1)
-            )
-          );
+          // (v5.17.21) A crossing re-bookmarks so the spread's odd right-hand
+          // page wins — but through the ROUTE's resolution, never the URL's.
+          // A `?s=2&ay=255` arrival names no page, so reading it directly
+          // wrote page 1 into the persisted bookmark: rotate a phone mid
+          // deep link and the reader's remembered position silently jumped
+          // back to Al-Fatihah.
+          store.dispatch(actions.setMushafBookmark(mushafRoutePage(state).page));
         }
       };
       if (typeof wideMQ.addEventListener === 'function')

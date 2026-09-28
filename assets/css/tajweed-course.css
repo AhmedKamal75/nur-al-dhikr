@@ -1,0 +1,256 @@
+/**
+ * tajweed-course.css — the course screen (v5.17.22)
+ *
+ * Its own stylesheet, not a slice of quran.css. The course shipped for a
+ * release rendering as bare text: the rules were written into quran.css,
+ * which the renderer injects only for the mushaf, the reader and the roots
+ * route. The file was 500 rules wide and a course visitor would have had to
+ * download every one of them to style a ladder.
+ *
+ * So the two concerns are separated: this sheet is loaded on the tajweed
+ * course route alone, and quran.css keeps the mushaf and the reader.
+ */
+/* v5.17.19 — the tajweed course screen. A stage ladder rather than a list:
+   the reader should see where they are, what is next, and what is still
+   shut. Locked rows say why they are shut, because a dimmed row with no
+   reason reads as broken. */
+.taj-course__stage {
+  margin-block-end: 1.5rem;
+}
+
+.taj-course__stage-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__stage-count {
+  margin-inline-start: auto;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.taj-course__sessions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.taj-course__session {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  background: var(--color-surface-alt);
+}
+
+.taj-course__session--next {
+  border-color: var(--color-accent);
+}
+
+.taj-course__session--locked {
+  opacity: 0.62;
+}
+
+.taj-course__session-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__session-order {
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-surface-raised);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8em;
+}
+
+.taj-course__badge {
+  font-size: 0.72em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--color-surface-raised);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.taj-course__badge--next {
+  background: var(--color-surface-raised);
+}
+
+.taj-course__rules {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.taj-course__rule-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  inline-size: 100%;
+  text-align: start;
+  background: none;
+  border: 0;
+  padding: 0.25rem 0.2rem;
+  border-radius: 8px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.taj-course__rule-btn:disabled {
+  cursor: default;
+}
+
+.taj-course__rule-src {
+  font-size: 0.72em;
+  opacity: 0.68;
+}
+
+.taj-course__rule-src--missing {
+  opacity: 0.9;
+  font-style: italic;
+}
+
+.taj-course__modes {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.taj-course__actions {
+  margin-block-start: 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.taj-course__continue {
+  border: 1px solid var(--color-accent);
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  margin-block: 0.9rem;
+}
+
+/* v5.17.20 — the classify round. Options, not letters: this mode asks a
+   question in words, so it is laid out as a list of choices. */
+.tajweed-practice__ayah {
+  font-size: 1.35em;
+  line-height: 2;
+  text-align: center;
+  margin-block: 0.8rem;
+}
+
+.tajweed-practice__options {
+  display: grid;
+  gap: 0.4rem;
+  margin-block-end: 0.7rem;
+}
+
+.tajweed-practice__option {
+  inline-size: 100%;
+  text-align: start;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tajweed-practice__option--right {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.tajweed-practice__option--wrong {
+  border-color: var(--color-border-strong);
+  text-decoration: line-through;
+}
+
+.tajweed-practice__option--dim {
+  opacity: 0.55;
+}
+
+.tajweed-practice__feedback {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  margin-block-end: 0.7rem;
+}
+
+/* v5.17.21 — "you are here" in the jump drawer. 204 rows across three
+   scrollers, and until now nothing said where you were. A left rail in the
+   primary colour reads as a position marker without adding a badge, and
+   forced-colors falls back to the outline so it survives high contrast. */
+.mushaf-jump__row--here {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+  font-weight: 600;
+}
+
+[dir='rtl'] .mushaf-jump__row--here {
+  box-shadow: inset -3px 0 0 var(--color-primary);
+}
+
+@media (forced-colors: active) {
+  .mushaf-jump__row--here {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+
+/* v5.17.21 — the ayah you asked for. "Open the mushaf at 2:255" is the most
+   used deep-link shape in any serious mushaf app and in a printed mushaf's
+   index, and the app could not express it: every mushaf link carried a page
+   and nothing else, so you landed at the top of a page with the ayah below
+   the fold and no sign it was there. A calm wash, never a blink — this is a
+   bookmark, not an alert. */
+.mushaf-ayah--target {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mushaf-ayah--target {
+    /* 280ms, inside the project's 300ms motion contract. This is meant to
+       catch the eye, not entertain it; a longer settle would be a
+       distraction on a page whose whole purpose is stillness. */
+    animation: mushaf-target-settle 280ms ease-out 1;
+  }
+  @keyframes mushaf-target-settle {
+    from {
+      background: color-mix(in srgb, var(--color-primary) 34%, transparent);
+    }
+    to {
+      background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .mushaf-ayah--target {
+    outline: 2px solid Highlight;
+  }
+}

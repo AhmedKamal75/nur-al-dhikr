@@ -2355,7 +2355,13 @@ body.has-player .hadith-card {
   font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: calc(var(--fs-arabic-card) * 0.8);
   line-height: var(--lh-arabic);
+  /* (v5.17.22) The corpus marks genuine line breaks in hadith with a
+     newline, and they are rendered here. Upstream used a literal `<br>`,
+     which the app escaped — correctly, it is scripture-derived text — into
+     four visible characters in the middle of the Arabic. */
+  white-space: pre-line;
 }
+
 .hadith-card__translation {
   font-size: 1rem;
   line-height: 1.7;

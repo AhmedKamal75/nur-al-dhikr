@@ -21,7 +21,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import { renderAyahWords, buildMushafSettingsPanel } from '../js/views/tafsirPanel.js';
-import { renderMushaf } from '../js/views/mushafReader.js';
+import { renderMushaf, mushafRoutePage, buildMushafSheet } from '../js/views/mushafReader.js';
+import { buildMushafJump } from '../js/views/mushafJump.js';
 import { buildWordStudyPanel } from '../js/views/tafsirPanel.js';
 import { TAJWEED_RULES } from '../js/domain/tajweed.js';
 import { ornamentTokenKind, sameSurfaceWord } from '../js/domain/tajweed.js';
@@ -392,5 +393,279 @@ describe('P0-4: surah header & Bismillah proportional rhythm', () => {
       assert.match(h, new RegExp(`data-mushaf-paper="${paper.id}"`), `paper ${paper.id} renders`);
     }
     assert.match(html, /data-mushaf-font="amiriQuran"/, 'typeface hook present for P0-2a');
+  });
+});
+
+/* ------------------------- mushaf route: `?s=&ay=` ------------------------- */
+/**
+ * (v5.17.21, FIXED) `#/mushaf?s=2&ay=255` opened Al-Fatihah 1.
+ *
+ * The deep link shipped reading `s`/`ay` for the highlight and then still
+ * deriving the page from the URL alone, so the book rendered page 1 and the
+ * marker matched nothing — a silent wrong answer about scripture position,
+ * which in a mushaf is the worst class of bug there is. The v5.17.21 test
+ * could not catch it: it only ever passed `{ page: 1 }`, the one shape where
+ * the broken and the fixed reader agree. Every case below drives a REAL
+ * page out of the REAL corpus and asserts against mushaf-meta.json's
+ * ayahPages, so the test fails if the wiring goes missing, and not only if a
+ * number in the data ever changes.
+ */
+describe('mushaf deep link: `?s=2&ay=255` opens THAT ayah (v5.17.21 fix)', () => {
+  const meta = readJSON('data/mushaf-meta.json');
+  const pageDoc = (n) => readJSON(`data/mushaf/${n}.json`);
+  // Pages read out of the corpus, never typed in: a data change moves the
+  // expectation with it, and a missing wiring does not.
+  const KURSI_PAGE = meta.ayahPages['2:255'];
+  const FATIHAH_PAGE = meta.ayahPages['1:1'];
+  const LAST_PAGE = meta.ayahPages['114:6'];
+  // The state's bookmark page doubles as the documented fallback: it is where
+  // a route that names nothing lands, so it must stay where it was.
+  const BOOKMARK = 7;
+  // Pages read out of the corpus, never typed in: a data change moves the
+  // expectation with it, and a missing wiring does not. BOOKMARK+1 is the
+  // page the OLD code would have turned to (it read the page off a URL that
+  // carries none and used the bookmark) — it is resident so that a
+  // regression fails on the destination assertion instead of on a fetch.
+  const pages = [
+    1,
+    2,
+    BOOKMARK,
+    BOOKMARK + 1,
+    FATIHAH_PAGE,
+    KURSI_PAGE,
+    KURSI_PAGE - 1,
+    KURSI_PAGE + 1,
+    LAST_PAGE,
+  ];
+
+  const state = (activeParams, over = {}) => ({
+    settings: { ...DEFAULT_SETTINGS, language: 'en' },
+    activeParams,
+    mushaf: { meta, pages: Object.fromEntries(pages.map((n) => [n, pageDoc(n)])) },
+    mushafBookmark: { page: BOOKMARK },
+    quran: { meta: null, surahs: {} },
+    quranWords: {},
+    ayahBookmarks: [],
+    surahPlayback: { active: false },
+    activeView: 'mushaf',
+    ...over,
+  });
+
+  /** The page numbers actually printed in the page medallions. */
+  const renderedPages = (html) =>
+    [...html.matchAll(/mushaf-page__number">([^<]+)</g)].map((m) =>
+      [...m[1]].reduce((n, c) => n * 10 + '٠١٢٣٤٥٦٧٨٩'.indexOf(c), 0)
+    );
+  /** Every ayah the route marked, as "surah:ayah" — nothing else counts. */
+  const targets = (html) =>
+    [
+      ...html.matchAll(
+        /<span class="mushaf-ayah[^"]*mushaf-ayah--target" data-action="mushaf-ayah-tap" data-surah="(\d+)" data-ayah="(\d+)"/g
+      ),
+    ].map((m) => `${m[1]}:${m[2]}`);
+  /** Rendered text with the word spans removed, the P0-2b technique. */
+  const plainOf = (html) =>
+    html
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  const verseText = (surah, ayah) =>
+    pageDoc(meta.ayahPages[`${surah}:${ayah}`])
+      .chapters.flatMap((c) => c.verses)
+      .find((v) => v.number === ayah).text;
+
+  test('the ayah a link names is the page that renders — and only that ayah is marked', () => {
+    // Sanity on the fixture itself: the whole test is worthless if the map
+    // and the page files ever disagree about where 2:255 lives.
+    assert.equal(KURSI_PAGE, 42, 'the corpus puts 2:255 on page 42');
+    assert.notEqual(KURSI_PAGE, FATIHAH_PAGE, '2:255 and 1:1 are on different pages');
+    // Strings, because parseHash() hands the view strings — and numbers,
+    // because a dataset-driven call site can carry them.
+    for (const params of [
+      { s: '2', ay: '255' },
+      { s: 2, ay: 255 },
+    ]) {
+      const html = renderMushaf(state(params));
+      assert.deepEqual(
+        renderedPages(html),
+        [KURSI_PAGE],
+        `opens ${KURSI_PAGE} for ${JSON.stringify(params)}`
+      );
+      assert.deepEqual(targets(html), ['2:255'], 'exactly one target, the one asked for');
+      // And the page on screen really carries it (not just the right footer).
+      assert.ok(
+        plainOf(html).includes(verseText(2, 255)),
+        'the 2:255 text itself is on the rendered page'
+      );
+    }
+  });
+
+  test('a bare `?page=42` is unchanged: that page, and nothing marked', () => {
+    const html = renderMushaf(state({ page: String(KURSI_PAGE) }));
+    assert.deepEqual(renderedPages(html), [KURSI_PAGE]);
+    assert.deepEqual(targets(html), [], 'a page-only route marks nothing');
+  });
+
+  test('an explicit `page` wins over the ayah — including when they disagree', () => {
+    // Search's mushaf chip passes BOTH; the spread, page-turn, jump and
+    // follow-along paths pass page only.
+    const agreeing = renderMushaf(state({ page: String(KURSI_PAGE), s: '2', ay: '255' }));
+    assert.deepEqual(renderedPages(agreeing), [KURSI_PAGE], 'page wins (and it agrees)');
+    assert.deepEqual(targets(agreeing), ['2:255'], 'the ayah is on that page, so it is marked');
+    // The non-degenerate twin: 2:255 is NOT on page 1, so a route that names
+    // both must show page 1 and mark nothing — never silently re-route.
+    const clashing = renderMushaf(state({ page: String(FATIHAH_PAGE), s: '2', ay: '255' }));
+    assert.deepEqual(renderedPages(clashing), [FATIHAH_PAGE], 'the page the URL names wins');
+    assert.deepEqual(targets(clashing), [], 'an ayah that is not on this page marks nothing');
+  });
+
+  test('the LAST page resolves too (2:114:6 sits on 604, the clamp edge)', () => {
+    const html = renderMushaf(state({ s: '114', ay: '6' }));
+    assert.deepEqual(renderedPages(html), [LAST_PAGE]);
+    assert.deepEqual(targets(html), ['114:6']);
+  });
+
+  test('an ayah the corpus cannot place degrades to the page behaviour — no crash, no target', () => {
+    // Every one of these used to be a route the reader could not answer.
+    // The contract is the same for all of them: the bookmark page renders,
+    // nothing is marked, nothing throws.
+    for (const params of [
+      { s: '2', ay: '9999' },
+      { s: '2', ay: '0' },
+      { s: '0', ay: '1' },
+      { s: '-1', ay: '5' },
+      { s: '2' },
+      { ay: '255' },
+      { s: 'x', ay: 'y' },
+      { s: '2.5', ay: '3' },
+      { s: '', ay: '' },
+    ]) {
+      const html = renderMushaf(state(params));
+      assert.deepEqual(
+        renderedPages(html),
+        [BOOKMARK],
+        `${JSON.stringify(params)} falls back to the bookmark page`
+      );
+      assert.deepEqual(targets(html), [], `${JSON.stringify(params)} marks nothing`);
+    }
+  });
+
+  test('missing meta / missing params / missing bookmark never throw', () => {
+    // The loader can hand the view a route before mushaf-meta.json has
+    // landed; resolvePage() answers null for a missing map rather than
+    // inventing a position.
+    const noMeta = renderMushaf(
+      state({ s: '2', ay: '255' }, { mushaf: { meta: null, pages: {} } })
+    );
+    assert.match(noMeta, /mushaf-loading/, 'the honest loading state, not a wrong page');
+    const bare = state({});
+    delete bare.activeParams;
+    assert.ok(renderMushaf(bare).length > 0, 'a state with no activeParams renders');
+    const noBookmark = state({});
+    delete noBookmark.mushafBookmark;
+    assert.deepEqual(renderedPages(renderMushaf(noBookmark)), [1], 'page 1, the old default');
+  });
+
+  test('the jump drawer and the reader resolve the SAME page (one rule, two surfaces)', () => {
+    // A drawer marking "you are here: Al-Fatihah" while the book shows 2:255
+    // is a second wrong answer about position, one tap from the first.
+    const hereSurahs = (html) =>
+      [
+        ...html.matchAll(
+          /mushaf-jump__surah mushaf-jump__row--here" data-action="mushaf-jump-page"[^>]*>[\s\S]*?mushaf-jump__surah-num">(\d+)</g
+        ),
+      ].map((m) => Number(m[1]));
+    assert.deepEqual(
+      hereSurahs(buildMushafJump(state({ s: '2', ay: '255' }))),
+      [2],
+      'the drawer says Al-Baqarah, the page the reader opened'
+    );
+    // And page-only routes keep the drawer's own rule (page 1 → Al-Fatihah).
+    assert.deepEqual(hereSurahs(buildMushafJump(state({ page: String(FATIHAH_PAGE) }))), [1]);
+    // A route that names nothing still lands on the bookmark page, so the
+    // drawer keeps saying whatever surah that page carries — derived from the
+    // corpus, not typed in.
+    const surahAt = (page) =>
+      Number(
+        Object.entries(meta.surahFirstPage)
+          .filter(([, first]) => Number(first) <= page)
+          .map(([n]) => n)
+          .pop()
+      );
+    assert.equal(surahAt(BOOKMARK), 2, 'the bookmark page sits inside Al-Baqarah');
+    assert.deepEqual(hereSurahs(buildMushafJump(state({}))), [surahAt(BOOKMARK)]);
+    // The ⋯ sheet's "memorise this surah" is the third surface that used to
+    // ask the URL instead of the route: on a 2:255 arrival it offered
+    // Al-Fatihah.
+    const sheet = buildMushafSheet(state({ s: '2', ay: '255' }));
+    assert.ok(
+      sheet.includes('href="#/quran/2?mem=1"'),
+      'the sheet offers the surah actually on the page'
+    );
+  });
+
+  test('mushafRoutePage: the one resolution, precedence and all', () => {
+    assert.deepEqual(mushafRoutePage(state({ s: '2', ay: '255' })), {
+      page: KURSI_PAGE,
+      surah: 2,
+      ayah: 255,
+    });
+    assert.deepEqual(
+      mushafRoutePage(state({ page: String(FATIHAH_PAGE), s: '2', ay: '255' })),
+      { page: FATIHAH_PAGE, surah: 2, ayah: 255 },
+      'page wins; the target is still reported for the marker'
+    );
+    assert.deepEqual(
+      mushafRoutePage(state({ s: '2', ay: '9999' })),
+      { page: BOOKMARK, surah: null, ayah: null },
+      'an unplaceable ayah names no target at all'
+    );
+    assert.deepEqual(mushafRoutePage(state({})), { page: BOOKMARK, surah: null, ayah: null });
+  });
+
+  test('a page turn clears the target: the URL it writes carries a page and nothing else', async () => {
+    // Driven through the REAL handler, not a re-implementation: mushaf-prev /
+    // mushaf-next both land here, and `go()` rewrites the whole query string,
+    // so `s`/`ay` cannot survive the turn and leave a highlight stuck to an
+    // ayah that is no longer on the page.
+    const shim = { location: { hash: '' }, scrollTo() {} };
+    globalThis.window = shim;
+    try {
+      const { navigateMushafPage } = await import('../js/app/handlers/quran.js');
+      const { setMushafMeta, setMushafPage, setMushafBookmark, navigate } = actions;
+      store.dispatch(setMushafMeta(meta));
+      for (const n of pages) store.dispatch(setMushafPage(String(n), pageDoc(n)));
+      store.dispatch(setMushafBookmark(BOOKMARK));
+
+      // Arrive the way a shared link does: no `page` in the URL at all.
+      store.dispatch(navigate('mushaf', { s: '2', ay: '255' }));
+      assert.deepEqual(renderedPages(renderMushaf(store.getState())), [KURSI_PAGE], 'on 2:255');
+
+      shim.location.hash = '#/mushaf?s=2&ay=255';
+      assert.equal(await navigateMushafPage('next'), true, 'the turn happened');
+      // The old code read the current page off the URL, found none, and used
+      // the bookmark: "next" from 2:255 used to land on page 8.
+      assert.equal(shim.location.hash, `#/mushaf?page=${KURSI_PAGE + 1}`, 'turns forward from 42');
+      assert.doesNotMatch(shim.location.hash, /[?&]s=/, 'the target is gone from the URL');
+      assert.doesNotMatch(shim.location.hash, /[?&]ay=/, 'the ayah is gone from the URL');
+
+      // Feed that URL back through the router's own query parse and the view
+      // must hold nothing: no page 43 doc is loaded, so even the skeleton is
+      // the honest state — but with the doc resident the marker is absent.
+      const params = Object.fromEntries(new URLSearchParams(shim.location.hash.split('?')[1]));
+      assert.deepEqual(params, { page: String(KURSI_PAGE + 1) }, 'the turn rewrote the route');
+      const turned = renderMushaf(state(params));
+      assert.deepEqual(renderedPages(turned), [KURSI_PAGE + 1], 'the new page renders');
+      assert.deepEqual(targets(turned), [], 'no highlight survives on the new page');
+
+      // And backwards, from the same deep link.
+      store.dispatch(navigate('mushaf', { s: '2', ay: '255' }));
+      shim.location.hash = '#/mushaf?s=2&ay=255';
+      assert.equal(await navigateMushafPage('prev'), true);
+      assert.equal(shim.location.hash, `#/mushaf?page=${KURSI_PAGE - 1}`, 'turns back from 42');
+    } finally {
+      delete globalThis.window;
+      store.dispatch(actions.navigate('home', {}));
+    }
   });
 });

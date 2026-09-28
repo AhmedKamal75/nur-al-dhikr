@@ -588,6 +588,12 @@
   color: var(--color-text-secondary);
 }
 
+/* (v5.17.22) The journal's textareas carry BOTH .input and .journal-textarea.
+   They used to carry only the second, which matched no rule in any
+   stylesheet — so they fell back to the UA's white background while the app
+   sets #edebe3 text in dark mode: 1.19:1, i.e. the reader's own words,
+   invisible, on the one screen where they write them. The shared .input base
+   now styles them; the extra class stays as the hook the view already uses. */
 .input,
 .select,
 .textarea {
