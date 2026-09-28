@@ -365,6 +365,10 @@ export const en = {
   // highlight/repeat/compare need ayah mode, one tap away.
   'audio.fileModeNote':
     'Whole-surah file: Ayah-by-ayah mode adds highlighting, page turns, repeat & compare.',
+  // (v5.17.27) picker honesty (OPEN-ISSUES #13): the whole-surah chip on
+  // every moshaf row — short label here, the fileModeNote sentence above
+  // as its title.
+  'audio.wholeSurahBadge': 'Whole surah — no ayah timings',
   'audio.riwayaNote': 'Voice is {rewaya} — on-screen text is Hafs.',
   // (v5.10.8) unified voice picker: ayah voices + searchable file moshafs.
   'audio.voiceModeAyah': 'Voice set — ayah-by-ayah mode',

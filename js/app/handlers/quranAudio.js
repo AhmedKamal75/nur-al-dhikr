@@ -493,9 +493,13 @@ export function buildReciterPick(state) {
     .map((r) => {
       const active = r.id === selectedId;
       const name = lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn;
+      // (v5.17.27, OPEN-ISSUES #13) whole-surah honesty in the picker
+      // itself: every moshaf row carries the no-ayah-timings chip (the
+      // fileModeNote sentence as its title). Ayah voices above carry none.
+      const timingBadge = ` <span class="chip chip--muted" title="${escapeHTML(t('audio.fileModeNote', lang))}">${escapeHTML(t('audio.wholeSurahBadge', lang))}</span>`;
       return `
       <button type="button" class="reciter-row ${active ? 'reciter-row--active' : ''}" data-action="recite-pick-moshaf" data-id="${escapeHTML(r.id)}" aria-pressed="${active}">
-        <span class="reciter-row__name">${escapeHTML(name)}</span>
+        <span class="reciter-row__name">${escapeHTML(name)}${timingBadge}</span>
         ${active ? check : ''}
       </button>`;
     })

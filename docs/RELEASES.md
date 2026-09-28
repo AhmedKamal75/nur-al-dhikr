@@ -2,6 +2,20 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.27 — The picker says what the player already knew
+
+- **Whole-surah voices are labelled in the picker itself** (OPEN-ISSUES #13).
+  Voices without per-ayah timings were marked after selection (the
+  `audio.fileModeNote` line under the player) but the two pickers showed
+  bare names — nothing told anyone _before_ tapping that highlighting,
+  page turns, repeat and compare need ayah mode. Every moshaf row in both
+  pickers (the in-player `buildReciterPick` and the Audio view's
+  `renderAudio`) now carries a short chip — `audio.wholeSurahBadge` in
+  both languages, with the existing `fileModeNote` sentence as its title.
+  The 16 ayah-by-ayah voices carry no chip. Pinned by
+  `tests/audio-picker-timing-badge.test.js` (moshaf rows carry it, ayah
+  rows do not, EN+AR), written failing first.
+
 ## v5.17.26 — What a broader review found, including in my own writing
 
 Review 4 came back at **8.7 against 8.8** — a regression, and the first honest

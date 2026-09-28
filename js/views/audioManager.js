@@ -84,10 +84,14 @@ export function renderAudio(state) {
         rewaya,
         trans,
       ].filter(Boolean);
+      // (v5.17.27, OPEN-ISSUES #13) whole-surah honesty in the picker
+      // itself: every moshaf row carries the no-ayah-timings chip (the
+      // fileModeNote sentence as its title). Verse rows below carry none.
+      const timingBadge = ` <span class="chip chip--muted" title="${escapeHTML(t('audio.fileModeNote', lang))}">${escapeHTML(t('audio.wholeSurahBadge', lang))}</span>`;
       return `
     <div class="reciter-row ${active ? 'reciter-row--active' : ''}">
       <button type="button" class="reciter-row__main" data-action="audio-select-moshaf" data-id="${escapeHTML(r.id)}">
-        <span class="reciter-row__name">${highlightMatch(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn, String(q).split(/\s+/))}${trans ? ` <span class="chip chip--muted">${escapeHTML(trans)}</span>` : ''}</span>
+        <span class="reciter-row__name">${highlightMatch(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn, String(q).split(/\s+/))}${trans ? ` <span class="chip chip--muted">${escapeHTML(trans)}</span>` : ''}${timingBadge}</span>
         ${subBits.length ? `<span class="reciter-row__sub">${escapeHTML(subBits.join(' — '))}</span>` : ''}
       </button>
       ${r.source === 'custom' ? `<button type="button" class="icon-btn icon-btn--sm" data-action="audio-remove-custom" data-id="${escapeHTML(r.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 14 })}</button>` : ''}

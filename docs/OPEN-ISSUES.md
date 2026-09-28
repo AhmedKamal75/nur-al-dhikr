@@ -5,9 +5,9 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-09-28 against the tree at v5.17.25**, by parsing this file's own
+> **Counted 2026-09-28 against the tree at v5.17.27**, by parsing this file's own
 > status column — not by hand, and not copied from any earlier header: **48 rows —
-> 12 OPEN, 7 PROPOSED, 2 DEFERRED, 4 DECIDED-NO, 11 RESOLVED, 1 STANDING
+> 11 OPEN, 7 PROPOSED, 2 DEFERRED, 4 DECIDED-NO, 12 RESOLVED, 1 STANDING
 > CONSTRAINT, 6 BLOCKED:scholar, 5 BLOCKED:device.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
@@ -53,7 +53,7 @@ Source IDs: `V#` = Omniview verdict · `C#` = contested · `P#` = proposal ·
 | 10  | Custom library card-level reorder                                    | **OPEN**                | Banner and section reorder were fixed; per-card reorder _inside a custom library_ is unverified under the shared lens.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | 11  | Orphan views (33 routes vs 18 chrome entries)                        | **PROPOSED**            | Reachable only by palette or deep link. Either per-tab menus or an honest redirect. No new views until decided.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 12  | Storage caps for custom content and attachments                      | **PROPOSED**            | The audio cache is capped and evicts oldest-first; the other IDB stores are not.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| 13  | Reciter metadata is uneven                                           | **OPEN**                | Voices without per-ayah timings are marked, not hidden. Still: surface that in the picker itself, not only after selection.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 13  | Reciter metadata is uneven                                           | **RESOLVED**            | Closed v5.17.27: every moshaf row in both pickers (`buildReciterPick` in `js/app/handlers/quranAudio.js`, `renderAudio` in `js/views/audioManager.js`) carries the `audio.wholeSurahBadge` chip (EN+AR, `fileModeNote` as title); the 16 ayah voices carry none. Pinned by `tests/audio-picker-timing-badge.test.js` (written failing first).                                                                                                                                                                                                                                                                                                                                   |
 | 14  | Hadeeth citations, narrators, Arabic chapter names, global bookmarks | **OPEN**                | Partly done (narrator extraction, standing badges). The rest is a data-quality pass with sources.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | 15  | Azkar depth                                                          | **OPEN**                | Per-item audio (only where a verified source exists), bilingual editing, stronger search. The owner asked for all three explicitly.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | 16  | Verse mode has no within-ayah seek                                   | **OPEN**                | By design — per-ayah files have no internal offsets. Needs an owner UX call: replay-ayah, or accept the limitation and say so louder.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -139,16 +139,16 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **12** |
+| **OPEN** (nobody has done it)                      | **11** |
 | **PROPOSED** (costed, needs an owner yes)          | **7**  |
 | **BLOCKED:scholar** (must never be machine-filled) | **6**  |
 | **BLOCKED:device** (needs real hardware)           | **5**  |
 | **DEFERRED** / **DECIDED-NO** (deliberate)         | **6**  |
-| **RESOLVED after re-verification**                 | **11** |
+| **RESOLVED after re-verification**                 | **12** |
 | **STANDING CONSTRAINT** (not a defect)             | **1**  |
 
 - **~55 distinct issues** were extractable from the audit material and the
-  owner's own reports. **19** still need work (12 open, 7 proposed); **10** were
+  owner's own reports. **18** still need work (11 open, 7 proposed); **10** were
   already done and had been re-investigated as still-open.
 - **Three "release-gating" items named here are now resolved**, and this file
   said otherwise until v5.17.23: Elder Mode discoverability (the wizard did
