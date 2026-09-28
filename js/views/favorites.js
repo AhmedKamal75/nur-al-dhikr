@@ -120,6 +120,7 @@ export function renderFavorites(state) {
           lang,
           isFavorite: true,
           isSpeaking: state.speakingItemId === e.item.id,
+          isPlayingAudio: state.dhikrAudioItemId === e.item.id,
           counter: selectors.getCounter(state, e.item.id),
           showTransliteration: state.settings.showTransliteration,
           showTranslation: state.settings.showTranslation,

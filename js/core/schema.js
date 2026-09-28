@@ -65,6 +65,50 @@ function normalizeReference(ref) {
   return out;
 }
 
+/**
+ * (v5.17.30, OPEN-ISSUES #15 infra only) Per-dhikr recitation audio:
+ * optional `{ url, reciter?, source?, license? } | null`. Absent (null) is
+ * the honest steady state — zero licensed clips ship, and the renderers
+ * draw NO button for null, never a dead one. A present-but-unverifiable
+ * value normalizes to null as well, so malformed/imported audio can never
+ * reach a player. The url gate mirrors OPEN-ISSUES #1 (https required;
+ * http only for localhost/LAN, same as audioCatalog.validateCustomServer).
+ * Pure data function — the single-shot playback driver lives in
+ * services/dhikrAudio.js, and the streaming-only cache policy is recorded
+ * in docs/DATA-SCHEMA.md.
+ */
+export function normalizeDhikrAudio(raw) {
+  if (raw == null) return null;
+  if (typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const url = typeof raw.url === 'string' ? raw.url.trim() : '';
+  if (!url || url.length > 500 || /\s/.test(url)) return null;
+  const isHttps = /^https:\/\/[^\s/$.?#].[^\s]*$/i.test(url);
+  const isLocalHttp =
+    /^http:\/\/(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(url) &&
+    /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(url);
+  if (!isHttps && !isLocalHttp) return null;
+  const cap = (v, max) => (typeof v === 'string' && v.trim() && v.length <= max ? v.trim() : '');
+  return {
+    url,
+    reciter: cap(raw.reciter, 120),
+    source: cap(raw.source, 120),
+    license: cap(raw.license, 120),
+  };
+}
+
+/**
+ * True only when the item carries a verified per-dhikr clip the renderers
+ * may offer. Renderers (ui/card.js, views/focus.js) must call this — never
+ * a truthiness check on item.audio — so an unverified value can never grow
+ * a button. Fail-closed on hostile shapes.
+ */
+export function hasVerifiedDhikrAudio(item) {
+  if (!item || typeof item !== 'object') return false;
+  const audio = item.audio;
+  if (audio == null || typeof audio !== 'object' || Array.isArray(audio)) return false;
+  return normalizeDhikrAudio(audio) !== null;
+}
+
 /** Normalize a single content item to guarantee every field defined by the spec exists. */
 export function normalizeItem(raw, categoryId) {
   const item = raw || {};
@@ -81,7 +125,7 @@ export function normalizeItem(raw, categoryId) {
     repetitions:
       Number.isFinite(item.repetitions) && item.repetitions > 0 ? Math.floor(item.repetitions) : 1,
     virtues: normalizeLocale(item.virtues),
-    audio: item.audio || null,
+    audio: normalizeDhikrAudio(item.audio),
     image: item.image || null,
     tags: Array.isArray(item.tags) ? item.tags.filter((t) => typeof t === 'string') : [],
     related: Array.isArray(item.related) ? item.related.filter((r) => typeof r === 'string') : [],
@@ -176,6 +220,12 @@ export function validateDocument(doc) {
       }
       if (item.grade === 'Custom' && !item.custom_grade.en && !item.custom_grade.ar) {
         warnings.push(`Item "${item.id}" is graded Custom but has no custom_grade explanation`);
+      }
+      // (v5.17.30) per-dhikr audio backstop: normalizeItem already drops an
+      // unverified value to null, so a non-null audio here that fails the
+      // gate means the document bypassed normalization — warn, never render.
+      if (item.audio != null && !hasVerifiedDhikrAudio(item)) {
+        warnings.push(`Item "${item.id}" has an unverified audio value (no https url)`);
       }
     }
   }

@@ -208,6 +208,7 @@ export function renderCategory(state) {
             lang,
             isFavorite: selectors.isFavorite(state, item.id),
             isSpeaking: state.speakingItemId === item.id,
+            isPlayingAudio: state.dhikrAudioItemId === item.id,
             counter: selectors.getCounter(state, item.id),
             showTransliteration: state.settings.showTransliteration,
             showTranslation: state.settings.showTranslation,

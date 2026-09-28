@@ -21,6 +21,7 @@ import * as compass from '../domain/compass.js';
 import * as audioStore from '../services/audioStore.js';
 import * as mediaSession from '../services/mediaSession.js';
 import * as player from '../services/player.js';
+import { stopDhikrAudio } from '../services/dhikrAudio.js';
 import { onAdhanStart } from '../services/prayerSound.js';
 import * as recitation from '../services/recitation.js';
 import * as surahPlayback from '../services/surahPlayback.js';
@@ -265,13 +266,19 @@ export function wirePlayer() {
   });
   // (v5.2.72) a real adhan owns the speaker: pause the full-surah track
   // (docked, resumable), freeze a verse session in place, and stop a
-  // single-verse tap. No auto-resume — one tap resumes, never a surprise.
+  // single-verse tap. (v5.17.30) a per-dhikr clip stops too — it is
+  // single-shot with no resume contract, so it simply ends. No
+  // auto-resume — one tap resumes, never a surprise.
   onAdhanStart(() => {
     yieldFullSurahPlayer();
     if (surahPlayback.isActive()) {
       store.dispatch(actions.setSurahPlayback(surahPlayback.pause()));
     }
     recitation.stop();
+    stopDhikrAudio();
+    if (store.getState().dhikrAudioItemId !== null) {
+      store.dispatch(actions.setDhikrAudioItem(null));
+    }
   });
   player.onTrackEnded(() => {
     const state = store.getState();

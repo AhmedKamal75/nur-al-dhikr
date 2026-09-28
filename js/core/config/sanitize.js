@@ -567,6 +567,35 @@ function asIdList(v) {
 }
 
 /**
+ * (v5.17.30, OPEN-ISSUES #15 infra only) Per-dhikr recitation audio on a
+ * user-added item: optional { url, reciter?, source?, license? } | null.
+ * Mirrors normalizeDhikrAudio in core/schema.js — config may not import
+ * schema (that import would cycle through config.js) — so the gate is
+ * duplicated here, exactly like the validateCustomServer mirror below.
+ * https-only per the OPEN-ISSUES #1 gate (http localhost/LAN excepted);
+ * anything else drops to undefined so the restore boundary, not the
+ * renderer, refuses it.
+ */
+function sanitizeDhikrAudio(raw) {
+  if (raw == null) return undefined;
+  if (typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+  const url = typeof raw.url === 'string' ? raw.url.trim() : '';
+  if (!url || url.length > 500 || /\s/.test(url)) return undefined;
+  const isHttps = /^https:\/\/[^\s/$.?#].[^\s]*$/i.test(url);
+  const isLocalHttp =
+    /^http:\/\/(localhost|127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/i.test(url) &&
+    /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(url);
+  if (!isHttps && !isLocalHttp) return undefined;
+  const cap = (v, max) => (typeof v === 'string' && v.trim() && v.length <= max ? v.trim() : '');
+  return {
+    url,
+    reciter: cap(raw.reciter, 120),
+    source: cap(raw.source, 120),
+    license: cap(raw.license, 120),
+  };
+}
+
+/**
  * (v5.0.0) One user-added or user-edited item stored inside prefs. These
  * values render as card HTML, so every field is strictly typed here:
  * strings capped, numbers clamped, ids regex-checked. The write path
@@ -580,6 +609,10 @@ function sanitizeUserItem(raw) {
   if (!id) return null;
   const grade = typeof p.grade === 'string' && GRADES.includes(p.grade) ? p.grade : 'unknown';
   const reps = Math.round(asNumber(p.repetitions, 1, 1, 10000));
+  // (v5.17.30) per-dhikr audio survives restore only through the https
+  // gate above; absent/invalid degrades to "no audio key", never null —
+  // the renderer treats a missing key and null identically (no button).
+  const audio = sanitizeDhikrAudio(p.audio);
   const item = {
     id,
     category_id:
@@ -614,6 +647,7 @@ function sanitizeUserItem(raw) {
     custom_grade: asStrMap(p.custom_grade),
     repetitions: reps,
     virtues: asStrMap(p.virtues),
+    ...(audio ? { audio } : {}),
     tags: asTagList(p.tags),
     related: asIdList(p.related),
     notes: asText(p.notes, '', 2000),

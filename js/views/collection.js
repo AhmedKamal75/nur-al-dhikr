@@ -107,6 +107,7 @@ export function renderCollection(state) {
             lang,
             isFavorite: selectors.isFavorite(state, e.item.id),
             isSpeaking: state.speakingItemId === e.item.id,
+            isPlayingAudio: state.dhikrAudioItemId === e.item.id,
             counter: selectors.getCounter(state, e.item.id),
             showTransliteration: state.settings.showTransliteration,
             showTranslation: state.settings.showTranslation,

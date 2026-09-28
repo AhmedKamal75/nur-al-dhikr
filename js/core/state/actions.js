@@ -67,6 +67,9 @@ export const actions = {
   tasbihCustomAdd: (text, target) => ({ type: 'TASBIH_CUSTOM_ADD', text, target }),
   tasbihCustomRemove: (id) => ({ type: 'TASBIH_CUSTOM_REMOVE', id }),
   setSpeakingItem: (itemId) => ({ type: 'SPEECH_SET_ACTIVE', itemId }),
+  // (v5.17.30) per-dhikr recitation highlight twin of setSpeakingItem —
+  // ephemeral, never persisted (see initial.js).
+  setDhikrAudioItem: (itemId) => ({ type: 'DHIKR_AUDIO_SET_ACTIVE', itemId }),
   // (v5.2.77, BUG-01) notify-only re-render nudge for per-second tickers.
   // The old code abused setSpeakingItem(null) as a cheap pulse, which
   // nulled a genuinely-speaking TTS item on every prayer/day/phase

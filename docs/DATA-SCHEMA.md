@@ -23,7 +23,7 @@ Category   { id, name:{en,ar}, description?:{en,ar}, order, icon?, color?, items
 Item       { id, category_id, title:{en,ar}, arabic, transliteration?,
              translation?:{en,ar}, reference?:{...}, grade?, custom_grade?:{en,ar},
              repetitions, virtues?:{en,ar}, tags?, related?, notes?:{en,ar},
-             audio?, image?, review? }
+             audio?:{ url, reciter?, source?, license? }|null, image?, review? }
 ```
 
 Two things to notice, both deliberate:
@@ -45,6 +45,27 @@ Two things to notice, both deliberate:
 - Scripture text (Qur'an, mushaf pages, Hadeeth) may only be changed by a
   documented, citable repair — see `docs/RUNBOOK.md` §3 and
   `scripts/repair-scripted-text.mjs`.
+
+## Per-dhikr audio (infra only, zero clips — v5.17.30)
+
+- `audio` is optional per item: `{ url, reciter?, source?, license? } | null`.
+  Absent (`null`) is the honest steady state — **no licensed per-dhikr clips
+  ship** (OPEN-ISSUES #15 needs a citable licensed source; #37 needs the
+  scholar ruling on per-reciter adhkar audio), and the renderers draw **no
+  button** for null, never a dead one and never TTS masquerading as
+  recitation (the synthesis button keeps its own `card.listen` label).
+- The url gate is https-only (http localhost/LAN excepted), mirroring the
+  OPEN-ISSUES #1 fix in `audioCatalog.validateCustomServer`. A present but
+  unverified value normalizes to null in `normalizeDhikrAudio`
+  (`js/core/schema.js`) and drops at the restore boundary in
+  `sanitizeDhikrAudio` (`js/core/config/sanitize.js`).
+- Playback is single-shot (`js/services/dhikrAudio.js`): one shared element,
+  played once, no queue/repeat/session/lock-screen. **Streaming-only**: clips
+  load with `preload="none"` and are never written to IndexedDB, so there is
+  no cache budget, no eviction, and no offline playback — offline playback of
+  adhkar clips is honestly absent, not silently broken. The Qur'an audio
+  infra (`audioCatalog`, `recitation`, audio providers) is not reused:
+  full-surah session semantics must never silently own a 30-second clip.
 
 ## Adding a field
 

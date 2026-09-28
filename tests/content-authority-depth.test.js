@@ -170,7 +170,10 @@ describe('the item editor merges onto the stored item', () => {
     reference: { collection: 'Book', reference_ar: { collection: 'كتاب' } },
     grade: 'Sahih',
     repetitions: 3,
-    audio: 'audio/one.mp3',
+    // (v5.17.30) per-dhikr audio is a shaped object now — a legacy bare
+    // string normalizes to null, so the merge-preservation case below uses
+    // the legal fixture shape (fixture url, never a licensed clip).
+    audio: { url: 'https://example.com/audio/one.mp3', reciter: '', source: '', license: '' },
     notes: 'Keep me',
     tags: ['sleep'],
     related: ['itm-2'],
@@ -208,7 +211,11 @@ describe('the item editor merges onto the stored item', () => {
     assert.equal(saved.virtues.ar, 'فضيلة قديمة', 'Arabic virtue survives');
     assert.equal(saved.custom_grade.ar, 'درجة مخصصة', 'Arabic custom grade survives');
     assert.equal(saved.repetitions, 7);
-    assert.equal(saved.audio, 'audio/one.mp3', 'unrelated fields survive');
+    assert.deepEqual(
+      saved.audio,
+      { url: 'https://example.com/audio/one.mp3', reciter: '', source: '', license: '' },
+      'unrelated fields survive'
+    );
     assert.equal(saved.notes, 'Keep me');
     assert.deepEqual(saved.tags, ['sleep']);
     assert.deepEqual(saved.related, ['itm-2']);

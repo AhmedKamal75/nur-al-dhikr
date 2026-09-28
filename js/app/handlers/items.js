@@ -37,6 +37,12 @@ import { closeModal, openModal } from '../../ui/modal.js';
 import { buildCollectionShareText } from '../../views/collection.js';
 import { showToast } from '../../ui/toast.js';
 import * as speech from '../../services/speech.js';
+import {
+  isPlayingDhikrAudioItem,
+  playDhikrAudio,
+  stopDhikrAudio,
+} from '../../services/dhikrAudio.js';
+import { hasVerifiedDhikrAudio } from '../../core/schema.js';
 import * as tasbih from '../../services/tasbih.js';
 import { pickRandomHadith } from '../../services/hadith.js';
 import { dismissCompleted, noteCompleted } from '../../domain/completedCards.js';
@@ -583,6 +589,12 @@ export const clickHandlers = {
   'toggle-speech': (ds) => {
     const entry = getItemEntry(ds.itemId);
     if (!entry) return;
+    // (v5.17.30) one voice: a playing recitation clip yields to synthesis
+    // (and vice versa below) — narration over recitation is unintelligible.
+    stopDhikrAudio();
+    if (store.getState().dhikrAudioItemId !== null) {
+      store.dispatch(actions.setDhikrAudioItem(null));
+    }
     if (speech.isSpeakingItem(ds.itemId)) {
       speech.stop();
       store.dispatch(actions.setSpeakingItem(null));
@@ -601,6 +613,62 @@ export const clickHandlers = {
       },
     });
     closeModal();
+  },
+
+  // (v5.17.30, OPEN-ISSUES #15 infra only) single-shot per-dhikr
+  // recitation: one clip, played once, streamed (never cached — see
+  // services/dhikrAudio.js). Fail-closed on unverified audio: the button
+  // only renders where the gate passes, and a forged event re-checks here
+  // instead of trusting the dataset. A start failure or mid-stream drop
+  // carries a Retry that replays THIS item's clip, not whatever happens
+  // to be selected now (same discipline as the full-surah Retry).
+  'play-dhikr-audio': (ds) => {
+    const entry = getItemEntry(ds.itemId);
+    if (!entry || !hasVerifiedDhikrAudio(entry.item)) return;
+    if (isPlayingDhikrAudioItem(ds.itemId)) {
+      stopDhikrAudio();
+      store.dispatch(actions.setDhikrAudioItem(null));
+      return;
+    }
+    // One voice: recitation stops synthesis, and the full-surah track
+    // yields (paused, docked) rather than overlapping it.
+    speech.stop();
+    store.dispatch(actions.setSpeakingItem(null));
+    yieldFullSurahPlayer();
+    store.dispatch(actions.setDhikrAudioItem(ds.itemId));
+    const lang = store.getState().settings.language;
+    const retry = () => {
+      clickHandlers['play-dhikr-audio'](ds);
+    };
+    const result = playDhikrAudio(
+      { itemId: ds.itemId, url: entry.item.audio.url },
+      {
+        onEnd: () => {
+          if (store.getState().dhikrAudioItemId === ds.itemId) {
+            store.dispatch(actions.setDhikrAudioItem(null));
+          }
+        },
+        onError: () => {
+          if (store.getState().dhikrAudioItemId === ds.itemId) {
+            store.dispatch(actions.setDhikrAudioItem(null));
+          }
+          showToast(t('dhikrAudio.failed', lang), {
+            assertive: true,
+            actionLabel: t('common.retry', lang),
+            onAction: retry,
+          });
+        },
+      }
+    );
+    if (result !== 'started') {
+      // Invalid url (hostile dataset slipped past render) or a host with
+      // no Audio: revert the optimistic highlight. Unsupported hosts get
+      // the failure toast without a Retry that could never succeed.
+      store.dispatch(actions.setDhikrAudioItem(null));
+      if (result === 'unsupported') {
+        showToast(t('dhikrAudio.failed', lang), { assertive: true });
+      }
+    }
   },
 
   'open-collection-picker': (ds) => {

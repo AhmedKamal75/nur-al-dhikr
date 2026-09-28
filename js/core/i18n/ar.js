@@ -709,6 +709,11 @@ export const ar = {
   'card.copyFailed': 'تعذر النسخ — جرّب تحديد النص يدويًا',
   'card.listen': 'استماع',
   'card.stop': 'إيقاف',
+  // (v5.17.30، OPEN-ISSUES #15 بنية فقط) تلاوة الذكر المسجّلة — صوت حقيقي،
+  // وليست القراءة الاصطناعية خلف card.listen. يجب أن يبقى اللفظان متميزين.
+  'card.playDhikrAudio': 'تشغيل التلاوة',
+  'card.stopDhikrAudio': 'إيقاف التلاوة',
+  'dhikrAudio.failed': 'تعذّر تشغيل التلاوة الصوتية.',
   'card.addToCollection': 'أضف إلى مجموعة',
   'card.more': 'المزيد',
   'card.openFocus': 'فتح في وضع التركيز',

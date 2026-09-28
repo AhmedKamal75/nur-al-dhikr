@@ -732,6 +732,12 @@ export const en = {
   'card.copyFailed': 'Couldn\u2019t copy — try selecting the text instead',
   'card.listen': 'Listen',
   'card.stop': 'Stop',
+  // (v5.17.30, OPEN-ISSUES #15 infra only) per-dhikr recitation — a real
+  // recorded voice, never the synthesiser behind card.listen. The two
+  // labels must stay distinct so TTS can never masquerade as recitation.
+  'card.playDhikrAudio': 'Play recitation',
+  'card.stopDhikrAudio': 'Stop recitation',
+  'dhikrAudio.failed': 'Recitation audio failed to play.',
   'card.addToCollection': 'Add to collection',
   'card.more': 'More',
   'card.openFocus': 'Open in Focus Mode',

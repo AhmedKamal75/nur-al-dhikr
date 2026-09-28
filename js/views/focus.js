@@ -5,6 +5,7 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
+import { hasVerifiedDhikrAudio } from '../core/schema.js';
 import { escapeHTML } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import {
@@ -136,6 +137,18 @@ export function renderFocus(state) {
   };
   const isFav = selectors.isFavorite(state, item.id);
   const isSpeaking = state.speakingItemId === item.id;
+  // (v5.17.30, OPEN-ISSUES #15 infra only) recitation twin of isSpeaking —
+  // same conditional-button contract as ui/card.js: verified clip only,
+  // absent audio renders no button, parked in by-heart mode like Listen.
+  const isPlayingAudio = state.dhikrAudioItemId === item.id;
+  const dhikrAudio = hasVerifiedDhikrAudio(item) ? item.audio : null;
+  const dhikrAudioLabel = t(isPlayingAudio ? 'card.stopDhikrAudio' : 'card.playDhikrAudio', lang);
+  const dhikrAudioCredit = dhikrAudio
+    ? [dhikrAudio.reciter, dhikrAudio.source].filter(Boolean).join(' · ')
+    : '';
+  const dhikrAudioTitle = dhikrAudioCredit
+    ? `${dhikrAudioLabel} — ${dhikrAudioCredit}`
+    : dhikrAudioLabel;
   // Strict language separation (same contract as ui/card.js): AR shows the
   // Arabic matn + Arabic virtue/source only; transliteration/translation
   // render in EN only, with no cross-language fallback.
@@ -184,6 +197,13 @@ export function renderFocus(state) {
             ? ''
             : `<button type="button" class="icon-btn icon-btn--play ${isSpeaking ? 'icon-btn--playing' : ''}" data-action="toggle-speech" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isSpeaking}" aria-label="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}" title="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}">
           ${icon(isSpeaking ? 'stop' : 'volume', { size: 20 })}
+        </button>`
+        }
+        ${
+          bh || !dhikrAudio
+            ? ''
+            : `<button type="button" class="icon-btn icon-btn--play ${isPlayingAudio ? 'icon-btn--playing' : ''}" data-action="play-dhikr-audio" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isPlayingAudio}" aria-label="${dhikrAudioLabel}" title="${escapeHTML(dhikrAudioTitle)}">
+          ${icon(isPlayingAudio ? 'stop' : 'play', { size: 20 })}
         </button>`
         }
         <button type="button" class="icon-btn ${isFav ? 'icon-btn--active' : ''}" data-action="toggle-favorite" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isFav}" aria-label="${t('card.favorite', lang)}">

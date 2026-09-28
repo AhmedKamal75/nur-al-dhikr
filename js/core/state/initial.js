@@ -406,6 +406,12 @@ export function initialState() {
     // showing that item re-renders its Play button reactively, and
     // starting playback on a new item correctly reverts any other card.
     speakingItemId: null,
+    // (v5.17.30, OPEN-ISSUES #15 infra only) Ephemeral — which item's
+    // per-dhikr recitation clip is currently playing, if any. Same
+    // reactive-highlight purpose as speakingItemId, deliberately NOT in
+    // PERSISTED_KEYS: a reload has no clip playing, so a persisted id
+    // would render a stuck playing button.
+    dhikrAudioItemId: null,
     // First-run onboarding ("Getting started" panel on Home). Persisted, but
     // self-dismissing for returning users — see sanitizeRestoredPayload:
     // anyone upgrading from an earlier version with existing progress is

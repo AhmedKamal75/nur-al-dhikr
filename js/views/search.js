@@ -265,6 +265,7 @@ export function renderSearch(state) {
               lang,
               isFavorite: selectors.isFavorite(state, r.item.id),
               isSpeaking: state.speakingItemId === r.item.id,
+              isPlayingAudio: state.dhikrAudioItemId === r.item.id,
               counter: selectors.getCounter(state, r.item.id),
               showTransliteration: state.settings.showTransliteration,
               showTranslation: state.settings.showTranslation,

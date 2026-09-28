@@ -2,6 +2,26 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.30 — Per-dhikr audio infra, with zero clips on purpose
+
+- **The player is ready; the clips are honestly absent** (OPEN-ISSUES #15
+  infra only, still OPEN — #37's scholar ruling and a licensed source are
+  still the gate). Items may now carry optional
+  `audio:{url,reciter?,source?,license?}|null`, validated https-only
+  (`normalizeDhikrAudio` in `js/core/schema.js`, mirrored at the restore
+  boundary in `sanitizeDhikrAudio`), and a "Play recitation" button renders
+  in cards and Focus ONLY where a verified clip exists — no button
+  otherwise, never a dead one, and never TTS wearing recitation's name
+  (Listen keeps its synthesis label, with a distinct icon and wording).
+  Playback is single-shot and streaming-only (`js/services/dhikrAudio.js`:
+  one shared element, `preload="none"`, never IndexedDB, no session
+  semantics borrowed from the full-surah engine), failures toast with a
+  Retry that replays the same item, and one voice wins at a time
+  (recitation yields synthesis, synthesis yields recitation, the adhan
+  stops both). Pinned by `tests/dhikr-audio.test.js` (shape fixtures,
+  card/Focus render with and without, driver play-once/failure,
+  handler Retry wiring — all fixture urls, no real audio).
+
 ## v5.17.29 — Roundel on every paper, and the page reads as a sheet
 
 - **The ayah-end roundel now wears all eleven papers.** The tight-roundel

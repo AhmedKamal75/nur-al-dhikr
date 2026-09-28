@@ -666,6 +666,10 @@ export function reduceLibrary(state, action) {
     case 'SPEECH_SET_ACTIVE':
       return { ...state, speakingItemId: action.itemId };
 
+    // (v5.17.30) per-dhikr recitation highlight — ephemeral like speech.
+    case 'DHIKR_AUDIO_SET_ACTIVE':
+      return { ...state, dhikrAudioItemId: action.itemId };
+
     default:
       return undefined;
   }

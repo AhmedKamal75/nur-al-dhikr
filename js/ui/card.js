@@ -30,6 +30,7 @@ import {
 } from '../domain/localeContent.js';
 import { icon } from '../core/icons.js';
 import { t } from '../core/i18n.js';
+import { hasVerifiedDhikrAudio } from '../core/schema.js';
 // SANCTIONED (DATA-01): grades.js is pure (core/config + core/utils only,
 // no state/services), same class as localeContent above.
 // eslint-disable-next-line no-restricted-imports
@@ -50,6 +51,10 @@ export function cardHTML(item, category, opts = {}) {
     lang = 'en',
     isFavorite = false,
     isSpeaking = false,
+    // (v5.17.30) per-dhikr recitation highlight twin of isSpeaking —
+    // callers pass state.dhikrAudioItemId === item.id. A caller that does
+    // not know the key gets the honest default (not playing).
+    isPlayingAudio = false,
     counter = null,
     showTransliteration = true,
     showTranslation = true,
@@ -122,6 +127,21 @@ export function cardHTML(item, category, opts = {}) {
   if (isDismissed(item.id)) return '';
   const exitingClass = wasCompletedRecently(item.id) ? ' card--exiting' : '';
 
+  // (v5.17.30, OPEN-ISSUES #15 infra only) the recitation button renders
+  // ONLY where a verified clip exists (absent audio → no button, never a
+  // dead one). It is deliberately a different control from the synthesiser
+  // button below (play icon vs volume icon, "Play recitation" vs "Listen")
+  // so TTS can never masquerade as recitation. Hidden in by-heart mode for
+  // the same reason Listen is — hearing the Arabic IS the answer.
+  const dhikrAudio = hasVerifiedDhikrAudio(item) ? item.audio : null;
+  const dhikrAudioLabel = t(isPlayingAudio ? 'card.stopDhikrAudio' : 'card.playDhikrAudio', lang);
+  const dhikrAudioCredit = dhikrAudio
+    ? [dhikrAudio.reciter, dhikrAudio.source].filter(Boolean).join(' · ')
+    : '';
+  const dhikrAudioTitle = dhikrAudioCredit
+    ? `${dhikrAudioLabel} — ${dhikrAudioCredit}`
+    : dhikrAudioLabel;
+
   return `
   <article class="card ${compact ? 'card--compact' : ''}${exitingClass}" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}" data-action="counter-tap" data-target="${escapeHTML(String(target))}" ${cycles > 0 ? `title="${escapeHTML(t('card.completedTimes', lang, { n: cycles }))}"` : ''}>
     <header class="card__top">
@@ -136,6 +156,13 @@ export function cardHTML(item, category, opts = {}) {
             ? ''
             : `<button type="button" class="icon-btn icon-btn--play ${isSpeaking ? 'icon-btn--playing' : ''}" data-action="toggle-speech" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isSpeaking}" aria-label="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}" title="${t(isSpeaking ? 'card.stop' : 'card.listen', lang)}">
           ${icon(isSpeaking ? 'stop' : 'volume', { size: 18 })}
+        </button>`
+        }
+        ${
+          byHeart || !dhikrAudio
+            ? ''
+            : `<button type="button" class="icon-btn icon-btn--play ${isPlayingAudio ? 'icon-btn--playing' : ''}" data-action="play-dhikr-audio" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isPlayingAudio}" aria-label="${dhikrAudioLabel}" title="${escapeHTML(dhikrAudioTitle)}">
+          ${icon(isPlayingAudio ? 'stop' : 'play', { size: 18 })}
         </button>`
         }
         <button type="button" class="icon-btn ${isFavorite ? 'icon-btn--active' : ''}" data-action="toggle-favorite" data-item-id="${escapeHTML(item.id)}" aria-pressed="${isFavorite}" aria-label="${t(isFavorite ? 'card.unfavorite' : 'card.favorite', lang)}" title="${t(isFavorite ? 'card.unfavorite' : 'card.favorite', lang)}">
