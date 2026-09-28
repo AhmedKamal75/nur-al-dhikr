@@ -253,6 +253,11 @@ export function isSajdaAyah(surah, ayah) {
  * @param {number|string} surah
  * @param {number|string} ayah
  * @returns {number|null} page number, or null when unresolvable
+ *
+ * (v5.17.28) THE canonical ayah→page reader — services/surahPlayback.js
+ * re-exports this instead of keeping its own copy. A corrupt map entry
+ * (out-of-range page) refuses with null rather than clamping onto a wrong
+ * page: callers render no chip / no flip on null, never a dead link.
  */
 export function resolvePage(ayahPages, surah, ayah) {
   if (!ayahPages || typeof ayahPages !== 'object') return null;
@@ -260,7 +265,7 @@ export function resolvePage(ayahPages, surah, ayah) {
   const a = Number(ayah);
   if (!Number.isFinite(s) || !Number.isFinite(a) || s < 1 || a < 1) return null;
   const page = ayahPages[`${s}:${a}`];
-  return Number.isFinite(page) ? clampPage(page) : null;
+  return Number.isInteger(page) && page >= 1 && page <= MUSHAF_PAGE_COUNT ? page : null;
 }
 
 /**

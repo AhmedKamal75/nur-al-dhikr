@@ -12,7 +12,7 @@ import { search as runSearch } from '../domain/search.js';
 import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
 import { searchTafsir, isTafsirSearchReady, tafsirIndexEdition } from '../domain/tafsirSearch.js';
 import { searchHadith } from '../domain/hadithSearch.js';
-import { resolvePage } from '../services/surahPlayback.js';
+import { resolvePage } from '../services/mushaf.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';

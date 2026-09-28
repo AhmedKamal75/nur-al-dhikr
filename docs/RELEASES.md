@@ -2,6 +2,22 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.28 — Search chips that know which page they open
+
+- **One `resolvePage`, and Search prefetches the map it resolves through**
+  (OPEN-ISSUES #46, still open — this narrows it, it does not close it).
+  The ayah→page reader existed twice — `services/mushaf.js` (the route,
+  the follow-along flip) and a stricter twin in `services/surahPlayback.js`
+  (the Search chip) — and Search only rendered its mushaf chip when the
+  map happened to be loaded already. Now `mushaf.js` is the single
+  canonical implementation (the playback copy is a deprecated re-export of
+  the same function), corrupt map entries refuse with null instead of
+  clamping onto a wrong page, and opening Search with a query prefetches
+  the mushaf meta so a cold search renders chips, not reader-only rows.
+  No new strings — the chip already shipped EN+AR. Pinned by
+  `tests/mushaf-search.test.js` (unification identity, resolve/route
+  units, chip href with page AND ayah, no-chip-when-null, AR label).
+
 ## v5.17.27 — The picker says what the player already knew
 
 - **Whole-surah voices are labelled in the picker itself** (OPEN-ISSUES #13).

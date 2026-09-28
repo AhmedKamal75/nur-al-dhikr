@@ -10,7 +10,8 @@
  *    element in recitation.js (one voice in the whole app, ever). It drives
  *    recitation through a swappable driver so tests can inject a fake and
  *    simulate 'ended' events without any audio device.
- *  - Pure helpers (nextAyah, resolvePage) are exported for unit tests.
+ *  - Pure helpers (nextAyah, plus resolvePage re-exported from
+ *    services/mushaf.js) are exported for unit tests.
  *  - The engine knows nothing about the DOM or the store: app.js subscribes
  *    via onAyahChange() and mirrors progress into state.surahPlayback, and
  *    owns the follow-scroll / page-flip effects.
@@ -60,12 +61,11 @@ export function nextAyah(ayah, total) {
   return a < t ? a + 1 : null;
 }
 
-/** Mushaf page holding a (surah, ayah), from mushaf-meta's ayahPages map. */
-export function resolvePage(ayahPages, surah, ayah) {
-  if (!ayahPages || typeof ayahPages !== 'object') return null;
-  const page = ayahPages[`${Number(surah)}:${Number(ayah)}`];
-  return Number.isInteger(page) && page >= 1 && page <= 604 ? page : null;
-}
+/** Mushaf page holding a (surah, ayah), from mushaf-meta's ayahPages map.
+ *  (v5.17.28, deprecated) the canonical implementation lives in
+ *  services/mushaf.js — this is a re-export so the engine and its tests
+ *  keep resolving to the same function. New code imports from there. */
+export { resolvePage } from './mushaf.js';
 
 /** Stable key for an ayah, same shape recitation.js uses everywhere. */
 export const ayahKey = (surah, ayah) => `${surah}:${ayah}`;

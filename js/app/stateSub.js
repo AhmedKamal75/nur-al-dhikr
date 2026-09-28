@@ -385,6 +385,13 @@ export function onStateChange(stateArg, action) {
     }
     rt.bulkViewWasSearch = ownsBulkBuild(state.activeView);
     maybeStartQuranSearchBuild(state);
+    // (v5.17.28) Search's ayah hits carry mushaf-page chips resolved from
+    // the ayahPages map — prefetch it with the query so a cold search
+    // renders chips, not reader-only rows. Best-effort like the
+    // STATISTICS/CERTIFICATE prefetch above: a failure just means no chips.
+    if (state.activeView === VIEWS.SEARCH && (state.activeParams?.q || '').trim()) {
+      ensureMushafMeta();
+    }
     maybeStartTafsirSearchBuild(state);
     maybeStartHadithSearchBuild(state);
     // v3.20: prayer settings changed through ANY path (bell toggles, location,
