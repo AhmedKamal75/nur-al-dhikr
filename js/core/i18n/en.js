@@ -1487,6 +1487,7 @@ export const en = {
   'common.done': 'Done',
   'common.loading': 'Loading\u2026',
   'common.retry': 'Retry',
+  'common.itemList': 'The dhikr in this category',
   'common.goHome': 'Go home',
   'common.notFoundHint': 'This link may be old or incomplete — the home screen is one tap away.',
   'common.copy': 'Copy',

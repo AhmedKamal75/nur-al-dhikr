@@ -1444,6 +1444,7 @@ export const ar = {
   'common.done': 'تم',
   'common.loading': 'جارٍ التحميل…',
   'common.retry': 'إعادة المحاولة',
+  'common.itemList': 'أذكار هذا التصنيف',
   'common.goHome': 'العودة للرئيسية',
   'common.notFoundHint': 'قد يكون الرابط قديمًا أو ناقصًا — الشاشة الرئيسية على بُعد ضغطة واحدة.',
   'common.copy': 'نسخ',

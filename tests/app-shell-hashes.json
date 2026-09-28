@@ -1,10 +1,10 @@
 {
-  "version": "5.17.23",
+  "version": "5.17.24",
   "files": {
     "index.html": "50147f34d1dd53b81cea2bfe9f87d02b9c66800c4cbf014a7c9679cdb28cfd9d",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "c22c052f94e0ff0c329258ef5e87d2a1ee347db8545c3004774839d0a7d296fd",
-    "manifest.json": "09769aa3c93a6f7e980993e9fca611219a25a2a27ee06ee48dbeaa4cc6e4e8ee",
+    "manifest.json": "0ce63d6081f39eef21c6aa898505727bf61ccda7abea90d651f98dd71e486789",
     "assets/css/variables.css": "bffe06304f943baee633c1fe6006e11e3c941879bee619ccf2b66633f6c211a5",
     "assets/css/base.css": "b29e2b3776b3d48b496b732aad7e11e54d65f462548b063b25982bfa8c326d66",
     "assets/css/layout.css": "447c297369e0f02e83545219cf7cfa4290534e37611bb4aa7d627496de0a3724",
@@ -14,7 +14,7 @@
     "assets/css/tajweed-course.css": "0b206e38062483a2e2bd46ed686434f3fe415bdaaae30a42e4c98ba8c6260e39",
     "assets/css/animations.css": "226a25676dffe061b18601f977c46247ead503a27d00dda8d72620fc9c2a313e",
     "assets/css/desktop.css": "4ff7192dd50f8fc036c8185fa9d25b81e0249a42277e95bcd17c8de9d55582c6",
-    "assets/css/accessibility.css": "07f3bcd3d0e0e434433785cc3ffc5ef322bfd76b14aa9b39b7537dfef124032a",
+    "assets/css/accessibility.css": "73790081317ac44ec09d14733fc0890cd128702d6acf06d720236a05dd60b175",
     "js/app.js": "61cb1b322d45c74122dafe71ea9f5d10b7e25f3364c9f17af09b70db538c5385",
     "js/app/audioEngine.js": "b20cf65fa08adbeb4e0fa04dfe7009c5fb3944f3607e99948fe17ca882431af7",
     "js/app/autoFit.js": "4ef02fdaf5fbd3e78cef0fe276d02c5a8e7f2c693a44c48d348abe9ae47157e1",
@@ -64,15 +64,15 @@
     "js/app/tafsirSearch.js": "4117d5b7163ea602924de8a45e55eed779c98d59469336faee2ef758b778380f",
     "js/app/tickers.js": "f115c8e3147513fdb5a421e10483568a553b98445bf7eafda8055b683579e865",
     "js/app/triggers.js": "6b2186cbb1f0c163e5b69291ed5960f174bfd1a570955354ae6e33e28b78e664",
-    "js/core/config.js": "dbe59cf6c19c68aed7f87da9b83dadee11b931dbef66e589248f2d2a18efd206",
+    "js/core/config.js": "d20fb665419147725cd975808a76b4810fdd7a032dd158f291f07eb7d6d621c3",
     "js/core/config/app.js": "b8237b2ea9a82475822d0644fc591d95786e7cd017e92b5f5b5c8ac143363a39",
     "js/core/config/quran.js": "aeb93fa7da04c73e8251901d02446eb8e4c6552d8681fad09e2b72467865c8e4",
     "js/core/config/sanitize.js": "39be7fd9d738251d99c7d6c701233b1bb8d60b2cfc74ccfbc5250cb7c3e58416",
     "js/core/config/views.js": "9016c0102fd5cce0777f665ce9d9ccd208d30bfedbe9cc63b088153c5804ef92",
     "js/core/fetch.js": "ad1e97518b73c69e3fd88af18941d0387a74960fa13104cd4e11903553494faf",
     "js/core/i18n.js": "84cc4087d47bd674ee19e1737deb1d7c23f535b4eff97322977994f0129d6ec8",
-    "js/core/i18n/ar.js": "7b046ace5b2aa3a5010281d255972146691554c4bb8df1db58b2799b30719a54",
-    "js/core/i18n/en.js": "6e4a1ed34eba166ad81b38ef4e23843520e9f2cac2a7a21c3052a266c37381ac",
+    "js/core/i18n/ar.js": "024d1490a5c2ac26c81a28e3293c276b6cb4dde635bf81fd5ec57a31de247050",
+    "js/core/i18n/en.js": "bad42ee4db56ef5568ab6961c35f8d59168f4e39d1bfffe6ec97266e6aef61f9",
     "js/core/icons.js": "39b58806f3ad9d9f10ccf27f3dbb10028356b9847f44e17ac4043fb057a85b44",
     "js/core/migration.js": "749f800f78bbf0c8b5872355c88ff30e447ecb5ee8c022cdff1601a15f7b8424",
     "js/core/router.js": "5067013d013307b404897e00948d4ab80b4d2bb90b400b926e4adb40813d45b8",
@@ -206,7 +206,7 @@
     "js/views/audioManager.js": "bebaed620ec404114acdf732a2290330c9cd51a8402421ec915112b9b7f7b0f5",
     "js/views/ayahStudy.js": "1b54702cac8b9af1d01b287eab2ab72c774ce36054cf9fa5872babd566c6c7ca",
     "js/views/calendar.js": "c277d3f5d5e04f9b54eea31ac96620f3020dfd667008abb31cf887d577856df6",
-    "js/views/category.js": "a56c9f09c9fbaec1ec55bcee1fb5ef83fd611dfbda19a33f7059ee5769cc3ccb",
+    "js/views/category.js": "4a17ccf027d652a8bb2c23083b8f519921cbfea5c558b80e89678272d1753709",
     "js/views/certificate.js": "c4a00a34ba49146fcd9b836fc997bf4172e1c437911338550a45ac637d0b045d",
     "js/views/checklist.js": "6f8702c5f09e03632e8fde9a7085264b506a0d3f4e9247cebe887bbecce18bef",
     "js/views/collection.js": "bc7639ad11008d31298e282be00131f73e8a80aad8235d17cce68ede2e4f4bfe",
@@ -266,6 +266,6 @@
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
     "assets/audio/adhan/adhan.mp3": "95c386b0a62b9aae51847aa160472b1ea23d98e8f0bb78f7f990b65441b207ee",
-    "sw.js": "34a295bf933aefc9d3958eb70d62c6aae189de626a0ce858a5d678ae52b3034b"
+    "sw.js": "8026028692e1920c9bd310fc96c9516386188442df6d1379afbc27ba030f75d4"
   }
 }

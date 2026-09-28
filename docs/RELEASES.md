@@ -2,6 +2,33 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.24 — The backlog becomes a real artefact, and stops lying
+
+- **`docs/BACKLOG.md` exists.** The owner's goals, where each one stands, the
+  score history, every review finding and what happened to it, and the known
+  non-fixes with their reasons. It was previously living in one agent's
+  memory, which is exactly the thing a second agent cannot read.
+  - `tests/backlog-consistency.test.js` fails if the backlog and the ledger
+    disagree, if the stated version is not the tree's version, if an OPEN
+    ledger row is missing from the open section, if a row marked "fixed" does
+    not name a test that exists, or if the 9.1 gate is ever recorded as met
+    without a review number that says so.
+- **The consistency test immediately found four things I had got wrong.** Two
+  "fixed" rows — the recitation Retry and the widened `roomySpacing` — had
+  **no test at all**. They were real changes and they were claims, not
+  closures. `tests/audio-recovery-and-spacing.test.js` now covers both, and
+  the same test caught a `.ayah-card__reference` selector I had invented and
+  that matched no markup, removed on the commit that introduced it.
+- **Ledger row 7's stated blocker was false.** It said no action-bearing
+  toast API exists. It has existed all along, with several call sites using
+  it — the audio path simply used none. A false blocker in a ledger is worse
+  than no blocker, because it stops the next person from looking.
+- **Heading order on list views.** Card titles are `<h3>` by design, meant to
+  sit under an `<h2>`, and three views put an `<h1>` and then the cards with
+  nothing between — so the sequence was h1 → h3. The list now has the `<h2>`
+  it was always missing, and the existing heading sweep checks order as well
+  as clipping.
+
 ## v5.17.23 — The second review's ten findings, closed
 
 A second independent review scored 8.8 and raised ten points. This closes

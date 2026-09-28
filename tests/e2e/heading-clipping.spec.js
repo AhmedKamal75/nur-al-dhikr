@@ -23,6 +23,38 @@ const ROUTES = [
 ];
 
 test.describe('headings are not clipped on a phone', () => {
+  // (v5.17.24) The same sweep checks ORDER. A card title is an <h3> by
+  // design — it is meant to sit under an <h2> — and three list views put an
+  // <h1> and then the cards with nothing between, so the sequence was h1 -> h3.
+  // A skipped level is a real defect however the scanner tags it, and the
+  // list was simply missing the heading it always needed.
+  test('no heading level is skipped on a list view', async ({ page }) => {
+    const out = [];
+    for (const route of [
+      '#/category/morning',
+      '#/library',
+      '#/kids',
+      '#/search?q=Allah',
+      '#/favorites',
+    ]) {
+      await page.goto(`./${route}`);
+      await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+      await page.waitForTimeout(900);
+      const seq = await page.evaluate(() =>
+        [...document.querySelectorAll('#main h1, #main h2, #main h3, #main h4, #main h5, #main h6')]
+          .filter((h) => h.textContent.trim())
+          .map((h) => Number(h.tagName.slice(1)))
+      );
+      for (let i = 1; i < seq.length; i += 1) {
+        if (seq[i] > seq[i - 1] + 1) {
+          out.push(`${route}: h${seq[i - 1]} -> h${seq[i]} skips a level`);
+          break;
+        }
+      }
+    }
+    expect(out, `skipped heading levels:\n  ${out.join('\n  ')}`).toEqual([]);
+  });
+
   test('no visible heading is truncated at 390px', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const offenders = [];

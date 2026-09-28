@@ -200,6 +200,7 @@ export function renderCategory(state) {
     ${
       items.length
         ? `
+      <h2 class="sr-only">${t('common.itemList', lang)}</h2>
     <div class="card-list">
       ${items
         .map((item, i) => {
