@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.20",
+  "version": "5.17.21",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
@@ -88,11 +88,6 @@
       "path": "lexical-review-queue.json",
       "bytes": 1734,
       "sha256": "a9f784268d269b1e638523a4ecd6e61b516b0405f6f40fd4715cddbe9f192fb2"
-    },
-    {
-      "path": "mushaf-annotations.json",
-      "bytes": 542,
-      "sha256": "cda4be0a9ed14bd070a0f1289c177ca58a5752277644065de8e8eca05dd607fc"
     },
     {
       "path": "mushaf-meta.json",

@@ -23,6 +23,7 @@ import path from 'node:path';
 import { renderAyahWords, buildMushafSettingsPanel } from '../js/views/tafsirPanel.js';
 import { renderMushaf } from '../js/views/mushafReader.js';
 import { buildWordStudyPanel } from '../js/views/tafsirPanel.js';
+import { TAJWEED_RULES } from '../js/domain/tajweed.js';
 import { ornamentTokenKind, sameSurfaceWord } from '../js/domain/tajweed.js';
 import { wordIrabLine } from '../js/domain/wordStudy.js';
 import { computeFitScale, FIT_MIN, FIT_MAX, takeoverManualZoom } from '../js/app/autoFit.js';
@@ -139,21 +140,25 @@ describe('P0-2: orthography, sajdah accent, waqf system', () => {
   test('P0-2b: the sajdah line accent renders on 32:15 only, bytes unchanged', () => {
     const meta = readJSON('data/quran-meta.json');
     const sajdah32 = meta.surahs.find((s) => s.number === 32);
-    const annotations = readJSON('data/mushaf-annotations.json');
-    const exactSajdah = annotations.sajdah.find(
-      (entry) => entry.surah === 32 && entry.ayah === 15 && entry.word === 'سَجَدُوا'
-    );
-    assert.ok(
-      exactSajdah?.overline === true,
-      'exact سَجَدُوا annotation carries sajdah overline metadata'
-    );
-    assert.ok(
-      exactSajdah.displayForms.includes('سُجَّدًا'),
-      'annotation also understands the bundled Uthmani surface'
-    );
-    assert.ok(annotations.tajweed.doubleUnderlineRules.includes('madd_2'));
-    assert.ok(annotations.tajweed.doubleUnderlineRules.includes('madd_munfasil'));
-    assert.equal(annotations.tajweed.doubleUnderlineEnabledByDefault, true);
+    // (v5.17.21) This used to read data/mushaf-annotations.json — a file
+    // NOTHING in the app ever loaded. The test asserted on documentation, so
+    // it would have stayed green if the sajdah accent had been deleted from
+    // the reader, and green if the double-underline list had drifted. It is
+    // now deleted, and these assertions read the LIVE sources instead: the
+    // accent constant the renderer actually uses, and the rule ids the
+    // underline implementation actually consults.
+    const readerSrc = read('js/views/mushafReader.js');
+    assert.match(readerSrc, /const SAJDA_ACCENT_SURAH = 32;/, 'the renderer accents 32');
+    assert.match(readerSrc, /const SAJDA_ACCENT_AYAH = 15;/, 'the renderer accents verse 15');
+    // Both written forms must be covered, because the Uthmani surface differs
+    // from the imla'i one and the accent has to survive either.
+    assert.match(readerSrc, /'سُجَّدًا'/, 'accent covers the Uthmani surface');
+    assert.match(readerSrc, /'سَجَدُوا'/, "accent covers the imla'i surface");
+    // The double-underline default and its rule list are real settings, so
+    // assert the real settings rather than a copy of them.
+    assert.equal(DEFAULT_SETTINGS.mushafPrefs.tajweedUnderlines, true, 'underlines default on');
+    const maddRuleIds = TAJWEED_RULES.map((r) => r.id).filter((id) => id.startsWith('madd_'));
+    assert.ok(maddRuleIds.length >= 6, 'the madd rules are the double-underlined set');
     const page = readJSON('data/mushaf-meta.json').ayahPages['32:15'];
     assert.equal(page, 416, 'the corpus still puts 32:15 on mushaf page 416');
     const doc = readJSON(`data/mushaf/${page}.json`);

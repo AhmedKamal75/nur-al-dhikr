@@ -26,6 +26,9 @@ test('E: mushafReader.js imports only layers + its extracted parts', () => {
     './ayahStudy.js',
     // (v5.12.0) player surfaces part (from-here math + fs file row).
     './mushafPlayer.js',
+    // (v5.17.21) the jump drawer, extracted when this file crossed its
+    // 800-line cap. Same rule as the others: extracted, not grown into.
+    './mushafJump.js',
   ];
   const offenders = importsOf(src('js/views/mushafReader.js')).filter(
     (spec) => !allowedPrefixes.some((p) => spec.startsWith(p)) && !allowedViews.includes(spec)
@@ -34,7 +37,7 @@ test('E: mushafReader.js imports only layers + its extracted parts', () => {
 });
 
 test('E: extracted parts have no back-edge into mushafReader', () => {
-  for (const mod of ['mushafBookmarks', 'khatma', 'ayahStudy']) {
+  for (const mod of ['mushafBookmarks', 'khatma', 'ayahStudy', 'mushafJump']) {
     const offenders = importsOf(src(`js/views/${mod}.js`)).filter((s) =>
       s.includes('mushafReader')
     );

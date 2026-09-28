@@ -55,6 +55,7 @@
  * without a DOM (tests/renderPatch.test.js).
  */
 
+import { clearMushafTarget, consumeMushafTarget, setMushafTarget } from '../ui/readingTokens.js';
 import { VIEWS, APP_NAME } from '../core/config.js';
 import { t } from '../core/i18n.js';
 import { buildHash, consumePopNavigation } from '../core/router.js';
@@ -669,6 +670,34 @@ export function settingsSectionScrollTarget(state) {
  * of only #main. rAF-defers past the patch so the node exists; reduced
  * motion gets an instant jump via scrollBehavior().
  */
+/**
+ * (v5.17.21) Reveal the ayah a mushaf deep link asked for.
+ *
+ * "Open the mushaf at 2:255" could not be expressed before this: every
+ * mushaf link carried a page and nothing else, so a shared link or search's
+ * "open in mushaf" dropped the reader at the top of a page with the ayah
+ * below the fold and no sign it was there. The view marks the ayah; this
+ * brings it into view, and moves focus to it so a screen reader announces
+ * the verse rather than only #main. rAF past the patch, and honouring
+ * reduced motion like every other arrival in this file.
+ */
+function revealMushafTarget() {
+  const target = consumeMushafTarget();
+  if (!target) return;
+  requestAnimationFrame(() => {
+    const el = document.querySelector(
+      `.mushaf-ayah--target[data-surah="${target.surah}"][data-ayah="${target.ayah}"]`
+    );
+    if (!el) return;
+    el.scrollIntoView({ behavior: scrollBehavior(), block: 'center' });
+    try {
+      el.focus?.({ preventScroll: true });
+    } catch {
+      /* focus is best-effort; never let it break rendering */
+    }
+  });
+}
+
 function scrollToSettingsSection(sectionId) {
   requestAnimationFrame(() => {
     const el = document.getElementById(sectionId);
@@ -902,6 +931,20 @@ export function render(state) {
       // section renders open but the renderer otherwise lands at the very
       // top. Scroll the target section up + focus its summary — unless this
       // navigation restored a saved offset (Back), which wins.
+      // (v5.17.21) A mushaf deep link that names an ayah reveals it. The
+      // token is set here from the ROUTE rather than by the navigate
+      // handler, so a pasted link, a Back/Forward step and a reload all
+      // behave the same, and a reader who moves on is not re-scrolled.
+      if (state.activeView === VIEWS.MUSHAF && saved == null) {
+        const sNum = Number(state.activeParams?.s);
+        const aNum = Number(state.activeParams?.ay);
+        if (Number.isFinite(sNum) && sNum > 0 && Number.isFinite(aNum) && aNum > 0) {
+          setMushafTarget(sNum, aNum);
+        } else {
+          clearMushafTarget();
+        }
+        revealMushafTarget();
+      }
       if (state.activeView === VIEWS.SETTINGS && saved == null) {
         const target = settingsSectionScrollTarget(state);
         if (target) {

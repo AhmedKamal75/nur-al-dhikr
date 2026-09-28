@@ -127,7 +127,12 @@ describe('search hits: ayah→page chips beside reader links', () => {
       assert.ok(html.includes('class="quran-hit__reader"'), 'reader link keeps its card');
       assert.ok(html.includes('href="#/quran/2?ay=5"'), 'reader deep link intact');
       assert.ok(html.includes('class="quran-hit__mushaf"'), 'mushaf chip renders');
-      assert.ok(html.includes('href="#/mushaf?page=42"'), 'chip deep-links the page');
+      // (v5.17.21) The chip now carries the ayah too, not just the page.
+      // "Open the mushaf at 2:5" is the deep-link shape every serious mushaf
+      // app and every printed mushaf index uses, and the app could not
+      // express it: every mushaf link passed a page and nothing else, so the
+      // reader landed at the top of the page with the ayah below the fold.
+      assert.ok(html.includes('href="#/mushaf?page=42&s=2&ay=5"'), 'chip deep-links page AND ayah');
       assert.ok(html.includes('data-page="42"'), 'page rides the dataset');
       assert.ok(
         html.match(/class="quran-hit__reader"[\s\S]*?<\/a>\s*<a class="quran-hit__mushaf"/),

@@ -4031,3 +4031,59 @@ body.has-player .reader-immersive-echo {
   padding: 0.7rem 0.8rem;
   margin-block-end: 0.7rem;
 }
+
+/* v5.17.21 — "you are here" in the jump drawer. 204 rows across three
+   scrollers, and until now nothing said where you were. A left rail in the
+   primary colour reads as a position marker without adding a badge, and
+   forced-colors falls back to the outline so it survives high contrast. */
+.mushaf-jump__row--here {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  box-shadow: inset 3px 0 0 var(--color-primary);
+  font-weight: 600;
+}
+
+[dir='rtl'] .mushaf-jump__row--here {
+  box-shadow: inset -3px 0 0 var(--color-primary);
+}
+
+@media (forced-colors: active) {
+  .mushaf-jump__row--here {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+
+/* v5.17.21 — the ayah you asked for. "Open the mushaf at 2:255" is the most
+   used deep-link shape in any serious mushaf app and in a printed mushaf's
+   index, and the app could not express it: every mushaf link carried a page
+   and nothing else, so you landed at the top of a page with the ayah below
+   the fold and no sign it was there. A calm wash, never a blink — this is a
+   bookmark, not an alert. */
+.mushaf-ayah--target {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mushaf-ayah--target {
+    /* 280ms, inside the project's 300ms motion contract. This is meant to
+       catch the eye, not entertain it; a longer settle would be a
+       distraction on a page whose whole purpose is stillness. */
+    animation: mushaf-target-settle 280ms ease-out 1;
+  }
+  @keyframes mushaf-target-settle {
+    from {
+      background: color-mix(in srgb, var(--color-primary) 34%, transparent);
+    }
+    to {
+      background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .mushaf-ayah--target {
+    outline: 2px solid Highlight;
+  }
+}

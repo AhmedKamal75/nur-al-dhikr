@@ -1008,7 +1008,9 @@ export const en = {
   'mushaf.juzSection': 'Juz',
   'mushaf.hizb': 'Hizb',
   'mushaf.hizbSection': 'Hizb',
-  'mushaf.hizbApprox': 'Hizb positions are approximate — exact marks are shown on the page.',
+  'mushaf.hizbApprox':
+    'Hizb positions are approximate: they are estimated from the page span, not read from the printed margin marks.',
+  'mushaf.approxMark': ' approx.',
   'mushaf.openInMushaf': 'Open in Mushaf',
   'mushaf.listen': 'Listen',
 

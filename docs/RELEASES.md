@@ -2,6 +2,44 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.21 — The mushaf: a link that can name a verse, a jump drawer that knows where you are
+
+- **"Open the mushaf at 2:255" now exists.** All 13 mushaf links in the app
+  passed a page and nothing else, so search's "open in mushaf" and any shared
+  link dropped the reader at the **top** of a page, with the ayah they asked
+  for below the fold and nothing to say it was there. The route now carries
+  `s` and `ay`, the target ayah is marked and scrolled into view with focus
+  moved to it, and a 280ms settle draws the eye without breaking the project's
+  300ms motion contract. `data/mushaf-meta.json` already held all 6,236
+  ayah→page entries; the route simply could not express the target.
+- **Fullscreen can jump.** Enter fullscreen — the mode you read seriously in
+  — and you could turn pages by one and nothing else. Reaching surah 36 from
+  surah 2 meant leaving fullscreen, opening the drawer, and re-entering,
+  losing the auto-fit, re-running its bisection and re-arming the wake lock.
+  The same existing action, so no new handler and no allowlist entry.
+- **The drawer says where you are.** 204 destinations across three scrollers
+  and not one carried `aria-current`. Now the surah and juz you are reading
+  are marked, which is orientation for a screen-reader user and a fact
+  everyone else can see too. Derived from the same first-page maps the jump
+  buttons already use, so it cannot disagree with where a jump lands.
+- **An approximation no longer wears the authority of printed data.** The
+  page header printed "Juz 1 · 1/8" — the eighth being derived by dividing
+  the juz's page span, not read from a margin — with no marker, while the
+  hizb drawer one screen away said plainly that positions are approximate.
+  One convention now, applied twice: the running head is marked as an
+  estimate, and the drawer's note was corrected, because "exact marks are
+  shown on the page" described something the app never did.
+- **Deleted `data/mushaf-annotations.json`.** Nothing in the app ever loaded
+  it, and a test asserted on it — so it would have stayed green if the sajdah
+  accent had been deleted from the reader, or if the double-underline list had
+  drifted. The test now reads the live sources the renderer actually uses.
+  A test that cannot fail while the app is wrong is worse than no test.
+- **Extracted `js/views/mushafJump.js`.** `mushafReader.js` crossed its
+  documented 800-line cap at 810, and AGENTS.md is explicit that a file near
+  its cap gets a module rather than a growth. The drawer was the clean seam:
+  pure navigation, no state of its own. Re-exported from the facade, so every
+  existing importer is untouched.
+
 ## v5.17.20 — Nothing is a dead end, nothing is half-checked, and one finished feature is finally reachable
 
 - **Every route is now proven accessible, not four of them.** A new gate scans

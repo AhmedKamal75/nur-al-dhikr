@@ -979,7 +979,9 @@ export const ar = {
   'mushaf.juzSection': 'الأجزاء',
   'mushaf.hizb': 'الحزب',
   'mushaf.hizbSection': 'الأحزاب',
-  'mushaf.hizbApprox': 'مواضع الأحزاب تقريبية — العلامة الدقيقة على الصفحة.',
+  'mushaf.hizbApprox':
+    'مواضع الأحزاب تقريبية: تُقدَّر من مدى الصفحات، لا تُقرأ من علامات الهامش المطبوع.',
+  'mushaf.approxMark': ' تقريبًا',
   'mushaf.openInMushaf': 'افتح في المصحف',
   'mushaf.listen': 'استماع',
 

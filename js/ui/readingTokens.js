@@ -32,6 +32,7 @@ export function setFlipDirection(dir) {
 export function consumeFlipDirection() {
   const dir = flipDirection;
   flipDirection = null;
+  mushafTarget = null;
   return dir;
 }
 
@@ -48,7 +49,35 @@ export function consumeFullscreenAnim() {
 }
 
 /** Test-only: drop both tokens so cases isolate. */
+/**
+ * (v5.17.21) "Open the mushaf at 2:255" needs a DOM effect after the patch:
+ * reveal the ayah. A view is a pure string template, so the request travels
+ * as a one-shot token exactly like the flip and fullscreen animations — set
+ * by whoever handled the navigation, consumed by the renderer once, so a
+ * reload cannot re-scroll a reader who has since moved on.
+ */
+let mushafTarget = null;
+
+/** The renderer calls this after the mushaf patch lands. */
+export function consumeMushafTarget() {
+  const t = mushafTarget;
+  mushafTarget = null;
+  return t;
+}
+
+export function setMushafTarget(surah, ayah) {
+  mushafTarget =
+    Number.isFinite(Number(surah)) && Number(surah) > 0
+      ? { surah: Number(surah), ayah: Number(ayah) }
+      : null;
+}
+
+export function clearMushafTarget() {
+  mushafTarget = null;
+}
+
 export function resetReadingTokensForTests() {
   flipDirection = null;
   fullscreenAnim = null;
+  mushafTarget = null;
 }

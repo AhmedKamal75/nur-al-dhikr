@@ -115,6 +115,14 @@ import { consumeFlipDirection, consumeFullscreenAnim } from '../ui/readingTokens
 export function renderMushaf(state) {
   const lang = state.settings.language;
   const page = clampPage(state.activeParams.page || state.mushafBookmark.page || 1);
+  // (v5.17.21) `ay` — "open the mushaf at 2:255". Every one of the 13 mushaf
+  // links in the app used to carry a page and nothing else, so search's
+  // "open in mushaf" and a shared link both dropped the reader at the TOP of
+  // a page, with the ayah they asked for somewhere below the fold and no
+  // indication it was even there. data/mushaf-meta.json already holds all
+  // 6,236 ayah->page entries; the route simply could not express the target.
+  const wantSurah = Number(state.activeParams.s) || null;
+  const wantAyah = Number(state.activeParams.ay) || null;
   const meta = state.mushaf.meta;
   const pageDoc = state.mushaf.pages[String(page)];
   const prefs = state.settings.mushafPrefs;
@@ -243,7 +251,8 @@ export function renderMushaf(state) {
             const sajdaMark = isSajda
               ? `<span class="mushaf-ayah__sajda" title="${t('mushaf.sajda', lang)}">\u06E9</span>`
               : '';
-            return `<span class="mushaf-ayah ${isMarked ? 'mushaf-ayah--bookmarked' : ''} ${isReciting ? 'mushaf-ayah--reciting' : ''}" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" ${focusAttrs} aria-label="${t('quran.ayah', lang)} ${toEasternArabicNumerals(v.number)}${isSajda ? ` — ${t('mushaf.sajda', lang)}` : ''}">${wordsHtml}<span class="mushaf-ayah__marker" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" ${markerAttrs}>\uFD3F${toEasternArabicNumerals(v.number)}\uFD3E</span>${sajdaMark}${isMarked ? '<span class="mushaf-ayah__bookmark-flag" aria-hidden="true">\u2726</span>' : ''}</span>`;
+            const isTarget = wantSurah === Number(chapter.number) && wantAyah === Number(v.number);
+            return `<span class="mushaf-ayah ${isMarked ? 'mushaf-ayah--bookmarked' : ''} ${isReciting ? 'mushaf-ayah--reciting' : ''}${isTarget ? ' mushaf-ayah--target' : ''}" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" ${focusAttrs} aria-label="${t('quran.ayah', lang)} ${toEasternArabicNumerals(v.number)}${isSajda ? ` — ${t('mushaf.sajda', lang)}` : ''}">${wordsHtml}<span class="mushaf-ayah__marker" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" ${markerAttrs}>\uFD3F${toEasternArabicNumerals(v.number)}\uFD3E</span>${sajdaMark}${isMarked ? '<span class="mushaf-ayah__bookmark-flag" aria-hidden="true">\u2726</span>' : ''}</span>`;
           })
           .join(' ');
 
@@ -393,7 +402,13 @@ function ayahCountLabelOf(state, number, lang) {
  */
 function juzLabelFor(meta, page, juz, lang) {
   const eighth = juzEighth(meta?.juzFirstPage, page, juz);
-  return `${t('mushaf.juz', lang)} ${numFor(lang, juz)} \u00B7 ${numFor(lang, eighth)}/${numFor(lang, 8)}`;
+  // (v5.17.21) The eighth is derived by dividing the juz's page span, not read
+  // from a margin. Printing it as "1/8" in the page header gave an
+  // approximation the visual authority of printed data — while the hizb
+  // drawer, one screen away, carried an honest note saying positions are
+  // approximate. One convention, applied twice: the fraction is marked as
+  // estimated here too, and the raw number stays available on hover/tap.
+  return `${t('mushaf.juz', lang)} ${numFor(lang, juz)} \u00B7 ${numFor(lang, eighth)}/${numFor(lang, 8)}${t('mushaf.approxMark', lang)}`;
 }
 
 /**
@@ -518,6 +533,15 @@ function buildFullscreenControls(
       <button type="button" class="icon-btn" data-action="mushaf-open-settings" aria-label="${t('mushaf.settingsTitle', lang)}" title="${t('mushaf.settingsTitle', lang)}">
         ${icon('settings', { size: 18 })}
       </button>
+      <!-- (v5.17.21) The jump drawer, in the mode you actually read in.
+           Without it, fullscreen could turn pages by one and nothing else:
+           reaching surah 36 meant exiting fullscreen, jumping, and
+           re-entering — losing the auto-fit, re-running its bisection and
+           re-arming the wake lock. Same action as the windowed topbar, so
+           no new handler and no allowlist entry. -->
+      <button type="button" class="icon-btn" data-action="mushaf-open-jump" aria-label="${t('mushaf.jumpTo', lang)}" title="${t('mushaf.jumpTo', lang)}">
+        ${icon('grid', { size: 18 })}
+      </button>
       <button type="button" class="icon-btn" data-action="mushaf-prev" ${canPrev ? '' : 'disabled'} aria-label="${orderName(t('mushaf.prevPage', lang))}" title="${t('mushaf.prevPage', lang)}">
         ${icon('chevronRight', { size: 20 })}
       </button>
@@ -584,71 +608,6 @@ function buildTranslationTray(state, docs, lang) {
   return `
     <h2 class="mushaf-tray__title">${icon('book', { size: 15 })} ${t('mushaf.translation', lang)}</h2>
     ${rows.join('')}`;
-}
-
-/** Jump-to-surah / jump-to-juz / jump-to-page drawer, opened in the shared modal.
- *  Pure NAVIGATION: page form + surah list + juz list. Progress (khatma
- *  plan/history) lives in buildMushafTrack, opened from the ⋯ sheet. */
-export function buildMushafJump(state) {
-  const lang = state.settings.language;
-  const meta = state.mushaf.meta;
-  if (!meta) return skeletonLines(lang, [64, 88, 64, 88, 64]);
-
-  const surahButtons = Object.entries(meta.chapterNames)
-    .map(
-      ([num, names]) => `
-    <button type="button" class="mushaf-jump__surah" data-action="mushaf-jump-page" data-page="${meta.surahFirstPage[num] || 1}" data-roving-item>
-      <span class="mushaf-jump__surah-num">${num}</span>
-      <span class="mushaf-jump__surah-name">${escapeHTML(pickLocale(names, lang))}</span>
-      <span class="mushaf-jump__surah-count">${ayahCountLabelOf(state, num, lang)}</span>
-    </button>`
-    )
-    .join('');
-
-  const juzButtons = Object.entries(meta.juzFirstPage)
-    .map(
-      ([juzNum, page]) => `
-    <button type="button" class="mushaf-jump__juz" data-action="mushaf-jump-page" data-page="${page}" data-roving-item>${juzNum}</button>`
-    )
-    .join('');
-
-  // (v5.2.58) Hizb index: 60 halves grouped by juz, jumping to the honest
-  // page-position approximation (exact breaks print in the page margins —
-  // the hint below says so). Buttons reuse the juz styling.
-  const hizbRows = [];
-  for (let juz = 1; juz <= 30; juz += 1) {
-    const halves = [juz * 2 - 1, juz * 2]
-      .map((h) => {
-        const page = hizbStartPage(meta.juzFirstPage, h);
-        if (page == null) return '';
-        const label = `${t('mushaf.hizb', lang)} ${numFor(lang, h)}`;
-        return `<button type="button" class="mushaf-jump__hizb" data-action="mushaf-jump-page" data-page="${page}" data-roving-item aria-label="${escapeHTML(label)} · ${t('mushaf.pageLabel', lang)} ${numFor(lang, page)}">${numFor(lang, h)}</button>`;
-      })
-      .join('');
-    if (!halves) continue;
-    hizbRows.push(
-      `<div class="mushaf-jump__hizb-row"><span class="mushaf-jump__hizb-juz">${t('mushaf.juz', lang)} ${numFor(lang, juz)}</span>${halves}</div>`
-    );
-  }
-
-  return `
-  <div class="mushaf-jump">
-    <h2 id="modal-title-mushaf-jump">${t('mushaf.jumpTo', lang)}</h2>
-    <form class="mushaf-jump__page-form" data-form="mushaf-jump-page">
-      <label for="mushaf-jump-page-input">${t('mushaf.pageLabel', lang)}</label>
-      <div class="mushaf-jump__page-row">
-        <input type="number" id="mushaf-jump-page-input" name="page" min="1" max="604" inputmode="numeric" value="${state.mushafBookmark.page || 1}" />
-        <button type="submit" class="btn btn--primary btn--sm">${t('mushaf.go', lang)}</button>
-      </div>
-    </form>
-    <h3 class="mushaf-jump__heading">${t('mushaf.surahs', lang)}</h3>
-    <div class="mushaf-jump__surah-list" role="group" aria-label="${t('mushaf.surahs', lang)}" data-roving>${surahButtons}</div>
-    <h3 class="mushaf-jump__heading">${t('mushaf.juzSection', lang)}</h3>
-    <div class="mushaf-jump__juz-list" role="group" aria-label="${t('mushaf.juzSection', lang)}" data-roving>${juzButtons}</div>
-    <h3 class="mushaf-jump__heading">${t('mushaf.hizbSection', lang)}</h3>
-    <p class="panel__subtext">${t('mushaf.hizbApprox', lang)}</p>
-    <div class="mushaf-jump__hizb-list" role="group" aria-label="${t('mushaf.hizbSection', lang)}" data-roving>${hizbRows.join('')}</div>
-  </div>`;
 }
 
 /**
@@ -760,6 +719,11 @@ export function buildMushafSheet(state) {
     </div>
   </div>`;
 }
+
+// (v5.17.21) The jump drawer now lives in its own module because this file
+// crossed its 800-line cap. Re-exported so every existing importer — the
+// handler, the tests — keeps importing from the facade unchanged.
+export { buildMushafJump } from './mushafJump.js';
 
 export { buildMushafTrack, buildKhatmaPlanForm } from './khatma.js';
 export { buildMushafAyahDetail } from './ayahStudy.js';
