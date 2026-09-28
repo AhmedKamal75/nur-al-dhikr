@@ -503,6 +503,40 @@ reads.
 
 ---
 
+## 7b. The usability verdict that overrides the score
+
+The owner's own verdict on the current app's organisation: _"azkar.me is super
+good and one of the reasons for that is that it is super intuitive to operate
+and easily. Is ours the same? **NO. A big fat NO.**_"
+
+That overrides the last review's "Features: usability 8.6". The owner is the
+release gate on usability, not the reviewer.
+
+**The measured reasons — the full plan is `docs/REORGANISATION-PLAN.md`:**
+
+- **17 top-level nav entries across 4 taxonomic groups**, against azkar.me's
+  about 6. A filing cabinet, not a home screen.
+- **Two nav entries lead to the same book** — `nav.quran` (Mushaf) and
+  `nav.reader` (classic reader). The source comment admits it: _"same book, two
+  discoverable doors."_ A first-time user is guessing.
+- **14 of 34 routes have no nav door at all**, including **`TAJWEED_COURSE`** —
+  the entire G-2 flagship, reachable only by typing a URL — and **`ROOTS`**,
+  the word-study index we supposedly beat the rival on.
+- **The best feature is the most buried.** "Browse by need" (12 moods) is
+  praised in review and sits two taps deep behind an indirection called
+  "Library", a word a user has no reason to use. azkar.me's front page _is_
+  that browse.
+- **Four nouns for one idea**: Garden, Checklist, Statistics, Favorites.
+  "Garden" and "Checklist" are labels that need a tutorial.
+- **A nav label that lies about its behaviour**: the item labelled _Search_
+  opens a command palette.
+
+**Target: 6 task-shaped doors** (Adhkar · Qur'an · Hadith · Prayer · Practise ·
+You), adhkar as the home screen with named category tiles and live counts, one
+door per book, and every route reachable in **2 taps or fewer**. Phased so
+each step is independently committable and revertable, and **instrumented
+before any change** so the improvement is measured rather than asserted.
+
 ## 8. Open work, ranked
 
 1. **Per-dhikr recitation audio** (0 items) — the largest rival gap. Needs a
@@ -567,6 +601,7 @@ reason 9.1 is a stretch rather than a formality.
 | Data conventions, provenance, repair-script rule    | `docs/DATA-SCHEMA.md`, `docs/TRUSTED-SOURCES.md`, `data/SOURCES.md` |
 | What can only be checked on a phone                 | `docs/DEVICE-TEST.md`                                               |
 | Competitive comparison                              | `docs/CAPABILITY-PARITY.md`                                         |
+| **Information architecture reorganisation plan**    | `docs/REORGANISATION-PLAN.md`                                       |
 | Tajweed research with per-rule sourcing             | `docs/TAJWEED-RESEARCH-DOSSIER.md`                                  |
 
 ---
