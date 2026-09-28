@@ -21,7 +21,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PALETTES } from '../js/core/config.js';
+import { PALETTES, MUSHAF_PAPERS } from '../js/core/config.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CSS_DIR = join(HERE, '..', 'assets', 'css');
@@ -343,5 +343,123 @@ test('touch targets: the token exists and core standalone controls use it', () =
   assert.ok(
     /\.chip::after\s*\{[^}]*inset-block:\s*-6px/.test(CSS['components.css']),
     '.chip needs its 44px vertical hit area'
+  );
+});
+
+/* ------------------------------------------------------------------ */
+/* v5.17.29 mushaf fidelity: roundel on all papers + page-height sheet */
+/* ------------------------------------------------------------------ */
+
+// Every rule block whose selector targets the ayah-end marker, as
+// { selector, declarations } pairs (grouped selectors split apart).
+function markerRules() {
+  const out = [];
+  for (const m of ALL_CSS.matchAll(/([^{}]+)\.mushaf-ayah__marker([^{}]*)\{([\s\S]*?)\n\}/g)) {
+    out.push({ selector: `${m[1]}.mushaf-ayah__marker${m[2]}`.trim(), decls: m[3] });
+  }
+  return out;
+}
+
+test('mushaf roundel (v5.17.29): all 11 papers wear the tight roundel', () => {
+  const rules = markerRules();
+  assert.ok(
+    rules.length >= 4,
+    `expected base + madinah + cream + extension rules, got ${rules.length}`
+  );
+  const missing = [];
+  for (const paper of MUSHAF_PAPERS) {
+    const hit = rules.find(
+      (r) =>
+        r.selector.includes(`[data-mushaf-paper='${paper.id}']`) &&
+        r.decls.includes('background-clip: content-box') &&
+        r.decls.includes('outline-offset: -0.4em') &&
+        r.decls.includes('border-radius: var(--radius-pill)')
+    );
+    if (!hit) missing.push(paper.id);
+  }
+  assert.deepEqual(missing, [], `papers without the tight roundel: ${missing.join(', ')}`);
+});
+
+test('mushaf roundel (v5.17.29): 30px+ hitbox kept, letter-spacing forbidden', () => {
+  const base = /^\.mushaf-ayah__marker\s*\{([\s\S]*?)\n\}/m.exec(CSS['quran.css'])?.[1] || '';
+  assert.ok(base, 'the base marker rule must exist');
+  // The invisible hitbox: generous padding with cancelling negative
+  // margins — the glyph taps like a 30px+ target without moving the paper.
+  assert.match(base, /padding:\s*0\.45em 0\.55em/, 'hitbox padding intact');
+  assert.match(base, /margin:\s*-0\.45em -0\.55em/, 'hitbox margins intact');
+  // Arabic joins break under letter-spacing (project rule, not taste).
+  assert.match(base, /letter-spacing:\s*normal/, 'marker never letter-spaced');
+  for (const r of markerRules()) {
+    const values = [...r.decls.matchAll(/letter-spacing\s*:\s*([^;]+);/g)].map((m) => m[1].trim());
+    assert.deepEqual(
+      values.filter((v) => v !== 'normal' && v !== '0'),
+      [],
+      `roundel must not letter-space: ${r.selector.slice(0, 80)}`
+    );
+  }
+});
+
+test('mushaf roundel (v5.17.29): forced-colors falls back to a system ring', () => {
+  const blocks = [
+    ...ALL_CSS.matchAll(/@media\s*\(forced-colors:\s*active\)\s*\{([\s\S]*?)\n\}/g),
+  ].map((m) => m[1]);
+  const hit = blocks.find((b) => b.includes('.mushaf-ayah__marker'));
+  assert.ok(hit, 'a forced-colors block must restyle the ayah-end marker');
+  assert.ok(hit.includes('CanvasText'), 'marker falls back to a system color');
+  assert.ok(/outline:\s*1px solid/.test(hit), 'the ring survives as a shape, not a tint');
+});
+
+test('mushaf roundel (v5.17.29): marker ink holds AA on every paper', () => {
+  // The marker color resolves per paper (gold 60% + paper ink; cream's
+  // print red is the documented exception). Recompute the same mix the
+  // stylesheet performs and demand WCAG AA against the paper ground.
+  const quran = CSS['quran.css'];
+  const goldOf = (block) => /--mushaf-gold:\s*(#[0-9a-fA-F]{6})/.exec(block)?.[1];
+  const defaultGold = goldOf(/\.mushaf-page-wrap\s*\{([\s\S]*?)\n\}/.exec(quran)?.[1] || '');
+  const darkGold = goldOf(
+    /\.mushaf-page-wrap\[data-mushaf-paper='night'\][\s\S]*?\{([\s\S]*?)\n\}/.exec(quran)?.[1] || ''
+  );
+  const madinahGold = goldOf(
+    /\.mushaf-page-wrap\[data-mushaf-paper='madinah'\]\s*\{([\s\S]*?)\n\}/.exec(quran)?.[1] || ''
+  );
+  assert.ok(defaultGold && darkGold && madinahGold, 'paper golds must resolve from the CSS');
+  for (const paper of MUSHAF_PAPERS) {
+    const gold = paper.id === 'madinah' ? madinahGold : paper.dark ? darkGold : defaultGold;
+    const marker = paper.id === 'cream' ? '#b3261e' : mix(gold, paper.ink, 60);
+    assert.ok(
+      ratio(marker, paper.bg) >= 4.5,
+      `paper ${paper.id}: marker ${marker} on ${paper.bg} = ${ratio(marker, paper.bg).toFixed(2)} (need 4.5)`
+    );
+  }
+});
+
+test('mushaf sheet (v5.17.29): windowed page owns a viewport-relative floor', () => {
+  const quran = CSS['quran.css'];
+  const m =
+    /\.view--mushaf:not\(\.view--mushaf-fullscreen\)\s+\.mushaf-page\s*\{([\s\S]*?)\n\}/.exec(
+      quran
+    )?.[1] || '';
+  assert.ok(m, 'the windowed-only sheet rule must exist');
+  assert.match(m, /min-block-size:\s*clamp\(420px, 75dvh, 960px\)/, 'viewport-relative floor');
+  assert.ok(!/^\s*height:/m.test(m), 'a floor, never a fixed height (tall pages still grow)');
+  assert.ok(
+    !m.includes('--font-scale'),
+    'the sheet must not touch the app type scale (OPEN-ISSUES #49 exclusion)'
+  );
+});
+
+test('mushaf sheet (v5.17.29): fullscreen auto-fit geometry untouched', () => {
+  // The windowed floor must not leak into TRUE fullscreen: layout.css
+  // still floors the fullscreen chain at 0 and the engine still owns
+  // only the fullscreen session.
+  const layout = CSS['layout.css'];
+  const fsPage =
+    /body\.is-mushaf-fullscreen \.mushaf-page\s*\{([\s\S]*?)\}/.exec(layout)?.[1] || '';
+  assert.match(fsPage, /min-block-size:\s*0/, 'fullscreen page still floors at 0');
+  const autoFit = readFileSync(join(HERE, '..', 'js', 'app', 'autoFit.js'), 'utf8');
+  assert.match(
+    autoFit,
+    /state\.mushafFullscreen === true && state\.activeView === VIEWS\.MUSHAF/,
+    'the fit engine still runs on fullscreen sessions only'
   );
 });

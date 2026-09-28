@@ -2,6 +2,35 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.29 — Roundel on every paper, and the page reads as a sheet
+
+- **The ayah-end roundel now wears all eleven papers.** The tight-roundel
+  technique from the Madinah edition (tint on the content-box only, an
+  inward-offset outline ring, pill radius — the marker's padded 30px+
+  hitbox untouched) already dressed Madinah green and cream print-red;
+  ivory, sepia, parchment, pure white, mint and rose take it in antique
+  gold, night, true black and black-and-gold in pale gilding, each tint
+  resolving per paper through the wrap-scoped `--mushaf-gold`. Every
+  marker ink holds WCAG AA on its own ground (worst: sepia 4.67:1),
+  Arabic is explicitly never letter-spaced so no spacing mode can unjoin
+  it, and forced-colors falls back to a system-color ring. Pinned by
+  `tests/cssDesign.test.js` (per-paper roundel, hitbox, AA on all 11,
+  forced-colors) — note `scripts/css-contrast-audit.mjs` does not exist;
+  the audit math lives in that test instead.
+- **The windowed page is a page-height sheet.** `.mushaf-page` outside
+  fullscreen owns `min-block-size: clamp(420px, 75dvh, 960px)` — a short
+  page fills the viewport like paper, a tall page still grows and scrolls
+  with the document, and both facing pages of a spread stretch to one
+  height. TRUE fullscreen is untouched (`layout.css` still floors at 0,
+  the auto-fit engine still runs on fullscreen sessions only), and the
+  floor is pure viewport units so the deliberate 200%-exclusion
+  (OPEN-ISSUES #49) cannot fight it. Pinned by
+  `tests/e2e/mushaf-sheet.spec.js` (390px floor, desktop spread parity,
+  fullscreen geometry).
+- **The backlog told two stories about the sheet; now it tells one.**
+  G-3 claimed the page-height sheet shipped in v5.17.21–23 while §4 said
+  not started. It ships here, and both rows say so.
+
 ## v5.17.28 — Search chips that know which page they open
 
 - **One `resolvePage`, and Search prefetches the map it resolves through**

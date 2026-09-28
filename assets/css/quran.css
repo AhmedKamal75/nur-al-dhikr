@@ -675,6 +675,22 @@ body.tajweed-underlines-off .tajweed {
     border-radius var(--dur-slow) var(--ease-standard),
     box-shadow var(--dur-slow) var(--ease-standard);
 }
+/* (v5.17.29) windowed page-height sheet: the windowed page reads as a
+   SHEET of paper, not a shrink-wrapped text box — a viewport-relative
+   floor (min-, never height: a tall page still grows and scrolls with
+   the document, so manual-zoom growth is never clipped). Scoped
+   :not(fullscreen): TRUE fullscreen owns its own geometry in
+   layout.css (body.is-mushaf-fullscreen, min-block-size: 0 down the
+   chain) plus the auto-fit engine, which only ever runs when
+   state.mushafFullscreen is true (autoFit.js lifecycle) — both are
+   deliberately untouched. The app-wide 200% type scale never reaches
+   mushaf Arabic (OPEN-ISSUES #49, deliberate), and this floor is pure
+   viewport units, so no scale fight is possible. Spread-safe: the two
+   facing pages share the book's flex row and stretch to one height. */
+.view--mushaf:not(.view--mushaf-fullscreen) .mushaf-page {
+  min-block-size: clamp(420px, 75vh, 960px);
+  min-block-size: clamp(420px, 75dvh, 960px);
+}
 .mushaf-page--flip-next {
   animation: mushafFlipFromNext var(--dur-slow) var(--ease-spring);
   will-change: transform;
@@ -1049,6 +1065,10 @@ body.tajweed-underlines-off .tajweed {
   font-size: 0.75em;
   color: color-mix(in srgb, var(--mushaf-gold) 60%, var(--mushaf-paper-ink, var(--color-text)));
   white-space: nowrap;
+  /* Arabic script is never letter-spaced (it breaks the joins) — stated
+     on the marker itself so no spacing mode (dyslexia, roomy) can ever
+     inherit into the roundel and unjoin the numeral's neighbours. */
+  letter-spacing: normal;
   /* The marker glyph is the pointer path to the ayah detail (verse words
      resolve to word-taps by design) — expand its hitbox invisibly so the
      12px glyph taps like a 30px+ target without touching the paper. */
@@ -1110,6 +1130,52 @@ body.tajweed-underlines-off .tajweed {
   outline-offset: -0.4em;
   border-radius: var(--radius-pill);
   margin-inline-start: -0.4em;
+}
+
+/* --- Roundel on every paper (v5.17.29) ---------------------------------------
+   The tight-roundel technique from the Madinah edition (tint on the
+   content-box only, inward-offset outline ring, pill radius, relaxed
+   inline-start margin) extended to the remaining nine papers. The tint
+   resolves PER PAPER through the wrap-scoped --mushaf-gold (antique gold
+   on the light papers, pale gilding on the night papers — see the gold
+   block above), so each paper wears its own ring while the marker's
+   padded 30px+ hitbox stays untouched. Madinah and cream keep their own
+   rules above (edition green, print red). */
+/* Light papers: ivory, sepia, parchment, pure white, mint, rose. */
+.mushaf-page-wrap[data-mushaf-paper='ivory'] .mushaf-ayah__marker,
+.mushaf-page-wrap[data-mushaf-paper='sepia'] .mushaf-ayah__marker,
+.mushaf-page-wrap[data-mushaf-paper='parchment'] .mushaf-ayah__marker,
+.mushaf-page-wrap[data-mushaf-paper='white'] .mushaf-ayah__marker,
+.mushaf-page-wrap[data-mushaf-paper='mint'] .mushaf-ayah__marker,
+.mushaf-page-wrap[data-mushaf-paper='rose'] .mushaf-ayah__marker {
+  background: color-mix(in srgb, var(--mushaf-gold) 13%, transparent);
+  background-clip: content-box;
+  outline: 1px solid color-mix(in srgb, var(--mushaf-gold) 50%, transparent);
+  outline-offset: -0.4em;
+  border-radius: var(--radius-pill);
+  margin-inline-start: -0.4em;
+}
+/* Night papers: night, true black, black & gold (pale gold ring). */
+.mushaf-page-wrap[data-mushaf-paper='night'] .mushaf-ayah__marker,
+.mushaf-page-wrap[data-mushaf-paper='amoled'] .mushaf-ayah__marker,
+.mushaf-page-wrap[data-mushaf-paper='royal-black'] .mushaf-ayah__marker {
+  background: color-mix(in srgb, var(--mushaf-gold) 13%, transparent);
+  background-clip: content-box;
+  outline: 1px solid color-mix(in srgb, var(--mushaf-gold) 50%, transparent);
+  outline-offset: -0.4em;
+  border-radius: var(--radius-pill);
+  margin-inline-start: -0.4em;
+}
+/* Forced-colors: the tint cannot survive high contrast, so the roundel
+   falls back to a system-color ring (the SHAPE still marks the ayah end
+   — a non-color cue) with the marker in CanvasText. */
+@media (forced-colors: active) {
+  .mushaf-ayah__marker {
+    forced-color-adjust: none;
+    background: transparent;
+    color: CanvasText;
+    outline: 1px solid CanvasText;
+  }
 }
 
 /* --- Tajweed on dark papers ---------------------------------------------------
