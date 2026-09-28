@@ -346,6 +346,8 @@ describe('mushaf regroup: zero feature loss', () => {
     // v5.17.19: the tajweed course. A new data-action needs a handler AND an
     // entry here, which is why these are listed rather than discovered.
     'tajweed-course-drill',
+    'practice-classify',
+    'practice-classify-next',
     'tajweed-course-drill-rule',
     'tajweed-course-toggle-done',
     'tajweed-course-mode',

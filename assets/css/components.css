@@ -3171,3 +3171,12 @@ a.view-sheet__row {
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;
 }
+
+/* v5.17.20 — the always-present language switch. The glyph is the TARGET
+   language, not the current one, so the button says what pressing it does. */
+.topbar__lang-code {
+  font-size: 0.78em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}

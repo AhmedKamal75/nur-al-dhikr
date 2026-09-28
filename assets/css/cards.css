@@ -4138,7 +4138,9 @@ body.has-player .hadith-card {
 .about-hero .about-version {
   margin: var(--space-1) 0 0;
   font-size: 0.88em;
-  opacity: 0.7;
+  /* No opacity here. Opacity blends the glyph toward the background, which
+     took this from 4.98:1 to about 3.4:1 and failed axe on both themes.
+     --color-text-muted is already the quieter token and passes on its own. */
 }
 
 .about-caps {
@@ -4322,4 +4324,38 @@ button.toggle-row:focus-visible {
   padding-block-start: var(--space-4);
   border-block-start: 1px solid var(--color-border);
   color: var(--color-text-muted);
+}
+
+/* v5.17.20 — pickers for the two routes that used to be dead ends.
+   #/mood and #/focus are linkable, so a bare one is a question, not an
+   error. These reuse the mood-tile and list-row shapes the app already has
+   rather than inventing a third list style. */
+.focus-picker {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.focus-picker__link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+  color: inherit;
+  text-decoration: none;
+}
+
+.focus-picker__count {
+  margin-inline-start: auto;
+  opacity: 0.7;
+  font-size: 0.8em;
+}
+
+.mood-tile-wrap {
+  list-style: none;
 }

@@ -18,6 +18,7 @@ import { t } from '../core/i18n.js';
 import { store, actions } from '../core/state.js';
 import {
   buildAnswerKey,
+  buildClassifyQuestion,
   buildWordAnswerKey,
   firstWeakRuleForAyah,
   isTajweedRuleId,
@@ -34,6 +35,7 @@ import {
   buildPracticeRound,
   buildPracticeSummary,
   buildPracticePicker,
+  renderClassifyRoundHtml,
 } from '../views/tajweedPracticeView.js';
 
 /* Tajweed practice / drill mode                                       */
@@ -86,6 +88,126 @@ async function loadQuestion(entry, targetRuleId, answerMode, weakRules = null) {
     targets,
     targetWords,
   };
+}
+
+/**
+ * (v5.17.20) The classify round — reachability for work that was already
+ * finished.
+ *
+ * `buildClassifyQuestion` has been written, tested and provenance-tagged since
+ * the quiz engine landed, and no user could ever reach it: the answer-mode
+ * allowlist excluded 'classify' and the picker offered only the two
+ * tap-the-letters modes. A complete, curated multiple-choice generator was
+ * sitting in the codebase doing nothing.
+ *
+ * A third ROUND TYPE rather than a third answer mode, deliberately. The two
+ * existing modes both ask "tap the letters"; classify asks "which rule is
+ * this?", which has a different answer shape and a different wrong-answer
+ * path. It shares the pool, the stats dispatch and the summary, so nothing is
+ * duplicated and neither simple mode grows a branch it never takes.
+ */
+export async function startClassifyRound(ruleId = 'mixed') {
+  const state = store.getState();
+  const lang = state.settings.language;
+  if (ruleId !== 'mixed' && !isTajweedRuleId(ruleId)) return null;
+  await ensureTajweedPool(state);
+  const pool = store.getState().tajweedPool;
+  if (!pool) return null;
+
+  // Draw ayahs from the rule's own rows when a rule was named, else from the
+  // mixed pool. The question then asks which rule this ayah carries.
+  const source =
+    ruleId === 'mixed'
+      ? Array.isArray(pool.mixed)
+        ? pool.mixed
+        : []
+      : Array.isArray(pool.byRule?.[ruleId])
+        ? pool.byRule[ruleId]
+        : [];
+  if (!source.length) return null;
+
+  const wanted = Math.min(PRACTICE_ROUND_SIZE, 5);
+  const questions = [];
+  const seen = new Set();
+  const maxTries = Math.min(source.length, 60);
+  for (let i = 0; i < maxTries && questions.length < wanted; i++) {
+    // Deterministic stride spread, same idea as pickRoundEntries, so a round
+    // is not five ayahs from the same corner of the corpus.
+    const entry = source[Math.floor((i * source.length) / maxTries) % source.length];
+    if (!entry) continue;
+    const key = `${entry.s}:${entry.a}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const q = loadQuestion(entry, null, 'find-spans');
+    if (!q) continue;
+    const mcq = buildClassifyQuestion(q.text, { surah: q.s, ayah: q.a });
+    // Fewer than two options is not a question, and a single-rule ayah makes
+    // it guessable by elimination.
+    if (!mcq || mcq.options.length < 2) continue;
+    questions.push({ ...mcq, s: q.s, a: q.a, text: q.text });
+  }
+  if (!questions.length) {
+    showToast(t('practice.nothingToReview', lang));
+    return null;
+  }
+
+  rt.practiceSession = {
+    mode: 'classify',
+    answerMode: 'classify',
+    ruleId,
+    questions,
+    qIndex: 0,
+    checked: false,
+    answer: null,
+    correct: 0,
+    roundStreak: 0,
+    bestRoundStreak: 0,
+  };
+  renderClassifyRound();
+  return rt.practiceSession;
+}
+
+/** Answer the current classify question. Records through the same one dispatch
+ *  the tap modes use, so stats and the weak-rule memory stay a single truth. */
+export function answerClassify(ruleId) {
+  const session = rt.practiceSession;
+  if (!session || session.mode !== 'classify' || session.checked) return;
+  if (typeof ruleId !== 'string' || !ruleId) return;
+  const q = session.questions[session.qIndex];
+  // An option that is not on the question is a crafted click, not an answer.
+  if (!q || !q.options.includes(ruleId)) return;
+  session.checked = true;
+  session.answer = ruleId;
+  const perfect = ruleId === q.correctAnswer;
+  if (perfect) {
+    session.correct += 1;
+    session.roundStreak = (session.roundStreak || 0) + 1;
+    session.bestRoundStreak = Math.max(session.bestRoundStreak || 0, session.roundStreak);
+  } else {
+    session.roundStreak = 0;
+  }
+  store.dispatch(actions.recordTajweedPracticeResult(q.correctAnswer, perfect));
+  renderClassifyRound();
+}
+
+/** Advance to the next classify question, or finish the round. */
+export function advanceClassifyRound() {
+  const session = rt.practiceSession;
+  if (!session || session.mode !== 'classify') return;
+  if (session.qIndex + 1 >= session.questions.length) {
+    renderPracticeSummary();
+    return;
+  }
+  session.qIndex += 1;
+  session.checked = false;
+  session.answer = null;
+  renderClassifyRound();
+}
+
+export function renderClassifyRound() {
+  openModal(renderClassifyRoundHtml(store.getState(), rt.practiceSession), {
+    labelledBy: 'modal-title-practice',
+  });
 }
 
 export async function startPracticeRound(ruleId, answerMode = 'find-spans') {

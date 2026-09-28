@@ -19,6 +19,9 @@ import {
   startPracticeRound,
   advancePracticeRound,
   openPracticePicker,
+  startClassifyRound,
+  answerClassify,
+  advanceClassifyRound,
 } from '../practice.js';
 
 import { MUSHAF_META_URL, VIEWS } from '../../core/config.js';
@@ -31,6 +34,7 @@ import {
   buildWordAnswerKey,
   scoreRound,
   scoreWordRound,
+  TAJWEED_QUIZ_MODES,
 } from '../../domain/tajweedPractice.js';
 import { setSessionFlag, setSessionValue } from '../../domain/sessionFlags.js';
 import { getWord, dictEntryFor, wordBookmarkKey } from '../../domain/wordStudy.js';
@@ -644,13 +648,19 @@ export const clickHandlers = {
   },
 
   'practice-mode': (ds) => {
-    if (!['find-spans', 'find-word'].includes(ds.mode)) return;
+    // 'classify' joins the two tap modes: a third round type, reachable.
+    if (!TAJWEED_QUIZ_MODES.includes(ds.mode)) return;
     rt.practicePickerMode = ds.mode;
     openPracticePicker();
   },
 
   'practice-start': async (ds) => {
-    await startPracticeRound(ds.rule, ds.mode || rt.practicePickerMode);
+    const mode = ds.mode || rt.practicePickerMode;
+    if (mode === 'classify') {
+      await startClassifyRound(ds.rule || 'mixed');
+      return;
+    }
+    await startPracticeRound(ds.rule, mode);
   },
 
   // (v5.17.19) Tajweed course. The spine is pure data; these four actions
@@ -743,6 +753,15 @@ export const clickHandlers = {
   'practice-next': async () => {
     if (!rt.practiceSession) return;
     await advancePracticeRound();
+  },
+
+  // (v5.17.20) The classify round. Validation lives in answerClassify: an
+  // option that is not on the question is a crafted click, not an answer.
+  'practice-classify': (ds) => {
+    answerClassify(String(ds.rule || ''));
+  },
+  'practice-classify-next': () => {
+    advanceClassifyRound();
   },
 
   'practice-review': async (ds) => {

@@ -163,6 +163,17 @@ export function renderTopBar(state, opts = {}) {
       <button type="button" class="icon-btn" data-action="quick-theme-toggle" aria-label="${t('a11y.themeToggle', lang)}">
         ${icon(isDark ? 'sun' : 'star', { size: 20 })}
       </button>
+      <!-- (v5.17.20) The language switch used to exist only at first run and
+           in Settings. An audit counted zero language controls across the
+           quran reader, library, mushaf, prayer and tasbih: a reader who
+           mis-picked at onboarding had no in-context way back, and had to
+           know that Settings held it. One icon, always present, is the fix. -->
+      <button type="button" class="icon-btn topbar__lang" data-action="quick-language-toggle"
+        aria-label="${t('a11y.languageToggle', lang)}" title="${t('a11y.languageToggle', lang)}"
+        lang="${lang === 'ar' ? 'en' : 'ar'}" dir="${lang === 'ar' ? 'ltr' : 'rtl'}"
+        hreflang="${lang === 'ar' ? 'en' : 'ar'}">
+        <span class="topbar__lang-code" aria-hidden="true">${lang === 'ar' ? 'EN' : 'ع'}</span>
+      </button>
       ${backButton}
     </div>
   </div>`;

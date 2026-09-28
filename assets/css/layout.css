@@ -50,6 +50,18 @@
   min-width: 0;
 }
 
+/* (v5.17.20) The menu toggle must not shrink. It is the app's only way out
+   of a view, it carries a 44px target, and it has no hit-area apron — so
+   when the bar got crowded, flex quietly squeezed it to 32px wide and taps
+   just outside its visual box fell through to the page underneath. Adding
+   the always-present language control is what made the bar crowded; this is
+   the bug that exposed. The brand text is the thing that should ellipsis,
+   and it already has overflow handling. */
+.topbar__menu,
+.topbar__back {
+  flex: 0 0 auto;
+}
+
 .topbar__brand {
   display: flex;
   align-items: center;

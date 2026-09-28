@@ -268,12 +268,19 @@ describe('P0-5b: round templates render (EN + AR)', () => {
     assert.match(html, /متعلم|متدرّب|متقن/, 'level badge Arabic');
   });
 
-  test('picker offers only span/word modes and carries the selected mode', () => {
+  // (v5.17.20) This used to assert the picker offered ONLY span/word, with an
+  // explicit doesNotMatch on classify. That assertion was not protecting a
+  // design decision — it was pinning the absence of a mode whose question
+  // builder had been finished and tested for as long as the engine existed.
+  // The contract is now: every registered quiz mode is offered.
+  test('picker offers every registered quiz mode and carries the selected one', () => {
     const html = buildPracticePicker(baseState(), 'find-word');
     assert.match(html, /data-action="practice-mode" data-mode="find-spans"/);
     assert.match(html, /data-action="practice-mode" data-mode="find-word"/);
+    assert.match(html, /data-action="practice-mode" data-mode="classify"/);
     assert.match(html, /data-action="practice-start" data-rule="mixed" data-mode="find-word"/);
-    assert.doesNotMatch(html, /data-mode="classify"/);
+    // The selected mode is marked, so the reader can see which they are in.
+    assert.match(html, /practice-mode--active" data-action="practice-mode" data-mode="find-word"/);
   });
 
   test('find-word round renders whole-word targets with one roving stop', () => {

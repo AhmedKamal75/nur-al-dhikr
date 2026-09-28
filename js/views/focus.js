@@ -6,6 +6,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
+import { buildHash } from '../core/router.js';
 import {
   showTransliterationFor,
   showTranslationFor,
@@ -16,6 +17,7 @@ import {
 } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
+import { skeletonLines } from '../ui/skeleton.js';
 import { VIEWS } from '../core/config.js';
 import { gradeChipHTML } from '../domain/grades.js';
 import { wasJustCompleted } from '../services/tasbih.js';
@@ -50,6 +52,57 @@ export function focusEnterClass(key, idx, last) {
   return idx >= (last?.idx ?? -1) ? ' focus--enter-next' : ' focus--enter-prev';
 }
 
+/**
+ * (v5.17.20) A bare #/focus used to render "Item not found" — and the
+ * palette launches Focus with no parameters, so tapping it in the app's own
+ * launcher produced a dead end. A paramless Focus is a question, not an
+ * error: "what would you like to focus on?" So answer it with the categories
+ * that actually have visible items, and drop into the first one on tap.
+ */
+function focusPickerHTML(state, lang) {
+  const docs = [
+    ...Object.values(state.library.documents || {}),
+    ...Object.values(state.customContent || {}),
+  ];
+  const rows = [];
+  for (const doc of docs) {
+    for (const cat of doc.categories || []) {
+      const items = visibleCategoryItems(state, cat);
+      if (!items.length) continue;
+      const first = items[0];
+      rows.push(`<li class="focus-picker__row">
+        <a class="focus-picker__link" href="${buildHash(VIEWS.FOCUS, { id: cat.id, subId: first.id })}" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${escapeHTML(first.id)}">
+          <span class="focus-picker__name">${escapeHTML(t(`cat.${cat.id}`, lang) === `cat.${cat.id}` ? cat.title || cat.id : t(`cat.${cat.id}`, lang))}</span>
+          <span class="focus-picker__count">${escapeHTML(t('collections.itemCount', lang, { n: items.length }))}</span>
+        </a>
+      </li>`);
+    }
+  }
+  if (!rows.length) {
+    // A loading state must never wear an error's clothes. Before the library
+    // index arrives there is nothing to list, and that is "not yet", not
+    // "not found" — a bare #/focus during a cold boot used to show exactly
+    // that false error whenever the index was still in flight.
+    const loading =
+      !state.library?.documents ||
+      !Object.keys(state.library.documents).length ||
+      !state.library?.itemIndex;
+    if (loading) {
+      return `<section class="view"><div class="view__loading" aria-busy="true">${skeletonLines(3)}</div></section>`;
+    }
+    // Genuinely nothing to focus on: that is an honest empty state.
+    return `<section class="view">${notFoundStateHTML({ title: t('common.notFoundItem', lang), lang, t })}</section>`;
+  }
+  return `<section class="view view--focus-picker">
+    <header class="view-header">
+      <a class="back-link" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.home', lang)}</a>
+      <h1 class="view__title">${t('focus.pickerTitle', lang)}</h1>
+    </header>
+    <p class="panel__subtext">${t('focus.pickerHint', lang)}</p>
+    <ul class="focus-picker">${rows.join('')}</ul>
+  </section>`;
+}
+
 export function renderFocus(state) {
   const lang = state.settings.language;
   const categoryId = state.activeParams.id;
@@ -57,9 +110,14 @@ export function renderFocus(state) {
   const cat = findCategory(state, categoryId);
   const item = visibleCategoryItems(state, cat).find((i) => i.id === itemId);
 
+  // No category asked for yet: show the picker rather than a dead end. A
+  // mistyped id must NOT get the picker — that would dress a broken link up
+  // as a working page.
+  if (!categoryId) return focusPickerHTML(state, lang);
+
   if (!cat || !item) {
-    // (v5.12.1 UX audit S13) the last bare not-found in the app: same shared
-    // recovery state (Go home) as category/mood/collection.
+    // (v5.12.1 UX audit S13) same shared recovery state (Go home) as
+    // category/mood/collection. A typed or stale id is genuinely not-found.
     return `<section class="view">${notFoundStateHTML({ title: t('common.notFoundItem', lang), lang, t })}</section>`;
   }
 

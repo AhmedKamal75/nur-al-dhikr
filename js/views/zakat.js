@@ -82,7 +82,10 @@ function inputsPanel(state, lang) {
   const noteFor = (id) => {
     const text = t(`zakat.note.${id}`, lang);
     if (!text || text === `zakat.note.${id}`) return '';
-    return ` <span class="zakat-note" title="${escapeHTML(text)}" aria-label="${escapeHTML(text)}">${icon('info', { size: 13 })}</span>`;
+    // No aria-label: this is a role-generic <span>, and ARIA forbids labelling
+    // one. `title` already exposes the same text to a screen reader on hover
+    // and focus, and axe flagged the duplicate as aria-prohibited-attr.
+    return ` <span class="zakat-note" title="${escapeHTML(text)}">${icon('info', { size: 13 })}</span>`;
   };
   const rows = ASSET_FIELDS.map(
     (f) => `

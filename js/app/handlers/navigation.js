@@ -123,6 +123,16 @@ export const clickHandlers = {
     store.dispatch(actions.updateSettings({ themeMode: isDark ? 'light' : 'dark' }));
   },
 
+  // (v5.17.20) Flip the interface language from wherever the reader is. The
+  // whole app re-renders from state, so this needs no navigation; the button
+  // carries lang/dir/hreflang so assistive tech announces the target language
+  // rather than the one currently on screen.
+  'quick-language-toggle': () => {
+    if (kidsScopeGuard(VIEWS.SETTINGS)) return;
+    const current = store.getState().settings.language === 'ar' ? 'ar' : 'en';
+    store.dispatch(actions.updateSettings({ language: current === 'ar' ? 'en' : 'ar' }));
+  },
+
   'open-palette': () => {
     // Also serves the nav-drawer item: shut the drawer first so the
     // overlay opens onto the content, not behind the drawer.

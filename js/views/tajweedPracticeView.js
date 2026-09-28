@@ -17,6 +17,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
+import { tajweedCitation } from '../domain/tajweedSources.js';
 import {
   TAJWEED_RULES,
   TAJWEED_FAMILIES,
@@ -75,6 +76,10 @@ export function buildPracticePicker(state, answerMode = 'find-spans') {
     <div class="practice-mode-switch" role="group" aria-label="${t('practice.mode', lang)}">
       ${modeButton('find-spans', 'practice.findSpans')}
       ${modeButton('find-word', 'practice.findWord')}
+      <!-- (v5.17.20) The third mode was always in TAJWEED_QUIZ_MODES and had
+           a finished question builder behind it, but the switch offered two.
+           This is the line that was missing. -->
+      ${modeButton('classify', 'practice.classifyMode')}
     </div>
 
     ${
@@ -313,5 +318,75 @@ export function buildPracticeLesson(state, ruleId, examples = []) {
       <button type="button" class="btn btn--primary" data-action="practice-start" data-rule="${rule.id}">${icon('play', { size: 15 })} ${t('practice.drillRule', lang)}</button>
       <button type="button" class="btn btn--secondary btn--sm" data-action="practice-open">${t('practice.backToRules', lang)}</button>
     </div>
+  </div>`;
+}
+
+/**
+ * The classify round (v5.17.20): "which rule is this?".
+ *
+ * Reachable at last — buildClassifyQuestion has existed, tested and tagged,
+ * since the quiz engine landed, with no path to it from the UI.
+ *
+ * A wrong answer shows what the rule actually is, with its citation, and a
+ * link to read the ayah. An MCQ that only says "wrong" teaches nothing, and
+ * this app's whole premise is that a rule should arrive with its source.
+ */
+export function renderClassifyRoundHtml(state, session) {
+  const lang = state.settings.language;
+  if (!session || session.mode !== 'classify') return '';
+  const q = session.questions?.[session.qIndex];
+  if (!q) return '';
+
+  const correct = TAJWEED_RULES.find((r) => r.id === q.correctAnswer);
+  const correctCite = tajweedCitation(q.correctAnswer, lang);
+
+  const options = q.options
+    .map((id) => {
+      const rule = TAJWEED_RULES.find((r) => r.id === id);
+      const chosen = session.answer === id;
+      const isRight = id === q.correctAnswer;
+      let cls = 'tajweed-practice__option';
+      if (session.checked && isRight) cls += ' tajweed-practice__option--right';
+      if (session.checked && chosen && !isRight) cls += ' tajweed-practice__option--wrong';
+      if (session.checked && !chosen && !isRight) cls += ' tajweed-practice__option--dim';
+      return `<button type="button" class="${cls}" data-action="practice-classify" data-rule="${escapeHTML(id)}" ${session.checked ? 'disabled' : ''} aria-pressed="${chosen ? 'true' : 'false'}">
+        <span class="tajweed-practice__option-name">${escapeHTML(pickLocale(rule?.name || { en: id, ar: id }, lang))}</span>
+      </button>`;
+    })
+    .join('');
+
+  const feedback = session.checked
+    ? `<div class="tajweed-practice__feedback" role="status">
+        <p class="tajweed-practice__verdict">${escapeHTML(
+          t(
+            session.answer === q.correctAnswer
+              ? 'practice.classifyRight'
+              : 'practice.classifyWrong',
+            lang
+          )
+        )}</p>
+        ${correct ? `<p class="tajweed-practice__explain">${escapeHTML(pickLocale(correct.desc, lang))}</p>` : ''}
+        ${correctCite ? `<p class="tajweed-legend__source">${escapeHTML(t('tajweedCourse.source', lang))}: ${escapeHTML(correctCite.title)} ${escapeHTML(correctCite.lines)}</p>` : ''}
+        <a class="link-btn link-btn--sm" href="${buildHash(VIEWS.QURAN, { id: q.s, ay: q.a })}" data-action="navigate" data-view="${VIEWS.QURAN}">${escapeHTML(t('practice.readAyah', lang, { n: q.a }))}</a>
+      </div>`
+    : '';
+
+  const last = session.qIndex + 1 >= session.questions.length;
+  return `
+  <div class="tajweed-practice tajweed-practice--classify">
+    <h2 id="modal-title-practice" class="sr-only">${t('practice.classifyTitle', lang)}</h2>
+    <p class="tajweed-practice__q">${t('practice.classifyQuestion', lang)}</p>
+    <p class="tajweed-practice__ayah" dir="rtl" lang="ar">${escapeHTML(q.text)}</p>
+    <div class="tajweed-practice__options" role="group" aria-label="${escapeHTML(t('practice.classifyQuestion', lang))}">${options}</div>
+    ${feedback}
+    <div class="practice-round__hud" aria-live="polite">
+      <span class="practice-round__progress" dir="ltr">${t('practice.questionOf', lang, { n: session.qIndex + 1, total: session.questions.length })}</span>
+      ${session.roundStreak > 1 ? `<span class="practice-round__streak">${t('practice.streakOn', lang, { n: session.roundStreak })}</span>` : ''}
+    </div>
+    ${
+      session.checked
+        ? `<div class="tajweed-practice__actions"><button type="button" class="btn btn--primary" data-action="practice-classify-next">${escapeHTML(t(last ? 'practice.seeSummary' : 'practice.next', lang))}</button></div>`
+        : ''
+    }
   </div>`;
 }

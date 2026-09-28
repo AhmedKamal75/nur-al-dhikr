@@ -2,6 +2,49 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.20 — Nothing is a dead end, nothing is half-checked, and one finished feature is finally reachable
+
+- **Every route is now proven accessible, not four of them.** A new gate scans
+  all 30 views in both themes. Widening it immediately found four serious
+  violations the narrow gate could not see, and all four are fixed: an
+  `aria-label` on a role-generic `<span>` in Zakat (ARIA forbids labelling
+  one; the `title` already carried the same text), an About version line that
+  failed contrast only because of `opacity: 0.7` — the token alone passes at
+  4.98:1, the opacity took it to about 3.4 — and the amber chip at 4.39:1,
+  now `#9a4708` at a measured 5.60:1. Colour tokens were measured, not guessed.
+- **A bare `#/mood` and `#/focus` were dead ends.** `#/focus` is launched with
+  no parameters from the app's own palette, so tapping it in the launcher
+  produced "Item not found". Both now answer the question instead of refusing
+  it: a picker of the twelve needs, and a picker of categories that have
+  visible items. A _mistyped_ id still says not-found — a picker there would
+  dress a broken link up as a working page, which is the one thing this app
+  must not do.
+- **The language switch exists on every view.** It used to live only at first
+  run and in Settings, so a reader who mis-picked at onboarding had no
+  in-context way back: an audit counted zero language controls across the
+  reader, library, mushaf, prayer and tasbih. One icon, always present, labelled
+  with the language it switches _to_.
+- **The classify round is reachable.** `buildClassifyQuestion` has been
+  written, tested and provenance-tagged since the quiz engine landed, and no
+  user could ever get to it: the answer-mode allowlist excluded 'classify' and
+  the picker's mode switch offered two buttons. A complete, curated
+  multiple-choice generator was sitting in the codebase doing nothing. It is
+  now a third round type — deliberately not a third answer mode, because
+  "which rule is this?" has a different answer shape from "tap the letters",
+  and it shares the pool, the stats dispatch and the summary so neither simple
+  mode grows a branch it never takes. A wrong answer names the rule, cites it,
+  and offers to read the ayah.
+- **The Elder Mode finding was half wrong, and the copy now says so.** The
+  audit reported the wizard never offers Elder Mode. It does: the comfort
+  step's button already sets `elderMode`. The real gap was that the wizard
+  called it "large text" while promising only text, when it also raises
+  contrast. The wording now matches the behaviour in both languages.
+- **Two look-and-feel findings were false positives, verified and left alone.**
+  The home hero is full-width above a 2-up grid (984 = 482×2 + a 20px gap),
+  which is a deliberate magazine layout, and the reader's ~92px side margins
+  are a centred reading measure — widening it would give the Arabic too long a
+  line. Both were measured in a browser before deciding not to touch them.
+
 ## v5.17.19 — A tajweed course, in six stages, with a plan or free access
 
 - **There is a course now.** Six stages, fourteen sessions, ordered the way

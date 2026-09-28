@@ -1561,6 +1561,7 @@ export const en = {
   'a11y.mainNav': 'Main navigation',
   'a11y.fileImports': 'File import controls',
   'a11y.themeToggle': 'Toggle color theme',
+  'a11y.languageToggle': 'Switch language',
   'a11y.counterProgress': '{count} of {target}',
   'a11y.counterComplete': 'Completed. Cycle {n}.',
   'update.available': 'A new version is ready',
@@ -1721,8 +1722,9 @@ export const en = {
   'onboarding.language': 'Choose your language',
   'onboarding.languageHint': 'Everything — every button, every explanation — in your language.',
   'onboarding.comfort': 'Comfortable to read?',
-  'onboarding.comfortHint': 'Large text and roomy targets for tired eyes and big fingers.',
-  'onboarding.bigTextYes': 'Yes, large text',
+  'onboarding.comfortHint':
+    'Larger text, roomy buttons and stronger contrast — easier for tired eyes. You can change any of this later in Settings.',
+  'onboarding.bigTextYes': 'Yes, make it easier to read',
   'onboarding.bigTextNo': 'No, standard size',
   'onboarding.location': 'Set your location',
   'onboarding.locationHint': 'For accurate prayer times',
@@ -2239,4 +2241,13 @@ export const en = {
   'tajweedCourse.searchPlaceholder': 'Search a rule or stage, e.g. ikhfa',
   'tajweedCourse.noResults':
     'No session matches that. Try a rule name such as ikhfa, or a stage such as madd.',
+  'focus.pickerHint': 'Choose a category, then one dhikr to stay with.',
+  'focus.pickerTitle': 'Focus one thing',
+  'moods.pickerHint': 'Choose what you would like to focus on.',
+  'practice.classifyMode': 'Name the rule',
+  'practice.classifyTitle': 'Name the rule',
+  'practice.classifyQuestion': 'Which rule does this ayah show?',
+  'practice.classifyRight': 'Correct.',
+  'practice.classifyWrong': 'Not quite — this is the rule:',
+  'practice.readAyah': 'Read it in the Qur’an (verse {n})',
 };

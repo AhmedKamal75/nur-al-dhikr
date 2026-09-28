@@ -89,7 +89,9 @@
      (base at 12% over surface) for backgrounds and the -text variant for
      labels — this holds AA in both themes by construction, replacing the
      old hardcoded chip hexes that failed dark mode at 2.4–3.6:1. */
-  --cat-amber: #b45309;
+  /* Was #b45309: 4.39:1 on the zakat surface, and it is used as text in
+     .chip--amber, so it failed WCAG AA. #9a4708 measures 5.60:1. */
+  --cat-amber: #9a4708;
   --cat-blue: #1d4ed8;
   --cat-cyan: #0e7490;
   --cat-emerald: #047857;

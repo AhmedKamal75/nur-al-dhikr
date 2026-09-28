@@ -3983,3 +3983,51 @@ body.has-player .reader-immersive-echo {
   padding: 0.8rem 0.9rem;
   margin-block: 0.9rem;
 }
+
+/* v5.17.20 — the classify round. Options, not letters: this mode asks a
+   question in words, so it is laid out as a list of choices. */
+.tajweed-practice__ayah {
+  font-size: 1.35em;
+  line-height: 2;
+  text-align: center;
+  margin-block: 0.8rem;
+}
+
+.tajweed-practice__options {
+  display: grid;
+  gap: 0.4rem;
+  margin-block-end: 0.7rem;
+}
+
+.tajweed-practice__option {
+  inline-size: 100%;
+  text-align: start;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-alt);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tajweed-practice__option--right {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+}
+
+.tajweed-practice__option--wrong {
+  border-color: var(--color-border-strong);
+  text-decoration: line-through;
+}
+
+.tajweed-practice__option--dim {
+  opacity: 0.55;
+}
+
+.tajweed-practice__feedback {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.7rem 0.8rem;
+  margin-block-end: 0.7rem;
+}
