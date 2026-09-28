@@ -192,6 +192,51 @@ opposite of adab) or their **logged-in, paid AI assistant**.
 
 ---
 
+## 5b. The azkar.me goal, concretely — parity then exceed
+
+**The owner's standing instruction is to clone azkar.me and be better at it.**
+The workable reading is _capability parity, then exceed_ — not a copy of their
+code, name, visual identity or corpus, which is both not ours to take and worse
+for a project whose standards differ. Do not "discover" this framing fresh.
+
+**Where the rival has genuinely pulled ahead, and the current state of each:**
+
+| #   | Gap they have                                       | Where we are                                                                                                                                                   |
+| --- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1  | Prayer madhab + manual minute offset                | **SHIPPED v5.17.12** — a "best" time is wrong by minutes for someone following a different madhab, so the control matters more than the number                 |
+| G2  | Floating counter while the app is in the background | **SHIPPED** — they ship an Android overlay; our equivalent is Document Picture-in-Picture (240px dial, 72px/800 numeral)                                       |
+| G3  | **Install / distribution story**                    | **OPEN** — we are second-class on iOS. Cannot ship a native app inside a no-build PWA, but the in-app install path can be made excellent. Owner-ranked highest |
+| G4  | **Per-city prayer pages**                           | **OPEN** — 300+ pages of pure SEO surface. Contradicts nothing but is marketing, not capability. **Owner decision**                                            |
+| G5  | Shared counter between devices                      | **N/A** — they do not have it either. Listed so it is not "discovered missing" later                                                                           |
+
+**Where we are already ahead** (do not regress these): corpus depth (4× their
+adhkar, 10× their Hadeeth), per-word study, Tajweed course, memorisation,
+reciters, accessibility, and offline truth.
+
+**The four section-level requirements**, each a standing goal in its own right:
+
+- **The adhkar / azkar section** — per-item audio where a verified source
+  exists, full bilingual coverage, and genuine depth per category. Still
+  **OPEN**; the audio half is the single largest rival advantage and needs a
+  licensed source. `OPEN-ISSUES` 15.
+- **The mushaf, as an object and as software** — G-3 above. The page must read
+  like paper: real page furniture, the 15-line Madani grid, correct Uthmani
+  orthography, and no double-printing of the Basmala. As software: verse deep
+  links, a fullscreen jump drawer, "you are here", and approximations labelled
+  as approximations. Four fidelity gaps remain (§8).
+- **Prayer times** — the controls ship and are tested; 7 methods against their
+  23, and 2 Asr twilight conventions against their 4. The extra methods are a
+  cited-data project, not a build.
+- **Tajweed** — G-2 above; the rival has none at all.
+
+**Deliberately not copied, and this is settled:** their **leaderboard** —
+ranking people's worship is the opposite of adab — and their **logged-in, paid
+AI assistant** (no accounts, no AI-authored religious content). Their adhkar
+corpus is Hisn al-Muslim by Ashraf Al-Qutbani, a real published book with its own
+editorial decisions; importing their file would import their sourcing decisions
+without their scholarship. Ours is separately sourced and attributed in
+`data/SOURCES.md`.
+
 ## 6. Who it is for, in priority order
 
 1. **The 70-year-old Arabic-only reader. She is the release gate.** If she
