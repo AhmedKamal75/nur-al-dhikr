@@ -1473,6 +1473,7 @@ export const ar = {
   'hadith.offlineReady': 'يعمل دون اتصال',
   'hadith.onDemand': 'يُحمَّل عند أول فتح ثم يعمل دون اتصال',
   'hadith.bookCount': '{n} حديث · {c} باباً',
+  'hadith.bookCountOne': '{n} حديث · {c} باباً',
   'hadith.loaded': 'محمل',
   'hadith.standingSahih': 'مجموعة صحيحة',
   // (v5.10.1) سطور الرواة وشارات الدرجات ودليل درجات الكتاب.
@@ -1514,6 +1515,7 @@ export const ar = {
   'about.scopeSunni':
     'النطاق: تتبع هذه المكتبة المجموعات السنية المعتمدة؛ والمجموعات الشيعية خارج النطاق في v5.x.',
   'common.error': 'حدث خطأ ما.',
+  'common.unknownRoute': 'هذا الرابط لا يشير إلى شيء في هذا التطبيق، فعُدت إلى الصفحة الرئيسية.',
   'common.skipToContent': 'تخطَّ إلى المحتوى',
   'a11y.mainNav': 'التنقل الرئيسي',
   'a11y.fileImports': 'عناصر استيراد الملفات',

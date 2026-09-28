@@ -186,7 +186,14 @@ export function renderMushaf(state) {
     doc.chapters
       .map((chapter) => {
         const showBanner = chapter.startsHere;
-        const showBismillah = chapter.startsHere && chapter.number !== 9;
+        // The Bismillah is a header for every surah that opens with one, and
+        // that is not every surah. At-Tawbah has none. Al-Fatiha is the case
+        // this guard originally missed: there the Basmala *is* ayah 1, so a
+        // header band plus the numbered verse printed the same words twice on
+        // the most-read page in the mushaf. data/mushaf/1.json has it right —
+        // verse 1 carries the text and there is no separate header entry — so
+        // the renderer was the thing corrupting correct data.
+        const showBismillah = chapter.startsHere && chapter.number !== 9 && chapter.number !== 1;
         // The printed mushaf announces a new surah with a header band:
         // an ornament-framed cartouche carrying the surah name, flanked by
         // decorative diamonds, with the Bismillah in gilded calligraphy

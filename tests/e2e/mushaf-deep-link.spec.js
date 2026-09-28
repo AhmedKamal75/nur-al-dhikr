@@ -121,3 +121,63 @@ test.describe('mushaf deep link to a verse', () => {
     expect(await page.locator('.mushaf-ayah--target').count()).toBe(0);
   });
 });
+
+/**
+ * The Basmala is a header for every surah that opens with one — and that is
+ * not every surah. The guard excluded only At-Tawbah, so Al-Fatiha printed
+ * its opening Basmala twice: once in the gilt header band, again as the
+ * numbered verse 1. Correct data, corrupted by the renderer, on the most-read
+ * page in the mushaf.
+ *
+ * Counted in the DOM rather than asserted on a source string, because the
+ * defect was only ever visible in a rendered page.
+ */
+test.describe('mushaf Basmala', () => {
+  // Scoped to the SURAH, not to the page or the word.
+  //
+  // Two things bit this assertion while it was being written, and both are
+  // worth keeping in mind: the desktop mushaf renders a two-page spread, so
+  // "?page=1" legitimately also shows Al-Baqarah's opening page with its own
+  // correct header Basmala; and a single printed Basmala renders one tappable
+  // span per word, each carrying its own data-surah. So: one entry per
+  // printed header, de-duplicated by surah.
+  const headerSurahs = async (page) =>
+    page.evaluate(() =>
+      [
+        ...new Set(
+          [...document.querySelectorAll('.mushaf-bismillah')]
+            .map((b) => b.querySelector('[data-surah]'))
+            .filter(Boolean)
+            .map((el) => Number(el.dataset.surah))
+        ),
+      ].sort((a, b) => a - b)
+    );
+
+  test('Al-Fatiha prints the Basmala as ayah 1 only, never as a header', async ({ page }) => {
+    await page.goto('./#/mushaf?page=1');
+    await expect(page.locator('.mushaf-ayah[data-surah="1"][data-ayah="1"]')).toBeVisible({
+      timeout: 25000,
+    });
+    await page.waitForTimeout(500);
+
+    // The defect: Al-Fatiha's Basmala IS ayah 1, so the gilt header printed
+    // the same words a second time, unnumbered, above the numbered verse.
+    const surahs = await headerSurahs(page);
+    expect(
+      surahs,
+      `Al-Fatiha must not render a header Basmala (headers on this spread: ${JSON.stringify(surahs)})`
+    ).not.toContain(1);
+
+    // The duplicate words are genuinely gone: the only header left belongs to
+    // the surah that legitimately opens with one.
+    expect(surahs, 'only the surah that legitimately opens with one').toEqual([2]);
+  });
+
+  test('Al-Baqarah still opens with its header Basmala', async ({ page }) => {
+    // The guard for Al-Fatiha must not have been widened by accident. If the
+    // exclusion became "any surah starting with the phrase", this catches it.
+    await page.goto('./#/mushaf?page=2');
+    await expect(page.locator('.mushaf-bismillah')).toBeVisible({ timeout: 25000 });
+    expect(await headerSurahs(page)).toContain(2);
+  });
+});

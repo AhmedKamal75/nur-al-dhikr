@@ -818,7 +818,7 @@ export function render(state) {
     const lang = state.settings.language;
     queueMicrotask(() => {
       window.history.replaceState(window.history.state, '', buildHash(VIEWS.HOME));
-      showToast(t('common.error', lang));
+      showToast(t('common.unknownRoute', lang));
     });
   }
   // (v5.17.22) Focus MODE needs a focus TARGET. A bare #/focus is the picker

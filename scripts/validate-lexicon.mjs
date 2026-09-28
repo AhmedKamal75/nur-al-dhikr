@@ -24,11 +24,33 @@ const ALLOWED_GENERIC = new Set([
   'no-attested-direct-antonym',
 ]);
 
-function isValidCitation(src) {
+/** Minimal citation shape — parity with js/domain/lexicalProvenance.js. */
+export function isValidCitation(src) {
   if (!src || typeof src !== 'object' || Array.isArray(src)) return false;
-  return REQUIRED.every((k) => typeof src[k] === 'string' && src[k].trim());
+  if ('tracking' in src || 'beacon' in src) return false;
+  for (const k of REQUIRED) {
+    if (typeof src[k] !== 'string' || !src[k].trim()) return false;
+  }
+  for (const key of ['location', 'url']) {
+    if (key in src && (typeof src[key] !== 'string' || !src[key].trim())) return false;
+  }
+  if ('url' in src) {
+    try {
+      const url = new URL(src.url);
+      if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password)
+        return false;
+      for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'gclid', 'fbclid']) {
+        if (url.searchParams.has(key)) return false;
+      }
+    } catch {
+      return false;
+    }
+  }
+  return true;
 }
 
+const isMain = process.argv[1]?.endsWith('validate-lexicon.mjs');
+if (isMain) {
 const errors = [];
 const schema = readJSON('data/lexical-provenance-schema.json');
 if (schema.schemaVersion !== '1.0') errors.push('schemaVersion must be 1.0');
@@ -109,3 +131,4 @@ else {
 }
 
 process.exit(errors.length ? 1 : 0);
+}

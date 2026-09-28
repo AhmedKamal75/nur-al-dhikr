@@ -239,7 +239,14 @@ function renderBookGrid(state, lang) {
           ${book.standing === 'sahih' ? `<span class="chip chip--grade chip--grade-sahih">${t('hadith.standingSahih', lang)}</span>` : ''}
           <span class="hadith-tile__author">${escapeHTML(pickLocale(book.author, lang))}</span>
           <span class="hadith-tile__blurb">${escapeHTML(pickLocale(book.blurb, lang))}</span>
-          <span class="hadith-tile__count">${t('hadith.bookCount', lang, { n: book.count, c: book.sectionCount })}${loaded ? ` · ${t('hadith.loaded', lang)}` : ''}</span>
+          <span class="hadith-tile__count">${t(
+            book.sectionCount === 1 ? 'hadith.bookCountOne' : 'hadith.bookCount',
+            lang,
+            {
+              n: book.count,
+              c: book.sectionCount,
+            }
+          )}${loaded ? ` · ${t('hadith.loaded', lang)}` : ''}</span>
         </a>
         ${manageRow}
         </div>`;

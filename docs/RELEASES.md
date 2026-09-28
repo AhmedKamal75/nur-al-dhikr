@@ -2,6 +2,70 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.26 — What a broader review found, including in my own writing
+
+Review 4 came back at **8.7 against 8.8** — a regression, and the first honest
+one in the score history. It ran a wider probe than the last round and found
+more than the last round did. Two of its findings were in religious data, and
+one of those was the worst defect this project has shipped.
+
+- **The Basmala printed twice on Al-Fatiha, mushaf page 1.** The gilt header
+  guard excluded only At-Tawbah. In Al-Fatiha the Basmala _is_ ayah 1, so the
+  page rendered an unnumbered header **and** the numbered verse — the same
+  words twice, on the most-read page in the mushaf. `data/mushaf/1.json` was
+  correct throughout; the renderer was corrupting it. Now excludes chapter 1 as
+  well. `tests/mushafBismillah.test.js` pins the rule against the _data_ (4/4,
+  and 2 fail with the fix reverted) and an e2e assert proves exactly one
+  header for the surah, failing with `headers: [1, 2]` before the fix.
+  - Two of my own first attempts at that e2e were wrong and would have shipped
+    a green test over a broken claim: one counted every Basmala on a
+    two-page spread, and one counted one entry per _tappable word_ instead of
+    per printed header. Both passed. The negative run is what caught them.
+- **59 records denied the grading of the collection they cite** (row 40). Not
+  the 13 first sampled: a corpus-wide sweep found `grade: "Unknown"` beside
+  `reference.collection: "Sahih al-Bukhari 6306"`, so the UI showed an
+  _Unverified_ chip next to a precise citation into a collection that asserts
+  exactly that grading. The information was already in the data; two fields
+  disagreed.
+  - `scripts/repair-grade-vs-collection.mjs` resolves it _from the citation_,
+    scoped to the two collections that self-certify in their own titles. It is
+    a report-then-`--write` script, and it round-trips the files byte-identical
+    so the diff is 59 grade lines and nothing else.
+  - `my-06-011` (Musnad Ahmad, which contains da'if and mawdu') and
+    `my-13-004` (al-Adab al-Mufrad, where al-Albani's grading is a note) were
+    deliberately left `Unknown`.
+  - `tests/grade-consistency.test.js` pins **both directions**, because a
+    grader that only ever promotes records is its own kind of defect. It also
+    asserts the corpus is non-empty, so it cannot pass vacuously.
+- **A 16x16px tap target survived Elder Mode** (WCAG 2.2 SC 2.5.8). The
+  chevron into the hadith of the day carried no class at all, so it collapsed
+  to the icon's own size. It now carries the same target class as the shuffle
+  button beside it; a browser probe measures **0 targets under 24px** in both
+  default and Elder Mode.
+- **Unknown routes said the wrong thing.** `#/bogus` redirected home with a
+  toast reading "Something went wrong." Nothing went wrong — the link points
+  nowhere, and that is a different sentence. New `common.unknownRoute` string
+  in both languages. The router docstring also promised a "not found" view
+  that does not exist; it now describes what the code does.
+- **"42 hadith · 1 chapters"** — added `hadith.bookCountOne` in both languages.
+  Arabic's `باباً` is a counter and stays singular for one, so it is the same
+  string in both keys.
+- **Six claims in `docs/BACKLOG.md` were wrong and are corrected in place.**
+  "Elder Mode raises them all" (it did not), a hand-written corpus total that
+  had already rotted, two descriptions of proofs I had not read, "install
+  story: not started" when the manifest and prompt wiring were done, and an
+  omission — the doubled Basmala was not on the list at all.
+- **Two findings were not acted on, on purpose.** The "search counts read 0
+  while loading" report did not reproduce for me: the loading panel prints an
+  explicit loading line and a skeleton and no zero, so it is logged as
+  OPEN (unreproduced) rather than "fixed". And "completing a dhikr removes its
+  card" is the deliberate v5.2.24 session dismissal, animated rather than
+  snapped — a product disagreement, not a defect, and not mine to make.
+- **The score-history test now accepts a regression that is NAMED.** It
+  previously demanded non-decreasing scores, so 8.7 failed it and the tempting
+  fix was to round up. The score is the score. The gate is now "never regress
+  quietly".
+
 ## v5.17.25 — The adhan leaves the precache
 
 - **`assets/audio/adhan/adhan.mp3` (~2.4MB) is no longer precached**

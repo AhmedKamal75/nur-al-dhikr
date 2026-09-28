@@ -6,8 +6,8 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-09-28 against the tree at v5.17.25**, by parsing this file's own
-> status column — not by hand, and not copied from any earlier header: **43 rows —
-> 10 OPEN, 7 PROPOSED, 2 DEFERRED, 2 DECIDED-NO, 10 RESOLVED, 1 STANDING
+> status column — not by hand, and not copied from any earlier header: **48 rows —
+> 12 OPEN, 7 PROPOSED, 2 DEFERRED, 4 DECIDED-NO, 11 RESOLVED, 1 STANDING
 > CONSTRAINT, 6 BLOCKED:scholar, 5 BLOCKED:device.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
@@ -92,13 +92,18 @@ Source IDs: `V#` = Omniview verdict · `C#` = contested · `P#` = proposal ·
 
 ## Blocked on hardware — see `docs/DEVICE-TEST.md`
 
-| #   | Item                                                               | Status         |
-| --- | ------------------------------------------------------------------ | -------------- |
-| 39  | Haptics, adhan audibility, wake-lock re-arm                        | BLOCKED:device |
-| 40  | Pinch-zoom vs swipe arbitration; edge tap zones in true fullscreen | BLOCKED:device |
-| 41  | Screen-reader pass (TalkBack / VoiceOver)                          | BLOCKED:device |
-| 42  | Audible ayah-to-ayah gap measurement                               | BLOCKED:device |
-| 43  | 3G install time and long-term storage growth on a low-end phone    | BLOCKED:device |
+| #   | Item                                                               | Status              |
+| --- | ------------------------------------------------------------------ | ------------------- |
+| 39  | Haptics, adhan audibility, wake-lock re-arm                        | BLOCKED:device      |
+| 40  | Pinch-zoom vs swipe arbitration; edge tap zones in true fullscreen | BLOCKED:device      |
+| 41  | Screen-reader pass (TalkBack / VoiceOver)                          | BLOCKED:device      |
+| 42  | Audible ayah-to-ayah gap measurement                               | BLOCKED:device      |
+| 43  | 3G install time and long-term storage growth on a low-end phone    | BLOCKED:device      |
+| 45  | `grade: "Unknown"` beside a self-certifying citation               | RESOLVED (verified) | **CORRECTED v5.17.26 — 59 records, not 13.** Each denied a grading its own `reference.collection` already asserted ("Sahih al-Bukhari 6306", "Sahih Muslim 2708"), so the UI showed an _Unverified_ chip beside a precise citation. The information was already in the data; the two fields simply disagreed. `scripts/repair-grade-vs-collection.mjs` resolves it from the citation, scoped to the two collections that self-certify in their own titles. `my-06-011` (Musnad Ahmad, which contains da'if and mawdu') and `my-13-004` (al-Adab al-Mufrad, where al-Albani's grading is a note) were deliberately LEFT Unknown. `tests/grade-consistency.test.js` pins both directions, because a grader that only ever promotes records is its own kind of defect. |
+| 46  | Mushaf search                                                      | OPEN                | The largest unclaimed rival gap after per-item audio. The app has a full-text index and a mushaf with 604 addressable pages, and no path from one to the other.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 47  | Completing a dhikr removes its card mid-list                       | DECIDED-NO (owner)  | Review 4 called this a defect; it is the deliberate v5.2.24 session-dismissal behaviour, animated rather than snapped, with the section counter still correct. A rival reviewer preferring a struck-through "done" row is a product disagreement, not a bug, and the owner has not asked for the change. Revisit only if reading flow proves worse in practice.                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 48  | Search result counts reading "0" while the corpus loads            | OPEN (unreproduced) | Review 4 reported `Qur'an: 0 · Hadith: 0` under a loading banner for ~6s. I could NOT reproduce it: the loading panel prints an explicit "Loading the Qur'an text for full-text search" line and a skeleton, and no count of 0 is rendered. Either a cold-start path I did not hit, or a misread. Left open rather than "fixed" on no evidence.                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 49  | 200% type scale does not reach the mushaf                          | DECIDED-NO (owner)  | Already deliberate and already recorded: the mushaf owns its typography so that app-wide scaling cannot break the page grid. It is a real WCAG 1.4.4 trade-off, taken knowingly, with Elder Mode as the path that does scale it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ## Stale report claims — closed, with evidence
 
@@ -134,16 +139,16 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **10** |
+| **OPEN** (nobody has done it)                      | **12** |
 | **PROPOSED** (costed, needs an owner yes)          | **7**  |
 | **BLOCKED:scholar** (must never be machine-filled) | **6**  |
 | **BLOCKED:device** (needs real hardware)           | **5**  |
-| **DEFERRED** / **DECIDED-NO** (deliberate)         | **4**  |
-| **RESOLVED after re-verification**                 | **10** |
+| **DEFERRED** / **DECIDED-NO** (deliberate)         | **6**  |
+| **RESOLVED after re-verification**                 | **11** |
 | **STANDING CONSTRAINT** (not a defect)             | **1**  |
 
 - **~55 distinct issues** were extractable from the audit material and the
-  owner's own reports. **17** still need work (10 open, 7 proposed); **10** were
+  owner's own reports. **19** still need work (12 open, 7 proposed); **10** were
   already done and had been re-investigated as still-open.
 - **Three "release-gating" items named here are now resolved**, and this file
   said otherwise until v5.17.23: Elder Mode discoverability (the wizard did

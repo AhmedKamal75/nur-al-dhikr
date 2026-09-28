@@ -1517,6 +1517,7 @@ export const en = {
   'hadith.offlineReady': 'Offline',
   'hadith.onDemand': 'Loads on first open, then offline',
   'hadith.bookCount': '{n} hadith · {c} chapters',
+  'hadith.bookCountOne': '{n} hadith · {c} chapter',
   'hadith.loaded': 'loaded',
   'hadith.standingSahih': 'Sahih collection',
   // (v5.10.1) narrator lines, enriched grade chips, collection grade guide.
@@ -1559,6 +1560,7 @@ export const en = {
   'about.scopeSunni':
     'Scope: this library follows the Sunni canonical collections; Shia collections are out of scope for v5.x.',
   'common.error': 'Something went wrong.',
+  'common.unknownRoute': "That link doesn't point anywhere in this app, so you were returned home.",
   'common.skipToContent': 'Skip to content',
   'a11y.mainNav': 'Main navigation',
   'a11y.fileImports': 'File import controls',

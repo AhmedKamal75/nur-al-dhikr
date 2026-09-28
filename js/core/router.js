@@ -15,7 +15,8 @@ import { VIEWS } from './config.js';
  *  boot()'s try/catch, that rendered the scary "your data may be
  *  corrupted / reset app data" error screen over a mere typo. (FIX
  *  review v3.3 B3.) Malformed segments now fall back to their raw text,
- *  which at worst yields a "not found" view — never a boot crash.
+ *  which at worst yields an unknown view that is redirected home with a
+ *  toast saying so (see renderer.js) — never a boot crash.
  *  Exported for unit tests. */
 export const safeDecode = (s) => {
   try {

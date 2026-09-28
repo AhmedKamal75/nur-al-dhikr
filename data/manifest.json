@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.25",
+  "version": "5.17.26",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
     {
       "path": "adhkar.json",
-      "bytes": 366455,
-      "sha256": "a9b48acea0f0a6a3ee9b8148fb669904b5e36c0b3ab324f64b58d3ab55483170"
+      "bytes": 366419,
+      "sha256": "a23935db241354029cc4f9f02b1c555fdb26fcc7a2d0ec97af963ac4f8480643"
     },
     {
       "path": "asma.json",
@@ -31,8 +31,8 @@
     },
     {
       "path": "duas.json",
-      "bytes": 961597,
-      "sha256": "517c37caf7b22ae59240d892440f7df6dc65a9ac16bb3a5112407938f356ee7f"
+      "bytes": 961515,
+      "sha256": "61895838576d5301f1c80c5e9ebdbfba2058bcfad38288e103c46e8384c4ba08"
     },
     {
       "path": "hadith/abudawud.json",
