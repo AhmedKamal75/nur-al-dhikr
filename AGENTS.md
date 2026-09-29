@@ -77,6 +77,15 @@ what you were told, say so instead of proceeding.
 5. **Fix safely, report loudly.** Small, obvious, covered fixes: just do them
    with a test. Anything touching UX contracts, religious data, or more than
    ~50 lines: report it with a proposal and let the owner decide.
+6. **Generalize the example; prefer dynamic over static.** (Owner ruling,
+   2026-09-29.) When the owner gives an example, it is an instance of a
+   principle — implement the principle everywhere it applies, not the example
+   in one place. A banner driven by prefs implies all chrome driven by data;
+   one trap test implies traps for the class. Concretely: derive from a single
+   source of truth instead of pinning parallel static lists — nav chrome from
+   the route→door map, counts from the corpus, labels from i18n — so the tree
+   cannot drift from itself. A static pin that cannot be derived must name, in
+   a comment and in its test, the source it mirrors.
 
 ## 2. The version-and-snapshot ritual
 
@@ -117,6 +126,8 @@ in isolation and say so; do not delete a test to get green.
   ones — except inside a documented exemption.
 - **New view**: keep it lazy. The renderer's static-import budget is capped and
   is already at the cap.
+- **New static list**: justify why it is not derived from its source of truth,
+  and name that source in a comment and in its test (rule 6).
 - **Approaching a cap?** `mushafReader.js` is under 800 lines and the renderer
   static budget is 19/19. Extract a module instead of growing a file.
 
