@@ -904,6 +904,9 @@ export const en = {
     'Isha follows Maghrib by minutes (120, or 90 in Ramadan), not degrees.',
   'prayer.methodNote.Tehran': 'Maghrib at 4.5° below the horizon, per Iranian convention.',
   'prayer.methodNote.MoonsightingCommittee': 'Simplified 18°/18° approximation of the full method.',
+  // v5.17.40 prayer-method provenance: label for the source body carried
+  // per method in data/prayer-methods.json (verified:false throughout).
+  'prayer.methodSource': 'Source: {body}',
   'prayer.offsetsTitle': 'Fine-tune times (minutes)',
   'prayer.offsetsHint':
     'Shift any prayer ±60 minutes — e.g. to match your local mosque. Applies everywhere: the timetable, alerts and fasting.',

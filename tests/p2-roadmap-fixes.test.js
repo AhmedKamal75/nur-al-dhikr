@@ -1015,10 +1015,30 @@ describe('UP-06: prayer offsets + method transparency', () => {
       Object.keys(METHODS).sort(),
       'one record per engine method'
     );
+    // (v5.17.40) the provenance label lives once per language, not per
+    // method — the body itself rides the JSON/domain source entries.
+    for (const lang of ['en', 'ar']) {
+      assert.notEqual(t('prayer.methodSource', lang), 'prayer.methodSource', 'source label named');
+      assert.match(
+        t('prayer.methodSource', lang),
+        /\{body\}/,
+        'source label carries the {body} slot'
+      );
+    }
     for (const m of methods) {
       for (const k of ['fajr', 'isha']) {
         assert.equal(m.angles[k], METHODS[m.id][k] ?? null, `${m.id} angle ${k} matches`);
       }
+      // (v5.17.40) source shape validated when present; JSON↔domain pinned.
+      assert.ok(m.source && typeof m.source === 'object', `${m.id} carries a source`);
+      assert.ok(m.source.body && typeof m.source.body === 'string', `${m.id} source names a body`);
+      assert.ok(
+        m.source.document && typeof m.source.document === 'string',
+        `${m.id} source names a document`
+      );
+      assert.equal(typeof m.source.verified, 'boolean', `${m.id} verified is explicit`);
+      assert.equal(m.source.verified, false, `${m.id} claims no official status`);
+      assert.deepEqual(METHODS[m.id].source, m.source, `${m.id} domain source matches JSON`);
       for (const lang of ['en', 'ar']) {
         assert.equal(t(`prayer.methodNote.${m.id}`, lang), m.note[lang], `${m.id} note mirrored`);
         assert.equal(
@@ -1041,10 +1061,33 @@ describe('UP-06: prayer offsets + method transparency', () => {
       },
     };
     const html = calcPanelHTML(st);
-    assert.match(html, /رابطة العالم الإسلامي/, 'method name localized, not raw English');
-    assert.doesNotMatch(html, /Muslim World League/, 'no English leak in AR UI');
+    assert.match(
+      html,
+      /<option[^>]*>رابطة العالم الإسلامي<\/option>/,
+      'method option localized, not raw English'
+    );
+    // The source body is an institution proper noun rendered verbatim in
+    // both languages (v5.17.40), so the no-leak gate scopes to the options —
+    // the labelled source line itself carries the Latin name by design.
+    assert.doesNotMatch(
+      html,
+      /<option[^>]*>Muslim World League<\/option>/,
+      'no English leak in AR method options'
+    );
     assert.match(html, /data-bind="prayer-offset" data-prayer="fajr"/, 'offset steppers render');
     assert.match(html, /الافتراضي العالمي/, 'region renders');
+    // (v5.17.40) provenance surfaces beside the note: the Arabic sheet shows
+    // the bilingual label, the English sheet the source body itself.
+    assert.match(html, /المصدر:/, 'source label renders in AR');
+    const enHtml = calcPanelHTML({
+      settings: {
+        ...DEFAULT_SETTINGS,
+        language: 'en',
+        prayer: { ...DEFAULT_SETTINGS.prayer, method: 'MWL' },
+      },
+    });
+    assert.match(enHtml, /Source:/, 'source label renders in EN');
+    assert.match(enHtml, /Muslim World League/, 'source body renders in EN');
   });
 });
 

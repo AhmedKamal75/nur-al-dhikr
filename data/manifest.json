@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.39",
+  "version": "5.17.40",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
@@ -3121,8 +3121,8 @@
     },
     {
       "path": "prayer-methods.json",
-      "bytes": 2901,
-      "sha256": "f844f27fe2989c5ca58358738a8cd5d0e106e36ef4880c000591465996069d3a"
+      "bytes": 4438,
+      "sha256": "fa394bb85ae041dce526f54ee34db1b4fa52dde593e415c3c3658c9455b87c83"
     },
     {
       "path": "prophet-duas.json",

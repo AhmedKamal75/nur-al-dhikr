@@ -864,6 +864,9 @@ export const ar = {
   'prayer.methodNote.UmmAlQura': 'العشاء بعد المغرب بالدقائق (120، أو 90 في رمضان) لا بالدرجات.',
   'prayer.methodNote.Tehran': 'المغرب عند 4.5° تحت الأفق حسب العرف الإيراني.',
   'prayer.methodNote.MoonsightingCommittee': 'تقريب مبسّط 18°/18° للطريقة الكاملة.',
+  // v5.17.40 prayer-method provenance: label for the source body carried
+  // per method in data/prayer-methods.json (verified:false throughout).
+  'prayer.methodSource': 'المصدر: {body}',
   'prayer.offsetsTitle': 'ضبط دقيق للأوقات (بالدقائق)',
   'prayer.offsetsHint':
     'أزح أي صلاة ±60 دقيقة — مثلًا لمطابقة مسجدك المحلي. يُطبَّق في كل مكان: الجدول والتنبيهات والصيام.',

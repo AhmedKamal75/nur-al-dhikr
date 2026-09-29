@@ -85,6 +85,17 @@ conventions); regions and explainer notes mirror the
 the calc sheet renders. A contracts test pins JSON ↔ domain ↔ i18n
 equality so the three can never drift.
 
+(v5.17.40) Each method also carries optional `source` provenance —
+`{body, document, url?, verified}` — mirrored between the JSON and
+`METHODS`, with the body surfaced in the calc sheet through the bilingual
+`prayer.methodSource` label. `body` names the convention institution,
+`document` names the convention. `verified` is `false` on all seven
+shipped methods: the angles rest on secondary corroboration only, and no
+official publication has been confirmed to standard — so nothing here
+claims official status. No further method ships until its official
+publication is verified; the researched-but-unverifiable candidates are
+listed as UNVERIFIED (not shipping) in `docs/BACKLOG.md` §4.
+
 ## Qur'an lemma study notes (`data/quran-dict.json`, v5.2.75)
 
 Lemma keys and EN glosses derive from the bundled corpus

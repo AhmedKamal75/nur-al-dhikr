@@ -1,9 +1,14 @@
 {
-  "_comment": "v5.2.75 (UP-06) prayer calculation methods: angles mirror domain/prayer.js METHODS, regions/notes mirror the prayer.methodRegion.* / prayer.methodNote.* i18n keys (which is what views render). A contracts test pins JSON <-> domain <-> i18n equality so the three can never drift.",
+  "_comment": "v5.2.75 (UP-06) prayer calculation methods: angles mirror domain/prayer.js METHODS, regions/notes mirror the prayer.methodRegion.* / prayer.methodNote.* i18n keys (which is what views render). A contracts test pins JSON <-> domain <-> i18n equality so the three can never drift. v5.17.40 adds optional per-method `source` provenance ({body, document, url?, verified}): body names the convention institution, document names the convention, verified stays false until an official publication is confirmed — SOURCES.md prayer section cites only secondary corroboration, so nothing here claims official status.",
   "methods": [
     {
       "id": "MWL",
       "angles": { "fajr": 18, "isha": 17 },
+      "source": {
+        "body": "Muslim World League",
+        "document": "Fajr 18°, Isha 17° convention",
+        "verified": false
+      },
       "region": { "en": "Worldwide default", "ar": "الافتراضي العالمي" },
       "note": {
         "en": "Fajr 18°, Isha 17° — the worldwide default.",
@@ -13,6 +18,11 @@
     {
       "id": "ISNA",
       "angles": { "fajr": 15, "isha": 15 },
+      "source": {
+        "body": "Islamic Society of North America",
+        "document": "Fajr 15°, Isha 15° convention",
+        "verified": false
+      },
       "region": { "en": "North America", "ar": "أمريكا الشمالية" },
       "note": {
         "en": "Fifteen-degree twilight, tuned for higher latitudes.",
@@ -22,6 +32,11 @@
     {
       "id": "Egyptian",
       "angles": { "fajr": 19.5, "isha": 17.5 },
+      "source": {
+        "body": "Egyptian General Authority of Survey",
+        "document": "Fajr 19.5°, Isha 17.5° convention",
+        "verified": false
+      },
       "region": { "en": "Egypt and the Levant", "ar": "مصر والشام" },
       "note": {
         "en": "Fajr 19.5° — the earliest Fajr of the standard methods.",
@@ -31,6 +46,11 @@
     {
       "id": "Karachi",
       "angles": { "fajr": 18, "isha": 18 },
+      "source": {
+        "body": "University of Islamic Sciences, Karachi",
+        "document": "Fajr 18°, Isha 18° convention",
+        "verified": false
+      },
       "region": { "en": "South Asia", "ar": "جنوب آسيا" },
       "note": {
         "en": "Matched 18° pair used across South Asia.",
@@ -45,6 +65,11 @@
         "ishaMinutesAfterMaghrib": 120,
         "ishaMinutesAfterMaghribRamadan": 90
       },
+      "source": {
+        "body": "Umm al-Qura Calendar, Makkah",
+        "document": "Fajr 18.5°; Isha 120 minutes after Maghrib (90 in Ramadan)",
+        "verified": false
+      },
       "region": { "en": "Saudi Arabia", "ar": "السعودية" },
       "note": {
         "en": "Isha follows Maghrib by minutes (120, or 90 in Ramadan), not degrees.",
@@ -54,6 +79,11 @@
     {
       "id": "Tehran",
       "angles": { "fajr": 17.7, "isha": 14, "maghribAngle": 4.5 },
+      "source": {
+        "body": "Institute of Geophysics, University of Tehran",
+        "document": "Fajr 17.7°, Isha 14°, Maghrib 4.5° convention",
+        "verified": false
+      },
       "region": { "en": "Iran", "ar": "إيران" },
       "note": {
         "en": "Maghrib at 4.5° below the horizon, per Iranian convention.",
@@ -63,6 +93,11 @@
     {
       "id": "MoonsightingCommittee",
       "angles": { "fajr": 18, "isha": 18 },
+      "source": {
+        "body": "Moonsighting Committee",
+        "document": "Simplified 18°/18° approximation of the full latitude-dependent method",
+        "verified": false
+      },
       "region": { "en": "North America, simplified", "ar": "أمريكا الشمالية، مبسّط" },
       "note": {
         "en": "Simplified 18°/18° approximation of the full method.",

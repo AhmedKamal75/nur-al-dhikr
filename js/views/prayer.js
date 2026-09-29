@@ -617,6 +617,11 @@ export function calcPanelHTML(state) {
   else if (m.ishaMinutesAfterMaghrib)
     angleBits.push(`${t('prayer.isha', lang)} +${m.ishaMinutesAfterMaghrib} min`);
   if (m.maghribAngle) angleBits.push(`${t('prayer.maghrib', lang)} ${m.maghribAngle}°`);
+  // (v5.17.40) provenance: the source body rides the domain METHODS entry
+  // (mirroring data/prayer-methods.json), rendered through the bilingual
+  // prayer.methodSource label — same explainer area as the note, no new UI.
+  const sourceBody =
+    m.source && typeof m.source.body === 'string' && m.source.body ? m.source.body : '';
   // Manual minute offsets, one stepper per prayer (−60..+60).
   const offsets = p.offsets && typeof p.offsets === 'object' ? p.offsets : {};
   const offsetRows = OFFSET_PRAYERS.map(
@@ -641,6 +646,7 @@ export function calcPanelHTML(state) {
     <select class="select" id="prayer-method-sheet" data-bind="prayer-method" aria-label="${t('prayer.method', lang)}">${methodOptions}</select>
     <p class="panel__subtext">${angleBits.map(escapeHTML).join(' · ')}</p>
     <p class="panel__subtext">${escapeHTML(t(`prayer.methodRegion.${methodId}`, lang))} — ${escapeHTML(t(`prayer.methodNote.${methodId}`, lang))}</p>
+    ${sourceBody ? `<p class="panel__subtext">${t('prayer.methodSource', lang, { body: sourceBody })}</p>` : ''}
     <label class="field-label" for="prayer-asr-sheet">${t('prayer.asrMethod', lang)}</label>
     <select class="select" id="prayer-asr-sheet" data-bind="prayer-asr" aria-label="${t('prayer.asrMethod', lang)}">${asrOptions}</select>
     <p class="field-label">${t('prayer.offsetsTitle', lang)}</p>

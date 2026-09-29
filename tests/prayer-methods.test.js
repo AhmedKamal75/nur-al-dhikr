@@ -173,6 +173,58 @@ describe('manual minute offsets', () => {
   });
 });
 
+describe('provenance: optional source, honestly unverified (v5.17.40)', () => {
+  const data = JSON.parse(readFileSync(join(ROOT, 'data/prayer-methods.json'), 'utf8'));
+
+  test('every shipped method carries a source with an honest shape', () => {
+    assert.equal(data.methods.length, 7, 'no new angles ship with the provenance infra');
+    for (const m of data.methods) {
+      assert.ok(m.source && typeof m.source === 'object', `${m.id} carries a source`);
+      assert.ok(
+        typeof m.source.body === 'string' && m.source.body.length > 0,
+        `${m.id} names its convention institution`
+      );
+      assert.ok(
+        typeof m.source.document === 'string' && m.source.document.length > 0,
+        `${m.id} names the convention document`
+      );
+      assert.equal(typeof m.source.verified, 'boolean', `${m.id} verified is an explicit boolean`);
+      // SOURCES.md prayer section cites only secondary corroboration, so
+      // nothing may claim official status.
+      assert.equal(m.source.verified, false, `${m.id} stays honestly unverified`);
+      if (m.source.url != null) {
+        assert.ok(
+          typeof m.source.url === 'string' && m.source.url.length > 0,
+          `${m.id} url, when present, is a non-empty string`
+        );
+      }
+      const extra = Object.keys(m.source).filter(
+        (k) => !['body', 'document', 'url', 'verified'].includes(k)
+      );
+      assert.deepEqual(extra, [], `${m.id} source carries no unpinned shape: ${extra.join(', ')}`);
+    }
+  });
+
+  test('JSON source mirrors the domain METHODS source, entry by entry', () => {
+    for (const m of data.methods) {
+      assert.deepEqual(
+        METHODS[m.id]?.source,
+        m.source,
+        `${m.id} domain source matches the data file`
+      );
+    }
+    for (const id of Object.keys(METHODS)) {
+      const listed = data.methods.find((m) => m.id === id);
+      assert.ok(listed?.source, `${id} domain source is documented in data`);
+    }
+  });
+
+  test('the calc sheet renders the source body through the bilingual label', () => {
+    const src = readFileSync(join(ROOT, 'js/views/prayer.js'), 'utf8');
+    assert.match(src, /prayer\.methodSource/, 'the explainer area renders the source');
+  });
+});
+
 describe('the three controls are actually reachable in the UI', () => {
   const src = readFileSync(join(ROOT, 'js/views/prayer.js'), 'utf8');
 

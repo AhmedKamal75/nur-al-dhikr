@@ -24,10 +24,49 @@ const D2R = Math.PI / 180;
 const R2D = 180 / Math.PI;
 
 export const METHODS = Object.freeze({
-  MWL: { name: 'Muslim World League', fajr: 18, isha: 17 },
-  ISNA: { name: 'Islamic Society of North America', fajr: 15, isha: 15 },
-  Egyptian: { name: 'Egyptian General Authority', fajr: 19.5, isha: 17.5 },
-  Karachi: { name: 'University of Islamic Sciences, Karachi', fajr: 18, isha: 18 },
+  MWL: {
+    name: 'Muslim World League',
+    fajr: 18,
+    isha: 17,
+    // (v5.17.40) provenance mirrors data/prayer-methods.json `source`.
+    // verified:false throughout: SOURCES.md prayer section cites only
+    // secondary corroboration, so no method claims official status.
+    source: {
+      body: 'Muslim World League',
+      document: 'Fajr 18°, Isha 17° convention',
+      verified: false,
+    },
+  },
+  ISNA: {
+    name: 'Islamic Society of North America',
+    fajr: 15,
+    isha: 15,
+    source: {
+      body: 'Islamic Society of North America',
+      document: 'Fajr 15°, Isha 15° convention',
+      verified: false,
+    },
+  },
+  Egyptian: {
+    name: 'Egyptian General Authority',
+    fajr: 19.5,
+    isha: 17.5,
+    source: {
+      body: 'Egyptian General Authority of Survey',
+      document: 'Fajr 19.5°, Isha 17.5° convention',
+      verified: false,
+    },
+  },
+  Karachi: {
+    name: 'University of Islamic Sciences, Karachi',
+    fajr: 18,
+    isha: 18,
+    source: {
+      body: 'University of Islamic Sciences, Karachi',
+      document: 'Fajr 18°, Isha 18° convention',
+      verified: false,
+    },
+  },
   // (v4.3) Umm al-Qura's published convention is Isha 90 minutes after
   // Maghrib during Ramadan and 120 minutes otherwise — a flat 90 left Isha
   // roughly half an hour early ~11 months a year for the method named after
@@ -38,14 +77,38 @@ export const METHODS = Object.freeze({
     isha: null,
     ishaMinutesAfterMaghrib: 120,
     ishaMinutesAfterMaghribRamadan: 90,
+    source: {
+      body: 'Umm al-Qura Calendar, Makkah',
+      document: 'Fajr 18.5°; Isha 120 minutes after Maghrib (90 in Ramadan)',
+      verified: false,
+    },
   },
   // (v4.3) Tehran computes Maghrib at 4.5° below the horizon (its own
   // convention), not the generic 0.833° sunset.
-  Tehran: { name: 'Institute of Geophysics, Tehran', fajr: 17.7, isha: 14, maghribAngle: 4.5 },
+  Tehran: {
+    name: 'Institute of Geophysics, Tehran',
+    fajr: 17.7,
+    isha: 14,
+    maghribAngle: 4.5,
+    source: {
+      body: 'Institute of Geophysics, University of Tehran',
+      document: 'Fajr 17.7°, Isha 14°, Maghrib 4.5° convention',
+      verified: false,
+    },
+  },
   // The real Moonsighting Committee method uses latitude-dependent angles;
   // this approximation (18°/18°) is what most published tables reduce it
   // to. Labeled honestly so nobody mistakes it for the full rule.
-  MoonsightingCommittee: { name: 'Moonsighting Committee (18°/18° approx.)', fajr: 18, isha: 18 },
+  MoonsightingCommittee: {
+    name: 'Moonsighting Committee (18°/18° approx.)',
+    fajr: 18,
+    isha: 18,
+    source: {
+      body: 'Moonsighting Committee',
+      document: 'Simplified 18°/18° approximation of the full latitude-dependent method',
+      verified: false,
+    },
+  },
 });
 
 export const ASR_FACTORS = Object.freeze({ Standard: 1, Hanafi: 2 });

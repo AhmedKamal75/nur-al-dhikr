@@ -2,6 +2,34 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.40 — Prayer-method provenance: every method names its source, nothing new ships
+
+- **Provenance infra, zero new angles.** Research found no further method
+  verifiable to official-publication standard, so the seven shipped methods
+  stay the seven shipped methods — shipping secondary angles as
+  authoritative would violate the never-invent rule. What ships instead is
+  the structure for honesty: each method in `data/prayer-methods.json`
+  carries optional `source:{body,document,url?,verified}`, mirrored in the
+  domain `METHODS`, with the body surfaced in the calculation sheet beside
+  the existing region/note explainer through the bilingual
+  `prayer.methodSource` label (one new key per language, institution proper
+  nouns render verbatim in both).
+- **Honestly unverified.** `SOURCES.md`'s prayer section cites only
+  secondary corroboration, and the data mirrors it: `verified:false` on all
+  seven, so no method claims official status it has not earned. The shape
+  (non-empty body/document, explicit boolean, optional non-empty url, no
+  unpinned keys) and the JSON↔domain↔i18n equality are pinned by
+  `tests/prayer-methods.test.js` and the extended UP-06 block in
+  `tests/p2-roadmap-fixes.test.js`.
+- **The research is recorded, not lost.** The 20 candidate bodies reviewed
+  and found unverifiable are listed in `docs/BACKLOG.md` §4 as an
+  explicitly UNVERIFIED, not-shipping table — no angles recorded, so there
+  is nothing to un-invent later and nobody needs to re-research from zero.
+  A candidate graduates only with a cited official publication plus scholar
+  sign-off.
+- **Arrangement of trust, not of routes.** No control, route, nav entry or
+  angle changes; the orphan trap stays green with 0 unjustified orphans.
+
 ## v5.17.39 — The orphans, one by one: four doors, two documented internals (reorganisation Phase 7)
 
 - **Four doors** (`docs/REORGANISATION-PLAN.md` Phase 7, §4): `FOCUS` is
