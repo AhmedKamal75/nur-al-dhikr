@@ -620,6 +620,12 @@ export function calcPanelHTML(state) {
   // (v5.17.40) provenance: the source body rides the domain METHODS entry
   // (mirroring data/prayer-methods.json), rendered through the bilingual
   // prayer.methodSource label — same explainer area as the note, no new UI.
+  // (v5.17.41) the label carries its own "(unverified)" qualifier, so an
+  // unverified body can never read as an endorsement. The body itself is an
+  // institution proper noun rendered verbatim in both languages — the
+  // deliberate MEMORY.md §4 exception (surah/reciter names), not a leak:
+  // transliterating an official body name would invent a translation, which
+  // is worse than quoting the name honestly.
   const sourceBody =
     m.source && typeof m.source.body === 'string' && m.source.body ? m.source.body : '';
   // Manual minute offsets, one stepper per prayer (−60..+60).

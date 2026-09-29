@@ -118,7 +118,7 @@ in isolation and say so; do not delete a test to get green.
 - **New view**: keep it lazy. The renderer's static-import budget is capped and
   is already at the cap.
 - **Approaching a cap?** `mushafReader.js` is under 800 lines and the renderer
-  static budget is 22/22. Extract a module instead of growing a file.
+  static budget is 19/19. Extract a module instead of growing a file.
 
 ## 5. Style
 

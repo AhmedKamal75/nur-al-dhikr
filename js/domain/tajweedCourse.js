@@ -370,7 +370,7 @@ export function isUnlocked(sessionId, progress, mode) {
  * is a real state and not a bug: the UI offers mixed practice instead of
  * pretending there is more course.
  */
-export function nextSession(progress, mode) {
+export function nextSession(progress, _mode) {
   const done = new Set(Object.keys(progress || {}));
   return allSessions().find((s) => !done.has(s.id)) || null;
 }

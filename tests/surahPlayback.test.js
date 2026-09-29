@@ -2,7 +2,6 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   nextAyah,
-  resolvePage,
   ayahKey,
   start,
   stop,
@@ -44,6 +43,9 @@ import {
   _expireSleepForTests,
 } from '../js/services/surahPlayback.js';
 import { configureDriver } from '../js/services/recitation.js';
+// (v5.17.41) page resolution lives ONLY in services/mushaf.js — the old
+// surahPlayback re-export is gone, so this suite imports the canonical copy.
+import { resolvePage } from '../js/services/mushaf.js';
 
 /**
  * The continuous-surah-recitation engine, tested through a fake audio
@@ -125,7 +127,7 @@ describe('pure helpers', () => {
     assert.equal(nextAyah(1.9, 7), 2, 'floors fractional input');
   });
 
-  test('resolvePage reads the mushaf ayahPages map with bounds', () => {
+  test('resolvePage (canonical services/mushaf.js) reads the ayahPages map with bounds', () => {
     const map = { '2:255': 42, '1:1': 1, '114:6': 604 };
     assert.equal(resolvePage(map, 2, 255), 42);
     assert.equal(resolvePage(map, 1, 1), 1);

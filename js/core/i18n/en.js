@@ -27,15 +27,16 @@ export const en = {
   // (REORG Phase 6) garden.title retired with the Garden nav noun — the
   // Growth view's heading is you.growth now. Body copy (garden.*) keeps
   // describing the visual treatment it sits beside.
-  'garden.invite': 'See these recitations grow in your Garden',
-  'garden.subtitle': 'Every dhikr you count is a seed. Watch what a lifetime of remembrance grows.',
+  'garden.invite': 'Watch these recitations grow',
+  'garden.subtitle':
+    'Every dhikr you count is a seed. Watch your Growth over a lifetime of remembrance.',
   'garden.seedsPlanted': 'seeds planted',
   'garden.progressLabel': 'Growth progress',
   'garden.growingToward': 'Growing toward {stage} — {n} dhikr to go',
   'garden.finalForm': 'A full grove. Every seed you plant from here deepens its shade.',
   'garden.timeline': 'Growth timeline',
   'garden.harvest': 'Grown so far',
-  'garden.seeStatistics': 'See the statistics behind the garden',
+  'garden.seeStatistics': 'See the statistics behind your Growth',
   // v5.2.75 reading grows the garden too (UP-12).
   'garden.readsCount': '{n} Qur’an pages read',
   'garden.stage.seed': 'Seed',
@@ -906,7 +907,9 @@ export const en = {
   'prayer.methodNote.MoonsightingCommittee': 'Simplified 18°/18° approximation of the full method.',
   // v5.17.40 prayer-method provenance: label for the source body carried
   // per method in data/prayer-methods.json (verified:false throughout).
-  'prayer.methodSource': 'Source: {body}',
+  // (v5.17.41) the unverified qualifier rides the label itself, so an
+  // unverified body can never render as an endorsement.
+  'prayer.methodSource': 'Source (unverified): {body}',
   'prayer.offsetsTitle': 'Fine-tune times (minutes)',
   'prayer.offsetsHint':
     'Shift any prayer ±60 minutes — e.g. to match your local mosque. Applies everywhere: the timetable, alerts and fasting.',

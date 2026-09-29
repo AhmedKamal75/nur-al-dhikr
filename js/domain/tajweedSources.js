@@ -208,8 +208,8 @@ export const TAJWEED_SOURCES = Object.freeze({
       ar: '١٧ — ابن الجزري: عشر لها ضد وسبع لا ضد لها',
     }),
     caveat: Object.freeze({
-      en: "Seventeen sifat, ten with opposites and seven without, as counted for Ibn al-Jazari in al-Wajiz (al-Muqaddima vv. 19-26). The reason given for seventeen is parity: so that the number of sifat would be seventeen, like the number of makharij. Others count differently: 18 counting al-tawassut as its own sifah, 20 adding al-khafa and al-ghunnah, 14 with al-Barkawi, 15, and 44 with Makki ibn Abi Talib. No count is this app's default.",
-      ar: 'سبع عشرة صفة، عشر لها ضد وسبع لا ضد لها، كما عدّها الوجيز لابن الجزري في المقدمة في الأبيات ١٩-٢٦. وسبب السبعة عشر المحاذاة: ليكون عدد الصفات سبع عشرة مثل عدد مخارج الحروف. ويعدّ غيره على خلاف ذلك: ١٨ بعدّ التوسط صفة مستقلة، و٢٠ بإضافة الخفاء والغنة، و١٤ عند البركوي، و١٥، و٤٤ عند مكي بن أبي طالب. وليس أي عدد هو المعتمَد في التطبيق.',
+      en: "Seventeen sifat, ten with opposites and seven without, as counted for Ibn al-Jazari in al-Wajiz (al-Muqaddima vv. 19-26). The reason given for seventeen is parity: so that the number of sifat would be seventeen, like the number of makharij. Others count differently: 18 counting al-tawassut as its own sifah, 20 adding al-khafa and al-ghunnah, and 44 with Makki ibn Abi Talib. No count is this app's default.",
+      ar: 'سبع عشرة صفة، عشر لها ضد وسبع لا ضد لها، كما عدّها الوجيز لابن الجزري في المقدمة في الأبيات ١٩-٢٦. وسبب السبعة عشر المحاذاة: ليكون عدد الصفات سبع عشرة مثل عدد مخارج الحروف. ويعدّ غيره على خلاف ذلك: ١٨ بعدّ التوسط صفة مستقلة، و٢٠ بإضافة الخفاء والغنة، و٤٤ عند مكي بن أبي طالب. وليس أي عدد هو المعتمَد في التطبيق.',
     }),
   }),
   sifat_18: Object.freeze({
@@ -218,8 +218,8 @@ export const TAJWEED_SOURCES = Object.freeze({
     review: 'contested',
     topic: 'sifat',
     label: Object.freeze({
-      en: '18 — Ibn al-Jazari and the majority: al-tawassut counted',
-      ar: '١٨ — ابن الجزري والجمهور: عدّ التوسط',
+      en: '18 — al-Amid reports Ibn al-Jazari and the majority: al-tawassut counted',
+      ar: '١٨ — العميد عن ابن الجزري والجمهور: عدّ التوسط',
     }),
     caveat: Object.freeze({
       en: "Eighteen: Ibn al-Jazari and the majority, as reported in al-Amid, counting al-tawassut, between-between, as its own sifah. Al-Wajiz counts 17, ten with opposites and seven without; Ghayat al-Murid counts 20. Taught alongside them, and no count is this app's default.",

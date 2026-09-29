@@ -13,7 +13,6 @@
 import { t } from '../core/i18n.js';
 import { escapeHTML, pickLocale, toEasternArabicNumerals } from '../core/utils.js';
 import { hizbStartPage, mushafRoutePage } from '../services/mushaf.js';
-import { MUSHAF_PAGE_COUNT } from '../core/config.js';
 import { skeletonLines } from '../ui/skeleton.js';
 
 /** Eastern numerals for the mushaf chrome in Arabic, Western in English. */
@@ -59,7 +58,7 @@ export function buildMushafJump(state) {
   // and a drawer that disagreed with the book would be a second wrong answer
   // about position. Defensive: a view must not throw on a missing param bag.
   const { page: here } = mushafRoutePage(state);
-  const contains = (startMap, key) => {
+  const contains = (startMap, _key) => {
     let current = null;
     for (const [k, v] of Object.entries(startMap)) {
       const n = Number(k);

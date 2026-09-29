@@ -1,8 +1,8 @@
 /**
  * tests/mushaf-search.test.js — the mushaf-search gap (v5.17.28):
- *  1. resolvePage lives in services/mushaf.js — search.js imports it from
- *     there, and services/surahPlayback.js re-exports the same function
- *     (no second implementation to drift);
+ *  1. resolvePage lives ONLY in services/mushaf.js — search.js imports it
+ *     from there (v5.17.41 removed the deprecated surahPlayback re-export,
+ *     so the engine can no longer hand out a second copy to drift);
  *  2. the canonical resolvePage + mushafRoutePage resolve units;
  *  3. search ayah hits render the mushaf chip (page AND ayah deep link,
  *     sibling anchors) and render none when the map is missing — or corrupt.
@@ -12,7 +12,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import { resolvePage, mushafRoutePage } from '../js/services/mushaf.js';
-import { resolvePage as playbackResolvePage } from '../js/services/surahPlayback.js';
+import * as playback from '../js/services/surahPlayback.js';
 import { renderSearch } from '../js/views/search.js';
 import { buildQuranIndex, resetQuranIndex, setQuranIndexReady } from '../js/domain/quranSearch.js';
 
@@ -30,12 +30,13 @@ describe('mushaf-search unification: one resolvePage', () => {
     assert.doesNotMatch(src, /services\/surahPlayback\.js/, 'no engine import left in search');
   });
 
-  test('surahPlayback re-exports the canonical function (same identity)', () => {
+  test('surahPlayback no longer re-exports resolvePage (one implementation)', async () => {
     assert.equal(
-      playbackResolvePage,
-      resolvePage,
-      'the deprecated dup is a re-export, not a second implementation'
+      playback.resolvePage,
+      undefined,
+      'the deprecated dup is gone — import resolvePage from services/mushaf.js'
     );
+    assert.equal(typeof resolvePage, 'function', 'the canonical import still resolves');
   });
 });
 

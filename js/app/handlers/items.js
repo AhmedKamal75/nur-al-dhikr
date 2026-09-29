@@ -854,9 +854,10 @@ export const clickHandlers = {
   },
 
   // (SEARCH-01) explicit pages: 'search-page' moves one scope to an
-  // exact page (qp/tp/lp via a pushed history entry). 'search-more' is the
-  // legacy shown-count alias: it converts one step forward into the covering
-  // page so old clients and tests keep working without a second code path.
+  // exact page (qp/tp/lp via a pushed history entry). The legacy
+  // 'search-more' shown-count alias was removed (v5.17.41): no view emits
+  // it anymore (tests/search-pagination-pages.test.js pins the absence),
+  // so the handler was dead code carrying a second pagination path.
   'search-page': (ds) => {
     const params = store.getState().activeParams || {};
     const q = params.q || '';
@@ -870,27 +871,6 @@ export const clickHandlers = {
     delete next[legacyKey];
     go(VIEWS.SEARCH, next);
   },
-  'search-more': (ds) => {
-    const params = store.getState().activeParams || {};
-    const q = params.q || '';
-    if (!q) return;
-    const scope = ['quran', 'tafsir', 'library'].includes(ds.scope) ? ds.scope : 'library';
-    const key = scope === 'quran' ? 'qp' : scope === 'tafsir' ? 'tp' : 'lp';
-    const legacyKey = scope === 'quran' ? 'qn' : scope === 'tafsir' ? 'tn' : 'ln';
-    const size = scope === 'library' ? 40 : scope === 'tafsir' ? 8 : 15;
-    const legacyShown = Math.floor(Number(params[legacyKey]));
-    const curPage = Math.floor(Number(params[key]));
-    const cur =
-      Number.isFinite(curPage) && curPage >= 1
-        ? curPage
-        : Number.isFinite(legacyShown) && legacyShown >= 1
-          ? Math.ceil(legacyShown / size)
-          : 1;
-    const next = { ...params, [key]: String(cur + 1) };
-    delete next[legacyKey];
-    go(VIEWS.SEARCH, next);
-  },
-
   'clear-search-history': () => {
     store.dispatch(actions.clearSearchHistory());
   },

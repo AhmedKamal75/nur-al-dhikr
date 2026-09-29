@@ -48,7 +48,7 @@ export const METHODS = Object.freeze({
     },
   },
   Egyptian: {
-    name: 'Egyptian General Authority',
+    name: 'Egyptian General Authority of Survey',
     fajr: 19.5,
     isha: 17.5,
     source: {
@@ -86,7 +86,7 @@ export const METHODS = Object.freeze({
   // (v4.3) Tehran computes Maghrib at 4.5° below the horizon (its own
   // convention), not the generic 0.833° sunset.
   Tehran: {
-    name: 'Institute of Geophysics, Tehran',
+    name: 'Institute of Geophysics, University of Tehran',
     fajr: 17.7,
     isha: 14,
     maghribAngle: 4.5,

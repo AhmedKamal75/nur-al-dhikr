@@ -2,6 +2,49 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.41 — Ten safe hostile findings in one commit: honest labels, dead code out, lint clean
+
+- **Prayer source line stops endorsing.** The calc-sheet provenance label now
+  carries its own qualifier — `prayer.methodSource` is `Source (unverified):
+{body}` / `المصدر (غير مؤكد): {body}` in both languages — so an unverified
+  body can never render as an endorsement. The triple pin moves with it
+  (`tests/prayer-methods.test.js`, the UP-06 block in
+  `tests/p2-roadmap-fixes.test.js`). The Latin institution name in the Arabic
+  sheet stays verbatim by design, now documented as the MEMORY.md §4
+  proper-noun exception (surah/reciter names): transliterating an official
+  body name would invent a translation, which is worse — the no-leak gate
+  scopes to the method options.
+- **Graduation is greened, not red.** The provenance tests assert the source
+  shape plus an honest boolean instead of pinning `verified:false`, so a
+  method that earns a cited official publication plus scholar sign-off flips
+  to `verified:true` without a red gate (`SOURCES.md` records the path).
+  No angles change; institution names canonicalize to their full forms
+  (Egyptian General Authority of Survey; Institute of Geophysics, University
+  of Tehran) in `js/domain/prayer.js`, already canonical in
+  `data/prayer-methods.json`.
+- **Copy honesty, both languages.** `nav.you` in Arabic drops the
+  account-implying `حسابي` for the literal `أنت`; the three Garden-as-place
+  strings become Growth-treatment copy (`garden.invite/subtitle/seeStatistics`,
+  EN+AR); `sifat_18` is now reported speech (`al-Amid reports…` /
+  `العميد عن…`); the `sifat_17` caveat no longer names the unshipped 14/15
+  counts (the shipped spread is 17/18/20/44).
+- **Dead code out.** The deprecated `resolvePage` re-export leaves
+  `js/services/surahPlayback.js` (one implementation in `services/mushaf.js`;
+  `tests/mushaf-search.test.js` now pins the absence) and the unemitted
+  `search-more` handler leaves `js/app/handlers/items.js` (absence was
+  already pinned by `tests/search-pagination-pages.test.js`). Orphan and
+  registry traps re-checked first — both green.
+- **Lint clean.** The 8 unused-var warnings go: dead `mushafReader`
+  `ayahCountLabelOf` and the `hizbStartPage`/`MUSHAF_PAGE_COUNT`/`PATH_MODES`
+  imports removed, the four unused params underscored (`mushafJump` key,
+  `tajweedCourseView` lang/hintKey, `tajweedCourse` mode).
+- **Docs.** `AGENTS.md` cap text corrected 22/22→19/19 to match the enforced
+  gate (`tests/startup-budget.test.js:48`); ledger row 24 notes it.
+
+Full ritual: five markers to 5.17.41, snapshot-shell, manifest:generate,
+compress-data, RELEASES entry. `npm run check` FULLY green with 0 lint
+warnings. evidence/overhaul-* left unstaged.
+
 ## v5.17.40 — Prayer-method provenance: every method names its source, nothing new ships
 
 - **Provenance infra, zero new angles.** Research found no further method

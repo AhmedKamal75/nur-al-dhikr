@@ -45,7 +45,6 @@ import {
   nextSpreadPage,
   prevSpreadPage,
   juzEighth,
-  hizbStartPage,
 } from '../services/mushaf.js';
 import {
   VIEWS,
@@ -401,14 +400,6 @@ export function renderMushaf(state) {
       </button>
     </nav>
   </section>`;
-}
-
-/** (v4.5) "{n} ayahs" for the jump drawer's surah rows — same source of
- *  truth (quran-meta) as the banner's count line, elided while it loads. */
-function ayahCountLabelOf(state, number, lang) {
-  const n = state.quran.meta?.surahs?.find((s) => Number(s.number) === Number(number))?.ayahCount;
-  if (!Number.isFinite(n)) return '';
-  return ayahCountPhrase(n, lang);
 }
 
 /**

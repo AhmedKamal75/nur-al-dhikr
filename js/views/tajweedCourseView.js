@@ -26,7 +26,6 @@ import { TAJWEED_RULES, TAJWEED_FAMILIES } from '../domain/tajweed.js';
 import { TAJWEED_WORKS, TAJWEED_SOURCES, tajweedCitation } from '../domain/tajweedSources.js';
 import {
   COURSE_STAGES,
-  PATH_MODES,
   allSessions,
   availableSessions,
   isDrivable,
@@ -159,7 +158,7 @@ function sessionRow(session, state, lang) {
   </li>`;
 }
 
-function tajweedWorkTitle(workId, lang) {
+function tajweedWorkTitle(workId, _lang) {
   // Imported lazily-by-value to keep this module's imports flat.
   const { TAJWEED_WORKS } = tajweedWorkTitle;
   return TAJWEED_WORKS?.[workId]?.shortTitle || { en: workId, ar: workId };
@@ -179,7 +178,7 @@ export function renderTajweedCourse(state) {
   const modeSwitch = `<div class="taj-course__modes" role="radiogroup" aria-labelledby="taj-course-mode-label">
     <span class="taj-course__mode-label" id="taj-course-mode-label">${escapeHTML(t('tajweedCourse.pathLabel', lang))}</span>
     ${MODE_LABELS.map(
-      ([value, labelKey, hintKey]) => `<label class="taj-course__mode">
+      ([value, labelKey]) => `<label class="taj-course__mode">
         <input type="radio" name="tajweed-path-mode" data-action="tajweed-course-mode" value="${value}" ${mode === value ? 'checked' : ''} />
         <span>${escapeHTML(t(labelKey, lang))}</span>
       </label>`

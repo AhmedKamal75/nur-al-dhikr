@@ -92,7 +92,10 @@ equality so the three can never drift.
 `document` names the convention. `verified` is `false` on all seven
 shipped methods: the angles rest on secondary corroboration only, and no
 official publication has been confirmed to standard — so nothing here
-claims official status. No further method ships until its official
+claims official status. A method graduates to `verified:true` with a cited
+official publication plus scholar sign-off (the provenance tests assert the
+source shape and an honest boolean, not `false`, so graduation turns green
+instead of red). No further method ships until its official
 publication is verified; the researched-but-unverifiable candidates are
 listed as UNVERIFIED (not shipping) in `docs/BACKLOG.md` §4.
 

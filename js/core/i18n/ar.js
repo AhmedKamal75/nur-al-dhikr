@@ -22,15 +22,15 @@ export const ar = {
   'nav.back': 'رجوع',
   // (REORG Phase 6) garden.title retired — the Growth view's heading is
   // you.growth now. See en.js.
-  'garden.invite': 'شاهد أذكارك تنمو في حديقتك',
-  'garden.subtitle': 'كل ذكر تعدّه بذرة. انظر ماذا يُنبت العمر كله من الذكر.',
+  'garden.invite': 'شاهد أذكارك تنمو',
+  'garden.subtitle': 'كل ذكر تعدّه بذرة. تابع نموّك على مدى عمر من الذكر.',
   'garden.seedsPlanted': 'بذرة مغروسة',
   'garden.progressLabel': 'مقدار النمو',
   'garden.growingToward': 'تنمو نحو {stage} — بقيت {n} من الذكر',
   'garden.finalForm': 'بستان كامل. كل بذرة تزرعها من هنا تزيد ظله.',
   'garden.timeline': 'مسار النمو',
   'garden.harvest': 'ما نبت حتى الآن',
-  'garden.seeStatistics': 'انظر الإحصاءات التي تنبت منها الحديقة',
+  'garden.seeStatistics': 'انظر الإحصاءات التي يقوم عليها نموّك',
   // v5.2.75 reading grows the garden too (UP-12).
   'garden.readsCount': 'قرأت {n} من صفحات المصحف',
   'garden.stage.seed': 'بذرة',
@@ -52,7 +52,7 @@ export const ar = {
   // see en.js.
   // (REORG Phase 6) one You section — bilingual with en.js from the
   // first commit.
-  'nav.you': 'حسابي',
+  'nav.you': 'أنت',
   'you.myAdhkar': 'أذكاري',
   'you.growth': 'النمو',
   'you.about': 'حول التطبيق والمصادر',
@@ -866,7 +866,8 @@ export const ar = {
   'prayer.methodNote.MoonsightingCommittee': 'تقريب مبسّط 18°/18° للطريقة الكاملة.',
   // v5.17.40 prayer-method provenance: label for the source body carried
   // per method in data/prayer-methods.json (verified:false throughout).
-  'prayer.methodSource': 'المصدر: {body}',
+  // (v5.17.41) the unverified qualifier rides the label itself — see en.js.
+  'prayer.methodSource': 'المصدر (غير مؤكد): {body}',
   'prayer.offsetsTitle': 'ضبط دقيق للأوقات (بالدقائق)',
   'prayer.offsetsHint':
     'أزح أي صلاة ±60 دقيقة — مثلًا لمطابقة مسجدك المحلي. يُطبَّق في كل مكان: الجدول والتنبيهات والصيام.',

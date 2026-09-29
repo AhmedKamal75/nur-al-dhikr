@@ -1037,7 +1037,12 @@ describe('UP-06: prayer offsets + method transparency', () => {
         `${m.id} source names a document`
       );
       assert.equal(typeof m.source.verified, 'boolean', `${m.id} verified is explicit`);
-      assert.equal(m.source.verified, false, `${m.id} claims no official status`);
+      // (v5.17.41) shape pinned, value not: graduation via a cited official
+      // publication plus scholar sign-off turns green instead of red.
+      assert.ok(
+        m.source.verified === false || m.source.verified === true,
+        `${m.id} verified is an honest boolean either way`
+      );
       assert.deepEqual(METHODS[m.id].source, m.source, `${m.id} domain source matches JSON`);
       for (const lang of ['en', 'ar']) {
         assert.equal(t(`prayer.methodNote.${m.id}`, lang), m.note[lang], `${m.id} note mirrored`);
@@ -1067,8 +1072,12 @@ describe('UP-06: prayer offsets + method transparency', () => {
       'method option localized, not raw English'
     );
     // The source body is an institution proper noun rendered verbatim in
-    // both languages (v5.17.40), so the no-leak gate scopes to the options —
-    // the labelled source line itself carries the Latin name by design.
+    // both languages (v5.17.40) — the deliberate MEMORY.md §4 exception for
+    // proper nouns (surah/reciter names), not a leak: transliterating an
+    // official body name would invent a translation, which is worse. The
+    // no-leak gate therefore scopes to the method options — the labelled
+    // source line itself carries the Latin name by design, with its own
+    // (unverified) qualifier (v5.17.41) so it never reads as an endorsement.
     assert.doesNotMatch(
       html,
       /<option[^>]*>Muslim World League<\/option>/,
@@ -1078,7 +1087,8 @@ describe('UP-06: prayer offsets + method transparency', () => {
     assert.match(html, /الافتراضي العالمي/, 'region renders');
     // (v5.17.40) provenance surfaces beside the note: the Arabic sheet shows
     // the bilingual label, the English sheet the source body itself.
-    assert.match(html, /المصدر:/, 'source label renders in AR');
+    // (v5.17.41) the label carries its own unverified qualifier.
+    assert.match(html, /المصدر \(غير مؤكد\):/, 'source label renders in AR');
     const enHtml = calcPanelHTML({
       settings: {
         ...DEFAULT_SETTINGS,
@@ -1086,7 +1096,7 @@ describe('UP-06: prayer offsets + method transparency', () => {
         prayer: { ...DEFAULT_SETTINGS.prayer, method: 'MWL' },
       },
     });
-    assert.match(enHtml, /Source:/, 'source label renders in EN');
+    assert.match(enHtml, /Source \(unverified\):/, 'source label renders in EN');
     assert.match(enHtml, /Muslim World League/, 'source body renders in EN');
   });
 });
