@@ -10,7 +10,7 @@ Last verified: **v5.17.11**, `npm run check` green, Chromium E2E green.
 
 ---
 
-## 1. The five things that will bite you
+## 1. The six things that will bite you
 
 1. **Five version markers move together or not at all.** `package.json`,
    `APP_VERSION` (`js/core/config.js`), `VERSION` (`sw.js`), `manifest.json`
@@ -37,6 +37,12 @@ Last verified: **v5.17.11**, `npm run check` green, Chromium E2E green.
    side, and keep a review state until signed off. The gate is **attribution,
    not authorship**. What is still forbidden: writing a hadith, tafsir, grade,
    timing or rule definition from memory and presenting it as sourced.
+
+6. **Itqan — do the work excellently, not merely done.** A gate you did not
+   run is not a gate you passed. Prefer the honest red you can explain over
+   the green you cannot. A commit message claiming a number nobody read is the
+   worst thing in this repo, because it is the only failure nothing downstream
+   can catch.
 
 ## 2. Architecture in one page
 

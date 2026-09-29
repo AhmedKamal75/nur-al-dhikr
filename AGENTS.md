@@ -101,6 +101,24 @@ what you were told, say so instead of proceeding.
      "Blocked" without a tag, an alternative search, or the generalized check is
      an incomplete report.
 
+8. **Do the work with itqan — excellence and due diligence.** (Owner standing
+   guidance.) A job is not finished because it produced output; it is finished
+   when it was done _well_. In this repo that means:
+   - **A green gate is a claim, not a proof.** Quote a number only from a run
+     you actually executed. Reporting a passing count you did not read is the
+     one unforgivable error, because it is the one nobody can detect. If a
+     commit message and the run disagree, the message is wrong.
+   - **Never let a fast gate outrun an honest one.** When optimising the test
+     cycle, the gate must change only _how fast_, never _what is checked_. A
+     timeout raised until a race stops complaining is a lie with a bigger
+     number. A retry that hides a flake is not a fix.
+   - **Fix the cause, not the symptom.**
+   - **Say what you did not verify.** "Unreproduced, left open" beats
+     "fixed", and is worth more to the next agent than a false closure.
+   - **Finish the job, including its loose ends.** A tree left dirty by
+     another agent is unfinished work, not someone else's problem. Adopt it
+     deliberately, verify it, and say in the commit whose work it was.
+
 ## 2. The version-and-snapshot ritual
 
 Cache-first bytes are pinned on purpose. Any `js/`, `assets/css/`, or `sw.js`
