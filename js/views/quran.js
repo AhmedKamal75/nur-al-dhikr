@@ -9,6 +9,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
+import { quranModeSwitchHTML } from '../ui/shell.js';
 import { escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS, TRANSLATION_EDITIONS } from '../core/config.js';
 import { selectors } from '../core/state.js';
@@ -638,6 +639,7 @@ export function renderQuran(state) {
         ${immersiveBtn}
       </div>
     </header>
+    ${quranModeSwitchHTML(state.activeView, lang)}
     ${!id ? `<p class="view__subtitle">${t('quran.subtitle', lang)}</p>` : ''}
     ${id ? surahReaderHTML(state, id) : surahListHTML(state)}
     ${immersiveExit}

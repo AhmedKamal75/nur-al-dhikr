@@ -44,8 +44,7 @@ export const ar = {
   'nav.settings': 'الإعدادات',
   'nav.about': 'حول التطبيق',
   'nav.quran': 'القرآن',
-  // (ORG-02 ruling) distinct chrome entry for the classic reader.
-  'nav.reader': 'القارئ',
+  // (REORG Phase 2) nav.reader retired with the second book door — see en.js.
   'nav.hadith': 'الأحاديث',
   'nav.qibla': 'القبلة',
   'nav.checklist': 'القائمة اليومية',
@@ -65,6 +64,9 @@ export const ar = {
   'quran.backToList': 'كل السور',
   'quran.quickActions': 'إجراءات سريعة',
   'quran.viewInMushaf': 'عرض المصحف',
+  // (REORG Phase 2) in-chrome Qur'an mode switch — bilingual with en.js from the first commit.
+  'quran.modeList': 'قراءة القائمة',
+  'quran.modeWord': 'دراسة الكلمات',
   'quran.continueReading': 'متابعة قراءة القرآن',
   'quran.readShortcut': 'اقرأ القرآن الكريم',
   'nav.ramadan': 'رمضان',

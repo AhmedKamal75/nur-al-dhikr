@@ -37,13 +37,14 @@ const NAV_GROUPS = [
       { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
       { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
       { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
-      // (ORG-02 ruling) the classic reader is its own chrome entry
-      // instead of hiding behind the Mushaf label — same book, two
-      // discoverable doors; active states split accordingly below.
-      { view: VIEWS.QURAN, icon: 'book-open', label: 'nav.reader' },
+      // (REORG Phase 2) one book, one door: the classic reader no longer
+      // competes for a chrome slot. #/quran stays a real route (deep links
+      // keep working) and isActive below lights this door for it; the
+      // List/Word switch inside the Qur'an chrome (quranModeSwitchHTML)
+      // carries the one-tap hop instead of a second nav entry.
       // (REORG Phase 1) Roots is the DEPTH of the Qur'an door — the index
-      // behind per-word study — not a separate top level. It sits beside
-      // the two book doors until Phase 2 merges them behind one entry.
+      // behind per-word study — not a separate top level. It keeps its own
+      // door beside the book until a later phase re-homes it.
       { view: VIEWS.ROOTS, icon: 'tree', label: 'nav.roots' },
       { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
       // (REORG Phase 1) the G-2 flagship's first front door, temporarily
@@ -93,10 +94,32 @@ const NAV_GROUPS = [
 /** Flat lookup used to decide the active item for the current view. */
 function isActive(active, view) {
   if (active === view) return true;
+  // (REORG Phase 2) merged Qur'an door: a deep link into #/quran lights the
+  // mushaf entry. ROOTS keeps its own Phase 1 door, so it never aliases here.
+  if (view === VIEWS.MUSHAF && active === VIEWS.QURAN) return true;
   if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
   return (
     view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
   );
+}
+
+/**
+ * (REORG Phase 2) the in-chrome Qur'an mode switch: List reading (#/quran)
+ * vs Word study (#/roots). Rendered inside the mushaf, reader and roots
+ * views — never a nav entry, never a new view. Existing `navigate` actions
+ * only (no handler or allowlist change) and the existing `.segmented`
+ * styling only (44px targets, so Elder/a11y is untouched). On the mushaf
+ * neither segment is active: the book IS the door, and the switch offers
+ * its two inner modes without a route hop or an interstitial.
+ */
+export function quranModeSwitchHTML(activeView, lang) {
+  const seg = (view, labelKey, selected) => `
+    <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  return `
+    <div class="segmented quran-mode-switch" role="group" aria-label="${t('quran.title', lang)}">
+      ${seg(VIEWS.QURAN, 'quran.modeList', activeView === VIEWS.QURAN)}
+      ${seg(VIEWS.ROOTS, 'quran.modeWord', activeView === VIEWS.ROOTS)}
+    </div>`;
 }
 
 function navItemHTML(n, active, lang, { drawer = false } = {}) {

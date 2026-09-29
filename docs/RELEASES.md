@@ -2,6 +2,25 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.34 — One book, one door (reorganisation Phase 2)
+
+- **The Qur'an doors merge** (`docs/REORGANISATION-PLAN.md` Phase 2): a
+  single `nav.quran` entry opens the mushaf; the classic reader stops
+  competing for a chrome slot. Both `#/mushaf` and `#/quran` stay real
+  routes with working deep links — active state resolves from the route,
+  so a deep link into `#/quran` still lights the Qur'an door.
+- **List reading vs Word study switch inside** (plan §2.3): a minimal
+  segmented switch in the Qur'an chrome (mushaf, reader, roots) links the
+  two inner modes with existing `navigate` actions only — no new view, no
+  new handler, no interstitial in any recitation flow.
+- **ROOTS keeps its Phase 1 door** as the Qur'an depth; the bilingual
+  switch labels (`quran.modeList` / `quran.modeWord`) ship EN+AR together.
+  No content, corpus or data change; the renderer static budget stays
+  19/19 and Elder/a11y targets are untouched.
+- **Measured, not asserted:** the reachability trap maps `#/quran` to the
+  Qur'an door in 2 taps (door → switch); orphans hold at 12 until Phases
+  3–7, and the SEARCH label mismatch stays pinned for Phase 6.
+
 ## v5.17.33 — The flagships get a front door (reorganisation Phase 1)
 
 - **Two nav doors, no structural change** (`docs/REORGANISATION-PLAN.md`

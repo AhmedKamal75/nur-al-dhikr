@@ -116,18 +116,39 @@ const INTERNAL_JUSTIFICATIONS = {
 /** Every VIEWS route → its door (1 tap) or null (orphan today). */
 const ROUTE_DOOR_MAP = Object.fromEntries(
   Object.entries(VIEWS).map(([routeKey, routeValue]) => {
-    const door = NAV_ENTRIES.find((e) => e.viewKey === routeKey) || null;
+    const direct = NAV_ENTRIES.find((e) => e.viewKey === routeKey) || null;
+    // (REORG Phase 2) merged Qur'an door: #/quran stays a real route and
+    // resolves to the mushaf entry in 2 taps (door → in-chrome List/Word
+    // switch). taps: 2 keeps the ≤2-taps assertion meaningful instead of
+    // laundering the merge into a fake orphan.
+    let door = direct;
+    let taps = direct ? 1 : null;
+    let via = null;
+    if (!door && routeKey === 'QURAN') {
+      const mushaf = NAV_ENTRIES.find((e) => e.viewKey === 'MUSHAF');
+      if (mushaf) {
+        door = mushaf;
+        taps = 2;
+        via = 'quran-mode-switch';
+      }
+    }
     const kidsDoor = !door && KIDS_DOOR_KEYS.has(routeKey);
     return [
       routeKey,
       {
         route: routeValue,
         door: door
-          ? { view: door.view, group: door.group, labelKey: door.labelKey, taps: 1 }
+          ? {
+              view: door.view,
+              group: door.group,
+              labelKey: door.labelKey,
+              taps,
+              ...(via ? { via } : {}),
+            }
           : kidsDoor
             ? { view: routeValue, group: null, labelKey: null, scope: 'kids', taps: 1 }
             : null,
-        taps: door || kidsDoor ? 1 : null,
+        taps: door || kidsDoor ? taps || 1 : null,
         internalJustification: INTERNAL_JUSTIFICATIONS[routeKey] || null,
       },
     ];
@@ -238,6 +259,42 @@ describe('Phase 1 pin: the flagships have a front door', () => {
     assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
     assert.ok(!ORPHANS.includes('ROOTS'), 'ROOTS is still orphaned');
     assert.equal(ORPHANS.length, 12, `expected the 12 non-flagship orphans, got ${ORPHANS.length}`);
+  });
+});
+
+describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
+  test('single nav.quran entry opens the mushaf; no competing reader entry', () => {
+    const bookDoors = NAV_ENTRIES.filter((e) => e.viewKey === 'MUSHAF' || e.viewKey === 'QURAN');
+    assert.deepEqual(
+      bookDoors.map((e) => e.viewKey),
+      ['MUSHAF'],
+      'the reader must not compete for a chrome slot'
+    );
+    assert.equal(
+      NAV_ENTRIES.find((e) => e.viewKey === 'MUSHAF').labelKey,
+      'nav.quran',
+      'the one door keeps the nav.quran label'
+    );
+  });
+
+  test('#/quran stays a real route resolving to the Qur’an door in 2 taps', () => {
+    const m = ROUTE_DOOR_MAP.QURAN;
+    assert.ok(m.door, '#/quran lost its door — the merge must not orphan the route');
+    assert.equal(m.door.group, 'nav.group.read');
+    assert.equal(m.door.labelKey, 'nav.quran');
+    assert.equal(m.taps, 2, 'door → in-chrome List/Word switch');
+    assert.equal(m.door.via, 'quran-mode-switch');
+    assert.ok(!ORPHANS.includes('QURAN'), '#/quran must not appear in the orphan list');
+  });
+
+  test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
+    for (const key of ['quran.modeList', 'quran.modeWord']) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+    }
+  });
+
+  test('the merge adds no orphan: 12 remain for Phases 3–7', () => {
+    assert.equal(ORPHANS.length, 12, `expected the 12 non-Qur’an orphans, got ${ORPHANS.length}`);
   });
 });
 

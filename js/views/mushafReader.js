@@ -34,6 +34,7 @@ import {
   toEasternArabicNumerals,
 } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
+import { quranModeSwitchHTML } from '../ui/shell.js';
 import {
   isFirstPage,
   isLastPage,
@@ -385,6 +386,7 @@ export function renderMushaf(state) {
   <section class="view view--mushaf">
     <h1 class="sr-only">${t('mushaf.title', lang)}</h1>
     ${topbar}
+    ${quranModeSwitchHTML(state.activeView, lang)}
     <div class="mushaf-page-wrap" data-mushaf-paper="${paper.id}" style="--mushaf-paper-bg:${paper.bg};--mushaf-paper-ink:${paper.ink};--mushaf-paper-border:${paper.border};">
       ${bookHTML}
     </div>
