@@ -13,6 +13,7 @@ import { pickStrict, showTransliterationFor } from '../domain/localeContent.js';
 import { wasCelebrated } from '../domain/celebrate.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS, QUIZ_LENGTH, QUIZ_CHOICE_COUNT } from '../core/config.js';
+import { practiseModeSwitchHTML } from '../ui/shell.js';
 import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
 const QUIZ_SIZES = [5, 10, 20];
@@ -47,6 +48,7 @@ function renderStart(state, lang) {
   return `
   <section class="view view--quiz">
     <h1 class="view__title">${t('quiz.title', lang)}</h1>
+    ${practiseModeSwitchHTML(state.activeView, lang)}
     ${emptyStateHTML({
       iconName: 'star',
       title: t('quiz.intro', lang, { n: QUIZ_LENGTH }),
@@ -86,6 +88,7 @@ function renderFinished(state, lang) {
   return `
   <section class="view view--quiz">
     <h1 class="view__title">${t('quiz.done', lang)}</h1>
+    ${practiseModeSwitchHTML(state.activeView, lang)}
     <div class="empty-state quiz-result${celebrate ? ' celebrate' : ''}">
       ${icon(correctCount === QUIZ_LENGTH ? 'sparkle' : 'star', { size: 40 })}
       <p class="quiz-result__score" dir="ltr">${correctCount} / ${QUIZ_LENGTH}</p>
@@ -111,7 +114,7 @@ function renderQuestion(state, lang) {
     // Defensive: the underlying library changed shape since the deck was
     // built (e.g. content was edited mid-quiz via the editor). Bail out
     // gracefully rather than rendering a broken question.
-    return `<section class="view view--quiz"><p class="empty-hint">${t('quiz.unavailable', lang)}</p>
+    return `<section class="view view--quiz">${practiseModeSwitchHTML(state.activeView, lang)}<p class="empty-hint">${t('quiz.unavailable', lang)}</p>
       <a class="btn btn--ghost" href="${buildHash(VIEWS.LIBRARY)}" data-action="quiz-exit-link">${t('quiz.exit', lang)}</a></section>`;
   }
   const item = entry.item;
@@ -162,6 +165,7 @@ function renderQuestion(state, lang) {
 
   return `
   <section class="view view--quiz">
+    ${practiseModeSwitchHTML(state.activeView, lang)}
     <header class="view-header view-header--row">
       <p class="view__meta">${t('quiz.progress', lang, { current: index + 1, total: deck.length })}</p>
       <p class="view__meta" dir="ltr">${icon('check', { size: 14 })} ${correctCount}</p>

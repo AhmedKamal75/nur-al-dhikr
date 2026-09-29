@@ -15,6 +15,7 @@ import { t } from '../core/i18n.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
+import { practiseModeSwitchHTML } from '../ui/shell.js';
 import {
   buildSimilarPairs,
   buildDrillRound,
@@ -149,6 +150,7 @@ export function renderMutashabihat(state) {
     return `
     <section class="view view--mutashabihat">
       <h1 class="view__title">${t('mutashabihat.title', lang)}</h1>
+      ${practiseModeSwitchHTML(state.activeView, lang)}
       ${
         failed
           ? loadErrorStateHTML({ lang, tierKey: 'quran-corpus', t })
@@ -160,6 +162,7 @@ export function renderMutashabihat(state) {
   return `
   <section class="view view--mutashabihat">
     <h1 class="view__title">${t('mutashabihat.title', lang)}</h1>
+    ${practiseModeSwitchHTML(state.activeView, lang)}
     ${
       loadedCount < 114
         ? `<p class="panel__subtext">${t('mutashabihat.partial', lang, { n: loadedCount })}</p>`

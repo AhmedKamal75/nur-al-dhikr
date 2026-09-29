@@ -209,6 +209,9 @@ export const ar = {
   // (REORG Phase 1) flagship doors — bilingual with en.js from the first commit.
   'nav.tajweedCourse': 'دورة التجويد',
   'nav.roots': 'جذور الكلمات',
+  // (REORG Phase 5) the Practise section name — bilingual with en.js from
+  // the first commit.
+  'practise.label': 'الممارسة',
   'audio.title': 'القراء والصوتيات',
   'audio.subtitle':
     '٣١٢ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',

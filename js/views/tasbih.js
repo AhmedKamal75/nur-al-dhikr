@@ -5,6 +5,7 @@ import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
 import { selectors } from '../core/state.js';
+import { practiseModeSwitchHTML } from '../ui/shell.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 import { isSupported as floatingCounterSupported } from '../services/floatingCounter.js';
 
@@ -96,6 +97,7 @@ export function renderTasbih(state) {
       <h1 class="view__title">${t('nav.tasbih', lang)}</h1>
       ${viewMenuButton('tasbih', lang, { labelKey: 'viewMenu.tasbih' })}
     </div>
+    ${practiseModeSwitchHTML(state.activeView, lang)}
 
     <div class="chip-row chip-row--scroll">${chips}${customChips}</div>
 

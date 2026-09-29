@@ -47,11 +47,13 @@ const NAV_GROUPS = [
       // door beside the book until a later phase re-homes it.
       { view: VIEWS.ROOTS, icon: 'tree', label: 'nav.roots' },
       { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
-      // (REORG Phase 1) the G-2 flagship's first front door, temporarily
-      // in the read group. Phase 5 re-homes it into the Practise section
-      // beside Tasbih, Quiz and Mutashabihat. Config only: no route, no
-      // view import, no deep-link change.
-      { view: VIEWS.TAJWEED_COURSE, icon: 'award', label: 'nav.tajweedCourse' },
+      // (REORG Phase 5) the G-2 flagship's Phase 1 door stood here, in the
+      // read group, as a temporary home. It is re-homed into the Practise
+      // section beside Tasbih, Quiz and Mutashabihat: #/tajweed-course
+      // stays a real route (deep links keep working) and isActive below
+      // lights the tasbih door for it; the in-chrome switch
+      // (practiseModeSwitchHTML) carries the hop. Config only: no route,
+      // no view import, no deep-link change.
       // The nav search item opens the command palette (quick launcher);
       // the full Search view stays one pick away (destination row +
       // history rows inside the palette).
@@ -104,6 +106,14 @@ function isActive(active, view) {
   // (REORG Phase 4) merged Prayer door: deep links into #/qibla and
   // #/calendar light the prayer entry. RAMADAN keeps its own door.
   if (view === VIEWS.PRAYER && (active === VIEWS.QIBLA || active === VIEWS.CALENDAR)) return true;
+  // (REORG Phase 5) one Practise section: deep links into #/tajweed-course,
+  // #/quiz and #/mutashabihat light the tasbih door. TASBIH keeps its own
+  // door as the section entry.
+  if (
+    view === VIEWS.TASBIH &&
+    [VIEWS.QUIZ, VIEWS.TAJWEED_COURSE, VIEWS.MUTASHABIHAT].includes(active)
+  )
+    return true;
   if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
   return (
     view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
@@ -147,6 +157,34 @@ export function prayerModeSwitchHTML(activeView, lang) {
       ${seg(VIEWS.PRAYER, 'nav.prayer', activeView === VIEWS.PRAYER)}
       ${seg(VIEWS.QIBLA, 'nav.qibla', activeView === VIEWS.QIBLA)}
       ${seg(VIEWS.CALENDAR, 'nav.calendar', activeView === VIEWS.CALENDAR)}
+    </div>`;
+}
+
+/**
+ * (REORG Phase 5) the in-chrome Practise switch — the stage rail §2.4
+ * promises the Tajweed course inside its section: Tasbih (#/tasbih) vs the
+ * course (#/tajweed-course) vs the 99 Names quiz (#/quiz) vs look-alike
+ * ayat (#/mutashabihat). Rendered inside all four views — never a nav
+ * entry, never a new view. Existing `navigate` actions only (no handler
+ * or allowlist change) and the existing `.segmented` styling only (44px
+ * targets, so Elder/a11y is untouched). The segments reuse bilingual
+ * labels that already name their destinations (the two nav entries plus
+ * the two views' own titles), so no segment label can drift and each
+ * label promises exactly its tap; the group name ships in a new bilingual
+ * `practise.label` key. No interstitial: every segment is a direct link
+ * to its route. The course's own stage ladder and progress model are
+ * untouched — this rail is the section door, not a second progress
+ * display, and it carries no ranking or shame copy (adab).
+ */
+export function practiseModeSwitchHTML(activeView, lang) {
+  const seg = (view, labelKey, selected) => `
+    <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  return `
+    <div class="segmented practise-mode-switch" role="group" aria-label="${t('practise.label', lang)}">
+      ${seg(VIEWS.TASBIH, 'nav.tasbih', activeView === VIEWS.TASBIH)}
+      ${seg(VIEWS.TAJWEED_COURSE, 'nav.tajweedCourse', activeView === VIEWS.TAJWEED_COURSE)}
+      ${seg(VIEWS.QUIZ, 'quiz.title', activeView === VIEWS.QUIZ)}
+      ${seg(VIEWS.MUTASHABIHAT, 'mutashabihat.title', activeView === VIEWS.MUTASHABIHAT)}
     </div>`;
 }
 

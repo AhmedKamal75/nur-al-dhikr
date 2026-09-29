@@ -217,6 +217,10 @@ export const en = {
   // (tajweedCourse.title, mushaf.roots) so the label promises the tap.
   'nav.tajweedCourse': 'Tajweed course',
   'nav.roots': 'Word roots',
+  // (REORG Phase 5) the Practise section name — the in-chrome Tasbih /
+  // Course / Quiz / Look-alike switch's group label. Bilingual with ar.js
+  // from the first commit.
+  'practise.label': 'Practise',
   'audio.title': 'Reciters & Audio',
   'audio.subtitle':
     '312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',

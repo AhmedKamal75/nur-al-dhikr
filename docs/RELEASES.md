@@ -2,6 +2,34 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.37 — Tasbih, course, quiz and look-alikes in one Practise section (reorganisation Phase 5)
+
+- **The Practise section** (`docs/REORGANISATION-PLAN.md` Phase 5, §2.4):
+  Tasbih, the Tajweed course, the 99 Names quiz and mutashabihat live in
+  one section behind a single `nav.tasbih` entry. The course's Phase 1
+  read-group door was temporary and is re-homed here. All four of
+  `#/tasbih`, `#/tajweed-course`, `#/quiz` and `#/mutashabihat` stay real
+  routes with working deep links — active state resolves from the route,
+  so a deep link into any of the three still lights the Tasbih door.
+- **The stage rail inside** (plan §2.4): a minimal segmented switch in the
+  Practise chrome (tasbih, course, quiz and mutashabihat views) links the
+  four inner modes with existing `navigate` actions only — no new view, no
+  new handler, no new static view import (renderer budget stays 19/19), no
+  interstitial in any flow. The segments reuse bilingual labels that
+  already name their destinations (the two nav entries plus the two views'
+  own titles); only the group name ships as one new bilingual key
+  (`practise.label`), so each label promises exactly its tap.
+- **Arrangement only.** The course's stage ladder and progress model are
+  untouched; no content, corpus, data or route change; language switch,
+  Elder/a11y (44px segments) and no-gamification targets are untouched —
+  the rail is a door, never a scoreboard: progress display, never ranking
+  or shame.
+- **Measured, not asserted:** the reachability trap maps `#/tajweed-course`,
+  `#/quiz` and `#/mutashabihat` to the Tasbih door in 2 taps each (door →
+  switch); orphans close two more (10 → 8) for Phases 6–7, and the SEARCH
+  label mismatch stays pinned for Phase 6. Pinned by the Phase 5 blocks in
+  `tests/nav-chrome.test.js` and `tests/nav-reachability.test.js`.
+
 ## v5.17.36 — Prayer, qibla and calendar behind one door (reorganisation Phase 4)
 
 - **The Prayer doors merge** (`docs/REORGANISATION-PLAN.md` Phase 4, §2.1):

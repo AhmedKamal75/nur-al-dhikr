@@ -100,17 +100,18 @@ const INTERNAL_JUSTIFICATIONS = {
   FOCUS: 'plan Phase 7 list: a door, or a documented internal-only decision.',
   COLLECTIONS: 'plan Phase 7 list: a door, or a documented internal-only decision.',
   COLLECTION: 'plan §1.5: follows from COLLECTIONS — Phase 7 door-or-justify.',
-  QUIZ: 'plan §2.1/Phase 5: Practise-section member (Tasbih + Tajweed course + Quiz + Mutashabihat).',
+  QUIZ: 'plan §2.1/§2.4/Phase 5: Practise-section member — door via the TASBIH entry + in-chrome switch.',
   AUDIO: 'plan Phase 7 list: a door, or a documented internal-only decision.',
   ROOTS:
     'plan §1.5 FLAGSHIP (needsDoor): the root index behind per-word study — Phase 1 gives it a door under Qur’an; NOT internal.',
   EDITOR: 'plan §1.5: a tool invoked from content surfaces — internal-only candidate (Phase 7).',
-  MUTASHABIHAT: 'plan §2.1/Phase 5: Practise-section member.',
+  MUTASHABIHAT:
+    'plan §2.1/§2.4/Phase 5: Practise-section member — door via the TASBIH entry + in-chrome switch.',
   JOURNAL: 'plan §2.1/Phase 6: You-section member.',
   CERTIFICATE: 'plan §2.2/Phase 6: re-homed out of the daily grid; You-section member.',
   AMBIENT: 'plan Phase 7 list: nightstand display — a door, or documented internal-only.',
   TAJWEED_COURSE:
-    'plan §1.5 FLAGSHIP (needsDoor): the entire G-2 course, reachable only by URL/search — Phase 1 gives it a real door; NOT internal.',
+    'plan §1.5 FLAGSHIP (needsDoor): the entire G-2 course, reachable only by URL/search — Phase 1 gives it a real door (temporary read-group home); Phase 5 re-homes it into the Practise section via the TASBIH entry + in-chrome switch; NOT internal.',
 };
 
 /** Every VIEWS route → its door (1 tap) or null (orphan today). */
@@ -143,6 +144,22 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
         door = prayer;
         taps = 2;
         via = 'prayer-mode-switch';
+      }
+    }
+    // (REORG Phase 5) one Practise section: #/quiz, #/mutashabihat and
+    // #/tajweed-course stay real routes and resolve to the tasbih entry
+    // in 2 taps (door → in-chrome Tasbih/Course/Quiz/Look-alike switch).
+    // taps: 2 keeps the ≤2-taps assertion meaningful instead of laundering
+    // the merge into a fake orphan. TASBIH keeps its own door as the entry.
+    if (
+      !door &&
+      (routeKey === 'QUIZ' || routeKey === 'MUTASHABIHAT' || routeKey === 'TAJWEED_COURSE')
+    ) {
+      const tasbih = NAV_ENTRIES.find((e) => e.viewKey === 'TASBIH');
+      if (tasbih) {
+        door = tasbih;
+        taps = 2;
+        via = 'practise-mode-switch';
       }
     }
     // (REORG Phase 3) Home IS the adhkar browser: the category grid (0
@@ -222,7 +239,7 @@ describe('Phase 0 census: nav entries, labels, destinations', () => {
       [
         'NAV CENSUS',
         `groups (${NAV_GROUP_LABELS.length}): ${NAV_GROUP_LABELS.join(', ')}`,
-        `entries (${census.length}; plan §1.1 says "17" but 6+5+5+3 = 19 — the plan text undercounts, the tree has 19)`,
+        `entries (${census.length}; plan §1.1 says "17" but 6+5+5+3 = 19 — the plan text undercounts; the tree had 19 at Phase 0, then −1 Phase 2 reader, −2 Phase 4 qibla/calendar, −1 Phase 5 course = 17)`,
         `routes (VIEWS): ${Object.keys(VIEWS).length}`,
         ...census.map(
           (c) =>
@@ -264,12 +281,13 @@ describe('Phase 0 census: nav entries, labels, destinations', () => {
 });
 
 describe('Phase 1 pin: the flagships have a front door', () => {
-  test('TAJWEED_COURSE sits in the read group (temporary home until Phase 5 Practise)', () => {
+  test('TAJWEED_COURSE re-homed to the Practise section in Phase 5 (its read-group door was temporary)', () => {
     const door = ROUTE_DOOR_MAP.TAJWEED_COURSE.door;
-    assert.ok(door, 'TAJWEED_COURSE still has no nav door');
-    assert.equal(door.taps, 1);
-    assert.equal(door.group, 'nav.group.read');
-    assert.equal(door.labelKey, 'nav.tajweedCourse');
+    assert.ok(door, 'TAJWEED_COURSE lost its door in the re-homing');
+    assert.equal(door.taps, 2, 'door → in-chrome Tasbih/Course/Quiz/Look-alike switch');
+    assert.equal(door.group, 'nav.group.tools');
+    assert.equal(door.labelKey, 'nav.tasbih');
+    assert.equal(door.via, 'practise-mode-switch');
   });
 
   test('ROOTS sits beside the Qur’an doors as their depth (until Phase 2 merges them)', () => {
@@ -280,10 +298,10 @@ describe('Phase 1 pin: the flagships have a front door', () => {
     assert.equal(door.labelKey, 'nav.roots');
   });
 
-  test('Phase 1 closed exactly the two flagship orphans (14 → 12, then 10 after Phase 3)', () => {
+  test('Phase 1 closed exactly the two flagship orphans (14 → 12, then 10 after Phase 3, then 8 after Phase 5)', () => {
     assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
     assert.ok(!ORPHANS.includes('ROOTS'), 'ROOTS is still orphaned');
-    assert.equal(ORPHANS.length, 10, `expected the 10 remaining orphans, got ${ORPHANS.length}`);
+    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -318,8 +336,8 @@ describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
     }
   });
 
-  test('the merge adds no orphan: 10 remain for Phases 4–7', () => {
-    assert.equal(ORPHANS.length, 10, `expected the 10 remaining orphans, got ${ORPHANS.length}`);
+  test('the merge adds no orphan: 8 remain for Phases 6–7 (10 until Phase 5)', () => {
+    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -344,10 +362,10 @@ describe('Phase 3 pin: the Adhkar front page is home', () => {
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD must not appear in the orphan list');
   });
 
-  test('Phase 3 closes two more orphans (12 → 10)', () => {
+  test('Phase 3 closes two more orphans (12 → 10, then 8 after Phase 5)', () => {
     assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY is still orphaned');
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD is still orphaned');
-    assert.equal(ORPHANS.length, 10, `expected the 10 Phases-4–7 orphans, got ${ORPHANS.length}`);
+    assert.equal(ORPHANS.length, 8, `expected the 8 Phases-6–7 orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -387,8 +405,58 @@ describe('Phase 4 pin: one Prayer door, three routes alive', () => {
     }
   });
 
-  test('the merge adds no orphan: 10 remain for Phases 5–7', () => {
-    assert.equal(ORPHANS.length, 10, `expected the 10 remaining orphans, got ${ORPHANS.length}`);
+  test('the merge adds no orphan: 8 remain for Phases 6–7 (10 until Phase 5)', () => {
+    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
+  });
+});
+
+describe('Phase 5 pin: one Practise section, four routes alive', () => {
+  test('single tasbih entry; the course no longer competes for a chrome slot', () => {
+    const practiseDoors = NAV_ENTRIES.filter((e) =>
+      ['TASBIH', 'TAJWEED_COURSE', 'QUIZ', 'MUTASHABIHAT'].includes(e.viewKey)
+    );
+    assert.deepEqual(
+      practiseDoors.map((e) => e.viewKey),
+      ['TASBIH'],
+      'the course, quiz and look-alikes must not compete for a chrome slot'
+    );
+    assert.equal(
+      NAV_ENTRIES.find((e) => e.viewKey === 'TASBIH').labelKey,
+      'nav.tasbih',
+      'the one door keeps the nav.tasbih label'
+    );
+  });
+
+  test('#/tajweed-course, #/quiz and #/mutashabihat stay real routes resolving to the Tasbih door in 2 taps', () => {
+    for (const key of ['TAJWEED_COURSE', 'QUIZ', 'MUTASHABIHAT']) {
+      const m = ROUTE_DOOR_MAP[key];
+      assert.ok(m.door, `#/${m.route} lost its door — the section must not orphan the route`);
+      assert.equal(m.door.group, 'nav.group.tools');
+      assert.equal(m.door.labelKey, 'nav.tasbih');
+      assert.equal(m.taps, 2, 'door → in-chrome Tasbih/Course/Quiz/Look-alike switch');
+      assert.equal(m.door.via, 'practise-mode-switch');
+      assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
+    }
+  });
+
+  test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
+    for (const key of [
+      'nav.tasbih',
+      'nav.tajweedCourse',
+      'quiz.title',
+      'mutashabihat.title',
+      'practise.label',
+    ]) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+
+  test('the section closes two orphans: 8 remain for Phases 6–7', () => {
+    assert.ok(!ORPHANS.includes('QUIZ'), 'QUIZ is still orphaned');
+    assert.ok(!ORPHANS.includes('MUTASHABIHAT'), 'MUTASHABIHAT is still orphaned');
+    assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
+    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 

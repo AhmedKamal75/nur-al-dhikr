@@ -1,6 +1,11 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderNav, quranModeSwitchHTML, prayerModeSwitchHTML } from '../js/ui/shell.js';
+import {
+  renderNav,
+  quranModeSwitchHTML,
+  prayerModeSwitchHTML,
+  practiseModeSwitchHTML,
+} from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
 import { initialState } from '../js/core/state/initial.js';
 import { en } from '../js/core/i18n/en.js';
@@ -152,6 +157,88 @@ describe('Phase 4 chrome: one Prayer door', () => {
 
   test('Prayer chrome copy is bilingual: the three reused nav labels', () => {
     for (const key of ['nav.prayer', 'nav.qibla', 'nav.calendar']) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+});
+
+/**
+ * REORG Phase 5 locks: one Practise section. Tasbih, the Tajweed course,
+ * the 99 Names quiz and look-alike ayat live in one section behind a
+ * single nav.tasbih door; the course's Phase 1 read-group door was
+ * temporary and is re-homed here. #/tajweed-course, #/quiz and
+ * #/mutashabihat stay real routes and light the tasbih door, while the
+ * in-chrome Tasbih/Course/Quiz/Look-alike switch (the §2.4 stage rail)
+ * carries the hop. Arrangement only — the course progress model, every
+ * handler and every data file are untouched, and the rail carries no
+ * ranking or shame copy (adab).
+ */
+describe('Phase 5 chrome: one Practise section', () => {
+  test('rail and drawer expose the tasbih door; course/quiz/look-alikes do not compete', () => {
+    const html = renderNav(stateFor(VIEWS.HOME));
+    assert.ok(html.includes(`data-view="${VIEWS.TASBIH}"`), 'tasbih entry present');
+    for (const view of [VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
+      const hits = html.split(`data-view="${view}"`).length - 1;
+      assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
+    }
+    const tasbihHits = html.split(`data-view="${VIEWS.TASBIH}"`).length - 1;
+    assert.ok(tasbihHits >= 2, `tasbih keeps its door in rail and drawer (saw ${tasbihHits})`);
+  });
+
+  test('active states merged: course/quiz/look-alike deep links light the tasbih door', () => {
+    // Each destination lights in rail + drawer (+ mobile bar where listed),
+    // so dedupe: exactly one DISTINCT active destination per view.
+    const distinct = (html) => [...new Set(activeViews(html))].sort();
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.TASBIH))), [VIEWS.TASBIH]);
+    for (const view of [VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.TASBIH],
+        `a deep link into #/${view} lights the Tasbih door, not a second entry`
+      );
+    }
+  });
+
+  test('in-chrome switch links tasbih, course, quiz and look-alikes with no new actions', () => {
+    for (const lang of ['en', 'ar']) {
+      const html = practiseModeSwitchHTML(VIEWS.TASBIH, lang);
+      for (const view of [VIEWS.TASBIH, VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
+        assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
+      }
+      assert.ok(
+        html.includes('data-action="navigate"') &&
+          !html.includes('data-action="practise-') &&
+          !html.includes('data-action="tajweed-') &&
+          !html.includes('data-action="quiz-') &&
+          !html.includes('data-action="mutashabihat-'),
+        `switch reuses navigate only (${lang})`
+      );
+      // Adab: the rail is a door, never a scoreboard — no ranking/shame copy.
+      for (const word of ['streak', 'rank', 'leader', 'shame', 'score', 'best']) {
+        assert.ok(
+          !html.toLowerCase().includes(word),
+          `switch carries no gamification copy (${word}, ${lang})`
+        );
+      }
+    }
+    // The active segment follows the route — exactly one claims each view.
+    for (const view of [VIEWS.TASBIH, VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
+      const html = practiseModeSwitchHTML(view, 'en');
+      const activeCount = html.split('segmented__btn--active').length - 1;
+      assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
+      assert.ok(html.includes(`data-view="${view}"`), `the #/${view} segment is the active one`);
+    }
+  });
+
+  test('Practise chrome copy is bilingual: reused labels plus the section name', () => {
+    for (const key of [
+      'nav.tasbih',
+      'nav.tajweedCourse',
+      'quiz.title',
+      'mutashabihat.title',
+      'practise.label',
+    ]) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }
