@@ -1545,6 +1545,13 @@ export const ar = {
   'home.setLocationAction': 'تحديد الموقع',
   'home.nowBadge': 'الآن',
   'home.hijriOn': 'هـ',
+  // (REORG Phase 3) الرئيسية هي متصفح الأذكار — انظر المقابل الإنجليزي.
+  'home.browserTitle': 'اقرأ الأذكار',
+  'home.browserSub': 'كل قسم مع عدده المباشر وتقدم اليوم — اختر قسمًا وابدأ.',
+  'home.readNow': 'اقرأ الآن',
+  'home.referenceTitle': 'مراجع',
+  'home.referenceSub': 'الأسماء وحاسبة الزكاة والشهادات هنا — خارج الورد اليومي.',
+  'home.openLibrary': 'افتح المكتبة الكاملة',
   // Gentle "it's been a while" nudge (v3.25) — see the EN block's contract.
   'nudge.title.light': 'مكانك محفوظ',
   'nudge.title.warm': 'الباب ما زال مفتوحًا',

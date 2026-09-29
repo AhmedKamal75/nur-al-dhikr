@@ -4,7 +4,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { pickLocale, dateKey, escapeHTML } from '../core/utils.js';
+import { pickLocale, categoryDisplayName, dateKey, escapeHTML } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { sessionFlag } from '../domain/sessionFlags.js';
 import { VIEWS, CHECKLIST_ITEMS } from '../core/config.js';
@@ -15,6 +15,12 @@ import { ramadanInfo } from '../domain/ramadan.js';
 import { resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';
+import { MOODS, itemsForMood } from '../domain/moods.js';
+import {
+  contentPrefsOf,
+  isCategoryHidden,
+  visibleCategoryItems,
+} from '../services/contentPrefs.js';
 
 /**
  * (v5.2.54) quick-action tiles: registry-driven (order/visibility from
@@ -73,7 +79,12 @@ import { countMemorized, dueCounts, dueSurahs, suggestFromKhatma } from '../doma
 import { worshipTodayRows } from '../domain/worship.js';
 import { DAILY_THEMES, dailyEligibleEntries, matchesTheme } from '../domain/dailyAyah.js';
 import { computeNudge, shouldShowNudge } from '../domain/nudge.js';
-import { dedupeEntries, isCompletedToday, nextFreshIndex } from '../domain/reflections.js';
+import {
+  dedupeEntries,
+  isCompletedToday,
+  listCompletion,
+  nextFreshIndex,
+} from '../domain/reflections.js';
 import { isDismissed } from '../domain/completedCards.js';
 
 /**
@@ -316,6 +327,187 @@ function libraryErrorHTML(state, lang) {
   return `<section class="panel">${loadErrorStateHTML({ lang, tierKey: 'library', t })}</section>`;
 }
 
+/**
+ * (REORG Phase 3) Home IS the adhkar browser: the 12 moods ride a filter
+ * row above a grid of named category tiles — each tile with a live item
+ * count, the kept section-level completion counter, and an explicit
+ * Read-now action. The 99 Names, Zakat and Certificates are re-homed into
+ * a Reference row outside the daily grid: reference, not a daily worship
+ * sequence.
+ *
+ * Read-only on purpose: hiding, reordering, editing and custom libraries
+ * stay in the Library view (linked below), so this browser adds no
+ * data-action beyond the existing `navigate` and no view import beyond
+ * the domain/service helpers the Library view already reads. Routes move;
+ * `data/` does not.
+ */
+const BROWSER_REFERENCE_LIBRARY_ID = 'asma';
+
+/** The lensed documents in the user's order — the Library view's math,
+ *  minus the manage chrome (browser is reading mode, always). */
+function browserDocuments(state) {
+  const prefs = contentPrefsOf(state);
+  const deletedLibs = prefs.deletedLibraries || {};
+  const hiddenLibs = prefs.hiddenLibraries || {};
+  const customDocs = Object.values(state.customContent || {}).filter(
+    (doc) => !hiddenLibs[doc.metadata.id]
+  );
+  const lensedDocs = (state.library.order || [])
+    .map((id) => state.library.documents[id])
+    .filter(Boolean)
+    .filter((doc) => !deletedLibs[doc.metadata.id] && !hiddenLibs[doc.metadata.id]);
+  const libRank = new Map((prefs.libraryOrderOverrides || []).map((id, i) => [id, i]));
+  return [...lensedDocs, ...customDocs]
+    .map((doc, i) => ({ doc, i }))
+    .sort(
+      (a, b) =>
+        (libRank.get(a.doc.metadata.id) ?? 1e9) - (libRank.get(b.doc.metadata.id) ?? 1e9) ||
+        a.i - b.i
+    )
+    .map((entry) => entry.doc);
+}
+
+/** One document's categories in the user's order, hidden/deleted removed
+ *  (reading-mode semantics, exactly like the Library view). */
+function browserCategories(state, doc) {
+  const prefs = contentPrefsOf(state);
+  const deletedCats = prefs.deletedCategories || {};
+  const catRank = new Map(
+    (prefs.categoryOrderOverrides?.[doc.metadata.id] || []).map((id, i) => [id, i])
+  );
+  const allCats = catRank.size
+    ? [...doc.categories].sort(
+        (a, b) =>
+          (catRank.get(a.id) ?? 1e9) - (catRank.get(b.id) ?? 1e9) || (a.order || 0) - (b.order || 0)
+      )
+    : [...doc.categories].sort((a, b) => a.order - b.order);
+  return allCats.filter((cat) => !isCategoryHidden(state, cat.id) && !deletedCats[cat.id]);
+}
+
+/** One named tile: live count, kept completion counter, Read-now action.
+ *  Two sibling links (never nested) to the same category route — the tile
+ *  body and the explicit CTA both navigate, with no interstitial. */
+function browserTileHTML(state, cat, lang) {
+  const items = visibleCategoryItems(state, cat);
+  const href = buildHash(VIEWS.CATEGORY, { id: cat.id });
+  const navAttrs = `href="${href}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="${escapeHTML(cat.id)}"`;
+  // The section-level completion counter, kept: silent until the first
+  // item is done today, achieved at 100% — a wall of 0% on every tile
+  // would read as shame, which this app refuses.
+  const { done, total, pct } = listCompletion(items, state.counters, dateKey(new Date()));
+  const progress =
+    done > 0
+      ? `<span class="category-tile__count">${escapeHTML(t('category.progressToday', lang, { done, total, pct }))}</span>`
+      : '';
+  return `
+      <div class="category-tile-wrap">
+        <a class="category-tile" ${navAttrs} aria-label="${escapeHTML(`${categoryDisplayName(cat, lang)} — ${t('collections.itemCount', lang, { n: items.length })}`)}">
+          <span class="category-tile__icon category-tile__icon--${escapeHTML(cat.color || 'slate')}">${icon(cat.icon || 'book', { size: 22 })}</span>
+          <span class="category-tile__text">
+            <span class="category-tile__name">${escapeHTML(categoryDisplayName(cat, lang))}</span>
+            <span class="category-tile__count">${t('collections.itemCount', lang, { n: items.length })}</span>
+            ${progress}
+          </span>
+        </a>
+        <a class="btn btn--secondary btn--sm browser-tile__read" ${navAttrs} aria-label="${escapeHTML(`${t('home.readNow', lang)}: ${categoryDisplayName(cat, lang)}`)}">${t('home.readNow', lang)} ${goIcon(lang, 14)}</a>
+      </div>`;
+}
+
+/** The 12 moods promoted to a filter row above the grid — same feature as
+ *  the buried Library indirection, now the front door. Chips carry the
+ *  existing 44px ::after apron, so Elder/a11y targets are untouched. */
+function browserMoodRowHTML(state, lang) {
+  const index = state.library?.itemIndex;
+  if (!index || !Object.keys(index).length) return '';
+  const chips = MOODS.map((mood) => {
+    const count = itemsForMood(mood, index).length;
+    return `
+      <a class="chip" href="${buildHash(VIEWS.MOOD, { id: mood.id })}" data-action="navigate" data-view="${VIEWS.MOOD}" data-id="${mood.id}" aria-label="${escapeHTML(`${t(`mood.${mood.id}`, lang)} — ${t('collections.itemCount', lang, { n: count })}`)}">
+        ${icon(mood.icon, { size: 15 })}
+        <span>${escapeHTML(t(`mood.${mood.id}`, lang))}</span>
+        <span class="chip__count">${t('collections.itemCount', lang, { n: count })}</span>
+      </a>`;
+  }).join('');
+  return `
+    <section class="library-section library-section--moods" aria-label="${escapeHTML(t('moods.title', lang))}">
+      <h2 class="library-section__title">${escapeHTML(t('moods.title', lang))}</h2>
+      <p class="library-section__desc">${escapeHTML(t('moods.subtitle', lang))}</p>
+      <div class="chip-row chip-row--scroll" role="group" aria-label="${escapeHTML(t('moods.title', lang))}">${chips}</div>
+    </section>`;
+}
+
+/** Reference, not a daily sequence: the Names row reuses the worship-row
+ *  shape beside Zakat and Certificates — direct `navigate` links, no
+ *  interstitial, deep links unchanged. */
+function browserReferenceHTML(state, lang) {
+  const docs = browserDocuments(state);
+  const asmaDoc = docs.find((doc) => doc.metadata.id === BROWSER_REFERENCE_LIBRARY_ID);
+  const asmaCats = asmaDoc ? browserCategories(state, asmaDoc) : [];
+  const row = ({ view, id, iconName, name, value }) => `
+      <a class="worship-row" href="${buildHash(view, id ? { id } : {})}" data-action="navigate" data-view="${view}"${id ? ` data-id="${escapeHTML(id)}"` : ''}>
+        <span class="worship-row__icon">${icon(iconName, { size: 16 })}</span>
+        <span class="worship-row__name">${escapeHTML(name)}</span>
+        <span class="worship-row__value" dir="auto">${value}</span>
+        ${goIcon(lang, 13)}
+      </a>`;
+  const rows = [
+    ...asmaCats.map((cat) =>
+      row({
+        view: VIEWS.CATEGORY,
+        id: cat.id,
+        iconName: cat.icon || 'star',
+        name: categoryDisplayName(cat, lang),
+        value: escapeHTML(
+          t('collections.itemCount', lang, { n: visibleCategoryItems(state, cat).length })
+        ),
+      })
+    ),
+    row({ view: VIEWS.ZAKAT, iconName: 'calculator', name: t('zakat.title', lang), value: '' }),
+    row({
+      view: VIEWS.CERTIFICATE,
+      iconName: 'award',
+      name: t('certificate.title', lang),
+      value: '',
+    }),
+  ].join('');
+  return `
+    <section class="panel panel--worship" aria-label="${escapeHTML(t('home.referenceTitle', lang))}">
+      <div class="panel__header"><h2>${escapeHTML(t('home.referenceTitle', lang))}</h2></div>
+      <p class="panel__subtext">${escapeHTML(t('home.referenceSub', lang))}</p>
+      <div class="worship-list">${rows}</div>
+    </section>`;
+}
+
+export function adhkarBrowserHTML(state) {
+  const lang = state.settings.language;
+  const docs = browserDocuments(state);
+  if (!docs.length) return '';
+  const dailyDocs = docs.filter((doc) => doc.metadata.id !== BROWSER_REFERENCE_LIBRARY_ID);
+  const sections = dailyDocs
+    .map((doc) => {
+      const cats = browserCategories(state, doc);
+      if (!cats.length) return '';
+      return `
+    <section class="library-section" id="home-section-${escapeHTML(doc.metadata.id)}">
+      <h2 class="library-section__title">${escapeHTML(pickLocale(doc.metadata.name, lang))}</h2>
+      ${doc.metadata.description?.[lang] ? `<p class="library-section__desc">${escapeHTML(pickLocale(doc.metadata.description, lang))}</p>` : ''}
+      <div class="category-grid">${cats.map((cat) => browserTileHTML(state, cat, lang)).join('')}</div>
+    </section>`;
+    })
+    .join('');
+  return `
+  <section class="home-browser" aria-label="${escapeHTML(t('home.browserTitle', lang))}">
+    <div class="view-header">
+      <h2 class="view__title">${escapeHTML(t('home.browserTitle', lang))}</h2>
+      <p class="view__subtitle">${escapeHTML(t('home.browserSub', lang))}</p>
+    </div>
+    ${browserMoodRowHTML(state, lang)}
+    ${sections}
+    ${browserReferenceHTML(state, lang)}
+    <p><a class="btn btn--ghost btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${escapeHTML(t('home.openLibrary', lang))} ${goIcon(lang, 14)}</a></p>
+  </section>`;
+}
+
 export function renderHome(state) {
   const lang = state.settings.language;
   const today = selectors.todayStats(state);
@@ -520,6 +712,8 @@ export function renderHome(state) {
       lang,
       nowWindow
     )}
+
+    ${adhkarBrowserHTML(state)}
 
     ${orderedHomePanels}
   </section>`;

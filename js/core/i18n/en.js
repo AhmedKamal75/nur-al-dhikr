@@ -1595,6 +1595,16 @@ export const en = {
   'home.setLocationAction': 'Set location',
   'home.nowBadge': 'Now',
   'home.hijriOn': 'AH',
+  // (REORG Phase 3) Home is the adhkar browser: the mood filter row, the
+  // named category grid with a Read-now action per tile, and the reference
+  // row the 99 Names / Zakat / Certificates were re-homed into.
+  'home.browserTitle': 'Read the adhkar',
+  'home.browserSub': 'Every section with its live count and today’s progress — pick one and begin.',
+  'home.readNow': 'Read now',
+  'home.referenceTitle': 'Reference',
+  'home.referenceSub':
+    'The Names, the Zakat calculator and the certificates live here — outside the daily sequence.',
+  'home.openLibrary': 'Open the full library',
   // Gentle "it's been a while" nudge (v3.25). The anti-guilt contract is
   // test-pinned over every key below, both languages: no streak/shame
   // vocabulary, no digits, no dates — the absence is never counted.

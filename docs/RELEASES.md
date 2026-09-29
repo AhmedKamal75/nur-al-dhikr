@@ -2,6 +2,30 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.35 — Home becomes the adhkar browser (reorganisation Phase 3)
+
+- **The front page is the browse** (`docs/REORGANISATION-PLAN.md` Phase 3,
+  §2.2): Home carries a grid of named category tiles — every daily section
+  with its live item count, the kept section-level completion counter, and
+  an explicit "Read now" action per tile. Taps to reach the adhkar grid: 0.
+- **The 12 moods move to a filter row above the grid** — the same
+  browse-by-need feature that lived at Home → Library → mood, now the front
+  door. One tap from Home into any need.
+- **The 99 Names, Zakat and Certificates leave the daily grid** for a
+  labelled Reference row: reference, not a daily worship sequence. Their
+  routes are unchanged — the Names keep their category route, Zakat and
+  Certificates their views, all deep links working.
+- **No data, corpus or route change.** The browser reads the same lensed
+  documents as the Library view (hides, order and deletes respected) and
+  emits only the existing `navigate` action — no new handler, no new view
+  import (renderer static budget stays 19/19), no interstitial in any
+  reading flow, language switch and Elder/a11y targets untouched, no
+  gamification copy in either language.
+- **Measured, not asserted:** the reachability trap maps `CATEGORY` and
+  `MOOD` to the Home door in 1 tap each (via the adhkar browser); orphans
+  drop 12 → 10 for Phases 4–7, and the SEARCH label mismatch stays pinned
+  for Phase 6. Pinned by `tests/adhkar-browser.test.js` (13 subtests).
+
 ## v5.17.34 — One book, one door (reorganisation Phase 2)
 
 - **The Qur'an doors merge** (`docs/REORGANISATION-PLAN.md` Phase 2): a

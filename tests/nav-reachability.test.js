@@ -95,8 +95,8 @@ const KIDS_DOOR_KEYS = new Set(KIDS_ENTRIES.map((e) => e.viewKey));
  */
 const INTERNAL_JUSTIFICATIONS = {
   CATEGORY:
-    'plan §1.5: follows from LIBRARY (depth of the adhkar browser) — Phase 7 door-or-justify.',
-  MOOD: 'plan §1.3/Phase 3: buried browse-by-need, promoted to a filter row — interim internal under LIBRARY.',
+    'plan §2.2/Phase 3: the adhkar browser grid IS home (0 taps) — CATEGORY follows from the HOME door in 1 tap via adhkar-browser; keeps its Library depth too.',
+  MOOD: 'plan §1.3/§2.2/Phase 3: the 12 moods are a filter row above the home grid — same feature, front door, 1 tap via adhkar-browser.',
   FOCUS: 'plan Phase 7 list: a door, or a documented internal-only decision.',
   COLLECTIONS: 'plan Phase 7 list: a door, or a documented internal-only decision.',
   COLLECTION: 'plan §1.5: follows from COLLECTIONS — Phase 7 door-or-justify.',
@@ -130,6 +130,18 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
         door = mushaf;
         taps = 2;
         via = 'quran-mode-switch';
+      }
+    }
+    // (REORG Phase 3) Home IS the adhkar browser: the category grid (0
+    // taps — it is home) and the 12-mood filter row above it put CATEGORY
+    // and MOOD one tap from the HOME door. Both keep their Library depth
+    // too; the map records the front door.
+    if (!door && (routeKey === 'CATEGORY' || routeKey === 'MOOD')) {
+      const home = NAV_ENTRIES.find((e) => e.viewKey === 'HOME');
+      if (home) {
+        door = home;
+        taps = 1;
+        via = 'adhkar-browser';
       }
     }
     const kidsDoor = !door && KIDS_DOOR_KEYS.has(routeKey);
@@ -255,10 +267,10 @@ describe('Phase 1 pin: the flagships have a front door', () => {
     assert.equal(door.labelKey, 'nav.roots');
   });
 
-  test('Phase 1 closed exactly the two flagship orphans (14 → 12)', () => {
+  test('Phase 1 closed exactly the two flagship orphans (14 → 12, then 10 after Phase 3)', () => {
     assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
     assert.ok(!ORPHANS.includes('ROOTS'), 'ROOTS is still orphaned');
-    assert.equal(ORPHANS.length, 12, `expected the 12 non-flagship orphans, got ${ORPHANS.length}`);
+    assert.equal(ORPHANS.length, 10, `expected the 10 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -293,8 +305,36 @@ describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
     }
   });
 
-  test('the merge adds no orphan: 12 remain for Phases 3–7', () => {
-    assert.equal(ORPHANS.length, 12, `expected the 12 non-Qur’an orphans, got ${ORPHANS.length}`);
+  test('the merge adds no orphan: 10 remain for Phases 4–7', () => {
+    assert.equal(ORPHANS.length, 10, `expected the 10 remaining orphans, got ${ORPHANS.length}`);
+  });
+});
+
+describe('Phase 3 pin: the Adhkar front page is home', () => {
+  test('CATEGORY follows from the HOME door in 1 tap (the grid is home)', () => {
+    const m = ROUTE_DOOR_MAP.CATEGORY;
+    assert.ok(m.door, 'CATEGORY lost its door — the home grid must carry every section');
+    assert.equal(m.door.group, 'nav.group.read');
+    assert.equal(m.door.labelKey, 'nav.home');
+    assert.equal(m.taps, 1, 'home tile → section');
+    assert.equal(m.door.via, 'adhkar-browser');
+    assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY must not appear in the orphan list');
+  });
+
+  test('MOOD rides the home filter row in 1 tap (same feature, front door)', () => {
+    const m = ROUTE_DOOR_MAP.MOOD;
+    assert.ok(m.door, 'MOOD lost its door — the 12 moods are a filter row above the home grid');
+    assert.equal(m.door.group, 'nav.group.read');
+    assert.equal(m.door.labelKey, 'nav.home');
+    assert.equal(m.taps, 1, 'home filter chip → mood');
+    assert.equal(m.door.via, 'adhkar-browser');
+    assert.ok(!ORPHANS.includes('MOOD'), 'MOOD must not appear in the orphan list');
+  });
+
+  test('Phase 3 closes two more orphans (12 → 10)', () => {
+    assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY is still orphaned');
+    assert.ok(!ORPHANS.includes('MOOD'), 'MOOD is still orphaned');
+    assert.equal(ORPHANS.length, 10, `expected the 10 Phases-4–7 orphans, got ${ORPHANS.length}`);
   });
 });
 

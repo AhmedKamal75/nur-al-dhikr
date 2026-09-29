@@ -440,6 +440,15 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* (REORG Phase 3) the home adhkar browser reuses the library tile shape;
+   the explicit Read-now action rides beneath the tile as a full-width
+   secondary button. Existing .btn sizing plus the 44px ::after apron, so
+   Elder/a11y targets are untouched; logical props only, no new tokens. */
+.browser-tile__read {
+  margin-block-start: var(--space-2);
+  inline-size: 100%;
+}
+
 /* Mood tiles ("browse by need") */
 .mood-grid {
   display: grid;
