@@ -41,7 +41,16 @@ const NAV_GROUPS = [
       // instead of hiding behind the Mushaf label — same book, two
       // discoverable doors; active states split accordingly below.
       { view: VIEWS.QURAN, icon: 'book-open', label: 'nav.reader' },
+      // (REORG Phase 1) Roots is the DEPTH of the Qur'an door — the index
+      // behind per-word study — not a separate top level. It sits beside
+      // the two book doors until Phase 2 merges them behind one entry.
+      { view: VIEWS.ROOTS, icon: 'tree', label: 'nav.roots' },
       { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
+      // (REORG Phase 1) the G-2 flagship's first front door, temporarily
+      // in the read group. Phase 5 re-homes it into the Practise section
+      // beside Tasbih, Quiz and Mutashabihat. Config only: no route, no
+      // view import, no deep-link change.
+      { view: VIEWS.TAJWEED_COURSE, icon: 'award', label: 'nav.tajweedCourse' },
       // The nav search item opens the command palette (quick launcher);
       // the full Search view stays one pick away (destination row +
       // history rows inside the palette).

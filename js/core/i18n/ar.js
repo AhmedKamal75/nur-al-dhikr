@@ -204,6 +204,9 @@ export const ar = {
   'mushaf.folderLabel': 'المجلد',
   'nav.more': 'المزيد',
   'nav.audio': 'القراء والصوتيات',
+  // (REORG Phase 1) flagship doors — bilingual with en.js from the first commit.
+  'nav.tajweedCourse': 'دورة التجويد',
+  'nav.roots': 'جذور الكلمات',
   'audio.title': 'القراء والصوتيات',
   'audio.subtitle':
     '٣١٢ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',

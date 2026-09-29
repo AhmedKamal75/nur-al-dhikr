@@ -209,6 +209,10 @@ export const en = {
   'mushaf.folderLabel': 'Folder',
   'nav.more': 'More',
   'nav.audio': 'Reciters & Audio',
+  // (REORG Phase 1) flagship doors. Same strings as the views they open
+  // (tajweedCourse.title, mushaf.roots) so the label promises the tap.
+  'nav.tajweedCourse': 'Tajweed course',
+  'nav.roots': 'Word roots',
   'audio.title': 'Reciters & Audio',
   'audio.subtitle':
     '312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',

@@ -2,6 +2,25 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.33 — The flagships get a front door (reorganisation Phase 1)
+
+- **Two nav doors, no structural change** (`docs/REORGANISATION-PLAN.md`
+  Phase 1): the Tajweed course lands in the read group as its own entry
+  (temporary home until Phase 5's Practise section), and Roots/word study
+  sits beside the two Qur'an doors as the _depth_ of the Qur'an, not a
+  separate top level (until Phase 2 merges them behind one door).
+- **Bilingual from the first commit** (plan naming rule §2.6): new
+  `nav.tajweedCourse` / `nav.roots` keys ship in EN+AR together, reusing
+  the exact strings of the views they open so each label promises its tap.
+- **No route changes, no deep-link changes.** All 34 routes stay reachable;
+  active state resolves by equality so both new doors light correctly.
+  Nav entries are config, not imports — the renderer static budget stays
+  19/19, Elder/a11y targets and gamification rules untouched.
+- **Measured, not asserted:** the Phase 0 reachability trap
+  (`tests/nav-reachability.test.js`, committed here) drops from 14 orphans
+  to 12 — the two closed are exactly the flagships §1.5 called out. The
+  trap stays strict for the remaining twelve until Phases 2–7.
+
 ## v5.17.32 — Makharij and sifat stages: the spread, not a verdict
 
 - **Two new course stages before mixed recitation** (`makharij`, `sifat`;
