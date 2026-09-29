@@ -6,6 +6,10 @@
  * stays visible, no blank route, no duplicate state, no page errors.
  */
 import { test, expect } from '@playwright/test';
+// (v5.17.45) This spec genuinely exercises the service worker, so it opts
+// back in to the suite-wide block in playwright.config.js. Everything else
+// runs with the worker off, so a test always sees the working tree.
+test.use({ serviceWorkers: 'allow' });
 
 async function expectShellAlive(page, where) {
   await expect(page.locator('#topbar'), `${where}: topbar survives`).not.toBeEmpty();
