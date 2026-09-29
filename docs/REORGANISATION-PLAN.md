@@ -250,6 +250,14 @@ language switch is on every chrome surface (8/8 e2e), zero tap targets under
 24px in both default and Elder Mode, and both gates green
 (2368 unit / 78 e2e).
 
+## 2b. Phase 2 continues this plan
+
+**Phases 0–7 are done. Phase 8 is the part this plan got wrong**, and it is
+specified in `docs/HANDOFF.md` §8b, PART A1: retire `nav.library`, promote
+`Practise` to a real door, re-home `Ramadan`/`Zakat`/`Offline library`, and land
+on the six top-level doors this plan originally asked for. `tests/nav-reachability.test.js`
+should be extended to assert the count, not just the absence of orphans.
+
 ## 3. What must NOT change
 
 The reorganisation is an IA change. These are off-limits:

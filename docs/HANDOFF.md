@@ -563,6 +563,162 @@ tree, so **"fixed" must name a test that fails without the fix.**
 
 ---
 
+## 8b. PHASE 2 PLAN — finish, fix, and the things nobody noticed
+
+> Written after reviewing v5.17.28–40 (the first reorganisation pass) by
+> execution, not by reading its summary. That pass is **good work** and it is
+> committed; this is what it left.
+>
+> **Gates at time of writing:** `npm run check` 2368 pass / 0 fail,
+> Chromium e2e 78 passed, version v5.17.40.
+>
+> **Two rules for this phase.** (1) One ritual-owner at a time — two agents
+> running the version ritual in parallel collided before and corrupted a
+> commit. (2) Every item below is either closed by a test that fails without
+> the fix, or it is still open. "Done" is not a status.
+
+### PART A — Finish what the reorganisation left
+
+The first pass fixed **reachability** brilliantly and stopped one level above
+where it was pointed. Full metric table in `docs/REORGANISATION-PLAN.md` §2a.
+
+**A1. The top-level chrome is still a filing cabinet — target 6 doors, ship 12.**
+
+The plan's headline ask was six task-shaped doors. Twelve remain, in the _same_
+four taxonomic groups (`read`/`worship`/`tools`/`mine`) the plan called the
+problem. This is the owner's own complaint, so it is the first thing to fix.
+
+- **Retire `nav.library`.** The adhkar grid is home, so Library is a **second
+  door to the tiles already on screen** — the exact redundancy the reorg was
+  meant to remove. `#/library` stays a real route behind the grid's "all" view.
+- **Promote `Practise` to a real door** carrying Tasbih, the **Tajweed course**,
+  the quiz and mutashabihat as in-page segments. Drop the bare `nav.tasbih` peer.
+  Today the G-2 flagship sits two metaphors below a door named after a
+  counting tool, which is not a dignified place for it.
+- **Re-home `Ramadan` into Prayer**, **`Zakat` into You**, and **`Offline
+library` into You** beside settings, where storage belongs.
+- **Target: Home · Qur'an · Ahadeeth · Prayer · Practise · You.**
+- `tests/nav-reachability.test.js` must be extended, not weakened: it should
+  assert **6 top-level entries** and fail if `nav.library` returns.
+
+### PART B — The things the owner and I discussed that nobody noticed
+
+These are the items that were in the brief, in the handoff, or on the roadmap,
+and that **twelve releases never touched.** Each one is a real gap, verified
+absent rather than assumed.
+
+**B1. The visual design was WRITTEN and never APPLIED.** _(highest value)_
+
+`docs/HANDOFF.md` §5d specifies the design position, palette, three
+typographic roles, space/shape/depth, and direction for every major surface.
+**No surface has been designed against it.** The user was explicit that visual
+craft is part of the requirement and that design judgment is delegated. Writing
+the spec was phase one; applying it is phase two and it has not started.
+
+- Apply §5d surface by surface, starting with the three that carry the most
+  weight: **the mushaf page**, **the adhkar card**, and **the counter**.
+- The mushaf page is explicitly _"a sheet of paper on a desk, not a card"_ with
+  a 15-line grid that governs the text block absolutely. Check the current
+  rendering against that sentence before changing anything.
+- Do not add tokens; 247 already exist in `assets/css/variables.css`.
+
+**B2. The mushaf's two remaining fidelity gaps.** Their own todo listed these
+as _"source/ruling-gated"_ and then never returned to them.
+
+- **Basmala with its own typographic voice** per paper (`prefs.bismillahStyle`
+  exists; the four fidelity gaps in `BACKLOG` §4 are still open).
+- **The 15-line Madani grid.** Roundel and page-height sheet landed in v5.17.29;
+  the grid did not.
+- Both need a ruling or a cited source before they are built. If the source
+  cannot be found, say so — do not approximate a print convention and call it
+  done.
+
+**B3. Prayer methodology: provenance landed, the depth did not.**
+
+v5.17.40 added a source field per method and tests. **The method count is still
+7 against the rival's 23, and still 2 Asr conventions against 4.** The goal
+was never the source field. Adding a 16th or 23rd convention requires a citable
+institutional source — Moonsighting Committee, MWL, ISNA, Egyptian General
+Authority, SPA, and the Jafari/Karajai/Hanafi variants each have published
+methods. Cite them properly with the spread shown, or leave the row open.
+
+**B4. The 9.1 score has never been taken.**
+
+G-1 reads **8.7 from v5.17.25**. Twelve releases and a full reorganisation
+later, **no review number exists.** Two hostile reviews were run; neither
+produced a score in the history. The largest body of work in this project's
+history is unmeasured, which means nobody can say whether the reorganisation
+helped. Run the rubric in §3 and record a real number — including if it is
+lower.
+
+**B5. ROADMAP honesty gaps that were never closed.** The roadmap opened with
+_"close the honesty gaps — nothing here adds a feature; each closes a place
+where the app could mislead."_ Two are still open:
+
+- **Riwaya-mismatch warning.** When a non-Hafs voice plays over Hafs text, say
+  so. The catalog already carries riwaya labels in
+  `js/services/audioCatalog.js`; the warning does not exist. This is a
+  _religious honesty_ item, not a feature.
+- **Verse-engine volume control** to match what file mode already has.
+  `js/domain/sleepTimer.js` has `volumeAt`; the verse surface has no control.
+
+**B6. Elder Mode is present but not discoverable, and the type scale cannot
+reach the requirement.** The roadmap asks for both. `settings.elderMode` exists
+with a hint, but nothing surfaces the mode to a reader who does not already know
+to look in settings — and the 70-year-old Arabic-only reader is the release
+gate. The mushaf's 200% scale remains deliberately decoupled; **that trade-off
+stands and is not to be "fixed"** — the answer is discoverability, not scale.
+
+**B7. Hadeeth depth (ledger row 14, still OPEN).** Citations, narrators, Arabic
+chapter names and global bookmarks. The corpus carries structured `reference`
+data and the UI does not surface the narrator. This is provenance we already
+own and are not showing.
+
+**B8. Adhkar depth (row 15): bilingual editing.** Per-item audio is correctly
+blocked on row 37. But **bilingual editing** — authoring an item in both
+languages in the editor — is engineering, not scholarship, and is not present.
+
+**B9. The honesty gates drift at release time.** The ledger header drifted
+**twice** across release batches, and three rows sat marked OPEN for shipped work
+until this review caught them. The gates work; the _process_ around them does
+not. Add a release-hygiene check that runs the ledger and backlog consistency
+suites **as part of the release ritual**, so a drifting header fails the release
+instead of waiting for a human to notice.
+
+### PART C — What must not change
+
+Everything in `REORGANISATION-PLAN.md` §3 still holds and was re-verified at
+v5.17.40: **34 routes, no route loss, deep links resolve (14/14), the language
+switch is on every chrome surface (8/8), zero tap targets under 24px in both
+default and Elder Mode, no recitation flow interrupted, no gamification
+ported.** Re-verify after each phase; do not assume a previous pass still holds.
+
+### PART D — Order of work, and what "done" means
+
+| Phase | Work                             | Done when                                                                                                                  |
+| ----- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 1     | **B4** — score the app           | A real number in the score history, with per-criterion evidence, regression named if it is one                             |
+| 2     | **A1** — six doors               | 6 top-level entries; `nav.library` gone; reachability test extended to assert both                                         |
+| 3     | **B1** — apply the design        | Mushaf page, adhkar card and counter reworked against §5d, with before/after evidence                                      |
+| 4     | **B5, B6** — honesty + a11y gaps | Riwaya warning and verse volume ship; Elder Mode is reachable without knowing about settings                               |
+| 5     | **B2, B3, B7, B8** — depth       | Each row either cites its source and ships, or is recorded as still blocked. **No row is closed by a source field alone.** |
+| 6     | **B9** — release hygiene         | A drifting ledger fails the release, not the next review                                                                   |
+
+**The success test is the owner's sentence, not a metric:** can the 70-year-old
+Arabic-only reader start a recitation, find Fajr, and count tasbih **without
+being taught**? If the numbers improve and she still cannot, the phase failed.
+
+### PART E — Explicitly not for this phase
+
+- Do not re-review after every commit. One scored review, at the end.
+- Do not touch `data/` content without a source. Per-dhikr audio stays blocked
+  on row 37; makharij and sifat already render their contested spreads.
+- Do not "fix" the three accepted trade-offs: the mushaf dropping its mark on a
+  page turn, 200% not reaching the mushaf, a completed dhikr removing its card.
+- Do not weaken a test to make a phase land. `tests/nav-reachability.test.js`,
+  `tests/grade-consistency.test.js` and `tests/backlog-consistency.test.js` are
+  traps; a failing trap means the work is wrong.
+
 ## 9. The honest blocker on 9.1
 
 The last reviewer's own closing judgement, quoted because it is the most useful
