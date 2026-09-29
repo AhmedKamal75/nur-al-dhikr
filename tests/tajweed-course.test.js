@@ -77,6 +77,13 @@ test('the runtime spine mirrors the canonical JSON', () => {
       assert.equal(ms.mixed, docSession.mixed, `${docSession.id} mixed flag drifted`);
       assert.equal(ms.citation.work, docSession.citation.work, `${docSession.id} work drifted`);
       assert.equal(ms.citation.lines, docSession.citation.lines, `${docSession.id} lines drifted`);
+      // (v5.17.32) Session titles render in the row heading; the mirror
+      // omitted them and every row shipped with an empty title. Parity
+      // means parity here too, plus the spread flag that switches the row
+      // from rule chips to the disagreement branch.
+      assert.deepEqual(ms.title, docSession.title, `${docSession.id} title drifted`);
+      assert.ok(ms.title?.en && ms.title?.ar, `${docSession.id} title must be bilingual`);
+      assert.equal(ms.spread || null, docSession.spread || null, `${docSession.id} spread drifted`);
     }
   }
 });
@@ -92,11 +99,21 @@ test('every session is ordered, uniquely identified, and drivable', () => {
       `${stage.id} is out of order`
     );
   }
-  // A session with nothing to drill is a dead row in a plan.
+  // A session with nothing to drill is a dead row in a plan — EXCEPT a
+  // spread session, which teaches a disagreement by design (v5.17.32).
+  // Those are exactly the non-drivable set; anything else is still a bug.
   const dead = allSessions()
     .filter((s) => !isDrivable(s))
     .map((s) => s.id);
-  assert.deepEqual(dead, [], 'sessions with nothing to practise');
+  const spread = allSessions()
+    .filter((s) => s.spread)
+    .map((s) => s.id);
+  assert.deepEqual(
+    dead.sort(),
+    spread.sort(),
+    'non-drillable sessions must be exactly the spread rows'
+  );
+  assert.deepEqual(spread.sort(), ['makharij-counts', 'sifat-counts']);
 });
 
 test('the course opens with madd, as the sourced shape requires', () => {
@@ -123,7 +140,27 @@ test('no session teaches a rule the app cannot attribute', () => {
     'a session teaches an uncited rule'
   );
   const unknown = courseRules().filter((r) => !TAJWEED_RULES.some((t) => t.id === r));
-  assert.deepEqual(unknown, [], 'a session references a rule the app does not have');
+  // Spread positions (makharij_17, sifat_18, …) are not classifier rules,
+  // so they are not in TAJWEED_RULES — but they must still resolve in the
+  // citation registry as contested entries, or the row teaches the
+  // unattributed. Anything else unknown is still a failure.
+  const spreadIds = allSessions()
+    .filter((s) => s.spread)
+    .flatMap((s) => s.focus || []);
+  for (const id of unknown) {
+    assert.ok(
+      spreadIds.includes(id) &&
+        TAJWEED_SOURCES[id]?.review === 'contested' &&
+        TAJWEED_SOURCES[id]?.caveat?.en &&
+        TAJWEED_SOURCES[id]?.caveat?.ar,
+      `${id} is taught but is neither a classifier rule nor a contested spread position`
+    );
+  }
+  assert.deepEqual(
+    unknown.filter((r) => !spreadIds.includes(r)),
+    [],
+    'a session references a rule the app does not have'
+  );
   // Every rule the course touches must also be a rule the classifier emits.
   for (const rule of courseRules()) {
     assert.ok(TAJWEED_SOURCES[rule], `${rule} has no citation`);

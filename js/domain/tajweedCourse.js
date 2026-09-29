@@ -1,13 +1,20 @@
 /**
- * tajweedCourse.js — the course spine (v5.17.19)
+ * tajweedCourse.js — the course spine (v5.17.32)
  *
- * Six stages, fifteen sessions, madd-first, shaped like Arabic101's
+ * Eight stages, seventeen sessions, madd-first, shaped like Arabic101's
  * published 30-day programme and sequenced along the classical gradient the
  * matns already use. What this module owns is ORDER and PROGRESS — never the
  * teaching text. Every session points at rule ids whose bilingual name,
  * description and citation live in data/tajweed-sources.json, and drills are
  * generated at run time by the app's own classifier over the app's own
  * Uthmani text. No rule prose and no answer key is authored here.
+ *
+ * Two session kinds. A drillable session teaches classifier rules and offers
+ * practice; a spread session (`spread`) teaches a disagreement — the
+ * 17/16/14 makharij counts, the sifat counts — and offers study, not
+ * drills, because drilling would pick the side the course refuses to pick.
+ * `isDrivable` is false for exactly those sessions, and the view renders no
+ * drill button for them.
  *
  * Two progression modes, because they answer different needs and the reader
  * picks:
@@ -41,6 +48,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'madd-natural',
         order: 1,
+        title: Object.freeze({ en: 'Natural madd', ar: 'المد الطبيعي' }),
         focus: ['madd_2'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '35-41' },
@@ -48,6 +56,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'madd-connected',
         order: 2,
+        title: Object.freeze({ en: 'Connected and separated madd', ar: 'المد المتصل والمنفصل' }),
         focus: ['madd_muttasil', 'madd_munfasil'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '42-47' },
@@ -55,6 +64,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'madd-paused',
         order: 3,
+        title: Object.freeze({ en: 'Madd at a pause', ar: 'المد عند الوقف' }),
         focus: ['madd_246'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '42-47' },
@@ -62,6 +72,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'madd-obligatory',
         order: 4,
+        title: Object.freeze({ en: 'Obligatory madd', ar: 'المد اللازمة' }),
         focus: ['madd_6', 'madd_iwad', 'madd_badal', 'madd_silah'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '47-58' },
@@ -83,6 +94,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'qalqalah-rule',
         order: 1,
+        title: Object.freeze({ en: 'The bounce', ar: 'القلقلة' }),
         focus: ['qalqalah'],
         mixed: false,
         citation: { work: 'jazariyya', lines: '23, 37-39' },
@@ -90,6 +102,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'tafkhim',
         order: 2,
+        title: Object.freeze({ en: 'Heavy and light', ar: 'التفخيم والترقيق' }),
         focus: ['tafkhim'],
         mixed: false,
         citation: { work: 'jazariyya', lines: '34-56' },
@@ -111,6 +124,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'noon-izhar',
         order: 1,
+        title: Object.freeze({ en: 'Clear noon', ar: 'الإظهار الحلقي' }),
         focus: ['izhar_shafawi', 'ghunnah'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '6-13' },
@@ -118,6 +132,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'noon-idgham',
         order: 2,
+        title: Object.freeze({ en: 'Merging noon', ar: 'الإدغام' }),
         focus: ['idgham_ghunnah', 'idgham_no_ghunnah'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '6-13' },
@@ -125,6 +140,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'noon-iqlab',
         order: 3,
+        title: Object.freeze({ en: 'Noon into meem', ar: 'الإقلاب' }),
         focus: ['iqlab'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '6-13' },
@@ -132,6 +148,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'noon-ikhfa',
         order: 4,
+        title: Object.freeze({ en: 'Hidden noon', ar: 'الإخفاء' }),
         focus: ['ikhfa'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '14-17' },
@@ -153,6 +170,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'meem-three',
         order: 1,
+        title: Object.freeze({ en: 'The three rulings', ar: 'الأحكام الثلاثة' }),
         focus: ['ikhfa_shafawi', 'idgham_shafawi', 'izhar_shafawi'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '18-23' },
@@ -177,6 +195,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'lam-shamsiyyah',
         order: 1,
+        title: Object.freeze({ en: 'The sun letters', ar: 'لام الشمس' }),
         focus: ['lam_shamsiyyah'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '24-29' },
@@ -184,6 +203,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'hamzat-wasl',
         order: 2,
+        title: Object.freeze({ en: 'Wasl and qaṭʿ', ar: 'الوصل والقطع' }),
         focus: ['hamzat_wasl'],
         mixed: false,
         citation: { work: 'jazariyya', lines: '100-103' },
@@ -191,8 +211,77 @@ export const COURSE_STAGES = Object.freeze([
     ],
   },
   {
-    id: 'mixed',
+    id: 'makharij',
     order: 6,
+    citation: { work: 'tamhid', lines: 'ch. 8' },
+    title: Object.freeze({
+      en: 'Makharij — the articulation points',
+      ar: 'المخارج — مخارج الحروف',
+    }),
+    // A reference stage, not a ladder rung: the count itself is disputed,
+    // so the sessions below show the spread and choose none of the counts.
+    why: Object.freeze({
+      en: 'The scholars who fixed the count disagree — 17, 16 or 14 — so this stage teaches the disagreement itself, each count with its authors and its mechanism, and chooses none.',
+      ar: 'اختلف العلماء الذين حدّدوا العدد — ١٧ أو ١٦ أو ١٤ — فتُدرَّس هنا المسألة نفسها، كل عدد بأصحابه وطريقته، دون اختيار.',
+    }),
+    sessions: [
+      {
+        id: 'makharij-counts',
+        order: 1,
+        title: Object.freeze({
+          en: 'Seventeen, sixteen, fourteen',
+          ar: 'سبعة عشر وستة عشر وأربعة عشر',
+        }),
+        focus: ['makharij_17', 'makharij_16', 'makharij_14'],
+        spread: 'makharij',
+        mixed: false,
+        citation: { work: 'tamhid', lines: 'ch. 8' },
+      },
+      {
+        id: 'makharij-ghunnah',
+        order: 2,
+        title: Object.freeze({
+          en: 'One point for ghunnah, fifteen letters for ikhfa',
+          ar: 'مخرج واحد للغنة وخمسة عشر حرفًا للإخفاء',
+        }),
+        focus: ['ghunnah', 'ikhfa'],
+        mixed: false,
+        citation: { work: 'jazariyya', lines: '19' },
+      },
+    ],
+  },
+  {
+    id: 'sifat',
+    order: 7,
+    citation: { work: 'jazariyya', lines: '19-26' },
+    title: Object.freeze({
+      en: 'Sifat — the characteristics of letters',
+      ar: 'الصفات — صفات الحروف',
+    }),
+    // Same contract as makharij: the count is disputed, so the session
+    // shows the spread with Ibn al-Jazari's own reason for seventeen.
+    why: Object.freeze({
+      en: "Seventeen, eighteen, twenty, forty-four: the count of the sifat is itself disputed, for reasons the scholars state. This stage shows the spread and repeats Ibn al-Jazari's own reason for seventeen.",
+      ar: 'سبع عشرة أو ثماني عشرة أو عشرون أو أربع وأربعون: عدد الصفات نفسه محل خلاف لأسباب ذكرها العلماء. تعرض هذه المرحلة الأعداد وتذكر سبب ابن الجزري نفسه للسبعة عشر.',
+    }),
+    sessions: [
+      {
+        id: 'sifat-counts',
+        order: 1,
+        title: Object.freeze({
+          en: 'Seventeen, eighteen, twenty, forty-four',
+          ar: 'سبع عشرة وثماني عشرة وعشرون وأربع وأربعون',
+        }),
+        focus: ['sifat_17', 'sifat_18', 'sifat_20', 'sifat_44'],
+        spread: 'sifat',
+        mixed: false,
+        citation: { work: 'jazariyya', lines: '19-26' },
+      },
+    ],
+  },
+  {
+    id: 'mixed',
+    order: 8,
     citation: { work: 'jazariyya', lines: '9-19' },
     title: Object.freeze({ en: 'Mixed recitation', ar: 'التلاوة المختلطة' }),
     // Why this stage sits here. Bilingual, and deliberately short: the
@@ -205,6 +294,7 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'mixed-drill',
         order: 1,
+        title: Object.freeze({ en: 'All rules together', ar: 'جميع القواعد' }),
         focus: [],
         mixed: true,
         citation: { work: 'jazariyya', lines: '9-19' },
@@ -246,12 +336,13 @@ export function courseRules() {
   return out;
 }
 
-/** A session with no focus rules and no mixed flag teaches nothing. */
+/** A session with no focus rules and no mixed flag teaches nothing. A spread
+ *  session teaches a disagreement, not a drillable rule, so it is never
+ *  drivable either: the practice engine drills one rule per round, and a
+ *  spread row must not silently become one. */
 export function isDrivable(session) {
-  return (
-    !!session &&
-    (session.mixed === true || (Array.isArray(session.focus) && session.focus.length > 0))
-  );
+  if (!session || session.spread) return false;
+  return session.mixed === true || (Array.isArray(session.focus) && session.focus.length > 0);
 }
 
 /**

@@ -1,5 +1,5 @@
 /**
- * tajweedCourseView.js — the course screen (v5.17.19)
+ * tajweedCourseView.js — the course screen (v5.17.32)
  *
  * Pure templates. No fetching, no state mutation: the caller passes state in
  * and the view reads the spine from domain/tajweedCourse.js. Lazy-loaded, so
@@ -9,6 +9,11 @@
  * those rules already carry, and a mode switch between the guided plan and
  * open access. A locked session in guided mode says why it is locked and
  * names what unlocks it, rather than just greying out.
+ *
+ * Spread sessions (makharij/sifat counts) render a different branch: every
+ * count with its authors, its work-and-lines citation, its contested badge
+ * and its disagreement note — and NO drill button anywhere, because
+ * drilling would pick the side the course refuses to pick.
  */
 
 import { escapeHTML, pickLocale } from '../core/utils.js';
@@ -17,12 +22,13 @@ import { buildHash } from '../core/router.js';
 import { t, isRTL } from '../core/i18n.js';
 import { VIEWS } from '../core/config.js';
 import { TAJWEED_RULES, TAJWEED_FAMILIES } from '../domain/tajweed.js';
-import { TAJWEED_WORKS, tajweedCitation } from '../domain/tajweedSources.js';
+import { TAJWEED_WORKS, TAJWEED_SOURCES, tajweedCitation } from '../domain/tajweedSources.js';
 import {
   COURSE_STAGES,
   PATH_MODES,
   allSessions,
   availableSessions,
+  isDrivable,
   nextSession,
   stageProgress,
   courseProgress,
@@ -42,6 +48,25 @@ const MODE_HINTS = Object.freeze({
 
 const ruleById = new Map(TAJWEED_RULES.map((r) => [r.id, r]));
 const familyById = new Map(TAJWEED_FAMILIES.map((f) => [f.id, f]));
+
+/** One spread row: a contested count with its authors, its citation, its
+ *  contested badge and its disagreement note. No button: a spread row is
+ *  for study, and any drill action here would silently pick a count.
+ *  Unknown ids render nothing, exactly like ruleChip below. */
+function spreadRow(ruleId, lang) {
+  const entry = TAJWEED_SOURCES[ruleId];
+  if (!entry || !entry.label) return '';
+  const cite = tajweedCitation(ruleId, lang);
+  const badge =
+    entry.review === 'contested'
+      ? `<span class="taj-course__badge taj-course__badge--contested">${escapeHTML(t('tajweedCourse.contested', lang))}</span>`
+      : '';
+  return `<li class="taj-course__spread-row">
+    <p class="taj-course__spread-label">${escapeHTML(pickLocale(entry.label, lang))} ${badge}</p>
+    ${cite ? `<p class="taj-course__spread-src">${escapeHTML(t('tajweedCourse.source', lang))}: ${escapeHTML(cite.title)} ${escapeHTML(cite.lines)}</p>` : ''}
+    ${entry.caveat ? `<p class="taj-course__spread-caveat">${escapeHTML(pickLocale(entry.caveat, lang))}</p>` : ''}
+  </li>`;
+}
 
 /** One rule chip: its colour, its name, and where the definition comes from. */
 function ruleChip(ruleId, lang, locked) {
@@ -72,12 +97,22 @@ function sessionRow(session, state, lang) {
   const citeText = cite
     ? `${pickLocale(tajweedWorkTitle(cite.work, lang), lang)} ${cite.lines}`
     : '';
-  const rules = (session.focus || []).map((r) => ruleChip(r, lang, !open)).join('');
+  // A spread session shows the disagreement, not rule chips: every focus id
+  // is a contested position rendered with its own citation and caveat.
+  const rules = session.spread
+    ? `<ul class="taj-course__spread">${(session.focus || []).map((r) => spreadRow(r, lang)).join('')}</ul>`
+    : (session.focus || []).map((r) => ruleChip(r, lang, !open)).join('');
+  const rulesBlock = session.spread
+    ? rules
+    : rules
+      ? `<ul class="taj-course__rules">${rules}</ul>`
+      : '';
   // The practice engine drills ONE rule per round, so a session-level button
   // is only honest where the session maps to a single round. For a
   // multi-rule session the rule chips are the action, rather than silently
-  // picking one rule and calling it the session.
-  const singleRound = session.mixed || (session.focus || []).length === 1;
+  // picking one rule and calling it the session. A spread session gets no
+  // drill button at all: drilling a disagreement would resolve it.
+  const singleRound = !session.spread && (session.mixed || (session.focus || []).length === 1);
   const sessionDrill = singleRound
     ? `<button type="button" class="btn btn--primary btn--sm" data-action="tajweed-course-drill" data-session="${escapeHTML(session.id)}">${icon('play', { size: 14 })} ${escapeHTML(t('tajweedCourse.practice', lang))}</button>`
     : '';
@@ -117,7 +152,7 @@ function sessionRow(session, state, lang) {
       ${badges.join('')}
     </div>
     ${citeText ? `<p class="taj-course__session-src">${escapeHTML(t('tajweedCourse.source', lang))}: ${escapeHTML(citeText)}</p>` : ''}
-    ${rules ? `<ul class="taj-course__rules">${rules}</ul>` : ''}
+    ${rulesBlock}
     ${lockNote}
     ${actions ? `<div class="taj-course__actions">${actions}</div>` : ''}
   </li>`;
@@ -180,7 +215,13 @@ export function renderTajweedCourse(state) {
       }).join('');
 
   const continueBlock = upNext
-    ? `<div class="taj-course__continue">
+    ? upNext.spread || !isDrivable(upNext)
+      ? `<div class="taj-course__continue">
+        <p class="taj-course__continue-label">${escapeHTML(t('tajweedCourse.continueLabel', lang))}</p>
+        <p class="taj-course__continue-title">${escapeHTML(pickLocale(upNext.title, lang))}</p>
+        <button type="button" class="btn btn--secondary" data-action="tajweed-course-toggle-done" data-session="${escapeHTML(upNext.id)}">${escapeHTML(t('tajweedCourse.markDone', lang))}</button>
+      </div>`
+      : `<div class="taj-course__continue">
         <p class="taj-course__continue-label">${escapeHTML(t('tajweedCourse.continueLabel', lang))}</p>
         <p class="taj-course__continue-title">${escapeHTML(pickLocale(upNext.title, lang))}</p>
         <button type="button" class="btn btn--primary" data-action="tajweed-course-drill" data-session="${escapeHTML(upNext.id)}">${icon('play', { size: 15 })} ${escapeHTML(t('tajweedCourse.start', lang))}</button>

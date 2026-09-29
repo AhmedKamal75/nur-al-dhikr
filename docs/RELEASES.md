@@ -2,6 +2,34 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.32 — Makharij and sifat stages: the spread, not a verdict
+
+- **Two new course stages before mixed recitation** (`makharij`, `sifat`;
+  8 stages, 17 sessions): the 17/16/14 makharij counts each with its
+  authors and mechanism (Khalil → Jazari 17; Sibawayh + Shatibi 16 with
+  al-jawf deleted and redistributed; Farra + Qutrub + Jarmi + Ibn Kayyan
+  14 with lam/nun/ra merged), and the sifat 17/18/20/44 spread with Ibn
+  al-Jazari's own parity reason for seventeen. Quoted from Ibn
+  al-Jazari's _al-Tamhid_ ch. 8 and _al-Muqaddima_ vv. 9/19–26 via
+  `docs/TAJWEED-RESEARCH-DOSSIER.md` §§3–4 — never resolved by the app,
+  because there is no TAJ-09 ruling in the tree.
+- **Spread rows are for study, not drills**: a dedicated renderer branch
+  shows each count's label, citation, contested badge and disagreement
+  note, and no drill button is emitted for spread rows, rule chips, or
+  the continue block. The drill handler refuses non-drivable sessions as
+  a second guard.
+- **A third makharij session** separates what the brief conflated:
+  ghunnah has one articulation point (al-khaysum, Jazariyya v. 19) while
+  ikhfa has fifteen letters (Tuhfat v. 15–16).
+- **Session titles now reach the screen**: the runtime spine omitted
+  them, so every course row rendered an empty heading. The mirror carries
+  all seventeen titles and the parity test enforces them.
+- Pinned by `tests/tajweed-makharij.test.js` (contested review+caveat,
+  all-three-counts render with attributions in both languages, no
+  lone-17-default, no drill button, search/progress inclusion) and
+  strengthened parity in `tests/tajweed-course.test.js` /
+  `tests/tajweed-sources.test.js`.
+
 ## v5.17.31 — The install path a reader actually walks
 
 - **Prompt deferral with a memory.** "Not now" (`install-later`) and a

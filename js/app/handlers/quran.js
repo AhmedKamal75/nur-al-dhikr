@@ -699,8 +699,12 @@ export const clickHandlers = {
     // Session-level drill, only offered where a session maps to ONE round.
     // A mixed session uses the mixed pool; anything else would be silently
     // choosing one of several rules, so the handler refuses instead.
+    // Spread sessions (makharij/sifat counts) are refused for the same
+    // reason one step further: drilling them would resolve a disagreement
+    // the course exists to show, so the view offers no button and this
+    // guard covers a crafted DOM.
     const session = COURSE.findSession(String(ds.session || ''));
-    if (!session) return;
+    if (!session || !COURSE.isDrivable(session)) return;
     const focus = session.focus || [];
     if (session.mixed) {
       await startPracticeRound('mixed', rt.practicePickerMode || 'find-spans');

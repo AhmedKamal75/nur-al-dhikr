@@ -73,6 +73,7 @@ test('bilingual everywhere a human reads it', () => {
   for (const [id, entry] of Object.entries(registry.rules)) {
     if (!entry.caveat) continue;
     assert.ok(entry.caveat.en && entry.caveat.ar, `${id} caveat is not bilingual`);
+    if (entry.label) assert.ok(entry.label.en && entry.label.ar, `${id} label is not bilingual`);
   }
   for (const [id, work] of Object.entries(registry.works)) {
     assert.ok(work.author?.en && work.author?.ar, `${id} author is not bilingual`);
@@ -156,6 +157,10 @@ test('the runtime module mirrors the canonical JSON exactly', () => {
     assert.equal(mod.lines, entry.lines, `${id} lines drifted`);
     assert.equal(mod.review, entry.review, `${id} review state drifted`);
     assert.deepEqual(mod.caveat || null, entry.caveat || null, `${id} caveat drifted`);
+    // (v5.17.32) Spread positions carry a bilingual display label the
+    // course view renders instead of a classifier-rule chip. Same drift
+    // rule as everything else in this registry.
+    assert.deepEqual(mod.label || null, entry.label || null, `${id} label drifted`);
   }
 });
 

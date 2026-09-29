@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.31",
+  "version": "5.17.32",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
@@ -9456,8 +9456,8 @@
     },
     {
       "path": "tajweed-course.json",
-      "bytes": 9982,
-      "sha256": "3ba94fc183b45de7026e3120a32546f62f39a10da71b6176a16881d6cc866233"
+      "bytes": 13119,
+      "sha256": "c6007efab966d5508761be6a732c09fc7212b90cc35b566a2292461bc7a44a37"
     },
     {
       "path": "tajweed-practice.json",
@@ -9466,8 +9466,8 @@
     },
     {
       "path": "tajweed-sources.json",
-      "bytes": 10525,
-      "sha256": "af63982e14b7ec84a4de76521433d9edad50b143d9021b1d2af30715c5fa9366"
+      "bytes": 17554,
+      "sha256": "58c82c6c9dc03175a81fb822f5c03bf39d1989a6b71feb3777afbd2660c25a81"
     },
     {
       "path": "translations/fr-hamidullah/1.json",

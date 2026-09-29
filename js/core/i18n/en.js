@@ -2236,7 +2236,8 @@ export const en = {
   'hadith.speechUnsupported': 'Speech is not available in this browser',
   'tajweedCourse.title': 'Tajweed course',
   'tajweedCourse.intro':
-    'Six stages in order, or pick any session. Every rule links to the text it is defined in.',
+    'Eight stages in order, or pick any session. Every rule links to the text it is defined in.',
+  'tajweedCourse.contested': 'Scholars differ — no count is the default',
   'tajweedCourse.progress': 'Course progress',
   'tajweedCourse.stage': 'Stage',
   'tajweedCourse.source': 'Source',

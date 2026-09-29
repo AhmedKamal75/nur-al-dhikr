@@ -2178,7 +2178,8 @@ export const ar = {
   'hadith.speechUnsupported': 'النطق غير متاح في هذا المتصفح',
   'tajweedCourse.title': 'دورة التجويد',
   'tajweedCourse.intro':
-    'ست مراحل مرتبة، أو اختر أي جلسة. وكل قاعدة موصولة بالنص الذي عُرِّفت فيه.',
+    'ثماني مراحل مرتبة، أو اختر أي جلسة. وكل قاعدة موصولة بالنص الذي عُرِّفت فيه.',
+  'tajweedCourse.contested': 'فيه خلاف بين العلماء — ولا عدد معتمَد',
   'tajweedCourse.progress': 'تقدّم الدورة',
   'tajweedCourse.stage': 'المرحلة',
   'tajweedCourse.source': 'المصدر',

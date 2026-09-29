@@ -2,7 +2,7 @@
  "schemaVersion": "1.0",
  "attribution": {
   "shape": "The stage -> session -> skill shape, the madd-first opening, and the one-session-a-day rhythm follow Arabic101's published 30-day Tajweed programme (https://www.youtube.com/Arabic101, https://arabic101.org/), whose intermediate course is described as six stages and thirty lessons at one lesson a day. That programme is credited for its PEDAGOGY here.",
-  "content": "No stage or session text in this file is copied from any course, and no religious prose is authored here. Every session points at rule ids whose bilingual name, description and citation already live in data/tajweed-sources.json (Tuhfat al-Atfal, al-Jazariyya), and at stage citations into those same matns. Drills are generated at run time by the app's own classifier over the app's own Uthmani text, so no exercise or answer key is written by hand.",
+   "content": "No stage or session text in this file is copied from any course, and no religious prose is authored here. Every session points at rule ids whose bilingual name, description and citation already live in data/tajweed-sources.json (Tuhfat al-Atfal, al-Jazariyya), and at stage citations into those same matns. Spread sessions point at contested position ids whose bilingual label and disagreement note live in that same registry, so the 17/16/14 makharij spread and the sifat count spread are shown with their authors and never resolved by the app. Drills are generated at run time by the app's own classifier over the app's own Uthmani text, so no exercise or answer key is written by hand.",
   "corroboration": "The madd-first order is not idiosyncratic. The free intermediate curriculum of Imam Muhammad ibn Saud Islamic University follows the same classical gradient, and the same sequence appears in the 16 sections of al-Jazariyya and the 61 verses of Tuhfat al-Atfal. Research: docs/TAJWEED-RESEARCH-DOSSIER.md.",
   "notClaimed": "This is NOT a reproduction of Arabic101's syllabus. Their exact stage names were not verifiable from a public source, so the stage grouping here is the matn gradient arranged in the shape they publish, and is attributed accordingly."
  },
@@ -337,9 +337,107 @@
     }
    ]
   },
-  {
-   "id": "mixed",
-   "order": 6,
+   {
+    "id": "makharij",
+    "order": 6,
+    "title": {
+     "en": "Makharij — the articulation points",
+     "ar": "المخارج — مخارج الحروف"
+    },
+    "why": {
+     "en": "The scholars who fixed the count disagree — 17, 16 or 14 — so this stage teaches the disagreement itself, each count with its authors and its mechanism, and chooses none.",
+     "ar": "اختلف العلماء الذين حدّدوا العدد — ١٧ أو ١٦ أو ١٤ — فتُدرَّس هنا المسألة نفسها، كل عدد بأصحابه وطريقته، دون اختيار."
+    },
+    "citation": {
+     "work": "tamhid",
+     "lines": "ch. 8"
+    },
+    "sessions": [
+     {
+      "id": "makharij-counts",
+      "order": 1,
+      "title": {
+       "en": "Seventeen, sixteen, fourteen",
+       "ar": "سبعة عشر وستة عشر وأربعة عشر"
+      },
+      "focus": [
+       "makharij_17",
+       "makharij_16",
+       "makharij_14"
+      ],
+      "spread": "makharij",
+      "citation": {
+       "work": "tamhid",
+       "lines": "ch. 8"
+      },
+      "mixed": false
+     },
+     {
+      "id": "makharij-ghunnah",
+      "order": 2,
+      "title": {
+       "en": "One point for ghunnah, fifteen letters for ikhfa",
+       "ar": "مخرج واحد للغنة وخمسة عشر حرفًا للإخفاء"
+      },
+      "focus": [
+       "ghunnah",
+       "ikhfa"
+      ],
+      "citation": {
+       "work": "jazariyya",
+       "lines": "19"
+      },
+      "also": [
+       {
+        "work": "tuhfat-al-atfal",
+        "lines": "14-17"
+       }
+      ],
+      "mixed": false
+     }
+    ]
+   },
+   {
+    "id": "sifat",
+    "order": 7,
+    "title": {
+     "en": "Sifat — the characteristics of letters",
+     "ar": "الصفات — صفات الحروف"
+    },
+    "why": {
+     "en": "Seventeen, eighteen, twenty, forty-four: the count of the sifat is itself disputed, for reasons the scholars state. This stage shows the spread and repeats Ibn al-Jazari's own reason for seventeen.",
+     "ar": "سبع عشرة أو ثماني عشرة أو عشرون أو أربع وأربعون: عدد الصفات نفسه محل خلاف لأسباب ذكرها العلماء. تعرض هذه المرحلة الأعداد وتذكر سبب ابن الجزري نفسه للسبعة عشر."
+    },
+    "citation": {
+     "work": "jazariyya",
+     "lines": "19-26"
+    },
+    "sessions": [
+     {
+      "id": "sifat-counts",
+      "order": 1,
+      "title": {
+       "en": "Seventeen, eighteen, twenty, forty-four",
+       "ar": "سبع عشرة وثماني عشرة وعشرون وأربع وأربعون"
+      },
+      "focus": [
+       "sifat_17",
+       "sifat_18",
+       "sifat_20",
+       "sifat_44"
+      ],
+      "spread": "sifat",
+      "citation": {
+       "work": "jazariyya",
+       "lines": "19-26"
+      },
+      "mixed": false
+     }
+    ]
+   },
+   {
+    "id": "mixed",
+    "order": 8,
    "title": {
     "en": "Mixed recitation",
     "ar": "التلاوة المختلطة"
