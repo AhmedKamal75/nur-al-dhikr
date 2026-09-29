@@ -33,6 +33,8 @@ import { isSurahMissing } from '../services/moshafAvailability.js';
 import { formatBytes } from '../services/audioStore.js';
 import { skeletonReciterRows } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
+import { quranModeSwitchHTML } from '../ui/shell.js';
+import { VIEWS } from '../core/config.js';
 
 function surahName(state, n) {
   const meta = state.quran.meta;
@@ -245,11 +247,15 @@ export function renderAudio(state) {
     </form>
   </section>`;
 
+  // (REORG Phase 7) Qur'an listening is the book's listening depth: the
+  // List/Word/Audio switch carries the hop back to the mushaf and the
+  // reader with existing navigate actions only — no new view, no new
+  // handler, no interstitial. The Audio segment is active here.
   return `
   <section class="view view--audio">
     <h1 class="view__title">${t('audio.title', lang)}</h1>
     <p class="view__subtitle">${t('audio.subtitle', lang)}</p>
-
+    ${quranModeSwitchHTML(VIEWS.AUDIO, lang)}
     <div class="search-bar audio-search">
       <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
       <input type="search" class="search-bar__input" id="audio-search-input"

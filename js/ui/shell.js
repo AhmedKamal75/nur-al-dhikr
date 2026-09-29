@@ -118,12 +118,63 @@ const NAV_GROUPS = [
   },
 ];
 
+/**
+ * (REORG Phase 7) internal-only decisions — plan §4 Phase 7: "a door, or a
+ * documented decision that it is internal-only. A route with no door and
+ * no justification is a finding."
+ *
+ * Two routes stay doorless ON PURPOSE, and this block is the justification
+ * the trap test reads alongside its own map copy:
+ *
+ * - `EDITOR` is a TOOL, not a destination. It is invoked from content
+ *   surfaces that already have doors — the Library banner sheet
+ *   (`library.openEditor`), the Category manage row (`content-new-item`,
+ *   `content-edit-item`), the card menu — never browsed to. A nav door
+ *   would promise a place; the editor IS an action on a place. Deep link
+ *   `#/editor` keeps working (palette, direct URL); it just claims no
+ *   chrome slot, and no active state aliases it.
+ * - `AMBIENT` is a KIOSK, not a section. The nightstand display hides the
+ *   entire chrome by design (`body.is-ambient` — topbar, nav, drawer,
+ *   player, same contract as mushaf fullscreen), so a nav door would
+ *   promise chrome the route deliberately removes. Entry is the Prayer
+ *   sheet (`prayer.sheet.ambient`); exit is the in-view close link back
+ *   to `#/prayer`. Deep link `#/ambient` keeps working; it just claims
+ *   no chrome slot, and no active state aliases it.
+ *
+ * Both keep working deep links, both keep the language switch where the
+ * shell owns it (topbar — ambient/focus-immersive hide chrome by design,
+ * the bare focus picker keeps it), both keep Elder/a11y targets, and
+ * neither carries gamification copy. Arrangement only: no route, view,
+ * handler or data change.
+ */
+export const INTERNAL_ONLY_ROUTES = Object.freeze({
+  EDITOR:
+    'tool invoked from content surfaces (library sheet, category manage, card menu) — internal-only by design',
+  AMBIENT:
+    'chrome-free nightstand kiosk entered from the Prayer sheet, exited to #/prayer — a nav door would promise chrome the route removes',
+});
+
 /** Flat lookup used to decide the active item for the current view. */
 function isActive(active, view) {
   if (active === view) return true;
-  // (REORG Phase 2) merged Qur'an door: a deep link into #/quran lights the
-  // mushaf entry. ROOTS keeps its own Phase 1 door, so it never aliases here.
-  if (view === VIEWS.MUSHAF && active === VIEWS.QURAN) return true;
+  // (REORG Phase 7) one Adhkar door: HOME is the adhkar browser (§2.2).
+  // CATEGORY, MOOD, FOCUS, COLLECTIONS and COLLECTION all resolve to it —
+  // the grid/filter row (CATEGORY, MOOD), the immersive one-item stage
+  // behind every card's Open-focus (FOCUS), and the home collections panel
+  // (COLLECTIONS, COLLECTION). LIBRARY keeps its own door for banner-level
+  // management and never aliases here, so exactly one distinct door lights
+  // per route (the Phase 0 trap's ≤2-taps map agrees with the chrome).
+  if (
+    view === VIEWS.HOME &&
+    [VIEWS.CATEGORY, VIEWS.MOOD, VIEWS.FOCUS, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
+  )
+    return true;
+  // (REORG Phase 2 + Phase 7) merged Qur'an door: a deep link into #/quran
+  // lights the mushaf entry, and so does #/audio — Qur'an listening (the
+  // reciter/voice picker + offline downloads) is the book's listening
+  // depth, carried by the in-chrome List/Word/Audio switch. ROOTS keeps
+  // its own Phase 1 door, so it never aliases here.
+  if (view === VIEWS.MUSHAF && (active === VIEWS.QURAN || active === VIEWS.AUDIO)) return true;
   // (REORG Phase 4) merged Prayer door: deep links into #/qibla and
   // #/calendar light the prayer entry. RAMADAN keeps its own door.
   if (view === VIEWS.PRAYER && (active === VIEWS.QIBLA || active === VIEWS.CALENDAR)) return true;
@@ -153,19 +204,27 @@ function isActive(active, view) {
   )
     return true;
   if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
-  return (
-    view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
-  );
+  // (REORG Phase 7) LIBRARY keeps its own door only. CATEGORY, COLLECTIONS
+  // and COLLECTION resolve to the HOME (Adhkar) door above — the map and
+  // the chrome agree, and exactly one door lights per route. The library's
+  // own banner-management depth stays reachable by tap; it just never
+  // claims another route's active state.
+  return false;
 }
 
 /**
- * (REORG Phase 2) the in-chrome Qur'an mode switch: List reading (#/quran)
- * vs Word study (#/roots). Rendered inside the mushaf, reader and roots
- * views — never a nav entry, never a new view. Existing `navigate` actions
- * only (no handler or allowlist change) and the existing `.segmented`
- * styling only (44px targets, so Elder/a11y is untouched). On the mushaf
- * neither segment is active: the book IS the door, and the switch offers
- * its two inner modes without a route hop or an interstitial.
+ * (REORG Phase 2 + Phase 7) the in-chrome Qur'an mode switch: List reading
+ * (#/quran) vs Word study (#/roots) vs Listening (#/audio — the reciter /
+ * voice picker + offline downloads). Rendered inside the mushaf, reader,
+ * roots and audio views — never a nav entry, never a new view. Existing
+ * `navigate` actions only (no handler or allowlist change) and the
+ * existing `.segmented` styling only (44px targets, so Elder/a11y is
+ * untouched). The Audio segment reuses the bilingual `nav.audio` label
+ * that already names its destination, so no segment label can drift and
+ * each label promises exactly its tap. On the mushaf neither segment is
+ * active: the book IS the door, and the switch offers its inner modes
+ * without a route hop or an interstitial. No gamification copy anywhere
+ * on the rail.
  */
 export function quranModeSwitchHTML(activeView, lang) {
   const seg = (view, labelKey, selected) => `
@@ -174,6 +233,7 @@ export function quranModeSwitchHTML(activeView, lang) {
     <div class="segmented quran-mode-switch" role="group" aria-label="${t('quran.title', lang)}">
       ${seg(VIEWS.QURAN, 'quran.modeList', activeView === VIEWS.QURAN)}
       ${seg(VIEWS.ROOTS, 'quran.modeWord', activeView === VIEWS.ROOTS)}
+      ${seg(VIEWS.AUDIO, 'nav.audio', activeView === VIEWS.AUDIO)}
     </div>`;
 }
 

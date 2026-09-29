@@ -2,6 +2,52 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.39 — The orphans, one by one: four doors, two documented internals (reorganisation Phase 7)
+
+- **Four doors** (`docs/REORGANISATION-PLAN.md` Phase 7, §4): `FOCUS` is
+  Adhkar depth — the immersive one-item recitation stage behind every
+  card's Open-focus, resolving to the HOME door in 2 taps (door →
+  category tile → card Open-focus, no interstitial); `COLLECTIONS` rides
+  the home collections panel in 1 tap and `COLLECTION` follows it in 2
+  (door → collections panel → collection tile); `AUDIO` is Qur'an
+  listening — the reciter/voice picker + offline downloads, resolving to
+  the MUSHAF door in 2 taps (door → in-chrome List/Word/Audio switch).
+  All four stay real routes with working deep links — active state
+  resolves from the route, so a deep link into any of them still lights
+  its door. Chrome entries hold at 12: no new nav entry anywhere.
+- **The listening switch inside** (plan §2.3): the Qur'an mode switch
+  grows from two segments to three — List reading, Word study,
+  Listening — reusing the bilingual `nav.audio` label that already names
+  its destination. Rendered in the mushaf, reader, roots AND audio views
+  with existing `navigate` actions only — no new view, no new handler,
+  no new static view import (renderer budget stays 19/19), no
+  interstitial in any flow. Every segment keeps its 44px target.
+- **Two documented internals** (plan §4 Phase 7: "a route with no door
+  and no justification is a finding"): `EDITOR` is a tool, not a
+  destination — invoked from content surfaces that already have doors
+  (the Library banner sheet, the Category manage row, the card menu), so
+  a nav door would promise a place for what is an action on a place;
+  `AMBIENT` is a kiosk, not a section — the nightstand display hides the
+  entire chrome by design (`body.is-ambient`, same contract as mushaf
+  fullscreen), so a nav door would promise chrome the route deliberately
+  removes (entry: the Prayer sheet; exit: the in-view close link back to
+  `#/prayer`). Both keep working deep links and claim no chrome slot;
+  both justifications are recorded in `js/ui/shell.js`
+  (`INTERNAL_ONLY_ROUTES`) and in the reachability map. The orphan trap
+  goes GREEN asserting 0 unjustified orphans.
+- **Arrangement only.** No content, corpus, data or route change; deep
+  links all keep working; no interstitial in any recitation; language
+  switch, Elder/a11y (44px segments, zero under 24px, both themes, 200%
+  text) and no-gamification targets are untouched — every rail is a
+  door, never a scoreboard. Bilingual EN+AR throughout with no new i18n
+  key (all segments reuse labels that already name their destinations).
+- **Measured, not asserted:** the reachability trap maps the four to
+  their doors (HOME ×3, MUSHAF ×1) and records the two internals;
+  doorless routes drop 6 → 2, unjustified orphans 6 → 0, and both former
+  traps (the orphan list + the map-coverage finding check) go green.
+  Pinned by the Phase 7 blocks in `tests/nav-chrome.test.js` and
+  `tests/nav-reachability.test.js`.
+
 ## v5.17.38 — Garden, tracker, counts, keepsakes and settings in one You section (reorganisation Phase 6)
 
 - **The You section** (`docs/REORGANISATION-PLAN.md` Phase 6, §2.5):

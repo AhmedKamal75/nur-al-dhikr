@@ -97,24 +97,39 @@ const INTERNAL_JUSTIFICATIONS = {
   CATEGORY:
     'plan §2.2/Phase 3: the adhkar browser grid IS home (0 taps) — CATEGORY follows from the HOME door in 1 tap via adhkar-browser; keeps its Library depth too.',
   MOOD: 'plan §1.3/§2.2/Phase 3: the 12 moods are a filter row above the home grid — same feature, front door, 1 tap via adhkar-browser.',
-  FOCUS: 'plan Phase 7 list: a door, or a documented internal-only decision.',
-  COLLECTIONS: 'plan Phase 7 list: a door, or a documented internal-only decision.',
-  COLLECTION: 'plan §1.5: follows from COLLECTIONS — Phase 7 door-or-justify.',
+  FOCUS:
+    'plan §4 Phase 7: Adhkar depth — the immersive one-item recitation stage behind every card’s Open-focus; door via the HOME entry in 2 taps (door → category tile → card Open-focus, no interstitial), deep links keep working.',
+  COLLECTIONS:
+    'plan §4 Phase 7: Adhkar depth — the user’s adhkar sets; door via the HOME entry in 1 tap (home collections panel → collections), deep links keep working.',
+  COLLECTION:
+    'plan §1.5/§4 Phase 7: follows from COLLECTIONS — door via the HOME entry in 2 taps (door → collections panel → collection tile), deep links keep working.',
   QUIZ: 'plan §2.1/§2.4/Phase 5: Practise-section member — door via the TASBIH entry + in-chrome switch.',
-  AUDIO: 'plan Phase 7 list: a door, or a documented internal-only decision.',
+  AUDIO:
+    'plan §4 Phase 7: Qur’an listening — the reciter/voice picker + offline downloads is the book’s listening depth; door via the MUSHAF entry in 2 taps (door → in-chrome List/Word/Audio switch), deep links keep working.',
   ROOTS:
     'plan §1.5 FLAGSHIP (needsDoor): the root index behind per-word study — Phase 1 gives it a door under Qur’an; NOT internal.',
-  EDITOR: 'plan §1.5: a tool invoked from content surfaces — internal-only candidate (Phase 7).',
+  EDITOR:
+    'plan §1.5/§4 Phase 7 INTERNAL-ONLY (documented in js/ui/shell.js INTERNAL_ONLY_ROUTES): a tool invoked from content surfaces (library sheet, category manage, card menu), never browsed to — a nav door would promise a place for what is an action on a place. Deep link #/editor keeps working; claims no chrome slot.',
   MUTASHABIHAT:
     'plan §2.1/§2.4/Phase 5: Practise-section member — door via the TASBIH entry + in-chrome switch.',
   JOURNAL:
     'plan §2.1/Phase 6: You-section member — door via the You (checklist) entry + in-chrome switch.',
   CERTIFICATE:
     'plan §2.2/Phase 6: re-homed out of the daily grid; You-section member — door via the You (checklist) entry + in-chrome switch.',
-  AMBIENT: 'plan Phase 7 list: nightstand display — a door, or documented internal-only.',
+  AMBIENT:
+    'plan §4 Phase 7 INTERNAL-ONLY (documented in js/ui/shell.js INTERNAL_ONLY_ROUTES): chrome-free nightstand kiosk entered from the Prayer sheet, exited to #/prayer — a nav door would promise chrome the route removes by design (body.is-ambient). Deep link #/ambient keeps working; claims no chrome slot.',
   TAJWEED_COURSE:
     'plan §1.5 FLAGSHIP (needsDoor): the entire G-2 course, reachable only by URL/search — Phase 1 gives it a real door (temporary read-group home); Phase 5 re-homes it into the Practise section via the TASBIH entry + in-chrome switch; NOT internal.',
 };
+
+/**
+ * (REORG Phase 7) routes that stay doorless ON PURPOSE. A route with no
+ * door and no entry here is a finding; a route with no door and an entry
+ * here is a documented internal-only decision (plan §4 Phase 7). The trap
+ * below asserts ZERO unjustified orphans — the two entries here are the
+ * only doorless routes allowed to remain.
+ */
+const INTERNAL_ONLY = new Set(['EDITOR', 'AMBIENT']);
 
 /** Every VIEWS route → its door (1 tap) or null (orphan today). */
 const ROUTE_DOOR_MAP = Object.fromEntries(
@@ -128,6 +143,21 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
     let taps = direct ? 1 : null;
     let via = null;
     if (!door && routeKey === 'QURAN') {
+      const mushaf = NAV_ENTRIES.find((e) => e.viewKey === 'MUSHAF');
+      if (mushaf) {
+        door = mushaf;
+        taps = 2;
+        via = 'quran-mode-switch';
+      }
+    }
+    // (REORG Phase 7) Qur'an listening: #/audio stays a real route and
+    // resolves to the mushaf entry in 2 taps (door → in-chrome
+    // List/Word/Audio switch). taps: 2 keeps the ≤2-taps assertion
+    // meaningful instead of laundering the section into a fake orphan.
+    // The audio view renders the same switch (views/audioManager.js), so
+    // the hop is one tap from either side with existing navigate actions
+    // only — no interstitial, no new handler.
+    if (!door && routeKey === 'AUDIO') {
       const mushaf = NAV_ENTRIES.find((e) => e.viewKey === 'MUSHAF');
       if (mushaf) {
         door = mushaf;
@@ -168,12 +198,29 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
     // taps — it is home) and the 12-mood filter row above it put CATEGORY
     // and MOOD one tap from the HOME door. Both keep their Library depth
     // too; the map records the front door.
-    if (!door && (routeKey === 'CATEGORY' || routeKey === 'MOOD')) {
+    // (REORG Phase 7) the same door carries the last Adhkar depths:
+    // FOCUS (the immersive one-item stage behind every card's Open-focus —
+    // home → category tile → card Open-focus, 2 taps, no interstitial),
+    // COLLECTIONS (home collections panel → collections, 1 tap) and
+    // COLLECTION (home → collections → collection tile, 2 taps). The
+    // chrome agrees: shell.js isActive lights HOME for all five, LIBRARY
+    // never aliases, so exactly one distinct door lights per route.
+    if (
+      !door &&
+      (routeKey === 'CATEGORY' ||
+        routeKey === 'MOOD' ||
+        routeKey === 'FOCUS' ||
+        routeKey === 'COLLECTIONS' ||
+        routeKey === 'COLLECTION')
+    ) {
       const home = NAV_ENTRIES.find((e) => e.viewKey === 'HOME');
       if (home) {
         door = home;
-        taps = 1;
-        via = 'adhkar-browser';
+        taps = routeKey === 'CATEGORY' || routeKey === 'MOOD' || routeKey === 'COLLECTIONS' ? 1 : 2;
+        via =
+          routeKey === 'COLLECTIONS' || routeKey === 'COLLECTION'
+            ? 'home-collections-panel'
+            : 'adhkar-browser';
       }
     }
     // (REORG Phase 6) one You section: #/garden, #/statistics,
@@ -221,6 +268,17 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
 const ORPHANS = Object.entries(ROUTE_DOOR_MAP)
   .filter(([, m]) => m.door === null)
   .map(([k]) => k);
+
+/**
+ * (REORG Phase 7) UNJUSTIFIED_ORPHANS is the finding list: doorless AND
+ * with no documented internal-only decision. The trap below asserts this
+ * is empty — the two remaining doorless routes (EDITOR, AMBIENT) both
+ * carry INTERNAL_ONLY entries plus code justifications in
+ * js/ui/shell.js, so the suite goes GREEN with 0 unjustified orphans.
+ */
+const UNJUSTIFIED_ORPHANS = ORPHANS.filter(
+  (k) => !INTERNAL_ONLY.has(k) || !INTERNAL_JUSTIFICATIONS[k]
+);
 
 /* ------------------------------------------------------------------ */
 /* Nav census (output + mismatch trap)                                 */
@@ -321,10 +379,14 @@ describe('Phase 1 pin: the flagships have a front door', () => {
     assert.equal(door.labelKey, 'nav.roots');
   });
 
-  test('Phase 1 closed exactly the two flagship orphans (14 → 12, then 10 after Phase 3, 8 after Phase 5, 6 after Phase 6)', () => {
+  test('Phase 1 closed exactly the two flagship orphans (14 → 12, then 10 after Phase 3, 8 after Phase 5, 6 after Phase 6, 2 documented internals after Phase 7)', () => {
     assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
     assert.ok(!ORPHANS.includes('ROOTS'), 'ROOTS is still orphaned');
-    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'EDITOR'],
+      `Phase 7 leaves only the 2 documented internals doorless, got ${ORPHANS.length}`
+    );
   });
 });
 
@@ -354,13 +416,17 @@ describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
   });
 
   test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
-    for (const key of ['quran.modeList', 'quran.modeWord']) {
+    for (const key of ['quran.modeList', 'quran.modeWord', 'nav.audio']) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
     }
   });
 
-  test('the merge adds no orphan: 6 remain for Phase 7 (8 until Phase 6)', () => {
-    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
+  test('the merge adds no orphan: only the 2 documented internals remain doorless after Phase 7', () => {
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'EDITOR'],
+      `expected only the 2 documented internals, got ${ORPHANS.length}`
+    );
   });
 });
 
@@ -385,10 +451,14 @@ describe('Phase 3 pin: the Adhkar front page is home', () => {
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD must not appear in the orphan list');
   });
 
-  test('Phase 3 closes two more orphans (12 → 10, then 8 after Phase 5, 6 after Phase 6)', () => {
+  test('Phase 3 closes two more orphans (12 → 10, then 8 after Phase 5, 6 after Phase 6, 2 documented internals after Phase 7)', () => {
     assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY is still orphaned');
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD is still orphaned');
-    assert.equal(ORPHANS.length, 6, `expected the 6 Phases-7 orphans, got ${ORPHANS.length}`);
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'EDITOR'],
+      `Phase 7 leaves only the 2 documented internals doorless, got ${ORPHANS.length}`
+    );
   });
 });
 
@@ -428,8 +498,12 @@ describe('Phase 4 pin: one Prayer door, three routes alive', () => {
     }
   });
 
-  test('the merge adds no orphan: 6 remain for Phase 7 (8 until Phase 6)', () => {
-    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
+  test('the merge adds no orphan: only the 2 documented internals remain doorless after Phase 7', () => {
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'EDITOR'],
+      `expected only the 2 documented internals, got ${ORPHANS.length}`
+    );
   });
 });
 
@@ -475,11 +549,15 @@ describe('Phase 5 pin: one Practise section, four routes alive', () => {
     }
   });
 
-  test('the section closes two orphans: 6 remain for Phase 7 (8 until Phase 6)', () => {
+  test('the section closes two orphans: only the 2 documented internals remain doorless after Phase 7', () => {
     assert.ok(!ORPHANS.includes('QUIZ'), 'QUIZ is still orphaned');
     assert.ok(!ORPHANS.includes('MUTASHABIHAT'), 'MUTASHABIHAT is still orphaned');
     assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
-    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'EDITOR'],
+      `Phase 7 leaves only the 2 documented internals doorless, got ${ORPHANS.length}`
+    );
   });
 });
 
@@ -571,27 +649,103 @@ describe('Phase 6 pin: one You section, eight routes alive', () => {
     assert.equal(en['title.checklist'], en['you.myAdhkar']);
   });
 
-  test('the section closes two orphans: 6 remain for Phase 7', () => {
+  test('the section closes two orphans: only the 2 documented internals remain doorless after Phase 7', () => {
     assert.ok(!ORPHANS.includes('JOURNAL'), 'JOURNAL is still orphaned');
     assert.ok(!ORPHANS.includes('CERTIFICATE'), 'CERTIFICATE is still orphaned');
     assert.deepEqual(
       [...ORPHANS].sort(),
-      ['AMBIENT', 'AUDIO', 'COLLECTION', 'COLLECTIONS', 'EDITOR', 'FOCUS'],
-      'only the Phase 7 list may remain doorless'
+      ['AMBIENT', 'EDITOR'],
+      'only the 2 documented internals (AMBIENT, EDITOR) may remain doorless'
     );
   });
 });
 
-describe('Phase 0 trap: every route reachable within 2 taps of a door', () => {
-  test('FAIL (Phase 0): orphan routes with no nav door', () => {
+describe('Phase 7 pin: the orphans, one by one — four doors, two documented internals', () => {
+  test('FOCUS is Adhkar depth: HOME door in 2 taps via the card Open-focus (no interstitial)', () => {
+    const m = ROUTE_DOOR_MAP.FOCUS;
+    assert.ok(m.door, 'FOCUS lost its door');
+    assert.equal(m.door.group, 'nav.group.read');
+    assert.equal(m.door.labelKey, 'nav.home');
+    assert.equal(m.taps, 2, 'door → category tile → card Open-focus');
+    assert.equal(m.door.via, 'adhkar-browser');
+    assert.ok(!ORPHANS.includes('FOCUS'), 'FOCUS must not appear in the orphan list');
+  });
+
+  test('COLLECTIONS rides the home panel in 1 tap; COLLECTION follows in 2', () => {
+    const cols = ROUTE_DOOR_MAP.COLLECTIONS;
+    assert.ok(cols.door, 'COLLECTIONS lost its door');
+    assert.equal(cols.door.group, 'nav.group.read');
+    assert.equal(cols.door.labelKey, 'nav.home');
+    assert.equal(cols.taps, 1, 'home collections panel → collections');
+    assert.equal(cols.door.via, 'home-collections-panel');
+    assert.ok(!ORPHANS.includes('COLLECTIONS'), 'COLLECTIONS must not appear in the orphan list');
+    const col = ROUTE_DOOR_MAP.COLLECTION;
+    assert.ok(col.door, 'COLLECTION lost its door');
+    assert.equal(col.door.group, 'nav.group.read');
+    assert.equal(col.door.labelKey, 'nav.home');
+    assert.equal(col.taps, 2, 'home → collections → collection tile');
+    assert.equal(col.door.via, 'home-collections-panel');
+    assert.ok(!ORPHANS.includes('COLLECTION'), 'COLLECTION must not appear in the orphan list');
+  });
+
+  test('#/audio is Qur’an listening: MUSHAF door in 2 taps via the List/Word/Audio switch', () => {
+    const m = ROUTE_DOOR_MAP.AUDIO;
+    assert.ok(m.door, '#/audio lost its door — listening must not orphan the route');
+    assert.equal(m.door.group, 'nav.group.read');
+    assert.equal(m.door.labelKey, 'nav.quran');
+    assert.equal(m.taps, 2, 'door → in-chrome List/Word/Audio switch');
+    assert.equal(m.door.via, 'quran-mode-switch');
+    assert.ok(!ORPHANS.includes('AUDIO'), '#/audio must not appear in the orphan list');
+  });
+
+  test('switch labels reuse the bilingual nav entries (naming rule §2.6)', () => {
+    for (const key of ['quran.modeList', 'quran.modeWord', 'nav.audio']) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+
+  test('EDITOR and AMBIENT stay doorless ON PURPOSE — documented internals, not findings', () => {
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'EDITOR'],
+      'only the 2 documented internals may remain doorless'
+    );
+    for (const key of ['EDITOR', 'AMBIENT']) {
+      assert.ok(INTERNAL_ONLY.has(key), `${key} has no internal-only decision`);
+      assert.ok(
+        INTERNAL_JUSTIFICATIONS[key] &&
+          !INTERNAL_JUSTIFICATIONS[key].includes('a door, or a documented'),
+        `${key} still carries the Phase 0 placeholder instead of the Phase 7 decision`
+      );
+    }
+  });
+
+  test('zero unjustified orphans: every doorless route is justified', () => {
+    assert.deepEqual(
+      [...UNJUSTIFIED_ORPHANS].sort(),
+      [],
+      `Phase 7 finding: routes with no door AND no justification: ${UNJUSTIFIED_ORPHANS.join(', ')}`
+    );
+  });
+});
+
+describe('Phase 0 trap: every route reachable within 2 taps of a door (GREEN after Phase 7)', () => {
+  test('GREEN (Phase 7): zero unjustified orphans — four doors, two documented internals', () => {
     const detail = ORPHANS.map(
       (k) =>
-        `${k} (internal-candidate: ${INTERNAL_JUSTIFICATIONS[k] || 'NO justification recorded — a finding per Phase 7'})`
+        `${k} (internal-only: ${INTERNAL_JUSTIFICATIONS[k] || 'NO justification recorded — a finding per Phase 7'})`
     );
     assert.deepEqual(
-      ORPHANS,
+      UNJUSTIFIED_ORPHANS,
       [],
-      `orphan routes reachable only by URL/search/palette — give each a door (Phases 1–6) or a documented internal-only decision (Phase 7):\n  ${detail.join('\n  ')}`
+      `orphan routes reachable only by URL/search/palette with no door AND no justification — give each a door or a documented internal-only decision (Phase 7):\n  ${detail.join('\n  ')}`
+    );
+    // The only doorless routes left are the two documented internals.
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'EDITOR'],
+      'doorless beyond the documented internals'
     );
   });
 
@@ -601,7 +755,7 @@ describe('Phase 0 trap: every route reachable within 2 taps of a door', () => {
       Object.keys(VIEWS).length,
       'map drifted from VIEWS — a route was added without updating the map'
     );
-    const unjustified = ORPHANS.filter((k) => !INTERNAL_JUSTIFICATIONS[k]);
+    const unjustified = UNJUSTIFIED_ORPHANS;
     assert.deepEqual(
       unjustified,
       [],

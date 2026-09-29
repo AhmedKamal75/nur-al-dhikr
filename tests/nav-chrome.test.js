@@ -6,9 +6,11 @@ import {
   prayerModeSwitchHTML,
   practiseModeSwitchHTML,
   youModeSwitchHTML,
+  INTERNAL_ONLY_ROUTES,
 } from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
 import { initialState } from '../js/core/state/initial.js';
+import { renderAudio } from '../js/views/audioManager.js';
 import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
 
@@ -363,5 +365,120 @@ describe('Phase 6 chrome: one You section', () => {
     for (const key of ['nav.garden', 'nav.checklist', 'checklist.title', 'garden.title']) {
       assert.ok(!(key in en) && !(key in ar), `${key} still names a screen`);
     }
+  });
+});
+
+/**
+ * REORG Phase 7 locks: the orphans, one by one. FOCUS, COLLECTIONS and
+ * COLLECTION resolve to the HOME (Adhkar) door; AUDIO resolves to the
+ * MUSHAF (Qur'an) door via the extended List/Word/Audio switch; EDITOR
+ * and AMBIENT stay doorless ON PURPOSE as documented internals
+ * (js/ui/shell.js INTERNAL_ONLY_ROUTES). Arrangement only — no route,
+ * view, handler or data change; renderer static budget stays 19/19; the
+ * switches reuse navigate only; every segment keeps its 44px target; no
+ * gamification copy; bilingual from the first commit.
+ */
+describe('Phase 7 chrome: Adhkar depths, Qur’an listening, two documented internals', () => {
+  test('no new chrome entries: the rail still exposes exactly the 12 Phase 6 doors', () => {
+    const html = renderNav(stateFor(VIEWS.HOME));
+    for (const view of [
+      VIEWS.FOCUS,
+      VIEWS.COLLECTIONS,
+      VIEWS.COLLECTION,
+      VIEWS.AUDIO,
+      VIEWS.EDITOR,
+      VIEWS.AMBIENT,
+    ]) {
+      const hits = html.split(`data-view="${view}"`).length - 1;
+      assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
+    }
+  });
+
+  test('active states: Adhkar depths light HOME, listening lights the Qur’an door', () => {
+    const distinct = (html) => [...new Set(activeViews(html))].sort();
+    for (const view of [VIEWS.FOCUS, VIEWS.COLLECTIONS, VIEWS.COLLECTION]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.HOME],
+        `a deep link into #/${view} lights the Adhkar door, not a second entry`
+      );
+    }
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.AUDIO))),
+      [VIEWS.MUSHAF],
+      'a deep link into #/audio lights the Qur’an door, not a second entry'
+    );
+    // Exactly one distinct door per route — LIBRARY never aliases here.
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.CATEGORY))), [VIEWS.HOME]);
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.LIBRARY))), [VIEWS.LIBRARY]);
+  });
+
+  test('Qur’an switch carries list, word and listening with no new actions', () => {
+    for (const lang of ['en', 'ar']) {
+      const html = quranModeSwitchHTML(VIEWS.AUDIO, lang);
+      for (const view of [VIEWS.QURAN, VIEWS.ROOTS, VIEWS.AUDIO]) {
+        assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
+      }
+      assert.ok(
+        html.includes('data-action="navigate"') && !html.includes('data-action="quran-'),
+        `switch reuses navigate only (${lang})`
+      );
+      for (const word of ['streak', 'rank', 'leader', 'shame', 'score', 'best']) {
+        assert.ok(
+          !html.toLowerCase().includes(word),
+          `switch carries no gamification copy (${word}, ${lang})`
+        );
+      }
+    }
+    for (const view of [VIEWS.QURAN, VIEWS.ROOTS, VIEWS.AUDIO]) {
+      const html = quranModeSwitchHTML(view, 'en');
+      const activeCount = html.split('segmented__btn--active').length - 1;
+      assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
+      assert.ok(html.includes(`data-view="${view}"`), `the #/${view} segment is the active one`);
+    }
+    assert.ok(
+      !quranModeSwitchHTML(VIEWS.MUSHAF, 'en').includes('segmented__btn--active'),
+      'the book is the door — no segment claims it'
+    );
+  });
+
+  test('the audio view renders the Qur’an switch with the listening segment active', () => {
+    const html = renderAudio({ ...initialState(), activeView: VIEWS.AUDIO });
+    assert.ok(html.includes('quran-mode-switch'), 'audio view carries the Qur’an switch');
+    assert.ok(html.includes(`data-view="${VIEWS.AUDIO}"`), 'switch links listening');
+    assert.ok(html.includes(`data-view="${VIEWS.QURAN}"`), 'switch links list reading');
+    assert.ok(html.includes('segmented__btn--active'), 'the listening segment claims #/audio');
+  });
+
+  test('Phase 7 chrome copy is bilingual: reused labels only, no new key', () => {
+    for (const key of ['nav.home', 'nav.quran', 'quran.modeList', 'quran.modeWord', 'nav.audio']) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+
+  test('EDITOR and AMBIENT are documented internals with no chrome claim', () => {
+    assert.deepEqual(
+      [...Object.keys(INTERNAL_ONLY_ROUTES)].sort(),
+      ['AMBIENT', 'EDITOR'],
+      'exactly the two kiosk/tool routes are internal-only'
+    );
+    for (const key of ['EDITOR', 'AMBIENT']) {
+      assert.ok(
+        INTERNAL_ONLY_ROUTES[key] && INTERNAL_ONLY_ROUTES[key].length > 40,
+        `${key} carries no recorded justification`
+      );
+    }
+    const distinct = (html) => [...new Set(activeViews(html))].sort();
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.EDITOR))),
+      [],
+      'no door lights for #/editor'
+    );
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.AMBIENT))),
+      [],
+      'no door lights for #/ambient'
+    );
   });
 });
