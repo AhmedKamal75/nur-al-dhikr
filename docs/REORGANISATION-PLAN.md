@@ -180,6 +180,76 @@ kept at all it is a _visual treatment_ inside "My adhkar", not a nav noun.
 
 ---
 
+## 2a. Status, verified against the tree (v5.17.40)
+
+Phases 0–7 landed across v5.17.33–39. **Measured, not claimed:**
+
+| Plan metric                   | Target                    | Actual                                      | Verdict        |
+| ----------------------------- | ------------------------- | ------------------------------------------- | -------------- |
+| Routes with no nav door       | 0, or documented internal | **2** (EDITOR, AMBIENT — justified)         | ✅ met         |
+| Taps to the adhkar grid       | 0 (it is home)            | **0** — 560 tiles on `#/`                   | ✅ met         |
+| Taps to the Tajweed course    | ≤ 2                       | **1** — segment inside the Practise door    | ✅ met         |
+| Taps to tasbih                | ≤ 2                       | **1**                                       | ✅ met         |
+| **Top-level nav entries**     | **6**                     | **12**                                      | ❌ **NOT met** |
+| **Labels needing a tutorial** | **0**                     | **`nav.library` survives**                  | ❌ **NOT met** |
+| Search label matches its tap  | yes                       | yes — now navigates to the real search view | ✅ met         |
+
+**What landed and is genuinely good:** the orphan problem is real and closed —
+14 doorless routes of 34, including the Tajweed flagship and the roots index,
+down to 2 documented internals. The adhkar grid became home with moods as a
+filter row on the same screen. The Mushaf/Reader coin flip is gone; both routes
+survive. `tests/nav-reachability.test.js` (35/35) builds a route→door map that
+resolves doors through section pages, so the fix is trapped.
+
+### What was NOT delivered: the chrome is still a filing cabinet
+
+**The plan's headline ask was 6 task-shaped doors. There are 12, in the same
+four taxonomic groups (`read` / `worship` / `tools` / `mine`) that the plan
+called the problem.** The section layer was built as in-page segmented switches
+(`seg(...)`) — Qur'an gets List | Word | Audio, Prayer gets Times | Qibla |
+Calendar, Practise gets Tasbih | Course | Quiz — and that is good work. But the
+_top level_ still reads:
+
+```
+read      Home · Library · Qur'an · Word roots · Ahadeeth · Search
+worship   Prayer · Ramadan
+tools     Tasbih · Zakat · Offline library
+mine      You
+```
+
+Three specific failures against the plan:
+
+1. **`nav.library` is still a top-level door.** The plan named this word
+   specifically: _"an indirection called 'Library', a word a user has no reason
+   to use."_ The grid is now home, so Library is a **second** door to the same
+   tiles — the redundancy the reorganisation was meant to remove.
+2. **`Practise` never became a door.** Prayer got a section page _and_ a
+   top-level entry; Tasbih got a section page _and_ a top-level entry. The
+   Tajweed course is a segment _under Tasbih_, so the flagship sits two
+   metaphors below a door named after a counting tool.
+3. **`Ramadan`, `Zakat` and `Offline library` were never re-homed** — they are
+   peers in the old taxonomy, not members of any of the six planned sections.
+
+**So: the reachability and the home page were fixed, and the top-level chrome
+was not.** A first-time user still faces twelve labelled icons, four of which
+are grouped by a taxonomy only the app understands.
+
+**The next step is therefore a small, surgical Phase 8, not a redo:**
+
+- **Retire `nav.library`** — the grid is home; a second door to it is noise.
+  `#/library` stays a real route behind the grid's own "all" affordance.
+- **Promote `Practise` to a real door** carrying Tasbih, the Tajweed course,
+  the quiz and mutashabihat as segments; drop the bare `nav.tasbih` peer.
+- **Re-home `Ramadan` and `Zakat`** into Prayer and You respectively; keep
+  `Offline library` in You, next to settings, where storage belongs.
+- Target **6**: Home · Qur'an · Ahadeeth · Prayer · Practise · You.
+
+Everything in §3 still holds and was re-verified: 34 routes, no route loss,
+deep links resolve (`tests/mushaf-route-resolution.test.js` 14/14), the
+language switch is on every chrome surface (8/8 e2e), zero tap targets under
+24px in both default and Elder Mode, and both gates green
+(2368 unit / 78 e2e).
+
 ## 3. What must NOT change
 
 The reorganisation is an IA change. These are off-limits:
