@@ -2,6 +2,41 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.38 — Garden, tracker, counts, keepsakes and settings in one You section (reorganisation Phase 6)
+
+- **The You section** (`docs/REORGANISATION-PLAN.md` Phase 6, §2.5):
+  Garden + Checklist + Statistics + Favorites + Journal + Certificate +
+  Settings + About collapse behind a single `nav.you` door — the daily
+  tracker, which carries today, streaks and the section entry. The other
+  seven stay real routes with working deep links — active state resolves
+  from the route, so a deep link into any of them still lights the You
+  door. Chrome entries 17 → 12.
+- **The section switch inside** (plan §2.5): a minimal wrapping segmented
+  switch in all eight views links My adhkar, Growth, Favorites, Journal,
+  Statistics, Certificate, Settings and About-and-sources with existing
+  `navigate` actions only — no new view, no new handler, no new static
+  view import (renderer budget stays 19/19), no interstitial in any flow.
+  The segments reuse bilingual labels that already name their
+  destinations; only the renamed entries ship as new bilingual keys
+  (`nav.you`, `you.myAdhkar`, `you.growth`, `you.about`), so each label
+  promises exactly its tap. Eight modes wrap onto two rows; every button
+  keeps its 44px target.
+- **The naming pass** (plan §2.6): `Garden` and `Checklist` retire as nav
+  nouns — the plant visual survives only as a treatment inside the Growth
+  view, never as chrome. The §1.6 Search/palette mismatch closes by
+  repointing: nav Search navigates to the real search view (the palette
+  stays one tap away on the top-bar button, which honestly names itself).
+  Document titles track the renames.
+- **Arrangement only.** No content, corpus, data or route change; language
+  switch, Elder/a11y and no-gamification targets are untouched — the rail
+  is a door, never a scoreboard.
+- **Measured, not asserted:** the reachability trap maps the seven members
+  to the You door in 2 taps each (door → switch); orphans close two more
+  (8 → 6: `FOCUS`, `COLLECTIONS`, `COLLECTION`, `AUDIO`, `EDITOR`,
+  `AMBIENT`) for Phase 7, and the SEARCH mismatch test goes green. Pinned
+  by the Phase 6 blocks in `tests/nav-chrome.test.js` and
+  `tests/nav-reachability.test.js`.
+
 ## v5.17.37 — Tasbih, course, quiz and look-alikes in one Practise section (reorganisation Phase 5)
 
 - **The Practise section** (`docs/REORGANISATION-PLAN.md` Phase 5, §2.4):

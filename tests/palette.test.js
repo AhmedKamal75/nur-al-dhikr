@@ -307,8 +307,8 @@ describe('journal text filter', () => {
   });
 });
 
-describe('nav search item opens the palette', () => {
-  test('rail and drawer search entries carry open-palette; siblings navigate', async () => {
+describe('nav search item navigates to search (Phase 6 closes the §1.6 trap)', () => {
+  test('rail and drawer search entries navigate; the palette keeps its own top-bar launcher', async () => {
     const { renderNav } = await import('../js/ui/shell.js');
     const state = { settings: { language: 'en', navCollapsed: false }, activeView: 'home' };
     const html = renderNav(state);
@@ -317,7 +317,15 @@ describe('nav search item opens the palette', () => {
     const parts = html.split('data-view="search"');
     assert.equal(parts.length - 1, 2, 'rail + drawer search entries');
     for (const tag of [parts[0].split('<a').at(-1), parts[1].split('<a').at(-1)]) {
-      assert.ok(tag.includes('data-action="open-palette"'), `opens palette: ${tag.slice(-80)}`);
+      // (REORG Phase 6) the §1.6 mismatch closed by repointing: the entry
+      // used to say Search and open the palette. It now dispatches a real
+      // navigation (rail: navigate, drawer: nav-drawer-go), so the label
+      // promises exactly the tap.
+      assert.ok(
+        tag.includes('data-action="navigate"') || tag.includes('data-action="nav-drawer-go"'),
+        `navigates to search: ${tag.slice(-80)}`
+      );
+      assert.ok(!tag.includes('open-palette'), `no palette override: ${tag.slice(-80)}`);
     }
     assert.ok(html.includes('data-view="home"') && html.includes('data-action="navigate"'));
   });

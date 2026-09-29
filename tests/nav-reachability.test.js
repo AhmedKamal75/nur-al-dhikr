@@ -107,8 +107,10 @@ const INTERNAL_JUSTIFICATIONS = {
   EDITOR: 'plan §1.5: a tool invoked from content surfaces — internal-only candidate (Phase 7).',
   MUTASHABIHAT:
     'plan §2.1/§2.4/Phase 5: Practise-section member — door via the TASBIH entry + in-chrome switch.',
-  JOURNAL: 'plan §2.1/Phase 6: You-section member.',
-  CERTIFICATE: 'plan §2.2/Phase 6: re-homed out of the daily grid; You-section member.',
+  JOURNAL:
+    'plan §2.1/Phase 6: You-section member — door via the You (checklist) entry + in-chrome switch.',
+  CERTIFICATE:
+    'plan §2.2/Phase 6: re-homed out of the daily grid; You-section member — door via the You (checklist) entry + in-chrome switch.',
   AMBIENT: 'plan Phase 7 list: nightstand display — a door, or documented internal-only.',
   TAJWEED_COURSE:
     'plan §1.5 FLAGSHIP (needsDoor): the entire G-2 course, reachable only by URL/search — Phase 1 gives it a real door (temporary read-group home); Phase 5 re-homes it into the Practise section via the TASBIH entry + in-chrome switch; NOT internal.',
@@ -174,6 +176,25 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
         via = 'adhkar-browser';
       }
     }
+    // (REORG Phase 6) one You section: #/garden, #/statistics,
+    // #/favorites, #/journal, #/certificate, #/settings and #/about stay
+    // real routes and resolve to the You door (the checklist entry) in 2
+    // taps (door → in-chrome My adhkar/Growth/… switch). taps: 2 keeps
+    // the ≤2-taps assertion meaningful instead of laundering the section
+    // into fake orphans. CHECKLIST keeps its own door as the entry.
+    if (
+      !door &&
+      ['GARDEN', 'STATISTICS', 'FAVORITES', 'JOURNAL', 'CERTIFICATE', 'SETTINGS', 'ABOUT'].includes(
+        routeKey
+      )
+    ) {
+      const you = NAV_ENTRIES.find((e) => e.viewKey === 'CHECKLIST');
+      if (you) {
+        door = you;
+        taps = 2;
+        via = 'you-mode-switch';
+      }
+    }
     const kidsDoor = !door && KIDS_DOOR_KEYS.has(routeKey);
     return [
       routeKey,
@@ -213,7 +234,9 @@ function buildCensus() {
     labelKey: e.labelKey,
     en: en[e.labelKey] ?? null,
     ar: ar[e.labelKey] ?? null,
-    action: e.action || (e.viewKey === 'SEARCH' ? 'navigate*' : 'navigate'),
+    // (REORG Phase 6) the SEARCH action override is gone — the entry
+    // navigates to the real search view, so the label promises the tap.
+    action: e.action || 'navigate',
     primaryBehaviour: e.action || 'navigate',
   }));
 }
@@ -239,7 +262,7 @@ describe('Phase 0 census: nav entries, labels, destinations', () => {
       [
         'NAV CENSUS',
         `groups (${NAV_GROUP_LABELS.length}): ${NAV_GROUP_LABELS.join(', ')}`,
-        `entries (${census.length}; plan §1.1 says "17" but 6+5+5+3 = 19 — the plan text undercounts; the tree had 19 at Phase 0, then −1 Phase 2 reader, −2 Phase 4 qibla/calendar, −1 Phase 5 course = 17)`,
+        `entries (${census.length}; plan §1.1 says "17" but 6+5+5+3 = 19 — the plan text undercounts; the tree had 19 at Phase 0, then +2 Phase 1 (course + roots), −1 Phase 2 reader, −2 Phase 4 qibla/calendar, −1 Phase 5 course = 17, then −5 Phase 6 (garden/statistics/favorites/settings/about re-homed into the one You door; checklist stays as the door) = 12)`,
         `routes (VIEWS): ${Object.keys(VIEWS).length}`,
         ...census.map(
           (c) =>
@@ -270,7 +293,7 @@ describe('Phase 0 census: nav entries, labels, destinations', () => {
     assert.deepEqual(missing, [], `nav labels missing in en or ar: ${missing.join(', ')}`);
   });
 
-  test('FAIL (Phase 0 §1.6): label-vs-destination mismatches — SEARCH says Search, opens the command palette', () => {
+  test('CLOSED (Phase 6 §1.6): no label-vs-destination mismatches — SEARCH now navigates to the search view', () => {
     const mismatches = findLabelDestinationMismatches();
     assert.deepEqual(
       mismatches,
@@ -298,10 +321,10 @@ describe('Phase 1 pin: the flagships have a front door', () => {
     assert.equal(door.labelKey, 'nav.roots');
   });
 
-  test('Phase 1 closed exactly the two flagship orphans (14 → 12, then 10 after Phase 3, then 8 after Phase 5)', () => {
+  test('Phase 1 closed exactly the two flagship orphans (14 → 12, then 10 after Phase 3, 8 after Phase 5, 6 after Phase 6)', () => {
     assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
     assert.ok(!ORPHANS.includes('ROOTS'), 'ROOTS is still orphaned');
-    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
+    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -336,8 +359,8 @@ describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
     }
   });
 
-  test('the merge adds no orphan: 8 remain for Phases 6–7 (10 until Phase 5)', () => {
-    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
+  test('the merge adds no orphan: 6 remain for Phase 7 (8 until Phase 6)', () => {
+    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -362,10 +385,10 @@ describe('Phase 3 pin: the Adhkar front page is home', () => {
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD must not appear in the orphan list');
   });
 
-  test('Phase 3 closes two more orphans (12 → 10, then 8 after Phase 5)', () => {
+  test('Phase 3 closes two more orphans (12 → 10, then 8 after Phase 5, 6 after Phase 6)', () => {
     assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY is still orphaned');
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD is still orphaned');
-    assert.equal(ORPHANS.length, 8, `expected the 8 Phases-6–7 orphans, got ${ORPHANS.length}`);
+    assert.equal(ORPHANS.length, 6, `expected the 6 Phases-7 orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -405,8 +428,8 @@ describe('Phase 4 pin: one Prayer door, three routes alive', () => {
     }
   });
 
-  test('the merge adds no orphan: 8 remain for Phases 6–7 (10 until Phase 5)', () => {
-    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
+  test('the merge adds no orphan: 6 remain for Phase 7 (8 until Phase 6)', () => {
+    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 
@@ -452,11 +475,110 @@ describe('Phase 5 pin: one Practise section, four routes alive', () => {
     }
   });
 
-  test('the section closes two orphans: 8 remain for Phases 6–7', () => {
+  test('the section closes two orphans: 6 remain for Phase 7 (8 until Phase 6)', () => {
     assert.ok(!ORPHANS.includes('QUIZ'), 'QUIZ is still orphaned');
     assert.ok(!ORPHANS.includes('MUTASHABIHAT'), 'MUTASHABIHAT is still orphaned');
     assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
-    assert.equal(ORPHANS.length, 8, `expected the 8 remaining orphans, got ${ORPHANS.length}`);
+    assert.equal(ORPHANS.length, 6, `expected the 6 remaining orphans, got ${ORPHANS.length}`);
+  });
+});
+
+describe('Phase 6 pin: one You section, eight routes alive', () => {
+  test('single You door; garden/statistics/favorites/settings/about no longer compete for a chrome slot', () => {
+    const youDoors = NAV_ENTRIES.filter((e) =>
+      ['CHECKLIST', 'GARDEN', 'STATISTICS', 'FAVORITES', 'SETTINGS', 'ABOUT'].includes(e.viewKey)
+    );
+    assert.deepEqual(
+      youDoors.map((e) => e.viewKey),
+      ['CHECKLIST'],
+      'the section members must not compete for a chrome slot'
+    );
+    assert.equal(
+      NAV_ENTRIES.find((e) => e.viewKey === 'CHECKLIST').labelKey,
+      'nav.you',
+      'the one door keeps the nav.you label, not the retired Checklist noun'
+    );
+    assert.equal(
+      NAV_ENTRIES.find((e) => e.viewKey === 'CHECKLIST').group,
+      'nav.group.mine',
+      'the You door lives in the Mine group'
+    );
+  });
+
+  test('#/garden, #/statistics, #/favorites, #/journal, #/certificate, #/settings and #/about stay real routes resolving to the You door in 2 taps', () => {
+    for (const key of [
+      'GARDEN',
+      'STATISTICS',
+      'FAVORITES',
+      'JOURNAL',
+      'CERTIFICATE',
+      'SETTINGS',
+      'ABOUT',
+    ]) {
+      const m = ROUTE_DOOR_MAP[key];
+      assert.ok(m.door, `#/${m.route} lost its door — the section must not orphan the route`);
+      assert.equal(m.door.group, 'nav.group.mine');
+      assert.equal(m.door.labelKey, 'nav.you');
+      assert.equal(m.taps, 2, 'door → in-chrome You switch');
+      assert.equal(m.door.via, 'you-mode-switch');
+      assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
+    }
+  });
+
+  test('the checklist route keeps its own door in 1 tap (it IS the section entry)', () => {
+    const m = ROUTE_DOOR_MAP.CHECKLIST;
+    assert.ok(m.door, '#/checklist lost its door');
+    assert.equal(m.door.group, 'nav.group.mine');
+    assert.equal(m.door.labelKey, 'nav.you');
+    assert.equal(m.taps, 1);
+  });
+
+  test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
+    for (const key of [
+      'nav.you',
+      'you.myAdhkar',
+      'you.growth',
+      'nav.favorites',
+      'journal.title',
+      'nav.statistics',
+      'certificate.title',
+      'nav.settings',
+      'you.about',
+    ]) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+
+  test('the naming pass retires the metaphor/tutorial nouns from every dictionary', () => {
+    for (const key of [
+      'nav.garden',
+      'nav.checklist',
+      'checklist.title',
+      'garden.title',
+      'title.garden',
+      'title.checklist',
+    ]) {
+      // title.* are per-route document titles, not nav nouns: they track
+      // the rename (Growth / My adhkar) instead of retiring.
+      if (key.startsWith('title.')) {
+        assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      } else {
+        assert.ok(!(key in en) && !(key in ar), `${key} still names a screen`);
+      }
+    }
+    assert.equal(en['title.garden'], en['you.growth']);
+    assert.equal(en['title.checklist'], en['you.myAdhkar']);
+  });
+
+  test('the section closes two orphans: 6 remain for Phase 7', () => {
+    assert.ok(!ORPHANS.includes('JOURNAL'), 'JOURNAL is still orphaned');
+    assert.ok(!ORPHANS.includes('CERTIFICATE'), 'CERTIFICATE is still orphaned');
+    assert.deepEqual(
+      [...ORPHANS].sort(),
+      ['AMBIENT', 'AUDIO', 'COLLECTION', 'COLLECTIONS', 'EDITOR', 'FOCUS'],
+      'only the Phase 7 list may remain doorless'
+    );
   });
 });
 

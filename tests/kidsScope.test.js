@@ -93,7 +93,12 @@ describe('kids scope: nav chrome', () => {
     assert.ok(!scoped.includes(VIEWS.SETTINGS));
     assert.ok(!scoped.includes(VIEWS.HOME));
     const full = viewsOf(renderNav(initialState()));
-    assert.ok(full.includes(VIEWS.SETTINGS), 'mode off keeps every destination');
+    // (REORG Phase 6) Settings left the chrome for the You section — the
+    // door (checklist view) is what mode-off chrome offers; Settings
+    // itself stays reachable via that door's in-chrome switch (pinned in
+    // tests/nav-reachability.test.js), so the scope boundary is unchanged.
+    assert.ok(full.includes(VIEWS.CHECKLIST), 'mode off keeps the You door');
+    assert.ok(!full.includes(VIEWS.SETTINGS), 'Settings rides the You switch, not the chrome');
     assert.ok(full.includes(VIEWS.HOME));
   });
 });

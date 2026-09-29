@@ -5,6 +5,7 @@ import {
   quranModeSwitchHTML,
   prayerModeSwitchHTML,
   practiseModeSwitchHTML,
+  youModeSwitchHTML,
 } from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
 import { initialState } from '../js/core/state/initial.js';
@@ -241,6 +242,126 @@ describe('Phase 5 chrome: one Practise section', () => {
     ]) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+});
+
+/**
+ * REORG Phase 6 locks: one You section, and the naming pass. Garden,
+ * Checklist, Statistics, Favorites, Journal, Certificate, Settings and
+ * About collapse behind a single nav.you door (the checklist view — it
+ * carries today, streaks and the section entry); the other seven stay
+ * real routes and light the You door, while the in-chrome switch carries
+ * the hop. 'Garden' and 'Checklist' retire as nav nouns (§2.6 rule 1:
+ * a label is a thing, not a metaphor); the plant visual survives only
+ * as a treatment inside the Growth view. The §1.6 Search/palette
+ * mismatch closes by repointing: nav Search navigates to the search
+ * view. Arrangement only — every handler, every data file and the
+ * renderer static budget (19/19) are untouched, and the rail carries no
+ * ranking or shame copy (adab).
+ */
+describe('Phase 6 chrome: one You section', () => {
+  test('rail and drawer expose the You door; section members do not compete', () => {
+    const html = renderNav(stateFor(VIEWS.HOME));
+    assert.ok(html.includes(`data-view="${VIEWS.CHECKLIST}"`), 'You door present');
+    for (const view of [
+      VIEWS.GARDEN,
+      VIEWS.STATISTICS,
+      VIEWS.FAVORITES,
+      VIEWS.SETTINGS,
+      VIEWS.ABOUT,
+    ]) {
+      const hits = html.split(`data-view="${view}"`).length - 1;
+      assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
+    }
+    const youHits = html.split(`data-view="${VIEWS.CHECKLIST}"`).length - 1;
+    assert.ok(youHits >= 2, `You keeps its door in rail and drawer (saw ${youHits})`);
+    // The door promises the person, not the old tracker noun.
+    assert.ok(
+      html.includes(`<span class="nav__label">${en['nav.you']}</span>`),
+      'door carries the nav.you label'
+    );
+  });
+
+  test('active states merged: section deep links light the You door', () => {
+    // Each destination lights in rail + drawer (+ mobile bar where listed),
+    // so dedupe: exactly one DISTINCT active destination per view.
+    const distinct = (html) => [...new Set(activeViews(html))].sort();
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.CHECKLIST))), [VIEWS.CHECKLIST]);
+    for (const view of [
+      VIEWS.GARDEN,
+      VIEWS.STATISTICS,
+      VIEWS.FAVORITES,
+      VIEWS.JOURNAL,
+      VIEWS.CERTIFICATE,
+      VIEWS.SETTINGS,
+      VIEWS.ABOUT,
+    ]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.CHECKLIST],
+        `a deep link into #/${view} lights the You door, not a second entry`
+      );
+    }
+  });
+
+  test('in-chrome switch links all eight section modes with no new actions', () => {
+    const members = [
+      VIEWS.CHECKLIST,
+      VIEWS.GARDEN,
+      VIEWS.FAVORITES,
+      VIEWS.JOURNAL,
+      VIEWS.STATISTICS,
+      VIEWS.CERTIFICATE,
+      VIEWS.SETTINGS,
+      VIEWS.ABOUT,
+    ];
+    for (const lang of ['en', 'ar']) {
+      const html = youModeSwitchHTML(VIEWS.CHECKLIST, lang);
+      for (const view of members) {
+        assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
+      }
+      assert.ok(
+        html.includes('data-action="navigate"') && !html.includes('data-action="you-'),
+        `switch reuses navigate only (${lang})`
+      );
+      // Adab: the rail is a door, never a scoreboard — no ranking/shame copy.
+      for (const word of ['streak', 'rank', 'leader', 'shame', 'score', 'best']) {
+        assert.ok(
+          !html.toLowerCase().includes(word),
+          `switch carries no gamification copy (${word}, ${lang})`
+        );
+      }
+    }
+    // The active segment follows the route — exactly one claims each view.
+    for (const view of members) {
+      const html = youModeSwitchHTML(view, 'en');
+      const activeCount = html.split('segmented__btn--active').length - 1;
+      assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
+      assert.ok(html.includes(`data-view="${view}"`), `the #/${view} segment is the active one`);
+    }
+  });
+
+  test('You chrome copy is bilingual: door, renamed entries, reused labels', () => {
+    for (const key of [
+      'nav.you',
+      'you.myAdhkar',
+      'you.growth',
+      'nav.favorites',
+      'journal.title',
+      'nav.statistics',
+      'certificate.title',
+      'nav.settings',
+      'you.about',
+    ]) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+
+  test('naming pass: no retired metaphor/tutorial noun survives in either dictionary', () => {
+    for (const key of ['nav.garden', 'nav.checklist', 'checklist.title', 'garden.title']) {
+      assert.ok(!(key in en) && !(key in ar), `${key} still names a screen`);
     }
   });
 });

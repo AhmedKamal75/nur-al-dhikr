@@ -30,6 +30,7 @@ import { splitEditions } from '../domain/wordStudy.js';
 import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
 import { installRowHTML } from './installRow.js';
+import { youModeSwitchHTML } from '../ui/shell.js';
 
 /**
  * (v5.2.48) Accordion memory, persisted. The open section used to live in
@@ -345,6 +346,7 @@ export function renderSettings(state, flags = {}) {
         data-bind="settings-search" autocomplete="off" />
     </div>
     <h1 class="view__title">${t('settings.title', lang)}</h1>
+    ${youModeSwitchHTML(state.activeView, lang)}
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>

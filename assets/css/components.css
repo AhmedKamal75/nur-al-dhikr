@@ -769,6 +769,17 @@
     var(--shadow-sm),
     inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
+/* (REORG Phase 6) the You section holds eight inner modes — one flex row
+ * of eight would squeeze every label below readability on a phone. The
+ * wrap modifier lets the segments flow onto two rows; each button keeps
+ * the base min-height (var(--touch-target)), so Elder/a11y targets are
+ * untouched. No new token, no physical properties. */
+.segmented--wrap {
+  flex-wrap: wrap;
+}
+.segmented--wrap .segmented__btn {
+  flex: 1 1 22%;
+}
 
 /* Search bar */
 .search-bar {

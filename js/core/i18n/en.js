@@ -19,9 +19,14 @@ export const en = {
   'nav.favorites': 'Favorites',
   'nav.collections': 'Collections',
   'nav.statistics': 'Statistics',
-  'nav.garden': 'Garden',
+  // (REORG Phase 6) nav.garden retired with the Garden nav noun — a label
+  // is a thing, not a metaphor (§2.6 rule 1). The route keeps its view
+  // keys (garden.*); the plant visual survives only as a treatment
+  // inside the Growth view, never as chrome.
   'nav.back': 'Back',
-  'garden.title': 'Your Garden',
+  // (REORG Phase 6) garden.title retired with the Garden nav noun — the
+  // Growth view's heading is you.growth now. Body copy (garden.*) keeps
+  // describing the visual treatment it sits beside.
   'garden.invite': 'See these recitations grow in your Garden',
   'garden.subtitle': 'Every dhikr you count is a seed. Watch what a lifetime of remembrance grows.',
   'garden.seedsPlanted': 'seeds planted',
@@ -49,7 +54,17 @@ export const en = {
   // book, one door; the reader route keeps its view keys (quran.*).
   'nav.hadith': 'Ahadeeth',
   'nav.qibla': 'Qibla',
-  'nav.checklist': 'Checklist',
+  // (REORG Phase 6) nav.checklist retired with the Checklist nav noun —
+  // a label that needs a tutorial needs a different name (§2.6 rule 3).
+  // The You section's door (the checklist route) is labelled nav.you;
+  // the tracker's heading is you.myAdhkar.
+  // (REORG Phase 6) one You section (plan §2.1 door 6, §2.5): the door
+  // plus the renamed inner entries. Bilingual with ar.js from the first
+  // commit (naming rule §2.6.4); each label promises exactly its tap.
+  'nav.you': 'You',
+  'you.myAdhkar': 'My adhkar',
+  'you.growth': 'Growth',
+  'you.about': 'About and sources',
   'quran.title': "The Holy Qur'an",
   'quran.subtitle': "The complete Qur'an — Arabic text with the Sahih International translation.",
   'quran.searchPlaceholder': 'Search by surah name or number\u2026',
@@ -438,7 +453,9 @@ export const en = {
   'title.tasbih': 'Tasbih Counter',
   'title.prayer': 'Prayer',
   'title.qibla': 'Qibla',
-  'title.checklist': 'Checklist',
+  // (REORG Phase 6) document title tracks the renamed heading — the tab
+  // still promises the screen it names.
+  'title.checklist': 'My adhkar',
   'title.quiz': '99 Names Quiz',
   'title.calendar': 'Calendar',
   'title.ramadan': 'Ramadan',
@@ -969,7 +986,8 @@ export const en = {
   'qibla.disclaimer':
     "A phone's compass sensor can be thrown off by metal, magnets, or nearby electronics. The direction and distance above are calculated from your location and are always accurate; treat the live needle as a helpful guide, not the final word.",
 
-  'checklist.title': 'Daily Checklist',
+  // (REORG Phase 6) checklist.title retired — the tracker's heading is
+  // you.myAdhkar now (home link, view h1 and switch segment share it).
   'checklist.subtitle':
     'A private, on-this-device reminder for your prayers and adhkar — not a substitute for praying on time.',
   'checklist.today': 'today',
@@ -2069,11 +2087,11 @@ export const en = {
   'viewMenu.qibla': 'Qibla options',
   'viewMenu.ramadan': 'Ramadan options',
   'viewMenu.calendar': 'Calendar options',
-  'viewMenu.checklist': 'Checklist options',
+  'viewMenu.checklist': 'My adhkar options',
   'viewMenu.tasbih': 'Tasbih options',
   'viewMenu.zakat': 'Zakat options',
   'viewMenu.statistics': 'Statistics options',
-  'viewMenu.garden': 'Garden options',
+  'viewMenu.garden': 'Growth options',
   'viewMenu.editor': 'Editor options',
   'viewMenu.group.customize': 'Customize',
   'viewMenu.group.tools': 'Tools',
@@ -2127,7 +2145,8 @@ export const en = {
   'title.mutashabihat': 'Look-alike Verses',
   'title.journal': 'Journal',
   'title.certificate': 'Certificate',
-  'title.garden': 'Garden',
+  // (REORG Phase 6) document title tracks the renamed heading.
+  'title.garden': 'Growth',
   'title.kids': 'Kids Quran',
   'ambient.exit': 'Exit nightstand display',
   'ambient.title': 'Nightstand display',

@@ -18,9 +18,10 @@ export const ar = {
   'nav.favorites': 'المفضلة',
   'nav.collections': 'المجموعات',
   'nav.statistics': 'الإحصائيات',
-  'nav.garden': 'الحديقة',
+  // (REORG Phase 6) nav.garden retired with the Garden nav noun — see en.js.
   'nav.back': 'رجوع',
-  'garden.title': 'حديقتك',
+  // (REORG Phase 6) garden.title retired — the Growth view's heading is
+  // you.growth now. See en.js.
   'garden.invite': 'شاهد أذكارك تنمو في حديقتك',
   'garden.subtitle': 'كل ذكر تعدّه بذرة. انظر ماذا يُنبت العمر كله من الذكر.',
   'garden.seedsPlanted': 'بذرة مغروسة',
@@ -47,7 +48,14 @@ export const ar = {
   // (REORG Phase 2) nav.reader retired with the second book door — see en.js.
   'nav.hadith': 'الأحاديث',
   'nav.qibla': 'القبلة',
-  'nav.checklist': 'القائمة اليومية',
+  // (REORG Phase 6) nav.checklist retired with the Checklist nav noun —
+  // see en.js.
+  // (REORG Phase 6) one You section — bilingual with en.js from the
+  // first commit.
+  'nav.you': 'حسابي',
+  'you.myAdhkar': 'أذكاري',
+  'you.growth': 'النمو',
+  'you.about': 'حول التطبيق والمصادر',
   'quran.title': 'القرآن الكريم',
   'quran.subtitle': 'القرآن الكريم كاملاً، النص العربي مع ترجمة صحيح إنترناشونال الإنجليزية.',
   'quran.searchPlaceholder': 'ابحث باسم السورة أو رقمها…',
@@ -421,7 +429,8 @@ export const ar = {
   'title.tasbih': 'السبحة',
   'title.prayer': 'الصلاة',
   'title.qibla': 'القبلة',
-  'title.checklist': 'قائمة المتابعة',
+  // (REORG Phase 6) document title tracks the renamed heading — see en.js.
+  'title.checklist': 'أذكاري',
   'title.quiz': 'اختبار الأسماء الحسنى',
   'title.calendar': 'التقويم',
   'title.ramadan': 'رمضان',
@@ -935,7 +944,7 @@ export const ar = {
   'qibla.disclaimer':
     'قد يتأثر مستشعر البوصلة في الهاتف بالمعادن أو المغناطيس أو الأجهزة الإلكترونية القريبة. الاتجاه والمسافة أعلاه محسوبان من موقعك ودقيقان دائمًا؛ اعتبر المؤشر الحي مجرد مرشد مساعد لا القول الفصل.',
 
-  'checklist.title': 'القائمة اليومية',
+  // (REORG Phase 6) checklist.title retired — see en.js.
   'checklist.subtitle':
     'تذكير خاص يبقى على جهازك لصلواتك وأذكارك — وليس بديلاً عن أداء الصلاة في وقتها.',
   'checklist.today': 'اليوم',
@@ -2006,11 +2015,11 @@ export const ar = {
   'viewMenu.qibla': 'خيارات القبلة',
   'viewMenu.ramadan': 'خيارات رمضان',
   'viewMenu.calendar': 'خيارات التقويم',
-  'viewMenu.checklist': 'خيارات القائمة اليومية',
+  'viewMenu.checklist': 'خيارات أذكاري',
   'viewMenu.tasbih': 'خيارات التسبيح',
   'viewMenu.zakat': 'خيارات الزكاة',
   'viewMenu.statistics': 'خيارات الإحصاءات',
-  'viewMenu.garden': 'خيارات الحديقة',
+  'viewMenu.garden': 'خيارات النمو',
   'viewMenu.editor': 'خيارات المحرر',
   'viewMenu.group.customize': 'تخصيص',
   'viewMenu.group.tools': 'أدوات',
@@ -2064,7 +2073,8 @@ export const ar = {
   'title.mutashabihat': 'المتشابهات',
   'title.journal': 'اليوميات',
   'title.certificate': 'الشهادة',
-  'title.garden': 'الحديقة',
+  // (REORG Phase 6) document title tracks the renamed heading — see en.js.
+  'title.garden': 'النمو',
   'title.kids': 'قرآن الأطفال',
   'ambient.exit': 'خروج من شاشة المنضدة',
   'ambient.title': 'شاشة المنضدة',

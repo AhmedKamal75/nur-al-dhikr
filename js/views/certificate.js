@@ -14,6 +14,7 @@ import { toHijri } from '../domain/calendar.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
+import { youModeSwitchHTML } from '../ui/shell.js';
 
 const HIJRI_MONTHS_EN = [
   'Muharram',
@@ -64,6 +65,7 @@ export function renderCertificate(state) {
     return `
     <section class="view view--certificate">
       <h1 class="view__title">${t('certificate.title', lang)}</h1>
+      ${youModeSwitchHTML(state.activeView, lang)}
       ${emptyStateHTML({
         iconName: 'award',
         title: t('certificate.nothingYet', lang),
@@ -83,6 +85,7 @@ export function renderCertificate(state) {
   return `
   <section class="view view--certificate">
     <h1 class="view__title">${t('certificate.title', lang)}</h1>
+    ${youModeSwitchHTML(state.activeView, lang)}
     <div class="cert" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">
       <header class="cert__head">
         <span class="cert__mark">${icon('quran', { size: 30 })}</span>

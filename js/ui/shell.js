@@ -54,10 +54,13 @@ const NAV_GROUPS = [
       // lights the tasbih door for it; the in-chrome switch
       // (practiseModeSwitchHTML) carries the hop. Config only: no route,
       // no view import, no deep-link change.
-      // The nav search item opens the command palette (quick launcher);
-      // the full Search view stays one pick away (destination row +
-      // history rows inside the palette).
-      { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search', action: 'open-palette' },
+      // (REORG Phase 6) the §1.6 trap is CLOSED by repointing, not
+      // relabelling: this entry used to say Search and open the command
+      // palette (action: 'open-palette'). It now navigates to the real
+      // search view, so the label promises exactly the tap. The palette
+      // stays one tap away on the top-bar button (palette.open), which
+      // honestly names itself as a quick launcher.
+      { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' },
     ],
   },
   {
@@ -72,27 +75,45 @@ const NAV_GROUPS = [
       // them; the in-chrome switch (prayerModeSwitchHTML) carries the
       // hop — the calendar is a tab, not a peer door. Arrangement only:
       // wake-ups, storage eviction and every handler are untouched.
+      // (REORG Phase 6) the daily-tracker entry stood here, in the
+      // worship group, as 'Checklist'. It is re-homed into the You
+      // section as that section's door (label nav.you): #/checklist
+      // stays a real route (deep links keep working) and isActive below
+      // lights the You door for every section member; the in-chrome
+      // switch (youModeSwitchHTML) carries the hop. Config only: no
+      // route, no view import, no deep-link change.
       { view: VIEWS.PRAYER, icon: 'prayer-rug', label: 'nav.prayer' },
       { view: VIEWS.RAMADAN, icon: 'rayah', label: 'nav.ramadan' },
-      { view: VIEWS.CHECKLIST, icon: 'target', label: 'nav.checklist' },
     ],
   },
   {
     label: 'nav.group.tools',
     items: [
       { view: VIEWS.TASBIH, icon: 'tasbih', label: 'nav.tasbih' },
-      { view: VIEWS.GARDEN, icon: 'sprout', label: 'nav.garden' },
+      // (REORG Phase 6) the growth-visual and counts entries stood here,
+      // in the tools group, as 'Garden' and 'Statistics'. Both are
+      // re-homed into the You section: #/garden and #/statistics stay
+      // real routes (deep links keep working) and isActive below lights
+      // the You door for them; the in-chrome switch (youModeSwitchHTML)
+      // carries the hop. Config only: no route, no view import, no
+      // deep-link change.
       { view: VIEWS.ZAKAT, icon: 'calculator', label: 'nav.zakat' },
-      { view: VIEWS.STATISTICS, icon: 'stats', label: 'nav.statistics' },
       { view: VIEWS.OFFLINE, icon: 'download', label: 'nav.offline' },
     ],
   },
   {
     label: 'nav.group.mine',
     items: [
-      { view: VIEWS.FAVORITES, icon: 'heart', label: 'nav.favorites' },
-      { view: VIEWS.SETTINGS, icon: 'settings', label: 'nav.settings' },
-      { view: VIEWS.ABOUT, icon: 'info', label: 'nav.about' },
+      // (REORG Phase 6) one You section (plan §2.1 door 6, §2.5): Garden
+      // + Checklist + Statistics + Favorites + Journal + Certificate +
+      // Settings + About collapse behind a single door. The daily
+      // tracker is the door's view (it carries today, streaks and the
+      // section entry); the other seven stay real routes resolving to
+      // this door in 2 taps via youModeSwitchHTML. 'Garden' and
+      // 'Checklist' retire as nav nouns (§2.6 rule 1: a label is a
+      // thing, not a metaphor); the plant visual survives only as a
+      // treatment inside the Growth view, never as chrome.
+      { view: VIEWS.CHECKLIST, icon: 'target', label: 'nav.you' },
     ],
   },
 ];
@@ -112,6 +133,23 @@ function isActive(active, view) {
   if (
     view === VIEWS.TASBIH &&
     [VIEWS.QUIZ, VIEWS.TAJWEED_COURSE, VIEWS.MUTASHABIHAT].includes(active)
+  )
+    return true;
+  // (REORG Phase 6) one You section: deep links into #/garden,
+  // #/statistics, #/favorites, #/journal, #/certificate, #/settings and
+  // #/about light the You door (the checklist view). CHECKLIST keeps its
+  // own door as the section entry.
+  if (
+    view === VIEWS.CHECKLIST &&
+    [
+      VIEWS.GARDEN,
+      VIEWS.STATISTICS,
+      VIEWS.FAVORITES,
+      VIEWS.JOURNAL,
+      VIEWS.CERTIFICATE,
+      VIEWS.SETTINGS,
+      VIEWS.ABOUT,
+    ].includes(active)
   )
     return true;
   if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
@@ -185,6 +223,40 @@ export function practiseModeSwitchHTML(activeView, lang) {
       ${seg(VIEWS.TAJWEED_COURSE, 'nav.tajweedCourse', activeView === VIEWS.TAJWEED_COURSE)}
       ${seg(VIEWS.QUIZ, 'quiz.title', activeView === VIEWS.QUIZ)}
       ${seg(VIEWS.MUTASHABIHAT, 'mutashabihat.title', activeView === VIEWS.MUTASHABIHAT)}
+    </div>`;
+}
+
+/**
+ * (REORG Phase 6) the in-chrome You switch — the §2.5 section door:
+ * My adhkar (#/checklist — today, streaks, the section entry) vs Growth
+ * (#/garden — the lifetime visual, metaphor retired to a treatment) vs
+ * Favorites vs Journal vs Statistics vs Certificate vs Settings vs About
+ * and sources. Rendered inside all eight views — never a nav entry,
+ * never a new view. Existing `navigate` actions only (no handler or
+ * allowlist change). Eight modes cannot share one flex row on a phone
+ * without squeezing labels below readability, so this is the one switch
+ * that takes the `.segmented--wrap` modifier (two flowing rows; every
+ * button keeps min-height: var(--touch-target), so Elder/a11y is
+ * untouched). The segments reuse bilingual labels that already name
+ * their destinations (the kept nav entries plus the views' own titles);
+ * only the section entries that had to be renamed ship as new bilingual
+ * keys (nav.you, you.myAdhkar, you.growth, you.about), so each label
+ * promises exactly its tap. No interstitial: every segment is a direct
+ * link to its route. The rail carries no ranking or shame copy (adab).
+ */
+export function youModeSwitchHTML(activeView, lang) {
+  const seg = (view, labelKey, selected) => `
+    <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  return `
+    <div class="segmented segmented--wrap you-mode-switch" role="group" aria-label="${t('nav.you', lang)}">
+      ${seg(VIEWS.CHECKLIST, 'you.myAdhkar', activeView === VIEWS.CHECKLIST)}
+      ${seg(VIEWS.GARDEN, 'you.growth', activeView === VIEWS.GARDEN)}
+      ${seg(VIEWS.FAVORITES, 'nav.favorites', activeView === VIEWS.FAVORITES)}
+      ${seg(VIEWS.JOURNAL, 'journal.title', activeView === VIEWS.JOURNAL)}
+      ${seg(VIEWS.STATISTICS, 'nav.statistics', activeView === VIEWS.STATISTICS)}
+      ${seg(VIEWS.CERTIFICATE, 'certificate.title', activeView === VIEWS.CERTIFICATE)}
+      ${seg(VIEWS.SETTINGS, 'nav.settings', activeView === VIEWS.SETTINGS)}
+      ${seg(VIEWS.ABOUT, 'you.about', activeView === VIEWS.ABOUT)}
     </div>`;
 }
 

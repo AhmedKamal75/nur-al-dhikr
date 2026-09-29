@@ -593,7 +593,7 @@ export function renderHome(state) {
     <a class="panel panel--checklist-summary-link" href="${buildHash(VIEWS.CHECKLIST)}" data-action="navigate" data-view="${VIEWS.CHECKLIST}">
       <span class="panel--checklist-summary-link__icon">${icon('target', { size: 22 })}</span>
       <span class="panel--checklist-summary-link__text">
-        <span class="panel--checklist-summary-link__label">${t('checklist.title', lang)}</span>
+        <span class="panel--checklist-summary-link__label">${t('you.myAdhkar', lang)}</span>
         <span class="panel--checklist-summary-link__sub" dir="ltr">${completedCount(selectors.todayChecklist(state))} / ${CHECKLIST_ITEMS.length} ${t('checklist.today', lang)}</span>
       </span>
       ${goIcon(lang, 18)}

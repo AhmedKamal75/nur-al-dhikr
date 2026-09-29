@@ -20,6 +20,7 @@ import { gardenState, gardenAchievements, GARDEN_STAGES } from '../domain/garden
 import { VIEWS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
+import { youModeSwitchHTML } from '../ui/shell.js';
 
 const numFor = (lang, n) => (lang === 'ar' ? toEasternArabicNumerals(n) : String(n));
 
@@ -201,9 +202,10 @@ export function renderGarden(state) {
   return `
   <section class="view view--garden">
     <div class="view-header view-header--row">
-      <h1 class="view__title">${t('garden.title', lang)}</h1>
+      <h1 class="view__title">${t('you.growth', lang)}</h1>
       ${viewMenuButton('garden', lang, { labelKey: 'viewMenu.garden' })}
     </div>
+    ${youModeSwitchHTML(state.activeView, lang)}
     <p class="view__subtitle">${t('garden.subtitle', lang)}</p>
 
     <div class="garden-hero panel garden-hero--living">
