@@ -86,6 +86,20 @@ what you were told, say so instead of proceeding.
    the route→door map, counts from the corpus, labels from i18n — so the tree
    cannot drift from itself. A static pin that cannot be derived must name, in
    a comment and in its test, the source it mirrors.
+7. **Be flexible before blocking.** (Owner ruling, 2026-09-29.) A blocked item
+   is a routing problem, not a stopping problem:
+   - Human-gated content gets an explicit AI-assistance tag — `review` state in
+     data plus an on-screen badge — so machine preparation is visible and
+     sign-off is a defined step, never a vague "later".
+   - Licensed needs get an opensource-alternative search first. A
+     freely-licensed, attributable source ships; only what has none stays
+     blocked, with the search recorded in the ledger.
+   - Geometric problems generalize to relational ones. A layout that must hold
+     at any viewport implies interactions that must hold across every surface
+     pairing (drawer/bar/sheet/palette, offline/online, audio focus, deep
+     links). Fix the dimension you were shown, then the adjacent one.
+   "Blocked" without a tag, an alternative search, or the generalized check is
+   an incomplete report.
 
 ## 2. The version-and-snapshot ritual
 
