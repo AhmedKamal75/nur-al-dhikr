@@ -14,7 +14,7 @@ import {
 } from '../hadithData.js';
 import { getItemEntry, itemClipboardText } from '../shared.js';
 import { normalizeHifzGrade } from '../../domain/hifz.js';
-import { yieldFullSurahPlayer } from '../audioEngine.js';
+import { claimSpeaker } from '../audioEngine.js';
 import { asTranslationEdition, TRANSLATION_EDITIONS, VIEWS } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
 import { go, replaceGo } from '../../core/router.js';
@@ -589,21 +589,19 @@ export const clickHandlers = {
   'toggle-speech': (ds) => {
     const entry = getItemEntry(ds.itemId);
     if (!entry) return;
-    // (v5.17.30) one voice: a playing recitation clip yields to synthesis
-    // (and vice versa below) — narration over recitation is unintelligible.
-    stopDhikrAudio();
-    if (store.getState().dhikrAudioItemId !== null) {
-      store.dispatch(actions.setDhikrAudioItem(null));
-    }
+    // (v5.17.30, generalised v5.17.43) one voice: a playing recitation clip
+    // yields to synthesis — narration over recitation is unintelligible. This
+    // handled clips and the full-surah track; a live verse session or an
+    // adhan kept playing underneath the narration.
+    claimSpeaker('speech');
     if (speech.isSpeakingItem(ds.itemId)) {
       speech.stop();
       store.dispatch(actions.setSpeakingItem(null));
       closeModal();
       return;
     }
-    // (v5.2.67) one voice: narration over a playing surah is unintelligible
-    // overlap — the track yields (paused, docked) instead.
-    yieldFullSurahPlayer();
+    // (v5.2.67) one voice: the track yields, paused and docked, not
+    // overlapping. The arbiter above already did this plus everything else.
     store.dispatch(actions.setSpeakingItem(ds.itemId));
     speech.speakItem(entry.item, {
       onEnd: () => {
@@ -630,11 +628,10 @@ export const clickHandlers = {
       store.dispatch(actions.setDhikrAudioItem(null));
       return;
     }
-    // One voice: recitation stops synthesis, and the full-surah track
-    // yields (paused, docked) rather than overlapping it.
-    speech.stop();
-    store.dispatch(actions.setSpeakingItem(null));
-    yieldFullSurahPlayer();
+    // One voice: a recitation clip displaces everything else. v5.17.43 — this
+    // stopped TTS and the full-surah track only, so a verse session or an
+    // adhan played straight under the clip.
+    claimSpeaker('adhkar');
     store.dispatch(actions.setDhikrAudioItem(ds.itemId));
     const lang = store.getState().settings.language;
     const retry = () => {

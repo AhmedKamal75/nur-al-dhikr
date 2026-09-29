@@ -280,6 +280,15 @@ describe('lock-screen transport state', () => {
 
 describe('wiring + strings', () => {
   test('every overlap fix calls the yield at its site', () => {
+    // v5.17.43: this used to require a literal `yieldFullSurahPlayer()` at
+    // each overlap site. The one-voice fix replaced those private stop lists
+    // with `claimSpeaker(voice)`, which is strictly more correct — it also
+    // silences TTS and a dhikr clip, which the old call did not — but it
+    // broke a test that was pinning the shape rather than the behaviour.
+    //
+    // What still matters is that every site that starts or stops a voice
+    // ARBITRATES. Assert that, and the test survives the next refactor of the
+    // arbiter itself.
     const audio = readProject('js/app/handlers/audio.js');
     const items = readProject('js/app/handlers/items.js');
     const worship = readProject('js/app/handlers/worship.js');
@@ -288,9 +297,14 @@ describe('wiring + strings', () => {
       assert.ok(i > -1, `${marker} exists`);
       return i;
     };
-    assert.ok(audio.indexOf('yieldFullSurahPlayer()', at(audio, "'playlist-play'")) > -1);
-    assert.ok(items.indexOf('yieldFullSurahPlayer()', at(items, "'toggle-speech'")) > -1);
-    assert.ok(worship.indexOf('yieldFullSurahPlayer()', at(worship, "'prayer-test-sound'")) > -1);
+    const arbitrates = (src, marker) =>
+      assert.ok(
+        /claimSpeaker\(/.test(src.slice(at(src, marker), at(src, marker) + 2200)),
+        `${marker} must arbitrate the speaker, not hand-roll a partial stop list`
+      );
+    arbitrates(audio, "'playlist-play'");
+    arbitrates(items, "'toggle-speech'");
+    arbitrates(worship, "'prayer-test-sound'");
     const del = at(audio, "'audio-remove-custom'");
     assert.ok(audio.indexOf('player.stop()', del) > -1, 'deleted voice stops sounding');
     const rep = at(audio, "'player-repeat'");

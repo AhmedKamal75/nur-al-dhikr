@@ -5,12 +5,7 @@
  */
 
 import { rt } from '../../app/rt.js';
-import {
-  downloadOne,
-  startAudioPlay,
-  toggleAudioMute,
-  yieldFullSurahPlayer,
-} from '../audioEngine.js';
+import { downloadOne, startAudioPlay, toggleAudioMute, claimSpeaker } from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
 import { MUSHAF_META_URL, QURAN_META_URL, VIEWS } from '../../core/config.js';
 import { QURAN_RECITER_IDS } from '../../core/config/quran.js';
@@ -493,9 +488,10 @@ export const clickHandlers = {
         return;
       }
       const r = surahPlayback.resolveQueueItem(pl.items, idx, state.quran.meta.surahs);
-      // (v5.2.67) one voice: a playing full-surah track yields (paused,
-      // docked) instead of sounding under the verse queue.
-      yieldFullSurahPlayer();
+      // (v5.2.67, generalised v5.17.43) one voice: the full-surah track
+      // yields paused and docked rather than sounding under the queue. This
+      // handled the player only — a dhikr clip or TTS played under it.
+      claimSpeaker('verse');
       surahPlayback.start({
         surah: r.surah,
         from: r.from,

@@ -27,7 +27,7 @@ import {
   shouldReofferInstall,
 } from '../../domain/install.js';
 import { liveUA } from '../../views/installRow.js';
-import { yieldFullSurahPlayer } from '../audioEngine.js';
+import { claimSpeaker } from '../audioEngine.js';
 import {
   previewAlert,
   refreshCustomAdhanFlags,
@@ -462,9 +462,11 @@ export const clickHandlers = {
     // v3.8: previews EXACTLY what a real prayer alert would do right now
     // (adhan source chain or the chosen tone), Fajr-flavored to show the
     // Fajr variant when one exists.
-    // (v5.2.67) one voice: the preview takes the speaker over a playing
-    // surah instead of layering on top of it.
-    yieldFullSurahPlayer();
+    // (v5.2.67, generalised v5.17.43) one voice: the preview takes the
+    // speaker rather than layering on top. This was the SIXTH start path that
+    // only knew about the full-surah player — a recitation, a dhikr clip or
+    // narration played straight under the preview.
+    claimSpeaker('adhan');
     previewAlert(store.getState().settings.prayer, { fajr: true });
   },
 

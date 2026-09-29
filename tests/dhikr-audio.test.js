@@ -494,15 +494,23 @@ describe('handler wiring: play-dhikr-audio resolves and fails with Retry', () =>
       /isPlayingDhikrAudioItem\(ds\.itemId\)\) \{\s*stopDhikrAudio\(\)/,
       'tapping while playing must stop (toggle)'
     );
+    // v5.17.43: this pinned a literal `yieldFullSurahPlayer()` inside the
+    // play-dhikr-audio handler. The one-voice fix replaced that private stop
+    // list with `claimSpeaker('adhkar')`, which is strictly stronger — it
+    // also silences TTS and a live verse session, which the old call did
+    // not. The behaviour is now held by tests/one-voice.test.js.
     assert.match(
       src,
-      /'play-dhikr-audio'[\s\S]{0,1200}yieldFullSurahPlayer\(\)/,
-      'recitation must yield the full-surah track'
+      /'play-dhikr-audio'[\s\S]{0,1400}claimSpeaker\('adhkar'\)/,
+      'a dhikr clip must arbitrate the speaker'
     );
     assert.match(
       src,
-      /'toggle-speech': \(ds\) => \{[\s\S]{0,600}stopDhikrAudio\(\)/,
-      'synthesis must stop a playing clip (one voice)'
+      // v5.17.43: was a literal `stopDhikrAudio()` inside toggle-speech, which
+      // silenced the clip but not a live verse session or an adhan. The
+      // arbiter covers all of them; this now asserts the arbitration.
+      /'toggle-speech': \(ds\) => \{[\s\S]{0,600}claimSpeaker\('speech'\)/,
+      'synthesis must arbitrate the speaker (one voice)'
     );
   });
 

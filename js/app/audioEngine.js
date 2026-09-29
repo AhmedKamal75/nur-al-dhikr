@@ -22,6 +22,7 @@ import * as audioStore from '../services/audioStore.js';
 import * as mediaSession from '../services/mediaSession.js';
 import * as player from '../services/player.js';
 import { stopDhikrAudio } from '../services/dhikrAudio.js';
+import * as speech from '../services/speech.js';
 import { onAdhanStart } from '../services/prayerSound.js';
 import * as recitation from '../services/recitation.js';
 import * as surahPlayback from '../services/surahPlayback.js';
@@ -41,6 +42,83 @@ export function yieldFullSurahPlayer() {
   player.pause();
   store.dispatch(actions.setAudioPlayer({ playing: false }));
   return true;
+}
+
+/* ------------------------------------------------------------------ */
+/* ONE VOICE, FOR REAL                                                 */
+/* ------------------------------------------------------------------ */
+
+/**
+ * The five voices that can hold the speaker, and which engine owns each:
+ *
+ *   'player'  — a full moshaf FILE (js/services/player.js), docked
+ *   'verse'   — verse-by-verse AND a single-ayah tap. These share the
+ *               recitation element, so they are ONE voice, not two.
+ *   'speech'  — TTS narration (js/services/speech.js)
+ *   'adhkar'  — a per-dhikr clip (js/services/dhikrAudio.js), single-shot
+ *   'adhan'   — a prayer alert (js/services/prayerSound.js)
+ *
+ * WHY THIS EXISTS, AND WHY IT IS ONE FUNCTION RATHER THAN SIX EDITS
+ *
+ * "One voice at a time" is a standing product decision. It was true for the
+ * two pairings anyone happened to look at and false for the rest: a TTS
+ * narration or a dhikr clip would talk straight over a recitation, a verse
+ * session or an adhan, because each start path only stopped the engines its
+ * author was already thinking about. That is a whole class of bug wearing
+ * one bug's clothes.
+ *
+ * The fix that does not come back is a single arbiter every start path calls.
+ * Adding `speech.stop()` to four call sites would fix today's symptom and
+ * leave the same trap for the sixth voice.
+ *
+ * The arbiter is deliberately generous about stopping and careful about how:
+ * a resumable voice is PAUSED and left docked (one tap resumes, position
+ * kept); a single-shot voice simply ends, with no auto-resume, because
+ * restarting someone's recitation unasked is worse than silence.
+ *
+ * @param {string} voice    the voice that is about to speak
+ * @param {object} [opts]
+ * @param {string[]} [opts.alsoKeep] voices this call is *not* displacing
+ * @returns {string[]} the voices it displaced
+ */
+export const VOICES = Object.freeze(['player', 'verse', 'speech', 'adhkar', 'adhan']);
+
+/** What happened to each displaced voice, for tests and for honest reporting. */
+export function claimSpeaker(voice, { alsoKeep = [] } = {}) {
+  const keep = new Set([voice, ...alsoKeep, voice]);
+  const displaced = [];
+
+  if (!keep.has('player') && yieldFullSurahPlayer()) displaced.push('player');
+
+  if (!keep.has('verse')) {
+    if (surahPlayback.isActive()) {
+      store.dispatch(actions.setSurahPlayback(surahPlayback.pause()));
+      displaced.push('verse');
+    }
+    if (recitation.currentlyPlayingKey()) {
+      recitation.stop();
+      if (!displaced.includes('verse')) displaced.push('verse');
+    }
+  }
+
+  if (!keep.has('adhkar') && store.getState().dhikrAudioItemId !== null) {
+    stopDhikrAudio();
+    store.dispatch(actions.setDhikrAudioItem(null));
+    displaced.push('adhkar');
+  }
+
+  if (!keep.has('speech') && store.getState().speakingItemId !== null) {
+    // v5.17.43: this is the gap that made narration talk over an adhan, and
+    // made a recitation talk over narration. `speech.isSpeaking()` is the
+    // ground truth; the store field is only cleared if it was set.
+    speech.stop();
+    if (store.getState().speakingItemId !== null) {
+      store.dispatch(actions.setSpeakingItem(null));
+    }
+    displaced.push('speech');
+  }
+
+  return displaced;
 }
 
 export async function startAudioPlay(moshafId, surah) {
@@ -64,15 +142,13 @@ export async function startAudioPlay(moshafId, surah) {
     store.dispatch(actions.setAudioPlayer({ moshafId: null, surah: null, playing: false }));
     return;
   }
-  // FIX (review A3): one voice at a time — starting a surah stops any
-  // verse-by-verse recitation in flight.
-  if (recitation.currentlyPlayingKey()) recitation.stop();
-  // (v4.2) …and the mirror case: surahPlayback drives its verses THROUGH
-  // the recitation element, so recitation.stop() alone killed the audio
-  // but left the session "active" — the player bar then docked a frozen
-  // verse console over the real full-surah playback (no pause/seek) until
-  // the user found "stop recite". One voice means BOTH consoles stop.
-  if (surahPlayback.isActive()) surahPlayback.stop();
+  // FIX (review A3): one voice at a time.
+  //   The original fix handled two of the five voices. surahPlayback drives
+  //   its verses THROUGH the recitation element, so stopping only recitation
+  //   killed the audio but left the session "active" — a frozen verse console
+  //   docked over the real playback until the user found "stop recite". That
+  //   is handled inside the arbiter, which stops both consoles.
+  claimSpeaker('player');
   // (v4.2) one batched re-render instead of two back-to-back full renders
   // (playlist auto-advance did this per track while parked on the Qur'ān
   // reader — two ~1MB view rebuilds per song change).
@@ -270,15 +346,9 @@ export function wirePlayer() {
   // single-shot with no resume contract, so it simply ends. No
   // auto-resume — one tap resumes, never a surprise.
   onAdhanStart(() => {
-    yieldFullSurahPlayer();
-    if (surahPlayback.isActive()) {
-      store.dispatch(actions.setSurahPlayback(surahPlayback.pause()));
-    }
-    recitation.stop();
-    stopDhikrAudio();
-    if (store.getState().dhikrAudioItemId !== null) {
-      store.dispatch(actions.setDhikrAudioItem(null));
-    }
+    // v5.17.43: was four of the five voices. Narration talked straight over
+    // the adhan. One call now, and the sixth voice cannot be forgotten either.
+    claimSpeaker('adhan');
   });
   player.onTrackEnded(() => {
     const state = store.getState();

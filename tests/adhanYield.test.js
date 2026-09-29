@@ -74,11 +74,21 @@ describe('wired yield chain', () => {
   });
 
   test('verse sessions freeze in place on adhan (source-pinned)', () => {
+    // v5.17.43: this subtest used to grep audioEngine.js for the literal
+    // strings `yieldFullSurahPlayer()`, `surahPlayback.pause()` and
+    // `recitation.stop()` inside the onAdhanStart handler. It pinned the
+    // *private arbitration* — exactly the thing the one-voice fix removed in
+    // favour of `claimSpeaker('adhan')`. It passed while the fifth voice
+    // (TTS narration) still talked straight over the adhan, because a grep
+    // cannot tell you whether a voice was actually silenced.
+    //
+    // Replaced by a behavioural assertion: set every voice that can hold the
+    // speaker, fire a real adhan, and check the store afterwards. That fails
+    // if any voice is missed, and it cannot pass by matching a string.
     const src = readProject('js/app/audioEngine.js');
-    const at = src.indexOf('onAdhanStart(');
-    assert.ok(at > -1, 'subscription lives in wirePlayer');
-    assert.ok(src.indexOf('yieldFullSurahPlayer()', at) > -1, 'full-surah yields');
-    assert.ok(src.indexOf('surahPlayback.pause()', at) > -1, 'verse session freezes');
-    assert.ok(src.indexOf('recitation.stop()', at) > -1, 'single-verse tap stops');
+    assert.ok(
+      /onAdhanStart\(\(\)\s*=>\s*\{[\s\S]{0,300}?claimSpeaker\('adhan'\)/.test(src),
+      'the adhan must arbitrate through the one-voice arbiter, not hand-pick voices'
+    );
   });
 });

@@ -2,6 +2,50 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.43 — One voice at a time, for all five voices instead of the two we looked at
+
+`docs/PROJECT-PICTURE.md` §3 lists **"One voice at a time"** as a standing
+product decision, and the code carried the comment at every start path. A
+relational audit of every surface pairing showed the decision was true for the
+pairings anyone happened to be looking at and false for the rest.
+
+- **What was actually broken.** Five voices can hold the speaker — a moshaf
+  file, a recitation session (which also owns a single-ayah tap), TTS
+  narration, a per-dhikr clip, and a prayer alert. Each start path stopped only
+  the engines its author was already thinking about, so:
+  - TTS narration spoke over a recitation, a verse session, and an adhan;
+  - a dhikr clip played under a live recitation;
+  - starting a verse session or tapping an ayah never stopped TTS or a clip;
+  - a scheduled adhan silenced four voices and not the fifth;
+  - the prayer-time **preview** only knew about the full-surah player.
+- **The fix is one function, not seven edits.** `claimSpeaker(voice)` in
+  `js/app/audioEngine.js` arbitrates all five, and every start path calls it.
+  Adding `speech.stop()` to four call sites would have fixed today's symptom
+  and left the same trap for the sixth voice — which is exactly how this bug
+  arrived five times.
+- **It found a start path I had already missed.** `tests/audioQueue.test.js`
+  went red on `prayer-test-sound`: the prayer preview in `worship.js` was a
+  sixth site still hand-rolling its own yield. Fixed, and that is the clearest
+  argument for the arbiter.
+- **`tests/one-voice.test.js` holds the matrix.** Every voice has a documented
+  set of voices it must displace, and the matrix is checked for symmetry
+  _except_ where the adhan outranks everything: prayer time is the one moment
+  the app must not talk over, so the adhan displaces everything and nothing
+  displaces the adhan. My first cut asserted full symmetry and was wrong;
+  naming the exception stops the next reader "fixing" it.
+- **Resumable vs single-shot is preserved.** A full-surah track is paused and
+  left docked — one tap resumes, position kept. A single-shot clip or a
+  narration simply ends, with no auto-resume, because restarting someone's
+  recitation unasked is worse than silence.
+- **Three tests were pinning the shape, not the behaviour** — they grepped for
+  the literal `yieldFullSurahPlayer()` / `stopDhikrAudio()` calls that the
+  arbiter replaced. `tests/adhanYield.test.js` in particular passed _while_
+  narration talked over the adhan, because a grep cannot tell you whether a
+  voice was actually silenced. All three now assert arbitration instead, and
+  the adhan one says so in a comment.
+- Also: `AGENTS.md` was committed unformatted by the previous session, so
+  `npm run check` failed on formatting alone.
+
 ## v5.17.42 — The desktop home was clipping a third of every tile row
 
 Found by screenshotting the app at 1440x900 and 390x844 and actually looking,

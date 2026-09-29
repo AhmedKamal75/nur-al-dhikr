@@ -98,8 +98,8 @@ what you were told, say so instead of proceeding.
      at any viewport implies interactions that must hold across every surface
      pairing (drawer/bar/sheet/palette, offline/online, audio focus, deep
      links). Fix the dimension you were shown, then the adjacent one.
-   "Blocked" without a tag, an alternative search, or the generalized check is
-   an incomplete report.
+     "Blocked" without a tag, an alternative search, or the generalized check is
+     an incomplete report.
 
 ## 2. The version-and-snapshot ritual
 

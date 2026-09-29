@@ -4,6 +4,7 @@
  * app/events.js merges them into the single delegation table.
  */
 
+import { claimSpeaker } from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
 
 import { MUSHAF_META_URL, QURAN_META_URL, QURAN_RECITERS } from '../../core/config.js';
@@ -49,12 +50,10 @@ export async function startVerseSurah(
       store.dispatch(actions.setMushafMeta(meta));
       state = store.getState();
     }
-    // One voice: the full-surah player yields to recitation.
-    const p = state.player;
-    if (p?.moshafId && p.playing) {
-      player.pause();
-      store.dispatch(actions.setAudioPlayer({ playing: false }));
-    }
+    // One voice: everything else yields to a recitation session. v5.17.43 —
+    // this handled the full-surah player only, so TTS and a dhikr clip kept
+    // talking over the verses.
+    claimSpeaker('verse');
     // (v5.0.0) an ayah RANGE (data-from / data-to) bounds the session:
     // "play 1–10" ends at 10; absent both = the whole surah (v4 behavior).
     // data-surah-to past the start surah becomes a cross-surah stopAt.

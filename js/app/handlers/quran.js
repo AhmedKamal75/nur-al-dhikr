@@ -1,3 +1,4 @@
+import { claimSpeaker } from '../audioEngine.js';
 import { rt } from '../../app/rt.js';
 import * as COURSE from '../../domain/tajweedCourse.js';
 import { fetchJSON } from '../net.js';
@@ -52,7 +53,6 @@ import {
 } from '../../services/mushaf.js';
 import { closeModal, getModalGeneration, isModalOpen, openModal } from '../../ui/modal.js';
 import { showToast } from '../../ui/toast.js';
-import * as player from '../../services/player.js';
 import * as recitation from '../../services/recitation.js';
 import * as surahPlayback from '../../services/surahPlayback.js';
 import { verseAudioCandidates } from '../../services/surahPlayback.js';
@@ -986,13 +986,10 @@ export const clickHandlers = {
       surahPlayback.stop();
       if (recitation.isPlaying(ds.key)) recitation.stop();
     } else {
-      // FIX (review A3): one voice at a time — starting a verse pauses the
-      // full-surah player (kept in the bar, resumable).
-      const p = store.getState().player;
-      if (p?.moshafId && p.playing) {
-        player.pause();
-        store.dispatch(actions.setAudioPlayer({ playing: false }));
-      }
+      // FIX (review A3): one voice at a time. v5.17.43 — the pause-the-player
+      // branch handled one of four other voices; TTS and a dhikr clip spoke
+      // over the tapped ayah.
+      claimSpeaker('verse');
       // (v5.2.61) offline-first single verses: the key carries surah:ayah,
       // so a stored Blob wins over the rendered CDN url (which stays the
       // fallback when nothing is stored).
