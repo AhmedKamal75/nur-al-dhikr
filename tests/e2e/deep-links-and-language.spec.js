@@ -78,7 +78,10 @@ test.describe('language switch', () => {
     for (const route of routes) {
       await page.goto(`./${route}`);
       await ready(page);
-      const toggles = page.locator('[data-action="quick-language-toggle"]');
+      // v5.17.44: a second, conditionally-shown copy lives in
+      // #immersive-chrome for the chrome-hiding surfaces. These assertions are
+      // about the normal topbar control, so scope to it explicitly.
+      const toggles = page.locator('#topbar [data-action="quick-language-toggle"]');
       await expect(toggles, `${route} has no language control`).toHaveCount(1, { timeout: 10000 });
     }
   });
@@ -89,12 +92,12 @@ test.describe('language switch', () => {
     const before = await page.evaluate(() => document.documentElement.getAttribute('lang'));
     expect(before).toBe('en');
 
-    await page.locator('[data-action="quick-language-toggle"]').click();
+    await page.locator('#topbar [data-action="quick-language-toggle"]').click();
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl', { timeout: 10000 });
     await expect(page.locator('html')).toHaveAttribute('lang', 'ar', { timeout: 10000 });
 
     // And back again, because a one-way switch is not a switch.
-    await page.locator('[data-action="quick-language-toggle"]').click();
+    await page.locator('#topbar [data-action="quick-language-toggle"]').click();
     await expect(page.locator('html')).toHaveAttribute('dir', 'ltr', { timeout: 10000 });
     await expect(page.locator('html')).toHaveAttribute('lang', 'en', { timeout: 10000 });
   });
@@ -105,7 +108,7 @@ test.describe('language switch', () => {
     // 0x0. Focus MODE now needs a focus TARGET; the picker keeps its chrome.
     await page.goto('./#/focus');
     await ready(page);
-    const sw = page.locator('[data-action="quick-language-toggle"]');
+    const sw = page.locator('#topbar [data-action="quick-language-toggle"]');
     await expect(sw).toBeVisible({ timeout: 10000 });
     const box = await sw.boundingBox();
     expect(box.width, 'the picker must not render a 0-width control').toBeGreaterThanOrEqual(44);
@@ -115,7 +118,7 @@ test.describe('language switch', () => {
   test('the button announces the language it switches TO', async ({ page }) => {
     await page.goto('./#/home');
     await ready(page);
-    const btn = page.locator('[data-action="quick-language-toggle"]');
+    const btn = page.locator('#topbar [data-action="quick-language-toggle"]');
     // While the app is English, the control is labelled for Arabic.
     await expect(btn).toHaveAttribute('lang', 'ar');
     await expect(btn).toHaveAttribute('hreflang', 'ar');

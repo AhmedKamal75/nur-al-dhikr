@@ -128,7 +128,15 @@ export const clickHandlers = {
   // carries lang/dir/hreflang so assistive tech announces the target language
   // rather than the one currently on screen.
   'quick-language-toggle': () => {
-    if (kidsScopeGuard(VIEWS.SETTINGS)) return;
+    // v5.17.44: the kids guard fired here and returned early, so in Kids Mode
+    // the switch was RENDERED, announced by assistive tech, and did nothing.
+    // A visible control that lies is worse than a missing one, and the kids
+    // scope guard exists to keep a child inside an allowlist of VIEWS — a
+    // language preference is not navigation, so it was never in scope.
+    //
+    // This is the general rule stated once: the guard governs WHERE YOU MAY
+    // GO, never WHAT YOU MAY CONFIGURE. Settings that are not a route change
+    // (language, theme, elder mode, text size) must not pass through it.
     const current = store.getState().settings.language === 'ar' ? 'ar' : 'en';
     store.dispatch(actions.updateSettings({ language: current === 'ar' ? 'en' : 'ar' }));
   },

@@ -715,3 +715,47 @@ body.is-mushaf-fullscreen.is-mushaf-manual .mushaf-page-wrap {
   gap: var(--space-2);
   width: min(320px, 80%);
 }
+
+/* ==========================================================================
+   The language switch on chrome-hiding surfaces
+   ==========================================================================
+
+   The rule, stated once: **a surface that hides the shell still owes the
+   reader the language switch.** Immersive focus, mushaf fullscreen and the
+   ambient nightstand each hide #topbar wholesale, and the switch went with it
+   — an Arabic-only reader who reached one of those modes could not get back.
+
+   Adding a mode later means adding its class to CHROME_HIDING_MODES and
+   nothing else. The list is the single source; the selector is derived from
+   it, so the rule cannot drift from the set of modes that hide chrome.
+   ========================================================================== */
+
+#immersive-chrome {
+  display: none;
+}
+
+/* One list, one derived selector — not three hand-written blocks that can
+   drift apart, which is how the focus-picker fix ended up a special case. */
+body.is-focus-mode #immersive-chrome,
+body.is-mushaf-fullscreen #immersive-chrome,
+body.is-reader-immersive #immersive-chrome,
+body.is-ambient #immersive-chrome {
+  display: block;
+  position: fixed;
+  /* Logical properties throughout, per the RTL rule. */
+  inset-block-start: calc(var(--space-2) + env(safe-area-inset-top, 0px));
+  inset-inline-end: calc(var(--space-2) + env(safe-area-inset-right, 0px));
+  /* Above the drawer and the player bar, below modals and toasts: a
+     reader in an immersive mode must still be able to switch language and
+     still be interrupted by a dialog. Token, not a raw number. */
+  z-index: var(--z-nav);
+}
+
+.topbar__lang--floating {
+  /* Opaque enough to be findable, quiet enough not to fight the page. The
+     mushaf is the surface most likely to be mid-verse, so it sits top-end
+     where the eye already goes for the exit control. */
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
+}

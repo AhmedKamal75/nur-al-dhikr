@@ -2,6 +2,46 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.44 — The language switch, on the four surfaces that were hiding it
+
+A relational audit of the shell found the always-present language switch
+missing or inert in exactly the modes where a reader is most likely to be
+lost. For the 70-year-old Arabic-only reader who is the release gate, that is
+the difference between a feature and a wall.
+
+- **The switch was hidden in all four chrome-hiding modes.** Immersive focus,
+  mushaf fullscreen, the classic reader's immersive mode and the ambient
+  nightstand each set `display: none !important` on `#topbar`, and the switch
+  went with it. An Arabic-only reader who reached one had no way back to
+  English.
+  - The earlier repair for the bare `#/focus` picker was a special case: it
+    simply stopped engaging immersive mode. One surface fixed, two left — and
+    then a fourth, which the first pass of this fix also missed.
+  - Now: `languageToggleHTML()` is a component, rendered once in the topbar
+    and once into `#immersive-chrome` — a deliberate **sibling of `#app`**,
+    because every container inside `#app` is hidden by some mode. One derived
+    CSS rule reveals it. A fifth chrome-hiding mode now needs one class in one
+    selector list and nothing else.
+- **`tests/language-switch-coverage.test.js` is the completeness trap.** It
+  derives every body class in the app that hides `#topbar` and asserts each one
+  also reveals the switch — and the reverse, so the rule invents no modes that
+  do not exist. This is what caught the fourth mode. It also pins that
+  `#immersive-chrome` lives outside `#app`, and that the kids guard does not
+  govern configuration.
+- **Kids Mode: a visible control that did nothing.** The switch rendered, was
+  announced by assistive tech, and returned early from a kids scope guard —
+  a guard whose job is stopping a child navigating outside an allowlist of
+  VIEWS. A language preference is not navigation. The rule is now stated once:
+  **the guard governs WHERE YOU MAY GO, never WHAT YOU MAY CONFIGURE.** The
+  test asserts the reader is still in Kids Mode afterwards, because that
+  distinction is what the guard is actually for.
+- **Every mode in the e2e test is entered the way the app enters it.** The
+  first version poked `document.body.classList.add('is-ambient')` and failed
+  for an instructive reason: `renderer.js` OWNS body classes and re-derives
+  them from state on every render, wiping an externally added class within
+  300ms. Driving the real route is both honest and stronger — it would catch a
+  mode the switch rule had missed, which is exactly what happened.
+
 ## v5.17.43 — One voice at a time, for all five voices instead of the two we looked at
 
 `docs/PROJECT-PICTURE.md` §3 lists **"One voice at a time"** as a standing

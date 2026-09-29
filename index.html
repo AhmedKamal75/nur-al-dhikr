@@ -88,6 +88,19 @@
       <div id="playerbar" role="region" aria-label="Audio player"></div>
     </div>
 
+    <!-- (v5.17.44) The language switch, for the surfaces that hide the shell.
+         Immersive focus, mushaf fullscreen and the ambient nightstand all set
+         `display: none !important` on #topbar, which took the switch with
+         them. An Arabic-only reader who reached one of those modes had no way
+         back to English, in the very screens that are easiest to get lost in.
+
+         This element is deliberately a SIBLING of #app, not a child: every
+         container inside #app is hidden by one mode or another, so anything
+         mounted in there disappears exactly when it is needed. It holds one
+         control and is hidden in every normal mode by CSS, so it adds nothing
+         to the chrome a reader sees. -->
+    <div id="immersive-chrome"></div>
+
     <!-- Modals announce themselves via dialog semantics + focus movement;
          an aria-live wrapper here made every dialog double-announced. -->
     <div id="modal-root"></div>

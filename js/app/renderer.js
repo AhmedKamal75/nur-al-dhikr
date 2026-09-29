@@ -63,7 +63,7 @@ import { scrollBehavior } from '../core/utils.js';
 import { actions, store } from '../core/state.js';
 import { rt } from './rt.js';
 import { showToast } from '../ui/toast.js';
-import { renderTopBar, renderNav } from '../ui/shell.js';
+import { renderTopBar, renderNav, languageToggleHTML } from '../ui/shell.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { renderHome } from '../views/home.js';
@@ -278,6 +278,7 @@ export function writeScrollTop(top, behavior = 'auto') {
 let mainEl = null;
 let topbarEl = null;
 let navEl = null;
+let immersiveChromeEl = null;
 let viewEnterTimer = null;
 // (v5.2.73, UP-02) the deep-link slug of the last same-view settings
 // arrival we already scrolled to — same-view slug→slug renders repeat on
@@ -325,6 +326,7 @@ export function mountShell() {
   mainEl = document.getElementById('main');
   topbarEl = document.getElementById('topbar');
   navEl = document.getElementById('bottomnav');
+  immersiveChromeEl = document.getElementById('immersive-chrome');
 }
 
 /**
@@ -794,6 +796,13 @@ export function render(state) {
 
   patchHTML(topbarEl, renderTopBar(state, { backDepth: rt.navBackStack?.length || 0 }));
   patchHTML(navEl, renderNav(state));
+  // (v5.17.44) The language switch for chrome-hiding surfaces. It is rendered
+  // unconditionally and CSS decides whether it shows, so adding a fourth
+  // immersive mode later needs a class in ONE list and nothing else.
+  patchHTML(
+    immersiveChromeEl,
+    languageToggleHTML(state.settings.language, 'topbar__lang--floating')
+  );
 
   // (v5.12.0 hostile review H1) the static shell's skip link shipped
   // hardcoded English — localize it on every render so AR keyboard and

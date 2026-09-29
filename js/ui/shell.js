@@ -346,6 +346,34 @@ function groupsHTML(active, lang, { drawer = false } = {}, groups = NAV_GROUPS) 
     .join('');
 }
 
+/**
+ * The language switch. ONE control, two places.
+ *
+ * The rule this file now states once: **any surface that hides the shell must
+ * still offer the language switch.** Immersive focus, mushaf fullscreen and
+ * the ambient nightstand each set `display: none !important` on `#topbar`,
+ * which took the switch with it and left an Arabic-only reader unable to
+ * leave Arabic — in the very modes that are easiest to get lost in.
+ *
+ * The previous fix for the bare `#/focus` picker was a special case: it simply
+ * stopped engaging immersive mode. That repaired one surface and left the
+ * other two, which is the un-generalised shape this project keeps paying for.
+ *
+ * So the control is a component, and the immersive copy is a single fixed
+ * element outside every hidden container. One rule, one source.
+ *
+ * @param {string} lang current language
+ * @param {string} [extraClass] extra class for the immersive copy
+ */
+export function languageToggleHTML(lang, extraClass = '') {
+  const other = lang === 'ar' ? 'en' : 'ar';
+  return `<button type="button" class="icon-btn topbar__lang ${extraClass}" data-action="quick-language-toggle"
+        aria-label="${t('a11y.languageToggle', lang)}" title="${t('a11y.languageToggle', lang)}"
+        lang="${other}" dir="${lang === 'ar' ? 'ltr' : 'rtl'}" hreflang="${other}">
+        <span class="topbar__lang-code" aria-hidden="true">${lang === 'ar' ? 'EN' : 'ع'}</span>
+      </button>`;
+}
+
 export function renderTopBar(state, opts = {}) {
   const lang = state.settings.language;
   // FIX (v4.0 hostile review B4): resolve the icon from state, not from the
@@ -398,12 +426,7 @@ export function renderTopBar(state, opts = {}) {
            quran reader, library, mushaf, prayer and tasbih: a reader who
            mis-picked at onboarding had no in-context way back, and had to
            know that Settings held it. One icon, always present, is the fix. -->
-      <button type="button" class="icon-btn topbar__lang" data-action="quick-language-toggle"
-        aria-label="${t('a11y.languageToggle', lang)}" title="${t('a11y.languageToggle', lang)}"
-        lang="${lang === 'ar' ? 'en' : 'ar'}" dir="${lang === 'ar' ? 'ltr' : 'rtl'}"
-        hreflang="${lang === 'ar' ? 'en' : 'ar'}">
-        <span class="topbar__lang-code" aria-hidden="true">${lang === 'ar' ? 'EN' : 'ع'}</span>
-      </button>
+      ${languageToggleHTML(lang)}
       ${backButton}
     </div>
   </div>`;
