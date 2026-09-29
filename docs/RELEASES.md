@@ -2,6 +2,29 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.36 — Prayer, qibla and calendar behind one door (reorganisation Phase 4)
+
+- **The Prayer doors merge** (`docs/REORGANISATION-PLAN.md` Phase 4, §2.1):
+  times + qibla + the Hijri calendar live in one section behind a single
+  `nav.prayer` entry. The calendar is a tab, not a peer door. Both
+  `#/qibla` and `#/calendar` stay real routes with working deep links —
+  active state resolves from the route, so a deep link into either still
+  lights the Prayer door.
+- **Times / Qibla / Calendar switch inside** (plan §2.1): a minimal
+  segmented switch in the Prayer chrome (times, qibla, calendar views)
+  links the three inner modes with existing `navigate` actions only — no
+  new view, no new handler, no new i18n key (the segments reuse the three
+  entries' own bilingual nav labels), no interstitial in any flow.
+- **Arrangement only.** Wake-ups, storage eviction and every handler are
+  untouched; no content, corpus, data or route change; the renderer static
+  budget stays 19/19 and language switch, Elder/a11y and no-gamification
+  targets are untouched. Ramadan keeps its own door.
+- **Measured, not asserted:** the reachability trap maps `#/qibla` and
+  `#/calendar` to the Prayer door in 2 taps each (door → switch); orphans
+  hold at 10 for Phases 5–7, and the SEARCH label mismatch stays pinned
+  for Phase 6. Pinned by the Phase 4 blocks in `tests/nav-chrome.test.js`
+  and `tests/nav-reachability.test.js`.
+
 ## v5.17.35 — Home becomes the adhkar browser (reorganisation Phase 3)
 
 - **The front page is the browse** (`docs/REORGANISATION-PLAN.md` Phase 3,

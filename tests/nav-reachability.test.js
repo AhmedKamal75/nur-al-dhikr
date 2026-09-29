@@ -132,6 +132,19 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
         via = 'quran-mode-switch';
       }
     }
+    // (REORG Phase 4) merged Prayer door: #/qibla and #/calendar stay
+    // real routes and resolve to the prayer entry in 2 taps (door →
+    // in-chrome Times/Qibla/Calendar switch). taps: 2 keeps the ≤2-taps
+    // assertion meaningful instead of laundering the merge into a fake
+    // orphan. RAMADAN keeps its own door, so it never aliases here.
+    if (!door && (routeKey === 'QIBLA' || routeKey === 'CALENDAR')) {
+      const prayer = NAV_ENTRIES.find((e) => e.viewKey === 'PRAYER');
+      if (prayer) {
+        door = prayer;
+        taps = 2;
+        via = 'prayer-mode-switch';
+      }
+    }
     // (REORG Phase 3) Home IS the adhkar browser: the category grid (0
     // taps — it is home) and the 12-mood filter row above it put CATEGORY
     // and MOOD one tap from the HOME door. Both keep their Library depth
@@ -335,6 +348,47 @@ describe('Phase 3 pin: the Adhkar front page is home', () => {
     assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY is still orphaned');
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD is still orphaned');
     assert.equal(ORPHANS.length, 10, `expected the 10 Phases-4–7 orphans, got ${ORPHANS.length}`);
+  });
+});
+
+describe('Phase 4 pin: one Prayer door, three routes alive', () => {
+  test('single nav.prayer entry; qibla and calendar no longer compete for a chrome slot', () => {
+    const prayerDoors = NAV_ENTRIES.filter((e) =>
+      ['PRAYER', 'QIBLA', 'CALENDAR'].includes(e.viewKey)
+    );
+    assert.deepEqual(
+      prayerDoors.map((e) => e.viewKey),
+      ['PRAYER'],
+      'qibla and the calendar must not compete for a chrome slot'
+    );
+    assert.equal(
+      NAV_ENTRIES.find((e) => e.viewKey === 'PRAYER').labelKey,
+      'nav.prayer',
+      'the one door keeps the nav.prayer label'
+    );
+  });
+
+  test('#/qibla and #/calendar stay real routes resolving to the Prayer door in 2 taps', () => {
+    for (const key of ['QIBLA', 'CALENDAR']) {
+      const m = ROUTE_DOOR_MAP[key];
+      assert.ok(m.door, `#/${m.route} lost its door — the merge must not orphan the route`);
+      assert.equal(m.door.group, 'nav.group.worship');
+      assert.equal(m.door.labelKey, 'nav.prayer');
+      assert.equal(m.taps, 2, 'door → in-chrome Times/Qibla/Calendar switch');
+      assert.equal(m.door.via, 'prayer-mode-switch');
+      assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
+    }
+  });
+
+  test('switch labels reuse the bilingual nav entries (naming rule §2.6)', () => {
+    for (const key of ['nav.prayer', 'nav.qibla', 'nav.calendar']) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+
+  test('the merge adds no orphan: 10 remain for Phases 5–7', () => {
+    assert.equal(ORPHANS.length, 10, `expected the 10 remaining orphans, got ${ORPHANS.length}`);
   });
 });
 

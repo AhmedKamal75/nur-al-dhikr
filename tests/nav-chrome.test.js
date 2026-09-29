@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { renderNav, quranModeSwitchHTML } from '../js/ui/shell.js';
+import { renderNav, quranModeSwitchHTML, prayerModeSwitchHTML } from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
 import { initialState } from '../js/core/state/initial.js';
 import { en } from '../js/core/i18n/en.js';
@@ -77,6 +77,81 @@ describe('Phase 2 chrome: one Qur’an door', () => {
     assert.ok(en['nav.quran'] && ar['nav.quran']);
     assert.notEqual(en['nav.quran'], ar['nav.quran']);
     for (const key of ['quran.modeList', 'quran.modeWord']) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+  });
+});
+
+/**
+ * REORG Phase 4 locks: one Prayer door. Times + qibla + Hijri calendar
+ * live in one section; the calendar is a tab, not a peer door. #/qibla
+ * and #/calendar stay real routes and light the prayer door, while the
+ * in-chrome Times/Qibla/Calendar switch carries the hop. RAMADAN keeps
+ * its own door. Arrangement only — no capability change.
+ */
+describe('Phase 4 chrome: one Prayer door', () => {
+  test('rail and drawer expose the prayer door once each; no competing qibla/calendar entry', () => {
+    const html = renderNav(stateFor(VIEWS.HOME));
+    assert.ok(html.includes(`data-view="${VIEWS.PRAYER}"`), 'prayer entry present');
+    const qiblaHits = html.split(`data-view="${VIEWS.QIBLA}"`).length - 1;
+    assert.equal(qiblaHits, 0, `qibla must not compete in the chrome (saw ${qiblaHits})`);
+    const calendarHits = html.split(`data-view="${VIEWS.CALENDAR}"`).length - 1;
+    assert.equal(
+      calendarHits,
+      0,
+      `the calendar must not compete in the chrome (saw ${calendarHits})`
+    );
+    const ramadanHits = html.split(`data-view="${VIEWS.RAMADAN}"`).length - 1;
+    assert.ok(
+      ramadanHits >= 2,
+      `ramadan keeps its own door in rail and drawer (saw ${ramadanHits})`
+    );
+  });
+
+  test('active states merged: #/qibla and #/calendar deep links light the prayer door', () => {
+    // Each destination lights in rail + drawer + mobile bar, so dedupe:
+    // exactly one DISTINCT active destination per view.
+    const distinct = (html) => [...new Set(activeViews(html))].sort();
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.PRAYER))), [VIEWS.PRAYER]);
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.QIBLA))),
+      [VIEWS.PRAYER],
+      'a deep link into #/qibla lights the Prayer door, not a second entry'
+    );
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.CALENDAR))),
+      [VIEWS.PRAYER],
+      'a deep link into #/calendar lights the Prayer door, not a second entry'
+    );
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.RAMADAN))), [VIEWS.RAMADAN]);
+  });
+
+  test('in-chrome switch links times, qibla and calendar with no new actions', () => {
+    for (const lang of ['en', 'ar']) {
+      const html = prayerModeSwitchHTML(VIEWS.PRAYER, lang);
+      assert.ok(
+        html.includes(`data-view="${VIEWS.PRAYER}"`) &&
+          html.includes(`data-view="${VIEWS.QIBLA}"`) &&
+          html.includes(`data-view="${VIEWS.CALENDAR}"`),
+        `switch carries all three modes (${lang})`
+      );
+      assert.ok(
+        html.includes('data-action="navigate"') && !html.includes('data-action="prayer-'),
+        `switch reuses navigate only (${lang})`
+      );
+    }
+    // The active segment follows the route — exactly one claims each view.
+    for (const view of [VIEWS.PRAYER, VIEWS.QIBLA, VIEWS.CALENDAR]) {
+      const html = prayerModeSwitchHTML(view, 'en');
+      const activeCount = html.split('segmented__btn--active').length - 1;
+      assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
+      assert.ok(html.includes(`data-view="${view}"`), `the #/${view} segment is the active one`);
+    }
+  });
+
+  test('Prayer chrome copy is bilingual: the three reused nav labels', () => {
+    for (const key of ['nav.prayer', 'nav.qibla', 'nav.calendar']) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }

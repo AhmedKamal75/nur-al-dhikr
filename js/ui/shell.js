@@ -64,10 +64,14 @@ const NAV_GROUPS = [
       // (v5.0.0) semantic fix: Prayer carries the prayer-rug glyph,
       // Qibla carries the compass (it IS a compass bearing). The old
       // pairing (prayer=compass, qibla=mosque) read backwards.
+      // (REORG Phase 4) one Prayer door: times + qibla + Hijri calendar
+      // in one section. #/qibla and #/calendar stay real routes (deep
+      // links keep working) and isActive below lights this door for
+      // them; the in-chrome switch (prayerModeSwitchHTML) carries the
+      // hop — the calendar is a tab, not a peer door. Arrangement only:
+      // wake-ups, storage eviction and every handler are untouched.
       { view: VIEWS.PRAYER, icon: 'prayer-rug', label: 'nav.prayer' },
-      { view: VIEWS.QIBLA, icon: 'compass', label: 'nav.qibla' },
       { view: VIEWS.RAMADAN, icon: 'rayah', label: 'nav.ramadan' },
-      { view: VIEWS.CALENDAR, icon: 'calendar', label: 'nav.calendar' },
       { view: VIEWS.CHECKLIST, icon: 'target', label: 'nav.checklist' },
     ],
   },
@@ -97,6 +101,9 @@ function isActive(active, view) {
   // (REORG Phase 2) merged Qur'an door: a deep link into #/quran lights the
   // mushaf entry. ROOTS keeps its own Phase 1 door, so it never aliases here.
   if (view === VIEWS.MUSHAF && active === VIEWS.QURAN) return true;
+  // (REORG Phase 4) merged Prayer door: deep links into #/qibla and
+  // #/calendar light the prayer entry. RAMADAN keeps its own door.
+  if (view === VIEWS.PRAYER && (active === VIEWS.QIBLA || active === VIEWS.CALENDAR)) return true;
   if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
   return (
     view === VIEWS.LIBRARY && [VIEWS.CATEGORY, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
@@ -119,6 +126,27 @@ export function quranModeSwitchHTML(activeView, lang) {
     <div class="segmented quran-mode-switch" role="group" aria-label="${t('quran.title', lang)}">
       ${seg(VIEWS.QURAN, 'quran.modeList', activeView === VIEWS.QURAN)}
       ${seg(VIEWS.ROOTS, 'quran.modeWord', activeView === VIEWS.ROOTS)}
+    </div>`;
+}
+
+/**
+ * (REORG Phase 4) the in-chrome Prayer switch: Times (#/prayer) vs Qibla
+ * (#/qibla) vs Hijri calendar (#/calendar). Rendered inside all three
+ * views — never a nav entry, never a new view. Existing `navigate`
+ * actions only (no handler or allowlist change) and the existing
+ * `.segmented` styling only (44px targets, so Elder/a11y is untouched).
+ * The segments reuse the three entries' own bilingual nav labels, so no
+ * new i18n key can drift and each label promises exactly its tap. No
+ * interstitial: every segment is a direct link to its route.
+ */
+export function prayerModeSwitchHTML(activeView, lang) {
+  const seg = (view, labelKey, selected) => `
+    <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  return `
+    <div class="segmented prayer-mode-switch" role="group" aria-label="${t('nav.prayer', lang)}">
+      ${seg(VIEWS.PRAYER, 'nav.prayer', activeView === VIEWS.PRAYER)}
+      ${seg(VIEWS.QIBLA, 'nav.qibla', activeView === VIEWS.QIBLA)}
+      ${seg(VIEWS.CALENDAR, 'nav.calendar', activeView === VIEWS.CALENDAR)}
     </div>`;
 }
 

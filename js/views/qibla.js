@@ -15,6 +15,7 @@
  */
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
+import { prayerModeSwitchHTML } from '../ui/shell.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML } from '../core/utils.js';
 import { qiblaBearing, distanceToKaabaKm, cardinalLabel, angleDelta } from '../domain/qibla.js';
@@ -34,6 +35,7 @@ export function renderQibla(state) {
         <h1 class="view__title">${t('nav.qibla', lang)}</h1>
         ${viewMenuButton('qibla', lang, { labelKey: 'viewMenu.qibla' })}
       </div>
+      ${prayerModeSwitchHTML(state.activeView, lang)}
       ${emptyStateHTML({
         iconName: 'mosque',
         title: t('prayer.locationNeeded', lang),
@@ -70,6 +72,7 @@ export function renderQibla(state) {
       <h1 class="view__title">${t('nav.qibla', lang)}</h1>
       ${viewMenuButton('qibla', lang, { labelKey: 'viewMenu.qibla' })}
     </div>
+    ${prayerModeSwitchHTML(state.activeView, lang)}
     <p class="view__subtitle">${t('qibla.subtitle', lang)}</p>
 
     <div class="qibla-compass">

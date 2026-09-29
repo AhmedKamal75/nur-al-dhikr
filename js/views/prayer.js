@@ -11,6 +11,7 @@ import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
+import { prayerModeSwitchHTML } from '../ui/shell.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 import { escapeHTML } from '../core/utils.js';
 import { wasCelebrated } from '../domain/celebrate.js';
@@ -93,6 +94,7 @@ export function renderPrayer(state) {
         <h1 class="view__title">${t('nav.prayer', lang)}</h1>
         ${viewMenuButton('prayer', lang, { labelKey: 'viewMenu.prayer' })}
       </div>
+      ${prayerModeSwitchHTML(state.activeView, lang)}
       ${emptyStateHTML({
         iconName: 'compass',
         title: t('prayer.locationNeeded', lang),
@@ -273,6 +275,7 @@ export function renderPrayer(state) {
       <h1 class="view__title">${t('nav.prayer', lang)}</h1>
       ${viewMenuButton('prayer', lang, { labelKey: 'viewMenu.prayer' })}
     </div>
+    ${prayerModeSwitchHTML(state.activeView, lang)}
 
     <div class="next-prayer-card">
       <div class="next-prayer-card__main">

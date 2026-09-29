@@ -1,10 +1,10 @@
 {
-  "version": "5.17.35",
+  "version": "5.17.36",
   "files": {
     "index.html": "50147f34d1dd53b81cea2bfe9f87d02b9c66800c4cbf014a7c9679cdb28cfd9d",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "c22c052f94e0ff0c329258ef5e87d2a1ee347db8545c3004774839d0a7d296fd",
-    "manifest.json": "0084aca8092f595e1e420f221f5004cc7d569c841669bbc6f2d134e2adbef071",
+    "manifest.json": "8d2af784d5f8a7b27b3bed726caaa23185e83a7011a930ef0e93c6b3d02e2d69",
     "assets/css/variables.css": "bffe06304f943baee633c1fe6006e11e3c941879bee619ccf2b66633f6c211a5",
     "assets/css/base.css": "b29e2b3776b3d48b496b732aad7e11e54d65f462548b063b25982bfa8c326d66",
     "assets/css/layout.css": "447c297369e0f02e83545219cf7cfa4290534e37611bb4aa7d627496de0a3724",
@@ -64,7 +64,7 @@
     "js/app/tafsirSearch.js": "4117d5b7163ea602924de8a45e55eed779c98d59469336faee2ef758b778380f",
     "js/app/tickers.js": "f115c8e3147513fdb5a421e10483568a553b98445bf7eafda8055b683579e865",
     "js/app/triggers.js": "45ea466de28bf5f848746e0ba7f57303c03cd2fe5e3082575ebf44548f0fd509",
-    "js/core/config.js": "51031c2042449a848b688e99dfaacc072e7043e0346108cd471cbf801db3143c",
+    "js/core/config.js": "df42ea3fcd4bc82e56e463180a399e5e59fa8f1563df977630cdc1555f2cea15",
     "js/core/config/app.js": "b8237b2ea9a82475822d0644fc591d95786e7cd017e92b5f5b5c8ac143363a39",
     "js/core/config/quran.js": "aeb93fa7da04c73e8251901d02446eb8e4c6552d8681fad09e2b72467865c8e4",
     "js/core/config/sanitize.js": "c017c8d03e0ebdbeefa29fb0a23da82710a99d6c8c0b5cf2959f4ed5e60c4911",
@@ -199,7 +199,7 @@
     "js/ui/modal.js": "f414f6a7e10e888a37206a23c2cacade49b7fb08ab125560dbc36ed6a2dddb4f",
     "js/ui/readingTokens.js": "d86690ae7b7bddbb81cfbbdf4d0fba712eb5b5da97b3cc71b51923d1d85efedc",
     "js/ui/recitationConsole.js": "04ea7920aae9e4e751b70a2ea0ba310bf77259e5d1a198e1409f51032edf5f98",
-    "js/ui/shell.js": "3f0f224506a5db7513ea24fc9131525eda990ee2af1e4183f0039c503b2c3cb3",
+    "js/ui/shell.js": "71c0f1e32c68d9356f952ebe9e27d07263d2aae9a67a72cf890009ebc0068f90",
     "js/ui/skeleton.js": "60d2790b8cde7c0111fd16680a29bf797d4039106e991ebf89f295aa70c2324f",
     "js/ui/toast.js": "0a85d47c99fd30e7fd4427c8f43af38cc21952e28db3c573a11123e7d794036d",
     "js/ui/viewSheet.js": "3b661fe3254122f5a947355b143e23d4034284f09b8021df2d210eb0bce12806",
@@ -207,7 +207,7 @@
     "js/views/ambient.js": "3869d97bde7a8907ee54beb412ca0876450f95cf8abfbc41defccd52332e4a7d",
     "js/views/audioManager.js": "f0725bd47edc68ffa7ed897aa0ff61d542b6b1477ef3681802527731dd93ba0c",
     "js/views/ayahStudy.js": "1b54702cac8b9af1d01b287eab2ab72c774ce36054cf9fa5872babd566c6c7ca",
-    "js/views/calendar.js": "c277d3f5d5e04f9b54eea31ac96620f3020dfd667008abb31cf887d577856df6",
+    "js/views/calendar.js": "a90c341a61a6e146f110c0c4ebd530c310b4c61b8acde744b9ec0a6f37f0d59b",
     "js/views/category.js": "943eeea90a186f61469ffa28e662008d274c584a0e5753163e248e2412101d9b",
     "js/views/certificate.js": "c4a00a34ba49146fcd9b836fc997bf4172e1c437911338550a45ac637d0b045d",
     "js/views/checklist.js": "6f8702c5f09e03632e8fde9a7085264b506a0d3f4e9247cebe887bbecce18bef",
@@ -235,8 +235,8 @@
     "js/views/onboardingPanel.js": "66fc6116e116c999d6c8feb1edc8b0c3b2f1df33d0b21c559aa6794aa9fb8489",
     "js/views/palette.js": "d92295e838d60dc4bab0eaf7146cae928b7f80b5e03ebbc1fffa6b998d9177ae",
     "js/views/playerBar.js": "cdcacc044ab80be80c4aaaca0b1ee630d961c028c3a449b7ff168e5e811293fd",
-    "js/views/prayer.js": "61fdcd7316f47695076b71db07b1ee7234f0f7ed8b00c30e80b80ccbd4ac2281",
-    "js/views/qibla.js": "b179119257ea8c37691da777aa91edef53cf1d0f363d8374ae2ce97152c5dfb0",
+    "js/views/prayer.js": "84679da9d9b69b9cdf81fa3f7fa377c91ddece5478e2a645b35e4852c72d60b4",
+    "js/views/qibla.js": "8d6970e2d4d3e61437362983db5af4c17753580b04c17181df5363ce9dbdb53f",
     "js/views/quiz.js": "c21b6c4a3a5210c6810c926f226b8c273cfe19f17893654ce7acb232e492c54b",
     "js/views/quran.js": "d66b17c4fa4c597da327081b05b2d029a44b97d744331187526c032aad8ddf9f",
     "js/views/ramadan.js": "c2f6c5bb4d30073365023bb351e30c3d7f6e5a5adf6d4fbc6950c5aca830826e",
@@ -268,6 +268,6 @@
     "assets/fonts/ScheherazadeNew-Bold.woff2": "6b6d12c4d0d9f2ec3ed790cc168ec10af7bd57862a0aaf6be112624b027ae0ef",
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
-    "sw.js": "ae9b5b15b16a9bdd5d42aadc583b81af6fc8ae14ae5aad59391fefe3395d423f"
+    "sw.js": "4be74b2dc53074ae2b69f5fe244439b76ef9617a1007c7311b134e8b7edca2d3"
   }
 }

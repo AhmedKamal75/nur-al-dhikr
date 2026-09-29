@@ -11,6 +11,7 @@
  */
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
+import { prayerModeSwitchHTML } from '../ui/shell.js';
 import { escapeHTML, dateKey } from '../core/utils.js';
 import { toHijri, islamicEventsForYear, EVENT_LABELS, isWhiteDay } from '../domain/calendar.js';
 import { datesWithNotesInRange } from '../services/calendarNotes.js';
@@ -247,6 +248,7 @@ export function renderCalendar(state) {
       <h1 class="view__title">${t('nav.calendar', lang)}</h1>
       ${viewMenuButton('calendar', lang, { labelKey: 'viewMenu.calendar' })}
     </div>
+    ${prayerModeSwitchHTML(state.activeView, lang)}
 
     <div class="hijri-today">
       <span class="hijri-today__day">${hToday.day}</span>
