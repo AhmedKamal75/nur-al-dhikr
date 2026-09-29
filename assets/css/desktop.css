@@ -218,7 +218,9 @@
     max-width: 40rem;
     margin-inline: auto;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    /* Same min-content floor as the home view above; the middle track is
+       the flexible one and must be allowed to shrink. */
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-3) var(--space-4);
@@ -264,7 +266,24 @@
      is untouched — only visual placement changes. */
   .view--home {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* `minmax(0, 1fr)`, not `1fr`.
+     *
+     * A bare `1fr` track is really `minmax(auto, 1fr)`, and that `auto`
+     * minimum resolves to the item's MIN-CONTENT width. The adhkar browser
+     * contains a deliberately non-wrapping horizontal scroller
+     * (`.chip-row--scroll`), so its min-content width is enormous — the whole
+     * track grew to 2533px inside a 1144px column, and `.view`'s
+     * `overflow-x: clip` silently ate the overflow. The visible result was the
+     * right-hand third of every tile row cut off mid-word on desktop only,
+     * because the grid only exists inside this min-width media query. Mobile
+     * was never affected, which is exactly why it read as "mobile is fine".
+     *
+     * `minmax(0, 1fr)` gives the track a zero floor so it can shrink to the
+     * column, and the scroller scrolls inside it as designed. The identical
+     * idiom is already used 9 lines above (repeat(5, minmax(0, 1fr))); this
+     * one rule was simply missed.
+     */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
   }
   .view--home > .home-hero,

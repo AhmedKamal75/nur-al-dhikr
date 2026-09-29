@@ -685,6 +685,105 @@ not. Add a release-hygiene check that runs the ledger and backlog consistency
 suites **as part of the release ritual**, so a drifting header fails the release
 instead of waiting for a human to notice.
 
+### PART B2 — THE VISUAL REVIEW, from actually looking at it
+
+Reviewed by screenshot at **1440×900 and 390×844**, not by reading CSS. The
+owner's verdict was: _"the desktop view of the app in the browser is broken
+(home is broken) and the mobile is somewhat okayish. BUT IT IS ALL SOMEWHAT
+SLOPPY."_
+
+**One of those was a real bug, and it is fixed in this release. The rest is
+design debt that no amount of CSS repair will fix.** Being precise about which
+is which matters more than being agreeable.
+
+#### B2.1 FIXED — the desktop home was clipping a third of every tile row
+
+**`.home-browser` measured 2533px inside a 1144px column**, so `overflow-x: clip`
+swallowed 1389px and the right-hand third of every tile was **cut off
+mid-word** — "After the Pro…", "Evening Adh…", "Du'a of Dh…".
+
+The cause was in `assets/css/desktop.css`:
+
+```css
+.view--home {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+```
+
+A bare `1fr` is really `minmax(auto, 1fr)`, and that `auto` minimum resolves to
+the item's **min-content** width. The adhkar browser contains a deliberately
+non-wrapping scroller (`.chip-row--scroll`), so its min-content width is
+enormous. Now `minmax(0, 1fr) minmax(0, 1fr)`; the identical idiom was already
+used nine lines above and this one rule was simply missed. `.tasbih-controls`
+had the same latent bug (`auto 1fr auto`) and is fixed too.
+
+**Why every existing gate missed it:** the grid lives inside a `min-width`
+media query, so below it the rule is unreachable — which is exactly why it read
+as "mobile is fine, desktop is broken". Document overflow was **0** (the clip ate
+it), so no reflow check fired, and the axe sweep only runs mobile-sized.
+`tests/desktop-blowout.test.js` now parses the stylesheet and fails on any bare
+`fr` track. Verified: **0 cut-off tiles** at 1440px.
+
+#### B2.2 The mushaf is GOOD — checked, because it is the thing that matters
+
+Worth saying plainly so nobody "fixes" it. The desktop two-page spread has its
+ornamental frame, corner diamonds, juz medallion, ayah-end roundels, the surah
+cartouche, and Arabic-Indic page numerals. It reads as paper. The cartouche
+counts are correct (`الفاتحة · ٧`, `البقرة · ٢٨٦`) — **I misread these from a
+screenshot and verified before reporting**; the RTL reads right-to-left and
+there is no bug. This is the standard the rest of the app should be held to.
+
+#### B2.3 STILL SLOPPY — the home page is a database dump, not a home page
+
+The reorganisation made the grid the home screen by putting **the entire corpus
+on it**: **560 tiles, 8,486px tall, nine screenfuls.** Above the fold a reader
+gets a shahada banner, a 216px hero, a "set your location" prompt, and an
+**8-step onboarding wizard** — and none of it is dhikr.
+
+Concretely, on a 1440px desktop:
+
+- **The right half of the screen is empty.** The two-column dashboard was
+  designed for the old panel home; with a tile grid in it, one column holds the
+  onboarding and the other is blank. Fixing the blowout _revealed_ this — it
+  was hidden before.
+- **Three panels of chrome sit above the content.** The hero is 216px of
+  mostly empty green with a dot pattern. On the design standard in §5d, _"the
+  text is the interface"_ and _"chrome should bow to the Qur'an"_ — this is
+  chrome asking for attention first.
+- **Categories and individual items share one grid and one visual treatment.**
+  "Morning Adhkar" (a category, 31 items) and "Du'a of Dh…" (a single du'a) are
+  the same tile. That is two abstraction levels in one list, which is why the
+  grid cannot be skimmed.
+- **Today's Progress is below all 560 tiles.** The one panel that answers "how
+  am I doing" is nine screens down.
+
+**azkar.me shows ~30 category tiles. We show 560.** The depth is the advantage;
+dumping it on the front door is not how you surface it.
+
+#### B2.4 The specific design calls to make (this is the "fix" the owner asked for)
+
+1. **The grid shows categories, not items.** Tapping a category enters it. A
+   "see all" affordance per library reaches the long tail. azkar.me's model.
+2. **Rank it.** Today's dhikr, the section you left off, and your four most-used
+   categories come first. Ours is alphabetical.
+3. **Demote the hero.** One line of dhikr beats 216px of brand. The shahada
+   banner stays — it is right — but it is 2533px of grid overflow once fixed,
+   and it does not need to be the loudest thing on the page.
+4. **Onboarding collapses to a single unobtrusive line** — "1 of 8 · continue ·
+   dismiss" — instead of a wizard occupying the first column. The 70-year-old
+   is the release gate; an 8-step wizard is a wall, not a welcome.
+5. **The two-column desktop home is the wrong shape now.** One column of
+   category tiles at a comfortable measure, with the empty half either removed
+   or given real content (Today's Progress beside the grid, not below it).
+6. **Check the other routes at 1440px** the same way. This review sampled four
+   routes; the same class of "designed for mobile, never revisited" debt is
+   likely on the ones nobody looked at.
+
+**Do this as one visual pass with before/after screenshots at both widths.** A
+CSS fix is not a design review, and the owner has asked for the design, not the
+patch.
+
 ### PART C — What must not change
 
 Everything in `REORGANISATION-PLAN.md` §3 still holds and was re-verified at

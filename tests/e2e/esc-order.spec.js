@@ -33,6 +33,25 @@ test('esc: modal closes, immersive reading survives, next esc leaves it', async 
 
   // Open the quick sheet over it with a real press-hold.
   const arabic = page.locator('.ayah-card__arabic').first();
+  // (v5.17.42) Scroll the target into view before measuring it. The press is
+  // synthetic mouse input at viewport coordinates, so an element below the
+  // fold silently swallows it: `page.mouse.move` to y=786 in a 720px window
+  // dispatches nowhere, and the sheet never opened. This spec went red when
+  // the reader's content above the first ayah grew by ~40px and pushed the
+  // Arabic just past the bottom of a 720px viewport.
+  //
+  // It looked exactly like a dead feature — a press-hold that never fired —
+  // and it was not. The handler is `pointerdown` on `.ayah-card` with a 550ms
+  // threshold and it works. TWO real things were behind it:
+  //
+  //  1. `scrollIntoViewIfNeeded` parks the element at the nearest viewport
+  //     edge, which at 390x844 put the Arabic's centre at y=815 of 844 —
+  //     underneath the fixed immersive-exit pill, whose button swallows the
+  //     press. Centring it is what a reader does.
+  //  2. That overlap was a genuine defect, not only a test artefact: the exit
+  //     pill covered Arabic the reader was trying to read. Fixed in
+  //     `layout.css` by reserving the block-end space it occupies.
+  await arabic.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
   const box = await arabic.boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await page.mouse.down();

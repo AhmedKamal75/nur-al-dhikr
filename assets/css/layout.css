@@ -555,6 +555,19 @@ body.is-reader-immersive .nav-drawer-overlay {
 }
 body.is-reader-immersive #main {
   max-width: 58rem;
+  /* (v5.17.42) Reserve the block-end space the fixed exit pill occupies.
+     `.reader-immersive-exit` is `position: fixed` at the bottom of the
+     viewport, and nothing cleared it: on a 390x844 phone the pill landed
+     directly on top of the first ayah's Arabic. `document.elementFromPoint`
+     at the ayah's centre returned the exit BUTTON, not the ayah — so the
+     press-hold long-press could never reach the text, because the app
+     correctly ignores presses on buttons.
+
+     This looked like a dead feature and was actually an overlay bug, which
+     is the more serious of the two: the control was also covering Arabic a
+     reader was trying to read. `tests/e2e/esc-order.spec.js` pins it.
+     Logical property, per the RTL rule. */
+  padding-block-end: calc(var(--space-4) + env(safe-area-inset-bottom, 0px) + 3rem);
 }
 body.is-reader-immersive .view-header {
   border-block-end: none;

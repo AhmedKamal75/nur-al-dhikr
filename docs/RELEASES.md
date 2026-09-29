@@ -2,6 +2,67 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.42 — The desktop home was clipping a third of every tile row
+
+Found by screenshotting the app at 1440x900 and 390x844 and actually looking,
+after the owner reported the desktop home broken and the mobile "somewhat
+okayish". One of those was a real bug. The rest is design debt, now written down
+rather than patched over.
+
+- **`.home-browser` was 2533px wide inside a 1144px column.** The right-hand
+  third of every tile row was cut off mid-word - "After the Pro", "Evening
+  Adh", "Du'a of Dh". `assets/css/desktop.css` had
+  `grid-template-columns: 1fr 1fr`, and a bare `1fr` is really
+  `minmax(auto, 1fr)`: that `auto` minimum resolves to the item's MIN-CONTENT
+  width, and the adhkar browser contains a deliberately non-wrapping scroller
+  (`.chip-row--scroll`), so the track grew past its container. `.view`'s
+  `overflow-x: clip` swallowed the 1389px of overflow silently.
+  - Now `minmax(0, 1fr) minmax(0, 1fr)`. The identical idiom was already used
+    nine lines above in the same file; this one rule was simply missed.
+    `.tasbih-controls` had the same latent bug (`auto 1fr auto`) and is fixed.
+  - **Why every gate missed it:** the grid lives inside a `min-width` media
+    query, so the rule is unreachable below it - which is exactly why it read as
+    "mobile is fine, desktop is broken". Document overflow was 0, so no reflow
+    check fired, and the axe sweep only runs mobile-sized viewports.
+  - `tests/desktop-blowout.test.js` parses the stylesheet and fails on any bare
+    `fr` track. Verified in Chromium: 0 cut-off tiles at 1440px.
+- **The mushaf was checked and is GOOD.** The desktop spread has its ornamental
+  frame, corner diamonds, juz medallion, ayah-end roundels and surah cartouche,
+  and reads as paper. The cartouche counts are correct (`الفاتحة · ٧`,
+  `البقرة · ٢٨٦`) - I misread them from a screenshot, verified before reporting,
+  and there is no bug. Recorded so the next agent does not "fix" it.
+- **The immersive exit pill was covering the Arabic it floats above.** Found
+  while chasing a red spec, and the more serious of the two problems.
+  `tests/e2e/esc-order.spec.js` presses and holds an ayah to open the quick
+  sheet; the sheet never opened. The handler was fine — `pointerdown` on
+  `.ayah-card`, 550ms threshold. At 390x844, `elementFromPoint` at the ayah's
+  centre returned `BUTTON.reader-immersive-exit__label`: the fixed bottom pill
+  sits on top of the reading column, nothing reserved space for it, and the app
+  correctly ignores presses on buttons. So the long-press could never reach the
+  text, and the pill was also covering Arabic a reader was trying to read.
+  - `body.is-reader-immersive #main` now reserves the block-end space the pill
+    occupies, honouring the safe-area inset. Logical property, per the RTL rule.
+  - The spec now centres its target before pressing, which is what a reader
+    does; `scrollIntoViewIfNeeded` parked the Arabic at the viewport edge,
+    underneath the pill, so the press could never land.
+  - Worth recording how this looked: a red test that read as "the press-hold
+    feature is dead" was actually "a floating control is sitting on the text".
+    Probing the element at the press point is what separated the two.
+
+- **The rest is sloppiness, and it is now named rather than quietly tolerated.**
+  The home screen is the whole corpus: 560 tiles, 8486px, nine screenfuls, with
+  categories and single items sharing one visual treatment. Above the fold a
+  reader meets a shahada banner, a 216px hero, a location prompt and an 8-step
+  onboarding wizard - and no dhikr. Today's Progress sits nine screens down.
+  The two-column desktop dashboard, designed for the old panel home, leaves half
+  the canvas empty; fixing the blowout revealed that rather than causing it.
+  - `docs/HANDOFF.md` PART B2 carries the visual review and the six specific
+    design calls to make: show categories not items, rank the grid, demote the
+    hero, collapse onboarding to one line, reshape the desktop home, and sweep
+    the other routes at 1440px the same way.
+  - A CSS fix is not a design review. This release fixes the bug and refuses to
+    pretend the design is finished.
+
 ## v5.17.41 — Ten safe hostile findings in one commit: honest labels, dead code out, lint clean
 
 - **Prayer source line stops endorsing.** The calc-sheet provenance label now
