@@ -9,7 +9,7 @@
  */
 
 import { MUSHAF_PAGE_COUNT } from '../../config.js';
-import { dateKey, uid } from '../../utils.js';
+import { dateKey, isSafeKey, uid } from '../../utils.js';
 import { juzProgress } from '../../../domain/khatma.js';
 import { sanitizeWindow, expandWindow } from '../../../domain/readerWindow.js';
 import {
@@ -275,6 +275,35 @@ export function reduceQuran(state, action) {
       // Progress is a lens over the course spine, never an edit to it.
       return { ...state, tajweedCourseProgress: action.progress || {} };
 
+    // (merged-plan item 2) explicit tajweed last-position stamp: the
+    // lesson opened/studied and/or the rule drilled. Either half may ride
+    // alone; junk halves stamp nothing and a fully-junk action no-ops.
+    case 'TAJWEED_LAST_SET': {
+      const sessionId = typeof action.sessionId === 'string' ? action.sessionId : null;
+      const ruleId = typeof action.ruleId === 'string' ? action.ruleId : null;
+      const okSession =
+        sessionId && isSafeKey(sessionId) && /^[A-Za-z0-9_-]{1,64}$/.test(sessionId)
+          ? sessionId
+          : null;
+      const okRule =
+        ruleId && isSafeKey(ruleId) && /^[A-Za-z0-9_-]{1,64}$/.test(ruleId) ? ruleId : null;
+      if (!okSession && !okRule) return state;
+      const prev = state.lastPosition || {};
+      if (
+        (okSession == null || prev.tajweedLesson?.sessionId === okSession) &&
+        (okRule == null || prev.tajweedRule?.ruleId === okRule)
+      )
+        return state;
+      return {
+        ...state,
+        lastPosition: {
+          ...prev,
+          ...(okSession ? { tajweedLesson: { sessionId: okSession, ts: Date.now() } } : null),
+          ...(okRule ? { tajweedRule: { ruleId: okRule, ts: Date.now() } } : null),
+        },
+      };
+    }
+
     case 'TAJWEED_PRACTICE_RESULT':
       // (v5.4.0, P0-5b) one dispatch, two memories: stats (streak/accuracy)
       // and the weak-rule map — a miss upserts {m,l}, a clean question
@@ -282,6 +311,8 @@ export function reduceQuran(state, action) {
       // 99-names quiz. 'mixed'/'review'/single-context sessions are NOT
       // rule ids: stats still accrue (existing semantics) but the weak
       // map stays clean of pseudo-keys.
+      // (merged-plan item 2) a real rule id also stamps the tajweed-rule
+      // last-position slot — the rule just worked on.
       return {
         ...state,
         tajweedPracticeStats: nextTajweedPracticeStats(
@@ -294,6 +325,14 @@ export function reduceQuran(state, action) {
             ? tajweedMissClear(state.tajweedMissRecords, action.ruleId)
             : tajweedMissRecord(state.tajweedMissRecords, action.ruleId, dateKey(new Date()))
           : state.tajweedMissRecords,
+        lastPosition:
+          isTajweedRuleId(action.ruleId) &&
+          state.lastPosition?.tajweedRule?.ruleId !== action.ruleId
+            ? {
+                ...(state.lastPosition || {}),
+                tajweedRule: { ruleId: action.ruleId, ts: Date.now() },
+              }
+            : state.lastPosition,
       };
 
     case 'AYAH_BOOKMARK_TOGGLE': {

@@ -23,6 +23,7 @@ import { sanitizeQuizMissRecords } from '../../domain/quiz.js';
 import { sanitizeTajweedCourseProgress } from '../../domain/tajweedCourse.js';
 import { sanitizeHijriDayLog } from '../../domain/ramadanPlanner.js';
 import { sanitizeNudgeState } from '../../domain/nudge.js';
+import { sanitizeLastPosition } from '../../domain/lastPosition.js';
 import { PERSISTED_KEYS, pickPersisted } from './initial.js';
 /**
  * Defensively coerce every array/object-shaped field of an imported (or
@@ -284,6 +285,9 @@ export function sanitizeRestoredPayload(payload) {
         : 'main',
     // Gentle-nudge marker (v3.25): only a real, past-or-today day survives.
     nudge: sanitizeNudgeState(p.nudge),
+    // (merged-plan item 2) unified last-position memory: well-shaped ids
+    // or null per slot; hostile shapes degrade to honest absence.
+    lastPosition: sanitizeLastPosition(p.lastPosition),
     // Backup marker (v3.26): a finite, past-or-now timestamp survives.
     backupMeta: sanitizeBackupMeta(p.backupMeta),
     // Onboarding: honor an explicit flag from the payload; when absent

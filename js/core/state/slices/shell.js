@@ -9,7 +9,7 @@
  */
 
 import { VIEWS, resolveKidsView, sanitizeSettings } from '../../config.js';
-import { dateKey } from '../../utils.js';
+import { dateKey, isSafeKey } from '../../utils.js';
 import { normalizeCustomContentMap } from '../../schema.js';
 import { defaultNudgeState } from '../../../domain/nudge.js';
 import { CONFIRM_STEPS } from '../../../domain/onboarding.js';
@@ -39,10 +39,53 @@ export function reduceShell(state, action) {
       // lands on the Kids home. Tap paths toast via handlers/navigation.js;
       // the reducer stays pure and silent.
       const view = resolveKidsView(action.view, state.settings?.kidsMode === true);
+      const params =
+        action.params && typeof action.params === 'object' && !Array.isArray(action.params)
+          ? action.params
+          : {};
+      // (merged-plan item 2) navigation stamps the last-position slots it
+      // can honestly witness. A hadith book opening records book+number;
+      // a tajweed-course visit records the session/rule it names. Junk
+      // params stamp nothing — absence stays absence.
+      const lastPosition = { ...(state.lastPosition || {}) };
+      if (view === VIEWS.HADITH && typeof params.id === 'string' && isSafeKey(params.id)) {
+        if (/^[A-Za-z0-9_-]{1,40}$/.test(params.id)) {
+          const prev = lastPosition.hadith;
+          const rawN = params.n == null || params.n === '' ? null : Math.floor(Number(params.n));
+          const n =
+            rawN != null && Number.isFinite(rawN) && rawN >= 1 ? Math.min(999999, rawN) : null;
+          if (prev?.bookId !== params.id || (n != null && n !== prev?.n)) {
+            // A new book always stamps (at its start when no number is
+            // named); the same book re-stamps only on an explicit number,
+            // so pager moves never rewrite a lived position with a guess.
+            lastPosition.hadith = { bookId: params.id, n: n ?? 1, ts: Date.now() };
+          }
+        }
+      }
+      if (view === VIEWS.TAJWEED_COURSE) {
+        if (typeof params.session === 'string' && isSafeKey(params.session)) {
+          if (/^[A-Za-z0-9_-]{1,64}$/.test(params.session)) {
+            if (lastPosition.tajweedLesson?.sessionId !== params.session) {
+              lastPosition.tajweedLesson = { sessionId: params.session, ts: Date.now() };
+            }
+          }
+        }
+        if (typeof params.rule === 'string' && isSafeKey(params.rule)) {
+          if (/^[A-Za-z0-9_-]{1,64}$/.test(params.rule)) {
+            if (lastPosition.tajweedRule?.ruleId !== params.rule) {
+              lastPosition.tajweedRule = { ruleId: params.rule, ts: Date.now() };
+            }
+          }
+        }
+      }
+      const lastChanged =
+        lastPosition !== state.lastPosition &&
+        Object.keys(lastPosition).some((k) => lastPosition[k] !== state.lastPosition?.[k]);
       const base = {
         ...state,
         activeView: view,
         activeParams: action.params || {},
+        ...(lastChanged ? { lastPosition } : null),
         // (v4.4) fullscreen Mushaf is a reading gesture tied to THIS view —
         // leaving the Mushaf (to any other view, incl. back/forward history)
         // must restore the normal shell, exactly like focus-mode does.
@@ -97,7 +140,21 @@ export function reduceShell(state, action) {
     case 'HISTORY_PUSH': {
       const entry = { itemId: action.itemId, categoryId: action.categoryId, ts: Date.now() };
       const filtered = state.history.filter((h) => h.itemId !== action.itemId);
-      return { ...state, history: [entry, ...filtered].slice(0, 50) };
+      // (merged-plan item 2) the same tap stamps the adhkar last-position
+      // slot — the set (category+item) the reader actually opened. Shaped
+      // ids only; junk stamps nothing and history still records the tap.
+      const itemId = typeof action.itemId === 'string' ? action.itemId : '';
+      const categoryId = typeof action.categoryId === 'string' ? action.categoryId : '';
+      const adhkar =
+        itemId && itemId.length <= 128 && categoryId && categoryId.length <= 64
+          ? { categoryId, itemId, ts: entry.ts }
+          : (state.lastPosition?.adhkar ?? null);
+      const lastPosition = { ...(state.lastPosition || {}), adhkar };
+      return {
+        ...state,
+        history: [entry, ...filtered].slice(0, 50),
+        lastPosition,
+      };
     }
 
     case 'SEARCH_HISTORY_ADD': {

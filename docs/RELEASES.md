@@ -2,6 +2,41 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.49 — One honest "where was I": the unified last-position service
+
+Merged-plan item 2. The app remembered fragments — a Qur'an surah, a
+Mushaf page, a history head — scattered across slices, with no memory at
+all of the adhkar set, the tasbih phrase, the hadith book, or the tajweed
+lesson and rule. Now `js/domain/lastPosition.js` reads all seven slots
+as one pure record, honest-empty when nothing was ever touched.
+
+- **Five new persisted slots, zero new slices.** `state.lastPosition`
+  carries adhkar (category+item, stamped by HISTORY_PUSH), tasbih phrase
+  (stamped by TASBIH_SET_ACTIVE), hadith (book+number, stamped on hadith
+  navigation), and tajweed lesson + rule (stamped by course touches and
+  practice results). Qur'an/Mushaf keep their long-standing bookmarks;
+  the service reads all seven together. The key rides PERSISTED_KEYS and
+  the restore sanitizer, so backups round-trip it and hostile blobs
+  degrade to absence, never to markup.
+- **Home resumes in words+numbers, never pressure.** The `continue`
+  panel keeps its id (saved orders and hides untouched) and the Qur'an
+  one-shot card keeps its exact shape and session latch; every other
+  lived place renders as a quiet row — label words from i18n, positions
+  as numbers — through existing routes and existing actions only (no new
+  data-action, no new static view import; the 19/19 renderer budget
+  holds). No streaks, no absence counts, no shame vocabulary in either
+  language. Nothing touched yet reads "No previous place — begin with
+  al-Fatihah" (AR: «لا مكان محفوظ بعد — ابدأ بالفاتحة»), linking to the
+  opening chapter instead of inventing a position.
+- Constraints held: bilingual EN+AR (10 new keys twinned, parity gate
+  green), Elder/a11y intact (existing panel/row classes, labelled
+  sections, logical properties only), no gamification, offline-safe (the
+  new domain module rides APP_SHELL).
+- Tests: `tests/lastPosition.test.js` (18 cases — 7 slots set/unset,
+  hostile-shape degradation, backup file round-trip, resume-card render
+  in both languages, action allowlist), plus the directly-affected e2e
+  subset (home-fold, smoke).
+
 ## v5.17.48 — Onboarding, non-blocking: three decisions, the rest waits
 
 Merged-plan item 1. The 8-step first-run wizard asked for setup,

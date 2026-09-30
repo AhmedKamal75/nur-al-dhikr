@@ -86,6 +86,8 @@ import {
   nextFreshIndex,
 } from '../domain/reflections.js';
 import { isDismissed } from '../domain/completedCards.js';
+import { readLastPositions } from '../domain/lastPosition.js';
+import { PRESETS as TASBIH_PRESETS } from './tasbih.js';
 
 /**
  * v3.19 combined "Today in worship" card: prayers, Qur'an reading (pages
@@ -164,6 +166,167 @@ export function worshipTodayCardHTML(state) {
       ${rows.map(rowHTML).join('')}
     </div>
   </section>`;
+}
+
+/**
+ * (merged-plan item 2) the unified resume panel: one honest record over
+ * the seven last-position slots (domain/lastPosition.js). The Qur'an
+ * one-shot card keeps its exact legacy shape and session latch; every
+ * other lived place renders as a words+numbers row (label words from
+ * i18n, positions as numbers/ids, never pressure copy — no streaks, no
+ * absence counts, no shame). All links reuse existing routes through the
+ * existing `navigate` / `mushaf-open-at-surah` actions: no new
+ * data-action, no new static view imports. When nothing was ever
+ * touched, the panel says so and offers al-Fatihah — absence stated,
+ * never faked. Pure (state → HTML); exported for tests.
+ */
+export function resumePanelHTML(state) {
+  const lang = state.settings.language;
+  const slots = readLastPositions(state);
+
+  // The legacy one-shot return-to-recitation, verbatim: shows only while
+  // a valid bookmark exists AND this session hasn't resumed it yet.
+  const quranCard =
+    slots.quran && !sessionFlag('continueResumed')
+      ? `
+    <a class="panel panel--quran-continue" href="${buildHash(VIEWS.MUSHAF)}" data-action="mushaf-open-at-surah" data-surah="${escapeHTML(slots.quran.surah)}">
+      <span class="panel--quran-continue__icon">${icon('quran', { size: 22 })}</span>
+      <span class="panel--quran-continue__text">
+        <span class="panel--quran-continue__label">${t('quran.continueReading', lang)}</span>
+        <span class="panel--quran-continue__sub">${t('quran.surah', lang)} ${escapeHTML(slots.quran.surah)}</span>
+      </span>
+      ${goIcon(lang, 18)}
+    </a>`
+      : '';
+
+  const row = ({ view, params, extraAttrs, iconName, name, value }) => `
+      <a class="worship-row" href="${buildHash(view, params)}" data-action="navigate" data-view="${view}"${extraAttrs || ''}>
+        <span class="worship-row__icon">${icon(iconName, { size: 16 })}</span>
+        <span class="worship-row__name">${name}</span>
+        <span class="worship-row__value" dir="auto">${value}</span>
+        ${goIcon(lang, 13)}
+      </a>`;
+
+  const rows = [];
+  if (slots.mushaf) {
+    rows.push(
+      row({
+        view: VIEWS.MUSHAF,
+        params: { page: String(slots.mushaf.page) },
+        iconName: 'quran',
+        name: escapeHTML(t('home.resume.mushaf', lang)),
+        value: escapeHTML(t('home.resume.page', lang, { n: slots.mushaf.page })),
+      })
+    );
+  }
+  if (slots.adhkar) {
+    const entry = state.library?.itemIndex?.[slots.adhkar.itemId];
+    const catName = entry?.category
+      ? categoryDisplayName(entry.category, lang)
+      : slots.adhkar.categoryId;
+    const itemTitle =
+      entry?.item?.title && typeof entry.item.title === 'object'
+        ? pickLocale(entry.item.title, lang)
+        : null;
+    rows.push(
+      row({
+        view: VIEWS.CATEGORY,
+        params: { id: slots.adhkar.categoryId },
+        extraAttrs: ` data-id="${escapeHTML(slots.adhkar.categoryId)}"`,
+        iconName: 'book',
+        name: escapeHTML(t('home.resume.adhkar', lang)),
+        value: escapeHTML(itemTitle ? `${catName} · ${itemTitle}` : catName),
+      })
+    );
+  }
+  if (slots.tasbih) {
+    const preset = TASBIH_PRESETS.find((p) => p.id === slots.tasbih.phraseId);
+    const custom = !preset
+      ? (Array.isArray(state.tasbihCustom) ? state.tasbihCustom : []).find(
+          (c) => c && c.id === slots.tasbih.phraseId
+        )
+      : null;
+    const label = preset
+      ? lang === 'ar'
+        ? preset.ar
+        : preset.en
+      : custom?.text || slots.tasbih.phraseId;
+    rows.push(
+      row({
+        view: VIEWS.TASBIH,
+        params: {},
+        iconName: 'bead',
+        name: escapeHTML(t('home.resume.tasbih', lang)),
+        value: escapeHTML(String(label)),
+      })
+    );
+  }
+  if (slots.hadith) {
+    const books = state.hadith?.index?.books;
+    const book = Array.isArray(books) ? books.find((b) => b && b.id === slots.hadith.bookId) : null;
+    const bookName =
+      book?.name && typeof book.name === 'object'
+        ? pickLocale(book.name, lang)
+        : slots.hadith.bookId;
+    rows.push(
+      row({
+        view: VIEWS.HADITH,
+        params: { id: slots.hadith.bookId, n: String(slots.hadith.n) },
+        extraAttrs: ` data-id="${escapeHTML(slots.hadith.bookId)}" data-n="${escapeHTML(String(slots.hadith.n))}"`,
+        iconName: 'book',
+        name: escapeHTML(t('home.resume.hadith', lang)),
+        value: escapeHTML(`${bookName} · #${slots.hadith.n}`),
+      })
+    );
+  }
+  if (slots.tajweedLesson) {
+    rows.push(
+      row({
+        view: VIEWS.TAJWEED_COURSE,
+        params: {},
+        iconName: 'star',
+        name: escapeHTML(t('home.resume.tajweed', lang)),
+        value: escapeHTML(`${t('home.resume.lesson', lang)} · ${slots.tajweedLesson.sessionId}`),
+      })
+    );
+  }
+  if (slots.tajweedRule) {
+    rows.push(
+      row({
+        view: VIEWS.TAJWEED_COURSE,
+        params: {},
+        iconName: 'star',
+        name: escapeHTML(t('home.resume.tajweed', lang)),
+        value: escapeHTML(`${t('home.resume.rule', lang)} · ${slots.tajweedRule.ruleId}`),
+      })
+    );
+  }
+
+  // Honest absence: no lived place anywhere — say so, and offer the
+  // opening chapter instead of inventing a position.
+  if (!quranCard && !rows.length) {
+    return `
+    <section class="panel panel--resume" aria-label="${escapeHTML(t('home.resumeTitle', lang))}">
+      <div class="panel__header"><h2>${icon('bookmark', { size: 16 })} ${t('home.resumeTitle', lang)}</h2></div>
+      <div class="worship-list">
+        <a class="worship-row" href="${buildHash(VIEWS.QURAN, { id: '1' })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="1">
+          <span class="worship-row__icon">${icon('quran', { size: 16 })}</span>
+          <span class="worship-row__name">${escapeHTML(t('home.resumeEmpty', lang))}</span>
+          <span class="worship-row__value" dir="auto"></span>
+          ${goIcon(lang, 13)}
+        </a>
+      </div>
+    </section>`;
+  }
+  if (!rows.length) return quranCard;
+  return `
+    ${quranCard}
+    <section class="panel panel--resume" aria-label="${escapeHTML(t('home.resumeTitle', lang))}">
+      <div class="panel__header"><h2>${icon('bookmark', { size: 16 })} ${t('home.resumeTitle', lang)}</h2></div>
+      <div class="worship-list">
+        ${rows.join('')}
+      </div>
+    </section>`;
 }
 
 /**
@@ -720,21 +883,10 @@ export function renderHome(state) {
       </span>
       ${goIcon(lang, 18)}
     </a>`,
-    // (GROWTH-01 delight 2) one-shot return-to-recitation: the card shows
-    // only while a valid bookmark exists AND this session hasn't resumed
-    // it yet (sessionFlags CONTINUE_RESUMED, set by mushaf-open-at-surah).
-    continue:
-      state.quranBookmark?.surah && !sessionFlag('continueResumed')
-        ? `
-    <a class="panel panel--quran-continue" href="${buildHash(VIEWS.MUSHAF)}" data-action="mushaf-open-at-surah" data-surah="${escapeHTML(String(state.quranBookmark.surah))}">
-      <span class="panel--quran-continue__icon">${icon('quran', { size: 22 })}</span>
-      <span class="panel--quran-continue__text">
-        <span class="panel--quran-continue__label">${t('quran.continueReading', lang)}</span>
-        <span class="panel--quran-continue__sub">${t('quran.surah', lang)} ${escapeHTML(String(state.quranBookmark.surah))}</span>
-      </span>
-      ${goIcon(lang, 18)}
-    </a>`
-        : '',
+    // (merged-plan item 2) the unified last-position resume: seven
+    // slots, one honest record (see resumePanelHTML above). The panel id
+    // stays 'continue' so saved orders and hides keep working.
+    continue: resumePanelHTML(state),
     progress: `
     <section class="panel panel--progress">
       <div class="panel__header">

@@ -689,10 +689,14 @@ export const clickHandlers = {
     if (next[session.id]) delete next[session.id];
     else next[session.id] = { at: Date.now() };
     store.dispatch(actions.setTajweedCourseProgress(next));
+    // (merged-plan item 2) touching a session marks the lesson last-place,
+    // studied or unmarked — the reader was here either way.
+    store.dispatch(actions.setTajweedLast({ sessionId: session.id }));
   },
   'tajweed-course-drill-rule': async (ds) => {
     // The rule chip is the precise action: one chip, one rule, one round.
     const rule = String(ds.rule || '');
+    store.dispatch(actions.setTajweedLast({ ruleId: rule }));
     await startPracticeRound(rule, rt.practicePickerMode || 'find-spans');
   },
   'tajweed-course-drill': async (ds) => {
@@ -705,6 +709,9 @@ export const clickHandlers = {
     // guard covers a crafted DOM.
     const session = COURSE.findSession(String(ds.session || ''));
     if (!session || !COURSE.isDrivable(session)) return;
+    // (merged-plan item 2) a drill starts from its lesson; a single-focus
+    // session also names its rule. Mixed names no rule (it is every rule).
+    store.dispatch(actions.setTajweedLast({ sessionId: session.id }));
     const focus = session.focus || [];
     if (session.mixed) {
       await startPracticeRound('mixed', rt.practicePickerMode || 'find-spans');
@@ -721,6 +728,8 @@ export const clickHandlers = {
       await import('../../domain/tajweedLessons.js');
     const rule = tajweedLessonRule(ds.rule);
     if (!rule) return;
+    // (merged-plan item 2) opening a rule lesson marks the rule last-place.
+    store.dispatch(actions.setTajweedLast({ ruleId: rule.id }));
     await ensureTajweedPool(store.getState());
     const { buildPracticeLesson } = await import('../../views/tajweedPracticeView.js');
     const examples = tajweedLessonExamples(store.getState().tajweedPool, rule.id);

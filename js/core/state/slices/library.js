@@ -626,11 +626,24 @@ export function reduceLibrary(state, action) {
       return { ...state, customContent: next };
     }
 
-    case 'TASBIH_SET_ACTIVE':
+    case 'TASBIH_SET_ACTIVE': {
+      // (merged-plan item 2) choosing a phrase also stamps the tasbih
+      // last-position slot — the dial the reader actually picked. A repeat
+      // select keeps its first stamp (the position did not move); junk
+      // selects nothing and stamps nothing.
+      const phraseId =
+        typeof action.itemId === 'string' && action.itemId && action.itemId.length <= 80
+          ? action.itemId
+          : null;
+      const prevTasbih = state.lastPosition?.tasbih ?? null;
+      const tasbih =
+        !phraseId || prevTasbih?.phraseId === phraseId ? prevTasbih : { phraseId, ts: Date.now() };
       return {
         ...state,
         tasbih: { activeItemId: action.itemId, activePhrase: action.phrase || null },
+        lastPosition: { ...(state.lastPosition || {}), tasbih },
       };
+    }
 
     // (v5.2.46) user-authored tasbih phrases: free text (trimmed, capped —
     // user content, stored verbatim and escaped at render) each with its

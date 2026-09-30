@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.48**. Last updated against a green `npm run check` and
+> Current version: **v5.17.49**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -45,17 +45,18 @@
 and none of them is in the 7.5 — they are un-scored context, and their effect
 must never be backdated into the number:**
 
-| Landed since (not scored)                                         | What changed                                                                                              |
-| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| v5.17.41 — ten safe hostile findings                              | honest labels, dead code out, lint clean                                                                  |
-| v5.17.42 — the desktop home clipped a third of every tile row     | `.home-browser` 2533px in a 1144px column                                                                 |
-| v5.17.42 — the immersive exit pill covered the Arabic             | a floating control sat on the text; the long-press could not reach it                                     |
-| v5.17.43 — "one voice at a time" was false for 3 of 5 pairings    | narration spoke over a recitation and over an adhan                                                       |
-| v5.17.44 — the language switch was hidden or inert in four places | an Arabic-only reader had no way back to English                                                          |
-| v5.17.45 — home above the fold, search-offline honesty            | the first dhikr sat below a full screen of chrome; search counts lied while offline                       |
-| v5.17.46 — six flat doors (Phase 8 / HANDOFF A1)                  | 12 entries in 4 taxonomic groups → 6 task-shaped doors from one DOORS map                                 |
-| v5.17.47 — home design (C4)                                       | ranked dhikr instead of alphabetical, chrome collapsed to one line                                        |
-| v5.17.48 — non-blocking onboarding                                | 8-step wizard → 3 decisions (language, location-or-offset, reciter); the rest waits passively in Settings |
+| Landed since (not scored)                                         | What changed                                                                                                                   |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| v5.17.41 — ten safe hostile findings                              | honest labels, dead code out, lint clean                                                                                       |
+| v5.17.42 — the desktop home clipped a third of every tile row     | `.home-browser` 2533px in a 1144px column                                                                                      |
+| v5.17.42 — the immersive exit pill covered the Arabic             | a floating control sat on the text; the long-press could not reach it                                                          |
+| v5.17.43 — "one voice at a time" was false for 3 of 5 pairings    | narration spoke over a recitation and over an adhan                                                                            |
+| v5.17.44 — the language switch was hidden or inert in four places | an Arabic-only reader had no way back to English                                                                               |
+| v5.17.45 — home above the fold, search-offline honesty            | the first dhikr sat below a full screen of chrome; search counts lied while offline                                            |
+| v5.17.46 — six flat doors (Phase 8 / HANDOFF A1)                  | 12 entries in 4 taxonomic groups → 6 task-shaped doors from one DOORS map                                                      |
+| v5.17.47 — home design (C4)                                       | ranked dhikr instead of alphabetical, chrome collapsed to one line                                                             |
+| v5.17.48 — non-blocking onboarding                                | 8-step wizard → 3 decisions (language, location-or-offset, reciter); the rest waits passively in Settings                      |
+| v5.17.49 — unified last-position                                  | seven honest slots (Qur'an, Mushaf, adhkar, tasbih, hadith, tajweed lesson+rule); resume rows replace the single continue card |
 
 **So 7.5 is stale in the optimistic direction, and no re-score has been taken.**
 The number that would be honest today is unknown, and guessing it would repeat

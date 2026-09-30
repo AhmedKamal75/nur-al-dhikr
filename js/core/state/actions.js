@@ -158,6 +158,15 @@ export const actions = {
   hadithBookFailed: (bookId) => ({ type: 'HADITH_BOOK_FAILED', bookId }),
   setHadithDaily: (daily) => ({ type: 'HADITH_DAILY_SET', daily }),
   setHadithView: (patch) => ({ type: 'HADITH_VIEW_SET', patch }),
+  // (merged-plan item 2) explicit last-position stamps: the hadith just
+  // opened (book+number) and the tajweed just touched (lesson and/or
+  // rule). Validation lives in the reducer — forged payloads no-op.
+  setHadithLast: (bookId, n) => ({ type: 'HADITH_LAST_SET', bookId, n }),
+  setTajweedLast: ({ sessionId = null, ruleId = null } = {}) => ({
+    type: 'TAJWEED_LAST_SET',
+    sessionId,
+    ruleId,
+  }),
   // (v5.2.75, BUG-09) consent to bulk-fetch every missing book for search.
   confirmHadithIndexAll: () => ({ type: 'HADITH_INDEX_ALL_CONFIRM' }),
   // (v5.2.0) Hadith bookmarks — key is "<bookId>:<n>".

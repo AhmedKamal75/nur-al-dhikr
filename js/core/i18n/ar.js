@@ -559,6 +559,18 @@ export const ar = {
   'home.reviewTitle': 'المستحق للمراجعة',
   'home.reviewTotal': '{n} بانتظارك — دقائق قليلة تُبقيها حاضرة.',
   'home.reviewHifz': 'الحفظ',
+  // (merged-plan item 2) ذاكرة المواضع الأخيرة — كلمات وأرقام فقط،
+  // دون أي ضغط: لا سلاسل، لا عدّ للغياب، لا توبيخ.
+  'home.resumeTitle': 'تابع من حيث توقفت',
+  'home.resumeEmpty': 'لا مكان محفوظ بعد — ابدأ بالفاتحة',
+  'home.resume.mushaf': 'المصحف',
+  'home.resume.adhkar': 'الأذكار',
+  'home.resume.tasbih': 'التسبيح',
+  'home.resume.hadith': 'الحديث',
+  'home.resume.tajweed': 'التجويد',
+  'home.resume.lesson': 'الدرس',
+  'home.resume.rule': 'الحكم',
+  'home.resume.page': 'الصفحة {n}',
   'home.favorites': 'المفضلة',
   'home.collections': 'المجموعات المثبتة',
   'home.verseOfTheDay': 'تأمل',

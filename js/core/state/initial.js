@@ -12,6 +12,7 @@ import {
 } from '../config.js';
 import { clone } from '../utils.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
+import { defaultLastPosition } from '../../domain/lastPosition.js';
 import { defaultFastingPrefs } from '../../domain/fasting.js';
 import { defaultNudgeState } from '../../domain/nudge.js';
 import { defaultHiddenHome } from '../../domain/homePanels.js';
@@ -377,6 +378,12 @@ export function initialState() {
     mutashabihat: { seed: null, picked: null, reveal: false, right: 0, wrong: 0, pool: 'all' },
     // (Removed: the v4.4 immersiveReader twin of readerImmersive was never
     // dispatched or read anywhere — one rename away from a real bug.)
+    // (merged-plan item 2) the unified last-position memory: five
+    // explicit slots (adhkar set, tasbih phrase, hadith book+number,
+    // tajweed lesson, tajweed rule). Qur'an/Mushaf keep their own
+    // long-standing bookmarks; domain/lastPosition.js reads all seven
+    // as one honest record. PERSISTED + restore-sanitized.
+    lastPosition: defaultLastPosition(),
     // Gentle "it's been a while" nudge (v3.25) — the day the card last
     // actually painted (or was dismissed), as 'YYYY-MM-DD'. One small
     // persisted write; every decision rule and the anti-guilt contract
@@ -505,6 +512,7 @@ export const PERSISTED_KEYS = [
   'hifzActiveProfile',
   'nudge',
   'backupMeta',
+  'lastPosition',
 ];
 
 export function pickPersisted(state) {

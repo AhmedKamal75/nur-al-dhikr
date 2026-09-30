@@ -7,6 +7,8 @@
  * ../reducer.js tries each in turn).
  */
 
+import { isSafeKey } from '../../utils.js';
+
 export function reduceHadith(state, action) {
   switch (action.type) {
     // ---- Ahadeeth (v3.9) — all ephemeral, see initialState ----
@@ -58,6 +60,22 @@ export function reduceHadith(state, action) {
           ...state.hadith,
           bookView: { ...state.hadith.bookView, ...patch },
         },
+      };
+    }
+
+    // (merged-plan item 2) explicit hadith last-position stamp
+    // (book+number). Navigation stamps it too (see shell NAVIGATE); this
+    // covers programmatic moves. Shaped ids only — junk stamps nothing.
+    case 'HADITH_LAST_SET': {
+      const bookId = typeof action.bookId === 'string' ? action.bookId : '';
+      const n = Math.floor(Number(action.n));
+      if (!isSafeKey(bookId) || !/^[A-Za-z0-9_-]{1,40}$/.test(bookId)) return state;
+      if (!Number.isFinite(n) || n < 1 || n > 999999) return state;
+      const prev = state.lastPosition?.hadith;
+      if (prev?.bookId === bookId && prev?.n === n) return state;
+      return {
+        ...state,
+        lastPosition: { ...(state.lastPosition || {}), hadith: { bookId, n, ts: Date.now() } },
       };
     }
 
