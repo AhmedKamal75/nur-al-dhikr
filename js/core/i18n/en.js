@@ -237,6 +237,9 @@ export const en = {
   // Course / Quiz / Look-alike switch's group label. Bilingual with ar.js
   // from the first commit.
   'practise.label': 'Practise',
+  // (REORG Phase 8 / HANDOFF A1) the fifth door's chrome label. The entry
+  // segment keeps nav.tasbih; the door promises the activity, not the tool.
+  'nav.practise': 'Practise',
   'audio.title': 'Reciters & Audio',
   'audio.subtitle':
     '312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',
@@ -433,10 +436,10 @@ export const en = {
   'audio.customNotAudio': 'That address did not serve audio — check the URL.',
   'audio.note':
     'Streams and downloads come directly from mp3quran.net / quranicaudio.com to your device; nothing is proxied and nothing plays without your tap. Downloaded files live only on this device.',
-  'nav.group.read': 'Read',
-  'nav.group.worship': 'Worship',
-  'nav.group.tools': 'Tools',
-  'nav.group.mine': 'Mine',
+  // (REORG Phase 8 / HANDOFF A1) the read/worship/tools/mine taxonomy
+  // retires with the grouped chrome — the six doors are flat, so the
+  // nav.group.* keys retire in both languages. Shell renders no group
+  // headers; kids scope keeps its own kids.title label.
 
   /* Document titles per route (renderer sets document.title on view
        change) — multi-tab, history and screen-reader users can tell
@@ -2235,7 +2238,9 @@ export const en = {
   'mushaf.tajweedSettings': 'Tajweed rules & colors',
   'mushaf.tajweedPractice': 'Practice Tajweed',
   'mushaf.mutashabihat': 'Similar verses',
-  'mushaf.roots': 'Word roots',
+  // (REORG Phase 8) mushaf.roots retired as a duplicate of nav.roots —
+  // the mushaf sheet's Word-roots row reuses the retired door key, so the
+  // key stays a live label (zero drift) with byte-identical copy.
 
   /* Mushaf regroup: labeled sheet sections + dedicated progress panel */
   'mushaf.sectionGo': 'Go',

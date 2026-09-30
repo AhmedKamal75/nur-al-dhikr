@@ -8,6 +8,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { escapeHTML } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
+import { youModeSwitchHTML } from '../ui/shell.js';
 import { OFFLINE_GROUPS } from '../domain/offline.js';
 import { formatBytes } from '../services/audioStore.js';
 
@@ -93,6 +94,7 @@ export function renderOffline(state) {
       <a class="back-link" href="${buildHash(VIEWS.SETTINGS)}" data-action="navigate" data-view="${VIEWS.SETTINGS}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.settings', lang)}</a>
       <h1 class="view__title">${t('nav.offline', lang)}</h1>
     </header>
+    ${youModeSwitchHTML(state.activeView, lang)}
     <p class="view__subtitle">${t('offline.lead', lang)}</p>
 
     <section class="panel">

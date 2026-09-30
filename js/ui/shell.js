@@ -1,24 +1,30 @@
 /**
  * components/shell.js
  * The persistent app shell: top bar (hamburger, title, search shortcut,
- * theme toggle) and a GROUPED, COLLAPSIBLE navigation.
+ * theme toggle) and a FLAT six-door navigation (REORG Phase 8 / HANDOFF A1).
  *
- *  - Desktop (>= 960px): a side rail with section headers (Read / Worship /
- *    Tools / Mine). The hamburger collapses it to an icon-only rail (the
- *    collapsed state persists in settings.navCollapsed). The rail scrolls
- *    independently, so nothing is ever unreachable — fixes the overflow
- *    bug where items below Settings could not be scrolled to.
- *  - Mobile: a bottom tab bar with the four most-used destinations plus a
- *    "More" button that opens the same grouped navigation as a bottom
+ *  - Desktop (>= 960px): a side rail with the six doors and no taxonomy
+ *    headers — Home · Qur'an · Ahadeeth · Prayer · Practise · You. The
+ *    hamburger collapses it to an icon-only rail (the collapsed state
+ *    persists in settings.navCollapsed). The rail scrolls independently,
+ *    so nothing is ever unreachable.
+ *  - Mobile: a bottom tab bar with the first four doors plus a
+ *    "More" button that opens the full six-door navigation as a bottom
  *    drawer sheet (the pattern used by most modern apps).
  *
  * Markup is identical for both breakpoints; CSS picks the presentation.
+ *
+ * Rule-6 note: every list below derives from DOORS in
+ * js/core/config/nav.js — the route→door map is the single source of
+ * truth, and this file only renders it. A static pin here names nav.js
+ * as its source.
  */
 
 import { icon } from '../core/icons.js';
 import { isRTL, t } from '../core/i18n.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
+import { DOORS } from '../core/config/nav.js';
 
 // (v5.2.65, item 22) kids-mode scope: the chrome offers only the allowlist
 // — the Kids home plus the Tasbih counter — so kids cannot wander by tap.
@@ -30,100 +36,36 @@ const KIDS_NAV_ITEMS = [
 ];
 const KIDS_NAV_GROUPS = [{ label: 'kids.title', items: KIDS_NAV_ITEMS }];
 
-const NAV_GROUPS = [
-  {
-    label: 'nav.group.read',
-    items: [
-      { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
-      { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
-      { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
-      // (REORG Phase 2) one book, one door: the classic reader no longer
-      // competes for a chrome slot. #/quran stays a real route (deep links
-      // keep working) and isActive below lights this door for it; the
-      // List/Word switch inside the Qur'an chrome (quranModeSwitchHTML)
-      // carries the one-tap hop instead of a second nav entry.
-      // (REORG Phase 1) Roots is the DEPTH of the Qur'an door — the index
-      // behind per-word study — not a separate top level. It keeps its own
-      // door beside the book until a later phase re-homes it.
-      { view: VIEWS.ROOTS, icon: 'tree', label: 'nav.roots' },
-      { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
-      // (REORG Phase 5) the G-2 flagship's Phase 1 door stood here, in the
-      // read group, as a temporary home. It is re-homed into the Practise
-      // section beside Tasbih, Quiz and Mutashabihat: #/tajweed-course
-      // stays a real route (deep links keep working) and isActive below
-      // lights the tasbih door for it; the in-chrome switch
-      // (practiseModeSwitchHTML) carries the hop. Config only: no route,
-      // no view import, no deep-link change.
-      // (REORG Phase 6) the §1.6 trap is CLOSED by repointing, not
-      // relabelling: this entry used to say Search and open the command
-      // palette (action: 'open-palette'). It now navigates to the real
-      // search view, so the label promises exactly the tap. The palette
-      // stays one tap away on the top-bar button (palette.open), which
-      // honestly names itself as a quick launcher.
-      { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' },
-    ],
-  },
-  {
-    label: 'nav.group.worship',
-    items: [
-      // (v5.0.0) semantic fix: Prayer carries the prayer-rug glyph,
-      // Qibla carries the compass (it IS a compass bearing). The old
-      // pairing (prayer=compass, qibla=mosque) read backwards.
-      // (REORG Phase 4) one Prayer door: times + qibla + Hijri calendar
-      // in one section. #/qibla and #/calendar stay real routes (deep
-      // links keep working) and isActive below lights this door for
-      // them; the in-chrome switch (prayerModeSwitchHTML) carries the
-      // hop — the calendar is a tab, not a peer door. Arrangement only:
-      // wake-ups, storage eviction and every handler are untouched.
-      // (REORG Phase 6) the daily-tracker entry stood here, in the
-      // worship group, as 'Checklist'. It is re-homed into the You
-      // section as that section's door (label nav.you): #/checklist
-      // stays a real route (deep links keep working) and isActive below
-      // lights the You door for every section member; the in-chrome
-      // switch (youModeSwitchHTML) carries the hop. Config only: no
-      // route, no view import, no deep-link change.
-      { view: VIEWS.PRAYER, icon: 'prayer-rug', label: 'nav.prayer' },
-      { view: VIEWS.RAMADAN, icon: 'rayah', label: 'nav.ramadan' },
-    ],
-  },
-  {
-    label: 'nav.group.tools',
-    items: [
-      { view: VIEWS.TASBIH, icon: 'tasbih', label: 'nav.tasbih' },
-      // (REORG Phase 6) the growth-visual and counts entries stood here,
-      // in the tools group, as 'Garden' and 'Statistics'. Both are
-      // re-homed into the You section: #/garden and #/statistics stay
-      // real routes (deep links keep working) and isActive below lights
-      // the You door for them; the in-chrome switch (youModeSwitchHTML)
-      // carries the hop. Config only: no route, no view import, no
-      // deep-link change.
-      { view: VIEWS.ZAKAT, icon: 'calculator', label: 'nav.zakat' },
-      { view: VIEWS.OFFLINE, icon: 'download', label: 'nav.offline' },
-    ],
-  },
-  {
-    label: 'nav.group.mine',
-    items: [
-      // (REORG Phase 6) one You section (plan §2.1 door 6, §2.5): Garden
-      // + Checklist + Statistics + Favorites + Journal + Certificate +
-      // Settings + About collapse behind a single door. The daily
-      // tracker is the door's view (it carries today, streaks and the
-      // section entry); the other seven stay real routes resolving to
-      // this door in 2 taps via youModeSwitchHTML. 'Garden' and
-      // 'Checklist' retire as nav nouns (§2.6 rule 1: a label is a
-      // thing, not a metaphor); the plant visual survives only as a
-      // treatment inside the Growth view, never as chrome.
-      { view: VIEWS.CHECKLIST, icon: 'target', label: 'nav.you' },
-    ],
-  },
-];
+/**
+ * (REORG Phase 8 / HANDOFF A1) the flat six-door chrome, derived from
+ * DOORS in js/core/config/nav.js — order, entry view, icon and labelKey
+ * all come from the map, so the rail cannot drift from the reachability
+ * trap. Six entries, this order: HOME(nav.home) · MUSHAF(nav.quran) ·
+ * HADITH(nav.hadith) · PRAYER(nav.prayer) · TASBIH-entry labelled
+ * nav.practise · CHECKLIST-entry labelled nav.you.
+ *
+ * Retired as doors (routes + deep links untouched, dictionary keys kept):
+ * nav.library (route stays behind the grid's all-view), nav.roots
+ * (absorbed into the MUSHAF door), nav.tasbih (stays as the Practise
+ * segment label), nav.ramadan (4th Prayer segment), nav.zakat + nav.offline
+ * (9th/10th You segments), nav.search (doorless-by-design via the topbar
+ * palette). The read/worship/tools/mine taxonomy retires with the groups.
+ */
+export const NAV_GROUPS = Object.freeze(
+  DOORS.map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
+);
+
+/** The mobile bar carries the first four doors; the drawer carries all six. */
+const MOBILE_ITEMS = Object.freeze(
+  DOORS.slice(0, 4).map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
+);
 
 /**
- * (REORG Phase 7) internal-only decisions — plan §4 Phase 7: "a door, or a
- * documented decision that it is internal-only. A route with no door and
- * no justification is a finding."
+ * (REORG Phase 7 + Phase 8) internal-only decisions — plan §4 Phase 7: "a
+ * door, or a documented decision that it is internal-only. A route with no
+ * door and no justification is a finding."
  *
- * Two routes stay doorless ON PURPOSE, and this block is the justification
+ * Three routes stay doorless ON PURPOSE, and this block is the justification
  * the trap test reads alongside its own map copy:
  *
  * - `EDITOR` is a TOOL, not a destination. It is invoked from content
@@ -140,121 +82,141 @@ const NAV_GROUPS = [
  *   sheet (`prayer.sheet.ambient`); exit is the in-view close link back
  *   to `#/prayer`. Deep link `#/ambient` keeps working; it just claims
  *   no chrome slot, and no active state aliases it.
+ * - `SEARCH` is doorless BY DESIGN (Phase 8): the search view is one tap
+ *   away on the topbar palette button (`palette.open`), which honestly
+ *   names itself as a quick launcher, and the palette lists the search
+ *   view as a destination. A sixth-plus-one nav door would promise a
+ *   place for what is a launcher action; the §1.6 label-lies trap stays
+ *   closed because no chrome entry says Search anymore. Deep link
+ *   `#/search` keeps working; it just claims no chrome slot, and no
+ *   active state aliases it.
  *
- * Both keep working deep links, both keep the language switch where the
- * shell owns it (topbar — ambient/focus-immersive hide chrome by design,
- * the bare focus picker keeps it), both keep Elder/a11y targets, and
- * neither carries gamification copy. Arrangement only: no route, view,
- * handler or data change.
+ * All three keep working deep links, all three keep the language switch
+ * where the shell owns it (topbar — ambient/focus-immersive hide chrome
+ * by design, the bare focus picker keeps it), and none carries
+ * gamification copy. Arrangement only: no route, view, handler or data
+ * change.
  */
 export const INTERNAL_ONLY_ROUTES = Object.freeze({
   EDITOR:
     'tool invoked from content surfaces (library sheet, category manage, card menu) — internal-only by design',
   AMBIENT:
     'chrome-free nightstand kiosk entered from the Prayer sheet, exited to #/prayer — a nav door would promise chrome the route removes',
+  SEARCH:
+    'doorless-by-design: the search view lives one tap away on the topbar palette (palette.open) which names itself as a quick launcher — a nav door would promise a place for what is a launcher action',
 });
+
+/**
+ * Reverse lookup derived from DOORS (rule 6): route value → door entry
+ * view value. A route with no door entry (EDITOR, AMBIENT, SEARCH, KIDS)
+ * lights nothing — that is the documented decision above, not a gap.
+ */
+const VIEW_KEY_BY_VALUE = Object.freeze(
+  Object.fromEntries(Object.entries(VIEWS).map(([k, v]) => [v, k]))
+);
+const DOOR_VIEW_BY_ROUTE_KEY = Object.freeze(
+  Object.fromEntries(DOORS.flatMap((d) => d.members.map((m) => [m.route, d.view])))
+);
 
 /** Flat lookup used to decide the active item for the current view. */
 function isActive(active, view) {
   if (active === view) return true;
-  // (REORG Phase 7) one Adhkar door: HOME is the adhkar browser (§2.2).
-  // CATEGORY, MOOD, FOCUS, COLLECTIONS and COLLECTION all resolve to it —
-  // the grid/filter row (CATEGORY, MOOD), the immersive one-item stage
-  // behind every card's Open-focus (FOCUS), and the home collections panel
-  // (COLLECTIONS, COLLECTION). LIBRARY keeps its own door for banner-level
-  // management and never aliases here, so exactly one distinct door lights
-  // per route (the Phase 0 trap's ≤2-taps map agrees with the chrome).
-  if (
-    view === VIEWS.HOME &&
-    [VIEWS.CATEGORY, VIEWS.MOOD, VIEWS.FOCUS, VIEWS.COLLECTIONS, VIEWS.COLLECTION].includes(active)
-  )
-    return true;
-  // (REORG Phase 2 + Phase 7) merged Qur'an door: a deep link into #/quran
-  // lights the mushaf entry, and so does #/audio — Qur'an listening (the
-  // reciter/voice picker + offline downloads) is the book's listening
-  // depth, carried by the in-chrome List/Word/Audio switch. ROOTS keeps
-  // its own Phase 1 door, so it never aliases here.
-  if (view === VIEWS.MUSHAF && (active === VIEWS.QURAN || active === VIEWS.AUDIO)) return true;
-  // (REORG Phase 4) merged Prayer door: deep links into #/qibla and
-  // #/calendar light the prayer entry. RAMADAN keeps its own door.
-  if (view === VIEWS.PRAYER && (active === VIEWS.QIBLA || active === VIEWS.CALENDAR)) return true;
-  // (REORG Phase 5) one Practise section: deep links into #/tajweed-course,
-  // #/quiz and #/mutashabihat light the tasbih door. TASBIH keeps its own
-  // door as the section entry.
-  if (
-    view === VIEWS.TASBIH &&
-    [VIEWS.QUIZ, VIEWS.TAJWEED_COURSE, VIEWS.MUTASHABIHAT].includes(active)
-  )
-    return true;
-  // (REORG Phase 6) one You section: deep links into #/garden,
-  // #/statistics, #/favorites, #/journal, #/certificate, #/settings and
-  // #/about light the You door (the checklist view). CHECKLIST keeps its
-  // own door as the section entry.
-  if (
-    view === VIEWS.CHECKLIST &&
-    [
-      VIEWS.GARDEN,
-      VIEWS.STATISTICS,
-      VIEWS.FAVORITES,
-      VIEWS.JOURNAL,
-      VIEWS.CERTIFICATE,
-      VIEWS.SETTINGS,
-      VIEWS.ABOUT,
-    ].includes(active)
-  )
-    return true;
+  const activeKey = VIEW_KEY_BY_VALUE[active];
+  if (!activeKey) return false;
+  const doorView = DOOR_VIEW_BY_ROUTE_KEY[activeKey];
+  if (!doorView) return false;
   if (view === VIEWS.HADITH) return active === VIEWS.HADITH; // book view IS the hadith view
-  // (REORG Phase 7) LIBRARY keeps its own door only. CATEGORY, COLLECTIONS
-  // and COLLECTION resolve to the HOME (Adhkar) door above — the map and
-  // the chrome agree, and exactly one door lights per route. The library's
-  // own banner-management depth stays reachable by tap; it just never
-  // claims another route's active state.
-  return false;
+  return doorView === view;
 }
 
 /**
- * (REORG Phase 2 + Phase 7) the in-chrome Qur'an mode switch: List reading
- * (#/quran) vs Word study (#/roots) vs Listening (#/audio — the reciter /
- * voice picker + offline downloads). Rendered inside the mushaf, reader,
- * roots and audio views — never a nav entry, never a new view. Existing
- * `navigate` actions only (no handler or allowlist change) and the
- * existing `.segmented` styling only (44px targets, so Elder/a11y is
- * untouched). The Audio segment reuses the bilingual `nav.audio` label
- * that already names its destination, so no segment label can drift and
- * each label promises exactly its tap. On the mushaf neither segment is
- * active: the book IS the door, and the switch offers its inner modes
- * without a route hop or an interstitial. No gamification copy anywhere
- * on the rail.
+ * Section-switch member lists, derived from DOORS (rule 6): the routes come
+ * from the map in chrome order, the labels reuse the bilingual keys that
+ * already name their destinations, so no segment label can drift and each
+ * label promises exactly its tap.
+ */
+const doorByEntry = (entry) => DOORS.find((d) => d.entry === entry);
+const switchRoutes = (entry, excludeEntry = false) => {
+  const door = doorByEntry(entry);
+  return door.members.map((m) => m.route).filter((r) => !excludeEntry || r !== entry);
+};
+const QURAN_SWITCH_LABELS = Object.freeze({
+  QURAN: 'quran.modeList',
+  ROOTS: 'quran.modeWord',
+  AUDIO: 'nav.audio',
+});
+const PRAYER_SWITCH_LABELS = Object.freeze({
+  PRAYER: 'nav.prayer',
+  QIBLA: 'nav.qibla',
+  CALENDAR: 'nav.calendar',
+  RAMADAN: 'nav.ramadan',
+});
+const PRACTISE_SWITCH_LABELS = Object.freeze({
+  TASBIH: 'nav.tasbih',
+  TAJWEED_COURSE: 'nav.tajweedCourse',
+  QUIZ: 'quiz.title',
+  MUTASHABIHAT: 'mutashabihat.title',
+});
+const YOU_SWITCH_LABELS = Object.freeze({
+  CHECKLIST: 'you.myAdhkar',
+  GARDEN: 'you.growth',
+  FAVORITES: 'nav.favorites',
+  JOURNAL: 'journal.title',
+  STATISTICS: 'nav.statistics',
+  CERTIFICATE: 'certificate.title',
+  ZAKAT: 'nav.zakat',
+  OFFLINE: 'nav.offline',
+  SETTINGS: 'nav.settings',
+  ABOUT: 'you.about',
+});
+
+/**
+ * (REORG Phase 2 + Phase 7 + Phase 8) the in-chrome Qur'an mode switch:
+ * List reading (#/quran) vs Word study (#/roots) vs Listening (#/audio —
+ * the reciter / voice picker + offline downloads). Rendered inside the
+ * mushaf, reader, roots and audio views — never a nav entry, never a new
+ * view. Existing `navigate` actions only (no handler or allowlist change)
+ * and the existing `.segmented` styling only (44px targets, so Elder/a11y
+ * is untouched). On the mushaf neither segment is active: the book IS the
+ * door, and the switch offers its inner modes without a route hop or an
+ * interstitial. No gamification copy anywhere on the rail.
  */
 export function quranModeSwitchHTML(activeView, lang) {
-  const seg = (view, labelKey, selected) => `
+  const seg = (routeKey, selected) => {
+    const view = VIEWS[routeKey];
+    const labelKey = QURAN_SWITCH_LABELS[routeKey];
+    return `
     <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  };
+  const routes = switchRoutes('MUSHAF', true);
+  const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
     <div class="segmented quran-mode-switch" role="group" aria-label="${t('quran.title', lang)}">
-      ${seg(VIEWS.QURAN, 'quran.modeList', activeView === VIEWS.QURAN)}
-      ${seg(VIEWS.ROOTS, 'quran.modeWord', activeView === VIEWS.ROOTS)}
-      ${seg(VIEWS.AUDIO, 'nav.audio', activeView === VIEWS.AUDIO)}
+      ${routes.map((r) => seg(r, activeKey === r)).join('')}
     </div>`;
 }
 
 /**
- * (REORG Phase 4) the in-chrome Prayer switch: Times (#/prayer) vs Qibla
- * (#/qibla) vs Hijri calendar (#/calendar). Rendered inside all three
- * views — never a nav entry, never a new view. Existing `navigate`
- * actions only (no handler or allowlist change) and the existing
- * `.segmented` styling only (44px targets, so Elder/a11y is untouched).
- * The segments reuse the three entries' own bilingual nav labels, so no
- * new i18n key can drift and each label promises exactly its tap. No
- * interstitial: every segment is a direct link to its route.
+ * (REORG Phase 4 + Phase 8) the in-chrome Prayer switch: Times (#/prayer)
+ * vs Qibla (#/qibla) vs Hijri calendar (#/calendar) vs the Ramadan
+ * companion (#/ramadan). Rendered inside all four views — never a nav
+ * entry, never a new view. Existing `navigate` actions only (no handler
+ * or allowlist change) and the existing `.segmented` styling only (44px
+ * targets, so Elder/a11y is untouched). No interstitial: every segment is
+ * a direct link to its route.
  */
 export function prayerModeSwitchHTML(activeView, lang) {
-  const seg = (view, labelKey, selected) => `
+  const seg = (routeKey, selected) => {
+    const view = VIEWS[routeKey];
+    const labelKey = PRAYER_SWITCH_LABELS[routeKey];
+    return `
     <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  };
+  const routes = switchRoutes('PRAYER');
+  const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
     <div class="segmented prayer-mode-switch" role="group" aria-label="${t('nav.prayer', lang)}">
-      ${seg(VIEWS.PRAYER, 'nav.prayer', activeView === VIEWS.PRAYER)}
-      ${seg(VIEWS.QIBLA, 'nav.qibla', activeView === VIEWS.QIBLA)}
-      ${seg(VIEWS.CALENDAR, 'nav.calendar', activeView === VIEWS.CALENDAR)}
+      ${routes.map((r) => seg(r, activeKey === r)).join('')}
     </div>`;
 }
 
@@ -265,58 +227,55 @@ export function prayerModeSwitchHTML(activeView, lang) {
  * ayat (#/mutashabihat). Rendered inside all four views — never a nav
  * entry, never a new view. Existing `navigate` actions only (no handler
  * or allowlist change) and the existing `.segmented` styling only (44px
- * targets, so Elder/a11y is untouched). The segments reuse bilingual
- * labels that already name their destinations (the two nav entries plus
- * the two views' own titles), so no segment label can drift and each
- * label promises exactly its tap; the group name ships in a new bilingual
+ * targets, so Elder/a11y is untouched). The door carries the new bilingual
+ * `nav.practise` label while the entry segment keeps `nav.tasbih`, so each
+ * label promises exactly its tap; the group name ships in the bilingual
  * `practise.label` key. No interstitial: every segment is a direct link
  * to its route. The course's own stage ladder and progress model are
  * untouched — this rail is the section door, not a second progress
  * display, and it carries no ranking or shame copy (adab).
  */
 export function practiseModeSwitchHTML(activeView, lang) {
-  const seg = (view, labelKey, selected) => `
+  const seg = (routeKey, selected) => {
+    const view = VIEWS[routeKey];
+    const labelKey = PRACTISE_SWITCH_LABELS[routeKey];
+    return `
     <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  };
+  const routes = switchRoutes('TASBIH');
+  const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
     <div class="segmented practise-mode-switch" role="group" aria-label="${t('practise.label', lang)}">
-      ${seg(VIEWS.TASBIH, 'nav.tasbih', activeView === VIEWS.TASBIH)}
-      ${seg(VIEWS.TAJWEED_COURSE, 'nav.tajweedCourse', activeView === VIEWS.TAJWEED_COURSE)}
-      ${seg(VIEWS.QUIZ, 'quiz.title', activeView === VIEWS.QUIZ)}
-      ${seg(VIEWS.MUTASHABIHAT, 'mutashabihat.title', activeView === VIEWS.MUTASHABIHAT)}
+      ${routes.map((r) => seg(r, activeKey === r)).join('')}
     </div>`;
 }
 
 /**
- * (REORG Phase 6) the in-chrome You switch — the §2.5 section door:
- * My adhkar (#/checklist — today, streaks, the section entry) vs Growth
- * (#/garden — the lifetime visual, metaphor retired to a treatment) vs
- * Favorites vs Journal vs Statistics vs Certificate vs Settings vs About
- * and sources. Rendered inside all eight views — never a nav entry,
- * never a new view. Existing `navigate` actions only (no handler or
- * allowlist change). Eight modes cannot share one flex row on a phone
- * without squeezing labels below readability, so this is the one switch
- * that takes the `.segmented--wrap` modifier (two flowing rows; every
- * button keeps min-height: var(--touch-target), so Elder/a11y is
- * untouched). The segments reuse bilingual labels that already name
- * their destinations (the kept nav entries plus the views' own titles);
- * only the section entries that had to be renamed ship as new bilingual
- * keys (nav.you, you.myAdhkar, you.growth, you.about), so each label
- * promises exactly its tap. No interstitial: every segment is a direct
- * link to its route. The rail carries no ranking or shame copy (adab).
+ * (REORG Phase 6 + Phase 8) the in-chrome You switch — the §2.5 section
+ * door: My adhkar (#/checklist — today, streaks, the section entry) vs
+ * Growth (#/garden — the lifetime visual, metaphor retired to a treatment)
+ * vs Favorites vs Journal vs Statistics vs Certificate vs Zakat vs Offline
+ * library vs Settings vs About and sources. Rendered inside all ten views —
+ * never a nav entry, never a new view. Existing `navigate` actions only
+ * (no handler or allowlist change). Ten modes cannot share one flex row on
+ * a phone without squeezing labels below readability, so this is the one
+ * switch that takes the `.segmented--wrap` modifier (two flowing rows;
+ * every button keeps min-height: var(--touch-target), so Elder/a11y is
+ * untouched). No interstitial: every segment is a direct link to its
+ * route. The rail carries no ranking or shame copy (adab).
  */
 export function youModeSwitchHTML(activeView, lang) {
-  const seg = (view, labelKey, selected) => `
+  const seg = (routeKey, selected) => {
+    const view = VIEWS[routeKey];
+    const labelKey = YOU_SWITCH_LABELS[routeKey];
+    return `
     <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  };
+  const routes = switchRoutes('CHECKLIST');
+  const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
     <div class="segmented segmented--wrap you-mode-switch" role="group" aria-label="${t('nav.you', lang)}">
-      ${seg(VIEWS.CHECKLIST, 'you.myAdhkar', activeView === VIEWS.CHECKLIST)}
-      ${seg(VIEWS.GARDEN, 'you.growth', activeView === VIEWS.GARDEN)}
-      ${seg(VIEWS.FAVORITES, 'nav.favorites', activeView === VIEWS.FAVORITES)}
-      ${seg(VIEWS.JOURNAL, 'journal.title', activeView === VIEWS.JOURNAL)}
-      ${seg(VIEWS.STATISTICS, 'nav.statistics', activeView === VIEWS.STATISTICS)}
-      ${seg(VIEWS.CERTIFICATE, 'certificate.title', activeView === VIEWS.CERTIFICATE)}
-      ${seg(VIEWS.SETTINGS, 'nav.settings', activeView === VIEWS.SETTINGS)}
-      ${seg(VIEWS.ABOUT, 'you.about', activeView === VIEWS.ABOUT)}
+      ${routes.map((r) => seg(r, activeKey === r)).join('')}
     </div>`;
 }
 
@@ -335,6 +294,14 @@ function navItemHTML(n, active, lang, { drawer = false } = {}) {
 }
 
 function groupsHTML(active, lang, { drawer = false } = {}, groups = NAV_GROUPS) {
+  // Flat six-door chrome: entries render with no taxonomy header. The kids
+  // scope still ships one labelled group, rendered the grouped way.
+  if (groups.length > 0 && groups[0] && groups[0].view) {
+    return `
+  <div class="nav__group nav__group--flat">
+    ${groups.map((n) => navItemHTML(n, active, lang, { drawer })).join('')}
+  </div>`;
+  }
   return groups
     .map(
       (g) => `
@@ -439,29 +406,24 @@ export function renderNav(state) {
   const kidsScoped = state.settings.kidsMode === true;
   const groups = kidsScoped ? KIDS_NAV_GROUPS : NAV_GROUPS;
 
-  // Mobile bottom bar: four fixed destinations + More (opens the drawer).
-  // In the kids scope the bar mirrors the allowlist (CSS hides it anyway —
-  // the DOM stays honest for tests and assistive tech).
-  const MOBILE_ITEMS = kidsScoped
-    ? KIDS_NAV_ITEMS
-    : [
-        { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
-        { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
-        { view: VIEWS.MUSHAF, icon: 'quran', label: 'nav.quran' },
-        { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
-      ];
+  // Mobile bottom bar: the first four doors + More (opens the drawer with
+  // all six). In the kids scope the bar mirrors the allowlist (CSS hides
+  // it anyway — the DOM stays honest for tests and assistive tech).
+  const mobileItems = kidsScoped ? KIDS_NAV_ITEMS : MOBILE_ITEMS;
   // (v5.17.3, axe) these wrappers are plain divs, not nested <nav>
   // landmarks: #bottomnav already owns the single "Main navigation"
   // landmark, and duplicate same-name navs fail `landmark-unique`.
   const mobileBar = `
     <div class="nav-mobile-bar">
-      ${MOBILE_ITEMS.map(
-        (n) => `
+      ${mobileItems
+        .map(
+          (n) => `
       <a class="nav-mobile-bar__item ${isActive(active, n.view) ? 'nav-mobile-bar__item--active' : ''}" href="${buildHash(n.view)}" data-action="navigate" data-view="${n.view}" aria-current="${isActive(active, n.view) ? 'page' : 'false'}">
         ${icon(n.icon, { size: 22 })}
         <span class="nav__label">${t(n.label, lang)}</span>
       </a>`
-      ).join('')}
+        )
+        .join('')}
       ${
         kidsScoped
           ? ''

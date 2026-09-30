@@ -17,9 +17,10 @@
  * service-worker precache gate walks the import graph from js/app.js
  * through this module.
  */
-export const APP_VERSION = '5.17.45';
+export const APP_VERSION = '5.17.46';
 
 export * from './config/app.js';
 export * from './config/quran.js';
 export * from './config/views.js';
+export * from './config/nav.js';
 export * from './config/sanitize.js';

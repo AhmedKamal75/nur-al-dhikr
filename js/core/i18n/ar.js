@@ -220,6 +220,8 @@ export const ar = {
   // (REORG Phase 5) the Practise section name — bilingual with en.js from
   // the first commit.
   'practise.label': 'الممارسة',
+  // (REORG Phase 8 / HANDOFF A1) the fifth door's chrome label.
+  'nav.practise': 'الممارسة',
   'audio.title': 'القراء والصوتيات',
   'audio.subtitle':
     '٣١٢ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',
@@ -410,10 +412,8 @@ export const ar = {
   'audio.customNotAudio': 'هذا العنوان لا يقدّم صوتًا — تأكد من الرابط.',
   'audio.note':
     'يأتي البث والتحميل مباشرة من mp3quran.net / quranicaudio.com إلى جهازك دون وسيط، ولا يعمل شيء إلا بضغطة منك. الملفات المحمّلة تبقى على جهازك فقط.',
-  'nav.group.read': 'القراءة',
-  'nav.group.worship': 'العبادة',
-  'nav.group.tools': 'الأدوات',
-  'nav.group.mine': 'خاصتي',
+  // (REORG Phase 8 / HANDOFF A1) the read/worship/tools/mine taxonomy
+  // retires with the grouped chrome — see en.js.
 
   /* عناوين المستند لكل مسار (يضبطها العارض عند تغيّر الواجهة). */
   'title.home': 'الرئيسية',
@@ -2160,7 +2160,7 @@ export const ar = {
   'mushaf.tajweedSettings': 'قواعد التجويد وألوانه',
   'mushaf.tajweedPractice': 'تدريب التجويد',
   'mushaf.mutashabihat': 'الآيات المتشابهات',
-  'mushaf.roots': 'جذور الكلمات',
+  // (REORG Phase 8) mushaf.roots retired as a duplicate of nav.roots — see en.js.
 
   /* إعادة تنظيم المصحف: أقسام مسماة + لوحة تقدم مستقلة */
   'mushaf.sectionGo': 'الانتقال',

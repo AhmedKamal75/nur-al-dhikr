@@ -694,7 +694,7 @@ export function buildMushafSheet(state) {
       }
       ${row('practice-open', 'mushaf.tajweedPractice', 'sparkle')}
       ${linkRow('mushaf.mutashabihat', 'quran', VIEWS.MUTASHABIHAT, {})}
-      ${linkRow('mushaf.roots', 'book', VIEWS.ROOTS, {})}
+      ${linkRow('nav.roots', 'book', VIEWS.ROOTS, {})}
     </div>
     <div class="mushaf-sheet__group">
       <h3 class="mushaf-jump__heading">${t('mushaf.sectionListen', lang)}</h3>

@@ -20,10 +20,14 @@ import { SETTINGS_SECTIONS, settingsSlugForSection } from './settings.js';
 import { contentTitleFor } from '../domain/localeContent.js';
 import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
-/** Navigation destinations searchable from the palette. */
+/** Navigation destinations searchable from the palette.
+ * (REORG Phase 8 / HANDOFF A1) resolved through DOORS in
+ * js/core/config/nav.js: LIBRARY has no door — the HOME door (the adhkar
+ * grid's all-view) carries it, so the palette offers Home, not a second
+ * door to the same tiles. SEARCH keeps its destination row: the search
+ * view is doorless-by-design and the palette IS its door. */
 const NAV_TARGETS = [
   { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
-  { view: VIEWS.LIBRARY, icon: 'library', label: 'nav.library' },
   { view: VIEWS.QURAN, icon: 'quran', label: 'nav.quran' },
   { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
   { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' },

@@ -504,7 +504,7 @@ export function adhkarBrowserHTML(state) {
     ${browserMoodRowHTML(state, lang)}
     ${sections}
     ${browserReferenceHTML(state, lang)}
-    <p><a class="btn btn--ghost btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${escapeHTML(t('home.openLibrary', lang))} ${goIcon(lang, 14)}</a></p>
+    <p><a class="btn btn--ghost btn--sm" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${escapeHTML(t('home.openLibrary', lang))} ${goIcon(lang, 14)}</a></p>
   </section>`;
 }
 
@@ -653,7 +653,7 @@ export function renderHome(state) {
           iconName: 'book',
           title: t('home.blankPage', lang),
           hint: t('home.noRecent', lang),
-          actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${escapeHTML(t('nav.library', lang))}</a>`,
+          actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${escapeHTML(t('nav.home', lang))}</a>`,
         }),
     favorites: favEntries.length
       ? `

@@ -23,6 +23,7 @@ import {
   NISAB_SILVER_GRAMS,
 } from '../domain/zakat.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
+import { youModeSwitchHTML } from '../ui/shell.js';
 
 const ASSET_FIELDS = [
   { id: 'cash', label: 'zakat.cash', placeholder: 'zakat.ph.amount' },
@@ -251,6 +252,7 @@ export function renderZakat(state) {
       <h1 class="view__title">${t('zakat.title', lang)}</h1>
       ${viewMenuButton('zakat', lang, { labelKey: 'viewMenu.zakat' })}
     </div>
+    ${youModeSwitchHTML(state.activeView, lang)}
     <p class="view__subtitle">${t('zakat.subtitle', lang)}</p>
 
     ${nisabPanel(state, lang)}

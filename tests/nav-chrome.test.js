@@ -15,11 +15,12 @@ import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
 
 /**
- * REORG Phase 2 locks (supersedes the ORG-02 two-doors ruling): one book,
- * one door. The classic reader no longer competes for a chrome slot —
- * #/quran stays a real route and lights the mushaf door, while the
- * in-chrome List/Word switch carries the hop. ROOTS keeps its Phase 1
- * door as the Qur'an depth.
+ * REORG Phase 2 locks (supersedes the ORG-02 two-doors ruling) + Phase 8
+ * absorption: one book, one door. The classic reader no longer competes
+ * for a chrome slot — #/quran stays a real route and lights the mushaf
+ * door, while the in-chrome List/Word/Audio switch carries the hop. ROOTS
+ * is absorbed into the same door (HANDOFF A1): #/roots stays a real route
+ * and lights the mushaf door in 2 taps via the switch.
  */
 const stateFor = (activeView) => ({ ...initialState(), activeView });
 
@@ -32,16 +33,16 @@ function activeViews(html) {
 }
 
 describe('Phase 2 chrome: one Qur’an door', () => {
-  test('rail and drawer expose the mushaf door once each; no competing reader entry', () => {
+  test('rail and drawer expose the mushaf door once each; no competing reader or roots entry', () => {
     const html = renderNav(stateFor(VIEWS.HOME));
     assert.ok(html.includes(`data-view="${VIEWS.MUSHAF}"`), 'mushaf entry present');
     const quranHits = html.split(`data-view="${VIEWS.QURAN}"`).length - 1;
     assert.equal(quranHits, 0, `reader must not compete in the chrome (saw ${quranHits})`);
     const rootsHits = html.split(`data-view="${VIEWS.ROOTS}"`).length - 1;
-    assert.ok(rootsHits >= 2, `roots depth keeps its door in rail and drawer (saw ${rootsHits})`);
+    assert.equal(rootsHits, 0, `roots must not compete in the chrome (saw ${rootsHits})`);
   });
 
-  test('active states merged: #/quran deep link lights the mushaf door; roots keeps its own', () => {
+  test('active states merged: #/quran and #/roots deep links light the mushaf door', () => {
     // Each destination lights in rail + drawer + mobile bar, so dedupe:
     // exactly one DISTINCT active destination per view.
     const distinct = (html) => [...new Set(activeViews(html))].sort();
@@ -51,7 +52,11 @@ describe('Phase 2 chrome: one Qur’an door', () => {
       [VIEWS.MUSHAF],
       'a deep link into #/quran lights the Qur’an door, not a second entry'
     );
-    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.ROOTS))), [VIEWS.ROOTS]);
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.ROOTS))),
+      [VIEWS.MUSHAF],
+      'a deep link into #/roots lights the Qur’an door, not a second entry'
+    );
   });
 
   test('in-chrome switch links list reading and word study with no new actions', () => {
@@ -92,14 +97,15 @@ describe('Phase 2 chrome: one Qur’an door', () => {
 });
 
 /**
- * REORG Phase 4 locks: one Prayer door. Times + qibla + Hijri calendar
- * live in one section; the calendar is a tab, not a peer door. #/qibla
- * and #/calendar stay real routes and light the prayer door, while the
- * in-chrome Times/Qibla/Calendar switch carries the hop. RAMADAN keeps
- * its own door. Arrangement only — no capability change.
+ * REORG Phase 4 locks + Phase 8 absorption: one Prayer door. Times +
+ * qibla + Hijri calendar + the Ramadan companion live in one section;
+ * the calendar is a tab, not a peer door. #/qibla, #/calendar and
+ * #/ramadan stay real routes and light the prayer door, while the
+ * in-chrome Times/Qibla/Calendar/Ramadan switch carries the hop.
+ * Arrangement only — no capability change.
  */
 describe('Phase 4 chrome: one Prayer door', () => {
-  test('rail and drawer expose the prayer door once each; no competing qibla/calendar entry', () => {
+  test('rail and drawer expose the prayer door once each; no competing qibla/calendar/ramadan entry', () => {
     const html = renderNav(stateFor(VIEWS.HOME));
     assert.ok(html.includes(`data-view="${VIEWS.PRAYER}"`), 'prayer entry present');
     const qiblaHits = html.split(`data-view="${VIEWS.QIBLA}"`).length - 1;
@@ -111,13 +117,10 @@ describe('Phase 4 chrome: one Prayer door', () => {
       `the calendar must not compete in the chrome (saw ${calendarHits})`
     );
     const ramadanHits = html.split(`data-view="${VIEWS.RAMADAN}"`).length - 1;
-    assert.ok(
-      ramadanHits >= 2,
-      `ramadan keeps its own door in rail and drawer (saw ${ramadanHits})`
-    );
+    assert.equal(ramadanHits, 0, `ramadan must not compete in the chrome (saw ${ramadanHits})`);
   });
 
-  test('active states merged: #/qibla and #/calendar deep links light the prayer door', () => {
+  test('active states merged: #/qibla, #/calendar and #/ramadan deep links light the prayer door', () => {
     // Each destination lights in rail + drawer + mobile bar, so dedupe:
     // exactly one DISTINCT active destination per view.
     const distinct = (html) => [...new Set(activeViews(html))].sort();
@@ -132,17 +135,22 @@ describe('Phase 4 chrome: one Prayer door', () => {
       [VIEWS.PRAYER],
       'a deep link into #/calendar lights the Prayer door, not a second entry'
     );
-    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.RAMADAN))), [VIEWS.RAMADAN]);
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.RAMADAN))),
+      [VIEWS.PRAYER],
+      'a deep link into #/ramadan lights the Prayer door, not a second entry'
+    );
   });
 
-  test('in-chrome switch links times, qibla and calendar with no new actions', () => {
+  test('in-chrome switch links times, qibla, calendar and ramadan with no new actions', () => {
     for (const lang of ['en', 'ar']) {
       const html = prayerModeSwitchHTML(VIEWS.PRAYER, lang);
       assert.ok(
         html.includes(`data-view="${VIEWS.PRAYER}"`) &&
           html.includes(`data-view="${VIEWS.QIBLA}"`) &&
-          html.includes(`data-view="${VIEWS.CALENDAR}"`),
-        `switch carries all three modes (${lang})`
+          html.includes(`data-view="${VIEWS.CALENDAR}"`) &&
+          html.includes(`data-view="${VIEWS.RAMADAN}"`),
+        `switch carries all four modes (${lang})`
       );
       assert.ok(
         html.includes('data-action="navigate"') && !html.includes('data-action="prayer-'),
@@ -150,7 +158,7 @@ describe('Phase 4 chrome: one Prayer door', () => {
       );
     }
     // The active segment follows the route — exactly one claims each view.
-    for (const view of [VIEWS.PRAYER, VIEWS.QIBLA, VIEWS.CALENDAR]) {
+    for (const view of [VIEWS.PRAYER, VIEWS.QIBLA, VIEWS.CALENDAR, VIEWS.RAMADAN]) {
       const html = prayerModeSwitchHTML(view, 'en');
       const activeCount = html.split('segmented__btn--active').length - 1;
       assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
@@ -158,8 +166,8 @@ describe('Phase 4 chrome: one Prayer door', () => {
     }
   });
 
-  test('Prayer chrome copy is bilingual: the three reused nav labels', () => {
-    for (const key of ['nav.prayer', 'nav.qibla', 'nav.calendar']) {
+  test('Prayer chrome copy is bilingual: the four reused nav labels', () => {
+    for (const key of ['nav.prayer', 'nav.qibla', 'nav.calendar', 'nav.ramadan']) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }
@@ -167,29 +175,34 @@ describe('Phase 4 chrome: one Prayer door', () => {
 });
 
 /**
- * REORG Phase 5 locks: one Practise section. Tasbih, the Tajweed course,
- * the 99 Names quiz and look-alike ayat live in one section behind a
- * single nav.tasbih door; the course's Phase 1 read-group door was
- * temporary and is re-homed here. #/tajweed-course, #/quiz and
- * #/mutashabihat stay real routes and light the tasbih door, while the
- * in-chrome Tasbih/Course/Quiz/Look-alike switch (the §2.4 stage rail)
- * carries the hop. Arrangement only — the course progress model, every
- * handler and every data file are untouched, and the rail carries no
- * ranking or shame copy (adab).
+ * REORG Phase 5 locks + Phase 8 door label: one Practise section. Tasbih,
+ * the Tajweed course, the 99 Names quiz and look-alike ayat live in one
+ * section behind the TASBIH entry wearing the nav.practise door label;
+ * the course's Phase 1 read-group door was temporary and is re-homed here.
+ * #/tajweed-course, #/quiz and #/mutashabihat stay real routes and light
+ * the Practise door, while the in-chrome Tasbih/Course/Quiz/Look-alike
+ * switch (the §2.4 stage rail) carries the hop. Arrangement only — the
+ * course progress model, every handler and every data file are untouched,
+ * and the rail carries no ranking or shame copy (adab).
  */
 describe('Phase 5 chrome: one Practise section', () => {
-  test('rail and drawer expose the tasbih door; course/quiz/look-alikes do not compete', () => {
+  test('rail and drawer expose the Practise door; course/quiz/look-alikes do not compete', () => {
     const html = renderNav(stateFor(VIEWS.HOME));
-    assert.ok(html.includes(`data-view="${VIEWS.TASBIH}"`), 'tasbih entry present');
+    assert.ok(html.includes(`data-view="${VIEWS.TASBIH}"`), 'practise entry present');
     for (const view of [VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
       const hits = html.split(`data-view="${view}"`).length - 1;
       assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
     }
     const tasbihHits = html.split(`data-view="${VIEWS.TASBIH}"`).length - 1;
-    assert.ok(tasbihHits >= 2, `tasbih keeps its door in rail and drawer (saw ${tasbihHits})`);
+    assert.ok(tasbihHits >= 2, `practise keeps its door in rail and drawer (saw ${tasbihHits})`);
+    // The door promises the activity (nav.practise), not the counting tool.
+    assert.ok(
+      html.includes(`<span class="nav__label">${en['nav.practise']}</span>`),
+      'door carries the nav.practise label'
+    );
   });
 
-  test('active states merged: course/quiz/look-alike deep links light the tasbih door', () => {
+  test('active states merged: course/quiz/look-alike deep links light the Practise door', () => {
     // Each destination lights in rail + drawer (+ mobile bar where listed),
     // so dedupe: exactly one DISTINCT active destination per view.
     const distinct = (html) => [...new Set(activeViews(html))].sort();
@@ -198,7 +211,7 @@ describe('Phase 5 chrome: one Practise section', () => {
       assert.deepEqual(
         distinct(renderNav(stateFor(view))),
         [VIEWS.TASBIH],
-        `a deep link into #/${view} lights the Tasbih door, not a second entry`
+        `a deep link into #/${view} lights the Practise door, not a second entry`
       );
     }
   });
@@ -234,8 +247,9 @@ describe('Phase 5 chrome: one Practise section', () => {
     }
   });
 
-  test('Practise chrome copy is bilingual: reused labels plus the section name', () => {
+  test('Practise chrome copy is bilingual: door label, entry segment, reused labels, section name', () => {
     for (const key of [
+      'nav.practise',
       'nav.tasbih',
       'nav.tajweedCourse',
       'quiz.title',
@@ -245,16 +259,20 @@ describe('Phase 5 chrome: one Practise section', () => {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }
+    assert.equal(en['nav.practise'], 'Practise');
+    assert.equal(ar['nav.practise'], 'الممارسة');
   });
 });
 
 /**
- * REORG Phase 6 locks: one You section, and the naming pass. Garden,
- * Checklist, Statistics, Favorites, Journal, Certificate, Settings and
- * About collapse behind a single nav.you door (the checklist view — it
- * carries today, streaks and the section entry); the other seven stay
- * real routes and light the You door, while the in-chrome switch carries
- * the hop. 'Garden' and 'Checklist' retire as nav nouns (§2.6 rule 1:
+ * REORG Phase 6 locks + Phase 8 absorption: one You section, ten modes.
+ * Garden, Checklist, Statistics, Favorites, Journal, Certificate, Zakat,
+ * Offline library, Settings and About collapse behind a single nav.you
+ * door (the checklist view — it carries today, streaks and the section
+ * entry); the other nine stay real routes and light the You door, while
+ * the in-chrome switch carries the hop. 'Garden' and 'Checklist' retire
+ * as nav nouns (§2.6 rule 1: a label is a thing, not a metaphor); the
+ * plant visual survives only as a treatment inside the Growth view.
  * a label is a thing, not a metaphor); the plant visual survives only
  * as a treatment inside the Growth view. The §1.6 Search/palette
  * mismatch closes by repointing: nav Search navigates to the search
@@ -272,6 +290,8 @@ describe('Phase 6 chrome: one You section', () => {
       VIEWS.FAVORITES,
       VIEWS.SETTINGS,
       VIEWS.ABOUT,
+      VIEWS.ZAKAT,
+      VIEWS.OFFLINE,
     ]) {
       const hits = html.split(`data-view="${view}"`).length - 1;
       assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
@@ -296,6 +316,8 @@ describe('Phase 6 chrome: one You section', () => {
       VIEWS.FAVORITES,
       VIEWS.JOURNAL,
       VIEWS.CERTIFICATE,
+      VIEWS.ZAKAT,
+      VIEWS.OFFLINE,
       VIEWS.SETTINGS,
       VIEWS.ABOUT,
     ]) {
@@ -307,7 +329,7 @@ describe('Phase 6 chrome: one You section', () => {
     }
   });
 
-  test('in-chrome switch links all eight section modes with no new actions', () => {
+  test('in-chrome switch links all ten section modes with no new actions', () => {
     const members = [
       VIEWS.CHECKLIST,
       VIEWS.GARDEN,
@@ -315,6 +337,8 @@ describe('Phase 6 chrome: one You section', () => {
       VIEWS.JOURNAL,
       VIEWS.STATISTICS,
       VIEWS.CERTIFICATE,
+      VIEWS.ZAKAT,
+      VIEWS.OFFLINE,
       VIEWS.SETTINGS,
       VIEWS.ABOUT,
     ];
@@ -344,7 +368,7 @@ describe('Phase 6 chrome: one You section', () => {
     }
   });
 
-  test('You chrome copy is bilingual: door, renamed entries, reused labels', () => {
+  test('You chrome copy is bilingual: door, renamed entries, reused labels, absorbed members', () => {
     for (const key of [
       'nav.you',
       'you.myAdhkar',
@@ -353,6 +377,8 @@ describe('Phase 6 chrome: one You section', () => {
       'journal.title',
       'nav.statistics',
       'certificate.title',
+      'nav.zakat',
+      'nav.offline',
       'nav.settings',
       'you.about',
     ]) {
@@ -369,29 +395,74 @@ describe('Phase 6 chrome: one You section', () => {
 });
 
 /**
- * REORG Phase 7 locks: the orphans, one by one. FOCUS, COLLECTIONS and
- * COLLECTION resolve to the HOME (Adhkar) door; AUDIO resolves to the
- * MUSHAF (Qur'an) door via the extended List/Word/Audio switch; EDITOR
- * and AMBIENT stay doorless ON PURPOSE as documented internals
- * (js/ui/shell.js INTERNAL_ONLY_ROUTES). Arrangement only — no route,
- * view, handler or data change; renderer static budget stays 19/19; the
- * switches reuse navigate only; every segment keeps its 44px target; no
- * gamification copy; bilingual from the first commit.
+ * REORG Phase 7 locks + Phase 8 six-door cut: the orphans, one by one,
+ * then the filing cabinet comes down. FOCUS, COLLECTIONS and COLLECTION
+ * resolve to the HOME (Adhkar) door; AUDIO resolves to the MUSHAF (Qur'an)
+ * door via the extended List/Word/Audio switch; LIBRARY resolves to HOME
+ * behind the grid's all-view; EDITOR, AMBIENT and SEARCH stay doorless ON
+ * PURPOSE as documented internals (js/ui/shell.js INTERNAL_ONLY_ROUTES).
+ * Arrangement only — no route, view, handler or data change; renderer
+ * static budget stays 19/19; the switches reuse navigate only; every
+ * segment keeps its 44px target; no gamification copy; bilingual from the
+ * first commit.
  */
-describe('Phase 7 chrome: Adhkar depths, Qur’an listening, two documented internals', () => {
-  test('no new chrome entries: the rail still exposes exactly the 12 Phase 6 doors', () => {
+describe('Phase 7 chrome: Adhkar depths, Qur’an listening, three documented internals', () => {
+  test('no new chrome entries: the rail exposes exactly the 6 Phase 8 doors', () => {
     const html = renderNav(stateFor(VIEWS.HOME));
     for (const view of [
+      VIEWS.LIBRARY,
       VIEWS.FOCUS,
       VIEWS.COLLECTIONS,
       VIEWS.COLLECTION,
       VIEWS.AUDIO,
+      VIEWS.ROOTS,
+      VIEWS.QURAN,
+      VIEWS.QIBLA,
+      VIEWS.CALENDAR,
+      VIEWS.RAMADAN,
+      VIEWS.TAJWEED_COURSE,
+      VIEWS.QUIZ,
+      VIEWS.MUTASHABIHAT,
+      VIEWS.GARDEN,
+      VIEWS.STATISTICS,
+      VIEWS.FAVORITES,
+      VIEWS.JOURNAL,
+      VIEWS.CERTIFICATE,
+      VIEWS.ZAKAT,
+      VIEWS.OFFLINE,
+      VIEWS.SETTINGS,
+      VIEWS.ABOUT,
+      VIEWS.SEARCH,
       VIEWS.EDITOR,
       VIEWS.AMBIENT,
     ]) {
       const hits = html.split(`data-view="${view}"`).length - 1;
       assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
     }
+    for (const view of [
+      VIEWS.HOME,
+      VIEWS.MUSHAF,
+      VIEWS.HADITH,
+      VIEWS.PRAYER,
+      VIEWS.TASBIH,
+      VIEWS.CHECKLIST,
+    ]) {
+      assert.ok(html.includes(`data-view="${view}"`), `door #/${view} present`);
+    }
+  });
+
+  test('the six doors wear the A1 labels in order', () => {
+    const html = renderNav(stateFor(VIEWS.HOME));
+    const labels = [...html.matchAll(/<span class="nav__label">([^<]+)<\/span>/g)].map((m) => m[1]);
+    const railLabels = labels.slice(0, 6);
+    assert.deepEqual(railLabels, [
+      en['nav.home'],
+      en['nav.quran'],
+      en['nav.hadith'],
+      en['nav.prayer'],
+      en['nav.practise'],
+      en['nav.you'],
+    ]);
   });
 
   test('active states: Adhkar depths light HOME, listening lights the Qur’an door', () => {
@@ -408,9 +479,10 @@ describe('Phase 7 chrome: Adhkar depths, Qur’an listening, two documented inte
       [VIEWS.MUSHAF],
       'a deep link into #/audio lights the Qur’an door, not a second entry'
     );
-    // Exactly one distinct door per route — LIBRARY never aliases here.
+    // Exactly one distinct door per route — LIBRARY resolves to HOME behind
+    // the grid's all-view.
     assert.deepEqual(distinct(renderNav(stateFor(VIEWS.CATEGORY))), [VIEWS.HOME]);
-    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.LIBRARY))), [VIEWS.LIBRARY]);
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.LIBRARY))), [VIEWS.HOME]);
   });
 
   test('Qur’an switch carries list, word and listening with no new actions', () => {
@@ -457,13 +529,13 @@ describe('Phase 7 chrome: Adhkar depths, Qur’an listening, two documented inte
     }
   });
 
-  test('EDITOR and AMBIENT are documented internals with no chrome claim', () => {
+  test('EDITOR, AMBIENT and SEARCH are documented internals with no chrome claim', () => {
     assert.deepEqual(
       [...Object.keys(INTERNAL_ONLY_ROUTES)].sort(),
-      ['AMBIENT', 'EDITOR'],
-      'exactly the two kiosk/tool routes are internal-only'
+      ['AMBIENT', 'EDITOR', 'SEARCH'],
+      'exactly the three kiosk/tool/launcher routes are internal-only'
     );
-    for (const key of ['EDITOR', 'AMBIENT']) {
+    for (const key of ['EDITOR', 'AMBIENT', 'SEARCH']) {
       assert.ok(
         INTERNAL_ONLY_ROUTES[key] && INTERNAL_ONLY_ROUTES[key].length > 40,
         `${key} carries no recorded justification`
@@ -479,6 +551,11 @@ describe('Phase 7 chrome: Adhkar depths, Qur’an listening, two documented inte
       distinct(renderNav(stateFor(VIEWS.AMBIENT))),
       [],
       'no door lights for #/ambient'
+    );
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.SEARCH))),
+      [],
+      'no door lights for #/search'
     );
   });
 });

@@ -197,7 +197,10 @@ describe('Phase 3: contracts that must not move', () => {
     const html = renderHome(browserState());
     assert.ok(html.includes('home-browser'), 'browser section rides the home view');
     assert.ok(html.includes(en['home.browserTitle']), 'browser title renders on home');
-    assert.ok(html.includes(`data-view="${VIEWS.LIBRARY}"`), 'full-library door still offered');
+    assert.ok(
+      html.includes(`data-view="${VIEWS.HOME}"`),
+      'all-view offered through the HOME door (Phase 8: LIBRARY has no door; #/library stays a real route behind the grid)'
+    );
     assert.ok(html.includes('topbar__lang') === false, 'no chrome duplication from the view');
   });
 

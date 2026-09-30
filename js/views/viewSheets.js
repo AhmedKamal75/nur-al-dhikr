@@ -500,7 +500,9 @@ export function buildCalendarSheet(state) {
           // from — a dead end. Now closes the sheet and scrolls to the
           // fasting panel below (same pattern as a section landing).
           sheetRow('calendar-goto-fasting', 'calendar.sheet.fasting', 'sun', lang),
-          sheetLinkRow('calendar.sheet.special', 'star', VIEWS.LIBRARY, {}, lang),
+          // (REORG Phase 8) LIBRARY has no door — the HOME door carries the
+          // grid's all-view, so this sheet hop resolves through it.
+          sheetLinkRow('calendar.sheet.special', 'star', VIEWS.HOME, {}, lang),
         ],
       },
     ],
@@ -646,7 +648,7 @@ export function buildGardenHowSheet(state) {
     <p class="view-sheet__intro">${t('garden.sheet.howBody', lang)}</p>
     <div class="view-sheet__group">
       ${sheetLinkRow('garden.sheet.tasbih', 'tasbih', VIEWS.TASBIH, {}, lang)}
-      ${sheetLinkRow('nav.library', 'library', VIEWS.LIBRARY, {}, lang)}
+      ${sheetLinkRow('nav.home', 'library', VIEWS.HOME, {}, lang)}
     </div>
   </div>`;
 }

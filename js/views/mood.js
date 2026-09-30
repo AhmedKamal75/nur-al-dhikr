@@ -30,7 +30,7 @@ function moodPickerHTML(state, lang) {
   });
   return `<section class="view view--mood-picker">
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${escapeHTML(t('nav.library', lang))}</a>
+      <a class="back-link" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${escapeHTML(t('nav.home', lang))}</a>
       <h1 class="view__title">${escapeHTML(t('moods.title', lang))}</h1>
     </header>
     <p class="panel__subtext">${escapeHTML(t('moods.pickerHint', lang))}</p>
@@ -60,7 +60,7 @@ export function renderMood(state) {
   return `
   <section class="view view--mood">
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('moods.title', lang)}</a>
+      <a class="back-link" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.home', lang)}</a>
       <h1 class="view__title">${icon(mood.icon, { size: 22 })} ${t(`mood.${mood.id}`, lang)}</h1>
       <p class="view__subtitle">${t('moods.subtitle', lang)}</p>
       <p class="view__meta">${t('collections.itemCount', lang, { n: entries.length })}</p>

@@ -530,7 +530,7 @@ export function renderStatistics(state) {
             title: t('stats.noData', lang),
             // (v5.12.1 UX audit S13) the title already hints the move; the
             // panel now offers it as a button (existing library view).
-            actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${escapeHTML(t('nav.library', lang))}</a>`,
+            actionHTML: `<a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${escapeHTML(t('nav.home', lang))}</a>`,
           })
     }
     ${gapPanelHTML(state, lang)}

@@ -37,6 +37,7 @@ import {
   ramadanKhatmPlan,
 } from '../domain/ramadanPlanner.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
+import { prayerModeSwitchHTML } from '../ui/shell.js';
 
 /**
  * Resolve the iftar/suhoor dua item id against the live library index —
@@ -280,6 +281,8 @@ function linksPanel(lang) {
       <a class="quick-action quick-action--qibla" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">
         ${icon('compass', { size: 22 })}<span>${t('nav.prayer', lang)}</span>
       </a>
+      <!-- (REORG Phase 8) section hop: #/zakat stays a real route and now
+           lights the You door via the in-chrome You switch. -->
       <a class="quick-action quick-action--tasbih" href="${buildHash(VIEWS.ZAKAT)}" data-action="navigate" data-view="${VIEWS.ZAKAT}">
         ${icon('calculator', { size: 22 })}<span>${t('nav.zakat', lang)}</span>
       </a>
@@ -394,6 +397,7 @@ export function renderRamadan(state) {
       <h1 class="view__title">${t('ramadan.title', lang)}</h1>
       ${viewMenuButton('ramadan', lang, { labelKey: 'viewMenu.ramadan' })}
     </div>
+    ${prayerModeSwitchHTML(state.activeView, lang)}
     ${main}
     <p class="view__meta">${t('ramadan.hijriNote', lang)}</p>
   </section>`;

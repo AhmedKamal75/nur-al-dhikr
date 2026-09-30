@@ -307,26 +307,31 @@ describe('journal text filter', () => {
   });
 });
 
-describe('nav search item navigates to search (Phase 6 closes the §1.6 trap)', () => {
-  test('rail and drawer search entries navigate; the palette keeps its own top-bar launcher', async () => {
-    const { renderNav } = await import('../js/ui/shell.js');
-    const state = { settings: { language: 'en', navCollapsed: false }, activeView: 'home' };
+describe('search is doorless-by-design (Phase 8 retires the Phase 6 search door)', () => {
+  test('no rail/drawer search entry; the palette destination + top-bar launcher carry search', async () => {
+    const { renderNav, renderTopBar } = await import('../js/ui/shell.js');
+    const state = {
+      settings: { language: 'en', themeMode: 'light', navCollapsed: false },
+      activeView: 'home',
+    };
     const html = renderNav(state);
-    // data-action precedes data-view in each tag, so every chunk before a
-    // data-view="search" occurrence ends with that item's own opening tag.
+    // (REORG Phase 8 / HANDOFF A1) SEARCH claims no chrome slot: the §1.6
+    // label-lies trap stays closed because no chrome entry says Search
+    // anymore. The search view lives one tap away on the topbar palette
+    // button (palette.open) and as a palette destination row.
     const parts = html.split('data-view="search"');
-    assert.equal(parts.length - 1, 2, 'rail + drawer search entries');
-    for (const tag of [parts[0].split('<a').at(-1), parts[1].split('<a').at(-1)]) {
-      // (REORG Phase 6) the §1.6 mismatch closed by repointing: the entry
-      // used to say Search and open the palette. It now dispatches a real
-      // navigation (rail: navigate, drawer: nav-drawer-go), so the label
-      // promises exactly the tap.
-      assert.ok(
-        tag.includes('data-action="navigate"') || tag.includes('data-action="nav-drawer-go"'),
-        `navigates to search: ${tag.slice(-80)}`
-      );
-      assert.ok(!tag.includes('open-palette'), `no palette override: ${tag.slice(-80)}`);
-    }
+    assert.equal(parts.length - 1, 0, 'no rail/drawer search entries');
+    assert.ok(
+      renderTopBar(state).includes('data-action="open-palette"'),
+      'top-bar palette launcher present'
+    );
+    const { buildPaletteGroups } = await import('../js/views/palette.js');
+    const { groups } = buildPaletteGroups({ query: '', lang: 'en' });
+    const navRows = groups.find((g) => g.key === 'navigate')?.rows || [];
+    assert.ok(
+      navRows.some((r) => r.data?.view === 'search'),
+      'the palette still offers the search view as a destination'
+    );
     assert.ok(html.includes('data-view="home"') && html.includes('data-action="navigate"'));
   });
 });

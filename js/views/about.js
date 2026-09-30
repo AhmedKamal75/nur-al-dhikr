@@ -33,7 +33,7 @@ const GUIDE_ROWS = [
   { view: 'MUSHAF', titleKey: 'about.guide.mushaf', iconName: 'book', descKey: 'about.gd.mushaf' },
   { view: 'QURAN', titleKey: 'nav.quran', iconName: 'quran', descKey: 'about.gd.quran' },
   { view: 'HADITH', titleKey: 'nav.hadith', iconName: 'library', descKey: 'about.gd.hadith' },
-  { view: 'LIBRARY', titleKey: 'nav.library', iconName: 'heart', descKey: 'about.gd.library' },
+  { view: 'HOME', titleKey: 'nav.home', iconName: 'heart', descKey: 'about.gd.library' },
   { view: 'PRAYER', titleKey: 'nav.prayer', iconName: 'mosque', descKey: 'about.gd.prayer' },
   { view: 'QIBLA', titleKey: 'nav.qibla', iconName: 'compass', descKey: 'about.gd.qibla' },
   { view: 'TASBIH', titleKey: 'nav.tasbih', iconName: 'bead', descKey: 'about.gd.tasbih' },

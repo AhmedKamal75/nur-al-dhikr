@@ -2,6 +2,36 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.46 — Six doors, flat: the filing cabinet comes down
+
+Phase 8 (HANDOFF PART A1, REORGANISATION-PLAN.md §2a). The reachability work
+held — every route was already within 2 taps — but the top-level chrome was
+still twelve entries in the same four taxonomic groups the plan called the
+problem. Now **6 flat doors**: Home · Qur'an · Ahadeeth · Prayer · Practise
+· You.
+
+- **Retired as doors, untouched as routes.** Library (the grid is home — a
+  second door to the same tiles was the redundancy the reorganisation was
+  meant to remove; `#/library` stays behind the grid's all-view), Word
+  roots (absorbed into the Qur'an door), Ramadan (into Prayer, as the 4th
+  switch segment), Zakat and the Offline library (into You beside settings,
+  switch 8→10), and Search (doorless-by-design: the topbar palette honestly
+  names itself as the launcher, so no chrome entry lies about its tap).
+  Every existing deep link keeps working.
+- **Promoted properly.** The fifth door is the TASBIH entry wearing the new
+  bilingual `nav.practise` label (EN Practise / AR الممارسة); the entry
+  segment keeps `nav.tasbih`, so each label promises exactly its tap.
+- **Derived, not pinned (rule 6).** `js/core/config/nav.js` is the single
+  source of truth — order, entry view, icon, labelKey, members with
+  route/taps/via, importing VIEWS only. NAV_GROUPS, the mobile bar, the
+  active-door lookup and all four section-switch member lists derive from
+  it; the reachability test imports the real map and keeps its old parser
+  as a drift-check. It asserts EXACTLY 6 entries in order and fails if
+  `nav.library` returns.
+- Retired dictionary keys: only the `nav.group.*` taxonomy (both
+  languages). Every retired door key stays as a segment or view label —
+  zero drift, i18n parity intact.
+
 ## v5.17.45 — The dhikr was below a whole screen of chrome, and search lied when offline
 
 Phase C. Three things, one release, because each is small and each is honest
