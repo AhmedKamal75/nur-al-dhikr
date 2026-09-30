@@ -2,6 +2,41 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.47 — Home, designed: ranked dhikr, one-line chrome
+
+C4 home design pass (HANDOFF B2.4, §5d). The review correction stands —
+home is 9 sections / 80 category tiles, not 560 items — so this pass
+ranks them instead of re-chunking them, and collapses the chrome that
+was still shouting above and below the dhikr.
+
+- **Ranked, not alphabetical.** Sections order by the reader's reality:
+  the section left off, then most-opened, then the sun-based adhkar
+  window (morning/evening leads at its hour), then live corpus size —
+  fresh readers meet Duas (527 items) first through the window boost,
+  not catalog order. Tiles rank the same way inside each section, so
+  the most-used categories surface. An explicit user order still wins
+  (it is the user's data). Rule 6: counts come from the corpus and the
+  reader's own history — `rankBrowserDocuments` / `rankBrowserCategories`
+  in `js/views/home.js`, pinned by `tests/home-design-c4.test.js`.
+- **"How am I doing" as one slim strip near the top.** Prayers n/5 ·
+  pages · dhikr count, same sources and same three doors as the worship
+  panel (navigate-only), instead of a full panel at the very bottom.
+- **Hero demoted to one quiet line** below the grid: name, tagline,
+  greeting and Hijri chip in caption scale on paper with a gilt leading
+  edge. The shahada banner stays first.
+- **The 8-step wizard collapses to one line** — "N of 8 · current step
+  · dismiss" — with the full step body, Back/Next and every deep link
+  intact inside a native `<details>`. No new data-action, no new
+  handler, zero new i18n keys (every string reused in both languages).
+- Measured: grid at **y=381** (1440×900, gate <450 holds), y=439 on a
+  390px phone with no sideways scroll. Before/after pair under
+  `assets/screenshots/home-c4-before|after.png`.
+- Constraints held: no data/route loss (deep-link hashes unchanged),
+  Elder/a11y intact (44px floors, both themes, 200% wrap), bilingual
+  EN+AR, no new static view import, no gamification, language switch
+  untouched. Tokens only — 247 in `variables.css`, none added, no
+  hardcoded colors.
+
 ## v5.17.46 — Six doors, flat: the filing cabinet comes down
 
 Phase 8 (HANDOFF PART A1, REORGANISATION-PLAN.md §2a). The reachability work

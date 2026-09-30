@@ -5,6 +5,11 @@
  * tested); this module only renders.
  *
  * Design notes:
+ *  - (v5.17.47, C4) the wizard rides collapsed inside a <details> behind a
+ *    single summary line — "N of 8 · current step · dismiss" — instead of
+ *    occupying the first screen. The full step body, Back/Next and every
+ *    deep link survive untouched inside; the summary itself is the native
+ *    expand control, so no new data-action and no new handler.
  *  - Position is ephemeral (state.ui.onboardingStep, null = follow the
  *    first incomplete step): a reload restarts the wizard exactly where
  *    work remains. Next skips without completing; Back revisits.
@@ -227,22 +232,25 @@ export function onboardingPanelHTML(state, lang, flags = {}) {
   };
 
   return `
-  <section class="panel panel--onboarding" aria-label="${t('onboarding.title', lang)}">
-    <div class="panel__header">
-      <h2>${t('onboarding.title', lang)}</h2>
-      <button type="button" class="icon-btn icon-btn--sm" data-action="onboarding-dismiss" aria-label="${t('onboarding.dismiss', lang)}" title="${t('onboarding.dismiss', lang)}">
-        ${icon('close', { size: 15 })}
-      </button>
-    </div>
-    <p class="panel__subtext">${t('onboarding.progress', lang, { done: doneCount, total: steps.length })}</p>
-    <div class="onboarding-steps onboarding-steps--wizard">
-      <div class="onboarding-step${step.done ? ' onboarding-step--done' : ''}">
-        <span class="onboarding-step__icon">${icon(step.done ? 'check' : STEP_ICONS[step.id], { size: 18 })}</span>
-        <span class="onboarding-step__text">
-          <span class="onboarding-step__label">${t(STEP_TITLES[step.id], lang)}</span>
+  <section class="panel panel--onboarding panel--onboarding--line" aria-label="${t('onboarding.title', lang)}">
+    <h2 class="sr-only">${t('onboarding.title', lang)}</h2>
+    <details class="onboarding-line">
+      <summary class="onboarding-line__summary">
+        <span class="onboarding-line__icon">${icon(step.done ? 'check' : STEP_ICONS[step.id], { size: 18 })}</span>
+        <span class="onboarding-line__text">
+          <span class="onboarding-line__progress" dir="auto">${t('onboarding.progress', lang, { done: doneCount, total: steps.length })}</span>
+          <span class="onboarding-line__step">${t(STEP_TITLES[step.id], lang)} · ${idx + 1} / ${steps.length}</span>
         </span>
-        <span class="onboarding-step__pos" dir="ltr">${idx + 1} / ${steps.length}</span>
-      </div>
+        <span class="onboarding-line__go">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}</span>
+      </summary>
+      <div class="onboarding-steps onboarding-steps--wizard">
+        <div class="onboarding-step${step.done ? ' onboarding-step--done' : ''}">
+          <span class="onboarding-step__icon">${icon(step.done ? 'check' : STEP_ICONS[step.id], { size: 18 })}</span>
+          <span class="onboarding-step__text">
+            <span class="onboarding-step__label">${t(STEP_TITLES[step.id], lang)}</span>
+          </span>
+          <span class="onboarding-step__pos" dir="ltr">${idx + 1} / ${steps.length}</span>
+        </div>
       <div class="onboarding-step__body">
         ${stepBodyHTML(step, state, lang, ctx)}
       </div>
@@ -258,6 +266,10 @@ export function onboardingPanelHTML(state, lang, flags = {}) {
             : ''
         }
       </div>
-    </div>
+      </div>
+    </details>
+    <button type="button" class="icon-btn icon-btn--sm onboarding-line__dismiss" data-action="onboarding-dismiss" aria-label="${t('onboarding.dismiss', lang)}" title="${t('onboarding.dismiss', lang)}">
+      ${icon('close', { size: 15 })}
+    </button>
   </section>`;
 }

@@ -838,6 +838,120 @@ body.is-scrolled-deep .category-top {
     linear-gradient(150deg, #041f1c 0%, #07302b 55%, #0b4a43 130%);
 }
 
+/* (v5.17.47, C4) the hero demoted to one quiet line. Paper, not a banner:
+   surface bg, a hairline border with a gilt leading edge, ink text — the
+   same content (name, tagline, greeting, Hijri chip) in caption scale.
+   Triple-class specificity so the gradient base above (and its dark
+   variant) cannot win back the background. */
+.view--home > .home-hero.home-hero--line {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  border-inline-start: 3px solid var(--color-gold);
+  background: var(--color-surface);
+  box-shadow: none;
+  color: var(--color-text);
+  overflow: visible;
+}
+.view--home > .home-hero.home-hero--line::before,
+.view--home > .home-hero.home-hero--line::after {
+  content: none;
+}
+.view--home > .home-hero.home-hero--line .home-hero__title {
+  font-size: var(--fs-sm);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: var(--lh-tight);
+  color: var(--color-text);
+  max-width: none;
+}
+.view--home > .home-hero.home-hero--line .home-hero__tagline {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+.view--home > .home-hero.home-hero--line .home-hero__greeting {
+  font-size: var(--fs-caption);
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+.view--home > .home-hero.home-hero--line .home-hero__hijri {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  color: var(--color-primary-text);
+}
+.view--home > .home-hero.home-hero--line .home-hero__profile {
+  background: var(--color-surface-alt);
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+.view--home > .home-hero.home-hero--line .home-hero__seed {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+
+/* (v5.17.47, C4) "how am I doing" as one slim strip near the top. Same
+   doors as the worship panel (prayer / mushaf / tasbih), navigate-only —
+   the panel below keeps the detail. Cells wrap at 200% type instead of
+   pushing the document sideways. */
+.home-today {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.home-today__cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1 1 9rem;
+  min-width: 0;
+  min-height: var(--touch-target);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+}
+a.home-today__cell:hover {
+  background: var(--color-surface-alt);
+  text-decoration: none;
+}
+.home-today__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-badge);
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary-text);
+  flex-shrink: 0;
+}
+.home-today__label {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-today__value {
+  margin-inline-start: auto;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
 /* Next-prayer strip */
 .home-prayer-strip {
   position: relative;
@@ -3577,6 +3691,83 @@ body.has-player .hadith-card {
   justify-content: space-between;
   gap: var(--space-2);
   padding-block-start: var(--space-1);
+}
+
+/* (v5.17.47, C4) the 8-step wizard collapses to a single unobtrusive line:
+   "N of 8 · current step · dismiss". The full step body, Back/Next and
+   every deep link survive untouched inside the <details>; the <summary>
+   is the native expand control, so no script and no new data-action. The
+   summary and the dismiss both clear the 44px floor. */
+.panel--onboarding--line {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+}
+.onboarding-line {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.onboarding-line__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-target);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  list-style: none;
+}
+.onboarding-line__summary::-webkit-details-marker {
+  display: none;
+}
+.onboarding-line__summary::marker {
+  content: '';
+}
+.onboarding-line__summary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+.onboarding-line__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-badge);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary-text);
+  flex-shrink: 0;
+}
+.onboarding-line__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.onboarding-line__progress {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.onboarding-line__step {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.onboarding-line__go {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+.onboarding-line__dismiss {
+  flex-shrink: 0;
 }
 
 /* Dual calendar cells are slightly tighter than the single grid */

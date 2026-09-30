@@ -345,7 +345,7 @@ const BROWSER_REFERENCE_LIBRARY_ID = 'asma';
 
 /** The lensed documents in the user's order — the Library view's math,
  *  minus the manage chrome (browser is reading mode, always). */
-function browserDocuments(state) {
+function browserDocuments(state, nowWindow = null) {
   const prefs = contentPrefsOf(state);
   const deletedLibs = prefs.deletedLibraries || {};
   const hiddenLibs = prefs.hiddenLibraries || {};
@@ -357,31 +357,116 @@ function browserDocuments(state) {
     .filter(Boolean)
     .filter((doc) => !deletedLibs[doc.metadata.id] && !hiddenLibs[doc.metadata.id]);
   const libRank = new Map((prefs.libraryOrderOverrides || []).map((id, i) => [id, i]));
-  return [...lensedDocs, ...customDocs]
-    .map((doc, i) => ({ doc, i }))
-    .sort(
-      (a, b) =>
-        (libRank.get(a.doc.metadata.id) ?? 1e9) - (libRank.get(b.doc.metadata.id) ?? 1e9) ||
-        a.i - b.i
-    )
-    .map((entry) => entry.doc);
+  const all = [...lensedDocs, ...customDocs];
+  // (v5.17.47, C4 rank) an explicit user order is the user's own data and
+  // always wins. Without one the sections rank themselves — recency (the
+  // section left off), then use (history opens per section), then corpus
+  // size (live visible items, not a pinned list) — instead of catalog
+  // order. Rule 6: the order derives from the corpus + the reader's own
+  // history, so the tree cannot drift from itself.
+  if (libRank.size) {
+    return all
+      .map((doc, i) => ({ doc, i }))
+      .sort(
+        (a, b) =>
+          (libRank.get(a.doc.metadata.id) ?? 1e9) - (libRank.get(b.doc.metadata.id) ?? 1e9) ||
+          a.i - b.i
+      )
+      .map((entry) => entry.doc);
+  }
+  return rankBrowserDocuments(state, all, nowWindow);
+}
+
+/**
+ * (v5.17.47, C4 rank) order sections by the reader's reality, not the
+ * catalog's. Sources, in precedence order: the section left off (most
+ * recent history entry), per-section open counts from state.history
+ * (most-recent-first [{ itemId, categoryId, ts }]), the sun-based adhkar
+ * window (morning/evening puts the adhkar library first), then live
+ * corpus size descending, then catalog order as the stable tiebreak.
+ * Pure — exported for tests.
+ */
+export function rankBrowserDocuments(state, docs, nowWindow = null) {
+  const index = state.library?.itemIndex || {};
+  const use = new Map();
+  const history = Array.isArray(state.history) ? state.history : [];
+  for (const h of history) {
+    const docId = index[h?.itemId]?.document?.metadata?.id;
+    if (docId) use.set(docId, (use.get(docId) || 0) + 1);
+  }
+  const leftOffDoc = index[history[0]?.itemId]?.document?.metadata?.id ?? null;
+  const catalogRank = new Map((state.library?.order || []).map((id, i) => [id, i]));
+  const timedDoc =
+    nowWindow === 'morning' || nowWindow === 'evening'
+      ? (docs.find((d) => (d.categories || []).some((c) => c.id === nowWindow))?.metadata?.id ??
+        null)
+      : null;
+  return [...docs].sort((a, b) => {
+    const aId = a.metadata.id;
+    const bId = b.metadata.id;
+    if (aId === leftOffDoc && bId !== leftOffDoc) return -1;
+    if (bId === leftOffDoc && aId !== leftOffDoc) return 1;
+    if (aId === timedDoc && bId !== timedDoc) return -1;
+    if (bId === timedDoc && aId !== timedDoc) return 1;
+    const usage = (use.get(bId) || 0) - (use.get(aId) || 0);
+    if (usage) return usage;
+    const size = docCorpusCount(state, b) - docCorpusCount(state, a);
+    if (size) return size;
+    return (catalogRank.get(aId) ?? 1e9) - (catalogRank.get(bId) ?? 1e9);
+  });
+}
+
+/** Live visible items in a document — the corpus size the ranking reads. */
+export function docCorpusCount(state, doc) {
+  return (doc.categories || []).reduce((n, cat) => n + visibleCategoryItems(state, cat).length, 0);
 }
 
 /** One document's categories in the user's order, hidden/deleted removed
- *  (reading-mode semantics, exactly like the Library view). */
-function browserCategories(state, doc) {
+ *  (reading-mode semantics, exactly like the Library view). An explicit
+ *  user order wins; without one the tiles rank themselves — the sun-based
+ *  window first (morning/evening adhkar at their hour), then the
+ *  reader's most-opened categories, then live item count — so the four
+ *  most-used categories surface instead of sitting alphabetical. */
+function browserCategories(state, doc, nowWindow = null) {
   const prefs = contentPrefsOf(state);
   const deletedCats = prefs.deletedCategories || {};
   const catRank = new Map(
     (prefs.categoryOrderOverrides?.[doc.metadata.id] || []).map((id, i) => [id, i])
   );
-  const allCats = catRank.size
-    ? [...doc.categories].sort(
-        (a, b) =>
-          (catRank.get(a.id) ?? 1e9) - (catRank.get(b.id) ?? 1e9) || (a.order || 0) - (b.order || 0)
-      )
-    : [...doc.categories].sort((a, b) => a.order - b.order);
-  return allCats.filter((cat) => !isCategoryHidden(state, cat.id) && !deletedCats[cat.id]);
+  const allCats = [...doc.categories].filter(
+    (cat) => !isCategoryHidden(state, cat.id) && !deletedCats[cat.id]
+  );
+  if (catRank.size) {
+    return [...allCats].sort(
+      (a, b) =>
+        (catRank.get(a.id) ?? 1e9) - (catRank.get(b.id) ?? 1e9) || (a.order || 0) - (b.order || 0)
+    );
+  }
+  return rankBrowserCategories(state, allCats, nowWindow);
+}
+
+/**
+ * (v5.17.47, C4 rank) order tiles by the reader's reality. Sources: the
+ * sun-based window id ('morning' / 'evening') first at its hour, then
+ * open counts per categoryId from state.history, then live visible item
+ * count descending, then the document's own order as the stable
+ * tiebreak. Pure — exported for tests.
+ */
+export function rankBrowserCategories(state, cats, nowWindow = null) {
+  const use = new Map();
+  const history = Array.isArray(state.history) ? state.history : [];
+  for (const h of history) {
+    if (h?.categoryId) use.set(h.categoryId, (use.get(h.categoryId) || 0) + 1);
+  }
+  return [...cats].sort((a, b) => {
+    if (nowWindow && a.id === nowWindow && b.id !== nowWindow) return -1;
+    if (nowWindow && b.id === nowWindow && a.id !== nowWindow) return 1;
+    const usage = (use.get(b.id) || 0) - (use.get(a.id) || 0);
+    if (usage) return usage;
+    const size = visibleCategoryItems(state, b).length - visibleCategoryItems(state, a).length;
+    if (size) return size;
+    return (a.order || 0) - (b.order || 0);
+  });
 }
 
 /** One named tile: live count, kept completion counter, Read-now action.
@@ -478,14 +563,51 @@ function browserReferenceHTML(state, lang) {
     </section>`;
 }
 
-export function adhkarBrowserHTML(state) {
+/**
+ * (v5.17.47, C4) "How am I doing" as one slim strip near the top instead
+ * of a full panel at the very bottom. Same sources as the worship panel
+ * (worshipTodayRows over existing per-day data), navigate-only links to
+ * the same three doors — the panel below keeps the detail, this strip
+ * only answers at a glance. No new data-action, no new strings.
+ */
+export function homeTodayStripHTML(state) {
   const lang = state.settings.language;
-  const docs = browserDocuments(state);
+  const rows = worshipTodayRows(
+    {
+      statistics: state.statistics,
+      dailyChecklist: state.dailyChecklist,
+      ramadanLog: state.ramadanLog,
+      sadaqahLog: state.sadaqahLog,
+    },
+    new Date()
+  );
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  const prayers = byId.get('prayers');
+  const quran = byId.get('quran');
+  const dhikr = byId.get('dhikr');
+  if (!prayers || !quran || !dhikr) return '';
+  const cell = ({ view, iconName, label, value }) => `
+      <a class="home-today__cell" href="${buildHash(view)}" data-action="navigate" data-view="${view}">
+        <span class="home-today__icon">${icon(iconName, { size: 15 })}</span>
+        <span class="home-today__label">${label}</span>
+        <span class="home-today__value" dir="auto">${value}</span>
+      </a>`;
+  return `
+  <section class="home-today" aria-label="${escapeHTML(t('worship.title', lang))}">
+    ${cell({ view: VIEWS.PRAYER, iconName: 'prayer-rug', label: t('worship.row.prayers', lang), value: `${prayers.count}/${prayers.total}` })}
+    ${cell({ view: VIEWS.MUSHAF, iconName: 'quran', label: t('worship.row.quran', lang), value: escapeHTML(t('worship.pagesToday', lang, { n: quran.count })) })}
+    ${cell({ view: VIEWS.TASBIH, iconName: 'bead', label: t('worship.row.dhikr', lang), value: escapeHTML(t('worship.countToday', lang, { n: dhikr.count })) })}
+  </section>`;
+}
+
+export function adhkarBrowserHTML(state, nowWindow = null) {
+  const lang = state.settings.language;
+  const docs = browserDocuments(state, nowWindow);
   if (!docs.length) return '';
   const dailyDocs = docs.filter((doc) => doc.metadata.id !== BROWSER_REFERENCE_LIBRARY_ID);
   const sections = dailyDocs
     .map((doc) => {
-      const cats = browserCategories(state, doc);
+      const cats = browserCategories(state, doc, nowWindow);
       if (!cats.length) return '';
       return `
     <section class="library-section" id="home-section-${escapeHTML(doc.metadata.id)}">
@@ -684,22 +806,13 @@ export function renderHome(state) {
     .map((id) => homePanels[id] || '')
     .join('');
 
-  // (v5.17.45) ORDER IS A DESIGN DECISION, and it was the wrong way round.
-  //
-  // Measured before this change: the first dhikr category sat at **y=1073** in
-  // a 900px viewport. A reader scrolled past more than a full screen — banner,
-  // a 216px hero, a location prompt, an 8-step onboarding wizard and a quick-
-  // tile row — before seeing a single dhikr. Every one of those was asking for
-  // attention before the reason the app exists had said anything.
-  //
-  // The order below is the app's actual argument with its reader: the shahada,
-  // then where you are today, then THE DHIKR. The hero keeps its content but
-  // stops being the first thing, because "the text is the interface" means the
-  // text comes before the branding.
-  //
-  // Not a filter, not a preference: the dhikr is always first. The rest is
-  // reordered but never removed, so nothing a reader was shown before
-  // disappears.
+  // (v5.17.47, C4) the page's argument, in order: the shahada, where
+  // you are today (prayer strip + one slim today-strip answering "how am
+  // I doing"), then THE DHIKR — ranked, not alphabetical. The brand hero
+  // is one quiet line below the grid and the 8-step wizard is one
+  // unobtrusive line beside it: chrome answers before it is asked, and
+  // never shouts. Nothing is removed — every panel still renders below
+  // in the reader's own order.
   return `
   <section class="view view--home">
     ${shahadaBannerHTML(lang)}
@@ -710,17 +823,19 @@ export function renderHome(state) {
 
     ${nudgeCardHTML(state)}
 
-    ${adhkarBrowserHTML(state)}
+    ${homeTodayStripHTML(state)}
 
-    <div class="home-hero home-hero--secondary">
-      <p class="home-hero__greeting">${t(greetingKey(), lang)}${hijriChipHTML(lang)}</p>
+    ${adhkarBrowserHTML(state, nowWindow)}
+
+    ${onboardingPanelHTML(state, lang)}
+
+    <div class="home-hero home-hero--line">
       <h1 class="home-hero__title">${t('app.name', lang)}</h1>
       <p class="home-hero__tagline">${t('app.tagline', lang)}</p>
+      <p class="home-hero__greeting">${t(greetingKey(), lang)}${hijriChipHTML(lang)}</p>
       ${profileChip}
       ${state.statistics?.totalRecitations === 1 ? `<p class="home-hero__seed" dir="auto">${escapeHTML(t('home.firstSeed', lang))}</p>` : ''}
     </div>
-
-    ${onboardingPanelHTML(state, lang)}
 
     ${quickTilesHTML(
       resolveQuickTiles({
