@@ -665,6 +665,8 @@ export const en = {
   'category.progressToday': '{done} of {total} done today · {pct}%',
   // v5.2.89 floating back-to-top on long card lists (P2).
   'category.backToTop': 'Back to top',
+  // (v5.17.52) session queue entry: play through the whole category in Focus.
+  'category.sessionStart': 'Read through in Focus',
   // v5.2.89 waqf & portion-marks legend in the Mushaf settings (P0-2).
   // Standard Uthmani print signs (same reference class as the tajweed
   // legend above): what each mark asks the reciter to do at the stop.
@@ -787,12 +789,18 @@ export const en = {
   'card.more': 'More',
   'card.openFocus': 'Open in Focus Mode',
   'card.completedTimes': 'Completed {n} times',
+  // (v5.17.52) progressive disclosure: the summary label for the collapsed
+  // translation/virtue/grade/transliteration block (card + Focus share it).
+  'card.details': 'Details',
   'focus.tapToCount': 'Tap anywhere to count',
   'focus.progress': '{count} of {target}',
   'focus.next': 'Next',
   'focus.previous': 'Previous',
   'focus.exit': 'Exit Focus Mode',
   'focus.reset': 'Reset counter',
+  // (v5.17.52) session queue: plain completion line when every visible item
+  // in the category is done today — stated, never celebrated.
+  'focus.sessionComplete': 'This section is complete for today.',
   'stats.week': 'This week',
   'stats.month': 'This Month',
   'stats.totalRecitations': 'Total Recitations',

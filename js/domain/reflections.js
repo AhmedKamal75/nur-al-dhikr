@@ -68,3 +68,16 @@ export function listCompletion(items, counters, todayKey) {
   }
   return { done, total, pct: total ? Math.round((done / total) * 100) : 0 };
 }
+
+/**
+ * (v5.17.52) session queue entry: the first visible item not yet completed
+ * today, in list order — where a play-through-category session starts (and
+ * resumes). Null when the list is empty or everything is done, in which
+ * case the caller starts at the head instead of rendering nothing.
+ */
+export function firstPendingItem(items, counters, todayKey) {
+  for (const item of items || []) {
+    if (!isCompletedToday(counters?.[item?.id], todayKey)) return item;
+  }
+  return null;
+}

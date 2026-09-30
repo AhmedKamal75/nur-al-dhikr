@@ -26,7 +26,7 @@ import {
   contentPrefsOf,
 } from '../services/contentPrefs.js';
 import { itemIsCustomized, fieldTogglesFor } from '../domain/contentLens.js';
-import { listCompletion } from '../domain/reflections.js';
+import { firstPendingItem, listCompletion } from '../domain/reflections.js';
 
 function findCategory(state, categoryId) {
   const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
@@ -130,6 +130,19 @@ export function renderCategory(state) {
       <button type="button" class="btn ${byHeartOn ? 'btn--primary' : 'btn--secondary'} btn--sm" data-action="${byHeartOn ? 'byheart-exit' : 'byheart-start'}" data-category-id="${escapeHTML(cat.id)}" aria-pressed="${byHeartOn}">
         ${icon('target', { size: 16 })} ${t('byheart.mode', lang)}
       </button>`;
+  // (v5.17.52) session queue entry: play through the whole category in
+  // Focus, starting (and resuming) at the first item not yet done today —
+  // all-done restarts at the head rather than dead-ending. The target rides
+  // the dataset so the handler stays a thin navigate.
+  const sessionFirst = items.length
+    ? firstPendingItem(items, state.counters, dateKey(new Date())) || items[0]
+    : null;
+  const sessionButton = sessionFirst
+    ? `
+      <button type="button" class="btn btn--secondary btn--sm" data-action="session-start" data-category-id="${escapeHTML(cat.id)}" data-item-id="${escapeHTML(sessionFirst.id)}">
+        ${icon('play', { size: 16 })} ${t('category.sessionStart', lang)}
+      </button>`
+    : '';
 
   // (v5.1.0) Declutter: the manage bar exists ONLY while manage mode is ON
   // (entered through the header's "⋯" menu → Manage). Reading mode shows
@@ -191,6 +204,7 @@ export function renderCategory(state) {
       ${categoryProgressHTML(state, visibleItems, lang)}
       ${quizButton}
       ${byHeartButton}
+      ${sessionButton}
       ${byHeartOn ? `<p class="panel__subtext">${t('byheart.hint', lang)}</p>` : ''}
     </header>
 

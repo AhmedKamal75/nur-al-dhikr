@@ -34,10 +34,70 @@ import { hasVerifiedDhikrAudio } from '../core/schema.js';
 // SANCTIONED (DATA-01): grades.js is pure (core/config + core/utils only,
 // no state/services), same class as localeContent above.
 // eslint-disable-next-line no-restricted-imports
-import { gradeChipHTML } from '../domain/grades.js';
+import { gradeChipHTML, gradeStateOf } from '../domain/grades.js';
 import { buildHash } from '../core/router.js';
 // eslint-disable-next-line no-restricted-imports -- sanctioned (see above)
 import { isDismissed, wasCompletedRecently } from '../domain/completedCards.js';
+
+/**
+ * (v5.17.52) Progressive disclosure — the one collapsed block shared by the
+ * card and Focus (rule 6: a single builder, so the two surfaces cannot
+ * drift from each other). Arabic stays first and always visible; the
+ * supplementary rows — transliteration, translation, virtue, and a
+ * source-backed grade — ride one tap behind a labelled <details>, which is
+ * natively keyboard-operable and announced, so Elder/a11y needs no extra
+ * wiring. Row labels reuse the existing content.field* / card.virtue keys;
+ * only the summary label is new (card.details, twinned). Inner content
+ * keeps the caller's class prefix (card__ / focus__) so existing
+ * typography applies unchanged.
+ *
+ * Honest-absence rule: an explicit `Unknown` grade is NEVER hidden — the
+ * caller keeps that chip in the open and this builder rows only a VALID
+ * grade. Missing/malformed grades render nowhere. Returns '' when every
+ * row is empty, so callers emit no hollow disclosure.
+ */
+export function disclosureHTML(item, lang = 'en', opts = {}) {
+  const {
+    showTransliteration = true,
+    showTranslation = true,
+    showVirtues = true,
+    showGrade = true,
+    byHeart = false,
+    highlight = [],
+    prefix = 'card',
+  } = opts;
+  const hl = Array.isArray(highlight) ? highlight : [];
+  // Same strict separation as the callers: transliteration/translation are
+  // EN-only, virtue reads the active side exclusively, and by-heart hides
+  // the transliteration giveaway exactly like the open layout did.
+  const showTranslit = !byHeart && showTransliterationFor(lang, showTransliteration);
+  const showTrans = showTranslationFor(lang, showTranslation);
+  const translation = showTrans ? translationFor(item, lang) : '';
+  const virtue = showVirtues ? virtueFor(item, lang) : '';
+  const rows = [];
+  if (showTranslit && item.transliteration) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldTranslit', lang))}</dt><dd class="disclosure__def ${prefix}__translit">${highlightMatch(item.transliteration, hl)}</dd></div>`
+    );
+  }
+  if (showTrans && translation) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldTranslation', lang))}</dt><dd class="disclosure__def ${prefix}__translation">${highlightMatch(translation, hl)}</dd></div>`
+    );
+  }
+  if (virtue) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('card.virtue', lang))}</dt><dd class="disclosure__def ${prefix}__virtue">${highlightMatch(virtue, hl)}</dd></div>`
+    );
+  }
+  if (showGrade && gradeStateOf(item.grade) === 'valid') {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldGrade', lang))}</dt><dd class="disclosure__def">${gradeChipHTML(item.grade, lang)}</dd></div>`
+    );
+  }
+  if (!rows.length) return '';
+  return `<details class="disclosure ${prefix}__disclosure"><summary class="disclosure__summary">${escapeHTML(t('card.details', lang))}</summary><dl class="disclosure__list">${rows.join('')}</dl></details>`;
+}
 
 /**
  * @param {object} item        normalized item
@@ -80,17 +140,26 @@ export function cardHTML(item, category, opts = {}) {
   // foreign one), but the fallback itself stays locale-safe: AR never
   // falls back to the Latin transliteration line.
   const title = contentTitleFor(item, lang);
-  // Strict language separation: transliteration/translation render in EN
-  // only (never in AR, regardless of toggles); virtue/reference/notes read
-  // the active side exclusively with no cross-language fallback.
-  const showTranslit = showTransliterationFor(lang, show.transliteration);
-  const showTrans = showTranslationFor(lang, show.translation);
-  const translation = showTrans ? translationFor(item, lang) : '';
-  const virtue = show.virtues ? virtueFor(item, lang) : '';
   // (DATA-01) honest grades: only source-backed values render a chip;
   // Unknown renders the uncertain "Unverified" chip, missing/malformed
   // render nothing — never an authoritative-looking raw string.
+  // (v5.17.52) progressive disclosure: the uncertain chip stays in the
+  // open header — Unknown is never hidden — while a source-backed grade
+  // moves into the collapsed disclosure block (see disclosureHTML).
   const gradeChip = show.grade ? gradeChipHTML(item.grade, lang) : '';
+  const headerGradeChip = show.grade && gradeStateOf(item.grade) === 'unknown' ? gradeChip : '';
+  // Strict language separation lives inside disclosureHTML now (same
+  // contract: transliteration/translation EN-only, virtue active-side
+  // only); the reference/notes lines below stay open as provenance.
+  const disclosure = disclosureHTML(item, lang, {
+    showTransliteration: show.transliteration,
+    showTranslation: show.translation,
+    showVirtues: show.virtues,
+    showGrade: show.grade,
+    byHeart: !!byHeart,
+    highlight: hl,
+    prefix: 'card',
+  });
   const refLine = show.reference ? referenceLineFor(item, lang, t('card.narratedBy', lang)) : '';
   const refNotes = show.reference ? noteFor(item.reference?.notes, lang, item) : '';
   const notes = show.notes ? noteFor(item.notes, lang) : '';
@@ -147,7 +216,7 @@ export function cardHTML(item, category, opts = {}) {
     <header class="card__top">
       <div class="card__meta">
         ${categoryChip}
-        ${gradeChip}
+        ${headerGradeChip}
         ${lifetimeBadge}
       </div>
       <div class="card__actions">
@@ -188,10 +257,7 @@ export function cardHTML(item, category, opts = {}) {
           ? `<p class="card__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
           : ''
     }
-    ${!byHeart && showTranslit && item.transliteration ? `<p class="card__translit">${highlightMatch(item.transliteration, hl)}</p>` : ''}
-    ${showTrans && translation ? `<p class="card__translation">${highlightMatch(translation, hl)}</p>` : ''}
-
-    ${show.virtues && virtue ? `<p class="card__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${highlightMatch(virtue, hl)}</p>` : ''}
+    ${disclosure}
     ${show.reference && refLine ? `<p class="card__reference">${icon('book', { size: 14 })} ${escapeHTML(refLine)}</p>` : ''}
     ${show.reference && refNotes ? `<p class="card__reference-note">${escapeHTML(refNotes)}</p>` : ''}
     ${show.notes && notes ? `<p class="card__attribution">${icon('info', { size: 12 })} ${escapeHTML(notes)}</p>` : ''}

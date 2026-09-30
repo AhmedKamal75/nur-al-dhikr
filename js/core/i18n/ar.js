@@ -629,6 +629,8 @@ export const ar = {
   'category.progressToday': 'أُنجز {done} من {total} اليوم · {pct}٪',
   // v5.2.89 floating back-to-top on long card lists (P2) — parity with en.
   'category.backToTop': 'العودة إلى الأعلى',
+  // (v5.17.52) session queue entry — parity with en.
+  'category.sessionStart': 'قراءة متتابعة في وضع التركيز',
   // v5.2.89 waqf & portion-marks legend (P0-2) — parity with en.
   'mushaf.waqfLegend': 'علامات الوقف والأجزاء',
   'mushaf.waqfIntro': 'علامات الصفحة العثمانية — ما يُفعل عند كل وقف.',
@@ -747,12 +749,16 @@ export const ar = {
   'card.more': 'المزيد',
   'card.openFocus': 'فتح في وضع التركيز',
   'card.completedTimes': 'تمّ {n} مرة',
+  // (v5.17.52) progressive disclosure — parity with en.
+  'card.details': 'التفاصيل',
   'focus.tapToCount': 'اضغط في أي مكان للعد',
   'focus.progress': '{count} من {target}',
   'focus.next': 'التالي',
   'focus.previous': 'السابق',
   'focus.exit': 'الخروج من وضع التركيز',
   'focus.reset': 'إعادة تعيين العداد',
+  // (v5.17.52) session queue — parity with en.
+  'focus.sessionComplete': 'اكتمل هذا القسم لهذا اليوم.',
   'stats.week': 'هذا الأسبوع',
   'stats.month': 'هذا الشهر',
   'stats.totalRecitations': 'إجمالي التسبيحات',

@@ -2,6 +2,48 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.52 — The adhkar session player with progressive disclosure
+
+Merged-plan item 5. The Focus stage showed everything at once —
+translation, virtue, grade and transliteration always expanded under the
+Arabic — and a category had no way to be read through: position said
+where you were, but nothing said how much of the pass was done. Now the
+Arabic leads alone with the supplements one tap behind a collapsed,
+labelled `<details>` (one shared `disclosureHTML` builder in
+`js/ui/card.js`, so the card and Focus cannot drift from each other),
+and every category carries a session: a "Read through in Focus" entry
+that starts — and resumes — at the first item not yet done today, with
+an x-of-n done-today line under the stage and a plain completion line
+when the pass is finished.
+
+- **Progressive disclosure, honestly graded.** Transliteration,
+  translation, virtue and a source-backed grade ride the collapsed block
+  with labelled rows; the reference line and notes stay open as
+  provenance. An explicit `Unknown` grade is never hidden — its
+  Unverified chip stays in the open header in both surfaces — while
+  missing/malformed grades render nowhere, as before. Empty items emit
+  no hollow block, and banner-level field toggles still gate every row.
+- **A queue, not a game.** Session progress reuses the category's own
+  `listCompletion` math over the same visible items prev/next walks, so
+  the stage, the counter and the queue always agree. Completion is
+  stated in plain caption text — no animation, no success color, no
+  badge, no confetti anywhere. Prev/next keep walking a finished queue;
+  an all-done category restarts at the head instead of dead-ending.
+- Constraints held: bilingual EN+AR (3 new keys twinned — `card.details`,
+  `focus.sessionComplete`, `category.sessionStart`; row labels reuse the
+  existing `content.field*` / `card.virtue` keys; strict AR separation
+  unchanged), 19/19 renderer budget intact (no new view, no new static
+  import — the session-start handler is a thin navigate), Elder/a11y
+  intact (`<details>` is natively keyboard-operable and announced, the
+  summary meets the touch-target floor, logical properties only, no new
+  custom properties), no data changes, offline-safe.
+- Tests: `tests/adhkar-session.test.js` (14 cases — collapsed-by-default
+  disclosure in both languages incl. the Unknown-stays-visible and
+  valid-grade-inside contracts, session progress incl. completion with a
+  no-gamification scan, first-pending resume math, the category entry
+  target in EN+AR), plus the directly-affected e2e subset
+  (routes-extended: category + focus).
+
 ## v5.17.51 — The active method, stated where the times are
 
 Merged-plan item 4. The calculation method lived only in the calc sheet

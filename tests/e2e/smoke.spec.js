@@ -91,3 +91,20 @@ test('smoke: picking a city states the active method on the hero and the home st
   await expect(strip).toBeVisible({ timeout: 20000 });
   await expect(strip).toContainText('Source (unverified):');
 });
+
+test('smoke: category session entry opens Focus with collapsed disclosure and progress', async ({
+  page,
+}) => {
+  // Merged-plan item 5: a category offers a play-through session that
+  // starts at the first pending item; Focus shows the queue position, the
+  // done-today progress, and the supplements collapsed behind one details.
+  await page.goto('#/category/morning');
+  const entry = page.locator('[data-action="session-start"]').first();
+  await expect(entry).toBeVisible({ timeout: 20000 });
+  await entry.click();
+  await expect(page.locator('.focus__position')).toBeVisible({ timeout: 20000 });
+  await expect(page.locator('.focus__session')).toContainText('done today');
+  const details = page.locator('.focus__disclosure');
+  await expect(details).toBeAttached();
+  expect(await details.getAttribute('open')).toBeNull();
+});

@@ -17,6 +17,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import { cardHTML } from '../js/ui/card.js';
 
 const root = path.resolve(import.meta.dirname, '..');
 const read = (rel) => fs.readFileSync(path.join(root, rel), 'utf8');
@@ -94,8 +95,26 @@ test('roomySpacing reaches the main reading surfaces, not only translations', ()
         .map((e) => read(path.join(d, e.name)))
     )
     .join('\n');
-  const ghosts = [...new Set(selectors)].filter((cls) => !markup.includes(cls));
+  // (v5.17.52) disclosureHTML (js/ui/card.js) builds its content classes
+  // from a card/focus prefix — `card__virtue` rides `${prefix}__virtue`,
+  // so the literal never sits in source while the rule still reaches live
+  // markup. Only the builder's documented rows may use this escape hatch,
+  // and the hatch itself is pinned to a live render below.
+  const PREFIX_BUILT = new Set(['card__virtue']);
+  const ghosts = [...new Set(selectors)].filter((cls) => {
+    if (markup.includes(cls)) return false;
+    if (PREFIX_BUILT.has(cls) && markup.includes('${prefix}__virtue')) return false;
+    return true;
+  });
   assert.deepEqual(ghosts, [], `roomySpacing selectors that match no markup: ${ghosts.join(', ')}`);
+  // The escape hatch is real markup, not a comment: a virtue-bearing card
+  // still emits the class the roomy rule targets.
+  const liveCard = cardHTML(
+    { id: 'roomy-pin', arabic: 'نص', virtues: { en: 'A virtue.' }, repetitions: 1 },
+    null,
+    { lang: 'en' }
+  );
+  assert.ok(liveCard.includes('card__virtue'), 'the roomy rule reaches live card markup');
 });
 
 test('roomySpacing never letter-spaces Arabic', () => {

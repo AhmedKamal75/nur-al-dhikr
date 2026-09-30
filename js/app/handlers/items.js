@@ -211,6 +211,14 @@ export const clickHandlers = {
     go(VIEWS.FOCUS, { id: ds.categoryId, subId: ds.itemId });
   },
 
+  // (v5.17.52) session queue entry: the category view already resolved the
+  // first pending item into the dataset, so this stays a thin navigate —
+  // a forged id lands on the Focus not-found state, never a crash.
+  'session-start': (ds) => {
+    if (!ds.categoryId || !ds.itemId) return;
+    go(VIEWS.FOCUS, { id: ds.categoryId, subId: ds.itemId });
+  },
+
   'focus-exit': (ds) => {
     go(VIEWS.CATEGORY, { id: ds.categoryId });
   },

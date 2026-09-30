@@ -6,21 +6,16 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { hasVerifiedDhikrAudio } from '../core/schema.js';
-import { escapeHTML } from '../core/utils.js';
+import { escapeHTML, dateKey } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
-import {
-  showTransliterationFor,
-  showTranslationFor,
-  translationFor,
-  virtueFor,
-  referenceLineFor,
-  noteFor,
-} from '../domain/localeContent.js';
+import { referenceLineFor, noteFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { VIEWS } from '../core/config.js';
-import { gradeChipHTML } from '../domain/grades.js';
+import { gradeChipHTML, gradeStateOf } from '../domain/grades.js';
+import { disclosureHTML } from '../ui/card.js';
+import { listCompletion } from '../domain/reflections.js';
 import { wasJustCompleted } from '../services/tasbih.js';
 import { visibleCategoryItems, itemTargetOf } from '../services/contentPrefs.js';
 import { hasPendingScholarlyReview } from '../domain/contentLens.js';
@@ -149,15 +144,21 @@ export function renderFocus(state) {
   const dhikrAudioTitle = dhikrAudioCredit
     ? `${dhikrAudioLabel} — ${dhikrAudioCredit}`
     : dhikrAudioLabel;
-  // Strict language separation (same contract as ui/card.js): AR shows the
-  // Arabic matn + Arabic virtue/source only; transliteration/translation
-  // render in EN only, with no cross-language fallback.
-  const showTranslit = showTransliterationFor(lang, state.settings.showTransliteration);
-  const showTrans = showTranslationFor(lang, state.settings.showTranslation);
-  const translation = showTrans ? translationFor(item, lang) : '';
-  const virtue = virtueFor(item, lang);
-  // (DATA-01) honest grades — see ui/card.js.
-  const gradeChip = gradeChipHTML(item.grade, lang);
+  // Strict language separation rides the shared disclosure builder (the
+  // same contract as ui/card.js): AR shows the Arabic matn + Arabic
+  // virtue/source only; transliteration/translation render in EN only,
+  // with no cross-language fallback. (Built after `bh` below — by-heart
+  // hides the transliteration giveaway exactly like the card.)
+  // (DATA-01) honest grades — see ui/card.js: an explicit Unknown stays in
+  // the open header, never hidden; a source-backed grade rides the
+  // disclosure block.
+  const gradeChip = gradeStateOf(item.grade) === 'unknown' ? gradeChipHTML(item.grade, lang) : '';
+  // (v5.17.52) session queue: play-through-category progress reuses the
+  // category's own completion math (rule 6) over the same visible items the
+  // prev/next arrows walk — position says where you are, this says how much
+  // of today's pass is done. Completion is stated plainly, never celebrated.
+  const session = listCompletion(items, state.counters, dateKey(new Date()));
+  const sessionDone = session.total > 0 && session.done >= session.total;
   const refLine = referenceLineFor(item, lang, t('card.narratedBy', lang));
   const refNotes = noteFor(item.reference?.notes, lang, item);
   const notes = noteFor(item.notes, lang);
@@ -184,6 +185,14 @@ export function renderFocus(state) {
   // to the small badge under the hint, never into the tap number.
   const focusDone = counter.count >= counter.target;
   const lifetimeCycles = counter.completedCycles || 0;
+  const disclosure = disclosureHTML(item, lang, {
+    showTransliteration: state.settings.showTransliteration,
+    showTranslation: state.settings.showTranslation,
+    showVirtues: true,
+    showGrade: true,
+    byHeart: !!bh,
+    prefix: 'focus',
+  });
 
   return `
   <section class="focus${enterClass}" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}">
@@ -228,8 +237,7 @@ export function renderFocus(state) {
             ? `<button type="button" class="hadith-card__cloze" data-action="byheart-reveal" data-item-id="${escapeHTML(item.id)}" aria-label="${t('hifz.reveal', lang)}">${t('hifz.reveal', lang)}</button>`
             : `<p class="focus__arabic" lang="ar" dir="rtl">${escapeHTML(item.arabic)}</p>`
         }
-        ${!bh && showTranslit && item.transliteration ? `<p class="focus__translit">${escapeHTML(item.transliteration)}</p>` : ''}
-        ${showTrans && translation ? `<p class="focus__translation">${escapeHTML(translation)}</p>` : ''}
+        ${disclosure}
         ${
           bh
             ? `
@@ -250,7 +258,8 @@ export function renderFocus(state) {
         </div>`
             : ''
         }
-        ${virtue ? `<p class="focus__virtue"><strong>${escapeHTML(t('card.virtue', lang))}:</strong> ${escapeHTML(virtue)}</p>` : ''}
+        ${session.total ? `<p class="focus__session">${escapeHTML(t('category.progressToday', lang, { done: session.done, total: session.total, pct: session.pct }))}</p>` : ''}
+        ${sessionDone ? `<p class="focus__complete">${escapeHTML(t('focus.sessionComplete', lang))}</p>` : ''}
         ${refLine ? `<p class="focus__reference">${icon('book', { size: 14 })} ${escapeHTML(refLine)}</p>` : ''}
         ${refNotes ? `<p class="focus__reference-note">${escapeHTML(refNotes)}</p>` : ''}
         ${notes ? `<p class="focus__attribution">${icon('info', { size: 12 })} ${escapeHTML(notes)}</p>` : ''}
