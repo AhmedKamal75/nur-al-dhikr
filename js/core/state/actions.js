@@ -347,6 +347,9 @@ export const actions = {
   // (v5.2.52) wizard: record a setup confirm; move the ephemeral position.
   markOnboardingStepSeen: (stepId) => ({ type: 'ONBOARDING_STEP_SEEN', stepId }),
   setOnboardingStep: (index) => ({ type: 'ONBOARDING_STEP_SET', index }),
+  // (v5.17.48) re-open the introduction from Settings: undismiss and start
+  // the 3-step wizard over (seen-flags cleared, position released).
+  reshowOnboarding: () => ({ type: 'ONBOARDING_RESHOW' }),
   installPromptReady: () => ({ type: 'INSTALL_PROMPT_READY' }),
   installPromptClear: () => ({ type: 'INSTALL_PROMPT_CLEAR' }),
   // (v5.17.31) prompt deferral: hide the offer without consuming the

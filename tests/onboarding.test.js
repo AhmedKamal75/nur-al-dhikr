@@ -1,6 +1,7 @@
 /**
- * tests/onboarding.test.js — first-run wizard logic (pure module, v5.2.52:
- * six steppedWizard steps; appearance checklist retired)
+ * tests/onboarding.test.js — first-run wizard logic (pure module, v5.17.48:
+ * three decisions — language, location-or-offset, reciter — with the other
+ * five legacy steps deferred to Settings).
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,9 +11,14 @@ import {
   onboardingComplete,
   shouldShowOnboarding,
   wizardStepIndex,
+  resolveOnboardingStep,
   WIZARD_STEP_IDS,
   CONFIRM_STEPS,
+  LEGACY_STEP_ORDER,
+  LEGACY_CONFIRM_STEPS,
+  DEFERRED_STEPS,
 } from '../js/domain/onboarding.js';
+import { VIEWS } from '../js/core/config.js';
 
 function baseState(overrides = {}) {
   return {
@@ -36,30 +42,48 @@ test('isReturningUser: true for anyone with real progress', () => {
   assert.equal(isReturningUser({ collections: [{ id: 'c' }] }), true);
 });
 
-test('buildOnboardingSteps: all eight steps start undone for a fresh user', () => {
+test('the wizard is three decisions; legacy order keeps all eight ids', () => {
+  assert.deepEqual(WIZARD_STEP_IDS, ['language', 'location', 'reciter']);
+  assert.deepEqual(CONFIRM_STEPS, ['language', 'location', 'reciter']);
+  assert.deepEqual(LEGACY_CONFIRM_STEPS, ['language', 'comfort', 'prayer', 'goals']);
+  assert.deepEqual(LEGACY_STEP_ORDER, [
+    'language',
+    'comfort',
+    'location',
+    'notifications',
+    'prayer',
+    'goals',
+    'install',
+    'firstReading',
+  ]);
+});
+
+test('deferred doors name real routes (mirrors VIEWS, js/core/config/views.js)', () => {
+  const views = new Set(Object.values(VIEWS));
+  assert.deepEqual(
+    DEFERRED_STEPS.map((d) => d.id),
+    ['comfort', 'notifications', 'prayer', 'goals', 'install', 'firstReading']
+  );
+  for (const d of DEFERRED_STEPS) {
+    assert.ok(views.has(d.view), `deferred ${d.id} names a real view: ${d.view}`);
+    assert.ok(d.params && typeof d.params === 'object', `deferred ${d.id} carries params`);
+  }
+});
+
+test('buildOnboardingSteps: all three steps start undone for a fresh user', () => {
   const steps = buildOnboardingSteps(baseState());
   assert.deepEqual(
     steps.map((s) => s.id),
-    [
-      'language',
-      'comfort',
-      'location',
-      'notifications',
-      'prayer',
-      'goals',
-      'install',
-      'firstReading',
-    ]
+    ['language', 'location', 'reciter']
   );
   assert.deepEqual(
     steps.map((s) => s.done),
-    [false, false, false, false, false, false, false, false]
+    [false, false, false]
   );
   assert.deepEqual(
     WIZARD_STEP_IDS,
     steps.map((s) => s.id)
   );
-  assert.deepEqual(CONFIRM_STEPS, ['language', 'comfort', 'prayer', 'goals']);
 });
 
 test('buildOnboardingSteps: each completion signal flips exactly its own step', () => {
@@ -68,38 +92,38 @@ test('buildOnboardingSteps: each completion signal flips exactly its own step', 
   );
   assert.deepEqual(
     located.map((s) => s.done),
-    [false, false, true, false, false, false, false, false]
+    [false, true, false]
   );
 
-  const notified = buildOnboardingSteps(baseState(), { notificationsGranted: true });
+  const defaults = buildOnboardingSteps(
+    baseState({ onboarding: { dismissed: false, stepsSeen: { location: true } } })
+  );
   assert.deepEqual(
-    notified.map((s) => s.done),
-    [false, false, false, true, false, false, false, false]
+    defaults.map((s) => s.done),
+    [false, true, false],
+    'continuing with defaults completes the location step without coordinates'
   );
 
   const setUp = buildOnboardingSteps(
+    baseState({ onboarding: { dismissed: false, stepsSeen: { language: true, reciter: true } } })
+  );
+  assert.deepEqual(
+    setUp.map((s) => s.done),
+    [true, false, true]
+  );
+
+  // Legacy confirms no longer complete anything on their own.
+  const legacy = buildOnboardingSteps(
     baseState({
       onboarding: {
         dismissed: false,
-        stepsSeen: { language: true, comfort: true, prayer: true, goals: true },
+        stepsSeen: { comfort: true, prayer: true, goals: true },
       },
     })
   );
   assert.deepEqual(
-    setUp.map((s) => s.done),
-    [true, true, false, false, true, true, false, false]
-  );
-
-  const installed = buildOnboardingSteps(baseState(), { appInstalled: true });
-  assert.deepEqual(
-    installed.map((s) => s.done),
-    [false, false, false, false, false, false, true, false]
-  );
-
-  const read = buildOnboardingSteps(baseState({ statistics: { totalRecitations: 1 } }));
-  assert.deepEqual(
-    read.map((s) => s.done),
-    [false, false, false, false, false, false, false, true]
+    legacy.map((s) => s.done),
+    [false, false, false]
   );
 });
 
@@ -107,35 +131,59 @@ test('buildOnboardingSteps: junk coordinates do not complete the location step',
   const junk = buildOnboardingSteps(
     baseState({ settings: { prayer: { latitude: 'x', longitude: null } } })
   );
-  assert.equal(junk[0].done, false);
+  assert.equal(junk[1].done, false);
 });
 
-test('onboardingComplete: only when every step is done', () => {
+test('resolveOnboardingStep: live steps render, legacy ones redirect, unknown is null', () => {
+  assert.deepEqual(resolveOnboardingStep('language'), { kind: 'wizard', index: 0 });
+  assert.deepEqual(resolveOnboardingStep('location'), { kind: 'wizard', index: 1 });
+  assert.deepEqual(resolveOnboardingStep('reciter'), { kind: 'wizard', index: 2 });
+  // Numeric positions follow the legacy order, not the new one.
+  assert.deepEqual(resolveOnboardingStep(1), {
+    kind: 'deferred',
+    view: 'settings',
+    params: { id: 'accessibility' },
+  });
+  assert.deepEqual(resolveOnboardingStep(6), {
+    kind: 'deferred',
+    view: 'settings',
+    params: { id: 'data' },
+  });
+  assert.deepEqual(resolveOnboardingStep(7), {
+    kind: 'deferred',
+    view: 'category',
+    params: { id: 'morning' },
+  });
+  assert.deepEqual(resolveOnboardingStep('comfort'), {
+    kind: 'deferred',
+    view: 'settings',
+    params: { id: 'accessibility' },
+  });
+  assert.deepEqual(resolveOnboardingStep('prayer'), {
+    kind: 'deferred',
+    view: 'prayer',
+    params: {},
+  });
+  assert.equal(resolveOnboardingStep('bogus'), null);
+  assert.equal(resolveOnboardingStep(99), null);
+  assert.equal(resolveOnboardingStep(null), null);
+});
+
+test('onboardingComplete: only when all three steps are done', () => {
   const all = buildOnboardingSteps(
     baseState({
       settings: { prayer: { latitude: 1, longitude: 2 } },
-      onboarding: {
-        dismissed: false,
-        stepsSeen: { language: true, comfort: true, prayer: true, goals: true },
-      },
-      statistics: { totalRecitations: 5 },
-    }),
-    { appInstalled: true, notificationsGranted: true }
+      onboarding: { dismissed: false, stepsSeen: { language: true, reciter: true } },
+    })
   );
   assert.equal(onboardingComplete(all), true);
-  // Same state, but the app is not installed yet → one undone step is enough.
-  const notInstalled = buildOnboardingSteps(
+  const pending = buildOnboardingSteps(
     baseState({
       settings: { prayer: { latitude: 1, longitude: 2 } },
-      onboarding: {
-        dismissed: false,
-        stepsSeen: { language: true, comfort: true, prayer: true, goals: true },
-      },
-      statistics: { totalRecitations: 5 },
-    }),
-    { appInstalled: false, notificationsGranted: true }
+      onboarding: { dismissed: false, stepsSeen: { language: true } },
+    })
   );
-  assert.equal(onboardingComplete(notInstalled), false);
+  assert.equal(onboardingComplete(pending), false);
 });
 
 test('shouldShowOnboarding: hides when dismissed, when complete, shows otherwise', () => {
@@ -143,20 +191,18 @@ test('shouldShowOnboarding: hides when dismissed, when complete, shows otherwise
   assert.equal(shouldShowOnboarding(baseState({ onboarding: { dismissed: true } })), false);
   const doneState = baseState({
     settings: { prayer: { latitude: 1, longitude: 2 } },
-    onboarding: {
-      dismissed: false,
-      stepsSeen: { language: true, comfort: true, prayer: true, goals: true },
-    },
-    statistics: { totalRecitations: 5 },
+    onboarding: { dismissed: false, stepsSeen: { language: true, reciter: true } },
   });
+  assert.equal(shouldShowOnboarding(doneState), false);
   assert.equal(
-    shouldShowOnboarding(doneState, { appInstalled: true, notificationsGranted: true }),
-    false
+    shouldShowOnboarding(
+      baseState({
+        onboarding: { dismissed: false, stepsSeen: { language: true, reciter: true } },
+      })
+    ),
+    true,
+    'location still pending without coordinates or a defaults confirm'
   );
-  assert.equal(
-    shouldShowOnboarding(doneState, { appInstalled: false, notificationsGranted: true }),
-    true
-  ); // install still pending
 });
 
 test('wizardStepIndex: override wins, else first incomplete', () => {
@@ -179,4 +225,9 @@ test('wizardStepIndex: override wins, else first incomplete', () => {
     'all done lands on the last step'
   );
   assert.equal(wizardStepIndex([], null), 0);
+});
+
+test('wizardStepIndex: a stored legacy position falls back honestly', () => {
+  const steps = buildOnboardingSteps(baseState());
+  assert.equal(wizardStepIndex(steps, 6), 0, 'legacy install position → first incomplete');
 });

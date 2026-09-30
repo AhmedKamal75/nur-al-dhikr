@@ -144,7 +144,25 @@ export function reduceShell(state, action) {
       if (state.onboarding?.dismissed) return state;
       return { ...state, onboarding: { ...state.onboarding, dismissed: true } };
 
-    // (v5.2.52) wizard setup confirms (prayer, goals) + ephemeral position.
+    // (v5.17.48) re-open the introduction from Settings: undismiss, clear
+    // the seen-flags (a restart, not a resume) and release the position so
+    // the wizard follows the first incomplete step again.
+    case 'ONBOARDING_RESHOW': {
+      const onboarding =
+        state.onboarding && typeof state.onboarding === 'object' ? state.onboarding : {};
+      if (onboarding.dismissed === false && state.ui?.onboardingStep == null) {
+        const seen = onboarding.stepsSeen;
+        if (!seen || (typeof seen === 'object' && Object.keys(seen).length === 0)) return state;
+      }
+      return {
+        ...state,
+        onboarding: { ...onboarding, dismissed: false, stepsSeen: {} },
+        ui: { ...state.ui, onboardingStep: null },
+      };
+    }
+
+    // (v5.17.48) wizard confirms (language, location-or-defaults, reciter)
+    // + ephemeral position.
     case 'ONBOARDING_STEP_SEEN': {
       if (!CONFIRM_STEPS.includes(action.stepId)) return state;
       const seen = state.onboarding?.stepsSeen;

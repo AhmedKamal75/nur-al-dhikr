@@ -809,7 +809,7 @@ export function renderHome(state) {
   // (v5.17.47, C4) the page's argument, in order: the shahada, where
   // you are today (prayer strip + one slim today-strip answering "how am
   // I doing"), then THE DHIKR — ranked, not alphabetical. The brand hero
-  // is one quiet line below the grid and the 8-step wizard is one
+  // is one quiet line below the grid and the 3-step wizard is one
   // unobtrusive line beside it: chrome answers before it is asked, and
   // never shouts. Nothing is removed — every panel still renders below
   // in the reader's own order.

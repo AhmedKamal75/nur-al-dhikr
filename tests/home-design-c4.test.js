@@ -237,12 +237,12 @@ describe('C4 chrome: the hero is one line, the wizard is one line', () => {
     assert.ok(html.includes('panel--onboarding--line'), 'line variant renders');
     assert.ok(html.includes('<details'), 'collapsed by default');
     assert.ok(html.includes('<summary'), 'the summary is the native continue control');
-    assert.ok(html.includes('0 of 8 steps done'), 'progress survives on the line');
+    assert.ok(html.includes('0 of 3 steps done'), 'progress survives on the line');
     assert.ok(html.includes('data-action="onboarding-dismiss"'), 'dismiss survives on the line');
     // The whole wizard, untouched, one tap away:
     assert.ok(html.includes('data-action="onboarding-language"'), 'language actions intact');
     assert.ok(html.includes('data-action="onboarding-step"'), 'Back/Next intact');
-    assert.ok(html.includes('1 / 8'), 'position intact');
+    assert.ok(html.includes('1 / 3'), 'position intact');
     const ar = onboardingPanelHTML({ ...s, settings: { ...s.settings, language: 'ar' } }, 'ar');
     assert.ok(ar.includes('أُنجزت'), 'AR progress on the line');
     assert.doesNotMatch(ar, /undefined/);

@@ -1,18 +1,19 @@
 /**
- * onboarding.js (v5.2.52)
- * Pure logic for the first-run wizard on Home (was a 4-row checklist).
+ * onboarding.js (v5.17.48)
+ * Pure logic for the first-run wizard on Home: three decisions —
+ * language, location-or-offset, reciter — then done, with an instant
+ * skip. Everything else the old 8-step wizard asked (comfort,
+ * notifications, calculation method, daily goal, install, first reading)
+ * is deferred: passive doors in Settings that never pop up on their own
+ * (see DEFERRED_STEPS + the Settings "finish later" block).
  *
  * Completion is always something *observable*, never a guess:
- *  - location:      settings.prayer has real coordinates
- *  - notifications: the browser granted notification permission (passed in
- *    via flags — the store can't know environment facts on its own)
- *  - prayer:        the person confirmed their calculation setup (method +
- *    Asr, defaults included — the recorded choice is the signal, which is
- *    why a confirm step exists instead of change detection)
- *  - goals:         the person confirmed their daily dhikr goal
- *  - install:       standalone display mode, or the browser fired
- *    appinstalled
- *  - first reading: at least one recitation ever recorded
+ *  - language:      the person picked a language (recorded confirm)
+ *  - location:      settings.prayer has real coordinates, OR the person
+ *    chose defaults/offsets instead (recorded confirm — prayer times
+ *    work from defaults, so "no GPS" is a valid answer, not a trap)
+ *  - reciter:       the person picked a voice or kept the default
+ *    (recorded confirm — audio already plays from DEFAULT_RECITER)
  *
  * The wizard auto-hides when every step is done, and can be dismissed
  * explicitly ("Maybe later"). Anyone upgrading from an earlier version
@@ -38,10 +39,22 @@ export function isReturningUser(payload) {
 }
 
 /**
- * Wizard steps, in order. The two setup steps complete on explicit
- * confirm (their seen-flags persist in state.onboarding.stepsSeen).
+ * Wizard steps, in order. Three decisions, then done. Every other
+ * first-run concern lives in DEFERRED_STEPS below.
  */
-export const WIZARD_STEP_IDS = [
+export const WIZARD_STEP_IDS = ['language', 'location', 'reciter'];
+
+/** Steps whose completion is a recorded confirm (persisted seen-flags). */
+export const CONFIRM_STEPS = ['language', 'location', 'reciter'];
+
+/**
+ * The pre-8-step order (v5.2.52–v5.17.47), kept so old positions still
+ * resolve: wizardStepIndex falls back honestly for out-of-range indices,
+ * and resolveOnboardingStep maps every legacy id/index to either its live
+ * step or the deferred door it moved to. No stored position or bookmarked
+ * step silently dies.
+ */
+export const LEGACY_STEP_ORDER = [
   'language',
   'comfort',
   'location',
@@ -52,40 +65,70 @@ export const WIZARD_STEP_IDS = [
   'firstReading',
 ];
 
-/** Steps whose completion is a recorded confirm (persisted seen-flags). */
-export const CONFIRM_STEPS = ['language', 'comfort', 'prayer', 'goals'];
+/**
+ * Deferred first-run doors: optional, passive, never auto-reshown. Each
+ * names the route that now owns it — `view` values mirror VIEWS
+ * (js/core/config/views.js), asserted by tests/onboarding.test.js, so the
+ * map cannot drift from the router.
+ */
+export const DEFERRED_STEPS = [
+  { id: 'comfort', view: 'settings', params: { id: 'accessibility' } },
+  { id: 'notifications', view: 'settings', params: { id: 'notifications' } },
+  { id: 'prayer', view: 'prayer', params: {} },
+  { id: 'goals', view: 'settings', params: { id: 'content' } },
+  { id: 'install', view: 'settings', params: { id: 'data' } },
+  { id: 'firstReading', view: 'category', params: { id: 'morning' } },
+];
+
+/**
+ * The old setup confirms (v5.2.52 CONFIRM_STEPS). Restore uses this to
+ * grandfather people who finished the old wizard: the reciter never had a
+ * wizard step before, so their default voice stands without being asked.
+ */
+export const LEGACY_CONFIRM_STEPS = ['language', 'comfort', 'prayer', 'goals'];
+
+/**
+ * Resolve any wizard reference — a live step id, a legacy step id, or a
+ * legacy numeric position — to where it honestly goes now.
+ * @param {string|number} ref step id or wizard position
+ * @returns {{kind: 'wizard', index: number}|{kind: 'deferred', view: string, params: object}|null}
+ *          null for unknown ids (callers fall back to first-incomplete).
+ */
+export function resolveOnboardingStep(ref) {
+  const deferredById = new Map(DEFERRED_STEPS.map((d) => [d.id, d]));
+  let id = null;
+  if (typeof ref === 'string' && ref) id = ref;
+  else if (typeof ref === 'number' && Number.isFinite(ref)) id = LEGACY_STEP_ORDER[ref] ?? null;
+  if (id == null) return null;
+  const wizardIndex = WIZARD_STEP_IDS.indexOf(id);
+  if (wizardIndex !== -1) return { kind: 'wizard', index: wizardIndex };
+  const deferred = deferredById.get(id);
+  if (deferred) return { kind: 'deferred', view: deferred.view, params: { ...deferred.params } };
+  return null;
+}
 
 /**
  * Build the ordered list of onboarding steps with their done flags.
  * @param {object} state app state
  * @param {{appInstalled?: boolean, notificationsGranted?: boolean}} [flags]
- *        environment facts the store can't know on its own (standalone
- *        display mode / appinstalled / notification permission)
+ *        accepted and ignored (legacy callers passed environment facts for
+ *        the deferred install/notifications steps — kept so old call sites
+ *        fail loudly at the test level, never silently here).
  * @returns {Array<{id: string, done: boolean}>}
  */
-export function buildOnboardingSteps(
-  state,
-  { appInstalled = false, notificationsGranted = false } = {}
-) {
+export function buildOnboardingSteps(state) {
   const p = state.settings?.prayer || {};
   const seen = state.onboarding?.stepsSeen;
   const seenMap = seen && typeof seen === 'object' && !Array.isArray(seen) ? seen : {};
+  const located =
+    p.latitude != null &&
+    p.longitude != null &&
+    Number.isFinite(Number(p.latitude)) &&
+    Number.isFinite(Number(p.longitude));
   return [
     { id: 'language', done: seenMap.language === true },
-    { id: 'comfort', done: seenMap.comfort === true },
-    {
-      id: 'location',
-      done:
-        p.latitude != null &&
-        p.longitude != null &&
-        Number.isFinite(Number(p.latitude)) &&
-        Number.isFinite(Number(p.longitude)),
-    },
-    { id: 'notifications', done: notificationsGranted === true },
-    { id: 'prayer', done: seenMap.prayer === true },
-    { id: 'goals', done: seenMap.goals === true },
-    { id: 'install', done: !!appInstalled },
-    { id: 'firstReading', done: (state.statistics?.totalRecitations || 0) > 0 },
+    { id: 'location', done: located || seenMap.location === true },
+    { id: 'reciter', done: seenMap.reciter === true },
   ];
 }
 

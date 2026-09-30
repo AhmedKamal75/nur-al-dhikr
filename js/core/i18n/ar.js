@@ -1716,8 +1716,6 @@ export const ar = {
   'onboarding.comfort': 'هل القراءة مريحة؟',
   'onboarding.comfortHint':
     'خط أكبر وأزرار أوسع وتباين أقوى — أيسر للعين المتعبة. ويمكنك تغيير أي من ذلك لاحقًا من الإعدادات.',
-  'onboarding.bigTextYes': 'نعم، اجعلها أيسر في القراءة',
-  'onboarding.bigTextNo': 'لا، حجم عادي',
   'onboarding.location': 'حدّد موقعك',
   'onboarding.locationHint': 'للحصول على مواقيت صلاة دقيقة',
   'onboarding.install': 'ثبّت التطبيق',
@@ -1741,6 +1739,17 @@ export const ar = {
   'onboarding.prayerSetup': 'طريقة الحساب',
   'onboarding.prayerSetupHint': 'الطريقة والعصر',
   'onboarding.setManually': 'إدخال يدوي',
+  // (v5.17.48) انظر التعليق المقابل في en.js — كل مفتاح هنا له توأم إنجليزي.
+  'onboarding.reciter': 'اختر القارئ',
+  'onboarding.reciterHint':
+    'الصوت الذي تُسمع به تلاوة القرآن. الصوت الافتراضي يعمل — اختر غيره أو أبقه بالضغط على تم.',
+  'onboarding.locationOffsetHint':
+    'لا يوجد GPS؟ أدخل مدينتك يدويًا أو اضبط المواقيت بإزاحات لكل صلاة — كلاهما في صفحة الصلاة. أو تابع بالإعدادات الافتراضية.',
+  'onboarding.useDefaults': 'المتابعة بالإعدادات الافتراضية',
+  'onboarding.moreVoices': 'أصوات أخرى في الإعدادات',
+  'onboarding.deferTitle': 'أكمل الإعداد متى شئت',
+  'onboarding.deferHint': 'هذه خطوات اختيارية. لن تظهر تلقائيًا أبدًا — افتح أيًا منها عندما تريد.',
+  'onboarding.reshow': 'إظهار المقدمة مجددًا',
   'khatma.planTitle': 'خطة الختمة',
   'khatma.setPlan': 'ضع خطة',
   'khatma.editPlan': 'تعديل الخطة',

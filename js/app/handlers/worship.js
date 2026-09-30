@@ -18,7 +18,8 @@ import { ramadanKhatmaPreset } from '../../domain/khatma.js';
 import { monthWindow, intensityBucket } from '../../domain/statistics.js';
 import { OFFSET_PRAYERS } from '../../domain/prayer.js';
 import { PRAYER_KEYS, dayComplete, prayerState } from '../../domain/prayerLog.js';
-import { CONFIRM_STEPS } from '../../domain/onboarding.js';
+import { CONFIRM_STEPS, resolveOnboardingStep } from '../../domain/onboarding.js';
+import { go } from '../../core/router.js';
 import {
   detectInstallPlatform,
   installStepsKey,
@@ -346,9 +347,32 @@ export const clickHandlers = {
   // Position is ephemeral (state.ui.onboardingStep, null = first
   // incomplete); confirms persist seen-flags and release the position so
   // the wizard follows the new first-incomplete step.
+  // (v5.17.48) 3-step wizard navigation. data-step names a step id:
+  // live steps move the ephemeral position, deferred legacy steps
+  // redirect to the route that now owns them, unknown ids release the
+  // position (first-incomplete) instead of dying. The legacy numeric
+  // data-idx path is unchanged (out-of-range already falls back).
   'onboarding-step': (ds) => {
+    if (ds.step) {
+      const target = resolveOnboardingStep(ds.step);
+      if (!target) {
+        store.dispatch(actions.setOnboardingStep(null));
+        return;
+      }
+      if (target.kind === 'wizard') {
+        store.dispatch(actions.setOnboardingStep(target.index));
+        return;
+      }
+      go(target.view, target.params);
+      return;
+    }
     const idx = Math.floor(Number(ds.idx));
     store.dispatch(actions.setOnboardingStep(Number.isFinite(idx) && idx >= 0 ? idx : null));
+  },
+
+  // (v5.17.48) re-open the introduction from the Settings deferred block.
+  'onboarding-reshow': () => {
+    store.dispatch(actions.reshowOnboarding());
   },
 
   'onboarding-confirm': (ds) => {

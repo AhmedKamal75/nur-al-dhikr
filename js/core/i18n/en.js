@@ -1787,8 +1787,6 @@ export const en = {
   'onboarding.comfort': 'Comfortable to read?',
   'onboarding.comfortHint':
     'Larger text, roomy buttons and stronger contrast — easier for tired eyes. You can change any of this later in Settings.',
-  'onboarding.bigTextYes': 'Yes, make it easier to read',
-  'onboarding.bigTextNo': 'No, standard size',
   'onboarding.location': 'Set your location',
   'onboarding.locationHint': 'For accurate prayer times',
   'onboarding.install': 'Install the app',
@@ -1812,6 +1810,21 @@ export const en = {
   'onboarding.prayerSetup': 'Calculation method',
   'onboarding.prayerSetupHint': 'Method and Asr',
   'onboarding.setManually': 'Enter manually',
+  // (v5.17.48) the 3-step wizard: reciter choice, the location "or offset /
+  // defaults" answer, and the deferred-doors block in Settings. Every key
+  // below has an AR twin (parity gate); reciter names themselves come from
+  // QURAN_RECITERS, never from these dictionaries.
+  'onboarding.reciter': 'Choose your reciter',
+  'onboarding.reciterHint':
+    'The voice for Qur’an audio. The default already plays — pick another voice, or keep it with Done.',
+  'onboarding.locationOffsetHint':
+    'No GPS? Enter your town manually, or fine-tune times with per-prayer offsets — both live under Prayer. Or continue with defaults.',
+  'onboarding.useDefaults': 'Continue with defaults',
+  'onboarding.moreVoices': 'More voices in Settings',
+  'onboarding.deferTitle': 'Finish setup when ready',
+  'onboarding.deferHint':
+    'These are optional. They never pop up on their own — open any of them when you want it.',
+  'onboarding.reshow': 'Show the introduction again',
   'khatma.planTitle': 'Khatma plan',
   'khatma.setPlan': 'Set a plan',
   'khatma.editPlan': 'Edit plan',

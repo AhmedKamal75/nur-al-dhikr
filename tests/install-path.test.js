@@ -5,8 +5,9 @@
  *  2. platform routing (installed > prompt > ios > android > desktop);
  *  3. the reducer flag matrix is idempotent and drops hostile outcomes;
  *  4. sanitizeSettings allowlists the new persisted deferral key;
- *  5. the wizard step renders Install+Later on prompt, per-platform steps
- *     off-prompt, and a re-offer once a deferral cools down — EN + AR;
+ *  5. (v5.17.48) install left the wizard: no wizard position renders an
+ *     install offer, the legacy position redirects to Settings → data,
+ *     and the deferred block still doors into install — EN + AR;
  *  6. the shared About/Settings row reuses the same copy per platform;
  *  7. runInstallPrompt drives a fake deferred event (accepted / dismissed /
  *     hostile shapes), and the real handlers consume/record through it;
@@ -34,9 +35,11 @@ import {
 import { reduce } from '../js/core/state/reducer.js';
 import { initialState } from '../js/core/state/initial.js';
 import { actions } from '../js/core/state/actions.js';
+import { resolveOnboardingStep } from '../js/domain/onboarding.js';
 import { sanitizeSettings } from '../js/core/config/sanitize.js';
 import { DEFAULT_SETTINGS } from '../js/core/config.js';
 import { onboardingPanelHTML } from '../js/views/onboardingPanel.js';
+import { deferredSetupHTML } from '../js/views/settings.js';
 import { installRowHTML } from '../js/views/installRow.js';
 import { renderAbout } from '../js/views/about.js';
 import { renderSettings } from '../js/views/settings.js';
@@ -213,7 +216,7 @@ describe('settings sanitize: installDeferral allowlist', () => {
 });
 
 /* ------------------------------------------------------------------ */
-/* 5. Wizard step variants                                             */
+/* 5. Install left the wizard (v5.17.48)                               */
 /* ------------------------------------------------------------------ */
 
 function wizardState(over = {}) {
@@ -228,68 +231,44 @@ function wizardState(over = {}) {
     onboarding: { dismissed: false, settingsVisited: false, stepsSeen: {} },
     statistics: { ...s.statistics, totalRecitations: 0 },
     install: { promptReady: false, installed: false, outcome: null, shellReady: false },
-    ui: { contentManage: false, onboardingStep: 6 },
+    ui: { contentManage: false, onboardingStep: null },
     ...over,
   };
 }
 
-describe('wizard install step: prompt vs per-platform copy', () => {
-  test('a live prompt offers Install + Not-now (EN + AR)', () => {
-    const html = onboardingPanelHTML(wizardState(), 'en', { installPromptReady: true });
-    assert.ok(html.includes('data-action="onboarding-install"'), 'install action');
-    assert.ok(html.includes('data-action="install-later"'), 'later action');
-    const arHtml = onboardingPanelHTML(
-      wizardState({ settings: { ...wizardState().settings, language: 'ar' } }),
-      'ar',
-      { installPromptReady: true }
-    );
-    assert.ok(arHtml.includes('data-action="onboarding-install"'), 'AR keeps the actions');
-    assert.ok(arHtml.includes('ليس الآن'), 'AR later copy');
-    assert.doesNotMatch(arHtml, /undefined/);
-  });
-
-  test('no prompt renders per-platform steps, never the generic line', () => {
-    for (const [platform, copy] of [
-      ['ios', 'Add to Home Screen'],
-      ['android', 'Install app'],
-      ['desktop', 'address bar'],
-    ]) {
-      const html = onboardingPanelHTML(wizardState(), 'en', { installPlatform: platform });
-      assert.ok(html.includes(copy), `${platform} steps`);
-      assert.ok(!html.includes('data-action="onboarding-install"'), `${platform}: no dead button`);
+describe('install is deferred, not a wizard step', () => {
+  test('no wizard position renders an install offer', () => {
+    for (const idx of [null, 0, 1, 2, 6]) {
+      const html = onboardingPanelHTML(
+        wizardState({ ui: { contentManage: false, onboardingStep: idx } }),
+        'en'
+      );
+      assert.ok(!html.includes('data-action="onboarding-install"'), `idx ${idx}: no install`);
+      assert.ok(!html.includes('data-action="install-later"'), `idx ${idx}: no later`);
+      assert.ok(!html.includes('data-action="install-reoffer"'), `idx ${idx}: no re-offer`);
     }
-    const arHtml = onboardingPanelHTML(
-      wizardState({ settings: { ...wizardState().settings, language: 'ar' } }),
-      'ar',
-      { installPlatform: 'ios' }
-    );
-    assert.ok(arHtml.includes('المشاركة'), 'AR iOS Share step');
   });
 
-  test('an expired deferral adds the re-offer; a fresh one stays quiet', () => {
-    const stale = wizardState({
-      settings: {
-        ...wizardState().settings,
-        installDeferral: { at: NOW - (INSTALL_REOFFER_DAYS * DAY + 1), count: 1 },
-      },
+  test('the legacy install position redirects to the Settings data section', () => {
+    assert.deepEqual(resolveOnboardingStep(6), {
+      kind: 'deferred',
+      view: 'settings',
+      params: { id: 'data' },
     });
-    // The fixture stamp is older than the real clock — still expired, so
-    // the re-offer renders regardless of Date.now skew.
-    assert.ok(
-      onboardingPanelHTML(stale, 'en', { installPlatform: 'android' }).includes(
-        'data-action="install-reoffer"'
-      ),
-      'expired deferral re-offers'
-    );
-    const fresh = wizardState({
-      settings: { ...wizardState().settings, installDeferral: { at: Date.now(), count: 1 } },
+    assert.deepEqual(resolveOnboardingStep('install'), {
+      kind: 'deferred',
+      view: 'settings',
+      params: { id: 'data' },
     });
-    assert.ok(
-      !onboardingPanelHTML(fresh, 'en', { installPlatform: 'android' }).includes(
-        'data-action="install-reoffer"'
-      ),
-      'fresh deferral stays quiet'
-    );
+  });
+
+  test('the Settings deferred block still doors into install (EN + AR)', () => {
+    const html = deferredSetupHTML(wizardState(), 'en');
+    assert.ok(html.includes('Install the app'), 'install door listed');
+    assert.ok(html.includes('data-view="settings" data-id="data"'), 'install deep link');
+    const arHtml = deferredSetupHTML(wizardState(), 'ar');
+    assert.ok(arHtml.includes('ثبّت التطبيق'), 'AR install door');
+    assert.doesNotMatch(arHtml, /undefined/);
   });
 });
 

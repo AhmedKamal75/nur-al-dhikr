@@ -1,100 +1,48 @@
 /**
- * views/onboardingPanel.js (v5.2.52)
- * The first-run wizard on Home — one step at a time (was a 4-row
- * checklist). Step completion logic lives in domain/onboarding.js (pure,
- * tested); this module only renders.
+ * views/onboardingPanel.js (v5.17.48)
+ * The first-run wizard on Home — three decisions (language,
+ * location-or-offset, reciter), then done, with an instant skip. Step
+ * completion logic lives in domain/onboarding.js (pure, tested); this
+ * module only renders.
  *
  * Design notes:
  *  - (v5.17.47, C4) the wizard rides collapsed inside a <details> behind a
- *    single summary line — "N of 8 · current step · dismiss" — instead of
+ *    single summary line — "N of 3 · current step · dismiss" — instead of
  *    occupying the first screen. The full step body, Back/Next and every
  *    deep link survive untouched inside; the summary itself is the native
  *    expand control, so no new data-action and no new handler.
+ *  - (v5.17.48) comfort, notifications, calculation method, daily goal,
+ *    install and first reading left the wizard: they are passive doors in
+ *    Settings (the "finish later" block) that never pop up on their own.
+ *    Every legacy step id/index still resolves — live steps render,
+ *    deferred ones redirect (see resolveOnboardingStep).
  *  - Position is ephemeral (state.ui.onboardingStep, null = follow the
  *    first incomplete step): a reload restarts the wizard exactly where
  *    work remains. Next skips without completing; Back revisits.
- *  - Permission steps prime first (why + what happens), then trigger the
- *    real browser prompt from the primary button (user gesture required).
- *  - Setup steps (method/Asr, daily goal) commit live through the shared
- *    data-bind pipeline; Confirm records the choice, defaults included.
- *  - Every unfinished action step also links straight to where it happens.
- *  - The install step degrades gracefully: an Install + Not-now pair when
- *    the browser offered beforeinstallprompt (a dismissal stamps deferral
- *    memory and re-offers after the cooldown), per-platform manual steps
- *    otherwise (iOS Share, Android menu, desktop address bar), and a quiet
- *    done row once standalone.
+ *  - The location step accepts three honest answers: GPS coordinates, a
+ *    manual town/offset setup in Prayer, or the defaults (prayer times
+ *    work from defaults, so "no GPS" completes the step, never traps it).
+ *  - The reciter list is derived from QURAN_RECITERS (the single source
+ *    of truth in core/config/quran.js) — never a pinned subset. Picks
+ *    ride the shared set-setting pipeline; Done keeps the current voice.
  *  - The panel disappears on its own once all steps are done.
  */
 
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
-import { escapeHTML } from '../core/utils.js';
+import { escapeHTML, pickLocale } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
-import { VIEWS } from '../core/config.js';
-import { METHODS, ASR_FACTORS } from '../domain/prayer.js';
+import { VIEWS, QURAN_RECITERS } from '../core/config.js';
 import { buildOnboardingSteps, wizardStepIndex } from '../domain/onboarding.js';
-import { detectInstallPlatform, installStepsKey, shouldReofferInstall } from '../domain/install.js';
-import { liveUA } from './installRow.js';
 
 export const STEP_ICONS = {
   language: 'book-open',
-  comfort: 'eye',
   location: 'location',
-  notifications: 'bell',
-  prayer: 'prayer-rug',
-  goals: 'target',
-  install: 'download',
-  firstReading: 'book-open',
+  reciter: 'volume',
 };
 
-/**
- * Live notification permission, guarded. Views stay DOM-free; this
- * side-effect-free capability probe is the documented exception (same
- * guard idiom as services/notifications.js). Tests pass explicit flags
- * instead — deterministic, no window needed.
- */
-function liveNotificationsGranted() {
-  try {
-    return (
-      typeof window !== 'undefined' &&
-      'Notification' in window &&
-      window.Notification.permission === 'granted'
-    );
-  } catch {
-    return false;
-  }
-}
-
-function liveNotificationsDenied() {
-  try {
-    return (
-      typeof window !== 'undefined' &&
-      'Notification' in window &&
-      window.Notification.permission === 'denied'
-    );
-  } catch {
-    return false;
-  }
-}
-
-function methodOptions(p) {
-  return Object.entries(METHODS)
-    .map(
-      ([id, m]) =>
-        `<option value="${id}" ${p.method === id ? 'selected' : ''}>${escapeHTML(m.name)}</option>`
-    )
-    .join('');
-}
-
-function asrOptions(p) {
-  return Object.keys(ASR_FACTORS)
-    .map((id) => `<option value="${id}" ${p.asr === id ? 'selected' : ''}>${id}</option>`)
-    .join('');
-}
-
 /** Step-specific body: priming copy + inline controls + deep links. */
-function stepBodyHTML(step, state, lang, ctx) {
-  const p = state.settings.prayer;
+function stepBodyHTML(step, state, lang) {
   switch (step.id) {
     case 'language':
       return `
@@ -104,88 +52,35 @@ function stepBodyHTML(step, state, lang, ctx) {
         <button type="button" class="btn btn--secondary btn--sm" data-action="onboarding-language" data-lang="en" lang="en" dir="ltr">English</button>
       </div>`;
 
-    case 'comfort':
-      return `
-      <p class="onboarding-step__prime">${t('onboarding.comfortHint', lang)}</p>
-      <div class="onboarding-step__actions">
-        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-comfort" data-big="1">${t('onboarding.bigTextYes', lang)}</button>
-        <button type="button" class="btn btn--secondary btn--sm" data-action="onboarding-comfort" data-big="0">${t('onboarding.bigTextNo', lang)}</button>
-      </div>`;
-
     case 'location':
       return `
       <p class="onboarding-step__prime">${t('onboarding.locationHint', lang)}</p>
+      <p class="onboarding-step__prime">${t('onboarding.locationOffsetHint', lang)}</p>
       <div class="onboarding-step__actions">
         <button type="button" class="btn btn--primary btn--sm" data-action="prayer-request-location">${icon('location', { size: 14 })} ${t('prayer.enableLocation', lang)}</button>
         <a class="link-btn link-btn--sm" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">${t('onboarding.setManually', lang)}</a>
+      </div>
+      <div class="onboarding-step__actions">
+        <button type="button" class="btn btn--secondary btn--sm" data-action="onboarding-confirm" data-step="location">${t('onboarding.useDefaults', lang)}</button>
       </div>`;
 
-    case 'notifications':
-      if (step.done)
-        return `<p class="onboarding-step__prime">${t('prayer.notifGranted', lang)}</p>`;
-      if (ctx.permissionDenied)
-        return `<p class="onboarding-step__prime">${t('ramadan.alertsDenied', lang)}</p>`;
+    case 'reciter': {
+      const current = state.settings?.reciter;
+      const rows = QURAN_RECITERS.map(
+        (r) => `
+      <button type="button" class="reciter-row ${current === r.id ? 'reciter-row--active' : ''}" data-action="set-setting" data-key="reciter" data-value="${escapeHTML(r.id)}" aria-pressed="${current === r.id}">
+        <span class="reciter-row__name">${escapeHTML(pickLocale({ en: r.nameEn, ar: r.nameAr }, lang))}</span>
+        ${current === r.id ? icon('check', { size: 16 }) : ''}
+      </button>`
+      ).join('');
       return `
-      <p class="onboarding-step__prime">${t('onboarding.notificationsPrime', lang)}</p>
+      <p class="onboarding-step__prime">${t('onboarding.reciterHint', lang)}</p>
+      <div class="reciter-list">${rows}</div>
       <div class="onboarding-step__actions">
-        <button type="button" class="btn btn--primary btn--sm" data-action="notifications-enable">${icon('bell', { size: 14 })} ${t('prayer.enableNotifications', lang)}</button>
+        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-confirm" data-step="reciter">${t('common.done', lang)}</button>
+        <a class="link-btn link-btn--sm" href="${buildHash(VIEWS.SETTINGS, { id: 'reciter' })}" data-action="navigate" data-view="${VIEWS.SETTINGS}" data-id="reciter">${t('onboarding.moreVoices', lang)}</a>
       </div>`;
-
-    case 'prayer':
-      return `
-      <p class="onboarding-step__prime">${t('onboarding.prayerSetupHint', lang)}</p>
-      <label class="field-label" for="wizard-prayer-method">${t('prayer.method', lang)}</label>
-      <select class="select" id="wizard-prayer-method" data-bind="prayer-method" aria-label="${t('prayer.method', lang)}">${methodOptions(p)}</select>
-      <label class="field-label" for="wizard-prayer-asr">${t('prayer.asrMethod', lang)}</label>
-      <select class="select" id="wizard-prayer-asr" data-bind="prayer-asr" aria-label="${t('prayer.asrMethod', lang)}">${asrOptions(p)}</select>
-      <div class="onboarding-step__actions">
-        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-confirm" data-step="prayer">${t('common.done', lang)}</button>
-      </div>`;
-
-    case 'goals':
-      return `
-      <p class="onboarding-step__prime">${t('tasbih.dailyGoal', lang)}</p>
-      <label class="field-label" for="wizard-daily-goal">${t('settings.dailyGoal', lang)}</label>
-      <input id="wizard-daily-goal" class="input" type="number" data-bind="dailyGoal" value="${escapeHTML(String(state.settings.dailyGoal ?? 100))}" min="1" max="10000">
-      <div class="onboarding-step__actions">
-        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-confirm" data-step="goals">${t('common.done', lang)}</button>
-      </div>`;
-
-    case 'install': {
-      if (step.done) return '';
-      // A live browser dialog: Install now, or "not now" (stamps deferral
-      // memory without consuming the stashed event). No dialog on this
-      // visit: the honest per-platform manual steps — never the dead
-      // generic line — plus a re-offer attempt once a past deferral has
-      // cooled down.
-      if (ctx.installPromptReady) {
-        return `
-      <p class="onboarding-step__prime">${t('onboarding.installHint', lang)}</p>
-      <div class="onboarding-step__actions">
-        <button type="button" class="btn btn--primary btn--sm" data-action="onboarding-install">${icon('download', { size: 14 })} ${t('onboarding.installAction', lang)}</button>
-        <button type="button" class="btn btn--secondary btn--sm" data-action="install-later">${t('onboarding.installLater', lang)}</button>
-      </div>`;
-      }
-      const deferral = state.settings?.installDeferral;
-      const reoffer =
-        deferral &&
-        typeof deferral === 'object' &&
-        (deferral.count || 0) > 0 &&
-        shouldReofferInstall(deferral)
-          ? `<button type="button" class="btn btn--secondary btn--sm" data-action="install-reoffer">${t('onboarding.installReoffer', lang)}</button>`
-          : '';
-      return `
-      <p class="onboarding-step__prime">${t('onboarding.installHint', lang)}</p>
-      <p class="onboarding-step__manual">${t(installStepsKey(ctx.installPlatform), lang)}</p>
-      ${reoffer ? `<div class="onboarding-step__actions">${reoffer}</div>` : ''}`;
     }
-
-    case 'firstReading':
-      return `
-      <p class="onboarding-step__prime">${t('onboarding.firstReadingHint', lang)}</p>
-      <div class="onboarding-step__actions">
-        <a class="btn btn--primary btn--sm" href="${buildHash(VIEWS.CATEGORY, { id: 'morning' })}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="morning">${t('onboarding.firstReading', lang)}</a>
-      </div>`;
 
     default:
       return '';
@@ -194,42 +89,23 @@ function stepBodyHTML(step, state, lang, ctx) {
 
 const STEP_TITLES = {
   language: 'onboarding.language',
-  comfort: 'onboarding.comfort',
   location: 'onboarding.location',
-  notifications: 'onboarding.notifications',
-  prayer: 'onboarding.prayerSetup',
-  goals: 'settings.dailyGoal',
-  install: 'onboarding.install',
-  firstReading: 'onboarding.firstReading',
+  reciter: 'onboarding.reciter',
 };
 
 /**
  * @param {object} state app state
  * @param {string} lang active UI language
- * @param {{appInstalled?: boolean, notificationsGranted?: boolean, installPromptReady?: boolean, installPlatform?: string}} [flags]
- *        test/SSR overrides — explicit booleans win over live probes.
  * @returns {string} HTML for the panel, or '' when it shouldn't render.
  */
-export function onboardingPanelHTML(state, lang, flags = {}) {
+export function onboardingPanelHTML(state, lang) {
   if (state.onboarding?.dismissed) return '';
-  const steps = buildOnboardingSteps(state, {
-    appInstalled: flags.appInstalled ?? !!state.install?.installed,
-    notificationsGranted: flags.notificationsGranted ?? liveNotificationsGranted(),
-  });
+  const steps = buildOnboardingSteps(state);
   if (steps.every((s) => s.done)) return '';
 
   const idx = wizardStepIndex(steps, state.ui?.onboardingStep);
   const step = steps[idx];
   const doneCount = steps.filter((s) => s.done).length;
-  const ctx = {
-    installPromptReady: flags.installPromptReady ?? !!state.install?.promptReady,
-    // The wizard step is never reached installed (done → ''), so the
-    // platform probe only routes the no-dialog manual steps here.
-    installPlatform:
-      flags.installPlatform ??
-      detectInstallPlatform({ installed: false, promptReady: false, ua: liveUA() }),
-    permissionDenied: step.id === 'notifications' && !step.done ? liveNotificationsDenied() : false,
-  };
 
   return `
   <section class="panel panel--onboarding panel--onboarding--line" aria-label="${t('onboarding.title', lang)}">
@@ -252,7 +128,7 @@ export function onboardingPanelHTML(state, lang, flags = {}) {
           <span class="onboarding-step__pos" dir="ltr">${idx + 1} / ${steps.length}</span>
         </div>
       <div class="onboarding-step__body">
-        ${stepBodyHTML(step, state, lang, ctx)}
+        ${stepBodyHTML(step, state, lang)}
       </div>
       <div class="onboarding-step__nav">
         ${

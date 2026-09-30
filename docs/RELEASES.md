@@ -2,6 +2,46 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.48 — Onboarding, non-blocking: three decisions, the rest waits
+
+Merged-plan item 1. The 8-step first-run wizard asked for setup,
+permissions, installation and a first reading before the reader had even
+seen the dhikr. Now the wizard asks three decisions — language,
+location-or-offset, reciter — then it is done, with a one-tap skip that
+leaves a complete home behind (prayer times work from defaults, audio
+plays from the default voice).
+
+- **Deferred, never auto-reshown.** Comfort, prayer alerts, calculation
+  method, daily goal, install and first reading moved to a passive
+  "Finish setup when ready" block at the top of Settings — six doors
+  with their existing hints, each deep-linking where it already lives.
+  Nothing pops up on its own; the introduction itself re-opens from the
+  same block ("Show the introduction again").
+- **Every old step still resolves.** The legacy 8-step order is kept as
+  a resolver (`resolveOnboardingStep` in `js/domain/onboarding.js`):
+  live ids render their new step, moved ids redirect to their route, a
+  stored legacy position falls back to the first incomplete step.
+  Upgraders who finished the old setup keep the default voice without
+  being asked (restore-time grandfathering, pinned by test).
+- **Reciter list derived, not pinned.** The new step renders every
+  voice in `QURAN_RECITERS` through the shared `set-setting` pipeline,
+  with Done keeping the current voice and a "More voices" door into
+  Settings. Counts, labels and routes all derive from their sources
+  (rule 6); the two orphaned comfort-button keys were removed, the five
+  other freed hint keys now caption the deferred doors.
+- Constraints held: bilingual EN+AR (parity gate green, all eight new
+  keys twinned), Elder/a11y intact (the comfort door still lands on the
+  Accessibility section; buttons keep their floors and labels), no new
+  data-action except `onboarding-reshow` (handler + wiring pinned), no
+  gamification (no progress bars or badges on the deferred doors), home
+  complete with defaults.
+- Tests: `tests/onboarding.test.js` + `tests/onboardingWizard.test.js`
+  rewritten for the 3-step model (resolver, migration, reshow, deferred
+  block), `tests/install-path.test.js` §5 re-pinned on the deferral,
+  `tests/home-design-c4.test.js` counts moved 8→3, new e2e subset
+  `tests/e2e/onboarding.spec.js` (walk-through, skip, AR switch,
+  deferred + reshow).
+
 ## v5.17.47 — Home, designed: ranked dhikr, one-line chrome
 
 C4 home design pass (HANDOFF B2.4, §5d). The review correction stands —

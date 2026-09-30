@@ -23,7 +23,7 @@ import {
 } from '../core/config.js';
 import { daysSinceBackup, formatBytes, dryRunVerdict } from '../services/dataHealth.js';
 import { backupStale, filePickerSupported } from '../services/backup.js';
-import { isReturningUser } from '../domain/onboarding.js';
+import { isReturningUser, DEFERRED_STEPS } from '../domain/onboarding.js';
 import { buildHash } from '../core/router.js';
 import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
 import { splitEditions } from '../domain/wordStudy.js';
@@ -83,6 +83,64 @@ const FIELD_LABELS = {
   grade: 'content.fieldGrade',
   notes: 'content.fieldNotes',
 };
+
+/** Label keys for the deferred first-run doors (all pre-existing keys). */
+const DEFERRED_LABELS = {
+  comfort: 'onboarding.comfort',
+  notifications: 'onboarding.notifications',
+  prayer: 'onboarding.prayerSetup',
+  goals: 'settings.dailyGoal',
+  install: 'onboarding.install',
+  firstReading: 'onboarding.firstReading',
+};
+
+/** Icons for the deferred doors (all pre-existing icon names). */
+const DEFERRED_ICONS = {
+  comfort: 'eye',
+  notifications: 'bell',
+  prayer: 'prayer-rug',
+  goals: 'target',
+  install: 'download',
+  firstReading: 'book-open',
+};
+
+/** Hint keys for the deferred doors (all pre-existing keys). */
+const DEFERRED_HINTS = {
+  comfort: 'onboarding.comfortHint',
+  notifications: 'onboarding.notificationsPrime',
+  prayer: 'onboarding.prayerSetupHint',
+  goals: 'tasbih.dailyGoal',
+  install: 'onboarding.installHint',
+  firstReading: 'onboarding.firstReadingHint',
+};
+
+/**
+ * (v5.17.48) The deferred first-run doors: comfort, notifications,
+ * calculation method, daily goal, install and first reading. A passive
+ * list — it never pops up on its own, it only answers when opened — plus
+ * the control that re-opens the 3-step introduction. Exported for tests.
+ */
+export function deferredSetupHTML(state, lang) {
+  void state;
+  const rows = DEFERRED_STEPS.map((d) => {
+    const idAttr = d.params && d.params.id ? ` data-id="${escapeHTML(d.params.id)}"` : '';
+    const paramObj = d.params && typeof d.params === 'object' ? d.params : {};
+    return `
+    <a class="reciter-row" href="${buildHash(d.view, paramObj)}" data-action="navigate" data-view="${escapeHTML(d.view)}"${idAttr}>
+      ${icon(DEFERRED_ICONS[d.id], { size: 16 })}
+      <span class="reciter-row__name">${escapeHTML(t(DEFERRED_LABELS[d.id], lang))}<span class="reciter-row__meta"> — ${escapeHTML(t(DEFERRED_HINTS[d.id], lang))}</span></span>
+    </a>`;
+  }).join('');
+  return `
+  <section class="panel panel--deferred" aria-label="${escapeHTML(t('onboarding.deferTitle', lang))}">
+    <h2 class="panel__title">${escapeHTML(t('onboarding.deferTitle', lang))}</h2>
+    <p class="panel__subtext">${escapeHTML(t('onboarding.deferHint', lang))}</p>
+    <div class="reciter-list">${rows}</div>
+    <div class="onboarding-step__actions">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="onboarding-reshow">${t('onboarding.reshow', lang)}</button>
+    </div>
+  </section>`;
+}
 
 /** Home panel order rows: up/down buttons + hide checkbox per panel.
  *  Shows every panel (visible in effective order, hidden ones last) so a
@@ -347,6 +405,7 @@ export function renderSettings(state, flags = {}) {
     </div>
     <h1 class="view__title">${t('settings.title', lang)}</h1>
     ${youModeSwitchHTML(state.activeView, lang)}
+    ${deferredSetupHTML(state, lang)}
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>

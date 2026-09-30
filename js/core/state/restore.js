@@ -10,7 +10,7 @@ import {
   MAX_COMPLETED_CYCLES,
   MAX_TOTAL_RECITATIONS,
 } from '../utils.js';
-import { isReturningUser, CONFIRM_STEPS } from '../../domain/onboarding.js';
+import { isReturningUser, CONFIRM_STEPS, LEGACY_CONFIRM_STEPS } from '../../domain/onboarding.js';
 import { defaultTajweedPracticeStats } from '../../domain/tajweedPractice.js';
 import { sanitizeAyahRecords, sanitizeHifzRecords, sanitizeMemRecords } from '../../domain/hifz.js';
 import { sanitizeFastingPrefs } from '../../domain/fasting.js';
@@ -293,12 +293,17 @@ export function sanitizeRestoredPayload(payload) {
     onboarding: {
       dismissed: typeof ob.dismissed === 'boolean' ? ob.dismissed : isReturningUser(p),
       settingsVisited: typeof ob.settingsVisited === 'boolean' ? ob.settingsVisited : false,
-      // (v5.2.52) wizard setup confirms — booleans for known steps only.
+      // (v5.17.48) wizard confirms — booleans for known steps only. The
+      // reciter never had a wizard step before: anyone who finished the
+      // old setup (all four legacy confirms) keeps the default voice
+      // without being asked — re-asking would be an auto-reshow.
       stepsSeen: (() => {
         const raw = ob.stepsSeen;
         if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
         const out = {};
         for (const id of CONFIRM_STEPS) if (raw[id] === true) out[id] = true;
+        if (out.reciter !== true && LEGACY_CONFIRM_STEPS.every((id) => raw[id] === true))
+          out.reciter = true;
         return out;
       })(),
     },
