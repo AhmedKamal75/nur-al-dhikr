@@ -928,6 +928,10 @@ export const en = {
   'prayer.offsetsTitle': 'Fine-tune times (minutes)',
   'prayer.offsetsHint':
     'Shift any prayer ±60 minutes — e.g. to match your local mosque. Applies everywhere: the timetable, alerts and fasting.',
+  // (v5.17.51, merged-plan item 4) the active-method line: one plain-text
+  // summary (method · Asr convention · offsets) on the prayer hero and the
+  // home ribbon. Zero offsets read as absence, never as "+0".
+  'prayer.offsetsNone': 'No offsets',
   // (v5.10.1) iqama waits: display-only minutes after adhan per fard prayer.
   'prayer.iqamaTitle': 'Iqama wait (minutes)',
   'prayer.iqamaHint':

@@ -1168,6 +1168,15 @@ a.home-today__cell:hover {
   color: var(--color-primary-text);
 }
 
+/* (v5.17.51, merged-plan item 4) the active-method line: one quiet
+   plain-text summary (method · Asr convention · offsets · source) under
+   the ribbon head in both variants. Logical properties only. */
+.home-prayer-ribbon__method {
+  margin: 0;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
+
 /* (v5.17.50, merged-plan item 3) the visible time-window label: one quiet
    line under the browser subtitle saying which ranking the grid follows. */
 .home-browser__window {
@@ -1650,6 +1659,17 @@ a.worship-row:hover {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   white-space: nowrap;
+}
+/* (v5.17.51, merged-plan item 4) the active-method line: one quiet
+   plain-text summary inside the hero's main block, under the countdown.
+   The hero is a dark gradient, so the line rides translucent white rather
+   than a surface token. Logical properties only. */
+.next-prayer-card__method {
+  display: block;
+  margin: 0;
+  margin-block-start: 2px;
+  font-size: var(--fs-caption);
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .prayer-list {

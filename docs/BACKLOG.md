@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.50**. Last updated against a green `npm run check` and
+> Current version: **v5.17.51**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -58,6 +58,7 @@ must never be backdated into the number:**
 | v5.17.48 — non-blocking onboarding                                | 8-step wizard → 3 decisions (language, location-or-offset, reciter); the rest waits passively in Settings                      |
 | v5.17.49 — unified last-position                                  | seven honest slots (Qur'an, Mushaf, adhkar, tasbih, hadith, tajweed lesson+rule); resume rows replace the single continue card |
 | v5.17.50 — time-aware Today                                       | six-prayer ribbon (current/next highlighted, honest —:— without location); visible adhkar-window label on the browser          |
+| v5.17.51 — active method in plain text                            | one method · Asr · offsets · source line on the prayer hero and the home ribbon, from one shared helper                        |
 
 **So 7.5 is stale in the optimistic direction, and no re-score has been taken.**
 The number that would be honest today is unknown, and guessing it would repeat

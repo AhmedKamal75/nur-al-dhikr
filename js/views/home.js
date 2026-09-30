@@ -78,6 +78,7 @@ import {
   currentPrayer,
   PRAYER_ORDER,
   formatClock,
+  prayerMethodLine,
 } from '../domain/prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
 import { dailyHadithCardHTML } from './hadithCard.js';
@@ -452,7 +453,10 @@ function todayPrayerTimes(state) {
  * No location, no times: all six cells read —:— beside an inline setup
  * action into the Prayer view, where the city presets and manual offsets
  * already live. Times are never faked — an honest placeholder beats a
- * plausible-looking clock. The order derives from domain/prayer.js
+ * plausible-looking clock. The active-method line stays off this variant:
+ * with no computed times on screen a method would dangle beside
+ * placeholders (and cost first-run fold budget); the setup action leads
+ * exactly where the method and offsets live. The order derives from domain/prayer.js
  * PRAYER_ORDER (rule 6), never a pinned copy here. Pure
  * (state/lang/times/now → HTML); exported for tests.
  */
@@ -511,6 +515,7 @@ export function prayerRibbonHTML(state, lang, times, now = new Date()) {
         <span class="home-prayer-strip__countdown" dir="ltr" data-home-countdown>—</span>
       </p>
     </div>
+    <p class="home-prayer-ribbon__method">${prayerMethodLine(p, lang)}</p>
     <div class="home-prayer-ribbon__cells" dir="ltr">${cells}
     </div>
   </section>`;

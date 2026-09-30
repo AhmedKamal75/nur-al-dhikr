@@ -2,6 +2,46 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.51 — The active method, stated where the times are
+
+Merged-plan item 4. The calculation method lived only in the calc sheet
+and onboarding: the prayer hero and the home prayer strip showed times
+with no word about which convention computed them. Now one plain-text
+line — method · Asr convention · offsets · source — rides the hero and
+the ribbon wherever computed times appear, built by the single
+`prayerMethodLine` helper in `js/domain/prayer.js` (rule 6 — both views
+call it, so the tree cannot drift from itself). The honest-absence
+variants (no location, no times) deliberately carry no line: a method
+beside —:— placeholders would dangle, and the setup action leads
+exactly where the method and offsets live.
+
+- **Reused, not reinvented.** Localized method and region names come from
+  the existing `prayer.method.*` / `prayer.methodRegion.*` keys, the
+  source through the existing `prayer.methodSource` (unverified)
+  qualifier — the institution body stays verbatim in both languages (the
+  deliberate MEMORY.md §4 proper-noun exception, as in the calc sheet).
+  The Asr token renders raw (`Standard` / `Hanafi`), exactly as the
+  existing Asr select does. Offsets render per prayer with the localized
+  minute unit (`Fajr +5m` / `الفجر +5 د`); all-zero reads as absence via
+  the one new twinned key `prayer.offsetsNone`, never as "+0".
+- **Hostile prefs degrade like the engine.** Unknown method → MWL,
+  unknown Asr → Standard, out-of-range/non-numeric offsets ignored —
+  the same own-property fallback the timetable uses, so a crafted backup
+  can never print a method the app did not compute with.
+- Constraints held: bilingual EN+AR (1 new key twinned, parity gate
+  green), Elder/a11y intact (existing type scale and tokens, logical
+  properties only, plain text — no new data-action, the strip stays
+  navigate-only), no new static view import (the 19/19 renderer budget
+  holds; home extends its existing domain import), no data or angle
+  changes, offline-safe (no new module — the helper lives in the
+  already-precached prayer domain).
+- Tests: `tests/prayer-method-line.test.js` (16 cases — line content in
+  both languages incl. offsets and the unverified qualifier, hostile
+  degradation, hero + full ribbon render with the no-line-no-time guard
+  on the honest-absence variants, rule-6/19-19/no-action contracts), plus
+  the directly-affected e2e subset (smoke incl. a new pick-a-city-states-
+  the-method test, home-fold).
+
 ## v5.17.50 — Time-aware Today: the six-prayer ribbon and a window label
 
 Merged-plan item 3. The Home hero knew only the next prayer, and the

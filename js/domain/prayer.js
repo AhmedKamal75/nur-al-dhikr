@@ -19,6 +19,7 @@
  */
 
 import { toHijri } from './calendar.js';
+import { t } from '../core/i18n.js';
 
 const D2R = Math.PI / 180;
 const R2D = 180 / Math.PI;
@@ -393,4 +394,52 @@ export function decimalHoursToDate(baseDate, decimalHours) {
   d.setHours(0, 0, 0, 0);
   d.setMinutes(Math.round(decimalHours * 60));
   return d;
+}
+
+/**
+ * (v5.17.51, merged-plan item 4) the active-method line: one plain-text
+ * summary of the calculation prefs the times on screen were computed with —
+ * method · region · Asr convention · offsets · source. The prayer hero and
+ * the home ribbon both render it; the calc sheet keeps the long explainer.
+ *
+ * Single source of truth (rule 6): both views call this, so the tree
+ * cannot drift from itself. Reuses the existing localized method/region
+ * names and the prayer.methodSource (unverified) qualifier — the source
+ * body is an institution proper noun rendered verbatim in both languages
+ * (the deliberate MEMORY.md §4 exception, as in the calc sheet). The Asr
+ * token renders raw ('Standard'/'Hanafi'), exactly as the existing Asr
+ * select does — transliterating a school label would invent a translation.
+ * Offsets render per prayer with the localized minute unit; all-zero
+ * reads as absence via prayer.offsetsNone, never as "+0".
+ *
+ * Hostile prefs degrade like the engine: unknown method → MWL, unknown
+ * Asr → Standard, out-of-range/non-numeric offsets ignored. Pure
+ * (prefs/lang → string); t() escapes the interpolated body centrally.
+ */
+export function prayerMethodLine(prefs, lang) {
+  const p = prefs && typeof prefs === 'object' ? prefs : {};
+  const methodId =
+    typeof p.method === 'string' && Object.hasOwn(METHODS, p.method) ? p.method : 'MWL';
+  const asrId = typeof p.asr === 'string' && Object.hasOwn(ASR_FACTORS, p.asr) ? p.asr : 'Standard';
+  const m = METHODS[methodId];
+  const nameKey = `prayer.method.${methodId}`;
+  const named = t(nameKey, lang);
+  const methodName = named === nameKey ? m.name : named;
+  const region = t(`prayer.methodRegion.${methodId}`, lang);
+  const offsets =
+    p.offsets && typeof p.offsets === 'object' && !Array.isArray(p.offsets) ? p.offsets : {};
+  const bits = [];
+  for (const name of OFFSET_PRAYERS) {
+    const minutes = Math.floor(Number(offsets[name]));
+    if (!Number.isFinite(minutes) || minutes === 0 || minutes < -60 || minutes > 60) continue;
+    const signed = minutes > 0 ? `+${minutes}` : `${minutes}`;
+    bits.push(`${t(`prayer.${name}`, lang)} ${t('units.m', lang, { n: signed })}`);
+  }
+  const offsetsBit = bits.length
+    ? bits.join(lang === 'ar' ? '، ' : ', ')
+    : t('prayer.offsetsNone', lang);
+  const segments = [methodName, region, `${t('prayer.asrMethod', lang)}: ${asrId}`, offsetsBit];
+  const body = m.source && typeof m.source.body === 'string' && m.source.body ? m.source.body : '';
+  if (body) segments.push(t('prayer.methodSource', lang, { body }));
+  return segments.join(' · ');
 }

@@ -66,3 +66,28 @@ test('smoke: prayer empty state offers grouped city directory', async ({ page })
     page.locator('.city-group').first().locator('[data-action="prayer-use-city"]').first()
   ).toBeVisible();
 });
+
+test('smoke: picking a city states the active method on the hero and the home strip', async ({
+  page,
+}) => {
+  // Merged-plan item 4: one plain-text line (method · Asr · offsets ·
+  // source) wherever computed times appear — the prayer hero and the home
+  // ribbon — with the unverified qualifier. The empty states carry none.
+  await page.goto('#/prayer');
+  await expect(page.locator('.city-group').first()).toBeAttached({ timeout: 20000 });
+  await expect(page.locator('.next-prayer-card__method')).toHaveCount(0);
+  await page.locator('.city-group summary').first().click();
+  await page
+    .locator('.city-group')
+    .first()
+    .locator('[data-action="prayer-use-city"]')
+    .first()
+    .click();
+  const hero = page.locator('.next-prayer-card__method');
+  await expect(hero).toBeVisible({ timeout: 20000 });
+  await expect(hero).toContainText('Source (unverified):');
+  await page.goto('#/home');
+  const strip = page.locator('.home-prayer-ribbon__method');
+  await expect(strip).toBeVisible({ timeout: 20000 });
+  await expect(strip).toContainText('Source (unverified):');
+});

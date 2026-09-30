@@ -19,6 +19,7 @@ import {
   calculateTimes,
   formatClock,
   nextPrayer,
+  prayerMethodLine,
   METHODS,
   ASR_FACTORS,
   OFFSET_PRAYERS,
@@ -282,6 +283,7 @@ export function renderPrayer(state) {
         <span class="next-prayer-card__label">${t('prayer.next', lang)}</span>
         <span class="next-prayer-card__name">${icon(PRAYER_ICONS[next.name] || 'sun', { size: 22 })} ${t('prayer.' + next.name, lang)}</span>
         <span class="next-prayer-card__countdown">${t('prayer.in', lang)} <span data-prayer-countdown dir="ltr">${hrsUntil > 0 ? t('units.h', lang, { n: hrsUntil }) + ' ' : ''}${t('units.m', lang, { n: remMins })}</span></span>
+        <span class="next-prayer-card__method">${prayerMethodLine(p, lang)}</span>
       </div>
       <div class="next-prayer-card__place">
         ${icon('location', { size: 13 })}
