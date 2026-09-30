@@ -1026,6 +1026,156 @@ a.home-today__cell:hover {
   font-size: var(--fs-sm);
 }
 
+/* (v5.17.50, merged-plan item 3) the six-prayer ribbon: the old next-only
+   strip grown into one card holding the next-prayer head line plus all six
+   prayers as Elder-sized taps into the Prayer view. Cells scroll
+   horizontally on narrow screens (the mood chip-row precedent) so no time
+   is ever clipped; the row is direction:ltr in both languages — time flows
+   left to right like a clock face, the same rule as the Prayer timeline. */
+.home-prayer-ribbon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.home-prayer-ribbon::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--color-gold-soft), var(--color-primary) 70%);
+}
+.home-prayer-ribbon__head {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+.home-prayer-ribbon__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+}
+.home-prayer-ribbon__next {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: end;
+}
+.home-prayer-ribbon__setup {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  flex: 1 1 auto;
+  font-size: var(--fs-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: end;
+}
+/* Narrow screens: the head stacks instead of truncating — the setup
+   sentence and the next-prayer line are never cut, just wrapped. */
+@media (max-width: 720px) {
+  .home-prayer-ribbon__head {
+    flex-wrap: wrap;
+  }
+  .home-prayer-ribbon__next,
+  .home-prayer-ribbon__setup {
+    white-space: normal;
+  }
+}
+.home-prayer-ribbon__cta {
+  font-weight: 700;
+}
+.home-prayer-ribbon__cells {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+}
+.home-prayer-ribbon__cell {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-inline-size: 72px;
+  min-height: 52px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.home-prayer-ribbon__cell--current {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.home-prayer-ribbon__cell--next {
+  border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+.home-prayer-ribbon__topline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  max-inline-size: 100%;
+}
+.home-prayer-ribbon__name {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.home-prayer-ribbon__time {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.home-prayer-ribbon__badge {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
+  color: var(--color-primary-text);
+}
+
+/* (v5.17.50, merged-plan item 3) the visible time-window label: one quiet
+   line under the browser subtitle saying which ranking the grid follows. */
+.home-browser__window {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
 /* Quick actions — modern horizontal cards: tinted icon tile + bold label.
    No markup change: the icon svg becomes its own tile via CSS. */
 .quick-actions {

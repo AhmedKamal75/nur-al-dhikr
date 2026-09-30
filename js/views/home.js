@@ -72,7 +72,13 @@ export function shahadaBannerHTML(lang) {
     </div>`;
 }
 import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
-import { calculateTimes, nextPrayer, formatClock } from '../domain/prayer.js';
+import {
+  calculateTimes,
+  nextPrayer,
+  currentPrayer,
+  PRAYER_ORDER,
+  formatClock,
+} from '../domain/prayer.js';
 import { onboardingPanelHTML } from './onboardingPanel.js';
 import { dailyHadithCardHTML } from './hadithCard.js';
 import { countMemorized, dueCounts, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
@@ -435,42 +441,91 @@ function todayPrayerTimes(state) {
 }
 
 /**
- * Next-prayer strip for the Home hero. Renders from today's computed times;
- * the live countdown span is patched once per second by app.js's home
- * ticker (data-home-countdown) — the same direct-DOM pattern the Ramadan
- * companion uses, so the ticking never touches the store or localStorage.
- * When no location is set yet, the strip becomes a gentle one-tap setup
- * card instead of hiding the feature entirely.
+ * (v5.17.50, merged-plan item 3) the six-prayer ribbon for the Home hero:
+ * every prayer of the day as one tap into the Prayer view (navigate only,
+ * the same deep link the old next-only strip used), with the prayer in
+ * effect marked current (aria-current + the shared "Now" badge) and the
+ * upcoming one marked next. The live countdown span keeps the
+ * data-home-countdown hook the app ticker patches directly, so the
+ * ticking still never touches the store.
+ *
+ * No location, no times: all six cells read —:— beside an inline setup
+ * action into the Prayer view, where the city presets and manual offsets
+ * already live. Times are never faked — an honest placeholder beats a
+ * plausible-looking clock. The order derives from domain/prayer.js
+ * PRAYER_ORDER (rule 6), never a pinned copy here. Pure
+ * (state/lang/times/now → HTML); exported for tests.
  */
-function nextPrayerStrip(state, lang, times) {
+export function prayerRibbonHTML(state, lang, times, now = new Date()) {
   const p = state.settings.prayer;
   const hasLocation = p.latitude != null && p.longitude != null;
+  const navAttrs = `href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}"`;
+  const title = `<h2 class="home-prayer-ribbon__title">${icon('sunrise', { size: 18 })} ${t('home.prayerRibbon', lang)}</h2>`;
 
-  if (!hasLocation) {
+  if (!hasLocation || !times) {
+    const cells = PRAYER_ORDER.map(
+      (name) => `
+      <a class="home-prayer-ribbon__cell home-prayer-ribbon__cell--empty" ${navAttrs}>
+        <span class="home-prayer-ribbon__topline"><span class="home-prayer-ribbon__name">${t('prayer.' + name, lang)}</span></span>
+        <span class="home-prayer-ribbon__time" dir="ltr">—:—</span>
+      </a>`
+    ).join('');
     return `
-    <a class="home-prayer-strip home-prayer-strip--setup" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}">
-      <span class="home-prayer-strip__icon">${icon('compass', { size: 20 })}</span>
-      <span class="home-prayer-strip__text">
-        <span class="home-prayer-strip__label">${t('home.setLocation', lang)}</span>
-        <span class="home-prayer-strip__cta">${t('home.setLocationAction', lang)} ${goIcon(lang, 14)}</span>
-      </span>
-    </a>`;
+  <section class="home-prayer-ribbon home-prayer-ribbon--setup" aria-label="${escapeHTML(t('home.prayerRibbon', lang))}">
+    <div class="home-prayer-ribbon__head">
+      ${title}
+      <p class="home-prayer-ribbon__setup">
+        <span>${t('home.setLocation', lang)}</span>
+        <a class="home-prayer-ribbon__cta" ${navAttrs}>${t('home.setLocationAction', lang)} ${goIcon(lang, 14)}</a>
+      </p>
+    </div>
+    <div class="home-prayer-ribbon__cells" dir="ltr">${cells}
+    </div>
+  </section>`;
   }
 
-  if (!times) return '';
-  const now = new Date();
   const next = nextPrayer(times, now);
+  const current = currentPrayer(times, now);
+  const amPm = { am: t('common.am', lang), pm: t('common.pm', lang) };
+  const cells = PRAYER_ORDER.map((name) => {
+    const isCurrent = name === current.name;
+    const isNext = name === next.name && !isCurrent;
+    const badge = isCurrent
+      ? `<span class="home-prayer-ribbon__badge">${t('home.nowBadge', lang)}</span>`
+      : isNext
+        ? `<span class="home-prayer-ribbon__badge home-prayer-ribbon__badge--next">${t('home.nextBadge', lang)}</span>`
+        : '';
+    return `
+      <a class="home-prayer-ribbon__cell${isCurrent ? ' home-prayer-ribbon__cell--current' : ''}${isNext ? ' home-prayer-ribbon__cell--next' : ''}" ${navAttrs}${isCurrent ? ' aria-current="true"' : ''}>
+        <span class="home-prayer-ribbon__topline"><span class="home-prayer-ribbon__name">${t('prayer.' + name, lang)}</span>${badge}</span>
+        <span class="home-prayer-ribbon__time" dir="ltr">${formatClock(times[name], true, amPm)}</span>
+      </a>`;
+  }).join('');
 
   return `
-  <a class="home-prayer-strip" href="${buildHash(VIEWS.PRAYER)}" data-action="navigate" data-view="${VIEWS.PRAYER}" data-home-next-prayer>
-    <span class="home-prayer-strip__icon">${icon('sunrise', { size: 20 })}</span>
-    <span class="home-prayer-strip__text">
-      <span class="home-prayer-strip__label">${t('home.nextPrayer', lang)}</span>
-      <span class="home-prayer-strip__name">${t('prayer.' + next.name, lang)} · <span dir="ltr">${formatClock(times[next.name])}</span></span>
-    </span>
-    <span class="home-prayer-strip__countdown" dir="ltr" data-home-countdown>—</span>
-    ${goIcon(lang, 16)}
-  </a>`;
+  <section class="home-prayer-ribbon" aria-label="${escapeHTML(t('home.prayerRibbon', lang))}">
+    <div class="home-prayer-ribbon__head">
+      ${title}
+      <p class="home-prayer-ribbon__next">
+        <span>${t('home.nextPrayer', lang)} · ${t('prayer.' + next.name, lang)} · <span dir="ltr">${formatClock(next.hours, true, amPm)}</span></span>
+        <span class="home-prayer-strip__countdown" dir="ltr" data-home-countdown>—</span>
+      </p>
+    </div>
+    <div class="home-prayer-ribbon__cells" dir="ltr">${cells}
+    </div>
+  </section>`;
+}
+
+/**
+ * (v5.17.50, merged-plan item 3) the visible label for the sun-based
+ * ranking the browser already applies (rankBrowserDocuments): the order
+ * on screen is explained on screen, in both languages. Pure — exported
+ * for tests.
+ */
+export function adhkarWindowLabel(nowWindow, lang) {
+  if (nowWindow === 'morning') return t('home.window.morning', lang);
+  if (nowWindow === 'evening') return t('home.window.evening', lang);
+  return t('home.window.none', lang);
 }
 
 /** The Hijri date chip rendered in the hero (e.g. "24 Ṣafar 1448 AH"). */
@@ -785,6 +840,7 @@ export function adhkarBrowserHTML(state, nowWindow = null) {
     <div class="view-header">
       <h2 class="view__title">${escapeHTML(t('home.browserTitle', lang))}</h2>
       <p class="view__subtitle">${escapeHTML(t('home.browserSub', lang))}</p>
+      <p class="home-browser__window">${escapeHTML(adhkarWindowLabel(nowWindow, lang))}</p>
     </div>
     ${browserMoodRowHTML(state, lang)}
     ${sections}
@@ -969,7 +1025,7 @@ export function renderHome(state) {
   <section class="view view--home">
     ${shahadaBannerHTML(lang)}
 
-    ${nextPrayerStrip(state, lang, prayerTimes)}
+    ${prayerRibbonHTML(state, lang, prayerTimes)}
 
     ${libraryErrorHTML(state, lang)}
 

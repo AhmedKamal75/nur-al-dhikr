@@ -113,6 +113,10 @@ export const METHODS = Object.freeze({
 
 export const ASR_FACTORS = Object.freeze({ Standard: 1, Hanafi: 2 });
 
+/** Canonical prayer order, sun-up to night. Views render from this
+ *  single list instead of pinning their own copy (rule 6). */
+export const PRAYER_ORDER = Object.freeze(['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']);
+
 /** Prayers carrying a manual minute offset (sunrise too — mosques shift it). */
 export const OFFSET_PRAYERS = Object.freeze(['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha']);
 
@@ -350,14 +354,33 @@ export function formatClock(decimalHours, hour12 = true, amPm = null) {
  * countdown arithmetic `(hours - nowHours + 24) % 24` keeps working.
  */
 export function nextPrayer(times, now = new Date()) {
-  const order = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
   const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-  for (const name of order) {
+  for (const name of PRAYER_ORDER) {
     if (Number.isFinite(times[name]) && times[name] > nowHours) {
       return { name, hours: times[name] };
     }
   }
   return { name: 'fajr', hours: times.fajr, tomorrow: true };
+}
+
+/**
+ * (v5.17.50) The prayer in effect right now: the most recent of today's
+ * computed times at or before now. Before today's Fajr the answer is
+ * yesterday's Isha — reported in today's day-relative frame (times.isha
+ * minus 24) so countdown arithmetic keeps working. Only the name drives
+ * the Home ribbon highlight; hours ride along for symmetry with
+ * nextPrayer. Pure — exported for tests.
+ */
+export function currentPrayer(times, now = new Date()) {
+  const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  let current = null;
+  for (const name of PRAYER_ORDER) {
+    if (Number.isFinite(times[name]) && times[name] <= nowHours) {
+      current = { name, hours: times[name] };
+    }
+  }
+  if (current) return current;
+  return { name: 'isha', hours: times.isha - 24, yesterday: true };
 }
 
 /** Convert day-relative decimal hours into a concrete Date. The minutes are

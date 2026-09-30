@@ -1634,8 +1634,15 @@ export const en = {
     'Offline files could not be downloaded — the app works online for now. Retry when your connection allows.',
   'update.refresh': 'Refresh',
   'home.nextPrayer': 'Next prayer',
-  'home.setLocation': 'Set your location to see today\u2019s prayer times',
+  'home.setLocation': 'Set your location to see today’s prayer times',
   'home.setLocationAction': 'Set location',
+  // (v5.17.50, merged-plan item 3) the six-prayer ribbon + the visible
+  // adhkar-window label. No streak/shame vocabulary, no digits.
+  'home.prayerRibbon': 'Today’s prayers',
+  'home.nextBadge': 'Next',
+  'home.window.morning': 'Morning window — morning adhkar first',
+  'home.window.evening': 'Evening window — evening adhkar first',
+  'home.window.none': 'Outside the morning and evening windows',
   'home.nowBadge': 'Now',
   'home.hijriOn': 'AH',
   // (REORG Phase 3) Home is the adhkar browser: the mood filter row, the

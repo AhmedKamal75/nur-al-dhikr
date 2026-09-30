@@ -2,6 +2,45 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.50 — Time-aware Today: the six-prayer ribbon and a window label
+
+Merged-plan item 3. The Home hero knew only the next prayer, and the
+adhkar browser ranked itself by the sun without ever saying so. Now the
+hero carries all six prayers of the day as one tap each into the Prayer
+view — the prayer in effect marked current (aria-current plus the shared
+"Now" badge), the upcoming one marked next — and the browser names the
+window its order follows.
+
+- **One ribbon, six honest cells.** The order derives from the canonical
+  `PRAYER_ORDER` in `js/domain/prayer.js` (rule 6 — no pinned copy in the
+  view), times render through the same localized 12-hour clock the Prayer
+  view uses, and the live countdown keeps its `data-home-countdown` hook
+  so the per-second ticker still patches the DOM directly without
+  touching the store. The new `currentPrayer` helper (most recent time
+  at/before now; before Fajr it is yesterday's Isha, flagged as such)
+  drives the highlight beside the existing `nextPrayer`.
+- **No location, no fakes.** Without saved coordinates — or when the
+  engine yields nothing — all six cells read —:— beside an inline setup
+  action into the Prayer view, where the city presets and manual offsets
+  already live. A placeholder stated beats a clock invented.
+- **The ranking speaks.** `adhkarWindowLabel` maps the existing
+  `nowWindow` ('morning' / 'evening' / none) to one visible line under
+  the browser subtitle, so the reader sees why morning adhkar leads in
+  the morning.
+- Constraints held: bilingual EN+AR (5 new keys twinned, parity gate
+  green; times keep the localized ص/م markers), Elder/a11y intact
+  (64px cells, labelled section, logical properties only, the cells row
+  flows left-to-right in both languages like the Prayer timeline),
+  navigate-only (no new data-action, no new static view import; the
+  19/19 renderer budget holds), no gamification, offline-safe (no new
+  module — the helper lives in the already-precached prayer domain).
+- Tests: `tests/home-today-ribbon.test.js` (16 cases — current/next
+  resolution incl. the overnight edge, 6-cell render with highlight and
+  deep links, both honest-absence variants with a no-clock-time guard,
+  window-label mapping in both languages, rule-6/19-19/no-shame
+  contracts, renderHome spot-check), plus the directly-affected e2e
+  subset (home-fold, smoke).
+
 ## v5.17.49 — One honest "where was I": the unified last-position service
 
 Merged-plan item 2. The app remembered fragments — a Qur'an surah, a

@@ -1571,6 +1571,12 @@ export const ar = {
   'home.nextPrayer': 'الصلاة القادمة',
   'home.setLocation': 'حدّد موقعك لعرض مواقيت الصلاة اليوم',
   'home.setLocationAction': 'تحديد الموقع',
+  // (v5.17.50, merged-plan item 3) — انظر المقابل الإنجليزي.
+  'home.prayerRibbon': 'صلوات اليوم',
+  'home.nextBadge': 'القادمة',
+  'home.window.morning': 'وقت الصباح — أذكار الصباح أولًا',
+  'home.window.evening': 'وقت المساء — أذكار المساء أولًا',
+  'home.window.none': 'خارج وقتي الصباح والمساء',
   'home.nowBadge': 'الآن',
   'home.hijriOn': 'هـ',
   // (REORG Phase 3) الرئيسية هي متصفح الأذكار — انظر المقابل الإنجليزي.
