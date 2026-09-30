@@ -30,6 +30,7 @@ import {
 } from '../domain/localeContent.js';
 import { icon } from '../core/icons.js';
 import { t } from '../core/i18n.js';
+import { missingDataHTML } from './missingData.js';
 import { hasVerifiedDhikrAudio } from '../core/schema.js';
 // SANCTIONED (DATA-01): grades.js is pure (core/config + core/utils only,
 // no state/services), same class as localeContent above.
@@ -53,8 +54,10 @@ import { isDismissed, wasCompletedRecently } from '../domain/completedCards.js';
  *
  * Honest-absence rule: an explicit `Unknown` grade is NEVER hidden — the
  * caller keeps that chip in the open and this builder rows only a VALID
- * grade. Missing/malformed grades render nowhere. Returns '' when every
- * row is empty, so callers emit no hollow disclosure.
+ * grade. Missing/malformed grades render nowhere. A missing translation is
+ * stated through the ONE missing-data pattern (merged-plan item 6) — EN
+ * only, like the translation row itself. Returns '' when every row is
+ * empty, so callers emit no hollow disclosure.
  */
 export function disclosureHTML(item, lang = 'en', opts = {}) {
   const {
@@ -83,6 +86,14 @@ export function disclosureHTML(item, lang = 'en', opts = {}) {
   if (showTrans && translation) {
     rows.push(
       `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldTranslation', lang))}</dt><dd class="disclosure__def ${prefix}__translation">${highlightMatch(translation, hl)}</dd></div>`
+    );
+  }
+  // (v5.17.53, merged-plan item 6) a missing translation is stated, never
+  // silently omitted — EN only, exactly like the translation row (AR never
+  // expects one; toggle-off stays silent: a hidden field is a choice).
+  if (showTrans && !translation) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldTranslation', lang))}</dt><dd class="disclosure__def">${missingDataHTML({ kind: 'translation-missing', lang, t })}</dd></div>`
     );
   }
   if (virtue) {

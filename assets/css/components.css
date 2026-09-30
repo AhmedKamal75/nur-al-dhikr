@@ -1248,6 +1248,51 @@ body.modal-open {
   text-align: center;
 }
 
+/* (v5.17.53, merged-plan item 6) the ONE honest-absence pattern: dashed
+   warm-gray, plain words, calm — never red, never a badge. Block states
+   render through ui/missingData.js; context states (grade chip, polar
+   note, offline rows, surah cells, load/notFound frames) keep their
+   load-bearing words and carry only this frame hook, so every absence
+   in the app shares one visual language. Tokens only — nothing new. */
+.missing-data {
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-surface-alt) 50%, var(--color-surface));
+  color: var(--color-text-secondary);
+}
+p.missing-data {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  text-align: center;
+}
+span.missing-data {
+  display: inline-block;
+  padding-inline: var(--space-2);
+  padding-block: var(--space-1);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-caption);
+  line-height: 1.4;
+}
+/* Hooked boxes keep their own shape and rhythm — only the honesty frame
+   joins in. The grade-unknown chip keeps its grade token fill (white-text
+   contrast is gate-pinned); the dash is what marks it uncertain. */
+.chip.missing-data {
+  border-style: dashed;
+  border-color: var(--color-border-strong);
+}
+p.panel__subtext.missing-data {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+span.offline-row__status.missing-data {
+  padding-inline: var(--space-2);
+  padding-block: var(--space-1);
+  border-radius: var(--radius-pill);
+}
+
 /* ==========================================================================
    11. View scaffolding + panels
    ========================================================================== */

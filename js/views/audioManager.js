@@ -122,6 +122,9 @@ export function renderAudio(state) {
       const busy = !!(state.audioDownloading && state.audioDownloading[key]);
       // Learned availability: surahs the server 404'd stay disabled with
       // an honest label instead of failing on every tap.
+      // (v5.17.53, merged-plan item 6) the cell carries the ONE missing-data
+      // frame hook (audio-missing); the reciter-specific reason stays in the
+      // title/aria-label because "not from THIS reciter" is load-bearing.
       const unavailable = !dl && isSurahMissing(selected.id, n);
       const label = lang === 'ar' ? t('quran.surah', lang) + ' ' + n : String(n);
       // (v5.10.2) one-button cells: a downloaded surah PLAYS on tap (the
@@ -130,7 +133,7 @@ export function renderAudio(state) {
       // undownloaded cell downloads exactly as before.
       const cellAction = dl ? 'quran-play-surah' : 'audio-download-surah';
       cells.push(`
-      <div class="dl-cell ${dl ? 'dl-cell--done' : ''}${busy ? ' dl-cell--busy' : ''}${unavailable ? ' dl-cell--missing' : ''}">
+      <div class="dl-cell ${dl ? 'dl-cell--done' : ''}${busy ? ' dl-cell--busy' : ''}${unavailable ? ' dl-cell--missing missing-data missing-data--audio-missing' : ''}">
         <button type="button" class="dl-cell__btn" data-action="${cellAction}" data-moshaf="${escapeHTML(selected.id)}" data-surah="${n}"
           ${unavailable ? 'disabled aria-disabled="true"' : ''}
           title="${escapeHTML(unavailable ? t('audio.surahUnavailable', lang) : surahName(state, n))}"

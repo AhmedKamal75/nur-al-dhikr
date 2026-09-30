@@ -144,8 +144,15 @@ test('disclosure: AR hides translit/translation, keeps the Arabic virtue', () =>
   assert.ok(html.includes('تُغرس له نخلة.'), 'Arabic virtue rows inside');
 });
 
-test('disclosure: empty items emit no hollow block, toggles hide rows', () => {
-  assert.equal(disclosureHTML({ id: 'x', arabic: 'نص' }, 'en'), '', 'no rows, no details');
+test('disclosure: an EN item with nothing to show states the missing translation, toggles hide rows', () => {
+  // (v5.17.53, merged-plan item 6) a bare item no longer emits a hollow
+  // nothing — EN states the missing translation through the ONE missing-data
+  // pattern instead of an empty <details>.
+  const bare = disclosureHTML({ id: 'x', arabic: 'نص' }, 'en');
+  assert.match(bare, /<details class="disclosure /);
+  assert.ok(bare.includes('missing-data--translation-missing'), 'honest absence, not silence');
+  assert.ok(bare.includes('No translation available.'));
+  assert.equal(disclosureHTML({ id: 'x', arabic: 'نص' }, 'ar'), '', 'AR still silent');
   const off = disclosureHTML(ITEM_FULL, 'en', {
     showTransliteration: false,
     showTranslation: false,

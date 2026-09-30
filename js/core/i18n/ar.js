@@ -759,6 +759,14 @@ export const ar = {
   'focus.reset': 'إعادة تعيين العداد',
   // (v5.17.52) session queue — parity with en.
   'focus.sessionComplete': 'اكتمل هذا القسم لهذا اليوم.',
+  // (v5.17.53، البند 6 من الخطة المدمجة) نمط الغياب الصادق الوحيد —
+  // انظر المقابل الإنجليزي للتوثيق.
+  'missingData.grade-unknown': 'غير محقق',
+  'missingData.translation-missing': 'لا توجد ترجمة متاحة.',
+  'missingData.audio-missing': 'لا يوجد صوت لهذا العنصر بعد.',
+  'missingData.tafsir-missing': 'لا يوجد تعليق لهذا المصدر في هذه الآية.',
+  'missingData.location-missing': 'لم يُحدد الموقع — لا يمكن حساب مواقيت الصلاة هنا.',
+  'missingData.offline-missing': 'غير محمّل',
   'stats.week': 'هذا الأسبوع',
   'stats.month': 'هذا الشهر',
   'stats.totalRecitations': 'إجمالي التسبيحات',
@@ -1244,10 +1252,9 @@ export const ar = {
   'tafsir.title': 'مصادر التفسير والنحو',
   'tafsir.categoryTafsir': 'تفسير',
   'tafsir.categoryGrammar': 'نحو',
-  'tafsir.emptyAyah': 'لا يوجد تعليق لهذا المصدر في هذه الآية.',
+  // (v5.17.53، البند 6 من الخطة المدمجة) tafsir.emptyAyah + tafsir.remoteHint
+  // متقاعدان — انظر المقابل الإنجليزي.
   'tafsir.pickSource': 'اختر مصدرًا من الأعلى.',
-  'tafsir.remoteHint':
-    'هذا مصدر كلاسيكي كبير غير مضمّن مع التطبيق. نزّله مرة واحدة وسيبقى متاحًا دون اتصال بعد ذلك.',
   'tafsir.download': 'تنزيل للقراءة دون اتصال',
   'tafsir.compare': 'المقارنة مع مصدر ثانٍ',
   'tafsir.compareC': 'المقارنة مع مصدر ثالث',

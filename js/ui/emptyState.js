@@ -53,12 +53,17 @@ export function emptyStateHTML({
  * a counter, the re-render swaps this state back to a skeleton, and
  * stateSub's ensure* pass refetches (the fetch guards were reset on
  * failure). `tierKey` is the loadErrors key the lazy loader flagged.
+ *
+ * (v5.17.53, merged-plan item 6) carries the ONE missing-data frame hook
+ * (offline-missing): the words stay loadFailed-specific because the Retry
+ * action needs its context, but the frame joins the shared visual language.
  */
 export function loadErrorStateHTML({ lang, tierKey, t }) {
   return emptyStateHTML({
     iconName: 'cloudOff',
     title: t('common.loadFailed', lang),
     actionHTML: `<button type="button" class="btn btn--primary btn--sm" data-action="retry-load" data-key="${escapeHTML(tierKey)}">${icon('refresh', { size: 14 })} ${escapeHTML(t('common.retry', lang))}</button>`,
+    className: 'missing-data missing-data--offline-missing',
   });
 }
 
@@ -68,6 +73,10 @@ export function loadErrorStateHTML({ lang, tierKey, t }) {
  * forward (reachable via #/mood with no id, or stale deep links). The
  * builder keeps each call site's specific title and adds one consistent
  * way out: a primary "Go home" button.
+ *
+ * (v5.17.53, merged-plan item 6) carries the missing-data frame hook (no
+ * kind modifier: a stale link is not one of the six absence states — the
+ * words stay specific, the frame stays shared).
  */
 export function notFoundStateHTML({ title, hint = '', lang, t }) {
   return emptyStateHTML({
@@ -75,5 +84,6 @@ export function notFoundStateHTML({ title, hint = '', lang, t }) {
     title,
     hint: hint || t('common.notFoundHint', lang),
     actionHTML: `<a class="btn btn--primary btn--sm" href="#/home" data-action="navigate" data-view="home">${escapeHTML(t('common.goHome', lang))}</a>`,
+    className: 'missing-data',
   });
 }

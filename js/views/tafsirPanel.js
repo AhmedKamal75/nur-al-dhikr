@@ -14,6 +14,7 @@ import { clamp, escapeHTML, pickLocale } from '../core/utils.js';
 import { pairForAyah, buildSimilarPairs } from '../domain/mutashabihat.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
+import { missingDataHTML } from '../ui/missingData.js';
 import { MUSHAF_FONTS, MUSHAF_PAPERS, VIEWS } from '../core/config.js';
 import {
   classifyAyahTajweed,
@@ -921,15 +922,19 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
         <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: activeEdition.authorEn, ar: activeEdition.authorAr }, lang))}</p>
         ${editionBodyHTML(activeEdition, text)}`;
     } else if (cachedSurah && typeof cachedSurah === 'object') {
-      body = `<p class="tafsir-panel__empty">${t('tafsir.emptyAyah', lang)}</p>`;
+      // (v5.17.53, merged-plan item 6) empty ayahs speak through the ONE
+      // missing-data pattern (single source: missingData.tafsir-missing).
+      body = missingDataHTML({ kind: 'tafsir-missing', lang, t });
     } else if (state.loadErrors?.['tafsir-text']) {
       body = `<div class="tafsir-panel__loading">${loadErrorStateHTML({ lang, tierKey: 'tafsir-text', t })}</div>`;
     } else if (activeEdition.bundled) {
       body = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
     } else {
+      // (v5.17.53, merged-plan item 6) uncached remote editions speak through
+      // the ONE missing-data pattern; the download action is preserved.
       body = `
         <div class="tafsir-panel__remote">
-          <p class="panel__subtext">${t('tafsir.remoteHint', lang)}</p>
+          ${missingDataHTML({ kind: 'offline-missing', lang, t })}
           <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-download" data-edition="${activeEdition.id}" data-surah="${surah}" data-ayah="${ayah}">
             ${icon('download', { size: 15 })} ${t('tafsir.download', lang)}
           </button>
@@ -987,15 +992,18 @@ function buildTafsirCompareSlot(state, surah, ayah, editions, activeId, slotKey,
       state.tafsir?.[ed.id]?.[String(surah)] &&
       typeof state.tafsir[ed.id][String(surah)] === 'object'
     ) {
-      second = `<p class="tafsir-panel__empty">${t('tafsir.emptyAyah', lang)}</p>`;
+      // (v5.17.53, merged-plan item 6) compare-slot empties share the same
+      // single source as the primary tab above.
+      second = missingDataHTML({ kind: 'tafsir-missing', lang, t });
     } else if (ed && ed.bundled) {
       second = `<div class="tafsir-panel__loading">${skeletonLines(lang, [92, 86, 60])}</div>`;
     } else if (ed && !ed.bundled) {
       // (v5.2.74, UP-08) uncached remote second source: its own explicit
       // download — the primary tab no longer owns this flow alone.
+      // (v5.17.53, merged-plan item 6) same single source as above.
       second = `
       <div class="tafsir-panel__remote">
-        <p class="panel__subtext">${t('tafsir.remoteHint', lang)}</p>
+        ${missingDataHTML({ kind: 'offline-missing', lang, t })}
         <button type="button" class="btn btn--primary btn--sm" data-action="tafsir-compare-download" data-edition="${escapeHTML(ed.id)}" data-surah="${surah}" data-ayah="${ayah}">
           ${icon('download', { size: 15 })} ${t('tafsir.download', lang)}
         </button>

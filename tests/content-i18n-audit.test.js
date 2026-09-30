@@ -401,6 +401,10 @@ describe('dict: en/ar parity, no orphan keys', () => {
       'home.theme.',
       'journal.prompt.',
       'kids.level.',
+      // (v5.17.53, merged-plan item 6) the ONE missing-data pattern builds
+      // its keys as `missingData.${kind}` in ui/missingData.js (rule 6) —
+      // a dynamic family like prayer.* above, not six dead strings.
+      'missingData.',
       'mood.',
       'mushaf.bismillah_',
       'nudge.cta.',

@@ -39,11 +39,17 @@ export function gradeStateOf(grade) {
  * Honest grade chip HTML. Returns '' unless the record carries a
  * source-backed grading value. `Unknown` renders the intentionally
  * uncertain "Unverified" chip; malformed values render nothing.
+ *
+ * (v5.17.53, merged-plan item 6) the Unknown chip rides the ONE missing-data
+ * pattern via the shared hook classes (dashed warm-gray, calm). Its words
+ * stay GRADE_LABELS.Unknown — the mirror of `missingData.grade-unknown`,
+ * named here per rule 6 (a static pin names the source it mirrors).
  */
 export function gradeChipHTML(grade, lang = 'en') {
   const canonical = normalizeGrade(grade);
   if (!canonical) return '';
   const label = pickLocale(GRADE_LABELS[canonical], lang);
-  const uncertain = canonical === 'Unknown' ? ' chip--grade-unknown' : '';
+  const uncertain =
+    canonical === 'Unknown' ? ' chip--grade-unknown missing-data missing-data--grade-unknown' : '';
   return `<span class="chip chip--grade chip--grade-${escapeHTML(canonical.toLowerCase())}${uncertain}">${escapeHTML(label)}</span>`;
 }

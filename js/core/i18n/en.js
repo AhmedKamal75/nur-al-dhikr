@@ -801,6 +801,16 @@ export const en = {
   // (v5.17.52) session queue: plain completion line when every visible item
   // in the category is done today — stated, never celebrated.
   'focus.sessionComplete': 'This section is complete for today.',
+  // (v5.17.53, merged-plan item 6) the ONE honest-absence pattern
+  // (ui/missingData.js, rule 6: callers pass a kind, never strings).
+  // grade-unknown mirrors GRADE_LABELS.Unknown (named source); tafsir-missing
+  // carries the long-standing empty-ayah sentence verbatim.
+  'missingData.grade-unknown': 'Unverified',
+  'missingData.translation-missing': 'No translation available.',
+  'missingData.audio-missing': 'No audio for this item yet.',
+  'missingData.tafsir-missing': 'This source has no commentary for this ayah.',
+  'missingData.location-missing': 'No location set — prayer times cannot be computed here.',
+  'missingData.offline-missing': 'Not downloaded',
   'stats.week': 'This week',
   'stats.month': 'This Month',
   'stats.totalRecitations': 'Total Recitations',
@@ -1302,10 +1312,10 @@ export const en = {
   'tafsir.title': 'Tafsir & grammar sources',
   'tafsir.categoryTafsir': 'Commentary',
   'tafsir.categoryGrammar': 'Grammar',
-  'tafsir.emptyAyah': 'This source has no commentary for this ayah.',
+  // (v5.17.53, merged-plan item 6) tafsir.emptyAyah + tafsir.remoteHint
+  // retired: both speak through missingData.tafsir-missing /
+  // missingData.offline-missing now (rule 6, single source).
   'tafsir.pickSource': 'Choose a source above.',
-  'tafsir.remoteHint':
-    "This is a large classical work not bundled with the app. Download it once and it's saved offline from then on.",
   'tafsir.download': 'Download to read offline',
   'tafsir.compare': 'Compare with a second source',
   'tafsir.compareC': 'Compare with a third source',

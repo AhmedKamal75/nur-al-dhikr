@@ -99,12 +99,18 @@ export function renderPrayer(state) {
       ${emptyStateHTML({
         iconName: 'compass',
         title: t('prayer.locationNeeded', lang),
-        hint: t('prayer.chooseCity', lang),
+        // (v5.17.53, merged-plan item 6) the hint speaks through the ONE
+        // missing-data pattern (single source); the city guidance moves to
+        // the extra line so no information is lost.
+        hint: t('missingData.location-missing', lang),
         actionHTML: `
       <button type="button" class="btn btn--primary" data-action="prayer-request-location">${icon('location', { size: 16 })} ${t('prayer.enableLocation', lang)}</button>
       <button type="button" class="link-btn" data-action="prayer-manual-location">${t('prayer.manualLocation', lang)}</button>`,
-        extraHTML: CITY_REGIONS.map(
-          (r) => `
+        className: 'missing-data missing-data--location-missing',
+        extraHTML:
+          `<p class="empty-state__hint">${escapeHTML(t('prayer.chooseCity', lang))}</p>` +
+          CITY_REGIONS.map(
+            (r) => `
         <details class="city-group">
           <summary>${escapeHTML(t(`prayer.region.${r}`, lang))}</summary>
           <div class="chip-row" role="group" aria-label="${escapeHTML(t(`prayer.region.${r}`, lang))}">${CITY_PRESETS.filter(
@@ -116,7 +122,7 @@ export function renderPrayer(state) {
             )
             .join('')}</div>
         </details>`
-        ).join(''),
+          ).join(''),
       })}
     </section>`;
   }
@@ -325,7 +331,10 @@ export function renderPrayer(state) {
       ${alertStatusHTML(state.alertTriggerStatus, lang)}
       ${
         fallbackNames.length
-          ? `<p class="panel__subtext prayer-fallback-note" id="prayer-fallback-note">${icon('info', { size: 14 })} ${t('prayer.polarNote', lang, { names: fallbackNames.map((n) => t('prayer.' + n, lang)).join(lang === 'ar' ? '، ' : ', ') })}</p>`
+          ? // (v5.17.53, merged-plan item 6) polar honesty keeps its exact
+            // words (the prayer names + estimate guidance are load-bearing)
+            // and carries the ONE missing-data frame hook.
+            `<p class="panel__subtext prayer-fallback-note missing-data missing-data--location-missing" id="prayer-fallback-note">${icon('info', { size: 14 })} ${t('prayer.polarNote', lang, { names: fallbackNames.map((n) => t('prayer.' + n, lang)).join(lang === 'ar' ? '، ' : ', ') })}</p>`
           : ''
       }
       ${

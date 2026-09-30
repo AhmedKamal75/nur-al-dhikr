@@ -32,7 +32,10 @@ function groupStatusHTML(status, group, lang) {
   if (st && st.total > 0) {
     return `<span class="offline-row__status">${escapeHTML(t('offline.partial', lang, { done: st.done, total: st.total }))}</span>`;
   }
-  return `<span class="offline-row__status">${escapeHTML(t('offline.notDownloaded', lang))}</span>`;
+  // (v5.17.53, merged-plan item 6) not-downloaded rows carry the ONE
+  // missing-data frame hook; the short row words stay (block contexts use
+  // missingData.offline-missing, the identical sentence).
+  return `<span class="offline-row__status missing-data missing-data--offline-missing">${escapeHTML(t('offline.notDownloaded', lang))}</span>`;
 }
 
 export function renderOffline(state) {
@@ -54,7 +57,9 @@ export function renderOffline(state) {
   const meter =
     quota && quota.quota > 0
       ? `<p class="panel__subtext" dir="ltr">${escapeHTML(t('offline.storage', lang))}: ${escapeHTML(formatBytes(quota.usage))} / ${escapeHTML(formatBytes(quota.quota))}</p>`
-      : `<p class="panel__subtext">${escapeHTML(t('offline.storageUnknown', lang))}</p>`;
+      : // (v5.17.53, merged-plan item 6) unknown quota keeps its exact words
+        // and carries the ONE missing-data frame hook.
+        `<p class="panel__subtext missing-data missing-data--offline-missing">${escapeHTML(t('offline.storageUnknown', lang))}</p>`;
   // (v5.2.75, PERF-02) audio-cache budget beside the device meter.
   const ac = jobs.audioCache;
   const audioMeter =

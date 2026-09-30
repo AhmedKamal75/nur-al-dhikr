@@ -2,6 +2,40 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.53 — One honest-absence pattern for every gap
+
+Merged-plan item 6. Absence used to speak in five dialects — an Unverified
+chip here, a bare paragraph there, a row badge, a polar footnote, a meter
+line — each hand-rolled at its call site. Now `js/ui/missingData.js` owns
+all of it: one dashed warm-gray frame with plain words, calm and never
+red, bilingual EN+AR through six `missingData.*` keys (rule 6 — callers
+pass a kind, never their own strings, so the tree cannot drift into
+parallel copy).
+
+- **Six states, one source.** Unknown grade, missing translation, missing
+  audio, missing tafsir, missing location, offline-not-downloaded. The
+  tafsir empty-ayah and uncached-remote blocks render through the builder
+  (their download actions preserved); the disclosure states a missing
+  translation in EN instead of silently omitting the row; the Unknown chip,
+  polar note, offline rows, storage meter, surah-missing cells and the
+  load/notFound frames carry the shared frame hook while keeping their
+  load-bearing exact words (prayer names, reciter reasons, Retry/Go-home
+  context). Two retired keys (`tafsir.emptyAyah`, `tafsir.remoteHint`).
+- **Calm is test-pinned, not asserted.** The suite scans the pattern's CSS
+  for danger/red styling, checks AR carries no Latin, and fails if a call
+  site reintroduces a parallel absence string.
+- Constraints held: bilingual EN+AR (6 keys twinned + 2 retired in both,
+  parity gate green; strict AR separation unchanged — AR never expects a
+  translation), Elder/a11y intact (existing tokens only, no new custom
+  properties, logical properties, plain text — no new data-action, the
+  19/19 renderer budget holds), no data changes, no behavior changes
+  beyond presentation, offline-safe (one small already-precached module).
+- Tests: `tests/missing-data.test.js` (22 cases — six kinds × two
+  languages, calm contract, grade/disclosure/tafsir/prayer/offline/audio/
+  frame migration pins incl. rule-6 source scans), the disclosure honesty
+  update in `tests/adhkar-session.test.js`, plus the directly-affected e2e
+  subset (smoke, routes-extended, study-mode).
+
 ## v5.17.52 — The adhkar session player with progressive disclosure
 
 Merged-plan item 5. The Focus stage showed everything at once —
