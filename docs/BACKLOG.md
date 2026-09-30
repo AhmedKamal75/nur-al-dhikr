@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.44**. Last updated against a green `npm run check` and
+> Current version: **v5.17.45**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -33,12 +33,27 @@
 
 ## 2. Score history
 
-| Review | Version  | Score   | What moved it                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ------ | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1      | v5.17.16 | **8.0** | Baseline. Offline 7.0, a11y 7.0, look/feel 7.5.                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| 2      | v5.17.21 | **8.2** | Offline and a11y genuinely fixed; found a **silent wrong surah** in the deep link.                                                                                                                                                                                                                                                                                                                                                                                  |
-| 3      | v5.17.22 | **8.8** | Found six **empty stage headings** and an **invisible** deep-link mark.                                                                                                                                                                                                                                                                                                                                                                                             |
-| 4      | v5.17.25 | **8.7** | **A REGRESSION from 8.8, and the first honest one in this table.** Three releases of fixes raised the number; a broader probe found more than the last round did, and found some of it in my own writing. Ran against the release that closed review 3. Found a **doubled Basmala** on Al-Fatiha and **59 records denying their own citation**. It also audited this file and caught me overstating six things — the first honest correction these tables have had. |
+| Review | Version  | Score   | What moved it                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------ | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1      | v5.17.16 | **8.0** | Baseline. Offline 7.0, a11y 7.0, look/feel 7.5.                                                                                                                                                                                                                                                                                                                                                                           |
+| 2      | v5.17.21 | **8.2** | Offline and a11y genuinely fixed; found a **silent wrong surah** in the deep link.                                                                                                                                                                                                                                                                                                                                        |
+| 3      | v5.17.22 | **8.8** | Found six **empty stage headings** and an **invisible** deep-link mark.                                                                                                                                                                                                                                                                                                                                                   |
+| 5      | v5.17.40 | **7.5** | **A second regression, and the lowest number this project has recorded.** Measured by three subagents running the §3 rubric, with per-criterion evidence. Look/feel 7.0, UI/UX 7.5, existence 8.0, functionality 7.5, usability 6.5, omitted 6.0, honesty 8.5, bilingual 8.0, a11y 8.0. The scorer also audited THIS file and found two rows marked "fixed" that were not, and two claims of mine it could not reproduce. |
+
+**Review 5 was measured against v5.17.40. Four real defects it helped find have
+landed since, and they are not in the 7.5:**
+
+| Fixed since                                                       | Was                                                                   |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------- |
+| v5.17.42 — the desktop home clipped a third of every tile row     | `.home-browser` 2533px in a 1144px column                             |
+| v5.17.42 — the immersive exit pill covered the Arabic             | a floating control sat on the text; the long-press could not reach it |
+| v5.17.43 — "one voice at a time" was false for 3 of 5 pairings    | narration spoke over a recitation and over an adhan                   |
+| v5.17.44 — the language switch was hidden or inert in four places | an Arabic-only reader had no way back to English                      |
+
+**So 7.5 is stale in the optimistic direction, and no re-score has been taken.**
+The number that would be honest today is unknown, and guessing it would repeat
+the exact failure this table exists to prevent. It gets re-taken at the end of
+Phase C, once, and that is the number G-1 is judged on.
 
 **What the score cannot reach, and why:** audio was never audible in a scoring
 environment, and five `BLOCKED:device` rows need real hardware. Those cap

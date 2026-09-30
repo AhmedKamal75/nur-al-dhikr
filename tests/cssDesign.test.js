@@ -340,9 +340,10 @@ test('touch targets: the token exists and core standalone controls use it', () =
     /\.chip\s*\{[^}]*position:\s*relative/.test(CSS['components.css']),
     '.chip needs relative positioning for its hit area'
   );
+  const chipAfter = /\.chip::after\s*\{[^}]*inset-block:\s*-(\d+)px/.exec(CSS['components.css']);
   assert.ok(
-    /\.chip::after\s*\{[^}]*inset-block:\s*-6px/.test(CSS['components.css']),
-    '.chip needs its 44px vertical hit area'
+    chipAfter && Number(chipAfter[1]) >= 6,
+    '.chip needs >=6px vertical hit-area expansion for its 44px effective target'
   );
 });
 

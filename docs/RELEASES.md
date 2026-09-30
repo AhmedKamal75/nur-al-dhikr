@@ -2,6 +2,60 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.45 — The dhikr was below a whole screen of chrome, and search lied when offline
+
+Phase C. Three things, one release, because each is small and each is honest
+about what it is.
+
+- **THE FIRST DHIKR SAT AT y=1073 IN A 900px VIEWPORT.** Above it: a shahada
+  banner, a 216px hero of mostly empty green with a dot pattern, a location
+  prompt, an 8-step onboarding wizard and a quick-tile row. A reader scrolled
+  past more than a full screen of chrome before the reason the app exists had
+  said anything. On the design standard in `HANDOFF.md` §5d — _"the text is the
+  interface"_, _"chrome should bow to the Qur'an"_ — that is the design
+  backwards, and it is why the page read as careless even though every tile on
+  it was correct.
+  - The order is now: shahada, where you are today, **the dhikr**. The hero
+    keeps its greeting, Hijri chip and tagline and moves below the grid, slimmed
+    from 216px to 131px. Nothing is removed — reordering, not deletion.
+  - Measured after: **y=299**. On the first screen.
+  - The grid also spans the full width on desktop. It was in a 562px column of
+    a two-column dashboard, so half the canvas was empty; fixing the earlier
+    2533px blowout had _revealed_ that rather than caused it. Now 1144px of a
+    1144px column.
+  - **And the Read-now buttons sat on three different baselines.** "Morning
+    Adhkar" wrapped to two lines, "After-Prayer Adhkar" to three, and the
+    action was a sibling following its tile rather than a child of the row. One
+    missing `margin-block-start: auto`. Now `distinct === 1` across a row.
+  - `tests/e2e/home-fold.spec.js` pins all of it: fold position, grid width
+    against the column, one baseline per row, no clipped tile, no sideways
+    scroll, the hero demoted but present, and every category still carrying a
+    live count and an openable action.
+
+- **SEARCH SAID "NO RESULTS" WHEN THE TRUTH WAS "NEVER LOADED".** `renderSearch`
+  checked the Qur'an tier and the tafsir tier and rendered an error + Retry for
+  both. It did not check the library tier. So a cold cache with no network
+  answered a real query with an empty list — a claim about the corpus when the
+  corpus was never fetched. The same query on the Library view was honest,
+  because `library.js:282` checks the same flag.
+  - Now the library tier gates the result list, the search is not run at all
+    against a corpus that failed to load, and the breakdown count passes `null`
+    rather than claiming 0.
+  - `tests/search-offline-honesty.test.js` holds the generalised rule: a section
+    that could not load must never render as a section that loaded and found
+    nothing — and it enumerates the tiers, so a new searchable corpus without a
+    failure branch fails the test. 4 of its 5 assertions fail without the fix.
+
+- **I WAS WRONG ABOUT THE HOME PAGE, AND THE RECORD IS CORRECTED.** I had
+  written, in two documents, that home put _"the entire corpus on it: 560
+  tiles"_. **False** — it was my own bad selector, `[class*="tile"]`, which also
+  matches the icon, chip and label nested inside each tile. Counted properly it
+  is **9 named sections, 80 category tiles, 9,875px**. That is already the right
+  shape: category-shaped, with a live count and a "Read now" action on each.
+  The first design call I had written for this section — _"show categories, not
+  items"_ — was written against a problem that does not exist, and is struck.
+  The two claims of mine that did survive measurement are the ones fixed above.
+
 ## v5.17.44 — The language switch, on the four surfaces that were hiding it
 
 A relational audit of the shell found the always-present language switch

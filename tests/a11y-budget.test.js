@@ -79,8 +79,11 @@ describe('accessibility budget (static)', () => {
       css
     );
     assert.ok(sm, '.icon-btn--sm::after must expand 6px per side (36 -> 48px effective)');
-    const chip = /\.chip::after\s*\{[^}]*inset-block:\s*-6px/s.exec(css);
-    assert.ok(chip, '.chip::after must expand 6px vertically (40 -> 52px effective)');
+    const chip = /\.chip::after\s*\{[^}]*inset-block:\s*-(\d+)px/s.exec(css);
+    assert.ok(
+      chip && Number(chip[1]) >= 6,
+      '.chip::after must expand >=6px vertically (>=52px effective hit area)'
+    );
     // The base icon button itself must be full-size, not compact.
     assert.match(css, /\.icon-btn\s*\{[^}]*width:\s*var\(--touch-target\)/s);
   });

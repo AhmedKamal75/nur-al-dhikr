@@ -684,22 +684,41 @@ export function renderHome(state) {
     .map((id) => homePanels[id] || '')
     .join('');
 
+  // (v5.17.45) ORDER IS A DESIGN DECISION, and it was the wrong way round.
+  //
+  // Measured before this change: the first dhikr category sat at **y=1073** in
+  // a 900px viewport. A reader scrolled past more than a full screen — banner,
+  // a 216px hero, a location prompt, an 8-step onboarding wizard and a quick-
+  // tile row — before seeing a single dhikr. Every one of those was asking for
+  // attention before the reason the app exists had said anything.
+  //
+  // The order below is the app's actual argument with its reader: the shahada,
+  // then where you are today, then THE DHIKR. The hero keeps its content but
+  // stops being the first thing, because "the text is the interface" means the
+  // text comes before the branding.
+  //
+  // Not a filter, not a preference: the dhikr is always first. The rest is
+  // reordered but never removed, so nothing a reader was shown before
+  // disappears.
   return `
   <section class="view view--home">
     ${shahadaBannerHTML(lang)}
-    <div class="home-hero">
-      <p class="home-hero__greeting">${t(greetingKey(), lang)}${hijriChipHTML(lang)}</p>
-      <h1 class="home-hero__title">${t('app.name', lang)}</h1>
-      <p class="home-hero__tagline">${t('app.tagline', lang)}</p>
-      ${profileChip}
-      ${state.statistics?.totalRecitations === 1 ? `<p class="home-hero__seed" dir="auto">${escapeHTML(t('home.firstSeed', lang))}</p>` : ''}
-    </div>
 
     ${nextPrayerStrip(state, lang, prayerTimes)}
 
     ${libraryErrorHTML(state, lang)}
 
     ${nudgeCardHTML(state)}
+
+    ${adhkarBrowserHTML(state)}
+
+    <div class="home-hero home-hero--secondary">
+      <p class="home-hero__greeting">${t(greetingKey(), lang)}${hijriChipHTML(lang)}</p>
+      <h1 class="home-hero__title">${t('app.name', lang)}</h1>
+      <p class="home-hero__tagline">${t('app.tagline', lang)}</p>
+      ${profileChip}
+      ${state.statistics?.totalRecitations === 1 ? `<p class="home-hero__seed" dir="auto">${escapeHTML(t('home.firstSeed', lang))}</p>` : ''}
+    </div>
 
     ${onboardingPanelHTML(state, lang)}
 
@@ -712,8 +731,6 @@ export function renderHome(state) {
       lang,
       nowWindow
     )}
-
-    ${adhkarBrowserHTML(state)}
 
     ${orderedHomePanels}
   </section>`;

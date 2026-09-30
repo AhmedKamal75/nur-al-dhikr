@@ -231,8 +231,16 @@
 .chip::after {
   content: '';
   position: absolute;
-  inset-block: -6px;
-  inset-inline: -3px;
+  /* (v5.17.45) 8px, not 6px, and the extra 2px is not decoration: a measured
+     probe 5px past the visual border did NOT hit the chip, only the scroller.
+     The apron is the target. tests/e2e/touch-targets.spec.js asks for 5px of
+     reach beyond what the reader can see, and a 6px apron measured short of it
+     inside a scroller whose clip box trims the last 2px.
+
+     The chip is still visually 40px and still MINIMALLY 40px — this only
+     widens the invisible area a near-miss pointer lands in. */
+  inset-block: -8px;
+  inset-inline: -4px;
 }
 .chip:hover {
   border-color: var(--color-border-strong);
@@ -351,7 +359,22 @@
 .chip-row--scroll {
   flex-wrap: nowrap;
   overflow-x: auto;
-  padding-bottom: var(--space-2);
+  /* (v5.17.45) SYMMETRIC block padding, and this was a real invisible-target
+     bug. `overflow-x: auto` forces `overflow-y: auto` too — CSS cannot say
+     "scroll sideways but let my children paint outside" — so the scroller's
+     clip box is the chip's real hit box, and the 6px `::after` apron on
+     `.chip` was being cut off. It only had `padding-bottom`, so the top edge
+     had no room at all.
+
+     That apron is the entire point of it: it is what lets a 40px chip catch a
+     pointer near its edge rather than only on the pixels it paints.
+     tests/e2e/touch-targets.spec.js caught this the moment the mood row moved
+     up the page and stopped being masked by a neighbouring element.
+
+     Padding, not a taller chip: the clip box grows to contain the apron, the
+     chips stay visually 40px, and nothing about the touch size changes for a
+     reader. */
+  padding-block: var(--space-2);
   /* (v4.4) an inline-end fade that says "this strip scrolls" — clipped
      chips on the tasbih presets were read as cut-off buttons, not a
      scroller. Mask direction flips with document direction. */

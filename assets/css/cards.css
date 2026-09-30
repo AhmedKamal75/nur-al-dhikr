@@ -301,8 +301,27 @@
    ========================================================================== */
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: var(--space-3);
+  /* Every tile in a row is the same height, so the Read-now actions line up
+     across the row instead of stair-stepping under titles that wrap to
+     different line counts. The wrapper is a column and the action is pushed
+     to its floor — see .category-tile-wrap. */
+  align-items: stretch;
+}
+
+/* (v5.17.45) The wrapper exists so the tile and its action travel together as
+   one grid cell. It was never made a column, so the action simply followed the
+   tile at whatever height that tile happened to be: "Morning Adhkar" wraps to
+   two lines, "After-Prayer Adhkar" to three, and the buttons landed on three
+   different baselines. This is what puts them all on one. */
+.category-tile-wrap {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.category-tile-wrap .category-tile {
+  flex: 1 1 auto;
 }
 
 .category-tile {
@@ -445,7 +464,10 @@
    secondary button. Existing .btn sizing plus the 44px ::after apron, so
    Elder/a11y targets are untouched; logical props only, no new tokens. */
 .browser-tile__read {
-  margin-block-start: var(--space-2);
+  /* auto, not a fixed space-2: this is what pins the action to the bottom of
+     the tallest tile in the row. */
+  margin-block-start: auto;
+  padding-block-start: var(--space-2);
   inline-size: 100%;
 }
 

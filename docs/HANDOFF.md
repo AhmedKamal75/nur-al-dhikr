@@ -734,37 +734,45 @@ counts are correct (`الفاتحة · ٧`, `البقرة · ٢٨٦`) — **I mi
 screenshot and verified before reporting**; the RTL reads right-to-left and
 there is no bug. This is the standard the rest of the app should be held to.
 
-#### B2.3 STILL SLOPPY — the home page is a database dump, not a home page
+#### B2.3 STILL SLOPPY — and one of my claims about it was wrong
 
-The reorganisation made the grid the home screen by putting **the entire corpus
-on it**: **560 tiles, 8,486px tall, nine screenfuls.** Above the fold a reader
-gets a shahada banner, a 216px hero, a "set your location" prompt, and an
-**8-step onboarding wizard** — and none of it is dhikr.
+**CORRECTION, measured, v5.17.45.** I previously wrote that the home page put
+"the entire corpus on it: 560 tiles, 8,486px". **That is false.** It was my own
+bad selector: `[class*="tile"]` also matches the icon, chip and label nested
+inside each tile. Counted properly, the home page is:
 
-Concretely, on a 1440px desktop:
+- **9 named sections** — Browse by need, Adhkar, Duas, Quranic Duas, Duas of
+  the Prophets, Reflections & Duas, Duas from Islamic Literature, Daily Sunnah,
+  Special Days & Seasons
+- **80 category tiles** in total, each with a live count and a "Read now" action
+- **9,875px** tall
+
+So it is **not** a database dump, and "azkar.me shows ~30, we show 560" was
+silly. The grid is already category-shaped, which is the right shape, and the
+first design call below was written against a problem that does not exist.
+
+What IS genuinely wrong, all of it visible in the screenshot and none of it
+about tile count:
 
 - **The right half of the screen is empty.** The two-column dashboard was
-  designed for the old panel home; with a tile grid in it, one column holds the
-  onboarding and the other is blank. Fixing the blowout _revealed_ this — it
-  was hidden before.
-- **Three panels of chrome sit above the content.** The hero is 216px of
-  mostly empty green with a dot pattern. On the design standard in §5d, _"the
-  text is the interface"_ and _"chrome should bow to the Qur'an"_ — this is
-  chrome asking for attention first.
-- **Categories and individual items share one grid and one visual treatment.**
-  "Morning Adhkar" (a category, 31 items) and "Du'a of Dh…" (a single du'a) are
-  the same tile. That is two abstraction levels in one list, which is why the
-  grid cannot be skimmed.
-- **Today's Progress is below all 560 tiles.** The one panel that answers "how
-  am I doing" is nine screens down.
-
-**azkar.me shows ~30 category tiles. We show 560.** The depth is the advantage;
-dumping it on the front door is not how you surface it.
+  designed for the old panel home; one column holds the onboarding and the
+  other is blank. Fixing the 2533px blowout _revealed_ this rather than
+  causing it.
+- **Three panels of chrome sit above the dhikr.** A 216px hero of mostly empty
+  green with a dot pattern, a location prompt, and an **8-step onboarding
+  wizard** — all above the fold, none of it dhikr. On the standard in §5d,
+  _"the text is the interface"_: this is chrome asking for attention first.
+- **Today's Progress is at the very bottom**, below every category. The one
+  panel that answers "how am I doing" should be near the top, not last.
+- **Nine sections of category tiles is a long page** at 9,875px. That is the
+  cost of 80 categories on one screen, and it is defensible — but it should be
+  a deliberate ranked order, and today it is alphabetical by library.
 
 #### B2.4 The specific design calls to make (this is the "fix" the owner asked for)
 
-1. **The grid shows categories, not items.** Tapping a category enters it. A
-   "see all" affordance per library reaches the long tail. azkar.me's model.
+1. ~~**The grid shows categories, not items.**~~ **DONE ALREADY** — measured:
+   80 category tiles across 9 sections, each with a count and a "Read now"
+   action. Strike this one; it was written against a miscounted grid.
 2. **Rank it.** Today's dhikr, the section you left off, and your four most-used
    categories come first. Ours is alphabetical.
 3. **Demote the hero.** One line of dhikr beats 216px of brand. The shahada

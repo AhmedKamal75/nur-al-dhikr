@@ -186,7 +186,17 @@ export function renderSearch(state) {
     query && isTafsirSearchReady() && !state.loadErrors?.['tafsir-search-corpus']
       ? searchTafsir(query, { limit: Infinity })
       : null;
-  const libAll = query ? runSearch(query, { limit: Infinity }) : [];
+  // (v5.17.47) HONESTY: a library tier that failed to load must not read as
+  // "no results".
+  //
+  // Every other section in this view already checks its tier
+  // (`quran-search-corpus`, `tafsir-search-corpus`) and renders an error + Retry
+  // instead of an empty state. The library section did not — so a cold cache
+  // with no network answered a real query with "nothing found", which is a
+  // claim about the corpus when the truth is that the corpus was never
+  // fetched. `library.js:282` gets this right; search did not.
+  const libLoadFailed = Boolean(state.loadErrors?.library);
+  const libAll = query && !libLoadFailed ? runSearch(query, { limit: Infinity }) : [];
   const hadithAll = query ? searchHadith(query, { limit: Infinity }) : [];
   const azkarAll = query ? libAll.filter((r) => r.document?.metadata?.id === 'adhkar') : [];
   const libPage = query ? paginate(libAll, state.activeParams, 'library') : null;
@@ -253,11 +263,13 @@ export function renderSearch(state) {
     ${
       query
         ? `
-      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll ? quranAll.length : 0, h: hadithAll.length, z: azkarAll.length })}</p>
+      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll ? quranAll.length : 0, h: hadithAll.length, z: libLoadFailed ? null : azkarAll.length })}</p>
       <p class="search-hadith-link"><a href="${buildHash(VIEWS.HADITH, { q: query })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-q="${escapeHTML(query)}">${icon('book', { size: 13 })} ${t('search.searchHadith', lang, { q: query })}</a></p>
       ${
-        libShown.length
-          ? `
+        libLoadFailed
+          ? loadErrorStateHTML({ lang, tierKey: 'library', t })
+          : libShown.length
+            ? `
       <div class="card-list">
         ${libShown
           .map((r) =>
@@ -276,11 +288,11 @@ export function renderSearch(state) {
           )
           .join('')}
       </div>${pageHTML(lang, 'library', libPage.page, libPage.pageCount, libShown.length, libAll.length)}`
-          : emptyStateHTML({
-              iconName: 'search',
-              title: t('search.noResults', lang),
-              hint: t('search.noResultsHint', lang),
-            })
+            : emptyStateHTML({
+                iconName: 'search',
+                title: t('search.noResults', lang),
+                hint: t('search.noResultsHint', lang),
+              })
       }
     `
         : ''

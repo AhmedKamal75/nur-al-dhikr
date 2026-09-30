@@ -384,3 +384,40 @@
     }
   }
 }
+
+/* (v5.17.45) The hero is no longer the first thing on Home.
+   It keeps its greeting and its Hijri chip, but demoted below the dhikr it
+   stops competing with the reason the app exists. On the desktop two-column
+   dashboard it becomes a slim aside rather than a 216px band of empty green. */
+@media (min-width: 960px) {
+  .view--home > .home-hero--secondary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+  .view--home > .home-hero--secondary .home-hero__title {
+    font-size: 1.15rem;
+  }
+  .view--home > .home-hero--secondary .home-hero__tagline {
+    font-size: var(--fs-caption);
+  }
+  .view--home > .home-hero--secondary .home-hero__seed {
+    flex-basis: 100%;
+  }
+}
+
+/* (v5.17.45) The dhikr browser is the main content, so on the desktop
+   dashboard it spans the full width instead of taking the left column and
+   leaving the right half of the screen empty. The two-column layout still
+   applies to the panels below it, where paired cards genuinely benefit. */
+@media (min-width: 960px) {
+  .view--home > .home-browser,
+  .view--home > .shahada-banner,
+  .view--home > .home-prayer-strip,
+  .view--home > .quick-actions,
+  .view--home > .home-hero--secondary {
+    grid-column: 1 / -1;
+  }
+}
