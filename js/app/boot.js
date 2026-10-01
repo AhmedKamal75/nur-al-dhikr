@@ -197,13 +197,14 @@ export async function boot() {
       } else {
         mediaSession.clearMetadata();
       }
-      // Kids-mode stars: a naturally finished surah earns one. The engine
-      // flags only true play-throughs (manual stops never set it), and the
-      // flag is single-read, so a star can never double-count.
+      // Kids-mode plain count (v5.17.58, merged-plan item 11): a naturally
+      // finished surah increments the heard total. The engine flags only
+      // true play-throughs (manual stops never set it), and the flag is
+      // single-read, so a finish can never double-count. No awards.
       const finished = surahPlayback.consumeLastFinish();
       if (finished != null && store.getState().settings.kidsMode === true) {
-        store.dispatch(actions.awardKidsStar(finished));
-        showToast(t('kids.starEarned', store.getState().settings.language));
+        store.dispatch(actions.recordKidsHeard());
+        showToast(t('kids.heardDone', store.getState().settings.language));
       }
     });
     // Lock-screen controls: the verse session wins when active (prev/next

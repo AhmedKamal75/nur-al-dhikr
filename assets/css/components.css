@@ -2532,60 +2532,27 @@ body.is-kids #bottomnav {
   font-size: var(--fs-xl);
   font-weight: 800;
 }
-.panel--kids-stars {
+/* (v5.17.58, merged-plan item 11) degamified: a plain lifetime count of
+   finished listens — no points, no levels, no charts. */
+.panel--kids-heard {
   align-items: center;
   text-align: center;
 }
-.kids-stars__icon {
-  color: var(--cat-gold-text);
-}
-.kids-stars__total {
+.kids-heard__total {
   font-size: 2.2rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
-.kids-stars__label {
+.kids-heard__label {
   font-size: var(--fs-base);
   font-weight: 600;
   color: var(--color-text-secondary);
 }
-.kids-stars__text {
+.kids-heard__text {
   display: flex;
   align-items: baseline;
   justify-content: center;
   gap: var(--space-2);
-}
-/* (v5.10.1) kids progression: level banner mirrors the stars panel, the
-   week chart is a 7-bar row that wraps safely on 390px viewports. */
-.panel--kids-level {
-  align-items: center;
-  text-align: center;
-}
-.kids-level__icon {
-  color: var(--cat-gold-text);
-}
-.kids-level__name {
-  font-size: var(--fs-lg);
-  font-weight: 800;
-}
-.kids-level__text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-.kids-level__bar {
-  width: 100%;
-  height: 10px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--color-text) 12%, transparent);
-  overflow: hidden;
-}
-.kids-level__bar-fill {
-  display: block;
-  height: 100%;
-  width: var(--fill, 0%);
-  background: var(--cat-gold-text);
-  border-radius: var(--radius-pill);
 }
 .kids-quiz__question,
 .kids-quiz__result {
@@ -2599,62 +2566,6 @@ body.is-kids #bottomnav {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-}
-.kids-parent__subtitle {
-  font-size: var(--fs-base);
-  font-weight: 700;
-  margin-block-start: var(--space-3);
-}
-.kids-week {
-  display: flex;
-  gap: var(--space-2);
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  align-items: flex-end;
-  justify-content: space-between;
-}
-.kids-week__day {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  flex: 1;
-  min-width: 0;
-}
-.kids-week__bar {
-  display: block;
-  width: 100%;
-  max-width: 34px;
-  height: var(--bar-h, 4px);
-  min-height: 4px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--color-primary) 65%, var(--color-surface));
-}
-.kids-week__key,
-.kids-week__count {
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-  font-variant-numeric: tabular-nums;
-}
-.kids-bysurah {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1_5);
-}
-.kids-bysurah li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: var(--fs-base);
-}
-.kids-bysurah__count {
-  font-weight: 700;
-  color: var(--cat-gold-text);
-  font-variant-numeric: tabular-nums;
 }
 .kids-grid {
   display: grid;

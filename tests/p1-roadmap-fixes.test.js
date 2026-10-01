@@ -236,7 +236,7 @@ describe('BUG-04: quran-meta failure renders error + Retry', () => {
       settings: { ...DEFAULT_SETTINGS, language: 'en' },
       quran: { meta: null },
       surahPlayback: null,
-      kidsStars: { total: 0, days: {} },
+      kidsHeard: { total: 0 },
       loadErrors: { 'quran-meta': true },
     };
     const html = renderKids(st);

@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.57**. Last updated against a green `npm run check` and
+> Current version: **v5.17.58**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -65,6 +65,7 @@ must never be backdated into the number:**
 | v5.17.55 — nightstand lamp mode                                   | fourth ambient mode: warm low-light shelf (existing glass-bar tokens, capped luminance) with big ayah transport + sleep chip; auto-advance OFF, ends at the last ayah                    |
 | v5.17.56 — browse-by-need below the fold + invitations            | mood row after the grid (dhikr owns the fold); 3 calm invitation cards (Hijri note, Friday Kahf, Ramadan countdown) with persisted day-dismissal, invitational copy only                 |
 | v5.17.57 — gentle queue + private ledger                          | Home queue retitled Available review with names-only chips (no +N, no totals, no streak KPI); counts live in the Statistics ledger; khatma/prayer/coaching reworded pause-not-fail       |
+| v5.17.58 — kids degamified, gate kept                             | stars, Seed→Crown levels, week chart, per-surah table, erase path and quiz awards removed; plain heard count only; quiz plays award-free; Settings-in + hold-to-exit + parent gate kept  |
 
 **So 7.5 is stale in the optimistic direction, and no re-score has been taken.**
 The number that would be honest today is unknown, and guessing it would repeat

@@ -2,6 +2,35 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.58 — Kids mode degamified, parent gate kept
+
+Merged-plan item 11. Kids mode stops scoring worship: the stars total,
+the Seed→Crown level ladder, the week chart, the per-surah breakdown,
+the erase path and every quiz award are gone. Listening keeps a plain
+lifetime count of finished listens ("3 surahs listened" / "٣ سورة
+استُمع إليها" — no points, no levels, no charts), the surah-name quiz
+is play without awards (the result line is the whole feedback), and
+there are no stats, comparisons or galleries anywhere in the mode.
+The parent gate is untouched: Settings entry in, 2-second hold plus
+the grown-ups-only arithmetic question out.
+
+- Constraints held: bilingual EN+AR (reworded `settings.kidsHint`,
+  `kids.listenHint/quizHint/quizWin`, new `kids.heard/heardHint/
+heardDone`; retired 21 strap keys in both languages — stars, levels,
+  week, by-surah, erase, parent dashboard — parity and orphan gates
+  green; AR carries no Latin), Elder/a11y intact (native buttons,
+  existing classes and tokens only, no new custom properties, logical
+  properties untouched), no data invention (legacy `kidsStars.total`
+  migrates once into `kidsHeard.total`, days/bySurah dropped),
+  offline-safe (no new precache bytes beyond edited files).
+- Tests: `tests/kids-degamified.test.js` (14 cases — no ladder/week/
+  award exports, plain-count reducer, quiz walks without awards, no
+  star/level/week/erase markup or CSS, retired keys gone EN+AR, gate
+  strings + Settings-in + hold-to-exit + gate handler pins), the
+  rewritten `tests/kids.test.js` (heard accumulation, restore
+  migration, render) and `tests/kidsLevels.test.js` (quiz rounds +
+  award-free session), and the kids e2e subset green on Chromium.
+
 ## v5.17.57 — The gentle queue: Available review on Home, counts in the private ledger
 
 Merged-plan item 10. The memorization queue stops counting on Home and

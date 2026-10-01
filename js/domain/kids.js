@@ -1,9 +1,11 @@
 /**
- * domain/kids.js — Kids-mode progression: levels, weekly activity, and the
- * surah-name memory quiz. All pure (seeded RNG for the quiz so tests are
- * deterministic); the store owns the session, the view owns the markup.
+ * domain/kids.js — Kids-mode helpers: the surah list and the surah-name
+ * memory quiz. Degamified (v5.17.58, merged-plan item 11): no points,
+ * no stars, no levels, no week chart — listening keeps a plain finished
+ * count in the store and the quiz is play without awards. All pure
+ * (seeded RNG for the quiz so tests are deterministic); the store owns
+ * the session, the view owns the markup.
  */
-import { dateKey, addDays } from '../core/utils.js';
 
 /**
  * The kids' surah list: Al-Fatiha + the short closing surahs. Lives in
@@ -15,50 +17,6 @@ export const KIDS_SURAHS = Object.freeze([
   1, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112,
   113, 114,
 ]);
-
-/** Star thresholds for kids levels — name keys resolve via kids.level.<id>. */
-export const KIDS_LEVELS = Object.freeze([
-  { id: 'seed', at: 0 },
-  { id: 'sprout', at: 5 },
-  { id: 'explorer', at: 15 },
-  { id: 'star', at: 30 },
-  { id: 'moon', at: 60 },
-  { id: 'crown', at: 100 },
-]);
-
-/**
- * Level for a star total: { level, next, progress } where `next` is null
- * at the final form and progress is 0..1 toward it. Hostile totals clamp
- * to zero so a forged blob can never crash the banner.
- */
-export function kidsLevelFor(total) {
-  const n = Number.isFinite(Math.floor(Number(total))) && total > 0 ? Math.floor(Number(total)) : 0;
-  let idx = 0;
-  for (let i = 0; i < KIDS_LEVELS.length; i += 1) {
-    if (n >= KIDS_LEVELS[i].at) idx = i;
-  }
-  const level = KIDS_LEVELS[idx];
-  const next = KIDS_LEVELS[idx + 1] || null;
-  const progress = next ? Math.min(1, Math.max(0, (n - level.at) / (next.at - level.at))) : 1;
-  return { level, next, progress };
-}
-
-/**
- * Last-7-day activity ending today (or `now`): [{ key, count }] oldest
- * first. Keys outside the calendar shape count as zero — a hostile days
- * map degrades to an empty week, never a crash.
- */
-export function kidsWeek(days, now = new Date()) {
-  const src = days && typeof days === 'object' ? days : {};
-  const base = now instanceof Date && !Number.isNaN(now.getTime()) ? now : new Date();
-  const out = [];
-  for (let i = 6; i >= 0; i -= 1) {
-    const key = dateKey(addDays(base, -i));
-    const c = Math.floor(Number(src[key]));
-    out.push({ key, count: Number.isFinite(c) && c > 0 ? Math.min(c, 10000) : 0 });
-  }
-  return out;
-}
 
 /** Deterministic PRNG (mulberry32) so quiz rounds are test-reproducible. */
 function mulberry32(seed) {

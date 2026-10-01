@@ -400,7 +400,8 @@ describe('dict: en/ar parity, no orphan keys', () => {
       'home.panel.',
       'home.theme.',
       'journal.prompt.',
-      'kids.level.',
+      // (v5.17.58, merged-plan item 11) retired: the kids.level.* family is
+      // gone with the levels (degamified) — no dynamic kids prefix remains.
       // (v5.17.53, merged-plan item 6) the ONE missing-data pattern builds
       // its keys as `missingData.${kind}` in ui/missingData.js (rule 6) —
       // a dynamic family like prayer.* above, not six dead strings.

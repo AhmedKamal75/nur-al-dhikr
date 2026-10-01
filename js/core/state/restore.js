@@ -368,33 +368,17 @@ export function sanitizeRestoredPayload(payload) {
     // in the same shapes the live reducer writes (capped so a hostile
     // backup can't bloat the blob; unknown active profile falls to main).
     ...cleanProfiles(p.profiles, p.profileStore, p.activeProfile),
-    // Kids stars: non-negative total + real calendar-day counts only.
-    kidsStars: (() => {
-      const k = p.kidsStars && typeof p.kidsStars === 'object' ? p.kidsStars : {};
-      const days = {};
-      const src = k.days && typeof k.days === 'object' ? k.days : {};
-      for (const [d, n] of Object.entries(src).slice(0, 3700)) {
-        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
-        if (!m || Number(m[2]) < 1 || Number(m[2]) > 12 || Number(m[3]) < 1 || Number(m[3]) > 31)
-          continue;
-        const c = Math.floor(Number(n));
-        if (Number.isFinite(c) && c > 0) days[d] = Math.min(c, 10000);
-      }
-      // Per-surah breakdown for the parent dashboard: surah ints 1..114,
-      // positive counts only; quiz wins without a surah simply omit it.
-      const bySurah = {};
-      const bsrc = k.bySurah && typeof k.bySurah === 'object' ? k.bySurah : {};
-      for (const [s, n] of Object.entries(bsrc).slice(0, 114)) {
-        const sn = Math.floor(Number(s));
-        const c = Math.floor(Number(n));
-        if (Number.isFinite(sn) && sn >= 1 && sn <= 114 && Number.isFinite(c) && c > 0)
-          bySurah[sn] = Math.min(c, 10000);
-      }
-      const total = Math.floor(Number(k.total));
+    // Kids plain count (v5.17.58, merged-plan item 11): lifetime total
+    // only. Migrates the pre-degamification kidsStars.total once, then
+    // drops its days/bySurah gamification payload — hostile shapes clamp
+    // to zero, never in.
+    kidsHeard: (() => {
+      const k = p.kidsHeard && typeof p.kidsHeard === 'object' ? p.kidsHeard : {};
+      const legacy = p.kidsStars && typeof p.kidsStars === 'object' ? p.kidsStars : {};
+      const raw = Number.isFinite(Math.floor(Number(k.total))) ? k.total : legacy.total;
+      const total = Math.floor(Number(raw));
       return {
         total: Number.isFinite(total) && total > 0 ? Math.min(total, 1000000) : 0,
-        days,
-        bySurah,
       };
     })(),
     // Recitation queues: capped counts, safe ids, clamped range ints.

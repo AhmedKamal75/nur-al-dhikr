@@ -260,37 +260,19 @@ export function reduceLibrary(state, action) {
       };
     }
 
-    // Kids-mode stars: one per naturally finished recitation (or quiz
-    // win). Date math via dateKey (local day) like every other daily
-    // counter here. The optional surah feeds the parent dashboard's
-    // per-surah breakdown — hostile values fall off, never in.
-    case 'KIDS_AWARD_STAR': {
-      const key = dateKey(new Date());
-      const cur = state.kidsStars && typeof state.kidsStars === 'object' ? state.kidsStars : {};
-      const days = cur.days && typeof cur.days === 'object' ? cur.days : {};
-      const bySurah =
-        cur.bySurah && typeof cur.bySurah === 'object' && !Array.isArray(cur.bySurah)
-          ? cur.bySurah
-          : {};
-      const sn = Math.floor(Number(action.surah));
-      const nextBySurah =
-        Number.isFinite(sn) && sn >= 1 && sn <= 114
-          ? { ...bySurah, [sn]: Math.min((Math.floor(Number(bySurah[sn])) || 0) + 1, 10000) }
-          : bySurah;
+    // Kids-mode plain count: one per naturally finished recitation.
+    // Degamified (v5.17.58, merged-plan item 11) — a lifetime total only,
+    // no days, no per-surah breakdown, no erase path. Hostile shapes clamp
+    // to zero so a forged blob can never crash the panel.
+    case 'KIDS_HEARD': {
+      const cur = state.kidsHeard && typeof state.kidsHeard === 'object' ? state.kidsHeard : {};
+      const total = Math.floor(Number(cur.total));
       return {
         ...state,
-        kidsStars: {
-          total: (Number(cur.total) || 0) + 1,
-          days: { ...days, [key]: (Number(days[key]) || 0) + 1 },
-          bySurah: nextBySurah,
+        kidsHeard: {
+          total: Number.isFinite(total) && total > 0 ? Math.min(total + 1, 1000000) : 1,
         },
       };
-    }
-
-    // (v5.15.0, V12) parent wipe: stars back to the initial shape. The
-    // quiz session is ephemeral (never persisted) so nothing else to clear.
-    case 'KIDS_ERASE_STARS': {
-      return { ...state, kidsStars: { total: 0, days: {} } };
     }
 
     // Kids memory-quiz session (ephemeral): prebuilt round only — the

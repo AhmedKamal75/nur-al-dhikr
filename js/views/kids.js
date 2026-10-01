@@ -1,21 +1,24 @@
 /**
- * views/kids.js — Kids mode home: big tiles, short surahs, stars.
+ * views/kids.js — Kids mode home: big tiles, short surahs, plain count.
  *
- * A calm skin over the same verse engine adults use — nothing here plays
+ * Degamified (v5.17.58, merged-plan item 11): no points, no stars, no
+ * levels, no week chart, no per-surah breakdown, no erase path. A calm
+ * skin over the same verse engine adults use — nothing here plays
  * audio any differently; it only offers a smaller world: Al-Fatiha plus
  * the short surahs at the end of the Mushaf, a giant tasbih door, and a
- * star for every surah listened to the very end. Parents enter through
- * Settings; kids leave through the hold-to-exit button (2s press, wired
- * in app/events.js) which also switches the mode back off.
+ * plain lifetime count of finished listens. The memory quiz is play
+ * without awards. Parents enter through Settings; kids leave through
+ * the hold-to-exit button (2s press, wired in app/events.js) which
+ * opens the parent gate and switches the mode back off.
  */
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { escapeHTML, dateKey } from '../core/utils.js';
+import { escapeHTML } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { skeletonSurahList } from '../ui/skeleton.js';
-import { kidsLevelFor, kidsWeek, KIDS_SURAHS } from '../domain/kids.js';
+import { KIDS_SURAHS } from '../domain/kids.js';
 
 /** Re-exported for existing importers (tests, handlers use domain directly). */
 export { KIDS_SURAHS };
@@ -23,9 +26,10 @@ export { KIDS_SURAHS };
 /** The kids' surah list lives in domain/kids.js (see re-export above). */
 
 /**
- * (v5.10.1) the surah-name memory game: "tap the surah of X" with four big
- * tiles. A correct first tap earns a star through the same KIDS_AWARD_STAR
- * path as listening (the handler owns the award, this only renders).
+ * (v5.17.58, merged-plan item 11) the surah-name memory game: "tap the
+ * surah of X" with four big tiles. Play only — a correct first tap earns
+ * nothing (the result line is the whole feedback; the handler owns the
+ * session, this only renders).
  */
 function renderKidsQuiz(state, lang, meta, quiz) {
   if (!meta) return '';
@@ -74,15 +78,12 @@ export function renderKids(state) {
   const lang = state.settings.language;
   const meta = state.quran.meta;
   const sp = state.surahPlayback;
-  const stars = state.kidsStars && typeof state.kidsStars === 'object' ? state.kidsStars : {};
-  const total = Number(stars.total) || 0;
-  const today = Number(stars.days?.[dateKey(new Date())]) || 0;
-  // (v5.10.1) progression: level derived from the lifetime total, week +
-  // per-surah breakdown for the parent panel, live quiz session (ephemeral).
-  const { level, next, progress } = kidsLevelFor(total);
-  const week = kidsWeek(stars.days);
-  const weekMax = Math.max(1, ...week.map((d) => d.count));
-  const bySurah = stars.bySurah && typeof stars.bySurah === 'object' ? stars.bySurah : {};
+  const heard = state.kidsHeard && typeof state.kidsHeard === 'object' ? state.kidsHeard : {};
+  const total = Math.floor(Number(heard.total));
+  const heardTotal = Number.isFinite(total) && total > 0 ? Math.min(total, 1000000) : 0;
+  // (v5.17.58, merged-plan item 11) degamified: a plain lifetime count of
+  // finished listens plus the live quiz session (ephemeral). No levels,
+  // no week chart, no per-surah table, no erase path.
   const quiz = state.kidsQuiz || null;
 
   // (v5.2.74, BUG-04) same honesty as the surah list: a failed quran-meta
@@ -113,31 +114,12 @@ export function renderKids(state) {
     <p class="kids-hello" dir="auto">${t('kids.hello', lang)}</p>
     <h1 class="sr-only">${t('kids.title', lang)}</h1>
 
-    <section class="panel panel--kids-stars" aria-live="polite">
-      <span class="kids-stars__icon" aria-hidden="true">${icon('star', { size: 30 })}</span>
-      <div class="kids-stars__text">
-        <span class="kids-stars__total" dir="ltr">${Number(stars.total) || 0}</span>
-        <span class="kids-stars__label">${t('kids.stars', lang)} · ${t('kids.todayStars', lang, { n: today })}</span>
+    <section class="panel panel--kids-heard" aria-live="polite">
+      <div class="kids-heard__text">
+        <span class="kids-heard__total" dir="ltr">${heardTotal}</span>
+        <span class="kids-heard__label">${t('kids.heard', lang)}</span>
       </div>
-      <p class="panel__subtext">${t('kids.starsHint', lang)}</p>
-    </section>
-
-    <section class="panel panel--kids-level" aria-label="${t('kids.level', lang)}">
-      <span class="kids-level__icon" aria-hidden="true">${icon('award', { size: 26 })}</span>
-      <div class="kids-level__text">
-        <span class="kids-level__name">${t('kids.level', lang)}: ${t(`kids.level.${level.id}`, lang)}</span>
-        <span class="panel__subtext">${
-          next
-            ? t('kids.toNext', lang, {
-                n: next.at - total,
-                level: t(`kids.level.${next.id}`, lang),
-              })
-            : t('kids.maxLevel', lang)
-        }</span>
-      </div>
-      <div class="kids-level__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(progress * 100)}" aria-label="${t('kids.level', lang)}">
-        <span class="kids-level__bar-fill" style="--fill:${Math.round(progress * 100)}%"></span>
-      </div>
+      <p class="panel__subtext">${t('kids.heardHint', lang)}</p>
     </section>
 
     <h2 class="kids-section-title">${t('kids.listen', lang)}</h2>
@@ -145,38 +127,6 @@ export function renderKids(state) {
     <div class="kids-grid">${tiles}</div>
 
     ${renderKidsQuiz(state, lang, meta, quiz)}
-
-    <section class="panel panel--kids-parent" aria-label="${t('kids.parent', lang)}">
-      <h2 class="kids-section-title">${t('kids.parent', lang)}</h2>
-      <p class="panel__subtext">${t('kids.parentHint', lang)}</p>
-      <h3 class="kids-parent__subtitle">${t('kids.weekTitle', lang)}</h3>
-      ${
-        week.some((d) => d.count > 0)
-          ? `<ol class="kids-week" dir="ltr">${week
-              .map(
-                (d) => `
-            <li class="kids-week__day">
-              <span class="kids-week__bar" style="--bar-h:${4 + Math.round((d.count / weekMax) * 44)}px" title="${escapeHTML(d.key)}: ${d.count}"></span>
-              <span class="kids-week__key">${escapeHTML(d.key.slice(5))}</span>
-              <span class="kids-week__count" dir="ltr">${d.count}</span>
-            </li>`
-              )
-              .join('')}</ol>`
-          : `<p class="panel__subtext">${t('kids.noStarsYet', lang)}</p>`
-      }
-      ${
-        Object.keys(bySurah).length
-          ? `<h3 class="kids-parent__subtitle">${t('kids.bySurah', lang)}</h3>
-      <ul class="kids-bysurah">${KIDS_SURAHS.filter((n) => bySurah[n] > 0)
-        .map((n) => {
-          const m = meta?.surahs?.find((x) => Number(x.number) === n);
-          return `<li><span dir="rtl" lang="ar">${escapeHTML(m?.nameAr || `#${n}`)}</span> <span class="kids-bysurah__count" dir="ltr">${bySurah[n]}</span></li>`;
-        })
-        .join('')}</ul>`
-          : ''
-      }
-      ${total > 0 ? `<button type="button" class="btn btn--ghost btn--sm" data-action="kids-erase">${t('kids.erase', lang)}</button>` : ''}
-    </section>
 
     <a class="kids-tasbih" href="${buildHash(VIEWS.TASBIH)}" data-action="navigate" data-view="${VIEWS.TASBIH}">
       ${icon('bead', { size: 34 })}

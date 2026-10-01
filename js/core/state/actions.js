@@ -185,12 +185,10 @@ export const actions = {
     type: 'HADITH_BOOKMARK_TOGGLE',
     key: `${String(bookId)}:${String(n)}`,
   }),
-  // Kids-mode star for a naturally finished recitation (surah optional —
-  // the parent dashboard breaks stars down per surah when it knows which).
-  awardKidsStar: (surah = null) => ({ type: 'KIDS_AWARD_STAR', surah }),
-  // (v5.15.0, V12) parent wipe: clear earned stars (fresh start, new
-  // sibling, shared device) behind a danger confirm — never silent.
-  eraseKidsStars: () => ({ type: 'KIDS_ERASE_STARS' }),
+  // Kids-mode plain count for a naturally finished recitation
+  // (v5.17.58, merged-plan item 11): no points, no awards — the quiz
+  // never dispatches this, listening only increments the heard total.
+  recordKidsHeard: () => ({ type: 'KIDS_HEARD' }),
   // Kids memory-quiz session (ephemeral): prebuilt round only, the
   // reducer never shuffles — same contract as GRAMMAR_DRILL_START.
   kidsQuizStart: (round) => ({ type: 'KIDS_QUIZ_START', round }),

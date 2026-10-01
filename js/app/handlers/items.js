@@ -880,11 +880,11 @@ export const clickHandlers = {
     store.dispatch(actions.clearSearchHistory());
   },
 
-  // (v5.10.1) kids memory quiz: build the round from live meta names (the
-  // view only offers Start once meta is loaded, this is the backstop), and
-  // answer taps award a star on a correct first answer. All session state
-  // is ephemeral (kidsQuiz, never persisted); stars persist like the
-  // listening stars through the same KIDS_AWARD_STAR path.
+  // (v5.17.58, merged-plan item 11) kids memory quiz, degamified: build
+  // the round from live meta names (the view only offers Start once meta
+  // is loaded, this is the backstop). Correct answers earn nothing — the
+  // result line is the whole feedback. All session state is ephemeral
+  // (kidsQuiz, never persisted); listening keeps its own plain count.
   'kids-quiz-start': () => {
     const st = store.getState();
     const meta = st.quran.meta;
@@ -905,33 +905,12 @@ export const clickHandlers = {
     if (!Number.isFinite(sn)) return;
     store.dispatch(actions.kidsQuizAnswer(sn));
     if (sn === q.target) {
-      store.dispatch(actions.awardKidsStar(q.target));
       showToast(t('kids.quizWin', st.settings.language));
     }
   },
 
   'kids-quiz-exit': () => {
     store.dispatch(actions.kidsQuizExit());
-  },
-
-  // (v5.15.0, V12) parent wipe, danger-confirmed: stars back to zero.
-  'kids-erase': () => {
-    const lang = store.getState().settings.language;
-    openModal(
-      buildConfirm({
-        message: t('kids.eraseConfirm', lang),
-        confirmAction: 'kids-erase-confirmed',
-        lang,
-        danger: true,
-      }),
-      { labelledBy: 'modal-title-confirm' }
-    );
-  },
-
-  'kids-erase-confirmed': () => {
-    store.dispatch(actions.eraseKidsStars());
-    closeModal();
-    showToast(t('kids.eraseDone', store.getState().settings.language));
   },
 
   // (v5.10.1) nightstand display-mode switcher (in-place, no navigation).

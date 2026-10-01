@@ -224,7 +224,7 @@ describe('reader + tiles in AR', () => {
       settings: { language: lang },
       quran: { meta },
       surahPlayback: {},
-      kidsStars: {},
+      kidsHeard: {},
     });
     const ar = renderKidsView(st('ar'));
     assert.ok(!ar.includes('kids-tile__name-en'), 'no Latin tile names in AR');

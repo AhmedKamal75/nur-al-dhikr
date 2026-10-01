@@ -51,10 +51,10 @@ export function initialState() {
     hadithMemRecords: {},
     // By-heart dhikr records: { "<itemId>": SRS record }, same ladder.
     byHeartRecords: {},
-    // Kids-mode stars: { total, days: { 'YYYY-MM-DD': n }, bySurah: { n: count } }.
-    // Awarded for finishing a recitation naturally while kids mode is on,
-    // or for winning a memory-quiz round. bySurah feeds the parent dashboard.
-    kidsStars: { total: 0, days: {} },
+    // Kids-mode plain count: { total } finished listens. Degamified
+    // (v5.17.58, merged-plan item 11) — no points, no days, no per-surah
+    // breakdown; the parent dashboard is gone, the parent gate stays.
+    kidsHeard: { total: 0 },
     // Kids memory-quiz session (ephemeral): { target, options, answered }
     // or null when idle. Deliberately NOT in PERSISTED_KEYS — a reload
     // restarts the round instead of resuming a stale question.
@@ -465,7 +465,7 @@ export const PERSISTED_KEYS = [
   'hadithNotes',
   'hadithMemRecords',
   'byHeartRecords',
-  'kidsStars',
+  'kidsHeard',
   'profiles',
   'profileStore',
   'activeProfile',

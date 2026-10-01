@@ -1,6 +1,7 @@
 /**
- * tests/kids.test.js — Kids mode: star awards + restore boundary, the
- * engine's natural-finish flag, and the Kids home render.
+ * tests/kids.test.js — Kids mode (v5.17.58, merged-plan item 11) degamified:
+ * a plain heard count + restore boundary, the engine's natural-finish
+ * flag, and the Kids home render. No stars, no levels, no awards.
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
@@ -9,34 +10,28 @@ import { initialState, PERSISTED_KEYS } from '../js/core/state/initial.js';
 import { actions } from '../js/core/state/actions.js';
 import { sanitizeRestoredPayload } from '../js/core/state/restore.js';
 import { sanitizeSettings } from '../js/core/config.js';
-import { dateKey } from '../js/core/utils.js';
 
-describe('KIDS_AWARD_STAR', () => {
-  test('accumulates total + today', () => {
-    let s = { ...initialState(), kidsStars: { total: 0, days: {} } };
-    s = reduce(s, actions.awardKidsStar());
-    s = reduce(s, actions.awardKidsStar());
-    const key = dateKey(new Date());
-    assert.equal(s.kidsStars.total, 2);
-    assert.equal(s.kidsStars.days[key], 2);
-    assert.ok(PERSISTED_KEYS.includes('kidsStars'));
+describe('KIDS_HEARD', () => {
+  test('accumulates a plain total', () => {
+    let s = { ...initialState(), kidsHeard: { total: 0 } };
+    s = reduce(s, actions.recordKidsHeard());
+    s = reduce(s, actions.recordKidsHeard());
+    assert.deepEqual(s.kidsHeard, { total: 2 });
+    assert.ok(PERSISTED_KEYS.includes('kidsHeard'));
+    assert.ok(!PERSISTED_KEYS.includes('kidsStars'));
   });
 
-  test('restore keeps sane counts only', () => {
-    const out = sanitizeRestoredPayload({
-      kidsStars: {
-        total: 'x',
-        days: { '2026-09-05': 3, nope: 9, '2026-13-99': 2 },
-        bySurah: { 114: 2, 999: 5, nope: 1 },
-      },
+  test('restore keeps a sane count and migrates the legacy stars total once', () => {
+    const out = sanitizeRestoredPayload({ kidsHeard: { total: 4, days: { '2026-09-05': 3 } } });
+    assert.deepEqual(out.kidsHeard, { total: 4 }, 'gamification payload dropped');
+    const legacy = sanitizeRestoredPayload({
+      kidsStars: { total: 5, days: { '2026-09-05': 3 }, bySurah: { 114: 2 } },
     });
-    assert.deepEqual(out.kidsStars, {
-      total: 0,
-      days: { '2026-09-05': 3 },
-      bySurah: { 114: 2 },
-    });
-    const out2 = sanitizeRestoredPayload({ kidsStars: null });
-    assert.deepEqual(out2.kidsStars, { total: 0, days: {}, bySurah: {} });
+    assert.deepEqual(legacy.kidsHeard, { total: 5 }, 'legacy total migrates');
+    const hostile = sanitizeRestoredPayload({ kidsHeard: { total: 'x' } });
+    assert.deepEqual(hostile.kidsHeard, { total: 0 });
+    const empty = sanitizeRestoredPayload({ kidsHeard: null });
+    assert.deepEqual(empty.kidsHeard, { total: 0 });
   });
 
   test('kidsMode sanitizes to boolean', () => {
@@ -74,7 +69,7 @@ describe('natural-finish flag', () => {
 });
 
 describe('Kids home render', () => {
-  test('tiles for every kids surah, escaped names, star counts', async () => {
+  test('tiles for every kids surah, escaped names, plain count', async () => {
     const { renderKids, KIDS_SURAHS } = await import('../js/views/kids.js');
     assert.ok(KIDS_SURAHS.includes(1) && KIDS_SURAHS.includes(114));
     assert.equal(KIDS_SURAHS.length, 23);
@@ -92,13 +87,15 @@ describe('Kids home render', () => {
         surahs: {},
       },
       surahPlayback: { active: true, surah: 112, ayah: 1, total: 6 },
-      kidsStars: { total: 5, days: {} },
+      kidsHeard: { total: 5 },
     };
     const html = renderKids(state);
     assert.ok(html.includes('data-surah="112"'), 'tiles carry play actions');
     assert.ok(html.includes('kids-tile--playing'), 'reciting tile marked');
-    assert.ok(html.includes('>5<'), 'star total shown');
+    assert.ok(html.includes('>5<'), 'plain count shown');
     assert.ok(html.includes('data-action="kids-exit-hold"'), 'hold-to-exit present');
     assert.ok(!html.includes('<script'), 'no markup smuggling');
+    assert.ok(!html.includes('panel--kids-level'), 'no level banner');
+    assert.ok(!html.includes('kids-week'), 'no week chart');
   });
 });
