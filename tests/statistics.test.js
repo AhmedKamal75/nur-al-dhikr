@@ -69,7 +69,10 @@ test('monthTotal sums only days in the ref month', () => {
     sessions: 1,
     itemIds: [],
   };
-  thisMonth.dailyHistory[sameMonthDay(Math.max(1, now.getDate() - 1))] = {
+  // (v5.17.54) On the 1st, "yesterday" doesn't exist in-month and on the 2nd
+  // max(2, date-1) collides with today — pick a guaranteed-distinct same-month day.
+  const otherDay = now.getDate() > 1 ? now.getDate() - 1 : 2;
+  thisMonth.dailyHistory[sameMonthDay(otherDay)] = {
     recitations: 20,
     sessions: 1,
     itemIds: [],

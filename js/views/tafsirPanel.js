@@ -528,7 +528,10 @@ function provenanceHTML(record, lang) {
   return text ? `<p class="word-study__provenance">${escapeHTML(text)}</p>` : '';
 }
 
-function wordSourcesHTML(study, lang) {
+// (v5.17.54, merged-plan item 7) exported for the inline study tray: the
+// sources block has ONE implementation (rule 6) — the tray reuses it so the
+// tray and the modal can never disagree about a word's provenance.
+export function wordSourcesHTML(study, lang) {
   const tiers = [
     ['wordStudy.contextualMeaning', study?.provenance?.contextual],
     ['wordStudy.definition', study?.provenance?.lemma],

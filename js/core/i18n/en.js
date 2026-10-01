@@ -1114,6 +1114,13 @@ export const en = {
     'These share words with the verse; they are text matches, not scholarly-linked narrations.',
   'study.hadithNone': 'No text matches in the loaded books.',
   'study.openHadith': 'Open Hadith browser',
+  // (v5.17.54, merged-plan item 7) the inline study tray: the same study
+  // panel under the tapped ayah row instead of a modal. trayTranslation
+  // names the translation edition on every panel (rule 6 provenance).
+  'study.trayTitle': 'Ayah study',
+  'study.trayClose': 'Close study',
+  'study.trayTranslation': 'Translation · {edition}',
+  'study.trayWords': 'Word by word',
   'mushaf.memorizeSurah': 'Memorize this surah',
   'mushaf.reciters': 'Reciters',
   'quran.searchShortcut': 'Search the Qur\u2019an',

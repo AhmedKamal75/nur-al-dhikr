@@ -30,6 +30,7 @@ import {
   buildTafsirPanel,
   buildWordStudyPanel,
 } from '../js/views/tafsirPanel.js';
+import { buildStudyTray } from '../js/views/studyTray.js';
 import { buildTajweedSettingsPanel } from '../js/views/tajweedSettings.js';
 import { buildPracticePicker, buildPracticeRound } from '../js/views/tajweedPracticeView.js';
 import { renderPlayerBar } from '../js/views/playerBar.js';
@@ -382,6 +383,11 @@ describe('mushaf regroup: zero feature loss', () => {
     'onboarding-install',
     'install-later',
     'install-reoffer',
+    // v5.17.54, merged-plan item 7: the inline study tray (classic reader
+    // ayah rows + mushaf translation-tray rows). Same handler/entry rule.
+    'study-tray-toggle',
+    'study-tray-close',
+    'study-tray-word',
   ]);
 
   function currentUnion() {
@@ -428,10 +434,21 @@ describe('mushaf regroup: zero feature loss', () => {
         reciterId: 'ar.alafasy',
       },
     });
+    // (v5.17.54, merged-plan item 7) the inline tray open: the mushaf
+    // translation tray carries the tray under its row, and the tray
+    // builder renders standalone — both emit the tray actions.
+    const studyTray = baseState({
+      studyTray: { surah: '1', ayah: '1', word: null, surface: null },
+      settings: {
+        mushafPrefs: { ...DEFAULT_SETTINGS.mushafPrefs, translationPanel: true },
+      },
+    });
     const surfaces = [
       renderMushaf(s),
       renderMushaf({ ...s, mushafFullscreen: true }),
       renderMushaf(tray),
+      renderMushaf(studyTray),
+      buildStudyTray(studyTray, 1, 1, 'نص'),
       buildMushafJump(s),
       buildMushafTrack(s),
       buildMushafSheet(s),

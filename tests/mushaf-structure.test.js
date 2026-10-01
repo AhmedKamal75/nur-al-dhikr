@@ -29,6 +29,10 @@ test('E: mushafReader.js imports only layers + its extracted parts', () => {
     // (v5.17.21) the jump drawer, extracted when this file crossed its
     // 800-line cap. Same rule as the others: extracted, not grown into.
     './mushafJump.js',
+    // (v5.17.54, merged-plan item 7) the inline study tray: shared by the
+    // mushaf translation tray and the classic reader, extracted so this
+    // file stays under its cap.
+    './studyTray.js',
   ];
   const offenders = importsOf(src('js/views/mushafReader.js')).filter(
     (spec) => !allowedPrefixes.some((p) => spec.startsWith(p)) && !allowedViews.includes(spec)

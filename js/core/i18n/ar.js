@@ -1058,6 +1058,11 @@ export const ar = {
   'study.hadithNote': 'هذه تشترك في ألفاظ مع الآية؛ وهي تطابقات نصية وليست أحاديث مرتبطة علميا.',
   'study.hadithNone': 'لا توجد تطابقات نصية في الكتب المحملة.',
   'study.openHadith': 'افتح متصفح الأحاديث',
+  // (v5.17.54, merged-plan item 7) — انظر المقابل الإنجليزي.
+  'study.trayTitle': 'دراسة الآية',
+  'study.trayClose': 'إغلاق الدراسة',
+  'study.trayTranslation': 'الترجمة · {edition}',
+  'study.trayWords': 'كلمة بكلمة',
   'mushaf.memorizeSurah': 'حفظ هذه السورة',
   'mushaf.reciters': 'القرّاء',
   'quran.searchShortcut': 'البحث في القرآن',

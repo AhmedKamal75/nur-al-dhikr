@@ -60,7 +60,9 @@ describe('accessibility budget (static)', () => {
     // Player bar is a toolbar (aria-labelled), not a document view; the
     // install row is a shared partial (About + Settings + wizard), not a
     // view either — both are exempt from the per-view heading rule.
-    const PARTIALS = new Set(['playerBar.js', 'installRow.js']);
+    // studyTray.js is a tray partial rendered inside ayah rows (v5.17.54),
+    // same precedent — exempt, headings live in the hosting view.
+    const PARTIALS = new Set(['playerBar.js', 'installRow.js', 'studyTray.js']);
     assert.deepEqual(
       without.filter((f) => !PARTIALS.has(f)),
       [],

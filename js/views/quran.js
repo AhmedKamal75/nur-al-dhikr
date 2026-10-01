@@ -23,6 +23,7 @@ import {
   recitationEchoHTML,
 } from '../ui/recitationConsole.js';
 import { renderAyahWords, buildBismillahHTML } from './tafsirPanel.js';
+import { buildStudyTray, isStudyTrayOpen } from './studyTray.js';
 import { BISMILLAH_AR, tajweedPrefsOf } from '../domain/tajweed.js';
 import { skeletonSurahList, skeletonAyahCards } from '../ui/skeleton.js';
 import { loadErrorStateHTML, notFoundStateHTML } from '../ui/emptyState.js';
@@ -347,6 +348,13 @@ function ayahCardDeps(state, number, num, meta, a) {
     hifzActive ? (hifzSession.level ?? null) : null,
     hifzActive ? (hifzSession.test ?? null) : null,
     hifzActive ? (hifzSession.revealed ?? null) : null,
+    // (v5.17.54, merged-plan item 7) the inline tray + everything it
+    // reads: an open/selected tray, fresh tafsir text and the active tab
+    // must rebuild the card, or the memo serves the pre-tray HTML.
+    state.studyTray,
+    state.tafsir,
+    state.tafsirEditions,
+    state.mushafSession?.tafsirTab ?? null,
   ];
 }
 
@@ -504,12 +512,22 @@ function surahReaderHTML(state, number) {
                 <button type="button" class="icon-btn icon-btn--sm" data-action="tafsir-open" data-surah="${num}" data-ayah="${a.number}" aria-label="${t('wordStudy.openTafsir', lang)}" title="${t('wordStudy.openTafsir', lang)}">
                   ${icon('book', { size: 16 })}
                 </button>
+                ${(() => {
+                  // (v5.17.54, merged-plan item 7) the inline tray toggle:
+                  // the same study panel under this row instead of a modal.
+                  // The tafsir-open modal path above stays exactly as it was.
+                  const trayOpen = isStudyTrayOpen(state, num, a.number);
+                  return `<button type="button" class="icon-btn icon-btn--sm${trayOpen ? ' icon-btn--active' : ''}" data-action="study-tray-toggle" data-surah="${num}" data-ayah="${a.number}" aria-expanded="${trayOpen}" aria-label="${t('study.trayTitle', lang)}" title="${t('study.trayTitle', lang)}">
+                  ${icon(trayOpen ? 'chevronUp' : 'chevronDown', { size: 16 })}
+                </button>`;
+                })()}
               </div>
             </div>
             <p class="ayah-card__arabic" dir="rtl" lang="ar">${arabicHTML}</p>
             ${joinTranslitLine(state, number, a.number)}
             ${showTranslation ? `<p class="ayah-card__translation" dir="auto">${escapeHTML(a.translation)}</p>` : ''}
             ${showTranslation ? cmpHTML : ''}
+            ${isStudyTrayOpen(state, num, a.number) ? buildStudyTray(state, num, a.number, a.text) : ''}
           </div>`;
             ayahCardCache.set(a, { deps: memoDeps, html: cardHTML });
             return cardHTML;

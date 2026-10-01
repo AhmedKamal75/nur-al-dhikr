@@ -159,6 +159,11 @@ export function initialState() {
     // Ephemeral — which word's grammar popover is open, if any:
     // { surah, ayah, i } | null. Never persisted; closes on navigation.
     activeWordStudy: null,
+    // (v5.17.54, merged-plan item 7) the inline study tray: which ayah row
+    // carries the study panel ({ surah, ayah, word, surface } | null).
+    // Ephemeral like activeWordStudy — NAVIGATE closes it (see shell slice)
+    // and PERSISTED_KEYS ignores it.
+    studyTray: null,
     // Curated ayah pool for the Tajweed practice/drill mode, fetched once.
     tajweedPool: null,
     // Persisted streak/accuracy stats for the drill mode.

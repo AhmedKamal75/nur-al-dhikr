@@ -3970,3 +3970,128 @@ body.has-player .reader-immersive-echo {
     outline: 2px solid Highlight;
   }
 }
+
+/* --- (v5.17.54, merged-plan item 7) the inline Qur'an study tray --------
+   The same study panel under the tapped ayah row instead of a modal, in
+   both readers. Visual contract: the Uthmani line rides the large Arabic
+   typeface; the translation NEVER shares it — small secondary text with
+   an explicit edition label on every panel. Existing tokens only, logical
+   properties only, plain text — no new custom properties, no red. */
+.study-tray {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-block-start: 1px dashed var(--color-border-strong);
+  margin-block-start: var(--space-3);
+  padding-block-start: var(--space-3);
+}
+.study-tray__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.study-tray__kicker {
+  margin: 0;
+  color: var(--color-primary-text);
+  font-size: var(--fs-caption);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+}
+.study-tray__title {
+  margin: 0;
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
+}
+.study-tray__arabic {
+  margin: 0;
+  font-family: var(--font-arabic);
+  font-size: var(--fs-arabic-card);
+  line-height: var(--lh-arabic);
+}
+.study-tray__edition {
+  margin: 0;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+.study-tray__translation {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--lh-normal);
+}
+.study-tray__translation--compare {
+  color: var(--color-text-secondary);
+  border-inline-start: 3px solid var(--color-border-strong);
+  padding-inline-start: var(--space-2);
+}
+.study-tray__words-label {
+  margin: 0;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.study-tray__words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.study-tray__chip-gloss {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  margin-inline-start: var(--space-1);
+}
+.study-tray__word-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+}
+.study-tray__word-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.study-tray__word-ar {
+  margin: 0;
+  font-family: var(--font-arabic);
+  font-size: var(--fs-md);
+  line-height: var(--lh-arabic);
+}
+.study-tray__word-en {
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+.study-tray__word-irab {
+  margin: 0;
+  font-size: var(--fs-sm);
+}
+.study-tray__word-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.study-tray__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.mushaf-tray__study {
+  display: flex;
+  flex-direction: column;
+}
+.mushaf-tray__study .study-tray {
+  border-block-start: none;
+  margin-block-start: 0;
+  padding-block-start: var(--space-2);
+}
+@media (forced-colors: active) {
+  .study-tray__title:focus {
+    outline: 2px solid Highlight;
+  }
+}

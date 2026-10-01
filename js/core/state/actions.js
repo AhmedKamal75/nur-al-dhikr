@@ -142,6 +142,17 @@ export const actions = {
     surface: typeof surface === 'string' && surface ? surface.slice(0, 140) : null,
   }),
   closeWordStudy: () => ({ type: 'WORD_STUDY_CLOSE' }),
+  // (v5.17.54, merged-plan item 7) the inline study tray: open under an
+  // ayah row (word/surface optional — a word tap inside selects it).
+  // Validation lives in the reducer — forged payloads no-op.
+  setStudyTray: (surah, ayah, word = null, surface = null) => ({
+    type: 'STUDY_TRAY_SET',
+    surah: String(surah),
+    ayah: String(ayah),
+    word: word == null ? null : Number(word),
+    surface: typeof surface === 'string' && surface ? surface.slice(0, 140) : null,
+  }),
+  closeStudyTray: () => ({ type: 'STUDY_TRAY_CLOSE' }),
   // (v5.2.75, UP-01) lemma-dict readiness + per-word bookmarks.
   setWordDict: (index) => ({ type: 'WORD_STUDY_DICT_READY', index }),
   // (v5.6.0) root-meaning readiness (ephemeral, same tier as wordDict).

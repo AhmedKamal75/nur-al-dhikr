@@ -233,6 +233,32 @@ export function reduceQuran(state, action) {
     case 'WORD_STUDY_CLOSE':
       return { ...state, activeWordStudy: null };
 
+    // (v5.17.54, merged-plan item 7) the inline study tray: which ayah row
+    // carries the study panel. Hostile-payload rules mirror WORD_STUDY_OPEN
+    // (canonical surah/ayah ints, word ≥ 1 or null, short surface); a fully
+    // hostile action no-ops and an identical set returns state (no notify).
+    case 'STUDY_TRAY_SET': {
+      const s = Math.floor(Number(action.surah));
+      const a = Math.floor(Number(action.ayah));
+      if (!(s >= 1 && s <= 114 && a >= 1 && a <= 286)) return state;
+      const w = action.word == null || action.word === '' ? null : Math.floor(Number(action.word));
+      if (w != null && !(w >= 1)) return state;
+      const surface =
+        typeof action.surface === 'string' && action.surface ? action.surface.slice(0, 140) : null;
+      const prev = state.studyTray || {};
+      if (
+        String(prev.surah) === String(s) &&
+        String(prev.ayah) === String(a) &&
+        (prev.word ?? null) === w &&
+        (prev.surface || null) === surface
+      )
+        return state;
+      return { ...state, studyTray: { surah: String(s), ayah: String(a), word: w, surface } };
+    }
+
+    case 'STUDY_TRAY_CLOSE':
+      return state.studyTray ? { ...state, studyTray: null } : state;
+
     // (v5.2.75, UP-01) lemma dictionary readiness (ephemeral) + per-word
     // bookmarks (persisted; hostile keys/caps enforced like all toggles).
     case 'WORD_STUDY_DICT_READY':

@@ -8,6 +8,7 @@ import {
   currentAyahDetailPage,
   ensureQuranRoots,
   ensureQuranWordsData,
+  ensureTafsirEditions,
   ensureTafsirText,
   ensureTajweedPool,
   ensureWordDict,
@@ -184,6 +185,23 @@ function resolveTappedWord(ds, target) {
   const word = getWord(state.quranWords, ds.surah, ds.ayah, Number(ds.i), surface);
   if (!word || typeof word.text !== 'string' || !word.text) return null;
   return { word, key };
+}
+
+/**
+ * (v5.17.54, merged-plan item 7) move keyboard focus into the freshly
+ * opened inline tray's heading (tabindex="-1"). Best-effort and async —
+ * the tray renders on the dispatch notify just above, so one frame later
+ * the node exists. Node/test runtimes have no document: guard and no-op.
+ */
+function focusStudyTray(surah, ayah) {
+  if (typeof document === 'undefined') return;
+  const sel = `[data-study-tray="${surah}:${ayah}"] .study-tray__title`;
+  const apply = () => {
+    const el = document.querySelector(sel);
+    if (el && typeof el.focus === 'function') el.focus();
+  };
+  if (typeof requestAnimationFrame === 'function') requestAnimationFrame(apply);
+  else setTimeout(apply, 0);
 }
 
 function wordStudyRequestIsCurrent(request) {
@@ -395,6 +413,23 @@ export const clickHandlers = {
     const surah = ds.surah,
       ayah = ds.ayah,
       i = Number(ds.i);
+    // (v5.17.54, merged-plan item 7) a word tap on the ayah row that
+    // carries the open inline tray selects the word INSIDE the tray —
+    // lemma/root/grammar chips under the row, never a modal. Every other
+    // word tap keeps the modal path exactly as it was.
+    const tray = store.getState().studyTray;
+    if (tray && String(tray.surah) === String(surah) && String(tray.ayah) === String(ayah)) {
+      const surface = target?.textContent?.trim().slice(0, 140) || null;
+      store.dispatch(actions.setStudyTray(surah, ayah, i, surface));
+      const st = store.getState();
+      await Promise.allSettled([
+        ensureQuranWordsData(st, surah),
+        ensureQuranRoots(st),
+        ensureWordDict(),
+        ensureRootsMeaning(),
+      ]);
+      return;
+    }
     // (v5.3.0) the tapped surface anchors popup resolution for the
     // handful of true spelling-split ayahs (37:164 etc.) where even
     // canonical indices diverge between sources.
@@ -407,6 +442,62 @@ export const clickHandlers = {
   // (v5.2.75, UP-01) per-word actions for the study popup. All resolve
   // the tapped word exactly like the popup does (surface-anchored), so
   // an action never operates on a different word than the one shown.
+  //
+  // (v5.17.54, merged-plan item 7) the inline tray's own three actions.
+  // The tray renders on dispatch (store notify → re-render); the ensures
+  // below only fill its word/tafsir tiers, and the focus move lands the
+  // keyboard inside the tray heading (Elder/a11y: the tray is natively
+  // keyboard-operable — buttons throughout — with managed focus on open).
+  'study-tray-toggle': async (ds) => {
+    const surah = parseInt(ds.surah, 10);
+    const ayah = parseInt(ds.ayah, 10);
+    if (!(surah >= 1 && surah <= 114) || !(ayah >= 1 && ayah <= 286)) return;
+    const cur = store.getState().studyTray;
+    if (cur && String(cur.surah) === String(surah) && String(cur.ayah) === String(ayah)) {
+      store.dispatch(actions.closeStudyTray());
+      return;
+    }
+    store.dispatch(actions.setStudyTray(surah, ayah, null, null));
+    focusStudyTray(surah, ayah);
+    const st = store.getState();
+    const defaultTafsir =
+      st.mushafSession?.tafsirTab || st.settings.mushafPrefs.defaultTafsir || null;
+    await Promise.allSettled([
+      ensureQuranWordsData(st, surah),
+      ensureQuranRoots(st),
+      ensureWordDict(),
+      ensureRootsMeaning(),
+      ensureTafsirEditions(st),
+      ...(defaultTafsir ? [ensureTafsirText(st, defaultTafsir, surah)] : []),
+      ...(st.quran.surahs[String(surah)] ? [] : [dispatchSurahDoc(String(surah)).catch(() => {})]),
+    ]);
+  },
+
+  'study-tray-close': () => {
+    store.dispatch(actions.closeStudyTray());
+  },
+
+  // Word chips inside the tray: select the word in place (the tray shows
+  // its lemma/root/grammar chips + sources). Never a modal — the modal
+  // word path above only runs when no tray is open for this ayah.
+  'study-tray-word': async (ds, e, target) => {
+    const surah = parseInt(ds.surah, 10);
+    const ayah = parseInt(ds.ayah, 10);
+    const i = Math.floor(Number(ds.i));
+    if (!(surah >= 1 && surah <= 114) || !(ayah >= 1 && ayah <= 286) || !(i >= 1)) return;
+    const surface =
+      (typeof ds.surface === 'string' && ds.surface.slice(0, 140)) ||
+      target?.textContent?.trim().slice(0, 140) ||
+      null;
+    store.dispatch(actions.setStudyTray(surah, ayah, i, surface));
+    const st = store.getState();
+    await Promise.allSettled([
+      ensureQuranWordsData(st, surah),
+      ensureQuranRoots(st),
+      ensureWordDict(),
+      ensureRootsMeaning(),
+    ]);
+  },
   'word-speak': (ds, e, target) => {
     const st = store.getState();
     const lang = st.settings.language;

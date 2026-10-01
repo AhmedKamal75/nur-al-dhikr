@@ -65,6 +65,10 @@ import {
 // mushafRoutePage() there.
 import { mushafRoutePage } from './mushafJump.js';
 import { renderAyahWords, buildBismillahHTML } from './tafsirPanel.js';
+// (v5.17.54, merged-plan item 7) the inline study tray lives in its own
+// module — this file stays under its 800-line cap (see
+// tests/mushaf-structure.test.js).
+import { buildStudyTray, isStudyTrayOpen } from './studyTray.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
 // (Blueprint E step 2) extracted view parts live in their own modules;
 // this file re-exports the builders so existing importers keep working.
@@ -602,7 +606,17 @@ function buildTranslationTray(state, docs, lang) {
         <button type="button" class="icon-btn icon-btn--sm" data-action="mushaf-ayah-tap" data-surah="${chapter.number}" data-ayah="${v.number}" aria-label="${t('wordStudy.openTafsir', lang)}" title="${t('wordStudy.openTafsir', lang)}">
           ${icon('book', { size: 15 })}
         </button>
-      </div>`);
+        ${(() => {
+          // (v5.17.54, merged-plan item 7) the inline tray toggle: the same
+          // study panel under this row. The book button above keeps the
+          // modal path exactly as it was.
+          const trayOpen = isStudyTrayOpen(state, chapter.number, v.number);
+          return `<button type="button" class="icon-btn icon-btn--sm${trayOpen ? ' icon-btn--active' : ''}" data-action="study-tray-toggle" data-surah="${chapter.number}" data-ayah="${v.number}" aria-expanded="${trayOpen}" aria-label="${t('study.trayTitle', lang)}" title="${t('study.trayTitle', lang)}">
+          ${icon(trayOpen ? 'chevronUp' : 'chevronDown', { size: 15 })}
+        </button>`;
+        })()}
+      </div>
+      ${isStudyTrayOpen(state, chapter.number, v.number) ? `<div class="mushaf-tray__study">${buildStudyTray(state, chapter.number, v.number, v.text)}</div>` : ''}`);
       }
     }
   }

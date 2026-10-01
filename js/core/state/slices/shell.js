@@ -93,6 +93,10 @@ export function reduceShell(state, action) {
         // (v4.5) reader immersive is likewise a reading gesture tied to
         // THIS view — leaving the classic reader restores the shell.
         readerImmersive: view === VIEWS.QURAN ? !!state.readerImmersive : false,
+        // (v5.17.54, merged-plan item 7) the inline study tray is a reading
+        // gesture tied to its ayah row — navigation anywhere closes it,
+        // exactly like the reading modes above.
+        studyTray: null,
         // (v4.5.2) manage mode is a per-surface editing gesture — it never
         // survives navigation onto a different surface (same DFA hygiene
         // as the modes above).

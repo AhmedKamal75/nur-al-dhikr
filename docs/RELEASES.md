@@ -2,6 +2,50 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.54 — The inline Qur'an study tray
+
+Merged-plan item 7. Tapping a word used to leave the reading row for a
+modal; now every ayah row carries its own Study control that renders the
+SAME study panel inline UNDER the tapped row — in the classic reader's
+ayah cards and under the mushaf translation-tray rows. Arabic first in
+the large Uthmani face, the translation beneath it in small secondary
+text with its edition named on every panel (`Translation · English —
+Sahih International`), per-word chips with lemma/root/grammar summaries,
+a selected-word detail with the shared sources block, and the tabbed
+tafsir panel with authors, compare slots and download actions verbatim.
+
+- **One panel, two homes, no drift.** The tray reuses
+  `buildAyahStudyExtras` and `wordSourcesHTML` (now exported) instead of
+  copying them, and the word-tap handler selects inside the open tray
+  instead of opening a modal there — rule 6, so tray and modal can never
+  disagree. The modal path (`tafsir-open`, `mushaf-ayah-tap`, word taps
+  with no tray open) is byte-for-byte untouched: no route, handler or
+  deep-link breakage.
+- **Honest absence, same pattern.** Missing translation and empty tafsir
+  ayahs speak through the ONE missing-data builder (item 6); AR stays
+  silent on translation absence and carries no translation line, exactly
+  the disclosure rule. Unloaded word tiers state loading; hostile
+  surah/ayah/word payloads render nothing and dispatch no-ops.
+- **Calm and plain.** Translation can never read as Uthmani (small
+  secondary class vs the Arabic typeface, test-pinned in CSS and HTML).
+  No scores, streaks, badges or celebrations anywhere in the tray.
+- Constraints held: bilingual EN+AR (4 keys twinned — `study.trayTitle`,
+  `study.trayClose`, `study.trayTranslation`, `study.trayWords`; parity
+  gate green; strict AR separation unchanged), 19/19 renderer budget
+  intact (no new view, no new static import — the tray is a shared
+  module, extracted so `mushafReader.js` stays under its 800-line cap at
+  ~760), Elder/a11y intact (native buttons throughout, tray heading
+  takes focus on open, logical properties only, existing tokens only, no
+  new custom properties), no data changes, offline-safe (one small
+  already-precached module).
+- Tests: `tests/study-tray.test.js` (21 cases — tray state incl.
+  NAVIGATE-close, under-the-row render in both readers, word chips +
+  detail + shared sources, edition/author/source labels, missing-data
+  honesty incl. AR silence, translation≠Uthmani CSS/HTML pins, parity +
+  no-gamification scans), the tray-open states added to the
+  `tests/mushaf-reorg.test.js` surface inventory, plus the
+  directly-affected e2e subset (smoke, routes-extended, study-mode).
+
 ## v5.17.53 — One honest-absence pattern for every gap
 
 Merged-plan item 6. Absence used to speak in five dialects — an Unverified
