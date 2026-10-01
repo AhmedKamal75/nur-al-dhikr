@@ -308,6 +308,7 @@ export function sanitizeSettings(raw) {
     kidsMode: asBool(s.kidsMode, d.kidsMode),
     homeOrder: sanitizeHomeOrder(s.homeOrder),
     hiddenHome: sanitizeHiddenHome(s.hiddenHome),
+    dismissedInvites: sanitizeDismissedInvites(s.dismissedInvites),
     quickOrder: sanitizeQuickOrder(s.quickOrder),
     hiddenQuick: sanitizeHiddenQuick(s.hiddenQuick),
     offline: sanitizeOfflineStatus(s.offline),
@@ -431,6 +432,39 @@ function sanitizeHiddenHome(raw) {
   if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
     for (const [k, v] of Object.entries(raw)) {
       if (HOME_PANEL_ID_SET.has(k) && isSafeKey(k) && v === true) out[k] = true;
+    }
+  }
+  return out;
+}
+
+/**
+ * (v5.17.56, merged-plan item 9) invitation ids — mirror of INVITE_IDS in
+ * domain/homeInvitations.js (kept inline so config never imports domain).
+ * Values are YYYY-MM-DD dismissal stamps: well-shaped day keys only, so a
+ * crafted backup can at most hide a card for a day, never inject markup
+ * (stamps are compared, never rendered).
+ */
+const HOME_INVITE_ID_SET = new Set(['hijri', 'friday', 'ramadan']);
+const DAY_KEY_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
+/** Strict calendar day: the components must round-trip (2025-02-30 rolls
+ *  over in Date and is therefore rejected, like sanitizeNudgeState). */
+function isStrictDayKey(v) {
+  const m = DAY_KEY_RE.exec(v);
+  if (!m) return false;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return (
+    d.getFullYear() === Number(m[1]) &&
+    d.getMonth() === Number(m[2]) - 1 &&
+    d.getDate() === Number(m[3])
+  );
+}
+function sanitizeDismissedInvites(raw) {
+  const out = {};
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    for (const [k, v] of Object.entries(raw)) {
+      if (!HOME_INVITE_ID_SET.has(k) || !isSafeKey(k)) continue;
+      if (typeof v !== 'string' || !isStrictDayKey(v)) continue;
+      out[k] = v;
     }
   }
   return out;

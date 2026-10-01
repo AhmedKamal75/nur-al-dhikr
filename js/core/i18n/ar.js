@@ -1850,6 +1850,20 @@ export const ar = {
   'mood.travel': 'سفر',
   'mood.sleep': 'قبل النوم',
   'mood.heart': 'تزكية القلب',
+  // (v5.17.56, merged-plan item 9) — انظر المقابل الإنجليزي. الدعوات
+  // بصيغة دعوة فقط، بلا عدّ أيام فائتة ولا استعجال ولا تخصيص.
+  'home.invite.hijriTitle': 'اليوم في التقويم الهجري',
+  'home.invite.hijriBody': '{hijri} · {event} في {gdate}',
+  'home.invite.hijriCta': 'افتح التقويم',
+  'home.invite.fridayTitle': 'اليوم الجمعة',
+  'home.invite.fridayBody': 'سورة الكهف قراءة محببة يوم الجمعة — افتحها متى وجدت لحظة هادئة.',
+  'home.invite.fridayCta': 'اقرأ سورة الكهف',
+  'home.invite.ramadanTitleIn': 'رمضان هنا',
+  'home.invite.ramadanBodyIn': 'اليوم {n} — رفيق الصيام جاهز متى أردت.',
+  'home.invite.ramadanTitleNear': 'رمضان يقترب',
+  'home.invite.ramadanBodyNear':
+    '{n} من الأيام حتى أول رمضان (تقديرًا) — لا استعداد مطلوب، الباب مفتوح.',
+  'home.invite.ramadanCta': 'افتح رفيق رمضان',
   'quran.recitersLink': 'القراء',
   'quran.immersiveEnter': 'قراءة بلا تشويش',
   'quran.immersiveExit': 'إنهاء القراءة بلا تشويش',

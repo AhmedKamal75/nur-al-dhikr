@@ -2,6 +2,47 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.56 — Browse-by-need below the fold + seasonal invitations
+
+Merged-plan item 9. The 12 mood chips move BELOW the adhkar grid — the
+dhikr owns the fold, the needs wait one scroll beneath it — and three calm
+invitation cards join them there: a Hijri date note (today's date plus the
+next occasion from the calendar's own event list, with the ±1–2 day tabular
+caveat said out loud), a Friday invitation into Surah Al-Kahf (shown on
+Fridays, dated by the same anchor the Jumu'ah preset recurs from), and a
+Ramadan invitation (Day N in-season, an honest countdown inside 60 days,
+silent the rest of the year).
+
+- **Invitations, not banners.** Each card carries one honest door —
+  calendar, Surah Al-Kahf (#/quran/18), the Ramadan companion — through the
+  existing `navigate` action. The dismiss button is the single new
+  data-action (`home-invite-dismiss`): it stamps the device's own today
+  into persisted settings, so "no today" survives a reload and the next
+  trigger day starts clean. Dismissal is a day's rest, never a mark.
+- **Adab, test-pinned.** Invitational language only — no missed-day
+  counting, no urgency words (no hurry/overdue/last-chance), no
+  streak/shame vocabulary, in either language. Classical need labels
+  untouched, no name or history read (no personalization), no notification
+  armed from anywhere on these cards (no push).
+- Constraints held: bilingual EN+AR (11 keys twinned —
+  `home.invite.hijriTitle/hijriBody/hijriCta`,
+  `home.invite.fridayTitle/fridayBody/fridayCta`,
+  `home.invite.ramadanTitleIn/ramadanBodyIn/ramadanTitleNear/ramadanBodyNear/ramadanCta`;
+  parity gate green; strict AR separation — AR carries no Latin outside
+  placeholders), 19/19 renderer budget intact (invitations live in a domain
+  module, home imports no view), Elder/a11y intact (native buttons with
+  bilingual labels, the existing 44px dismiss apron, logical properties,
+  no new custom properties, no headings stolen — the nudge's aside
+  precedent), no data changes, offline-safe (no new precache bytes beyond
+  edited files).
+- Tests: `tests/home-invites.test.js` (27 cases — mood order on home,
+  per-trigger render incl. Gregorian year-boundary Hijri event and
+  derived-not-pinned Ramadan countdown, dismiss-today/tomorrow/hostile
+  shapes, handler registration + device-today stamp, sanitize pins,
+  bilingual copy scans, 19/19 + CSS + no-personalization pins), plus the
+  browser's navigate-only contract updated for the one intentional dismiss
+  action, and the home e2e subset (smoke, home-fold) green on Chromium.
+
 ## v5.17.55 — Nightstand lamp mode
 
 Merged-plan item 8. The nightstand gains a fourth display mode — a warm

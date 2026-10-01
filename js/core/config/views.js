@@ -363,6 +363,11 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // are ignored at render time so newer-version backups can't blank Home.
   homeOrder: null,
   hiddenHome: {},
+  // (v5.17.56, merged-plan item 9) calm dismissal memory for the three
+  // below-fold home invitations: { [inviteId]: 'YYYY-MM-DD' } stamped on
+  // dismiss. A stamp hides its card for that day only (reloads included);
+  // the next trigger day starts clean. Sanitized like everything else.
+  dismissedInvites: {},
   // (v5.2.54) quick-tile order (null = usage-driven) + per-tile hides.
   quickOrder: null,
   hiddenQuick: {},

@@ -1937,6 +1937,22 @@ export const en = {
   'mood.travel': 'Traveling',
   'mood.sleep': 'Before sleep',
   'mood.heart': 'Purify the heart',
+  // (v5.17.56, merged-plan item 9) the three below-fold home invitations:
+  // invitational language only — no missed-day counting, no urgency words,
+  // no personalization. Placeholders mirror ar exactly (parity gate).
+  'home.invite.hijriTitle': 'The Hijri date today',
+  'home.invite.hijriBody': '{hijri} · {event} on {gdate}',
+  'home.invite.hijriCta': 'Open the calendar',
+  'home.invite.fridayTitle': 'It is Friday',
+  'home.invite.fridayBody':
+    'Surah Al-Kahf is a beloved Friday reading — open it whenever you have a quiet moment.',
+  'home.invite.fridayCta': 'Read Surah Al-Kahf',
+  'home.invite.ramadanTitleIn': 'Ramadan is here',
+  'home.invite.ramadanBodyIn': 'Day {n} — the fasting companion is ready whenever you are.',
+  'home.invite.ramadanTitleNear': 'Ramadan is approaching',
+  'home.invite.ramadanBodyNear':
+    '{n} days until 1 Ramadan (estimated) — no preparation needed, the door is open.',
+  'home.invite.ramadanCta': 'Open the Ramadan companion',
   'quran.recitersLink': 'Reciters',
   'quran.immersiveEnter': 'Immersive reading',
   'quran.immersiveExit': 'Exit immersive reading',

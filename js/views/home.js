@@ -17,6 +17,13 @@ import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';
 import { MOODS, itemsForMood } from '../domain/moods.js';
 import {
+  INVITE_IDS,
+  shouldShowInvite,
+  hijriInviteState,
+  ramadanInviteState,
+} from '../domain/homeInvitations.js';
+import { EVENT_LABELS, toHijri } from '../domain/calendar.js';
+import {
   contentPrefsOf,
   isCategoryHidden,
   visibleCategoryItems,
@@ -50,8 +57,6 @@ export function quickTilesHTML(tileIds, lang, nowWindow) {
         .join('')}
     </div>`;
 }
-import { toHijri } from '../domain/calendar.js';
-
 /** Forward/CTA chevron: points with the reading direction (U7 rule). */
 const goIcon = (lang, size) => icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size });
 
@@ -551,18 +556,19 @@ function libraryErrorHTML(state, lang) {
 }
 
 /**
- * (REORG Phase 3) Home IS the adhkar browser: the 12 moods ride a filter
- * row above a grid of named category tiles — each tile with a live item
- * count, the kept section-level completion counter, and an explicit
- * Read-now action. The 99 Names, Zakat and Certificates are re-homed into
- * a Reference row outside the daily grid: reference, not a daily worship
- * sequence.
+ * (REORG Phase 3) Home IS the adhkar browser: a grid of named category
+ * tiles — each tile with a live item count, the kept section-level
+ * completion counter, and an explicit Read-now action — with the 12 moods
+ * as a filter row BELOW the grid (v5.17.56, merged-plan item 9: the dhikr
+ * owns the fold) and the three seasonal invitations under that. The 99
+ * Names, Zakat and Certificates are re-homed into a Reference row outside
+ * the daily grid: reference, not a daily worship sequence.
  *
  * Read-only on purpose: hiding, reordering, editing and custom libraries
  * stay in the Library view (linked below), so this browser adds no
- * data-action beyond the existing `navigate` and no view import beyond
- * the domain/service helpers the Library view already reads. Routes move;
- * `data/` does not.
+ * data-action beyond the existing `navigate` and the invitations' calm
+ * `home-invite-dismiss`, and no view import beyond the domain/service
+ * helpers the Library view already reads. Routes move; `data/` does not.
  */
 const BROWSER_REFERENCE_LIBRARY_ID = 'asma';
 
@@ -721,9 +727,10 @@ function browserTileHTML(state, cat, lang) {
       </div>`;
 }
 
-/** The 12 moods promoted to a filter row above the grid — same feature as
- *  the buried Library indirection, now the front door. Chips carry the
- *  existing 44px ::after apron, so Elder/a11y targets are untouched. */
+/** The 12 moods ride a filter row BELOW the grid now (v5.17.56, merged-plan
+ *  item 9) — browse-by-need stays one tap away, but the dhikr itself owns
+ *  the fold. Chips carry the existing 44px ::after apron, so Elder/a11y
+ *  targets are untouched. */
 function browserMoodRowHTML(state, lang) {
   const index = state.library?.itemIndex;
   if (!index || !Object.keys(index).length) return '';
@@ -823,6 +830,107 @@ export function homeTodayStripHTML(state) {
   </section>`;
 }
 
+/**
+ * (v5.17.56, merged-plan item 9) the three below-fold invitations: a Hijri
+ * date note (the calendar's own event list), a Friday Al-Kahf invitation
+ * (the preset anchor's Friday), and a Ramadan countdown/companion
+ * invitation (the companion's own season math). One honest door each —
+ * calendar, Surah Al-Kahf, the Ramadan companion — navigate only; the
+ * dismiss button is the single new data-action (`home-invite-dismiss`,
+ * persisted calm dismissal through SETTINGS_UPDATE). No numbers except
+ * the Ramadan day/countdown, no names, no history read, no notification
+ * armed from here. Pure (state/date → HTML); exported for tests.
+ */
+export function homeInvitesHTML(state, today = new Date()) {
+  const lang = state.settings.language;
+  const dismissed = state.settings.dismissedInvites || {};
+  const cards = [];
+
+  const dismissBtn = (id) => `
+      <button type="button" class="icon-btn icon-btn--sm panel--nudge__dismiss" data-action="home-invite-dismiss" data-id="${id}" aria-label="${escapeHTML(t('nudge.dismiss', lang))}" title="${escapeHTML(t('nudge.dismiss', lang))}">${icon('close', { size: 13 })}</button>`;
+
+  const card = ({ id, iconName, title, line, extra, cta }) => `
+    <aside class="panel panel--nudge home-invite" data-home-invite="${id}">
+      <span class="panel--nudge__icon">${icon(iconName, { size: 20 })}</span>
+      <div class="panel--nudge__text">
+        <p class="panel--nudge__title">${title}</p>
+        <p class="panel--nudge__line">${line}</p>
+        ${extra || ''}
+        ${cta}
+      </div>
+      ${dismissBtn(id)}
+    </aside>`;
+
+  const ctaLink = (view, params, label, extraAttrs = '') => `
+        <a class="panel--nudge__cta" href="${buildHash(view, params)}" data-action="navigate" data-view="${view}"${extraAttrs}>${label} ${goIcon(lang, 12)}</a>`;
+
+  // One builder per invitation; INVITE_IDS (domain/homeInvitations.js) is
+  // the render order, so the order lives in exactly one place.
+  const builders = {
+    hijri: () => {
+      if (!shouldShowInvite('hijri', today, dismissed)) return '';
+      const st = hijriInviteState(today);
+      if (!st.eventKey || !st.eventDate) return '';
+      const hijriDate = `${st.hijri.day} ${pickLocale(st.hijri.monthName, lang)} ${st.hijri.year} ${t('home.hijriOn', lang)}`;
+      const eventLabel = EVENT_LABELS[st.eventKey]?.[lang] || EVENT_LABELS[st.eventKey]?.en;
+      const gdate = st.eventDate.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
+        month: 'short',
+        day: 'numeric',
+      });
+      return card({
+        id: 'hijri',
+        iconName: 'calendar',
+        title: escapeHTML(t('home.invite.hijriTitle', lang)),
+        // t() escapes interpolated vars; the static template stays raw.
+        line: t('home.invite.hijriBody', lang, { hijri: hijriDate, event: eventLabel, gdate }),
+        extra: `<p class="panel__subtext">${escapeHTML(t('calendar.estimateNote', lang))}</p>`,
+        cta: ctaLink(VIEWS.CALENDAR, {}, escapeHTML(t('home.invite.hijriCta', lang))),
+      });
+    },
+    friday: () => {
+      if (!shouldShowInvite('friday', today, dismissed)) return '';
+      return card({
+        id: 'friday',
+        iconName: 'quran',
+        title: escapeHTML(t('home.invite.fridayTitle', lang)),
+        line: escapeHTML(t('home.invite.fridayBody', lang)),
+        extra: '',
+        cta: ctaLink(
+          VIEWS.QURAN,
+          { id: '18' },
+          escapeHTML(t('home.invite.fridayCta', lang)),
+          ' data-id="18"'
+        ),
+      });
+    },
+    ramadan: () => {
+      if (!shouldShowInvite('ramadan', today, dismissed)) return '';
+      const st = ramadanInviteState(today);
+      const inSeason = st.mode === 'in';
+      return card({
+        id: 'ramadan',
+        iconName: 'rayah',
+        title: escapeHTML(
+          t(inSeason ? 'home.invite.ramadanTitleIn' : 'home.invite.ramadanTitleNear', lang)
+        ),
+        line: inSeason
+          ? t('home.invite.ramadanBodyIn', lang, { n: st.day })
+          : t('home.invite.ramadanBodyNear', lang, { n: st.daysUntil }),
+        extra: '',
+        cta: ctaLink(VIEWS.RAMADAN, {}, escapeHTML(t('home.invite.ramadanCta', lang))),
+      });
+    },
+  };
+
+  for (const id of INVITE_IDS) {
+    const html = builders[id]();
+    if (html) cards.push(html);
+  }
+
+  if (!cards.length) return '';
+  return `<div class="home-invites">${cards.join('')}</div>`;
+}
+
 export function adhkarBrowserHTML(state, nowWindow = null) {
   const lang = state.settings.language;
   const docs = browserDocuments(state, nowWindow);
@@ -847,8 +955,9 @@ export function adhkarBrowserHTML(state, nowWindow = null) {
       <p class="view__subtitle">${escapeHTML(t('home.browserSub', lang))}</p>
       <p class="home-browser__window">${escapeHTML(adhkarWindowLabel(nowWindow, lang))}</p>
     </div>
-    ${browserMoodRowHTML(state, lang)}
     ${sections}
+    ${browserMoodRowHTML(state, lang)}
+    ${homeInvitesHTML(state)}
     ${browserReferenceHTML(state, lang)}
     <p><a class="btn btn--ghost btn--sm" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${escapeHTML(t('home.openLibrary', lang))} ${goIcon(lang, 14)}</a></p>
   </section>`;

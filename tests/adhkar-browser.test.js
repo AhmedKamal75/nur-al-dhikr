@@ -2,8 +2,8 @@
  * tests/adhkar-browser.test.js — REORGANISATION-PLAN.md Phase 3.
  *
  * Home IS the adhkar browser: named category tiles with live counts and a
- * Read-now action per tile; the 12 moods promoted to a filter row above
- * the grid; the 99 Names / Zakat / Certificates re-homed into a Reference
+ * Read-now action per tile; the 12 moods ride a filter row below the grid
+ * (v5.17.56: the dhikr owns the fold); the 99 Names / Zakat / Certificates
  * row outside the daily grid; the section-level completion counter kept.
  *
  * Constraints pinned here: no data/corpus change (routes move, data/
@@ -57,7 +57,7 @@ function browserState({ lang = 'en', prefs = {}, counters = {} } = {}) {
 const actionsOf = (html) => new Set([...html.matchAll(/data-action="([^"]+)"/g)].map((m) => m[1]));
 
 describe('Phase 3: the mood filter row (same feature, front door)', () => {
-  test('all 12 moods ride chips above the grid, each with a live count', () => {
+  test('all 12 moods ride chips below the grid, each with a live count', () => {
     const html = adhkarBrowserHTML(browserState());
     for (const mood of MOODS) {
       assert.ok(
@@ -160,9 +160,16 @@ describe('Phase 3: the kept completion counter, honestly', () => {
 });
 
 describe('Phase 3: contracts that must not move', () => {
-  test('the browser emits navigate only — no new data-action, no interstitial', () => {
+  test('the browser emits navigate + the invitations calm dismiss — nothing else', () => {
     const html = adhkarBrowserHTML(browserState());
-    assert.deepEqual([...actionsOf(html)], ['navigate'], 'every browser tap is an existing action');
+    // (v5.17.56, merged-plan item 9) the below-fold invitations add exactly
+    // one action: home-invite-dismiss (persisted calm dismissal, handler in
+    // app/handlers/worship.js). No interstitial, no push arming.
+    assert.deepEqual(
+      [...actionsOf(html)].sort(),
+      ['home-invite-dismiss', 'navigate'],
+      'every browser tap is an existing action or the allowlisted dismiss'
+    );
   });
 
   test('home.js imports no view — the 19/19 static budget stays untouched', () => {

@@ -12,6 +12,7 @@ import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { dateKey, scrollBehavior, vibrate } from '../../core/utils.js';
 import { toHijri } from '../../domain/calendar.js';
+import { INVITE_IDS } from '../../domain/homeInvitations.js';
 import { markCelebration } from '../../domain/celebrate.js';
 import { nextRemindTime } from '../../domain/fasting.js';
 import { ramadanKhatmaPreset } from '../../domain/khatma.js';
@@ -115,6 +116,20 @@ export const clickHandlers = {
   // go quietly IS the feature.
   'nudge-dismiss': () => {
     store.dispatch(actions.dismissNudge());
+  },
+
+  // (v5.17.56, merged-plan item 9) the below-fold invitations' calm,
+  // persistent dismissal: stamps the DEVICE's own today into persisted
+  // settings (survives reloads) and ignores forged ids, so a crafted
+  // dispatch can neither hide anything else nor schedule anything. The
+  // trigger re-evaluates tomorrow — dismissal is a day's rest, never a
+  // mark against anyone.
+  'home-invite-dismiss': (ds) => {
+    if (!ds?.id || !INVITE_IDS.includes(ds.id)) return;
+    const cur = store.getState().settings.dismissedInvites || {};
+    store.dispatch(
+      actions.updateSettings({ dismissedInvites: { ...cur, [ds.id]: dateKey(new Date()) } })
+    );
   },
 
   'calendar-open-day': (ds) => {

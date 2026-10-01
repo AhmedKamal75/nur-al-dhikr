@@ -1185,6 +1185,16 @@ a.home-today__cell:hover {
   margin: 0;
 }
 
+/* (v5.17.56, merged-plan item 9) the below-fold invitations: one quiet
+   stack under the mood row. Cards reuse the nudge frame (same calm border,
+   same 44px dismiss apron, same reduced-motion behavior) — only the stack
+   gap is new. Existing tokens only, logical properties only. */
+.home-invites {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 /* Quick actions — modern horizontal cards: tinted icon tile + bold label.
    No markup change: the icon svg becomes its own tile via CSS. */
 .quick-actions {

@@ -250,9 +250,16 @@ describe('C4 chrome: the hero is one line, the wizard is one line', () => {
 });
 
 describe('C4 contracts that must not move', () => {
-  test('the browser still emits navigate only; home still imports no view', () => {
+  test('the browser emits navigate + the invitations calm dismiss; home still imports no view', () => {
     const html = adhkarBrowserHTML(homeState());
-    assert.deepEqual([...actionsOf(html)], ['navigate'], 'every browser tap is an existing action');
+    // (v5.17.56, merged-plan item 9) the below-fold invitations add exactly
+    // one action: home-invite-dismiss (persisted calm dismissal). Same
+    // intentional addition as tests/adhkar-browser.test.js.
+    assert.deepEqual(
+      [...actionsOf(html)].sort(),
+      ['home-invite-dismiss', 'navigate'],
+      'every browser tap is an existing action or the allowlisted dismiss'
+    );
     const src = readFileSync(join(ROOT, 'js/views/home.js'), 'utf8');
     assert.ok(!src.includes("from '../views/"), 'the 19/19 static budget stays untouched');
     const panelSrc = readFileSync(join(ROOT, 'js/views/onboardingPanel.js'), 'utf8');
