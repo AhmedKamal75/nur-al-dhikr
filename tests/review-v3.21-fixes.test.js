@@ -331,7 +331,7 @@ describe('review v3.21: persisted day-dedup helpers', () => {
 /* ------------------------------------------------------------------ */
 
 describe('review v3.21: view honesty under real data shapes', () => {
-  test('hifz card reports the TRUE due count, not the display cap', () => {
+  test('hifz card shows names only: true queue, no counts on Home (ledger keeps them)', () => {
     const today = new Date();
     const iso = (offset) => {
       const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + offset);
@@ -354,11 +354,12 @@ describe('review v3.21: view honesty under real data shapes', () => {
       quran: {},
       mushaf: {},
     });
-    assert.ok(
-      html.includes('6 due for review'),
-      `expected true count in HTML; got: ${html.match(/[^]*panel__subtext[^]*?</)?.[0]}`
-    );
+    // (v5.17.57, merged-plan item 10) Home carries no counts — the six
+    // due surahs surface as four name-only chips plus the ledger door.
+    assert.ok(html.includes('Available review'), 'gentle title renders');
+    assert.ok(!html.includes('6 due for review'), 'no due-today count on Home');
     assert.equal((html.match(/class="chip"/g) || []).length, 4, 'display stays capped at 4 chips');
+    assert.ok(html.includes('data-view="statistics"'), 'counts live one tap away, in the ledger');
   });
 
   test('worship card tolerates a non-array sadaqahLog', () => {

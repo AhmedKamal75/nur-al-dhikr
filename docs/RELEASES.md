@@ -2,6 +2,42 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.57 — The gentle queue: Available review on Home, counts in the private ledger
+
+Merged-plan item 10. The memorization queue stops counting on Home and
+starts inviting: the hifz card and the review digest are retitled
+"Available review" / "مراجعة متاحة", chips carry names only (no +N
+overdue, no due-today line, no total badge), and the progress panel drops
+its streak KPI. Every count those panels used to show still exists — one
+tap away in the private practice ledger, the Statistics memorization
+panel, which keeps the honest surah/ayah numbers under the same gentle
+header.
+
+- **Pause, not fail.** Every touched surface states the same promise in
+  both languages: pause anytime, your place is saved. Khatma verdicts
+  lose "behind" and the daily catch-up (and their warn styling), the
+  prayer insight becomes "a gentle return to" with no miss count, and
+  streak coaching keeps its milestones with a pause clause. No red
+  badges, no catch-up copy, no new heat map, no loss implied anywhere.
+- Constraints held: bilingual EN+AR (retitled `hifz.cardTitle`,
+  `home.reviewTitle`, `stats.reviewDue`; reworded `hifz.memorizedBadge`,
+  `hifz.dueToday`, `stats.reviewDueEmpty`, `stats.streakToGo/Eve`,
+  `khatma.behind/behindSchedule`, `plog.mostMissed`; new
+  `hifz.availableHint`, `hifz.openLedger`, `home.reviewGentle`; two
+  count-coupled Home keys retired with their badges — parity and orphan
+  gates green), Elder/a11y intact (native links/buttons, existing
+  classes only, no new custom properties, logical properties untouched),
+  no data changes (domain math and record shapes byte-identical — copy +
+  placement only), offline-safe (no new precache bytes beyond edited
+  files).
+- Tests: `tests/gentle-ledger.test.js` (14 cases — banned
+  overdue/shame words on full Home EN+AR, counts-hidden-on-Home +
+  present-in-ledger pins, ledger empty-state tone, khatma/prayer/coaching
+  pause-not-fail), plus the three suites that asserted the retired copy
+  updated to the new contract (`homePanels`, `review-v3.21-fixes`,
+  `p2-roadmap-fixes`), and the home/statistics e2e subset green on
+  Chromium.
+
 ## v5.17.56 — Browse-by-need below the fold + seasonal invitations
 
 Merged-plan item 9. The 12 mood chips move BELOW the adhkar grid — the

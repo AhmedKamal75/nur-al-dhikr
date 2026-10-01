@@ -68,11 +68,15 @@ function refDate(ref) {
 
 /**
  * (v5.2.75, UP-05) memorization digest + juz reading strip. The global
- * "due today" counts (surah tracks + ayah tracks) deep-link into the
- * reader at the first due surah; the 30-cell strip shows pages read per
+ * available-review counts (surah tracks + ayah tracks) deep-link into the
+ * reader at the first available surah; the 30-cell strip shows pages read per
  * juz from the khatma machinery's own mushafPagesRead. Empty states keep
  * the nudge tone (no dates, no counts, no shaming); the whole panel stays
  * hidden until there is anything to digest or map.
+ *
+ * (v5.17.57, merged-plan item 10) this panel is the private practice
+ * ledger: counts live HERE, never on Home — pause-not-fail words, the
+ * numbers stay honest.
  */
 export function memorizationPanel(state, lang) {
   const today = dateKey(new Date());

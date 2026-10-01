@@ -87,7 +87,7 @@ describe('UX-1 fresh-install density cap', () => {
 });
 
 describe('(v5.6.0, B-1) review-due digest panel', () => {
-  test('silent until anything is due; counts + deep links per memory', async () => {
+  test('silent until anything is due; links per memory, counts in the ledger', async () => {
     const { reviewDigestCardHTML } = await import('../js/views/home.js');
     const base = {
       settings: { language: 'en' },
@@ -104,9 +104,12 @@ describe('(v5.6.0, B-1) review-due digest panel', () => {
       tajweedMissRecords: { ghunnah: { m: 1, l: '2026-09-01' } },
     };
     const html = reviewDigestCardHTML(due);
-    assert.match(html, /Due for review/, 'title renders');
-    // Total = 1 hifz + 1 quiz + 1 tajweed.
-    assert.match(html, /3/, 'total count renders');
+    assert.match(html, /Available review/, 'gentle title renders');
+    // (v5.17.57, merged-plan item 10) Home carries no totals: no badge,
+    // no per-row counts — the ledger (Statistics) keeps them, linked below.
+    assert.doesNotMatch(html, /streak-badge/, 'no total badge on Home');
+    assert.doesNotMatch(html, /chip__count/, 'no per-row counts on Home');
+    assert.match(html, /data-view="statistics"/, 'the ledger door is linked');
     // Hifz row deep-links into memorize mode for the first due surah.
     assert.match(html, /mem/, 'hifz row links to memorize mode');
     // Quiz row links to the quiz view (which owns its review flow).
@@ -130,7 +133,7 @@ describe('(v5.6.0, B-1) review-due digest panel', () => {
       quizMissRecords: {},
       tajweedMissRecords: { ghunnah: { m: 1, l: '2026-09-01' } },
     });
-    assert.match(html, /المستحق للمراجعة/, 'AR title renders');
+    assert.match(html, /مراجعة متاحة/, 'AR gentle title renders');
     assert.match(html, /مراجعة الأخطاء/, 'AR review action renders');
   });
 });

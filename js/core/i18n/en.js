@@ -373,7 +373,7 @@ export const en = {
   'hifz.mcqDealing': 'Preparing your question…',
   'hifz.rehide': 'Hide again',
   'hifz.markMemorized': 'Mark memorized',
-  'hifz.memorizedBadge': 'Memorized · review due {date}',
+  'hifz.memorizedBadge': 'Memorized · available {date}',
   'hifz.recalled': 'Recalled',
   'hifz.struggled': 'Struggled',
   'hifz.again': 'Again',
@@ -381,10 +381,15 @@ export const en = {
   'hifz.good': 'Good',
   'hifz.easy': 'Easy',
   'hifz.mistakes': 'Mistakes by ayah',
-  'hifz.cardTitle': 'Hifz review',
+  'hifz.cardTitle': 'Available review',
   'hifz.memorizedCount': '{n} surahs memorized',
-  'hifz.dueToday': '{n} due for review',
+  'hifz.dueToday': '{n} available for review',
   'hifz.suggestHint': 'Fully read — ready to memorize:',
+  // (v5.17.57, merged-plan item 10) gentle queue: counts live in the
+  // private ledger (Statistics), never on Home — pause, place saved.
+  'hifz.availableHint':
+    'Your memorized surahs wait gently — pause anytime, your place is saved. Counts live in your private ledger.',
+  'hifz.openLedger': 'Open private ledger',
   'audio.play': 'Play',
   'audio.pause': 'Pause',
   // (v5.10.5) playback-mode toggle: ayah-by-ayah engine vs whole-surah file.
@@ -590,8 +595,13 @@ export const en = {
   'home.eveningShortcut': 'Evening Adhkar',
   'home.dailyProgress': 'Today\u2019s Progress',
   // (v5.6.0, B-1) review-due digest — shame-free nudge copy.
-  'home.reviewTitle': 'Due for review',
-  'home.reviewTotal': '{n} waiting — a few minutes keeps them fresh.',
+  // (v5.17.57, merged-plan item 10) gentle queue: Home carries no counts,
+  // no due-today — the private ledger (Statistics) keeps them. The old
+  // count line and the Home streak KPI were deleted with the badges that
+  // rendered them (orphan gate); the ledger keeps its own stats.* keys.
+  'home.reviewTitle': 'Available review',
+  'home.reviewGentle':
+    'Anything ready lives in your private ledger — pause anytime, your place is saved.',
   'home.reviewHifz': 'Hifz',
   // (merged-plan item 2) unified last-position resume — words + numbers,
   // never pressure: no streaks, no counts of absence, no shame.
@@ -615,7 +625,8 @@ export const en = {
   'home.theme.gratitude': 'Gratitude',
   'home.theme.guidance': 'Guidance',
   'home.theme.paradise': 'Paradise',
-  'home.streak': 'Day Streak',
+  // (v5.17.57, merged-plan item 10) the Home streak KPI is gone — streaks
+  // live in the private ledger (Statistics) under stats.* keys.
   'home.noRecent': 'Nothing read yet today. Open a category to begin.',
   'home.blankPage': 'A blank page, waiting warmly',
   'home.firstSeed': 'The garden grows its first seed — may Allah bless you.',
@@ -1787,9 +1798,11 @@ export const en = {
   'stats.avgPerDay': 'Avg / Day (30d)',
   // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
   // follows the nudge tone rules: no dates, no counts, no shaming.
-  'stats.reviewDue': 'Review due',
+  // (v5.17.57, merged-plan item 10) the Statistics panel is the private
+  // ledger: counts live here, in pause-not-fail words.
+  'stats.reviewDue': 'Available review',
   'stats.reviewDueLine': '{s} surahs · {a} ayahs',
-  'stats.reviewDueEmpty': 'All caught up — nothing due today.',
+  'stats.reviewDueEmpty': 'Nothing ready right now — your place is saved.',
   'stats.juzTitle': 'Reading by juz',
   'stats.juzCell': 'Part {n}: {r} of {t} pages',
   'stats.khatmaProgress': 'Khatma progress',
@@ -1801,8 +1814,9 @@ export const en = {
   'stats.goalMet': 'Goal met — barakallahu feek!',
   'stats.goalLeft': '{n} to go',
   'stats.streakCoachTitle': 'Streak coaching',
-  'stats.streakToGo': '{n} days to your {m}-day milestone',
-  'stats.streakEve': 'One morning left to your {m}-day milestone — God willing.',
+  'stats.streakToGo': '{n} days to your {m}-day milestone — pausing keeps your place saved.',
+  'stats.streakEve':
+    'One morning left to your {m}-day milestone — God willing. Pausing keeps your place saved.',
   'stats.streakTop': 'Every milestone cleared — may Allah keep your light firm.',
   'stats.topSurahs': 'Most-read surahs',
   'stats.pagesRead': '{n} pages',
@@ -1893,8 +1907,10 @@ export const en = {
   'khatma.projected': 'At this pace: {date}',
   'khatma.onTrack': 'On track',
   'khatma.ahead': 'Ahead of schedule',
-  'khatma.behind': '{n} pages behind today’s target',
-  'khatma.behindSchedule': 'Behind schedule — a small daily catch-up will bring it back.',
+  // (v5.17.57, merged-plan item 10) pause-not-fail: the plan states
+  // where you are, never what you lost — no behind, no catch-up.
+  'khatma.behind': '{n} pages to your own target — pausing is fine, your place is saved.',
+  'khatma.behindSchedule': 'Paused is fine — your place is saved, return whenever you wish.',
   'khatma.completeBanner': 'Khatma complete — may Allah accept it from you.',
   // (v5.6.0, B-4) juz milestone row.
   'khatma.juzDone': 'Juz {done} of {total} complete',
@@ -1914,7 +1930,9 @@ export const en = {
   // (v5.10.1) 30-day log insights (positive framing, same anti-guilt rule).
   'plog.rate30': '{n}% of prayers logged in the last 30 days',
   'plog.jamaahRate': '{n}% of logged prayers in congregation',
-  'plog.mostMissed': 'Most often missed: {prayer} ({n})',
+  // (v5.17.57, merged-plan item 10) pause-not-fail: a gentle return,
+  // never a miss count — the ledger keeps numbers, this line keeps adab.
+  'plog.mostMissed': 'A gentle return to: {prayer}',
   'plog.bestStreak': 'Best streak: {n} days',
   'plog.state.prayed': 'Prayed',
   'plog.state.jamaah': 'In congregation',

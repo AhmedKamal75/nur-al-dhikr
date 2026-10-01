@@ -160,7 +160,9 @@ describe('UP-05: SRS due digest + juz strip', () => {
       ...over,
     });
     const html = memorizationPanel(st(), 'en');
-    assert.match(html, /Review due/, 'digest header renders');
+    // (v5.17.57, merged-plan item 10) the ledger header is gentle;
+    // the counts live HERE, never on Home.
+    assert.match(html, /Available review/, 'gentle ledger header renders');
     assert.match(html, /1 surahs · 0 ayahs/, 'counts render');
     assert.match(html, /data-view="quran" data-id="2"/, 'deep-links to the due surah reader');
     assert.equal((html.match(/class="juz-chip/g) || []).length, 30, '30 chips render');
@@ -178,7 +180,9 @@ describe('UP-05: SRS due digest + juz strip', () => {
       },
       'en'
     );
-    assert.match(caughtUp, /All caught up/, 'no numbers, no shaming');
+    assert.match(caughtUp, /your place is saved/, 'pause-not-fail, no numbers, no shaming');
+    assert.ok(!caughtUp.toLowerCase().includes('caught up'), 'no catch-up copy');
+    assert.ok(!caughtUp.toLowerCase().includes('nothing due'), 'no due-today copy');
     assert.doesNotMatch(caughtUp, /data-view="quran"/, 'no reader link without dues');
     const empty = memorizationPanel(
       {

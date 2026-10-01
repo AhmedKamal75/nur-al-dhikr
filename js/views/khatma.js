@@ -60,8 +60,10 @@ export function buildMushafTrack(state) {
         `<span class="mushaf-khatma__bit">${t('khatma.projected', lang, { date: fmtDate(status.projectedFinishISO) })}</span>`
       );
     }
-    // One honest verdict, in priority order: finished > behind the daily
-    // schedule > ahead of the daily schedule > pace/projection verdicts.
+    // One honest verdict, in priority order: finished > the daily
+    // target in pause-not-fail words > ahead > pace/projection verdicts.
+    // (v5.17.57, merged-plan item 10) no warn styling, no behind, no
+    // catch-up: pausing is stated, the place is saved, loss never implied.
     let verdictText = '';
     let verdictCls = '';
     let verdictCelebrate = false;
@@ -74,7 +76,7 @@ export function buildMushafTrack(state) {
       verdictCelebrate = justCompletedKhatma(state);
     } else if (status.behindBy > 0) {
       verdictText = t('khatma.behind', lang, { n: status.behindBy });
-      verdictCls = 'mushaf-khatma__verdict--warn';
+      verdictCls = '';
     } else if (status.todayEnd && status.read >= status.todayEnd) {
       verdictText = t('khatma.ahead', lang);
       verdictCls = 'mushaf-khatma__verdict--good';
@@ -83,7 +85,7 @@ export function buildMushafTrack(state) {
       verdictCls = 'mushaf-khatma__verdict--good';
     } else if (status.onTrack === false) {
       verdictText = t('khatma.behindSchedule', lang);
-      verdictCls = 'mushaf-khatma__verdict--warn';
+      verdictCls = '';
     }
     planRows = `
     <div class="mushaf-khatma__bits">${bits.map((b) => `<span class="mushaf-khatma__bitwrap">${b}</span>`).join('')}</div>

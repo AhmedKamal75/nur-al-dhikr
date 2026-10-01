@@ -212,8 +212,10 @@ export function renderPrayer(state) {
         <p class="plog-insights__row">${icon('stats', { size: 15 })} ${t('plog.rate30', lang, { n: Math.round(insights.rate * 100) })}</p>
         <p class="plog-insights__row">${icon('mosque', { size: 15 })} ${t('plog.jamaahRate', lang, { n: Math.round(insights.jamaahRate * 100) })}</p>
         ${
+          // (v5.17.57, merged-plan item 10) pause-not-fail: a gentle
+          // return, never a miss count — numbers live in the ledger.
           insights.mostMissed
-            ? `<p class="plog-insights__row">${icon('info', { size: 15 })} ${t('plog.mostMissed', lang, { prayer: t(`prayer.${insights.mostMissed}`, lang), n: insights.missedByPrayer[insights.mostMissed] })}</p>`
+            ? `<p class="plog-insights__row">${icon('info', { size: 15 })} ${t('plog.mostMissed', lang, { prayer: t(`prayer.${insights.mostMissed}`, lang) })}</p>`
             : ''
         }
         ${

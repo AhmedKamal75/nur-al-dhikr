@@ -353,7 +353,7 @@ export const ar = {
   'hifz.mcqDealing': 'جارٍ تجهيز سؤالك…',
   'hifz.rehide': 'إخفاء من جديد',
   'hifz.markMemorized': 'أتمم الحفظ',
-  'hifz.memorizedBadge': 'محفوظة · المراجعة {date}',
+  'hifz.memorizedBadge': 'محفوظة · متاحة {date}',
   'hifz.recalled': 'أتقنتها',
   'hifz.struggled': 'صعُبت عليّ',
   'hifz.again': 'مرة أخرى',
@@ -361,10 +361,14 @@ export const ar = {
   'hifz.good': 'جيد',
   'hifz.easy': 'سهل',
   'hifz.mistakes': 'الأخطاء حسب الآية',
-  'hifz.cardTitle': 'مراجعة الحفظ',
+  'hifz.cardTitle': 'مراجعة متاحة',
   'hifz.memorizedCount': 'تم حفظ {n} سورة',
-  'hifz.dueToday': '{n} مستحقة للمراجعة',
+  'hifz.dueToday': '{n} متاحة للمراجعة',
   'hifz.suggestHint': 'قرأتها كاملة — جاهزة للحفظ:',
+  // (v5.17.57, merged-plan item 10) انظر التعليق المقابل في en.js.
+  'hifz.availableHint':
+    'سورك المحفوظة بانتظارك بلطف — توقّف متى شئت ومكانك محفوظ. العدّ في سجلّك الخاص.',
+  'hifz.openLedger': 'افتح السجلّ الخاص',
   'audio.play': 'تشغيل',
   'audio.pause': 'إيقاف مؤقت',
   // (v5.10.5) مفتاح وضع التشغيل: محرك الآيات مقابل ملف السورة.
@@ -556,8 +560,9 @@ export const ar = {
   'home.eveningShortcut': 'أذكار المساء',
   'home.dailyProgress': 'تقدم اليوم',
   // (v5.6.0, B-1) ملخص المستحق للمراجعة.
-  'home.reviewTitle': 'المستحق للمراجعة',
-  'home.reviewTotal': '{n} بانتظارك — دقائق قليلة تُبقيها حاضرة.',
+  // (v5.17.57, merged-plan item 10) انظر التعليق المقابل في en.js.
+  'home.reviewTitle': 'مراجعة متاحة',
+  'home.reviewGentle': 'كل ما جهز في سجلّك الخاص — توقّف متى شئت ومكانك محفوظ.',
   'home.reviewHifz': 'الحفظ',
   // (merged-plan item 2) ذاكرة المواضع الأخيرة — كلمات وأرقام فقط،
   // دون أي ضغط: لا سلاسل، لا عدّ للغياب، لا توبيخ.
@@ -581,7 +586,7 @@ export const ar = {
   'home.theme.gratitude': 'الشكر',
   'home.theme.guidance': 'الهداية',
   'home.theme.paradise': 'الجنة',
-  'home.streak': 'أيام متتالية',
+  // (v5.17.57, merged-plan item 10) انظر التعليق المقابل في en.js.
   'home.noRecent': 'لم تقرأ شيئًا اليوم بعد. افتح قسمًا للبدء.',
   'home.blankPage': 'صفحة بيضاء تنتظرك بودّ',
   'home.firstSeed': 'البستان ينبت أول بذرة — بارك الله فيك.',
@@ -1707,9 +1712,10 @@ export const ar = {
   'stats.avgPerDay': 'المعدل اليومي (٣٠ يومًا)',
   // v5.2.75 memorization digest + juz strip (UP-05). Empty-state copy
   // follows the nudge tone rules: no dates, no counts, no shaming.
-  'stats.reviewDue': 'مراجعة مستحقة',
+  // (v5.17.57, merged-plan item 10) انظر التعليق المقابل في en.js.
+  'stats.reviewDue': 'مراجعة متاحة',
   'stats.reviewDueLine': '{s} سور · {a} آيات',
-  'stats.reviewDueEmpty': 'لا شيء مستحق اليوم — أحسنت المتابعة.',
+  'stats.reviewDueEmpty': 'لا شيء جاهز الآن — مكانك محفوظ.',
   'stats.juzTitle': 'القراءة حسب الأجزاء',
   'stats.juzCell': 'الجزء {n}: {r} من {t} صفحة',
   'stats.khatmaProgress': 'تقدم الختمة',
@@ -1721,8 +1727,8 @@ export const ar = {
   'stats.goalMet': 'تحقق الهدف — بارك الله فيك!',
   'stats.goalLeft': 'بقي {n}',
   'stats.streakCoachTitle': 'تدريب السلسلة',
-  'stats.streakToGo': '{n} أيام إلى إنجاز {m} يومًا',
-  'stats.streakEve': 'بقي صباح واحد على إنجاز {m} يومًا — إن شاء الله.',
+  'stats.streakToGo': '{n} أيام إلى إنجاز {m} يومًا — التوقف يحفظ مكانك.',
+  'stats.streakEve': 'بقي صباح واحد على إنجاز {m} يومًا — إن شاء الله. التوقف يحفظ مكانك.',
   'stats.streakTop': 'كل الإنجازات محققة — ثبّت الله نورك.',
   'stats.topSurahs': 'السور الأكثر قراءة',
   'stats.pagesRead': '{n} صفحات',
@@ -1808,8 +1814,9 @@ export const ar = {
   'khatma.projected': 'بهذه الوتيرة: {date}',
   'khatma.onTrack': 'على المسار',
   'khatma.ahead': 'متقدّم على الجدول',
-  'khatma.behind': 'متأخر بـ{n} صفحة عن هدف اليوم',
-  'khatma.behindSchedule': 'متأخر عن الجدول — جدول يومي بسيط يعيدك إلى المسار.',
+  // (v5.17.57, merged-plan item 10) انظر التعليق المقابل في en.js.
+  'khatma.behind': '{n} صفحة نحو هدفك — التوقف لا بأس به ومكانك محفوظ.',
+  'khatma.behindSchedule': 'التوقف لا بأس به — مكانك محفوظ وعُد متى شئت.',
   'khatma.completeBanner': 'أتممت الختمة — تقبّل الله منك.',
   // (v5.6.0, B-4) سطر مراحل الأجزاء.
   'khatma.juzDone': 'أتممت {done} من {total} جزءًا',
@@ -1828,7 +1835,8 @@ export const ar = {
   // (v5.10.1) رؤى سجل 30 يومًا.
   'plog.rate30': '{n}٪ من الصلوات مسجلة في آخر 30 يومًا',
   'plog.jamaahRate': '{n}٪ من الصلوات المسجلة جماعة',
-  'plog.mostMissed': 'الأكثر فواتًا: {prayer} ({n})',
+  // (v5.17.57, merged-plan item 10) انظر التعليق المقابل في en.js.
+  'plog.mostMissed': 'عودة لطيفة إلى: {prayer}',
   'plog.bestStreak': 'أفضل سلسلة: {n} يوم',
   'plog.state.prayed': 'صُلّيت',
   'plog.state.jamaah': 'صُلّيت جماعة',

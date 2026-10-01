@@ -968,7 +968,6 @@ export function renderHome(state) {
   const today = selectors.todayStats(state);
   const goal = state.settings.dailyGoal || 100;
   const pct = Math.min(100, Math.round((today.recitations / Math.max(1, goal)) * 100));
-  const streak = state.statistics.currentStreak || 0;
 
   const dailyPick = pickDailyItem(state.library.itemIndex, state.settings.dailyAyahTheme);
   // (v5.2.25) feed queue: done-today and session-dismissed items never
@@ -1057,11 +1056,13 @@ export function renderHome(state) {
     // slots, one honest record (see resumePanelHTML above). The panel id
     // stays 'continue' so saved orders and hides keep working.
     continue: resumePanelHTML(state),
+    // (v5.17.57, merged-plan item 10) the progress panel carries no
+    // streak KPI: counts live in the private ledger (Statistics), Home
+    // keeps the day's bar only — pause, never fail.
     progress: `
     <section class="panel panel--progress">
       <div class="panel__header">
         <h2>${t('home.dailyProgress', lang)}</h2>
-        <span class="streak-badge">${icon('flame', { size: 16 })} ${streak} ${t('home.streak', lang)}</span>
       </div>
       <div class="progress-bar" role="progressbar" aria-label="${t('home.dailyProgress', lang)}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
         <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
@@ -1185,13 +1186,18 @@ export function renderHome(state) {
  * yet memorized are offered as honest "ready to memorize" suggestions.
  * Computed from persisted records only — zero network, zero boot cost; the
  * card is silently absent until the person has actually marked something.
+ *
+ * (v5.17.57, merged-plan item 10) the gentle queue: the title is
+ * "Available review", chips carry names only (no +N overdue, no due-today
+ * line, no totals) — counts live in the private ledger (Statistics),
+ * linked below. Pause-not-fail: pausing is stated, loss never implied.
  */
 export function hifzReviewCardHTML(state) {
   const lang = state.settings.language;
   const records = state.hifzRecords ?? {};
   const memorized = countMemorized(records);
-  // (review v3.21): count BEFORE the display cap — with 7 surahs due the
-  // card used to claim “4 due for review”.
+  // (review v3.21): count BEFORE the display cap — the cap bounds chips,
+  // never words: Home shows no counts at all now (ledger keeps them).
   const dueAll = dueSurahs(records);
   const due = dueAll.slice(0, 4);
   const surahMetas = state.quran.meta?.surahs ?? null;
@@ -1216,7 +1222,6 @@ export function hifzReviewCardHTML(state) {
       (d) => `
       <a class="chip" href="${buildHash(VIEWS.QURAN, { id: d.surah, mem: '1' })}" title="${t('hifz.memorizedBadge', lang, { date: d.due })}">
         ${escapeHTML(nameOf(d.surah))}
-        ${d.overdue > 0 ? `<span class="chip__count" dir="ltr">+${d.overdue}</span>` : ''}
       </a>`
     )
     .join('');
@@ -1232,9 +1237,7 @@ export function hifzReviewCardHTML(state) {
     <div class="panel__header">
       <h2>${icon('target', { size: 16 })} ${t('hifz.cardTitle', lang)}</h2>
     </div>
-    <p class="panel__subtext">
-      ${t('hifz.memorizedCount', lang, { n: memorized })}${dueAll.length ? ` \u00b7 ${t('hifz.dueToday', lang, { n: dueAll.length })}` : ''}
-    </p>
+    <p class="panel__subtext">${escapeHTML(t('hifz.availableHint', lang))}</p>
     ${dueChips ? `<div class="chip-row chip-row--scroll">${dueChips}</div>` : ''}
     ${
       suggChips
@@ -1243,15 +1246,20 @@ export function hifzReviewCardHTML(state) {
     <div class="chip-row chip-row--scroll">${suggChips}</div>`
         : ''
     }
+    <p><a class="btn btn--ghost btn--sm" href="${buildHash(VIEWS.STATISTICS)}" data-action="navigate" data-view="${VIEWS.STATISTICS}">${escapeHTML(t('hifz.openLedger', lang))} ${goIcon(lang, 14)}</a></p>
   </section>`;
 }
 
 /**
  * (v5.6.0, B-1) "Due for review" digest: one daily nudge aggregating the
  * three persisted memories — hifz lapses (surah + ayah level), 99-names
- * quiz misses, tajweed weak rules — into a single count with a deep link
- * per row. Silent until anything is actually due. Counts only; the owning
- * views keep the detail (this panel never duplicates them).
+ * quiz misses, tajweed weak rules — into deep links per row. Silent until
+ * anything is actually due. Links only; the owning views keep the detail
+ * (this panel never duplicates them).
+ *
+ * (v5.17.57, merged-plan item 10) the gentle ledger door: no total badge,
+ * no per-row counts — counts live in the private ledger (Statistics),
+ * linked below. Pause-not-fail: pausing is stated, loss never implied.
  */
 export function reviewDigestCardHTML(state) {
   const lang = state.settings.language;
@@ -1273,14 +1281,14 @@ export function reviewDigestCardHTML(state) {
   <section class="panel panel--review-digest">
     <div class="panel__header">
       <h2>${icon('repeat', { size: 16 })} ${t('home.reviewTitle', lang)}</h2>
-      <span class="streak-badge" dir="ltr">${total}</span>
     </div>
-    <p class="panel__subtext">${t('home.reviewTotal', lang, { n: total })}</p>
+    <p class="panel__subtext">${escapeHTML(t('home.reviewGentle', lang))}</p>
     <div class="review-digest__rows">
-      ${hifzN ? row(`<a class="chip" href="${hifzHref}" data-action="navigate" data-view="${VIEWS.QURAN}">${escapeHTML(t('home.reviewHifz', lang))} <span class="chip__count" dir="ltr">${hifzN}</span></a>`) : ''}
-      ${quizN ? row(`<a class="chip" href="${buildHash(VIEWS.QUIZ)}" data-action="navigate" data-view="${VIEWS.QUIZ}">${escapeHTML(t('quiz.title', lang))} <span class="chip__count" dir="ltr">${quizN}</span></a>`) : ''}
-      ${tajweedN ? row(`<button type="button" class="chip" data-action="practice-start" data-rule="review">${icon('repeat', { size: 13 })} ${escapeHTML(t('practice.reviewMistakes', lang))} <span class="chip__count" dir="ltr">${tajweedN}</span></button>`) : ''}
+      ${hifzN ? row(`<a class="chip" href="${hifzHref}" data-action="navigate" data-view="${VIEWS.QURAN}">${escapeHTML(t('home.reviewHifz', lang))}</a>`) : ''}
+      ${quizN ? row(`<a class="chip" href="${buildHash(VIEWS.QUIZ)}" data-action="navigate" data-view="${VIEWS.QUIZ}">${escapeHTML(t('quiz.title', lang))}</a>`) : ''}
+      ${tajweedN ? row(`<button type="button" class="chip" data-action="practice-start" data-rule="review">${icon('repeat', { size: 13 })} ${escapeHTML(t('practice.reviewMistakes', lang))}</button>`) : ''}
     </div>
+    <p><a class="btn btn--ghost btn--sm" href="${buildHash(VIEWS.STATISTICS)}" data-action="navigate" data-view="${VIEWS.STATISTICS}">${escapeHTML(t('hifz.openLedger', lang))} ${goIcon(lang, 14)}</a></p>
   </section>`;
 }
 
