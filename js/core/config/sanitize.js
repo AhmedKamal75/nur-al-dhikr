@@ -53,8 +53,8 @@ const SAFE_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 export const BISMILLAH_STYLES = new Set(['auto', 'gold', 'accent']);
 const MUSHAF_PAPER_IDS = new Set(MUSHAF_PAPERS.map((p) => p.id));
 const ADHAN_MODE_IDS = new Set(['adhan', 'tone', 'off']);
-/** (v5.10.1) nightstand display modes — mirror of config/views.js AMBIENT_MODES. */
-const AMBIENT_MODE_IDS = new Set(['countdown', 'verse', 'dhikr']);
+/** (v5.10.1) nightstand display modes — mirror of config/views.js AMBIENT_MODES. (v5.17.55, item 8) + lamp. */
+const AMBIENT_MODE_IDS = new Set(['countdown', 'verse', 'dhikr', 'lamp']);
 /** (v4.4) Verse-of-the-day themes — mirror of domain/dailyAyah.js. */
 const DAILY_AYAH_THEME_IDS = new Set([
   'any',

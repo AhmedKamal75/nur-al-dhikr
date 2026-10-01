@@ -937,8 +937,9 @@ export const clickHandlers = {
   // (v5.10.1) nightstand display-mode switcher (in-place, no navigation).
   // Hostile modes fall off via the sanitizer allowlist on restore and the
   // includes-guard here; the view also guards on render.
+  // (v5.17.55, item 8) + lamp: the fourth nightstand mode.
   'ambient-mode': (ds) => {
-    if (!['countdown', 'verse', 'dhikr'].includes(ds.mode)) return;
+    if (!['countdown', 'verse', 'dhikr', 'lamp'].includes(ds.mode)) return;
     store.dispatch(actions.updatePrayerSettings({ ambientMode: ds.mode }));
   },
 };

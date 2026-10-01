@@ -65,8 +65,10 @@ export const KIDS_ALLOWED_VIEWS = Object.freeze([VIEWS.KIDS, VIEWS.TASBIH]);
  * (v5.10.1) Nightstand display modes: the prayer countdown (default),
  * a full-screen verse of the day, or a rotating short dhikr. Allowlisted
  * in sanitize.js; the ambient view owns the switcher.
+ * (v5.17.55, item 8) + lamp: warm low-light recitation shelf with big
+ * transport + sleep chip. Auto-advance stays off (no endless loop).
  */
-export const AMBIENT_MODES = Object.freeze(['countdown', 'verse', 'dhikr']);
+export const AMBIENT_MODES = Object.freeze(['countdown', 'verse', 'dhikr', 'lamp']);
 
 export function isKidsAllowedView(view) {
   return KIDS_ALLOWED_VIEWS.includes(view);

@@ -2,6 +2,45 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.55 — Nightstand lamp mode
+
+Merged-plan item 8. The nightstand gains a fourth display mode — a warm
+low-light lamp shelf for recitation at the bedside. Near-black warm ground
+with amber text (the existing fullscreen glass-bar tokens, no new custom
+properties, luminance-capped, no pure white, no blue), big 56–84px
+transport (previous ayah, play/pause, next ayah — pinned `direction: ltr`
+so the order never mirrors), the listen-mode sleep-timer chip with its
+live countdown label, and the compact prayer countdown ticking beneath.
+
+- **A shelf, not a second player.** The transport reuses the verse
+  engine's existing actions (`recite-ayah-prev`, `recite-pause-toggle`,
+  `recite-ayah-next`) and the sleep chip reuses the shared ladder
+  (`recite-sleep-cycle`, off → 5 → 15 → 30 → 45 → 60 → off) — no new
+  data-action, no new settings key, no new static view import. With no
+  session running the buttons disable and an honest note says to start
+  one from the Qur'an or Audio view.
+- **Adab: no endless loop.** Auto-advance defaults OFF and stays off —
+  the lamp renders no listen/loop/repeat controls, and the session ends
+  at its last ayah the way every surah-scoped session does. The wake lock
+  stays auto-held by the existing ambient pair; no visible toggle, so the
+  chrome stays a single exit plus the mode chips.
+- Constraints held: bilingual EN+AR (5 keys twinned — `ambient.modeLamp`,
+  `ambient.lampHint`, `ambient.lampNoSession`, `ambient.lampNow`,
+  `ambient.lampTransport`; parity gate green; strict AR separation —
+  AR carries no Latin), 19/19 renderer budget intact (ambient stays a
+  lazy dynamic import), Elder/a11y intact (native buttons with
+  bilingual labels, 44px+ targets, logical properties, reduced-motion
+  honored, heading order unchanged), no data changes, offline-safe (no
+  new precache bytes beyond edited files).
+- Tests: `tests/ambientLamp.test.js` (12 cases — palette luminance caps
+  - no-white/no-blue pins, existing-tokens-only CSS scan, transport +
+    sleep-chip render idle/active, handler-backed actions, shared sleep
+    ladder, auto-advance-OFF policy + no listen/loop/repeat emission,
+    allowlist + hostile-mode fallback, EN+AR parity + AR purity, no
+    gamification scan, 19/19 budget pin), the ambient e2e extended with
+    the lamp stop (`tests/e2e/depth-upgrades.spec.js` — 4-mode switcher,
+    lamp transport + sleep chip visible).
+
 ## v5.17.54 — The inline Qur'an study tray
 
 Merged-plan item 7. Tapping a word used to leave the reading row for a

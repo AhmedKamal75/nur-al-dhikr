@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.54**. Last updated against a green `npm run check` and
+> Current version: **v5.17.55**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -62,6 +62,7 @@ must never be backdated into the number:**
 | v5.17.52 — adhkar session + progressive disclosure                | collapsed translation/virtue/grade/transliteration behind one shared details block (Unknown stays visible); play-through-category session with plain x-of-n progress and completion      |
 | v5.17.53 — unified missing-data pattern                           | one dashed warm-gray honest-absence frame for six states (grade/translation/audio/tafsir/location/offline) from one builder; ad-hoc strings retired, exact words kept where load-bearing |
 | v5.17.54 — inline Qur'an study tray                               | the same study panel under the tapped ayah row (both readers) with edition-labelled translation, word chips + shared sources, modal path untouched                                       |
+| v5.17.55 — nightstand lamp mode                                   | fourth ambient mode: warm low-light shelf (existing glass-bar tokens, capped luminance) with big ayah transport + sleep chip; auto-advance OFF, ends at the last ayah                    |
 
 **So 7.5 is stale in the optimistic direction, and no re-score has been taken.**
 The number that would be honest today is unknown, and guessing it would repeat

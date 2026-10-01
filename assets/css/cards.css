@@ -1831,6 +1831,111 @@ body.is-ambient #main {
 .ambient__clock--compact {
   font-size: clamp(2rem, 9vw, 3.5rem);
 }
+/* (v5.17.55, item 8) Lamp shelf: warm low light for the nightstand.
+   Existing tokens only (APP-FLOW §5 ambient direction): the ground is the
+   fullscreen glass-bar token, the ink its gold — near-black warm ground,
+   amber text, no pure white, no blue, no new custom properties. The
+   transport order is pinned direction:ltr so it never mirrors (MEMORY §4);
+   targets stay at 56px for elder hands; reduced-motion kills the glow. */
+.view--ambient-lamp {
+  background: var(--fs-bar-bg);
+  color: var(--fs-bar-gold);
+}
+.view--ambient-lamp .ambient__kicker,
+.view--ambient-lamp .ambient__lamp-hint,
+.view--ambient-lamp .ambient__lamp-now,
+.view--ambient-lamp .ambient__lamp-empty,
+.view--ambient-lamp .ambient__clock,
+.view--ambient-lamp .ambient__place,
+.view--ambient-lamp .ambient__date {
+  color: var(--fs-bar-gold);
+}
+.view--ambient-lamp .ambient__lamp-hint,
+.view--ambient-lamp .ambient__lamp-empty {
+  font-size: var(--fs-base);
+  margin: 0;
+  max-width: 52ch;
+  opacity: 0.85;
+}
+.view--ambient-lamp .ambient__lamp-now {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  margin: 0;
+}
+.view--ambient-lamp .ambient__place,
+.view--ambient-lamp .ambient__date {
+  opacity: 0.8;
+}
+.view--ambient-lamp .ambient__modes {
+  border-color: color-mix(in srgb, var(--fs-bar-gold) 35%, transparent);
+}
+.view--ambient-lamp .ambient__mode {
+  color: color-mix(in srgb, var(--fs-bar-gold) 72%, transparent);
+}
+.view--ambient-lamp .ambient__mode--active {
+  background: color-mix(in srgb, var(--fs-bar-gold) 18%, transparent);
+  color: var(--fs-bar-gold);
+}
+.view--ambient-lamp .ambient__exit {
+  color: var(--fs-bar-gold);
+}
+.ambient__transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  direction: ltr;
+  margin-block: var(--space-2);
+}
+.ambient__transport-btn,
+.ambient__transport-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--fs-bar-gold) 55%, transparent);
+  background: transparent;
+  color: var(--fs-bar-gold);
+  cursor: pointer;
+}
+.ambient__transport-btn {
+  inline-size: 56px;
+  block-size: 56px;
+}
+.ambient__transport-play {
+  inline-size: 84px;
+  block-size: 84px;
+  border-width: 2px;
+}
+.ambient__transport-btn:disabled,
+.ambient__transport-play:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.ambient__sleep {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in srgb, var(--fs-bar-gold) 35%, transparent);
+  background: transparent;
+  color: var(--fs-bar-gold);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  padding-block: var(--space-1_5);
+  padding-inline: var(--space-3);
+  min-height: var(--touch-target);
+  cursor: pointer;
+}
+.ambient__sleep--on {
+  background: color-mix(in srgb, var(--fs-bar-gold) 18%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .view--ambient-lamp .ambient__transport-play,
+  .view--ambient-lamp .ambient__transport-btn {
+    transition: none;
+  }
+}
 .prayer-row {
   display: flex;
   align-items: center;

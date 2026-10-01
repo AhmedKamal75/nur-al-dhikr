@@ -32,12 +32,18 @@ test('ambient: display-mode switcher swaps modes', async ({ page }) => {
   await page.goto('#/ambient');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
   const modes = page.locator('[data-action="ambient-mode"]');
-  // Location-empty renders no switcher; with a location there are 3 modes.
+  // Location-empty renders no switcher; with a location there are 4 modes
+  // (countdown, verse, dhikr, lamp — v5.17.55 item 8).
   const count = await modes.count();
-  expect([0, 3]).toContain(count);
-  if (count === 3) {
+  expect([0, 4]).toContain(count);
+  if (count === 4) {
     await modes.nth(1).click();
     await expect(page.locator('.ambient__mode--active').nth(0)).toContainText(/Verse|آية/);
+    // (v5.17.55, item 8) lamp shelf: big transport + sleep chip, no errors.
+    await modes.nth(3).click();
+    await expect(page.locator('.ambient__mode--active').nth(0)).toContainText(/Lamp|مصباح/);
+    await expect(page.locator('.ambient__transport').first()).toBeVisible();
+    await expect(page.locator('[data-action="recite-sleep-cycle"]').first()).toBeVisible();
   }
   expect(pageErrors).toEqual([]);
 });

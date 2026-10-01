@@ -52,6 +52,18 @@ const ALLOWLIST = [
     hook: 'recite-ayah-next',
     reason: 'ayah sequence in mushaf order',
   },
+  // (v5.17.55, item 8) lamp shelf: same ayah transport, same exemption —
+  // the container pins direction:ltr so the order never mirrors (UX-4).
+  {
+    file: 'js/views/ambient.js',
+    hook: 'recite-ayah-prev',
+    reason: 'ayah sequence in mushaf order',
+  },
+  {
+    file: 'js/views/ambient.js',
+    hook: 'recite-ayah-next',
+    reason: 'ayah sequence in mushaf order',
+  },
   { file: 'js/views/statistics.js', hook: 'stat-garden-link', reason: 'CSS-mirrored (see below)' },
 ];
 

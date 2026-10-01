@@ -2225,6 +2225,13 @@ export const en = {
   'ambient.modeCountdown': 'Countdown',
   'ambient.modeVerse': 'Verse',
   'ambient.modeDhikr': 'Dhikr',
+  'ambient.modeLamp': 'Lamp',
+  // (v5.17.55, item 8) nightstand lamp mode: warm low-light recitation shelf.
+  'ambient.lampHint': 'Warm low light for the nightstand — the recitation stays where it ends.',
+  'ambient.lampNoSession':
+    "Start a recitation from the Qur'an or Audio view — the lamp keeps it here, ayah by ayah.",
+  'ambient.lampNow': 'Now reciting',
+  'ambient.lampTransport': 'Recitation controls',
   'ambient.emptyCorpus': 'Library still loading — showing the countdown until it arrives.',
   'prayer.exportedIcs': 'Prayer times downloaded — import the file into your calendar app',
   /* (v5.1.0) Prayer page blocks */

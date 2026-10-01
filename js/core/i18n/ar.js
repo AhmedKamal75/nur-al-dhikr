@@ -2134,6 +2134,12 @@ export const ar = {
   'ambient.modeCountdown': 'العد التنازلي',
   'ambient.modeVerse': 'آية',
   'ambient.modeDhikr': 'ذكر',
+  'ambient.modeLamp': 'مصباح',
+  // (v5.17.55، البند 8) وضع المصباح الليلي: رف تلاوة بإضاءة دافئة خافتة.
+  'ambient.lampHint': 'إضاءة دافئة خافتة لمنضدة الليل — تبقى التلاوة حيث انتهت.',
+  'ambient.lampNoSession': 'ابدأ التلاوة من عرض القرآن أو الصوت — يحفظها المصباح هنا، آية آية.',
+  'ambient.lampNow': 'يتلى الآن',
+  'ambient.lampTransport': 'أزرار التلاوة',
   'ambient.emptyCorpus': 'المكتبة ما زالت تُحمّل — يُعرض العد التنازلي حتى تصل.',
   'prayer.exportedIcs': 'نُزّلت المواقيت — استورد الملف في تطبيق التقويم',
   /* (v5.1.0) أقسام صفحة الصلاة */

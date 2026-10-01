@@ -1,10 +1,12 @@
 /**
- * views/ambient.js (v5.2.0, modes v5.10.1)
- * Ambient / kiosk display: a big-text, chrome-free nightstand view. Three
+ * views/ambient.js (v5.2.0, modes v5.10.1, lamp v5.17.55 item 8)
+ * Ambient / kiosk display: a big-text, chrome-free nightstand view. Four
  * display modes (settings.prayer.ambientMode, switched in place): the live
- * countdown to the next prayer, a full-screen verse of the day, or a
+ * countdown to the next prayer, a full-screen verse of the day, a
  * slow-rotating short dhikr (one pick per day, same deterministic pool as
- * Home). Meant for propping the phone on a shelf — the renderer hides
+ * Home), or the lamp shelf — warm low light with big recitation transport
+ * (prev / play-pause / next, ayah by ayah) and the listen-mode sleep timer.
+ * Meant for propping the phone on a shelf — the renderer hides
  * topbar/nav/player while this route is active (body.is-ambient, same
  * contract as mushaf fullscreen), and a wake lock keeps the screen on
  * (see app/fullscreen.js ambient pair + stateSub lifecycle). Pure string
@@ -19,6 +21,7 @@ import { VIEWS, AMBIENT_MODES } from '../core/config.js';
 import { calculateTimes } from '../domain/prayer.js';
 import { nextPrayerCountdown } from '../domain/prayerTimeline.js';
 import { ambientVerse, ambientDhikr } from '../domain/ambient.js';
+import { sleepSnapshot } from '../services/surahPlayback.js';
 import { PRAYER_ICONS } from './prayer.js';
 import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
@@ -75,6 +78,14 @@ export function renderAmbient(state) {
     </div>`;
 
   if (mode !== 'countdown') {
+    if (mode === 'lamp') {
+      return `
+    <section class="view view--ambient view--ambient-lamp">
+      ${exit}
+      ${switcher}
+      ${renderLampBlock(state, lang, p, now, cd)}
+    </section>`;
+    }
     const slide =
       mode === 'verse'
         ? ambientVerse(state.library.itemIndex, now)
@@ -110,7 +121,7 @@ export function renderAmbient(state) {
   </section>`;
 }
 
-/** Countdown hero shared by all three modes (the verse/dhikr slides sit above it, compact). */
+/** Countdown hero shared by the modes (the verse/dhikr slides and the lamp shelf sit above it, compact). */
 function renderCountdownBlock(lang, p, now, cd) {
   return `
     <p class="ambient__kicker">${t('prayer.next', lang)}</p>
@@ -128,4 +139,58 @@ function renderCountdownLine(lang, p, now, cd, compact) {
     <p class="ambient__clock${compact ? ' ambient__clock--compact' : ''}" dir="ltr" role="timer" data-ambient-countdown aria-label="${escapeHTML(`${t('prayer.' + cd.name, lang)} ${t('prayer.in', lang)} ${cd.h} ${t('units.h', lang, { n: cd.h })} ${cd.m} ${t('units.m', lang, { n: cd.m })}`)}">${clock}</p>
     <p class="ambient__place">${icon('location', { size: 14 })} ${escapeHTML(placeName)}</p>
     <p class="ambient__date">${escapeHTML(now.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' }))}</p>`;
+}
+
+/**
+ * (v5.17.55, item 8) Lamp shelf: warm low-light recitation controls over a
+ * compact countdown. The transport reuses the verse engine's existing
+ * actions (no new data-action, no listen/loop/repeat — auto-advance stays
+ * OFF and the session ends at its last ayah). The sleep chip reuses the
+ * listen-mode ladder (recite-sleep-cycle) with its live label, exactly like
+ * the player bar's console. With no session running the buttons disable
+ * and an honest note says where to start one.
+ */
+function renderLampBlock(state, lang, p, now, cd) {
+  const sp = state.surahPlayback;
+  const active = !!(sp?.active && sp.surah != null);
+  const paused = sp?.paused === true;
+  const surah = state.quran?.meta?.surahs?.find((x) => String(x.number) === String(sp?.surah));
+  const surahName = active
+    ? lang === 'ar'
+      ? surah?.nameAr || `#${sp.surah}`
+      : surah?.nameTransliteration || `#${sp.surah}`
+    : '';
+  const ayah = Math.floor(Number(sp?.ayah));
+  const total = Math.floor(Number(sp?.total));
+  const pos =
+    active && Number.isFinite(ayah) && Number.isFinite(total) && total > 0
+      ? ` · <span dir="ltr">${ayah} / ${total}</span>`
+      : '';
+  // Live verse-engine sleep state (playerBar precedent: ui reads the
+  // service snapshot, state only mirrors coarse playback fields).
+  let sleep = { enabled: false, label: '' };
+  try {
+    sleep = sleepSnapshot();
+  } catch {
+    /* engine unavailable in this context — chip renders off */
+  }
+  const sleepLabel = t('audio.sleepTimer', lang);
+  const dis = active ? '' : ' disabled aria-disabled="true"';
+  return `
+    <p class="ambient__kicker">${t('ambient.modeLamp', lang)}</p>
+    <p class="ambient__lamp-hint">${t('ambient.lampHint', lang)}</p>
+    ${
+      active
+        ? `<p class="ambient__lamp-now" dir="auto">${escapeHTML(t('ambient.lampNow', lang))} — ${escapeHTML(surahName)}${pos}</p>`
+        : `<p class="ambient__lamp-empty">${t('ambient.lampNoSession', lang)}</p>`
+    }
+    <div class="ambient__transport" role="group" dir="ltr" aria-label="${escapeHTML(t('ambient.lampTransport', lang))}">
+      <button type="button" class="ambient__transport-btn" data-action="recite-ayah-prev" aria-label="${escapeHTML(t('audio.ayahPrev', lang))}" title="${escapeHTML(t('audio.ayahPrev', lang))}"${dis}>${icon('chevronRight', { size: 28 })}</button>
+      <button type="button" class="ambient__transport-play" data-action="recite-pause-toggle" aria-label="${escapeHTML(t(paused || !active ? 'audio.play' : 'audio.pause', lang))}" title="${escapeHTML(t(paused || !active ? 'audio.play' : 'audio.pause', lang))}"${dis}>${icon(paused || !active ? 'play' : 'pause', { size: 34 })}</button>
+      <button type="button" class="ambient__transport-btn" data-action="recite-ayah-next" aria-label="${escapeHTML(t('audio.ayahNext', lang))}" title="${escapeHTML(t('audio.ayahNext', lang))}"${dis}>${icon('chevronLeft', { size: 28 })}</button>
+    </div>
+    <button type="button" class="ambient__sleep${sleep.enabled ? ' ambient__sleep--on' : ''}" data-action="recite-sleep-cycle" aria-pressed="${sleep.enabled === true}" aria-label="${escapeHTML(sleepLabel)}${sleep.label ? ` — ${sleep.label}` : ''}" title="${escapeHTML(sleepLabel)}${sleep.label ? ` — ${sleep.label}` : ''}">
+      ${icon('bed', { size: 16 })}${sleep.enabled && sleep.label ? ` <span dir="ltr">${escapeHTML(sleep.label)}</span>` : ''}
+    </button>
+    ${renderCountdownLine(lang, p, now, cd, true)}`;
 }
