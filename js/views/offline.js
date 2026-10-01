@@ -9,6 +9,7 @@ import { buildHash } from '../core/router.js';
 import { escapeHTML } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { youModeSwitchHTML } from '../ui/shell.js';
+import { backupSummaryHTML } from './backupSummary.js';
 import { OFFLINE_GROUPS } from '../domain/offline.js';
 import { formatBytes } from '../services/audioStore.js';
 
@@ -118,6 +119,8 @@ export function renderOffline(state) {
       <button type="button" class="btn btn--primary" data-action="offline-download-all">${icon('download', { size: 16 })} ${escapeHTML(t('offline.downloadAll', lang, { mb: totalMB }))}</button>`
       }
     </section>
+
+    ${backupSummaryHTML(state, { variant: 'offline' })}
 
     <section class="panel">
       <div class="panel__header"><h2>${t('offline.groupsTitle', lang)}</h2></div>

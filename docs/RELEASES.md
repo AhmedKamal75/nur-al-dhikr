@@ -2,6 +2,39 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.59 — One offline+backup summary card on both surfaces
+
+Merged-plan item 12. The Offline library and the Settings data section
+finally say what each other knows: one shared summary card
+(`js/views/backupSummary.js`, rule 6 — one builder, two surfaces, so the
+two can never drift) states the last off-device export age, the rolling
+on-device auto-snapshot age plus its size, the stale nudge past 30 days
+(returning users only — strangers are never nagged), a restore entry,
+and the cross-link binding the pair (Offline → Settings data section,
+Settings → Offline library). The restore entry is honest by
+construction: the snapshot restore shows only when a snapshot exists,
+otherwise the file-import path; the size line renders only when a real
+byte count is known; "never" and "nothing saved yet" are stated, never
+implied away.
+
+- Constraints held: bilingual EN+AR (4 keys twinned —
+  `backup.summaryTitle/summarySize/openData/openOffline`; the fact lines
+  reuse the existing data-health copy — parity and orphan gates green),
+  19/19 renderer budget intact (the builder is a `ui/` module importing
+  no view; no new data-actions — every CTA reuses an already-handled
+  one), Elder/a11y intact (labelled section, native links/buttons,
+  existing panel classes only, no new CSS, no inline styles), no
+  gamification (no counts-as-scores, no streak/shame words in either
+  language), offline-safe (the new module rides APP_SHELL like every
+  other `js/` file).
+- Tests: `tests/backup-summary.test.js` (20 cases — facts per state
+  never/fresh/stale, card render per state on both surfaces, Offline↔
+  Settings link wiring, restore gating, reducer/sanitizer byte honesty,
+  EN+AR parity, adab scan, budget + a11y pins), plus the suites that
+  assert the refactored copy updated to the shared contract
+  (`backupAuto`, `dataHealth`, `offline-library`), and the
+  offline/settings e2e subset green on Chromium.
+
 ## v5.17.58 — Kids mode degamified, parent gate kept
 
 Merged-plan item 11. Kids mode stops scoring worship: the stars total,

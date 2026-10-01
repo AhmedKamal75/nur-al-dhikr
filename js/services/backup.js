@@ -169,7 +169,16 @@ export async function maybeAutoBackupNow() {
     const snap = persistedSnapshot(state);
     if (!autoBackupDue(state.backupMeta, snap)) return 'skipped';
     if (!writeAutoSnapshot(snap)) return 'failed';
-    store.dispatch(actions.markAutoBackupSaved());
+    // (v5.17.59, merged-plan item 12) stamp the snapshot's size beside its
+    // time, so the shared summary card states it honestly. Best-effort:
+    // a measuring failure still leaves a correctly stamped snapshot.
+    let bytes = null;
+    try {
+      bytes = backupFileText(snap).length;
+    } catch {
+      bytes = null;
+    }
+    store.dispatch(actions.markAutoBackupSaved(bytes));
     return 'saved';
   } catch {
     return 'failed';

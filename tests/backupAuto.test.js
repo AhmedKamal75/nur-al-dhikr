@@ -198,6 +198,7 @@ describe('backupMeta: auto stamp coexists with the manual stamp', () => {
     assert.deepEqual(sanitizeRestoredPayload({}).backupMeta, {
       lastBackupAt: null,
       lastAutoBackupAt: null,
+      lastAutoBackupBytes: null,
     });
   });
 });

@@ -155,10 +155,16 @@ function sanitizeBackupMeta(raw, now = Date.now()) {
     if (!Number.isFinite(ts) || ts <= 0 || ts > now) return null;
     return Math.floor(ts);
   };
-  const d = { lastBackupAt: null, lastAutoBackupAt: null };
+  const d = { lastBackupAt: null, lastAutoBackupAt: null, lastAutoBackupBytes: null };
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return d;
   d.lastBackupAt = cleanTs(raw.lastBackupAt);
   d.lastAutoBackupAt = cleanTs(raw.lastAutoBackupAt);
+  // (v5.17.59, merged-plan item 12) the snapshot byte count the shared
+  // summary card states: a finite count above zero only, junk → null.
+  const rawBytes = raw.lastAutoBackupBytes;
+  const bytes = rawBytes == null || rawBytes === '' ? NaN : Number(rawBytes);
+  d.lastAutoBackupBytes =
+    Number.isFinite(bytes) && bytes > 0 && bytes <= 1073741824 ? Math.floor(bytes) : null;
   return d;
 }
 

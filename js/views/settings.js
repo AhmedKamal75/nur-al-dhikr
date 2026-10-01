@@ -21,15 +21,16 @@ import {
   APP_VERSION,
   VIEWS,
 } from '../core/config.js';
-import { daysSinceBackup, formatBytes, dryRunVerdict } from '../services/dataHealth.js';
-import { backupStale, filePickerSupported } from '../services/backup.js';
-import { isReturningUser, DEFERRED_STEPS } from '../domain/onboarding.js';
+import { formatBytes, dryRunVerdict } from '../services/dataHealth.js';
+import { filePickerSupported } from '../services/backup.js';
+import { DEFERRED_STEPS } from '../domain/onboarding.js';
 import { buildHash } from '../core/router.js';
 import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
 import { splitEditions } from '../domain/wordStudy.js';
 import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
 import { installRowHTML } from './installRow.js';
+import { backupSummaryHTML } from './backupSummary.js';
 import { youModeSwitchHTML } from '../ui/shell.js';
 
 /**
@@ -575,15 +576,16 @@ export function renderSettings(state, flags = {}) {
       <!-- (v5.17.31) the persistent install row: same copy as About and the
            wizard step, so the offer survives past first-run. -->
       ${installRowHTML(state, lang, flags.install || {})}
-      <!-- v3.26 data health check: three honest facts, zero servers -->
+      <!-- v3.26 data health check: honest facts, zero servers.
+           (v5.17.59, merged-plan item 12) the backup facts render through
+           the ONE shared summary card (js/views/backupSummary.js) — the same
+           builder the Offline view uses, so the two surfaces cannot drift. -->
       <div class="data-health">
         <p class="panel__subtext" dir="ltr">${storageLine(state, lang)}</p>
-        <p class="panel__subtext">${lastBackupLine(state, lang)}</p>
-        ${staleBackupBanner(state, lang)}
-        <p class="panel__subtext">${autoBackupLine(state, lang)}</p>
         <p class="panel__subtext" dir="ltr">${t('settings.dataAppVersion', lang, { v: APP_VERSION })}</p>
         ${dryRunLine(state, lang)}
       </div>
+      ${backupSummaryHTML(state, { variant: 'settings' })}
       <div class="btn-stack">
         <!-- (REORG Phase 8) section hop: #/offline stays a real route and now
              lights the You door via the in-chrome You switch. -->
@@ -614,38 +616,6 @@ function storageLine(state, lang) {
     used,
     quota: quota ?? '?',
   });
-}
-
-/** Days since the last backup export — null means never. */
-function lastBackupLine(state, lang) {
-  const days = daysSinceBackup(state.backupMeta?.lastBackupAt, new Date());
-  if (days == null) return t('settings.dataLastBackupNever', lang);
-  return t('settings.dataLastBackupDays', lang, { n: days });
-}
-
-/** Days since the rolling on-device snapshot — null means never. */
-function autoBackupLine(state, lang) {
-  const days = daysSinceBackup(state.backupMeta?.lastAutoBackupAt, new Date());
-  if (days == null) return t('settings.dataAutoNever', lang);
-  return t('settings.dataAutoLine', lang, { n: days });
-}
-
-/**
- * (v5.2.53) stale-backup nudge: returning users with data worth
- * protecting, whose last off-device export is old or never, get the
- * export call-to-action inline. The on-device snapshot never counts —
- * device loss still needs a manual export, and this says so by pointing
- * at Export, not at the snapshot.
- */
-function staleBackupBanner(state, lang) {
-  if (!isReturningUser(state)) return '';
-  if (!backupStale(state.backupMeta?.lastBackupAt)) return '';
-  const days = daysSinceBackup(state.backupMeta?.lastBackupAt, new Date());
-  const line =
-    days == null
-      ? t('settings.dataBackupNever', lang)
-      : t('settings.dataBackupStale', lang, { n: days });
-  return `<p class="panel__subtext">${icon('shield', { size: 13 })} ${line} <button type="button" class="link-btn link-btn--sm" data-action="export-backup">${t('settings.exportBackup', lang)}</button></p>`;
 }
 
 /** The restore dry-run verdict, rendered after the first "verify" tap. */

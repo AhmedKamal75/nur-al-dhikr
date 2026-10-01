@@ -292,7 +292,9 @@ export const actions = {
   // Data health (v3.26)
   markBackupExported: () => ({ type: 'BACKUP_EXPORTED' }),
   // (v5.2.53) the rolling on-device snapshot landed.
-  markAutoBackupSaved: () => ({ type: 'BACKUP_AUTO_SAVED' }),
+  // (v5.17.59, merged-plan item 12) the snapshot's byte count rides along
+  // so the shared summary card can state its size; the reducer cleans it.
+  markAutoBackupSaved: (bytes = null) => ({ type: 'BACKUP_AUTO_SAVED', value: bytes }),
   setDataHealthStorage: (value) => ({ type: 'DATA_HEALTH_STORAGE', value }),
   setDataHealthDryRun: (value) => ({ type: 'DATA_HEALTH_DRYRUN', value }),
   recordTajweedPracticeResult: (ruleId, perfect) => ({

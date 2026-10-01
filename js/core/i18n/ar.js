@@ -1378,6 +1378,12 @@ export const ar = {
   'settings.dataBackupNever': 'صدّر نسخة احتياطية — لا تصدير بعد.',
   'settings.dataAutoLine': 'نسخة تلقائية على هذا الجهاز: قبل {n} يوم',
   'settings.dataAutoNever': 'نسخة تلقائية على هذا الجهاز: لا شيء بعد.',
+  // (v5.17.59, merged-plan item 12) — انظر المقابل الإنجليزي. البطاقة
+  // الواحدة لملخص عدم الاتصال والنسخ الاحتياطي من بانٍ واحد مشترك.
+  'backup.summaryTitle': 'ملخص النسخة الاحتياطية',
+  'backup.summarySize': 'حجم النسخة التلقائية: {size}',
+  'backup.openData': 'فتح إعدادات النسخ الاحتياطي',
+  'backup.openOffline': 'فتح مكتبة عدم الاتصال',
   'settings.dataLinkFile': 'حفظ في ملف…',
   'settings.restoreAutoBackup': 'استعادة النسخة التلقائية',
   'settings.backupFileSaved': 'حُفظت النسخة الاحتياطية في ملفك.',

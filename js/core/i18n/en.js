@@ -1449,6 +1449,14 @@ export const en = {
   'settings.dataBackupNever': 'Export a backup — no export yet.',
   'settings.dataAutoLine': 'Auto-backup on this device: {n} day(s) ago',
   'settings.dataAutoNever': 'Auto-backup on this device: nothing saved yet',
+  // (v5.17.59, merged-plan item 12) the ONE offline+backup summary card,
+  // rendered on the Offline view and in the Settings data section from a
+  // single builder (js/views/backupSummary.js) — facts, nudge and restore
+  // entry identical on both, only the cross-link direction differs.
+  'backup.summaryTitle': 'Backup summary',
+  'backup.summarySize': 'Snapshot size: {size}',
+  'backup.openData': 'Open backup settings',
+  'backup.openOffline': 'Open offline library',
   'settings.dataLinkFile': 'Save to a file…',
   'settings.restoreAutoBackup': 'Restore auto-backup',
   'settings.backupFileSaved': 'Backup saved to your linked file.',

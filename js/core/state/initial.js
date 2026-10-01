@@ -397,7 +397,10 @@ export function initialState() {
     // Data health (v3.26) — the timestamp of the last backup EXPORT (the
     // only honest "backed up" this zero-server app can know). PERSISTED;
     // sanitized in restore. Written by the export-backup action.
-    backupMeta: { lastBackupAt: null, lastAutoBackupAt: null },
+    // (v5.2.53) the rolling on-device snapshot stamp rides beside it.
+    // (v5.17.59, merged-plan item 12) the snapshot's byte count rides too,
+    // so the shared summary card can state its size honestly.
+    backupMeta: { lastBackupAt: null, lastAutoBackupAt: null, lastAutoBackupBytes: null },
     // Ephemeral (v3.26) — the Settings data-health readouts: the storage
     // estimate for this session's device and the last restore-dry-run
     // report. Describes this session, never persisted.

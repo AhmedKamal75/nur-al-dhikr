@@ -373,8 +373,26 @@ export function reduceShell(state, action) {
       return { ...state, backupMeta: { ...state.backupMeta, lastBackupAt: Date.now() } };
     }
     // (v5.2.53) rolling auto-snapshot stamp (keeps the manual stamp intact).
+    // (v5.17.59, merged-plan item 12) the snapshot byte count rides along
+    // for the shared summary card; junk degrades to null, never a throw.
     case 'BACKUP_AUTO_SAVED': {
-      return { ...state, backupMeta: { ...state.backupMeta, lastAutoBackupAt: Date.now() } };
+      const n = Number(action.value);
+      const bytes =
+        action.value != null &&
+        action.value !== '' &&
+        Number.isFinite(n) &&
+        n > 0 &&
+        n <= 1073741824
+          ? Math.floor(n)
+          : null;
+      return {
+        ...state,
+        backupMeta: {
+          ...state.backupMeta,
+          lastAutoBackupAt: Date.now(),
+          lastAutoBackupBytes: bytes,
+        },
+      };
     }
     case 'DATA_HEALTH_STORAGE': {
       const s = action.value;
