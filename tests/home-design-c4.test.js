@@ -190,19 +190,23 @@ describe('C4 chrome: one slim today-strip near the top', () => {
     assert.ok(!/streak|leaderboard|متصدر/i.test(html), 'no shame copy');
   });
 
-  test('the strip rides above the browser, the slim hero and wizard below it', () => {
+  test('the strip rides above the tasbih entry, the slim hero and wizard below it', () => {
     const html = renderHome(homeState());
-    const order = ['home-today', 'home-browser', 'panel--onboarding--line', 'home-hero--line'].map(
-      (cls) => html.indexOf(cls)
-    );
+    const order = [
+      'home-today',
+      'panel--worship',
+      'panel--onboarding--line',
+      'home-hero--line',
+    ].map((cls) => html.indexOf(cls));
     assert.ok(
       order.every((i) => i >= 0),
       'all four regions render'
     );
     assert.ok(
       order[0] < order[1] && order[1] < order[2] && order[2] < order[3],
-      'today → dhikr → setup line → brand line'
+      'today → tasbih entry → setup line → brand line'
     );
+    assert.ok(!html.includes('home-browser'), 'the grid lives in the Azkar section now');
   });
 });
 

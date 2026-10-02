@@ -6,6 +6,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, escapeHTML } from '../core/utils.js';
 import { VIEWS, COLLECTION_SUGGESTIONS } from '../core/config.js';
+import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 
 /** Live item count (prune keeps deleted ids for restore; the index drops
@@ -29,6 +30,7 @@ export function renderCollections(state) {
       <h1 class="view__title">${t('nav.collections', lang)}</h1>
       <button type="button" class="btn btn--primary btn--sm" data-action="create-collection">${icon('plus', { size: 16 })} ${t('collections.create', lang)}</button>
     </header>
+    ${azkarModeSwitchHTML(state.activeView, lang)}
 
     ${
       cols.length

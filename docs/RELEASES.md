@@ -2,6 +2,54 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.61 — Home is a landing: seven hierarchical sections
+
+Owner IA ruling: HOME IS A LANDING (not the azkar grid), and the menu is
+HIERARCHICAL SECTIONS with subsections — Home · Azkar · Qur'an · Hadith ·
+Prayer · Practise · You. The section→members pattern generalizes from the
+DOORS map (AGENTS.md rule 6: extend members, never hardcode parallel
+lists — the drawer, the rail, the mobile bar, the switches and the
+reachability trap all read the same map).
+
+- Home is Today only: the prayer ribbon, the moment, the today strip, the
+  resume rows and an explicit tasbih entry. The azkar grid moved to its own
+  Azkar section (#/library), which reuses the same browser component
+  (ranked tiles, mood row, invitations, reference) — one component, one
+  grid, its own door (`nav.azkar`: EN Azkar / AR الأذكار). Manage mode keeps
+  the full banner authority under the same Azkar switch.
+- Seven sections, one tap each (30 membered routes + 3 documented internals
+  - kids scope = all 34 routes; member counts pinned 1·6·6·1·4·2·10): the
+    Qur'an section carries its study depths (the Tajweed course and
+    look-alike ayat moved from Practise — the switch is five segments now),
+    Practise keeps Tasbih + the 99 Names quiz, Prayer and You are unchanged,
+    Hadith stands alone, `nav.library` retired as a nav noun.
+- Hierarchical drawer (the mobile More-sheet): one block per section with
+  subsection rows for direct members. Tile-depth members (CATEGORY,
+  COLLECTION — their views need an id and answer bare links with an honest 404) carry `direct: false` in the map and resolve through the browser
+  tiles instead of a drawer hop. Rail and mobile bar stay flat (entries
+  only); active states light the entry plus the member row.
+- All 34 routes + deep links keep working; the palette offers Azkar beside
+  Home; back-links in the Azkar depths point at the section, not Home.
+
+- Constraints held: bilingual EN+AR (one new key twinned — `nav.azkar`;
+  `nav.library` retired in both — parity and orphan gates green), 19/19
+  renderer budget intact (no new view import — the library reuses the home
+  browser builder; no new data-action — every row reuses `navigate` /
+  `nav-drawer-go`), Elder/a11y intact (existing segmented/nav/chip styling
+  only, 44px targets kept, no new CSS custom properties, logical properties
+  untouched), no gamification (adab scan on every switch), offline-safe (no
+  new precache bytes beyond edited files).
+- Tests: `tests/nav-reachability.test.js` (IA-7 pins — seven sections in
+  order, member counts 1·6·6·1·4·2·10, tile-depth `direct:false`, Azkar
+  depths, course + look-alikes under Qur'an, trap stays GREEN),
+  `tests/nav-chrome.test.js` (Azkar section chrome, hierarchical drawer
+  derivation + rows + active states, five-segment Qur'an switch, two-segment
+  Practise switch, rail stays flat), the suites that asserted the moved
+  grid updated to the new contract (`adhkar-browser`, `home-design-c4`,
+  `home-today-ribbon`, `library-jump`, `contentManage`,
+  `content-authority-depth`, `kidsScope`, `content-i18n-audit`), and the
+  shell/deep-links/routes e2e subset green on Chromium.
+
 ## v5.17.60 — Root-aware search: a word finds its own family
 
 Merged-plan item 13. Querying رحمة now also finds ayahs holding

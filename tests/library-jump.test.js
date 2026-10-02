@@ -2,6 +2,11 @@
  * tests/library-jump.test.js — (v5.2.88, P2) library section jump chips:
  * one chip per rendered section, targets matching section ids, EN+AR
  * labels, sticky-row CSS with topbar-offset landings.
+ *
+ * (IA-7) the chips live in manage mode now: reading mode IS the moved
+ * adhkar browser (ranked tiles, mood row, invitations — its own
+ * navigation), while the banner-authority grid keeps the jump row for long
+ * libraries under management.
  */
 import test, { describe } from 'node:test';
 import assert from 'node:assert/strict';
@@ -19,7 +24,7 @@ const loadDoc = (f) => processDocument(JSON.parse(readFileSync(join(ROOT, f), 'u
 const adhkar = loadDoc('data/adhkar.json');
 const duas = loadDoc('data/duas.json');
 
-const libState = (ids, lang = 'en') => ({
+const libState = (ids, lang = 'en', manage = true) => ({
   settings: { ...DEFAULT_SETTINGS, language: lang, contentPrefs: {} },
   library: {
     documents: { adhkar, duas },
@@ -27,7 +32,7 @@ const libState = (ids, lang = 'en') => ({
     itemIndex: {},
   },
   customContent: {},
-  ui: { contentManage: false },
+  ui: { contentManage: manage },
 });
 
 describe('library jump chips', () => {
@@ -55,6 +60,12 @@ describe('library jump chips', () => {
     const html = renderLibrary(libState(['adhkar']));
     assert.doesNotMatch(html, /class="library-jump"/);
     assert.ok(html.includes('id="lib-section-adhkar"'), 'section id still present');
+  });
+
+  test('reading mode renders the moved browser, not the jump row', () => {
+    const html = renderLibrary(libState(['adhkar', 'duas'], 'en', false));
+    assert.ok(html.includes('azkar-mode-switch'), 'the Azkar switch rides reading mode');
+    assert.doesNotMatch(html, /class="library-jump"/, 'no jump row over the browser');
   });
 
   test('AR labels render in Arabic', () => {

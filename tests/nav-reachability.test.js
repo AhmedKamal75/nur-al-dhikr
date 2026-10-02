@@ -1,17 +1,19 @@
 /**
- * tests/nav-reachability.test.js — REORGANISATION-PLAN.md Phase 0 + Phase 8.
+ * tests/nav-reachability.test.js — REORGANISATION-PLAN.md Phase 0 + IA-7.
  *
  * INSTRUMENT BEFORE MOVING. This file is TEST-ONLY: it imports the real
- * route→door map (DOORS from js/core/config/nav.js — the single source of
- * truth per AGENTS.md rule 6) and asserts every route is reachable within
- * 2 taps of a door. The old static shell.js NAV_GROUPS parser is kept as a
+ * route→section map (DOORS from js/core/config/nav.js — the single source
+ * of truth per AGENTS.md rule 6) and asserts every route is reachable within
+ * 2 taps of a section. The old static shell.js NAV_GROUPS parser is kept as a
  * DRIFT-CHECK: it verifies the chrome derives from the map instead of
  * pinning a parallel list.
  *
- * Phase 8 (HANDOFF PART A1): the chrome is flat with EXACTLY 6 doors —
- * HOME(nav.home) · MUSHAF(nav.quran) · HADITH(nav.hadith) · PRAYER(nav.prayer)
+ * IA-7 (v5.17.61): the chrome is hierarchical with EXACTLY 7 sections —
+ * HOME(nav.home, the Today landing) · LIBRARY(nav.azkar, the adhkar
+ * browser) · MUSHAF(nav.quran) · HADITH(nav.hadith) · PRAYER(nav.prayer)
  * · TASBIH-entry labelled nav.practise · CHECKLIST-entry labelled nav.you —
- * and the test must fail if nav.library returns as a door.
+ * and the test must fail if the azkar grid returns to Home or if a section
+ * entry drifts from the map.
  *
  * Renderer budget note: the enforced gate is 19/19
  * (tests/startup-budget.test.js:48, MAX_STATIC_VIEW_IMPORTS). Nothing here
@@ -41,13 +43,15 @@ const shellSrc = read('js/ui/shell.js');
 function parseDoorsStatic(src) {
   const entryRe = /entry:\s*'(\w+)'/g;
   const labelRe = /labelKey:\s*'([^']+)'/g;
-  const memberRe = /\{\s*route:\s*'(\w+)'\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*\}/g;
+  const memberRe =
+    /\{\s*route:\s*'(\w+)'\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*\}/g;
   const entries = [...src.matchAll(entryRe)];
   const labels = [...src.matchAll(labelRe)];
   const members = [...src.matchAll(memberRe)].map((m) => ({
     route: m[1],
     taps: Number(m[2]),
     via: m[4] ?? null,
+    ...(m[6] ? { direct: m[6] === 'true' } : {}),
     index: m.index,
   }));
   return { entries, labels, members };
@@ -93,20 +97,21 @@ const KIDS_DOOR_KEYS = new Set(KIDS_ENTRIES.map((e) => e.viewKey));
  * through a door's in-chrome switch (Phases 2–6, 8).
  */
 const INTERNAL_JUSTIFICATIONS = {
+  HOME: 'IA-7: the Today landing stands alone — ribbon + moment + resume + tasbih entry. The grid moved to the AZKAR section, so HOME claims no subsections.',
   CATEGORY:
-    'plan §2.2/Phase 3: the adhkar browser grid IS home (0 taps) — CATEGORY follows from the HOME door in 1 tap via adhkar-browser; keeps its Library depth too.',
-  MOOD: 'plan §1.3/§2.2/Phase 3: the 12 moods are a filter row above the home grid — same feature, front door, 1 tap via adhkar-browser.',
+    'IA-7: tile-depth of the AZKAR section — a browser tile with an id carries it (direct:false: the view 404s bare, so the drawer offers no direct hop). Door via the LIBRARY entry in 1 tap via adhkar-browser.',
+  MOOD: 'IA-7: Azkar-section member — the 12 moods ride the browser filter row AND answer the bare picker. Door via the LIBRARY entry in 1 tap via adhkar-browser.',
   FOCUS:
-    'plan §4 Phase 7: Adhkar depth — the immersive one-item recitation stage behind every card’s Open-focus; door via the HOME entry in 2 taps (door → category tile → card Open-focus, no interstitial), deep links keep working.',
+    'IA-7: Azkar depth — the immersive one-item recitation stage behind every card’s Open-focus and the bare picker; door via the LIBRARY entry in 2 taps (entry → category tile → card Open-focus, no interstitial), deep links keep working.',
   COLLECTIONS:
-    'plan §4 Phase 7: Adhkar depth — the user’s adhkar sets; door via the HOME entry in 1 tap (home collections panel → collections), deep links keep working.',
+    'IA-7: Azkar-section member — the user’s adhkar sets list; door via the LIBRARY entry in 1 tap (azkar collections panel → collections), deep links keep working.',
   COLLECTION:
-    'plan §1.5/§4 Phase 7: follows from COLLECTIONS — door via the HOME entry in 2 taps (door → collections panel → collection tile), deep links keep working.',
+    'IA-7: tile-depth of the AZKAR section — follows from COLLECTIONS (direct:false: the view 404s bare). Door via the LIBRARY entry in 2 taps (entry → collections panel → collection tile), deep links keep working.',
   LIBRARY:
-    'HANDOFF A1 / REORG Phase 8: the grid is home, so Library was a second door to the tiles already on screen — retired as a door. #/library stays a real route behind the grid’s all-view and resolves to the HOME door in 2 taps via home-all-view; deep links keep working.',
-  QUIZ: 'plan §2.1/§2.4/Phase 5: Practise-section member — door via the TASBIH entry (labelled nav.practise) + in-chrome switch.',
+    'IA-7: the AZKAR section entry — the moved adhkar grid (renderLibrary reuses the browser component). Door IS the entry: 1 tap, via null; deep links keep working.',
+  QUIZ: 'plan §2.1/§2.4/Phase 5 + IA-7: Practise-section member — door via the TASBIH entry (labelled nav.practise) + in-chrome switch.',
   AUDIO:
-    'plan §4 Phase 7: Qur’an listening — the reciter/voice picker + offline downloads is the book’s listening depth; door via the MUSHAF entry in 2 taps (door → in-chrome List/Word/Audio switch), deep links keep working.',
+    'plan §4 Phase 7: Qur’an listening — the reciter/voice picker + offline downloads is the book’s listening depth; door via the MUSHAF entry in 2 taps (door → in-chrome switch), deep links keep working.',
   ROOTS:
     'HANDOFF A1 / REORG Phase 8: the root index behind per-word study is the DEPTH of the Qur’an door — absorbed into the MUSHAF door in 2 taps via quran-mode-switch; #/roots stays a real route, deep links keep working.',
   SEARCH:
@@ -114,7 +119,7 @@ const INTERNAL_JUSTIFICATIONS = {
   EDITOR:
     'plan §1.5/§4 Phase 7 INTERNAL-ONLY (documented in js/ui/shell.js INTERNAL_ONLY_ROUTES): a tool invoked from content surfaces (library sheet, category manage, card menu), never browsed to — a nav door would promise a place for what is an action on a place. Deep link #/editor keeps working; claims no chrome slot.',
   MUTASHABIHAT:
-    'plan §2.1/§2.4/Phase 5: Practise-section member — door via the TASBIH entry (labelled nav.practise) + in-chrome switch.',
+    'IA-7: Qur’an-study depth — look-alike ayat moved from Practise to the MUSHAF door (study belongs to the book). Door via the MUSHAF entry in 2 taps via quran-mode-switch; deep links keep working.',
   JOURNAL:
     'plan §2.1/Phase 6: You-section member — door via the You (checklist) entry + in-chrome switch.',
   CERTIFICATE:
@@ -122,7 +127,7 @@ const INTERNAL_JUSTIFICATIONS = {
   AMBIENT:
     'plan §4 Phase 7 INTERNAL-ONLY (documented in js/ui/shell.js INTERNAL_ONLY_ROUTES): chrome-free nightstand kiosk entered from the Prayer sheet, exited to #/prayer — a nav door would promise chrome the route removes by design (body.is-ambient). Deep link #/ambient keeps working; claims no chrome slot.',
   TAJWEED_COURSE:
-    'plan §1.5/§2.4/Phase 5 + Phase 8: the G-2 flagship lives in the Practise section — door via the TASBIH entry (labelled nav.practise) in 2 taps via practise-mode-switch; NOT internal.',
+    'IA-7: the flagship lives in the QUR’AN section — door via the MUSHAF entry in 2 taps via quran-mode-switch (moved from Practise: study belongs to the book); NOT internal.',
   RAMADAN:
     'HANDOFF A1 / REORG Phase 8: the Ramadan companion is Prayer depth — absorbed into the PRAYER door in 2 taps via the 4-segment prayer-mode-switch; #/ramadan stays a real route, deep links keep working.',
   ZAKAT:
@@ -216,7 +221,7 @@ describe('Phase 0 census: nav entries, labels, destinations', () => {
     console.log(
       [
         'NAV CENSUS',
-        `entries (${census.length}; Phase 8/A1: flat six doors — Home · Qur’an · Ahadeeth · Prayer · Practise · You)`,
+        `entries (${census.length}; IA-7: seven sections — Home · Azkar · Qur’an · Ahadeeth · Prayer · Practise · You)`,
         `routes (VIEWS): ${Object.keys(VIEWS).length}`,
         ...census.map(
           (c) =>
@@ -288,11 +293,23 @@ describe('Rule 6 drift-check: the test reads the real map, the parser proves it'
       const end = parsed.entries[i + 1]?.index ?? Infinity;
       return parsed.members
         .filter((m) => m.index > start && m.index < end)
-        .map((m) => ({ route: m.route, taps: m.taps, via: m.via }));
+        .map((m) => ({
+          route: m.route,
+          taps: m.taps,
+          via: m.via,
+          ...(m.direct !== undefined ? { direct: m.direct } : {}),
+        }));
     });
+    const liveMembers = (d) =>
+      d.members.map((m) => ({
+        route: m.route,
+        taps: m.taps,
+        via: m.via ?? null,
+        ...(m.direct !== undefined ? { direct: m.direct } : {}),
+      }));
     assert.deepEqual(
       byDoor,
-      DOORS.map((d) => d.members.map((m) => ({ route: m.route, taps: m.taps, via: m.via }))),
+      DOORS.map(liveMembers),
       'door members drifted between the file text and the import'
     );
   });
@@ -315,12 +332,25 @@ describe('Rule 6 drift-check: the test reads the real map, the parser proves it'
     for (const marker of ['DOORS.find(', 'switchRoutes(']) {
       assert.ok(shellSrc.includes(marker), `mode-switch members must derive via ${marker}`);
     }
+    // The hierarchical drawer derives from the same map: section blocks in
+    // map order, subsection rows for direct members only (rule 6 — the
+    // `direct: false` tile-depth flag lives in nav.js, not here).
+    for (const marker of [
+      'drawerSectionsHTML',
+      'SWITCH_LABELS_BY_ENTRY',
+      'azkarModeSwitchHTML',
+      'm.direct !== false',
+    ]) {
+      assert.ok(shellSrc.includes(marker), `hierarchical chrome must derive via ${marker}`);
+    }
     // No resurrected taxonomy and no retired peer doors pinned in the chrome.
+    // (IA-7) LIBRARY is a door again BY DESIGN — the Azkar section entry —
+    // so it is asserted in the seven-sections pin below, not here.
     assert.ok(
       !shellSrc.includes("label: 'nav.group."),
       'the read/worship/tools/mine taxonomy must not return to the chrome'
     );
-    for (const retired of ['VIEWS.LIBRARY', 'VIEWS.ROOTS', 'VIEWS.SEARCH', 'VIEWS.RAMADAN']) {
+    for (const retired of ['VIEWS.ROOTS', 'VIEWS.SEARCH', 'VIEWS.RAMADAN']) {
       assert.ok(
         !shellSrc.includes(`{ view: ${retired}`),
         `${retired} must not return as a chrome entry`
@@ -335,36 +365,39 @@ describe('Rule 6 drift-check: the test reads the real map, the parser proves it'
   });
 });
 
-describe('HANDOFF PART A1: EXACTLY six flat doors, in order', () => {
-  test('six top-level entries — Home · Qur’an · Ahadeeth · Prayer · Practise · You', () => {
+describe('IA-7: EXACTLY seven sections, in order', () => {
+  test('seven top-level entries — Home · Azkar · Qur’an · Ahadeeth · Prayer · Practise · You', () => {
     assert.equal(
       NAV_ENTRIES.length,
-      6,
-      `A1 demands 6 top-level entries, the chrome ships ${NAV_ENTRIES.length}`
+      7,
+      `IA-7 demands 7 top-level entries, the chrome ships ${NAV_ENTRIES.length}`
     );
     assert.deepEqual(
       NAV_ENTRIES.map((e) => e.viewKey),
-      ['HOME', 'MUSHAF', 'HADITH', 'PRAYER', 'TASBIH', 'CHECKLIST'],
-      'door entry order drifted from the A1 target'
+      ['HOME', 'LIBRARY', 'MUSHAF', 'HADITH', 'PRAYER', 'TASBIH', 'CHECKLIST'],
+      'door entry order drifted from the IA-7 target'
     );
   });
 
-  test('labelKey sequence — nav.home · nav.quran · nav.hadith · nav.prayer · nav.practise · nav.you', () => {
+  test('labelKey sequence — nav.home · nav.azkar · nav.quran · nav.hadith · nav.prayer · nav.practise · nav.you', () => {
     assert.deepEqual(
       NAV_ENTRIES.map((e) => e.labelKey),
-      ['nav.home', 'nav.quran', 'nav.hadith', 'nav.prayer', 'nav.practise', 'nav.you'],
-      'door label sequence drifted from the A1 target'
+      ['nav.home', 'nav.azkar', 'nav.quran', 'nav.hadith', 'nav.prayer', 'nav.practise', 'nav.you'],
+      'door label sequence drifted from the IA-7 target'
     );
   });
 
-  test('A1 verbatim: fail if nav.library returns', () => {
-    const libraryDoors = NAV_ENTRIES.filter(
-      (e) => e.viewKey === 'LIBRARY' || e.labelKey === 'nav.library'
-    );
+  test('IA-7: the Azkar door wears nav.azkar — nav.library retired as a nav noun', () => {
+    const azkar = NAV_ENTRIES.find((e) => e.viewKey === 'LIBRARY');
+    assert.ok(azkar, 'no LIBRARY section entry');
+    assert.equal(azkar.labelKey, 'nav.azkar', 'the Azkar section wears nav.azkar, not nav.library');
+    assert.equal(azkar.view, VIEWS.LIBRARY);
+    assert.ok(!('nav.library' in en) && !('nav.library' in ar), 'nav.library still names a screen');
+    const libraryDoors = NAV_ENTRIES.filter((e) => e.labelKey === 'nav.library');
     assert.deepEqual(
       libraryDoors,
       [],
-      'fail if nav.library returns (A1): the grid is home — a second door to the tiles is the redundancy the reorganisation was meant to remove'
+      'nav.library returned as a door label: the section is Azkar now'
     );
   });
 
@@ -384,6 +417,11 @@ describe('HANDOFF PART A1: EXACTLY six flat doors, in order', () => {
     assert.equal(ar['nav.practise'], 'الممارسة');
   });
 
+  test('the Azkar door ships its new bilingual label (EN Azkar / AR الأذكار)', () => {
+    assert.equal(en['nav.azkar'], 'Azkar');
+    assert.equal(ar['nav.azkar'], 'الأذكار');
+  });
+
   test('the retired taxonomy stays retired in both dictionaries', () => {
     for (const key of [
       'nav.group.read',
@@ -397,7 +435,6 @@ describe('HANDOFF PART A1: EXACTLY six flat doors, in order', () => {
 
   test('retired door keys stay as segment/view labels — zero drift, both languages', () => {
     for (const key of [
-      'nav.library',
       'nav.roots',
       'nav.tasbih',
       'nav.ramadan',
@@ -409,6 +446,61 @@ describe('HANDOFF PART A1: EXACTLY six flat doors, in order', () => {
         en[key] && ar[key],
         `${key} drifted — retired doors keep their keys in both languages`
       );
+    }
+    // (IA-7) nav.library retired with the Library nav noun — the section is
+    // Azkar now (nav.azkar door, title.library document title).
+    assert.ok(!('nav.library' in en) && !('nav.library' in ar), 'nav.library still names a screen');
+  });
+});
+
+describe('IA-7 pin: sections with pinned member counts (extend, never weaken)', () => {
+  test('member counts per section derive from the live DOORS import', () => {
+    const counts = Object.fromEntries(DOORS.map((d) => [d.entry, d.members.length]));
+    assert.deepEqual(
+      counts,
+      {
+        HOME: 1,
+        LIBRARY: 6,
+        MUSHAF: 6,
+        HADITH: 1,
+        PRAYER: 4,
+        TASBIH: 2,
+        CHECKLIST: 10,
+      },
+      'a section gained or lost a member without updating the map — extend the map AND this pin together'
+    );
+  });
+
+  test('30 membered + 3 internal-only + kids scope = all 34 VIEWS routes', () => {
+    const membered = DOORS.reduce((n, d) => n + d.members.length, 0);
+    assert.equal(membered, 30, `the sections carry ${membered} members, not 30`);
+    assert.deepEqual([...ORPHANS].sort(), ['AMBIENT', 'EDITOR', 'SEARCH']);
+    assert.equal(
+      membered + ORPHANS.length + 1,
+      Object.keys(VIEWS).length,
+      'members + internals + kids scope must cover every VIEWS route'
+    );
+  });
+
+  test('tile-depth members flag direct:false and resolve through the landing', () => {
+    const tiled = DOORS.flatMap((d) =>
+      d.members.filter((m) => m.direct === false).map((m) => m.route)
+    );
+    assert.deepEqual([...tiled].sort(), ['CATEGORY', 'COLLECTION']);
+    for (const key of tiled) {
+      const m = ROUTE_DOOR_MAP[key];
+      assert.ok(m.door, `${key} lost its door — tile-depth still resolves to a section`);
+      assert.equal(m.door.entry, 'LIBRARY');
+    }
+  });
+
+  test('every section entry resolves to itself in 1 tap with no hop', () => {
+    for (const d of DOORS) {
+      const m = ROUTE_DOOR_MAP[d.entry];
+      assert.ok(m.door, `${d.entry} lost its own door`);
+      assert.equal(m.door.entry, d.entry);
+      assert.equal(m.taps, 1);
+      assert.ok(!('via' in m.door), `${d.entry} carries a hop — the entry IS the tap`);
     }
   });
 });
@@ -424,13 +516,13 @@ describe('Phase 8 pin: absorbed members resolve through their doors in ≤2 taps
     assert.ok(!ORPHANS.includes('ROOTS'), 'ROOTS must not appear in the orphan list');
   });
 
-  test('LIBRARY follows from the HOME door in 2 taps (the grid’s all-view)', () => {
+  test('LIBRARY IS the Azkar section entry in 1 tap (the moved grid)', () => {
     const m = ROUTE_DOOR_MAP.LIBRARY;
-    assert.ok(m.door, 'LIBRARY lost its door — the route stays behind the grid’s all-view');
-    assert.equal(m.door.entry, 'HOME');
-    assert.equal(m.door.labelKey, 'nav.home');
-    assert.equal(m.taps, 2);
-    assert.equal(m.door.via, 'home-all-view');
+    assert.ok(m.door, 'LIBRARY lost its door — the moved grid must own its section');
+    assert.equal(m.door.entry, 'LIBRARY');
+    assert.equal(m.door.labelKey, 'nav.azkar');
+    assert.equal(m.taps, 1);
+    assert.ok(!('via' in m.door), 'the entry IS the tap — no hop');
     assert.ok(!ORPHANS.includes('LIBRARY'), 'LIBRARY must not appear in the orphan list');
   });
 
@@ -470,13 +562,13 @@ describe('Phase 8 pin: absorbed members resolve through their doors in ≤2 taps
 });
 
 describe('Phase 1 pin: the flagships have a front door', () => {
-  test('TAJWEED_COURSE lives in the Practise section (TASBIH entry, nav.practise label)', () => {
+  test('TAJWEED_COURSE lives in the Qur’an section (MUSHAF entry, nav.quran label)', () => {
     const door = ROUTE_DOOR_MAP.TAJWEED_COURSE.door;
     assert.ok(door, 'TAJWEED_COURSE lost its door in the re-homing');
-    assert.equal(door.taps, 2, 'door → in-chrome Tasbih/Course/Quiz/Look-alike switch');
-    assert.equal(door.entry, 'TASBIH');
-    assert.equal(door.labelKey, 'nav.practise');
-    assert.equal(door.via, 'practise-mode-switch');
+    assert.equal(door.taps, 2, 'door → in-chrome Qur’an switch');
+    assert.equal(door.entry, 'MUSHAF');
+    assert.equal(door.labelKey, 'nav.quran');
+    assert.equal(door.via, 'quran-mode-switch');
   });
 
   test('ROOTS sits in the Qur’an door as its depth (Phase 8 absorption)', () => {
@@ -498,7 +590,7 @@ describe('Phase 1 pin: the flagships have a front door', () => {
   });
 });
 
-describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
+describe('Phase 2 pin: one Qur’an door, six routes alive', () => {
   test('single nav.quran entry opens the mushaf; no competing reader entry', () => {
     const bookDoors = NAV_ENTRIES.filter((e) => e.viewKey === 'MUSHAF' || e.viewKey === 'QURAN');
     assert.deepEqual(
@@ -524,8 +616,26 @@ describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
   });
 
   test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
-    for (const key of ['quran.modeList', 'quran.modeWord', 'nav.audio']) {
+    for (const key of [
+      'quran.modeList',
+      'quran.modeWord',
+      'nav.audio',
+      'nav.tajweedCourse',
+      'mutashabihat.title',
+    ]) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+    }
+  });
+
+  test('#/tajweed-course and #/mutashabihat stay real routes resolving to the Qur’an door in 2 taps', () => {
+    for (const key of ['TAJWEED_COURSE', 'MUTASHABIHAT']) {
+      const m = ROUTE_DOOR_MAP[key];
+      assert.ok(m.door, `#/${m.route} lost its door — study belongs to the book`);
+      assert.equal(m.door.entry, 'MUSHAF');
+      assert.equal(m.door.labelKey, 'nav.quran');
+      assert.equal(m.taps, 2, 'door → in-chrome Qur’an switch');
+      assert.equal(m.door.via, 'quran-mode-switch');
+      assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
     }
   });
 
@@ -538,28 +648,37 @@ describe('Phase 2 pin: one Qur’an door, both routes alive', () => {
   });
 });
 
-describe('Phase 3 pin: the Adhkar front page is home', () => {
-  test('CATEGORY follows from the HOME door in 1 tap (the grid is home)', () => {
-    const m = ROUTE_DOOR_MAP.CATEGORY;
-    assert.ok(m.door, 'CATEGORY lost its door — the home grid must carry every section');
+describe('Phase 3 pin: the Azkar section owns the browser', () => {
+  test('HOME stands alone: the Today landing claims no subsections', () => {
+    const m = ROUTE_DOOR_MAP.HOME;
+    assert.ok(m.door, 'HOME lost its door');
     assert.equal(m.door.entry, 'HOME');
     assert.equal(m.door.labelKey, 'nav.home');
-    assert.equal(m.taps, 1, 'home tile → section');
+    assert.equal(m.taps, 1);
+    assert.ok(!('via' in m.door), 'the landing IS the tap');
+  });
+
+  test('CATEGORY follows from the LIBRARY door in 1 tap (tile-depth, direct:false)', () => {
+    const m = ROUTE_DOOR_MAP.CATEGORY;
+    assert.ok(m.door, 'CATEGORY lost its door — the Azkar grid must carry every section');
+    assert.equal(m.door.entry, 'LIBRARY');
+    assert.equal(m.door.labelKey, 'nav.azkar');
+    assert.equal(m.taps, 1, 'browser tile → section');
     assert.equal(m.door.via, 'adhkar-browser');
     assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY must not appear in the orphan list');
   });
 
-  test('MOOD rides the home filter row in 1 tap (same feature, front door)', () => {
+  test('MOOD rides the browser in 1 tap (same feature, section door)', () => {
     const m = ROUTE_DOOR_MAP.MOOD;
-    assert.ok(m.door, 'MOOD lost its door — the 12 moods are a filter row above the home grid');
-    assert.equal(m.door.entry, 'HOME');
-    assert.equal(m.door.labelKey, 'nav.home');
-    assert.equal(m.taps, 1, 'home filter chip → mood');
+    assert.ok(m.door, 'MOOD lost its door — the 12 moods live in the Azkar section');
+    assert.equal(m.door.entry, 'LIBRARY');
+    assert.equal(m.door.labelKey, 'nav.azkar');
+    assert.equal(m.taps, 1, 'browser filter chip → mood');
     assert.equal(m.door.via, 'adhkar-browser');
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD must not appear in the orphan list');
   });
 
-  test('Phase 3 still closes its orphans under the flat chrome', () => {
+  test('Phase 3 still closes its orphans under the seven sections', () => {
     assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY is still orphaned');
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD is still orphaned');
     assert.deepEqual(
@@ -615,15 +734,15 @@ describe('Phase 4 pin: one Prayer door, four routes alive', () => {
   });
 });
 
-describe('Phase 5 pin: one Practise section, four routes alive', () => {
-  test('single Practise entry (TASBIH view, nav.practise label); course/quiz/look-alikes do not compete', () => {
+describe('Phase 5 pin: one Practise section, two routes alive', () => {
+  test('single Practise entry (TASBIH view, nav.practise label); the quiz does not compete', () => {
     const practiseDoors = NAV_ENTRIES.filter((e) =>
       ['TASBIH', 'TAJWEED_COURSE', 'QUIZ', 'MUTASHABIHAT'].includes(e.viewKey)
     );
     assert.deepEqual(
       practiseDoors.map((e) => e.viewKey),
       ['TASBIH'],
-      'the course, quiz and look-alikes must not compete for a chrome slot'
+      'the quiz must not compete for a chrome slot (the course and look-alikes moved to Qur’an)'
     );
     assert.equal(
       NAV_ENTRIES.find((e) => e.viewKey === 'TASBIH').labelKey,
@@ -632,27 +751,28 @@ describe('Phase 5 pin: one Practise section, four routes alive', () => {
     );
   });
 
-  test('#/tajweed-course, #/quiz and #/mutashabihat stay real routes resolving to the Practise door in 2 taps', () => {
-    for (const key of ['TAJWEED_COURSE', 'QUIZ', 'MUTASHABIHAT']) {
+  test('#/quiz stays a real route resolving to the Practise door in 2 taps', () => {
+    for (const key of ['QUIZ']) {
       const m = ROUTE_DOOR_MAP[key];
       assert.ok(m.door, `#/${m.route} lost its door — the section must not orphan the route`);
       assert.equal(m.door.entry, 'TASBIH');
       assert.equal(m.door.labelKey, 'nav.practise');
-      assert.equal(m.taps, 2, 'door → in-chrome Tasbih/Course/Quiz/Look-alike switch');
+      assert.equal(m.taps, 2, 'door → in-chrome Tasbih/Quiz switch');
       assert.equal(m.door.via, 'practise-mode-switch');
       assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
     }
   });
 
+  test('the course and look-alikes resolve to the Qur’an door, not Practise', () => {
+    for (const key of ['TAJWEED_COURSE', 'MUTASHABIHAT']) {
+      const m = ROUTE_DOOR_MAP[key];
+      assert.equal(m.door.entry, 'MUSHAF', `#/${m.route} still points at Practise`);
+      assert.equal(m.door.via, 'quran-mode-switch');
+    }
+  });
+
   test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
-    for (const key of [
-      'nav.practise',
-      'nav.tasbih',
-      'nav.tajweedCourse',
-      'quiz.title',
-      'mutashabihat.title',
-      'practise.label',
-    ]) {
+    for (const key of ['nav.practise', 'nav.tasbih', 'quiz.title', 'practise.label']) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }
@@ -660,8 +780,6 @@ describe('Phase 5 pin: one Practise section, four routes alive', () => {
 
   test('the section holds its routes: only the 3 documented doorless routes remain', () => {
     assert.ok(!ORPHANS.includes('QUIZ'), 'QUIZ is still orphaned');
-    assert.ok(!ORPHANS.includes('MUTASHABIHAT'), 'MUTASHABIHAT is still orphaned');
-    assert.ok(!ORPHANS.includes('TAJWEED_COURSE'), 'TAJWEED_COURSE is still orphaned');
     assert.deepEqual(
       [...ORPHANS].sort(),
       ['AMBIENT', 'EDITOR', 'SEARCH'],
@@ -768,31 +886,31 @@ describe('Phase 6 pin: one You section, ten routes alive', () => {
   });
 });
 
-describe('Phase 7 pin: the orphans, one by one — absorbed depths, three documented internals', () => {
-  test('FOCUS is Adhkar depth: HOME door in 2 taps via the card Open-focus (no interstitial)', () => {
+describe('Phase 7 pin: the orphans, one by one — Azkar depths, Qur’an listening, three documented internals', () => {
+  test('FOCUS is Azkar depth: LIBRARY door in 2 taps via the card Open-focus (no interstitial)', () => {
     const m = ROUTE_DOOR_MAP.FOCUS;
     assert.ok(m.door, 'FOCUS lost its door');
-    assert.equal(m.door.entry, 'HOME');
-    assert.equal(m.door.labelKey, 'nav.home');
+    assert.equal(m.door.entry, 'LIBRARY');
+    assert.equal(m.door.labelKey, 'nav.azkar');
     assert.equal(m.taps, 2, 'door → category tile → card Open-focus');
     assert.equal(m.door.via, 'adhkar-browser');
     assert.ok(!ORPHANS.includes('FOCUS'), 'FOCUS must not appear in the orphan list');
   });
 
-  test('COLLECTIONS rides the home panel in 1 tap; COLLECTION follows in 2', () => {
+  test('COLLECTIONS rides the Azkar panel in 1 tap; COLLECTION follows in 2', () => {
     const cols = ROUTE_DOOR_MAP.COLLECTIONS;
     assert.ok(cols.door, 'COLLECTIONS lost its door');
-    assert.equal(cols.door.entry, 'HOME');
-    assert.equal(cols.door.labelKey, 'nav.home');
-    assert.equal(cols.taps, 1, 'home collections panel → collections');
-    assert.equal(cols.door.via, 'home-collections-panel');
+    assert.equal(cols.door.entry, 'LIBRARY');
+    assert.equal(cols.door.labelKey, 'nav.azkar');
+    assert.equal(cols.taps, 1, 'azkar collections panel → collections');
+    assert.equal(cols.door.via, 'azkar-collections-panel');
     assert.ok(!ORPHANS.includes('COLLECTIONS'), 'COLLECTIONS must not appear in the orphan list');
     const col = ROUTE_DOOR_MAP.COLLECTION;
     assert.ok(col.door, 'COLLECTION lost its door');
-    assert.equal(col.door.entry, 'HOME');
-    assert.equal(col.door.labelKey, 'nav.home');
-    assert.equal(col.taps, 2, 'home → collections → collection tile');
-    assert.equal(col.door.via, 'home-collections-panel');
+    assert.equal(col.door.entry, 'LIBRARY');
+    assert.equal(col.door.labelKey, 'nav.azkar');
+    assert.equal(col.taps, 2, 'azkar → collections → collection tile');
+    assert.equal(col.door.via, 'azkar-collections-panel');
     assert.ok(!ORPHANS.includes('COLLECTION'), 'COLLECTION must not appear in the orphan list');
   });
 
@@ -838,8 +956,8 @@ describe('Phase 7 pin: the orphans, one by one — absorbed depths, three docume
   });
 });
 
-describe('Phase 0 trap: every route reachable within 2 taps of a door (GREEN after Phase 8)', () => {
-  test('GREEN (Phase 8): zero unjustified orphans — six doors, three documented internals', () => {
+describe('Phase 0 trap: every route reachable within 2 taps of a section (GREEN after IA-7)', () => {
+  test('GREEN (IA-7): zero unjustified orphans — seven sections, three documented internals', () => {
     const detail = ORPHANS.map(
       (k) =>
         `${k} (internal-only: ${INTERNAL_JUSTIFICATIONS[k] || 'NO justification recorded — a finding per Phase 7'})`

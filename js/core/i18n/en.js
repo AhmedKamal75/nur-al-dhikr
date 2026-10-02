@@ -14,7 +14,12 @@ export const en = {
   'banner.shahadaLabel':
     'The Shahada — There is no god but Allah, and Muhammad is the Messenger of Allah',
   'nav.home': 'Home',
-  'nav.library': 'Library',
+  // (v5.17.61, IA-7) the Azkar section door: the adhkar browser grid moved
+  // out of Home (now a Today landing) into its own section behind the
+  // LIBRARY route. Bilingual with ar.js from the first commit.
+  'nav.azkar': 'Azkar',
+  // (IA-7) nav.library retired with the Library nav noun — the section is
+  // Azkar now (nav.azkar door, title.library document title). See ar.js.
   'nav.search': 'Search',
   'nav.favorites': 'Favorites',
   'nav.collections': 'Collections',
@@ -441,8 +446,8 @@ export const en = {
   'audio.customNotAudio': 'That address did not serve audio — check the URL.',
   'audio.note':
     'Streams and downloads come directly from mp3quran.net / quranicaudio.com to your device; nothing is proxied and nothing plays without your tap. Downloaded files live only on this device.',
-  // (REORG Phase 8 / HANDOFF A1) the read/worship/tools/mine taxonomy
-  // retires with the grouped chrome — the six doors are flat, so the
+  // (REORG Phase 8 / HANDOFF A1, IA-7) the read/worship/tools/mine taxonomy
+  // retires with the grouped chrome — the sections stand alone, so the
   // nav.group.* keys retire in both languages. Shell renders no group
   // headers; kids scope keeps its own kids.title label.
 

@@ -1,17 +1,23 @@
 /**
- * views/library.js (v5.0.0)
- * The Library owns BANNER-level management: a Manage toggle reveals, for
- * every library — reorder its sections, edit/hide/true-delete the library,
- * add sections to ANY library (builtin included, via the prefs lens),
- * restore a library (or everything) to defaults, schedule a daily
- * reminder, and set which card fields its sections show. Builtin content
- * is never modified: all edits live in the user's contentPrefs lens.
+ * views/library.js — the Azkar section (IA-7, v5.17.61).
+ *
+ * Reading mode IS the adhkar browser moved out of Home (same component,
+ * views/home.js adhkarBrowserHTML — ranked tiles, mood row, invitations,
+ * reference), under the Azkar section switch. Manage mode owns the
+ * BANNER-level management below: a Manage toggle reveals, for every
+ * library — reorder its sections, edit/hide/true-delete the library, add
+ * sections to ANY library (builtin included, via the prefs lens), restore
+ * a library (or everything) to defaults, schedule a daily reminder, and
+ * set which card fields its sections show. Builtin content is never
+ * modified: all edits live in the user's contentPrefs lens.
  */
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, categoryDisplayName, escapeHTML } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
+import { azkarModeSwitchHTML } from '../ui/shell.js';
+import { adhkarBrowserHTML, resolveBrowserWindow } from './home.js';
 import { MOODS, itemsForMood } from '../domain/moods.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
@@ -26,6 +32,28 @@ export function renderLibrary(state) {
   const lang = state.settings.language;
   const prefs = contentPrefsOf(state);
   const manage = !!state.ui?.contentManage;
+  // (IA-7) reading mode IS the moved adhkar browser: Home is a Today
+  // landing now, and the grid lives here — the same component, not a copy
+  // (adhkarBrowserHTML from views/home.js: ranked tiles, mood row,
+  // invitations, reference). Manage mode keeps the full banner authority
+  // below. The section switch rides both modes.
+  if (!manage) {
+    const { nowWindow } = resolveBrowserWindow(state);
+    const browser = adhkarBrowserHTML(state, nowWindow);
+    return `
+  <section class="view view--library">
+    <div class="view-header view-header--row">
+      <h1 class="view__title">${t('nav.azkar', lang)}</h1>
+      ${viewMenuButton('library', lang, { labelKey: 'viewMenu.library' })}
+    </div>
+    ${azkarModeSwitchHTML(state.activeView, lang)}
+    ${
+      state.loadErrors?.library && !browser
+        ? loadErrorStateHTML({ lang, tierKey: 'library', t })
+        : browser
+    }
+  </section>`;
+  }
   const deletedLibs = prefs.deletedLibraries || {};
   const hiddenLibs = prefs.hiddenLibraries || {};
   const customDocs = Object.values(state.customContent).filter(
@@ -240,20 +268,19 @@ export function renderLibrary(state) {
   return `
   <section class="view view--library">
     <div class="view-header view-header--row">
-      <h1 class="view__title">${t('nav.library', lang)}</h1>
+      <h1 class="view__title">${t('nav.azkar', lang)}</h1>
       ${
-        /* (v5.1.0) Declutter: the Manage toggle now lives ONLY in the "⋯"
-           menu (viewSheet "view-sheet-manage"). While manage mode is ON a
-           single primary "Done" rides the header so the exit is always in
-           reach; reading mode shows nothing but the ⋯ button. */
-        manage
-          ? `<button type="button" class="btn btn--primary btn--sm" data-action="content-manage-toggle" aria-pressed="true">
+        /* Manage mode only past the reading-mode early return above: the
+           Manage toggle lives in the "⋯" menu (viewSheet
+           "view-sheet-manage"), and while it is ON a single primary
+           "Done" rides the header so the exit is always in reach. */
+        `<button type="button" class="btn btn--primary btn--sm" data-action="content-manage-toggle" aria-pressed="true">
         ${icon('close', { size: 14 })} ${t('content.done', lang)}
       </button>`
-          : ''
       }
       ${viewMenuButton('library', lang, { labelKey: 'viewMenu.library' })}
     </div>
+    ${azkarModeSwitchHTML(state.activeView, lang)}
     ${(() => {
       // (v5.2.88, P2) section jump chips: one per rendered section, sticky
       // under the topbar so long libraries stay navigable. Buttons (not

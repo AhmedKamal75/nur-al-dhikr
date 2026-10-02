@@ -11,6 +11,7 @@ import { buildHash } from '../core/router.js';
 import { referenceLineFor, noteFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
+import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { VIEWS } from '../core/config.js';
 import { gradeChipHTML, gradeStateOf } from '../domain/grades.js';
@@ -91,9 +92,10 @@ function focusPickerHTML(state, lang) {
   }
   return `<section class="view view--focus-picker">
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.home', lang)}</a>
+      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.azkar', lang)}</a>
       <h1 class="view__title">${t('focus.pickerTitle', lang)}</h1>
     </header>
+    ${azkarModeSwitchHTML(state.activeView, lang)}
     <p class="panel__subtext">${t('focus.pickerHint', lang)}</p>
     <ul class="focus-picker">${rows.join('')}</ul>
   </section>`;

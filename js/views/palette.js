@@ -21,13 +21,14 @@ import { contentTitleFor } from '../domain/localeContent.js';
 import { hasPendingScholarlyReview } from '../domain/contentLens.js';
 
 /** Navigation destinations searchable from the palette.
- * (REORG Phase 8 / HANDOFF A1) resolved through DOORS in
- * js/core/config/nav.js: LIBRARY has no door — the HOME door (the adhkar
- * grid's all-view) carries it, so the palette offers Home, not a second
- * door to the same tiles. SEARCH keeps its destination row: the search
- * view is doorless-by-design and the palette IS its door. */
+ * (IA-7) resolved through the sections in js/core/config/nav.js: HOME is
+ * the Today landing and LIBRARY is the Azkar section entry, so the palette
+ * offers both — Home for today, Azkar for the browser. SEARCH keeps its
+ * destination row: the search view is doorless-by-design and the palette
+ * IS its door. */
 const NAV_TARGETS = [
   { view: VIEWS.HOME, icon: 'home', label: 'nav.home' },
+  { view: VIEWS.LIBRARY, icon: 'book', label: 'nav.azkar' },
   { view: VIEWS.QURAN, icon: 'quran', label: 'nav.quran' },
   { view: VIEWS.HADITH, icon: 'mosque', label: 'nav.hadith' },
   { view: VIEWS.SEARCH, icon: 'search', label: 'nav.search' },

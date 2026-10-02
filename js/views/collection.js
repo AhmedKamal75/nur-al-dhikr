@@ -15,6 +15,7 @@ import { fieldTogglesFor, hasPendingScholarlyReview } from '../domain/contentLen
 import { selectors } from '../core/state.js';
 import { VIEWS } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
+import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
 
 /**
@@ -90,6 +91,7 @@ export function renderCollection(state) {
           : ''
       }
     </header>
+    ${azkarModeSwitchHTML(state.activeView, lang)}
     <div class="search-bar">
       <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
       <input type="search" class="search-bar__input" id="collection-search-input"

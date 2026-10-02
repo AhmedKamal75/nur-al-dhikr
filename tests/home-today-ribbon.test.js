@@ -259,8 +259,32 @@ describe('item-3 contracts that must not move', () => {
     const html = renderHome(full);
     assert.ok(html.includes('home-prayer-ribbon'), 'ribbon rides the home view');
     assert.ok(html.includes('data-home-countdown'), 'ticker hook rides the home view');
-    assert.ok(html.includes('home-browser__window'), 'window label rides the home view');
     const bare = renderHome(ribbonState({ lat: null, lng: null }));
     assert.ok(bare.includes('—:—'), 'no-location home never fakes a time');
+  });
+
+  test('the window label rides the Azkar browser (the moved grid)', async () => {
+    const adhkarDoc = processDocument(
+      JSON.parse(readFileSync(join(ROOT, 'data/adhkar.json'), 'utf8'))
+    ).value;
+    const base = ribbonState();
+    const index = {};
+    for (const cat of adhkarDoc.categories || []) {
+      for (const item of cat.items || [])
+        index[item.id] = { item, category: cat, document: adhkarDoc };
+    }
+    const full = {
+      ...base,
+      library: {
+        ...base.library,
+        documents: { adhkar: adhkarDoc },
+        order: ['adhkar'],
+        itemIndex: index,
+      },
+      customContent: {},
+    };
+    const { renderLibrary } = await import('../js/views/library.js');
+    const html = renderLibrary(full);
+    assert.ok(html.includes('home-browser__window'), 'window label rides the Azkar view');
   });
 });

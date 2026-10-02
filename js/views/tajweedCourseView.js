@@ -21,7 +21,7 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { t, isRTL } from '../core/i18n.js';
 import { VIEWS } from '../core/config.js';
-import { practiseModeSwitchHTML } from '../ui/shell.js';
+import { quranModeSwitchHTML } from '../ui/shell.js';
 import { TAJWEED_RULES, TAJWEED_FAMILIES } from '../domain/tajweed.js';
 import { TAJWEED_WORKS, TAJWEED_SOURCES, tajweedCitation } from '../domain/tajweedSources.js';
 import {
@@ -238,7 +238,7 @@ export function renderTajweedCourse(state) {
         <span>${escapeHTML(t('tajweedCourse.progress', lang))}: ${overall.done} / ${overall.total}</span>
       </div>
     </div>
-    ${practiseModeSwitchHTML(state.activeView, lang)}
+    ${quranModeSwitchHTML(state.activeView, lang)}
     <p class="taj-course__intro">${escapeHTML(t('tajweedCourse.intro', lang))}</p>
     ${modeSwitch}
     ${continueBlock}

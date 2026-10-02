@@ -16,6 +16,7 @@ import { contentTitleFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { VIEWS, QUIZ_LIBRARY_ID } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
+import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 import {
@@ -194,7 +195,7 @@ export function renderCategory(state) {
   return `
   <section class="view view--category">
     <header class="view-header">
-      <a class="back-link" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.home', lang)}</a>
+      <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.azkar', lang)}</a>
       <div class="view-header--row">
         <h1 class="view__title">${escapeHTML(categoryDisplayName(cat, lang))}</h1>
         ${viewMenuButton('category', lang, { labelKey: 'viewMenu.category' })}
@@ -207,6 +208,7 @@ export function renderCategory(state) {
       ${sessionButton}
       ${byHeartOn ? `<p class="panel__subtext">${t('byheart.hint', lang)}</p>` : ''}
     </header>
+    ${azkarModeSwitchHTML(state.activeView, lang)}
 
     ${manageBar}
     ${unhideBar}

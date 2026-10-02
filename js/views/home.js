@@ -447,6 +447,41 @@ function todayPrayerTimes(state) {
 }
 
 /**
+ * (IA-7, v5.17.61) the shared sun-window resolution for the adhkar
+ * browser: today's real prayer times plus which adhkar window ('morning' /
+ * 'evening' / null) the browser ranks by. Home keeps using it for the
+ * quick tiles; the Azkar section view (renderLibrary) uses it for the
+ * moved grid — one computation, two readers (rule 6). Pure; exported for
+ * tests and the library view.
+ */
+export function resolveBrowserWindow(state) {
+  const prayerTimes = todayPrayerTimes(state);
+  return { prayerTimes, nowWindow: recommendedAdhkarWindow(new Date(), prayerTimes) };
+}
+
+/**
+ * (IA-7, v5.17.61) the explicit Tasbih entry on the Today landing: one
+ * honest door into the counter, beside the prayer ribbon, the moment, the
+ * today strip and the resume rows. Reuses the worship-row shape and the
+ * existing nav.tasbih / title.tasbih labels (no new strings), the existing
+ * `navigate` action (no handler change) and existing panel classes only
+ * (Elder/a11y untouched). Pure (state → HTML); exported for tests.
+ */
+export function tasbihEntryHTML(state) {
+  const lang = state.settings.language;
+  return `
+  <section class="panel panel--worship" aria-label="${escapeHTML(t('nav.tasbih', lang))}">
+    <div class="worship-list">
+      <a class="worship-row" href="${buildHash(VIEWS.TASBIH)}" data-action="navigate" data-view="${VIEWS.TASBIH}">
+        <span class="worship-row__icon">${icon('bead', { size: 16 })}</span>
+        <span class="worship-row__name">${t('nav.tasbih', lang)}</span>
+        <span class="worship-row__value" dir="auto">${t('title.tasbih', lang)}</span>
+        ${goIcon(lang, 13)}
+      </a>
+    </div>
+  </section>`;
+}
+/**
  * (v5.17.50, merged-plan item 3) the six-prayer ribbon for the Home hero:
  * every prayer of the day as one tap into the Prayer view (navigate only,
  * the same deep link the old next-only strip used), with the prayer in
@@ -996,12 +1031,9 @@ export function renderHome(state) {
     }
     return out;
   };
-  // Today's real prayer times, shared by the strip and the adhkar windows.
-  const prayerTimes = todayPrayerTimes(state);
-  // Which adhkar quick action deserves a "now" nudge: the actual sun-based
-  // windows when a location is set, the fixed clock approximation otherwise
-  // (see js/adhkarTiming.js for the reasoning behind each range).
-  const nowWindow = recommendedAdhkarWindow(new Date(), prayerTimes);
+  // Today's real prayer times, shared by the strip and the adhkar windows
+  // (one computation, two readers — see resolveBrowserWindow above).
+  const { prayerTimes, nowWindow } = resolveBrowserWindow(state);
 
   const recentEntries = takeFresh(
     state.history
@@ -1129,13 +1161,13 @@ export function renderHome(state) {
     .map((id) => homePanels[id] || '')
     .join('');
 
-  // (v5.17.47, C4) the page's argument, in order: the shahada, where
-  // you are today (prayer strip + one slim today-strip answering "how am
-  // I doing"), then THE DHIKR — ranked, not alphabetical. The brand hero
-  // is one quiet line below the grid and the 3-step wizard is one
-  // unobtrusive line beside it: chrome answers before it is asked, and
-  // never shouts. Nothing is removed — every panel still renders below
-  // in the reader's own order.
+  // (IA-7) the page's argument, in order: the shahada, where you are
+  // today (prayer ribbon + one slim today-strip answering "how am I
+  // doing"), the explicit tasbih entry, then the brand hero, the wizard,
+  // the quick tiles and every panel in the reader's own order. The adhkar
+  // grid is NOT here anymore: it moved to its own Azkar section
+  // (#/library), which reuses the browser component below — Home is a
+  // Today landing, and the grid owns its own door.
   return `
   <section class="view view--home">
     ${shahadaBannerHTML(lang)}
@@ -1148,7 +1180,7 @@ export function renderHome(state) {
 
     ${homeTodayStripHTML(state)}
 
-    ${adhkarBrowserHTML(state, nowWindow)}
+    ${tasbihEntryHTML(state)}
 
     ${onboardingPanelHTML(state, lang)}
 

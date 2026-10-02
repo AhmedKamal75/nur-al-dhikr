@@ -1,15 +1,19 @@
 /**
- * tests/adhkar-browser.test.js — REORGANISATION-PLAN.md Phase 3.
+ * tests/adhkar-browser.test.js — the Azkar section browser (IA-7).
  *
- * Home IS the adhkar browser: named category tiles with live counts and a
- * Read-now action per tile; the 12 moods ride a filter row below the grid
- * (v5.17.56: the dhikr owns the fold); the 99 Names / Zakat / Certificates
- * row outside the daily grid; the section-level completion counter kept.
+ * The AZKAR section (#/library) IS the adhkar browser: named category
+ * tiles with live counts and a Read-now action per tile; the 12 moods ride
+ * a filter row below the grid (v5.17.56: the dhikr owns the fold); the 99
+ * Names / Zakat / Certificates row outside the daily grid; the
+ * section-level completion counter kept. Home is a Today landing now — the
+ * grid moved here, reusing the same browser component (one component, one
+ * grid, its own door).
  *
  * Constraints pinned here: no data/corpus change (routes move, data/
  * does not), all deep links keep working, no new data-action (navigate
- * only), no new static view import (home reuses domain/service helpers),
- * bilingual EN+AR throughout, no gamification copy.
+ * only), no new static view import (library reuses the home browser
+ * builder — the 19/19 renderer budget stays untouched), bilingual EN+AR
+ * throughout, no gamification copy.
  */
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
@@ -22,6 +26,7 @@ import { initialState } from '../js/core/state/initial.js';
 import { MOODS } from '../js/domain/moods.js';
 import { dateKey } from '../js/core/utils.js';
 import { adhkarBrowserHTML, renderHome } from '../js/views/home.js';
+import { renderLibrary } from '../js/views/library.js';
 import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
 
@@ -200,15 +205,23 @@ describe('Phase 3: contracts that must not move', () => {
     }
   });
 
-  test('renderHome carries the browser for a real boot state (spot-check)', () => {
-    const html = renderHome(browserState());
-    assert.ok(html.includes('home-browser'), 'browser section rides the home view');
-    assert.ok(html.includes(en['home.browserTitle']), 'browser title renders on home');
+  test('the Azkar section carries the browser; Home is a landing (spot-check)', () => {
+    const libHtml = renderLibrary(browserState());
+    assert.ok(libHtml.includes('home-browser'), 'browser section rides the Azkar view');
+    assert.ok(libHtml.includes(en['home.browserTitle']), 'browser title renders on Azkar');
+    assert.ok(libHtml.includes('azkar-mode-switch'), 'the Azkar switch rides the section');
     assert.ok(
-      html.includes(`data-view="${VIEWS.HOME}"`),
-      'all-view offered through the HOME door (Phase 8: LIBRARY has no door; #/library stays a real route behind the grid)'
+      libHtml.includes(`data-view="${VIEWS.LIBRARY}"`),
+      'the grid is offered through the LIBRARY door (IA-7: the Azkar section entry)'
     );
-    assert.ok(html.includes('topbar__lang') === false, 'no chrome duplication from the view');
+    const homeHtml = renderHome(browserState());
+    assert.ok(!homeHtml.includes('home-browser'), 'Home carries no browser grid');
+    assert.ok(homeHtml.includes('home-prayer-ribbon'), 'Home keeps the ribbon');
+    assert.ok(
+      homeHtml.includes(`data-view="${VIEWS.TASBIH}"`),
+      'Home keeps an explicit tasbih entry'
+    );
+    assert.ok(homeHtml.includes('topbar__lang') === false, 'no chrome duplication from the view');
   });
 
   test('DEFAULT_SETTINGS untouched: no new settings key, no new panel id', () => {

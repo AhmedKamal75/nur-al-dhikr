@@ -2,10 +2,12 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   renderNav,
+  azkarModeSwitchHTML,
   quranModeSwitchHTML,
   prayerModeSwitchHTML,
   practiseModeSwitchHTML,
   youModeSwitchHTML,
+  drawerSectionsHTML,
   INTERNAL_ONLY_ROUTES,
 } from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
@@ -15,12 +17,187 @@ import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
 
 /**
- * REORG Phase 2 locks (supersedes the ORG-02 two-doors ruling) + Phase 8
- * absorption: one book, one door. The classic reader no longer competes
- * for a chrome slot — #/quran stays a real route and lights the mushaf
- * door, while the in-chrome List/Word/Audio switch carries the hop. ROOTS
- * is absorbed into the same door (HANDOFF A1): #/roots stays a real route
- * and lights the mushaf door in 2 taps via the switch.
+ * IA-7 chrome: the Azkar section owns the browser. The LIBRARY route is the
+ * section entry wearing nav.azkar; Home is a Today landing with no grid.
+ * The in-chrome Azkar hop (browser vs Moods vs Focus vs Collections) rides
+ * the existing `.segmented` styling with `navigate` only; tile-depth
+ * members (CATEGORY, COLLECTION — their views need an id) resolve through
+ * the browser tiles, never a direct hop.
+ */
+describe('IA-7 chrome: one Azkar section', () => {
+  test('rail and drawer expose the Azkar door; the grid no longer renders on Home', async () => {
+    const { renderHome } = await import('../js/views/home.js');
+    const { renderLibrary } = await import('../js/views/library.js');
+    const html = renderNav(stateFor(VIEWS.HOME));
+    assert.ok(html.includes(`data-view="${VIEWS.LIBRARY}"`), 'azkar entry present');
+    const homeHtml = renderHome(stateFor(VIEWS.HOME));
+    assert.ok(!homeHtml.includes('home-browser'), 'Home carries no browser grid');
+    assert.ok(!homeHtml.includes('category-tile'), 'Home carries no category tiles');
+    assert.ok(homeHtml.includes('home-prayer-ribbon'), 'Home keeps the ribbon');
+    assert.ok(homeHtml.includes('panel--resume'), 'Home keeps the resume rows');
+    assert.ok(
+      homeHtml.includes(`data-view="${VIEWS.TASBIH}"`),
+      'Home keeps an explicit tasbih entry'
+    );
+    const libHtml = renderLibrary(stateFor(VIEWS.LIBRARY));
+    assert.ok(libHtml.includes('azkar-mode-switch'), 'the Azkar section carries its switch');
+    assert.ok(libHtml.includes(en['nav.azkar']), 'the Azkar section wears its name');
+  });
+
+  test('active states merged: Azkar depths light the Azkar door', () => {
+    const distinct = (html) => [...new Set(activeViews(html))].sort();
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.LIBRARY))), [VIEWS.LIBRARY]);
+    // Tile-depth members light the entry only (no direct drawer row)…
+    for (const view of [VIEWS.CATEGORY, VIEWS.COLLECTION]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.LIBRARY],
+        `a deep link into #/${view} lights the Azkar door, not a second entry`
+      );
+    }
+    // …direct members light the entry AND their own drawer row.
+    for (const view of [VIEWS.MOOD, VIEWS.FOCUS, VIEWS.COLLECTIONS]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.LIBRARY, view].sort(),
+        `a deep link into #/${view} lights the Azkar entry plus its drawer row`
+      );
+    }
+  });
+
+  test('in-chrome Azkar hop links browser, moods, focus and collections with no new actions', () => {
+    for (const lang of ['en', 'ar']) {
+      const html = azkarModeSwitchHTML(VIEWS.LIBRARY, lang);
+      for (const view of [VIEWS.LIBRARY, VIEWS.MOOD, VIEWS.FOCUS, VIEWS.COLLECTIONS]) {
+        assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
+      }
+      assert.ok(
+        html.includes('data-action="navigate"') && !html.includes('data-action="azkar-'),
+        `switch reuses navigate only (${lang})`
+      );
+      for (const word of ['streak', 'rank', 'leader', 'shame', 'score', 'best']) {
+        assert.ok(
+          !html.toLowerCase().includes(word),
+          `switch carries no gamification copy (${word}, ${lang})`
+        );
+      }
+    }
+    for (const view of [VIEWS.LIBRARY, VIEWS.MOOD, VIEWS.FOCUS, VIEWS.COLLECTIONS]) {
+      const html = azkarModeSwitchHTML(view, 'en');
+      const activeCount = html.split('segmented__btn--active').length - 1;
+      assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
+    }
+    // Tile-depth views carry no segment: the browser tiles own them.
+    for (const view of [VIEWS.CATEGORY, VIEWS.COLLECTION]) {
+      assert.ok(
+        !azkarModeSwitchHTML(view, 'en').includes('segmented__btn--active'),
+        `no segment claims #/${view} — tile-depth resolves through the browser`
+      );
+    }
+  });
+
+  test('Azkar chrome copy is bilingual: section door plus the hop labels', () => {
+    for (const key of ['nav.azkar', 'title.mood', 'title.focus', 'title.collections']) {
+      assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
+      assert.notEqual(en[key], ar[key], `${key} not translated`);
+    }
+    assert.equal(en['nav.azkar'], 'Azkar');
+    assert.equal(ar['nav.azkar'], 'الأذكار');
+  });
+});
+
+/**
+ * IA-7 chrome: the hierarchical drawer (the mobile More-sheet). One block
+ * per section from the map, each with its entry plus subsection rows for
+ * direct members only — tile-depth members (direct:false) resolve through
+ * the section landing, exactly as the map documents.
+ */
+describe('IA-7 chrome: hierarchical drawer derives from the map', () => {
+  test('drawer carries seven section blocks in map order', () => {
+    for (const lang of ['en', 'ar']) {
+      const html = drawerSectionsHTML(VIEWS.HOME, lang);
+      const sections = [...html.matchAll(/data-section="(\w+)"/g)].map((m) => m[1]);
+      assert.deepEqual(sections, [
+        'HOME',
+        'LIBRARY',
+        'MUSHAF',
+        'HADITH',
+        'PRAYER',
+        'TASBIH',
+        'CHECKLIST',
+      ]);
+    }
+  });
+
+  test('drawer subsection rows link every direct member; tile-depth stays landing-bound', () => {
+    const html = drawerSectionsHTML(VIEWS.HOME, 'en');
+    // Direct members present as rows…
+    for (const view of [
+      VIEWS.MOOD,
+      VIEWS.FOCUS,
+      VIEWS.COLLECTIONS,
+      VIEWS.QURAN,
+      VIEWS.ROOTS,
+      VIEWS.AUDIO,
+      VIEWS.TAJWEED_COURSE,
+      VIEWS.MUTASHABIHAT,
+      VIEWS.QIBLA,
+      VIEWS.CALENDAR,
+      VIEWS.RAMADAN,
+      VIEWS.QUIZ,
+    ]) {
+      assert.ok(html.includes(`data-view="${view}"`), `drawer rows carry #/${view}`);
+    }
+    // …tile-depth members offer no direct row (their views 404 bare)…
+    assert.equal(
+      html.split(`data-view="${VIEWS.CATEGORY}"`).length - 1,
+      0,
+      'no direct drawer row into bare #/category'
+    );
+    assert.equal(
+      html.split(`data-view="${VIEWS.COLLECTION}"`).length - 1,
+      0,
+      'no direct drawer row into bare #/collection'
+    );
+    // …and every row reuses the drawer action only.
+    assert.ok(!html.includes('data-action="navigate"'), 'drawer rows go through nav-drawer-go');
+    assert.ok(html.includes('data-action="nav-drawer-go"'), 'drawer rows close the drawer');
+  });
+
+  test('drawer active states follow the section: member deep links light entry + row', () => {
+    const html = drawerSectionsHTML(VIEWS.QURAN, 'en');
+    assert.ok(html.includes(`data-view="${VIEWS.MUSHAF}"`), 'the Qur’an entry renders');
+    const selected = [...html.matchAll(/data-view="([^"]+)"[^>]*aria-current="page"/g)].map(
+      (m) => m[1]
+    );
+    assert.ok(selected.includes(VIEWS.MUSHAF), 'the section entry lights for a member view');
+    assert.ok(selected.includes(VIEWS.QURAN), 'the member row lights for its own view');
+  });
+
+  test('the drawer renders inside renderNav with all seven entries', () => {
+    const html = renderNav(stateFor(VIEWS.HOME));
+    assert.ok(html.includes('nav-drawer__body'), 'drawer body renders');
+    for (const view of [
+      VIEWS.HOME,
+      VIEWS.LIBRARY,
+      VIEWS.MUSHAF,
+      VIEWS.HADITH,
+      VIEWS.PRAYER,
+      VIEWS.TASBIH,
+      VIEWS.CHECKLIST,
+    ]) {
+      assert.ok(html.includes(`data-view="${view}"`), `drawer carries #/${view}`);
+    }
+  });
+});
+
+/**
+ * REORG Phase 2 locks (supersedes the ORG-02 two-doors ruling) + IA-7: one
+ * book, one door, six routes. The classic reader no longer competes for a
+ * chrome slot — #/quran stays a real route and lights the mushaf door —
+ * and the Tajweed course + look-alike ayat moved here from Practise, so
+ * the in-chrome switch carries five modes. ROOTS stays absorbed (HANDOFF
+ * A1): #/roots stays a real route and lights the mushaf door.
  */
 const stateFor = (activeView) => ({ ...initialState(), activeView });
 
@@ -32,64 +209,99 @@ function activeViews(html) {
   return out;
 }
 
+/**
+ * Rail-only HTML: the desktop scroller plus the mobile bar, cut before the
+ * drawer. IA-7 keeps the rail flat (one tap per section) while the drawer
+ * is hierarchical (entries + subsection rows) — so "must not compete"
+ * pins read the rail, and drawer rows get their own positive pins.
+ */
+function railHTML(html) {
+  return html.split('nav-drawer')[0];
+}
+
 describe('Phase 2 chrome: one Qur’an door', () => {
-  test('rail and drawer expose the mushaf door once each; no competing reader or roots entry', () => {
-    const html = renderNav(stateFor(VIEWS.HOME));
+  test('rail exposes the mushaf door once; no competing reader or roots entry', () => {
+    const html = railHTML(renderNav(stateFor(VIEWS.HOME)));
     assert.ok(html.includes(`data-view="${VIEWS.MUSHAF}"`), 'mushaf entry present');
     const quranHits = html.split(`data-view="${VIEWS.QURAN}"`).length - 1;
-    assert.equal(quranHits, 0, `reader must not compete in the chrome (saw ${quranHits})`);
+    assert.equal(quranHits, 0, `reader must not compete in the rail (saw ${quranHits})`);
     const rootsHits = html.split(`data-view="${VIEWS.ROOTS}"`).length - 1;
-    assert.equal(rootsHits, 0, `roots must not compete in the chrome (saw ${rootsHits})`);
+    assert.equal(rootsHits, 0, `roots must not compete in the rail (saw ${rootsHits})`);
   });
 
-  test('active states merged: #/quran and #/roots deep links light the mushaf door', () => {
-    // Each destination lights in rail + drawer + mobile bar, so dedupe:
-    // exactly one DISTINCT active destination per view.
+  test('active states merged: member deep links light the entry plus their drawer row', () => {
+    // The entry lights in rail + drawer + mobile bar while the member row
+    // lights in the drawer, so dedupe: the entry plus the member itself.
     const distinct = (html) => [...new Set(activeViews(html))].sort();
     assert.deepEqual(distinct(renderNav(stateFor(VIEWS.MUSHAF))), [VIEWS.MUSHAF]);
-    assert.deepEqual(
-      distinct(renderNav(stateFor(VIEWS.QURAN))),
-      [VIEWS.MUSHAF],
-      'a deep link into #/quran lights the Qur’an door, not a second entry'
-    );
-    assert.deepEqual(
-      distinct(renderNav(stateFor(VIEWS.ROOTS))),
-      [VIEWS.MUSHAF],
-      'a deep link into #/roots lights the Qur’an door, not a second entry'
-    );
+    for (const view of [
+      VIEWS.QURAN,
+      VIEWS.ROOTS,
+      VIEWS.AUDIO,
+      VIEWS.TAJWEED_COURSE,
+      VIEWS.MUTASHABIHAT,
+    ]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.MUSHAF, view].sort(),
+        `a deep link into #/${view} lights the Qur’an entry plus its drawer row`
+      );
+    }
   });
 
-  test('in-chrome switch links list reading and word study with no new actions', () => {
+  test('in-chrome switch links list, word, listening, course and look-alikes with no new actions', () => {
     for (const lang of ['en', 'ar']) {
       const html = quranModeSwitchHTML(VIEWS.QURAN, lang);
-      assert.ok(
-        html.includes(`data-view="${VIEWS.QURAN}"`) && html.includes(`data-view="${VIEWS.ROOTS}"`),
-        `switch carries both modes (${lang})`
-      );
+      for (const view of [
+        VIEWS.QURAN,
+        VIEWS.ROOTS,
+        VIEWS.AUDIO,
+        VIEWS.TAJWEED_COURSE,
+        VIEWS.MUTASHABIHAT,
+      ]) {
+        assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
+      }
       assert.ok(
         html.includes('data-action="navigate"') && !html.includes('data-action="quran-'),
         `switch reuses navigate only (${lang})`
       );
     }
     // Active segment follows the route; on the mushaf neither is active.
-    assert.ok(
-      quranModeSwitchHTML(VIEWS.QURAN, 'en').includes('segmented__btn--active'),
-      'list segment active on #/quran'
-    );
-    assert.ok(
-      quranModeSwitchHTML(VIEWS.ROOTS, 'en').includes('segmented__btn--active'),
-      'word segment active on #/roots'
-    );
+    for (const view of [
+      VIEWS.QURAN,
+      VIEWS.ROOTS,
+      VIEWS.AUDIO,
+      VIEWS.TAJWEED_COURSE,
+      VIEWS.MUTASHABIHAT,
+    ]) {
+      const html = quranModeSwitchHTML(view, 'en');
+      const activeCount = html.split('segmented__btn--active').length - 1;
+      assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
+      assert.ok(html.includes(`data-view="${view}"`), `the #/${view} segment is the active one`);
+    }
     assert.ok(
       !quranModeSwitchHTML(VIEWS.MUSHAF, 'en').includes('segmented__btn--active'),
       'the book is the door — no segment claims it'
     );
   });
 
-  test('Qur’an chrome copy is bilingual: nav.quran plus the switch labels', () => {
+  test('course and look-alike views render the Qur’an switch (moved from Practise)', async () => {
+    const { renderMutashabihat } = await import('../js/views/mutashabihat.js');
+    const html = renderMutashabihat({ ...initialState(), activeView: VIEWS.MUTASHABIHAT });
+    assert.ok(html.includes('quran-mode-switch'), 'look-alikes carry the Qur’an switch');
+    assert.ok(html.includes(`data-view="${VIEWS.TAJWEED_COURSE}"`), 'the switch links the course');
+  });
+
+  test('Qur’an chrome copy is bilingual: nav.quran plus the five switch labels', () => {
     assert.ok(en['nav.quran'] && ar['nav.quran']);
     assert.notEqual(en['nav.quran'], ar['nav.quran']);
-    for (const key of ['quran.modeList', 'quran.modeWord']) {
+    for (const key of [
+      'quran.modeList',
+      'quran.modeWord',
+      'nav.audio',
+      'nav.tajweedCourse',
+      'mutashabihat.title',
+    ]) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }
@@ -105,41 +317,34 @@ describe('Phase 2 chrome: one Qur’an door', () => {
  * Arrangement only — no capability change.
  */
 describe('Phase 4 chrome: one Prayer door', () => {
-  test('rail and drawer expose the prayer door once each; no competing qibla/calendar/ramadan entry', () => {
-    const html = renderNav(stateFor(VIEWS.HOME));
+  test('rail exposes the prayer door once; no competing qibla/calendar/ramadan entry', () => {
+    const html = railHTML(renderNav(stateFor(VIEWS.HOME)));
     assert.ok(html.includes(`data-view="${VIEWS.PRAYER}"`), 'prayer entry present');
     const qiblaHits = html.split(`data-view="${VIEWS.QIBLA}"`).length - 1;
-    assert.equal(qiblaHits, 0, `qibla must not compete in the chrome (saw ${qiblaHits})`);
+    assert.equal(qiblaHits, 0, `qibla must not compete in the rail (saw ${qiblaHits})`);
     const calendarHits = html.split(`data-view="${VIEWS.CALENDAR}"`).length - 1;
     assert.equal(
       calendarHits,
       0,
-      `the calendar must not compete in the chrome (saw ${calendarHits})`
+      `the calendar must not compete in the rail (saw ${calendarHits})`
     );
     const ramadanHits = html.split(`data-view="${VIEWS.RAMADAN}"`).length - 1;
-    assert.equal(ramadanHits, 0, `ramadan must not compete in the chrome (saw ${ramadanHits})`);
+    assert.equal(ramadanHits, 0, `ramadan must not compete in the rail (saw ${ramadanHits})`);
   });
 
-  test('active states merged: #/qibla, #/calendar and #/ramadan deep links light the prayer door', () => {
-    // Each destination lights in rail + drawer + mobile bar, so dedupe:
-    // exactly one DISTINCT active destination per view.
+  test('active states merged: member deep links light the entry plus their drawer row', () => {
+    // Each destination lights in rail + drawer entry (+ mobile bar where
+    // listed) while the member row lights in the drawer, so dedupe to the
+    // entry plus the member itself.
     const distinct = (html) => [...new Set(activeViews(html))].sort();
     assert.deepEqual(distinct(renderNav(stateFor(VIEWS.PRAYER))), [VIEWS.PRAYER]);
-    assert.deepEqual(
-      distinct(renderNav(stateFor(VIEWS.QIBLA))),
-      [VIEWS.PRAYER],
-      'a deep link into #/qibla lights the Prayer door, not a second entry'
-    );
-    assert.deepEqual(
-      distinct(renderNav(stateFor(VIEWS.CALENDAR))),
-      [VIEWS.PRAYER],
-      'a deep link into #/calendar lights the Prayer door, not a second entry'
-    );
-    assert.deepEqual(
-      distinct(renderNav(stateFor(VIEWS.RAMADAN))),
-      [VIEWS.PRAYER],
-      'a deep link into #/ramadan lights the Prayer door, not a second entry'
-    );
+    for (const view of [VIEWS.QIBLA, VIEWS.CALENDAR, VIEWS.RAMADAN]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.PRAYER, view].sort(),
+        `a deep link into #/${view} lights the Prayer entry plus its drawer row`
+      );
+    }
   });
 
   test('in-chrome switch links times, qibla, calendar and ramadan with no new actions', () => {
@@ -175,26 +380,23 @@ describe('Phase 4 chrome: one Prayer door', () => {
 });
 
 /**
- * REORG Phase 5 locks + Phase 8 door label: one Practise section. Tasbih,
- * the Tajweed course, the 99 Names quiz and look-alike ayat live in one
- * section behind the TASBIH entry wearing the nav.practise door label;
- * the course's Phase 1 read-group door was temporary and is re-homed here.
- * #/tajweed-course, #/quiz and #/mutashabihat stay real routes and light
- * the Practise door, while the in-chrome Tasbih/Course/Quiz/Look-alike
- * switch (the §2.4 stage rail) carries the hop. Arrangement only — the
- * course progress model, every handler and every data file are untouched,
- * and the rail carries no ranking or shame copy (adab).
+ * REORG Phase 5 locks + IA-7 door label: one Practise section, two modes.
+ * Tasbih and the 99 Names quiz live in one section behind the TASBIH entry
+ * wearing the nav.practise door label; the Tajweed course and look-alike
+ * ayat moved to the Qur’an section (IA-7). #/quiz stays a real route and
+ * lights the Practise door, while the in-chrome Tasbih/Quiz switch carries
+ * the hop. Arrangement only — the rail carries no ranking or shame copy.
  */
 describe('Phase 5 chrome: one Practise section', () => {
-  test('rail and drawer expose the Practise door; course/quiz/look-alikes do not compete', () => {
-    const html = renderNav(stateFor(VIEWS.HOME));
+  test('rail exposes the Practise door; the quiz does not compete', () => {
+    const html = railHTML(renderNav(stateFor(VIEWS.HOME)));
     assert.ok(html.includes(`data-view="${VIEWS.TASBIH}"`), 'practise entry present');
     for (const view of [VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
       const hits = html.split(`data-view="${view}"`).length - 1;
-      assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
+      assert.equal(hits, 0, `#/${view} must not compete in the rail (saw ${hits})`);
     }
     const tasbihHits = html.split(`data-view="${VIEWS.TASBIH}"`).length - 1;
-    assert.ok(tasbihHits >= 2, `practise keeps its door in rail and drawer (saw ${tasbihHits})`);
+    assert.ok(tasbihHits >= 1, `practise keeps its door in the rail (saw ${tasbihHits})`);
     // The door promises the activity (nav.practise), not the counting tool.
     assert.ok(
       html.includes(`<span class="nav__label">${en['nav.practise']}</span>`),
@@ -202,24 +404,22 @@ describe('Phase 5 chrome: one Practise section', () => {
     );
   });
 
-  test('active states merged: course/quiz/look-alike deep links light the Practise door', () => {
-    // Each destination lights in rail + drawer (+ mobile bar where listed),
-    // so dedupe: exactly one DISTINCT active destination per view.
+  test('active states merged: the quiz deep link lights the entry plus its drawer row', () => {
+    // The entry lights in rail + drawer (+ mobile bar where listed) while
+    // the member row lights in the drawer: entry plus member itself.
     const distinct = (html) => [...new Set(activeViews(html))].sort();
     assert.deepEqual(distinct(renderNav(stateFor(VIEWS.TASBIH))), [VIEWS.TASBIH]);
-    for (const view of [VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
-      assert.deepEqual(
-        distinct(renderNav(stateFor(view))),
-        [VIEWS.TASBIH],
-        `a deep link into #/${view} lights the Practise door, not a second entry`
-      );
-    }
+    assert.deepEqual(
+      distinct(renderNav(stateFor(VIEWS.QUIZ))),
+      [VIEWS.QUIZ, VIEWS.TASBIH].sort(),
+      'a deep link into #/quiz lights the Practise entry plus its drawer row'
+    );
   });
 
-  test('in-chrome switch links tasbih, course, quiz and look-alikes with no new actions', () => {
+  test('in-chrome switch links tasbih and quiz with no new actions', () => {
     for (const lang of ['en', 'ar']) {
       const html = practiseModeSwitchHTML(VIEWS.TASBIH, lang);
-      for (const view of [VIEWS.TASBIH, VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
+      for (const view of [VIEWS.TASBIH, VIEWS.QUIZ]) {
         assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
       }
       assert.ok(
@@ -239,7 +439,7 @@ describe('Phase 5 chrome: one Practise section', () => {
       }
     }
     // The active segment follows the route — exactly one claims each view.
-    for (const view of [VIEWS.TASBIH, VIEWS.TAJWEED_COURSE, VIEWS.QUIZ, VIEWS.MUTASHABIHAT]) {
+    for (const view of [VIEWS.TASBIH, VIEWS.QUIZ]) {
       const html = practiseModeSwitchHTML(view, 'en');
       const activeCount = html.split('segmented__btn--active').length - 1;
       assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
@@ -247,15 +447,8 @@ describe('Phase 5 chrome: one Practise section', () => {
     }
   });
 
-  test('Practise chrome copy is bilingual: door label, entry segment, reused labels, section name', () => {
-    for (const key of [
-      'nav.practise',
-      'nav.tasbih',
-      'nav.tajweedCourse',
-      'quiz.title',
-      'mutashabihat.title',
-      'practise.label',
-    ]) {
+  test('Practise chrome copy is bilingual: door label, entry segment, quiz, section name', () => {
+    for (const key of ['nav.practise', 'nav.tasbih', 'quiz.title', 'practise.label']) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }
@@ -281,8 +474,8 @@ describe('Phase 5 chrome: one Practise section', () => {
  * ranking or shame copy (adab).
  */
 describe('Phase 6 chrome: one You section', () => {
-  test('rail and drawer expose the You door; section members do not compete', () => {
-    const html = renderNav(stateFor(VIEWS.HOME));
+  test('rail exposes the You door; section members do not compete', () => {
+    const html = railHTML(renderNav(stateFor(VIEWS.HOME)));
     assert.ok(html.includes(`data-view="${VIEWS.CHECKLIST}"`), 'You door present');
     for (const view of [
       VIEWS.GARDEN,
@@ -294,10 +487,10 @@ describe('Phase 6 chrome: one You section', () => {
       VIEWS.OFFLINE,
     ]) {
       const hits = html.split(`data-view="${view}"`).length - 1;
-      assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
+      assert.equal(hits, 0, `#/${view} must not compete in the rail (saw ${hits})`);
     }
     const youHits = html.split(`data-view="${VIEWS.CHECKLIST}"`).length - 1;
-    assert.ok(youHits >= 2, `You keeps its door in rail and drawer (saw ${youHits})`);
+    assert.ok(youHits >= 1, `You keeps its door in the rail (saw ${youHits})`);
     // The door promises the person, not the old tracker noun.
     assert.ok(
       html.includes(`<span class="nav__label">${en['nav.you']}</span>`),
@@ -305,9 +498,9 @@ describe('Phase 6 chrome: one You section', () => {
     );
   });
 
-  test('active states merged: section deep links light the You door', () => {
-    // Each destination lights in rail + drawer (+ mobile bar where listed),
-    // so dedupe: exactly one DISTINCT active destination per view.
+  test('active states merged: section deep links light the entry plus their drawer row', () => {
+    // The entry lights in rail + drawer (+ mobile bar where listed) while
+    // the member row lights in the drawer: entry plus member itself.
     const distinct = (html) => [...new Set(activeViews(html))].sort();
     assert.deepEqual(distinct(renderNav(stateFor(VIEWS.CHECKLIST))), [VIEWS.CHECKLIST]);
     for (const view of [
@@ -323,8 +516,8 @@ describe('Phase 6 chrome: one You section', () => {
     ]) {
       assert.deepEqual(
         distinct(renderNav(stateFor(view))),
-        [VIEWS.CHECKLIST],
-        `a deep link into #/${view} lights the You door, not a second entry`
+        [VIEWS.CHECKLIST, view].sort(),
+        `a deep link into #/${view} lights the You entry plus its drawer row`
       );
     }
   });
@@ -395,22 +588,21 @@ describe('Phase 6 chrome: one You section', () => {
 });
 
 /**
- * REORG Phase 7 locks + Phase 8 six-door cut: the orphans, one by one,
- * then the filing cabinet comes down. FOCUS, COLLECTIONS and COLLECTION
- * resolve to the HOME (Adhkar) door; AUDIO resolves to the MUSHAF (Qur'an)
- * door via the extended List/Word/Audio switch; LIBRARY resolves to HOME
- * behind the grid's all-view; EDITOR, AMBIENT and SEARCH stay doorless ON
- * PURPOSE as documented internals (js/ui/shell.js INTERNAL_ONLY_ROUTES).
- * Arrangement only — no route, view, handler or data change; renderer
- * static budget stays 19/19; the switches reuse navigate only; every
- * segment keeps its 44px target; no gamification copy; bilingual from the
- * first commit.
+ * IA-7 locks: seven sections, hierarchical drawer. FOCUS, MOOD and
+ * COLLECTIONS resolve to the LIBRARY (Azkar) door with drawer rows;
+ * CATEGORY and COLLECTION are tile-depth (entry lights, no row); AUDIO,
+ * TAJWEED_COURSE and MUTASHABIHAT resolve to the MUSHAF (Qur'an) door;
+ * QUIZ resolves to TASBIH (Practise); EDITOR, AMBIENT and SEARCH stay
+ * doorless ON PURPOSE as documented internals (js/ui/shell.js
+ * INTERNAL_ONLY_ROUTES). Arrangement only — no route, view, handler or
+ * data change; renderer static budget stays 19/19; the switches reuse
+ * navigate only; every segment keeps its 44px target; no gamification
+ * copy; bilingual from the first commit.
  */
-describe('Phase 7 chrome: Adhkar depths, Qur’an listening, three documented internals', () => {
-  test('no new chrome entries: the rail exposes exactly the 6 Phase 8 doors', () => {
-    const html = renderNav(stateFor(VIEWS.HOME));
+describe('IA-7 chrome: Azkar depths, Qur’an study, three documented internals', () => {
+  test('no new rail entries: the rail exposes exactly the 7 IA-7 sections', () => {
+    const html = railHTML(renderNav(stateFor(VIEWS.HOME)));
     for (const view of [
-      VIEWS.LIBRARY,
       VIEWS.FOCUS,
       VIEWS.COLLECTIONS,
       VIEWS.COLLECTION,
@@ -437,26 +629,28 @@ describe('Phase 7 chrome: Adhkar depths, Qur’an listening, three documented in
       VIEWS.AMBIENT,
     ]) {
       const hits = html.split(`data-view="${view}"`).length - 1;
-      assert.equal(hits, 0, `#/${view} must not compete in the chrome (saw ${hits})`);
+      assert.equal(hits, 0, `#/${view} must not compete in the rail (saw ${hits})`);
     }
     for (const view of [
       VIEWS.HOME,
+      VIEWS.LIBRARY,
       VIEWS.MUSHAF,
       VIEWS.HADITH,
       VIEWS.PRAYER,
       VIEWS.TASBIH,
       VIEWS.CHECKLIST,
     ]) {
-      assert.ok(html.includes(`data-view="${view}"`), `door #/${view} present`);
+      assert.ok(html.includes(`data-view="${view}"`), `section #/${view} present`);
     }
   });
 
-  test('the six doors wear the A1 labels in order', () => {
-    const html = renderNav(stateFor(VIEWS.HOME));
+  test('the seven sections wear the IA-7 labels in order', () => {
+    const html = railHTML(renderNav(stateFor(VIEWS.HOME)));
     const labels = [...html.matchAll(/<span class="nav__label">([^<]+)<\/span>/g)].map((m) => m[1]);
-    const railLabels = labels.slice(0, 6);
+    const railLabels = labels.slice(0, 7);
     assert.deepEqual(railLabels, [
       en['nav.home'],
+      en['nav.azkar'],
       en['nav.quran'],
       en['nav.hadith'],
       en['nav.prayer'],
@@ -465,30 +659,46 @@ describe('Phase 7 chrome: Adhkar depths, Qur’an listening, three documented in
     ]);
   });
 
-  test('active states: Adhkar depths light HOME, listening lights the Qur’an door', () => {
+  test('active states: Azkar depths light LIBRARY, study lights the Qur’an door', () => {
     const distinct = (html) => [...new Set(activeViews(html))].sort();
-    for (const view of [VIEWS.FOCUS, VIEWS.COLLECTIONS, VIEWS.COLLECTION]) {
+    // Tile-depth: entry only.
+    for (const view of [VIEWS.CATEGORY, VIEWS.COLLECTION]) {
       assert.deepEqual(
         distinct(renderNav(stateFor(view))),
-        [VIEWS.HOME],
-        `a deep link into #/${view} lights the Adhkar door, not a second entry`
+        [VIEWS.LIBRARY],
+        `a deep link into #/${view} lights the Azkar section, not a second entry`
       );
     }
-    assert.deepEqual(
-      distinct(renderNav(stateFor(VIEWS.AUDIO))),
-      [VIEWS.MUSHAF],
-      'a deep link into #/audio lights the Qur’an door, not a second entry'
-    );
-    // Exactly one distinct door per route — LIBRARY resolves to HOME behind
-    // the grid's all-view.
-    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.CATEGORY))), [VIEWS.HOME]);
-    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.LIBRARY))), [VIEWS.HOME]);
+    // Direct members: entry plus drawer row.
+    for (const view of [VIEWS.FOCUS, VIEWS.COLLECTIONS, VIEWS.MOOD]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.LIBRARY, view].sort(),
+        `a deep link into #/${view} lights the Azkar entry plus its drawer row`
+      );
+    }
+    // Exactly one distinct door per route — LIBRARY resolves to itself.
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.CATEGORY))), [VIEWS.LIBRARY]);
+    assert.deepEqual(distinct(renderNav(stateFor(VIEWS.LIBRARY))), [VIEWS.LIBRARY]);
+    for (const view of [VIEWS.AUDIO, VIEWS.TAJWEED_COURSE, VIEWS.MUTASHABIHAT]) {
+      assert.deepEqual(
+        distinct(renderNav(stateFor(view))),
+        [VIEWS.MUSHAF, view].sort(),
+        `a deep link into #/${view} lights the Qur’an entry plus its drawer row`
+      );
+    }
   });
 
-  test('Qur’an switch carries list, word and listening with no new actions', () => {
+  test('Qur’an switch carries list, word, listening, course and look-alikes with no new actions', () => {
     for (const lang of ['en', 'ar']) {
       const html = quranModeSwitchHTML(VIEWS.AUDIO, lang);
-      for (const view of [VIEWS.QURAN, VIEWS.ROOTS, VIEWS.AUDIO]) {
+      for (const view of [
+        VIEWS.QURAN,
+        VIEWS.ROOTS,
+        VIEWS.AUDIO,
+        VIEWS.TAJWEED_COURSE,
+        VIEWS.MUTASHABIHAT,
+      ]) {
         assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
       }
       assert.ok(
@@ -502,7 +712,13 @@ describe('Phase 7 chrome: Adhkar depths, Qur’an listening, three documented in
         );
       }
     }
-    for (const view of [VIEWS.QURAN, VIEWS.ROOTS, VIEWS.AUDIO]) {
+    for (const view of [
+      VIEWS.QURAN,
+      VIEWS.ROOTS,
+      VIEWS.AUDIO,
+      VIEWS.TAJWEED_COURSE,
+      VIEWS.MUTASHABIHAT,
+    ]) {
       const html = quranModeSwitchHTML(view, 'en');
       const activeCount = html.split('segmented__btn--active').length - 1;
       assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
@@ -523,7 +739,14 @@ describe('Phase 7 chrome: Adhkar depths, Qur’an listening, three documented in
   });
 
   test('Phase 7 chrome copy is bilingual: reused labels only, no new key', () => {
-    for (const key of ['nav.home', 'nav.quran', 'quran.modeList', 'quran.modeWord', 'nav.audio']) {
+    for (const key of [
+      'nav.home',
+      'nav.azkar',
+      'nav.quran',
+      'quran.modeList',
+      'quran.modeWord',
+      'nav.audio',
+    ]) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }

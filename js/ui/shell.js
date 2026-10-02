@@ -1,22 +1,24 @@
 /**
  * components/shell.js
  * The persistent app shell: top bar (hamburger, title, search shortcut,
- * theme toggle) and a FLAT six-door navigation (REORG Phase 8 / HANDOFF A1).
+ * theme toggle) and a SEVEN-SECTION navigation (IA-7, v5.17.61).
  *
- *  - Desktop (>= 960px): a side rail with the six doors and no taxonomy
- *    headers — Home · Qur'an · Ahadeeth · Prayer · Practise · You. The
- *    hamburger collapses it to an icon-only rail (the collapsed state
+ *  - Desktop (>= 960px): a side rail with the seven sections and no taxonomy
+ *    headers — Home · Azkar · Qur'an · Ahadeeth · Prayer · Practise · You.
+ *    The hamburger collapses it to an icon-only rail (the collapsed state
  *    persists in settings.navCollapsed). The rail scrolls independently,
  *    so nothing is ever unreachable.
- *  - Mobile: a bottom tab bar with the first four doors plus a
- *    "More" button that opens the full six-door navigation as a bottom
- *    drawer sheet (the pattern used by most modern apps).
+ *  - Mobile: a bottom tab bar with the first five sections plus a
+ *    "More" button that opens the full seven-section navigation as a
+ *    bottom drawer sheet (the pattern used by most modern apps). The drawer
+ *    is hierarchical: each section block carries its subsection rows, so
+ *    every member is one more tap away without leaving the chrome.
  *
  * Markup is identical for both breakpoints; CSS picks the presentation.
  *
- * Rule-6 note: every list below derives from DOORS in
- * js/core/config/nav.js — the route→door map is the single source of
- * truth, and this file only renders it. A static pin here names nav.js
+ * Rule-6 note: every list below derives from SECTIONS (exported as DOORS)
+ * in js/core/config/nav.js — the route→section map is the single source
+ * of truth, and this file only renders it. A static pin here names nav.js
  * as its source.
  */
 
@@ -37,27 +39,28 @@ const KIDS_NAV_ITEMS = [
 const KIDS_NAV_GROUPS = [{ label: 'kids.title', items: KIDS_NAV_ITEMS }];
 
 /**
- * (REORG Phase 8 / HANDOFF A1) the flat six-door chrome, derived from
- * DOORS in js/core/config/nav.js — order, entry view, icon and labelKey
- * all come from the map, so the rail cannot drift from the reachability
- * trap. Six entries, this order: HOME(nav.home) · MUSHAF(nav.quran) ·
- * HADITH(nav.hadith) · PRAYER(nav.prayer) · TASBIH-entry labelled
- * nav.practise · CHECKLIST-entry labelled nav.you.
+ * (IA-7, v5.17.61) the seven-section chrome, derived from DOORS in
+ * js/core/config/nav.js — order, entry view, icon and labelKey all come
+ * from the map, so the rail cannot drift from the reachability trap.
+ * Seven entries, this order: HOME(nav.home) · LIBRARY(nav.azkar) ·
+ * MUSHAF(nav.quran) · HADITH(nav.hadith) · PRAYER(nav.prayer) ·
+ * TASBIH-entry labelled nav.practise · CHECKLIST-entry labelled nav.you.
  *
  * Retired as doors (routes + deep links untouched, dictionary keys kept):
- * nav.library (route stays behind the grid's all-view), nav.roots
- * (absorbed into the MUSHAF door), nav.tasbih (stays as the Practise
- * segment label), nav.ramadan (4th Prayer segment), nav.zakat + nav.offline
- * (9th/10th You segments), nav.search (doorless-by-design via the topbar
- * palette). The read/worship/tools/mine taxonomy retires with the groups.
+ * nav.roots (absorbed into the MUSHAF door), nav.tasbih (stays as
+ * the Practise segment label), nav.ramadan (4th Prayer segment), nav.zakat
+ * + nav.offline (9th/10th You segments), nav.search (doorless-by-design
+ * via the topbar palette). nav.library retired with the Library nav noun
+ * (IA-7: the section is Azkar now). The read/worship/tools/mine taxonomy
+ * retires with the groups.
  */
 export const NAV_GROUPS = Object.freeze(
   DOORS.map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
 );
 
-/** The mobile bar carries the first four doors; the drawer carries all six. */
+/** The mobile bar carries the first five sections; the drawer carries all seven. */
 const MOBILE_ITEMS = Object.freeze(
-  DOORS.slice(0, 4).map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
+  DOORS.slice(0, 5).map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
 );
 
 /**
@@ -140,10 +143,31 @@ const switchRoutes = (entry, excludeEntry = false) => {
   const door = doorByEntry(entry);
   return door.members.map((m) => m.route).filter((r) => !excludeEntry || r !== entry);
 };
+/**
+ * (IA-7) the Azkar section's in-chrome hop: the browser (#/library — the
+ * section entry and the grid's home) vs Moods (#/mood — the bare picker,
+ * twelve needs) vs Focus (#/focus — the bare picker) vs Collections
+ * (#/collections — the user's adhkar sets). CATEGORY and COLLECTION are
+ * tile-depth only (their views 404 bare — an id is required), so they
+ * carry `direct: false` in the map and resolve through the browser tiles
+ * instead of a direct drawer/switch hop; the map documents the hop, so no
+ * drawer row may promise them. Rendered inside all six Azkar views —
+ * never a nav entry, never a new view. Existing `navigate` actions only
+ * (no handler or allowlist change) and the existing `.segmented` styling
+ * only (44px targets, so Elder/a11y is untouched).
+ */
+const AZKAR_SWITCH_LABELS = Object.freeze({
+  LIBRARY: 'nav.azkar',
+  MOOD: 'title.mood',
+  FOCUS: 'title.focus',
+  COLLECTIONS: 'title.collections',
+});
 const QURAN_SWITCH_LABELS = Object.freeze({
   QURAN: 'quran.modeList',
   ROOTS: 'quran.modeWord',
   AUDIO: 'nav.audio',
+  TAJWEED_COURSE: 'nav.tajweedCourse',
+  MUTASHABIHAT: 'mutashabihat.title',
 });
 const PRAYER_SWITCH_LABELS = Object.freeze({
   PRAYER: 'nav.prayer',
@@ -153,9 +177,7 @@ const PRAYER_SWITCH_LABELS = Object.freeze({
 });
 const PRACTISE_SWITCH_LABELS = Object.freeze({
   TASBIH: 'nav.tasbih',
-  TAJWEED_COURSE: 'nav.tajweedCourse',
   QUIZ: 'quiz.title',
-  MUTASHABIHAT: 'mutashabihat.title',
 });
 const YOU_SWITCH_LABELS = Object.freeze({
   CHECKLIST: 'you.myAdhkar',
@@ -171,11 +193,35 @@ const YOU_SWITCH_LABELS = Object.freeze({
 });
 
 /**
- * (REORG Phase 2 + Phase 7 + Phase 8) the in-chrome Qur'an mode switch:
- * List reading (#/quran) vs Word study (#/roots) vs Listening (#/audio —
- * the reciter / voice picker + offline downloads). Rendered inside the
- * mushaf, reader, roots and audio views — never a nav entry, never a new
- * view. Existing `navigate` actions only (no handler or allowlist change)
+ * (IA-7) the in-chrome Azkar hop — the section menu inside the section:
+ * the browser (#/library) vs Moods vs Focus vs Collections. Rendered
+ * inside all six Azkar views. Tile-depth members (CATEGORY, COLLECTION)
+ * ride the browser tiles, never this rail: their views need an id, so a
+ * direct segment would promise a place that 404s bare. Existing
+ * `navigate` actions only, existing `.segmented` styling only.
+ */
+export function azkarModeSwitchHTML(activeView, lang) {
+  const seg = (routeKey, selected) => {
+    const view = VIEWS[routeKey];
+    const labelKey = AZKAR_SWITCH_LABELS[routeKey];
+    return `
+    <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+  };
+  const routes = Object.keys(AZKAR_SWITCH_LABELS);
+  const activeKey = VIEW_KEY_BY_VALUE[activeView];
+  return `
+    <div class="segmented azkar-mode-switch" role="group" aria-label="${t('nav.azkar', lang)}">
+      ${routes.map((r) => seg(r, activeKey === r)).join('')}
+    </div>`;
+}
+
+/**
+ * (REORG Phase 2 + Phase 7 + Phase 8 + IA-7) the in-chrome Qur'an mode
+ * switch: List reading (#/quran) vs Word study (#/roots) vs Listening
+ * (#/audio — the reciter / voice picker + offline downloads) vs the
+ * Tajweed course (#/tajweed-course) vs look-alike ayat (#/mutashabihat).
+ * Rendered inside the mushaf, reader, roots, audio, course and
+ * look-alike views — never a nav entry, never a new view. Existing `navigate` actions only (no handler or allowlist change)
  * and the existing `.segmented` styling only (44px targets, so Elder/a11y
  * is untouched). On the mushaf neither segment is active: the book IS the
  * door, and the switch offers its inner modes without a route hop or an
@@ -221,19 +267,18 @@ export function prayerModeSwitchHTML(activeView, lang) {
 }
 
 /**
- * (REORG Phase 5) the in-chrome Practise switch — the stage rail §2.4
- * promises the Tajweed course inside its section: Tasbih (#/tasbih) vs the
- * course (#/tajweed-course) vs the 99 Names quiz (#/quiz) vs look-alike
- * ayat (#/mutashabihat). Rendered inside all four views — never a nav
- * entry, never a new view. Existing `navigate` actions only (no handler
- * or allowlist change) and the existing `.segmented` styling only (44px
- * targets, so Elder/a11y is untouched). The door carries the new bilingual
- * `nav.practise` label while the entry segment keeps `nav.tasbih`, so each
- * label promises exactly its tap; the group name ships in the bilingual
- * `practise.label` key. No interstitial: every segment is a direct link
- * to its route. The course's own stage ladder and progress model are
- * untouched — this rail is the section door, not a second progress
- * display, and it carries no ranking or shame copy (adab).
+ * (REORG Phase 5 + IA-7) the in-chrome Practise switch: Tasbih (#/tasbih)
+ * vs the 99 Names quiz (#/quiz). The Tajweed course and look-alike ayat
+ * moved to the QUR'AN section (owner IA: study depths belong to the book),
+ * so this rail is two segments now — derived from the map, like every
+ * switch here. Rendered inside both views — never a nav entry, never a
+ * new view. Existing `navigate` actions only (no handler or allowlist
+ * change) and the existing `.segmented` styling only (44px targets, so
+ * Elder/a11y is untouched). The door carries the bilingual `nav.practise`
+ * label while the entry segment keeps `nav.tasbih`, so each label promises
+ * exactly its tap; the group name ships in the bilingual `practise.label`
+ * key. No interstitial: every segment is a direct link to its route. The
+ * rail carries no ranking or shame copy (adab).
  */
 export function practiseModeSwitchHTML(activeView, lang) {
   const seg = (routeKey, selected) => {
@@ -294,7 +339,7 @@ function navItemHTML(n, active, lang, { drawer = false } = {}) {
 }
 
 function groupsHTML(active, lang, { drawer = false } = {}, groups = NAV_GROUPS) {
-  // Flat six-door chrome: entries render with no taxonomy header. The kids
+  // Seven-section rail: entries render with no taxonomy header. The kids
   // scope still ships one labelled group, rendered the grouped way.
   if (groups.length > 0 && groups[0] && groups[0].view) {
     return `
@@ -311,6 +356,57 @@ function groupsHTML(active, lang, { drawer = false } = {}, groups = NAV_GROUPS) 
   </div>`
     )
     .join('');
+}
+
+/**
+ * (IA-7) section→member label index for the hierarchical drawer. Each
+ * entry reuses its section's own switch-label map — the same objects the
+ * in-chrome switches read — so drawer rows and switch segments can never
+ * disagree: one map per section, two readers (rule 6). Sections without a
+ * map (HOME, HADITH) stand alone: a single-member section needs no
+ * subsection rows.
+ */
+const SWITCH_LABELS_BY_ENTRY = Object.freeze({
+  LIBRARY: AZKAR_SWITCH_LABELS,
+  MUSHAF: QURAN_SWITCH_LABELS,
+  PRAYER: PRAYER_SWITCH_LABELS,
+  TASBIH: PRACTISE_SWITCH_LABELS,
+  CHECKLIST: YOU_SWITCH_LABELS,
+});
+
+function drawerSubRowHTML(door, member, activeKey, lang) {
+  const view = VIEWS[member.route];
+  const labelKey = SWITCH_LABELS_BY_ENTRY[door.entry]?.[member.route] || door.labelKey;
+  const label = t(labelKey, lang);
+  const selected = activeKey === member.route;
+  return `
+    <a class="nav__item nav__item--sub${selected ? ' nav__item--active' : ''}"
+       href="${buildHash(view)}" data-action="nav-drawer-go" data-view="${view}"
+       title="${label}" aria-label="${label}" aria-current="${selected ? 'page' : 'false'}">
+      <span class="nav__label">${label}</span>
+    </a>`;
+}
+
+/**
+ * (IA-7) the hierarchical drawer (the mobile More-sheet): one block per
+ * section from DOORS, each with its entry plus its subsection rows. Rows
+ * derive from the map — members flagged `direct: false` (tile-depth: their
+ * views need an id and 404 bare) resolve through the section landing
+ * instead of a direct hop, exactly as the map documents. Every row reuses
+ * the existing `navigate`/`nav-drawer-go` actions (no handler or allowlist
+ * change) and the existing `.nav__item` styling, so Elder/a11y targets are
+ * untouched. Exported for tests.
+ */
+export function drawerSectionsHTML(active, lang) {
+  const activeKey = VIEW_KEY_BY_VALUE[active];
+  return DOORS.map((door) => {
+    const subs = door.members.filter((m) => m.route !== door.entry && m.direct !== false);
+    return `
+  <div class="nav__group nav__group--section" data-section="${door.entry}">
+    ${navItemHTML({ view: door.view, icon: door.icon, label: door.labelKey }, active, lang, { drawer: true })}
+    ${subs.length ? `<div class="nav__sub">${subs.map((m) => drawerSubRowHTML(door, m, activeKey, lang)).join('')}</div>` : ''}
+  </div>`;
+  }).join('');
 }
 
 /**
@@ -406,9 +502,10 @@ export function renderNav(state) {
   const kidsScoped = state.settings.kidsMode === true;
   const groups = kidsScoped ? KIDS_NAV_GROUPS : NAV_GROUPS;
 
-  // Mobile bottom bar: the first four doors + More (opens the drawer with
-  // all six). In the kids scope the bar mirrors the allowlist (CSS hides
-  // it anyway — the DOM stays honest for tests and assistive tech).
+  // Mobile bottom bar: the first five sections + More (opens the drawer
+  // with all seven, hierarchically). In the kids scope the bar mirrors the
+  // allowlist (CSS hides it anyway — the DOM stays honest for tests and
+  // assistive tech).
   const mobileItems = kidsScoped ? KIDS_NAV_ITEMS : MOBILE_ITEMS;
   // (v5.17.3, axe) these wrappers are plain divs, not nested <nav>
   // landmarks: #bottomnav already owns the single "Main navigation"
@@ -449,6 +546,6 @@ export function renderNav(state) {
         ${icon('close', { size: 20 })}
       </button>
     </div>
-    <div class="nav-drawer__body">${groupsHTML(active, lang, { drawer: true }, groups)}</div>
+    <div class="nav-drawer__body">${kidsScoped ? groupsHTML(active, lang, { drawer: true }, groups) : drawerSectionsHTML(active, lang)}</div>
   </div>`;
 }

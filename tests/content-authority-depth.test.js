@@ -90,7 +90,9 @@ function state(prefs = {}, custom = { 'lib-custom-1': customDoc }) {
     collections: [],
     counters: {},
     speakingItemId: null,
-    ui: { contentManage: false },
+    // (IA-7) the banner grid lives in manage mode now — reading mode is the
+    // moved browser, so grid assertions render managed.
+    ui: { contentManage: true },
   };
 }
 

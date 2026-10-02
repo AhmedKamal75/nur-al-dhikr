@@ -13,7 +13,10 @@ export const ar = {
   // التسمية الميسّرة فقط هي ما يتوطّن.
   'banner.shahadaLabel': 'الشهادة — لا إله إلا الله محمد رسول الله',
   'nav.home': 'الرئيسية',
-  'nav.library': 'المكتبة',
+  // (v5.17.61, IA-7) the Azkar section door — bilingual with en.js from
+  // the first commit.
+  'nav.azkar': 'الأذكار',
+  // (IA-7) nav.library retired with the Library nav noun — see en.js.
   'nav.search': 'بحث',
   'nav.favorites': 'المفضلة',
   'nav.collections': 'المجموعات',

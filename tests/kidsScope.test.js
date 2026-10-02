@@ -97,8 +97,14 @@ describe('kids scope: nav chrome', () => {
     // door (checklist view) is what mode-off chrome offers; Settings
     // itself stays reachable via that door's in-chrome switch (pinned in
     // tests/nav-reachability.test.js), so the scope boundary is unchanged.
+    // (IA-7) the hierarchical drawer carries Settings as a subsection row
+    // under You — the RAIL still offers only sections, so kids cannot tap
+    // there by entry.
     assert.ok(full.includes(VIEWS.CHECKLIST), 'mode off keeps the You door');
-    assert.ok(!full.includes(VIEWS.SETTINGS), 'Settings rides the You switch, not the chrome');
+    const rail = renderNav(initialState()).split('nav-drawer')[0];
+    const railViews = [...rail.matchAll(/data-view="([^"]+)"/g)].map((m) => m[1]);
+    assert.ok(!railViews.includes(VIEWS.SETTINGS), 'Settings rides a drawer row, not the rail');
+    assert.ok(full.includes(VIEWS.SETTINGS), 'the You drawer row reaches Settings');
     assert.ok(full.includes(VIEWS.HOME));
   });
 });
