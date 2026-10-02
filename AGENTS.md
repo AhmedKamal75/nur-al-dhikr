@@ -98,8 +98,19 @@ what you were told, say so instead of proceeding.
      at any viewport implies interactions that must hold across every surface
      pairing (drawer/bar/sheet/palette, offline/online, audio focus, deep
      links). Fix the dimension you were shown, then the adjacent one.
-     "Blocked" without a tag, an alternative search, or the generalized check is
-     an incomplete report.
+   "Blocked" without a tag, an alternative search, or the generalized check is
+   an incomplete report.
+
+9. **No slop ships in either language.** (Owner ruling, 2026-10-02.) A string
+   that fits in English but breaks in Arabic — overflow, clipping, broken
+   joining, orphaned Latin, mirrored transport order — is a defect, not a
+   translation issue. Generalize: every new or changed user-facing string must
+   render in AR (RTL, longest realistic content) and EN without overflow,
+   overlap, or visual breakage, verified by execution (screenshot or
+   layout assertion), not by reading the CSS. Layouts must be content-proof:
+   no fixed heights holding translated text, no un-wrapped Latin inside
+   Arabic lines, no physical properties. A test that only renders EN is an
+   incomplete test.
 
 8. **Do the work with itqan — excellence and due diligence.** (Owner standing
    guidance.) A job is not finished because it produced output; it is finished
