@@ -822,16 +822,35 @@
     var(--shadow-sm),
     inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 25%, transparent);
 }
-/* (REORG Phase 6) the You section holds eight inner modes — one flex row
- * of eight would squeeze every label below readability on a phone. The
- * wrap modifier lets the segments flow onto two rows; each button keeps
- * the base min-height (var(--touch-target)), so Elder/a11y targets are
- * untouched. No new token, no physical properties. */
+/* (REORG Phase 6) the You section holds TEN inner modes. This used to be
+ * `flex-wrap: wrap` over `flex: 1 1 22%`, and 22% capped the row at four
+ * segments AT EVERY WIDTH — measured: 4/4/2 in three rows on a 1440px desktop
+ * (150px tall, 337px per button, one row was available) and 4/4/2 on a 393px
+ * phone (172px tall) with ALL TEN labels broken across two lines. A segmented
+ * control implies a handful of peers; ten is a navigation surface, so it gets
+ * a grid: even columns, one line per label, and the column count follows the
+ * room available instead of a fixed basis. */
 .segmented--wrap {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
 }
 .segmented--wrap .segmented__btn {
-  flex: 1 1 22%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* Wraps at the space, never mid-word: the grid tracks are narrower than the
+     longest label ("Memorization Certificate"), and a broken word is worse
+     than a second line. */
+  overflow-wrap: break-word;
+}
+/* Wide enough to carry all ten on one line. The 10 mirrors the You section's
+   member list in core/config/nav.js — tests/nav-reachability.test.js derives
+   the switch's own length and fails if a segment is added without this. */
+@media (min-width: 1100px) {
+  .you-mode-switch {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
 }
 
 /* Search bar */

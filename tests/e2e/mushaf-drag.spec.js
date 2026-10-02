@@ -37,13 +37,32 @@ async function dragBook(page, startDx, steps, endDx, identifier = 7) {
   );
 }
 
+/**
+ * The mushaf view mounts lazily, so `#main` is populated by the shell long
+ * before `.mushaf-book` exists. These two tests used `#main` not-empty plus a
+ * fixed 2s sleep as their readiness gate — a proxy that asserts something
+ * weaker than what the test depends on, and therefore races real render time.
+ * Under full-suite load the mushaf (page fetch + webfont) lost that race and
+ * `document.querySelector('.mushaf-book')` came back null, crashing
+ * dragBook() with `Cannot read properties of null (reading 'getBoundingClientRect')`.
+ *
+ * This is the same defect class as the v5.17.64 finding where a11y-matrix
+ * seeded `settings.theme` instead of `settings.themeMode`: the gate reported
+ * readiness for something other than the thing under test. The fix is to wait
+ * for the subject, which is what overhaul-orthography.spec.js already does with
+ * `.mushaf-page__text` — not to raise the timeout or add a retry. The 30s
+ * budget below is the sibling spec's; the change is WHAT is awaited.
+ */
+async function openMushaf(page, hash) {
+  await page.goto(hash);
+  await expect(page.locator('.mushaf-book')).toBeVisible({ timeout: 30000 });
+}
+
 test('paper drag: book follows the finger, release turns the page', async ({ page }) => {
   test.slow();
   const pageErrors = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
-  await page.goto('#/mushaf?page=2');
-  await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await page.waitForTimeout(2000);
+  await openMushaf(page, '#/mushaf?page=2');
   const before = await page.evaluate(() => location.hash);
   const r = await dragBook(page, -120, 6, -150);
   expect(r.dragging, 'book carries the drag state mid-pull').toBe(true);
@@ -59,9 +78,7 @@ test('paper drag: a short pull snaps back without turning', async ({ page }) => 
   test.slow();
   const pageErrors = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
-  await page.goto('#/mushaf?page=4');
-  await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await page.waitForTimeout(2000);
+  await openMushaf(page, '#/mushaf?page=4');
   const before = await page.evaluate(() => location.hash);
   const r = await dragBook(page, -30, 3, -30, 9);
   expect(r.dragging, 'even a short pull engages the drag').toBe(true);

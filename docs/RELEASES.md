@@ -2,6 +2,73 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.66 — The "You" switch was ten segments in a component built for three
+
+The You section's in-chrome switch holds **ten** inner modes. It was rendered as
+`.segmented--wrap`: `flex-wrap: wrap` over `flex: 1 1 22%`. A 22% basis caps the
+row at **four segments at every width**, which is invisible in the source and
+obvious on screen:
+
+| viewport       | before                                                                  | after                                                |
+| -------------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| 1440px desktop | 4/4/2 in **3 rows**, 150px tall, 337px per button                       | **1 row**, 61px tall                                 |
+| 1024px tablet  | 4/4/2 in 3 rows, 157px tall, 4 labels broken                            | 3 rows, even columns                                 |
+| 393px phone    | 4/4/2 in 3 rows, 172px tall, **all ten labels broken across two lines** | 2 columns, 5 rows, only 2 labels wrap — at the space |
+
+A segmented control implies a handful of mutually exclusive peers. Ten is a
+navigation surface, so it gets a grid: `repeat(auto-fit, minmax(min(100%, 9.5rem),
+1fr))`, so the column count follows the room available instead of a fixed basis,
+plus a `min-width: 1100px` breakpoint carrying all ten on one line where there is
+room for them. Labels wrap at the **space**, never mid-word (`overflow-wrap:
+break-word`) — the tracks are narrower than "Memorization Certificate", and a
+broken word is worse than a second line.
+
+The `10` in that breakpoint is a literal, so it is pinned rather than trusted:
+`tests/nav-reachability.test.js` derives the You door's member count from
+`core/config/nav.js` and fails if the two disagree, so an eleventh segment
+breaks the gate instead of silently orphaning a row. The same test refuses a
+return to any percentage flex-basis, which is the actual defect.
+
+This also generalised the earlier lesson rather than repeating it: the phone
+switch **grew** 172px → 253px, so the touch-target and heading gates were run
+before committing rather than after. Both stayed green — the growth lands at the
+top of the section, and unlike v5.17.65 it does not reach the onboarding card.
+
+### A flaky gate that was the same bug as v5.17.64
+
+`mushaf-drag.spec.js` failed intermittently in full runs (2 of 4) and passed 8/8
+isolated, with `Cannot read properties of null (reading 'getBoundingClientRect')`
+at `dragBook()`. Both tests gated on `#main` not-empty plus a fixed
+`page.waitForTimeout(2000)`. But the mushaf view mounts **lazily** — the shell
+fills `#main` immediately, so that proxy asserted readiness for something other
+than the subject, and then raced real render time. Under 4-worker load the mushaf
+(page fetch + webfont) lost the race and `.mushaf-book` was still null.
+
+This is the identical defect class as the v5.17.64 finding where `a11y-matrix`
+seeded `settings.theme` instead of `settings.themeMode`: **the gate reported
+readiness for something other than the thing under test.** Both tests now await
+`expect(page.locator('.mushaf-book')).toBeVisible({ timeout: 30000 })` — the
+pattern `overhaul-orthography.spec.js` already uses with `.mushaf-page__text`.
+
+The 30s budget is the sibling spec's existing value. **What changed is what is
+awaited, not how long is tolerated** — no timeout was raised to stop the race
+complaining, and no retry was added to hide it. Full suite after: **173 passed,
+3 skipped, 0 failed.**
+
+### Still open, unreproduced
+
+`overhaul-orthography.spec.js` (ORTH-01) failed in **2 of 6** full
+`--project=chromium` runs and has passed every isolated run (5/5) and every
+loaded run since. Runs measure 17–49s against the spec's own 120s budget — and
+that budget _is_ enforced: a probe confirmed `test.setTimeout()` called mid-body
+sets a real deadline (an 800ms budget failed at 802ms), so these were not
+timeouts. The mushaf CSS is untouched by this release and the selectors changed
+here are scoped to `.home-*` and `.segmented--wrap` / `.you-mode-switch`, none of
+which the mushaf route uses. It may share the same readiness-proxy root cause —
+the spec does await `.mushaf-page__text`, so if it recurs, that is where to look.
+**Not fixed by raising the timeout or adding a retry.** Reopen with a captured
+failure.
+
 ## v5.17.65 — Home was hiding two of the five daily prayers
 
 Both fixes came from looking at the rendered app rather than the source: a

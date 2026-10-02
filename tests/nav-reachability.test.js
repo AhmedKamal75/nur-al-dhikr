@@ -994,4 +994,43 @@ describe('Phase 0 trap: every route reachable within 2 taps of a section (GREEN 
       `Phase 8 finding: routes with no door AND no justification: ${unjustified.join(', ')}`
     );
   });
+  test('the You switch grid pins its column count to the door map, not a literal', () => {
+    // `.you-mode-switch` sets `grid-template-columns: repeat(10, ...)` on wide
+    // viewports so all ten segments share one line. Ten is a literal in CSS,
+    // so this is the drift-check that keeps it honest: both sides are derived
+    // from core/config/nav.js, and adding an eleventh member fails here rather
+    // than silently wrapping an orphan onto a second row.
+    const youDoor = DOORS.find((d) => d.entry === 'CHECKLIST');
+    assert.ok(youDoor, 'the CHECKLIST (You) door must exist in the map');
+    const memberCount = youDoor.members.length;
+
+    const css = readFileSync(
+      path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        '..',
+        'assets',
+        'css',
+        'components.css'
+      ),
+      'utf8'
+    );
+    const rule = /\.you-mode-switch\s*\{([^}]*)\}/.exec(css);
+    assert.ok(rule, '.you-mode-switch must declare its own columns');
+    const pinned = /grid-template-columns:\s*repeat\((\d+)/.exec(rule[1]);
+    assert.ok(pinned, '.you-mode-switch must pin an explicit column count');
+    assert.equal(
+      Number(pinned[1]),
+      memberCount,
+      `the You switch renders ${memberCount} segments (from the DOORS map) but the CSS ` +
+        `grid is pinned to ${pinned[1]} columns — one segment will wrap alone onto a second row`
+    );
+
+    // And it must not go back to a fixed-percentage basis, which is what put
+    // four-per-row on a 1440px desktop and broke all ten labels on a phone.
+    assert.doesNotMatch(
+      css,
+      /\.segmented--wrap \.segmented__btn\s*\{[^}]*flex:\s*1 1 \d+%/s,
+      'a percentage flex-basis caps the row at a fixed segment count at EVERY width'
+    );
+  });
 });
