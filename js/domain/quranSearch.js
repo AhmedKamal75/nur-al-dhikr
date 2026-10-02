@@ -31,6 +31,11 @@
  */
 
 import { normalizeSearch, normalizeArabic, stripQuranAnnotations } from '../core/utils.js';
+import {
+  expandQueryWithRoots,
+  mergeQuranHits,
+  QURAN_EXPANSION_HIT_CAP,
+} from './rootAwareSearch.js';
 
 let quranRecords = []; // [{ s, a, hay, hayTrans }]
 let arabicByKey = new Map(); // "s:a" -> normalized-arabic for snippet reuse
@@ -163,6 +168,62 @@ export function searchQuran(query, { limit = 24 } = {}) {
   const out = results.slice(0, safeLimit);
   lastSearch = { query: raw, limit: safeLimit, results: out };
   return out;
+}
+
+/* ------------------------------------------------------------------ */
+/* Root-expanded search (v5.17.60, merged-plan item 13)                */
+/* ------------------------------------------------------------------ */
+/**
+ * searchQuranExpanded(): exact search PLUS the query's root family.
+ * A word matches its root family: querying رحمة also finds ayahs holding
+ * الرحمن/رحيم (same root رحم, different surface forms), and an English
+ * "mercy" reaches the رحم family through the recorded classical meanings
+ * in data/quran-roots-meaning.json (read, never invented).
+ *
+ * Exact hits keep their scores and lead (no regression — expansion only
+ * ADDS ayahs, each flagged viaRoot with its root). Pure and index-local:
+ * the roots + meanings indexes arrive as arguments; without them this
+ * degrades to the exact search. Returns { hits, expansion }.
+ */
+export function searchQuranExpanded(
+  query,
+  { limit = 24, rootsIndex = null, meaningsIndex = null } = {}
+) {
+  const resultLimit = limit == null ? Infinity : Number(limit);
+  const safeLimit = Number.isFinite(resultLimit) ? Math.max(0, resultLimit) : Infinity;
+  const exact = searchQuran(query, { limit: Infinity });
+  const expansion = expandQueryWithRoots(query, rootsIndex, meaningsIndex);
+  if (!expansion.matched || !expansion.arabicForms.length || !quranRecords.length) {
+    return { hits: exact.slice(0, safeLimit), expansion };
+  }
+  const exactKeys = new Set(exact.map((h) => `${h.s}:${h.a}`));
+  // Forms fold through the record pipeline (annotations stripped,
+  // diacritics folded, alefs elided) so they meet hayArabic on its terms.
+  const foldedForms = expansion.arabicForms.map((f) =>
+    elideAlefs(normalizeArabic(stripQuranAnnotations(f)))
+  );
+  const formRoots = new Map(); // folded form -> first root that contributed it
+  expansion.roots.forEach((r) => {
+    const key = elideAlefs(normalizeArabic(stripQuranAnnotations(r.root)));
+    if (key && !formRoots.has(key)) formRoots.set(key, r.root);
+  });
+  const expanded = [];
+  for (const rec of quranRecords) {
+    const key = `${rec.s}:${rec.a}`;
+    if (exactKeys.has(key)) continue;
+    let via = null;
+    for (const form of foldedForms) {
+      if (form && rec.hayArabic.includes(form)) {
+        via = formRoots.get(form) || expansion.roots[0]?.root || '';
+        break;
+      }
+    }
+    if (via !== null) {
+      expanded.push({ s: rec.s, a: rec.a, score: 1, viaRoot: true, root: via });
+      if (expanded.length >= QURAN_EXPANSION_HIT_CAP) break;
+    }
+  }
+  return { hits: mergeQuranHits(exact, expanded, { limit: safeLimit }), expansion };
 }
 
 /* ------------------------------------------------------------------ */

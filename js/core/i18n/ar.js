@@ -616,6 +616,15 @@ export const ar = {
   'search.suggestions': 'جرّب بحثًا',
   'search.emptyHint':
     'ابحث في القرآن كاملًا وكل الأذكار والأدعية والأسماء الحسنى — بالعربية أو الإنجليزية.',
+  // (v5.17.60، البند 13 من الخطة المدمجة) البحث الجذري: طبقة الجذور
+  // وحالات الفراغ الصادقة التي تسمي ما تم البحث فيه فعلًا.
+  'search.rootsResults': 'من جذور الكلمات',
+  'search.rootsCount': '{n} جذور',
+  'search.rootFamily': 'بما في ذلك عائلة {root} ({n} كلمة)',
+  'search.emptyNamed': 'تم البحث في {scope} — ولا توجد نتائج.',
+  'search.scopeLibrary': 'مكتبة الأذكار',
+  'search.scopeQuran': 'القرآن الكريم',
+  'search.scopeRoots': 'فهرس الجذور',
   'favorites.empty': 'لم تُضِف شيئًا إلى المفضلة بعد.',
   'favorites.emptyHint': 'اضغط على أيقونة القلب في أي بطاقة لحفظها هنا.',
   'favorites.emptyAction': 'تصفح المكتبة',

@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.59**. Last updated against a green `npm run check` and
+> Current version: **v5.17.60**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -67,6 +67,7 @@ must never be backdated into the number:**
 | v5.17.57 — gentle queue + private ledger                          | Home queue retitled Available review with names-only chips (no +N, no totals, no streak KPI); counts live in the Statistics ledger; khatma/prayer/coaching reworded pause-not-fail                   |
 | v5.17.58 — kids degamified, gate kept                             | stars, Seed→Crown levels, week chart, per-surah table, erase path and quiz awards removed; plain heard count only; quiz plays award-free; Settings-in + hold-to-exit + parent gate kept              |
 | v5.17.59 — unified offline+backup summary card                    | one shared card on the Offline view + Settings data section (last-export age, auto-snapshot age/size, 30-day nudge, restore entry, Offline↔Settings cross-links); snapshot bytes stamped + sanitized |
+| v5.17.60 — root-aware search                                      | Latin fold + romanized bridge + root-family expansion (read, never invented) into library + Qur'an tiers; roots-result section with door chips; tiers named pending/failed, empties name their scope |
 
 **So 7.5 is stale in the optimistic direction, and no re-score has been taken.**
 The number that would be honest today is unknown, and guessing it would repeat

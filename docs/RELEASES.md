@@ -2,6 +2,28 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.60 — Root-aware search: a word finds its own family
+
+Merged-plan item 13. Querying رحمة now also finds ayahs holding
+الرحمن/رحيم (same root رحم, different surface forms), and an English
+"mercy" reaches the رحم family through the recorded classical meanings
+in data/quran-roots-meaning.json (read, never invented). A Latin "sabr"
+reaches a "ṣabr" transliteration through the same fold on both sides.
+Exact hits keep their scores and lead — expansion only ADDS ayahs, each
+flagged with its root. Tiers that failed or are still loading are named
+(pending/failed), never counted as zero; empty states name the scope
+actually searched. New pure module `js/domain/rootAwareSearch.js`
+(transliteration fold, romanized skeleton bridge, root-family expansion,
+unifiedSearch tier combiner), wired into the library + Qur'an tiers and
+a new roots-result section with door chips into the roots view.
+
+- Constraints held: no data changes (reads the bundled roots corpus),
+  bilingual EN+AR (7 twinned keys), 19/19 renderer budget intact, Elder/a11y
+  intact, offline-safe (pure, index-local, nothing fetched), no gamification.
+- Tests: `tests/root-aware-search.test.js` (12 cases — folding, bridges,
+  key/form/meaning/romanized expansion, hostile keys, merge order+dedupe,
+  tier honesty, view render incl. door chips and named empties).
+
 ## v5.17.59 — One offline+backup summary card on both surfaces
 
 Merged-plan item 12. The Offline library and the Settings data section

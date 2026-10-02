@@ -9,7 +9,8 @@ import { icon } from '../core/icons.js';
 import { escapeHTML, highlightMatch, pickLocale, ayahCountPhrase } from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { search as runSearch } from '../domain/search.js';
-import { searchQuran, isQuranSearchReady } from '../domain/quranSearch.js';
+import { searchQuranExpanded, isQuranSearchReady } from '../domain/quranSearch.js';
+import { expandQueryWithRoots } from '../domain/rootAwareSearch.js';
 import { searchTafsir, isTafsirSearchReady, tafsirIndexEdition } from '../domain/tafsirSearch.js';
 import { searchHadith } from '../domain/hadithSearch.js';
 import { resolvePage } from '../services/mushaf.js';
@@ -93,8 +94,12 @@ function quranSection(state, query, lang, all) {
   }
   // (SEARCH-01) explicit pages: the index still runs once (uncapped —
   // `all` is computed by renderSearch), the pager slices the window.
+  // (v5.17.60, item 13) an empty list here means the tier RAN with zero
+  // hits (loading/failure return above), so the empty state names the
+  // scope that was actually searched instead of a generic "nothing".
   const { items: hits, page, pageCount, total } = paginate(all, state.activeParams, 'quran');
   const terms = String(query).split(/\s+/);
+  const emptyNamed = t('search.emptyNamed', lang, { scope: t('search.scopeQuran', lang) });
   return `
   <section class="panel quran-search-panel">
     <div class="panel__header">
@@ -106,7 +111,7 @@ function quranSection(state, query, lang, all) {
         ? `<div class="quran-hit-list">${hits.map((h) => quranResultRow(state, h, lang, terms)).join('')}</div>${pageHTML(lang, 'quran', page, pageCount, hits.length, total)}`
         : emptyStateHTML({
             iconName: 'search',
-            title: t('search.noResults', lang),
+            title: emptyNamed,
             hint: t('search.noResultsHint', lang),
           })
     }
@@ -172,16 +177,50 @@ const SUGGESTIONS = {
   ar: ['رحمة', 'الصبر', 'مغفرة', 'الجنة', 'نور', 'هداية'],
 };
 
+/** (v5.17.60, item 13) the roots tier: the query's root family as
+ *  door chips into the roots view — rendered only when the expansion
+ *  matched; an honest named empty when the tier ran with no family. */
+function rootsSection(expansion, lang) {
+  if (!expansion) return '';
+  const head = `<div class="panel__header"><h2>${t('search.rootsResults', lang)}</h2><span class="view__meta">${t('search.rootsCount', lang, { n: expansion.roots.length })}</span></div>`;
+  if (!expansion.matched) {
+    return `<section class="panel roots-search-panel">${head}${emptyStateHTML({
+      iconName: 'search',
+      title: t('search.emptyNamed', lang, { scope: t('search.scopeRoots', lang) }),
+      hint: t('search.noResultsHint', lang),
+    })}</section>`;
+  }
+  return `<section class="panel roots-search-panel">${head}<div class="chip-row">${expansion.roots
+    .map(
+      (r) =>
+        `<a class="chip chip--query" href="${buildHash(VIEWS.ROOTS, { id: r.root })}" data-action="navigate" data-view="${VIEWS.ROOTS}" data-id="${escapeHTML(r.root)}">${escapeHTML(r.root)}<span class="chip__sub">${escapeHTML(t('search.rootFamily', lang, { root: r.root, n: r.count }))}</span></a>`
+    )
+    .join('')}</div></section>`;
+}
+
 export function renderSearch(state) {
   const lang = state.settings.language;
   const query = state.activeParams.q || '';
   // (v5.9.0) one index pass per corpus per render (the v4.0 single-pass
   // contract): the lists feed BOTH the sections and the match-breakdown
   // counters, so counting never costs a second pass.
-  const quranAll =
-    query && isQuranSearchReady() && !state.loadErrors?.['quran-search-corpus']
-      ? searchQuran(query, { limit: Infinity })
+  // (v5.17.60, item 13) root-aware recall: the query's root family
+  // expands BOTH tiers — Qur'an hits via searchQuranExpanded, library
+  // hits via extraTerms. Without loaded roots indexes this degrades to
+  // the exact search (expandQueryWithRoots returns unmatched).
+  const expansion =
+    query && !state.loadErrors?.['quran-search-corpus']
+      ? expandQueryWithRoots(query, state.quranRoots, state.rootsMeaning?.index)
       : null;
+  const quranRes =
+    query && isQuranSearchReady() && !state.loadErrors?.['quran-search-corpus']
+      ? searchQuranExpanded(query, {
+          limit: Infinity,
+          rootsIndex: state.quranRoots,
+          meaningsIndex: state.rootsMeaning?.index,
+        })
+      : null;
+  const quranAll = quranRes ? quranRes.hits : null;
   const tafsirAll =
     query && isTafsirSearchReady() && !state.loadErrors?.['tafsir-search-corpus']
       ? searchTafsir(query, { limit: Infinity })
@@ -196,7 +235,10 @@ export function renderSearch(state) {
   // claim about the corpus when the truth is that the corpus was never
   // fetched. `library.js:282` gets this right; search did not.
   const libLoadFailed = Boolean(state.loadErrors?.library);
-  const libAll = query && !libLoadFailed ? runSearch(query, { limit: Infinity }) : [];
+  const libAll =
+    query && !libLoadFailed
+      ? runSearch(query, { limit: Infinity, extraTerms: expansion?.arabicForms })
+      : [];
   const hadithAll = query ? searchHadith(query, { limit: Infinity }) : [];
   const azkarAll = query ? libAll.filter((r) => r.document?.metadata?.id === 'adhkar') : [];
   const libPage = query ? paginate(libAll, state.activeParams, 'library') : null;
@@ -260,6 +302,8 @@ export function renderSearch(state) {
 
     ${query ? tafsirSection(state, query, lang, tafsirAll) : ''}
 
+    ${query ? rootsSection(expansion, lang) : ''}
+
     ${
       query
         ? `
@@ -290,7 +334,7 @@ export function renderSearch(state) {
       </div>${pageHTML(lang, 'library', libPage.page, libPage.pageCount, libShown.length, libAll.length)}`
             : emptyStateHTML({
                 iconName: 'search',
-                title: t('search.noResults', lang),
+                title: t('search.emptyNamed', lang, { scope: t('search.scopeLibrary', lang) }),
                 hint: t('search.noResultsHint', lang),
               })
       }

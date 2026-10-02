@@ -658,6 +658,15 @@ export const en = {
   'search.suggestions': 'Try a search',
   'search.emptyHint':
     'Search the whole Qur\u2019an, every dhikr and dua, and the 99 Names \u2014 in Arabic or English.',
+  // (v5.17.60, merged-plan item 13) root-aware search: the roots tier and
+  // the honest empty states that name what was actually searched.
+  'search.rootsResults': 'From the word roots',
+  'search.rootsCount': '{n} roots',
+  'search.rootFamily': 'Including the {root} family ({n} words)',
+  'search.emptyNamed': 'Searched {scope} \u2014 nothing matched.',
+  'search.scopeLibrary': 'the azkar library',
+  'search.scopeQuran': 'the Qur\u2019an',
+  'search.scopeRoots': 'the root index',
   'favorites.empty': 'You haven\u2019t favorited anything yet.',
   'favorites.emptyHint': 'Tap the heart icon on any card to save it here.',
   'favorites.emptyAction': 'Browse the Library',

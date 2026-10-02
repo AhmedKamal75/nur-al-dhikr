@@ -6,6 +6,7 @@
  */
 
 import { normalizeSearch, pickLocale } from '../core/utils.js';
+import { foldTranslit } from './rootAwareSearch.js';
 
 let index = []; // [{ itemId, haystack, weightHints }]
 let itemLookup = new Map();
@@ -56,6 +57,12 @@ export function buildIndex(itemIndex) {
           ' ' +
           item.transliteration
       ),
+      // (v5.17.60, merged-plan item 13) cross-script bridging: the
+      // transliteration field folded with the same Latin fold as queries,
+      // so a plain "sabr" reaches a "ṣabr" the exact fold cannot see.
+      translitHay: foldTranslit(
+        `${item.transliteration || ''} ${pickLocale(item.title, 'en') || ''}`
+      ),
     };
     index.push(rec);
     itemLookup.set(itemId, entry);
@@ -66,8 +73,14 @@ export function buildIndex(itemIndex) {
 /**
  * Search the index. Returns an array of { itemId, item, category, document, score }
  * ranked by relevance (title/exact matches first).
+ *
+ * (v5.17.60, merged-plan item 13) two recall aids that never reorder exact
+ * hits: a Latin term also matches the folded transliteration haystack
+ * (cross-script bridging, scored below a body hit), and `extraTerms`
+ * (root-family Arabic forms from expandQueryWithRoots) append OR-matched
+ * expansion hits with viaRoot:true AFTER every exact hit.
  */
-export function search(query, { limit = 50 } = {}) {
+export function search(query, { limit = 50, extraTerms = null } = {}) {
   const resultLimit = limit == null ? Infinity : Number(limit);
   const safeLimit = Number.isFinite(resultLimit) ? Math.max(0, resultLimit) : Infinity;
   const q = normalizeSearch(query);
@@ -76,26 +89,55 @@ export function search(query, { limit = 50 } = {}) {
   if (!terms.length) return [];
 
   const results = [];
+  const exactIds = new Set();
   for (const rec of index) {
     let score = 0;
     let allMatch = true;
     for (const term of terms) {
       const inTitle = rec.titleHaystack.includes(term);
       const inBody = rec.haystack.includes(term);
-      if (!inTitle && !inBody) {
+      // Bridging: a Latin term reaches the transliteration's folded form.
+      const fl = foldTranslit(term);
+      const inTranslit =
+        !inTitle && !inBody && fl && fl.length >= 2 && rec.translitHay
+          ? rec.translitHay.split(' ').some((w) => w === fl || (fl.length >= 4 && w.startsWith(fl)))
+          : false;
+      if (!inTitle && !inBody && !inTranslit) {
         allMatch = false;
         break;
       }
-      score += inTitle ? 5 : 1;
+      if (inTitle) score += 5;
+      else if (inBody) score += 1;
+      else score += 0.5;
       if (rec.titleHaystack.startsWith(term)) score += 3;
     }
-    if (allMatch) results.push({ itemId: rec.itemId, score });
+    if (allMatch) {
+      exactIds.add(rec.itemId);
+      results.push({ itemId: rec.itemId, score });
+    }
   }
 
   results.sort((a, b) => b.score - a.score);
-  return results
-    .slice(0, safeLimit)
-    .map((r) => ({ ...itemLookup.get(r.itemId), itemId: r.itemId, score: r.score }));
+  const extras = Array.isArray(extraTerms) ? extraTerms.filter(Boolean) : [];
+  if (extras.length) {
+    const expanded = [];
+    for (const rec of index) {
+      if (exactIds.has(rec.itemId)) continue;
+      let hits = 0;
+      for (const form of extras) {
+        if (rec.haystack.includes(form) || rec.titleHaystack.includes(form)) hits += 1;
+      }
+      if (hits) expanded.push({ itemId: rec.itemId, score: 0.25 * hits, viaRoot: true });
+    }
+    expanded.sort((a, b) => b.score - a.score);
+    for (const r of expanded) results.push(r);
+  }
+  return results.slice(0, safeLimit).map((r) => ({
+    ...itemLookup.get(r.itemId),
+    itemId: r.itemId,
+    score: r.score,
+    ...(r.viaRoot ? { viaRoot: true } : {}),
+  }));
 }
 
 /**
