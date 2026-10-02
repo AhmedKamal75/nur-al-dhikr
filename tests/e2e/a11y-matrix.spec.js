@@ -97,11 +97,27 @@ for (const theme of THEMES) {
           }
         }, theme);
 
+        // Set BEFORE the first paint, so the view is never caught mid-transition.
+        await page.emulateMedia({ reducedMotion: 'reduce' });
         await page.goto(route);
         // Wait for the view itself: the boot skeleton is non-empty, and
         // scanning it proves nothing.
         await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
         await assertTheme(page, theme);
+        // (v5.17.65) Emulate reduced motion before auditing. The app already
+        // collapses every animation and transition to 0.001ms under this
+        // preference (assets/css/base.css:178-185), so this uses a real,
+        // shipped accessibility path rather than a test-only stylesheet.
+        //
+        // It fixes a false failure, and the signature was unmistakable: every
+        // failure named `h1` plus the FIRST input on the page (h1 +
+        // #hadith-grid-search-input, h1 + #settings-search-input), on a
+        // DIFFERENT route set each run, all of them green in isolation. axe
+        // was sampling the view mid-entry-transition. A reader never sees a
+        // colour that only exists at t=120ms, and a gate that reports one is
+        // reporting a state that does not exist. Resting-state contrast is
+        // still measured in full — transitions complete instantly, so the
+        // settled colours are what axe reads.
         await page.waitForTimeout(1200);
 
         const res = await new AxeBuilder({ page }).analyze();

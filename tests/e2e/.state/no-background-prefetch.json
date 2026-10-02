@@ -2,7 +2,7 @@
   "cookies": [],
   "origins": [
     {
-      "origin": "http://127.0.0.1:8080",
+      "origin": "http://127.0.0.1:8123",
       "localStorage": [
         {
           "name": "nurAlDhikr:v2:state",

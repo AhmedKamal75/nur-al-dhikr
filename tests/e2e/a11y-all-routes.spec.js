@@ -64,7 +64,11 @@ test.describe('a11y across every route', () => {
       // dark one on the SAME page leaves both installed, and both re-run on
       // every later navigation. One context per theme is the only way the
       // second pass can actually be dark.
-      const context = await browser.newContext();
+      // (v5.17.65) reduced motion, same reasoning as a11y-matrix.spec.js:
+      // axe must not sample a view mid-entry-transition. The app collapses
+      // motion under this preference via its own shipped rule
+      // (assets/css/base.css:178-185).
+      const context = await browser.newContext({ reducedMotion: 'reduce' });
       const themed = await context.newPage();
       await themed.addInitScript((t) => {
         try {

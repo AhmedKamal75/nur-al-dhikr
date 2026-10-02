@@ -16,6 +16,36 @@ const EVIDENCE_MATRIX = process.env.EVIDENCE_MATRIX === '1';
 // triple-engine runs stay opt-in: the whole 20+ spec suite × 3 engines
 // would triple CI time for routes with no engine-specific surface.
 const CROSS_ENGINE = process.env.CROSS_ENGINE === '1';
+
+/**
+ * The suite gets its OWN port, and never reuses whatever is listening.
+ *
+ * (v5.17.65) This used to be 8080 with `reuseExistingServer: !CI`, which is
+ * also `npm start` and the port every README/CONTRIBUTING/DEVICE-TEST doc tells
+ * the owner to serve on. So `reuseExistingServer` would happily adopt the
+ * owner's `python3 -m http.server 8080` — SINGLE-THREADED — and every parallel
+ * worker would serialise through it.
+ *
+ * That is not hypothetical; it is what happened. A full chromium run failed
+ * three a11y-matrix tests with "Test timeout of 45000ms exceeded while setting
+ * up context" — no colour-contrast violation anywhere, just browsers failing to
+ * start. The same six tests passed in isolation in 23s, and the next full run
+ * passed. `ss -ltnp | grep 8080` showed a single-threaded server that had been
+ * up for hours. The config already documented this trap in a wall of prose
+ * above webServer; the cost was still an hour and a false "the suite is flaky"
+ * conclusion, twice.
+ *
+ * A dedicated port removes the failure mode instead of detecting it. Detection
+ * was tried first and rejected on evidence: a concurrency probe (N parallel
+ * fetches, compare elapsed) does NOT distinguish the two servers here — at
+ * N=8 the threaded one measured 5x SLOWER, at N=24 they tied, because
+ * per-request overhead dominates a localhost fetch. A timing heuristic that
+ * inverts its own answer is worse than no check.
+ *
+ * 8080 is untouched: that is still the human server.
+ */
+const E2E_PORT = Number(process.env.E2E_PORT ?? 8123);
+
 export default defineConfig({
   testDir: 'tests/e2e',
   testMatch: '**/*.spec.js',
@@ -44,7 +74,7 @@ export default defineConfig({
   workers: Number(process.env.PW_WORKERS ?? 4),
   retries: process.env.CI ? 2 : 0,
   use: {
-    baseURL: 'http://127.0.0.1:8080',
+    baseURL: `http://127.0.0.1:${E2E_PORT}`,
     trace: EVIDENCE_MATRIX ? 'on' : 'retain-on-failure',
     // (v5.17.17) The app prefetches ~1,400 corpus files 15s after boot. For a
     // reader that is invisible and happens once. For this suite it ran in
@@ -95,29 +125,22 @@ export default defineConfig({
         ]
       : [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    // (v5.17.2, matrix; re-investigated v5.17.45) threaded:
-    // `python3 -m http.server` is SINGLE-THREADED, so 4 parallel browsers
-    // serialise on every data load and starve each other's budgets. The
-    // user-facing `npm start` stays single-threaded — one user is fine.
+    // Threaded, because `python3 -m http.server` is SINGLE-THREADED: four
+    // parallel browsers serialise on every data load and starve each other's
+    // budgets. The human-facing `npm start` on 8080 stays single-threaded —
+    // one reader is fine, and that is not the suite's problem.
     //
-    // READ THIS IF THE SUITE IS SUDDENLY FLAKY AND SLOW.
-    //
-    // `reuseExistingServer: !CI` means Playwright REUSES whatever is already on
-    // 8080. During this session a stale `python3 -m http.server 8080` from
-    // another session had been running for a day and a half with exactly ONE
-    // thread, so every run serialised on it. Measured cost: a route that takes
-    // 6.5s alone took ~15s under load, and a full suite run failed a random
-    // spec about one run in three.
-    //
-    // The threaded server below is only used if nothing is already listening.
-    // So: if runs are mysteriously slow, check for a stale single-threaded
-    // server on 8080 and kill it. `ss -ltnp | grep 8080`. This is an
-    // environment trap, not a code bug, and it is written down here so the
-    // next agent does not lose an hour to it.
-    command:
-      'python3 -c "from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler; ThreadingHTTPServer((\'127.0.0.1\', 8080), SimpleHTTPRequestHandler).serve_forever()"',
-    url: 'http://127.0.0.1:8080',
-    reuseExistingServer: !process.env.CI,
+    // (v5.17.65) `reuseExistingServer` is now hard false. It used to be
+    // `!CI`, which meant the suite adopted whatever was already on the port —
+    // including the owner's single-threaded `npm start`. That produced a full
+    // run failing three a11y tests on browser startup with no violation at
+    // all, while the same tests passed in isolation. See E2E_PORT above for the
+    // full account; the short version is that a dedicated port plus never
+    // reusing makes the trap structurally impossible instead of merely
+    // documented.
+    command: `python3 -c "from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler; ThreadingHTTPServer(('127.0.0.1', ${E2E_PORT}), SimpleHTTPRequestHandler).serve_forever()"`,
+    url: `http://127.0.0.1:${E2E_PORT}`,
+    reuseExistingServer: false,
     timeout: 30 * 1000,
   },
 });
