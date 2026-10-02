@@ -2,6 +2,55 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.65 — Home was hiding two of the five daily prayers
+
+Both fixes came from looking at the rendered app rather than the source: a
+Chromium measurement, not a grep.
+
+**1. Maghrib and Isha were off-screen on every phone.** The Home prayer ribbon
+was `display: flex; overflow-x: auto` with `flex: 1 0 auto` cells. Measured at
+393px: **319px of track for 474px of content** — Fajr, Sunrise, Dhuhr and Asr
+showed, and Maghrib and Isha sat past the edge behind a scroller with no
+affordance, no gradient and no scrollbar to hint at it. At 360px only **3 of 6**
+were visible. The cells are now a grid of six columns, and all six are visible at
+360px, 393px, 1024px and 1440px (re-measured: `fullyInside` 6/6,
+`scrollWidth == clientWidth`, `overflow-x: visible`). The container keeps
+`dir="ltr"` from the markup, so Fajr → Isha reads in order in Arabic too.
+
+A phone 3×2 grid was tried first and **reverted on evidence**, which is the more
+useful half of this change. Two rows grew Home ~64px, which pushed the onboarding
+card's dismiss button to the bottom edge of the inner scroller, where `#main`'s
+overflow clipped the button's 44px `::after` apron from 5px to **1px** —
+`touch-targets.spec.js` failed on it, and the app was genuinely worse, not just
+red. Six columns at every width, with the cells tightening (`gap: 4px`,
+`padding-inline: 2px`) under 560px, keeps the strip to one row and the apron
+intact (re-measured 5px, with 53px of clearance at 390×844). The lesson is
+narrower than "six columns are nicer": **growing a page's height is a change with
+a reach**, and the thing that breaks is rarely the thing you edited.
+
+**2. Two labels were being silently trimmed.** `.home-today__label` and
+`.home-prayer-ribbon__name` were both `white-space: nowrap` +
+`text-overflow: ellipsis` inside rows that also held nowrap values and nowrap
+siblings. Three stat cells plus their values cannot share one 393px row, and six
+prayer names cannot share 319px, so instead of wrapping, both were cut:
+**101px lost** from "Qur'an reading", **26px** from "قراءة القرآن", and a prayer
+name was the first thing to go. The labels and names now wrap. Trimming the
+_name of the prayer a time belongs to_ is the worst version of this bug, which
+is why the gate now covers both selectors.
+
+Three traps in `tests/cssDesign.test.js`, all mutation-tested against the old CSS
+(proved by reverting: **3 failed / 20 passed**, restored: **23 passed**). The
+first draft of the ribbon test asserted `repeat(3)` was present and `repeat(2)`
+absent across _all_ CSS, which failed on the weekday strip and both calendars —
+the assertion was wrong, not the code, and it is now scoped to the ribbon's own
+rules.
+
+Also measured and found **not** broken, recorded here so nobody re-chases them:
+the mobile bottom bar is `position: static`, so nothing is hidden behind it (an
+earlier reading of a screenshot mistook the viewport fold for an overlap), and
+the `+4px` `scrollWidth` deltas the clip sweep reports on `.chip` are sub-pixel
+rounding, not truncation.
+
 ## v5.17.64 — The gate that could not see, and two bugs it was hiding
 
 **The a11y matrix had never audited dark mode.** `a11y-matrix.spec.js` and

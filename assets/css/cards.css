@@ -917,6 +917,7 @@ body.is-scrolled-deep .category-top {
 .home-today__cell {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-2);
   flex: 1 1 9rem;
   min-width: 0;
@@ -945,9 +946,12 @@ a.home-today__cell:hover {
   font-weight: 600;
   color: var(--color-text-muted);
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Rule 8: a label is content, never decoration to be trimmed. These three
+     cells plus their nowrap values cannot share one 393px phone row, and the
+     old nowrap+ellipsis silently ate 101px of "Qur'an reading" (26px of
+     "قراءة القرآن") rather than wrapping. The cell wraps; the label wraps
+     with it. */
+  overflow-wrap: anywhere;
 }
 .home-today__value {
   margin-inline-start: auto;
@@ -1118,19 +1122,40 @@ a.home-today__cell:hover {
 .home-prayer-ribbon__cta {
   font-weight: 700;
 }
+/* Six cells, always all six visible.
+   This was `display:flex; overflow-x:auto` with `flex: 1 0 auto` cells, which
+   measured 319px of track for 474px of content on a 393px phone: Fajr, Sunrise,
+   Dhuhr and Asr showed, and Maghrib and Isha — two of the five daily prayers —
+   sat off-screen behind a scroller with no affordance. At 360px only three of
+   six showed. A grid removes the hidden content instead of styling it.
+
+   Phones keep SIX columns rather than dropping to 3x2 deliberately: 3x2 grows
+   Home ~64px, which pushed the onboarding card's dismiss button to the
+   scroller's bottom edge, where #main's overflow clipped its 44px apron to
+   1px. touch-targets.spec.js caught that as a real a11y regression, so the
+   strip stays ONE row of six on a phone and the cells tighten to pay for it.
+   The container keeps dir="ltr" from the markup, so Fajr -> Isha reads in order
+   in Arabic too and sequence order never mirrors (MEMORY.md §4). */
 .home-prayer-ribbon__cells {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--space-2);
-  overflow-x: auto;
+}
+@media (max-width: 560px) {
+  .home-prayer-ribbon__cells {
+    gap: 4px;
+  }
+  .home-prayer-ribbon__cell {
+    padding: var(--space-1) 2px;
+  }
 }
 .home-prayer-ribbon__cell {
-  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  min-inline-size: 72px;
+  min-inline-size: 0;
   min-height: 52px;
   padding: var(--space-2);
   border-radius: var(--radius-md);
@@ -1154,9 +1179,10 @@ a.home-today__cell:hover {
 .home-prayer-ribbon__name {
   font-size: var(--fs-caption);
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* Rule 8, same defect as .home-today__label: this was nowrap + ellipsis,
+     so the one thing a worshipper must never lose — which prayer the time
+     belongs to — was the thing trimmed first. It wraps instead. */
+  overflow-wrap: anywhere;
 }
 .home-prayer-ribbon__time {
   font-size: var(--fs-sm);

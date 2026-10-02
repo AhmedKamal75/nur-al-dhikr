@@ -706,3 +706,81 @@ test('v5.17.64: a chosen text colour is never also dimmed with opacity', () => {
       'rule actually sits on.'
   );
 });
+
+test('rule 8: no Home prayer is hidden behind an unlabelled scroller', () => {
+  // The Home prayer ribbon is the app's primary surface, and five daily
+  // prayers live on it. It shipped as `display:flex; overflow-x:auto` with
+  // `flex: 1 0 auto` cells: measured in Chromium, 319px of track for 474px of
+  // content on a 393px phone, so Maghrib and Isha were off-screen with no
+  // affordance, and only 3 of 6 showed at 360px. A grid shows all six.
+  const rule = /\.home-prayer-ribbon__cells\s*\{([^}]*)\}/.exec(ALL_CSS);
+  assert.ok(rule, '.home-prayer-ribbon__cells must exist');
+  assert.match(
+    rule[1],
+    /display:\s*grid/,
+    'the ribbon must lay its cells out in a grid, not a single scrolling row'
+  );
+  assert.doesNotMatch(
+    rule[1],
+    /overflow-x:\s*(auto|scroll)/,
+    'a horizontal scroller here hides prayer times with no affordance — that is the ' +
+      'defect this gate exists for'
+  );
+  // Scoped to the ribbon's OWN rules: repeat(2)/repeat(3) are legitimate in the
+  // weekday strip and the calendars, so a whole-file scan would fail on those.
+  const ribbonCols = [
+    ...ALL_CSS.matchAll(/\.home-prayer-ribbon__cells\s*(?:,[^{]*)?\{([^}]*)\}/g),
+  ].flatMap((m) =>
+    [...m[1].matchAll(/grid-template-columns:\s*repeat\((\d+)/g)].map((c) => Number(c[1]))
+  );
+
+  assert.ok(ribbonCols.length > 0, 'the ribbon must declare its columns');
+  assert.deepEqual(
+    [...new Set(ribbonCols)],
+    [6],
+    'every ribbon layout — base and phone override — must keep six columns. A 3x2 phone ' +
+      'variant was tried and reverted: it grew Home ~64px, which pushed the onboarding ' +
+      'dismiss button to the scroller edge and clipped its 44px apron to 1px ' +
+      '(touch-targets.spec.js). The cells tighten instead, so the strip keeps one row.'
+  );
+});
+
+test('rule 8: a prayer name is never truncated, on the ribbon or the stat row', () => {
+  // `.home-prayer-ribbon__name` was also nowrap + ellipsis, so the one thing a
+  // worshipper must never lose — which prayer a time belongs to — was the first
+  // thing trimmed when six cells share a phone row. Names wrap instead.
+  for (const sel of ['.home-prayer-ribbon__name', '.home-today__label']) {
+    const rule = new RegExp(sel.replace('.', '\\.') + '\\s*\\{([^}]*)\\}').exec(ALL_CSS);
+    assert.ok(rule, `${sel} must exist`);
+    assert.doesNotMatch(
+      rule[1],
+      /white-space:\s*nowrap|overflow:\s*hidden|text-overflow:\s*ellipsis/,
+      `${sel} truncates its own text; rule 8 says a label is content, never decoration`
+    );
+  }
+});
+
+test('rule 8: a stat label wraps instead of being truncated by an ellipsis', () => {
+  // `.home-today__label` was `white-space: nowrap` + `text-overflow: ellipsis`
+  // inside a `flex: 1 1 9rem` row that also holds nowrap values. At 393px the
+  // three cells could not share one row, and instead of wrapping the label was
+  // silently trimmed: 101px lost from "Qur'an reading", 26px from the Arabic
+  // "قراءة القرآن". A label is content — it wraps or the layout gives it room.
+  const rule = /\.home-today__label\s*\{([^}]*)\}/.exec(ALL_CSS);
+  assert.ok(rule, '.home-today__label must exist');
+  assert.doesNotMatch(
+    rule[1],
+    /white-space:\s*nowrap/,
+    'a nowrap label cannot wrap, so the only way to fit is truncation'
+  );
+  assert.doesNotMatch(
+    rule[1],
+    /text-overflow:\s*ellipsis/,
+    "an ellipsis here is how the Qur'an reading label lost 101px without anyone noticing"
+  );
+  assert.doesNotMatch(
+    rule[1],
+    /overflow:\s*hidden/,
+    'hidden overflow on a label is truncation by another name'
+  );
+});
