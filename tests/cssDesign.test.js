@@ -464,3 +464,245 @@ test('mushaf sheet (v5.17.29): fullscreen auto-fit geometry untouched', () => {
     'the fit engine still runs on fullscreen sessions only'
   );
 });
+
+/* ------------------------------------------------------------------ *
+ * v5.17.64 — the two ways this stylesheet lost a contrast regression
+ * to a rule that was individually fine.
+ * ------------------------------------------------------------------ */
+
+/** Which of background/background-color/color/border-color a rule body sets. */
+function paintedProps(body) {
+  const out = new Set();
+  for (const m of body.matchAll(/(^|;)\s*(background|background-color|color|border-color)\s*:/g)) {
+    out.add(m[2]);
+  }
+  return out;
+}
+
+/** Single-class rules with their byte offset, so "declared later" is checkable.
+ *
+ * Comments MUST be stripped first. `([^{}]+)` captures everything back to the
+ * previous `}`, so a rule preceded by an explanatory comment yields a "selector"
+ * of `/* why *\/ .chip--basis-active` — which fails the single-class shape test
+ * and drops the rule from the index entirely. That is not hypothetical: the
+ * Zakat rule this gate exists for carries a long comment, so an earlier version
+ * of this gate indexed nothing and passed every mutation. A gate that cannot see
+ * the rule it was written for is worse than no gate.
+ */
+function stripCssComments(src) {
+  return src.replace(/\/\*[\s\S]*?\*\//g, '');
+}
+
+function singleClassRules() {
+  const out = [];
+  for (const f of CSS_FILES) {
+    const src = stripCssComments(CSS[f]);
+    // Scoped scan, because a global byte offset is not a position in the
+    // cascade. `.nav__item` at layout.css:317 lives INSIDE the ≥960px media
+    // block and `.nav__item--active` at :337 lives in that same block after it,
+    // so the active state correctly wins; comparing raw offsets across block
+    // boundaries reported it as a conflict that does not exist. Two rules can
+    // only clobber each other inside the same at-rule context.
+    let i = 0;
+    let prelude = '';
+    const stack = [];
+    while (i < src.length) {
+      const ch = src[i];
+      if (ch === '{') {
+        const at = /^\s*(@[a-zA-Z-]+)/.exec(prelude);
+        if (at) stack.push(prelude.trim());
+        const start = i + 1;
+        let depth = 1;
+        let j = start;
+        while (j < src.length && depth > 0) {
+          if (src[j] === '{') depth += 1;
+          else if (src[j] === '}') depth -= 1;
+          j += 1;
+        }
+        const body = src.slice(start, j - 1);
+        const head = prelude.trim();
+        if (!at) {
+          for (const part of head.split(',')) {
+            const sel = part.trim();
+            if (!/^\.[a-z0-9_-]+$/.test(sel)) continue;
+            const props = paintedProps(body);
+            if (props.size === 0) continue;
+            out.push({ sel, file: f, idx: start, props, scope: stack.join(' && ') });
+          }
+        }
+        prelude = '';
+        i = j;
+        // `i` now sits past this block's closing brace, so the `}` branch below
+        // will never see it. Without this pop the at-rule stack only ever
+        // grows: adjacent rules share one accumulated (wrong) scope and still
+        // compare equal, while two rules separated by a media block compare
+        // unequal and a real conflict is silently suppressed.
+        if (at) stack.pop();
+        continue;
+      }
+      if (ch === '}') {
+        stack.pop();
+        prelude = '';
+        i += 1;
+        continue;
+      }
+      if (ch === ';') {
+        prelude = '';
+        i += 1;
+        continue;
+      }
+      prelude += ch;
+      i += 1;
+    }
+  }
+  return out;
+}
+
+/**
+ * Class pairs that actually appear TOGETHER on one element in the markup.
+ *
+ * This is what makes the ordering check below precise. A naive "is this
+ * selector a string prefix of that one" test fires ~35 times on this
+ * stylesheet, almost all of them `.quick-actions` vs `.quick-action` — classes
+ * that never share an element, so the later rule cannot possibly clobber the
+ * earlier one. Requiring the pair to co-occur in a rendered class list drops
+ * the false positives and leaves the real conflict.
+ *
+ * Conditional classes are read from INSIDE the interpolation, not stripped with
+ * it. js/views/zakat.js writes
+ * `class="chip chip--basis ${basis === 'gold' ? 'chip--basis-active' : ''}"`,
+ * so the state class exists only as a quoted literal inside `${...}`. An
+ * earlier version of this deleted the interpolation wholesale and therefore
+ * never saw the very pair it was written to catch — a gate that cannot fail.
+ */
+function coOccurringClassPairs() {
+  const pairs = new Set();
+  const jsDir = join(HERE, '..', 'js');
+  const addPair = (list) => {
+    for (let i = 0; i < list.length; i += 1) {
+      for (let j = i + 1; j < list.length; j += 1) pairs.add([list[i], list[j]].sort().join('|'));
+    }
+  };
+  const walk = (dir) => {
+    for (const name of readdirSync(dir)) {
+      const full = join(dir, name);
+      if (full.endsWith('.js')) {
+        const src = readFileSync(full, 'utf8');
+        for (const m of src.matchAll(/class="([^"]*)"/g)) {
+          const attr = m[1];
+          // Static tokens, plus every single-quoted literal (how a conditional
+          // class is written), minus the `?`/`:`/keyword noise around them.
+          const tokens = new Set(attr.split(/\s+/));
+          for (const q of attr.matchAll(/'([a-z][a-z0-9_-]*)'/g)) tokens.add(q[1]);
+          addPair([...tokens].filter((c) => /^[a-z][a-z0-9_-]*$/.test(c)));
+        }
+      } else {
+        try {
+          if (readdirSync(full)) walk(full);
+        } catch {
+          /* not a directory */
+        }
+      }
+    }
+  };
+  walk(jsDir);
+  return pairs;
+}
+
+test('v5.17.64: a base class never clobbers a state class that shares its element', () => {
+  // How the Zakat basis chip broke: js/views/zakat.js emits
+  // `class="chip chip--basis chip--basis-active"`, `.chip--basis` was declared
+  // AFTER `.chip--basis-active`, and both are one class of specificity — so the
+  // base won on source order and the SELECTED chip painted `--color-surface`
+  // while keeping `--color-on-primary` text. White on white, 1.02:1 by axe.
+  const rules = singleClassRules();
+  const bySel = new Map();
+  for (const r of rules) {
+    if (!bySel.has(r.sel)) bySel.set(r.sel, []);
+    bySel.get(r.sel).push(r);
+  }
+  const conflicts = [];
+  for (const pair of coOccurringClassPairs()) {
+    // The pairs are bare class names from the markup; bySel is keyed by
+    // SELECTOR, which carries the dot. Re-adding it here is load-bearing: an
+    // earlier version compared `bySel.has('chip--basis')` against keys shaped
+    // `.chip--basis`, so every pair took the `continue` below and the gate
+    // reported zero conflicts forever.
+    const [aRaw, bRaw] = pair.split('|');
+    const a = `.${aRaw}`;
+    const b = `.${bRaw}`;
+    if (!bySel.has(a) || !bySel.has(b)) continue;
+    if (!b.startsWith(a) && !a.startsWith(b)) continue;
+    const base = b.startsWith(a) ? a : b;
+    const state = base === a ? b : a;
+    for (const rs of bySel.get(state)) {
+      for (const rb of bySel.get(base)) {
+        if (rb.file !== rs.file || rb.idx <= rs.idx) continue;
+        // Same at-rule context only: a rule inside a media query cannot
+        // clobber a global one, and two rules in different queries never meet.
+        if (rb.scope !== rs.scope) continue;
+        // Only a SHARED property can actually be clobbered. A base that paints
+        // `background` does not undo a state that only sets `color`, and
+        // flagging that pairing turns a precise gate into noise.
+        const shared = [...rs.props].filter((p) => rb.props.has(p));
+        if (shared.length === 0) continue;
+        conflicts.push(
+          `${rs.file}: ${state} is declared BEFORE ${base}, which re-sets ` +
+            `${shared.join('/')} later — an element carrying both takes the BASE's value`
+        );
+      }
+    }
+  }
+  assert.deepEqual(
+    [...new Set(conflicts)],
+    [],
+    'state/base source-order conflicts. Compound the STATE selector instead of moving it ' +
+      '(e.g. `.chip.chip--basis-active`), so the state outranks its base whatever order ' +
+      'this file is edited in.'
+  );
+});
+
+test('v5.17.64: a chosen text colour is never also dimmed with opacity', () => {
+  // `.taj-course__session--locked { opacity: 0.62 }` was how the locked session
+  // was dimmed. Opacity composites toward the backdrop, so it faded the card's
+  // INHERITED TEXT too — title, source line and lock note all fell under AA and
+  // axe flagged the course. Contrast became a side effect of a number nobody
+  // measured. Eleven more rules did the same thing and happened to pass; they
+  // pass by luck, not by measurement, and any palette change can unmake them.
+  // All twelve now use a colour token.
+  //
+  // SCOPE, stated honestly: this catches a rule that sets BOTH a `color` and an
+  // `opacity` — provably double-dimming, since the colour was already chosen
+  // and the alpha then overrides what was measured about it. A bare
+  // `opacity: .6` on a text wrapper (the shape the tajweed bug actually had)
+  // is NOT caught here: telling "this wraps text" from "this is decorative"
+  // statically needs a naming heuristic, and a heuristic gate produces false
+  // positives, gets switched off, and stops catching anything. The disabled-
+  // control opacity in this stylesheet is legitimate — WCAG 1.4.3 exempts
+  // inactive components, which is why axe does not flag them. axe over the full
+  // route matrix (tests/e2e/a11y-matrix.spec.js) is the gate for that class.
+  const offenders = [];
+  for (const f of CSS_FILES) {
+    const src = stripCssComments(CSS[f]).replace(
+      /@keyframes[^{}]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g,
+      ''
+    );
+    for (const m of src.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+      const head = m[1].trim();
+      if (head.startsWith('@')) continue;
+      const op = /(?:^|;)\s*opacity:\s*([0-9.]+)\s*;/.exec(m[2]);
+      if (!op || Number(op[1]) >= 1) continue;
+      if (!/(^|;)\s*color\s*:/.test(m[2])) continue;
+      const line = CSS[f].slice(0, m.index).split('\n').length;
+      offenders.push(`${f}:${line} ${head.replace(/\s+/g, ' ')} (opacity: ${op[1]})`);
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    'these rules pick a text colour AND set opacity < 1, which fades that colour toward the ' +
+      'background and makes the choice unmeasurable. Express the hierarchy in the colour token ' +
+      '(--color-text-muted / --color-text-secondary), or color-mix against the surface this ' +
+      'rule actually sits on.'
+  );
+});

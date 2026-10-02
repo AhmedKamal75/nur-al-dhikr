@@ -2840,7 +2840,7 @@ body.has-player .reader-immersive-echo {
   margin: 0.45rem 0 0.15rem;
   font-size: var(--fs-sm);
   font-weight: 700;
-  opacity: 0.8;
+  color: var(--color-text-muted);
 }
 .word-study__root-letters {
   margin: 0.2rem 0;
@@ -2850,7 +2850,7 @@ body.has-player .reader-immersive-echo {
 .word-study__antonym-note {
   margin: 0.35rem 0 0;
   font-size: var(--fs-sm);
-  opacity: 0.78;
+  color: var(--color-text-muted);
 }
 .word-study__root-meaning {
   font-family: var(--font-arabic);
@@ -3914,21 +3914,21 @@ body.has-player .reader-immersive-echo {
 .tajweed-legend__source {
   margin-block-start: 2px;
   font-size: 0.72em;
-  opacity: 0.68;
+  color: var(--color-text-muted);
 }
 
 .tajweed-legend__caveat {
   margin-block-start: 3px;
   font-size: 0.72em;
   font-style: italic;
-  opacity: 0.74;
+  color: var(--color-text-muted);
 }
 
 /* An uncited rule must be visible, not tidy. Honest absence over a blank
    line that reads as "nothing to see here". */
 .tajweed-legend__source--missing {
-  opacity: 0.9;
   font-style: italic;
+  color: var(--color-text-secondary);
 }
 
 /* (v5.17.23) MOVED BACK HERE, deliberately. The deep-link mark lived in

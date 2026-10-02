@@ -47,7 +47,7 @@ async function violationsFor(page, route) {
 }
 
 test.describe('a11y across every route', () => {
-  test('no serious or critical violation on any view, in either theme', async ({ page }) => {
+  test('no serious or critical violation on any view, in either theme', async ({ browser }) => {
     test.setTimeout(600_000);
     const { VIEWS } = await import('../../js/core/config.js');
     const routes = routesFor(VIEWS);
@@ -55,12 +55,23 @@ test.describe('a11y across every route', () => {
 
     const failures = [];
     for (const theme of ['light', 'dark']) {
-      await page.addInitScript((t) => {
+      // `themeMode`, not `theme` — the latter is not a settings key, so the seed
+      // was discarded and the entire "dark" pass re-audited light. This spec
+      // and a11y-matrix.spec.js carried the identical defect.
+      //
+      // It is also seeded PER PASS through a fresh context, because
+      // `addInitScript` is cumulative: registering a light seed and then a
+      // dark one on the SAME page leaves both installed, and both re-run on
+      // every later navigation. One context per theme is the only way the
+      // second pass can actually be dark.
+      const context = await browser.newContext();
+      const themed = await context.newPage();
+      await themed.addInitScript((t) => {
         try {
           const KEY = 'nurAlDhikr:v2:state';
           const raw = localStorage.getItem(KEY);
           const state = raw ? JSON.parse(raw) : {};
-          state.settings = { ...(state.settings || {}), theme: t, language: 'en' };
+          state.settings = { ...(state.settings || {}), themeMode: t, language: 'en' };
           localStorage.setItem(KEY, JSON.stringify(state));
         } catch {
           /* the default theme stands */
@@ -68,7 +79,20 @@ test.describe('a11y across every route', () => {
       }, theme);
 
       for (const route of routes) {
-        const found = await violationsFor(page, route);
+        const found = await violationsFor(themed, route);
+        // Prove the theme actually resolved before trusting anything axe
+        // reports for it. Checked once per pass rather than per route: the seed
+        // is applied on context creation, so the first route settles it.
+        if (route === routes[0]) {
+          const resolved = await themed.evaluate(() =>
+            document.documentElement.getAttribute('data-theme')
+          );
+          expect(
+            resolved,
+            `[${theme}] theme "${theme}" did not take (data-theme="${resolved}") — this ` +
+              'sweep would audit light twice and call it a dark pass'
+          ).toBe(theme);
+        }
         for (const v of found) {
           const where = [...new Set(v.nodes.slice(0, 3).map((n) => n.target.join(' ')))].join(
             ' | '
@@ -76,6 +100,7 @@ test.describe('a11y across every route', () => {
           failures.push(`[${theme}] ${route} — ${v.id} (${v.impact}): ${v.help} :: ${where}`);
         }
       }
+      await context.close();
     }
     assertNoFailures(failures);
   });

@@ -463,7 +463,15 @@
   border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
   color: var(--color-primary-text);
 }
-.chip--basis-active {
+/* (IA-7 audit) `.chip--basis` is declared BELOW this rule, so before v5.17.64
+   it silently won on source order at equal specificity: the Zakat basis chips
+   emit BOTH classes (js/views/zakat.js:59,62), so the selected chip painted
+   `--color-surface` while keeping `--color-on-primary` text — white on white,
+   measured at 1.02:1 by axe. The selector is compounded rather than merely
+   moved above its base, because "a state modifier must outrank the base it
+   modifies" has to survive the next person appending a rule to this file.
+   tests/cssDesign.test.js pins the ordering for the whole `.chip--*` family. */
+.chip.chip--basis-active {
   background: var(--color-primary);
   border-color: var(--color-primary);
   color: var(--color-on-primary);

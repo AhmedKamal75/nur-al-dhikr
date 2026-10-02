@@ -52,6 +52,35 @@ const THEMES = ['light', 'dark'];
  *  a named failure rather than a swallowed 600s timeout. */
 test.setTimeout(45_000);
 
+/**
+ * Seed the theme, then PROVE it resolved.
+ *
+ * This replaced a seed that wrote `settings.theme` — a key that does not
+ * exist. The setting is `themeMode` (js/core/theme.js:25), so the old seed was
+ * silently discarded and the whole "theme: dark" half of this matrix had been
+ * re-scanning LIGHT mode since it was written: 33 routes audited twice, dark
+ * mode never audited at all. A seed naming a key the app does not read fails
+ * OPEN, which is the worst way a gate can fail.
+ *
+ * The assertion below is the part that actually prevents a recurrence. Naming
+ * the key correctly is a fix; asserting `data-theme` came out the other side is
+ * a gate, and it is what turns the next key rename into a red test instead of
+ * a silent duplicate audit.
+ *
+ * Seeding rather than clicking the topbar toggle is deliberate: some routes
+ * remove the chrome entirely (`body.is-ambient #topbar { display:none }`,
+ * layout.css:586), so a toggle-driven sweep times out on a route that has no
+ * topbar to press.
+ */
+async function assertTheme(page, want) {
+  const resolved = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+  expect(
+    resolved,
+    `theme "${want}" did not take (data-theme="${resolved}") — the matrix would scan the ` +
+      'wrong theme and report it as a pass'
+  ).toBe(want);
+}
+
 for (const theme of THEMES) {
   test.describe(`theme: ${theme}`, () => {
     for (const { key, route } of ROUTES) {
@@ -61,7 +90,7 @@ for (const theme of THEMES) {
             const KEY = 'nurAlDhikr:v2:state';
             const raw = localStorage.getItem(KEY);
             const state = raw ? JSON.parse(raw) : {};
-            state.settings = { ...(state.settings || {}), theme: t, language: 'en' };
+            state.settings = { ...(state.settings || {}), themeMode: t, language: 'en' };
             localStorage.setItem(KEY, JSON.stringify(state));
           } catch {
             /* the default theme stands */
@@ -72,6 +101,7 @@ for (const theme of THEMES) {
         // Wait for the view itself: the boot skeleton is non-empty, and
         // scanning it proves nothing.
         await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+        await assertTheme(page, theme);
         await page.waitForTimeout(1200);
 
         const res = await new AxeBuilder({ page }).analyze();

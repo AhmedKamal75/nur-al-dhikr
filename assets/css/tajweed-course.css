@@ -50,8 +50,20 @@
   border-color: var(--color-accent);
 }
 
+/* (v5.17.64) A locked session used to be dimmed with `opacity: 0.62`. Opacity
+   composites toward the backdrop, so it faded the card's INHERITED TEXT too —
+   the session title, its source line and the lock note all fell under AA, and
+   axe flagged the course in light mode. Contrast became a side effect of a
+   number nobody measured, which is the wrong tool twice over: the state is
+   "not yet unlocked", and that is a colour, not an alpha.
+
+   `--color-text-muted` is the honest expression of it, and it is chosen
+   because it MEASURES: 4.64:1 on `--color-surface-alt` in light, 6.60:1 in
+   dark (both AA). Nothing in this file needs opacity to look locked — the
+   border and ground already differ from an unlocked card.
+   tests/cssDesign.test.js refuses a new `opacity` on a text-bearing rule. */
 .taj-course__session--locked {
-  opacity: 0.62;
+  color: var(--color-text-muted);
 }
 
 .taj-course__session-head {
@@ -154,12 +166,12 @@
 
 .taj-course__rule-src {
   font-size: 0.72em;
-  opacity: 0.68;
+  color: var(--color-text-muted);
 }
 
 .taj-course__rule-src--missing {
-  opacity: 0.9;
   font-style: italic;
+  color: var(--color-text-secondary);
 }
 
 .taj-course__modes {

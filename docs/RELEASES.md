@@ -2,6 +2,64 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.64 — The gate that could not see, and two bugs it was hiding
+
+**The a11y matrix had never audited dark mode.** `a11y-matrix.spec.js` and
+`a11y-all-routes.spec.js` both seeded `settings.theme`, which is not a settings
+key — the setting is `themeMode` (`js/core/theme.js:25`). The seed was silently
+discarded, so the entire "dark" half of a 33-route axe sweep had been re-scanning
+LIGHT. Two audits where one was claimed, and dark mode never measured at all. A
+gate that fails open is worse than no gate, because it reports a pass it did not
+earn. Both specs now seed `themeMode` and **assert `html[data-theme]` resolved**
+before trusting any result. `a11y-all-routes.spec.js` also moved to one browser
+context per theme: `addInitScript` is cumulative, so a light seed and a dark seed
+on the same page both re-ran on every later navigation and light won.
+
+Fixing it surfaced the real bugs. Both were invisible to every existing gate.
+
+**1. The Zakat basis selector was white on white — 1.02:1.** `zakat.js` emits
+`class="chip chip--basis chip--basis-active"`, and `.chip--basis` was declared
+_after_ `.chip--basis-active` at equal specificity, so the base won on source
+order: the SELECTED chip painted `--color-surface` while keeping
+`--color-on-primary` text. The state selector is now compounded
+(`.chip.chip--basis-active`) so it outranks its base whatever order the file is
+edited in.
+
+**2. A completed worship row looked identical to an incomplete one.**
+`.worship-row__value--done` (green) sat ~1,380 lines before `.worship-row__value`
+at equal specificity; the base won, so the "done" state gave no visual feedback
+at all. Also compounded.
+
+Both are the same class, and the class now has a gate:
+`tests/cssDesign.test.js` derives which class pairs actually co-occur on one
+element in the markup, scopes every rule to its enclosing at-rule, and fails when
+a base re-sets a property a state already set. Scoping matters — a global byte
+offset is not a position in the cascade, and an unscoped version reported a
+`.nav__item--active` conflict that does not exist because both rules live inside
+the same `min-width: 960px` block with the active one later.
+
+**Text hierarchy now uses colour tokens, not `opacity`.**
+`.taj-course__session--locked { opacity: 0.62 }` faded a locked session's
+_inherited_ text with it — title, source line and lock note all fell under AA.
+Opacity composites toward the backdrop, so it made contrast a side effect of a
+number nobody measured. Twelve rules did this; all twelve now name a measured
+token (`--color-text-muted` clears AA on every surface in both themes, worst case
+4.64:1). Ambient keeps its own near-black/gold system and uses `color-mix`
+against its own ground rather than borrowing a palette token.
+
+Gates: `npm run check` green; full chromium e2e green, including
+`a11y-matrix` (33 routes × 2 themes) and `a11y-all-routes`, both now auditing
+dark mode for the first time.
+
+**Both new gates were mutation-tested, and both were broken first.** The
+ordering gate reported zero conflicts forever because `bySel` is keyed by
+selector (`.chip--basis`) while the co-occurrence pairs are bare class names
+(`chip--basis`); and an earlier version indexed nothing at all, because a rule
+preceded by an explanatory comment parses as `/* why */ .chip--basis-active`
+and fails the single-class shape test. The at-rule scanner also never popped its
+stack, so scopes accumulated and suppressed real conflicts. A gate that cannot
+fail is worse than no gate, which is the whole subject of this release.
+
 ## v5.17.63 — Settings, professionally shelved
 
 Settings was one long accordion list with two orphan blocks (the deferred
