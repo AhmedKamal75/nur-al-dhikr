@@ -440,6 +440,22 @@ function safe(s) {
   return String(s).replace(/[`|*]/g, '').replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * A GFM table padded the way `prettier --parser markdown` pads one, because
+ * `npm run check` runs `prettier --check` over docs/*.md and the generator's
+ * output has to survive it. The rule is width = max(3, longest cell), every
+ * cell padded to that width, delimiter row all dashes. Derived empirically
+ * (prettier 3.9) rather than by shelling out to prettier, so the generator
+ * stays plain-node and deterministic with no dependency.
+ */
+function mdTable(headers, rows) {
+  const all = [headers, ...rows];
+  const widths = headers.map((_, i) => Math.max(3, ...all.map((r) => String(r[i] ?? '').length)));
+  const line = (cells) =>
+    `| ${widths.map((w, i) => String(cells[i] ?? '').padEnd(w)).join(' | ')} |`;
+  return [line(headers), `| ${widths.map((w) => '-'.repeat(w)).join(' | ')} |`, ...rows.map(line)];
+}
+
 /* ------------------------------------------------------------------ *
  * The spine: route -> section -> view module, DERIVED from the sources
  * that already own it (AGENTS.md rule 6).
@@ -482,8 +498,14 @@ function parseViews(src) {
   return out.size > 0 ? out : null;
 }
 
-/** DOORS: the section map from core/config/nav.js, in chrome order. */
-function parseDoors(src, views) {
+/**
+ * DOORS: the section map from core/config/nav.js, in chrome order.
+ *
+ * `problems` is collected, not thrown: the caller reports every structural
+ * complaint at once, because an agent fixing chrome needs the whole list, not
+ * the first one it tripped over.
+ */
+function parseDoors(src, views, problems) {
   const at = src.indexOf('DOORS = Object.freeze(');
   if (at < 0) return null;
   const block = blockAt(src, src.indexOf('[', at));
@@ -496,6 +518,21 @@ function parseDoors(src, views) {
     const labelKey = chunk.match(/labelKey:\s*'([^']+)'/)?.[1];
     const icon = chunk.match(/icon:\s*'([^']+)'/)?.[1];
     if (!viewKey || !views.has(viewKey)) return null;
+    // A section's entry IS its own route. Renaming one without the other
+    // produces a chrome entry that links somewhere nobody declared, and the
+    // index would print it as fact — so this is checked, not assumed. It also
+    // keeps the index honest when a test compares it against nav.js: a
+    // test that regenerates both sides together cannot catch a bad rename,
+    // because both move in lockstep. This check can.
+    if (key !== viewKey) {
+      problems.push(
+        `nav.js section ${key} declares entry: '${key}' but view: VIEWS.${viewKey} — ` +
+          "a section's entry must be its own route"
+      );
+    }
+    if (!views.has(key)) {
+      problems.push(`nav.js section entry '${key}' is not a key in VIEWS (views.js)`);
+    }
     const members = [];
     for (const m of chunk.matchAll(
       /route:\s*'([A-Z_][A-Z0-9_]*)'\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')([^)]*)\)/g
@@ -564,7 +601,7 @@ function buildSpine() {
   try {
     views = parseViews(read('js/core/config/views.js'));
     if (!views) problems.push('could not parse VIEWS from js/core/config/views.js');
-    doors = parseDoors(read('js/core/config/nav.js'), views ?? new Map());
+    doors = parseDoors(read('js/core/config/nav.js'), views ?? new Map(), problems);
     if (!doors) problems.push('could not parse DOORS from js/core/config/nav.js');
     modules = parseRouteModules(read('js/app/renderer.js'));
     if (modules.eager.size + modules.lazy.size === 0) {
@@ -802,27 +839,34 @@ function main() {
       '> this is fixed — an index that lists 30 of 34 routes reads as "the rest do not exist".'
     );
   } else {
-    I.push('| # | section | entry route | label key | routes under it | tap | via |');
-    I.push('| - | ------- | ----------- | --------- | ---------------- | --- | --- |');
+    const spineRows = [];
     spine.doors.forEach((d, i) => {
       for (const m of d.members) {
         const mod = spine.modules.eager.get(m.route) ?? spine.modules.lazy.get(m.route);
         const eager = spine.modules.eager.has(m.route);
-        const routeCell = `${m.route}${m.direct ? '' : ' *(tile-depth)*'}`;
-        const via = m.via ? `\`${m.via}\`` : '— (is the tap)';
-        I.push(
-          `| ${i + 1} | **${safe(d.labelKey ?? '—')}** | \`${safe(d.entry)}\` → \`#/${safe(d.view)}\` | ` +
-            `\`${safe(d.labelKey ?? '—')}\` | ${i === 0 && d.members[0] === m ? routeCell : routeCell}` +
-            `${mod ? ` → \`${safe(mod)}\`${eager ? '' : ' *(lazy)*'}` : ' → **UNMAPPED**'}` +
-            ` | ${m.taps} | ${via} |`
-        );
+        // prettier rewrites *x* to _x_ inside a table cell, so emit the form it wants.
+        const routeCell = `${m.route}${m.direct ? '' : ' _(tile-depth)_'}`;
+        spineRows.push([
+          String(i + 1),
+          `\`${safe(d.labelKey ?? '—')}\``,
+          `\`${safe(d.entry)}\` → \`#/${safe(d.view)}\``,
+          `${routeCell}${mod ? ` → \`${safe(mod)}\`${eager ? '' : ' _(lazy)_'}` : ' → **UNMAPPED**'}`,
+          String(m.taps),
+          m.via ? `\`${m.via}\`` : '— (is the tap)',
+        ]);
       }
     });
+    I.push(
+      ...mdTable(
+        ['#', 'section (label key)', 'entry route', 'routes under it', 'tap', 'via'],
+        spineRows
+      )
+    );
     I.push('');
     I.push(
-      `*(tile-depth)* members need a parameter, so a bare link answers an honest 404 and the ` +
+      `_(tile-depth)_ members need a parameter, so a bare link answers an honest 404 and the ` +
         `drawer offers no direct row for them — the section landing's own tiles carry them. ` +
-        `*(lazy)* routes are \`import()\`-ed on first visit, not statically imported.`
+        `_(lazy)_ routes are \`import()\`-ed on first visit, not statically imported.`
     );
   }
   I.push('');
@@ -836,28 +880,47 @@ function main() {
   }
   I.push('## 2. Where to make a change');
   I.push('');
-  I.push('| If you are adding… | It lives in | And you must also… |');
-  I.push('| ------------------ | ----------- | ------------------- |');
   I.push(
-    '| a route | `js/core/config/views.js` (VIEWS) | add it to `VIEW_TABLE` or `LAZY_VIEW_LOADERS` in `js/app/renderer.js`, then to a `DOORS` section in `js/core/config/nav.js`'
-  );
-  I.push(
-    '| a chrome section | `js/core/config/nav.js` (DOORS) | nothing pins it elsewhere — `js/ui/shell.js` derives from it |'
-  );
-  I.push(
-    '| a `data-action` | the emitting view/ui | add the handler to the matching map in `js/app/handlers/*.js`, and an allowlist entry in `tests/mushaf-reorg.test.js` |'
-  );
-  I.push(
-    '| an i18n key | `js/core/i18n/en.js` **and** `js/core/i18n/ar.js` | one language is a failing gate |'
-  );
-  I.push(
-    '| a settings key | the view that renders it | add it to `js/core/config/sanitize.js` or it dies on reload |'
-  );
-  I.push(
-    '| a CSS custom property | `assets/css/variables.css` | it must resolve, or `tests/cssDesign.test.js` fails |'
-  );
-  I.push(
-    '| a file under `js/` | anywhere | add it to `APP_SHELL` in `sw.js`, then re-stamp the shell snapshot |'
+    ...mdTable(
+      ['If you are adding…', 'It lives in', 'And you must also…'],
+      [
+        [
+          'a route',
+          '`js/core/config/views.js` (VIEWS)',
+          'add it to `VIEW_TABLE` or `LAZY_VIEW_LOADERS` in `js/app/renderer.js`, then to a `DOORS` section in `js/core/config/nav.js`',
+        ],
+        [
+          'a chrome section',
+          '`js/core/config/nav.js` (DOORS)',
+          'nothing pins it elsewhere — `js/ui/shell.js` derives from it',
+        ],
+        [
+          'a `data-action`',
+          'the emitting view/ui',
+          'add the handler to the matching map in `js/app/handlers/*.js`, and an allowlist entry in `tests/mushaf-reorg.test.js`',
+        ],
+        [
+          'an i18n key',
+          '`js/core/i18n/en.js` **and** `js/core/i18n/ar.js`',
+          'one language is a failing gate',
+        ],
+        [
+          'a settings key',
+          'the view that renders it',
+          'add it to `js/core/config/sanitize.js` or it dies on reload',
+        ],
+        [
+          'a CSS custom property',
+          '`assets/css/variables.css`',
+          'it must resolve, or `tests/cssDesign.test.js` fails',
+        ],
+        [
+          'a file under `js/`',
+          'anywhere',
+          'add it to `APP_SHELL` in `sw.js`, then re-stamp the shell snapshot',
+        ],
+      ]
+    )
   );
   I.push('');
   I.push('## 3. Conventions');
@@ -868,15 +931,23 @@ function main() {
   I.push('');
   I.push('## 4. Inventory by subsystem');
   I.push('');
-  I.push('| subsystem | what lives there | modules | where in the dump |');
-  I.push('| --------- | --------------- | ------- | --------------- |');
   const subs2 = [...new Set(entries.map((e) => e.sub))].sort();
-  for (const sub of subs2) {
-    const n = entries.filter((x) => x.sub === sub).length;
-    I.push(
-      `| \`js/${sub}\` | ${safe(SUBSYSTEM_BLURBS[sub] ?? '')} | ${n} | [open](agent-map-full.md#${sub}) |`
-    );
-  }
+  I.push(
+    ...mdTable(
+      ['subsystem', 'what lives there', 'modules', 'where in the dump'],
+      subs2.map((sub) => {
+        const n = entries.filter((x) => x.sub === sub).length;
+        // data/ is a sibling of js/, not a child of it.
+        const dir = sub === 'data' ? 'data/' : `js/${sub}`;
+        return [
+          `\`${dir}\``,
+          safe(SUBSYSTEM_BLURBS[sub] ?? ''),
+          String(n),
+          `[open](agent-map-full.md#${sub})`,
+        ];
+      })
+    )
+  );
   I.push('');
   I.push('## 5. Lookup tables (counts; open the dump for the rows)');
   I.push('');
@@ -888,8 +959,8 @@ function main() {
       entries.filter(
         (e) =>
           (e.handlesClick?.length ?? 0) +
-          (e.handlesChange?.length ?? 0) +
-          (e.handlesForms?.length ?? 0) >
+            (e.handlesChange?.length ?? 0) +
+            (e.handlesForms?.length ?? 0) >
           0
       ).length
     }** of ${jsCount}.`
