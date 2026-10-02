@@ -2,8 +2,9 @@
    variables.css — Nūr al-Dhikr design tokens (v4.0 system)
 
    Aesthetic direction: "manuscript calm" — the grounding palette evokes
-   emerald tilework and manuscript ink; surfaces are warm ivory paper in
-   light mode and deep botanical slate in dark mode. One restrained
+   emerald tilework and manuscript ink; surfaces are warm cream paper in
+   light mode and a warm night lamp in dark mode. Floating chrome shares
+   one liquid-glass treatment (warm tint + blur + hairline). One restrained
    geometric motif (the 8-point Khatim star) is the only ornament.
 
    Architecture of this file:
@@ -26,17 +27,21 @@
    ========================================================================== */
 
 :root {
-  /* ---- 1. Neutral scale (light) -------------------------------------- */
-  --color-bg: #f6f4ec;
-  --color-surface: #ffffff;
-  --color-surface-alt: #f1efe7;
-  --color-surface-raised: #ffffff;
-  --color-border: #e4e0d1;
-  --color-border-strong: #cfc9b4;
-  --color-text: #1e1c15;
-  --color-text-secondary: #57554b;
-  --color-text-muted: #716d5c;
-  --color-overlay: rgba(20, 20, 16, 0.48);
+  /* ---- 1. Neutral scale (light) --------------------------------------
+     (v5.17.62, palette) warm cream paper, deep green ink: the page is a
+     sheet (#f7f1e2), cards sit on it in warm white, ink carries a green
+     cast. Every tier still holds WCAG AA on bg/surface/surface-alt
+     (pinned in tests/palette-glass.test.js + cssDesign). */
+  --color-bg: #f7f1e2;
+  --color-surface: #fffdf6;
+  --color-surface-alt: #f2ebda;
+  --color-surface-raised: #fffdf6;
+  --color-border: #e2d7bd;
+  --color-border-strong: #c8bc9c;
+  --color-text: #1f2318;
+  --color-text-secondary: #565a4b;
+  --color-text-muted: #6e6952;
+  --color-overlay: rgba(32, 28, 18, 0.48);
   /* (v5.2.75, UX-08) fullscreen glass-bar chrome floats over the BOOK,
      not the room, so it owns three fixed tokens instead of following
      the palette system. */
@@ -57,8 +62,8 @@
      with it; gold stays fixed as the brand accent. */
   --color-primary-deep: color-mix(in srgb, var(--color-primary-raw) 58%, #071f1c);
   --color-primary-ink: color-mix(in srgb, var(--color-primary-raw) 42%, #04120f);
-  --color-gold: #c9a227;
-  --color-gold-soft: #e8d48b;
+  --color-gold: #b8912a;
+  --color-gold-soft: #e6cf7e;
   --color-on-primary: #ffffff;
   /* Fixed dark ink for text sitting ON theme-independent fills (accent
      badges, heatmap bucket-4 in light mode). NOT overridden by dark mode —
@@ -186,10 +191,11 @@
   --radius-badge: var(--radius-md);
 
   /* Modern calm elevation: soft, wide, low-opacity. Cards float on paper;
-     the hero and sheets sit one level above. Dark theme deepens both. */
-  --shadow-sm: 0 1px 2px rgba(28, 32, 28, 0.05), 0 2px 10px rgba(28, 32, 28, 0.05);
-  --shadow-md: 0 2px 6px rgba(28, 32, 28, 0.06), 0 14px 34px rgba(28, 32, 28, 0.1);
-  --shadow-lg: 0 6px 14px rgba(28, 32, 28, 0.08), 0 30px 60px rgba(28, 32, 28, 0.18);
+     the hero and sheets sit one level above. Dark theme deepens both.
+     (v5.17.62, palette) shadow wash follows the warm paper. */
+  --shadow-sm: 0 1px 2px rgba(46, 40, 24, 0.05), 0 2px 10px rgba(46, 40, 24, 0.05);
+  --shadow-md: 0 2px 6px rgba(46, 40, 24, 0.06), 0 14px 34px rgba(46, 40, 24, 0.1);
+  --shadow-lg: 0 6px 14px rgba(46, 40, 24, 0.08), 0 30px 60px rgba(46, 40, 24, 0.18);
   --shadow-hero: 0 10px 24px rgba(8, 51, 47, 0.28), 0 28px 64px rgba(8, 51, 47, 0.22);
   --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-primary-text) 40%, transparent);
   --ring-primary: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent);
@@ -212,6 +218,21 @@
 
   /* ---- Touch targets (WCAG 2.5.5 / iOS HIG) --------------------------- */
   --touch-target: 44px;
+
+  /* ---- Liquid glass: one shared treatment ------------------------------
+     (v5.17.62, HANDOFF §5d) every floating surface — topbar, bottom nav,
+     player bar, sheets, modals — reads the same trio: a warm translucent
+     tint, one blur, one saturate. The hairline is always
+     var(--color-border); nothing here invents a second glass language.
+     Tints derive from --color-surface so both themes follow with no
+     override block. --glass-bg (80%) floats over content; --glass-bg-strong
+     (92%) carries small text (player meta, sheet rows, modal bodies).
+     Fallbacks live in accessibility.css: prefers-reduced-transparency and
+     forced-colors go opaque, Elder mode goes opaque (release-gate reader). */
+  --glass-blur: 18px;
+  --glass-saturate: 1.5;
+  --glass-bg: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  --glass-bg-strong: color-mix(in srgb, var(--color-surface) 92%, transparent);
 
   /* ---- 7. Typography ----------------------------------------------------
      The UI face is the platform's native system stack — honest and instant
@@ -286,19 +307,21 @@
 }
 
 /* ==========================================================================
-   Dark theme — deep botanical slate. Every category/tajweed family gets a
-   brightened -text variant; fills stay deep so surfaces stay calm.
+   Dark theme — warm night lamp. Surfaces are lamplit umber, not botanical
+   slate; ink is warm paper-white. Every text tier still holds AA on
+   bg/surface/surface-alt, and every brightened category/semantic text
+   still holds AA (pinned in tests/palette-glass.test.js + cssDesign).
    ========================================================================== */
 [data-theme='dark'] {
-  --color-bg: #0c0f0d;
-  --color-surface: #131715;
-  --color-surface-alt: #181d1a;
-  --color-surface-raised: #1b211d;
-  --color-border: #262c27;
-  --color-border-strong: #333a33;
-  --color-text: #edebe3;
-  --color-text-secondary: #c6c3b7; /* lifted for AA+ comfort on inactive labels */
-  --color-text-muted: #a8a494;
+  --color-bg: #141109;
+  --color-surface: #1d1912;
+  --color-surface-alt: #242017;
+  --color-surface-raised: #282219;
+  --color-border: #332d21;
+  --color-border-strong: #443c2c;
+  --color-text: #f0e9d6;
+  --color-text-secondary: #cdc4ae; /* lifted for AA+ comfort on inactive labels */
+  --color-text-muted: #ada58d;
   --color-overlay: rgba(0, 0, 0, 0.6);
   --color-on-primary: #ffffff;
 

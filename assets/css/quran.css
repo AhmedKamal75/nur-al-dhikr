@@ -1820,6 +1820,8 @@ body.mushaf-fs-idle .mushaf-fs-console:hover {
 .mushaf-sheet__group {
   display: flex;
   flex-direction: column;
+  /* (v5.17.62, liquid glass) same shared tint + hairline as .view-sheet__group. */
+  background: var(--glass-bg-strong);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -1831,7 +1833,9 @@ body.mushaf-fs-idle .mushaf-fs-console:hover {
   width: 100%;
   min-height: 52px;
   padding: var(--space-2) var(--space-4);
-  background: var(--color-surface);
+  /* (v5.17.62, liquid glass) transparent so the group's shared tint reads
+     through; hover stays the opaque gated surface for clear feedback. */
+  background: transparent;
   color: var(--color-text);
   font-size: var(--fs-sm);
   font-weight: 500;

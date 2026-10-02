@@ -2,6 +2,51 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.62 — Warm paper, night lamp, one glass
+
+HANDOFF §5d applied to the chrome (palette + liquid glass; the mushaf page
+itself is untouched — the B2.2 review holds it as the standard, not the
+patient). Light mode is cream paper with deep green ink (`--color-bg`
+`#f7f1e2`, `--color-text` `#1f2318`); dark mode is a warm night lamp, not
+botanical slate (`--color-bg` `#141109`, `--color-text` `#f0e9d6`); gilt
+stays restrained (`--color-gold` `#b8912a`, decorative only). Token names
+unchanged — values retuned, no parallel system.
+
+- One shared liquid-glass treatment for every floating surface: topbar,
+  bottom nav, player bar, modals and both sheet groups read the same warm
+  tint + `18px` blur + hairline (`--glass-bg` / `--glass-bg-strong` derive
+  from `--color-surface`, so both themes follow with no override block;
+  sheet rows stay transparent so the tint reads through). Four new tokens,
+  all resolution-gated.
+- Fallbacks with the treatment, not after it: reduced-transparency and
+  forced-colors resolve every glass surface opaque with a system edge, and
+  Elder mode reads fully opaque — the release-gate reader never reads
+  small text through translucency. Glass itself animates nothing, so the
+  global reduced-motion kill stays sufficient.
+- One trap repaired honestly: `language-switch-coverage` derived
+  "chrome-hiding" from every `body.is-X #topbar` selector, so the new Elder
+  glass fallback (which styles the bar, never hides it) read as a fifth
+  hiding mode. The derivation now requires `display: none` in the same
+  rule — same strength, no false positive.
+
+- Constraints held: bilingual EN+AR (no user-facing strings added or
+  changed — parity gate untouched), 19/19 renderer budget intact (CSS +
+  test only, no new view, no new data-action, theme.js never touches the
+  glass tokens), Elder/a11y intact (44px targets kept, opaque Elder
+  fallbacks, axe clean both themes), no gamification, offline-safe (edited
+  files only, shell re-stamped).
+- Tests: `tests/palette-glass.test.js` (16 cases — glass token resolution,
+  consensus values, full contrast audit inline for both themes × all 11
+  palettes × 19 category families, shared-treatment pins, raw-blur ban,
+  all three fallback pins, no-motion pin, budget + pure-CSS pins),
+  `tests/language-switch-coverage.test.js` (hiding derivation repaired),
+  `npm run check` green, axe + shell-chrome + AR-overflow e2e subset
+  green on Chromium.
+- Ledger: no OPEN-ISSUES row tracks §5d chrome application, so none
+  changes status — the enforced header counts are untouched. What remains
+  of B1 (mushaf fidelity gaps, adhkar card, counter) stays open where it
+  was.
+
 ## v5.17.61 — Home is a landing: seven hierarchical sections
 
 Owner IA ruling: HOME IS A LANDING (not the azkar grid), and the menu is

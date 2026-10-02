@@ -30,6 +30,25 @@ body.is-elder .panel__subtext {
   font-size: var(--fs-base);
 }
 
+/* (v5.17.62, liquid glass) Elder mode reads opaque: the release-gate
+   reader gets the gated AA surfaces with no translucency to dilute them.
+   Same tokens the glass tints derive from, at full opacity. */
+body.is-elder #topbar,
+body.is-elder #bottomnav,
+body.is-elder .topbar__lang--floating {
+  background: var(--color-bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+body.is-elder .player-bar,
+body.is-elder .modal,
+body.is-elder .view-sheet__group,
+body.is-elder .mushaf-sheet__group {
+  background: var(--color-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 /* ==========================================================================
    High contrast (setting-driven; token overrides live in variables.css)
    ========================================================================== */
@@ -99,6 +118,17 @@ body.is-elder .panel__subtext {
   }
   .player-bar,
   .prayer-list {
+    background: var(--color-surface);
+  }
+  /* (v5.17.62, liquid glass) the modal and sheet groups join the solid
+     list — they wear the shared tint now, so they resolve with it. The
+     floating language pill is topbar family and goes solid too. */
+  .modal,
+  .view-sheet__group,
+  .mushaf-sheet__group,
+  .topbar__lang--floating {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     background: var(--color-surface);
   }
   #topbar {
@@ -396,6 +426,30 @@ html[data-dyslexia='true'][dir='rtl'] body {
   .shape-btn--active {
     border: 2px solid Highlight;
     font-weight: 700;
+  }
+
+  /* (v5.17.62, liquid glass) the shared glass surfaces resolve opaque with
+     a system edge — translucency carries no state here, the border does. */
+  #topbar,
+  #bottomnav,
+  .player-bar,
+  .modal,
+  .topbar__lang--floating {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  #topbar {
+    border-bottom: 1px solid ButtonText;
+  }
+  #bottomnav {
+    border-top: 1px solid ButtonText;
+  }
+  .player-bar,
+  .modal,
+  .view-sheet__group,
+  .mushaf-sheet__group {
+    border: 1px solid ButtonText;
+    background: Canvas;
   }
 
   /* Download grid: "saved offline" must survive without its tint. */

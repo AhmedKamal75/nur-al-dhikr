@@ -25,10 +25,18 @@ const allCss = readdirSync(cssDir)
   .map((f) => ({ file: f, text: readFileSync(`${cssDir}/${f}`, 'utf8') }))
   .map(({ file, text }) => ({ file, text: text.replace(/\/\*[\s\S]*?\*\//g, '') }));
 
-/** Every body class that hides the topbar, across every stylesheet. */
+/** Every body class that hides #topbar, across every stylesheet.
+ * (v5.17.62) A rule is hiding only if its declarations say `display: none` —
+ * an earlier revision matched every `body.is-X #topbar` selector, so the
+ * Elder opaque-glass fallback (which styles the bar, never hides it) read
+ * as a fifth chrome-hiding mode. The trap stays as strong: a genuinely new
+ * hiding mode still fails until the switch rule extends to it. */
 const CHROME_HIDING = new Set();
 for (const { text } of allCss) {
-  for (const m of text.matchAll(/body\.(is-[a-z-]+)\s+#topbar/g)) CHROME_HIDING.add(m[1]);
+  for (const m of text.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    if (!/display\s*:\s*none/.test(m[2])) continue;
+    for (const s of m[1].matchAll(/body\.(is-[a-z-]+)\s+#topbar/g)) CHROME_HIDING.add(s[1]);
+  }
 }
 
 /** Every body class that reveals the floating language switch. */

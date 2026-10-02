@@ -885,7 +885,13 @@ body.modal-open {
      dvh line entirely, leaving no height cap at all. */
   max-height: 86vh;
   max-height: 86dvh;
-  background: var(--color-surface);
+  /* (v5.17.62, liquid glass) sheets and modals share the player bar's
+     strong tint + blur + hairline — one glass language for every overlay.
+     Opaque fallbacks (reduced-transparency, forced-colors, Elder) live in
+     accessibility.css. */
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: 1px solid var(--color-border);
   border-radius: calc(var(--radius-lg) + 2px);
   box-shadow: var(--shadow-lg);
@@ -1729,9 +1735,11 @@ span.offline-row__status.missing-data {
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  /* (v5.17.62, liquid glass) the shared treatment at strong tint — the bar
+     carries small meta text, so it floats at 92% surface, not 80%. */
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-lg);
 }
@@ -2972,6 +2980,9 @@ body.is-kids #main {
 .view-sheet__group {
   display: flex;
   flex-direction: column;
+  /* (v5.17.62, liquid glass) sheets wear the shared tint + hairline; the
+     blur is inherited from the glass modal behind them, not re-applied. */
+  background: var(--glass-bg-strong);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   overflow: hidden;

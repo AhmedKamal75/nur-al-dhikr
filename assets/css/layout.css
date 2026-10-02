@@ -24,13 +24,15 @@
   /* (v5.12.1 UX audit S6) notched phones: the status-bar overlap is real;
      zero-cost elsewhere (fallback 0px). */
   padding-block-start: env(safe-area-inset-top, 0px);
-  /* Calm frosted chrome: deep blur + saturation over a warm tint, plus a
-     hairline shadow so the bar reads as one level above the paper. */
-  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
-  backdrop-filter: blur(20px) saturate(1.6);
-  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  /* (v5.17.62, liquid glass) the shared treatment: warm tint + one blur +
+     hairline shadow so the bar reads as one level above the paper.
+     Opaque fallbacks (reduced-transparency, forced-colors, Elder) live in
+     accessibility.css. */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border-bottom: 1px solid var(--color-border);
-  box-shadow: 0 1px 12px rgba(28, 32, 28, 0.06);
+  box-shadow: 0 1px 12px rgba(46, 40, 24, 0.06);
 }
 
 .topbar__inner {
@@ -155,9 +157,10 @@ body.has-player #main {
   inset-inline: 0;
   z-index: var(--z-nav);
   padding-bottom: env(safe-area-inset-bottom, 0);
-  background: color-mix(in srgb, var(--color-bg) 90%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* (v5.17.62, liquid glass) same shared treatment as the topbar. */
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border-top: 1px solid var(--color-border);
 }
 
@@ -754,8 +757,10 @@ body.is-ambient #immersive-chrome {
 .topbar__lang--floating {
   /* Opaque enough to be findable, quiet enough not to fight the page. The
      mushaf is the surface most likely to be mid-verse, so it sits top-end
-     where the eye already goes for the exit control. */
-  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
-  backdrop-filter: blur(6px);
+     where the eye already goes for the exit control.
+     (v5.17.62, liquid glass) topbar family: the shared strong tint + blur. */
+  background: var(--glass-bg-strong);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
 }
