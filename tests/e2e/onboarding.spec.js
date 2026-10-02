@@ -69,8 +69,26 @@ test('fresh readers meet three decisions: language, location, reciter', async ({
     .click();
   await expect(page.locator('.panel--onboarding')).toHaveCount(0, { timeout: 10000 });
 
-  // Home is complete with the answers: the dhikr grid is there.
-  await expect(page.locator('.home-browser')).toBeVisible({ timeout: 10000 });
+  // Home is complete with the answers. Since IA-7 the adhkar grid is no longer
+  // ON Home, so asserting `.home-browser` here was asserting a surface that had
+  // moved (it was one of the eight tests IA-7 left red). What "complete" means
+  // now is asserted instead: the Today landing renders its own surface, and the
+  // reciter this wizard just chose actually stuck — which is the thing the old
+  // proxy was standing in for.
+  await expect(page.locator('.home-hero')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('.home-prayer-ribbon')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('.home-today')).toBeVisible({ timeout: 10000 });
+  const keptReciter = await page.evaluate(() => {
+    try {
+      return JSON.parse(localStorage.getItem('nurAlDhikr:v2:state') || '{}').settings?.reciter;
+    } catch {
+      return null;
+    }
+  });
+  expect(
+    keptReciter,
+    "the wizard let the reader pick a voice and then lost it — 'Home is complete with the answers' is the claim under test"
+  ).toBeTruthy();
 
   // A reload does not bring the wizard back.
   await page.reload();
@@ -85,7 +103,10 @@ test('an instant skip leaves a complete home behind', async ({ page }) => {
   await expect(page.locator('.onboarding-line__summary').first()).toBeVisible({ timeout: 20000 });
   await page.getByRole('button', { name: 'Maybe later' }).click();
   await expect(page.locator('.panel--onboarding')).toHaveCount(0, { timeout: 10000 });
-  await expect(page.locator('.home-browser')).toBeVisible({ timeout: 10000 });
+  // Same correction as above: `.home-browser` moved to the AZKAR section in
+  // IA-7. Skipping must still leave a usable Today landing, not a blank page.
+  await expect(page.locator('.home-hero')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('.home-today')).toBeVisible({ timeout: 10000 });
   await page.reload();
   await ready(page);
   await expect(page.locator('.panel--onboarding')).toHaveCount(0, { timeout: 10000 });

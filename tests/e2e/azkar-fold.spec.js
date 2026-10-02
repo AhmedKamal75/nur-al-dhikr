@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * home-fold.spec.js — the dhikr must be the first thing on the home screen.
+ * azkar-fold.spec.js — the dhikr must be the first thing on the AZKAR screen.
+ *
+ * RENAMED from home-fold.spec.js (IA-7, v5.17.61).
  *
  * MEASURED BEFORE THIS FILE EXISTED
  *
@@ -14,23 +16,42 @@ import { test, expect } from '@playwright/test';
  * design, and it is why the page read as "sloppy" even though every tile on it
  * was correct.
  *
- * It is also now at y=299, in full-width columns, with every Read-now action on
- * one baseline.
+ * WHY THE ROUTE MOVED
  *
- * WHAT THIS PINS, AND WHY EACH ONE
+ * This file used to run against `./#/`. IA-7 split the chrome into seven
+ * sections and moved the adhkar grid OFF the home screen entirely: Home became
+ * a Today landing (ribbon, moment, resume, tasbih entry) and the grid moved to
+ * the AZKAR section, whose entry route is `#/library` and whose title is
+ * "Azkar". The owner ruling was that home should be home, not a full azkar.
  *
- * A home screen can drift back toward chrome-first one reorder at a time, and
- * nobody notices until someone screenshots it. These are the measurements, so
- * the next person gets a red test instead of an opinion.
+ * The MEASUREMENTS below are unchanged and still load-bearing — a section
+ * landing can drift back toward chrome-first one reorder at a time. Only the
+ * route moved. These six tests were left red by that move (they still looked
+ * for `.home-browser` on Home, where it no longer renders); they are re-pointed
+ * here rather than deleted, because deleting a guard because the thing it
+ * guarded moved is how a real defect becomes invisible.
+ *
+ * Note the class is `.home-browser` even on the Azkar screen: `adhkarBrowserHTML`
+ * in js/views/home.js is one component with two callers (home no longer calls
+ * it; library does), so it kept its name. That is a naming wart, not a bug —
+ * do not "fix" it by renaming here without renaming the component too.
  */
 test.use({ serviceWorkers: 'block' });
 
-test.describe('the home fold', () => {
+const AZKAR = './#/library';
+const HOME = './#/';
+
+/** Wait for a patch-layer render to settle before measuring geometry. */
+async function settled(page) {
+  await page.waitForTimeout(1200);
+}
+
+test.describe('the azkar section fold', () => {
   test('the dhikr grid is on the first screen, not below a screen of chrome', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('./#/');
+    await page.goto(AZKAR);
     await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
-    await page.waitForTimeout(1200);
+    await settled(page);
 
     const top = await page.evaluate(() => {
       const g = document.querySelector('.home-browser');
@@ -45,9 +66,9 @@ test.describe('the home fold', () => {
 
   test('the grid uses the full width, so the right half is not empty', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('./#/');
+    await page.goto(AZKAR);
     await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
-    await page.waitForTimeout(1200);
+    await settled(page);
 
     const { grid, main } = await page.evaluate(() => {
       const g = document.querySelector('.home-browser').getBoundingClientRect();
@@ -69,9 +90,9 @@ test.describe('the home fold', () => {
     // different baselines. Visually it read as careless; it was one missing
     // `margin-block-start: auto`.
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('./#/');
+    await page.goto(AZKAR);
     await expect(page.locator('.category-grid').first()).toBeVisible({ timeout: 25000 });
-    await page.waitForTimeout(1200);
+    await settled(page);
 
     const tops = await page.evaluate(() => {
       const grid = document.querySelector('.category-grid');
@@ -90,9 +111,9 @@ test.describe('the home fold', () => {
 
   test('no tile is cut off, and the page does not scroll sideways', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('./#/');
+    await page.goto(AZKAR);
     await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
-    await page.waitForTimeout(1200);
+    await settled(page);
 
     const r = await page.evaluate(() => {
       const gb = document.querySelector('.home-browser').getBoundingClientRect();
@@ -103,27 +124,7 @@ test.describe('the home fold', () => {
       };
     });
     expect(r.cut, 'no tile may stick out past the grid').toBe(0);
-    expect(r.overflow, 'the home page must not scroll sideways').toBe(0);
-  });
-
-  test('the hero is demoted below the dhikr but still present', async ({ page }) => {
-    // Reordering is not removal. The greeting, the Hijri chip and the tagline
-    // are all still there; they just no longer open the page.
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('./#/');
-    await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
-    await page.waitForTimeout(1200);
-
-    const r = await page.evaluate(() => {
-      const g = document.querySelector('.home-browser').getBoundingClientRect();
-      const h = document.querySelector('.home-hero');
-      return {
-        hero: h ? Math.round(h.getBoundingClientRect().top) : null,
-        grid: Math.round(g.top),
-      };
-    });
-    expect(r.hero, 'the hero must still exist').not.toBeNull();
-    expect(r.hero, 'the hero must come after the dhikr').toBeGreaterThan(r.grid);
+    expect(r.overflow, 'the azkar page must not scroll sideways').toBe(0);
   });
 
   test('every category still carries a live count and a Read-now action', async ({ page }) => {
@@ -131,9 +132,9 @@ test.describe('the home fold', () => {
     // be opened or cannot be sized. Both were there before; this pins that the
     // reordering did not cost either.
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('./#/');
+    await page.goto(AZKAR);
     await expect(page.locator('.category-grid').first()).toBeVisible({ timeout: 25000 });
-    await page.waitForTimeout(1200);
+    await settled(page);
 
     const r = await page.evaluate(() => {
       const tiles = [...document.querySelectorAll('.category-tile-wrap')];
@@ -148,5 +149,62 @@ test.describe('the home fold', () => {
     expect(r.tiles, 'the grid should carry real categories').toBeGreaterThan(20);
     expect(r.withCount, 'every category must state how many items it holds').toBe(r.tiles);
     expect(r.withAction, 'every category must be openable').toBe(r.tiles);
+  });
+});
+
+test.describe('home is home, not a full azkar (IA-7)', () => {
+  // This is the decision the six red tests above were left behind by, written
+  // down so it cannot be undone quietly. Before IA-7 the grid rendered on Home
+  // and this file could not have existed: Home WAS the grid.
+  test('home renders its Today surface, not the adhkar grid', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(HOME);
+    await expect(page.locator('#main h1')).toBeVisible({ timeout: 25000 });
+    await settled(page);
+
+    const r = await page.evaluate(() => ({
+      hero: document.querySelectorAll('.home-hero').length,
+      shahada: document.querySelectorAll('.shahada-banner').length,
+      ribbon: document.querySelectorAll('.home-prayer-ribbon').length,
+      today: document.querySelectorAll('.home-today').length,
+      quick: document.querySelectorAll('.quick-actions').length,
+      // The thing that must NOT be here any more.
+      browser: document.querySelectorAll('.home-browser').length,
+      grid: document.querySelectorAll('.category-grid').length,
+      tiles: document.querySelectorAll('.category-tile-wrap').length,
+    }));
+
+    // Home keeps its own surface — reordering is not removal. The greeting,
+    // the prayer ribbon and the Today strip are what "home" means now.
+    expect(r.hero, 'the greeting/hero must still exist on home').toBe(1);
+    expect(r.ribbon, 'home opens on the prayer ribbon, not a category grid').toBe(1);
+    expect(r.today, "home opens on today's state, not a catalogue").toBe(1);
+    // And it must not have quietly become the azkar screen again.
+    expect(
+      r.browser,
+      'the adhkar grid is back on Home. The owner ruling (IA-7) is that home should be home, ' +
+        'not a full azkar — if this is deliberate, it is an IA change, not a regression to absorb silently.'
+    ).toBe(0);
+    expect(r.grid, 'no category grid on Home').toBe(0);
+    expect(r.tiles, 'no category tiles on Home').toBe(0);
+  });
+
+  test('the azkar grid is one tap from home, not a scroll away', async ({ page }) => {
+    // Home is allowed to be a landing only if the thing it replaced is still
+    // cheap to reach. "One tap" is the whole claim: a reader who wants the grid
+    // must not have to know it is called Azkar or that it lives at #/library.
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(HOME);
+    await expect(page.locator('#main h1')).toBeVisible({ timeout: 25000 });
+
+    const link = page
+      .locator(`#bottomnav a[href="#/library"], #bottomnav [href="#/library"]`)
+      .first();
+    await expect(
+      link,
+      'the AZKAR section must be in the chrome, or home is a dead end for the grid'
+    ).toBeVisible({ timeout: 10000 });
+    await link.click();
+    await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
   });
 });
