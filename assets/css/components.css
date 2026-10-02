@@ -356,6 +356,28 @@
 .settings-acc[open] .settings-acc__chevron {
   transform: rotate(180deg);
 }
+/* (v5.17.63) Settings groups: one labelled shelf per intent holding its
+ * accordions. Spacing only — no fixed heights (translated hints must never
+ * clip), logical properties only, existing tokens only, no new custom
+ * properties. Headings are not targets, so the 44px floor stays on the
+ * rows and summaries where it already was. */
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-block-start: var(--space-5);
+}
+.settings-group:first-of-type {
+  margin-block-start: var(--space-3);
+}
+.settings-group__title {
+  margin: 0;
+  font-size: var(--fs-md);
+  font-weight: 800;
+}
+.settings-group__hint {
+  margin: 0;
+}
 .chip-row--scroll {
   flex-wrap: nowrap;
   overflow-x: auto;

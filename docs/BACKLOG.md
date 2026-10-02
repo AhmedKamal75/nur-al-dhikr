@@ -6,7 +6,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.62**. Last updated against a green `npm run check` and
+> Current version: **v5.17.63**. Last updated against a green `npm run check` and
 > a green Chromium e2e run.
 
 ---
@@ -70,6 +70,7 @@ must never be backdated into the number:**
 | v5.17.60 — root-aware search                                      | Latin fold + romanized bridge + root-family expansion (read, never invented) into library + Qur'an tiers; roots-result section with door chips; tiers named pending/failed, empties name their scope                                            |
 | v5.17.61 — home is a landing, seven sections                      | Today landing (ribbon + moment + resume + tasbih entry); azkar grid moved to the Azkar section (same browser component); Qur'an carries tajweed + look-alikes; hierarchical drawer from the map; nav.library retired                            |
 | v5.17.62 — warm paper, night lamp, one glass                      | cream paper + deep green ink (light), warm night lamp (dark), gilt restrained; one liquid-glass treatment for topbar/player/sheets/modals with reduced-transparency + forced-colors + Elder fallbacks; language-switch trap derivation repaired |
+| v5.17.63 — settings, professionally shelved                       | seven labelled groups over the same 12 accordions (deferred + About doors in Setup & about; install + backup card single-sourced in data); one settingRow builder for every toggle row; search kept, now hides whole groups; arrangement only   |
 
 **So 7.5 is stale in the optimistic direction, and no re-score has been taken.**
 The number that would be honest today is unknown, and guessing it would repeat

@@ -2,7 +2,7 @@
 
 GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (plain node, no args).
 
-- js modules: 242 — data files: 27 — tests: 245
+- js modules: 242 — data files: 27 — tests: 246
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -2542,7 +2542,7 @@ job: Global search: the Adhkar/Duas/Names library index (search.js) plus, since 
 
 job: Settings reorganized into calm, purposeful sections — one panel per intent, each header carrying an icon and a one-line "what this does". New v5 sections: Counting feedback (vibration / tick sound / …
 
-- exports: `settingsSectionIds` (function), `settingsSlugForSection` (function), `settingsSectionForSlug` (function), `openSettingsSectionFor` (function), `deferredSetupHTML` (function), `SETTINGS_SECTIONS` (const), `matchSettingsSection` (function), `renderSettings` (function)
+- exports: `settingsSectionIds` (function), `settingsSlugForSection` (function), `settingsSectionForSlug` (function), `openSettingsSectionFor` (function), `deferredSetupHTML` (function), `settingRow` (function), `SETTINGS_SECTIONS` (const), `SETTINGS_GROUPS` (const), `matchSettingsSection` (function), `renderSettings` (function)
 - emits: `add-preset`, `add-reminder`, `backup-link-file`, `content-restore-all`, `delete-reminder`, `export-backup`, `export-plan`, `home-panel-move`, `home-panel-toggle`, `import-backup`, `import-plan`, `mushaf-set-tafsir`, `navigate`, `onboarding-reshow`, `profile-create`, `profile-delete`, `profile-switch`, `quick-tile-move`, `quick-tile-toggle`, `reset-all-data`, `restore-auto-backup`, `schedule-open-manager`, `set-setting`, `toggle-elder-mode`, `toggle-kids-mode`, `toggle-reminder`, `toggle-setting`, `verify-backup` (+ dynamic `data-action="${...}"`)
 - handles: —
 - i18n: `audio.noSecondVoice`, `common.delete`, `editor.emptyState`, `library.sheet.restoreAll`, `nav.about`, `nav.offline`, `onboarding.deferHint`, `onboarding.deferTitle`, `onboarding.reshow`, `preset.dailyVerse`, `preset.jumuah`, `quran.quickActions`, `schedule.manager`, `settings.accessibility`, `settings.addReminder`, `settings.appearance`, `settings.arabicFontSize`, `settings.arabicTypeface`, `settings.audioManager`, `settings.autoAdvanceFocus` (+71 more)
@@ -3207,6 +3207,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `SEARCH_PAGE_SIZES`: `js/domain/searchPagination.js`
 - `SEED_LOOKAHEAD`: `js/services/surahPlayback.js`
 - `SESSION_ARTWORK`: `js/services/mediaSession.js`
+- `SETTINGS_GROUPS`: `js/views/settings.js`
 - `SETTINGS_SECTIONS`: `js/views/settings.js`
 - `SETTINGS_SECTION_SLUGS`: `js/core/config/sanitize.js`
 - `SHAHADA_TEXT`: `js/views/home.js`
@@ -4357,6 +4358,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `setSpeed`: `js/services/surahPlayback.js`
 - `setTarget`: `js/services/tasbih.js`
 - `setVolume`: `js/services/player.js`, `js/services/recitation.js`
+- `settingRow`: `js/views/settings.js`
 - `settingsSectionForSlug`: `js/views/settings.js`
 - `settingsSectionIds`: `js/views/settings.js`
 - `settingsSectionScrollTarget`: `js/app/renderer.js`
@@ -5573,7 +5575,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `ground`: `js/domain/ambient.js`
 - `group`: `js/domain/offline.js`, `js/domain/roots.js`, `js/views/offline.js`
 - `grouped`: `js/ui/viewSheet.js`, `js/views/roots.js`
-- `groups`: `js/app/offlineJobs.js`, `js/domain/offline.js`, `js/ui/shell.js`
+- `groups`: `js/app/offlineJobs.js`, `js/domain/offline.js`, `js/ui/shell.js`, `js/views/settings.js`
 - `growth`: `js/domain/garden.js`, `js/views/garden.js`
 - `guarantees`: `js/core/idb/openDB.js`
 - `guard`: `js/app/stateSub.js`, `js/domain/gestures.js`
@@ -6897,6 +6899,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `setspeed`: `js/services/surahPlayback.js`
 - `settarget`: `js/services/tasbih.js`
 - `settimeout`: `js/services/notifications.js`
+- `settingrow`: `js/views/settings.js`
 - `settings`: `js/app/renderer.js`, `js/core/config/sanitize.js`, `js/core/config/views.js`, `js/core/i18n.js`, `js/core/state/slices/shell.js`, `js/core/theme.js`, `js/domain/homePanels.js`, `js/domain/locations.js`, `js/domain/tajweedSources.js`, `js/services/dataHealth.js`, `js/services/prayerSound.js`, `js/views/ambient.js`, `js/views/installRow.js`, `js/views/qibla.js`, `js/views/settings.js`
 - `settingssectionforslug`: `js/views/settings.js`
 - `settingssectionids`: `js/views/settings.js`
@@ -7609,6 +7612,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/seedBundle.test.js` — / Seed-bundle contract: the slim archive is intentionally tiny but runnable. (pins: `./helpers/seedMode.mjs`)
 - `tests/separation-renderers.test.js` — template-level language-separation gates (takeover audit A1-A4, A6, B2). The v5.2.31 audit pinned the contract at five renderers; the takeover (pins: `../js/domain/localeContent.js`, `../js/ui/card.js`, `../js/views/editor.js`, `../js/views/hadith.js`, `../js/views/quiz.js`)
 - `tests/session-start-warm.test.js` — (v5.11.0 A) tap-parallel warm: start() fires the lookahead horizon's probes+preloads synchronously at tap time (concurrent with the first ayah's own storage probe), instead (pins: `../js/services/mushaf.js`, `../js/services/recitation.js`, `../js/services/surahPlayback.js`)
+- `tests/settings-groups.test.js` — (v5.17.63) professional Settings sections. Arrangement only: the same 12 accordions, the same controls, the same contracts — now shelved into seven labelled groups (Setup & about · (pins: `../js/core/i18n.js`, `../js/core/utils.js`, `../js/views/settings.js`)
 - `tests/settingsSection.test.js` — item 5 (settings accordion persistence + deep links) gates: 1. the sanitize allowlist mirrors the view's section slugs exactly (no (pins: `../js/core/config.js`, `../js/views/palette.js`, `../js/views/settings.js`)
 - `tests/shahada-banner.test.js` — the Shahada strip atop Home carries quoted wording: no theme, language, or edit may silently alter a letter, translate it, or drop its RTL/ARIA contract. (pins: `../js/views/home.js`)
 - `tests/shareCard.test.js` — pure pieces of the image-card renderer (pins: `../js/services/shareCard.js`)

@@ -17,7 +17,22 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+/**
+ * TWO outputs, because one was unreadable.
+ *
+ * The single original file grew to ~530 KB / 7,600 lines: a per-file dump plus
+ * three reverse indexes (action, export, job keyword). It is authoritative and
+ * nobody can read it — an agent handed a context budget opens it, drowns, and
+ * goes back to grepping, which is the exact failure this map was commissioned
+ * to stop.
+ *
+ * So: OUT is the INDEX an agent actually reads (spine + counts + pointers,
+ * bounded by tests/agent-map.test.js so it cannot regrow), and FULL_OUT is the
+ * exhaustive dump, read only when a task names a specific file or action.
+ * Both are generated from the same scan, so they cannot disagree.
+ */
 const OUT = path.join(ROOT, 'docs', 'AGENT-MAP.md');
+const FULL_OUT = path.join(ROOT, 'docs', 'agent-map-full.md');
 
 /** Emitted actions with no static handler; each needs a reason. */
 const ALLOWLIST = [
@@ -425,6 +440,152 @@ function safe(s) {
   return String(s).replace(/[`|*]/g, '').replace(/\s+/g, ' ').trim();
 }
 
+/* ------------------------------------------------------------------ *
+ * The spine: route -> section -> view module, DERIVED from the sources
+ * that already own it (AGENTS.md rule 6).
+ *
+ * views.js owns the route ids, nav.js owns the seven sections, renderer.js
+ * owns which module renders each route (and whether it is eager or lazy).
+ * Nothing here is pinned: if the chrome gains an eighth section or a route
+ * moves, the index moves with it on the next run. A hand-kept route table
+ * would be a second thing to forget, which is how this file became
+ * unreadable in the first place.
+ *
+ * Every parser degrades LOUDLY. A silent partial parse is worse than a
+ * missing one: an index that confidently lists 30 of 34 routes is read as
+ * "the other four do not exist".
+ * ------------------------------------------------------------------ */
+
+/** Extract a balanced `{...}` / `[...]` block starting at `openIdx`. */
+function blockAt(src, openIdx) {
+  const open = src[openIdx];
+  const close = open === '{' ? '}' : ']';
+  let depth = 0;
+  for (let i = openIdx; i < src.length; i += 1) {
+    if (src[i] === open) depth += 1;
+    else if (src[i] === close) {
+      depth -= 1;
+      if (depth === 0) return src.slice(openIdx + 1, i);
+    }
+  }
+  return null;
+}
+
+/** VIEWS: the route-id -> route-value map from core/config/views.js. */
+function parseViews(src) {
+  const at = src.indexOf('VIEWS = Object.freeze(');
+  if (at < 0) return null;
+  const block = blockAt(src, src.indexOf('{', at));
+  if (!block) return null;
+  const out = new Map();
+  for (const m of block.matchAll(/([A-Z_][A-Z0-9_]*)\s*:\s*'([^']+)'/g)) out.set(m[1], m[2]);
+  return out.size > 0 ? out : null;
+}
+
+/** DOORS: the section map from core/config/nav.js, in chrome order. */
+function parseDoors(src, views) {
+  const at = src.indexOf('DOORS = Object.freeze(');
+  if (at < 0) return null;
+  const block = blockAt(src, src.indexOf('[', at));
+  if (!block) return null;
+  const chunks = block.split(/entry:\s*'/).slice(1);
+  const doors = [];
+  for (const chunk of chunks) {
+    const key = chunk.slice(0, chunk.indexOf("'"));
+    const viewKey = chunk.match(/view:\s*VIEWS\.([A-Z_][A-Z0-9_]*)/)?.[1];
+    const labelKey = chunk.match(/labelKey:\s*'([^']+)'/)?.[1];
+    const icon = chunk.match(/icon:\s*'([^']+)'/)?.[1];
+    if (!viewKey || !views.has(viewKey)) return null;
+    const members = [];
+    for (const m of chunk.matchAll(
+      /route:\s*'([A-Z_][A-Z0-9_]*)'\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')([^)]*)\)/g
+    )) {
+      members.push({
+        route: m[1],
+        taps: Number(m[2]),
+        via: m[4] ?? null,
+        // Tile-depth members answer a bare link with an honest 404, so the
+        // drawer offers no direct row for them.
+        direct: !/direct:\s*false/.test(m[5] ?? ''),
+      });
+    }
+    doors.push({ entry: key, viewKey, view: views.get(viewKey), labelKey, icon, members });
+  }
+  return doors.length > 0 ? doors : null;
+}
+
+/**
+ * renderer.js: which module renders each route, eager vs lazy. Static routes
+ * resolve through the top-of-file import statements; lazy routes carry their
+ * module path in the dynamic import() right in the table entry.
+ */
+function parseRouteModules(src) {
+  const imported = new Map();
+  for (const m of src.matchAll(/import\s*\{([^}]+)\}\s*from\s*'(\.\.\/views\/[^']+)'/g)) {
+    for (const name of m[1].split(',')) {
+      const id = name
+        .trim()
+        .split(/\s+as\s+/)
+        .pop()
+        .trim();
+      if (id) imported.set(id, m[2]);
+    }
+  }
+  const eager = new Map();
+  const lazy = new Map();
+  const staticAt = src.indexOf('VIEW_TABLE = {');
+  if (staticAt > 0) {
+    const block = blockAt(src, src.indexOf('{', staticAt)) ?? '';
+    for (const m of block.matchAll(/\[VIEWS\.([A-Z_][A-Z0-9_]*)\]:\s*([A-Za-z0-9_$]+)/g)) {
+      const mod = imported.get(m[2]);
+      if (mod) eager.set(m[1], mod.replace('../views/', 'js/views/'));
+    }
+  }
+  const lazyAt = src.indexOf('LAZY_VIEW_LOADERS = {');
+  if (lazyAt > 0) {
+    // Entries can wrap onto the next line, so match across newlines.
+    const rest = src.slice(lazyAt);
+    for (const m of rest.matchAll(
+      /\[VIEWS\.([A-Z_][A-Z0-9_]*)\]:\s*\(\)\s*=>\s*(?:\n\s*)?import\('\.\.\/views\/([^']+)'\)/g
+    )) {
+      lazy.set(m[1], `js/views/${m[2]}`);
+    }
+  }
+  return { eager, lazy };
+}
+
+/** The full spine, or an explicit failure the caller must surface. */
+function buildSpine() {
+  const read = (p) => readFileSync(path.join(ROOT, p), 'utf8');
+  const problems = [];
+  let views;
+  let doors;
+  let modules;
+  try {
+    views = parseViews(read('js/core/config/views.js'));
+    if (!views) problems.push('could not parse VIEWS from js/core/config/views.js');
+    doors = parseDoors(read('js/core/config/nav.js'), views ?? new Map());
+    if (!doors) problems.push('could not parse DOORS from js/core/config/nav.js');
+    modules = parseRouteModules(read('js/app/renderer.js'));
+    if (modules.eager.size + modules.lazy.size === 0) {
+      problems.push('could not parse view tables from js/app/renderer.js');
+      modules = { eager: new Map(), lazy: new Map() };
+    }
+  } catch (err) {
+    problems.push(`spine build threw: ${String(err)}`);
+    return {
+      ok: false,
+      problems,
+      views: new Map(),
+      doors: [],
+      modules: { eager: new Map(), lazy: new Map() },
+    };
+  }
+  const placed = new Set(doors.flatMap((d) => d.members.map((m) => m.route)));
+  const orphans = [...views.keys()].filter((k) => !placed.has(k));
+  return { ok: problems.length === 0, problems, views, doors, modules, orphans };
+}
+
 function backtickList(items) {
   if (items.length === 0) return '—';
   return items.map((x) => `\`${safe(x)}\``).join(', ');
@@ -595,12 +756,175 @@ function main() {
     process.exit(1);
   }
 
-  // Emit markdown.
+  // ---------------------------------------------------------------- index
+  // The file an agent actually reads. Spine first, then the lookup tables,
+  // then pointers into the exhaustive dump. Deliberately small: the byte
+  // budget is enforced by tests/agent-map.test.js, so this cannot quietly
+  // regrow into the unreadable wall it replaced.
+  const spine = buildSpine();
+  const jsCount = entries.filter((e) => !e.data).length;
+  const I = [];
+  I.push('# AGENT-MAP — the project in one page');
+  I.push('');
+  I.push(
+    'GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (plain node, no args).'
+  );
+  I.push('');
+  I.push(
+    'Read this file first. It is deliberately short: the spine, the lookup tables and the ' +
+      'counted inventories. For one specific module’s exports, one `data-action`’s handler, or ' +
+      'one keyword’s owners, read the exhaustive dump next.'
+  );
+  I.push('');
+  I.push(
+    `- js modules: ${jsCount} — data files: ${dataEntries.length} — tests: ${testEntries.length}`
+  );
+  I.push(
+    `- exhaustive dump: \`docs/agent-map-full.md\` (${entries.length + testEntries.length} entries)`
+  );
+  I.push('');
+
+  I.push('## 1. The spine: chrome section → routes → view module');
+  I.push('');
+  I.push(
+    'Seven sections own the chrome. Each row is derived from `js/core/config/nav.js` (DOORS), ' +
+      'whose route ids come from `js/core/config/views.js` (VIEWS) and whose view modules come ' +
+      'from `js/app/renderer.js` (VIEW_TABLE eager / LAZY_VIEW_LOADERS lazy). Nothing below is ' +
+      'pinned here — change the source and regenerate.'
+  );
+  I.push('');
+  if (!spine.ok) {
+    I.push('> **SPINE UNAVAILABLE.** The generator could not read the source of truth:');
+    for (const p of spine.problems) I.push(`> - ${p}`);
+    I.push('>');
+    I.push('> The rest of this index is still accurate, but do NOT trust the table below until');
+    I.push(
+      '> this is fixed — an index that lists 30 of 34 routes reads as "the rest do not exist".'
+    );
+  } else {
+    I.push('| # | section | entry route | label key | routes under it | tap | via |');
+    I.push('| - | ------- | ----------- | --------- | ---------------- | --- | --- |');
+    spine.doors.forEach((d, i) => {
+      for (const m of d.members) {
+        const mod = spine.modules.eager.get(m.route) ?? spine.modules.lazy.get(m.route);
+        const eager = spine.modules.eager.has(m.route);
+        const routeCell = `${m.route}${m.direct ? '' : ' *(tile-depth)*'}`;
+        const via = m.via ? `\`${m.via}\`` : '— (is the tap)';
+        I.push(
+          `| ${i + 1} | **${safe(d.labelKey ?? '—')}** | \`${safe(d.entry)}\` → \`#/${safe(d.view)}\` | ` +
+            `\`${safe(d.labelKey ?? '—')}\` | ${i === 0 && d.members[0] === m ? routeCell : routeCell}` +
+            `${mod ? ` → \`${safe(mod)}\`${eager ? '' : ' *(lazy)*'}` : ' → **UNMAPPED**'}` +
+            ` | ${m.taps} | ${via} |`
+        );
+      }
+    });
+    I.push('');
+    I.push(
+      `*(tile-depth)* members need a parameter, so a bare link answers an honest 404 and the ` +
+        `drawer offers no direct row for them — the section landing's own tiles carry them. ` +
+        `*(lazy)* routes are \`import()\`-ed on first visit, not statically imported.`
+    );
+  }
+  I.push('');
+  if (spine.orphans && spine.orphans.length > 0) {
+    I.push(
+      `Routes in VIEWS claimed by no section: ${spine.orphans.map((o) => `\`${o}\``).join(', ')}. ` +
+        `Deep-linkable but not in the chrome — each needs its justification in ` +
+        '`tests/nav-reachability.test.js` or it is an orphan bug.'
+    );
+    I.push('');
+  }
+  I.push('## 2. Where to make a change');
+  I.push('');
+  I.push('| If you are adding… | It lives in | And you must also… |');
+  I.push('| ------------------ | ----------- | ------------------- |');
+  I.push(
+    '| a route | `js/core/config/views.js` (VIEWS) | add it to `VIEW_TABLE` or `LAZY_VIEW_LOADERS` in `js/app/renderer.js`, then to a `DOORS` section in `js/core/config/nav.js`'
+  );
+  I.push(
+    '| a chrome section | `js/core/config/nav.js` (DOORS) | nothing pins it elsewhere — `js/ui/shell.js` derives from it |'
+  );
+  I.push(
+    '| a `data-action` | the emitting view/ui | add the handler to the matching map in `js/app/handlers/*.js`, and an allowlist entry in `tests/mushaf-reorg.test.js` |'
+  );
+  I.push(
+    '| an i18n key | `js/core/i18n/en.js` **and** `js/core/i18n/ar.js` | one language is a failing gate |'
+  );
+  I.push(
+    '| a settings key | the view that renders it | add it to `js/core/config/sanitize.js` or it dies on reload |'
+  );
+  I.push(
+    '| a CSS custom property | `assets/css/variables.css` | it must resolve, or `tests/cssDesign.test.js` fails |'
+  );
+  I.push(
+    '| a file under `js/` | anywhere | add it to `APP_SHELL` in `sw.js`, then re-stamp the shell snapshot |'
+  );
+  I.push('');
+  I.push('## 3. Conventions');
+  I.push('');
+  I.push('`js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;');
+  I.push('`js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;');
+  I.push('`js/ui/*.js` dumb chrome primitives; `js/services/*.js` side-effect owners.');
+  I.push('');
+  I.push('## 4. Inventory by subsystem');
+  I.push('');
+  I.push('| subsystem | what lives there | modules | where in the dump |');
+  I.push('| --------- | --------------- | ------- | --------------- |');
+  const subs2 = [...new Set(entries.map((e) => e.sub))].sort();
+  for (const sub of subs2) {
+    const n = entries.filter((x) => x.sub === sub).length;
+    I.push(
+      `| \`js/${sub}\` | ${safe(SUBSYSTEM_BLURBS[sub] ?? '')} | ${n} | [open](agent-map-full.md#${sub}) |`
+    );
+  }
+  I.push('');
+  I.push('## 5. Lookup tables (counts; open the dump for the rows)');
+  I.push('');
+  I.push(
+    `- \`data-action\` values emitted anywhere: **${byActionEmit.size}** — every one resolves to a handler (see the Allowlist section of the dump).`
+  );
+  I.push(
+    `- files that handle at least one click/change/form action: **${
+      entries.filter(
+        (e) =>
+          (e.handlesClick?.length ?? 0) +
+          (e.handlesChange?.length ?? 0) +
+          (e.handlesForms?.length ?? 0) >
+          0
+      ).length
+    }** of ${jsCount}.`
+  );
+  I.push(`- exported symbols: **${byExport.size}**.`);
+  I.push(
+    `- i18n keys touched by js/: **${new Set(entries.flatMap((e) => e.i18n)).size}** of the two dictionaries.`
+  );
+  I.push('');
+  I.push('## 6. When you need the exhaustive dump');
+  I.push('');
+  I.push('Read `docs/agent-map-full.md` when the task names a specific module, a specific');
+  I.push('`data-action`, or a specific exported symbol. It has, per file: header job, every');
+  I.push('export with its first doc line, actions emitted, actions handled, i18n keys, routes');
+  I.push('touched — plus three reverse indexes and a per-test list of what each test pins.');
+  I.push('');
+  I.push('Do **not** load the whole dump to answer "where does X live" — the tables above and a');
+  I.push('targeted grep answer that in one hop. Loading 530 KB to find one file is how an agent');
+  I.push('starts guessing instead of looking.');
+  I.push('');
+
+  writeFileSync(OUT, `${I.join('\n').replace(/\n+$/, '')}\n`);
+
+  // ------------------------------------------------------------- full dump
   const L = [];
-  L.push('# AGENT-MAP — what-and-where for every file');
+  L.push('# AGENT-MAP (full) — every file, every export, every action');
   L.push('');
   L.push(
     'GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (plain node, no args).'
+  );
+  L.push('');
+  L.push(
+    `This is the exhaustive dump. For the one-page version — chrome spine, where-to-change ` +
+      `table, counted inventory — read \`docs/AGENT-MAP.md\` instead. This file is ~530 KB by ` +
+      `design; it is meant to be searched for one named thing, not read end to end.`
   );
   L.push('');
   L.push(
@@ -694,10 +1018,18 @@ function main() {
   }
   L.push('');
 
-  writeFileSync(OUT, `${L.join('\n').replace(/\n+$/, '')}\n`);
+  writeFileSync(FULL_OUT, `${L.join('\n').replace(/\n+$/, '')}\n`);
+  const indexBytes = Buffer.byteLength(readFileSync(OUT));
   console.log(
-    `agent-map: ${entries.filter((e) => !e.data).length} js files + ${dataEntries.length} data files + ${testEntries.length} tests → docs/AGENT-MAP.md`
+    `agent-map: ${entries.filter((e) => !e.data).length} js files + ${dataEntries.length} data files + ` +
+      `${testEntries.length} tests → docs/agent-map-full.md; index → docs/AGENT-MAP.md ` +
+      `(${(indexBytes / 1024).toFixed(1)} KB)`
   );
+  if (!spine.ok) {
+    console.error('agent-map: SPINE INCOMPLETE — docs/AGENT-MAP.md section 1 is a failure notice:');
+    for (const p of spine.problems) console.error(`  ${p}`);
+    process.exit(1);
+  }
 }
 
 main();

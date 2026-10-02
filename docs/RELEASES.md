@@ -2,6 +2,44 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.63 — Settings, professionally shelved
+
+Settings was one long accordion list with two orphan blocks (the deferred
+first-run doors on top, the About door at the bottom). It now reads as
+seven labelled groups — Setup & about · Language & display · Content &
+library · Audio & recitation · Prayer & reminders · Access & family ·
+Offline & backup — each a shelf holding its accordions (`SETTINGS_GROUPS`
+partitions `SETTINGS_SECTIONS` exactly once, rule 6, so a reorder can
+neither orphan nor duplicate a setting). The deferred doors and the About
+door slot into Setup & about; the install row and the backup summary stay
+single-sourced inside the data section (shared builders reused, never
+copied); the search box is kept as-is (cheap, already there) and now hides
+whole group shelves on a total miss. Every toggle-style row renders through
+the ONE `settingRow` builder (label + control + optional hint, same
+`.toggle-row` chrome, same data-action contracts — byte-identical controls).
+
+- Arrangement only: no setting added or removed, no default changed, no
+  handler touched. All 12 section ids/slugs, deep links (`#/settings/<slug>`),
+  the persisted open-section pin and the sanitizer allowlist are untouched;
+  accordion order is unchanged (shelves follow the existing order).
+- Constraints held: bilingual EN+AR (14 twinned keys — 7 titles + 7 hints;
+  parity and orphan gates green), 19/19 renderer budget intact (no new view
+  import, no new data-action), Elder/a11y intact (44px targets kept, native
+  `<details>`/`<label>`/`<button>` controls, labelled shelves, group CSS is
+  spacing-only with logical properties and no fixed heights), no
+  gamification (new copy adab-scanned), offline-safe (edited files only,
+  shell re-stamped).
+- Tests: `tests/settings-groups.test.js` (23 cases — group partition pin,
+  EN+AR hierarchy render, deep-link landing inside its group, every toggle /
+  set / bind / action reachable in both languages, shared rows render exactly
+  once, search kept + whole-group hiding, one-builder pins, parity, adab,
+  budget, a11y/CSS pins), plus the suites that pin the untouched contracts
+  (`settingsSection`, `counter-flow`, `gestures`, `palette`,
+  `backup-summary`, `install-path`, `onboardingWizard`), and the
+  settings e2e subset green on Chromium.
+- Ledger: no OPEN-ISSUES row tracks Settings organisation, so none changes
+  status — the enforced header counts are untouched.
+
 ## v5.17.62 — Warm paper, night lamp, one glass
 
 HANDOFF §5d applied to the chrome (palette + liquid glass; the mushaf page

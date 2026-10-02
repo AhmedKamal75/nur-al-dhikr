@@ -2048,6 +2048,23 @@ export const en = {
   'journal.reflectionEmpty': 'No reflections yet.',
   'journal.reflectionEmptyInput': 'Write something first.',
   'journal.tabDuas': 'My duas',
+  // (v5.17.63) professional settings groups: one shelf per intent, each
+  // accordion living in exactly one group (SETTINGS_GROUPS in
+  // js/views/settings.js — the groups partition the sections).
+  'settings.groupSetup': 'Setup & about',
+  'settings.groupSetupHint': 'Finish the first-run steps, or read about the app.',
+  'settings.groupDisplay': 'Language & display',
+  'settings.groupDisplayHint': 'Language, theme, type and reading comfort.',
+  'settings.groupContent': 'Content & library',
+  'settings.groupContentHint': 'What the cards and Home show — and for whom.',
+  'settings.groupAudio': 'Audio & recitation',
+  'settings.groupAudioHint': 'Voices, translations and counting feedback.',
+  'settings.groupPrayer': 'Prayer & reminders',
+  'settings.groupPrayerHint': 'Friday, daily-verse and yearly reminders, plus schedules.',
+  'settings.groupAccess': 'Access & family',
+  'settings.groupAccessHint': 'Comfort reading, and a profile per person.',
+  'settings.groupBackup': 'Offline & backup',
+  'settings.groupBackupHint': 'The offline library, backups and your data.',
   'settings.searchPh': 'Search settings\u2026',
   // (v5.9.0) section shortcut chips above the accordions.
   'favorites.searchPh': 'Search favorites\u2026',

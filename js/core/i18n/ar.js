@@ -1942,6 +1942,22 @@ export const ar = {
   'journal.reflectionEmpty': 'لا خواطر بعد.',
   'journal.reflectionEmptyInput': 'اكتب شيئًا أولًا.',
   'journal.tabDuas': 'أدعيتي',
+  // (v5.17.63) مجموعات الإعدادات الاحترافية — رف واحد لكل مقصد (انظر
+  // SETTINGS_GROUPS في js/views/settings.js).
+  'settings.groupSetup': 'البدء وعن التطبيق',
+  'settings.groupSetupHint': 'أكمل خطوات البدء الأولى، أو تعرّف على التطبيق.',
+  'settings.groupDisplay': 'اللغة والعرض',
+  'settings.groupDisplayHint': 'اللغة والسمة والخط وراحة القراءة.',
+  'settings.groupContent': 'المحتوى والمكتبة',
+  'settings.groupContentHint': 'ما تُظهره البطاقات والرئيسية — ولمن.',
+  'settings.groupAudio': 'الصوت والتلاوة',
+  'settings.groupAudioHint': 'الأصوات والترجمات واستجابة العدّ.',
+  'settings.groupPrayer': 'الصلاة والتذكيرات',
+  'settings.groupPrayerHint': 'تذكيرات الجمعة وآية اليوم والسنوية، مع الجداول.',
+  'settings.groupAccess': 'الوصول والعائلة',
+  'settings.groupAccessHint': 'قراءة مريحة، وملف لكل شخص.',
+  'settings.groupBackup': 'دون اتصال والنسخ الاحتياطي',
+  'settings.groupBackupHint': 'المكتبة دون اتصال والنسخ الاحتياطية وبياناتك.',
   'settings.searchPh': 'ابحث في الإعدادات\u2026',
   // (v5.9.0) اختصارات الأقسام فوق القوائم.
   'favorites.searchPh': 'ابحث في المفضلة\u2026',

@@ -210,19 +210,47 @@ function accHeader(title, iconName, lang, hintKey) {
   </summary>`;
 }
 
+/**
+ * (v5.17.63) The ONE settings row builder (rule 6): every toggle-style
+ * setting is label + control + optional hint inside the existing
+ * `.toggle-row` chrome, so all rows share one shape and the stylesheet
+ * keeps a single target. `tag` picks the wrapper — 'label' for real
+ * checkboxes (tapping anywhere on the row toggles the input), 'button'
+ * for click-dispatched switches — and `control` is the switch HTML
+ * verbatim, so every existing data-action contract renders the same
+ * control it always did. Arrangement only: no setting, default or
+ * handler changes — the rows just come from one place now.
+ */
+export function settingRow({ tag = 'label', label, hint = '', control, attrs = '' }) {
+  const open =
+    tag === 'button'
+      ? `<button type="button" class="toggle-row"${attrs ? ` ${attrs}` : ''}>`
+      : `<label class="toggle-row"${attrs ? ` ${attrs}` : ''}>`;
+  const close = tag === 'button' ? '</button>' : '</label>';
+  const hintHTML = hint ? `<br /><span class="panel__subtext">${escapeHTML(hint)}</span>` : '';
+  return `
+  ${open}
+    <span class="toggle-row__label">${escapeHTML(label)}${hintHTML}</span>
+    ${control}
+  ${close}`;
+}
+
 /** A clickable toggle row for NON-settings-boolean state (the same switch
  *  visual as toggleRow, but dispatches a click handler). */
-function clickToggleRow(action, dataset, label, on) {
+function clickToggleRow(action, dataset, label, on, hint = '') {
   const attrs = Object.entries(dataset)
     .map(([k, v]) => `data-${k}="${escapeHTML(String(v))}"`)
     .join(' ');
-  return `
-  <button type="button" class="toggle-row" data-action="${action}" ${attrs} aria-pressed="${on}" aria-label="${escapeHTML(label)}">
-    <span class="toggle-row__label">${escapeHTML(label)}</span>
-    <span class="switch" aria-hidden="true">
-      <span class="switch__track ${on ? 'switch__track--on' : ''}"></span>
-    </span>
-  </button>`;
+  return settingRow({
+    tag: 'button',
+    label,
+    hint,
+    control: `
+      <span class="switch" aria-hidden="true">
+        <span class="switch__track ${on ? 'switch__track--on' : ''}"></span>
+      </span>`,
+    attrs: `data-action="${action}"${attrs ? ` ${attrs}` : ''} aria-pressed="${on}" aria-label="${escapeHTML(label)}"`,
+  });
 }
 
 /** Filterable settings sections: title + hint keys matched in both
@@ -249,6 +277,85 @@ export const SETTINGS_SECTIONS = [
   { id: 'settings-sec-profiles', title: 'settings.profiles', hint: 'settings.profilesHint' },
   { id: 'settings-sec-data', title: 'settings.data' },
 ];
+
+/**
+ * (v5.17.63) Professional groups over the sections above (rule 6): each
+ * section id appears in exactly one group's `sections` (pinned by
+ * tests/settings-groups.test.js), so the groups cannot drift from the
+ * accordions and no setting can be orphaned or duplicated by a reorder.
+ * The `setup` group holds no accordion — it slots the deferred first-run
+ * doors and the About door, which are shared builders (backupSummary.js /
+ * installRow.js stay single-sourced in the data section), so every shared
+ * row still renders exactly once.
+ */
+export const SETTINGS_GROUPS = [
+  { id: 'settings-group-setup', title: 'settings.groupSetup', hint: 'settings.groupSetupHint' },
+  {
+    id: 'settings-group-display',
+    title: 'settings.groupDisplay',
+    hint: 'settings.groupDisplayHint',
+    sections: ['settings-sec-language', 'settings-sec-appearance'],
+  },
+  {
+    id: 'settings-group-content',
+    title: 'settings.groupContent',
+    hint: 'settings.groupContentHint',
+    sections: ['settings-sec-content', 'settings-sec-cardfields'],
+  },
+  {
+    id: 'settings-group-audio',
+    title: 'settings.groupAudio',
+    hint: 'settings.groupAudioHint',
+    sections: [
+      'settings-sec-reciter',
+      'settings-sec-translation',
+      'settings-sec-compare',
+      'settings-sec-feedback',
+    ],
+  },
+  {
+    id: 'settings-group-prayer',
+    title: 'settings.groupPrayer',
+    hint: 'settings.groupPrayerHint',
+    sections: ['settings-sec-notifications'],
+  },
+  {
+    id: 'settings-group-access',
+    title: 'settings.groupAccess',
+    hint: 'settings.groupAccessHint',
+    sections: ['settings-sec-accessibility', 'settings-sec-profiles'],
+  },
+  {
+    id: 'settings-group-backup',
+    title: 'settings.groupBackup',
+    hint: 'settings.groupBackupHint',
+    sections: ['settings-sec-data'],
+  },
+];
+
+/** Group open/close tags (render-local: they need the live filter state).
+ *  A group with sections hides while the search filter hides every member;
+ *  the setup group (deferred doors + About door, no accordion) never hides —
+ *  the doors answer a search the section filter cannot see, as before. */
+function groupHelpers(lang, filterQ, hideSettings) {
+  const hiddenFor = (group) =>
+    Boolean(filterQ) &&
+    Array.isArray(group.sections) &&
+    group.sections.length > 0 &&
+    group.sections.every((id) => hideSettings.has(id));
+  return {
+    groupOpen(group) {
+      return `
+  <section class="settings-group${hiddenFor(group) ? ' hidden' : ''}" id="${group.id}" aria-labelledby="${group.id}-title">
+    <h2 class="settings-group__title" id="${group.id}-title">${escapeHTML(t(group.title, lang))}</h2>
+    <p class="panel__subtext settings-group__hint">${escapeHTML(t(group.hint, lang))}</p>`;
+    },
+    groupClose() {
+      return `
+  </section>`;
+    },
+  };
+}
 
 export function matchSettingsSection(sec, query) {
   const q = normalizeSearch(query);
@@ -277,6 +384,11 @@ export function renderSettings(state, flags = {}) {
   // The open accordion: deep link wins, then the persisted pin, then the
   // default section. (The search filter below opens matches instead.)
   const openId = openSettingsSectionFor(state);
+  // (v5.17.63) Group wrappers for the professional sections below. By index
+  // into SETTINGS_GROUPS (rule 6 — the groups partition SETTINGS_SECTIONS,
+  // so an index always names the intended shelf).
+  const { groupOpen, groupClose } = groupHelpers(lang, filterQ, hideSettings);
+  const [G_SETUP, G_DISPLAY, G_CONTENT, G_AUDIO, G_PRAYER, G_ACCESS, G_BACKUP] = SETTINGS_GROUPS;
 
   const paletteSwatches = PALETTES.map(
     (p) => `
@@ -406,7 +518,11 @@ export function renderSettings(state, flags = {}) {
     </div>
     <h1 class="view__title">${t('settings.title', lang)}</h1>
     ${youModeSwitchHTML(state.activeView, lang)}
+    ${groupOpen(G_SETUP)}
     ${deferredSetupHTML(state, lang)}
+    <a class="btn btn--ghost" href="${buildHash(VIEWS.ABOUT)}" data-action="navigate" data-view="${VIEWS.ABOUT}">${icon('info', { size: 16 })} ${t('nav.about', lang)}</a>
+    ${groupClose()}
+    ${groupOpen(G_DISPLAY)}
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>
@@ -439,7 +555,8 @@ export function renderSettings(state, flags = {}) {
         ).join('')}
       </div>
     </details>
-
+    ${groupClose()}
+    ${groupOpen(G_CONTENT)}
     <details class="panel settings-acc" id="settings-sec-content"${filterQ ? (hideSettings.has('settings-sec-content') ? ' hidden' : ' open') : openId === 'settings-sec-content' ? ' open' : ''}>
       ${accHeader(t('settings.content', lang), 'list', lang)}
       ${toggleRow('showTransliteration', s.showTransliteration, t('settings.showTransliteration', lang))}
@@ -459,7 +576,8 @@ export function renderSettings(state, flags = {}) {
       ${cardFieldRows}
       <button type="button" class="btn btn--secondary btn--sm" data-action="content-restore-all">${icon('refresh', { size: 14 })} ${t('library.sheet.restoreAll', lang)}</button>
     </details>
-
+    ${groupClose()}
+    ${groupOpen(G_AUDIO)}
     <details class="panel settings-acc" id="settings-sec-reciter"${filterQ ? (hideSettings.has('settings-sec-reciter') ? ' hidden' : ' open') : openId === 'settings-sec-reciter' ? ' open' : ''}>
       ${accHeader(t('settings.reciter', lang), 'volume', lang, 'settings.reciterHint')}
       <div class="reciter-list">${reciterRows}</div>
@@ -503,7 +621,8 @@ export function renderSettings(state, flags = {}) {
           .join('')}
       </div>
     </details>
-
+    ${groupClose()}
+    ${groupOpen(G_PRAYER)}
     <details class="panel settings-acc" id="settings-sec-notifications"${filterQ ? (hideSettings.has('settings-sec-notifications') ? ' hidden' : ' open') : openId === 'settings-sec-notifications' ? ' open' : ''}>
       ${accHeader(t('settings.notifications', lang), 'bell', lang)}
       <div class="btn-stack">
@@ -531,27 +650,32 @@ export function renderSettings(state, flags = {}) {
       })()}
       ${reminders || `<p class="empty-hint">${t('editor.emptyState', lang)}</p>`}
     </details>
-
+    ${groupClose()}
+    ${groupOpen(G_ACCESS)}
     <details class="panel settings-acc" id="settings-sec-accessibility"${filterQ ? (hideSettings.has('settings-sec-accessibility') ? ' hidden' : ' open') : openId === 'settings-sec-accessibility' ? ' open' : ''}>
       ${accHeader(t('settings.accessibility', lang), 'hands', lang)}
       ${toggleRow('reduceMotion', s.reduceMotion, t('settings.reduceMotion', lang))}
       ${toggleRow('highContrast', s.highContrast, t('settings.highContrast', lang))}
       ${toggleRow('dyslexiaFriendly', s.dyslexiaFriendly, t('settings.dyslexiaFriendly', lang))}
       ${toggleRow('roomySpacing', s.roomySpacing, t('settings.roomySpacing', lang))}
-      <label class="toggle-row">
-        <span class="toggle-row__label">${escapeHTML(t('settings.elderMode', lang))}<br /><span class="panel__subtext">${escapeHTML(t('settings.elderHint', lang))}</span></span>
+      ${settingRow({
+        label: t('settings.elderMode', lang),
+        hint: t('settings.elderHint', lang),
+        control: `
         <span class="switch">
           <input type="checkbox" data-action="toggle-elder-mode" ${s.elderMode ? 'checked' : ''} />
           <span class="switch__track"></span>
-        </span>
-      </label>
-      <label class="toggle-row">
-        <span class="toggle-row__label">${escapeHTML(t('settings.kidsMode', lang))}<br /><span class="panel__subtext">${escapeHTML(t('settings.kidsHint', lang))}</span></span>
+        </span>`,
+      })}
+      ${settingRow({
+        label: t('settings.kidsMode', lang),
+        hint: t('settings.kidsHint', lang),
+        control: `
         <span class="switch">
           <input type="checkbox" data-action="toggle-kids-mode" ${s.kidsMode ? 'checked' : ''} />
           <span class="switch__track"></span>
-        </span>
-      </label>
+        </span>`,
+      })}
     </details>
 
     <details class="panel settings-acc" id="settings-sec-profiles"${filterQ ? (hideSettings.has('settings-sec-profiles') ? ' hidden' : ' open') : openId === 'settings-sec-profiles' ? ' open' : ''}>
@@ -570,7 +694,8 @@ export function renderSettings(state, flags = {}) {
         <button type="button" class="chip chip--add" data-action="profile-create">${icon('plus', { size: 12 })} ${t('settings.profileNew', lang)}</button>
       </div>
     </details>
-
+    ${groupClose()}
+    ${groupOpen(G_BACKUP)}
     <details class="panel settings-acc" id="settings-sec-data"${filterQ ? (hideSettings.has('settings-sec-data') ? ' hidden' : ' open') : openId === 'settings-sec-data' ? ' open' : ''}>
       ${accHeader(t('settings.data', lang), 'shield', lang)}
       <!-- (v5.17.31) the persistent install row: same copy as About and the
@@ -600,8 +725,7 @@ export function renderSettings(state, flags = {}) {
         <button type="button" class="btn btn--danger" data-action="reset-all-data">${icon('trash', { size: 16 })} ${t('settings.resetData', lang)}</button>
       </div>
     </details>
-
-    <a class="btn btn--ghost" href="${buildHash(VIEWS.ABOUT)}" data-action="navigate" data-view="${VIEWS.ABOUT}">${icon('info', { size: 16 })} ${t('nav.about', lang)}</a>
+    ${groupClose()}
   </section>`;
 }
 
@@ -632,17 +756,20 @@ function dryRunLine(state, lang) {
   return `<p class="panel__subtext">${t('settings.dataVerifyFailed', lang, r)}</p>`;
 }
 
-function toggleRow(key, value, label) {
+function toggleRow(key, value, label, hint = '') {
   // The WHOLE row is one <label>: the checkbox gets its accessible name from
   // the visible text, and tapping anywhere on the row toggles it. (The old
   // layout left the text a sibling of a label wrapping only the track —
   // every settings switch announced as a nameless "checkbox".)
-  return `
-  <label class="toggle-row">
-    <span class="toggle-row__label">${escapeHTML(label)}</span>
-    <span class="switch">
-      <input type="checkbox" data-action="toggle-setting" data-key="${key}" ${value ? 'checked' : ''} />
-      <span class="switch__track"></span>
-    </span>
-  </label>`;
+  // (v5.17.63) via the one settingRow builder (rule 6) — same label, same
+  // control, same contract; the builder just owns the chrome now.
+  return settingRow({
+    label,
+    hint,
+    control: `
+      <span class="switch">
+        <input type="checkbox" data-action="toggle-setting" data-key="${key}" ${value ? 'checked' : ''} />
+        <span class="switch__track"></span>
+      </span>`,
+  });
 }
