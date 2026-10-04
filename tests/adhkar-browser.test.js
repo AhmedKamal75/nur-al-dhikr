@@ -77,13 +77,16 @@ describe('Phase 3: the mood filter row (same feature, front door)', () => {
   test('filter row is bilingual (AR renders translated names, no English CTA)', () => {
     const html = adhkarBrowserHTML(browserState({ lang: 'ar' }));
     assert.ok(html.includes(ar['moods.title']), 'AR moods title renders');
-    assert.ok(html.includes(ar['home.readNow']), 'AR Read-now renders');
+    assert.ok(
+      html.includes(ar['moods.title']),
+      'AR mood chrome renders without English CTA leakage'
+    );
     assert.ok(!html.includes('>Read now<'), 'no English CTA leaks into Arabic chrome');
   });
 });
 
-describe('Phase 3: named tiles with live counts + Read-now per tile', () => {
-  test('every daily category gets a tile with its live count and a Read-now action', () => {
+describe('Phase 3: named tiles with live counts + one action per tile', () => {
+  test('every daily category is itself one navigable tile with a live count', () => {
     const state = browserState();
     const html = adhkarBrowserHTML(state);
     const dailyCats = [...adhkarDoc.categories, ...duasDoc.categories];
@@ -94,12 +97,7 @@ describe('Phase 3: named tiles with live counts + Read-now per tile', () => {
         `tile missing for category: ${cat.id}`
       );
     }
-    const reads = html.split('browser-tile__read').length - 1;
-    assert.equal(
-      reads,
-      dailyCats.length,
-      `one Read-now per tile (${reads} vs ${dailyCats.length})`
-    );
+    assert.equal(html.split('browser-tile__read').length - 1, 0, 'no detached Read-now action');
     // Live count, not a hard-coded number: the morning section's real size.
     const morning = adhkarDoc.categories.find((c) => c.id === 'morning');
     assert.ok(
@@ -182,11 +180,10 @@ describe('Phase 3: contracts that must not move', () => {
     assert.ok(!src.includes("from '../views/"), 'home reuses domain/service helpers, not views');
   });
 
-  test('every new home.browser*/home.readNow/home.reference*/home.openLibrary key is bilingual', () => {
+  test('every active Home browser/reference key is bilingual', () => {
     for (const key of [
       'home.browserTitle',
       'home.browserSub',
-      'home.readNow',
       'home.referenceTitle',
       'home.referenceSub',
       'home.openLibrary',

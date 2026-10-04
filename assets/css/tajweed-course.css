@@ -27,7 +27,12 @@
 
 .taj-course__stage-count {
   margin-inline-start: auto;
-  opacity: 0.7;
+  /* The `opacity: 0.7` here used to dim an INHERITED colour that
+     deslopify.css assigns via --color-text-muted, compositing it to 3.00:1 in
+     light and 2.13:1 in dark. axe flagged it on #/tajweed-course in both themes.
+     The token already says "secondary" and now measures above AA, so the
+     alpha is removed rather than tuned — same rule as the locked-session fix
+     below. */
   font-variant-numeric: tabular-nums;
 }
 

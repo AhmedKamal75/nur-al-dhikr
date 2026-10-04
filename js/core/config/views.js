@@ -302,7 +302,16 @@ export const PALETTES = Object.freeze([
   { id: 'rose', name: { en: 'Rose', ar: 'وردي' }, primary: '#BE123C', accent: '#FB7185' },
   { id: 'forest', name: { en: 'Forest', ar: 'أخضر غابي' }, primary: '#14532D', accent: '#4ADE80' },
   { id: 'ocean', name: { en: 'Ocean', ar: 'محيطي' }, primary: '#0369A1', accent: '#38BDF8' },
-  { id: 'midnight', name: { en: 'Midnight', ar: 'ليلي' }, primary: '#111827', accent: '#6B7280' },
+  // #111827 mixed 50% with white for the dark-theme primary-text token and
+  // landed at 4.43:1 on --color-surface-alt (#202923) — a serious AA failure
+  // the project forbids. #1a2338 keeps the same near-black navy identity and
+  // clears it at 4.75:1.
+  {
+    id: 'midnight',
+    name: { en: 'Midnight', ar: 'ليلي' },
+    primary: '#1a2338',
+    accent: '#6B7280',
+  },
   /* ivory's primary is stone-600 (not -500): it is used as TEXT on
      surface-alt chips, and stone-500 measured 4.17:1 there — under AA.
      Picked by scripts/css-contrast-audit.mjs. */

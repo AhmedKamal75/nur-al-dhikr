@@ -114,10 +114,15 @@ function asHiddenMap(hidden) {
  */
 export function resolveQuickTiles(input) {
   const { order = null, hidden = null, visits = null } = input || {};
+  const requestedLimit = Number(input?.limit);
+  const limit = Number.isFinite(requestedLimit)
+    ? Math.max(0, Math.floor(requestedLimit))
+    : Infinity;
   const hide = asHiddenMap(hidden);
   const seen = new Set();
   const out = [];
   const take = (id) => {
+    if (out.length >= limit) return;
     if (QUICK_TILE_IDS.includes(id) && !seen.has(id) && hide[id] !== true) {
       seen.add(id);
       out.push(id);

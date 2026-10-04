@@ -83,30 +83,25 @@ test.describe('the azkar section fold', () => {
     ).toBeGreaterThan(0.9);
   });
 
-  test('every Read-now action in a row shares one baseline', async ({ page }) => {
-    // The tiles are the same height in a grid row, but the ACTION was a sibling
-    // following its tile, so a title that wrapped to three lines pushed its
-    // button below one that wrapped to two. The buttons landed on three
-    // different baselines. Visually it read as careless; it was one missing
-    // `margin-block-start: auto`.
+  test('every category tile is one visual action, not a tile-plus-button sandwich', async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(AZKAR);
     await expect(page.locator('.category-grid').first()).toBeVisible({ timeout: 25000 });
     await settled(page);
 
-    const tops = await page.evaluate(() => {
-      const grid = document.querySelector('.category-grid');
-      if (!grid) return [];
-      return [...grid.querySelectorAll('.category-tile-wrap')]
-        .slice(0, 5)
-        .map((w) => Math.round(w.querySelector('.browser-tile__read').getBoundingClientRect().top));
+    const result = await page.evaluate(() => {
+      const tiles = [...document.querySelectorAll('.category-tile-wrap')];
+      return {
+        wrappers: tiles.length,
+        directLinks: tiles.filter((w) => w.querySelector('.category-tile[href]')).length,
+        detachedButtons: tiles.filter((w) => w.querySelector('.browser-tile__read')).length,
+      };
     });
-    expect(tops.length, 'expected at least four tiles in the first row').toBeGreaterThanOrEqual(4);
-    const distinct = [...new Set(tops)];
-    expect(
-      distinct.length,
-      `the Read-now actions sit on ${distinct.length} different baselines (${tops.join(', ')}) — they should be one`
-    ).toBe(1);
+    expect(result.wrappers).toBeGreaterThanOrEqual(4);
+    expect(result.directLinks).toBe(result.wrappers);
+    expect(result.detachedButtons).toBe(0);
   });
 
   test('no tile is cut off, and the page does not scroll sideways', async ({ page }) => {
@@ -127,7 +122,7 @@ test.describe('the azkar section fold', () => {
     expect(r.overflow, 'the azkar page must not scroll sideways').toBe(0);
   });
 
-  test('every category still carries a live count and a Read-now action', async ({ page }) => {
+  test('every category still carries a live count and is directly openable', async ({ page }) => {
     // The one thing a worship reader must never see is a category that cannot
     // be opened or cannot be sized. Both were there before; this pins that the
     // reordering did not cost either.
@@ -143,12 +138,14 @@ test.describe('the azkar section fold', () => {
         withCount: tiles.filter((t) =>
           /\d/.test(t.querySelector('.category-tile__count')?.textContent || '')
         ).length,
-        withAction: tiles.filter((t) => t.querySelector('.browser-tile__read')).length,
+        withAction: tiles.filter((t) => t.querySelector('.category-tile[href]')).length,
+        detached: tiles.filter((t) => t.querySelector('.browser-tile__read')).length,
       };
     });
     expect(r.tiles, 'the grid should carry real categories').toBeGreaterThan(20);
     expect(r.withCount, 'every category must state how many items it holds').toBe(r.tiles);
     expect(r.withAction, 'every category must be openable').toBe(r.tiles);
+    expect(r.detached, 'no category may ship a duplicate detached action').toBe(0);
   });
 });
 

@@ -460,27 +460,11 @@ export function resolveBrowserWindow(state) {
 }
 
 /**
- * (IA-7, v5.17.61) the explicit Tasbih entry on the Today landing: one
- * honest door into the counter, beside the prayer ribbon, the moment, the
- * today strip and the resume rows. Reuses the worship-row shape and the
- * existing nav.tasbih / title.tasbih labels (no new strings), the existing
- * `navigate` action (no handler change) and existing panel classes only
- * (Elder/a11y untouched). Pure (state → HTML); exported for tests.
+ * v5.17.72: Tasbih is already a first-class Practise door and can also be
+ * surfaced by the Home quick-action registry. Keeping a second full-width
+ * row here made Home feel like a launcher instead of a daily landing, so the
+ * dedicated duplicate doorway is intentionally retired.
  */
-export function tasbihEntryHTML(state) {
-  const lang = state.settings.language;
-  return `
-  <section class="panel panel--worship" aria-label="${escapeHTML(t('nav.tasbih', lang))}">
-    <div class="worship-list">
-      <a class="worship-row" href="${buildHash(VIEWS.TASBIH)}" data-action="navigate" data-view="${VIEWS.TASBIH}">
-        <span class="worship-row__icon">${icon('bead', { size: 16 })}</span>
-        <span class="worship-row__name">${t('nav.tasbih', lang)}</span>
-        <span class="worship-row__value" dir="auto">${t('title.tasbih', lang)}</span>
-        ${goIcon(lang, 13)}
-      </a>
-    </div>
-  </section>`;
-}
 /**
  * (v5.17.50, merged-plan item 3) the six-prayer ribbon for the Home hero:
  * every prayer of the day as one tap into the Prayer view (navigate only,
@@ -757,8 +741,8 @@ function browserTileHTML(state, cat, lang) {
             <span class="category-tile__count">${t('collections.itemCount', lang, { n: items.length })}</span>
             ${progress}
           </span>
+          <span class="category-tile__arrow" aria-hidden="true">${goIcon(lang, 14)}</span>
         </a>
-        <a class="btn btn--secondary btn--sm browser-tile__read" ${navAttrs} aria-label="${escapeHTML(`${t('home.readNow', lang)}: ${categoryDisplayName(cat, lang)}`)}">${t('home.readNow', lang)} ${goIcon(lang, 14)}</a>
       </div>`;
 }
 
@@ -851,6 +835,14 @@ export function homeTodayStripHTML(state) {
   const quran = byId.get('quran');
   const dhikr = byId.get('dhikr');
   if (!prayers || !quran || !dhikr) return '';
+  const quranValue =
+    quran.count > 0
+      ? t('worship.pagesToday', lang, { n: quran.count })
+      : t('home.notStarted', lang);
+  const dhikrValue =
+    dhikr.count > 0
+      ? t('worship.countToday', lang, { n: dhikr.count })
+      : t('home.notStarted', lang);
   const cell = ({ view, iconName, label, value }) => `
       <a class="home-today__cell" href="${buildHash(view)}" data-action="navigate" data-view="${view}">
         <span class="home-today__icon">${icon(iconName, { size: 15 })}</span>
@@ -860,8 +852,8 @@ export function homeTodayStripHTML(state) {
   return `
   <section class="home-today" aria-label="${escapeHTML(t('worship.title', lang))}">
     ${cell({ view: VIEWS.PRAYER, iconName: 'prayer-rug', label: t('worship.row.prayers', lang), value: `${prayers.count}/${prayers.total}` })}
-    ${cell({ view: VIEWS.MUSHAF, iconName: 'quran', label: t('worship.row.quran', lang), value: escapeHTML(t('worship.pagesToday', lang, { n: quran.count })) })}
-    ${cell({ view: VIEWS.TASBIH, iconName: 'bead', label: t('worship.row.dhikr', lang), value: escapeHTML(t('worship.countToday', lang, { n: dhikr.count })) })}
+    ${cell({ view: VIEWS.MUSHAF, iconName: 'quran', label: t('worship.row.quran', lang), value: escapeHTML(quranValue) })}
+    ${cell({ view: VIEWS.TASBIH, iconName: 'bead', label: t('worship.row.dhikr', lang), value: escapeHTML(dhikrValue) })}
   </section>`;
 }
 
@@ -1091,7 +1083,9 @@ export function renderHome(state) {
     // (v5.17.57, merged-plan item 10) the progress panel carries no
     // streak KPI: counts live in the private ledger (Statistics), Home
     // keeps the day's bar only — pause, never fail.
-    progress: `
+    progress:
+      today?.recitations > 0
+        ? `
     <section class="panel panel--progress">
       <div class="panel__header">
         <h2>${t('home.dailyProgress', lang)}</h2>
@@ -1100,6 +1094,15 @@ export function renderHome(state) {
         <div class="progress-bar__fill" style="--p:${(pct / 100).toFixed(3)}"></div>
       </div>
       <p class="panel__subtext" dir="ltr">${escapeHTML(String(today?.recitations || 0))} / ${escapeHTML(String(goal))}</p>
+    </section>`
+        : `
+    <section class="panel panel--progress panel--progress-empty">
+      <div class="panel--progress-empty__icon" aria-hidden="true">${icon('sparkle', { size: 20 })}</div>
+      <div class="panel--progress-empty__text">
+        <h2>${t('home.dailyProgress', lang)}</h2>
+        <p class="panel__subtext">${escapeHTML(t('home.startYourDay', lang))}</p>
+      </div>
+      <a class="link-btn link-btn--sm" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${escapeHTML(t('nav.azkar', lang))} ${goIcon(lang, 12)}</a>
     </section>`,
     verse: daily
       ? `
@@ -1180,8 +1183,6 @@ export function renderHome(state) {
 
     ${homeTodayStripHTML(state)}
 
-    ${tasbihEntryHTML(state)}
-
     ${onboardingPanelHTML(state, lang)}
 
     <div class="home-hero home-hero--line">
@@ -1197,6 +1198,10 @@ export function renderHome(state) {
         order: state.settings.quickOrder,
         hidden: state.settings.hiddenQuick,
         visits: state.tileVisits,
+        // Home is the daily landing, not a second application launcher.
+        // Settings still exposes the full registry; the landing surfaces the
+        // first four user-selected/usage-ranked shortcuts only.
+        limit: 4,
       }),
       lang,
       nowWindow

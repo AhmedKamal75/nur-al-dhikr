@@ -1,0 +1,1730 @@
+[
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok (2 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "h-overflow 74px",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok (2 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok (2 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok (2 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "h-overflow 74px",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok (2 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok (2 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok (1 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "h-overflow 41px",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok (1 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok (1 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok (1 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "offscreen: segmented__btn",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "h-overflow 41px",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok (1 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok (1 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "quran-library",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "mushaf",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "prayer",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "you",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "settings",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "offscreen: reciter-row__meta",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "stats",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "offline",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "ltr"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "home",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "azkar-browser",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok (4 in-scroller items outside viewport)",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "focus-mode",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "quran-library",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "mushaf",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-course",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "tajweed-practice",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "prayer",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "you",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "settings",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "stats",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ },
+ {
+  "route": "offline",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "state": "ok",
+  "errors": 0,
+  "dir": "rtl"
+ }
+]

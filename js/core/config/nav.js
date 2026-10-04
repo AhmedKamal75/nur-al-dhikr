@@ -56,8 +56,9 @@ export const DOORS = Object.freeze([
     icon: 'home',
     labelKey: 'nav.home',
     members: Object.freeze([
-      // The Today landing: ribbon + moment + resume + tasbih entry. The
-      // grid moved to the AZKAR section, so HOME stands alone — one tap,
+      // The Today landing: brand context + prayer context + daily status
+      // + configured quick actions. The grid moved to the AZKAR section,
+      // so HOME stands alone — one tap,
       // no subsections.
       Object.freeze({ route: 'HOME', taps: 1, via: null }),
     ]),

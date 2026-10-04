@@ -1,7 +1,7 @@
 {
-  "name": "N\u016br al-Dhikr \u2014 Adhkar & Duas",
-  "short_name": "N\u016br al-Dhikr",
-  "description": "An offline-first daily companion for Adhkar, Duas, and the 99 Names of Allah \u2014 with a complete Qur'an reader, prayer times, a Hijri calendar, tasbih counter, and full content editor.",
+  "name": "Nūr al-Dhikr — Adhkar & Duas",
+  "short_name": "Nūr al-Dhikr",
+  "description": "An offline-first daily companion for Adhkar, Duas, and the 99 Names of Allah — with a complete Qur'an reader, prayer times, a Hijri calendar, tasbih counter, and full content editor.",
   "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
@@ -172,6 +172,6 @@
       "label": "The Qur'an reader with per-word study"
     }
   ],
-  "version": "5.17.66",
-  "version_name": "5.17.66"
+  "version": "5.17.81",
+  "version_name": "5.17.81"
 }

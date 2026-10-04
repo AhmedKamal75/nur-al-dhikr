@@ -69,6 +69,9 @@ export const en = {
   // commit (naming rule §2.6.4); each label promises exactly its tap.
   'nav.you': 'You',
   'you.myAdhkar': 'My adhkar',
+  'you.group.practice': 'Practice',
+  'you.group.growth': 'Growth & progress',
+  'you.group.tools': 'Tools & app',
   'you.growth': 'Growth',
   'you.about': 'About and sources',
   'quran.title': "The Holy Qur'an",
@@ -232,7 +235,6 @@ export const en = {
   'mushaf.notePh': 'Add a note…',
   'mushaf.noteLabel': 'Bookmark note',
   'mushaf.folderLabel': 'Folder',
-  'nav.more': 'More',
   'nav.audio': 'Reciters & Audio',
   // (REORG Phase 1) flagship doors. Same strings as the views they open
   // (tajweedCourse.title, mushaf.roots) so the label promises the tap.
@@ -599,6 +601,9 @@ export const en = {
   'home.morningShortcut': 'Morning Adhkar',
   'home.eveningShortcut': 'Evening Adhkar',
   'home.dailyProgress': 'Today\u2019s Progress',
+  'home.notStarted': 'Not started',
+  'home.startYourDay':
+    'A quiet place to begin — your activity will appear here as you use the app.',
   // (v5.6.0, B-1) review-due digest — shame-free nudge copy.
   // (v5.17.57, merged-plan item 10) gentle queue: Home carries no counts,
   // no due-today — the private ledger (Statistics) keeps them. The old
@@ -1712,7 +1717,6 @@ export const en = {
   // row the 99 Names / Zakat / Certificates were re-homed into.
   'home.browserTitle': 'Read the adhkar',
   'home.browserSub': 'Every section with its live count and today’s progress — pick one and begin.',
-  'home.readNow': 'Read now',
   'home.referenceTitle': 'Reference',
   'home.referenceSub':
     'The Names, the Zakat calculator and the certificates live here — outside the daily sequence.',

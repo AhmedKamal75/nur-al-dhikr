@@ -235,11 +235,26 @@ describe('contract: version markers in lockstep', () => {
     assert.equal(fromSw, fromPkg, 'sw.js cache VERSION');
     // The SW cache name must embed the exact version.
     assert.ok(sw.includes(`nur-al-dhikr-v${fromPkg}`));
-    // Manifest carries a version too (or at least a stable id/name pair).
+    // Manifest carries a stable identity...
     assert.ok(manifest.name && typeof manifest.name === 'string');
-    assert.ok(
-      !manifest.version || manifest.version === fromPkg,
-      `manifest.version ${manifest.version} != ${fromPkg}`
+    // ...and BOTH manifest version markers, in lockstep. The previous
+    // `!manifest.version || ...` escape let v5.17.77 ship with
+    // manifest.version 5.17.72 beside version_name 5.17.77: an absent marker
+    // is a missing marker, not a passing gate.
+    assert.equal(manifest.version, fromPkg, `manifest.version ${manifest.version} != ${fromPkg}`);
+    assert.equal(
+      manifest.version_name,
+      fromPkg,
+      `manifest.version_name ${manifest.version_name} != ${fromPkg}`
+    );
+    // package-lock.json's root entry is a sixth marker that silently drifts
+    // (the v5.17.66 tree carried lock 5.17.2). npm rewrites it on install, so
+    // pin it here rather than trusting the ritual to remember.
+    const lock = JSON.parse(readProject('package-lock.json'));
+    assert.equal(
+      lock.packages?.['']?.version,
+      fromPkg,
+      `package-lock root version ${lock.packages?.['']?.version} != ${fromPkg}`
     );
   });
 
@@ -337,6 +352,13 @@ describe('contract: CSS design-system protocols', () => {
     .filter((f) => f.endsWith('.css'))
     .map((f) => readProject('assets/css/' + f))
     .join('\n');
+  // Inline <style> in the shell entry point bypasses assets/css entirely, so
+  // a stylesheet-only scan cannot see it. The one raw z-index that lives there
+  // (index.html's file:// emergency notice) sat outside this contract for the
+  // life of the tree; fold the entry point into the scan instead.
+  const shellCss = [...readProject('index.html').matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)]
+    .map((m) => m[1])
+    .join('\n');
 
   test('every --cat-* category token has a dark-mode override', () => {
     const lightBlock = /\b:root\b[\s\S]*?(?=\[data-theme)/.exec(variables)?.[0] || variables;
@@ -348,9 +370,11 @@ describe('contract: CSS design-system protocols', () => {
   });
 
   test('z-index declarations use the --z-* scale (allowlisted exceptions only)', () => {
-    const allowed = new Set(['auto']);
+    // The emergency notice must outrank every app surface by definition: it is
+    // shown when the shell never booted, so no --z-* token can exist yet.
+    const allowed = new Set(['auto', '2147483647']);
     const offenders = [];
-    for (const m of allCss.matchAll(/z-index:\s*([^;]+);/g)) {
+    for (const m of (allCss + '\n' + shellCss).matchAll(/z-index:\s*([^;]+);/g)) {
       const v = m[1].trim();
       if (v.startsWith('var(--z-') || allowed.has(v)) continue;
       offenders.push(v);

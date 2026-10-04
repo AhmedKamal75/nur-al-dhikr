@@ -57,6 +57,9 @@ export const ar = {
   // first commit.
   'nav.you': 'أنت',
   'you.myAdhkar': 'أذكاري',
+  'you.group.practice': 'الممارسة',
+  'you.group.growth': 'النمو والتقدم',
+  'you.group.tools': 'الأدوات والتطبيق',
   'you.growth': 'النمو',
   'you.about': 'حول التطبيق والمصادر',
   'quran.title': 'القرآن الكريم',
@@ -215,7 +218,6 @@ export const ar = {
   'mushaf.notePh': 'أضف ملاحظة…',
   'mushaf.noteLabel': 'ملاحظة العلامة',
   'mushaf.folderLabel': 'المجلد',
-  'nav.more': 'المزيد',
   'nav.audio': 'القراء والصوتيات',
   // (REORG Phase 1) flagship doors — bilingual with en.js from the first commit.
   'nav.tajweedCourse': 'دورة التجويد',
@@ -562,6 +564,8 @@ export const ar = {
   'home.morningShortcut': 'أذكار الصباح',
   'home.eveningShortcut': 'أذكار المساء',
   'home.dailyProgress': 'تقدم اليوم',
+  'home.notStarted': 'لم يبدأ بعد',
+  'home.startYourDay': 'مساحة هادئة للبداية — سيظهر نشاطك هنا مع استخدامك للتطبيق.',
   // (v5.6.0, B-1) ملخص المستحق للمراجعة.
   // (v5.17.57, merged-plan item 10) انظر التعليق المقابل في en.js.
   'home.reviewTitle': 'مراجعة متاحة',
@@ -1625,7 +1629,6 @@ export const ar = {
   // (REORG Phase 3) الرئيسية هي متصفح الأذكار — انظر المقابل الإنجليزي.
   'home.browserTitle': 'اقرأ الأذكار',
   'home.browserSub': 'كل قسم مع عدده المباشر وتقدم اليوم — اختر قسمًا وابدأ.',
-  'home.readNow': 'اقرأ الآن',
   'home.referenceTitle': 'مراجع',
   'home.referenceSub': 'الأسماء وحاسبة الزكاة والشهادات هنا — خارج الورد اليومي.',
   'home.openLibrary': 'افتح المكتبة الكاملة',

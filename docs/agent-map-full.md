@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 242 — data files: 27 — tests: 246
+- js modules: 242 — data files: 27 — tests: 248
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -2103,7 +2103,7 @@ job: The persistent app shell: top bar (hamburger, title, search shortcut, theme
 - exports: `NAV_GROUPS` (function), `INTERNAL_ONLY_ROUTES` (const), `azkarModeSwitchHTML` (function), `quranModeSwitchHTML` (function), `prayerModeSwitchHTML` (function), `practiseModeSwitchHTML` (function), `youModeSwitchHTML` (function), `drawerSectionsHTML` (function), `languageToggleHTML` (function), `renderTopBar` (function), `renderNav` (function)
 - emits: `go-back`, `nav-drawer-close`, `nav-drawer-go`, `nav-toggle`, `navigate`, `open-palette`, `quick-language-toggle`, `quick-theme-toggle` (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `a11y.languageToggle`, `a11y.mainNav`, `a11y.navToggle`, `a11y.themeToggle`, `app.name`, `common.close`, `nav.azkar`, `nav.back`, `nav.more`, `nav.prayer`, `nav.you`, `palette.open`, `practise.label`, `quran.title`
+- i18n: `a11y.languageToggle`, `a11y.mainNav`, `a11y.navToggle`, `a11y.themeToggle`, `app.name`, `common.close`, `nav.azkar`, `nav.back`, `nav.prayer`, `nav.you`, `palette.open`, `practise.label`, `quran.title`
 - routes: `#/prayer`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.KIDS`, `VIEWS.TASBIH`
 
 ### `js/ui/skeleton.js`
@@ -2314,11 +2314,11 @@ job: shared hadith card builders. (v5.2.18) Extracted from views/hadith.js so Ho
 
 job: (header names file only — no job line)
 
-- exports: `quickTilesHTML` (function), `SHAHADA_TEXT` (const), `shahadaBannerHTML` (function), `worshipTodayCardHTML` (function), `resumePanelHTML` (function), `nudgeCardHTML` (function), `resolveBrowserWindow` (function), `tasbihEntryHTML` (function), `prayerRibbonHTML` (function), `adhkarWindowLabel` (function), `rankBrowserDocuments` (function), `docCorpusCount` (function), `rankBrowserCategories` (function), `homeTodayStripHTML` (function), `homeInvitesHTML` (function), `adhkarBrowserHTML` (function), `renderHome` (function), `hifzReviewCardHTML` (function), `reviewDigestCardHTML` (function), `buildSadaqahEditor` (function)
+- exports: `quickTilesHTML` (function), `SHAHADA_TEXT` (const), `shahadaBannerHTML` (function), `worshipTodayCardHTML` (function), `resumePanelHTML` (function), `nudgeCardHTML` (function), `resolveBrowserWindow` (function), `prayerRibbonHTML` (function), `adhkarWindowLabel` (function), `rankBrowserDocuments` (function), `docCorpusCount` (function), `rankBrowserCategories` (function), `homeTodayStripHTML` (function), `homeInvitesHTML` (function), `adhkarBrowserHTML` (function), `renderHome` (function), `hifzReviewCardHTML` (function), `reviewDigestCardHTML` (function), `buildSadaqahEditor` (function)
 - emits: `home-invite-dismiss`, `modal-close`, `mushaf-open-at-surah`, `navigate`, `nudge-dismiss`, `practice-start`, `quick-tile`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `set-setting`
 - handles: —
 - i18n: `app.name`, `app.tagline`, `banner.shahadaLabel`, `calendar.estimateNote`, `category.progressToday`, `certificate.title`, `checklist.today`, `collections.itemCount`, `common.am`, `common.delete`, `common.pm`, `editor.cancel`, `editor.save`, `hifz.availableHint`, `hifz.cardTitle`, `hifz.memorizedBadge`, `hifz.openLedger`, `hifz.suggestHint`, `home.blankPage`, `home.browserSub` (+78 more)
-- routes: `VIEWS.CALENDAR`, `VIEWS.CATEGORY`, `VIEWS.CERTIFICATE`, `VIEWS.CHECKLIST`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.MOOD`, `VIEWS.MUSHAF`, `VIEWS.PRAYER`, `VIEWS.QUIZ`, `VIEWS.QURAN`, `VIEWS.RAMADAN`, `VIEWS.SETTINGS`, `VIEWS.STATISTICS`, `VIEWS.TAJWEED_COURSE`, `VIEWS.TASBIH`, `VIEWS.ZAKAT`
+- routes: `VIEWS.CALENDAR`, `VIEWS.CATEGORY`, `VIEWS.CERTIFICATE`, `VIEWS.CHECKLIST`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.LIBRARY`, `VIEWS.MOOD`, `VIEWS.MUSHAF`, `VIEWS.PRAYER`, `VIEWS.QUIZ`, `VIEWS.QURAN`, `VIEWS.RAMADAN`, `VIEWS.SETTINGS`, `VIEWS.STATISTICS`, `VIEWS.TAJWEED_COURSE`, `VIEWS.TASBIH`, `VIEWS.ZAKAT`
 
 ### `js/views/installRow.js`
 
@@ -2467,7 +2467,7 @@ job: The persistent full-surah player bar, rendered once a moshaf+surah is selec
 - exports: `renderPlayerBar` (function)
 - emits: `audio-mute-toggle`, `player-close`, `player-min-toggle`, `player-next`, `player-prev`, `player-rate`, `player-repeat`, `player-seek-back`, `player-seek-fwd`, `player-sleep-cycle`, `player-toggle`, `recite-mode-ayah`, `recite-pause-toggle`, `recite-stop` (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `audio.buffering`, `audio.fileModeNote`, `audio.minimizeHint`, `audio.modeAyah`, `audio.next`, `audio.offlineBadge`, `audio.player`, `audio.playerMinimize`, `audio.playerRestore`, `audio.prev`, `audio.reciteStop`, `audio.reciting`, `audio.repeat`, `audio.repeatAll`, `audio.repeatAllShort`, `audio.riwayaNote`, `audio.seek`, `audio.seekBack`, `audio.seekFwd`, `audio.sleepTimer` (+4 more)
+- i18n: `audio.buffering`, `audio.fileModeNote`, `audio.minimizeHint`, `audio.modeAyah`, `audio.moreSettings`, `audio.next`, `audio.offlineBadge`, `audio.player`, `audio.playerMinimize`, `audio.playerRestore`, `audio.prev`, `audio.reciteStop`, `audio.reciting`, `audio.repeat`, `audio.repeatAll`, `audio.repeatAllShort`, `audio.riwayaNote`, `audio.seek`, `audio.seekBack`, `audio.seekFwd` (+5 more)
 - routes: —
 
 ### `js/views/prayer.js`
@@ -4456,7 +4456,6 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `tajweedRule`: `js/domain/tajweed.js`
 - `takeoverManualZoom`: `js/app/autoFit.js`
 - `taraweehCount`: `js/domain/ramadanPlanner.js`
-- `tasbihEntryHTML`: `js/views/home.js`
 - `throttle`: `js/core/utils.js`
 - `tickForTests`: `js/services/notifications.js`
 - `timetableCell`: `js/domain/prayerExport.js`
@@ -7154,7 +7153,6 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `target`: `js/domain/completedCards.js`, `js/domain/launchIntents.js`, `js/services/contentPrefs.js`, `js/views/category.js`
 - `targets`: `js/domain/planExport.js`
 - `tasbih`: `js/core/config/app.js`, `js/core/state/slices/library.js`, `js/domain/celebrate.js`, `js/domain/planExport.js`, `js/services/audioContext.js`, `js/services/tasbih.js`
-- `tasbihentryhtml`: `js/views/home.js`
 - `telemetry`: `js/services/gapTelemetry.js`
 - `template`: `js/ui/card.js`
 - `templates`: `js/views/khatma.js`, `js/views/mushafBookmarks.js`, `js/views/tafsirPanel.js`, `js/views/tajweedCourseView.js`, `js/views/tajweedPracticeView.js`
@@ -7467,12 +7465,14 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/dataHealth.test.js` — v3.26.0, the Settings data health check. "Backups people never test are hopes, not backups." The dry run's whole contract: the exact bytes an export would produce go through the SAME (pins: `../js/core/i18n.js`, `../js/core/state.js`, `../js/services/dataHealth.js`, `../js/views/settings.js`)
 - `tests/declination.test.js` — v3.26.0, the World Magnetic Model in the app. The gold standard: NOAA/NCEI publishes official WMM2025 test values (scripts/WMM2025COF/WMM2025_TestValues.txt). A qibla needle correction (pins: `../js/core/i18n.js`, `../js/domain/wmm.js`, `../js/views/qibla.js`)
 - `tests/desktop-blowout.test.js` — a grid track may not exceed its container. THE BUG THIS PINS assets/css/desktop.css turned the home view into a two-column grid with (pins: —)
+- `tests/deslopify-regressions.test.js` — (no header comment) (pins: —)
 - `tests/dhikr-audio.test.js` — per-dhikr recitation INFRA ONLY (v5.17.30, OPEN-ISSUES #15 + #37). Zero real clips ship and none are fetched here: every case uses fixture (pins: `../js/app/events.js`, `../js/core/config.js`, `../js/core/schema.js`, `../js/services/dhikrAudio.js`, `../js/ui/card.js`, `../js/views/focus.js`)
 - `tests/docs-honesty.test.js` — F-003: docs must never hardcode a passing claim the tree cannot prove. Counts live in ARCHITECTURE/README tables, regenerated from actual runs per the release protocol; the badge and (pins: —)
 - `tests/editorReference.test.js` — audit rank 7 (v5.2.71) gates: 1. the item form carries book/chapter/reference-notes/Arabic-source inputs prefilled from the item (both languages render labels); (pins: `../js/core/config/sanitize.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/localeContent.js`, `../js/views/editor.js`)
 - `tests/event-registries.test.js` — Blueprint D gates: the change/input arms moved out of events.js into feature-owned { sel, run } registries. Pins completeness (no arm lost in the move), selector uniqueness (pins: `../js/app/events.js`, `../js/core/state.js`)
 - `tests/fasting.test.js` — (no header comment) (pins: `../js/domain/calendar.js`, `../js/domain/fasting.js`)
 - `tests/favorites.test.js` — item 8 (favorites bulk) gates: 1. favoriteSortFor resolves valid sorts, hostile ones fall back; 2. sortFavorites orders recent (newest first), alpha (EN + AR locale (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/ui/menus.js`, `../js/views/favorites.js`)
+- `tests/feature-interiors.test.js` — (no header comment) (pins: —)
 - `tests/fetch-timeout-catalog.test.js` — B2/B8 regressions: fetchJSON escapes a hung socket via timeout; loadCatalog shares one in-flight promise instead of returning null to the second caller. (pins: `../js/app/net.js`)
 - `tests/first-run-language.test.js` — the two "an Arabic-only reader is stranded in English chrome" verdicts, pinned by EXECUTION (not by a source-grep), because both used to be believed fixed while one was (pins: `../js/app/fileImports.js`, `../js/core/config.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/services/backup.js`)
 - `tests/floating-counter.test.js` — the floating counter (v5.17.15). The feature exists because azkar.me ships an Android overlay and we cannot: "no build step, no app store" is a standing constraint (ADR 0002). The web (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/services/floatingCounter.js`)

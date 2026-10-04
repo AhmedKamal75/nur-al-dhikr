@@ -8,11 +8,10 @@
  *    The hamburger collapses it to an icon-only rail (the collapsed state
  *    persists in settings.navCollapsed). The rail scrolls independently,
  *    so nothing is ever unreachable.
- *  - Mobile: a bottom tab bar with the first five sections plus a
- *    "More" button that opens the full seven-section navigation as a
- *    bottom drawer sheet (the pattern used by most modern apps). The drawer
- *    is hierarchical: each section block carries its subsection rows, so
- *    every member is one more tap away without leaving the chrome.
+ *  - Mobile: the bottom bar exposes all seven top-level sections directly.
+ *    The hamburger in the top bar remains a secondary hierarchical drawer
+ *    for subsection navigation and power-user access; it is never required
+ *    to reach a top-level destination.
  *
  * Markup is identical for both breakpoints; CSS picks the presentation.
  *
@@ -58,9 +57,9 @@ export const NAV_GROUPS = Object.freeze(
   DOORS.map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
 );
 
-/** The mobile bar carries the first five sections; the drawer carries all seven. */
+/** The mobile bar exposes every top-level door; the drawer remains secondary. */
 const MOBILE_ITEMS = Object.freeze(
-  DOORS.slice(0, 5).map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
+  DOORS.map((d) => Object.freeze({ view: d.view, icon: d.icon, label: d.labelKey }))
 );
 
 /**
@@ -192,6 +191,25 @@ const YOU_SWITCH_LABELS = Object.freeze({
   ABOUT: 'you.about',
 });
 
+/** v5.17.72: the ten You destinations are intentionally grouped so the
+ * section reads like a personal control center instead of a 10-button pill
+ * wall. Order remains derived from switchRoutes/DOORS; only presentation is
+ * grouped here. */
+const YOU_SWITCH_GROUPS = Object.freeze([
+  Object.freeze({
+    key: 'you.group.practice',
+    routes: Object.freeze(['CHECKLIST', 'FAVORITES', 'JOURNAL']),
+  }),
+  Object.freeze({
+    key: 'you.group.growth',
+    routes: Object.freeze(['GARDEN', 'STATISTICS', 'CERTIFICATE']),
+  }),
+  Object.freeze({
+    key: 'you.group.tools',
+    routes: Object.freeze(['ZAKAT', 'OFFLINE', 'SETTINGS', 'ABOUT']),
+  }),
+]);
+
 /**
  * (IA-7) the in-chrome Azkar hop — the section menu inside the section:
  * the browser (#/library) vs Moods vs Focus vs Collections. Rendered
@@ -210,9 +228,9 @@ export function azkarModeSwitchHTML(activeView, lang) {
   const routes = Object.keys(AZKAR_SWITCH_LABELS);
   const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
-    <div class="segmented azkar-mode-switch" role="group" aria-label="${t('nav.azkar', lang)}">
+    <nav class="segmented section-mode-switch azkar-mode-switch" aria-label="${t('nav.azkar', lang)}">
       ${routes.map((r) => seg(r, activeKey === r)).join('')}
-    </div>`;
+    </nav>`;
 }
 
 /**
@@ -237,9 +255,9 @@ export function quranModeSwitchHTML(activeView, lang) {
   const routes = switchRoutes('MUSHAF', true);
   const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
-    <div class="segmented quran-mode-switch" role="group" aria-label="${t('quran.title', lang)}">
+    <nav class="segmented section-mode-switch quran-mode-switch" aria-label="${t('quran.title', lang)}">
       ${routes.map((r) => seg(r, activeKey === r)).join('')}
-    </div>`;
+    </nav>`;
 }
 
 /**
@@ -261,9 +279,9 @@ export function prayerModeSwitchHTML(activeView, lang) {
   const routes = switchRoutes('PRAYER');
   const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
-    <div class="segmented prayer-mode-switch" role="group" aria-label="${t('nav.prayer', lang)}">
+    <nav class="segmented section-mode-switch prayer-mode-switch" aria-label="${t('nav.prayer', lang)}">
       ${routes.map((r) => seg(r, activeKey === r)).join('')}
-    </div>`;
+    </nav>`;
 }
 
 /**
@@ -290,38 +308,42 @@ export function practiseModeSwitchHTML(activeView, lang) {
   const routes = switchRoutes('TASBIH');
   const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
-    <div class="segmented practise-mode-switch" role="group" aria-label="${t('practise.label', lang)}">
+    <nav class="segmented section-mode-switch practise-mode-switch" aria-label="${t('practise.label', lang)}">
       ${routes.map((r) => seg(r, activeKey === r)).join('')}
-    </div>`;
+    </nav>`;
 }
 
 /**
- * (REORG Phase 6 + Phase 8) the in-chrome You switch — the §2.5 section
- * door: My adhkar (#/checklist — today, streaks, the section entry) vs
- * Growth (#/garden — the lifetime visual, metaphor retired to a treatment)
- * vs Favorites vs Journal vs Statistics vs Certificate vs Zakat vs Offline
- * library vs Settings vs About and sources. Rendered inside all ten views —
- * never a nav entry, never a new view. Existing `navigate` actions only
- * (no handler or allowlist change). Ten modes cannot share one flex row on
- * a phone without squeezing labels below readability, so this is the one
- * switch that takes the `.segmented--wrap` modifier (two flowing rows;
- * every button keeps min-height: var(--touch-target), so Elder/a11y is
- * untouched). No interstitial: every segment is a direct link to its
- * route. The rail carries no ranking or shame copy (adab).
+ * (REORG Phase 6 + Deslopify pass 6) the in-chrome You switch is a grouped
+ * navigation matrix: Practice, Growth & progress, and Tools & app. Ten
+ * destinations remain directly reachable, but they are grouped by job
+ * instead of squeezed into one long row of pills. Existing `navigate` actions
+ * remain unchanged; every item is still a direct link with a 44px target.
+ * The rail carries no ranking or shame copy (adab).
  */
 export function youModeSwitchHTML(activeView, lang) {
   const seg = (routeKey, selected) => {
     const view = VIEWS[routeKey];
     const labelKey = YOU_SWITCH_LABELS[routeKey];
     return `
-    <a class="segmented__btn${selected ? ' segmented__btn--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">${t(labelKey, lang)}</a>`;
+      <a class="you-subnav__item${selected ? ' you-subnav__item--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">
+        <span class="you-subnav__item-label">${t(labelKey, lang)}</span>
+      </a>`;
   };
-  const routes = switchRoutes('CHECKLIST');
+
   const activeKey = VIEW_KEY_BY_VALUE[activeView];
   return `
-    <div class="segmented segmented--wrap you-mode-switch" role="group" aria-label="${t('nav.you', lang)}">
-      ${routes.map((r) => seg(r, activeKey === r)).join('')}
-    </div>`;
+    <nav class="you-subnav" aria-label="${t('nav.you', lang)}">
+      ${YOU_SWITCH_GROUPS.map(
+        (group) => `
+      <section class="you-subnav__group" aria-labelledby="you-group-${group.key.replaceAll('.', '-')}">
+        <h2 id="you-group-${group.key.replaceAll('.', '-')}" class="you-subnav__group-title">${t(group.key, lang)}</h2>
+        <div class="you-subnav__grid">
+          ${group.routes.map((r) => seg(r, activeKey === r)).join('')}
+        </div>
+      </section>`
+      ).join('')}
+    </nav>`;
 }
 
 function navItemHTML(n, active, lang, { drawer = false } = {}) {
@@ -502,10 +524,9 @@ export function renderNav(state) {
   const kidsScoped = state.settings.kidsMode === true;
   const groups = kidsScoped ? KIDS_NAV_GROUPS : NAV_GROUPS;
 
-  // Mobile bottom bar: the first five sections + More (opens the drawer
-  // with all seven, hierarchically). In the kids scope the bar mirrors the
-  // allowlist (CSS hides it anyway — the DOM stays honest for tests and
-  // assistive tech).
+  // Mobile bottom bar: all seven sections are direct doors. In the kids
+  // scope the bar mirrors the allowlist (CSS hides it anyway — the DOM stays
+  // honest for tests and assistive tech).
   const mobileItems = kidsScoped ? KIDS_NAV_ITEMS : MOBILE_ITEMS;
   // (v5.17.3, axe) these wrappers are plain divs, not nested <nav>
   // landmarks: #bottomnav already owns the single "Main navigation"
@@ -521,14 +542,7 @@ export function renderNav(state) {
       </a>`
         )
         .join('')}
-      ${
-        kidsScoped
-          ? ''
-          : `<button type="button" class="nav-mobile-bar__item" data-action="nav-toggle" aria-haspopup="dialog" aria-label="${t('nav.more', lang)}">
-        ${icon('menu', { size: 22 })}
-        <span class="nav__label">${t('nav.more', lang)}</span>
-      </button>`
-      }
+
     </div>`;
 
   return `

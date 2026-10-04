@@ -112,6 +112,26 @@ describe('IA-7 chrome: one Azkar section', () => {
  * direct members only — tile-depth members (direct:false) resolve through
  * the section landing, exactly as the map documents.
  */
+describe('IA-7 chrome: mobile bar exposes every top-level door', () => {
+  test('mobile bar has exactly the seven DOORS in source order, with no arbitrary More bucket', async () => {
+    const { DOORS } = await import('../js/core/config/nav.js');
+    const html = renderNav(stateFor(VIEWS.HOME));
+    const bar = html.match(/<div class="nav-mobile-bar">([\s\S]*?)<\/div>\s*`?/)?.[1] || '';
+    const views = [...bar.matchAll(/data-view="([^"]+)"/g)].map((m) => m[1]);
+    assert.deepEqual(
+      views,
+      DOORS.map((d) => d.view),
+      'mobile bar derives one direct slot per top-level door'
+    );
+    assert.equal(views.length, 7, 'there are seven direct doors, not an arbitrary subset');
+    assert.equal(
+      bar.includes('data-action="nav-drawer-open"'),
+      false,
+      'More/drawer is not a nav slot'
+    );
+  });
+});
+
 describe('IA-7 chrome: hierarchical drawer derives from the map', () => {
   test('drawer carries seven section blocks in map order', () => {
     for (const lang of ['en', 'ar']) {
@@ -537,6 +557,11 @@ describe('Phase 6 chrome: one You section', () => {
     ];
     for (const lang of ['en', 'ar']) {
       const html = youModeSwitchHTML(VIEWS.CHECKLIST, lang);
+      assert.equal(
+        (html.match(/you-subnav__group-title/g) || []).length,
+        3,
+        `three You groups (${lang})`
+      );
       for (const view of members) {
         assert.ok(html.includes(`data-view="${view}"`), `switch carries #/${view} (${lang})`);
       }
@@ -552,10 +577,10 @@ describe('Phase 6 chrome: one You section', () => {
         );
       }
     }
-    // The active segment follows the route — exactly one claims each view.
+    // The active destination follows the route — exactly one claims each view.
     for (const view of members) {
       const html = youModeSwitchHTML(view, 'en');
-      const activeCount = html.split('segmented__btn--active').length - 1;
+      const activeCount = html.split('you-subnav__item--active').length - 1;
       assert.equal(activeCount, 1, `exactly one segment active on #/${view}`);
       assert.ok(html.includes(`data-view="${view}"`), `the #/${view} segment is the active one`);
     }

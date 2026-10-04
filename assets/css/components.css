@@ -844,6 +844,26 @@
      than a second line. */
   overflow-wrap: break-word;
 }
+/* A segmented control with too many peers for one phone line must WRAP, not
+   overflow. Measured at 360x800: the Qur'an mode switch (5 buttons) had
+   `scrollWidth` 413 against `clientWidth` 334 with `overflow-x: visible`, so
+   the fifth option sat outside the viewport AND the whole page gained 66px of
+   unintended horizontal scroll — the reader could swipe the entire app sideways.
+   4 of 5 options were fully visible.
+
+   English only: the same control measured `scrollWidth` 334 == `clientWidth`
+   334 in Arabic and already fit exactly, so this deliberately does nothing to
+   Arabic rather than "fixing" a layout that was never broken.
+
+   Chosen over `overflow-x: auto`, which also zeroes the page scroll but leaves
+   the fifth option hidden behind a scroller (measured 4/5 visible, and the
+   project already distrusts unlabelled scrollers). Wrapping measured 5/5
+   visible with every button >= 44px tall. */
+@media (max-width: 480px) {
+  .segmented {
+    flex-wrap: wrap;
+  }
+}
 /* Wide enough to carry all ten on one line. The 10 mirrors the You section's
    member list in core/config/nav.js — tests/nav-reachability.test.js derives
    the switch's own length and fails if a segment is added without this. */

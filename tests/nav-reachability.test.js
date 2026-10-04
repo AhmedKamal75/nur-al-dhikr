@@ -234,7 +234,7 @@ describe('Phase 0 census: nav entries, labels, destinations', () => {
             (k) =>
               k.startsWith('nav.') &&
               !k.startsWith('nav.group.') &&
-              !['nav.back', 'nav.more'].includes(k) &&
+              k !== 'nav.back' &&
               !census.some((c) => c.labelKey === k)
           )
           .join(
@@ -322,8 +322,8 @@ describe('Rule 6 drift-check: the test reads the real map, the parser proves it'
     );
     assert.ok(shellSrc.includes('DOORS.map('), 'NAV_GROUPS must derive from DOORS.map (rule 6)');
     assert.ok(
-      shellSrc.includes('DOORS.slice('),
-      'MOBILE_ITEMS must derive from DOORS.slice (rule 6)'
+      /const MOBILE_ITEMS[\s\S]*?DOORS\.map\(/.test(shellSrc),
+      'MOBILE_ITEMS must derive directly from DOORS.map (rule 6)'
     );
     assert.ok(
       shellSrc.includes('DOOR_VIEW_BY_ROUTE_KEY'),

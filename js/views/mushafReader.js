@@ -173,6 +173,7 @@ export function renderMushaf(state) {
     if (state.loadErrors?.[failedTier]) {
       return `
     <section class="view view--mushaf">
+      <h1 class="sr-only">${escapeHTML(t('mushaf.title', lang))}</h1>
       <div class="mushaf-loading">${loadErrorStateHTML({ lang, tierKey: failedTier, t })}</div>
     </section>`;
     }

@@ -99,15 +99,48 @@ function mix(fg, bg, pct) {
   );
 }
 function blockTokens(selectorRe) {
-  const m = CSS['variables.css'].match(selectorRe);
-  assert.ok(m, `variables.css must contain block matching ${selectorRe}`);
   const out = {};
-  for (const mm of m[1].matchAll(/--([a-z0-9_-]+):\s*([^;]+);/gi)) out[`--${mm[1]}`] = mm[2].trim();
+  let seen = 0;
+  // Resolve the token set the BROWSER ends up with, not one file's opinion of
+  // it. Equal-specificity blocks are settled by source order, so the last
+  // stylesheet to declare a token wins.
+  //
+  // This function used to read variables.css alone. The v5.17.7x deslopify
+  // pass added a second `:root` in deslopify.css, which index.html loads last,
+  // so the contrast gate went on certifying --color-text-muted #6e6952 (4.90:1,
+  // passes) while every light view rendered #6d756c (4.22:1, fails AA). A
+  // gate that reads a token the cascade has already overridden is worse than
+  // no gate: it reports green for a defect that is on screen.
+  for (const f of EFFECTIVE_CSS_ORDER) {
+    const globalRe = new RegExp(selectorRe.source, 'g');
+    for (const m of CSS[f].matchAll(globalRe)) {
+      seen++;
+      for (const mm of m[1].matchAll(/--([a-z0-9_-]+):\s*([^;]+);/gi)) {
+        out[`--${mm[1]}`] = mm[2].trim();
+      }
+    }
+  }
+  assert.ok(seen, `no stylesheet in the shell load order contains a block matching ${selectorRe}`);
   return out;
 }
 
+// The single source of truth for cascade order is the shell itself: the
+// stylesheets index.html links, in document order, followed by the route-lazy
+// sheets the renderer injects later (they win over everything, and one day one
+// of them will define a token).
+const EFFECTIVE_CSS_ORDER = [
+  ...new Set(
+    [
+      ...readFileSync(join(HERE, '..', 'index.html'), 'utf8').matchAll(
+        /assets\/css\/([a-z0-9_-]+\.css)/g
+      ),
+    ].map((m) => m[1])
+  ),
+  ...CSS_FILES.filter((f) => !readFileSync(join(HERE, '..', 'index.html'), 'utf8').includes(f)),
+];
+
 const root = blockTokens(/:root\s*\{([\s\S]*?)\n\}/);
-const darkBlock = blockTokens(/\[data-theme=['\"]dark['\"]\]\s*\{([\s\S]*?)\n\}/);
+const darkBlock = blockTokens(/\[data-theme=['"]dark['"]\]\s*\{([\s\S]*?)\n\}/);
 const dark = { ...root, ...darkBlock };
 
 test('design tokens: every var() reference resolves (nothing undefined at runtime)', () => {
@@ -161,6 +194,57 @@ test('contrast: text tiers hold AA on every surface they render on (light + dark
       }
     }
   }
+});
+
+test('contrast: derived (color-mix) foregrounds hold AA on the surface they sit on', () => {
+  // The token-tier contract above cannot see a foreground that is COMPUTED.
+  // Two shipped rules were: a gold-on-gold chip that measured 3.72:1, and a
+  // text rule whose colour came from a token in another file while a third
+  // file dimmed it with `opacity`. Both were only ever caught by axe, on a
+  // route, months later. These are the two measured pairs, pinned as numbers
+  // with the rule they came from named — deliberately NOT a naming heuristic
+  // over class names, which this suite already rejects for good reason.
+  // Parse the ACTUAL declaration out of the stylesheet. Asserting a hardcoded
+  // 70% here would be a decorative test: it would still pass with the rule
+  // reverted to 88%, which is the mistake this pin exists to catch.
+  const hijriDecl = /\.home-hero--line \.home-hero__hijri\s*\{([^}]*)\}/.exec(
+    stripCssComments(CSS['deslopify.css'])
+  );
+  assert.ok(hijriDecl, '.home-hero--line .home-hero__hijri rule must exist');
+  const hijriPct =
+    /color:\s*color-mix\(in srgb,\s*var\(--color-gold\)\s*([\d.]+)%,\s*var\(--color-text\)\s*\)/.exec(
+      hijriDecl[1]
+    );
+  assert.ok(
+    hijriPct,
+    '.home-hero__hijri must derive its text colour from --color-gold over --color-text, so the tint it sits on can be measured against it'
+  );
+  const hijriBg = mix(root['--color-gold'], root['--color-surface'], 10);
+  const hijriFg = mix(root['--color-gold'], root['--color-text'], Number(hijriPct[1]));
+  assert.ok(
+    ratio(hijriFg, hijriBg) >= 4.5,
+    `home-hero__hijri gold text ${hijriFg} on its own gold tint ${hijriBg} = ${ratio(hijriFg, hijriBg).toFixed(2)} (need 4.5)`
+  );
+  // Same chip must also stay legible if it ever renders on the plain surface.
+  assert.ok(
+    ratio(hijriFg, root['--color-surface']) >= 4.5,
+    `home-hero__hijri ${hijriFg} on --color-surface = ${ratio(hijriFg, root['--color-surface']).toFixed(2)}`
+  );
+});
+
+test('tajweed-course.css dims no text with opacity (token instead)', () => {
+  // `.taj-course__stage-count` carried `opacity: 0.7` while its colour was
+  // assigned by deslopify.css as --color-text-muted — 3.00:1 light, 2.13:1
+  // dark. The generic opacity gate in this file cannot see it (it only catches
+  // colour AND opacity in the same rule, which is stated in that test's scope
+  // note), so pin the absence here where the alpha used to be.
+  const src = stripCssComments(CSS['tajweed-course.css']);
+  const block = /\.taj-course__stage-count\s*\{([^}]*)\}/.exec(src);
+  assert.ok(block, '.taj-course__stage-count rule must exist');
+  assert.ok(
+    !/opacity\s*:/.test(block[1]),
+    '.taj-course__stage-count must not set opacity — its colour comes from a token in another file, so the alpha silently voids the measured token'
+  );
 });
 
 test('contrast: semantic foregrounds hold AA on their dark -bg surfaces', () => {
@@ -316,6 +400,39 @@ test('focus: the global :focus-visible rule never overrides border-radius', () =
   assert.ok(
     m[0].includes('--color-primary-text'),
     'focus ring must use the theme-tuned foreground token'
+  );
+});
+
+test('a segmented control wraps on a phone instead of widening the page', () => {
+  // Measured at 360x800, English: `.quran-mode-switch` (5 buttons) had
+  // `scrollWidth` 413 vs `clientWidth` 334 with `overflow-x: visible` — 66px
+  // of unintended horizontal scroll for the WHOLE page, and only 4 of 5
+  // options visible. Arabic measured 334/334 and already fit, which is why a
+  // bilingual fix must not disturb it.
+  //
+  // Asserted as a declaration, not as a vibe: the narrow-viewport wrap has to
+  // exist, it has to be scoped to phone widths (so desktop keeps one line), and
+  // it must be `wrap` rather than a scroller — the project already distrusts
+  // scrollers that hide an option (see the Home prayer ribbon rule below).
+  const narrow = [
+    ...ALL_CSS.matchAll(/@media\s*\(max-width:\s*480px\)\s*\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g),
+  ].map((m) => m[1]);
+  assert.ok(narrow.length >= 1, 'there must be a phone-width breakpoint owning this rule');
+  assert.ok(
+    narrow.some((b) => /\.segmented\s*\{[^}]*flex-wrap:\s*wrap/.test(b)),
+    'some phone-width breakpoint must declare flex-wrap: wrap on .segmented — found none in: ' +
+      narrow.length +
+      ' block(s)'
+  );
+  assert.ok(
+    !narrow.some((b) => /\.segmented\s*\{[^}]*overflow-x:\s*(auto|scroll)/.test(b)),
+    'a segmented control must not become a scroller at phone widths — that hides options'
+  );
+  // And the wrapped buttons must still reach the touch target.
+  const btn = CSS['components.css'].match(/\.segmented__btn\s*\{[^}]*\}/);
+  assert.ok(
+    btn && btn[0].includes('var(--touch-target)'),
+    '.segmented__btn must reach 44px when wrapped'
   );
 });
 
@@ -704,6 +821,60 @@ test('v5.17.64: a chosen text colour is never also dimmed with opacity', () => {
       'background and makes the choice unmeasurable. Express the hierarchy in the colour token ' +
       '(--color-text-muted / --color-text-secondary), or color-mix against the surface this ' +
       'rule actually sits on.'
+  );
+});
+
+test('a hit-area apron is never clipped by its own element', () => {
+  // The compact-control idiom in this codebase is a visually small box plus a
+  // `::after { inset-*: -Npx }` apron that widens the effective hit area.
+  // That apron is a DESCENDANT of the control, so any `overflow: hidden`/
+  // `clip` on the control's own box silently deletes the reach it exists to
+  // add. `.card__meta > .chip { overflow: hidden }` did exactly that: the chip
+  // looked 40px, the apron promised 56px, and a real pointer 5px off the top
+  // or bottom landed on `.card__top`.
+
+  // Structural, not a naming heuristic: the check pairs a real `overflow`
+  // declaration with a real apron declaration on the same selector. A class
+  // name is never guessed at.
+  const apronSel = new Set();
+  for (const f of CSS_FILES) {
+    const src = stripCssComments(CSS[f]);
+    for (const m of src.matchAll(/([^{}]+)::after\s*\{([^}]*)\}/g)) {
+      if (!/inset-(block|inline)\s*:\s*-|inset\s*:\s*-/.test(m[2])) continue;
+      for (const s of m[1].split(',')) {
+        const t = s.trim().replace(/\s+/g, ' ');
+        if (t) apronSel.add(t);
+      }
+    }
+  }
+  assert.ok(apronSel.size >= 8, `expected the apron idiom to still exist, found ${apronSel.size}`);
+
+  const endsWith = (sel, a) => sel.split(/\s+/).pop() === a;
+  const offenders = [];
+  for (const f of CSS_FILES) {
+    const src = stripCssComments(CSS[f]);
+    for (const m of src.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+      const head = m[1].trim().replace(/\s+/g, ' ');
+      if (head.startsWith('@')) continue;
+      const of = /(?:^|;)\s*overflow\s*:\s*(hidden|clip)\s*(;|$)/.exec(m[2]);
+      if (!of) continue;
+      // A clip that is deliberately pushed back out by the apron's own reach
+      // is the fix, not the defect.
+      const margin = /(?:^|;)\s*overflow-clip-margin\s*:\s*([\d.]+)px/.exec(m[2]);
+      for (const part of head.split(',').map((s) => s.trim())) {
+        const a = [...apronSel].find((x) => endsWith(part, x));
+        if (!a) continue;
+        if (margin && Number(margin[1]) >= 4) continue;
+        offenders.push(`${f}: ${part} — overflow:${of[1]} clips the ::after apron on ${a}`);
+      }
+    }
+  }
+  assert.deepEqual(
+    offenders,
+    [],
+    'these rules clip a control that carries its own hit-area apron, deleting the reach the ' +
+      'apron exists to add. Use `overflow: clip` with `overflow-clip-margin` at least as large ' +
+      'as the apron inset (overflow-clip-margin is a no-op on `overflow: hidden`).'
   );
 });
 

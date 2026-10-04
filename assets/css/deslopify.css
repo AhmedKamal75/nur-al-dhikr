@@ -1,0 +1,3371 @@
+/*
+ * deslopify.css — Nūr al-Dhikr product-wide visual refinement
+ *
+ * This file does not introduce a second design system. It is a final, audited
+ * presentation layer over the existing token/component system. The goal is
+ * restraint: one house identity, semantic emphasis, fewer competing shapes,
+ * and content-proof bilingual geometry.
+ */
+
+:root {
+  /* House identity: manuscript ivory + deep emerald + restrained gilt. */
+  --color-bg: #f6f1e6;
+  --color-surface: #fffdf8;
+  --color-surface-alt: #eee8da;
+  --color-surface-raised: #fffefb;
+  --color-border: #ded4bc;
+  --color-border-strong: #c9b992;
+  --color-text: #1f2a22;
+  --color-text-secondary: #536056;
+  /* #6d756c measured 4.22:1 on this paper — below AA 4.5 for body text, and
+     axe reported it as a serious violation on every light view that renders
+     muted text. Darkened to #616961 (5.04:1 on --color-bg, 4.64:1 on the
+     darkest light surface) rather than exempting it: muted ink is still ink. */
+  --color-text-muted: #616961;
+  --color-primary-raw: #1a5f3e;
+  --color-accent-raw: #c8a24e;
+  --color-gold: #a9822a;
+
+  /* Palette choice remains functional, but every palette shares the same
+     quiet paper/ink architecture.  Color is an accent, not a replacement
+     for the whole product identity. */
+  --color-gold-soft: #e1c97f;
+  --color-primary: var(--color-primary-raw);
+  --color-accent: var(--color-accent-raw);
+  --color-primary-deep: #0d4229;
+  --color-primary-ink: #092f1e;
+  --shadow-sm: 0 1px 2px rgba(48, 37, 18, 0.045), 0 4px 14px rgba(48, 37, 18, 0.055);
+  --shadow-md: 0 4px 12px rgba(48, 37, 18, 0.06), 0 18px 34px rgba(48, 37, 18, 0.08);
+  --shadow-lg: 0 12px 30px rgba(23, 37, 29, 0.15), 0 24px 64px rgba(23, 37, 29, 0.12);
+  --shadow-hero: 0 10px 26px rgba(23, 60, 43, 0.16), 0 22px 56px rgba(23, 60, 43, 0.12);
+  --radius-control: 12px;
+  --radius-card-safe: 18px;
+}
+
+[data-palette='emerald'] {
+  --color-primary-raw: #1a5f3e;
+  --color-accent-raw: #c8a24e;
+}
+[data-palette='sapphire'] {
+  --color-primary-raw: #1f5fae;
+  --color-accent-raw: #6ea8df;
+}
+[data-palette='royal'] {
+  --color-primary-raw: #6841a8;
+  --color-accent-raw: #ae94df;
+}
+[data-palette='amber'] {
+  --color-primary-raw: #8b4a12;
+  --color-accent-raw: #d8a63c;
+}
+[data-palette='slate'] {
+  --color-primary-raw: #44515f;
+  --color-accent-raw: #9aa8b6;
+}
+[data-palette='rose'] {
+  --color-primary-raw: #a93659;
+  --color-accent-raw: #d8839a;
+}
+[data-palette='forest'] {
+  --color-primary-raw: #1f633a;
+  --color-accent-raw: #6faf7f;
+}
+[data-palette='ocean'] {
+  --color-primary-raw: #15648f;
+  --color-accent-raw: #67a7c9;
+}
+[data-palette='midnight'] {
+  --color-primary-raw: #354154;
+  --color-accent-raw: #7e8b9e;
+}
+[data-palette='ivory'] {
+  --color-primary-raw: #625b54;
+  --color-accent-raw: #aaa098;
+}
+[data-palette='amoled'] {
+  --color-primary-raw: #1a5f3e;
+  --color-accent-raw: #d5b65f;
+}
+
+[data-theme='dark'] {
+  --color-bg: #0f1512;
+  --color-surface: #171e1a;
+  --color-surface-alt: #202923;
+  --color-surface-raised: #202a24;
+  --color-border: #35423a;
+  --color-border-strong: #4b5a4f;
+  --color-text: #eff4ee;
+  --color-text-secondary: #c1ccc4;
+  --color-text-muted: #9aa89f;
+  --color-primary-raw: #4c9b72;
+  --color-accent-raw: #d5b65f;
+  --color-primary: var(--color-primary-raw);
+  --color-accent: var(--color-accent-raw);
+  --color-primary-deep: #0d4229;
+  --color-primary-ink: #061b12;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.22), 0 4px 16px rgba(0, 0, 0, 0.16);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.24), 0 18px 34px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.34), 0 24px 64px rgba(0, 0, 0, 0.26);
+  --shadow-hero: 0 12px 28px rgba(0, 0, 0, 0.38), 0 26px 58px rgba(0, 0, 0, 0.28);
+}
+
+/* -------------------------------------------------------------------------
+   Global geometry
+   ------------------------------------------------------------------------- */
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+#main {
+  max-width: 1480px;
+  padding-inline: clamp(16px, 2vw, 32px);
+}
+
+.view {
+  gap: clamp(16px, 1.7vw, 24px);
+}
+
+/* The shell should look like one product, not seven independently styled apps. */
+#topbar {
+  background: color-mix(in srgb, var(--color-bg) 92%, transparent);
+  border-bottom-color: color-mix(in srgb, var(--color-border) 82%, transparent);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+
+.topbar__brand {
+  gap: 10px;
+  padding: 4px 8px;
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+}
+
+.topbar__brand-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--color-primary);
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--color-primary) 28%, transparent);
+}
+
+/* Desktop: no hamburger fighting the always-visible rail. */
+@media (min-width: 960px) {
+  .topbar__menu {
+    display: none !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Navigation: seven real doors on mobile too
+   ------------------------------------------------------------------------- */
+.nav-mobile-bar {
+  gap: 3px;
+  padding: 6px 8px 3px;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  border-top-color: color-mix(in srgb, var(--color-border) 85%, transparent);
+  box-shadow: 0 -10px 28px rgba(28, 38, 31, 0.06);
+  backdrop-filter: blur(16px) saturate(115%);
+  -webkit-backdrop-filter: blur(16px) saturate(115%);
+}
+
+.nav-mobile-bar__item {
+  min-width: 0;
+  min-height: 50px;
+  padding: 5px 2px;
+  gap: 3px;
+  border-radius: 11px;
+  font-size: 0.62rem;
+  font-weight: 650;
+  color: var(--color-text-muted);
+}
+
+.nav-mobile-bar__item svg {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.nav-mobile-bar__item .nav__label {
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.nav-mobile-bar__item[aria-current='page'] {
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+@media (max-width: 380px) {
+  .nav-mobile-bar {
+    padding-inline: 4px;
+  }
+  .nav-mobile-bar__item {
+    font-size: 0.58rem;
+    padding-inline: 0;
+  }
+  .nav-mobile-bar__item svg {
+    width: 19px;
+    height: 19px;
+  }
+}
+
+@media (min-width: 960px) {
+  #bottomnav {
+    background: var(--color-bg);
+    border-inline-end-color: var(--color-border);
+  }
+
+  .nav__scroller {
+    padding: 18px 12px 28px;
+  }
+
+  .nav__item {
+    min-height: 48px;
+    border-radius: 12px;
+    font-size: 0.93rem;
+  }
+
+  .nav__item[aria-current='page'],
+  .nav__item--active {
+    background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+    color: var(--color-primary-text);
+    border-inline-start-width: 2px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   View headers and segmented navigation
+   ------------------------------------------------------------------------- */
+.view-header {
+  gap: 6px;
+}
+
+.view__title {
+  font-size: clamp(1.65rem, 2.6vw, 2.2rem);
+  letter-spacing: -0.028em;
+}
+
+.view__subtitle {
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.segmented {
+  gap: 3px;
+  padding: 4px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-surface-alt) 82%, var(--color-surface));
+  border-color: var(--color-border);
+}
+
+.segmented__btn {
+  min-height: 44px;
+  border-radius: 10px;
+  font-weight: 650;
+}
+
+.segmented__btn--active {
+  background: var(--color-surface);
+  color: var(--color-primary-text);
+  box-shadow:
+    0 1px 4px rgba(38, 48, 39, 0.08),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+   Home: one calm landing, not a dashboard warehouse
+   ------------------------------------------------------------------------- */
+.view--home {
+  max-width: 1160px;
+  margin-inline: auto;
+}
+
+.view--home > .shahada-banner {
+  order: 2;
+  min-height: 54px;
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 17%, var(--color-border));
+  box-shadow: none;
+}
+
+.view--home > .shahada-banner .shahada-banner__text {
+  font-size: clamp(1rem, 2.1vw, 1.25rem);
+  color: var(--color-primary-text);
+  line-height: 1.75;
+}
+
+.view--home > .shahada-banner .shahada-banner__rule {
+  background: linear-gradient(90deg, transparent, var(--color-gold) 50%, transparent);
+  opacity: 0.55;
+}
+
+.view--home > .home-hero.home-hero--line {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px 14px;
+  min-height: 70px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+  border-inline-start: 3px solid var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__title {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__tagline {
+  font-size: var(--fs-caption);
+  color: var(--color-text-secondary);
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__greeting {
+  margin-inline-start: auto;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  letter-spacing: 0;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__hijri {
+  background: color-mix(in srgb, var(--color-gold) 10%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-gold) 24%, transparent);
+  /* Gold at 88% measured 3.72:1 against its own 10% gold tint — gold text on a
+     gold chip, which reads as gilded and is unreadable. 70% keeps the antique
+     gold identity at 4.74:1 on the tint and 5.26:1 on the plain surface. */
+  color: color-mix(in srgb, var(--color-gold) 70%, var(--color-text));
+}
+
+.view--home > .home-prayer-ribbon {
+  order: 3;
+  width: 100%;
+  max-width: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  border-radius: 18px;
+}
+
+.view--home > .home-today {
+  order: 4;
+  width: 100%;
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--home > .home-today .home-today__cell {
+  min-height: 48px;
+  border-radius: 12px;
+}
+
+.view--home > .tasbih-entry {
+  order: 5;
+  width: 100%;
+}
+
+.view--home > .home-invites,
+.view--home > .panel--nudge {
+  order: 6;
+}
+
+.view--home > .quick-actions {
+  order: 7;
+}
+
+.view--home > .onboarding-panel {
+  order: 8;
+}
+
+.view--home > .home-browser,
+.view--home > .panel--worship,
+.view--home > .panel--resume,
+.view--home > .panel--progress {
+  order: 9;
+}
+
+/* Home quick actions are an accent, not another navigation rail. */
+.view--home > .quick-actions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.view--home > .quick-actions .quick-action {
+  min-height: 68px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.view--home > .quick-actions .quick-action svg {
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
+  color: var(--color-primary-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+.view--home > .quick-actions .quick-action,
+.view--home > .quick-actions .quick-action:hover {
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.view--home > .quick-actions .quick-action:hover {
+  transform: translateY(-1px);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--home > .quick-actions .quick-action__now {
+  background: var(--color-gold);
+  color: #231b0a;
+}
+
+@media (max-width: 760px) {
+  .view--home > .home-hero.home-hero--line {
+    align-items: flex-start;
+  }
+  .view--home > .home-hero.home-hero--line .home-hero__greeting {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+  }
+  .view--home > .quick-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .view--home > .home-hero.home-hero--line {
+    min-height: 0;
+  }
+
+  .view--home > .home-hero.home-hero--line .home-hero__title,
+  .view--home > .home-hero.home-hero--line .home-hero__tagline {
+    max-width: 100%;
+  }
+
+  .view--home > .shahada-banner {
+    padding-inline: 12px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   You: ten destinations need a navigation matrix, not a giant segmented
+   control. Keep the existing single source of truth in nav.js, but make the
+   presentation dense, calm and touchable.
+   ------------------------------------------------------------------------- */
+.view--you .you-mode-switch {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-surface-alt) 82%, var(--color-surface));
+  border: 1px solid var(--color-border);
+}
+
+.view--you .you-mode-switch .segmented__btn {
+  min-width: 0;
+  min-height: 48px;
+  padding: 7px 8px;
+  border-radius: 11px;
+  font-size: clamp(0.72rem, 0.8vw, 0.84rem);
+  line-height: 1.2;
+  font-weight: 650;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+.view--you .you-mode-switch .segmented__btn--active {
+  background: var(--color-surface);
+  box-shadow:
+    0 1px 4px rgba(38, 48, 39, 0.08),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+@media (max-width: 900px) {
+  .view--you .you-mode-switch {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .view--you .you-mode-switch {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .view--you .you-mode-switch .segmented__btn {
+    min-height: 46px;
+    padding: 7px 6px;
+    font-size: 0.76rem;
+  }
+}
+
+@media (min-width: 1500px) {
+  .view--you .you-mode-switch {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Adhkar library: one card = one action; no detached "Read now" slabs
+   ------------------------------------------------------------------------- */
+.view--library {
+  max-width: 1160px;
+  margin-inline: auto;
+}
+
+.view--library .library-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.view--library .library-section__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.view--library .library-section__title::after {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.view--library .library-section__desc {
+  max-width: 66ch;
+  margin: -3px 0 2px;
+}
+
+.view--library .category-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.view--library .category-tile-wrap {
+  min-width: 0;
+}
+
+.view--library .category-tile-wrap .category-tile {
+  min-height: 138px;
+  padding: 18px;
+  border-radius: 16px;
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.view--library .category-tile-wrap .category-tile:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+  box-shadow: var(--shadow-md);
+}
+
+/* Semantic color, not rainbow. Category identity remains in the icon glyph. */
+.view--library .category-tile__icon,
+.view--library .category-tile__icon[class*='category-tile__icon--'] {
+  --tile-cat: var(--color-primary);
+  --tile-cat-text: var(--color-primary-text);
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
+  color: var(--color-primary-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 14%, transparent);
+}
+
+.view--library .category-tile__name {
+  font-size: 0.96rem;
+  line-height: 1.35;
+}
+
+.view--library .category-tile__count {
+  color: var(--color-text-muted);
+}
+
+/* The tile is already a link. The old second button was duplicate chrome. */
+.view--library .browser-tile__read {
+  display: none;
+}
+
+.view--library .category-tile::after {
+  content: '→';
+  align-self: flex-end;
+  margin-top: auto;
+  color: var(--color-primary-text);
+  font-size: 1rem;
+  color: color-mix(in srgb, var(--color-primary-text) 72%, var(--color-surface));
+}
+
+[dir='rtl'] .view--library .category-tile::after {
+  content: '←';
+}
+
+@media (max-width: 1050px) {
+  .view--library .category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .view--library .category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .view--library .category-tile-wrap .category-tile {
+    min-height: 128px;
+  }
+}
+
+@media (max-width: 420px) {
+  .view--library .category-grid {
+    gap: 8px;
+  }
+  .view--library .category-tile-wrap .category-tile {
+    min-height: 122px;
+    padding: 14px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Settings: quiet hierarchy; options remain powerful without looking like
+   an admin console.
+   ------------------------------------------------------------------------- */
+.view--settings,
+.view--about {
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+.view--settings .panel,
+.view--settings .settings-acc {
+  border-radius: 16px;
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--settings .settings-acc__summary {
+  min-height: 60px;
+  padding: 12px 16px;
+}
+
+.view--settings .settings-acc__title {
+  font-weight: 760;
+}
+
+.view--settings .settings-acc__hint {
+  color: var(--color-text-muted);
+}
+
+.view--settings .settings-group {
+  background: color-mix(in srgb, var(--color-surface-alt) 38%, var(--color-surface));
+  border-radius: 12px;
+}
+
+.view--settings .toggle-row,
+.view--settings .reciter-row,
+.view--settings .home-panel-row {
+  border-radius: 11px;
+}
+
+.view--settings .toggle-row:hover,
+.view--settings .reciter-row:hover,
+.view--settings .home-panel-row:hover {
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+}
+
+/* -------------------------------------------------------------------------
+   Generic cards: consistent silhouette outside reading surfaces
+   ------------------------------------------------------------------------- */
+.view:not(.view--mushaf) .panel,
+.view:not(.view--mushaf) .card {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.view:not(.view--mushaf) .panel__header h2,
+.view:not(.view--mushaf) .panel__title {
+  letter-spacing: -0.018em;
+}
+
+/* Liquid glass is for floating chrome, not every card. */
+.nav-drawer,
+[role='dialog'] {
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+}
+
+/* Do not apply glass to content cards; preserve readable paper/ink. */
+.view:not(.view--mushaf) .panel,
+.view:not(.view--mushaf) .card,
+.view:not(.view--mushaf) .category-tile,
+.view:not(.view--mushaf) .quick-action {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-theme='dark'][data-palette='emerald'] {
+  --color-primary-raw: #55a77c;
+  --color-accent-raw: #d5b65f;
+}
+[data-theme='dark'][data-palette='sapphire'] {
+  --color-primary-raw: #78aef2;
+  --color-accent-raw: #a9c9f6;
+}
+[data-theme='dark'][data-palette='royal'] {
+  --color-primary-raw: #c0a6ef;
+  --color-accent-raw: #d7c6f5;
+}
+[data-theme='dark'][data-palette='amber'] {
+  --color-primary-raw: #f0b85d;
+  --color-accent-raw: #f4cf7b;
+}
+[data-theme='dark'][data-palette='slate'] {
+  --color-primary-raw: #aab6c4;
+  --color-accent-raw: #d0d8e1;
+}
+[data-theme='dark'][data-palette='rose'] {
+  --color-primary-raw: #ee8cab;
+  --color-accent-raw: #f2b1c4;
+}
+[data-theme='dark'][data-palette='forest'] {
+  --color-primary-raw: #73c28e;
+  --color-accent-raw: #a4d7b2;
+}
+[data-theme='dark'][data-palette='ocean'] {
+  --color-primary-raw: #70b5db;
+  --color-accent-raw: #a6d2e9;
+}
+[data-theme='dark'][data-palette='midnight'] {
+  --color-primary-raw: #9eabbc;
+  --color-accent-raw: #c3ccd7;
+}
+[data-theme='dark'][data-palette='ivory'] {
+  --color-primary-raw: #c1b9af;
+  --color-accent-raw: #ddd3c8;
+}
+[data-theme='dark'][data-palette='amoled'] {
+  --color-primary-raw: #55a77c;
+  --color-accent-raw: #d5b65f;
+}
+
+/* -------------------------------------------------------------------------
+   RTL/LTR guardrails
+   ------------------------------------------------------------------------- */
+html[dir='rtl'] .view--home .home-hero__greeting {
+  letter-spacing: 0;
+}
+
+:where(.view, .panel, .card, .settings-acc, .category-tile, .quick-action) {
+  min-width: 0;
+}
+
+:where(.view, .panel, .card, .settings-acc, .category-tile, .quick-action)
+  :where(h1, h2, h3, p, span, a) {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Do not break identifiers, verse numbers, or code-like content. */
+:where(.tabular, [dir='ltr'], .mushaf-page, .mushaf-ayah-number) {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view--library .category-tile-wrap .category-tile,
+  .view--home > .quick-actions .quick-action {
+    transition: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   First-use calm: empty progress is an invitation, not a scoreboard.
+   ------------------------------------------------------------------------- */
+.view--home .panel--progress-empty {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 78px;
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+
+.panel--progress-empty__icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+}
+
+.panel--progress-empty__text h2 {
+  margin: 0;
+}
+
+.panel--progress-empty__text p {
+  margin: 3px 0 0;
+  max-width: 62ch;
+}
+
+@media (max-width: 560px) {
+  .view--home .panel--progress-empty {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .view--home .panel--progress-empty .link-btn {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Navigation polish: active state is an indicator, not a giant sticker.
+   ------------------------------------------------------------------------- */
+.nav-mobile-bar__item {
+  position: relative;
+  background: transparent;
+}
+
+.nav-mobile-bar__item[aria-current='page'],
+.nav-mobile-bar__item--active {
+  background: transparent;
+}
+
+.nav-mobile-bar__item[aria-current='page']::after,
+.nav-mobile-bar__item--active::after {
+  content: '';
+  position: absolute;
+  inset-inline: 50%;
+  bottom: 1px;
+  width: 24px;
+  height: 3px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+[dir='rtl'] .nav-mobile-bar__item[aria-current='page']::after,
+[dir='rtl'] .nav-mobile-bar__item--active::after {
+  transform: translateX(50%);
+}
+
+/* -------------------------------------------------------------------------
+   Settings polish: the group is a shelf; the accordion is the control.
+   Avoid nested-card noise and keep the hierarchy obvious in both scripts.
+   ------------------------------------------------------------------------- */
+.view--settings .settings-group {
+  gap: 10px;
+  margin-block: 4px 20px;
+  padding: 4px;
+  border: 1px solid color-mix(in srgb, var(--color-border) 76%, transparent);
+  background: color-mix(in srgb, var(--color-surface-alt) 32%, var(--color-bg));
+  border-radius: 20px;
+}
+
+.view--settings .settings-group__title {
+  margin: 12px 14px 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+[dir='rtl'] .view--settings .settings-group__title {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.view--settings .settings-group__hint {
+  margin: 0 14px 2px;
+  max-width: 70ch;
+}
+
+.view--settings .settings-acc {
+  margin: 0;
+  background: var(--color-surface);
+  box-shadow: none;
+  border-radius: 15px;
+}
+
+.view--settings .settings-acc + .settings-acc {
+  margin-top: 2px;
+}
+
+.view--settings .settings-acc[open] {
+  box-shadow: var(--shadow-sm);
+}
+
+.view--settings .settings-acc__summary {
+  border-radius: 15px;
+}
+
+.view--settings .settings-acc[open] .settings-acc__summary {
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.view--settings .swatch-row,
+.view--settings .shape-row {
+  gap: 8px;
+}
+
+.view--settings .swatch,
+.view--settings .shape-btn {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  border-radius: 12px;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.view--settings .swatch:hover,
+.view--settings .shape-btn:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+}
+
+.view--settings .swatch--active,
+.view--settings .shape-btn--active {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+   Pass 3: sibling views share the same editorial skeleton.
+   Home is the benchmark; these routes should look related without becoming
+   clones of one another. Reading surfaces remain intentionally special.
+   ------------------------------------------------------------------------- */
+.view--quran,
+.view--hadith,
+.view--prayer,
+.view--statistics,
+.view--tasbih,
+.view--journal,
+.view--focus {
+  max-width: 1160px;
+  margin-inline: auto;
+}
+
+.view--quran .quran-topbar,
+.view--hadith .view-header,
+.view--prayer .view-header,
+.view--statistics .view-header,
+.view--tasbih .view-header {
+  margin-bottom: 2px;
+}
+
+.view--quran .quran-topbar,
+.view--hadith .view-header,
+.view--prayer .view-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
+}
+
+.view--quran .quran-topbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.view--quran .quran-mode-switch,
+.view--hadith .hadith-controls {
+  margin-block: 4px 6px;
+}
+
+/* Qur'an landing: quiet index, stronger distinction for the surah number. */
+.view--quran .surah-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.view--quran .surah-tile {
+  min-height: 92px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--quran .surah-tile:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.view--quran .surah-tile__num {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
+  color: var(--color-primary-text);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.view--quran .surah-tile__text {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.view--quran .surah-tile__name-ar {
+  font-size: 1.05rem;
+  font-weight: 760;
+}
+
+.view--quran .surah-tile__name-en,
+.view--quran .surah-tile__meta {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.view--quran .surah-tile__play {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: transparent;
+  border-color: var(--color-border);
+}
+
+@media (max-width: 1040px) {
+  .view--quran .surah-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .view--quran .surah-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .view--quran .quran-topbar__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* Hadith landing: books are library entries, not generic coloured cards. */
+.view--hadith .search-bar {
+  max-width: 720px;
+  margin-block: 10px 14px;
+}
+
+.view--hadith .hadith-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.view--hadith .hadith-tile {
+  min-height: 154px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--hadith .hadith-tile:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 30%, var(--color-border));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.view--hadith .hadith-tile__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
+  color: var(--color-primary-text);
+}
+
+.view--hadith .hadith-tile__name {
+  font-size: 1rem;
+  font-weight: 760;
+}
+
+.view--hadith .hadith-tile__count,
+.view--hadith .hadith-tile__author,
+.view--hadith .hadith-tile__blurb {
+  color: var(--color-text-muted);
+}
+
+.view--hadith .hadith-tile__badge {
+  margin-top: auto;
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  color: var(--color-primary-text);
+}
+
+.view--hadith .hadith-hit {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  padding: 14px;
+}
+
+@media (max-width: 1000px) {
+  .view--hadith .hadith-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .view--hadith .hadith-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Prayer: one focal moment, one timetable, secondary tools below. */
+.view--prayer .next-prayer-card {
+  min-height: 166px;
+  margin-bottom: 12px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 9%, var(--color-surface)),
+    var(--color-surface)
+  );
+  box-shadow: var(--shadow-md);
+}
+
+.view--prayer .next-prayer-card__name {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 820;
+}
+
+.view--prayer .next-prayer-card__countdown {
+  color: var(--color-primary-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.view--prayer .panel--times,
+.view--prayer .panel--prayer-log,
+.view--prayer .panel--prayer-tools {
+  overflow: hidden;
+}
+
+.view--prayer .prayer-list {
+  display: grid;
+  gap: 0;
+}
+
+.view--prayer .prayer-row {
+  min-height: 58px;
+  padding: 8px 10px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
+}
+
+.view--prayer .prayer-row:last-child {
+  border-bottom: 0;
+}
+
+.view--prayer .prayer-row--active {
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+}
+
+.view--prayer .prayer-row__name {
+  font-weight: 700;
+}
+
+.view--prayer .prayer-row__time {
+  min-width: 5.5ch;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+}
+
+.view--prayer .quick-actions--compact {
+  gap: 9px;
+}
+
+.view--prayer .quick-actions--compact .quick-action {
+  min-height: 64px;
+  border-radius: 14px;
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: none;
+}
+
+/* Statistics: remove the dashboard-y “wall of numbers”. */
+.view--statistics .stat-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.view--statistics .stat-card {
+  min-height: 94px;
+  padding: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 15px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--statistics .stat-card__value {
+  color: var(--color-primary-text);
+  font-size: clamp(1.45rem, 2.2vw, 2rem);
+  font-weight: 820;
+  font-variant-numeric: tabular-nums;
+}
+
+.view--statistics .stat-card__label {
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+.view--statistics .ranked-row {
+  min-height: 52px;
+  border-bottom-color: color-mix(in srgb, var(--color-border) 62%, transparent);
+}
+
+@media (max-width: 760px) {
+  .view--statistics .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Tasbih: the action gets the visual center; settings stay secondary. */
+.view--tasbih {
+  max-width: 980px;
+}
+
+.view--tasbih .tasbih-stage {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: clamp(10px, 2vw, 22px) 0;
+}
+
+.view--tasbih .tasbih-dial {
+  filter: drop-shadow(0 16px 36px color-mix(in srgb, var(--color-primary) 16%, transparent));
+}
+
+.view--tasbih .tasbih-stage__arabic {
+  max-width: 42ch;
+  font-size: clamp(1.1rem, 2.4vw, 1.55rem);
+  line-height: 1.8;
+  color: var(--color-primary-text);
+}
+
+.view--tasbih .tasbih-controls {
+  width: min(100%, 760px);
+}
+
+.view--tasbih .tasbih-lifetime,
+.view--tasbih .panel--tasbih-custom {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+  background: var(--color-surface);
+}
+
+@media (max-width: 560px) {
+  .view--statistics .stat-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .view--prayer .next-prayer-card {
+    padding: 16px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Pass 4: remove the last traces of “component demo” styling.
+   The product should feel composed, not upholstered. Content remains
+   prominent; controls are quiet until they are actionable.
+   ------------------------------------------------------------------------- */
+:root {
+  --shadow-sm: 0 1px 2px rgb(24 32 27 / 0.035), 0 5px 16px rgb(24 32 27 / 0.045);
+  --shadow-md: 0 5px 16px rgb(24 32 27 / 0.06), 0 14px 30px rgb(24 32 27 / 0.055);
+  --radius-card-safe: 16px;
+}
+
+[data-theme='dark'] {
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.22), 0 7px 18px rgb(0 0 0 / 0.16);
+  --shadow-md: 0 6px 18px rgb(0 0 0 / 0.25), 0 18px 34px rgb(0 0 0 / 0.18);
+}
+
+/* Controls are deliberately flatter than cards. A filled button should look
+   like an action, not like a miniature floating object. */
+.btn--primary {
+  background: var(--color-primary);
+  box-shadow: none;
+  border-color: color-mix(in srgb, var(--color-primary) 88%, black);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-primary) 92%, black);
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+.btn--secondary {
+  box-shadow: none;
+}
+
+.btn--secondary:hover:not(:disabled) {
+  box-shadow: none;
+}
+
+/* A card is a content container, not a collection of nested floating boxes. */
+.view:not(.view--mushaf) .panel,
+.view:not(.view--mushaf) .card,
+.view:not(.view--mushaf) .category-tile,
+.view:not(.view--mushaf) .hadith-tile,
+.view:not(.view--mushaf) .surah-tile,
+.view:not(.view--mushaf) .stat-card {
+  border-radius: var(--radius-card-safe);
+}
+
+/* Keep section headings visibly above their containers without adding another
+   framed “header card”. */
+.view:not(.view--mushaf) .panel__header {
+  min-height: 44px;
+  padding-bottom: 8px;
+}
+
+.view:not(.view--mushaf) .panel__header h2,
+.view:not(.view--mushaf) .panel__title {
+  font-size: 1rem;
+  font-weight: 780;
+}
+
+/* Stronger editorial width: long text should look like reading, not like a
+   spreadsheet stretched to the edges of a 1440px monitor. */
+.view:not(.view--mushaf) .panel__subtext,
+.view:not(.view--mushaf) .view__subtitle {
+  max-width: 72ch;
+}
+
+/* Home and landing pages breathe at the same cadence. */
+.view--home,
+.view--library,
+.view--quran,
+.view--hadith,
+.view--prayer,
+.view--statistics,
+.view--tasbih,
+.view--settings {
+  row-gap: clamp(14px, 1.5vw, 22px);
+}
+
+/* Mobile chrome: seven doors, but none of them should become microscopic. */
+.nav-mobile-bar__item {
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.nav-mobile-bar__item .nav__label {
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+@media (max-width: 380px) {
+  .nav-mobile-bar__item {
+    font-size: 0.64rem;
+  }
+}
+
+/* Secondary navigation is a navigation matrix, not a line of pills. */
+.view--you .you-mode-switch {
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.view--you .you-mode-switch .segmented__btn {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.view--you .you-mode-switch .segmented__btn--active {
+  border-color: color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
+}
+
+/* Dense utility areas should not become giant empty rectangles on desktop. */
+.view--statistics .ranked-list,
+.view--prayer .prayer-list,
+.view--tasbih .tasbih-controls {
+  max-width: 820px;
+}
+
+/* Tasbih supporting controls are intentionally quieter than the counter. */
+.view--tasbih .tasbih-controls .btn,
+.view--tasbih .tasbih-controls .chip,
+.view--tasbih .target-stepper {
+  box-shadow: none;
+}
+
+.view--tasbih .panel--tasbih-custom {
+  max-width: 820px;
+  margin-inline: auto;
+}
+
+/* Reading-adjacent surfaces inherit the same editorial heading treatment. */
+.view--quran .quran-topbar__actions .btn,
+.view--hadith .view-header .btn,
+.view--prayer .view-header .btn,
+.view--statistics .view-header .btn,
+.view--tasbih .view-header .btn {
+  box-shadow: none;
+}
+
+/* Small screens: reduce ornamental padding before reducing readable type. */
+@media (max-width: 600px) {
+  #main {
+    padding-inline: 12px;
+  }
+
+  .view-header {
+    padding-inline: 2px;
+  }
+
+  .view:not(.view--mushaf) .panel,
+  .view:not(.view--mushaf) .card {
+    border-radius: 14px;
+  }
+
+  .view--home > .quick-actions {
+    gap: 8px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Pass 5: remove legacy decorative drift from shared browse surfaces.
+   The Azkar reference works because color identifies the product, not every
+   individual tile. Semantic icons remain; rainbow card chrome does not.
+   ------------------------------------------------------------------------- */
+.view:not(.view--mushaf) .category-tile__icon[class*='category-tile__icon--'] {
+  --tile-cat: var(--color-primary);
+  --tile-cat-text: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
+  color: var(--color-primary-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 13%, transparent);
+}
+
+.view:not(.view--mushaf) .mood-tile {
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.view:not(.view--mushaf) .collection-tile,
+.view:not(.view--mushaf) .mood-tile,
+.view:not(.view--mushaf) .surah-tile,
+.view:not(.view--mushaf) .hadith-tile {
+  border-radius: var(--radius-card-safe);
+  border-color: var(--color-border);
+}
+
+.view:not(.view--mushaf) .mood-tile:hover,
+.view:not(.view--mushaf) .collection-tile:hover,
+.view:not(.view--mushaf) .surah-tile:hover,
+.view:not(.view--mushaf) .hadith-tile:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.view--home > .home-hero.home-hero--line {
+  min-height: 86px;
+  padding: 16px 20px;
+  border-inline-start-width: 4px;
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__title {
+  font-size: clamp(1.18rem, 2vw, 1.45rem);
+  line-height: 1.2;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__tagline {
+  margin-top: 3px;
+  max-width: 46ch;
+  line-height: 1.45;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__greeting {
+  font-size: var(--fs-sm);
+  color: var(--color-text-secondary);
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__profile {
+  margin-inline-start: 0;
+}
+
+.view--home > .home-prayer-ribbon,
+.view--home > .home-today,
+.view--home > .quick-actions,
+.view--home > .panel--progress,
+.view--home > .panel--worship,
+.view--home > .panel--resume {
+  border-color: color-mix(in srgb, var(--color-border) 92%, transparent);
+}
+
+.view--library .library-section__title,
+.view--quran .view-header,
+.view--hadith .view-header,
+.view--prayer .view-header,
+.view--statistics .view-header,
+.view--tasbih .view-header {
+  letter-spacing: -0.015em;
+}
+
+@media (max-width: 600px) {
+  .view--home > .home-hero.home-hero--line {
+    padding: 15px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Pass 6: editorial hierarchy + grouped personal navigation.
+   Remove the last remaining launcher/card-demo feeling from Home and You.
+   ------------------------------------------------------------------------- */
+.view--home > .shahada-banner {
+  min-height: 0;
+  padding: 10px 2px 12px;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  border-block: 1px solid color-mix(in srgb, var(--color-gold) 28%, var(--color-border));
+  box-shadow: none;
+}
+
+.view--home > .shahada-banner .shahada-banner__text {
+  font-size: clamp(0.96rem, 2vw, 1.18rem);
+  color: color-mix(in srgb, var(--color-text-secondary) 86%, var(--color-primary));
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+}
+
+.view--home > .home-hero.home-hero--line {
+  min-height: 0;
+  padding: 6px 2px 2px;
+  border: 0;
+  border-inline-start: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  align-items: baseline;
+  gap: 8px 18px;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__title {
+  font-size: clamp(1.55rem, 3vw, 2.05rem);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__tagline {
+  margin-top: 4px;
+  max-width: 42ch;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.view--home > .home-today {
+  box-shadow: none;
+  background: transparent;
+  border-radius: 0;
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  padding-inline: 0;
+}
+
+.view--prayer .next-prayer-card {
+  min-height: 152px;
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
+  border-inline-start: 4px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  box-shadow: var(--shadow-sm);
+}
+
+.view--you .you-subnav {
+  display: grid;
+  gap: 14px;
+}
+
+.view--you .you-subnav__group {
+  min-width: 0;
+}
+
+.view--you .you-subnav__group-title {
+  margin: 0 0 7px;
+  padding-inline: 2px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[dir='rtl'] .view--you .you-subnav__group-title {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.view--you .you-subnav__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.view--you .you-subnav__item {
+  position: relative;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 13px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: none;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.view--you .you-subnav__item:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-border));
+  background: var(--color-surface-raised);
+}
+
+.view--you .you-subnav__item--active {
+  border-color: color-mix(in srgb, var(--color-primary) 26%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  color: var(--color-primary-text);
+}
+
+.view--you .you-subnav__item--active::before {
+  content: '';
+  position: absolute;
+  inset-block: 10px;
+  inset-inline-start: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--color-primary);
+}
+
+[dir='rtl'] .view--you .you-subnav__item--active::before {
+  border-radius: 3px 0 0 3px;
+}
+
+.view--you .you-subnav__item-label {
+  min-width: 0;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 920px) {
+  .view--you .you-subnav__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .view--you .you-subnav__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .view--you .you-subnav__item {
+    min-height: 46px;
+    padding: 9px 10px;
+  }
+
+  .view--home > .home-hero.home-hero--line {
+    padding: 4px 0 1px;
+    gap: 6px 12px;
+  }
+
+  .view--home > .home-hero.home-hero--line .home-hero__title {
+    font-size: clamp(1.45rem, 8vw, 1.8rem);
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Pass 6b: readable mobile labels without arbitrary word splitting.
+   Seven doors have a deliberately small footprint; labels may wrap only at
+   natural word boundaries. One-word labels must remain words, never shards.
+   ------------------------------------------------------------------------- */
+.nav-mobile-bar__item .nav__label {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+@media (max-width: 380px) {
+  .nav-mobile-bar__item .nav__label {
+    font-size: 0.62rem;
+    letter-spacing: -0.018em;
+  }
+}
+
+/* Do not let the seven-door bar become seven translucent pills. The active
+   item gets a small semantic edge; the dock itself remains one surface. */
+.nav-mobile-bar__item {
+  box-shadow: none;
+}
+.nav-mobile-bar__item[aria-current='page'] {
+  position: relative;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-primary-text);
+}
+.nav-mobile-bar__item[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  inset-inline: 22%;
+  inset-block-end: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+/* You's grouped links are allowed to wrap at word boundaries, never inside a
+   word or between joined-script clusters. This matters especially in Arabic
+   at the two-column phone breakpoint. */
+.view--you .you-subnav__item-label {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+/* -------------------------------------------------------------------------
+   Pass 7 — feature interiors: stop treating deep features as utility pages.
+   The home shell is intentionally quiet; focus, listening and Tajweed need
+   their own interaction rhythm rather than inheriting dashboard chrome.
+   ------------------------------------------------------------------------- */
+
+/* Focus / adhkar reading mode ------------------------------------------------ */
+.focus__top {
+  padding-inline: clamp(16px, 3vw, 30px);
+  padding-block: 14px 10px;
+  max-width: 980px;
+  inline-size: 100%;
+  margin-inline: auto;
+}
+.focus__identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.focus__category {
+  min-width: 0;
+  max-width: 32ch;
+  overflow-wrap: anywhere;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+.focus__position {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+.focus__progress {
+  inline-size: min(980px, calc(100% - 32px));
+  block-size: 3px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text) 9%, transparent);
+  overflow: hidden;
+}
+.focus__progress-fill {
+  --focus-pct: 0%;
+  display: block;
+  inline-size: var(--focus-pct, 0%);
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--color-primary);
+  transition: inline-size 220ms var(--ease-standard);
+}
+.focus__scroll {
+  padding-inline: clamp(18px, 5vw, 56px);
+  padding-block: clamp(24px, 7vh, 64px) 18px;
+}
+.focus__content {
+  max-width: min(760px, 100%);
+  gap: clamp(18px, 3.5vh, 30px);
+}
+.focus__arabic {
+  max-width: 30ch;
+  font-size: clamp(2.15rem, 5.7vw, 3.35rem);
+  line-height: 2.08;
+}
+.focus__translation {
+  max-width: 54ch;
+  font-size: var(--fs-md);
+  line-height: 1.8;
+}
+.focus__reference,
+.focus__reference-note,
+.focus__attribution {
+  max-width: 54ch;
+}
+.focus__hint,
+.focus__lifetime {
+  margin: 0;
+}
+.focus__bar {
+  inline-size: min(620px, calc(100% - 32px));
+  margin: 0 auto calc(10px + env(safe-area-inset-bottom, 0));
+  padding: 8px 10px;
+  border-radius: 18px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 96%, transparent);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px) saturate(120%);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+}
+.focus__counter {
+  inline-size: 64px;
+  block-size: 64px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 0;
+  color: var(--color-on-primary, #fff);
+  box-shadow: 0 5px 18px color-mix(in srgb, var(--color-primary) 22%, transparent);
+}
+.focus__counter-num {
+  color: inherit;
+  font-size: 1.18rem;
+}
+.focus__counter-den {
+  color: color-mix(in srgb, var(--color-on-primary, #fff) 78%, transparent);
+}
+.focus__ring-track {
+  stroke: color-mix(in srgb, var(--color-on-primary, #fff) 22%, transparent);
+}
+.focus__ring-fill {
+  stroke: var(--color-on-primary, #fff);
+}
+.focus__top-actions .icon-btn {
+  width: 40px;
+  height: 40px;
+}
+@media (max-width: 560px) {
+  .focus__identity {
+    gap: 7px;
+  }
+  .focus__category {
+    max-width: 22ch;
+    font-size: var(--fs-caption);
+  }
+  .focus__top-actions {
+    gap: 2px;
+  }
+  .focus__scroll {
+    padding-block-start: 20px;
+  }
+  .focus__arabic {
+    font-size: clamp(1.9rem, 8vw, 2.55rem);
+    max-width: 24ch;
+  }
+  .focus__bar {
+    inline-size: calc(100% - 20px);
+    border-radius: 16px;
+  }
+}
+
+/* Adhkar library / browse ---------------------------------------------------- */
+.view--library .category-grid {
+  gap: 14px;
+}
+.view--library .category-tile-wrap .category-tile {
+  min-height: 116px;
+  padding: 15px 16px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+.view--library .category-tile__icon,
+.view--library .category-tile__icon[class*='category-tile__icon--'] {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+.view--library .category-tile__name {
+  font-size: var(--fs-sm);
+}
+.view--library .category-tile::after {
+  font-size: 0.9rem;
+  opacity: 0.55;
+}
+.view--library .mood-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+.view--library .mood-tile {
+  min-height: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.view--library .mood-tile__icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  border-radius: 9px;
+}
+
+/* Qur'an listening / player -------------------------------------------------- */
+#playerbar {
+  pointer-events: none;
+}
+#playerbar .player-bar {
+  pointer-events: auto;
+}
+.player-bar {
+  padding: 10px 12px;
+  gap: 8px;
+  border-radius: 18px;
+  border-color: color-mix(in srgb, var(--color-border) 82%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 95%, transparent);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+}
+.player-bar__head {
+  min-height: 44px;
+  gap: 7px;
+}
+.player-bar__meta {
+  min-width: 150px;
+}
+.player-bar__mode-note {
+  display: none;
+}
+.player-bar__secondary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-inline-start: auto;
+}
+.player-bar__secondary .player-bar__chip {
+  min-height: 34px;
+}
+.player-bar__track {
+  gap: 8px;
+}
+.player-bar__volume {
+  display: none;
+}
+@media (max-width: 700px) {
+  #playerbar {
+    inset-inline: 8px;
+  }
+  .player-bar {
+    border-radius: 16px;
+  }
+  .player-bar__meta {
+    min-width: 0;
+  }
+  .player-bar__secondary {
+    flex-wrap: nowrap;
+    max-inline-size: 42vw;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .player-bar__secondary::-webkit-scrollbar {
+    display: none;
+  }
+  .player-bar__track .player-bar__chip {
+    display: none;
+  }
+}
+
+/* Tajweed course ------------------------------------------------------------- */
+.view--tajweed-course {
+  max-width: 980px;
+}
+.taj-course__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 340px);
+  gap: 18px;
+  align-items: end;
+  margin-block-end: 14px;
+  padding-block-end: 16px;
+  border-block-end: 1px solid var(--color-border);
+}
+.taj-course__head h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+.taj-course__overall {
+  padding: 10px 0 0;
+}
+.taj-course__overall::before {
+  content: '';
+  display: block;
+  block-size: 4px;
+  margin-block-end: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text) 9%, transparent);
+}
+.taj-course__overall span {
+  display: block;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+  text-align: end;
+}
+.taj-course__continue {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 16px;
+  align-items: center;
+  padding: 14px 16px;
+  margin-block: 18px 24px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, var(--color-border));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+}
+.taj-course__continue-label,
+.taj-course__continue-title {
+  grid-column: 1;
+  margin: 0;
+}
+.taj-course__continue-label {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.taj-course__continue-title {
+  font-size: var(--fs-md);
+  font-weight: 700;
+}
+.taj-course__continue .btn {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+.taj-course__stage {
+  margin-block-end: 26px;
+}
+.taj-course__stage-head {
+  gap: 8px;
+  padding-block-end: 8px;
+  border-block-end: 1px solid var(--color-border);
+}
+.taj-course__stage-order {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-primary-text);
+}
+.taj-course__stage-count {
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+}
+.taj-course__sessions {
+  gap: 6px;
+}
+.taj-course__session {
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--color-surface);
+}
+.taj-course__session--next {
+  border-color: color-mix(in srgb, var(--color-primary) 42%, var(--color-border));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+.taj-course__session-head {
+  min-width: 0;
+}
+.taj-course__session-title {
+  font-weight: 700;
+}
+.taj-course__badge {
+  background: transparent;
+  border: 1px solid var(--color-border);
+}
+.taj-course__actions {
+  margin-block-start: 8px;
+}
+.taj-course__search {
+  margin-block-end: 18px;
+}
+.tajweed-practice__option {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--color-surface);
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
+}
+.tajweed-practice__option:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--color-primary) 38%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+@media (max-width: 720px) {
+  .taj-course__head {
+    grid-template-columns: 1fr;
+  }
+  .taj-course__overall span {
+    text-align: start;
+  }
+  .taj-course__continue {
+    grid-template-columns: 1fr;
+  }
+  .taj-course__continue .btn {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: start;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Pass 9: feature interiors should feel like purpose-built tools.
+   The shell is quiet; deep features get a clear primary gesture and flatter
+   secondary chrome. This is intentionally additive so the underlying product
+   controls and state remain untouched.
+   ------------------------------------------------------------------------- */
+
+/* Prayer: the timetable is the working surface. Tools are a secondary index,
+   not a second dashboard made from six equal cards. */
+.view--prayer .panel--prayer-tools .quick-actions--compact {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--color-border);
+}
+.view--prayer .panel--prayer-tools .quick-action {
+  min-height: 54px;
+  justify-content: flex-start;
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-inline-end: 1px solid var(--color-border);
+  border-radius: 0;
+  padding: 10px 12px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-text-secondary);
+}
+.view--prayer .panel--prayer-tools .quick-action:hover {
+  transform: none;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  color: var(--color-primary-text);
+}
+.view--prayer .panel--prayer-tools .quick-action:nth-child(3n) {
+  border-inline-end: 0;
+}
+@media (max-width: 700px) {
+  .view--prayer .panel--prayer-tools .quick-actions--compact {
+    grid-template-columns: 1fr 1fr;
+  }
+  .view--prayer .panel--prayer-tools .quick-action:nth-child(3n) {
+    border-inline-end: 1px solid var(--color-border);
+  }
+  .view--prayer .panel--prayer-tools .quick-action:nth-child(2n) {
+    border-inline-end: 0;
+  }
+}
+
+/* Hadith: a library tile should identify the book in one glance. Metadata is
+   quiet, while the title and source remain the visual anchors. */
+.view--hadith .hadith-tile {
+  min-height: 138px;
+  padding: 15px 16px;
+  gap: 8px;
+  box-shadow: none;
+}
+.view--hadith .hadith-tile__head {
+  margin-block-end: 1px;
+}
+.view--hadith .hadith-tile__blurb {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.45;
+}
+.view--hadith .hadith-tile__author,
+.view--hadith .hadith-tile__count {
+  font-size: var(--fs-caption);
+}
+.view--hadith .hadith-tile__name {
+  line-height: 1.3;
+}
+
+/* Statistics: the first metric is the result of the practice, not another
+   square in a KPI wall. Give it a little more breathing room and turn the
+   remaining metrics into a compact supporting band. */
+.view--statistics .stat-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.view--statistics .stat-grid .stat-card:first-child {
+  grid-column: span 2;
+  min-height: 114px;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
+}
+.view--statistics .stat-grid .stat-card:first-child .stat-card__value {
+  font-size: clamp(1.8rem, 3vw, 2.45rem);
+}
+@media (max-width: 860px) {
+  .view--statistics .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .view--statistics .stat-grid .stat-card:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Tasbih: the counter is a practice surface, not a framed widget inside a
+   framed page. Strip the second shell away so the hand gesture dominates. */
+.view--tasbih .tasbih-stage {
+  padding: clamp(18px, 4vh, 34px) 0 20px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.view--tasbih .tasbih-dial {
+  --tasbih-dial-size: clamp(210px, 28vw, 250px);
+}
+.view--tasbih .tasbih-stage__cycles {
+  background: transparent;
+  border: 0;
+  padding-inline: 0;
+  letter-spacing: 0.04em;
+}
+.view--tasbih .tasbih-controls {
+  padding: 10px 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.view--tasbih .chip-row--scroll {
+  scrollbar-width: none;
+}
+.view--tasbih .chip-row--scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Audio manager: technical download controls remain powerful but visually
+   become an index, not a wall of bordered squares. */
+.view--audio {
+  max-width: 1120px;
+}
+.view--audio .reciter-list {
+  gap: 2px;
+}
+.view--audio .reciter-row {
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-border) 68%, transparent);
+  border-radius: 0;
+  background: transparent;
+  padding-inline: 8px;
+}
+.view--audio .reciter-row:last-child {
+  border-bottom: 0;
+}
+.view--audio .reciter-row--active {
+  box-shadow: none;
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+}
+.view--audio .panel--dl {
+  box-shadow: none;
+  border-color: var(--color-border);
+}
+.view--audio .dl-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 6px;
+}
+.view--audio .dl-cell {
+  min-height: 54px;
+  padding: 4px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+}
+.view--audio .dl-cell--done {
+  background: color-mix(in srgb, var(--color-success-bg) 76%, var(--color-surface));
+}
+@media (max-width: 900px) {
+  .view--audio .dl-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .view--audio .dl-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* File player: volume is a real control, but no longer creates a third
+   horizontal slab below the transport. */
+#playerbar {
+  pointer-events: none;
+}
+#playerbar .player-bar {
+  pointer-events: auto;
+}
+.player-bar__volume {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-inline-size: 104px;
+  color: var(--color-text-muted);
+}
+.player-bar__volume .player-bar__seek {
+  inline-size: 86px;
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .player-bar__volume {
+    min-inline-size: 88px;
+  }
+  .player-bar__volume .player-bar__seek {
+    inline-size: 70px;
+  }
+}
+
+/* Tajweed: the curriculum is a sequence. Use a quiet rail rather than a
+   stack of boxed cards so “next” is visually obvious without feeling loud. */
+.view--tajweed-course .taj-course__sessions {
+  border-inline-start: 1px solid color-mix(in srgb, var(--color-border) 78%, transparent);
+  padding-inline-start: 10px;
+}
+.view--tajweed-course .taj-course__session {
+  border-inline: 0;
+  border-block: 1px solid color-mix(in srgb, var(--color-border) 58%, transparent);
+  border-radius: 0;
+  background: transparent;
+  padding: 11px 8px;
+}
+.view--tajweed-course .taj-course__session:first-child {
+  border-block-start: 0;
+}
+.view--tajweed-course .taj-course__session:last-child {
+  border-block-end: 0;
+}
+.view--tajweed-course .taj-course__session--next {
+  margin-inline-start: -11px;
+  padding-inline-start: 17px;
+  border-inline-start: 2px solid var(--color-primary);
+  box-shadow: none;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  border-radius: 0 10px 10px 0;
+}
+[dir='rtl'] .view--tajweed-course .taj-course__session--next {
+  border-radius: 10px 0 0 10px;
+}
+
+/* -------------------------------------------------------------------------
+   Pass 10: study surfaces — word study, tafsir, roots, journal and quiz.
+   These are learning tools, not dashboards. Prefer a reading hierarchy over
+   nested cards and make the selected source/answer obvious without noise.
+   ------------------------------------------------------------------------- */
+
+/* Tafsir: source switching is a rail; the active edition is signalled by an
+   underline and colour, not another heavy filled pill. */
+.tafsir-tabs {
+  gap: 2px;
+  border-block-end: 1px solid var(--color-border);
+  padding-block-end: 0;
+  scrollbar-width: none;
+}
+.tafsir-tabs::-webkit-scrollbar {
+  display: none;
+}
+.tafsir-tab {
+  position: relative;
+  min-height: 42px;
+  padding-inline: 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  box-shadow: none;
+}
+.tafsir-tab:hover {
+  border: 0;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  color: var(--color-text);
+}
+.tafsir-tab--active {
+  border: 0;
+  background: transparent;
+  color: var(--color-primary-text);
+}
+.tafsir-tab--active::before {
+  content: '';
+  position: absolute;
+  inset-inline: 8px;
+  inset-block-end: -1px;
+  block-size: 2px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+.tafsir-tab__category {
+  background: transparent;
+  border: 0;
+  color: var(--color-text-muted);
+}
+.tafsir-panel {
+  gap: 12px;
+  max-width: 78ch;
+  margin-inline: auto;
+}
+.tafsir-panel__author {
+  padding-block-start: 2px;
+  font-weight: 700;
+}
+.tafsir-panel__body {
+  font-size: clamp(1rem, 1.4vw, 1.08rem);
+  line-height: 2;
+}
+.tafsir-panel__body[lang='en'] {
+  line-height: 1.8;
+}
+.tafsir-compare {
+  padding-block-start: 12px;
+}
+
+/* Word study: the word is the hero; dictionaries and provenance read like a
+   compact editorial column underneath it. */
+.word-study__hero {
+  padding: 18px 0 14px;
+  border: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.word-study__hero .word-study__arabic {
+  font-size: clamp(2rem, 5vw, 3.1rem);
+  line-height: 1.8;
+}
+.word-study__context {
+  max-width: 70ch;
+  margin-inline: auto;
+  padding-block-start: 10px;
+}
+.word-study__word-actions {
+  justify-content: center;
+  border-block: 0;
+  padding-block: 0;
+}
+.word-study__block {
+  padding-block: 14px;
+}
+.word-study__root {
+  border-radius: 12px;
+  border-inline-start: 3px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+}
+.word-study__sources {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Roots: an index of linguistic entries should scan like an index, not a
+   collection of floating product cards. */
+.roots-grid,
+.root-grid,
+.roots-list {
+  gap: 8px;
+}
+.root-tile {
+  min-height: 76px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: none;
+  background: var(--color-surface);
+  transition:
+    border-color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
+}
+.root-tile:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+}
+.root-tile__name {
+  font-size: var(--fs-lg);
+}
+
+/* Journal: one writing surface followed by a quiet chronological archive. */
+.view--journal .panel--prompt {
+  border-color: color-mix(in srgb, var(--color-primary) 16%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+}
+.view--journal .journal-entry {
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--journal .journal-entry + .journal-entry {
+  border-block-start: 0;
+}
+.view--journal .journal-entry__prompt {
+  color: var(--color-text-secondary);
+}
+
+/* Quiz: answers should feel tappable, not like four equal panels. */
+.quiz-choice {
+  border-radius: 12px;
+  background: var(--color-surface);
+  box-shadow: none;
+  justify-content: flex-start;
+  text-align: start;
+  padding-inline: 14px;
+}
+.quiz-choice:hover:not(:disabled) {
+  transform: none;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+.quiz-feedback,
+.quiz-result {
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+/* Hostile review fix: Pass 10 found that Prayer's new light hero inherited
+   the legacy dark-hero text tokens. Reset every child explicitly so the focal
+   surface stays readable in both themes. */
+.view--prayer .next-prayer-card {
+  color: var(--color-text);
+}
+.view--prayer .next-prayer-card__label {
+  color: var(--color-text-muted);
+}
+.view--prayer .next-prayer-card__name {
+  color: var(--color-text);
+}
+.view--prayer .next-prayer-card__countdown {
+  color: var(--color-primary-text);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.view--prayer .next-prayer-card__method,
+.view--prayer .next-prayer-card__place {
+  color: var(--color-text-muted);
+}
+
+/* -------------------------------------------------------------------------
+   Pass 11 — utility + secondary feature interiors.
+   These are complete features, not miniature dashboards. Give each one a
+   single focal task, then let supporting information read as rails/lists.
+   ------------------------------------------------------------------------- */
+
+/* Azkar utility surfaces: favorites, collections, category and mood should
+   feel like one library family rather than four bespoke page templates. */
+.view--favorites,
+.view--collections,
+.view--collection,
+.view--category,
+.view--mood,
+.view--mood-picker,
+.view--search {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
+.view--favorites .segmented,
+.view--favorites .search-bar,
+.view--collection .search-bar,
+.view--search .search-bar {
+  border-radius: 14px;
+}
+
+.view--favorites .segmented {
+  border-block-end: 1px solid var(--color-border);
+  padding-block-end: 4px;
+  background: transparent;
+}
+.view--favorites .segmented__btn {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-text-muted);
+  min-height: 42px;
+}
+.view--favorites .segmented__btn--active {
+  color: var(--color-primary-text);
+  box-shadow: inset 0 -2px 0 var(--color-primary);
+}
+
+.view--favorites .favorite-row,
+.view--collection .collection-row {
+  border-block-start: 1px solid var(--color-border);
+  padding-block: 6px 12px;
+}
+.view--favorites .favorite-row:first-child,
+.view--collection .collection-row:first-child {
+  border-block-start: 0;
+}
+.view--favorites .favorite-row__move,
+.view--collection .collection-row__order {
+  margin-block: 0;
+  padding-block-end: 5px;
+  justify-content: flex-start;
+}
+.view--favorites .favorite-row__move .btn,
+.view--collection .collection-row__order .icon-btn {
+  box-shadow: none;
+}
+
+.view--collections .collection-grid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+.view--collections .collection-tile {
+  min-height: 94px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  column-gap: 11px;
+  padding: 13px 14px;
+  border-radius: 14px;
+  box-shadow: none;
+}
+.view--collections .collection-tile__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+.view--collections .collection-tile__count {
+  grid-column: 2;
+}
+.view--collections > .panel {
+  margin-block-start: 14px;
+  box-shadow: none;
+  border-inline: 0;
+  border-radius: 0;
+  padding-inline: 0;
+}
+
+.view--search .search-suggest,
+.view--search .search-history {
+  margin-block: 14px 4px;
+  padding-block: 4px 12px;
+  border-block-end: 1px solid var(--color-border);
+}
+.view--search .search-suggest .panel__header,
+.view--search .search-history .panel__header {
+  padding-inline: 0;
+}
+.view--search .quran-search-panel,
+.view--search .roots-search-panel {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  padding-inline: 0;
+}
+.view--search .quran-hit {
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  padding-inline: 0;
+}
+.view--search .quran-hit:first-child {
+  border-block-start: 0;
+}
+.view--search .search-results-count,
+.view--search .search-hadith-link {
+  display: inline-block;
+  margin-inline-end: 10px;
+}
+
+/* Khatma: progress first, planning second. Avoid making the daily reading
+   habit look like an admin form. */
+.mushaf-track .mushaf-khatma {
+  gap: 14px;
+}
+.mushaf-track .mushaf-khatma__bits {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.mushaf-track .mushaf-khatma__bit {
+  border: 0;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+  padding: 8px 10px;
+}
+.mushaf-track .mushaf-khatma__actions {
+  padding-block-start: 4px;
+}
+.khatma-plan {
+  gap: 12px;
+}
+.khatma-plan__presets {
+  align-items: center;
+  padding-block-end: 8px;
+  border-block-end: 1px solid var(--color-border);
+}
+
+/* Qibla: the compass is the feature. Facts become a read-only information
+   rail below it, not five little dashboard cards. */
+.view--qibla .qibla-compass {
+  max-width: 640px;
+  margin-inline: auto;
+  padding: 24px 20px 18px;
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.view--qibla .qibla-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.view--qibla .qibla-fact {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 0;
+  border-inline-end: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.view--qibla .qibla-fact:last-child {
+  border-inline-end: 0;
+}
+.view--qibla .qibla-fact__label {
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+}
+.view--qibla .qibla-calibrate {
+  box-shadow: none;
+  border-inline: 0;
+  border-radius: 0;
+  padding-inline: 0;
+}
+@media (max-width: 700px) {
+  .view--qibla .qibla-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .view--qibla .qibla-fact:nth-child(2n) {
+    border-inline-end: 0;
+  }
+  .view--qibla .qibla-fact:nth-child(n + 3) {
+    border-block-start: 1px solid var(--color-border);
+  }
+}
+
+/* Calendar: today's date is a small hero; the month grid is the object and
+   events/fasting are supporting timelines. */
+.view--calendar .hijri-today {
+  padding-block: 4px 12px;
+  border-block-end: 1px solid var(--color-border);
+}
+.view--calendar > .panel {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--calendar .event-list {
+  border-block-start: 1px solid var(--color-border);
+}
+.view--calendar .event-row {
+  min-height: 46px;
+  padding-block: 7px;
+  border-block-end: 1px solid var(--color-border);
+}
+.view--calendar .event-row:last-child {
+  border-block-end: 0;
+}
+.view--calendar .cal-cell {
+  border-radius: 9px;
+}
+
+/* Garden: preserve the bespoke illustration, but make the timeline the
+   quiet progression beneath it instead of another row of cards. */
+.view--garden .garden-hero {
+  padding: 20px;
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  box-shadow: none;
+}
+.view--garden .garden-timeline-panel,
+.view--garden .garden-harvest {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--garden .garden-timeline {
+  gap: 0;
+}
+.view--garden .garden-timeline__node {
+  position: relative;
+  padding-block: 5px;
+}
+.view--garden .garden-timeline__node + .garden-timeline__node::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -50%;
+  top: 22px;
+  width: 100%;
+  border-top: 1px solid var(--color-border);
+}
+.view--garden .garden-timeline__icon {
+  position: relative;
+  z-index: var(--z-raised);
+}
+
+/* Offline: operational status should look like a system list, not a stack of
+   marketing cards. */
+.view--offline > .panel {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--offline .offline-row {
+  padding-block: 11px;
+}
+.view--offline .offline-row:hover {
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+}
+
+/* Zakat: calculator inputs are one working surface; the result is the only
+   visually promoted block. */
+.view--zakat > .panel {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--zakat .zakat-result {
+  border-inline-start: 3px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  padding-inline: 16px;
+}
+.view--zakat .zakat-result--due {
+  border-inline-start-color: var(--color-success);
+}
+.view--zakat .zakat-due {
+  padding-block: 4px 2px;
+}
+.view--zakat .zakat-history-row {
+  min-height: 48px;
+  padding-block: 8px;
+  border-block-end: 1px solid var(--color-border);
+}
+
+/* Mutashabihat: one question stage and a flat answer ladder. */
+.view--mutashabihat .panel--drill {
+  max-width: 900px;
+  margin-inline: auto;
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--mutashabihat .drill__options {
+  display: grid;
+  gap: 8px;
+}
+.view--mutashabihat .drill__option {
+  justify-content: flex-start;
+  min-height: 52px;
+  border-radius: 12px;
+  box-shadow: none;
+  background: var(--color-surface);
+}
+.view--mutashabihat .drill__pair {
+  border-block: 1px solid var(--color-border);
+  padding-block: 12px;
+}
+.view--mutashabihat .drill__pair-item {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Editor / backup utilities: settings-work surfaces should be legible and
+   dense without looking like an admin template. */
+.view--editor > .panel,
+.view--editor .editor-category {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.view--editor .editor-category + .editor-category {
+  border-block-start: 1px solid var(--color-border);
+  padding-block-start: 12px;
+}
+.view--editor .editor-item-row {
+  border-block: 1px solid var(--color-border);
+}
+.view--editor .editor-item-row:first-child {
+  border-block-start: 0;
+}
+
+/* Ramadan remains intentionally special, but its supporting sections should
+   not become a wall of equally loud boxes around the hero. */
+.view--ramadan > .panel {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--ramadan .panel--fast-tracker,
+.view--ramadan .panel--ramadan-planner,
+.view--ramadan .panel--ramadan-khatm {
+  border-block: 1px solid var(--color-border);
+}
+.view--ramadan .fast-dot {
+  border-radius: 10px;
+}
+
+/* Kids is allowed a different, warmer visual language; it should still be
+   one coherent activity surface rather than generic adult cards in disguise. */
+.view--kids .panel--kids-heard,
+.view--kids .panel--kids-quiz {
+  border: 0;
+  border-radius: 20px;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--mushaf-gold) 7%, var(--color-surface));
+}
+.view--kids .kids-grid {
+  gap: 10px;
+}
+.view--kids .kids-tile {
+  min-height: 132px;
+  border-width: 1px;
+  border-radius: 18px;
+  box-shadow: none;
+}
+
+/* Ambient mode is a sanctuary, not a dashboard. Remove generic view chrome
+   wherever the feature itself provides the focus. */
+.view--ambient {
+  max-width: 1120px;
+}
+.view--ambient .ambient__transport {
+  box-shadow: none;
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+}
+
+/* -------------------------------------------------------------------------
+   Pass 12 — practice, learning trays, checklists, onboarding and Qur'an
+   secondary navigation. Specialized reading objects stay specialized; only
+   the surrounding interaction chrome is de-boxed.
+   ------------------------------------------------------------------------- */
+
+/* Tajweed practice: one drill stage, flat rule ladder, quiet statistics. */
+.tajweed-practice .practice-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-block: 1px solid var(--color-border);
+  gap: 0;
+  background: transparent;
+}
+.tajweed-practice .practice-stats__item {
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 0;
+  background: transparent;
+  border-inline-end: 1px solid var(--color-border);
+}
+.tajweed-practice .practice-stats__item:last-child {
+  border-inline-end: 0;
+}
+.tajweed-practice .practice-rule-list {
+  gap: 0;
+  border-block-start: 1px solid var(--color-border);
+}
+.tajweed-practice .practice-rule-row {
+  gap: 6px;
+  padding-block: 4px;
+  border-block-end: 1px solid var(--color-border);
+}
+.tajweed-practice .practice-rule {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding-inline: 4px;
+  box-shadow: none;
+}
+.tajweed-practice .practice-rule:hover {
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+}
+.tajweed-practice .practice-lesson__example {
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.tajweed-practice .practice-ayah {
+  padding-block: 12px 18px;
+  font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+}
+.tajweed-practice .practice-result,
+.tajweed-practice .practice-summary {
+  border-block-start: 1px solid var(--color-border);
+  padding-block-start: 16px;
+}
+
+/* Checklist: the habit is the list. Summary/history are quiet evidence. */
+.view--checklist .panel,
+.view--checklist .panel--checklist-summary {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.view--checklist .checklist-calm {
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+}
+.view--checklist .checklist-row {
+  padding-inline: 2px;
+  border-radius: 0;
+}
+.view--checklist .checklist-row:hover {
+  background: color-mix(in srgb, var(--color-primary) 3%, var(--color-surface));
+}
+.view--checklist .checklist-history {
+  padding-block: 8px 2px;
+}
+
+/* Inline Qur'an study tray: the ayah remains primary; the tray is an
+   editorial expansion, not a nested card inside another card. */
+.mushaf-tray__study .study-tray__word-detail {
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  padding-inline: 0;
+  background: transparent;
+}
+.mushaf-tray__study .study-tray__translation--compare {
+  border-inline-start-width: 2px;
+}
+.mushaf-tray__study .study-tray__words {
+  padding-block: 2px;
+}
+
+/* Onboarding: a guide, not another dashboard widget. */
+.view--home > .onboarding-panel {
+  border-inline: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  padding-inline: 0;
+}
+.panel--onboarding--line {
+  border-block: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+}
+.onboarding-line__icon {
+  box-shadow: none;
+}
+
+/* Mushaf secondary navigation: the manuscript stays untouched; jump/bookmark
+   lists read like navigation indices. */
+.mushaf-jump__surah,
+.mushaf-jump__juz,
+.mushaf-jump__hizb-row,
+.mushaf-bookmark-row {
+  box-shadow: none;
+}
+.mushaf-jump__surah,
+.mushaf-jump__juz {
+  border-radius: 10px;
+}
+.mushaf-bookmark-row {
+  border-radius: 0;
+  border-inline: 0;
+  border-block: 1px solid var(--color-border);
+  background: transparent;
+}
+.mushaf-bookmark-row:first-child {
+  border-block-start: 0;
+}
+
+/* Recitation console: transport remains a control surface, but secondary
+   metadata does not need another panel around it. */
+.mushaf-fs-console .rec-console-note,
+.reader-immersive-console .rec-console-note {
+  color: var(--color-text-muted);
+}
+.mushaf-fs-console .rec-console-more,
+.reader-immersive-console .rec-console-more {
+  box-shadow: none;
+}
+
+/* -------------------------------------------------------------------------
+   Pass 12 — section chrome + settings index.
+
+   Browser evidence on v5.17.77/78 showed that the product's section switches
+   were still the most obvious generic "UI kit" element: five large pills on
+   Qur'an/audio/Tajweed and four on Azkar/Prayer. They are navigation, not a
+   segmented value picker. Keep the existing class for compatibility and
+   tests, but give these rails the quieter editorial treatment used by the
+   specialist reading surfaces.
+   ------------------------------------------------------------------------- */
+.section-mode-switch {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  margin-block: 6px 10px;
+  padding: 0 2px;
+  border: 0;
+  border-block-end: 1px solid var(--color-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.section-mode-switch::-webkit-scrollbar {
+  display: none;
+}
+
+.section-mode-switch .segmented__btn {
+  position: relative;
+  flex: 1 0 auto;
+  min-inline-size: 96px;
+  min-block-size: 44px;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  box-shadow: none;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.section-mode-switch .segmented__btn:hover {
+  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
+  color: var(--color-text);
+  transform: none;
+  box-shadow: none;
+}
+
+.section-mode-switch .segmented__btn--active,
+.section-mode-switch .segmented__btn[aria-current='page'] {
+  color: var(--color-primary-text);
+  background: transparent;
+  box-shadow: none;
+}
+
+.section-mode-switch .segmented__btn--active::after,
+.section-mode-switch .segmented__btn[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  inset-inline: 10px;
+  inset-block-end: -1px;
+  block-size: 2px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+@media (max-width: 560px) {
+  .section-mode-switch {
+    gap: 0;
+    margin-block: 4px 8px;
+  }
+
+  .section-mode-switch .segmented__btn {
+    min-inline-size: max-content;
+    padding-inline: 10px;
+  }
+}
+
+/* Settings should feel like a control centre, not a sub-navigation page
+   wearing the same cards as content views. The grouped You links become a
+   compact index here; the actual controls below own the visual weight. */
+.view--settings .settings-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 420px);
+  gap: 20px 28px;
+  align-items: end;
+  padding-block: 2px 10px;
+  border-block-end: 1px solid var(--color-border);
+}
+
+.view--settings .settings-hero .view__title {
+  margin: 0;
+}
+
+.view--settings .settings-hero .view__subtitle {
+  max-width: 58ch;
+  margin-block: 4px 0;
+}
+
+.view--settings .settings-hero__search {
+  margin: 0;
+}
+
+.view--settings > .you-subnav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px 28px;
+  padding-block: 12px 14px;
+  border-block-end: 1px solid var(--color-border);
+}
+
+.view--settings > .you-subnav .you-subnav__group-title {
+  margin: 0 0 3px;
+  padding: 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+[dir='rtl'] .view--settings > .you-subnav .you-subnav__group-title {
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.view--settings > .you-subnav .you-subnav__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 14px;
+}
+
+.view--settings > .you-subnav .you-subnav__item {
+  position: relative;
+  min-block-size: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  box-shadow: none;
+}
+
+.view--settings > .you-subnav .you-subnav__item:hover,
+.view--settings > .you-subnav .you-subnav__item--active {
+  transform: none;
+  background: transparent;
+  color: var(--color-primary-text);
+  border: 0;
+}
+
+.view--settings > .you-subnav .you-subnav__item--active::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 1px;
+  width: auto;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+@media (max-width: 780px) {
+  .view--settings .settings-hero {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .view--settings > .you-subnav {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* Audio manager: keep the library/list relationship editorial. On wide
+   screens the voice index gets a readable measure instead of floating as a
+   narrow island inside a huge empty panel; the download grid stays the
+   dense technical area where density is justified. */
+.view--audio > .panel:not(.panel--dl):not(.panel--queue) {
+  max-width: none;
+}
+
+.view--audio > .panel:not(.panel--dl):not(.panel--queue) .reciter-list {
+  max-inline-size: 760px;
+}
+
+@media (min-width: 1100px) {
+  .view--audio .reciter-list {
+    max-inline-size: 820px;
+  }
+}

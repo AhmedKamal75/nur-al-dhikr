@@ -75,19 +75,27 @@ export function renderPlayerBar(state) {
         ${moshaf?.rewaya && !/hafs/i.test(String(moshaf.rewaya)) ? `<span class="player-bar__mode-note" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(t('audio.riwayaNote', lang, { rewaya: String(moshaf.rewaya) }))}</span>` : ''}
       </div>
       <span class="player-bar__buffer" data-player-buffer hidden>${t('audio.buffering', lang)}</span>
-      <button type="button" class="player-bar__chip ${repeat !== 'off' ? 'player-bar__chip--on' : ''}" data-action="player-repeat" aria-pressed="${repeat !== 'off'}" aria-label="${repeatLabel}" title="${repeatLabel}">
-        ${icon('repeat', { size: 14 })}${repeat === 'all' ? ` ${escapeHTML(t('audio.repeatAllShort', lang))}` : ''}
-      </button>
-      <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)} — ${rate}&times;">${rate}&times;</button>
-      <button type="button" class="player-bar__chip ${muted ? 'player-bar__chip--on' : ''}" data-action="audio-mute-toggle" aria-pressed="${muted}" aria-keyshortcuts="m" aria-label="${t(muted ? 'audio.unmute' : 'audio.mute', lang)}" title="${t(muted ? 'audio.unmute' : 'audio.mute', lang)}">
-        ${icon(muted ? 'volume-x' : 'volume', { size: 14 })}
-      </button>
-      <button type="button" class="player-bar__chip ${p.sleepEnabled ? 'player-bar__chip--on' : ''}" data-action="player-sleep-cycle" aria-pressed="${p.sleepEnabled === true}" aria-label="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}" title="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}">
-        ${icon('bed', { size: 14 })}${p.sleepEnabled && p.sleepLabel ? ` ${escapeHTML(p.sleepLabel)}` : ''}
-      </button>
-      <button type="button" class="player-bar__chip" data-action="recite-mode-ayah" aria-label="${t('audio.modeAyah', lang)}" title="${t('audio.modeAyah', lang)}">
-        ${icon('list', { size: 14 })}
-      </button>
+      <div class="player-bar__secondary" role="group" aria-label="${escapeHTML(t('audio.moreSettings', lang))}">
+        <button type="button" class="player-bar__chip ${repeat !== 'off' ? 'player-bar__chip--on' : ''}" data-action="player-repeat" aria-pressed="${repeat !== 'off'}" aria-label="${repeatLabel}" title="${repeatLabel}">
+          ${icon('repeat', { size: 14 })}${repeat === 'all' ? ` ${escapeHTML(t('audio.repeatAllShort', lang))}` : ''}
+        </button>
+        <button type="button" class="player-bar__chip" data-action="player-rate" aria-label="${t('audio.speed', lang)} — ${rate}&times;">${rate}&times;</button>
+        <button type="button" class="player-bar__chip ${muted ? 'player-bar__chip--on' : ''}" data-action="audio-mute-toggle" aria-pressed="${muted}" aria-keyshortcuts="m" aria-label="${t(muted ? 'audio.unmute' : 'audio.mute', lang)}" title="${t(muted ? 'audio.unmute' : 'audio.mute', lang)}">
+          ${icon(muted ? 'volume-x' : 'volume', { size: 14 })}
+        </button>
+        <button type="button" class="player-bar__chip ${p.sleepEnabled ? 'player-bar__chip--on' : ''}" data-action="player-sleep-cycle" aria-pressed="${p.sleepEnabled === true}" aria-label="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}" title="${t('audio.sleepTimer', lang)}${p.sleepLabel ? ` — ${p.sleepLabel}` : ''}">
+          ${icon('bed', { size: 14 })}${p.sleepEnabled && p.sleepLabel ? ` ${escapeHTML(p.sleepLabel)}` : ''}
+        </button>
+        <button type="button" class="player-bar__chip" data-action="recite-mode-ayah" aria-label="${t('audio.modeAyah', lang)}" title="${t('audio.modeAyah', lang)}">
+          ${icon('list', { size: 14 })}
+        </button>
+        <label class="player-bar__volume" title="${escapeHTML(volTitle)}">
+          ${icon('volume', { size: 14 })}
+          <span class="sr-only">${escapeHTML(volTitle)}</span>
+          <input class="player-bar__seek" type="range" min="0" max="100" step="5" value="${volPct}" dir="ltr"
+            data-player-volume aria-label="${escapeHTML(volTitle)}"${volDisabled ? ' disabled aria-disabled="true"' : ''} />
+        </label>
+      </div>
       <button type="button" class="icon-btn icon-btn--sm" data-action="player-min-toggle" aria-label="${t('audio.playerMinimize', lang)}" title="${t('audio.minimizeHint', lang)}">${icon('chevronDown', { size: 16 })}</button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="player-close" data-player-dismiss="1" aria-label="${t('common.close', lang)}">${icon('close', { size: 16 })}</button>
     </div>
@@ -98,11 +106,6 @@ export function renderPlayerBar(state) {
         data-player-seek aria-label="${t('audio.seek', lang)}" />
       <button type="button" class="player-bar__chip" data-action="player-seek-fwd" aria-label="${t('audio.seekFwd', lang)}" title="${t('audio.seekFwd', lang)}">${lang === 'ar' ? '+10 ث' : '+10s'}</button>
       <span class="player-bar__time" data-player-dur>0:00</span>
-    </div>
-    <div class="player-bar__volume">
-      ${icon('volume', { size: 14 })}
-      <input class="player-bar__seek" type="range" min="0" max="100" step="5" value="${volPct}" dir="ltr"
-        data-player-volume aria-label="${escapeHTML(volTitle)}" title="${escapeHTML(volTitle)}"${volDisabled ? ' disabled aria-disabled="true"' : ''} />
     </div>
   </div>`;
 }

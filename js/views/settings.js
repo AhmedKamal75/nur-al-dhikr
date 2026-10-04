@@ -510,13 +510,17 @@ export function renderSettings(state, flags = {}) {
 
   return `
   <section class="view view--settings">
-    <div class="search-bar">
-      <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
-      <input type="search" class="search-bar__input" id="settings-search-input"
-        placeholder="${t('settings.searchPh', lang)}" aria-label="${t('settings.searchPh', lang)}" value="${escapeHTML(state.activeParams?.q || '')}"
-        data-bind="settings-search" autocomplete="off" />
-    </div>
-    <h1 class="view__title">${t('settings.title', lang)}</h1>
+    <header class="settings-hero">
+      <div>
+        <h1 class="view__title">${t('settings.title', lang)}</h1>
+      </div>
+      <div class="settings-hero__search search-bar">
+        <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
+        <input type="search" class="search-bar__input" id="settings-search-input"
+          placeholder="${t('settings.searchPh', lang)}" aria-label="${t('settings.searchPh', lang)}" value="${escapeHTML(state.activeParams?.q || '')}"
+          data-bind="settings-search" autocomplete="off" />
+      </div>
+    </header>
     ${youModeSwitchHTML(state.activeView, lang)}
     ${groupOpen(G_SETUP)}
     ${deferredSetupHTML(state, lang)}

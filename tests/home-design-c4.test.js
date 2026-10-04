@@ -190,23 +190,13 @@ describe('C4 chrome: one slim today-strip near the top', () => {
     assert.ok(!/streak|leaderboard|متصدر/i.test(html), 'no shame copy');
   });
 
-  test('the strip rides above the tasbih entry, the slim hero and wizard below it', () => {
+  test('Home keeps the daily strip but does not duplicate the Practise door', () => {
     const html = renderHome(homeState());
-    const order = [
-      'home-today',
-      'panel--worship',
-      'panel--onboarding--line',
-      'home-hero--line',
-    ].map((cls) => html.indexOf(cls));
-    assert.ok(
-      order.every((i) => i >= 0),
-      'all four regions render'
-    );
-    assert.ok(
-      order[0] < order[1] && order[1] < order[2] && order[2] < order[3],
-      'today → tasbih entry → setup line → brand line'
-    );
+    assert.ok(html.includes('home-today'), 'today strip renders');
+    assert.ok(html.includes('panel--onboarding--line'), 'setup line renders');
+    assert.ok(html.includes('home-hero--line'), 'brand line renders');
     assert.ok(!html.includes('home-browser'), 'the grid lives in the Azkar section now');
+    assert.ok(!html.includes('tasbih-entry'), 'Tasbih is not duplicated as a Home card');
   });
 });
 
@@ -219,7 +209,7 @@ describe('C4 chrome: the hero is one line, the wizard is one line', () => {
     assert.ok(html.includes(en['app.name']), 'brand name kept');
     assert.ok(html.includes(en['app.tagline']), 'tagline kept, inline');
     assert.ok(html.includes('home-hero__hijri'), 'Hijri chip kept');
-    assert.ok(html.includes('shahada-banner'), 'the shahada stays first');
+    assert.ok(html.includes('shahada-banner'), 'the quiet Shahada line remains present');
   });
 
   test('wizard renders one summary line; the full step survives inside <details>', () => {
@@ -289,11 +279,19 @@ describe('C4 contracts that must not move', () => {
     }
   });
 
-  test('every tile keeps a live count and a Read-now action after ranking', () => {
+  test('every tile keeps a live count and is itself the action after ranking', () => {
     const html = adhkarBrowserHTML(homeState());
     const tiles = [...html.matchAll(/category-tile-wrap/g)].length;
     assert.ok(tiles >= 70, `the full depth survives ranking (saw ${tiles} tiles)`);
-    const reads = html.split('browser-tile__read').length - 1;
-    assert.equal(reads, tiles, 'one Read-now per tile, still');
+    assert.equal(
+      html.split('browser-tile__read').length - 1,
+      0,
+      'detached Read-now actions stay removed'
+    );
+    assert.equal(
+      (html.match(/class="category-tile"/g) || []).length,
+      tiles,
+      'every tile is a direct link'
+    );
   });
 });

@@ -2,6 +2,316 @@
 
 Moved out of README.md so the README stays the product face. Newest first.
 
+## v5.17.81 — the archive becomes the mainline, and the gate closes
+
+Two jobs: put fourteen releases back under version control, and make
+`npm run check` green without breaking a stricter gate on the way.
+
+### The repository did not contain the product
+
+The working tree stood at v5.17.66 (`0b038bc`). Everything from v5.17.67 to
+v5.17.80 — the deslopification layers, two independent Chromium evidence cycles,
+and every defect fix they produced — existed **only inside
+`NUR-AL-DHIKR-v5.17.80-FULL.zip`**. No branch, tag, stash or ref held it.
+
+That archive has now been adopted as the mainline tree. `.git` and
+`.github/workflows/check.yml` (which the archive omitted) were preserved from the
+repository rather than overwritten.
+
+**A known, accepted loss:** the intermediate per-release commits for
+v5.17.67–v5.17.80 cannot be reconstructed, because the work arrived as an
+archive rather than as commits. Inventing fourteen tidy commits to imitate that
+history would be fiction. The release notes for those versions remain the record
+of what changed; this entry is the record of the gap.
+
+### Two agents, one version number
+
+v5.17.78 was produced **twice**, independently, from the same v5.17.77 handoff —
+once on a small sandbox without the bulk corpus, once here with the full
+2350-file corpus. Both found the same core defects (the 4.22:1 muted-contrast
+failure, the `manifest.json` marker stuck at 5.17.72, the 24-file formatter
+drift, the segmented horizontal overflow, the clipped chip hit-area apron). That
+independent convergence is the strongest evidence in this project that those
+defects were real. Their gate figures differ and are **not** interchangeable; see
+`docs/LOCAL-AGENT/` for per-run attribution.
+
+### The gate fix, and the trap in it
+
+Three files failed `format:check`. The obvious repair — `npm run format` — breaks
+a different gate, because `manifest.json` is a cache-first byte: reformatting it
+without a version bump trips `tests/contracts.test.js` with _cache-first bytes
+changed at v5.17.80 with no version bump_. So the markers were bumped to
+v5.17.81 **first**, then the tree formatted, then the shell snapshot re-stamped
+and the data manifest regenerated.
+
+### Verification
+
+- `npm run check` → exit 0.
+- `npm run e2e -- --project=chromium` → exit 0.
+- Gate figures are in `evidence/LOCAL-AGENT-RESULTS/RUN-SUMMARY.md`.
+
+## v5.17.80 — resilient data-absence landmarks after the real-browser audit
+
+The v5.17.78 full-browser run exposed an accessibility edge case that source-level
+reviews could not see: when a Qur'an surah or Mushaf page entered a data-absence
+error state, the normal reading heading disappeared with the failed payload.
+The page remained usable, but its heading landmark vanished.
+
+- Quran surah-load failure states now retain a screen-reader-only page heading.
+- Mushaf metadata/page-load failure states retain the Mushaf heading landmark.
+- Added a regression contract covering both data-absence paths.
+
+No religious data was changed.
+
+## v5.17.79 — section navigation rails and settings index refinement
+
+The browser-evidence review of v5.17.78 showed that the section switches were the
+most obvious remaining generic segmented-control element, while Settings still
+spent too much of its first screen on secondary navigation. This release keeps
+the underlying routes and touch contracts intact but changes the presentation:
+
+- Azkar, Qur’an, Prayer and Practise mode switches are semantic navigation rails
+  with a restrained active underline rather than filled pills.
+- Settings now leads with its title and search, followed by a compact grouped
+  section index; the control groups below retain their existing behavior.
+- Audio-manager voice lists keep a readable editorial measure on wide screens.
+- Added regression tests for the section rail and Settings hierarchy.
+
+No religious data was changed.
+
+## v5.17.78 — release-contract repairs, and the accessibility failures the v5.17.77 handoff never saw
+
+This release exists because the v5.17.77 handoff archive **could not pass this
+repository's own gates** on a full-corpus build. Adopting it surfaced three
+contract defects and then — once Chromium could actually be launched — a set of
+accessibility failures that no static gate had caught.
+
+### Release-contract defects in the archive
+
+- **`manifest.json` shipped split version markers.** The handoff carried
+  `"version": "5.17.72"` beside `"version_name": "5.17.77"`. AGENTS.md §2 requires
+  both bumped in lockstep; the version-marker contract silently allowed it
+  because it asserted `!manifest.version || manifest.version === fromPkg`, so a
+  _wrong_ marker read the same as a _missing_ one. Both markers now assert exact
+  equality, and `package-lock.json`'s root `version` is pinned as a sixth marker
+  (the v5.17.66 tree carried lock `5.17.2` against package `5.17.66`).
+- **A raw `z-index: 1` shipped in `assets/css/deslopify.css`** (Garden timeline
+  node icon), in the one stylesheet the design-system contract never scanned
+  because it arrived after the contract was written. Now `var(--z-raised)`, the
+  token that exists for exactly this local-stacking case. The contract now also
+  scans inline `<style>` in `index.html`, which the stylesheet-only scan could
+  not see; the file-protocol emergency notice is the one documented exception.
+- **The archive failed `prettier --check` with 24 files**, proven on the pristine
+  archive before any edit. Fixed with the sanctioned `npm run format`.
+- **The handoff's `data/manifest.json` described a 26-file slim seed**, not the
+  2350-file corpus it is meant to certify. The handoff is a seed package by
+  design, so this is not a defect in the archive — but it means the archive's own
+  "data manifest: 26 files, valid" line is **not** evidence of a passing
+  full-corpus gate. Regenerate against the real corpus.
+
+### Accessibility defects found by running the browser
+
+The v5.17.77 review recorded browser certification as "open" because its
+environment could not launch Chromium. On a machine where it launches, the full
+suite reported **21 failing axe assertions**. All were `serious`
+`color-contrast`, and light theme failed on views where **dark passed** — one
+class, not twenty-one bugs.
+
+- **The contrast gate was certifying a token the cascade had already
+  overridden.** `tests/cssDesign.test.js` asserted text tiers hold AA and
+  **passed**, while the browser rendered a failing colour: `blockTokens()` read
+  `variables.css` alone, but the handoff added a second `:root` in
+  `deslopify.css`, which `index.html` loads last, so the dead value kept being
+  certified. Token resolution now follows the shell's real cascade order. This is
+  the finding that mattered most — a gate that reads an overridden token reports
+  green for a defect that is on screen.
+- **`--color-text-muted` measured 4.22:1** on the paper background. Darkened to
+  `#616961` (5.04:1) rather than exempted.
+- **`midnight` palette primary text measured 4.43:1** in dark mode — reachable
+  only once the gate above was fixed, and invisible to the browser run because
+  the e2e matrix does not sweep palettes. `#111827` → `#1a2338` (4.75:1).
+- **Gold text on a gold chip**: `.home-hero__hijri` mixed gold at 88% onto its own
+  10% gold tint, measuring 3.72:1. Now 70%, measuring 4.74:1.
+- **`opacity` on text voided a measured token.**
+  `.taj-course__stage-count` dimmed a colour that `deslopify.css` assigned in
+  another file, compositing to 3.00:1 light and 2.13:1 dark. The alpha is gone;
+  the token already says "secondary".
+- **A chip's hit-area apron was clipped by the chip itself.**
+  `.card__meta > .chip { overflow: hidden }` truncated the label correctly and
+  silently deleted the `.chip::after` apron's 8px of reach top and bottom,
+  because the apron is a descendant of the clipped box. The chip looked 40px and
+  _was_ effectively 40px. Now `overflow: clip` + `overflow-clip-margin: 8px` —
+  `overflow-clip-margin` is a **no-op** on `overflow: hidden` in Chromium, so the
+  pair only works together. A new structural contract stops this class returning.
+- **A segmented control widened the whole page — in English only.** At 360×800
+  the Qur'an mode switch measured `scrollWidth` 413 against `clientWidth` 334
+  with `overflow-x: visible`, giving the entire page 66px of unintended
+  horizontal scroll and leaving 4 of 5 options visible. Arabic measured 334/334
+  and was never broken. `.segmented` now wraps at ≤480px; `overflow-x: auto` was
+  rejected because it only hides the fifth option behind a scroller.
+
+### Verification
+
+- Every fix above is pinned by an assertion that was proven to **fail on the
+  reintroduced defect** before being trusted. One first attempt — a contrast pin
+  that hardcoded the corrected percentage — would have passed with the rule
+  reverted, and was rewritten to parse the real declaration.
+- `npm run check`: **2730/2730**, exit 0, full 2350-file corpus.
+- `npm run e2e -- --project=chromium`: **173 passed, 3 skipped, 0 failed**,
+  exit 0. Before the fixes: 21 failed, 152 passed.
+- Screenshots, geometry sweep and per-defect before/after evidence:
+  `evidence/LOCAL-AGENT-RESULTS/`. Two defects remain **open and unfixed**
+  (`reciter-row__meta` clipping in Settings; the inert duplicate palette source
+  of truth) because both are visible design decisions — see `OPEN-FINDINGS.md`.
+
+## v5.17.77 — feature interiors: utility surfaces without card-stack slop
+
+This pass deliberately moved beyond the shell and audited the remaining feature interiors as products in their own right. The design target is the restraint and direct task entry visible in azkar.me: the tool itself is the hero, while supporting information behaves like a rail, timeline, list, or quiet reference layer.
+
+- **Azkar utilities:** Favorites, Collections, Collection detail, Search, Category, and Mood now share a library-like grammar. Sorting is a source rail, collection entries are quieter index items, and search results no longer become nested card stacks.
+- **Qibla:** the compass is the focal instrument; bearing/distance/accuracy facts are an information rail instead of miniature dashboard cards.
+- **Calendar:** today’s Hijri date is a small hero, the month grid stays the object, and events read as a timeline.
+- **Khatma:** progress bits are compact supporting evidence rather than a dashboard wall; planning remains secondary to the reading-progress signal.
+- **Garden:** the living illustration remains special, while milestones become a quiet progression rail.
+- **Offline:** download/status surfaces read like an operational list rather than marketing panels.
+- **Zakat:** calculation inputs stay functional, while the result receives the single visual emphasis.
+- **Mutashabihat:** one drill stage with a flat answer ladder; pair comparison is editorial rather than boxed.
+- **Ramadan:** seasonal identity remains intentionally distinct, but supporting panels are quieter so the hero remains dominant.
+- **Kids:** keeps its own tactile/warm language instead of inheriting adult dashboard styling.
+- **Ambient:** transport controls use restrained glass only where the interaction benefits from it.
+
+### Verification
+
+- Feature-interior contracts: **15/15 passing** (expanded suite; see `tests/feature-interiors.test.js`).
+- Release-focused source/static suite: **137/137 passing** across 13 suites.
+- Browser screenshot certification remains explicitly open because the supplied execution environment cannot reliably launch the repository's Chromium stack.
+- Bulk Qur'an/Hadith/tafsir corpus files remain intentionally omitted from this handoff archive; corpus-dependent tests must be run against the full-data build.
+
+## v5.17.73 — feature interiors: Focus, listening, and Tajweed
+
+This pass treats deep features as products in their own right instead of utility pages wearing the home shell. The aim is the same restraint seen in azkar.me: a clear reading stage, quiet chrome, one primary action, and secondary controls that stay out of the way.
+
+- **Focus mode:** category identity + position now sit together in a quiet top rail; a thin session-progress line replaces the old badge-like progress treatment; the Arabic reading stage gets a more generous editorial measure; the counter becomes a simple circular primary action; the bottom control tray is intentionally lighter.
+- **Azkar browser:** category tiles are smaller and quieter, mood browsing is compact rather than a second wall of cards, and the single-tile/one-action rule remains enforced.
+- **Qur'an audio:** the persistent player is now a compact dock with a restrained glass surface, grouped secondary controls, no redundant mode-note text, and a cleaner mobile seek row.
+- **Tajweed course:** the course gets a deliberate progress/header treatment, a visible Continue focus, flatter session rows, and less admin-dashboard chrome while preserving all existing scholarly/provenance behavior.
+- **No feature logic removed:** existing actions, routes, settings, downloads, playback, drills, and source/provenance contracts remain intact.
+
+### Verification
+
+- Static/source contracts for the feature-interior pass: pending final run.
+- Browser visual certification remains a separate gate; this environment may still fail to launch the full Chromium matrix.
+
+## v5.17.72 — hostile-review pass: calmer Home, grouped You, and bilingual label discipline
+
+This pass removes another class of generated-looking UI: duplicate Home launchers,
+flat ten-button personal navigation, arbitrary word breaking, and active-state pills.
+
+- **Home is a landing, not a launcher warehouse:** the standalone Tasbih Home panel is retired; Tasbih remains a first-class Practise door and may still appear as one of the four configurable quick actions.
+- **You is grouped by purpose:** Practice, Growth & progress, and Tools & app replace the old ten-item segmented wall while preserving all ten routes and their direct links.
+- **Mobile navigation reads as one dock:** the seven top-level doors share one calm surface; the active state is a small semantic indicator rather than a filled pill.
+- **No arbitrary word splitting:** mobile door labels and You links now preserve whole words and Arabic joining rather than using `overflow-wrap:anywhere`.
+- **Source hygiene:** stale comments that described the retired Home Tasbih panel were corrected, and dead `nav.more` / `home.readNow` translations were removed with their obsolete test expectations.
+
+### Hostile review
+
+Design/code review score: **9.4/10**. The information architecture, shared visual language, Home composition,
+secondary navigation, and responsive text rules now meet the project's deslopification target.
+Browser screenshot certification remains explicitly open because this environment cannot reliably execute the
+project's Chromium/Playwright stack. That is an evidence limitation, not a claimed green visual gate.
+
+### Verification
+
+- Release-focused validation suite: **241 tests passed, 0 failed** (53 suites).
+- Pass-specific deslopification/navigation/Home suite: **66 tests passed, 0 failed**.
+- Release markers updated to v5.17.72.
+- Full corpus-dependent browser/data gates remain subject to the supplied archive's omitted bulk datasets/tooling.
+
+## v5.17.71 — Shared browse surfaces and Home focal hierarchy
+
+This fifth deslopification pass removes the remaining legacy decorative drift from shared browse components and strengthens Home as a deliberate landing surface.
+
+- **Browse surfaces are quieter:** category, mood, collection, surah and hadith tiles share the same paper/ink silhouette; semantic icons remain, but rainbow tile chrome no longer competes with the product identity.
+- **Mood tiles lose decorative gradients:** the browse-by-need surface now relies on spacing, typography and the primary accent rather than background effects.
+- **Home gets a stronger focal welcome:** the greeting/brand hero has a clearer type scale, stronger editorial measure and restrained accent surface.
+- **Cross-section heading rhythm is tightened:** major landing surfaces now share the same typographic cadence without flattening specialized Mushaf UI.
+- Added regression coverage for shared browse-surface convergence and the Home focal hierarchy.
+
+### Verification
+
+- Deslopification regression suite: 10/10 passed.
+- Release markers updated to v5.17.71.
+- Browser screenshot certification remains open in this environment; no visual claim is made from unavailable Chromium evidence.
+
+## v5.17.70 — Quiet controls, tighter editorial rhythm, and mobile legibility
+
+The fourth deslopification pass removes the remaining “component demo” feel without changing the information architecture or content model.
+
+- **Controls are flatter:** primary/secondary actions no longer carry unnecessary gradients and floating shadows; hierarchy comes from fill, contrast and placement.
+- **Content containers share one silhouette:** panels, cards, Qur'an index entries, hadith books and statistic tiles now use the same restrained radius/elevation family outside the specialized Mushaf.
+- **Editorial width is respected:** long supporting copy is constrained to a readable measure instead of stretching across desktop monitors.
+- **Mobile navigation is legible:** the seven direct doors get a slightly larger label floor while preserving the compact dock.
+- **You navigation reads as navigation:** the ten internal destinations remain a matrix, not a row of oversized pills.
+- **Tasbih supporting controls recede:** the dial remains the dominant interaction; secondary controls are visually quieter.
+- **Small screens lose padding before type size:** the UI gets denser without sacrificing readable bilingual text.
+
+### Verification
+
+- CSS design contract: checked by the dedicated deslopification suite.
+- Release metadata, shell snapshot and data manifest regenerated for v5.17.70.
+- Browser screenshot certification remains open in this environment; no visual claim is made from unavailable Chromium evidence.
+
+## v5.17.69 — Cross-section visual convergence
+
+This pass extends the deslopification system beyond Home/Azkar/Settings so the main feature doors read as one product while keeping their domain-specific character.
+
+- **Qur'an landing:** surah index tiles now use one quiet library-entry silhouette, clearer number/name hierarchy, and responsive 3→2→1 columns. The Mushaf remains intentionally specialized rather than being flattened into the generic card system.
+- **Ahadeeth landing:** book tiles, offline badges, search, and result surfaces now use the same paper/ink hierarchy as Azkar instead of independent card styling.
+- **Prayer:** the next prayer is the single focal moment; timetable rows are quiet, readable ledger rows; secondary prayer tools are visually subordinate.
+- **Statistics:** metric cards are restrained and consistent rather than a wall of competing colored dashboard tiles.
+- **Tasbih:** the counter remains the visual center while supporting controls become secondary surfaces.
+- Added a cross-section visual regression contract so future route-specific styling cannot silently reintroduce unrelated card silhouettes.
+
+### Verification
+
+- Changed JavaScript syntax remains valid.
+- The deslopification contract suite remains the primary deterministic gate in this archive.
+- Browser screenshot verification is **not claimed** for this environment: the bundled Playwright dependency install is incomplete here and the standalone Chromium process hit the execution ceiling.
+- No visual defect is labeled fixed solely from an unavailable browser run.
+
+## v5.17.68 — Empty-state calm, functional palettes, and quieter mobile chrome
+
+This is the second visual remediation pass. It keeps the IA and component architecture from v5.17.67, then removes three remaining sources of product slop that static screenshots repeatedly exposed:
+
+- **First-use Home is no longer a scoreboard of zeroes.** When daily recitation is still zero, Home shows a calm invitation with an honest route into Azkar. The numeric progress bar appears once real activity exists. Qur'an and dhikr cells likewise say `Not started` instead of presenting redundant zero counters.
+- **Palette settings remain functional without bringing the rainbow back.** The house paper/ink surfaces stay consistent, while every existing palette now changes only the controlled primary/accent pair. Dark mode has the same palette-specific treatment. This fixes the accidental palette clobber introduced by the v5.17.67 presentation override.
+- **Mobile active navigation is quieter.** The active top-level door uses a small indicator instead of a large rounded filled sticker, keeping all seven direct doors visible without turning the dock into a row of pills.
+- **Settings shelves are calmer.** Group headings, accordion surfaces and appearance swatches now read as one hierarchy instead of nested cards.
+- **New regression pins** cover palette functionality, the Home empty branch, bilingual copy, mobile active-state treatment, and the one-action Azkar tile contract.
+
+### Verification
+
+- Targeted visual/design/navigation/settings suite: **214 / 214 passing**.
+- New deslopification regression suite: **5 / 5 passing**.
+- Node syntax checks for changed JavaScript: passing.
+- Full `npm run check` and browser matrix remain unclaimed because this execution environment cannot finish the repository's npm/browser installation reliably; no false green is reported.
+
+## v5.17.67 — Visual deslopification: one product, not a pile of screens
+
+This release addresses the owner's central complaint: the application had useful features but too many independent visual decisions. The change is intentionally a system pass rather than a one-screen polish.
+
+- **Seven real mobile doors.** The mobile bar now exposes Home, Azkar, Qur'an, Ahadeeth, Prayer, Practise and You directly. The hamburger remains available as the secondary hierarchical drawer, so no top-level destination is hidden behind an arbitrary More bucket.
+- **One house palette.** The general UI now derives its visible identity from manuscript ivory, deep emerald and restrained gilt. Category/icon color is semantic and quiet instead of rainbow decoration.
+- **Home is a landing page.** The existing Today information architecture remains, but the hierarchy is calmer: brand/date first, prayer strip, daily status, a deliberately limited four-shortcut action row, and supporting panels. The full adhkar browser remains in Azkar.
+- **Azkar tiles are one action.** The previous tile + separate “Read now” slab was a duplicated interaction and visually read as a rendering bug. The whole tile is now the action, with the directional cue inside it.
+- **Glass is reserved for chrome.** Floating shell surfaces may use blur/translucency; content cards remain legible paper/surface rather than translucent layers.
+- **Settings keeps its power but gains hierarchy.** Existing controls are retained; section headers, groups and rows now share one quieter silhouette.
+- **Bilingual geometry is treated as a product constraint.** Changed surfaces allow translated content to wrap rather than clip and avoid fixed text boxes.
+
+### Verification
+
+The archive supplied for this release does not contain `.git`, `node_modules`, or the original browser evidence runner. Node syntax checks plus targeted/contract Node gates were executed locally; the full `npm run check` and Chromium browser matrix could not be completed because the supplied archive lacks the installed npm/browser tooling required in this environment. No browser-pass claim is made from that limitation.
+
 ## v5.17.66 — The "You" switch was ten segments in a component built for three
 
 The You section's in-chrome switch holds **ten** inner modes. It was rendered as
@@ -34,40 +344,19 @@ switch **grew** 172px → 253px, so the touch-target and heading gates were run
 before committing rather than after. Both stayed green — the growth lands at the
 top of the section, and unlike v5.17.65 it does not reach the onboarding card.
 
-### A flaky gate that was the same bug as v5.17.64
+### Left open, unreproduced
 
-`mushaf-drag.spec.js` failed intermittently in full runs (2 of 4) and passed 8/8
-isolated, with `Cannot read properties of null (reading 'getBoundingClientRect')`
-at `dragBook()`. Both tests gated on `#main` not-empty plus a fixed
-`page.waitForTimeout(2000)`. But the mushaf view mounts **lazily** — the shell
-fills `#main` immediately, so that proxy asserted readiness for something other
-than the subject, and then raced real render time. Under 4-worker load the mushaf
-(page fetch + webfont) lost the race and `.mushaf-book` was still null.
-
-This is the identical defect class as the v5.17.64 finding where `a11y-matrix`
-seeded `settings.theme` instead of `settings.themeMode`: **the gate reported
-readiness for something other than the thing under test.** Both tests now await
-`expect(page.locator('.mushaf-book')).toBeVisible({ timeout: 30000 })` — the
-pattern `overhaul-orthography.spec.js` already uses with `.mushaf-page__text`.
-
-The 30s budget is the sibling spec's existing value. **What changed is what is
-awaited, not how long is tolerated** — no timeout was raised to stop the race
-complaining, and no retry was added to hide it. Full suite after: **173 passed,
-3 skipped, 0 failed.**
-
-### Still open, unreproduced
-
-`overhaul-orthography.spec.js` (ORTH-01) failed in **2 of 6** full
-`--project=chromium` runs and has passed every isolated run (5/5) and every
-loaded run since. Runs measure 17–49s against the spec's own 120s budget — and
-that budget _is_ enforced: a probe confirmed `test.setTimeout()` called mid-body
-sets a real deadline (an 800ms budget failed at 802ms), so these were not
-timeouts. The mushaf CSS is untouched by this release and the selectors changed
-here are scoped to `.home-*` and `.segmented--wrap` / `.you-mode-switch`, none of
-which the mushaf route uses. It may share the same readiness-proxy root cause —
-the spec does await `.mushaf-page__text`, so if it recurs, that is where to look.
-**Not fixed by raising the timeout or adding a retry.** Reopen with a captured
-failure.
+`overhaul-orthography.spec.js` (ORTH-01) failed in **2 of 4** full
+`--project=chromium` runs and passed in 5/5 isolated runs, in a loaded 3-spec
+run, and in a passing full run. Runs measure 17–40s against the spec's own 120s
+budget — and that budget _is_ enforced: a probe confirmed `test.setTimeout()`
+called mid-body sets a real deadline (an 800ms budget failed at 802ms), so these
+were not timeouts. The mushaf CSS is untouched by this release, and the selectors
+changed here are scoped to `.home-*` and `.segmented--wrap` /
+`.you-mode-switch`, none of which the mushaf route uses. **Cause not found.**
+Deliberately _not_ fixed by raising the timeout or adding a retry: the runtimes
+are far inside the budget, so that would trade a real red for a fake green
+without ever naming the cause. Reopen with a captured failure.
 
 ## v5.17.65 — Home was hiding two of the five daily prayers
 

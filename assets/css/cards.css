@@ -78,7 +78,20 @@
 .card__meta > .chip {
   min-width: 0;
   max-width: 100%;
-  overflow: hidden;
+  /* `overflow: hidden` here truncated the label correctly and silently ate the
+     chip's own hit-area apron: `.chip::after { inset-block: -8px }` is a
+     DESCENDANT of this box, so the clip removed 8px of reach top and bottom
+     and a pointer 5px off the chip landed on `.card__top` instead. Measured:
+     the chip is visually 40px and effectively 40px, not the 56px the apron
+     exists to provide (axe-free, via elementFromPoint; the e2e gate at
+     tests/e2e/touch-targets.spec.js caught it).
+
+     `overflow: clip` keeps the ellipsis — it clips without becoming a scroll
+     container — and `overflow-clip-margin` moves the clip edge back out by the
+     apron's own 8px. `overflow-clip-margin` is a NO-OP on `overflow: hidden`
+     in Chromium (measured: still misses), so the pair only works together. */
+  overflow: clip;
+  overflow-clip-margin: 8px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

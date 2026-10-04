@@ -6,7 +6,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { hasVerifiedDhikrAudio } from '../core/schema.js';
-import { escapeHTML, dateKey } from '../core/utils.js';
+import { escapeHTML, dateKey, categoryDisplayName } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { referenceLineFor, noteFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
@@ -127,6 +127,8 @@ export function renderFocus(state) {
   const prevItem = items[idx - 1] || null;
   const nextItem = items[idx + 1] || null;
 
+  const categoryName = categoryDisplayName(cat, lang);
+
   const counter = selectors.getCounter(state, item.id) || {
     count: 0,
     target: itemTargetOf(state, item),
@@ -201,7 +203,10 @@ export function renderFocus(state) {
     <h1 class="sr-only">${t('title.focus', lang)}</h1>
     <header class="focus__top">
       <button type="button" class="icon-btn" data-action="focus-exit" data-category-id="${escapeHTML(cat.id)}" aria-label="${t('focus.exit', lang)}">${icon('close', { size: 22 })}</button>
-      <span class="focus__position" dir="ltr">${idx + 1} / ${items.length}</span>
+      <div class="focus__identity">
+        <span class="focus__category">${escapeHTML(categoryName)}</span>
+        <span class="focus__position" dir="ltr">${idx + 1} / ${items.length}</span>
+      </div>
       <div class="focus__top-actions">
         ${
           bh
@@ -222,6 +227,9 @@ export function renderFocus(state) {
         </button>
       </div>
     </header>
+    <div class="focus__progress" role="progressbar" aria-valuenow="${idx + 1}" aria-valuemin="1" aria-valuemax="${items.length}" aria-label="${escapeHTML(t('focus.progress', lang, { count: idx + 1, target: items.length }))}">
+      <span class="focus__progress-fill" style="--focus-pct:${Math.max(0, Math.min(100, ((idx + 1) / Math.max(1, items.length)) * 100))}%"></span>
+    </div>
 
     <!-- (v4.5, APP-FLOW I7) THE STAGE IS THE BUTTON: the whole scrollable
          content area counts on tap, exactly like the card body in windowed

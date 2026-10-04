@@ -536,7 +536,7 @@ function surahReaderHTML(state, number) {
       </div>
       ${loadDown}`
     : state.loadErrors?.['quran-surah']
-      ? loadErrorStateHTML({ lang, tierKey: 'quran-surah', t })
+      ? `\n        <h1 class="sr-only">${escapeHTML(surahMeta ? surahMeta.nameAr : t('quran.title', lang))}</h1>\n        ${loadErrorStateHTML({ lang, tierKey: 'quran-surah', t })}`
       : skeletonAyahCards(lang, 4);
 
   const nav = `
