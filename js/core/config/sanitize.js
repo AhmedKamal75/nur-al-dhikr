@@ -363,6 +363,7 @@ export function sanitizeSettings(raw) {
       : d.dailyAyahTheme,
     profileName: asShortStr(s.profileName, d.profileName, 60),
     autoAdvanceFocus: asBool(s.autoAdvanceFocus, d.autoAdvanceFocus),
+    autoAdvanceFocusExplicit: asBool(s.autoAdvanceFocusExplicit, d.autoAdvanceFocusExplicit),
     dailyGoal: Math.round(asNumber(s.dailyGoal, d.dailyGoal, 1, 10000)),
     // (v5.2.48) accordion memory — a section slug or null (default section
     // renders on null); unknown slugs drop to null, never a broken pin.

@@ -1358,6 +1358,7 @@ export const ar = {
     'اهتزاز أقوى ونغمة أعلى كل N نقرة أثناء جلسات العدّ الطويلة. الإيقاف يعطّله.',
   'settings.milestoneOff': 'إيقاف',
   'settings.autoAdvanceFocus': 'الانتقال التلقائي بعد الإكمال',
+  'settings.autoAdvanceFocusHint': 'ينتقل التركيز تلقائيًا إلى الذكر التالي.',
   'settings.dailyGoal': 'هدف الذكر اليومي',
   'settings.reciter': 'قارئ القرآن',
   'settings.reciterHint':

@@ -28,7 +28,7 @@ Append one entry per local-agent session.
 
 ### 2026-10-04 — remote continuation from local Chromium evidence
 
-**Baseline version:** v5.17.78 browser-certified findings; implementation advanced to v5.17.80.
+**Baseline version:** v5.17.78 browser-certified findings; implementation advanced to v5.17.83.
 
 **Environment:** Full-corpus project tree recovered from the local-agent handoff.
 
@@ -42,7 +42,7 @@ Append one entry per local-agent session.
 
 **Tests:** targeted design/navigation/settings/Azkar suites: 112 tests, 0 failures after the heading fix.
 
-**Screenshots:** local v5.17.78 matrix is authoritative for visual comparison; a fresh browser matrix is still required for v5.17.80.
+**Screenshots:** local v5.17.78 matrix is authoritative for visual comparison; a fresh browser matrix is still required for v5.17.83.
 
 **Open limitations:** Chromium execution is not reliable in the remote environment; do not claim a fresh browser-certified score from this pass.
 

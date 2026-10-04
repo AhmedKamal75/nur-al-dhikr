@@ -443,7 +443,12 @@ export const DEFAULT_SETTINGS = Object.freeze({
   dailyAyahTheme: 'any',
   // (v4.4) The name printed on memorization certificates.
   profileName: '',
-  autoAdvanceFocus: false,
+  autoAdvanceFocus: true,
+  // Hidden compatibility marker: before v5.17.82 the shipped default was
+  // false, so a persisted false without this marker is treated as the old
+  // default during restore. Once the person changes the control, the marker
+  // becomes true and their explicit preference is preserved.
+  autoAdvanceFocusExplicit: false,
   dailyGoal: 100,
   // (v5.2.48) accordion memory — the open settings section slug (see
   // settingsSectionIds in views/settings.js), or null for the default

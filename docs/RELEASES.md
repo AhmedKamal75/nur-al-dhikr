@@ -1,54 +1,32 @@
 # Release notes — Nūr al-Dhikr
 
+## v5.17.83 — Focus handoff, Settings control language, legacy default migration
+
+Applied from the v5.17.83 patch archive onto the v5.17.81 mainline. Two defects
+in the patch were repaired before commit: `settings.autoAdvanceFocusHint` was
+called from `js/views/settings.js` but absent from **both** i18n dictionaries, and
+`docs/AGENT-MAP.md` was stale. Verified: `npm run check` exit 0 (2737/2737);
+`npm run e2e -- --project=chromium` 172 passed, 3 skipped, 1 flaky (a 45s browser
+timeout in a11y-matrix that passes 2/2 in isolation in 9.1s).
+
+- Focus now treats auto-advance as the product default even for legacy persisted snapshots that still carry the old shipped `false` default; a hidden explicit-choice marker preserves a real opt-out after the user changes the setting.
+- The Focus counter ignores duplicate taps during the 360ms completion handoff, preventing a completed dhikr from being incremented again while the next item is entering.
+- Settings navigation is no longer styled as plain hyperlink prose: the You index uses compact target-sized control tiles with semantic icons and a clear active state.
+- Long Settings metadata now owns a flexible row column and wraps instead of being clipped by the row/ancestor.
+
 Moved out of README.md so the README stays the product face. Newest first.
 
-## v5.17.81 — the archive becomes the mainline, and the gate closes
+## v5.17.82 — Home order, Focus progression, and settings controls
 
-Two jobs: put fourteen releases back under version control, and make
-`npm run check` green without breaking a stricter gate on the way.
+The owner-facing review identified a deeper interaction problem: Focus behaved like a full-screen counter rather than a sequential reading session, Home opened with decorative chrome before orientation, and Settings selection rows still resembled legacy hyperlinks.
 
-### The repository did not contain the product
+- Focus now auto-advances to the next visible dhikr after completing the current target by default; the existing setting remains an opt-out.
+- Home now reads in an explicit order: identity/orientation → prayer context → today → quick actions → supporting content → quiet Shahada footer.
+- Settings reciter/translation/tafsir selection rows now render as full-width controls with visible selection state and wrapping bilingual metadata.
+- Removed the duplicate palette color definitions from `deslopify.css`; `js/core/config/views.js` is the source of truth and `theme.js` applies it.
+- Added regressions for the Focus default and Home order.
 
-The working tree stood at v5.17.66 (`0b038bc`). Everything from v5.17.67 to
-v5.17.80 — the deslopification layers, two independent Chromium evidence cycles,
-and every defect fix they produced — existed **only inside
-`NUR-AL-DHIKR-v5.17.80-FULL.zip`**. No branch, tag, stash or ref held it.
-
-That archive has now been adopted as the mainline tree. `.git` and
-`.github/workflows/check.yml` (which the archive omitted) were preserved from the
-repository rather than overwritten.
-
-**A known, accepted loss:** the intermediate per-release commits for
-v5.17.67–v5.17.80 cannot be reconstructed, because the work arrived as an
-archive rather than as commits. Inventing fourteen tidy commits to imitate that
-history would be fiction. The release notes for those versions remain the record
-of what changed; this entry is the record of the gap.
-
-### Two agents, one version number
-
-v5.17.78 was produced **twice**, independently, from the same v5.17.77 handoff —
-once on a small sandbox without the bulk corpus, once here with the full
-2350-file corpus. Both found the same core defects (the 4.22:1 muted-contrast
-failure, the `manifest.json` marker stuck at 5.17.72, the 24-file formatter
-drift, the segmented horizontal overflow, the clipped chip hit-area apron). That
-independent convergence is the strongest evidence in this project that those
-defects were real. Their gate figures differ and are **not** interchangeable; see
-`docs/LOCAL-AGENT/` for per-run attribution.
-
-### The gate fix, and the trap in it
-
-Three files failed `format:check`. The obvious repair — `npm run format` — breaks
-a different gate, because `manifest.json` is a cache-first byte: reformatting it
-without a version bump trips `tests/contracts.test.js` with _cache-first bytes
-changed at v5.17.80 with no version bump_. So the markers were bumped to
-v5.17.81 **first**, then the tree formatted, then the shell snapshot re-stamped
-and the data manifest regenerated.
-
-### Verification
-
-- `npm run check` → exit 0.
-- `npm run e2e -- --project=chromium` → exit 0.
-- Gate figures are in `evidence/LOCAL-AGENT-RESULTS/RUN-SUMMARY.md`.
+No religious data was changed.
 
 ## v5.17.80 — resilient data-absence landmarks after the real-browser audit
 

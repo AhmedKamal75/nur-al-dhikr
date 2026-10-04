@@ -85,3 +85,15 @@ Check:
 - Feature interiors need their own product review. Passing shell/layout gates does not prove that Player, Tajweed, Settings, Focus Mode, or utility tools feel authored.
 - A seed/corpus omission must be reported separately from a code failure. Never convert missing-data failures into a false green.
 - A browser score must come after the full matrix; source-only scores are provisional and should not be presented as final quality.
+
+### v5.17.82 durable lesson — feature semantics before chrome
+
+- Focus Mode is a sequential reading/counting workflow, not merely a full-screen card. Completing a target should continue to the next visible item by default; any opt-out is a secondary preference.
+- Home order matters semantically: orient the reader first, give current worship context second, then offer a small set of actions, then supporting panels. Decorative or devotional footer chrome must not precede the primary orientation.
+- Settings selection controls must look like controls, not hyperlinks. Long bilingual metadata must wrap instead of being clipped.
+
+### v5.17.82 Focus default migration and Settings control-language lesson
+
+- The Focus session is a sequential reading/counting flow. Auto-advance is the default product behavior; the setting is an opt-out, not the core interaction. Legacy snapshots that stored the old shipped default (`false`) are migrated to the new default once, while a post-v5.17.82 explicit choice is preserved with `autoAdvanceFocusExplicit`.
+- Settings navigation must not resemble prose hyperlinks. Any navigational index inside Settings should present as a compact control/list treatment with an icon, target-sized surface, clear active state, and no underline.
+- Long metadata belongs to the row's flexible content column and must wrap rather than be clipped by an ancestor or an inline span.

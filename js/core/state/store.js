@@ -10,6 +10,23 @@ import { initialState, pickPersisted, PERSISTED_KEYS } from './initial.js';
 import { reduce } from './reducer.js';
 import { sanitizeRestoredPayload, freshSessionCounters, isFuturePayload } from './restore.js';
 
+/**
+ * Compatibility migration for the Focus default changed in v5.17.82.
+ * Prior releases persisted `autoAdvanceFocus: false` as the shipped default,
+ * so a legacy snapshot with no explicit-choice marker must not silently keep
+ * the old product default. Once the person changes the setting,
+ * `autoAdvanceFocusExplicit` protects that explicit choice on future loads.
+ */
+export function migrateFocusAutoAdvanceSetting(settings) {
+  const source = settings && typeof settings === 'object' ? settings : {};
+  const out = { ...source };
+  if (out.autoAdvanceFocusExplicit !== true && out.autoAdvanceFocus === false) {
+    out.autoAdvanceFocus = true;
+  }
+  out.autoAdvanceFocusExplicit = out.autoAdvanceFocusExplicit === true;
+  return out;
+}
+
 class Store {
   constructor() {
     this.state = initialState();
@@ -94,7 +111,7 @@ class Store {
       // every field, clamps numbers, checks enums, and deep-merges the
       // nested objects (prayer / audio / mushafPrefs) over their
       // defaults.
-      settings: sanitizeSettings(result.value.settings),
+      settings: migrateFocusAutoAdvanceSetting(sanitizeSettings(result.value.settings)),
       // Defense-in-depth: localStorage can end up holding malformed custom
       // content from a bad import, manual tampering, or a bug in an older
       // version of this app. Normalize on every load so a single corrupted

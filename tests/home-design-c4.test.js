@@ -200,6 +200,16 @@ describe('C4 chrome: one slim today-strip near the top', () => {
   });
 });
 
+describe('Home reading order: identity before utility', () => {
+  test('hero leads, practical context follows, Shahada rests at the end', () => {
+    const html = renderHome(homeState());
+    const at = (needle) => html.indexOf(needle);
+    assert.ok(at('home-hero--line') < at('home-prayer-ribbon'), 'hero precedes prayer context');
+    assert.ok(at('home-prayer-ribbon') < at('quick-actions'), 'prayer precedes quick actions');
+    assert.ok(at('quick-actions') < at('shahada-banner'), 'actions precede footer banner');
+  });
+});
+
 describe('C4 chrome: the hero is one line, the wizard is one line', () => {
   test('hero keeps every content, loses the banner (h1 intact for a11y)', () => {
     const html = renderHome(homeState());

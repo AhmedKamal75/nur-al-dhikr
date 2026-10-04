@@ -30,6 +30,7 @@ import {
 import { resolveCompareText } from '../js/domain/translationCompare.js';
 import { APP_VERSION, DEFAULT_SETTINGS, SCHEMA_VERSION } from '../js/core/config.js';
 import { actions, store } from '../js/core/state.js';
+import { migrateFocusAutoAdvanceSetting } from '../js/core/state/store.js';
 import {
   isFuturePayload,
   persistedSnapshot,
@@ -63,6 +64,25 @@ function baseState(overrides = {}) {
 }
 
 const wordTapSpans = (html) => [...html.matchAll(/<span class="qword[^>]*>/g)].map((m) => m[0]);
+
+describe('Focus completion defaults', () => {
+  test('fresh installs continue to the next visible dhikr after completion', () => {
+    assert.equal(DEFAULT_SETTINGS.autoAdvanceFocus, true);
+  });
+
+  test('legacy persisted default is migrated to auto-advance until explicitly changed', () => {
+    assert.equal(
+      migrateFocusAutoAdvanceSetting({ autoAdvanceFocus: false, autoAdvanceFocusExplicit: false })
+        .autoAdvanceFocus,
+      true
+    );
+    assert.equal(
+      migrateFocusAutoAdvanceSetting({ autoAdvanceFocus: false, autoAdvanceFocusExplicit: true })
+        .autoAdvanceFocus,
+      false
+    );
+  });
+});
 
 describe('BUG-05: lang="ar" on Arabic scripture', () => {
   test('classic reader: ayah Arabic, surah name, bismillah carry lang="ar"', () => {

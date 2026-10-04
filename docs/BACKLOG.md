@@ -1,3 +1,5 @@
+- **v5.17.83:** Home composition, Focus auto-advance default, Settings control styling, palette source-of-truth cleanup.
+
 # BACKLOG.md — what the owner asked for, and what is actually true
 
 > **This is the durable backlog.** It exists so that the goals, the state of
@@ -6,12 +8,11 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.81**. `npm run check` and `npm run e2e -- --project=chromium`
-> are green on the full 2350-file corpus; results are recorded in
-> `evidence/LOCAL-AGENT-RESULTS/RUN-SUMMARY.md`. This release also puts
-> v5.17.67–v5.17.80 into the mainline: that work had arrived only as an archive,
-> so the repository did not describe the product. See the v5.17.81 release note
-> for what was recovered and what per-release history was lost.
+> Current version: **v5.17.83**. `npm run check` is green on a full-corpus build in
+> this environment; Chromium e2e results are recorded in
+> `evidence/LOCAL-AGENT-RESULTS/RUN-SUMMARY.md`. The v5.17.77 handoff archive
+> itself failed this tree's own gates (format and version markers), which is
+> recorded in the v5.17.78 release notes.
 
 ---
 

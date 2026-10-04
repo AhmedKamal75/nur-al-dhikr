@@ -565,7 +565,12 @@ export function renderSettings(state, flags = {}) {
       ${accHeader(t('settings.content', lang), 'list', lang)}
       ${toggleRow('showTransliteration', s.showTransliteration, t('settings.showTransliteration', lang))}
       ${toggleRow('showTranslation', s.showTranslation, t('settings.showTranslation', lang))}
-      ${toggleRow('autoAdvanceFocus', s.autoAdvanceFocus, t('settings.autoAdvanceFocus', lang))}
+      ${toggleRow(
+        'autoAdvanceFocus',
+        s.autoAdvanceFocus,
+        t('settings.autoAdvanceFocus', lang),
+        t('settings.autoAdvanceFocusHint', lang)
+      )}
       <p class="field-label" id="daily-goal-label">${t('settings.dailyGoal', lang)}</p>
       <input type="number" class="input" min="1" max="10000" value="${escapeHTML(String(s.dailyGoal ?? ''))}" data-bind="dailyGoal" aria-labelledby="daily-goal-label" />
       <p class="field-label">${t('settings.homePanels', lang)}</p>

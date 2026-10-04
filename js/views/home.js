@@ -1173,18 +1173,7 @@ export function renderHome(state) {
   // Today landing, and the grid owns its own door.
   return `
   <section class="view view--home">
-    ${shahadaBannerHTML(lang)}
-
-    ${prayerRibbonHTML(state, lang, prayerTimes)}
-
-    ${libraryErrorHTML(state, lang)}
-
-    ${nudgeCardHTML(state)}
-
-    ${homeTodayStripHTML(state)}
-
-    ${onboardingPanelHTML(state, lang)}
-
+    <!-- Home has one argument: orient → act → review → explore. -->
     <div class="home-hero home-hero--line">
       <h1 class="home-hero__title">${t('app.name', lang)}</h1>
       <p class="home-hero__tagline">${t('app.tagline', lang)}</p>
@@ -1192,6 +1181,12 @@ export function renderHome(state) {
       ${profileChip}
       ${state.statistics?.totalRecitations === 1 ? `<p class="home-hero__seed" dir="auto">${escapeHTML(t('home.firstSeed', lang))}</p>` : ''}
     </div>
+
+    ${prayerRibbonHTML(state, lang, prayerTimes)}
+
+    ${libraryErrorHTML(state, lang)}
+
+    ${homeTodayStripHTML(state)}
 
     ${quickTilesHTML(
       resolveQuickTiles({
@@ -1207,7 +1202,13 @@ export function renderHome(state) {
       nowWindow
     )}
 
+    ${nudgeCardHTML(state)}
+
+    ${onboardingPanelHTML(state, lang)}
+
     ${orderedHomePanels}
+
+    ${shahadaBannerHTML(lang)}
   </section>`;
 }
 

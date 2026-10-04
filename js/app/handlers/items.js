@@ -4,7 +4,7 @@
  * app/events.js merges them into the single delegation table.
  */
 
-import { scheduleAutoAdvance } from '../focusRuntime.js';
+import { isAutoAdvancePendingFor, scheduleAutoAdvance } from '../focusRuntime.js';
 import { rt } from '../rt.js';
 import {
   ensureHadithBook,
@@ -150,6 +150,18 @@ export const clickHandlers = {
   },
 
   'counter-tap': (ds, e) => {
+    const beforeState = store.getState();
+    // Once a Focus item reaches its target, the stage remains visually
+    // present for the brief transition into the next item. Do not let a
+    // second physical tap in that handoff window increment the completed
+    // item again or postpone the transition.
+    if (
+      beforeState.activeView === VIEWS.FOCUS &&
+      beforeState.settings.autoAdvanceFocus &&
+      isAutoAdvancePendingFor(ds.itemId)
+    ) {
+      return;
+    }
     const target = parseInt(ds.target, 10) || 1;
     // (v5.2.24) exit-animation handoff: predict the completion BEFORE the
     // synchronous re-render below, so the fresh card already carries

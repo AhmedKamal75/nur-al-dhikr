@@ -88,7 +88,7 @@ job: user file imports: backup JSON (with confirm), shared family plans (with co
 
 job: Focus-mode runtime: keyboard navigation and the single pending auto-advance timer (v3.7 race fix).
 
-- exports: `handleFocusKeydown` (function), `navigateFocusAdjacent` (function), `scheduleAutoAdvance` (function)
+- exports: `handleFocusKeydown` (function), `isAutoAdvancePendingFor` (function), `navigateFocusAdjacent` (function), `scheduleAutoAdvance` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -832,7 +832,7 @@ job: worship-and-practice slice of the store reducer. Owns fasting prefs, sadaqa
 
 job: core/state — package root docs live in core/state.js (the facade).
 
-- exports: `store` (const)
+- exports: `migrateFocusAutoAdvanceSetting` (function), `store` (const)
 - emits: —
 - handles: —
 - i18n: —
@@ -2547,7 +2547,7 @@ job: Settings reorganized into calm, purposeful sections — one panel per inten
 - exports: `settingsSectionIds` (function), `settingsSlugForSection` (function), `settingsSectionForSlug` (function), `openSettingsSectionFor` (function), `deferredSetupHTML` (function), `settingRow` (function), `SETTINGS_SECTIONS` (const), `SETTINGS_GROUPS` (const), `matchSettingsSection` (function), `renderSettings` (function)
 - emits: `add-preset`, `add-reminder`, `backup-link-file`, `content-restore-all`, `delete-reminder`, `export-backup`, `export-plan`, `home-panel-move`, `home-panel-toggle`, `import-backup`, `import-plan`, `mushaf-set-tafsir`, `navigate`, `onboarding-reshow`, `profile-create`, `profile-delete`, `profile-switch`, `quick-tile-move`, `quick-tile-toggle`, `reset-all-data`, `restore-auto-backup`, `schedule-open-manager`, `set-setting`, `toggle-elder-mode`, `toggle-kids-mode`, `toggle-reminder`, `toggle-setting`, `verify-backup` (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `audio.noSecondVoice`, `common.delete`, `editor.emptyState`, `library.sheet.restoreAll`, `nav.about`, `nav.offline`, `onboarding.deferHint`, `onboarding.deferTitle`, `onboarding.reshow`, `preset.dailyVerse`, `preset.jumuah`, `quran.quickActions`, `schedule.manager`, `settings.accessibility`, `settings.addReminder`, `settings.appearance`, `settings.arabicFontSize`, `settings.arabicTypeface`, `settings.audioManager`, `settings.autoAdvanceFocus` (+71 more)
+- i18n: `audio.noSecondVoice`, `common.delete`, `editor.emptyState`, `library.sheet.restoreAll`, `nav.about`, `nav.offline`, `onboarding.deferHint`, `onboarding.deferTitle`, `onboarding.reshow`, `preset.dailyVerse`, `preset.jumuah`, `quran.quickActions`, `schedule.manager`, `settings.accessibility`, `settings.addReminder`, `settings.appearance`, `settings.arabicFontSize`, `settings.arabicTypeface`, `settings.audioManager`, `settings.autoAdvanceFocus` (+72 more)
 - routes: `#/offline`, `VIEWS.ABOUT`, `VIEWS.AUDIO`, `VIEWS.OFFLINE`
 
 ### `js/views/statistics.js`
@@ -3763,6 +3763,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `invalidateLazyFetches`: `js/app/lazyData.js`
 - `inviteDayKey`: `js/domain/homeInvitations.js`
 - `isActive`: `js/services/surahPlayback.js`
+- `isAutoAdvancePendingFor`: `js/app/focusRuntime.js`
 - `isBackupFile`: `js/domain/launchIntents.js`
 - `isBulkAbortError`: `js/app/net.js`
 - `isCategoryHidden`: `js/services/contentPrefs.js`
@@ -3908,6 +3909,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `mergeQuranHits`: `js/domain/rootAwareSearch.js`
 - `mergedClickHandlers`: `js/app/events.js`
 - `migrate`: `js/core/migration.js`
+- `migrateFocusAutoAdvanceSetting`: `js/core/state/store.js`
 - `milestoneBadges`: `js/domain/milestones.js`
 - `milestoneHit`: `js/domain/celebrate.js`
 - `miniCardHTML`: `js/ui/card.js`
@@ -5732,6 +5734,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `invite`: `js/domain/homeInvitations.js`
 - `invitedaykey`: `js/domain/homeInvitations.js`
 - `isactive`: `js/services/surahPlayback.js`
+- `isautoadvancependingfor`: `js/app/focusRuntime.js`
 - `isbackupfile`: `js/domain/launchIntents.js`
 - `isbulkaborterror`: `js/app/net.js`
 - `iscategoryhidden`: `js/services/contentPrefs.js`
@@ -6023,6 +6026,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `methods`: `js/domain/prayer.js`
 - `micro`: `js/domain/celebrate.js`
 - `migrate`: `js/core/migration.js`
+- `migratefocusautoadvancesetting`: `js/core/state/store.js`
 - `milestone`: `js/views/certificate.js`
 - `milestonebadges`: `js/domain/milestones.js`
 - `milestonehit`: `js/domain/celebrate.js`
@@ -7553,7 +7557,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/p0-mushaf-core.test.js` — P0-1 … P0-4 gates (v5.3.0). Every acceptance criterion below is checkable from pure templates, the domain classifier, or the shipped CSS — no browser required: (pins: `../js/app/autoFit.js`, `../js/core/config.js`, `../js/core/state.js`, `../js/domain/tajweed.js`, `../js/domain/wordStudy.js`, `../js/views/mushafJump.js`, `../js/views/mushafReader.js`, `../js/views/tafsirPanel.js`)
 - `tests/p0-roadmap-fixes.test.js` — v5.2.73 P0 regressions for Nur-al-Dhikr-Agent2-Overhaul-Roadmap-v5.2.72: 1. BUG-01: a library that fails to load must never cause its favorites / (pins: `../js/app/net.js`, `../js/app/renderer.js`, `../js/app/rt.js`, `../js/app/stateSub.js`, `../js/core/state.js`, `../js/domain/quranSearch.js`)
 - `tests/p0-tajweed-rounds.test.js` — P0-5 gates (v5.3.0): 1. shipped pool covers EVERY TAJWEED_RULES id with >= 5 real corpus rows (the "لا توجد آيات تدريب لهذا الحكم بعد" dead end is dead); (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/domain/quiz.js`, `../js/domain/tajweed.js`, `../js/domain/tajweedPractice.js`, `../js/views/tajweedPracticeView.js`, `./helpers/seedMode.mjs`)
-- `tests/p1-roadmap-fixes.test.js` — v5.2.74 P1 regressions for Nur-al-Dhikr-Agent2-Overhaul-Roadmap-v5.2.72: 1. BUG-05: Arabic scripture runs carry lang="ar" (WCAG 3.1.2). (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/core/state/restore.js`, `../js/core/storage.js`, `../js/domain/gestures.js`, `../js/domain/tafsirSearch.js`, `../js/domain/translationCompare.js`, `../js/services/backup.js`, `../js/views/ayahStudy.js`, `../js/views/kids.js`, `../js/views/quran.js`, `../js/views/ramadan.js`, `../js/views/search.js`, `../js/views/tafsirPanel.js`)
+- `tests/p1-roadmap-fixes.test.js` — v5.2.74 P1 regressions for Nur-al-Dhikr-Agent2-Overhaul-Roadmap-v5.2.72: 1. BUG-05: Arabic scripture runs carry lang="ar" (WCAG 3.1.2). (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/core/state/restore.js`, `../js/core/state/store.js`, `../js/core/storage.js`, `../js/domain/gestures.js`, `../js/domain/tafsirSearch.js`, `../js/domain/translationCompare.js`, `../js/services/backup.js`, `../js/views/ayahStudy.js`, `../js/views/kids.js`, `../js/views/quran.js`, `../js/views/ramadan.js`, `../js/views/search.js`, `../js/views/tafsirPanel.js`)
 - `tests/p2-roadmap-fixes.test.js` — v5.2.75 P2 regressions for Nur-al-Dhikr-Agent2-Overhaul-Roadmap-v5.2.72: 1. BUG-08: rapid double-tap on two ayah play buttons must not toast a (pins: `../js/app/drawer.js`, `../js/app/hadithData.js`, `../js/core/config.js`, `../js/core/i18n.js`, `../js/core/state.js`, `../js/domain/hifz.js`, `../js/services/alertTriggers.js`, `../js/services/audioStore.js`, `../js/services/mushaf.js`, `../js/services/prayerSound.js`, `../js/services/recitation.js`, `../js/views/hadithCard.js`, `../js/views/qibla.js`, `../js/views/quran.js`, `../js/views/statistics.js`, `./helpers/seedMode.mjs`)
 - `tests/palette-glass.test.js` — v5.17.62 palette + liquid-glass upgrade (HANDOFF §5d: worship instrument, paper-not-screen, gilt restraint; 4-LLM consensus: cream paper, deep green ink, gold only for now/here, (pins: `../js/core/config.js`)
 - `tests/palette.test.js` — command-palette providers (pure, store-free). Pins the Spotlight-style overlay logic: literal-match highlighting, provider grouping/caps, surah names in every script, translation-aware (pins: `../js/core/utils.js`, `../js/domain/search.js`, `../js/views/palette.js`)

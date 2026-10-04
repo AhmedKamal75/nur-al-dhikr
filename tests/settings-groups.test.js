@@ -403,6 +403,25 @@ describe('contract: language, adab, budget, a11y', () => {
     assert.ok(src.includes('./installRow.js'), 'install row still reused, not copied');
   });
 
+  test('Settings You index is a control surface, not legacy hyperlink prose', () => {
+    const shell = readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8');
+    const css = readFileSync(new URL('../assets/css/deslopify.css', import.meta.url), 'utf8');
+    assert.match(shell, /YOU_SWITCH_ICONS/);
+    assert.match(shell, /you-subnav__item-icon/);
+    assert.match(
+      css,
+      /\.view--settings > \.you-subnav \.you-subnav__item\s*\{[\s\S]*?border: 1px solid/
+    );
+    assert.match(css, /\.view--settings > \.you-subnav \.you-subnav__item-icon/);
+    assert.match(css, /\.view--settings > \.you-subnav \.you-subnav__item--active/);
+    assert.ok(
+      !/text-decoration:\s*underline/.test(
+        css.slice(css.indexOf('.view--settings > .you-subnav .you-subnav__item'))
+      ),
+      'settings nav has no underline treatment'
+    );
+  });
+
   test('Elder/a11y: labelled shelves, native controls, content-proof CSS', () => {
     const html = renderSettings(richState());
     const h1 = html.indexOf('<h1 class="view__title">');

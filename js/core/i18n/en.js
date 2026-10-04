@@ -1431,6 +1431,7 @@ export const en = {
     'A stronger buzz and a higher tick every Nth tap during long counting sessions. Off disables it.',
   'settings.milestoneOff': 'Off',
   'settings.autoAdvanceFocus': 'Auto-Advance After Completing',
+  'settings.autoAdvanceFocusHint': 'Focus advances to the next dhikr automatically.',
   'settings.dailyGoal': 'Daily Dhikr Goal',
   'settings.reciter': 'Qur\u2019an Reciter',
   'settings.reciterHint':

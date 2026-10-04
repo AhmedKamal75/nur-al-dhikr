@@ -38,6 +38,15 @@ export function handleFocusKeydown(e) {
   }
 }
 
+export function isAutoAdvancePendingFor(itemId) {
+  if (!rt.pendingAutoAdvanceTimer) return false;
+  const state = store.getState();
+  return (
+    state.activeView === VIEWS.FOCUS &&
+    String(state.activeParams?.subId ?? '') === String(itemId ?? '')
+  );
+}
+
 export function navigateFocusAdjacent(dir) {
   const state = store.getState();
   const categoryId = state.activeParams.id;
@@ -78,5 +87,5 @@ export function scheduleAutoAdvance() {
     if (String(now.activeParams?.id ?? '') !== from.id) return;
     if (String(now.activeParams?.subId ?? '') !== from.subId) return;
     navigateFocusAdjacent(1);
-  }, 550);
+  }, 360);
 }

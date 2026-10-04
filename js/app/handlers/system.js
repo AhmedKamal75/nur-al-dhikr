@@ -42,8 +42,14 @@ export const clickHandlers = {
     const flipMode =
       (ds.key === 'reciter' || ds.key === 'reciterB') &&
       store.getState().settings.reciteMode !== 'ayah';
+    const explicitFocusChoice =
+      ds.key === 'autoAdvanceFocus' ? { autoAdvanceFocusExplicit: true } : {};
     store.dispatch(
-      actions.updateSettings({ [ds.key]: ds.value, ...(flipMode ? { reciteMode: 'ayah' } : {}) })
+      actions.updateSettings({
+        [ds.key]: ds.value,
+        ...explicitFocusChoice,
+        ...(flipMode ? { reciteMode: 'ayah' } : {}),
+      })
     );
     if (flipMode) showToast(t('audio.voiceModeAyah', store.getState().settings.language));
     // Live-apply reciter voices to a running recitation session — otherwise

@@ -191,6 +191,19 @@ const YOU_SWITCH_LABELS = Object.freeze({
   ABOUT: 'you.about',
 });
 
+const YOU_SWITCH_ICONS = Object.freeze({
+  CHECKLIST: 'check',
+  GARDEN: 'sprout',
+  FAVORITES: 'heart',
+  JOURNAL: 'book',
+  STATISTICS: 'stats',
+  CERTIFICATE: 'award',
+  ZAKAT: 'calculator',
+  OFFLINE: 'download',
+  SETTINGS: 'settings',
+  ABOUT: 'info',
+});
+
 /** v5.17.72: the ten You destinations are intentionally grouped so the
  * section reads like a personal control center instead of a 10-button pill
  * wall. Order remains derived from switchRoutes/DOORS; only presentation is
@@ -327,6 +340,7 @@ export function youModeSwitchHTML(activeView, lang) {
     const labelKey = YOU_SWITCH_LABELS[routeKey];
     return `
       <a class="you-subnav__item${selected ? ' you-subnav__item--active' : ''}" href="${buildHash(view)}" data-action="navigate" data-view="${view}" aria-current="${selected ? 'page' : 'false'}">
+        <span class="you-subnav__item-icon" aria-hidden="true">${icon(YOU_SWITCH_ICONS[routeKey], { size: 15 })}</span>
         <span class="you-subnav__item-label">${t(labelKey, lang)}</span>
       </a>`;
   };

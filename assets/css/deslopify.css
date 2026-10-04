@@ -42,50 +42,9 @@
   --radius-card-safe: 18px;
 }
 
-[data-palette='emerald'] {
-  --color-primary-raw: #1a5f3e;
-  --color-accent-raw: #c8a24e;
-}
-[data-palette='sapphire'] {
-  --color-primary-raw: #1f5fae;
-  --color-accent-raw: #6ea8df;
-}
-[data-palette='royal'] {
-  --color-primary-raw: #6841a8;
-  --color-accent-raw: #ae94df;
-}
-[data-palette='amber'] {
-  --color-primary-raw: #8b4a12;
-  --color-accent-raw: #d8a63c;
-}
-[data-palette='slate'] {
-  --color-primary-raw: #44515f;
-  --color-accent-raw: #9aa8b6;
-}
-[data-palette='rose'] {
-  --color-primary-raw: #a93659;
-  --color-accent-raw: #d8839a;
-}
-[data-palette='forest'] {
-  --color-primary-raw: #1f633a;
-  --color-accent-raw: #6faf7f;
-}
-[data-palette='ocean'] {
-  --color-primary-raw: #15648f;
-  --color-accent-raw: #67a7c9;
-}
-[data-palette='midnight'] {
-  --color-primary-raw: #354154;
-  --color-accent-raw: #7e8b9e;
-}
-[data-palette='ivory'] {
-  --color-primary-raw: #625b54;
-  --color-accent-raw: #aaa098;
-}
-[data-palette='amoled'] {
-  --color-primary-raw: #1a5f3e;
-  --color-accent-raw: #d5b65f;
-}
+/* Palette raw values are owned by js/core/config/views.js and injected by theme.js.
+   Keeping palette colors in CSS as a second source of truth caused the cascade to
+   disagree with Settings and hid contrast defects. */
 
 [data-theme='dark'] {
   --color-bg: #0f1512;
@@ -3310,34 +3269,46 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 
 .view--settings > .you-subnav .you-subnav__item {
   position: relative;
-  min-block-size: 36px;
+  min-block-size: 42px;
   display: inline-flex;
   align-items: center;
-  padding: 6px 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--color-text-secondary);
+  gap: 8px;
+  padding: 8px 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 11px;
+  background: var(--color-surface);
+  color: var(--color-text);
   box-shadow: none;
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
 }
 
-.view--settings > .you-subnav .you-subnav__item:hover,
+.view--settings > .you-subnav .you-subnav__item:hover {
+  transform: translateY(-1px);
+  background: var(--color-surface-raised);
+  border-color: color-mix(in srgb, var(--color-primary) 24%, var(--color-border));
+}
+
 .view--settings > .you-subnav .you-subnav__item--active {
   transform: none;
-  background: transparent;
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
   color: var(--color-primary-text);
-  border: 0;
+  border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 
-.view--settings > .you-subnav .you-subnav__item--active::before {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  inset-block-end: 1px;
-  width: auto;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--color-primary);
+.view--settings > .you-subnav .you-subnav__item-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+}
+
+.view--settings > .you-subnav .you-subnav__item--active .you-subnav__item-icon {
+  color: var(--color-primary-text);
 }
 
 @media (max-width: 780px) {
@@ -3349,6 +3320,16 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   .view--settings > .you-subnav {
     grid-template-columns: 1fr;
     gap: 10px;
+  }
+
+  .view--settings > .you-subnav .you-subnav__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .view--settings > .you-subnav .you-subnav__item {
+    inline-size: 100%;
   }
 }
 
@@ -3367,5 +3348,99 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 @media (min-width: 1100px) {
   .view--audio .reciter-list {
     max-inline-size: 820px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Pass 7: Home reads as a page, not a bag of widgets.
+   ------------------------------------------------------------------------- */
+.view--home {
+  gap: clamp(16px, 2.2vw, 28px);
+}
+
+.view--home > .home-hero.home-hero--line {
+  padding-block: 4px 0;
+  margin-block-end: 0;
+}
+.view--home > .home-hero.home-hero--line .home-hero__title {
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+}
+.view--home > .home-hero.home-hero--line .home-hero__greeting {
+  margin-block-start: 6px;
+}
+
+/* The main Home landmarks are full-width on the desktop grid. */
+@media (min-width: 960px) {
+  .view--home > .home-hero.home-hero--line,
+  .view--home > .home-prayer-ribbon,
+  .view--home > .home-today,
+  .view--home > .quick-actions,
+  .view--home > .panel--onboarding,
+  .view--home > .shahada-banner {
+    grid-column: 1 / -1;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Settings: controls must read as controls, never as legacy hyperlinks.
+   ------------------------------------------------------------------------- */
+.view--settings .reciter-row {
+  width: 100%;
+  color: var(--color-text);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 12px 14px;
+  justify-content: space-between;
+}
+.view--settings .reciter-row:visited {
+  color: var(--color-text);
+}
+.view--settings .reciter-row:hover {
+  color: var(--color-text);
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-primary) 13%, var(--color-border));
+}
+.view--settings .reciter-row--active {
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
+  border-color: color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
+  box-shadow: none;
+}
+.view--settings .reciter-row__name {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.45;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.view--settings .reciter-row__meta {
+  color: var(--color-text-muted);
+  white-space: normal;
+}
+
+/* Small-screen settings: selection lists become readable full-width rows,
+   not clipped single-line links. */
+@media (max-width: 600px) {
+  .view--settings .settings-group {
+    border-radius: 16px;
+    padding: 2px;
+  }
+  .view--settings .settings-group__title {
+    margin-inline: 12px;
+  }
+  .view--settings .reciter-row {
+    min-height: 52px;
+    padding: 12px;
+  }
+  .view--settings .reciter-row__meta {
+    display: block;
+    margin-block-start: 2px;
   }
 }

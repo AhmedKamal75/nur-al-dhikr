@@ -5,7 +5,7 @@ It is allowed to change as the evidence changes. Durable principles belong in `A
 
 ## Current baseline
 
-- Release: **v5.17.80**
+- Release: **v5.17.83**
 - Stack: vanilla ES modules + plain CSS + no build step + no runtime dependencies
 - Offline-first PWA
 - Arabic + English
@@ -17,7 +17,7 @@ It is allowed to change as the evidence changes. Durable principles belong in `A
 
 Browser evidence baseline: **v5.17.78 scored 9.35/10** in the weighted hostile review after a real Chromium run. That run found and fixed light-theme AA contrast failures, 44px touch-target contract failures, and a 25px Tajweed horizontal overflow; it also recorded one onboarding reciter persistence flake and 38 corpus-dependent failures in the seed bundle.
 
-Current source baseline: **v5.17.80**. Treat the old 9.9 source claim as obsolete until the local browser matrix re-rates this tree. The machine run is the authority for geometry, visual overflow, interaction state, and screenshot claims.
+Current source baseline: **v5.17.83**. Treat the old 9.9 source claim as obsolete until the local browser matrix re-rates this tree. The machine run is the authority for geometry, visual overflow, interaction state, and screenshot claims.
 
 ## Current pass focus
 
