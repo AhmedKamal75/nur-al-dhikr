@@ -71,7 +71,7 @@ export function navigateFocusAdjacent(dir) {
  * one, and when it fires it re-checks that the user is still on EXACTLY the
  * item/view the completion happened on, so a stale timer can never yank the
  * view away from somewhere new. */
-export function scheduleAutoAdvance() {
+export function scheduleAutoAdvance(delay = 220) {
   const origin = store.getState();
   const from = {
     view: origin.activeView,
@@ -79,13 +79,16 @@ export function scheduleAutoAdvance() {
     subId: String(origin.activeParams?.subId ?? ''),
   };
   clearTimeout(rt.pendingAutoAdvanceTimer);
-  rt.pendingAutoAdvanceTimer = setTimeout(() => {
-    rt.pendingAutoAdvanceTimer = null;
-    const now = store.getState();
-    if (isModalOpen()) return;
-    if (now.activeView !== from.view) return;
-    if (String(now.activeParams?.id ?? '') !== from.id) return;
-    if (String(now.activeParams?.subId ?? '') !== from.subId) return;
-    navigateFocusAdjacent(1);
-  }, 360);
+  rt.pendingAutoAdvanceTimer = setTimeout(
+    () => {
+      rt.pendingAutoAdvanceTimer = null;
+      const now = store.getState();
+      if (isModalOpen()) return;
+      if (now.activeView !== from.view) return;
+      if (String(now.activeParams?.id ?? '') !== from.id) return;
+      if (String(now.activeParams?.subId ?? '') !== from.subId) return;
+      navigateFocusAdjacent(1);
+    },
+    Math.max(120, Math.min(600, Number(delay) || 220))
+  );
 }

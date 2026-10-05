@@ -11,12 +11,11 @@
  * set which card fields its sections show. Builtin content is never
  * modified: all edits live in the user's contentPrefs lens.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { pickLocale, categoryDisplayName, escapeHTML } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
-import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { adhkarBrowserHTML, resolveBrowserWindow } from './home.js';
 import { MOODS, itemsForMood } from '../domain/moods.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
@@ -43,10 +42,17 @@ export function renderLibrary(state) {
     return `
   <section class="view view--library">
     <div class="view-header view-header--row">
-      <h1 class="view__title">${t('nav.azkar', lang)}</h1>
+      <div>
+        <h1 class="view__title">${t('nav.azkar', lang)}</h1>
+        <p class="view__subtitle">${t('home.browserSub', lang)}</p>
+      </div>
       ${viewMenuButton('library', lang, { labelKey: 'viewMenu.library' })}
     </div>
-    ${azkarModeSwitchHTML(state.activeView, lang)}
+    <a class="library-search-launch" href="${buildHash(VIEWS.SEARCH)}" data-action="navigate" data-view="${VIEWS.SEARCH}">
+      ${icon('search', { size: 18 })}
+      <span>${escapeHTML(t('search.placeholder', lang))}</span>
+      ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 15 })}
+    </a>
     ${
       state.loadErrors?.library && !browser
         ? loadErrorStateHTML({ lang, tierKey: 'library', t })
@@ -280,7 +286,6 @@ export function renderLibrary(state) {
       }
       ${viewMenuButton('library', lang, { labelKey: 'viewMenu.library' })}
     </div>
-    ${azkarModeSwitchHTML(state.activeView, lang)}
     ${(() => {
       // (v5.2.88, P2) section jump chips: one per rendered section, sticky
       // under the topbar so long libraries stay navigable. Buttons (not

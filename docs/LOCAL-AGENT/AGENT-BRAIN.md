@@ -5,7 +5,7 @@ It is allowed to change as the evidence changes. Durable principles belong in `A
 
 ## Current baseline
 
-- Release: **v5.17.83**
+- Release: **v5.17.86**
 - Stack: vanilla ES modules + plain CSS + no build step + no runtime dependencies
 - Offline-first PWA
 - Arabic + English
@@ -17,9 +17,13 @@ It is allowed to change as the evidence changes. Durable principles belong in `A
 
 Browser evidence baseline: **v5.17.78 scored 9.35/10** in the weighted hostile review after a real Chromium run. That run found and fixed light-theme AA contrast failures, 44px touch-target contract failures, and a 25px Tajweed horizontal overflow; it also recorded one onboarding reciter persistence flake and 38 corpus-dependent failures in the seed bundle.
 
-Current source baseline: **v5.17.83**. Treat the old 9.9 source claim as obsolete until the local browser matrix re-rates this tree. The machine run is the authority for geometry, visual overflow, interaction state, and screenshot claims.
+Current source baseline: **v5.17.86**. Treat the old 9.9 source claim as obsolete until the local browser matrix re-rates this tree. The machine run is the authority for geometry, visual overflow, interaction state, and screenshot claims.
 
 ## Current pass focus
+
+- Main menu is now a true hierarchy: worship/product domains expand in the main menu; Zakat, Offline, Settings, and About are standalone application-tail siblings, with Settings then About last.
+- Native `<details>` disclosure styling is explicitly reset; browser marker/dashed-line fallthrough is a defect.
+- Home is a vertical editorial story: identity → Today/prayer context → actions → Shahada → next → reflection → context. Decorative/supporting panels must not precede Today.
 
 - Section mode switches were changed from filled segmented controls to editorial navigation rails.
 - Settings now leads with identity/search and a compact grouped You index.
@@ -91,3 +95,10 @@ Example:
 5. Grep / search
 
 Static inspection is never visual proof.
+
+### v5.17.86 durable lesson — Home is not a launcher and Player is not a settings shelf
+
+- Home must answer “what should I do now?” before “what else exists?”. Default Home therefore keeps only the daily core and two current-window adhkar shortcuts; optional reflection/support panels are opt-in.
+- A feature's secondary controls should not compete with its primary action. The full-surah Player keeps transport visible and collapses repeat/speed/mute/sleep/mode/volume behind native disclosure.
+- The Azkar browser now has a single search doorway and subtle daily anchors; its catalogue remains a library, not a dashboard.
+- Focus completion is a session transition: count once, acknowledge briefly, then advance.

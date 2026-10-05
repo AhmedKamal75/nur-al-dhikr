@@ -206,10 +206,11 @@ describe('Phase 3: contracts that must not move', () => {
     const libHtml = renderLibrary(browserState());
     assert.ok(libHtml.includes('home-browser'), 'browser section rides the Azkar view');
     assert.ok(libHtml.includes(en['home.browserTitle']), 'browser title renders on Azkar');
-    assert.ok(libHtml.includes('azkar-mode-switch'), 'the Azkar switch rides the section');
-    assert.ok(
-      libHtml.includes(`data-view="${VIEWS.LIBRARY}"`),
-      'the grid is offered through the LIBRARY door (IA-7: the Azkar section entry)'
+    assert.ok(/view--library/.test(libHtml), 'the browser has its own Azkar landing surface');
+    assert.doesNotMatch(
+      libHtml,
+      /section-mode-switch|azkar-mode-switch/,
+      'Azkar does not duplicate main-menu navigation'
     );
     const homeHtml = renderHome(browserState());
     assert.ok(!homeHtml.includes('home-browser'), 'Home carries no browser grid');

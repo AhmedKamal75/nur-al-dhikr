@@ -47,3 +47,12 @@ Append one entry per local-agent session.
 **Open limitations:** Chromium execution is not reliable in the remote environment; do not claim a fresh browser-certified score from this pass.
 
 **Next handoff:** rerun the full matrix locally and return before/after evidence, with special attention to feature interiors.
+
+## v5.17.84 — main-menu hierarchy + Home composition
+
+- User-hostile review found the previous menu hierarchy semantically wrong: Zakat/Settings were visually grouped, worship domains did not present as clean collapsible sections, and native `<details>` chrome leaked through as dashed/stacked decoration.
+- Converted the application tail to flat standalone siblings and added explicit disclosure styling for worship sections.
+- Reordered Home so Today/actions precede Shahada/next/reflection/context and reduced mobile Home title scale.
+- Focus/Tajweed were not redesigned; they remain strong surfaces.
+- Targeted validation: 150 tests passed across 38 suites.
+- Full `npm run check` / Chromium matrix must be run on the authoritative local tree before a browser score is assigned.

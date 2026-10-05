@@ -19,9 +19,9 @@
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
+import { studyContextHTML } from './studyContext.js';
 import { t, isRTL } from '../core/i18n.js';
 import { VIEWS } from '../core/config.js';
-import { quranModeSwitchHTML } from '../ui/shell.js';
 import { TAJWEED_RULES, TAJWEED_FAMILIES } from '../domain/tajweed.js';
 import { TAJWEED_WORKS, TAJWEED_SOURCES, tajweedCitation } from '../domain/tajweedSources.js';
 import {
@@ -79,11 +79,14 @@ function ruleChip(ruleId, lang, locked) {
     ? `<span class="tajweed-legend__swatch" style="background:${escapeHTML(color)}"></span>`
     : `<span class="tajweed-legend__swatch tajweed-legend__swatch--plain"></span>`;
   return `<li class="taj-course__rule">
-    <button type="button" class="taj-course__rule-btn" data-action="tajweed-course-drill-rule" data-rule="${escapeHTML(ruleId)}" ${locked ? 'disabled' : ''}>
-    ${swatch}
-    <span class="taj-course__rule-name">${escapeHTML(pickLocale(rule.name, lang))}</span>
-    ${cite ? `<span class="taj-course__rule-src">${escapeHTML(t('tajweedCourse.source', lang))}: ${escapeHTML(cite.title)} ${escapeHTML(cite.lines)}</span>` : `<span class="taj-course__rule-src taj-course__rule-src--missing">${escapeHTML(t('tajweedCourse.uncited', lang))}</span>`}
-    </button>
+    <div class="taj-course__rule-main">
+      <button type="button" class="taj-course__rule-btn" data-action="tajweed-course-drill-rule" data-rule="${escapeHTML(ruleId)}" ${locked ? 'disabled' : ''}>
+        ${swatch}
+        <span class="taj-course__rule-name">${escapeHTML(pickLocale(rule.name, lang))}</span>
+        ${cite ? `<span class="taj-course__rule-src">${escapeHTML(t('tajweedCourse.source', lang))}: ${escapeHTML(cite.title)} ${escapeHTML(cite.lines)}</span>` : `<span class="taj-course__rule-src taj-course__rule-src--missing">${escapeHTML(t('tajweedCourse.uncited', lang))}</span>`}
+      </button>
+      <button type="button" class="icon-btn icon-btn--sm taj-course__learn" data-action="practice-lesson" data-rule="${escapeHTML(ruleId)}" ${locked ? 'disabled' : ''} aria-label="${escapeHTML(t('practice.lesson', lang))} — ${escapeHTML(pickLocale(rule.name, lang))}" title="${escapeHTML(t('practice.lesson', lang))}">${icon('book', { size: 15 })}</button>
+    </div>
   </li>`;
 }
 
@@ -238,7 +241,6 @@ export function renderTajweedCourse(state) {
         <span>${escapeHTML(t('tajweedCourse.progress', lang))}: ${overall.done} / ${overall.total}</span>
       </div>
     </div>
-    ${quranModeSwitchHTML(state.activeView, lang)}
     <p class="taj-course__intro">${escapeHTML(t('tajweedCourse.intro', lang))}</p>
     ${modeSwitch}
     ${continueBlock}

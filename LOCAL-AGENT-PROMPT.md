@@ -2,7 +2,7 @@
 
 You are the **local implementation + browser-QA agent** for Nūr al-Dhikr.
 
-You are not being asked to invent a redesign from scratch. The product has already undergone multiple deslopification passes through `v5.17.80`. Your job is to **run the real application on the owner's machine, collect hard browser evidence, find what is still visually or functionally poor, fix it at the source, and return evidence that another engineer can act on**.
+You are not being asked to invent a redesign from scratch. The product has already undergone multiple deslopification passes through `v5.17.86`. Your job is to **run the real application on the owner's machine, collect hard browser evidence, find what is still visually or functionally poor, fix it at the source, and return evidence that another engineer can act on**.
 
 The owner will feed your evidence back to an independent reviewer for the next pass. Therefore, false confidence is worse than an unfinished item.
 
@@ -27,7 +27,7 @@ Do not replace the existing project documents. The local-agent files are an exec
 
 ## 2. Current state
 
-Current release: **v5.17.80**.
+Current release: **v5.17.86**.
 
 The last real-browser baseline is **v5.17.78**, scored **9.35/10** after Chromium evidence. Do not reuse the old 9.9 source-only claim. Re-rate the current tree after running the complete browser matrix. Treat 9.9 as the ceiling to earn with evidence, not a preset result.
 
@@ -59,6 +59,17 @@ The highest-value feature areas for browser review are:
 - settings / appearance / language / accessibility
 
 `azkar.me` is a **taste reference**, not a codebase to copy. Take its restraint, information hierarchy, direct content entry, reading focus, semantic use of color, and interaction calm. Do not copy its branding, text, proprietary assets, implementation, or assumptions that conflict with Nūr al-Dhikr's requirements.
+
+## 2A. Owner observations that must be validated, not merely acknowledged
+
+The owner has identified three product-level problems that must be treated as classes:
+
+- **Focus / sequential recitation:** completing the current dhikr at its target should increment the session, briefly acknowledge completion, then automatically move to the next visible dhikr in the same category. This must work from the entire reading stage, not only the tiny counter control. Extra taps during the handoff must not double-count or delay progression.
+- **Settings control language:** Settings must not present navigation as underlined/inline hyperlink prose. Navigation inside Settings should look like deliberate control surfaces, with icons, touch-sized targets, readable labels, and a clear active state. Long metadata must wrap instead of clipping.
+- **Home hierarchy:** Home must have an obvious reading order: identity/context first, Today/prayer context second, primary actions third, then the Shahada/contextual bridge, next task, reflection, onboarding and supporting material. Reflection or utility panels must never visually jump above the day's core.
+- **Main-menu hierarchy:** Home is a direct landing. Worship/product domains (Azkar, Qur’an, Prayer, Practise, You where applicable) expose their own direct children through one expandable main-menu row. Zakat, Offline, Settings, then About are standalone application-tail siblings; Settings/About must never be visually or semantically grouped with Zakat/Offline. Native `<details>` markers, dashed connectors, and browser-default disclosure chrome are defects.
+
+Do not patch only the exact example the owner described. Find the shared interaction/layout rule that governs the whole class and pin it with a regression test.
 
 ## 3. First run — prove the machine
 
@@ -298,3 +309,16 @@ Return a compact message containing:
 Do not use words such as "fixed", "perfect", "production-ready", or "9.9/10" without evidence.
 
 The owner's next step is to inspect your evidence, not trust your confidence.
+
+## v5.17.86 focus for this machine run
+
+Do not assume the source-only changes are visually successful. The fresh browser matrix must explicitly inspect:
+
+1. Home at first install: confirm the first fold is identity → Today/prayer → current daily action, with no reflection/banner crowding the top.
+2. Main menu: confirm worship domains expand/collapse cleanly and Zakat, Offline, Settings, About remain standalone siblings at the tail.
+3. Azkar: confirm search doorway, Morning/Evening featured treatment, category density, bilingual geometry, and direct one-action tiles.
+4. Focus: confirm a single tap on a one-count item visibly reaches 1 and advances automatically to the next visible item; test Morning and Evening, EN/AR, phone/desktop.
+5. Player: confirm transport is visually primary and the secondary disclosure is usable without clipping, especially on 360×800 and RTL.
+6. Settings: confirm no row visually resembles an unstyled hyperlink and long bilingual metadata wraps.
+
+If any of these fail in the browser, fix the class at source and add a regression. Do not merely adjust a screenshot.

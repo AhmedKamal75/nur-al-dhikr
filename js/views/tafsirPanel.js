@@ -921,9 +921,7 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
     const cachedSurah = state.tafsir?.[activeEdition.id]?.[String(surah)];
     const text = cachedSurah?.[String(ayah)];
     if (typeof text === 'string' && text.trim()) {
-      body = `
-        <p class="tafsir-panel__author">${escapeHTML(pickLocale({ en: activeEdition.authorEn, ar: activeEdition.authorAr }, lang))}</p>
-        ${editionBodyHTML(activeEdition, text)}`;
+      body = editionBodyHTML(activeEdition, text);
     } else if (cachedSurah && typeof cachedSurah === 'object') {
       // (v5.17.53, merged-plan item 6) empty ayahs speak through the ONE
       // missing-data pattern (single source: missingData.tafsir-missing).
@@ -947,9 +945,26 @@ export function buildTafsirPanel(state, surah, ayah, activeId) {
 
   const activeTabId = activeEdition ? `tafsir-tab-${activeEdition.id}` : '';
   const compareBlock = buildTafsirCompare(state, surah, ayah, allEditions, activeEdition?.id, lang);
+  const sourceMeta = activeEdition
+    ? `
+      <div class="tafsir-panel__source-meta" aria-label="${escapeHTML(t('tafsir.sourceContext', lang))}">
+        <div class="tafsir-panel__source-meta-main">
+          <span class="tafsir-panel__source-name">${escapeHTML(pickLocale({ en: activeEdition.nameEn, ar: activeEdition.nameAr }, lang))}</span>
+          <span class="tafsir-panel__source-author">${escapeHTML(pickLocale({ en: activeEdition.authorEn, ar: activeEdition.authorAr }, lang))}</span>
+        </div>
+        <span class="tafsir-panel__source-kind">${t(activeEdition.category === 'grammar' ? 'tafsir.categoryGrammar' : 'tafsir.categoryTafsir', lang)}</span>
+      </div>`
+    : '';
 
   return `
   <div class="tafsir-panel">
+    <div class="tafsir-panel__context">
+      <div>
+        <p class="tafsir-panel__kicker">${escapeHTML(t('tafsir.title', lang))}</p>
+        <p class="tafsir-panel__ayah-ref" dir="ltr">${Number(surah)}:${Number(ayah)}</p>
+      </div>
+      ${sourceMeta}
+    </div>
     <div class="tafsir-tabs" role="tablist" aria-label="${t('tafsir.title', lang)}">
       ${bundled.map(tabBtn).join('')}
       ${remote.length ? `<span class="tafsir-tabs__sep"></span>${remote.map(tabBtn).join('')}` : ''}

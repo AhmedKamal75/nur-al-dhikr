@@ -26,6 +26,10 @@ export const QUICK_TILE_IDS = Object.freeze([
   'zakat',
 ]);
 
+/** Home's default shortcuts are task-shaped, not usage-random or finance-first.
+ * Settings may still customize the quick-action order/hides. */
+export const HOME_QUICK_TILE_DEFAULTS = Object.freeze(['morning', 'evening']);
+
 /** Registry: destination, icon, label key and accent class per tile. */
 export const QUICK_TILE_DEFS = Object.freeze([
   {
@@ -113,7 +117,7 @@ function asHiddenMap(hidden) {
  * then anything missing in usage order — minus hidden ones.
  */
 export function resolveQuickTiles(input) {
-  const { order = null, hidden = null, visits = null } = input || {};
+  const { order = null, hidden = null, visits = null, defaultOrder = null } = input || {};
   const requestedLimit = Number(input?.limit);
   const limit = Number.isFinite(requestedLimit)
     ? Math.max(0, Math.floor(requestedLimit))
@@ -128,10 +132,16 @@ export function resolveQuickTiles(input) {
       out.push(id);
     }
   };
-  const base = Array.isArray(order) ? order : usageTileOrder(visits);
+  const base = Array.isArray(order)
+    ? order
+    : Array.isArray(defaultOrder)
+      ? defaultOrder
+      : usageTileOrder(visits);
   for (const id of base) take(id);
   // A manual order may omit ids (older backup) — usage order fills them.
   if (Array.isArray(order)) for (const id of usageTileOrder(visits)) take(id);
+  if (!Array.isArray(order) && Array.isArray(defaultOrder))
+    for (const id of QUICK_TILE_IDS) take(id);
   return out;
 }
 

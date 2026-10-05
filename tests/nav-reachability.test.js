@@ -26,7 +26,12 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import { VIEWS } from '../js/core/config.js';
-import { DOORS, DOOR_LABEL_KEYS } from '../js/core/config/nav.js';
+import {
+  APP_MENU_ENTRIES,
+  APP_MENU_GROUPS,
+  DOORS,
+  DOOR_LABEL_KEYS,
+} from '../js/core/config/nav.js';
 import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
 
@@ -43,15 +48,21 @@ const shellSrc = read('js/ui/shell.js');
 function parseDoorsStatic(src) {
   const entryRe = /entry:\s*'(\w+)'/g;
   const labelRe = /labelKey:\s*'([^']+)'/g;
+  // The trailing `,?` matters: four members are written multi-line with a
+  // trailing comma before `}` (COLLECTIONS, COLLECTION, TAJWEED_COURSE,
+  // MUTASHABIHAT, CERTIFICATE). Without it the pattern silently matched
+  // nothing for them, so this drift-check compared 22 static members against
+  // 26 real ones and failed on a false accusation instead of on real drift.
   const memberRe =
-    /\{\s*route:\s*'(\w+)'\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*\}/g;
+    /\{\s*route:\s*'(\w+)'\s*(?:,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*,?\s*\}/g;
   const entries = [...src.matchAll(entryRe)];
   const labels = [...src.matchAll(labelRe)];
   const members = [...src.matchAll(memberRe)].map((m) => ({
     route: m[1],
-    taps: Number(m[2]),
-    via: m[4] ?? null,
-    ...(m[6] ? { direct: m[6] === 'true' } : {}),
+    labelKey: m[2] ?? null,
+    taps: Number(m[3]),
+    via: m[5] ?? null,
+    ...(m[7] ? { direct: m[7] === 'true' } : {}),
     index: m.index,
   }));
   return { entries, labels, members };
@@ -131,9 +142,9 @@ const INTERNAL_JUSTIFICATIONS = {
   RAMADAN:
     'HANDOFF A1 / REORG Phase 8: the Ramadan companion is Prayer depth — absorbed into the PRAYER door in 2 taps via the 4-segment prayer-mode-switch; #/ramadan stays a real route, deep links keep working.',
   ZAKAT:
-    'HANDOFF A1 / REORG Phase 8: You-section member beside settings, where storage belongs — door via the You (checklist) entry in 2 taps via the 10-segment you-mode-switch; #/zakat stays a real route, deep links keep working.',
+    'HANDOFF A1 / REORG Phase 8: Standalone application utility in the main menu; #/zakat stays a real route, deep links keep working.',
   OFFLINE:
-    'HANDOFF A1 / REORG Phase 8: You-section member beside settings, where storage belongs — door via the You (checklist) entry in 2 taps via the 10-segment you-mode-switch; #/offline stays a real route, deep links keep working.',
+    'HANDOFF A1 / REORG Phase 8: Standalone application utility in the main menu; #/offline stays a real route, deep links keep working.',
 };
 
 /**
@@ -157,6 +168,10 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
       }
     }
     const kidsDoor = !hit && KIDS_DOOR_KEYS.has(routeKey);
+    const appGroup = hit
+      ? null
+      : APP_MENU_GROUPS.find((g) => g.entries.some((e) => e.view === routeValue)) || null;
+    const appEntry = appGroup?.entries.find((e) => e.view === routeValue) || null;
     return [
       routeKey,
       {
@@ -171,8 +186,18 @@ const ROUTE_DOOR_MAP = Object.fromEntries(
             }
           : kidsDoor
             ? { view: routeValue, entry: routeKey, labelKey: null, scope: 'kids', taps: 1 }
-            : null,
-        taps: hit ? hit.member.taps : kidsDoor ? 1 : null,
+            : appGroup
+              ? {
+                  view: routeValue,
+                  entry: routeKey,
+                  labelKey: appEntry?.label || null,
+                  scope: 'app',
+                  taps: 1,
+                  via: 'main-menu',
+                  appKind: appGroup.kind,
+                }
+              : null,
+        taps: hit ? hit.member.taps : kidsDoor ? 1 : appGroup ? 1 : null,
         internalJustification: INTERNAL_JUSTIFICATIONS[routeKey] || null,
       },
     ];
@@ -191,7 +216,7 @@ const UNJUSTIFIED_ORPHANS = ORPHANS.filter(
   (k) => !INTERNAL_ONLY.has(k) || !INTERNAL_JUSTIFICATIONS[k]
 );
 
-/* The flat chrome as derived: six entries in DOORS order. */
+/* The primary chrome as derived: seven entries in DOORS order. */
 const NAV_ENTRIES = DOORS.map((d) => ({
   viewKey: d.entry,
   view: d.view,
@@ -277,11 +302,13 @@ describe('Rule 6 drift-check: the test reads the real map, the parser proves it'
       DOORS.map((d) => d.entry),
       'door entry order drifted between the file text and the import'
     );
-    assert.deepEqual(
-      parsed.labels.map((m) => m[1]),
-      DOORS.map((d) => d.labelKey),
-      'door labelKey order drifted between the file text and the import'
-    );
+    const expectedLabels = DOORS.map((d) => d.labelKey);
+    const textLabels = parsed.labels.map((m) => m[1]);
+    let cursor = -1;
+    for (const expected of expectedLabels) {
+      cursor = textLabels.indexOf(expected, cursor + 1);
+      assert.ok(cursor >= 0, `door label ${expected} disappeared from nav.js text`);
+    }
     assert.deepEqual(
       DOOR_LABEL_KEYS,
       DOORS.map((d) => d.labelKey),
@@ -329,16 +356,14 @@ describe('Rule 6 drift-check: the test reads the real map, the parser proves it'
       shellSrc.includes('DOOR_VIEW_BY_ROUTE_KEY'),
       'isActive must resolve through the DOORS reverse lookup (rule 6)'
     );
-    for (const marker of ['DOORS.find(', 'switchRoutes(']) {
-      assert.ok(shellSrc.includes(marker), `mode-switch members must derive via ${marker}`);
-    }
+    assert.ok(shellSrc.includes('DOORS.map('), 'hierarchical members must derive from DOORS');
     // The hierarchical drawer derives from the same map: section blocks in
     // map order, subsection rows for direct members only (rule 6 — the
     // `direct: false` tile-depth flag lives in nav.js, not here).
     for (const marker of [
       'drawerSectionsHTML',
-      'SWITCH_LABELS_BY_ENTRY',
-      'azkarModeSwitchHTML',
+      'APP_MENU_ENTRIES',
+      'navSubRowsHTML',
       'm.direct !== false',
     ]) {
       assert.ok(shellSrc.includes(marker), `hierarchical chrome must derive via ${marker}`);
@@ -465,7 +490,7 @@ describe('IA-7 pin: sections with pinned member counts (extend, never weaken)', 
         HADITH: 1,
         PRAYER: 4,
         TASBIH: 2,
-        CHECKLIST: 10,
+        CHECKLIST: 6,
       },
       'a section gained or lost a member without updating the map — extend the map AND this pin together'
     );
@@ -473,12 +498,12 @@ describe('IA-7 pin: sections with pinned member counts (extend, never weaken)', 
 
   test('30 membered + 3 internal-only + kids scope = all 34 VIEWS routes', () => {
     const membered = DOORS.reduce((n, d) => n + d.members.length, 0);
-    assert.equal(membered, 30, `the sections carry ${membered} members, not 30`);
+    assert.equal(membered, 26, `the worship/personal sections carry ${membered} members, not 26`);
     assert.deepEqual([...ORPHANS].sort(), ['AMBIENT', 'EDITOR', 'SEARCH']);
     assert.equal(
-      membered + ORPHANS.length + 1,
+      membered + APP_MENU_ENTRIES.length + ORPHANS.length + 1,
       Object.keys(VIEWS).length,
-      'members + internals + kids scope must cover every VIEWS route'
+      'door members + app menu + internals + kids scope must cover every VIEWS route'
     );
   });
 
@@ -512,7 +537,7 @@ describe('Phase 8 pin: absorbed members resolve through their doors in ≤2 taps
     assert.equal(m.door.entry, 'MUSHAF');
     assert.equal(m.door.labelKey, 'nav.quran');
     assert.equal(m.taps, 2);
-    assert.equal(m.door.via, 'quran-mode-switch');
+    assert.equal(m.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('ROOTS'), 'ROOTS must not appear in the orphan list');
   });
 
@@ -532,18 +557,18 @@ describe('Phase 8 pin: absorbed members resolve through their doors in ≤2 taps
     assert.equal(m.door.entry, 'PRAYER');
     assert.equal(m.door.labelKey, 'nav.prayer');
     assert.equal(m.taps, 2);
-    assert.equal(m.door.via, 'prayer-mode-switch');
+    assert.equal(m.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('RAMADAN'), 'RAMADAN must not appear in the orphan list');
   });
 
-  test('ZAKAT and OFFLINE are You depth: CHECKLIST door in 2 taps via the 10-segment switch', () => {
+  test('ZAKAT and OFFLINE are standalone application-tail utilities, separate from Settings/About', () => {
     for (const key of ['ZAKAT', 'OFFLINE']) {
       const m = ROUTE_DOOR_MAP[key];
-      assert.ok(m.door, `#/${m.route} lost its door — re-homing must not orphan the route`);
-      assert.equal(m.door.entry, 'CHECKLIST');
-      assert.equal(m.door.labelKey, 'nav.you');
-      assert.equal(m.taps, 2, 'door → in-chrome You switch');
-      assert.equal(m.door.via, 'you-mode-switch');
+      assert.ok(m.door, `#/${m.route} lost its main-menu entry`);
+      assert.equal(m.door.entry, key);
+      assert.equal(m.door.labelKey, key === 'ZAKAT' ? 'nav.zakat' : 'nav.offline');
+      assert.equal(m.taps, 1, 'standalone main-menu utility');
+      assert.equal(m.door.via, 'main-menu');
       assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
     }
   });
@@ -568,7 +593,7 @@ describe('Phase 1 pin: the flagships have a front door', () => {
     assert.equal(door.taps, 2, 'door → in-chrome Qur’an switch');
     assert.equal(door.entry, 'MUSHAF');
     assert.equal(door.labelKey, 'nav.quran');
-    assert.equal(door.via, 'quran-mode-switch');
+    assert.equal(door.via, 'main-menu');
   });
 
   test('ROOTS sits in the Qur’an door as its depth (Phase 8 absorption)', () => {
@@ -611,7 +636,7 @@ describe('Phase 2 pin: one Qur’an door, six routes alive', () => {
     assert.equal(m.door.entry, 'MUSHAF');
     assert.equal(m.door.labelKey, 'nav.quran');
     assert.equal(m.taps, 2, 'door → in-chrome List/Word switch');
-    assert.equal(m.door.via, 'quran-mode-switch');
+    assert.equal(m.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('QURAN'), '#/quran must not appear in the orphan list');
   });
 
@@ -634,7 +659,7 @@ describe('Phase 2 pin: one Qur’an door, six routes alive', () => {
       assert.equal(m.door.entry, 'MUSHAF');
       assert.equal(m.door.labelKey, 'nav.quran');
       assert.equal(m.taps, 2, 'door → in-chrome Qur’an switch');
-      assert.equal(m.door.via, 'quran-mode-switch');
+      assert.equal(m.door.via, 'main-menu');
       assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
     }
   });
@@ -664,7 +689,7 @@ describe('Phase 3 pin: the Azkar section owns the browser', () => {
     assert.equal(m.door.entry, 'LIBRARY');
     assert.equal(m.door.labelKey, 'nav.azkar');
     assert.equal(m.taps, 1, 'browser tile → section');
-    assert.equal(m.door.via, 'adhkar-browser');
+    assert.equal(m.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('CATEGORY'), 'CATEGORY must not appear in the orphan list');
   });
 
@@ -674,7 +699,7 @@ describe('Phase 3 pin: the Azkar section owns the browser', () => {
     assert.equal(m.door.entry, 'LIBRARY');
     assert.equal(m.door.labelKey, 'nav.azkar');
     assert.equal(m.taps, 1, 'browser filter chip → mood');
-    assert.equal(m.door.via, 'adhkar-browser');
+    assert.equal(m.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('MOOD'), 'MOOD must not appear in the orphan list');
   });
 
@@ -713,7 +738,7 @@ describe('Phase 4 pin: one Prayer door, four routes alive', () => {
       assert.equal(m.door.entry, 'PRAYER');
       assert.equal(m.door.labelKey, 'nav.prayer');
       assert.equal(m.taps, 2, 'door → in-chrome Times/Qibla/Calendar/Ramadan switch');
-      assert.equal(m.door.via, 'prayer-mode-switch');
+      assert.equal(m.door.via, 'main-menu');
       assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
     }
   });
@@ -758,7 +783,7 @@ describe('Phase 5 pin: one Practise section, two routes alive', () => {
       assert.equal(m.door.entry, 'TASBIH');
       assert.equal(m.door.labelKey, 'nav.practise');
       assert.equal(m.taps, 2, 'door → in-chrome Tasbih/Quiz switch');
-      assert.equal(m.door.via, 'practise-mode-switch');
+      assert.equal(m.door.via, 'main-menu');
       assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
     }
   });
@@ -767,12 +792,20 @@ describe('Phase 5 pin: one Practise section, two routes alive', () => {
     for (const key of ['TAJWEED_COURSE', 'MUTASHABIHAT']) {
       const m = ROUTE_DOOR_MAP[key];
       assert.equal(m.door.entry, 'MUSHAF', `#/${m.route} still points at Practise`);
-      assert.equal(m.door.via, 'quran-mode-switch');
+      assert.equal(m.door.via, 'main-menu');
     }
   });
 
   test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
-    for (const key of ['nav.practise', 'nav.tasbih', 'quiz.title', 'practise.label']) {
+    // `practise.label` was dropped here: it was the pre-rename twin of
+    // `nav.practise`, with byte-identical values in both languages
+    // ('Practise' / 'الممارسة'), and nothing rendered it once the TASBIH door
+    // took `labelKey: 'nav.practise'` (js/core/config/nav.js). `nav.practise` is
+    // asserted on this same line, so the bilingual-naming rule this test exists
+    // to protect is still covered — the stale twin was not a second guarantee.
+    // Content keys are NOT added back to satisfy the i18n audit: an unreferenced
+    // dictionary entry is dead weight, and inventing UI to justify one is worse.
+    for (const key of ['nav.practise', 'nav.tasbih', 'quiz.title']) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
     }
@@ -805,25 +838,22 @@ describe('Phase 6 pin: one You section, ten routes alive', () => {
     );
   });
 
-  test('#/garden, #/statistics, #/favorites, #/journal, #/certificate, #/zakat, #/offline, #/settings and #/about stay real routes resolving to the You door in 2 taps', () => {
-    for (const key of [
-      'GARDEN',
-      'STATISTICS',
-      'FAVORITES',
-      'JOURNAL',
-      'CERTIFICATE',
-      'ZAKAT',
-      'OFFLINE',
-      'SETTINGS',
-      'ABOUT',
-    ]) {
+  test('#/garden, #/statistics, #/favorites, #/journal and #/certificate stay under You; Zakat/Offline/Settings/About are standalone menu entries', () => {
+    for (const key of ['GARDEN', 'STATISTICS', 'FAVORITES', 'JOURNAL', 'CERTIFICATE']) {
       const m = ROUTE_DOOR_MAP[key];
-      assert.ok(m.door, `#/${m.route} lost its door — the section must not orphan the route`);
+      assert.ok(m.door, `#/${m.route} lost its You door`);
       assert.equal(m.door.entry, 'CHECKLIST');
       assert.equal(m.door.labelKey, 'nav.you');
-      assert.equal(m.taps, 2, 'door → in-chrome You switch');
-      assert.equal(m.door.via, 'you-mode-switch');
-      assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
+      assert.equal(m.taps, 2, 'main menu → You → child');
+      assert.equal(m.door.via, 'main-menu');
+      assert.ok(!ORPHANS.includes(key));
+    }
+    for (const key of ['ZAKAT', 'OFFLINE', 'SETTINGS', 'ABOUT']) {
+      const m = ROUTE_DOOR_MAP[key];
+      assert.ok(m.door, `#/${m.route} lost its standalone main-menu entry`);
+      assert.equal(m.door.entry, key);
+      assert.equal(m.taps, 1, 'standalone main-menu entry');
+      assert.equal(m.door.via, 'main-menu');
     }
   });
 
@@ -847,7 +877,7 @@ describe('Phase 6 pin: one You section, ten routes alive', () => {
       'nav.zakat',
       'nav.offline',
       'nav.settings',
-      'you.about',
+      'nav.about',
     ]) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);
@@ -893,7 +923,7 @@ describe('Phase 7 pin: the orphans, one by one — Azkar depths, Qur’an listen
     assert.equal(m.door.entry, 'LIBRARY');
     assert.equal(m.door.labelKey, 'nav.azkar');
     assert.equal(m.taps, 2, 'door → category tile → card Open-focus');
-    assert.equal(m.door.via, 'adhkar-browser');
+    assert.equal(m.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('FOCUS'), 'FOCUS must not appear in the orphan list');
   });
 
@@ -902,14 +932,14 @@ describe('Phase 7 pin: the orphans, one by one — Azkar depths, Qur’an listen
     assert.ok(cols.door, 'COLLECTIONS lost its door');
     assert.equal(cols.door.entry, 'LIBRARY');
     assert.equal(cols.door.labelKey, 'nav.azkar');
-    assert.equal(cols.taps, 1, 'azkar collections panel → collections');
-    assert.equal(cols.door.via, 'azkar-collections-panel');
+    assert.equal(cols.taps, 2, 'main menu → Azkar → Collections');
+    assert.equal(cols.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('COLLECTIONS'), 'COLLECTIONS must not appear in the orphan list');
     const col = ROUTE_DOOR_MAP.COLLECTION;
     assert.ok(col.door, 'COLLECTION lost its door');
     assert.equal(col.door.entry, 'LIBRARY');
     assert.equal(col.door.labelKey, 'nav.azkar');
-    assert.equal(col.taps, 2, 'azkar → collections → collection tile');
+    assert.equal(col.taps, 3, 'main menu → Azkar → Collections → collection tile');
     assert.equal(col.door.via, 'azkar-collections-panel');
     assert.ok(!ORPHANS.includes('COLLECTION'), 'COLLECTION must not appear in the orphan list');
   });
@@ -920,7 +950,7 @@ describe('Phase 7 pin: the orphans, one by one — Azkar depths, Qur’an listen
     assert.equal(m.door.entry, 'MUSHAF');
     assert.equal(m.door.labelKey, 'nav.quran');
     assert.equal(m.taps, 2, 'door → in-chrome List/Word/Audio switch');
-    assert.equal(m.door.via, 'quran-mode-switch');
+    assert.equal(m.door.via, 'main-menu');
     assert.ok(!ORPHANS.includes('AUDIO'), '#/audio must not appear in the orphan list');
   });
 
@@ -983,54 +1013,19 @@ describe('Phase 0 trap: every route reachable within 2 taps of a section (GREEN 
     );
     const mapped = new Set();
     for (const d of DOORS) for (const m of d.members) mapped.add(m.route);
+    for (const entry of APP_MENU_ENTRIES) {
+      const routeKey = Object.keys(VIEWS).find((key) => VIEWS[key] === entry.view);
+      if (routeKey) mapped.add(routeKey);
+    }
     for (const key of Object.keys(VIEWS)) {
       if (KIDS_DOOR_KEYS.has(key) || INTERNAL_ONLY.has(key)) continue;
-      assert.ok(mapped.has(key), `${key} is in VIEWS but in no DOORS member list`);
+      assert.ok(mapped.has(key), `${key} is in no DOORS member list or standalone menu entry`);
     }
     const unjustified = UNJUSTIFIED_ORPHANS;
     assert.deepEqual(
       unjustified,
       [],
       `Phase 8 finding: routes with no door AND no justification: ${unjustified.join(', ')}`
-    );
-  });
-  test('the You switch grid pins its column count to the door map, not a literal', () => {
-    // `.you-mode-switch` sets `grid-template-columns: repeat(10, ...)` on wide
-    // viewports so all ten segments share one line. Ten is a literal in CSS,
-    // so this is the drift-check that keeps it honest: both sides are derived
-    // from core/config/nav.js, and adding an eleventh member fails here rather
-    // than silently wrapping an orphan onto a second row.
-    const youDoor = DOORS.find((d) => d.entry === 'CHECKLIST');
-    assert.ok(youDoor, 'the CHECKLIST (You) door must exist in the map');
-    const memberCount = youDoor.members.length;
-
-    const css = readFileSync(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        '..',
-        'assets',
-        'css',
-        'components.css'
-      ),
-      'utf8'
-    );
-    const rule = /\.you-mode-switch\s*\{([^}]*)\}/.exec(css);
-    assert.ok(rule, '.you-mode-switch must declare its own columns');
-    const pinned = /grid-template-columns:\s*repeat\((\d+)/.exec(rule[1]);
-    assert.ok(pinned, '.you-mode-switch must pin an explicit column count');
-    assert.equal(
-      Number(pinned[1]),
-      memberCount,
-      `the You switch renders ${memberCount} segments (from the DOORS map) but the CSS ` +
-        `grid is pinned to ${pinned[1]} columns — one segment will wrap alone onto a second row`
-    );
-
-    // And it must not go back to a fixed-percentage basis, which is what put
-    // four-per-row on a 1440px desktop and broke all ten labels on a phone.
-    assert.doesNotMatch(
-      css,
-      /\.segmented--wrap \.segmented__btn\s*\{[^}]*flex:\s*1 1 \d+%/s,
-      'a percentage flex-basis caps the row at a fixed segment count at EVERY width'
     );
   });
 });

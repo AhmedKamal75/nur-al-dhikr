@@ -25,7 +25,9 @@
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML } from '../core/utils.js';
-import { TRANSLATION_EDITIONS } from '../core/config.js';
+import { TRANSLATION_EDITIONS, VIEWS } from '../core/config.js';
+import { buildHash } from '../core/router.js';
+import { mergeStudyContextParams } from './studyContext.js';
 import { resolveCompareTexts } from '../domain/translationCompare.js';
 import {
   getWord,
@@ -144,6 +146,76 @@ function selectedWordDetail(state, lang, surah, ayah) {
       ${irabLine ? `<p class="study-tray__word-irab">${escapeHTML(irabLine)}</p>` : ''}
       ${tags.length ? `<div class="study-tray__word-tags">${tags.map((tag) => `<span class="chip chip--basis chip--sm">${escapeHTML(tag)}</span>`).join('')}</div>` : ''}
       ${wordSourcesHTML(study, lang)}
+      <div class="study-tray__word-actions">
+        <button type="button" class="btn btn--secondary btn--sm" data-action="word-study-from-tray" data-surah="${surah}" data-ayah="${ayah}" data-i="${i}" data-surface="${escapeHTML(surface || word.text || '')}">
+          ${icon('search', { size: 14 })} ${escapeHTML(t('wordStudy.open', lang))}
+        </button>
+      </div>
+    </div>`;
+}
+
+function studyJourneyHTML(state, lang, surah, ayah) {
+  const i = trayWordIndex(state);
+  const surface =
+    typeof state?.studyTray?.surface === 'string' && state.studyTray.surface
+      ? state.studyTray.surface
+      : null;
+  const selected = i == null ? null : getWord(state?.quranWords, surah, ayah, i, surface);
+  const root = selected?.root ? String(selected.root).trim() : '';
+  const links = [
+    {
+      key: 'study.journeyTafsir',
+      iconName: 'book',
+      action: 'tafsir-open',
+      attrs: `data-surah="${surah}" data-ayah="${ayah}"`,
+    },
+    ...(root
+      ? [
+          {
+            key: 'study.journeyRoot',
+            iconName: 'search',
+            href: buildHash(VIEWS.ROOTS, mergeStudyContextParams({ id: root }, state)),
+            attrs: `data-view="${VIEWS.ROOTS}" data-id="${escapeHTML(root)}"`,
+          },
+        ]
+      : []),
+    {
+      key: 'study.journeyTajweed',
+      iconName: 'sparkle',
+      href: buildHash(VIEWS.TAJWEED_COURSE, mergeStudyContextParams({}, state)),
+      attrs: `data-view="${VIEWS.TAJWEED_COURSE}"`,
+    },
+    {
+      key: 'study.journeyMemorize',
+      iconName: 'target',
+      href: buildHash(VIEWS.QURAN, {
+        id: surah,
+        ay: String(ayah),
+        mem: '1',
+        ...mergeStudyContextParams({}, state),
+      }),
+      attrs: `data-view="${VIEWS.QURAN}" data-id="${surah}" data-ay="${ayah}" data-mem="1"`,
+    },
+    {
+      key: 'study.journeyMutashabihat',
+      iconName: 'quran',
+      href: buildHash(VIEWS.MUTASHABIHAT, mergeStudyContextParams({}, state)),
+      attrs: `data-view="${VIEWS.MUTASHABIHAT}"`,
+    },
+  ];
+  return `
+    <div class="study-tray__journey">
+      <p class="study-tray__journey-label">${escapeHTML(t('study.journeyTitle', lang))}</p>
+      <div class="study-tray__journey-links" role="group" aria-label="${escapeHTML(t('study.journeyTitle', lang))}">
+        ${links
+          .map((item) => {
+            if (item.href) {
+              return `<a class="study-tray__journey-link" href="${item.href}" data-action="navigate" ${item.attrs}>${icon(item.iconName, { size: 14 })}<span>${escapeHTML(t(item.key, lang))}</span></a>`;
+            }
+            return `<button type="button" class="study-tray__journey-link" data-action="${item.action}" ${item.attrs}>${icon(item.iconName, { size: 14 })}<span>${escapeHTML(t(item.key, lang))}</span></button>`;
+          })
+          .join('')}
+      </div>
     </div>`;
 }
 
@@ -182,6 +254,7 @@ export function buildStudyTray(state, surahNumber, ayahNumber, arabicText = null
     ${translationBlock(state, lang, surah, ayah, ayahDoc)}
     ${wordsBlock}
     ${buildAyahStudyExtras(state, surah, ayah, state?.mushafSession?.tafsirTab ?? null)}
+    ${studyJourneyHTML(state, lang, surah, ayah)}
     <div class="study-tray__foot">
       <button type="button" class="btn btn--secondary btn--sm" data-action="tafsir-open" data-surah="${surah}" data-ayah="${ayah}">
         ${icon('book', { size: 15 })} ${t('wordStudy.openTafsir', lang)}

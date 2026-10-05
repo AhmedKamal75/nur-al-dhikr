@@ -1753,6 +1753,25 @@ body.mushaf-fs-idle .mushaf-fs-console:hover {
   }
 }
 
+/* --- Mushaf contextual study rail -------------------------------------------
+   The selected ayah stays on the paper; its study surface lives directly
+   beneath the book. It is intentionally separate from the optional
+   translation tray so an ayah tap never depends on translation settings. */
+.mushaf-study-rail {
+  display: flex;
+  flex-direction: column;
+  margin-block-start: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-block: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-surface) 96%, var(--color-primary) 4%);
+}
+.mushaf-study-rail .study-tray {
+  border-block-start: 0;
+  margin-block-start: 0;
+  padding-block-start: 0;
+}
+
 /* --- Translation tray (v4.4) --------------------------------------------------
    The Mushaf-side home of the classic reader's inline translations: this
    page's ayahs under the paper — never ON it. */
@@ -4084,6 +4103,111 @@ body.has-player .reader-immersive-echo {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
+}
+.study-tray__word-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-block-start: 0.75rem;
+}
+
+.study-tray__journey {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block-start: var(--space-1);
+}
+.study-tray__journey-label {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+}
+.study-tray__journey-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.study-tray__journey-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.study-tray__journey-link:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-primary-text);
+}
+
+.practice-lesson__example-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt);
+}
+.practice-lesson__example-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.practice-lesson__example-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: var(--color-primary-text);
+  font: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.practice-lesson__example-link:hover {
+  text-decoration: underline;
+}
+.practice-lesson__ayah {
+  margin: 0;
+  font-family: var(--font-arabic);
+  font-size: clamp(1.35rem, 2.7vw, 1.8rem);
+  line-height: 2;
+  text-align: center;
+}
+.practice-lesson__mark {
+  color: inherit;
+  background: transparent;
+  text-decoration: underline;
+  text-decoration-thickness: 0.11em;
+  text-underline-offset: 0.16em;
+  text-decoration-color: var(--color-primary);
+  border-radius: var(--radius-xs, 0.2rem);
+}
+.practice-lesson__legend {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+}
+.practice-lesson__legend-mark {
+  width: 1.3rem;
+  height: 0.2rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
 }
 .mushaf-tray__study {
   display: flex;

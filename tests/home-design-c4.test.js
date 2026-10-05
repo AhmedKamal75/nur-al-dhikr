@@ -206,7 +206,10 @@ describe('Home reading order: identity before utility', () => {
     const at = (needle) => html.indexOf(needle);
     assert.ok(at('home-hero--line') < at('home-prayer-ribbon'), 'hero precedes prayer context');
     assert.ok(at('home-prayer-ribbon') < at('quick-actions'), 'prayer precedes quick actions');
-    assert.ok(at('quick-actions') < at('shahada-banner'), 'actions precede footer banner');
+    assert.ok(
+      at('home-secondary') < at('shahada-banner'),
+      'supporting content precedes identity footer'
+    );
   });
 });
 
@@ -219,7 +222,7 @@ describe('C4 chrome: the hero is one line, the wizard is one line', () => {
     assert.ok(html.includes(en['app.name']), 'brand name kept');
     assert.ok(html.includes(en['app.tagline']), 'tagline kept, inline');
     assert.ok(html.includes('home-hero__hijri'), 'Hijri chip kept');
-    assert.ok(html.includes('shahada-banner'), 'the quiet Shahada line remains present');
+    assert.ok(html.includes('shahada-banner'), 'the quiet Shahada identity line remains present');
   });
 
   test('wizard renders one summary line; the full step survives inside <details>', () => {
@@ -291,7 +294,9 @@ describe('C4 contracts that must not move', () => {
 
   test('every tile keeps a live count and is itself the action after ranking', () => {
     const html = adhkarBrowserHTML(homeState());
-    const tiles = [...html.matchAll(/category-tile-wrap/g)].length;
+    const tiles = [
+      ...html.matchAll(/<div class="category-tile-wrap(?: category-tile-wrap--featured)?">/g),
+    ].length;
     assert.ok(tiles >= 70, `the full depth survives ranking (saw ${tiles} tiles)`);
     assert.equal(
       html.split('browser-tile__read').length - 1,
@@ -299,7 +304,7 @@ describe('C4 contracts that must not move', () => {
       'detached Read-now actions stay removed'
     );
     assert.equal(
-      (html.match(/class="category-tile"/g) || []).length,
+      (html.match(/class="category-tile(?:\s[^"]*)?"/g) || []).length,
       tiles,
       'every tile is a direct link'
     );

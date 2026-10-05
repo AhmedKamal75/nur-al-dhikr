@@ -37,7 +37,6 @@ import {
   ramadanKhatmPlan,
 } from '../domain/ramadanPlanner.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
-import { prayerModeSwitchHTML } from '../ui/shell.js';
 
 /**
  * Resolve the iftar/suhoor dua item id against the live library index —
@@ -397,7 +396,6 @@ export function renderRamadan(state) {
       <h1 class="view__title">${t('ramadan.title', lang)}</h1>
       ${viewMenuButton('ramadan', lang, { labelKey: 'viewMenu.ramadan' })}
     </div>
-    ${prayerModeSwitchHTML(state.activeView, lang)}
     ${main}
     <p class="view__meta">${t('ramadan.hijriNote', lang)}</p>
   </section>`;

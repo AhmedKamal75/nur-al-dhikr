@@ -97,3 +97,16 @@ Check:
 - The Focus session is a sequential reading/counting flow. Auto-advance is the default product behavior; the setting is an opt-out, not the core interaction. Legacy snapshots that stored the old shipped default (`false`) are migrated to the new default once, while a post-v5.17.82 explicit choice is preserved with `autoAdvanceFocusExplicit`.
 - Settings navigation must not resemble prose hyperlinks. Any navigational index inside Settings should present as a compact control/list treatment with an icon, target-sized surface, clear active state, and no underline.
 - Long metadata belongs to the row's flexible content column and must wrap rather than be clipped by an ancestor or an inline span.
+
+### v5.17.84 durable lesson — semantic hierarchy must exist in both source and rendered chrome
+
+- A correct `DOORS`/`details` structure is not enough. If the browser is allowed to apply native `<summary>` markers or legacy nav selectors, the hierarchy renders like a browser-default outline. Reset the disclosure marker and own the summary/sub-row chrome explicitly.
+- Standalone application destinations must remain semantically standalone. Zakat, Offline, Settings, and About may share a row primitive, but they must not be grouped under a misleading “utility/settings/about” family. Settings then About are deliberate final siblings.
+- Home order is product logic, not decorative taste: orientation and Today context come before actions; reflection, onboarding, and supporting content come later. A screenshot that puts reflection before the day's core is a product defect even when every card itself looks polished.
+- When a screenshot and source disagree, treat the disagreement itself as a defect: identify the exact tree/version that produced the screenshot before making another stylistic judgment.
+
+### v5.17.86 durable memory
+
+The owner explicitly rejects “feature completeness” as a proxy for quality. Home, Settings, Focus, Player, and the Azkar browser must each have a clear primary job. Do not reintroduce broad shortcut grids, reflective cards before daily work, or rows of equally weighted controls.
+
+The owner’s reference quality bar is azkar.me: simple category entry, obvious search, direct reading/counting, progress that explains where the user is, and restrained secondary controls. Treat this as a product-language reference, not a request to copy branding or implementation.

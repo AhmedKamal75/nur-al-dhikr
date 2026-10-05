@@ -282,7 +282,7 @@ describe('shared rows render exactly once (no duplication)', () => {
         html.indexOf('id="settings-group-display"')
       );
       assert.ok(setupSlice.includes('panel--deferred'), 'deferred slotted in the setup group');
-      assert.ok(setupSlice.includes('#/about'), 'About door slotted in the setup group');
+      assert.ok(!setupSlice.includes('#/about'), 'About stays in the main-menu application tail');
     }
   });
 
@@ -403,25 +403,16 @@ describe('contract: language, adab, budget, a11y', () => {
     assert.ok(src.includes('./installRow.js'), 'install row still reused, not copied');
   });
 
-  test('Settings You index is a control surface, not legacy hyperlink prose', () => {
+  test('Settings is a standalone application control, not a You subsection', () => {
     const shell = readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8');
-    const css = readFileSync(new URL('../assets/css/deslopify.css', import.meta.url), 'utf8');
-    assert.match(shell, /YOU_SWITCH_ICONS/);
-    assert.match(shell, /you-subnav__item-icon/);
-    assert.match(
-      css,
-      /\.view--settings > \.you-subnav \.you-subnav__item\s*\{[\s\S]*?border: 1px solid/
-    );
-    assert.match(css, /\.view--settings > \.you-subnav \.you-subnav__item-icon/);
-    assert.match(css, /\.view--settings > \.you-subnav \.you-subnav__item--active/);
-    assert.ok(
-      !/text-decoration:\s*underline/.test(
-        css.slice(css.indexOf('.view--settings > .you-subnav .you-subnav__item'))
-      ),
-      'settings nav has no underline treatment'
-    );
+    const nav = readFileSync(new URL('../js/core/config/nav.js', import.meta.url), 'utf8');
+    assert.match(shell, /APP_MENU_ENTRIES/);
+    assert.match(shell, /nav__app-tail/);
+    assert.match(nav, /view: VIEWS\.SETTINGS/);
+    assert.match(nav, /view: VIEWS\.ABOUT/);
+    assert.doesNotMatch(nav, /route: 'SETTINGS'/);
+    assert.doesNotMatch(nav, /route: 'ABOUT'/);
   });
-
   test('Elder/a11y: labelled shelves, native controls, content-proof CSS', () => {
     const html = renderSettings(richState());
     const h1 = html.indexOf('<h1 class="view__title">');

@@ -964,6 +964,55 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 .view--hadith .hadith-controls {
   margin-block: 4px 6px;
 }
+.quran-study-door {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.7fr);
+  gap: 18px;
+  align-items: center;
+  margin-block: 14px 16px;
+  padding-block: 14px;
+  border-block: 1px solid var(--color-border);
+}
+.quran-study-door__copy {
+  min-width: 0;
+}
+.quran-study-door__kicker {
+  margin: 0 0 3px;
+  font-size: var(--fs-md);
+  font-weight: 760;
+}
+.quran-study-door__subtitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+  line-height: 1.55;
+}
+.quran-study-door__links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.quran-study-door__link {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--fs-caption);
+  font-weight: 680;
+  text-decoration: none;
+  text-align: center;
+}
+.quran-study-door__link:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-border));
+  background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+}
 
 /* Qur'an landing: quiet index, stronger distinction for the surah number. */
 .view--quran .surah-grid {
@@ -1036,6 +1085,13 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 }
 
 @media (max-width: 620px) {
+  .quran-study-door {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .quran-study-door__links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .view--quran .surah-grid {
     grid-template-columns: 1fr;
   }
@@ -1742,6 +1798,198 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 }
 
 /* -------------------------------------------------------------------------
+   Pass 8 — real hierarchical main menu
+   The section map already owns the IA. These rules make that hierarchy look
+   intentional instead of falling through to native <details>/<summary> chrome.
+   One section row expands; children are a quiet index beneath it. Settings,
+   About, Zakat and Offline remain plain top-level application entries.
+   ------------------------------------------------------------------------- */
+.nav__group--hierarchy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav__section {
+  margin: 0;
+  border: 0;
+}
+
+.nav__section-summary {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 10px;
+  min-block-size: var(--touch-target);
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard);
+}
+
+.nav__section-summary::-webkit-details-marker {
+  display: none;
+}
+
+.nav__section-summary::marker {
+  content: '';
+}
+
+.nav__section-summary:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+
+.nav__section-summary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
+}
+
+.nav__section-icon {
+  inline-size: 24px;
+  block-size: 24px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.nav__section-summary .nav__label {
+  min-inline-size: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav__section-chevron {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  transform: rotate(-90deg);
+  transition:
+    transform var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard);
+}
+
+[dir='rtl'] .nav__section-chevron {
+  transform: rotate(90deg);
+}
+
+.nav__section[open] > .nav__section-summary .nav__section-chevron {
+  transform: rotate(0);
+}
+
+.nav__section--current > .nav__section-summary {
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+}
+
+.nav__sub {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 4px;
+  padding-inline: 10px 2px;
+}
+
+[dir='rtl'] .nav__sub {
+  padding-inline: 2px 10px;
+}
+
+.nav__item--sub {
+  position: relative;
+  min-block-size: 44px;
+  padding: 7px 10px 7px 18px;
+  border-radius: 10px;
+  font-size: var(--fs-caption);
+  font-weight: 550;
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+[dir='rtl'] .nav__item--sub {
+  padding-inline: 10px 18px;
+}
+
+.nav__item--sub::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 6px;
+  inset-block-start: 50%;
+  inline-size: 4px;
+  block-size: 4px;
+  border-radius: 50%;
+  background: var(--color-border-strong);
+  transform: translateY(-50%);
+}
+
+[dir='rtl'] .nav__item--sub::before {
+  inset-inline-start: auto;
+  inset-inline-end: 6px;
+}
+
+.nav__item--sub:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+
+.nav__item--sub.nav__item--active {
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
+  color: var(--color-primary-text);
+  font-weight: 650;
+  border-inline-start: 0;
+}
+
+.nav__item--sub.nav__item--active::before {
+  background: var(--color-primary);
+}
+
+.nav__item--overview {
+  font-weight: 650;
+}
+
+@media (max-width: 959px) {
+  .nav-drawer__body .nav__section-summary {
+    min-block-size: 56px;
+    padding-inline: 10px;
+    font-size: var(--fs-md);
+  }
+
+  .nav-drawer__body .nav__sub {
+    margin-block-end: 6px;
+    padding-inline: 12px 4px;
+  }
+
+  [dir='rtl'] .nav-drawer__body .nav__sub {
+    padding-inline: 4px 12px;
+  }
+
+  .nav-drawer__body .nav__item--sub {
+    min-block-size: 48px;
+    font-size: var(--fs-sm);
+  }
+}
+
+@media (min-width: 960px) {
+  html[data-nav-collapsed='true'] .nav__section-summary {
+    grid-template-columns: 24px;
+    justify-content: center;
+    padding-inline: 8px;
+  }
+
+  html[data-nav-collapsed='true'] .nav__section-summary .nav__label,
+  html[data-nav-collapsed='true'] .nav__section-summary .nav__section-chevron,
+  html[data-nav-collapsed='true'] .nav__sub {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
    Pass 7 — feature interiors: stop treating deep features as utility pages.
    The home shell is intentionally quiet; focus, listening and Tajweed need
    their own interaction rhythm rather than inheriting dashboard chrome.
@@ -2092,6 +2340,24 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 .taj-course__session-title {
   font-weight: 700;
 }
+.taj-course__rule-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 6px;
+}
+.taj-course__rule-btn {
+  min-width: 0;
+}
+.taj-course__learn {
+  align-self: center;
+  flex: 0 0 auto;
+}
+.practice-lesson__source {
+  margin: 8px 0 0;
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
 .taj-course__badge {
   background: transparent;
   border: 1px solid var(--color-border);
@@ -2421,6 +2687,76 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   background: transparent;
   border: 0;
   color: var(--color-text-muted);
+}
+.tafsir-panel__context {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block-end: 10px;
+  border-block-end: 1px solid var(--color-border);
+}
+.tafsir-panel__kicker,
+.tafsir-panel__ayah-ref,
+.tafsir-panel__source-name,
+.tafsir-panel__source-author {
+  margin: 0;
+}
+.tafsir-panel__kicker {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+.tafsir-panel__ayah-ref {
+  margin-block-start: 3px;
+  font-weight: 750;
+}
+.tafsir-panel__source-meta {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  min-width: 0;
+  text-align: end;
+}
+.tafsir-panel__source-meta-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.tafsir-panel__source-name {
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.tafsir-panel__source-author {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+.tafsir-panel__source-kind {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+  font-size: 0.76rem;
+  border-inline-start: 1px solid var(--color-border);
+  padding-inline-start: 10px;
+}
+@media (max-width: 620px) {
+  .tafsir-panel__context {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .tafsir-panel__source-meta {
+    width: 100%;
+    text-align: start;
+    align-items: flex-start;
+  }
+  .tafsir-panel__source-kind {
+    margin-inline-start: auto;
+    border-inline-start: 0;
+    border-inline-end: 0;
+    padding-inline-start: 0;
+  }
 }
 .tafsir-panel {
   gap: 12px;
@@ -3131,88 +3467,6 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   box-shadow: none;
 }
 
-/* -------------------------------------------------------------------------
-   Pass 12 — section chrome + settings index.
-
-   Browser evidence on v5.17.77/78 showed that the product's section switches
-   were still the most obvious generic "UI kit" element: five large pills on
-   Qur'an/audio/Tajweed and four on Azkar/Prayer. They are navigation, not a
-   segmented value picker. Keep the existing class for compatibility and
-   tests, but give these rails the quieter editorial treatment used by the
-   specialist reading surfaces.
-   ------------------------------------------------------------------------- */
-.section-mode-switch {
-  display: flex;
-  align-items: stretch;
-  gap: 2px;
-  margin-block: 6px 10px;
-  padding: 0 2px;
-  border: 0;
-  border-block-end: 1px solid var(--color-border);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.section-mode-switch::-webkit-scrollbar {
-  display: none;
-}
-
-.section-mode-switch .segmented__btn {
-  position: relative;
-  flex: 1 0 auto;
-  min-inline-size: 96px;
-  min-block-size: 44px;
-  padding: 9px 11px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--color-text-muted);
-  box-shadow: none;
-  white-space: normal;
-  overflow-wrap: normal;
-  word-break: normal;
-}
-
-.section-mode-switch .segmented__btn:hover {
-  background: color-mix(in srgb, var(--color-primary) 4%, var(--color-surface));
-  color: var(--color-text);
-  transform: none;
-  box-shadow: none;
-}
-
-.section-mode-switch .segmented__btn--active,
-.section-mode-switch .segmented__btn[aria-current='page'] {
-  color: var(--color-primary-text);
-  background: transparent;
-  box-shadow: none;
-}
-
-.section-mode-switch .segmented__btn--active::after,
-.section-mode-switch .segmented__btn[aria-current='page']::after {
-  content: '';
-  position: absolute;
-  inset-inline: 10px;
-  inset-block-end: -1px;
-  block-size: 2px;
-  border-radius: 999px;
-  background: var(--color-primary);
-}
-
-@media (max-width: 560px) {
-  .section-mode-switch {
-    gap: 0;
-    margin-block: 4px 8px;
-  }
-
-  .section-mode-switch .segmented__btn {
-    min-inline-size: max-content;
-    padding-inline: 10px;
-  }
-}
-
 /* Settings should feel like a control centre, not a sub-navigation page
    wearing the same cards as content views. The grouped You links become a
    compact index here; the actual controls below own the visual weight. */
@@ -3238,209 +3492,568 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   margin: 0;
 }
 
-.view--settings > .you-subnav {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px 28px;
-  padding-block: 12px 14px;
-  border-block-end: 1px solid var(--color-border);
+.view--settings .reciter-row__name {
+  min-inline-size: 0;
+  inline-size: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
-.view--settings > .you-subnav .you-subnav__group-title {
-  margin: 0 0 3px;
-  padding: 0;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.view--settings .reciter-row__meta {
+  display: inline;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  white-space: normal;
+}
+
+/* v5.17.84 — Home task order. The ornamental shahada sits after Today/Start,
+   never before the day's first useful action. Supporting/reflection content is
+   always below this core argument. */
+.view--home > .home-core {
+  gap: clamp(16px, 2.2vw, 24px);
+}
+
+.view--home > .home-core .home-section--today {
+  order: 1;
+}
+
+.view--home > .home-core .home-section--actions {
+  order: 2;
+}
+
+.view--home > .shahada-banner {
+  max-width: 1120px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .view--home > .home-core {
+    gap: 14px;
+  }
+
+  .view--home > .shahada-banner {
+    margin-block: 0;
+  }
+}
+
+/* v5.17.84 — Home should feel like a quiet welcome, not a generic card.
+   The useful content begins immediately; the brand line is context, not a
+   dashboard tile. */
+.view--home > .home-hero.home-hero--line {
+  min-block-size: 52px;
+  padding: 6px 0 8px;
+  border: 0;
+  border-inline-start: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__title {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+}
+
+.view--home > .home-hero.home-hero--line .home-hero__tagline {
+  font-size: 0.78rem;
   color: var(--color-text-muted);
 }
 
-[dir='rtl'] .view--settings > .you-subnav .you-subnav__group-title {
-  letter-spacing: 0;
-  text-transform: none;
+.view--home > .home-hero.home-hero--line .home-hero__greeting {
+  margin-inline-start: auto;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
 }
 
-.view--settings > .you-subnav .you-subnav__grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 14px;
+@media (max-width: 600px) {
+  .view--home > .home-hero.home-hero--line {
+    min-block-size: 46px;
+    padding-block: 4px 6px;
+    gap: 4px 10px;
+  }
+
+  .view--home > .home-hero.home-hero--line .home-hero__title {
+    font-size: clamp(1.12rem, 5vw, 1.34rem);
+  }
+
+  .view--home > .home-hero.home-hero--line .home-hero__tagline,
+  .view--home > .home-hero.home-hero--line .home-hero__greeting {
+    font-size: 0.72rem;
+  }
 }
 
-.view--settings > .you-subnav .you-subnav__item {
-  position: relative;
-  min-block-size: 42px;
-  display: inline-flex;
+/* -------------------------------------------------------------------------
+   Pass 8b — settings controls and Home composition
+   ------------------------------------------------------------------------- */
+.view--settings .panel--deferred .reciter-list {
+  gap: 6px;
+}
+
+.view--settings .panel--deferred .reciter-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 18px;
   align-items: center;
-  gap: 8px;
-  padding: 8px 11px;
+  gap: 10px;
+  min-block-size: 56px;
+  padding: 9px 12px;
   border: 1px solid var(--color-border);
-  border-radius: 11px;
+  border-radius: 12px;
   background: var(--color-surface);
   color: var(--color-text);
+  text-decoration: none !important;
   box-shadow: none;
-  text-decoration: none;
-  transition:
-    border-color 150ms ease,
-    background 150ms ease,
-    transform 150ms ease;
 }
 
-.view--settings > .you-subnav .you-subnav__item:hover {
-  transform: translateY(-1px);
+.view--settings .panel--deferred .reciter-row:hover {
   background: var(--color-surface-raised);
-  border-color: color-mix(in srgb, var(--color-primary) 24%, var(--color-border));
-}
-
-.view--settings > .you-subnav .you-subnav__item--active {
-  transform: none;
-  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
-  color: var(--color-primary-text);
   border-color: color-mix(in srgb, var(--color-primary) 28%, var(--color-border));
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-primary) 8%, transparent);
 }
 
-.view--settings > .you-subnav .you-subnav__item-icon {
-  display: inline-grid;
+.view--settings .settings-link-row__icon {
+  inline-size: 28px;
+  block-size: 28px;
+  display: grid;
   place-items: center;
-  flex: 0 0 auto;
-  color: var(--color-text-muted);
-}
-
-.view--settings > .you-subnav .you-subnav__item--active .you-subnav__item-icon {
+  border-radius: 9px;
   color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
 }
 
-@media (max-width: 780px) {
-  .view--settings .settings-hero {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .view--settings > .you-subnav {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .view--settings > .you-subnav .you-subnav__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
-  }
-
-  .view--settings > .you-subnav .you-subnav__item {
-    inline-size: 100%;
-  }
-}
-
-/* Audio manager: keep the library/list relationship editorial. On wide
-   screens the voice index gets a readable measure instead of floating as a
-   narrow island inside a huge empty panel; the download grid stays the
-   dense technical area where density is justified. */
-.view--audio > .panel:not(.panel--dl):not(.panel--queue) {
-  max-width: none;
-}
-
-.view--audio > .panel:not(.panel--dl):not(.panel--queue) .reciter-list {
-  max-inline-size: 760px;
-}
-
-@media (min-width: 1100px) {
-  .view--audio .reciter-list {
-    max-inline-size: 820px;
-  }
-}
-
-/* -------------------------------------------------------------------------
-   Pass 7: Home reads as a page, not a bag of widgets.
-   ------------------------------------------------------------------------- */
-.view--home {
-  gap: clamp(16px, 2.2vw, 28px);
-}
-
-.view--home > .home-hero.home-hero--line {
-  padding-block: 4px 0;
-  margin-block-end: 0;
-}
-.view--home > .home-hero.home-hero--line .home-hero__title {
-  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
-}
-.view--home > .home-hero.home-hero--line .home-hero__greeting {
-  margin-block-start: 6px;
-}
-
-/* The main Home landmarks are full-width on the desktop grid. */
-@media (min-width: 960px) {
-  .view--home > .home-hero.home-hero--line,
-  .view--home > .home-prayer-ribbon,
-  .view--home > .home-today,
-  .view--home > .quick-actions,
-  .view--home > .panel--onboarding,
-  .view--home > .shahada-banner {
-    grid-column: 1 / -1;
-  }
-}
-
-/* -------------------------------------------------------------------------
-   Settings: controls must read as controls, never as legacy hyperlinks.
-   ------------------------------------------------------------------------- */
-.view--settings .reciter-row {
-  width: 100%;
-  color: var(--color-text);
-  text-decoration: none;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 14px;
-  padding: 12px 14px;
-  justify-content: space-between;
-}
-.view--settings .reciter-row:visited {
-  color: var(--color-text);
-}
-.view--settings .reciter-row:hover {
-  color: var(--color-text);
-  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
-  border-color: color-mix(in srgb, var(--color-primary) 13%, var(--color-border));
-}
-.view--settings .reciter-row--active {
-  color: var(--color-primary-text);
-  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
-  border-color: color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
-  box-shadow: none;
-}
-.view--settings .reciter-row__name {
-  display: block;
-  flex: 1 1 auto;
-  min-width: 0;
-  max-width: 100%;
+.view--settings .panel--deferred .reciter-row__name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 7px;
+  min-inline-size: 0;
+  inline-size: auto;
   white-space: normal;
   overflow: visible;
   text-overflow: clip;
-  line-height: 1.45;
-  font-weight: 650;
-  overflow-wrap: anywhere;
-}
-.view--settings .reciter-row__meta {
-  color: var(--color-text-muted);
-  white-space: normal;
+  line-height: 1.35;
 }
 
-/* Small-screen settings: selection lists become readable full-width rows,
-   not clipped single-line links. */
+.view--settings .panel--deferred .reciter-row__meta {
+  display: block;
+  max-inline-size: 100%;
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+  line-height: 1.45;
+}
+
+.view--settings .settings-link-row__chevron {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+}
+
+.view--settings .reciter-list .reciter-row {
+  border-block-end: 1px solid var(--color-border);
+}
+
+.view--settings .reciter-list .reciter-row:last-child {
+  border-block-end: 0;
+}
+
+/* Home is an editorial vertical story at every width. Desktop gets its
+   breathing room from inner grids, not by placing unrelated sections beside
+   one another. */
+.view--home {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2.2vw, 24px);
+}
+
+.view--home > .home-core,
+.view--home > .home-secondary,
+.view--home > .shahada-banner {
+  inline-size: 100%;
+  max-inline-size: 1080px;
+  margin-inline: auto;
+}
+
+.view--home > .home-core,
+.view--home > .home-secondary {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 2vw, 22px);
+}
+
+.view--home .home-section {
+  inline-size: 100%;
+}
+
+.view--home .home-section__heading {
+  display: flex;
+  align-items: baseline;
+  min-block-size: 28px;
+  margin-block-end: 7px;
+  padding-inline: 2px;
+}
+
+.view--home .home-section__heading h2 {
+  margin: 0;
+  font-size: clamp(0.98rem, 1.4vw, 1.12rem);
+  line-height: 1.25;
+  font-weight: 760;
+  letter-spacing: -0.012em;
+}
+
+.view--home .home-secondary > .home-section--reflection {
+  margin-block-start: 2px;
+}
+
+.view--home .home-secondary > .home-section--supporting {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 960px) {
+  .view--home > .home-core,
+  .view--home > .home-secondary {
+    max-inline-size: 1120px;
+  }
+
+  .view--home > .home-core .home-section--actions .quick-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 600px) {
-  .view--settings .settings-group {
-    border-radius: 16px;
-    padding: 2px;
+  .view--home > .home-core,
+  .view--home > .home-secondary {
+    gap: 14px;
   }
-  .view--settings .settings-group__title {
-    margin-inline: 12px;
+
+  .view--home .home-section__heading {
+    margin-block-end: 5px;
   }
-  .view--settings .reciter-row {
-    min-height: 52px;
-    padding: 12px;
+
+  .view--home .home-section__heading h2 {
+    font-size: 0.98rem;
   }
-  .view--settings .reciter-row__meta {
-    display: block;
-    margin-block-start: 2px;
+
+  .view--home > .home-hero.home-hero--line {
+    min-block-size: 44px;
+    padding-block: 3px 5px;
+  }
+
+  .view--home > .home-hero.home-hero--line .home-hero__title {
+    font-size: clamp(1.05rem, 4vw, 1.28rem);
+    line-height: 1.2;
+  }
+}
+
+/* v5.17.84 — application-tail hierarchy.
+   Zakat, Offline, Settings and About are four standalone destinations. They
+   share the same row treatment but are never presented as one semantic group.
+   Settings and About are intentionally the final two destinations. */
+.nav__app-tail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-block-start: 10px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.nav__app-tail .nav__item--app-tail {
+  min-block-size: var(--touch-target);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+}
+
+.nav__app-tail .nav__item--app-tail:hover {
+  background: var(--color-surface-alt);
+}
+
+.nav__app-tail .nav__item--app-settings {
+  margin-block-start: 8px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+}
+
+.nav__app-tail .nav__item--app-about {
+  font-weight: 650;
+}
+
+@media (max-width: 959px) {
+  .nav-drawer__body .nav__app-tail .nav__item--app-tail {
+    min-block-size: 56px;
+  }
+}
+
+@media (min-width: 960px) {
+  html[data-nav-collapsed='true'] .nav__app-tail .nav__item--app-tail {
+    justify-content: center;
+    padding-inline: 8px;
+  }
+
+  html[data-nav-collapsed='true'] .nav__app-tail .nav__label {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   v5.17.85 — Home is a landing, not a dashboard; Azkar is a library.
+   ------------------------------------------------------------------------- */
+.view--home > .home-secondary:empty {
+  display: none;
+}
+
+.view--home > .home-secondary {
+  max-inline-size: 960px;
+}
+
+.view--home .home-section--next {
+  margin-block-start: 0;
+}
+
+.view--home .home-section--next .panel {
+  box-shadow: none;
+}
+
+.view--home > .home-core .home-section--actions .quick-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-inline-size: 760px;
+}
+
+@media (max-width: 600px) {
+  .view--home > .home-core .home-section--actions .quick-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Azkar browser: one search doorway, two daily anchors, then the catalogue. */
+.view--library .library-search-launch,
+.home-browser .library-search-launch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: 52px;
+  margin-block: 4px 20px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-surface) 94%, var(--color-primary) 6%);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  box-shadow: none;
+}
+.view--library .library-search-launch:hover,
+.home-browser .library-search-launch:hover {
+  color: var(--color-text);
+  border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-border));
+  background: var(--color-surface-raised);
+}
+.library-search-launch > span {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.library-search-launch > svg:first-child {
+  color: var(--color-primary-text);
+  flex: 0 0 auto;
+}
+.library-search-launch > svg:last-child {
+  color: var(--color-text-muted);
+  flex: 0 0 auto;
+}
+
+.view--library .category-tile-wrap--featured .category-tile,
+.home-browser .category-tile[data-featured='true'] {
+  min-block-size: 88px;
+  border-color: color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 7%, var(--color-surface)),
+    var(--color-surface)
+  );
+}
+
+.view--library .category-tile[data-featured='true'] .category-tile__icon,
+.home-browser .category-tile[data-featured='true'] .category-tile__icon {
+  inline-size: 46px;
+  block-size: 46px;
+  border-radius: 13px;
+}
+
+.view--library .category-tile[data-featured='true'] .category-tile__name,
+.home-browser .category-tile[data-featured='true'] .category-tile__name {
+  font-size: var(--fs-md);
+  font-weight: 760;
+}
+
+/* Focus is a reading instrument: the stage owns the screen; chrome stays
+   subordinate and the completion handoff is deliberately brief. */
+.focus__scroll {
+  max-inline-size: 820px;
+  margin-inline: auto;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--color-surface) 96%, var(--color-primary) 4%);
+  border: 1px solid var(--color-border);
+}
+
+.focus__content {
+  max-inline-size: 720px;
+  margin-inline: auto;
+  padding-inline: clamp(18px, 4vw, 42px);
+  padding-block: clamp(24px, 5vw, 48px);
+}
+
+.focus__arabic {
+  max-inline-size: 42rem;
+  margin-inline: auto;
+  font-size: clamp(1.55rem, 3.2vw, 2.25rem);
+  line-height: 2.15;
+  text-align: center;
+}
+
+.focus__hint {
+  margin-block: 10px 4px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.focus__bar {
+  max-inline-size: 720px;
+  margin-inline: auto;
+}
+
+@media (max-width: 600px) {
+  .focus__scroll {
+    border-inline: 0;
+    border-radius: 14px;
+  }
+  .focus__content {
+    padding-inline: 14px;
+    padding-block: 20px 26px;
+  }
+  .focus__arabic {
+    font-size: clamp(1.42rem, 7vw, 1.8rem);
+    line-height: 2.05;
+  }
+}
+
+/* v5.17.85 — the full-surah player keeps transport visible and puts secondary
+   controls behind one native disclosure. A player should read as playback,
+   not as a row of unrelated settings. */
+.player-bar__more {
+  position: relative;
+  margin-inline-start: auto;
+  flex: 0 0 auto;
+}
+.player-bar__more > summary {
+  list-style: none;
+  cursor: pointer;
+  min-block-size: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.player-bar__more > summary::-webkit-details-marker,
+.player-bar__more > summary::marker {
+  display: none;
+}
+.player-bar__more[open] > summary {
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+}
+.player-bar__more .player-bar__secondary {
+  position: absolute;
+  /* Was a raw `z-index: 5`, which is not on the --z-* scale and sits between
+     --z-raised and --z-player with no defined meaning. This panel only needs to
+     paint above its siblings INSIDE the player bar; the bar's own placement is
+     --z-player (39). --z-raised is the token for exactly this. */
+  z-index: var(--z-raised);
+  inset-inline-end: 0;
+  inset-block-end: calc(100% + 8px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, max-content));
+  gap: 5px;
+  min-inline-size: min(360px, calc(100vw - 24px));
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-lg);
+}
+.player-bar__more .player-bar__volume {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+}
+.player-bar__more .player-bar__volume .player-bar__seek {
+  flex: 1;
+  min-inline-size: 110px;
+}
+@media (max-width: 700px) {
+  .player-bar__more .player-bar__secondary {
+    inset-inline-end: -4px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-inline-size: min(300px, calc(100vw - 20px));
+  }
+  .player-bar__more .player-bar__chip {
+    justify-content: center;
+  }
+}
+
+/* Exact-origin study context: related study views keep one quiet route back
+   to the ayah that started the session. It is navigation chrome, not another
+   dashboard card. */
+.study-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-block: 0 14px;
+  padding-block: 8px;
+  border-block: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+.study-context__copy {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.study-context__kicker {
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+.study-context__ref {
+  font-size: 0.82rem;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+.study-context__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  color: var(--color-primary);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+.study-context__back:hover,
+.study-context__back:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 620px) {
+  .study-context {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
   }
 }

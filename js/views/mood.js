@@ -12,7 +12,6 @@ import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { selectors } from '../core/state.js';
 import { cardHTML } from '../ui/card.js';
-import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { MOODS, moodById, itemsForMood } from '../domain/moods.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';
@@ -34,7 +33,6 @@ function moodPickerHTML(state, lang) {
       <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${escapeHTML(t('nav.azkar', lang))}</a>
       <h1 class="view__title">${escapeHTML(t('moods.title', lang))}</h1>
     </header>
-    ${azkarModeSwitchHTML(state.activeView, lang)}
     <p class="panel__subtext">${escapeHTML(t('moods.pickerHint', lang))}</p>
     <ul class="mood-tiles">${rows.join('')}</ul>
   </section>`;
@@ -67,7 +65,6 @@ export function renderMood(state) {
       <p class="view__subtitle">${t('moods.subtitle', lang)}</p>
       <p class="view__meta">${t('collections.itemCount', lang, { n: entries.length })}</p>
     </header>
-    ${azkarModeSwitchHTML(state.activeView, lang)}
 
     ${
       entries.length

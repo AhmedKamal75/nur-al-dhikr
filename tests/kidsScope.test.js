@@ -18,6 +18,7 @@ import {
   isKidsAllowedView,
   resolveKidsView,
 } from '../js/core/config/views.js';
+import { DOORS, APP_MENU_ENTRIES } from '../js/core/config/nav.js';
 import { reduce } from '../js/core/state/reducer.js';
 import { initialState } from '../js/core/state/initial.js';
 import { actions } from '../js/core/state/actions.js';
@@ -101,10 +102,30 @@ describe('kids scope: nav chrome', () => {
     // under You — the RAIL still offers only sections, so kids cannot tap
     // there by entry.
     assert.ok(full.includes(VIEWS.CHECKLIST), 'mode off keeps the You door');
-    const rail = renderNav(initialState()).split('nav-drawer')[0];
-    const railViews = [...rail.matchAll(/data-view="([^"]+)"/g)].map((m) => m[1]);
-    assert.ok(!railViews.includes(VIEWS.SETTINGS), 'Settings rides a drawer row, not the rail');
-    assert.ok(full.includes(VIEWS.SETTINGS), 'the You drawer row reaches Settings');
+    // (v5.17.84+) Settings is a standalone application-tail entry in the main
+    // menu — APP_MENU_GROUPS in js/core/config/nav.js, whose comment says these
+    // are "standalone siblings at the end of the main menu" and forbids
+    // inventing semantic buckets. The old assertion sliced the rendered HTML on
+    // the substring 'nav-drawer' and asserted Settings was absent from whatever
+    // came first; that method read the rail and the drawer out of ONE string, so
+    // it broke as soon as the tail legitimately moved, and it could not tell a
+    // section door from an application-tail entry even when it worked.
+    //
+    // The intent is unchanged and is now asserted structurally: Settings is NOT
+    // a section door, and it IS reachable. Kids scope is asserted separately
+    // above and still passes.
+    assert.ok(
+      !DOORS.some(
+        (d) =>
+          d.entry === VIEWS.SETTINGS || (d.members || []).some((m) => m.route === VIEWS.SETTINGS)
+      ),
+      'Settings must stay out of the section doors — it is an application-tail entry'
+    );
+    assert.ok(
+      APP_MENU_ENTRIES.some((e) => e.view === VIEWS.SETTINGS),
+      'Settings remains reachable as a standalone main-menu entry'
+    );
+    assert.ok(full.includes(VIEWS.SETTINGS), 'the main menu reaches Settings');
     assert.ok(full.includes(VIEWS.HOME));
   });
 });

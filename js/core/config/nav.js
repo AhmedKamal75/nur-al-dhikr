@@ -15,15 +15,16 @@
  * (Practise) · CHECKLIST-entry labelled nav.you (You).
  *
  * HOME is a landing, not the grid: the ribbon, the moment, the resume rows
- * and the tasbih entry live there; the azkar grid lives in the AZKAR
+ * and the daily status and configured quick actions live there; the azkar grid lives in the AZKAR
  * section behind the LIBRARY route (renderLibrary reuses the browser
  * component from views/home.js — one component, two places is a copy).
  *
- * Retired as doors — routes and deep links untouched, keys kept in both
- * dictionaries (zero drift; several stay live as switch/view labels):
+ * Deep-link routes remain stable even when they are not top-level chrome.
+ * Their existing labels stay in both dictionaries for view-level context, but
+ * navigation hierarchy is owned here rather than duplicated inside views.
  * nav.roots (absorbed into the MUSHAF door), nav.tasbih (stays as the
  * Practise segment label), nav.ramadan (4th Prayer segment), nav.zakat +
- * nav.offline (9th/10th You segments), nav.search (doorless-by-design via
+ * nav.zakat + nav.offline (standalone application-tail entries), nav.search (doorless-by-design via
  * the topbar palette). nav.library retired with the Library nav noun (the
  * section is Azkar now; title.library stays the document title). The
  * read/worship/tools/mine taxonomy stays retired with the groups — the
@@ -75,13 +76,18 @@ export const DOORS = Object.freeze([
       // their views need an id and answer bare links with an honest 404,
       // so the drawer offers no direct hop — the browser tiles carry them.
       Object.freeze({ route: 'LIBRARY', taps: 1, via: null }),
-      Object.freeze({ route: 'CATEGORY', taps: 1, via: 'adhkar-browser', direct: false }),
-      Object.freeze({ route: 'MOOD', taps: 1, via: 'adhkar-browser' }),
-      Object.freeze({ route: 'FOCUS', taps: 2, via: 'adhkar-browser' }),
-      Object.freeze({ route: 'COLLECTIONS', taps: 1, via: 'azkar-collections-panel' }),
+      Object.freeze({ route: 'CATEGORY', taps: 1, via: 'main-menu', direct: false }),
+      Object.freeze({ route: 'MOOD', labelKey: 'title.mood', taps: 1, via: 'main-menu' }),
+      Object.freeze({ route: 'FOCUS', labelKey: 'title.focus', taps: 2, via: 'main-menu' }),
+      Object.freeze({
+        route: 'COLLECTIONS',
+        labelKey: 'title.collections',
+        taps: 2,
+        via: 'main-menu',
+      }),
       Object.freeze({
         route: 'COLLECTION',
-        taps: 2,
+        taps: 3,
         via: 'azkar-collections-panel',
         direct: false,
       }),
@@ -98,11 +104,21 @@ export const DOORS = Object.freeze([
       // Practise (owner IA: Qur'an carries its own study depths, while
       // Practise keeps counting + the Names quiz).
       Object.freeze({ route: 'MUSHAF', taps: 1, via: null }),
-      Object.freeze({ route: 'QURAN', taps: 2, via: 'quran-mode-switch' }),
-      Object.freeze({ route: 'ROOTS', taps: 2, via: 'quran-mode-switch' }),
-      Object.freeze({ route: 'AUDIO', taps: 2, via: 'quran-mode-switch' }),
-      Object.freeze({ route: 'TAJWEED_COURSE', taps: 2, via: 'quran-mode-switch' }),
-      Object.freeze({ route: 'MUTASHABIHAT', taps: 2, via: 'quran-mode-switch' }),
+      Object.freeze({ route: 'QURAN', labelKey: 'quran.modeList', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'ROOTS', labelKey: 'quran.modeWord', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'AUDIO', labelKey: 'nav.audio', taps: 2, via: 'main-menu' }),
+      Object.freeze({
+        route: 'TAJWEED_COURSE',
+        labelKey: 'nav.tajweedCourse',
+        taps: 2,
+        via: 'main-menu',
+      }),
+      Object.freeze({
+        route: 'MUTASHABIHAT',
+        labelKey: 'mutashabihat.title',
+        taps: 2,
+        via: 'main-menu',
+      }),
     ]),
   }),
   Object.freeze({
@@ -120,9 +136,9 @@ export const DOORS = Object.freeze([
     members: Object.freeze([
       // Times, direction, calendar and the Ramadan companion: one act.
       Object.freeze({ route: 'PRAYER', taps: 1, via: null }),
-      Object.freeze({ route: 'QIBLA', taps: 2, via: 'prayer-mode-switch' }),
-      Object.freeze({ route: 'CALENDAR', taps: 2, via: 'prayer-mode-switch' }),
-      Object.freeze({ route: 'RAMADAN', taps: 2, via: 'prayer-mode-switch' }),
+      Object.freeze({ route: 'QIBLA', labelKey: 'nav.qibla', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'CALENDAR', labelKey: 'nav.calendar', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'RAMADAN', labelKey: 'nav.ramadan', taps: 2, via: 'main-menu' }),
     ]),
   }),
   Object.freeze({
@@ -135,7 +151,7 @@ export const DOORS = Object.freeze([
       // section name while the entry segment keeps the nav.tasbih label.
       // The tajweed course + look-alike ayat moved to the QURAN section.
       Object.freeze({ route: 'TASBIH', taps: 1, via: null }),
-      Object.freeze({ route: 'QUIZ', taps: 2, via: 'practise-mode-switch' }),
+      Object.freeze({ route: 'QUIZ', labelKey: 'quiz.title', taps: 2, via: 'main-menu' }),
     ]),
   }),
   Object.freeze({
@@ -144,18 +160,20 @@ export const DOORS = Object.freeze([
     icon: 'target',
     labelKey: 'nav.you',
     members: Object.freeze([
-      // Everything about the person, in one place. Zakat and the offline
-      // library sit beside settings, where storage belongs.
+      // Personal practice and progress. Utility/account controls live in
+      // their own main-menu group below; Settings/About are the final standalone
+      // application entries.
       Object.freeze({ route: 'CHECKLIST', taps: 1, via: null }),
-      Object.freeze({ route: 'GARDEN', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'FAVORITES', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'JOURNAL', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'STATISTICS', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'CERTIFICATE', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'ZAKAT', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'OFFLINE', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'SETTINGS', taps: 2, via: 'you-mode-switch' }),
-      Object.freeze({ route: 'ABOUT', taps: 2, via: 'you-mode-switch' }),
+      Object.freeze({ route: 'GARDEN', labelKey: 'you.growth', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'FAVORITES', labelKey: 'nav.favorites', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'JOURNAL', labelKey: 'journal.title', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'STATISTICS', labelKey: 'nav.statistics', taps: 2, via: 'main-menu' }),
+      Object.freeze({
+        route: 'CERTIFICATE',
+        labelKey: 'certificate.title',
+        taps: 2,
+        via: 'main-menu',
+      }),
     ]),
   }),
 ]);
@@ -165,3 +183,39 @@ export const DOOR_ENTRIES = Object.freeze(DOORS.map((d) => d.entry));
 
 /** Flat chrome labels in order — the reachability trap pins this sequence. */
 export const DOOR_LABEL_KEYS = Object.freeze(DOORS.map((d) => d.labelKey));
+
+/** Application destinations deliberately outside the seven worship/task doors.
+ * They are standalone siblings at the end of the main menu. Do not invent
+ * semantic buckets such as "utility" or "settings" that make unrelated
+ * destinations look like one feature family. The visual shell may add
+ * separators for readability, but membership stays flat and derived here.
+ */
+export const APP_MENU_GROUPS = Object.freeze([
+  Object.freeze({
+    kind: 'zakat',
+    entries: Object.freeze([
+      Object.freeze({ view: VIEWS.ZAKAT, icon: 'calculator', label: 'nav.zakat' }),
+    ]),
+  }),
+  Object.freeze({
+    kind: 'offline',
+    entries: Object.freeze([
+      Object.freeze({ view: VIEWS.OFFLINE, icon: 'download', label: 'nav.offline' }),
+    ]),
+  }),
+  Object.freeze({
+    kind: 'settings',
+    entries: Object.freeze([
+      Object.freeze({ view: VIEWS.SETTINGS, icon: 'settings', label: 'nav.settings' }),
+    ]),
+  }),
+  Object.freeze({
+    kind: 'about',
+    entries: Object.freeze([
+      Object.freeze({ view: VIEWS.ABOUT, icon: 'info', label: 'nav.about' }),
+    ]),
+  }),
+]);
+
+/** Flat lookup used by the route reachability test and active-route audit. */
+export const APP_MENU_ENTRIES = Object.freeze(APP_MENU_GROUPS.flatMap((group) => group.entries));

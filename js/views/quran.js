@@ -9,7 +9,6 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { quranModeSwitchHTML } from '../ui/shell.js';
 import { escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS, TRANSLATION_EDITIONS } from '../core/config.js';
 import { selectors } from '../core/state.js';
@@ -630,6 +629,20 @@ export function renderQuran(state) {
   // must be reachable from here — not buried in a nav view the person may
   // never open.
   const recitersLink = `<button type="button" class="btn btn--secondary btn--sm quran-mushaf-toggle" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 16 })} ${t('quran.recitersLink', lang)}</button>`;
+  const studyLinks = !id
+    ? `<section class="quran-study-door" aria-labelledby="quran-study-title">
+        <div class="quran-study-door__copy">
+          <p class="quran-study-door__kicker">${escapeHTML(t('quran.studyTitle', lang))}</p>
+          <p id="quran-study-title" class="quran-study-door__subtitle">${escapeHTML(t('quran.studySubtitle', lang))}</p>
+        </div>
+        <nav class="quran-study-door__links" aria-label="${escapeHTML(t('quran.studyTitle', lang))}">
+          <a class="quran-study-door__link" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">${icon('book', { size: 16 })}<span>${escapeHTML(t('mushaf.title', lang))}</span></a>
+          <a class="quran-study-door__link" href="${buildHash(VIEWS.ROOTS)}" data-action="navigate" data-view="${VIEWS.ROOTS}">${icon('search', { size: 16 })}<span>${escapeHTML(t('quran.modeWord', lang))}</span></a>
+          <a class="quran-study-door__link" href="${buildHash(VIEWS.TAJWEED_COURSE)}" data-action="navigate" data-view="${VIEWS.TAJWEED_COURSE}">${icon('sparkle', { size: 16 })}<span>${escapeHTML(t('nav.tajweedCourse', lang))}</span></a>
+          <a class="quran-study-door__link" href="${buildHash(VIEWS.MUTASHABIHAT)}" data-action="navigate" data-view="${VIEWS.MUTASHABIHAT}">${icon('quran', { size: 16 })}<span>${escapeHTML(t('mutashabihat.title', lang))}</span></a>
+        </nav>
+      </section>`
+    : '';
 
   // (v4.5, APP-FLOW §5) Immersive reading: the reader-side sibling of the
   // Mushaf's TRUE fullscreen — chrome away, column wide, ayah cards only.
@@ -657,8 +670,7 @@ export function renderQuran(state) {
         ${immersiveBtn}
       </div>
     </header>
-    ${quranModeSwitchHTML(state.activeView, lang)}
-    ${!id ? `<p class="view__subtitle">${t('quran.subtitle', lang)}</p>` : ''}
+    ${!id ? `<p class="view__subtitle">${t('quran.subtitle', lang)}</p>${studyLinks}` : ''}
     ${id ? surahReaderHTML(state, id) : surahListHTML(state)}
     ${immersiveExit}
   </section>`;

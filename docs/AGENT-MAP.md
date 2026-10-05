@@ -4,49 +4,45 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 Read this file first. It is deliberately short: the spine, the lookup tables and the counted inventories. For one specific module’s exports, one `data-action`’s handler, or one keyword’s owners, read the exhaustive dump next.
 
-- js modules: 242 — data files: 27 — tests: 248
-- exhaustive dump: `docs/agent-map-full.md` (517 entries)
+- js modules: 243 — data files: 27 — tests: 258
+- exhaustive dump: `docs/agent-map-full.md` (528 entries)
 
 ## 1. The spine: chrome section → routes → view module
 
 Seven sections own the chrome. Each row is derived from `js/core/config/nav.js` (DOORS), whose route ids come from `js/core/config/views.js` (VIEWS) and whose view modules come from `js/app/renderer.js` (VIEW_TABLE eager / LAZY_VIEW_LOADERS lazy). Nothing below is pinned here — change the source and regenerate.
 
-| #   | section (label key) | entry route                 | routes under it                                           | tap | via                       |
-| --- | ------------------- | --------------------------- | --------------------------------------------------------- | --- | ------------------------- |
-| 1   | `nav.home`          | `HOME` → `#/home`           | HOME → `js/views/home.js`                                 | 1   | — (is the tap)            |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | LIBRARY → `js/views/library.js`                           | 1   | — (is the tap)            |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | CATEGORY _(tile-depth)_ → `js/views/category.js`          | 1   | `adhkar-browser`          |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | MOOD → `js/views/mood.js`                                 | 1   | `adhkar-browser`          |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | FOCUS → `js/views/focus.js`                               | 2   | `adhkar-browser`          |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | COLLECTIONS → `js/views/collections.js`                   | 1   | `azkar-collections-panel` |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | COLLECTION _(tile-depth)_ → `js/views/collection.js`      | 2   | `azkar-collections-panel` |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | MUSHAF → `js/views/mushafReader.js` _(lazy)_              | 1   | — (is the tap)            |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | QURAN → `js/views/quran.js` _(lazy)_                      | 2   | `quran-mode-switch`       |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | ROOTS → `js/views/roots.js` _(lazy)_                      | 2   | `quran-mode-switch`       |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | AUDIO → `js/views/audioManager.js` _(lazy)_               | 2   | `quran-mode-switch`       |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | TAJWEED_COURSE → `js/views/tajweedCourseView.js` _(lazy)_ | 2   | `quran-mode-switch`       |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | MUTASHABIHAT → `js/views/mutashabihat.js` _(lazy)_        | 2   | `quran-mode-switch`       |
-| 4   | `nav.hadith`        | `HADITH` → `#/hadith`       | HADITH → `js/views/hadith.js` _(lazy)_                    | 1   | — (is the tap)            |
-| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | PRAYER → `js/views/prayer.js`                             | 1   | — (is the tap)            |
-| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | QIBLA → `js/views/qibla.js`                               | 2   | `prayer-mode-switch`      |
-| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | CALENDAR → `js/views/calendar.js`                         | 2   | `prayer-mode-switch`      |
-| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | RAMADAN → `js/views/ramadan.js`                           | 2   | `prayer-mode-switch`      |
-| 6   | `nav.practise`      | `TASBIH` → `#/tasbih`       | TASBIH → `js/views/tasbih.js`                             | 1   | — (is the tap)            |
-| 6   | `nav.practise`      | `TASBIH` → `#/tasbih`       | QUIZ → `js/views/quiz.js` _(lazy)_                        | 2   | `practise-mode-switch`    |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | CHECKLIST → `js/views/checklist.js`                       | 1   | — (is the tap)            |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | GARDEN → `js/views/garden.js` _(lazy)_                    | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | FAVORITES → `js/views/favorites.js`                       | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | JOURNAL → `js/views/journal.js` _(lazy)_                  | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | STATISTICS → `js/views/statistics.js` _(lazy)_            | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | CERTIFICATE → `js/views/certificate.js` _(lazy)_          | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | ZAKAT → `js/views/zakat.js`                               | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | OFFLINE → `js/views/offline.js` _(lazy)_                  | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | SETTINGS → `js/views/settings.js`                         | 2   | `you-mode-switch`         |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | ABOUT → `js/views/about.js` _(lazy)_                      | 2   | `you-mode-switch`         |
+| #   | section (label key) | entry route                 | routes under it                                                                 | tap | via                       |
+| --- | ------------------- | --------------------------- | ------------------------------------------------------------------------------- | --- | ------------------------- |
+| 1   | `nav.home`          | `HOME` → `#/home`           | HOME → `js/views/home.js`                                                       | 1   | — (is the tap)            |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | LIBRARY → `js/views/library.js`                                                 | 1   | — (is the tap)            |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | CATEGORY _(tile-depth)_ → `js/views/category.js`                                | 1   | `main-menu`               |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | MOOD _(title.mood)_ → `js/views/mood.js`                                        | 1   | `main-menu`               |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | FOCUS _(title.focus)_ → `js/views/focus.js`                                     | 2   | `main-menu`               |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | COLLECTIONS _(title.collections)_ → `js/views/collections.js`                   | 2   | `main-menu`               |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | COLLECTION _(tile-depth)_ → `js/views/collection.js`                            | 3   | `azkar-collections-panel` |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | MUSHAF → `js/views/mushafReader.js` _(lazy)_                                    | 1   | — (is the tap)            |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | QURAN _(quran.modeList)_ → `js/views/quran.js` _(lazy)_                         | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | ROOTS _(quran.modeWord)_ → `js/views/roots.js` _(lazy)_                         | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | AUDIO _(nav.audio)_ → `js/views/audioManager.js` _(lazy)_                       | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | TAJWEED_COURSE _(nav.tajweedCourse)_ → `js/views/tajweedCourseView.js` _(lazy)_ | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | MUTASHABIHAT _(mutashabihat.title)_ → `js/views/mutashabihat.js` _(lazy)_       | 2   | `main-menu`               |
+| 4   | `nav.hadith`        | `HADITH` → `#/hadith`       | HADITH → `js/views/hadith.js` _(lazy)_                                          | 1   | — (is the tap)            |
+| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | PRAYER → `js/views/prayer.js`                                                   | 1   | — (is the tap)            |
+| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | QIBLA _(nav.qibla)_ → `js/views/qibla.js`                                       | 2   | `main-menu`               |
+| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | CALENDAR _(nav.calendar)_ → `js/views/calendar.js`                              | 2   | `main-menu`               |
+| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | RAMADAN _(nav.ramadan)_ → `js/views/ramadan.js`                                 | 2   | `main-menu`               |
+| 6   | `nav.practise`      | `TASBIH` → `#/tasbih`       | TASBIH → `js/views/tasbih.js`                                                   | 1   | — (is the tap)            |
+| 6   | `nav.practise`      | `TASBIH` → `#/tasbih`       | QUIZ _(quiz.title)_ → `js/views/quiz.js` _(lazy)_                               | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | CHECKLIST → `js/views/checklist.js`                                             | 1   | — (is the tap)            |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | GARDEN _(you.growth)_ → `js/views/garden.js` _(lazy)_                           | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | FAVORITES _(nav.favorites)_ → `js/views/favorites.js`                           | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | JOURNAL _(journal.title)_ → `js/views/journal.js` _(lazy)_                      | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | STATISTICS _(nav.statistics)_ → `js/views/statistics.js` _(lazy)_               | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | CERTIFICATE _(certificate.title)_ → `js/views/certificate.js` _(lazy)_          | 2   | `main-menu`               |
 
 _(tile-depth)_ members need a parameter, so a bare link answers an honest 404 and the drawer offers no direct row for them — the section landing's own tiles carry them. _(lazy)_ routes are `import()`-ed on first visit, not statically imported.
 
-Routes in VIEWS claimed by no section: `SEARCH`, `EDITOR`, `AMBIENT`, `KIDS`. Deep-linkable but not in the chrome — each needs its justification in `tests/nav-reachability.test.js` or it is an orphan bug.
+Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `EDITOR`, `AMBIENT`, `KIDS`, `OFFLINE`. Deep-linkable but not in the chrome — each needs its justification in `tests/nav-reachability.test.js` or it is an orphan bug.
 
 ## 2. Where to make a change
 
@@ -81,14 +77,14 @@ Routes in VIEWS claimed by no section: `SEARCH`, `EDITOR`, `AMBIENT`, `KIDS`. De
 | `js/domain`       | pure logic: no DOM, no store; core-only imports (compass sensor excepted).   | 72      | [open](agent-map-full.md#domain)       |
 | `js/services`     | side-effect owners: audio, notifications, persistence helpers.               | 27      | [open](agent-map-full.md#services)     |
 | `js/ui`           | dumb chrome primitives: toasts, modals, cards, shells.                       | 12      | [open](agent-map-full.md#ui)           |
-| `js/views`        | pure state→HTML templates + their pure helpers.                              | 50      | [open](agent-map-full.md#views)        |
+| `js/views`        | pure state→HTML templates + their pure helpers.                              | 51      | [open](agent-map-full.md#views)        |
 
 ## 5. Lookup tables (counts; open the dump for the rows)
 
 - `data-action` values emitted anywhere: **353** — every one resolves to a handler (see the Allowlist section of the dump).
-- files that handle at least one click/change/form action: **19** of 242.
-- exported symbols: **1552**.
-- i18n keys touched by js/: **1453** of the two dictionaries.
+- files that handle at least one click/change/form action: **19** of 243.
+- exported symbols: **1556**.
+- i18n keys touched by js/: **1467** of the two dictionaries.
 
 ## 6. When you need the exhaustive dump
 

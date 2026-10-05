@@ -1,25 +1,57 @@
 {
-  "generatedAt": "2026-10-04T11:17:36.150Z",
+  "generatedAt": "2026-10-05T04:49:58.812Z",
   "project": "chromium",
   "viewport": 1280,
   "provenance": {
-    "head": "d6ca7e7",
+    "head": "707fe63",
     "measuredPathsDirty": [
       "M assets/css/deslopify.css",
+      " M assets/css/quran.css",
       " M js/app/focusRuntime.js",
-      " M js/app/handlers/items.js",
-      " M js/app/handlers/system.js",
+      " M js/app/handlers/quran.js",
       " M js/core/config.js",
-      " M js/core/config/sanitize.js",
-      " M js/core/config/views.js",
+      " M js/core/config/nav.js",
       " M js/core/i18n/ar.js",
       " M js/core/i18n/en.js",
-      " M js/core/state/store.js",
+      " M js/domain/homePanels.js",
+      " M js/domain/quickTiles.js",
       " M js/ui/shell.js",
+      " M js/views/about.js",
+      " M js/views/audioManager.js",
+      " M js/views/calendar.js",
+      " M js/views/category.js",
+      " M js/views/certificate.js",
+      " M js/views/checklist.js",
+      " M js/views/collection.js",
+      " M js/views/collections.js",
+      " M js/views/favorites.js",
+      " M js/views/focus.js",
+      " M js/views/garden.js",
       " M js/views/home.js",
-      " M js/views/settings.js"
+      " M js/views/journal.js",
+      " M js/views/library.js",
+      " M js/views/mood.js",
+      " M js/views/mushafReader.js",
+      " M js/views/mutashabihat.js",
+      " M js/views/offline.js",
+      " M js/views/playerBar.js",
+      " M js/views/prayer.js",
+      " M js/views/qibla.js",
+      " M js/views/quiz.js",
+      " M js/views/quran.js",
+      " M js/views/ramadan.js",
+      " M js/views/roots.js",
+      " M js/views/settings.js",
+      " M js/views/statistics.js",
+      " M js/views/studyTray.js",
+      " M js/views/tafsirPanel.js",
+      " M js/views/tajweedCourseView.js",
+      " M js/views/tajweedPracticeView.js",
+      " M js/views/tasbih.js",
+      " M js/views/zakat.js",
+      "?? js/views/studyContext.js"
     ],
-    "measuredPathsDirtyCount": 13
+    "measuredPathsDirtyCount": 45
   },
   "enforced": false,
   "regions": [
@@ -44,7 +76,7 @@
     "slackCells": 0,
     "overflowOffenders": 11,
     "hardClipOffenders": 0,
-    "softClipCells": 14
+    "softClipCells": 12
   },
   "defects": [
     "en @1 #/audio: overflow span.chip chip--muted \"Whole surah — no ayah timings\" right=1286 (100% of viewport) ×1 — CUT by ancestor span.reciter-row__name (overflow-x:hidden; document slack stays 0)",
@@ -59,9 +91,9 @@
     "en @2 #/audio: overflow span.chip chip--muted \"Saheeh Intl Translation\" right=1603 (125% of viewport) ×10 — CUT by ancestor span.reciter-row__name (overflow-x:hidden; document slack stays 0)",
     "en @2 #/audio: overflow span.chip chip--muted \"Whole surah — no ayah timings\" right=1416 (111% of viewport) ×10 — CUT by ancestor span.reciter-row__name (overflow-x:hidden; document slack stays 0)",
     "en @2 #/audio: overflow span.chip chip--muted \"Whole surah — no ayah timings\" right=1371 (107% of viewport) ×10 — CUT by ancestor span.reciter-row__name (overflow-x:hidden; document slack stays 0)",
+    "en @2 #/audio:   (elided, allowed) span.reciter-row__name \"Abdallah Abdal Whole surah — no ayah timings\"",
     "en @2 #/audio:   (elided, allowed) span.reciter-row__name \"Abdelbari Al-Toubayti Whole surah — no ayah \"",
-    "en @2 #/audio:   (elided, allowed) span.reciter-row__name \"Abdelmoujib Benkirane Whole surah — no ayah \"",
-    "en @2 #/audio:   (elided, allowed) span.reciter-row__name \"Abdul Aziz Al-Ahmad Whole surah — no ayah ti\""
+    "en @2 #/audio:   (elided, allowed) span.reciter-row__name \"Abdelmoujib Benkirane Whole surah — no ayah \""
   ],
   "cells": [
     {
@@ -73,7 +105,7 @@
       "slack": 0,
       "overflowCount": 0,
       "hardClipCount": 0,
-      "softClipCount": 1
+      "softClipCount": 0
     },
     {
       "lang": "en",
@@ -469,7 +501,7 @@
       "slack": 0,
       "overflowCount": 0,
       "hardClipCount": 0,
-      "softClipCount": 1
+      "softClipCount": 0
     },
     {
       "lang": "en",
@@ -667,7 +699,7 @@
       "slack": 0,
       "overflowCount": 10,
       "hardClipCount": 0,
-      "softClipCount": 37
+      "softClipCount": 64
     },
     {
       "lang": "en",
@@ -865,7 +897,7 @@
       "slack": 0,
       "overflowCount": 0,
       "hardClipCount": 0,
-      "softClipCount": 1
+      "softClipCount": 0
     },
     {
       "lang": "ar",
@@ -1063,7 +1095,7 @@
       "slack": 0,
       "overflowCount": 0,
       "hardClipCount": 0,
-      "softClipCount": 0
+      "softClipCount": 3
     },
     {
       "lang": "ar",
@@ -1459,7 +1491,7 @@
       "slack": 0,
       "overflowCount": 0,
       "hardClipCount": 0,
-      "softClipCount": 4
+      "softClipCount": 10
     },
     {
       "lang": "ar",

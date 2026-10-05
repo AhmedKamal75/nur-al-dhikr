@@ -74,7 +74,10 @@ describe('resolveQuickTiles: usage default, manual wins, hidden hides', () => {
       ['zakat', 'tasbih', 'qibla']
     );
     assert.deepEqual(resolveQuickTiles({ hidden: { mushaf: true, zakat: true } }).length, 6);
-    assert.deepEqual(resolveQuickTiles({ limit: 4 }), ['mushaf', 'morning', 'evening', 'tasbih']);
+    assert.deepEqual(resolveQuickTiles({ defaultOrder: ['morning', 'evening'], limit: 2 }), [
+      'morning',
+      'evening',
+    ]);
     assert.deepEqual(resolveQuickTiles({ visits: { qibla: 9 }, limit: 2 }), ['qibla', 'mushaf']);
     assert.ok(!resolveQuickTiles({ hidden: { mushaf: true } }).includes('mushaf'));
   });

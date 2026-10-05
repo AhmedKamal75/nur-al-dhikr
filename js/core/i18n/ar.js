@@ -13,6 +13,9 @@ export const ar = {
   // التسمية الميسّرة فقط هي ما يتوطّن.
   'banner.shahadaLabel': 'الشهادة — لا إله إلا الله محمد رسول الله',
   'nav.home': 'الرئيسية',
+  'nav.main': 'القائمة الرئيسية',
+  'nav.overview': 'نظرة عامة',
+
   // (v5.17.61, IA-7) the Azkar section door — bilingual with en.js from
   // the first commit.
   'nav.azkar': 'الأذكار',
@@ -57,11 +60,7 @@ export const ar = {
   // first commit.
   'nav.you': 'أنت',
   'you.myAdhkar': 'أذكاري',
-  'you.group.practice': 'الممارسة',
-  'you.group.growth': 'النمو والتقدم',
-  'you.group.tools': 'الأدوات والتطبيق',
   'you.growth': 'النمو',
-  'you.about': 'حول التطبيق والمصادر',
   'quran.title': 'القرآن الكريم',
   'quran.subtitle': 'القرآن الكريم كاملاً، النص العربي مع ترجمة صحيح إنترناشونال الإنجليزية.',
   'quran.searchPlaceholder': 'ابحث باسم السورة أو رقمها…',
@@ -81,6 +80,8 @@ export const ar = {
   // (REORG Phase 2) in-chrome Qur'an mode switch — bilingual with en.js from the first commit.
   'quran.modeList': 'قراءة القائمة',
   'quran.modeWord': 'دراسة الكلمات',
+  'quran.studyTitle': 'استكشف دراسة القرآن',
+  'quran.studySubtitle': 'المصحف ودراسة الكلمات والتجويد والمتشابهات — اختر طريقة دراستك.',
   'quran.continueReading': 'متابعة قراءة القرآن',
   'quran.readShortcut': 'اقرأ القرآن الكريم',
   'nav.ramadan': 'رمضان',
@@ -224,7 +225,6 @@ export const ar = {
   'nav.roots': 'جذور الكلمات',
   // (REORG Phase 5) the Practise section name — bilingual with en.js from
   // the first commit.
-  'practise.label': 'الممارسة',
   // (REORG Phase 8 / HANDOFF A1) the fifth door's chrome label.
   'nav.practise': 'الممارسة',
   'audio.title': 'القراء والصوتيات',
@@ -470,6 +470,10 @@ export const ar = {
   'units.m': '{n} د',
   'common.am': 'ص',
   'common.pm': 'م',
+  'home.reflectionHeading': 'للتأمل',
+  'home.nextHeading': 'خطوتك التالية',
+  'home.startHeading': 'ابدأ من هنا',
+  'home.todayHeading': 'اليوم',
   'home.viewAll.favorites': 'عرض كل المفضلة',
   'home.viewAll.collections': 'عرض كل المجموعات',
   'qibla.cardinal.n': 'ش',
@@ -1084,6 +1088,14 @@ export const ar = {
   'study.trayClose': 'إغلاق الدراسة',
   'study.trayTranslation': 'الترجمة · {edition}',
   'study.trayWords': 'كلمة بكلمة',
+  'study.journeyTitle': 'متابعة الدراسة',
+  'study.journeyTafsir': 'التفسير',
+  'study.journeyRoot': 'الجذر',
+  'study.journeyTajweed': 'التجويد',
+  'study.journeyMemorize': 'الحفظ',
+  'study.journeyMutashabihat': 'الآيات المتشابهة',
+  'study.contextTitle': 'سياق الدراسة',
+  'study.returnToAyah': 'العودة إلى الآية {s}:{a}',
   'mushaf.memorizeSurah': 'حفظ هذه السورة',
   'mushaf.reciters': 'القرّاء',
   'quran.searchShortcut': 'البحث في القرآن',
@@ -1160,6 +1172,9 @@ export const ar = {
   'practice.lesson': 'تعلّم',
   'practice.lessonWhat': 'القاعدة',
   'practice.lessonExamples': 'شاهدها في القرآن',
+  'practice.lessonOpenAyah': 'افتح الآية',
+  'practice.lessonHighlight': 'المظلّل: هذه القاعدة',
+  'practice.lessonExampleUnavailable': 'نص الآية غير متاح حاليًا.',
   'practice.lessonEmpty': 'تظهر الأمثلة مع تحميل بنك التدريب — درّب القاعدة مرة وستجدها هنا.',
   'practice.drillRule': 'درّب هذه القاعدة',
   'practice.backToRules': 'عودة إلى القواعد',
@@ -1275,6 +1290,7 @@ export const ar = {
   'wordStudy.prefix': 'سابقة',
   'wordStudy.suffix': 'لاحقة',
 
+  'tafsir.sourceContext': 'المصدر الحالي',
   'tafsir.title': 'مصادر التفسير والنحو',
   'tafsir.categoryTafsir': 'تفسير',
   'tafsir.categoryGrammar': 'نحو',
@@ -1357,8 +1373,9 @@ export const ar = {
   'settings.milestoneHint':
     'اهتزاز أقوى ونغمة أعلى كل N نقرة أثناء جلسات العدّ الطويلة. الإيقاف يعطّله.',
   'settings.milestoneOff': 'إيقاف',
-  'settings.autoAdvanceFocus': 'الانتقال التلقائي بعد الإكمال',
-  'settings.autoAdvanceFocusHint': 'ينتقل التركيز تلقائيًا إلى الذكر التالي.',
+  'settings.autoAdvanceFocus': 'الانتقال تلقائيًا إلى الذكر التالي بعد إكمال العدد',
+  'settings.autoAdvanceFocusHint':
+    'عند بلوغ العدد ينتقل وضع التركيز إلى الذكر التالي الظاهر في التصنيف نفسه. عطّل هذا الخيار للبقاء على الذكر المكتمل.',
   'settings.dailyGoal': 'هدف الذكر اليومي',
   'settings.reciter': 'قارئ القرآن',
   'settings.reciterHint':

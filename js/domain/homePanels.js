@@ -32,17 +32,13 @@ export const HOME_PANEL_IDS = Object.freeze([
  * renders nothing off-season and must be there in-season. Stored
  * settings always win (existing users keep exactly what they have).
  */
-export const HOME_DEFAULT_VISIBLE = Object.freeze([
-  'ramadan',
-  'continue',
-  'progress',
-  'verse',
-  'hadith',
-  // (v5.6.0, B-1) the digest renders nothing until something is actually
-  // due, so it costs fresh installs zero density and is there the first
-  // morning anything lapses.
-  'review',
-]);
+export const HOME_DEFAULT_VISIBLE = Object.freeze(['continue', 'progress']);
+
+/** Panels that form Home's fixed argument before reflective/exploratory content.
+ * Saved customization may reorder the lower tier, but never lifts reflections
+ * above the daily action/progress block. */
+export const HOME_PRIMARY_PANEL_IDS = Object.freeze(['continue', 'progress']);
+export const HOME_HIGHLIGHT_PANEL_IDS = Object.freeze(['verse', 'hadith', 'review']);
 
 /** hiddenHome for a fresh install: everything outside the default set. */
 export function defaultHiddenHome() {
@@ -59,17 +55,18 @@ export function resolveHomePanels(order, hidden) {
   const hide = hidden && typeof hidden === 'object' ? hidden : {};
   const seen = new Set();
   const out = [];
-  if (Array.isArray(order)) {
-    for (const id of order) {
-      if (HOME_PANEL_IDS.includes(id) && !seen.has(id) && hide[id] !== true) {
-        seen.add(id);
-        out.push(id);
-      }
+  const push = (id) => {
+    if (HOME_PANEL_IDS.includes(id) && !seen.has(id) && hide[id] !== true) {
+      seen.add(id);
+      out.push(id);
     }
-  }
-  for (const id of HOME_PANEL_IDS) {
-    if (!seen.has(id) && hide[id] !== true) out.push(id);
-  }
+  };
+  // Home has a stable editorial argument: resume/progress first. Optional
+  // panels are never auto-inserted; they appear only when explicitly enabled
+  // through a saved order. This prevents old panel registries from turning
+  // Home back into an accidental dashboard.
+  for (const id of HOME_PRIMARY_PANEL_IDS) push(id);
+  if (Array.isArray(order)) for (const id of order) push(id);
   return out;
 }
 

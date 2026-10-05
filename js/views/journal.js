@@ -14,7 +14,6 @@ import {
   duaMonthStats,
   REFLECTION_PROMPTS,
 } from '../domain/duaJournal.js';
-import { youModeSwitchHTML } from '../ui/shell.js';
 
 /** Entries per journal page (was: hard .slice(0, 50) with no way to see more). */
 export const JOURNAL_PAGE_SIZE = 10;
@@ -198,7 +197,6 @@ export function renderJournal(state) {
   return `
   <section class="view view--journal">
     <h1 class="view__title">${t('journal.title', lang)}</h1>
-    ${youModeSwitchHTML(state.activeView, lang)}
     <p class="view__subtitle">${t('journal.subtitle', lang)}</p>
 
     ${

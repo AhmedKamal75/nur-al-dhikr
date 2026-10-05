@@ -14,6 +14,9 @@ export const en = {
   'banner.shahadaLabel':
     'The Shahada — There is no god but Allah, and Muhammad is the Messenger of Allah',
   'nav.home': 'Home',
+  'nav.main': 'Main menu',
+  'nav.overview': 'Overview',
+
   // (v5.17.61, IA-7) the Azkar section door: the adhkar browser grid moved
   // out of Home (now a Today landing) into its own section behind the
   // LIBRARY route. Bilingual with ar.js from the first commit.
@@ -69,11 +72,7 @@ export const en = {
   // commit (naming rule §2.6.4); each label promises exactly its tap.
   'nav.you': 'You',
   'you.myAdhkar': 'My adhkar',
-  'you.group.practice': 'Practice',
-  'you.group.growth': 'Growth & progress',
-  'you.group.tools': 'Tools & app',
   'you.growth': 'Growth',
-  'you.about': 'About and sources',
   'quran.title': "The Holy Qur'an",
   'quran.subtitle': "The complete Qur'an — Arabic text with the Sahih International translation.",
   'quran.searchPlaceholder': 'Search by surah name or number\u2026',
@@ -94,6 +93,9 @@ export const en = {
   // study) — bilingual with ar.js from the first commit.
   'quran.modeList': 'List reading',
   'quran.modeWord': 'Word study',
+  'quran.studyTitle': 'Explore Qur’an study',
+  'quran.studySubtitle':
+    'Mushaf, word study, Tajweed and look-alike ayat — choose how you want to study.',
   'quran.continueReading': "Continue Reading Qur'an",
   'quran.readShortcut': "Read the Qur'an",
   'nav.ramadan': 'Ramadan',
@@ -243,7 +245,6 @@ export const en = {
   // (REORG Phase 5) the Practise section name — the in-chrome Tasbih /
   // Course / Quiz / Look-alike switch's group label. Bilingual with ar.js
   // from the first commit.
-  'practise.label': 'Practise',
   // (REORG Phase 8 / HANDOFF A1) the fifth door's chrome label. The entry
   // segment keeps nav.tasbih; the door promises the activity, not the tool.
   'nav.practise': 'Practise',
@@ -502,6 +503,10 @@ export const en = {
   'units.m': '{n}m',
   'common.am': 'AM',
   'common.pm': 'PM',
+  'home.reflectionHeading': 'For reflection',
+  'home.nextHeading': 'Next for you',
+  'home.startHeading': 'Start here',
+  'home.todayHeading': 'Today',
   'home.viewAll.favorites': 'View all favorites',
   'home.viewAll.collections': 'View all collections',
   'qibla.cardinal.n': 'N',
@@ -1151,6 +1156,14 @@ export const en = {
   'study.trayClose': 'Close study',
   'study.trayTranslation': 'Translation · {edition}',
   'study.trayWords': 'Word by word',
+  'study.journeyTitle': 'Continue studying',
+  'study.journeyTafsir': 'Tafsir',
+  'study.journeyRoot': 'Root',
+  'study.journeyTajweed': 'Tajweed',
+  'study.journeyMemorize': 'Memorize',
+  'study.journeyMutashabihat': 'Look-alike ayat',
+  'study.contextTitle': 'Study context',
+  'study.returnToAyah': 'Return to ayah {s}:{a}',
   'mushaf.memorizeSurah': 'Memorize this surah',
   'mushaf.reciters': 'Reciters',
   'quran.searchShortcut': 'Search the Qur\u2019an',
@@ -1227,6 +1240,9 @@ export const en = {
   'practice.lesson': 'Learn',
   'practice.lessonWhat': 'The rule',
   'practice.lessonExamples': 'See it in the Quran',
+  'practice.lessonOpenAyah': 'Open ayah',
+  'practice.lessonHighlight': 'Highlighted: this rule',
+  'practice.lessonExampleUnavailable': 'The ayah text is not loaded yet.',
   'practice.lessonEmpty':
     'Examples load with the drill pool — drill the rule once and they appear here.',
   'practice.drillRule': 'Drill this rule',
@@ -1346,6 +1362,7 @@ export const en = {
   'wordStudy.prefix': 'Prefix',
   'wordStudy.suffix': 'Suffix',
 
+  'tafsir.sourceContext': 'Current source',
   'tafsir.title': 'Tafsir & grammar sources',
   'tafsir.categoryTafsir': 'Commentary',
   'tafsir.categoryGrammar': 'Grammar',
@@ -1430,8 +1447,9 @@ export const en = {
   'settings.milestoneHint':
     'A stronger buzz and a higher tick every Nth tap during long counting sessions. Off disables it.',
   'settings.milestoneOff': 'Off',
-  'settings.autoAdvanceFocus': 'Auto-Advance After Completing',
-  'settings.autoAdvanceFocusHint': 'Focus advances to the next dhikr automatically.',
+  'settings.autoAdvanceFocus': 'Continue automatically after each completed dhikr',
+  'settings.autoAdvanceFocusHint':
+    'When the target is reached, Focus moves to the next visible dhikr in the same category. Turn this off to stay on the completed dhikr.',
   'settings.dailyGoal': 'Daily Dhikr Goal',
   'settings.reciter': 'Qur\u2019an Reciter',
   'settings.reciterHint':

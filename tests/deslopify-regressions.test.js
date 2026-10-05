@@ -38,7 +38,7 @@ test('new empty-state copy ships bilingually', () => {
 
 test('Azkar tile cleanup keeps the duplicate action hidden at the design layer', () => {
   assert.match(css, /\.view--library \.browser-tile__read \{\n\s*display: none;/);
-  assert.match(home, /<a class="category-tile"/);
+  assert.match(home, /category-tile/);
 });
 
 test('major feature doors converge on one surface system', () => {
@@ -87,49 +87,122 @@ test('shared browse surfaces do not reintroduce rainbow or gradient tile chrome'
 });
 
 test('Home hero remains the focal welcome surface rather than a generic utility card', () => {
-  assert.match(css, /Pass 6: editorial hierarchy \+ grouped personal navigation/);
+  assert.match(css, /v5\.17\.84 — Home should feel like a quiet welcome/);
   assert.match(
     css,
     /\.view--home > \.home-hero\.home-hero--line \{[\s\S]*border: 0;[\s\S]*background: transparent;/
   );
   assert.match(
     css,
-    /\.view--home > \.home-hero\.home-hero--line \.home-hero__title \{[\s\S]*font-size: clamp\(1\.55rem/
+    /\.view--home > \.home-hero\.home-hero--line \.home-hero__title \{[\s\S]*font-size: clamp\(1\.25rem/
   );
 });
 
-test('You navigation is grouped instead of a ten-button segmented wall', () => {
-  assert.match(css, /\.view--you \.you-subnav__/);
-  assert.match(css, /you-subnav__group-title/);
-  assert.match(css, /grid-template-columns: repeat\(4/);
-  assert.match(css, /grid-template-columns: repeat\(2/);
+test('You is a true top-level section and does not own Settings/About/Tools', () => {
+  const nav = readFileSync(new URL('../js/core/config/nav.js', import.meta.url), 'utf8');
+  assert.match(nav, /entry: 'CHECKLIST'/);
+  assert.doesNotMatch(nav, /route: 'SETTINGS'/);
+  assert.doesNotMatch(nav, /route: 'ABOUT'/);
+  assert.doesNotMatch(nav, /route: 'ZAKAT'/);
+  assert.doesNotMatch(nav, /route: 'OFFLINE'/);
 });
 
 test('Home does not render a duplicate standalone Tasbih doorway', () => {
   assert.doesNotMatch(home, /\$\{tasbihEntryHTML\(state\)\}/);
 });
 
-test('section navigation uses an editorial rail instead of a filled segmented surface', () => {
-  assert.match(css, /Pass 12 — section chrome \+ settings index/);
-  assert.match(
-    css,
-    /\.section-mode-switch \{[\s\S]*border-block-end: 1px solid var\(--color-border\)/
+test('section navigation lives in the main menu, not duplicated on every page', () => {
+  assert.doesNotMatch(
+    readFileSync(new URL('../js/views/library.js', import.meta.url), 'utf8'),
+    /azkarModeSwitchHTML/
   );
-  assert.match(css, /\.section-mode-switch \.segmented__btn \{[\s\S]*min-block-size: 44px/);
+  assert.doesNotMatch(
+    readFileSync(new URL('../js/views/quran.js', import.meta.url), 'utf8'),
+    /quranModeSwitchHTML/
+  );
+  assert.doesNotMatch(
+    readFileSync(new URL('../js/views/prayer.js', import.meta.url), 'utf8'),
+    /prayerModeSwitchHTML/
+  );
+  assert.doesNotMatch(
+    readFileSync(new URL('../js/views/tasbih.js', import.meta.url), 'utf8'),
+    /practiseModeSwitchHTML/
+  );
+  assert.doesNotMatch(
+    readFileSync(new URL('../js/views/checklist.js', import.meta.url), 'utf8'),
+    /youModeSwitchHTML/
+  );
   assert.match(
-    css,
-    /\.section-mode-switch \.segmented__btn--active,[\s\S]*background: transparent;/
+    readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8'),
+    /<details class="nav__section/
   );
 });
 
 test('Settings leads with identity and search before the control index', () => {
   const settings = readFileSync(new URL('../js/views/settings.js', import.meta.url), 'utf8');
-  assert.ok(
-    settings.indexOf('<header class="settings-hero">') <
-      settings.indexOf('youModeSwitchHTML(state.activeView, lang)')
-  );
+  assert.ok(settings.indexOf('<header class="settings-hero">') >= 0);
+  assert.equal(settings.includes('youModeSwitchHTML(state.activeView, lang)'), false);
   assert.match(css, /\.view--settings \.settings-hero \{[\s\S]*grid-template-columns:/);
-  assert.match(css, /\.view--settings > \.you-subnav \{[\s\S]*grid-template-columns: repeat\(3/);
+  assert.doesNotMatch(css, /\.view--settings > \.you-subnav \{/);
+  assert.doesNotMatch(css, /\.section-mode-switch \{/);
+  const renderStart = home.lastIndexOf('<section class="view view--home">');
+  assert.ok(renderStart >= 0, 'Home render markup disappeared');
+  const homeRender = home.slice(renderStart);
+  assert.ok(homeRender.indexOf('home-core') < homeRender.indexOf('home-secondary'));
+  assert.ok(homeRender.indexOf('home-secondary') < homeRender.indexOf('shahadaBannerHTML(lang)'));
+  assert.ok(homeRender.indexOf('home-today-heading') < homeRender.indexOf('home-start-heading'));
+});
+
+test('Home keeps a vertical product argument: core → Shahada → next → reflection → context', () => {
+  const renderStart = home.lastIndexOf('<section class="view view--home">');
+  const homeRender = home.slice(renderStart);
+  const positions = [
+    'home-core',
+    'shahadaBannerHTML(lang)',
+    'home-section--next',
+    'home-section--reflection',
+    'nudgeCardHTML(state)',
+    'onboardingPanelHTML(state, lang)',
+  ].map((needle) => [needle, homeRender.indexOf(needle)]);
+  for (const [name, pos] of positions) assert.ok(pos >= 0, `Home missing ${name}`);
+  assert.ok(positions[0][1] < positions[1][1], 'core must precede Shahada');
+  assert.ok(positions[0][1] < positions[2][1], 'core must precede Next');
+  assert.ok(positions[2][1] < positions[3][1], 'Next must precede Reflection');
+  assert.ok(positions[3][1] < positions[4][1], 'Reflection must precede contextual nudge');
+  assert.ok(positions[4][1] < positions[5][1], 'nudge must precede onboarding');
+});
+
+test('application tail keeps Zakat, Offline, Settings and About as standalone siblings', () => {
+  const nav = readFileSync(new URL('../js/core/config/nav.js', import.meta.url), 'utf8');
+  assert.match(nav, /kind: 'zakat'/);
+  assert.match(nav, /kind: 'offline'/);
+  assert.match(nav, /kind: 'settings'/);
+  assert.match(nav, /kind: 'about'/);
+  assert.match(css, /\.nav__app-tail\s*\{/);
+  assert.match(css, /\.nav__item--app-settings/);
+  assert.match(css, /\.nav__item--app-about/);
+  assert.doesNotMatch(css, /\.nav__group--app-utility/);
+});
+
+test('hierarchical menu has intentional visual chrome and no native marker/dashed-line fallthrough', () => {
+  const navCss = css;
+  assert.match(navCss, /\.nav__section\s*\{/);
+  assert.match(navCss, /\.nav__section-summary\s*\{/);
+  assert.match(navCss, /\.nav__section-summary::-webkit-details-marker/);
+  assert.match(navCss, /\.nav__section-summary::marker/);
+  assert.match(navCss, /\.nav__sub\s*\{/);
+  assert.doesNotMatch(navCss, /\.nav__sub[\s\S]{0,900}border[^;]*dashed/);
+});
+
+test('Settings setup links are controls, not hyperlink-looking prose', () => {
+  const settings = readFileSync(new URL('../js/views/settings.js', import.meta.url), 'utf8');
+  assert.match(settings, /settings-link-row__icon/);
+  assert.match(settings, /settings-link-row__chevron/);
+  assert.match(
+    css,
+    /\.view--settings \.panel--deferred \.reciter-row\s*\{[\s\S]*text-decoration: none !important/
+  );
+  assert.match(css, /\.view--settings \.panel--deferred \.reciter-row__meta/);
 });
 
 test('data-absent Quran and Mushaf states retain a page heading landmark', () => {

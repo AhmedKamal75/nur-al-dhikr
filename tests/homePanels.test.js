@@ -7,6 +7,8 @@ import assert from 'node:assert/strict';
 import {
   HOME_PANEL_IDS,
   HOME_DEFAULT_VISIBLE,
+  HOME_PRIMARY_PANEL_IDS,
+  HOME_HIGHLIGHT_PANEL_IDS,
   resolveHomePanels,
   moveHomePanel,
   defaultHiddenHome,
@@ -15,17 +17,31 @@ import { sanitizeSettings } from '../js/core/config.js';
 import { initialState } from '../js/core/state/initial.js';
 
 describe('resolveHomePanels', () => {
-  test('book order by default, hides respected, stale ids ignored', () => {
-    assert.deepEqual(resolveHomePanels(null, {}), [...HOME_PANEL_IDS]);
-    assert.deepEqual(resolveHomePanels(null, { verse: true, nope: true }), [
-      ...HOME_PANEL_IDS.filter((id) => id !== 'verse'),
-    ]);
-    assert.deepEqual(resolveHomePanels(['hifz', 'hifz', 'nope', 'verse'], {}), [
-      'hifz',
-      'verse',
-      ...HOME_PANEL_IDS.filter((id) => id !== 'hifz' && id !== 'verse'),
-    ]);
-    assert.deepEqual(resolveHomePanels('junk', null), [...HOME_PANEL_IDS]);
+  test('daily core is fixed; optional panels appear only when explicitly ordered', () => {
+    const out = resolveHomePanels(['collections', 'hifz', 'verse'], {});
+    assert.deepEqual(out.slice(0, HOME_PRIMARY_PANEL_IDS.length), [...HOME_PRIMARY_PANEL_IDS]);
+    assert.ok(out.includes('collections'));
+    assert.ok(out.includes('verse'));
+    assert.ok(out.indexOf('collections') > out.indexOf('progress'));
+  });
+
+  test('hides respected while stale ids are ignored', () => {
+    const out = resolveHomePanels(null, { verse: true, nope: true });
+    assert.ok(!out.includes('verse'));
+    assert.ok(out.includes('continue'));
+    assert.ok(out.includes('progress'));
+    assert.ok(!out.includes('nope'));
+  });
+
+  test('saved order cannot lift reflection above the daily core', () => {
+    const out = resolveHomePanels(['verse', 'continue', 'hifz'], {});
+    assert.ok(out.indexOf('continue') < out.indexOf('verse'));
+    assert.ok(out.indexOf('progress') < out.indexOf('verse'));
+  });
+
+  test('invalid order falls back to the daily core only', () => {
+    const out = resolveHomePanels('junk', null);
+    assert.deepEqual(out, [...HOME_PRIMARY_PANEL_IDS]);
   });
 });
 
@@ -64,10 +80,7 @@ describe('UX-1 fresh-install density cap', () => {
     // (v5.6.0, B-1) 'review' joins the defaults: it renders nothing
     // until something is actually due, so the density cap holds while
     // the nudge is there the first morning anything lapses.
-    assert.deepEqual(
-      [...HOME_DEFAULT_VISIBLE],
-      ['ramadan', 'continue', 'progress', 'verse', 'hadith', 'review']
-    );
+    assert.deepEqual([...HOME_DEFAULT_VISIBLE], ['continue', 'progress']);
     const hidden = defaultHiddenHome();
     assert.deepEqual(
       Object.keys(hidden).sort(),
@@ -82,7 +95,9 @@ describe('UX-1 fresh-install density cap', () => {
     // Settings toggle path: enabling worship removes its flag.
     const opted = { ...hiddenHome };
     delete opted.worship;
-    assert.ok(resolveHomePanels(null, opted).includes('worship'));
+    assert.deepEqual(resolveHomePanels(null, opted), [...HOME_DEFAULT_VISIBLE]);
+    const explicit = resolveHomePanels(['worship'], opted);
+    assert.ok(explicit.includes('worship'));
   });
 });
 

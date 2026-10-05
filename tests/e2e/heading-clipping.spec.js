@@ -23,6 +23,17 @@ const ROUTES = [
 ];
 
 test.describe('headings are not clipped on a phone', () => {
+  test('missing-data routes retain an accessible heading landmark', async ({ page }) => {
+    for (const route of ['#/quran?id=99999', '#/mushaf?page=99999']) {
+      await page.goto(`./${route}`);
+      await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+      await page.waitForTimeout(900);
+      const heading = page.locator('#main h1.sr-only').first();
+      await expect(heading, `accessible heading missing for ${route}`).toHaveCount(1);
+      await expect(heading).not.toHaveText('');
+    }
+  });
+
   // (v5.17.24) The same sweep checks ORDER. A card title is an <h3> by
   // design — it is meant to sit under an <h2> — and three list views put an
   // <h1> and then the cards with nothing between, so the sequence was h1 -> h3.

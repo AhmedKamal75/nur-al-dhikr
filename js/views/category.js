@@ -16,7 +16,6 @@ import { contentTitleFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { VIEWS, QUIZ_LIBRARY_ID } from '../core/config.js';
 import { cardHTML } from '../ui/card.js';
-import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
 import {
@@ -208,7 +207,6 @@ export function renderCategory(state) {
       ${sessionButton}
       ${byHeartOn ? `<p class="panel__subtext">${t('byheart.hint', lang)}</p>` : ''}
     </header>
-    ${azkarModeSwitchHTML(state.activeView, lang)}
 
     ${manageBar}
     ${unhideBar}

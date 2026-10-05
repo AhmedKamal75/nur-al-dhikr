@@ -64,7 +64,6 @@ describe('library jump chips', () => {
 
   test('reading mode renders the moved browser, not the jump row', () => {
     const html = renderLibrary(libState(['adhkar', 'duas'], 'en', false));
-    assert.ok(html.includes('azkar-mode-switch'), 'the Azkar switch rides reading mode');
     assert.doesNotMatch(html, /class="library-jump"/, 'no jump row over the browser');
   });
 

@@ -13,7 +13,6 @@ import { buildHash } from '../core/router.js';
 import { selectors } from '../core/state.js';
 import { completedCount, checklistStreak, recentHistory } from '../services/checklist.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
-import { youModeSwitchHTML } from '../ui/shell.js';
 
 function dayLabel(dateKeyStr, lang) {
   const d = new Date(dateKeyStr + 'T00:00:00');
@@ -59,7 +58,6 @@ export function renderChecklist(state) {
       <h1 class="view__title">${t('you.myAdhkar', lang)}</h1>
       ${viewMenuButton('checklist', lang, { labelKey: 'viewMenu.checklist' })}
     </div>
-    ${youModeSwitchHTML(state.activeView, lang)}
     <p class="view__subtitle">${t('checklist.subtitle', lang)}</p>
 
     <section class="panel panel--checklist-summary">

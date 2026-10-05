@@ -12,7 +12,6 @@ import { escapeHTML, pickLocale } from '../core/utils.js';
 import { APP_VERSION, VIEWS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
 import { installRowHTML } from './installRow.js';
-import { youModeSwitchHTML } from '../ui/shell.js';
 
 /** A "what you can do" row — icon + plain sentence. */
 function capabilityRow(iconName, textKey, lang) {
@@ -89,7 +88,6 @@ export function renderAbout(state, flags = {}) {
       <p class="about-mission">${t('about.mission', lang)}</p>
       <p class="about-version">${t('about.version', lang)}: ${APP_VERSION}</p>
     </div>
-    ${youModeSwitchHTML(state.activeView, lang)}
 
     <section class="panel">
       <div class="panel__header"><h2>${t('about.whatItIs', lang)}</h2></div>

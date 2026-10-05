@@ -374,7 +374,14 @@ describe('contract: CSS design-system protocols', () => {
     // shown when the shell never booted, so no --z-* token can exist yet.
     const allowed = new Set(['auto', '2147483647']);
     const offenders = [];
-    for (const m of (allCss + '\n' + shellCss).matchAll(/z-index:\s*([^;]+);/g)) {
+    // Comments are stripped first: a value quoted inside a comment is
+    // documentation, not a declaration, and reading it as one made this gate
+    // fail on the very comment that documented the fix. The gate measures
+    // what it claims to measure — live declarations only.
+    const live = (allCss + '\n' + shellCss)
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/<!--[\s\S]*?-->/g, '');
+    for (const m of live.matchAll(/z-index:\s*([^;]+);/g)) {
       const v = m[1].trim();
       if (v.startsWith('var(--z-') || allowed.has(v)) continue;
       offenders.push(v);

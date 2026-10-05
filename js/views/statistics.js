@@ -23,7 +23,6 @@ import {
   topSurahsByPages,
 } from '../domain/statistics.js';
 import { viewMenuButton } from '../ui/viewSheet.js';
-import { youModeSwitchHTML } from '../ui/shell.js';
 import { dueCounts, dueSurahs, dueAyahs } from '../domain/hifz.js';
 import { planStatus } from '../domain/khatma.js';
 import { juzReadStates } from '../services/mushaf.js';
@@ -392,7 +391,6 @@ export function renderStatistics(state) {
       <h1 class="view__title">${t('nav.statistics', lang)}</h1>
       ${viewMenuButton('statistics', lang, { labelKey: 'viewMenu.statistics' })}
     </div>
-    ${youModeSwitchHTML(state.activeView, lang)}
 
     ${reviewPanelHTML(state)}
 

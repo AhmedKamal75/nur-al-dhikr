@@ -77,7 +77,30 @@ test('renderHome: mercy theme shows the mercy verse + six theme chips', () => {
   const base = initialState();
   const state = {
     ...base,
-    settings: { ...base.settings, language: 'en', dailyAyahTheme: 'mercy', hiddenHome: {} },
+    // (v5.17.84+) Home renders only HOME_PRIMARY_PANEL_IDS ('continue',
+    // 'progress') until a panel is explicitly enabled through a saved order —
+    // js/domain/homePanels.js, whose comment says optional panels are "never
+    // auto-inserted" so Home cannot drift back into a dashboard. `verse` is a
+    // highlight panel, so the fixture must now opt in the way a real user does.
+    //
+    // Every assertion below is unchanged and still meaningful: the themed verse
+    // must appear, the off-theme one must not, and all six theme chips must
+    // render. Only the state shape moved to the current contract.
+    //
+    // OPEN FINDING, not fixed here: DEFAULT_SETTINGS.homeOrder is null, so this
+    // panel is hidden by default — and it is the ONLY surface for the
+    // `dailyAyahTheme` setting. A default user cannot reach or change their
+    // theme. That is a product decision (should the verse panel be primary
+    // again, or should the setting be surfaced elsewhere?), not a test fix.
+    settings: {
+      ...base.settings,
+      language: 'en',
+      dailyAyahTheme: 'mercy',
+      // hiddenHome must be un-set as well as ordered: the default hides the
+      // verse/hadith/review/hifz highlight panels outright.
+      hiddenHome: { ...base.settings.hiddenHome, verse: false },
+      homeOrder: ['verse'],
+    },
     library: {
       raw: [],
       order: [],

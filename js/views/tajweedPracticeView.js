@@ -15,6 +15,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
+import { mergeStudyContextParams } from './studyContext.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { tajweedCitation } from '../domain/tajweedSources.js';
@@ -26,6 +27,7 @@ import {
   tajweedPrefsOf,
   tajweedRule,
   wordUnits,
+  classifyAyahTajweed,
 } from '../domain/tajweed.js';
 import {
   accuracyFor,
@@ -281,6 +283,36 @@ export function buildPracticeSummary(state, session) {
  * reader jumps to and highlights), and the drill button. Pure template —
  * the handler loads the pool and passes validated examples.
  */
+function renderRuleExampleText(text, ruleId) {
+  const raw = String(text || '').trim();
+  if (!raw) return '';
+  const words = classifyAyahTajweed(raw);
+  return words
+    .map((entry) => {
+      const source = String(entry.word || '');
+      const spans = (entry.spans || [])
+        .filter((span) => span?.rule === ruleId)
+        .sort((a, b) => a.start - b.start || a.end - b.end);
+      if (!spans.length) return escapeHTML(source);
+      let cursor = 0;
+      const out = [];
+      for (const span of spans) {
+        const start = Math.max(cursor, Math.min(source.length, Number(span.start) || 0));
+        const end = Math.max(start, Math.min(source.length, Number(span.end) || start));
+        if (start > cursor) out.push(escapeHTML(source.slice(cursor, start)));
+        if (end > start) {
+          out.push(
+            `<mark class="practice-lesson__mark" data-rule="${escapeHTML(ruleId)}">${escapeHTML(source.slice(start, end))}</mark>`
+          );
+          cursor = end;
+        }
+      }
+      if (cursor < source.length) out.push(escapeHTML(source.slice(cursor)));
+      return out.join('');
+    })
+    .join(' ');
+}
+
 export function buildPracticeLesson(state, ruleId, examples = []) {
   const lang = state.settings.language;
   const rule = tajweedRule(ruleId);
@@ -294,24 +326,39 @@ export function buildPracticeLesson(state, ruleId, examples = []) {
     const m = meta.find((x) => Number(x?.number) === Number(s));
     return m ? pickLocale({ en: m.nameTransliteration || m.nameEn, ar: m.nameAr }, lang) : `#${s}`;
   };
+  const exampleCards = list
+    .map((e) => {
+      const ref = `${escapeHTML(surahName(e.s))} · ${t('practice.exampleRef', lang, { s: e.s, a: e.a })}`;
+      const text = renderRuleExampleText(e.text, rule.id);
+      const hasMark = text.includes('practice-lesson__mark');
+      return `
+        <article class="practice-lesson__example-card">
+          <div class="practice-lesson__example-head">
+            <span>${ref}</span>
+            <a class="practice-lesson__example-link" href="${buildHash(VIEWS.QURAN, { id: e.s, ay: String(e.a), ...mergeStudyContextParams({}, state) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${e.s}" data-ay="${e.a}">
+              ${escapeHTML(t('practice.lessonOpenAyah', lang))} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}
+            </a>
+          </div>
+          ${text ? `<p class="practice-lesson__ayah" dir="rtl" lang="ar">${text}</p>${hasMark ? `<p class="practice-lesson__legend"><span class="practice-lesson__legend-mark" aria-hidden="true"></span>${escapeHTML(t('practice.lessonHighlight', lang))}</p>` : ''}` : `<p class="panel__subtext">${escapeHTML(t('practice.lessonExampleUnavailable', lang))}</p>`}
+        </article>`;
+    })
+    .join('');
   return `
   <div class="tajweed-practice practice-lesson">
     <h2 id="modal-title-practice">${escapeHTML(pickLocale(rule.name, lang))}</h2>
     <p class="practice-lesson__family"><span class="practice-rule__swatch"${color ? ` style="background:${color}"` : ' style="border-style:dashed"'}></span> ${escapeHTML(familyName)}</p>
     <h3 class="practice-lesson__heading">${t('practice.lessonWhat', lang)}</h3>
     <p class="practice-lesson__desc" dir="auto">${escapeHTML(pickLocale(rule.desc, lang))}</p>
+    ${(() => {
+      const cite = tajweedCitation(rule.id, lang);
+      return cite
+        ? `<p class="practice-lesson__source">${escapeHTML(t('tajweedCourse.source', lang))}: ${escapeHTML(cite.title)} ${escapeHTML(cite.lines)}</p>`
+        : '';
+    })()}
     <h3 class="practice-lesson__heading">${t('practice.lessonExamples', lang)}</h3>
     ${
       list.length
-        ? `<div class="practice-lesson__examples">${list
-            .map(
-              (e) => `
-          <a class="practice-lesson__example" href="${buildHash(VIEWS.QURAN, { id: e.s, ay: String(e.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${e.s}" data-ay="${e.a}">
-            <span dir="auto">${escapeHTML(surahName(e.s))} · ${t('practice.exampleRef', lang, { s: e.s, a: e.a })}</span>
-            ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}
-          </a>`
-            )
-            .join('')}</div>`
+        ? `<div class="practice-lesson__examples">${exampleCards}</div>`
         : `<p class="panel__subtext">${t('practice.lessonEmpty', lang)}</p>`
     }
     <div class="practice-summary__actions">

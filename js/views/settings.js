@@ -7,7 +7,7 @@
  * the schedules manager link. Every control keeps its existing
  * data-action contract (set-setting / toggle-setting / data-bind …).
  */
-import { t, availableLanguages, languageLabel } from '../core/i18n.js';
+import { t, availableLanguages, languageLabel, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, normalizeSearch, pickLocale } from '../core/utils.js';
 import {
@@ -31,7 +31,6 @@ import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
 import { installRowHTML } from './installRow.js';
 import { backupSummaryHTML } from './backupSummary.js';
-import { youModeSwitchHTML } from '../ui/shell.js';
 
 /**
  * (v5.2.48) Accordion memory, persisted. The open section used to live in
@@ -128,8 +127,9 @@ export function deferredSetupHTML(state, lang) {
     const paramObj = d.params && typeof d.params === 'object' ? d.params : {};
     return `
     <a class="reciter-row" href="${buildHash(d.view, paramObj)}" data-action="navigate" data-view="${escapeHTML(d.view)}"${idAttr}>
-      ${icon(DEFERRED_ICONS[d.id], { size: 16 })}
-      <span class="reciter-row__name">${escapeHTML(t(DEFERRED_LABELS[d.id], lang))}<span class="reciter-row__meta"> — ${escapeHTML(t(DEFERRED_HINTS[d.id], lang))}</span></span>
+      <span class="settings-link-row__icon" aria-hidden="true">${icon(DEFERRED_ICONS[d.id], { size: 17 })}</span>
+      <span class="reciter-row__name">${escapeHTML(t(DEFERRED_LABELS[d.id], lang))}<span class="reciter-row__meta">${escapeHTML(t(DEFERRED_HINTS[d.id], lang))}</span></span>
+      <span class="settings-link-row__chevron" aria-hidden="true">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 15 })}</span>
     </a>`;
   }).join('');
   return `
@@ -521,10 +521,8 @@ export function renderSettings(state, flags = {}) {
           data-bind="settings-search" autocomplete="off" />
       </div>
     </header>
-    ${youModeSwitchHTML(state.activeView, lang)}
     ${groupOpen(G_SETUP)}
     ${deferredSetupHTML(state, lang)}
-    <a class="btn btn--ghost" href="${buildHash(VIEWS.ABOUT)}" data-action="navigate" data-view="${VIEWS.ABOUT}">${icon('info', { size: 16 })} ${t('nav.about', lang)}</a>
     ${groupClose()}
     ${groupOpen(G_DISPLAY)}
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>

@@ -21,7 +21,7 @@ import { t, isRTL } from '../core/i18n.js';
 import { escapeHTML, highlightMatch } from '../core/utils.js';
 import { VIEWS } from '../core/config.js';
 import { buildHash } from '../core/router.js';
-import { quranModeSwitchHTML } from '../ui/shell.js';
+import { studyContextHTML } from './studyContext.js';
 import { icon } from '../core/icons.js';
 import { loadErrorStateHTML } from '../ui/emptyState.js';
 import { skeletonLines } from '../ui/skeleton.js';
@@ -183,7 +183,6 @@ function renderRootsIndex(state, lang) {
   <section class="view view--roots">
     <h1 class="view__title">${t('roots.title', lang)}</h1>
     <p class="view__subtitle">${t('roots.subtitle', lang)}</p>
-    ${quranModeSwitchHTML(VIEWS.ROOTS, lang)}
     ${drill}
     ${searchBox(lang, q)}
     <p class="roots-totals">${totalLine}</p>
@@ -325,8 +324,8 @@ function renderRootDetail(state, lang, root) {
 
   return `
   <section class="view view--roots">
+    ${studyContextHTML(state)}
     <a class="roots-back" href="${buildHash(VIEWS.ROOTS, {})}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('roots.back', lang)}</a>
-    ${quranModeSwitchHTML(VIEWS.ROOTS, lang)}
     <h1 class="sr-only">${t('title.roots', lang)} — <span dir="rtl" lang="ar">${escapeHTML(root)}</span></h1>
     <div class="root-detail__head">
       <span class="root-detail__name" dir="rtl" lang="ar">${escapeHTML(root)}</span>

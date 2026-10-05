@@ -1,13 +1,72 @@
+## v5.17.93 — Tafsir becomes a clearer part of ayah study
+
+- **Study continuity:** the Tafsir surface now opens with an explicit ayah context (`surah:ayah`) so the commentary is visibly attached to the exact text being studied rather than looking like a generic source browser.
+- **Source transparency:** the active edition's name, author and category are presented together above the commentary. The author is no longer duplicated inside the body.
+- **Responsive:** the source metadata collapses cleanly on narrow screens and uses existing design tokens only.
+- **Bilingual:** the new source-context label is EN/AR paired; the Qur'anic reference remains numeric and direction-safe.
+- **Regression:** focused Tafsir/Qur'an/Mushaf suites pass, including English/Arabic direction and source rendering.
+
+## v5.17.92 — Full Word Study from the contextual rail
+
+- **Word-study depth:** selecting a word inside the Mushaf Study rail now exposes a deliberate **Open word study** action for the complete lexical surface; the inline rail remains the quick contextual layer rather than trying to duplicate the entire Word Study view.
+- **Exact-word continuity:** the action carries the exact surah, ayah, word index, and tapped surface into the existing Word Study modal, using the same resolver as direct word taps.
+- **Bilingual:** the new action is localized in English and Arabic with no new data or religious copy.
+- **Regression:** 29/29 focused tests pass, including Study Tray, Mushaf Study Rail, Study Context, and the new v5.17.92 tests.
+
+## v5.17.91 — Qur’an study context survives the learning loop
+
+- **Mushaf study context:** exact ayah origin is preserved when the learner moves from the inline study tray into Roots, Tajweed Course, or Look-alike Ayat.
+- **Return-to-ayah control:** related study views expose one quiet, bilingual return path to the originating ayah instead of relying on browser-history luck.
+- **Context propagation:** Tajweed lesson examples and study-tray journey links keep the originating ayah context intact.
+- **No route/dashboard sprawl:** the context is URL-backed navigation metadata, not a new dashboard or persistent panel.
+- **Regression:** 289 tests / 58 suites pass in the focused Qur’an/Mushaf/Tajweed/Word Study run.
+
+## v5.17.90 — Tajweed lessons become real teaching examples
+
+- Tajweed rule lessons now show **real Qur'anic ayah text**, loaded from the app's own bundled corpus, instead of presenting example ayahs as reference numbers alone.
+- The same deterministic Tajweed classifier used by practice marks the relevant span inside each lesson example, so **Learn → See → Practice** uses one source of truth.
+- Each example keeps a direct **Open ayah** path back to the Qur'an reader.
+- Lesson examples remain Arabic in both interface languages; only surrounding UI chrome is localized.
+- Added regression coverage for bilingual lesson rendering, rule highlighting, and the expanded lesson surface.
+- Fixed an Arabic course-copy typo discovered during the audit.
+
+## v5.17.89 — Mushaf contextual study rail
+
+- Ayah taps now open the contextual Study rail beneath the Mushaf paper.
+
+## v5.17.86 — Focus completion-state handoff
+
+Focus now preserves the completed repetition visually for the brief transition after a cycle completes. The shared counter service still resets persisted live progress to zero for the next cycle, while the Focus renderer derives a transient completed presentation from its existing celebration stamp. This makes the intended flow explicit: **0/1 → 1/1 → next** and **0/3 → 1/3 → 2/3 → 3/3 → next**, without changing counting semantics elsewhere. Added regression pins for the presentation contract.
+
+Browser certification is still not claimed from this workspace; the authoritative local Chromium matrix remains required.
+
 # Release notes — Nūr al-Dhikr
 
-## v5.17.83 — Focus handoff, Settings control language, legacy default migration
+## v5.17.85 — Home discipline, Azkar library doorway, Focus handoff, quieter player
 
-Applied from the v5.17.83 patch archive onto the v5.17.81 mainline. Two defects
-in the patch were repaired before commit: `settings.autoAdvanceFocusHint` was
-called from `js/views/settings.js` but absent from **both** i18n dictionaries, and
-`docs/AGENT-MAP.md` was stale. Verified: `npm run check` exit 0 (2737/2737);
-`npm run e2e -- --project=chromium` 172 passed, 3 skipped, 1 flaky (a 45s browser
-timeout in a11y-matrix that passes 2/2 in isolation in 9.1s).
+- Home is now intentionally sparse by default: the daily core is Continue + Today progress; optional reflective panels are never auto-inserted into a fresh/default Home. Explicit saved panel choices remain available below the core.
+- Home quick actions default to Morning + Evening only; Qur’an, Tasbih, Prayer and other destinations remain in their proper top-level menu instead of turning Home into a launcher wall.
+- The identity Shahada strip remains available but is rendered at the end of Home, after supporting content, rather than interrupting the daily task flow.
+- The Azkar browser gains a dedicated search doorway, while Morning and Evening receive a subtle featured treatment without changing the underlying corpus or routes.
+- Focus completion handoff is shortened to a brief 220ms default with bounded delay, so a one-tap completion of a one-count dhikr advances promptly to the next visible dhikr while retaining the duplicate-tap guard.
+- The full-surah audio player now keeps transport as the primary visible control surface and moves repeat/speed/mute/sleep/mode/volume into a native disclosure. This removes the “row of settings” appearance while preserving every existing action.
+- Added regression contracts for the new Home/Azkar/Focus/product-player grammar.
+- Full corpus remains authoritative: **2,350 data files**.
+
+No religious data was changed.
+
+## v5.17.84 — real expandable main menu and deliberate Home reading order
+
+- Restored the intended main-menu hierarchy: Home remains a direct landing, worship/product domains can expand to reveal their direct child destinations, and Zakat, Offline, Settings, then About remain standalone siblings at the application tail.
+- Removed the visual fall-through from native `<details>/<summary>`: no browser disclosure marker, no dashed hierarchy line, no accidental legacy grouping. Child rows are quiet, target-sized, and RTL-safe.
+- Settings and About are no longer presented as a semantic family with Zakat/Offline; the distinction is product meaning, not merely styling.
+- Home now has an enforced vertical product argument: identity/orientation → Today and prayer context → Start Here actions → Shahada context → next task → reflection → contextual/onboarding/supporting material.
+- Home mobile heading scale is reduced so the first useful content does not get pushed below the fold by oversized typography.
+- Added regression pins for the flat application tail, menu disclosure chrome, and Home reading order.
+
+No religious data was changed.
+
+## v5.17.83 — Focus handoff, Settings control language, legacy default migration
 
 - Focus now treats auto-advance as the product default even for legacy persisted snapshots that still carry the old shipped `false` default; a hidden explicit-choice marker preserves a real opt-out after the user changes the setting.
 - The Focus counter ignores duplicate taps during the 360ms completion handoff, preventing a completed dhikr from being incremented again while the next item is entering.
@@ -5149,3 +5208,17 @@ runtime subsystems); the 1,878-line `state.js` became the
 system was rewritten on a token pipeline with mathematical scales; the
 docs were consolidated from 3,225 lines of history into this file +
 ARCHITECTURE.md + CREDITS.md.
+
+## v5.17.88 — Unified ayah study journey
+
+- Added a compact **Continue studying** strip to the inline ayah study tray.
+- From the same ayah, the user can move directly to **Tafsir, the selected word's root, Tajweed course, memorization, or Mutashabihat** without losing the ayah context on routes that support it.
+- The root destination appears only when a selected word has a real root; no fabricated fallback is shown.
+- Added English/Arabic labels and restrained Mushaf/Qur'an styling for the new study bridge.
+
+## v5.17.87 — Qur'an study gateway + teach-before-drill Tajweed
+
+- The classic Qur'an index now exposes a restrained study gateway for the four major study depths already shipped: Mushaf, Word Study, Tajweed course, and Look-alike Ayat. This improves discoverability without moving them into a generic dashboard or changing the settled Qur'an navigation hierarchy.
+- Tajweed course rule rows now expose two distinct intentions: **Learn** opens the sourced teaching lesson; the existing rule action remains the drill. A learner no longer has to infer that tapping a curriculum rule immediately starts a quiz.
+- Tajweed rule lessons now surface their citation directly beside the definition, before the example ayahs and drill CTA.
+- All new user-facing strings are bilingual; mobile collapses the Qur'an study gateway to a compact two-column link grid.

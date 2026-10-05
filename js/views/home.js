@@ -12,8 +12,16 @@ import { cardHTML } from '../ui/card.js';
 import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 import { completedCount } from '../services/checklist.js';
 import { ramadanInfo } from '../domain/ramadan.js';
-import { resolveHomePanels } from '../domain/homePanels.js';
-import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
+import {
+  HOME_HIGHLIGHT_PANEL_IDS,
+  HOME_PRIMARY_PANEL_IDS,
+  resolveHomePanels,
+} from '../domain/homePanels.js';
+import {
+  HOME_QUICK_TILE_DEFAULTS,
+  QUICK_TILE_DEFS,
+  resolveQuickTiles,
+} from '../domain/quickTiles.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';
 import { MOODS, itemsForMood } from '../domain/moods.js';
 import {
@@ -732,9 +740,10 @@ function browserTileHTML(state, cat, lang) {
     done > 0
       ? `<span class="category-tile__count">${escapeHTML(t('category.progressToday', lang, { done, total, pct }))}</span>`
       : '';
+  const featured = cat.id === 'morning' || cat.id === 'evening';
   return `
-      <div class="category-tile-wrap">
-        <a class="category-tile" ${navAttrs} aria-label="${escapeHTML(`${categoryDisplayName(cat, lang)} — ${t('collections.itemCount', lang, { n: items.length })}`)}">
+      <div class="category-tile-wrap${featured ? ' category-tile-wrap--featured' : ''}">
+        <a class="category-tile" ${navAttrs}${featured ? ' data-featured="true"' : ''} aria-label="${escapeHTML(`${categoryDisplayName(cat, lang)} — ${t('collections.itemCount', lang, { n: items.length })}`)}">
           <span class="category-tile__icon category-tile__icon--${escapeHTML(cat.color || 'slate')}">${icon(cat.icon || 'book', { size: 22 })}</span>
           <span class="category-tile__text">
             <span class="category-tile__name">${escapeHTML(categoryDisplayName(cat, lang))}</span>
@@ -1160,17 +1169,26 @@ export function renderHome(state) {
     </section>`
       : '',
   };
-  const orderedHomePanels = resolveHomePanels(state.settings.homeOrder, state.settings.hiddenHome)
-    .map((id) => homePanels[id] || '')
-    .join('');
+  const orderedHomePanelIds = resolveHomePanels(
+    state.settings.homeOrder,
+    state.settings.hiddenHome
+  );
+  const primaryPanelSet = new Set(HOME_PRIMARY_PANEL_IDS);
+  const highlightPanelSet = new Set(HOME_HIGHLIGHT_PANEL_IDS);
+  const renderPanelGroup = (ids) => ids.map((id) => homePanels[id] || '').join('');
+  const primaryPanels = renderPanelGroup(
+    orderedHomePanelIds.filter((id) => primaryPanelSet.has(id))
+  );
+  const highlightPanels = renderPanelGroup(
+    orderedHomePanelIds.filter((id) => highlightPanelSet.has(id))
+  );
+  const supportingPanels = renderPanelGroup(
+    orderedHomePanelIds.filter((id) => !primaryPanelSet.has(id) && !highlightPanelSet.has(id))
+  );
 
-  // (IA-7) the page's argument, in order: the shahada, where you are
-  // today (prayer ribbon + one slim today-strip answering "how am I
-  // doing"), the explicit tasbih entry, then the brand hero, the wizard,
-  // the quick tiles and every panel in the reader's own order. The adhkar
-  // grid is NOT here anymore: it moved to its own Azkar section
-  // (#/library), which reuses the browser component below — Home is a
-  // Today landing, and the grid owns its own door.
+  // Home has one stable editorial argument: orient → today → start → resume.
+  // Optional panels are explicitly opt-in and remain below the daily core.
+  // The adhkar grid is never a Home panel; it has its own Azkar door.
   return `
   <section class="view view--home">
     <!-- Home has one argument: orient → act → review → explore. -->
@@ -1182,31 +1200,64 @@ export function renderHome(state) {
       ${state.statistics?.totalRecitations === 1 ? `<p class="home-hero__seed" dir="auto">${escapeHTML(t('home.firstSeed', lang))}</p>` : ''}
     </div>
 
-    ${prayerRibbonHTML(state, lang, prayerTimes)}
+    <div class="home-core" data-home-core>
+      <section class="home-section home-section--today" aria-labelledby="home-today-heading">
+        <div class="home-section__heading">
+          <h2 id="home-today-heading">${t('home.todayHeading', lang)}</h2>
+        </div>
+        ${prayerRibbonHTML(state, lang, prayerTimes)}
+        ${libraryErrorHTML(state, lang)}
+        ${homeTodayStripHTML(state)}
+      </section>
 
-    ${libraryErrorHTML(state, lang)}
+      <section class="home-section home-section--actions" aria-labelledby="home-start-heading">
+        <div class="home-section__heading">
+          <h2 id="home-start-heading">${t('home.startHeading', lang)}</h2>
+        </div>
+        ${quickTilesHTML(
+          resolveQuickTiles({
+            order: state.settings.quickOrder,
+            hidden: state.settings.hiddenQuick,
+            visits: state.tileVisits,
+            defaultOrder: HOME_QUICK_TILE_DEFAULTS,
+            // Home is the daily landing, not a second application launcher.
+            // Settings exposes the full registry; Home surfaces only the two
+            // current daily worship shortcuts by default.
+            limit: 2,
+          }),
+          lang,
+          nowWindow
+        )}
+      </section>
+    </div>
 
-    ${homeTodayStripHTML(state)}
-
-    ${quickTilesHTML(
-      resolveQuickTiles({
-        order: state.settings.quickOrder,
-        hidden: state.settings.hiddenQuick,
-        visits: state.tileVisits,
-        // Home is the daily landing, not a second application launcher.
-        // Settings still exposes the full registry; the landing surfaces the
-        // first four user-selected/usage-ranked shortcuts only.
-        limit: 4,
-      }),
-      lang,
-      nowWindow
-    )}
-
-    ${nudgeCardHTML(state)}
-
-    ${onboardingPanelHTML(state, lang)}
-
-    ${orderedHomePanels}
+    <div class="home-secondary" data-home-secondary>
+      ${
+        primaryPanels
+          ? `<section class="home-section home-section--next" aria-labelledby="home-next-heading">
+        <div class="home-section__heading"><h2 id="home-next-heading">${t('home.nextHeading', lang)}</h2></div>
+        ${primaryPanels}
+      </section>`
+          : ''
+      }
+      ${
+        highlightPanels
+          ? `<section class="home-section home-section--reflection" aria-labelledby="home-reflection-heading">
+        <div class="home-section__heading"><h2 id="home-reflection-heading">${t('home.reflectionHeading', lang)}</h2></div>
+        ${highlightPanels}
+      </section>`
+          : ''
+      }
+      ${nudgeCardHTML(state)}
+      ${onboardingPanelHTML(state, lang)}
+      ${
+        supportingPanels
+          ? `<section class="home-section home-section--supporting">
+        ${supportingPanels}
+      </section>`
+          : ''
+      }
+    </div>
 
     ${shahadaBannerHTML(lang)}
   </section>`;

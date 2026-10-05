@@ -11,7 +11,6 @@ import { buildHash } from '../core/router.js';
 import { referenceLineFor, noteFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
 import { notFoundStateHTML } from '../ui/emptyState.js';
-import { azkarModeSwitchHTML } from '../ui/shell.js';
 import { skeletonLines } from '../ui/skeleton.js';
 import { VIEWS } from '../core/config.js';
 import { gradeChipHTML, gradeStateOf } from '../domain/grades.js';
@@ -95,7 +94,6 @@ function focusPickerHTML(state, lang) {
       <a class="back-link" href="${buildHash(VIEWS.LIBRARY)}" data-action="navigate" data-view="${VIEWS.LIBRARY}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('nav.azkar', lang)}</a>
       <h1 class="view__title">${t('focus.pickerTitle', lang)}</h1>
     </header>
-    ${azkarModeSwitchHTML(state.activeView, lang)}
     <p class="panel__subtext">${t('focus.pickerHint', lang)}</p>
     <ul class="focus-picker">${rows.join('')}</ul>
   </section>`;
@@ -167,7 +165,14 @@ export function renderFocus(state) {
   const refNotes = noteFor(item.reference?.notes, lang, item);
   const notes = noteFor(item.notes, lang);
   const reviewWarning = hasPendingScholarlyReview(item);
-  const pct = Math.min(100, Math.round((counter.count / Math.max(1, counter.target)) * 100));
+  // The shared counter resets its stored count to 0 when a cycle completes.
+  // Focus is different: during the short completion handoff the reader must
+  // see the completed state (1/1, 3/3, …), otherwise a fast auto-advance feels
+  // like the tap was lost. Keep persistence semantics untouched and derive the
+  // transient presentation from the celebration stamp.
+  const justCompleted = wasJustCompleted(item.id);
+  const displayCount = justCompleted ? counter.target : counter.count;
+  const pct = Math.min(100, Math.round((displayCount / Math.max(1, counter.target)) * 100));
   // (v5.2.24) directional enter: forward slides from the reading-start
   // side, back from the other — auto-advance (+1) always slides forward.
   const focusKey = `${cat.id}:${item.id}`;
@@ -187,7 +192,7 @@ export function renderFocus(state) {
   // (v5.2.25) separation of concerns, same as the card pill: the
   // counter shows ONLY live session progress — the lifetime cycles moved
   // to the small badge under the hint, never into the tap number.
-  const focusDone = counter.count >= counter.target;
+  const focusDone = justCompleted || counter.count >= counter.target;
   const lifetimeCycles = counter.completedCycles || 0;
   const disclosure = disclosureHTML(item, lang, {
     showTransliteration: state.settings.showTransliteration,
@@ -280,7 +285,7 @@ export function renderFocus(state) {
          nav stack that ate a third of the screen: reset, prev/next, the
          64px progress counter, and the card menu. The stage above keeps
          ALL the room, and it scrolls (see the overflow fix in cards.css). -->
-    <p class="focus__hint${wasJustCompleted(item.id) ? ' is-just-completed' : ''}">${t('focus.tapToCount', lang)}</p>
+    <p class="focus__hint${justCompleted ? ' is-just-completed' : ''}">${t('focus.tapToCount', lang)}</p>
     ${lifetimeCycles > 0 ? `<p class="focus__lifetime" title="${escapeHTML(t('card.completedTimes', lang, { n: lifetimeCycles }))}">✓ ${escapeHTML(String(lifetimeCycles))}×</p>` : ''}
     <footer class="focus__bar">
       <button type="button" class="icon-btn" data-action="focus-reset" data-item-id="${escapeHTML(item.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.reset', lang)}" title="${t('focus.reset', lang)}">
@@ -290,12 +295,12 @@ export function renderFocus(state) {
         <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${prevItem ? escapeHTML(prevItem.id) : ''}" ${prevItem ? '' : 'disabled'} aria-label="${t('focus.previous', lang)}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 20 })}</button>
         <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${nextItem ? escapeHTML(nextItem.id) : ''}" ${nextItem ? '' : 'disabled'} aria-label="${t('focus.next', lang)}">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 20 })}</button>
       </div>
-      <button type="button" class="focus__counter${wasJustCompleted(item.id) ? ' is-just-completed' : ''}${focusDone ? ' is-done' : ''}" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: counter.count, target: counter.target })}">
+      <button type="button" class="focus__counter${justCompleted ? ' is-just-completed' : ''}${focusDone ? ' is-done' : ''}" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: displayCount, target: counter.target })}">
         <svg class="focus__ring" viewBox="0 0 64 64" aria-hidden="true">
           <circle cx="32" cy="32" r="27" class="focus__ring-track"/>
           <circle cx="32" cy="32" r="27" class="focus__ring-fill" style="--pct:${pct}"/>
         </svg>
-        <span class="focus__counter-num" aria-hidden="true">${escapeHTML(String(counter.count))}${focusDone ? ' ✓' : ''}</span>
+        <span class="focus__counter-num" aria-hidden="true">${escapeHTML(String(displayCount))}${focusDone ? ' ✓' : ''}</span>
         <span class="focus__counter-den" aria-hidden="true">/ ${escapeHTML(String(counter.target))}</span>
       </button>
       <button type="button" class="icon-btn" data-action="open-card-menu" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" aria-label="${t('card.more', lang)}" title="${t('card.more', lang)}">

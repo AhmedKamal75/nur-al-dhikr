@@ -16,7 +16,6 @@ import { emptyStateHTML } from '../ui/emptyState.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 import { fieldTogglesFor } from '../domain/contentLens.js';
-import { youModeSwitchHTML } from '../ui/shell.js';
 
 /** Sort orders, in control order. Unknown `?sort=` falls back to recent. */
 export const FAVORITE_SORTS = ['recent', 'alpha', 'read'];
@@ -99,7 +98,6 @@ export function renderFavorites(state) {
           : ''
       }
     </div>
-    ${youModeSwitchHTML(state.activeView, lang)}
     <div class="search-bar">
       <span class="search-bar__icon" aria-hidden="true">${icon('search', { size: 18 })}</span>
       <input type="search" class="search-bar__input" id="favorites-search-input"

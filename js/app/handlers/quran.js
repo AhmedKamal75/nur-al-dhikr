@@ -364,36 +364,47 @@ export const clickHandlers = {
     go(VIEWS.MUSHAF, { page: String(page) });
   },
 
-  'mushaf-ayah-tap': async (ds) => {
+  'mushaf-ayah-tap': async (ds, _e, target) => {
     const state = store.getState();
-    // (v5.17.21, FIXED) Same route resolution as the reader: on a
-    // `?s=&ay=` arrival the URL names no page, and deriving the facing-page
-    // candidates from the bookmark instead made an ayah on page 42 look for
-    // a home on pages 1|2 — the study popup then opened with no verse found
-    // and a bookmark pointing at a page that does not carry it.
-    const { mushafRoutePage } = await mushafView();
-    const page = mushafRoutePage(state).page;
-    // (v4.5) in a spread the tapped ayah may sit on EITHER facing page —
-    // find which one carries it so its bookmark records the true page.
-    const spreadOn = mushafSpreadActive(state.settings.mushafPrefs);
-    const right = spreadOn ? spreadRightPage(page) : page;
-    const left = spreadOn ? spreadLeftPage(right) : null;
-    const carries = (doc) =>
-      doc?.chapters?.some(
-        (c) =>
-          String(c.number) === String(ds.surah) &&
-          c.verses.some((v) => String(v.number) === String(ds.ayah))
-      );
-    const rightDoc = state.mushaf.pages[String(right)];
-    const leftDoc = left != null ? state.mushaf.pages[String(left)] : null;
-    const pageNum = leftDoc && carries(leftDoc) && !carries(rightDoc) ? left : right;
-    const pageDoc = state.mushaf.pages[String(pageNum)];
-    const chapter = pageDoc?.chapters.find((c) => String(c.number) === String(ds.surah));
-    const verse = chapter?.verses.find((v) => String(v.number) === String(ds.ayah));
-    if (!verse) return;
-    // (v5.2.9) fresh ayah -> fall back to the default tafsir source.
+    const surah = parseInt(ds.surah, 10);
+    const ayah = parseInt(ds.ayah, 10);
+    if (!(surah >= 1 && surah <= 114) || !(ayah >= 1 && ayah <= 286)) return;
+
+    // Fullscreen is intentionally paper-only: the contextual rail is a
+    // windowed reading surface, so a direct ayah tap there retains the
+    // established modal study path rather than creating hidden state that
+    // cannot be rendered until fullscreen is closed.
+    if (state.mushafFullscreen === true) {
+      store.dispatch(actions.setMushafSession({ tafsirTab: null }));
+      await openAyahStudy(surah, ayah, currentAyahDetailPage(surah, ayah));
+      return;
+    }
+
+    // Word taps are a distinct interaction handled by `word-tap`. An ayah
+    // tap now opens the contextual study rail on the reading surface instead
+    // of jumping straight into a modal. This preserves reading context and
+    // makes Tafsir a deliberate second-level study action.
+    const cur = state.studyTray;
+    if (cur && String(cur.surah) === String(surah) && String(cur.ayah) === String(ayah)) {
+      store.dispatch(actions.closeStudyTray());
+      return;
+    }
+
     store.dispatch(actions.setMushafSession({ tafsirTab: null }));
-    await openAyahStudy(ds.surah, ds.ayah, pageNum);
+    store.dispatch(actions.setStudyTray(surah, ayah, null, null));
+    focusStudyTray(surah, ayah);
+    const st = store.getState();
+    const defaultTafsir =
+      st.mushafSession?.tafsirTab || st.settings.mushafPrefs.defaultTafsir || null;
+    await Promise.allSettled([
+      ensureQuranWordsData(st, surah),
+      ensureQuranRoots(st),
+      ensureWordDict(),
+      ensureRootsMeaning(),
+      ensureTafsirEditions(st),
+      ...(defaultTafsir ? [ensureTafsirText(st, defaultTafsir, surah)] : []),
+      ...(st.quran.surahs[String(surah)] ? [] : [dispatchSurahDoc(String(surah)).catch(() => {})]),
+    ]);
   },
 
   'word-tap': async (ds, e, target) => {
@@ -480,6 +491,20 @@ export const clickHandlers = {
   // Word chips inside the tray: select the word in place (the tray shows
   // its lemma/root/grammar chips + sources). Never a modal — the modal
   // word path above only runs when no tray is open for this ayah.
+  'word-study-from-tray': async (ds, e, target) => {
+    const surah = parseInt(ds.surah, 10);
+    const ayah = parseInt(ds.ayah, 10);
+    const i = Math.floor(Number(ds.i));
+    if (!(surah >= 1 && surah <= 114) || !(ayah >= 1 && ayah <= 286) || !(i >= 1)) return;
+    const surface =
+      (typeof ds.surface === 'string' && ds.surface.slice(0, 140)) ||
+      target?.textContent?.trim().slice(0, 140) ||
+      null;
+    const view = store.getState().activeView;
+    store.dispatch(actions.openWordStudy(surah, ayah, i, surface));
+    await openWordStudy({ view, surah, ayah, i, surface });
+  },
+
   'study-tray-word': async (ds, e, target) => {
     const surah = parseInt(ds.surah, 10);
     const ayah = parseInt(ds.ayah, 10);
@@ -822,9 +847,23 @@ export const clickHandlers = {
     // (merged-plan item 2) opening a rule lesson marks the rule last-place.
     store.dispatch(actions.setTajweedLast({ ruleId: rule.id }));
     await ensureTajweedPool(store.getState());
+    let nextState = store.getState();
+    const examples = tajweedLessonExamples(nextState.tajweedPool, rule.id);
+    const missingSurahs = [
+      ...new Set(examples.map((e) => String(e.s)).filter((s) => !nextState.quran.surahs[s])),
+    ];
+    if (missingSurahs.length) {
+      await Promise.all(missingSurahs.map((surah) => dispatchSurahDoc(surah).catch(() => null)));
+      nextState = store.getState();
+    }
+    const examplesWithText = examples.map((e) => ({
+      ...e,
+      text:
+        nextState.quran.surahs[String(e.s)]?.ayahs?.find((a) => Number(a.number) === Number(e.a))
+          ?.text || '',
+    }));
     const { buildPracticeLesson } = await import('../../views/tajweedPracticeView.js');
-    const examples = tajweedLessonExamples(store.getState().tajweedPool, rule.id);
-    openModal(buildPracticeLesson(store.getState(), rule.id, examples), {
+    openModal(buildPracticeLesson(nextState, rule.id, examplesWithText), {
       labelledBy: 'modal-title-practice',
     });
   },

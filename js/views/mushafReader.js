@@ -34,7 +34,6 @@ import {
   toEasternArabicNumerals,
 } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
-import { quranModeSwitchHTML } from '../ui/shell.js';
 import {
   isFirstPage,
   isLastPage,
@@ -362,13 +361,31 @@ export function renderMushaf(state) {
   // reader's inline translations: this page's ayahs, Arabic ref + the
   // translation, under the paper (never ON it). Windowed mode only;
   // fullscreen keeps the page pure, exactly like the printed book.
+  const study = state.studyTray;
+  const studySurah = study ? Math.floor(Number(study.surah)) : null;
+  const studyAyah = study ? Math.floor(Number(study.ayah)) : null;
+  const studyDocs = leftDoc ? [rightDoc, leftDoc] : [rightDoc];
+  const studyVerse =
+    studySurah && studyAyah
+      ? studyDocs
+          .flatMap((doc) => doc?.chapters || [])
+          .find((chapter) => Number(chapter.number) === studySurah)
+          ?.verses?.find((verse) => Number(verse.number) === studyAyah)
+      : null;
+  // The study rail belongs to the READING surface, not to the optional
+  // translation tray. This keeps an ayah tap contextual on the actual
+  // Mushaf while leaving the paper itself visually untouched.
+  const studyRail =
+    !fullscreen && isStudyTrayOpen(state, studySurah, studyAyah)
+      ? `<section class="mushaf-study-rail" aria-label="${escapeHTML(t('study.trayTitle', lang))}" aria-live="polite">
+          ${buildStudyTray(state, studySurah, studyAyah, studyVerse?.text || null)}
+        </section>`
+      : '';
+  // The translation tray remains a separate, page-wide reading aid. It never
+  // becomes the hidden home of the active ayah's study state.
   const tray =
     !fullscreen && prefs.translationPanel
-      ? `<div class="mushaf-tray">${buildTranslationTray(
-          state,
-          leftDoc ? [rightDoc, leftDoc] : [rightDoc],
-          lang
-        )}</div>`
+      ? `<div class="mushaf-tray">${buildTranslationTray(state, studyDocs, lang)}</div>`
       : '';
 
   if (fullscreen) {
@@ -390,10 +407,10 @@ export function renderMushaf(state) {
   <section class="view view--mushaf">
     <h1 class="sr-only">${t('mushaf.title', lang)}</h1>
     ${topbar}
-    ${quranModeSwitchHTML(state.activeView, lang)}
     <div class="mushaf-page-wrap" data-mushaf-paper="${paper.id}" style="--mushaf-paper-bg:${paper.bg};--mushaf-paper-ink:${paper.ink};--mushaf-paper-border:${paper.border};">
       ${bookHTML}
     </div>
+    ${studyRail}
     ${tray}
     <nav class="mushaf-nav">
       <button type="button" class="icon-btn mushaf-nav__btn" data-action="mushaf-prev" ${canPrev ? '' : 'disabled'} aria-label="${isRTL(lang) ? t('mushaf.prevPage', lang) : `${t('mushaf.prevPage', lang)}. ${t('mushaf.bookOrderNote', lang)}`}" title="${t('mushaf.prevPage', lang)}">

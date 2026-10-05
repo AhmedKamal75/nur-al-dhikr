@@ -14,15 +14,15 @@ test('study mode: ayah modal names the surface and scopes hadith matches', async
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
   await page.waitForTimeout(3000);
 
-  // Open the word popup for the first tappable ayah, then enter the
-  // study modal through its Tafsir action (the real user path).
+  // An ayah tap opens the contextual study rail on the reading surface.
+  // Word taps remain the separate word-study interaction. Tafsir is then
+  // entered deliberately from the contextual rail.
   const ayah = page.locator('[data-action="mushaf-ayah-tap"]').first();
   await expect(ayah, 'ayah tap target renders').toBeVisible({ timeout: 20000 });
   await ayah.click();
-  await expect(page.locator('.word-study').first(), 'word popup opens').toBeVisible({
-    timeout: 20000,
-  });
-  await page.locator('.word-study [data-action="tafsir-open"]').first().click();
+  const rail = page.locator('.mushaf-study-rail').first();
+  await expect(rail, 'contextual study rail opens').toBeVisible({ timeout: 20000 });
+  await rail.locator('[data-action="tafsir-open"]').first().click();
   const modal = page.locator('.mushaf-ayah-detail').first();
   await expect(modal, 'study modal opens').toBeVisible({ timeout: 20000 });
 
