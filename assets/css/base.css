@@ -184,6 +184,20 @@ figure {
   scroll-behavior: auto !important;
 }
 
+[data-reduce-motion='true'] .nav__item:active,
+[data-reduce-motion='true'] .nav-mobile-bar__item:active,
+[data-reduce-motion='true'] button.chip:active,
+[data-reduce-motion='true'] .counter-pill:active,
+[data-reduce-motion='true'] .category-tile:active,
+[data-reduce-motion='true'] .mood-tile:active,
+[data-reduce-motion='true'] .collection-tile:active,
+[data-reduce-motion='true'] .surah-tile:active,
+[data-reduce-motion='true'] .quick-action:active,
+[data-reduce-motion='true'] .icon-btn:active,
+[data-reduce-motion='true'] .btn:active {
+  transform: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

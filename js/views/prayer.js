@@ -19,6 +19,7 @@ import {
   formatClock,
   nextPrayer,
   prayerMethodLine,
+  compactPrayerMethodLine,
   METHODS,
   ASR_FACTORS,
   OFFSET_PRAYERS,
@@ -245,37 +246,6 @@ export function renderPrayer(state) {
     month: 'long',
   });
 
-  // (v5.1.0) ORGANIZATION: the bare floating rows and the everything-in-
-  // the-menu layout read as cluttered. The page now tells one story in
-  // clearly-labeled blocks: the hero (next prayer), a "Today's times"
-  // panel that frames the six rows with a date, the log panel, and a
-  // "Prayer tools" tile grid that surfaces the six features the "⋯" menu
-  // also holds (sunnah, qada', adhan, calculation, places, qibla) —
-  // visible, but below the content instead of crowding the top.
-  const toolTile = (action, labelKey, iconName, { view = null } = {}) =>
-    view
-      ? `
-      <a class="quick-action quick-action--prayer" href="${buildHash(view)}" data-action="navigate" data-view="${view}">
-        ${icon(iconName, { size: 22 })}<span>${t(labelKey, lang)}</span>
-      </a>`
-      : `
-      <button type="button" class="quick-action quick-action--prayer" data-action="${action}">
-        ${icon(iconName, { size: 22 })}<span>${t(labelKey, lang)}</span>
-      </button>`;
-
-  const toolsPanel = `
-    <section class="panel panel--prayer-tools">
-      <div class="panel__header"><h2>${t('prayer.toolsTitle', lang)}</h2></div>
-      <div class="quick-actions quick-actions--compact">
-        ${toolTile('prayer-open-sunnah', 'prayer.sheet.sunnah', 'rayah')}
-        ${toolTile('prayer-open-qada', 'prayer.sheet.qada', 'refresh')}
-        ${toolTile('prayer-open-adhan', 'prayer.sheet.adhan', 'volume')}
-        ${toolTile('prayer-open-calc', 'prayer.sheet.calc', 'calculator')}
-        ${toolTile('prayer-open-location', 'prayer.sheet.location', 'location')}
-        ${toolTile(null, 'prayer.qiblaTile', 'compass', { view: VIEWS.QIBLA })}
-      </div>
-    </section>`;
-
   return `
   <section class="view view--prayer">
     <div class="view-header view-header--row">
@@ -288,7 +258,7 @@ export function renderPrayer(state) {
         <span class="next-prayer-card__label">${t('prayer.next', lang)}</span>
         <span class="next-prayer-card__name">${icon(PRAYER_ICONS[next.name] || 'sun', { size: 22 })} ${t('prayer.' + next.name, lang)}</span>
         <span class="next-prayer-card__countdown">${t('prayer.in', lang)} <span data-prayer-countdown dir="ltr">${hrsUntil > 0 ? t('units.h', lang, { n: hrsUntil }) + ' ' : ''}${t('units.m', lang, { n: remMins })}</span></span>
-        <span class="next-prayer-card__method">${prayerMethodLine(p, lang)}</span>
+        <span class="next-prayer-card__method">${compactPrayerMethodLine(p, lang)}</span>
       </div>
       <div class="next-prayer-card__place">
         ${icon('location', { size: 13 })}
@@ -361,7 +331,6 @@ export function renderPrayer(state) {
       <p class="panel__subtext">${t('plog.hint', lang)}</p>
     </section>
 
-    ${toolsPanel}
   </section>`;
 }
 
@@ -616,7 +585,10 @@ export function calcPanelHTML(state) {
     )
     .join('');
   const asrOptions = Object.keys(ASR_FACTORS)
-    .map((id) => `<option value="${id}" ${p.asr === id ? 'selected' : ''}>${id}</option>`)
+    .map(
+      (id) =>
+        `<option value="${id}" ${p.asr === id ? 'selected' : ''}>${escapeHTML(t(`prayer.asr.${id}`, lang))}</option>`
+    )
     .join('');
   // Explainer for the active method: defining angles + region + note.
   const m = METHODS[p.method] || METHODS.MWL;
@@ -656,22 +628,43 @@ export function calcPanelHTML(state) {
       </label>`
   ).join('');
   return `
-  <div class="panel view-panel-modal">
+  <div class="panel view-panel-modal prayer-calc-panel">
     <div class="panel__header"><h2 id="panel-calc-title">${t('prayer.sheet.calc', lang)}</h2></div>
+
     <label class="field-label" for="prayer-method-sheet">${t('prayer.method', lang)}</label>
     <select class="select" id="prayer-method-sheet" data-bind="prayer-method" aria-label="${t('prayer.method', lang)}">${methodOptions}</select>
-    <p class="panel__subtext">${angleBits.map(escapeHTML).join(' · ')}</p>
-    <p class="panel__subtext">${escapeHTML(t(`prayer.methodRegion.${methodId}`, lang))} — ${escapeHTML(t(`prayer.methodNote.${methodId}`, lang))}</p>
-    ${sourceBody ? `<p class="panel__subtext">${t('prayer.methodSource', lang, { body: sourceBody })}</p>` : ''}
+    <p class="panel__subtext prayer-calc-panel__summary">${escapeHTML(t(`prayer.methodRegion.${methodId}`, lang))} · ${escapeHTML(t(`prayer.methodNote.${methodId}`, lang))}</p>
+
+    <details class="prayer-calc-panel__details" open>
+      <summary>${t('prayer.methodDetails', lang)}</summary>
+      <div class="prayer-calc-panel__details-body">
+        <p class="panel__subtext">${escapeHTML(angleBits.join(' · '))}</p>
+        ${sourceBody ? `<p class="panel__subtext">${t('prayer.methodSource', lang, { body: sourceBody })}</p>` : ''}
+        <p class="panel__subtext">${t('prayer.calculationBasis', lang)}</p>
+      </div>
+    </details>
+
     <label class="field-label" for="prayer-asr-sheet">${t('prayer.asrMethod', lang)}</label>
     <select class="select" id="prayer-asr-sheet" data-bind="prayer-asr" aria-label="${t('prayer.asrMethod', lang)}">${asrOptions}</select>
-    <p class="field-label">${t('prayer.offsetsTitle', lang)}</p>
-    <div class="zakat-price-row">${offsetRows}</div>
-    <p class="panel__subtext">${t('prayer.offsetsHint', lang)}</p>
-    <p class="field-label">${t('prayer.iqamaTitle', lang)}</p>
-    <div class="zakat-price-row">${iqamaRows}</div>
-    <p class="panel__subtext">${t('prayer.iqamaHint', lang)}</p>
-    <p class="panel__subtext">${t('prayer.sheet.calcHint', lang)}</p>
+
+    <details class="prayer-calc-panel__details">
+      <summary>${t('prayer.fineTuneDetails', lang)}</summary>
+      <div class="prayer-calc-panel__details-body">
+        <p class="panel__subtext">${t('prayer.offsetsHint', lang)}</p>
+        <p class="field-label">${t('prayer.offsetsTitle', lang)}</p>
+        <div class="zakat-price-row">${offsetRows}</div>
+      </div>
+    </details>
+
+    <details class="prayer-calc-panel__details">
+      <summary>${t('prayer.iqamaDetails', lang)}</summary>
+      <div class="prayer-calc-panel__details-body">
+        <p class="panel__subtext">${t('prayer.iqamaHint', lang)}</p>
+        <div class="zakat-price-row">${iqamaRows}</div>
+      </div>
+    </details>
+
+    <p class="panel__subtext prayer-calc-panel__footer-note">${t('prayer.sheet.calcHint', lang)}</p>
   </div>`;
 }
 

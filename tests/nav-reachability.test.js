@@ -48,13 +48,8 @@ const shellSrc = read('js/ui/shell.js');
 function parseDoorsStatic(src) {
   const entryRe = /entry:\s*'(\w+)'/g;
   const labelRe = /labelKey:\s*'([^']+)'/g;
-  // The trailing `,?` matters: four members are written multi-line with a
-  // trailing comma before `}` (COLLECTIONS, COLLECTION, TAJWEED_COURSE,
-  // MUTASHABIHAT, CERTIFICATE). Without it the pattern silently matched
-  // nothing for them, so this drift-check compared 22 static members against
-  // 26 real ones and failed on a false accusation instead of on real drift.
   const memberRe =
-    /\{\s*route:\s*'(\w+)'\s*(?:,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*,?\s*\}/g;
+    /\{\s*route:\s*'(\w+)'\s*(?:,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*\}/g;
   const entries = [...src.matchAll(entryRe)];
   const labels = [...src.matchAll(labelRe)];
   const members = [...src.matchAll(memberRe)].map((m) => ({
@@ -797,14 +792,6 @@ describe('Phase 5 pin: one Practise section, two routes alive', () => {
   });
 
   test('switch labels ship bilingual from the first commit (naming rule §2.6)', () => {
-    // `practise.label` was dropped here: it was the pre-rename twin of
-    // `nav.practise`, with byte-identical values in both languages
-    // ('Practise' / 'الممارسة'), and nothing rendered it once the TASBIH door
-    // took `labelKey: 'nav.practise'` (js/core/config/nav.js). `nav.practise` is
-    // asserted on this same line, so the bilingual-naming rule this test exists
-    // to protect is still covered — the stale twin was not a second guarantee.
-    // Content keys are NOT added back to satisfy the i18n audit: an unreferenced
-    // dictionary entry is dead weight, and inventing UI to justify one is worse.
     for (const key of ['nav.practise', 'nav.tasbih', 'quiz.title']) {
       assert.ok(en[key] && ar[key], `${key} missing in en or ar`);
       assert.notEqual(en[key], ar[key], `${key} not translated`);

@@ -69,3 +69,17 @@ test('session: deleted folder corrects read-only (B12, no write-back)', () => {
   assert.ok(html.includes('2:255') && html.includes('112:1'), 'falls back to all');
   assert.equal(s.mushafSession.bookmarkFilter, 'gone', 'render does not mutate state');
 });
+
+test('bookmark rows preserve exact ayah target data for return-to-reading', () => {
+  const html = buildMushafBookmarks(bookmarkState('__all__'));
+  assert.match(
+    html,
+    /data-action="mushaf-jump-page" data-page="10" data-surah="2" data-ayah="255"/,
+    'bookmark navigation carries the exact saved surah and ayah, not only the page'
+  );
+  assert.match(
+    html,
+    /data-action="mushaf-jump-page" data-page="20" data-surah="112" data-ayah="1"/,
+    'every bookmark row retains an exact ayah target'
+  );
+});

@@ -126,40 +126,42 @@ export function renderTasbih(state) {
 
     <div class="tasbih-controls">
       <button type="button" class="btn btn--ghost" data-action="tasbih-reset" data-phrase-id="${escapeHTML(active.id)}" data-target="${escapeHTML(String(counter.target))}">${t('tasbih.reset', lang)}</button>
-      ${
-        // (v5.17.15) The floating counter is only OFFERED where the browser
-        // can do it. A button that cannot work is worse than no button — and
-        // on Safari/Firefox it would be permanently dead.
-        floatingCounterSupported()
-          ? `<button type="button" class="btn btn--ghost" data-action="tasbih-float" data-phrase-id="${escapeHTML(active.id)}" aria-pressed="${state.ui?.tasbihFloat === true}">${icon('expand', { size: 14 })} ${t('tasbih.float', lang)}</button>`
-          : ''
-      }
-      <div class="target-stepper">
-        <span>${t('tasbih.target', lang)}</span>
-        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${escapeHTML(active.id)}" data-delta="-1" aria-label="${t('tasbih.targetDown', lang)}">−</button>
-        <span class="target-stepper__value" aria-live="polite">${escapeHTML(String(counter.target))}</span>
-        <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${escapeHTML(active.id)}" data-delta="1" aria-label="${t('tasbih.targetUp', lang)}">+</button>
-      </div>
-      <div class="chip-row target-presets" role="group" aria-label="${t('tasbih.targetPresets', lang)}">
-        ${[33, 100, 500, 1000]
-          .map(
-            (n) => `
-        <button type="button" class="chip${counter.target === n ? ' chip--active' : ''}" data-action="tasbih-target-set" data-phrase-id="${escapeHTML(active.id)}" data-target="${n}" aria-pressed="${counter.target === n}">${n}</button>`
-          )
-          .join('')}
-      </div>
     </div>
 
-    <section class="panel panel--tasbih-custom">
-      <div class="panel__header"><h2>${t('tasbih.customPhrase', lang)}</h2></div>
-      <label class="field-label" for="tasbih-custom-text">${t('tasbih.customPhrase', lang)}</label>
-      <input id="tasbih-custom-text" class="input" type="text" data-bind="tasbih-custom-text" maxlength="500" autocomplete="off" dir="auto" placeholder="${t('tasbih.customPlaceholder', lang)}">
-      <label class="field-label" for="tasbih-custom-target">${t('tasbih.target', lang)}</label>
-      <input id="tasbih-custom-target" class="input" type="number" data-bind="tasbih-custom-target" value="33" min="1" max="100000">
-      <div class="panel__actions">
-        <button type="button" class="btn btn--primary btn--sm" data-action="tasbih-custom-save">${t('tasbih.customAdd', lang)}</button>
+    <details class="panel tasbih-options">
+      <summary>${t('tasbih.optionsTitle', lang)}</summary>
+      <div class="tasbih-options__body">
+        ${
+          floatingCounterSupported()
+            ? `<button type="button" class="btn btn--ghost" data-action="tasbih-float" data-phrase-id="${escapeHTML(active.id)}" aria-pressed="${state.ui?.tasbihFloat === true}">${icon('expand', { size: 14 })} ${t('tasbih.float', lang)}</button>`
+            : ''
+        }
+        <div class="target-stepper">
+          <span>${t('tasbih.target', lang)}</span>
+          <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${escapeHTML(active.id)}" data-delta="-1" aria-label="${t('tasbih.targetDown', lang)}">−</button>
+          <span class="target-stepper__value" aria-live="polite">${escapeHTML(String(counter.target))}</span>
+          <button type="button" class="icon-btn" data-action="tasbih-target-step" data-phrase-id="${escapeHTML(active.id)}" data-delta="1" aria-label="${t('tasbih.targetUp', lang)}">+</button>
+        </div>
+        <div class="chip-row target-presets" role="group" aria-label="${t('tasbih.targetPresets', lang)}">
+          ${[33, 100, 500, 1000]
+            .map(
+              (n) => `
+          <button type="button" class="chip${counter.target === n ? ' chip--active' : ''}" data-action="tasbih-target-set" data-phrase-id="${escapeHTML(active.id)}" data-target="${n}" aria-pressed="${counter.target === n}">${n}</button>`
+            )
+            .join('')}
+        </div>
+        <div class="tasbih-options__custom">
+          <h2>${t('tasbih.customPhrase', lang)}</h2>
+          <label class="field-label" for="tasbih-custom-text">${t('tasbih.customPhrase', lang)}</label>
+          <input id="tasbih-custom-text" class="input" type="text" data-bind="tasbih-custom-text" maxlength="500" autocomplete="off" dir="auto" placeholder="${t('tasbih.customPlaceholder', lang)}">
+          <label class="field-label" for="tasbih-custom-target">${t('tasbih.target', lang)}</label>
+          <input id="tasbih-custom-target" class="input" type="number" data-bind="tasbih-custom-target" value="33" min="1" max="100000">
+          <div class="panel__actions">
+            <button type="button" class="btn btn--primary btn--sm" data-action="tasbih-custom-save">${t('tasbih.customAdd', lang)}</button>
+          </div>
+        </div>
       </div>
-    </section>
+    </details>
 
     <p class="tasbih-lifetime">${icon('stats', { size: 14 })} ${t('tasbih.lifetime', lang)}: ${lifetime}</p>
   </section>`;

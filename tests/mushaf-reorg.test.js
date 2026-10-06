@@ -388,6 +388,8 @@ describe('mushaf regroup: zero feature loss', () => {
     'study-tray-toggle',
     'study-tray-close',
     'study-tray-word',
+    // v5.17.102: page-scoped Mushaf find entry point.
+    'mushaf-open-page-find',
   ]);
 
   function currentUnion() {

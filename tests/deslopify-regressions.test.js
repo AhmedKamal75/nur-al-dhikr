@@ -138,6 +138,17 @@ test('section navigation lives in the main menu, not duplicated on every page', 
   );
 });
 
+test('settings heading remains readable at mobile widths', () => {
+  assert.match(
+    css,
+    /@media \(max-width: 600px\)[\s\S]*?\.view--settings \.settings-hero \{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)/
+  );
+  assert.match(
+    css,
+    /\.view--settings \.settings-hero \.view__title \{[\s\S]*?white-space: nowrap;/
+  );
+});
+
 test('Settings leads with identity and search before the control index', () => {
   const settings = readFileSync(new URL('../js/views/settings.js', import.meta.url), 'utf8');
   assert.ok(settings.indexOf('<header class="settings-hero">') >= 0);
@@ -149,27 +160,16 @@ test('Settings leads with identity and search before the control index', () => {
   assert.ok(renderStart >= 0, 'Home render markup disappeared');
   const homeRender = home.slice(renderStart);
   assert.ok(homeRender.indexOf('home-core') < homeRender.indexOf('home-secondary'));
-  assert.ok(homeRender.indexOf('home-secondary') < homeRender.indexOf('shahadaBannerHTML(lang)'));
+  assert.equal(homeRender.includes('shahadaBannerHTML(lang)'), false);
   assert.ok(homeRender.indexOf('home-today-heading') < homeRender.indexOf('home-start-heading'));
 });
 
-test('Home keeps a vertical product argument: core → Shahada → next → reflection → context', () => {
+test('Home carries no decorative Shahada or onboarding strip', () => {
   const renderStart = home.lastIndexOf('<section class="view view--home">');
   const homeRender = home.slice(renderStart);
-  const positions = [
-    'home-core',
-    'shahadaBannerHTML(lang)',
-    'home-section--next',
-    'home-section--reflection',
-    'nudgeCardHTML(state)',
-    'onboardingPanelHTML(state, lang)',
-  ].map((needle) => [needle, homeRender.indexOf(needle)]);
-  for (const [name, pos] of positions) assert.ok(pos >= 0, `Home missing ${name}`);
-  assert.ok(positions[0][1] < positions[1][1], 'core must precede Shahada');
-  assert.ok(positions[0][1] < positions[2][1], 'core must precede Next');
-  assert.ok(positions[2][1] < positions[3][1], 'Next must precede Reflection');
-  assert.ok(positions[3][1] < positions[4][1], 'Reflection must precede contextual nudge');
-  assert.ok(positions[4][1] < positions[5][1], 'nudge must precede onboarding');
+  assert.ok(renderStart >= 0, 'Home render markup disappeared');
+  assert.doesNotMatch(homeRender, /shahadaBannerHTML|shahada-banner|SHAHADA_TEXT/);
+  assert.doesNotMatch(homeRender, /panel--onboarding--line|onboardingPanelHTML\(state, lang\)/);
 });
 
 test('application tail keeps Zakat, Offline, Settings and About as standalone siblings', () => {

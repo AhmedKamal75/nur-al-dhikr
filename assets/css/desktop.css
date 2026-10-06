@@ -406,7 +406,6 @@
    spans full width too — never a half-width orphan in a column. */
 @media (min-width: 960px) {
   .view--home > .home-browser,
-  .view--home > .shahada-banner,
   .view--home > .home-prayer-strip,
   .view--home > .home-today,
   .view--home > .panel--onboarding--line,

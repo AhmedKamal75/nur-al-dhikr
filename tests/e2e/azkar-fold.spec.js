@@ -174,6 +174,7 @@ test.describe('home is home, not a full azkar (IA-7)', () => {
     // Home keeps its own surface — reordering is not removal. The greeting,
     // the prayer ribbon and the Today strip are what "home" means now.
     expect(r.hero, 'the greeting/hero must still exist on home').toBe(1);
+    expect(r.shahada, 'Home must not use the Shahada as decorative chrome').toBe(0);
     expect(r.ribbon, 'home opens on the prayer ribbon, not a category grid').toBe(1);
     expect(r.today, "home opens on today's state, not a catalogue").toBe(1);
     // And it must not have quietly become the azkar screen again.
@@ -203,5 +204,57 @@ test.describe('home is home, not a full azkar (IA-7)', () => {
     ).toBeVisible({ timeout: 10000 });
     await link.click();
     await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
+  });
+});
+
+test.describe('Azkar reading surface and counter separation', () => {
+  test('Details is independent from counting and contains the supplementary content', async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto('./#/category?id=morning');
+    await expect(page.locator('.card').first()).toBeVisible({ timeout: 25000 });
+    await settled(page);
+
+    const card = page.locator('.card').first();
+    const summary = card.locator('details.card__disclosure > summary.disclosure__summary');
+    const counterLabel = card.locator('.counter-pill__label');
+
+    await expect(summary).toHaveText(/Details/);
+    const before = await counterLabel.textContent();
+    await summary.click();
+    await expect(card.locator('details.card__disclosure')).toHaveAttribute('open', '');
+    await expect(counterLabel).toHaveText(before);
+
+    const detailsText = await card.locator('details.card__disclosure').textContent();
+    expect(detailsText).toMatch(/Translation|Reference|Repetitions/i);
+
+    await counterLabel.click();
+    const after = await counterLabel.textContent();
+    const parseCount = (value) =>
+      Number.parseInt(
+        String(value)
+          .trim()
+          .split(/\s*\/\s*/)[0],
+        10
+      );
+    expect(parseCount(after)).toBe(parseCount(before) + 1);
+  });
+
+  test('Details keyboard activation also never increments the counter', async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto('./#/category?id=morning');
+    await expect(page.locator('.card').first()).toBeVisible({ timeout: 25000 });
+    await settled(page);
+
+    const card = page.locator('.card').first();
+    const summary = card.locator('details.card__disclosure > summary.disclosure__summary');
+    const counterLabel = card.locator('.counter-pill__label');
+    const before = await counterLabel.textContent();
+
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    await expect(card.locator('details.card__disclosure')).toHaveAttribute('open', '');
+    await expect(counterLabel).toHaveText(before);
   });
 });

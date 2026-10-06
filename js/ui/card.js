@@ -68,6 +68,14 @@ export function disclosureHTML(item, lang = 'en', opts = {}) {
     byHeart = false,
     highlight = [],
     prefix = 'card',
+    readingMode = false,
+    itemTitle = '',
+    categoryName = '',
+    referenceText = '',
+    referenceNotes = '',
+    itemNotes = '',
+    reviewWarning = '',
+    repetitions = null,
   } = opts;
   const hl = Array.isArray(highlight) ? highlight : [];
   // Same strict separation as the callers: transliteration/translation are
@@ -78,6 +86,16 @@ export function disclosureHTML(item, lang = 'en', opts = {}) {
   const translation = showTrans ? translationFor(item, lang) : '';
   const virtue = showVirtues ? virtueFor(item, lang) : '';
   const rows = [];
+  if (readingMode && itemTitle) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldTitle', lang))}</dt><dd class="disclosure__def">${highlightMatch(itemTitle, hl)}</dd></div>`
+    );
+  }
+  if (readingMode && categoryName) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldCategory', lang))}</dt><dd class="disclosure__def">${highlightMatch(categoryName, hl)}</dd></div>`
+    );
+  }
   if (showTranslit && item.transliteration) {
     rows.push(
       `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldTranslit', lang))}</dt><dd class="disclosure__def ${prefix}__translit">${highlightMatch(item.transliteration, hl)}</dd></div>`
@@ -104,6 +122,36 @@ export function disclosureHTML(item, lang = 'en', opts = {}) {
   if (showGrade && gradeStateOf(item.grade) === 'valid') {
     rows.push(
       `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldGrade', lang))}</dt><dd class="disclosure__def">${gradeChipHTML(item.grade, lang)}</dd></div>`
+    );
+  }
+  if (
+    readingMode &&
+    repetitions != null &&
+    Number.isFinite(Number(repetitions)) &&
+    Number(repetitions) > 0
+  ) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldRepetitions', lang))}</dt><dd class="disclosure__def" dir="ltr">${escapeHTML(String(repetitions))}</dd></div>`
+    );
+  }
+  if (readingMode && referenceText) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldReference', lang))}</dt><dd class="disclosure__def">${highlightMatch(referenceText, hl)}</dd></div>`
+    );
+  }
+  if (readingMode && referenceNotes) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldReferenceNotes', lang))}</dt><dd class="disclosure__def">${highlightMatch(referenceNotes, hl)}</dd></div>`
+    );
+  }
+  if (readingMode && itemNotes) {
+    rows.push(
+      `<div class="disclosure__row"><dt class="disclosure__term">${escapeHTML(t('content.fieldNotes', lang))}</dt><dd class="disclosure__def">${highlightMatch(itemNotes, hl)}</dd></div>`
+    );
+  }
+  if (readingMode && reviewWarning) {
+    rows.push(
+      `<div class="disclosure__row disclosure__row--notice"><dt class="disclosure__term">${escapeHTML(t('content.fieldReview', lang))}</dt><dd class="disclosure__def">${highlightMatch(reviewWarning, hl)}</dd></div>`
     );
   }
   if (!rows.length) return '';
@@ -133,6 +181,7 @@ export function cardHTML(item, category, opts = {}) {
     fields = null,
     byHeart = null,
     highlight = [],
+    readingMode = false,
   } = opts;
   const hl = Array.isArray(highlight) ? highlight : [];
 
@@ -162,6 +211,15 @@ export function cardHTML(item, category, opts = {}) {
   // Strict language separation lives inside disclosureHTML now (same
   // contract: transliteration/translation EN-only, virtue active-side
   // only); the reference/notes lines below stay open as provenance.
+  const target = item.repetitions || counter?.target || 1;
+  const count = counter?.count || 0;
+  const cycles = counter?.completedCycles || 0;
+  const refLine = show.reference ? referenceLineFor(item, lang, t('card.narratedBy', lang)) : '';
+  const refNotes = show.reference ? noteFor(item.reference?.notes, lang, item) : '';
+  const notes = show.notes ? noteFor(item.notes, lang) : '';
+  const reviewWarning = hasPendingScholarlyReview(item) ? t('content.reviewPending', lang) : '';
+  const itemTitle = contentTitleFor(item, lang);
+  const categoryName = category ? pickLocale(category.name, lang) : '';
   const disclosure = disclosureHTML(item, lang, {
     showTransliteration: show.transliteration,
     showTranslation: show.translation,
@@ -170,20 +228,21 @@ export function cardHTML(item, category, opts = {}) {
     byHeart: !!byHeart,
     highlight: hl,
     prefix: 'card',
+    readingMode,
+    itemTitle,
+    categoryName,
+    referenceText: refLine,
+    referenceNotes: refNotes,
+    itemNotes: notes,
+    reviewWarning,
+    repetitions: target,
   });
-  const refLine = show.reference ? referenceLineFor(item, lang, t('card.narratedBy', lang)) : '';
-  const refNotes = show.reference ? noteFor(item.reference?.notes, lang, item) : '';
-  const notes = show.notes ? noteFor(item.notes, lang) : '';
-  const reviewWarning = hasPendingScholarlyReview(item);
   // The EFFECTIVE item target is authoritative (the user's manage-mode
   // override already rides `item.repetitions` — views map items through
   // withEffectiveTargets), so a counter record left stale by an older
   // build or a restored backup can never quietly shrink the target the
   // person set. The pill readout and the article's data-target below share
   // this ONE value, so what the card says is what a tap counts toward.
-  const target = item.repetitions || counter?.target || 1;
-  const count = counter?.count || 0;
-  const cycles = counter?.completedCycles || 0;
   // (v5.2.25) separation of concerns: the pill shows ONLY live session
   // progress (count / target — never the lifetime cycles, which used to
   // render as "6 / 1 ✓" and read as a broken counter). Lifetime lives in
@@ -223,13 +282,17 @@ export function cardHTML(item, category, opts = {}) {
     : dhikrAudioLabel;
 
   return `
-  <article class="card ${compact ? 'card--compact' : ''}${exitingClass}" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}" data-action="counter-tap" data-target="${escapeHTML(String(target))}" ${cycles > 0 ? `title="${escapeHTML(t('card.completedTimes', lang, { n: cycles }))}"` : ''}>
+  <article class="card ${compact ? 'card--compact' : ''}${readingMode ? ' card--reading' : ''}${exitingClass}" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}" data-action="counter-tap" data-target="${escapeHTML(String(target))}" ${cycles > 0 ? `title="${escapeHTML(t('card.completedTimes', lang, { n: cycles }))}"` : ''}>
     <header class="card__top">
-      <div class="card__meta">
+      ${
+        readingMode
+          ? ''
+          : `<div class="card__meta">
         ${categoryChip}
         ${headerGradeChip}
         ${lifetimeBadge}
-      </div>
+      </div>`
+      }
       <div class="card__actions">
         ${
           byHeart
@@ -254,12 +317,8 @@ export function cardHTML(item, category, opts = {}) {
       </div>
     </header>
 
-    ${title ? `<h3 class="card__title">${highlightMatch(title, hl)}</h3>` : ''}
-    ${
-      reviewWarning
-        ? `<p class="content-review-warning" role="note">${icon('info', { size: 14 })} ${escapeHTML(t('content.reviewPending', lang))}</p>`
-        : ''
-    }
+    ${readingMode ? '' : title ? `<h3 class="card__title">${highlightMatch(title, hl)}</h3>` : ''}
+    ${!readingMode && reviewWarning ? `<p class="content-review-warning" role="note">${icon('info', { size: 14 })} ${escapeHTML(reviewWarning)}</p>` : ''}
 
     ${
       byHeart && !byHeart.revealed && item.arabic
@@ -269,9 +328,9 @@ export function cardHTML(item, category, opts = {}) {
           : ''
     }
     ${disclosure}
-    ${show.reference && refLine ? `<p class="card__reference">${icon('book', { size: 14 })} ${escapeHTML(refLine)}</p>` : ''}
-    ${show.reference && refNotes ? `<p class="card__reference-note">${escapeHTML(refNotes)}</p>` : ''}
-    ${show.notes && notes ? `<p class="card__attribution">${icon('info', { size: 12 })} ${escapeHTML(notes)}</p>` : ''}
+    ${!readingMode && show.reference && refLine ? `<p class="card__reference">${icon('book', { size: 14 })} ${escapeHTML(refLine)}</p>` : ''}
+    ${!readingMode && show.reference && refNotes ? `<p class="card__reference-note">${escapeHTML(refNotes)}</p>` : ''}
+    ${!readingMode && show.notes && notes ? `<p class="card__attribution">${icon('info', { size: 12 })} ${escapeHTML(notes)}</p>` : ''}
 
     ${
       byHeart
@@ -305,9 +364,13 @@ export function cardHTML(item, category, opts = {}) {
         <span class="counter-pill__ring" style="--progress:${progressPct}%"></span>
         <span class="counter-pill__label" dir="ltr">${escapeHTML(String(count))} / ${escapeHTML(String(target))}</span>
       </button>
-      <button type="button" class="btn btn--ghost btn--sm" data-action="open-focus" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}">
+      ${
+        readingMode
+          ? ''
+          : `<button type="button" class="btn btn--ghost btn--sm" data-action="open-focus" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(category?.id || item.category_id || '')}">
         ${t('card.openFocus', lang)}
-      </button>
+      </button>`
+      }
     </footer>
   </article>`;
 }

@@ -416,6 +416,21 @@ export function decimalHoursToDate(baseDate, decimalHours) {
  * Asr → Standard, out-of-range/non-numeric offsets ignored. Pure
  * (prefs/lang → string); t() escapes the interpolated body centrally.
  */
+/**
+ * Compact method summary for focal prayer surfaces. Keep provenance and
+ * adjustment detail out of the next-prayer hero; the full calculation sheet
+ * remains the deliberate place for that information.
+ */
+export function compactPrayerMethodLine(prefs, lang) {
+  const p = prefs && typeof prefs === 'object' ? prefs : {};
+  const methodId =
+    typeof p.method === 'string' && Object.hasOwn(METHODS, p.method) ? p.method : 'MWL';
+  const asrId = typeof p.asr === 'string' && Object.hasOwn(ASR_FACTORS, p.asr) ? p.asr : 'Standard';
+  const methodKey = `prayer.method.${methodId}`;
+  const methodName = t(methodKey, lang) === methodKey ? METHODS[methodId].name : t(methodKey, lang);
+  return `${methodName} · ${t('prayer.asrMethod', lang)}: ${t(`prayer.asr.${asrId}`, lang)}`;
+}
+
 export function prayerMethodLine(prefs, lang) {
   const p = prefs && typeof prefs === 'object' ? prefs : {};
   const methodId =

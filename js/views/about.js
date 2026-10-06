@@ -106,34 +106,40 @@ export function renderAbout(state, flags = {}) {
       </ul>
     </section>
 
-    <section class="panel">
-      <div class="panel__header"><h2>${t('about.guide', lang)}</h2></div>
-      <p class="panel__subtext">${t('about.guideHint', lang)}</p>
-      <div class="guide-list">
-        ${GUIDE_ROWS.map((r) => guideRow(r, lang)).join('')}
+    <details class="panel about-disclosure">
+      <summary class="about-disclosure__summary">${t('about.guide', lang)}</summary>
+      <div class="about-disclosure__body">
+        <p class="panel__subtext">${t('about.guideHint', lang)}</p>
+        <div class="guide-list">
+          ${GUIDE_ROWS.map((r) => guideRow(r, lang)).join('')}
+        </div>
       </div>
-    </section>
+    </details>
 
-    <section class="panel">
-      <div class="panel__header"><h2>${t('about.privacy', lang)}</h2></div>
-      <p>${t('about.privacyBody', lang)}</p>
-    </section>
+    <details class="panel about-disclosure">
+      <summary class="about-disclosure__summary">${t('about.privacy', lang)}</summary>
+      <div class="about-disclosure__body"><p>${t('about.privacyBody', lang)}</p></div>
+    </details>
 
-    <section class="panel">
-      <div class="panel__header"><h2>${t('about.sources', lang)}</h2></div>
-      <ul class="source-list">${sources}</ul>
-      <p class="panel__subtext">${t('about.hadithSources', lang)}</p>
-      <p class="panel__subtext">${t('content.aiAssistance', lang)}</p>
-      <p class="panel__subtext">${t('content.reviewPendingLong', lang)}</p>
-      <p class="panel__subtext">${t('about.scopeSunni', lang)}</p>
-      <p class="panel__subtext">${t('about.verifyNote', lang)}</p>
-    </section>
+    <details class="panel about-disclosure">
+      <summary class="about-disclosure__summary">${t('about.sources', lang)}</summary>
+      <div class="about-disclosure__body">
+        <ul class="source-list">${sources}</ul>
+        <p class="panel__subtext">${t('about.hadithSources', lang)}</p>
+        <p class="panel__subtext">${t('content.aiAssistance', lang)}</p>
+        <p class="panel__subtext">${t('content.reviewPendingLong', lang)}</p>
+        <p class="panel__subtext">${t('about.scopeSunni', lang)}</p>
+        <p class="panel__subtext">${t('about.verifyNote', lang)}</p>
+      </div>
+    </details>
 
-    <section class="panel">
-      <div class="panel__header"><h2>${t('about.offline', lang)}</h2></div>
-      <p>${t('about.offlineBody', lang)}</p>
-      ${installRowHTML(state, lang, flags.install || {})}
-    </section>
+    <details class="panel about-disclosure">
+      <summary class="about-disclosure__summary">${t('about.offline', lang)}</summary>
+      <div class="about-disclosure__body">
+        <p>${t('about.offlineBody', lang)}</p>
+        ${installRowHTML(state, lang, flags.install || {})}
+      </div>
+    </details>
 
     <p class="about-builtwith">${t('about.builtWith', lang)}</p>
   </section>`;

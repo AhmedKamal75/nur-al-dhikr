@@ -125,7 +125,7 @@ describe('badges render on sahih books only', () => {
     assert.ok(!reader('nawawi', 'N').includes('Sahih collection'), 'no badge without standing');
     assert.ok(
       reader('nawawi', 'N').includes('hadith-grade-guide'),
-      'mixed book still gets the grade guide'
+      'mixed book still exposes grading details'
     );
   });
 

@@ -620,6 +620,15 @@ function buildReaderImmersiveConsole(state, lang) {
 export function renderQuran(state) {
   const lang = state.settings.language;
   const id = state.activeParams.id;
+  if (id != null && id !== '' && !/^[0-9]+$/.test(String(id))) {
+    return `<section class="view view--quran">${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
+  }
+  if (id != null && id !== '') {
+    const n = Number(id);
+    if (!Number.isInteger(n) || n < 1 || n > 114) {
+      return `<section class="view view--quran">${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
+    }
+  }
 
   const mushafLink = id
     ? `<button type="button" class="btn btn--secondary btn--sm quran-mushaf-toggle" data-action="mushaf-open-at-surah" data-surah="${escapeHTML(String(id))}">${icon('book', { size: 16 })} ${t('quran.viewInMushaf', lang)}</button>`

@@ -302,11 +302,14 @@ export function renderMushaf(state) {
       <a class="icon-btn" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}" aria-label="${t('nav.home', lang)}">
         ${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 20 })}
       </a>
-      <button type="button" class="mushaf-topbar__title" data-action="mushaf-open-jump">
+      <span class="mushaf-topbar__title" aria-label="${escapeHTML(headerName)} \u00B7 ${juzLabel}">
         ${escapeHTML(headerName)} \u00B7 ${juzLabel}
-      </button>
+      </span>
       <button type="button" class="icon-btn" data-action="mushaf-open-jump" aria-label="${t('mushaf.jumpTo', lang)}" title="${t('mushaf.jumpTo', lang)}">
         ${icon('grid', { size: 18 })}
+      </button>
+      <button type="button" class="icon-btn" data-action="mushaf-open-page-find" aria-label="${t('mushaf.findOnPage', lang)}" title="${t('mushaf.findOnPage', lang)}">
+        ${icon('search', { size: 18 })}
       </button>
       ${topbarPlay}
       <button type="button" class="icon-btn" data-action="mushaf-toggle-fullscreen" aria-label="${t('mushaf.fullscreenEnter', lang)}" title="${t('mushaf.fullscreenEnter', lang)}">
@@ -571,6 +574,9 @@ function buildFullscreenControls(
       <button type="button" class="icon-btn" data-action="mushaf-open-jump" aria-label="${t('mushaf.jumpTo', lang)}" title="${t('mushaf.jumpTo', lang)}">
         ${icon('grid', { size: 18 })}
       </button>
+      <button type="button" class="icon-btn" data-action="mushaf-open-page-find" aria-label="${t('mushaf.findOnPage', lang)}" title="${t('mushaf.findOnPage', lang)}">
+        ${icon('search', { size: 18 })}
+      </button>
       <button type="button" class="icon-btn" data-action="mushaf-prev" ${canPrev ? '' : 'disabled'} aria-label="${orderName(t('mushaf.prevPage', lang))}" title="${t('mushaf.prevPage', lang)}">
         ${icon('chevronRight', { size: 20 })}
       </button>
@@ -705,6 +711,7 @@ export function buildMushafSheet(state) {
     <div class="mushaf-sheet__group">
       <h3 class="mushaf-jump__heading">${t('mushaf.sectionGo', lang)}</h3>
       ${row('mushaf-open-jump', 'mushaf.jumpTo', 'grid')}
+      ${row('mushaf-open-page-find', 'mushaf.findOnPage', 'search')}
        ${row('mushaf-open-bookmarks', 'mushaf.bookmarks', 'bookmark')}
        ${row('word-bookmarks-open', 'wordStudy.savedWords', 'bookmark')}
        ${linkRow('quran.searchShortcut', 'search', VIEWS.SEARCH)}

@@ -713,43 +713,6 @@ body.is-scrolled-deep .category-top {
 /* ==========================================================================
    3. Home
    ========================================================================== */
-/* (v5.17.6) The Shahada banner: a black Rayah-style strip with the fixed
-   Arabic wording in ivory Amiri between two thin gold rules. Deliberately
-   theme-independent — black cloth with light writing reads in light AND
-   dark mode, and the contrast (~15:1) needs no high-contrast override. */
-.shahada-banner {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
-  border-radius: calc(var(--radius-lg) + 6px);
-  background: #111110;
-  border: 1px solid rgba(232, 212, 139, 0.35);
-  box-shadow: var(--shadow-hero);
-}
-.shahada-banner__rule {
-  flex: 1 1 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--color-gold-soft) 30%,
-    var(--color-gold) 50%,
-    var(--color-gold-soft) 70%,
-    transparent
-  );
-  opacity: 0.9;
-}
-.shahada-banner__text {
-  margin: 0;
-  font-family: 'Amiri Quran', 'Amiri', 'Traditional Arabic', serif;
-  font-size: clamp(1.15rem, 4.6vw, 1.6rem);
-  font-weight: 700;
-  line-height: 2;
-  color: #f7f3e6;
-  text-align: center;
-  text-wrap: balance;
-}
 .home-hero {
   display: flex;
   flex-direction: column;
@@ -3077,6 +3040,10 @@ body.has-player .hadith-card {
   font-weight: 700;
   color: var(--color-primary-text);
 }
+.quran-hit__relation {
+  font-size: var(--fs-caption);
+  color: var(--color-text-muted);
+}
 .quran-hit__arabic {
   font-family: var(--font-arabic-reading, var(--font-arabic));
   font-size: var(--fs-md);
@@ -4976,4 +4943,16 @@ button.toggle-row:focus-visible {
 
 .mood-tile-wrap {
   list-style: none;
+}
+
+/* v5.17.96 — reading-first Hadith metadata disclosure. The text remains in
+   the document, but collection/chapter/narrator/grade metadata is quiet until
+   the reader deliberately asks for it. */
+.hadith-card__details,
+.hadith-book-details {
+  margin-block-start: var(--space-2);
+}
+.hadith-card__details .disclosure__def,
+.hadith-book-details .disclosure__def {
+  max-inline-size: 70ch;
 }

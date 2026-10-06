@@ -193,7 +193,10 @@ describe('C4 chrome: one slim today-strip near the top', () => {
   test('Home keeps the daily strip but does not duplicate the Practise door', () => {
     const html = renderHome(homeState());
     assert.ok(html.includes('home-today'), 'today strip renders');
-    assert.ok(html.includes('panel--onboarding--line'), 'setup line renders');
+    assert.ok(
+      !html.includes('panel--onboarding--line'),
+      'onboarding is not part of the Home worship surface'
+    );
     assert.ok(html.includes('home-hero--line'), 'brand line renders');
     assert.ok(!html.includes('home-browser'), 'the grid lives in the Azkar section now');
     assert.ok(!html.includes('tasbih-entry'), 'Tasbih is not duplicated as a Home card');
@@ -201,15 +204,13 @@ describe('C4 chrome: one slim today-strip near the top', () => {
 });
 
 describe('Home reading order: identity before utility', () => {
-  test('hero leads, practical context follows, Shahada rests at the end', () => {
+  test('hero leads practical context without decorative sacred-text chrome', () => {
     const html = renderHome(homeState());
     const at = (needle) => html.indexOf(needle);
     assert.ok(at('home-hero--line') < at('home-prayer-ribbon'), 'hero precedes prayer context');
     assert.ok(at('home-prayer-ribbon') < at('quick-actions'), 'prayer precedes quick actions');
-    assert.ok(
-      at('home-secondary') < at('shahada-banner'),
-      'supporting content precedes identity footer'
-    );
+    assert.equal(at('shahada-banner'), -1, 'Home carries no decorative Shahada footer');
+    assert.equal(at('panel--onboarding--line'), -1, 'Home carries no setup/onboarding strip');
   });
 });
 
@@ -222,7 +223,14 @@ describe('C4 chrome: the hero is one line, the wizard is one line', () => {
     assert.ok(html.includes(en['app.name']), 'brand name kept');
     assert.ok(html.includes(en['app.tagline']), 'tagline kept, inline');
     assert.ok(html.includes('home-hero__hijri'), 'Hijri chip kept');
-    assert.ok(html.includes('shahada-banner'), 'the quiet Shahada identity line remains present');
+    assert.ok(
+      !html.includes('panel--onboarding--line'),
+      'Home does not carry setup/onboarding chrome'
+    );
+    assert.ok(
+      !html.includes('shahada-banner'),
+      'Home does not render a decorative Shahada identity line'
+    );
   });
 
   test('wizard renders one summary line; the full step survives inside <details>', () => {

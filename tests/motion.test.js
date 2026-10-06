@@ -270,6 +270,32 @@ describe('CSS motion contract', () => {
     assert.match(block[0], /transition-duration:\s*0.001ms\s*!important/);
   });
 
+  test('reduced motion suppresses press transforms for shared interactive chrome', () => {
+    const base = texts['base.css'];
+    const anim = texts['animations.css'];
+    const selectors = [
+      '.nav__item:active',
+      '.nav-mobile-bar__item:active',
+      'button.chip:active',
+      '.counter-pill:active',
+      '.category-tile:active',
+      '.mood-tile:active',
+      '.collection-tile:active',
+      '.surah-tile:active',
+      '.quick-action:active',
+      '.icon-btn:active',
+      '.btn:active',
+    ];
+    const reduceBlock = base.slice(base.indexOf("[data-reduce-motion='true'] .nav__item:active"));
+    for (const selector of selectors)
+      assert.ok(reduceBlock.includes(selector), `app reduce-motion covers ${selector}`);
+    assert.match(reduceBlock, /transform:\s*none\s*!important/);
+    const osBlock = anim.slice(anim.indexOf('@media (prefers-reduced-motion: reduce)'));
+    for (const selector of selectors)
+      assert.ok(osBlock.includes(selector), `OS reduce-motion covers ${selector}`);
+    assert.match(osBlock, /transform:\s*none\s*!important/);
+  });
+
   test('the Mushaf page-flip rides the spring curve', () => {
     assert.match(
       texts['quran.css'],

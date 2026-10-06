@@ -9,10 +9,6 @@
 export const en = {
   'app.name': 'Nūr al-Dhikr',
   'app.tagline': 'Read. Remember. Reflect. Act.',
-  // (v5.17.6) the Shahada banner strip atop Home. The wording itself is
-  // fixed Arabic (never translated); only its accessible label localizes.
-  'banner.shahadaLabel':
-    'The Shahada — There is no god but Allah, and Muhammad is the Messenger of Allah',
   'nav.home': 'Home',
   'nav.main': 'Main menu',
   'nav.overview': 'Overview',
@@ -117,6 +113,7 @@ export const en = {
     'Tap today\u2019s circle to mark the fast as kept. Previous days stay as recorded — this is your private log.',
   'ramadan.fastDay': 'Day {n} of Ramadan',
   'ramadan.plannerTitle': 'Taraweeh & night worship',
+  'ramadan.plannerSummary': "Taraweeh {taraweeh} · I'tikaf {itikaf} · Last ten {lastTen}",
   'ramadan.plannerHint':
     'Your private night-worship log for this Ramadan. Tap an elapsed night to mark it — future nights unlock day by day.',
   'ramadan.taraweeh': 'Taraweeh nights',
@@ -150,6 +147,7 @@ export const en = {
   'ramadan.bannerTitle': 'Ramadan Mubarak',
   'ramadan.bannerSub': 'Day {n} — open the fasting companion',
   'ramadan.alertsTitle': 'Suhoor & Iftar alerts',
+  'ramadan.alertsSummary': '{active} of 2 alerts on',
   'ramadan.suhoorAlert': 'Suhoor (before Fajr)',
   'ramadan.iftarAlert': 'Iftar (at Maghrib)',
   'ramadan.suhoorOffset': 'Suhoor alert — minutes before Fajr',
@@ -305,6 +303,8 @@ export const en = {
   'offline.downloadAll': 'Download everything (~{mb} MB)',
   'offline.stop': 'Stop',
   'offline.downloading': 'Downloading…',
+  'offline.manageTitle': 'Manage offline storage',
+  'offline.manageMeta': '{mb} MB available for on-device content',
   'offline.groupsTitle': 'Content groups',
   'offline.group.quran': "Qur'an text",
   'offline.group.translations': 'Translations',
@@ -581,6 +581,8 @@ export const en = {
   'zakat.snapshotSaved': 'Saved to history',
   'zakat.deleteSnapshotConfirm': 'Delete this saved calculation? This cannot be undone.',
   'zakat.fitrTitle': 'Zakat al-Fitr',
+  'zakat.fitrSummary': 'Separate household calculation',
+  'zakat.savedSummary': '{n} saved',
   'zakat.fitrPerPerson': 'Per-person amount (one sa\u2019 of staple food)',
   'zakat.fitrPeople': 'Household members',
   'zakat.fitrTotal': 'Fitr total',
@@ -633,7 +635,6 @@ export const en = {
   'home.favorites': 'Favorites',
   'home.collections': 'Pinned Collections',
   'home.verseOfTheDay': 'Reflection',
-  'home.verseTheme': 'Verse theme',
   'home.theme.any': 'Any',
   'home.theme.mercy': 'Mercy',
   'home.theme.patience': 'Patience',
@@ -653,6 +654,8 @@ export const en = {
   'search.noResults': 'No results found.',
   'search.noResultsHint': 'Try fewer words, or a different spelling.',
   'search.quranResults': "From the Qur'an",
+  'search.mushafPage': 'Mushaf · p. {page}',
+  'search.relatedRoot': 'Related root: {root}',
   'search.loadingCorpus':
     'Loading the Qur\u2019an text for full-text search \u2014 once loaded, this works offline forever.',
   // v5.2.74 tafsir result group in the Search view (UP-08).
@@ -681,7 +684,6 @@ export const en = {
   'search.emptyNamed': 'Searched {scope} \u2014 nothing matched.',
   'search.scopeLibrary': 'the azkar library',
   'search.scopeQuran': 'the Qur\u2019an',
-  'search.scopeRoots': 'the root index',
   'favorites.empty': 'You haven\u2019t favorited anything yet.',
   'favorites.emptyHint': 'Tap the heart icon on any card to save it here.',
   'favorites.emptyAction': 'Browse the Library',
@@ -747,12 +749,17 @@ export const en = {
   'content.hideBanner': 'Hide banner',
   'content.hiddenBanners': '{n} hidden or deleted banners',
   'content.fields': 'Card fields',
+  'content.fieldTitle': 'Title',
+  'content.fieldCategory': 'Category',
   'content.fieldTranslit': 'Transliteration',
   'content.fieldTranslation': 'Translation',
   'content.fieldVirtues': 'Virtues',
   'content.fieldReference': 'Reference',
   'content.fieldGrade': 'Grade',
   'content.fieldNotes': 'Notes',
+  'content.fieldRepetitions': 'Repetitions',
+  'content.fieldReferenceNotes': 'Reference notes',
+  'content.fieldReview': 'Review',
   'content.fieldsInherit': 'Use global defaults',
   'content.fieldsInherited': 'Fields follow the global defaults (Settings).',
   'content.restoreItem': 'Restore this card',
@@ -846,6 +853,7 @@ export const en = {
   'missingData.tafsir-missing': 'This source has no commentary for this ayah.',
   'missingData.location-missing': 'No location set — prayer times cannot be computed here.',
   'missingData.offline-missing': 'Not downloaded',
+  'stats.detailsTitle': 'Detailed activity',
   'stats.week': 'This week',
   'stats.month': 'This Month',
   'stats.totalRecitations': 'Total Recitations',
@@ -882,6 +890,7 @@ export const en = {
   'review.mushafPages': 'Mushaf pages read',
   'tasbih.target': 'Target',
   'tasbih.targetPresets': 'Target presets',
+  'tasbih.optionsTitle': 'Counter options',
   'tasbih.reset': 'Reset',
   'tasbih.float': 'Floating counter',
   'tasbih.floatUnsupported': 'Floating windows are not supported by this browser',
@@ -909,6 +918,13 @@ export const en = {
     'Prayer times require your location. This stays entirely on your device.',
   'prayer.method': 'Calculation Method',
   'prayer.asrMethod': 'Asr Juristic Method',
+  'prayer.asr.Standard': "Standard (Shafi'i / Maliki / Hanbali)",
+  'prayer.asr.Hanafi': 'Hanafi',
+  'prayer.methodDetails': 'How this calculation is defined',
+  'prayer.calculationBasis':
+    'Times are calculated on this device from the saved coordinates, date, selected method and Asr convention. Different local authorities may use different conventions.',
+  'prayer.fineTuneDetails': 'Fine-tune displayed times',
+  'prayer.iqamaDetails': 'Show local iqama waits',
   'prayer.manualLocation': 'Enter coordinates manually',
   'prayer.chooseCity': 'Or pick your city — approximate times until exact location is set',
   'prayer.region.me': 'Middle East',
@@ -1034,6 +1050,7 @@ export const en = {
   'qibla.subtitle': 'The direction to face for prayer, from your location.',
   'qibla.bearing': 'Direction',
   'qibla.distance': 'Distance to the Kaaba',
+  'qibla.detailsTitle': 'Accuracy and magnetic north',
   'qibla.accuracy': 'Location accuracy ±{m} m',
   'qibla.holdFlat': 'Hold your phone flat and turn until the marker points up.',
   'qibla.noSensor':
@@ -1068,6 +1085,7 @@ export const en = {
   // you.myAdhkar now (home link, view h1 and switch segment share it).
   'checklist.subtitle':
     'A private, on-this-device reminder for your prayers and adhkar — not a substitute for praying on time.',
+  'checklist.historyTitle': 'Last 7 days',
   'checklist.today': 'today',
   'checklist.dayStreak': 'day streak',
   'checklist.groupPrayer': 'Prayers',
@@ -1119,6 +1137,13 @@ export const en = {
   // of leaving every EN user to reverse-engineer it.
   'mushaf.bookOrderNote': 'Pages and ayahs follow mushaf order — right to left in both languages',
   'mushaf.swipeHint': 'Swipe or use the arrows to turn the page',
+  'mushaf.findOnPage': 'Find on this page',
+  'mushaf.findOnPageHint': 'Search only the text on the visible Mushaf page.',
+  'mushaf.findOnPageInput': 'Find in this page',
+  'mushaf.findOnPagePlaceholder': 'Arabic text…',
+  'mushaf.findOnPageStart': 'Type Arabic text to search this page.',
+  'mushaf.findNoMatch': 'No match on the visible page for “{q}”.',
+  'mushaf.pageLabelShort': 'p.',
   'mushaf.pageLabel': 'Page (1\u2013604)',
   'mushaf.go': 'Go',
   'mushaf.surahs': 'Surahs',
@@ -1668,8 +1693,22 @@ export const en = {
   'hadith.loaded': 'loaded',
   'hadith.standingSahih': 'Sahih collection',
   // (v5.10.1) narrator lines, enriched grade chips, collection grade guide.
-  'hadith.narratedBy': 'Narrated by {name}',
-  'hadith.gradeGuide': 'About grading in this book',
+
+  'hadith.contents': 'Contents',
+  'hadith.coverage': 'Coverage',
+  'hadith.sourceProvenance':
+    'CC0 hadith-api dataset; full provenance is recorded in About → Sources.',
+  'hadith.details': 'Details',
+  'hadith.bookDetails': 'About this book',
+  'hadith.author': 'Author',
+  'hadith.aboutBook': 'About',
+  'hadith.sourceLabel': 'Source',
+  'hadith.reference': 'Reference',
+  'hadith.collection': 'Collection',
+  'hadith.chapter': 'Chapter',
+  'hadith.narrator': 'Narrator',
+  'hadith.gradeLabel': 'Grade',
+  'hadith.grading': 'Grading',
   'hadith.standingNote':
     'Grades differ by book and by narration. The Two Sahihs are Sahih by scholarly consensus; across the four Sunans many narrations are Hasan and some are Daif.',
   'hadith.mixedNote':
@@ -1761,6 +1800,9 @@ export const en = {
   'stats.exportEmpty': 'Nothing to export yet.',
   'stats.exportedCsv': 'Statistics CSV saved to downloads.',
   'stats.shareTitle': 'My week of remembrance',
+  'settings.dailyAyahTheme': 'Daily Ayah theme',
+  'settings.dailyAyahThemeHint':
+    'Choose the kind of verse shown on Home. The choice changes the selection, not the reading surface.',
   'settings.homePanels': 'Home panels',
   'settings.homePanelsHint':
     'Reorder the home screen and hide what you never use. Unchecked panels stay here so you can bring them back.',
@@ -2074,8 +2116,8 @@ export const en = {
   // (v5.17.63) professional settings groups: one shelf per intent, each
   // accordion living in exactly one group (SETTINGS_GROUPS in
   // js/views/settings.js — the groups partition the sections).
-  'settings.groupSetup': 'Setup & about',
-  'settings.groupSetupHint': 'Finish the first-run steps, or read about the app.',
+  'settings.groupSetup': 'Setup',
+  'settings.groupSetupHint': 'Optional first-run steps you can revisit when you are ready.',
   'settings.groupDisplay': 'Language & display',
   'settings.groupDisplayHint': 'Language, theme, type and reading comfort.',
   'settings.groupContent': 'Content & library',
@@ -2267,6 +2309,8 @@ export const en = {
   'audio.rangePlay': 'Play range',
   'library.sheet.translation': 'Translations',
   'library.sheet.translit': 'Transliteration',
+  'category.sheet.byheart': 'Recall from memory',
+  'category.sheet.quiz': 'Start quiz',
   'category.sheet.manage': 'Manage this section',
   'content.resetCategory': 'Reset this section',
 
@@ -2416,7 +2460,6 @@ export const en = {
   'hadith.noteDeleted': 'Note deleted',
   'hadith.memorize': 'Memorize this hadith',
   'hadith.memorizeClose': 'Exit memorize mode',
-  'byheart.mode': 'By heart',
   'byheart.hint':
     'Arabic hides behind a tap — recall each dhikr from its meaning, then grade yourself. Reviews resurface on the memorization schedule.',
   'grammar.title': 'Grammar flashcards',

@@ -1,3 +1,18 @@
+# v5.17.108 — Zakat progressive disclosure
+
+- Keep the annual Zakat calculator (nisab, wealth inputs, live result) as the dominant working surface.
+- Move Zakat al-Fitr into a secondary disclosure with a compact bilingual summary.
+- Move saved Zakat assessments/history into a secondary disclosure only when history exists; preserve hawl/reminder/delete actions unchanged.
+- Added EN/AR regression coverage for hierarchy and disclosure presence.
+- No religious corpus data changed.
+
+## v5.17.107 — Ramadan secondary disclosure
+
+- Reduced Ramadan card sprawl by making the night-worship planner and Suhoor/Iftar alerts progressive disclosures.
+- Kept summary status visible when collapsed.
+- Converted Explore from a generic panel into compact navigation.
+- Added EN/AR regression coverage.
+
 # Changelog
 
 The full, human-written release history lives in **[`docs/RELEASES.md`](docs/RELEASES.md)** —

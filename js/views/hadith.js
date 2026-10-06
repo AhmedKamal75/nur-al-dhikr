@@ -271,40 +271,58 @@ function renderBookGrid(state, lang) {
  * The four-grade vocabulary doubles as the legend for enriched grade
  * chips whenever graded files arrive.
  */
-function gradeGuideHTML(isSahihCollection, lang) {
+function gradeGuideRowsHTML(isSahihCollection, lang) {
   const grades = ['sahih', 'hasan', 'daif', 'mawdu'];
   return `
-  <details class="hadith-grade-guide">
-    <summary>${t('hadith.gradeGuide', lang)}</summary>
-    <p class="panel__subtext">${t(isSahihCollection ? 'hadith.standingNote' : 'hadith.mixedNote', lang)}</p>
-    <dl class="hadith-grade-guide__list">
-      ${grades
-        .map(
-          (g) => `
-        <div class="hadith-grade-guide__row">
-          <dt><span class="chip chip--grade chip--grade-${g}">${t(`hadith.grade.${g}Short`, lang)}</span></dt>
-          <dd>${t(`hadith.grade.${g}`, lang)}</dd>
-        </div>`
-        )
-        .join('')}
-    </dl>
-  </details>`;
+    <div class="disclosure__row">
+      <dt class="disclosure__term">${t('hadith.grading', lang)}</dt>
+      <dd class="disclosure__def">
+        <p class="panel__subtext">${t(isSahihCollection ? 'hadith.standingNote' : 'hadith.mixedNote', lang)}</p>
+        <div class="hadith-grade-guide__list">
+          ${grades
+            .map(
+              (g) => `
+            <div class="hadith-grade-guide__row">
+              <span class="chip chip--grade chip--grade-${g}">${t(`hadith.grade.${g}Short`, lang)}</span>
+              <span>${t(`hadith.grade.${g}`, lang)}</span>
+            </div>`
+            )
+            .join('')}
+        </div>
+      </dd>
+    </div>`;
 }
 
 function sectionChipRow(doc, active, lang, bookmarkCount = 0) {
-  const chips = [
-    `<button type="button" class="chip ${active === 'all' ? 'chip--active' : ''}" data-action="hadith-section" data-id="all" aria-pressed="${active === 'all'}">${t('hadith.allChapters', lang)}</button>`,
-    // (v5.2.0) Bookmarks pseudo-section — filtered in renderBookReader,
-    // not in services/hadith.js (which only knows chapter ids).
-    `<button type="button" class="chip ${active === 'bookmarked' ? 'chip--active' : ''}" data-action="hadith-section" data-id="bookmarked" aria-pressed="${active === 'bookmarked'}">${icon('bookmark', { size: 13 })} ${t('hadith.bookmarked', lang)} <span class="chip__count">${bookmarkCount}</span></button>`,
+  const activeSection = doc.sections.find((s) => String(s.id) === String(active));
+  const activeLabel =
+    active === 'bookmarked'
+      ? `${t('hadith.bookmarked', lang)}${bookmarkCount ? ` · ${bookmarkCount}` : ''}`
+      : activeSection
+        ? `${activeSection.name} · ${activeSection.count}`
+        : t('hadith.allChapters', lang);
+  const buttons = [
+    `<button type="button" class="hadith-contents__row${active === 'all' ? ' is-active' : ''}" data-action="hadith-section" data-id="all" aria-pressed="${active === 'all'}">
+      <span>${t('hadith.allChapters', lang)}</span><span class="hadith-contents__count">${doc.hadiths.length}</span>
+    </button>`,
+    `<button type="button" class="hadith-contents__row${active === 'bookmarked' ? ' is-active' : ''}" data-action="hadith-section" data-id="bookmarked" aria-pressed="${active === 'bookmarked'}">
+      <span>${icon('bookmark', { size: 13 })} ${t('hadith.bookmarked', lang)}</span><span class="hadith-contents__count">${bookmarkCount}</span>
+    </button>`,
     ...doc.sections.map(
       (s) => `
-    <button type="button" class="chip ${active === s.id ? 'chip--active' : ''}" data-action="hadith-section" data-id="${escapeHTML(s.id)}" aria-pressed="${active === s.id}" title="${escapeHTML(s.name)}">
-      ${escapeHTML(s.name)} <span class="chip__count">${s.count}</span>
-    </button>`
+      <button type="button" class="hadith-contents__row${active === s.id ? ' is-active' : ''}" data-action="hadith-section" data-id="${escapeHTML(s.id)}" aria-pressed="${active === s.id}">
+        <span>${escapeHTML(s.name)}</span><span class="hadith-contents__count">${s.count}</span>
+      </button>`
     ),
   ];
-  return `<div class="chip-row chip-row--scroll">${chips.join('')}</div>`;
+  return `
+    <details class="hadith-contents">
+      <summary class="disclosure__summary">
+        <span class="hadith-contents__label">${t('hadith.contents', lang)}</span>
+        <span class="hadith-contents__current" dir="auto">${escapeHTML(activeLabel)}</span>
+      </summary>
+      <div class="hadith-contents__list" role="list">${buttons.join('')}</div>
+    </details>`;
 }
 
 function pagerHTML(page, total, filteredCount, from, to, lang) {
@@ -326,15 +344,29 @@ function renderBookReader(state, lang) {
   const doc = state.hadith.docs[bookId];
   const failed = state.hadith.errors?.[bookId];
 
+  const bookName = pickLocale(bookMeta?.name ?? doc?.name ?? { en: bookId }, lang);
+  const bookAuthor = bookMeta?.author ?? doc?.author;
+  const bookBlurb = bookMeta?.blurb ?? doc?.blurb;
+  const bookDetails = `
+    <details class="disclosure card__disclosure hadith-book-details">
+      <summary class="disclosure__summary">${t('hadith.bookDetails', lang)}</summary>
+      <dl class="disclosure__list">
+        ${bookAuthor ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.author', lang)}</dt><dd class="disclosure__def">${escapeHTML(pickLocale(bookAuthor, lang))}</dd></div>` : ''}
+        ${bookBlurb ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.aboutBook', lang)}</dt><dd class="disclosure__def">${escapeHTML(pickLocale(bookBlurb, lang))}</dd></div>` : ''}
+        ${bookMeta ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.coverage', lang)}</dt><dd class="disclosure__def">${escapeHTML(t(bookMeta.count === 1 ? 'hadith.bookCountOne' : 'hadith.bookCount', lang, { n: bookMeta.count, c: bookMeta.sectionCount }))}</dd></div>` : ''}
+        <div class="disclosure__row"><dt class="disclosure__term">${t('hadith.sourceLabel', lang)}</dt><dd class="disclosure__def">${escapeHTML(t('hadith.sourceProvenance', lang))}</dd></div>
+        ${bookMeta ? gradeGuideRowsHTML(bookMeta.standing === 'sahih', lang) : ''}
+      </dl>
+    </details>`;
+
   const header = `
     <header class="view-header">
       <a class="back-link" href="${buildHash(VIEWS.HADITH)}" data-action="navigate" data-view="${VIEWS.HADITH}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${t('hadith.title', lang)}</a>
       <div class="view-header--row">
-        <h1 class="view__title" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(pickLocale(bookMeta?.name ?? doc?.name ?? { en: bookId }, lang))}</h1>
+        <h1 class="view__title" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${escapeHTML(bookName)}</h1>
         ${bookMeta?.standing === 'sahih' ? `<span class="chip chip--grade chip--grade-sahih">${t('hadith.standingSahih', lang)}</span>` : ''}
         ${viewMenuButton('hadith-book', lang, { labelKey: 'viewMenu.hadithBook' })}
       </div>
-      ${bookMeta?.author || doc?.author ? `<p class="view__subtitle">${escapeHTML(pickLocale(bookMeta?.author ?? doc.author, lang))}</p>` : ''}
     </header>`;
 
   if (!doc) {
@@ -447,6 +479,7 @@ function renderBookReader(state, lang) {
       const key = `${bookId}:${h.n}`;
       return hadithCardHTML(h, {
         lang,
+        bookName,
         sectionName: sectionNames.get(h.b) || '',
         isTarget: deepTarget != null && Number(h.n) === deepTarget,
         showTranslation: state.settings.showTranslation,
@@ -466,8 +499,7 @@ function renderBookReader(state, lang) {
   return `
   <section class="view view--hadith-book">
     ${header}
-    ${doc.blurb ? `<p class="view__meta">${escapeHTML(pickLocale(doc.blurb, lang))}</p>` : ''}
-    ${gradeGuideHTML(bookMeta?.standing === 'sahih', lang)}
+    ${bookDetails}
     ${deepMissed ? `<div class="panel"><p class="empty-hint" role="status">${t('hadith.unknownNumber', lang, { n: deepTarget })}</p></div>` : ''}
 
     <div class="hadith-controls">

@@ -186,11 +186,13 @@ export function renderAudio(state) {
     </button>`
   ).join('');
   const verseSection = `
-  <section class="panel">
-    <div class="panel__header"><h2>${t('audio.verseVoices', lang)}</h2></div>
-    <p class="panel__subtext">${t('audio.verseVoicesHint', lang)}</p>
-    <div class="reciter-list">${verseRows}</div>
-  </section>`;
+  <details class="panel audio-secondary-disclosure">
+    <summary class="audio-secondary-disclosure__summary">${t('audio.verseVoices', lang)}</summary>
+    <div class="audio-secondary-disclosure__body">
+      <p class="panel__subtext">${t('audio.verseVoicesHint', lang)}</p>
+      <div class="reciter-list">${verseRows}</div>
+    </div>
+  </details>`;
 
   // (v5.2.61) offline verse packs: per-surah ayah audio for the ACTIVE
   // voice (no separate picker — packs always follow settings.reciter).
@@ -227,27 +229,28 @@ export function renderAudio(state) {
       </div>`);
   }
   const versePacks = `
-  <section class="panel panel--dl">
-    <div class="panel__header">
-      <h2>${t('audio.versePacks', lang)}</h2>
-      <span class="chip__count">${packDone} / ${packTotal}</span>
+  <details class="panel panel--dl audio-secondary-disclosure">
+    <summary class="audio-secondary-disclosure__summary">${t('audio.versePacks', lang)} <span class="chip__count">${packDone} / ${packTotal}</span></summary>
+    <div class="audio-secondary-disclosure__body">
+      <p class="panel__subtext">${t('audio.versePacksHint', lang)}</p>
+      <div class="dl-grid">${packCells.join('')}</div>
     </div>
-    <p class="panel__subtext">${t('audio.versePacksHint', lang)}</p>
-    <div class="dl-grid">${packCells.join('')}</div>
-  </section>`;
+  </details>`;
 
   const storageRow = `
-  <section class="panel">
-    <div class="panel__header"><h2>${t('audio.customTitle', lang)}</h2></div>
-    <form class="editor-form" data-form="audio-custom-reciter">
-      <label class="field">${t('audio.customName', lang)}<input class="input" name="name" required placeholder="${t('audio.customNamePh', lang)}" /></label>
-      <label class="field">${t('audio.customServer', lang)}<input class="input" name="server" dir="ltr" required placeholder="https://example.com/quran/" /></label>
-      <p class="panel__subtext">${t('audio.customHint', lang)}</p>
-      <div class="editor-form__actions">
-        <button type="submit" class="btn btn--primary btn--sm">${t('common.save', lang)}</button>
-      </div>
-    </form>
-  </section>`;
+  <details class="panel audio-secondary-disclosure">
+    <summary class="audio-secondary-disclosure__summary">${t('audio.customTitle', lang)}</summary>
+    <div class="audio-secondary-disclosure__body">
+      <form class="editor-form" data-form="audio-custom-reciter">
+        <label class="field">${t('audio.customName', lang)}<input class="input" name="name" required placeholder="${t('audio.customNamePh', lang)}" /></label>
+        <label class="field">${t('audio.customServer', lang)}<input class="input" name="server" dir="ltr" required placeholder="https://example.com/quran/" /></label>
+        <p class="panel__subtext">${t('audio.customHint', lang)}</p>
+        <div class="editor-form__actions">
+          <button type="submit" class="btn btn--primary btn--sm">${t('common.save', lang)}</button>
+        </div>
+      </form>
+    </div>
+  </details>`;
 
   // (REORG Phase 7) Qur'an listening is the book's listening depth: the
   // List/Word/Audio switch carries the hop back to the mushaf and the
@@ -310,17 +313,19 @@ function buildPlaybackDefaults(state, lang) {
         `<option value="${m}"${m === sleeping ? ' selected' : ''}>${escapeHTML(t('units.m', lang, { n: m }))}</option>`
     ).join('');
   return `
-  <section class="panel">
-    <div class="panel__header"><h2>${t('audio.playbackDefaults', lang)}</h2></div>
-    <p class="panel__subtext">${t('audio.playbackDefaultsHint', lang)}</p>
-    <div class="editor-form">
+  <details class="panel audio-secondary-disclosure">
+    <summary class="audio-secondary-disclosure__summary">${t('audio.playbackDefaults', lang)}</summary>
+    <div class="audio-secondary-disclosure__body">
+      <p class="panel__subtext">${t('audio.playbackDefaultsHint', lang)}</p>
+      <div class="editor-form">
       <label class="field">${t('audio.repeatAyah', lang)}<select class="select" data-audio-pref="ayahRepeat">${repOpts}</select></label>
       <label class="field">${t('audio.rangeLoop', lang)}<select class="select" data-audio-pref="loop"${live ? '' : ' disabled aria-disabled="true"'}>${loopOpts}</select>
         <span class="editor-form__note">${escapeHTML(live ? t('audio.loopMode', lang) : t('audio.loopNeedsSession', lang))}</span></label>
       <label class="field">${t('audio.sleepTimer', lang)}<select class="select" data-audio-pref="sleep">${sleepOpts}</select>
         <span class="editor-form__note">${escapeHTML(t('audio.sleepFileHint', lang))}</span></label>
+      </div>
     </div>
-  </section>`;
+  </details>`;
 }
 
 /**
@@ -381,16 +386,18 @@ function renderQueuePanel(state, lang) {
     )
     .join('');
   return `
-    <section class="panel panel--queue">
-      <div class="panel__header">
-        <h2>${t('playlist.title', lang)}</h2>
-        <button type="button" class="btn btn--secondary btn--sm" data-action="playlist-create">
-          ${icon('plus', { size: 14 })} ${t('playlist.create', lang)}
-        </button>
+    <details class="panel panel--queue audio-secondary-disclosure">
+      <summary class="audio-secondary-disclosure__summary">${t('playlist.title', lang)}</summary>
+      <div class="audio-secondary-disclosure__body">
+        <div class="panel__actions">
+          <button type="button" class="btn btn--secondary btn--sm" data-action="playlist-create">
+            ${icon('plus', { size: 14 })} ${t('playlist.create', lang)}
+          </button>
+        </div>
+        <p class="panel__subtext">${t('playlist.hint', lang)}</p>
+        ${rows || `<p class="empty-hint">${t('playlist.noQueues', lang)}</p>`}
       </div>
-      <p class="panel__subtext">${t('playlist.hint', lang)}</p>
-      ${rows || `<p class="empty-hint">${t('playlist.noQueues', lang)}</p>`}
-    </section>`;
+    </details>`;
 }
 
 /**

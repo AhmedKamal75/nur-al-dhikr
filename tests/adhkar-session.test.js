@@ -175,6 +175,51 @@ test('card: Arabic and provenance stay open, supplements collapse', () => {
   assert.ok(html.includes('<details'), 'supplements collapse behind one tap');
 });
 
+test('card reading mode keeps the recitation surface focused and moves metadata into Details', () => {
+  const category = { id: 'cat-sess', name: { en: 'Session', ar: 'جلسة' }, color: 'emerald' };
+  const html = cardHTML(ITEM_FULL, category, { lang: 'en', readingMode: true });
+  const openPart = html.slice(0, html.indexOf('<details'));
+
+  assert.ok(
+    openPart.includes('سُبْحَانَ اللَّهِ'),
+    'Arabic dhikr remains the primary visible content'
+  );
+  assert.ok(
+    !openPart.includes('Glory be to Allah.'),
+    'translation is not exposed in the primary surface'
+  );
+  assert.ok(
+    !openPart.includes('Subhanallah.'),
+    'transliteration is not exposed in the primary surface'
+  );
+  assert.ok(!openPart.includes('Sahih Muslim'), 'reference is not exposed in the primary surface');
+  assert.ok(
+    !openPart.includes('Session'),
+    'category metadata is not exposed in the primary surface'
+  );
+
+  const details = html.slice(html.indexOf('<details'));
+  assert.ok(details.includes('Glory be to Allah.'), 'translation moves into Details');
+  assert.ok(details.includes('Subhanallah.'), 'transliteration moves into Details');
+  assert.ok(details.includes('Sahih Muslim'), 'reference moves into Details');
+  assert.ok(details.includes('Session'), 'category moves into Details');
+  assert.ok(details.includes('3'), 'repetition target moves into Details');
+  assert.match(details, /<summary class="disclosure__summary">Details<\/summary>/);
+});
+
+test('card reading mode preserves Arabic-first presentation in AR and keeps English metadata out of AR', () => {
+  const category = { id: 'cat-sess', name: { en: 'Session', ar: 'جلسة' }, color: 'emerald' };
+  const html = cardHTML(ITEM_FULL, category, { lang: 'ar', readingMode: true });
+  const openPart = html.slice(0, html.indexOf('<details'));
+  const details = html.slice(html.indexOf('<details'));
+
+  assert.ok(openPart.includes('سُبْحَانَ اللَّهِ'));
+  assert.ok(!openPart.includes('Glory be to Allah.'));
+  assert.ok(!details.includes('Glory be to Allah.'));
+  assert.ok(details.includes('تُغرس له نخلة.'), 'Arabic virtue remains available in Details');
+  assert.ok(details.includes('جلسة'), 'Arabic category label is localized');
+});
+
 test('focus: stage keeps Arabic + position, session progress rides below', () => {
   const html = renderFocus(focusState());
   assert.ok(html.includes('سُبْحَانَ اللَّهِ'), 'Arabic leads the stage');

@@ -637,19 +637,14 @@ body.tajweed-underlines-off .tajweed {
 .mushaf-topbar__title {
   flex: 1;
   min-width: 0;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text-muted);
   font-size: var(--fs-sm);
-  font-weight: 700;
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-alt);
-  color: var(--color-text-secondary);
-  transition:
-    background-color var(--dur-fast) var(--ease-standard),
-    color var(--dur-fast) var(--ease-standard);
-}
-.mushaf-topbar__title:hover {
-  background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface-alt));
-  color: var(--color-primary-text);
+  font-weight: 650;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* --- The page ---------------------------------------------------------- */
@@ -1927,6 +1922,69 @@ body.mushaf-fs-idle .mushaf-fs-console:hover {
   font-size: var(--fs-md);
   font-weight: 700;
 }
+
+/* Page-scoped Mushaf find: compact search aid inside the reading context. */
+.mushaf-page-find {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.mushaf-page-find__status {
+  min-height: 3rem;
+}
+.mushaf-page-find__results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: min(52vh, 34rem);
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.mushaf-page-find__result {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 58px;
+  padding: var(--space-3) var(--space-4);
+  background: transparent;
+  color: var(--color-text);
+  text-align: start;
+  cursor: pointer;
+}
+.mushaf-page-find__result + .mushaf-page-find__result {
+  border-block-start: 1px solid var(--color-border);
+}
+.mushaf-page-find__result:hover {
+  background: var(--color-surface-alt);
+}
+.mushaf-page-find__result:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
+}
+.mushaf-page-find__result-ref,
+.mushaf-page-find__result-page {
+  color: var(--color-text-muted);
+  font-size: var(--fs-caption);
+  white-space: nowrap;
+}
+.mushaf-page-find__result-text {
+  min-width: 0;
+  font-family: var(--mushaf-font-family, var(--font-arabic));
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+@media (max-width: 520px) {
+  .mushaf-page-find__result {
+    grid-template-columns: auto 1fr;
+  }
+  .mushaf-page-find__result-page {
+    grid-column: 2;
+  }
+}
+
 .mushaf-jump__page-form {
   display: flex;
   gap: var(--space-2);

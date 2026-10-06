@@ -79,9 +79,15 @@ export function renderChecklist(state) {
       }
     </section>
 
-    <section class="panel">
-      <div class="checklist-history">${historyStrip}</div>
-    </section>
+    <details class="checklist-history-details">
+      <summary class="checklist-history-details__summary">
+        <span>${t('checklist.historyTitle', lang)}</span>
+        <span class="checklist-history-details__meta">${streak > 0 ? `${streak} ${t('checklist.dayStreak', lang)}` : ''}</span>
+      </summary>
+      <div class="checklist-history-details__body">
+        <div class="checklist-history">${historyStrip}</div>
+      </div>
+    </details>
 
     <section class="panel">
       <div class="panel__header"><h2>${t('checklist.groupPrayer', lang)}</h2></div>

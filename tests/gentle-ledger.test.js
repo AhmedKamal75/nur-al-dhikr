@@ -68,21 +68,7 @@ function queuedState(lang = 'en') {
   const base = initialState();
   return {
     ...base,
-    // (v5.17.84+) 'review' is a HOME_HIGHLIGHT_PANEL_ID: js/domain/homePanels.js
-    // renders only HOME_PRIMARY_PANEL_IDS ('continue', 'progress') until a
-    // panel is explicitly enabled through a saved order, so a highlight panel
-    // needs opting in the way a real user does. The assertions below — no
-    // queue/shame wording, no streak KPI, the gentle queue present, the ledger
-    // door present — are unchanged.
-    // `hiddenHome` needs the panel UN-hidden as well as ordered: DEFAULT
-    // hiddenHome() marks verse/hadith/review/hifz hidden, and
-    // resolveHomePanels drops a panel that is either not ordered OR hidden.
-    settings: {
-      ...base.settings,
-      language: lang,
-      homeOrder: ['review'],
-      hiddenHome: { ...base.settings.hiddenHome, review: false },
-    },
+    settings: { ...base.settings, language: lang, homeOrder: ['hifz', 'review'], hiddenHome: {} },
     hifzRecords: {
       2: {
         level: 1,

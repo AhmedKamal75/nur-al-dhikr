@@ -9,11 +9,11 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.93**. Adopted from the v5.17.93 archive onto the
-> v5.17.81 mainline; see the v5.17.93 release note for the ten releases it
-> carries and the release-contract repairs made at adoption time. Both gates
-> are run on the full 2350-file corpus; results are in
-> `evidence/LOCAL-AGENT-RESULTS/RUN-SUMMARY.md`.
+> Current version: **v5.17.125**. The v5.17.83 full-corpus gates were green; the
+> v5.17.84 targeted source/contracts bundle is green, while the full check and
+> Chromium matrix for v5.17.84 still need to be run on the authoritative local machine. The v5.17.77 handoff archive
+> itself failed this tree's own gates (format and version markers), which is
+> recorded in the v5.17.78 release notes.
 
 ---
 
@@ -154,7 +154,7 @@ Recorded so "not done" is a decision with a reason rather than an omission.
 | **Row 14 — Hadeeth citations, narrators, Arabic chapter names, global bookmarks** | Partly done (narrator extraction, standing badges). The rest is a data-quality pass with sources. `OPEN-ISSUES` 14.                                                                                                                                                                                                                                                                                                |
 | **Row 19 — tasbih cycle counters are unbounded**                                  | A long session grows the counter without a floor. Small, but it needs a decided limit, not an arbitrary one.                                                                                                                                                                                                                                                                                                       |
 | **Row 22 — iOS storage eviction and push limits are not in the README**           | Documentation debt about a real platform behaviour. Cheap, and nobody has written it down.                                                                                                                                                                                                                                                                                                                         |
-| **Row 46 — mushaf search (page-scoped surface)**                                  | First path shipped and pinned: ayah-hit chips deep-link to page AND ayah (`tests/mushaf-search.test.js`; ledger row 46 RESOLVED). What remains is a true page-scoped search surface — searching within/by mushaf page, not just ayah→page jumps. Still the largest rival gap after per-item audio.                                                                                                                 |
+| **Row 46 — mushaf search (page-scoped surface)**                                  | Ayah-hit continuation is now clearer and Tafsir results also reach the exact Mushaf page; root-expanded matches disclose their relation. A true in-Mushaf page-scoped find surface (searching within the current page) remains open and is not claimed shipped yet.                                                                                                                                                |
 | **Row 48 — search counts read "0" while the corpus loads**                        | Reported by review 4 and **not reproducible** by me. Left open rather than fixed on no evidence.                                                                                                                                                                                                                                                                                                                   |
 | **Row 26 — iOS cannot be relied on for prayer-time wake-ups**                     | A platform limit, not a bug. `BLOCKED:device`.                                                                                                                                                                                                                                                                                                                                                                     |
 

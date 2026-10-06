@@ -167,25 +167,30 @@ export function plannerPanel(state, lang, hijri, total) {
   };
 
   return `
-  <section class="panel panel--ramadan-planner">
-    <div class="panel__header"><h2>${t('ramadan.plannerTitle', lang)}</h2></div>
-    <p class="panel__subtext">${t('ramadan.plannerHint', lang)}</p>
-    <div class="panel__header panel__header--sub">
-      <h3>${t('ramadan.taraweeh', lang)}</h3>
-      <span class="streak-badge">${icon('check', { size: 14 })} ${taraweehKept} / ${total}</span>
+  <details class="panel ramadan-secondary-disclosure panel--ramadan-planner">
+    <summary class="ramadan-secondary-disclosure__summary">
+      <span class="ramadan-secondary-disclosure__title">${t('ramadan.plannerTitle', lang)}</span>
+      <span class="ramadan-secondary-disclosure__meta">${t('ramadan.plannerSummary', lang, { taraweeh: `${taraweehKept}/${total}`, itikaf: `${itikafKept}/${total}`, lastTen: `${lastTenKept}/${lastTenTotal}` })}</span>
+    </summary>
+    <div class="ramadan-secondary-disclosure__body">
+      <p class="panel__subtext">${t('ramadan.plannerHint', lang)}</p>
+      <div class="panel__header panel__header--sub">
+        <h3>${t('ramadan.taraweeh', lang)}</h3>
+        <span class="streak-badge">${icon('check', { size: 14 })} ${taraweehKept} / ${total}</span>
+      </div>
+      <div class="fast-dot-grid">${dots(taraweeh, 'taraweehLog', 'ramadan.taraweehNight')}</div>
+      <div class="panel__header panel__header--sub">
+        <h3>${t('ramadan.itikaf', lang)}</h3>
+        <span class="streak-badge">${icon('check', { size: 14 })} ${itikafKept} / ${total}</span>
+      </div>
+      <div class="fast-dot-grid">${dots(itikaf, 'itikafLog', 'ramadan.itikafDay')}</div>
+      <div class="panel__header panel__header--sub">
+        <h3>${t('ramadan.lastTen', lang)}</h3>
+        <span class="streak-badge">${icon('check', { size: 14 })} ${lastTenKept} / ${lastTenTotal}</span>
+      </div>
+      <div class="fast-dot-grid">${dots(lastTen, 'lastTenLog', 'ramadan.lastTenDay', 21, total)}</div>
     </div>
-    <div class="fast-dot-grid">${dots(taraweeh, 'taraweehLog', 'ramadan.taraweehNight')}</div>
-    <div class="panel__header panel__header--sub">
-      <h3>${t('ramadan.itikaf', lang)}</h3>
-      <span class="streak-badge">${icon('check', { size: 14 })} ${itikafKept} / ${total}</span>
-    </div>
-    <div class="fast-dot-grid">${dots(itikaf, 'itikafLog', 'ramadan.itikafDay')}</div>
-    <div class="panel__header panel__header--sub">
-      <h3>${t('ramadan.lastTen', lang)}</h3>
-      <span class="streak-badge">${icon('check', { size: 14 })} ${lastTenKept} / ${lastTenTotal}</span>
-    </div>
-    <div class="fast-dot-grid">${dots(lastTen, 'lastTenLog', 'ramadan.lastTenDay', 21, total)}</div>
-  </section>`;
+  </details>`;
 }
 
 /**
@@ -238,38 +243,45 @@ function alertsPanel(state, lang, times) {
       ${perm === 'default' ? `<button type="button" class="btn btn--secondary btn--sm" data-action="ramadan-enable-notifications">${t('ramadan.enableNotifications', lang)}</button>` : ''}
     </div>`;
 
+  const activeAlerts = Number(ra.suhoor) + Number(ra.iftar);
+
   return `
-  <section class="panel">
-    <div class="panel__header"><h2>${t('ramadan.alertsTitle', lang)}</h2></div>
-    ${permBanner}
-    <div class="prayer-row">
-      <span class="prayer-row__icon">${icon('utensils', { size: 18 })}</span>
-      <span class="prayer-row__name">${t('ramadan.suhoorAlert', lang)}</span>
-      <span class="prayer-row__time" dir="ltr">${formatClock(Math.max(0, times.fajr - (ra.suhoorOffset || 30) / 60))}</span>
-      <button type="button" class="icon-btn icon-btn--sm ${ra.suhoor ? 'icon-btn--active-bell' : ''}" data-action="toggle-ramadan-alert" data-alert="suhoor" aria-pressed="${ra.suhoor}" aria-label="${t('ramadan.suhoorAlert', lang)}">
-        ${icon('bell', { size: 15 })}
-      </button>
+  <details class="panel ramadan-secondary-disclosure">
+    <summary class="ramadan-secondary-disclosure__summary">
+      <span class="ramadan-secondary-disclosure__title">${t('ramadan.alertsTitle', lang)}</span>
+      <span class="ramadan-secondary-disclosure__meta">${t('ramadan.alertsSummary', lang, { active: activeAlerts })}</span>
+    </summary>
+    <div class="ramadan-secondary-disclosure__body">
+      ${permBanner}
+      <div class="prayer-row">
+        <span class="prayer-row__icon">${icon('utensils', { size: 18 })}</span>
+        <span class="prayer-row__name">${t('ramadan.suhoorAlert', lang)}</span>
+        <span class="prayer-row__time" dir="ltr">${formatClock(Math.max(0, times.fajr - (ra.suhoorOffset || 30) / 60))}</span>
+        <button type="button" class="icon-btn icon-btn--sm ${ra.suhoor ? 'icon-btn--active-bell' : ''}" data-action="toggle-ramadan-alert" data-alert="suhoor" aria-pressed="${ra.suhoor}" aria-label="${t('ramadan.suhoorAlert', lang)}">
+          ${icon('bell', { size: 15 })}
+        </button>
+      </div>
+      <div class="prayer-row">
+        <span class="prayer-row__icon">${icon('sunset', { size: 18 })}</span>
+        <span class="prayer-row__name">${t('ramadan.iftarAlert', lang)}</span>
+        <span class="prayer-row__time" dir="ltr">${formatClock(times.maghrib)}</span>
+        <button type="button" class="icon-btn icon-btn--sm ${ra.iftar ? 'icon-btn--active-bell' : ''}" data-action="toggle-ramadan-alert" data-alert="iftar" aria-pressed="${ra.iftar}" aria-label="${t('ramadan.iftarAlert', lang)}">
+          ${icon('bell', { size: 15 })}
+        </button>
+      </div>
+      <div class="sound-picker-row">
+        <label class="field-label" for="suhoor-offset-select">${t('ramadan.suhoorOffset', lang)}</label>
+        <select class="select" id="suhoor-offset-select" data-bind="ramadan-suhoor-offset">${offsetOptions}</select>
+      </div>
+      <p class="panel__subtext">${t('ramadan.alertsNote', lang)}</p>
     </div>
-    <div class="prayer-row">
-      <span class="prayer-row__icon">${icon('sunset', { size: 18 })}</span>
-      <span class="prayer-row__name">${t('ramadan.iftarAlert', lang)}</span>
-      <span class="prayer-row__time" dir="ltr">${formatClock(times.maghrib)}</span>
-      <button type="button" class="icon-btn icon-btn--sm ${ra.iftar ? 'icon-btn--active-bell' : ''}" data-action="toggle-ramadan-alert" data-alert="iftar" aria-pressed="${ra.iftar}" aria-label="${t('ramadan.iftarAlert', lang)}">
-        ${icon('bell', { size: 15 })}
-      </button>
-    </div>
-    <div class="sound-picker-row">
-      <label class="field-label" for="suhoor-offset-select">${t('ramadan.suhoorOffset', lang)}</label>
-      <select class="select" id="suhoor-offset-select" data-bind="ramadan-suhoor-offset">${offsetOptions}</select>
-    </div>
-    <p class="panel__subtext">${t('ramadan.alertsNote', lang)}</p>
-  </section>`;
+  </details>`;
 }
 
 function linksPanel(lang) {
   return `
-  <section class="panel">
-    <div class="panel__header"><h2>${t('ramadan.explore', lang)}</h2></div>
+  <nav class="ramadan-explore" aria-label="${t('ramadan.explore', lang)}">
+    <span class="ramadan-explore__label">${t('ramadan.explore', lang)}</span>
     <div class="quick-actions quick-actions--compact">
       <a class="quick-action quick-action--prayer" href="${buildHash(VIEWS.CATEGORY, { id: 'ramadan-special' })}" data-action="navigate" data-view="${VIEWS.CATEGORY}" data-id="ramadan-special">
         ${icon('hands', { size: 22 })}<span>${t('ramadan.ramadanDuas', lang)}</span>
@@ -286,7 +298,7 @@ function linksPanel(lang) {
         ${icon('calculator', { size: 22 })}<span>${t('nav.zakat', lang)}</span>
       </a>
     </div>
-  </section>`;
+  </nav>`;
 }
 
 function countdownBlock(label, value, sub) {

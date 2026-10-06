@@ -108,40 +108,34 @@ export function renderQibla(state) {
         <span class="qibla-fact__label">${t('qibla.bearing', lang)}</span>
         <span class="qibla-fact__value" dir="ltr">${Math.round(bearing)}\u00B0 ${cardinal}</span>
       </div>
-      <div class="qibla-fact" id="qibla-error-row" hidden>
-        <span class="qibla-fact__label">${t('qibla.headingError', lang)}</span>
-        <span class="qibla-fact__value" dir="ltr" id="qibla-error-value">—</span>
-      </div>
       <div class="qibla-fact">
         <span class="qibla-fact__label">${t('qibla.distance', lang)}</span>
         <span class="qibla-fact__value" dir="ltr">${Math.round(distanceKm).toLocaleString(locale, digitOpt)} km <span class="qibla-fact__value-sub">(${Math.round(distanceMi).toLocaleString(locale, digitOpt)} mi)</span></span>
       </div>
-      ${
-        Number.isFinite(Number(p.locationAccuracy)) && Number(p.locationAccuracy) >= 0
-          ? `
-      <div class="qibla-fact">
-        <span class="qibla-fact__label">${t('qibla.accuracy', lang, { m: Math.round(Number(p.locationAccuracy)) })}</span>
-        <span class="qibla-fact__value" dir="ltr">±${Math.round(Number(p.locationAccuracy))} m</span>
-      </div>`
-          : ''
-      }
-      ${
-        declLabel
-          ? `
-      <div class="qibla-fact">
-        <span class="qibla-fact__label">${t('qibla.declination', lang)}</span>
-        <span class="qibla-fact__value" dir="ltr">${declLabel}</span>
-      </div>`
-          : ''
-      }
+      <div class="qibla-fact" id="qibla-error-row" hidden>
+        <span class="qibla-fact__label">${t('qibla.headingError', lang)}</span>
+        <span class="qibla-fact__value" dir="ltr" id="qibla-error-value">—</span>
+      </div>
     </section>
 
-    ${
-      declLabel
-        ? `<p class="view__meta">${t('qibla.declinationModel', lang)}</p>
-    <p class="view__meta">${t('qibla.declinationNote', lang)}</p>`
-        : ''
-    }
+    <details class="panel qibla-details">
+      <summary>${t('qibla.detailsTitle', lang)}</summary>
+      <div class="qibla-details__body">
+        ${
+          Number.isFinite(Number(p.locationAccuracy)) && Number(p.locationAccuracy) >= 0
+            ? `<div class="qibla-detail-row"><span>${t('qibla.accuracy', lang, { m: Math.round(Number(p.locationAccuracy)) })}</span><strong dir="ltr">±${Math.round(Number(p.locationAccuracy))} m</strong></div>`
+            : ''
+        }
+        ${
+          declLabel
+            ? `<div class="qibla-detail-row"><span>${t('qibla.declination', lang)}</span><strong dir="ltr">${declLabel}</strong></div>
+      <p class="view__meta">${t('qibla.declinationModel', lang)}</p>
+      <p class="view__meta">${t('qibla.declinationNote', lang)}</p>`
+            : ''
+        }
+        <p class="view__meta">${escapeHTML(p.locationName || `${p.latitude.toFixed(2)}, ${p.longitude.toFixed(2)}`)}</p>
+      </div>
+    </details>
 
     <details class="panel qibla-calibrate">
       <summary class="qibla-calibrate__summary">${t('qibla.calibrateTitle', lang)}</summary>

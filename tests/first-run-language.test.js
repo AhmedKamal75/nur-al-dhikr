@@ -48,7 +48,7 @@ function hydrateInChild({ storedLanguage, osLanguage }) {
     };
     globalThis.window = { localStorage };
     globalThis.localStorage = localStorage;
-    globalThis.navigator = { languages: [${JSON.stringify(osLanguage)}], language: ${JSON.stringify(osLanguage)} };
+    Object.defineProperty(globalThis, 'navigator', { value: { languages: [${JSON.stringify(osLanguage)}], language: ${JSON.stringify(osLanguage)} }, configurable: true });
     const { store } = await import(${JSON.stringify(join(HERE, '../js/core/state/store.js'))});
     process.stdout.write(String(store.hydrate().settings.language));
   `;

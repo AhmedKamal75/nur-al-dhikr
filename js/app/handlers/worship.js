@@ -65,6 +65,7 @@ export const clickHandlers = {
     closeModal();
     const el = document.getElementById('calendar-fasting');
     if (!el) return;
+    if (el instanceof HTMLDetailsElement) el.open = true;
     el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
   },
 

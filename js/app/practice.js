@@ -257,7 +257,14 @@ export async function startPracticeRound(ruleId, answerMode = 'find-spans') {
     }
   }
   if (!questions.length) {
-    showToast(t('practice.loadFailed', state.settings.language));
+    const retryLang = state.settings.language;
+    showToast(t('practice.loadFailed', retryLang), {
+      assertive: true,
+      actionLabel: t('common.retry', retryLang),
+      onAction: () => {
+        void startPracticeRound(ruleId, mode);
+      },
+    });
     return;
   }
   const first = questions[0];

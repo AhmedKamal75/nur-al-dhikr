@@ -62,10 +62,6 @@ describe('accessibility budget (static)', () => {
     // view either — both are exempt from the per-view heading rule.
     // studyTray.js is a tray partial rendered inside ayah rows (v5.17.54),
     // same precedent — exempt, headings live in the hosting view.
-    // studyContext.js (v5.17.91+) is the "return to the ayah you came from"
-    // partial, injected by tajweed practice/course, roots and mutashabihat —
-    // the same category again. It is a fragment with no document structure of
-    // its own, so requiring an h1/h2 of it was never meaningful.
     const PARTIALS = new Set(['playerBar.js', 'installRow.js', 'studyTray.js', 'studyContext.js']);
     assert.deepEqual(
       without.filter((f) => !PARTIALS.has(f)),

@@ -15,9 +15,9 @@ test('Home quick actions default to the current daily adhkar pair', () => {
   assert.match(src, /HOME_QUICK_TILE_DEFAULTS[\s\S]*\['morning', 'evening'\]/);
 });
 
-test('Home identity banner is footer-level, never between core and supporting content', () => {
+test('Home has no decorative Shahada banner', () => {
   const src = read('../js/views/home.js');
-  assert.ok(src.indexOf('home-secondary') < src.lastIndexOf('shahadaBannerHTML(lang)'));
+  assert.doesNotMatch(src, /shahadaBannerHTML|SHAHADA_TEXT|shahada-banner/);
 });
 
 test('Azkar browser has a dedicated search doorway and featured daily categories', () => {

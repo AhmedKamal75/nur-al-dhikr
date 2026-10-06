@@ -25,14 +25,14 @@ function fakeEl(sel) {
   };
 }
 
-test('D: every arm survived the move (40 change + 19 input)', () => {
+test('D: every arm survived the move (40 change + 20 input)', () => {
   // 40 = 36 inherited + city-preset change arm + the two storage switches
-  // + the tajweed course's guided/open radio; 19 = 18 + the course search box.
+  // + the tajweed course's guided/open radio; 20 = 19 + the page-scoped Mushaf find box.
   // which moved OFF the click table in v5.17.17 because a click-dispatched
-  // checkbox has its native toggle cancelled; 19 = 17 inherited +
+  // checkbox has its native toggle cancelled; 20 = 18 inherited +
   // verse-volume live input (v5.17.5).
   assert.equal(changeRegistry.length, 40);
-  assert.equal(inputRegistry.length, 19);
+  assert.equal(inputRegistry.length, 20);
 });
 
 test('D: registry entries are well-formed with unique selectors', () => {

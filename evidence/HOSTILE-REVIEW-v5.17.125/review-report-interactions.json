@@ -1,0 +1,622 @@
+[
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details, and Details is independent of counting",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__light__393x852.png",
+    "hash": "c075ef56cf97"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__light__393x852.png",
+    "hash": "ff71cd75aaf9",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C — Focus counter sequence 0/1 -> 1/1 -> next (requires entering a category first)",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "picker",
+    "file": "v5.17.125__focus__picker__en__light__393x852.png",
+    "hash": "40967faf291b"
+   },
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__light__393x852.png",
+    "hash": "84ceda330f27",
+    "changed": true
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__light__393x852.png",
+    "hash": "1cd54dd00fff",
+    "changed": true
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__light__393x852.png",
+    "hash": "03b0d6ba61b5",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B — main-menu disclosure hierarchy with the flat application tail",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__light__393x852.png",
+    "hash": "431bae26ff30"
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__light__393x852.png",
+    "hash": "de75bd66b6eb",
+    "changed": true
+   },
+   {
+    "state": "sections-open",
+    "file": "v5.17.125__menu__sections-open__en__light__393x852.png",
+    "hash": "de75bd66b6eb",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary, secondary controls behind one disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__light__393x852.png",
+    "hash": "cde2494cd9be"
+   },
+   {
+    "state": "secondary-open",
+    "file": "v5.17.125__player__secondary-open__en__light__393x852.png",
+    "hash": "f4945784752d",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first surface with a Details disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__light__393x852.png",
+    "hash": "462880be21d8"
+   },
+   {
+    "state": "details-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__light__393x852.png",
+    "hash": "462880be21d8",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__light__393x852.png",
+    "hash": "59727d1ed89a"
+   },
+   {
+    "state": "disclosure-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__light__393x852.png",
+    "hash": "59727d1ed89a",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details, and Details is independent of counting",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__dark__393x852.png",
+    "hash": "2289c7b63370"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__dark__393x852.png",
+    "hash": "10236c67b489",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C — Focus counter sequence 0/1 -> 1/1 -> next (requires entering a category first)",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "picker",
+    "file": "v5.17.125__focus__picker__ar__dark__393x852.png",
+    "hash": "1412f878c32b"
+   },
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__dark__393x852.png",
+    "hash": "fab9fcf6d34b",
+    "changed": true
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__dark__393x852.png",
+    "hash": "f4002d119d9b",
+    "changed": true
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__dark__393x852.png",
+    "hash": "c282caf33625",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B — main-menu disclosure hierarchy with the flat application tail",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__dark__393x852.png",
+    "hash": "66b0f67c2993"
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__dark__393x852.png",
+    "hash": "d064060e646b",
+    "changed": true
+   },
+   {
+    "state": "sections-open",
+    "file": "v5.17.125__menu__sections-open__ar__dark__393x852.png",
+    "hash": "d064060e646b",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary, secondary controls behind one disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__dark__393x852.png",
+    "hash": "5754e21f2eb2"
+   },
+   {
+    "state": "secondary-open",
+    "file": "v5.17.125__player__secondary-open__ar__dark__393x852.png",
+    "hash": "a2c5559e5bc5",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first surface with a Details disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__dark__393x852.png",
+    "hash": "6765a19e2533"
+   },
+   {
+    "state": "details-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__dark__393x852.png",
+    "hash": "6765a19e2533",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__dark__393x852.png",
+    "hash": "2b1477943048"
+   },
+   {
+    "state": "disclosure-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__dark__393x852.png",
+    "hash": "2b1477943048",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details, and Details is independent of counting",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__light__1440x900.png",
+    "hash": "2140a39649b5"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__light__1440x900.png",
+    "hash": "c539c916b5cf",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C — Focus counter sequence 0/1 -> 1/1 -> next (requires entering a category first)",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "picker",
+    "file": "v5.17.125__focus__picker__en__light__1440x900.png",
+    "hash": "aa8f9b676164"
+   },
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__light__1440x900.png",
+    "hash": "1c162ae72c13",
+    "changed": true
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__light__1440x900.png",
+    "hash": "aec03547197e",
+    "changed": true
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__light__1440x900.png",
+    "hash": "fcc72d3bd5c9",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B — main-menu disclosure hierarchy with the flat application tail",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__light__1440x900.png",
+    "hash": "452cb0b33529"
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__light__1440x900.png",
+    "hash": "452cb0b33529",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   },
+   {
+    "state": "sections-open",
+    "file": "v5.17.125__menu__sections-open__en__light__1440x900.png",
+    "hash": "6fbb26da8b23",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary, secondary controls behind one disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__light__1440x900.png",
+    "hash": "c33fc287ba6a"
+   },
+   {
+    "state": "secondary-open",
+    "file": "v5.17.125__player__secondary-open__en__light__1440x900.png",
+    "hash": "7271db31085c",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first surface with a Details disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__light__1440x900.png",
+    "hash": "ac986b0ccf01"
+   },
+   {
+    "state": "details-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__light__1440x900.png",
+    "hash": "ac986b0ccf01",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__light__1440x900.png",
+    "hash": "2c40e591e275"
+   },
+   {
+    "state": "disclosure-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__light__1440x900.png",
+    "hash": "2c40e591e275",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details, and Details is independent of counting",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__dark__1440x900.png",
+    "hash": "4a474534fd43"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__dark__1440x900.png",
+    "hash": "d150fb2ee5e5",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C — Focus counter sequence 0/1 -> 1/1 -> next (requires entering a category first)",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "picker",
+    "file": "v5.17.125__focus__picker__ar__dark__1440x900.png",
+    "hash": "39f1cba64334"
+   },
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__dark__1440x900.png",
+    "hash": "df37797a6961",
+    "changed": true
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__dark__1440x900.png",
+    "hash": "dbbc493d8185",
+    "changed": true
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__dark__1440x900.png",
+    "hash": "776282591727",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B — main-menu disclosure hierarchy with the flat application tail",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__dark__1440x900.png",
+    "hash": "72ab091c737f"
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__dark__1440x900.png",
+    "hash": "72ab091c737f",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   },
+   {
+    "state": "sections-open",
+    "file": "v5.17.125__menu__sections-open__ar__dark__1440x900.png",
+    "hash": "d1dd61958d96",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary, secondary controls behind one disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__dark__1440x900.png",
+    "hash": "8dea7186100f"
+   },
+   {
+    "state": "secondary-open",
+    "file": "v5.17.125__player__secondary-open__ar__dark__1440x900.png",
+    "hash": "00789affe555",
+    "changed": true
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first surface with a Details disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__dark__1440x900.png",
+    "hash": "55622d3bdc0a"
+   },
+   {
+    "state": "details-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__dark__1440x900.png",
+    "hash": "55622d3bdc0a",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__dark__1440x900.png",
+    "hash": "7a56e482a2a1"
+   },
+   {
+    "state": "disclosure-open",
+    "verdict": "NO SELECTOR MATCH: summary.disclosure__summary"
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__dark__1440x900.png",
+    "hash": "7a56e482a2a1",
+    "changed": false,
+    "verdict": "UNVERIFIED — byte-identical to the previous state"
+   }
+  ],
+  "errors": []
+ }
+]

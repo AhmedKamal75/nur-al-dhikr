@@ -43,13 +43,21 @@ test('a failed tier does not run a search it cannot satisfy', () => {
   );
 });
 
+test('the breakdown does not report zero while the Quran corpus is still loading', () => {
+  assert.match(
+    src,
+    /quranAll == null \? '—' : quranAll\.length/,
+    'Quran must show an unavailable marker while its search corpus is not ready'
+  );
+});
+
 test('the breakdown count does not report zero for a corpus that never loaded', () => {
   // "Qur'an: 0 · Hadith: 0 · Azkar: 0" is the exact sentence this fixes. A
   // null is passed so the template can render a dash rather than a number it
   // does not have.
   assert.match(
     src,
-    /libLoadFailed \? null : azkarAll\.length/,
+    /libLoadFailed \? '—' : azkarAll\.length/,
     'the Azkar count must not claim 0 when the library tier failed'
   );
 });
@@ -80,4 +88,11 @@ test('the library view already does this correctly — the two must agree', () =
   // stories depending on where they typed it.
   const library = readFileSync(`${ROOT}js/views/library.js`, 'utf8');
   assert.match(library, /loadErrors\?\.library/, 'library.js should still check the tier');
+});
+
+test('global Search Hadith loading honesty: empty index does not report zero while catalog exists', () => {
+  assert.match(src, /hadithIndexStats/);
+  assert.match(src, /hadithBreakdown/);
+  assert.match(src, /hadithBooks\.length > 0 && hadithStats\.records === 0/);
+  assert.match(src, /h: hadithBreakdown/);
 });

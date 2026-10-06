@@ -198,6 +198,9 @@ export function buildCategorySheet(state) {
       {
         rows: [
           sheetRow('view-sheet-manage', 'category.sheet.manage', 'edit', lang),
+          sheetRow('byheart-start', 'category.sheet.byheart', 'target', lang, {
+            dataset: { 'category-id': categoryId },
+          }),
           sheetRow('content-reset-category', 'content.resetCategory', 'refresh', lang, {
             dataset: { 'category-id': categoryId },
           }),
@@ -220,6 +223,9 @@ export function buildCategorySheet(state) {
               custom: isCustom ? '1' : '',
             },
           }),
+          ...(libId === QUIZ_LIBRARY_ID
+            ? [sheetRow('quiz-start', 'category.sheet.quiz', 'star', lang)]
+            : []),
         ],
       },
       {

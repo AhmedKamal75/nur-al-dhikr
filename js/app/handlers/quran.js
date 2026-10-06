@@ -292,6 +292,14 @@ export const clickHandlers = {
 
   'mushaf-next': () => navigateMushafPage('next'),
 
+  'mushaf-open-page-find': async () => {
+    const { buildMushafPageFind } = await import('../../views/mushafPageFind.js');
+    openModal(buildMushafPageFind(store.getState()), {
+      labelledBy: 'modal-title-mushaf-page-find',
+      focusSelector: '#mushaf-page-find-input',
+    });
+  },
+
   'mushaf-open-jump': async () => {
     const { buildMushafJump } = await mushafView();
     openModal(buildMushafJump(store.getState()), { labelledBy: 'modal-title-mushaf-jump' });
@@ -302,6 +310,21 @@ export const clickHandlers = {
   'mushaf-open-track': async () => {
     const { buildMushafTrack } = await mushafView();
     openModal(buildMushafTrack(store.getState()), { labelledBy: 'modal-title-mushaf-track' });
+  },
+
+  'mushaf-find-page-result': async (ds) => {
+    const page = clampPage(ds.page);
+    const surah = Number(ds.surah);
+    const ayah = Number(ds.ayah);
+    if (!Number.isFinite(surah) || !Number.isFinite(ayah)) return;
+    closeModal();
+    try {
+      await ensureMushafNavigationPages(page);
+      go(VIEWS.MUSHAF, { page: String(page), s: String(surah), ay: String(ayah) });
+    } catch (err) {
+      console.error('[mushaf] find result load failed', page, err);
+      showToast(t('mushaf.loadFailed', store.getState().settings.language));
+    }
   },
 
   'mushaf-jump-page': async (ds) => {
@@ -319,7 +342,19 @@ export const clickHandlers = {
       showToast(t('mushaf.loadFailed', store.getState().settings.language));
       return;
     }
-    go(VIEWS.MUSHAF, { page: String(dest) });
+    // Bookmark rows carry an exact ayah as well as its printed page. Keep
+    // both pieces of context when reopening a saved ayah so the reader can
+    // restore its target highlight instead of merely landing on the page.
+    const surah = Number(ds.surah);
+    const ayah = Number(ds.ayah);
+    const hasAyahTarget =
+      Number.isInteger(surah) && surah >= 1 && surah <= 114 && Number.isInteger(ayah) && ayah >= 1;
+    go(
+      VIEWS.MUSHAF,
+      hasAyahTarget
+        ? { page: String(dest), s: String(surah), ay: String(ayah) }
+        : { page: String(dest) }
+    );
   },
 
   // (v4.5) Feature parity: from the Mushaf's ayah detail straight into the
@@ -1196,6 +1231,14 @@ export const changeHandlers = [
 ];
 
 export const inputHandlers = [
+  {
+    sel: '[data-bind="mushaf-page-find"]',
+    run: async (_ds, el) => {
+      const { renderMushafPageFindResults } = await import('../../views/mushafPageFind.js');
+      const status = el.closest('.mushaf-page-find')?.querySelector('.mushaf-page-find__status');
+      if (status) status.innerHTML = renderMushafPageFindResults(store.getState(), el.value);
+    },
+  },
   {
     sel: '[data-bind="bookmark-note"]',
     run: (ds, el) => {

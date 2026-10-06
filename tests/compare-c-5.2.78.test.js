@@ -12,6 +12,7 @@ import { sanitizeSettings } from '../js/core/config.js';
 import { resolveCompareTexts, compareVisible } from '../js/domain/translationCompare.js';
 import { en } from '../js/core/i18n/en.js';
 import { ar } from '../js/core/i18n/ar.js';
+import { readFileSync } from 'node:fs';
 
 const EDITIONS = [
   { id: 'en-sahih', native: 'Sahih', dir: 'ltr', inline: true },
@@ -80,4 +81,11 @@ describe('UP-06 compare C', () => {
       assert.ok(ar[k], `ar ${k}`);
     }
   });
+});
+
+test('Settings Compare C uses a non-interactive subsection heading inside the parent disclosure', () => {
+  const src = readFileSync(new URL('../js/views/settings.js', import.meta.url), 'utf8');
+  assert.match(src, /function accSubheading/);
+  assert.match(src, /accSubheading\(t\('settings\.compareTranslationC'/);
+  assert.doesNotMatch(src, /accHeader\(t\('settings\.compareTranslationC'/);
 });

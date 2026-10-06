@@ -256,8 +256,30 @@ export function renderZakat(state) {
     ${nisabPanel(state, lang)}
     ${inputsPanel(state, lang)}
     ${resultPanel(state, lang)}
-    ${fitrPanel(state, lang)}
-    ${savedPanel(state, lang)}
+    <details class="zakat-secondary-disclosure">
+      <summary class="zakat-secondary-disclosure__summary">
+        <span class="zakat-secondary-disclosure__title">${t('zakat.fitrTitle', lang)}</span>
+        <span class="zakat-secondary-disclosure__meta">${t('zakat.fitrSummary', lang)}</span>
+      </summary>
+      <div class="zakat-secondary-disclosure__body">
+        ${fitrPanel(state, lang)}
+      </div>
+    </details>
+
+    ${
+      state.zakatHistory.length
+        ? `
+    <details class="zakat-secondary-disclosure">
+      <summary class="zakat-secondary-disclosure__summary">
+        <span class="zakat-secondary-disclosure__title">${t('zakat.savedTitle', lang)}</span>
+        <span class="zakat-secondary-disclosure__meta">${t('zakat.savedSummary', lang, { n: state.zakatHistory.length })}</span>
+      </summary>
+      <div class="zakat-secondary-disclosure__body">
+        ${savedPanel(state, lang)}
+      </div>
+    </details>`
+        : ''
+    }
 
     <p class="view__meta">${t('zakat.disclaimer', lang)}</p>
   </section>`;

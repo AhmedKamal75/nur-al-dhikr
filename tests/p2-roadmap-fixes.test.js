@@ -649,6 +649,18 @@ describe('UP-03: qibla calibration + heading-error readout', () => {
     },
   });
 
+  test('technical accuracy details are progressive while direction and distance stay primary', () => {
+    const html = renderQibla(qiblaState('en'));
+    const facts =
+      html.match(/<section class=\"panel qibla-facts\">([\s\S]*?)<\/section>/)?.[1] || '';
+    assert.match(facts, /qibla.bearing|Direction/);
+    assert.match(facts, /Distance to the Kaaba/);
+    assert.doesNotMatch(facts, /Magnetic declination/);
+    assert.match(html, /class=\"panel qibla-details\"/);
+    assert.match(html, /Accuracy and magnetic north/);
+    assert.match(html, /Magnetic declination/);
+  });
+
   test('calibration card renders in both languages, sensors or not', () => {
     const en = renderQibla(qiblaState('en'));
     assert.match(en, /Calibrate the compass/, 'EN walkthrough renders');

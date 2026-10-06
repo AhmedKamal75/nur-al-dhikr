@@ -85,7 +85,7 @@ export function buildMushafBookmarks(state) {
       const name = names ? pickLocale(names, lang) : '';
       return `
     <div class="mushaf-bookmark-row">
-      <button type="button" class="mushaf-bookmark-row__main" data-action="mushaf-jump-page" data-page="${escapeHTML(String(b.page))}">
+      <button type="button" class="mushaf-bookmark-row__main" data-action="mushaf-jump-page" data-page="${escapeHTML(String(b.page))}" data-surah="${escapeHTML(String(b.surah))}" data-ayah="${escapeHTML(String(b.ayah))}">
         <span class="mushaf-bookmark-row__ref" dir="ltr">${escapeHTML(String(b.surah))}:${escapeHTML(String(b.ayah))}</span>
         <span class="mushaf-bookmark-row__name">${escapeHTML(name)} · ${t('mushaf.pageShort', lang)} ${escapeHTML(String(b.page))}</span>
       </button>

@@ -121,7 +121,7 @@ describe('groups partition the sections exactly once (rule 6)', () => {
     assert.deepEqual(grouped, sectionIds, 'orphan or duplicated section');
   });
 
-  test('group shelves name real sections; the setup group holds doors, not accordions', () => {
+  test('group shelves name real sections; setup is a separate progressive disclosure', () => {
     const known = new Set(SETTINGS_SECTIONS.map((s) => s.id));
     for (const g of SETTINGS_GROUPS) {
       assert.match(g.id, /^settings-group-[a-z]+$/, `group id shape: ${g.id}`);
@@ -130,8 +130,18 @@ describe('groups partition the sections exactly once (rule 6)', () => {
     }
     const setup = SETTINGS_GROUPS[0];
     assert.equal(setup.id, 'settings-group-setup', 'setup shelf leads');
-    assert.ok(!setup.sections, 'setup holds the deferred + About doors, no accordion');
+    assert.ok(
+      !setup.sections,
+      'setup holds the deferred setup disclosure, not a setting accordion'
+    );
     assert.equal(SETTINGS_GROUPS.length, 7, 'seven shelves');
+    const html = renderSettings(richState());
+    assert.ok(
+      html.includes('class="panel settings-setup-disclosure panel--deferred"'),
+      'setup disclosure renders'
+    );
+    assert.ok(html.includes('Finish setup when ready'), 'setup disclosure summary renders');
+    assert.ok(html.includes('data-action="onboarding-reshow"'), 'setup actions remain reachable');
   });
 });
 

@@ -28,7 +28,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { initialState } from '../js/core/state/initial.js';
-import { prayerMethodLine } from '../js/domain/prayer.js';
+import { prayerMethodLine, compactPrayerMethodLine } from '../js/domain/prayer.js';
 import { renderPrayer } from '../js/views/prayer.js';
 import { prayerRibbonHTML } from '../js/views/home.js';
 import { en } from '../js/core/i18n/en.js';
@@ -144,16 +144,39 @@ describe('prayerMethodLine: one plain-text summary of the active prefs', () => {
   });
 });
 
-describe('render: the hero and the home strip carry the line', () => {
-  test('the prayer hero names the active method, Asr convention, offsets and source', () => {
+describe('compactPrayerMethodLine: focal surfaces stay readable', () => {
+  test('EN names the method and localized Asr convention without provenance clutter', () => {
+    const line = compactPrayerMethodLine({ method: 'Karachi', asr: 'Hanafi' }, 'en');
+    assert.ok(line.includes(en['prayer.method.Karachi']));
+    assert.ok(line.includes(en['prayer.asrMethod']));
+    assert.ok(line.includes(en['prayer.asr.Hanafi']));
+    assert.ok(!line.includes('Source (unverified):'));
+  });
+
+  test('AR localizes the Asr convention and falls back safely', () => {
+    const line = compactPrayerMethodLine({ method: '__proto__', asr: 'zzz' }, 'ar');
+    assert.ok(line.includes(ar['prayer.method.MWL']));
+    assert.ok(line.includes(ar['prayer.asr.Standard']));
+    assert.doesNotMatch(line, /Source|Standard|MWL/);
+  });
+});
+
+describe('render: focal hero is compact; home strip keeps the full summary', () => {
+  test('the prayer hero names the active method and Asr convention without advanced metadata', () => {
     const html = renderPrayer(
       viewState({ prayer: { offsets: { fajr: 5 }, asr: 'Hanafi', method: 'Karachi' } })
     );
-    assert.ok(html.includes('next-prayer-card__method'), 'the hero carries the method line');
+    assert.ok(
+      html.includes('next-prayer-card__method'),
+      'the hero carries the compact method line'
+    );
     assert.ok(html.includes(en['prayer.method.Karachi']), 'method named on the hero');
-    assert.ok(html.includes('Hanafi'), 'Asr convention on the hero');
-    assert.ok(html.includes(`${en['prayer.fajr']} +5m`), 'offsets on the hero');
-    assert.ok(html.includes('Source (unverified):'), 'unverified qualifier on the hero');
+    assert.ok(html.includes(en['prayer.asr.Hanafi']), 'Asr convention on the hero');
+    assert.ok(
+      !html.includes(`${en['prayer.fajr']} +5m`),
+      'offset detail stays out of the focal hero'
+    );
+    assert.ok(!html.includes('Source (unverified):'), 'provenance stays in calculation settings');
   });
 
   test('the full home ribbon carries the same line, from the same helper', () => {
@@ -182,10 +205,11 @@ describe('render: the hero and the home strip carry the line', () => {
     assert.ok(!html.includes('next-prayer-card__method'), 'empty state carries no method line');
   });
 
-  test('AR hero and AR strip render the AR line', () => {
+  test('AR hero stays compact while the home strip retains the full transparent summary', () => {
     const hero = renderPrayer(viewState({ lang: 'ar' }));
     assert.ok(hero.includes(ar['prayer.method.MWL']), 'AR method on the hero');
-    assert.ok(hero.includes('المصدر (غير مؤكد):'), 'AR qualifier on the hero');
+    assert.ok(hero.includes(ar['prayer.asr.Standard']), 'AR Asr convention on the hero');
+    assert.ok(!hero.includes('المصدر (غير مؤكد):'), 'AR provenance stays out of the focal hero');
     const strip = prayerRibbonHTML(viewState({ lang: 'ar' }), 'ar', TIMES, at(10));
     assert.ok(strip.includes(ar['prayer.method.MWL']), 'AR method on the strip');
     assert.ok(strip.includes('المصدر (غير مؤكد):'), 'AR qualifier on the strip');
@@ -221,5 +245,26 @@ describe('item-4 contracts that must not move', () => {
     const css = readFileSync(join(ROOT, 'assets/css/cards.css'), 'utf8');
     assert.ok(css.includes('.next-prayer-card__method'), 'hero line styled');
     assert.ok(css.includes('.home-prayer-ribbon__method'), 'strip line styled');
+  });
+});
+
+describe('Prayer calc surface: detail belongs in the deliberate settings sheet', () => {
+  test('hero uses the compact method line, while full provenance stays in calc', async () => {
+    const { renderPrayer } = await import('../js/views/prayer.js');
+    const hero = renderPrayer(viewState({ prayer: { method: 'Karachi', asr: 'Hanafi' } }));
+    assert.ok(hero.includes(en['prayer.asr.Hanafi']));
+    assert.ok(!hero.includes('Source (unverified):'));
+    assert.ok(!hero.includes(en['prayer.offsetsNone']));
+  });
+
+  test('calc panel localizes Asr choices and exposes methodology progressively', async () => {
+    const { calcPanelHTML } = await import('../js/views/prayer.js');
+    const html = calcPanelHTML(viewState());
+    assert.ok(html.includes(en['prayer.methodDetails']));
+    assert.ok(html.includes(en['prayer.calculationBasis']));
+    assert.ok(html.includes(en['prayer.asr.Standard'].replace("'", '&#39;')));
+    assert.ok(html.includes(en['prayer.asr.Hanafi']));
+    assert.ok(html.includes(en['prayer.fineTuneDetails']));
+    assert.ok(html.includes(en['prayer.iqamaDetails']));
   });
 });

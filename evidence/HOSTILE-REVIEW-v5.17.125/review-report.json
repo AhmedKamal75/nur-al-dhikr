@@ -1,0 +1,5730 @@
+[
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__light__360x800.png",
+    "hash": "2b8255ce5aad",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__light__360x800.png",
+    "hash": "2b8255ce5aad",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__light__360x800.png",
+    "hash": "1ae8a6ae7bca",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__light__360x800.png",
+    "hash": "a531cbd31454",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__light__360x800.png",
+    "hash": "1ae8a6ae7bca",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__light__360x800.png",
+    "hash": "033bbd5cc0eb",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__light__360x800.png",
+    "hash": "f7a941e8c74a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__light__360x800.png",
+    "hash": "f7a941e8c74a",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__light__360x800.png",
+    "hash": "f7a941e8c74a",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__light__360x800.png",
+    "hash": "497fdf632ef6",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__light__360x800.png",
+    "hash": "c448bacb46fa",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__light__360x800.png",
+    "hash": "a1158a142ee8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__light__360x800.png",
+    "hash": "a34c97b72337",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__light__360x800.png",
+    "hash": "cc67c3acb8ac",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__light__360x800.png",
+    "hash": "cc67c3acb8ac",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__light__360x800.png",
+    "hash": "bfedcd58fbdf",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__light__360x800.png",
+    "hash": "9a8ccb3244c8",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__light__360x800.png",
+    "hash": "d92f78fa3a21",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__light__360x800.png",
+    "hash": "06b239c4f4f9",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__light__360x800.png",
+    "hash": "06b239c4f4f9",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__light__360x800.png",
+    "hash": "035566ac35ab",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__light__360x800.png",
+    "hash": "1b30d2e6dc6b",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__light__360x800.png",
+    "hash": "173451aa46a8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__light__360x800.png",
+    "hash": "173451aa46a8",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__light__360x800.png",
+    "hash": "4f48f0b6c762",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__light__360x800.png",
+    "hash": "8d6d20419484",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__dark__360x800.png",
+    "hash": "6aa67ceb15d6",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__dark__360x800.png",
+    "hash": "6aa67ceb15d6",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__dark__360x800.png",
+    "hash": "0d161e7c332a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__dark__360x800.png",
+    "hash": "a2a0f49c6ac0",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__dark__360x800.png",
+    "hash": "0d161e7c332a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__dark__360x800.png",
+    "hash": "76ca236352db",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__dark__360x800.png",
+    "hash": "e94c69ea4e3b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__dark__360x800.png",
+    "hash": "e94c69ea4e3b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__dark__360x800.png",
+    "hash": "e94c69ea4e3b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__dark__360x800.png",
+    "hash": "29969cfdea7d",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__dark__360x800.png",
+    "hash": "fc1ae02bc50d",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__dark__360x800.png",
+    "hash": "1ccde95769b4",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__dark__360x800.png",
+    "hash": "bce702131b2e",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__dark__360x800.png",
+    "hash": "afebd6fb3bb9",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__dark__360x800.png",
+    "hash": "afebd6fb3bb9",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__dark__360x800.png",
+    "hash": "373c801e98ab",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__dark__360x800.png",
+    "hash": "40b9cba6f67b",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__dark__360x800.png",
+    "hash": "2fd8b9eb6a43",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__dark__360x800.png",
+    "hash": "8aded07a1352",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__dark__360x800.png",
+    "hash": "8aded07a1352",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__dark__360x800.png",
+    "hash": "51b0a764acf4",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__dark__360x800.png",
+    "hash": "f583eae6eeb5",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__dark__360x800.png",
+    "hash": "e976e9c048a7",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__dark__360x800.png",
+    "hash": "e976e9c048a7",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__dark__360x800.png",
+    "hash": "894138fddd17",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__dark__360x800.png",
+    "hash": "fb9ce8ae9017",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__light__360x800.png",
+    "hash": "5079c34f029f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__light__360x800.png",
+    "hash": "5079c34f029f",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__light__360x800.png",
+    "hash": "f39fb069a54c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__light__360x800.png",
+    "hash": "064b559ae8d5",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__light__360x800.png",
+    "hash": "f39fb069a54c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__light__360x800.png",
+    "hash": "073a1f368224",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__light__360x800.png",
+    "hash": "a10fdf90e06e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__light__360x800.png",
+    "hash": "a10fdf90e06e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__light__360x800.png",
+    "hash": "a10fdf90e06e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__light__360x800.png",
+    "hash": "f610a3ecab45",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__light__360x800.png",
+    "hash": "e10f65a1c797",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__light__360x800.png",
+    "hash": "dc96c57b15a8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__light__360x800.png",
+    "hash": "b8231289cd34",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__light__360x800.png",
+    "hash": "e98aa0be31de",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__light__360x800.png",
+    "hash": "e98aa0be31de",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__light__360x800.png",
+    "hash": "7bec0c976b76",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__light__360x800.png",
+    "hash": "78e39bc1198e",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__light__360x800.png",
+    "hash": "d4f9ec6c34d6",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__light__360x800.png",
+    "hash": "1829b7efda24",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__light__360x800.png",
+    "hash": "1829b7efda24",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__light__360x800.png",
+    "hash": "541b90c8dab9",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__light__360x800.png",
+    "hash": "3125abf4bd0c",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__light__360x800.png",
+    "hash": "47321b79eaea",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__light__360x800.png",
+    "hash": "47321b79eaea",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__light__360x800.png",
+    "hash": "79edfec48e29",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__light__360x800.png",
+    "hash": "9825922f9854",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__dark__360x800.png",
+    "hash": "b15150bd69b4",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__dark__360x800.png",
+    "hash": "b15150bd69b4",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__dark__360x800.png",
+    "hash": "7b8be6ef3176",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__dark__360x800.png",
+    "hash": "8ea858bc6b8a",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__dark__360x800.png",
+    "hash": "7b8be6ef3176",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__dark__360x800.png",
+    "hash": "fa87e61d178b",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__dark__360x800.png",
+    "hash": "98b125f30ad1",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__dark__360x800.png",
+    "hash": "98b125f30ad1",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__dark__360x800.png",
+    "hash": "98b125f30ad1",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__dark__360x800.png",
+    "hash": "8c818a1b2fff",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__dark__360x800.png",
+    "hash": "b6a52711e629",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__dark__360x800.png",
+    "hash": "45f854562ed9",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__dark__360x800.png",
+    "hash": "9747c2e37714",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__dark__360x800.png",
+    "hash": "e7df28a7e654",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__dark__360x800.png",
+    "hash": "e7df28a7e654",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__dark__360x800.png",
+    "hash": "80ac481ffa51",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__dark__360x800.png",
+    "hash": "7c0bd52d0a20",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__dark__360x800.png",
+    "hash": "f5b218e34c00",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__dark__360x800.png",
+    "hash": "94848127b1f7",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__dark__360x800.png",
+    "hash": "94848127b1f7",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__dark__360x800.png",
+    "hash": "8ce4f4b0b36d",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__dark__360x800.png",
+    "hash": "151da24f49be",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__dark__360x800.png",
+    "hash": "09e57fc05fc7",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__dark__360x800.png",
+    "hash": "09e57fc05fc7",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__dark__360x800.png",
+    "hash": "fa2aef0d25b1",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__dark__360x800.png",
+    "hash": "569a3c2ca874",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__light__393x852.png",
+    "hash": "41df7328ef16",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__light__393x852.png",
+    "hash": "41df7328ef16",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__light__393x852.png",
+    "hash": "431bae26ff30",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__light__393x852.png",
+    "hash": "905ba73c3ff6",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__light__393x852.png",
+    "hash": "431bae26ff30",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__light__393x852.png",
+    "hash": "de75bd66b6eb",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__light__393x852.png",
+    "hash": "40967faf291b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__light__393x852.png",
+    "hash": "40967faf291b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__light__393x852.png",
+    "hash": "40967faf291b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__light__393x852.png",
+    "hash": "9deb71aa6e6c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__light__393x852.png",
+    "hash": "327f88eb9b33",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__light__393x852.png",
+    "hash": "b7e951a6c6cc",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__light__393x852.png",
+    "hash": "fc8035e37809",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__light__393x852.png",
+    "hash": "462880be21d8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__light__393x852.png",
+    "hash": "462880be21d8",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__light__393x852.png",
+    "hash": "a0f6453b6f3f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__light__393x852.png",
+    "hash": "c381882131b7",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__light__393x852.png",
+    "hash": "59ecac6dec26",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__light__393x852.png",
+    "hash": "cde2494cd9be",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__light__393x852.png",
+    "hash": "cde2494cd9be",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__light__393x852.png",
+    "hash": "b997cf97adc9",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__light__393x852.png",
+    "hash": "1057cbd2e018",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__light__393x852.png",
+    "hash": "59727d1ed89a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__light__393x852.png",
+    "hash": "59727d1ed89a",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__light__393x852.png",
+    "hash": "2b823d79c43e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__light__393x852.png",
+    "hash": "961c9a45ba49",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__dark__393x852.png",
+    "hash": "b4dda51c899d",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__dark__393x852.png",
+    "hash": "b4dda51c899d",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__dark__393x852.png",
+    "hash": "f1d764894493",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__dark__393x852.png",
+    "hash": "5c6913295014",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__dark__393x852.png",
+    "hash": "f1d764894493",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__dark__393x852.png",
+    "hash": "5d2cda0b3f6b",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__dark__393x852.png",
+    "hash": "8993ee04933c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__dark__393x852.png",
+    "hash": "8993ee04933c",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__dark__393x852.png",
+    "hash": "8993ee04933c",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__dark__393x852.png",
+    "hash": "59395d90dbe1",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__dark__393x852.png",
+    "hash": "053d66f19880",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__dark__393x852.png",
+    "hash": "e69529a43209",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__dark__393x852.png",
+    "hash": "b56cc8b0ef7e",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__dark__393x852.png",
+    "hash": "9dec4579cb57",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__dark__393x852.png",
+    "hash": "9dec4579cb57",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__dark__393x852.png",
+    "hash": "8a9db73ad773",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__dark__393x852.png",
+    "hash": "62e8ae637289",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__dark__393x852.png",
+    "hash": "dd9e6960972e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__dark__393x852.png",
+    "hash": "bbfc9e9e671f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__dark__393x852.png",
+    "hash": "bbfc9e9e671f",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__dark__393x852.png",
+    "hash": "9c44836d84fa",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__dark__393x852.png",
+    "hash": "ab3902188825",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__dark__393x852.png",
+    "hash": "7199ad319188",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__dark__393x852.png",
+    "hash": "7199ad319188",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__dark__393x852.png",
+    "hash": "00db62dfe4fb",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__dark__393x852.png",
+    "hash": "5362eaff9c77",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__light__393x852.png",
+    "hash": "19b59cccb53f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__light__393x852.png",
+    "hash": "19b59cccb53f",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__light__393x852.png",
+    "hash": "fce07efe14dd",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__light__393x852.png",
+    "hash": "1a38f8626bcd",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__light__393x852.png",
+    "hash": "fce07efe14dd",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__light__393x852.png",
+    "hash": "6894d7a87dbc",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__light__393x852.png",
+    "hash": "9d912b2b8a09",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__light__393x852.png",
+    "hash": "9d912b2b8a09",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__light__393x852.png",
+    "hash": "9d912b2b8a09",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__light__393x852.png",
+    "hash": "e357a726e8fb",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__light__393x852.png",
+    "hash": "b71883e2fdb2",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__light__393x852.png",
+    "hash": "496623677b27",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__light__393x852.png",
+    "hash": "ab60c9e2fce6",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__light__393x852.png",
+    "hash": "76133a3143cf",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__light__393x852.png",
+    "hash": "76133a3143cf",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__light__393x852.png",
+    "hash": "af50b3404ffd",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__light__393x852.png",
+    "hash": "258b3f3e5a9a",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__light__393x852.png",
+    "hash": "b22eec638852",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__light__393x852.png",
+    "hash": "af758423188b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__light__393x852.png",
+    "hash": "af758423188b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__light__393x852.png",
+    "hash": "f4814632e25a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__light__393x852.png",
+    "hash": "31be721533ec",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__light__393x852.png",
+    "hash": "107218c5b9e3",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__light__393x852.png",
+    "hash": "107218c5b9e3",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__light__393x852.png",
+    "hash": "90d27fed46c1",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__light__393x852.png",
+    "hash": "b1477b7f827a",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__dark__393x852.png",
+    "hash": "6761a8ea8595",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__dark__393x852.png",
+    "hash": "6761a8ea8595",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__dark__393x852.png",
+    "hash": "66b0f67c2993",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__dark__393x852.png",
+    "hash": "6f4390b8bbb7",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__dark__393x852.png",
+    "hash": "66b0f67c2993",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__dark__393x852.png",
+    "hash": "d064060e646b",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__dark__393x852.png",
+    "hash": "1412f878c32b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__dark__393x852.png",
+    "hash": "1412f878c32b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__dark__393x852.png",
+    "hash": "1412f878c32b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__dark__393x852.png",
+    "hash": "f3dc564defb5",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__dark__393x852.png",
+    "hash": "ad62f4272d21",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__dark__393x852.png",
+    "hash": "a1eb0b24c4a4",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__dark__393x852.png",
+    "hash": "22bd956906c7",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__dark__393x852.png",
+    "hash": "6765a19e2533",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__dark__393x852.png",
+    "hash": "6765a19e2533",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__dark__393x852.png",
+    "hash": "8944a19837cb",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__dark__393x852.png",
+    "hash": "18b7ae34cc4c",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__dark__393x852.png",
+    "hash": "2b8c2fe62b57",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__dark__393x852.png",
+    "hash": "5754e21f2eb2",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__dark__393x852.png",
+    "hash": "5754e21f2eb2",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__dark__393x852.png",
+    "hash": "17832780a935",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__dark__393x852.png",
+    "hash": "42470898733b",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__dark__393x852.png",
+    "hash": "2b1477943048",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__dark__393x852.png",
+    "hash": "2b1477943048",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__dark__393x852.png",
+    "hash": "ca0e11e2c4d8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__dark__393x852.png",
+    "hash": "5d8036ae5570",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__light__1024x768.png",
+    "hash": "49c06b286237",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__light__1024x768.png",
+    "hash": "71b5d1784a28",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__light__1024x768.png",
+    "hash": "2dd92556a49b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__light__1024x768.png",
+    "hash": "354c94dcb526",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__light__1024x768.png",
+    "hash": "2dd92556a49b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__light__1024x768.png",
+    "hash": "2dd92556a49b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__light__1024x768.png",
+    "hash": "2921466614f8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__light__1024x768.png",
+    "hash": "2921466614f8",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__light__1024x768.png",
+    "hash": "2921466614f8",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__light__1024x768.png",
+    "hash": "a56cb83cb625",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__light__1024x768.png",
+    "hash": "fadc84496f1c",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__light__1024x768.png",
+    "hash": "030170e0cc72",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__light__1024x768.png",
+    "hash": "238a09527615",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__light__1024x768.png",
+    "hash": "59755175e812",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__light__1024x768.png",
+    "hash": "15125ffa7bd5",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__light__1024x768.png",
+    "hash": "3a064e45202e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__light__1024x768.png",
+    "hash": "bcb27c0d3c63",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__light__1024x768.png",
+    "hash": "5415443156e8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__light__1024x768.png",
+    "hash": "cd0472198652",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__light__1024x768.png",
+    "hash": "cd0472198652",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__light__1024x768.png",
+    "hash": "943dd6fbd8c6",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__light__1024x768.png",
+    "hash": "da50da9511d9",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__light__1024x768.png",
+    "hash": "44f1066d375f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__light__1024x768.png",
+    "hash": "3406756cce80",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__light__1024x768.png",
+    "hash": "2d8a4a291033",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__light__1024x768.png",
+    "hash": "37dd7f85c19f",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__dark__1024x768.png",
+    "hash": "ec0d62ce9808",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__dark__1024x768.png",
+    "hash": "ff574388a22f",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__dark__1024x768.png",
+    "hash": "1d04dc23323e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__dark__1024x768.png",
+    "hash": "6bafe5d1c331",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__dark__1024x768.png",
+    "hash": "1d04dc23323e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__dark__1024x768.png",
+    "hash": "1d04dc23323e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__dark__1024x768.png",
+    "hash": "f0713c331e3e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__dark__1024x768.png",
+    "hash": "f0713c331e3e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__dark__1024x768.png",
+    "hash": "f0713c331e3e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__dark__1024x768.png",
+    "hash": "0cd11dd7276d",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__dark__1024x768.png",
+    "hash": "395a8939ee48",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__dark__1024x768.png",
+    "hash": "7ab2aac236fa",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__dark__1024x768.png",
+    "hash": "db572993b3e7",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__dark__1024x768.png",
+    "hash": "b31d35c0de16",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__dark__1024x768.png",
+    "hash": "3ef5318f2d52",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__dark__1024x768.png",
+    "hash": "060ed2e4ad23",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__dark__1024x768.png",
+    "hash": "7bf54bd02805",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__dark__1024x768.png",
+    "hash": "a044ca9e35f7",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__dark__1024x768.png",
+    "hash": "75dc22371e56",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__dark__1024x768.png",
+    "hash": "75dc22371e56",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__dark__1024x768.png",
+    "hash": "75e2c0903364",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__dark__1024x768.png",
+    "hash": "fdf5170d11d0",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__dark__1024x768.png",
+    "hash": "1d27b9e571bd",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__dark__1024x768.png",
+    "hash": "ed9725383298",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__dark__1024x768.png",
+    "hash": "6f293e13012c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__dark__1024x768.png",
+    "hash": "914d97be17d5",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__light__1024x768.png",
+    "hash": "9952ee6a5c6e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__light__1024x768.png",
+    "hash": "d854c6b9c621",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__light__1024x768.png",
+    "hash": "42a7cf01c1ee",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__light__1024x768.png",
+    "hash": "16707654875f",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__light__1024x768.png",
+    "hash": "42a7cf01c1ee",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__light__1024x768.png",
+    "hash": "42a7cf01c1ee",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__light__1024x768.png",
+    "hash": "ea0e169bac0b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__light__1024x768.png",
+    "hash": "ea0e169bac0b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__light__1024x768.png",
+    "hash": "ea0e169bac0b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__light__1024x768.png",
+    "hash": "cb8f12bf664a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__light__1024x768.png",
+    "hash": "df2c3c9a8b98",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__light__1024x768.png",
+    "hash": "9c6c9d873e4a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__light__1024x768.png",
+    "hash": "68e4d5c76012",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__light__1024x768.png",
+    "hash": "cc96f44bbcf3",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__light__1024x768.png",
+    "hash": "ede9d069ba7c",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__light__1024x768.png",
+    "hash": "9bff11366f3c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__light__1024x768.png",
+    "hash": "1461c9cd00af",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__light__1024x768.png",
+    "hash": "c29dc29d517f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__light__1024x768.png",
+    "hash": "0cae155b98de",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__light__1024x768.png",
+    "hash": "0cae155b98de",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__light__1024x768.png",
+    "hash": "976682c9b653",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__light__1024x768.png",
+    "hash": "0bf408ca92eb",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__light__1024x768.png",
+    "hash": "343d8441620c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__light__1024x768.png",
+    "hash": "9729096d713e",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__light__1024x768.png",
+    "hash": "5fedf590666a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__light__1024x768.png",
+    "hash": "8c5c021a3788",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__dark__1024x768.png",
+    "hash": "505055958674",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__dark__1024x768.png",
+    "hash": "de309325f130",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__dark__1024x768.png",
+    "hash": "65983e116a7f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__dark__1024x768.png",
+    "hash": "6c745a7a06aa",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__dark__1024x768.png",
+    "hash": "65983e116a7f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__dark__1024x768.png",
+    "hash": "65983e116a7f",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__dark__1024x768.png",
+    "hash": "1669523940cd",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__dark__1024x768.png",
+    "hash": "1669523940cd",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__dark__1024x768.png",
+    "hash": "1669523940cd",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__dark__1024x768.png",
+    "hash": "1aa9e419f0d3",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__dark__1024x768.png",
+    "hash": "d60e3fdf97f5",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__dark__1024x768.png",
+    "hash": "3818364db442",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__dark__1024x768.png",
+    "hash": "bb1f4201d971",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__dark__1024x768.png",
+    "hash": "8ccba5082987",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__dark__1024x768.png",
+    "hash": "e21c5d419673",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__dark__1024x768.png",
+    "hash": "430c8b17f559",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__dark__1024x768.png",
+    "hash": "384812e8ae0f",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__dark__1024x768.png",
+    "hash": "e4391d472ee6",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__dark__1024x768.png",
+    "hash": "62734008fe9d",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__dark__1024x768.png",
+    "hash": "62734008fe9d",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__dark__1024x768.png",
+    "hash": "869035e3820c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__dark__1024x768.png",
+    "hash": "cc1805346481",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__dark__1024x768.png",
+    "hash": "0048aa020b61",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__dark__1024x768.png",
+    "hash": "1aee5797d3a8",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__dark__1024x768.png",
+    "hash": "7098eb4c28c9",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__dark__1024x768.png",
+    "hash": "e716d243e234",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__light__1440x900.png",
+    "hash": "7dd64448833d",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__light__1440x900.png",
+    "hash": "3fadc74136b9",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__light__1440x900.png",
+    "hash": "452cb0b33529",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__light__1440x900.png",
+    "hash": "c342f18713c6",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__light__1440x900.png",
+    "hash": "452cb0b33529",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__light__1440x900.png",
+    "hash": "452cb0b33529",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__light__1440x900.png",
+    "hash": "aa8f9b676164",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__light__1440x900.png",
+    "hash": "aa8f9b676164",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__light__1440x900.png",
+    "hash": "aa8f9b676164",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__light__1440x900.png",
+    "hash": "267d87680225",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__light__1440x900.png",
+    "hash": "28153aff2406",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__light__1440x900.png",
+    "hash": "4217563ed6be",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__light__1440x900.png",
+    "hash": "72ca52661157",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__light__1440x900.png",
+    "hash": "ac986b0ccf01",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__light__1440x900.png",
+    "hash": "4a9ffb1cb5e7",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__light__1440x900.png",
+    "hash": "8c7b15a7dc98",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__light__1440x900.png",
+    "hash": "5404eeb5e099",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__light__1440x900.png",
+    "hash": "7ebce0b89514",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__light__1440x900.png",
+    "hash": "c33fc287ba6a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__light__1440x900.png",
+    "hash": "c33fc287ba6a",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__light__1440x900.png",
+    "hash": "2796eb51b238",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__light__1440x900.png",
+    "hash": "9ad3e31a7306",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__light__1440x900.png",
+    "hash": "2c40e591e275",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__light__1440x900.png",
+    "hash": "63370c9ea864",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__light__1440x900.png",
+    "hash": "f3b402ab13a6",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__light__1440x900.png",
+    "hash": "0c466c56f0be",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__en__dark__1440x900.png",
+    "hash": "f28fc3fa4d84",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__en__dark__1440x900.png",
+    "hash": "4cc6b994fba1",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__en__dark__1440x900.png",
+    "hash": "c6db606c5f7e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__en__dark__1440x900.png",
+    "hash": "861c2b18d7c1",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__en__dark__1440x900.png",
+    "hash": "c6db606c5f7e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__en__dark__1440x900.png",
+    "hash": "c6db606c5f7e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__en__dark__1440x900.png",
+    "hash": "509d49173f0e",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__en__dark__1440x900.png",
+    "hash": "509d49173f0e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__en__dark__1440x900.png",
+    "hash": "509d49173f0e",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__en__dark__1440x900.png",
+    "hash": "ce37fd103a96",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__en__dark__1440x900.png",
+    "hash": "2d3933144696",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__en__dark__1440x900.png",
+    "hash": "9953dc67d795",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__en__dark__1440x900.png",
+    "hash": "4f541ebf798d",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__en__dark__1440x900.png",
+    "hash": "055245eb2de8",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__en__dark__1440x900.png",
+    "hash": "d44c952d717c",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__en__dark__1440x900.png",
+    "hash": "e909251a3ae6",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__en__dark__1440x900.png",
+    "hash": "c5b90c475f79",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__en__dark__1440x900.png",
+    "hash": "eec7bf9e155b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__en__dark__1440x900.png",
+    "hash": "df30ef7fa0de",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__en__dark__1440x900.png",
+    "hash": "df30ef7fa0de",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__en__dark__1440x900.png",
+    "hash": "c1ff2e336fd5",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__en__dark__1440x900.png",
+    "hash": "1c5e65a7d6c3",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__en__dark__1440x900.png",
+    "hash": "3254f611f2f9",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__en__dark__1440x900.png",
+    "hash": "172e9c3abfde",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__en__dark__1440x900.png",
+    "hash": "17cc8b6815ee",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__en__dark__1440x900.png",
+    "hash": "e6dcc24e5dfd",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__light__1440x900.png",
+    "hash": "4550114c3dcd",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__light__1440x900.png",
+    "hash": "4c050862c7cc",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__light__1440x900.png",
+    "hash": "2015bf44cad2",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__light__1440x900.png",
+    "hash": "f2ad4cccda42",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__light__1440x900.png",
+    "hash": "2015bf44cad2",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__light__1440x900.png",
+    "hash": "2015bf44cad2",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__light__1440x900.png",
+    "hash": "6286d3055c7b",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__light__1440x900.png",
+    "hash": "6286d3055c7b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__light__1440x900.png",
+    "hash": "6286d3055c7b",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__light__1440x900.png",
+    "hash": "47736c68aa3c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__light__1440x900.png",
+    "hash": "0d7f18503ade",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__light__1440x900.png",
+    "hash": "f65ee7a9cbfe",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__light__1440x900.png",
+    "hash": "c8ca958f199e",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__light__1440x900.png",
+    "hash": "ee9f24f807cc",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__light__1440x900.png",
+    "hash": "ec7539a61890",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__light__1440x900.png",
+    "hash": "174dba031e01",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__light__1440x900.png",
+    "hash": "693e920b40e6",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__light__1440x900.png",
+    "hash": "35e56869d97a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__light__1440x900.png",
+    "hash": "862e972e24e2",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__light__1440x900.png",
+    "hash": "862e972e24e2",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__light__1440x900.png",
+    "hash": "e2598d94c39c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__light__1440x900.png",
+    "hash": "f3f835d8cc10",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__light__1440x900.png",
+    "hash": "26e09af4a00a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__light__1440x900.png",
+    "hash": "b168db176869",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__light__1440x900.png",
+    "hash": "4b48a3252630",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__light__1440x900.png",
+    "hash": "745472bf30a7",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "azkar",
+  "claim": "C — Azkar reading surface: dhikr + count + Details; Details must NOT increment the count",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__azkar__landing__ar__dark__1440x900.png",
+    "hash": "70c878068e14",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__azkar__details-open__ar__dark__1440x900.png",
+    "hash": "baa1992ea415",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "home",
+  "claim": "D — Home composition; complete absence of decorative Shahada treatment",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__home__landing__ar__dark__1440x900.png",
+    "hash": "72ab091c737f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__home__scrolled__ar__dark__1440x900.png",
+    "hash": "2d260419983d",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "menu",
+  "claim": "§B/§D — main-menu disclosure hierarchy; tail siblings standalone",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "menu-closed",
+    "file": "v5.17.125__menu__menu-closed__ar__dark__1440x900.png",
+    "hash": "72ab091c737f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "menu-open",
+    "file": "v5.17.125__menu__menu-open__ar__dark__1440x900.png",
+    "hash": "72ab091c737f",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "focus",
+  "claim": "C/B — Focus counter: 0/1 -> 1/1 -> next; 3-count variant",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "counter-0",
+    "file": "v5.17.125__focus__counter-0__ar__dark__1440x900.png",
+    "hash": "39f1cba64334",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-1",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-1",
+    "file": "v5.17.125__focus__counter-1__ar__dark__1440x900.png",
+    "hash": "39f1cba64334",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "counter-2",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": "[data-action=\"focus-count\"], .focus__count, .counter__increment"
+   },
+   {
+    "state": "counter-2",
+    "file": "v5.17.125__focus__counter-2__ar__dark__1440x900.png",
+    "hash": "39f1cba64334",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "mushaf",
+  "claim": "B — Mushaf study loop: ayah tap -> study rail; Find on this page",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reading",
+    "file": "v5.17.125__mushaf__reading__ar__dark__1440x900.png",
+    "hash": "c0def77e3fd2",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "ayah-tapped",
+    "file": "v5.17.125__mushaf__ayah-tapped__ar__dark__1440x900.png",
+    "hash": "ca949753db71",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "tafsir",
+  "claim": "A — Tafsir opens with explicit surah:ayah context + edition/author/category above the commentary",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "reader",
+    "file": "v5.17.125__tafsir__reader__ar__dark__1440x900.png",
+    "hash": "d1da4f7f2f07",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "tafsir-open",
+    "file": "v5.17.125__tafsir__tafsir-open__ar__dark__1440x900.png",
+    "hash": "c6576bf0e87b",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "hadith",
+  "claim": "E — Hadith reading-first with Details disclosure + Reference inside",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__hadith__landing__ar__dark__1440x900.png",
+    "hash": "55622d3bdc0a",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "details-open",
+    "file": "v5.17.125__hadith__details-open__ar__dark__1440x900.png",
+    "hash": "12ee45e14a1d",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "prayer",
+  "claim": "F — Prayer methodology disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__prayer__landing__ar__dark__1440x900.png",
+    "hash": "099f095b7a38",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "method-open",
+    "file": "v5.17.125__prayer__method-open__ar__dark__1440x900.png",
+    "hash": "61790088f39d",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "quran-invalid",
+  "claim": "A/§A — invalid Qur'an deep link must NOT load forever",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "after-3s",
+    "file": "v5.17.125__quran-invalid__after-3s__ar__dark__1440x900.png",
+    "hash": "60444a41869c",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "player",
+  "claim": "K — full-surah player: transport primary; repeat/speed/mute/sleep/mode in a disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "collapsed",
+    "file": "v5.17.125__player__collapsed__ar__dark__1440x900.png",
+    "hash": "8dea7186100f",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "more-open",
+    "verdict": "NO SELECTOR MATCH",
+    "selector": ".player-bar__more > summary, [data-action=\"player-more\"]"
+   },
+   {
+    "state": "more-open",
+    "file": "v5.17.125__player__more-open__ar__dark__1440x900.png",
+    "hash": "8dea7186100f",
+    "changed": false,
+    "verdict": "UNVERIFIED — identical to the previous state",
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "settings",
+  "claim": "L — Settings; long reciter metadata; Setup disclosure (v5.17.122)",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__settings__landing__ar__dark__1440x900.png",
+    "hash": "eb44f5a8d2b1",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.125__settings__scrolled__ar__dark__1440x900.png",
+    "hash": "d233a4250df9",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "statistics",
+  "claim": "H — progressive disclosure open/close",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__statistics__landing__ar__dark__1440x900.png",
+    "hash": "7a56e482a2a1",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__statistics__disclosure-open__ar__dark__1440x900.png",
+    "hash": "a6cfb4c317ae",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ },
+ {
+  "route": "offline",
+  "claim": "I — Offline management disclosure",
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "states": [
+   {
+    "state": "landing",
+    "file": "v5.17.125__offline__landing__ar__dark__1440x900.png",
+    "hash": "4068fc3d6884",
+    "changed": "n/a (first)",
+    "overflow": 0,
+    "offscreen": []
+   },
+   {
+    "state": "disclosure-open",
+    "file": "v5.17.125__offline__disclosure-open__ar__dark__1440x900.png",
+    "hash": "541de165672d",
+    "changed": true,
+    "overflow": 0,
+    "offscreen": []
+   }
+  ],
+  "errors": []
+ }
+]

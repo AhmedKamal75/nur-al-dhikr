@@ -397,7 +397,7 @@ export function renderStatistics(state) {
     ${
       hasAnyData
         ? `
-    <div class="stat-grid">
+    <div class="stat-grid statistics-overview">
       <div class="stat-card">
         <span class="stat-card__value">${stats.totalRecitations}</span>
         <span class="stat-card__label">${t('stats.totalRecitations', lang)}</span>
@@ -411,36 +411,47 @@ export function renderStatistics(state) {
         <span class="stat-card__label">${t('stats.currentStreak', lang)} (${t('stats.days', lang)})</span>
       </div>
       <div class="stat-card">
-        <span class="stat-card__value">${stats.longestStreak}</span>
-        <span class="stat-card__label">${t('stats.longestStreak', lang)}</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-card__value">${totalInLastDays(stats, 30)}</span>
-        <span class="stat-card__label">${t('stats.month', lang)}</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-card__value">${averagePerDay(stats, 30)}</span>
-        <span class="stat-card__label">${t('stats.avgPerDay', lang)}</span>
-      </div>
-      <div class="stat-card">
         <span class="stat-card__value">${activeDays(stats)}</span>
         <span class="stat-card__label">${t('stats.activeDays', lang)}</span>
       </div>
     </div>
 
-    <a class="stat-garden-link" href="${buildHash(VIEWS.GARDEN)}" data-action="navigate" data-view="${VIEWS.GARDEN}">
-      ${icon('sprout', { size: 18 })}
-      <span>${t('garden.invite', lang)}</span>
-      ${icon('chevronRight', { size: 16 })}
-    </a>
+    <div class="statistics-links">
+      <a class="stat-garden-link" href="${buildHash(VIEWS.GARDEN)}" data-action="navigate" data-view="${VIEWS.GARDEN}">
+        ${icon('sprout', { size: 18 })}
+        <span>${t('garden.invite', lang)}</span>
+        ${icon('chevronRight', { size: 16 })}
+      </a>
 
-    <a class="stat-garden-link" href="${buildHash(VIEWS.CERTIFICATE)}" data-action="navigate" data-view="${VIEWS.CERTIFICATE}">
-      ${icon('award', { size: 18 })}
-      <span>${t('stats.viewCertificate', lang)}</span>
-      ${icon('chevronRight', { size: 16 })}
-    </a>
+      <a class="stat-garden-link" href="${buildHash(VIEWS.CERTIFICATE)}" data-action="navigate" data-view="${VIEWS.CERTIFICATE}">
+        ${icon('award', { size: 18 })}
+        <span>${t('stats.viewCertificate', lang)}</span>
+        ${icon('chevronRight', { size: 16 })}
+      </a>
+    </div>
 
-    <section class="panel">
+    <details class="statistics-details">
+      <summary class="statistics-details__summary">
+        <span class="statistics-details__title">${t('stats.detailsTitle', lang)}</span>
+        <span class="statistics-details__meta">${t('stats.longestStreak', lang)}: ${stats.longestStreak}</span>
+      </summary>
+      <div class="statistics-details__body">
+        <div class="stat-grid statistics-overview statistics-overview--secondary">
+          <div class="stat-card">
+            <span class="stat-card__value">${stats.longestStreak}</span>
+            <span class="stat-card__label">${t('stats.longestStreak', lang)}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__value">${totalInLastDays(stats, 30)}</span>
+            <span class="stat-card__label">${t('stats.month', lang)}</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card__value">${averagePerDay(stats, 30)}</span>
+            <span class="stat-card__label">${t('stats.avgPerDay', lang)}</span>
+          </div>
+        </div>
+
+        <section class="panel">
       <div class="panel__header"><h2>${t('stats.goalTitle', lang)}</h2></div>
       <p class="stat-goal__line" dir="ltr">${goal.today} / ${goal.goal}</p>
       <div class="stat-goal__bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${goal.pct}" aria-label="${t('stats.goalTitle', lang)}">
@@ -526,6 +537,8 @@ export function renderStatistics(state) {
     </section>`
         : ''
     }
+      </div>
+    </details>
     `
         : emptyStateHTML({
             iconName: 'stats',

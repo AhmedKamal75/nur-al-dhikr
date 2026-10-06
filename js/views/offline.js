@@ -120,37 +120,45 @@ export function renderOffline(state) {
 
     ${backupSummaryHTML(state, { variant: 'offline' })}
 
-    <section class="panel">
-      <div class="panel__header"><h2>${t('offline.groupsTitle', lang)}</h2></div>
-      ${rows}
-    </section>
+    <details class="offline-management-disclosure">
+      <summary class="offline-management-disclosure__summary">
+        <span class="offline-management-disclosure__title">${t('offline.manageTitle', lang)}</span>
+        <span class="offline-management-disclosure__meta">${escapeHTML(t('offline.manageMeta', lang, { mb: totalMB }))}</span>
+      </summary>
+      <div class="offline-management-disclosure__body">
+        <section class="panel">
+          <div class="panel__header"><h2>${t('offline.groupsTitle', lang)}</h2></div>
+          ${rows}
+        </section>
 
-    <section class="panel">
-      <div class="panel__header"><h2>${t('offline.storageModeTitle', lang)}</h2></div>
-      <p class="panel__subtext">${t('offline.storageModeBody', lang)}</p>
-      <p class="panel__subtext">${t('offline.clearStudyBody', lang)}</p>
-      <button type="button" class="btn btn--secondary btn--sm" data-action="offline-clear-study" ${running ? 'disabled' : ''}>${icon('trash', { size: 14 })} ${escapeHTML(t('offline.clearStudy', lang))}</button>
-      <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
-        <span class="mushaf-sheet__label">${t('offline.compressedLabel', lang)}</span>
-        <span class="switch">
-          <input type="checkbox" data-action="offline-toggle-compressed" ${compressed ? 'checked' : ''} ${running ? 'disabled' : ''} />
-          <span class="switch__track"></span>
-        </span>
-      </label>
-      <p class="panel__subtext">${t('offline.essentialsBody', lang)}</p>
-      <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
-        <span class="mushaf-sheet__label">${t('offline.essentialsLabel', lang)}</span>
-        <span class="switch">
-          <input type="checkbox" data-action="offline-toggle-essentials-auto" ${essentialsAuto ? 'checked' : ''} />
-          <span class="switch__track"></span>
-        </span>
-      </label>
-    </section>
+        <section class="panel">
+          <div class="panel__header"><h2>${t('offline.storageModeTitle', lang)}</h2></div>
+          <p class="panel__subtext">${t('offline.storageModeBody', lang)}</p>
+          <p class="panel__subtext">${t('offline.clearStudyBody', lang)}</p>
+          <button type="button" class="btn btn--secondary btn--sm" data-action="offline-clear-study" ${running ? 'disabled' : ''}>${icon('trash', { size: 14 })} ${escapeHTML(t('offline.clearStudy', lang))}</button>
+          <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
+            <span class="mushaf-sheet__label">${t('offline.compressedLabel', lang)}</span>
+            <span class="switch">
+              <input type="checkbox" data-action="offline-toggle-compressed" ${compressed ? 'checked' : ''} ${running ? 'disabled' : ''} />
+              <span class="switch__track"></span>
+            </span>
+          </label>
+          <p class="panel__subtext">${t('offline.essentialsBody', lang)}</p>
+          <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
+            <span class="mushaf-sheet__label">${t('offline.essentialsLabel', lang)}</span>
+            <span class="switch">
+              <input type="checkbox" data-action="offline-toggle-essentials-auto" ${essentialsAuto ? 'checked' : ''} />
+              <span class="switch__track"></span>
+            </span>
+          </label>
+        </section>
 
-    <section class="panel">
-      <div class="panel__header"><h2>${t('offline.audioTitle', lang)}</h2></div>
-      <p class="panel__subtext">${t('offline.audioBody', lang)}</p>
-      <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.AUDIO)}" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 14 })} ${t('offline.audioOpen', lang)}</a>
-    </section>
+        <section class="panel">
+          <div class="panel__header"><h2>${t('offline.audioTitle', lang)}</h2></div>
+          <p class="panel__subtext">${t('offline.audioBody', lang)}</p>
+          <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.AUDIO)}" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 14 })} ${t('offline.audioOpen', lang)}</a>
+        </section>
+      </div>
+    </details>
   </section>`;
 }

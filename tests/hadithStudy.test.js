@@ -76,13 +76,14 @@ describe('hadithNarrator precedence', () => {
 });
 
 describe('hadith card + guide strings', () => {
-  test('narrator line and enriched grade chip render', () => {
+  test('narrator details and enriched grade chip render', () => {
     const html = hadithCardHTML(
       { n: 1, ar: 'نص', en: "Narrated 'Umar: ...", grade: 'hasan' },
       { lang: 'en', bookId: 'bukhari' }
     );
-    assert.match(html, /hadith-card__narrator/, 'narrator line');
-    assert.match(html, /Narrated by/, 'label');
+    assert.match(html, /hadith-card__details/, 'details disclosure');
+    assert.match(html, /Narrator/, 'narrator label');
+    assert.match(html, /&#39;Umar/, 'narrator value');
     assert.match(html, /chip--grade-hasan/, 'enriched grade chip');
   });
 

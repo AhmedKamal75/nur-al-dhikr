@@ -25,6 +25,7 @@ export function hadithCardHTML(
   {
     lang,
     sectionName = '',
+    sectionId = '',
     isTarget = false,
     showTranslation = true,
     showArabic = true,
@@ -32,6 +33,7 @@ export function hadithCardHTML(
     bookId = '',
     bookmarked = false,
     note = '',
+    bookName = '',
     memorizing = false,
     memRevealed = false,
     memDue = '',
@@ -46,9 +48,7 @@ export function hadithCardHTML(
   // (validator pass-through; shipped rows carry none, so this is idle
   // until graded files ship — never invented).
   const narrator = hadithNarrator(h, lang);
-  const narratorLine = narrator
-    ? `<p class="hadith-card__narrator" dir="auto">${t('hadith.narratedBy', lang, { name: narrator })}</p>`
-    : '';
+  const hasReference = Boolean(bookName || h.n);
   const gradeChip =
     typeof h.grade === 'string' && ['sahih', 'hasan', 'daif', 'mawdu'].includes(h.grade)
       ? `<span class="chip chip--grade chip--grade-${h.grade}" title="${t(`hadith.grade.${h.grade}`, lang)}">${t(`hadith.grade.${h.grade}Short`, lang)}</span>`
@@ -91,10 +91,28 @@ export function hadithCardHTML(
           : ''
       }
     </div>
-    ${narratorLine}
     ${arabicBlock}
     ${h.en && showTranslation && lang !== 'ar' ? `<p class="hadith-card__translation" dir="ltr">${highlightMatch(h.en, hl)}</p>` : ''}
-    ${hasNote ? `<p class="hadith-card__note" dir="auto"><span class="hadith-card__note-label">${t('hadith.note', lang)}</span> ${escapeHTML(note)}</p>` : ''}
+    ${
+      hasReference ||
+      sectionName ||
+      narrator ||
+      (typeof h.grade === 'string' && ['sahih', 'hasan', 'daif', 'mawdu'].includes(h.grade)) ||
+      hasNote
+        ? `
+    <details class="disclosure card__disclosure hadith-card__details">
+      <summary class="disclosure__summary">${t('hadith.details', lang)}</summary>
+      <dl class="disclosure__list">
+        ${bookName ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.collection', lang)}</dt><dd class="disclosure__def" dir="auto">${escapeHTML(bookName)}</dd></div>` : ''}
+        ${hasReference ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.reference', lang)}</dt><dd class="disclosure__def" dir="auto">${escapeHTML(bookName ? `${bookName} · #${num}` : `#${num}`)}</dd></div>` : ''}
+        ${sectionName ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.chapter', lang)}</dt><dd class="disclosure__def" dir="auto"${sectionId ? ` data-section-id="${escapeHTML(sectionId)}"` : ''}>${escapeHTML(sectionName)}</dd></div>` : ''}
+        ${narrator ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.narrator', lang)}</dt><dd class="disclosure__def" dir="auto">${escapeHTML(narrator)}</dd></div>` : ''}
+        ${typeof h.grade === 'string' && ['sahih', 'hasan', 'daif', 'mawdu'].includes(h.grade) ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.gradeLabel', lang)}</dt><dd class="disclosure__def">${t(`hadith.grade.${h.grade}`, lang)}</dd></div>` : ''}
+        ${hasNote ? `<div class="disclosure__row"><dt class="disclosure__term">${t('hadith.note', lang)}</dt><dd class="disclosure__def" dir="auto">${escapeHTML(note)}</dd></div>` : ''}
+      </dl>
+    </details>`
+        : ''
+    }
     ${memRow}
     <div class="hadith-card__actions">
       <button type="button" class="icon-btn icon-btn--sm${bookmarked ? ' icon-btn--active' : ''}" data-action="hadith-bookmark" data-book-id="${escapeHTML(bookId)}" data-n="${escapeHTML(num)}" aria-pressed="${bookmarked}" aria-label="${t(bookmarked ? 'hadith.unbookmark' : 'hadith.bookmark', lang)}" title="${t(bookmarked ? 'hadith.unbookmark' : 'hadith.bookmark', lang)}">${icon('bookmark', { size: 15 })}</button>
@@ -131,6 +149,7 @@ export function dailyHadithCardHTML(state) {
       const memKey = state.hadith.bookView?.memorizeKey || null;
       return hadithCardHTML(h, {
         lang,
+        bookName: bookMeta ? pickLocale(bookMeta.name, lang) : '',
         showTranslation: state.settings.showTranslation,
         bookId: daily.bookId,
         bookmarked: (state.hadithBookmarks || []).includes(key),

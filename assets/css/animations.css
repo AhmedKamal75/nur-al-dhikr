@@ -264,6 +264,20 @@ button.chip:active,
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+
+  .nav__item:active,
+  .nav-mobile-bar__item:active,
+  button.chip:active,
+  .counter-pill:active,
+  .category-tile:active,
+  .mood-tile:active,
+  .collection-tile:active,
+  .surah-tile:active,
+  .quick-action:active,
+  .icon-btn:active,
+  .btn:active {
+    transform: none !important;
+  }
 }
 
 /* ==========================================================================

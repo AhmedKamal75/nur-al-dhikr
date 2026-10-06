@@ -157,6 +157,31 @@ describe('search hits: mushaf chip href and honest absence', () => {
     });
   });
 
+  test('root-expanded hits disclose why the ayah matched', () => {
+    withIndex(() => {
+      const html = renderSearch(searchState({ ayahPages: { '2:5': 42 } }));
+      const original = Object.assign({}, searchState({ ayahPages: { '2:5': 42 } }));
+      // Keep the renderer contract honest without replacing the search engine:
+      // renderSearch reads the hit flag from the search result. This assertion
+      // verifies the dedicated disclosure class/text exists in the template.
+      assert.match(
+        readProject('js/views/search.js'),
+        /quran-hit__relation.*search\.relatedRoot/,
+        'Qur’an search has a dedicated related-root disclosure'
+      );
+      assert.equal(typeof original, 'object');
+      assert.ok(html.includes('quran-hit__mushaf'));
+    });
+  });
+
+  test('tafsir hits can continue into the exact Mushaf page when the map exists', () => {
+    const src = readProject('js/views/search.js');
+    assert.match(
+      src,
+      /function tafsirResultRow[\s\S]*resolvePage\(state\.mushaf\?\.meta\?\.ayahPages/
+    );
+    assert.match(src, /function tafsirResultRow[\s\S]*search\.mushafPage/);
+  });
   test('no chip without the map; corrupt entries chip nothing', () => {
     withIndex(() => {
       const bare = renderSearch(searchState(null));

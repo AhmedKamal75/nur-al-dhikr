@@ -244,3 +244,26 @@ describe('tasbih view: customs render + authoring form', () => {
     assert.ok(html.includes('x&quot; onmouseover=&quot;alert(1)'), 'id escaped in stage attrs');
   });
 });
+
+describe('v5.17.110: Tasbih secondary controls stay behind options', () => {
+  test('custom authoring and target controls are not part of the immediate counter surface', async () => {
+    const { renderTasbih } = await import('../js/views/tasbih.js');
+    const state = {
+      settings: { language: 'en' },
+      tasbih: { activeItemId: 'subhanallah' },
+      tasbihCustom: [],
+      statistics: { totalRecitations: 0 },
+      counters: {},
+      ui: {},
+    };
+    const html = renderTasbih(state);
+    const stage = html.match(
+      /<div class=\"tasbih-stage[\s\S]*?<\/div>\s*<div class=\"tasbih-controls/
+    );
+    assert.ok(stage, 'counting stage remains before controls');
+    assert.match(html, /class=\"panel tasbih-options\"/);
+    assert.match(html, /Counter options/);
+    assert.match(html, /data-action=\"tasbih-custom-save\"/);
+    assert.match(html, /data-action=\"tasbih-target-set\"/);
+  });
+});

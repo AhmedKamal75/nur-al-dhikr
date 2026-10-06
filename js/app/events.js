@@ -520,6 +520,16 @@ export function bindGlobalEvents() {
       return;
     }
     const action = target.dataset.action;
+    // Card bodies are count targets, but native <details>/<summary> is a
+    // nested reading affordance. A summary click must stay a disclosure
+    // action; it must never bubble into the card's counter-tap handler.
+    if (
+      action === 'counter-tap' &&
+      target.matches('.card[data-action=\"counter-tap\"]') &&
+      e.target.closest?.('details')
+    ) {
+      return;
+    }
     if (action === 'modal-close-overlay') return;
     // Kids exit has no tap handler on purpose — but repeated taps mean a
     // grown-up who missed the hint. After 3 taps in 6s, say plainly that

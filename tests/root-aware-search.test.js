@@ -127,14 +127,14 @@ function viewState(q, extra = {}) {
   };
 }
 
-test('view: roots tier renders honest empty naming the root index when unmatched', () => {
+test('view: roots tier stays silent when no root matches', () => {
   resetQuranIndex();
   buildQuranIndex(VIEW_DOCS);
   setQuranIndexReady(true);
   try {
     const html = renderSearch(viewState('zzzqqq'));
-    assert.match(html, /From the word roots/);
-    assert.match(html, /Searched the root index — nothing matched/);
+    assert.doesNotMatch(html, /roots-search-panel/);
+    assert.doesNotMatch(html, /Searched the root index — nothing matched/);
   } finally {
     setQuranIndexReady(false);
     resetQuranIndex();

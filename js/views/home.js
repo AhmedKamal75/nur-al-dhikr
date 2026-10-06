@@ -68,22 +68,6 @@ export function quickTilesHTML(tileIds, lang, nowWindow) {
 /** Forward/CTA chevron: points with the reading direction (U7 rule). */
 const goIcon = (lang, size) => icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size });
 
-/**
- * (v5.17.6) The Shahada banner: a black Rayah-style strip carrying the
- * fixed Arabic wording (never translated — it is quoted revelation, not
- * UI chrome). Pure template; the wording is pinned by
- * tests/shahada-banner.test.js so no edit, theme, or translation pass
- * can silently alter a single letter.
- */
-export const SHAHADA_TEXT = 'لا إله إلا الله محمد رسول الله';
-export function shahadaBannerHTML(lang) {
-  return `
-    <div class="shahada-banner" role="img" aria-label="${escapeHTML(t('banner.shahadaLabel', lang))}">
-      <span class="shahada-banner__rule" aria-hidden="true"></span>
-      <p class="shahada-banner__text" dir="rtl" lang="ar">${SHAHADA_TEXT}</p>
-      <span class="shahada-banner__rule" aria-hidden="true"></span>
-    </div>`;
-}
 import { recommendedAdhkarWindow } from '../domain/adhkarTiming.js';
 import {
   calculateTimes,
@@ -93,7 +77,6 @@ import {
   formatClock,
   prayerMethodLine,
 } from '../domain/prayer.js';
-import { onboardingPanelHTML } from './onboardingPanel.js';
 import { dailyHadithCardHTML } from './hadithCard.js';
 import { countMemorized, dueCounts, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
 import { worshipTodayRows } from '../domain/worship.js';
@@ -1118,12 +1101,6 @@ export function renderHome(state) {
     <section class="panel panel--reflection">
       <div class="panel__header"><h2>${t('home.verseOfTheDay', lang)}</h2></div>
       ${cardHTML(daily.item, daily.category, { lang, isFavorite: selectors.isFavorite(state, daily.item.id), isSpeaking: state.speakingItemId === daily.item.id, isPlayingAudio: state.dhikrAudioItemId === daily.item.id, counter: selectors.getCounter(state, daily.item.id), showTransliteration: state.settings.showTransliteration, showTranslation: state.settings.showTranslation, compact: true, fields: fieldTogglesFor(state, daily.document?.metadata?.id) })}
-      <div class="chip-row chip-row--scroll" role="group" aria-label="${escapeHTML(t('home.verseTheme', lang))}">
-        ${DAILY_THEMES.map(
-          (th) => `
-        <button type="button" class="chip chip--sm ${state.settings.dailyAyahTheme === th || (!state.settings.dailyAyahTheme && th === 'any') ? 'chip--active' : ''}" data-action="set-setting" data-key="dailyAyahTheme" data-value="${th}" aria-pressed="${state.settings.dailyAyahTheme === th || (!state.settings.dailyAyahTheme && th === 'any')}">${escapeHTML(t(`home.theme.${th}`, lang))}</button>`
-        ).join('')}
-      </div>
     </section>`
       : '',
     hadith: dailyHadithCardHTML(state),
@@ -1249,7 +1226,6 @@ export function renderHome(state) {
           : ''
       }
       ${nudgeCardHTML(state)}
-      ${onboardingPanelHTML(state, lang)}
       ${
         supportingPanels
           ? `<section class="home-section home-section--supporting">
@@ -1259,7 +1235,6 @@ export function renderHome(state) {
       }
     </div>
 
-    ${shahadaBannerHTML(lang)}
   </section>`;
 }
 

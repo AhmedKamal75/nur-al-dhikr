@@ -91,45 +91,58 @@ function fastingPanelHTML(state, lang, today) {
       </div>`
     : '';
 
+  const todaySummary = todayFasted ? t('fasting.fasted', lang) : t('fasting.markFasted', lang);
+  const countSummary = counts.thisHijriYear
+    ? t('fasting.countYear', lang, { n: counts.thisHijriYear })
+    : t('fasting.count', lang, { n: counts.total });
+
   return `
-    <section class="panel panel--fasting" id="calendar-fasting">
-      <div class="panel__header"><h2>${icon('sun', { size: 16 })} ${t('fasting.title', lang)}</h2></div>
-      <p class="panel__subtext">
-        ${t('fasting.count', lang, { n: counts.total })}${counts.thisHijriYear ? ` · ${t('fasting.countYear', lang, { n: counts.thisHijriYear })}` : ''}
-      </p>
-      ${catRows}
-      <div class="fast-row fast-row--time">
-        <span class="fast-row__text">
-          <span class="fast-row__name">${t('fasting.remindTime', lang)}</span>
-        </span>
-        <button type="button" class="chip" data-action="fasting-cycle-remind-time" dir="ltr" aria-label="${t('fasting.remindTime', lang)}">${prefs.remindTime}</button>
-      </div>
-      ${
-        anyRemind && perm !== 'granted'
-          ? `<button type="button" class="btn btn--secondary btn--sm" data-action="ramadan-enable-notifications">${t('ramadan.enableNotifications', lang)}</button>`
-          : ''
-      }
-      <p class="panel__subtext">${t('fasting.sharedLogNote', lang)}</p>
-    </section>
+    <details class="calendar-secondary-disclosure" id="calendar-fasting">
+      <summary class="calendar-secondary-disclosure__summary">
+        <span class="calendar-secondary-disclosure__title">${icon('sun', { size: 16 })} ${t('fasting.title', lang)}</span>
+        <span class="calendar-secondary-disclosure__meta">${escapeHTML(todaySummary)} · ${escapeHTML(countSummary)}</span>
+      </summary>
+      <div class="calendar-secondary-disclosure__body">
+        <section class="panel panel--fasting">
+          <div class="panel__header"><h2>${icon('sun', { size: 16 })} ${t('fasting.title', lang)}</h2></div>
+          <p class="panel__subtext">
+            ${t('fasting.count', lang, { n: counts.total })}${counts.thisHijriYear ? ` · ${t('fasting.countYear', lang, { n: counts.thisHijriYear })}` : ''}
+          </p>
+          ${catRows}
+          <div class="fast-row fast-row--time">
+            <span class="fast-row__text">
+              <span class="fast-row__name">${t('fasting.remindTime', lang)}</span>
+            </span>
+            <button type="button" class="chip" data-action="fasting-cycle-remind-time" dir="ltr" aria-label="${t('fasting.remindTime', lang)}">${prefs.remindTime}</button>
+          </div>
+          ${
+            anyRemind && perm !== 'granted'
+              ? `<button type="button" class="btn btn--secondary btn--sm" data-action="ramadan-enable-notifications">${t('ramadan.enableNotifications', lang)}</button>`
+              : ''
+          }
+          <p class="panel__subtext">${t('fasting.sharedLogNote', lang)}</p>
+        </section>
 
-    <section class="panel panel--fasting-days">
-      <div class="panel__header"><h2>${t('fasting.todayTitle', lang)}</h2></div>
-      <div class="fast-row">
-        <span class="fast-row__text">
-          <span class="fast-row__name">${t('calendar.today', lang)} — ${hToday.day} ${escapeHTML(hToday.monthName[lang] || hToday.monthName.en)}</span>
-          ${todayCats.length ? `<span class="fast-row__hint">${todayCats.map((c) => t(`fasting.cat.${c}`, lang)).join(' · ')}</span>` : ''}
-        </span>
-        <button type="button" class="chip ${todayFasted ? 'chip--active' : ''}" data-action="ramadan-toggle-fast" data-log-key="${todayLogKey}" data-day="${hToday.day}" aria-pressed="${todayFasted}">
-          ${todayFasted ? t('fasting.fasted', lang) : t('fasting.markFasted', lang)}
-        </button>
-      </div>
-    </section>
+        <section class="panel panel--fasting-days">
+          <div class="panel__header"><h2>${t('fasting.todayTitle', lang)}</h2></div>
+          <div class="fast-row">
+            <span class="fast-row__text">
+              <span class="fast-row__name">${t('calendar.today', lang)} — ${hToday.day} ${escapeHTML(hToday.monthName[lang] || hToday.monthName.en)}</span>
+              ${todayCats.length ? `<span class="fast-row__hint">${todayCats.map((c) => t(`fasting.cat.${c}`, lang)).join(' · ')}</span>` : ''}
+            </span>
+            <button type="button" class="chip ${todayFasted ? 'chip--active' : ''}" data-action="ramadan-toggle-fast" data-log-key="${todayLogKey}" data-day="${hToday.day}" aria-pressed="${todayFasted}">
+              ${todayFasted ? t('fasting.fasted', lang) : t('fasting.markFasted', lang)}
+            </button>
+          </div>
+        </section>
 
-    <section class="panel panel--fasting-upcoming">
-      <div class="panel__header"><h2>${t('fasting.next', lang)}</h2></div>
-      ${upcomingRows}
-      ${recentChips ? `<p class="panel__subtext">${t('fasting.history', lang)}</p>${recentChips}` : ''}
-    </section>`;
+        <section class="panel panel--fasting-upcoming">
+          <div class="panel__header"><h2>${t('fasting.next', lang)}</h2></div>
+          ${upcomingRows}
+          ${recentChips ? `<p class="panel__subtext">${t('fasting.history', lang)}</p>${recentChips}` : ''}
+        </section>
+      </div>
+    </details>`;
 }
 
 function parseMonthParam(param) {

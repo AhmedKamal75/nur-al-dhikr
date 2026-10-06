@@ -4,8 +4,8 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 Read this file first. It is deliberately short: the spine, the lookup tables and the counted inventories. For one specific module’s exports, one `data-action`’s handler, or one keyword’s owners, read the exhaustive dump next.
 
-- js modules: 243 — data files: 27 — tests: 258
-- exhaustive dump: `docs/agent-map-full.md` (528 entries)
+- js modules: 244 — data files: 27 — tests: 272
+- exhaustive dump: `docs/agent-map-full.md` (543 entries)
 
 ## 1. The spine: chrome section → routes → view module
 
@@ -16,29 +16,29 @@ Seven sections own the chrome. Each row is derived from `js/core/config/nav.js` 
 | 1   | `nav.home`          | `HOME` → `#/home`           | HOME → `js/views/home.js`                                                       | 1   | — (is the tap)            |
 | 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | LIBRARY → `js/views/library.js`                                                 | 1   | — (is the tap)            |
 | 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | CATEGORY _(tile-depth)_ → `js/views/category.js`                                | 1   | `main-menu`               |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | MOOD _(title.mood)_ → `js/views/mood.js`                                        | 1   | `main-menu`               |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | FOCUS _(title.focus)_ → `js/views/focus.js`                                     | 2   | `main-menu`               |
-| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | COLLECTIONS _(title.collections)_ → `js/views/collections.js`                   | 2   | `main-menu`               |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | MOOD (`title.mood`) → `js/views/mood.js`                                        | 1   | `main-menu`               |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | FOCUS (`title.focus`) → `js/views/focus.js`                                     | 2   | `main-menu`               |
+| 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | COLLECTIONS (`title.collections`) → `js/views/collections.js`                   | 2   | `main-menu`               |
 | 2   | `nav.azkar`         | `LIBRARY` → `#/library`     | COLLECTION _(tile-depth)_ → `js/views/collection.js`                            | 3   | `azkar-collections-panel` |
 | 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | MUSHAF → `js/views/mushafReader.js` _(lazy)_                                    | 1   | — (is the tap)            |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | QURAN _(quran.modeList)_ → `js/views/quran.js` _(lazy)_                         | 2   | `main-menu`               |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | ROOTS _(quran.modeWord)_ → `js/views/roots.js` _(lazy)_                         | 2   | `main-menu`               |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | AUDIO _(nav.audio)_ → `js/views/audioManager.js` _(lazy)_                       | 2   | `main-menu`               |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | TAJWEED_COURSE _(nav.tajweedCourse)_ → `js/views/tajweedCourseView.js` _(lazy)_ | 2   | `main-menu`               |
-| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | MUTASHABIHAT _(mutashabihat.title)_ → `js/views/mutashabihat.js` _(lazy)_       | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | QURAN (`quran.modeList`) → `js/views/quran.js` _(lazy)_                         | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | ROOTS (`quran.modeWord`) → `js/views/roots.js` _(lazy)_                         | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | AUDIO (`nav.audio`) → `js/views/audioManager.js` _(lazy)_                       | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | TAJWEED_COURSE (`nav.tajweedCourse`) → `js/views/tajweedCourseView.js` _(lazy)_ | 2   | `main-menu`               |
+| 3   | `nav.quran`         | `MUSHAF` → `#/mushaf`       | MUTASHABIHAT (`mutashabihat.title`) → `js/views/mutashabihat.js` _(lazy)_       | 2   | `main-menu`               |
 | 4   | `nav.hadith`        | `HADITH` → `#/hadith`       | HADITH → `js/views/hadith.js` _(lazy)_                                          | 1   | — (is the tap)            |
 | 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | PRAYER → `js/views/prayer.js`                                                   | 1   | — (is the tap)            |
-| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | QIBLA _(nav.qibla)_ → `js/views/qibla.js`                                       | 2   | `main-menu`               |
-| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | CALENDAR _(nav.calendar)_ → `js/views/calendar.js`                              | 2   | `main-menu`               |
-| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | RAMADAN _(nav.ramadan)_ → `js/views/ramadan.js`                                 | 2   | `main-menu`               |
+| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | QIBLA (`nav.qibla`) → `js/views/qibla.js`                                       | 2   | `main-menu`               |
+| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | CALENDAR (`nav.calendar`) → `js/views/calendar.js`                              | 2   | `main-menu`               |
+| 5   | `nav.prayer`        | `PRAYER` → `#/prayer`       | RAMADAN (`nav.ramadan`) → `js/views/ramadan.js`                                 | 2   | `main-menu`               |
 | 6   | `nav.practise`      | `TASBIH` → `#/tasbih`       | TASBIH → `js/views/tasbih.js`                                                   | 1   | — (is the tap)            |
-| 6   | `nav.practise`      | `TASBIH` → `#/tasbih`       | QUIZ _(quiz.title)_ → `js/views/quiz.js` _(lazy)_                               | 2   | `main-menu`               |
+| 6   | `nav.practise`      | `TASBIH` → `#/tasbih`       | QUIZ (`quiz.title`) → `js/views/quiz.js` _(lazy)_                               | 2   | `main-menu`               |
 | 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | CHECKLIST → `js/views/checklist.js`                                             | 1   | — (is the tap)            |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | GARDEN _(you.growth)_ → `js/views/garden.js` _(lazy)_                           | 2   | `main-menu`               |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | FAVORITES _(nav.favorites)_ → `js/views/favorites.js`                           | 2   | `main-menu`               |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | JOURNAL _(journal.title)_ → `js/views/journal.js` _(lazy)_                      | 2   | `main-menu`               |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | STATISTICS _(nav.statistics)_ → `js/views/statistics.js` _(lazy)_               | 2   | `main-menu`               |
-| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | CERTIFICATE _(certificate.title)_ → `js/views/certificate.js` _(lazy)_          | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | GARDEN (`you.growth`) → `js/views/garden.js` _(lazy)_                           | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | FAVORITES (`nav.favorites`) → `js/views/favorites.js`                           | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | JOURNAL (`journal.title`) → `js/views/journal.js` _(lazy)_                      | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | STATISTICS (`nav.statistics`) → `js/views/statistics.js` _(lazy)_               | 2   | `main-menu`               |
+| 7   | `nav.you`           | `CHECKLIST` → `#/checklist` | CERTIFICATE (`certificate.title`) → `js/views/certificate.js` _(lazy)_          | 2   | `main-menu`               |
 
 _(tile-depth)_ members need a parameter, so a bare link answers an honest 404 and the drawer offers no direct row for them — the section landing's own tiles carry them. _(lazy)_ routes are `import()`-ed on first visit, not statically imported.
 
@@ -77,14 +77,14 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 | `js/domain`       | pure logic: no DOM, no store; core-only imports (compass sensor excepted).   | 72      | [open](agent-map-full.md#domain)       |
 | `js/services`     | side-effect owners: audio, notifications, persistence helpers.               | 27      | [open](agent-map-full.md#services)     |
 | `js/ui`           | dumb chrome primitives: toasts, modals, cards, shells.                       | 12      | [open](agent-map-full.md#ui)           |
-| `js/views`        | pure state→HTML templates + their pure helpers.                              | 51      | [open](agent-map-full.md#views)        |
+| `js/views`        | pure state→HTML templates + their pure helpers.                              | 52      | [open](agent-map-full.md#views)        |
 
 ## 5. Lookup tables (counts; open the dump for the rows)
 
-- `data-action` values emitted anywhere: **353** — every one resolves to a handler (see the Allowlist section of the dump).
-- files that handle at least one click/change/form action: **19** of 243.
-- exported symbols: **1556**.
-- i18n keys touched by js/: **1467** of the two dictionaries.
+- `data-action` values emitted anywhere: **355** — every one resolves to a handler (see the Allowlist section of the dump).
+- files that handle at least one click/change/form action: **19** of 244.
+- exported symbols: **1557**.
+- i18n keys touched by js/: **1506** of the two dictionaries.
 
 ## 6. When you need the exhaustive dump
 

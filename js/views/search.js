@@ -12,7 +12,7 @@ import { search as runSearch } from '../domain/search.js';
 import { searchQuranExpanded, isQuranSearchReady } from '../domain/quranSearch.js';
 import { expandQueryWithRoots } from '../domain/rootAwareSearch.js';
 import { searchTafsir, isTafsirSearchReady, tafsirIndexEdition } from '../domain/tafsirSearch.js';
-import { searchHadith } from '../domain/hadithSearch.js';
+import { searchHadith, hadithIndexStats } from '../domain/hadithSearch.js';
 import { resolvePage } from '../services/mushaf.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
@@ -59,19 +59,23 @@ function quranResultRow(state, hit, lang, terms = []) {
   if (!ayah) return '';
   const refLabel = `${meta ? escapeHTML(pickLocale({ en: meta.nameTransliteration || meta.nameEn, ar: meta.nameAr }, lang)) : ''} · ${hit.s}:${hit.a}`;
   // (v5.2.58) ayah→page: the mushaf-meta ayahPages map covers all 6,236
-  // ayahs; unloaded map (or unresolvable pair) renders no chip, never a
-  // dead link. (Sibling links, never nested — nested <a> is invalid HTML.)
+  // ayahs; unloaded map (or unresolvable pair) renders no link, never a
+  // dead promise. Keep reader + Mushaf as sibling anchors.
   const page = resolvePage(state.mushaf?.meta?.ayahPages, hit.s, hit.a);
   const mushafLink =
     page == null
       ? ''
-      : `<a class="quran-hit__mushaf" href="${buildHash(VIEWS.MUSHAF, { page: String(page), s: String(hit.s ?? ''), ay: String(hit.a ?? '') })}" data-action="navigate" data-view="${VIEWS.MUSHAF}" data-page="${page}" aria-label="${t('mushaf.openInMushaf', lang)} — ${t('mushaf.pageLabel', lang)} ${page}">${icon('book', { size: 12 })} ${t('mushaf.pageShort', lang)} ${page}</a>`;
+      : `<a class="quran-hit__mushaf" href="${buildHash(VIEWS.MUSHAF, { page: String(page), s: String(hit.s ?? ''), ay: String(hit.a ?? '') })}" data-action="navigate" data-view="${VIEWS.MUSHAF}" data-page="${page}" aria-label="${t('mushaf.openInMushaf', lang)} — ${t('mushaf.pageLabel', lang)} ${page}">${icon('book', { size: 12 })} ${t('search.mushafPage', lang, { page })}</a>`;
+  const relation = hit.viaRoot
+    ? `<span class="quran-hit__relation">${t('search.relatedRoot', lang, { root: hit.root || '—' })}</span>`
+    : '';
   return `
   <div class="quran-hit">
     <a class="quran-hit__reader" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
       <p class="quran-hit__arabic" dir="rtl" lang="ar">${highlightMatch(ayah.text, terms)}</p>
       ${state.settings.showTranslation && ayah.translation ? `<p class="quran-hit__translation" dir="auto">${highlightMatch(ayah.translation, terms)}</p>` : ''}
       <span class="quran-hit__ref">${refLabel} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 12 })}</span>
+      ${relation}
     </a>
     ${mushafLink}
   </div>`;
@@ -125,12 +129,18 @@ function tafsirResultRow(state, hit, editionId, editionName, lang, terms = []) {
   if (!text) return '';
   const meta = state.quran.meta?.surahs?.find((s) => s.number === hit.s);
   const refLabel = `${meta ? escapeHTML(pickLocale({ en: meta.nameTransliteration || meta.nameEn, ar: meta.nameAr }, lang)) : ''} · ${hit.s}:${hit.a}`;
+  const page = resolvePage(state.mushaf?.meta?.ayahPages, hit.s, hit.a);
+  const mushafLink =
+    page == null
+      ? ''
+      : `<a class="quran-hit__mushaf" href="${buildHash(VIEWS.MUSHAF, { page: String(page), s: String(hit.s ?? ''), ay: String(hit.a ?? '') })}" data-action="navigate" data-view="${VIEWS.MUSHAF}" data-page="${page}" aria-label="${t('mushaf.openInMushaf', lang)} — ${t('mushaf.pageLabel', lang)} ${page}">${icon('book', { size: 12 })} ${t('search.mushafPage', lang, { page })}</a>`;
   return `
   <div class="quran-hit">
     <a class="quran-hit__reader" href="${buildHash(VIEWS.QURAN, { id: hit.s, ay: String(hit.a) })}" data-action="navigate" data-view="${VIEWS.QURAN}" data-id="${hit.s}" data-ay="${escapeHTML(String(hit.a))}">
       <p class="quran-hit__translation" dir="auto">${highlightMatch(text.length > 220 ? `${text.slice(0, 220)}…` : text, terms)}</p>
       <span class="quran-hit__ref">${refLabel} ${editionName ? `· ${escapeHTML(editionName)}` : ''} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 12 })}</span>
     </a>
+    ${mushafLink}
   </div>`;
 }
 
@@ -183,13 +193,7 @@ const SUGGESTIONS = {
 function rootsSection(expansion, lang) {
   if (!expansion) return '';
   const head = `<div class="panel__header"><h2>${t('search.rootsResults', lang)}</h2><span class="view__meta">${t('search.rootsCount', lang, { n: expansion.roots.length })}</span></div>`;
-  if (!expansion.matched) {
-    return `<section class="panel roots-search-panel">${head}${emptyStateHTML({
-      iconName: 'search',
-      title: t('search.emptyNamed', lang, { scope: t('search.scopeRoots', lang) }),
-      hint: t('search.noResultsHint', lang),
-    })}</section>`;
-  }
+  if (!expansion.matched) return '';
   return `<section class="panel roots-search-panel">${head}<div class="chip-row">${expansion.roots
     .map(
       (r) =>
@@ -240,6 +244,13 @@ export function renderSearch(state) {
       ? runSearch(query, { limit: Infinity, extraTerms: expansion?.arabicForms })
       : [];
   const hadithAll = query ? searchHadith(query, { limit: Infinity }) : [];
+  const hadithStats = hadithIndexStats();
+  const hadithBooks = state.hadith?.index?.books || [];
+  // The global Search build is kicked off by stateSub. While the index is
+  // genuinely empty but the catalog is present, 0 would falsely mean
+  // "searched and found nothing" rather than "not indexed yet".
+  const hadithBreakdown =
+    query && hadithBooks.length > 0 && hadithStats.records === 0 ? '—' : hadithAll.length;
   const azkarAll = query ? libAll.filter((r) => r.document?.metadata?.id === 'adhkar') : [];
   const libPage = query ? paginate(libAll, state.activeParams, 'library') : null;
   const libShown = libPage ? libPage.items : [];
@@ -307,7 +318,7 @@ export function renderSearch(state) {
     ${
       query
         ? `
-      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll ? quranAll.length : 0, h: hadithAll.length, z: libLoadFailed ? null : azkarAll.length })}</p>
+      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll == null ? '—' : quranAll.length, h: hadithBreakdown, z: libLoadFailed ? '—' : azkarAll.length })}</p>
       <p class="search-hadith-link"><a href="${buildHash(VIEWS.HADITH, { q: query })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-q="${escapeHTML(query)}">${icon('book', { size: 13 })} ${t('search.searchHadith', lang, { q: query })}</a></p>
       ${
         libLoadFailed

@@ -534,30 +534,17 @@ function parseDoors(src, views, problems) {
       problems.push(`nav.js section entry '${key}' is not a key in VIEWS (views.js)`);
     }
     const members = [];
-    // Members are written with their fields in ANY order
-    // (`{ route: 'MOOD', labelKey: 'title.mood', taps: 1, via: 'main-menu' }`),
-    // so match the object literal and read each field out of it. The previous
-    // pattern demanded `taps` immediately after `route`, which silently matched
-    // NOTHING for every member that declares a labelKey first — those routes
-    // were dropped from the spine entirely, along with their labels.
-    for (const m of chunk.matchAll(/\{\s*route:\s*'([A-Z_][A-Z0-9_]*)'([^}]*)\}/g)) {
-      const rest = m[2];
-      const taps = /taps:\s*(\d+)/.exec(rest)?.[1];
-      if (taps == null) continue; // not a member row
-      const via = /via:\s*(null|'([^']+)')/.exec(rest);
+    for (const m of chunk.matchAll(
+      /route:\s*'([A-Z_][A-Z0-9_]*)'(?:\s*,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')([^)]*)\)/g
+    )) {
       members.push({
         route: m[1],
-        taps: Number(taps),
-        via: via?.[2] ?? null,
-        // A member may carry its OWN label key (title.mood, nav.audio,
-        // quiz.title, ...). Dropping it meant the spine printed only the
-        // section's key, so most chrome label keys never appeared in the index
-        // at all — the map an agent reads to find a label could not tell them
-        // the label existed.
-        labelKey: /labelKey:\s*'([^']+)'/.exec(rest)?.[1],
+        labelKey: m[2] ?? null,
+        taps: Number(m[3]),
+        via: m[5] ?? null,
         // Tile-depth members answer a bare link with an honest 404, so the
         // drawer offers no direct row for them.
-        direct: !/direct:\s*false/.test(rest),
+        direct: !/direct:\s*false/.test(m[6] ?? ''),
       });
     }
     doors.push({ entry: key, viewKey, view: views.get(viewKey), labelKey, icon, members });
@@ -859,17 +846,12 @@ function main() {
         const mod = spine.modules.eager.get(m.route) ?? spine.modules.lazy.get(m.route);
         const eager = spine.modules.eager.has(m.route);
         // prettier rewrites *x* to _x_ inside a table cell, so emit the form it wants.
-        const routeCell = `${m.route}${m.direct ? '' : ' _(tile-depth)_'}`;
-        // When a member names its own label, show it: the section key alone
-        // hides that e.g. the QURAN section's word-by-word mode is labelled
-        // `quran.modeWord`, not the section's own key.
-        const ownLabel =
-          m.labelKey && m.labelKey !== d.labelKey ? ` _(${safe(m.labelKey)})_` : '';
+        const routeCell = `${m.route}${m.labelKey ? ` (\`${safe(m.labelKey)}\`)` : ''}${m.direct ? '' : ' _(tile-depth)_'}`;
         spineRows.push([
           String(i + 1),
           `\`${safe(d.labelKey ?? '—')}\``,
           `\`${safe(d.entry)}\` → \`#/${safe(d.view)}\``,
-          `${routeCell}${ownLabel}${mod ? ` → \`${safe(mod)}\`${eager ? '' : ' _(lazy)_'}` : ' → **UNMAPPED**'}`,
+          `${routeCell}${mod ? ` → \`${safe(mod)}\`${eager ? '' : ' _(lazy)_'}` : ' → **UNMAPPED**'}`,
           String(m.taps),
           m.via ? `\`${m.via}\`` : '— (is the tap)',
         ]);

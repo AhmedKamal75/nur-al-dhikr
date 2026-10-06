@@ -29,6 +29,7 @@ import { CARD_FIELD_KEYS } from '../domain/contentLens.js';
 import { splitEditions } from '../domain/wordStudy.js';
 import { HOME_PANEL_IDS, resolveHomePanels } from '../domain/homePanels.js';
 import { QUICK_TILE_DEFS, resolveQuickTiles } from '../domain/quickTiles.js';
+import { DAILY_THEMES } from '../domain/dailyAyah.js';
 import { installRowHTML } from './installRow.js';
 import { backupSummaryHTML } from './backupSummary.js';
 
@@ -120,7 +121,7 @@ const DEFERRED_HINTS = {
  * list — it never pops up on its own, it only answers when opened — plus
  * the control that re-opens the 3-step introduction. Exported for tests.
  */
-export function deferredSetupHTML(state, lang) {
+function deferredSetupBodyHTML(state, lang) {
   void state;
   const rows = DEFERRED_STEPS.map((d) => {
     const idAttr = d.params && d.params.id ? ` data-id="${escapeHTML(d.params.id)}"` : '';
@@ -133,13 +134,18 @@ export function deferredSetupHTML(state, lang) {
     </a>`;
   }).join('');
   return `
-  <section class="panel panel--deferred" aria-label="${escapeHTML(t('onboarding.deferTitle', lang))}">
-    <h2 class="panel__title">${escapeHTML(t('onboarding.deferTitle', lang))}</h2>
     <p class="panel__subtext">${escapeHTML(t('onboarding.deferHint', lang))}</p>
     <div class="reciter-list">${rows}</div>
     <div class="onboarding-step__actions">
       <button type="button" class="btn btn--secondary btn--sm" data-action="onboarding-reshow">${t('onboarding.reshow', lang)}</button>
-    </div>
+    </div>`;
+}
+
+export function deferredSetupHTML(state, lang) {
+  return `
+  <section class="panel panel--deferred" aria-label="${escapeHTML(t('onboarding.deferTitle', lang))}">
+    <h2 class="panel__title">${escapeHTML(t('onboarding.deferTitle', lang))}</h2>
+    ${deferredSetupBodyHTML(state, lang)}
   </section>`;
 }
 
@@ -208,6 +214,14 @@ function accHeader(title, iconName, lang, hintKey) {
     </span>
     <span class="settings-acc__chevron" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
   </summary>`;
+}
+
+function accSubheading(title, lang, hintKey = '') {
+  return `
+  <div class="settings-acc__subheading">
+    <span class="settings-acc__subheading-title">${escapeHTML(title)}</span>
+    ${hintKey ? `<span class="panel__subtext settings-acc__subheading-hint">${t(hintKey, lang)}</span>` : ''}
+  </div>`;
 }
 
 /**
@@ -283,10 +297,10 @@ export const SETTINGS_SECTIONS = [
  * section id appears in exactly one group's `sections` (pinned by
  * tests/settings-groups.test.js), so the groups cannot drift from the
  * accordions and no setting can be orphaned or duplicated by a reorder.
- * The `setup` group holds no accordion — it slots the deferred first-run
- * doors and the About door, which are shared builders (backupSummary.js /
- * installRow.js stay single-sourced in the data section), so every shared
- * row still renders exactly once.
+ * The `setup` group holds one small progressive disclosure for the deferred
+ * first-run doors. About remains a separate top-level application door.
+ * Deferred content uses a shared body builder so the standalone exported
+ * `deferredSetupHTML` contract and the Settings disclosure cannot drift.
  */
 export const SETTINGS_GROUPS = [
   { id: 'settings-group-setup', title: 'settings.groupSetup', hint: 'settings.groupSetupHint' },
@@ -522,7 +536,12 @@ export function renderSettings(state, flags = {}) {
       </div>
     </header>
     ${groupOpen(G_SETUP)}
-    ${deferredSetupHTML(state, lang)}
+    <details class="panel settings-setup-disclosure panel--deferred">
+      ${accHeader(t('onboarding.deferTitle', lang), 'settings', lang, 'onboarding.deferHint')}
+      <div class="settings-setup-disclosure__body">
+        ${deferredSetupBodyHTML(state, lang)}
+      </div>
+    </details>
     ${groupClose()}
     ${groupOpen(G_DISPLAY)}
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
@@ -571,6 +590,14 @@ export function renderSettings(state, flags = {}) {
       )}
       <p class="field-label" id="daily-goal-label">${t('settings.dailyGoal', lang)}</p>
       <input type="number" class="input" min="1" max="10000" value="${escapeHTML(String(s.dailyGoal ?? ''))}" data-bind="dailyGoal" aria-labelledby="daily-goal-label" />
+      <p class="field-label" id="daily-ayah-theme-label">${t('settings.dailyAyahTheme', lang)}</p>
+      <p class="panel__subtext">${t('settings.dailyAyahThemeHint', lang)}</p>
+      <div class="chip-row chip-row--scroll" role="group" aria-labelledby="daily-ayah-theme-label">
+        ${DAILY_THEMES.map(
+          (th) => `
+        <button type="button" class="chip chip--sm ${s.dailyAyahTheme === th || (!s.dailyAyahTheme && th === 'any') ? 'chip--active' : ''}" data-action="set-setting" data-key="dailyAyahTheme" data-value="${th}" aria-pressed="${s.dailyAyahTheme === th || (!s.dailyAyahTheme && th === 'any')}">${escapeHTML(t(`home.theme.${th}`, lang))}</button>`
+        ).join('')}
+      </div>
       <p class="field-label">${t('settings.homePanels', lang)}</p>
       <p class="panel__subtext">${t('settings.homePanelsHint', lang)}</p>
       ${homePanelRows(state, lang)}
@@ -603,7 +630,7 @@ export function renderSettings(state, flags = {}) {
     <details class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openId === 'settings-sec-compare' ? ' open' : ''}>
       ${accHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
       <div class="reciter-list">${compareRows}</div>
-      ${accHeader(t('settings.compareTranslationC', lang), 'book', lang, 'settings.compareHintC')}
+      ${accSubheading(t('settings.compareTranslationC', lang), lang, 'settings.compareHintC')}
       <div class="reciter-list">${compareCRows}</div>
       <p class="field-label">${t('settings.tafsirDefault', lang)}</p>
       <p class="panel__subtext">${t('settings.tafsirDefaultHint', lang)}</p>

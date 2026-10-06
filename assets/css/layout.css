@@ -50,6 +50,8 @@
   align-items: center;
   gap: var(--space-1_5);
   min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 /* (v5.17.20) The menu toggle must not shrink. It is the app's only way out
@@ -75,6 +77,8 @@
   font-size: 1.05rem;
   letter-spacing: -0.015em;
   color: var(--color-text);
+  min-width: 0;
+  max-width: 100%;
 }
 .topbar__brand:hover {
   text-decoration: none;
@@ -100,9 +104,36 @@
 }
 
 .topbar__brand-text {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (max-width: 380px) {
+  .topbar__inner {
+    gap: 2px;
+    padding-inline: 8px;
+  }
+
+  .topbar__lead {
+    gap: 2px;
+  }
+
+  .topbar__brand {
+    gap: 6px;
+    padding-inline: 4px;
+    font-size: 0.98rem;
+  }
+
+  .topbar__brand-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .topbar__actions {
+    gap: 0;
+  }
 }
 
 .topbar__actions {

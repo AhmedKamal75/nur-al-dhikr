@@ -1,3 +1,225 @@
+## v5.17.125 — Tajweed Practice retry affordance
+
+- When a Tajweed practice round cannot load any questions, the failure toast is now assertive and offers a direct **Retry** action using the exact same rule and answer mode.
+- Ordinary status toasts remain transient and actionless; this pass only adds an action where the user has an obvious recovery path.
+- Added bilingual regression coverage for the retry affordance.
+- No religious corpus bytes changed.
+
+## v5.17.124 — Open-issues ledger reconciliation
+
+- Re-verified `OPEN-ISSUES.md` against the current source and moved the Tasbih counter-integrity item (#19) to RESOLVED, backed by `tests/tasbihCaps.test.js`.
+- Reconciled the old search-loading item (#48) to RESOLVED after the v5.17.103/119/120 search honesty and root-panel fixes; the proof now lives in the search regression tests.
+- Updated the ledger counts so the durable issue document no longer claims two already-fixed defects remain open.
+- No application corpus data changed.
+
+## v5.17.123 — Reduced-motion press feedback
+
+- Suppressed active-press scale transforms for navigation and shared buttons when either the in-app **Reduce Motion** setting or the OS `prefers-reduced-motion` preference is active.
+- Preserved ordinary press feedback for users who have not requested reduced motion.
+- Added a motion regression contract covering the shared interactive chrome.
+- No religious corpus bytes changed.
+
+## v5.17.122 — Settings setup hierarchy
+
+- Renamed the Settings shelf from “Setup & about” to **Setup** so it no longer implies that About lives inside Settings.
+- Collapsed the optional first-run doors behind one native disclosure; setup links and the re-show-introduction action remain unchanged and bilingual.
+- Kept the disclosure separate from the twelve setting accordions so the Settings index does not gain another peer-level configuration row.
+- Preserved the exported `deferredSetupHTML` contract for existing callers/tests.
+- No religious corpus bytes changed.
+
+## v5.17.121 — Settings Compare C hierarchy
+
+- Replaced a nested second `<summary>` inside the Compare `<details>` with a non-interactive subsection heading for Compare C.
+- Removed the misleading disclosure affordance while preserving Compare B/C controls, translation selection, and default Tafsir settings.
+- Added regression coverage; no religious corpus bytes changed.
+
+## v5.17.120 — Global Search root-panel cleanup
+
+- When root-aware search finds no related root family, the global Search view now omits the empty Roots panel entirely.
+- Preserved matched-root expansion and existing root chips.
+- Removed the obsolete `search.scopeRoots` EN/AR strings and updated the root-aware view contract.
+- No religious corpus bytes changed.
+
+## v5.17.119 — Global Search Hadith honesty
+
+- While the Hadith catalog exists but its cross-book search index is still empty during first build, the global Search breakdown now shows `Hadith: —` instead of falsely claiming zero results.
+- Genuine zero-result queries still report `Hadith: 0` once the index contains records.
+- Added regression coverage; no religious corpus bytes changed.
+
+## v5.17.118 — RTL disclosure affordance
+
+- Fixed About and Audio/Reciters disclosure chevrons so the collapsed state points toward hidden content in RTL as well as LTR.
+- Opening a disclosure still points downward in both directions.
+- Added regression coverage; no religious corpus bytes changed.
+
+## v5.17.117 — Audio/Reciters hierarchy
+
+- Kept reciter search/selection and the selected full-moshaf download surface as the immediate listening task.
+- Moved verse voices, playback defaults, verse-pack management, saved queues, and custom-reciter authoring behind one progressive-disclosure grammar.
+- Preserved all playback/download handlers, data, and bilingual labels.
+- Added regression coverage; no religious corpus bytes changed.
+
+## v5.17.116 — About hierarchy
+
+- Kept About identity and capabilities visible as the human-facing entry point.
+- Moved the feature guide, privacy explanation, source/provenance details, and install/offline guidance into native progressive disclosures.
+- Preserved all links, provenance copy, installation behavior, and bilingual content.
+- Added EN/AR hierarchy regression coverage; no religious corpus bytes changed.
+
+## v5.17.115 — Category action hierarchy
+
+- Kept **Focus session** as the single category-header action.
+- Moved By-heart and Quiz modes into the existing section options menu so reading entry is not surrounded by competing mode buttons.
+- Added bilingual menu labels and regression coverage.
+- No religious corpus bytes changed.
+
+## v5.17.114 — Offline management hierarchy
+
+- Kept Download all + storage meter + progress as the primary offline task.
+- Group-by-group downloads, storage mode, study-data clearing, compression/essentials preferences, and audio downloads now live under one **Manage offline storage / إدارة التخزين دون اتصال** disclosure.
+- Added bilingual summary copy and responsive styling.
+- No religious corpus bytes changed.
+
+## v5.17.113 — Settings reciter metadata wrapping
+
+- Fixed the Settings reciter/translation/tafsir selector rows so the row title can actually wrap long bilingual names instead of inheriting the global single-line ellipsis rule.
+- Preserved 44px+ touch height and constrained the row/name widths so the fix does not reintroduce horizontal overflow.
+- Added a regression trap for the exact CSS cascade defect.
+- No religious corpus bytes changed.
+
+## v5.17.112 — Checklist history hierarchy
+
+- Kept today’s checklist progress, streak, and the Prayer / Adhkar check-in groups immediately usable.
+- Moved the seven-day history strip behind **Last 7 days / آخر ٧ أيام**.
+- Added bilingual disclosure copy and restrained responsive styling.
+- No religious corpus bytes changed.
+
+## v5.17.111 — Statistics hierarchy cleanup
+
+- Reduced the visible Statistics overview to four high-signal metrics: total recitations, reading today, current streak, and active days.
+- Moved longest streak, rolling-month totals, average/day, daily goal, streak coaching, top surahs, memorization digest, weekly chart, heatmap, and most-read breakdown behind one native **Detailed activity** disclosure.
+- Kept Garden and Certificate as compact navigation links instead of competing with the metric overview.
+- Added bilingual EN/AR regression coverage and responsive disclosure styling.
+- No religious corpus bytes changed.
+
+## v5.17.110 — Tasbih focus cleanup
+
+- Keep phrase selection, the Arabic dhikr, counter, progress, and reset in the immediate counting flow.
+- Move target editing, floating-counter setup, and custom-phrase authoring behind **Counter options / خيارات العداد**.
+- Preserve all existing targets, custom entries, persistence, and counting behavior.
+- Add bilingual progressive-disclosure coverage; no corpus data changed.
+
+## v5.17.109 — Qibla hierarchy cleanup
+
+- Keep the compass, direction, and distance as the primary Qibla surface.
+- Move location accuracy and magnetic-declination methodology into a progressive Details disclosure.
+- Preserve the live heading-error row and calibration walkthrough.
+- Add EN/AR regression coverage; no religious corpus data changed.
+
+## v5.17.108 — Zakat progressive disclosure
+
+The annual Zakat calculator remains the primary working surface. Zakat al-Fitr and saved assessment/hawl history are now progressive disclosures with compact bilingual summaries, preserving their existing calculations and actions. No corpus data changed.
+
+## v5.17.107 — Ramadan secondary disclosure
+
+- Kept the live Ramadan state prominent while moving the night-worship planner and Suhoor/Iftar reminder controls behind native progressive disclosures.
+- Collapsed summaries retain useful status: Taraweeh/I'tikaf/last-ten counts and active reminder count.
+- Converted Explore from a generic panel into compact navigation.
+- Added bilingual EN/AR summary copy and regression protection.
+- No bundled religious corpus bytes were modified.
+
+## v5.17.106 — Calendar fasting progressive disclosure
+
+- The Calendar remains focused on the dual-date month grid instead of presenting voluntary fasting management as three consecutive panels.
+- Voluntary fasting is now a native **Fasting** disclosure with a concise collapsed summary showing today's state and fasting count.
+- Existing category toggles, reminder time, notification controls, today logging, upcoming days, and history remain unchanged inside the disclosure.
+- Calendar-sheet navigation to fasting now opens the disclosure before scrolling to it.
+- Added regression coverage for the disclosure structure and landing behavior.
+- No Qur’an, Hadith, Azkar, or other bundled religious corpus bytes were modified.
+
+## v5.17.105 — Mushaf location hierarchy cleanup
+
+- The Mushaf top bar location (surah + juz) is now a quiet, read-only context label instead of a pill-shaped button.
+- The adjacent **Jump** control remains the single explicit navigation entry point, eliminating duplicate controls for the same Jump surface.
+- Preserves the existing location text, bilingual rendering, page turning, fullscreen controls, bookmarks, Find-on-page, and Jump behavior.
+- Added a regression contract requiring exactly one explicit `mushaf-open-jump` control in the top-level reader surface.
+- No Qur’an, Hadith, Azkar, or other bundled religious corpus bytes were modified.
+
+## v5.17.103 — Search result availability honesty
+
+- Global Search no longer reports `Quran: 0` or `Azkar: 0` while the corresponding corpus is unavailable/loading; unavailable searchable tiers display an em dash.
+- Added regression coverage for loading-state count honesty.
+- No religious corpus data changed.
+
+## v5.17.102 — Qur’an search → Mushaf continuity
+
+- **Search → Mushaf:** Tafsir search results now offer the same exact Mushaf page/ayah continuation as direct Qur’an hits whenever the canonical ayah→page map resolves.
+- **Search honesty:** root-expanded Qur’an hits explicitly disclose the related root that caused the expansion instead of appearing indistinguishable from exact text matches.
+- **Mushaf link clarity:** search results now label the visible destination as `Mushaf · p. N` / `المصحف · ص N` rather than an unexplained page abbreviation.
+- **Navigation safety:** reader and Mushaf links remain sibling anchors; unresolved/corrupt page mappings produce no dead link.
+- No Qur’an, Hadith, Azkar, or other bundled religious corpus bytes were modified.
+
+## v5.17.100 — Hadith contents + provenance cleanup
+
+- Replaced the permanent chapter-chip wall in the Hadith reader with a native, progressively disclosed Contents section. The current chapter remains visible in the summary so readers retain orientation without consuming the reading surface.
+- Preserved All chapters and Bookmarked as the first navigation targets; chapter rows remain simple list controls rather than card/chip tiles.
+- Added compact book coverage metadata to About this book.
+- Clarified Hadith text provenance in the book details using the existing CC0 hadith-api source record; no new religious attribution was invented.
+- Added bilingual strings and regression coverage for the new disclosure grammar.
+- No bundled religious corpus bytes were modified.
+
+## v5.17.99 — Home theme preference moved to Settings
+
+- Removed the Daily Ayah theme filter chips from the Home verse surface so the reading card stays focused on the verse rather than exposing configuration inline.
+- Added the same theme control to Settings → Content with bilingual explanation; the underlying `dailyAyahTheme` setting and selection logic are unchanged.
+- Removed the now-unused `home.verseTheme` translation key.
+- Cleaned a stale CSS comment that described the removed decorative Shahada treatment.
+- No religious corpus bytes were modified.
+
+## v5.17.98 — Hadith references and reader-depth refinement
+
+- **Hadith reader:** added an explicit, source-native Reference line inside Details (collection + hadith number).
+- **Arabic/English:** reference label is available in both UI languages.
+- **Prayer:** preserved the reading-first Prayer hierarchy and calculation disclosures from v5.17.97.
+- **Integrity:** no sacred corpus bytes were changed.
+
+- **Prayer surface:** removed the duplicate six-tile Prayer tools grid from the main Prayer page; the existing Prayer view menu remains the single secondary navigation point.
+- **Next-prayer focus:** the hero now shows only the concise calculation method + Asr convention summary; provenance and adjustment detail stay in the deliberate calculation sheet.
+- **Calculation transparency:** calculation settings now progressively disclose method definition, provenance, local calculation basis, fine-tuning offsets, and iqama display settings instead of presenting every control at once.
+- **Bilingual correctness:** Standard and Hanafi Asr conventions now have explicit English/Arabic labels instead of raw internal enum names.
+- **Regression repair:** restored the missing bilingual `hadith.grading` key exposed by the previous reading-first refactor.
+- No religious corpus data or prayer calculation constants were changed.
+
+## v5.17.96 — Reading-first Hadith, Azkar details isolation, and sacred-text cleanup
+
+- **Hadith reading surface:** book-reader metadata is now progressive disclosure. The default hadith surface foregrounds the number, Arabic/translation and useful action controls; collection, chapter, narrator, grade explanation and personal notes move behind native **Details**.
+- **Hadith book context:** author, book description and source/provenance are available behind **About this book**, keeping the reader header focused on the text.
+- Keeps the manually validated Azkar tap/count timing unchanged while separating the reading surface from metadata.
+- Makes the Azkar `Details` disclosure independent from counting and moves supplementary metadata into it.
+- Removes the Home Shahada decorative banner and the intrusive onboarding strip.
+- Fixes mobile Settings title wrapping, compact English header pressure, invalid Qur’an route handling, and clipped audio metadata.
+- Regenerates the agent map and repairs its route-label parser so labeled routes remain represented in the generated spine.
+- Removes obsolete orphan i18n keys left by retired Home/You grouping surfaces.
+- Updates regression fixtures so optional Home panels are tested only when explicitly opted in.
+- No religious corpus data was changed.
+- Browser/Chromium certification remains **NOT VERIFIED** in this workspace because the environment blocks local/file URLs and Playwright dependencies could not be installed from the available npm cache.
+
+## v5.17.94 — Focused Azkar reading surface and Home reverence cleanup
+
+- **Azkar reading surface:** category reading now foregrounds the Arabic dhikr and live count while moving translation, transliteration, virtues, grade, repetition target, reference, notes, and review metadata behind a native **Details** disclosure.
+- **Interaction correctness:** the Details summary is no longer swallowed by the card's counter-tap delegation, so opening Details never increments the dhikr. Existing tap/count timing is preserved.
+- **Bilingual:** the expanded metadata labels are paired in English and Arabic.
+- **Home reverence:** removed the decorative Shahada footer/banner from Home. Sacred text is no longer used as ornamental chrome there.
+- **Home focus:** removed the intrusive onboarding/setup strip from the worship surface rather than making Home another dashboard.
+- **Mobile repair:** fixed the 360px Settings title collapse, tightened the English mobile topbar, and prevented the audio reciter badge from clipping.
+- **State repair:** invalid Qur'an routes such as `id=99999` now resolve to an explicit not-found state instead of a permanent loading skeleton.
+- **Offline shell:** added `js/views/studyContext.js` to the service-worker APP_SHELL and stamped the release cache version to v5.17.94.
+- **Regression coverage:** added Azkar Details/counter separation tests, bilingual reading-surface tests, Home sacred-text/onboarding contracts, and the mobile Settings safeguard.
+
+Browser/Chromium certification is **not claimed from this workspace** because the repository dependencies could not be fully installed from the available npm cache/network.
+
+No religious data was changed.
+
 ## v5.17.93 — Tafsir becomes a clearer part of ayah study
 
 - **Study continuity:** the Tafsir surface now opens with an explicit ayah context (`surah:ayah`) so the commentary is visibly attached to the exact text being studied rather than looking like a generic source browser.
