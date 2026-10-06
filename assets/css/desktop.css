@@ -260,37 +260,9 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
-  /* Home dashboard: on wide screens the stacked panels become two columns
-     (hero, prayer strip and quick actions still span full width) so the
-     page fills the canvas instead of leaving a dead right half. DOM order
-     is untouched — only visual placement changes. */
-  .view--home {
-    display: grid;
-    /* `minmax(0, 1fr)`, not `1fr`.
-     *
-     * A bare `1fr` track is really `minmax(auto, 1fr)`, and that `auto`
-     * minimum resolves to the item's MIN-CONTENT width. The adhkar browser
-     * contains a deliberately non-wrapping horizontal scroller
-     * (`.chip-row--scroll`), so its min-content width is enormous — the whole
-     * track grew to 2533px inside a 1144px column, and `.view`'s
-     * `overflow-x: clip` silently ate the overflow. The visible result was the
-     * right-hand third of every tile row cut off mid-word on desktop only,
-     * because the grid only exists inside this min-width media query. Mobile
-     * was never affected, which is exactly why it read as "mobile is fine".
-     *
-     * `minmax(0, 1fr)` gives the track a zero floor so it can shrink to the
-     * column, and the scroller scrolls inside it as designed. The identical
-     * idiom is already used 9 lines above (repeat(5, minmax(0, 1fr))); this
-     * one rule was simply missed.
-     */
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-  }
-  .view--home > .home-hero,
-  .view--home > .home-prayer-strip,
-  .view--home > .quick-actions {
-    grid-column: 1 / -1;
-  }
+  /* Home is intentionally governed by the editorial layout in deslopify.css.
+     Do not reintroduce a desktop grid here: it reverses the visual story,
+     narrows the daily surface, and leaves a dead half-canvas on wide screens. */
 }
 
 /* ------------------------------------------------------------------

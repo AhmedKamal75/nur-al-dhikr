@@ -23,7 +23,7 @@ Current source baseline: **v5.17.86**. Treat the old 9.9 source claim as obsolet
 
 - Main menu is now a true hierarchy: worship/product domains expand in the main menu; Zakat, Offline, Settings, and About are standalone application-tail siblings, with Settings then About last.
 - Native `<details>` disclosure styling is explicitly reset; browser marker/dashed-line fallthrough is a defect.
-- Home is a vertical editorial story: identity → Today/prayer context → actions → Shahada → next → reflection → context. Decorative/supporting panels must not precede Today.
+- Home is a vertical editorial story: identity → Today/prayer context → Start Here actions → Next → reflection → context. Decorative/supporting panels must not precede Today.
 
 - Section mode switches were changed from filled segmented controls to editorial navigation rails.
 - Settings now leads with identity/search and a compact grouped You index.

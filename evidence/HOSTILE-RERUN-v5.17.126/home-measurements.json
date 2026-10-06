@@ -1,0 +1,2018 @@
+[
+ {
+  "lang": "en",
+  "theme": "light",
+  "vp": "360x800",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__light__360x800.png",
+    "hash": "33cb7a81d45d"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__light__360x800.png",
+    "hash": "d0b0a801e5c0",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 88,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 189,
+     "h": 816,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 189,
+     "h": 605,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 222,
+     "h": 219,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 441,
+     "h": 166,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 607,
+     "h": 186,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 807,
+     "h": 197,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 1020,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 1020,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 1053,
+     "h": 157,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 360,
+   "contentHeight": 1211,
+   "viewportH": 800,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 189,
+    "h": 816,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 807,
+    "h": 197,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 1020,
+    "h": 190,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "en",
+  "theme": "dark",
+  "vp": "360x800",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__dark__360x800.png",
+    "hash": "14d25712364a"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__dark__360x800.png",
+    "hash": "8972d7dccb56",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 88,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 189,
+     "h": 816,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 189,
+     "h": 605,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 222,
+     "h": 219,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 441,
+     "h": 166,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 607,
+     "h": 186,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 807,
+     "h": 197,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 1020,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 1020,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 1053,
+     "h": 157,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 360,
+   "contentHeight": 1211,
+   "viewportH": 800,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 189,
+    "h": 816,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 807,
+    "h": 197,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 1020,
+    "h": 190,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "light",
+  "vp": "360x800",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__light__360x800.png",
+    "hash": "a5d16efc26b6"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__light__360x800.png",
+    "hash": "78638ed7b76a",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 62,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 163,
+     "h": 727,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 163,
+     "h": 516,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 196,
+     "h": 179,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 375,
+     "h": 140,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 515,
+     "h": 164,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 693,
+     "h": 197,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 906,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 906,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 939,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 360,
+   "contentHeight": 1093,
+   "viewportH": 800,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 163,
+    "h": 727,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 693,
+    "h": 197,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 906,
+    "h": 187,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "360x800",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__dark__360x800.png",
+    "hash": "7a33b45caedb"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__dark__360x800.png",
+    "hash": "3e3e808dd1a7",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 62,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 163,
+     "h": 727,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 163,
+     "h": 516,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 196,
+     "h": 179,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 375,
+     "h": 140,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 515,
+     "h": 164,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 693,
+     "h": 197,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 906,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 906,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 939,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 360,
+   "contentHeight": 1093,
+   "viewportH": 800,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 163,
+    "h": 727,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 693,
+    "h": 197,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 906,
+    "h": 187,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "en",
+  "theme": "light",
+  "vp": "393x852",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__light__393x852.png",
+    "hash": "623129402ce5"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__light__393x852.png",
+    "hash": "8df395cc0c5d",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 62,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 163,
+     "h": 749,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 163,
+     "h": 538,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 196,
+     "h": 201,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 397,
+     "h": 140,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 536,
+     "h": 164,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 715,
+     "h": 197,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 928,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 928,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 961,
+     "h": 157,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 393,
+   "contentHeight": 1118,
+   "viewportH": 852,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 163,
+    "h": 749,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 715,
+    "h": 197,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 928,
+    "h": 190,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "en",
+  "theme": "dark",
+  "vp": "393x852",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__dark__393x852.png",
+    "hash": "22a0a91269a8"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__dark__393x852.png",
+    "hash": "e1391db071e5",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 62,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 163,
+     "h": 749,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 163,
+     "h": 538,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 196,
+     "h": 201,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 397,
+     "h": 140,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 536,
+     "h": 164,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 715,
+     "h": 197,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 928,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 928,
+     "h": 190,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 961,
+     "h": 157,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 393,
+   "contentHeight": 1118,
+   "viewportH": 852,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 163,
+    "h": 749,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 715,
+    "h": 197,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 928,
+    "h": 190,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "light",
+  "vp": "393x852",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__light__393x852.png",
+    "hash": "0e411a9b07d9"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__light__393x852.png",
+    "hash": "7c588e41cf8f",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 62,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 163,
+     "h": 683,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 163,
+     "h": 472,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 196,
+     "h": 160,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 356,
+     "h": 114,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 470,
+     "h": 164,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 649,
+     "h": 197,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 862,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 862,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 895,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 393,
+   "contentHeight": 1049,
+   "viewportH": 852,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 163,
+    "h": 683,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 649,
+    "h": 197,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 862,
+    "h": 187,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "393x852",
+  "kind": "mobile",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__dark__393x852.png",
+    "hash": "00fbd804b0bb"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__dark__393x852.png",
+    "hash": "e14f24ac07d9",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 85,
+     "h": 62,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 163,
+     "h": 683,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 163,
+     "h": 472,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 196,
+     "h": 160,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 356,
+     "h": 114,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 470,
+     "h": 164,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 649,
+     "h": 197,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 862,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 862,
+     "h": 187,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 895,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 393,
+   "contentHeight": 1049,
+   "viewportH": 852,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 163,
+    "h": 683,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 649,
+    "h": 197,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 862,
+    "h": 187,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "en",
+  "theme": "light",
+  "vp": "1024x768",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__light__1024x768.png",
+    "hash": "c2eac02a479e"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__light__1024x768.png",
+    "hash": "8ed8d4243f8c",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 159,
+     "h": 469,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 159,
+     "h": 337,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 194,
+     "h": 130,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 323,
+     "h": 88,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 411,
+     "h": 85,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 516,
+     "h": 111,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 650,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 650,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 685,
+     "h": 154,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 760,
+   "contentHeight": 839,
+   "viewportH": 768,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 159,
+    "h": 469,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 516,
+    "h": 111,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 650,
+    "h": 189,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1024x768",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__dark__1024x768.png",
+    "hash": "f47a45deeebd"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__dark__1024x768.png",
+    "hash": "d303a98d6cc1",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 159,
+     "h": 469,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 159,
+     "h": 337,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 194,
+     "h": 130,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 323,
+     "h": 88,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 411,
+     "h": 85,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 516,
+     "h": 111,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 650,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 650,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 685,
+     "h": 154,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 760,
+   "contentHeight": 839,
+   "viewportH": 768,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 159,
+    "h": 469,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 516,
+    "h": 111,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 650,
+    "h": 189,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1024x768",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__light__1024x768.png",
+    "hash": "6d9473d2b9e5"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__light__1024x768.png",
+    "hash": "3c6ad8e1f8cf",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 159,
+     "h": 443,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 159,
+     "h": 312,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 194,
+     "h": 130,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 323,
+     "h": 62,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 385,
+     "h": 85,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 491,
+     "h": 111,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 624,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 624,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 659,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 760,
+   "contentHeight": 813,
+   "viewportH": 768,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 159,
+    "h": 443,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 491,
+    "h": 111,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 624,
+    "h": 189,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1024x768",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__dark__1024x768.png",
+    "hash": "55103a8b1e27"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__dark__1024x768.png",
+    "hash": "ab886b886f5c",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 159,
+     "h": 443,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 159,
+     "h": 312,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 194,
+     "h": 130,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 323,
+     "h": 62,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 385,
+     "h": 85,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 491,
+     "h": 111,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 624,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 624,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 659,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 760,
+   "contentHeight": 813,
+   "viewportH": 768,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 159,
+    "h": 443,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 491,
+    "h": 111,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 624,
+    "h": 189,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "en",
+  "theme": "light",
+  "vp": "1440x900",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__light__1440x900.png",
+    "hash": "52f690874134"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__light__1440x900.png",
+    "hash": "0ef60e051d31",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 160,
+     "h": 445,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 160,
+     "h": 312,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 195,
+     "h": 130,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 325,
+     "h": 62,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 387,
+     "h": 85,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 494,
+     "h": 111,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 629,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 629,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 664,
+     "h": 154,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 1176,
+   "contentHeight": 818,
+   "viewportH": 900,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 160,
+    "h": 445,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 494,
+    "h": 111,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 629,
+    "h": 189,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "en",
+  "theme": "dark",
+  "vp": "1440x900",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__en__dark__1440x900.png",
+    "hash": "b57aa78e4b70"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__en__dark__1440x900.png",
+    "hash": "bdb094a1922b",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "Nūr al-Dhikr",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 160,
+     "h": 445,
+     "heading": "Today",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 160,
+     "h": 312,
+     "heading": "Today",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 195,
+     "h": 130,
+     "heading": "Today’s prayers",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 325,
+     "h": 62,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 387,
+     "h": 85,
+     "heading": "Today’s Progress",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 494,
+     "h": 111,
+     "heading": "Start here",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 629,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 629,
+     "h": 189,
+     "heading": "Next for you",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 664,
+     "h": 154,
+     "heading": "Continue where you left off",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 1176,
+   "contentHeight": 818,
+   "viewportH": 900,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 160,
+    "h": 445,
+    "heading": "Today",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 494,
+    "h": 111,
+    "heading": "Start here",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 629,
+    "h": 189,
+    "heading": "Next for you",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "light",
+  "vp": "1440x900",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__light__1440x900.png",
+    "hash": "6477b6c8ea84"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__light__1440x900.png",
+    "hash": "e1eecfd77ec2",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 160,
+     "h": 445,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 160,
+     "h": 312,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 195,
+     "h": 130,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 325,
+     "h": 62,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 387,
+     "h": 85,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 494,
+     "h": 111,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 629,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 629,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 664,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 1176,
+   "contentHeight": 818,
+   "viewportH": 900,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 160,
+    "h": 445,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 494,
+    "h": 111,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 629,
+    "h": 189,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ },
+ {
+  "lang": "ar",
+  "theme": "dark",
+  "vp": "1440x900",
+  "kind": "desktop",
+  "errors": [],
+  "states": [
+   {
+    "state": "top",
+    "file": "v5.17.126__home__top__ar__dark__1440x900.png",
+    "hash": "b3cb865974c2"
+   },
+   {
+    "state": "scrolled",
+    "file": "v5.17.126__home__scrolled__ar__dark__1440x900.png",
+    "hash": "be9abeaa2f1f",
+    "changed": true
+   }
+  ],
+  "measure": {
+   "secs": [
+    {
+     "i": 0,
+     "top": 84,
+     "h": 52,
+     "heading": "نور الذكر",
+     "cls": "home-hero home-hero--line"
+    },
+    {
+     "i": 1,
+     "top": 160,
+     "h": 445,
+     "heading": "اليوم",
+     "cls": "home-core"
+    },
+    {
+     "i": 2,
+     "top": 160,
+     "h": 312,
+     "heading": "اليوم",
+     "cls": "home-section home-section--today"
+    },
+    {
+     "i": 3,
+     "top": 195,
+     "h": 130,
+     "heading": "صلوات اليوم",
+     "cls": "home-prayer-ribbon home-prayer-rib"
+    },
+    {
+     "i": 4,
+     "top": 325,
+     "h": 62,
+     "heading": "",
+     "cls": "home-today"
+    },
+    {
+     "i": 5,
+     "top": 387,
+     "h": 85,
+     "heading": "تقدم اليوم",
+     "cls": "panel panel--progress panel--progr"
+    },
+    {
+     "i": 6,
+     "top": 494,
+     "h": 111,
+     "heading": "ابدأ من هنا",
+     "cls": "home-section home-section--actions"
+    },
+    {
+     "i": 7,
+     "top": 629,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-secondary"
+    },
+    {
+     "i": 8,
+     "top": 629,
+     "h": 189,
+     "heading": "خطوتك التالية",
+     "cls": "home-section home-section--next"
+    },
+    {
+     "i": 9,
+     "top": 664,
+     "h": 154,
+     "heading": "تابع من حيث توقفت",
+     "cls": "panel panel--resume"
+    }
+   ],
+   "shahada": false,
+   "progressInsideToday": true,
+   "mainWidth": 1176,
+   "contentHeight": 818,
+   "viewportH": 900,
+   "overflowX": 0,
+   "offscreen": []
+  },
+  "order": {
+   "today": {
+    "i": 1,
+    "top": 160,
+    "h": 445,
+    "heading": "اليوم",
+    "cls": "home-core"
+   },
+   "start": {
+    "i": 6,
+    "top": 494,
+    "h": 111,
+    "heading": "ابدأ من هنا",
+    "cls": "home-section home-section--actions"
+   },
+   "next": {
+    "i": 7,
+    "top": 629,
+    "h": 189,
+    "heading": "خطوتك التالية",
+    "cls": "home-secondary"
+   }
+  },
+  "orderOk": false,
+  "scrolledChanged": true
+ }
+]

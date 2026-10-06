@@ -31,7 +31,7 @@ test('calendar fasting jump opens the disclosure before scrolling', () => {
   const handler = read('js/app/handlers/worship.js');
   assert.match(
     handler,
-    /'calendar-goto-fasting': \(\) => \{[\s\S]*?el instanceof HTMLDetailsElement[\s\S]*?el\.open = true/,
+    /'calendar-goto-fasting': \(\) => \{[\s\S]*?el\?\.tagName === 'DETAILS'[\s\S]*?el\.open = true/,
     'the calendar sheet entry opens the native disclosure before landing on it'
   );
 });

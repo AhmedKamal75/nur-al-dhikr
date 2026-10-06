@@ -4,7 +4,7 @@
  * global-search surface: it searches only resident pages in the current
  * single-page view or spread and never leaves the Mushaf.
  */
-import { t } from '../core/i18n.js';
+import { t, isRTL } from '../core/i18n.js';
 import {
   escapeHTML,
   normalizeSearch,
@@ -12,7 +12,6 @@ import {
   toEasternArabicNumerals,
 } from '../core/utils.js';
 import { icon } from '../core/icons.js';
-import { isRTL } from '../core/i18n.js';
 import { mushafRoutePage } from '../services/mushaf.js';
 
 const fold = (text) => normalizeSearch(stripQuranAnnotations(String(text || '')));

@@ -1153,8 +1153,11 @@ export function renderHome(state) {
   const primaryPanelSet = new Set(HOME_PRIMARY_PANEL_IDS);
   const highlightPanelSet = new Set(HOME_HIGHLIGHT_PANEL_IDS);
   const renderPanelGroup = (ids) => ids.map((id) => homePanels[id] || '').join('');
+  // Progress is a Today summary, not a "next" task. Keep it beside the
+  // prayer/today strip; Continue remains the only primary next-task panel.
+  const progressPanel = orderedHomePanelIds.includes('progress') ? homePanels.progress || '' : '';
   const primaryPanels = renderPanelGroup(
-    orderedHomePanelIds.filter((id) => primaryPanelSet.has(id))
+    orderedHomePanelIds.filter((id) => primaryPanelSet.has(id) && id !== 'progress')
   );
   const highlightPanels = renderPanelGroup(
     orderedHomePanelIds.filter((id) => highlightPanelSet.has(id))
@@ -1185,6 +1188,7 @@ export function renderHome(state) {
         ${prayerRibbonHTML(state, lang, prayerTimes)}
         ${libraryErrorHTML(state, lang)}
         ${homeTodayStripHTML(state)}
+        ${progressPanel}
       </section>
 
       <section class="home-section home-section--actions" aria-labelledby="home-start-heading">

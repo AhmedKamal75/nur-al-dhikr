@@ -20,7 +20,7 @@ The current source pass fixes a real information-architecture defect and a Home-
 - worship/product domains are expandable main-menu sections with explicitly owned disclosure chrome;
 - native summary markers and dashed/stacked browser fallthrough are suppressed;
 - Zakat, Offline, Settings, About are standalone application-tail siblings, with Settings then About last;
-- Home order is identity → Today/prayer context → Start Here → Shahada → next → reflection → context;
+- Home order is identity → Today/prayer context → Start Here → Next → reflection → context;
 - Home mobile heading scale was reduced;
 - regression pins were added for the menu hierarchy and Home reading order.
 

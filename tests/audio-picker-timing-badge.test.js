@@ -94,3 +94,28 @@ test('renderAudio: moshaf rows carry the badge, verse rows do not', async () => 
     assert.ok(!html.includes('audio.wholeSurahBadge'), `no raw key leaks (${lang})`);
   }
 });
+
+test('mushaf page-play picker allows long surah labels to wrap instead of forcing a single-line overflow', async () => {
+  const { buildMushafPlayPick } = await import('../js/views/mushafPlayer.js');
+  const html = buildMushafPlayPick({
+    settings: { language: 'en', customReciters: [], mushafPrefs: { spread: false } },
+    mushaf: { pages: { 1: { chapters: [{ number: 1, titleEn: 'Al-Fatihah' }] } } },
+    quran: {
+      meta: {
+        surahs: [
+          { number: 1, nameEn: 'Al-Fatihah', nameAr: 'الفاتحة', nameTransliteration: 'Al-Fatihah' },
+        ],
+      },
+    },
+    player: { surah: null },
+    surahPlayback: {},
+  });
+  assert.match(html, /mushaf-pick-row__name/);
+  const css = (await import('node:fs')).readFileSync(
+    new URL('../assets/css/quran.css', import.meta.url),
+    'utf8'
+  );
+  const block = css.match(/\.mushaf-pick-row__name \{([\s\S]*?)\n\}/)?.[1] || '';
+  assert.match(block, /white-space:\s*normal/);
+  assert.match(block, /overflow-wrap:\s*anywhere/);
+});

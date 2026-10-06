@@ -44,14 +44,24 @@ test('sheets: drill from more-sheet through track to plan, plus study', async ({
   await expect(page.locator('.modal__body')).not.toBeEmpty({ timeout: 8000 });
   await page.locator('.modal__close').first().click();
 
-  // The hadith browser + the home daily panel (shared leaf module).
+  // The hadith leaf is optional Home content after the sparse-home redesign.
+  // Opt into it through Settings, then prove the lazy leaf renders.
   await page.goto('#/hadith');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(1000);
+  await page.goto('#/settings');
+  await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+  const content = page.locator('#settings-sec-content');
+  if ((await content.getAttribute('open')) == null) await content.locator('summary').click();
+  const hadithToggle = page.locator('input[data-action="home-panel-toggle"][data-id="hadith"]');
+  await expect(hadithToggle).toBeVisible({ timeout: 10000 });
+  if (!(await hadithToggle.isChecked())) await hadithToggle.check({ force: true });
   await page.goto('#/home');
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(1500);
   const home = await page.locator('#main').innerHTML();
-  expect(home.includes('panel--hadith-daily'), 'home renders the daily hadith card').toBe(true);
+  expect(home.includes('panel--hadith-daily'), 'opted-in Home renders the daily hadith card').toBe(
+    true
+  );
 
   expect(pageErrors, `uncaught exceptions: ${pageErrors.join('\n')}`).toEqual([]);
   expect(consoleErrors, `console errors: ${consoleErrors.join('\n')}`).toEqual([]);

@@ -247,7 +247,7 @@ body {
 }
 
 .view--home > .home-hero.home-hero--line {
-  order: 1;
+  order: 0;
   display: flex;
   align-items: center;
   gap: 8px 14px;
@@ -2784,6 +2784,27 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   max-inline-size: 100%;
   display: inline-block;
 }
+
+/* v5.17.126 — the reciter picker is a modal, not .view--audio. Long
+   whole-surah badges must wrap there too or the selected file mode becomes
+   unreachable on narrow phones. */
+.reciter-pick .reciter-row__main {
+  min-inline-size: 0;
+}
+.reciter-pick .reciter-row__name,
+.onboarding-panel .reciter-row__name {
+  min-inline-size: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.reciter-pick .reciter-row__name .chip,
+.onboarding-panel .reciter-row__name .chip {
+  display: inline-block;
+  max-inline-size: 100%;
+  white-space: normal;
+  vertical-align: middle;
+}
 .view--audio .panel--dl {
   box-shadow: none;
   border-color: var(--color-border);
@@ -3991,6 +4012,18 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   white-space: normal;
 }
 
+/* v5.17.126 — Home order is explicit, never left to flex auto-order.
+   Identity/orientation must precede Today, then Start, then the next task. */
+.view--home > .home-hero.home-hero--line {
+  order: 0;
+}
+.view--home > .home-core {
+  order: 1;
+}
+.view--home > .home-secondary {
+  order: 2;
+}
+
 /* Home task order: the daily action comes first; supporting/reflection content
    remains below the core reading surface. Sacred text is content, not chrome. */
 .view--home > .home-core {
@@ -4189,6 +4222,18 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   }
 }
 
+@media (min-width: 1200px) {
+  /* Older desktop.css used to impose a two-column dashboard here. Keep this
+     guard late in the cascade so that stale desktop rules cannot resize or
+     reorder Home again. */
+  .view--home {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 600px) {
   .view--home > .home-core,
   .view--home > .home-secondary {
@@ -4274,7 +4319,9 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 }
 
 .view--home > .home-secondary {
-  max-inline-size: 960px;
+  max-inline-size: 1120px;
+  inline-size: 100%;
+  margin-inline: auto;
 }
 
 .view--home .home-section--next {

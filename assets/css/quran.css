@@ -1664,9 +1664,9 @@ body.mushaf-fs-idle .mushaf-fs-console:hover {
   flex: 1;
   min-width: 0;
   font-family: var(--font-arabic);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  white-space: normal;
 }
 .reciter-pick .panel__subtext {
   margin-block: var(--space-3) var(--space-1);

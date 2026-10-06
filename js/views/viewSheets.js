@@ -12,7 +12,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { escapeHTML, pickLocale } from '../core/utils.js';
-import { VIEWS } from '../core/config.js';
+import { VIEWS, QUIZ_LIBRARY_ID } from '../core/config.js';
 import { viewSheet, sheetRow, sheetLinkRow, sheetToggleRow } from '../ui/viewSheet.js';
 import { fieldTogglesFor, CARD_FIELD_KEYS } from '../domain/contentLens.js';
 import { findCategoryById, contentPrefsOf } from '../services/contentPrefs.js';

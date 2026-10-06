@@ -363,15 +363,24 @@ function sameMemoDeps(prev, next) {
 
 function surahReaderHTML(state, number) {
   const lang = state.settings.language;
-  const meta = state.quran.meta;
-  const surah = state.quran.surahs[number];
-  const surahMeta = meta ? meta.surahs.find((s) => String(s.number) === String(number)) : null;
+  const num = numberToInt(number);
 
-  if (meta && !surahMeta) {
-    return `<section class="view">${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
+  // A malformed/non-existent id must never enter the loading skeleton path.
+  // The route is already known to be outside the canonical 1..114 corpus, so
+  // render the not-found state immediately and give assistive technology a
+  // stable heading even before the Quran corpus finishes hydrating.
+  if (num < 1 || num > 114) {
+    return `<section class="view"><h1 class="sr-only">${escapeHTML(t('quran.notFound', lang))}</h1>${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
   }
 
-  const num = parseInt(number, 10);
+  const meta = state.quran.meta;
+  const surah = state.quran.surahs[number] || state.quran.surahs[num];
+  const surahMeta = meta ? meta.surahs.find((s) => String(s.number) === String(num)) : null;
+
+  if (meta && !surahMeta) {
+    return `<section class="view"><h1 class="sr-only">${escapeHTML(t('quran.notFound', lang))}</h1>${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
+  }
+
   const prev = num > 1 ? num - 1 : null;
   const next = num < 114 ? num + 1 : null;
   const showBismillah = num !== 1 && num !== 9;
@@ -621,12 +630,12 @@ export function renderQuran(state) {
   const lang = state.settings.language;
   const id = state.activeParams.id;
   if (id != null && id !== '' && !/^[0-9]+$/.test(String(id))) {
-    return `<section class="view view--quran">${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
+    return `<section class="view view--quran"><h1 class="sr-only">${escapeHTML(t('quran.notFound', lang))}</h1>${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
   }
   if (id != null && id !== '') {
     const n = Number(id);
     if (!Number.isInteger(n) || n < 1 || n > 114) {
-      return `<section class="view view--quran">${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
+      return `<section class="view view--quran"><h1 class="sr-only">${escapeHTML(t('quran.notFound', lang))}</h1>${notFoundStateHTML({ title: t('quran.notFound', lang), lang, t })}</section>`;
     }
   }
 

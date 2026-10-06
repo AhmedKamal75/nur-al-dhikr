@@ -1,3 +1,13 @@
+## v5.17.126 — hostile-review remediation: Home, invalid Qur’an routes, and picker resilience
+
+- **Home composition restored:** identity/orientation now precedes Today, Start Here follows Today, and Next for you follows the daily core. Today’s Progress stays inside Today instead of appearing under Next.
+- **Desktop Home geometry:** removed the stale two-column desktop.css rule and pinned a late single-column Home guard so wide screens use the available content rail without becoming a dashboard.
+- **Invalid Qur’an deep links:** numeric IDs outside 1–114 now resolve immediately to an explicit not-found state with an accessible heading; they no longer enter an indefinite skeleton path.
+- **Audio / reciter resilience:** long reciter names and whole-surah mode badges wrap in the reciter picker, onboarding picker, and Mushaf page-play picker instead of forcing one-line clipping.
+- **Hostile-review lint defects:** imported QUIZ_LIBRARY_ID correctly, removed the duplicate mushafPageFind i18n import, and replaced the browser-global HTMLDetailsElement reference with a tag-name check.
+- **Evidence discipline:** added the v5.17.125 hostile-review assessment and a browser rerun packet for v5.17.126. The local Chromium run remains the authority for final visual certification.
+- No religious corpus bytes were modified.
+
 ## v5.17.125 — Tajweed Practice retry affordance
 
 - When a Tajweed practice round cannot load any questions, the failure toast is now assertive and offers a direct **Retry** action using the exact same rule and answer mode.

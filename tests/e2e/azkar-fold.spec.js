@@ -212,7 +212,7 @@ test.describe('Azkar reading surface and counter separation', () => {
     page,
   }) => {
     await page.setViewportSize({ width: 393, height: 852 });
-    await page.goto('./#/category?id=morning');
+    await page.goto('./#/category/morning');
     await expect(page.locator('.card').first()).toBeVisible({ timeout: 25000 });
     await settled(page);
 
@@ -243,7 +243,7 @@ test.describe('Azkar reading surface and counter separation', () => {
 
   test('Details keyboard activation also never increments the counter', async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
-    await page.goto('./#/category?id=morning');
+    await page.goto('./#/category/morning');
     await expect(page.locator('.card').first()).toBeVisible({ timeout: 25000 });
     await settled(page);
 

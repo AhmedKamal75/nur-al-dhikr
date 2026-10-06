@@ -9,6 +9,7 @@
  */
 import { t, availableLanguages, languageLabel, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
+import { onboardingPanelHTML } from './onboardingPanel.js';
 import { escapeHTML, normalizeSearch, pickLocale } from '../core/utils.js';
 import {
   ARABIC_TEXT_FONTS,
@@ -398,6 +399,8 @@ export function renderSettings(state, flags = {}) {
   // The open accordion: deep link wins, then the persisted pin, then the
   // default section. (The search filter below opens matches instead.)
   const openId = openSettingsSectionFor(state);
+  const onboardingReplay =
+    state.activeParams?.id === 'onboarding' ? onboardingPanelHTML(state, lang) : '';
   // (v5.17.63) Group wrappers for the professional sections below. By index
   // into SETTINGS_GROUPS (rule 6 — the groups partition SETTINGS_SECTIONS,
   // so an index always names the intended shelf).
@@ -542,6 +545,7 @@ export function renderSettings(state, flags = {}) {
         ${deferredSetupBodyHTML(state, lang)}
       </div>
     </details>
+    ${onboardingReplay}
     ${groupClose()}
     ${groupOpen(G_DISPLAY)}
     <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>

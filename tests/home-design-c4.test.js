@@ -10,7 +10,7 @@
  *     order). An explicit user order still wins (it is the user's data).
  *  2. Tiles rank the same way inside each section (window id first at
  *     its hour, then most-opened, then live count).
- *  3. The hero is one quiet line below the dhikr (h1 + tagline +
+ *  3. The hero is one quiet identity line before Today (h1 + tagline +
  *     greeting + Hijri chip kept, nothing removed).
  *  4. The 8-step wizard collapses to one summary line ("N of 8 ·
  *     current step · dismiss") with the full step body, Back/Next and
@@ -207,8 +207,13 @@ describe('Home reading order: identity before utility', () => {
   test('hero leads practical context without decorative sacred-text chrome', () => {
     const html = renderHome(homeState());
     const at = (needle) => html.indexOf(needle);
-    assert.ok(at('home-hero--line') < at('home-prayer-ribbon'), 'hero precedes prayer context');
-    assert.ok(at('home-prayer-ribbon') < at('quick-actions'), 'prayer precedes quick actions');
+    assert.ok(at('home-hero--line') < at('home-today'), 'identity precedes the Today section');
+    assert.ok(at('home-today') < at('quick-actions'), 'Today context precedes Start Here');
+    assert.ok(
+      at('panel--progress') < at('quick-actions'),
+      'Today progress stays with Today, before Start Here'
+    );
+    assert.ok(at('quick-actions') < at('home-section--next'), 'Start Here precedes Next for you');
     assert.equal(at('shahada-banner'), -1, 'Home carries no decorative Shahada footer');
     assert.equal(at('panel--onboarding--line'), -1, 'Home carries no setup/onboarding strip');
   });

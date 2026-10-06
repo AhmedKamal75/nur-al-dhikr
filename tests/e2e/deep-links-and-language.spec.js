@@ -51,8 +51,10 @@ test.describe('deep links', () => {
   test('the palette entry for Focus no longer dead-ends', async ({ page }) => {
     await page.goto('./#/home');
     await ready(page);
-    await page.locator('[data-action="open-palette"]').first().click();
-    const focusEntry = page.locator('[data-action="navigate"][data-view="focus"]').first();
+    await page.locator('#topbar [data-action="open-palette"]').click();
+    const focusEntry = page
+      .locator('#palette-results [data-action="navigate"][data-view="focus"]')
+      .first();
     await expect(focusEntry, 'the palette must offer Focus').toBeVisible({ timeout: 10000 });
     await focusEntry.click();
     await ready(page);

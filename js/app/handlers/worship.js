@@ -21,6 +21,7 @@ import { OFFSET_PRAYERS } from '../../domain/prayer.js';
 import { PRAYER_KEYS, dayComplete, prayerState } from '../../domain/prayerLog.js';
 import { CONFIRM_STEPS, resolveOnboardingStep } from '../../domain/onboarding.js';
 import { go } from '../../core/router.js';
+import { VIEWS } from '../../core/config.js';
 import {
   detectInstallPlatform,
   installStepsKey,
@@ -65,7 +66,7 @@ export const clickHandlers = {
     closeModal();
     const el = document.getElementById('calendar-fasting');
     if (!el) return;
-    if (el instanceof HTMLDetailsElement) el.open = true;
+    if (el?.tagName === 'DETAILS') el.open = true;
     el.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
   },
 
@@ -389,6 +390,7 @@ export const clickHandlers = {
   // (v5.17.48) re-open the introduction from the Settings deferred block.
   'onboarding-reshow': () => {
     store.dispatch(actions.reshowOnboarding());
+    go(VIEWS.SETTINGS, { id: 'onboarding' });
   },
 
   'onboarding-confirm': (ds) => {

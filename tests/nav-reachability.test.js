@@ -48,8 +48,14 @@ const shellSrc = read('js/ui/shell.js');
 function parseDoorsStatic(src) {
   const entryRe = /entry:\s*'(\w+)'/g;
   const labelRe = /labelKey:\s*'([^']+)'/g;
+  // The trailing `,?` matters: several members are written multi-line with a
+  // trailing comma before `}` (COLLECTIONS, COLLECTION, TAJWEED_COURSE,
+  // MUTASHABIHAT, CERTIFICATE). Without it the pattern silently matches nothing
+  // for them, so this drift-check compares fewer static members than the real
+  // DOORS and fails on a false accusation instead of on real drift. This fix was
+  // applied at v5.17.93 and reverted by the v5.17.126 archive; re-applied.
   const memberRe =
-    /\{\s*route:\s*'(\w+)'\s*(?:,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*\}/g;
+    /\{\s*route:\s*'(\w+)'\s*(?:,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*,?\s*\}/g;
   const entries = [...src.matchAll(entryRe)];
   const labels = [...src.matchAll(labelRe)];
   const members = [...src.matchAll(memberRe)].map((m) => ({

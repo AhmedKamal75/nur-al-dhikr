@@ -1,13 +1,11 @@
 /**
  * desktop-blowout.test.js — a grid track may not exceed its container.
  *
- * THE BUG THIS PINS
- *
- * `assets/css/desktop.css` turned the home view into a two-column grid with
- * `grid-template-columns: 1fr 1fr`. A bare `1fr` is really `minmax(auto, 1fr)`,
- * and that `auto` minimum resolves to the item's MIN-CONTENT width. The adhkar
- * browser contains a deliberately non-wrapping horizontal scroller
- * (`.chip-row--scroll`), so its min-content width is enormous.
+ * The desktop contract this pins is now intentionally simple: Home is one
+ * editorial column. Historical desktop.css grid rules caused the real browser
+ * to place the Home story into a narrow half-column, reorder its hero visually,
+ * and leave a large dead canvas beside it. The final Home layout lives in
+ * deslopify.css; desktop.css must never impose a second Home geometry.
  *
  * Measured before the fix, at a 1440px viewport:
  *   .view            1144px   (the column)
@@ -84,11 +82,19 @@ test('no desktop grid track uses a bare fr, which floors at min-content', () => 
   );
 });
 
-test('the home view is the two-column dashboard it claims to be', () => {
-  // Guards the fix from being "simplified" back to one column: the intent is
-  // two balanced columns on wide screens, full-bleed hero above them.
-  const home = desktopCss.match(/\.view--home\s*\{([^}]+)\}/);
-  assert.ok(home, 'the .view--home desktop block should exist');
-  assert.match(home[1], /display:\s*grid/);
-  assert.match(home[1], /grid-template-columns:\s*minmax\(0,\s*1fr\)\s+minmax\(0,\s*1fr\)/);
+test('the desktop stylesheet does not impose a two-column Home dashboard', () => {
+  const homeBlocks = [...desktopCss.matchAll(/\.view--home\s*\{([^}]+)\}/g)].map((m) => m[1]);
+  assert.ok(
+    homeBlocks.length === 0 ||
+      homeBlocks.every((block) => !/display:\s*grid|grid-template-columns/.test(block))
+  );
+});
+
+test('Home is explicitly a single editorial column in the late design layer', () => {
+  const css = readFileSync(`${ROOT}assets/css/deslopify.css`, 'utf8');
+  const home = css.match(/@media \(min-width: 1200px\) \{[\s\S]*?\.view--home \{([^}]+)\}/);
+  assert.ok(home, 'the late wide-screen Home guard should exist');
+  assert.match(home[1], /display:\s*flex/);
+  assert.match(home[1], /flex-direction:\s*column/);
+  assert.match(home[1], /grid-template-columns:\s*none/);
 });

@@ -99,7 +99,7 @@ test('recovered: sadaqah editor logs an amount+note gift into history', async ({
   expect(consoleErrors, `console errors: ${consoleErrors.join('\n')}`).toEqual([]);
 });
 
-test('recovered: verse theme chips narrow the daily card and persist', async ({ page }) => {
+test('recovered: Daily Ayah theme selection lives in Settings and persists', async ({ page }) => {
   const consoleErrors = [];
   const pageErrors = [];
   page.on('console', (msg) => {
@@ -107,26 +107,23 @@ test('recovered: verse theme chips narrow the daily card and persist', async ({ 
   });
   page.on('pageerror', (err) => pageErrors.push(String(err)));
 
-  // The verse panel ships in the fresh-install default set (UX-1), so no
-  // opt-in dance is needed here — unlike the worship card above.
-  await page.goto('#/home');
+  await page.goto('#/settings');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+  const content = page.locator('#settings-sec-content');
+  if ((await content.getAttribute('open')) == null) await content.locator('summary').click();
   const mercy = page.locator('[data-key="dailyAyahTheme"][data-value="mercy"]');
   await expect(mercy).toBeVisible({ timeout: 10000 });
   await mercy.click();
   await expect(mercy).toHaveAttribute('aria-pressed', 'true');
   await page.reload();
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await expect(page.locator('[data-key="dailyAyahTheme"][data-value="mercy"]')).toHaveAttribute(
-    'aria-pressed',
-    'true'
-  );
-  // Restore the default so later runs start unfiltered.
-  await page.locator('[data-key="dailyAyahTheme"][data-value="any"]').click();
-  await expect(page.locator('[data-key="dailyAyahTheme"][data-value="any"]')).toHaveAttribute(
-    'aria-pressed',
-    'true'
-  );
+  const reopened = page.locator('[data-key="dailyAyahTheme"][data-value="mercy"]');
+  await expect(reopened).toBeVisible({ timeout: 10000 });
+  await expect(reopened).toHaveAttribute('aria-pressed', 'true');
+  await reopened
+    .locator('xpath=..')
+    .locator('[data-key="dailyAyahTheme"][data-value="any"]')
+    .click();
 
   expect(pageErrors, `uncaught exceptions: ${pageErrors.join('\n')}`).toEqual([]);
   expect(consoleErrors, `console errors: ${consoleErrors.join('\n')}`).toEqual([]);
