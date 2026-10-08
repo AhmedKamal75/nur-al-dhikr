@@ -74,7 +74,13 @@ test('qalqalah fires on ق ط ب ج د with sukun, not on other sakin letters', 
 });
 
 test('Muqaṭṭaʿāt opening tokens do not inherit bare-letter Qalqalah', () => {
-  for (const word of ['\u0637\u0647', '\u0637\u0633', '\u0637\u0633\u0645', '\u0642', '\u0639\u0633\u0642']) {
+  for (const word of [
+    '\u0637\u0647',
+    '\u0637\u0633\u0653',
+    '\u0637\u0633\u0653\u0645\u0653',
+    '\u0642\u0653',
+    '\u0639\u0633\u0653\u0642\u0653',
+  ]) {
     assert.deepEqual(
       rulesOf(word).filter((r) => r === 'qalqalah'),
       [],
@@ -137,6 +143,8 @@ test('qalqalah suppression requires explicit assimilation evidence', () => {
     '\u0627\u064e\u062D\u064e\u0637\u0652\u062A\u064f', // أَحَطْتُ
     '\u0628\u064e\u0633\u064e\u0637\u0652\u062A\u064e', // بَسَطْتَ
     '\u0641\u064e\u0631\u0651\u064e\u0637\u0652\u062A\u064f', // فَرَّطْتُ
+    '\u0641\u064e\u0631\u0651\u064e\u0637\u064e\u062A\u064f\u0645\u0652', // فَرَّطَتُمْ shape guard (not the corpus form)
+    '\u0641\u064e\u0631\u0651\u064e\u0637\u0652\u062A\u064F\u0645\u0652', // فَرَّطتُمۡ
     '\u0646\u064e\u062E\u0652\u0644\u064F\u0642\u0643\u0651\u064F\u0645\u0652', // نَخْلُقكُّم
   ]) {
     assert.deepEqual(rulesOf(word).filter((r) => r === 'qalqalah'), []);
