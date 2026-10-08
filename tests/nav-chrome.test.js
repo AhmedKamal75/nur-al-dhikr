@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { renderNav, drawerSectionsHTML, INTERNAL_ONLY_ROUTES } from '../js/ui/shell.js';
+import { renderNav, renderTopBar, drawerSectionsHTML, INTERNAL_ONLY_ROUTES } from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
 import { APP_MENU_ENTRIES, APP_MENU_GROUPS, DOORS } from '../js/core/config/nav.js';
 import { initialState } from '../js/core/state/initial.js';
@@ -69,6 +69,14 @@ describe('v5.17.84 main menu hierarchy', () => {
     assert.match(shell, /class="icon-btn topbar__menu" data-action="nav-toggle"/);
     assert.match(shell, /navControlIcon/);
     assert.doesNotMatch(css, /@media \(min-width: 960px\) \{\s*\.topbar__menu\s*\{\s*display:\s*none !important;/);
+  });
+
+  test('mobile menu trigger targets the drawer and the drawer has a stable id', () => {
+    const topbar = renderTopBar(stateFor(VIEWS.HOME));
+    const nav = renderNav(stateFor(VIEWS.HOME));
+    assert.match(topbar, /data-action="nav-toggle"/);
+    assert.match(topbar, /aria-controls="nav-drawer"/);
+    assert.match(nav, /id="nav-drawer"/);
   });
 
   test('Settings and About are standalone at the end of the main menu', () => {
