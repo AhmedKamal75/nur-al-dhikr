@@ -20,6 +20,7 @@ test('navigation shell: desktop rail collapse and expand are reachable', async (
   await boot(page, 1440, 900);
 
   const toggle = page.locator('.topbar__menu');
+  const expandedWidth = await page.locator('#bottomnav').evaluate((el) => getComputedStyle(el).width);
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('html')).toHaveAttribute('data-nav-collapsed', 'false');
 
@@ -33,7 +34,7 @@ test('navigation shell: desktop rail collapse and expand are reachable', async (
       .getPropertyValue('--sidenav-width-collapsed')
       .trim(),
   }));
-  expect(collapsed.width).not.toBe('240px');
+  expect(collapsed.width).not.toBe(expandedWidth);
   expect(collapsed.railVar).not.toBe('');
 
   await toggle.click();
@@ -82,6 +83,33 @@ test('navigation shell: parent section names navigate and summaries only disclos
 
   await summary.click();
   await expect(closed).not.toHaveAttribute('open', '');
+});
+
+test('navigation shell: desktop child and application-tail links all route', async ({ page }) => {
+  await boot(page, 1440, 900);
+
+  const hrefs = await page.locator('#bottomnav .nav__scroller a.nav__item[href]').evaluateAll((nodes) =>
+    [...new Set(nodes.map((node) => node.getAttribute('href')).filter(Boolean))]
+  );
+  expect(hrefs.length).toBeGreaterThanOrEqual(15);
+
+  for (const href of hrefs) {
+    await page.goto('#/home');
+    await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+    const link = page.locator('#bottomnav .nav__scroller a.nav__item[href="' + href + '"]').first();
+    const section = link.locator('xpath=ancestor::details[1]');
+    if (await section.count()) {
+      const open = await section.getAttribute('open');
+      if (open === null) {
+        await section.locator('summary.nav__section-toggle').click();
+        await expect(section).toHaveAttribute('open', '');
+      }
+    }
+    await expect(link).toBeVisible();
+    await link.click();
+    const expectedHash = new URL(href, page.url()).hash;
+    await expect.poll(() => new URL(page.url()).hash).toBe(expectedHash);
+  }
 });
 
 test('navigation shell: mobile drawer and active underline remain honest', async ({ page }) => {
