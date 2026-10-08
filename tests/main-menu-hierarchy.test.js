@@ -42,11 +42,13 @@ describe('v5.17.84 main-menu hierarchy', () => {
     assert.match(shell, /APP_MENU_ENTRIES\.map\(\(n\) =>/);
     assert.match(shell, /<details data-open-controlled class="nav__section/);
     assert.match(shell, /nav__section-chevron/);
-    assert.match(css, /\.nav__section\s*\{/);
+    assert.match(shell, /class="nav__section-link/);
+    assert.match(shell, /<summary class="nav__section-toggle"/);
+    assert.match(css, /\.nav__section-link/);
   });
 
   test('menu has bilingual labels for the new hierarchy affordances', () => {
-    for (const key of ['nav.main', 'nav.overview']) {
+    for (const key of ['nav.main', 'nav.overview', 'nav.toggleSection', 'nav.expand', 'nav.collapse']) {
       assert.ok(en[key], `missing English ${key}`);
       assert.ok(ar[key], `missing Arabic ${key}`);
     }
