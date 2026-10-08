@@ -126,6 +126,17 @@ test('navigation shell: mobile drawer and active underline remain honest', async
   await expect(drawer).toBeVisible();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 
+  const drawerLink = drawer.locator('.nav__section-link').first();
+  await expect(drawerLink).toBeVisible();
+  const drawerHref = await drawerLink.getAttribute('href');
+  await drawerLink.click();
+  await expect(page.locator('body')).not.toHaveClass(/nav-drawer-open/);
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect.poll(() => new URL(page.url()).hash).toBe(drawerHref);
+
+  await trigger.click();
+  await expect(drawer).toBeVisible();
+
   const close = drawer.locator('[data-action="nav-drawer-close"]');
   await close.click();
   await expect(page.locator('body')).not.toHaveClass(/nav-drawer-open/);
