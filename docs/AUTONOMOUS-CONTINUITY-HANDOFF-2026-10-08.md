@@ -116,3 +116,11 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - `قَدْ تَّبَيَّنَ` and `ارْكَبْ مَّعَنَا` remain route-sensitive and are intentionally not auto-suppressed without a declared reading profile.
 - Regression coverage now pins both positive and negative sides of this contract.
 - This remains **unverified by local execution and browser evidence**. Full 6,236-ayah execution/anomaly analysis remains the next gating step.
+
+
+### 2026-10-08 corpus/anomaly findings
+- A Unicode-aware raw-text boundary scan now covers the full 114-surah corpus. It found one confirmed same-letter boundary candidate: `وَقَد دَّخَلُوا` (5:61); six bare/implicit-sukun د→تّ candidates in 2:256, 6:94, 9:117, 29:35, 29:38, 61:5; and one route-sensitive ب→مّ candidate, `ارۡكَب مَّعَنَا` (11:42).
+- Scholarly cross-check changed the disposition of the d→t family: published Tajweed references describe dāl→tāʾ assimilation as an explicit idgham family, including examples such as `لَقَدْ تَابَ`, `قَدْ تَبَيَّنَ`, `قَدْ تَعْلَمُونَ`, and `لَقَدْ تَقَطَّعَ`. citeturn301559search0turn301559search5turn301559search8
+- The ط→ت no-Qalqalah exception set was widened to include `فَرَّطتُ`; the corpus contains it at 39:56. The same sources describe `بسطت` / `أحطت` / `فرطت` as incomplete assimilation where the sakin ط must be pronounced without Qalqalah. citeturn301559search8turn301559search9
+- The route-sensitive `اركب معنا` case remains deliberately conservative: sources document different reading-route treatment for Hafs, so the classifier must not silently assert one route without a declared profile. citeturn799118search0
+- Exact corpus spellings verified: `بَسَطتَ` at 5:28, `أَحَطتُ` at 27:22, `فَرَّطتُ` at 39:56, `نَخۡلُقكُّم` at 77:20.
