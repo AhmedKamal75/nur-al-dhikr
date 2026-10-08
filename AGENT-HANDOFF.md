@@ -106,3 +106,35 @@ settled decisions: [MEMORY.md](MEMORY.md).
 - **Not yet verified anywhere:** real audio playback and the sleep-timer fade
   (headless has no audio device), Firefox and WebKit, Mushaf Find/spread/
   fullscreen, bookmark reopen, Hadith Reference, oversized-import hardening.
+
+
+## Next hostile/deslopification wave — 2026-10-08
+
+The owner has replaced ZIP-to-chat handoff with GitHub as the shared source of truth. Work from `main` history and the current PR/issue trail.
+
+### Current candidate
+
+- **PR #2** `fix: keep prayer provenance qualifier on focal method line`
+- Branch: `fix/prayer-provenance-hero`
+- Purpose: restore the bilingual `Source (unverified):` qualifier on the compact/focal prayer method line without weakening the deliberately-red assertion.
+- **Do not merge until the local agent runs `npm run check` and Chromium E2E honestly.**
+
+### Hostile-review queue
+
+See GitHub issue #1 for the owner's six current product findings:
+
+1. **Mutashabihat / Look-alike Ayat:** geometry/scaling plus content-depth enrichment. Measure current browser states before CSS changes.
+2. **Tajweed Course:** expand from a curriculum/practice shell into a real beginner→advanced written interactive course. Source-backed, bilingual, offline, no invented religious prose.
+3. **Calendar:** current dual-date grid needs responsive/visual polish. Evidence first at phone/tablet/desktop and EN/AR light/dark.
+4. **Practise IA:** current Practice door is Tasbih + 99 Names Quiz while Tajweed/Mutashabihat practice sits elsewhere. Audit the jobs-to-be-done before adding or moving navigation.
+5. **Offline Library:** v5.17.135 fixed the primary switch visibility defect; audit the whole page for remaining density/hierarchy/polish issues without burying Essentials again.
+6. **Settings:** Arabic typeface specimen cards and palette swatches need real visual refinement; source-level fixes are not considered certified until current browser evidence proves them.
+
+### Evidence rule
+
+Do not mark a visual issue resolved from source inspection alone. Capture the current state, interaction state where relevant, and EN/AR + light/dark + representative widths. Keep stale selector failures separate from product defects.
+
+### Preserve
+
+No Home dashboard, no generic “More”, no decorative sacred banners, no per-dhikr audio corpus, no invented grades/rulings/methodologies, no timeout inflation, no weakened assertions.
+
