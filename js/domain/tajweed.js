@@ -281,6 +281,16 @@ export const TAJWEED_RULES = Object.freeze([
     },
   },
   {
+    id: 'izhar',
+    color: null,
+    family: 'plain',
+    name: { en: 'Izhar (clear noon)', ar: 'الإظهار الحلقي' },
+    desc: {
+      en: 'Noon sakinah or tanween is pronounced clearly before the throat letters.',
+      ar: 'إظهار النون الساكنة أو التنوين عند حروف الحلق.',
+    },
+  },
+  {
     id: 'iqlab',
     color: '#4CAF50',
     family: 'nasal',
@@ -605,6 +615,8 @@ export function classifyWordTajweed(
           spans.push({ start: u.start, end: u.end, rule: 'idgham_no_ghunnah' });
         else if (nb && IKHFA_LETTERS.has(nb))
           spans.push({ start: u.start, end: u.end, rule: 'ikhfa' });
+        else if (nb && IZHAR_HAQI_LETTERS.has(nb))
+          spans.push({ start: u.start, end: u.end, rule: 'izhar' });
       }
     }
 
