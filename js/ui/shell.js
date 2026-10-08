@@ -167,15 +167,25 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
       drawer,
     });
   const isOpen = door.view === active || door.members.some((m) => m.route === activeKey);
+  const label = t(door.labelKey, lang);
   return `
-  <details data-open-controlled class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}"${isOpen ? ' open' : ''}>
-    <summary class="nav__section-summary">
-      <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
-      <span class="nav__label">${t(door.labelKey, lang)}</span>
-      <span class="nav__section-chevron" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
-    </summary>
-    <div class="nav__sub">${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
-  </details>`;
+  <div class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}">
+    <div class="nav__section-row">
+      <a class="nav__section-link${isOpen ? ' nav__item--active' : ''}"
+         href="${buildHash(door.view)}" data-action="${drawer ? 'nav-drawer-go' : 'navigate'}" data-view="${door.view}"
+         title="${label}" aria-label="${label}" aria-current="${door.view === active ? 'page' : 'false'}">
+        <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
+        <span class="nav__label">${label}</span>
+      </a>
+      <button type="button" class="nav__section-toggle" data-action="nav-section-toggle" data-section="${door.entry}"
+              aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="nav-sub-${door.entry}"
+              aria-label="${isOpen ? t('nav.collapse', lang) : t('nav.expand', lang)}"
+              title="${isOpen ? t('nav.collapse', lang) : t('nav.expand', lang)}">
+        <span class="nav__section-chevron${isOpen ? ' nav__section-chevron--open' : ''}" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
+      </button>
+    </div>
+    <div id="nav-sub-${door.entry}" class="nav__sub"${isOpen ? '' : ' hidden'}>${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
+  </div>`;
 }
 
 function appMenuHTML(active, lang, { drawer = false } = {}) {
@@ -276,6 +286,14 @@ export function renderTopBar(state, opts = {}) {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
   const collapsed = !!state.settings.navCollapsed;
+  const desktopNav =
+    typeof window !== 'undefined' && window.matchMedia?.('(min-width: 960px)').matches;
+  const navControlLabel = desktopNav
+    ? t(collapsed ? 'nav.expand' : 'nav.collapse', lang)
+    : t('a11y.navToggle', lang);
+  const navControlIcon = desktopNav
+    ? icon(collapsed ? (isRTL(lang) ? 'chevronLeft' : 'chevronRight') : (isRTL(lang) ? 'chevronRight' : 'chevronLeft'), { size: 20 })
+    : icon('menu', { size: 22 });
   // (v4.5.2, APP-FLOW I9) the universal Back affordance: present whenever
   // a forward navigation left somewhere to go back TO. It rides the real
   // browser history (I3), so it always lands where the user actually came
@@ -294,8 +312,8 @@ export function renderTopBar(state, opts = {}) {
   return `
   <div class="topbar__inner">
     <div class="topbar__lead">
-      <button type="button" class="icon-btn topbar__menu" data-action="nav-toggle" aria-label="${t('a11y.navToggle', lang)}" aria-expanded="${collapsed ? 'false' : 'true'}" aria-controls="bottomnav">
-        ${icon('menu', { size: 22 })}
+      <button type="button" class="icon-btn topbar__menu" data-action="nav-toggle" aria-label="${navControlLabel}" title="${navControlLabel}" aria-expanded="${desktopNav ? (collapsed ? 'false' : 'true') : 'false'}" aria-controls="bottomnav">
+        ${navControlIcon}
       </button>
       <a class="topbar__brand" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">
         <span class="topbar__brand-icon" aria-hidden="true">${icon('rayah', { size: 21 })}</span>
