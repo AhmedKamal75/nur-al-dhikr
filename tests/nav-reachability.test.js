@@ -693,16 +693,22 @@ describe('Phase 2 pin: one Qur’an door, six routes alive', () => {
     }
   });
 
-  test('#/tajweed-course and #/mutashabihat stay real routes resolving to the Qur’an door in 2 taps', () => {
-    for (const key of ['TAJWEED_COURSE', 'MUTASHABIHAT']) {
-      const m = ROUTE_DOOR_MAP[key];
-      assert.ok(m.door, `#/${m.route} lost its door — study belongs to the book`);
-      assert.equal(m.door.entry, 'MUSHAF');
-      assert.equal(m.door.labelKey, 'nav.quran');
-      assert.equal(m.taps, 2, 'door → in-chrome Qur’an switch');
-      assert.equal(m.door.via, 'main-menu');
-      assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
-    }
+  test('#/tajweed-course stays Qur’an-owned while #/mutashabihat is a Practice recall route', () => {
+    const course = ROUTE_DOOR_MAP.TAJWEED_COURSE;
+    assert.ok(course.door, '#/tajweed-course lost its door');
+    assert.equal(course.door.entry, 'MUSHAF');
+    assert.equal(course.door.labelKey, 'nav.quran');
+    assert.equal(course.taps, 2, 'door → in-chrome Qur’an switch');
+    assert.equal(course.door.via, 'main-menu');
+    assert.ok(!ORPHANS.includes('TAJWEED_COURSE'));
+
+    const recall = ROUTE_DOOR_MAP.MUTASHABIHAT;
+    assert.ok(recall.door, '#/mutashabihat lost its door');
+    assert.equal(recall.door.entry, 'PRACTICE');
+    assert.equal(recall.door.labelKey, 'nav.practise');
+    assert.equal(recall.taps, 2, 'door → Practice task');
+    assert.equal(recall.door.via, 'main-menu');
+    assert.ok(!ORPHANS.includes('MUTASHABIHAT'));
   });
 
   test('the merge adds no orphan: only the 3 documented doorless routes remain', () => {
