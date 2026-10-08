@@ -48,6 +48,25 @@ describe('v5.17.84 main menu hierarchy', () => {
     assert.ok(html.includes(`data-view="${VIEWS.ABOUT}"`));
   });
 
+  test('top-level section rows navigate while the adjacent control owns disclosure', () => {
+    const html = renderNav(stateFor(VIEWS.HOME));
+    for (const door of DOORS.filter((d) => d.members.some((m) => m.route !== d.entry && m.direct !== false))) {
+      const sectionPos = html.indexOf(`data-section="${door.entry}"`);
+      assert.ok(sectionPos >= 0, `${door.entry} section missing`);
+      const section = html.slice(sectionPos, html.indexOf('</div>', sectionPos + 1) + 6);
+      assert.match(section, new RegExp(`data-action="(?:navigate|nav-drawer-go)"[^>]*data-view="${door.view}"`));
+      assert.match(section, /data-action="nav-section-toggle"/);
+    }
+  });
+
+  test('desktop rail collapse has a reachable topbar toggle contract', () => {
+    const shell = readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8');
+    const css = readFileSync(new URL('../assets/css/deslopify.css', import.meta.url), 'utf8');
+    assert.match(shell, /class="icon-btn topbar__menu" data-action="nav-toggle"/);
+    assert.match(shell, /navControlIcon/);
+    assert.doesNotMatch(css, /@media \(min-width: 960px\) \{\s*\.topbar__menu\s*\{\s*display:\s*none !important;/);
+  });
+
   test('Settings and About are standalone at the end of the main menu', () => {
     const html = renderNav(stateFor(VIEWS.HOME));
     const settingsPos = html.lastIndexOf(`data-view="${VIEWS.SETTINGS}"`);
