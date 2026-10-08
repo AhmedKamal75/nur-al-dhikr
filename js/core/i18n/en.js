@@ -30,6 +30,7 @@ export const en = {
   'nav.back': 'Back',
   'nav.expand': 'Expand',
   'nav.collapse': 'Collapse',
+  'nav.toggleSection': 'Expand or collapse section',
   // (REORG Phase 6) garden.title retired with the Garden nav noun — the
   // Growth view's heading is you.growth now. Body copy (garden.*) keeps
   // describing the visual treatment it sits beside.
