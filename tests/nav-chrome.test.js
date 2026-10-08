@@ -37,6 +37,7 @@ describe('v5.17.84 main menu hierarchy', () => {
   test('main menu sections expose explicit destination and disclosure controls', () => {
     const html = renderNav(stateFor(VIEWS.HOME));
     assert.ok(html.includes('nav__section'));
+    assert.ok(html.includes('<details data-open-controlled class="nav__section'));
     assert.ok(html.includes('nav__section-link'));
     assert.ok(html.includes('nav__section-toggle'));
     assert.ok(html.includes('data-section="LIBRARY"'));
@@ -58,7 +59,7 @@ describe('v5.17.84 main menu hierarchy', () => {
       assert.ok(sectionPos >= 0, `${door.entry} section missing`);
       const section = html.slice(sectionPos, html.indexOf('</div>', sectionPos + 1) + 6);
       assert.match(section, new RegExp(`data-action="(?:navigate|nav-drawer-go)"[^>]*data-view="${door.view}"`));
-      assert.match(section, /data-action="nav-section-toggle"/);
+      assert.match(section, /<summary class="nav__section-toggle"/);
     }
   });
 
