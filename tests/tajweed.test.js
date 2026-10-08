@@ -161,6 +161,9 @@ test('ornament-only tokens do not break cross-word Tajweed lookahead or ayah-fin
     'ornament must not hide the next idgham letter'
   );
 
+  const sajdah = classifyAyahTajweed('مِنْ ۩ هُدًى');
+  assert.equal(sajdah[1].spans.length, 0, 'standalone sajdah mark remains a render-only token');
+
   const final = classifyAyahTajweed('الرَّحِيمِ ۚ');
   assert.ok(
     final[0].spans.some((s) => s.rule === 'madd_246'),
@@ -172,6 +175,8 @@ test('ornament-only tokens do not break cross-word Tajweed lookahead or ayah-fin
     iwad[0].spans.some((s) => s.rule === 'madd_iwad'),
     'a trailing ornament must not suppress final madd iwad'
   );
+  const numbered = classifyAyahTajweed('مِنْ ١ هُدًى');
+  assert.equal(numbered[1].spans.length, 0, 'standalone ayah numeral remains a render-only token');
   assert.equal(final[1].spans.length, 0, 'standalone ornament remains a render-only token');
 });
 
