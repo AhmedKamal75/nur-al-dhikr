@@ -190,6 +190,14 @@ test('tanween triggers the same noon-sakinah family as a bare sakin noon', () =>
   ); // كِتَابٌ + م...
 });
 
+test('small waw/yeh only become Madd as-Silah after hāʾ al-kinayah', () => {
+  assert.ok(rulesOf('\u0644\u064e\u0647\u064f\u06E5').includes('madd_silah')); // لَهُۥ
+  assert.equal(rulesOf('\u062F\u064e\u0627\u0648\u064F\u06E5\u062F\u064F').includes('madd_silah'), false); // دَاوُۥدُ
+  assert.ok(rulesOf('\u062F\u064e\u0627\u0648\u064F\u06E5\u062F\u064F').includes('madd_2'));
+  assert.equal(rulesOf('\u064A\u064F\u062D\u0652\u064A\u0650\u06E6').includes('madd_silah'), false); // يُحۡيِۦ
+  assert.ok(rulesOf('\u064A\u064F\u062D\u0652\u064A\u0650\u06E6').includes('madd_2'));
+});
+
 test('madd badal requires hamza+madd orthography, not any madda sign', () => {
   assert.equal(rulesOf('\u0622\u062F\u064e\u0645َ')[0], 'madd_badal'); // آدَمَ
   assert.ok(
