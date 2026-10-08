@@ -139,7 +139,7 @@ No Home dashboard, no generic “More”, no decorative sacred banners, no per-d
 
 ### Active implementation candidates
 
-- **PR #2 — prayer provenance:** `fix/prayer-provenance-hero`. Restore the bilingual `Source (unverified):` qualifier on the focal prayer method line. Do not weaken the existing red assertion. Run full check + Chromium before merge.
+- **PR #2 — prayer provenance: MERGED.** `fix/prayer-provenance-hero` restored the bilingual `Source (unverified):` qualifier on the focal prayer method line. The merged commit recorded `npm run check` **2836/2836** and Chromium **176 passed / 3 skipped / 0 failed**. The repository version marker remains v5.17.136 until the next release bundle is formally versioned.
 - **PR #3 — Practice IA:** `feature/practice-ia`. Adds a lazy Practice landing with Tasbih, Tajweed Practice, Qur'an Recall and 99 Names; moves Mutashabihat route ownership to Practice while leaving its engine unchanged. Run full check + Chromium plus a fresh 360/393/1024/1440 EN/AR light/dark evidence matrix before merge.
 - **PR #6 — desktop navigation/actionability:** `fix/navigation-shell-v2`. Restores an explicit desktop rail collapse/expand control, separates parent section navigation from disclosure, and preserves the current mobile active underline. Do not merge until full checks and the requested Chromium matrix pass.
   - Focused browser gate: `npx playwright test tests/e2e/navigation-shell.spec.js --project=chromium`.
