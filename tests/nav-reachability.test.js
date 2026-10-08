@@ -467,7 +467,7 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
     );
   });
 
-  test('the Practise door is the PRACTICE landing entry; the You door is the CHECKLIST entry',
+  test('the Practise door is the PRACTICE landing entry; the You door is the CHECKLIST entry', () => {
     const practise = NAV_ENTRIES.find((e) => e.labelKey === 'nav.practise');
     assert.ok(practise, 'no door labelled nav.practise');
     assert.equal(practise.viewKey, 'PRACTICE');
@@ -478,7 +478,7 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
     assert.equal(you.view, VIEWS.CHECKLIST);
   });
 
-  test('the Practice door ships its bilingual label (EN Practise / AR الممارسة)',
+  test('the Practice door ships its bilingual label (EN Practise / AR الممارسة)', () => {
     assert.equal(en['nav.practise'], 'Practise');
     assert.equal(ar['nav.practise'], 'الممارسة');
   });
