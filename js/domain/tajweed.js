@@ -156,7 +156,7 @@ const IKHFA_LETTERS = new Set([
 /**
  * Legend metadata for the settings/legend UI. Order matters (display order).
  *
- * (v4.5.2) STANDARD PALETTE. The user's reference chart (the classic
+ * (v4.5.2) APP PALETTE. Based on the user's familiar reference chart (the classic
  * 8-family color-coded mushaf legend) is now THE palette:
  *
  *   silent (gray)  — hamzat al-wasl, lam shamsiyyah
@@ -176,7 +176,7 @@ const IKHFA_LETTERS = new Set([
  * them for something they are not. The one genuinely citable convention
  * found is Indonesia's LPMQ Pedoman Tajwid Sistem Warna (2011).
  *
- * Three rules the standard mushaf convention leaves UNMARKED (idgham bila
+ * Three rules this app's reference convention leaves UNMARKED (idgham bila
  * ghunnah, izhar shafawi, and halqi izhar) now carry color: null and render no color span
  * — matching the printed books rather than inventing an off-chart hue.
  * Each rule also carries a `family` key so the legend can group rows the
@@ -317,7 +317,7 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'plain',
     name: { en: 'Idgham (no Ghunnah)', ar: 'الإدغام بلا غنة' },
     desc: {
-      en: 'Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored, as in the standard mushaf.',
+      en: 'Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored under this app's current convention.',
       ar: 'إدغام النون الساكنة أو التنوين في اللام أو الراء بلا غنة — بلا لون كما في المصحف المعياري.',
     },
   },
@@ -717,8 +717,8 @@ export function classifyWordTajweed(
       else if (nb) spans.push({ start: u.start, end: u.end, rule: 'izhar_shafawi' });
     }
 
-    // (v4.5.2) Tafkhim — the two deterministic heavy cases from the standard
-    // chart's blue family: the lam that sits directly before the ha of the
+    // (v4.5.2) Tafkhim — the two deterministic heavy cases represented by
+    // this app's blue heavy family: the lam that sits directly before the ha of the
     // divine name (with or without a particle prefix — والله، بالله، لله،
     // تالله all carry it), and a ra' carrying fatha or damma (ra'
     // mufakhkhamah). A kasra ra' is thin (tarqiq) and a sukun ra' depends on
