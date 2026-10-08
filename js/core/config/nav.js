@@ -11,7 +11,7 @@
  *
  * Seven task-shaped sections, in order (owner IA ruling, v5.17.61):
  * HOME (Today landing) · AZKAR (the adhkar browser, entry LIBRARY) ·
- * MUSHAF (Qur'an) · HADITH · PRAYER · TASBIH-entry labelled nav.practise
+ * MUSHAF (Qur'an) · HADITH · PRAYER · PRACTICE-entry labelled nav.practise
  * (Practise) · CHECKLIST-entry labelled nav.you (You).
  *
  * HOME is a landing, not the grid: the ribbon, the moment, the resume rows
@@ -147,9 +147,10 @@ export const DOORS = Object.freeze([
     icon: 'repeat',
     labelKey: 'nav.practise',
     members: Object.freeze([
-      // Counting and the Names quiz are one activity; the door carries the
-      // section name while the entry segment keeps the nav.tasbih label.
-      // The tajweed course + look-alike ayat moved to the QURAN section.
+      // Practice is a task launcher: the section owns short rehearsal
+      // destinations while the underlying study surfaces remain canonical.
+      // Mutashabihat is intentionally reachable from both Practice (recall
+      // task) and Qur'an (study depth); the engines and data are not duplicated.
       Object.freeze({ route: 'PRACTICE', taps: 1, via: null }),
       Object.freeze({ route: 'TASBIH', taps: 2, via: 'main-menu' }),
       Object.freeze({ route: 'QUIZ', labelKey: 'quiz.title', taps: 2, via: 'main-menu' }),
