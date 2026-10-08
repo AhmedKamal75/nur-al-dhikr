@@ -422,8 +422,8 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'madd',
     name: { en: "Madd 'Arid (at a stop, 2\u20136)", ar: 'المد العارض للسكون' },
     desc: {
-      en: 'A madd letter at the very end of the ayah, where reciters pause.',
-      ar: 'مد يقع آخر الآية عند الوقف عليه.',
+      en: 'A madd letter followed by the final consonant of the ayah; at a stop, that consonant becomes temporarily silent (2, 4, or 6 counts).',
+      ar: 'مد يسبق الحرف الأخير من الآية، فيسكن الحرف الأخير وقفًا ويجوز فيه القصر والتوسط والإشباع.'
     },
   },
   {
