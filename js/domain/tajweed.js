@@ -125,13 +125,17 @@ const SUN_LETTERS = new Set([
   NOON,
 ]);
 const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BEH, '\u062C', '\u062F']);
-// Exact Qur'anic spellings whose recitation has no Qalqalah on the written sakin
-// consonant. Keep these lexical because this classifier has no declared reading route.
 // Qalqalah-bearing Muqaṭṭaʿāt opening tokens are letter-name sequences, not ordinary
-// consonant tokens carrying sukun. The raw Uthmani spelling intentionally omits the
-// vowel marks from these openings, so the generic "bare Qalqalah letter = sakin"
-// fallback must not color the ط/ق components here.
-const QALQALAH_MUQATTAAT_WORDS = new Set(['\u0637\u0647', '\u0637\u0633', '\u0637\u0633\u0645', '\u0642', '\u0639\u0633\u0642']);
+// consonant tokens carrying sukun. The raw Uthmani spelling intentionally leaves the
+// qlq-bearing component unmarked in forms such as طه / طس / طسم, so the generic
+// "bare Qalqalah letter = sakin" fallback must not color those components.
+const QALQALAH_MUQATTAAT_WORDS = new Set([
+  '\u0637\u0647',
+  '\u0637\u0633',
+  '\u0637\u0633\u0645',
+  '\u0642',
+  '\u0639\u0633\u0642',
+]);
 const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set([
   '\u0628\u0633\u0637\u062A',
   '\u0623\u062D\u0637\u062A',
