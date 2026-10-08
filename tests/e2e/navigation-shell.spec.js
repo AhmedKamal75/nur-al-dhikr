@@ -20,6 +20,19 @@ test('navigation shell: desktop rail collapse and expand are reachable', async (
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
 });
 
+test('navigation shell: topbar control semantics follow a resize across desktop breakpoint', async ({ page }) => {
+  await boot(page, 1440, 900);
+  const toggle = page.locator('.topbar__menu');
+  await expect(toggle).toHaveAttribute('aria-controls', 'bottomnav');
+  await expect(toggle).toHaveAttribute('aria-label', /Collapse|طي/);
+  await page.setViewportSize({ width: 800, height: 900 });
+  await expect(toggle).toHaveAttribute('aria-controls', 'nav-drawer');
+  await expect(toggle).toHaveAttribute('aria-label', /menu|القائمة/i);
+  await page.setViewportSize({ width: 1200, height: 900 });
+  await expect(toggle).toHaveAttribute('aria-controls', 'bottomnav');
+  await expect(toggle).toHaveAttribute('aria-label', /Collapse|طي/);
+});
+
 test('navigation shell: parent section links navigate while summaries disclose', async ({ page }) => {
   await boot(page, 1440, 900);
   const link = page.locator('#bottomnav .nav__scroller .nav__section-link').first();
