@@ -22,7 +22,7 @@ const MAX_PAIRS = 400; // deck pool cap; pairs are ranked by run length
 const N = MIN_WORDS;
 
 let pairCache = null; // built once per corpus identity
-let cacheSource = null;
+let cacheSource = null; // reloads must replace the corpus object rather than mutate it in place
 
 const ayahKey = (s, a) => `${s}:${a}`;
 
