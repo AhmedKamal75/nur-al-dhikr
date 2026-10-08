@@ -45,8 +45,20 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
   let spanCount = 0;
   const ruleCounts = new Map();
   let multiRuleSameUnit = 0;
+  let bareQalqalahSpans = 0;
+  const qlqBoundaryPairs = new Map();
+  const qlqBoundaryExamples = new Map();
 
   for (const row of corpus) {
+    const rawWords = row.text.trim().split(/\s+/).filter(Boolean);
+    const semanticWordIndexes = rawWords
+      .map((word, i) => (/[\p{L}]/u.test(word) ? i : -1))
+      .filter((i) => i >= 0);
+    const nextSemanticIndex = new Map();
+    for (let i = 0; i < semanticWordIndexes.length - 1; i += 1) {
+      nextSemanticIndex.set(semanticWordIndexes[i], semanticWordIndexes[i + 1]);
+    }
+
     const result = classifyAyahTajweed(row.text);
     assert.equal(
       result.length,
@@ -79,6 +91,40 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
         seen.add(span.rule);
         ruleCounts.set(span.rule, (ruleCounts.get(span.rule) || 0) + 1);
         spanCount += 1;
+
+        if (span.rule === 'qalqalah') {
+          const renderedSpan = word.word.slice(span.start, span.end);
+          if (!/[\u064B-\u0652\u0670\u06E1\u06E2\u06ED\u06E4\u0653]/u.test(renderedSpan)) {
+            bareQalqalahSpans += 1;
+          }
+
+          const nextIndex = nextSemanticIndex.get(word.wordIndex - 1);
+          if (nextIndex !== undefined) {
+            const nextWord = rawWords[nextIndex];
+            const firstLetter = [...nextWord].find(
+              (ch) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch)
+            );
+            const wordLetters = [...word.word].map((ch, i) => ({
+              ch,
+              i,
+            })).filter(({ ch }) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch));
+            const lastLetter = wordLetters.at(-1);
+            if (lastLetter && span.start === lastLetter.i) {
+              const pair = renderedSpan[0] + '->' + (firstLetter || '?');
+              qlqBoundaryPairs.set(pair, (qlqBoundaryPairs.get(pair) || 0) + 1);
+              const examples = qlqBoundaryExamples.get(pair) || [];
+              if (examples.length < 12) {
+                examples.push({
+                  surah: row.surah,
+                  ayah: row.ayah,
+                  word: word.word,
+                  nextWord,
+                });
+                qlqBoundaryExamples.set(pair, examples);
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -93,5 +139,8 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
     spanCount,
     ruleCounts: Object.fromEntries([...ruleCounts.entries()].sort()),
     multiRuleSameUnit,
+    bareQalqalahSpans,
+    qlqBoundaryPairs: Object.fromEntries([...qlqBoundaryPairs.entries()].sort()),
+    qlqBoundaryExamples: Object.fromEntries([...qlqBoundaryExamples.entries()].sort()),
   }, null, 2));
 });
