@@ -440,7 +440,7 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
     );
     assert.deepEqual(
       NAV_ENTRIES.map((e) => e.viewKey),
-      ['HOME', 'LIBRARY', 'MUSHAF', 'HADITH', 'PRAYER', 'TASBIH', 'CHECKLIST'],
+      ['HOME', 'LIBRARY', 'MUSHAF', 'HADITH', 'PRAYER', 'PRACTICE', 'CHECKLIST'],
       'door entry order drifted from the IA-7 target'
     );
   });
@@ -470,8 +470,8 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
   test('the Practise door is the TASBIH entry wearing nav.practise; the You door is the CHECKLIST entry wearing nav.you', () => {
     const practise = NAV_ENTRIES.find((e) => e.labelKey === 'nav.practise');
     assert.ok(practise, 'no door labelled nav.practise');
-    assert.equal(practise.viewKey, 'TASBIH');
-    assert.equal(practise.view, VIEWS.TASBIH);
+    assert.equal(practise.viewKey, 'PRACTICE');
+    assert.equal(practise.view, VIEWS.PRACTICE);
     const you = NAV_ENTRIES.find((e) => e.labelKey === 'nav.you');
     assert.ok(you, 'no door labelled nav.you');
     assert.equal(you.viewKey, 'CHECKLIST');
@@ -530,7 +530,7 @@ describe('IA-7 pin: sections with pinned member counts (extend, never weaken)', 
         MUSHAF: 6,
         HADITH: 1,
         PRAYER: 4,
-        TASBIH: 2,
+        PRACTICE: 4,
         CHECKLIST: 6,
       },
       'a section gained or lost a member without updating the map — extend the map AND this pin together'
