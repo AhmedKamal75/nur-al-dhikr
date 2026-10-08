@@ -108,6 +108,21 @@ export const clickHandlers = {
     }
   },
 
+  'nav-section-toggle': (ds, _e, target) => {
+    const section = target?.closest?.('.nav__section[data-section]');
+    if (!section) return;
+    const sub = section.querySelector('.nav__sub');
+    const toggle = target.closest('.nav__section-toggle');
+    if (!sub || !toggle) return;
+    const open = !sub.hidden;
+    sub.hidden = open;
+    section.classList.toggle('nav__section--open', !open);
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.setAttribute('aria-label', !open ? t('nav.collapse', store.getState().settings.language) : t('nav.expand', store.getState().settings.language));
+    toggle.setAttribute('title', !open ? t('nav.collapse', store.getState().settings.language) : t('nav.expand', store.getState().settings.language));
+    toggle.querySelector('.nav__section-chevron')?.classList.toggle('nav__section-chevron--open', !open);
+  },
+
   'nav-drawer-close': () => {
     closeNavDrawer();
   },
