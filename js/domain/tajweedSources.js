@@ -302,8 +302,8 @@ export const TAJWEED_SOURCES = Object.freeze({
     review: 'contested',
     topic: 'madd-lazim',
     caveat: Object.freeze({
-      en: 'Counted among the four madd lāzim types. Its permitted length is given as four or six counts in the case of ʿayn, with the same caution stated for the mīm in Āl ʿImrān.',
-      ar: 'يُعدّ من أنواع المد اللازمة الأربعة، ويأتي تقديره أربعة أو ستة في حالة العين، وعلى نحوه ميم آل عمران.',
+      en: "Madd Badal is a distinct madd category and must not be conflated with the four types of Madd Lazim. In this app's current classifier it is represented as a 2-count rule (see the executable fixture). Other recitation traditions can differ, so any future multi-riwayah support must scope the length explicitly.",
+      ar: 'مد البدل باب مستقل من أبواب المد، ولا ينبغي خلطه بأنواع المد اللازم الأربعة. يمثله المصنّف الحالي في التطبيق كمد بمقدار حركتين (وفق الاختبار التنفيذي). وقد تختلف بعض طرق القراءة، لذلك يجب تحديد المقدار صراحة عند إضافة دعم لقراءات متعددة.',
     }),
   }),
   madd_silah: Object.freeze({
