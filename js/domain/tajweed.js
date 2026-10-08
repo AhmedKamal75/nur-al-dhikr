@@ -717,8 +717,8 @@ export function classifyWordTajweed(
       else if (nb) spans.push({ start: u.start, end: u.end, rule: 'izhar_shafawi' });
     }
 
-    // (v4.5.2) Tafkhim — the two deterministic heavy cases from the standard
-    // chart's blue family: the lam that sits directly before the ha of the
+    // (v4.5.2) Tafkhim — the two deterministic heavy cases represented by
+    // this app's blue heavy family: the lam that sits directly before the ha of the
     // divine name (with or without a particle prefix — والله، بالله، لله،
     // تالله all carry it), and a ra' carrying fatha or damma (ra'
     // mufakhkhamah). A kasra ra' is thin (tarqiq) and a sukun ra' depends on
