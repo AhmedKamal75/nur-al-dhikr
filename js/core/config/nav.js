@@ -137,7 +137,7 @@ export const DOORS = Object.freeze([
   Object.freeze({
     entry: 'PRACTICE',
     view: VIEWS.PRACTICE,
-    icon: 'sparkle',
+    icon: 'repeat',
     labelKey: 'nav.practise',
     members: Object.freeze([
       // Practice is a task launcher. The underlying engines remain in their
