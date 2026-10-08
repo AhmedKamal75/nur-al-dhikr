@@ -110,17 +110,26 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 
 ## Tajweed checkpoint update — 2026-10-08 autonomous wave
-- PR #21 remains **OPEN / unmerged** while the Qalqalah deep audit continues.
-- The earlier broad Qalqalah suppression heuristic was narrowed because dissimilar-letter adjacency alone was not enough evidence to choose a reading route.
-- The classifier now suppresses Qalqalah only for explicit same-letter assimilation (next consonant shaddah-marked), exact `بسطت` / `أحطت` incomplete-assimilation spellings, and exact base sequence `نخلقكم`, where accepted complete/incomplete ق→ك realizations do not use Qalqalah on the sakin ق.
-- `قَدْ تَّبَيَّنَ` and `ارْكَبْ مَّعَنَا` remain route-sensitive and are intentionally not auto-suppressed without a declared reading profile.
-- Regression coverage now pins both positive and negative sides of this contract.
-- This remains **unverified by local execution and browser evidence**. Full 6,236-ayah execution/anomaly analysis remains the next gating step.
 
+- PR #21 remains **OPEN / unmerged** at current branch head `7b3390aef3a26d577d1991973d2000815c15e067`.
+- The first Qalqalah suppression patch was intentionally rejected as too broad. Letter-pair adjacency alone was not enough evidence, especially for the very common ب→م and ق→ك boundaries.
+- Current Qalqalah contract:
+  - suppress identical-letter assimilation when the following consonant is explicitly shaddah-marked;
+  - suppress the dal→ta assimilation family when the following ta is explicitly shaddah-marked;
+  - suppress the exact no-Qalqalah intra-word spellings `بسطت`, `أحطت`, `فرطت`;
+  - suppress `نخلقكم` because both accepted complete/incomplete ق→ك realizations are performed without Qalqalah on the sakin qaf;
+  - leave `اركب معنا` conservative until the app declares a reading profile, because its treatment varies by reading route.
+- Unicode-aware raw-text boundary scanning now covers all 114 surahs. The concrete sakin-boundary candidates are:
+  - `وَقَد دَّخَلُوا` (5:61): identical-letter assimilation;
+  - `قَد/لَقَد/وَقَد + تَّ...` in 2:256, 6:94, 9:117, 29:35, 29:38, 61:5: dal→ta assimilation;
+  - `ارۡكَب مَّعَنَا` (11:42): route-sensitive ba→mim.
+- Exact corpus spellings were verified at 5:28 (`بَسَطتَ`), 27:22 (`أَحَطتُ`), 39:56 (`فَرَّطتُ`), and 77:20 (`نَخۡلُقكُّم`).
+- Scholarly references used for the implementation review: Islamweb's *Hidayat al-Qari* on permitted/route-specific idgham; Hoda al-Quran's discussion of obligatory dal→ta idgham; and Quranpedia's *Al-Mizan fi Ahkam Tajwid al-Qur'an* on dal→ta and incomplete ta/ṭa cases. These sources are external research inputs; they do not substitute for app-specific validation.
+- `tests/tajweed-corpus-sweep.test.js` now emits rule counts, duplicate-span failures, same-unit overlap counts, bare-Qalqalah counts, and word-final Qalqalah boundary-pair diagnostics for the full execution pass.
+- **Still unverified:** no local full-corpus test run has been independently observed, no browser evidence covers the newest Tajweed changes, and queued GitHub Actions are not being counted as passes.
 
-### 2026-10-08 corpus/anomaly findings
-- A Unicode-aware raw-text boundary scan now covers the full 114-surah corpus. It found one confirmed same-letter boundary candidate: `وَقَد دَّخَلُوا` (5:61); six bare/implicit-sukun د→تّ candidates in 2:256, 6:94, 9:117, 29:35, 29:38, 61:5; and one route-sensitive ب→مّ candidate, `ارۡكَب مَّعَنَا` (11:42).
-- Scholarly cross-check changed the disposition of the d→t family: published Tajweed references describe dāl→tāʾ assimilation as an explicit idgham family, including examples such as `لَقَدْ تَابَ`, `قَدْ تَبَيَّنَ`, `قَدْ تَعْلَمُونَ`, and `لَقَدْ تَقَطَّعَ`. citeturn301559search0turn301559search5turn301559search8
-- The ط→ت no-Qalqalah exception set was widened to include `فَرَّطتُ`; the corpus contains it at 39:56. The same sources describe `بسطت` / `أحطت` / `فرطت` as incomplete assimilation where the sakin ط must be pronounced without Qalqalah. citeturn301559search8turn301559search9
-- The route-sensitive `اركب معنا` case remains deliberately conservative: sources document different reading-route treatment for Hafs, so the classifier must not silently assert one route without a declared profile. citeturn799118search0
-- Exact corpus spellings verified: `بَسَطتَ` at 5:28, `أَحَطتُ` at 27:22, `فَرَّطتُ` at 39:56, `نَخۡلُقكُّم` at 77:20.
+## Autonomous next gate
+1. Obtain a real execution result for the 6,236-ayah sweep and inspect every emitted Qalqalah boundary diagnostic.
+2. Reconcile any suspicious overlaps/spans against source text and the scoped Tajweed contract.
+3. Continue the Tajweed classifier audit into the remaining high-risk assumptions (bare/implicit sukun, Madd final-word heuristics, rule precedence) before returning to Mushaf/browser hostile review.
+
