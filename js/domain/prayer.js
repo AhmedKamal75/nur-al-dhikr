@@ -428,7 +428,16 @@ export function compactPrayerMethodLine(prefs, lang) {
   const asrId = typeof p.asr === 'string' && Object.hasOwn(ASR_FACTORS, p.asr) ? p.asr : 'Standard';
   const methodKey = `prayer.method.${methodId}`;
   const methodName = t(methodKey, lang) === methodKey ? METHODS[methodId].name : t(methodKey, lang);
-  return `${methodName} · ${t('prayer.asrMethod', lang)}: ${t(`prayer.asr.${asrId}`, lang)}`;
+  const sourceBody =
+    METHODS[methodId]?.source &&
+    typeof METHODS[methodId].source.body === 'string' &&
+    METHODS[methodId].source.body
+      ? METHODS[methodId].source.body
+      : '';
+  const sourceBit = sourceBody ? t('prayer.methodSource', lang, { body: sourceBody }) : '';
+  return [`${methodName} · ${t('prayer.asrMethod', lang)}: ${t(`prayer.asr.${asrId}`, lang)}`, sourceBit]
+    .filter(Boolean)
+    .join(' · ');
 }
 
 export function prayerMethodLine(prefs, lang) {
