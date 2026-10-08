@@ -5,8 +5,9 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-10-07 against the tree at v5.17.133**, by parsing this file's own
-> status column — not by hand, and not copied from any earlier header: **68 rows — 28 RESOLVED, 16 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 1 STANDING CONSTRAINT.**
+> **Counted 2026-10-08 against the working tree**, by parsing this file's own
+> rows rather than by hand: **71 rows — 28 RESOLVED, 18 OPEN, 7 BLOCKED:scholar,
+> 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
@@ -155,6 +156,10 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 71  | Offline Library still needs UI polish after the v5.17.135 visibility fix | **OPEN — evidence required** | Keep Essentials primary. Audit download action, group density, storage/audio-cache hierarchy, backup relationship and bilingual wrapping.                                                                                         |
 | 72  | Settings Arabic typeface and palette need further visual polish          | **OPEN — evidence required** | Source-level specimen/swatch fixes exist, but current browser proof is required. Audit typeface preview differentiation, selected state and palette color visibility at representative widths/themes.                             |
 
+| 73 | Desktop rail collapse was implemented but unreachable | **OPEN — fix candidate** | v5.17.136 source audit found the desktop collapse handler and persisted state, but the only topbar trigger was hidden at ≥960px. PR #4 restores an explicit desktop collapse/expand control; local Chromium evidence is required before closure. |
+| 74 | Main-menu section labels could feel like dead buttons | **OPEN — fix candidate** | Parent Qur'an/Azkar/Prayer/etc. rows were native disclosure summaries, so tapping the label expanded/collapsed instead of navigating to the section. PR #4 separates the section destination link from the adjacent disclosure control; verify every menu route in Chromium. |
+| 75 | Mobile seven-door active underline alignment | **STANDING CONSTRAINT** | Owner reports the underlying active underline is now correctly aligned in mobile view. Preserve the current quiet underline geometry during desktop/menu work; do not reintroduce filled pills or drift the indicator. |
+
 ## Stale report claims — closed, with evidence
 
 These were reported as open by an audit and are **not** open. Recorded so nobody
@@ -189,7 +194,7 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **16** |
+| **OPEN** (nobody has done it)                      | **18** |
 | **PROPOSED** (costed, needs an owner yes)          | **5**  |
 | **BLOCKED:scholar** (must never be machine-filled) | **7**  |
 | **BLOCKED:device** (needs real hardware)           | **5**  |
