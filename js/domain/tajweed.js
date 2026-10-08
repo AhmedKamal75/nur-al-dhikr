@@ -607,9 +607,14 @@ export function classifyWordTajweed(
       SUN_LETTERS.has(next.base) &&
       next.diacritics.has(SHADDA) &&
       !isDivineName(word) &&
-      // Bare ال (lam second) or ال after a one-letter prefix particle
-      // (وَٱلشَّمۡسِ، بِٱلۡحَقِّ) — anything longer is not the article.
-      (i === 1 || (i === 2 && units[0] && isPrefixParticle(units[0])))
+      // Bare ال, ال after a one-letter prefix particle
+      // (وَٱلشَّمۡسِ، بِٱلۡحَقِّ), or the article immediately after a
+      // vocalized lām-prefix (لِلطَّآئِفِينَ, لِلظَّالِمِينَ).
+      (
+        i === 1 ||
+        (i === 2 && units[0] && isPrefixParticle(units[0])) ||
+        (i === 1 && prev.base === LAM && prev.diacritics.size > 0)
+      )
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'lam_shamsiyyah' });
     }
