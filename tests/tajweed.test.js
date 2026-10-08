@@ -75,27 +75,27 @@ test('qalqalah fires on ق ط ب ج د with sukun, not on other sakin letters', 
 
 test('qalqalah is suppressed when the sakin letter is assimilated into the next consonant', () => {
   assert.deepEqual(
-    rulesOf('\\u0642\\u0652', { nextWordFirstBase: '\\u0643' }).filter((r) => r === 'qalqalah'),
+    rulesOf('\u0642\u0652', { nextWordFirstBase: '\u0643' }).filter((r) => r === 'qalqalah'),
     []
   ); // قْ ك — qaf merges into kaf (idgham mutaqaribain)
   assert.deepEqual(
-    rulesOf('\\u062f\\u0652', { nextWordFirstBase: '\\u062f' }).filter((r) => r === 'qalqalah'),
+    rulesOf('\u062f\u0652', { nextWordFirstBase: '\u062f' }).filter((r) => r === 'qalqalah'),
     []
   ); // دْ د — وَقَد دَّخَلُوا
   assert.deepEqual(
-    rulesOf('\\u062f\\u0652', { nextWordFirstBase: '\\u062a' }).filter((r) => r === 'qalqalah'),
+    rulesOf('\u062f\u0652', { nextWordFirstBase: '\u062a' }).filter((r) => r === 'qalqalah'),
     []
   ); // دْ ت — قَد تَّبَيَّنَ
   assert.deepEqual(
-    rulesOf('\\u0627\\u064e\\u062d\\u064e\\u0637\\u0652\\u062a\\u064f').filter((r) => r === 'qalqalah'),
+    rulesOf('\u0627\u064e\u062d\u064e\u0637\u0652\u062a\u064f').filter((r) => r === 'qalqalah'),
     []
   ); // طْ ت — بَسَطْتَ / أَحَطْتُ
   assert.deepEqual(
-    rulesOf('\\u0628\\u0652', { nextWordFirstBase: '\\u0645' }).filter((r) => r === 'qalqalah'),
+    rulesOf('\u0628\u0652', { nextWordFirstBase: '\u0645' }).filter((r) => r === 'qalqalah'),
     []
   ); // بْ م — ارْكَبْ مَّعَنَا
   assert.ok(
-    rulesOf('\\u0642\\u0652', { nextWordFirstBase: '\\u062e' }).includes('qalqalah')
+    rulesOf('\u0642\u0652', { nextWordFirstBase: '\u062e' }).includes('qalqalah')
   ); // قْ خ — genuine sakin qaf remains Qalqalah
 });
 
