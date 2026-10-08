@@ -155,9 +155,9 @@ test('section navigation lives in the main menu, not duplicated on every page', 
     /youModeSwitchHTML/
   );
   const shell = readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8');
+  assert.match(shell, /<details data-open-controlled class="nav__section/);
   assert.match(shell, /class="nav__section-link/);
-  assert.match(shell, /data-action="nav-section-toggle"/);
-  assert.doesNotMatch(shell, /<details data-open-controlled class="nav__section/);
+  assert.match(shell, /<summary class="nav__section-toggle"/);
 
 });
 
