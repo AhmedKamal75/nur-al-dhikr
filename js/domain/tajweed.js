@@ -500,6 +500,14 @@ function tokenizeUnits(word) {
   return units;
 }
 
+function isHaKinayahSilahUnit(unit, prev) {
+  return (
+    prev?.base === '\u0647' &&
+    ((unit.base === SMALL_WAW && prev.diacritics.has(DAMMA)) ||
+      (unit.base === SMALL_YEH && prev.diacritics.has(KASRA)))
+  );
+}
+
 function isMaddLetter(unit, prev) {
   if (unit.base === DAGGER_ALIF) return true;
   if (unit.base === ALIF_MADDA) return true;
@@ -705,7 +713,7 @@ export function classifyWordTajweed(
       const signaled =
         u.base === ALIF_MADDA ||
         (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
-      const isSilah = u.base === SMALL_WAW || u.base === SMALL_YEH;
+      const isSilah = isHaKinayahSilahUnit(u, prev);
       if (next && HAMZA_LETTERS.has(next.base)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
       } else if (
@@ -752,7 +760,11 @@ export function classifyWordTajweed(
     // small-high madda folds to MADDA_ABOVE at tokenize time, so testing
     // for MADDA_ABOVE alone covers both spellings.
     if ((u.base === SMALL_WAW || u.base === SMALL_YEH) && !u.diacritics.has(MADDA_ABOVE)) {
-      spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
+      spans.push({
+        start: u.start,
+        end: u.end,
+        rule: isHaKinayahSilahUnit(u, prev) ? 'madd_silah' : 'madd_2',
+      });
     }
 
     // Meem sakinah family (v3.7) — closes the gap TODO.md documented since
