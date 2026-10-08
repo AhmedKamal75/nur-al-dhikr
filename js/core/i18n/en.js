@@ -28,6 +28,9 @@ export const en = {
   // keys (garden.*); the plant visual survives only as a treatment
   // inside the Growth view, never as chrome.
   'nav.back': 'Back',
+  'nav.expand': 'Expand',
+  'nav.collapse': 'Collapse',
+  'nav.toggleSection': 'Expand or collapse section',
   // (REORG Phase 6) garden.title retired with the Garden nav noun — the
   // Growth view's heading is you.growth now. Body copy (garden.*) keeps
   // describing the visual treatment it sits beside.
