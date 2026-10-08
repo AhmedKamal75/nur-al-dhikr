@@ -99,10 +99,9 @@ export const DOORS = Object.freeze([
     icon: 'quran',
     labelKey: 'nav.quran',
     members: Object.freeze([
-      // One book, one door: the classic reader and word study ride the
-      // switch, and the tajweed course + look-alike ayat moved here from
-      // Practise (owner IA: Qur'an carries its own study depths, while
-      // Practise keeps counting + the Names quiz).
+      // One book, one door: the classic reader and word study ride the switch.
+      // The Tajweed course remains Qur’an-owned; recall drills may launch from
+      // Practice without moving the underlying study surface.
       Object.freeze({ route: 'MUSHAF', taps: 1, via: null }),
       Object.freeze({ route: 'QURAN', labelKey: 'quran.modeList', taps: 2, via: 'main-menu' }),
       Object.freeze({ route: 'ROOTS', labelKey: 'quran.modeWord', taps: 2, via: 'main-menu' }),
