@@ -170,25 +170,19 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
   const label = t(door.labelKey, lang);
   const subId = `nav-sub-${door.entry}${drawer ? '-drawer' : ''}`;
   return `
-  <div class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}">
-    <div class="nav__section-row">
-      <a class="nav__section-link${isOpen ? ' nav__item--active' : ''}"
-         href="${buildHash(door.view)}" data-action="${drawer ? 'nav-drawer-go' : 'navigate'}" data-view="${door.view}"
-         title="${label}" aria-label="${label}" aria-current="${door.view === active ? 'page' : 'false'}">
-        <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
-        <span class="nav__label">${label}</span>
-      </a>
-      <button type="button" class="nav__section-toggle" data-action="nav-section-toggle" data-section="${door.entry}"
-              aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="${subId}"
-              aria-label="${isOpen ? t('nav.collapse', lang) : t('nav.expand', lang)}"
-              title="${isOpen ? t('nav.collapse', lang) : t('nav.expand', lang)}">
-        <span class="nav__section-chevron${isOpen ? ' nav__section-chevron--open' : ''}" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
-      </button>
-    </div>
-    <div id="${subId}" class="nav__sub"${isOpen ? '' : ' hidden'}>${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
-  </div>`;
+  <details data-open-controlled class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}"${isOpen ? ' open' : ''}>
+    <summary class="nav__section-toggle" title="${t('nav.toggleSection', lang)}" aria-label="${t('nav.toggleSection', lang)}" aria-controls="${subId}">
+      <span class="nav__section-chevron${isOpen ? ' nav__section-chevron--open' : ''}" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
+    </summary>
+    <a class="nav__section-link${isOpen ? ' nav__item--active' : ''}"
+       href="${buildHash(door.view)}" data-action="${drawer ? 'nav-drawer-go' : 'navigate'}" data-view="${door.view}"
+       title="${label}" aria-label="${label}" aria-current="${door.view === active ? 'page' : 'false'}">
+      <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
+      <span class="nav__label">${label}</span>
+    </a>
+    <div id="${subId}" class="nav__sub">${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
+  </details>`;
 }
-
 function appMenuHTML(active, lang, { drawer = false } = {}) {
   const entries = APP_MENU_ENTRIES.map((n) => {
     const kind =
