@@ -4895,13 +4895,14 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 .nav__section-chevron {
   display: grid;
   place-items: center;
+  transform: rotate(-90deg);
   transition: transform var(--dur-base) var(--ease-standard);
 }
-.nav__section-chevron--open {
-  transform: rotate(180deg);
+[dir='rtl'] .nav__section-chevron {
+  transform: rotate(90deg);
 }
-[dir='rtl'] .nav__section-chevron--open {
-  transform: rotate(180deg);
+.nav__section-chevron--open {
+  transform: none;
 }
 .nav__section--current .nav__section-toggle {
   color: var(--color-primary-text);
