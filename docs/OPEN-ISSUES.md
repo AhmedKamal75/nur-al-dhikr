@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-07 against the tree at v5.17.133**, by parsing this file's own
-> status column — not by hand, and not copied from any earlier header: **62 rows — 27 RESOLVED, 11 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 1 STANDING CONSTRAINT.**
+> status column — not by hand, and not copied from any earlier header: **68 rows — 27 RESOLVED, 17 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 1 STANDING CONSTRAINT.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
@@ -144,16 +144,16 @@ These findings are directly grounded in the owner-supplied Chromium screenshots 
 
 ## v5.17.136 owner follow-through addendum
 
-These are the owner's current product findings after the v5.17.136 Chromium evidence pass. They are separate from the historical audit totals above and remain open until evidence or an explicit product decision closes them.
+These are the owner's current product findings after the v5.17.136 Chromium evidence pass. They are separate from the historical audit totals above and remain open until evidence or an explicit product decision closes them. Row ids continue the main table (67+) — the numbers were reused on first merge, which made two different items share an id.
 
 | #   | Hostile-review item                                                      | Status                       | Evidence / next action                                                                                                                                                                                                            |
 | --- | ------------------------------------------------------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 61  | Practice IA is under-organized (Tasbih + 99 Names only)                  | **IN PROGRESS — PR**         | Practice is being turned into a concise task launcher for Tasbih, Tajweed Practice, Qur'an recall, and 99 Names without moving underlying study ownership or creating a generic More bucket. See `docs/PRACTICE-IA-NEXT-PLAN.md`. |
-| 62  | Tajweed course lacks full written teaching depth                         | **OPEN — content/research**  | Current spine has 8 stages / 17 sessions / 27 rule definitions but does not yet provide a complete beginner→advanced self-study lesson body. See `docs/TAJWEED-COURSE-NEXT-PLAN.md`; content must be source-backed and bilingual. |
-| 63  | Mutashabihat / look-alike Ayat needs geometry + richer study content     | **OPEN — evidence required** | Capture current 360/393/1024/1440 EN/AR light/dark states before changing geometry. Separate visual scaling from the deeper request for sourced enrichment.                                                                       |
-| 64  | Calendar grid needs visual/responsive refinement                         | **OPEN — evidence required** | Audit dual-date hierarchy, cell proportions, spacing, Arabic readability and event relationship at phone/tablet/desktop widths before changing CSS.                                                                               |
-| 65  | Offline Library still needs UI polish after the v5.17.135 visibility fix | **OPEN — evidence required** | Keep Essentials primary. Audit download action, group density, storage/audio-cache hierarchy, backup relationship and bilingual wrapping.                                                                                         |
-| 66  | Settings Arabic typeface and palette need further visual polish          | **OPEN — evidence required** | Source-level specimen/swatch fixes exist, but current browser proof is required. Audit typeface preview differentiation, selected state and palette color visibility at representative widths/themes.                             |
+| 67  | Practice IA is under-organized (Tasbih + 99 Names only)                  | **OPEN** (PR in flight)      | Practice is being turned into a concise task launcher for Tasbih, Tajweed Practice, Qur'an recall, and 99 Names without moving underlying study ownership or creating a generic More bucket. See `docs/PRACTICE-IA-NEXT-PLAN.md`. |
+| 68  | Tajweed course lacks full written teaching depth                         | **OPEN — content/research**  | Current spine has 8 stages / 17 sessions / 27 rule definitions but does not yet provide a complete beginner→advanced self-study lesson body. See `docs/TAJWEED-COURSE-NEXT-PLAN.md`; content must be source-backed and bilingual. |
+| 69  | Mutashabihat / look-alike Ayat needs geometry + richer study content     | **OPEN — evidence required** | Capture current 360/393/1024/1440 EN/AR light/dark states before changing geometry. Separate visual scaling from the deeper request for sourced enrichment.                                                                       |
+| 70  | Calendar grid needs visual/responsive refinement                         | **OPEN — evidence required** | Audit dual-date hierarchy, cell proportions, spacing, Arabic readability and event relationship at phone/tablet/desktop widths before changing CSS.                                                                               |
+| 71  | Offline Library still needs UI polish after the v5.17.135 visibility fix | **OPEN — evidence required** | Keep Essentials primary. Audit download action, group density, storage/audio-cache hierarchy, backup relationship and bilingual wrapping.                                                                                         |
+| 72  | Settings Arabic typeface and palette need further visual polish          | **OPEN — evidence required** | Source-level specimen/swatch fixes exist, but current browser proof is required. Audit typeface preview differentiation, selected state and palette color visibility at representative widths/themes.                             |
 
 ## Stale report claims — closed, with evidence
 
@@ -189,7 +189,7 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **11** |
+| **OPEN** (nobody has done it)                      | **17** |
 | **PROPOSED** (costed, needs an owner yes)          | **5**  |
 | **BLOCKED:scholar** (must never be machine-filled) | **7**  |
 | **BLOCKED:device** (needs real hardware)           | **5**  |
