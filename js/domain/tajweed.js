@@ -724,11 +724,12 @@ export function classifyWordTajweed(
         // the hamza that motivates the elongation is the letter itself
         // (e.g. \u0622 in \u0622\u062F\u064e\u0645َ, "\u0100dam").
         spans.push({ start: u.start, end: u.end, rule: 'madd_badal' });
-      } else if (isLastWordOfAyah && i >= units.length - 2) {
-        // The madd letter sits in the ayah's final syllable (itself the
-        // last unit, or exactly one closing consonant remains) — that's
-        // the syllable a reciter pauses on, hence 'arid lissukoon rather
-        // than a plain natural madd.
+      } else if (isLastWordOfAyah && i === units.length - 2 && next) {
+        // Madd 'Arid requires a real final consonant after the madd letter:
+        // the consonant's vowel becomes a temporary sukoon at the stop.
+        // A word that itself ends on the madd letter (e.g. وَٱلضُّحَىٰ)
+        // remains natural madd; there is no following consonant on which a
+        // الوقف-induced sukoon can occur.
         spans.push({ start: u.start, end: u.end, rule: 'madd_246' });
       } else {
         spans.push({ start: u.start, end: u.end, rule: 'madd_2' });
