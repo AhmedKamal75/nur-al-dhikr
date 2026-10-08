@@ -435,7 +435,10 @@ export function compactPrayerMethodLine(prefs, lang) {
       ? METHODS[methodId].source.body
       : '';
   const sourceBit = sourceBody ? t('prayer.methodSource', lang, { body: sourceBody }) : '';
-  return [`${methodName} · ${t('prayer.asrMethod', lang)}: ${t(`prayer.asr.${asrId}`, lang)}`, sourceBit]
+  return [
+    `${methodName} · ${t('prayer.asrMethod', lang)}: ${t(`prayer.asr.${asrId}`, lang)}`,
+    sourceBit,
+  ]
     .filter(Boolean)
     .join(' · ');
 }
