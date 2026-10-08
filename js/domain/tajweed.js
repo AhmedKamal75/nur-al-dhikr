@@ -176,7 +176,7 @@ const IKHFA_LETTERS = new Set([
  * them for something they are not. The one genuinely citable convention
  * found is Indonesia's LPMQ Pedoman Tajwid Sistem Warna (2011).
  *
- * Three rules the standard mushaf convention leaves UNMARKED (idgham bila
+ * Three rules this app's presentation convention leaves UNCOLORED (idgham bila
  * ghunnah, izhar shafawi, and halqi izhar) now carry color: null and render no color span
  * — matching the printed books rather than inventing an off-chart hue.
  * Each rule also carries a `family` key so the legend can group rows the
@@ -317,7 +317,7 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'plain',
     name: { en: 'Idgham (no Ghunnah)', ar: 'الإدغام بلا غنة' },
     desc: {
-      en: 'Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored, as in the standard mushaf.',
+      en: 'Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored by this app's presentation convention.',
       ar: 'إدغام النون الساكنة أو التنوين في اللام أو الراء بلا غنة — بلا لون كما في المصحف المعياري.',
     },
   },
@@ -347,7 +347,7 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'plain',
     name: { en: 'Izhar Shafawi', ar: 'الإظهار الشفوي' },
     desc: {
-      en: 'Meem sakinah is pronounced plainly — left uncolored, as in the standard mushaf.',
+      en: 'Meem sakinah is pronounced plainly — left uncolored by this app's presentation convention.',
       ar: 'إظهار الميم الساكنة — بلا لون كما في المصحف المعياري.',
     },
   },
@@ -747,7 +747,7 @@ export function classifyWordTajweed(
     // (عَلِيمًا) — the Uthmani rasm writes it both ways. Only the
     // ayah-final position is deterministic (mid-ayah the tanween feeds the
     // noon-sakinah family instead), so that is the only place it is
-    // colored. Pink, the 2-count member of the standard madd family.
+    // colored. The 2-count member of this app's madd palette.
     const trailingTanweenAlif =
       units.length >= 2 &&
       units[units.length - 1].base === ALIF &&
