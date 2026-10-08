@@ -29,7 +29,7 @@ test('Al-Fatiha 1:1 matches the well-known reference reading', () => {
   );
   assert.deepEqual(result[0].spans, []); // بِسْمِ — nothing to mark
   // (v4.5.2) the divine name's second lam is now Tafkhim (blue, per the
-  // standard chart) instead of deliberately uncolored.
+  // app palette convention) instead of deliberately uncolored.
   assert.deepEqual(ruleTextPairs(result[1].word), [
     { rule: 'hamzat_wasl', text: '\u0671' },
     { rule: 'tafkhim', text: '\u0644\u0651\u064e' },
@@ -218,7 +218,7 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
 });
 
 /* ------------------------------------------------------------------ */
-/* v4.5.2 — the standard-palette additions: Tafkhim + Madd 'Iwad      */
+/* v4.5.2 — the app-palette additions: Tafkhim + Madd 'Iwad      */
 /* ------------------------------------------------------------------ */
 
 test('tafkhim: the heavy lam of the divine name, with or without a prefix', () => {
@@ -258,7 +258,7 @@ test("madd 'iwad: ayah-final fathah tanween is red; mid-ayah tanween is not", ()
   );
 });
 
-test('the standard chart palette: families match the reference chart colors', () => {
+test('the app palette: families match the reference chart colors', () => {
   const colorOf = (id) => TAJWEED_RULES.find((r) => r.id === id)?.color;
   // silent gray
   assert.equal(colorOf('hamzat_wasl'), '#9E9E9E');
@@ -272,17 +272,17 @@ test('the standard chart palette: families match the reference chart colors', ()
     'idgham_shafawi',
     'ikhfa_shafawi',
   ])
-    assert.equal(colorOf(id), '#4CAF50', `${id} should be standard green`);
+    assert.equal(colorOf(id), '#4CAF50', `${id} should be app-palette green`);
   // qalqalah cyan, tafkhim blue
   assert.equal(colorOf('qalqalah'), '#00BCD4');
   assert.equal(colorOf('tafkhim'), '#2196F3');
-  // madd ladder: standard-chart reds (cumin → orange-red → blood → dark)
+  // madd ladder: app-palette reds (cumin → orange-red → blood → dark)
   assert.equal(colorOf('madd_2'), '#D32F2F');
   assert.equal(colorOf('madd_iwad'), '#D32F2F');
   assert.equal(colorOf('madd_munfasil'), '#BF3600');
   assert.equal(colorOf('madd_muttasil'), '#C62828');
   assert.equal(colorOf('madd_6'), '#B71C1C');
-  // the two rules the standard convention leaves uncolored
+  // the two rules this app's presentation convention leaves uncolored
   assert.equal(colorOf('idgham_no_ghunnah'), null);
   assert.equal(colorOf('izhar_shafawi'), null);
   assert.equal(colorOf('izhar'), null);
