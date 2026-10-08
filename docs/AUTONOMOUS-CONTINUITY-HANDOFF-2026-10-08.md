@@ -153,3 +153,9 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The reviewed correction from the still-open PR #18 was carried onto PR #21, updating both `data/tajweed-sources.json` and `js/domain/tajweedSources.js`.
 - The corrected copy explicitly says Madd Badal is a distinct category, records the app's current classifier as 2-count, and scopes any future multi-riwayah length claim to an explicit reading profile.
 - Durable ledger row 83 records the source/data correction. This does not close the broader Tajweed evidence gate.
+
+### Madd Badal executable heuristic audit — 2026-10-08
+- Deep source review found `signaled = u.base === ALIF_MADDA || u.diacritics.has(MADDA_ABOVE)` was too broad. U+0653 is a general Qur'anic madd sign; it does not by itself establish Madd Badal.
+- The classifier now limits the Badal signal to actual hamza+madd orthography: `آ` / `ALIF_MADDA`, or a hamza base carrying the explicit madda mark.
+- Regression coverage pins `آدَمَ` and an explicit hamza+madda spelling as Badal, while `مَآ` must remain natural `madd_2` and must not become `madd_badal`.
+- This is still unverified by local/full-corpus execution. Uthmani notation references confirm U+0653 is a madd marker and is not itself a Badal classifier. 
