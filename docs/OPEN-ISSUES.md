@@ -16,6 +16,8 @@
 > was rather than quietly reclassified — an unverified tick is the failure mode this
 > ledger exists to prevent.
 
+> **Current in-flight verification (2026-10-08):** PR #3 Practice IA and PR #4 navigation are implementation candidates only. Their latest GitHub Actions runs must pass before either is merged or versioned. Browser evidence from the local agent remains authoritative for real viewport/RTL/device behavior.
+
 The counterpart to `docs/RELEASES.md` (what is done).
 
 - v5.17.135 resolves issue 20: Audio defaults now use the same direct sleep-cycle interaction as the player; the duplicate selector grammar is removed. **Every row below was
