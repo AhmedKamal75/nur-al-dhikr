@@ -110,10 +110,17 @@ body {
   box-shadow: 0 5px 16px color-mix(in srgb, var(--color-primary) 28%, transparent);
 }
 
-/* Desktop: no hamburger fighting the always-visible rail. */
+/* Desktop: the same compact topbar control collapses/expands the rail.
+   The control remains the obvious, global escape hatch for a dense desktop
+   menu instead of making the collapse state discoverable by accident. */
 @media (min-width: 960px) {
   .topbar__menu {
-    display: none !important;
+    display: inline-grid !important;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+  html[data-nav-collapsed='true'] .topbar__menu {
+    color: var(--color-primary-text);
   }
 }
 
@@ -4826,4 +4833,107 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   .audio-secondary-disclosure[open]
   .audio-secondary-disclosure__summary::before {
   transform: rotate(90deg);
+}
+
+
+/* Navigation action/disclosure split: every section name is a real destination;
+   only the small chevron control expands/collapses its children. This removes
+   the "I clicked Qur'an and nothing happened" ambiguity while keeping the
+   hierarchy intact. */
+.nav__section {
+  margin: 0;
+  border: 0;
+}
+.nav__section-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--touch-target);
+  align-items: stretch;
+  gap: 2px;
+}
+.nav__section-link {
+  min-block-size: var(--touch-target);
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+}
+.nav__section-link:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+.nav__section-link:focus-visible,
+.nav__section-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
+}
+.nav__section-link.nav__item--active {
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  border-inline-start: 2px solid var(--color-primary);
+}
+.nav__section-toggle {
+  inline-size: var(--touch-target);
+  min-block-size: var(--touch-target);
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.nav__section-toggle:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+.nav__section-chevron {
+  display: grid;
+  place-items: center;
+  transition: transform var(--dur-base) var(--ease-standard);
+}
+.nav__section-chevron--open {
+  transform: rotate(180deg);
+}
+[dir='rtl'] .nav__section-chevron--open {
+  transform: rotate(180deg);
+}
+.nav__section--current .nav__section-toggle {
+  color: var(--color-primary-text);
+}
+.nav__section .nav__sub[hidden] {
+  display: none;
+}
+@media (max-width: 959px) {
+  .nav-drawer__body .nav__section-row {
+    grid-template-columns: minmax(0, 1fr) var(--touch-target);
+  }
+  .nav-drawer__body .nav__section-link,
+  .nav-drawer__body .nav__section-toggle {
+    min-block-size: 56px;
+  }
+  .nav-drawer__body .nav__section-link {
+    font-size: var(--fs-md);
+  }
+}
+@media (min-width: 960px) {
+  html[data-nav-collapsed='true'] .nav__section-link {
+    grid-template-columns: 24px;
+    justify-content: center;
+    padding-inline: 8px;
+  }
+  html[data-nav-collapsed='true'] .nav__section-link .nav__label {
+    display: none;
+  }
+  html[data-nav-collapsed='true'] .nav__section-toggle {
+    display: none;
+  }
+  html[data-nav-collapsed='true'] .nav__sub {
+    display: none !important;
+  }
 }
