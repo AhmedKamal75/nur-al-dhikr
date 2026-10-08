@@ -1,12 +1,12 @@
 # OPEN-ISSUES.md — what is still open, verified against the tree
 
-> **Independent score: 8.0 / 10** (v5.17.16, hostile scoring agent, execution-backed,
+> **Independent score: 8.0 / 10** (historical v5.17.16 hostile scoring baseline, execution-backed,
 > ±0.6). The five findings below are the agent's, checked against the tree: four held,
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **71 rows — 28 RESOLVED, 18 OPEN, 7 BLOCKED:scholar,
+> rows rather than by hand: **78 rows**; status totals below are historical and must be recalculated before the next release.
 > 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
@@ -16,11 +16,11 @@
 > was rather than quietly reclassified — an unverified tick is the failure mode this
 > ledger exists to prevent.
 
-> **Current in-flight verification (2026-10-08):** PR #3 Practice IA and PR #6 navigation are implementation candidates only. Their latest GitHub Actions runs must pass before either is merged or versioned. Browser evidence from the local agent remains authoritative for real viewport/RTL/device behavior.
+> **Current in-flight verification (2026-10-08):** PR #6 navigation, PR #7 Practice IA, and PR #8 Mutashabihat cache hardening are implementation candidates only. Their latest GitHub Actions runs must pass before either is merged or versioned. Browser evidence from the local agent remains authoritative for real viewport/RTL/device behavior.
 
 The counterpart to `docs/RELEASES.md` (what is done).
 
-- v5.17.135 resolves issue 20: Audio defaults now use the same direct sleep-cycle interaction as the player; the duplicate selector grammar is removed. **Every row below was
+- v5.17.136 resolves issue 61: Audio defaults now use the same direct sleep-cycle interaction as the player; the duplicate selector grammar is removed. **Every row below was
   checked against the code in this release, not copied from an audit report.**
   Where a report's claim turned out to be stale, the row says so and shows the
   evidence that closed it.
@@ -151,7 +151,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 
 | #   | Hostile-review item                                                      | Status                       | Evidence / next action                                                                                                                                                                                                            |
 | --- | ------------------------------------------------------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 67  | Practice IA is under-organized (Tasbih + 99 Names only)                  | **OPEN** (PR in flight)      | Practice is being turned into a concise task launcher for Tasbih, Tajweed Practice, Qur'an recall, and 99 Names without moving underlying study ownership or creating a generic More bucket. See `docs/PRACTICE-IA-NEXT-PLAN.md`. |
+| 67  | Practice IA is under-organized (Tasbih + 99 Names only)                  | **OPEN** (PR #7 in flight)      | Practice is being turned into a concise task launcher for Tasbih, Tajweed Practice, Qur'an recall, and 99 Names without moving underlying study ownership or creating a generic More bucket. See PR #7 and `docs/PRACTICE-IA-NEXT-PLAN.md`. |
 | 68  | Tajweed course lacks full written teaching depth                         | **OPEN — content/research**  | Current spine has 8 stages / 17 sessions / 27 rule definitions but does not yet provide a complete beginner→advanced self-study lesson body. See `docs/TAJWEED-COURSE-NEXT-PLAN.md`; content must be source-backed and bilingual. |
 | 69  | Mutashabihat / look-alike Ayat needs geometry + richer study content     | **OPEN — evidence required** | Capture current 360/393/1024/1440 EN/AR light/dark states before changing geometry. Separate visual scaling from the deeper request for sourced enrichment.                                                                       |
 | 70  | Calendar grid needs visual/responsive refinement                         | **OPEN — evidence required** | Audit dual-date hierarchy, cell proportions, spacing, Arabic readability and event relationship at phone/tablet/desktop widths before changing CSS.                                                                               |
