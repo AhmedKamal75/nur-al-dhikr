@@ -164,7 +164,7 @@ export const COURSE_STAGES = Object.freeze([
     // teaching itself is the rules' own sourced descriptions.
     why: Object.freeze({
       en: 'Three cases, fewer branches than the noon rules, and the same shape — which is the point: having just learned one set, this one is a variation, not new material.',
-      ar: 'ثلاثة أحكام، أقل تفصيلًا من أحكام النون، وبنفس الصورة — وهذا هو المقصود: بعد تعلّم مجموعة صارت هذه 변화 لا مادة جديدة.',
+      ar: 'ثلاثة أحكام، أقل تفصيلًا من أحكام النون، وبنفس الصورة — وهذا هو المقصود: بعد تعلّم مجموعة تُعدّ هذه تنويعًا لا مادة جديدة.',
     }),
     sessions: [
       {
