@@ -77,8 +77,18 @@ export const DOORS = Object.freeze([
       // so the drawer offers no direct hop — the browser tiles carry them.
       Object.freeze({ route: 'LIBRARY', taps: 1, via: null }),
       Object.freeze({ route: 'CATEGORY', taps: 1, via: 'main-menu', direct: false }),
-      Object.freeze({ route: 'MOOD', labelKey: 'title.mood', taps: 1, via: 'main-menu' }),
-      Object.freeze({ route: 'FOCUS', labelKey: 'title.focus', taps: 2, via: 'main-menu' }),
+      Object.freeze({
+        route: 'MOOD',
+        labelKey: 'title.mood',
+        taps: 1,
+        via: 'main-menu',
+      }),
+      Object.freeze({
+        route: 'FOCUS',
+        labelKey: 'title.focus',
+        taps: 2,
+        via: 'main-menu',
+      }),
       Object.freeze({
         route: 'COLLECTIONS',
         labelKey: 'title.collections',
@@ -103,9 +113,24 @@ export const DOORS = Object.freeze([
       // The Tajweed course remains Qur’an-owned; recall drills may launch from
       // Practice without moving the underlying study surface.
       Object.freeze({ route: 'MUSHAF', taps: 1, via: null }),
-      Object.freeze({ route: 'QURAN', labelKey: 'quran.modeList', taps: 2, via: 'main-menu' }),
-      Object.freeze({ route: 'ROOTS', labelKey: 'quran.modeWord', taps: 2, via: 'main-menu' }),
-      Object.freeze({ route: 'AUDIO', labelKey: 'nav.audio', taps: 2, via: 'main-menu' }),
+      Object.freeze({
+        route: 'QURAN',
+        labelKey: 'quran.modeList',
+        taps: 2,
+        via: 'main-menu',
+      }),
+      Object.freeze({
+        route: 'ROOTS',
+        labelKey: 'quran.modeWord',
+        taps: 2,
+        via: 'main-menu',
+      }),
+      Object.freeze({
+        route: 'AUDIO',
+        labelKey: 'nav.audio',
+        taps: 2,
+        via: 'main-menu',
+      }),
       Object.freeze({
         route: 'TAJWEED_COURSE',
         labelKey: 'nav.tajweedCourse',
@@ -145,7 +170,12 @@ export const DOORS = Object.freeze([
       Object.freeze({ route: 'PRACTICE', taps: 1, via: null }),
       Object.freeze({ route: 'TASBIH', taps: 2, via: 'main-menu' }),
       Object.freeze({ route: 'QUIZ', labelKey: 'quiz.title', taps: 2, via: 'main-menu' }),
-      Object.freeze({ route: 'MUTASHABIHAT', labelKey: 'mutashabihat.title', taps: 2, via: 'main-menu' }),
+      Object.freeze({
+        route: 'MUTASHABIHAT',
+        labelKey: 'mutashabihat.title',
+        taps: 2,
+        via: 'main-menu',
+      }),
     ]),
   }),
   Object.freeze({
