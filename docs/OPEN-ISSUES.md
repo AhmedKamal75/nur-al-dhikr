@@ -142,6 +142,19 @@ These findings are directly grounded in the owner-supplied Chromium screenshots 
 | 62 | Home panel switch is a dead control (nine of twelve panels) | **RESOLVED v5.17.136** | `resolveHomePanels()` places a panel on Home only when it is in the saved order, and only `home-panel-move` ever wrote that order. Unticking a panel's switch set `hiddenHome` and nothing appeared — and the switch rendered ON while the panel stayed off, so it actively lied. The switch now reports where the panel actually is, and ticking it appends the panel to the order. |
 | 63 | Prayer method line drops its provenance qualifier | **OPEN** | The compact hero line reads "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" unqualified, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only. Restoring `Source (unverified):` is a worship-surface copy decision for the owner. `tests/e2e/smoke.spec.js` is deliberately red to keep it visible; do NOT edit the assertion. |
 
+## v5.17.136 owner follow-through addendum
+
+These are the owner's current product findings after the v5.17.136 Chromium evidence pass. They are separate from the historical audit totals above and remain open until evidence or an explicit product decision closes them.
+
+| # | Hostile-review item | Status | Evidence / next action |
+|---|---|---|---|
+| 61 | Practice IA is under-organized (Tasbih + 99 Names only) | **IN PROGRESS — PR** | Practice is being turned into a concise task launcher for Tasbih, Tajweed Practice, Qur'an recall, and 99 Names without moving underlying study ownership or creating a generic More bucket. See `docs/PRACTICE-IA-NEXT-PLAN.md`. |
+| 62 | Tajweed course lacks full written teaching depth | **OPEN — content/research** | Current spine has 8 stages / 17 sessions / 27 rule definitions but does not yet provide a complete beginner→advanced self-study lesson body. See `docs/TAJWEED-COURSE-NEXT-PLAN.md`; content must be source-backed and bilingual. |
+| 63 | Mutashabihat / look-alike Ayat needs geometry + richer study content | **OPEN — evidence required** | Capture current 360/393/1024/1440 EN/AR light/dark states before changing geometry. Separate visual scaling from the deeper request for sourced enrichment. |
+| 64 | Calendar grid needs visual/responsive refinement | **OPEN — evidence required** | Audit dual-date hierarchy, cell proportions, spacing, Arabic readability and event relationship at phone/tablet/desktop widths before changing CSS. |
+| 65 | Offline Library still needs UI polish after the v5.17.135 visibility fix | **OPEN — evidence required** | Keep Essentials primary. Audit download action, group density, storage/audio-cache hierarchy, backup relationship and bilingual wrapping. |
+| 66 | Settings Arabic typeface and palette need further visual polish | **OPEN — evidence required** | Source-level specimen/swatch fixes exist, but current browser proof is required. Audit typeface preview differentiation, selected state and palette color visibility at representative widths/themes. |
+
 ## Stale report claims — closed, with evidence
 
 These were reported as open by an audit and are **not** open. Recorded so nobody

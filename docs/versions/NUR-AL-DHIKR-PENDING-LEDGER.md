@@ -81,6 +81,17 @@ Large text / 200%, reduced motion/transparency, forced colors, safe-area insets,
 - **Home:** recapture 393×852 and 1440×900 EN/AR, light/dark. Confirm the single-item “Next for you” card is compact and that the Home hierarchy remains landing-page-like rather than dashboard-like.
 - **Carry-forward:** rerun all previously observed Chromium problem cases before closing them, including Azkar Details/count separation, Offline Essentials visibility, player narrow layout, invalid Qur'an deep link, Hadith Reference, Prayer methodology, Mushaf Find/bookmark, and progressive disclosures.
 
+### E. Owner product-enrichment wave
+
+GitHub Issue #1 and the v5.17.136 owner review now drive the next product wave:
+
+- **Practice IA:** implement the focused task-launcher model in `docs/PRACTICE-IA-NEXT-PLAN.md`. Current implementation candidate is on a feature branch; do not merge before full repository checks and Chromium E2E.
+- **Tajweed course depth:** use `docs/TAJWEED-COURSE-NEXT-PLAN.md` as the content/interaction contract. Do not mass-generate religious prose; source and review it.
+- **Mutashabihat:** obtain current Chromium evidence before geometry changes; separate layout defects from sourced content enrichment.
+- **Calendar:** obtain current Chromium evidence before grid changes.
+- **Offline:** keep Essentials above the fold; audit the remainder for density/hierarchy/polish.
+- **Settings:** obtain current browser evidence for Arabic typeface specimens and palette swatches before further CSS changes.
+
 ## EXPLICIT NO-GO / PRESERVE
 
 - No per-dhikr audio clips.
