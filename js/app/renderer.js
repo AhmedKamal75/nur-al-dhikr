@@ -126,6 +126,7 @@ const VIEW_TABLE = {
  * button every other tier uses — no new data-actions to gate).
  */
 const LAZY_VIEW_LOADERS = {
+  [VIEWS.PRACTICE]: () => import('../views/practice.js').then((m) => m.renderPractice),
   [VIEWS.QUIZ]: () => import('../views/quiz.js').then((m) => m.renderQuiz),
   [VIEWS.OFFLINE]: () => import('../views/offline.js').then((m) => m.renderOffline),
   // (v5.17.19) Lazy on purpose: the renderer is at its 19 static view-import
@@ -344,6 +345,7 @@ export const QURAN_CSS_ROUTES = new Set([VIEWS.MUSHAF, VIEWS.QURAN, VIEWS.ROOTS]
  * been the wrong trade in the other direction.
  */
 export const ROUTE_CSS = Object.freeze({
+  practice: { routes: new Set([VIEWS.PRACTICE]), href: 'assets/css/practice.css' },
   quran: { routes: QURAN_CSS_ROUTES, href: 'assets/css/quran.css' },
   tajweedCourse: { routes: new Set([VIEWS.TAJWEED_COURSE]), href: 'assets/css/tajweed-course.css' },
 });
