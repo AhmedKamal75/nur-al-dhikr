@@ -140,3 +140,9 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The branch now excludes only those exact Qalqalah-bearing Muqaṭṭaʿāt token strings from the generic Qalqalah fallback. Unit tests cover all five forms.
 - `فرطتم` was also added to the exact incomplete-ṭā→tā assimilation set; the corpus contains it at 12:80, and Tajweed references explicitly state that the ṭā in `فرطتم` loses Qalqalah during incomplete assimilation. (Tajweed instructional references cited in the working audit).
 - This is still unverified by local execution/browser evidence.
+
+### Madd ʿĀriḍ heuristic audit — 2026-10-08
+- Static review found `madd_246` used `isLastWordOfAyah && i >= units.length - 2`, which allowed a madd letter at the **last unit** of a word to be classified as Madd ʿĀriḍ.
+- This was corrected to require `i === units.length - 2` and an actual following unit. Madd ʿĀriḍ is defined as a stop-induced sukoon occurring after a madd/leen letter; when the word ends on the madd letter itself, there is no final consonant receiving that sukoon. citeturn638691search2turn638691search7
+- Corpus regression target: `وَٱلضُّحَىٰ` (93:1) must not receive `madd_246`; `الرَّحِيمِ` with a final consonant remains a valid `madd_246` test shape.
+- This change is still unverified by local execution.
