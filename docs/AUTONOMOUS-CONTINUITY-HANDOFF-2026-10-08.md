@@ -111,7 +111,7 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 ## Tajweed checkpoint update — 2026-10-08 autonomous wave
 
-- PR #21 is **OPEN / unmerged**, mergeable, current head `dfcfd8d8e0565f83f51141c33be4131d72cd11eb`.
+- PR #21 is **OPEN / unmerged**, mergeable, current head `34c86c4f55bff9a742bad949cdb7a6bc6817e724`.
 - Formal app release remains **v5.17.136**; no v5.17.137 claim is made.
 - Ornament-aware semantic lookahead remains part of the branch: raw rendering tokens are preserved, while cross-word Tajweed lookahead and ayah-final status use pronunciation-bearing semantic tokens.
 - Qalqalah broad adjacency suppression was intentionally rejected. Current suppression is evidence-backed and narrow:
