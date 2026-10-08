@@ -107,3 +107,12 @@ together.
 
 ## Browser/device evidence
 Required evidence remains first-class for product claims. Relevant matrix includes 360/393/768/1024/1440 widths, EN/AR, light/dark, and hostile interaction paths. Never substitute source inspection for browser proof where visual/runtime behavior is the claim.
+
+
+## Tajweed checkpoint update — 2026-10-08 autonomous wave
+- PR #21 remains **OPEN / unmerged** while the Qalqalah deep audit continues.
+- The earlier broad Qalqalah suppression heuristic was narrowed because dissimilar-letter adjacency alone was not enough evidence to choose a reading route.
+- The classifier now suppresses Qalqalah only for explicit same-letter assimilation (next consonant shaddah-marked), exact `بسطت` / `أحطت` incomplete-assimilation spellings, and exact base sequence `نخلقكم`, where accepted complete/incomplete ق→ك realizations do not use Qalqalah on the sakin ق.
+- `قَدْ تَّبَيَّنَ` and `ارْكَبْ مَّعَنَا` remain route-sensitive and are intentionally not auto-suppressed without a declared reading profile.
+- Regression coverage now pins both positive and negative sides of this contract.
+- This remains **unverified by local execution and browser evidence**. Full 6,236-ayah execution/anomaly analysis remains the next gating step.
