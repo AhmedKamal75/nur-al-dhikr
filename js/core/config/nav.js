@@ -113,12 +113,6 @@ export const DOORS = Object.freeze([
         taps: 2,
         via: 'main-menu',
       }),
-      Object.freeze({
-        route: 'MUTASHABIHAT',
-        labelKey: 'mutashabihat.title',
-        taps: 2,
-        via: 'main-menu',
-      }),
     ]),
   }),
   Object.freeze({
@@ -142,16 +136,17 @@ export const DOORS = Object.freeze([
     ]),
   }),
   Object.freeze({
-    entry: 'TASBIH',
-    view: VIEWS.TASBIH,
-    icon: 'tasbih',
+    entry: 'PRACTICE',
+    view: VIEWS.PRACTICE,
+    icon: 'sparkle',
     labelKey: 'nav.practise',
     members: Object.freeze([
-      // Counting and the Names quiz are one activity; the door carries the
-      // section name while the entry segment keeps the nav.tasbih label.
-      // The tajweed course + look-alike ayat moved to the QURAN section.
-      Object.freeze({ route: 'TASBIH', taps: 1, via: null }),
+      // Practice is a task launcher. The underlying engines remain in their
+      // own views: Tasbih, 99 Names, and Qur'an recall (Mutashabihat).
+      Object.freeze({ route: 'PRACTICE', taps: 1, via: null }),
+      Object.freeze({ route: 'TASBIH', taps: 2, via: 'main-menu' }),
       Object.freeze({ route: 'QUIZ', labelKey: 'quiz.title', taps: 2, via: 'main-menu' }),
+      Object.freeze({ route: 'MUTASHABIHAT', labelKey: 'mutashabihat.title', taps: 2, via: 'main-menu' }),
     ]),
   }),
   Object.freeze({
