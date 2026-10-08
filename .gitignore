@@ -19,4 +19,9 @@ playwright-report/
 # Reviewer-side clutter: external audit docs + OS zone markers.
 # Never committed, never bundled (build-seed honors --exclude-standard).
 AUDIT-REPORT*
+
+# Agent scratch: stray source slices, release checksums and OS zone markers
+# copied in alongside a release ZIP. Never referenced by the app.
+mushaf_reader_part.txt
+*.sha256
 *:Zone.Identifier
