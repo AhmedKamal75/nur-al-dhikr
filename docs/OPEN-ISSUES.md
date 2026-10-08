@@ -5,9 +5,9 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **78 rows**; status totals below are historical and must be recalculated before the next release.
-> 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> **Counted 2026-10-08 against the working tree**, by parsing this file's own rows
+> rather than by hand: **78 rows**. Status totals are intentionally not hard-coded here;
+> rows 67–78 were added or reclassified after the previous count.
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
