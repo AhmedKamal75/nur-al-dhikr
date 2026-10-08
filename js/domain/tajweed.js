@@ -702,7 +702,9 @@ export function classifyWordTajweed(
       // Marked on a bare consonant -> a muqatta'at letter-name madd.
       spans.push({ start: u.start, end: u.end, rule: 'madd_6' });
     } else if (isMaddLetter(u, prev)) {
-      const signaled = u.base === ALIF_MADDA || u.diacritics.has(MADDA_ABOVE);
+      const signaled =
+        u.base === ALIF_MADDA ||
+        (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
       const isSilah = u.base === SMALL_WAW || u.base === SMALL_YEH;
       if (next && HAMZA_LETTERS.has(next.base)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
@@ -724,9 +726,10 @@ export function classifyWordTajweed(
       } else if (isSilah) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
       } else if (signaled) {
-        // A signaled madd letter with no hamza immediately adjacent —
-        // the hamza that motivates the elongation is the letter itself
-        // (e.g. \u0622 in \u0622\u062F\u064e\u0645َ, "\u0100dam").
+        // Madd Badal is an actual hamza+madd spelling (e.g. \u0622 in \u0622\u062F\u064e\u0645َ,
+        // or a hamza carrying an explicit madda mark). A standalone U+0653 on an
+        // ordinary madd letter is a Mushaf lengthening sign, not proof of Badal;
+        // it falls through to the natural madd classification here.
         spans.push({ start: u.start, end: u.end, rule: 'madd_badal' });
       } else if (isLastWordOfAyah && i === units.length - 2 && next) {
         // Madd 'Arid requires a real final consonant after the madd letter:
