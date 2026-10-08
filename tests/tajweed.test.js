@@ -73,38 +73,80 @@ test('qalqalah fires on ق ط ب ج د with sukun, not on other sakin letters', 
   ); // أَنْعَمْتَ — ن and م sakin, neither is a qalqalah letter
 });
 
-test('qalqalah is suppressed when the sakin letter is assimilated into the next consonant', () => {
+test('qalqalah suppression requires explicit assimilation evidence', () => {
   assert.deepEqual(
-    rulesOf('\u0642\u0652', { nextWordFirstBase: '\u0643' }).filter((r) => r === 'qalqalah'),
-    []
-  ); // قْ ك — qaf merges into kaf (idgham mutaqaribain)
+    rulesOf('\u0642\u0652', {
+      nextWordFirstBase: '\u0643',
+      nextWordFirstHasShadda: false,
+    }).filter((r) => r === 'qalqalah'),
+    ['qalqalah']
+  );
   assert.deepEqual(
-    rulesOf('\u062f\u0652', { nextWordFirstBase: '\u062f' }).filter((r) => r === 'qalqalah'),
+    rulesOf('\u0642\u0652', {
+      nextWordFirstBase: '\u0643',
+      nextWordFirstHasShadda: true,
+    }).filter((r) => r === 'qalqalah'),
     []
-  ); // دْ د — وَقَد دَّخَلُوا
+  ); // explicit next-kaf shadda supports the assimilation boundary.
   assert.deepEqual(
-    rulesOf('\u062f\u0652', { nextWordFirstBase: '\u062a' }).filter((r) => r === 'qalqalah'),
-    []
-  ); // دْ ت — قَد تَّبَيَّنَ
+    rulesOf('\u062F\u0652', {
+      nextWordFirstBase: '\u062F',
+      nextWordFirstHasShadda: false,
+    }).filter((r) => r === 'qalqalah'),
+    ['qalqalah']
+  );
   assert.deepEqual(
-    rulesOf('\u0627\u064e\u062d\u064e\u0637\u0652\u062a\u064f').filter((r) => r === 'qalqalah'),
+    rulesOf('\u062F\u0652', {
+      nextWordFirstBase: '\u062F',
+      nextWordFirstHasShadda: true,
+    }).filter((r) => r === 'qalqalah'),
     []
-  ); // طْ ت — بَسَطْتَ / أَحَطْتُ
+  ); // explicit identical-letter idgham.
   assert.deepEqual(
-    rulesOf('\u0628\u0652', { nextWordFirstBase: '\u0645' }).filter((r) => r === 'qalqalah'),
+    rulesOf('\u062F\u0652', {
+      nextWordFirstBase: '\u062A',
+      nextWordFirstHasShadda: true,
+    }).filter((r) => r === 'qalqalah'),
+    ['qalqalah']
+  ); // route-sensitive without a declared reading profile.
+  assert.deepEqual(
+    rulesOf('\u0628\u0652', {
+      nextWordFirstBase: '\u0645',
+      nextWordFirstHasShadda: true,
+    }).filter((r) => r === 'qalqalah'),
+    ['qalqalah']
+  ); // route-sensitive without a declared reading profile.
+  assert.deepEqual(
+    rulesOf('\u0627\u064e\u062D\u064e\u0637\u0652\u062A\u064f').filter(
+      (r) => r === 'qalqalah'
+    ),
     []
-  ); // بْ م — ارْكَبْ مَّعَنَا
+  ); // أَحَطْتُ
+  assert.deepEqual(
+    rulesOf('\u0628\u064e\u0633\u064e\u0637\u0652\u062A\u064e').filter(
+      (r) => r === 'qalqalah'
+    ),
+    []
+  ); // بَسَطْتَ
+  assert.deepEqual(
+    rulesOf('\u0646\u064e\u062E\u0652\u0644\u064F\u0642\u0643\u0651\u064F\u0645\u0652').filter(
+      (r) => r === 'qalqalah'
+    ),
+    []
+  ); // نَخْلُقكُّم
   assert.ok(
-    rulesOf('\u0642\u0652', { nextWordFirstBase: '\u062e' }).includes('qalqalah')
-  ); // قْ خ — genuine sakin qaf remains Qalqalah
+    rulesOf('\u0642\u0652', { nextWordFirstBase: '\u062E' }).includes('qalqalah')
+  );
 });
 
-test('ayah-level Qalqalah suppression survives real assimilation spellings', () => {
-  const mergedDal = classifyAyahTajweed('وَقَد دَّخَلُوا');
-  assert.equal(mergedDal[1].spans.some((s) => s.rule === 'qalqalah'), false);
+test('ayah-level Qalqalah suppression survives confirmed source spellings', () => {
+  const mergedDal = classifyAyahTajweed(
+    '\u0648\u064e\u0642\u064e\u062F \u062F\u0651\u064e\u062E\u064e\u0644\u064F\u0648\u0627'
+  );
+  assert.equal(mergedDal[1].spans.some((sp) => sp.rule === 'qalqalah'), false);
 
-  const mergedTa = classifyAyahTajweed('بَسَطتَ');
-  assert.equal(mergedTa[0].spans.some((s) => s.rule === 'qalqalah'), false);
+  const mergedTa = classifyAyahTajweed('\u0628\u064e\u0633\u064e\u0637\u0652\u062A\u064e');
+  assert.equal(mergedTa[0].spans.some((sp) => sp.rule === 'qalqalah'), false);
 });
 
 test('ghunnah fires on shaddah-marked \u0646/\u0645 only', () => {
