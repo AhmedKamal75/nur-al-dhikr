@@ -168,6 +168,7 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
     });
   const isOpen = door.view === active || door.members.some((m) => m.route === activeKey);
   const label = t(door.labelKey, lang);
+  const subId = `nav-sub-${door.entry}${drawer ? '-drawer' : ''}`;
   return `
   <div class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}">
     <div class="nav__section-row">
@@ -178,13 +179,13 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
         <span class="nav__label">${label}</span>
       </a>
       <button type="button" class="nav__section-toggle" data-action="nav-section-toggle" data-section="${door.entry}"
-              aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="nav-sub-${door.entry}"
+              aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="${subId}"
               aria-label="${isOpen ? t('nav.collapse', lang) : t('nav.expand', lang)}"
               title="${isOpen ? t('nav.collapse', lang) : t('nav.expand', lang)}">
         <span class="nav__section-chevron${isOpen ? ' nav__section-chevron--open' : ''}" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
       </button>
     </div>
-    <div id="nav-sub-${door.entry}" class="nav__sub"${isOpen ? '' : ' hidden'}>${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
+    <div id="${subId}" class="nav__sub"${isOpen ? '' : ' hidden'}>${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
   </div>`;
 }
 
