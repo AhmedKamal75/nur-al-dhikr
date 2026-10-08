@@ -2,11 +2,7 @@
 
 **Current head:** `v5.17.136` · branch `main` · upstream `origin/main` is in sync.
 
-If you were handed a release ZIP instead of the repository, stop and read
-[docs/versions/BROWSER-EVIDENCE-v5.17.136.md](docs/versions/BROWSER-EVIDENCE-v5.17.136.md).
-A ZIP of this project **cannot carry the git history**, so it loses the trail
-that explains _why_ a decision was made — which is where most of the real
-information lives. Work from the repository.
+Shared source of truth is GitHub `main`. Work from repository history and the current PR/issue trail; do not use ZIP handoffs as the project workflow.
 
 ## The one rule that decides whether your work counts
 
@@ -113,10 +109,10 @@ The owner has replaced ZIP-to-chat handoff with GitHub as the shared source of t
 
 ### Current candidate
 
-- **PR #2** `fix: keep prayer provenance qualifier on focal method line`
-- Branch: `fix/prayer-provenance-hero`
-- Purpose: restore the bilingual `Source (unverified):` qualifier on the compact/focal prayer method line without weakening the deliberately-red assertion.
-- **Do not merge until the local agent runs `npm run check` and Chromium E2E honestly.**
+- **PR #6** `fix: restore desktop navigation collapse and actionable menu sections` — implementation candidate, currently 18 commits behind `main`; refresh/rebase required before merge.
+- **PR #7** `feat: give Practice its own focused task launcher (current main)` — implementation candidate, currently 14 commits behind `main`; refresh/rebase required before merge.
+- **PR #8** `fix: invalidate Mutashabihat pairs when corpus changes` — correctness candidate, currently 13 commits behind `main`; refresh/rebase required before merge.
+- All three remain subject to honest GitHub Actions plus local Chromium evidence before merge.
 
 ### Hostile-review queue
 
@@ -139,8 +135,10 @@ No Home dashboard, no generic “More”, no decorative sacred banners, no per-d
 
 ### Active implementation candidates
 
-- **PR #2 — prayer provenance: MERGED.** `fix/prayer-provenance-hero` restored the bilingual `Source (unverified):` qualifier on the focal prayer method line. The merged commit recorded `npm run check` **2836/2836** and Chromium **176 passed / 3 skipped / 0 failed**. The repository version marker remains v5.17.136 until the next release bundle is formally versioned.
-- **PR #3 — Practice IA:** `feature/practice-ia`. Adds a lazy Practice landing with Tasbih, Tajweed Practice, Qur'an Recall and 99 Names; moves Mutashabihat route ownership to Practice while leaving its engine unchanged. Run full check + Chromium plus a fresh 360/393/1024/1440 EN/AR light/dark evidence matrix before merge.
-- **PR #6 — desktop navigation/actionability:** `fix/navigation-shell-v2`. Restores an explicit desktop rail collapse/expand control, separates parent section navigation from disclosure, and preserves the current mobile active underline. Do not merge until full checks and the requested Chromium matrix pass.
+- **Prayer provenance fix: MERGED.** The focal prayer method line again carries the bilingual `Source (unverified):` qualifier. The merged browser gate recorded `npm run check` **2836/2836** and Chromium **176 passed / 3 skipped / 0 failed**. The repository version marker remains v5.17.136 until the next release bundle is formally versioned.
+- **Tajweed noon-Izhar correctness fix: ON MAIN, next release.** The noon lesson no longer points at `izhar_shafawi`; main now has a sourced `izhar` rule, throat-letter classification, canonical/runtime course parity, and deterministic regression coverage. Formal release bump still waits for browser certification and the release ritual.
+- **PR #7 — Practice IA:** `feature/practice-ia-current`. Adds a lazy Practice landing with Tasbih, Tajweed Practice, Qur'an Recall and 99 Names while preserving Qur'an ownership of the full Tajweed Course. It is a current-main candidate but must be refreshed against current `main` before merge.
+- **PR #8 — Mutashabihat cache correctness:** `fix/mutashabihat-corpus-cache`. Keys computed pairs by corpus object identity and adds regression coverage. Refresh against current `main` before merge.
+- **PR #6 — desktop navigation/actionability:** `fix/navigation-shell-v2`. Restores an explicit desktop rail collapse/expand control, separates parent section navigation from disclosure, and preserves the current mobile active underline. It is currently stale against `main`; refresh before merge.
   - Focused browser gate: `npx playwright test tests/e2e/navigation-shell.spec.js --project=chromium`.
   - Matrix requirement: 1024/1440 desktop and 360/393 mobile, EN/AR, light/dark; verify parent links, child links, app-tail links, collapse/expand, drawer Escape/overlay, RTL chevrons, and mobile underline geometry.
