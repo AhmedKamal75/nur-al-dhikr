@@ -1,7 +1,7 @@
 # Nūr al-Dhikr — Persistent Request Ledger
 
 **Updated:** 2026-10-08
-**Current app:** v5.17.136
+**Current app:** v5.17.137
 **Current phase:** browser/device certification → hostile-review follow-through → accessibility/robustness → evidence-backed utility/deslopification
 **Distribution:** `origin/main` is the authority. Work from the repository; a release ZIP cannot carry the git history and therefore loses the reasoning behind each decision.
 

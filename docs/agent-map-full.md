@@ -2103,7 +2103,7 @@ job: The persistent app shell: top bar (hamburger, title, search shortcut, theme
 - exports: `NAV_GROUPS` (function), `INTERNAL_ONLY_ROUTES` (const), `drawerSectionsHTML` (function), `languageToggleHTML` (function), `renderTopBar` (function), `renderNav` (function)
 - emits: `go-back`, `nav-drawer-close`, `nav-toggle`, `navigate`, `open-palette`, `quick-language-toggle`, `quick-theme-toggle` (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `a11y.languageToggle`, `a11y.mainNav`, `a11y.navToggle`, `a11y.themeToggle`, `app.name`, `common.close`, `nav.back`, `nav.main`, `nav.overview`, `palette.open`
+- i18n: `a11y.languageToggle`, `a11y.mainNav`, `a11y.navToggle`, `a11y.themeToggle`, `app.name`, `common.close`, `nav.back`, `nav.main`, `nav.overview`, `nav.toggleSection`, `palette.open`
 - routes: `#/prayer`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.KIDS`, `VIEWS.OFFLINE`, `VIEWS.SETTINGS`, `VIEWS.TASBIH`, `VIEWS.ZAKAT`
 
 ### `js/ui/skeleton.js`

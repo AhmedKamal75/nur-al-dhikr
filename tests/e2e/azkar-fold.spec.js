@@ -195,27 +195,18 @@ test.describe('home is home, not a full azkar (IA-7)', () => {
     await page.goto(HOME);
     await expect(page.locator('#main h1')).toBeVisible({ timeout: 25000 });
 
-    // (v5.17.136) Since the v5.17.133 seven-door chrome the doors are
-    // hierarchical <details> sections: `#/library` is a sub-row that only
-    // exists once its section is open. The claim under test is "one tap from
-    // home", so tap the DOOR — the section summary — which is the one-tap
-    // affordance — and then read the grid. Reaching for the sub-row directly
-    // tested the pre-133 flat DOM and could not see the real first tap.
-    const azkarDoor = page
-      .locator('#bottomnav details.nav__section[data-section="LIBRARY"] > summary')
-      .first();
+    // (v5.17.137) The seven-door chrome now makes each door an actionable
+    // link beside its own chevron disclosure, so the Azkar grid is genuinely
+    // ONE tap from Home: tap the door, land on the grid. Under the previous
+    // arrangement the door was a <details> summary and the link hid inside it,
+    // so this test had to open the section first -- which was exactly the
+    // "dead end" the assertion was written to catch.
+    const azkarDoor = page.locator('#bottomnav a.nav__section-link[href="#/library"]').first();
     await expect(
       azkarDoor,
-      'the AZKAR door must be in the chrome, or home is a dead end for the grid'
+      'the AZKAR door must be an actionable link in the chrome, or home is a dead end for the grid'
     ).toBeVisible({ timeout: 10000 });
-    const azkarLink = page.locator('#bottomnav a[href="#/library"]').first();
-    if (!(await azkarDoor.evaluate((el) => el.parentElement.open))) {
-      await azkarDoor.click();
-    }
-    await expect(azkarLink, 'the grid link is reachable from the door in one more tap').toBeVisible(
-      { timeout: 10000 }
-    );
-    await azkarLink.click();
+    await azkarDoor.click();
     await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
   });
 });

@@ -6,8 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **71 rows — 28 RESOLVED, 18 OPEN, 7 BLOCKED:scholar,
-> 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **71 rows — 28 RESOLVED, 18 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,

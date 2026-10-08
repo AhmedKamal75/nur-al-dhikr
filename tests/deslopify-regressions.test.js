@@ -154,10 +154,13 @@ test('section navigation lives in the main menu, not duplicated on every page', 
     readFileSync(new URL('../js/views/checklist.js', import.meta.url), 'utf8'),
     /youModeSwitchHTML/
   );
+  const shell = readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8');
   assert.match(
-    readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8'),
-    /<details data-open-controlled class="nav__section/
+    shell,
+    /<div class="nav__section[^>]*>[\s\S]*?<details class="nav__section-details" data-open-controlled/
   );
+  assert.match(shell, /class="nav__section-link/);
+  assert.match(shell, /<summary class="nav__section-toggle"/);
 });
 
 test('settings heading remains readable at mobile widths', () => {
@@ -209,9 +212,12 @@ test('application tail keeps Zakat, Offline, Settings and About as standalone si
 test('hierarchical menu has intentional visual chrome and no native marker/dashed-line fallthrough', () => {
   const navCss = css;
   assert.match(navCss, /\.nav__section\s*\{/);
-  assert.match(navCss, /\.nav__section-summary\s*\{/);
-  assert.match(navCss, /\.nav__section-summary::-webkit-details-marker/);
-  assert.match(navCss, /\.nav__section-summary::marker/);
+  // The section summary is now a chevron-only disclosure control beside an
+  // actionable section link (v5.17.137 navigation branch), so the native
+  // marker is suppressed on `.nav__section-toggle`, not `.nav__section-summary`.
+  assert.match(navCss, /\.nav__section-toggle\s*\{/);
+  assert.match(navCss, /\.nav__section-toggle::-webkit-details-marker/);
+  assert.match(navCss, /\.nav__section-toggle::marker/);
   assert.match(navCss, /\.nav__sub\s*\{/);
   assert.doesNotMatch(navCss, /\.nav__sub[\s\S]{0,900}border[^;]*dashed/);
 });

@@ -1,3 +1,14 @@
+## v5.17.137 — actionable navigation sections and a reachable rail collapse
+
+Merges the two open branches from the other agent and repairs what they needed.
+
+- **Nav sections are actionable.** Each hierarchical door is now a real link with a separate chevron disclosure control beside it, so a section label is never a control that only looks tappable (`OPEN-ISSUES` 74). `nav.expand`, `nav.collapse` and `nav.toggleSection` ship in EN and AR.
+- **Desktop rail collapse is reachable** (`OPEN-ISSUES` 73): the collapse control existed in code with no working affordance.
+- **Prayer-method provenance restored** (`OPEN-ISSUES` 63): `compactPrayerMethodLine` appends `prayer.methodSource` whenever the method carries a source body, in both languages, so the hero no longer states an uncertified calculation source as fact.
+- The v5.17.136 disclosure fix holds through this change: `open` on `<details>` is user-owned, and the nav sections keep state-driven semantics via `data-open-controlled`.
+- One raw `z-index` from the merged branch was moved onto the existing `--z-raised` token, whose comment already documents exactly this use ("local stacking above a sibling").
+- Religious corpus bytes unchanged.
+
 ## v5.17.136 — adopt v5.17.135, then fix the regression it shipped with
 
 Adopts the v5.17.135 source ZIP (checksum `5e724741e5ebaf5…23252` verified against the published value) and repairs what it carried. Real Chromium evidence, not source reading, drove every item.

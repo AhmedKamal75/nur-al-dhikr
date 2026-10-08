@@ -40,13 +40,25 @@ describe('v5.17.84 main-menu hierarchy', () => {
   test('main menu derives expandable sections from DOORS and app tail from one source', () => {
     assert.match(shell, /DOORS\.map\(\(door\) => hierarchicalSectionHTML/);
     assert.match(shell, /APP_MENU_ENTRIES\.map\(\(n\) =>/);
-    assert.match(shell, /<details data-open-controlled class="nav__section/);
+    // (v5.17.137) The section is a <div> row; only the SUB-LIST sits inside the
+    // <details>, because a closed <details> hides every child but its summary —
+    // which is what made the door name an unreachable "dead button".
+    assert.match(shell, /<div class="nav__section/);
+    assert.match(shell, /<details class="nav__section-details" data-open-controlled/);
     assert.match(shell, /nav__section-chevron/);
-    assert.match(css, /\.nav__section\s*\{/);
+    assert.match(shell, /class="nav__section-link/);
+    assert.match(shell, /<summary class="nav__section-toggle"/);
+    assert.match(css, /\.nav__section-link/);
   });
 
   test('menu has bilingual labels for the new hierarchy affordances', () => {
-    for (const key of ['nav.main', 'nav.overview']) {
+    for (const key of [
+      'nav.main',
+      'nav.overview',
+      'nav.toggleSection',
+      'nav.expand',
+      'nav.collapse',
+    ]) {
       assert.ok(en[key], `missing English ${key}`);
       assert.ok(ar[key], `missing Arabic ${key}`);
     }

@@ -9,7 +9,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.136**. The v5.17.83 full-corpus gates were green; the
+> Current version: **v5.17.137**. The v5.17.83 full-corpus gates were green; the
 > v5.17.84 targeted source/contracts bundle is green, while the full check and
 > Chromium matrix for v5.17.84 still need to be run on the authoritative local machine. The v5.17.77 handoff archive
 > itself failed this tree's own gates (format and version markers), which is

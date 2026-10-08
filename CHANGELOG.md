@@ -1,4 +1,11 @@
-# v5.17.136 — adopt v5.17.135, then fix what it shipped with
+# v5.17.137 — navigation chrome: actionable section rows and a reachable rail collapse
+
+- Merged `fix/navigation-desktop-collapse-and-menu-actions`: each nav section is now an actionable link plus a chevron disclosure control, so a section label is never a dead button, and the desktop rail collapse has a real control. New EN/AR labels for expand/collapse and the section disclosure.
+- Restored the prayer-method provenance qualifier (merged from `fix/prayer-provenance-hero`), so the hero no longer states an uncertified calculation source as fact.
+- Disclosure fix from v5.17.136 still holds: `open` on `<details>` is user-owned, with `data-open-controlled` opt-in for state-driven sections.
+- Religious corpus bytes unchanged.
+
+## v5.17.136 — adopt v5.17.135, then fix what it shipped with
 
 - Adopted the v5.17.135 source (published SHA-256 verified) and repaired two regressions it carried.
 - Fixed every `<details>` on `#/audio` collapsing on any in-panel interaction — the sleep ladder needed 5 re-opens per 6-tap walk at 135 and none at 126. `open` is now a user-owned toggle; state-driven disclosures opt in via `data-open-controlled`.

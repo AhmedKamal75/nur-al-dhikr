@@ -167,17 +167,33 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
       drawer,
     });
   const isOpen = door.view === active || door.members.some((m) => m.route === activeKey);
+  const label = t(door.labelKey, lang);
+  const subId = `nav-sub-${door.entry}${drawer ? '-drawer' : ''}`;
+  // (v5.17.137) The section link and the disclosure are SIBLINGS, not
+  // children of one <details>. A closed <details> hides every child except
+  // its <summary>, so the first cut of this — link inside the details — meant
+  // the section name was invisible and untappable whenever the section was
+  // collapsed, which is the exact "dead button" this row was meant to fix.
+  // Measured in Chromium before the fix: the link resolved but was not
+  // visible, and clicking the summary did not open it either.
   return `
-  <details data-open-controlled class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}"${isOpen ? ' open' : ''}>
-    <summary class="nav__section-summary">
-      <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
-      <span class="nav__label">${t(door.labelKey, lang)}</span>
-      <span class="nav__section-chevron" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
-    </summary>
-    <div class="nav__sub">${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
-  </details>`;
+  <div class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}">
+    <div class="nav__section-row">
+      <a class="nav__section-link${isOpen ? ' nav__item--active' : ''}"
+         href="${buildHash(door.view)}" data-action="${drawer ? 'nav-drawer-go' : 'navigate'}" data-view="${door.view}"
+         title="${label}" aria-label="${label}" aria-current="${door.view === active ? 'page' : 'false'}">
+        <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
+        <span class="nav__label">${label}</span>
+      </a>
+      <details class="nav__section-details" data-open-controlled${isOpen ? ' open' : ''}>
+        <summary class="nav__section-toggle" title="${t('nav.toggleSection', lang)}" aria-label="${t('nav.toggleSection', lang)}" aria-controls="${subId}">
+          <span class="nav__section-chevron${isOpen ? ' nav__section-chevron--open' : ''}" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
+        </summary>
+        <div id="${subId}" class="nav__sub">${navSubRowsHTML(door, activeKey, lang, { drawer })}</div>
+      </details>
+    </div>
+  </div>`;
 }
-
 function appMenuHTML(active, lang, { drawer = false } = {}) {
   const entries = APP_MENU_ENTRIES.map((n) => {
     const kind =
@@ -276,6 +292,24 @@ export function renderTopBar(state, opts = {}) {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
   const collapsed = !!state.settings.navCollapsed;
+  const desktopNav =
+    typeof window !== 'undefined' && window.matchMedia?.('(min-width: 960px)').matches;
+  const navControlLabel = desktopNav
+    ? t(collapsed ? 'nav.expand' : 'nav.collapse', lang)
+    : t('a11y.navToggle', lang);
+  const navControlIcon = desktopNav
+    ? icon(
+        collapsed
+          ? isRTL(lang)
+            ? 'chevronLeft'
+            : 'chevronRight'
+          : isRTL(lang)
+            ? 'chevronRight'
+            : 'chevronLeft',
+        { size: 20 }
+      )
+    : icon('menu', { size: 22 });
+  const navControlTarget = desktopNav ? 'bottomnav' : 'nav-drawer';
   // (v4.5.2, APP-FLOW I9) the universal Back affordance: present whenever
   // a forward navigation left somewhere to go back TO. It rides the real
   // browser history (I3), so it always lands where the user actually came
@@ -294,8 +328,8 @@ export function renderTopBar(state, opts = {}) {
   return `
   <div class="topbar__inner">
     <div class="topbar__lead">
-      <button type="button" class="icon-btn topbar__menu" data-action="nav-toggle" aria-label="${t('a11y.navToggle', lang)}" aria-expanded="${collapsed ? 'false' : 'true'}" aria-controls="bottomnav">
-        ${icon('menu', { size: 22 })}
+      <button type="button" class="icon-btn topbar__menu" data-action="nav-toggle" aria-label="${navControlLabel}" title="${navControlLabel}" aria-expanded="${desktopNav ? (collapsed ? 'false' : 'true') : 'false'}" aria-controls="${navControlTarget}">
+        ${navControlIcon}
       </button>
       <a class="topbar__brand" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">
         <span class="topbar__brand-icon" aria-hidden="true">${icon('rayah', { size: 21 })}</span>
@@ -356,7 +390,7 @@ export function renderNav(state) {
   </div>
   ${mobileBar}
   <div class="nav-drawer-overlay" data-action="nav-drawer-close"></div>
-  <div class="nav-drawer" role="dialog" aria-modal="true" aria-label="${t('a11y.mainNav', lang)}">
+  <div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="${t('a11y.mainNav', lang)}">
     <div class="nav-drawer__head">
       <span class="nav-drawer__title">${t('app.name', lang)}</span>
       <button type="button" class="icon-btn" data-action="nav-drawer-close" aria-label="${t('common.close', lang)}">
