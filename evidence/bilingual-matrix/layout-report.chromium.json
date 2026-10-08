@@ -1,18 +1,11 @@
 {
-  "generatedAt": "2026-10-08T15:47:45.816Z",
+  "generatedAt": "2026-10-08T16:30:28.515Z",
   "project": "chromium",
   "viewport": 1280,
   "provenance": {
-    "head": "14a09c5",
-    "measuredPathsDirty": [
-      "MM assets/css/deslopify.css",
-      "M  js/app/drawer.js",
-      " M js/core/config.js",
-      "M  js/core/i18n/ar.js",
-      "M  js/core/i18n/en.js",
-      "MM js/ui/shell.js"
-    ],
-    "measuredPathsDirtyCount": 6
+    "head": "b6a0bb5",
+    "measuredPathsDirty": [],
+    "measuredPathsDirtyCount": 0
   },
   "enforced": false,
   "regions": [

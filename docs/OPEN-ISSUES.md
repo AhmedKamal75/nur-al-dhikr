@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **71 rows — 28 RESOLVED, 18 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **72 rows — 28 RESOLVED, 19 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
@@ -158,6 +158,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 73 | Desktop rail collapse was implemented but unreachable | **OPEN — fix candidate** | v5.17.136 source audit found the desktop collapse handler and persisted state, but the only topbar trigger was hidden at ≥960px. PR #4 restores an explicit desktop collapse/expand control; local Chromium evidence is required before closure. |
 | 74 | Main-menu section labels could feel like dead buttons | **OPEN — fix candidate** | Parent Qur'an/Azkar/Prayer/etc. rows were native disclosure summaries, so tapping the label expanded/collapsed instead of navigating to the section. PR #4 separates the section destination link from the adjacent disclosure control; verify every menu route in Chromium. |
 | 75 | Mobile seven-door active underline alignment | **STANDING CONSTRAINT** | Owner reports the underlying active underline is now correctly aligned in mobile view. Preserve the current quiet underline geometry during desktop/menu work; do not reintroduce filled pills or drift the indicator. |
+| 76 | `navigation-shell` desktop routing test is load-flaky | **OPEN** | It walks ~15 destinations with a full app boot each, inside one 30 s test. Measured: failed in 2 of 4 full Chromium runs, passes every time in isolation and in a third full run. This is the suite-load class `playwright.config.js` already documents (browsers queueing behind one static server), not a nav defect — CI runs with `retries: 2` and local runs with 0, which is why it only shows locally. Not papered over by raising the timeout. Real fix is to split the walk or make the boot cheaper. |
 
 ## Stale report claims — closed, with evidence
 
@@ -193,7 +194,7 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **18** |
+| **OPEN** (nobody has done it)                      | **19** |
 | **PROPOSED** (costed, needs an owner yes)          | **5**  |
 | **BLOCKED:scholar** (must never be machine-filled) | **7**  |
 | **BLOCKED:device** (needs real hardware)           | **5**  |
