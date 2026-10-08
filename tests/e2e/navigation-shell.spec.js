@@ -29,13 +29,17 @@ test('navigation shell: desktop rail collapse and expand are reachable', async (
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
 
   const collapsed = await page.locator('#bottomnav').evaluate((el) => ({
-    width: getComputedStyle(el).width,
-    railVar: getComputedStyle(document.documentElement)
-      .getPropertyValue('--sidenav-width-collapsed')
-      .trim(),
+    width: parseFloat(getComputedStyle(el).width),
+    railVar: parseFloat(
+      getComputedStyle(document.documentElement)
+        .getPropertyValue('--sidenav-width-collapsed')
+        .trim()
+    ),
   }));
-  expect(collapsed.width).not.toBe(expandedWidth);
-  expect(collapsed.railVar).not.toBe('');
+  expect(collapsed.railVar).toBeGreaterThan(0);
+  await expect
+    .poll(async () => page.locator('#bottomnav').evaluate((el) => parseFloat(getComputedStyle(el).width)))
+    .toBeCloseTo(collapsed.railVar, 0);
 
   await toggle.click();
   await expect(page.locator('html')).toHaveAttribute('data-nav-collapsed', 'false');
