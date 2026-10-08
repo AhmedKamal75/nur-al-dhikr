@@ -16,7 +16,7 @@
 > was rather than quietly reclassified — an unverified tick is the failure mode this
 > ledger exists to prevent.
 
-> **Current in-flight verification (2026-10-08):** PR #3 Practice IA and PR #4 navigation are implementation candidates only. Their latest GitHub Actions runs must pass before either is merged or versioned. Browser evidence from the local agent remains authoritative for real viewport/RTL/device behavior.
+> **Current in-flight verification (2026-10-08):** PR #3 Practice IA and PR #6 navigation are implementation candidates only. Their latest GitHub Actions runs must pass before either is merged or versioned. Browser evidence from the local agent remains authoritative for real viewport/RTL/device behavior.
 
 The counterpart to `docs/RELEASES.md` (what is done).
 
@@ -158,8 +158,8 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 71  | Offline Library still needs UI polish after the v5.17.135 visibility fix | **OPEN — evidence required** | Keep Essentials primary. Audit download action, group density, storage/audio-cache hierarchy, backup relationship and bilingual wrapping.                                                                                         |
 | 72  | Settings Arabic typeface and palette need further visual polish          | **OPEN — evidence required** | Source-level specimen/swatch fixes exist, but current browser proof is required. Audit typeface preview differentiation, selected state and palette color visibility at representative widths/themes.                             |
 
-| 73 | Desktop rail collapse was implemented but unreachable | **OPEN — fix candidate** | v5.17.136 source audit found the desktop collapse handler and persisted state, but the only topbar trigger was hidden at ≥960px. PR #4 restores an explicit desktop collapse/expand control; local Chromium evidence is required before closure. |
-| 74 | Main-menu section labels could feel like dead buttons | **OPEN — fix candidate** | Parent Qur'an/Azkar/Prayer/etc. rows were native disclosure summaries, so tapping the label expanded/collapsed instead of navigating to the section. PR #4 separates the section destination link from the adjacent disclosure control; verify every menu route in Chromium. |
+| 73 | Desktop rail collapse was implemented but unreachable | **OPEN — fix candidate** | v5.17.136 source audit found the desktop collapse handler and persisted state, but the only topbar trigger was hidden at ≥960px. PR #6 restores an explicit desktop collapse/expand control; local Chromium evidence is required before closure. |
+| 74 | Main-menu section labels could feel like dead buttons | **OPEN — fix candidate** | Parent Qur'an/Azkar/Prayer/etc. rows were native disclosure summaries, so tapping the label expanded/collapsed instead of navigating to the section. PR #6 separates the section destination link from the adjacent disclosure control; verify every menu route in Chromium. |
 | 75 | Mobile seven-door active underline alignment | **STANDING CONSTRAINT** | Owner reports the underlying active underline is now correctly aligned in mobile view. Preserve the current quiet underline geometry during desktop/menu work; do not reintroduce filled pills or drift the indicator. |
 
 ## Stale report claims — closed, with evidence
