@@ -80,14 +80,14 @@ test('qalqalah suppression requires explicit assimilation evidence', () => {
       nextWordFirstHasShadda: false,
     }).filter((r) => r === 'qalqalah'),
     ['qalqalah']
-  );
+  ); // adjacency alone is not enough.
   assert.deepEqual(
     rulesOf('\u0642\u0652', {
       nextWordFirstBase: '\u0643',
       nextWordFirstHasShadda: true,
     }).filter((r) => r === 'qalqalah'),
     []
-  ); // explicit next-kaf shadda supports the assimilation boundary.
+  ); // explicit next-kaf shadda supports the qaf→kaf assimilation family.
   assert.deepEqual(
     rulesOf('\u062F\u0652', {
       nextWordFirstBase: '\u062F',
@@ -105,38 +105,33 @@ test('qalqalah suppression requires explicit assimilation evidence', () => {
   assert.deepEqual(
     rulesOf('\u062F\u0652', {
       nextWordFirstBase: '\u062A',
-      nextWordFirstHasShadda: true,
+      nextWordFirstHasShadda: false,
     }).filter((r) => r === 'qalqalah'),
     ['qalqalah']
-  ); // route-sensitive without a declared reading profile.
+  ); // no assimilation cue without the target shadda.
+  assert.deepEqual(
+    rulesOf('\u062F\u0652', {
+      nextWordFirstBase: '\u062A',
+      nextWordFirstHasShadda: true,
+    }).filter((r) => r === 'qalqalah'),
+    []
+  ); // required dal→ta assimilation.
   assert.deepEqual(
     rulesOf('\u0628\u0652', {
       nextWordFirstBase: '\u0645',
       nextWordFirstHasShadda: true,
     }).filter((r) => r === 'qalqalah'),
     ['qalqalah']
-  ); // route-sensitive without a declared reading profile.
-  assert.deepEqual(
-    rulesOf('\u0627\u064e\u062D\u064e\u0637\u0652\u062A\u064f').filter(
-      (r) => r === 'qalqalah'
-    ),
-    []
-  ); // أَحَطْتُ
-  assert.deepEqual(
-    rulesOf('\u0628\u064e\u0633\u064e\u0637\u0652\u062A\u064e').filter(
-      (r) => r === 'qalqalah'
-    ),
-    []
-  ); // بَسَطْتَ
-  assert.deepEqual(
-    rulesOf('\u0646\u064e\u062E\u0652\u0644\u064F\u0642\u0643\u0651\u064F\u0645\u0652').filter(
-      (r) => r === 'qalqalah'
-    ),
-    []
-  ); // نَخْلُقكُّم
-  assert.ok(
-    rulesOf('\u0642\u0652', { nextWordFirstBase: '\u062E' }).includes('qalqalah')
-  );
+  ); // ارْكَبْ مَّعَنَا remains route-sensitive without a profile.
+  for (const word of [
+    '\u0627\u064e\u062D\u064e\u0637\u0652\u062A\u064f', // أَحَطْتُ
+    '\u0628\u064e\u0633\u064e\u0637\u0652\u062A\u064e', // بَسَطْتَ
+    '\u0641\u064e\u0631\u0651\u064e\u0637\u0652\u062A\u064f', // فَرَّطْتُ
+    '\u0646\u064e\u062E\u0652\u0644\u064F\u0642\u0643\u0651\u064F\u0645\u0652', // نَخْلُقكُّم
+  ]) {
+    assert.deepEqual(rulesOf(word).filter((r) => r === 'qalqalah'), []);
+  }
+  assert.ok(rulesOf('\u0642\u0652', { nextWordFirstBase: '\u062E' }).includes('qalqalah'));
 });
 
 test('ayah-level Qalqalah suppression survives confirmed source spellings', () => {
@@ -145,7 +140,7 @@ test('ayah-level Qalqalah suppression survives confirmed source spellings', () =
   );
   assert.equal(mergedDal[1].spans.some((sp) => sp.rule === 'qalqalah'), false);
 
-  const mergedTa = classifyAyahTajweed('\u0628\u064e\u0633\u064e\u0637\u0652\u062A\u064e');
+  const mergedTa = classifyAyahTajweed('\u0642\u064e\u062F \u062A\u0651\u064e\u0628\u064e\u064a\u0651\u064e\u0646\u064e');
   assert.equal(mergedTa[0].spans.some((sp) => sp.rule === 'qalqalah'), false);
 });
 
