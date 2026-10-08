@@ -845,12 +845,15 @@ export function classifyAyahTajweed(ayahText) {
   const result = words.map((word, i) => {
     const nextIndex = nextSemanticIndex.get(i);
     const nextWord = nextIndex === undefined ? null : words[nextIndex];
-    const nextWordFirstBase = nextWord ? (tokenizeUnits(nextWord)[0]?.base ?? null) : null;
+    const nextWordUnits = nextWord ? tokenizeUnits(nextWord) : [];
+    const nextWordFirstBase = nextWordUnits[0]?.base ?? null;
+    const nextWordFirstHasShadda = nextWordUnits[0]?.diacritics.has(SHADDA) ?? false;
     return {
       word,
       wordIndex: i + 1,
       spans: classifyWordTajweed(word, {
         nextWordFirstBase,
+        nextWordFirstHasShadda,
         isLastWordOfAyah: i === lastSemanticIndex,
       }),
     };
