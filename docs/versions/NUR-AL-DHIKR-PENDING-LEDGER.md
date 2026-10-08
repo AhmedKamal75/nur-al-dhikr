@@ -3,7 +3,7 @@
 **Updated:** 2026-10-08
 **Current app:** v5.17.136
 **Current phase:** browser/device certification → hostile-review follow-through → accessibility/robustness → evidence-backed utility/deslopification
-**Distribution:** `origin/main` is the authority. Work from the repository; a release ZIP cannot carry the git history and therefore loses the reasoning behind each decision.
+**Distribution:** `origin/main` is the authority. Work from the repository; Git history, reviews, ledgers, and release records are the durable project state.
 
 ## CURRENT RELEASE — v5.17.136
 
@@ -61,7 +61,7 @@ See `HOSTILE-REVIEW-v5.17.132.md` for the independent multi-lens findings and di
 
 ### A. Browser/device certification — REQUIRED
 
-Re-run the authoritative local Chromium matrix against v5.17.135, including carried-forward v5.17.126–131 cases and the hostile-review utility surfaces. Do not claim visual certification from source-only evidence.
+Re-run the authoritative local Chromium matrix against v5.17.136, including carried-forward v5.17.126–131 cases and the hostile-review utility surfaces. Do not claim visual certification from source-only evidence.
 
 ### B. Hostile-review follow-through
 
@@ -75,7 +75,7 @@ Re-run the authoritative local Chromium matrix against v5.17.135, including carr
 
 Large text / 200%, reduced motion/transparency, forced colors, safe-area insets, keyboard-only, and real-device screen-reader evidence remain open.
 
-### D. Evidence-driven deslopification (v5.17.133–134)
+### D. Evidence-driven deslopification and shell certification (v5.17.136+)
 
 - **Mobile shell:** recapture all seven doors at 360×800 and 393×852 EN/AR, light/dark. Confirm the active item is a quiet indicator, labels remain readable, no clipping occurs, and no generic “More” bucket is introduced.
 - **Home:** recapture 393×852 and 1440×900 EN/AR, light/dark. Confirm the single-item “Next for you” card is compact and that the Home hierarchy remains landing-page-like rather than dashboard-like.
@@ -91,6 +91,7 @@ GitHub Issue #1 and the v5.17.136 owner review now drive the next product wave:
 - **Calendar:** obtain current Chromium evidence before grid changes.
 - **Offline:** keep Essentials above the fold; audit the remainder for density/hierarchy/polish.
 - **Settings:** obtain current browser evidence for Arabic typeface specimens and palette swatches before further CSS changes.
+- **Main navigation:** certify the desktop rail collapse/expand control and every parent-section destination/disclosure action from `fix/navigation-desktop-collapse-and-menu-actions`; the current mobile active underline alignment is a preserve constraint, not a redesign target.
 
 ## EXPLICIT NO-GO / PRESERVE
 
@@ -109,4 +110,4 @@ GitHub Issue #1 and the v5.17.136 owner review now drive the next product wave:
 - Keep this ledger current; fulfilled items leave the NOW queue.
 - Prefer implementation and evidence over plans.
 - Preserve what already works.
-- Every release requires a complete source ZIP, checksum, verification record, updated ledger/checkpoint, Global persistence, and exact saved-ZIP hash verification before the version is considered complete.
+- Every release requires the complete source/history to be present in GitHub, a verification record, an updated ledger/checkpoint, and exact commit/release traceability before the version is considered complete.
