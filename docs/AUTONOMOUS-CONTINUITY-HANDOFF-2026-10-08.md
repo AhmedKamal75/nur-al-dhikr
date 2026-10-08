@@ -111,7 +111,7 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 ## Tajweed checkpoint update — 2026-10-08 autonomous wave
 
-- PR #21 is **OPEN / unmerged**, mergeable, current head `0439ddd1de14ad4941b803806bb123976d184eca`.
+- PR #21 is **OPEN / unmerged**, mergeable, current head `dfcfd8d8e0565f83f51141c33be4131d72cd11eb`.
 - Formal app release remains **v5.17.136**; no v5.17.137 claim is made.
 - Ornament-aware semantic lookahead remains part of the branch: raw rendering tokens are preserved, while cross-word Tajweed lookahead and ayah-final status use pronunciation-bearing semantic tokens.
 - Qalqalah broad adjacency suppression was intentionally rejected. Current suppression is evidence-backed and narrow:
@@ -159,3 +159,7 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The classifier now limits the Badal signal to actual hamza+madd orthography: `آ` / `ALIF_MADDA`, or a hamza base carrying the explicit madda mark.
 - Regression coverage pins `آدَمَ` and an explicit hamza+madda spelling as Badal, while `مَآ` must remain natural `madd_2` and must not become `madd_badal`.
 - This is still unverified by local/full-corpus execution. Uthmani notation references confirm U+0653 is a madd marker and is not itself a Badal classifier. 
+
+### Low-iqlab normalization checkpoint
+- The classifier defines both `IQLAB_MARK` (U+06E2) and `IQLAB_MARK_LOW` (U+06ED), and `canonMark()` deliberately folds the low form to the canonical high form before rule classification.
+- A regression now pins the low-mark path to `iqlab`; no runtime change was necessary.
