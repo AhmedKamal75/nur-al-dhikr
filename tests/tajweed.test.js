@@ -231,6 +231,25 @@ test('meem sakinah family: idgham (before م), ikhfa (before ب), izhar (everyth
   );
 });
 
+test("madd 'arid requires a following final consonant", () => {
+  const duha = classifyAyahTajweed('\u0648\u064e\u0671\u0644\u0636\u0651\u064f\u062d\u064e\u0670');
+  assert.equal(
+    duha[0].spans.some((s) => s.rule === 'madd_246'),
+    false,
+    'وَٱلضُّحَىٰ ends on the madd letter itself; it is not madd arid'
+  );
+  assert.ok(
+    duha[0].spans.some((s) => s.rule === 'madd_2'),
+    'the final alif maqsurah remains a natural madd when no final consonant follows'
+  );
+
+  const raheem = classifyAyahTajweed('الرَّحِيمِ');
+  assert.ok(
+    raheem[0].spans.some((s) => s.rule === 'madd_246'),
+    'الرَّحِيمِ has a final consonant after the madd letter'
+  );
+});
+
 test('ornament-only tokens do not break cross-word Tajweed lookahead or ayah-final context', () => {
   const izhar = classifyAyahTajweed('مِنْ ۚ هُدًى');
   assert.equal(izhar[0].spans[0]?.rule, 'izhar', 'ornament must not hide the next throat letter');
