@@ -125,7 +125,7 @@ export const COURSE_STAGES = Object.freeze([
         id: 'noon-izhar',
         order: 1,
         title: Object.freeze({ en: 'Clear noon', ar: 'الإظهار الحلقي' }),
-        focus: ['izhar_shafawi', 'ghunnah'],
+        focus: ['izhar'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '6-13' },
       },
