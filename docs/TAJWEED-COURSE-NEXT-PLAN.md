@@ -16,7 +16,7 @@ The repository currently provides:
 - Contested Makharij/Sifat spreads instead of silently selecting one disputed count.
 - Offline-first data and bilingual course structure.
 
-The missing layer is **instructional depth**: a learner should be able to open a lesson and actually study a concept before being asked to drill it.
+The missing layer is **curriculum-level instructional depth**. The app already has a useful rule-lesson modal: sourced rule definition, family, Qur'anic examples with highlighting, citation, and a direct drill action. What is missing is the larger lesson/chapter layer around those rule units — objectives, sequencing, worked progression, misconceptions, checks, mastery/review and a beginner→advanced learning path.
 
 ## Product definition
 
