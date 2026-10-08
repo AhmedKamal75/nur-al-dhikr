@@ -201,6 +201,17 @@ test('madd: natural, connected (muttasil), separated (munfasil), badal, and obli
   );
 });
 
+test('Muqaṭṭaʿāt Meem is not treated as ordinary Meem Sakinah', () => {
+  const opening = classifyAyahTajweed('\u062D\u0645\u0653 \u0639\u0633\u0653\u0642\u0653')[0];
+  assert.equal(
+    opening.spans.some((s) =>
+      ['idgham_shafawi', 'ikhfa_shafawi', 'izhar_shafawi'].includes(s.rule)
+    ),
+    false
+  );
+  assert.ok(opening.spans.some((s) => s.rule === 'madd_6'));
+});
+
 test('meem sakinah family: idgham (before م), ikhfa (before ب), izhar (everything else)', () => {
   // Cross-word cases go through classifyAyahTajweed so the one-letter
   // lookahead the rules depend on is exercised exactly as in production.
