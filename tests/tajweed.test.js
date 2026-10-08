@@ -166,6 +166,13 @@ test('ghunnah fires on shaddah-marked \u0646/\u0645 only', () => {
   assert.ok(rulesOf('\u062B\u064F\u0645َّ').includes('ghunnah')); // ثُمَّ
 });
 
+test('low Uthmani iqlab mark canonicalizes to the same iqlab rule', () => {
+  assert.equal(
+    rulesOf('\u0645\u0652\u0646\u06ED', { nextWordFirstBase: '\u0628' })[0],
+    'iqlab'
+  );
+});
+
 test('noon sakinah / tanween: iqlab, idgham (with/without ghunnah), ikhfa, and clean izhar', () => {
   assert.equal(rulesOf('\u0645ِ\u0646ْ', { nextWordFirstBase: '\u0628' })[0], 'iqlab'); // منْ بـ...
   assert.equal(rulesOf('\u0645َ\u0646ْ', { nextWordFirstBase: '\u064A' })[0], 'idgham_ghunnah'); // منْ يـ...
