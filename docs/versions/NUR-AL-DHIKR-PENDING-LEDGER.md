@@ -1,17 +1,21 @@
 # Nūr al-Dhikr — Persistent Request Ledger
 
-**Updated:** 2026-10-07
+**Updated:** 2026-10-08
 **Current app:** v5.17.136
 **Current phase:** browser/device certification → hostile-review follow-through → accessibility/robustness → evidence-backed utility/deslopification
+**Distribution:** `origin/main` is the authority. Work from the repository; a release ZIP cannot carry the git history and therefore loses the reasoning behind each decision.
 
-## CURRENT LOCAL RELEASE — v5.17.135
+## CURRENT RELEASE — v5.17.136
+
+### Awaiting the owner's decision
+
+- **Prayer method provenance qualifier (deliberately-red `smoke.spec.js`).** The compact hero line reads "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" with no qualification, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only. Restoring `Source (unverified):` is a worship-surface copy decision. The test stays red until it is made — do not edit the assertion.
 
 ### Implemented this wave
 
+- **v5.17.136 — adopted v5.17.135 and fixed its two regressions.** (1) Every `<details>` on `#/audio` collapsed on any in-panel interaction (5 open → 0, where v5.17.126 held at 5), which made the new sleep ladder one rung per panel opening — 5 re-opens per 6-tap walk across all twelve viewport × language × theme cells; `open` is now a user-owned toggle with `data-open-controlled` opt-in for state-driven disclosures. (2) The Home panel switch was dead: `resolveHomePanels()` needs the panel in the saved order and only the reorder buttons wrote it, so nine of twelve panels were unreachable. Evidence: `docs/versions/BROWSER-EVIDENCE-v5.17.136.md`.
 - **v5.17.135 — Offline Essentials hierarchy:** moved the essential offline switch to the primary surface before meter/audio/cache detail after real Chromium evidence showed it could be outside the initial viewport. Added structural regression coverage. No religious corpus bytes intentionally modified.
 - **v5.17.133 — evidence-driven deslopification:** restored the mobile seven-door active state to a quiet indicator after a later cascade reintroduced a filled pill; compacted the Home single-item continuation state; added regression coverage. No religious corpus bytes intentionally modified.
-
-### Prior release lineage
 
 - **v5.17.132 — hostile-review import-boundary hardening:** local JSON backup/family-plan imports reject files above 8 MiB before FileReader parsing; imported family-plan Tasbih maps reject `__proto__`, `constructor`, and `prototype`; in-app Hadith provenance wording is neutral until exact rights are verified. No religious corpus bytes intentionally modified.
 - **v5.17.131 — offline storage honesty:** Offline → Manage offline storage now exposes a user-controlled persistent-storage request where the browser supports the Storage API; the result is reported honestly in EN/AR. The UI and README explain that persistent storage is not unlimited and backups remain necessary. Issue row 22 is resolved.
