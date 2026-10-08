@@ -73,6 +73,16 @@ test('qalqalah fires on ق ط ب ج د with sukun, not on other sakin letters', 
   ); // أَنْعَمْتَ — ن and م sakin, neither is a qalqalah letter
 });
 
+test('Muqaṭṭaʿāt opening tokens do not inherit bare-letter Qalqalah', () => {
+  for (const word of ['\u0637\u0647', '\u0637\u0633', '\u0637\u0633\u0645', '\u0642', '\u0639\u0633\u0642']) {
+    assert.deepEqual(
+      rulesOf(word).filter((r) => r === 'qalqalah'),
+      [],
+      word
+    );
+  }
+});
+
 test('qalqalah suppression requires explicit assimilation evidence', () => {
   assert.deepEqual(
     rulesOf('\u0642\u0652', {
