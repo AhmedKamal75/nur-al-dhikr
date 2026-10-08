@@ -127,6 +127,7 @@ const SUN_LETTERS = new Set([
 const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BEH, '\u062C', '\u062F']);
 const IDGHAM_GHUNNAH_LETTERS = new Set([YEH, NOON, MEEM, WAW]);
 const IDGHAM_NO_GHUNNAH_LETTERS = new Set([LAM, '\u0631']);
+const IZHAR_HALQI_LETTERS = new Set(['\u0621', '\u0647', '\u0639', '\u062D', '\u063A', '\u062E']);
 const IKHFA_LETTERS = new Set([
   '\u062A',
   '\u062B',
@@ -175,8 +176,8 @@ const IKHFA_LETTERS = new Set([
  * them for something they are not. The one genuinely citable convention
  * found is Indonesia's LPMQ Pedoman Tajwid Sistem Warna (2011).
  *
- * Two rules the standard mushaf convention leaves UNMARKED (idgham bila
- * ghunnah, izhar shafawi) now carry color: null and render no color span
+ * Three rules the standard mushaf convention leaves UNMARKED (idgham bila
+ * ghunnah, izhar shafawi, and halqi izhar) now carry color: null and render no color span
  * — matching the printed books rather than inventing an off-chart hue.
  * Each rule also carries a `family` key so the legend can group rows the
  * way the reference chart groups them.
