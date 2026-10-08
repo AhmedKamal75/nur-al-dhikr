@@ -226,6 +226,19 @@ export const ar = {
   // the first commit.
   // (REORG Phase 8 / HANDOFF A1) the fifth door's chrome label.
   'nav.practise': 'الممارسة',
+  'practiceHub.title': 'الممارسة',
+  'practiceHub.lead': 'طرق قصيرة ومركزة لمراجعة ما تتعلمه.',
+  'practiceHub.open': 'فتح',
+  'practiceHub.start': 'بدء التدريب',
+  'practiceHub.tasbihTitle': 'التسبيح',
+  'practiceHub.tasbihHint': 'عدّ الذكر الذي تختاره.',
+  'practiceHub.tajweedTitle': 'تدريب التجويد',
+  'practiceHub.tajweedHint': 'تعرّف على الأحكام في آيات حقيقية وراجع ما أخطأت فيه.',
+  'practiceHub.recallTitle': 'مراجعة حفظ القرآن',
+  'practiceHub.recallHint': 'درّب التمييز بين الآيات المتشابهة.',
+  'practiceHub.namesTitle': 'الأسماء الحسنى',
+  'practiceHub.namesHint': 'راجع أسماء الله ومعانيها.',
+  'practiceHub.note': 'تبقى الممارسة مركزة على المهام؛ أما الدروس الكاملة وواجهات الدراسة فتظل في أقسامها الأصلية.',
   'audio.title': 'القراء والصوتيات',
   'audio.subtitle':
     '٣١٢ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',
