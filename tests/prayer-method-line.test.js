@@ -145,19 +145,22 @@ describe('prayerMethodLine: one plain-text summary of the active prefs', () => {
 });
 
 describe('compactPrayerMethodLine: focal surfaces stay readable', () => {
-  test('EN names the method and localized Asr convention without provenance clutter', () => {
+  test('EN names the method, Asr convention, and source qualifier', () => {
     const line = compactPrayerMethodLine({ method: 'Karachi', asr: 'Hanafi' }, 'en');
     assert.ok(line.includes(en['prayer.method.Karachi']));
     assert.ok(line.includes(en['prayer.asrMethod']));
     assert.ok(line.includes(en['prayer.asr.Hanafi']));
-    assert.ok(!line.includes('Source (unverified):'));
+    assert.ok(line.includes(en['prayer.methodSource'].split('{body}')[0].trim()));
   });
 
-  test('AR localizes the Asr convention and falls back safely', () => {
+  test('AR localizes the Asr convention and source qualifier safely', () => {
     const line = compactPrayerMethodLine({ method: '__proto__', asr: 'zzz' }, 'ar');
     assert.ok(line.includes(ar['prayer.method.MWL']));
     assert.ok(line.includes(ar['prayer.asr.Standard']));
-    assert.doesNotMatch(line, /Source|Standard|MWL/);
+    assert.ok(line.includes(ar['prayer.methodSource'].split('{body}')[0].trim()));
+    assert.ok(!line.includes('Source (unverified):'));
+    assert.ok(!line.includes('Standard'));
+    assert.ok(!line.includes('MWL'));
   });
 });
 
@@ -176,7 +179,7 @@ describe('render: focal hero is compact; home strip keeps the full summary', () 
       !html.includes(`${en['prayer.fajr']} +5m`),
       'offset detail stays out of the focal hero'
     );
-    assert.ok(!html.includes('Source (unverified):'), 'provenance stays in calculation settings');
+    assert.ok(html.includes('Source (unverified):'), 'the focal line keeps provenance honest');
   });
 
   test('the full home ribbon carries the same line, from the same helper', () => {
@@ -209,7 +212,7 @@ describe('render: focal hero is compact; home strip keeps the full summary', () 
     const hero = renderPrayer(viewState({ lang: 'ar' }));
     assert.ok(hero.includes(ar['prayer.method.MWL']), 'AR method on the hero');
     assert.ok(hero.includes(ar['prayer.asr.Standard']), 'AR Asr convention on the hero');
-    assert.ok(!hero.includes('المصدر (غير مؤكد):'), 'AR provenance stays out of the focal hero');
+    assert.ok(hero.includes('المصدر (غير مؤكد):'), 'AR provenance stays on the focal hero');
     const strip = prayerRibbonHTML(viewState({ lang: 'ar' }), 'ar', TIMES, at(10));
     assert.ok(strip.includes(ar['prayer.method.MWL']), 'AR method on the strip');
     assert.ok(strip.includes('المصدر (غير مؤكد):'), 'AR qualifier on the strip');
@@ -249,11 +252,11 @@ describe('item-4 contracts that must not move', () => {
 });
 
 describe('Prayer calc surface: detail belongs in the deliberate settings sheet', () => {
-  test('hero uses the compact method line, while full provenance stays in calc', async () => {
+  test('hero uses the compact method line with honest provenance, while offsets stay in calc', async () => {
     const { renderPrayer } = await import('../js/views/prayer.js');
     const hero = renderPrayer(viewState({ prayer: { method: 'Karachi', asr: 'Hanafi' } }));
     assert.ok(hero.includes(en['prayer.asr.Hanafi']));
-    assert.ok(!hero.includes('Source (unverified):'));
+    assert.ok(hero.includes('Source (unverified):'));
     assert.ok(!hero.includes(en['prayer.offsetsNone']));
   });
 
