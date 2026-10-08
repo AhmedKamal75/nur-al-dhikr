@@ -794,15 +794,31 @@ export function classifyAyahTajweed(ayahText) {
   const cached = classifyMemo.get(text);
   if (cached) return cached;
   const words = text.trim().split(/\s+/).filter(Boolean);
+
+  // Rendering keeps every raw token so ornaments remain exactly where the
+  // source placed them. Semantic lookahead must use only pronunciation-bearing
+  // tokens, however: a standalone waqf/sajdah/ornament token is not the next
+  // word for noon/meem/madd rules, and it must not steal the ayah-final status
+  // from the final pronunciation-bearing word.
+  const semanticIndices = words
+    .map((word, i) => (tokenizeUnits(word).length > 0 ? i : -1))
+    .filter((i) => i >= 0);
+  const nextSemanticIndex = new Map();
+  for (let p = 0; p < semanticIndices.length - 1; p += 1) {
+    nextSemanticIndex.set(semanticIndices[p], semanticIndices[p + 1]);
+  }
+  const lastSemanticIndex = semanticIndices.at(-1) ?? -1;
+
   const result = words.map((word, i) => {
-    const nextWord = words[i + 1];
+    const nextIndex = nextSemanticIndex.get(i);
+    const nextWord = nextIndex === undefined ? null : words[nextIndex];
     const nextWordFirstBase = nextWord ? (tokenizeUnits(nextWord)[0]?.base ?? null) : null;
     return {
       word,
       wordIndex: i + 1,
       spans: classifyWordTajweed(word, {
         nextWordFirstBase,
-        isLastWordOfAyah: i === words.length - 1,
+        isLastWordOfAyah: i === lastSemanticIndex,
       }),
     };
   });
