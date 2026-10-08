@@ -163,9 +163,7 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
   const activeKey = VIEW_KEY_BY_VALUE[active];
   const hasChildren = door.members.some((m) => m.route !== door.entry && m.direct !== false);
   if (!hasChildren)
-    return navItemHTML({ view: door.view, icon: door.icon, label: door.labelKey }, active, lang, {
-      drawer,
-    });
+    return navItemHTML({ view: door.view, icon: door.icon, label: door.labelKey }, active, lang, { drawer });
   const isOpen = door.view === active || door.members.some((m) => m.route === activeKey);
   const label = t(door.labelKey, lang);
   const subId = `nav-sub-${door.entry}${drawer ? '-drawer' : ''}`;
@@ -173,10 +171,6 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
   <details data-open-controlled class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}"${isOpen ? ' open' : ''}>
     <summary class="nav__section-toggle" title="${t('nav.toggleSection', lang)}" aria-label="${t('nav.toggleSection', lang)}" aria-controls="${subId}">
       <span class="nav__section-chevron${isOpen ? ' nav__section-chevron--open' : ''}" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
-    </summary>
-      <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
-      <span class="nav__label">${t(door.labelKey, lang)}</span>
-      <span class="nav__section-chevron" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
     </summary>
     <a class="nav__section-link${isOpen ? ' nav__item--active' : ''}"
        href="${buildHash(door.view)}" data-action="${drawer ? 'nav-drawer-go' : 'navigate'}" data-view="${door.view}"
