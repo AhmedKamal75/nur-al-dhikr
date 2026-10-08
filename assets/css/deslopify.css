@@ -4644,48 +4644,19 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 }
 
 
-/* Navigation action/disclosure split: every section name is a real destination;
-   only the small chevron control expands/collapses its children. This removes
-   the "I clicked Qur'an and nothing happened" ambiguity while keeping the
-   hierarchy intact. */
+/* Navigation action/disclosure split: section names navigate; native summary
+   disclosure stays a small, explicit chevron control. Keeping <details> user-owned
+   preserves its open state across normal shell rerenders. */
 .nav__section {
+  position: relative;
   margin: 0;
   border: 0;
 }
-.nav__section-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--touch-target);
-  align-items: stretch;
-  gap: 2px;
-}
-.nav__section-link {
-  min-block-size: var(--touch-target);
-  min-inline-size: 0;
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: var(--radius-md);
-  color: var(--color-text-secondary);
-  font-size: var(--fs-sm);
-  font-weight: 650;
-}
-.nav__section-link:hover {
-  background: var(--color-surface-alt);
-  color: var(--color-text);
-}
-.nav__section-link:focus-visible,
-.nav__section-toggle:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus) inset;
-}
-.nav__section-link.nav__item--active {
-  color: var(--color-primary-text);
-  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
-  border-inline-start: 2px solid var(--color-primary);
-}
 .nav__section-toggle {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: 0;
+  z-index: 2;
   inline-size: var(--touch-target);
   min-block-size: var(--touch-target);
   border: 0;
@@ -4695,10 +4666,21 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   display: grid;
   place-items: center;
   cursor: pointer;
+  list-style: none;
+}
+.nav__section-toggle::-webkit-details-marker {
+  display: none;
+}
+.nav__section-toggle::marker {
+  content: '';
 }
 .nav__section-toggle:hover {
   background: var(--color-surface-alt);
   color: var(--color-text);
+}
+.nav__section-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
 }
 .nav__section-chevron {
   display: grid;
@@ -4709,21 +4691,42 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 [dir='rtl'] .nav__section-chevron {
   transform: rotate(90deg);
 }
-.nav__section-chevron--open {
+.nav__section[open] > .nav__section-toggle .nav__section-chevron {
   transform: none;
 }
-.nav__section--current .nav__section-toggle {
+.nav__section--current > .nav__section-toggle {
   color: var(--color-primary-text);
 }
-.nav__section .nav__sub[hidden] {
-  display: none;
+.nav__section-link {
+  min-block-size: var(--touch-target);
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  padding-inline-end: calc(var(--touch-target) + 8px);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 650;
+}
+.nav__section-link:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+.nav__section-link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus) inset;
+}
+.nav__section-link.nav__item--active {
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  border-inline-start: 2px solid var(--color-primary);
 }
 @media (max-width: 959px) {
-  .nav-drawer__body .nav__section-row {
-    grid-template-columns: minmax(0, 1fr) var(--touch-target);
-  }
-  .nav-drawer__body .nav__section-link,
-  .nav-drawer__body .nav__section-toggle {
+  .nav-drawer__body .nav__section-toggle,
+  .nav-drawer__body .nav__section-link {
     min-block-size: 56px;
   }
   .nav-drawer__body .nav__section-link {
@@ -4731,15 +4734,15 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   }
 }
 @media (min-width: 960px) {
+  html[data-nav-collapsed='true'] .nav__section-toggle {
+    display: none;
+  }
   html[data-nav-collapsed='true'] .nav__section-link {
     grid-template-columns: 24px;
     justify-content: center;
     padding-inline: 8px;
   }
   html[data-nav-collapsed='true'] .nav__section-link .nav__label {
-    display: none;
-  }
-  html[data-nav-collapsed='true'] .nav__section-toggle {
     display: none;
   }
   html[data-nav-collapsed='true'] .nav__sub {
