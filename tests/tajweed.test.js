@@ -150,6 +150,31 @@ test('meem sakinah family: idgham (before م), ikhfa (before ب), izhar (everyth
   );
 });
 
+test('ornament-only tokens do not break cross-word Tajweed lookahead or ayah-final context', () => {
+  const izhar = classifyAyahTajweed('مِنْ ۚ هُدًى');
+  assert.equal(izhar[0].spans[0]?.rule, 'izhar', 'ornament must not hide the next throat letter');
+
+  const idgham = classifyAyahTajweed('مِنْ ۖ يَعْمَلْ');
+  assert.equal(
+    idgham[0].spans[0]?.rule,
+    'idgham_ghunnah',
+    'ornament must not hide the next idgham letter'
+  );
+
+  const final = classifyAyahTajweed('الرَّحِيمِ ۚ');
+  assert.ok(
+    final[0].spans.some((s) => s.rule === 'madd_246'),
+    'a trailing ornament must not steal final-word pause context'
+  );
+
+  const iwad = classifyAyahTajweed('عَلِيمًا ۚ');
+  assert.ok(
+    iwad[0].spans.some((s) => s.rule === 'madd_iwad'),
+    'a trailing ornament must not suppress final madd iwad'
+  );
+  assert.equal(final[1].spans.length, 0, 'standalone ornament remains a render-only token');
+});
+
 test('empty/undefined input never throws', () => {
   assert.deepEqual(classifyWordTajweed(''), []);
   assert.deepEqual(classifyWordTajweed(undefined), []);
