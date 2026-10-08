@@ -147,3 +147,9 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - This was corrected to require `i === units.length - 2` and an actual following unit. Madd ʿĀriḍ is defined as a stop-induced sukoon occurring after a madd/leen letter; when the word ends on the madd letter itself, there is no final consonant receiving that sukoon. (research basis: Islamweb's definition of Madd ʿĀriḍ as a stop-induced sukoon after a madd/leen letter).
 - Corpus regression target: `وَٱلضُّحَىٰ` (93:1) must not receive `madd_246`; `الرَّحِيمِ` with a final consonant remains a valid `madd_246` test shape.
 - This change is still unverified by local execution.
+
+### Madd Badal source-taxonomy correction — 2026-10-08
+- The old canonical/runtime source registry incorrectly classified Madd Badal as one of the four Madd Lazim types and conflated the special ʿayn length discussion with it.
+- The reviewed correction from the still-open PR #18 was carried onto PR #21, updating both `data/tajweed-sources.json` and `js/domain/tajweedSources.js`.
+- The corrected copy explicitly says Madd Badal is a distinct category, records the app's current classifier as 2-count, and scopes any future multi-riwayah length claim to an explicit reading profile.
+- Durable ledger row 83 records the source/data correction. This does not close the broader Tajweed evidence gate.
