@@ -25,11 +25,25 @@ function taskLink({ iconName, titleKey, hintKey, href, action, button, lang }) {
   ].join('');
 
   if (button) {
-    return '<button type="button" class="practice-task" data-action="' + action + '">' + inner + '</button>';
+    return (
+      '<button type="button" class="practice-task" data-action="' +
+      action +
+      '">' +
+      inner +
+      '</button>'
+    );
   }
 
   const view = href.replace(/^#\//, '');
-  return '<a class="practice-task" href="' + href + '" data-action="navigate" data-view="' + view + '">' + inner + '</a>';
+  return (
+    '<a class="practice-task" href="' +
+    href +
+    '" data-action="navigate" data-view="' +
+    view +
+    '">' +
+    inner +
+    '</a>'
+  );
 }
 
 export function renderPractice(state) {
@@ -37,16 +51,49 @@ export function renderPractice(state) {
   return [
     '<section class="view view--practice">',
     '<header class="view-header view-header--row"><div>',
-    '<h1 class="view__title">', t('practiceHub.title', lang), '</h1>',
-    '<p class="view__subtitle">', t('practiceHub.lead', lang), '</p>',
+    '<h1 class="view__title">',
+    t('practiceHub.title', lang),
+    '</h1>',
+    '<p class="view__subtitle">',
+    t('practiceHub.lead', lang),
+    '</p>',
     '</div></header>',
-    '<nav class="practice-task-list" aria-label="', t('practiceHub.title', lang), '">',
-    taskLink({ iconName: 'tasbih', titleKey: 'practiceHub.tasbihTitle', hintKey: 'practiceHub.tasbihHint', href: buildHash(VIEWS.TASBIH), lang }),
-    taskLink({ iconName: 'book', titleKey: 'practiceHub.tajweedTitle', hintKey: 'practiceHub.tajweedHint', action: 'practice-open', button: true, lang }),
-    taskLink({ iconName: 'quran', titleKey: 'practiceHub.recallTitle', hintKey: 'practiceHub.recallHint', href: buildHash(VIEWS.MUTASHABIHAT), lang }),
-    taskLink({ iconName: 'star', titleKey: 'practiceHub.namesTitle', hintKey: 'practiceHub.namesHint', href: buildHash(VIEWS.QUIZ), lang }),
+    '<nav class="practice-task-list" aria-label="',
+    t('practiceHub.title', lang),
+    '">',
+    taskLink({
+      iconName: 'tasbih',
+      titleKey: 'practiceHub.tasbihTitle',
+      hintKey: 'practiceHub.tasbihHint',
+      href: buildHash(VIEWS.TASBIH),
+      lang,
+    }),
+    taskLink({
+      iconName: 'book',
+      titleKey: 'practiceHub.tajweedTitle',
+      hintKey: 'practiceHub.tajweedHint',
+      action: 'practice-open',
+      button: true,
+      lang,
+    }),
+    taskLink({
+      iconName: 'quran',
+      titleKey: 'practiceHub.recallTitle',
+      hintKey: 'practiceHub.recallHint',
+      href: buildHash(VIEWS.MUTASHABIHAT),
+      lang,
+    }),
+    taskLink({
+      iconName: 'star',
+      titleKey: 'practiceHub.namesTitle',
+      hintKey: 'practiceHub.namesHint',
+      href: buildHash(VIEWS.QUIZ),
+      lang,
+    }),
     '</nav>',
-    '<p class="practice-task-note">', t('practiceHub.note', lang), '</p>',
+    '<p class="practice-task-note">',
+    t('practiceHub.note', lang),
+    '</p>',
     '</section>',
   ].join('');
 }
