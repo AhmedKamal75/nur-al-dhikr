@@ -127,7 +127,12 @@ const SUN_LETTERS = new Set([
 const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BEH, '\u062C', '\u062F']);
 // Exact Qur'anic spellings whose recitation has no Qalqalah on the written sakin
 // consonant. Keep these lexical because this classifier has no declared reading route.
-const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set(['\u0628\u0633\u0637\u062A', '\u0623\u062D\u0637\u062A', '\u0646\u062E\u0644\u0642\u0643\u0645']);
+const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set([
+  '\u0628\u0633\u0637\u062A',
+  '\u0623\u062D\u0637\u062A',
+  '\u0641\u0631\u0637\u062A',
+  '\u0646\u062E\u0644\u0642\u0643\u0645',
+]);
 const IDGHAM_GHUNNAH_LETTERS = new Set([YEH, NOON, MEEM, WAW]);
 const IDGHAM_NO_GHUNNAH_LETTERS = new Set([LAM, '\u0631']);
 const IZHAR_HALQI_LETTERS = new Set(['\u0621', '\u0647', '\u0639', '\u062D', '\u063A', '\u062E']);
@@ -549,13 +554,17 @@ function isLazimConsonant(base) {
  * caller (renderAyahWords) already processes one word at a time, so this
  * slots directly into that loop with no extra offset bookkeeping.
  *
- * `nextWordFirstBase` / `nextWordFirstHasShadda` / `isLastWordOfAyah` let the noon-sakinah/tanween
- * and madd rules see one letter across a word boundary without needing
+ * `nextWordFirstBase` / `nextWordFirstHasShadda` / `isLastWordOfAyah` let the
+ * noon-sakinah/tanween and madd rules see one letter across a word boundary without needing
  * the whole ayah's text.
  */
 export function classifyWordTajweed(
   word,
-  { nextWordFirstBase = null, nextWordFirstHasShadda = false, isLastWordOfAyah = false } = {}
+  {
+    nextWordFirstBase = null,
+    nextWordFirstHasShadda = false,
+    isLastWordOfAyah = false,
+  } = {}
 ) {
   if (!word) return [];
   const units = tokenizeUnits(word);
@@ -598,21 +607,23 @@ export function classifyWordTajweed(
       // Only suppress Qalqalah where the text supports an assimilation we can
       // state without inventing a reading route:
       //   * identical consonant + following shadda = explicit small idgham;
-      //   * بَسَطْتَ / أَحَطْتُ keep the ط's sukun but lose Qalqalah under
-      //     incomplete assimilation;
+      //   * دْ→تّ with explicit next-letter shadda = the known complete
+      //     dal→ta assimilation family;
+      //   * بَسَطْتَ / أَحَطْتُ / فَرَّطْتُ keep the ط's sukun but lose
+      //     Qalqalah under incomplete assimilation;
       //   * نَخْلُقكُّم has complete/incomplete ق→ك realizations, neither
       //     requiring a Qalqalah bounce on the sakin ق.
       //
-      // Do not infer dissimilar-letter assimilation from adjacency alone.
-      // قَدْ تَّبَيَّنَ and ارْكَبْ مَّعَنَا are reading-route-sensitive; this
-      // classifier has no declared reading profile, so silently choosing one
-      // would replace one false cue with another.
+      // Do not infer other dissimilar-letter assimilation from adjacency alone.
+      // بْ→مّ in ارْكَبْ مَّعَنَا is reading-route-sensitive; this classifier
+      // has no declared reading profile, so it stays conservative there.
       const sameLetterAssimilation = nextBase === u.base && nextStartsWithShadda;
+      const dalToTaAssimilation = u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
       const knownNoEchoWord =
         QALQALAH_KNOWN_NO_ECHO_WORDS.has(baseSequence) &&
         ((u.base === '\u0637' && next?.base === '\u062A') ||
           (u.base === '\u0642' && next?.base === '\u0643'));
-      const assimilatesInstead = sameLetterAssimilation || knownNoEchoWord;
+      const assimilatesInstead = sameLetterAssimilation || dalToTaAssimilation || knownNoEchoWord;
       if (sakin && !assimilatesInstead) {
         spans.push({ start: u.start, end: u.end, rule: 'qalqalah' });
       }
