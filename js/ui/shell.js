@@ -289,6 +289,7 @@ export function renderTopBar(state, opts = {}) {
   const navControlIcon = desktopNav
     ? icon(collapsed ? (isRTL(lang) ? 'chevronLeft' : 'chevronRight') : (isRTL(lang) ? 'chevronRight' : 'chevronLeft'), { size: 20 })
     : icon('menu', { size: 22 });
+  const navControlTarget = desktopNav ? 'bottomnav' : 'nav-drawer';
   // (v4.5.2, APP-FLOW I9) the universal Back affordance: present whenever
   // a forward navigation left somewhere to go back TO. It rides the real
   // browser history (I3), so it always lands where the user actually came
@@ -307,7 +308,7 @@ export function renderTopBar(state, opts = {}) {
   return `
   <div class="topbar__inner">
     <div class="topbar__lead">
-      <button type="button" class="icon-btn topbar__menu" data-action="nav-toggle" aria-label="${navControlLabel}" title="${navControlLabel}" aria-expanded="${desktopNav ? (collapsed ? 'false' : 'true') : 'false'}" aria-controls="bottomnav">
+      <button type="button" class="icon-btn topbar__menu" data-action="nav-toggle" aria-label="${navControlLabel}" title="${navControlLabel}" aria-expanded="${desktopNav ? (collapsed ? 'false' : 'true') : 'false'}" aria-controls="${navControlTarget}">
         ${navControlIcon}
       </button>
       <a class="topbar__brand" href="${buildHash(VIEWS.HOME)}" data-action="navigate" data-view="${VIEWS.HOME}">
@@ -369,7 +370,7 @@ export function renderNav(state) {
   </div>
   ${mobileBar}
   <div class="nav-drawer-overlay" data-action="nav-drawer-close"></div>
-  <div class="nav-drawer" role="dialog" aria-modal="true" aria-label="${t('a11y.mainNav', lang)}">
+  <div id="nav-drawer" class="nav-drawer" role="dialog" aria-modal="true" aria-label="${t('a11y.mainNav', lang)}">
     <div class="nav-drawer__head">
       <span class="nav-drawer__title">${t('app.name', lang)}</span>
       <button type="button" class="icon-btn" data-action="nav-drawer-close" aria-label="${t('common.close', lang)}">
