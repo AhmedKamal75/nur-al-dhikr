@@ -594,9 +594,9 @@ export function classifyWordTajweed(
       // bounce would be a false pronunciation cue.
       const assimilatesInstead =
         nextBase === u.base ||
-        (u.base === '\\u0642' && nextBase === '\\u0643') || // ق → ك
-        (u.base === '\\u0637' && nextBase === '\\u062A') || // ط → ت
-        (u.base === '\\062F' && nextBase === '\\062A') || // د → ت
+        (u.base === 'ق' && nextBase === 'ك') || // ق → ك
+        (u.base === 'ط' && nextBase === 'ت') || // ط → ت
+        (u.base === 'د' && nextBase === 'ت') || // د → ت
         (u.base === BEH && nextBase === MEEM); // ب → م
       if (sakin && !assimilatesInstead) {
         spans.push({ start: u.start, end: u.end, rule: 'qalqalah' });
