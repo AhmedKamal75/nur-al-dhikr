@@ -51,6 +51,19 @@ test('hamzat al-wasl fires on every \u0671, nowhere else', () => {
   assert.deepEqual(rulesOf('\u0642\u064e\u0627\u0644َ'), ['madd_2']); // قَالَ has no hamza-wasl at all, only its own natural madd
 });
 
+test('lam shamsiyyah also detects the article after a lam-prefix', () => {
+  assert.ok(
+    rulesOf('\u0644\u0650\u0644\u0637\u0651\u064e\u0627\u0653\u0626\u0650\u0641\u0650\u064a\u0646').includes(
+      'lam_shamsiyyah'
+    )
+  ); // لِلطَّآئِفِينَ
+  assert.ok(
+    rulesOf('\u0644\u0650\u0644\u0638\u0651\u064e\u0627\u0644\u0650\u0645\u0650\u064a\u0646').includes(
+      'lam_shamsiyyah'
+    )
+  ); // لِلظَّالِمِينَ
+});
+
 test('lam shamsiyyah fires only for \u0627\u0644/\u0671\u0644 + shaddah sun letter, and never on the divine name', () => {
   assert.ok(
     rulesOf('\u0671\u0644\u0631\u0651\u064e\u062D\u0650\u064a\u0645ِ').includes('lam_shamsiyyah')
