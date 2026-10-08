@@ -143,6 +143,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 ### Madd ʿĀriḍ heuristic audit — 2026-10-08
 - Static review found `madd_246` used `isLastWordOfAyah && i >= units.length - 2`, which allowed a madd letter at the **last unit** of a word to be classified as Madd ʿĀriḍ.
-- This was corrected to require `i === units.length - 2` and an actual following unit. Madd ʿĀriḍ is defined as a stop-induced sukoon occurring after a madd/leen letter; when the word ends on the madd letter itself, there is no final consonant receiving that sukoon. citeturn638691search2turn638691search7
+- This was corrected to require `i === units.length - 2` and an actual following unit. Madd ʿĀriḍ is defined as a stop-induced sukoon occurring after a madd/leen letter; when the word ends on the madd letter itself, there is no final consonant receiving that sukoon. (research basis: Islamweb's definition of Madd ʿĀriḍ as a stop-induced sukoon after a madd/leen letter).
 - Corpus regression target: `وَٱلضُّحَىٰ` (93:1) must not receive `madd_246`; `الرَّحِيمِ` with a final consonant remains a valid `madd_246` test shape.
 - This change is still unverified by local execution.
