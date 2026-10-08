@@ -133,3 +133,10 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 2. Reconcile any suspicious overlaps/spans against source text and the scoped Tajweed contract.
 3. Continue the Tajweed classifier audit into the remaining high-risk assumptions (bare/implicit sukun, Madd final-word heuristics, rule precedence) before returning to Mushaf/browser hostile review.
 
+
+### Muqaṭṭaʿāt anomaly — 2026-10-08
+- Static corpus inspection found `طه` in 20:1 entering the generic Qalqalah branch because the raw spelling carries no vowel marks on the opening letters. The same structural risk exists for the qlq-bearing opening tokens `طس`, `طسم`, `ق`, and `عسق`.
+- Web verification confirms Qalqalah is tied to the five letters when they are sakin, while `طه` is a Muqaṭṭaʿāt opening read as the letter names `طا` and `ها`; therefore raw absence of diacritics must not be treated as sukun in these opening tokens. citeturn613102search0turn613102search8
+- The branch now excludes only those exact Qalqalah-bearing Muqaṭṭaʿāt token strings from the generic Qalqalah fallback. Unit tests cover all five forms.
+- `فرطتم` was also added to the exact incomplete-ṭā→tā assimilation set; the corpus contains it at 12:80, and Tajweed references explicitly state that the ṭā in `فرطتم` loses Qalqalah during incomplete assimilation. citeturn273812search1turn273812search4
+- This is still unverified by local execution/browser evidence.
