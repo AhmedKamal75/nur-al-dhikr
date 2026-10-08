@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-07 against the tree at v5.17.133**, by parsing this file's own
-> status column — not by hand, and not copied from any earlier header: **68 rows — 27 RESOLVED, 17 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 1 STANDING CONSTRAINT.**
+> status column — not by hand, and not copied from any earlier header: **68 rows — 28 RESOLVED, 16 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 1 STANDING CONSTRAINT.**
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
@@ -140,7 +140,7 @@ These findings are directly grounded in the owner-supplied Chromium screenshots 
 | 60 | Offline Essentials switch is below the initial viewport | **RESOLVED v5.17.135** | Owner-machine Chromium showed the switch outside the viewport on the Offline route. The essentials decision surface is now emitted immediately after the route lead, before meter/audio/cache detail, and the structural order is regression-pinned. Fresh browser recapture remains required. |
 | 61 | Any in-panel interaction collapses every disclosure on `#/audio` | **RESOLVED v5.17.136** | v5.17.135's new `audio-sleep-cycle` button dispatches `setAudioPlayer`, the route re-renders, and `patchElement()` stripped `open` because no view modelled it. Attributed by identical user actions: v5.17.126 held 5 disclosures open, v5.17.135 collapsed all 5. Effect: the unified sleep ladder was one rung per panel opening — 5 re-opens per 6-tap walk at all twelve viewport × language × theme cells. `open` is now a user-owned toggle in `js/app/renderer.js`; the Settings accordions, nav doors and prayer panel opt in via `data-open-controlled`. Pinned by `tests/renderPatch.test.js` (5 tests, 3 of which fail with the exemption removed) and re-measured in Chromium: 5/5 panels hold through the full walk. |
 | 62 | Home panel switch is a dead control (nine of twelve panels) | **RESOLVED v5.17.136** | `resolveHomePanels()` places a panel on Home only when it is in the saved order, and only `home-panel-move` ever wrote that order. Unticking a panel's switch set `hiddenHome` and nothing appeared — and the switch rendered ON while the panel stayed off, so it actively lied. The switch now reports where the panel actually is, and ticking it appends the panel to the order. |
-| 63 | Prayer method line drops its provenance qualifier | **OPEN** | The compact hero line reads "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" unqualified, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only. Restoring `Source (unverified):` is a worship-surface copy decision for the owner. `tests/e2e/smoke.spec.js` is deliberately red to keep it visible; do NOT edit the assertion. |
+| 63 | Prayer method line dropped its provenance qualifier | **RESOLVED v5.17.137** | The compact hero line had read "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" unqualified, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only — an uncertified source stated as fact. `compactPrayerMethodLine` now appends `prayer.methodSource` whenever the method has a source body, in both languages, and falls back to the bare line when it does not. Pinned by `tests/prayer-method-line.test.js` and by `tests/e2e/smoke.spec.js`, which is green again. |
 
 ## v5.17.136 owner follow-through addendum
 
@@ -189,7 +189,7 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **17** |
+| **OPEN** (nobody has done it)                      | **16** |
 | **PROPOSED** (costed, needs an owner yes)          | **5**  |
 | **BLOCKED:scholar** (must never be machine-filled) | **7**  |
 | **BLOCKED:device** (needs real hardware)           | **5**  |

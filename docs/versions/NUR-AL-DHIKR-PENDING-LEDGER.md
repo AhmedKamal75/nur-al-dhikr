@@ -5,13 +5,11 @@
 **Current phase:** browser/device certification → hostile-review follow-through → accessibility/robustness → evidence-backed utility/deslopification
 **Distribution:** `origin/main` is the authority. Work from the repository; a release ZIP cannot carry the git history and therefore loses the reasoning behind each decision.
 
-## CURRENT RELEASE — v5.17.136
-
-### Awaiting the owner's decision
-
-- **Prayer method provenance qualifier (deliberately-red `smoke.spec.js`).** The compact hero line reads "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" with no qualification, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only. Restoring `Source (unverified):` is a worship-surface copy decision. The test stays red until it is made — do not edit the assertion.
+## CURRENT RELEASE — v5.17.136 (working toward v5.17.137)
 
 ### Implemented this wave
+
+- **Prayer method provenance qualifier restored** (merged from `fix/prayer-provenance-hero`). `compactPrayerMethodLine` appends `prayer.methodSource` when the method carries a source body, in both languages, so the hero no longer states an uncertified calculation source as fact. `tests/prayer-method-line.test.js` and `tests/e2e/smoke.spec.js` are green again; the Chromium gate is fully green for the first time in this series.
 
 - **v5.17.136 — adopted v5.17.135 and fixed its two regressions.** (1) Every `<details>` on `#/audio` collapsed on any in-panel interaction (5 open → 0, where v5.17.126 held at 5), which made the new sleep ladder one rung per panel opening — 5 re-opens per 6-tap walk across all twelve viewport × language × theme cells; `open` is now a user-owned toggle with `data-open-controlled` opt-in for state-driven disclosures. (2) The Home panel switch was dead: `resolveHomePanels()` needs the panel in the saved order and only the reorder buttons wrote it, so nine of twelve panels were unreachable. Evidence: `docs/versions/BROWSER-EVIDENCE-v5.17.136.md`.
 - **v5.17.135 — Offline Essentials hierarchy:** moved the essential offline switch to the primary surface before meter/audio/cache detail after real Chromium evidence showed it could be outside the initial viewport. Added structural regression coverage. No religious corpus bytes intentionally modified.

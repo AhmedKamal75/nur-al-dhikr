@@ -5,13 +5,11 @@
 **Current phase:** browser/device certification → hostile-review follow-through → accessibility/robustness → evidence-backed utility/deslopification
 **Distribution:** `origin/main` is the authority. Work from the repository; a release ZIP cannot carry the git history and therefore loses the reasoning behind each decision.
 
-## CURRENT RELEASE — v5.17.136
-
-### Awaiting the owner's decision
-
-- **Prayer method provenance qualifier (deliberately-red `smoke.spec.js`).** The compact hero line reads "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" with no qualification, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only. Restoring `Source (unverified):` is a worship-surface copy decision. The test stays red until it is made — do not edit the assertion.
+## CURRENT RELEASE — v5.17.136 (working toward v5.17.137)
 
 ### Implemented this wave
+
+- **Prayer method provenance qualifier restored** (merged from `fix/prayer-provenance-hero`). `compactPrayerMethodLine` appends `prayer.methodSource` when the method carries a source body, in both languages, so the hero no longer states an uncertified calculation source as fact. `tests/prayer-method-line.test.js` and `tests/e2e/smoke.spec.js` are green again; the Chromium gate is fully green for the first time in this series.
 
 - **v5.17.136 — adopted v5.17.135 and fixed its two regressions.** (1) Every `<details>` on `#/audio` collapsed on any in-panel interaction (5 open → 0, where v5.17.126 held at 5), which made the new sleep ladder one rung per panel opening — 5 re-opens per 6-tap walk across all twelve viewport × language × theme cells; `open` is now a user-owned toggle with `data-open-controlled` opt-in for state-driven disclosures. (2) The Home panel switch was dead: `resolveHomePanels()` needs the panel in the saved order and only the reorder buttons wrote it, so nine of twelve panels were unreachable. Evidence: `docs/versions/BROWSER-EVIDENCE-v5.17.136.md`.
 - **v5.17.135 — Offline Essentials hierarchy:** moved the essential offline switch to the primary surface before meter/audio/cache detail after real Chromium evidence showed it could be outside the initial viewport. Added structural regression coverage. No religious corpus bytes intentionally modified.
@@ -80,6 +78,17 @@ Large text / 200%, reduced motion/transparency, forced colors, safe-area insets,
 - **Mobile shell:** recapture all seven doors at 360×800 and 393×852 EN/AR, light/dark. Confirm the active item is a quiet indicator, labels remain readable, no clipping occurs, and no generic “More” bucket is introduced.
 - **Home:** recapture 393×852 and 1440×900 EN/AR, light/dark. Confirm the single-item “Next for you” card is compact and that the Home hierarchy remains landing-page-like rather than dashboard-like.
 - **Carry-forward:** rerun all previously observed Chromium problem cases before closing them, including Azkar Details/count separation, Offline Essentials visibility, player narrow layout, invalid Qur'an deep link, Hadith Reference, Prayer methodology, Mushaf Find/bookmark, and progressive disclosures.
+
+### E. Owner product-enrichment wave
+
+GitHub Issue #1 and the v5.17.136 owner review now drive the next product wave:
+
+- **Practice IA:** implement the focused task-launcher model in `docs/PRACTICE-IA-NEXT-PLAN.md`. Current implementation candidate is on a feature branch; do not merge before full repository checks and Chromium E2E.
+- **Tajweed course depth:** use `docs/TAJWEED-COURSE-NEXT-PLAN.md` as the content/interaction contract. Do not mass-generate religious prose; source and review it.
+- **Mutashabihat:** obtain current Chromium evidence before geometry changes; separate layout defects from sourced content enrichment.
+- **Calendar:** obtain current Chromium evidence before grid changes.
+- **Offline:** keep Essentials above the fold; audit the remainder for density/hierarchy/polish.
+- **Settings:** obtain current browser evidence for Arabic typeface specimens and palette swatches before further CSS changes.
 
 ## EXPLICIT NO-GO / PRESERVE
 
