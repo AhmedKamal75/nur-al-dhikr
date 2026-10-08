@@ -1,0 +1,42 @@
+/* Practice landing: a flat task list, not a second dashboard. */
+.view--practice { max-width: 880px; }
+.view--practice .view-header { margin-block-end: var(--space-5); }
+.practice-task-list { display: grid; border-block-start: 1px solid var(--color-border); }
+.practice-task {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-height: 82px;
+  padding: 14px 2px;
+  border: 0;
+  border-block-end: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+.practice-task:hover, .practice-task:focus-visible { background: color-mix(in srgb, var(--color-primary) 5%, transparent); }
+.practice-task__icon {
+  display: grid;
+  place-items: center;
+  inline-size: 46px;
+  block-size: 46px;
+  border-radius: 14px;
+  color: var(--color-primary-text);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 18%, var(--color-border));
+}
+.practice-task__body { min-width: 0; display: grid; gap: 3px; }
+.practice-task__title { font-size: var(--fs-md); }
+.practice-task__hint { color: var(--color-text-muted); font-size: var(--fs-sm); line-height: 1.45; }
+.practice-task__action { display: inline-flex; align-items: center; gap: 5px; color: var(--color-primary-text); font-size: var(--fs-caption); font-weight: 750; white-space: nowrap; }
+.practice-task-note { margin-block: var(--space-4) 0; color: var(--color-text-muted); font-size: var(--fs-caption); line-height: 1.5; }
+[dir='rtl'] .practice-task__action svg { transform: rotate(180deg); }
+@media (max-width: 560px) {
+  .practice-task { grid-template-columns: 42px minmax(0, 1fr); gap: 12px; min-height: 76px; }
+  .practice-task__icon { inline-size: 42px; block-size: 42px; }
+  .practice-task__action { grid-column: 2; justify-self: start; margin-block-start: 2px; }
+}
+@media (min-width: 900px) { .practice-task-list { border-block-end: 1px solid var(--color-border); } }
