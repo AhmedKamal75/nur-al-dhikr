@@ -7,16 +7,16 @@ import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 
-function taskLink({ iconName, titleKey, hintKey, href, action, button }) {
+function taskLink({ iconName, titleKey, hintKey, href, action, button, lang }) {
   const iconHTML = icon(iconName, { size: 20 });
-  const label = t(button ? 'practiceHub.start' : 'practiceHub.open');
+  const label = t(button ? 'practiceHub.start' : 'practiceHub.open', lang);
   const inner = [
     '<span class="practice-task__icon" aria-hidden="true">',
     iconHTML,
     '</span><span class="practice-task__body"><strong class="practice-task__title">',
-    t(titleKey),
+    t(titleKey, lang),
     '</strong><span class="practice-task__hint">',
-    t(hintKey),
+    t(hintKey, lang),
     '</span></span><span class="practice-task__action">',
     label,
     ' ',
@@ -41,10 +41,10 @@ export function renderPractice(state) {
     '<p class="view__subtitle">', t('practiceHub.lead', lang), '</p>',
     '</div></header>',
     '<nav class="practice-task-list" aria-label="', t('practiceHub.title', lang), '">',
-    taskLink({ iconName: 'tasbih', titleKey: 'practiceHub.tasbihTitle', hintKey: 'practiceHub.tasbihHint', href: buildHash(VIEWS.TASBIH) }),
-    taskLink({ iconName: 'book', titleKey: 'practiceHub.tajweedTitle', hintKey: 'practiceHub.tajweedHint', action: 'practice-open', button: true }),
-    taskLink({ iconName: 'quran', titleKey: 'practiceHub.recallTitle', hintKey: 'practiceHub.recallHint', href: buildHash(VIEWS.MUTASHABIHAT) }),
-    taskLink({ iconName: 'star', titleKey: 'practiceHub.namesTitle', hintKey: 'practiceHub.namesHint', href: buildHash(VIEWS.QUIZ) }),
+    taskLink({ iconName: 'tasbih', titleKey: 'practiceHub.tasbihTitle', hintKey: 'practiceHub.tasbihHint', href: buildHash(VIEWS.TASBIH), lang }),
+    taskLink({ iconName: 'book', titleKey: 'practiceHub.tajweedTitle', hintKey: 'practiceHub.tajweedHint', action: 'practice-open', button: true, lang }),
+    taskLink({ iconName: 'quran', titleKey: 'practiceHub.recallTitle', hintKey: 'practiceHub.recallHint', href: buildHash(VIEWS.MUTASHABIHAT), lang }),
+    taskLink({ iconName: 'star', titleKey: 'practiceHub.namesTitle', hintKey: 'practiceHub.namesHint', href: buildHash(VIEWS.QUIZ), lang }),
     '</nav>',
     '<p class="practice-task-note">', t('practiceHub.note', lang), '</p>',
     '</section>',
