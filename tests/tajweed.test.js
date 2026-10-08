@@ -99,6 +99,14 @@ test('qalqalah is suppressed when the sakin letter is assimilated into the next 
   ); // قْ خ — genuine sakin qaf remains Qalqalah
 });
 
+test('ayah-level Qalqalah suppression survives real assimilation spellings', () => {
+  const mergedDal = classifyAyahTajweed('وَقَد دَّخَلُوا');
+  assert.equal(mergedDal[1].spans.some((s) => s.rule === 'qalqalah'), false);
+
+  const mergedTa = classifyAyahTajweed('بَسَطتَ');
+  assert.equal(mergedTa[0].spans.some((s) => s.rule === 'qalqalah'), false);
+});
+
 test('ghunnah fires on shaddah-marked \u0646/\u0645 only', () => {
   assert.ok(rulesOf('\u0625ِ\u0646َّ').includes('ghunnah')); // إِنَّ
   assert.ok(rulesOf('\u062B\u064F\u0645َّ').includes('ghunnah')); // ثُمَّ
