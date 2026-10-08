@@ -183,6 +183,22 @@ test('tanween triggers the same noon-sakinah family as a bare sakin noon', () =>
   ); // كِتَابٌ + م...
 });
 
+test('madd badal requires hamza+madd orthography, not any madda sign', () => {
+  assert.equal(rulesOf('\u0622\u062F\u064e\u0645َ')[0], 'madd_badal'); // آدَمَ
+  assert.ok(
+    rulesOf('\u0645\u064e\u0627\u0653').includes('madd_2'),
+    'مَآ is an explicitly marked ordinary madd, not Madd Badal'
+  );
+  assert.equal(
+    rulesOf('\u0645\u064e\u0627\u0653').includes('madd_badal'),
+    false
+  );
+  assert.equal(
+    rulesOf('\u0623\u0653\u062F\u064e\u0645َ')[0],
+    'madd_badal'
+  ); // explicit hamza + madda spelling of the same category
+});
+
 test('madd: natural, connected (muttasil), separated (munfasil), badal, and obligatory (muqatta\u2019at)', () => {
   assert.ok(rulesOf('\u0642َالَ').includes('madd_2')); // قَالَ, plain natural madd
   assert.ok(rulesOf('\u062C\u064e\u0627\u0621َ').includes('madd_muttasil')); // جَاءَ — alif then hamza in the same word
