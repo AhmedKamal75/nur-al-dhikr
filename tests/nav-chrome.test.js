@@ -1,5 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { renderNav, drawerSectionsHTML, INTERNAL_ONLY_ROUTES } from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
 import { APP_MENU_ENTRIES, APP_MENU_GROUPS, DOORS } from '../js/core/config/nav.js';
@@ -33,11 +34,11 @@ describe('v5.17.84 main menu hierarchy', () => {
     );
   });
 
-  test('desktop/main drawer uses expandable details for worship depth', () => {
+  test('main menu sections expose explicit destination and disclosure controls', () => {
     const html = renderNav(stateFor(VIEWS.HOME));
     assert.ok(html.includes('nav__section'));
-    assert.ok(html.includes('nav__section-summary'));
-    assert.ok(html.includes('nav__section-chevron'));
+    assert.ok(html.includes('nav__section-link'));
+    assert.ok(html.includes('nav__section-toggle'));
     assert.ok(html.includes('data-section="LIBRARY"'));
     assert.ok(html.includes('data-section="MUSHAF"'));
     assert.ok(html.includes('data-section="PRAYER"'));
@@ -46,6 +47,8 @@ describe('v5.17.84 main menu hierarchy', () => {
     assert.ok(html.includes('nav__item--app-about'));
     assert.ok(html.includes(`data-view="${VIEWS.SETTINGS}"`));
     assert.ok(html.includes(`data-view="${VIEWS.ABOUT}"`));
+    assert.ok(html.includes('id="nav-sub-LIBRARY"'));
+    assert.ok(html.includes('id="nav-sub-LIBRARY-drawer"'));
   });
 
   test('top-level section rows navigate while the adjacent control owns disclosure', () => {
