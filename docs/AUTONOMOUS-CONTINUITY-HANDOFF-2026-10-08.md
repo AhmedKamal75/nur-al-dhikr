@@ -170,3 +170,10 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The classifier now uses `isHaKinayahSilahUnit()`: small Waw must follow a hāʾ with damma, and small Yeh must follow a hāʾ with kasra, to receive `madd_silah`. Other bare small Waw/Yeh forms become `madd_2`; madda-marked forms continue through the main Madd branch.
 - The tests now pin `لَهُۥ` as Silah and `دَاوُۥدُ` / `يُحۡيِۦ` as ordinary madd.
 - This is still unverified by local/full-corpus execution and browser evidence.
+
+### Lam Shamsiyyah lām-prefix audit — 2026-10-08
+- Static source inspection found at least 75 concrete article-after-lām-prefix forms in Surahs 1–20, including لِلطَّآئِفِينَ, لِلظَّـٰلِمِينَ, لِلسُّحۡتِ, and لِلَّذِينَ.
+- The previous classifier handled bare alif-lam and the one-letter prefix particles w/f/b/k, but could miss the article lam after a lām-prefix.
+- The classifier now accepts a second lam whose previous unit is a vocalized lam-prefix, while retaining the existing article guards.
+- Regression coverage pins لِلطَّآئِفِينَ and لِلظَّالِمِينَ.
+- Verification remains pending local/full-corpus execution and browser evidence.
