@@ -440,7 +440,7 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
     );
     assert.deepEqual(
       NAV_ENTRIES.map((e) => e.viewKey),
-      ['HOME', 'LIBRARY', 'MUSHAF', 'HADITH', 'PRAYER', 'TASBIH', 'CHECKLIST'],
+      ['HOME', 'LIBRARY', 'MUSHAF', 'HADITH', 'PRAYER', 'PRACTICE', 'CHECKLIST'],
       'door entry order drifted from the IA-7 target'
     );
   });
@@ -470,8 +470,8 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
   test('the Practise door is the TASBIH entry wearing nav.practise; the You door is the CHECKLIST entry wearing nav.you', () => {
     const practise = NAV_ENTRIES.find((e) => e.labelKey === 'nav.practise');
     assert.ok(practise, 'no door labelled nav.practise');
-    assert.equal(practise.viewKey, 'TASBIH');
-    assert.equal(practise.view, VIEWS.TASBIH);
+    assert.equal(practise.viewKey, 'PRACTICE');
+    assert.equal(practise.view, VIEWS.PRACTICE);
     const you = NAV_ENTRIES.find((e) => e.labelKey === 'nav.you');
     assert.ok(you, 'no door labelled nav.you');
     assert.equal(you.viewKey, 'CHECKLIST');
@@ -527,10 +527,10 @@ describe('IA-7 pin: sections with pinned member counts (extend, never weaken)', 
       {
         HOME: 1,
         LIBRARY: 6,
-        MUSHAF: 6,
+        MUSHAF: 5,
         HADITH: 1,
         PRAYER: 4,
-        TASBIH: 2,
+        PRACTICE: 4,
         CHECKLIST: 6,
       },
       'a section gained or lost a member without updating the map — extend the map AND this pin together'
@@ -539,7 +539,7 @@ describe('IA-7 pin: sections with pinned member counts (extend, never weaken)', 
 
   test('30 membered + 3 internal-only + kids scope = all 34 VIEWS routes', () => {
     const membered = DOORS.reduce((n, d) => n + d.members.length, 0);
-    assert.equal(membered, 26, `the worship/personal sections carry ${membered} members, not 26`);
+    assert.equal(membered, 27, `the worship/personal sections carry ${membered} members, not 27`);
     assert.deepEqual([...ORPHANS].sort(), ['AMBIENT', 'EDITOR', 'SEARCH']);
     assert.equal(
       membered + APP_MENU_ENTRIES.length + ORPHANS.length + 1,
@@ -693,16 +693,21 @@ describe('Phase 2 pin: one Qur’an door, six routes alive', () => {
     }
   });
 
-  test('#/tajweed-course and #/mutashabihat stay real routes resolving to the Qur’an door in 2 taps', () => {
-    for (const key of ['TAJWEED_COURSE', 'MUTASHABIHAT']) {
-      const m = ROUTE_DOOR_MAP[key];
-      assert.ok(m.door, `#/${m.route} lost its door — study belongs to the book`);
-      assert.equal(m.door.entry, 'MUSHAF');
-      assert.equal(m.door.labelKey, 'nav.quran');
-      assert.equal(m.taps, 2, 'door → in-chrome Qur’an switch');
-      assert.equal(m.door.via, 'main-menu');
-      assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
-    }
+  test('#/tajweed-course stays Qur’an-owned while #/mutashabihat is a Practice recall route', () => {
+    const course = ROUTE_DOOR_MAP.TAJWEED_COURSE;
+    assert.ok(course.door, '#/tajweed-course lost its door');
+    assert.equal(course.door.entry, 'MUSHAF');
+    assert.equal(course.door.labelKey, 'nav.quran');
+    assert.equal(course.taps, 2, 'door → in-chrome Qur’an switch');
+    assert.equal(course.door.via, 'main-menu');
+    assert.ok(!ORPHANS.includes('TAJWEED_COURSE'));
+    const recall = ROUTE_DOOR_MAP.MUTASHABIHAT;
+    assert.ok(recall.door, '#/mutashabihat lost its door');
+    assert.equal(recall.door.entry, 'PRACTICE');
+    assert.equal(recall.door.labelKey, 'nav.practise');
+    assert.equal(recall.taps, 2, 'door → Practice task');
+    assert.equal(recall.door.via, 'main-menu');
+    assert.ok(!ORPHANS.includes('MUTASHABIHAT'));
   });
 
   test('the merge adds no orphan: only the 3 documented doorless routes remain', () => {
@@ -800,30 +805,22 @@ describe('Phase 4 pin: one Prayer door, four routes alive', () => {
   });
 });
 
-describe('Phase 5 pin: one Practise section, two routes alive', () => {
-  test('single Practise entry (TASBIH view, nav.practise label); the quiz does not compete', () => {
+describe('Practice IA: one Practise section, task routes remain reachable', () => {
+  test('Practice is its own landing entry; task destinations remain in the same door', () => {
     const practiseDoors = NAV_ENTRIES.filter((e) =>
-      ['TASBIH', 'TAJWEED_COURSE', 'QUIZ', 'MUTASHABIHAT'].includes(e.viewKey)
+      ['PRACTICE', 'TASBIH', 'QUIZ', 'MUTASHABIHAT'].includes(e.viewKey)
     );
-    assert.deepEqual(
-      practiseDoors.map((e) => e.viewKey),
-      ['TASBIH'],
-      'the quiz must not compete for a chrome slot (the course and look-alikes moved to Qur’an)'
-    );
-    assert.equal(
-      NAV_ENTRIES.find((e) => e.viewKey === 'TASBIH').labelKey,
-      'nav.practise',
-      'the one door keeps the nav.practise label (Phase 8)'
-    );
+    assert.deepEqual(practiseDoors.map((e) => e.viewKey), ['PRACTICE']);
+    assert.equal(NAV_ENTRIES.find((e) => e.viewKey === 'PRACTICE').labelKey, 'nav.practise');
   });
 
-  test('#/quiz stays a real route resolving to the Practise door in 2 taps', () => {
-    for (const key of ['QUIZ']) {
+  test('Practice task routes stay real routes resolving to the Practice door in 2 taps', () => {
+    for (const key of ['TASBIH', 'QUIZ', 'MUTASHABIHAT']) {
       const m = ROUTE_DOOR_MAP[key];
       assert.ok(m.door, `#/${m.route} lost its door — the section must not orphan the route`);
-      assert.equal(m.door.entry, 'TASBIH');
+      assert.equal(m.door.entry, 'PRACTICE');
       assert.equal(m.door.labelKey, 'nav.practise');
-      assert.equal(m.taps, 2, 'door → in-chrome Tasbih/Quiz switch');
+      assert.equal(m.taps, 2, 'Practice door → task destination');
       assert.equal(m.door.via, 'main-menu');
       assert.ok(!ORPHANS.includes(key), `#/${m.route} must not appear in the orphan list`);
     }
