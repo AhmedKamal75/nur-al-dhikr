@@ -258,7 +258,8 @@ export const en = {
   'practiceHub.recallHint': 'Train the distinctions between look-alike ayat.',
   'practiceHub.namesTitle': '99 Names',
   'practiceHub.namesHint': 'Recall the Names of Allah and their meanings.',
-  'practiceHub.note': 'Practice stays task-focused; the full lessons and study surfaces remain in their subject areas.',
+  'practiceHub.note':
+    'Practice stays task-focused; the full lessons and study surfaces remain in their subject areas.',
   'audio.title': 'Reciters & Audio',
   'audio.subtitle':
     '312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',
