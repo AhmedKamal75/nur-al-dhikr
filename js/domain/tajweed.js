@@ -616,7 +616,7 @@ export function classifyWordTajweed(
           spans.push({ start: u.start, end: u.end, rule: 'idgham_no_ghunnah' });
         else if (nb && IKHFA_LETTERS.has(nb))
           spans.push({ start: u.start, end: u.end, rule: 'ikhfa' });
-        else if (nb && IZHAR_HAQI_LETTERS.has(nb))
+        else if (nb && IZHAR_HALQI_LETTERS.has(nb))
           spans.push({ start: u.start, end: u.end, rule: 'izhar' });
       }
     }
