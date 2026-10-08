@@ -263,3 +263,20 @@ test('the standard chart palette: families match the reference chart colors', ()
     if (r.family !== 'plain') assert.ok(familyIds.has(r.family), `${r.id} unknown family`);
   }
 });
+
+
+test('ayah-boundary Tajweed lookahead skips standalone ornament tokens', () => {
+  const result = classifyAyahTajweed(
+    '\u0645ِ\u0646ْ \u06D6 \u0643َ\u0627\u0646َ'
+  );
+  assert.equal(result.length, 3);
+  assert.equal(result[0].spans[0]?.rule, 'ikhfa');
+});
+
+test('ayah-final madd survives a trailing standalone ornament token', () => {
+  const result = classifyAyahTajweed(
+    '\u0648َ\u0644َا \u0627\u0644\u0636\u0651\u064E\u0627\u0653\u0644\u0651\u0650\u064A\u0646َ \u06E9'
+  );
+  const finalWord = result[1];
+  assert.ok(finalWord.spans.some((span) => span.rule === 'madd_246'));
+});

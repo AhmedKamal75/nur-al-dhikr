@@ -616,7 +616,7 @@ export function classifyWordTajweed(
           spans.push({ start: u.start, end: u.end, rule: 'idgham_no_ghunnah' });
         else if (nb && IKHFA_LETTERS.has(nb))
           spans.push({ start: u.start, end: u.end, rule: 'ikhfa' });
-        else if (nb && IZHAR_HAQI_LETTERS.has(nb))
+        else if (nb && IZHAR_HALQI_LETTERS.has(nb))
           spans.push({ start: u.start, end: u.end, rule: 'izhar' });
       }
     }
@@ -794,15 +794,29 @@ export function classifyAyahTajweed(ayahText) {
   const cached = classifyMemo.get(text);
   if (cached) return cached;
   const words = text.trim().split(/\s+/).filter(Boolean);
+  // Standalone Qur'anic ornaments (waqf/sajdah/hizb marks) can occupy a
+  // whitespace token. They are not pronunciation words, so boundary-sensitive
+  // rules must look through them and the final real word must own ayah-end
+  // pause rules. Keep every raw token in the result for rendering/index
+  // stability; only the lookahead/last-word semantics use non-empty units.
+  const unitsByWord = words.map((word) => tokenizeUnits(word));
+  const realWordIndices = unitsByWord
+    .map((units, i) => (units.length ? i : -1))
+    .filter((i) => i >= 0);
+  const lastRealWordIndex = realWordIndices.at(-1) ?? -1;
+
   const result = words.map((word, i) => {
-    const nextWord = words[i + 1];
-    const nextWordFirstBase = nextWord ? (tokenizeUnits(nextWord)[0]?.base ?? null) : null;
+    let nextRealWordIndex = i + 1;
+    while (nextRealWordIndex < words.length && !unitsByWord[nextRealWordIndex].length) {
+      nextRealWordIndex += 1;
+    }
+    const nextWordFirstBase = unitsByWord[nextRealWordIndex]?.[0]?.base ?? null;
     return {
       word,
       wordIndex: i + 1,
       spans: classifyWordTajweed(word, {
         nextWordFirstBase,
-        isLastWordOfAyah: i === words.length - 1,
+        isLastWordOfAyah: i === lastRealWordIndex,
       }),
     };
   });
