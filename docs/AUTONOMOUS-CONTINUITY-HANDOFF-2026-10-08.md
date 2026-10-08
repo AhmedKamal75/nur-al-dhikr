@@ -163,3 +163,10 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 ### Low-iqlab normalization checkpoint
 - The classifier defines both `IQLAB_MARK` (U+06E2) and `IQLAB_MARK_LOW` (U+06ED), and `canonMark()` deliberately folds the low form to the canonical high form before rule classification.
 - A regression now pins the low-mark path to `iqlab`; no runtime change was necessary.
+
+### Madd Silah small-letter audit — 2026-10-08
+- Full-corpus source inspection found numerous small Waw/Yeh marks outside hāʾ-al-kināyah, including `دَاوُۥدُ`, `تَلۡوُۥنَ`, `فَأۡوُۥٓاْ`, `يُحۡيِۦ`, `وَلِيِّۦ`, `لِتَسۡتَوُۥاْ`, and `ٱلۡمَوۡءُۥدَةُ`.
+- The previous blanket branch `small waw/yeh → madd_silah` would mislabel those ordinary small-letter spellings.
+- The classifier now uses `isHaKinayahSilahUnit()`: small Waw must follow a hāʾ with damma, and small Yeh must follow a hāʾ with kasra, to receive `madd_silah`. Other bare small Waw/Yeh forms become `madd_2`; madda-marked forms continue through the main Madd branch.
+- The tests now pin `لَهُۥ` as Silah and `دَاوُۥدُ` / `يُحۡيِۦ` as ordinary madd.
+- This is still unverified by local/full-corpus execution and browser evidence.
