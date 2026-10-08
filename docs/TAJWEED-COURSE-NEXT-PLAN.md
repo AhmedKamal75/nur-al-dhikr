@@ -190,7 +190,9 @@ Other current Tajweed programmes similarly emphasize Makharij/Sifaat, Noon/Meem 
 
 The project's existing research dossier and sourced rule registry remain the authoritative basis for actual religious teaching content.
 
-## Next implementation gate
+## Deep-review engineering contract
+
+The durable rule/verification contract is recorded in [`TAJWEED-RULE-MATRIX.md`](./TAJWEED-RULE-MATRIX.md), and the 2026-10-08 hostile findings/assumption corrections are recorded in [`TAJWEED-DEEP-REVIEW-2026-10-08.md`](./TAJWEED-DEEP-REVIEW-2026-10-08.md). These documents distinguish classifier reachability from corpus correctness and scholarly validation; do not collapse those evidence levels.\n\n## Next implementation gate
 
 Before adding a large body of lesson prose:
 
