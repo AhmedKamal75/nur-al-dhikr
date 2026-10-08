@@ -23,6 +23,9 @@ export const ar = {
   'nav.statistics': 'الإحصائيات',
   // (REORG Phase 6) nav.garden retired with the Garden nav noun — see en.js.
   'nav.back': 'رجوع',
+  'nav.expand': 'توسيع',
+  'nav.collapse': 'طيّ',
+  'nav.toggleSection': 'توسيع القسم أو طيّه',
   // (REORG Phase 6) garden.title retired — the Growth view's heading is
   // you.growth now. See en.js.
   'garden.invite': 'شاهد أذكارك تنمو',
