@@ -170,7 +170,7 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
   return `
   <details data-open-controlled class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}"${isOpen ? ' open' : ''}>
     <summary class="nav__section-toggle" title="${t('nav.toggleSection', lang)}" aria-label="${t('nav.toggleSection', lang)}" aria-controls="${subId}">
-      <span class="nav__section-chevron${isOpen ? ' nav__section-chevron--open' : ''}" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
+      <span class="nav__section-chevron" aria-hidden="true">${icon('chevronDown', { size: 16 })}</span>
     </summary>
     <a class="nav__section-link${isOpen ? ' nav__item--active' : ''}"
        href="${buildHash(door.view)}" data-action="${drawer ? 'nav-drawer-go' : 'navigate'}" data-view="${door.view}"
@@ -265,6 +265,35 @@ export function languageToggleHTML(lang, extraClass = '') {
         <span class="topbar__lang-code" aria-hidden="true">${lang === 'ar' ? 'EN' : 'ع'}</span>
       </button>`;
 }
+
+function syncNavControlForViewport() {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const button = document.querySelector('.topbar__menu');
+  if (!button) return;
+  const desktopNav = window.matchMedia?.('(min-width: 960px)').matches === true;
+  const lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
+  const collapsed = document.documentElement.dataset.navCollapsed === 'true';
+  const drawerOpen = document.body.classList.contains('nav-drawer-open');
+  const label = desktopNav ? t(collapsed ? 'nav.expand' : 'nav.collapse', lang) : t('a11y.navToggle', lang);
+  const iconName = desktopNav
+    ? collapsed
+      ? isRTL(lang) ? 'chevronLeft' : 'chevronRight'
+      : isRTL(lang) ? 'chevronRight' : 'chevronLeft'
+    : 'menu';
+  button.setAttribute('aria-label', label);
+  button.setAttribute('title', label);
+  button.setAttribute('aria-controls', desktopNav ? 'bottomnav' : 'nav-drawer');
+  button.setAttribute('aria-expanded', desktopNav ? String(!collapsed) : String(drawerOpen));
+  button.innerHTML = icon(iconName, { size: desktopNav ? 20 : 22 });
+}
+
+function installNavViewportSync() {
+  if (typeof window === 'undefined' || window.__nurNavViewportSync) return;
+  window.__nurNavViewportSync = true;
+  window.addEventListener('resize', syncNavControlForViewport, { passive: true });
+}
+
+installNavViewportSync();
 
 export function renderTopBar(state, opts = {}) {
   const lang = state.settings.language;
