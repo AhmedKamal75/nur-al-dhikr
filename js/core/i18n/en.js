@@ -246,6 +246,19 @@ export const en = {
   // (REORG Phase 8 / HANDOFF A1) the fifth door's chrome label. The entry
   // segment keeps nav.tasbih; the door promises the activity, not the tool.
   'nav.practise': 'Practise',
+  'practiceHub.title': 'Practice',
+  'practiceHub.lead': 'Short, focused ways to rehearse what you are learning.',
+  'practiceHub.open': 'Open',
+  'practiceHub.start': 'Start practice',
+  'practiceHub.tasbihTitle': 'Tasbih',
+  'practiceHub.tasbihHint': 'Count a chosen dhikr.',
+  'practiceHub.tajweedTitle': 'Tajweed practice',
+  'practiceHub.tajweedHint': 'Find rules in real Qur\\'anic ayat and review mistakes.',
+  'practiceHub.recallTitle': 'Qur\\'an recall',
+  'practiceHub.recallHint': 'Train the distinctions between look-alike ayat.',
+  'practiceHub.namesTitle': '99 Names',
+  'practiceHub.namesHint': 'Recall the Names of Allah and their meanings.',
+  'practiceHub.note': 'Practice stays task-focused; the full lessons and study surfaces remain in their subject areas.',
   'audio.title': 'Reciters & Audio',
   'audio.subtitle':
     '312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',
