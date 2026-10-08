@@ -463,7 +463,11 @@ function tokenizeUnits(word) {
   const units = [];
   for (let i = 0; i < word.length; i += 1) {
     const ch = word[i];
-    if (ch === TATWEEL) continue;
+    if (
+      ch === TATWEEL ||
+      WORD_ORNAMENT_CHARS.has(ch) ||
+      ORNAMENT_DIGITS.has(ch)
+    ) continue;
     // Consonantal small marks spell real letters (the plural yeh, an
     // assimilated noon) — fold them so the letter rules engage.
     const base = ch === SMALL_HIGH_YEH ? YEH : ch === SMALL_HIGH_NOON ? NOON : ch;
