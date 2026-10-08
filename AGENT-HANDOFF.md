@@ -138,3 +138,8 @@ Do not mark a visual issue resolved from source inspection alone. Capture the cu
 
 No Home dashboard, no generic “More”, no decorative sacred banners, no per-dhikr audio corpus, no invented grades/rulings/methodologies, no timeout inflation, no weakened assertions.
 
+
+### Active implementation candidates
+
+- **PR #2 — prayer provenance:** `fix/prayer-provenance-hero`. Restore the bilingual `Source (unverified):` qualifier on the focal prayer method line. Do not weaken the existing red assertion. Run full check + Chromium before merge.
+- **PR #3 — Practice IA:** `feature/practice-ia`. Adds a lazy Practice landing with Tasbih, Tajweed Practice, Qur'an Recall and 99 Names; moves Mutashabihat route ownership to Practice while leaving its engine unchanged. Run full check + Chromium plus a fresh 360/393/1024/1440 EN/AR light/dark evidence matrix before merge.
