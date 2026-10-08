@@ -184,7 +184,7 @@ Completion is a progress aid, not a gate that hides the underlying Qur'anic mate
 
 ## Research basis
 
-Current external course benchmarks show that serious Tajweed curricula are staged and practice-oriented rather than flat lists. Arabic101's current Intermediate Tajweed course, for example, uses six stages and 30 lessons and explicitly recommends a lesson-per-day rhythm, with separate revision and Q&A lessons. Its Tajweed catalogue also separates beginner, intermediate and advanced levels. urlArabic101 Intermediate Tajweedhttps://academy.arabic101.org/courses/intermediate-tajweed/
+Current external course benchmarks show that serious Tajweed curricula are staged and practice-oriented rather than flat lists. Arabic101's current Intermediate Tajweed course, for example, uses six stages and 30 lessons and explicitly recommends a lesson-per-day rhythm, with separate revision and Q&A lessons. Its Tajweed catalogue also separates beginner, intermediate and advanced levels. [Arabic101 Intermediate Tajweed](https://academy.arabic101.org/courses/intermediate-tajweed/)
 
 Other current Tajweed programmes similarly emphasize Makharij/Sifaat, Noon/Meem Sakinah, Madd, Qalqalah, stopping and repeated applied practice rather than memorizing rule names alone. These are useful benchmarks, not sources for copying course content.
 
