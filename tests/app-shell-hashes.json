@@ -134,7 +134,7 @@
     "js/domain/onboarding.js": "7da0e63869e1da69819acba0588945aaa029d1c260c9ca6f14fba5db652e50b3",
     "js/domain/planExport.js": "5b5c00d225d040d8b68b185a45f864cc2326aa5e34f611ce3f761654e7e1c6b2",
     "js/domain/playerShortcuts.js": "f389bed599737fe823b601ee7dd7a98010998ebf9aebbce68e3204c955d00820",
-    "js/domain/prayer.js": "ae4f66373f0a334e15411edbd10f3b4ddfe794380f54f0a468515af3800b3f74",
+    "js/domain/prayer.js": "9df36c5be255ce5112e4c5db992469b66844178b82f4f9b6317afaf6bc7fb5be",
     "js/domain/prayerExport.js": "61dcab8709f2ead8e05d8c2e3ba9e701c4a51350089f5f8b078c72fd0af11f99",
     "js/domain/prayerLog.js": "836f8c364a9ce97fd7ab030bc15193ad8170d32ac295f78a61166e650b575a35",
     "js/domain/prayerTimeline.js": "0c02d71939cb3ddcad5253f5a6e3a51bb596b56c8f2c5f4f06dcff055e67b7db",
