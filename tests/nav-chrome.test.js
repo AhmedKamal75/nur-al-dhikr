@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { renderNav, renderTopBar, drawerSectionsHTML, INTERNAL_ONLY_ROUTES from '../js/ui/shell.js';
+import { renderNav, renderTopBar, drawerSectionsHTML, INTERNAL_ONLY_ROUTES } from '../js/ui/shell.js';
 import { VIEWS } from '../js/core/config.js';
 import { APP_MENU_ENTRIES, APP_MENU_GROUPS, DOORS } from '../js/core/config/nav.js';
 import { initialState } from '../js/core/state/initial.js';
