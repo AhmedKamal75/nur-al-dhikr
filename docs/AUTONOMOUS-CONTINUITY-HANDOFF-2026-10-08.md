@@ -111,28 +111,29 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 ## Tajweed checkpoint update — 2026-10-08 autonomous wave
 
-- PR #21 remains **OPEN / unmerged** at current branch head `7b3390aef3a26d577d1991973d2000815c15e067`.
-- The first Qalqalah suppression patch was intentionally rejected as too broad. Letter-pair adjacency alone was not enough evidence, especially for the very common ب→م and ق→ك boundaries.
-- Current Qalqalah contract:
-  - suppress identical-letter assimilation when the following consonant is explicitly shaddah-marked;
-  - suppress the dal→ta assimilation family when the following ta is explicitly shaddah-marked;
-  - suppress the exact no-Qalqalah intra-word spellings `بسطت`, `أحطت`, `فرطت`;
-  - suppress `نخلقكم` because both accepted complete/incomplete ق→ك realizations are performed without Qalqalah on the sakin qaf;
-  - leave `اركب معنا` conservative until the app declares a reading profile, because its treatment varies by reading route.
-- Unicode-aware raw-text boundary scanning now covers all 114 surahs. The concrete sakin-boundary candidates are:
-  - `وَقَد دَّخَلُوا` (5:61): identical-letter assimilation;
-  - `قَد/لَقَد/وَقَد + تَّ...` in 2:256, 6:94, 9:117, 29:35, 29:38, 61:5: dal→ta assimilation;
-  - `ارۡكَب مَّعَنَا` (11:42): route-sensitive ba→mim.
-- Exact corpus spellings were verified at 5:28 (`بَسَطتَ`), 27:22 (`أَحَطتُ`), 39:56 (`فَرَّطتُ`), and 77:20 (`نَخۡلُقكُّم`).
-- Scholarly references used for the implementation review: Islamweb's *Hidayat al-Qari* on permitted/route-specific idgham; Hoda al-Quran's discussion of obligatory dal→ta idgham; and Quranpedia's *Al-Mizan fi Ahkam Tajwid al-Qur'an* on dal→ta and incomplete ta/ṭa cases. These sources are external research inputs; they do not substitute for app-specific validation.
-- `tests/tajweed-corpus-sweep.test.js` now emits rule counts, duplicate-span failures, same-unit overlap counts, bare-Qalqalah counts, and word-final Qalqalah boundary-pair diagnostics for the full execution pass.
-- **Still unverified:** no local full-corpus test run has been independently observed, no browser evidence covers the newest Tajweed changes, and queued GitHub Actions are not being counted as passes.
+- PR #21 is **OPEN / unmerged**, mergeable, current head `3a2eac642eea17aadaa9bf802f7c94a59e31cfe6`.
+- Formal app release remains **v5.17.136**; no v5.17.137 claim is made.
+- Ornament-aware semantic lookahead remains part of the branch: raw rendering tokens are preserved, while cross-word Tajweed lookahead and ayah-final status use pronunciation-bearing semantic tokens.
+- Qalqalah broad adjacency suppression was intentionally rejected. Current suppression is evidence-backed and narrow:
+  - identical-letter assimilation when the following consonant is explicitly shaddah-marked;
+  - dal→ta assimilation when the following ta is explicitly shaddah-marked;
+  - exact incomplete-ṭā→tā spellings `بسطت`, `أحطت`, `فرطت`, `فرطتم`;
+  - `نخلقكم`, where accepted qaf→kaf realizations do not use Qalqalah on the written sakin qaf;
+  - exact Qalqalah-bearing Muqaṭṭaʿāt opening tokens are exempted from the generic bare-letter fallback.
+- `اركب معنا` stays conservative because its ب→م treatment is route-sensitive and the app has no declared reading profile.
+- A Unicode-aware source scan covered all 114 surahs for the principal Qalqalah assimilation boundary families. Confirmed concrete cases include `وَقَد دَّخَلُوا` (5:61), the dal→ta family at 2:256 / 6:94 / 9:117 / 29:35 / 29:38 / 61:5, and `ارۡكَب مَّعَنَا` (11:42).
+- Exact incomplete-ṭā→tā corpus spellings verified include 5:28 `بَسَطتَ`, 12:80 `فَرَّطتُمۡ`, 27:22 `أَحَطتُ`, and 39:56 `فَرَّطتُ`. `نَخۡلُقكُّم` is at 77:20.
+- The Madd audit found that `madd_246` previously allowed a madd unit at the very end of the word. It now requires a following final consonant (`i === units.length - 2 && next`). The learner-facing rule description was corrected accordingly.
+- Regression targets now include `وَٱلضُّحَىٰ` (93:1) as **not** Madd ʿĀriḍ and `الرَّحِيمِ` as the final-consonant Madd ʿĀriḍ shape.
+- Corpus diagnostics in `tests/tajweed-corpus-sweep.test.js` now include rule counts, duplicate spans, same-unit overlaps, bare-Qalqalah counts, and word-final Qalqalah boundary-pair examples.
+- **Verification remains incomplete:** no local full-corpus run has been independently observed, current GitHub Actions runs are queued, and there is no browser evidence for the newest Tajweed changes. These are gating items, not implied passes.
 
 ## Autonomous next gate
-1. Obtain a real execution result for the 6,236-ayah sweep and inspect every emitted Qalqalah boundary diagnostic.
-2. Reconcile any suspicious overlaps/spans against source text and the scoped Tajweed contract.
-3. Continue the Tajweed classifier audit into the remaining high-risk assumptions (bare/implicit sukun, Madd final-word heuristics, rule precedence) before returning to Mushaf/browser hostile review.
 
+1. Obtain a real execution result for the 6,236-ayah sweep and inspect every emitted Qalqalah boundary diagnostic.
+2. Reconcile any suspicious spans/overlaps against source text and the scoped Tajweed contract.
+3. Continue the classifier audit through rule precedence and remaining Madd/noon/meem edge cases.
+4. Once Tajweed is evidence-backed, resume Mushaf/browser hostile review before any release bump.
 
 ### Muqaṭṭaʿāt anomaly — 2026-10-08
 - Static corpus inspection found `طه` in 20:1 entering the generic Qalqalah branch because the raw spelling carries no vowel marks on the opening letters. The same structural risk exists for the qlq-bearing opening tokens `طس`, `طسم`, `ق`, and `عسق`.
