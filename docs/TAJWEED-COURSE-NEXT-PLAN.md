@@ -119,7 +119,7 @@ A lesson should be a structured content object, for example:
       "surah": 2,
       "ayah": 255,
       "focus": ["madd_2"],
-      "note": {"en": "...", "ar": "..."}
+      "note": { "en": "...", "ar": "..." }
     }
   ],
   "notice": {

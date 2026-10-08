@@ -107,7 +107,6 @@ settled decisions: [MEMORY.md](MEMORY.md).
   (headless has no audio device), Firefox and WebKit, Mushaf Find/spread/
   fullscreen, bookmark reopen, Hadith Reference, oversized-import hardening.
 
-
 ## Next hostile/deslopification wave — 2026-10-08
 
 The owner has replaced ZIP-to-chat handoff with GitHub as the shared source of truth. Work from `main` history and the current PR/issue trail.
@@ -137,7 +136,6 @@ Do not mark a visual issue resolved from source inspection alone. Capture the cu
 ### Preserve
 
 No Home dashboard, no generic “More”, no decorative sacred banners, no per-dhikr audio corpus, no invented grades/rulings/methodologies, no timeout inflation, no weakened assertions.
-
 
 ### Active implementation candidates
 

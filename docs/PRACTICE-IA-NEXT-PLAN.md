@@ -19,16 +19,19 @@ This means the Practice door can expose a concise set of task-shaped entries wit
 ## Proposed Practice surface
 
 ### 1. Tasbih
+
 **Purpose:** count a chosen dhikr.
 
 Keep the current focused counter as the actual destination. The Practice surface should describe it in task language, not pretend it is an educational course.
 
 ### 2. Tajweed Practice
+
 **Purpose:** identify and apply Tajweed rules.
 
 Launch the existing rule-level drills, mixed rounds and mistake review. The full written lesson remains under Qur'an → Tajweed Course.
 
 Surface state should be small and useful:
+
 - rules practised recently;
 - weak-rule review availability;
 - continue button where a real session exists.
@@ -36,6 +39,7 @@ Surface state should be small and useful:
 No gamified leaderboard, no shame language.
 
 ### 3. Qur'an Recall
+
 **Purpose:** retrieval practice for memorization.
 
 This is where Mutashabihat and future Hifz review can be launched. It does not duplicate the Mushaf or Study Mode.
@@ -43,6 +47,7 @@ This is where Mutashabihat and future Hifz review can be launched. It does not d
 Initial destination can be Mutashabihat because that feature already exists and has a clear recall task.
 
 ### 4. 99 Names
+
 **Purpose:** recall the Names and their meanings.
 
 Keep the current Quiz engine, including weak-item review. Do not pretend it is a generic Islamic quiz engine unless the scope is actually expanded.
