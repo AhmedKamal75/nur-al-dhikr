@@ -26,10 +26,16 @@ function errorScreenLang() {
 
 /* ------------------------------------------------------------------ */
 
+function syncNavTrigger(open) {
+  const button = document.querySelector('.topbar__menu');
+  if (button) button.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
 export function openNavDrawer() {
   const active = document.activeElement;
   rt.navDrawerOpener = active && typeof active.focus === 'function' ? active : null;
   document.body.classList.add('nav-drawer-open');
+  syncNavTrigger(true);
   // Move focus into the sheet so keyboard/SR users land inside it, not on
   // the covered page behind the overlay.
   requestAnimationFrame(() => {
@@ -41,6 +47,7 @@ export function openNavDrawer() {
 export function closeNavDrawer() {
   if (!document.body.classList.contains('nav-drawer-open')) return;
   document.body.classList.remove('nav-drawer-open');
+  syncNavTrigger(false);
   rt.navDrawerOpener?.focus();
   rt.navDrawerOpener = null;
 }
