@@ -21,8 +21,8 @@ const MIN_AYAH_WORDS = 6; // ignore tiny ayahs (their n-grams are noise)
 const MAX_PAIRS = 400; // deck pool cap; pairs are ranked by run length
 const N = MIN_WORDS;
 
-let pairCache = null; // built once per session
-let cacheKey = '';
+let pairCache = null; // built once per corpus identity
+let cacheSource = null;
 
 const ayahKey = (s, a) => `${s}:${a}`;
 
@@ -67,8 +67,10 @@ function extendRun(wordsA, wordsB, posA, posB) {
  * runLen: number, sharedWords: string[] }] sorted by longest run first.
  */
 export function buildSimilarPairs(surahs, { force = false } = {}) {
-  const key = surahs ? Object.keys(surahs).length + '-' + (surahs[1]?.ayahs?.length ?? 0) : '';
-  if (!force && pairCache && cacheKey === key) return pairCache;
+  // The corpus object itself is the cache identity. The old key used only
+  // object size + Surah 1 length, so replacing the loaded corpus with another
+  // corpus of the same shape could silently reuse stale pairs.
+  if (!force && pairCache && cacheSource === surahs) return pairCache;
 
   // n-gram index: gram -> [{ key, idx }] (word position of the gram start)
   const grams = new Map();
@@ -120,14 +122,14 @@ export function buildSimilarPairs(surahs, { force = false } = {}) {
 
   const pairs = [...best.values()].sort((x, y) => y.runLen - x.runLen).slice(0, MAX_PAIRS);
   pairCache = pairs;
-  cacheKey = key;
+  cacheSource = surahs;
   return pairs;
 }
 
 /** Forget the cache (used when the corpus reloads / in tests). */
 export function resetMutashabihatCache() {
   pairCache = null;
-  cacheKey = '';
+  cacheSource = null;
 }
 
 /**
