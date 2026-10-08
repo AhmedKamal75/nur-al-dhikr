@@ -1,22 +1,40 @@
 {
-  "generatedAt": "2026-10-06T11:04:37.159Z",
+  "generatedAt": "2026-10-07T15:15:43.177Z",
   "project": "chromium",
   "viewport": 1280,
   "provenance": {
-    "head": "cb81f9e",
+    "head": "7b01f94",
     "measuredPathsDirty": [
-      "M assets/css/desktop.css",
+      "M assets/css/accessibility.css",
       " M assets/css/deslopify.css",
-      " M assets/css/quran.css",
+      " M assets/css/layout.css",
+      " M js/app/audioEngine.js",
+      " M js/app/boot.js",
+      " M js/app/drawer.js",
+      " M js/app/fileImports.js",
+      " M js/app/handlers/audio.js",
+      " M js/app/handlers/offline.js",
+      " M js/app/handlers/quran.js",
+      " M js/app/handlers/quranAudio.js",
+      " M js/app/handlers/system.js",
       " M js/app/handlers/worship.js",
+      " M js/app/lazyData.js",
+      " M js/app/offlineJobs.js",
+      " M js/app/renderer.js",
       " M js/core/config.js",
+      " M js/core/i18n/ar.js",
+      " M js/core/i18n/en.js",
+      " M js/domain/planExport.js",
+      " M js/services/backup.js",
+      " M js/ui/modal.js",
+      " M js/ui/shell.js",
+      " M js/views/audioManager.js",
       " M js/views/home.js",
-      " M js/views/mushafPageFind.js",
-      " M js/views/quran.js",
-      " M js/views/settings.js",
-      " M js/views/viewSheets.js"
+      " M js/views/offline.js",
+      " M js/views/prayer.js",
+      " M js/views/settings.js"
     ],
-    "measuredPathsDirtyCount": 10
+    "measuredPathsDirtyCount": 28
   },
   "enforced": false,
   "regions": [
@@ -26,7 +44,7 @@
     "#immersive-chrome"
   ],
   "matrix": {
-    "routes": 36,
+    "routes": 37,
     "langs": [
       "en",
       "ar"
@@ -35,7 +53,7 @@
       1,
       2
     ],
-    "cells": 144
+    "cells": 148
   },
   "totals": {
     "slackCells": 0,
@@ -422,6 +440,17 @@
     {
       "lang": "en",
       "fontScale": 1,
+      "route": "tajweed-course",
+      "path": "#/tajweed-course",
+      "viewport": 1280,
+      "slack": 0,
+      "overflowCount": 0,
+      "hardClipCount": 0,
+      "softClipCount": 0
+    },
+    {
+      "lang": "en",
+      "fontScale": 1,
       "route": "search",
       "path": "#/search?q=Allah",
       "viewport": 1280,
@@ -798,6 +827,17 @@
       "fontScale": 2,
       "route": "offline",
       "path": "#/offline",
+      "viewport": 1280,
+      "slack": 0,
+      "overflowCount": 0,
+      "hardClipCount": 0,
+      "softClipCount": 0
+    },
+    {
+      "lang": "en",
+      "fontScale": 2,
+      "route": "tajweed-course",
+      "path": "#/tajweed-course",
       "viewport": 1280,
       "slack": 0,
       "overflowCount": 0,
@@ -1214,6 +1254,17 @@
     {
       "lang": "ar",
       "fontScale": 1,
+      "route": "tajweed-course",
+      "path": "#/tajweed-course",
+      "viewport": 1280,
+      "slack": 0,
+      "overflowCount": 0,
+      "hardClipCount": 0,
+      "softClipCount": 0
+    },
+    {
+      "lang": "ar",
+      "fontScale": 1,
       "route": "search",
       "path": "#/search?q=Allah",
       "viewport": 1280,
@@ -1590,6 +1641,17 @@
       "fontScale": 2,
       "route": "offline",
       "path": "#/offline",
+      "viewport": 1280,
+      "slack": 0,
+      "overflowCount": 0,
+      "hardClipCount": 0,
+      "softClipCount": 0
+    },
+    {
+      "lang": "ar",
+      "fontScale": 2,
+      "route": "tajweed-course",
+      "path": "#/tajweed-course",
       "viewport": 1280,
       "slack": 0,
       "overflowCount": 0,

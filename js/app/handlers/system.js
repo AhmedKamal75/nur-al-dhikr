@@ -562,13 +562,30 @@ export const changeHandlers = [
   },
   {
     // Home panel visibility: the checkbox means VISIBLE (unchecked hides).
+    // (v5.17.136) It now also DOES the visible part. resolveHomePanels() only
+    // puts a panel on Home if it is in the saved order, and the order was only
+    // ever written by the up/down buttons — moveHomePanel() materialises the
+    // whole book order as a side effect. So unticking the hide box changed
+    // `hiddenHome` and nothing appeared: a control labelled with the panel it
+    // governs, silently doing nothing, for all nine optional panels. Unticking
+    // now also appends the panel to the order and ticking removes it, so the
+    // checkbox and the saved order cannot disagree.
     sel: '[data-action="home-panel-toggle"]',
     run: (ds, el) => {
       const id = String(ds.id || '');
-      const hidden = { ...(store.getState().settings.hiddenHome || {}) };
-      if (el.checked) delete hidden[id];
-      else hidden[id] = true;
-      store.dispatch(actions.updateSettings({ hiddenHome: hidden }));
+      if (!id) return;
+      const settings = store.getState().settings;
+      const hidden = { ...(settings.hiddenHome || {}) };
+      const order = Array.isArray(settings.homeOrder) ? [...settings.homeOrder] : [];
+      if (el.checked) {
+        delete hidden[id];
+        if (!order.includes(id)) order.push(id);
+      } else {
+        hidden[id] = true;
+        const at = order.indexOf(id);
+        if (at >= 0) order.splice(at, 1);
+      }
+      store.dispatch(actions.updateSettings({ hiddenHome: hidden, homeOrder: order }));
     },
   },
   {

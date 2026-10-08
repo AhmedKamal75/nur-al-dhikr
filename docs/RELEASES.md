@@ -1,3 +1,60 @@
+## v5.17.136 — adopt v5.17.135, then fix the regression it shipped with
+
+Adopts the v5.17.135 source ZIP (checksum `5e724741e5ebaf5…23252` verified against the published value) and repairs what it carried. Real Chromium evidence, not source reading, drove every item.
+
+- **REGRESSION FIXED — every `<details>` on `#/audio` collapsed when you touched anything inside it.** v5.17.135's new `audio-sleep-cycle` button dispatches `setAudioPlayer`, which re-renders the route, and the patch engine stripped the `open` attribute because the view never modelled it. Measured against v5.17.126, which preserved it: 5 disclosures open before an interaction, **0 after** at 135. The sleep ladder was therefore one rung per panel opening — **5 re-opens per 6-tap walk** at all twelve viewport × language × theme cells. `open` on `<details>` is now treated as a user-owned toggle like `value`/`checked`; the Settings accordions, nav doors and prayer panel opt back in with `data-open-controlled`.
+- **REGRESSION FIXED — the Home panel switch was a dead control.** `resolveHomePanels()` only places a panel on Home if it is in the saved order, and only the up/down buttons ever wrote that order. Unticking a panel's switch changed `hiddenHome` and nothing appeared: nine of twelve panels were unreachable by any labelled action. The switch now reports where the panel actually is, and ticking it appends the panel to the order.
+- **Binary/geometry claims re-measured:** the sleep control is one line and unclipped in EN and AR at 360/393/1024 (79–114px of content in a 258–641px box); the first harness pass reported wrapping because it divided the button's height by its line-height, which counts padding.
+- **Six browser specs re-pointed** to the real user path rather than the pre-v5.17.122/133 DOM: open the Setup disclosure, the Tasbih options, the player bar's "more"; tap the Azkar _door_ instead of a collapsed sub-row; count on a counter whose target exceeds 1; follow the word-study step into Study Mode; accept `#/settings/onboarding`.
+- **`touch-targets` now derives its census from the DOM** instead of requiring a sub-44px control to exist — it had been failing whenever the compact controls grew, which improves the pointer contract.
+- **Known red, deliberately:** `smoke.spec.js` expects the `Source (unverified):` qualifier on the prayer method line. `data/prayer-methods.json` records MWL as `verified: false` and `data/SOURCES.md` documents that only secondary corroboration exists, but the v5.17.x compact hero line dropped the qualifier and now states an uncertified source as fact. Restoring the qualifier is a worship-surface copy decision and is left to the owner; the test stays red rather than have the guarantee edited away.
+- Religious corpus bytes unchanged: the only `data/` files touched are `SOURCES.md` and the generated `data/manifest.json`.
+
+## v5.17.135 — Offline Essentials moved into the primary decision surface
+
+The owner-machine Chromium evidence showed the essentials switch could be below the initial viewport on the Offline route. The switch is now rendered immediately after the route lead, before detailed storage meters, audio cache and management information. This is a hierarchy correction, not an addition of another control layer. Browser recertification remains required.
+
+## v5.17.133 — evidence-driven Home/navigation deslopification
+
+This local release responds directly to the supplied v5.17.126 Chromium evidence and the v5.17.132 hostile review. The mobile seven-door shell again uses an indicator rather than a filled active pill, and the Home single-item resume state no longer consumes dashboard-sized vertical space.
+
+Browser certification is still pending; these changes must be recaptured by the owner-machine Chromium matrix before being called visually verified.
+
+## v5.17.132 — Hostile import-boundary hardening
+
+- Local JSON backup and family-plan files above **8 MiB** are rejected before the app invokes `FileReader`/`JSON.parse`, reducing memory-pressure and parse-DoS exposure on low-end devices.
+- Family-plan Tasbih target maps reject `__proto__`, `constructor`, and `prototype` keys.
+- Added hostile boundary regression coverage.
+- In-app Hadith provenance wording no longer makes a blanket CC0 claim while the exact upstream translation/source rights chain is under review.
+- No religious corpus bytes changed.
+
+## v5.17.131 — Offline storage honesty
+
+Offline → Manage offline storage now exposes a user-controlled persistent-storage request where the browser supports the Storage API, and reports granted / declined / unsupported outcomes in EN + AR. The UI explicitly warns that persistent storage is not unlimited and recommends recent backups. README documents browser-managed storage eviction and the limits of exact background prayer alarms on web platforms. No religious corpus bytes changed.
+
+## v5.17.130 — Accessible last-resort error screen
+
+The unrecoverable render-error surface now uses the app's semantic typography/colour tokens instead of inline hardcoded styling, declares its active language/direction, and keeps its emergency controls legible in forced-colors mode. Reload and Reset behavior are unchanged. No religious corpus data changed.
+
+## v5.17.129 — Action-affordance audit continuation
+
+The action-affordance audit continued only where a failed operation has a direct, idempotent recovery path. Full-surah playback startup failures, lazy modal chunk loads, custom Adhan import failures, offline-download attempts made while offline, single-surah audio downloads, and verse-pack downloads now expose a localized **Retry** action. Validation failures, known-missing media, quota/storage conditions, generic delegated-handler errors, and ordinary status toasts intentionally remain without actions. No religious corpus bytes changed.
+
+## v5.17.128 — recoverable load failures get direct Retry actions
+
+- Qur’an metadata and surah lazy-load failures now offer a direct **Retry** action that re-runs the same load path.
+- Mushaf navigation, Find-result, jump, and surah-entry page-load failures now offer a direct **Retry** action for the exact requested page.
+- Ordinary status/success toasts remain transient and actionless; this pass only adds recovery actions where the next safe action is unambiguous.
+- Added source-level regression coverage for the retry contracts.
+- No religious corpus bytes were intentionally modified.
+
+## v5.17.127 — Settings palette/typeface affordances and Offline essentials hierarchy
+
+- Palette selectors visibly use their palette colour token instead of being flattened to the surface colour.
+- Arabic reading typeface choices are specimen cards with readable preview, name, and explanatory copy; the Mushaf font remains separate.
+- Offline essentials is promoted into the primary Offline decision surface; detailed cache/group management remains progressive disclosure.
+- No religious corpus bytes were changed.
+
 ## v5.17.126 — hostile-review remediation: Home, invalid Qur’an routes, and picker resilience
 
 - **Home composition restored:** identity/orientation now precedes Today, Start Here follows Today, and Next for you follows the daily core. Today’s Progress stays inside Today instead of appearing under Next.

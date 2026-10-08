@@ -322,9 +322,10 @@ export function resumePanelHTML(state) {
     </section>`;
   }
   if (!rows.length) return quranCard;
+  const singleRowClass = rows.length === 1 ? ' panel--resume--single' : '';
   return `
     ${quranCard}
-    <section class="panel panel--resume" aria-label="${escapeHTML(t('home.resumeTitle', lang))}">
+    <section class="panel panel--resume${singleRowClass}" aria-label="${escapeHTML(t('home.resumeTitle', lang))}">
       <div class="panel__header"><h2>${icon('bookmark', { size: 16 })} ${t('home.resumeTitle', lang)}</h2></div>
       <div class="worship-list">
         ${rows.join('')}

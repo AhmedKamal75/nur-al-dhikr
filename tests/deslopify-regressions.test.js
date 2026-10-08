@@ -23,6 +23,28 @@ test('mobile active state is an indicator, not a filled sticker', () => {
   );
 });
 
+test('mobile navigation cascade keeps the restrained active indicator', () => {
+  assert.match(
+    readFileSync(new URL('../assets/css/layout.css', import.meta.url), 'utf8'),
+    /\.nav-mobile-bar__item--active,\n\.nav-mobile-bar__item\[aria-current='page'\] \{[\s\S]*background: transparent;/
+  );
+  assert.match(
+    readFileSync(new URL('../assets/css/layout.css', import.meta.url), 'utf8'),
+    /\.nav-mobile-bar__item--active::after,\n\.nav-mobile-bar__item\[aria-current='page'\]::after \{[\s\S]*content: '';[\s\S]*background: var\(--color-primary\);/
+  );
+  assert.doesNotMatch(
+    readFileSync(new URL('../assets/css/layout.css', import.meta.url), 'utf8'),
+    /\.nav-mobile-bar__item--active::after,[\s\S]*content: none;/
+  );
+});
+
+test('single-item Home resume state is compact', () => {
+  assert.match(home, /const singleRowClass = rows\.length === 1 \? ' panel--resume--single' : '';/);
+  assert.match(home, /panel panel--resume\${singleRowClass}/);
+  assert.match(css, /\.view--home > \.panel--resume--single \{/);
+  assert.match(css, /\.view--home > \.panel--resume--single \.worship-row \{/);
+});
+
 test('Home empty progress has a calm first-use branch', () => {
   assert.match(home, /panel--progress-empty/);
   assert.match(home, /today\?\.recitations > 0/);
@@ -134,7 +156,7 @@ test('section navigation lives in the main menu, not duplicated on every page', 
   );
   assert.match(
     readFileSync(new URL('../js/ui/shell.js', import.meta.url), 'utf8'),
-    /<details class="nav__section/
+    /<details data-open-controlled class="nav__section/
   );
 });
 

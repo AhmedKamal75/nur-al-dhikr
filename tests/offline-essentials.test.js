@@ -146,3 +146,19 @@ test('the reader can see it, and turn it off, in both languages', () => {
     }
   }
 });
+
+test('the essentials switch is structurally primary, before storage-meter details', () => {
+  const view = read('js/views/offline.js');
+  const essentials = view.indexOf('class="offline-essentials offline-essentials--primary"');
+  const meter = view.indexOf('${meter}');
+  const audio = view.indexOf('${audioMeter}');
+  const cache = view.indexOf('${cacheSlider}');
+  assert.ok(essentials >= 0, 'primary essentials surface is emitted');
+  assert.ok(essentials < meter, 'essentials must appear before meter details');
+  assert.ok(essentials < audio, 'essentials must appear before audio details');
+  assert.ok(essentials < cache, 'essentials must appear before cache details');
+  assert.match(
+    read('assets/css/deslopify.css'),
+    /offline-essentials--primary[\s\S]*border-inline-start: 3px solid var\(--color-primary\)/
+  );
+});

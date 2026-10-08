@@ -10,9 +10,13 @@ recording is credited in `assets/audio/adhan/CREDITS.md`.
   Sunan Abu Dawud, Jami' at-Tirmidhi, Sunan an-Nasa'i, Sunan Ibn Majah —
   plus the Forty Hadith of an-Nawawi and Forty Hadith Qudsi — classical
   public-domain works (13th century and earlier). 34,239 hadith total.
-- Machine-readable editions: [fawazahmed0/hadith-api](https://github.com/fawazahmed0/hadith-api),
-  dedicated to the public domain (CC0). The English translations are the
-  sunnah.com published translations mirrored by that dataset.
+- Machine-readable editions: [fawazahmed0/hadith-api](https://github.com/fawazahmed0/hadith-api).
+  The repository publishes a public-domain/Unlicense dedication, but that does
+  not by itself settle the redistribution terms of every upstream translation
+  or source. In particular, sunnah.com states that it does not permit scraping
+  or mass reproduction of entire books/collections on other websites. This
+  project therefore treats the exact translation/source rights chain as a
+  provenance item to be reviewed before broad redistribution.
 - Alignment + integrity gates are documented in `data/SOURCES.md` and
   enforced permanently by the test suite.
 
@@ -35,6 +39,9 @@ recording is credited in `assets/audio/adhan/CREDITS.md`.
   (corpus.quran.com, Kais Dukes et al.) — non-commercial use with
   acknowledgement, recorded here and in the in-app About screen.
 - English word-by-word glosses and transliteration: quranwbw.com dataset.
+  The exact redistributed dataset snapshot and its licence/permission chain
+  are not currently established in this repository; do not infer data rights
+  from a separate QuranWBW code-repository licence.
 - Root indices: computed locally from the bundled morphology (not a
   third-party dataset).
 - Tafsir and grammar texts (al-Muyassar, al-Mukhtasar, al-Jalalayn,

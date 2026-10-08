@@ -326,6 +326,16 @@ export const en = {
   'offline.storageModeTitle': 'Storage mode',
   'offline.storageModeBody':
     'Standard keeps full-size files (fast to open, ~150 MB). Compressed stores zipped files (~27 MB) and unzips on open — slower, kinder to storage and data. Applies to new downloads; switching clears downloaded text.',
+  'offline.persistenceNote':
+    'Some browsers can reclaim website storage under storage pressure. You can ask this browser to treat Nūr al-Dhikr storage as persistent when supported; keep a backup anyway.',
+  'offline.persistenceAction': 'Protect offline data',
+  'offline.persistenceAlready': 'This browser already marks Nūr al-Dhikr storage as persistent.',
+  'offline.persistenceGranted':
+    'The browser granted persistent storage for Nūr al-Dhikr on this device.',
+  'offline.persistenceDeclined':
+    'Persistent storage was not granted. Keep a recent backup so your local data can be restored.',
+  'offline.persistenceUnsupported':
+    'This browser does not expose a persistent-storage request. Keep a recent backup for safety.',
   'offline.compressedLabel': 'Store downloads compressed',
   // (v5.17.17) The essentials batch. "about 3 MB" is the measured gzipped
   // size of the Qur'an text plus all 604 mushaf pages — not a round guess.
@@ -1540,6 +1550,7 @@ export const en = {
   'plan.importConfirm':
     'Apply this plan on top of your own data? Your logs, history, and favorites stay untouched.',
   'plan.importDone': 'Plan applied.',
+  'plan.fileTooLarge': 'That plan file is too large to import safely (maximum 8 MB).',
   'plan.badFile': 'That file is not a shared plan.',
   'settings.resetData': 'Reset All Data',
   'settings.resetConfirm':
@@ -1697,7 +1708,7 @@ export const en = {
   'hadith.contents': 'Contents',
   'hadith.coverage': 'Coverage',
   'hadith.sourceProvenance':
-    'CC0 hadith-api dataset; full provenance is recorded in About → Sources.',
+    'hadith-api dataset; full provenance and source-rights notes are recorded in About → Sources.',
   'hadith.details': 'Details',
   'hadith.bookDetails': 'About this book',
   'hadith.author': 'Author',
@@ -2048,6 +2059,7 @@ export const en = {
   'backup.importConfirm':
     'Importing replaces everything currently on this device — favorites, streaks, statistics, and settings — with the backup\u2019s contents. This cannot be undone. Continue?',
   'backup.importDone': 'Backup imported.',
+  'backup.fileTooLarge': 'That file is too large to import safely (maximum 8 MB).',
   'backup.invalidJson': 'That file is not valid JSON.',
   'backup.futureVersion':
     'This backup is from a newer version of Nūr al-Dhikr — update the app to import it.',

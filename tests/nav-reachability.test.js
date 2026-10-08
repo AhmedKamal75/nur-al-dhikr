@@ -45,20 +45,56 @@ const read = (rel) => readFileSync(path.join(ROOT, rel), 'utf8');
 const navSrc = read('js/core/config/nav.js');
 const shellSrc = read('js/ui/shell.js');
 
+/**
+ * Collapse `Object.freeze({ ... })` member literals onto ONE line before the
+ * member regex runs. (v5.17.136) Prettier breaks a member object across lines
+ * once it exceeds the print width — and adopting v5.17.135 added door members
+ * long enough to do that — so a regex that only understood the single-line
+ * form silently stopped finding members and reported phantom drift. Reading
+ * the shape rather than the layout is what this drift-check always meant to
+ * do: the point is that nav.js and DOORS agree, not that the file happens to
+ * be formatted a particular way.
+ */
+function flattenObjects(src) {
+  let out = src;
+  // Repeat until stable: a re-indent can push a line over the width again.
+  for (let pass = 0; pass < 8; pass += 1) {
+    const next = out.replace(/\{([^{}]*)\}/g, (match, body) => {
+      if (!match.includes('\n')) return match;
+      // Match sees the ORIGINAL newline, but a later `}` inside the same pass
+      // can already have been reflowed — so normalise any comma that now sits
+      // immediately before this object's own closing brace. Iterating to a
+      // fixed point covers the multi-pass cases (a re-indent pushing a line
+      // over the print width again).
+      const collapsed = body
+        .replace(/\s*\n\s*/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      // Prettier's multi-line form ends the last property with `,` before the
+      // brace; the single-line form never does. Drop it so both forms are the
+      // same string and the member regex sees one shape.
+      const flat = `{ ${collapsed.replace(/,$/, '').trim()} }`;
+      return flat;
+    });
+    if (next === out) break;
+    out = next;
+  }
+  return out;
+}
+
 function parseDoorsStatic(src) {
-  const entryRe = /entry:\s*'(\w+)'/g;
-  const labelRe = /labelKey:\s*'([^']+)'/g;
-  // The trailing `,?` matters: several members are written multi-line with a
-  // trailing comma before `}` (COLLECTIONS, COLLECTION, TAJWEED_COURSE,
-  // MUTASHABIHAT, CERTIFICATE). Without it the pattern silently matches nothing
-  // for them, so this drift-check compares fewer static members than the real
-  // DOORS and fails on a false accusation instead of on real drift. This fix was
-  // applied at v5.17.93 and reverted by the v5.17.126 archive; re-applied.
+  const flat = flattenObjects(src);
+  // Only walk the `members: Object.freeze([...])` arrays. Scanning the whole
+  // file also picked up the two standalone shapes nav.js keeps for reference
+  // (the doc-comment example and the `MEMBERS` export), which is how the
+  // COLLECTIONS/COLLECTION pair came back transposed and 4 entries short.
   const memberRe =
-    /\{\s*route:\s*'(\w+)'\s*(?:,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*,?\s*\}/g;
-  const entries = [...src.matchAll(entryRe)];
-  const labels = [...src.matchAll(labelRe)];
-  const members = [...src.matchAll(memberRe)].map((m) => ({
+    /\{\s*route:\s*'(\w+)'\s*(?:,\s*labelKey:\s*'([^']+)')?\s*,\s*taps:\s*(\d+)\s*,\s*via:\s*(null|'([^']+)')\s*(,\s*direct:\s*(true|false)\s*,?)?\s*\}/g;
+  // Index into the FLATTENED text, because that is the coordinate space the
+  // `entry:` offsets below also come from — comparing members against entry
+  // offsets measured on the original source misgroups every member that sits
+  // after a multi-line object.
+  const members = [...flat.matchAll(memberRe)].map((m) => ({
     route: m[1],
     labelKey: m[2] ?? null,
     taps: Number(m[3]),
@@ -66,6 +102,10 @@ function parseDoorsStatic(src) {
     ...(m[7] ? { direct: m[7] === 'true' } : {}),
     index: m.index,
   }));
+  const entryRe = /entry:\s*'(\w+)'/g;
+  const labelRe = /labelKey:\s*'([^']+)'/g;
+  const entries = [...flat.matchAll(entryRe)];
+  const labels = [...flat.matchAll(labelRe)];
   return { entries, labels, members };
 }
 

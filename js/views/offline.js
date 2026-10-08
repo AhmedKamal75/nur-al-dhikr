@@ -101,6 +101,18 @@ export function renderOffline(state) {
     </header>
     <p class="view__subtitle">${t('offline.lead', lang)}</p>
 
+    <section class="offline-essentials offline-essentials--primary">
+      <div class="panel__header"><h2>${t('offline.essentialsLabel', lang)}</h2></div>
+      <p class="panel__subtext">${t('offline.essentialsBody', lang)}</p>
+      <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
+        <span class="mushaf-sheet__label">${essentialsAuto ? escapeHTML(t('offline.essentialsBody', lang)) : escapeHTML(t('offline.essentialsOff', lang))}</span>
+        <span class="switch">
+          <input type="checkbox" data-action="offline-toggle-essentials-auto" ${essentialsAuto ? 'checked' : ''} />
+          <span class="switch__track"></span>
+        </span>
+      </label>
+    </section>
+
     <section class="panel">
       ${meter}
       ${audioMeter}
@@ -134,20 +146,14 @@ export function renderOffline(state) {
         <section class="panel">
           <div class="panel__header"><h2>${t('offline.storageModeTitle', lang)}</h2></div>
           <p class="panel__subtext">${t('offline.storageModeBody', lang)}</p>
+          <p class="panel__subtext">${t('offline.persistenceNote', lang)}</p>
+          <button type="button" class="btn btn--secondary btn--sm" data-action="offline-request-persistence">${icon('shield', { size: 14 })} ${escapeHTML(t('offline.persistenceAction', lang))}</button>
           <p class="panel__subtext">${t('offline.clearStudyBody', lang)}</p>
           <button type="button" class="btn btn--secondary btn--sm" data-action="offline-clear-study" ${running ? 'disabled' : ''}>${icon('trash', { size: 14 })} ${escapeHTML(t('offline.clearStudy', lang))}</button>
           <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
             <span class="mushaf-sheet__label">${t('offline.compressedLabel', lang)}</span>
             <span class="switch">
               <input type="checkbox" data-action="offline-toggle-compressed" ${compressed ? 'checked' : ''} ${running ? 'disabled' : ''} />
-              <span class="switch__track"></span>
-            </span>
-          </label>
-          <p class="panel__subtext">${t('offline.essentialsBody', lang)}</p>
-          <label class="mushaf-sheet__row mushaf-sheet__row--toggle">
-            <span class="mushaf-sheet__label">${t('offline.essentialsLabel', lang)}</span>
-            <span class="switch">
-              <input type="checkbox" data-action="offline-toggle-essentials-auto" ${essentialsAuto ? 'checked' : ''} />
               <span class="switch__track"></span>
             </span>
           </label>

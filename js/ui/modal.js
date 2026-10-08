@@ -219,7 +219,14 @@ export function openLazyModal(load, { labelledBy = null, viewGuard = null } = {}
     .catch((err) => {
       console.error('[modal] lazy sheet failed to load', err);
       try {
-        showToast(t('common.error', store.getState().settings.language));
+        const lang = store.getState().settings.language;
+        showToast(t('common.error', lang), {
+          assertive: true,
+          actionLabel: t('common.retry', lang),
+          onAction: () => {
+            void openLazyModal(load, { labelledBy, viewGuard });
+          },
+        });
       } catch {
         /* toast needs a DOM — logging above is the floor */
       }

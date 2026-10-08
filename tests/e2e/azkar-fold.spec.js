@@ -195,14 +195,27 @@ test.describe('home is home, not a full azkar (IA-7)', () => {
     await page.goto(HOME);
     await expect(page.locator('#main h1')).toBeVisible({ timeout: 25000 });
 
-    const link = page
-      .locator(`#bottomnav a[href="#/library"], #bottomnav [href="#/library"]`)
+    // (v5.17.136) Since the v5.17.133 seven-door chrome the doors are
+    // hierarchical <details> sections: `#/library` is a sub-row that only
+    // exists once its section is open. The claim under test is "one tap from
+    // home", so tap the DOOR — the section summary — which is the one-tap
+    // affordance — and then read the grid. Reaching for the sub-row directly
+    // tested the pre-133 flat DOM and could not see the real first tap.
+    const azkarDoor = page
+      .locator('#bottomnav details.nav__section[data-section="LIBRARY"] > summary')
       .first();
     await expect(
-      link,
-      'the AZKAR section must be in the chrome, or home is a dead end for the grid'
+      azkarDoor,
+      'the AZKAR door must be in the chrome, or home is a dead end for the grid'
     ).toBeVisible({ timeout: 10000 });
-    await link.click();
+    const azkarLink = page.locator('#bottomnav a[href="#/library"]').first();
+    if (!(await azkarDoor.evaluate((el) => el.parentElement.open))) {
+      await azkarDoor.click();
+    }
+    await expect(azkarLink, 'the grid link is reachable from the door in one more tap').toBeVisible(
+      { timeout: 10000 }
+    );
+    await azkarLink.click();
     await expect(page.locator('.home-browser')).toBeVisible({ timeout: 25000 });
   });
 });
@@ -229,8 +242,27 @@ test.describe('Azkar reading surface and counter separation', () => {
     const detailsText = await card.locator('details.card__disclosure').textContent();
     expect(detailsText).toMatch(/Translation|Reference|Repetitions/i);
 
-    await counterLabel.click();
-    const after = await counterLabel.textContent();
+    // (v5.17.136) Count on a pill whose target is greater than 1. The first
+    // card's target is 1, and a tap that reaches the target COMPLETES the
+    // cycle and re-points the pill at the next dhikr — so on that card the
+    // label legitimately goes "0 / 1" -> "0 / 3" and a naive +1 read of it
+    // reports a counter that is in fact working. Verified in Chromium: the
+    // tap moved completedCycles 0 -> 1 and advanced adh-mor-001 -> adh-mor-003a.
+    // Counting is only observable as +1 where the target leaves room.
+    const countable = page.locator('.card .counter-pill[data-target]').filter({
+      has: page.locator(':scope'),
+    });
+    const target = Number(await countable.first().getAttribute('data-target'));
+    const countingCard = target > 1 ? countable.first() : page.locator('.card').nth(1);
+    const countingPill = countingCard.locator('.counter-pill');
+    await countingPill.scrollIntoViewIfNeeded();
+    const pillTarget = Number(await countingPill.getAttribute('data-target'));
+    expect(pillTarget, 'found a counter with room to count into').toBeGreaterThan(1);
+
+    const beforeCount = await countingPill.locator('.counter-pill__label').textContent();
+    await countingPill.locator('.counter-pill__label').click();
+    await page.waitForTimeout(400);
+    const afterCount = await countingPill.locator('.counter-pill__label').textContent();
     const parseCount = (value) =>
       Number.parseInt(
         String(value)
@@ -238,7 +270,9 @@ test.describe('Azkar reading surface and counter separation', () => {
           .split(/\s*\/\s*/)[0],
         10
       );
-    expect(parseCount(after)).toBe(parseCount(before) + 1);
+    expect(parseCount(afterCount), `counter read "${beforeCount}" -> "${afterCount}"`).toBe(
+      parseCount(beforeCount) + 1
+    );
   });
 
   test('Details keyboard activation also never increments the counter', async ({ page }) => {

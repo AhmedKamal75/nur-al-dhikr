@@ -6,6 +6,7 @@ import {
   structuralKey,
   matchChildrenDeep,
   focusSignature,
+  patchElement,
 } from '../js/app/renderer.js';
 
 /**
@@ -291,5 +292,73 @@ describe('focusSignature (focus salvage across re-renders)', () => {
     } finally {
       restore();
     }
+  });
+});
+
+/**
+ * A <details> the reader opened is a USER-OWNED toggle, exactly like the
+ * `value`/`checked` of an input: no view models "is this panel open", so
+ * attribute syncing used to strip `open` on the next dispatch and collapse
+ * the panel under the reader's finger.
+ *
+ * On #/audio that made the v5.17.135 sleep-timer ladder unusable — one tap
+ * per opening of "Recitation defaults". The regression is invisible to the
+ * unit suite and to source reading; it needs the attribute rule pinned here.
+ *
+ * patchElement is tested through a node-like double because the reconcile
+ * below it is pure (no DOM needed) and this file already holds that line:
+ * "the matchers are pure functions on node-like inputs".
+ */
+const el = (tag, attrs = {}) => {
+  const map = new Map(Object.entries(attrs));
+  return {
+    tagName: tag.toUpperCase(),
+    childNodes: [],
+    get attributes() {
+      return Array.from(map, ([name, value]) => ({ name, value }));
+    },
+    hasAttribute: (n) => map.has(n),
+    getAttribute: (n) => (map.has(n) ? map.get(n) : null),
+    setAttribute: (n, v) => map.set(n, String(v)),
+    removeAttribute: (n) => map.delete(n),
+  };
+};
+
+describe('patchElement and the <details open> user-owned toggle (v5.17.136)', () => {
+  test('a reader-opened panel survives a patch that does not model open', () => {
+    const cur = el('details', { class: 'panel', open: '' });
+    const inc = el('details', { class: 'panel' });
+    patchElement(cur, inc);
+    assert.ok(cur.hasAttribute('open'), 'the open panel must not collapse on re-render');
+  });
+
+  test('the same panel is NOT force-opened by markup that always says open', () => {
+    const cur = el('details', { class: 'panel' }); // reader closed it
+    const inc = el('details', { class: 'panel', open: '' });
+    patchElement(cur, inc);
+    assert.ok(!cur.hasAttribute('open'), 'a closed panel must not snap open either');
+  });
+
+  test('data-open-controlled keeps state-owned semantics (nav doors, Settings)', () => {
+    const cur = el('details', { 'data-open-controlled': '', class: 'nav__section', open: '' });
+    const inc = el('details', { 'data-open-controlled': '', class: 'nav__section' });
+    patchElement(cur, inc);
+    assert.ok(!cur.hasAttribute('open'), 'a controlled disclosure follows the incoming markup');
+  });
+
+  test('ordinary attributes still sync both ways around the exemption', () => {
+    const cur = el('details', { class: 'panel old', open: '', 'aria-hidden': 'true' });
+    const inc = el('details', { class: 'panel new' });
+    patchElement(cur, inc);
+    assert.equal(cur.getAttribute('class'), 'panel new', 'attributes still sync');
+    assert.ok(!cur.hasAttribute('aria-hidden'), 'stale attributes are still removed');
+    assert.ok(cur.hasAttribute('open'), 'only `open` is exempt');
+  });
+
+  test('the exemption is <details>-scoped, so other elements are untouched', () => {
+    const cur = el('div', { open: '' });
+    const inc = el('div');
+    patchElement(cur, inc);
+    assert.ok(!cur.hasAttribute('open'), 'a <div open> is meaningless and must still sync');
   });
 });

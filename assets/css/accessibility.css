@@ -4,6 +4,89 @@
    ========================================================================== */
 
 /* ==========================================================================
+   Last-resort render-error surface (v5.17.130)
+   Keep the emergency path theme-aware and RTL-safe even when the normal
+   renderer has failed. Forced-colors must still expose control boundaries.
+   ========================================================================== */
+.error-screen {
+  box-sizing: border-box;
+  inline-size: min(28rem, calc(100vw - 2rem));
+  margin: 15vh auto 0;
+  padding: 1.5rem;
+  padding-block-start: max(1.5rem, env(safe-area-inset-top, 0px));
+  text-align: center;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.error-screen__icon {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+  line-height: 1;
+}
+.error-screen__title {
+  margin: 0 0 0.5rem;
+  color: var(--color-text);
+  font-size: var(--fs-lg);
+}
+.error-screen__body {
+  margin: 0 0 1.25rem;
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+.error-screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.error-screen__button {
+  min-block-size: var(--touch-target);
+  min-inline-size: 7rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.error-screen__button:focus-visible {
+  outline: 3px solid var(--color-primary-text);
+  outline-offset: 2px;
+}
+.error-screen__button--primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.error-screen__button--danger {
+  background: var(--color-danger, var(--color-primary));
+  color: var(--color-danger-text);
+}
+
+@media (forced-colors: active) {
+  .error-screen {
+    border-color: ButtonText;
+    background: Canvas;
+    color: CanvasText;
+  }
+  .error-screen__title,
+  .error-screen__body {
+    color: CanvasText;
+  }
+  .error-screen__button,
+  .error-screen__button--primary,
+  .error-screen__button--danger {
+    border-color: ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+  .error-screen__button:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ==========================================================================
    Elderly mode (body.is-elder): XL type + 52px targets, app-wide.
    Font-size bumps ride the existing --font-scale custom properties where
    possible; the class adds the extra step plus roomier touch targets.

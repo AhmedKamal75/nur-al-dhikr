@@ -539,7 +539,13 @@ export const clickHandlers = {
       render(store.getState());
     } catch (err) {
       console.error('[prayer-adhan-clear]', err);
-      showToast(t('common.error', lang));
+      showToast(t('common.error', lang), {
+        assertive: true,
+        actionLabel: t('common.retry', lang),
+        onAction: () => {
+          void clickHandlers['prayer-adhan-clear'](ds);
+        },
+      });
     }
   },
 

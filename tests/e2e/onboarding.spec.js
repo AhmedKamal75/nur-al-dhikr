@@ -25,21 +25,42 @@ async function expandWizard(page) {
   await expect(body).toBeVisible({ timeout: 10000 });
 }
 
+/**
+ * (v5.17.136) v5.17.122 collapsed the optional first-run doors behind one
+ * native <details> (`settings-setup-disclosure`). Opening it IS the user
+ * path now, so the specs open it rather than reaching through it. Without
+ * this the "deferred doors wait passively in Settings" claim was untestable.
+ */
+async function openSetupDisclosure(page) {
+  const disclosure = page.locator('#main details.settings-setup-disclosure').first();
+  await expect(disclosure, 'the Setup disclosure is present in Settings').toHaveCount(1);
+  if (!(await disclosure.evaluate((el) => el.open))) {
+    await disclosure.locator('summary').click();
+    await expect(disclosure).toHaveAttribute('open', '');
+  }
+  return disclosure;
+}
+
 test('fresh readers keep Home clean and find deferred setup in Settings', async ({ page }) => {
   await page.goto('./#/home');
   await ready(page);
   await expect(page.locator('.panel--onboarding')).toHaveCount(0);
   await page.goto('./#/settings');
   await ready(page);
-  await expect(page.locator('.panel--deferred').first()).toBeVisible({ timeout: 20000 });
-  await expect(page.locator('.panel--deferred').first()).toContainText('Finish setup when ready');
+  const setup = await openSetupDisclosure(page);
+  await expect(setup).toContainText('Finish setup when ready');
 });
 
 test('the deferred introduction reopens inside Settings, never on Home', async ({ page }) => {
   await page.goto('./#/settings');
   await ready(page);
+  await openSetupDisclosure(page);
   await page.locator('.panel--deferred [data-action="onboarding-reshow"]').click();
-  await expect(page).toHaveURL(/#\/settings\?id=onboarding$/);
+  // (v5.17.136) The section is addressed as a PATH segment now
+  // (`#/settings/onboarding`), not the old `?id=onboarding` query. Both still
+  // resolve — the deep-link specs prove the query form — but the app emits the
+  // path form, so that is what the re-show action must produce.
+  await expect(page).toHaveURL(/#\/settings\/onboarding$/);
   await expandWizard(page);
   await expect(page.locator('.panel--onboarding').first()).toContainText('Choose your language');
 });

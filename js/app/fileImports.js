@@ -49,7 +49,13 @@ export async function handleAdhanImport(file, kind) {
       await import('../services/audioStore.js'));
   } catch (err) {
     console.error('[adhan-import] audio store failed to load', err);
-    showToast(t('prayer.adhanImportFailed', lang));
+    showToast(t('prayer.adhanImportFailed', lang), {
+      assertive: true,
+      actionLabel: t('common.retry', lang),
+      onAction: () => {
+        void handleAdhanImport(file, kind);
+      },
+    });
     return;
   }
   const code = validateAdhanFile(file);
@@ -81,12 +87,23 @@ export async function handleAdhanImport(file, kind) {
     render(store.getState());
   } catch (err) {
     console.error('[adhan-import]', err);
-    showToast(t('prayer.adhanImportFailed', lang));
+    showToast(t('prayer.adhanImportFailed', lang), {
+      assertive: true,
+      actionLabel: t('common.retry', lang),
+      onAction: () => {
+        void handleAdhanImport(file, kind);
+      },
+    });
   }
 }
 
 export async function handleImportFile(file) {
   try {
+    const lang = store.getState().settings.language;
+    if (backup.isImportFileTooLarge(file)) {
+      showToast(t('backup.fileTooLarge', lang));
+      return;
+    }
     // (v5.13.0, V12) kids sandbox: imports land outside the sandbox —
     // refuse inside kids mode instead of leaking foreign content in.
     if (store.getState().settings.kidsMode === true) {
@@ -96,7 +113,6 @@ export async function handleImportFile(file) {
     const text = await backup.readFileAsText(file);
     const result = backup.parseBackup(text);
     if (!result.success) {
-      const lang = store.getState().settings.language;
       showToast(backupErrorText(result, lang));
       return;
     }
@@ -104,7 +120,6 @@ export async function handleImportFile(file) {
     // — favorites, streaks, collections, statistics — with no undo. One
     // misclick used to wipe months of data with a cheerful "Done". Now the
     // person sees exactly what is about to happen and confirms first.
-    const lang = store.getState().settings.language;
     rt.pendingImportPayload = result.value;
     openModal(
       buildConfirm({
@@ -116,7 +131,14 @@ export async function handleImportFile(file) {
       { labelledBy: 'modal-title-confirm' }
     );
   } catch (err) {
-    showToast(t('common.error', store.getState().settings.language));
+    const lang = store.getState().settings.language;
+    showToast(t('common.error', lang), {
+      assertive: true,
+      actionLabel: t('common.retry', lang),
+      onAction: () => {
+        void handleImportFile(file);
+      },
+    });
     console.error('[import]', err);
   }
 }
@@ -128,6 +150,11 @@ export async function handleImportFile(file) {
  * so the boot graph stays untouched. */
 export async function handleImportPlanFile(file) {
   try {
+    const lang = store.getState().settings.language;
+    if (backup.isImportFileTooLarge(file)) {
+      showToast(t('plan.fileTooLarge', lang));
+      return;
+    }
     const text = await backup.readFileAsText(file);
     let json = null;
     try {
@@ -136,7 +163,6 @@ export async function handleImportPlanFile(file) {
       json = null;
     }
     const { isPlanFile, sanitizePlan } = await import('../domain/planExport.js');
-    const lang = store.getState().settings.language;
     if (!isPlanFile(json)) {
       showToast(t('plan.badFile', lang));
       return;
@@ -157,7 +183,14 @@ export async function handleImportPlanFile(file) {
       { labelledBy: 'modal-title-confirm' }
     );
   } catch (err) {
-    showToast(t('common.error', store.getState().settings.language));
+    const lang = store.getState().settings.language;
+    showToast(t('common.error', lang), {
+      assertive: true,
+      actionLabel: t('common.retry', lang),
+      onAction: () => {
+        void handleImportPlanFile(file);
+      },
+    });
     console.error('[import-plan]', err);
   }
 }

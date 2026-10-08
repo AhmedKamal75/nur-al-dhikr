@@ -168,7 +168,16 @@ function fetchQuranMetaShared({ announce = false } = {}) {
         console.error('[quran] failed to load meta', err);
         rt.quranMetaFetchStarted = false;
         flagLoad('quran-meta', true);
-        if (announce) showToast(t('quran.loadFailed', store.getState().settings.language));
+        if (announce) {
+          const retryLang = store.getState().settings.language;
+          showToast(t('quran.loadFailed', retryLang), {
+            assertive: true,
+            actionLabel: t('common.retry', retryLang),
+            onAction: () => {
+              void ensureQuranData(store.getState());
+            },
+          });
+        }
         return false;
       } finally {
         if (quranMetaInFlight === request) quranMetaInFlight = null;
@@ -247,7 +256,14 @@ export async function ensureQuranData(state) {
       if (!isCurrentGeneration(generation)) return;
       console.error('[quran] failed to load surah', id, err);
       flagLoad('quran-surah', true);
-      showToast(t('quran.loadFailed', store.getState().settings.language));
+      const retryLang = store.getState().settings.language;
+      showToast(t('quran.loadFailed', retryLang), {
+        assertive: true,
+        actionLabel: t('common.retry', retryLang),
+        onAction: () => {
+          void ensureQuranData(store.getState());
+        },
+      });
     } finally {
       quranSurahFetchesInFlight.delete(id);
     }

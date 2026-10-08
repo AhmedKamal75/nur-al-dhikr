@@ -9,7 +9,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.126**. The v5.17.83 full-corpus gates were green; the
+> Current version: **v5.17.136**. The v5.17.83 full-corpus gates were green; the
 > v5.17.84 targeted source/contracts bundle is green, while the full check and
 > Chromium matrix for v5.17.84 still need to be run on the authoritative local machine. The v5.17.77 handoff archive
 > itself failed this tree's own gates (format and version markers), which is
@@ -47,9 +47,9 @@
 | 4      | v5.17.25 | **8.7** | **A regression vs 8.8, and the first honestly named one in this table.** A broader probe found a **doubled Basmala** on Al-Fatiha p.1 and **59 records denying their own citation**. It also audited the backlog and caught six overclaims.                                                                                                                                                                                                                     |
 | 5      | v5.17.40 | **7.5** | **REGRESSION vs 8.7 (review 4), and the lowest number this project has recorded.** Measured by three subagents running the §3 rubric, with per-criterion evidence: Look 7.0/15, UX 7.5/15, Existence 8.0/10, Functionality 7.5/10, Usability 6.5/10, Omitted 6.0/10, Honesty 8.5/15, Bilingual 8.0/5, A11y 8.0/10 = 7.45→7.5. The scorer also audited THIS file and found two rows marked "fixed" that were not, and two claims of mine it could not reproduce. |
 
-**Review 5 was measured against v5.17.40. Eight releases have landed since,
-and none of them is in the 7.5 — they are un-scored context, and their effect
-must never be backdated into the number:**
+**Review 5 was measured against v5.17.40. Many releases have landed since,
+and none of them is assigned a retrospective score. v5.17.133–135 are un-scored
+implementation/review context; their effect must not be backdated into the history:**
 
 | Landed since (not scored)                                                                          | What changed                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -157,6 +157,11 @@ Recorded so "not done" is a decision with a reason rather than an omission.
 | **Row 46 — mushaf search (page-scoped surface)**                                  | Ayah-hit continuation is now clearer and Tafsir results also reach the exact Mushaf page; root-expanded matches disclose their relation. A true in-Mushaf page-scoped find surface (searching within the current page) remains open and is not claimed shipped yet.                                                                                                                                                |
 | **Row 48 — search counts read "0" while the corpus loads**                        | Reported by review 4 and **not reproducible** by me. Left open rather than fixed on no evidence.                                                                                                                                                                                                                                                                                                                   |
 | **Row 26 — iOS cannot be relied on for prayer-time wake-ups**                     | A platform limit, not a bug. `BLOCKED:device`.                                                                                                                                                                                                                                                                                                                                                                     |
+| **Row 52 — Hadith translation provenance / redistribution wording**               | Source/license chain remains unresolved; do not infer blanket permission from a repository licence.                                                                                                                                                                                                                                                                                                                |
+| **Row 53 — Word-by-word Quran data licence/snapshot not explicit enough**         | Exact redistributed dataset snapshot and permission chain remain unresolved.                                                                                                                                                                                                                                                                                                                                       |
+| **Row 54 — Mutable Tafsir `main` dependency**                                     | Runtime must be pinned to an immutable reviewed snapshot or self-hosted source.                                                                                                                                                                                                                                                                                                                                    |
+| **Row 58 — Mobile seven-door density**                                            | Historical 393px evidence is tight; current-device recertification is required before any further IA change.                                                                                                                                                                                                                                                                                                       |
+| **Row 59 — Home desktop balance**                                                 | v5.17.133 compacted the single-item continuation state; current-browser recapture must confirm the balance.                                                                                                                                                                                                                                                                                                        |
 
 ### UNVERIFIED prayer-method candidates — researched, NOT shipping (v5.17.40)
 
@@ -196,7 +201,7 @@ plus a scholar sign-off, at which point it gains a `source` entry with
 
 ## 5. The standing ledger
 
-Full detail and per-row evidence: **`docs/OPEN-ISSUES.md`** — 48 rows. Its
+Full detail and per-row evidence: **`docs/OPEN-ISSUES.md`** — 59 rows. Its
 header, its summary table and its rows are cross-checked by
 `tests/open-issues-ledger.test.js`, so the document cannot quietly disagree
 with itself.

@@ -235,7 +235,13 @@ export async function runOfflineBatch(groupIds) {
   const lang = store.getState().settings.language;
   if (store.getState().offlineJobs?.running) return;
   if (typeof navigator !== 'undefined' && 'onLine' in navigator && !navigator.onLine) {
-    showToast(t('offline.needOnline', lang), { assertive: true });
+    showToast(t('offline.needOnline', lang), {
+      assertive: true,
+      actionLabel: t('common.retry', lang),
+      onAction: () => {
+        void runOfflineBatch(groupIds);
+      },
+    });
     return;
   }
   const ids = OFFLINE_GROUPS.map((g) => g.id).filter((id) => groupIds.includes(id));

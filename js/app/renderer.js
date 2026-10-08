@@ -531,11 +531,24 @@ export function focusSignature(el) {
  * never the live user-owned property, so in-place patching cannot clobber
  * typed-ahead text or user toggles.
  */
-function patchElement(cur, inc) {
+export function patchElement(cur, inc) {
+  // (v5.17.136) `open` on <details> is a USER-OWNED toggle — the same class of
+  // state as an input's `value`/`checked`, which the loops below already treat
+  // as property-safe. It was NOT exempt, and no view models "is this panel
+  // open", so the attribute was STRIPPED on the next dispatch: every panel
+  // collapsed the moment you touched anything inside it. On #/audio that made
+  // the new sleep-timer ladder unusable (one tap per opening of "Recitation
+  // defaults" — 5 re-opens per 6-tap walk, measured against v5.17.126, which
+  // preserved them). Views whose open state genuinely IS state-driven — the
+  // Settings accordions, the nav doors, the prayer panel — opt in with
+  // `data-open-controlled` and keep state-owned semantics.
+  const openIsUserOwned = cur.tagName === 'DETAILS' && !cur.hasAttribute('data-open-controlled');
   for (const attr of Array.from(cur.attributes)) {
+    if (openIsUserOwned && attr.name === 'open') continue;
     if (!inc.hasAttribute(attr.name)) cur.removeAttribute(attr.name);
   }
   for (const attr of Array.from(inc.attributes)) {
+    if (openIsUserOwned && attr.name === 'open') continue;
     if (cur.getAttribute(attr.name) !== attr.value) {
       cur.setAttribute(attr.name, attr.value);
     }

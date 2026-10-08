@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-06T11:05:57.348Z",
-  "routeCount": 33,
+  "generatedAt": "2026-10-07T15:17:07.360Z",
+  "routeCount": 34,
   "results": [
     {
       "lang": "en",
@@ -201,6 +201,12 @@
       "empty": false
     },
     {
+      "lang": "en",
+      "route": "tajweed-course",
+      "path": "#/tajweed-course",
+      "empty": false
+    },
+    {
       "lang": "ar",
       "route": "home",
       "path": "#/home",
@@ -396,6 +402,12 @@
       "lang": "ar",
       "route": "offline",
       "path": "#/offline",
+      "empty": false
+    },
+    {
+      "lang": "ar",
+      "route": "tajweed-course",
+      "path": "#/tajweed-course",
       "empty": false
     }
   ]

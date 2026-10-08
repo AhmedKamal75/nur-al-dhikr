@@ -119,3 +119,9 @@ citable source and they will be fixed from one.
 
 Code: [MIT](LICENSE.md). Content (texts, translations, fonts, audio)
 carries its own open licenses — see [CREDITS.md](CREDITS.md).
+
+## Offline storage and mobile-platform limits
+
+Nūr al-Dhikr is offline-first, but browser-managed storage is not a substitute for backups. On WebKit, website data can be evicted under storage pressure or other policy conditions; supported browsers may expose the Storage API so the app can request persistent storage. Nūr al-Dhikr exposes that request from **Offline → Manage offline storage** when the browser supports it. Keep a recent backup regardless.
+
+Prayer reminders are also subject to the capabilities of the browser and operating system. Web Push is supported by Home Screen web apps on modern iOS/iPadOS, but exact background alarm behavior should never be promised by a browser-only application.

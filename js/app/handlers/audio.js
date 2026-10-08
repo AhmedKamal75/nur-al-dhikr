@@ -91,17 +91,19 @@ export const clickHandlers = {
     // left people guessing whether 2MB landed. A 404 is learned
     // availability, reported honestly instead of as a generic failure.
     if (!res.ok && res.error === 'missing') markSurahMissing(ds.moshaf, surah);
-    showToast(
-      t(
-        res.ok
-          ? 'audio.downloadDone'
-          : res.error === 'missing'
-            ? 'audio.surahUnavailable'
-            : 'audio.downloadFailed',
-        lang
-      ),
-      res.ok ? {} : { assertive: true }
-    );
+    if (res.ok) {
+      showToast(t('audio.downloadDone', lang));
+    } else if (res.error === 'missing') {
+      showToast(t('audio.surahUnavailable', lang), { assertive: true });
+    } else {
+      showToast(t('audio.downloadFailed', lang), {
+        assertive: true,
+        actionLabel: t('common.retry', lang),
+        onAction: () => {
+          void clickHandlers['audio-download-surah'](ds);
+        },
+      });
+    }
   },
 
   'audio-delete-surah': async (ds) => {
@@ -171,8 +173,15 @@ export const clickHandlers = {
       store.dispatch(actions.tickerNudge());
     }
     if (evicted) showToast(t('audio.evictedWarning', lang, { n: evicted }), { assertive: true });
-    if (failed && !saved) showToast(t('audio.downloadFailed', lang), { assertive: true });
-    else if (failed) showToast(t('audio.versePackDone', lang, { n: done, m: total }));
+    if (failed && !saved) {
+      showToast(t('audio.downloadFailed', lang), {
+        assertive: true,
+        actionLabel: t('common.retry', lang),
+        onAction: () => {
+          void clickHandlers['verse-pack-download'](ds);
+        },
+      });
+    } else if (failed) showToast(t('audio.versePackDone', lang, { n: done, m: total }));
     else showToast(t('audio.downloadDone', lang));
   },
 
@@ -511,7 +520,14 @@ export const clickHandlers = {
       closeModal();
     } catch (err) {
       console.error('[playlist] failed to start', err);
-      showToast(t('audio.reciteStartFailed', store.getState().settings.language));
+      const retryLang = store.getState().settings.language;
+      showToast(t('audio.reciteStartFailed', retryLang), {
+        assertive: true,
+        actionLabel: t('common.retry', retryLang),
+        onAction: () => {
+          void clickHandlers['playlist-play'](ds);
+        },
+      });
     }
   },
 
@@ -606,6 +622,12 @@ export const clickHandlers = {
     applyFileSleep(nextSleepRung(snap.enabled, snap.minutes), store.getState().settings.language);
   },
 
+  'audio-sleep-cycle': () => {
+    const p = store.getState().player || {};
+    const next = nextSleepRung(p.sleepEnabled === true, Number(p.sleepMinutes));
+    applyFileSleep(next, store.getState().settings.language);
+  },
+
   'player-next': () => {
     const p = store.getState().player;
     if (p?.surah != null && p.surah < 114) startAudioPlay(p.moshafId, p.surah + 1);
@@ -693,15 +715,6 @@ export const changeHandlers = [
         store.dispatch(actions.setSurahPlayback(surahPlayback.setLoop(v)));
         showToast(t(v === 1 ? 'audio.loopOff' : 'audio.loopOn', lang, { n: v }));
         return;
-      }
-      if (pref === 'sleep') {
-        if (el.value === '' || el.value == null) {
-          applyFileSleep(null, lang);
-          return;
-        }
-        const m = parseInt(el.value, 10);
-        if (!SLEEP_TIMER_CHOICES.includes(m)) return;
-        applyFileSleep(m, lang);
       }
     },
   },

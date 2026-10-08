@@ -1,0 +1,1800 @@
+[
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "Sleep timer off",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "Sleep timer off",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "Sleep timer off",
+      "labelText": "Sleep timer off",
+      "w": 260,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 114,
+      "clientW": 258,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 360,
+        "h": 800
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 260x44px, label \"Sleep timer off\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (114px content in 258px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5m -> on:15m -> on:30m -> on:45m -> on:60m -> on:Sleep timer off."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "en",
+    "theme": "dark",
+    "viewport": "360x800",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "Sleep timer off",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "Sleep timer off",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "Sleep timer off",
+      "labelText": "Sleep timer off",
+      "w": 260,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 114,
+      "clientW": 258,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 360,
+        "h": 800
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 260x44px, label \"Sleep timer off\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (114px content in 258px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5m -> on:15m -> on:30m -> on:45m -> on:60m -> on:Sleep timer off."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "أُلغي مؤقت النوم",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "أُلغي مؤقت النوم",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "أُلغي مؤقت النوم",
+      "labelText": "أُلغي مؤقت النوم",
+      "w": 260,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 79,
+      "clientW": 258,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 360,
+        "h": 800
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 260x44px, label \"أُلغي مؤقت النوم\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (79px content in 258px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5 د -> on:15 د -> on:30 د -> on:45 د -> on:60 د -> on:أُلغي مؤقت النوم."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "ar",
+    "theme": "dark",
+    "viewport": "360x800",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "أُلغي مؤقت النوم",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "أُلغي مؤقت النوم",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "أُلغي مؤقت النوم",
+      "labelText": "أُلغي مؤقت النوم",
+      "w": 260,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 79,
+      "clientW": 258,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 360,
+        "h": 800
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 260x44px, label \"أُلغي مؤقت النوم\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (79px content in 258px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5 د -> on:15 د -> on:30 د -> on:45 د -> on:60 د -> on:أُلغي مؤقت النوم."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "Sleep timer off",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "Sleep timer off",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "Sleep timer off",
+      "labelText": "Sleep timer off",
+      "w": 293,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 114,
+      "clientW": 291,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 393,
+        "h": 852
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 293x44px, label \"Sleep timer off\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (114px content in 291px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5m -> on:15m -> on:30m -> on:45m -> on:60m -> on:Sleep timer off."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "en",
+    "theme": "dark",
+    "viewport": "393x852",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "Sleep timer off",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "Sleep timer off",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "Sleep timer off",
+      "labelText": "Sleep timer off",
+      "w": 293,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 114,
+      "clientW": 291,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 393,
+        "h": 852
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 293x44px, label \"Sleep timer off\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (114px content in 291px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5m -> on:15m -> on:30m -> on:45m -> on:60m -> on:Sleep timer off."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "أُلغي مؤقت النوم",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "أُلغي مؤقت النوم",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "أُلغي مؤقت النوم",
+      "labelText": "أُلغي مؤقت النوم",
+      "w": 293,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 79,
+      "clientW": 291,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 393,
+        "h": 852
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 293x44px, label \"أُلغي مؤقت النوم\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (79px content in 291px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5 د -> on:15 د -> on:30 د -> on:45 د -> on:60 د -> on:أُلغي مؤقت النوم."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "ar",
+    "theme": "dark",
+    "viewport": "393x852",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "أُلغي مؤقت النوم",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "أُلغي مؤقت النوم",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "أُلغي مؤقت النوم",
+      "labelText": "أُلغي مؤقت النوم",
+      "w": 293,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 79,
+      "clientW": 291,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 393,
+        "h": 852
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 293x44px, label \"أُلغي مؤقت النوم\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (79px content in 291px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5 د -> on:15 د -> on:30 د -> on:45 د -> on:60 د -> on:أُلغي مؤقت النوم."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "Sleep timer off",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "Sleep timer off",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "Sleep timer off",
+      "labelText": "Sleep timer off",
+      "w": 643,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 114,
+      "clientW": 641,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 643x44px, label \"Sleep timer off\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (114px content in 641px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5m -> on:15m -> on:30m -> on:45m -> on:60m -> on:Sleep timer off."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "en",
+    "theme": "dark",
+    "viewport": "1024x768",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "Sleep timer off",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60m",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "Sleep timer off",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "Sleep timer off",
+      "labelText": "Sleep timer off",
+      "w": 643,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 114,
+      "clientW": 641,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 643x44px, label \"Sleep timer off\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (114px content in 641px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5m -> on:15m -> on:30m -> on:45m -> on:60m -> on:Sleep timer off."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "أُلغي مؤقت النوم",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "أُلغي مؤقت النوم",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "أُلغي مؤقت النوم",
+      "labelText": "أُلغي مؤقت النوم",
+      "w": 643,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 79,
+      "clientW": 641,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 643x44px, label \"أُلغي مؤقت النوم\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (79px content in 641px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5 د -> on:15 د -> on:30 د -> on:45 د -> on:60 د -> on:أُلغي مؤقت النوم."
+  },
+  {
+    "case": "audio-sleep-ladder",
+    "view": "#/audio",
+    "lang": "ar",
+    "theme": "dark",
+    "viewport": "1024x768",
+    "action": "open Playback defaults, click the sleep control 6 times",
+    "before": "أُلغي مؤقت النوم",
+    "rungs": [
+      {
+        "expected": "5",
+        "pressed": "true",
+        "label": "5 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "15",
+        "pressed": "true",
+        "label": "15 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "30",
+        "pressed": "true",
+        "label": "30 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "45",
+        "pressed": "true",
+        "label": "45 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "60",
+        "pressed": "true",
+        "label": "60 د",
+        "disclosuresOpen": 0
+      },
+      {
+        "expected": "off",
+        "pressed": "false",
+        "label": "أُلغي مؤقت النوم",
+        "disclosuresOpen": 0
+      }
+    ],
+    "reopensNeededToCycleLadder": 5,
+    "sleepControlsOnScreen": 1,
+    "sleepSelectsOnScreen": 0,
+    "measurement": {
+      "found": true,
+      "text": "أُلغي مؤقت النوم",
+      "labelText": "أُلغي مؤقت النوم",
+      "w": 643,
+      "h": 44,
+      "labelLines": 1,
+      "labelWraps": false,
+      "labelClipped": false,
+      "inlineContent": 79,
+      "clientW": 641,
+      "whiteSpace": "nowrap",
+      "scrollDeltaW": 6,
+      "scrollDeltaH": 6,
+      "overflowsParent": false,
+      "reallyVisible": false,
+      "viewport": {
+        "w": 1024,
+        "h": 768
+      }
+    },
+    "pageErrors": [],
+    "result": "FAIL",
+    "observation": "1 sleep control(s), 0 sleep select(s). RE-OPENS NEEDED to walk the ladder: 5/6 (0/0/0/0/0/0 disclosures open after each tap). Control 643x44px, label \"أُلغي مؤقت النوم\" on 1 line(s) (white-space:nowrap), labelWraps=false labelClipped=false (79px content in 641px), scrollDelta=6/6, overflowsParent=false. Ladder: on:5 د -> on:15 د -> on:30 د -> on:45 د -> on:60 د -> on:أُلغي مؤقت النوم."
+  },
+  {
+    "case": "shared-ladder-state",
+    "view": "#/audio + player bar",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "arm sleep from Audio settings, create a player, click the player chip once",
+    "method": "player created via store dispatch (no audio device in headless)",
+    "armedInSettings": "5m",
+    "chipPressed": "true",
+    "chipLabel": "04:59",
+    "settingsLabelAfterChipClick": "15m",
+    "pageErrors": [],
+    "result": "PASS",
+    "observation": "Armed from Audio settings -> \"5m\". The player chip reported aria-pressed=true \"04:59\" WITHOUT being touched (shared state). After one click on the player chip the Audio settings control read \"15m\" — the two surfaces moved together, so it is one ladder."
+  },
+  {
+    "case": "nav-seven-door-active-treatment",
+    "view": "#/home",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Home, read the nav doors and the active treatment",
+    "result": {
+      "nav": true,
+      "sections": 10,
+      "doors": 66,
+      "activeCount": 2,
+      "libraryVisible": false,
+      "libraryInClosedSection": true,
+      "activeStyles": [
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "0px",
+          "outline": "3px"
+        },
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "14px",
+          "outline": "3px"
+        }
+      ]
+    },
+    "pageErrors": [],
+    "observation": "{\"nav\":true,\"sections\":10,\"doors\":66,\"activeCount\":2,\"libraryVisible\":false,\"libraryInClosedSection\":true,\"activeStyles\":[{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"0px\",\"outline\":\"3px\"},{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"14px\",\"outline\":\"3px\"}]}"
+  },
+  {
+    "case": "nav-seven-door-active-treatment",
+    "view": "#/home",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Home, read the nav doors and the active treatment",
+    "result": {
+      "nav": true,
+      "sections": 10,
+      "doors": 66,
+      "activeCount": 2,
+      "libraryVisible": false,
+      "libraryInClosedSection": true,
+      "activeStyles": [
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "0px",
+          "outline": "3px"
+        },
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "14px",
+          "outline": "3px"
+        }
+      ]
+    },
+    "pageErrors": [],
+    "observation": "{\"nav\":true,\"sections\":10,\"doors\":66,\"activeCount\":2,\"libraryVisible\":false,\"libraryInClosedSection\":true,\"activeStyles\":[{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"0px\",\"outline\":\"3px\"},{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"14px\",\"outline\":\"3px\"}]}"
+  },
+  {
+    "case": "nav-seven-door-active-treatment",
+    "view": "#/home",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Home, read the nav doors and the active treatment",
+    "result": {
+      "nav": true,
+      "sections": 10,
+      "doors": 66,
+      "activeCount": 2,
+      "libraryVisible": false,
+      "libraryInClosedSection": true,
+      "activeStyles": [
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "0px",
+          "outline": "3px"
+        },
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "14px",
+          "outline": "3px"
+        }
+      ]
+    },
+    "pageErrors": [],
+    "observation": "{\"nav\":true,\"sections\":10,\"doors\":66,\"activeCount\":2,\"libraryVisible\":false,\"libraryInClosedSection\":true,\"activeStyles\":[{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"0px\",\"outline\":\"3px\"},{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"14px\",\"outline\":\"3px\"}]}"
+  },
+  {
+    "case": "nav-seven-door-active-treatment",
+    "view": "#/home",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Home, read the nav doors and the active treatment",
+    "result": {
+      "nav": true,
+      "sections": 10,
+      "doors": 66,
+      "activeCount": 2,
+      "libraryVisible": false,
+      "libraryInClosedSection": true,
+      "activeStyles": [
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "0px",
+          "outline": "3px"
+        },
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "14px",
+          "outline": "3px"
+        }
+      ]
+    },
+    "pageErrors": [],
+    "observation": "{\"nav\":true,\"sections\":10,\"doors\":66,\"activeCount\":2,\"libraryVisible\":false,\"libraryInClosedSection\":true,\"activeStyles\":[{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"0px\",\"outline\":\"3px\"},{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"14px\",\"outline\":\"3px\"}]}"
+  },
+  {
+    "case": "nav-seven-door-active-treatment",
+    "view": "#/home",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Home, read the nav doors and the active treatment",
+    "result": {
+      "nav": true,
+      "sections": 10,
+      "doors": 66,
+      "activeCount": 2,
+      "libraryVisible": true,
+      "libraryInClosedSection": true,
+      "activeStyles": [
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.887059 0.928627 0.907608)",
+          "radius": "12px",
+          "outline": "3px"
+        },
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "14px",
+          "outline": "3px"
+        }
+      ]
+    },
+    "pageErrors": [],
+    "observation": "{\"nav\":true,\"sections\":10,\"doors\":66,\"activeCount\":2,\"libraryVisible\":true,\"libraryInClosedSection\":true,\"activeStyles\":[{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.887059 0.928627 0.907608)\",\"radius\":\"12px\",\"outline\":\"3px\"},{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"14px\",\"outline\":\"3px\"}]}"
+  },
+  {
+    "case": "nav-seven-door-active-treatment",
+    "view": "#/home",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Home, read the nav doors and the active treatment",
+    "result": {
+      "nav": true,
+      "sections": 10,
+      "doors": 66,
+      "activeCount": 2,
+      "libraryVisible": true,
+      "libraryInClosedSection": true,
+      "activeStyles": [
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.887059 0.928627 0.907608)",
+          "radius": "12px",
+          "outline": "3px"
+        },
+        {
+          "cls": "nav__item nav__item--active",
+          "bg": "color(srgb 0.0588235 0.462745 0.431373 / 0.12)",
+          "radius": "14px",
+          "outline": "3px"
+        }
+      ]
+    },
+    "pageErrors": [],
+    "observation": "{\"nav\":true,\"sections\":10,\"doors\":66,\"activeCount\":2,\"libraryVisible\":true,\"libraryInClosedSection\":true,\"activeStyles\":[{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.887059 0.928627 0.907608)\",\"radius\":\"12px\",\"outline\":\"3px\"},{\"cls\":\"nav__item nav__item--active\",\"bg\":\"color(srgb 0.0588235 0.462745 0.431373 / 0.12)\",\"radius\":\"14px\",\"outline\":\"3px\"}]}"
+  },
+  {
+    "case": "offline-essentials-above-fold",
+    "view": "#/offline",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Offline, measure the essentials switch against the first viewport",
+    "result": {
+      "found": true,
+      "headingTop": 241,
+      "bodyTop": 279,
+      "switchTop": 524,
+      "switchH": 32,
+      "switchInFirstViewport": true,
+      "viewportH": 800
+    },
+    "pageErrors": [],
+    "observation": "{\"found\":true,\"headingTop\":241,\"bodyTop\":279,\"switchTop\":524,\"switchH\":32,\"switchInFirstViewport\":true,\"viewportH\":800}"
+  },
+  {
+    "case": "offline-essentials-above-fold",
+    "view": "#/offline",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Offline, measure the essentials switch against the first viewport",
+    "result": {
+      "found": true,
+      "headingTop": 220,
+      "bodyTop": 258,
+      "switchTop": 384,
+      "switchH": 32,
+      "switchInFirstViewport": true,
+      "viewportH": 800
+    },
+    "pageErrors": [],
+    "observation": "{\"found\":true,\"headingTop\":220,\"bodyTop\":258,\"switchTop\":384,\"switchH\":32,\"switchInFirstViewport\":true,\"viewportH\":800}"
+  },
+  {
+    "case": "offline-essentials-above-fold",
+    "view": "#/offline",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Offline, measure the essentials switch against the first viewport",
+    "result": {
+      "found": true,
+      "headingTop": 241,
+      "bodyTop": 279,
+      "switchTop": 477,
+      "switchH": 32,
+      "switchInFirstViewport": true,
+      "viewportH": 852
+    },
+    "pageErrors": [],
+    "observation": "{\"found\":true,\"headingTop\":241,\"bodyTop\":279,\"switchTop\":477,\"switchH\":32,\"switchInFirstViewport\":true,\"viewportH\":852}"
+  },
+  {
+    "case": "offline-essentials-above-fold",
+    "view": "#/offline",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Offline, measure the essentials switch against the first viewport",
+    "result": {
+      "found": true,
+      "headingTop": 220,
+      "bodyTop": 258,
+      "switchTop": 363,
+      "switchH": 32,
+      "switchInFirstViewport": true,
+      "viewportH": 852
+    },
+    "pageErrors": [],
+    "observation": "{\"found\":true,\"headingTop\":220,\"bodyTop\":258,\"switchTop\":363,\"switchH\":32,\"switchInFirstViewport\":true,\"viewportH\":852}"
+  },
+  {
+    "case": "offline-essentials-above-fold",
+    "view": "#/offline",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Offline, measure the essentials switch against the first viewport",
+    "result": {
+      "found": true,
+      "headingTop": 222,
+      "bodyTop": 260,
+      "switchTop": 364,
+      "switchH": 32,
+      "switchInFirstViewport": true,
+      "viewportH": 768
+    },
+    "pageErrors": [],
+    "observation": "{\"found\":true,\"headingTop\":222,\"bodyTop\":260,\"switchTop\":364,\"switchH\":32,\"switchInFirstViewport\":true,\"viewportH\":768}"
+  },
+  {
+    "case": "offline-essentials-above-fold",
+    "view": "#/offline",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Offline, measure the essentials switch against the first viewport",
+    "result": {
+      "found": true,
+      "headingTop": 222,
+      "bodyTop": 260,
+      "switchTop": 340,
+      "switchH": 32,
+      "switchInFirstViewport": true,
+      "viewportH": 768
+    },
+    "pageErrors": [],
+    "observation": "{\"found\":true,\"headingTop\":222,\"bodyTop\":260,\"switchTop\":340,\"switchH\":32,\"switchInFirstViewport\":true,\"viewportH\":768}"
+  },
+  {
+    "case": "invalid-quran-deep-link",
+    "view": "#/quran/9999",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "deep link to a Quran id outside 1-114",
+    "result": {
+      "skeleton": false,
+      "chars": 136,
+      "heading": "Surah not found.",
+      "notFound": true
+    },
+    "pageErrors": [
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "observation": "{\"skeleton\":false,\"chars\":136,\"heading\":\"Surah not found.\",\"notFound\":true}"
+  },
+  {
+    "case": "invalid-quran-deep-link",
+    "view": "#/quran/9999",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "deep link to a Quran id outside 1-114",
+    "result": {
+      "skeleton": false,
+      "chars": 149,
+      "heading": "السورة غير موجودة.",
+      "notFound": true
+    },
+    "pageErrors": [
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "observation": "{\"skeleton\":false,\"chars\":149,\"heading\":\"السورة غير موجودة.\",\"notFound\":true}"
+  },
+  {
+    "case": "invalid-quran-deep-link",
+    "view": "#/quran/9999",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "deep link to a Quran id outside 1-114",
+    "result": {
+      "skeleton": false,
+      "chars": 136,
+      "heading": "Surah not found.",
+      "notFound": true
+    },
+    "pageErrors": [
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "observation": "{\"skeleton\":false,\"chars\":136,\"heading\":\"Surah not found.\",\"notFound\":true}"
+  },
+  {
+    "case": "invalid-quran-deep-link",
+    "view": "#/quran/9999",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "deep link to a Quran id outside 1-114",
+    "result": {
+      "skeleton": false,
+      "chars": 149,
+      "heading": "السورة غير موجودة.",
+      "notFound": true
+    },
+    "pageErrors": [
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "observation": "{\"skeleton\":false,\"chars\":149,\"heading\":\"السورة غير موجودة.\",\"notFound\":true}"
+  },
+  {
+    "case": "invalid-quran-deep-link",
+    "view": "#/quran/9999",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "deep link to a Quran id outside 1-114",
+    "result": {
+      "skeleton": false,
+      "chars": 136,
+      "heading": "Surah not found.",
+      "notFound": true
+    },
+    "pageErrors": [
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "observation": "{\"skeleton\":false,\"chars\":136,\"heading\":\"Surah not found.\",\"notFound\":true}"
+  },
+  {
+    "case": "invalid-quran-deep-link",
+    "view": "#/quran/9999",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "deep link to a Quran id outside 1-114",
+    "result": {
+      "skeleton": false,
+      "chars": 149,
+      "heading": "السورة غير موجودة.",
+      "notFound": true
+    },
+    "pageErrors": [
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: [quran] failed to load surah 9999 Error: Failed to fetch data/quran/9999.json: 404\n    at fetchJSON (http://127.0.0.1:8155/js/app/net.js:48:",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)",
+      "console: Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "observation": "{\"skeleton\":false,\"chars\":149,\"heading\":\"السورة غير موجودة.\",\"notFound\":true}"
+  },
+  {
+    "case": "prayer-methodology-disclosure",
+    "view": "#/prayer",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Prayer, expand the methodology disclosure",
+    "result": {
+      "total": 6,
+      "open": 1
+    },
+    "pageErrors": [],
+    "observation": "{\"total\":6,\"open\":1}"
+  },
+  {
+    "case": "prayer-methodology-disclosure",
+    "view": "#/prayer",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Prayer, expand the methodology disclosure",
+    "result": {
+      "total": 6,
+      "open": 1
+    },
+    "pageErrors": [],
+    "observation": "{\"total\":6,\"open\":1}"
+  },
+  {
+    "case": "prayer-methodology-disclosure",
+    "view": "#/prayer",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Prayer, expand the methodology disclosure",
+    "result": {
+      "total": 6,
+      "open": 1
+    },
+    "pageErrors": [],
+    "observation": "{\"total\":6,\"open\":1}"
+  },
+  {
+    "case": "prayer-methodology-disclosure",
+    "view": "#/prayer",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Prayer, expand the methodology disclosure",
+    "result": {
+      "total": 6,
+      "open": 1
+    },
+    "pageErrors": [],
+    "observation": "{\"total\":6,\"open\":1}"
+  },
+  {
+    "case": "prayer-methodology-disclosure",
+    "view": "#/prayer",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Prayer, expand the methodology disclosure",
+    "result": {
+      "total": 6,
+      "open": 1
+    },
+    "pageErrors": [],
+    "observation": "{\"total\":6,\"open\":1}"
+  },
+  {
+    "case": "prayer-methodology-disclosure",
+    "view": "#/prayer",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Prayer, expand the methodology disclosure",
+    "result": {
+      "total": 6,
+      "open": 1
+    },
+    "pageErrors": [],
+    "observation": "{\"total\":6,\"open\":1}"
+  },
+  {
+    "case": "settings-long-metadata",
+    "view": "#/settings",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Settings, measure row overflow and label wrapping",
+    "result": {
+      "rowCount": 2,
+      "horizontalOverflowRows": 0,
+      "verticalScrollRows": 0,
+      "details": 13,
+      "h1": "Settings"
+    },
+    "pageErrors": [],
+    "observation": "{\"rowCount\":2,\"horizontalOverflowRows\":0,\"verticalScrollRows\":0,\"details\":13,\"h1\":\"Settings\"}"
+  },
+  {
+    "case": "settings-long-metadata",
+    "view": "#/settings",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Settings, measure row overflow and label wrapping",
+    "result": {
+      "rowCount": 2,
+      "horizontalOverflowRows": 0,
+      "verticalScrollRows": 0,
+      "details": 13,
+      "h1": "الإعدادات"
+    },
+    "pageErrors": [],
+    "observation": "{\"rowCount\":2,\"horizontalOverflowRows\":0,\"verticalScrollRows\":0,\"details\":13,\"h1\":\"الإعدادات\"}"
+  },
+  {
+    "case": "settings-long-metadata",
+    "view": "#/settings",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Settings, measure row overflow and label wrapping",
+    "result": {
+      "rowCount": 2,
+      "horizontalOverflowRows": 0,
+      "verticalScrollRows": 0,
+      "details": 13,
+      "h1": "Settings"
+    },
+    "pageErrors": [],
+    "observation": "{\"rowCount\":2,\"horizontalOverflowRows\":0,\"verticalScrollRows\":0,\"details\":13,\"h1\":\"Settings\"}"
+  },
+  {
+    "case": "settings-long-metadata",
+    "view": "#/settings",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Settings, measure row overflow and label wrapping",
+    "result": {
+      "rowCount": 2,
+      "horizontalOverflowRows": 0,
+      "verticalScrollRows": 0,
+      "details": 13,
+      "h1": "الإعدادات"
+    },
+    "pageErrors": [],
+    "observation": "{\"rowCount\":2,\"horizontalOverflowRows\":0,\"verticalScrollRows\":0,\"details\":13,\"h1\":\"الإعدادات\"}"
+  },
+  {
+    "case": "settings-long-metadata",
+    "view": "#/settings",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Settings, measure row overflow and label wrapping",
+    "result": {
+      "rowCount": 2,
+      "horizontalOverflowRows": 0,
+      "verticalScrollRows": 0,
+      "details": 13,
+      "h1": "Settings"
+    },
+    "pageErrors": [],
+    "observation": "{\"rowCount\":2,\"horizontalOverflowRows\":0,\"verticalScrollRows\":0,\"details\":13,\"h1\":\"Settings\"}"
+  },
+  {
+    "case": "settings-long-metadata",
+    "view": "#/settings",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Settings, measure row overflow and label wrapping",
+    "result": {
+      "rowCount": 2,
+      "horizontalOverflowRows": 0,
+      "verticalScrollRows": 0,
+      "details": 13,
+      "h1": "الإعدادات"
+    },
+    "pageErrors": [],
+    "observation": "{\"rowCount\":2,\"horizontalOverflowRows\":0,\"verticalScrollRows\":0,\"details\":13,\"h1\":\"الإعدادات\"}"
+  },
+  {
+    "case": "statistics-route",
+    "view": "#/statistics",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Statistics, confirm it renders content",
+    "result": {
+      "h1": "Statistics",
+      "chars": 550,
+      "details": 0
+    },
+    "pageErrors": [],
+    "observation": "{\"h1\":\"Statistics\",\"chars\":550,\"details\":0}"
+  },
+  {
+    "case": "statistics-route",
+    "view": "#/statistics",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "360x800",
+    "action": "open Statistics, confirm it renders content",
+    "result": {
+      "h1": "الإحصائيات",
+      "chars": 486,
+      "details": 0
+    },
+    "pageErrors": [],
+    "observation": "{\"h1\":\"الإحصائيات\",\"chars\":486,\"details\":0}"
+  },
+  {
+    "case": "statistics-route",
+    "view": "#/statistics",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Statistics, confirm it renders content",
+    "result": {
+      "h1": "Statistics",
+      "chars": 550,
+      "details": 0
+    },
+    "pageErrors": [],
+    "observation": "{\"h1\":\"Statistics\",\"chars\":550,\"details\":0}"
+  },
+  {
+    "case": "statistics-route",
+    "view": "#/statistics",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "open Statistics, confirm it renders content",
+    "result": {
+      "h1": "الإحصائيات",
+      "chars": 486,
+      "details": 0
+    },
+    "pageErrors": [],
+    "observation": "{\"h1\":\"الإحصائيات\",\"chars\":486,\"details\":0}"
+  },
+  {
+    "case": "statistics-route",
+    "view": "#/statistics",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Statistics, confirm it renders content",
+    "result": {
+      "h1": "Statistics",
+      "chars": 550,
+      "details": 0
+    },
+    "pageErrors": [],
+    "observation": "{\"h1\":\"Statistics\",\"chars\":550,\"details\":0}"
+  },
+  {
+    "case": "statistics-route",
+    "view": "#/statistics",
+    "lang": "ar",
+    "theme": "light",
+    "viewport": "1024x768",
+    "action": "open Statistics, confirm it renders content",
+    "result": {
+      "h1": "الإحصائيات",
+      "chars": 486,
+      "details": 0
+    },
+    "pageErrors": [],
+    "observation": "{\"h1\":\"الإحصائيات\",\"chars\":486,\"details\":0}"
+  },
+  {
+    "case": "offline-essentials-persistence",
+    "view": "#/offline",
+    "lang": "en",
+    "theme": "light",
+    "viewport": "393x852",
+    "action": "toggle the essentials switch, reload, read it again",
+    "before": true,
+    "after": false,
+    "afterReload": false,
+    "result": "PASS",
+    "observation": "checked true -> false -> after reload false. The toggle responded and the change survived a reload."
+  }
+]

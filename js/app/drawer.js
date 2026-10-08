@@ -59,12 +59,14 @@ export function renderErrorScreen(err) {
   const lang = errorScreenLang();
   const main = document.getElementById('main') || document.body;
   main.innerHTML = `
-    <div style="max-width:420px;margin:15vh auto;padding:24px;text-align:center;font-family:system-ui,sans-serif;">
-      <p style="font-size:2rem;margin-bottom:8px;">\u26A0\uFE0F</p>
-      <h1 style="font-size:1.25rem;margin-bottom:8px;">${t('error.screen.title', lang)}</h1>
-      <p style="color:#555;font-size:0.9rem;margin-bottom:20px;">${t('error.screen.body', lang)}</p>
-      <button id="error-reload-btn" style="margin:4px;padding:10px 20px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer;">${t('error.screen.reload', lang)}</button>
-      <button id="error-reset-btn" style="margin:4px;padding:10px 20px;border-radius:8px;border:none;background:#B91C1C;color:#fff;cursor:pointer;">${t('error.screen.reset', lang)}</button>
+    <div class="error-screen" lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">
+      <p class="error-screen__icon" aria-hidden="true">\u26A0\uFE0F</p>
+      <h1 class="error-screen__title">${t('error.screen.title', lang)}</h1>
+      <p class="error-screen__body">${t('error.screen.body', lang)}</p>
+      <div class="error-screen__actions">
+        <button id="error-reload-btn" class="error-screen__button error-screen__button--primary" type="button">${t('error.screen.reload', lang)}</button>
+        <button id="error-reset-btn" class="error-screen__button error-screen__button--danger" type="button">${t('error.screen.reset', lang)}</button>
+      </div>
     </div>`;
   document
     .getElementById('error-reload-btn')

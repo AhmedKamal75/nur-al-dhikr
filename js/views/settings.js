@@ -150,9 +150,16 @@ export function deferredSetupHTML(state, lang) {
   </section>`;
 }
 
-/** Home panel order rows: up/down buttons + hide checkbox per panel.
- *  Shows every panel (visible in effective order, hidden ones last) so a
- *  hidden panel can always be brought back. */
+/** Home panel order rows: up/down buttons + visibility switch per panel.
+ *  Shows every panel (in effective order first, the rest last) so a panel that
+ *  is off can always be brought back.
+ *
+ *  (v5.17.136) The switch reports WHERE THE PANEL ACTUALLY IS. It used to
+ *  render from `hidden` alone, so every optional panel showed ON while
+ *  resolveHomePanels() kept it off Home — a switch claiming a panel was
+ *  showing when it was not, for nine of twelve panels. "On" now means "on
+ *  Home": not hidden AND present in the effective order. Ticking goes through
+ *  home-panel-toggle, which appends the panel to the saved order. */
 function homePanelRows(state, lang) {
   const order = resolveHomePanels(state.settings.homeOrder, {});
   const hidden = state.settings.hiddenHome || {};
@@ -166,7 +173,9 @@ function homePanelRows(state, lang) {
       <button type="button" class="icon-btn icon-btn--sm" data-action="home-panel-move" data-id="${id}" data-dir="-1" ${i === 0 ? 'disabled' : ''} aria-label="${t('settings.moveUp', lang)}">${icon('chevronUp', { size: 15 })}</button>
       <button type="button" class="icon-btn icon-btn--sm" data-action="home-panel-move" data-id="${id}" data-dir="1" ${i === listed.length - 1 ? 'disabled' : ''} aria-label="${t('settings.moveDown', lang)}">${icon('chevronDown', { size: 15 })}</button>
       <label class="switch" title="${escapeHTML(t('settings.hidePanel', lang))}">
-        <input type="checkbox" data-action="home-panel-toggle" data-id="${id}" ${hidden[id] ? '' : 'checked'} aria-label="${escapeHTML(t(`home.panel.${id}`, lang))}" />
+        <input type="checkbox" data-action="home-panel-toggle" data-id="${id}" ${
+          hidden[id] || !order.includes(id) ? '' : 'checked'
+        } aria-label="${escapeHTML(t(`home.panel.${id}`, lang))}" />
         <span class="switch__track"></span>
       </label>
     </div>`
@@ -548,12 +557,12 @@ export function renderSettings(state, flags = {}) {
     ${onboardingReplay}
     ${groupClose()}
     ${groupOpen(G_DISPLAY)}
-    <details class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-language"${filterQ ? (hideSettings.has('settings-sec-language') ? ' hidden' : ' open') : openId === 'settings-sec-language' ? ' open' : ''}>
       ${accHeader(t('settings.language', lang), 'book-open', lang)}
       <div class="segmented">${langButtons}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-appearance"${filterQ ? (hideSettings.has('settings-sec-appearance') ? ' hidden' : ' open') : openId === 'settings-sec-appearance' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-appearance"${filterQ ? (hideSettings.has('settings-sec-appearance') ? ' hidden' : ' open') : openId === 'settings-sec-appearance' ? ' open' : ''}>
       ${accHeader(t('settings.appearance', lang), 'sun', lang)}
       <p class="field-label">${t('settings.theme', lang)}</p>
       <div class="segmented">${modeButtons}</div>
@@ -570,19 +579,25 @@ export function renderSettings(state, flags = {}) {
            the adhkar, the duas and the reader, and cannot disturb a page of
            the Qur'an. -->
       <p class="field-label" id="arabic-typeface-label">${t('settings.arabicTypeface', lang)}</p>
-      <div class="swatch-row" role="radiogroup" aria-labelledby="arabic-typeface-label">
+      <!-- (v5.17.127) Specimen cards, not palette swatches: choosing a
+           READING typeface is a judgement about how the text looks in a full
+           ayah, so each option previews a real phrase at its own family with
+           its own name and sub-label. A colour swatch communicates none of
+           that and made this row look like a colour picker. -->
+      <div class="typeface-picker" role="radiogroup" aria-labelledby="arabic-typeface-label">
         ${ARABIC_TEXT_FONTS.map(
           (f) => `
-        <button type="button" class="swatch ${s.arabicFont === f.id ? 'swatch--active' : ''}" data-action="set-setting" data-key="arabicFont" data-value="${escapeHTML(f.id)}" role="radio" aria-checked="${s.arabicFont === f.id}" title="${escapeHTML(f.sub[lang] || f.sub.en)}">
-          <span class="swatch__preview" lang="ar" dir="rtl" style="font-family:${escapeHTML(f.family)}">سُبْحَانَ</span>
-          <span class="swatch__name">${escapeHTML(f.name[lang] || f.name.en)}</span>
+        <button type="button" class="typeface-option ${s.arabicFont === f.id ? 'typeface-option--active' : ''}" data-action="set-setting" data-key="arabicFont" data-value="${escapeHTML(f.id)}" role="radio" aria-checked="${s.arabicFont === f.id}" title="${escapeHTML(f.sub[lang] || f.sub.en)}">
+          <span class="typeface-option__preview" lang="ar" dir="rtl" style="font-family:${escapeHTML(f.family)}">سُبْحَانَ اللهِ</span>
+          <span class="typeface-option__name">${escapeHTML(f.name[lang] || f.name.en)}</span>
+          <span class="typeface-option__sub">${escapeHTML(f.sub[lang] || f.sub.en)}</span>
         </button>`
         ).join('')}
       </div>
     </details>
     ${groupClose()}
     ${groupOpen(G_CONTENT)}
-    <details class="panel settings-acc" id="settings-sec-content"${filterQ ? (hideSettings.has('settings-sec-content') ? ' hidden' : ' open') : openId === 'settings-sec-content' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-content"${filterQ ? (hideSettings.has('settings-sec-content') ? ' hidden' : ' open') : openId === 'settings-sec-content' ? ' open' : ''}>
       ${accHeader(t('settings.content', lang), 'list', lang)}
       ${toggleRow('showTransliteration', s.showTransliteration, t('settings.showTransliteration', lang))}
       ${toggleRow('showTranslation', s.showTranslation, t('settings.showTranslation', lang))}
@@ -609,14 +624,14 @@ export function renderSettings(state, flags = {}) {
       ${quickTileRows(state, lang)}
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-cardfields"${filterQ ? (hideSettings.has('settings-sec-cardfields') ? ' hidden' : ' open') : openId === 'settings-sec-cardfields' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-cardfields"${filterQ ? (hideSettings.has('settings-sec-cardfields') ? ' hidden' : ' open') : openId === 'settings-sec-cardfields' ? ' open' : ''}>
       ${accHeader(t('settings.cardFields', lang), 'grid', lang, 'settings.cardFieldsHint')}
       ${cardFieldRows}
       <button type="button" class="btn btn--secondary btn--sm" data-action="content-restore-all">${icon('refresh', { size: 14 })} ${t('library.sheet.restoreAll', lang)}</button>
     </details>
     ${groupClose()}
     ${groupOpen(G_AUDIO)}
-    <details class="panel settings-acc" id="settings-sec-reciter"${filterQ ? (hideSettings.has('settings-sec-reciter') ? ' hidden' : ' open') : openId === 'settings-sec-reciter' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-reciter"${filterQ ? (hideSettings.has('settings-sec-reciter') ? ' hidden' : ' open') : openId === 'settings-sec-reciter' ? ' open' : ''}>
       ${accHeader(t('settings.reciter', lang), 'volume', lang, 'settings.reciterHint')}
       <div class="reciter-list">${reciterRows}</div>
       <p class="field-label">${t('settings.reciterB', lang)}</p>
@@ -626,12 +641,12 @@ export function renderSettings(state, flags = {}) {
       <a class="btn btn--secondary btn--sm" href="${buildHash(VIEWS.AUDIO)}" data-action="navigate" data-view="${VIEWS.AUDIO}">${icon('volume', { size: 14 })} ${t('settings.audioManager', lang)}</a>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-translation"${filterQ ? (hideSettings.has('settings-sec-translation') ? ' hidden' : ' open') : openId === 'settings-sec-translation' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-translation"${filterQ ? (hideSettings.has('settings-sec-translation') ? ' hidden' : ' open') : openId === 'settings-sec-translation' ? ' open' : ''}>
       ${accHeader(t('settings.translation', lang), 'book', lang, 'settings.quranTranslationHint')}
       <div class="reciter-list">${translationRows}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openId === 'settings-sec-compare' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-compare"${filterQ ? (hideSettings.has('settings-sec-compare') ? ' hidden' : ' open') : openId === 'settings-sec-compare' ? ' open' : ''}>
       ${accHeader(t('settings.compareTranslation', lang), 'book', lang, 'settings.compareHint')}
       <div class="reciter-list">${compareRows}</div>
       ${accSubheading(t('settings.compareTranslationC', lang), lang, 'settings.compareHintC')}
@@ -641,7 +656,7 @@ export function renderSettings(state, flags = {}) {
       <div class="reciter-list">${tafsirDefaultRows}</div>
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-feedback"${filterQ ? (hideSettings.has('settings-sec-feedback') ? ' hidden' : ' open') : openId === 'settings-sec-feedback' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-feedback"${filterQ ? (hideSettings.has('settings-sec-feedback') ? ' hidden' : ' open') : openId === 'settings-sec-feedback' ? ' open' : ''}>
       ${accHeader(t('settings.feedback', lang), 'bead', lang, 'settings.feedbackHint')}
       ${toggleRow('hapticsEnabled', s.hapticsEnabled, t('settings.haptics', lang))}
       ${toggleRow('soundEnabled', s.soundEnabled, t('settings.sound', lang))}
@@ -661,7 +676,7 @@ export function renderSettings(state, flags = {}) {
     </details>
     ${groupClose()}
     ${groupOpen(G_PRAYER)}
-    <details class="panel settings-acc" id="settings-sec-notifications"${filterQ ? (hideSettings.has('settings-sec-notifications') ? ' hidden' : ' open') : openId === 'settings-sec-notifications' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-notifications"${filterQ ? (hideSettings.has('settings-sec-notifications') ? ' hidden' : ' open') : openId === 'settings-sec-notifications' ? ' open' : ''}>
       ${accHeader(t('settings.notifications', lang), 'bell', lang)}
       <div class="btn-stack">
         <button type="button" class="btn btn--secondary btn--sm" data-action="add-reminder">${icon('plus', { size: 14 })} ${t('settings.addReminder', lang)}</button>
@@ -690,7 +705,7 @@ export function renderSettings(state, flags = {}) {
     </details>
     ${groupClose()}
     ${groupOpen(G_ACCESS)}
-    <details class="panel settings-acc" id="settings-sec-accessibility"${filterQ ? (hideSettings.has('settings-sec-accessibility') ? ' hidden' : ' open') : openId === 'settings-sec-accessibility' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-accessibility"${filterQ ? (hideSettings.has('settings-sec-accessibility') ? ' hidden' : ' open') : openId === 'settings-sec-accessibility' ? ' open' : ''}>
       ${accHeader(t('settings.accessibility', lang), 'hands', lang)}
       ${toggleRow('reduceMotion', s.reduceMotion, t('settings.reduceMotion', lang))}
       ${toggleRow('highContrast', s.highContrast, t('settings.highContrast', lang))}
@@ -716,7 +731,7 @@ export function renderSettings(state, flags = {}) {
       })}
     </details>
 
-    <details class="panel settings-acc" id="settings-sec-profiles"${filterQ ? (hideSettings.has('settings-sec-profiles') ? ' hidden' : ' open') : openId === 'settings-sec-profiles' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-profiles"${filterQ ? (hideSettings.has('settings-sec-profiles') ? ' hidden' : ' open') : openId === 'settings-sec-profiles' ? ' open' : ''}>
       ${accHeader(t('settings.profiles', lang), 'folder', lang, 'settings.profilesHint')}
       <div class="chip-row" role="group" aria-label="${escapeHTML(t('settings.profiles', lang))}">
         <button type="button" class="chip ${state.activeProfile === 'main' ? 'chip--active' : ''}" data-action="profile-switch" data-id="main" aria-pressed="${state.activeProfile === 'main'}">${escapeHTML(t('settings.profileMain', lang))}</button>
@@ -734,7 +749,7 @@ export function renderSettings(state, flags = {}) {
     </details>
     ${groupClose()}
     ${groupOpen(G_BACKUP)}
-    <details class="panel settings-acc" id="settings-sec-data"${filterQ ? (hideSettings.has('settings-sec-data') ? ' hidden' : ' open') : openId === 'settings-sec-data' ? ' open' : ''}>
+    <details data-open-controlled class="panel settings-acc" id="settings-sec-data"${filterQ ? (hideSettings.has('settings-sec-data') ? ' hidden' : ' open') : openId === 'settings-sec-data' ? ' open' : ''}>
       ${accHeader(t('settings.data', lang), 'shield', lang)}
       <!-- (v5.17.31) the persistent install row: same copy as About and the
            wizard step, so the offer survives past first-run. -->

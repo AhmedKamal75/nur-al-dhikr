@@ -246,7 +246,14 @@ export async function startAudioPlay(moshafId, surah) {
   } catch (err) {
     console.error('[app] startAudioPlay failed', err);
     store.dispatch(actions.setAudioPlayer({ playing: false }));
-    showToast(t('audio.playFailed', state.settings.language), { assertive: true });
+    const lang = state.settings.language;
+    showToast(t('audio.playFailed', lang), {
+      assertive: true,
+      actionLabel: t('common.retry', lang),
+      onAction: () => {
+        void startAudioPlay(moshafId, surah);
+      },
+    });
   }
 }
 

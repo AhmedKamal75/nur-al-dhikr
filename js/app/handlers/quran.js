@@ -138,7 +138,14 @@ export async function navigateMushafPage(direction) {
     if (generation !== rt.lazyDataGeneration) return false;
   } catch (err) {
     console.error('[mushaf] navigation page load failed', dest, err);
-    showToast(t('mushaf.loadFailed', store.getState().settings.language));
+    const retryLang = store.getState().settings.language;
+    showToast(t('mushaf.loadFailed', retryLang), {
+      assertive: true,
+      actionLabel: t('common.retry', retryLang),
+      onAction: () => {
+        void ensureMushafNavigationPages(dest);
+      },
+    });
     return false;
   }
 
@@ -323,7 +330,14 @@ export const clickHandlers = {
       go(VIEWS.MUSHAF, { page: String(page), s: String(surah), ay: String(ayah) });
     } catch (err) {
       console.error('[mushaf] find result load failed', page, err);
-      showToast(t('mushaf.loadFailed', store.getState().settings.language));
+      const retryLang = store.getState().settings.language;
+      showToast(t('mushaf.loadFailed', retryLang), {
+        assertive: true,
+        actionLabel: t('common.retry', retryLang),
+        onAction: () => {
+          void ensureMushafNavigationPages(page);
+        },
+      });
     }
   },
 
@@ -339,7 +353,14 @@ export const clickHandlers = {
       await ensureMushafNavigationPages(dest);
     } catch (err) {
       console.error('[mushaf] jump page load failed', dest, err);
-      showToast(t('mushaf.loadFailed', store.getState().settings.language));
+      const retryLang = store.getState().settings.language;
+      showToast(t('mushaf.loadFailed', retryLang), {
+        assertive: true,
+        actionLabel: t('common.retry', retryLang),
+        onAction: () => {
+          void ensureMushafNavigationPages(dest);
+        },
+      });
       return;
     }
     // Bookmark rows carry an exact ayah as well as its printed page. Keep
@@ -393,7 +414,14 @@ export const clickHandlers = {
       await ensureMushafNavigationPages(page);
     } catch (err) {
       console.error('[mushaf] surah page load failed', page, err);
-      showToast(t('mushaf.loadFailed', store.getState().settings.language));
+      const retryLang = store.getState().settings.language;
+      showToast(t('mushaf.loadFailed', retryLang), {
+        assertive: true,
+        actionLabel: t('common.retry', retryLang),
+        onAction: () => {
+          void ensureMushafNavigationPages(page);
+        },
+      });
       return;
     }
     go(VIEWS.MUSHAF, { page: String(page) });

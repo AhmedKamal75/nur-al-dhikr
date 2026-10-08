@@ -122,15 +122,17 @@ until they exist, the Two-Sahihs badge stays the only grade in the UI.
 
 ## Ahadeeth library (data/hadith/)
 
-The Ahadeeth texts (Arabic + English) are the public-domain collection
-texts of **the six canonical books — Sahih al-Bukhari, Sahih Muslim,
-Sunan Abu Dawud, Jami' at-Tirmidhi, Sunan an-Nasa'i and Sunan Ibn Majah —
-plus the Forty Hadith of Imam an-Nawawi and Forty Hadith Qudsi** as
-published by sunnah.com, obtained via the CC0-dedicated dataset repository
-[fawazahmed0/hadith-api](https://github.com/fawazahmed0/hadith-api)
-(edition dumps, cached in scripts/cache/hadith/ outside the app dir and
-transformed by scripts/build-hadith.mjs). The classical collections
-themselves are 13th-century-and-earlier works in the public domain.
+The Ahadeeth texts (Arabic + English) are sourced through the
+[fawazahmed0/hadith-api](https://github.com/fawazahmed0/hadith-api) dataset
+pipeline (edition dumps, cached in scripts/cache/hadith/ outside the app dir
+and transformed by scripts/build-hadith.mjs). The source repository publishes
+a public-domain/Unlicense dedication, but the project does not treat that alone
+as proof that every upstream translation or source may be redistributed without
+restriction. Sunnah.com explicitly states that it does not permit scraping or
+mass reproduction of entire books or collections on other websites. The exact
+source/permission chain therefore remains a provenance review item before broad
+redistribution. The classical collections themselves are 13th-century-and-earlier
+works in the public domain.
 
 - v3.16: the four Sunan collections (Abu Dawud 5,272 · Tirmidhi 3,926 ·
   an-Nasa'i 5,679 · Ibn Majah 4,340) were rebuilt from the same source

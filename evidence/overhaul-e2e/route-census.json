@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-25T14:28:30.211Z",
+  "generatedAt": "2026-10-07T11:57:04.651Z",
   "source": "js/core/config/views.js",
-  "routeCount": 33,
+  "routeCount": 34,
   "routes": [
     {
       "key": "HOME",
@@ -167,8 +167,16 @@
       "key": "OFFLINE",
       "path": "#/offline",
       "view": "offline"
+    },
+    {
+      "key": "TAJWEED_COURSE",
+      "path": "#/tajweed-course",
+      "view": "tajweed-course"
     }
   ],
-  "kidsAllowed": ["KIDS", "TASBIH"],
+  "kidsAllowed": [
+    "KIDS",
+    "TASBIH"
+  ],
   "notes": "Count re-derived from the checkout; do not copy a stale number."
 }

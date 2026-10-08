@@ -22,7 +22,7 @@ import {
   REPEAT_CYCLE,
   LOOP_CYCLE,
 } from '../services/surahPlayback.js';
-import { SLEEP_TIMER_CHOICES } from '../domain/sleepTimer.js';
+import { SLEEP_TIMER_CHOICES, nextSleepRung } from '../domain/sleepTimer.js';
 import {
   searchReciters,
   findMoshaf,
@@ -305,13 +305,16 @@ function buildPlaybackDefaults(state, lang) {
     (n) =>
       `<option value="${n}"${n === loop ? ' selected' : ''}>${n === 1 ? escapeHTML(t('audio.loopOnce', lang)) : `×${n}`}</option>`
   ).join('');
-  const sleeping = state.player?.sleepEnabled === true ? state.player.sleepMinutes : '';
-  const sleepOpts =
-    `<option value=""${sleeping === '' ? ' selected' : ''}>${escapeHTML(t('audio.sleepOff', lang))}</option>` +
-    SLEEP_TIMER_CHOICES.map(
-      (m) =>
-        `<option value="${m}"${m === sleeping ? ' selected' : ''}>${escapeHTML(t('units.m', lang, { n: m }))}</option>`
-    ).join('');
+  const sleeping = state.player?.sleepEnabled === true;
+  const sleepMinutes = sleeping ? Number(state.player?.sleepMinutes) : null;
+  const sleepLabel =
+    sleeping && SLEEP_TIMER_CHOICES.includes(sleepMinutes)
+      ? t('units.m', lang, { n: sleepMinutes })
+      : '';
+  const sleepControlLabel =
+    sleeping && sleepLabel
+      ? `${t('audio.sleepTimer', lang)} — ${sleepLabel}`
+      : t('audio.sleepTimer', lang);
   return `
   <details class="panel audio-secondary-disclosure">
     <summary class="audio-secondary-disclosure__summary">${t('audio.playbackDefaults', lang)}</summary>
@@ -321,7 +324,11 @@ function buildPlaybackDefaults(state, lang) {
       <label class="field">${t('audio.repeatAyah', lang)}<select class="select" data-audio-pref="ayahRepeat">${repOpts}</select></label>
       <label class="field">${t('audio.rangeLoop', lang)}<select class="select" data-audio-pref="loop"${live ? '' : ' disabled aria-disabled="true"'}>${loopOpts}</select>
         <span class="editor-form__note">${escapeHTML(live ? t('audio.loopMode', lang) : t('audio.loopNeedsSession', lang))}</span></label>
-      <label class="field">${t('audio.sleepTimer', lang)}<select class="select" data-audio-pref="sleep">${sleepOpts}</select>
+      <label class="field">${t('audio.sleepTimer', lang)}
+        <button type="button" class="btn btn--secondary btn--sm" data-action="audio-sleep-cycle" aria-pressed="${sleeping}" aria-label="${escapeHTML(sleepControlLabel)}" title="${escapeHTML(sleepControlLabel)}">
+          ${icon('bed', { size: 14 })}
+          <span>${escapeHTML(sleeping && sleepLabel ? sleepLabel : t('audio.sleepOff', lang))}</span>
+        </button>
         <span class="editor-form__note">${escapeHTML(t('audio.sleepFileHint', lang))}</span></label>
       </div>
     </div>

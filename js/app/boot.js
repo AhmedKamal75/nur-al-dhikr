@@ -392,7 +392,19 @@ function consumeLaunchIntents() {
           handleImportFile(await handle.getFile());
         } catch (err) {
           console.error('[launch] open-with failed', err);
-          showToast(t('common.error', store.getState().settings.language));
+          const lang = store.getState().settings.language;
+          showToast(t('common.error', lang), {
+            assertive: true,
+            actionLabel: t('common.retry', lang),
+            onAction: () => {
+              void handle
+                .getFile()
+                .then(handleImportFile)
+                .catch((retryErr) => {
+                  console.error('[launch] open-with retry failed', retryErr);
+                });
+            },
+          });
         }
       }
     });

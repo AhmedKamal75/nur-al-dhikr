@@ -52,6 +52,8 @@ const BACKUP_ERROR_MESSAGES = Object.freeze({
 });
 
 /** Rolling on-device snapshot cadence + off-device staleness threshold. */
+export const MAX_IMPORT_FILE_BYTES = 8 * 1024 * 1024;
+
 export const AUTO_BACKUP_DAYS = 7;
 export const STALE_BACKUP_DAYS = 30;
 /** localStorage key for the rolling auto-snapshot (a valid backup file). */
@@ -134,6 +136,11 @@ export function parseBackup(text) {
 }
 
 /** Read a File object (from an <input type="file">) as text, Promise-based. */
+export function isImportFileTooLarge(file) {
+  const size = Number(file?.size);
+  return Number.isFinite(size) && size > MAX_IMPORT_FILE_BYTES;
+}
+
 export function readFileAsText(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

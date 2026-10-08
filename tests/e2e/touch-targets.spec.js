@@ -65,10 +65,24 @@ test('touch-targets: compact controls catch pointers beyond their visual box', a
   });
 
   const probed = results.filter((r) => r.edge !== 'size');
-  expect(probed.length, 'no sub-44px compact controls found to probe').toBeGreaterThan(0);
+  // (v5.17.136) The candidate set is DERIVED from the DOM, not pinned, so
+  // this stays honest as the chrome changes size: if every discovered
+  // control already meets 44px on its own, there is legitimately nothing to
+  // probe and that is a pass, not a failure. It used to require a sub-44px
+  // control to exist, which made the spec fail whenever the compact controls
+  // grew — a change that IMPROVED the pointer contract.
   const misses = results.filter((r) => !r.owned);
   expect(
     misses,
     `pointer misses beyond visual border: ${JSON.stringify(misses.slice(0, 6))}`
   ).toEqual([]);
+  expect(
+    results.length,
+    'the census found no compact controls at all, so it proved nothing'
+  ).toBeGreaterThan(0);
+  console.log(
+    `touch-target census: ${results.length} controls, ${probed.length} needed apron probing, ${
+      results.length - probed.length
+    } passed by size alone`
+  );
 });

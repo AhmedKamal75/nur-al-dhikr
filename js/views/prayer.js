@@ -635,7 +635,7 @@ export function calcPanelHTML(state) {
     <select class="select" id="prayer-method-sheet" data-bind="prayer-method" aria-label="${t('prayer.method', lang)}">${methodOptions}</select>
     <p class="panel__subtext prayer-calc-panel__summary">${escapeHTML(t(`prayer.methodRegion.${methodId}`, lang))} · ${escapeHTML(t(`prayer.methodNote.${methodId}`, lang))}</p>
 
-    <details class="prayer-calc-panel__details" open>
+    <details class="prayer-calc-panel__details" data-open-controlled open>
       <summary>${t('prayer.methodDetails', lang)}</summary>
       <div class="prayer-calc-panel__details-body">
         <p class="panel__subtext">${escapeHTML(angleBits.join(' · '))}</p>

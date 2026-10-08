@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 244 — data files: 27 — tests: 274
+- js modules: 244 — data files: 27 — tests: 281
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -41,7 +41,7 @@ job: the composition root: hydrate the store, load the content libraries, wire e
 - exports: `boot` (function)
 - emits: —
 - handles: —
-- i18n: `audio.reciteVerseFailed`, `audio.verseFallbackSurah`, `common.error`, `common.loading`, `kids.heardDone`, `share.received`, `storage.persistFailed`
+- i18n: `audio.reciteVerseFailed`, `audio.verseFallbackSurah`, `common.error`, `common.loading`, `common.retry`, `kids.heardDone`, `share.received`, `storage.persistFailed`
 - routes: `VIEWS.SEARCH`
 
 ### `js/app/compassRuntime.js`
@@ -81,7 +81,7 @@ job: user file imports: backup JSON (with confirm), shared family plans (with co
 - exports: `backupErrorText` (function), `handleAdhanImport` (function), `handleImportFile` (function), `handleImportPlanFile` (function)
 - emits: —
 - handles: —
-- i18n: `backup.importConfirm`, `common.error`, `kids.blocked`, `plan.badFile`, `plan.importConfirm`, `prayer.adhanImportFailed`, `prayer.adhanImported`, `prayer.adhanInvalid`
+- i18n: `backup.fileTooLarge`, `backup.importConfirm`, `common.error`, `common.retry`, `kids.blocked`, `plan.badFile`, `plan.fileTooLarge`, `plan.importConfirm`, `prayer.adhanImportFailed`, `prayer.adhanImported`, `prayer.adhanInvalid`
 - routes: —
 
 ### `js/app/focusRuntime.js`
@@ -151,7 +151,7 @@ job: (no header comment)
 - exports: `ensureMushafNavigationPages` (function), `ensureMushafMeta` (function), `ensureQuranMeta` (function), `ensureQuranData` (function), `ensureMushafData` (function), `clearLazyInFlightFetches` (function), `invalidateLazyFetches` (function), `ensureWordDict` (function), `ensureRootsMeaning` (function), `ensureMushafSurahDocs` (function), `ensureQuranWordsData` (function), `ensureQuranRoots` (function), `ensureQuranRootsFull` (function), `ensureTafsirEditions` (function), `ensureTajweedPool` (function), `ensureTafsirText` (function), `currentAyahDetailPage` (function), `openAyahStudy` (function)
 - emits: —
 - handles: —
-- i18n: `khatma.completeToast`, `quran.loadFailed`
+- i18n: `common.retry`, `khatma.completeToast`, `quran.loadFailed`
 - routes: —
 
 ### `js/app/net.js`
@@ -171,7 +171,7 @@ job: offline-library batch downloads (v5.3.0). One tap warms the service worker'
 - exports: `ESSENTIAL_GROUPS_TEST` (const), `ESSENTIALS_DEFER_MS` (const), `essentialsAutoBlocker` (function), `maybeAutoDownloadEssentials` (function), `checkOfflineRoom` (function), `stopOfflineBatch` (function), `clearTextCache` (function), `clearStudyData` (function), `ensureOfflineQuota` (function), `runOfflineBatch` (function)
 - emits: —
 - handles: —
-- i18n: `offline.lowStorage`, `offline.needOnline`, `offline.started`
+- i18n: `common.retry`, `offline.lowStorage`, `offline.needOnline`, `offline.started`
 - routes: —
 
 ### `js/app/palette.js`
@@ -248,7 +248,7 @@ job: (no header comment)
 
 job: Treats state as read-only input and produces DOM output. Two render tiers: 1. Shell (topbar + nav) — re-rendered only when settings/activeView change in a way that affects it (cheap either way, but k…
 
-- exports: `LAZY_VIEW_KEYS` (const), `resetLazyViewsForTests` (function), `clearScrollMemory` (function), `readScrollTop` (function), `writeScrollTop` (function), `viewKeyOf` (function), `VIEW_ENTER_MS` (const), `shouldMarkViewEnter` (function), `mountShell` (function), `QURAN_CSS_ROUTES` (const), `ROUTE_CSS` (const), `ensureQuranCss` (function), `nodeKey` (function), `matchChildren` (function), `structuralKey` (function), `matchChildrenDeep` (function), `focusSignature` (function), `patchHTML` (function), `settingsSectionScrollTarget` (function), `render` (function)
+- exports: `LAZY_VIEW_KEYS` (const), `resetLazyViewsForTests` (function), `clearScrollMemory` (function), `readScrollTop` (function), `writeScrollTop` (function), `viewKeyOf` (function), `VIEW_ENTER_MS` (const), `shouldMarkViewEnter` (function), `mountShell` (function), `QURAN_CSS_ROUTES` (const), `ROUTE_CSS` (const), `ensureQuranCss` (function), `nodeKey` (function), `matchChildren` (function), `structuralKey` (function), `matchChildrenDeep` (function), `focusSignature` (function), `patchElement` (function), `patchHTML` (function), `settingsSectionScrollTarget` (function), `render` (function)
 - emits: — (+ dynamic `data-action="${...}"`)
 - handles: —
 - i18n: `a11y.fileImports`, `audio.player`, `common.skipToContent`, `common.unknownRoute`, `title.home`
@@ -334,8 +334,8 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const), `resolveRangeSave` (function)
 - emits: —
-- handles: `audio-batch-dismiss`, `audio-batch-stop`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-download-surah`, `audio-mute-toggle`, `audio-pick-moshaf`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `player-close`, `player-min-toggle`, `player-next`, `player-prev`, `player-rate`, `player-repeat`, `player-seek-back`, `player-seek-fwd`, `player-sleep-cycle`, `player-toggle`, `playlist-create`, `playlist-delete`, `playlist-delete-confirmed`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `playlist-save-range`, `quran-play-surah`, `verse-pack-delete`, `verse-pack-download`
-- i18n: `audio.allDone`, `audio.batchCancelled`, `audio.batchDone`, `audio.batchDoneSkipped`, `audio.batchStarted`, `audio.deleted`, `audio.downloadDone`, `audio.downloadFailed`, `audio.downloading`, `audio.echoNeedsRepeat`, `audio.evictedWarning`, `audio.loopNeedsSession`, `audio.quota`, `audio.reciteStartFailed`, `audio.sleepArmed`, `audio.sleepOff`, `audio.surahUnavailable`, `audio.versePackDone`, `playlist.addedRange`, `playlist.createTitle` (+6 more)
+- handles: `audio-batch-dismiss`, `audio-batch-stop`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-download-surah`, `audio-mute-toggle`, `audio-pick-moshaf`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `audio-sleep-cycle`, `player-close`, `player-min-toggle`, `player-next`, `player-prev`, `player-rate`, `player-repeat`, `player-seek-back`, `player-seek-fwd`, `player-sleep-cycle`, `player-toggle`, `playlist-create`, `playlist-delete`, `playlist-delete-confirmed`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `playlist-save-range`, `quran-play-surah`, `verse-pack-delete`, `verse-pack-download`
+- i18n: `audio.allDone`, `audio.batchCancelled`, `audio.batchDone`, `audio.batchDoneSkipped`, `audio.batchStarted`, `audio.deleted`, `audio.downloadDone`, `audio.downloadFailed`, `audio.downloading`, `audio.echoNeedsRepeat`, `audio.evictedWarning`, `audio.loopNeedsSession`, `audio.quota`, `audio.reciteStartFailed`, `audio.sleepArmed`, `audio.sleepOff`, `audio.surahUnavailable`, `audio.versePackDone`, `common.retry`, `playlist.addedRange` (+7 more)
 - routes: `VIEWS.AUDIO`
 
 ### `js/app/handlers/content.js`
@@ -424,8 +424,8 @@ job: offline-library controls (v5.3.0). Thin click handlers over app/offlineJobs
 
 - exports: `clickHandlers` (object), `changeHandlers` (const)
 - emits: `offline-toggle-compressed`, `offline-toggle-essentials-auto`
-- handles: `offline-clear-study`, `offline-download-all`, `offline-download-group`, `offline-stop`, `offline-toggle-compressed` (change/input), `offline-toggle-essentials-auto` (change/input)
-- i18n: `offline.clearStudyDone`, `offline.essentialsAlready`, `offline.essentialsOff`
+- handles: `offline-clear-study`, `offline-download-all`, `offline-download-group`, `offline-request-persistence`, `offline-stop`, `offline-toggle-compressed` (change/input), `offline-toggle-essentials-auto` (change/input)
+- i18n: `offline.clearStudyDone`, `offline.essentialsAlready`, `offline.essentialsOff`, `offline.persistenceAlready`, `offline.persistenceDeclined`, `offline.persistenceUnsupported`
 - routes: —
 
 ### `js/app/handlers/quiz.js`
@@ -445,7 +445,7 @@ job: (no header comment)
 - exports: `applyTajweedColors` (function), `navigateMushafPage` (function), `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const)
 - emits: `tajweed-course-mode`, `word-bookmark`
 - handles: `khatma-clear-plan`, `khatma-open-plan`, `mushaf-ayah-tap`, `mushaf-copy-ayah`, `mushaf-find-page-result`, `mushaf-jump-page`, `mushaf-more`, `mushaf-next`, `mushaf-open-at-surah`, `mushaf-open-bookmarks`, `mushaf-open-in-study`, `mushaf-open-jump`, `mushaf-open-page-find`, `mushaf-open-settings`, `mushaf-open-track`, `mushaf-play-pick`, `mushaf-prev`, `mushaf-remove-bookmark`, `mushaf-reset-progress`, `mushaf-set-bismillah`, `mushaf-set-font`, `mushaf-set-paper`, `mushaf-set-tafsir`, `mushaf-toggle-bookmark`, `mushaf-toggle-fullscreen`, `play-ayah`, `practice-check`, `practice-classify`, `practice-classify-next`, `practice-lesson`, `practice-mode`, `practice-next`, `practice-open`, `practice-review`, `practice-start`, `practice-tap`, `practice-this-ayah`, `quran-toggle-immersive`, `quran-window-expand`, `root-jump`, `roots-expand`, `roots-jump`, `roots-open`, `roots-page`, `roots-tab`, `study-tray-close`, `study-tray-toggle`, `study-tray-word`, `tafsir-compare`, `tafsir-compare-download`, `tafsir-download`, `tafsir-open`, `tafsir-tab`, `tajweed-course-drill`, `tajweed-course-drill-rule`, `tajweed-course-toggle-done`, `tajweed-open-settings`, `tajweed-reset`, `tajweed-set-color`, `tajweed-toggle-rule`, `word-bookmark`, `word-bookmark-open`, `word-bookmark-remove`, `word-bookmarks-open`, `word-copy`, `word-share`, `word-speak`, `word-study-from-tray`, `word-tap`, `tajweed-course-mode` (change/input)
-- i18n: `card.copied`, `card.copyFailed`, `common.error`, `khatma.planCleared`, `mushaf.khatmaResetDone`, `mushaf.loadFailed`, `practice.nearestAyah`, `practice.nothingHere`, `tajweed.resetDone`, `wordStudy.savedWordRemoved`, `wordStudy.soundOff`, `wordStudy.speechUnsupported`, `wordStudy.title`
+- i18n: `card.copied`, `card.copyFailed`, `common.error`, `common.retry`, `khatma.planCleared`, `mushaf.khatmaResetDone`, `mushaf.loadFailed`, `practice.nearestAyah`, `practice.nothingHere`, `tajweed.resetDone`, `wordStudy.savedWordRemoved`, `wordStudy.soundOff`, `wordStudy.speechUnsupported`, `wordStudy.title`
 - routes: `VIEWS.MUSHAF`, `VIEWS.QURAN`, `VIEWS.ROOTS`
 
 ### `js/app/handlers/quranAudio.js`
@@ -455,7 +455,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 - exports: `startVerseSurah` (function), `echoPauseOptions` (function), `clickHandlers` (object), `buildReciterPick` (function), `changeHandlers` (const), `inputHandlers` (const)
 - emits: `modal-close`, `navigate`, `playlist-save-range`, `recite-pick-moshaf`, `recite-voice-b`, `set-setting`
 - handles: `quran-range-open`, `recite-ayah-next`, `recite-ayah-prev`, `recite-compare-swap`, `recite-compare-toggle`, `recite-echo-toggle`, `recite-follow-toggle`, `recite-listen-toggle`, `recite-loop-toggle`, `recite-mode-ayah`, `recite-mode-surah`, `recite-more-toggle`, `recite-pause-toggle`, `recite-pick-moshaf`, `recite-repeat-toggle`, `recite-sleep-cycle`, `recite-speed-cycle`, `recite-stop`, `recite-voice-b`, `recite-voice-open`, `surah-play`
-- i18n: `audio.browseAllMoshafs`, `audio.chooseReciter`, `audio.compareNeedB`, `audio.echoNeedsRepeat`, `audio.echoPause`, `audio.echoPauseHint`, `audio.echoPauseOpt`, `audio.fileModeNote`, `audio.fileVoices`, `audio.loopOnce`, `audio.moshafShown`, `audio.noSecondVoice`, `audio.rangeFrom`, `audio.rangeLoop`, `audio.rangePlay`, `audio.rangeTitle`, `audio.rangeTo`, `audio.rangeToSurah`, `audio.reciteStartFailed`, `audio.searchPh` (+12 more)
+- i18n: `audio.browseAllMoshafs`, `audio.chooseReciter`, `audio.compareNeedB`, `audio.echoNeedsRepeat`, `audio.echoPause`, `audio.echoPauseHint`, `audio.echoPauseOpt`, `audio.fileModeNote`, `audio.fileVoices`, `audio.loopOnce`, `audio.moshafShown`, `audio.noSecondVoice`, `audio.rangeFrom`, `audio.rangeLoop`, `audio.rangePlay`, `audio.rangeTitle`, `audio.rangeTo`, `audio.rangeToSurah`, `audio.reciteStartFailed`, `audio.searchPh` (+13 more)
 - routes: `#/audio`, `view:audio`
 
 ### `js/app/handlers/system.js`
@@ -495,7 +495,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 - exports: `clickHandlers` (object), `changeHandlers` (const)
 - emits: `checklist-toggle`, `sunnah-toggle`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
 - handles: `calendar-delete-note`, `calendar-edit-note`, `calendar-goto-fasting`, `calendar-new-note`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `gap-telemetry-clear`, `home-invite-dismiss`, `install-later`, `install-reoffer`, `khatma-ramadan-preset`, `location-profile-apply`, `location-profile-remove`, `location-profile-save`, `notifications-enable`, `nudge-dismiss`, `onboarding-comfort`, `onboarding-confirm`, `onboarding-dismiss`, `onboarding-install`, `onboarding-language`, `onboarding-reshow`, `onboarding-step`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-set-alert-mode`, `prayer-test-sound`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `ramadan-enable-notifications`, `ramadan-planner-toggle`, `ramadan-toggle-fast`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`, `stats-heatmap-export`, `stats-heatmap-shift`, `toggle-prayer-alert`, `toggle-ramadan-alert`, `checklist-toggle` (change/input), `sunnah-toggle` (change/input), `toggle-prayer-quiet` (change/input), `toggle-prayer-quiet-cancel` (change/input)
-- i18n: `common.error`, `khatma.presetFilled`, `onboarding.installAccepted`, `onboarding.installDeferred`, `plog.allLoggedToast`, `prayer.adhanCleared`, `prayer.notifGranted`, `profiles.applied`, `profiles.namePlaceholder`, `profiles.namePrompt`, `profiles.saved`, `qada.added`, `qada.cleared`, `qada.doneOne`, `qada.offerAdd`, `qada.offerMissed`, `ramadan.alertsDenied`, `stats.gapCleared`, `stats.heatmapSaved`, `stats.monthTotalLabel`
+- i18n: `common.error`, `common.retry`, `khatma.presetFilled`, `onboarding.installAccepted`, `onboarding.installDeferred`, `plog.allLoggedToast`, `prayer.adhanCleared`, `prayer.notifGranted`, `profiles.applied`, `profiles.namePlaceholder`, `profiles.namePrompt`, `profiles.saved`, `qada.added`, `qada.cleared`, `qada.doneOne`, `qada.offerAdd`, `qada.offerMissed`, `ramadan.alertsDenied`, `stats.gapCleared`, `stats.heatmapSaved` (+1 more)
 - routes: `VIEWS.SETTINGS`
 
 ### `js/app/handlers/zakat.js`
@@ -1796,7 +1796,7 @@ job: Offline recitation storage: a dedicated IndexedDB database (separate from t
 
 job: Export the persisted portion of state as a downloadable JSON file, and import/validate a previously exported file back into the store. This is the only supported way to move data between devices, sin…
 
-- exports: `BACKUP_ERRORS` (const), `AUTO_BACKUP_DAYS` (const), `STALE_BACKUP_DAYS` (const), `AUTO_BACKUP_KEY` (const), `buildBackupPayload` (function), `downloadBackup` (function), `downloadPlan` (function), `parseBackup` (function), `readFileAsText` (function), `autoBackupDue` (function), `maybeAutoBackupNow` (function), `backupStale` (function), `defaultBackupStorage` (function), `writeAutoSnapshot` (function), `readAutoSnapshot` (function), `backupFileText` (function), `filePickerSupported` (function), `pickBackupFile` (function), `saveBackupHandle` (function), `loadBackupHandle` (function), `clearBackupHandle` (function), `writeBackupToHandle` (function)
+- exports: `BACKUP_ERRORS` (const), `MAX_IMPORT_FILE_BYTES` (const), `AUTO_BACKUP_DAYS` (const), `STALE_BACKUP_DAYS` (const), `AUTO_BACKUP_KEY` (const), `buildBackupPayload` (function), `downloadBackup` (function), `downloadPlan` (function), `parseBackup` (function), `isImportFileTooLarge` (function), `readFileAsText` (function), `autoBackupDue` (function), `maybeAutoBackupNow` (function), `backupStale` (function), `defaultBackupStorage` (function), `writeAutoSnapshot` (function), `readAutoSnapshot` (function), `backupFileText` (function), `filePickerSupported` (function), `pickBackupFile` (function), `saveBackupHandle` (function), `loadBackupHandle` (function), `clearBackupHandle` (function), `writeBackupToHandle` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -2073,7 +2073,7 @@ job: A single reusable modal/dialog host mounted once in index.html (#modal-root
 - exports: `openModal` (function), `closeModal` (function), `cycleTabFocus` (function), `isModalOpen` (function), `getModalGeneration` (function), `openLazyModal` (function)
 - emits: `modal-close`, `modal-close-overlay`
 - handles: —
-- i18n: `common.close`, `common.error`
+- i18n: `common.close`, `common.error`, `common.retry`
 - routes: —
 
 ### `js/ui/readingTokens.js`
@@ -2165,7 +2165,7 @@ job: Ambient / kiosk display: a big-text, chrome-free nightstand view. Four disp
 job: Reciters & offline downloads: - searchable catalog of 312 mushafs (mp3quran + quranicaudio) + the user's custom reciters,
 
 - exports: `resumeBannerHTML` (function), `renderAudio` (function)
-- emits: `audio-batch-dismiss`, `audio-batch-stop`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `playlist-create`, `playlist-delete`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `set-setting` (+ dynamic `data-action="${...}"`)
+- emits: `audio-batch-dismiss`, `audio-batch-stop`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `audio-sleep-cycle`, `playlist-create`, `playlist-delete`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `set-setting` (+ dynamic `data-action="${...}"`)
 - handles: —
 - i18n: `audio.batchResume`, `audio.batchResumeGo`, `audio.batchStop`, `audio.customHint`, `audio.customName`, `audio.customNamePh`, `audio.customServer`, `audio.customTitle`, `audio.deleteAll`, `audio.deleteFile`, `audio.downloadAll`, `audio.downloadFile`, `audio.downloadMissing`, `audio.fileModeNote`, `audio.loopMode`, `audio.loopNeedsSession`, `audio.loopOnce`, `audio.moreResults`, `audio.noResultsHint`, `audio.note` (+33 more)
 - routes: —
@@ -2445,9 +2445,9 @@ job: Look-alike (mutashabihat) drill — a hifz practice mode for ayat that rese
 job: the Offline library (v5.3.0): one-tap bulk download of every on-demand text corpus, per-group status, a storage meter, and a pointer to reciter-audio downloads (which stay per-reciter in Audio).
 
 - exports: `renderOffline` (function)
-- emits: `navigate`, `offline-clear-study`, `offline-download-all`, `offline-download-group`, `offline-stop`, `offline-toggle-compressed`, `offline-toggle-essentials-auto`
+- emits: `navigate`, `offline-clear-study`, `offline-download-all`, `offline-download-group`, `offline-request-persistence`, `offline-stop`, `offline-toggle-compressed`, `offline-toggle-essentials-auto`
 - handles: —
-- i18n: `nav.offline`, `nav.settings`, `offline.audioBody`, `offline.audioCache`, `offline.audioOpen`, `offline.audioTitle`, `offline.cacheLimit`, `offline.cacheLimitHint`, `offline.clearStudy`, `offline.clearStudyBody`, `offline.complete`, `offline.compressedLabel`, `offline.downloadAll`, `offline.downloadGroup`, `offline.downloading`, `offline.essentialsBody`, `offline.essentialsLabel`, `offline.groupsTitle`, `offline.lead`, `offline.manageMeta` (+8 more)
+- i18n: `nav.offline`, `nav.settings`, `offline.audioBody`, `offline.audioCache`, `offline.audioOpen`, `offline.audioTitle`, `offline.cacheLimit`, `offline.cacheLimitHint`, `offline.clearStudy`, `offline.clearStudyBody`, `offline.complete`, `offline.compressedLabel`, `offline.downloadAll`, `offline.downloadGroup`, `offline.downloading`, `offline.essentialsBody`, `offline.essentialsLabel`, `offline.essentialsOff`, `offline.groupsTitle`, `offline.lead` (+11 more)
 - routes: `VIEWS.AUDIO`, `VIEWS.SETTINGS`
 
 ### `js/views/onboardingPanel.js`
@@ -2674,6 +2674,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `audio-play-moshaf`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `audio-remove-custom`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `audio-select-moshaf`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
+- `audio-sleep-cycle`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `ayah-share`: emitted by `js/views/ayahStudy.js`, `js/views/quran.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/items.js`
 - `backup-link-file`: emitted by `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `bookmark-delete-folder`: emitted by `js/views/mushafBookmarks.js`; handled in `js/app/handlers/zakat.js`
@@ -2844,6 +2845,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `offline-clear-study`: emitted by `js/views/offline.js`; handled in `js/app/handlers/offline.js`
 - `offline-download-all`: emitted by `js/views/offline.js`; handled in `js/app/handlers/offline.js`
 - `offline-download-group`: emitted by `js/views/offline.js`; handled in `js/app/handlers/offline.js`
+- `offline-request-persistence`: emitted by `js/views/offline.js`; handled in `js/app/handlers/offline.js`
 - `offline-stop`: emitted by `js/views/offline.js`; handled in `js/app/handlers/offline.js`
 - `offline-toggle-compressed`: emitted by `js/app/handlers/offline.js`, `js/views/offline.js`; handled in `js/app/handlers/offline.js`
 - `offline-toggle-essentials-auto`: emitted by `js/app/handlers/offline.js`, `js/views/offline.js`; handled in `js/app/handlers/offline.js`
@@ -3144,6 +3146,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `LOOP_CYCLE`: `js/services/surahPlayback.js`
 - `LOOP_CYCLE_UI`: `js/ui/recitationConsole.js`
 - `MAX_COMPLETED_CYCLES`: `js/core/utils.js`
+- `MAX_IMPORT_FILE_BYTES`: `js/services/backup.js`
 - `MAX_LATENESS_MS`: `js/services/alertTriggers.js`
 - `MAX_LOOKAHEAD`: `js/services/surahPlayback.js`
 - `MAX_PLAN`: `js/services/alertTriggers.js`
@@ -3805,6 +3808,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `isFunctionToken`: `js/domain/lexicalProvenance.js`
 - `isFuturePayload`: `js/core/state/restore.js`
 - `isHadithIndexAllConfirmed`: `js/app/hadithData.js`
+- `isImportFileTooLarge`: `js/services/backup.js`
 - `isInviteDismissed`: `js/domain/homeInvitations.js`
 - `isKidsAllowedView`: `js/core/config/views.js`
 - `isLastPage`: `js/services/mushaf.js`
@@ -4059,6 +4063,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `parseBackup`: `js/services/backup.js`
 - `parseProtocolLaunch`: `js/domain/launchIntents.js`
 - `parseShareTarget`: `js/domain/launchIntents.js`
+- `patchElement`: `js/app/renderer.js`
 - `patchHTML`: `js/app/renderer.js`
 - `pause`: `js/services/player.js`, `js/services/recitation.js`, `js/services/surahPlayback.js`
 - `peekNextTriples`: `js/services/surahPlayback.js`
@@ -4898,7 +4903,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `button`: `js/ui/viewSheet.js`
 - `buttons`: `js/core/router.js`
 - `byte`: `js/app/fileImports.js`
-- `bytes`: `js/services/audioStore.js`, `js/views/backupSummary.js`
+- `bytes`: `js/services/audioStore.js`, `js/services/backup.js`, `js/views/backupSummary.js`
 - `cache`: `js/app/offlineJobs.js`, `js/services/audioStore.js`
 - `cached`: `js/app/offlineJobs.js`, `js/views/quran.js`
 - `caching`: `js/app/quranData.js`
@@ -5779,6 +5784,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `isfunctiontoken`: `js/domain/lexicalProvenance.js`
 - `isfuturepayload`: `js/core/state/restore.js`
 - `ishadithindexallconfirmed`: `js/app/hadithData.js`
+- `isimportfiletoolarge`: `js/services/backup.js`
 - `isinvitedismissed`: `js/domain/homeInvitations.js`
 - `iskidsallowedview`: `js/core/config/views.js`
 - `islamic`: `js/domain/calendar.js`
@@ -6319,6 +6325,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `pasted`: `js/ui/recitationConsole.js`
 - `patch`: `js/core/icons.js`
 - `patched`: `js/views/playerBar.js`
+- `patchelement`: `js/app/renderer.js`
 - `patchhtml`: `js/app/renderer.js`
 - `patching`: `js/app/compassRuntime.js`
 - `path`: `js/domain/install.js`, `js/domain/tajweedCourse.js`, `js/views/kids.js`
@@ -7457,6 +7464,8 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/a11y-budget.test.js` — (v5.17.2) audit ACCESS follow-up, step 1. Static budget gates that run in unit CI (no browser needed): touch target >= 44px, visible focus, reduced-motion kill rule, (pins: —)
 - `tests/a11yPrefs.test.js` — item 16 (theming/a11y) gates: 1. the two reading-comfort prefs sanitize to false and ride updateSettings like every other setting; (pins: `../js/core/config.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/views/settings.js`)
 - `tests/about-hierarchy.test.js` — (no header comment) (pins: `../js/views/about.js`)
+- `tests/action-affordance-v128.test.js` — (no header comment) (pins: —)
+- `tests/action-affordance-v129.test.js` — (no header comment) (pins: —)
 - `tests/adaptive-lookahead.test.js` — (v5.10.4) adaptive prefetch depth: the EWMA weighting, the fetch/ayah ratio bands, the passive sample intake, and the plain-path triple walk (with complex-mode bail). (pins: `../js/services/recitation.js`, `../js/services/surahPlayback.js`)
 - `tests/adhan-cache.test.js` — OPEN-ISSUES #8 (v5.17.25) assets/audio/adhan/adhan.mp3 is ~2.4MB — roughly 40% of the install — for a file only needed when a prayer alert fires. It must NOT be (pins: —)
 - `tests/adhanYield.test.js` — v5.2.72 (adhan owns the speaker) gates: 1. playAlert fires the start hook on the tone path (node-safe: the WebAudio attempt degrades silently, the hook still runs); (pins: `../js/services/prayerSound.js`)
@@ -7514,6 +7523,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/dhikr-audio.test.js` — per-dhikr recitation INFRA ONLY (v5.17.30, OPEN-ISSUES #15 + #37). Zero real clips ship and none are fetched here: every case uses fixture (pins: `../js/app/events.js`, `../js/core/config.js`, `../js/core/schema.js`, `../js/services/dhikrAudio.js`, `../js/ui/card.js`, `../js/views/focus.js`)
 - `tests/docs-honesty.test.js` — F-003: docs must never hardcode a passing claim the tree cannot prove. Counts live in ARCHITECTURE/README tables, regenerated from actual runs per the release protocol; the badge and (pins: —)
 - `tests/editorReference.test.js` — audit rank 7 (v5.2.71) gates: 1. the item form carries book/chapter/reference-notes/Arabic-source inputs prefilled from the item (both languages render labels); (pins: `../js/core/config/sanitize.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/localeContent.js`, `../js/views/editor.js`)
+- `tests/error-screen-a11y-v130.test.js` — (no header comment) (pins: —)
 - `tests/event-registries.test.js` — Blueprint D gates: the change/input arms moved out of events.js into feature-owned { sel, run } registries. Pins completeness (no arm lost in the move), selector uniqueness (pins: `../js/app/events.js`, `../js/core/state.js`)
 - `tests/fasting.test.js` — (no header comment) (pins: `../js/domain/calendar.js`, `../js/domain/fasting.js`)
 - `tests/favorites.test.js` — item 8 (favorites bulk) gates: 1. favoriteSortFor resolves valid sorts, hostile ones fall back; 2. sortFavorites orders recent (newest first), alpha (EN + AR locale (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/ui/menus.js`, `../js/views/favorites.js`)
@@ -7547,6 +7557,8 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/home-invites.test.js` — (v5.17.56, merged-plan item 9) permanent. Browse-by-need below the fold + three calm home invitations (Hijri date note, Friday Al-Kahf, Ramadan countdown/companion): (pins: `../js/app/events.js`, `../js/app/handlers/worship.js`, `../js/core/config.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/schema.js`, `../js/core/state.js`, `../js/core/state/initial.js`, `../js/core/utils.js`, `../js/domain/calendar.js`, `../js/domain/homeInvitations.js`, `../js/domain/moods.js`, `../js/domain/ramadan.js`, `../js/domain/reminderPresets.js`, `../js/views/home.js`)
 - `tests/home-today-ribbon.test.js` — merged-plan item 3: time-aware Today. The Home hero grows from a next-only strip into a six-prayer ribbon (every prayer taps into the Prayer view; current/next highlighted), (pins: `../js/core/config.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/router.js`, `../js/core/schema.js`, `../js/core/state/initial.js`, `../js/domain/prayer.js`, `../js/views/home.js`)
 - `tests/homePanels.test.js` — home panel order + visibility: pure resolve/ move helpers and the settings sanitizer boundary. (pins: `../js/core/config.js`, `../js/core/state/initial.js`, `../js/domain/homePanels.js`)
+- `tests/hostile-import-boundary.test.js` — Hostile review: untrusted local-file import boundaries. Guards against memory-pressure / parse-DoS from arbitrarily large JSON files and reserved object keys entering family-plan counter maps. (pins: `../js/domain/planExport.js`, `../js/services/backup.js`)
+- `tests/hostile-provenance.test.js` — (no header comment) (pins: —)
 - `tests/hostile-v125-remediation.test.js` — v5.17.126 hostile-review remediation contracts. These are source-level traps for defects found by the local Chromium pass on v5.17.125. They do not replace browser evidence; they prevent reintroducing (pins: —)
 - `tests/hygiene-gates.test.js` — F-004/F-005, permanent: 1. every runtime fetch() goes through the timeout layer (js/core/fetch.js is the single legal site); (pins: —)
 - `tests/icons-kill.test.js` — (no header comment) (pins: `../js/core/icons.js`, `./helpers/icon-audit.mjs`)
@@ -7595,6 +7607,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/offline-essentials.test.js` — the "works offline" promise (v5.17.17) The About copy says "Everything lives on your device and works offline". An independent audit found that false for the corpus people (pins: `../js/app/offlineJobs.js`, `../js/core/config.js`, `../js/core/config/sanitize.js`)
 - `tests/offline-gzip.test.js` — compressed downloads (v5.3.0): transparent .json.gz fetching with plain fallback, the storage-mode toggle, and the packaging script. (pins: `../js/app/handlers/offline.js`, `../js/app/net.js`, `../js/app/offlineJobs.js`, `../js/core/config.js`, `../js/core/state.js`, `../js/core/state/initial.js`, `../js/views/offline.js`)
 - `tests/offline-library.test.js` — one-tap offline downloads: inventory shape, progress-slice discipline, sanitizer boundary, and view rendering. (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/core/state/initial.js`, `../js/domain/offline.js`, `../js/views/offline.js`, `./helpers/seedMode.mjs`)
+- `tests/offline-persistence-131.test.js` — (no header comment) (pins: —)
 - `tests/onboarding.test.js` — first-run wizard logic (pure module, v5.17.48: three decisions — language, location-or-offset, reciter — with the other five legacy steps deferred to Settings). (pins: `../js/core/config.js`, `../js/domain/onboarding.js`)
 - `tests/onboardingWizard.test.js` — item 9 (onboarding wizard) gates, v5.17.48 (3-step wizard: language → location-or-offset → reciter): 1. ONBOARDING_STEP_SEEN records only live confirms; legacy confirms (pins: `../js/core/config/quran.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/views/onboardingPanel.js`, `../js/views/settings.js`)
 - `tests/one-voice.test.js` — "one voice at a time" must mean all five pairs. THE DEFECT THIS PINS docs/PROJECT-PICTURE.md §3 lists "One voice at a time" as a standing (pins: —)
@@ -7675,6 +7688,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/seedBundle.test.js` — / Seed-bundle contract: the slim archive is intentionally tiny but runnable. (pins: `./helpers/seedMode.mjs`)
 - `tests/separation-renderers.test.js` — template-level language-separation gates (takeover audit A1-A4, A6, B2). The v5.2.31 audit pinned the contract at five renderers; the takeover (pins: `../js/domain/localeContent.js`, `../js/ui/card.js`, `../js/views/editor.js`, `../js/views/hadith.js`, `../js/views/quiz.js`)
 - `tests/session-start-warm.test.js` — (v5.11.0 A) tap-parallel warm: start() fires the lookahead horizon's probes+preloads synchronously at tap time (concurrent with the first ayah's own storage probe), instead (pins: `../js/services/mushaf.js`, `../js/services/recitation.js`, `../js/services/surahPlayback.js`)
+- `tests/settings-deslopification-127.test.js` — (no header comment) (pins: —)
 - `tests/settings-groups.test.js` — (v5.17.63) professional Settings sections. Arrangement only: the same 12 accordions, the same controls, the same contracts — now shelved into seven labelled groups (Setup & about · (pins: `../js/core/i18n.js`, `../js/core/utils.js`, `../js/views/settings.js`)
 - `tests/settings-reciter-overflow.test.js` — (no header comment) (pins: —)
 - `tests/settingsSection.test.js` — item 5 (settings accordion persistence + deep links) gates: 1. the sanitize allowlist mirrors the view's section slugs exactly (no (pins: `../js/core/config.js`, `../js/views/palette.js`, `../js/views/settings.js`)

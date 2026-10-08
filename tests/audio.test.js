@@ -426,8 +426,12 @@ test('audio defaults panel renders direct picks, loop gated (v5.12.0)', async ()
   assert.ok(html.includes('<option value="-1">∞</option>'), 'infinity is a direct pick');
   assert.ok(html.includes('data-audio-pref="loop" disabled'), 'loop gated with no session');
   assert.ok(html.includes('Start a recitation first'), 'gate reason named');
-  assert.ok(html.includes('data-audio-pref="sleep"'), 'sleep select');
-  assert.ok(html.includes('<option value="5">5m</option>'), '5-minute rung is a direct pick');
+  assert.ok(
+    html.includes('data-action="audio-sleep-cycle"'),
+    'sleep cycle uses the same direct interaction grammar'
+  );
+  assert.ok(html.includes('aria-pressed="false"'), 'sleep-off state is visible');
+  assert.ok(!html.includes('data-audio-pref="sleep"'), 'no duplicate sleep selector');
   assert.ok(!html.includes('audio.playbackDefaults'), 'no raw key leaks (EN)');
   assert.ok(
     !html.includes('audio.repeatAyah') || html.includes('Repeat each ayah'),
@@ -463,14 +467,7 @@ test('audio-pref change arm sets repeat/loop/sleep directly (v5.12.0)', async ()
     assert.equal(store.getState().settings.audio.ayahRepeat, 3);
     // Loop with no session explains instead of arming.
     entry.run({}, el('loop', '3'));
-    // Sleep direct-pick arms the file engine, '' clears it.
-    entry.run({}, el('sleep', '30'));
-    assert.equal(store.getState().player.sleepEnabled, true);
-    assert.equal(store.getState().player.sleepMinutes, 30);
-    entry.run({}, el('sleep', ''));
-    assert.equal(store.getState().player.sleepEnabled, false);
-    entry.run({}, el('sleep', '99'));
-    assert.equal(store.getState().player.sleepEnabled, false, 'hostile sleep no-ops');
+    // Sleep is no longer duplicated as a select; the direct cycle action is the sole interaction grammar.
   } finally {
     player.clearSleepTimer();
     player.resetPlayerForTests();

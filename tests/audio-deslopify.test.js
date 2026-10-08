@@ -25,3 +25,9 @@ test('Audio secondary authoring/download surfaces use one progressive-disclosure
   assert.match(src, /audio-secondary-disclosure__summary.*playlist\.title/s);
   assert.match(css, /\.view--audio \.audio-secondary-disclosure/);
 });
+
+test('Audio sleep setting reuses the direct player cycle affordance', () => {
+  assert.match(src, /data-action="audio-sleep-cycle"/);
+  assert.match(src, /nextSleepRung/);
+  assert.doesNotMatch(src, /data-audio-pref="sleep"/);
+});

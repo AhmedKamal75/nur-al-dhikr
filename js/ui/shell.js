@@ -168,7 +168,7 @@ function hierarchicalSectionHTML(door, active, lang, { drawer = false } = {}) {
     });
   const isOpen = door.view === active || door.members.some((m) => m.route === activeKey);
   return `
-  <details class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}"${isOpen ? ' open' : ''}>
+  <details data-open-controlled class="nav__section${isOpen ? ' nav__section--current' : ''}" data-section="${door.entry}"${isOpen ? ' open' : ''}>
     <summary class="nav__section-summary">
       <span class="nav__section-icon" aria-hidden="true">${icon(door.icon, { size: 22 })}</span>
       <span class="nav__label">${t(door.labelKey, lang)}</span>

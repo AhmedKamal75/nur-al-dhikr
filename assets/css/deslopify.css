@@ -335,6 +335,21 @@ body {
   order: 9;
 }
 
+/* A single resume destination is a continuation cue, not a dashboard card.
+   Keep the heading and one row readable while removing dead vertical space. */
+.view--home > .panel--resume--single {
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+.view--home > .panel--resume--single .worship-row {
+  min-height: 48px;
+  padding: 5px var(--space-2);
+}
+.view--home > .panel--resume--single .worship-row__icon {
+  width: 34px;
+  height: 34px;
+}
+
 /* Home quick actions are an accent, not another navigation rail. */
 .view--home > .quick-actions {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -914,7 +929,12 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   gap: 8px;
 }
 
-.view--settings .swatch,
+.view--settings .swatch {
+  border-color: var(--color-border);
+  background: var(--sw-color, var(--color-primary));
+  border-radius: 12px;
+}
+
 .view--settings .shape-btn {
   border-color: var(--color-border);
   background: var(--color-surface);
@@ -929,6 +949,51 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 .view--settings .shape-btn:hover {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+}
+
+.view--settings .typeface-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.view--settings .typeface-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+  min-height: 88px;
+  padding: 10px 12px;
+  text-align: start;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.view--settings .typeface-option__preview {
+  font-size: 1.35rem;
+  line-height: 1.45;
+}
+
+.view--settings .typeface-option__name {
+  font-weight: 700;
+}
+
+.view--settings .typeface-option__sub {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.view--settings .typeface-option--active {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+@media (max-width: 520px) {
+  .view--settings .typeface-picker {
+    grid-template-columns: 1fr;
+  }
 }
 
 .view--settings .swatch--active,
@@ -1349,6 +1414,20 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 
 .view--offline .offline-management-disclosure__body {
   padding: 0 12px 12px;
+}
+
+/* v5.17.135 — Essentials is the primary Offline decision, not a buried switch. */
+.view--offline > .offline-essentials--primary {
+  margin-block: 0 var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 26%, var(--color-border));
+  border-inline-start: 3px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+  box-shadow: var(--shadow-sm);
+}
+.view--offline > .offline-essentials--primary .panel__header {
+  margin-block-end: 2px;
 }
 
 .view--offline .offline-management-disclosure__body > .panel {

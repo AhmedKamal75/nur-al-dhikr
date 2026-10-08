@@ -40,7 +40,7 @@ describe('v5.17.84 main-menu hierarchy', () => {
   test('main menu derives expandable sections from DOORS and app tail from one source', () => {
     assert.match(shell, /DOORS\.map\(\(door\) => hierarchicalSectionHTML/);
     assert.match(shell, /APP_MENU_ENTRIES\.map\(\(n\) =>/);
-    assert.match(shell, /<details class="nav__section/);
+    assert.match(shell, /<details data-open-controlled class="nav__section/);
     assert.match(shell, /nav__section-chevron/);
     assert.match(css, /\.nav__section\s*\{/);
   });

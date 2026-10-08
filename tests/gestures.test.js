@@ -136,10 +136,15 @@ const settingsState = {
 
 test('settings: 12 collapsible accordion panels, first open', () => {
   const html = renderSettings(settingsState);
-  const panels = html.match(/<details class="panel settings-acc" id="settings-sec-[a-z]+"/g) || [];
+  const panels =
+    html.match(
+      /<details data-open-controlled class="panel settings-acc" id="settings-sec-[a-z]+"/g
+    ) || [];
   assert.equal(panels.length, 12, 'every settings section is an accordion panel');
   assert.ok(
-    html.includes('<details class="panel settings-acc" id="settings-sec-language" open>'),
+    html.includes(
+      '<details data-open-controlled class="panel settings-acc" id="settings-sec-language" open>'
+    ),
     'first panel open by default'
   );
   assert.ok(html.includes('<summary class="settings-acc__summary">'), 'native summary control');
@@ -150,10 +155,15 @@ test('settings: TOC jump chips are gone, the 12 accordion panels stand alone', (
   const html = renderSettings(settingsState);
   assert.ok(!html.includes('settings-toc'), 'no TOC nav renders');
   assert.ok(!html.includes('settings-toc-go'), 'no TOC action emitted');
-  const panels = html.match(/<details class="panel settings-acc" id="settings-sec-[a-z]+"/g) || [];
+  const panels =
+    html.match(
+      /<details data-open-controlled class="panel settings-acc" id="settings-sec-[a-z]+"/g
+    ) || [];
   assert.equal(panels.length, 12, 'every settings section is still an accordion panel');
   assert.ok(
-    html.includes('<details class="panel settings-acc" id="settings-sec-language" open>'),
+    html.includes(
+      '<details data-open-controlled class="panel settings-acc" id="settings-sec-language" open>'
+    ),
     'first panel open by default'
   );
 });

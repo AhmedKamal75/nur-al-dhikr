@@ -49,9 +49,9 @@ test('accordion memory: re-render re-opens exactly the stored section', () => {
     activeProfile: 'main',
   };
   const html = renderSettings(state);
-  const tags = html.match(/<details class="panel settings-acc"[^>]*>/g) || [];
+  const tags = html.match(/<details data-open-controlled class="panel settings-acc"[^>]*>/g) || [];
   assert.equal(tags.length, 12);
-  const openOnes = tags.filter((tag) => /\bopen\b/.test(tag));
+  const openOnes = tags.filter((tag) => /\sopen(\s|>|=)/.test(tag));
   assert.equal(openOnes.length, 1, 'single-expansion survives the render');
   assert.ok(openOnes[0].includes('id="settings-sec-feedback"'), 'the stored section is open');
 });
@@ -66,24 +66,24 @@ test('accordion memory: deep link wins, unknown slugs fall back', () => {
   const deep = renderSettings({ ...base, activeParams: { id: 'data' } });
   assert.ok(
     deep
-      .match(/<details class="panel settings-acc"[^>]*>/g)
-      .filter((t) => /\bopen\b/.test(t))[0]
+      .match(/<details data-open-controlled class="panel settings-acc"[^>]*>/g)
+      .filter((t) => /\sopen(\s|>|=)/.test(t))[0]
       .includes('id="settings-sec-data"'),
     'deep link opens its section'
   );
   const bogus = renderSettings({ ...base, activeParams: { id: 'nope' } });
   assert.ok(
     bogus
-      .match(/<details class="panel settings-acc"[^>]*>/g)
-      .filter((t) => /\bopen\b/.test(t))[0]
+      .match(/<details data-open-controlled class="panel settings-acc"[^>]*>/g)
+      .filter((t) => /\sopen(\s|>|=)/.test(t))[0]
       .includes('id="settings-sec-feedback"'),
     'unknown slug falls back to the stored pin'
   );
   const fresh = renderSettings({ ...base, settings: { language: 'en' } });
   assert.ok(
     fresh
-      .match(/<details class="panel settings-acc"[^>]*>/g)
-      .filter((t) => /\bopen\b/.test(t))[0]
+      .match(/<details data-open-controlled class="panel settings-acc"[^>]*>/g)
+      .filter((t) => /\sopen(\s|>|=)/.test(t))[0]
       .includes('id="settings-sec-language"'),
     'no pin opens the default section'
   );

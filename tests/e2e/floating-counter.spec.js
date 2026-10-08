@@ -17,6 +17,16 @@ test('floating counter: opens a second window that follows the count', async ({ 
 
   await page.goto('#/tasbih');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
+  // (v5.17.136) The float control lives inside the "Tasbih options"
+  // disclosure. That is the intended user path, so open it rather than
+  // reaching past it — the assertion below is still "offered exactly once,
+  // not yet pressed, and opens a window".
+  const options = page.locator('#main details.tasbih-options');
+  await expect(options, 'the options disclosure is present').toHaveCount(1);
+  if (!(await options.evaluate((el) => el.open))) {
+    await options.locator('summary').click();
+    await expect(options).toHaveAttribute('open', '');
+  }
   const button = page.locator('[data-action="tasbih-float"]');
 
   // Probe AFTER navigation: the API only means anything on a real document,

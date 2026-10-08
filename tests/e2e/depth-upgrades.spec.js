@@ -81,6 +81,16 @@ test('playback mode: verse console flips to file bar and back', async ({ page })
   await page.locator('.player-bar--recite [data-action="recite-mode-surah"]').click();
   await expect(page.locator('.player-bar__surah')).toBeVisible({ timeout: 20000 });
   // …and back to ayah-by-ayah from the file bar.
+  // (v5.17.136) The two playback modes have genuinely different structures:
+  // in recite mode the mode switch is a direct chip, in file mode it lives
+  // inside the bar's "more" disclosure (`.player-bar__secondary`). Opening
+  // that disclosure is the user path, so do it instead of clicking through it.
+  const fileMore = page.locator('.player-bar details.player-bar__more').first();
+  await expect(fileMore, 'the file bar has a "more" disclosure').toHaveCount(1);
+  if (!(await fileMore.evaluate((el) => el.open))) {
+    await fileMore.locator('summary').click();
+    await expect(fileMore).toHaveAttribute('open', '');
+  }
   await page.locator('.player-bar [data-action="recite-mode-ayah"]').click();
   await expect(page.locator('.player-bar--recite')).toBeVisible({ timeout: 20000 });
   expect(pageErrors).toEqual([]);

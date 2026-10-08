@@ -81,7 +81,14 @@ export async function startVerseSurah(
     });
   } catch (err) {
     console.error('[surah-playback] failed to start', err);
-    showToast(t('audio.reciteStartFailed', store.getState().settings.language));
+    const lang = store.getState().settings.language;
+    showToast(t('audio.reciteStartFailed', lang), {
+      assertive: true,
+      actionLabel: t('common.retry', lang),
+      onAction: () => {
+        void startVerseSurah(surah, { from, to, surahTo, loop });
+      },
+    });
   }
 }
 

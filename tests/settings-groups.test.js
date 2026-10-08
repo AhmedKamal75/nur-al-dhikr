@@ -156,7 +156,9 @@ describe('group hierarchy renders in both languages', () => {
       assert.ok(html.includes(escapeHTML(t(g.hint, 'en'))), `EN hint renders: ${g.hint}`);
     }
     const details =
-      html.match(/<details class="panel settings-acc" id="settings-sec-[a-z]+"/g) || [];
+      html.match(
+        /<details data-open-controlled class="panel settings-acc" id="settings-sec-[a-z]+"/g
+      ) || [];
     assert.equal(details.length, 12, 'all 12 accordions survive inside the groups');
   });
 
@@ -175,7 +177,9 @@ describe('group hierarchy renders in both languages', () => {
   test('deep-link open still lands inside its group', () => {
     const html = renderSettings(richState({ activeParams: { id: 'reciter' } }));
     assert.ok(
-      html.includes('<details class="panel settings-acc" id="settings-sec-reciter" open>'),
+      html.includes(
+        '<details data-open-controlled class="panel settings-acc" id="settings-sec-reciter" open>'
+      ),
       'reciter accordion opens on deep link'
     );
     const audioAt = html.indexOf('id="settings-group-audio"');

@@ -38,6 +38,34 @@ export const clickHandlers = {
     await clearStudyData();
     showToast(t('offline.clearStudyDone', lang));
   },
+
+  // Request persistent storage when the browser exposes the Storage API.
+  // This does not guarantee unlimited storage: it only asks the browser to
+  // keep the origin out of best-effort eviction where supported. The result
+  // is reported honestly so the user knows whether the request was granted.
+  'offline-request-persistence': async () => {
+    const lang = store.getState().settings.language;
+    try {
+      const storage = navigator?.storage;
+      if (!storage?.persist || !storage?.persisted) {
+        showToast(t('offline.persistenceUnsupported', lang));
+        return;
+      }
+      const already = await storage.persisted();
+      if (already) {
+        showToast(t('offline.persistenceAlready', lang));
+        return;
+      }
+      const granted = await storage.persist();
+      showToast(t(granted ? 'offline.persistenceGranted' : 'offline.persistenceDeclined', lang), {
+        duration: 6000,
+        assertive: granted !== true,
+      });
+    } catch (err) {
+      console.warn('[offline] persistent storage request failed', err);
+      showToast(t('offline.persistenceDeclined', lang), { duration: 6000, assertive: true });
+    }
+  },
 };
 
 export const changeHandlers = [

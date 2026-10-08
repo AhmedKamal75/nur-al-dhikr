@@ -63,6 +63,7 @@ export function sanitizePlan(obj) {
   if (p.tasbihTargets && typeof p.tasbihTargets === 'object') {
     const tt = {};
     for (const [id, n] of Object.entries(p.tasbihTargets)) {
+      if (id === '__proto__' || id === 'constructor' || id === 'prototype') continue;
       const v = Number(n);
       if (
         typeof id === 'string' &&
