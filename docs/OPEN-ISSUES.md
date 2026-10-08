@@ -163,6 +163,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 75 | Mobile seven-door active underline alignment | **STANDING CONSTRAINT** | Owner reports the underlying active underline is now correctly aligned in mobile view. Preserve the current quiet underline geometry during desktop/menu work; do not reintroduce filled pills or drift the indicator. |
 | 76 | Practice is still a tool jump instead of a coherent rehearsal launcher | **OPEN — fix candidate** | PR #7 (`feature/practice-ia-current`) adds a focused Practice landing with four task-shaped entries while preserving Qur'an ownership of the full Tajweed Course. Chromium evidence is required before merge; do not merge the stale PR #3 branch. |
 | 77 | Mutashabihat pair cache could survive a same-shape corpus replacement | **OPEN — fix candidate** | PR #8 (`fix/mutashabihat-corpus-cache`) keys the computed pair cache by corpus object identity and adds a regression test. This is a correctness hardening change; merge only after CI. |
+| 78 | Tajweed course contained corrupted Arabic copy in the Meem-stage explanation | **RESOLVED on main — next release** | The authoritative course JSON and runtime mirror contained the stray non-Arabic token `变化`. Both were corrected to `تُعدّ هذه تنويعًا لا مادة جديدة.` No curriculum structure was changed. |
 
 ## Stale report claims — closed, with evidence
 
