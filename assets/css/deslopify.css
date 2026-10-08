@@ -4647,10 +4647,81 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 /* Navigation action/disclosure split: section names navigate; native summary
    disclosure stays a small, explicit chevron control. Keeping <details> user-owned
    preserves its open state across normal shell rerenders. */
+.nav__group--hierarchy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 .nav__section {
   position: relative;
   margin: 0;
   border: 0;
+}
+.nav__section-icon {
+  inline-size: 24px;
+  block-size: 24px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.nav__section-link .nav__label {
+  min-inline-size: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav__sub {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 4px;
+  padding-inline: 10px 2px;
+}
+[dir='rtl'] .nav__sub {
+  padding-inline: 2px 10px;
+}
+.nav__item--sub {
+  position: relative;
+  min-block-size: 44px;
+  padding: 7px 10px 7px 18px;
+  border-radius: 10px;
+  font-size: var(--fs-caption);
+  font-weight: 550;
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+[dir='rtl'] .nav__item--sub {
+  padding-inline: 7px 18px;
+}
+.nav__item--sub::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 6px;
+  inset-block-start: 50%;
+  inline-size: 4px;
+  block-size: 4px;
+  border-radius: 50%;
+  background: var(--color-border-strong);
+  transform: translateY(-50%);
+}
+[dir='rtl'] .nav__item--sub::before {
+  inset-inline-start: auto;
+  inset-inline-end: 6px;
+}
+.nav__item--sub:hover {
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+}
+.nav__item--sub.nav__item--active {
+  background: color-mix(in srgb, var(--color-primary) 9%, var(--color-surface));
+  color: var(--color-primary-text);
+  font-weight: 650;
+  border-inline-start: 0;
+}
+.nav__item--sub.nav__item--active::before {
+  background: var(--color-primary);
+}
+.nav__item--overview {
+  font-weight: 650;
 }
 .nav__section-toggle {
   position: absolute;
