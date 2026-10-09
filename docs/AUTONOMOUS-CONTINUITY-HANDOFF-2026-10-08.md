@@ -62,6 +62,16 @@ On `integration/tajweed-clean-mainline-2026-10-09`:
 
 Evidence boundary: this is a focused direct-source execution, **not** the native Node test runner. The test additions, ESLint/Prettier checks, GitHub Actions, Chromium visual behavior, and scholarly review still require their own evidence. Do not close existing Tafkhim issue rows or release based only on this probe.
 
+### Post-normalization full-corpus rerun — 2026-10-09
+
+The attached-token fix has now been checked across the entire bundled Qur'an corpus, not merely the four synthetic probes.
+
+- Exact classifier source blob: `b48dfcb6f82068195a26d7639f2a36297e8d67be`.
+- Eight isolated execution batches covered all 114 JSON surah files / 6,236 ayahs and produced **104,554 spans**.
+- All 21 registered rule IDs were reached. Zero file-fetch/parse failures, word/token-count mismatches, invalid word indices, invalid span offsets, unknown rule IDs, or duplicate spans were observed.
+- The same four exact-range collisions remained (three `ghunnah + idgham_ghunnah`, one `ghunnah + idgham_no_ghunnah`); exactly two unmarked Qalqalah spans remained, consistent with the documented pause-final cases.
+- The durable details and batch counts are in `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. This was direct execution of fetched JS source, **not** native Node/CI, browser verification, or a scholarly gold-label audit.
+
 ### Qalqalah deep-audit finding
 
 The prior broad heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as Qalqalah. Source review found cases where a specific assimilation changes the independent consonant realization. The current branch therefore uses deliberately narrow evidence rather than broad letter-adjacency suppression:
@@ -449,7 +459,7 @@ This integration branch was created from current `main` to resolve the stale-bas
 
 - A replacement **draft PR #26** now exists: https://github.com/AhmedKamal75/nur-al-dhikr/pull/26. It targets current `main`, and GitHub currently reports it mergeable. It supersedes stale-base PR #21 in intent; PR #21 remains open for now, not merged or forcibly closed.
 - Current branch: `integration/tajweed-mainline-2026-10-09`. The integration includes the original classifier/source/inspector/test changes plus two necessary adjacent files: `assets/css/quran.css` adds subordinate styling for alternate Tajweed citations in RTL-safe logical properties, and `tests/tajweed-sources.test.js` now compares complete canonical/runtime citation structures and tests localized alternate-source locators. These two changes are relevant to the updated source registry/UI, not unrelated cleanup.
-- Current authoritative corpus report: `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`, current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef`. The documented rerun executed all 114 surah files / 6,236 ayahs, produced 104,554 spans, reached all 21 rule IDs, and recorded zero structural invariant failures. It found four exact same-range collisions and two pause-final unmarked Qalqalah spans. This is isolated JavaScript-runtime evidence, not native Node/CI, browser, or scholarly validation.
+- Current authoritative corpus report: `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. The post-normalization rerun executed exact classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be` across all 114 surah files / 6,236 ayahs, produced 104,554 spans, reached all 21 rule IDs, and recorded zero structural invariant failures. It found the same four exact same-range collisions and two pause-final unmarked Qalqalah spans. This is direct isolated JavaScript execution, not native Node/CI, browser, or scholarly validation.
 - Isolated JS harness snapshots documented in that report: Tajweed classifier unit tests 29/29; citation registry/parity tests 11/11; canonical/runtime comparison 28/28 rule objects and 4/4 work objects. Do not present these as official Node test-runner results.
 - Re-reviewed painter/inspector: `filterSpansByPrefs()` preserves all enabled matches; the painter sorts by start and skips a span beginning before the current cursor. Corpus execution found no partial/nested overlaps—only four equal-range pairs—so current corpus behavior is deterministic, but synthetic/future partial overlaps still lack an explicit painter policy. Keep this as a follow-up rather than claim universal overlap correctness.
 - Corrected `docs/OPEN-ISSUES.md` to preserve main's navigation row 80, retain newer integration rows 91–94, update the date, and reconcile the bottom summary with the actual 90 table rows (IDs are non-contiguous, highest ID 94). It now reports 36 OPEN, 5 PROPOSED, 7 BLOCKED:scholar, 5 pure BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 2 STANDING CONSTRAINT, and 29 RESOLVED split into 27 re-verified + 2 resolved-on-main/next-release.
