@@ -172,6 +172,12 @@ test('an unattributed rule is reported, not rendered blank', () => {
   assert.deepEqual(uncitedTajweedRules(['madd_2', 'not_a_rule']), ['not_a_rule']);
 });
 
+test('secondary Tajweed source link has visible and keyboard-focus styling', () => {
+  const css = read('assets/css/quran.css');
+  assert.match(css, /\.tajweed-legend__source-link\s*\{[^}]*text-decoration:\s*underline dotted/s);
+  assert.match(css, /\.tajweed-legend__source-link:focus-visible\s*\{/);
+});
+
 test('the ʿayn citation exposes its secondary source to the Mushaf legend', () => {
   const citation = tajweedCitation('madd_4_6', 'en');
   assert.ok(citation);
