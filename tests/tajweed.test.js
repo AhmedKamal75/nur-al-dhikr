@@ -28,18 +28,32 @@ test('Al-Fatiha 1:1 matches the well-known reference reading', () => {
     '\u0628ِ\u0633\u0652\u0645ِ \u0671\u0644\u0644\u0651\u064e\u0647ِ \u0671\u0644\u0631\u0651\u064e\u062D\u0652\u0645\u064e\u0670\u0646ِ \u0671\u0644\u0631\u0651\u064e\u062D\u0650\u064a\u0645ِ'
   );
   assert.deepEqual(result[0].spans, []); // بِسْمِ — nothing to mark
-  // (v4.5.2) the divine name's second lam is now Tafkhim (blue, per the
-  // app palette convention) instead of deliberately uncolored.
+  // The preceding word ends in kasra (بِسْمِ), so the lām of
+  // lafẓ al-jalālah is light here and must not receive the heavy Tafkhim tag.
   assert.deepEqual(ruleTextPairs(result[1].word), [
     { rule: 'hamzat_wasl', text: '\u0671' },
-    { rule: 'tafkhim', text: '\u0644\u0651\u064e' },
-  ]); // ٱللَّهِ — divine name: wasla gray + the heavy lam blue (lam+shadda+fatha)
+  ]); // بِسْمِ ٱللَّهِ — lām al-jalālah is tarqiq after kasra
   const rahman = ruleTextPairs(result[2].word);
   assert.ok(rahman.some((r) => r.rule === 'hamzat_wasl'));
   assert.ok(rahman.some((r) => r.rule === 'lam_shamsiyyah'));
   assert.ok(rahman.some((r) => r.rule === 'madd_2')); // the dagger alif
   const raheem = classifyWordTajweed(result[3].word, { isLastWordOfAyah: true });
   assert.ok(raheem.some((s) => s.rule === 'madd_246')); // ayah-final madd, pause-lengthened
+});
+
+
+test('lam of lafz al-jalalah respects heavy/light vowel context', () => {
+  const hasAllahTafkhim = (text) =>
+    classifyAyahTajweed(text).some((word) =>
+      word.spans.some((span) => span.rule === 'tafkhim')
+    );
+
+  assert.equal(hasAllahTafkhim('ٱللَّهُ'), true, 'initial recitation uses the heavy lām');
+  assert.equal(hasAllahTafkhim('قَالَ ٱللَّهُ'), true, 'a preceding fatḥah supports tafkhim');
+  assert.equal(hasAllahTafkhim('وَٱللَّهِ'), true, 'the attached wāw-prefix has fatḥah');
+  assert.equal(hasAllahTafkhim('فِي ٱللَّهِ'), false, 'a preceding kasrah requires tarqiq');
+  assert.equal(hasAllahTafkhim('بِٱللَّهِ'), false, 'the attached bi-prefix has kasrah');
+  assert.equal(hasAllahTafkhim('لِلَّهِ'), false, 'the attached li-prefix has kasrah');
 });
 
 test('hamzat al-wasl fires on every \u0671, nowhere else', () => {
