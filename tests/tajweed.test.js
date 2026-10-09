@@ -471,9 +471,14 @@ test('divine-name recognition ignores attached Quranic ornaments', () => {
     classifyAyahTajweed(text)[index].spans.some((span) => span.rule === 'tafkhim');
 
   assert.equal(
-    hasTafkhim('ٱللَّهُۚ'),
+    hasTafkhim('ٱللَّهُ۞'),
     true,
-    'an attached waqf mark must not hide the initial divine-name lām'
+    'an attached rub el-hizb mark must not hide the initial divine-name lām'
+  );
+  assert.equal(
+    hasTafkhim('ٱللَّهُ١'),
+    true,
+    'an attached ayah numeral must not hide the initial divine-name lām'
   );
   assert.equal(
     hasTafkhim('قَالَ ٱللَّهُۚ', 1),
