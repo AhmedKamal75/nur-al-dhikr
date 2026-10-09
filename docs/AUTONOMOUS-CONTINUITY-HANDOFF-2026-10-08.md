@@ -412,3 +412,12 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Added `.tajweed-legend__source--also` styling in route-lazy `assets/css/quran.css`: logical inline padding and a subtle logical border distinguish secondary citations without introducing an LTR-only indent. It uses the existing theme-aware `--color-border` token.
 - This is a source-level presentation refinement only. Chromium proof for 360/393/1024/1440 widths, Arabic RTL, light/dark, long Arabic/English source titles, and the contested caveat stacking remains pending under ledger row 94.
 - CSS blob: `6affdbccbee6172e5807abce8efce2b3662b654c`. No PR created; continue branch-local.
+
+
+
+### Current test-snapshot execution — 2026-10-09 05:15Z
+
+- Executed all current `tests/tajweed.test.js` assertions against classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` in an isolated synchronous harness: **29/29 passed** (test blob `d1bb1b04e4c1a20c5a271afb2225dece222bfe4a`).
+- Executed all current `tests/tajweed-sources.test.js` assertions in a separate isolated harness: **11/11 passed** (test blob `203bde8367582990c03440ef80b0642c2bde08f6`; canonical JSON `607c221d95138112ce507733e466e7ac1d9c3d11`; runtime mirror `2889e476ce399f52bca70697966ec49ee7635671`).
+- Complete rule/work object parity was rechecked: 28/28 rules and 4/4 works match; the Arabic title and localized alternate citations are correct. These are shim-run assertions, not native Node or CI results.
+- Exact snapshots/results are recorded in the corpus report commit `0a4871afb823ddc72d1639066c4a977d13246a58`. Native `npm run check`, CI, browser matrix, and scholarly review remain open. Keep formal release v5.17.136; no PR creation without owner request.
