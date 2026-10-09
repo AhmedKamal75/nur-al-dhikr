@@ -194,7 +194,7 @@ const IKHFA_LETTERS = new Set([
  * them for something they are not. The one genuinely citable convention
  * found is Indonesia's LPMQ Pedoman Tajwid Sistem Warna (2011).
  *
-      en: "Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored by this app's presentation convention.",
+ * Three rules this app's presentation convention leaves UNCOLORED (idgham bila
  * ghunnah, izhar shafawi, and halqi izhar) now carry color: null and render no color span
  * — matching the printed books rather than inventing an off-chart hue.
  * Each rule also carries a `family` key so the legend can group rows the
@@ -335,7 +335,7 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'plain',
     name: { en: 'Idgham (no Ghunnah)', ar: 'الإدغام بلا غنة' },
     desc: {
-      en: 'Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored by this app's presentation convention.',
+      en: "Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored by this app's presentation convention.",
       ar: 'إدغام النون الساكنة أو التنوين في اللام أو الراء بلا غنة — بلا لون كما في المصحف المعياري.',
     },
   },
