@@ -50,6 +50,18 @@ Regression examples include:
 - `عَلِيمًا ۚ` → Madd Iwad
 - ornament tokens remain render-only.
 
+### Attached-token normalization regression — 2026-10-09
+
+The deep review found a distinct consistency gap between tokenization and divine-name recognition. `tokenizeUnits()` skips Qur'anic ornaments and digits, but the old `skeletonOf()` removed only diacritics and tatweel. When the rub el-hizb ornament (۞) or an Arabic ayah numeral (١) was attached to the token `ٱللَّهُ`, divine-name recognition failed and the initial lām's Tafkhim marker disappeared.
+
+On `integration/tajweed-clean-mainline-2026-10-09`:
+- `skeletonOf()` now excludes `WORD_ORNAMENT_CHARS` and `ORNAMENT_DIGITS`, matching the tokenizer's semantic boundary.
+- Regression coverage checks an attached rub el-hizb mark, an attached Arabic numeral, and preserves the heavy/light context distinction with attached waqf marks.
+- Direct execution of the exact main/candidate classifier blobs showed the expected delta: main returned no Tafkhim span for `ٱللَّهُ۞` and `ٱللَّهُ١`; the candidate returned Tafkhim for both. For `فِي ٱللَّهِۚ`, main incorrectly returned Tafkhim and the candidate correctly left it uncolored.
+- The four targeted candidate probes passed when invoking the fetched classifier directly in the isolated JavaScript runtime.
+
+Evidence boundary: this is a focused direct-source execution, **not** the native Node test runner. The test additions, ESLint/Prettier checks, GitHub Actions, Chromium visual behavior, and scholarly review still require their own evidence. Do not close existing Tafkhim issue rows or release based only on this probe.
+
 ### Qalqalah deep-audit finding
 
 The prior broad heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as Qalqalah. Source review found cases where a specific assimilation changes the independent consonant realization. The current branch therefore uses deliberately narrow evidence rather than broad letter-adjacency suppression:
@@ -446,9 +458,13 @@ This integration branch was created from current `main` to resolve the stale-bas
 
 
 
-### Clean ancestry safeguard — 2026-10-09 05:23Z
+### Clean ancestry safeguard and latest working state — 2026-10-09
 
-- A history audit found the prior integration branch reported 73 commits ahead of current `main`, despite only 11 changed files. To avoid carrying ambiguous/unnecessary commit ancestry, created a second branch from the **exact current main SHA** `61e26848a48dfba8540d7ce48dab22c45bd437f9`: `integration/tajweed-clean-mainline-2026-10-09`.
-- Transplanted the audited final file contents onto that clean base. Compare now reports exactly **11 commits ahead, 0 behind**, and exactly the intended 11 changed files: Tajweed source registry JSON/runtime, classifier, Tafsir-panel inspector/painter, Tajweed CSS, classifier/source-registry tests, full-corpus sweep test, issue ledger, execution report, and continuity handoff. No Quran data, unrelated application modules, or release marker are changed.
-- Classifier blob is unchanged from the documented full-corpus execution snapshot: `92f4fba4747024582c3334400bc6d3437732d5ef`; citation JSON/runtime and test blobs also match the audited source snapshots. The report's original execution branch remains accurately recorded as the predecessor integration branch; this clean-ancestry transplant was not separately re-executed across all 6,236 ayahs.
-- The prior draft PR #26 is retained temporarily while the clean replacement is prepared. Open a new draft PR from this clean branch and confirm its base/head/diff/mergeability and current-head CI before deciding whether to close PR #26 and stale PR #21. No PR is merged; release remains v5.17.136.
+- Authoritative repository: `AhmedKamal75/nur-al-dhikr`. Formal release remains **v5.17.136**; do not bump the release or claim native/browser certification until verified.
+- Candidate PR: **#27**, [Tajweed deep-audit fixes — clean mainline integration](https://github.com/AhmedKamal75/nur-al-dhikr/pull/27). Branch `integration/tajweed-clean-mainline-2026-10-09`, based on exact main SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`; no direct merge has been performed.
+- Latest branch head after the attached-token normalization regression: `3ded3b18a0f8a85dba055cdabdec0e168c4e533d`.
+- Current classifier source blob: `b48dfcb6f82068195a26d7639f2a36297e8d67be`. Current Tajweed unit-test blob: `067f660834412228f8bdb3ea9d080b3124421fd7`.
+- The added normalization/test patch touches existing files only: `js/domain/tajweed.js` and `tests/tajweed.test.js`. It does not change bundled sacred text, service-worker version, package version, or formal release.
+- Direct main-versus-candidate source execution passed four targeted probes: attached ۞, attached ١, heavy context with attached waqf, and light context after kasrah with attached waqf. This catches an actual old-code false negative on attached non-diacritic ornaments and a light-context false positive. These probes are **not** a substitute for `node --test`.
+- The latest GitHub Actions run must be fetched for the current head before recording any pass. Earlier check snapshots were queued, not passed. Native `npm run check`, Chromium/device behavior, and scholarly rule validation remain release gates.
+- Next action: validate current-head native/CI outcomes. If a check fails, inspect its real failure and fix the underlying defect without weakening assertions. Continue the corpus/rule audit only after this checkpoint is safely recorded. Keep the open issue ledger truthful and avoid changing resolved counts without execution evidence.
