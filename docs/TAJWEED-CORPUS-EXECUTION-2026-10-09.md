@@ -214,8 +214,8 @@ Source review found a styling interaction beyond the classifier corpus: `applyTa
 
 - Current classifier source blob: `60b9b294d91420c45eb05382c6492172f9491302`; the delta from the corpus-tested blob is the family-to-custom-property map only, not classification rules.
 - Current CSS blob: `399d6bb24526137509f9354c60449c1c9a6345e4`.
-- Current coherence-test blob: `6acea00d0accbffbca2f83c4a2538293b46b5dff`.
-- Static mapping check confirmed all 18 unique `--tw-user-*` variables are referenced by the CSS fallback layer. The coherence test pins this mapping and preserves the night/amoled/royal-black default palette.
+- Current coherence-test blob at this checkpoint: `289bf67ebc77fa5fc4f71a4514b482c9ff1f0711` (the 2026-10-09 follow-up adds unique-owner and no-CSS-declaration assertions for the `--tw-user-*` namespace).
+- Static mapping check confirmed all 18 unique `--tw-user-*` variables are referenced by the CSS fallback layer; none is declared directly in CSS, preventing paper-scope shadowing. The coherence test pins this mapping and preserves the night/amoled/royal-black default palette. An independent static comparison across all 18 colored rule classes confirmed the fallback variable uses the same light-theme, dark-theme, and dark-paper values as before the refactor.
 - The coherence test also had a stale expectation that preference filtering dropped the second of two spans on the same range. The actual intended behavior preserves all enabled classifier matches for the inspector; the painter chooses one visible span. Its test now verifies both equal-range rules can be disabled independently.
 - The existing classifier test file executed 30/30 in the isolated synchronous harness against blob `60b9...`. Static CSS and preference-filter checks passed. **None of this is native Node/CI or real-browser evidence**; the new coherence assertions still need the native test runner, and dark-paper rendering must be confirmed in Chromium before closing issue 95 in `docs/OPEN-ISSUES.md`.
 
@@ -228,3 +228,9 @@ Source review found a styling interaction beyond the classifier corpus: `applyTa
 - Result: **11/11 tests passed** in an isolated synchronous harness against the exact fetched classifier, runtime module, JSON registry and test source. The harness supplied the JSON/source files to the test and used a strict subset of Node assertions. It is not the native `node:test` runner.
 - The canonical registry contains 28 rule citation entries and 4 work entries; the executable Tajweed classifier currently has 21 rule IDs. Every classifier rule ID resolves to a citation and `uncitedTajweedRules()` returns an empty list. Canonical/runtime parity passed in the 11-test suite.
 - Remaining: native Node/CI execution and real Mushaf citation layout verification (Arabic/English × light/dark × phone/desktop).
+
+## Coherence regression follow-up — 2026-10-09 05:59Z
+
+- Current coherence test blob `289bf67ebc77fa5fc4f71a4514b482c9ff1f0711` pins that the 18 user override names are unique and do not appear as stylesheet declarations (they must be set from the root inline style only). This protects against reintroducing a local CSS declaration that shadows the user's choice.
+- Source-level manual evaluation of the exact assertions against current `assets/css/quran.css` and `js/domain/tajweed.js` returned true for uniqueness, all 18 fallback references, no CSS declarations, all three dark-paper selectors/defaults, and independent same-range rule toggles. This was not execution of the full coherence file; its Node imports and file IO require the native test runner.
+- The current classifier test file remains 30/30 in the isolated synchronous harness. Native CI for code/test head `be46a09065e348c9bdbdd19760c7e60066c59c8a` has 12 checks queued and zero completed. New documentation commits will move HEAD and trigger their own workflows, so always fetch the exact current branch head before quoting CI state.
