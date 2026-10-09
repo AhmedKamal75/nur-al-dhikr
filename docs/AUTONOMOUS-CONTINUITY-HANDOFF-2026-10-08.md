@@ -404,3 +404,11 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Isolated checks confirm the runtime/canonical rule and work structures match, and `tajweedCitation('hamzat_wasl', 'en'/'ar')` returns the expected alternate source with the correct Arabic title. The regression is saved in `tests/tajweed-sources.test.js`.
 - Ledger row 94 tracks remaining UI/native verification. Do not close until real Chromium review confirms layout/wrapping and native Node/CI passes.
 - Commits: ledger `d0fe8029ef37bb38d53ada01c6d6afe0d4a31bbb`; report `3a2df4deb1da25c504d9af55e82e80ae202a690d`. Continue without opening a PR, per owner instruction.
+
+
+
+### RTL-aware alternate citation styling — 2026-10-09 05:14Z
+
+- Added `.tajweed-legend__source--also` styling in route-lazy `assets/css/quran.css`: logical inline padding and a subtle logical border distinguish secondary citations without introducing an LTR-only indent. It uses the existing theme-aware `--color-border` token.
+- This is a source-level presentation refinement only. Chromium proof for 360/393/1024/1440 widths, Arabic RTL, light/dark, long Arabic/English source titles, and the contested caveat stacking remains pending under ledger row 94.
+- CSS blob: `6affdbccbee6172e5807abce8efce2b3662b654c`. No PR created; continue branch-local.
