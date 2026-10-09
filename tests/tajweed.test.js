@@ -300,6 +300,14 @@ test('madd: natural, connected (muttasil), separated (munfasil), badal, and obli
   );
 });
 
+test('Muqaṭṭaʿāt Madd recognizes Kaf and keeps ʿAyn duration distinct', () => {
+  const kahyaas = rulesOf('\u0643\u0653\u0647\u064A\u0639\u0653\u0635\u0653');
+  assert.deepEqual(kahyaas, ['madd_6', 'madd_4_6', 'madd_6']);
+  const aynSeenQaf = rulesOf('\u0639\u0653\u0633\u0653\u0642\u0653');
+  assert.deepEqual(aynSeenQaf, ['madd_4_6', 'madd_6', 'madd_6']);
+  assert.deepEqual(rulesOf('\u0643\u0653'), [], 'an isolated marked Kaf is not assumed to be a Muqaṭṭaʿāt opening');
+});
+
 test('Muqaṭṭaʿāt Meem is not treated as ordinary Meem Sakinah', () => {
   const opening = classifyAyahTajweed('\u062D\u0645\u0653 \u0639\u0633\u0653\u0642\u0653')[0];
   assert.equal(
@@ -438,6 +446,7 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
     'madd_munfasil',
     'madd_246',
     'madd_6',
+    'madd_4_6',
   ];
   for (const id of used) assert.ok(ids.has(id), `missing legend entry for ${id}`);
   assert.equal(tajweedRule('qalqalah').id, 'qalqalah');
