@@ -59,7 +59,7 @@ export const TAJWEED_WORKS = Object.freeze({
       ar: 'المد والقصر (وزارة الأوقاف المصرية)',
     }),
     note: Object.freeze({
-      en: "Official Egyptian Ministry of Awqaf article. Its section on the opening letters describes the 4/6-count exception for ʿayn.",
+      en: 'Official Egyptian Ministry of Awqaf article. Its section on the opening letters describes the 4/6-count exception for ʿayn.',
       ar: 'مقال رسمي لوزارة الأوقاف المصرية. يذكر قسم أحكام الحروف في أوائل السور استثناء العين بمقدار أربع أو ست حركات.',
     }),
     url: 'https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1',

@@ -72,7 +72,10 @@ export const COURSE_STAGES = Object.freeze([
       {
         id: 'madd-obligatory',
         order: 4,
-        title: Object.freeze({ en: 'Madd Lāzim and other madd forms', ar: 'المد اللازم وأنواع أخرى من المد' }),
+        title: Object.freeze({
+          en: 'Madd Lāzim and other madd forms',
+          ar: 'المد اللازم وأنواع أخرى من المد',
+        }),
         focus: ['madd_6', 'madd_4_6', 'madd_iwad', 'madd_badal', 'madd_silah'],
         mixed: false,
         citation: { work: 'tuhfat-al-atfal', lines: '47-58' },

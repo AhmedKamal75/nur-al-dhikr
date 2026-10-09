@@ -8,6 +8,11 @@
 > **Counted 2026-10-09 after Tajweed integration:** **88 rows — 33 OPEN, 5 PROPOSED, 7 BLOCKED:scholar, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 30 RESOLVED, 2 STANDING CONSTRAINT.**
 > Counts are parsed from the numbered rows; `tests/open-issues-ledger.test.js` guards against drift.
 >
+> **Counted 2026-10-09 against the working tree**, by parsing this file's own
+> rows rather than by hand: **88 rows — 33 OPEN, 30 RESOLVED, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> The totals are stated so they can be checked against the table;
+> `tests/open-issues-ledger.test.js` fails if they drift.
+>
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
 > including one that had been open since v5.3.0 and one whose only test asserted on
@@ -210,15 +215,15 @@ re-investigates them.
 
 Counted from the current 88 ledger rows by `tests/open-issues-ledger.test.js`, not estimated:
 
-| Bucket | Count |
-| --- | ---: |
-| **OPEN** (needs work or verification) | **33** |
-| **PROPOSED** (costed, needs an owner decision) | **5** |
-| **BLOCKED:scholar** (requires qualified scholarly review) | **7** |
-| **BLOCKED:device** (requires real hardware) | **5** |
-| **DEFERRED** | **2** |
-| **DECIDED-NO** | **4** |
-| **RESOLVED** | **30** |
-| **STANDING CONSTRAINT** (not a defect) | **2** |
+| Bucket                                                    |  Count |
+| --------------------------------------------------------- | -----: |
+| **OPEN** (needs work or verification)                     | **33** |
+| **PROPOSED** (costed, needs an owner decision)            |  **5** |
+| **BLOCKED:scholar** (requires qualified scholarly review) |  **7** |
+| **BLOCKED:device** (requires real hardware)               |  **5** |
+| **DEFERRED**                                              |  **2** |
+| **DECIDED-NO**                                            |  **4** |
+| **RESOLVED**                                              | **30** |
+| **STANDING CONSTRAINT** (not a defect)                    |  **2** |
 
 The OPEN bucket includes implementation candidates, evidence-gated fixes, and the newer Tajweed audit rows. “Resolved in source” is not the same as verified for release: each row's own evidence gate remains authoritative. The historical v5.17.16 score and older prose elsewhere in this document are not a current whole-product score.

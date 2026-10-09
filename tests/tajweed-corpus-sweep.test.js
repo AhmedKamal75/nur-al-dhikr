@@ -73,8 +73,17 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
       const spansByUnit = new Map();
       for (const span of word.spans) {
         const spanKey = span.start + ':' + span.end + ':' + span.rule;
-        assert.ok(!seenSpanKeys.has(spanKey),
-          'duplicate Tajweed span ' + spanKey + ' at ' + row.surah + ':' + row.ayah + ' word ' + word.wordIndex);
+        assert.ok(
+          !seenSpanKeys.has(spanKey),
+          'duplicate Tajweed span ' +
+            spanKey +
+            ' at ' +
+            row.surah +
+            ':' +
+            row.ayah +
+            ' word ' +
+            word.wordIndex
+        );
         seenSpanKeys.add(spanKey);
         const unitKey = span.start + ':' + span.end;
         const prior = spansByUnit.get(unitKey) || [];
@@ -85,13 +94,13 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
         }
         prior.push(span.rule);
         spansByUnit.set(unitKey, prior);
-        assert.ok(KNOWN_RULES.has(span.rule),
-          `unknown Tajweed rule ${span.rule} at ${row.surah}:${row.ayah}`);
+        assert.ok(
+          KNOWN_RULES.has(span.rule),
+          `unknown Tajweed rule ${span.rule} at ${row.surah}:${row.ayah}`
+        );
         assert.ok(Number.isInteger(span.start) && Number.isInteger(span.end));
         assert.ok(
-          span.start >= 0 &&
-          span.end > span.start &&
-          span.end <= word.word.length,
+          span.start >= 0 && span.end > span.start && span.end <= word.word.length,
           `invalid span ${JSON.stringify(span)} at ${row.surah}:${row.ayah}`
         );
         seen.add(span.rule);
@@ -110,10 +119,12 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
             const firstLetter = [...nextWord].find(
               (ch) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch)
             );
-            const wordLetters = [...word.word].map((ch, i) => ({
-              ch,
-              i,
-            })).filter(({ ch }) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch));
+            const wordLetters = [...word.word]
+              .map((ch, i) => ({
+                ch,
+                i,
+              }))
+              .filter(({ ch }) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch));
             const lastLetter = wordLetters.at(-1);
             if (lastLetter && span.start === lastLetter.i) {
               const pair = renderedSpan[0] + '->' + (firstLetter || '?');
@@ -157,14 +168,20 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
     'same-unit Tajweed rule pairs changed; review rule overlap and rendering precedence'
   );
 
-  console.log(JSON.stringify({
-    corpusAyahs: corpus.length,
-    spanCount,
-    ruleCounts: Object.fromEntries([...ruleCounts.entries()].sort()),
-    multiRuleSameUnit,
-    multiRulePairs: Object.fromEntries([...multiRulePairs.entries()].sort()),
-    bareQalqalahSpans,
-    qlqBoundaryPairs: Object.fromEntries([...qlqBoundaryPairs.entries()].sort()),
-    qlqBoundaryExamples: Object.fromEntries([...qlqBoundaryExamples.entries()].sort()),
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        corpusAyahs: corpus.length,
+        spanCount,
+        ruleCounts: Object.fromEntries([...ruleCounts.entries()].sort()),
+        multiRuleSameUnit,
+        multiRulePairs: Object.fromEntries([...multiRulePairs.entries()].sort()),
+        bareQalqalahSpans,
+        qlqBoundaryPairs: Object.fromEntries([...qlqBoundaryPairs.entries()].sort()),
+        qlqBoundaryExamples: Object.fromEntries([...qlqBoundaryExamples.entries()].sort()),
+      },
+      null,
+      2
+    )
+  );
 });

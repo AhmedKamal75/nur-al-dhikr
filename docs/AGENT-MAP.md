@@ -4,8 +4,8 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 Read this file first. It is deliberately short: the spine, the lookup tables and the counted inventories. For one specific module’s exports, one `data-action`’s handler, or one keyword’s owners, read the exhaustive dump next.
 
-- js modules: 244 — data files: 27 — tests: 281
-- exhaustive dump: `docs/agent-map-full.md` (552 entries)
+- js modules: 244 — data files: 27 — tests: 282
+- exhaustive dump: `docs/agent-map-full.md` (553 entries)
 
 ## 1. The spine: chrome section → routes → view module
 

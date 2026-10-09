@@ -13,15 +13,15 @@
 
 ## Execution totals
 
-| Surahs | Files | Ayahs | Spans produced | Same-unit multi-rule collisions | Unmarked Qalqalah spans |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 1–19 | 19 | 2,348 | 53,909 | 2 | 0 |
-| 20–38 | 19 | 1,710 | 25,492 | 2 | 0 |
-| 39–57 | 19 | 1,046 | 14,868 | 0 | 0 |
-| 58–76 | 19 | 518 | 6,964 | 0 | 0 |
-| 77–95 | 19 | 484 | 2,555 | 0 | 1 |
-| 96–114 | 19 | 130 | 769 | 0 | 1 |
-| **Total** | **114** | **6,236** | **104,557** | **4** | **2** |
+| Surahs    |   Files |     Ayahs | Spans produced | Same-unit multi-rule collisions | Unmarked Qalqalah spans |
+| --------- | ------: | --------: | -------------: | ------------------------------: | ----------------------: |
+| 1–19      |      19 |     2,348 |         53,909 |                               2 |                       0 |
+| 20–38     |      19 |     1,710 |         25,492 |                               2 |                       0 |
+| 39–57     |      19 |     1,046 |         14,868 |                               0 |                       0 |
+| 58–76     |      19 |       518 |          6,964 |                               0 |                       0 |
+| 77–95     |      19 |       484 |          2,555 |                               0 |                       1 |
+| 96–114    |      19 |       130 |            769 |                               0 |                       1 |
+| **Total** | **114** | **6,236** |    **104,557** |                           **4** |                   **2** |
 
 In the classifier snapshot used for this recorded direct run, all 21 registered `TAJWEED_RULES` entries were reachable. This is historical baseline evidence: the later PR #24 correction adds a separate `madd_4_6` rule and raises the candidate registry to 22 rule identities, so this corpus result must not be represented as a run of the current candidate.
 
@@ -42,12 +42,12 @@ An earlier snapshot of `tests/tajweed.test.js` was executed in an isolated JavaS
 
 The classifier produces these four overlaps; they are not four arbitrary offset errors:
 
-| Location | Written unit | Rules sharing the exact same span | Initial assessment |
-| --- | --- | --- | --- |
-| 3:153 | `بِغَمّٖ` | `ghunnah` + `idgham_no_ghunnah` | Shaddah-ghunnah on the mīm and tanween assimilation into the next lām coexist at one written unit. |
-| 6:39 | `صُمّٞ` | `ghunnah` + `idgham_ghunnah` | Shaddah-ghunnah and tanween idgham into the next wāw coexist. |
-| 27:10 | `جَآنّٞ` | `ghunnah` + `idgham_ghunnah` | Shaddah-ghunnah and the word-final tanween's next-word idgham coexist. |
-| 28:31 | `جَآنّٞ` | `ghunnah` + `idgham_ghunnah` | Same pair as 27:10. |
+| Location | Written unit | Rules sharing the exact same span | Initial assessment                                                                                 |
+| -------- | ------------ | --------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 3:153    | `بِغَمّٖ`    | `ghunnah` + `idgham_no_ghunnah`   | Shaddah-ghunnah on the mīm and tanween assimilation into the next lām coexist at one written unit. |
+| 6:39     | `صُمّٞ`      | `ghunnah` + `idgham_ghunnah`      | Shaddah-ghunnah and tanween idgham into the next wāw coexist.                                      |
+| 27:10    | `جَآنّٞ`    | `ghunnah` + `idgham_ghunnah`      | Shaddah-ghunnah and the word-final tanween's next-word idgham coexist.                             |
+| 28:31    | `جَآنّٞ`    | `ghunnah` + `idgham_ghunnah`      | Same pair as 27:10.                                                                                |
 
 The raw classifier reports both rules. The original `filterSpansByPrefs()` dropped later overlaps, which hid the secondary rule from the inspector. This has now been corrected: preference filtering keeps all enabled spans in stable source order, so the inspector lists both phenomena and respects per-rule on/off preferences. The painter still emits one CSS rule class per written glyph; when ranges are equal, stable classifier order chooses the first enabled span for color, and disabling that rule lets the next enabled rule paint. The policy is now explicit in `js/views/tafsirPanel.js` and covered by a direct regression. The row remains **OPEN** for official Node/CI execution and real browser/visual inspection, not because the filter still discards secondary rules.
 
@@ -65,6 +65,7 @@ The earlier third case, **Hūd 11:42 — `ٱرۡكَب مَّعَنَا`**, is n
 A proposed generic cross-word Qāf→Kāf guard was separately removed after source review; the documented special qāf case remains lexical/reading-scoped (including `نخلقكم`), not a blanket rule for any qāf+sukūn followed by shaddah-marked kāf.
 
 The corpus sweep now expects exactly two unmarked Qalqalah spans, corresponding to the two ayah-final pause cases above. In the final direct run, all 6,236 ayahs executed; structural invariants passed; there were no fetch/parse failures. The targeted Tajweed unit file passed 28/28 in the isolated shim. This is still not native Node/CI, browser evidence, or a scholarly validation of every rule.
+
 ## Verification boundary and next gate
 
 Historical result for an earlier classifier snapshot only: all 114 JSON sources loaded; all 6,236 ayahs executed; all 21 rule IDs reached; structural invariants passed; four overlap pairs and three unmarked Qalqalah cases were isolated. A later pre-PR-24 run recorded two unmarked Qalqalah spans. Neither run validates the current PR-24 22-rule classifier; its full-corpus result remains pending.
@@ -73,13 +74,11 @@ Still not done: official `npm run check` / `node --test`, CI completion, Chromiu
 
 This report records classifier execution and anomalies; it is not a claim that all Tajweed rules have been scholarly-validated or that the feature is release-ready.
 
-
 ## Cross-component curriculum audit — 2026-10-09
 
 Static review of the canonical course JSON, runtime course mirror, and course regression tests found a teaching-taxonomy defect separate from classifier span accuracy. Session `madd-obligatory` was titled “Obligatory madd / المد اللازمة” while its focus set grouped `madd_6`, `madd_iwad`, `madd_badal`, and `madd_silah`. Madd Badal is explicitly a distinct category in the corrected source registry; the classifications of Madd ʿIwaḍ and Ṣilah vary by source. The old heading therefore overgeneralized the category. The visible title now explicitly names the four categories in English and Arabic: “Madd Lāzim, Badal, ʿIwaḍ, and Ṣilah” / “المد اللازم والبدل والعوض والصلة”. The existing session ID is preserved to avoid invalidating saved course progress, and a regression pins both the bilingual title and unchanged focus set.
 
 The source caveat for `madd_6` was also clarified: the identifier denotes the six-count length, not six categories. It now says that the cited passage of Tuhfat al-Atfal describes four forms of Madd Lāzim, and warns against inferring that distinct rules grouped in one session are all Madd Lāzim. Issue ledger row 91 remains **OPEN** until native tests/CI, Arabic pedagogy review, and browser rendering are checked. These are source-level/content corrections; no independent browser or scholarly sign-off is claimed.
-
 
 ## Muqaṭṭaʿāt Madd anomaly — 2026-10-09 (fresh execution pending)
 

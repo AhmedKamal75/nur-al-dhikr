@@ -129,14 +129,24 @@ const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BEH, '\u062C', '\u062F']);
 // consonants are classified as letter-name madd only inside these openings;
 // this prevents an arbitrary marked consonant elsewhere from becoming Madd Lazim.
 const MUQATTAAT_MADD_WORDS = new Set([
-  '\u0627\u0644\u0645', '\u0671\u0644\u0645',
-  '\u0627\u0644\u0645\u0635', '\u0671\u0644\u0645\u0635',
-  '\u0627\u0644\u0631', '\u0671\u0644\u0631',
-  '\u0627\u0644\u0645\u0631', '\u0671\u0644\u0645\u0631',
+  '\u0627\u0644\u0645',
+  '\u0671\u0644\u0645',
+  '\u0627\u0644\u0645\u0635',
+  '\u0671\u0644\u0645\u0635',
+  '\u0627\u0644\u0631',
+  '\u0671\u0644\u0631',
+  '\u0627\u0644\u0645\u0631',
+  '\u0671\u0644\u0645\u0631',
   '\u0643\u0647\u064a\u0639\u0635',
-  '\u0637\u0647', '\u0637\u0633', '\u0637\u0633\u0645',
-  '\u064a\u0633', '\u0635', '\u062d\u0645', '\u0639\u0633\u0642',
-  '\u0642', '\u0646',
+  '\u0637\u0647',
+  '\u0637\u0633',
+  '\u0637\u0633\u0645',
+  '\u064a\u0633',
+  '\u0635',
+  '\u062d\u0645',
+  '\u0639\u0633\u0642',
+  '\u0642',
+  '\u0646',
 ]);
 // Qalqalah-bearing Muqaṭṭaʿāt opening tokens are letter-name sequences, not ordinary
 // consonant tokens carrying sukun. The raw Uthmani spelling intentionally leaves the
@@ -152,9 +162,7 @@ const QALQALAH_MUQATTAAT_WORDS = new Set([
 // Hafs-specific connected-recitation exception: the final bāʾ of
 // ٱرۡكَبْ is assimilated into the following shaddah-marked mīm in مَّعَنَا.
 // Keep this scoped to the exact word+boundary; bare bāʾ→mīm adjacency is not enough.
-const QALQALAH_BA_MEEM_ASSIMILATION_WORDS = new Set([
-  '\u0671\u0631\u0643\u0628',
-]);
+const QALQALAH_BA_MEEM_ASSIMILATION_WORDS = new Set(['\u0671\u0631\u0643\u0628']);
 const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set([
   '\u0628\u0633\u0637\u062A',
   '\u0623\u062D\u0637\u062A',
@@ -442,7 +450,7 @@ export const TAJWEED_RULES = Object.freeze([
     name: { en: "Madd 'Arid (at a stop, 2\u20136)", ar: 'المد العارض للسكون' },
     desc: {
       en: 'A madd letter followed by the final consonant of the ayah; at a stop, that consonant becomes temporarily silent (2, 4, or 6 counts).',
-      ar: 'مد يسبق الحرف الأخير من الآية، فيسكن الحرف الأخير وقفًا ويجوز فيه القصر والتوسط والإشباع.'
+      ar: 'مد يسبق الحرف الأخير من الآية، فيسكن الحرف الأخير وقفًا ويجوز فيه القصر والتوسط والإشباع.',
     },
   },
   {
@@ -510,11 +518,7 @@ function tokenizeUnits(word) {
   const units = [];
   for (let i = 0; i < word.length; i += 1) {
     const ch = word[i];
-    if (
-      ch === TATWEEL ||
-      WORD_ORNAMENT_CHARS.has(ch) ||
-      ORNAMENT_DIGITS.has(ch)
-    ) continue;
+    if (ch === TATWEEL || WORD_ORNAMENT_CHARS.has(ch) || ORNAMENT_DIGITS.has(ch)) continue;
     // Consonantal small marks spell real letters (the plural yeh, an
     // assimilated noon) — fold them so the letter rules engage.
     const base = ch === SMALL_HIGH_YEH ? YEH : ch === SMALL_HIGH_NOON ? NOON : ch;
@@ -569,10 +573,10 @@ function endsWithDivineName(word) {
 function unitHasHeavyVowel(unit) {
   return Boolean(
     unit &&
-      (unit.diacritics.has(FATHA) ||
-        unit.diacritics.has(DAMMA) ||
-        unit.diacritics.has(FATHATAN) ||
-        unit.diacritics.has(DAMMATAN))
+    (unit.diacritics.has(FATHA) ||
+      unit.diacritics.has(DAMMA) ||
+      unit.diacritics.has(FATHATAN) ||
+      unit.diacritics.has(DAMMATAN))
   );
 }
 
@@ -679,7 +683,8 @@ export function classifyWordTajweed(
     if (
       u.base === LAM &&
       prev &&
-      (prev.base === ALIF_WASLA || prev.base === ALIF ||
+      (prev.base === ALIF_WASLA ||
+        prev.base === ALIF ||
         (i === 1 && prev.base === LAM && prev.diacritics.size > 0)) &&
       next &&
       SUN_LETTERS.has(next.base) &&
@@ -688,10 +693,7 @@ export function classifyWordTajweed(
       // Bare ال, ال after a one-letter prefix particle
       // (وَٱلشَّمۡسِ، بِٱلۡحَقِّ), or the article immediately after a
       // vocalized lām-prefix (لِلطَّآئِفِينَ, لِلظَّالِمِينَ).
-      (
-        i === 1 ||
-        (i === 2 && units[0] && isPrefixParticle(units[0]))
-      )
+      (i === 1 || (i === 2 && units[0] && isPrefixParticle(units[0])))
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'lam_shamsiyyah' });
     }
@@ -700,9 +702,7 @@ export function classifyWordTajweed(
       const sakin =
         u.diacritics.has(SUKUN) || u.diacritics.has(SUKUN_ALT) || u.diacritics.size === 0;
       const nextBase = next?.base ?? nextWordFirstBase;
-      const nextStartsWithShadda = next
-        ? next.diacritics.has(SHADDA)
-        : nextWordFirstHasShadda;
+      const nextStartsWithShadda = next ? next.diacritics.has(SHADDA) : nextWordFirstHasShadda;
 
       // Only suppress Qalqalah where the text supports an assimilation we can
       // state without inventing a reading route:
@@ -718,7 +718,8 @@ export function classifyWordTajweed(
       // بْ→مّ in ارْكَبْ مَّعَنَا is reading-route-sensitive; this classifier
       // has no declared reading profile, so it stays conservative there.
       const sameLetterAssimilation = nextBase === u.base && nextStartsWithShadda;
-      const dalToTaAssimilation = u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
+      const dalToTaAssimilation =
+        u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
       const knownNoEchoWord =
         QALQALAH_KNOWN_NO_ECHO_WORDS.has(baseSequence) &&
         ((u.base === '\u0637' && next?.base === '\u062A') ||
@@ -807,8 +808,7 @@ export function classifyWordTajweed(
       });
     } else if (isMaddLetter(u, prev)) {
       const signaled =
-        u.base === ALIF_MADDA ||
-        (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
+        u.base === ALIF_MADDA || (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
       const isSilah = isHaKinayahSilahUnit(u, prev);
       if (next && HAMZA_LETTERS.has(next.base)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });

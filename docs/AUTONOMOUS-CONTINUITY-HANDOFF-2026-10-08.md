@@ -1,14 +1,18 @@
 # Nūr al-Dhikr — Autonomous Continuity Handoff
+
 Updated: 2026-10-09
 
 ## Source of truth
+
 - Repository: `AhmedKamal75/nur-al-dhikr`
 - GitHub `main` remains the authoritative shared source/history.
 - ZIP artifacts are intentionally not part of the continuity workflow unless explicitly requested.
 - Formal release baseline remains **v5.17.136**. Do not label later work v5.17.137 until the version marker, service worker cache version, release record, and required verification are deliberately advanced together.
 
 ## Autonomous operating contract
+
 Continue independently across waves/chats. Persist meaningful progress in GitHub, especially:
+
 1. implementation commits;
 2. durable issue ledger updates;
 3. continuity/handoff documentation;
@@ -18,6 +22,7 @@ Continue independently across waves/chats. Persist meaningful progress in GitHub
 Do not claim local Node/Chromium/device execution unless the evidence exists. Queued GitHub Actions are not passes.
 
 ## Current deep-review focus: Tajweed
+
 User explicitly approved keeping Tajweed active until a full-corpus execution/anomaly pass is performed.
 
 ### Full-corpus execution gate — completed with explicit limits (2026-10-09)
@@ -30,6 +35,7 @@ The current branch classifier has now been executed across all 114 bundled Quran
 - The existing `tests/tajweed.test.js` was additionally run through a synchronous in-tool shim: 26/26 passed. This is useful execution evidence, but it is **not** `node --test`; CI, browser/device execution, and an authoritative scholarly comparison remain unverified. The full corpus run is direct execution of the fetched classifier source, not `npm run check`.
 
 Remaining gate before Tajweed can be called sufficiently verified:
+
 - run the repository's official Node/lint/format/data checks and obtain completed CI jobs;
 - review the four classifier overlaps and define how the painter/inspector exposes more than one rule on a written unit;
 - settle the reading-profile policy for `ٱرۡكَب مَّعَنَا` with a trusted source and explicit profile semantics;
@@ -37,13 +43,16 @@ Remaining gate before Tajweed can be called sufficiently verified:
 - inspect real Mushaf/practice browser behavior, then reassess completion honestly.
 
 ### Recent semantic-lookahead fix
+
 Branch: `fix/tajweed-semantic-lookahead-2026-10-08`
 
 The classifier now separates raw rendering tokens from pronunciation-bearing semantic tokens so standalone Qur'anic ornaments cannot:
+
 - hide the next pronunciation-bearing word from cross-word noon/meem rules;
 - steal `isLastWordOfAyah` from the final pronunciation-bearing word.
 
 Regression examples include:
+
 - `مِنْ ۚ هُدًى` → Izhar
 - `مِنْ ۖ يَعْمَلْ` → Idgham with ghunnah
 - `الرَّحِيمِ ۚ` → final Madd
@@ -65,6 +74,7 @@ Do **not** describe bāʾ→mīm as a generally suppressed family: the full-corp
 The complete corpus report records diagnostics and limitations. Corpus execution has been performed, but this issue remains **OPEN** pending official Node/CI execution and scholarly/reading-profile resolution. Do not generalize beyond the supported reading/methodology without source evidence.
 
 ### Durable issue ledger
+
 - Row 78: Tajweed course corrupted Arabic copy — resolved on main, next release.
 - Row 79: Halqi Izhar — reopened during deep audit previously; must remain truthful until runtime + full-corpus evidence establish closure.
 - Row 80: **Tajweed Qalqalah false positives at assimilation boundaries — OPEN, deep-audit follow-up.**
@@ -76,6 +86,7 @@ The complete corpus report records diagnostics and limitations. Corpus execution
   - Do not close merely because regression tests exist.
 
 ## Important existing Tajweed architecture
+
 - `data/tajweed-course.json`: 8 stages / 17 sessions / source-backed course spine.
 - `js/domain/tajweedCourse.js`: course progression.
 - `js/domain/tajweedSources.js`: 27 source entries, including contested items.
@@ -87,6 +98,7 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 - Corpus-sweep diagnostics include rule counts, duplicate-span detection, and multiple-rule same-unit diagnostics.
 
 ## Verification status
+
 - The isolated JavaScript-runtime corpus run is complete and documented on classifier SHA `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`; all 6,236 ayahs passed structural invariants.
 - The current `tests/tajweed.test.js` passed 27/27 in an isolated compatibility shim; do not relabel this as Node's native test runner.
 - The most recently checked GitHub Actions run was queued, not passing. Recheck after each new commit.
@@ -95,6 +107,7 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 - Therefore Tajweed remains actively under audit.
 
 ## Next autonomous priorities
+
 1. Run `npm run check` / Node tests and wait for completed CI results; treat queued jobs as unknown.
 2. Decide and test display/inspector handling of the four known same-unit overlap cases (ledger row 88).
 3. Resolve or explicitly scope the reading-profile-dependent `ٱرۡكَب مَّعَنَا` Qalqalah case (row 80) without broad suppression.
@@ -105,17 +118,19 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 8. Only after Tajweed reaches an evidence-backed stopping point, resume the broader deslopification loop.
 
 ## Release discipline
+
 Do not bump v5.17.136 while these changes remain unverified. Preserve the release lineage. When a later release is actually verified, update:
+
 - `js/core/config.js`
 - `sw.js`
 - release/version evidence
 - durable handoff
 - tests/evidence state
-together.
+  together.
 
 ## Browser/device evidence
-Required evidence remains first-class for product claims. Relevant matrix includes 360/393/768/1024/1440 widths, EN/AR, light/dark, and hostile interaction paths. Never substitute source inspection for browser proof where visual/runtime behavior is the claim.
 
+Required evidence remains first-class for product claims. Relevant matrix includes 360/393/768/1024/1440 widths, EN/AR, light/dark, and hostile interaction paths. Never substitute source inspection for browser proof where visual/runtime behavior is the claim.
 
 ## Tajweed checkpoint update — 2026-10-08 autonomous wave
 
@@ -144,35 +159,41 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 4. Once Tajweed is evidence-backed, resume Mushaf/browser hostile review before any release bump.
 
 ### Muqaṭṭaʿāt anomaly — 2026-10-08
+
 - Static corpus inspection found `طه` in 20:1 entering the generic Qalqalah branch because the raw spelling carries no vowel marks on the opening letters. The same structural risk exists for the qlq-bearing opening tokens `طس`, `طسم`, `ق`, and `عسق`.
-- Web verification confirms Qalqalah is tied to the five letters when they are sakin, while `طه` is a Muqaṭṭaʿāt opening read as the letter names `طا` and `ها`; therefore raw absence of diacritics must not be treated as sukun in these opening tokens. (Islamweb Tajweed Lesson 8; Ibn Ashur, *al-Tahrir wa'l-Tanwir*, surah Ta-Ha).
+- Web verification confirms Qalqalah is tied to the five letters when they are sakin, while `طه` is a Muqaṭṭaʿāt opening read as the letter names `طا` and `ها`; therefore raw absence of diacritics must not be treated as sukun in these opening tokens. (Islamweb Tajweed Lesson 8; Ibn Ashur, _al-Tahrir wa'l-Tanwir_, surah Ta-Ha).
 - The branch now excludes only those exact Qalqalah-bearing Muqaṭṭaʿāt token strings from the generic Qalqalah fallback. Unit tests cover all five forms.
 - `فرطتم` was also added to the exact incomplete-ṭā→tā assimilation set; the corpus contains it at 12:80, and Tajweed references explicitly state that the ṭā in `فرطتم` loses Qalqalah during incomplete assimilation. (Tajweed instructional references cited in the working audit).
 - This is still unverified by local execution/browser evidence.
 
 ### Madd ʿĀriḍ heuristic audit — 2026-10-08
+
 - Static review found `madd_246` used `isLastWordOfAyah && i >= units.length - 2`, which allowed a madd letter at the **last unit** of a word to be classified as Madd ʿĀriḍ.
 - This was corrected to require `i === units.length - 2` and an actual following unit. Madd ʿĀriḍ is defined as a stop-induced sukoon occurring after a madd/leen letter; when the word ends on the madd letter itself, there is no final consonant receiving that sukoon. (research basis: Islamweb's definition of Madd ʿĀriḍ as a stop-induced sukoon after a madd/leen letter).
 - Corpus regression target: `وَٱلضُّحَىٰ` (93:1) must not receive `madd_246`; `الرَّحِيمِ` with a final consonant remains a valid `madd_246` test shape.
 - This change is still unverified by local execution.
 
 ### Madd Badal source-taxonomy correction — 2026-10-08
+
 - The old canonical/runtime source registry incorrectly classified Madd Badal as one of the four Madd Lazim types and conflated the special ʿayn length discussion with it.
 - The reviewed correction from the still-open PR #18 was carried onto PR #21, updating both `data/tajweed-sources.json` and `js/domain/tajweedSources.js`.
 - The corrected copy explicitly says Madd Badal is a distinct category, records the app's current classifier as 2-count, and scopes any future multi-riwayah length claim to an explicit reading profile.
 - Durable ledger row 83 records the source/data correction. This does not close the broader Tajweed evidence gate.
 
 ### Madd Badal executable heuristic audit — 2026-10-08
+
 - Deep source review found `signaled = u.base === ALIF_MADDA || u.diacritics.has(MADDA_ABOVE)` was too broad. U+0653 is a general Qur'anic madd sign; it does not by itself establish Madd Badal.
 - The classifier now limits the Badal signal to actual hamza+madd orthography: `آ` / `ALIF_MADDA`, or a hamza base carrying the explicit madda mark.
 - Regression coverage pins `آدَمَ` and an explicit hamza+madda spelling as Badal, while `مَآ` must remain natural `madd_2` and must not become `madd_badal`.
-- This is still unverified by local/full-corpus execution. Uthmani notation references confirm U+0653 is a madd marker and is not itself a Badal classifier. 
+- This is still unverified by local/full-corpus execution. Uthmani notation references confirm U+0653 is a madd marker and is not itself a Badal classifier.
 
 ### Low-iqlab normalization checkpoint
+
 - The classifier defines both `IQLAB_MARK` (U+06E2) and `IQLAB_MARK_LOW` (U+06ED), and `canonMark()` deliberately folds the low form to the canonical high form before rule classification.
 - A regression now pins the low-mark path to `iqlab`; no runtime change was necessary.
 
 ### Madd Silah small-letter audit — 2026-10-08
+
 - Full-corpus source inspection found numerous small Waw/Yeh marks outside hāʾ-al-kināyah, including `دَاوُۥدُ`, `تَلۡوُۥنَ`, `فَأۡوُۥٓاْ`, `يُحۡيِۦ`, `وَلِيِّۦ`, `لِتَسۡتَوُۥاْ`, and `ٱلۡمَوۡءُۥدَةُ`.
 - The previous blanket branch `small waw/yeh → madd_silah` would mislabel those ordinary small-letter spellings.
 - The classifier now uses `isHaKinayahSilahUnit()`: small Waw must follow a hāʾ with damma, and small Yeh must follow a hāʾ with kasra, to receive `madd_silah`. Other bare small Waw/Yeh forms become `madd_2`; madda-marked forms continue through the main Madd branch.
@@ -180,12 +201,12 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - This is still unverified by local/full-corpus execution and browser evidence.
 
 ### Lam Shamsiyyah lām-prefix audit — 2026-10-08
+
 - Static source inspection found at least 75 concrete article-after-lām-prefix forms in Surahs 1–20, including لِلطَّآئِفِينَ, لِلظَّـٰلِمِينَ, لِلسُّحۡتِ, and لِلَّذِينَ.
 - The previous classifier handled bare alif-lam and the one-letter prefix particles w/f/b/k, but could miss the article lam after a lām-prefix.
 - The classifier now accepts a second lam whose previous unit is a vocalized lam-prefix, while retaining the existing article guards.
 - Regression coverage pins لِلطَّآئِفِينَ and لِلظَّالِمِينَ.
 - Verification remains pending local/full-corpus execution and browser evidence.
-
 
 ### Autonomous checkpoint — 2026-10-09: plural Qalqalah exception mismatch
 
@@ -194,7 +215,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Corrected the set key to `\u0641\u0631\u0637\u062A\u0645`, and corrected the nearby rule comment to include the plural form. The regression already exists; this source review predicts it should catch the previous defect, but no test execution is claimed.
 - `docs/OPEN-ISSUES.md` row 80 now records this finding and the correction while remaining **OPEN** pending actual execution and full-corpus anomaly review.
 - The fix is on `fix/tajweed-semantic-lookahead-2026-10-08`, under PR #21. Formal release remains v5.17.136; the PR is not being merged based on static inspection alone.
-
 
 ### Autonomous checkpoint — 2026-10-09: unreachable lām-prefix branch
 
@@ -205,7 +225,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Relevant source/test commits: `a16e159624947cfb369cd174939fcde8387cf210` (classifier) and `bf47c32fd06b24575c14066e4391548a1adc4ba5` (regression test). The plural `فَرَّطتُمۡ` exact-key correction is in `633c57dd829a705c470304ebfadc789995c976e9`; the handoff/ledger checkpoints are also on this PR branch.
 - Do not infer test failure/pass from this static review: GitHub Actions remains queued at the last check, and no local runtime execution is available as evidence yet.
 
-
 ### Autonomous checkpoint — 2026-10-09: Allah-lām context sensitivity
 
 - A semantic Tajweed defect was found in the original classifier: the second lām of Lafẓ al-Jalālah was unconditionally tagged tafkhim whenever the word skeleton ended in lām+lām+hāʾ. That falsely marked **بِسْمِ ٱللَّهِ** as heavy despite the preceding kasrah.
@@ -215,7 +234,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Regression cases have been added/updated for بِسْمِ ٱللَّهِ, initial ٱللَّهُ, قَالَ ٱللَّهُ, وَٱللَّهِ, فِي ٱللَّهِ, بِٱللَّهِ, and لِلَّهِ.
 - Durable docs/OPEN-ISSUES.md row 87 records the issue and leaves it **OPEN**. The current classifier has since been executed across the full 6,236-ayah corpus in the isolated JavaScript runtime, and the targeted heavy/light cases pass there. Official Node/CI execution, browser evidence, and a scholarly-oracle comparison remain pending.
 - Latest relevant change commits include c5fde1086e84e790248a9df6628d2b3f8c3dab6c (escape correction), 82d66a2c9f5373e47ceb4e74e30f47aead3d80e0 (regressions), and f15bf9f5a553843a74a33d6d6dc8bde20077c0dc (comment correction). The full branch has also fixed the plural Qalqalah exception key and the unreachable lām-prefix guard. GitHub Actions has been queued for recent heads; do not interpret queue state as pass.
-
 
 ### Autonomous checkpoint — 2026-10-09: test-harness failures and second corpus pass
 
@@ -231,7 +249,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Durable report: docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md; issue ledger rows 80, 86–89 remain open to the exact degree described there.
 - Current PR remains an implementation candidate only. Check Actions again on the newest PR head; do not merge or bump v5.17.136 based on the in-tool shim or isolated runtime.
 
-
 ### Autonomous checkpoint — 2026-10-09: overlap visibility fix and final corpus rerun
 
 - Corrected `filterSpansByPrefs()` in `js/domain/tajweed.js`: it now filters only disabled rules and returns all active spans in stable start/end order. It no longer drops a second Tajweed rule merely because it occupies the same source range as another active rule.
@@ -240,7 +257,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - View documentation blob: `8e586328c8850483b25fc747bf1ce638a1bf8fab`. Corpus report updated at `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`; issue 88 changed to **corrected in code, pending integration verification**.
 - Re-ran all 114 Qur'an JSON files in six batches against current classifier SHA `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`: 6,236 ayahs, 104,558 spans, every 21 rule IDs reached. Zero raw-token-count mismatches, bad word indices, unknown rules, invalid offsets, exact duplicate spans, or data fetch/parse failures. Same-unit collisions remain exactly three `ghunnah+idgham_ghunnah` and one `ghunnah+idgham_no_ghunnah`; all overlap events are exact same-range collisions, not offset-drift overlaps. The three unmarked Qalqalah spans remain 11:42 route-sensitive `ٱرۡكَب`, 94:8 pause-final `فَٱرۡغَب`, and 96:19 pause-final `وَٱقۡتَرِب۩`.
 - The corpus run is source-execution evidence, and 27/27 is an isolated shim, not official project-gate evidence. Actions was still queued at last inspection. Next: confirm CI result on the newest PR head, get native Node tests and browser checks, and inspect the actual overlapping word inspector in EN/AR + light/dark + small/desktop sizes. Do not merge PR #21 or advance formal release v5.17.136 without those gates.
-
 
 ### Autonomous checkpoint — 2026-10-09 04:35Z: refreshed PR/CI state and mergeability hold
 
@@ -251,7 +267,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The targeted unit suite also has isolated-shim evidence only (the report contains historical 27/27 and 28/28 runs on different source/test snapshots); do not collapse those historical results into a claim that current native `npm run check` passed.
 - Immediate next actions: inspect why the PR is non-mergeable, compare the current branch against current main, review the exact 9-file diff for stale/contradictory documentation, and keep working on code/test quality while CI is queued. No release bump, merge, or browser-pass claim until evidence exists.
 
-
 ### Autonomous checkpoint — 2026-10-09 04:40Z: main/PR release-lineage reconciliation
 
 - Fresh live reads show that `main` has advanced to **v5.17.137**: `package.json` version `5.17.137` (blob `fd47947e0f87f6fb99d9813bcef1c496d5510ff0`), `js/core/config.js` APP_VERSION `5.17.137` (blob `b1df36c0429815f8bca4c67af9a7560ed2845cee`), `sw.js` cache prefix `nur-al-dhikr-v5.17.137` (blob `935840f42cacc08d14beb8018b08d7868c1a216f`), and `docs/RELEASES.md` contains a v5.17.137 entry (blob `f5abe9e170297d19eef04f0de44f2966c4eb9883`). Thus **v5.17.137 is the current main-branch version marker**, even though this does not by itself prove every verification gate passed. Earlier handoff text saying the current formal release is v5.17.136 describes the stale Tajweed branch, not current main; do not repeat it as current-main fact.
@@ -260,8 +275,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Actions query for the current head SHA returned no associated PR workflow runs in the connector response. The earlier run 37878235372 was queued for an older head; it must not be represented as a current-head result or as a pass. Native Node/CI and browser verification remain unproven.
 - Documentation integrity finding: the corpus report includes historical test totals on older classifier/test blobs (27/27 and 28/28 isolated shim runs). The report's latest explicit current snapshot is classifier `ba7d1732190fc1a75de36b11e048fad0fb4a71f4`, test blob `cdca893dc31cb963b122ffc54d25378269d35858`, sweep-test blob `387e4eb1196253a5b1537109d3c33a3b289fb9bf`, and its final paragraph reports 28 synchronous shim tests—not native Node. Keep historical counts labelled by their exact snapshot; never summarize them as one run.
 - Next safe actions: inspect the full PR patch and identify conflicts/semantic overlaps against current main; decide whether to port changes onto a fresh current-main branch rather than updating the stale PR; repair any stale handoff wording; keep rows 80, 86–89 open; seek real Node/CI/browser evidence; do not merge or claim Tajweed complete without evidence. No code, release marker, or merge state was changed in this checkpoint.
-
-
 
 ### Autonomous checkpoint — 2026-10-09 04:39Z: mergeability blocker narrowed; ledger reconciled
 
@@ -273,7 +286,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - At the latest refresh, the workflow-run lookup and combined-status lookup for the current PR head returned no surfaced runs/statuses. An earlier `check` run was queued on an earlier head; it is not a pass and should not be reported as current-head evidence.
 - Next safe work: (1) fetch PR metadata again and confirm the exact current head; (2) inspect the complete current-main vs PR diff for `js/domain/tajweed.js`, then transplant the required classifier changes onto a fresh branch from current main without losing main's intervening edits; (3) move the Tajweed issue rows to unused IDs on that fresh branch and preserve main row 80; (4) run native `npm run check` / CI and real browser tests if the environment supports them; (5) only then update/replace the PR. Do not rewrite main or change the release marker until these gates pass.
 
-
 ### Autonomous checkpoint — 2026-10-09 04:45Z: clean current-main Tajweed integration branch
 
 - Because PR #21 is stale/diverged and GitHub reports it non-mergeable, a separate integration branch was created from the **current `main` ref**, named `fix/tajweed-audit-v5-17-137-2026-10-09`. This avoids force-merging or rebasing the stale branch in place.
@@ -283,14 +295,12 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Integration branch writes so far are source/test/docs-only. No release marker, service-worker cache version, or religious corpus text was changed. The branch is **not yet a release and has not been verified**.
 - Next: audit the newly integrated tree against current main, run native project checks through GitHub Actions if triggered, inspect CI result for the final head, then seek real Chromium evidence. Only after reviewing the final tree should a new PR be opened; PR #21 remains open and stale for now and must not be merged as-is.
 
-
 ### Autonomous checkpoint — 2026-10-09 04:44Z: current-main integration PR opened
 
 - Opened draft PR **#24**, https://github.com/AhmedKamal75/nur-al-dhikr/pull/24, from `fix/tajweed-audit-v5-17-137-2026-10-09` into `main`. This is the clean integration candidate; PR #21 is still stale and should not be merged as-is.
 - Live re-fetch confirms PR #24 head `976f2dc51bb6144cd17479a569a0777b4705fb47`, base `61e26848a48dfba8540d7ce48dab22c45bd437f9`, mergeable **true**, comparison **ahead 10 / behind 0**. It is intentionally draft/unmerged pending checks and evidence.
 - GitHub Actions run **37885188489** is associated with that head and is **queued**. Jobs listed: accessibility static gates; lint/format/unit tests on Node 24; 4-viewport evidence matrix + traces; lint/format/unit tests on Node 20; browser smoke + races; cross-engine release matrix (smoke/audio/a11y). Every job was queued at the last check; there is no pass/fail result yet.
 - Keep release markers at v5.17.137. Do not claim the draft is verified just because GitHub currently says mergeable true or because the Actions jobs exist. Re-fetch PR/head after any new commit and use completed job conclusions/logs as evidence.
-
 
 ### Autonomous checkpoint — 2026-10-09 04:46Z: course taxonomy finding and correction
 
@@ -300,15 +310,12 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - New ledger row 91 remains OPEN pending native test/CI, Arabic pedagogy review, and browser rendering. The source edits have not been natively tested yet; do not close row 91 based on source changes alone.
 - These commits advanced PR #24 after its first queued CI run. Re-fetch the current PR head and associated Actions before citing any CI result; old-head runs do not verify the latest commit.
 
-
 ### Autonomous checkpoint — 2026-10-09 04:48Z: Muqaṭṭaʿāt Madd classifier refinement
 
 - A further hostile pass found the old `madd_6` description used isolated `آ` as an example, misleadingly conflating a common Madd Badal spelling with the six-count Madd Lazim condition. The legend now describes an original sukoon/shaddah and uses the corpus spelling `ٱلضَّآلِّينَ`.
 - The Muqaṭṭaʿāt Madd branch previously assigned fixed `madd_6` to letter ʿayn despite its reported 4-or-6-count treatment, omitted Kaf, and inferred a letter-name rule from a marked consonant without validating the whole token skeleton. PR #24 now checks an explicit set of Muqaṭṭaʿāt base skeletons, recognizes Kaf, and emits the separate bilingual `madd_4_6` rule for ʿayn. Source registry JSON/runtime mirror and the Madd course focus include the new rule. Tests cover `كهيعص`, `عسق`, isolated marked Kaf, and the corrected Madd Lazim definition.
 - This adds a rule identity (candidate: 22 registered rule IDs). The earlier direct corpus result of 104,557 spans / 21 rules was run against classifier blob `ba7d1732190fc1a75de36b11e048fad0fb4a71f4` **before** this correction; it is historical, not proof of the current candidate. Current classifier blob: `8edf33ae72fdb726bdb177828588665f7e7bec9e`; current classifier test blob at this checkpoint: `052cb7e4f64a554f372d071a2777e3a9d3a86deb`.
 - New ledger row 92 records the issue and remains OPEN pending fresh full-corpus execution, native Node/CI, and Mushaf/browser evidence. Do not update the corpus totals or call the new rule verified until the current candidate is actually exercised.
-
-
 
 ### Canonical Tajweed integration selection — 2026-10-09 04:57Z
 
@@ -318,8 +325,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Corrected the Madd Badal source locator in both `data/tajweed-sources.json` and `js/domain/tajweedSources.js` to line 46; source mirror parity test explicitly checks these fields. Current source JSON/mirror contain the new `madd_4_6` rule.
 - Latest known PR #24 head after these fixes: `48e4047a6270e942389b380576e13bd33e62ad99`; Actions run `37886350323` is **queued**, not a pass. No native `npm run check`, current-head CI pass, Chromium matrix, or scholarly validation has been observed.
 - Next: wait/re-query current-head Actions; inspect test failures rather than papering over them; ensure corpus sweep's hardcoded two bare-Qalqalah and four collision invariants still hold under the new classifier; run `npm run check`; then test actual Mushaf painter/inspector and course EN/AR in Chromium. Keep v5.17.137 as current main baseline; do not merge or bump a release marker until evidence gates pass.
-
-
 
 ### Cleanup checkpoint — 2026-10-09 05:00Z
 
@@ -331,8 +336,6 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Latest PR #24 head at this checkpoint: `26ad8d629a9fb3f5901ec57a00c3682167418cf4`; current-head Actions lookup showed run `37886403905` queued, not passed. The next head may differ if more fixes are committed.
 - Still required: native `npm run check`, inspect full-corpus sweep diagnostics under the new 29-rule registry, current-head CI pass, Chromium Mushaf inspector/painter and course EN/AR light/dark/phone/desktop evidence, and scholarly review. Do not close rows 81–92 or bump release marker merely because source edits exist.
 
-
-
 ### Source and pedagogy checkpoint — 2026-10-09 05:05Z
 
 - Further review found that `madd_6`'s legend explained the ordinary word-level Madd Lazim example and the special ʿayn case, but omitted why the other marked Muqaṭṭaʿāt letter names are six-count. Updated bilingual EN/AR copy to explain both word-level original sukoon and six-count opening-letter names (e.g. lām, mīm, ṣād, qāf), while keeping ʿayn separate. Added a regression that pins both language explanations.
@@ -341,15 +344,11 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Source used for the primary verse text: Wikisource `تحفة الأطفال`, verse 54 (`https://ar.wikisource.org/wiki/تحفة_الأطفال`). Secondary source: Egyptian Ministry of Awqaf, `المد والقصر` by A. D. al-Sayyid Isma'il Ali Sulayman (`https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1`).
 - These code/source/test updates are now committed to PR #24. Do not merge while current-head CI is queued; let the latest head's full check matrix decide the next correction wave.
 
-
-
 ### Citation surfacing checkpoint — 2026-10-09 05:07Z
 
 - The new Egyptian Ministry of Awqaf reference was initially present in the registry but not surfaced by the Mushaf Tajweed legend: `tajweedCitation()` returned only the primary work, and `tajweedSourceLine()` ignored secondary sources. Corrected the full path: only secondary sources with an openable URL are exposed by the helper, and the legend now displays a bilingual “Additional source / مرجع إضافي” line with the title, author, and external link.
 - Added quiet secondary-text-color, semi-bold dotted-underlined link styling, keyboard `:focus-visible` outline, `noopener noreferrer`, and regressions for citation metadata plus CSS contrast/focus visibility. The external source URL is percent-encoded so the Arabic-string lint does not misread the URL as Latin words inside Arabic text.
 - Latest code is on PR #24. No browser proof yet; the current-head CI matrix must confirm formatting, tests, accessibility, and actual Mushaf rendering before this can be called verified.
-
-
 
 ### Final static consistency sweep — 2026-10-09 05:09Z
 
@@ -357,22 +356,16 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Re-ran the same recursive Arabic-string scan over the full canonical `data/tajweed-sources.json`: **zero Arabic-containing strings with Latin words** were found after the fix.
 - Final intended candidate head before CI refresh: latest PR #24 branch commit. No additional source or version edits should be made unless the latest CI/test matrix exposes a concrete failure. Current corpus report still predates the `madd_4_6` rule; do not claim current-corpus pass until the current-head sweep runs.
 
-
-
 ### Documentation precision checkpoint — 2026-10-09 05:10Z
 
 - Removed a stale “20 Tajweed rules” claim from the source-registry test header; the candidate now has 22 classifier rule identities and 29 citation-registry entries (some study entries are not classifier rules).
 - The corpus report's closing summary had an older snapshot saying three bare Qalqalah cases. It is now explicitly marked historical and distinguishes the earlier three-case result, the later pre-PR-24 two-case run, and the **pending** current 22-rule PR-24 sweep.
 - No new changes are planned unless the current-head CI identifies a concrete defect. Latest CI evidence must be fetched for the latest PR head, not inferred from queued older runs.
 
-
-
 ### Corpus-report SHA reconciliation — 2026-10-09 05:11Z
 
 - Corrected the report's “current candidate classifier blob” wording. The first Muqaṭṭaʿāt Madd patch used blob `8edf33ae72fdb726bdb177828588665f7e7bec9e`; the current classifier blob is `9e638d4961a6c4cf2c758ad2fd7ad67e2c70ab7a` after bilingual legend-copy changes only (classification logic unchanged between those two snapshots).
 - No corpus result is claimed for the current 22-rule classifier. The old 104,557-span / 21-rule and earlier three-Qalqalah results are historical. Current-head CI is the only available path to a native run while the local environment cannot reach GitHub.
-
-
 
 ### Final source-mirror parity audit — 2026-10-09 05:12Z
 

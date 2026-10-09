@@ -9456,8 +9456,8 @@
     },
     {
       "path": "tajweed-course.json",
-      "bytes": 13104,
-      "sha256": "5a4e2e783b02f4971c65f84938d62fa9eba9faaab23ce4d6c3f2c27136677ac2"
+      "bytes": 13173,
+      "sha256": "ceb90c33e9484007b347421b63cdb28cead87de1eaf3f775ce347242b39fb56e"
     },
     {
       "path": "tajweed-practice.json",
@@ -9466,8 +9466,8 @@
     },
     {
       "path": "tajweed-sources.json",
-      "bytes": 17646,
-      "sha256": "4f9935bc4e90571af9af13dbc79edee5a466afc91de70f559bc0d14e8a669841"
+      "bytes": 19696,
+      "sha256": "b7364d5028bdbd1cf1873610eaae2466add08e962365c41ff6c13c408ef1ab3e"
     },
     {
       "path": "translations/fr-hamidullah/1.json",

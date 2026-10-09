@@ -31,9 +31,7 @@ test('Al-Fatiha 1:1 matches the well-known reference reading', () => {
   assert.deepEqual(result[0].spans, []); // بِسْمِ — nothing to mark
   // The preceding word ends in kasra (بِسْمِ), so the lām of
   // lafẓ al-jalālah is light here and must not receive the heavy Tafkhim tag.
-  assert.deepEqual(ruleTextPairs(result[1].word), [
-    { rule: 'hamzat_wasl', text: '\u0671' },
-  ]); // بِسْمِ ٱللَّهِ — lām al-jalālah is tarqiq after kasra
+  assert.deepEqual(ruleTextPairs(result[1].word), [{ rule: 'hamzat_wasl', text: '\u0671' }]); // بِسْمِ ٱللَّهِ — lām al-jalālah is tarqiq after kasra
   const rahman = ruleTextPairs(result[2].word);
   assert.ok(rahman.some((r) => r.rule === 'hamzat_wasl'));
   assert.ok(rahman.some((r) => r.rule === 'lam_shamsiyyah'));
@@ -42,12 +40,9 @@ test('Al-Fatiha 1:1 matches the well-known reference reading', () => {
   assert.ok(raheem.some((s) => s.rule === 'madd_246')); // ayah-final madd, pause-lengthened
 });
 
-
 test('lam of lafz al-jalalah respects heavy/light vowel context', () => {
   const hasAllahTafkhim = (text) =>
-    classifyAyahTajweed(text).some((word) =>
-      word.spans.some((span) => span.rule === 'tafkhim')
-    );
+    classifyAyahTajweed(text).some((word) => word.spans.some((span) => span.rule === 'tafkhim'));
 
   assert.equal(hasAllahTafkhim('ٱللَّهُ'), true, 'initial recitation uses the heavy lām');
   assert.equal(hasAllahTafkhim('قَالَ ٱللَّهُ'), true, 'a preceding fatḥah supports tafkhim');
@@ -78,18 +73,21 @@ test('hamzat al-wasl fires on every \u0671, nowhere else', () => {
 
 test('lam shamsiyyah also detects the article after a lam-prefix', () => {
   assert.ok(
-    rulesOf('\u0644\u0650\u0644\u0637\u0651\u064e\u0627\u0653\u0626\u0650\u0641\u0650\u064a\u0646').includes(
-      'lam_shamsiyyah'
-    )
+    rulesOf(
+      '\u0644\u0650\u0644\u0637\u0651\u064e\u0627\u0653\u0626\u0650\u0641\u0650\u064a\u0646'
+    ).includes('lam_shamsiyyah')
   ); // لِلطَّآئِفِينَ
   assert.ok(
-    rulesOf('\u0644\u0650\u0644\u0638\u0651\u064e\u0627\u0644\u0650\u0645\u0650\u064a\u0646').includes(
-      'lam_shamsiyyah'
-    )
+    rulesOf(
+      '\u0644\u0650\u0644\u0638\u0651\u064e\u0627\u0644\u0650\u0645\u0650\u064a\u0646'
+    ).includes('lam_shamsiyyah')
   ); // لِلظَّالِمِينَ
 
-  const lamPrefixExample = '\u0644\u0650\u0644\u0638\u0651\u064e\u0627\u0644\u0650\u0645\u0650\u064a\u0646';
-  const articleLam = classifyWordTajweed(lamPrefixExample).find((span) => span.rule === 'lam_shamsiyyah');
+  const lamPrefixExample =
+    '\u0644\u0650\u0644\u0638\u0651\u064e\u0627\u0644\u0650\u0645\u0650\u064a\u0646';
+  const articleLam = classifyWordTajweed(lamPrefixExample).find(
+    (span) => span.rule === 'lam_shamsiyyah'
+  );
   assert.ok(articleLam, 'the silent article lām should receive the Tajweed span');
   assert.equal(articleLam.start, 2, 'classify the second lām, not the pronounced lām-prefix');
   assert.equal(lamPrefixExample.slice(articleLam.start, articleLam.end), '\u0644');
@@ -190,7 +188,10 @@ test('qalqalah suppression requires explicit assimilation evidence', () => {
     '\u0641\u064e\u0631\u0651\u064e\u0637\u062A\u064f\u0645\u06E1', // فَرَّطتُمۡ
     '\u0646\u064e\u062E\u0652\u0644\u064F\u0642\u0643\u0651\u064F\u0645\u0652', // نَخْلُقكُّم
   ]) {
-    assert.deepEqual(rulesOf(word).filter((r) => r === 'qalqalah'), []);
+    assert.deepEqual(
+      rulesOf(word).filter((r) => r === 'qalqalah'),
+      []
+    );
   }
   assert.ok(rulesOf('\u0642\u0652', { nextWordFirstBase: '\u062E' }).includes('qalqalah'));
 });
@@ -222,10 +223,18 @@ test('ayah-level Qalqalah suppression survives confirmed source spellings', () =
   const mergedDal = classifyAyahTajweed(
     '\u0648\u064e\u0642\u064e\u062F \u062F\u0651\u064e\u062E\u064e\u0644\u064F\u0648\u0627'
   );
-  assert.equal(mergedDal[1].spans.some((sp) => sp.rule === 'qalqalah'), false);
+  assert.equal(
+    mergedDal[1].spans.some((sp) => sp.rule === 'qalqalah'),
+    false
+  );
 
-  const mergedTa = classifyAyahTajweed('\u0642\u064e\u062F \u062A\u0651\u064e\u0628\u064e\u064a\u0651\u064e\u0646\u064e');
-  assert.equal(mergedTa[0].spans.some((sp) => sp.rule === 'qalqalah'), false);
+  const mergedTa = classifyAyahTajweed(
+    '\u0642\u064e\u062F \u062A\u0651\u064e\u0628\u064e\u064a\u0651\u064e\u0646\u064e'
+  );
+  assert.equal(
+    mergedTa[0].spans.some((sp) => sp.rule === 'qalqalah'),
+    false
+  );
 });
 
 test('ghunnah fires on shaddah-marked \u0646/\u0645 only', () => {
@@ -260,7 +269,10 @@ test('tanween triggers the same noon-sakinah family as a bare sakin noon', () =>
 
 test('small waw/yeh only become Madd as-Silah after hāʾ al-kinayah', () => {
   assert.ok(rulesOf('\u0644\u064e\u0647\u064f\u06E5').includes('madd_silah')); // لَهُۥ
-  assert.equal(rulesOf('\u062F\u064e\u0627\u0648\u064F\u06E5\u062F\u064F').includes('madd_silah'), false); // دَاوُۥدُ
+  assert.equal(
+    rulesOf('\u062F\u064e\u0627\u0648\u064F\u06E5\u062F\u064F').includes('madd_silah'),
+    false
+  ); // دَاوُۥدُ
   assert.ok(rulesOf('\u062F\u064e\u0627\u0648\u064F\u06E5\u062F\u064F').includes('madd_2'));
   assert.equal(rulesOf('\u064A\u064F\u062D\u0652\u064A\u0650\u06E6').includes('madd_silah'), false); // يُحۡيِۦ
   assert.ok(rulesOf('\u064A\u064F\u062D\u0652\u064A\u0650\u06E6').includes('madd_2'));
@@ -283,14 +295,8 @@ test('madd badal requires hamza+madd orthography, not any madda sign', () => {
     rulesOf('\u0645\u064e\u0627\u0653').includes('madd_2'),
     'مَآ is an explicitly marked ordinary madd, not Madd Badal'
   );
-  assert.equal(
-    rulesOf('\u0645\u064e\u0627\u0653').includes('madd_badal'),
-    false
-  );
-  assert.equal(
-    rulesOf('\u0623\u0653\u062F\u064e\u0645َ')[0],
-    'madd_badal'
-  ); // explicit hamza + madda spelling of the same category
+  assert.equal(rulesOf('\u0645\u064e\u0627\u0653').includes('madd_badal'), false);
+  assert.equal(rulesOf('\u0623\u0653\u062F\u064e\u0645َ')[0], 'madd_badal'); // explicit hamza + madda spelling of the same category
 });
 
 test('madd: natural, connected (muttasil), separated (munfasil), badal, and obligatory (muqatta\u2019at)', () => {
@@ -318,7 +324,11 @@ test('Muqaṭṭaʿāt Madd recognizes Kaf and keeps ʿAyn duration distinct', (
   assert.match(tajweedRule('madd_4_6').desc.en, /Madd al-Līn/);
   const aynSeenQaf = rulesOf('\u0639\u0653\u0633\u0653\u0642\u0653');
   assert.deepEqual(aynSeenQaf, ['madd_4_6', 'madd_6', 'madd_6']);
-  assert.deepEqual(rulesOf('\u0643\u0653'), [], 'an isolated marked Kaf is not assumed to be a Muqaṭṭaʿāt opening');
+  assert.deepEqual(
+    rulesOf('\u0643\u0653'),
+    [],
+    'an isolated marked Kaf is not assumed to be a Muqaṭṭaʿāt opening'
+  );
 });
 
 test('Muqaṭṭaʿāt Meem is not treated as ordinary Meem Sakinah', () => {
@@ -431,13 +441,10 @@ test('preference filtering preserves same-unit rule overlaps for the inspector',
     { start: 3, end: 4, rule: 'idgham_ghunnah' },
   ];
   assert.deepEqual(filterSpansByPrefs(overlaps, null), overlaps);
-  assert.deepEqual(filterSpansByPrefs(overlaps, { rules: { ghunnah: false } }), [
-    overlaps[1],
+  assert.deepEqual(filterSpansByPrefs(overlaps, { rules: { ghunnah: false } }), [overlaps[1]]);
+  assert.deepEqual(filterSpansByPrefs(overlaps, { rules: { idgham_ghunnah: false } }), [
+    overlaps[0],
   ]);
-  assert.deepEqual(
-    filterSpansByPrefs(overlaps, { rules: { idgham_ghunnah: false } }),
-    [overlaps[0]]
-  );
 });
 
 test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a legend entry', () => {
@@ -478,7 +485,9 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
 test('tafkhim: the lām of Lafẓ al-Jalālah follows its vowel context', () => {
   // A standalone word is treated as initial recitation only when the caller says so.
   assert.ok(
-    rulesOf('\u0671\u0644\u0644\u0651\u064e\u0647\u0650', { isFirstWordOfAyah: true }).includes('tafkhim')
+    rulesOf('\u0671\u0644\u0644\u0651\u064e\u0647\u0650', { isFirstWordOfAyah: true }).includes(
+      'tafkhim'
+    )
   );
   // وَٱللَّهِ — attached wāw with fatḥah supports the heavy lām.
   assert.ok(rulesOf('\u0648\u064e\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
