@@ -366,7 +366,26 @@ export function tajweedCitation(ruleId, lang) {
   if (!work) return null;
   const title = lang === 'ar' ? work.shortTitle.ar : work.shortTitle.en;
   const author = lang === 'ar' ? work.author.ar : work.author.en;
-  return { title, author, lines: entry.lines, review: entry.review, caveat: entry.caveat || null };
+  const also = (entry.also || [])
+    .map((workId) => {
+      const source = TAJWEED_WORKS[workId];
+      if (!source) return null;
+      return {
+        title: lang === 'ar' ? source.shortTitle.ar : source.shortTitle.en,
+        author: lang === 'ar' ? source.author.ar : source.author.en,
+        url: source.url || null,
+      };
+    })
+    .filter(Boolean);
+  return {
+    title,
+    author,
+    lines: entry.lines,
+    review: entry.review,
+    caveat: entry.caveat || null,
+    url: work.url || null,
+    also,
+  };
 }
 
 /** Rule ids with no citation. Must be empty; the test says so out loud. */
