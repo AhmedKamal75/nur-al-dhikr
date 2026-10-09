@@ -364,3 +364,10 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Removed a stale “20 Tajweed rules” claim from the source-registry test header; the candidate now has 22 classifier rule identities and 29 citation-registry entries (some study entries are not classifier rules).
 - The corpus report's closing summary had an older snapshot saying three bare Qalqalah cases. It is now explicitly marked historical and distinguishes the earlier three-case result, the later pre-PR-24 two-case run, and the **pending** current 22-rule PR-24 sweep.
 - No new changes are planned unless the current-head CI identifies a concrete defect. Latest CI evidence must be fetched for the latest PR head, not inferred from queued older runs.
+
+
+
+### Corpus-report SHA reconciliation — 2026-10-09 05:11Z
+
+- Corrected the report's “current candidate classifier blob” wording. The first Muqaṭṭaʿāt Madd patch used blob `8edf33ae72fdb726bdb177828588665f7e7bec9e`; the current classifier blob is `9e638d4961a6c4cf2c758ad2fd7ad67e2c70ab7a` after bilingual legend-copy changes only (classification logic unchanged between those two snapshots).
+- No corpus result is claimed for the current 22-rule classifier. The old 104,557-span / 21-rule and earlier three-Qalqalah results are historical. Current-head CI is the only available path to a native run while the local environment cannot reach GitHub.
