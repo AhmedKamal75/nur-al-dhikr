@@ -356,3 +356,11 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - A manual reproduction of the source-registry Arabic-string lint found one pre-existing-in-this-branch defect introduced by the Madd Lāzim caveat: the Arabic sentence embedded the Latin identifier `madd_6`. Replaced it with Arabic-only wording in canonical JSON and runtime mirror.
 - Re-ran the same recursive Arabic-string scan over the full canonical `data/tajweed-sources.json`: **zero Arabic-containing strings with Latin words** were found after the fix.
 - Final intended candidate head before CI refresh: latest PR #24 branch commit. No additional source or version edits should be made unless the latest CI/test matrix exposes a concrete failure. Current corpus report still predates the `madd_4_6` rule; do not claim current-corpus pass until the current-head sweep runs.
+
+
+
+### Documentation precision checkpoint — 2026-10-09 05:10Z
+
+- Removed a stale “20 Tajweed rules” claim from the source-registry test header; the candidate now has 22 classifier rule identities and 29 citation-registry entries (some study entries are not classifier rules).
+- The corpus report's closing summary had an older snapshot saying three bare Qalqalah cases. It is now explicitly marked historical and distinguishes the earlier three-case result, the later pre-PR-24 two-case run, and the **pending** current 22-rule PR-24 sweep.
+- No new changes are planned unless the current-head CI identifies a concrete defect. Latest CI evidence must be fetched for the latest PR head, not inferred from queued older runs.
