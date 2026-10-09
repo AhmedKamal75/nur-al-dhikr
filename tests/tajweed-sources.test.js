@@ -179,4 +179,7 @@ test('Madd al-Lin of ʿAyn cites the Tuhfat verse naming its two faces', () => {
   assert.match(entry.caveat.en, /4 or 6 counts/);
   assert.match(entry.caveat.ar, /أربعًا أو ست/);
   assert.equal(TAJWEED_SOURCES.madd_4_6.lines, '54');
+  assert.deepEqual(TAJWEED_SOURCES.madd_4_6.also, ['madd-wa-qasr']);
+  assert.equal(entry.also[0].work, 'madd-wa-qasr');
+  assert.equal(registry.works['madd-wa-qasr'].url, 'https://awkafonline.gov.eg/content-sections/116/5024/المد-والقصر');
 });
