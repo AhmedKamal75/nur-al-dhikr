@@ -144,3 +144,11 @@ The current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` was execu
 - Correction: all nine runtime entries now preserve the full alternate-citation objects. `tests/tajweed-sources.test.js` now deep-compares the complete runtime `TAJWEED_SOURCES` and `TAJWEED_WORKS` structures to the canonical JSON, including nested metadata.
 - Verification: the current JS module was evaluated in an isolated JavaScript runtime; canonicalized full-object comparison passed for all **28 rule entries and 4 works**. This is a direct parity execution, not the native Node test or CI result.
 - Native verification remains pending. Do not close ledger row 92 until `npm run check`/native tests pass on the current source.
+
+
+
+## Arabic bibliographic-title correction — 2026-10-09 05:12Z
+
+- The runtime citation surfaced the Arabic title for *al-Tamhid* as `التهويد في علم التجويد`. Catalog/text records identify the correct title as `التمهيد في علم التجويد` (Quranpedia: https://quranpedia.net/book/131; Islamweb: https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents).
+- Corrected the canonical JSON and runtime JS mirror, then added a regression assertion in `tests/tajweed-sources.test.js`.
+- Isolated execution confirms the Arabic title is identical in the canonical registry, runtime registry, and alternate-citation output. Full runtime/canonical parity still passes in the isolated JS check. Native Node/CI and browser evidence remain pending.
