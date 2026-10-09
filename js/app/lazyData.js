@@ -24,6 +24,7 @@ import {
   TAJWEED_PRACTICE_POOL_URL,
 } from '../core/config.js';
 import { t } from '../core/i18n.js';
+import { normalizeTajweedPracticePool } from '../domain/tajweedPractice.js';
 import { actions, store } from '../core/state.js';
 import {
   clampPage,
@@ -740,7 +741,7 @@ export async function ensureTajweedPool(state) {
   rt.tajweedPoolFetchStarted = true;
   const request = (async () => {
     try {
-      const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
+      const pool = normalizeTajweedPracticePool(await fetchJSON(TAJWEED_PRACTICE_POOL_URL));
       if (!isCurrentGeneration(generation)) return false;
       store.dispatch(actions.setTajweedPool(pool));
       flagLoad('tajweed-pool', false);
