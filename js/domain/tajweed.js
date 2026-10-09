@@ -836,7 +836,7 @@ export function classifyWordTajweed(
     const inlineAllahPrefix =
       !isDivineName(word) &&
       units.length >= 3 &&
-      [WAW, '\u0641', BEH, KAF, LAM, '\u062A'].includes(units[0]?.base) &&
+      [WAW, '\u0641', BEH, '\u0643', LAM, '\u062A'].includes(units[0]?.base) &&
       units[0].diacritics.size > 0
         ? units[0]
         : null;
