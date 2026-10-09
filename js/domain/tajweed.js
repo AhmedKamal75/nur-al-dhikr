@@ -531,13 +531,48 @@ function isDivineName(word) {
   return skeleton === `${ALIF_WASLA}${LAM}${LAM}\u0647` || skeleton === `${ALIF}${LAM}${LAM}\u0647`;
 }
 
-/** (v4.5.2) The divine name WITH its common particle prefixes — والله،
- *  بالله، لله، تالله — all share the heavy (mufakhkham) lam directly
- *  before the ha. Any skeleton ENDING in lam+lam+ha qualifies. */
+/** Detect the divine-name spelling, including attached particles.
+ *  Ending in lām+lām+hāʾ identifies the name; it does NOT by itself mean
+ *  tafkhim. The preceding recitation vowel determines heavy vs light. */
 function endsWithDivineName(word) {
-  return skeletonOf(word).endsWith(`${LAM}${LAM}\u0647`);
+  return skeletonOf(word).endsWith(`${LAM}${LAM}\\u0647`);
 }
 
+function unitHasHeavyVowel(unit) {
+  return Boolean(
+    unit &&
+      (unit.diacritics.has(FATHA) ||
+        unit.diacritics.has(DAMMA) ||
+        unit.diacritics.has(FATHATAN) ||
+        unit.diacritics.has(DAMMATAN))
+  );
+}
+
+/** Conservative connected-recitation context for the lām of lafẓ al-jalālah.
+ *  Return true only when the final pronounced vowel of the preceding token
+ *  explicitly supports tafkhim; uncertain endings stay uncolored. */
+function previousWordHasHeavyFinalVowel(word) {
+  const units = tokenizeUnits(word);
+  const last = units.at(-1);
+  if (!last) return false;
+  if (unitHasHeavyVowel(last)) return true;
+
+  const beforeLast = units.at(-2);
+  if (!beforeLast) return false;
+  const hasHeavyVowel = unitHasHeavyVowel(beforeLast);
+  if (
+    hasHeavyVowel &&
+    (last.base === ALIF ||
+      last.base === ALIF_WASLA ||
+      last.base === ALEF_MAKSURA ||
+      last.base === DAGGER_ALIF)
+  ) {
+    return true;
+  }
+  if (hasHeavyVowel && last.base === WAW) return true;
+  // A long yāʾ following kasrah is a light-context signal, not tafkhim.
+  return false;
+}
 function skeletonOf(word) {
   return [...String(word)].filter((ch) => !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL).join('');
 }
@@ -582,6 +617,8 @@ export function classifyWordTajweed(
     nextWordFirstBase = null,
     nextWordFirstHasShadda = false,
     isLastWordOfAyah = false,
+    isFirstWordOfAyah = false,
+    previousWordHasHeavyFinalVowel = false,
   } = {}
 ) {
   if (!word) return [];
@@ -792,18 +829,27 @@ export function classifyWordTajweed(
       else if (nb) spans.push({ start: u.start, end: u.end, rule: 'izhar_shafawi' });
     }
 
-    // (v4.5.2) Tafkhim — the two deterministic heavy cases from the standard
-    // chart's blue family: the lam that sits directly before the ha of the
-    // divine name (with or without a particle prefix — والله، بالله، لله،
-    // تالله all carry it), and a ra' carrying fatha or damma (ra'
-    // mufakhkhamah). A kasra ra' is thin (tarqiq) and a sukun ra' depends on
-    // the vowel BEFORE it, which this classifier cannot see honestly — both
-    // stay uncolored rather than guessed, like the reference mushaf.
+    // Tafkhim on the lām of lafẓ al-jalālah is context-sensitive:
+    // fatha/damma immediately before the name (or beginning recitation)
+    // supports heaviness; kasra requires tarqiq and is deliberately uncolored.
+    // Attached particle forms (وَٱللَّهُ / بِٱللَّهِ / لِلَّهِ) use the
+    // pronounced particle vowel rather than assuming every spelling is heavy.
+    const inlineAllahPrefix =
+      !isDivineName(word) &&
+      units.length >= 3 &&
+      [WAW, '\\u0641', BEH, KAF, LAM, '\\u062A'].includes(units[0]?.base) &&
+      units[0].diacritics.size > 0
+        ? units[0]
+        : null;
+    const divineNameHasHeavyContext = isDivineName(word)
+      ? isFirstWordOfAyah || previousWordHasHeavyFinalVowel
+      : unitHasHeavyVowel(inlineAllahPrefix);
     if (
       u.base === LAM &&
-      next?.base === '\u0647' &&
+      next?.base === '\\u0647' &&
       prev?.base === LAM &&
-      endsWithDivineName(word)
+      endsWithDivineName(word) &&
+      divineNameHasHeavyContext
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
@@ -879,9 +925,16 @@ export function classifyAyahTajweed(ayahText) {
     .map((word, i) => (tokenizeUnits(word).length > 0 ? i : -1))
     .filter((i) => i >= 0);
   const nextSemanticIndex = new Map();
-  for (let p = 0; p < semanticIndices.length - 1; p += 1) {
-    nextSemanticIndex.set(semanticIndices[p], semanticIndices[p + 1]);
+  const previousSemanticIndex = new Map();
+  for (let p = 0; p < semanticIndices.length; p += 1) {
+    if (p < semanticIndices.length - 1) {
+      nextSemanticIndex.set(semanticIndices[p], semanticIndices[p + 1]);
+    }
+    if (p > 0) {
+      previousSemanticIndex.set(semanticIndices[p], semanticIndices[p - 1]);
+    }
   }
+  const firstSemanticIndex = semanticIndices[0] ?? -1;
   const lastSemanticIndex = semanticIndices.at(-1) ?? -1;
 
   const result = words.map((word, i) => {
@@ -890,13 +943,19 @@ export function classifyAyahTajweed(ayahText) {
     const nextWordUnits = nextWord ? tokenizeUnits(nextWord) : [];
     const nextWordFirstBase = nextWordUnits[0]?.base ?? null;
     const nextWordFirstHasShadda = nextWordUnits[0]?.diacritics.has(SHADDA) ?? false;
+    const previousIndex = previousSemanticIndex.get(i);
+    const previousWord = previousIndex === undefined ? null : words[previousIndex];
     return {
       word,
       wordIndex: i + 1,
       spans: classifyWordTajweed(word, {
         nextWordFirstBase,
         nextWordFirstHasShadda,
+        isFirstWordOfAyah: i === firstSemanticIndex,
         isLastWordOfAyah: i === lastSemanticIndex,
+        previousWordHasHeavyFinalVowel: previousWord
+          ? previousWordHasHeavyFinalVowel(previousWord)
+          : false,
       }),
     };
   });
