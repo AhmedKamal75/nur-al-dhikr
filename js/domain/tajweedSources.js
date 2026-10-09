@@ -369,11 +369,13 @@ export function tajweedCitation(ruleId, lang) {
   const also = (entry.also || [])
     .map((workId) => {
       const source = TAJWEED_WORKS[workId];
-      if (!source) return null;
+      // Only expose secondary entries that have a directly openable source.
+      // The legacy string-only references remain attribution metadata, not UI links.
+      if (!source?.url) return null;
       return {
         title: lang === 'ar' ? source.shortTitle.ar : source.shortTitle.en,
         author: lang === 'ar' ? source.author.ar : source.author.en,
-        url: source.url || null,
+        url: source.url,
       };
     })
     .filter(Boolean);
