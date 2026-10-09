@@ -6,7 +6,7 @@
 
 - Repository: `AhmedKamal75/nur-al-dhikr`
 - Working branch: `fix/tajweed-semantic-lookahead-2026-10-08`
-- Classifier file content SHA used for this run: `0b67ade836183802278d84599169e3430ea18fc8` (the source version containing the Qalqalah plural-key, lām-prefix, Allah-lām context, and syntax/runtime corrections).
+- Classifier file content SHA used for the final rerun: `44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555` (includes the Qalqalah plural-key correction, explicit-sukun-aware Muqaṭṭaʿāt exemption, explicit-shadda Qāf→Kāf guard, lām-prefix fix, Allah-lām context, and syntax/runtime corrections).
 - Corpus inputs: the 114 JSON files under `data/quran/1.json` through `data/quran/114.json`, fetched from the same branch.
 - Execution method: the ES-module source was fetched from GitHub, its top-level `export` modifiers were removed for evaluation, it was compiled/executed with `new Function` in the available JavaScript tool runtime, and the actual `classifyAyahTajweed(ayah.text)` function was invoked for each corpus ayah. Data files were parsed as JSON. The implementation was processed in six ranges to stay inside the tool-call limit.
 - This is real classifier execution against the bundled text, not merely static scanning. It is **not** an official `node --test` / `npm run check` run and does not prove UI integration or scholarly correctness.
@@ -34,7 +34,7 @@ The following structural invariants had **zero observed failures across all 6,23
 - no duplicate `start:end:rule` spans;
 - no corpus file fetch or JSON parse failures.
 
-A separate targeted execution of 15 hand-selected regression cases also passed against this same classifier source, including ornament-aware lookahead/finality, the plural `فَرَّطتُمۡ` exception, lām-prefix Lam Shamsiyyah, and context-sensitive Lām al-Jalālah. That targeted probe is not a substitute for the repository's test suite.
+The current `tests/tajweed.test.js` file was also executed in an isolated JavaScript harness after stripping its Node imports and supplying small synchronous `test` / `assert` shims: **26/26 test cases passed** on the latest classifier/test file pair. This is stronger than a hand-written spot check, but it is still not Node's native test runner, and shim behavior is not guaranteed identical for every assertion. The harness run caught and helped correct the Muqaṭṭaʿāt/explicit-sukun exemption bug, the lām-prefix test's double-escaped string, an invalid Qalqalah fixture spelling, an iqlab assertion that accidentally checked only the first unrelated span, and stale Lām al-Jalālah expectations.
 
 ## Anomalies requiring follow-up
 
@@ -51,7 +51,7 @@ The classifier produces these four overlaps; they are not four arbitrary offset 
 
 The raw classifier reports both rules. However, `filterSpansByPrefs()` currently returns non-overlapping spans by dropping any later span whose start is before the prior span's end. Since these spans share exact offsets, the painter/inspector receives only the first (currently `ghunnah`) span. This may be a necessary one-color-per-glyph display choice, but precedence is implicit and the secondary rule is not surfaced by this filter. The durable ledger keeps this presentation issue **OPEN**; do not change the classifier pair counts without reviewing the recitation semantics and display policy.
 
-The corpus sweep test was strengthened to pin the observed collision inventory: three `ghunnah+idgham_ghunnah` cases and one `ghunnah+idgham_no_ghunnah` case. Any new or missing pair now requires deliberate review.
+The corpus sweep test was strengthened to pin the observed collision inventory: three `ghunnah+idgham_ghunnah` cases and one `ghunnah+idgham_no_ghunnah` case. Any new or missing pair now requires deliberate review. The latest full-corpus rerun on classifier SHA `44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555` reproduced all summary counts above after the Muqaṭṭaʿāt/Qalqalah changes.
 
 ### 2. Three Qalqalah spans without an explicit sukun/diacritic inside the highlighted slice
 
@@ -59,12 +59,12 @@ The corpus sweep test was strengthened to pin the observed collision inventory: 
 - **94:8 — `فَٱرۡغَب`:** final-word bāʾ. A pause at the ayah end induces the expected Qalqalah; the source word has no explicit mark inside the one-character span.
 - **96:19 — `وَٱقۡتَرِب۩`:** final-word bāʾ followed by the sajdah ornament. As an ayah-final stop, the unmarked highlighted letter is expected under the current pause model.
 
-The lightweight boundary diagnostic found no other surviving emitted Qalqalah span immediately before a following shadda in the later five ranges. Earlier raw-text candidates for identical-letter and dāl→tāʾ assimilation had already been given explicit guards and regression fixtures. This does not make the Qalqalah issue fully closed: the route-specific case at 11:42 still needs an explicit reading/profile decision and scholarly sign-off.
+The lightweight boundary diagnostic found no other surviving emitted Qalqalah span immediately before a following shadda in the later five ranges. Explicit-shadda Qāf→Kāf at a word boundary is now also treated as assimilation, as demanded by the classifier's regression contract; it is an intentionally narrow cue and needs official Node/source-profile review alongside the intra-word `نَخْلُقكُّم` exception. Earlier raw-text candidates for identical-letter and dāl→tāʾ assimilation had already been given explicit guards and regression fixtures. This does not make the Qalqalah issue fully closed: the route-specific case at 11:42 still needs an explicit reading/profile decision and scholarly sign-off.
 
 ## Verification boundary and next gate
 
 Done in the isolated JavaScript runtime: all 114 JSON sources loaded; all 6,236 ayahs executed; all 21 rule IDs reached; structural invariants passed; the four overlap pairs and three unmarked Qalqalah cases were isolated and documented.
 
-Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep rows 79, 80, 86, 87, and 88 open until their specific verification requirements are met.
+Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep rows 79, 80, 86, 87, 88, and 89 open until their specific verification requirements are met.
 
 This report records classifier execution and anomalies; it is not a claim that all Tajweed rules have been scholarly-validated or that the feature is release-ready.
