@@ -77,3 +77,13 @@ This report records classifier execution and anomalies; it is not a claim that a
 ## Counter correction discovered during integration review
 
 The counter's mark detector was broadened to include corpus-attested U+0656, U+0657, and U+065E, then the full corpus was re-executed against classifier blob `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1`. The expanded detector still found exactly two unmarked pause-final Qalqalah spans: فَٱرۡغَب (94:8) and وَٱقْتَرِب۩ (96:19). The classifier's `isBaseLetter()` was also corrected to exclude non-letter ornaments/numerals while explicitly preserving dagger alif and the four corpus-attested small-letter signs; this matters because a first attempted filter accidentally dropped thousands of madd spans. This full-corpus rerun is direct isolated JavaScript execution, not native Node/CI.
+
+
+
+## Integration snapshot validity correction — 2026-10-09
+
+This report was copied onto the mainline integration branch as historical evidence. **Its corpus totals must not be attributed to the integration branch's current classifier without a rerun.** The report names classifier blob `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1`, while the current integration branch classifier blob is `92f4fba4747024582c3334400bc6d3437732d5ef`. The source report's 104,554-span result is therefore valid only for the named historical snapshot. Do not call it a current integration corpus pass.
+
+The runtime citation registry's rule-key set was compared with the canonical JSON `rules` key set on the integration branch: 28 keys on each side, with no missing or extra IDs. This key-set check does **not** establish full metadata parity; the repository's native parity test still must run.
+
+Next evidence required for this branch: rerun the complete corpus using the exact integration classifier blob above and current `data/quran/*.json`, then run native Node tests/CI and browser integration tests. Keep those gates open until results are captured.
