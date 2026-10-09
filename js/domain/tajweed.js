@@ -600,6 +600,18 @@ function isLazimConsonant(base) {
   );
 }
 
+/** The opening letter names are not ordinary word-final Qalqalah.
+ *  Exempt only the known Muqaṭṭaʿāt skeletons whose marks are absent or
+ *  lengthening-only; an explicit sukun/vowel means this is a real letter
+ *  occurrence and must be classified normally (e.g. a test qāf+sukun).
+ */
+function isQalqalahMuqattaatToken(baseSequence, units) {
+  return (
+    QALQALAH_MUQATTAAT_WORDS.has(baseSequence) &&
+    units.every((unit) => [...unit.diacritics].every((mark) => mark === MADDA_ABOVE))
+  );
+}
+
 /**
  * Classify one word's tajweed rules. Returns spans {start, end, rule}
  * with indices relative to `word` itself (not the whole ayah) — the
@@ -655,7 +667,7 @@ export function classifyWordTajweed(
       spans.push({ start: u.start, end: u.end, rule: 'lam_shamsiyyah' });
     }
 
-    if (QALQALAH_LETTERS.has(u.base) && !QALQALAH_MUQATTAAT_WORDS.has(baseSequence)) {
+    if (QALQALAH_LETTERS.has(u.base) && !isQalqalahMuqattaatToken(baseSequence, units)) {
       const sakin =
         u.diacritics.has(SUKUN) || u.diacritics.has(SUKUN_ALT) || u.diacritics.size === 0;
       const nextBase = next?.base ?? nextWordFirstBase;
@@ -678,11 +690,12 @@ export function classifyWordTajweed(
       // has no declared reading profile, so it stays conservative there.
       const sameLetterAssimilation = nextBase === u.base && nextStartsWithShadda;
       const dalToTaAssimilation = u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
+      const qafToKafAssimilation = u.base === '\u0642' && nextBase === '\u0643' && nextStartsWithShadda;
       const knownNoEchoWord =
         QALQALAH_KNOWN_NO_ECHO_WORDS.has(baseSequence) &&
         ((u.base === '\u0637' && next?.base === '\u062A') ||
           (u.base === '\u0642' && next?.base === '\u0643'));
-      const assimilatesInstead = sameLetterAssimilation || dalToTaAssimilation || knownNoEchoWord;
+      const assimilatesInstead = sameLetterAssimilation || dalToTaAssimilation || qafToKafAssimilation || knownNoEchoWord;
       if (sakin && !assimilatesInstead) {
         spans.push({ start: u.start, end: u.end, rule: 'qalqalah' });
       }
