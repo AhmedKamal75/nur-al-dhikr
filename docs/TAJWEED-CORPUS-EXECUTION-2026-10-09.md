@@ -82,8 +82,42 @@ The counter's mark detector was broadened to include corpus-attested U+0656, U+0
 
 ## Integration snapshot validity correction — 2026-10-09
 
-This report was copied onto the mainline integration branch as historical evidence. **Its corpus totals must not be attributed to the integration branch's current classifier without a rerun.** The report names classifier blob `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1`, while the current integration branch classifier blob is `92f4fba4747024582c3334400bc6d3437732d5ef`. The source report's 104,554-span result is therefore valid only for the named historical snapshot. Do not call it a current integration corpus pass.
+The earlier run in this report used classifier blob `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1`. A second full-corpus run was subsequently performed against the exact current integration classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef`; its independently accumulated total also equals 104,554 spans. The current-snapshot run and its per-range totals are recorded below. This remains isolated JavaScript-runtime evidence, not native Node/CI or browser proof.
 
-The runtime citation registry's rule-key set was compared with the canonical JSON `rules` key set on the integration branch: 28 keys on each side, with no missing or extra IDs. This key-set check does **not** establish full metadata parity; the repository's native parity test still must run.
+The runtime citation registry's rule-key set was compared with the canonical JSON `rules` key set on the integration branch: 28 keys on each side, with no missing or extra IDs. The continuity handoff additionally records a direct per-entry work/lines/review/caveat/label parity check with no drift and no uncited IDs. Native registry tests remain required.
 
-Next evidence required for this branch: rerun the complete corpus using the exact integration classifier blob above and current `data/quran/*.json`, then run native Node tests/CI and browser integration tests. Keep those gates open until results are captured.
+
+
+## Current integration snapshot rerun — 2026-10-09 04:58Z
+
+**Authoritative execution snapshot for this section**
+- Branch: `integration/tajweed-mainline-2026-10-09`
+- Exact classifier blob: `92f4fba4747024582c3334400bc6d3437732d5ef`
+- Input: `data/quran/1.json` through `data/quran/114.json`, fetched from this same branch; all files parsed successfully.
+- Method: fetched the classifier module, removed top-level ES-module `export` modifiers, compiled the actual module body in an isolated JavaScript runtime, then called `classifyAyahTajweed(ayah.text)` for every ayah. Each nine-surah batch fetched the exact same classifier blob. This is direct classifier execution, but **not** the repository's native Node test runner, GitHub Actions completion, UI integration, or scholarly validation.
+
+| Surah range | Files | Ayahs | Spans |
+| --- | ---: | ---: | ---: |
+| 1–9 | 9 | 1,364 | 36,042 |
+| 10–18 | 9 | 886 | 16,739 |
+| 19–27 | 9 | 1,002 | 13,831 |
+| 28–36 | 9 | 536 | 10,569 |
+| 37–45 | 9 | 722 | 9,941 |
+| 46–54 | 9 | 391 | 5,199 |
+| 55–63 | 9 | 298 | 4,586 |
+| 64–72 | 9 | 276 | 3,200 |
+| 73–81 | 9 | 354 | 2,158 |
+| 82–90 | 9 | 214 | 1,210 |
+| 91–99 | 9 | 103 | 619 |
+| 100–108 | 9 | 61 | 310 |
+| 109–114 | 6 | 29 | 150 |
+| **Total** | **114** | **6,236** | **104,554** |
+
+**Current-snapshot structural invariants**
+- All 21 registered classifier rule IDs were reached at least once across the corpus.
+- Zero raw-token-count mismatches; zero invalid one-based word indices; zero unknown/unregistered rule IDs; zero invalid/out-of-bounds spans; zero duplicate exact `wordIndex:start:end:rule` spans.
+- Four exact same-written-range multi-rule collisions: three `ghunnah + idgham_ghunnah` (6:39 `صُمّٞ`, 27:10 `جَآنّٞ`, 28:31 `جَآنّٞ`) and one `ghunnah + idgham_no_ghunnah` (3:153 `بِغَمّٖ`).
+- Two remaining Qalqalah spans without an explicit sukun mark in the span: 94:8 `فَٱرۡغَب` and 96:19 `وَٱقۡتَرِب۩`. These remain expected pause-final/waqf cases requiring a reference-backed policy, not silent auto-fixes.
+- All 114 file fetches and JSON parses succeeded. This sweep checks structural invariants and observed anomalies; it is not a scholarly gold-label comparison and cannot establish that every Tajweed classification is correct.
+
+**Still open:** current-head native `npm run check` / `node --test`, completed GitHub Actions, actual Chromium rendering and inspector behavior (EN/AR × light/dark × phone/desktop), and a trusted-source comparison for rule-level correctness.
