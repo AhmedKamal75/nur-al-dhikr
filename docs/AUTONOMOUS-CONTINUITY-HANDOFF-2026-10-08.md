@@ -20,21 +20,24 @@ Do not claim local Node/Chromium/device execution unless the evidence exists. Qu
 ## Current deep-review focus: Tajweed
 User explicitly approved keeping Tajweed active until a full-corpus execution/anomaly pass is performed.
 
-### Full-corpus execution gate — completed with explicit limits (2026-10-09)
+### Full-corpus execution gate — latest classifier verified structurally (updated 2026-10-09)
 
-The current branch classifier has now been executed across all 114 bundled Quran JSON files / 6,236 ayahs in the available JavaScript tool runtime. The durable result is `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
+The latest direct corpus run is recorded in `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. It was executed after the attached-token normalization fix against exact classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be`, on this clean-mainline integration branch.
 
-- Latest classifier content SHA: `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
-- Zero raw-token-count mismatches, bad one-based word indices, unknown rule IDs, invalid span offsets, duplicate exact spans, file-fetch failures, or JSON parse failures were observed.
-- Four same-written-unit collisions were identified and categorized; three implicit/no-explicit-mark Qalqalah spans were reviewed, of which two are ayah-final pause cases and one (`ٱرۡكَب مَّعَنَا`, 11:42) remains reading-profile-sensitive.
-- The existing `tests/tajweed.test.js` was additionally run through a synchronous in-tool shim: 26/26 passed. This is useful execution evidence, but it is **not** `node --test`; CI, browser/device execution, and an authoritative scholarly comparison remain unverified. The full corpus run is direct execution of the fetched classifier source, not `npm run check`.
+- All 114 bundled Quran JSON files loaded and parsed; all 6,236 ayahs executed in eight batches.
+- **104,554 spans** were produced, and all 21 current `TAJWEED_RULES` IDs were reached.
+- Zero word/token-count mismatches, invalid one-based word indices, invalid span offsets, unknown rule IDs, duplicate exact spans, or fetch/parse failures were observed.
+- Four exact same-written-range rule collisions remain: three `ghunnah + idgham_ghunnah` and one `ghunnah + idgham_no_ghunnah`. No claim is made here about partial/nested overlaps for this post-normalization rerun.
+- Exactly two unmarked Qalqalah spans remain, consistent with ayah-final pause cases `فَٱرۡغَب` (94:8) and `وَٱقْتَرِب۩` (96:19). The earlier third span at `ٱرۡكَب مَّعَنَا` was removed by a narrowly-scoped lexical exception; it is **not** generalized to every bāʾ→mīm boundary.
+- This evidence is direct execution of fetched classifier source, not native `node --test`, `npm run check`, completed CI, browser/device testing, or a scholarly gold-label comparison.
 
-Remaining gate before Tajweed can be called sufficiently verified:
-- run the repository's official Node/lint/format/data checks and obtain completed CI jobs;
-- review the four classifier overlaps and define how the painter/inspector exposes more than one rule on a written unit;
-- settle the reading-profile policy for `ٱرۡكَب مَّعَنَا` with a trusted source and explicit profile semantics;
-- verify course ↔ classifier ↔ source-registry consistency, Arabic/English parity, and lesson-level pedagogy;
-- inspect real Mushaf/practice browser behavior, then reassess completion honestly.
+Remaining release gates:
+- official Node/lint/format/data checks and completed current-head GitHub Actions;
+- Chromium review of the Mushaf painter/inspector, alternate citation UI and rule toggles (EN/AR × light/dark × phone/desktop);
+- source-backed scholarly/reading-profile resolution of Qalqalah assimilation cases and broader rule-level correctness;
+- full course ↔ classifier ↔ canonical/runtime source-registry consistency review, including lesson-level pedagogy.
+
+Row 80's Qalqalah issue remains **OPEN** for reading-profile/source and official verification even though the exact lexical exception is implemented. Row 88's Lām al-Jalālah issue remains **OPEN** until native checks and real Mushaf/browser behavior are verified. Do not merge or version-release on corpus structural execution alone.
 
 ### Recent semantic-lookahead fix
 Branch: `fix/tajweed-semantic-lookahead-2026-10-08`
@@ -82,7 +85,7 @@ The prior broad heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as 
 - exempt Muqaṭṭaʿāt only when the token is one of the known opening-letter skeletons and its marks are absent or madda-only. An explicit sukun/sukun-alt must not be hidden by the skeleton match.
 - suppress exact intra-word spellings `بَسَطْتَ`, `أَحَطْتُ`, `فَرَّطْتُ`, `فَرَّطْتُم`, and `نَخْلُقكُّم`.
 
-Do **not** describe bāʾ→mīm as a generally suppressed family: the full-corpus run still emits Qalqalah on the bāʾ in `ٱرۡكَب مَّعَنَا` (11:42). This remains an open, reading-profile-sensitive case; without a declared reading profile and source-backed decision, do not broaden the suppression rule. The other two no-explicit-mark spans in the full-corpus sweep are end-of-ayah pause cases: `فَٱرۡغَب` (94:8) and `وَٱقۡتَرِب۩` (96:19).
+Earlier classifier snapshots emitted Qalqalah on the bāʾ in `ٱرۡكَب مَّعَنَا` (11:42). The current clean-mainline classifier suppresses only this exact lexical base sequence when the following mīm carries shadda; generic bāʾ→mīm boundaries remain eligible for Qalqalah. The post-normalization corpus rerun now shows only the two ayah-final pause cases without an explicit mark in the highlighted span: `فَٱرۡغَب` (94:8) and `وَٱقْتَرِب۩` (96:19). Keep the exact phrase **OPEN** as a reading-profile/source-policy question; do not broaden the exception without a declared profile and trusted reference.
 
 The complete corpus report records diagnostics and limitations. Corpus execution has been performed, but this issue remains **OPEN** pending official Node/CI execution and scholarly/reading-profile resolution. Do not generalize beyond the supported reading/methodology without source evidence.
 
@@ -150,7 +153,7 @@ Required evidence remains first-class for product claims. Relevant matrix includ
   - exact incomplete-ṭā→tā spellings `بسطت`, `أحطت`, `فرطت`, `فرطتم`;
   - `نخلقكم`, where accepted qaf→kaf realizations do not use Qalqalah on the written sakin qaf;
   - exact Qalqalah-bearing Muqaṭṭaʿāt opening tokens are exempted from the generic bare-letter fallback.
-- `اركب معنا` stays conservative because its ب→م treatment is route-sensitive and the app has no declared reading profile.
+- At this 2026-10-08 checkpoint, `اركب معنا` was still handled conservatively. The later clean-mainline follow-up adds a narrowly-scoped exception for the exact lexical base sequence before shadda-mīm; the reading/profile policy remains open, and no generic ب→م suppression is allowed.
 - A Unicode-aware source scan covered all 114 surahs for the principal Qalqalah assimilation boundary families. Confirmed concrete cases include `وَقَد دَّخَلُوا` (5:61), the dal→ta family at 2:256 / 6:94 / 9:117 / 29:35 / 29:38 / 61:5, and `ارۡكَب مَّعَنَا` (11:42).
 - Exact incomplete-ṭā→tā corpus spellings verified include 5:28 `بَسَطتَ`, 12:80 `فَرَّطتُمۡ`, 27:22 `أَحَطتُ`, and 39:56 `فَرَّطتُ`. `نَخۡلُقكُّم` is at 77:20.
 - The Madd audit found that `madd_246` previously allowed a madd unit at the very end of the word. It now requires a following final consonant (`i === units.length - 2 && next`). The learner-facing rule description was corrected accordingly.
