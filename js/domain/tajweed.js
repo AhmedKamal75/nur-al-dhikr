@@ -125,6 +125,30 @@ const SUN_LETTERS = new Set([
   NOON,
 ]);
 const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BEH, '\u062C', '\u062F']);
+// Qalqalah-bearing Muqaṭṭaʿāt opening tokens are letter-name sequences, not ordinary
+// consonant tokens carrying sukun. The raw Uthmani spelling intentionally leaves the
+// qlq-bearing component unmarked in forms such as طه / طس / طسم, so the generic
+// "bare Qalqalah letter = sakin" fallback must not color those components.
+const QALQALAH_MUQATTAAT_WORDS = new Set([
+  '\u0637\u0647',
+  '\u0637\u0633',
+  '\u0637\u0633\u0645',
+  '\u0642',
+  '\u0639\u0633\u0642',
+]);
+// Hafs-specific connected-recitation exception: the final bāʾ of
+// ٱرۡكَبْ is assimilated into the following shaddah-marked mīm in مَّعَنَا.
+// Keep this scoped to the exact word+boundary; bare bāʾ→mīm adjacency is not enough.
+const QALQALAH_BA_MEEM_ASSIMILATION_WORDS = new Set([
+  '\u0671\u0631\u0643\u0628',
+]);
+const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set([
+  '\u0628\u0633\u0637\u062A',
+  '\u0623\u062D\u0637\u062A',
+  '\u0641\u0631\u0637\u062A',
+  '\u0641\u0631\u0637\u062A\u0645',
+  '\u0646\u062E\u0644\u0642\u0643\u0645',
+]);
 const IDGHAM_GHUNNAH_LETTERS = new Set([YEH, NOON, MEEM, WAW]);
 const IDGHAM_NO_GHUNNAH_LETTERS = new Set([LAM, '\u0631']);
 const IZHAR_HALQI_LETTERS = new Set(['\u0621', '\u0647', '\u0639', '\u062D', '\u063A', '\u062E']);
@@ -176,7 +200,7 @@ const IKHFA_LETTERS = new Set([
  * them for something they are not. The one genuinely citable convention
  * found is Indonesia's LPMQ Pedoman Tajwid Sistem Warna (2011).
  *
- * Three rules the standard mushaf convention leaves UNMARKED (idgham bila
+ * Three rules this app's presentation convention leaves UNCOLORED (idgham bila
  * ghunnah, izhar shafawi, and halqi izhar) now carry color: null and render no color span
  * — matching the printed books rather than inventing an off-chart hue.
  * Each rule also carries a `family` key so the legend can group rows the
@@ -232,10 +256,10 @@ export const TAJWEED_FAMILIES = Object.freeze([
     id: 'plain',
     color: null,
     recolorable: false,
-    name: { en: 'Uncolored by convention', ar: 'بلا لون بحكم العُرف' },
+    name: { en: 'Uncolored in this app', ar: 'بلا لون في هذا التطبيق' },
     desc: {
-      en: 'Two rules left uncoloured in the printed mushaf tradition, shown here so every rule stays reachable. The colour scheme below is this app\u2019s own, not an official standard.',
-      ar: 'قاعدتان تُركان بلا اللون في تقاليد المصاحف المطبوعة، معروضتان هنا حتى تبقى كل القواعد ميسرة. نظام الألوان أدناه خاص بهذا التطبيق، وليس معيارًا رسميًا.',
+      en: 'Three rules are left uncolored in this app’s presentation convention, so the legend names them without inventing a hue. This palette is the app’s own, not an official standard.',
+      ar: 'يترك التطبيق ثلاث قواعد بلا لون ضمن أسلوب العرض الخاص به، مع إبقائها في الدليل دون اختراع لون لها. لوحة الألوان خاصة بالتطبيق وليست معيارًا رسميًا.',
     },
   },
 ]);
@@ -317,7 +341,7 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'plain',
     name: { en: 'Idgham (no Ghunnah)', ar: 'الإدغام بلا غنة' },
     desc: {
-      en: 'Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored, as in the standard mushaf.',
+      en: "Noon sakinah/tanween merges into a following ل or ر, no nasalization — left uncolored by this app's presentation convention.",
       ar: 'إدغام النون الساكنة أو التنوين في اللام أو الراء بلا غنة — بلا لون كما في المصحف المعياري.',
     },
   },
@@ -347,7 +371,7 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'plain',
     name: { en: 'Izhar Shafawi', ar: 'الإظهار الشفوي' },
     desc: {
-      en: 'Meem sakinah is pronounced plainly — left uncolored, as in the standard mushaf.',
+      en: "Meem sakinah is pronounced plainly — left uncolored by this app's presentation convention.",
       ar: 'إظهار الميم الساكنة — بلا لون كما في المصحف المعياري.',
     },
   },
@@ -404,8 +428,8 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'madd',
     name: { en: "Madd 'Arid (at a stop, 2\u20136)", ar: 'المد العارض للسكون' },
     desc: {
-      en: 'A madd letter at the very end of the ayah, where reciters pause.',
-      ar: 'مد يقع آخر الآية عند الوقف عليه.',
+      en: 'A madd letter followed by the final consonant of the ayah; at a stop, that consonant becomes temporarily silent (2, 4, or 6 counts).',
+      ar: 'مد يسبق الحرف الأخير من الآية، فيسكن الحرف الأخير وقفًا ويجوز فيه القصر والتوسط والإشباع.'
     },
   },
   {
@@ -451,7 +475,19 @@ export const TAJWEED_RULES = Object.freeze([
 ]);
 
 function isBaseLetter(ch) {
-  return !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL && ch !== ' ';
+  if (DIACRITIC_CHARS.has(ch) || ch === TATWEEL || ch === ' ') return false;
+  // The classifier operates on Arabic text, not arbitrary non-mark code points.
+  // In particular, rub el hizb (۞), ayah numerals, and punctuation are ornaments,
+  // not consonants for semantic lookahead. Preserve dagger alif as the classifier's
+  // explicit madd unit, plus the four corpus-attested small-letter signs.
+  if (
+    ch === DAGGER_ALIF ||
+    ch === '\u06E5' ||
+    ch === '\u06E6' ||
+    ch === '\u06E7' ||
+    ch === '\u06E8'
+  ) return true;
+  return /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch);
 }
 
 const SMALL_HIGH_YEH = '\u06E7'; // consonantal small yeh (ٱلنَّبِيِّـۧنَ) — a yeh for rule purposes
@@ -463,7 +499,11 @@ function tokenizeUnits(word) {
   const units = [];
   for (let i = 0; i < word.length; i += 1) {
     const ch = word[i];
-    if (ch === TATWEEL) continue;
+    if (
+      ch === TATWEEL ||
+      WORD_ORNAMENT_CHARS.has(ch) ||
+      ORNAMENT_DIGITS.has(ch)
+    ) continue;
     // Consonantal small marks spell real letters (the plural yeh, an
     // assimilated noon) — fold them so the letter rules engage.
     const base = ch === SMALL_HIGH_YEH ? YEH : ch === SMALL_HIGH_NOON ? NOON : ch;
@@ -476,6 +516,14 @@ function tokenizeUnits(word) {
     }
   }
   return units;
+}
+
+function isHaKinayahSilahUnit(unit, prev) {
+  return (
+    prev?.base === '\u0647' &&
+    ((unit.base === SMALL_WAW && prev.diacritics.has(DAMMA)) ||
+      (unit.base === SMALL_YEH && prev.diacritics.has(KASRA)))
+  );
 }
 
 function isMaddLetter(unit, prev) {
@@ -491,23 +539,57 @@ function isMaddLetter(unit, prev) {
   return false;
 }
 
-/** بِسْمِ ٱللَّهِ etc. — "Allah" is a fixed divine name, not decomposed as
- *  ال + ILAH in live recitation pedagogy, so its doubled lam is
- *  conventionally left uncolored in published tajweed mus7afs even though
- *  the same assimilation is phonetically happening. Matched on the
- *  consonant skeleton so any vowel/case-ending still matches. */
+/** Identify the fixed divine-name spelling, not the ordinary definite article.
+ *  Its doubled lām is not automatically heavy: the pronunciation is tafkhim
+ *  after a heavy preceding vowel and tarqiq after kasrah. The app's current
+ *  palette only marks the heavy case when that context is explicit. */
 function isDivineName(word) {
   const skeleton = skeletonOf(word);
   return skeleton === `${ALIF_WASLA}${LAM}${LAM}\u0647` || skeleton === `${ALIF}${LAM}${LAM}\u0647`;
 }
 
-/** (v4.5.2) The divine name WITH its common particle prefixes — والله،
- *  بالله، لله، تالله — all share the heavy (mufakhkham) lam directly
- *  before the ha. Any skeleton ENDING in lam+lam+ha qualifies. */
+/** Detect the divine-name spelling, including attached particles.
+ *  Ending in lām+lām+hāʾ identifies the name; it does NOT by itself mean
+ *  tafkhim. The preceding recitation vowel determines heavy vs light. */
 function endsWithDivineName(word) {
   return skeletonOf(word).endsWith(`${LAM}${LAM}\u0647`);
 }
 
+function unitHasHeavyVowel(unit) {
+  return Boolean(
+    unit &&
+      (unit.diacritics.has(FATHA) ||
+        unit.diacritics.has(DAMMA) ||
+        unit.diacritics.has(FATHATAN) ||
+        unit.diacritics.has(DAMMATAN))
+  );
+}
+
+/** Conservative connected-recitation context for the lām of lafẓ al-jalālah.
+ *  Return true only when the final pronounced vowel of the preceding token
+ *  explicitly supports tafkhim; uncertain endings stay uncolored. */
+function previousWordHasHeavyFinalVowel(word) {
+  const units = tokenizeUnits(word);
+  const last = units.at(-1);
+  if (!last) return false;
+  if (unitHasHeavyVowel(last)) return true;
+
+  const beforeLast = units.at(-2);
+  if (!beforeLast) return false;
+  const hasHeavyVowel = unitHasHeavyVowel(beforeLast);
+  if (
+    hasHeavyVowel &&
+    (last.base === ALIF ||
+      last.base === ALIF_WASLA ||
+      last.base === ALEF_MAKSURA ||
+      last.base === DAGGER_ALIF)
+  ) {
+    return true;
+  }
+  if (hasHeavyVowel && last.base === WAW) return true;
+  // A long yāʾ following kasrah is a light-context signal, not tafkhim.
+  return false;
+}
 function skeletonOf(word) {
   return [...String(word)].filter((ch) => !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL).join('');
 }
@@ -536,22 +618,41 @@ function isLazimConsonant(base) {
   );
 }
 
+/** The opening letter names are not ordinary word-final Qalqalah.
+ *  Exempt only the known Muqaṭṭaʿāt skeletons whose marks are absent or
+ *  lengthening-only; an explicit sukun/vowel means this is a real letter
+ *  occurrence and must be classified normally (e.g. a test qāf+sukun).
+ */
+function isQalqalahMuqattaatToken(baseSequence, units) {
+  return (
+    QALQALAH_MUQATTAAT_WORDS.has(baseSequence) &&
+    units.every((unit) => [...unit.diacritics].every((mark) => mark === MADDA_ABOVE))
+  );
+}
+
 /**
  * Classify one word's tajweed rules. Returns spans {start, end, rule}
  * with indices relative to `word` itself (not the whole ayah) — the
  * caller (renderAyahWords) already processes one word at a time, so this
  * slots directly into that loop with no extra offset bookkeeping.
  *
- * `nextWordFirstBase` / `isLastWordOfAyah` let the noon-sakinah/tanween
- * and madd rules see one letter across a word boundary without needing
+ * `nextWordFirstBase` / `nextWordFirstHasShadda` / `isLastWordOfAyah` let the
+ * noon-sakinah/tanween and madd rules see one letter across a word boundary without needing
  * the whole ayah's text.
  */
 export function classifyWordTajweed(
   word,
-  { nextWordFirstBase = null, isLastWordOfAyah = false } = {}
+  {
+    nextWordFirstBase = null,
+    nextWordFirstHasShadda = false,
+    isLastWordOfAyah = false,
+    isFirstWordOfAyah = false,
+    previousWordHasHeavyFinalVowel = false,
+  } = {}
 ) {
   if (!word) return [];
   const units = tokenizeUnits(word);
+  const baseSequence = units.map((unit) => unit.base).join('');
   const spans = [];
 
   for (let i = 0; i < units.length; i += 1) {
@@ -567,22 +668,61 @@ export function classifyWordTajweed(
     if (
       u.base === LAM &&
       prev &&
-      (prev.base === ALIF_WASLA || prev.base === ALIF) &&
+      (prev.base === ALIF_WASLA || prev.base === ALIF ||
+        (i === 1 && prev.base === LAM && prev.diacritics.size > 0)) &&
       next &&
       SUN_LETTERS.has(next.base) &&
       next.diacritics.has(SHADDA) &&
       !isDivineName(word) &&
-      // Bare ال (lam second) or ال after a one-letter prefix particle
-      // (وَٱلشَّمۡسِ، بِٱلۡحَقِّ) — anything longer is not the article.
-      (i === 1 || (i === 2 && units[0] && isPrefixParticle(units[0])))
+      // Bare ال, ال after a one-letter prefix particle
+      // (وَٱلشَّمۡسِ، بِٱلۡحَقِّ), or the article immediately after a
+      // vocalized lām-prefix (لِلطَّآئِفِينَ, لِلظَّالِمِينَ).
+      (
+        i === 1 ||
+        (i === 2 && units[0] && isPrefixParticle(units[0]))
+      )
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'lam_shamsiyyah' });
     }
 
-    if (QALQALAH_LETTERS.has(u.base)) {
+    if (QALQALAH_LETTERS.has(u.base) && !isQalqalahMuqattaatToken(baseSequence, units)) {
       const sakin =
         u.diacritics.has(SUKUN) || u.diacritics.has(SUKUN_ALT) || u.diacritics.size === 0;
-      if (sakin) spans.push({ start: u.start, end: u.end, rule: 'qalqalah' });
+      const nextBase = next?.base ?? nextWordFirstBase;
+      const nextStartsWithShadda = next
+        ? next.diacritics.has(SHADDA)
+        : nextWordFirstHasShadda;
+
+      // Only suppress Qalqalah where the text supports an assimilation we can
+      // state without inventing a reading route:
+      //   * identical consonant + following shadda = explicit small idgham;
+      //   * دْ→تّ with explicit next-letter shadda = the known complete
+      //     dal→ta assimilation family;
+      //   * بَسَطْتَ / أَحَطْتُ / فَرَّطْتُ / فَرَّطْتُم keep the ط's sukun but lose
+      //     Qalqalah under incomplete assimilation;
+      //   * نَخْلُقكُّم has complete/incomplete ق→ك realizations, neither
+      //     requiring a Qalqalah bounce on the sakin ق.
+      //
+      // Do not infer other dissimilar-letter assimilation from adjacency alone.
+      // بْ→مّ in ارْكَبْ مَّعَنَا is reading-route-sensitive; this classifier
+      // has no declared reading profile, so it stays conservative there.
+      const sameLetterAssimilation = nextBase === u.base && nextStartsWithShadda;
+      const dalToTaAssimilation = u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
+      const knownNoEchoWord =
+        QALQALAH_KNOWN_NO_ECHO_WORDS.has(baseSequence) &&
+        ((u.base === '\u0637' && next?.base === '\u062A') ||
+          (u.base === '\u0642' && next?.base === '\u0643'));
+      const arkabMaanaAssimilation =
+        QALQALAH_BA_MEEM_ASSIMILATION_WORDS.has(baseSequence) &&
+        u.base === BEH &&
+        !next &&
+        nextWordFirstBase === MEEM &&
+        nextWordFirstHasShadda;
+      const assimilatesInstead =
+        sameLetterAssimilation || dalToTaAssimilation || knownNoEchoWord || arkabMaanaAssimilation;
+      if (sakin && !assimilatesInstead) {
+        spans.push({ start: u.start, end: u.end, rule: 'qalqalah' });
+      }
     }
 
     if ((u.base === NOON || u.base === MEEM) && u.diacritics.has(SHADDA)) {
@@ -648,8 +788,10 @@ export function classifyWordTajweed(
       // Marked on a bare consonant -> a muqatta'at letter-name madd.
       spans.push({ start: u.start, end: u.end, rule: 'madd_6' });
     } else if (isMaddLetter(u, prev)) {
-      const signaled = u.base === ALIF_MADDA || u.diacritics.has(MADDA_ABOVE);
-      const isSilah = u.base === SMALL_WAW || u.base === SMALL_YEH;
+      const signaled =
+        u.base === ALIF_MADDA ||
+        (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
+      const isSilah = isHaKinayahSilahUnit(u, prev);
       if (next && HAMZA_LETTERS.has(next.base)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
       } else if (
@@ -670,15 +812,17 @@ export function classifyWordTajweed(
       } else if (isSilah) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
       } else if (signaled) {
-        // A signaled madd letter with no hamza immediately adjacent —
-        // the hamza that motivates the elongation is the letter itself
-        // (e.g. \u0622 in \u0622\u062F\u064e\u0645َ, "\u0100dam").
+        // Madd Badal is an actual hamza+madd spelling (e.g. \u0622 in \u0622\u062F\u064e\u0645َ,
+        // or a hamza carrying an explicit madda mark). A standalone U+0653 on an
+        // ordinary madd letter is a Mushaf lengthening sign, not proof of Badal;
+        // it falls through to the natural madd classification here.
         spans.push({ start: u.start, end: u.end, rule: 'madd_badal' });
-      } else if (isLastWordOfAyah && i >= units.length - 2) {
-        // The madd letter sits in the ayah's final syllable (itself the
-        // last unit, or exactly one closing consonant remains) — that's
-        // the syllable a reciter pauses on, hence 'arid lissukoon rather
-        // than a plain natural madd.
+      } else if (isLastWordOfAyah && i === units.length - 2 && next) {
+        // Madd 'Arid requires a real final consonant after the madd letter:
+        // the consonant's vowel becomes a temporary sukoon at the stop.
+        // A word that itself ends on the madd letter (e.g. وَٱلضُّحَىٰ)
+        // remains natural madd; there is no following consonant on which a
+        // الوقف-induced sukoon can occur.
         spans.push({ start: u.start, end: u.end, rule: 'madd_246' });
       } else {
         spans.push({ start: u.start, end: u.end, rule: 'madd_2' });
@@ -694,7 +838,11 @@ export function classifyWordTajweed(
     // small-high madda folds to MADDA_ABOVE at tokenize time, so testing
     // for MADDA_ABOVE alone covers both spellings.
     if ((u.base === SMALL_WAW || u.base === SMALL_YEH) && !u.diacritics.has(MADDA_ABOVE)) {
-      spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
+      spans.push({
+        start: u.start,
+        end: u.end,
+        rule: isHaKinayahSilahUnit(u, prev) ? 'madd_silah' : 'madd_2',
+      });
     }
 
     // Meem sakinah family (v3.7) — closes the gap TODO.md documented since
@@ -717,18 +865,27 @@ export function classifyWordTajweed(
       else if (nb) spans.push({ start: u.start, end: u.end, rule: 'izhar_shafawi' });
     }
 
-    // (v4.5.2) Tafkhim — the two deterministic heavy cases from the standard
-    // chart's blue family: the lam that sits directly before the ha of the
-    // divine name (with or without a particle prefix — والله، بالله، لله،
-    // تالله all carry it), and a ra' carrying fatha or damma (ra'
-    // mufakhkhamah). A kasra ra' is thin (tarqiq) and a sukun ra' depends on
-    // the vowel BEFORE it, which this classifier cannot see honestly — both
-    // stay uncolored rather than guessed, like the reference mushaf.
+    // Tafkhim on the lām of lafẓ al-jalālah is context-sensitive:
+    // fatha/damma immediately before the name (or beginning recitation)
+    // supports heaviness; kasra requires tarqiq and is deliberately uncolored.
+    // Attached particle forms (وَٱللَّهُ / بِٱللَّهِ / لِلَّهِ) use the
+    // pronounced particle vowel rather than assuming every spelling is heavy.
+    const inlineAllahPrefix =
+      !isDivineName(word) &&
+      units.length >= 3 &&
+      [WAW, '\u0641', BEH, '\u0643', LAM, '\u062A'].includes(units[0]?.base) &&
+      units[0].diacritics.size > 0
+        ? units[0]
+        : null;
+    const divineNameHasHeavyContext = isDivineName(word)
+      ? isFirstWordOfAyah || previousWordHasHeavyFinalVowel
+      : unitHasHeavyVowel(inlineAllahPrefix);
     if (
       u.base === LAM &&
       next?.base === '\u0647' &&
       prev?.base === LAM &&
-      endsWithDivineName(word)
+      endsWithDivineName(word) &&
+      divineNameHasHeavyContext
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
@@ -743,7 +900,7 @@ export function classifyWordTajweed(
     // (عَلِيمًا) — the Uthmani rasm writes it both ways. Only the
     // ayah-final position is deterministic (mid-ayah the tanween feeds the
     // noon-sakinah family instead), so that is the only place it is
-    // colored. Pink, the 2-count member of the standard madd family.
+    // colored. The 2-count member of this app's madd palette.
     const trailingTanweenAlif =
       units.length >= 2 &&
       units[units.length - 1].base === ALIF &&
@@ -794,15 +951,47 @@ export function classifyAyahTajweed(ayahText) {
   const cached = classifyMemo.get(text);
   if (cached) return cached;
   const words = text.trim().split(/\s+/).filter(Boolean);
+
+  // Rendering keeps every raw token so ornaments remain exactly where the
+  // source placed them. Semantic lookahead must use only pronunciation-bearing
+  // tokens, however: a standalone waqf/sajdah/ornament token is not the next
+  // word for noon/meem/madd rules, and it must not steal the ayah-final status
+  // from the final pronunciation-bearing word.
+  const semanticIndices = words
+    .map((word, i) => (tokenizeUnits(word).length > 0 ? i : -1))
+    .filter((i) => i >= 0);
+  const nextSemanticIndex = new Map();
+  const previousSemanticIndex = new Map();
+  for (let p = 0; p < semanticIndices.length; p += 1) {
+    if (p < semanticIndices.length - 1) {
+      nextSemanticIndex.set(semanticIndices[p], semanticIndices[p + 1]);
+    }
+    if (p > 0) {
+      previousSemanticIndex.set(semanticIndices[p], semanticIndices[p - 1]);
+    }
+  }
+  const firstSemanticIndex = semanticIndices[0] ?? -1;
+  const lastSemanticIndex = semanticIndices.at(-1) ?? -1;
+
   const result = words.map((word, i) => {
-    const nextWord = words[i + 1];
-    const nextWordFirstBase = nextWord ? (tokenizeUnits(nextWord)[0]?.base ?? null) : null;
+    const nextIndex = nextSemanticIndex.get(i);
+    const nextWord = nextIndex === undefined ? null : words[nextIndex];
+    const nextWordUnits = nextWord ? tokenizeUnits(nextWord) : [];
+    const nextWordFirstBase = nextWordUnits[0]?.base ?? null;
+    const nextWordFirstHasShadda = nextWordUnits[0]?.diacritics.has(SHADDA) ?? false;
+    const previousIndex = previousSemanticIndex.get(i);
+    const previousWord = previousIndex === undefined ? null : words[previousIndex];
     return {
       word,
       wordIndex: i + 1,
       spans: classifyWordTajweed(word, {
         nextWordFirstBase,
-        isLastWordOfAyah: i === words.length - 1,
+        nextWordFirstHasShadda,
+        isFirstWordOfAyah: i === firstSemanticIndex,
+        isLastWordOfAyah: i === lastSemanticIndex,
+        previousWordHasHeavyFinalVowel: previousWord
+          ? previousWordHasHeavyFinalVowel(previousWord)
+          : false,
       }),
     };
   });
@@ -1096,24 +1285,17 @@ export function effectiveRuleColor(prefs, rule) {
     : rule.color;
 }
 
-/** Filter a word's spans down to the active, paintable rules. The painter
- *  and the word inspector both consume this result, so overlapping rule
- *  matches can never be listed in the inspector while being skipped on the
- *  page. */
+/** Filter a word's spans by the enabled-rule preferences and keep source order.
+ *  Distinct Tajweed phenomena can legitimately share one written unit (e.g.
+ *  ghunnah on a shaddah-marked letter plus tanween idgham on that same glyph).
+ *  The inspector must list every enabled match; the painter chooses one
+ *  deterministic visible span when glyph ranges overlap. */
 export function filterSpansByPrefs(spans, prefs) {
   if (!Array.isArray(spans)) return [];
-  const sorted = spans
+  return spans
     .filter((sp) => ruleEnabled(prefs, sp.rule))
     .slice()
     .sort((a, b) => a.start - b.start || a.end - b.end);
-  const out = [];
-  let cursor = -1;
-  for (const span of sorted) {
-    if (span.start < cursor) continue;
-    out.push(span);
-    cursor = span.end;
-  }
-  return out;
 }
 
 /** A curated swatch palette for the color pickers — readable against both

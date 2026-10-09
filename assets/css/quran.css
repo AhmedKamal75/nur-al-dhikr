@@ -3994,6 +3994,13 @@ body.has-player .reader-immersive-echo {
   color: var(--color-text-muted);
 }
 
+/* Alternate citations stay visually subordinate to the primary source,
+   with logical properties so the grouping reads correctly in Arabic RTL. */
+.tajweed-legend__source--also {
+  padding-inline-start: 0.5rem;
+  border-inline-start: 1px solid var(--color-border);
+}
+
 .tajweed-legend__caveat {
   margin-block-start: 3px;
   font-size: 0.72em;

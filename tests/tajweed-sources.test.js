@@ -22,6 +22,7 @@ import {
   TAJWEED_SOURCES,
   TAJWEED_WORKS,
   uncitedTajweedRules,
+  tajweedCitation,
 } from '../js/domain/tajweedSources.js';
 
 const root = path.resolve(import.meta.dirname, '..');
@@ -142,26 +143,36 @@ test('family names are not attributed to an unnamed authority either', () => {
 });
 
 test('the runtime module mirrors the canonical JSON exactly', () => {
-  // The JSON is canonical; the JS module is what ships, because the legend
-  // and Settings need the citation synchronously and offline. Two copies
-  // means two things that can drift, so drift is a failing test.
-  assert.deepEqual(
-    Object.keys(TAJWEED_SOURCES).sort(),
-    Object.keys(registry.rules).sort(),
-    'rule sets differ'
+  // Compare the complete structures, not only selected citation fields.
+  // This catches drift in source topic, alternate works, labels, review
+  // caveats, and work metadata (author/title/institution/year/URL) as well
+  // as the basic rule-to-work locator.
+  assert.deepEqual(TAJWEED_SOURCES, registry.rules, 'rule registry drifted');
+  assert.deepEqual(TAJWEED_WORKS, registry.works, 'source/work metadata drifted');
+});
+test('al-Tamhid source title matches the published Arabic title', () => {
+  assert.equal(
+    registry.works.tamhid.shortTitle.ar,
+    '\u0627\u0644\u062a\u0645\u0647\u064a\u062f \u0641\u064a \u0639\u0644\u0645 \u0627\u0644\u062a\u062c\u0648\u064a\u062f'
   );
-  assert.deepEqual(Object.keys(TAJWEED_WORKS).sort(), Object.keys(registry.works).sort());
-  for (const [id, entry] of Object.entries(registry.rules)) {
-    const mod = TAJWEED_SOURCES[id];
-    assert.equal(mod.work, entry.work, `${id} work drifted`);
-    assert.equal(mod.lines, entry.lines, `${id} lines drifted`);
-    assert.equal(mod.review, entry.review, `${id} review state drifted`);
-    assert.deepEqual(mod.caveat || null, entry.caveat || null, `${id} caveat drifted`);
-    // (v5.17.32) Spread positions carry a bilingual display label the
-    // course view renders instead of a classifier-rule chip. Same drift
-    // rule as everything else in this registry.
-    assert.deepEqual(mod.label || null, entry.label || null, `${id} label drifted`);
-  }
+  assert.equal(
+    TAJWEED_WORKS.tamhid.shortTitle.ar,
+    registry.works.tamhid.shortTitle.ar
+  );
+});
+
+test('tajweedCitation exposes localized alternate source locators', () => {
+  const en = tajweedCitation('hamzat_wasl', 'en');
+  assert.equal(en.also.length, 1);
+  assert.equal(en.also[0].title, TAJWEED_WORKS.tamhid.shortTitle.en);
+  assert.equal(en.also[0].author, TAJWEED_WORKS.tamhid.author.en);
+  assert.equal(en.also[0].lines, 'ch. 5');
+  assert.equal(en.also[0].review, 'sourced');
+
+  const ar = tajweedCitation('hamzat_wasl', 'ar');
+  assert.equal(ar.also[0].title, TAJWEED_WORKS.tamhid.shortTitle.ar);
+  assert.equal(ar.also[0].author, TAJWEED_WORKS.tamhid.author.ar);
+  assert.equal(tajweedCitation('not_a_rule', 'en'), null);
 });
 
 test('an unattributed rule is reported, not rendered blank', () => {

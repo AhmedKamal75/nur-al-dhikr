@@ -42,7 +42,7 @@ export const TAJWEED_WORKS = Object.freeze({
   }),
   tamhid: Object.freeze({
     author: Object.freeze({ en: 'Ibn al-Jazari', ar: 'ابن الجزري' }),
-    shortTitle: Object.freeze({ en: 'al-Tamhid fi ilm al-Tajwid', ar: 'التهويد في علم التجويد' }),
+    shortTitle: Object.freeze({ en: 'al-Tamhid fi ilm al-Tajwid', ar: 'التمهيد في علم التجويد' }),
     edition: 'ed. Ali Husayn al-Bawwab, Riyadh 1405/1985',
     note: Object.freeze({
       en: 'The prose expansion of the Jazariyya, and the usual reference for chapter-level organisation.',
@@ -68,21 +68,27 @@ export const TAJWEED_SOURCES = Object.freeze({
     work: 'jazariyya',
     lines: '100-103',
     review: 'sourced',
-    also: Object.freeze(['tamhid']),
+    also: Object.freeze([
+      Object.freeze({ work: 'tamhid', lines: 'ch. 5', review: 'sourced' }),
+    ]),
     topic: 'orthography',
   }),
   lam_shamsiyyah: Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '24-29',
     review: 'sourced',
-    also: Object.freeze(['jazariyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'jazariyya', lines: '28, 43', review: 'sourced' }),
+    ]),
     topic: 'lams',
   }),
   ghunnah: Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '14-17',
     review: 'sourced',
-    also: Object.freeze(['jazariyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'jazariyya', lines: '19', review: 'sourced' }),
+    ]),
     topic: 'ikhfa-and-ghunnah',
     caveat: Object.freeze({
       en: 'Ghunnah has ONE articulation point, al-khaysum. The figure 15 counts ikhfa letters, not ghunnah points.',
@@ -100,6 +106,12 @@ export const TAJWEED_SOURCES = Object.freeze({
     }),
   }),
   iqlab: Object.freeze({
+    work: 'tuhfat-al-atfal',
+    lines: '6-13',
+    review: 'sourced',
+    topic: 'nun-sakinah',
+  }),
+  izhar: Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '6-13',
     review: 'sourced',
@@ -139,7 +151,9 @@ export const TAJWEED_SOURCES = Object.freeze({
     work: 'jazariyya',
     lines: '23, 37-39',
     review: 'contested',
-    also: Object.freeze(['mawsua-saudiyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'mawsua-saudiyya', lines: 'qalqalah section', review: 'sourced' }),
+    ]),
     caveat: Object.freeze({
       en: 'Five letters or six? al-Jabari added hamzah, al-Sibawayh ta, al-Mubarrad kaf; the majority refuse all three. Grades of qalqalah are likewise given as 2, 3 or 4, which changes intensity rather than the sound.',
       ar: 'خمسة أحرف أم ستة؟ أضاف الجباري الهمزة، والسيباويه التاء، والمبرد الكاف، ورفض الجمهور هذه الثلاثة. أما درجات القلقلة فتقال ٢ أو ٣ أو ٤، والأمر في الشدة لا في الصوت.',
@@ -159,7 +173,9 @@ export const TAJWEED_SOURCES = Object.freeze({
     work: 'tamhid',
     lines: 'ch. 8',
     review: 'contested',
-    also: Object.freeze(['jazariyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'jazariyya', lines: '9', review: 'sourced' }),
+    ]),
     topic: 'makharij',
     label: Object.freeze({
       en: '17 — Khalil ibn Ahmad, adopted by Ibn al-Jazari',
@@ -258,14 +274,18 @@ export const TAJWEED_SOURCES = Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '35-41',
     review: 'sourced',
-    also: Object.freeze(['jazariyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'jazariyya', lines: '68-71', review: 'sourced' }),
+    ]),
     topic: 'madd-tabi',
   }),
   madd_246: Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '42-47',
     review: 'contested',
-    also: Object.freeze(['jazariyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'jazariyya', lines: '68-71', review: 'sourced' }),
+    ]),
     topic: 'madd-aridh-lazil',
     caveat: Object.freeze({
       en: "This id groups madd ʿāriḍ and madd lāzīl, which most texts set down as two separate rulings. The grouping is this app's, made so the colouring can share one family.",
@@ -276,14 +296,18 @@ export const TAJWEED_SOURCES = Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '42-47',
     review: 'sourced',
-    also: Object.freeze(['jazariyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'jazariyya', lines: '68-71', review: 'sourced' }),
+    ]),
     topic: 'madd-muttasil-munfasil',
   }),
   madd_munfasil: Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '42-47',
     review: 'sourced',
-    also: Object.freeze(['jazariyya']),
+    also: Object.freeze([
+      Object.freeze({ work: 'jazariyya', lines: '68-71', review: 'sourced' }),
+    ]),
     topic: 'madd-muttasil-munfasil',
   }),
   madd_iwad: Object.freeze({
@@ -298,12 +322,12 @@ export const TAJWEED_SOURCES = Object.freeze({
   }),
   madd_badal: Object.freeze({
     work: 'tuhfat-al-atfal',
-    lines: '47-58',
+    lines: '46',
     review: 'contested',
-    topic: 'madd-lazim',
+    topic: 'madd-badal',
     caveat: Object.freeze({
-      en: 'Counted among the four madd lāzim types. Its permitted length is given as four or six counts in the case of ʿayn, with the same caution stated for the mīm in Āl ʿImrān.',
-      ar: 'يُعدّ من أنواع المد اللازمة الأربعة، ويأتي تقديره أربعة أو ستة في حالة العين، وعلى نحوه ميم آل عمران.',
+      en: "Madd Badal is a distinct madd category and must not be conflated with the four types of Madd Lazim. In this app's current classifier it is represented as a 2-count rule (see the executable fixture). Other recitation traditions can differ, so any future multi-riwayah support must scope the length explicitly.",
+      ar: 'مد البدل باب مستقل من أبواب المد، ولا ينبغي خلطه بأنواع المد اللازم الأربعة. يمثله المصنّف الحالي في التطبيق كمد بمقدار حركتين (وفق الاختبار التنفيذي). وقد تختلف بعض طرق القراءة، لذلك يجب تحديد المقدار صراحة عند إضافة دعم لقراءات متعددة.',
     }),
   }),
   madd_silah: Object.freeze({
@@ -340,7 +364,27 @@ export function tajweedCitation(ruleId, lang) {
   if (!work) return null;
   const title = lang === 'ar' ? work.shortTitle.ar : work.shortTitle.en;
   const author = lang === 'ar' ? work.author.ar : work.author.en;
-  return { title, author, lines: entry.lines, review: entry.review, caveat: entry.caveat || null };
+  const also = (entry.also || [])
+    .map((citation) => {
+      const alternateWork = TAJWEED_WORKS[citation.work];
+      if (!alternateWork) return null;
+      return {
+        title: lang === 'ar' ? alternateWork.shortTitle.ar : alternateWork.shortTitle.en,
+        author: lang === 'ar' ? alternateWork.author.ar : alternateWork.author.en,
+        lines: citation.lines,
+        review: citation.review,
+        caveat: citation.caveat || null,
+      };
+    })
+    .filter(Boolean);
+  return {
+    title,
+    author,
+    lines: entry.lines,
+    review: entry.review,
+    caveat: entry.caveat || null,
+    also,
+  };
 }
 
 /** Rule ids with no citation. Must be empty; the test says so out loud. */
