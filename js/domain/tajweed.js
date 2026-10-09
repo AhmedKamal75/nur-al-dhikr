@@ -481,7 +481,7 @@ function isBaseLetter(ch) {
   // not consonants for semantic lookahead. Small high yeh/noon are the two
   // corpus-attested consonantal marks handled specially by tokenizeUnits.
   if (ch === '\u06E7' || ch === '\u06E8') return true;
-  return /\\p{L}/u.test(ch) && /\\p{Script=Arabic}/u.test(ch);
+  return /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch);
 }
 
 const SMALL_HIGH_YEH = '\u06E7'; // consonantal small yeh (ٱلنَّبِيِّـۧنَ) — a yeh for rule purposes
