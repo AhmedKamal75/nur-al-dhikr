@@ -326,6 +326,16 @@ export const TAJWEED_SOURCES = Object.freeze({
       ar: 'يشير المعرّف `madd_6` إلى مقدار ست حركات، لا إلى عدد ستة أنواع من المد. تعرض تحفة الأطفال في هذا الموضع أربعة أنواع من المد اللازم. يُبقى المعرّف للتوافق، ولا يعني جمع أحكام مستقلة في درس واحد أنها كلها من المد اللازم.',
     }),
   }),
+  madd_4_6: Object.freeze({
+    work: 'tuhfat-al-atfal',
+    lines: '47-58',
+    review: 'contested',
+    topic: 'madd-lazim',
+    caveat: Object.freeze({
+      en: 'In the Muqaṭṭaʿāt opening letters, ʿayn has a reported 4- or 6-count length. This is distinct from the fixed six-count Madd Lazim label; the app marks it separately but does not choose a duration.',
+      ar: 'في الحروف المقطعة، لحرف العين وجه في المد أربع أو ست حركات. وهذا يختلف عن وسم المد اللازم ذي الست حركات؛ يميّزه التطبيق ولا يختار مقدار الأداء.',
+    }),
+  }),
 });
 
 /**
