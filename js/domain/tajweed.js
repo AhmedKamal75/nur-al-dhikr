@@ -127,6 +127,7 @@ const SUN_LETTERS = new Set([
 const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BEH, '\u062C', '\u062F']);
 const IDGHAM_GHUNNAH_LETTERS = new Set([YEH, NOON, MEEM, WAW]);
 const IDGHAM_NO_GHUNNAH_LETTERS = new Set([LAM, '\u0631']);
+const IZHAR_HALQI_LETTERS = new Set(['\u0621', '\u0647', '\u0639', '\u062D', '\u063A', '\u062E']);
 const IKHFA_LETTERS = new Set([
   '\u062A',
   '\u062B',
@@ -175,8 +176,8 @@ const IKHFA_LETTERS = new Set([
  * them for something they are not. The one genuinely citable convention
  * found is Indonesia's LPMQ Pedoman Tajwid Sistem Warna (2011).
  *
- * Two rules the standard mushaf convention leaves UNMARKED (idgham bila
- * ghunnah, izhar shafawi) now carry color: null and render no color span
+ * Three rules the standard mushaf convention leaves UNMARKED (idgham bila
+ * ghunnah, izhar shafawi, and halqi izhar) now carry color: null and render no color span
  * — matching the printed books rather than inventing an off-chart hue.
  * Each rule also carries a `family` key so the legend can group rows the
  * way the reference chart groups them.
@@ -278,6 +279,16 @@ export const TAJWEED_RULES = Object.freeze([
     desc: {
       en: 'Noon sakinah/tanween is pronounced softly, between clear and merged.',
       ar: 'إخفاء النون الساكنة أو التنوين عند خمسة عشر حرفًا.',
+    },
+  },
+  {
+    id: 'izhar',
+    color: null,
+    family: 'plain',
+    name: { en: 'Izhar (clear noon)', ar: 'الإظهار الحلقي' },
+    desc: {
+      en: 'Noon sakinah or tanween is pronounced clearly before the throat letters.',
+      ar: 'إظهار النون الساكنة أو التنوين عند حروف الحلق.',
     },
   },
   {
@@ -605,6 +616,8 @@ export function classifyWordTajweed(
           spans.push({ start: u.start, end: u.end, rule: 'idgham_no_ghunnah' });
         else if (nb && IKHFA_LETTERS.has(nb))
           spans.push({ start: u.start, end: u.end, rule: 'ikhfa' });
+        else if (nb && IZHAR_HALQI_LETTERS.has(nb))
+          spans.push({ start: u.start, end: u.end, rule: 'izhar' });
       }
     }
 

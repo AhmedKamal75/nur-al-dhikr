@@ -1,12 +1,14 @@
 # OPEN-ISSUES.md — what is still open, verified against the tree
 
-> **Independent score: 8.0 / 10** (v5.17.16, hostile scoring agent, execution-backed,
+> **Independent score: 8.0 / 10** (historical v5.17.16 hostile scoring baseline, execution-backed,
 > ±0.6). The five findings below are the agent's, checked against the tree: four held,
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **72 rows — 28 RESOLVED, 19 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **76 rows — 30 RESOLVED, 21 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> The totals are stated so they can be checked against the table;
+> `tests/open-issues-ledger.test.js` fails if they drift.
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
@@ -15,9 +17,11 @@
 > was rather than quietly reclassified — an unverified tick is the failure mode this
 > ledger exists to prevent.
 
+> **Current in-flight verification (2026-10-08):** PR #11 navigation, PR #10 Practice IA, and PR #9 Mutashabihat cache hardening are implementation candidates only. Their latest GitHub Actions runs must pass before either is merged or versioned. Browser evidence from the local agent remains authoritative for real viewport/RTL/device behavior.
+
 The counterpart to `docs/RELEASES.md` (what is done).
 
-- v5.17.135 resolves issue 20: Audio defaults now use the same direct sleep-cycle interaction as the player; the duplicate selector grammar is removed. **Every row below was
+- v5.17.136 resolves issue 61: Audio defaults now use the same direct sleep-cycle interaction as the player; the duplicate selector grammar is removed. **Every row below was
   checked against the code in this release, not copied from an audit report.**
   Where a report's claim turned out to be stale, the row says so and shows the
   evidence that closed it.
@@ -140,25 +144,29 @@ These findings are directly grounded in the owner-supplied Chromium screenshots 
 | 60 | Offline Essentials switch is below the initial viewport | **RESOLVED v5.17.135** | Owner-machine Chromium showed the switch outside the viewport on the Offline route. The essentials decision surface is now emitted immediately after the route lead, before meter/audio/cache detail, and the structural order is regression-pinned. Fresh browser recapture remains required. |
 | 61 | Any in-panel interaction collapses every disclosure on `#/audio` | **RESOLVED v5.17.136** | v5.17.135's new `audio-sleep-cycle` button dispatches `setAudioPlayer`, the route re-renders, and `patchElement()` stripped `open` because no view modelled it. Attributed by identical user actions: v5.17.126 held 5 disclosures open, v5.17.135 collapsed all 5. Effect: the unified sleep ladder was one rung per panel opening — 5 re-opens per 6-tap walk at all twelve viewport × language × theme cells. `open` is now a user-owned toggle in `js/app/renderer.js`; the Settings accordions, nav doors and prayer panel opt in via `data-open-controlled`. Pinned by `tests/renderPatch.test.js` (5 tests, 3 of which fail with the exemption removed) and re-measured in Chromium: 5/5 panels hold through the full walk. |
 | 62 | Home panel switch is a dead control (nine of twelve panels) | **RESOLVED v5.17.136** | `resolveHomePanels()` places a panel on Home only when it is in the saved order, and only `home-panel-move` ever wrote that order. Unticking a panel's switch set `hiddenHome` and nothing appeared — and the switch rendered ON while the panel stayed off, so it actively lied. The switch now reports where the panel actually is, and ticking it appends the panel to the order. |
-| 63 | Prayer method line dropped its provenance qualifier | **RESOLVED v5.17.137** | The compact hero line had read "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" unqualified, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only — an uncertified source stated as fact. `compactPrayerMethodLine` now appends `prayer.methodSource` whenever the method has a source body, in both languages, and falls back to the bare line when it does not. Pinned by `tests/prayer-method-line.test.js` and by `tests/e2e/smoke.spec.js`, which is green again. |
+| 63 | Prayer method line dropped its provenance qualifier | **RESOLVED on main — next release** | The compact hero line had read "Muslim World League · Asr Juristic Method: Standard (Shafi'i / Maliki / Hanbali)" unqualified, while `data/prayer-methods.json` records MWL as `"verified": false` and `data/SOURCES.md` documents secondary corroboration only — an uncertified source stated as fact. `compactPrayerMethodLine` now appends `prayer.methodSource` whenever the method has a source body, in both languages, and falls back to the bare line when it does not. Pinned by `tests/prayer-method-line.test.js` and by `tests/e2e/smoke.spec.js`, which is green again. |
 
 ## v5.17.136 owner follow-through addendum
 
 These are the owner's current product findings after the v5.17.136 Chromium evidence pass. They are separate from the historical audit totals above and remain open until evidence or an explicit product decision closes them. Row ids continue the main table (67+) — the numbers were reused on first merge, which made two different items share an id.
 
-| #   | Hostile-review item                                                      | Status                       | Evidence / next action                                                                                                                                                                                                            |
-| --- | ------------------------------------------------------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 67  | Practice IA is under-organized (Tasbih + 99 Names only)                  | **OPEN** (PR in flight)      | Practice is being turned into a concise task launcher for Tasbih, Tajweed Practice, Qur'an recall, and 99 Names without moving underlying study ownership or creating a generic More bucket. See `docs/PRACTICE-IA-NEXT-PLAN.md`. |
-| 68  | Tajweed course lacks full written teaching depth                         | **OPEN — content/research**  | Current spine has 8 stages / 17 sessions / 27 rule definitions but does not yet provide a complete beginner→advanced self-study lesson body. See `docs/TAJWEED-COURSE-NEXT-PLAN.md`; content must be source-backed and bilingual. |
-| 69  | Mutashabihat / look-alike Ayat needs geometry + richer study content     | **OPEN — evidence required** | Capture current 360/393/1024/1440 EN/AR light/dark states before changing geometry. Separate visual scaling from the deeper request for sourced enrichment.                                                                       |
-| 70  | Calendar grid needs visual/responsive refinement                         | **OPEN — evidence required** | Audit dual-date hierarchy, cell proportions, spacing, Arabic readability and event relationship at phone/tablet/desktop widths before changing CSS.                                                                               |
-| 71  | Offline Library still needs UI polish after the v5.17.135 visibility fix | **OPEN — evidence required** | Keep Essentials primary. Audit download action, group density, storage/audio-cache hierarchy, backup relationship and bilingual wrapping.                                                                                         |
-| 72  | Settings Arabic typeface and palette need further visual polish          | **OPEN — evidence required** | Source-level specimen/swatch fixes exist, but current browser proof is required. Audit typeface preview differentiation, selected state and palette color visibility at representative widths/themes.                             |
+| #   | Hostile-review item                                                      | Status                       | Evidence / next action                                                                                                                                                                                                                       |
+| --- | ------------------------------------------------------------------------ | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 67  | Practice IA is under-organized (Tasbih + 99 Names only)                  | **OPEN** (PR #10 in flight)  | Practice is being turned into a concise task launcher for Tasbih, Tajweed Practice, Qur'an recall, and 99 Names without moving underlying study ownership or creating a generic More bucket. See PR #10 and `docs/PRACTICE-IA-NEXT-PLAN.md`. |
+| 68  | Tajweed course lacks full written teaching depth                         | **OPEN — content/research**  | Current spine has 8 stages / 17 sessions / 27 rule definitions but does not yet provide a complete beginner→advanced self-study lesson body. See `docs/TAJWEED-COURSE-NEXT-PLAN.md`; content must be source-backed and bilingual.            |
+| 69  | Mutashabihat / look-alike Ayat needs geometry + richer study content     | **OPEN — evidence required** | Capture current 360/393/1024/1440 EN/AR light/dark states before changing geometry. Separate visual scaling from the deeper request for sourced enrichment.                                                                                  |
+| 70  | Calendar grid needs visual/responsive refinement                         | **OPEN — evidence required** | Audit dual-date hierarchy, cell proportions, spacing, Arabic readability and event relationship at phone/tablet/desktop widths before changing CSS.                                                                                          |
+| 71  | Offline Library still needs UI polish after the v5.17.135 visibility fix | **OPEN — evidence required** | Keep Essentials primary. Audit download action, group density, storage/audio-cache hierarchy, backup relationship and bilingual wrapping.                                                                                                    |
+| 72  | Settings Arabic typeface and palette need further visual polish          | **OPEN — evidence required** | Source-level specimen/swatch fixes exist, but current browser proof is required. Audit typeface preview differentiation, selected state and palette color visibility at representative widths/themes.                                        |
 
-| 73 | Desktop rail collapse was implemented but unreachable | **OPEN — fix candidate** | v5.17.136 source audit found the desktop collapse handler and persisted state, but the only topbar trigger was hidden at ≥960px. PR #4 restores an explicit desktop collapse/expand control; local Chromium evidence is required before closure. |
-| 74 | Main-menu section labels could feel like dead buttons | **OPEN — fix candidate** | Parent Qur'an/Azkar/Prayer/etc. rows were native disclosure summaries, so tapping the label expanded/collapsed instead of navigating to the section. PR #4 separates the section destination link from the adjacent disclosure control; verify every menu route in Chromium. |
+| 73 | Desktop rail collapse was implemented but unreachable | **OPEN — fix candidate** | v5.17.136 source audit found the desktop collapse handler and persisted state, but the only topbar trigger was hidden at ≥960px. PR #11 restores an explicit desktop collapse/expand control; local Chromium evidence is required before closure. |
+| 74 | Main-menu section labels could feel like dead buttons | **OPEN — fix candidate** | Parent Qur'an/Azkar/Prayer/etc. rows were native disclosure summaries, so tapping the label expanded/collapsed instead of navigating to the section. PR #6 separates the section destination link from the adjacent disclosure control; verify every menu route in Chromium. |
 | 75 | Mobile seven-door active underline alignment | **STANDING CONSTRAINT** | Owner reports the underlying active underline is now correctly aligned in mobile view. Preserve the current quiet underline geometry during desktop/menu work; do not reintroduce filled pills or drift the indicator. |
-| 76 | `navigation-shell` desktop routing test is load-flaky | **OPEN** | It walks ~15 destinations with a full app boot each, inside one 30 s test. Measured: failed in 2 of 4 full Chromium runs, passes every time in isolation and in a third full run. This is the suite-load class `playwright.config.js` already documents (browsers queueing behind one static server), not a nav defect — CI runs with `retries: 2` and local runs with 0, which is why it only shows locally. Not papered over by raising the timeout. Real fix is to split the walk or make the boot cheaper. |
+| 76 | Practice is still a tool jump instead of a coherent rehearsal launcher | **OPEN — fix candidate** | PR #7 (`feature/practice-ia-current`) adds a focused Practice landing with four task-shaped entries while preserving Qur'an ownership of the full Tajweed Course. Chromium evidence is required before merge; do not merge the stale PR #3 branch. |
+| 77 | Mutashabihat pair cache could survive a same-shape corpus replacement | **OPEN — fix candidate** | PR #8 (`fix/mutashabihat-corpus-cache`) keys the computed pair cache by corpus object identity and adds a regression test. This is a correctness hardening change; merge only after CI. |
+| 78 | Tajweed course contained corrupted Arabic copy in the Meem-stage explanation | **RESOLVED on main — next release** | The authoritative course JSON and runtime mirror contained the stray non-Arabic token `变化`. Both were corrected to `تُعدّ هذه تنويعًا لا مادة جديدة.` No curriculum structure was changed. |
+| 79 | Tajweed noon lesson/classifier omitted explicit Halqi Izhar | **RESOLVED on main — next release** | The “Clear noon / الإظهار الحلقي” session was incorrectly wired to `izhar_shafawi`, while the classifier treated throat-letter cases as unclassified. Main now has a sourced `izhar` rule (Tuhfat al-Atfal 6–13), explicit throat-letter classification, corrected canonical/runtime course focus, and regression coverage. |
+| 80 | `navigation-shell` desktop routing test is load-flaky | **OPEN** | It walks ~15 destinations with a full app boot each, inside one 30 s test. Measured: failed in 2 of 4 full Chromium runs, passes every time in isolation and in a third full run. This is the suite-load class `playwright.config.js` already documents (browsers queueing behind one static server), not a nav defect — CI runs with `retries: 2` and local runs with 0, which is why it only shows locally. Not papered over by raising the timeout. Real fix is to split the walk or make the boot cheaper. |
 
 ## Stale report claims — closed, with evidence
 
@@ -194,7 +202,7 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **19** |
+| **OPEN** (nobody has done it)                      | **21** |
 | **PROPOSED** (costed, needs an owner yes)          | **5**  |
 | **BLOCKED:scholar** (must never be machine-filled) | **7**  |
 | **BLOCKED:device** (needs real hardware)           | **5**  |

@@ -83,8 +83,8 @@ test('noon sakinah / tanween: iqlab, idgham (with/without ghunnah), ikhfa, and c
   assert.equal(rulesOf('\u0645َ\u0646ْ', { nextWordFirstBase: '\u064A' })[0], 'idgham_ghunnah'); // منْ يـ...
   assert.equal(rulesOf('\u0645َ\u0646ْ', { nextWordFirstBase: '\u0644' })[0], 'idgham_no_ghunnah'); // منْ لـ...
   assert.equal(rulesOf('\u0645ِ\u0646ْ', { nextWordFirstBase: '\u0643' })[0], 'ikhfa'); // منْ كـ...
-  // followed by a throat letter (ه ع ح غ خ ء) -> izhar -> no rule at all
-  assert.deepEqual(rulesOf('\u0645ِ\u0646ْ', { nextWordFirstBase: '\u0647' }), []);
+  // followed by a throat letter (ء ه ع ح غ خ) -> explicit halqi izhar.
+  assert.equal(rulesOf('\u0645ِ\u0646ْ', { nextWordFirstBase: '\u0647' })[0], 'izhar');
 });
 
 test('tanween triggers the same noon-sakinah family as a bare sakin noon', () => {
@@ -168,6 +168,7 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
     'idgham_ghunnah',
     'idgham_no_ghunnah',
     'ikhfa',
+    'izhar',
     'madd_2',
     'madd_badal',
     'madd_silah',
@@ -254,6 +255,7 @@ test('the standard chart palette: families match the reference chart colors', ()
   // the two rules the standard convention leaves uncolored
   assert.equal(colorOf('idgham_no_ghunnah'), null);
   assert.equal(colorOf('izhar_shafawi'), null);
+  assert.equal(colorOf('izhar'), null);
   // every rule carries a family, and every family id exists in TAJWEED_FAMILIES
   const familyIds = new Set(TAJWEED_FAMILIES.map((f) => f.id));
   for (const r of TAJWEED_RULES) {
