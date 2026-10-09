@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **86 rows — 30 RESOLVED, 31 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **87 rows — 30 RESOLVED, 32 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
 >
@@ -180,6 +180,8 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 90 | Muqaṭṭaʿāt exemption masks explicitly sakin Qalqalah letters in isolated words | **OPEN — corrected on mainline integration branch, pending official test gate** | The exemption now applies only to known opening-letter skeletons with no marks or madda-only marks; explicit sukun/sukun-alt or vowels prevent it. The full-corpus run passed its structural invariants, and the corpus report records the current test-file snapshot as 28/28 under an isolated synchronous shim—not native Node. Keep open until official Node tests/CI and real Mushaf rendering evidence are available. See `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. |
 
 > Added 10 Tajweed audit rows from the integration branch; existing main row 80 (`navigation-shell` load-flakiness) is preserved unchanged. Rows 81–90 remain open until their stated evidence gates pass.
+
+| 91 | Tajweed tokenizer can treat non-letter ornaments as semantic base letters | **OPEN — source fix, native verification pending** | `isBaseLetter()` previously accepted every non-diacritic non-space character, so rub el hizb (`۞`) and numerals could be treated as pronunciation-bearing units and break cross-word lookahead despite the ornament-aware semantic index. It now accepts Arabic letters plus the two corpus-attested consonantal small marks, and regressions cover rub el hizb and numeral tokens between noon-sakinah and the following letter. The native Node/CI corpus sweep and browser rendering still need to pass. |
 
 ## Stale report claims — closed, with evidence
 
