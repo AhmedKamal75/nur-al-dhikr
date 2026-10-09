@@ -475,7 +475,13 @@ export const TAJWEED_RULES = Object.freeze([
 ]);
 
 function isBaseLetter(ch) {
-  return !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL && ch !== ' ';
+  if (DIACRITIC_CHARS.has(ch) || ch === TATWEEL || ch === ' ') return false;
+  // The classifier operates on Arabic text, not arbitrary non-mark code points.
+  // In particular, rub el hizb (۞), ayah numerals, and punctuation are ornaments,
+  // not consonants for semantic lookahead. Small high yeh/noon are the two
+  // corpus-attested consonantal marks handled specially by tokenizeUnits.
+  if (ch === '\u06E7' || ch === '\u06E8') return true;
+  return /\\p{L}/u.test(ch) && /\\p{Script=Arabic}/u.test(ch);
 }
 
 const SMALL_HIGH_YEH = '\u06E7'; // consonantal small yeh (ٱلنَّبِيِّـۧنَ) — a yeh for rule purposes
