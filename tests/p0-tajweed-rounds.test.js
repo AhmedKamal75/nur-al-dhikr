@@ -159,6 +159,25 @@ describe('P0-5a: backfillTajweedPool (pure, honest, bounded)', () => {
     assert.equal(JSON.stringify(sparse), snapshot, 'input untouched');
   });
 
+  test('caller options cannot expand backfill beyond the hard cap', () => {
+    const availableDocs = { ...docs };
+    for (const surah of [2, 3, 4, 5, 19, 42]) {
+      const pathToDoc = `data/quran/${surah}.json`;
+      if (existsSync(path.join(ROOT, pathToDoc))) {
+        availableDocs[surah] = readJSON(pathToDoc);
+      }
+    }
+    const { addedByRule } = backfillTajweedPool(
+      { byRule: {}, mixed: [] },
+      availableDocs,
+      { min: 0, cap: 1_000_000, only: ['tafkhim'] }
+    );
+    assert.ok(
+      (addedByRule.tafkhim || 0) <= PRACTICE_POOL_CAP,
+      'an untrusted cap option must not expand the bounded backfill budget'
+    );
+  });
+
   test('hostile docs are ignored, not fatal', () => {
     const { addedByRule } = backfillTajweedPool(
       { byRule: { tafkhim: [] }, mixed: [] },
