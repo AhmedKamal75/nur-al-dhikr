@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **89 rows — 29 RESOLVED, 35 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **90 rows — 29 RESOLVED, 36 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
 >
@@ -186,6 +186,8 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 92 | Alternate Tajweed citation locators were flattened in the runtime mirror | **OPEN — source corrected, native test pending** | Canonical `data/tajweed-sources.json` stores `also` as citation objects with `work`, `lines`, and `review`, but the runtime `js/domain/tajweedSources.js` mirror reduced each to a bare work ID. That silently lost alternate locators. The mirror now preserves each full object and `tests/tajweed-sources.test.js` compares the entire runtime rule/work objects to canonical JSON. Isolated JavaScript parity execution now matches all 28 rule entries and 4 works; native Node/CI is still required. |
 
 | 93 | Arabic title of al-Tamhid was misspelled in source metadata | **OPEN — title corrected, native verification pending** | The registry showed `التهويد في علم التجويد`, but catalog and text records identify the work as `التمهيد في علم التجويد` (Quranpedia: https://quranpedia.net/book/131; Islamweb: https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents). Canonical JSON, runtime mirror, and a regression assertion now use the verified title. Keep open until native registry tests/CI pass. |
+
+| 94 | Alternate Tajweed citations were stored but not surfaced in the Mushaf legend | **OPEN — source/UI fix implemented, browser verification pending** | The registry's `also` entries were preserved in data but `tajweedCitation()` and `tajweedSourceLine()` exposed only the primary source. The helper now localizes alternate work title/author/locator/review metadata, and the Mushaf Tajweed legend renders each alternate locator as a separately escaped source line. Unit regression covers English/Arabic output; verify layout, wrapping, and reader clarity in Chromium EN/AR × light/dark × phone/desktop before closure. |
 
 ## Stale report claims — closed, with evidence
 
