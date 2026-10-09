@@ -24,7 +24,7 @@ User explicitly approved keeping Tajweed active until a full-corpus execution/an
 
 The current branch classifier has now been executed across all 114 bundled Quran JSON files / 6,236 ayahs in the available JavaScript tool runtime. The durable result is `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
 
-- Latest classifier content SHA: `44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
+- Latest classifier content SHA: `f448939a6724f49cd5257449df5f45fb0afb8c50`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
 - Zero raw-token-count mismatches, bad one-based word indices, unknown rule IDs, invalid span offsets, duplicate exact spans, file-fetch failures, or JSON parse failures were observed.
 - Four same-written-unit collisions were identified and categorized; three implicit/no-explicit-mark Qalqalah spans were reviewed, of which two are ayah-final pause cases and one (`ٱرۡكَب مَّعَنَا`, 11:42) remains reading-profile-sensitive.
 - The existing `tests/tajweed.test.js` was additionally run through a synchronous in-tool shim: 26/26 passed. This is useful execution evidence, but it is **not** `node --test`; CI, browser/device execution, and an authoritative scholarly comparison remain unverified. The full corpus run is direct execution of the fetched classifier source, not `npm run check`.
@@ -71,7 +71,7 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 - Row 86: **Lam Shamsiyyah after vocalized lām-prefix — OPEN pending official tests/browser evidence.**
 - Row 87: **Lām al-Jalālah heavy/light context — OPEN pending official tests/browser evidence and source comparison.**
 - Row 88: **Same-unit multi-rule collisions hidden by painter/inspector — OPEN.**
-- Row 89: **Muqaṭṭaʿāt exemption masking explicit sukun — corrected on PR #21; OPEN pending official tests and reading-scope review.**
+- Row 89: **Muqaṭṭaʿāt exemption masking explicit sukun — corrected on PR #21; OPEN pending official test/CI evidence.**
   - Recorded on the Tajweed branch.
   - Do not close merely because regression tests exist.
 
@@ -87,7 +87,7 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 - Corpus-sweep diagnostics include rule counts, duplicate-span detection, and multiple-rule same-unit diagnostics.
 
 ## Verification status
-- The isolated JavaScript-runtime corpus run is complete and documented on classifier SHA `44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555`; all 6,236 ayahs passed structural invariants.
+- The isolated JavaScript-runtime corpus run is complete and documented on classifier SHA `f448939a6724f49cd5257449df5f45fb0afb8c50`; all 6,236 ayahs passed structural invariants.
 - The current `tests/tajweed.test.js` passed 26/26 in an isolated compatibility shim; do not relabel this as Node's native test runner.
 - The most recently checked GitHub Actions run was queued, not passing. Recheck after each new commit.
 - No browser evidence has been obtained for the newest Tajweed changes.
@@ -221,12 +221,12 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 - Executing the existing Tajweed unit file in an isolated JS harness surfaced four issues. They were investigated individually rather than dismissed as harness noise.
 - Fixed the Muqaṭṭaʿāt bypass so a qāf-with-explicit-sukun token cannot be mistaken for the bare opening-letter name qāf. Known opening-letter tokens are exempt only when marks are absent or lengthening-only.
-- Added explicit-shadda Qāf→Kāf assimilation handling. The regression contract requires qāf+sukun before kāf to retain Qalqalah with no shadda and suppress it when the following kāf has explicit shadda. Treat that as a narrowly gated behavior needing official test and reading-profile review, not as general letter adjacency.
+- Reviewed and rejected the proposed generic cross-word Qāf→Kāf suppression. Source references scope the documented assimilation to known lexical/reading cases such as نخلقكم, not any word-final qāf before a shaddah-marked kāf. The regression now requires generic qāf+sukūn to retain Qalqalah even when the next-word kāf is shadda-marked; exact lexical exceptions remain explicit.
 - Fixed the lām-prefix regression's manually added test string, which had double-escaped Unicode sequences; the original positive tests used the correct actual text.
 - Corrected the isolated low-Uthmani-iqlab test to assert the presence of iqlab rather than assuming it is the first span when an earlier same-word mīm can legitimately emit its own rule.
 - Updated the Lām al-Jalālah test: an initial standalone word is explicitly marked as initial context; a wāw prefix with fatḥah remains heavy; bi-/li-prefix forms with kasrah are not labelled heavy. The classifier has no separate tarqīq span/color, so these remain uncolored.
 - Fixed the hatatta test fixture's initial letter to hamza-on-alif (U+0623), matching the intended no-Qalqalah lexical key.
-- Latest source/test pair: classifier 44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555; test file blob 0c8482534b5344a377b8405bece2b5efe8af31b0. Isolated unit harness reports **26/26 pass**.
-- Full corpus was re-run on classifier SHA 44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555 after those source fixes. Totals remain 114 files / 6,236 ayahs / 104,558 spans, all 21 rule IDs reachable, zero structural invariant failures. Same-unit collision inventory and the three no-explicit-mark Qalqalah cases remain unchanged.
+- Latest source/test pair: classifier f448939a6724f49cd5257449df5f45fb0afb8c50; test file blob 85765057e4568592c9eaef02bf0c697e40019f45. Isolated unit harness reports **26/26 pass**.
+- Full corpus was re-run on classifier SHA f448939a6724f49cd5257449df5f45fb0afb8c50 after those source fixes. Totals remain 114 files / 6,236 ayahs / 104,558 spans, all 21 rule IDs reachable, zero structural invariant failures. Same-unit collision inventory and the three no-explicit-mark Qalqalah cases remain unchanged.
 - Durable report: docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md; issue ledger rows 80, 86–89 remain open to the exact degree described there.
 - Current PR remains an implementation candidate only. Check Actions again on the newest PR head; do not merge or bump v5.17.136 based on the in-tool shim or isolated runtime.
