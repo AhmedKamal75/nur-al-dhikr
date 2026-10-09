@@ -54,6 +54,16 @@ test('lam of lafz al-jalalah respects heavy/light vowel context', () => {
   assert.equal(hasAllahTafkhim('فِي ٱللَّهِ'), false, 'a preceding kasrah requires tarqiq');
   assert.equal(hasAllahTafkhim('بِٱللَّهِ'), false, 'the attached bi-prefix has kasrah');
   assert.equal(hasAllahTafkhim('لِلَّهِ'), false, 'the attached li-prefix has kasrah');
+  assert.equal(
+    hasAllahTafkhim('قَالَ ۚ ٱللَّهُ'),
+    true,
+    'a standalone ornament must not erase a preceding heavy vowel'
+  );
+  assert.equal(
+    hasAllahTafkhim('فِي ۚ ٱللَّهِ'),
+    false,
+    'a standalone ornament must not erase the preceding kasrah context'
+  );
 });
 
 test('hamzat al-wasl fires on every \u0671, nowhere else', () => {
