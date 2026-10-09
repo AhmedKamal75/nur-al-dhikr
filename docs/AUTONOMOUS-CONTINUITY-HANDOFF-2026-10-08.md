@@ -290,3 +290,12 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Live re-fetch confirms PR #24 head `976f2dc51bb6144cd17479a569a0777b4705fb47`, base `61e26848a48dfba8540d7ce48dab22c45bd437f9`, mergeable **true**, comparison **ahead 10 / behind 0**. It is intentionally draft/unmerged pending checks and evidence.
 - GitHub Actions run **37885188489** is associated with that head and is **queued**. Jobs listed: accessibility static gates; lint/format/unit tests on Node 24; 4-viewport evidence matrix + traces; lint/format/unit tests on Node 20; browser smoke + races; cross-engine release matrix (smoke/audio/a11y). Every job was queued at the last check; there is no pass/fail result yet.
 - Keep release markers at v5.17.137. Do not claim the draft is verified just because GitHub currently says mergeable true or because the Actions jobs exist. Re-fetch PR/head after any new commit and use completed job conclusions/logs as evidence.
+
+
+### Autonomous checkpoint — 2026-10-09 04:46Z: course taxonomy finding and correction
+
+- A deeper cross-component audit compared canonical `data/tajweed-course.json`, the runtime mirror `js/domain/tajweedCourse.js`, the rule source registry, and course tests. It found that the fourth Madd session was titled “Obligatory madd / المد اللازمة” while focusing on `madd_6`, `madd_iwad`, `madd_badal`, and `madd_silah`. Madd Badal is a distinct category; ʿIwaḍ and Ṣilah have source-dependent taxonomy caveats. The old title overgeneralized the set.
+- PR #24 now titles that session “Madd Lāzim, Badal, ʿIwaḍ, and Ṣilah” / “المد اللازم والبدل والعوض والصلة” in both canonical JSON and runtime mirror. The session ID remains unchanged to preserve saved course progress. A test pins the bilingual title and unchanged focus set.
+- The `madd_6` source caveat in both canonical JSON and runtime mirror was rewritten to state clearly that the identifier names a six-count length, not six rule categories, and that the four forms of Madd Lāzim described in Tuhfat al-Atfal should not be conflated with distinct rules grouped in one session.
+- New ledger row 91 remains OPEN pending native test/CI, Arabic pedagogy review, and browser rendering. The source edits have not been natively tested yet; do not close row 91 based on source changes alone.
+- These commits advanced PR #24 after its first queued CI run. Re-fetch the current PR head and associated Actions before citing any CI result; old-head runs do not verify the latest commit.
