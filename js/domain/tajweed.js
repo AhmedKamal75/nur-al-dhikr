@@ -690,12 +690,11 @@ export function classifyWordTajweed(
       // has no declared reading profile, so it stays conservative there.
       const sameLetterAssimilation = nextBase === u.base && nextStartsWithShadda;
       const dalToTaAssimilation = u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
-      const qafToKafAssimilation = u.base === '\u0642' && nextBase === '\u0643' && nextStartsWithShadda;
       const knownNoEchoWord =
         QALQALAH_KNOWN_NO_ECHO_WORDS.has(baseSequence) &&
         ((u.base === '\u0637' && next?.base === '\u062A') ||
           (u.base === '\u0642' && next?.base === '\u0643'));
-      const assimilatesInstead = sameLetterAssimilation || dalToTaAssimilation || qafToKafAssimilation || knownNoEchoWord;
+      const assimilatesInstead = sameLetterAssimilation || dalToTaAssimilation || knownNoEchoWord;
       if (sakin && !assimilatesInstead) {
         spans.push({ start: u.start, end: u.end, rule: 'qalqalah' });
       }
