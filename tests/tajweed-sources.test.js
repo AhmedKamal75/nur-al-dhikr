@@ -188,7 +188,10 @@ test('the ʿayn citation exposes its secondary source to the Mushaf legend', () 
     citation.also[0].url,
     'https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1'
   );
-  assert.equal(tajweedCitation('madd_4_6', 'ar').also[0].title, 'المد والقصر (وزارة الأوقاف المصرية)');
+  assert.equal(
+    tajweedCitation('madd_4_6', 'ar').also[0].title,
+    'المد والقصر (وزارة الأوقاف المصرية)'
+  );
 });
 
 test('Madd al-Lin of ʿAyn cites the Tuhfat verse naming its two faces', () => {
@@ -201,5 +204,8 @@ test('Madd al-Lin of ʿAyn cites the Tuhfat verse naming its two faces', () => {
   assert.equal(TAJWEED_SOURCES.madd_4_6.lines, '54');
   assert.deepEqual(TAJWEED_SOURCES.madd_4_6.also, ['madd-wa-qasr']);
   assert.equal(entry.also[0].work, 'madd-wa-qasr');
-  assert.equal(registry.works['madd-wa-qasr'].url, 'https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1');
+  assert.equal(
+    registry.works['madd-wa-qasr'].url,
+    'https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1'
+  );
 });
