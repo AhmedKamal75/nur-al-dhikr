@@ -478,9 +478,15 @@ function isBaseLetter(ch) {
   if (DIACRITIC_CHARS.has(ch) || ch === TATWEEL || ch === ' ') return false;
   // The classifier operates on Arabic text, not arbitrary non-mark code points.
   // In particular, rub el hizb (۞), ayah numerals, and punctuation are ornaments,
-  // not consonants for semantic lookahead. Small high yeh/noon are the two
-  // corpus-attested small-letter marks handled specially by tokenizeUnits.
-  if (ch === '\u06E5' || ch === '\u06E6' || ch === '\u06E7' || ch === '\u06E8') return true;
+  // not consonants for semantic lookahead. Preserve dagger alif as the classifier's
+  // explicit madd unit, plus the four corpus-attested small-letter signs.
+  if (
+    ch === DAGGER_ALIF ||
+    ch === '\u06E5' ||
+    ch === '\u06E6' ||
+    ch === '\u06E7' ||
+    ch === '\u06E8'
+  ) return true;
   return /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch);
 }
 
