@@ -3994,6 +3994,20 @@ body.has-player .reader-immersive-echo {
   color: var(--color-text-muted);
 }
 
+.tajweed-legend__source-link {
+  margin-inline-start: 0.35em;
+  color: inherit;
+  text-decoration: underline dotted;
+  text-underline-offset: 0.15em;
+  white-space: nowrap;
+}
+
+.tajweed-legend__source-link:focus-visible {
+  outline: 2px solid var(--color-border-strong);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .tajweed-legend__caveat {
   margin-block-start: 3px;
   font-size: 0.72em;
