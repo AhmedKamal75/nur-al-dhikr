@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   BISMILLAH_AR,
   TAJWEED_FAMILIES,
+  TAJWEED_FAMILY_VARS,
   TAJWEED_RULES,
   canonicalWordTokens,
   filterSpansByPrefs,
@@ -40,6 +41,23 @@ test('Tajweed page spans resolve through CSS variables, never inline color', () 
   });
   assert.match(html, /class="tajweed tajweed--/);
   assert.doesNotMatch(html, /style="color:/);
+});
+
+test('Madd al-Līn of ʿAyn has color and non-color Mushaf styling', () => {
+  const css = readFileSync(new URL('../assets/css/quran.css', import.meta.url), 'utf8');
+  assert.match(
+    css,
+    /\.tajweed--madd_6,\s*\.tajweed--madd_4_6\s*\{\s*color:\s*var\(--tw-madd-laazim\);\s*\}/
+  );
+  assert.match(
+    css,
+    /\.tajweed--madd_6,\s*\.tajweed--madd_4_6\s*\{\s*text-decoration:\s*underline double;/
+  );
+  assert.match(css, /\.qword--underline:has\([\s\S]*> \.tajweed--madd_4_6,/);
+  assert.ok(
+    TAJWEED_FAMILY_VARS.madd.includes('--tw-madd-laazim'),
+    'the user-selected Madd family color must still reach the new rule'
+  );
 });
 
 test('every Tajweed rule is reachable in Settings, including plain rules', () => {
