@@ -5,8 +5,8 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **76 rows — 30 RESOLVED, 21 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> **Counted 2026-10-09 against the integration branch**, by parsing this file's own
+> rows rather than by hand: **90 rows — 29 RESOLVED, 36 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
 >
@@ -165,8 +165,29 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 76 | Practice is still a tool jump instead of a coherent rehearsal launcher | **OPEN — fix candidate** | PR #7 (`feature/practice-ia-current`) adds a focused Practice landing with four task-shaped entries while preserving Qur'an ownership of the full Tajweed Course. Chromium evidence is required before merge; do not merge the stale PR #3 branch. |
 | 77 | Mutashabihat pair cache could survive a same-shape corpus replacement | **OPEN — fix candidate** | PR #8 (`fix/mutashabihat-corpus-cache`) keys the computed pair cache by corpus object identity and adds a regression test. This is a correctness hardening change; merge only after CI. |
 | 78 | Tajweed course contained corrupted Arabic copy in the Meem-stage explanation | **RESOLVED on main — next release** | The authoritative course JSON and runtime mirror contained the stray non-Arabic token `变化`. Both were corrected to `تُعدّ هذه تنويعًا لا مادة جديدة.` No curriculum structure was changed. |
-| 79 | Tajweed noon lesson/classifier omitted explicit Halqi Izhar | **RESOLVED on main — next release** | The “Clear noon / الإظهار الحلقي” session was incorrectly wired to `izhar_shafawi`, while the classifier treated throat-letter cases as unclassified. Main now has a sourced `izhar` rule (Tuhfat al-Atfal 6–13), explicit throat-letter classification, corrected canonical/runtime course focus, and regression coverage. |
+| 79 | Tajweed noon lesson/classifier omitted explicit Halqi Izhar | **OPEN — runtime source mirror fix, native verification pending** | The canonical JSON and runtime mirror now both expose 28 rule IDs, including `izhar`, with a direct key-set and metadata parity check recorded in the 2026-10-09 continuity handoff. This is source/runtime parity evidence from an isolated JS execution, not native Node/CI. Keep open until `tests/tajweed-sources.test.js`, `npm run check`, and current-head CI pass. |
 | 80 | `navigation-shell` desktop routing test is load-flaky | **OPEN** | It walks ~15 destinations with a full app boot each, inside one 30 s test. Measured: failed in 2 of 4 full Chromium runs, passes every time in isolation and in a third full run. This is the suite-load class `playwright.config.js` already documents (browsers queueing behind one static server), not a nav defect — CI runs with `retries: 2` and local runs with 0, which is why it only shows locally. Not papered over by raising the timeout. Real fix is to split the walk or make the boot cheaper. |
+
+| 81 | Tajweed Qalqalah false positives at assimilation boundaries | **OPEN — reading-profile/source + native verification** | Full-corpus execution has now been rerun against current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef`: 6,236 ayahs / 104,554 spans, with two unmarked pause-final spans (`فَٱرۡغَب`, 94:8; `وَٱقْتَرِب۩`, 96:19). The narrow `ٱرۡكَب مَّعَنَا` exception remains a reading-profile/source question. Structural execution does not settle scholarly correctness; require trusted-source review plus native Node/CI. See `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. |
+| 82 | Tajweed Qalqalah false positives on Muqaṭṭaʿāt openings | **OPEN — source correction executed, native verification pending** | Current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` completed the 6,236-ayah structural sweep: all 21 rule IDs reached, with zero token-count, word-index, rule-ID, offset, or duplicate-span failures. Explicit-sukun suppression still needs native regression and browser verification. |
+| 83 | Tajweed Madd ʿĀriḍ heuristic over-classifies word-final madd letters | **OPEN — source correction executed, scholarly/native verification pending** | `madd_246` now requires a final consonant after the madd unit, preventing a word-final madd letter such as `وَٱلضُّحَىٰ` (93:1) from being marked as Madd ʿĀriḍ. Current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` completed the full-corpus structural sweep, but the corpus sweep is not a gold-label oracle. Require a targeted reference comparison and native Node/CI. |
+| 84 | Tajweed Madd Badal source locator was off by one verse | **OPEN — source corrected, verification pending** | The canonical registry and runtime mirror now cite Tuhfat al-Atfal bayt 46 for Madd Badal (the verse explicitly gives the badal examples), rather than 47–58, which begins the discussion of Madd Lazim. The topic is recorded as a distinct Madd Badal category and the app's Hafs-oriented 2-count behavior is scoped explicitly. Registry parity tests, native Node/CI, and scholarly review remain required. |
+| 85 | Tajweed Madd Badal executable heuristic treats generic U+0653 as Badal | **OPEN — deep-audit follow-up** | `signaled = u.base === ALIF_MADDA || u.diacritics.has(MADDA_ABOVE)` could classify ordinary U+0653-marked madd (e.g. `مَآ`) as Madd Badal even though the mark itself denotes extra madd generally. The branch narrows Badal detection to actual hamza+madd orthography (`آ` or hamza carrying madda) and adds positive/negative regressions. Full-corpus execution remains required before closure. |
+| 86 | Tajweed Madd Silah over-classifies all small Waw/Yeh marks | **OPEN — deep-audit follow-up** | The classifier treated every bare small Waw/Yeh (`ۥ`/`ۦ`) as Madd as-Silah. Full-corpus source inspection found ordinary small-letter spellings such as `دَاوُۥدُ`, `يَسۡتَحۡيِۦ`, `لِتَسۡتَوُۥاْ`, and `ٱلۡمَوۡءُۥدَةُ`; these are not hāʾ-al-kināyah. The branch now requires the small letter to follow a properly vocalized hāʾ-pronoun for Silah and otherwise classifies the small letter as natural madd. |
+| 87 | Tajweed Lam Shamsiyyah misses article after lām-prefix | **OPEN — deep-audit follow-up** | Corpus inspection found article-after-lām-prefix forms including لِلطَّآئِفِينَ and لِلظَّالِمِينَ. Static control-flow review then caught that the attempted clause was unreachable: an outer guard required the previous unit to be alif/alif-wasla before the inner condition could test a lām-prefix. mainline integration branch now admits a vocalized lām-prefix in the outer guard, removes the dead duplicate branch, and strengthens the test to require the second (silent article) lām at source offset 2. This is a source-level correction only; unit/full-corpus execution and browser evidence remain pending. |
+| 88 | Tajweed marks the lām of Lafẓ al-Jalālah heavy regardless of preceding vowel | **OPEN — deep-audit follow-up** | The old condition marked the lām of Allah as `tafkhim` whenever the word skeleton ended in lām+lām+hāʾ, so the common phrase `بِسْمِ ٱللَّهِ` was tagged heavy despite the preceding kasrah. Tajweed references distinguish the heavy form after fatḥah/ḍammah from the light form after kasrah (Islamweb: https://www.islamweb.net/eschool/tajweed/ShowLesson.php?REF_ID=RES-C0C72595-7975-6963-A2A7-BCAEABB67BD2&lang=E; SurahQuran: https://surahquran.com/Tajweed/ahkam-allam-en.html). mainline integration branch now passes previous semantic-word vowel context across ornaments and handles attached prefixes conservatively; positive/negative regressions cover initial Allah, preceding fatḥah, fatha-bearing wāw, preceding kasrah, bi-prefix, and li-prefix. This remains a static source correction: runtime tests, full-corpus execution, and Mushaf/browser review are not yet verified. |
+| 89 | Same-unit Tajweed overlaps need deliberate painter/inspector behavior | **OPEN — classifier behavior confirmed, UI integration unverified** | The current classifier full-corpus run found four exact same-written-range collisions: three `ghunnah+idgham_ghunnah` (6:39, 27:10, 28:31) and one `ghunnah+idgham_no_ghunnah` (3:153). A second pairwise range audit found zero partial/nested overlaps across all 6,236 ayahs; only those four equal-range pairs exist in this corpus. Preference filtering preserves all enabled spans in stable order, while the painter chooses a deterministic visible span. Verify the actual Mushaf painter/inspector and rule toggles in Chromium EN/AR, light/dark, phone/desktop; define how future partial overlaps should be diagnosed. See `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. |
+| 90 | Muqaṭṭaʿāt exemption masks explicitly sakin Qalqalah letters in isolated words | **OPEN — current corpus execution passed structural gates; native/UI gates pending** | The exemption applies only to known opening-letter skeletons with no marks or madda-only marks; explicit sukun/sukun-alt or vowels prevent exemption. The current integration classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` completed the full 114-file / 6,236-ayah sweep with zero structural invariant failures. Native Node/CI and real Mushaf rendering evidence are still required. See `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. |
+
+> Added 10 Tajweed audit rows from the integration branch; existing main row 80 (`navigation-shell` load-flakiness) is preserved unchanged. Rows 81–90 remain open until their stated evidence gates pass.
+
+| 91 | Tajweed tokenizer can treat non-letter ornaments as semantic base letters | **OPEN — source fix, native verification pending** | `isBaseLetter()` previously accepted every non-diacritic non-space character, so rub el hizb (`۞`) and numerals could be treated as pronunciation-bearing units and break cross-word lookahead despite the ornament-aware semantic index. It now accepts Arabic letters plus explicit dagger alif and the four special small-letter signs U+06E5–U+06E8, while excluding non-letter ornaments/numerals. Regression cases cover rub el hizb and numeral tokens between noon-sakinah and the following letter. Native Node/CI and browser rendering still need to pass. |
+
+| 92 | Alternate Tajweed citation locators were flattened in the runtime mirror | **OPEN — source corrected, native test pending** | Canonical `data/tajweed-sources.json` stores `also` as citation objects with `work`, `lines`, and `review`, but the runtime `js/domain/tajweedSources.js` mirror reduced each to a bare work ID. That silently lost alternate locators. The mirror now preserves each full object and `tests/tajweed-sources.test.js` compares the entire runtime rule/work objects to canonical JSON. Isolated JavaScript parity execution now matches all 28 rule entries and 4 works; native Node/CI is still required. |
+
+| 93 | Arabic title of al-Tamhid was misspelled in source metadata | **OPEN — title corrected, native verification pending** | The registry showed `التهويد في علم التجويد`, but catalog and text records identify the work as `التمهيد في علم التجويد` (Quranpedia: https://quranpedia.net/book/131; Islamweb: https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents). Canonical JSON, runtime mirror, and a regression assertion now use the verified title. Keep open until native registry tests/CI pass. |
+
+| 94 | Alternate Tajweed citations were stored but not surfaced in the Mushaf legend | **OPEN — source/UI fix implemented, browser verification pending** | The registry's `also` entries were preserved in data but `tajweedCitation()` and `tajweedSourceLine()` exposed only the primary source. The helper now localizes alternate work title/author/locator/review metadata, and the Mushaf Tajweed legend renders each alternate locator as a separately escaped source line. Unit regression covers English/Arabic output; verify layout, wrapping, and reader clarity in Chromium EN/AR × light/dark × phone/desktop before closure. |
 
 ## Stale report claims — closed, with evidence
 
@@ -198,25 +219,19 @@ re-investigates them.
 
 ## The honest summary
 
-Counted from the table above, not estimated:
+Counted from the current table on 2026-10-09, not estimated:
 
-| Bucket                                             | Count  |
-| -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **21** |
-| **PROPOSED** (costed, needs an owner yes)          | **5**  |
-| **BLOCKED:scholar** (must never be machine-filled) | **7**  |
-| **BLOCKED:device** (needs real hardware)           | **5**  |
-| **DEFERRED** / **DECIDED-NO** (deliberate)         | **6**  |
-| **RESOLVED after re-verification**                 | **25** |
-| **STANDING CONSTRAINT** (not a defect)             | **1**  |
+| Bucket | Count |
+| --- | ---: |
+| **OPEN** (including two OPEN / BLOCKED:device rows) | **36** |
+| **PROPOSED** (costed, needs an owner decision) | **5** |
+| **BLOCKED:scholar** (must never be machine-filled) | **7** |
+| **BLOCKED:device** (pure device-blocked rows; mixed rows counted under OPEN) | **5** |
+| **DEFERRED** (deliberate) | **2** |
+| **DECIDED-NO** (deliberate) | **4** |
+| **RESOLVED after re-verification** | **27** |
+| **RESOLVED on main — next release** | **2** |
+| **STANDING CONSTRAINT** (not a defect) | **2** |
+| **Total issue rows** | **90** |
 
-- **~55 distinct issues** were extractable from the audit material and the
-  owner's own reports. **11** still need work (5 open, 6 proposed); **10** were
-  already done and had been re-investigated as still-open.
-- **Three "release-gating" items named here are now resolved**, and this file
-  said otherwise until v5.17.23: Elder Mode discoverability (the wizard did
-  offer it; only the wording was wrong), the 200% type scale (clamp 0.85–2,
-  proven in a browser), and the `http://` audio-server gate (it has existed
-  since v5.13.0 — `audioCatalog.js` requires https outside localhost/LAN).
-- **What is actually release-gating now** is listed in the table, not in a
-  prose paragraph that can drift from it. Read the table.
+These buckets reconcile to the 90 rows currently present. The highest row ID is 94 because issue IDs are not contiguous; use the table's actual row count, not the maximum ID. There are **41 OPEN or PROPOSED items**. Scholarly and device constraints remain explicit; they must not be silently converted into machine-resolved work. A resolved row may still require release inclusion or final native verification, as stated in that row.
