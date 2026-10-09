@@ -105,6 +105,12 @@ export const TAJWEED_SOURCES = Object.freeze({
     review: 'sourced',
     topic: 'nun-sakinah',
   }),
+  izhar: Object.freeze({
+    work: 'tuhfat-al-atfal',
+    lines: '6-13',
+    review: 'sourced',
+    topic: 'nun-sakinah',
+  }),
   idgham_ghunnah: Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '6-13',
