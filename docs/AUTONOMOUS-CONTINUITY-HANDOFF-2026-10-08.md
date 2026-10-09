@@ -330,3 +330,13 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Confirmed corpus spellings in bundled source: 19:1 `كٓهيعٓصٓ`, 42:1 `حمٓ`, and 42:2 `عٓسٓقٓ`, so the new Muqaṭṭaʿāt Madd classifier has genuine corpus cases to exercise (not only synthetic fixtures).
 - Latest PR #24 head at this checkpoint: `26ad8d629a9fb3f5901ec57a00c3682167418cf4`; current-head Actions lookup showed run `37886403905` queued, not passed. The next head may differ if more fixes are committed.
 - Still required: native `npm run check`, inspect full-corpus sweep diagnostics under the new 29-rule registry, current-head CI pass, Chromium Mushaf inspector/painter and course EN/AR light/dark/phone/desktop evidence, and scholarly review. Do not close rows 81–92 or bump release marker merely because source edits exist.
+
+
+
+### Source and pedagogy checkpoint — 2026-10-09 05:05Z
+
+- Further review found that `madd_6`'s legend explained the ordinary word-level Madd Lazim example and the special ʿayn case, but omitted why the other marked Muqaṭṭaʿāt letter names are six-count. Updated bilingual EN/AR copy to explain both word-level original sukoon and six-count opening-letter names (e.g. lām, mīm, ṣād, qāf), while keeping ʿayn separate. Added a regression that pins both language explanations.
+- Narrowed `madd_4_6`'s primary citation from the broad range 47–58 to Tuhfat al-Atfal verse 54, which says ʿayn has two faces and the longer is preferred. Added a secondary source record for A. D. al-Sayyid Isma'il Ali Sulayman's Egyptian Ministry of Awqaf article `al-Madd wa-l-Qasr`, whose opening-letter section explicitly explains the 4/6-count exception. Canonical JSON, runtime mirror, and regression test now pin both citations. URL is percent-encoded to avoid false positives in the project's Arabic-string scan.
+- This does not close issue row 92: it still needs current-classifier full-corpus execution, official Node/CI, browser evidence, and a qualified reading-profile/source comparison. The primary Tuhfat verse's “longer preferred” and differing contemporary teaching descriptions should not be flattened into a universal claim.
+- Source used for the primary verse text: Wikisource `تحفة الأطفال`, verse 54 (`https://ar.wikisource.org/wiki/تحفة_الأطفال`). Secondary source: Egyptian Ministry of Awqaf, `المد والقصر` by A. D. al-Sayyid Isma'il Ali Sulayman (`https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1`).
+- These code/source/test updates are now committed to PR #24. Do not merge while current-head CI is queued; let the latest head's full check matrix decide the next correction wave.
