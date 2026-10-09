@@ -392,8 +392,21 @@ test('ornament-only tokens do not break cross-word Tajweed lookahead or ayah-fin
     iwad[0].spans.some((s) => s.rule === 'madd_iwad'),
     'a trailing ornament must not suppress final madd iwad'
   );
-  const numbered = classifyAyahTajweed('مِنْ ١ هُدًى');
+  const numbered = classifyAyahTajweed('\u0645\u0650\u0646\u0652 \u0661 \u0647\u064f\u062f\u064b\u0649');
   assert.equal(numbered[1].spans.length, 0, 'standalone ayah numeral remains a render-only token');
+
+  const hizbLookahead = classifyAyahTajweed('\u0645\u0650\u0646\u0652 \u06DE \u064a\u064e\u0639\u0652\u0645\u064e\u0644\u0652');
+  assert.equal(
+    hizbLookahead[0].spans[0]?.rule,
+    'idgham_ghunnah',
+    'rub el hizb must not become a false semantic letter between words'
+  );
+  const numberedLookahead = classifyAyahTajweed('\u0645\u0650\u0646\u0652 \u0661 \u064a\u064e\u0639\u0652\u0645\u064e\u0644\u0652');
+  assert.equal(
+    numberedLookahead[0].spans[0]?.rule,
+    'idgham_ghunnah',
+    'an ayah numeral must not break semantic lookahead'
+  );
   assert.equal(final[1].spans.length, 0, 'standalone ornament remains a render-only token');
 });
 
