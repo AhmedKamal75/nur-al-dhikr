@@ -91,8 +91,8 @@ test('the runtime spine mirrors the canonical JSON', () => {
 test('madd lesson title distinguishes the categories it groups', () => {
   const session = findSession('madd-obligatory');
   assert.deepEqual(session.title, {
-    en: 'Madd Lāzim, Badal, ʿIwaḍ, and Ṣilah',
-    ar: 'المد اللازم والبدل والعوض والصلة',
+    en: 'Madd Lāzim and other madd forms',
+    ar: 'المد اللازم وأنواع أخرى من المد',
   });
   assert.deepEqual(session.focus, ['madd_6', 'madd_4_6', 'madd_iwad', 'madd_badal', 'madd_silah']);
 });
