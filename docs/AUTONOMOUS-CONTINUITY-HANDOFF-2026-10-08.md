@@ -341,3 +341,12 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Current integration PR #23 is draft and GitHub reports it mergeable. Latest branch commit when this checkpoint was written: `0ba636730064a0669e0162464bc7fe5dff1fa4cb`; Actions run `37886564679` on that commit is **queued**, not passed: https://github.com/AhmedKamal75/nur-al-dhikr/actions/runs/37886564679. Another run is queued on the report update commit `854a85571c448b1796b33688eedc39a6ccbabbfb`; monitor the exact branch head and run before interpreting.
 - Current issue ledger is snapshot-accurate for these corpus results. Row 79's mirror fix is recorded as source-level parity checked but native verification pending. Rows 81–83 and 89–90 now distinguish the current corpus execution from still-open scholarly/native/browser gates. Row 91 remains open for native verification of ornament/numeral tokenizer exclusions.
 - Next: inspect current CI failures or passes, don't infer from queue status. Then inspect current-head test results and perform the real Chromium integration review. Formal release remains v5.17.136; no merge until all gates are met.
+
+
+
+### Owner closure event — 2026-10-09 05:02Z
+
+- The repository owner closed PR #23 at 2026-10-09 04:59:47Z. This was confirmed from the GitHub issue-event timeline; it was not inferred from a stale PR snapshot.
+- Respect that action: **do not reopen PR #23 or create a replacement PR unless the owner asks.** The working branch remains saved and current at `integration/tajweed-mainline-2026-10-09`, head `97a0d07ab687df1531469b73c6dab6942c44064a`. The PR's stored head SHA is older than the branch head because the branch received additional commits after closure; don't treat the closed PR's head SHA as the latest code.
+- Current classifier corpus rerun, ledger reconciliation, source/runtime parity correction, and the historical-vs-current execution boundary are saved in the branch. GitHub Actions runs created for earlier branch heads remain queued at last check; they are not passes and may not reflect the latest branch commit. The latest full-corpus run is the isolated JS execution described above.
+- Continue source-level review and persist findings on the branch without reopening the PR. Keep v5.17.136 as the formal release baseline.
