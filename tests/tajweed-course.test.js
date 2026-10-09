@@ -94,7 +94,7 @@ test('madd lesson title distinguishes the categories it groups', () => {
     en: 'Madd Lāzim, Badal, ʿIwaḍ, and Ṣilah',
     ar: 'المد اللازم والبدل والعوض والصلة',
   });
-  assert.deepEqual(session.focus, ['madd_6', 'madd_iwad', 'madd_badal', 'madd_silah']);
+  assert.deepEqual(session.focus, ['madd_6', 'madd_4_6', 'madd_iwad', 'madd_badal', 'madd_silah']);
 });
 
 test('every session is ordered, uniquely identified, and drivable', () => {
