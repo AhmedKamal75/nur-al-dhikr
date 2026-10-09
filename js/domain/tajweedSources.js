@@ -338,7 +338,7 @@ export const TAJWEED_SOURCES = Object.freeze({
     topic: 'madd-lazim',
     caveat: Object.freeze({
       en: '`madd_6` names the six-count length, not a count of six rule types. Tuhfat al-Atfal describes four forms of madd lazim in this passage. Keep the identifier for compatibility; do not infer that separate rules grouped in a course session are all madd lazim.',
-      ar: 'يشير المعرّف `madd_6` إلى مقدار ست حركات، لا إلى عدد ستة أنواع من المد. تعرض تحفة الأطفال في هذا الموضع أربعة أنواع من المد اللازم. يُبقى المعرّف للتوافق، ولا يعني جمع أحكام مستقلة في درس واحد أنها كلها من المد اللازم.',
+      ar: 'يشير المعرّف البرمجي إلى مقدار ست حركات، لا إلى عدد ستة أنواع من المد. تعرض تحفة الأطفال في هذا الموضع أربعة أنواع من المد اللازم. يُبقى المعرّف للتوافق، ولا يعني جمع أحكام مستقلة في درس واحد أنها كلها من المد اللازم.',
     }),
   }),
   madd_4_6: Object.freeze({
