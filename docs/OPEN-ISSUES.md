@@ -5,7 +5,7 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-10-08 against the working tree**, by parsing this file's own
+> **Counted 2026-10-09 against the integration branch**, by parsing this file's own
 > rows rather than by hand: **90 rows — 29 RESOLVED, 36 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
@@ -219,28 +219,19 @@ re-investigates them.
 
 ## The honest summary
 
-Counted from the table above, not estimated:
+Counted from the current table on 2026-10-09, not estimated:
 
-| Bucket                                             | Count  |
-| -------------------------------------------------- | ------ |
-| **OPEN** (including open items with a device constraint) | **33** |
-| **PROPOSED** (costed, needs an owner yes)                 | **5**  |
-| **BLOCKED:scholar** (must never be machine-filled)        | **7**  |
-| **BLOCKED:device** (fully blocked on real hardware)       | **5**  |
-| **DEFERRED** / **DECIDED-NO** (deliberate)                | **6**  |
-| **RESOLVED after re-verification**                        | **27** |
-| **RESOLVED on main — next release**                      | **2**  |
-| **STANDING CONSTRAINT** (not a defect)                    | **2**  |
+| Bucket | Count |
+| --- | ---: |
+| **OPEN** (including two OPEN / BLOCKED:device rows) | **36** |
+| **PROPOSED** (costed, needs an owner decision) | **5** |
+| **BLOCKED:scholar** (must never be machine-filled) | **7** |
+| **BLOCKED:device** (pure device-blocked rows; mixed rows counted under OPEN) | **5** |
+| **DEFERRED** (deliberate) | **2** |
+| **DECIDED-NO** (deliberate) | **4** |
+| **RESOLVED after re-verification** | **27** |
+| **RESOLVED on main — next release** | **2** |
+| **STANDING CONSTRAINT** (not a defect) | **2** |
+| **Total issue rows** | **90** |
 
-- **87 issue rows** are currently tracked. **38** are open or proposed (33 open,
-  5 proposed); 12 are blocked pending scholar/device evidence; 6 are deferred or
-  deliberately declined; 29 are resolved; and 2 are standing constraints.
-  Rows marked both OPEN and BLOCKED:device remain in OPEN because work is still
-  needed, while the device limitation is retained in the row description.
-- **Three "release-gating" items named here are now resolved**, and this file
-  said otherwise until v5.17.23: Elder Mode discoverability (the wizard did
-  offer it; only the wording was wrong), the 200% type scale (clamp 0.85–2,
-  proven in a browser), and the `http://` audio-server gate (it has existed
-  since v5.13.0 — `audioCatalog.js` requires https outside localhost/LAN).
-- **What is actually release-gating now** is listed in the table, not in a
-  prose paragraph that can drift from it. Read the table.
+These buckets reconcile to the 90 rows currently present. The highest row ID is 94 because issue IDs are not contiguous; use the table's actual row count, not the maximum ID. There are **41 OPEN or PROPOSED items**. Scholarly and device constraints remain explicit; they must not be silently converted into machine-resolved work. A resolved row may still require release inclusion or final native verification, as stated in that row.
