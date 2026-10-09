@@ -93,6 +93,16 @@ test('user Tajweed family colors override paper-scoped default palettes', () => 
   const overrideVars = Object.values(TAJWEED_FAMILY_VARS).flat();
 
   assert.ok(overrideVars.length > 0);
+  assert.equal(
+    new Set(overrideVars).size,
+    overrideVars.length,
+    'each user override property must have exactly one family/rule owner'
+  );
+  assert.deepEqual(
+    css.match(/(?:^|[;{])\s*(--tw-user-[a-z0-9-]+)\s*:/gi) || [],
+    [],
+    'user override properties must not be declared in CSS, where a paper scope could shadow them'
+  );
   for (const variable of overrideVars) {
     assert.ok(variable.startsWith('--tw-user-'), `custom color variable must be isolated: ${variable}`);
     assert.ok(
