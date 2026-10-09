@@ -1,8 +1,61 @@
-# Tajweed full-corpus execution and anomaly report — historical run (2026-10-09)
+# Tajweed full-corpus execution and anomaly report — 2026-10-09
 
-> **Current-tree warning (2026-10-09):** The detailed totals below are for a pre-PR-24 snapshot with 21 rule IDs, not current main. Current main is at classifier blob `be8ec542139394050bed67caa5c44230ebe0c7e1` and registers 22 rule IDs including `madd_4_6`. Its complete 6,236-ayah execution has **not** yet been recorded. The merge commit itself states five deterministic gate failures remained; the associated Node/accessibility/browser jobs were still queued on the last check. Do not present the older span totals as current validation.
+## Latest 22-rule execution — follow-up branch (2026-10-09)
 
-**Status:** the all-surah classifier execution/invariant gate was completed in an isolated JavaScript runtime. The repository's Node test runner, GitHub Actions jobs, browser matrix, and a scholarly reference comparison remain unverified.
+**Status:** complete isolated JavaScript execution across all 114 corpus files and 6,236 ayahs. This is current candidate classifier evidence, not native Node/CI, browser, or scholarly validation.
+
+- Repository: AhmedKamal75/nur-al-dhikr
+- Follow-up branch: fix/tajweed-remaining-gates-2026-10-09
+- Classifier source blob: e2bf791f35575c3d774846930b02a6988bfe92cd (the classifier logic matches current main; this branch additionally changes the preference filter used by the UI).
+- Inputs: data/quran/1.json through data/quran/114.json from main. Each JSON file parsed successfully.
+- Method: remove top-level ES-module export modifiers, compile the actual classifier into an isolated JavaScript runtime, then call classifyAyahTajweed for every ayah. Token-index, span bounds, duplicate identity, rule reachability, same-range cross-rule collision, and unmarked-Qalqalah checks were scoped to each individual word because span offsets are word-relative.
+- Measurement correction: a preliminary temporary accumulator incorrectly scoped span-identity maps to the whole ayah, causing offsets that repeat in different words to be counted as duplicates. Those preliminary duplicate/collision totals were discarded; all totals below use word-local maps.
+
+| Surahs | Files | Ayahs | Spans produced |
+| --- | ---: | ---: | ---: |
+| 1–14 | 14 | 1,802 | 45,549 |
+| 15–28 | 14 | 1,538 | 22,889 |
+| 29–42 | 14 | 985 | 16,350 |
+| 43–56 | 14 | 750 | 8,628 |
+| 57–70 | 14 | 344 | 6,049 |
+| 71–84 | 14 | 490 | 3,294 |
+| 85–98 | 14 | 229 | 1,292 |
+| 99–112 | 14 | 87 | 449 |
+| 113–114 | 2 | 11 | 54 |
+| **Total** | **114** | **6,236** | **104,554** |
+
+### Structural invariants
+
+- All **22/22** registered rule IDs were reached, including madd_4_6.
+- Raw token-count mismatches: **0**.
+- Invalid one-based word indices: **0**.
+- Invalid span offsets/ranges: **0**.
+- Unknown rule IDs: **0**.
+- Duplicate exact start:end:rule spans within a word: **0**.
+- File fetch / JSON parse failures: **0**.
+
+### Exact same-range cross-rule collisions
+
+Four collisions were observed, all already identified by the prior audit:
+
+| Ayah | Written unit | Coexisting rules |
+| --- | --- | --- |
+| 3:153 | بِغَمّٖ | ghunnah + idgham_no_ghunnah |
+| 6:39 | صُمّٞ | ghunnah + idgham_ghunnah |
+| 27:10 | جَآنّٞ | ghunnah + idgham_ghunnah |
+| 28:31 | جَآنّٞ | ghunnah + idgham_ghunnah |
+
+The corrected run reports three ghunnah + idgham_ghunnah collisions and one ghunnah + idgham_no_ghunnah collision. These remain pedagogical/source-review items; the UI must expose the selected visible rule consistently when preferences change.
+
+### Remaining classifier anomalies
+
+- Two pause-final Qalqalah spans do not carry an explicit sukun mark in the selected orthography: 94:8 فَٱرۡغَب (final bāʾ) and 96:19 وَٱقۡتَرِب۩ (final bāʾ before the sajdah ornament). The corpus sweep identifies them but does not itself establish a scholarly judgment; ledger row 81 remains open.
+- Madd al-Līn of ʿAyn is emitted once at 19:1 كٓهيعٓصٓ and once at 42:2 عٓسٓقٓ, both as rule madd_4_6. These are the two known corpus ayahs for the rule in this reading profile.
+- The span painter/filter interaction is tested separately and changed in this branch; this corpus result only validates classifier output, not the DOM inspector or rendered colors.
+
+**Limitations:** a direct isolated-JavaScript run is not the repository's native node --test / npm run check, not a completed GitHub Actions run, not real-browser or cross-engine evidence, and not independent scholarly annotation review.
+
+## Historical 21-rule execution snapshot (pre-PR #24)
 
 ## Exact inputs and method
 
