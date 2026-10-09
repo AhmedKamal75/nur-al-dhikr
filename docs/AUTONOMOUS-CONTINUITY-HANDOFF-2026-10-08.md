@@ -5,7 +5,7 @@ Updated: 2026-10-09
 - Repository: `AhmedKamal75/nur-al-dhikr`
 - GitHub `main` remains the authoritative shared source/history.
 - ZIP artifacts are intentionally not part of the continuity workflow unless explicitly requested.
-- Formal release baseline remains **v5.17.136**. Do not label later work v5.17.137 until the version marker, service worker cache version, release record, and required verification are deliberately advanced together.
+- Current `main` carries coordinated **v5.17.137** markers in `package.json`, `js/core/config.js`, `sw.js`, and `docs/RELEASES.md` at base SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`. This draft branch inherits and leaves those markers unchanged. Do not create a new version marker until native CI, browser, and scholarly validation gates are complete.
 
 ## Autonomous operating contract
 Continue independently across waves/chats. Persist meaningful progress in GitHub, especially:
@@ -469,17 +469,17 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Re-reviewed painter/inspector: `filterSpansByPrefs()` preserves all enabled matches; the painter sorts by start and skips a span beginning before the current cursor. Corpus execution found no partial/nested overlaps—only four equal-range pairs—so current corpus behavior is deterministic, but synthetic/future partial overlaps still lack an explicit painter policy. Keep this as a follow-up rather than claim universal overlap correctness.
 - Corrected `docs/OPEN-ISSUES.md` to preserve main's navigation row 80, retain newer integration rows 91–94, update the date, and reconcile the bottom summary with the actual 90 table rows (IDs are non-contiguous, highest ID 94). It now reports 36 OPEN, 5 PROPOSED, 7 BLOCKED:scholar, 5 pure BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 2 STANDING CONSTRAINT, and 29 RESOLVED split into 27 re-verified + 2 resolved-on-main/next-release.
 - Current-head GitHub Actions `check` was queued on an earlier PR #26 head (`4514a86608eab8f0985ae6595f62400639b16c0a`); no completed current-head result has been observed. Re-fetch PR metadata and workflow status after this checkpoint commit.
-- Do not merge or release yet. Remaining gates: native `npm run check` / `node --test`, current-head CI completion, Chromium checks for the source/inspector/painter (EN/AR × light/dark × phone/desktop), and scholarly review of reading-route-sensitive Qalqalah and the classifier's per-rule correctness. Formal release remains v5.17.136.
+- Do not merge or create a new release yet. Remaining gates: native `npm run check` / `node --test`, current-head CI completion, Chromium checks for the source/inspector/painter (EN/AR × light/dark × phone/desktop), and scholarly review of reading-route-sensitive Qalqalah and the classifier's per-rule correctness. Current `main` version markers are v5.17.137; this draft does not change them.
 
 
 
 ### Clean ancestry safeguard and latest working state — 2026-10-09
 
-- Authoritative repository: `AhmedKamal75/nur-al-dhikr`. Formal release remains **v5.17.136**; do not bump the release or claim native/browser certification until verified.
+- Authoritative repository: `AhmedKamal75/nur-al-dhikr`. Current `main` version markers are **v5.17.137** (verified in `package.json`, `js/core/config.js`, `sw.js`, and `docs/RELEASES.md`); this draft leaves them unchanged and is not native/browser certified.
 - Candidate PR: **#27**, [Tajweed deep-audit fixes — clean mainline integration](https://github.com/AhmedKamal75/nur-al-dhikr/pull/27). Branch `integration/tajweed-clean-mainline-2026-10-09`, based on exact main SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`; no direct merge has been performed.
-- Latest branch head after the attached-token normalization regression: `3ded3b18a0f8a85dba055cdabdec0e168c4e533d`.
+- Code/test commit introducing the attached-token normalization regression: `3ded3b18a0f8a85dba055cdabdec0e168c4e533d`; subsequent commits update documentation/evidence only, not the classifier or test file.
 - Current classifier source blob: `b48dfcb6f82068195a26d7639f2a36297e8d67be`. Current Tajweed unit-test blob: `067f660834412228f8bdb3ea9d080b3124421fd7`.
-- The added normalization/test patch touches existing files only: `js/domain/tajweed.js` and `tests/tajweed.test.js`. It does not change bundled sacred text, service-worker version, package version, or formal release.
-- Direct main-versus-candidate source execution passed four targeted probes: attached ۞, attached ١, heavy context with attached waqf, and light context after kasrah with attached waqf. This catches an actual old-code false negative on attached non-diacritic ornaments and a light-context false positive. These probes are **not** a substitute for `node --test`.
-- The latest GitHub Actions run must be fetched for the current head before recording any pass. Earlier check snapshots were queued, not passed. Native `npm run check`, Chromium/device behavior, and scholarly rule validation remain release gates.
+- The normalization/test patch touches existing files only: `js/domain/tajweed.js` and `tests/tajweed.test.js`. It does not change bundled sacred text or the inherited v5.17.137 package/config/service-worker/release markers.
+- Direct main-versus-candidate source execution passed four targeted probes: attached ۞, attached ١, heavy context with attached waqf, and light context after kasrah with attached waqf. A full post-normalization corpus sweep also passed structural checks over all 6,236 ayahs, and the current `tests/tajweed.test.js` passed 30/30 cases in a separate isolated shim. Neither replaces native `node --test` or CI.
+- Latest observed GitHub Actions runs on the PR were still queued at the last live check; re-fetch for the exact current head before recording any pass. Native `npm run check`, Chromium/device behavior, and scholarly rule validation remain release gates.
 - Next action: validate current-head native/CI outcomes. If a check fails, inspect its real failure and fix the underlying defect without weakening assertions. Continue the corpus/rule audit only after this checkpoint is safely recorded. Keep the open issue ledger truthful and avoid changing resolved counts without execution evidence.
