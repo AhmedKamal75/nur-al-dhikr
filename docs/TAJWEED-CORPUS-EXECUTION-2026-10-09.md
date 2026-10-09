@@ -291,3 +291,13 @@ The exact current `buildMushafSettingsPanel()` function and its nested `tajweedS
 ## Exact citation-view test callback execution — 2026-10-09 06:12Z
 
 The committed callback body for `Mushaf legend localizes primary and alternate citation locators` was extracted from coherence-test blob `6baacd16580be3d6bd3c717c2c419ec21171be25` and run directly with the current extracted `buildMushafSettingsPanel()` / `tajweedSourceLine()` bodies, actual classifier and citation helpers, and shims only for i18n, icons, configuration constants, state factory and the two regex assertion methods. The callback passed. Exact source blobs: view `b1ee333644a0a6343e1bf926a13396d112f37744`, classifier `ba3d9c28ce0952f83cf3bfbc0ee0d6898637e65a`, runtime source registry `f58ecd242a90d9e9e7f21647b6c8de7539ab06f7`. This is stronger than a hand-written equivalent probe because it runs the committed assertion body, but it remains **non-native and non-browser** evidence.
+
+
+## Per-surah validation for guided Tajweed lesson examples — 2026-10-09
+
+A hostile-pool probe found that `tajweedLessonExamples()` only applied the global envelope (surah 1–114, ayah 1–286). This let impossible references such as 114:286 survive even though An-Nas has 6 ayahs. The lesson example helper now requires canonical per-surah counts and excludes any reference with no matching metadata or with `a > ayahCount`. The `practice-lesson` handler awaits shared `ensureQuranMeta()` before filtering and supplies `quran.meta.surahs`; it does not maintain a second verse-count table.
+
+- Current lesson helper blob: `15d399c56d8584c6cc7569711048fc81868ec567`; current regression test blob: `8bab7d8e05ff13431d7b3786ed769a09c063b381`; current handler blob: `18d090f6d5e3fbef56c9db542b0b12d1d4a6b1d4`; canonical metadata blob: `44ce73c40da6123aa1497ea884b02394e3d22675`.
+- The five pure lesson validator cases passed **5/5** in an isolated synchronous harness. Explicit results: 114:286 rejected; 114:6 accepted; unavailable/empty metadata returns no example refs. The harness is not native `node:test`.
+- The current shipped practice pool (`data/tajweed-practice.json`, schema 2.0) was also scanned against all 114 counts in `quran-meta.json`: **44,933** entries across three levels, all 20 rule pools, and **zero invalid surah/ayah references**. This is a defensive guard for future/malformed pools, not a claim that current data contained bad references.
+- Ledger row 96 remains **OPEN** until native Node/CI and actual lesson-modal behavior are verified. No Qur'an text, canonical ayah counts, or rule classifications changed.
