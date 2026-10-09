@@ -1,5 +1,5 @@
 # Nūr al-Dhikr — Autonomous Continuity Handoff
-Updated: 2026-10-08
+Updated: 2026-10-09
 
 ## Source of truth
 - Repository: `AhmedKamal75/nur-al-dhikr`
@@ -111,7 +111,7 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 ## Tajweed checkpoint update — 2026-10-08 autonomous wave
 
-- PR #21 is **OPEN / unmerged**, mergeable, current head `34c86c4f55bff9a742bad949cdb7a6bc6817e724`.
+- PR #21 remains **OPEN / unmerged** and mergeable at the last live check; its current head is available from the canonical [PR #21 page](https://github.com/AhmedKamal75/nur-al-dhikr/pull/21). Avoid treating the earlier `34c86c4...` checkpoint SHA as current.
 - Formal app release remains **v5.17.136**; no v5.17.137 claim is made.
 - Ornament-aware semantic lookahead remains part of the branch: raw rendering tokens are preserved, while cross-word Tajweed lookahead and ayah-final status use pronunciation-bearing semantic tokens.
 - Qalqalah broad adjacency suppression was intentionally rejected. Current suppression is evidence-backed and narrow:
@@ -177,3 +177,13 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The classifier now accepts a second lam whose previous unit is a vocalized lam-prefix, while retaining the existing article guards.
 - Regression coverage pins لِلطَّآئِفِينَ and لِلظَّالِمِينَ.
 - Verification remains pending local/full-corpus execution and browser evidence.
+
+
+### Autonomous checkpoint — 2026-10-09: plural Qalqalah exception mismatch
+
+- Static inspection compared the exact no-Qalqalah set in `js/domain/tajweed.js` with the already-present `فَرَّطتُمۡ` regression fixture in `tests/tajweed.test.js`.
+- The code key was accidentally `فرطم` (missing `ت`) while `tokenizeUnits()` builds the exact letter sequence `فرطتم`. Because suppression uses exact `Set.has(baseSequence)`, the intended exception would not match the plural Qur'anic form.
+- Corrected the set key to `\u0641\u0631\u0637\u062A\u0645`, and corrected the nearby rule comment to include the plural form. The regression already exists; this source review predicts it should catch the previous defect, but no test execution is claimed.
+- `docs/OPEN-ISSUES.md` row 80 now records this finding and the correction while remaining **OPEN** pending actual execution and full-corpus anomaly review.
+- The fix is on `fix/tajweed-semantic-lookahead-2026-10-08`, under PR #21. Formal release remains v5.17.136; the PR is not being merged based on static inspection alone.
+
