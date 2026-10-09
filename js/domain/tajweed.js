@@ -256,10 +256,10 @@ export const TAJWEED_FAMILIES = Object.freeze([
     id: 'plain',
     color: null,
     recolorable: false,
-    name: { en: 'Uncolored by convention', ar: 'بلا لون بحكم العُرف' },
+    name: { en: 'Uncolored in this app', ar: 'بلا لون في هذا التطبيق' },
     desc: {
-      en: 'Two rules left uncoloured in the printed mushaf tradition, shown here so every rule stays reachable. The colour scheme below is this app\u2019s own, not an official standard.',
-      ar: 'قاعدتان تُركان بلا اللون في تقاليد المصاحف المطبوعة، معروضتان هنا حتى تبقى كل القواعد ميسرة. نظام الألوان أدناه خاص بهذا التطبيق، وليس معيارًا رسميًا.',
+      en: 'Three rules are left uncolored in this app’s presentation convention, so the legend names them without inventing a hue. This palette is the app’s own, not an official standard.',
+      ar: 'يترك التطبيق ثلاث قواعد بلا لون ضمن أسلوب العرض الخاص به، مع إبقائها في الدليل دون اختراع لون لها. لوحة الألوان خاصة بالتطبيق وليست معيارًا رسميًا.',
     },
   },
 ]);
