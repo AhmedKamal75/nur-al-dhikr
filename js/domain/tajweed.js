@@ -602,7 +602,8 @@ export function classifyWordTajweed(
     if (
       u.base === LAM &&
       prev &&
-      (prev.base === ALIF_WASLA || prev.base === ALIF) &&
+      (prev.base === ALIF_WASLA || prev.base === ALIF ||
+        (i === 1 && prev.base === LAM && prev.diacritics.size > 0)) &&
       next &&
       SUN_LETTERS.has(next.base) &&
       next.diacritics.has(SHADDA) &&
@@ -612,8 +613,7 @@ export function classifyWordTajweed(
       // vocalized lām-prefix (لِلطَّآئِفِينَ, لِلظَّالِمِينَ).
       (
         i === 1 ||
-        (i === 2 && units[0] && isPrefixParticle(units[0])) ||
-        (i === 1 && prev.base === LAM && prev.diacritics.size > 0)
+        (i === 2 && units[0] && isPrefixParticle(units[0]))
       )
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'lam_shamsiyyah' });
