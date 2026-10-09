@@ -49,7 +49,7 @@ The corrected run reports three ghunnah + idgham_ghunnah collisions and one ghun
 
 ### Remaining classifier anomalies
 
-- Two pause-final Qalqalah spans do not carry an explicit sukun mark in the selected orthography: 94:8 فَٱرۡغَب (final bāʾ) and 96:19 وَٱقۡتَرِب۩ (final bāʾ before the sajdah ornament). The corpus sweep identifies them but does not itself establish a scholarly judgment; ledger row 81 remains open.
+- Two diagnostic spans have no explicit final sukun in the raw orthography: 94:8 فَٱرۡغَب and 96:19 وَٱقۡتَرِب۩. These are final bāʾs in imperative verbs; Qalqalah at waqf is expected, so they are **not classified as false positives**. A teaching reference explicitly discusses Qalqalah at stopping and gives فَارْغَبْ as an example ([Quranpedia](https://quranpedia.net/fatwa/2648)); the classifier emits the marks and the raw Unicode scan should not confuse missing annotation with incorrect tajweed. Issue 81 remains open only for the reading-route-sensitive 11:42 `ٱرۡكَب مَّعَنَا` assimilation policy and official integration verification.
 - Madd al-Līn of ʿAyn is emitted once at 19:1 كٓهيعٓصٓ and once at 42:2 عٓسٓقٓ, both as rule madd_4_6. These are the two known corpus ayahs for the rule in this reading profile.
 - The span painter/filter interaction is tested separately and changed in this branch; this corpus result only validates classifier output, not the DOM inspector or rendered colors.
 
