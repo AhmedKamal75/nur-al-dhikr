@@ -160,3 +160,18 @@ The current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` was execu
 - The runtime registry's `also` citations were previously not surfaced by `tajweedCitation()` or the Mushaf legend. The helper now resolves each alternate citation to localized title and author plus locator/review metadata, and `tajweedSourceLine()` emits an additional escaped source line for each alternate.
 - Regression coverage checks English and Arabic alternate-source metadata, and source/runtime full-object parity remains exact in isolated execution.
 - The UI change is not browser-verified. Row 94 remains open for the EN/AR × light/dark × phone/desktop rendering and wrapping review; native Node/CI is also pending.
+
+
+
+## Current source-test snapshots — 2026-10-09 05:15Z
+
+The following checks were executed against the exact source/test blobs below using isolated synchronous JavaScript harnesses that supplied small `test` and `assert` shims. These are **not** native Node test-runner results.
+
+| Check | Source / fixture blob | Result |
+| --- | --- | --- |
+| Tajweed classifier unit tests | classifier `92f4fba4747024582c3334400bc6d3437732d5ef`; test `d1bb1b04e4c1a20c5a271afb2225dece222bfe4a` | **29/29 passed** |
+| Citation registry invariants and complete JSON/runtime parity | JSON `607c221d95138112ce507733e466e7ac1d9c3d11`; runtime `2889e476ce399f52bca70697966ec49ee7635671`; test `203bde8367582990c03440ef80b0642c2bde08f6` | **11/11 passed** |
+| Full citation/work object comparison | Same JSON/runtime blobs | **28/28 rule objects and 4/4 work objects matched exactly** |
+| Full corpus classifier execution | classifier `92f4fba4747024582c3334400bc6d3437732d5ef`; 114 bundled surah files | **6,236 ayahs; 104,554 spans; all 21 rule IDs reached; zero recorded structural invariant failures** |
+
+Still unverified: native `npm run check` / `node --test`, completed current-head GitHub Actions, Chromium rendering and interactions, and scholar/reference sign-off. Do not promote shim execution into a CI pass.
