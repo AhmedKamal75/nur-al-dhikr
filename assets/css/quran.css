@@ -3996,7 +3996,8 @@ body.has-player .reader-immersive-echo {
 
 .tajweed-legend__source-link {
   margin-inline-start: 0.35em;
-  color: inherit;
+  color: var(--color-text-secondary);
+  font-weight: 600;
   text-decoration: underline dotted;
   text-underline-offset: 0.15em;
   white-space: nowrap;
