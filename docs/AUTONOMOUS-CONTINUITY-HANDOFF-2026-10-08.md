@@ -318,3 +318,15 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Corrected the Madd Badal source locator in both `data/tajweed-sources.json` and `js/domain/tajweedSources.js` to line 46; source mirror parity test explicitly checks these fields. Current source JSON/mirror contain the new `madd_4_6` rule.
 - Latest known PR #24 head after these fixes: `48e4047a6270e942389b380576e13bd33e62ad99`; Actions run `37886350323` is **queued**, not a pass. No native `npm run check`, current-head CI pass, Chromium matrix, or scholarly validation has been observed.
 - Next: wait/re-query current-head Actions; inspect test failures rather than papering over them; ensure corpus sweep's hardcoded two bare-Qalqalah and four collision invariants still hold under the new classifier; run `npm run check`; then test actual Mushaf painter/inspector and course EN/AR in Chromium. Keep v5.17.137 as current main baseline; do not merge or bump a release marker until evidence gates pass.
+
+
+
+### Cleanup checkpoint — 2026-10-09 05:00Z
+
+- Closed stale PR #21 (diverged/non-mergeable) and duplicate draft PR #23 as superseded by active draft PR #24. Their branches/discussions remain available; no merge occurred. PR #24 is the sole active Tajweed integration candidate.
+- PR #24 current branch: `fix/tajweed-audit-v5-17-137-2026-10-09`, based on main SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`; mergeable at last refresh.
+- Current ledger is 88 rows; computed buckets: 33 OPEN, 5 PROPOSED, 7 BLOCKED:scholar, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 30 RESOLVED, 2 STANDING CONSTRAINT. Removed the duplicated stale header count and restored `## The honest summary` with matching bucket totals so `tests/open-issues-ledger.test.js` can validate it.
+- Corrected Madd Badal citation locator in both canonical JSON and runtime mirror to line 46. Current canonical registry has 29 rule IDs, including the newly added `madd_4_6`; runtime mirror includes the same new rule. Exact mirror-parity checks are in the existing test suites.
+- Confirmed corpus spellings in bundled source: 19:1 `كٓهيعٓصٓ`, 42:1 `حمٓ`, and 42:2 `عٓسٓقٓ`, so the new Muqaṭṭaʿāt Madd classifier has genuine corpus cases to exercise (not only synthetic fixtures).
+- Latest PR #24 head at this checkpoint: `26ad8d629a9fb3f5901ec57a00c3682167418cf4`; current-head Actions lookup showed run `37886403905` queued, not passed. The next head may differ if more fixes are committed.
+- Still required: native `npm run check`, inspect full-corpus sweep diagnostics under the new 29-rule registry, current-head CI pass, Chromium Mushaf inspector/painter and course EN/AR light/dark/phone/desktop evidence, and scholarly review. Do not close rows 81–92 or bump release marker merely because source edits exist.
