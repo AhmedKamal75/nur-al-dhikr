@@ -31,6 +31,8 @@ The latest direct corpus run is recorded in `docs/TAJWEED-CORPUS-EXECUTION-2026-
 - Exactly two unmarked Qalqalah spans remain, consistent with ayah-final pause cases `فَٱرۡغَب` (94:8) and `وَٱقْتَرِب۩` (96:19). The earlier third span at `ٱرۡكَب مَّعَنَا` was removed by a narrowly-scoped lexical exception; it is **not** generalized to every bāʾ→mīm boundary.
 - This evidence is direct execution of fetched classifier source, not native `node --test`, `npm run check`, completed CI, browser/device testing, or a scholarly gold-label comparison.
 
+- The matching current `tests/tajweed.test.js` blob `067f660834412228f8bdb3ea9d080b3124421fd7` also executed **30/30** in an isolated synchronous harness against classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be`. It uses a custom subset of Node assert and is not native `node:test` or CI evidence. Full details are in the corpus execution report.
+
 Remaining release gates:
 - official Node/lint/format/data checks and completed current-head GitHub Actions;
 - Chromium review of the Mushaf painter/inspector, alternate citation UI and rule toggles (EN/AR × light/dark × phone/desktop);
