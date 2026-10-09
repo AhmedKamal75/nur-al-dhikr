@@ -22,6 +22,7 @@ import {
   TAJWEED_SOURCES,
   TAJWEED_WORKS,
   uncitedTajweedRules,
+  tajweedCitation,
 } from '../js/domain/tajweedSources.js';
 
 const root = path.resolve(import.meta.dirname, '..');
@@ -149,6 +150,20 @@ test('the runtime module mirrors the canonical JSON exactly', () => {
   assert.deepEqual(TAJWEED_SOURCES, registry.rules, 'rule registry drifted');
   assert.deepEqual(TAJWEED_WORKS, registry.works, 'source/work metadata drifted');
 });
+test('tajweedCitation exposes localized alternate source locators', () => {
+  const en = tajweedCitation('hamzat_wasl', 'en');
+  assert.equal(en.also.length, 1);
+  assert.equal(en.also[0].title, TAJWEED_WORKS.tamhid.shortTitle.en);
+  assert.equal(en.also[0].author, TAJWEED_WORKS.tamhid.author.en);
+  assert.equal(en.also[0].lines, 'ch. 5');
+  assert.equal(en.also[0].review, 'sourced');
+
+  const ar = tajweedCitation('hamzat_wasl', 'ar');
+  assert.equal(ar.also[0].title, TAJWEED_WORKS.tamhid.shortTitle.ar);
+  assert.equal(ar.also[0].author, TAJWEED_WORKS.tamhid.author.ar);
+  assert.equal(tajweedCitation('not_a_rule', 'en'), null);
+});
+
 test('an unattributed rule is reported, not rendered blank', () => {
   assert.deepEqual(uncitedTajweedRules(RULE_IDS), [], 'a shipped rule has no citation');
   // An unknown id must return null so a test can see it, not an empty string
