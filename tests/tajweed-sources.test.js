@@ -142,28 +142,13 @@ test('family names are not attributed to an unnamed authority either', () => {
 });
 
 test('the runtime module mirrors the canonical JSON exactly', () => {
-  // The JSON is canonical; the JS module is what ships, because the legend
-  // and Settings need the citation synchronously and offline. Two copies
-  // means two things that can drift, so drift is a failing test.
-  assert.deepEqual(
-    Object.keys(TAJWEED_SOURCES).sort(),
-    Object.keys(registry.rules).sort(),
-    'rule sets differ'
-  );
-  assert.deepEqual(Object.keys(TAJWEED_WORKS).sort(), Object.keys(registry.works).sort());
-  for (const [id, entry] of Object.entries(registry.rules)) {
-    const mod = TAJWEED_SOURCES[id];
-    assert.equal(mod.work, entry.work, `${id} work drifted`);
-    assert.equal(mod.lines, entry.lines, `${id} lines drifted`);
-    assert.equal(mod.review, entry.review, `${id} review state drifted`);
-    assert.deepEqual(mod.caveat || null, entry.caveat || null, `${id} caveat drifted`);
-    // (v5.17.32) Spread positions carry a bilingual display label the
-    // course view renders instead of a classifier-rule chip. Same drift
-    // rule as everything else in this registry.
-    assert.deepEqual(mod.label || null, entry.label || null, `${id} label drifted`);
-  }
+  // Compare the complete structures, not only selected citation fields.
+  // This catches drift in source topic, alternate works, labels, review
+  // caveats, and work metadata (author/title/institution/year/URL) as well
+  // as the basic rule-to-work locator.
+  assert.deepEqual(TAJWEED_SOURCES, registry.rules, 'rule registry drifted');
+  assert.deepEqual(TAJWEED_WORKS, registry.works, 'source/work metadata drifted');
 });
-
 test('an unattributed rule is reported, not rendered blank', () => {
   assert.deepEqual(uncitedTajweedRules(RULE_IDS), [], 'a shipped rule has no citation');
   // An unknown id must return null so a test can see it, not an empty string
