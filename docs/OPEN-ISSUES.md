@@ -5,9 +5,9 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-10-08 against the working tree**, by parsing this file's own rows
-> rather than by hand: **78 rows**. Status totals are intentionally not hard-coded here;
-> rows 67–78 were added or reclassified after the previous count.
+> **Counted 2026-10-09 against the working tree**, by parsing this file's own rows
+> rather than by hand: **84 rows** (highest issue ID: 88). Status totals are intentionally not hard-coded here;
+> rows 79–88 record the latest deep Tajweed/corpus findings and follow-ups.
 >
 > Every row marked RESOLVED above was verified by execution this pass, and the
 > evidence is named in the row. Nine were stale or wrong when this pass started,
@@ -173,6 +173,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 85 | Tajweed Madd Silah over-classifies all small Waw/Yeh marks | **OPEN — deep-audit follow-up** | The classifier treated every bare small Waw/Yeh (`ۥ`/`ۦ`) as Madd as-Silah. Full-corpus source inspection found ordinary small-letter spellings such as `دَاوُۥدُ`, `يَسۡتَحۡيِۦ`, `لِتَسۡتَوُۥاْ`, and `ٱلۡمَوۡءُۥدَةُ`; these are not hāʾ-al-kināyah. The branch now requires the small letter to follow a properly vocalized hāʾ-pronoun for Silah and otherwise classifies the small letter as natural madd. |
 | 86 | Tajweed Lam Shamsiyyah misses article after lām-prefix | **OPEN — deep-audit follow-up** | Corpus inspection found article-after-lām-prefix forms including لِلطَّآئِفِينَ and لِلظَّالِمِينَ. Static control-flow review then caught that the attempted clause was unreachable: an outer guard required the previous unit to be alif/alif-wasla before the inner condition could test a lām-prefix. PR #21 now admits a vocalized lām-prefix in the outer guard, removes the dead duplicate branch, and strengthens the test to require the second (silent article) lām at source offset 2. This is a source-level correction only; unit/full-corpus execution and browser evidence remain pending. |
 | 87 | Tajweed marks the lām of Lafẓ al-Jalālah heavy regardless of preceding vowel | **OPEN — deep-audit follow-up** | The old condition marked the lām of Allah as `tafkhim` whenever the word skeleton ended in lām+lām+hāʾ, so the common phrase `بِسْمِ ٱللَّهِ` was tagged heavy despite the preceding kasrah. Tajweed references distinguish the heavy form after fatḥah/ḍammah from the light form after kasrah (Islamweb: https://www.islamweb.net/eschool/tajweed/ShowLesson.php?REF_ID=RES-C0C72595-7975-6963-A2A7-BCAEABB67BD2&lang=E; SurahQuran: https://surahquran.com/Tajweed/ahkam-allam-en.html). PR #21 now passes previous semantic-word vowel context across ornaments and handles attached prefixes conservatively; positive/negative regressions cover initial Allah, preceding fatḥah, fatha-bearing wāw, preceding kasrah, bi-prefix, and li-prefix. This remains a static source correction: runtime tests, full-corpus execution, and Mushaf/browser review are not yet verified. |
+| 88 | Same-unit Tajweed overlaps are silently dropped by the painter/inspector filter | **OPEN — corpus-anomaly follow-up** | Full source execution across all 6,236 bundled ayahs found four exact same-span multi-rule collisions: three `ghunnah+idgham_ghunnah` (`صُمّٞ` 6:39, `جَآنّٞ` 27:10 and 28:31) and one `ghunnah+idgham_no_ghunnah` (`بِغَمّٖ` 3:153). These are plausible simultaneous phenomena from shaddah plus tanween, not proven classifier false positives. `filterSpansByPrefs()` currently removes later overlapping spans; as the rule classifier emits ghunnah first, the second rule is hidden from the shared painter/inspector result. The corpus sweep test now pins these known pair counts and requires review if they change. See `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. Still open pending a principled display/inspection policy, official Node/CI execution, and browser evidence. |
 ## Stale report claims — closed, with evidence
 
 These were reported as open by an audit and are **not** open. Recorded so nobody
