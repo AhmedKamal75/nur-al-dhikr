@@ -214,7 +214,7 @@ Source review found a styling interaction beyond the classifier corpus: `applyTa
 
 - Current classifier source blob at this checkpoint: `ba3d9c28ce0952f83cf3bfbc0ee0d6898637e65a`. The corpus execution was performed on `b48dfcb6f82068195a26d7639f2a36297e8d67be`; the later `60b9b294d91420c45eb05382c6492172f9491302` changed the family-to-custom-property map only, and the current `ba3d...` update changes only comments clarifying the route assumption. No executable classifier logic has changed since the corpus run.
 - Current CSS blob: `399d6bb24526137509f9354c60449c1c9a6345e4`.
-- Current coherence-test blob at this checkpoint: `289bf67ebc77fa5fc4f71a4514b482c9ff1f0711` (the 2026-10-09 follow-up adds unique-owner and no-CSS-declaration assertions for the `--tw-user-*` namespace).
+- Current coherence-test blob at this checkpoint: `6baacd16580be3d6bd3c717c2c419ec21171be25` (preserves unique-owner/no-CSS-declaration assertions and adds a bilingual Mushaf-legend citation-locator regression).
 - Static mapping check confirmed all 18 unique `--tw-user-*` variables are referenced by the CSS fallback layer; none is declared directly in CSS, preventing paper-scope shadowing. The coherence test pins this mapping and preserves the night/amoled/royal-black default palette. An independent static comparison across all 18 colored rule classes confirmed the fallback variable uses the same light-theme, dark-theme, and dark-paper values as before the refactor.
 - The coherence test also had a stale expectation that preference filtering dropped the second of two spans on the same range. The actual intended behavior preserves all enabled classifier matches for the inspector; the painter chooses one visible span. Its test now verifies both equal-range rules can be disabled independently.
 - The existing classifier test file executed 30/30 in the isolated synchronous harness against blob `60b9...`. Static CSS and preference-filter checks passed. **None of this is native Node/CI or real-browser evidence**; the new coherence assertions still need the native test runner, and dark-paper rendering must be confirmed in Chromium before closing issue 95 in `docs/OPEN-ISSUES.md`.
@@ -270,3 +270,11 @@ A direct execution of the actual `tajweedSourceLine()` rendering helper exposed 
 - English keeps `ch. 5`, `ch. 8`, and `qalqalah section`; Arabic shows `الفصل 5`, `الفصل 8`, and `باب القلقلة` respectively.
 - Current `tests/tajweed-sources.test.js` passed **12/12** in an isolated harness against the exact source test/runtime/classifier/JSON blobs. The actual `tajweedSourceLine()` helper was separately executed with the current source registry and produced Arabic citation HTML with localized locators; its English output retained the original locator strings.
 - Both executions used isolated JavaScript shims and are **not** native Node or Chromium evidence. Verify citation wrapping and readability in EN/AR × light/dark × phone/desktop before closing issue 94.
+
+
+## Citation-locator UI-path follow-up — 2026-10-09
+
+- The source registry now localizes locators in Arabic: e.g., `ch. 5` → `الفصل 5`, and `qalqalah section` → `باب القلقلة`; English locators remain unchanged. Current runtime registry blob: `f58ecd242a90d9e9e7f21647b6c8de7539ab06f7`; test blob: `28822b95814520baa8aae23ba7f215ad5ad20055`.
+- The registry suite passed **12/12** cases in the isolated synchronous harness, including the new Arabic locator labels, against the exact current canonical JSON and runtime mirror. This is not native `node:test`/CI evidence.
+- The coherence suite now includes `Mushaf legend localizes primary and alternate citation locators` (test blob `6baacd16580be3d6bd3c717c2c419ec21171be25`). Its native test has not run yet. A direct execution of the exact `tajweedSourceLine()` function extracted from current `js/views/tafsirPanel.js` (`b1ee333644a0a6343e1bf926a13396d112f37744`) plus the real current `tajweedCitation()` helper confirmed English `ch. 5`, Arabic `الفصل 5`, Arabic `باب القلقلة`, absence of English locator strings in Arabic output, and safe escaping. This is source-level execution with shims, not an end-to-end rendered Mushaf/browser pass.
+
