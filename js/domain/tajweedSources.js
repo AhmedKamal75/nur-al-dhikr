@@ -114,6 +114,12 @@ export const TAJWEED_SOURCES = Object.freeze({
       ar: 'الإخفاء خمسة عشر حرفًا، وتتباعد النصوص في عدد أحكام النون الساكنة والتنوين (٣ أو ٤ أو ٥ أو ٦).',
     }),
   }),
+  izhar: Object.freeze({
+    work: 'tuhfat-al-atfal',
+    lines: '6-13',
+    review: 'sourced',
+    topic: 'nun-sakinah',
+  }),
   iqlab: Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '6-13',
