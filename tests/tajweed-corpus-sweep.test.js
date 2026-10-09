@@ -45,6 +45,7 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
   let spanCount = 0;
   const ruleCounts = new Map();
   let multiRuleSameUnit = 0;
+  const multiRulePairs = new Map();
   let bareQalqalahSpans = 0;
   const qlqBoundaryPairs = new Map();
   const qlqBoundaryExamples = new Map();
@@ -76,9 +77,14 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
           'duplicate Tajweed span ' + spanKey + ' at ' + row.surah + ':' + row.ayah + ' word ' + word.wordIndex);
         seenSpanKeys.add(spanKey);
         const unitKey = span.start + ':' + span.end;
-        const prior = spansByUnit.get(unitKey) || 0;
-        spansByUnit.set(unitKey, prior + 1);
-        if (prior > 0) multiRuleSameUnit += 1;
+        const prior = spansByUnit.get(unitKey) || [];
+        if (prior.length > 0) {
+          multiRuleSameUnit += 1;
+          const pairKey = [...prior, span.rule].sort().join('+');
+          multiRulePairs.set(pairKey, (multiRulePairs.get(pairKey) || 0) + 1);
+        }
+        prior.push(span.rule);
+        spansByUnit.set(unitKey, prior);
         assert.ok(KNOWN_RULES.has(span.rule),
           `unknown Tajweed rule ${span.rule} at ${row.surah}:${row.ayah}`);
         assert.ok(Number.isInteger(span.start) && Number.isInteger(span.end));
@@ -134,11 +140,24 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
     assert.ok(seen.has(rule.id), `rule is unreachable in the real Quran corpus: ${rule.id}`);
   }
 
+  // Same-unit overlaps are not automatically classifier errors: tanween can
+  // share a written unit with shaddah-ghunnah. Pin the four observed collisions
+  // so any new pair forces deliberate review of the painter/inspector precedence.
+  assert.deepEqual(
+    [...multiRulePairs.entries()].sort(([a], [b]) => a.localeCompare(b)),
+    [
+      ['ghunnah+idgham_ghunnah', 3],
+      ['ghunnah+idgham_no_ghunnah', 1],
+    ],
+    'same-unit Tajweed rule pairs changed; review rule overlap and rendering precedence'
+  );
+
   console.log(JSON.stringify({
     corpusAyahs: corpus.length,
     spanCount,
     ruleCounts: Object.fromEntries([...ruleCounts.entries()].sort()),
     multiRuleSameUnit,
+    multiRulePairs: Object.fromEntries([...multiRulePairs.entries()].sort()),
     bareQalqalahSpans,
     qlqBoundaryPairs: Object.fromEntries([...qlqBoundaryPairs.entries()].sort()),
     qlqBoundaryExamples: Object.fromEntries([...qlqBoundaryExamples.entries()].sort()),
