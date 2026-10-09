@@ -503,6 +503,18 @@ test("madd 'iwad: ayah-final fathah tanween is red; mid-ayah tanween is not", ()
   );
 });
 
+test('uncolored Tajweed family copy matches its actual rule count', () => {
+  const plain = TAJWEED_FAMILIES.find((family) => family.id === 'plain');
+  assert.equal(
+    TAJWEED_RULES.filter((rule) => rule.color === null).length,
+    3,
+    'the app currently leaves exactly three rule IDs uncolored'
+  );
+  assert.match(plain.desc.en, /Three rules/);
+  assert.match(plain.desc.en, /not an official standard/);
+  assert.match(plain.desc.ar, /\u062B\u0644\u0627\u062B \u0642\u0648\u0627\u0639\u062F/u);
+});
+
 test('the app palette: families match the reference chart colors', () => {
   const colorOf = (id) => TAJWEED_RULES.find((r) => r.id === id)?.color;
   // silent gray
