@@ -234,3 +234,12 @@ Source review found a styling interaction beyond the classifier corpus: `applyTa
 - Current coherence test blob `289bf67ebc77fa5fc4f71a4514b482c9ff1f0711` pins that the 18 user override names are unique and do not appear as stylesheet declarations (they must be set from the root inline style only). This protects against reintroducing a local CSS declaration that shadows the user's choice.
 - Source-level manual evaluation of the exact assertions against current `assets/css/quran.css` and `js/domain/tajweed.js` returned true for uniqueness, all 18 fallback references, no CSS declarations, all three dark-paper selectors/defaults, and independent same-range rule toggles. This was not execution of the full coherence file; its Node imports and file IO require the native test runner.
 - The current classifier test file remains 30/30 in the isolated synchronous harness. Native CI for code/test head `be46a09065e348c9bdbdd19760c7e60066c59c8a` has 12 checks queued and zero completed. New documentation commits will move HEAD and trigger their own workflows, so always fetch the exact current branch head before quoting CI state.
+
+
+## Tajweed course consistency harness — 2026-10-09
+
+- Current course runtime blob: `fa945af25ed509cea367a56930269d0519ebad0f`; canonical course JSON blob: `25b392f873aeaebc0612b09fbda6c1c427b1bbae`; exact test blob: `1062e9a9f99f9cb1caa9c84bdf6852853b3a79c2`.
+- Inputs also included classifier blob `60b9b294d91420c45eb05382c6492172f9491302` and source-registry runtime blob `0589d00d802542f388280bebd3ef7f7f10969ff3`.
+- Result: **12/12 course tests passed** in an isolated synchronous harness using the exact fetched test source/runtime/canonical JSON. The assertions use a strict subset of Node's assertion API; this is not native `node:test` or CI evidence.
+- The verified course has **8 stages and 17 sessions**, with no uncited sessions. Covered checks include canonical/runtime spine parity, ordering/unique session IDs, madd-first structure, source attribution, rule coverage, guided/open progression, unlocking/revisiting, progress arithmetic, search, bilingual strings and honest course attribution.
+- Native Node/CI and rendered lesson/browser evidence remain outstanding.
