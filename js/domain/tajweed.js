@@ -521,11 +521,10 @@ function isMaddLetter(unit, prev) {
   return false;
 }
 
-/** بِسْمِ ٱللَّهِ etc. — "Allah" is a fixed divine name, not decomposed as
- *  ال + ILAH in live recitation pedagogy, so its doubled lam is
- *  conventionally left uncolored in published tajweed mus7afs even though
- *  the same assimilation is phonetically happening. Matched on the
- *  consonant skeleton so any vowel/case-ending still matches. */
+/** Identify the fixed divine-name spelling, not the ordinary definite article.
+ *  Its doubled lām is not automatically heavy: the pronunciation is tafkhim
+ *  after a heavy preceding vowel and tarqiq after kasrah. The app's current
+ *  palette only marks the heavy case when that context is explicit. */
 function isDivineName(word) {
   const skeleton = skeletonOf(word);
   return skeleton === `${ALIF_WASLA}${LAM}${LAM}\u0647` || skeleton === `${ALIF}${LAM}${LAM}\u0647`;
