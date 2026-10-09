@@ -270,7 +270,10 @@ test('Madd Lazim description uses a valid example and states its condition', () 
   const rule = tajweedRule('madd_6');
   assert.match(rule.desc.en, /original sukoon/i);
   assert.match(rule.desc.en, /ٱلضَّآلِّينَ/);
+  assert.match(rule.desc.en, /names of certain Muqaṭṭaʿāt letters/i);
+  assert.match(rule.desc.en, /lām, mīm, ṣād, qāf/);
   assert.match(rule.desc.ar, /سكون أصلي/);
+  assert.match(rule.desc.ar, /أسماء بعض الحروف المقطعة/);
   assert.doesNotMatch(rule.desc.en, /e\.g\.\s*آ/);
 });
 
