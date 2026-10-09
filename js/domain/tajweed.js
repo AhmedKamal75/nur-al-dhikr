@@ -481,8 +481,8 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'madd',
     name: { en: 'Madd Lazim (necessary, 6)', ar: 'المد اللازم' },
     desc: {
-      en: 'A madd letter followed by an original sukoon (including a shaddah), as in ٱلضَّآلِّينَ; six counts. The letter-name madd of ʿayn has its own 4-or-6-count entry.',
-      ar: 'مد لازم بمقدار ست حركات إذا تلا حرف المد سكون أصلي أو شدة، مثل ٱلضَّآلِّينَ. ولحرف العين في الحروف المقطعة حكم مستقل بمقدار أربع أو ست حركات.',
+      en: 'Six-count Madd Lazim occurs when a madd letter is followed by an original sukoon (including a shaddah), as in ٱلضَّآلِّينَ, and in the names of certain Muqaṭṭaʿāt letters (e.g. lām, mīm, ṣād, qāf). The letter-name ʿayn is special and may be read for 4 or 6 counts.',
+      ar: 'يكون المد اللازم ست حركات إذا تلا حرف المد سكون أصلي أو شدة، مثل ٱلضَّآلِّينَ، وكذلك في أسماء بعض الحروف المقطعة التي تمد ست حركات مثل لام وميم وصاد وقاف. أما حرف العين فله وجهان: أربع أو ست حركات.',
     },
   },
   {
