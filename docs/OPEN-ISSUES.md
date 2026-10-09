@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-08 against the working tree**, by parsing this file's own
-> rows rather than by hand: **88 rows — 29 RESOLVED, 34 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **89 rows — 29 RESOLVED, 35 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
 >
@@ -184,6 +184,8 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 91 | Tajweed tokenizer can treat non-letter ornaments as semantic base letters | **OPEN — source fix, native verification pending** | `isBaseLetter()` previously accepted every non-diacritic non-space character, so rub el hizb (`۞`) and numerals could be treated as pronunciation-bearing units and break cross-word lookahead despite the ornament-aware semantic index. It now accepts Arabic letters plus explicit dagger alif and the four special small-letter signs U+06E5–U+06E8, while excluding non-letter ornaments/numerals. Regression cases cover rub el hizb and numeral tokens between noon-sakinah and the following letter. Native Node/CI and browser rendering still need to pass. |
 
 | 92 | Alternate Tajweed citation locators were flattened in the runtime mirror | **OPEN — source corrected, native test pending** | Canonical `data/tajweed-sources.json` stores `also` as citation objects with `work`, `lines`, and `review`, but the runtime `js/domain/tajweedSources.js` mirror reduced each to a bare work ID. That silently lost alternate locators. The mirror now preserves each full object and `tests/tajweed-sources.test.js` compares the entire runtime rule/work objects to canonical JSON. Isolated JavaScript parity execution now matches all 28 rule entries and 4 works; native Node/CI is still required. |
+
+| 93 | Arabic title of al-Tamhid was misspelled in source metadata | **OPEN — title corrected, native verification pending** | The registry showed `التهويد في علم التجويد`, but catalog and text records identify the work as `التمهيد في علم التجويد` (Quranpedia: https://quranpedia.net/book/131; Islamweb: https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents). Canonical JSON, runtime mirror, and a regression assertion now use the verified title. Keep open until native registry tests/CI pass. |
 
 ## Stale report claims — closed, with evidence
 
