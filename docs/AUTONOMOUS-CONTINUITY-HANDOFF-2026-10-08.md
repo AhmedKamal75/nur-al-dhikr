@@ -20,17 +20,21 @@ Do not claim local Node/Chromium/device execution unless the evidence exists. Qu
 ## Current deep-review focus: Tajweed
 User explicitly approved keeping Tajweed active until a full-corpus execution/anomaly pass is performed.
 
-Required gate before calling Tajweed sufficiently verified:
-- execute all 6,236 ayahs / 114 surahs;
-- verify all 20 deterministic classifier rules against real corpus occurrences;
-- analyze suspicious/false-positive spans, not merely exceptions;
-- verify cross-word and ornament boundaries;
-- verify ayah-final Madd / Madd Iwad;
-- inspect rule overlap and precedence;
-- verify course ↔ classifier ↔ source-registry consistency;
-- verify Arabic/English parity;
-- add regressions for every discovered defect;
-- then reassess completion honestly.
+### Full-corpus execution gate — completed with explicit limits (2026-10-09)
+
+The current branch classifier has now been executed across all 114 bundled Quran JSON files / 6,236 ayahs in the available JavaScript tool runtime. The durable result is `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
+
+- 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
+- Zero raw-token-count mismatches, bad one-based word indices, unknown rule IDs, invalid span offsets, duplicate exact spans, file-fetch failures, or JSON parse failures were observed.
+- Four same-written-unit collisions were identified and categorized; three implicit/no-explicit-mark Qalqalah spans were reviewed, of which two are ayah-final pause cases and one (`ٱرۡكَب مَّعَنَا`, 11:42) remains reading-profile-sensitive.
+- This is direct execution of the fetched classifier source in an isolated JavaScript runtime, **not** `npm run check`, the Node test runner, CI, browser/device execution, or an authoritative scholarly comparison.
+
+Remaining gate before Tajweed can be called sufficiently verified:
+- run the repository's official Node/lint/format/data checks and obtain completed CI jobs;
+- review the four classifier overlaps and define how the painter/inspector exposes more than one rule on a written unit;
+- settle the reading-profile policy for `ٱرۡكَب مَّعَنَا` with a trusted source and explicit profile semantics;
+- verify course ↔ classifier ↔ source-registry consistency, Arabic/English parity, and lesson-level pedagogy;
+- inspect real Mushaf/practice browser behavior, then reassess completion honestly.
 
 ### Recent semantic-lookahead fix
 Branch: `fix/tajweed-semantic-lookahead-2026-10-08`
@@ -47,20 +51,16 @@ Regression examples include:
 - ornament tokens remain render-only.
 
 ### Qalqalah deep-audit finding
-A corpus inspection exposed a genuine false-positive class. The old Qalqalah heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as Qalqalah, but assimilation boundaries can suppress independent Qalqalah.
 
-The fix on the Tajweed branch suppresses Qalqalah when the current sakin Qalqalah letter is immediately assimilated into the following consonant, covering:
-- same-letter assimilation;
-- ق → ك;
-- ط → ت;
-- د → ت;
-- ب → م.
+The prior broad heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as Qalqalah. Source review found cases where a specific assimilation changes the independent consonant realization. The current branch therefore uses deliberately narrow evidence rather than broad letter-adjacency suppression:
 
-Regression coverage now includes both isolated boundary fixtures and real ayah-level spellings such as:
-- `وَقَد دَّخَلُوا`
-- `بَسَطتَ`
+- suppress same-letter assimilation only when the following same consonant carries explicit shadda;
+- suppress the supported dāl→tāʾ boundary when the following tāʾ carries explicit shadda;
+- suppress exact intra-word spellings `بَسَطْتَ`, `أَحَطْتُ`, `فَرَّطْتُ`, `فَرَّطْتُم`, and `نَخْلُقكُّم`.
 
-Important: this is **not yet closed**. Full-corpus execution is still required, and scholarly scope must remain conservative. The current source evidence confirms that Qalqalah is tied to the five letters when sakin, while assimilation can alter the independent consonant realization. Do not generalize beyond the supported reading/methodology without source evidence.
+Do **not** describe bāʾ→mīm as a generally suppressed family: the full-corpus run still emits Qalqalah on the bāʾ in `ٱرۡكَب مَّعَنَا` (11:42). This remains an open, reading-profile-sensitive case; without a declared reading profile and source-backed decision, do not broaden the suppression rule. The other two no-explicit-mark spans in the full-corpus sweep are end-of-ayah pause cases: `فَٱرۡغَب` (94:8) and `وَٱقۡتَرِب۩` (96:19).
+
+The complete corpus report records diagnostics and limitations. Corpus execution has been performed, but this issue remains **OPEN** pending official Node/CI execution and scholarly/reading-profile resolution. Do not generalize beyond the supported reading/methodology without source evidence.
 
 ### Durable issue ledger
 - Row 78: Tajweed course corrupted Arabic copy — resolved on main, next release.
@@ -73,7 +73,7 @@ Important: this is **not yet closed**. Full-corpus execution is still required, 
 - `data/tajweed-course.json`: 8 stages / 17 sessions / source-backed course spine.
 - `js/domain/tajweedCourse.js`: course progression.
 - `js/domain/tajweedSources.js`: 27 source entries, including contested items.
-- `js/domain/tajweed.js`: 20 deterministic classifier rules.
+- `js/domain/tajweed.js`: 21 deterministic classifier rules in the current branch registry.
 - `js/domain/tajweedLessons.js`: sourced lesson examples.
 - `js/views/tajweedPracticeView.js`: rule/family explanations, sources, Qur'an examples and drills.
 - Full-corpus sweep file: `tests/tajweed-corpus-sweep.test.js`.
@@ -81,20 +81,21 @@ Important: this is **not yet closed**. Full-corpus execution is still required, 
 - Corpus-sweep diagnostics include rule counts, duplicate-span detection, and multiple-rule same-unit diagnostics.
 
 ## Verification status
-- Recent GitHub Actions runs have remained queued. Do not report them as passing.
+- The isolated JavaScript-runtime corpus run is complete and documented; do not relabel it as the official Node test suite.
+- The most recently checked GitHub Actions run was queued, not passing. Recheck after each new commit.
 - No browser evidence has been obtained for the newest Tajweed changes.
-- No local full-corpus execution has been independently observed in this workflow.
+- No full scholarly-reference corpus comparison has been performed.
 - Therefore Tajweed remains actively under audit.
 
 ## Next autonomous priorities
-1. Obtain/perform the full-corpus execution/anomaly pass through available evidence.
-2. Inspect every suspicious Qalqalah assimilation family for false positives and false negatives.
-3. Review bare/implicit-sukun assumptions for noon/meem/qalqalah against actual Uthmani Unicode unit structure.
-4. Review Madd final-word heuristics against corpus reality.
-5. Audit rule overlap/precedence diagnostics.
-6. Audit the course/classifier/source registry contract.
-7. Keep each discovered issue in the durable ledger before considering it closed.
-8. Only after Tajweed reaches an evidence-backed stopping point, resume Mushaf/browser hostile review and the broader deslopification loop.
+1. Run `npm run check` / Node tests and wait for completed CI results; treat queued jobs as unknown.
+2. Decide and test display/inspector handling of the four known same-unit overlap cases (ledger row 88).
+3. Resolve or explicitly scope the reading-profile-dependent `ٱرۡكَب مَّعَنَا` Qalqalah case (row 80) without broad suppression.
+4. Continue the hostile review of Madd final-word, ornament, noon/meem and Unicode-unit boundaries.
+5. Audit course/classifier/source-registry consistency and the quality/depth of lesson sequencing.
+6. Obtain browser evidence for the Mushaf and Tajweed practice at mobile and desktop sizes, Arabic/English, light/dark.
+7. Keep each new finding in the durable issue ledger before considering it closed.
+8. Only after Tajweed reaches an evidence-backed stopping point, resume the broader deslopification loop.
 
 ## Release discipline
 Do not bump v5.17.136 while these changes remain unverified. Preserve the release lineage. When a later release is actually verified, update:
@@ -205,5 +206,5 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - PR #21 changes this from unconditional matching to conservative context-aware tagging: standalone Lafẓ al-Jalālah receives the app's heavy tag only at the first semantic word or when the preceding semantic word's final pronunciation context explicitly signals fatḥah/ḍammah; attached prefix forms inspect the prefix vowel, so بِـ / لِـ are not marked heavy. This app has no separate tarqiq span/color, so light or uncertain cases remain uncolored.
 - Semantic lookbehind uses the same ornament-aware word indices as lookahead, so a standalone waqf/sajdah symbol must not turn the previous context into an unknown word.
 - Regression cases have been added/updated for بِسْمِ ٱللَّهِ, initial ٱللَّهُ, قَالَ ٱللَّهُ, وَٱللَّهِ, فِي ٱللَّهِ, بِٱللَّهِ, and لِلَّهِ.
-- Durable docs/OPEN-ISSUES.md row 87 records the issue and leaves it **OPEN**. This has not yet been executed against Node tests or the 6,236-ayah corpus; no browser or scholarly-oracle comparison has been run. Review the exact Unicode escapes in the source and wait for real execution evidence before relying on the correction.
+- Durable docs/OPEN-ISSUES.md row 87 records the issue and leaves it **OPEN**. The current classifier has since been executed across the full 6,236-ayah corpus in the isolated JavaScript runtime, and the targeted heavy/light cases pass there. Official Node/CI execution, browser evidence, and a scholarly-oracle comparison remain pending.
 - Latest relevant change commits include c5fde1086e84e790248a9df6628d2b3f8c3dab6c (escape correction), 82d66a2c9f5373e47ceb4e74e30f47aead3d80e0 (regressions), and f15bf9f5a553843a74a33d6d6dc8bde20077c0dc (comment correction). The full branch has also fixed the plural Qalqalah exception key and the unreachable lām-prefix guard. GitHub Actions has been queued for recent heads; do not interpret queue state as pass.
