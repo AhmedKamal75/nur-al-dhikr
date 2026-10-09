@@ -172,7 +172,17 @@ test('tajweedCitation exposes localized alternate source locators', () => {
   const ar = tajweedCitation('hamzat_wasl', 'ar');
   assert.equal(ar.also[0].title, TAJWEED_WORKS.tamhid.shortTitle.ar);
   assert.equal(ar.also[0].author, TAJWEED_WORKS.tamhid.author.ar);
+  assert.equal(ar.also[0].lines, 'الفصل 5');
   assert.equal(tajweedCitation('not_a_rule', 'en'), null);
+});
+
+test('citation locator labels are localized without changing English references', () => {
+  assert.equal(tajweedCitation('hamzat_wasl', 'en').also[0].lines, 'ch. 5');
+  assert.equal(tajweedCitation('hamzat_wasl', 'ar').also[0].lines, 'الفصل 5');
+  assert.equal(tajweedCitation('makharij_17', 'en').lines, 'ch. 8');
+  assert.equal(tajweedCitation('makharij_17', 'ar').lines, 'الفصل 8');
+  assert.equal(tajweedCitation('qalqalah', 'en').also[0].lines, 'qalqalah section');
+  assert.equal(tajweedCitation('qalqalah', 'ar').also[0].lines, 'باب القلقلة');
 });
 
 test('an unattributed rule is reported, not rendered blank', () => {
