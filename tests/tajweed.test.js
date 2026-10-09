@@ -466,6 +466,27 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
 /* v4.5.2 — the app-palette additions: Tafkhim + Madd 'Iwad      */
 /* ------------------------------------------------------------------ */
 
+test('divine-name recognition ignores attached Quranic ornaments', () => {
+  const hasTafkhim = (text, index = 0) =>
+    classifyAyahTajweed(text)[index].spans.some((span) => span.rule === 'tafkhim');
+
+  assert.equal(
+    hasTafkhim('ٱللَّهُۚ'),
+    true,
+    'an attached waqf mark must not hide the initial divine-name lām'
+  );
+  assert.equal(
+    hasTafkhim('قَالَ ٱللَّهُۚ', 1),
+    true,
+    'an attached waqf mark must not hide heavy-vowel context from the preceding word'
+  );
+  assert.equal(
+    hasTafkhim('فِي ٱللَّهِۚ', 1),
+    false,
+    'normalizing the ornament must preserve light context after kasrah'
+  );
+});
+
 test('tafkhim: the lām of Lafẓ al-Jalālah follows its vowel context', () => {
   // A standalone word is treated as initial recitation only when the caller says so.
   assert.ok(
