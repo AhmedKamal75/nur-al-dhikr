@@ -1,4 +1,6 @@
-# Tajweed full-corpus execution and anomaly report — 2026-10-09
+# Tajweed full-corpus execution and anomaly report — historical run (2026-10-09)
+
+> **Current-tree warning (2026-10-09):** The detailed totals below are for a pre-PR-24 snapshot with 21 rule IDs, not current main. Current main is at classifier blob `be8ec542139394050bed67caa5c44230ebe0c7e1` and registers 22 rule IDs including `madd_4_6`. Its complete 6,236-ayah execution has **not** yet been recorded. The merge commit itself states five deterministic gate failures remained; the associated Node/accessibility/browser jobs were still queued on the last check. Do not present the older span totals as current validation.
 
 **Status:** the all-surah classifier execution/invariant gate was completed in an isolated JavaScript runtime. The repository's Node test runner, GitHub Actions jobs, browser matrix, and a scholarly reference comparison remain unverified.
 
