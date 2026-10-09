@@ -24,10 +24,10 @@ User explicitly approved keeping Tajweed active until a full-corpus execution/an
 
 The current branch classifier has now been executed across all 114 bundled Quran JSON files / 6,236 ayahs in the available JavaScript tool runtime. The durable result is `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
 
-- 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
+- Latest classifier content SHA: `44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
 - Zero raw-token-count mismatches, bad one-based word indices, unknown rule IDs, invalid span offsets, duplicate exact spans, file-fetch failures, or JSON parse failures were observed.
 - Four same-written-unit collisions were identified and categorized; three implicit/no-explicit-mark Qalqalah spans were reviewed, of which two are ayah-final pause cases and one (`ٱرۡكَب مَّعَنَا`, 11:42) remains reading-profile-sensitive.
-- This is direct execution of the fetched classifier source in an isolated JavaScript runtime, **not** `npm run check`, the Node test runner, CI, browser/device execution, or an authoritative scholarly comparison.
+- The existing `tests/tajweed.test.js` was additionally run through a synchronous in-tool shim: 26/26 passed. This is useful execution evidence, but it is **not** `node --test`; CI, browser/device execution, and an authoritative scholarly comparison remain unverified. The full corpus run is direct execution of the fetched classifier source, not `npm run check`.
 
 Remaining gate before Tajweed can be called sufficiently verified:
 - run the repository's official Node/lint/format/data checks and obtain completed CI jobs;
@@ -56,6 +56,8 @@ The prior broad heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as 
 
 - suppress same-letter assimilation only when the following same consonant carries explicit shadda;
 - suppress the supported dāl→tāʾ boundary when the following tāʾ carries explicit shadda;
+- suppress cross-word Qāf→Kāf only when the next kāf carries explicit shadda; bare adjacency is not enough;
+- exempt Muqaṭṭaʿāt only when the token is one of the known opening-letter skeletons and its marks are absent or madda-only. An explicit sukun/sukun-alt must not be hidden by the skeleton match.
 - suppress exact intra-word spellings `بَسَطْتَ`, `أَحَطْتُ`, `فَرَّطْتُ`, `فَرَّطْتُم`, and `نَخْلُقكُّم`.
 
 Do **not** describe bāʾ→mīm as a generally suppressed family: the full-corpus run still emits Qalqalah on the bāʾ in `ٱرۡكَب مَّعَنَا` (11:42). This remains an open, reading-profile-sensitive case; without a declared reading profile and source-backed decision, do not broaden the suppression rule. The other two no-explicit-mark spans in the full-corpus sweep are end-of-ayah pause cases: `فَٱرۡغَب` (94:8) and `وَٱقۡتَرِب۩` (96:19).
@@ -66,6 +68,10 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 - Row 78: Tajweed course corrupted Arabic copy — resolved on main, next release.
 - Row 79: Halqi Izhar — reopened during deep audit previously; must remain truthful until runtime + full-corpus evidence establish closure.
 - Row 80: **Tajweed Qalqalah false positives at assimilation boundaries — OPEN, deep-audit follow-up.**
+- Row 86: **Lam Shamsiyyah after vocalized lām-prefix — OPEN pending official tests/browser evidence.**
+- Row 87: **Lām al-Jalālah heavy/light context — OPEN pending official tests/browser evidence and source comparison.**
+- Row 88: **Same-unit multi-rule collisions hidden by painter/inspector — OPEN.**
+- Row 89: **Muqaṭṭaʿāt exemption masking explicit sukun — corrected on PR #21; OPEN pending official tests and reading-scope review.**
   - Recorded on the Tajweed branch.
   - Do not close merely because regression tests exist.
 
@@ -81,7 +87,8 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 - Corpus-sweep diagnostics include rule counts, duplicate-span detection, and multiple-rule same-unit diagnostics.
 
 ## Verification status
-- The isolated JavaScript-runtime corpus run is complete and documented; do not relabel it as the official Node test suite.
+- The isolated JavaScript-runtime corpus run is complete and documented on classifier SHA `44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555`; all 6,236 ayahs passed structural invariants.
+- The current `tests/tajweed.test.js` passed 26/26 in an isolated compatibility shim; do not relabel this as Node's native test runner.
 - The most recently checked GitHub Actions run was queued, not passing. Recheck after each new commit.
 - No browser evidence has been obtained for the newest Tajweed changes.
 - No full scholarly-reference corpus comparison has been performed.
@@ -208,3 +215,18 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Regression cases have been added/updated for بِسْمِ ٱللَّهِ, initial ٱللَّهُ, قَالَ ٱللَّهُ, وَٱللَّهِ, فِي ٱللَّهِ, بِٱللَّهِ, and لِلَّهِ.
 - Durable docs/OPEN-ISSUES.md row 87 records the issue and leaves it **OPEN**. The current classifier has since been executed across the full 6,236-ayah corpus in the isolated JavaScript runtime, and the targeted heavy/light cases pass there. Official Node/CI execution, browser evidence, and a scholarly-oracle comparison remain pending.
 - Latest relevant change commits include c5fde1086e84e790248a9df6628d2b3f8c3dab6c (escape correction), 82d66a2c9f5373e47ceb4e74e30f47aead3d80e0 (regressions), and f15bf9f5a553843a74a33d6d6dc8bde20077c0dc (comment correction). The full branch has also fixed the plural Qalqalah exception key and the unreachable lām-prefix guard. GitHub Actions has been queued for recent heads; do not interpret queue state as pass.
+
+
+### Autonomous checkpoint — 2026-10-09: test-harness failures and second corpus pass
+
+- Executing the existing Tajweed unit file in an isolated JS harness surfaced four issues. They were investigated individually rather than dismissed as harness noise.
+- Fixed the Muqaṭṭaʿāt bypass so a qāf-with-explicit-sukun token cannot be mistaken for the bare opening-letter name qāf. Known opening-letter tokens are exempt only when marks are absent or lengthening-only.
+- Added explicit-shadda Qāf→Kāf assimilation handling. The regression contract requires qāf+sukun before kāf to retain Qalqalah with no shadda and suppress it when the following kāf has explicit shadda. Treat that as a narrowly gated behavior needing official test and reading-profile review, not as general letter adjacency.
+- Fixed the lām-prefix regression's manually added test string, which had double-escaped Unicode sequences; the original positive tests used the correct actual text.
+- Corrected the isolated low-Uthmani-iqlab test to assert the presence of iqlab rather than assuming it is the first span when an earlier same-word mīm can legitimately emit its own rule.
+- Updated the Lām al-Jalālah test: an initial standalone word is explicitly marked as initial context; a wāw prefix with fatḥah remains heavy; bi-/li-prefix forms with kasrah are not labelled heavy. The classifier has no separate tarqīq span/color, so these remain uncolored.
+- Fixed the hatatta test fixture's initial letter to hamza-on-alif (U+0623), matching the intended no-Qalqalah lexical key.
+- Latest source/test pair: classifier 44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555; test file blob 0c8482534b5344a377b8405bece2b5efe8af31b0. Isolated unit harness reports **26/26 pass**.
+- Full corpus was re-run on classifier SHA 44a1b35af47b9c53b14d6ca59eb8e9f4f0cc8555 after those source fixes. Totals remain 114 files / 6,236 ayahs / 104,558 spans, all 21 rule IDs reachable, zero structural invariant failures. Same-unit collision inventory and the three no-explicit-mark Qalqalah cases remain unchanged.
+- Durable report: docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md; issue ledger rows 80, 86–89 remain open to the exact degree described there.
+- Current PR remains an implementation candidate only. Check Actions again on the newest PR head; do not merge or bump v5.17.136 based on the in-tool shim or isolated runtime.
