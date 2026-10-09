@@ -1067,6 +1067,16 @@ function tajweedSourceLine(ruleId, lang) {
       `<div class="tajweed-legend__caveat">${escapeHTML(c.caveat[lang] || c.caveat.en)}</div>`
     );
   }
+  for (const source of c.also || []) {
+    const label = lang === 'ar' ? 'مرجع إضافي' : 'Additional source';
+    const openLabel = lang === 'ar' ? 'فتح المصدر' : 'Open source';
+    const link = source.url
+      ? ` <a class="tajweed-legend__source-link" href="${escapeHTML(source.url)}" target="_blank" rel="noopener noreferrer">${openLabel}</a>`
+      : '';
+    parts.push(
+      `<div class="tajweed-legend__source">${escapeHTML(label)}: ${escapeHTML(source.title)} — ${escapeHTML(source.author)}${link}</div>`
+    );
+  }
   return parts.join('');
 }
 
