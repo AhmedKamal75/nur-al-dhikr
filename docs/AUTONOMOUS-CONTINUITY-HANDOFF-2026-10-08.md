@@ -521,3 +521,17 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Direct execution of the exact `tajweedSourceLine()` function from `js/views/tafsirPanel.js` (blob `b1ee333644a0a6343e1bf926a13396d112f37744`) with the real current `tajweedCitation()` helper produced all expected outputs: English `ch. 5`, Arabic `الفصل 5`, Arabic `باب القلقلة`, no English locator leakage in Arabic output, and escaped HTML. This is isolated source execution, not the Node runner or browser.
 - The current citation registry test blob `28822b95814520baa8aae23ba7f215ad5ad20055` passed 12/12 in the isolated synchronous harness against runtime mirror `f58ecd242a90d9e9e7f21647b6c8de7539ab06f7`, canonical JSON `607c221d95138112ce507733e466e7ac1d9c3d11`, and classifier `ba3d9c28ce0952f83cf3bfbc0ee0d6898637e65a`. Not native Node/CI.
 - Row 94 remains OPEN for native and Chromium wrapping/layout. Row 81 remains OPEN because the app has no declared qirāʾah/tarīq selector; the source supports only a route-scoped conclusion for ٱرۡكَبْ مَّعَنَا, not a universal rule.
+
+
+## 06:14Z continuation — lesson example references validated against actual surah counts
+
+- **New finding:** the guided-lesson pool filter used only global bounds and could accept a nonexistent reference such as 114:286. `js/domain/tajweedLessons.js` now requires metadata-backed per-surah ayah counts and fails closed when metadata is unavailable. `js/app/handlers/quran.js` calls shared `ensureQuranMeta()` before obtaining lesson examples; the helper receives the metadata already used by the Qur'an reader.
+- Current source blobs: lesson helper `15d399c56d8584c6cc7569711048fc81868ec567`; regression tests `8bab7d8e05ff13431d7b3786ed769a09c063b381`; handler `18d090f6d5e3fbef56c9db542b0b12d1d4a6b1d4`; canonical `quran-meta.json` `44ce73c40da6123aa1497ea884b02394e3d22675`.
+- Five pure test cases passed **5/5** in an isolated synchronous harness. Explicit checks confirmed 114:286 is rejected, 114:6 is accepted, and missing/empty metadata produces no refs. This was not native `node:test`.
+- Independently scanned the shipped `data/tajweed-practice.json` schema 2.0 pool against canonical metadata: **44,933** entries across three levels and all 20 rule pools; **zero invalid surah/ayah references** today. The change protects against future or malformed pool data, not an observed defect in the current corpus.
+- Added issue **96 — Tajweed lesson examples can reference nonexistent ayahs**, status OPEN, and reconciled the ledger to **92 rows / 38 OPEN / 43 OPEN-or-PROPOSED**. The ledger does not claim completion.
+- This work changes no sacred text, ayah-count data, classifier rule logic, or release-version markers. Browser verification of the lesson modal and native Node/CI results remain gates.
+
+### Current CI boundary
+
+At the last live check before this source/documentation wave, PR #27 head `79dea611be039ace163d83b0cd10550f88688d5e` still had **12/12 checks queued, 0 completed**. Documentation and code commits have since advanced the branch. Re-fetch the exact current PR HEAD and inspect its checks before stating any result; queueing is not passing.
