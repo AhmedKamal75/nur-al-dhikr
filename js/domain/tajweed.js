@@ -489,10 +489,10 @@ export const TAJWEED_RULES = Object.freeze([
     id: 'madd_4_6',
     color: '#B71C1C',
     family: 'madd',
-    name: { en: 'Madd of ʿAyn (4 or 6 counts)', ar: 'مد حرف العين (أربع أو ست حركات)' },
+    name: { en: 'Madd al-Līn of ʿAyn (4 or 6)', ar: 'مد اللين في حرف العين (أربع أو ست حركات)' },
     desc: {
-      en: 'In the Muqaṭṭaʿāt openings, the letter ʿayn has a reported 4- or 6-count length. The app identifies the rule but does not choose a duration.',
-      ar: 'في فواتح السور، لحرف العين وجه أربع أو ست حركات. يحدد التطبيق الحكم ولا يختار مقدار الأداء.',
+      en: 'In the Muqaṭṭaʿāt openings, ʿayn is treated as Madd al-Līn and may be read for 4 or 6 counts. The app marks it separately and does not choose a duration.',
+      ar: 'في فواتح السور، يُمدّ حرف العين مدَّ لينٍ أربعًا أو ست حركات. يميّزه التطبيق ولا يختار مقدار الأداء.',
     },
   },
 ]);
