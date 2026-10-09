@@ -133,3 +133,14 @@ The current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` was execu
 - Exactly **four equal-range pairs** were found, matching the collision list above. All four are the known ghunnah + idgham cases.
 - This supports the current painter's deterministic “first enabled span colors the glyph” behavior for the corpus as it exists today: the only observed overlaps have identical ranges. It does **not** prove synthetic/future classifier output can never produce partial overlaps, nor does it replace browser checks of the inspector and toggles.
 - A test-level follow-up remains worthwhile: explicitly define the painter contract for partial overlaps (either split glyph runs or reject/diagnose them), rather than silently skipping an overlapping span without a visible diagnostic. The corpus currently provides no partial-overlap example to force a policy.
+
+
+
+## Runtime citation-mirror parity audit — 2026-10-09 05:10Z
+
+- Canonical registry: `data/tajweed-sources.json` blob `dbc569060d76b7d0126a0916290353ac32289292`.
+- Runtime registry after correction: `js/domain/tajweedSources.js` blob `6b34dd48f4b38e0acfc450a3ea6e619b17da25d4`.
+- Finding: nine `also` entries had been flattened from full citation objects (`work`, `lines`, `review`) to bare work-ID strings. A prior partial parity test did not compare `also`, so it missed this source-locator loss.
+- Correction: all nine runtime entries now preserve the full alternate-citation objects. `tests/tajweed-sources.test.js` now deep-compares the complete runtime `TAJWEED_SOURCES` and `TAJWEED_WORKS` structures to the canonical JSON, including nested metadata.
+- Verification: the current JS module was evaluated in an isolated JavaScript runtime; canonicalized full-object comparison passed for all **28 rule entries and 4 works**. This is a direct parity execution, not the native Node test or CI result.
+- Native verification remains pending. Do not close ledger row 92 until `npm run check`/native tests pass on the current source.
