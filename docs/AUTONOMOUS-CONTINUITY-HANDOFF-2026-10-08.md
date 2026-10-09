@@ -187,3 +187,13 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - `docs/OPEN-ISSUES.md` row 80 now records this finding and the correction while remaining **OPEN** pending actual execution and full-corpus anomaly review.
 - The fix is on `fix/tajweed-semantic-lookahead-2026-10-08`, under PR #21. Formal release remains v5.17.136; the PR is not being merged based on static inspection alone.
 
+
+### Autonomous checkpoint — 2026-10-09: unreachable lām-prefix branch
+
+- A second static control-flow defect was found in the lām-prefix Lam Shamsiyyah addition. The classifier's outer guard admitted only an alif/alif-wasla before the article lām, making the inner `prev.base === LAM` exception impossible to reach for `لِلظَّالِمِينَ` and `لِلطَّآئِفِينَ`.
+- Fixed the outer guard to allow the article lām at index 1 when the preceding lām-prefix is vocalized; removed the now-redundant dead inner clause.
+- Strengthened `tests/tajweed.test.js` so the lām-prefix regression additionally requires a `lam_shamsiyyah` span starting at UTF-16 offset 2 and slicing to the **second lām**. This prevents a future unrelated match from satisfying the test.
+- `docs/OPEN-ISSUES.md` row 86 now records the actual dead-branch cause and the source-level correction; it remains **OPEN** pending test execution, full-corpus review, and browser evidence.
+- Relevant source/test commits: `a16e159624947cfb369cd174939fcde8387cf210` (classifier) and `bf47c32fd06b24575c14066e4391548a1adc4ba5` (regression test). The plural `فَرَّطتُمۡ` exact-key correction is in `633c57dd829a705c470304ebfadc789995c976e9`; the handoff/ledger checkpoints are also on this PR branch.
+- Do not infer test failure/pass from this static review: GitHub Actions remains queued at the last check, and no local runtime execution is available as evidence yet.
+
