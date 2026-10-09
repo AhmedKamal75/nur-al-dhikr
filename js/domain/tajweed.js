@@ -365,7 +365,7 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'plain',
     name: { en: 'Izhar Shafawi', ar: 'الإظهار الشفوي' },
     desc: {
-      en: 'Meem sakinah is pronounced plainly — left uncolored by this app's presentation convention.',
+      en: "Meem sakinah is pronounced plainly — left uncolored by this app's presentation convention.",
       ar: 'إظهار الميم الساكنة — بلا لون كما في المصحف المعياري.',
     },
   },
