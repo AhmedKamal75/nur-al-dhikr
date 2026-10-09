@@ -21,6 +21,7 @@ import { TAJWEED_RULES, TAJWEED_FAMILIES } from '../js/domain/tajweed.js';
 import {
   TAJWEED_SOURCES,
   TAJWEED_WORKS,
+  tajweedCitation,
   uncitedTajweedRules,
 } from '../js/domain/tajweedSources.js';
 
@@ -169,6 +170,19 @@ test('an unattributed rule is reported, not rendered blank', () => {
   // An unknown id must return null so a test can see it, not an empty string
   // that renders as a tidy blank line.
   assert.deepEqual(uncitedTajweedRules(['madd_2', 'not_a_rule']), ['not_a_rule']);
+});
+
+test('the ʿayn citation exposes its secondary source to the Mushaf legend', () => {
+  const citation = tajweedCitation('madd_4_6', 'en');
+  assert.ok(citation);
+  assert.equal(citation.also.length, 1);
+  assert.equal(citation.also[0].title, 'al-Madd wa-l-Qasr (Egyptian Ministry of Awqaf)');
+  assert.equal(citation.also[0].author, "A. D. al-Sayyid Isma'il Ali Sulayman");
+  assert.equal(
+    citation.also[0].url,
+    'https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1'
+  );
+  assert.equal(tajweedCitation('madd_4_6', 'ar').also[0].title, 'المد والقصر (وزارة الأوقاف المصرية)');
 });
 
 test('Madd al-Lin of ʿAyn cites the Tuhfat verse naming its two faces', () => {
