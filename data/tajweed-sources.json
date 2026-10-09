@@ -60,6 +60,21 @@
     "en": "Reference work used here for the qalqalah letter-count dispute.",
     "ar": "مرجع مستخدَم هنا في خلاف عدد حروف قلقلة."
    }
+  },
+  "madd-wa-qasr": {
+   "author": {
+    "en": "A. D. al-Sayyid Isma'il Ali Sulayman",
+    "ar": "أ. د. السيد إسماعيل علي سليمان"
+   },
+   "shortTitle": {
+    "en": "al-Madd wa-l-Qasr (Egyptian Ministry of Awqaf)",
+    "ar": "المد والقصر (وزارة الأوقاف المصرية)"
+   },
+   "note": {
+    "en": "Official Egyptian Ministry of Awqaf article. Its section on the opening letters describes the 4/6-count exception for ʿayn.",
+    "ar": "مقال رسمي لوزارة الأوقاف المصرية. يذكر قسم أحكام الحروف في أوائل السور استثناء العين بمقدار أربع أو ست حركات."
+   },
+   "url": "https://awkafonline.gov.eg/content-sections/116/5024/المد-والقصر"
   }
  },
  "rules": {
@@ -147,10 +162,10 @@
    "topic": "mim-sakinah"
   },
   "izhar": {
-    "work": "tuhfat-al-atfal",
-    "lines": "6-13",
-    "review": "sourced",
-    "topic": "nun-sakinah"
+   "work": "tuhfat-al-atfal",
+   "lines": "6-13",
+   "review": "sourced",
+   "topic": "nun-sakinah"
   },
   "izhar_shafawi": {
    "work": "tuhfat-al-atfal",
@@ -174,117 +189,117 @@
     "ar": "خمسة أحرف أم ستة؟ أضاف الجباري الهمزة، والسيباويه التاء، والمبرد الكاف، ورفض الجمهور هذه الثلاثة. أما درجات القلقلة فتقال ٢ أو ٣ أو ٤، والأمر في الشدة لا في الصوت."
    }
   },
-   "tafkhim": {
-    "work": "jazariyya",
-    "lines": "34-56",
-    "review": "sourced",
-    "topic": "sifat"
-   },
-   "makharij_17": {
-    "work": "tamhid",
-    "lines": "ch. 8",
-    "review": "contested",
-    "also": [
-     {
-      "work": "jazariyya",
-      "lines": "9",
-      "review": "sourced"
-     }
-    ],
-    "topic": "makharij",
-    "label": {
-     "en": "17 — Khalil ibn Ahmad, adopted by Ibn al-Jazari",
-     "ar": "١٧ — الخليل بن أحمد، واعتمده ابن الجزري"
-    },
-    "caveat": {
-     "en": "Seventeen articulation points, keeping al-jawf as a real makhraj: jawf 1, halq 3, lisan 10, shafatan 2, khayshum 1. Ibn al-Jazari states his choice in al-Muqaddima v. 9, seventeen on the view of whoever has tested it. Two other counts are taught in this course, 16 and 14, and no count is this app's default.",
-     "ar": "سبعة عشر مخرجًا، مع إبقاء الجوف مخرجًا حقيقيًّا: الجوف ١ والحلق ٣ واللسان ١٠ والشفتان ٢ والخيشوم ١. واختارها ابن الجزري في المقدمة في البيت ٩. ويُدرَّس في هذه الدورة عددان آخران، ١٦ و١٤، وليس أي عدد هو المعتمَد في التطبيق."
+  "tafkhim": {
+   "work": "jazariyya",
+   "lines": "34-56",
+   "review": "sourced",
+   "topic": "sifat"
+  },
+  "makharij_17": {
+   "work": "tamhid",
+   "lines": "ch. 8",
+   "review": "contested",
+   "also": [
+    {
+     "work": "jazariyya",
+     "lines": "9",
+     "review": "sourced"
     }
+   ],
+   "topic": "makharij",
+   "label": {
+    "en": "17 — Khalil ibn Ahmad, adopted by Ibn al-Jazari",
+    "ar": "١٧ — الخليل بن أحمد، واعتمده ابن الجزري"
    },
-   "makharij_16": {
-    "work": "tamhid",
-    "lines": "ch. 8",
-    "review": "contested",
-    "topic": "makharij",
-    "label": {
-     "en": "16 — Sibawayh and al-Shatibi: al-jawf deleted",
-     "ar": "١٦ — سيبويه والشاطبي: إسقاط الجوف"
-    },
-    "caveat": {
-     "en": "Sixteen: al-jawf is deleted and its three letters redistributed, alif to the halq, ya to mid-tongue, waw to the lips, and many followed him therein, among them al-Shatibi. The 17-count and the 14-count are taught alongside it, and no count is this app's default.",
-     "ar": "ستة عشر: يُسقَط مخرج الجوف وتُوزَّع حروفه على بقية المخارج، فالألف من الحلق والياء من وسط اللسان والواو من الشفتين، وتابعه على ذلك كثير منهم الشاطبي. ويُدرَّس معه العددان ١٧ و١٤، وليس أي عدد هو المعتمَد في التطبيق."
-    }
+   "caveat": {
+    "en": "Seventeen articulation points, keeping al-jawf as a real makhraj: jawf 1, halq 3, lisan 10, shafatan 2, khayshum 1. Ibn al-Jazari states his choice in al-Muqaddima v. 9, seventeen on the view of whoever has tested it. Two other counts are taught in this course, 16 and 14, and no count is this app's default.",
+    "ar": "سبعة عشر مخرجًا، مع إبقاء الجوف مخرجًا حقيقيًّا: الجوف ١ والحلق ٣ واللسان ١٠ والشفتان ٢ والخيشوم ١. واختارها ابن الجزري في المقدمة في البيت ٩. ويُدرَّس في هذه الدورة عددان آخران، ١٦ و١٤، وليس أي عدد هو المعتمَد في التطبيق."
+   }
+  },
+  "makharij_16": {
+   "work": "tamhid",
+   "lines": "ch. 8",
+   "review": "contested",
+   "topic": "makharij",
+   "label": {
+    "en": "16 — Sibawayh and al-Shatibi: al-jawf deleted",
+    "ar": "١٦ — سيبويه والشاطبي: إسقاط الجوف"
    },
-   "makharij_14": {
-    "work": "tamhid",
-    "lines": "ch. 8",
-    "review": "contested",
-    "topic": "makharij",
-    "label": {
-     "en": "14 — al-Farra, Qutrub, al-Jarmi, Ibn Kayyan: dhulqiyyah merged",
-     "ar": "١٤ — الفراء وقطرب والجرمي وابن كيّان: جمع الذلقية"
-    },
-    "caveat": {
-     "en": "Fourteen: al-jawf deleted as Sibawayh did, and the tongue's makharij made eight, because lam, nun and ra are put in one makhraj. That is the way of Qutrub, al-Jarmi, al-Farra and their followers. Taught alongside 17 and 16, and no count is this app's default.",
-     "ar": "أربعة عشر: يُسقَط الجوف كما فعل سيبويه، وتُجعَل مخارج اللسان ثمانية لأن اللام والنون والراء من مخرج واحد، وهو مذهب قطرب والجرمي والفراء ومن تبعهم. ويُدرَّس مع العددين ١٧ و١٦، وليس أي عدد هو المعتمَد في التطبيق."
-    }
+   "caveat": {
+    "en": "Sixteen: al-jawf is deleted and its three letters redistributed, alif to the halq, ya to mid-tongue, waw to the lips, and many followed him therein, among them al-Shatibi. The 17-count and the 14-count are taught alongside it, and no count is this app's default.",
+    "ar": "ستة عشر: يُسقَط مخرج الجوف وتُوزَّع حروفه على بقية المخارج، فالألف من الحلق والياء من وسط اللسان والواو من الشفتين، وتابعه على ذلك كثير منهم الشاطبي. ويُدرَّس معه العددان ١٧ و١٤، وليس أي عدد هو المعتمَد في التطبيق."
+   }
+  },
+  "makharij_14": {
+   "work": "tamhid",
+   "lines": "ch. 8",
+   "review": "contested",
+   "topic": "makharij",
+   "label": {
+    "en": "14 — al-Farra, Qutrub, al-Jarmi, Ibn Kayyan: dhulqiyyah merged",
+    "ar": "١٤ — الفراء وقطرب والجرمي وابن كيّان: جمع الذلقية"
    },
-   "sifat_17": {
-    "work": "jazariyya",
-    "lines": "19-26",
-    "review": "contested",
-    "topic": "sifat",
-    "label": {
-     "en": "17 — Ibn al-Jazari: ten with opposites, seven without",
-     "ar": "١٧ — ابن الجزري: عشر لها ضد وسبع لا ضد لها"
-    },
-    "caveat": {
-     "en": "Seventeen sifat, ten with opposites and seven without, as counted for Ibn al-Jazari in al-Wajiz (al-Muqaddima vv. 19-26). The reason given for seventeen is parity: so that the number of sifat would be seventeen, like the number of makharij. Others count differently: 18 counting al-tawassut as its own sifah, 20 adding al-khafa and al-ghunnah, and 44 with Makki ibn Abi Talib. No count is this app's default.",
-     "ar": "سبع عشرة صفة، عشر لها ضد وسبع لا ضد لها، كما عدّها الوجيز لابن الجزري في المقدمة في الأبيات ١٩-٢٦. وسبب السبعة عشر المحاذاة: ليكون عدد الصفات سبع عشرة مثل عدد مخارج الحروف. ويعدّ غيره على خلاف ذلك: ١٨ بعدّ التوسط صفة مستقلة، و٢٠ بإضافة الخفاء والغنة، و٤٤ عند مكي بن أبي طالب. وليس أي عدد هو المعتمَد في التطبيق."
-    }
+   "caveat": {
+    "en": "Fourteen: al-jawf deleted as Sibawayh did, and the tongue's makharij made eight, because lam, nun and ra are put in one makhraj. That is the way of Qutrub, al-Jarmi, al-Farra and their followers. Taught alongside 17 and 16, and no count is this app's default.",
+    "ar": "أربعة عشر: يُسقَط الجوف كما فعل سيبويه، وتُجعَل مخارج اللسان ثمانية لأن اللام والنون والراء من مخرج واحد، وهو مذهب قطرب والجرمي والفراء ومن تبعهم. ويُدرَّس مع العددين ١٧ و١٦، وليس أي عدد هو المعتمَد في التطبيق."
+   }
+  },
+  "sifat_17": {
+   "work": "jazariyya",
+   "lines": "19-26",
+   "review": "contested",
+   "topic": "sifat",
+   "label": {
+    "en": "17 — Ibn al-Jazari: ten with opposites, seven without",
+    "ar": "١٧ — ابن الجزري: عشر لها ضد وسبع لا ضد لها"
    },
-   "sifat_18": {
-    "work": "jazariyya",
-    "lines": "19-26",
-    "review": "contested",
-    "topic": "sifat",
-    "label": {
-     "en": "18 — al-Amid reports Ibn al-Jazari and the majority: al-tawassut counted",
-     "ar": "١٨ — العميد عن ابن الجزري والجمهور: عدّ التوسط"
-    },
-    "caveat": {
-     "en": "Eighteen: Ibn al-Jazari and the majority, as reported in al-Amid, counting al-tawassut, between-between, as its own sifah. Al-Wajiz counts 17, ten with opposites and seven without; Ghayat al-Murid counts 20. Taught alongside them, and no count is this app's default.",
-     "ar": "ثماني عشرة: ابن الجزري والجمهور كما في العميد، بعدّ التوسط صفة مستقلة. ويعدّ الوجيز ١٧، عشرًا لها ضد وسبعًا لا ضد لها، ويعدّ غاية المريد ٢٠. تُدرَّس معهما، وليس أي عدد هو المعتمَد في التطبيق."
-    }
+   "caveat": {
+    "en": "Seventeen sifat, ten with opposites and seven without, as counted for Ibn al-Jazari in al-Wajiz (al-Muqaddima vv. 19-26). The reason given for seventeen is parity: so that the number of sifat would be seventeen, like the number of makharij. Others count differently: 18 counting al-tawassut as its own sifah, 20 adding al-khafa and al-ghunnah, and 44 with Makki ibn Abi Talib. No count is this app's default.",
+    "ar": "سبع عشرة صفة، عشر لها ضد وسبع لا ضد لها، كما عدّها الوجيز لابن الجزري في المقدمة في الأبيات ١٩-٢٦. وسبب السبعة عشر المحاذاة: ليكون عدد الصفات سبع عشرة مثل عدد مخارج الحروف. ويعدّ غيره على خلاف ذلك: ١٨ بعدّ التوسط صفة مستقلة، و٢٠ بإضافة الخفاء والغنة، و٤٤ عند مكي بن أبي طالب. وليس أي عدد هو المعتمَد في التطبيق."
+   }
+  },
+  "sifat_18": {
+   "work": "jazariyya",
+   "lines": "19-26",
+   "review": "contested",
+   "topic": "sifat",
+   "label": {
+    "en": "18 — al-Amid reports Ibn al-Jazari and the majority: al-tawassut counted",
+    "ar": "١٨ — العميد عن ابن الجزري والجمهور: عدّ التوسط"
    },
-   "sifat_20": {
-    "work": "jazariyya",
-    "lines": "19-26",
-    "review": "contested",
-    "topic": "sifat",
-    "label": {
-     "en": "20 — Ghayat al-Murid: al-khafa and al-ghunnah added",
-     "ar": "٢٠ — غاية المريد: بإضافة الخفاء والغنة"
-    },
-    "caveat": {
-     "en": "Twenty: Ghayat al-Murid, eighteen plus al-khafa, a sifah of the three madd letters and ha, plus al-ghunnah. Taught alongside 17 and 18, and no count is this app's default.",
-     "ar": "عشرون: غاية المريد، الثماني عشرة مع الخفاء وهي صفة لحروف المد الثلاثة والهاء، والغنة. تُدرَّس مع ١٧ و١٨، وليس أي عدد هو المعتمَد في التطبيق."
-    }
+   "caveat": {
+    "en": "Eighteen: Ibn al-Jazari and the majority, as reported in al-Amid, counting al-tawassut, between-between, as its own sifah. Al-Wajiz counts 17, ten with opposites and seven without; Ghayat al-Murid counts 20. Taught alongside them, and no count is this app's default.",
+    "ar": "ثماني عشرة: ابن الجزري والجمهور كما في العميد، بعدّ التوسط صفة مستقلة. ويعدّ الوجيز ١٧، عشرًا لها ضد وسبعًا لا ضد لها، ويعدّ غاية المريد ٢٠. تُدرَّس معهما، وليس أي عدد هو المعتمَد في التطبيق."
+   }
+  },
+  "sifat_20": {
+   "work": "jazariyya",
+   "lines": "19-26",
+   "review": "contested",
+   "topic": "sifat",
+   "label": {
+    "en": "20 — Ghayat al-Murid: al-khafa and al-ghunnah added",
+    "ar": "٢٠ — غاية المريد: بإضافة الخفاء والغنة"
    },
-   "sifat_44": {
-    "work": "jazariyya",
-    "lines": "19-26",
-    "review": "contested",
-    "topic": "sifat",
-    "label": {
-     "en": "44 — Makki ibn Abi Talib: many more added",
-     "ar": "٤٤ — مكي بن أبي طالب: بزيادات كثيرة"
-    },
-    "caveat": {
-     "en": "Forty-four: Makki ibn Abi Talib al-Qaysi, adding many more, as reported in al-Wajiz. The minority position, taught so the spread is complete, and no count is this app's default.",
-     "ar": "أربع وأربعون: مكي بن أبي طالب القيسي، بزيادات كثيرة كما في الوجيز. وهو قول الأقلية، ويُذكَر لتكتمل الصورة، وليس أي عدد هو المعتمَد في التطبيق."
-    }
+   "caveat": {
+    "en": "Twenty: Ghayat al-Murid, eighteen plus al-khafa, a sifah of the three madd letters and ha, plus al-ghunnah. Taught alongside 17 and 18, and no count is this app's default.",
+    "ar": "عشرون: غاية المريد، الثماني عشرة مع الخفاء وهي صفة لحروف المد الثلاثة والهاء، والغنة. تُدرَّس مع ١٧ و١٨، وليس أي عدد هو المعتمَد في التطبيق."
+   }
+  },
+  "sifat_44": {
+   "work": "jazariyya",
+   "lines": "19-26",
+   "review": "contested",
+   "topic": "sifat",
+   "label": {
+    "en": "44 — Makki ibn Abi Talib: many more added",
+    "ar": "٤٤ — مكي بن أبي طالب: بزيادات كثيرة"
    },
+   "caveat": {
+    "en": "Forty-four: Makki ibn Abi Talib al-Qaysi, adding many more, as reported in al-Wajiz. The minority position, taught so the spread is complete, and no count is this app's default.",
+    "ar": "أربع وأربعون: مكي بن أبي طالب القيسي، بزيادات كثيرة كما في الوجيز. وهو قول الأقلية، ويُذكَر لتكتمل الصورة، وليس أي عدد هو المعتمَد في التطبيق."
+   }
+  },
   "madd_2": {
    "work": "tuhfat-al-atfal",
    "lines": "35-41",
@@ -389,7 +404,14 @@
    "caveat": {
     "en": "In the Muqaṭṭaʿāt openings, ʿayn is treated as Madd al-Līn and may be read for 4 or 6 counts (six is preferred in this teaching source). This is distinct from fixed six-count Madd Lazim; the app marks it separately and does not choose a duration.",
     "ar": "في فواتح السور، يُعامل حرف العين على أنه مد لين، ويُقرأ أربعًا أو ست حركات (والست هي المقدّمة في هذا المصدر التعليمي). وهذا غير المد اللازم ذي الست حركات؛ يميّزه التطبيق ولا يختار مقدار الأداء."
-   }
+   },
+   "also": [
+    {
+     "work": "madd-wa-qasr",
+     "lines": "section: حكم الحروف الموجودة في أوائل السور",
+     "review": "sourced"
+    }
+   ]
   }
  },
  "provenance": {
