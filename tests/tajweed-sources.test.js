@@ -151,7 +151,10 @@ test('the runtime module mirrors the canonical JSON exactly', () => {
   assert.deepEqual(TAJWEED_WORKS, registry.works, 'source/work metadata drifted');
 });
 test('al-Tamhid source title matches the published Arabic title', () => {
-  assert.equal(registry.works.tamhid.shortTitle.ar, '\u0627\u0644\u062a\u0645\u0647\u064a\u062f \u0641\u064a \u0639\u0644\u0645 \u0627\u0644\u062a\u062c\u0648\u064a\u062f');
+  assert.equal(
+    registry.works.tamhid.shortTitle.ar,
+    '\u0627\u0644\u062a\u0645\u0647\u064a\u062f \u0641\u064a \u0639\u0644\u0645 \u0627\u0644\u062a\u062c\u0648\u064a\u062f'
+  );
   assert.equal(
     TAJWEED_WORKS.tamhid.shortTitle.ar,
     registry.works.tamhid.shortTitle.ar
