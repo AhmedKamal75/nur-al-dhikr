@@ -125,6 +125,19 @@ const SUN_LETTERS = new Set([
   NOON,
 ]);
 const QALQALAH_LETTERS = new Set(['\u0642', '\u0637', BEH, '\u062C', '\u062F']);
+// Exact base skeletons of the Qur'anic Muqaṭṭaʿāt tokens. Madd-bearing
+// consonants are classified as letter-name madd only inside these openings;
+// this prevents an arbitrary marked consonant elsewhere from becoming Madd Lazim.
+const MUQATTAAT_MADD_WORDS = new Set([
+  '\u0627\u0644\u0645', '\u0671\u0644\u0645',
+  '\u0627\u0644\u0645\u0635', '\u0671\u0644\u0645\u0635',
+  '\u0627\u0644\u0631', '\u0671\u0644\u0631',
+  '\u0627\u0644\u0645\u0631', '\u0671\u0644\u0645\u0631',
+  '\u0643\u0647\u064a\u0639\u0635',
+  '\u0637\u0647', '\u0637\u0633', '\u0637\u0633\u0645',
+  '\u064a\u0633', '\u0635', '\u062d\u0645', '\u0639\u0633\u0642',
+  '\u0642', '\u0646',
+]);
 // Qalqalah-bearing Muqaṭṭaʿāt opening tokens are letter-name sequences, not ordinary
 // consonant tokens carrying sukun. The raw Uthmani spelling intentionally leaves the
 // qlq-bearing component unmarked in forms such as طه / طس / طسم, so the generic
@@ -468,8 +481,18 @@ export const TAJWEED_RULES = Object.freeze([
     family: 'madd',
     name: { en: 'Madd Lazim (necessary, 6)', ar: 'المد اللازم' },
     desc: {
-      en: 'An obligatory 6-count elongation, e.g. \u0622 (alif madda).',
-      ar: 'مد لازم بمقدار ست حركات، كألف المدة (آ).',
+      en: 'A madd letter followed by an original sukoon (including a shaddah), as in ٱلضَّآلِّينَ; six counts. The letter-name madd of ʿayn has its own 4-or-6-count entry.',
+      ar: 'مد لازم بمقدار ست حركات إذا تلا حرف المد سكون أصلي أو شدة، مثل ٱلضَّآلِّينَ. ولحرف العين في الحروف المقطعة حكم مستقل بمقدار أربع أو ست حركات.',
+    },
+  },
+  {
+    id: 'madd_4_6',
+    color: '#B71C1C',
+    family: 'madd',
+    name: { en: 'Madd of ʿAyn (4 or 6 counts)', ar: 'مد حرف العين (أربع أو ست حركات)' },
+    desc: {
+      en: 'In the Muqaṭṭaʿāt openings, the letter ʿayn has a reported 4- or 6-count length. The app identifies the rule but does not choose a duration.',
+      ar: 'في فواتح السور، لحرف العين وجه أربع أو ست حركات. يحدد التطبيق الحكم ولا يختار مقدار الأداء.',
     },
   },
 ]);
@@ -763,9 +786,11 @@ export function classifyWordTajweed(
     // else (e.g. the small-high spelling on a silent plural alif like
     // وَٱسۡجُدُواْۤ) is not a letter-name and must not go red.
     const muqattaMadd =
+      MUQATTAAT_MADD_WORDS.has(baseSequence) &&
       u.diacritics.has(MADDA_ABOVE) &&
       !isMaddLetter(u, prev) &&
-      (u.base === LAM ||
+      (u.base === '\u0643' ||
+        u.base === LAM ||
         u.base === MEEM ||
         u.base === NOON ||
         u.base === '\u0633' ||
@@ -773,8 +798,13 @@ export function classifyWordTajweed(
         u.base === '\u0635' ||
         u.base === '\u0639');
     if (muqattaMadd) {
-      // Marked on a bare consonant -> a muqatta'at letter-name madd.
-      spans.push({ start: u.start, end: u.end, rule: 'madd_6' });
+      // ʿAyn is the special letter-name case with a 4- or 6-count length;
+      // do not mislabel it as a fixed six-count rule.
+      spans.push({
+        start: u.start,
+        end: u.end,
+        rule: u.base === '\u0639' ? 'madd_4_6' : 'madd_6',
+      });
     } else if (isMaddLetter(u, prev)) {
       const signaled =
         u.base === ALIF_MADDA ||
