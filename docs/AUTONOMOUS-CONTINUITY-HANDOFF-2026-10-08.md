@@ -421,3 +421,12 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Executed all current `tests/tajweed-sources.test.js` assertions in a separate isolated harness: **11/11 passed** (test blob `203bde8367582990c03440ef80b0642c2bde08f6`; canonical JSON `607c221d95138112ce507733e466e7ac1d9c3d11`; runtime mirror `2889e476ce399f52bca70697966ec49ee7635671`).
 - Complete rule/work object parity was rechecked: 28/28 rules and 4/4 works match; the Arabic title and localized alternate citations are correct. These are shim-run assertions, not native Node or CI results.
 - Exact snapshots/results are recorded in the corpus report commit `0a4871afb823ddc72d1639066c4a977d13246a58`. Native `npm run check`, CI, browser matrix, and scholarly review remain open. Keep formal release v5.17.136; no PR creation without owner request.
+
+
+
+### Final current snapshot — 2026-10-09 05:16Z
+
+- Re-ran the exact current classifier tests after formatting and metadata changes: `tests/tajweed.test.js` blob `d1bb1b04e4c1a20c5a271afb2225dece222bfe4a` against classifier `92f4fba4747024582c3334400bc6d3437732d5ef` passed **29/29** in an isolated synchronous shim.
+- Re-ran the exact current registry tests: `tests/tajweed-sources.test.js` blob `587c54ceddfb8493bfe6fe431dbff4ae43747f0c`, canonical JSON `607c221d95138112ce507733e466e7ac1d9c3d11`, runtime module `0589d00d802542f388280bebd3ef7f7f10969ff3`: **11/11** passed in the isolated shim. Full canonical/runtime parity is exact; alternate citations localize correctly and the Arabic title is fixed.
+- Citation display implementation: view blob `b1ee333644a0a6343e1bf926a13396d112f37744`; RTL-aware style in `assets/css/quran.css` blob `6affdbccbee6172e5807abce8efce2b3662b654c`. Row 94 remains open for browser review.
+- Report updated to the exact latest test hashes in commit `e1a8ab279cdbe0aadceba450036ab9c430ef595a`. These checks are not native Node/CI; the old queued Actions run belongs to a closed PR head and is not current evidence.
