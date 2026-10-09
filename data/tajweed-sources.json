@@ -385,10 +385,10 @@
    "work": "tuhfat-al-atfal",
    "lines": "47-58",
    "review": "contested",
-   "topic": "madd-lazim",
+   "topic": "madd-lin",
    "caveat": {
-    "en": "In the Muqaṭṭaʿāt opening letters, ʿayn has a reported 4- or 6-count length. This is distinct from the fixed six-count Madd Lazim label; the app marks it separately but does not choose a duration.",
-    "ar": "في الحروف المقطعة، لحرف العين وجه في المد أربع أو ست حركات. وهذا يختلف عن وسم المد اللازم ذي الست حركات؛ يميّزه التطبيق ولا يختار مقدار الأداء."
+    "en": "In the Muqaṭṭaʿāt openings, ʿayn is treated as Madd al-Līn and may be read for 4 or 6 counts (six is preferred in this teaching source). This is distinct from fixed six-count Madd Lazim; the app marks it separately and does not choose a duration.",
+    "ar": "في فواتح السور، يُعامل حرف العين على أنه مد لين، ويُقرأ أربعًا أو ست حركات (والست هي المقدّمة في هذا المصدر التعليمي). وهذا غير المد اللازم ذي الست حركات؛ يميّزه التطبيق ولا يختار مقدار الأداء."
    }
   }
  },
