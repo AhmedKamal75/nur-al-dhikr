@@ -1,11 +1,10 @@
 /**
  * tajweed-sources.test.js — no rule may be taught without a citation (v5.17.18)
  *
- * The app teaches 20 tajweed rules with a one-sentence description each and
- * no source field. A rule description is religious teaching, so AGENTS.md
- * §1.1a requires it to name where it came from. This is the cheap way to
- * satisfy that: attach a citation to each rule rather than rewriting prose
- * that was already correct.
+ * Tajweed rule definitions and study entries evolve; every user-facing
+ * rule description is religious teaching, so AGENTS.md §1.1a requires it to
+ * name where it came from. The canonical registry and runtime mirror must
+ * stay aligned, and contested source claims must explain their uncertainty.
  *
  * The registry is data/tajweed-sources.json. This test is what stops a
  * future rule from shipping unattributed — the failure that is invisible in
