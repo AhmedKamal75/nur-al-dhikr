@@ -200,8 +200,22 @@ This rerun **does validate current-source structural execution after the normali
 
 ## Current classifier unit-test rerun — 2026-10-09
 
-- Exact classifier blob: `b48dfcb6f82068195a26d7639f2a36297e8d67be`.
+- Exact classifier blob used in the latest harness: `60b9b294d91420c45eb05382c6492172f9491302`.
 - Exact test blob: `067f660834412228f8bdb3ea9d080b3124421fd7`.
 - Result: **30/30 test cases passed** in an isolated synchronous JavaScript harness, including the attached rub el-hizb/numeral divine-name regressions and all existing cases in `tests/tajweed.test.js`.
+- The classifier blob changed from the full-corpus run (`b48dfcb6f82068195a26d7639f2a36297e8d67be`) only in the exported `TAJWEED_FAMILY_VARS` mapping: custom family colors now set dedicated `--tw-user-*` overrides. `classifyAyahTajweed()` and its classification logic were not changed by that mapping edit; the full corpus was not re-run against the new exact file hash.
 - Harness method: the Node imports were removed, test registration was shimmed synchronously, and the assertions used by this file (`equal`, `ok`, `deepEqual`, `match`) were supplied by a small local strict subset. This executes the test functions but is **not** the native `node:test` runner; it cannot claim Node's complete assertion semantics or official project-gate status.
 - Required next gate: run the native `node --test` / `npm run check` and obtain a completed current-head CI result. No test is closed solely on the isolated harness.
+
+
+## Dark-paper custom-color follow-up — 2026-10-09
+
+Source review found a styling interaction beyond the classifier corpus: `applyTajweedColors()` previously set the same `--tw-*` names that night/amoled/royal-black `.mushaf-page-wrap` rules define locally. On those papers, the local palette could shadow the learner's root-level custom color even though the legend showed the custom swatch. The current candidate uses dedicated inherited `--tw-user-*` variables and resolves them before the paper/theme defaults.
+
+- Current classifier source blob: `60b9b294d91420c45eb05382c6492172f9491302`; the delta from the corpus-tested blob is the family-to-custom-property map only, not classification rules.
+- Current CSS blob: `399d6bb24526137509f9354c60449c1c9a6345e4`.
+- Current coherence-test blob: `6acea00d0accbffbca2f83c4a2538293b46b5dff`.
+- Static mapping check confirmed all 18 unique `--tw-user-*` variables are referenced by the CSS fallback layer. The coherence test pins this mapping and preserves the night/amoled/royal-black default palette.
+- The coherence test also had a stale expectation that preference filtering dropped the second of two spans on the same range. The actual intended behavior preserves all enabled classifier matches for the inspector; the painter chooses one visible span. Its test now verifies both equal-range rules can be disabled independently.
+- The existing classifier test file executed 30/30 in the isolated synchronous harness against blob `60b9...`. Static CSS and preference-filter checks passed. **None of this is native Node/CI or real-browser evidence**; the new coherence assertions still need the native test runner, and dark-paper rendering must be confirmed in Chromium before closing issue 95 in `docs/OPEN-ISSUES.md`.
+
