@@ -11,6 +11,7 @@ import {
   TAJWEED_RULES,
   TAJWEED_FAMILIES,
   tajweedRule,
+  filterSpansByPrefs,
 } from '../js/domain/tajweed.js';
 
 function rulesOf(word, opts) {
@@ -378,6 +379,21 @@ test('empty/undefined input never throws', () => {
   assert.deepEqual(classifyWordTajweed(undefined), []);
   assert.deepEqual(classifyAyahTajweed(''), []);
   assert.deepEqual(classifyAyahTajweed(undefined), []);
+});
+
+test('preference filtering preserves same-unit rule overlaps for the inspector', () => {
+  const overlaps = [
+    { start: 3, end: 4, rule: 'ghunnah' },
+    { start: 3, end: 4, rule: 'idgham_ghunnah' },
+  ];
+  assert.deepEqual(filterSpansByPrefs(overlaps, null), overlaps);
+  assert.deepEqual(filterSpansByPrefs(overlaps, { rules: { ghunnah: false } }), [
+    overlaps[1],
+  ]);
+  assert.deepEqual(
+    filterSpansByPrefs(overlaps, { rules: { idgham_ghunnah: false } }),
+    [overlaps[0]]
+  );
 });
 
 test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a legend entry', () => {
