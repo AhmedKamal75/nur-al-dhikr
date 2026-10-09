@@ -282,3 +282,11 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The issue ledger was merged from current main, preserving main's existing row 80 (`navigation-shell` load-flakiness), then porting the Tajweed rows as unique IDs 81–90. Its header now counts 86 numbered rows. The old summary totals were explicitly relabelled historical because they predate these additions; a full status recount remains due. This avoids the stale PR's duplicate row-80 collision.
 - Integration branch writes so far are source/test/docs-only. No release marker, service-worker cache version, or religious corpus text was changed. The branch is **not yet a release and has not been verified**.
 - Next: audit the newly integrated tree against current main, run native project checks through GitHub Actions if triggered, inspect CI result for the final head, then seek real Chromium evidence. Only after reviewing the final tree should a new PR be opened; PR #21 remains open and stale for now and must not be merged as-is.
+
+
+### Autonomous checkpoint — 2026-10-09 04:44Z: current-main integration PR opened
+
+- Opened draft PR **#24**, https://github.com/AhmedKamal75/nur-al-dhikr/pull/24, from `fix/tajweed-audit-v5-17-137-2026-10-09` into `main`. This is the clean integration candidate; PR #21 is still stale and should not be merged as-is.
+- Live re-fetch confirms PR #24 head `976f2dc51bb6144cd17479a569a0777b4705fb47`, base `61e26848a48dfba8540d7ce48dab22c45bd437f9`, mergeable **true**, comparison **ahead 10 / behind 0**. It is intentionally draft/unmerged pending checks and evidence.
+- GitHub Actions run **37885188489** is associated with that head and is **queued**. Jobs listed: accessibility static gates; lint/format/unit tests on Node 24; 4-viewport evidence matrix + traces; lint/format/unit tests on Node 20; browser smoke + races; cross-engine release matrix (smoke/audio/a11y). Every job was queued at the last check; there is no pass/fail result yet.
+- Keep release markers at v5.17.137. Do not claim the draft is verified just because GitHub currently says mergeable true or because the Actions jobs exist. Re-fetch PR/head after any new commit and use completed job conclusions/logs as evidence.
