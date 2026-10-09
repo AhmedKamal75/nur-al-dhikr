@@ -159,7 +159,9 @@ export function backfillTajweedPool(
   const minRows = Math.min(capRows, Math.max(0, numericOption(min, PRACTICE_POOL_MIN)));
   const onlySet = Array.isArray(only) && only.length ? new Set(only) : null;
   const addedByRule = {};
-  const surahKeys = Array.from({ length: 114 }, (_, i) => String(i + 1)).filter((key) => Object.hasOwn(docs, key));
+  const surahKeys = Array.from({ length: 114 }, (_, i) => String(i + 1)).filter((key) =>
+    Object.hasOwn(docs, key)
+  );
   for (const rule of TAJWEED_RULES) {
     if (onlySet && !onlySet.has(rule.id)) continue;
     const list = Array.isArray(byRule[rule.id]) ? byRule[rule.id] : [];
