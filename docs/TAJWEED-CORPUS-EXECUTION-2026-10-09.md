@@ -23,7 +23,7 @@
 | 96–114 | 19 | 130 | 769 | 0 | 1 |
 | **Total** | **114** | **6,236** | **104,557** | **4** | **2** |
 
-All 21 entries in the current `TAJWEED_RULES` registry were reachable in the corpus. This is 21 rule identities, not the older shorthand count of 20 in earlier handoff text.
+In the classifier snapshot used for this recorded direct run, all 21 registered `TAJWEED_RULES` entries were reachable. This is historical baseline evidence: the later PR #24 correction adds a separate `madd_4_6` rule and raises the candidate registry to 22 rule identities, so this corpus result must not be represented as a run of the current candidate.
 
 The following structural invariants had **zero observed failures across all 6,236 ayahs**:
 
@@ -69,7 +69,7 @@ The corpus sweep now expects exactly two unmarked Qalqalah spans, corresponding 
 
 Done in the isolated JavaScript runtime: all 114 JSON sources loaded; all 6,236 ayahs executed; all 21 rule IDs reached; structural invariants passed; the four overlap pairs and three unmarked Qalqalah cases were isolated and documented.
 
-Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep Tajweed rows 81–90 open according to their individual statuses; row 79 is the separate Halqi Izhar fix already present on main, and main's row 80 is the unrelated navigation-shell load-flakiness issue. The current classifier source blob is `ba7d1732190fc1a75de36b11e048fad0fb4a71f4`; the current `tests/tajweed.test.js` blob is `cdca893dc31cb963b122ffc54d25378269d35858` and passed 28 synchronous tests under an isolated shim, not native Node. The corpus sweep test blob `387e4eb1196253a5b1537109d3c33a3b289fb9bf` now asserts exactly two unmarked Qalqalah spans.
+Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep Tajweed rows 81–92 open according to their individual statuses; row 79 is the separate Halqi Izhar fix already present on main, and main's row 80 is the unrelated navigation-shell load-flakiness issue. The last directly executed classifier snapshot before the Muqaṭṭaʿāt Madd correction was `ba7d1732190fc1a75de36b11e048fad0fb4a71f4`; its 104,557-span / 21-rule result is historical and is not a run of the current candidate. The current candidate classifier blob is `8edf33ae72fdb726bdb177828588665f7e7bec9e`, and the current `tests/tajweed.test.js` blob is `052cb7e4f64a554f372d071a2777e3a9d3a86deb`; these newest changes have not been run under native Node or a fresh direct corpus execution. The earlier 28-test synchronous shim result applied to an older test snapshot, not this current file. The corpus sweep test blob `387e4eb1196253a5b1537109d3c33a3b289fb9bf` asserts all registered rule IDs are reachable and exactly two unmarked Qalqalah spans.
 
 This report records classifier execution and anomalies; it is not a claim that all Tajweed rules have been scholarly-validated or that the feature is release-ready.
 
@@ -79,3 +79,13 @@ This report records classifier execution and anomalies; it is not a claim that a
 Static review of the canonical course JSON, runtime course mirror, and course regression tests found a teaching-taxonomy defect separate from classifier span accuracy. Session `madd-obligatory` was titled “Obligatory madd / المد اللازمة” while its focus set grouped `madd_6`, `madd_iwad`, `madd_badal`, and `madd_silah`. Madd Badal is explicitly a distinct category in the corrected source registry; the classifications of Madd ʿIwaḍ and Ṣilah vary by source. The old heading therefore overgeneralized the category. The visible title now explicitly names the four categories in English and Arabic: “Madd Lāzim, Badal, ʿIwaḍ, and Ṣilah” / “المد اللازم والبدل والعوض والصلة”. The existing session ID is preserved to avoid invalidating saved course progress, and a regression pins both the bilingual title and unchanged focus set.
 
 The source caveat for `madd_6` was also clarified: the identifier denotes the six-count length, not six categories. It now says that the cited passage of Tuhfat al-Atfal describes four forms of Madd Lāzim, and warns against inferring that distinct rules grouped in one session are all Madd Lāzim. Issue ledger row 91 remains **OPEN** until native tests/CI, Arabic pedagogy review, and browser rendering are checked. These are source-level/content corrections; no independent browser or scholarly sign-off is claimed.
+
+
+## Muqaṭṭaʿāt Madd anomaly — 2026-10-09 (fresh execution pending)
+
+A further classifier/legend/source audit found two issues in the letter-name madd path:
+
+- The `madd_6` legend description used isolated `آ` (alif madda) as its example, which is misleading because that orthography can be Madd Badal; the six-count Madd Lazim example should demonstrate an original sukoon/shaddah after the madd letter. The description now uses the bundled Qur'anic spelling `ٱلضَّآلِّينَ` and explains the special ʿayn duration separately.
+- The old Muqaṭṭaʿāt path classified every marked letter in its hardcoded subset as fixed `madd_6`, omitted Kaf, and did not verify that the whole token was a known opening-letter skeleton. PR #24 adds an exact set of known Muqaṭṭaʿāt base skeletons, recognizes Kaf, and emits a distinct bilingual `madd_4_6` rule for ʿayn, whose reported duration is four or six counts. The canonical/runtime source registry and course focus now include that rule; tests cover `كهيعص`, `عسق`, and a negative isolated-Kaf case.
+
+The previous corpus totals above were measured **before** these changes. Do not extrapolate the old 104,557 span count or 21-rule reachability result to the new source. Current candidate classifier blob: `8edf33ae72fdb726bdb177828588665f7e7bec9e`. GitHub Actions is queued; a fresh full-corpus result, native Node checks, browser evidence, and scholarly/source review are still required. Ledger row 92 remains OPEN.
