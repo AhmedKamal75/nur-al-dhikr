@@ -359,3 +359,12 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Result: **zero partial/nested overlaps** anywhere in the 6,236-ayah corpus. The only intersections are the four exact equal-range collisions already listed: three `ghunnah+idgham_ghunnah`, one `ghunnah+idgham_no_ghunnah`. The report and ledger row 89 now record this.
 - This gives corpus-specific evidence for deterministic painter precedence but not a general guarantee for future/synthetic classifier output. Row 89 remains open until actual Chromium inspector/painter/rule-toggle behavior is verified; consider adding an explicit test or diagnostic contract for partial overlaps in future.
 - PR #23 remains **closed by owner**; do not reopen or create another PR without a user request. Latest branch head will be the current tip after this handoff commit. Continue preserving progress on the branch and do not merge or bump v5.17.136.
+
+
+
+### Workflow correction — 2026-10-09 05:06Z
+
+- I mistakenly opened draft PR #25 while preparing a current-main integration, despite the latest saved owner instruction above that PR #23 had been closed by the owner and no replacement PR should be created without an explicit request. I immediately closed PR #25 without merging it. This is an acknowledged workflow error; do not reopen PR #25, PR #23, or PR #21, and do not create another PR unless the owner explicitly asks.
+- The integration branch `integration/tajweed-mainline-2026-10-09` remains saved and merge-base-clean against current `main` as last compared (ahead 44, behind 0). The branch's current code and docs remain available for continued source-level review; closing the draft PR did not delete the branch.
+- At 05:05Z the integration branch's classifier had advanced to blob `92f4fba4747024582c3334400bc6d3437732d5ef`; its latest reported full-corpus run is 104,554 spans, not the earlier 104,557 snapshot. The execution report/ledger must be checked against the current exact branch head before quoting totals. Current-head GitHub Actions was still queued; no native check or browser pass is established.
+- Continue saving changes directly to the integration branch, not through a PR, unless the owner asks. Before further edits, refresh the current branch head and relevant file SHAs because other autonomous waves may have advanced this branch since the previous fetch.
