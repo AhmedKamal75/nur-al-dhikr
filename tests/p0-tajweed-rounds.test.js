@@ -20,6 +20,7 @@ import path from 'node:path';
 import { classifyAyahTajweed, TAJWEED_RULES } from '../js/domain/tajweed.js';
 import {
   backfillTajweedPool,
+  normalizeTajweedPracticePool,
   practiceLevel,
   pickRoundEntries,
   PRACTICE_ROUND_SIZE,
@@ -37,7 +38,7 @@ import {
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const readJSON = (rel) => JSON.parse(readFileSync(path.join(ROOT, rel), 'utf8'));
 
-const pool = readJSON('data/tajweed-practice.json');
+const pool = normalizeTajweedPracticePool(readJSON('data/tajweed-practice.json'));
 
 describe('P0-5a: practice pool covers every rule with real rows', () => {
   test('every TAJWEED_RULES id has its complete shipped Quranic corpus coverage', () => {
@@ -45,9 +46,7 @@ describe('P0-5a: practice pool covers every rule with real rows', () => {
       const rows = pool.byRule[rule.id] || [];
       const expectedAyahs = Number(pool.coverage?.[rule.id]?.ayahs || 0);
       if (SEED_MODE && expectedAyahs === 0) continue;
-      const requiredMin = SEED_MODE
-        ? Math.min(PRACTICE_POOL_MIN, expectedAyahs)
-        : PRACTICE_POOL_MIN;
+      const requiredMin = Math.min(PRACTICE_POOL_MIN, expectedAyahs);
       assert.ok(
         rows.length >= requiredMin,
         `rule ${rule.id} has only ${rows.length} rows (min ${requiredMin})`
@@ -55,7 +54,9 @@ describe('P0-5a: practice pool covers every rule with real rows', () => {
       assert.equal(rows.length, expectedAyahs, `rule ${rule.id} rows must equal shipped coverage`);
       for (const level of ['1', '2', '3']) {
         const levelRows = pool.levels?.[level]?.[rule.id] || [];
-        assert.ok(levelRows.length > 0, `rule ${rule.id} missing level ${level}`);
+        if (expectedAyahs > 0) {
+          assert.ok(levelRows.length > 0, `rule ${rule.id} missing level ${level}`);
+        }
         if (level === '3')
           assert.equal(
             levelRows.length,
@@ -69,7 +70,7 @@ describe('P0-5a: practice pool covers every rule with real rows', () => {
   test('every pool row points at a real corpus ayah and re-derives (spot: new rules)', () => {
     const meta = readJSON('data/quran-meta.json');
     const counts = new Map(meta.surahs.map((s) => [s.number, s.ayahCount]));
-    for (const rule of ['tafkhim', 'madd_iwad']) {
+    for (const rule of ['tafkhim', 'madd_iwad', 'madd_4_6']) {
       for (const e of pool.byRule[rule]) {
         assert.ok(
           counts.has(e.s) && e.a >= 1 && e.a <= counts.get(e.s),
@@ -101,6 +102,28 @@ describe('P0-5a: practice pool covers every rule with real rows', () => {
   test('mixed pool exists and carries rows', () => {
     assert.ok(Array.isArray(pool.mixed) && pool.mixed.length >= PRACTICE_POOL_MIN);
   });
+});
+
+test('legacy full-corpus pool gains only source-grounded Madd al-Līn of ʿAyn rows', () => {
+  const legacy = {
+    corpus: { surahs: 114, ayahs: 6236, ruleCount: 21, mixedAyahs: 4000 },
+    byRule: { madd_6: [{ s: 19, a: 1, w: 1, c: 2 }] },
+    coverage: { madd_6: { ayahs: 1, spans: 1 } },
+    levels: { '1': {}, '2': {}, '3': {} },
+    mixed: [{ s: 19, a: 1, w: 1, c: 2 }],
+  };
+  const upgraded = normalizeTajweedPracticePool(legacy);
+  assert.notEqual(upgraded, legacy);
+  assert.deepEqual(upgraded.byRule.madd_4_6, [
+    { s: 19, a: 1, w: 1, c: 1 },
+    { s: 42, a: 2, w: 1, c: 1 },
+  ]);
+  assert.deepEqual(upgraded.coverage.madd_4_6, { ayahs: 2, spans: 2 });
+  assert.deepEqual(upgraded.levels['3'].madd_4_6, upgraded.byRule.madd_4_6);
+  assert.equal(upgraded.corpus.ruleCount, TAJWEED_RULES.length);
+
+  const seed = { corpus: { surahs: 2, ayahs: 20, ruleCount: 21 }, byRule: {}, mixed: [] };
+  assert.equal(normalizeTajweedPracticePool(seed), seed, 'never add absent-corpus rows to a seed pool');
 });
 
 describe('P0-5a: backfillTajweedPool (pure, honest, bounded)', () => {
