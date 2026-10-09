@@ -1,7 +1,7 @@
 /**
  * tests/p0-tajweed-rounds.test.js — P0-5 gates (v5.3.0):
- *  1. shipped pool covers EVERY TAJWEED_RULES id with >= 5 real corpus
- *     rows (the "لا توجد آيات تدريب لهذا الحكم بعد" dead end is dead);
+ *  1. shipped pool coverage matches the current classifier without fabricating
+ *     rows when a legitimate rule has fewer than five distinct ayahs;
  *  2. new tafkhim/madd_iwad rows re-derive from the shipped classifier
  *     (no invented data — every entry is recomputable);
  *  3. backfillTajweedPool fills/only-top-ups honestly from loaded docs;
@@ -123,7 +123,11 @@ test('legacy full-corpus pool gains only source-grounded Madd al-Līn of ʿAyn r
   assert.equal(upgraded.corpus.ruleCount, TAJWEED_RULES.length);
 
   const seed = { corpus: { surahs: 2, ayahs: 20, ruleCount: 21 }, byRule: {}, mixed: [] };
-  assert.equal(normalizeTajweedPracticePool(seed), seed, 'never add absent-corpus rows to a seed pool');
+  assert.equal(
+    normalizeTajweedPracticePool(seed),
+    seed,
+    'never add absent-corpus rows to a seed pool'
+  );
 });
 
 describe('P0-5a: backfillTajweedPool (pure, honest, bounded)', () => {
