@@ -591,7 +591,19 @@ function previousWordHasHeavyFinalVowel(word) {
   return false;
 }
 function skeletonOf(word) {
-  return [...String(word)].filter((ch) => !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL).join('');
+  // Keep recognition aligned with tokenizeUnits(): the rendered Qur'anic token
+  // may carry a waqf/sajdah ornament or ayah numeral at either edge. Those marks
+  // are not pronounced letters and must not change whether the underlying word
+  // is lafẓ al-jalālah (or whether its final lām is eligible for context rules).
+  return [...String(word)]
+    .filter(
+      (ch) =>
+        !DIACRITIC_CHARS.has(ch) &&
+        ch !== TATWEEL &&
+        !WORD_ORNAMENT_CHARS.has(ch) &&
+        !ORNAMENT_DIGITS.has(ch)
+    )
+    .join('');
 }
 
 /** One-letter prefix particles that can precede the article (و ف ب ك). */
