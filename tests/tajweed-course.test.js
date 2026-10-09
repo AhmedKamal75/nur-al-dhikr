@@ -88,6 +88,15 @@ test('the runtime spine mirrors the canonical JSON', () => {
   }
 });
 
+test('madd lesson title distinguishes the categories it groups', () => {
+  const session = findSession('madd-obligatory');
+  assert.deepEqual(session.title, {
+    en: 'Madd Lāzim, Badal, ʿIwaḍ, and Ṣilah',
+    ar: 'المد اللازم والبدل والعوض والصلة',
+  });
+  assert.deepEqual(session.focus, ['madd_6', 'madd_iwad', 'madd_badal', 'madd_silah']);
+});
+
 test('every session is ordered, uniquely identified, and drivable', () => {
   const ids = allSessions().map((s) => s.id);
   assert.equal(new Set(ids).size, ids.length, 'duplicate session id');
