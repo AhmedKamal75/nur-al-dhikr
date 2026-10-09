@@ -121,3 +121,14 @@ The runtime citation registry's rule-key set was compared with the canonical JSO
 - All 114 file fetches and JSON parses succeeded. This sweep checks structural invariants and observed anomalies; it is not a scholarly gold-label comparison and cannot establish that every Tajweed classification is correct.
 
 **Still open:** current-head native `npm run check` / `node --test`, completed GitHub Actions, actual Chromium rendering and inspector behavior (EN/AR × light/dark × phone/desktop), and a trusted-source comparison for rule-level correctness.
+
+
+
+## Painter overlap audit — 2026-10-09 05:04Z
+
+The current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` was executed over the same 114-file corpus again to inspect pairwise span intersections within each word, not just exact same-range collisions.
+
+- **Zero partial/nested intersections** were found: no pair of spans with overlapping character ranges but different `start:end` boundaries.
+- Exactly **four equal-range pairs** were found, matching the collision list above. All four are the known ghunnah + idgham cases.
+- This supports the current painter's deterministic “first enabled span colors the glyph” behavior for the corpus as it exists today: the only observed overlaps have identical ranges. It does **not** prove synthetic/future classifier output can never produce partial overlaps, nor does it replace browser checks of the inspector and toggles.
+- A test-level follow-up remains worthwhile: explicitly define the painter contract for partial overlaps (either split glyph runs or reject/diagnose them), rather than silently skipping an overlapping span without a visible diagnostic. The corpus currently provides no partial-overlap example to force a policy.
