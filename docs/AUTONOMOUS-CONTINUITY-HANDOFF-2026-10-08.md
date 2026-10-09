@@ -340,3 +340,11 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - This does not close issue row 92: it still needs current-classifier full-corpus execution, official Node/CI, browser evidence, and a qualified reading-profile/source comparison. The primary Tuhfat verse's “longer preferred” and differing contemporary teaching descriptions should not be flattened into a universal claim.
 - Source used for the primary verse text: Wikisource `تحفة الأطفال`, verse 54 (`https://ar.wikisource.org/wiki/تحفة_الأطفال`). Secondary source: Egyptian Ministry of Awqaf, `المد والقصر` by A. D. al-Sayyid Isma'il Ali Sulayman (`https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1`).
 - These code/source/test updates are now committed to PR #24. Do not merge while current-head CI is queued; let the latest head's full check matrix decide the next correction wave.
+
+
+
+### Citation surfacing checkpoint — 2026-10-09 05:07Z
+
+- The new Egyptian Ministry of Awqaf reference was initially present in the registry but not surfaced by the Mushaf Tajweed legend: `tajweedCitation()` returned only the primary work, and `tajweedSourceLine()` ignored secondary sources. Corrected the full path: only secondary sources with an openable URL are exposed by the helper, and the legend now displays a bilingual “Additional source / مرجع إضافي” line with the title, author, and external link.
+- Added quiet inherited-color dotted-underlined link styling, keyboard `:focus-visible` outline, `noopener noreferrer`, and regressions for citation metadata plus CSS focus visibility. The external source URL is percent-encoded so the Arabic-string lint does not misread the URL as Latin words inside Arabic text.
+- Latest code is on PR #24. No browser proof yet; the current-head CI matrix must confirm formatting, tests, accessibility, and actual Mushaf rendering before this can be called verified.
