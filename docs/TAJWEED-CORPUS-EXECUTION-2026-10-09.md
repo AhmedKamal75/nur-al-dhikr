@@ -170,7 +170,7 @@ The following checks were executed against the exact source/test blobs below usi
 | Check | Source / fixture blob | Result |
 | --- | --- | --- |
 | Tajweed classifier unit tests | classifier `92f4fba4747024582c3334400bc6d3437732d5ef`; test `d1bb1b04e4c1a20c5a271afb2225dece222bfe4a` | **29/29 passed** |
-| Citation registry invariants and complete JSON/runtime parity | JSON `607c221d95138112ce507733e466e7ac1d9c3d11`; runtime `2889e476ce399f52bca70697966ec49ee7635671`; test `203bde8367582990c03440ef80b0642c2bde08f6` | **11/11 passed** |
+| Citation registry invariants and complete JSON/runtime parity | JSON `607c221d95138112ce507733e466e7ac1d9c3d11`; runtime `0589d00d802542f388280bebd3ef7f7f10969ff3`; test `587c54ceddfb8493bfe6fe431dbff4ae43747f0c` | **11/11 passed** |
 | Full citation/work object comparison | Same JSON/runtime blobs | **28/28 rule objects and 4/4 work objects matched exactly** |
 | Full corpus classifier execution | classifier `92f4fba4747024582c3334400bc6d3437732d5ef`; 114 bundled surah files | **6,236 ayahs; 104,554 spans; all 21 rule IDs reached; zero recorded structural invariant failures** |
 
