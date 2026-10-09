@@ -44,6 +44,77 @@ export const PRACTICE_POOL_MIN = 5;
 export const PRACTICE_POOL_CAP = 25;
 
 /**
+ * Bridge the generated v2 pool across a newly introduced rare rule.
+ *
+ * Madd al-Līn of ʿAyn occurs in two distinct ayahs in this bundled Hafs
+ * corpus: 19:1 (كٓهيعٓصٓ) and 42:2 (عٓسٓقٓ). Older generated pool files
+ * already contain these ayahs in their mixed pool via other rules, but they
+ * predate the separate madd_4_6 rule. Add only these source-grounded rows
+ * when the metadata identifies the complete 114-surah corpus. A seed pool
+ * must never receive rows for surahs it does not bundle. Rebuilding the
+ * generated artifact with scripts/build-tajweed-practice.mjs makes this
+ * compatibility bridge a no-op and is the preferred long-term state.
+ */
+const MADDAIN_AYN_CORPUS_ROWS = Object.freeze([
+  Object.freeze({ s: 19, a: 1, w: 1, c: 1 }),
+  Object.freeze({ s: 42, a: 2, w: 1, c: 1 }),
+]);
+
+export function normalizeTajweedPracticePool(pool) {
+  if (!pool || typeof pool !== 'object' || Array.isArray(pool)) return pool;
+  const corpus = pool.corpus;
+  if (Number(corpus?.surahs) !== 114 || Number(corpus?.ayahs) < 6000) return pool;
+
+  const priorRuleRows = Array.isArray(pool.byRule?.madd_4_6) ? pool.byRule.madd_4_6 : [];
+  const nextRuleRows = [...priorRuleRows];
+  const seenRuleRows = new Set(
+    nextRuleRows.map((row) => (row ? `${row.s}:${row.a}` : ''))
+  );
+  for (const row of MADDAIN_AYN_CORPUS_ROWS) {
+    const key = `${row.s}:${row.a}`;
+    if (!seenRuleRows.has(key)) {
+      nextRuleRows.push({ ...row });
+      seenRuleRows.add(key);
+    }
+  }
+
+  const priorCoverage = pool.coverage && typeof pool.coverage === 'object' ? pool.coverage : {};
+  const priorLevels = pool.levels && typeof pool.levels === 'object' ? pool.levels : {};
+  const levelRows = (size) => nextRuleRows.slice(0, size);
+  const needsRuleRows = nextRuleRows.length !== priorRuleRows.length;
+  const needsCoverage =
+    Number(priorCoverage.madd_4_6?.ayahs) !== nextRuleRows.length ||
+    Number(priorCoverage.madd_4_6?.spans) !== nextRuleRows.reduce((sum, row) => sum + Number(row?.c || 0), 0);
+  const needsLevels = ['1', '2', '3'].some(
+    (level) =>
+      !Array.isArray(priorLevels[level]?.madd_4_6) ||
+      priorLevels[level].madd_4_6.length !== nextRuleRows.length
+  );
+  if (!needsRuleRows && !needsCoverage && !needsLevels && Number(corpus.ruleCount) === TAJWEED_RULES.length) {
+    return pool;
+  }
+
+  return {
+    ...pool,
+    corpus: { ...corpus, ruleCount: TAJWEED_RULES.length },
+    byRule: { ...(pool.byRule && typeof pool.byRule === 'object' ? pool.byRule : {}), madd_4_6: nextRuleRows },
+    coverage: {
+      ...priorCoverage,
+      madd_4_6: {
+        ayahs: nextRuleRows.length,
+        spans: nextRuleRows.reduce((sum, row) => sum + Number(row?.c || 0), 0),
+      },
+    },
+    levels: {
+      ...priorLevels,
+      '1': { ...(priorLevels['1'] || {}), madd_4_6: levelRows(10) },
+      '2': { ...(priorLevels['2'] || {}), madd_4_6: levelRows(25) },
+      '3': { ...(priorLevels['3'] || {}), madd_4_6: [...nextRuleRows] },
+    },
+  };
+}
+
+/**
  * Backfill `pool.byRule` for every TAJWEED_RULES id with fewer than `min`
  * entries, scanning `surahDocs` ({ surahNumber: {ayahs:[{number,text}]}}).
  * Rules named in `only` bypass the min check (top-up mode: the session
