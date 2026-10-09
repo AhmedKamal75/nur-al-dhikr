@@ -1253,27 +1253,30 @@ export function wordUnits(word) {
 /** Every CSS variable a family's color resolves through. The runtime
  *  applier sets these on <html> so the .tajweed--* classes, the legend
  *  swatches and the practice view can never disagree. */
+/** User-selected colors live in a separate inheritance layer.
+ * Paper scopes may override the standard --tw-* palette locally; separate
+ * --tw-user-* properties let the learner's explicit choice win on every paper. */
 export const TAJWEED_FAMILY_VARS = Object.freeze({
-  silent: ['--tw-hamza-wasl', '--tw-lam-shamsiyah'],
+  silent: ['--tw-user-hamza-wasl', '--tw-user-lam-shamsiyah'],
   nasal: [
-    '--tw-ghunnah',
-    '--tw-ikhfa',
-    '--tw-iqlab',
-    '--tw-idgham-ghunnah',
-    '--tw-idgham-shafawi',
-    '--tw-ikhfa-shafawi',
+    '--tw-user-ghunnah',
+    '--tw-user-ikhfa',
+    '--tw-user-iqlab',
+    '--tw-user-idgham-ghunnah',
+    '--tw-user-idgham-shafawi',
+    '--tw-user-ikhfa-shafawi',
   ],
-  qalqalah: ['--tw-qalqalah'],
-  heavy: ['--tw-tafkhim'],
+  qalqalah: ['--tw-user-qalqalah'],
+  heavy: ['--tw-user-tafkhim'],
   madd: [
-    '--tw-madd-normal',
-    '--tw-madd-iwad',
-    '--tw-madd-badal',
-    '--tw-madd-arid',
-    '--tw-madd-munfasil',
-    '--tw-madd-silah',
-    '--tw-madd-muttasil',
-    '--tw-madd-laazim',
+    '--tw-user-madd-normal',
+    '--tw-user-madd-iwad',
+    '--tw-user-madd-badal',
+    '--tw-user-madd-arid',
+    '--tw-user-madd-munfasil',
+    '--tw-user-madd-silah',
+    '--tw-user-madd-muttasil',
+    '--tw-user-madd-laazim',
   ],
 });
 
