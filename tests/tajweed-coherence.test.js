@@ -103,7 +103,10 @@ test('user Tajweed family colors override paper-scoped default palettes', () => 
 
   // The dark-paper scopes retain their accessible default palette. User picks
   // win through the distinct --tw-user-* layer instead of fighting these values.
-  assert.match(css, /\.mushaf-page-wrap\[data-mushaf-paper='night'\][\s\S]*?--tw-qalqalah:\s*#4dd0e1/);
+  assert.match(
+    css,
+    /\.mushaf-page-wrap\[data-mushaf-paper='night'\][\s\S]*?--tw-qalqalah:\s*#4dd0e1/
+  );
   assert.match(css, /\.mushaf-page-wrap\[data-mushaf-paper='amoled'\]/);
   assert.match(css, /\.mushaf-page-wrap\[data-mushaf-paper='royal-black'\]/);
 });
