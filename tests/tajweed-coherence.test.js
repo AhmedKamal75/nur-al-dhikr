@@ -69,6 +69,24 @@ test('the Mushaf legend reads tajweedPrefs and includes every rule', () => {
   assert.equal(rows.length, TAJWEED_RULES.length);
 });
 
+test('Mushaf legend localizes primary and alternate citation locators', () => {
+  const en = buildMushafSettingsPanel(state());
+  const ar = buildMushafSettingsPanel(
+    state({
+      settings: {
+        language: 'ar',
+        mushafPrefs: { tajweedColoring: true },
+      },
+    })
+  );
+
+  assert.match(en, /ch\. 5/);
+  assert.match(en, /qalqalah section/);
+  assert.match(ar, /الفصل 5/);
+  assert.match(ar, /باب القلقلة/);
+  assert.doesNotMatch(ar, /ch\. 5|qalqalah section/);
+});
+
 test('practice swatches honour color prefs and never render a null background', () => {
   const html = buildPracticePicker(
     state({
