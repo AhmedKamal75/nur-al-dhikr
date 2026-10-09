@@ -243,3 +243,14 @@ Source review found a styling interaction beyond the classifier corpus: `applyTa
 - Result: **12/12 course tests passed** in an isolated synchronous harness using the exact fetched test source/runtime/canonical JSON. The assertions use a strict subset of Node's assertion API; this is not native `node:test` or CI evidence.
 - The verified course has **8 stages and 17 sessions**, with no uncited sessions. Covered checks include canonical/runtime spine parity, ordering/unique session IDs, madd-first structure, source attribution, rule coverage, guided/open progression, unlocking/revisiting, progress arithmetic, search, bilingual strings and honest course attribution.
 - Native Node/CI and rendered lesson/browser evidence remain outstanding.
+
+## Tajweed practice + quiz-mode harnesses — 2026-10-09
+
+The current practice and quiz-mode test sources were also executed in isolated synchronous harnesses, with the current classifier blob `60b9b294d91420c45eb05382c6492172f9491302`:
+
+| Test file | Blob | Result | Method limitation |
+| --- | --- | ---: | --- |
+| `tests/tajweedPractice.test.js` | `7a635c81fd623039e73b29de15d11e61ec6998a0` | **14/14** | The quiz-memory helper imports were stubbed; scoring, picking, answer-key, statistics and accuracy functions were exercised. |
+| `tests/tajweed-quiz-modes.test.js` | `87ffca966672c5a23b0470493a3bca19e409f32c` | **6/6** | Quiz-memory helper imports and the `describe`/test registration were shimmed; mode registry, classifier/answer-key agreement, sourced answer choices, no-guess behavior, review pool integration and span keys were exercised. |
+
+The `tajweedPractice.js` source blob for both was `8b541e20de62b2986c08f3bbae058ca4c5a9d27a`. Both harnesses used a strict subset of Node assertions and are **not** native `node:test` or CI runs; they do not validate the real `quiz.js` miss-record plumbing. Native test execution and browser review of actual practice views remain required.
