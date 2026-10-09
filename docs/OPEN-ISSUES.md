@@ -217,17 +217,20 @@ Counted from the table above, not estimated:
 
 | Bucket                                             | Count  |
 | -------------------------------------------------- | ------ |
-| **OPEN** (nobody has done it)                      | **21** |
-| **PROPOSED** (costed, needs an owner yes)          | **5**  |
-| **BLOCKED:scholar** (must never be machine-filled) | **7**  |
-| **BLOCKED:device** (needs real hardware)           | **5**  |
-| **DEFERRED** / **DECIDED-NO** (deliberate)         | **6**  |
-| **RESOLVED after re-verification**                 | **25** |
-| **STANDING CONSTRAINT** (not a defect)             | **1**  |
+| **OPEN** (including open items with a device constraint) | **33** |
+| **PROPOSED** (costed, needs an owner yes)                 | **5**  |
+| **BLOCKED:scholar** (must never be machine-filled)        | **7**  |
+| **BLOCKED:device** (fully blocked on real hardware)       | **5**  |
+| **DEFERRED** / **DECIDED-NO** (deliberate)                | **6**  |
+| **RESOLVED after re-verification**                        | **27** |
+| **RESOLVED on main — next release**                      | **2**  |
+| **STANDING CONSTRAINT** (not a defect)                    | **2**  |
 
-- **~55 distinct issues** were extractable from the audit material and the
-  owner's own reports. **11** still need work (5 open, 6 proposed); **10** were
-  already done and had been re-investigated as still-open.
+- **87 issue rows** are currently tracked. **38** are open or proposed (33 open,
+  5 proposed); 12 are blocked pending scholar/device evidence; 6 are deferred or
+  deliberately declined; 29 are resolved; and 2 are standing constraints.
+  Rows marked both OPEN and BLOCKED:device remain in OPEN because work is still
+  needed, while the device limitation is retained in the row description.
 - **Three "release-gating" items named here are now resolved**, and this file
   said otherwise until v5.17.23: Elder Mode discoverability (the wizard did
   offer it; only the wording was wrong), the 200% type scale (clamp 0.85–2,
