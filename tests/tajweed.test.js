@@ -183,7 +183,7 @@ test('qalqalah suppression requires explicit assimilation evidence', () => {
     ['qalqalah']
   ); // ارْكَبْ مَّعَنَا remains route-sensitive without a profile.
   for (const word of [
-    '\u0627\u064e\u062D\u064e\u0637\u0652\u062A\u064f', // أَحَطْتُ
+    '\u0623\u064e\u062D\u064e\u0637\u0652\u062A\u064f', // أَحَطْتُ
     '\u0628\u064e\u0633\u064e\u0637\u0652\u062A\u064e', // بَسَطْتَ
     '\u0641\u064e\u0631\u0651\u064e\u0637\u062A\u064f', // فَرَّطتُ
     '\u0641\u064e\u0631\u0651\u064e\u0637\u062A\u064f\u0645\u06E1', // فَرَّطتُمۡ
