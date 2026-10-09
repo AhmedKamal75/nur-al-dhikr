@@ -174,7 +174,10 @@ test('an unattributed rule is reported, not rendered blank', () => {
 
 test('secondary Tajweed source link has visible and keyboard-focus styling', () => {
   const css = read('assets/css/quran.css');
-  assert.match(css, /\.tajweed-legend__source-link\s*\{[^}]*text-decoration:\s*underline dotted/s);
+  assert.match(
+    css,
+    /\.tajweed-legend__source-link\s*\{[^}]*color:\s*var\(--color-text-secondary\)[^}]*text-decoration:\s*underline dotted/s
+  );
   assert.match(css, /\.tajweed-legend__source-link:focus-visible\s*\{/);
 });
 
