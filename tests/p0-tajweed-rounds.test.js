@@ -45,6 +45,9 @@ describe('P0-5a: practice pool covers every rule with real rows', () => {
     for (const rule of TAJWEED_RULES) {
       const rows = pool.byRule[rule.id] || [];
       const expectedAyahs = Number(pool.coverage?.[rule.id]?.ayahs || 0);
+      if (!SEED_MODE) {
+        assert.ok(expectedAyahs > 0, `rule ${rule.id} has no real rows in the full corpus`);
+      }
       if (SEED_MODE && expectedAyahs === 0) continue;
       const requiredMin = Math.min(PRACTICE_POOL_MIN, expectedAyahs);
       assert.ok(
