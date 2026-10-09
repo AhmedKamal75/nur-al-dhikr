@@ -17,6 +17,7 @@ export const VIEWS = Object.freeze({
   COLLECTION: 'collection',
   STATISTICS: 'statistics',
   TASBIH: 'tasbih',
+  PRACTICE: 'practice',
   PRAYER: 'prayer',
   QIBLA: 'qibla',
   CHECKLIST: 'checklist',

@@ -11,7 +11,7 @@
  * IA-7 (v5.17.61): the chrome is hierarchical with EXACTLY 7 sections —
  * HOME(nav.home, the Today landing) · LIBRARY(nav.azkar, the adhkar
  * browser) · MUSHAF(nav.quran) · HADITH(nav.hadith) · PRAYER(nav.prayer)
- * · TASBIH-entry labelled nav.practise · CHECKLIST-entry labelled nav.you —
+ * · PRACTICE-entry labelled nav.practise · CHECKLIST-entry labelled nav.you —
  * and the test must fail if the azkar grid returns to Home or if a section
  * entry drifts from the map.
  *
@@ -171,7 +171,7 @@ const INTERNAL_JUSTIFICATIONS = {
   EDITOR:
     'plan §1.5/§4 Phase 7 INTERNAL-ONLY (documented in js/ui/shell.js INTERNAL_ONLY_ROUTES): a tool invoked from content surfaces (library sheet, category manage, card menu), never browsed to — a nav door would promise a place for what is an action on a place. Deep link #/editor keeps working; claims no chrome slot.',
   MUTASHABIHAT:
-    'IA-7: Qur’an-study depth — look-alike ayat moved from Practise to the MUSHAF door (study belongs to the book). Door via the MUSHAF entry in 2 taps via quran-mode-switch; deep links keep working.',
+    'IA-7: Qur’an-study depth remains canonical under the MUSHAF door, while Practice intentionally exposes the same engine as a recall task. This is dual listing, not duplicated content: MUSHAF owns study depth; PRACTICE owns rehearsal. Deep links keep working.',
   JOURNAL:
     'plan §2.1/Phase 6: You-section member — door via the You (checklist) entry + in-chrome switch.',
   CERTIFICATE:
@@ -440,7 +440,7 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
     );
     assert.deepEqual(
       NAV_ENTRIES.map((e) => e.viewKey),
-      ['HOME', 'LIBRARY', 'MUSHAF', 'HADITH', 'PRAYER', 'TASBIH', 'CHECKLIST'],
+      ['HOME', 'LIBRARY', 'MUSHAF', 'HADITH', 'PRAYER', 'PRACTICE', 'CHECKLIST'],
       'door entry order drifted from the IA-7 target'
     );
   });
@@ -467,11 +467,11 @@ describe('IA-7: EXACTLY seven sections, in order', () => {
     );
   });
 
-  test('the Practise door is the TASBIH entry wearing nav.practise; the You door is the CHECKLIST entry wearing nav.you', () => {
+  test('the Practise door is the PRACTICE entry wearing nav.practise; the You door is the CHECKLIST entry wearing nav.you', () => {
     const practise = NAV_ENTRIES.find((e) => e.labelKey === 'nav.practise');
     assert.ok(practise, 'no door labelled nav.practise');
-    assert.equal(practise.viewKey, 'TASBIH');
-    assert.equal(practise.view, VIEWS.TASBIH);
+    assert.equal(practise.viewKey, 'PRACTICE');
+    assert.equal(practise.view, VIEWS.PRACTICE);
     const you = NAV_ENTRIES.find((e) => e.labelKey === 'nav.you');
     assert.ok(you, 'no door labelled nav.you');
     assert.equal(you.viewKey, 'CHECKLIST');
@@ -530,7 +530,7 @@ describe('IA-7 pin: sections with pinned member counts (extend, never weaken)', 
         MUSHAF: 6,
         HADITH: 1,
         PRAYER: 4,
-        TASBIH: 2,
+        PRACTICE: 4,
         CHECKLIST: 6,
       },
       'a section gained or lost a member without updating the map — extend the map AND this pin together'
