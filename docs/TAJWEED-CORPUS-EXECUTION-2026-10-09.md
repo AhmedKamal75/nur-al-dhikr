@@ -72,3 +72,8 @@ Done in the isolated JavaScript runtime: all 114 JSON sources loaded; all 6,236 
 Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep rows 79, 80, 86, 87, 88, and 89 open until their specific verification requirements are met. The current classifier source blob is `ba7d1732190fc1a75de36b11e048fad0fb4a71f4`; the current `tests/tajweed.test.js` blob is `cdca893dc31cb963b122ffc54d25378269d35858` and passed 28 synchronous tests under an isolated shim, not native Node. The corpus sweep test blob `387e4eb1196253a5b1537109d3c33a3b289fb9bf` now asserts exactly two unmarked Qalqalah spans.
 
 This report records classifier execution and anomalies; it is not a claim that all Tajweed rules have been scholarly-validated or that the feature is release-ready.
+
+
+## Counter correction discovered during integration review
+
+A later hostile review found that the original bare-Qalqalah counter's mark regex recognized canonical tanween but omitted corpus-attested U+0656 (subscript kasratan), U+0657 (inverted dammatan), and U+065E (alternate dammatan). The new corpus test now includes the broader U+064B–U+065E mark range. Therefore, the reported count of two unmarked Qalqalah spans is **provisional until the current-head native corpus test completes**; do not treat that count as independently revalidated yet. The two known pause-final examples remain فَٱرۡغَب (94:8) and وَٱقْتَرِب۩ (96:19), but the broadened detector may expose additional cases for review.
