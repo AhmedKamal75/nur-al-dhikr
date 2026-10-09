@@ -181,7 +181,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 
 > Added 10 Tajweed audit rows from the integration branch; existing main row 80 (`navigation-shell` load-flakiness) is preserved unchanged. Rows 81–90 remain open until their stated evidence gates pass.
 
-| 91 | Tajweed tokenizer can treat non-letter ornaments as semantic base letters | **OPEN — source fix, native verification pending** | `isBaseLetter()` previously accepted every non-diacritic non-space character, so rub el hizb (`۞`) and numerals could be treated as pronunciation-bearing units and break cross-word lookahead despite the ornament-aware semantic index. It now accepts Arabic letters plus the two corpus-attested consonantal small marks, and regressions cover rub el hizb and numeral tokens between noon-sakinah and the following letter. The native Node/CI corpus sweep and browser rendering still need to pass. |
+| 91 | Tajweed tokenizer can treat non-letter ornaments as semantic base letters | **OPEN — source fix, native verification pending** | `isBaseLetter()` previously accepted every non-diacritic non-space character, so rub el hizb (`۞`) and numerals could be treated as pronunciation-bearing units and break cross-word lookahead despite the ornament-aware semantic index. It now accepts Arabic letters plus explicit dagger alif and the four special small-letter signs U+06E5–U+06E8, while excluding non-letter ornaments/numerals. Regression cases cover rub el hizb and numeral tokens between noon-sakinah and the following letter. Native Node/CI and browser rendering still need to pass. |
 
 ## Stale report claims — closed, with evidence
 
