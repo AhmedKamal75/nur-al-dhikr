@@ -219,3 +219,12 @@ Source review found a styling interaction beyond the classifier corpus: `applyTa
 - The coherence test also had a stale expectation that preference filtering dropped the second of two spans on the same range. The actual intended behavior preserves all enabled classifier matches for the inspector; the painter chooses one visible span. Its test now verifies both equal-range rules can be disabled independently.
 - The existing classifier test file executed 30/30 in the isolated synchronous harness against blob `60b9...`. Static CSS and preference-filter checks passed. **None of this is native Node/CI or real-browser evidence**; the new coherence assertions still need the native test runner, and dark-paper rendering must be confirmed in Chromium before closing issue 95 in `docs/OPEN-ISSUES.md`.
 
+
+
+## Citation registry regression harness — 2026-10-09
+
+- Current classifier blob: `60b9b294d91420c45eb05382c6492172f9491302`.
+- Canonical registry JSON blob: `607c221d95138112ce507733e466e7ac1d9c3d11`; runtime mirror blob: `0589d00d802542f388280bebd3ef7f7f10969ff3`; test blob: `587c54ceddfb8493bfe6fe431dbff4ae43747f0c`.
+- Result: **11/11 tests passed** in an isolated synchronous harness against the exact fetched classifier, runtime module, JSON registry and test source. The harness supplied the JSON/source files to the test and used a strict subset of Node assertions. It is not the native `node:test` runner.
+- The canonical registry contains 28 rule citation entries and 4 work entries; the executable Tajweed classifier currently has 21 rule IDs. Every classifier rule ID resolves to a citation and `uncitedTajweedRules()` returns an empty list. Canonical/runtime parity passed in the 11-test suite.
+- Remaining: native Node/CI execution and real Mushaf citation layout verification (Arabic/English × light/dark × phone/desktop).
