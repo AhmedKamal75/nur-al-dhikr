@@ -350,3 +350,12 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Respect that action: **do not reopen PR #23 or create a replacement PR unless the owner asks.** The working branch remains saved and current at `integration/tajweed-mainline-2026-10-09`, head `97a0d07ab687df1531469b73c6dab6942c44064a`. The PR's stored head SHA is older than the branch head because the branch received additional commits after closure; don't treat the closed PR's head SHA as the latest code.
 - Current classifier corpus rerun, ledger reconciliation, source/runtime parity correction, and the historical-vs-current execution boundary are saved in the branch. GitHub Actions runs created for earlier branch heads remain queued at last check; they are not passes and may not reflect the latest branch commit. The latest full-corpus run is the isolated JS execution described above.
 - Continue source-level review and persist findings on the branch without reopening the PR. Keep v5.17.136 as the formal release baseline.
+
+
+
+### Painter overlap audit checkpoint — 2026-10-09 05:05Z
+
+- Re-executed the current classifier `92f4fba4747024582c3334400bc6d3437732d5ef` over the full 114-file corpus to test every pair of spans within each word for interval intersection.
+- Result: **zero partial/nested overlaps** anywhere in the 6,236-ayah corpus. The only intersections are the four exact equal-range collisions already listed: three `ghunnah+idgham_ghunnah`, one `ghunnah+idgham_no_ghunnah`. The report and ledger row 89 now record this.
+- This gives corpus-specific evidence for deterministic painter precedence but not a general guarantee for future/synthetic classifier output. Row 89 remains open until actual Chromium inspector/painter/rule-toggle behavior is verified; consider adding an explicit test or diagnostic contract for partial overlaps in future.
+- PR #23 remains **closed by owner**; do not reopen or create another PR without a user request. Latest branch head will be the current tip after this handoff commit. Continue preserving progress on the branch and do not merge or bump v5.17.136.
