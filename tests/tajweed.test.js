@@ -195,6 +195,29 @@ test('qalqalah suppression requires explicit assimilation evidence', () => {
   assert.ok(rulesOf('\u0642\u0652', { nextWordFirstBase: '\u062E' }).includes('qalqalah'));
 });
 
+test('the exact ٱرۡكَب مَّعَنَا boundary uses the app convention without broad bāʾ→mīm suppression', () => {
+  const arkab = classifyAyahTajweed('ٱرۡكَب مَّعَنَا');
+  assert.equal(
+    arkab[0].spans.some((span) => span.rule === 'qalqalah'),
+    false,
+    'the exact Qur’anic bāʾ→shaddah-mīm boundary is the documented lexical exception'
+  );
+
+  const unrelated = classifyAyahTajweed('اُكْتُبْ مَّعَنَا');
+  assert.equal(
+    unrelated[0].spans.some((span) => span.rule === 'qalqalah'),
+    true,
+    'do not generalize the exception to every bāʾ before a shaddah-marked mīm'
+  );
+
+  const noShadda = classifyAyahTajweed('اُكْتُبْ مَعَنَا');
+  assert.equal(
+    noShadda[0].spans.some((span) => span.rule === 'qalqalah'),
+    true,
+    'the exception requires the exact next-word shaddah evidence too'
+  );
+});
+
 test('ayah-level Qalqalah suppression survives confirmed source spellings', () => {
   const mergedDal = classifyAyahTajweed(
     '\u0648\u064e\u0642\u064e\u062F \u062F\u0651\u064e\u062E\u064e\u0644\u064F\u0648\u0627'
