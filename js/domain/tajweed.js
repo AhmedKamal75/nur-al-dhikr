@@ -668,7 +668,7 @@ export function classifyWordTajweed(
       //   * identical consonant + following shadda = explicit small idgham;
       //   * دْ→تّ with explicit next-letter shadda = the known complete
       //     dal→ta assimilation family;
-      //   * بَسَطْتَ / أَحَطْتُ / فَرَّطْتُ keep the ط's sukun but lose
+      //   * بَسَطْتَ / أَحَطْتُ / فَرَّطْتُ / فَرَّطْتُم keep the ط's sukun but lose
       //     Qalqalah under incomplete assimilation;
       //   * نَخْلُقكُّم has complete/incomplete ق→ك realizations, neither
       //     requiring a Qalqalah bounce on the sakin ق.
