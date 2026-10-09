@@ -145,8 +145,8 @@ test('qalqalah suppression requires explicit assimilation evidence', () => {
       nextWordFirstBase: '\u0643',
       nextWordFirstHasShadda: true,
     }).filter((r) => r === 'qalqalah'),
-    []
-  ); // explicit next-kaf shadda supports the qaf→kaf assimilation family.
+    ['qalqalah']
+  ); // don't generalize the lexical نخلقكم Qaf→Kaf exception to any word boundary.
   assert.deepEqual(
     rulesOf('\u062F\u0652', {
       nextWordFirstBase: '\u062F',
