@@ -136,6 +136,11 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
   }
 
   assert.ok(spanCount > 0, 'corpus sweep produced no Tajweed spans');
+  assert.equal(
+    bareQalqalahSpans,
+    2,
+    'after the exact ٱرۡكَب مَّعَنَا exception, only the two known ayah-final pause spans should be unmarked'
+  );
   for (const rule of TAJWEED_RULES) {
     assert.ok(seen.has(rule.id), `rule is unreachable in the real Quran corpus: ${rule.id}`);
   }
