@@ -152,3 +152,11 @@ The current classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` was execu
 - The runtime citation surfaced the Arabic title for *al-Tamhid* as `التهويد في علم التجويد`. Catalog/text records identify the correct title as `التمهيد في علم التجويد` (Quranpedia: https://quranpedia.net/book/131; Islamweb: https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents).
 - Corrected the canonical JSON and runtime JS mirror, then added a regression assertion in `tests/tajweed-sources.test.js`.
 - Isolated execution confirms the Arabic title is identical in the canonical registry, runtime registry, and alternate-citation output. Full runtime/canonical parity still passes in the isolated JS check. Native Node/CI and browser evidence remain pending.
+
+
+
+## Alternate-source visibility — 2026-10-09 05:13Z
+
+- The runtime registry's `also` citations were previously not surfaced by `tajweedCitation()` or the Mushaf legend. The helper now resolves each alternate citation to localized title and author plus locator/review metadata, and `tajweedSourceLine()` emits an additional escaped source line for each alternate.
+- Regression coverage checks English and Arabic alternate-source metadata, and source/runtime full-object parity remains exact in isolated execution.
+- The UI change is not browser-verified. Row 94 remains open for the EN/AR × light/dark × phone/desktop rendering and wrapping review; native Node/CI is also pending.
