@@ -76,6 +76,7 @@ test('Mushaf legend localizes primary and alternate citation locators', () => {
       settings: {
         language: 'ar',
         mushafPrefs: { tajweedColoring: true },
+        tajweedPrefs: {},
       },
     })
   );
