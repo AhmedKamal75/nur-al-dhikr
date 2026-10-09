@@ -24,7 +24,7 @@ User explicitly approved keeping Tajweed active until a full-corpus execution/an
 
 The current branch classifier has now been executed across all 114 bundled Quran JSON files / 6,236 ayahs in the available JavaScript tool runtime. The durable result is `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
 
-- Latest classifier content SHA: `f448939a6724f49cd5257449df5f45fb0afb8c50`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
+- Latest classifier content SHA: `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
 - Zero raw-token-count mismatches, bad one-based word indices, unknown rule IDs, invalid span offsets, duplicate exact spans, file-fetch failures, or JSON parse failures were observed.
 - Four same-written-unit collisions were identified and categorized; three implicit/no-explicit-mark Qalqalah spans were reviewed, of which two are ayah-final pause cases and one (`ٱرۡكَب مَّعَنَا`, 11:42) remains reading-profile-sensitive.
 - The existing `tests/tajweed.test.js` was additionally run through a synchronous in-tool shim: 26/26 passed. This is useful execution evidence, but it is **not** `node --test`; CI, browser/device execution, and an authoritative scholarly comparison remain unverified. The full corpus run is direct execution of the fetched classifier source, not `npm run check`.
@@ -87,8 +87,8 @@ The complete corpus report records diagnostics and limitations. Corpus execution
 - Corpus-sweep diagnostics include rule counts, duplicate-span detection, and multiple-rule same-unit diagnostics.
 
 ## Verification status
-- The isolated JavaScript-runtime corpus run is complete and documented on classifier SHA `f448939a6724f49cd5257449df5f45fb0afb8c50`; all 6,236 ayahs passed structural invariants.
-- The current `tests/tajweed.test.js` passed 26/26 in an isolated compatibility shim; do not relabel this as Node's native test runner.
+- The isolated JavaScript-runtime corpus run is complete and documented on classifier SHA `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`; all 6,236 ayahs passed structural invariants.
+- The current `tests/tajweed.test.js` passed 27/27 in an isolated compatibility shim; do not relabel this as Node's native test runner.
 - The most recently checked GitHub Actions run was queued, not passing. Recheck after each new commit.
 - No browser evidence has been obtained for the newest Tajweed changes.
 - No full scholarly-reference corpus comparison has been performed.
@@ -226,7 +226,17 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Corrected the isolated low-Uthmani-iqlab test to assert the presence of iqlab rather than assuming it is the first span when an earlier same-word mīm can legitimately emit its own rule.
 - Updated the Lām al-Jalālah test: an initial standalone word is explicitly marked as initial context; a wāw prefix with fatḥah remains heavy; bi-/li-prefix forms with kasrah are not labelled heavy. The classifier has no separate tarqīq span/color, so these remain uncolored.
 - Fixed the hatatta test fixture's initial letter to hamza-on-alif (U+0623), matching the intended no-Qalqalah lexical key.
-- Latest source/test pair: classifier f448939a6724f49cd5257449df5f45fb0afb8c50; test file blob 85765057e4568592c9eaef02bf0c697e40019f45. Isolated unit harness reports **26/26 pass**.
-- Full corpus was re-run on classifier SHA f448939a6724f49cd5257449df5f45fb0afb8c50 after those source fixes. Totals remain 114 files / 6,236 ayahs / 104,558 spans, all 21 rule IDs reachable, zero structural invariant failures. Same-unit collision inventory and the three no-explicit-mark Qalqalah cases remain unchanged.
+- Latest source/test pair: classifier 4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9; test file blob b64d1acf92ab4e1f92ee7351b426954f8872cd57. Isolated unit harness reports **26/26 pass**.
+- Full corpus was re-run on classifier SHA 4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9 after the overlap-filter change. Totals remain 114 files / 6,236 ayahs / 104,558 spans, all 21 rule IDs reachable, zero structural invariant failures. Four same-unit collision cases and the three no-explicit-mark Qalqalah cases remain unchanged.
 - Durable report: docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md; issue ledger rows 80, 86–89 remain open to the exact degree described there.
 - Current PR remains an implementation candidate only. Check Actions again on the newest PR head; do not merge or bump v5.17.136 based on the in-tool shim or isolated runtime.
+
+
+### Autonomous checkpoint — 2026-10-09: overlap visibility fix and final corpus rerun
+
+- Corrected `filterSpansByPrefs()` in `js/domain/tajweed.js`: it now filters only disabled rules and returns all active spans in stable start/end order. It no longer drops a second Tajweed rule merely because it occupies the same source range as another active rule.
+- Clarified `colorizeWord()` in shared `js/views/tafsirPanel.js`: one glyph still receives one visible CSS rule class; for equal ranges the first enabled span in stable classifier order paints it. The inspector retains every enabled rule, and disabling the first rule lets the other one paint the glyph.
+- Added the unit test `preference filtering preserves same-unit rule overlaps for the inspector`, checking default behavior and disabling either rule independently. Test blob: `b64d1acf92ab4e1f92ee7351b426954f8872cd57`. Isolated harness now reports **27/27 passing** against classifier source blob `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`; this is not native Node or official CI.
+- View documentation blob: `8e586328c8850483b25fc747bf1ce638a1bf8fab`. Corpus report updated at `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`; issue 88 changed to **corrected in code, pending integration verification**.
+- Re-ran all 114 Qur'an JSON files in six batches against current classifier SHA `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`: 6,236 ayahs, 104,558 spans, every 21 rule IDs reached. Zero raw-token-count mismatches, bad word indices, unknown rules, invalid offsets, exact duplicate spans, or data fetch/parse failures. Same-unit collisions remain exactly three `ghunnah+idgham_ghunnah` and one `ghunnah+idgham_no_ghunnah`; all overlap events are exact same-range collisions, not offset-drift overlaps. The three unmarked Qalqalah spans remain 11:42 route-sensitive `ٱرۡكَب`, 94:8 pause-final `فَٱرۡغَب`, and 96:19 pause-final `وَٱقۡتَرِب۩`.
+- The corpus run is source-execution evidence, and 27/27 is an isolated shim, not official project-gate evidence. Actions was still queued at last inspection. Next: confirm CI result on the newest PR head, get native Node tests and browser checks, and inspect the actual overlapping word inspector in EN/AR + light/dark + small/desktop sizes. Do not merge PR #21 or advance formal release v5.17.136 without those gates.
