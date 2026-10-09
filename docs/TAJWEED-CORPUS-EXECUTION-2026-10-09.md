@@ -6,7 +6,7 @@
 
 - Repository: `AhmedKamal75/nur-al-dhikr`
 - Working branch: `fix/tajweed-semantic-lookahead-2026-10-08`
-- Classifier source blob used for the final rerun: `ba7d1732190fc1a75de36b11e048fad0fb4a71f4` (includes the Qalqalah plural-key correction, explicit-sukun-aware Muqaṭṭaʿāt exemption, narrowly scoped ٱرۡكَب مَّعَنَا exception, lām-prefix fix, Allah-lām context, syntax/runtime corrections, and inspector-safe same-unit overlap filtering).
+- Classifier source blob used for the final rerun: `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1` (includes the Qalqalah plural-key correction, explicit-sukun-aware Muqaṭṭaʿāt exemption, narrowly scoped ٱرۡكَب مَّعَنَا exception, lām-prefix fix, Allah-lām context, syntax/runtime corrections, and inspector-safe same-unit overlap filtering).
 - Corpus inputs: the 114 JSON files under `data/quran/1.json` through `data/quran/114.json`, fetched from the same branch.
 - Execution method: the ES-module source was fetched from GitHub, its top-level `export` modifiers were removed for evaluation, it was compiled/executed with `new Function` in the available JavaScript tool runtime, and the actual `classifyAyahTajweed(ayah.text)` function was invoked for each corpus ayah. Data files were parsed as JSON. The implementation was processed in six ranges to stay inside the tool-call limit.
 - This is real classifier execution against the bundled text, not merely static scanning. It is **not** an official `node --test` / `npm run check` run and does not prove UI integration or scholarly correctness.
@@ -15,13 +15,13 @@
 
 | Surahs | Files | Ayahs | Spans produced | Same-unit multi-rule collisions | Unmarked Qalqalah spans |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 1–19 | 19 | 2,348 | 53,909 | 2 | 0 |
-| 20–38 | 19 | 1,710 | 25,492 | 2 | 0 |
-| 39–57 | 19 | 1,046 | 14,868 | 0 | 0 |
-| 58–76 | 19 | 518 | 6,964 | 0 | 0 |
-| 77–95 | 19 | 484 | 2,555 | 0 | 1 |
+| 1–19 | 19 | 2,348 | 53,914 | 2 | 0 |
+| 20–38 | 19 | 1,710 | 25,489 | 2 | 0 |
+| 39–57 | 19 | 1,046 | 14,866 | 0 | 0 |
+| 58–76 | 19 | 518 | 6,962 | 0 | 0 |
+| 77–95 | 19 | 484 | 2,554 | 0 | 1 |
 | 96–114 | 19 | 130 | 769 | 0 | 1 |
-| **Total** | **114** | **6,236** | **104,557** | **4** | **2** |
+| **Total** | **114** | **6,236** | **104,554** | **4** | **2** |
 
 All 21 entries in the current `TAJWEED_RULES` registry were reachable in the corpus. This is 21 rule identities, not the older shorthand count of 20 in earlier handoff text.
 
@@ -67,13 +67,13 @@ A proposed generic cross-word Qāf→Kāf guard was separately removed after sou
 The corpus sweep now expects exactly two unmarked Qalqalah spans, corresponding to the two ayah-final pause cases above. In the final direct run, all 6,236 ayahs executed; structural invariants passed; there were no fetch/parse failures. The targeted Tajweed unit file passed 28/28 in the isolated shim. This is still not native Node/CI, browser evidence, or a scholarly validation of every rule.
 ## Verification boundary and next gate
 
-Done in the isolated JavaScript runtime: all 114 JSON sources loaded; all 6,236 ayahs executed; all 21 rule IDs reached; structural invariants passed; the four overlap pairs and three unmarked Qalqalah cases were isolated and documented.
+Done in the isolated JavaScript runtime: all 114 JSON sources loaded; all 6,236 ayahs executed; all 21 rule IDs reached; structural invariants passed; the four same-unit overlap cases and two unmarked pause-final Qalqalah spans were isolated and documented.
 
-Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep rows 79, 80, 86, 87, 88, and 89 open until their specific verification requirements are met. The current classifier source blob is `ba7d1732190fc1a75de36b11e048fad0fb4a71f4`; the current `tests/tajweed.test.js` blob is `cdca893dc31cb963b122ffc54d25378269d35858` and passed 28 synchronous tests under an isolated shim, not native Node. The corpus sweep test blob `387e4eb1196253a5b1537109d3c33a3b289fb9bf` now asserts exactly two unmarked Qalqalah spans.
+Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep rows 79, 80, 86, 87, 88, and 89 open until their specific verification requirements are met. The current classifier source blob is `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1`. An earlier snapshot of `tests/tajweed.test.js` passed 28 synchronous tests under an isolated shim; that is historical evidence, not a result for the current test file and not native Node. The current corpus sweep test blob is `9abdcebfb89e1d0ae12036604366c7376be93c05` and its mark detector covers the expanded Uthmani range.
 
 This report records classifier execution and anomalies; it is not a claim that all Tajweed rules have been scholarly-validated or that the feature is release-ready.
 
 
 ## Counter correction discovered during integration review
 
-A later hostile review found that the original bare-Qalqalah counter's mark regex recognized canonical tanween but omitted corpus-attested U+0656 (subscript kasratan), U+0657 (inverted dammatan), and U+065E (alternate dammatan). The new corpus test now includes the broader U+064B–U+065E mark range. Therefore, the reported count of two unmarked Qalqalah spans is **provisional until the current-head native corpus test completes**; do not treat that count as independently revalidated yet. The two known pause-final examples remain فَٱرۡغَب (94:8) and وَٱقْتَرِب۩ (96:19), but the broadened detector may expose additional cases for review.
+The counter's mark detector was broadened to include corpus-attested U+0656, U+0657, and U+065E, then the full corpus was re-executed against classifier blob `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1`. The expanded detector still found exactly two unmarked pause-final Qalqalah spans: فَٱرۡغَب (94:8) and وَٱقْتَرِب۩ (96:19). The classifier's `isBaseLetter()` was also corrected to exclude non-letter ornaments/numerals while explicitly preserving dagger alif and the four corpus-attested small-letter signs; this matters because a first attempted filter accidentally dropped thousands of madd spans. This full-corpus rerun is direct isolated JavaScript execution, not native Node/CI.
