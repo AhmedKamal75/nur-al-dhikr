@@ -371,3 +371,11 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 
 - Corrected the report's “current candidate classifier blob” wording. The first Muqaṭṭaʿāt Madd patch used blob `8edf33ae72fdb726bdb177828588665f7e7bec9e`; the current classifier blob is `9e638d4961a6c4cf2c758ad2fd7ad67e2c70ab7a` after bilingual legend-copy changes only (classification logic unchanged between those two snapshots).
 - No corpus result is claimed for the current 22-rule classifier. The old 104,557-span / 21-rule and earlier three-Qalqalah results are historical. Current-head CI is the only available path to a native run while the local environment cannot reach GitHub.
+
+
+
+### Final source-mirror parity audit — 2026-10-09 05:12Z
+
+- A manual key-set comparison caught one real release-blocking drift: canonical `data/tajweed-sources.json` had 29 rule citations, but `js/domain/tajweedSources.js` had only 28 and omitted `izhar`, despite the classifier and course teaching Halqi Izhar on current main. Added the missing runtime entry (`tuhfat-al-atfal`, verses 6–13, `nun-sakinah` topic).
+- Rechecked the canonical/runtime source key sets after the fix: **29 vs 29; no missing or extra rule IDs**. Full field parity and the official test remain pending CI. This would have failed `tests/tajweed-sources.test.js`'s existing “runtime module mirrors the canonical JSON exactly” gate, so it was worth catching before waiting on the queued runner.
+- Current active branch remains PR #24; no release marker change, no merge, and current-classifier full-corpus execution is still pending.
