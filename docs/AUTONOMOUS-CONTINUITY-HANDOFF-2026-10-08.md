@@ -1,11 +1,26 @@
 # Nūr al-Dhikr — Autonomous Continuity Handoff
-Updated: 2026-10-09
+Updated: 2026-10-09 05:56Z
 
 ## Source of truth
 - Repository: `AhmedKamal75/nur-al-dhikr`
 - GitHub `main` remains the authoritative shared source/history.
 - ZIP artifacts are intentionally not part of the continuity workflow unless explicitly requested.
 - Current `main` carries coordinated **v5.17.137** markers in `package.json`, `js/core/config.js`, `sw.js`, and `docs/RELEASES.md` at base SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`. This draft branch inherits and leaves those markers unchanged. Do not create a new version marker until native CI, browser, and scholarly validation gates are complete.
+
+## Authoritative current checkpoint — 2026-10-09 05:56Z
+
+**This block supersedes older, lower dated checkpoint notes below wherever they describe current branch, PR, workflow, or release state.** Those paragraphs are historical records, not instructions to recreate or reopen their old branches/PRs.
+
+- **Current release marker:** v5.17.137 on `main`, based at `61e26848a48dfba8540d7ce48dab22c45bd437f9`. The Tajweed repair is isolated on draft PR [#27](https://github.com/AhmedKamal75/nur-al-dhikr/pull/27); no merge and no new release marker.
+- **Current branch:** `integration/tajweed-clean-mainline-2026-10-09`, exact head `a366531ee36f9b249ac424b3451a7b32d66afaa2`, 31 commits ahead of `main`, zero behind, 12 changed files. PR #27 is draft and unmerged.
+- **Latest source/test hashes:** classifier `60b9b294d91420c45eb05382c6492172f9491302`; Mushaf CSS `399d6bb24526137509f9354c60449c1c9a6345e4`; `tests/tajweed.test.js` `067f660834412228f8bdb3ea9d080b3124421fd7`; coherence test `6acea00d0accbffbca2f83c4a2538293b46b5dff`.
+- **Implemented in this wave:** attached Qur'anic ornaments/digits no longer break divine-name recognition; learner-selected Tajweed colors use a dedicated `--tw-user-*` inheritance layer so local dark-paper defaults cannot shadow them; the coherence test now expects independent same-glyph rule toggles. The style change leaves the established theme/paper palette values intact.
+- **Evidence:** 30/30 classifier test cases passed in an isolated synchronous JS harness using a limited assert shim (not native `node:test`). The full 6,236-ayah / 104,554-span structural sweep was run on classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be`; its classifier logic is unchanged by the later CSS-variable-map-only delta to `60b9...`. Static comparison verified 18/18 custom variables are referenced and all 18 rule classes preserve their prior light-theme, dark-theme and dark-paper fallback colors. Ledger arithmetic verified: 91 issue rows; 29 resolved, 37 open, 7 scholar-blocked, 5 proposed, 5 device-blocked, 4 decided-no, 2 standing constraints, 2 deferred.
+- **Current-head CI:** workflow runs `37890199509` and `37890195572` both reference exact head `a366531e...`; all 12 jobs across those two duplicate runs were still queued at 05:56Z, with zero completed checks and no failure logs. [Latest run](https://github.com/AhmedKamal75/nur-al-dhikr/actions/runs/37890199509). Do not call this a pass.
+- **Still open:** native `npm run check` / `node --test`; completed exact-head CI; Chromium EN/AR × light/dark × phone/desktop verification of custom colors, painter/inspector and rule toggles, source-citation layout; scholarly/source review of Qalqalah and rule-level correctness. Issue 95 stays OPEN until native and browser evidence exists.
+- **Next safe action:** check exact-head workflow status when available; diagnose any real failures, never weaken assertions to green. While Actions are queued, continue static review and targeted isolated source checks with their evidence boundary explicit. Keep PR #27 draft/unmerged and version markers unchanged until all gates pass.
+
+
 
 ## Autonomous operating contract
 Continue independently across waves/chats. Persist meaningful progress in GitHub, especially:
