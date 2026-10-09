@@ -26,12 +26,43 @@ const POOL = {
   },
 };
 
+const SURAH_META = [
+  { number: 1, ayahCount: 7 },
+  { number: 2, ayahCount: 286 },
+  { number: 112, ayahCount: 4 },
+  { number: 114, ayahCount: 6 },
+];
+
 describe('tajweedLessonExamples', () => {
   test('validated, deduped, capped refs', () => {
-    const ex = tajweedLessonExamples(POOL, 'ghunnah');
+    const ex = tajweedLessonExamples(POOL, 'ghunnah', undefined, SURAH_META);
     assert.equal(ex.length, LESSON_EXAMPLE_COUNT);
     assert.deepEqual(ex[0], { s: 1, a: 1 });
     assert.ok(ex.every((e) => e.s >= 1 && e.s <= 114 && e.a >= 1 && e.a <= 286));
+  });
+
+  test('rejects globally in-range but nonexistent ayahs for that surah', () => {
+    const invalidRefs = {
+      byRule: {
+        ghunnah: [
+          { s: 114, a: 286 },
+          { s: 1, a: 8 },
+          { s: 112, a: 5 },
+          { s: 112, a: 4 },
+          { s: 999, a: 1 },
+        ],
+      },
+    };
+    assert.deepEqual(
+      tajweedLessonExamples(invalidRefs, 'ghunnah', 10, SURAH_META),
+      [{ s: 112, a: 4 }]
+    );
+  });
+
+  test('fails closed when canonical surah counts are missing', () => {
+    assert.deepEqual(tajweedLessonExamples(POOL, 'ghunnah'), []);
+    assert.deepEqual(tajweedLessonExamples(POOL, 'ghunnah', 3, []), []);
+    assert.deepEqual(tajweedLessonExamples(POOL, 'ghunnah', 3, null), []);
   });
 
   test('unknown rule and hostile pools yield []', () => {
