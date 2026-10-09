@@ -85,7 +85,7 @@ The counter's mark detector was broadened to include corpus-attested U+0656, U+0
 
 The earlier run in this report used classifier blob `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1`. A second full-corpus run was subsequently performed against the exact current integration classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef`; its independently accumulated total also equals 104,554 spans. The current-snapshot run and its per-range totals are recorded below. This remains isolated JavaScript-runtime evidence, not native Node/CI or browser proof.
 
-The runtime citation registry's rule-key set was compared with the canonical JSON `rules` key set on the integration branch: 28 keys on each side, with no missing or extra IDs. The continuity handoff additionally records a direct per-entry work/lines/review/caveat/label parity check with no drift and no uncited IDs. Native registry tests remain required.
+The runtime citation registry's rule-key set was compared with the canonical JSON `rules` key set on the integration branch: 28 keys on each side, with no missing or extra IDs. A later full-structure comparison found that nine `also` entries had lost alternate citation locators in the runtime mirror; these were corrected, and the complete structure now matches in isolated execution. See `Runtime citation-mirror parity audit` below. Native registry tests remain required.
 
 
 
