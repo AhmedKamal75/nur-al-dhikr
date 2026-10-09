@@ -136,9 +136,13 @@ const QALQALAH_MUQATTAAT_WORDS = new Set([
   '\u0642',
   '\u0639\u0633\u0642',
 ]);
-// Hafs-specific connected-recitation exception: the final bāʾ of
-// ٱرۡكَبْ is assimilated into the following shaddah-marked mīm in مَّعَنَا.
-// Keep this scoped to the exact word+boundary; bare bāʾ→mīm adjacency is not enough.
+// Connected-reading exception for the exact phrase ٱرۡكَبْ مَّعَنَا under
+// Ḥafṣ via al-Shāṭibiyyah: the sākin bāʾ is assimilated into the mīm.
+// A source-reviewed lesson distinguishes this from Ḥafṣ via Ṭayyibat al-Nashr,
+// where both izhār and idghām are reported. The app has no route selector;
+// this remains an assumed default, not a universal rule for every Ḥafṣ path.
+// Keep suppression scoped to this exact word+boundary; never infer it from
+// bāʾ→mīm adjacency alone. See OPEN-ISSUES row 81 for source and policy gate.
 const QALQALAH_BA_MEEM_ASSIMILATION_WORDS = new Set([
   '\u0671\u0631\u0643\u0628',
 ]);
@@ -716,8 +720,9 @@ export function classifyWordTajweed(
       //     requiring a Qalqalah bounce on the sakin ق.
       //
       // Do not infer other dissimilar-letter assimilation from adjacency alone.
-      // بْ→مّ in ارْكَبْ مَّعَنَا is reading-route-sensitive; this classifier
-      // has no declared reading profile, so it stays conservative there.
+      // The one بْ→مّ exception below is scoped to the assumed Ḥafṣ/Shāṭibiyyah
+      // connected-reading convention; without a declared profile, its app-wide
+      // default remains an open product/scholar decision (OPEN-ISSUES row 81).
       const sameLetterAssimilation = nextBase === u.base && nextStartsWithShadda;
       const dalToTaAssimilation = u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
       const knownNoEchoWord =
