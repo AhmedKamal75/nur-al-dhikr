@@ -100,7 +100,9 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
 
         if (span.rule === 'qalqalah') {
           const renderedSpan = word.word.slice(span.start, span.end);
-          if (!/[\u064B-\u0652\u0670\u06E1\u06E2\u06ED\u06E4\u0653]/u.test(renderedSpan)) {
+          // Include corpus-attested subscript/inverted tanween variants (U+0656/U+0657/U+065E);
+          // otherwise a marked consonant can be misreported as a bare Qalqalah letter.
+          if (!/[\\u064B-\\u065E\\u0670\\u06E1\\u06E2\\u06ED\\u06E4]/u.test(renderedSpan)) {
             bareQalqalahSpans += 1;
           }
 
