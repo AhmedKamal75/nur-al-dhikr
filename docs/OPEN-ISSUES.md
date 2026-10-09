@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-09 against the integration branch**, by parsing this file's own
-> rows rather than by hand: **91 rows — 29 RESOLVED, 37 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **92 rows — 29 RESOLVED, 38 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
 >
@@ -189,6 +189,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 
 | 94 | Alternate Tajweed citations were stored but not surfaced in the Mushaf legend | **OPEN — source/UI fix implemented, browser verification pending** | The registry now preserves alternate works and localizes Arabic citation locators (`ch. 5` → `الفصل 5`; `qalqalah section` → `باب القلقلة`). The legend renders primary/alternate citation lines through escaped HTML. The exact `buildMushafSettingsPanel()` + `tajweedSourceLine()` bodies were executed with the current rule/citation helpers and minimal UI shims; the committed view-level callback in `tests/tajweed-coherence.test.js` (blob `6baacd16580be3d6bd3c717c2c419ec21171be25`) also passed in an isolated harness. The citation registry suite is 12/12 in an isolated synchronous harness. None is native Node/CI or Chromium evidence. Keep OPEN until native tests/CI pass and actual layout/wrapping is verified in Chromium EN/AR × light/dark × phone/desktop. |
 | 95 | User-selected Tajweed colors are shadowed by dark-paper defaults | **OPEN — CSS fix on draft, native/browser verification pending** | The dark-paper rules define local `--tw-*` palette values on `.mushaf-page-wrap`, which can shadow root-level values set by the user-color action and make glyph colors disagree with the chosen legend swatch. PR #27 moves user picks to a separate inherited `--tw-user-*` layer and has CSS fallbacks preserving the dark-paper default palette; `tests/tajweed-coherence.test.js` pins all 18 override variables and the dark defaults. Verify real Mushaf rendering (EN/AR × light/dark × phone/desktop) and native CI before closure. |
+| 96 | Tajweed lesson examples can reference nonexistent ayahs | **OPEN — validation fix implemented; native verification pending** | The lesson-pool filter only checked globally plausible ranges (surah 1–114, ayah 1–286), so references such as 114:286 could survive even though An-Nas has 6 ayahs. `tajweedLessonExamples()` now validates every reference against canonical `quran-meta.json` per-surah `ayahCount`; the handler ensures shared Qur’an metadata before filtering and fails closed if counts are unavailable. Regression tests reject 114:286, 1:8, and 112:5 while accepting 112:4. Current isolated pure-test check is 5/5, not native Node. Keep open until native Node/CI and rendered lesson behavior pass; no Qur’an text or ayah counts were edited. |
 
 ## Stale report claims — closed, with evidence
 
@@ -224,7 +225,7 @@ Counted from the current table on 2026-10-09, not estimated:
 
 | Bucket | Count |
 | --- | ---: |
-| **OPEN** (including two OPEN / BLOCKED:device rows) | **37** |
+| **OPEN** (including two OPEN / BLOCKED:device rows) | **38** |
 | **PROPOSED** (costed, needs an owner decision) | **5** |
 | **BLOCKED:scholar** (must never be machine-filled) | **7** |
 | **BLOCKED:device** (pure device-blocked rows; mixed rows counted under OPEN) | **5** |
@@ -233,6 +234,6 @@ Counted from the current table on 2026-10-09, not estimated:
 | **RESOLVED after re-verification** | **27** |
 | **RESOLVED on main — next release** | **2** |
 | **STANDING CONSTRAINT** (not a defect) | **2** |
-| **Total issue rows** | **91** |
+| **Total issue rows** | **92** |
 
-These buckets reconcile to the 91 rows currently present. The highest row ID is 95 because issue IDs are not contiguous; use the table's actual row count, not the maximum ID. There are **42 OPEN or PROPOSED items**. Scholarly and device constraints remain explicit; they must not be silently converted into machine-resolved work. A resolved row may still require release inclusion or final native verification, as stated in that row.
+These buckets reconcile to the 92 rows currently present. The highest row ID is 96 because issue IDs are not contiguous; use the table's actual row count, not the maximum ID. There are **43 OPEN or PROPOSED items**. Scholarly and device constraints remain explicit; they must not be silently converted into machine-resolved work. A resolved row may still require release inclusion or final native verification, as stated in that row.
