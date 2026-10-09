@@ -49,6 +49,21 @@ export const TAJWEED_WORKS = Object.freeze({
       ar: 'متن شرح للمقدمة الجزرية، وهو المرجع المعتاد في تنظيم الأبواب.',
     }),
   }),
+  'madd-wa-qasr': Object.freeze({
+    author: Object.freeze({
+      en: "A. D. al-Sayyid Isma'il Ali Sulayman",
+      ar: 'أ. د. السيد إسماعيل علي سليمان',
+    }),
+    shortTitle: Object.freeze({
+      en: 'al-Madd wa-l-Qasr (Egyptian Ministry of Awqaf)',
+      ar: 'المد والقصر (وزارة الأوقاف المصرية)',
+    }),
+    note: Object.freeze({
+      en: "Official Egyptian Ministry of Awqaf article. Its section on the opening letters describes the 4/6-count exception for ʿayn.",
+      ar: 'مقال رسمي لوزارة الأوقاف المصرية. يذكر قسم أحكام الحروف في أوائل السور استثناء العين بمقدار أربع أو ست حركات.',
+    }),
+    url: 'https://awkafonline.gov.eg/content-sections/116/5024/المد-والقصر',
+  }),
   'mawsua-saudiyya': Object.freeze({
     author: Object.freeze({
       en: "King Fahd Glorious Quran Printing Complex (al-Mawsu'a al-Sa'udiyya)",
@@ -331,6 +346,7 @@ export const TAJWEED_SOURCES = Object.freeze({
     lines: '54',
     review: 'contested',
     topic: 'madd-lin',
+    also: Object.freeze(['madd-wa-qasr']),
     caveat: Object.freeze({
       en: 'In the Muqaṭṭaʿāt openings, ʿayn is treated as Madd al-Līn and may be read for 4 or 6 counts (six is preferred in this teaching source). This is distinct from fixed six-count Madd Lazim; the app marks it separately and does not choose a duration.',
       ar: 'في فواتح السور، يُعامل حرف العين على أنه مد لين، ويُقرأ أربعًا أو ست حركات (والست هي المقدّمة في هذا المصدر التعليمي). وهذا غير المد اللازم ذي الست حركات؛ يميّزه التطبيق ولا يختار مقدار الأداء.',
