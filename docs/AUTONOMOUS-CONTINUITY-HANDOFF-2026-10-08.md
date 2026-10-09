@@ -395,3 +395,12 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Alternate-source display work uncovered a typo in the Arabic title of al-Tamhid: `التهويد في علم التجويد` was wrong; the catalogued title is `التمهيد في علم التجويد` (Quranpedia https://quranpedia.net/book/131; Islamweb https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents).
 - Corrected canonical JSON, runtime mirror, and added a regression test. Isolated full-object parity still passes; localized alternate citation now emits the corrected Arabic title. Native tests remain unverified.
 - Commits: JSON `1359a205b0054c38f4fcc89344760455d469b14f`; runtime `42f05509833b8cd3f8527a1845053d7dbaaa8371`; regression test `43bf1397af8af32331b4133146be784862144eed`; ledger `10fa47363d4cbbab711a1e77ee3aa9a627b3858e`; report `68f4921301edf3a7a3c7d7c8fe06589c63165f37`.
+
+
+
+### Alternate-source UI checkpoint — 2026-10-09 05:13Z
+
+- The citation API now returns localized alternate source objects (`title`, `author`, `lines`, `review`, `caveat`) and the Mushaf Tajweed legend renders each alternate locator in its own escaped source line. No new localization key was required; the existing source label is reused in the active language.
+- Isolated checks confirm the runtime/canonical rule and work structures match, and `tajweedCitation('hamzat_wasl', 'en'/'ar')` returns the expected alternate source with the correct Arabic title. The regression is saved in `tests/tajweed-sources.test.js`.
+- Ledger row 94 tracks remaining UI/native verification. Do not close until real Chromium review confirms layout/wrapping and native Node/CI passes.
+- Commits: ledger `d0fe8029ef37bb38d53ada01c6d6afe0d4a31bbb`; report `3a2df4deb1da25c504d9af55e82e80ae202a690d`. Continue without opening a PR, per owner instruction.
