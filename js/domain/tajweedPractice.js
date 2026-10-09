@@ -129,29 +129,46 @@ export function backfillTajweedPool(
   surahDocs,
   { min = PRACTICE_POOL_MIN, cap = PRACTICE_POOL_CAP, only = null } = {}
 ) {
-  const base = pool && typeof pool === 'object' ? pool : {};
-  const byRule = { ...(base.byRule || {}) };
-  const mixedKeys = new Set((base.mixed || []).map((e) => (e ? `${e.s}:${e.a}` : '')));
-  const mixed = [...(base.mixed || [])];
+  const base = pool && typeof pool === 'object' && !Array.isArray(pool) ? pool : {};
+  const priorByRule =
+    base.byRule && typeof base.byRule === 'object' && !Array.isArray(base.byRule)
+      ? base.byRule
+      : {};
+  const byRule = { ...priorByRule };
+  const mixedSource = Array.isArray(base.mixed) ? base.mixed : [];
+  const mixedKeys = new Set(mixedSource.map((e) => (e ? `${e.s}:${e.a}` : '')));
+  const mixed = [...mixedSource];
+  const docs =
+    surahDocs && typeof surahDocs === 'object' && !Array.isArray(surahDocs) ? surahDocs : {};
+  const numericOption = (value, fallback) =>
+    Number.isFinite(Number(value)) ? Math.floor(Number(value)) : fallback;
+  // Callers cannot turn a convenience backfill into an unbounded corpus scan.
+  const capRows = Math.min(PRACTICE_POOL_CAP, Math.max(0, numericOption(cap, PRACTICE_POOL_CAP)));
+  const minRows = Math.min(capRows, Math.max(0, numericOption(min, PRACTICE_POOL_MIN)));
   const onlySet = Array.isArray(only) && only.length ? new Set(only) : null;
   const addedByRule = {};
+  const surahKeys = Object.keys(docs).sort((a, b) => Number(a) - Number(b));
   for (const rule of TAJWEED_RULES) {
     if (onlySet && !onlySet.has(rule.id)) continue;
-    const list = byRule[rule.id] || [];
-    if (list.length >= min && !onlySet) continue;
+    const list = Array.isArray(byRule[rule.id]) ? byRule[rule.id] : [];
+    if (list.length >= minRows && !onlySet) continue;
     // One ayah can legitimately exercise MANY rules — dedupe is per rule,
     // never global, or the first rule processed would starve the rest.
     const seen = new Set(list.map((e) => (e ? `${e.s}:${e.a}` : '')));
     const additions = [];
-    for (const sKey of Object.keys(surahDocs)) {
+    for (const sKey of surahKeys) {
       const surah = Number(sKey);
-      const doc = surahDocs[sKey];
+      if (!Number.isInteger(surah) || surah < 1 || surah > 114) continue;
+      const doc = docs[sKey];
       if (!doc || !Array.isArray(doc.ayahs)) continue;
       for (const ayah of doc.ayahs) {
-        if (list.length + additions.length >= cap) break;
-        const key = `${surah}:${ayah.number}`;
+        if (list.length + additions.length >= capRows) break;
+        if (!ayah || typeof ayah.text !== 'string') continue;
+        const ayahNumber = Number(ayah.number);
+        if (!Number.isInteger(ayahNumber) || ayahNumber < 1 || ayahNumber > 286) continue;
+        const key = `${surah}:${ayahNumber}`;
         if (seen.has(key)) continue;
-        const perWord = classifyAyahTajweed(String(ayah.text || ''));
+        const perWord = classifyAyahTajweed(ayah.text);
         let firstWord = 0;
         let count = 0;
         for (const w of perWord) {
@@ -162,7 +179,7 @@ export function backfillTajweedPool(
           }
         }
         if (firstWord) {
-          const row = { s: surah, a: Number(ayah.number), w: firstWord, c: count };
+          const row = { s: surah, a: ayahNumber, w: firstWord, c: count };
           additions.push(row);
           seen.add(key);
           if (!mixedKeys.has(key)) {
@@ -171,7 +188,7 @@ export function backfillTajweedPool(
           }
         }
       }
-      if (list.length + additions.length >= cap) break;
+      if (list.length + additions.length >= capRows) break;
     }
     if (additions.length) {
       byRule[rule.id] = [...list, ...additions];
