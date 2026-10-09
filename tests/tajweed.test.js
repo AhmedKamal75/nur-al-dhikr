@@ -266,6 +266,14 @@ test('small waw/yeh only become Madd as-Silah after hāʾ al-kinayah', () => {
   assert.ok(rulesOf('\u064A\u064F\u062D\u0652\u064A\u0650\u06E6').includes('madd_2'));
 });
 
+test('Madd Lazim description uses a valid example and states its condition', () => {
+  const rule = tajweedRule('madd_6');
+  assert.match(rule.desc.en, /original sukoon/i);
+  assert.match(rule.desc.en, /ٱلضَّآلِّينَ/);
+  assert.match(rule.desc.ar, /سكون أصلي/);
+  assert.doesNotMatch(rule.desc.en, /e\.g\.\s*آ/);
+});
+
 test('madd badal requires hamza+madd orthography, not any madda sign', () => {
   assert.equal(rulesOf('\u0622\u062F\u064e\u0645َ')[0], 'madd_badal'); // آدَمَ
   assert.ok(
