@@ -368,3 +368,12 @@ This integration branch was created from current `main` to resolve the stale-bas
 - The integration branch `integration/tajweed-mainline-2026-10-09` remains saved and merge-base-clean against current `main` as last compared (ahead 44, behind 0). The branch's current code and docs remain available for continued source-level review; closing the draft PR did not delete the branch.
 - At 05:05Z the integration branch's classifier had advanced to blob `92f4fba4747024582c3334400bc6d3437732d5ef`; its latest reported full-corpus run is 104,554 spans, not the earlier 104,557 snapshot. The execution report/ledger must be checked against the current exact branch head before quoting totals. Current-head GitHub Actions was still queued; no native check or browser pass is established.
 - Continue saving changes directly to the integration branch, not through a PR, unless the owner asks. Before further edits, refresh the current branch head and relevant file SHAs because other autonomous waves may have advanced this branch since the previous fetch.
+
+
+
+### Source-of-truth cleanup — 2026-10-09 05:08Z
+
+- Corrected the top of `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md` to identify the exact current integration classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` and branch, and explicitly label earlier blobs/test snapshots as historical. The current authoritative corpus result is 104,554 spans across 6,236 ayahs, 21/21 rule IDs reached, zero recorded structural invariant failures, four exact same-unit collision pairs, and two unmarked pause-final Qalqalah spans. Isolated JS execution only; no native Node/CI/browser/scholarly pass claimed.
+- Strengthened `tests/tajweed-sources.test.js` from selected-field parity checks to complete deep equality of the runtime citation/work registry against canonical JSON. This now detects drift in topic, alternate references, labels, caveats, and source/work metadata, not only keys/work/lines/review.
+- Both edits are saved on `integration/tajweed-mainline-2026-10-09`. Their source blobs are report `92c27d9ef51c80691ca9c3cde82228c71d3fb326` and registry test `a5e6c3bb570d885ef54db4f189b4a1c9b8df7941`. The latest branch commit still needs current-head CI status lookup; no local native Node or Chromium environment was available through this GitHub-only workflow.
+- Workflow guard remains: PR #21 and PR #25 are closed, and PR #23 was owner-closed. Do not create/reopen a PR without explicit owner request. Continue branch-local audit and preserve v5.17.136 as formal release baseline.
