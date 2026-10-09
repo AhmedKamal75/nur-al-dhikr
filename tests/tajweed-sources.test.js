@@ -170,3 +170,13 @@ test('an unattributed rule is reported, not rendered blank', () => {
   // that renders as a tidy blank line.
   assert.deepEqual(uncitedTajweedRules(['madd_2', 'not_a_rule']), ['not_a_rule']);
 });
+
+test('Madd al-Lin of ʿAyn cites the Tuhfat verse naming its two faces', () => {
+  const entry = registry.rules.madd_4_6;
+  assert.equal(entry.work, 'tuhfat-al-atfal');
+  assert.equal(entry.lines, '54');
+  assert.equal(entry.review, 'contested');
+  assert.match(entry.caveat.en, /4 or 6 counts/);
+  assert.match(entry.caveat.ar, /أربعًا أو ست/);
+  assert.equal(TAJWEED_SOURCES.madd_4_6.lines, '54');
+});
