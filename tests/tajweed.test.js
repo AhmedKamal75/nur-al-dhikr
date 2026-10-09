@@ -12,6 +12,9 @@ import {
   TAJWEED_FAMILIES,
   tajweedRule,
   filterSpansByPrefs,
+  CLASSIFY_MEMO_CAP,
+  clearClassifyMemo,
+  classifyMemoSizeForTests,
 } from '../js/domain/tajweed.js';
 
 function rulesOf(word, opts) {
@@ -435,16 +438,40 @@ test('empty/undefined input never throws', () => {
   assert.deepEqual(classifyAyahTajweed(undefined), []);
 });
 
-test('preference filtering preserves same-unit rule overlaps for the inspector', () => {
+test('preference filtering matches the painter-visible span set', () => {
   const overlaps = [
     { start: 3, end: 4, rule: 'ghunnah' },
     { start: 3, end: 4, rule: 'idgham_ghunnah' },
   ];
-  assert.deepEqual(filterSpansByPrefs(overlaps, null), overlaps);
+  assert.deepEqual(filterSpansByPrefs(overlaps, null), [overlaps[0]]);
   assert.deepEqual(filterSpansByPrefs(overlaps, { rules: { ghunnah: false } }), [overlaps[1]]);
-  assert.deepEqual(filterSpansByPrefs(overlaps, { rules: { idgham_ghunnah: false } }), [
-    overlaps[0],
+  assert.deepEqual(
+    filterSpansByPrefs(overlaps, { rules: { idgham_ghunnah: false } }),
+    [overlaps[0]]
+  );
+
+  const partialOverlaps = [
+    { start: 0, end: 3, rule: 'madd_6' },
+    { start: 2, end: 4, rule: 'ghunnah' },
+    { start: 3, end: 5, rule: 'qalqalah' },
+  ];
+  assert.deepEqual(filterSpansByPrefs(partialOverlaps, null), [
+    partialOverlaps[0],
+    partialOverlaps[2],
   ]);
+});
+
+test('classifier memo remains bounded on arbitrary unique inputs', () => {
+  clearClassifyMemo();
+  try {
+    for (let i = 0; i < CLASSIFY_MEMO_CAP + 17; i += 1) {
+      classifyAyahTajweed(`ب ${i}`);
+    }
+    assert.equal(classifyMemoSizeForTests(), CLASSIFY_MEMO_CAP);
+  } finally {
+    clearClassifyMemo();
+  }
+  assert.equal(classifyMemoSizeForTests(), 0);
 });
 
 test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a legend entry', () => {
