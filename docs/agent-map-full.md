@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 244 — data files: 27 — tests: 282
+- js modules: 244 — data files: 27 — tests: 283
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -7598,6 +7598,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/mushaf.test.js` — (no header comment) (pins: `../js/services/mushaf.js`)
 - `tests/mushafBismillah.test.js` — the Bismillah is a header for every surah that opens with one, and that is not every surah. The guard that decides this used to exclude only At-Tawbah, so Al-Fatiha (pins: `../js/domain/tajweed.js`)
 - `tests/mushafHizb.test.js` — item 15 (Mushaf parity) gates: 1. hizbStartPage maps 1..60 onto juz halves monotonically, never overtaking the next juz, degrading to null on hostile input; (pins: `../js/domain/quranSearch.js`, `../js/services/mushaf.js`, `../js/views/mushafReader.js`, `../js/views/search.js`)
+- `tests/mutashabihat-cache.test.js` — (no header comment) (pins: `../js/domain/mutashabihat.js`)
 - `tests/nav-chrome.test.js` — (no header comment) (pins: `../js/core/config.js`, `../js/core/config/nav.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/initial.js`, `../js/ui/shell.js`)
 - `tests/nav-reachability.test.js` — REORGANISATION-PLAN.md Phase 0 + IA-7. INSTRUMENT BEFORE MOVING. This file is TEST-ONLY: it imports the real route→section map (DOORS from js/core/config/nav.js — the single source (pins: `../js/core/config.js`, `../js/core/config/nav.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`)
 - `tests/notifications-dedup.test.js` — F-007: the persisted day-dedup is shared across tabs. A sibling tab's write must invalidate our cache (storage event) and never be clobbered by ours (merge-on-write). (pins: `../js/services/notifications.js`)
