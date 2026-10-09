@@ -535,7 +535,7 @@ function isDivineName(word) {
  *  Ending in lām+lām+hāʾ identifies the name; it does NOT by itself mean
  *  tafkhim. The preceding recitation vowel determines heavy vs light. */
 function endsWithDivineName(word) {
-  return skeletonOf(word).endsWith(`${LAM}${LAM}\\u0647`);
+  return skeletonOf(word).endsWith(`${LAM}${LAM}\u0647`);
 }
 
 function unitHasHeavyVowel(unit) {
@@ -837,7 +837,7 @@ export function classifyWordTajweed(
     const inlineAllahPrefix =
       !isDivineName(word) &&
       units.length >= 3 &&
-      [WAW, '\\u0641', BEH, KAF, LAM, '\\u062A'].includes(units[0]?.base) &&
+      [WAW, '\u0641', BEH, KAF, LAM, '\u062A'].includes(units[0]?.base) &&
       units[0].diacritics.size > 0
         ? units[0]
         : null;
@@ -846,7 +846,7 @@ export function classifyWordTajweed(
       : unitHasHeavyVowel(inlineAllahPrefix);
     if (
       u.base === LAM &&
-      next?.base === '\\u0647' &&
+      next?.base === '\u0647' &&
       prev?.base === LAM &&
       endsWithDivineName(word) &&
       divineNameHasHeavyContext
