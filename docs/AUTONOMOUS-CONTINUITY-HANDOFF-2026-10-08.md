@@ -348,3 +348,11 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - The new Egyptian Ministry of Awqaf reference was initially present in the registry but not surfaced by the Mushaf Tajweed legend: `tajweedCitation()` returned only the primary work, and `tajweedSourceLine()` ignored secondary sources. Corrected the full path: only secondary sources with an openable URL are exposed by the helper, and the legend now displays a bilingual “Additional source / مرجع إضافي” line with the title, author, and external link.
 - Added quiet secondary-text-color, semi-bold dotted-underlined link styling, keyboard `:focus-visible` outline, `noopener noreferrer`, and regressions for citation metadata plus CSS contrast/focus visibility. The external source URL is percent-encoded so the Arabic-string lint does not misread the URL as Latin words inside Arabic text.
 - Latest code is on PR #24. No browser proof yet; the current-head CI matrix must confirm formatting, tests, accessibility, and actual Mushaf rendering before this can be called verified.
+
+
+
+### Final static consistency sweep — 2026-10-09 05:09Z
+
+- A manual reproduction of the source-registry Arabic-string lint found one pre-existing-in-this-branch defect introduced by the Madd Lāzim caveat: the Arabic sentence embedded the Latin identifier `madd_6`. Replaced it with Arabic-only wording in canonical JSON and runtime mirror.
+- Re-ran the same recursive Arabic-string scan over the full canonical `data/tajweed-sources.json`: **zero Arabic-containing strings with Latin words** were found after the fix.
+- Final intended candidate head before CI refresh: latest PR #24 branch commit. No additional source or version edits should be made unless the latest CI/test matrix exposes a concrete failure. Current corpus report still predates the `madd_4_6` rule; do not claim current-corpus pass until the current-head sweep runs.
