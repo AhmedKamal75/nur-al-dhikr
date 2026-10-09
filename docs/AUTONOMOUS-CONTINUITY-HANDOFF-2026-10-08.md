@@ -377,3 +377,13 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Strengthened `tests/tajweed-sources.test.js` from selected-field parity checks to complete deep equality of the runtime citation/work registry against canonical JSON. This now detects drift in topic, alternate references, labels, caveats, and source/work metadata, not only keys/work/lines/review.
 - Both edits are saved on `integration/tajweed-mainline-2026-10-09`. Their source blobs are report `92c27d9ef51c80691ca9c3cde82228c71d3fb326` and registry test `a5e6c3bb570d885ef54db4f189b4a1c9b8df7941`. The latest branch commit still needs current-head CI status lookup; no local native Node or Chromium environment was available through this GitHub-only workflow.
 - Workflow guard remains: PR #21 and PR #25 are closed, and PR #23 was owner-closed. Do not create/reopen a PR without explicit owner request. Continue branch-local audit and preserve v5.17.136 as formal release baseline.
+
+
+
+### Citation-mirror data-loss finding — 2026-10-09 05:10Z
+
+- A direct structural comparison of canonical `data/tajweed-sources.json` against evaluated runtime `js/domain/tajweedSources.js` found nine rule entries where `also` citations had been flattened from `{work, lines, review}` objects to work-ID strings. The old parity test only compared work/lines/review/caveat/label for primary citations and did not detect this loss.
+- Corrected all nine runtime `also` entries to preserve their exact work ID, locator, and review state. The strengthened test now uses complete deep equality for `TAJWEED_SOURCES` vs `registry.rules` and `TAJWEED_WORKS` vs `registry.works`.
+- Re-evaluated the runtime module in an isolated JavaScript runtime and compared canonicalized objects: **28/28 rule entries and 4/4 work records match exactly**. This is direct parity evidence, not native Node test/CI evidence.
+- Commits: runtime correction `771156f0f1192044fb7e75ec1a4601d6f1f395a7`; ledger row 92 and count update `1fc0e5d261653045429f31bbde74645418913d5c`. Row 92 remains OPEN until native Node/CI verifies the strengthened test.
+- No PR was opened. Respect the owner instruction: continue on the branch only unless explicitly asked otherwise.
