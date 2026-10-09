@@ -87,11 +87,11 @@ test('lam shamsiyyah also detects the article after a lam-prefix', () => {
     )
   ); // لِلظَّالِمِينَ
 
-  const lamPrefixExample = '\\u0644\\u0650\\u0644\\u0638\\u0651\\u064e\\u0627\\u0644\\u0650\\u0645\\u0650\\u064a\\u0646';
+  const lamPrefixExample = '\u0644\u0650\u0644\u0638\u0651\u064e\u0627\u0644\u0650\u0645\u0650\u064a\u0646';
   const articleLam = classifyWordTajweed(lamPrefixExample).find((span) => span.rule === 'lam_shamsiyyah');
   assert.ok(articleLam, 'the silent article lām should receive the Tajweed span');
   assert.equal(articleLam.start, 2, 'classify the second lām, not the pronounced lām-prefix');
-  assert.equal(lamPrefixExample.slice(articleLam.start, articleLam.end), '\\u0644');
+  assert.equal(lamPrefixExample.slice(articleLam.start, articleLam.end), '\u0644');
 });
 
 test('lam shamsiyyah fires only for \u0627\u0644/\u0671\u0644 + shaddah sun letter, and never on the divine name', () => {
@@ -211,8 +211,9 @@ test('ghunnah fires on shaddah-marked \u0646/\u0645 only', () => {
 
 test('low Uthmani iqlab mark canonicalizes to the same iqlab rule', () => {
   assert.equal(
-    rulesOf('\u0645\u0652\u0646\u06ED', { nextWordFirstBase: '\u0628' })[0],
-    'iqlab'
+    rulesOf('\u0645\u0652\u0646\u06ED', { nextWordFirstBase: '\u0628' }).includes('iqlab'),
+    true,
+    'the low mark must normalize to iqlab even when the preceding same-word meem has its own rule'
   );
 });
 
@@ -413,21 +414,21 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
 /* v4.5.2 — the app-palette additions: Tafkhim + Madd 'Iwad      */
 /* ------------------------------------------------------------------ */
 
-test('tafkhim: the heavy lam of the divine name, with or without a prefix', () => {
-  // ٱللَّهِ — bare divine name
-  assert.ok(rulesOf('\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
-  // وَٱللَّهِ — oath form (waw prefix)
+test('tafkhim: the lām of Lafẓ al-Jalālah follows its vowel context', () => {
+  // A standalone word is treated as initial recitation only when the caller says so.
+  assert.ok(
+    rulesOf('\u0671\u0644\u0644\u0651\u064e\u0647\u0650', { isFirstWordOfAyah: true }).includes('tafkhim')
+  );
+  // وَٱللَّهِ — attached wāw with fatḥah supports the heavy lām.
   assert.ok(rulesOf('\u0648\u064e\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
-  // بِٱللَّهِ — with ba' prefix
-  assert.ok(rulesOf('\u0628\u0650\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
-  // لِلَّهِ — with bare lam prefix
-  assert.ok(rulesOf('\u0644\u0650\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
-  // ٱللَّهُمَّ — Allahumma: the lam-ha ending is NOT there (ends لهم), no tafkhim lam
+  // بِٱللَّهِ and لِلَّهِ have kasrah before the name: tarqiq, not tafkhim.
+  assert.ok(!rulesOf('\u0628\u0650\u0671\u0644\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
+  assert.ok(!rulesOf('\u0644\u0650\u0644\u0651\u064e\u0647\u0650').includes('tafkhim'));
+  // ٱللَّهُمَّ — Allahumma: the lam-ha ending is NOT there (ends لهم), no tafkhim lam.
   assert.ok(
     !rulesOf('\u0671\u0644\u0644\u0651\u064e\u0647\u064f\u0645\u0651\u064e').includes('tafkhim')
   );
 });
-
 test('tafkhim: ra\u2019 mufakhkhamah (fatha/damma) fires; kasra and sukun do not', () => {
   assert.ok(rulesOf('\u0631\u064e\u0628\u0651').includes('tafkhim')); // رَبّ — fatha
   assert.ok(rulesOf('\u0631\u064f\u0632\u0650\u0642').includes('tafkhim')); // رُزِق — damma
@@ -474,7 +475,7 @@ test('the app palette: families match the reference chart colors', () => {
   assert.equal(colorOf('madd_munfasil'), '#BF3600');
   assert.equal(colorOf('madd_muttasil'), '#C62828');
   assert.equal(colorOf('madd_6'), '#B71C1C');
-  // the two rules this app's presentation convention leaves uncolored
+  // the three rules this app's presentation convention leaves uncolored
   assert.equal(colorOf('idgham_no_ghunnah'), null);
   assert.equal(colorOf('izhar_shafawi'), null);
   assert.equal(colorOf('izhar'), null);
