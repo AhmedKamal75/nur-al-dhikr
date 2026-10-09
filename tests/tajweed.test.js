@@ -62,6 +62,12 @@ test('lam shamsiyyah also detects the article after a lam-prefix', () => {
       'lam_shamsiyyah'
     )
   ); // لِلظَّالِمِينَ
+
+  const lamPrefixExample = '\\u0644\\u0650\\u0644\\u0638\\u0651\\u064e\\u0627\\u0644\\u0650\\u0645\\u0650\\u064a\\u0646';
+  const articleLam = classifyWordTajweed(lamPrefixExample).find((span) => span.rule === 'lam_shamsiyyah');
+  assert.ok(articleLam, 'the silent article lām should receive the Tajweed span');
+  assert.equal(articleLam.start, 2, 'classify the second lām, not the pronounced lām-prefix');
+  assert.equal(lamPrefixExample.slice(articleLam.start, articleLam.end), '\\u0644');
 });
 
 test('lam shamsiyyah fires only for \u0627\u0644/\u0671\u0644 + shaddah sun letter, and never on the divine name', () => {
