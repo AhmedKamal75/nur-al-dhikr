@@ -6,7 +6,7 @@
 
 - Repository: `AhmedKamal75/nur-al-dhikr`
 - Working branch: `fix/tajweed-semantic-lookahead-2026-10-08`
-- Classifier file content SHA used for the final rerun: `f448939a6724f49cd5257449df5f45fb0afb8c50` (includes the Qalqalah plural-key correction, explicit-sukun-aware Muqaṭṭaʿāt exemption, lexical-only Qāf→Kāf handling, lām-prefix fix, Allah-lām context, and syntax/runtime corrections).
+- Classifier file content SHA used for the final rerun: `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9` (includes the Qalqalah plural-key correction, explicit-sukun-aware Muqaṭṭaʿāt exemption, lexical-only Qāf→Kāf handling, lām-prefix fix, Allah-lām context, syntax/runtime corrections, and inspector-safe same-unit overlap filtering).
 - Corpus inputs: the 114 JSON files under `data/quran/1.json` through `data/quran/114.json`, fetched from the same branch.
 - Execution method: the ES-module source was fetched from GitHub, its top-level `export` modifiers were removed for evaluation, it was compiled/executed with `new Function` in the available JavaScript tool runtime, and the actual `classifyAyahTajweed(ayah.text)` function was invoked for each corpus ayah. Data files were parsed as JSON. The implementation was processed in six ranges to stay inside the tool-call limit.
 - This is real classifier execution against the bundled text, not merely static scanning. It is **not** an official `node --test` / `npm run check` run and does not prove UI integration or scholarly correctness.
@@ -34,7 +34,7 @@ The following structural invariants had **zero observed failures across all 6,23
 - no duplicate `start:end:rule` spans;
 - no corpus file fetch or JSON parse failures.
 
-The current `tests/tajweed.test.js` file was also executed in an isolated JavaScript harness after stripping its Node imports and supplying small synchronous `test` / `assert` shims: **26/26 test cases passed** on the latest classifier/test file pair. This is stronger than a hand-written spot check, but it is still not Node's native test runner, and shim behavior is not guaranteed identical for every assertion. The harness run caught and helped correct the Muqaṭṭaʿāt/explicit-sukun exemption bug, the lām-prefix test's double-escaped string, an invalid Qalqalah fixture spelling, an iqlab assertion that accidentally checked only the first unrelated span, and stale Lām al-Jalālah expectations.
+The current `tests/tajweed.test.js` file was also executed in an isolated JavaScript harness after stripping its Node imports and supplying small synchronous `test` / `assert` shims: **27/27 test cases passed** on classifier SHA `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9` and test blob `b64d1acf92ab4e1f92ee7351b426954f8872cd57`. This is not Node's native test runner. The extra regression asserts same-unit overlaps survive preference filtering, and verifies each collision rule can be independently disabled.
 
 ## Anomalies requiring follow-up
 
@@ -49,9 +49,9 @@ The classifier produces these four overlaps; they are not four arbitrary offset 
 | 27:10 | `جَآنّٞ` | `ghunnah` + `idgham_ghunnah` | Shaddah-ghunnah and the word-final tanween's next-word idgham coexist. |
 | 28:31 | `جَآنّٞ` | `ghunnah` + `idgham_ghunnah` | Same pair as 27:10. |
 
-The raw classifier reports both rules. However, `filterSpansByPrefs()` currently returns non-overlapping spans by dropping any later span whose start is before the prior span's end. Since these spans share exact offsets, the painter/inspector receives only the first (currently `ghunnah`) span. This may be a necessary one-color-per-glyph display choice, but precedence is implicit and the secondary rule is not surfaced by this filter. The durable ledger keeps this presentation issue **OPEN**; do not change the classifier pair counts without reviewing the recitation semantics and display policy.
+The raw classifier reports both rules. The original `filterSpansByPrefs()` dropped later overlaps, which hid the secondary rule from the inspector. This has now been corrected: preference filtering keeps all enabled spans in stable source order, so the inspector lists both phenomena and respects per-rule on/off preferences. The painter still emits one CSS rule class per written glyph; when ranges are equal, stable classifier order chooses the first enabled span for color, and disabling that rule lets the next enabled rule paint. The policy is now explicit in `js/views/tafsirPanel.js` and covered by a direct regression. The row remains **OPEN** for official Node/CI execution and real browser/visual inspection, not because the filter still discards secondary rules.
 
-The corpus sweep test was strengthened to pin the observed collision inventory: three `ghunnah+idgham_ghunnah` cases and one `ghunnah+idgham_no_ghunnah` case. Any new or missing pair now requires deliberate review. The latest full-corpus rerun on classifier SHA `f448939a6724f49cd5257449df5f45fb0afb8c50` reproduced all summary counts above after the Muqaṭṭaʿāt/Qalqalah changes and removal of the unsupported generic cross-word Qāf→Kāf guard.
+The corpus sweep test was strengthened to pin the observed collision inventory: three `ghunnah+idgham_ghunnah` cases and one `ghunnah+idgham_no_ghunnah` case. Any new or missing pair now requires deliberate review. The latest full-corpus rerun on classifier SHA `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9` reproduced all summary counts above after the Muqaṭṭaʿāt/Qalqalah changes, removal of the unsupported generic cross-word Qāf→Kāf guard, and the inspector-safe overlap filter change. All four overlaps are exact same-range collisions; no differently ranged partial-overlap cases were observed.
 
 ### 2. Three Qalqalah spans without an explicit sukun/diacritic inside the highlighted slice
 
@@ -65,6 +65,6 @@ The lightweight boundary diagnostic found no other surviving emitted Qalqalah sp
 
 Done in the isolated JavaScript runtime: all 114 JSON sources loaded; all 6,236 ayahs executed; all 21 rule IDs reached; structural invariants passed; the four overlap pairs and three unmarked Qalqalah cases were isolated and documented.
 
-Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep rows 79, 80, 86, 87, 88, and 89 open until their specific verification requirements are met. The current test-file blob is `85765057e4568592c9eaef02bf0c697e40019f45`; its 26 synchronous tests passed under an isolated shim, not native Node.
+Still not done: official `npm run check` / `node --test`, CI completion, Chromium/browser/device matrix, visual review of the word inspector and color painter on overlap cases, and a surah-by-surah comparison against a trusted Tajweed annotation/reference. GitHub Actions being queued is not a pass. Keep rows 79, 80, 86, 87, 88, and 89 open until their specific verification requirements are met. The current test-file blob is `b64d1acf92ab4e1f92ee7351b426954f8872cd57`; its 27 synchronous tests passed under an isolated shim, not native Node.
 
 This report records classifier execution and anomalies; it is not a claim that all Tajweed rules have been scholarly-validated or that the feature is release-ready.
