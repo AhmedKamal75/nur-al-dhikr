@@ -175,3 +175,24 @@ The following checks were executed against the exact source/test blobs below usi
 | Full corpus classifier execution | classifier `92f4fba4747024582c3334400bc6d3437732d5ef`; 114 bundled surah files | **6,236 ayahs; 104,554 spans; all 21 rule IDs reached; zero recorded structural invariant failures** |
 
 Still unverified: native `npm run check` / `node --test`, completed current-head GitHub Actions, Chromium rendering and interactions, and scholar/reference sign-off. Do not promote shim execution into a CI pass.
+
+
+## Post-normalization current-source rerun — 2026-10-09
+
+After the attached-token normalization fix, the exact current classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be` was fetched and executed directly over the bundled Quran corpus on `integration/tajweed-clean-mainline-2026-10-09`. Each range was executed in a fresh isolated JavaScript runtime against that exact source blob; the official Node runner was not available through this connector.
+
+| Surahs | Ayahs | Spans | Same-range collisions | Unmarked Qalqalah spans |
+| --- | ---: | ---: | --- | ---: |
+| 1–15 | 1,901 | 46,485 | 1 ghunnah + idgham-ighunnah; 1 ghunnah + idgham-no-ighunnah | 0 |
+| 16–30 | 1,568 | 24,420 | 2 ghunnah + idgham-ighunnah | 0 |
+| 31–45 | 1,041 | 16,217 | 0 | 0 |
+| 46–60 | 653 | 8,959 | 0 | 0 |
+| 61–75 | 428 | 4,792 | 0 | 0 |
+| 76–90 | 452 | 2,602 | 0 | 0 |
+| 91–105 | 150 | 851 | 0 | 2 |
+| 106–114 | 43 | 228 | 0 | 0 |
+| **Total** | **6,236** | **104,554** | **3 ghunnah + idgham_ghunnah; 1 ghunnah + idgham_no_ghunnah** | **2** |
+
+**Observed results across all eight batches:** all 114 JSON files loaded and parsed; all 6,236 ayahs executed; all 21 registered rule IDs were reached. There were zero word/token-count mismatches, invalid word indices, invalid span offsets, unknown rule IDs, duplicate exact spans, or fetch/parse failures. The four equal-range pairs match the previously documented inventory; two unmarked Qalqalah spans remain, consistent with the known ayah-final pause examples.
+
+This rerun **does validate current-source structural execution after the normalization change**, unlike the earlier predecessor-blob run. It is still not `node --test`, `npm run check`, GitHub Actions success, visual browser testing, or a scholarly gold-label comparison. The result must not be described as proof that every Tajweed classification is correct.
