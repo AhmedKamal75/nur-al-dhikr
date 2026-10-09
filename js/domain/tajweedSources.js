@@ -357,6 +357,18 @@ export const TAJWEED_SOURCES = Object.freeze({
  * entry. Returning null rather than a blank string keeps "unattributed"
  * visible to a test instead of rendering as an empty line that looks fine.
  */
+/** Present a locator in the reader's language without mutating its
+ * canonical registry form. Most locators are numeric matn/line ranges and
+ * stay language-neutral; only the registry's prose labels need translation. */
+function localizeCitationLocator(locator, lang) {
+  const value = String(locator || '').trim();
+  if (lang !== 'ar') return value;
+  const chapter = /^ch\.\s*(\d+)$/i.exec(value);
+  if (chapter) return `الفصل ${chapter[1]}`;
+  if (/^qalqalah section$/i.test(value)) return 'باب القلقلة';
+  return value;
+}
+
 export function tajweedCitation(ruleId, lang) {
   const entry = TAJWEED_SOURCES[ruleId];
   if (!entry) return null;
@@ -371,7 +383,7 @@ export function tajweedCitation(ruleId, lang) {
       return {
         title: lang === 'ar' ? alternateWork.shortTitle.ar : alternateWork.shortTitle.en,
         author: lang === 'ar' ? alternateWork.author.ar : alternateWork.author.en,
-        lines: citation.lines,
+        lines: localizeCitationLocator(citation.lines, lang),
         review: citation.review,
         caveat: citation.caveat || null,
       };
@@ -380,7 +392,7 @@ export function tajweedCitation(ruleId, lang) {
   return {
     title,
     author,
-    lines: entry.lines,
+    lines: localizeCitationLocator(entry.lines, lang),
     review: entry.review,
     caveat: entry.caveat || null,
     also,
