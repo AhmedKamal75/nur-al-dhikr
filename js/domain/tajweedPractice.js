@@ -80,24 +80,36 @@ export function normalizeTajweedPracticePool(pool) {
 
   const priorCoverage = pool.coverage && typeof pool.coverage === 'object' ? pool.coverage : {};
   const priorLevels = pool.levels && typeof pool.levels === 'object' ? pool.levels : {};
-  const levelRows = (size) => nextRuleRows.slice(0, size);
+  const expectedLevels = {
+    '1': nextRuleRows.slice(0, 10),
+    '2': nextRuleRows.slice(0, 25),
+    '3': [...nextRuleRows],
+  };
+  const expectedSpanCount = nextRuleRows.reduce((sum, row) => sum + Number(row?.c || 0), 0);
   const needsRuleRows = nextRuleRows.length !== priorRuleRows.length;
   const needsCoverage =
     Number(priorCoverage.madd_4_6?.ayahs) !== nextRuleRows.length ||
-    Number(priorCoverage.madd_4_6?.spans) !== nextRuleRows.reduce((sum, row) => sum + Number(row?.c || 0), 0);
+    Number(priorCoverage.madd_4_6?.spans) !== expectedSpanCount;
   const needsLevels = ['1', '2', '3'].some(
     (level) =>
-      !Array.isArray(priorLevels[level]?.madd_4_6) ||
-      priorLevels[level].madd_4_6.length !== nextRuleRows.length
+      JSON.stringify(priorLevels[level]?.madd_4_6 || []) !== JSON.stringify(expectedLevels[level])
   );
-  if (!needsRuleRows && !needsCoverage && !needsLevels && Number(corpus.ruleCount) === TAJWEED_RULES.length) {
+  if (
+    !needsRuleRows &&
+    !needsCoverage &&
+    !needsLevels &&
+    Number(corpus.ruleCount) === TAJWEED_RULES.length
+  ) {
     return pool;
   }
 
   return {
     ...pool,
     corpus: { ...corpus, ruleCount: TAJWEED_RULES.length },
-    byRule: { ...(pool.byRule && typeof pool.byRule === 'object' ? pool.byRule : {}), madd_4_6: nextRuleRows },
+    byRule: {
+      ...(pool.byRule && typeof pool.byRule === 'object' ? pool.byRule : {}),
+      madd_4_6: nextRuleRows,
+    },
     coverage: {
       ...priorCoverage,
       madd_4_6: {
@@ -107,9 +119,9 @@ export function normalizeTajweedPracticePool(pool) {
     },
     levels: {
       ...priorLevels,
-      '1': { ...(priorLevels['1'] || {}), madd_4_6: levelRows(10) },
-      '2': { ...(priorLevels['2'] || {}), madd_4_6: levelRows(25) },
-      '3': { ...(priorLevels['3'] || {}), madd_4_6: [...nextRuleRows] },
+      '1': { ...(priorLevels['1'] || {}), madd_4_6: expectedLevels['1'] },
+      '2': { ...(priorLevels['2'] || {}), madd_4_6: expectedLevels['2'] },
+      '3': { ...(priorLevels['3'] || {}), madd_4_6: expectedLevels['3'] },
     },
   };
 }
