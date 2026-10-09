@@ -298,7 +298,7 @@ export const TAJWEED_SOURCES = Object.freeze({
   }),
   madd_badal: Object.freeze({
     work: 'tuhfat-al-atfal',
-    lines: '47-58',
+    lines: '46',
     review: 'contested',
     topic: 'madd-badal',
     caveat: Object.freeze({
