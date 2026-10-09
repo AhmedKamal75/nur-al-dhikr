@@ -150,6 +150,14 @@ test('the runtime module mirrors the canonical JSON exactly', () => {
   assert.deepEqual(TAJWEED_SOURCES, registry.rules, 'rule registry drifted');
   assert.deepEqual(TAJWEED_WORKS, registry.works, 'source/work metadata drifted');
 });
+test('al-Tamhid source title matches the published Arabic title', () => {
+  assert.equal(registry.works.tamhid.shortTitle.ar, '\u0627\u0644\u062a\u0645\u0647\u064a\u062f \u0641\u064a \u0639\u0644\u0645 \u0627\u0644\u062a\u062c\u0648\u064a\u062f');
+  assert.equal(
+    TAJWEED_WORKS.tamhid.shortTitle.ar,
+    registry.works.tamhid.shortTitle.ar
+  );
+});
+
 test('tajweedCitation exposes localized alternate source locators', () => {
   const en = tajweedCitation('hamzat_wasl', 'en');
   assert.equal(en.also.length, 1);
