@@ -387,3 +387,11 @@ This integration branch was created from current `main` to resolve the stale-bas
 - Re-evaluated the runtime module in an isolated JavaScript runtime and compared canonicalized objects: **28/28 rule entries and 4/4 work records match exactly**. This is direct parity evidence, not native Node test/CI evidence.
 - Commits: runtime correction `771156f0f1192044fb7e75ec1a4601d6f1f395a7`; ledger row 92 and count update `1fc0e5d261653045429f31bbde74645418913d5c`. Row 92 remains OPEN until native Node/CI verifies the strengthened test.
 - No PR was opened. Respect the owner instruction: continue on the branch only unless explicitly asked otherwise.
+
+
+
+### Bibliographic source-title correction — 2026-10-09 05:12Z
+
+- Alternate-source display work uncovered a typo in the Arabic title of al-Tamhid: `التهويد في علم التجويد` was wrong; the catalogued title is `التمهيد في علم التجويد` (Quranpedia https://quranpedia.net/book/131; Islamweb https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents).
+- Corrected canonical JSON, runtime mirror, and added a regression test. Isolated full-object parity still passes; localized alternate citation now emits the corrected Arabic title. Native tests remain unverified.
+- Commits: JSON `1359a205b0054c38f4fcc89344760455d469b14f`; runtime `42f05509833b8cd3f8527a1845053d7dbaaa8371`; regression test `43bf1397af8af32331b4133146be784862144eed`; ledger `10fa47363d4cbbab711a1e77ee3aa9a627b3858e`; report `68f4921301edf3a7a3c7d7c8fe06589c63165f37`.
