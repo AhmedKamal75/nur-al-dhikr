@@ -136,6 +136,12 @@ const QALQALAH_MUQATTAAT_WORDS = new Set([
   '\u0642',
   '\u0639\u0633\u0642',
 ]);
+// Hafs-specific connected-recitation exception: the final bāʾ of
+// ٱرۡكَبْ is assimilated into the following shaddah-marked mīm in مَّعَنَا.
+// Keep this scoped to the exact word+boundary; bare bāʾ→mīm adjacency is not enough.
+const QALQALAH_BA_MEEM_ASSIMILATION_WORDS = new Set([
+  '\u0671\u0631\u0643\u0628',
+]);
 const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set([
   '\u0628\u0633\u0637\u062A',
   '\u0623\u062D\u0637\u062A',
@@ -694,7 +700,14 @@ export function classifyWordTajweed(
         QALQALAH_KNOWN_NO_ECHO_WORDS.has(baseSequence) &&
         ((u.base === '\u0637' && next?.base === '\u062A') ||
           (u.base === '\u0642' && next?.base === '\u0643'));
-      const assimilatesInstead = sameLetterAssimilation || dalToTaAssimilation || knownNoEchoWord;
+      const arkabMaanaAssimilation =
+        QALQALAH_BA_MEEM_ASSIMILATION_WORDS.has(baseSequence) &&
+        u.base === BEH &&
+        !next &&
+        nextWordFirstBase === MEEM &&
+        nextWordFirstHasShadda;
+      const assimilatesInstead =
+        sameLetterAssimilation || dalToTaAssimilation || knownNoEchoWord || arkabMaanaAssimilation;
       if (sakin && !assimilatesInstead) {
         spans.push({ start: u.start, end: u.end, rule: 'qalqalah' });
       }
