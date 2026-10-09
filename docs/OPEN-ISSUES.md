@@ -6,7 +6,7 @@
 > v5.17.21; its score replaces this line when it lands.
 >
 > **Counted 2026-10-09 against the integration branch**, by parsing this file's own
-> rows rather than by hand: **90 rows — 29 RESOLVED, 36 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **91 rows — 29 RESOLVED, 37 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
 >
@@ -188,6 +188,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 93 | Arabic title of al-Tamhid was misspelled in source metadata | **OPEN — title corrected, native verification pending** | The registry showed `التهويد في علم التجويد`, but catalog and text records identify the work as `التمهيد في علم التجويد` (Quranpedia: https://quranpedia.net/book/131; Islamweb: https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents). Canonical JSON, runtime mirror, and a regression assertion now use the verified title. Keep open until native registry tests/CI pass. |
 
 | 94 | Alternate Tajweed citations were stored but not surfaced in the Mushaf legend | **OPEN — source/UI fix implemented, browser verification pending** | The registry's `also` entries were preserved in data but `tajweedCitation()` and `tajweedSourceLine()` exposed only the primary source. The helper now localizes alternate work title/author/locator/review metadata, and the Mushaf Tajweed legend renders each alternate locator as a separately escaped source line. Unit regression covers English/Arabic output; verify layout, wrapping, and reader clarity in Chromium EN/AR × light/dark × phone/desktop before closure. |
+| 95 | User-selected Tajweed colors are shadowed by dark-paper defaults | **OPEN — CSS fix on draft, native/browser verification pending** | The dark-paper rules define local `--tw-*` palette values on `.mushaf-page-wrap`, which can shadow root-level values set by the user-color action and make glyph colors disagree with the chosen legend swatch. PR #27 moves user picks to a separate inherited `--tw-user-*` layer and has CSS fallbacks preserving the dark-paper default palette; `tests/tajweed-coherence.test.js` pins all 18 override variables and the dark defaults. Verify real Mushaf rendering (EN/AR × light/dark × phone/desktop) and native CI before closure. |
 
 ## Stale report claims — closed, with evidence
 
@@ -223,7 +224,7 @@ Counted from the current table on 2026-10-09, not estimated:
 
 | Bucket | Count |
 | --- | ---: |
-| **OPEN** (including two OPEN / BLOCKED:device rows) | **36** |
+| **OPEN** (including two OPEN / BLOCKED:device rows) | **37** |
 | **PROPOSED** (costed, needs an owner decision) | **5** |
 | **BLOCKED:scholar** (must never be machine-filled) | **7** |
 | **BLOCKED:device** (pure device-blocked rows; mixed rows counted under OPEN) | **5** |
@@ -232,6 +233,6 @@ Counted from the current table on 2026-10-09, not estimated:
 | **RESOLVED after re-verification** | **27** |
 | **RESOLVED on main — next release** | **2** |
 | **STANDING CONSTRAINT** (not a defect) | **2** |
-| **Total issue rows** | **90** |
+| **Total issue rows** | **91** |
 
-These buckets reconcile to the 90 rows currently present. The highest row ID is 94 because issue IDs are not contiguous; use the table's actual row count, not the maximum ID. There are **41 OPEN or PROPOSED items**. Scholarly and device constraints remain explicit; they must not be silently converted into machine-resolved work. A resolved row may still require release inclusion or final native verification, as stated in that row.
+These buckets reconcile to the 91 rows currently present. The highest row ID is 95 because issue IDs are not contiguous; use the table's actual row count, not the maximum ID. There are **42 OPEN or PROPOSED items**. Scholarly and device constraints remain explicit; they must not be silently converted into machine-resolved work. A resolved row may still require release inclusion or final native verification, as stated in that row.
