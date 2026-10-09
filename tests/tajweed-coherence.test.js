@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import {
   BISMILLAH_AR,
   TAJWEED_FAMILIES,
+  TAJWEED_FAMILY_VARS,
   TAJWEED_RULES,
   canonicalWordTokens,
   filterSpansByPrefs,
@@ -87,12 +88,36 @@ test('word tokens retain their printed ornaments for page and inspector parity',
   assert.equal(token.raw, 'رَبِّهِمۡۗ');
 });
 
-test('the inspector span lens is the same non-overlapping set the painter uses', () => {
+test('user Tajweed family colors override paper-scoped default palettes', () => {
+  const css = readFileSync(new URL('../assets/css/quran.css', import.meta.url), 'utf8');
+  const overrideVars = Object.values(TAJWEED_FAMILY_VARS).flat();
+
+  assert.ok(overrideVars.length > 0);
+  for (const variable of overrideVars) {
+    assert.ok(variable.startsWith('--tw-user-'), `custom color variable must be isolated: ${variable}`);
+    assert.ok(
+      css.includes(`var(${variable}, var(`),
+      `${variable} must take precedence over the paper/theme fallback`
+    );
+  }
+
+  // The dark-paper scopes retain their accessible default palette. User picks
+  // win through the distinct --tw-user-* layer instead of fighting these values.
+  assert.match(css, /\.mushaf-page-wrap\[data-mushaf-paper='night'\][\s\S]*?--tw-qalqalah:\s*#4dd0e1/);
+  assert.match(css, /\.mushaf-page-wrap\[data-mushaf-paper='amoled'\]/);
+  assert.match(css, /\.mushaf-page-wrap\[data-mushaf-paper='royal-black'\]/);
+});
+
+test('the inspector retains same-unit rule collisions for independent toggling', () => {
   const spans = [
     { rule: 'madd_6', start: 2, end: 4 },
     { rule: 'ghunnah', start: 4, end: 7 },
     { rule: 'idgham_ghunnah', start: 4, end: 7 },
   ];
-  assert.deepEqual(filterSpansByPrefs(spans, {}), [spans[0], spans[1]]);
+  assert.deepEqual(filterSpansByPrefs(spans, {}), spans);
   assert.deepEqual(filterSpansByPrefs(spans, { rules: { ghunnah: false } }), [spans[0], spans[2]]);
+  assert.deepEqual(
+    filterSpansByPrefs(spans, { rules: { idgham_ghunnah: false } }),
+    [spans[0], spans[1]]
+  );
 });
