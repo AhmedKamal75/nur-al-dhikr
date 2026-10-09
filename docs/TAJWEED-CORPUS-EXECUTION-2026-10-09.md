@@ -196,3 +196,12 @@ After the attached-token normalization fix, the exact current classifier blob `b
 **Observed results across all eight batches:** all 114 JSON files loaded and parsed; all 6,236 ayahs executed; all 21 registered rule IDs were reached. There were zero word/token-count mismatches, invalid word indices, invalid span offsets, unknown rule IDs, duplicate exact spans, or fetch/parse failures. The four equal-range pairs match the previously documented inventory; two unmarked Qalqalah spans remain, consistent with the known ayah-final pause examples.
 
 This rerun **does validate current-source structural execution after the normalization change**, unlike the earlier predecessor-blob run. It is still not `node --test`, `npm run check`, GitHub Actions success, visual browser testing, or a scholarly gold-label comparison. The result must not be described as proof that every Tajweed classification is correct.
+
+
+## Current classifier unit-test rerun — 2026-10-09
+
+- Exact classifier blob: `b48dfcb6f82068195a26d7639f2a36297e8d67be`.
+- Exact test blob: `067f660834412228f8bdb3ea9d080b3124421fd7`.
+- Result: **30/30 test cases passed** in an isolated synchronous JavaScript harness, including the attached rub el-hizb/numeral divine-name regressions and all existing cases in `tests/tajweed.test.js`.
+- Harness method: the Node imports were removed, test registration was shimmed synchronously, and the assertions used by this file (`equal`, `ok`, `deepEqual`, `match`) were supplied by a small local strict subset. This executes the test functions but is **not** the native `node:test` runner; it cannot claim Node's complete assertion semantics or official project-gate status.
+- Required next gate: run the native `node --test` / `npm run check` and obtain a completed current-head CI result. No test is closed solely on the isolated harness.
