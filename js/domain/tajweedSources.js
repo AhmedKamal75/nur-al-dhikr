@@ -42,7 +42,7 @@ export const TAJWEED_WORKS = Object.freeze({
   }),
   tamhid: Object.freeze({
     author: Object.freeze({ en: 'Ibn al-Jazari', ar: 'ابن الجزري' }),
-    shortTitle: Object.freeze({ en: 'al-Tamhid fi ilm al-Tajwid', ar: 'التهويد في علم التجويد' }),
+    shortTitle: Object.freeze({ en: 'al-Tamhid fi ilm al-Tajwid', ar: 'التمهيد في علم التجويد' }),
     edition: 'ed. Ali Husayn al-Bawwab, Riyadh 1405/1985',
     note: Object.freeze({
       en: 'The prose expansion of the Jazariyya, and the usual reference for chapter-level organisation.',
