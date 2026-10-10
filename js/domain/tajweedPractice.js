@@ -44,6 +44,89 @@ export const PRACTICE_POOL_MIN = 5;
 export const PRACTICE_POOL_CAP = 25;
 
 /**
+ * Bridge the generated v2 pool across a newly introduced rare rule.
+ *
+ * Madd al-Līn of ʿAyn occurs in two distinct ayahs in this bundled Hafs
+ * corpus: 19:1 (كٓهيعٓصٓ) and 42:2 (عٓسٓقٓ). Older generated pool files
+ * already contain these ayahs in their mixed pool via other rules, but they
+ * predate the separate madd_4_6 rule. Add only these source-grounded rows
+ * when the metadata identifies the complete 114-surah corpus. A seed pool
+ * must never receive rows for surahs it does not bundle. Rebuilding the
+ * generated artifact with scripts/build-tajweed-practice.mjs makes this
+ * compatibility bridge a no-op and is the preferred long-term state.
+ */
+const MADDAIN_AYN_CORPUS_ROWS = Object.freeze([
+  Object.freeze({ s: 19, a: 1, w: 1, c: 1 }),
+  Object.freeze({ s: 42, a: 2, w: 1, c: 1 }),
+]);
+
+export function normalizeTajweedPracticePool(pool) {
+  if (!pool || typeof pool !== 'object' || Array.isArray(pool)) return pool;
+  const corpus = pool.corpus;
+  if (Number(corpus?.surahs) !== 114 || Number(corpus?.ayahs) < 6000) return pool;
+
+  const priorRuleRows = Array.isArray(pool.byRule?.madd_4_6) ? pool.byRule.madd_4_6 : [];
+  const nextRuleRows = [...priorRuleRows];
+  const seenRuleRows = new Set(
+    nextRuleRows.map((row) => (row ? `${row.s}:${row.a}` : ''))
+  );
+  for (const row of MADDAIN_AYN_CORPUS_ROWS) {
+    const key = `${row.s}:${row.a}`;
+    if (!seenRuleRows.has(key)) {
+      nextRuleRows.push({ ...row });
+      seenRuleRows.add(key);
+    }
+  }
+
+  const priorCoverage = pool.coverage && typeof pool.coverage === 'object' ? pool.coverage : {};
+  const priorLevels = pool.levels && typeof pool.levels === 'object' ? pool.levels : {};
+  const expectedLevels = {
+    '1': nextRuleRows.slice(0, 10),
+    '2': nextRuleRows.slice(0, 25),
+    '3': [...nextRuleRows],
+  };
+  const expectedSpanCount = nextRuleRows.reduce((sum, row) => sum + Number(row?.c || 0), 0);
+  const needsRuleRows = nextRuleRows.length !== priorRuleRows.length;
+  const needsCoverage =
+    Number(priorCoverage.madd_4_6?.ayahs) !== nextRuleRows.length ||
+    Number(priorCoverage.madd_4_6?.spans) !== expectedSpanCount;
+  const needsLevels = ['1', '2', '3'].some(
+    (level) =>
+      JSON.stringify(priorLevels[level]?.madd_4_6 || []) !== JSON.stringify(expectedLevels[level])
+  );
+  if (
+    !needsRuleRows &&
+    !needsCoverage &&
+    !needsLevels &&
+    Number(corpus.ruleCount) === TAJWEED_RULES.length
+  ) {
+    return pool;
+  }
+
+  return {
+    ...pool,
+    corpus: { ...corpus, ruleCount: TAJWEED_RULES.length },
+    byRule: {
+      ...(pool.byRule && typeof pool.byRule === 'object' ? pool.byRule : {}),
+      madd_4_6: nextRuleRows,
+    },
+    coverage: {
+      ...priorCoverage,
+      madd_4_6: {
+        ayahs: nextRuleRows.length,
+        spans: nextRuleRows.reduce((sum, row) => sum + Number(row?.c || 0), 0),
+      },
+    },
+    levels: {
+      ...priorLevels,
+      '1': { ...(priorLevels['1'] || {}), madd_4_6: expectedLevels['1'] },
+      '2': { ...(priorLevels['2'] || {}), madd_4_6: expectedLevels['2'] },
+      '3': { ...(priorLevels['3'] || {}), madd_4_6: expectedLevels['3'] },
+    },
+  };
+}
+
+/**
  * Backfill `pool.byRule` for every TAJWEED_RULES id with fewer than `min`
  * entries, scanning `surahDocs` ({ surahNumber: {ayahs:[{number,text}]}}).
  * Rules named in `only` bypass the min check (top-up mode: the session
@@ -58,29 +141,48 @@ export function backfillTajweedPool(
   surahDocs,
   { min = PRACTICE_POOL_MIN, cap = PRACTICE_POOL_CAP, only = null } = {}
 ) {
-  const base = pool && typeof pool === 'object' ? pool : {};
-  const byRule = { ...(base.byRule || {}) };
-  const mixedKeys = new Set((base.mixed || []).map((e) => (e ? `${e.s}:${e.a}` : '')));
-  const mixed = [...(base.mixed || [])];
+  const base = pool && typeof pool === 'object' && !Array.isArray(pool) ? pool : {};
+  const priorByRule =
+    base.byRule && typeof base.byRule === 'object' && !Array.isArray(base.byRule)
+      ? base.byRule
+      : {};
+  const byRule = { ...priorByRule };
+  const mixedSource = Array.isArray(base.mixed) ? base.mixed : [];
+  const mixedKeys = new Set(mixedSource.map((e) => (e ? `${e.s}:${e.a}` : '')));
+  const mixed = [...mixedSource];
+  const docs =
+    surahDocs && typeof surahDocs === 'object' && !Array.isArray(surahDocs) ? surahDocs : {};
+  const numericOption = (value, fallback) =>
+    Number.isFinite(Number(value)) ? Math.floor(Number(value)) : fallback;
+  // Callers cannot turn a convenience backfill into an unbounded corpus scan.
+  const capRows = Math.min(PRACTICE_POOL_CAP, Math.max(0, numericOption(cap, PRACTICE_POOL_CAP)));
+  const minRows = Math.min(capRows, Math.max(0, numericOption(min, PRACTICE_POOL_MIN)));
   const onlySet = Array.isArray(only) && only.length ? new Set(only) : null;
   const addedByRule = {};
+  const surahKeys = Array.from({ length: 114 }, (_, i) => String(i + 1)).filter((key) =>
+    Object.hasOwn(docs, key)
+  );
   for (const rule of TAJWEED_RULES) {
     if (onlySet && !onlySet.has(rule.id)) continue;
-    const list = byRule[rule.id] || [];
-    if (list.length >= min && !onlySet) continue;
+    const list = Array.isArray(byRule[rule.id]) ? byRule[rule.id] : [];
+    if (list.length >= minRows && !onlySet) continue;
     // One ayah can legitimately exercise MANY rules — dedupe is per rule,
     // never global, or the first rule processed would starve the rest.
     const seen = new Set(list.map((e) => (e ? `${e.s}:${e.a}` : '')));
     const additions = [];
-    for (const sKey of Object.keys(surahDocs)) {
+    for (const sKey of surahKeys) {
       const surah = Number(sKey);
-      const doc = surahDocs[sKey];
+      if (!Number.isInteger(surah) || surah < 1 || surah > 114) continue;
+      const doc = docs[sKey];
       if (!doc || !Array.isArray(doc.ayahs)) continue;
       for (const ayah of doc.ayahs) {
-        if (list.length + additions.length >= cap) break;
-        const key = `${surah}:${ayah.number}`;
+        if (list.length + additions.length >= capRows) break;
+        if (!ayah || typeof ayah.text !== 'string') continue;
+        const ayahNumber = Number(ayah.number);
+        if (!Number.isInteger(ayahNumber) || ayahNumber < 1 || ayahNumber > 286) continue;
+        const key = `${surah}:${ayahNumber}`;
         if (seen.has(key)) continue;
-        const perWord = classifyAyahTajweed(String(ayah.text || ''));
+        const perWord = classifyAyahTajweed(ayah.text);
         let firstWord = 0;
         let count = 0;
         for (const w of perWord) {
@@ -91,7 +193,7 @@ export function backfillTajweedPool(
           }
         }
         if (firstWord) {
-          const row = { s: surah, a: Number(ayah.number), w: firstWord, c: count };
+          const row = { s: surah, a: ayahNumber, w: firstWord, c: count };
           additions.push(row);
           seen.add(key);
           if (!mixedKeys.has(key)) {
@@ -100,7 +202,7 @@ export function backfillTajweedPool(
           }
         }
       }
-      if (list.length + additions.length >= cap) break;
+      if (list.length + additions.length >= capRows) break;
     }
     if (additions.length) {
       byRule[rule.id] = [...list, ...additions];

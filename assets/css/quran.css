@@ -385,6 +385,7 @@ body:not(.tajweed-underlines-off)
     > .tajweed--madd_silah,
     > .tajweed--madd_muttasil,
     > .tajweed--madd_6,
+    > .tajweed--madd_4_6,
     > .tajweed--hamzat_wasl,
     > .tajweed--lam_shamsiyyah,
     > .tajweed--tafkhim
@@ -443,7 +444,8 @@ body:not(.tajweed-underlines-off)
 .tajweed--madd_muttasil {
   color: var(--tw-madd-muttasil);
 }
-.tajweed--madd_6 {
+.tajweed--madd_6,
+.tajweed--madd_4_6 {
   color: var(--tw-madd-laazim);
 }
 
@@ -472,7 +474,8 @@ body:not(.tajweed-underlines-off)
 .tajweed--madd_munfasil,
 .tajweed--madd_silah,
 .tajweed--madd_muttasil,
-.tajweed--madd_6 {
+.tajweed--madd_6,
+.tajweed--madd_4_6 {
   text-decoration: underline double;
   text-underline-offset: 3px;
 }

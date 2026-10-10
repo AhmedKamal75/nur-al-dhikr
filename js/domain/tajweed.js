@@ -1303,17 +1303,32 @@ export function effectiveRuleColor(prefs, rule) {
     : rule.color;
 }
 
-/** Filter a word's spans by the enabled-rule preferences and keep source order.
- *  Distinct Tajweed phenomena can legitimately share one written unit (e.g.
- *  ghunnah on a shaddah-marked letter plus tanween idgham on that same glyph).
- *  The inspector must list every enabled match; the painter chooses one
- *  deterministic visible span when glyph ranges overlap. */
+/** Filter to enabled, non-overlapping spans that the painter can render.
+ * Equal-range collisions resolve in classifier order. Turning off the winning
+ * rule reveals the next enabled span; the inspector uses this exact set so it
+ * never lists a rule whose mark is not visible in the Mushaf.
+ */
 export function filterSpansByPrefs(spans, prefs) {
   if (!Array.isArray(spans)) return [];
-  return spans
-    .filter((sp) => ruleEnabled(prefs, sp.rule))
+  const sorted = spans
+    .filter((sp) => sp && ruleEnabled(prefs, sp.rule))
     .slice()
     .sort((a, b) => a.start - b.start || a.end - b.end);
+  const visible = [];
+  let cursor = 0;
+  for (const span of sorted) {
+    if (
+      !Number.isInteger(span.start) ||
+      !Number.isInteger(span.end) ||
+      span.start < cursor ||
+      span.end <= span.start
+    ) {
+      continue;
+    }
+    visible.push(span);
+    cursor = span.end;
+  }
+  return visible;
 }
 
 /** A curated swatch palette for the color pickers — readable against both

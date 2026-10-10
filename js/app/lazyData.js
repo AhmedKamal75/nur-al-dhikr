@@ -740,7 +740,9 @@ export async function ensureTajweedPool(state) {
   rt.tajweedPoolFetchStarted = true;
   const request = (async () => {
     try {
-      const pool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
+      const rawPool = await fetchJSON(TAJWEED_PRACTICE_POOL_URL);
+      const { normalizeTajweedPracticePool } = await import('../domain/tajweedPractice.js');
+      const pool = normalizeTajweedPracticePool(rawPool);
       if (!isCurrentGeneration(generation)) return false;
       store.dispatch(actions.setTajweedPool(pool));
       flagLoad('tajweed-pool', false);

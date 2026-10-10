@@ -46,7 +46,9 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
   const ruleCounts = new Map();
   let multiRuleSameUnit = 0;
   const multiRulePairs = new Map();
-  let bareQalqalahSpans = 0;
+  const bareQalqalahExamples = [];
+  let partialOverlapPairs = 0;
+  const partialOverlapExamples = [];
   const qlqBoundaryPairs = new Map();
   const qlqBoundaryExamples = new Map();
 
@@ -110,7 +112,12 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
         if (span.rule === 'qalqalah') {
           const renderedSpan = word.word.slice(span.start, span.end);
           if (!/[\u064B-\u0652\u0670\u06E1\u06E2\u06ED\u06E4\u0653]/u.test(renderedSpan)) {
-            bareQalqalahSpans += 1;
+            bareQalqalahExamples.push({
+              surah: row.surah,
+              ayah: row.ayah,
+              word: word.word,
+              span: renderedSpan,
+            });
           }
 
           const nextIndex = nextSemanticIndex.get(word.wordIndex - 1);
@@ -143,14 +150,43 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
           }
         }
       }
+      // Different classifier ranges may not partially overlap: the Mushaf can
+      // paint one non-overlapping set without silently hiding another rule.
+      // Exact same-range multi-rule collisions are separately pinned below.
+      for (let i = 0; i < word.spans.length; i += 1) {
+        for (let j = i + 1; j < word.spans.length; j += 1) {
+          const a = word.spans[i];
+          const b = word.spans[j];
+          const intersects = Math.max(a.start, b.start) < Math.min(a.end, b.end);
+          const sameRange = a.start === b.start && a.end === b.end;
+          if (intersects && !sameRange) {
+            partialOverlapPairs += 1;
+            if (partialOverlapExamples.length < 10) {
+              partialOverlapExamples.push({
+                surah: row.surah,
+                ayah: row.ayah,
+                word: word.word,
+                spans: [a, b],
+              });
+            }
+          }
+        }
+      }
     }
   }
 
   assert.ok(spanCount > 0, 'corpus sweep produced no Tajweed spans');
+  assert.deepEqual(
+    bareQalqalahExamples
+      .map((item) => `${item.surah}:${item.ayah}:${item.word}:${item.span}`)
+      .sort(),
+    ['94:8:فَٱرۡغَب:ب', '96:19:وَٱقۡتَرِب۩:ب'],
+    'bare final-bāʾ Qalqalah spans must remain the two expected waqf examples'
+  );
   assert.equal(
-    bareQalqalahSpans,
-    2,
-    'after the exact ٱرۡكَب مَّعَنَا exception, only the two known ayah-final pause spans should be unmarked'
+    partialOverlapPairs,
+    0,
+    'partial Tajweed span overlap requires explicit rendering policy and a reviewed regression'
   );
   for (const rule of TAJWEED_RULES) {
     assert.ok(seen.has(rule.id), `rule is unreachable in the real Quran corpus: ${rule.id}`);
@@ -176,7 +212,9 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
         ruleCounts: Object.fromEntries([...ruleCounts.entries()].sort()),
         multiRuleSameUnit,
         multiRulePairs: Object.fromEntries([...multiRulePairs.entries()].sort()),
-        bareQalqalahSpans,
+        bareQalqalahExamples,
+        partialOverlapPairs,
+        partialOverlapExamples,
         qlqBoundaryPairs: Object.fromEntries([...qlqBoundaryPairs.entries()].sort()),
         qlqBoundaryExamples: Object.fromEntries([...qlqBoundaryExamples.entries()].sort()),
       },

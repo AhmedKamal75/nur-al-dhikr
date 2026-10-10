@@ -146,10 +146,9 @@ export function renderAyahWords(
  *  to trust (computed directly from this app's own text, not aligned
  *  against a third-party offset table).
  *
- *  The inspector retains every enabled rule even when two rules occupy the
- *  same written unit. A glyph can only get one CSS rule class in this markup:
- *  for equal ranges, stable classifier order gives the first enabled rule the
- *  visible color; disabling that rule lets the next one paint the glyph. */
+ *  The inspector and painter use the same non-overlapping span set.
+ *  Equal-range spans resolve in classifier order; disabling the winning rule
+ *  lets the next enabled rule become visible. */
 function colorizeWord(word, spans, prefs = null) {
   const active = filterSpansByPrefs(spans, prefs);
   if (!active.length) return escapeHTML(word);
