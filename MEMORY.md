@@ -6,11 +6,11 @@ nothing on disk carried the state forward. Everything here is verified against
 the tree, not remembered. When something here is wrong, fix this file in the
 same change that fixes the code.
 
-Last verified: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromium E2E green (180 passed, 3 skipped).
+Last verified release: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromium E2E green (180 passed, 3 skipped). The v5.17.139 rasm-correctness candidate is on a separate draft branch and is not release-certified.
 
 ---
 
-## 1. The six things that will bite you
+## 1. The seven things that will bite you
 
 1. **Five version markers move together or not at all.** `package.json`,
    `APP_VERSION` (`js/core/config.js`), `VERSION` (`sw.js`), `manifest.json`
@@ -43,6 +43,11 @@ Last verified: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromi
    the green you cannot. A commit message claiming a number nobody read is the
    worst thing in this repo, because it is the only failure nothing downstream
    can catch.
+
+7. **Sophisticated simplicity.** Prefer the smallest clear, testable design that solves the
+   whole evidenced problem. Do not add complexity merely to look advanced; generalize when a
+   class of failures calls for it. This complements, and never relaxes, the source, scholarly,
+   accessibility, offline, evidence, and regression-test rules.
 
 ## 2. Architecture in one page
 
@@ -106,15 +111,14 @@ Last verified: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromi
 See `docs/OPEN-ISSUES.md` for the full list with owners. The ones most likely to
 be forgotten:
 
-- **TOP PRIORITY — Tajweed is wrong in the Mushaf reader (ledger row 99).** The
-  classifier was written against the `data/quran/*.json` rasm and is not
-  rasm-agnostic. The same ayah is coloured differently depending on which door the
-  reader entered, on **1,221 of 6,236 ayahs (19.6%)**. Three spellings cause it:
-  Madd Badal lost (267 ayahs — Mushaf writes `hamza-above + fatha`, corpus writes
-  `hamza + madda-above`, so Badal falls through to `madd_2`); Madd Iwaḍ spuriously
-  added (716); Iqlab crossing a word boundary (260). Normalising the rasm does not
-  close the gap. Until this is fixed, **any** Tajweed work measured against the
-  corpus is silently wrong in the Mushaf. Details in the handoff doc and row 99.
+- **TOP PRIORITY — Qur’an/Mushaf Tajweed rasm consistency (ledger row 99).** Current `main`
+  is v5.17.138 at `fbf867d533bd708c2ae8bd98765c160ef4440bc3`. A focused implementation
+  candidate is on `fix/quran-mushaf-rasm-row99-2026-10-10`: alternate Madd Badal spelling,
+  contextual final tanween spelling, explicit Iqlab-mark recognition, and dagger-alif glyph anchoring.
+  The reported 1,221/6,236-ayah baseline must be independently recomputed against these pinned sources.
+  **Do not close row 99** until the cross-rasm rule/span sweep, native CI, Chromium glyph inspection,
+  and source-backed scholarly review pass. Canonical Qur’an text stays untouched.
+
 - **Scholar-gated, never machine-filled:** grades for `pdf-duas`, `daily-sunnah`,
   `reflections`; the 30 quranic items in simplified orthography (F5); whether
   Bismillah-as-interactive-text is acceptable; qalqalah colour convention; a

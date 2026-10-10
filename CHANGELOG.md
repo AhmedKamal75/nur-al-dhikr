@@ -1,3 +1,9 @@
+# v5.17.139 — Qur’an/Mushaf rasm-aware Tajweed (candidate; not certified)
+
+- First implementation wave for OPEN-ISSUES row 99: alternate-rasm Madd Badal, contextual final tanween/Madd Iwaḍ, explicit Iqlab signal and dagger-alif glyph anchoring.
+- Adds targeted regressions, a full 6,236-ayah cross-rasm Node gate, and `scripts/audit-tajweed-rasm.mjs` for mismatch counts and span locations.
+- Not release-certified: native CI, full audit review, Chromium EN/AR × light/dark × phone/desktop glyph checks and scholarly review remain required. Qur’an data is unchanged.
+
 # v5.17.138 — the Tajweed integration branch, merged and made honest
 
 - Resolved the interrupted merge of `integration/tajweed-clean-mainline-2026-10-09` into main (8 conflicted files). Content-level disagreements kept both sides' changes; prettier-only disagreements took the house style; the three docs conflicts were reconciled by union with the superseded checkpoints kept as audit trail.

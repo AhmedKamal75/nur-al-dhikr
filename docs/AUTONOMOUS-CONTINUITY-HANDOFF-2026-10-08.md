@@ -1,6 +1,8 @@
 # Nūr al-Dhikr — Autonomous Continuity Handoff
 
-Updated: 2026-10-09 06:12Z
+> **Current row 99 implementation candidate (2026-10-10):** branch `fix/quran-mushaf-rasm-row99-2026-10-10`, based on main `fbf867d533bd708c2ae8bd98765c160ef4440bc3`. The source fix, targeted tests, full corpus test and diagnostic script are committed; native check, full audit result, Chromium glyph matrix and scholarly review remain UNVERIFIED. Row 99 MUST remain OPEN until those gates pass.
+
+Updated: 2026-10-10 — row 99 candidate checkpoint
 
 ## Source of truth
 

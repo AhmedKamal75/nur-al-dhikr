@@ -612,3 +612,16 @@ test('Muqaṭṭaʿāt Madd recognizes Kaf and keeps ʿAyn duration distinct', (
     'an isolated marked Kaf is not assumed to be a Muqaṭṭaʿāt opening'
   );
 });
+
+test('dagger alif is highlighted with its owning Arabic glyph', () => {
+  for (const word of ['ٱلرَّحْمَٰنِ', 'ٱلرَّحْمَـٰنِ']) {
+    const span = classifyWordTajweed(word, { isLastWordOfAyah: true }).find(
+      (candidate) => candidate.rule === 'madd_246'
+    );
+    assert.ok(span, 'missing ayah-final madd for ' + word);
+    assert.equal(span.start, word.indexOf('م'));
+    assert.ok(word.slice(span.start, span.end).startsWith('م'));
+    assert.ok(word.slice(span.start, span.end).includes('\u0670'));
+    assert.equal(/\p{M}/u.test(word[span.start]), false);
+  }
+});
