@@ -65,9 +65,19 @@ what you were told, say so instead of proceeding.
    - **Both gates green before you commit.** Never commit a red `npm run check`
      or a red e2e run; a red commit is worse than a dirty tree because it
      launders a broken state into history.
-   - **Never `git push`,** never `--amend`, never `--force`, never rewrite
-     published history. Committing is local; the owner still owns what
-     reaches the remote.
+   - **`git push origin main` is authorised.** (Owner ruling, 2026-10-10.)
+     Push after a green commit rather than leaving verified work sitting on
+     one machine where other agents and the owner's CI cannot see it. Push
+     **only when the tree is green and the commit is final** — a pushed red
+     state is worse than a local one, because CI will act on it.
+     Still never `--amend`, never `--force`, never rewrite published history,
+     and never push to a branch other than `main`. If `main` has moved, stop
+     and report; do not resolve it by force.
+   - **Credentials:** if the remote needs auth, use a per-command header
+     (`git -c http.extraheader=...`) from `$GITHUB_TOKEN`. Never write a token
+     into `.git/config`, into the remote URL, or into any tracked file.
+   - **Report what you pushed** in your summary, with the remote SHA, so the
+     owner can confirm what reached `origin/main` without diffing.
    - **Report what you committed** in your summary, so the owner can read the
      log instead of diffing 200 files.
 3. **Every user-facing string in Arabic AND English.** One missing language is
