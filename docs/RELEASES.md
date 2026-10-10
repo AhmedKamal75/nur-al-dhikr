@@ -1,3 +1,14 @@
+## v5.17.138 — cross-rasm Tajweed correctness (candidate)
+
+- Fixed three source-dependent rule failures reproduced against the checked-in Qur'an and Mushaf:
+  Madd Badal (2:4/2:8), Madd Iwad (4:1), and Iqlab (2:18).
+- The classifier accepts both Madd Badal spellings, treats the small-high-meem as an explicit Iqlab
+  signal, and recognizes the inverted-tanween spelling only in the ayah-final Madd Iwad shape.
+- Added source-backed regressions and `scripts/audit-tajweed-rasm.mjs`, a diagnostic comparing
+  canonical word positions across the classic reader and all 604 Mushaf pages.
+- Qur'an source text is unchanged. The reported 1,221-ayah aggregate, full offset audit, native gates,
+  Chromium glyph inspection, and scholarly review remain open. This candidate is not certified.
+
 ## v5.17.137 — actionable navigation sections and a reachable rail collapse
 
 Merges the two open branches from the other agent and repairs what they needed.

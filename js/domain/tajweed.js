@@ -32,7 +32,8 @@ const KASRATAN = '\u064D';
 const DAMMATAN = '\u064C';
 const DAGGER_ALIF = '\u0670';
 const TATWEEL = '\u0640';
-const MADDA_ABOVE = '\u0653'; // combining madda — this Uthmani source marks madd points (incl. the muqatta'at letter-names) explicitly rather than leaving them to be inferred
+const MADDA_ABOVE = '\u0653';
+const HAMZA_ABOVE_MARK = '\u0654'; // combining madda — this Uthmani source marks madd points (incl. the muqatta'at letter-names) explicitly rather than leaving them to be inferred
 const IQLAB_MARK = '\u06E2'; // small high meem isolated form — marks a noon/tanween that has already undergone iqlab in the text itself
 const IQLAB_MARK_LOW = '\u06ED'; // small low meem — the same iqlab mark in a lower position
 const MADDA_SMALL_HIGH = '\u06E4'; // small high madda — the madda mark in its raised spelling (e.g. on a silah waw)
@@ -55,6 +56,7 @@ const DIACRITIC_CHARS = new Set([
   KASRATAN,
   DAMMATAN,
   MADDA_ABOVE,
+  HAMZA_ABOVE_MARK,
   IQLAB_MARK,
   IQLAB_MARK_LOW,
   MADDA_SMALL_HIGH,
@@ -526,6 +528,10 @@ function tokenizeUnits(word) {
       units.push({ base, start: i, end: i + 1, diacritics: new Set() });
     } else if (DIACRITIC_CHARS.has(ch) && units.length) {
       const u = units[units.length - 1];
+      if (ch === HAMZA_ABOVE_MARK && u.hamzaAboveStart === undefined) {
+        u.hamzaAboveStart = i > 0 && word[i - 1] === TATWEEL ? i - 1 : i;
+      }
+      if (ch === DAMMATAN_INV) u.hasInvertedDammatan = true;
       u.diacritics.add(canonMark(ch));
       u.end = i + 1;
     }
@@ -754,23 +760,21 @@ export function classifyWordTajweed(
         u.diacritics.has(IQLAB_MARK) ||
         u.diacritics.size === 0);
     const tanween = [...u.diacritics].some((d) => TANWEEN_MARKS.has(d));
-    if (noonSakinah || tanween) {
-      if (u.diacritics.has(IQLAB_MARK)) {
-        // The text itself already marks this as iqlab (small high meem) —
-        // no need to peek at the next letter.
-        spans.push({ start: u.start, end: u.end, rule: 'iqlab' });
-      } else {
-        const nb = next ? next.base : nextWordFirstBase;
-        if (nb === BEH) spans.push({ start: u.start, end: u.end, rule: 'iqlab' });
-        else if (nb && IDGHAM_GHUNNAH_LETTERS.has(nb))
-          spans.push({ start: u.start, end: u.end, rule: 'idgham_ghunnah' });
-        else if (nb && IDGHAM_NO_GHUNNAH_LETTERS.has(nb))
-          spans.push({ start: u.start, end: u.end, rule: 'idgham_no_ghunnah' });
-        else if (nb && IKHFA_LETTERS.has(nb))
-          spans.push({ start: u.start, end: u.end, rule: 'ikhfa' });
-        else if (nb && IZHAR_HALQI_LETTERS.has(nb))
-          spans.push({ start: u.start, end: u.end, rule: 'izhar' });
-      }
+    // U+06E2 is itself an explicit Iqlab signal. Some source spellings omit
+    // separate tanween, so classification must not depend on orthographic duplication.
+    if (u.diacritics.has(IQLAB_MARK)) {
+      spans.push({ start: u.start, end: u.end, rule: 'iqlab' });
+    } else if (noonSakinah || tanween) {
+      const nb = next ? next.base : nextWordFirstBase;
+      if (nb === BEH) spans.push({ start: u.start, end: u.end, rule: 'iqlab' });
+      else if (nb && IDGHAM_GHUNNAH_LETTERS.has(nb))
+        spans.push({ start: u.start, end: u.end, rule: 'idgham_ghunnah' });
+      else if (nb && IDGHAM_NO_GHUNNAH_LETTERS.has(nb))
+        spans.push({ start: u.start, end: u.end, rule: 'idgham_no_ghunnah' });
+      else if (nb && IKHFA_LETTERS.has(nb))
+        spans.push({ start: u.start, end: u.end, rule: 'ikhfa' });
+      else if (nb && IZHAR_HALQI_LETTERS.has(nb))
+        spans.push({ start: u.start, end: u.end, rule: 'izhar' });
     }
 
     // Madd (elongation). This Uthmani source marks madd points explicitly
@@ -807,8 +811,11 @@ export function classifyWordTajweed(
         rule: u.base === '\u0639' ? 'madd_4_6' : 'madd_6',
       });
     } else if (isMaddLetter(u, prev)) {
+      const badalFromHamzaAbove = u.base === ALIF && prev?.hamzaAboveStart !== undefined;
       const signaled =
-        u.base === ALIF_MADDA || (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
+        u.base === ALIF_MADDA ||
+        (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE)) ||
+        badalFromHamzaAbove;
       const isSilah = isHaKinayahSilahUnit(u, prev);
       if (next && HAMZA_LETTERS.has(next.base)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
@@ -830,11 +837,13 @@ export function classifyWordTajweed(
       } else if (isSilah) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
       } else if (signaled) {
-        // Madd Badal is an actual hamza+madd spelling (e.g. \u0622 in \u0622\u062F\u064e\u0645َ,
-        // or a hamza carrying an explicit madda mark). A standalone U+0653 on an
-        // ordinary madd letter is a Mushaf lengthening sign, not proof of Badal;
-        // it falls through to the natural madd classification here.
-        spans.push({ start: u.start, end: u.end, rule: 'madd_badal' });
+        // Madd Badal appears as hamza+madda (أٓ) or hamza-above/fatha plus alif
+        // (ـَٔا). Keep the span relative to the untouched source spelling.
+        spans.push({
+          start: badalFromHamzaAbove ? prev.hamzaAboveStart : u.start,
+          end: u.end,
+          rule: 'madd_badal',
+        });
       } else if (isLastWordOfAyah && i === units.length - 2 && next) {
         // Madd 'Arid requires a real final consonant after the madd letter:
         // the consonant's vowel becomes a temporary sukoon at the stop.
@@ -924,7 +933,12 @@ export function classifyWordTajweed(
       units[units.length - 1].base === ALIF &&
       units[units.length - 1].diacritics.size === 0;
     const atPauseEnd = i === units.length - 1 || (i === units.length - 2 && trailingTanweenAlif);
-    if (isLastWordOfAyah && atPauseEnd && u.diacritics.has(FATHATAN)) {
+    // One corpus spells ayah-final fathatan-before-alif as U+0657. Preserve its
+    // ordinary dammatan meaning elsewhere; recognize it here only in this final shape.
+    const finalFathatanVariant =
+      u.diacritics.has(FATHATAN) ||
+      (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2);
+    if (isLastWordOfAyah && atPauseEnd && finalFathatanVariant) {
       spans.push({ start: u.start, end: u.end, rule: 'madd_iwad' });
     }
   }

@@ -5,11 +5,11 @@
 > one was wrong and the correction is recorded. A second hostile review runs at
 > v5.17.21; its score replaces this line when it lands.
 >
-> **Counted 2026-10-09 after Tajweed integration:** **88 rows — 33 OPEN, 5 PROPOSED, 7 BLOCKED:scholar, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 30 RESOLVED, 2 STANDING CONSTRAINT.**
+> **Counted 2026-10-09 after Tajweed integration:** **89 rows — 34 OPEN, 5 PROPOSED, 7 BLOCKED:scholar, 5 BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 30 RESOLVED, 2 STANDING CONSTRAINT.**
 > Counts are parsed from the numbered rows; `tests/open-issues-ledger.test.js` guards against drift.
 >
 > **Counted 2026-10-09 against the working tree**, by parsing this file's own
-> rows rather than by hand: **88 rows — 33 OPEN, 30 RESOLVED, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
+> rows rather than by hand: **89 rows — 34 OPEN, 30 RESOLVED, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED.**
 > The totals are stated so they can be checked against the table;
 > `tests/open-issues-ledger.test.js` fails if they drift.
 >
@@ -182,6 +182,7 @@ These are the owner's current product findings after the v5.17.136 Chromium evid
 | 90 | Muqaṭṭaʿāt exemption masks explicitly sakin Qalqalah letters in isolated words | **OPEN — corrected in source, pending official test gate** | The exemption applies only to known opening-letter skeletons with no marks or madda-only marks; explicit sukun/sukun-alt or vowels prevent it. The earlier isolated-shim test count and corpus totals predate PR #24's `madd_4_6` expansion. Require native Node tests/CI and real Mushaf rendering evidence. |
 | 91 | Tajweed course labels Madd Badal, ʿIwaḍ, and Ṣilah collectively as “Obligatory madd” | **OPEN — corrected in draft PR #24, pending CI/review** | The fourth Madd session previously titled “Obligatory madd / المد اللازمة” focused on `madd_6`, `madd_iwad`, `madd_badal`, and `madd_silah`. That label falsely implied all four were Madd Lāzim, especially misleading for the explicitly separate Madd Badal category. The course title now names each category in EN/AR while preserving the session ID and progress compatibility; a regression pins title and focus. Native tests, Arabic pedagogy review, and browser rendering remain pending. |
 | 92 | Muqaṭṭaʿāt Madd mislabels ʿAyn as fixed six-count and misses Kaf | **OPEN — classifier/teaching correction made; render/data/CI verification pending** | Merged PR #24 added exact opening-token skeletons and separate bilingual `madd_4_6` for ʿayn; the source registry cites Tuhfat al-Atfal verse 54 and a secondary Egyptian Ministry of Awqaf article for the 4/6-count distinction. Current main classifier yields one `madd_4_6` span at 19:1 (`كٓهيعٓصٓ`) and one at 42:2 (`عٓسٓقٓ`). The 22nd rule was not added to the checked-in practice JSON before the compatibility normalizer was introduced. Hostile stylesheet review found `madd_4_6` also omitted from the Mushaf color selector, family underline cue, and `.qword--underline:has(...)` contract; this follow-up adds all three and a regression, reusing the existing `--tw-madd-laazim` token so light/dark paper defaults and Madd-family color preferences remain coherent. Native tests/CI, regenerated practice artifact + manifest, browser rendering, and reading-source sign-off remain gating. |
+| 99 | Quran-versus-Mushaf rasm changes Tajweed classification and glyph spans                | **OPEN — fix underway; full corpus, native CI, and browser verification pending**   | GitHub issue [#31](https://github.com/AhmedKamal75/nur-al-dhikr/issues/31). Candidate execution reproduced spelling-dependent Madd Badal (2:4/2:8), Madd Iwad (4:1), and Iqlab (2:18). Regressions use checked-in text from both readers. The reported 1,221-ayah aggregate and tatweel/dagger-alif offset inventory still need a full rerun through `scripts/audit-tajweed-rasm.mjs`; no Qur'an text is rewritten. Keep OPEN until full comparison, native tests/CI, Chromium glyph inspection, and scholarly review are complete.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
 ## Stale report claims — closed, with evidence
 
@@ -213,11 +214,11 @@ re-investigates them.
 
 ## The honest summary
 
-Counted from the current 88 ledger rows by `tests/open-issues-ledger.test.js`, not estimated:
+Counted from the current 89 ledger rows by `tests/open-issues-ledger.test.js`, not estimated:
 
 | Bucket                                                    |  Count |
 | --------------------------------------------------------- | -----: |
-| **OPEN** (needs work or verification)                     | **33** |
+| **OPEN** (needs work or verification)                     | **34** |
 | **PROPOSED** (costed, needs an owner decision)            |  **5** |
 | **BLOCKED:scholar** (requires qualified scholarly review) |  **7** |
 | **BLOCKED:device** (requires real hardware)               |  **5** |

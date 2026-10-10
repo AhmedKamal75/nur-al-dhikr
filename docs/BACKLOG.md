@@ -9,7 +9,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.137**. The v5.17.83 full-corpus gates were green; the
+> Current version: **v5.17.138**. The v5.17.83 full-corpus gates were green; the
 > v5.17.84 targeted source/contracts bundle is green, while the full check and
 > Chromium matrix for v5.17.84 still need to be run on the authoritative local machine. The v5.17.77 handoff archive
 > itself failed this tree's own gates (format and version markers), which is
@@ -140,6 +140,11 @@ open. "Fixed" alone is not a status in this project.
 
 Recorded so "not done" is a decision with a reason rather than an omission.
 
+**OPEN-ISSUES row 99 — Qur'an/Mushaf rasm-aware Tajweed classification:** direct execution reproduced
+Madd Badal (2:4/2:8), Madd Iwad (4:1), and Iqlab (2:18) differences. Keep canonical text untouched;
+run the full aligned corpus audit, native gates, and Chromium glyph checks before closure. See GitHub
+issue #31.
+
 | Item                                                                                              | Why it is still open                                                                                                                                                                                                                                                                                                                                                                                               |
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Mutashabihat pair cache could survive a corpus swap**                                           | A same-shape corpus replacement could leave a stale pair cache, so look-alike study content might not refresh with the data. Waiting on the PR that addresses it; recorded here so it is not lost. `OPEN-ISSUES` 77.                                                                                                                                                                                               |
@@ -223,7 +228,7 @@ plus a scholar sign-off, at which point it gains a `source` entry with
 
 ## 5. The standing ledger
 
-Full detail and per-row evidence: **`docs/OPEN-ISSUES.md`** — 88 rows. Its
+Full detail and per-row evidence: **`docs/OPEN-ISSUES.md`** — 89 rows. Its
 header, its summary table and its rows are cross-checked by
 `tests/open-issues-ledger.test.js`, so the document cannot quietly disagree
 with itself.
