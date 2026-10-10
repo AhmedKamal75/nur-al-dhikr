@@ -1,0 +1,28 @@
+name: Temporary row 99 formatter preview
+
+on:
+  push:
+    branches:
+      - fix/quran-mushaf-rasm-row99-2026-10-10
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Format the three files rejected by Prettier
+        run: npx prettier --write docs/AUTONOMOUS-CONTINUITY-HANDOFF-2026-10-08.md js/domain/tajweed.js tests/tajweed-rasm-equivalence.test.js
+      - name: Print exact formatted files for clean GitHub patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in docs/AUTONOMOUS-CONTINUITY-HANDOFF-2026-10-08.md js/domain/tajweed.js tests/tajweed-rasm-equivalence.test.js; do
+            echo "===FORMAT-FILE-BEGIN:$file==="
+            cat "$file"
+            echo "===FORMAT-FILE-END:$file==="
+          done
