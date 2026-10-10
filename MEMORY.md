@@ -44,6 +44,10 @@ Last verified: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromi
    worst thing in this repo, because it is the only failure nothing downstream
    can catch.
 
+
+    Prefer sophisticated simplicity: solve the whole problem with the smallest clear, testable
+    design. Never add complexity for its own sake; this complements and never relaxes existing rules.
+
 ## 2. Architecture in one page
 
 - **Stack:** vanilla ES modules, no build step, no framework, no dependencies.

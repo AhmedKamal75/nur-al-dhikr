@@ -9,7 +9,7 @@
 > is the short version, and `tests/backlog-consistency.test.js` fails if the
 > two disagree.
 >
-> Current version: **v5.17.138**. The v5.17.83 full-corpus gates were green; the
+> Current version: **v5.17.139**. The v5.17.83 full-corpus gates were green; the
 > v5.17.84 targeted source/contracts bundle is green, while the full check and
 > Chromium matrix for v5.17.84 still need to be run on the authoritative local machine. The v5.17.77 handoff archive
 > itself failed this tree's own gates (format and version markers), which is
@@ -139,6 +139,11 @@ open. "Fixed" alone is not a status in this project.
 ## 4. Known, accepted, and still open
 
 Recorded so "not done" is a decision with a reason rather than an omission.
+
+**OPEN-ISSUES row 99 — Qur'an/Mushaf rasm-aware Tajweed classification:** direct execution reproduced
+Madd Badal (2:4/2:8), Madd Iwaḍ (4:1), and Iqlab (2:18) discrepancies. Candidate corrections are
+being validated; the full aligned 6,236-ayah audit, native tests, and Chromium glyph checks remain
+open. Qur'an source text remains untouched. See GitHub issue #31.
 
 | Item                                                                                              | Why it is still open                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

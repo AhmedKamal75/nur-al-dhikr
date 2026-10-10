@@ -1,3 +1,15 @@
+## Cross-rasm mismatch reproduction and candidate patch — 2026-10-10
+
+Direct execution against the exact checked-in Qur'an/Mushaf strings reproduced three spelling-dependent classifications:
+
+- **2:4 and 2:8 — Madd Badal:** corpus `أٓ` classified as `madd_badal`, while Mushaf `ـَٔا` fell through to `madd_2`.
+- **4:1 — Madd Iwaḍ:** corpus `رَقِيبٗا` did not receive ayah-final `madd_iwad`, while Mushaf `رَقِيبًا` did. The alternate U+0657 form is recognized only in the final-before-bare-alif context.
+- **2:18 — Iqlab:** the corpus spelling `صُمُّۢ` omitted Iqlab while Mushaf `صُمٌّۢ` included it. U+06E2 is now treated as an explicit signal, independent of whether a separate tanween code point is present.
+
+The candidate is on branch `fix/quran-mushaf-rasm-consistency-mainline-2026-10-10` as of this report update. GitHub issue [#31](https://github.com/AhmedKamal75/nur-al-dhikr/issues/31) tracks the work. Source text is unchanged.
+
+**Still open:** independently rerun the local agent's reported 1,221/6,236 ayah and 52.5% per-word totals against this new classifier, examine the exported full-corpus diagnostic artifact, prove glyph positions in Chromium, and obtain source-backed scholarly review. The new audit job is explicitly diagnostic (it records mismatch counts rather than hiding them); it does not itself establish that all rules are correct. Ledger row 99 remains OPEN until those criteria are met.
+
 # Tajweed full-corpus execution and anomaly report — 2026-10-09
 
 **Status:** the all-surah classifier execution/invariant gate was completed in an isolated JavaScript runtime. The repository's Node test runner, GitHub Actions jobs, browser matrix, and a scholarly reference comparison remain unverified.
