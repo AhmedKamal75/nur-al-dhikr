@@ -2,7 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { canonicalWordTokens, classifyAyahTajweed, classifyWordTajweed } from '../js/domain/tajweed.js';
+import {
+  canonicalWordTokens,
+  classifyAyahTajweed,
+  classifyWordTajweed,
+} from '../js/domain/tajweed.js';
 
 function readJSON(path) {
   return JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf8'));
@@ -28,7 +32,10 @@ function firstSpan(text, rule) {
 }
 
 test('Madd Badal recognizes both checked-in spellings in Quran 2:4 and 2:8', () => {
-  for (const [ayah, page] of [[4, 2], [8, 3]]) {
+  for (const [ayah, page] of [
+    [4, 2],
+    [8, 3],
+  ]) {
     const corpusText = quranAyah(2, ayah);
     const mushafText = mushafAyah(page, 2, ayah);
     assert.ok(corpusText, `missing Quran 2:${ayah}`);
@@ -60,7 +67,10 @@ test('Madd Iwad accepts the corpus final-tanween spelling contextually', () => {
   assert.equal(mushaf.text, 'بً');
 
   const midAyah = classifyWordTajweed('رَقِيبٗا', { isLastWordOfAyah: false });
-  assert.equal(midAyah.some((span) => span.rule === 'madd_iwad'), false);
+  assert.equal(
+    midAyah.some((span) => span.rule === 'madd_iwad'),
+    false
+  );
 });
 
 test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2:18', () => {
@@ -74,8 +84,14 @@ test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2
     ['Mushaf', mushafText],
   ]) {
     const firstWord = classifyAyahTajweed(text)[0];
-    assert.ok(firstWord.spans.some((span) => span.rule === 'ghunnah'), `${label} ghunnah`);
-    assert.ok(firstWord.spans.some((span) => span.rule === 'iqlab'), `${label} iqlab`);
+    assert.ok(
+      firstWord.spans.some((span) => span.rule === 'ghunnah'),
+      `${label} ghunnah`
+    );
+    assert.ok(
+      firstWord.spans.some((span) => span.rule === 'iqlab'),
+      `${label} iqlab`
+    );
   }
 });
 
@@ -104,21 +120,43 @@ test('all aligned Qur’an/Mushaf words have matching Tajweed rules and glyph an
   assert.equal(quran.size, 6236, 'classic text must contain 6,236 ayahs');
   assert.equal(mushaf.size, 6236, 'the 604 Mushaf pages must cover 6,236 ayahs');
   assert.deepEqual(duplicates, [], 'neither source may duplicate an ayah');
-  assert.deepEqual([...quran.keys()].filter((key) => !mushaf.has(key)), []);
-  assert.deepEqual([...mushaf.keys()].filter((key) => !quran.has(key)), []);
+  assert.deepEqual(
+    [...quran.keys()].filter((key) => !mushaf.has(key)),
+    []
+  );
+  assert.deepEqual(
+    [...mushaf.keys()].filter((key) => !quran.has(key)),
+    []
+  );
 
   const ornaments = new Set([
-    '\u0640', '\u06D6', '\u06D7', '\u06D8', '\u06DA', '\u06DB',
-    '\u06DC', '\u06DE', '\u06E9', '\u06EC', '\uFD3E', '\uFD3F',
-    '(', ')', ...'0123456789٠١٢٣٤٥٦٧٨٩',
+    '\u0640',
+    '\u06D6',
+    '\u06D7',
+    '\u06D8',
+    '\u06DA',
+    '\u06DB',
+    '\u06DC',
+    '\u06DE',
+    '\u06E9',
+    '\u06EC',
+    '\uFD3E',
+    '\uFD3F',
+    '(',
+    ')',
+    ...'0123456789٠١٢٣٤٥٦٧٨٩',
   ]);
-  const skeleton = (word) => [...word].filter(
-    (ch) => !/\p{M}/u.test(ch) && !ornaments.has(ch)
-  ).join('');
-  const letterOrdinal = (word, offset) => [...word.slice(0, offset)].filter(
-    (ch) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch) &&
-      ch !== '\u0640' && !/\p{M}/u.test(ch) && !ornaments.has(ch)
-  ).length;
+  const skeleton = (word) =>
+    [...word].filter((ch) => !/\p{M}/u.test(ch) && !ornaments.has(ch)).join('');
+  const letterOrdinal = (word, offset) =>
+    [...word.slice(0, offset)].filter(
+      (ch) =>
+        /\p{L}/u.test(ch) &&
+        /\p{Script=Arabic}/u.test(ch) &&
+        ch !== '\u0640' &&
+        !/\p{M}/u.test(ch) &&
+        !ornaments.has(ch)
+    ).length;
   const wordsOf = (text) => {
     const tokens = canonicalWordTokens(text);
     const classified = classifyAyahTajweed(text);
@@ -184,20 +222,28 @@ test('all aligned Qur’an/Mushaf words have matching Tajweed rules and glyph an
       comparedWords += 1;
       if (JSON.stringify(a.rules) !== JSON.stringify(b.rules) && ruleMismatches.length < 30) {
         ruleMismatches.push({
-          ayah: key, quranWord: a.raw, mushafWord: b.raw,
-          quranRules: a.rules, mushafRules: b.rules,
+          ayah: key,
+          quranWord: a.raw,
+          mushafWord: b.raw,
+          quranRules: a.rules,
+          mushafRules: b.rules,
         });
       }
       const ruleIds = new Set([...a.spans.map((s) => s.rule), ...b.spans.map((s) => s.rule)]);
       for (const rule of ruleIds) {
         const aa = a.spans.filter((span) => span.rule === rule);
         const bb = b.spans.filter((span) => span.rule === rule);
-        if (aa.length !== bb.length ||
-            aa.some((span) => span.startsOnMark) ||
-            bb.some((span) => span.startsOnMark)) {
+        if (
+          aa.length !== bb.length ||
+          aa.some((span) => span.startsOnMark) ||
+          bb.some((span) => span.startsOnMark)
+        ) {
           if (offsetMismatches.length < 30) {
             offsetMismatches.push({
-              ayah: key, rule, quranWord: a.raw, mushafWord: b.raw,
+              ayah: key,
+              rule,
+              quranWord: a.raw,
+              mushafWord: b.raw,
             });
           }
           continue;
@@ -206,8 +252,12 @@ test('all aligned Qur’an/Mushaf words have matching Tajweed rules and glyph an
           if (aa[k].startOrdinal !== bb[k].startOrdinal || aa[k].endOrdinal !== bb[k].endOrdinal) {
             if (offsetMismatches.length < 30) {
               offsetMismatches.push({
-                ayah: key, rule, quranWord: a.raw, mushafWord: b.raw,
-                quranSpan: aa[k], mushafSpan: bb[k],
+                ayah: key,
+                rule,
+                quranWord: a.raw,
+                mushafWord: b.raw,
+                quranSpan: aa[k],
+                mushafSpan: bb[k],
               });
             }
           }
@@ -219,9 +269,17 @@ test('all aligned Qur’an/Mushaf words have matching Tajweed rules and glyph an
   assert.deepEqual(
     ruleMismatches,
     [],
-    'cross-rasm rule sets differ: alignment exceptions=' + alignmentExceptions.length +
-      ', compared words=' + comparedWords + ', orthographic variants=' + orthographicVariants +
+    'cross-rasm rule sets differ: alignment exceptions=' +
+      alignmentExceptions.length +
+      ', compared words=' +
+      comparedWords +
+      ', orthographic variants=' +
+      orthographicVariants +
       '. Run scripts/audit-tajweed-rasm.mjs for the complete diagnostic.'
   );
-  assert.deepEqual(offsetMismatches, [], 'paired rule spans must align to the same letter ordinals');
+  assert.deepEqual(
+    offsetMismatches,
+    [],
+    'paired rule spans must align to the same letter ordinals'
+  );
 });

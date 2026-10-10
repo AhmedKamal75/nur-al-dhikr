@@ -517,13 +517,7 @@ function isBaseLetter(ch) {
   // In particular, rub el hizb (۞), ayah numerals, and punctuation are ornaments,
   // not consonants for semantic lookahead. Dagger alif attaches to its host glyph
   // through DIACRITIC_CHARS; retain the four corpus-attested small-letter bases.
-  if (
-    ch === '\u06E5' ||
-    ch === '\u06E6' ||
-    ch === '\u06E7' ||
-    ch === '\u06E8'
-  )
-    return true;
+  if (ch === '\u06E5' || ch === '\u06E6' || ch === '\u06E7' || ch === '\u06E8') return true;
   return /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch);
 }
 
@@ -866,7 +860,8 @@ export function classifyWordTajweed(
     } else if (isMaddLetter(u, prev)) {
       const signaled =
         u.maddBadalStart !== undefined ||
-        u.base === ALIF_MADDA || (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
+        u.base === ALIF_MADDA ||
+        (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE));
       const isSilah = isHaKinayahSilahUnit(u, prev);
       if (next && HAMZA_LETTERS.has(next.base)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
