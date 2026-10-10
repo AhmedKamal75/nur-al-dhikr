@@ -6,6 +6,7 @@ import { playFlipSound } from '../inputs.js';
 import { dispatchSurahDoc } from '../quranData.js';
 import {
   currentAyahDetailPage,
+  ensureQuranMeta,
   ensureQuranRoots,
   ensureQuranWordsData,
   ensureTafsirEditions,
@@ -909,9 +910,18 @@ export const clickHandlers = {
     if (!rule) return;
     // (merged-plan item 2) opening a rule lesson marks the rule last-place.
     store.dispatch(actions.setTajweedLast({ ruleId: rule.id }));
+    // Per-surah ayah counts are required to reject impossible pool references
+    // (e.g. 114:286). This is the same shared, cache-first metadata fetch used
+    // by the reader, not a second source of verse counts.
+    await ensureQuranMeta();
     await ensureTajweedPool(store.getState());
     let nextState = store.getState();
-    const examples = tajweedLessonExamples(nextState.tajweedPool, rule.id);
+    const examples = tajweedLessonExamples(
+      nextState.tajweedPool,
+      rule.id,
+      undefined,
+      nextState.quran.meta?.surahs || []
+    );
     const missingSurahs = [
       ...new Set(examples.map((e) => String(e.s)).filter((s) => !nextState.quran.surahs[s])),
     ];

@@ -1062,6 +1062,13 @@ function tajweedSourceLine(ruleId, lang) {
   const parts = [
     `<div class="tajweed-legend__source">${escapeHTML(t('mushaf.tajweedSource', lang))}: ${escapeHTML(c.title)} ${escapeHTML(c.lines)}</div>`,
   ];
+  for (const alternate of c.also || []) {
+    parts.push(
+      `<div class="tajweed-legend__source tajweed-legend__source--also">${escapeHTML(
+        t('mushaf.tajweedSource', lang)
+      )}: ${escapeHTML(alternate.title)} ${escapeHTML(alternate.lines)}</div>`
+    );
+  }
   if (c.review === 'contested' && c.caveat) {
     parts.push(
       `<div class="tajweed-legend__caveat">${escapeHTML(c.caveat[lang] || c.caveat.en)}</div>`

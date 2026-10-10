@@ -1,3 +1,60 @@
+## v5.17.138 — the Tajweed integration branch, merged and made honest
+
+Resolves the interrupted merge of `integration/tajweed-clean-mainline-2026-10-09` into
+main (8 conflicted files, unmerged at the start of this session) and repairs the
+defects the union exposed. v5.17.137 was committed with a red test; this release
+is the first one in the series whose `npm run check` I have actually read.
+
+- **The merge itself.** Both sides had worked the same files. Where they disagreed on
+  _content_, both changes were kept: the `--tw-user-*` colour-override layer from the
+  integration branch, and the `madd_4_6` rule, the exact Muqaṭṭaʿāt skeleton guard and
+  the Kaf recognition from main. Where they disagreed only on prettier's line
+  wrapping, the house style won. The three docs conflicts were reconciled by union:
+  the longer corpus report and handoff history are both preserved, with the superseded
+  mainline checkpoints kept as audit trail under an explicit correction banner.
+- **Alternate citations are visible again.** The runtime mirror had reduced each
+  registry `also` entry — stored canonically as `{work, lines, review}` — to a bare
+  work id, which indexed `TAJWEED_WORKS` to `undefined` and silently dropped every
+  alternate citation from the Mushaf legend. The mirror now preserves the whole
+  record, adds the work's URL when it has one, and the registry test compares complete
+  runtime objects against canonical JSON rather than a hand-picked field list.
+  Citation locators are localized: `ch. 5` → `الفصل 5`, `qalqalah section` → `باب القلقلة`.
+  (`OPEN-ISSUES` 92, 94.)
+- **A user's Tajweed colour can no longer be shadowed by a dark paper.** `applyTajweedColors()`
+  wrote `--tw-*` at the document root while night/amoled/royal-black papers declare the
+  same property names locally, so the paper default could win over the learner's pick.
+  Picks now live in an isolated `--tw-user-*` layer that no paper scope declares, and
+  each coloured rule reads `var(--tw-user-*, var(--tw-*))`. All 18 override variables are
+  pinned, along with the paper defaults they must not override. **No browser cascade
+  evidence yet** — that gate stays open. (`OPEN-ISSUES` 95.)
+- **Lesson examples can no longer point at ayahs that do not exist.** The pool filter
+  only checked the global 1–114 / 1–286 envelope, so 114:286 survived although An-Nas
+  has 6 ayahs. Examples are now validated against canonical per-surah counts and fail
+  closed when metadata is unavailable. No Qur'an text and no ayah count was edited.
+  (`OPEN-ISSUES` 96.)
+- **The practice pool is regenerated from the merged classifier**, so it gains the two
+  rules the merge introduced (`izhar`, 1,323 ayahs; `madd_4_6`, 2 ayahs) and loses the
+  rows the merge invalidated. The old `>= 5 rows per rule` gate could not be met for
+  `madd_4_6`, which the Qur'an reaches at exactly 19:1 and 42:2 — five rows would mean
+  inventing drill material. Both pool gates now require _complete corpus coverage_
+  instead, which is strictly stronger, and `tests/tajweed-corpus-sweep.test.js`
+  re-derives every rule's count across all 114 surahs so the clamp cannot hide a pool
+  that silently lost or gained rows.
+- **`izhar` is a real rule now** in both the canonical registry and the runtime mirror,
+  with the metadata parity check that was missing when the lesson pointed at
+  `izhar_shafawi`. (`OPEN-ISSUES` 79.)
+- **Two stale test fixtures corrected, not weakened.** The Mutashabihat cache guard gave
+  surah 1 and surah 2 identical text inside one corpus, so the pair it called spurious
+  was correct — the guard now varies each ayah and additionally pins that a forced
+  rebuild returns the same result. The backfill expectation hard-coded an older
+  classifier's Fatiha row; it is re-derived, and the comment records that the divine
+  name's lām is _not_ tafkhīm after `بِسۡمِ`.
+- Ledger reconciled to **94 rows** (was 88/92 across the two branches); rows 91 and 92
+  from main were renumbered 97 and 98 to make room for the integration branch's 91–96.
+  No row was closed by this merge: every OPEN row still needs the native, browser, or
+  scholarly evidence its own text names.
+- Religious corpus bytes unchanged.
+
 ## v5.17.137 — actionable navigation sections and a reachable rail collapse
 
 Merges the two open branches from the other agent and repairs what they needed.

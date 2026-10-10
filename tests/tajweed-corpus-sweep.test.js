@@ -49,6 +49,7 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
   let bareQalqalahSpans = 0;
   const qlqBoundaryPairs = new Map();
   const qlqBoundaryExamples = new Map();
+  const ayahsByRule = new Map();
 
   for (const row of corpus) {
     const rawWords = row.text.trim().split(/\s+/).filter(Boolean);
@@ -66,6 +67,12 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
       row.text.trim().split(/\s+/).filter(Boolean).length,
       `word-count mismatch at ${row.surah}:${row.ayah}`
     );
+
+    for (const rule of TAJWEED_RULES) {
+      if (result.some((w) => w.spans.some((sp) => sp.rule === rule.id))) {
+        ayahsByRule.set(rule.id, (ayahsByRule.get(rule.id) || 0) + 1);
+      }
+    }
 
     for (const word of result) {
       assert.ok(Number.isInteger(word.wordIndex) && word.wordIndex > 0);
@@ -109,7 +116,9 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
 
         if (span.rule === 'qalqalah') {
           const renderedSpan = word.word.slice(span.start, span.end);
-          if (!/[\u064B-\u0652\u0670\u06E1\u06E2\u06ED\u06E4\u0653]/u.test(renderedSpan)) {
+          // Include corpus-attested subscript/inverted tanween variants (U+0656/U+0657/U+065E);
+          // otherwise a marked consonant can be misreported as a bare Qalqalah letter.
+          if (!/[ً-ٮٰۭۡۢۤ]/u.test(renderedSpan)) {
             bareQalqalahSpans += 1;
           }
 
@@ -155,6 +164,34 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
   for (const rule of TAJWEED_RULES) {
     assert.ok(seen.has(rule.id), `rule is unreachable in the real Quran corpus: ${rule.id}`);
   }
+
+  // The shipped practice pool is derived from this same classifier, so its
+  // per-rule ayah counts must be exactly what this run observes. This is what
+  // licenses tests/p0-tajweed-rounds.test.js to clamp its >=5-row floor to the
+  // corpus: a rule the Qur'an barely contains (madd_4_6 occurs at 19:1 and 42:2
+  // only) is pinned to its true count here, so the clamp cannot hide a pool
+  // that silently lost or invented drill rows.
+  const pool = JSON.parse(
+    fs.readFileSync(path.join(ROOT, 'data', 'tajweed-practice.json'), 'utf8')
+  );
+  const drift = [];
+  for (const rule of TAJWEED_RULES) {
+    const derived = ayahsByRule.get(rule.id) || 0;
+    const shipped = Number(pool.coverage?.[rule.id]?.ayahs ?? -1);
+    if (derived !== shipped) {
+      drift.push(`${rule.id}: corpus has ${derived} ayahs, pool claims ${shipped}`);
+    }
+    assert.equal(
+      (pool.byRule[rule.id] || []).length,
+      derived,
+      `${rule.id} pool rows must match corpus coverage exactly`
+    );
+  }
+  assert.deepEqual(
+    drift,
+    [],
+    `practice pool coverage drifted from the classifier:\n  ${drift.join('\n  ')}`
+  );
 
   // Same-unit overlaps are not automatically classifier errors: tanween can
   // share a written unit with shaddah-ghunnah. Pin the four observed collisions

@@ -6,7 +6,7 @@ nothing on disk carried the state forward. Everything here is verified against
 the tree, not remembered. When something here is wrong, fix this file in the
 same change that fixes the code.
 
-Last verified: **v5.17.11**, `npm run check` green, Chromium E2E green.
+Last verified: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromium E2E green (180 passed, 3 skipped).
 
 ---
 
@@ -106,6 +106,15 @@ Last verified: **v5.17.11**, `npm run check` green, Chromium E2E green.
 See `docs/OPEN-ISSUES.md` for the full list with owners. The ones most likely to
 be forgotten:
 
+- **TOP PRIORITY — Tajweed is wrong in the Mushaf reader (ledger row 99).** The
+  classifier was written against the `data/quran/*.json` rasm and is not
+  rasm-agnostic. The same ayah is coloured differently depending on which door the
+  reader entered, on **1,221 of 6,236 ayahs (19.6%)**. Three spellings cause it:
+  Madd Badal lost (267 ayahs — Mushaf writes `hamza-above + fatha`, corpus writes
+  `hamza + madda-above`, so Badal falls through to `madd_2`); Madd Iwaḍ spuriously
+  added (716); Iqlab crossing a word boundary (260). Normalising the rasm does not
+  close the gap. Until this is fixed, **any** Tajweed work measured against the
+  corpus is silently wrong in the Mushaf. Details in the handoff doc and row 99.
 - **Scholar-gated, never machine-filled:** grades for `pdf-duas`, `daily-sunnah`,
   `reflections`; the 30 quranic items in simplified orthography (F5); whether
   Bismillah-as-interactive-text is acceptable; qalqalah colour convention; a

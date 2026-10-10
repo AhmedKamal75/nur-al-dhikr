@@ -404,47 +404,65 @@ body:not(.tajweed-underlines-off)
   flex-shrink: 0;
 }
 
-/* Tajweed coloring — tokens mirror domain/tajweed.js's rule table.
- * (v4.5.2) STANDARD PALETTE + the two new rules. idgham-no-ghunnah and
- * izhar-shafawi keep their class (the spans still exist — the inspector
- * and the practice view rely on the rule ids) but are deliberately NOT
- * colored: the standard color-coded mushaf convention leaves both
- * unmarked, and the legend says so. */
+/* Tajweed coloring — user overrides are read before the paper/theme palette.
+ * A paper wrapper may define --tw-* locally (e.g. lifted hues for night paper),
+ * so custom picks use inherited --tw-user-* properties that those paper scopes
+ * cannot shadow. idgham-no-ghunnah and izhar-shafawi remain deliberately
+ * uncolored by convention; their semantic spans remain available to the
+ * inspector and practice view. */
 .tajweed--hamzat_wasl {
-  color: var(--tw-hamza-wasl);
+  color: var(--tw-user-hamza-wasl, var(--tw-hamza-wasl));
 }
 .tajweed--lam_shamsiyyah {
-  color: var(--tw-lam-shamsiyah);
+  color: var(--tw-user-lam-shamsiyah, var(--tw-lam-shamsiyah));
 }
-.tajweed--ghunnah,
-.tajweed--ikhfa,
-.tajweed--iqlab,
-.tajweed--idgham_ghunnah,
-.tajweed--idgham_shafawi,
+.tajweed--ghunnah {
+  color: var(--tw-user-ghunnah, var(--tw-ghunnah));
+}
+.tajweed--ikhfa {
+  color: var(--tw-user-ikhfa, var(--tw-ikhfa));
+}
+.tajweed--iqlab {
+  color: var(--tw-user-iqlab, var(--tw-iqlab));
+}
+.tajweed--idgham_ghunnah {
+  color: var(--tw-user-idgham-ghunnah, var(--tw-idgham-ghunnah));
+}
+.tajweed--idgham_shafawi {
+  color: var(--tw-user-idgham-shafawi, var(--tw-idgham-shafawi));
+}
 .tajweed--ikhfa_shafawi {
-  color: var(--tw-ghunnah);
+  color: var(--tw-user-ikhfa-shafawi, var(--tw-ikhfa-shafawi));
 }
 .tajweed--qalqalah {
-  color: var(--tw-qalqalah);
+  color: var(--tw-user-qalqalah, var(--tw-qalqalah));
 }
 .tajweed--tafkhim {
-  color: var(--tw-tafkhim);
+  color: var(--tw-user-tafkhim, var(--tw-tafkhim));
 }
-.tajweed--madd_2,
-.tajweed--madd_iwad,
-.tajweed--madd_badal,
+.tajweed--madd_2 {
+  color: var(--tw-user-madd-normal, var(--tw-madd-normal));
+}
+.tajweed--madd_iwad {
+  color: var(--tw-user-madd-iwad, var(--tw-madd-iwad));
+}
+.tajweed--madd_badal {
+  color: var(--tw-user-madd-badal, var(--tw-madd-badal));
+}
 .tajweed--madd_246 {
-  color: var(--tw-madd-normal);
+  color: var(--tw-user-madd-arid, var(--tw-madd-arid));
 }
-.tajweed--madd_munfasil,
+.tajweed--madd_munfasil {
+  color: var(--tw-user-madd-munfasil, var(--tw-madd-munfasil));
+}
 .tajweed--madd_silah {
-  color: var(--tw-madd-munfasil);
+  color: var(--tw-user-madd-silah, var(--tw-madd-silah));
 }
 .tajweed--madd_muttasil {
-  color: var(--tw-madd-muttasil);
+  color: var(--tw-user-madd-muttasil, var(--tw-madd-muttasil));
 }
 .tajweed--madd_6 {
-  color: var(--tw-madd-laazim);
+  color: var(--tw-user-madd-laazim, var(--tw-madd-laazim));
 }
 
 /* (v5.2.77, UX-07) tajweed non-color cues: color is never the sole
@@ -4007,6 +4025,13 @@ body.has-player .reader-immersive-echo {
   outline: 2px solid var(--color-border-strong);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Alternate citations stay visually subordinate to the primary source,
+   with logical properties so the grouping reads correctly in Arabic RTL. */
+.tajweed-legend__source--also {
+  padding-inline-start: 0.5rem;
+  border-inline-start: 1px solid var(--color-border);
 }
 
 .tajweed-legend__caveat {

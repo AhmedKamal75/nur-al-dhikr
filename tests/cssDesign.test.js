@@ -22,6 +22,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PALETTES, MUSHAF_PAPERS } from '../js/core/config.js';
+import { TAJWEED_FAMILY_VARS } from '../js/domain/tajweed.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const CSS_DIR = join(HERE, '..', 'assets', 'css');
@@ -55,6 +56,14 @@ const JS_SET = new Set([
   '--mushaf-paper-bg',
   '--mushaf-paper-ink',
   '--mushaf-paper-border',
+  // The learner's Tajweed color picks, applied inline on <html> by
+  // applyTajweedColors(). Deliberately undeclared in CSS so a paper scope's
+  // local --tw-* default can never shadow an explicit user choice; the CSS
+  // classes read them with the theme palette as fallback. Derived from the
+  // classifier's own map so a new rule cannot be added without its variable
+  // being recognised here (tests/tajweed-coherence.test.js pins the other
+  // half of this contract: never declared in CSS).
+  ...Object.values(TAJWEED_FAMILY_VARS).flat(),
 ]);
 
 function definedTokens() {

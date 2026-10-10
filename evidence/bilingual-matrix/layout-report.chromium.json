@@ -1,11 +1,19 @@
 {
-  "generatedAt": "2026-10-08T16:30:28.515Z",
+  "generatedAt": "2026-10-10T11:40:50.578Z",
   "project": "chromium",
   "viewport": 1280,
   "provenance": {
-    "head": "b6a0bb5",
-    "measuredPathsDirty": [],
-    "measuredPathsDirtyCount": 0
+    "head": "e2881f4",
+    "measuredPathsDirty": [
+      "M  assets/css/quran.css",
+      "M  js/app/handlers/quran.js",
+      " M js/core/config.js",
+      "M  js/domain/tajweed.js",
+      "MM js/domain/tajweedLessons.js",
+      "M  js/domain/tajweedSources.js",
+      "M  js/views/tafsirPanel.js"
+    ],
+    "measuredPathsDirtyCount": 7
   },
   "enforced": false,
   "regions": [

@@ -1,13 +1,29 @@
 # Nūr al-Dhikr — Autonomous Continuity Handoff
 
-Updated: 2026-10-09
+Updated: 2026-10-09 06:12Z
 
 ## Source of truth
 
 - Repository: `AhmedKamal75/nur-al-dhikr`
 - GitHub `main` remains the authoritative shared source/history.
 - ZIP artifacts are intentionally not part of the continuity workflow unless explicitly requested.
-- Formal release baseline remains **v5.17.136**. Do not label later work v5.17.137 until the version marker, service worker cache version, release record, and required verification are deliberately advanced together.
+- Current `main` carries coordinated **v5.17.137** markers in `package.json`, `js/core/config.js`, `sw.js`, and `docs/RELEASES.md` at base SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`. This draft branch inherits and leaves those markers unchanged. Do not create a new version marker until native CI, browser, and scholarly validation gates are complete.
+
+## Authoritative current checkpoint — 2026-10-09 06:12Z
+
+**This block supersedes older checkpoint text below wherever it conflicts about the current branch, PR, test evidence, or release state.** Older entries remain historical audit trail, not active instructions to resurrect earlier branches/PRs.
+
+- **Release/source of truth:** current `main` remains v5.17.137 at base SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`. Keep the repair isolated in draft PR [#27](https://github.com/AhmedKamal75/nur-al-dhikr/pull/27); it is not merged, and do not alter the release version markers until release gates pass.
+- **Current branch tip at this snapshot:** `bc2152d669cfc075fbb52e0b365e38e7059e8830` on `integration/tajweed-clean-mainline-2026-10-09`; zero commits behind `main`, 12 changed files. Always fetch the live PR head on resume because this handoff update itself advances the branch.
+- **Relevant current source/test blobs:** classifier `ba3d9c28ce0952f83cf3bfbc0ee0d6898637e65a`; Mushaf CSS `399d6bb24526137509f9354c60449c1c9a6345e4`; citation registry `f58ecd242a90d9e9e7f21647b6c8de7539ab06f7`; source registry test `28822b95814520baa8aae23ba7f215ad5ad20055`; classifier unit test `067f660834412228f8bdb3ea9d080b3124421fd7`; coherence test `6baacd16580be3d6bd3c717c2c419ec21171be25`; view `b1ee333644a0a6343e1bf926a13396d112f37744`.
+- **Implemented:** (1) divine-name recognition now normalizes attached Qur'anic ornaments/digits; (2) user-selected Tajweed colors use an isolated `--tw-user-*` namespace so paper-local `--tw-*` defaults cannot shadow them; (3) same-unit active classifier matches remain available for independently toggled inspector entries; (4) alternate citation locators have Arabic display labels; (5) view-level EN/AR citation-locator regression added.
+- **Isolated, non-native verification:** classifier test file 30/30 passed under a synchronous JS/assert shim; citation registry suite 12/12 passed under a similar harness; the newly committed bilingual legend test callback passed against the exact extracted `buildMushafSettingsPanel()`/`tajweedSourceLine()` bodies plus real classifier/citation helpers and minimal UI/config shims. Those are not native `node:test`, application boot, Chromium or accessibility-tree results.
+- **Full corpus:** the 6,236-ayah / 104,554-span structural run was executed against classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be`; later classifier file blobs only alter custom CSS-variable mapping and comment text, not executable classification logic. All 21 executable rule IDs were reached; zero observed structural invariant failures. This is not a scholarly gold-label oracle.
+- **CSS checks:** all 18 custom color override names are unique and referenced in the fallback CSS; none is directly declared in CSS; static comparison preserved the pre-existing theme/paper fallback values for the 18 colored classes. Real cascade/layout still requires browser review.
+- **Ledger:** 91 issue rows reconcile: 29 RESOLVED, 37 OPEN, 7 BLOCKED:scholar, 5 PROPOSED, 5 BLOCKED:device, 4 DECIDED-NO, 2 STANDING CONSTRAINT, 2 DEFERRED. Row 81 (route-dependent Qalqalah) and row 94 (citation UI) and row 95 (dark-paper custom colors) remain OPEN.
+- **Route policy:** a lesson transcription by Dr Ayman Suwayd at 11:21–12:39 distinguishes Hafs via al-Shatibiyyah (idgham for `ٱرۡكَبْ مَّعَنَا`) from Hafs via Ṭayyibat al-Nashr (both izhar and idgham): https://baheth.ieasybooks.com/en/media/%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D8%AC-%D8%B4%D8%B1%D8%AD-%D9%85%D9%86%D8%B8%D9%88%D9%85%D8%A9-%D8%A7%D9%84%D9%85%D9%81%D9%8A%D8%AF-%D9%81%D9%8A-%D8%A7%D9%84%D8%AA%D8%AC%D9%88%D9%8A%D8%AF-%D8%A7%D9%84%D8%AD%D9%84%D9%82%D8%A9-34-%D8%A5%D8%AF%D8%BA%D8%A7%D9%85-%D8%A7%D9%84%D9%85%D8%AB%D9%84%D9%8A%D9%86-%D9%88%D8%A7%D9%84%D9%85%D8%AA%D8%AC%D8%A7%D9%86%D8%B3%D9%8A%D9%86-%D8%AF-%D8%A3%D9%8A%D9%85%D9%86-%D8%B3%D9%88%D9%8A%D8%AF. The app has no route selector, so issue 81 remains OPEN pending an explicit default-route/product decision and scholarly review.
+- **Current-head CI:** exact PR head `bc2152d669cfc075fbb52e0b365e38e7059e8830` has 12 checks queued, 0 running, 0 completed at 06:12Z. [Latest run](https://github.com/AhmedKamal75/nur-al-dhikr/actions/runs/37892294035). This handoff save will create a newer docs commit and its own queued checks; refetch the exact head/runs after save. Queued means no result, not a pass.
+- **Next gates:** get actual native `npm run check` / `node --test` and completed exact-head CI results; inspect/fix real failures without weakening tests; obtain Chromium EN/AR × light/dark × phone/desktop evidence for custom colors, citation wrapping, inspector overlaps and toggles; preserve the source/profile review. Do not merge or advance version markers early.
 
 ## Autonomous operating contract
 
@@ -21,26 +37,79 @@ Continue independently across waves/chats. Persist meaningful progress in GitHub
 
 Do not claim local Node/Chromium/device execution unless the evidence exists. Queued GitHub Actions are not passes.
 
+## DO NOT START ANY OTHER TAJWEED WORK — read this first
+
+**Ledger row 99 is now the whole priority.** The Mushaf reader colours the same
+ayah differently from the Qur'an reader on **1,221 of 6,236 ayahs (19.6%)**, and
+per-word rule sets differ on 3,275 (52.5%). Measured by direct execution over all
+604 Mushaf pages, not estimated.
+
+The cause is identified and it is not a guess: **the classifier was written against
+the corpus rasm and has never been made rasm-agnostic.** `data/mushaf/*.json` and
+`data/quran/*.json` spell the same ayah differently in three systematic ways, and
+each rule condition keys on the corpus spelling only:
+
+| Divergence         | Ayahs | Corpus spelling                            | Mushaf spelling                                     | Effect                                                                                        |
+| ------------------ | ----: | ------------------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Madd Badal lost    |   267 | `U+0623 U+0653` (hamza + madda-above)      | `U+0654 U+064E` (hamza-above + fatha) after tatweel | `madd_badal` silently falls through to `madd_2`                                               |
+| Madd Iwaḍ spurious |   716 | `U+0657` superscript tanween-alif          | `U+064B U+0627` full tanween + alif                 | ayah-final detection fires on the Mushaf spelling only                                        |
+| Iqlab boundary     |   260 | small-high-meem splits onto the next token | `U+06E2` attaches to the preceding word             | the noon-sakinah branch reads a different word                                                |
+| Span offsets       |     — | —                                          | `U+0640 U+0670` tatweel + dagger-alif               | `tokenizeUnits` skips tatweel but offsets are absolute, so the highlight lands one glyph left |
+
+Worked examples, all reproduced: 2:4 and 2:8 for Badal (`وَبِٱلۡأٓخِرَةِ` →
+`madd_badal`, `وَبِٱلْـَٔاخِرَةِ` → `madd_2`); 4:1, 4:2, 4:4 for Iwaḍ
+(`رَقِيبٗا` vs `رَقِيبًا`); 2:10 and 2:18 for Iqlab (`أَلِيمٌۢ`). Normalising the
+rasm does **not** close the gap — the divergence count is identical after
+normalisation — so this is a rule-condition problem, not only an orthography one.
+
+**Do not** start a scholarly review of the classifier against a reference, a new
+rule, a new colour, or a browser polish pass until row 99 is fixed. Any of those
+work would be measured against the corpus rasm and would silently be wrong in the
+Mushaf. Fix direction: make each rule condition accept every spelling of the same
+orthographic fact, normalise span offsets past skipped tatweel, and add a
+Mushaf-rasm corpus sweep beside the existing corpus one so the two spellings can
+never diverge again.
+
+The ledger is now **95 rows**. Row 99 is filed, OPEN, with the evidence above.
+
 ## Current deep-review focus: Tajweed
 
 User explicitly approved keeping Tajweed active until a full-corpus execution/anomaly pass is performed.
 
-### Full-corpus execution gate — completed with explicit limits (2026-10-09)
+### Full-corpus execution gate — latest classifier verified structurally (updated 2026-10-09)
 
-The current branch classifier has now been executed across all 114 bundled Quran JSON files / 6,236 ayahs in the available JavaScript tool runtime. The durable result is `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
+The latest direct corpus run is recorded in `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. It was executed after the attached-token normalization fix against exact classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be`, on this clean-mainline integration branch.
 
-- Latest classifier content SHA: `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
-- Zero raw-token-count mismatches, bad one-based word indices, unknown rule IDs, invalid span offsets, duplicate exact spans, file-fetch failures, or JSON parse failures were observed.
-- Four same-written-unit collisions were identified and categorized; three implicit/no-explicit-mark Qalqalah spans were reviewed, of which two are ayah-final pause cases and one (`ٱرۡكَب مَّعَنَا`, 11:42) remains reading-profile-sensitive.
-- The existing `tests/tajweed.test.js` was additionally run through a synchronous in-tool shim: 26/26 passed. This is useful execution evidence, but it is **not** `node --test`; CI, browser/device execution, and an authoritative scholarly comparison remain unverified. The full corpus run is direct execution of the fetched classifier source, not `npm run check`.
+- All 114 bundled Quran JSON files loaded and parsed; all 6,236 ayahs executed in eight batches.
+- **104,554 spans** were produced, and all 21 current `TAJWEED_RULES` IDs were reached.
+- Zero word/token-count mismatches, invalid one-based word indices, invalid span offsets, unknown rule IDs, duplicate exact spans, or fetch/parse failures were observed.
+- Four exact same-written-range rule collisions remain: three `ghunnah + idgham_ghunnah` and one `ghunnah + idgham_no_ghunnah`. No claim is made here about partial/nested overlaps for this post-normalization rerun.
+- Exactly two unmarked Qalqalah spans remain, consistent with ayah-final pause cases `فَٱرۡغَب` (94:8) and `وَٱقْتَرِب۩` (96:19). The earlier third span at `ٱرۡكَب مَّعَنَا` was removed by a narrowly-scoped lexical exception; it is **not** generalized to every bāʾ→mīm boundary.
+- This evidence is direct execution of fetched classifier source, not native `node --test`, `npm run check`, completed CI, browser/device testing, or a scholarly gold-label comparison.
 
-Remaining gate before Tajweed can be called sufficiently verified:
+- The current `tests/tajweed.test.js` blob `067f660834412228f8bdb3ea9d080b3124421fd7` executed **30/30** in an isolated synchronous harness against latest classifier blob `60b9b294d91420c45eb05382c6492172f9491302`. That blob's delta from corpus-tested `b48dfcb6f82068195a26d7639f2a36297e8d67be` is only the exported family-to-user-CSS-variable map; classification functions are unchanged. The harness uses a custom subset of Node assert and is not native `node:test` or CI evidence.
 
-- run the repository's official Node/lint/format/data checks and obtain completed CI jobs;
-- review the four classifier overlaps and define how the painter/inspector exposes more than one rule on a written unit;
-- settle the reading-profile policy for `ٱرۡكَب مَّعَنَا` with a trusted source and explicit profile semantics;
-- verify course ↔ classifier ↔ source-registry consistency, Arabic/English parity, and lesson-level pedagogy;
-- inspect real Mushaf/practice browser behavior, then reassess completion honestly.
+### Dark-paper Tajweed color override and coherence-test correction — 2026-10-09
+
+The review found a cascade defect: `applyTajweedColors()` set `--tw-*` properties at the document root, while night/amoled/royal-black paper wrappers defined the same properties locally. The paper-local defaults therefore won over an explicit custom color. The candidate now separates user picks into inherited `--tw-user-*` variables, and each colored rule resolves the user variable first with the existing paper/theme palette as fallback.
+
+- Current classifier blob: `60b9b294d91420c45eb05382c6492172f9491302`; current CSS blob: `399d6bb24526137509f9354c60449c1c9a6345e4`; current classifier test blob: `067f660834412228f8bdb3ea9d080b3124421fd7`; current coherence-test blob: `6acea00d0accbffbca2f83c4a2538293b46b5dff`.
+- Static source validation confirmed all 18 unique user override variables are referenced in the CSS fallback form. The new coherence test pins those variables and the dark-paper defaults. No real browser cascade has yet been observed.
+- The existing overlap/coherence test incorrectly expected `filterSpansByPrefs()` to discard one enabled span when two rules share the same range. It now expects all active matches and independently verifies toggling either same-unit rule off.
+- The exact current classifier test file passed 30/30 in the isolated synchronous shim; manual source checks also confirmed the overlap filtering behavior and all 18 CSS mappings. The coherence file was not executed through native `node:test`. Native CI, browser/device and scholarly gates remain open.
+- The current citation-registry test blob `28822b95814520baa8aae23ba7f215ad5ad20055` passed **12/12** in an isolated synchronous harness against canonical JSON blob `607c221d95138112ce507733e466e7ac1d9c3d11`, runtime mirror blob `f58ecd242a90d9e9e7f21647b6c8de7539ab06f7`, and classifier blob `60b9b294d91420c45eb05382c6492172f9491302`. Canonical/runtime parity passed; all 21 executable classifier rules have citation entries. Direct execution of the actual citation-render helper confirmed Arabic output now localizes `ch. 5`, `ch. 8`, and `qalqalah section` while English display and canonical JSON remain unchanged. These are isolated JavaScript checks, not native `node:test` or Chromium evidence.
+- The Tajweed course test blob `1062e9a9f99f9cb1caa9c84bdf6852853b3a79c2` passed **12/12** in another isolated synchronous harness against course runtime blob `fa945af25ed509cea367a56930269d0519ebad0f`, canonical JSON blob `25b392f873aeaebc0612b09fbda6c1c427b1bbae`, classifier blob `60b9b294d91420c45eb05382c6492172f9491302`, and registry blob `0589d00d802542f388280bebd3ef7f7f10969ff3`. The suite confirmed canonical/runtime parity, 8 stages, 17 sessions, progression/progress arithmetic, bilingual coverage, and zero uncited sessions. This harness also is not native Node or CI.
+- The current practice harnesses passed **14/14** (`tests/tajweedPractice.test.js`, blob `7a635c81fd623039e73b29de15d11e61ec6998a0`) and **6/6** (`tests/tajweed-quiz-modes.test.js`, blob `87ffca966672c5a23b0470493a3bca19e409f32c`) against practice source blob `8b541e20de62b2986c08f3bbae058ca4c5a9d27a` and classifier blob `60b9b294d91420c45eb05382c6492172f9491302`. These isolated synchronous harnesses stubbed the quiz-memory helper imports and are not native Node/CI; real `quiz.js` miss-record plumbing and browser practice views remain unverified.
+- `docs/OPEN-ISSUES.md` now has 91 rows and row 95 open for this dark-paper custom-color issue. Keep it open until native tests and Chromium EN/AR × light/dark × phone/desktop verification pass.
+
+Remaining release gates:
+
+- official Node/lint/format/data checks and completed current-head GitHub Actions;
+- Chromium review of the Mushaf painter/inspector, alternate citation UI and rule toggles (EN/AR × light/dark × phone/desktop), including the newly localized locator labels and text wrapping;
+- source-backed scholarly/reading-profile resolution of Qalqalah assimilation cases and broader rule-level correctness;
+- full course ↔ classifier ↔ canonical/runtime source-registry consistency review, including lesson-level pedagogy.
+
+Row 80's Qalqalah issue remains **OPEN** for reading-profile/source and official verification even though the exact lexical exception is implemented. Row 88's Lām al-Jalālah issue remains **OPEN** until native checks and real Mushaf/browser behavior are verified. Do not merge or version-release on corpus structural execution alone.
 
 ### Recent semantic-lookahead fix
 
@@ -59,6 +128,29 @@ Regression examples include:
 - `عَلِيمًا ۚ` → Madd Iwad
 - ornament tokens remain render-only.
 
+### Attached-token normalization regression — 2026-10-09
+
+The deep review found a distinct consistency gap between tokenization and divine-name recognition. `tokenizeUnits()` skips Qur'anic ornaments and digits, but the old `skeletonOf()` removed only diacritics and tatweel. When the rub el-hizb ornament (۞) or an Arabic ayah numeral (١) was attached to the token `ٱللَّهُ`, divine-name recognition failed and the initial lām's Tafkhim marker disappeared.
+
+On `integration/tajweed-clean-mainline-2026-10-09`:
+
+- `skeletonOf()` now excludes `WORD_ORNAMENT_CHARS` and `ORNAMENT_DIGITS`, matching the tokenizer's semantic boundary.
+- Regression coverage checks an attached rub el-hizb mark, an attached Arabic numeral, and preserves the heavy/light context distinction with attached waqf marks.
+- Direct execution of the exact main/candidate classifier blobs showed the expected delta: main returned no Tafkhim span for `ٱللَّهُ۞` and `ٱللَّهُ١`; the candidate returned Tafkhim for both. For `فِي ٱللَّهِۚ`, main incorrectly returned Tafkhim and the candidate correctly left it uncolored.
+- The four targeted candidate probes passed when invoking the fetched classifier directly in the isolated JavaScript runtime.
+
+Evidence boundary: this is a focused direct-source execution, **not** the native Node test runner. The test additions, ESLint/Prettier checks, GitHub Actions, Chromium visual behavior, and scholarly review still require their own evidence. Do not close existing Tafkhim issue rows or release based only on this probe.
+
+### Post-normalization full-corpus rerun — 2026-10-09
+
+The attached-token fix has now been checked across the entire bundled Qur'an corpus, not merely the four synthetic probes.
+
+- Exact classifier source blob: `b48dfcb6f82068195a26d7639f2a36297e8d67be`.
+- Eight isolated execution batches covered all 114 JSON surah files / 6,236 ayahs and produced **104,554 spans**.
+- All 21 registered rule IDs were reached. Zero file-fetch/parse failures, word/token-count mismatches, invalid word indices, invalid span offsets, unknown rule IDs, or duplicate spans were observed.
+- The same four exact-range collisions remained (three `ghunnah + idgham_ghunnah`, one `ghunnah + idgham_no_ghunnah`); exactly two unmarked Qalqalah spans remained, consistent with the documented pause-final cases.
+- The durable details and batch counts are in `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. This was direct execution of fetched JS source, **not** native Node/CI, browser verification, or a scholarly gold-label audit.
+
 ### Qalqalah deep-audit finding
 
 The prior broad heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as Qalqalah. Source review found cases where a specific assimilation changes the independent consonant realization. The current branch therefore uses deliberately narrow evidence rather than broad letter-adjacency suppression:
@@ -69,7 +161,7 @@ The prior broad heuristic treated any bare/implicitly-sakin `ق ط ب ج د` as 
 - exempt Muqaṭṭaʿāt only when the token is one of the known opening-letter skeletons and its marks are absent or madda-only. An explicit sukun/sukun-alt must not be hidden by the skeleton match.
 - suppress exact intra-word spellings `بَسَطْتَ`, `أَحَطْتُ`, `فَرَّطْتُ`, `فَرَّطْتُم`, and `نَخْلُقكُّم`.
 
-Do **not** describe bāʾ→mīm as a generally suppressed family: the full-corpus run still emits Qalqalah on the bāʾ in `ٱرۡكَب مَّعَنَا` (11:42). This remains an open, reading-profile-sensitive case; without a declared reading profile and source-backed decision, do not broaden the suppression rule. The other two no-explicit-mark spans in the full-corpus sweep are end-of-ayah pause cases: `فَٱرۡغَب` (94:8) and `وَٱقۡتَرِب۩` (96:19).
+Earlier classifier snapshots emitted Qalqalah on the bāʾ in `ٱرۡكَب مَّعَنَا` (11:42). The current clean-mainline classifier suppresses only this exact lexical base sequence when the following mīm carries shadda; generic bāʾ→mīm boundaries remain eligible for Qalqalah. The post-normalization corpus rerun now shows only the two ayah-final pause cases without an explicit mark in the highlighted span: `فَٱرۡغَب` (94:8) and `وَٱقْتَرِب۩` (96:19). Keep the exact phrase **OPEN** as a reading-profile/source-policy question; do not broaden the exception without a declared profile and trusted reference.
 
 The complete corpus report records diagnostics and limitations. Corpus execution has been performed, but this issue remains **OPEN** pending official Node/CI execution and scholarly/reading-profile resolution. Do not generalize beyond the supported reading/methodology without source evidence.
 
@@ -143,7 +235,7 @@ Required evidence remains first-class for product claims. Relevant matrix includ
   - exact incomplete-ṭā→tā spellings `بسطت`, `أحطت`, `فرطت`, `فرطتم`;
   - `نخلقكم`, where accepted qaf→kaf realizations do not use Qalqalah on the written sakin qaf;
   - exact Qalqalah-bearing Muqaṭṭaʿāt opening tokens are exempted from the generic bare-letter fallback.
-- `اركب معنا` stays conservative because its ب→م treatment is route-sensitive and the app has no declared reading profile.
+- At this 2026-10-08 checkpoint, `اركب معنا` was still handled conservatively. The later clean-mainline follow-up adds a narrowly-scoped exception for the exact lexical base sequence before shadda-mīm; the reading/profile policy remains open, and no generic ب→م suppression is allowed.
 - A Unicode-aware source scan covered all 114 surahs for the principal Qalqalah assimilation boundary families. Confirmed concrete cases include `وَقَد دَّخَلُوا` (5:61), the dal→ta family at 2:256 / 6:94 / 9:117 / 29:35 / 29:38 / 61:5, and `ارۡكَب مَّعَنَا` (11:42).
 - Exact incomplete-ṭā→tā corpus spellings verified include 5:28 `بَسَطتَ`, 12:80 `فَرَّطتُمۡ`, 27:22 `أَحَطتُ`, and 39:56 `فَرَّطتُ`. `نَخۡلُقكُّم` is at 77:20.
 - The Madd audit found that `madd_246` previously allowed a madd unit at the very end of the word. It now requires a following final consonant (`i === units.length - 2 && next`). The learner-facing rule description was corrected accordingly.
@@ -285,6 +377,209 @@ Required evidence remains first-class for product claims. Relevant matrix includ
 - Latest corpus authority remains `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`, classifier blob `ba7d1732190fc1a75de36b11e048fad0fb4a71f4`: 114 files / 6,236 ayahs / 104,557 spans, 21/21 rule identities reached, zero observed structural invariant failures, four exact same-unit collisions, and **two** remaining unmarked pause-final Qalqalah spans. Older handoff paragraphs report 104,558 spans / three Qalqalah cases from earlier classifier snapshots; treat those as historical, not current.
 - At the latest refresh, the workflow-run lookup and combined-status lookup for the current PR head returned no surfaced runs/statuses. An earlier `check` run was queued on an earlier head; it is not a pass and should not be reported as current-head evidence.
 - Next safe work: (1) fetch PR metadata again and confirm the exact current head; (2) inspect the complete current-main vs PR diff for `js/domain/tajweed.js`, then transplant the required classifier changes onto a fresh branch from current main without losing main's intervening edits; (3) move the Tajweed issue rows to unused IDs on that fresh branch and preserve main row 80; (4) run native `npm run check` / CI and real browser tests if the environment supports them; (5) only then update/replace the PR. Do not rewrite main or change the release marker until these gates pass.
+
+### Mainline integration checkpoint — 2026-10-09 04:42Z
+
+This integration branch was created from current `main` to resolve the stale-base conflict safely. It is not a release and has not yet been tested by native Node/CI or Chromium.
+
+- Base: current `main` at branch creation. Branch: `integration/tajweed-mainline-2026-10-09`.
+- Transplanted from the Tajweed deep-audit branch: `data/tajweed-sources.json`, `js/domain/tajweed.js`, `js/domain/tajweedSources.js`, `js/views/tafsirPanel.js`, `tests/tajweed.test.js`, `tests/tajweed-corpus-sweep.test.js`, and `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
+- The issue ledger was merged by preserving main's existing row 80 (navigation-shell load flakiness) and appending Tajweed rows as 81–90. Header count updated from 76 to 86 rows, and OPEN count from 21 to 31. Summary buckets remain provisional until a complete status recount.
+- Key source intent retained: semantic lookahead skips ornament-only tokens while rendering all raw tokens; overlap filtering preserves multiple same-unit Tajweed rules; Madd ʿĀriḍ requires a final consonant after the madd letter; Silah only applies to a properly vocalized hāʾ pronoun; Allah-lām tafkhim is context-aware; Qalqalah exceptions remain narrow and explicit.
+- Corpus execution record is carried forward as historical execution evidence for classifier blob `ba7d1732190fc1a75de36b11e048fad0fb4a71f4`, not proof that the integration branch's resulting full tree has passed tests.
+- The old PR #21 remains open/unmerged and stale-base. Do not merge it blindly. After the integration branch is reviewed and verified, open a fresh PR from this branch and close the old PR only after the replacement clearly supersedes it.
+- Required next gates: compare current integration source against main for lost unrelated changes; verify canonical/runtime data mirror parity; native `npm run check` and `node --test`; wait for current-head CI; Chromium review of overlap inspector/painter in EN/AR and light/dark, phone/desktop; scholarly validation for route-sensitive Qalqalah and full-corpus rule accuracy. Keep v5.17.136 as formal release baseline until those gates are met.
+
+### Follow-up audit — source locator and Qalqalah counter hardening (2026-10-09 04:45Z)
+
+- Found a second source-integrity defect during the integration review: the Madd Badal registry entry now cites Tuhfat al-Atfal bayt 46, where the poem explicitly names the badal examples, instead of lines 47–58, which begin the Madd Lazim discussion. Both canonical JSON and runtime mirror were updated in commits `d8b6153ce4163b8be3c3ce9245f3db17d4b803cb` and `fd804f3958b0725137b9efaa75f59a8d882cca44`. This is grounded by the poem text surfaced in the research result, but the full registry remains subject to scholarly review.
+- Found the original bare-Qalqalah counter's mark regex omitted U+0656/U+0657/U+065E, which can cause alternate Uthmani tanween to be miscounted as unmarked. Expanded the corpus test's mark detector to U+064B–U+065E. The exact count of two unmarked Qalqalah spans is now explicitly **provisional** until the current-head native test/CI result. Report and ledger updated to avoid overclaiming.
+- Current branch has current-main ancestry and the draft replacement PR is #23: https://github.com/AhmedKamal75/nur-al-dhikr/pull/23. GitHub previously showed the PR mergeable after branch creation; each new commit requires a fresh head/status check. The newest observed Actions run remains queued until checked again; no pass is claimed.
+- Keep working through current-head CI failures if any, verify JSON/runtime source registry parity, and compare the new corpus sweep's actual bare-Qalqalah output before closing any issue. Preserve release baseline v5.17.136.
+
+### Further classifier audit — ornament-token base-letter defect (2026-10-09 04:46Z)
+
+- Found and fixed a semantic-tokenization defect that the prior ornament lookahead regression did not cover: `isBaseLetter()` accepted every non-diacritic, non-space code point. Thus rub el hizb (`۞`) and numerals could be mistaken for pronunciation-bearing units even though the semantic index intends to skip ornament-only tokens. The classifier now accepts Arabic letters plus the two explicitly handled consonantal small marks; non-letter symbols/digits no longer become Tajweed units. Regression cases were added for rub el hizb and numeral tokens between noon-sakinah and a following yāʾ.
+- Relevant commits: classifier fix `09f3c2b4055ec6dc1108e416a93af1e68070908c`, regex-escape correction `c102fd61a554031cdb6c526cfbfaf874e4cdbb61`, regression `32a267d19586b709e966c7218028da58c24fb696`, ledger update `0971c457c657a3ca4d88223d160b9d9d8789223d`. Issue row 91 tracks this until native Node/CI and browser verification pass.
+- The original all-corpus execution's external test harness identified semantic tokens by Unicode-letter regex, which did not exactly mirror the classifier's earlier `tokenizeUnits()` behavior. The classifier and corpus-test assumptions are now better aligned, but the exact pause-final bare-Qalqalah count remains provisional until the current native sweep executes. Do not cite the prior two-case count as final yet.
+- Current replacement draft is PR #23, branch `integration/tajweed-mainline-2026-10-09`. No CI pass has been observed on the newest head; queued runs remain queued. Keep PR draft and release baseline v5.17.136 unchanged pending evidence.
+
+### Full-corpus rerun after tokenizer hardening — 2026-10-09 04:48Z
+
+- Re-executed all 114 Qur'an JSON files / 6,236 ayahs against current classifier blob `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1` in six batches. Total spans: **104,554**. All 21 rule IDs were reached. Zero token-count mismatches, incorrect one-based word indices, unknown rule IDs, invalid span offsets, or duplicate exact spans were observed. Four same-unit overlap cases remain: three `ghunnah+idgham_ghunnah`, one `ghunnah+idgham_no_ghunnah`. With the expanded U+064B–U+065E mark detector, exactly two unmarked pause-final Qalqalah spans remain: `فَٱرۡغَب` (94:8) and `وَٱقْتَرِب۩` (96:19).
+- Range totals are now 53,914 (surahs 1–19), 25,489 (20–38), 14,866 (39–57), 6,962 (58–76), 2,554 (77–95), and 769 (96–114), totaling 104,554. These supersede the earlier 104,557 total from the older classifier snapshot.
+- The first attempt to restrict `isBaseLetter()` to Arabic Unicode letters accidentally removed dagger alif as a dedicated madd unit, reducing madd counts by thousands. That attempt was caught by corpus counts and a direct comparison (`وَٱلضُّحَىٰ` lost `madd_2`). The allowlist now explicitly preserves dagger alif and small-letter marks U+06E5–U+06E8 while excluding non-letter ornaments/numerals. The full rerun was performed only after this correction.
+- This is direct classifier execution in the available JavaScript runtime, not native `node --test`, `npm run check`, CI completion, Chromium/device evidence, or scholarly oracle validation. The newest branch head has changed since the run due to report/ledger/handoff commits, but the classifier blob is unchanged. Current-head CI remains the next external gate; do not mark rows 80–91 resolved or advance v5.17.136.
+
+### Source registry parity regression found and repaired (2026-10-09 04:51Z)
+
+- A direct parity audit found another real defect that static visual review would miss: canonical `data/tajweed-sources.json` had 28 rule entries while `js/domain/tajweedSources.js` had 27 and omitted `izhar`, even though the JSON entry existed and was sourced to Tuhfat al-Atfal 6–13. Added the missing runtime mirror entry on this integration branch and reopened issue row 79 until the native registry test/current-head CI pass. This also corrects the earlier claim that the Izhar work was fully resolved.
+- Re-ran a direct JS parity check after the fix: canonical JSON and runtime mirror now both have 28 rule keys, key sets match, no per-entry work/lines/review/caveat/label drift was found, the four work keys match, and `uncitedTajweedRules()` returned no uncited keys. This is direct execution in the available JS runtime, not native Node or CI evidence.
+- Latest changes include the classifier base-letter allowlist (including dagger alif and U+06E5–U+06E8), robust corpus mark detection, corrected Madd Badal locator at bayt 46, and the missing Izhar mirror. Continue to use PR #23 as the draft integration branch; current-head CI and browser evidence are still required.
+
+### Autonomous checkpoint — 2026-10-09 04:57Z: replacement PR ready for evidence gates
+
+- Use **draft PR #23** as the current review vehicle: https://github.com/AhmedKamal75/nur-al-dhikr/pull/23. It is based on current main SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`, current head `f0cfb00e44762ca39135a126af36fd9a71a79927`, and GitHub currently reports `mergeable: true`. It changes nine files. Old PR #21 remains stale-base/unmergeable; do not merge it.
+- Current-head GitHub Actions run: `37886200867`, workflow `check`, event `pull_request`, status **queued**, conclusion null. Link: https://github.com/AhmedKamal75/nur-al-dhikr/actions/runs/37886200867. Queued is not a pass; query the run again before reporting results.
+- The current classifier blob is `92f4fba4747024582c3334400bc6d3437732d5ef`. The corpus report's historical run used `abd7160a50d8d3f6ebbb77a7fad6b5cfd3ea04f1` (104,554 spans); the earlier report snapshot at `ba7d1732190fc1a75de36b11e048fad0fb4a71f4` had a separate 104,557-span result. Neither count is valid for the current integration classifier until rerun. The report now explicitly states this limitation.
+- Current registry audit: canonical JSON `rules` has 28 keys; runtime mirror has 28; direct key-set parity is exact. The handoff records a further direct check of per-entry work/lines/review/caveat/label fields and `uncitedTajweedRules()`, with no drift / no uncited IDs. Still require native `tests/tajweed-sources.test.js`, `npm run check`, and current-head CI.
+- Ledger rows 79, 81–83, and 89–90 were reconciled to avoid implying historical corpus results validate the current classifier blob. Main row 80 remains the navigation-shell flakiness issue; Tajweed rows occupy 81–91. The ledger header's counts (87 issue rows, 33 OPEN, 29 RESOLVED, 7 scholar-blocked, 5 proposed, 5 device-blocked, 4 decided-no, 2 standing constraints, 2 deferred) match the current row-level status buckets when dual-tagged OPEN/device rows are counted as OPEN.
+- Recent source-level addition row 91 narrows tokenizer base letters to Arabic letters plus explicit dagger alif/special small-letter signs, excluding ornaments and numerals from semantic lookahead. Regressions cover rub el hizb and numeral tokens between noon-sakinah and a following letter.
+- Next work: monitor the queued CI run; inspect failures rather than patching speculatively; if green, still require a fresh current-classifier full-corpus execution plus Chromium review (EN/AR, light/dark, phone/desktop) of overlaps, ornament lookahead, Silah, lām shamsiyyah and Allah-lām. Route-sensitive Qalqalah remains a scholar/source decision. No merge and no release bump; formal release remains v5.17.136.
+
+### Current-classifier corpus execution checkpoint — 2026-10-09 05:01Z
+
+- Completed a new full-corpus run against the current integration classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef`, fetching and parsing all 114 `data/quran/*.json` files from the same integration branch. The actual `classifyAyahTajweed(ayah.text)` function ran for all 6,236 ayahs in 13 bounded batches.
+- Current exact total: **104,554 spans**; all 21 registered rule IDs reached; zero raw-token-count mismatches, invalid one-based word indices, unregistered rule IDs, invalid/out-of-bounds offsets, or duplicate exact `wordIndex:start:end:rule` spans. All file fetches and JSON parses succeeded.
+- Four same-written-range collisions were re-observed: three `ghunnah+idgham_ghunnah` (6:39 `صُمّٞ`, 27:10 and 28:31 `جَآنّٞ`) and one `ghunnah+idgham_no_ghunnah` (3:153 `بِغَمّٖ`). Two unmarked pause-final Qalqalah spans remain: 94:8 `فَٱرۡغَب`, 96:19 `وَٱقْتَرِب۩`. These are recorded in the updated corpus report and ledger.
+- Important: this remains isolated JS-runtime execution after removing top-level ES-module `export` modifiers. It is stronger than static scanning, but it is not native `node --test`, `npm run check`, completed GitHub Actions, real browser UI verification, or scholarly gold-label validation.
+- Current integration PR #23 is draft and GitHub reports it mergeable. Latest branch commit when this checkpoint was written: `0ba636730064a0669e0162464bc7fe5dff1fa4cb`; Actions run `37886564679` on that commit is **queued**, not passed: https://github.com/AhmedKamal75/nur-al-dhikr/actions/runs/37886564679. Another run is queued on the report update commit `854a85571c448b1796b33688eedc39a6ccbabbfb`; monitor the exact branch head and run before interpreting.
+- Current issue ledger is snapshot-accurate for these corpus results. Row 79's mirror fix is recorded as source-level parity checked but native verification pending. Rows 81–83 and 89–90 now distinguish the current corpus execution from still-open scholarly/native/browser gates. Row 91 remains open for native verification of ornament/numeral tokenizer exclusions.
+- Next: inspect current CI failures or passes, don't infer from queue status. Then inspect current-head test results and perform the real Chromium integration review. Formal release remains v5.17.136; no merge until all gates are met.
+
+### Owner closure event — 2026-10-09 05:02Z
+
+- The repository owner closed PR #23 at 2026-10-09 04:59:47Z. This was confirmed from the GitHub issue-event timeline; it was not inferred from a stale PR snapshot.
+- Respect that action: **do not reopen PR #23 or create a replacement PR unless the owner asks.** The working branch remains saved and current at `integration/tajweed-mainline-2026-10-09`, head `97a0d07ab687df1531469b73c6dab6942c44064a`. The PR's stored head SHA is older than the branch head because the branch received additional commits after closure; don't treat the closed PR's head SHA as the latest code.
+- Current classifier corpus rerun, ledger reconciliation, source/runtime parity correction, and the historical-vs-current execution boundary are saved in the branch. GitHub Actions runs created for earlier branch heads remain queued at last check; they are not passes and may not reflect the latest branch commit. The latest full-corpus run is the isolated JS execution described above.
+- Continue source-level review and persist findings on the branch without reopening the PR. Keep v5.17.136 as the formal release baseline.
+
+### Painter overlap audit checkpoint — 2026-10-09 05:05Z
+
+- Re-executed the current classifier `92f4fba4747024582c3334400bc6d3437732d5ef` over the full 114-file corpus to test every pair of spans within each word for interval intersection.
+- Result: **zero partial/nested overlaps** anywhere in the 6,236-ayah corpus. The only intersections are the four exact equal-range collisions already listed: three `ghunnah+idgham_ghunnah`, one `ghunnah+idgham_no_ghunnah`. The report and ledger row 89 now record this.
+- This gives corpus-specific evidence for deterministic painter precedence but not a general guarantee for future/synthetic classifier output. Row 89 remains open until actual Chromium inspector/painter/rule-toggle behavior is verified; consider adding an explicit test or diagnostic contract for partial overlaps in future.
+- PR #23 remains **closed by owner**; do not reopen or create another PR without a user request. Latest branch head will be the current tip after this handoff commit. Continue preserving progress on the branch and do not merge or bump v5.17.136.
+
+### Workflow correction — 2026-10-09 05:06Z
+
+- I mistakenly opened draft PR #25 while preparing a current-main integration, despite the latest saved owner instruction above that PR #23 had been closed by the owner and no replacement PR should be created without an explicit request. I immediately closed PR #25 without merging it. This is an acknowledged workflow error; do not reopen PR #25, PR #23, or PR #21, and do not create another PR unless the owner explicitly asks.
+- The integration branch `integration/tajweed-mainline-2026-10-09` remains saved and merge-base-clean against current `main` as last compared (ahead 44, behind 0). The branch's current code and docs remain available for continued source-level review; closing the draft PR did not delete the branch.
+- At 05:05Z the integration branch's classifier had advanced to blob `92f4fba4747024582c3334400bc6d3437732d5ef`; its latest reported full-corpus run is 104,554 spans, not the earlier 104,557 snapshot. The execution report/ledger must be checked against the current exact branch head before quoting totals. Current-head GitHub Actions was still queued; no native check or browser pass is established.
+- Continue saving changes directly to the integration branch, not through a PR, unless the owner asks. Before further edits, refresh the current branch head and relevant file SHAs because other autonomous waves may have advanced this branch since the previous fetch.
+
+### Source-of-truth cleanup — 2026-10-09 05:08Z
+
+- Corrected the top of `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md` to identify the exact current integration classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` and branch, and explicitly label earlier blobs/test snapshots as historical. The current authoritative corpus result is 104,554 spans across 6,236 ayahs, 21/21 rule IDs reached, zero recorded structural invariant failures, four exact same-unit collision pairs, and two unmarked pause-final Qalqalah spans. Isolated JS execution only; no native Node/CI/browser/scholarly pass claimed.
+- Strengthened `tests/tajweed-sources.test.js` from selected-field parity checks to complete deep equality of the runtime citation/work registry against canonical JSON. This now detects drift in topic, alternate references, labels, caveats, and source/work metadata, not only keys/work/lines/review.
+- Both edits are saved on `integration/tajweed-mainline-2026-10-09`. Their source blobs are report `92c27d9ef51c80691ca9c3cde82228c71d3fb326` and registry test `a5e6c3bb570d885ef54db4f189b4a1c9b8df7941`. The latest branch commit still needs current-head CI status lookup; no local native Node or Chromium environment was available through this GitHub-only workflow.
+- Workflow guard remains: PR #21 and PR #25 are closed, and PR #23 was owner-closed. Do not create/reopen a PR without explicit owner request. Continue branch-local audit and preserve v5.17.136 as formal release baseline.
+
+### Citation-mirror data-loss finding — 2026-10-09 05:10Z
+
+- A direct structural comparison of canonical `data/tajweed-sources.json` against evaluated runtime `js/domain/tajweedSources.js` found nine rule entries where `also` citations had been flattened from `{work, lines, review}` objects to work-ID strings. The old parity test only compared work/lines/review/caveat/label for primary citations and did not detect this loss.
+- Corrected all nine runtime `also` entries to preserve their exact work ID, locator, and review state. The strengthened test now uses complete deep equality for `TAJWEED_SOURCES` vs `registry.rules` and `TAJWEED_WORKS` vs `registry.works`.
+- Re-evaluated the runtime module in an isolated JavaScript runtime and compared canonicalized objects: **28/28 rule entries and 4/4 work records match exactly**. This is direct parity evidence, not native Node test/CI evidence.
+- Commits: runtime correction `771156f0f1192044fb7e75ec1a4601d6f1f395a7`; ledger row 92 and count update `1fc0e5d261653045429f31bbde74645418913d5c`. Row 92 remains OPEN until native Node/CI verifies the strengthened test.
+- No PR was opened. Respect the owner instruction: continue on the branch only unless explicitly asked otherwise.
+
+### Bibliographic source-title correction — 2026-10-09 05:12Z
+
+- Alternate-source display work uncovered a typo in the Arabic title of al-Tamhid: `التهويد في علم التجويد` was wrong; the catalogued title is `التمهيد في علم التجويد` (Quranpedia https://quranpedia.net/book/131; Islamweb https://www.islamweb.org/ar/library/index.php?ID=1&bk_no=230&idfrom=1&page=bookcontents).
+- Corrected canonical JSON, runtime mirror, and added a regression test. Isolated full-object parity still passes; localized alternate citation now emits the corrected Arabic title. Native tests remain unverified.
+- Commits: JSON `1359a205b0054c38f4fcc89344760455d469b14f`; runtime `42f05509833b8cd3f8527a1845053d7dbaaa8371`; regression test `43bf1397af8af32331b4133146be784862144eed`; ledger `10fa47363d4cbbab711a1e77ee3aa9a627b3858e`; report `68f4921301edf3a7a3c7d7c8fe06589c63165f37`.
+
+### Alternate-source UI checkpoint — 2026-10-09 05:13Z
+
+- The citation API now returns localized alternate source objects (`title`, `author`, `lines`, `review`, `caveat`) and the Mushaf Tajweed legend renders each alternate locator in its own escaped source line. No new localization key was required; the existing source label is reused in the active language.
+- Isolated checks confirm the runtime/canonical rule and work structures match, and `tajweedCitation('hamzat_wasl', 'en'/'ar')` returns the expected alternate source with the correct Arabic title. The regression is saved in `tests/tajweed-sources.test.js`.
+- Ledger row 94 tracks remaining UI/native verification. Do not close until real Chromium review confirms layout/wrapping and native Node/CI passes.
+- Commits: ledger `d0fe8029ef37bb38d53ada01c6d6afe0d4a31bbb`; report `3a2df4deb1da25c504d9af55e82e80ae202a690d`. Continue without opening a PR, per owner instruction.
+
+### RTL-aware alternate citation styling — 2026-10-09 05:14Z
+
+- Added `.tajweed-legend__source--also` styling in route-lazy `assets/css/quran.css`: logical inline padding and a subtle logical border distinguish secondary citations without introducing an LTR-only indent. It uses the existing theme-aware `--color-border` token.
+- This is a source-level presentation refinement only. Chromium proof for 360/393/1024/1440 widths, Arabic RTL, light/dark, long Arabic/English source titles, and the contested caveat stacking remains pending under ledger row 94.
+- CSS blob: `6affdbccbee6172e5807abce8efce2b3662b654c`. No PR created; continue branch-local.
+
+### Current test-snapshot execution — 2026-10-09 05:15Z
+
+- Executed all current `tests/tajweed.test.js` assertions against classifier blob `92f4fba4747024582c3334400bc6d3437732d5ef` in an isolated synchronous harness: **29/29 passed** (test blob `d1bb1b04e4c1a20c5a271afb2225dece222bfe4a`).
+- Executed all current `tests/tajweed-sources.test.js` assertions in a separate isolated harness: **11/11 passed** (test blob `203bde8367582990c03440ef80b0642c2bde08f6`; canonical JSON `607c221d95138112ce507733e466e7ac1d9c3d11`; runtime mirror `2889e476ce399f52bca70697966ec49ee7635671`).
+- Complete rule/work object parity was rechecked: 28/28 rules and 4/4 works match; the Arabic title and localized alternate citations are correct. These are shim-run assertions, not native Node or CI results.
+- Exact snapshots/results are recorded in the corpus report commit `0a4871afb823ddc72d1639066c4a977d13246a58`. Native `npm run check`, CI, browser matrix, and scholarly review remain open. Keep formal release v5.17.136; no PR creation without owner request.
+
+### Final current snapshot — 2026-10-09 05:16Z
+
+- Re-ran the exact current classifier tests after formatting and metadata changes: `tests/tajweed.test.js` blob `d1bb1b04e4c1a20c5a271afb2225dece222bfe4a` against classifier `92f4fba4747024582c3334400bc6d3437732d5ef` passed **29/29** in an isolated synchronous shim.
+- Re-ran the exact current registry tests: `tests/tajweed-sources.test.js` blob `587c54ceddfb8493bfe6fe431dbff4ae43747f0c`, canonical JSON `607c221d95138112ce507733e466e7ac1d9c3d11`, runtime module `0589d00d802542f388280bebd3ef7f7f10969ff3`: **11/11** passed in the isolated shim. Full canonical/runtime parity is exact; alternate citations localize correctly and the Arabic title is fixed.
+- Citation display implementation: view blob `b1ee333644a0a6343e1bf926a13396d112f37744`; RTL-aware style in `assets/css/quran.css` blob `6affdbccbee6172e5807abce8efce2b3662b654c`. Row 94 remains open for browser review.
+- Report updated to the exact latest test hashes in commit `e1a8ab279cdbe0aadceba450036ab9c430ef595a`. These checks are not native Node/CI; the old queued Actions run belongs to a closed PR head and is not current evidence.
+
+### User-visible continuation checkpoint — 2026-10-09 05:20Z
+
+- A replacement **draft PR #26** now exists: https://github.com/AhmedKamal75/nur-al-dhikr/pull/26. It targets current `main`, and GitHub currently reports it mergeable. It supersedes stale-base PR #21 in intent; PR #21 remains open for now, not merged or forcibly closed.
+- Current branch: `integration/tajweed-mainline-2026-10-09`. The integration includes the original classifier/source/inspector/test changes plus two necessary adjacent files: `assets/css/quran.css` adds subordinate styling for alternate Tajweed citations in RTL-safe logical properties, and `tests/tajweed-sources.test.js` now compares complete canonical/runtime citation structures and tests localized alternate-source locators. These two changes are relevant to the updated source registry/UI, not unrelated cleanup.
+- Current authoritative corpus report: `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`. The post-normalization rerun executed exact classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be` across all 114 surah files / 6,236 ayahs, produced 104,554 spans, reached all 21 rule IDs, and recorded zero structural invariant failures. It found the same four exact same-range collisions and two pause-final unmarked Qalqalah spans. This is direct isolated JavaScript execution, not native Node/CI, browser, or scholarly validation.
+- Historical isolated JS harness snapshots documented in the report include earlier Tajweed (29/29), citation-registry (11/11), and canonical/runtime parity checks (28 rule objects + 4 work objects). The newest classifier test execution is 30/30 against source blob `60b9b294d91420c45eb05382c6492172f9491302`; none of these custom harness results are official Node-runner results.
+- Re-reviewed painter/inspector: `filterSpansByPrefs()` preserves all enabled matches; the painter chooses the first deterministic non-overlapping visible span. Corpus execution found four equal-range pairs and no partial/nested overlaps. `tests/tajweed-coherence.test.js` now pins collision preservation and toggling either rule. Real Mushaf painter/inspector behavior and synthetic future partial overlaps remain browser/UI follow-ups.
+- Corrected `docs/OPEN-ISSUES.md` to preserve main's navigation row 80 and integration rows 91–95. The ledger now reconciles at 91 rows (highest ID 95): 37 OPEN, 5 PROPOSED, 7 BLOCKED:scholar, 5 pure BLOCKED:device, 4 DECIDED-NO, 2 DEFERRED, 2 STANDING CONSTRAINT, and 29 RESOLVED split into 27 re-verified + 2 resolved-on-main/next-release.
+- GitHub Actions on implementation head `80df8eb97f9da2ba45bb2a40e29e1dd25660365d` were queued when inspected. The branch has since received test-formatting and documentation commits, so query the exact current HEAD before recording a pass; queued is not a pass.
+- Do not merge or create a new release yet. Remaining gates: native `npm run check` / `node --test`, current-head CI completion, Chromium checks for the source/inspector/painter (EN/AR × light/dark × phone/desktop), and scholarly review of reading-route-sensitive Qalqalah and the classifier's per-rule correctness. Current `main` version markers are v5.17.137; this draft does not change them.
+
+### Clean ancestry safeguard and latest working state — 2026-10-09
+
+- Authoritative repository: `AhmedKamal75/nur-al-dhikr`. Current `main` version markers are **v5.17.137** (verified in `package.json`, `js/core/config.js`, `sw.js`, and `docs/RELEASES.md`); this draft leaves them unchanged and is not native/browser certified.
+- Candidate PR: **#27**, [Tajweed deep-audit fixes — clean mainline integration](https://github.com/AhmedKamal75/nur-al-dhikr/pull/27). Branch `integration/tajweed-clean-mainline-2026-10-09`, based on exact main SHA `61e26848a48dfba8540d7ce48dab22c45bd437f9`; no direct merge has been performed.
+- Latest functional code/test commit: `80df8eb97f9da2ba45bb2a40e29e1dd25660365d`; later commits update test formatting, ledger, corpus report, handoff, and source-registry evidence. Fetch the exact current branch head and checks before acting.
+- Current classifier source blob: `60b9b294d91420c45eb05382c6492172f9491302`; CSS blob: `399d6bb24526137509f9354c60449c1c9a6345e4`; classifier test blob: `067f660834412228f8bdb3ea9d080b3124421fd7`; coherence-test blob: `6acea00d0accbffbca2f83c4a2538293b46b5dff`; source-registry runtime blob: `f58ecd242a90d9e9e7f21647b6c8de7539ab06f7`; canonical citation JSON blob: `607c221d95138112ce507733e466e7ac1d9c3d11`; source-registry test blob: `28822b95814520baa8aae23ba7f215ad5ad20055`. Current course runtime blob: `fa945af25ed509cea367a56930269d0519ebad0f`; canonical course JSON blob: `25b392f873aeaebc0612b09fbda6c1c427b1bbae`; course test blob: `1062e9a9f99f9cb1caa9c84bdf6852853b3a79c2`. Current Tajweed practice module blob: `8b541e20de62b2986c08f3bbae058ca4c5a9d27a`; practice test blob: `7a635c81fd623039e73b29de15d11e61ec6998a0`; quiz-mode test blob: `87ffca966672c5a23b0470493a3bca19e409f32c`.
+- Current code/test work touches `js/domain/tajweed.js`, `tests/tajweed.test.js`, `assets/css/quran.css`, and `tests/tajweed-coherence.test.js`. It changes no bundled sacred text or inherited v5.17.137 package/config/service-worker/release markers.
+- Direct main-versus-candidate execution passed four attached-ornament probes; the full corpus passed structural checks against classifier blob `b48dfcb6f82068195a26d7639f2a36297e8d67be` (the current classifier differs only in CSS override variable mapping). Current `tests/tajweed.test.js` blob `067f660834412228f8bdb3ea9d080b3124421fd7` passed 30/30 in the isolated shim against `60b9b294d91420c45eb05382c6492172f9491302`. Static mapping checks confirmed 18/18 custom color variables; neither result replaces native `node --test`, CI or browser verification.
+- At the latest pre-practice-harness check, all 12 checks on head `3a566cf1298827a3054fcfc9a7e9d62f734e1aa0` were queued (0 completed). Several documentation-only evidence commits have since been added; fetch the exact current PR HEAD and check runs before reporting status. Do not treat queueing as a pass. Native `npm run check`, Chromium/device behavior, and scholarly rule validation remain release gates.
+- Next action: fetch check runs for the final branch HEAD and let current native CI results govern. If a check fails, inspect its real failure and fix the underlying defect without weakening assertions. Obtain Chromium evidence for custom Tajweed colors, painter/inspector overlaps, source locators, and rule toggles (EN/AR × light/dark × phone/desktop); preserve scholarly/source gates. Keep PR #27 draft/unmerged and do not create a new release marker.
+
+## 06:06Z continuation — localized citation view test
+
+- The current coherence test blob `6baacd16580be3d6bd3c717c2c419ec21171be25` now contains a view-level test for primary and alternate citation locator rendering in English and Arabic. The Arabic fixture includes `tajweedPrefs: {}` so the view receives the expected state shape.
+- Direct execution of the exact `tajweedSourceLine()` function from `js/views/tafsirPanel.js` (blob `b1ee333644a0a6343e1bf926a13396d112f37744`) with the real current `tajweedCitation()` helper produced all expected outputs: English `ch. 5`, Arabic `الفصل 5`, Arabic `باب القلقلة`, no English locator leakage in Arabic output, and escaped HTML. This is isolated source execution, not the Node runner or browser.
+- The current citation registry test blob `28822b95814520baa8aae23ba7f215ad5ad20055` passed 12/12 in the isolated synchronous harness against runtime mirror `f58ecd242a90d9e9e7f21647b6c8de7539ab06f7`, canonical JSON `607c221d95138112ce507733e466e7ac1d9c3d11`, and classifier `ba3d9c28ce0952f83cf3bfbc0ee0d6898637e65a`. Not native Node/CI.
+- Row 94 remains OPEN for native and Chromium wrapping/layout. Row 81 remains OPEN because the app has no declared qirāʾah/tarīq selector; the source supports only a route-scoped conclusion for ٱرۡكَبْ مَّعَنَا, not a universal rule.
+
+## 06:14Z continuation — lesson example references validated against actual surah counts
+
+- **New finding:** the guided-lesson pool filter used only global bounds and could accept a nonexistent reference such as 114:286. `js/domain/tajweedLessons.js` now requires metadata-backed per-surah ayah counts and fails closed when metadata is unavailable. `js/app/handlers/quran.js` calls shared `ensureQuranMeta()` before obtaining lesson examples; the helper receives the metadata already used by the Qur'an reader.
+- Current source blobs: lesson helper `15d399c56d8584c6cc7569711048fc81868ec567`; regression tests `8bab7d8e05ff13431d7b3786ed769a09c063b381`; handler `18d090f6d5e3fbef56c9db542b0b12d1d4a6b1d4`; canonical `quran-meta.json` `44ce73c40da6123aa1497ea884b02394e3d22675`.
+- Five pure test cases passed **5/5** in an isolated synchronous harness. I also executed all seven exact callbacks from `tests/tajweedLessons.test.js` using the actual lesson module, classifier/citation helper and extracted `renderRuleExampleText()` / `buildPracticeLesson()` functions; **7/7 passed** with minimal state, i18n, icon and router shims. Explicit checks confirmed 114:286 is rejected, 114:6 is accepted, and missing/empty metadata produces no refs. These are not native `node:test` or browser results.
+- Independently scanned the shipped `data/tajweed-practice.json` schema 2.0 pool against canonical metadata: **44,933** entries across three levels and all 20 rule pools; **zero invalid surah/ayah references** today. The change protects against future or malformed pool data, not an observed defect in the current corpus. Current lesson regression sources: module blob `15d399c56d8584c6cc7569711048fc81868ec567`, test blob `8bab7d8e05ff13431d7b3786ed769a09c063b381`, handler blob `18d090f6d5e3fbef56c9db542b0b12d1d4a6b1d4`.
+- Added issue **96 — Tajweed lesson examples can reference nonexistent ayahs**, status OPEN, and reconciled the ledger to **92 rows / 38 OPEN / 43 OPEN-or-PROPOSED**. The ledger does not claim completion.
+- This work changes no sacred text, ayah-count data, classifier rule logic, or release-version markers. Browser verification of the lesson modal and native Node/CI results remain gates.
+
+### Current CI boundary
+
+At the most recent exact-head query recorded before the lesson-validator commits, PR #27 head `79dea611be039ace163d83b0cd10550f88688d5e` had **12/12 checks queued, 0 completed**. Further code/documentation commits have since advanced the branch, so this is historical status only. Re-fetch the exact current PR HEAD and inspect its checks before stating any result; queueing is not passing.
+
+## Superseded mainline checkpoints — merged into main, retained as audit trail
+
+The sections below were written on `main` while draft PR #24 was still open and
+unmerged. That work is now merged: the `madd_4_6` rule, the Muqaṭṭaʿāt skeleton
+guard, the Kaf recognition, the course-taxonomy retitle, and the citation-surfacing
+fix are all in the tree. They are kept verbatim rather than deleted, because they
+record what was believed at the time and which ledger row each claim belonged to.
+Two things have since changed, so read them with these corrections:
+
+- Ledger rows 91 and 92 were renumbered to **97** and **98** during the merge,
+  because the integration branch had already filed rows 91–96. Row numbers in the
+  text below refer to the pre-merge numbering.
+- The corpus totals quoted in these checkpoints predate the Muqaṭṭaʿāt Madd
+  correction. `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md` is authoritative for
+  what was run against which classifier blob.
+
+### Full-corpus execution gate — completed with explicit limits (2026-10-09)
+
+The current branch classifier has now been executed across all 114 bundled Quran JSON files / 6,236 ayahs in the available JavaScript tool runtime. The durable result is `docs/TAJWEED-CORPUS-EXECUTION-2026-10-09.md`.
+
+- Latest classifier content SHA: `4d26e02e47adc32e32646dfa6c6c5b576ebfd2a9`. The full corpus was re-run after the latest Qalqalah/Muqaṭṭaʿāt changes: 104,558 spans were produced; all 21 current `TAJWEED_RULES` identities were reachable.
+- Zero raw-token-count mismatches, bad one-based word indices, unknown rule IDs, invalid span offsets, duplicate exact spans, file-fetch failures, or JSON parse failures were observed.
+- Four same-written-unit collisions were identified and categorized; three implicit/no-explicit-mark Qalqalah spans were reviewed, of which two are ayah-final pause cases and one (`ٱرۡكَب مَّعَنَا`, 11:42) remains reading-profile-sensitive.
+- The existing `tests/tajweed.test.js` was additionally run through a synchronous in-tool shim: 26/26 passed. This is useful execution evidence, but it is **not** `node --test`; CI, browser/device execution, and an authoritative scholarly comparison remain unverified. The full corpus run is direct execution of the fetched classifier source, not `npm run check`.
+
+Remaining gate before Tajweed can be called sufficiently verified:
+
+- run the repository's official Node/lint/format/data checks and obtain completed CI jobs;
+- review the four classifier overlaps and define how the painter/inspector exposes more than one rule on a written unit;
+- settle the reading-profile policy for `ٱرۡكَب مَّعَنَا` with a trusted source and explicit profile semantics;
+- verify course ↔ classifier ↔ source-registry consistency, Arabic/English parity, and lesson-level pedagogy;
+- inspect real Mushaf/practice browser behavior, then reassess completion honestly.
 
 ### Autonomous checkpoint — 2026-10-09 04:45Z: clean current-main Tajweed integration branch
 

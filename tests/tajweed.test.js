@@ -278,17 +278,6 @@ test('small waw/yeh only become Madd as-Silah after hāʾ al-kinayah', () => {
   assert.ok(rulesOf('\u064A\u064F\u062D\u0652\u064A\u0650\u06E6').includes('madd_2'));
 });
 
-test('Madd Lazim description uses a valid example and states its condition', () => {
-  const rule = tajweedRule('madd_6');
-  assert.match(rule.desc.en, /original sukoon/i);
-  assert.match(rule.desc.en, /ٱلضَّآلِّينَ/);
-  assert.match(rule.desc.en, /names of certain Muqaṭṭaʿāt letters/i);
-  assert.match(rule.desc.en, /lām, mīm, ṣād, qāf/);
-  assert.match(rule.desc.ar, /سكون أصلي/);
-  assert.match(rule.desc.ar, /أسماء بعض الحروف المقطعة/);
-  assert.doesNotMatch(rule.desc.en, /e\.g\.\s*آ/);
-});
-
 test('madd badal requires hamza+madd orthography, not any madda sign', () => {
   assert.equal(rulesOf('\u0622\u062F\u064e\u0645َ')[0], 'madd_badal'); // آدَمَ
   assert.ok(
@@ -314,20 +303,6 @@ test('madd: natural, connected (muttasil), separated (munfasil), badal, and obli
   assert.deepEqual(
     alm.map((s) => s.rule),
     ['madd_6', 'madd_6']
-  );
-});
-
-test('Muqaṭṭaʿāt Madd recognizes Kaf and keeps ʿAyn duration distinct', () => {
-  const kahyaas = rulesOf('\u0643\u0653\u0647\u064A\u0639\u0653\u0635\u0653');
-  assert.deepEqual(kahyaas, ['madd_6', 'madd_4_6', 'madd_6']);
-  assert.match(tajweedRule('madd_4_6').name.en, /Madd al-Līn/);
-  assert.match(tajweedRule('madd_4_6').desc.en, /Madd al-Līn/);
-  const aynSeenQaf = rulesOf('\u0639\u0653\u0633\u0653\u0642\u0653');
-  assert.deepEqual(aynSeenQaf, ['madd_4_6', 'madd_6', 'madd_6']);
-  assert.deepEqual(
-    rulesOf('\u0643\u0653'),
-    [],
-    'an isolated marked Kaf is not assumed to be a Muqaṭṭaʿāt opening'
   );
 });
 
@@ -423,8 +398,27 @@ test('ornament-only tokens do not break cross-word Tajweed lookahead or ayah-fin
     iwad[0].spans.some((s) => s.rule === 'madd_iwad'),
     'a trailing ornament must not suppress final madd iwad'
   );
-  const numbered = classifyAyahTajweed('مِنْ ١ هُدًى');
+  const numbered = classifyAyahTajweed(
+    '\u0645\u0650\u0646\u0652 \u0661 \u0647\u064f\u062f\u064b\u0649'
+  );
   assert.equal(numbered[1].spans.length, 0, 'standalone ayah numeral remains a render-only token');
+
+  const hizbLookahead = classifyAyahTajweed(
+    '\u0645\u0650\u0646\u0652 \u06DE \u064a\u064e\u0639\u0652\u0645\u064e\u0644\u0652'
+  );
+  assert.equal(
+    hizbLookahead[0].spans[0]?.rule,
+    'idgham_ghunnah',
+    'rub el hizb must not become a false semantic letter between words'
+  );
+  const numberedLookahead = classifyAyahTajweed(
+    '\u0645\u0650\u0646\u0652 \u0661 \u064a\u064e\u0639\u0652\u0645\u064e\u0644\u0652'
+  );
+  assert.equal(
+    numberedLookahead[0].spans[0]?.rule,
+    'idgham_ghunnah',
+    'an ayah numeral must not break semantic lookahead'
+  );
   assert.equal(final[1].spans.length, 0, 'standalone ornament remains a render-only token');
 });
 
@@ -466,7 +460,6 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
     'madd_munfasil',
     'madd_246',
     'madd_6',
-    'madd_4_6',
   ];
   for (const id of used) assert.ok(ids.has(id), `missing legend entry for ${id}`);
   assert.equal(tajweedRule('qalqalah').id, 'qalqalah');
@@ -481,6 +474,32 @@ test('TAJWEED_RULES / tajweedRule: every rule id used by the classifier has a le
 /* ------------------------------------------------------------------ */
 /* v4.5.2 — the app-palette additions: Tafkhim + Madd 'Iwad      */
 /* ------------------------------------------------------------------ */
+
+test('divine-name recognition ignores attached Quranic ornaments', () => {
+  const hasTafkhim = (text, index = 0) =>
+    classifyAyahTajweed(text)[index].spans.some((span) => span.rule === 'tafkhim');
+
+  assert.equal(
+    hasTafkhim('ٱللَّهُ۞'),
+    true,
+    'an attached rub el-hizb mark must not hide the initial divine-name lām'
+  );
+  assert.equal(
+    hasTafkhim('ٱللَّهُ١'),
+    true,
+    'an attached ayah numeral must not hide the initial divine-name lām'
+  );
+  assert.equal(
+    hasTafkhim('قَالَ ٱللَّهُۚ', 1),
+    true,
+    'an attached waqf mark must not hide heavy-vowel context from the preceding word'
+  );
+  assert.equal(
+    hasTafkhim('فِي ٱللَّهِۚ', 1),
+    false,
+    'normalizing the ornament must preserve light context after kasrah'
+  );
+});
 
 test('tafkhim: the lām of Lafẓ al-Jalālah follows its vowel context', () => {
   // A standalone word is treated as initial recitation only when the caller says so.
@@ -521,6 +540,18 @@ test("madd 'iwad: ayah-final fathah tanween is red; mid-ayah tanween is not", ()
   );
 });
 
+test('uncolored Tajweed family copy matches its actual rule count', () => {
+  const plain = TAJWEED_FAMILIES.find((family) => family.id === 'plain');
+  assert.equal(
+    TAJWEED_RULES.filter((rule) => rule.color === null).length,
+    3,
+    'the app currently leaves exactly three rule IDs uncolored'
+  );
+  assert.match(plain.desc.en, /Three rules/);
+  assert.match(plain.desc.en, /not an official standard/);
+  assert.match(plain.desc.ar, /\u062B\u0644\u0627\u062B \u0642\u0648\u0627\u0639\u062F/u);
+});
+
 test('the app palette: families match the reference chart colors', () => {
   const colorOf = (id) => TAJWEED_RULES.find((r) => r.id === id)?.color;
   // silent gray
@@ -555,4 +586,29 @@ test('the app palette: families match the reference chart colors', () => {
     assert.ok(r.family, `${r.id} missing family`);
     if (r.family !== 'plain') assert.ok(familyIds.has(r.family), `${r.id} unknown family`);
   }
+});
+
+test('Madd Lazim description uses a valid example and states its condition', () => {
+  const rule = tajweedRule('madd_6');
+  assert.match(rule.desc.en, /original sukoon/i);
+  assert.match(rule.desc.en, /ٱلضَّآلِّينَ/);
+  assert.match(rule.desc.en, /names of certain Muqaṭṭaʿāt letters/i);
+  assert.match(rule.desc.en, /lām, mīm, ṣād, qāf/);
+  assert.match(rule.desc.ar, /سكون أصلي/);
+  assert.match(rule.desc.ar, /أسماء بعض الحروف المقطعة/);
+  assert.doesNotMatch(rule.desc.en, /e\.g\.\s*آ/);
+});
+
+test('Muqaṭṭaʿāt Madd recognizes Kaf and keeps ʿAyn duration distinct', () => {
+  const kahyaas = rulesOf('\u0643\u0653\u0647\u064A\u0639\u0653\u0635\u0653');
+  assert.deepEqual(kahyaas, ['madd_6', 'madd_4_6', 'madd_6']);
+  assert.match(tajweedRule('madd_4_6').name.en, /Madd al-Līn/);
+  assert.match(tajweedRule('madd_4_6').desc.en, /Madd al-Līn/);
+  const aynSeenQaf = rulesOf('\u0639\u0653\u0633\u0653\u0642\u0653');
+  assert.deepEqual(aynSeenQaf, ['madd_4_6', 'madd_6', 'madd_6']);
+  assert.deepEqual(
+    rulesOf('\u0643\u0653'),
+    [],
+    'an isolated marked Kaf is not assumed to be a Muqaṭṭaʿāt opening'
+  );
 });

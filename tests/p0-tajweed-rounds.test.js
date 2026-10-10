@@ -45,9 +45,14 @@ describe('P0-5a: practice pool covers every rule with real rows', () => {
       const rows = pool.byRule[rule.id] || [];
       const expectedAyahs = Number(pool.coverage?.[rule.id]?.ayahs || 0);
       if (SEED_MODE && expectedAyahs === 0) continue;
-      const requiredMin = SEED_MODE
-        ? Math.min(PRACTICE_POOL_MIN, expectedAyahs)
-        : PRACTICE_POOL_MIN;
+      // The floor is the practice minimum, clamped to what the Qur'anic corpus
+      // actually contains. madd_4_6 (Madd al-Līn of ʿayn) is reachable at only
+      // 19:1 and 42:2 — two ayahs, and there is no third. Shipping five would
+      // mean inventing drill material, so the honest state is two complete rows
+      // and no more. Complete coverage is still pinned exactly below, and
+      // tests/tajweed-corpus-sweep.test.js re-derives every rule's count from
+      // the corpus so this number cannot be quietly inflated or deflated.
+      const requiredMin = Math.min(PRACTICE_POOL_MIN, expectedAyahs);
       assert.ok(
         rows.length >= requiredMin,
         `rule ${rule.id} has only ${rows.length} rows (min ${requiredMin})`
@@ -115,13 +120,16 @@ describe('P0-5a: backfillTajweedPool (pure, honest, bounded)', () => {
     assert.ok(filled.byRule.tafkhim.length >= 1, 'tafkhim gained rows from Fatiha');
     assert.equal(filled.byRule.madd_iwad.length, 1, 'satisfied rule untouched at min');
     assert.equal(addedByRule.tafkhim > 0, true);
-    // Fatiha 1:1 carries the heavy lam of the divine name + heavy ra's.
+    // Fatiha 1:1 marks the two heavy rā's of al-Raḥmān / al-Raḥīm. The divine
+    // name's lām is NOT one of them: بِسۡمِ ends in kasrah, so that lām is
+    // tarqīq (light), not tafkhīm — the context-sensitive lām rule. Re-derived
+    // here rather than hard-coded from an older classifier's output.
     const first = filled.byRule.tafkhim[0];
-    assert.deepEqual(first, { s: 1, a: 1, w: 2, c: 3 });
+    assert.deepEqual(first, { s: 1, a: 1, w: 3, c: 2 });
   });
 
   test('only[] bypasses the min gate for top-up mode', () => {
-    const fullish = { byRule: { tafkhim: [{ s: 1, a: 1, w: 2, c: 3 }] }, mixed: [] };
+    const fullish = { byRule: { tafkhim: [{ s: 1, a: 1, w: 3, c: 2 }] }, mixed: [] };
     const { addedByRule } = backfillTajweedPool(fullish, docs, {
       min: 25,
       only: ['tafkhim'],

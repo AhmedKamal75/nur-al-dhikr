@@ -159,9 +159,13 @@ const QALQALAH_MUQATTAAT_WORDS = new Set([
   '\u0642',
   '\u0639\u0633\u0642',
 ]);
-// Hafs-specific connected-recitation exception: the final bāʾ of
-// ٱرۡكَبْ is assimilated into the following shaddah-marked mīm in مَّعَنَا.
-// Keep this scoped to the exact word+boundary; bare bāʾ→mīm adjacency is not enough.
+// Connected-reading exception for the exact phrase ٱرۡكَبْ مَّعَنَا under
+// Ḥafṣ via al-Shāṭibiyyah: the sākin bāʾ is assimilated into the mīm.
+// A source-reviewed lesson distinguishes this from Ḥafṣ via Ṭayyibat al-Nashr,
+// where both izhār and idghām are reported. The app has no route selector;
+// this remains an assumed default, not a universal rule for every Ḥafṣ path.
+// Keep suppression scoped to this exact word+boundary; never infer it from
+// bāʾ→mīm adjacency alone. See OPEN-ISSUES row 81 for source and policy gate.
 const QALQALAH_BA_MEEM_ASSIMILATION_WORDS = new Set(['\u0671\u0631\u0643\u0628']);
 const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set([
   '\u0628\u0633\u0637\u062A',
@@ -277,10 +281,10 @@ export const TAJWEED_FAMILIES = Object.freeze([
     id: 'plain',
     color: null,
     recolorable: false,
-    name: { en: 'Uncolored by convention', ar: 'بلا لون بحكم العُرف' },
+    name: { en: 'Uncolored in this app', ar: 'بلا لون في هذا التطبيق' },
     desc: {
-      en: 'Two rules left uncoloured in the printed mushaf tradition, shown here so every rule stays reachable. The colour scheme below is this app\u2019s own, not an official standard.',
-      ar: 'قاعدتان تُركان بلا اللون في تقاليد المصاحف المطبوعة، معروضتان هنا حتى تبقى كل القواعد ميسرة. نظام الألوان أدناه خاص بهذا التطبيق، وليس معيارًا رسميًا.',
+      en: 'Three rules are left uncolored in this app’s presentation convention, so the legend names them without inventing a hue. This palette is the app’s own, not an official standard.',
+      ar: 'يترك التطبيق ثلاث قواعد بلا لون ضمن أسلوب العرض الخاص به، مع إبقائها في الدليل دون اختراع لون لها. لوحة الألوان خاصة بالتطبيق وليست معيارًا رسميًا.',
     },
   },
 ]);
@@ -506,7 +510,20 @@ export const TAJWEED_RULES = Object.freeze([
 ]);
 
 function isBaseLetter(ch) {
-  return !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL && ch !== ' ';
+  if (DIACRITIC_CHARS.has(ch) || ch === TATWEEL || ch === ' ') return false;
+  // The classifier operates on Arabic text, not arbitrary non-mark code points.
+  // In particular, rub el hizb (۞), ayah numerals, and punctuation are ornaments,
+  // not consonants for semantic lookahead. Preserve dagger alif as the classifier's
+  // explicit madd unit, plus the four corpus-attested small-letter signs.
+  if (
+    ch === DAGGER_ALIF ||
+    ch === '\u06E5' ||
+    ch === '\u06E6' ||
+    ch === '\u06E7' ||
+    ch === '\u06E8'
+  )
+    return true;
+  return /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch);
 }
 
 const SMALL_HIGH_YEH = '\u06E7'; // consonantal small yeh (ٱلنَّبِيِّـۧنَ) — a yeh for rule purposes
@@ -606,7 +623,19 @@ function previousWordHasHeavyFinalVowel(word) {
   return false;
 }
 function skeletonOf(word) {
-  return [...String(word)].filter((ch) => !DIACRITIC_CHARS.has(ch) && ch !== TATWEEL).join('');
+  // Keep recognition aligned with tokenizeUnits(): the rendered Qur'anic token
+  // may carry a waqf/sajdah ornament or ayah numeral at either edge. Those marks
+  // are not pronounced letters and must not change whether the underlying word
+  // is lafẓ al-jalālah (or whether its final lām is eligible for context rules).
+  return [...String(word)]
+    .filter(
+      (ch) =>
+        !DIACRITIC_CHARS.has(ch) &&
+        ch !== TATWEEL &&
+        !WORD_ORNAMENT_CHARS.has(ch) &&
+        !ORNAMENT_DIGITS.has(ch)
+    )
+    .join('');
 }
 
 /** One-letter prefix particles that can precede the article (و ف ب ك). */
@@ -715,8 +744,9 @@ export function classifyWordTajweed(
       //     requiring a Qalqalah bounce on the sakin ق.
       //
       // Do not infer other dissimilar-letter assimilation from adjacency alone.
-      // بْ→مّ in ارْكَبْ مَّعَنَا is reading-route-sensitive; this classifier
-      // has no declared reading profile, so it stays conservative there.
+      // The one بْ→مّ exception below is scoped to the assumed Ḥafṣ/Shāṭibiyyah
+      // connected-reading convention; without a declared profile, its app-wide
+      // default remains an open product/scholar decision (OPEN-ISSUES row 81).
       const sameLetterAssimilation = nextBase === u.base && nextStartsWithShadda;
       const dalToTaAssimilation =
         u.base === '\u062F' && nextBase === '\u062A' && nextStartsWithShadda;
@@ -1259,27 +1289,30 @@ export function wordUnits(word) {
 /** Every CSS variable a family's color resolves through. The runtime
  *  applier sets these on <html> so the .tajweed--* classes, the legend
  *  swatches and the practice view can never disagree. */
+/** User-selected colors live in a separate inheritance layer.
+ * Paper scopes may override the standard --tw-* palette locally; separate
+ * --tw-user-* properties let the learner's explicit choice win on every paper. */
 export const TAJWEED_FAMILY_VARS = Object.freeze({
-  silent: ['--tw-hamza-wasl', '--tw-lam-shamsiyah'],
+  silent: ['--tw-user-hamza-wasl', '--tw-user-lam-shamsiyah'],
   nasal: [
-    '--tw-ghunnah',
-    '--tw-ikhfa',
-    '--tw-iqlab',
-    '--tw-idgham-ghunnah',
-    '--tw-idgham-shafawi',
-    '--tw-ikhfa-shafawi',
+    '--tw-user-ghunnah',
+    '--tw-user-ikhfa',
+    '--tw-user-iqlab',
+    '--tw-user-idgham-ghunnah',
+    '--tw-user-idgham-shafawi',
+    '--tw-user-ikhfa-shafawi',
   ],
-  qalqalah: ['--tw-qalqalah'],
-  heavy: ['--tw-tafkhim'],
+  qalqalah: ['--tw-user-qalqalah'],
+  heavy: ['--tw-user-tafkhim'],
   madd: [
-    '--tw-madd-normal',
-    '--tw-madd-iwad',
-    '--tw-madd-badal',
-    '--tw-madd-arid',
-    '--tw-madd-munfasil',
-    '--tw-madd-silah',
-    '--tw-madd-muttasil',
-    '--tw-madd-laazim',
+    '--tw-user-madd-normal',
+    '--tw-user-madd-iwad',
+    '--tw-user-madd-badal',
+    '--tw-user-madd-arid',
+    '--tw-user-madd-munfasil',
+    '--tw-user-madd-silah',
+    '--tw-user-madd-muttasil',
+    '--tw-user-madd-laazim',
   ],
 });
 

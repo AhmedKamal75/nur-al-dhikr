@@ -1,4 +1,16 @@
-# v5.17.137 — navigation chrome: actionable section rows and a reachable rail collapse
+# v5.17.138 — the Tajweed integration branch, merged and made honest
+
+- Resolved the interrupted merge of `integration/tajweed-clean-mainline-2026-10-09` into main (8 conflicted files). Content-level disagreements kept both sides' changes; prettier-only disagreements took the house style; the three docs conflicts were reconciled by union with the superseded checkpoints kept as audit trail.
+- Alternate Tajweed citations are visible again: the runtime mirror had flattened each registry `also` record to a bare work id, silently dropping them from the Mushaf legend. Locators are localized (`ch. 5` → `الفصل 5`).
+- A user's Tajweed colour can no longer be shadowed by a dark-paper default — picks moved to an isolated `--tw-user-*` layer that no paper scope declares.
+- Lesson examples are validated against canonical per-surah ayah counts and fail closed when metadata is missing. No Qur'an text or count was edited.
+- The practice pool is regenerated from the merged classifier. The `>= 5 rows per rule` gate became "complete corpus coverage", which is strictly stronger and honest for `madd_4_6` (reachable only at 19:1 and 42:2); the corpus sweep now re-derives every rule's count across all 114 surahs.
+- `izhar` is a real rule in both the canonical registry and the runtime mirror.
+- Two stale test fixtures corrected rather than weakened (Mutashabihat cache identity, Fatiha backfill row).
+- Ledger reconciled to 94 rows. No row was closed by this release.
+- Religious corpus bytes unchanged.
+
+## v5.17.137 — navigation chrome: actionable section rows and a reachable rail collapse
 
 - Merged `fix/navigation-desktop-collapse-and-menu-actions`: each nav section is now an actionable link plus a chevron disclosure control, so a section label is never a dead button, and the desktop rail collapse has a real control. New EN/AR labels for expand/collapse and the section disclosure.
 - Restored the prayer-method provenance qualifier (merged from `fix/prayer-provenance-hero`), so the hero no longer states an uncertified calculation source as fact.
