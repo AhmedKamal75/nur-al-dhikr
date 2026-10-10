@@ -28,7 +28,12 @@ function surfaceSkeleton(text) {
 
 function letterOrdinal(text, offset) {
   return [...text.slice(0, offset)].filter(
-    (ch) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch)
+    (ch) =>
+      /\p{L}/u.test(ch) &&
+      /\p{Script=Arabic}/u.test(ch) &&
+      ch !== '\u0640' &&
+      !/\p{M}/u.test(ch) &&
+      !ORNAMENTS.has(ch)
   ).length;
 }
 
@@ -52,6 +57,9 @@ function classifyCanonicalWords(text) {
       end: span.end,
       text: word.word.slice(span.start, span.end),
       letterOrdinal: letterOrdinal(word.word, span.start),
+      endLetterOrdinal: letterOrdinal(word.word, span.end),
+      startsAtCombiningMark: /\p{M}/u.test(word.word[span.start] || ''),
+      startsAtDaggerAlif: word.word[span.start] === '\u0670',
     }));
     return {
       canonicalIndex: index + 1,
@@ -99,6 +107,10 @@ let wordCountMismatches = 0;
 let wordsCompared = 0;
 let differingWords = 0;
 let offsetDivergenceCount = 0;
+let wordSkeletonDifferences = 0;
+const wordSkeletonSamples = [];
+let maddSpansStartingOnDaggerAlif = 0;
+const daggerStartSamples = [];
 
 for (const [key, text] of quran) {
   const pageRecord = mushaf.get(key);
@@ -116,6 +128,18 @@ for (const [key, text] of quran) {
     const a = corpusWords[i];
     const b = pageWords[i];
     wordsCompared += 1;
+    if (a.skeleton !== b.skeleton) {
+      wordSkeletonDifferences += 1;
+      if (wordSkeletonSamples.length < SAMPLE_LIMIT) wordSkeletonSamples.push({ key, page: pageRecord.page, wordIndex: i + 1, quranWord: a.raw, mushafWord: b.raw, quranSkeleton: a.skeleton, mushafSkeleton: b.skeleton });
+    }
+    for (const [side, word] of [['Qur’an', a], ['Mushaf', b]]) {
+      for (const span of word.spans) {
+        if (span.rule.startsWith('madd') && span.startsAtDaggerAlif) {
+          maddSpansStartingOnDaggerAlif += 1;
+          if (daggerStartSamples.length < SAMPLE_LIMIT) daggerStartSamples.push({ key, page: pageRecord.page, wordIndex: i + 1, side, rule: span.rule, word: word.raw, span });
+        }
+      }
+    }
     const onlyQuran = a.rules.filter((rule) => !b.rules.includes(rule));
     const onlyMushaf = b.rules.filter((rule) => !a.rules.includes(rule));
     if (onlyQuran.length || onlyMushaf.length) {
@@ -172,11 +196,15 @@ console.log(JSON.stringify({
   },
   result: {
     affectedAyahsByRuleSet: affectedAyahs.size, differingWords,
+    wordSkeletonDifferences,
     offsetDivergences: offsetDivergenceCount,
+    maddSpansStartingOnDaggerAlif,
     ruleDeltas: Object.fromEntries([...ruleDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))),
   },
   samples: {
     ruleMismatches: mismatchSamples, offsetDivergences: offsetSamples,
+    wordSkeletonDifferences: wordSkeletonSamples,
+    maddSpansStartingOnDaggerAlif: daggerStartSamples,
     missingFromMushaf: missingFromMushaf.slice(0, SAMPLE_LIMIT),
     missingFromQuran: missingFromQuran.slice(0, SAMPLE_LIMIT),
     duplicateQuran: duplicateQuran.slice(0, SAMPLE_LIMIT),

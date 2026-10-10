@@ -1,3 +1,17 @@
+## v5.17.139 — Qur’an/Mushaf rasm-aware Tajweed (candidate; not certified)
+
+This candidate targets ledger row 99 and is not a finished release. The full
+6,236-ayah cross-rasm audit, native Node/CI, Chromium glyph inspection, and
+scholarly review must pass before certification.
+
+- Recognizes the checked-in Mushaf Madd Badal spelling without transferring
+  hamza marks onto the preceding consonant.
+- Reads the corpus's inverted-tanween Madd Iwaḍ spelling only in its ayah-final,
+  trailing-alif context; U+06E2 is an explicit Iqlab signal.
+- Keeps dagger alif attached to the glyph it elongates; adds targeted regressions
+  and a corpus-wide cross-rasm gate. Canonical Qur’an/Mushaf text is untouched.
+- Row 99 remains OPEN pending real execution, visual verification and scholarly review.
+
 ## v5.17.138 — the Tajweed integration branch, merged and made honest
 
 Resolves the interrupted merge of `integration/tajweed-clean-mainline-2026-10-09` into
