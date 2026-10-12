@@ -1,3 +1,10 @@
+## v5.17.139 — cross-rasm Tajweed correctness (candidate)
+
+- Corrected three spelling-dependent classifications reproduced from checked-in Qur'an and Mushaf text: Madd Badal (2:4/2:8), Madd Iwaḍ (4:1), and explicit Iqlab marker handling (2:18).
+- Added source-backed regressions and a full 114-surah / 604-page diagnostic aligned by canonical word positions.
+- Added a GitHub Actions audit job that publishes diagnostic JSON as a 30-day artifact. It reports remaining differences rather than presenting the report as scholarly ground truth.
+- Qur'an/Mushaf corpus bytes remain unchanged. The reported 1,221-ayah / 52.5% aggregate must be remeasured against this candidate; actual glyph-offset verification and scholarly review remain open. This candidate is not certified.
+
 ## v5.17.138 — the Tajweed integration branch, merged and made honest
 
 Resolves the interrupted merge of `integration/tajweed-clean-mainline-2026-10-09` into

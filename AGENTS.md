@@ -140,6 +140,13 @@ what you were told, say so instead of proceeding.
      another agent is unfinished work, not someone else's problem. Adopt it
      deliberately, verify it, and say in the commit whose work it was.
 
+10. **Sophisticated simplicity.** Choose the smallest clear design that fully solves the real
+    problem and can be verified. Do not add abstractions, dependencies, frameworks, or layers
+    merely to make a solution look advanced. Generalize when evidence shows a class of cases;
+    prefer one shared rule with regressions over a pile of local exceptions. This complements,
+    and never overrides, the source, evidence, test, accessibility, offline, and religious-data
+    constraints above.
+
 ## 2. The version-and-snapshot ritual
 
 Cache-first bytes are pinned on purpose. Any `js/`, `assets/css/`, or `sw.js`
