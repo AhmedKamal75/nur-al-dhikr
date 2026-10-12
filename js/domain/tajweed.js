@@ -908,7 +908,7 @@ export function classifyWordTajweed(
         ? next.hamzaAboveStart !== undefined
         : nextWordFirstHasHamzaAbove;
       const nb =
-        nextHasHamzaAbove && rawNextBase === ALIF ? '\\u0623' : rawNextBase;
+        nextHasHamzaAbove && rawNextBase === ALIF ? '\u0623' : rawNextBase;
       if (nb) {
         const rule = noonTanweenRuleForNextBase(nb, {
           sameWord: Boolean(next),
