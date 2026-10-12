@@ -117,6 +117,8 @@ for (const [key, text] of quran) {
         page: pageRecord.page,
         quranWordCount: corpusWords.length,
         mushafWordCount: pageWords.length,
+        quranWords: corpusWords.map((word) => word.raw),
+        mushafWords: pageWords.map((word) => word.raw),
       });
     }
     continue;
