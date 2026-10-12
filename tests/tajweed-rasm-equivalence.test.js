@@ -197,3 +197,42 @@ test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2
     );
   }
 });
+
+function wordSkeletonForTest(word) {
+  return String(word)
+    .replace(/\\p{M}/gu, '')
+    .replace(/ـ/gu, '')
+    .replace(/ٱ/gu, 'ا');
+}
+
+test('the four Quranic Izhar Mutlaq word exceptions remain clear in the shipped corpus', () => {
+  const fixtures = [
+    { surah: 79, ayah: 38, key: 'الدنيا', count: 1 },
+    { surah: 37, ayah: 97, key: 'بنيانا', count: 1 },
+    { surah: 13, ayah: 4, key: 'صنوان', count: 2 },
+    { surah: 6, ayah: 99, key: 'قنوان', count: 1 },
+  ];
+
+  for (const fixture of fixtures) {
+    const text = quranAyah(fixture.surah, fixture.ayah);
+    assert.ok(text, `missing Quran ${fixture.surah}:${fixture.ayah}`);
+    const rows = classifyAyahTajweed(text).filter(
+      (row) => wordSkeletonForTest(row.word) === fixture.key
+    );
+    assert.equal(
+      rows.length,
+      fixture.count,
+      `unexpected ${fixture.key} corpus occurrences at ${fixture.surah}:${fixture.ayah}`
+    );
+    for (const row of rows) {
+      assert.ok(
+        row.spans.some((span) => span.rule === 'izhar'),
+        `${fixture.surah}:${fixture.ayah} ${row.word} must be clear under Izhar Mutlaq`
+      );
+      assert.ok(
+        !row.spans.some((span) => span.rule === 'idgham_ghunnah'),
+        `${fixture.surah}:${fixture.ayah} ${row.word} must not be assimilated`
+      );
+    }
+  }
+});
