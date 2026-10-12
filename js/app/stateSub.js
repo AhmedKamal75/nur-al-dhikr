@@ -26,6 +26,7 @@ import {
   ensureMushafData,
   ensureMushafMeta,
   ensureQuranData,
+  ensureQuranMeta,
   ensureQuranRoots,
   ensureQuranRootsFull,
 } from './lazyData.js';
@@ -321,6 +322,16 @@ export function onStateChange(stateArg, action) {
     rt.lastSeenTranslationEdition = state.settings.quranTranslation;
     applyTheme(state.settings);
     if (state.activeView === VIEWS.QURAN) ensureQuranData(state);
+    // Direct related-study links must validate their return ayah against the
+    // canonical counts, even when no reader has been opened in this session.
+    if (
+      (state.activeView === VIEWS.ROOTS || state.activeView === VIEWS.MUTASHABIHAT) &&
+      (state.activeParams?.from === 'mushaf' || state.activeParams?.from === 'quran') &&
+      !state.quran.meta &&
+      !state.loadErrors?.['quran-meta']
+    ) {
+      void ensureQuranMeta();
+    }
     // Kids tiles need the surah names — same lazy tier as the reader.
     if (state.activeView === VIEWS.KIDS) ensureQuranData(state);
     if (state.activeView === VIEWS.ROOTS) {
