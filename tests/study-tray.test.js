@@ -230,6 +230,10 @@ describe('study tray render: the same panel under the row', () => {
     assert.ok(html.includes('mushaf-tray__study'), 'tray wrapper under the row');
     assert.ok(html.includes('data-study-tray="1:1"'), 'tray renders');
     assert.ok(html.includes('data-action="mushaf-ayah-tap"'), 'modal path untouched');
+    assert.ok(
+      html.includes('href="#/tajweed-course?from=mushaf&fromSurah=1&fromAyah=1"'),
+      'Study Tray journey preserves the exact ayah from the Mushaf'
+    );
   });
 
   test('every tray action resolves to a handler (no route/handler breakage)', () => {
@@ -269,6 +273,10 @@ describe('study tray words: chips inside the tray', () => {
     assert.ok(detail.includes('سمو'), 'root chip renders');
     assert.ok(detail.includes('occurrences in the Qur'), 'root count renders');
     assert.ok(detail.includes('word-study__sources'), 'shared sources block renders (rule 6)');
+    assert.ok(
+      detail.includes('href="#/roots/%D8%B3%D9%85%D9%88?from=quran&fromSurah=1&fromAyah=1"'),
+      'root browser link preserves the exact ayah from the classic reader'
+    );
     assert.ok(
       detail.includes('Sources &amp; review') || detail.includes('Sources & review'),
       'sources labelled'

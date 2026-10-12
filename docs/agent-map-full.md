@@ -282,7 +282,7 @@ job: the store's single subscriber. Every state change flows through here: theme
 - emits: —
 - handles: —
 - i18n: —
-- routes: `VIEWS.AUDIO`, `VIEWS.CERTIFICATE`, `VIEWS.HADITH`, `VIEWS.KIDS`, `VIEWS.MUSHAF`, `VIEWS.MUTASHABIHAT`, `VIEWS.OFFLINE`, `VIEWS.QURAN`, `VIEWS.ROOTS`, `VIEWS.SEARCH`, `VIEWS.SETTINGS`, `VIEWS.STATISTICS`
+- routes: `VIEWS.AUDIO`, `VIEWS.CERTIFICATE`, `VIEWS.HADITH`, `VIEWS.KIDS`, `VIEWS.MUSHAF`, `VIEWS.MUTASHABIHAT`, `VIEWS.OFFLINE`, `VIEWS.QURAN`, `VIEWS.ROOTS`, `VIEWS.SEARCH`, `VIEWS.SETTINGS`, `VIEWS.STATISTICS`, `VIEWS.TAJWEED_COURSE`
 
 ### `js/app/tafsirSearch.js`
 
@@ -7705,7 +7705,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/statisticsDepth.test.js` — (v5.10.1) statistics depth: daily-goal progress, streak coaching milestones, and the derived per-surah reading breakdown (pages read → surahs on those pages). (pins: `../js/domain/statistics.js`)
 - `tests/statsExport.test.js` — item 4 (statistics export) gates: 1. buildStatsCSV emits the daily grain oldest-first (header + all four counters), coercing hostile values and skipping junk/rolled keys; (pins: `../js/core/utils.js`, `../js/domain/statistics.js`)
 - `tests/streak.test.js` — item 2 (streak inflation) gates for the v5.2.45 rules in core/state/streak.js: 1. an idle today never inflates or breaks: empty history reads 0 (was (pins: `../js/core/state.js`, `../js/core/state/streak.js`, `../js/core/utils.js`)
-- `tests/study-context.test.js` — (no header comment) (pins: `../js/core/router.js`, `../js/views/studyContext.js`)
+- `tests/study-context.test.js` — (no header comment) (pins: `../js/core/router.js`, `../js/views/studyContext.js`, `../js/views/tajweedCourseView.js`)
 - `tests/study-mode.test.js` — (no header comment) (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/hadithSearch.js`, `../js/views/ayahStudy.js`)
 - `tests/study-tray.test.js` — merged-plan item 7 (v5.17.54), permanent. The inline Qur'an study tray: tapping an ayah's Study control renders the SAME study panel inline UNDER the tapped ayah row (classic reader cards + (pins: `../js/app/events.js`, `../js/core/config.js`, `../js/core/i18n.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/reducer.js`, `../js/views/mushafReader.js`, `../js/views/quran.js`, `../js/views/studyTray.js`)
 - `tests/studyLanguage.test.js` — item v5.2.68 (study in your language) gates: 1. the Settings tafsir picker lists bundled editions (native names), marks the active default, and dispatches mushaf-set-tafsir; (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/domain/grammarDrill.js`, `../js/domain/roots.js`, `../js/views/ayahStudy.js`, `../js/views/kids.js`, `../js/views/palette.js`, `../js/views/quran.js`, `../js/views/roots.js`, `../js/views/settings.js`, `../js/views/tafsirPanel.js`)
