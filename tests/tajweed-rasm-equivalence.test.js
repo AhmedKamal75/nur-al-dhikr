@@ -268,3 +268,80 @@ test('ayah lookahead recognizes hamza-above on a leading alif without rewriting 
   assert.ok(!plain.spans.some((span) => span.rule === 'izhar'));
   assert.equal(markedText, 'مِنۡ أَهۡلِ', 'classification must not normalize the source text');
 });
+
+test('Madd Muttasil is consistent for combining hamza-below and precomposed hamza rasms', () => {
+  for (const [surah, ayah, page] of [
+    [10, 15, 210],
+    [16, 90, 277],
+    [20, 130, 321],
+    [30, 8, 405],
+    [30, 16, 406],
+    [42, 51, 488],
+  ]) {
+    const corpusText = quranAyah(surah, ayah);
+    const mushafText = mushafAyah(page, surah, ayah);
+    const corpusWord = classifyAyahTajweed(corpusText).find((row) => row.word.includes('ٓيٕ'));
+    const mushafWord = classifyAyahTajweed(mushafText).find((row) => row.word.includes('ٓئ'));
+    assert.ok(corpusWord, `missing Quran hamza-below form at ${surah}:${ayah}`);
+    assert.ok(mushafWord, `missing Mushaf hamza form at ${surah}:${ayah}`);
+    assert.ok(corpusWord.spans.some((span) => span.rule === 'madd_muttasil'));
+    assert.ok(mushafWord.spans.some((span) => span.rule === 'madd_muttasil'));
+    assert.ok(!corpusWord.spans.some((span) => span.rule === 'madd_2'));
+  }
+});
+
+test('Madd Iwad excludes every checked-in ta marbuta stop case', () => {
+  const fixtures = [
+    [56, 7, 534],
+    [69, 14, 567],
+    [74, 52, 577],
+    [79, 11, 583],
+    [88, 4, 592],
+    [88, 11, 592],
+    [89, 28, 594],
+    [98, 2, 598],
+  ];
+
+  for (const [surah, ayah, page] of fixtures) {
+    const corpusText = quranAyah(surah, ayah);
+    const mushafText = mushafAyah(page, surah, ayah);
+    assert.ok(corpusText, `missing Quran ${surah}:${ayah}`);
+    assert.ok(mushafText, `missing Mushaf ${surah}:${ayah}`);
+    const corpusLast = classifyAyahTajweed(corpusText).at(-1);
+    const mushafLast = classifyAyahTajweed(mushafText).at(-1);
+    assert.ok(corpusLast.word.includes('ة'), `expected ta marbuta at Quran ${surah}:${ayah}`);
+    assert.ok(mushafLast.word.includes('ة'), `expected ta marbuta at Mushaf ${surah}:${ayah}`);
+    assert.ok(
+      !corpusLast.spans.some((span) => span.rule === 'madd_iwad'),
+      `Quran ${surah}:${ayah} must not apply Madd Iwad on ta marbuta`
+    );
+    assert.ok(
+      !mushafLast.spans.some((span) => span.rule === 'madd_iwad'),
+      `Mushaf ${surah}:${ayah} must not apply Madd Iwad on ta marbuta`
+    );
+  }
+});
+
+test('Madd Iwad matches both rasms for final words with source-specific tanween marks', () => {
+  for (const [surah, ayah, page, prefix] of [
+    [17, 107, 293, 'سُجَّد'],
+    [56, 35, 535, 'إِنشَا'],
+  ]) {
+    const corpusText = quranAyah(surah, ayah);
+    const mushafText = mushafAyah(page, surah, ayah);
+    assert.ok(corpusText, `missing Quran ${surah}:${ayah}`);
+    assert.ok(mushafText, `missing Mushaf ${surah}:${ayah}`);
+    const corpusLast = classifyAyahTajweed(corpusText).at(-1);
+    const mushafLast = classifyAyahTajweed(mushafText).at(-1);
+    assert.ok(corpusLast.word.startsWith(prefix), `unexpected Quran ending at ${surah}:${ayah}`);
+    assert.ok(mushafLast.word.startsWith(prefix), `unexpected Mushaf ending at ${surah}:${ayah}`);
+    assert.ok(
+      corpusLast.spans.some((span) => span.rule === 'madd_iwad'),
+      `Quran ${surah}:${ayah} must apply Madd Iwad`
+    );
+    assert.ok(
+      mushafLast.spans.some((span) => span.rule === 'madd_iwad'),
+      `Mushaf ${surah}:${ayah} must apply Madd Iwad`
+    );
+  }
+});
