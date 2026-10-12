@@ -92,10 +92,13 @@ const missingFromMushaf = [...quran.keys()].filter((key) => !mushaf.has(key));
 const missingFromQuran = [...mushaf.keys()].filter((key) => !quran.has(key));
 const mismatchSamples = [];
 const offsetSamples = [];
+const wordCountMismatchSamples = [];
+const surfaceSkeletonMismatchSamples = [];
 const ruleDeltas = new Map();
 const affectedAyahs = new Set();
 let checkedAyahs = 0;
 let wordCountMismatches = 0;
+let surfaceSkeletonMismatches = 0;
 let wordsCompared = 0;
 let differingWords = 0;
 let offsetDivergenceCount = 0;
@@ -108,6 +111,14 @@ for (const [key, text] of quran) {
   const pageWords = classifyCanonicalWords(pageRecord.text);
   if (corpusWords.length !== pageWords.length) {
     wordCountMismatches += 1;
+    if (wordCountMismatchSamples.length < SAMPLE_LIMIT) {
+      wordCountMismatchSamples.push({
+        key,
+        page: pageRecord.page,
+        quranWordCount: corpusWords.length,
+        mushafWordCount: pageWords.length,
+      });
+    }
     continue;
   }
 
@@ -115,6 +126,20 @@ for (const [key, text] of quran) {
   for (let i = 0; i < corpusWords.length; i += 1) {
     const a = corpusWords[i];
     const b = pageWords[i];
+    if (a.skeleton !== b.skeleton) {
+      surfaceSkeletonMismatches += 1;
+      if (surfaceSkeletonMismatchSamples.length < SAMPLE_LIMIT) {
+        surfaceSkeletonMismatchSamples.push({
+          key,
+          page: pageRecord.page,
+          wordIndex: i + 1,
+          quranWord: a.raw,
+          mushafWord: b.raw,
+          quranSkeleton: a.skeleton,
+          mushafSkeleton: b.skeleton,
+        });
+      }
+    }
     wordsCompared += 1;
     const onlyQuran = a.rules.filter((rule) => !b.rules.includes(rule));
     const onlyMushaf = b.rules.filter((rule) => !a.rules.includes(rule));
@@ -165,18 +190,22 @@ for (const [key, text] of quran) {
 
 console.log(JSON.stringify({
   scope: {
-    quranAyahs: quran.size, mushafAyahs: mushaf.size, checkedAyahs, wordsCompared,
-    wordCountMismatches, missingFromMushaf: missingFromMushaf.length,
+    quranAyahs: quran.size, mushafAyahs: mushaf.size, checkedAyahs,
+    wordAlignedAyahs: checkedAyahs - wordCountMismatches,
+    wordsCompared, wordCountMismatches, missingFromMushaf: missingFromMushaf.length,
     missingFromQuran: missingFromQuran.length, duplicateQuran: duplicateQuran.length,
     duplicateMushaf: duplicateMushaf.length,
   },
   result: {
     affectedAyahsByRuleSet: affectedAyahs.size, differingWords,
+    surfaceSkeletonMismatches,
     offsetDivergences: offsetDivergenceCount,
     ruleDeltas: Object.fromEntries([...ruleDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))),
   },
   samples: {
     ruleMismatches: mismatchSamples, offsetDivergences: offsetSamples,
+    wordCountMismatchAyahs: wordCountMismatchSamples,
+    surfaceSkeletonMismatches: surfaceSkeletonMismatchSamples,
     missingFromMushaf: missingFromMushaf.slice(0, SAMPLE_LIMIT),
     missingFromQuran: missingFromQuran.slice(0, SAMPLE_LIMIT),
     duplicateQuran: duplicateQuran.slice(0, SAMPLE_LIMIT),
