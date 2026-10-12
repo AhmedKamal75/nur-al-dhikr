@@ -90,12 +90,17 @@ test('Study Tray journey links derive context from the exact open ayah', () => {
     id: 'نصر', from: 'quran', fromSurah: '2', fromAyah: '255',
   });
   assert.deepEqual(
-    mergeStudyContextParams({ id: 'نصر' }, { ...mushaf, studyTray: { surah: '1', ayah: '8' } }),
-    { id: 'نصر' }, 'invalid tray references must not create a study context'
+    mergeStudyContextParams(
+      { id: 'نصر' },
+      { ...mushaf, studyTray: { surah: '1', ayah: '8' } }
+    ),
+    { id: 'نصر' },
+    'invalid tray references must not create a study context'
   );
   assert.deepEqual(
     mergeStudyContextParams({ id: 'نصر' }, { ...mushaf, studyTray: null }),
-    { id: 'نصر' }, 'a page-only Mushaf route must not guess which ayah was open'
+    { id: 'نصر' },
+    'a page-only Mushaf route must not guess which ayah was open'
   );
   const relatedStudy = {
     ...base({ from: 'mushaf', fromSurah: '2', fromAyah: '255' }),
