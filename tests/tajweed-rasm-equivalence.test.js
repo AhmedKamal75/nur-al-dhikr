@@ -255,3 +255,16 @@ test('noon-sakinah before a seated hamza is izhar in the shipped corpus (98:1)',
     'hamza must not be classified as idgham or ikhfa'
   );
 });
+
+test('ayah lookahead recognizes hamza-above on a leading alif without rewriting text', () => {
+  const markedText = 'مِنۡ أَهۡلِ';
+  const marked = classifyAyahTajweed(markedText).find((row) => row.word === 'مِنۡ');
+  assert.ok(marked);
+  assert.ok(marked.spans.some((span) => span.rule === 'izhar'));
+
+  const plainText = 'مِنۡ اَهۡلِ';
+  const plain = classifyAyahTajweed(plainText).find((row) => row.word === 'مِنۡ');
+  assert.ok(plain);
+  assert.ok(!plain.spans.some((span) => span.rule === 'izhar'));
+  assert.equal(markedText, 'مِنۡ أَهۡلِ', 'classification must not normalize the source text');
+});
