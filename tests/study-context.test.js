@@ -122,18 +122,17 @@ test('Study Tray journey links derive context from the exact open ayah', () => {
 });
 
 test('Tajweed Course renders a validated return path for direct study links', () => {
-    const html = renderTajweedCourse(
-      base({ from: 'mushaf', fromSurah: '2', fromAyah: '255' })
-    );
-    assert.match(html, /class="study-context"/);
-    assert.match(html, /Return to ayah 2:255/);
-    assert.ok(html.includes('#/mushaf?s=2&ay=255'));
-    const invalid = renderTajweedCourse(
-      base({ from: 'mushaf', fromSurah: '1', fromAyah: '8' })
-    );
-    assert.doesNotMatch(invalid, /class="study-context"/);
-  }
-);
+  const html = renderTajweedCourse(
+    base({ from: 'mushaf', fromSurah: '2', fromAyah: '255' })
+  );
+  assert.match(html, /class="study-context"/);
+  assert.match(html, /Return to ayah 2:255/);
+  assert.ok(html.includes('#/mushaf?s=2&ay=255'));
+  const invalid = renderTajweedCourse(
+    base({ from: 'mushaf', fromSurah: '1', fromAyah: '8' })
+  );
+  assert.doesNotMatch(invalid, /class="study-context"/);
+});
 
 test('word-root navigation preserves an exact source ayah', () => {
   assert.deepEqual(
