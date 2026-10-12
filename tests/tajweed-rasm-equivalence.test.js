@@ -63,10 +63,7 @@ test('Madd Iwad accepts the corpus final-tanween spelling contextually', () => {
   assert.equal(mushaf.text, 'بً');
 
   const midAyah = classifyWordTajweed('رَقِيبٗا', { isLastWordOfAyah: false });
-  assert.equal(
-    midAyah.some((span) => span.rule === 'madd_iwad'),
-    false
-  );
+  assert.equal(midAyah.some((span) => span.rule === 'madd_iwad'), false);
 });
 
 test('cross-rasm tanween-fatha spelling does not invent natural madd (Quran 2:95)', () => {
@@ -75,12 +72,8 @@ test('cross-rasm tanween-fatha spelling does not invent natural madd (Quran 2:95
   assert.ok(corpusText, 'missing Quran 2:95');
   assert.ok(mushafText, 'missing Mushaf 2:95');
 
-  const corpus = classifyAyahTajweed(corpusText).find((row) =>
-    row.word.startsWith('أَبَد')
-  );
-  const mushaf = classifyAyahTajweed(mushafText).find((row) =>
-    row.word.startsWith('أَبَد')
-  );
+  const corpus = classifyAyahTajweed(corpusText).find((row) => row.word.startsWith('أَبَد'));
+  const mushaf = classifyAyahTajweed(mushafText).find((row) => row.word.startsWith('أَبَد'));
   assert.ok(corpus, 'Quran spelling of أَبَدًا must be present');
   assert.ok(mushaf, 'Mushaf spelling of أَبَدًا must be present');
   assert.equal(corpus.word, 'أَبَدَۢا');
@@ -103,12 +96,8 @@ test('ra with dammatan is heavy in both checked-in rasms (Quran 2:96)', () => {
   assert.ok(corpusText, 'missing Quran 2:96');
   assert.ok(mushafText, 'missing Mushaf 2:96');
 
-  const corpus = classifyAyahTajweed(corpusText).find((row) =>
-    row.word.startsWith('بَصِير')
-  );
-  const mushaf = classifyAyahTajweed(mushafText).find((row) =>
-    row.word.startsWith('بَصِير')
-  );
+  const corpus = classifyAyahTajweed(corpusText).find((row) => row.word.startsWith('بَصِير'));
+  const mushaf = classifyAyahTajweed(mushafText).find((row) => row.word.startsWith('بَصِير'));
   assert.ok(corpus, 'Quran spelling of بَصِير must be present');
   assert.ok(mushaf, 'Mushaf spelling of بَصِير must be present');
   assert.equal(corpus.word, 'بَصِيرُۢ');
@@ -155,12 +144,8 @@ test('Madd Muttasil recognises hamza-above encoded on a seated letter in both ra
     assert.ok(corpusText, `missing Quran ${surah}:${ayah}`);
     assert.ok(mushafText, `missing Mushaf ${surah}:${ayah}`);
 
-    const corpusWord = classifyAyahTajweed(corpusText).find((row) =>
-      row.word.includes('ٓيٕ')
-    );
-    const mushafWord = classifyAyahTajweed(mushafText).find((row) =>
-      row.word.includes('ٓئ')
-    );
+    const corpusWord = classifyAyahTajweed(corpusText).find((row) => row.word.includes('ٓيٕ'));
+    const mushafWord = classifyAyahTajweed(mushafText).find((row) => row.word.includes('ٓئ'));
     assert.ok(corpusWord, `missing seated-letter hamza in Quran ${surah}:${ayah}`);
     assert.ok(mushafWord, `missing explicit hamza in Mushaf ${surah}:${ayah}`);
     assert.ok(
