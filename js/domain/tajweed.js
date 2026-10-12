@@ -214,7 +214,24 @@ export const NOON_TANWEEN_RULE_GROUP = Object.freeze({
         'ك',
       ]),
     }),
-    Object.freeze({ rule: 'izhar', nextBases: Object.freeze(['ء', 'ه', 'ع', 'ح', 'غ', 'خ']) }),
+    Object.freeze({
+      rule: 'izhar',
+      // Hamza is phonetic, not a code-point identity: include its common
+      // seated spellings as well as the standalone form in Uthmani text.
+      nextBases: Object.freeze([
+        'ء',
+        'أ',
+        'إ',
+        'ؤ',
+        'ئ',
+        'آ',
+        'ه',
+        'ع',
+        'ح',
+        'غ',
+        'خ',
+      ]),
+    }),
   ]),
 });
 
