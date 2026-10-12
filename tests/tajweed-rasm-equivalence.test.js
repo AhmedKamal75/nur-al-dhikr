@@ -69,6 +69,60 @@ test('Madd Iwad accepts the corpus final-tanween spelling contextually', () => {
   );
 });
 
+test('cross-rasm tanween-fatha spelling does not invent natural madd (Quran 2:95)', () => {
+  const corpusText = quranAyah(2, 95);
+  const mushafText = mushafAyah(15, 2, 95);
+  assert.ok(corpusText, 'missing Quran 2:95');
+  assert.ok(mushafText, 'missing Mushaf 2:95');
+
+  const corpus = classifyAyahTajweed(corpusText).find((row) =>
+    row.word.startsWith('أَبَد')
+  );
+  const mushaf = classifyAyahTajweed(mushafText).find((row) =>
+    row.word.startsWith('أَبَد')
+  );
+  assert.ok(corpus, 'Quran spelling of أَبَدًا must be present');
+  assert.ok(mushaf, 'Mushaf spelling of أَبَدًا must be present');
+  assert.equal(corpus.word, 'أَبَدَۢا');
+  assert.equal(mushaf.word, 'أَبَدًۢا');
+  assert.ok(
+    corpus.spans.some((span) => span.rule === 'iqlab'),
+    'keep the explicit Iqlab classification'
+  );
+  assert.ok(
+    mushaf.spans.some((span) => span.rule === 'iqlab'),
+    'keep the explicit Iqlab classification in the alternate spelling'
+  );
+  assert.ok(!corpus.spans.some((span) => span.rule === 'madd_2'));
+  assert.ok(!mushaf.spans.some((span) => span.rule === 'madd_2'));
+});
+
+test('ra with dammatan is heavy in both checked-in rasms (Quran 2:96)', () => {
+  const corpusText = quranAyah(2, 96);
+  const mushafText = mushafAyah(15, 2, 96);
+  assert.ok(corpusText, 'missing Quran 2:96');
+  assert.ok(mushafText, 'missing Mushaf 2:96');
+
+  const corpus = classifyAyahTajweed(corpusText).find((row) =>
+    row.word.startsWith('بَصِير')
+  );
+  const mushaf = classifyAyahTajweed(mushafText).find((row) =>
+    row.word.startsWith('بَصِير')
+  );
+  assert.ok(corpus, 'Quran spelling of بَصِير must be present');
+  assert.ok(mushaf, 'Mushaf spelling of بَصِير must be present');
+  assert.equal(corpus.word, 'بَصِيرُۢ');
+  assert.equal(mushaf.word, 'بَصِيرٌۢ');
+  assert.ok(
+    corpus.spans.some((span) => span.rule === 'tafkhim'),
+    'damma on ra supports tafkhim'
+  );
+  assert.ok(
+    mushaf.spans.some((span) => span.rule === 'tafkhim'),
+    'dammatan on ra also supports tafkhim'
+  );
+});
+
 test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2:18', () => {
   const corpusText = quranAyah(2, 18);
   const mushafText = mushafAyah(4, 2, 18);

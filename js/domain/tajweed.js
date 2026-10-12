@@ -571,6 +571,17 @@ function isMaddLetter(unit, prev) {
   if ((unit.base === SMALL_WAW || unit.base === SMALL_YEH) && unit.diacritics.has(MADDA_ABOVE))
     return true; // silah madd, only when the text signals it's lengthened
   if (unit.diacritics.size > 0 && !unit.diacritics.has(MADDA_ABOVE)) return false; // a madd letter carries no *vowel* of its own, but may carry the madda mark
+  // This Uthmani source can spell tanween-fatha before alif as fatha +
+  // the explicit small-high-meem iqlab mark (e.g. 2:95). That alif is part
+  // of tanween orthography, not a natural-madd vowel. The corresponding
+  // fathatan spelling is already excluded by the preceding vowel check.
+  if (
+    unit.base === ALIF &&
+    prev?.diacritics.has(FATHA) &&
+    prev.diacritics.has(IQLAB_MARK)
+  ) {
+    return false;
+  }
   if ((unit.base === ALIF || unit.base === ALIF_WASLA) && prev?.diacritics.has(FATHA)) return true;
   if (unit.base === WAW && prev?.diacritics.has(DAMMA)) return true;
   if ((unit.base === YEH || unit.base === ALEF_MAKSURA) && prev?.diacritics.has(KASRA)) return true;
@@ -946,7 +957,13 @@ export function classifyWordTajweed(
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
-    if (u.base === RA && (u.diacritics.has(FATHA) || u.diacritics.has(DAMMA))) {
+    if (
+      u.base === RA &&
+      (u.diacritics.has(FATHA) ||
+        u.diacritics.has(DAMMA) ||
+        u.diacritics.has(FATHATAN) ||
+        u.diacritics.has(DAMMATAN))
+    ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
 
