@@ -158,7 +158,7 @@
     "js/domain/statistics.js": "6005e4f2c72f43df20da98e0843cafed6b2a0b0a2f625470ab59f726f95248ac",
     "js/domain/sunnah.js": "08e8ea12c46c24d284a537e42ca975af2a95dff91374a4c84bcc88838c7ace5a",
     "js/domain/tafsirSearch.js": "abab5bbbb96104681d09fcc799f867ed591d477274b8d4fdc78ee8119b8eb66e",
-    "js/domain/tajweed.js": "363b02a7766029b0bef77181a73eaacc5ffae1840c23bda97151b06105130770",
+    "js/domain/tajweed.js": "f610c29c427fb9cece2469f1b2e3a90cc15a60cf1ac678ef1ed6dfa4e3fd22cf",
     "js/views/studyContext.js": "ca86c53d39196e2eceffb2509403a3d7de5eb64d96fa2b29e504ab68e1b22924",
     "js/views/tajweedCourseView.js": "cc8e87706fab59be6c3cf56391549a5b2ca069774c44b4e374d81b8dcc475222",
     "js/domain/tajweedCourse.js": "6549252f9a592e6901c26d0fdc1918437d0ffce260fd8b5d9be9bf2738fa7fb1",
