@@ -1,3 +1,9 @@
+# v5.17.140 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
+
+- Adds a data-driven next-letter table for the mutually exclusive noon-sakinah/tanween family, with contract tests for table integrity, cited rule IDs, and parity with the live classifier.
+- Combines the newest audit instrumentation and targeted cross-rasm regression candidates on a clean branch from main.
+- No Qur’an text was edited or normalized. This is a prototype, not proof that all Tajweed rules are correct; full source-backed and browser review remains mandatory.
+
 # v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
 
 - Lands the crew's fix for ledger row 99, from the single-commit mainline candidate (the other two branches attempting it fail their own alignment test).
