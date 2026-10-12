@@ -79,7 +79,10 @@ test('Study Tray journey links derive context from the exact open ayah', () => {
     studyTray: { surah: '2', ayah: '255', word: 3 },
   };
   assert.deepEqual(mergeStudyContextParams({ id: 'نصر' }, mushaf), {
-    id: 'نصر', from: 'mushaf', fromSurah: '2', fromAyah: '255',
+    id: 'نصر',
+    from: 'mushaf',
+    fromSurah: '2',
+    fromAyah: '255',
   });
   const quran = {
     ...base({ id: '2' }),
@@ -87,7 +90,10 @@ test('Study Tray journey links derive context from the exact open ayah', () => {
     studyTray: { surah: '2', ayah: '255', word: 3 },
   };
   assert.deepEqual(mergeStudyContextParams({ id: 'نصر' }, quran), {
-    id: 'نصر', from: 'quran', fromSurah: '2', fromAyah: '255',
+    id: 'نصر',
+    from: 'quran',
+    fromSurah: '2',
+    fromAyah: '255',
   });
   assert.deepEqual(
     mergeStudyContextParams(
@@ -108,7 +114,10 @@ test('Study Tray journey links derive context from the exact open ayah', () => {
     studyTray: { surah: '3', ayah: '7' },
   };
   assert.deepEqual(mergeStudyContextParams({ id: 'نصر' }, relatedStudy), {
-    id: 'نصر', from: 'mushaf', fromSurah: '2', fromAyah: '255',
+    id: 'نصر',
+    from: 'mushaf',
+    fromSurah: '2',
+    fromAyah: '255',
   });
 });
 
