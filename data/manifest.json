@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.139",
+  "version": "5.17.140",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
@@ -9466,8 +9466,8 @@
     },
     {
       "path": "tajweed-sources.json",
-      "bytes": 19696,
-      "sha256": "32005d791530116785c72286767be618ef717f31df94970517948f3eec75fb94"
+      "bytes": 20695,
+      "sha256": "5d0e3209a6640ec66a70a8e885e24cfacd26780204d0a783c260507b001e2ae6"
     },
     {
       "path": "translations/fr-hamidullah/1.json",
