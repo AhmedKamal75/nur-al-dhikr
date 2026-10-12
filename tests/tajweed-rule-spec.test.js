@@ -4,10 +4,11 @@ import test from 'node:test';
 import {
   classifyWordTajweed,
   NOON_TANWEEN_RULE_GROUP,
+  NOON_TANWEEN_SAME_WORD_EXCEPTIONS,
   noonTanweenRuleForNextBase,
   TAJWEED_RULES,
 } from '../js/domain/tajweed.js';
-import { TAJWEED_SOURCES } from '../js/domain/tajweedSources.js';
+import { TAJWEED_SOURCES, TAJWEED_WORKS } from '../js/domain/tajweedSources.js';
 
 const groupRuleIds = NOON_TANWEEN_RULE_GROUP.rules.map(({ rule }) => rule);
 
@@ -40,34 +41,59 @@ test('noon/tanween specification is explicit, immutable, and limited to exclusiv
   }
 });
 
-test('declarative next-letter rules reproduce each current noon/tanween branch', () => {
-  const cases = [
-    ['ب', 'iqlab'],
-    ['ي', 'idgham_ghunnah'],
-    ['ن', 'idgham_ghunnah'],
-    ['م', 'idgham_ghunnah'],
-    ['و', 'idgham_ghunnah'],
-    ['ل', 'idgham_no_ghunnah'],
-    ['ر', 'idgham_no_ghunnah'],
-    ['ت', 'ikhfa'],
-    ['ك', 'ikhfa'],
-    ['ء', 'izhar'],
-    ['ه', 'izhar'],
-    ['ع', 'izhar'],
-    ['ح', 'izhar'],
-    ['غ', 'izhar'],
-    ['خ', 'izhar'],
-  ];
+test('every declarative follower letter maps to its exclusive rule in the live classifier', () => {
+  for (const entry of NOON_TANWEEN_RULE_GROUP.rules) {
+    for (const nextBase of entry.nextBases) {
+      assert.equal(noonTanweenRuleForNextBase(nextBase), entry.rule);
+      const spans = classifyWordTajweed('نْ', { nextWordFirstBase: nextBase });
+      assert.deepEqual(
+        spans.filter(({ rule }) => groupRuleIds.includes(rule)).map(({ rule }) => rule),
+        [entry.rule],
+        `classifier disagreed with ${entry.rule} before ${nextBase}`
+      );
+    }
+  }
+});
 
-  for (const [nextBase, expectedRule] of cases) {
-    assert.equal(noonTanweenRuleForNextBase(nextBase), expectedRule);
-    const spans = classifyWordTajweed('نْ', { nextWordFirstBase: nextBase });
-    assert.deepEqual(
-      spans.filter(({ rule }) => groupRuleIds.includes(rule)).map(({ rule }) => rule),
-      [expectedRule],
-      `classifier disagreed with the spec before ${nextBase}`
+test('Izhar Mutlaq exception list is closed, sourced, and separate from ordinary matching', () => {
+  assert.equal(NOON_TANWEEN_SAME_WORD_EXCEPTIONS.id, 'izhar_mutlaq');
+  assert.equal(NOON_TANWEEN_SAME_WORD_EXCEPTIONS.rule, 'izhar');
+  assert.equal(NOON_TANWEEN_SAME_WORD_EXCEPTIONS.source, 'awqaf-noon-sakinah');
+  assert.ok(Object.isFrozen(NOON_TANWEEN_SAME_WORD_EXCEPTIONS));
+  assert.ok(Object.isFrozen(NOON_TANWEEN_SAME_WORD_EXCEPTIONS.wordSkeletons));
+  assert.deepEqual(
+    NOON_TANWEEN_SAME_WORD_EXCEPTIONS.nextBases,
+    ['ي', 'و']
+  );
+  assert.ok(TAJWEED_SOURCES.izhar.also.some((citation) =>
+    citation.work === NOON_TANWEEN_SAME_WORD_EXCEPTIONS.source
+  ));
+  assert.ok(TAJWEED_WORKS[NOON_TANWEEN_SAME_WORD_EXCEPTIONS.source].url);
+
+  for (const [word, nextBase] of [
+    ['ٱلدُّنۡيَا', 'ي'],
+    ['بُنۡيَٰنٗا', 'ي'],
+    ['صِنۡوَانٞ', 'و'],
+    ['قِنۡوَانٞ', 'و'],
+  ]) {
+    const spans = classifyWordTajweed(word);
+    assert.ok(spans.some(({ rule }) => rule === 'izhar'), word);
+    assert.ok(!spans.some(({ rule }) => rule === 'idgham_ghunnah'), word);
+    assert.equal(
+      noonTanweenRuleForNextBase(nextBase, {
+        sameWord: true,
+        wordSkeleton:
+          word === 'ٱلدُّنۡيَا' ? 'الدنيا' :
+          word === 'بُنۡيَٰنٗا' ? 'بنيانا' :
+          word === 'صِنۡوَانٞ' ? 'صنوان' : 'قنوان',
+      }),
+      'izhar'
     );
   }
+
+  const nonException = classifyWordTajweed('مِنْيَ');
+  assert.ok(nonException.some(({ rule }) => rule === 'idgham_ghunnah'));
+  assert.ok(!nonException.some(({ rule }) => rule === 'izhar'));
 });
 
 test('unknown following letters do not acquire a noon/tanween rule', () => {
