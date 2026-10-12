@@ -117,3 +117,17 @@ test('cross-word lookahead preserves a combining hamza on initial alif', () => {
   });
   assert.ok(!unmarked.some(({ rule }) => groupRuleIds.includes(rule)));
 });
+
+test('cross-word lookahead treats combining hamza-below on a yeh carrier as hamza', () => {
+  const marked = classifyWordTajweed('نْ', {
+    nextWordFirstBase: 'ي',
+    nextWordFirstHasHamzaBelow: true,
+  });
+  assert.ok(marked.some(({ rule }) => rule === 'izhar'));
+
+  const plain = classifyWordTajweed('نْ', {
+    nextWordFirstBase: 'ي',
+    nextWordFirstHasHamzaBelow: false,
+  });
+  assert.ok(plain.some(({ rule }) => rule === 'idgham_ghunnah'));
+});
