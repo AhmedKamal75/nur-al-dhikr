@@ -200,7 +200,7 @@ test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2
 
 function wordSkeletonForTest(word) {
   return String(word)
-    .replace(/\\p{M}/gu, '')
+    .replace(/\p{M}/gu, '')
     .replace(/ـ/gu, '')
     .replace(/ٱ/gu, 'ا');
 }
