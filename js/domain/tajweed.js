@@ -176,26 +176,82 @@ const QALQALAH_KNOWN_NO_ECHO_WORDS = new Set([
   '\u0641\u0631\u0637\u062A\u0645',
   '\u0646\u062E\u0644\u0642\u0643\u0645',
 ]);
-const IDGHAM_GHUNNAH_LETTERS = new Set([YEH, NOON, MEEM, WAW]);
-const IDGHAM_NO_GHUNNAH_LETTERS = new Set([LAM, '\u0631']);
-const IZHAR_HALQI_LETTERS = new Set(['\u0621', '\u0647', '\u0639', '\u062D', '\u063A', '\u062E']);
-const IKHFA_LETTERS = new Set([
-  '\u062A',
-  '\u062B',
-  '\u062C',
-  '\u062F',
-  '\u0630',
-  '\u0632',
-  '\u0633',
-  '\u0634',
-  '\u0635',
-  '\u0636',
-  '\u0637',
-  '\u0638',
-  '\u0641',
-  '\u0642',
-  '\u0643',
-]);
+/**
+ * Declarative prototype for the mutually exclusive next-letter branch of
+ * noon-sakinah/tanween classification. These glyphs are data, not predicates:
+ * contextual recognition (including the explicit Iqlab mark) stays in the
+ * classifier. Only this group uses first-match semantics.
+ *
+ * Rule IDs and citations remain owned by TAJWEED_RULES and
+ * data/tajweed-sources.json; the contract test checks that this table cannot
+ * introduce an orphan rule. No exception list is asserted without a sourced
+ * corpus decision.
+ */
+export const NOON_TANWEEN_RULE_GROUP = Object.freeze({
+  id: 'noon_sakinah_tanween',
+  mode: 'first-match',
+  rules: Object.freeze([
+    Object.freeze({ rule: 'iqlab', nextBases: Object.freeze(['ب']) }),
+    Object.freeze({ rule: 'idgham_ghunnah', nextBases: Object.freeze(['ي', 'ن', 'م', 'و']) }),
+    Object.freeze({ rule: 'idgham_no_ghunnah', nextBases: Object.freeze(['ل', 'ر']) }),
+    Object.freeze({
+      rule: 'ikhfa',
+      nextBases: Object.freeze([
+        'ت',
+        'ث',
+        'ج',
+        'د',
+        'ذ',
+        'ز',
+        'س',
+        'ش',
+        'ص',
+        'ض',
+        'ط',
+        'ظ',
+        'ف',
+        'ق',
+        'ك',
+      ]),
+    }),
+    Object.freeze({ rule: 'izhar', nextBases: Object.freeze(['ء', 'ه', 'ع', 'ح', 'غ', 'خ']) }),
+  ]),
+});
+
+/**
+ * Sourced same-word exception: Izhar Mutlaq before yāʾ/wāw in the four
+ * Qur'anic words named by the Egyptian Ministry of Awqaf. The corpus writes
+ * bunyān with fathatan's written alif (بُنۡيَٰنٗا), so both unvowelled key
+ * forms are represented. This is deliberately a closed list, not a broad
+ * "same word means izhar" heuristic.
+ */
+export const NOON_TANWEEN_SAME_WORD_EXCEPTIONS = Object.freeze({
+  id: 'izhar_mutlaq',
+  rule: 'izhar',
+  source: 'awqaf-noon-sakinah',
+  nextBases: Object.freeze(['ي', 'و']),
+  wordSkeletons: Object.freeze(['الدنيا', 'بنيان', 'بنيانا', 'صنوان', 'قنوان']),
+});
+
+/** Resolve context first, then the closed mutually-exclusive follower group. */
+export function noonTanweenRuleForNextBase(
+  base,
+  { sameWord = false, wordSkeleton = null } = {}
+) {
+  if (
+    sameWord &&
+    NOON_TANWEEN_SAME_WORD_EXCEPTIONS.nextBases.includes(base) &&
+    NOON_TANWEEN_SAME_WORD_EXCEPTIONS.wordSkeletons.includes(wordSkeleton)
+  ) {
+    return NOON_TANWEEN_SAME_WORD_EXCEPTIONS.rule;
+  }
+
+  for (const candidate of NOON_TANWEEN_RULE_GROUP.rules) {
+    if (candidate.nextBases.includes(base)) return candidate.rule;
+  }
+  return null;
+}
+
 /* Meem-sakinah lookahead groups (v3.7). Exactly one letter decides each:
  * before م the two merge entirely (idgham mutamathilayn, with ghunnah);
  * before ب the meem hides softly (ikhfa shafawi); every other letter reads
@@ -336,10 +392,10 @@ export const TAJWEED_RULES = Object.freeze([
     id: 'izhar',
     color: null,
     family: 'plain',
-    name: { en: 'Izhar (clear noon)', ar: 'الإظهار الحلقي' },
+    name: { en: 'Izhar (clear noon)', ar: 'الإظهار الحلقي والمطلق' },
     desc: {
-      en: 'Noon sakinah or tanween is pronounced clearly before the throat letters.',
-      ar: 'إظهار النون الساكنة أو التنوين عند حروف الحلق.',
+      en: 'Noon sakinah/tanween is clear before the throat letters; the nūn also remains clear before yāʾ or wāw in the four one-word exceptions of izhar mutlaq: al-dunya, bunyan, sinwan, and qinwan.',
+      ar: 'تُظهر النون الساكنة أو التنوين عند حروف الحلق، وتُظهر النون قبل الياء أو الواو في الكلمات الأربع للإظهار المطلق: الدنيا، وبنيان، وصنوان، وقنوان.',
     },
   },
   {
@@ -571,6 +627,17 @@ function isMaddLetter(unit, prev) {
   if ((unit.base === SMALL_WAW || unit.base === SMALL_YEH) && unit.diacritics.has(MADDA_ABOVE))
     return true; // silah madd, only when the text signals it's lengthened
   if (unit.diacritics.size > 0 && !unit.diacritics.has(MADDA_ABOVE)) return false; // a madd letter carries no *vowel* of its own, but may carry the madda mark
+  // This Uthmani source can spell tanween-fatha before alif as fatha +
+  // the explicit small-high-meem iqlab mark (e.g. 2:95). That alif is part
+  // of tanween orthography, not a natural-madd vowel. The corresponding
+  // fathatan spelling is already excluded by the preceding vowel check.
+  if (
+    unit.base === ALIF &&
+    prev?.diacritics.has(FATHA) &&
+    prev.diacritics.has(IQLAB_MARK)
+  ) {
+    return false;
+  }
   if ((unit.base === ALIF || unit.base === ALIF_WASLA) && prev?.diacritics.has(FATHA)) return true;
   if (unit.base === WAW && prev?.diacritics.has(DAMMA)) return true;
   if ((unit.base === YEH || unit.base === ALEF_MAKSURA) && prev?.diacritics.has(KASRA)) return true;
@@ -610,6 +677,10 @@ function previousWordHasHeavyFinalVowel(word) {
   const units = tokenizeUnits(word);
   const last = units.at(-1);
   if (!last) return false;
+  // A final explicit kasrah is the pronounced vowel, even when this rasm
+  // writes the carrier as alif-maqsurah (يَدَىِ) instead of yeh (يَدَيِ).
+  // Do not let the preceding letter's fatḥah override that light context.
+  if (last.diacritics.has(KASRA) || last.diacritics.has(KASRATAN)) return false;
   if (unitHasHeavyVowel(last)) return true;
 
   const beforeLast = units.at(-2);
@@ -645,6 +716,25 @@ function skeletonOf(word) {
 }
 
 /** One-letter prefix particles that can precede the article (و ف ب ك). */
+/**
+ * Minimal letter skeleton for the closed Izhar Mutlaq list. It strips only
+ * marks/ornaments and the dagger-alif presentation sign; it never rewrites
+ * the Qur'an string used for rendering or span offsets.
+ */
+function noonTanweenWordSkeleton(word) {
+  return [...String(word)]
+    .filter(
+      (ch) =>
+        !DIACRITIC_CHARS.has(ch) &&
+        ch !== TATWEEL &&
+        ch !== DAGGER_ALIF &&
+        !WORD_ORNAMENT_CHARS.has(ch) &&
+        !ORNAMENT_DIGITS.has(ch)
+    )
+    .map((ch) => (ch === ALIF_WASLA ? ALIF : ch))
+    .join('');
+}
+
 function isPrefixParticle(unit) {
   return (
     (unit.base === WAW || unit.base === '\u0641' || unit.base === BEH || unit.base === '\u0643') &&
@@ -796,15 +886,13 @@ export function classifyWordTajweed(
       spans.push({ start: u.start, end: u.end, rule: 'iqlab' });
     } else if (noonSakinah || tanween) {
       const nb = next ? next.base : nextWordFirstBase;
-      if (nb === BEH) spans.push({ start: u.start, end: u.end, rule: 'iqlab' });
-      else if (nb && IDGHAM_GHUNNAH_LETTERS.has(nb))
-        spans.push({ start: u.start, end: u.end, rule: 'idgham_ghunnah' });
-      else if (nb && IDGHAM_NO_GHUNNAH_LETTERS.has(nb))
-        spans.push({ start: u.start, end: u.end, rule: 'idgham_no_ghunnah' });
-      else if (nb && IKHFA_LETTERS.has(nb))
-        spans.push({ start: u.start, end: u.end, rule: 'ikhfa' });
-      else if (nb && IZHAR_HALQI_LETTERS.has(nb))
-        spans.push({ start: u.start, end: u.end, rule: 'izhar' });
+      if (nb) {
+        const rule = noonTanweenRuleForNextBase(nb, {
+          sameWord: Boolean(next),
+          wordSkeleton: next ? noonTanweenWordSkeleton(word) : null,
+        });
+        if (rule) spans.push({ start: u.start, end: u.end, rule });
+      }
     }
 
     // Madd (elongation). This Uthmani source marks madd points explicitly
@@ -847,7 +935,11 @@ export function classifyWordTajweed(
         (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE)) ||
         badalFromHamzaAbove;
       const isSilah = isHaKinayahSilahUnit(u, prev);
-      if (next && HAMZA_LETTERS.has(next.base)) {
+      // Some Uthmani source files encode hamza on a seated letter with a
+      // combining hamza-above mark (e.g. ...آيِٕ), while the Mushaf rasm
+      // uses a standalone hamza-bearing base (....آئِ). Both are hamza
+      // after the madd letter, so both require Madd Muttasil.
+      if (next && (HAMZA_LETTERS.has(next.base) || next.hamzaAboveStart !== undefined)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
       } else if (
         next &&
@@ -946,7 +1038,13 @@ export function classifyWordTajweed(
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
-    if (u.base === RA && (u.diacritics.has(FATHA) || u.diacritics.has(DAMMA))) {
+    if (
+      u.base === RA &&
+      (u.diacritics.has(FATHA) ||
+        u.diacritics.has(DAMMA) ||
+        u.diacritics.has(FATHATAN) ||
+        u.diacritics.has(DAMMATAN))
+    ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
 
@@ -965,9 +1063,19 @@ export function classifyWordTajweed(
     const atPauseEnd = i === units.length - 1 || (i === units.length - 2 && trailingTanweenAlif);
     // One corpus spells ayah-final fathatan-before-alif as U+0657. Preserve its
     // ordinary dammatan meaning elsewhere; recognize it here only in this final shape.
+    // A source rasm can encode tanween-fatha as fatha + the explicit
+    // small-high-meem Iqlab mark before a written alif (e.g. 4:137). When
+    // that token is ayah-final, stopping there still triggers Madd Iwad;
+    // connected-reading Iqlab must not erase the pause rule.
+    const iqlabTanweenFatha =
+      u.diacritics.has(FATHA) &&
+      u.diacritics.has(IQLAB_MARK) &&
+      trailingTanweenAlif &&
+      i === units.length - 2;
     const finalFathatanVariant =
       u.diacritics.has(FATHATAN) ||
-      (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2);
+      (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2) ||
+      iqlabTanweenFatha;
     if (isLastWordOfAyah && atPauseEnd && finalFathatanVariant) {
       spans.push({ start: u.start, end: u.end, rule: 'madd_iwad' });
     }
