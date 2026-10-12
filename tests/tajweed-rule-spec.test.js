@@ -103,3 +103,17 @@ test('unknown following letters do not acquire a noon/tanween rule', () => {
     assert.ok(!spans.some(({ rule }) => groupRuleIds.includes(rule)), base);
   }
 });
+
+test('cross-word lookahead preserves a combining hamza on initial alif', () => {
+  const marked = classifyWordTajweed('نْ', {
+    nextWordFirstBase: 'ا',
+    nextWordFirstHasHamzaAbove: true,
+  });
+  assert.ok(marked.some(({ rule }) => rule === 'izhar'));
+
+  const unmarked = classifyWordTajweed('نْ', {
+    nextWordFirstBase: 'ا',
+    nextWordFirstHasHamzaAbove: false,
+  });
+  assert.ok(!unmarked.some(({ rule }) => groupRuleIds.includes(rule)));
+});
