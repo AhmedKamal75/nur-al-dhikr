@@ -33,7 +33,8 @@ const DAMMATAN = '\u064C';
 const DAGGER_ALIF = '\u0670';
 const TATWEEL = '\u0640';
 const MADDA_ABOVE = '\u0653';
-const HAMZA_ABOVE_MARK = '\u0654'; // combining madda — this Uthmani source marks madd points (incl. the muqatta'at letter-names) explicitly rather than leaving them to be inferred
+const HAMZA_ABOVE_MARK = '\u0654'; // combining hamza above; Uthmani orthography may use a mark instead of a precomposed letter
+const HAMZA_BELOW_MARK = '\u0655'; // combining hamza below on a yeh carrier (e.g. the Quran corpus's ...يِٕ spelling)
 const IQLAB_MARK = '\u06E2'; // small high meem isolated form — marks a noon/tanween that has already undergone iqlab in the text itself
 const IQLAB_MARK_LOW = '\u06ED'; // small low meem — the same iqlab mark in a lower position
 const MADDA_SMALL_HIGH = '\u06E4'; // small high madda — the madda mark in its raised spelling (e.g. on a silah waw)
@@ -57,6 +58,7 @@ const DIACRITIC_CHARS = new Set([
   DAMMATAN,
   MADDA_ABOVE,
   HAMZA_ABOVE_MARK,
+  HAMZA_BELOW_MARK,
   IQLAB_MARK,
   IQLAB_MARK_LOW,
   MADDA_SMALL_HIGH,
@@ -103,6 +105,7 @@ const NOON = '\u0646';
 const MEEM = '\u0645';
 const BEH = '\u0628';
 const RA = '\u0631';
+const TA_MARBUTA = '\u0629';
 
 /** The corpus Basmala, byte-identical to Qur'an 1:1. Reader headers and
  *  the Tajweed settings sample all render this one spelling. */
@@ -621,6 +624,9 @@ function tokenizeUnits(word) {
       if (ch === HAMZA_ABOVE_MARK && u.hamzaAboveStart === undefined) {
         u.hamzaAboveStart = i > 0 && word[i - 1] === TATWEEL ? i - 1 : i;
       }
+      if (ch === HAMZA_BELOW_MARK && u.hamzaBelowStart === undefined) {
+        u.hamzaBelowStart = i > 0 && word[i - 1] === TATWEEL ? i - 1 : i;
+      }
       if (ch === DAMMATAN_INV) u.hasInvertedDammatan = true;
       u.diacritics.add(canonMark(ch));
       u.end = i + 1;
@@ -803,6 +809,7 @@ export function classifyWordTajweed(
     nextWordFirstBase = null,
     nextWordFirstHasShadda = false,
     nextWordFirstHasHamzaAbove = false,
+    nextWordFirstHasHamzaBelow = false,
     isLastWordOfAyah = false,
     isFirstWordOfAyah = false,
     previousWordHasHeavyFinalVowel = false,
@@ -907,8 +914,12 @@ export function classifyWordTajweed(
       const nextHasHamzaAbove = next
         ? next.hamzaAboveStart !== undefined
         : nextWordFirstHasHamzaAbove;
-      const nb =
-        nextHasHamzaAbove && rawNextBase === ALIF ? '\u0623' : rawNextBase;
+      const nextHasHamzaBelow = next
+        ? next.hamzaBelowStart !== undefined
+        : nextWordFirstHasHamzaBelow;
+      let nb = rawNextBase;
+      if (nextHasHamzaAbove && rawNextBase === ALIF) nb = '\u0623';
+      else if (nextHasHamzaBelow && rawNextBase === YEH) nb = '\u0626';
       if (nb) {
         const rule = noonTanweenRuleForNextBase(nb, {
           sameWord: Boolean(next),
@@ -958,11 +969,16 @@ export function classifyWordTajweed(
         (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE)) ||
         badalFromHamzaAbove;
       const isSilah = isHaKinayahSilahUnit(u, prev);
-      // Some Uthmani source files encode hamza on a seated letter with a
-      // combining hamza-above mark (e.g. ...آيِٕ), while the Mushaf rasm
-      // uses a standalone hamza-bearing base (....آئِ). Both are hamza
-      // after the madd letter, so both require Madd Muttasil.
-      if (next && (HAMZA_LETTERS.has(next.base) || next.hamzaAboveStart !== undefined)) {
+      // Uthmani sources may encode a hamza on a carrier with a combining
+      // mark (e.g. ...آيِٕ), while the Mushaf rasm uses a precomposed
+      // hamza-bearing base (....آئِ). Either combining direction is a hamza
+      // after the madd letter and therefore qualifies for Madd Muttasil.
+      if (
+        next &&
+        (HAMZA_LETTERS.has(next.base) ||
+          next.hamzaAboveStart !== undefined ||
+          next.hamzaBelowStart !== undefined)
+      ) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
       } else if (
         next &&
@@ -1082,7 +1098,7 @@ export function classifyWordTajweed(
     const trailingTanweenAlif =
       units.length >= 2 &&
       units[units.length - 1].base === ALIF &&
-      units[units.length - 1].diacritics.size === 0;
+      [...units[units.length - 1].diacritics].every((mark) => mark === MADDA_ABOVE);
     const atPauseEnd = i === units.length - 1 || (i === units.length - 2 && trailingTanweenAlif);
     // One corpus spells ayah-final fathatan-before-alif as U+0657. Preserve its
     // ordinary dammatan meaning elsewhere; recognize it here only in this final shape.
@@ -1095,11 +1111,23 @@ export function classifyWordTajweed(
       u.diacritics.has(IQLAB_MARK) &&
       trailingTanweenAlif &&
       i === units.length - 2;
+    // The corpus uses U+0657 for fathatan in two contextual shapes:
+    // immediately before its trailing alif, and on a final hamza where the
+    // parallel Mushaf rasm writes fathatan. Everywhere else it remains the
+    // inverted-dammatan mark folded by canonMark().
+    const invertedFathatanOnFinalHamza =
+      u.hasInvertedDammatan && i === units.length - 1 && HAMZA_LETTERS.has(u.base);
     const finalFathatanVariant =
       u.diacritics.has(FATHATAN) ||
       (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2) ||
+      invertedFathatanOnFinalHamza ||
       iqlabTanweenFatha;
-    if (isLastWordOfAyah && atPauseEnd && finalFathatanVariant) {
+    if (
+      isLastWordOfAyah &&
+      atPauseEnd &&
+      finalFathatanVariant &&
+      u.base !== TA_MARBUTA
+    ) {
       spans.push({ start: u.start, end: u.end, rule: 'madd_iwad' });
     }
   }
@@ -1174,6 +1202,8 @@ export function classifyAyahTajweed(ayahText) {
     const nextWordFirstHasShadda = nextWordUnits[0]?.diacritics.has(SHADDA) ?? false;
     const nextWordFirstHasHamzaAbove =
       nextWordUnits[0]?.hamzaAboveStart !== undefined;
+    const nextWordFirstHasHamzaBelow =
+      nextWordUnits[0]?.hamzaBelowStart !== undefined;
     const previousIndex = previousSemanticIndex.get(i);
     const previousWord = previousIndex === undefined ? null : words[previousIndex];
     return {
@@ -1183,6 +1213,7 @@ export function classifyAyahTajweed(ayahText) {
         nextWordFirstBase,
         nextWordFirstHasShadda,
         nextWordFirstHasHamzaAbove,
+        nextWordFirstHasHamzaBelow,
         isFirstWordOfAyah: i === firstSemanticIndex,
         isLastWordOfAyah: i === lastSemanticIndex,
         previousWordHasHeavyFinalVowel: previousWord
