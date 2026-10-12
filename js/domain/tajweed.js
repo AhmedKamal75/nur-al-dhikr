@@ -802,6 +802,7 @@ export function classifyWordTajweed(
   {
     nextWordFirstBase = null,
     nextWordFirstHasShadda = false,
+    nextWordFirstHasHamzaAbove = false,
     isLastWordOfAyah = false,
     isFirstWordOfAyah = false,
     previousWordHasHeavyFinalVowel = false,
@@ -902,7 +903,12 @@ export function classifyWordTajweed(
     if (u.diacritics.has(IQLAB_MARK)) {
       spans.push({ start: u.start, end: u.end, rule: 'iqlab' });
     } else if (noonSakinah || tanween) {
-      const nb = next ? next.base : nextWordFirstBase;
+      const rawNextBase = next ? next.base : nextWordFirstBase;
+      const nextHasHamzaAbove = next
+        ? next.hamzaAboveStart !== undefined
+        : nextWordFirstHasHamzaAbove;
+      const nb =
+        nextHasHamzaAbove && rawNextBase === ALIF ? '\\u0623' : rawNextBase;
       if (nb) {
         const rule = noonTanweenRuleForNextBase(nb, {
           sameWord: Boolean(next),
@@ -1166,6 +1172,8 @@ export function classifyAyahTajweed(ayahText) {
     const nextWordUnits = nextWord ? tokenizeUnits(nextWord) : [];
     const nextWordFirstBase = nextWordUnits[0]?.base ?? null;
     const nextWordFirstHasShadda = nextWordUnits[0]?.diacritics.has(SHADDA) ?? false;
+    const nextWordFirstHasHamzaAbove =
+      nextWordUnits[0]?.hamzaAboveStart !== undefined;
     const previousIndex = previousSemanticIndex.get(i);
     const previousWord = previousIndex === undefined ? null : words[previousIndex];
     return {
@@ -1174,6 +1182,7 @@ export function classifyAyahTajweed(ayahText) {
       spans: classifyWordTajweed(word, {
         nextWordFirstBase,
         nextWordFirstHasShadda,
+        nextWordFirstHasHamzaAbove,
         isFirstWordOfAyah: i === firstSemanticIndex,
         isLastWordOfAyah: i === lastSemanticIndex,
         previousWordHasHeavyFinalVowel: previousWord
