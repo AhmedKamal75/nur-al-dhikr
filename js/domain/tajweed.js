@@ -571,6 +571,17 @@ function isMaddLetter(unit, prev) {
   if ((unit.base === SMALL_WAW || unit.base === SMALL_YEH) && unit.diacritics.has(MADDA_ABOVE))
     return true; // silah madd, only when the text signals it's lengthened
   if (unit.diacritics.size > 0 && !unit.diacritics.has(MADDA_ABOVE)) return false; // a madd letter carries no *vowel* of its own, but may carry the madda mark
+  // This Uthmani source can spell tanween-fatha before alif as fatha +
+  // the explicit small-high-meem iqlab mark (e.g. 2:95). That alif is part
+  // of tanween orthography, not a natural-madd vowel. The corresponding
+  // fathatan spelling is already excluded by the preceding vowel check.
+  if (
+    unit.base === ALIF &&
+    prev?.diacritics.has(FATHA) &&
+    prev.diacritics.has(IQLAB_MARK)
+  ) {
+    return false;
+  }
   if ((unit.base === ALIF || unit.base === ALIF_WASLA) && prev?.diacritics.has(FATHA)) return true;
   if (unit.base === WAW && prev?.diacritics.has(DAMMA)) return true;
   if ((unit.base === YEH || unit.base === ALEF_MAKSURA) && prev?.diacritics.has(KASRA)) return true;
@@ -610,6 +621,10 @@ function previousWordHasHeavyFinalVowel(word) {
   const units = tokenizeUnits(word);
   const last = units.at(-1);
   if (!last) return false;
+  // A final explicit kasrah is the pronounced vowel, even when this rasm
+  // writes the carrier as alif-maqsurah (يَدَىِ) instead of yeh (يَدَيِ).
+  // Do not let the preceding letter's fatḥah override that light context.
+  if (last.diacritics.has(KASRA) || last.diacritics.has(KASRATAN)) return false;
   if (unitHasHeavyVowel(last)) return true;
 
   const beforeLast = units.at(-2);
@@ -847,7 +862,11 @@ export function classifyWordTajweed(
         (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE)) ||
         badalFromHamzaAbove;
       const isSilah = isHaKinayahSilahUnit(u, prev);
-      if (next && HAMZA_LETTERS.has(next.base)) {
+      // Some Uthmani source files encode hamza on a seated letter with a
+      // combining hamza-above mark (e.g. ...آيِٕ), while the Mushaf rasm
+      // uses a standalone hamza-bearing base (....آئِ). Both are hamza
+      // after the madd letter, so both require Madd Muttasil.
+      if (next && (HAMZA_LETTERS.has(next.base) || next.hamzaAboveStart !== undefined)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
       } else if (
         next &&
@@ -946,7 +965,13 @@ export function classifyWordTajweed(
     ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
-    if (u.base === RA && (u.diacritics.has(FATHA) || u.diacritics.has(DAMMA))) {
+    if (
+      u.base === RA &&
+      (u.diacritics.has(FATHA) ||
+        u.diacritics.has(DAMMA) ||
+        u.diacritics.has(FATHATAN) ||
+        u.diacritics.has(DAMMATAN))
+    ) {
       spans.push({ start: u.start, end: u.end, rule: 'tafkhim' });
     }
 
@@ -965,9 +990,19 @@ export function classifyWordTajweed(
     const atPauseEnd = i === units.length - 1 || (i === units.length - 2 && trailingTanweenAlif);
     // One corpus spells ayah-final fathatan-before-alif as U+0657. Preserve its
     // ordinary dammatan meaning elsewhere; recognize it here only in this final shape.
+    // A source rasm can encode tanween-fatha as fatha + the explicit
+    // small-high-meem Iqlab mark before a written alif (e.g. 4:137). When
+    // that token is ayah-final, stopping there still triggers Madd Iwad;
+    // connected-reading Iqlab must not erase the pause rule.
+    const iqlabTanweenFatha =
+      u.diacritics.has(FATHA) &&
+      u.diacritics.has(IQLAB_MARK) &&
+      trailingTanweenAlif &&
+      i === units.length - 2;
     const finalFathatanVariant =
       u.diacritics.has(FATHATAN) ||
-      (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2);
+      (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2) ||
+      iqlabTanweenFatha;
     if (isLastWordOfAyah && atPauseEnd && finalFathatanVariant) {
       spans.push({ start: u.start, end: u.end, rule: 'madd_iwad' });
     }
