@@ -25,7 +25,7 @@ The spec test checks unique IDs, one-glyph Arabic letter sets, disjoint membersh
 
 The current same-word lookahead treated nūn sākinah followed by yāʾ/wāw inside the four traditional Izhar Mutlaq words as ordinary idghām. The Egyptian Ministry of Awqaf's article **أحكام النون الساكنة والتنوين** explicitly names **الدنيا، بنيان، صنوان، قنوان** as one-word exceptions that must remain clear. Its URL and locator are now included under the existing Izhar citation; the rule stays in the existing `izhar` identity to avoid an unsupported new practice-pool taxonomy.
 
-The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct.
+The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct. A separate corpus regression also guards the hamza-family follower set (`ء`, `أ`, `إ`, `ؤ`, `ئ`, `آ`) using the actual `مِنۡ أَهۡلِ` form in 98:1; those code points share the hamza sound even though their written shapes differ.
 
 ## Correctness and parity requirements
 
