@@ -75,6 +75,21 @@ export const TAJWEED_WORKS = Object.freeze({
       ar: 'مرجع مستخدَم هنا في خلاف عدد حروف قلقلة.',
     }),
   }),
+  'awqaf-noon-sakinah': Object.freeze({
+    author: Object.freeze({
+      en: 'Egyptian Ministry of Awqaf',
+      ar: 'وزارة الأوقاف المصرية',
+    }),
+    shortTitle: Object.freeze({
+      en: 'Rulings of Nūn Sākinah and Tanwīn',
+      ar: 'أحكام النون الساكنة والتنوين',
+    }),
+    note: Object.freeze({
+      en: 'Official Ministry of Awqaf explanation that names the four one-word Izhar Mutlaq exceptions: al-dunya, bunyan, sinwan, and qinwan.',
+      ar: 'شرح رسمي لوزارة الأوقاف المصرية يذكر الكلمات الأربع للإظهار المطلق: الدنيا، وبنيان، وصنوان، وقنوان.',
+    }),
+    url: 'https://awkafonline.gov.eg/content-sections/116/4995/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D9%86%D9%88%D9%86-%D8%A7%D9%84%D8%B3%D8%A7%D9%83%D9%86%D8%A9%D8%8C-%D9%88%D8%A7%D9%84%D8%AA%D9%86%D9%88%D9%8A%D9%86',
+  }),
 });
 
 /** workId -> the citation string a reader sees, per language. */
@@ -118,6 +133,13 @@ export const TAJWEED_SOURCES = Object.freeze({
     work: 'tuhfat-al-atfal',
     lines: '6-13',
     review: 'sourced',
+    also: Object.freeze([
+      Object.freeze({
+        work: 'awqaf-noon-sakinah',
+        lines: 'izhar mutlaq section',
+        review: 'sourced',
+      }),
+    ]),
     topic: 'nun-sakinah',
   }),
   iqlab: Object.freeze({
@@ -382,6 +404,7 @@ function localizeCitationLocator(locator, lang) {
   const chapter = /^ch\.\s*(\d+)$/i.exec(value);
   if (chapter) return `الفصل ${chapter[1]}`;
   if (/^qalqalah section$/i.test(value)) return 'باب القلقلة';
+  if (/^izhar mutlaq section$/i.test(value)) return 'فقرة الإظهار المطلق';
   return value;
 }
 
