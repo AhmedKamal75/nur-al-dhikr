@@ -121,9 +121,7 @@ test('Study Tray journey links derive context from the exact open ayah', () => {
   });
 });
 
-test(
-  'Tajweed Course renders a validated return path for direct study links',
-  () => {
+test('Tajweed Course renders a validated return path for direct study links', () => {
     const html = renderTajweedCourse(
       base({ from: 'mushaf', fromSurah: '2', fromAyah: '255' })
     );
