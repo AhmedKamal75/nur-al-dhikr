@@ -235,6 +235,7 @@ export function renderTajweedCourse(state) {
       </div>`;
 
   return `<div class="taj-course">
+    ${studyContextHTML(state)}
     <div class="taj-course__head">
       <h1>${escapeHTML(t('tajweedCourse.title', lang))}</h1>
       <div class="taj-course__overall" role="progressbar" aria-valuenow="${Math.round(overall.ratio * 100)}" aria-valuemin="0" aria-valuemax="100" aria-label="${escapeHTML(t('tajweedCourse.progress', lang))}">

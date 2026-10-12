@@ -2574,7 +2574,7 @@ job: (header names file only — no job line)
 
 job: Shared Qur'an study context. A related study surface may be entered from an exact ayah in the Mushaf. Keep that origin in the URL so the learner can always return to the text
 
-- exports: `studyContextOf` (function), `studyContextParams` (function), `mergeStudyContextParams` (function), `studyContextHTML` (function)
+- exports: `studyContextOf` (function), `studyContextParams` (function), `mergeStudyContextParams` (function), `wordStudyContextParams` (function), `studyContextHTML` (function)
 - emits: `navigate`
 - handles: —
 - i18n: `study.contextTitle`, `study.returnToAyah`
@@ -4572,6 +4572,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `wordGrammarSummary`: `js/domain/wordStudy.js`
 - `wordIrabLine`: `js/domain/wordStudy.js`
 - `wordSourcesHTML`: `js/views/tafsirPanel.js`
+- `wordStudyContextParams`: `js/views/studyContext.js`
 - `wordUnits`: `js/domain/tajweed.js`
 - `wordsUrls`: `js/domain/offline.js`
 - `worshipReview`: `js/domain/review.js`
@@ -7429,6 +7430,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `words`: `js/core/config/quran.js`, `js/domain/grammarDrill.js`, `js/services/shareCard.js`
 - `wordsourceshtml`: `js/views/tafsirPanel.js`
 - `wordstudy`: `js/domain/roots.js`
+- `wordstudycontextparams`: `js/views/studyContext.js`
 - `wordsurls`: `js/domain/offline.js`
 - `wordunits`: `js/domain/tajweed.js`
 - `work`: `js/core/router.js`, `js/domain/locations.js`, `js/domain/qada.js`

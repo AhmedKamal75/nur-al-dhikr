@@ -78,6 +78,7 @@ import {
 } from '../../views/tafsirPanel.js';
 import { buildTajweedSettingsPanel } from '../../views/tajweedSettings.js';
 import { TAJWEED_FAMILY_VARS, tajweedPrefsOf } from '../../domain/tajweed.js';
+import { wordStudyContextParams } from '../../views/studyContext.js';
 
 /** (v4.6.0) Push the user's family color overrides onto <html> as the
  *  --tw-* custom properties the .tajweed--* classes resolve through. No
@@ -717,7 +718,8 @@ export const clickHandlers = {
   // straight into the dedicated view for that root.
   'roots-open': (ds) => {
     closeModal();
-    go(VIEWS.ROOTS, { id: ds.root });
+    const state = store.getState();
+    go(VIEWS.ROOTS, { id: ds.root, ...wordStudyContextParams(state) });
   },
 
   // From a word-form group's ref chip into the classic reader at that ayah

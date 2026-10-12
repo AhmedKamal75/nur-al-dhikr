@@ -10,25 +10,75 @@ import { escapeHTML } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS } from '../core/config.js';
 
+/**
+ * Accept a reference only when the canonical metadata can prove that the
+ * ayah exists. A global 1–286 bound is insufficient: most surahs are shorter.
+ * Missing metadata fails closed; callers that support context deep links
+ * ensure this small metadata file has loaded before rendering the return link.
+ */
+function exactAyahReference(surah, ayah, meta) {
+  const s = Number(surah);
+  const a = Number(ayah);
+  if (!Number.isInteger(s) || s < 1 || s > 114 || !Number.isInteger(a) || a < 1) {
+    return null;
+  }
+  const record = Array.isArray(meta?.surahs) ? meta.surahs.find((item) => item.number === s) : null;
+  if (!Number.isInteger(record?.ayahCount) || a > record.ayahCount) return null;
+  return { surah: s, ayah: a };
+}
+
 export function studyContextOf(state) {
   const p = state?.activeParams || {};
   const from = p.from === 'mushaf' || p.from === 'quran' ? p.from : null;
-  const surah = Math.floor(Number(p.fromSurah));
-  const ayah = Math.floor(Number(p.fromAyah));
-  if (!from || !(surah >= 1 && surah <= 114) || !(ayah >= 1 && ayah <= 286)) return null;
-  return { from, surah, ayah };
+  const reference = exactAyahReference(p.fromSurah, p.fromAyah, state?.quran?.meta);
+  return from && reference ? { from, ...reference } : null;
 }
 
-export function studyContextParams(surah, ayah, from = 'mushaf') {
-  const s = Math.floor(Number(surah));
-  const a = Math.floor(Number(ayah));
-  if (!(s >= 1 && s <= 114) || !(a >= 1 && a <= 286)) return {};
-  return { from, fromSurah: String(s), fromAyah: String(a) };
+export function studyContextParams(surah, ayah, from = 'mushaf', meta = null) {
+  if (from !== 'mushaf' && from !== 'quran') return {};
+  const reference = exactAyahReference(surah, ayah, meta);
+  return reference
+    ? { from, fromSurah: String(reference.surah), fromAyah: String(reference.ayah) }
+    : {};
+}
+
+/**
+ * The inline Study Tray already has the exact ayah that opened it. Carry that
+ * source into its journey links even when the reader URL itself has no ayah
+ * context query parameters. Never infer an ayah from a Mushaf page number.
+ */
+function studyTrayContextOf(state) {
+  const from =
+    state?.activeView === VIEWS.MUSHAF
+      ? 'mushaf'
+      : state?.activeView === VIEWS.QURAN
+        ? 'quran'
+        : null;
+  const tray = state?.studyTray;
+  if (!from || !tray) return null;
+  const reference = exactAyahReference(tray.surah, tray.ayah, state?.quran?.meta);
+  return reference ? { from, ...reference } : null;
 }
 
 export function mergeStudyContextParams(params, state) {
-  const ctx = studyContextOf(state);
-  return ctx ? { ...params, ...studyContextParams(ctx.surah, ctx.ayah, ctx.from) } : params;
+  const ctx = studyContextOf(state) || studyTrayContextOf(state);
+  return ctx
+    ? { ...params, ...studyContextParams(ctx.surah, ctx.ayah, ctx.from, state?.quran?.meta) }
+    : params;
+}
+
+export function wordStudyContextParams(state) {
+  const from =
+    state?.activeView === VIEWS.MUSHAF
+      ? 'mushaf'
+      : state?.activeView === VIEWS.QURAN
+        ? 'quran'
+        : null;
+  if (from) {
+    const active = state?.activeWordStudy;
+    return active ? studyContextParams(active.surah, active.ayah, from, state?.quran?.meta) : {};
+  }
+  return mergeStudyContextParams({}, state);
 }
 
 export function studyContextHTML(state) {
