@@ -140,6 +140,41 @@ test('Madd Iwad recognises ayah-final Iqlab tanween-fatha across the two rasms (
   assert.ok(!midAyah.some((span) => span.rule === 'madd_iwad'));
 });
 
+test('Madd Muttasil recognises hamza-above encoded on a seated letter in both rasms', () => {
+  const cases = [
+    [10, 15, 210],
+    [16, 90, 277],
+    [20, 130, 321],
+    [30, 8, 405],
+    [30, 16, 406],
+    [42, 51, 488],
+  ];
+  for (const [surah, ayah, page] of cases) {
+    const corpusText = quranAyah(surah, ayah);
+    const mushafText = mushafAyah(page, surah, ayah);
+    assert.ok(corpusText, `missing Quran ${surah}:${ayah}`);
+    assert.ok(mushafText, `missing Mushaf ${surah}:${ayah}`);
+
+    const corpusWord = classifyAyahTajweed(corpusText).find((row) =>
+      row.word.includes('ٓيٕ')
+    );
+    const mushafWord = classifyAyahTajweed(mushafText).find((row) =>
+      row.word.includes('ٓئ')
+    );
+    assert.ok(corpusWord, `missing seated-letter hamza in Quran ${surah}:${ayah}`);
+    assert.ok(mushafWord, `missing explicit hamza in Mushaf ${surah}:${ayah}`);
+    assert.ok(
+      corpusWord.spans.some((span) => span.rule === 'madd_muttasil'),
+      `Quran ${surah}:${ayah} must classify the source hamza form as Madd Muttasil`
+    );
+    assert.ok(
+      mushafWord.spans.some((span) => span.rule === 'madd_muttasil'),
+      `Mushaf ${surah}:${ayah} must classify the explicit hamza form as Madd Muttasil`
+    );
+    assert.ok(!corpusWord.spans.some((span) => span.rule === 'madd_2'));
+  }
+});
+
 test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2:18', () => {
   const corpusText = quranAyah(2, 18);
   const mushafText = mushafAyah(4, 2, 18);

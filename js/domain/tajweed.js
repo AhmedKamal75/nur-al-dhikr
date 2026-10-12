@@ -858,7 +858,11 @@ export function classifyWordTajweed(
         (HAMZA_LETTERS.has(u.base) && u.diacritics.has(MADDA_ABOVE)) ||
         badalFromHamzaAbove;
       const isSilah = isHaKinayahSilahUnit(u, prev);
-      if (next && HAMZA_LETTERS.has(next.base)) {
+      // Some Uthmani source files encode hamza on a seated letter with a
+      // combining hamza-above mark (e.g. ...آيِٕ), while the Mushaf rasm
+      // uses a standalone hamza-bearing base (....آئِ). Both are hamza
+      // after the madd letter, so both require Madd Muttasil.
+      if (next && (HAMZA_LETTERS.has(next.base) || next.hamzaAboveStart !== undefined)) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
       } else if (
         next &&
