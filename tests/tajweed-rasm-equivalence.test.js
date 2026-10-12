@@ -236,3 +236,22 @@ test('the four Quranic Izhar Mutlaq word exceptions remain clear in the shipped 
     }
   }
 });
+
+test('noon-sakinah before a seated hamza is izhar in the shipped corpus (98:1)', () => {
+  const text = quranAyah(98, 1);
+  assert.ok(text);
+  assert.ok(text.includes('مِنۡ أَهۡلِ'), 'expected the checked-in source spelling');
+
+  const noonWord = classifyAyahTajweed(text).find((row) => row.word === 'مِنۡ');
+  assert.ok(noonWord, 'missing مِنۡ');
+  assert.ok(
+    noonWord.spans.some((span) => span.rule === 'izhar'),
+    'hamza-on-alif must resolve to Izhar in this cross-word context'
+  );
+  assert.ok(
+    !noonWord.spans.some((span) =>
+      ['idgham_ghunnah', 'idgham_no_ghunnah', 'ikhfa'].includes(span.rule)
+    ),
+    'hamza must not be classified as idgham or ikhfa'
+  );
+});
