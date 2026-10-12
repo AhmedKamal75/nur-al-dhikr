@@ -21,6 +21,12 @@ Only this group is marked `first-match`. The project intentionally preserves mul
 
 The spec test checks unique IDs, one-glyph Arabic letter sets, disjoint membership, citation/legend registry membership, and live classifier behavior for every branch. It is a contract test for architecture, not a scholarly proof that every letter set is correct.
 
+## First source-backed classification defect addressed
+
+The current same-word lookahead treated nūn sākinah followed by yāʾ/wāw inside the four traditional Izhar Mutlaq words as ordinary idghām. The Egyptian Ministry of Awqaf's article **أحكام النون الساكنة والتنوين** explicitly names **الدنيا، بنيان، صنوان، قنوان** as one-word exceptions that must remain clear. Its URL and locator are now included under the existing Izhar citation; the rule stays in the existing `izhar` identity to avoid an unsupported new practice-pool taxonomy.
+
+The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct.
+
 ## Correctness and parity requirements
 
 1. Treat the previous classifier output as a differential baseline only, not as a source of religious truth.
