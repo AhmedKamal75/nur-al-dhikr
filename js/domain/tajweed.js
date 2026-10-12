@@ -218,8 +218,34 @@ export const NOON_TANWEEN_RULE_GROUP = Object.freeze({
   ]),
 });
 
-/** Resolve one following base letter through the closed declarative group. */
-export function noonTanweenRuleForNextBase(base) {
+/**
+ * Sourced same-word exception: Izhar Mutlaq before yāʾ/wāw in the four
+ * Qur'anic words named by the Egyptian Ministry of Awqaf. The corpus writes
+ * bunyān with fathatan's written alif (بُنۡيَٰنٗا), so both unvowelled key
+ * forms are represented. This is deliberately a closed list, not a broad
+ * "same word means izhar" heuristic.
+ */
+export const NOON_TANWEEN_SAME_WORD_EXCEPTIONS = Object.freeze({
+  id: 'izhar_mutlaq',
+  rule: 'izhar',
+  source: 'awqaf-noon-sakinah',
+  nextBases: Object.freeze(['ي', 'و']),
+  wordSkeletons: Object.freeze(['الدنيا', 'بنيان', 'بنيانا', 'صنوان', 'قنوان']),
+});
+
+/** Resolve context first, then the closed mutually-exclusive follower group. */
+export function noonTanweenRuleForNextBase(
+  base,
+  { sameWord = false, wordSkeleton = null } = {}
+) {
+  if (
+    sameWord &&
+    NOON_TANWEEN_SAME_WORD_EXCEPTIONS.nextBases.includes(base) &&
+    NOON_TANWEEN_SAME_WORD_EXCEPTIONS.wordSkeletons.includes(wordSkeleton)
+  ) {
+    return NOON_TANWEEN_SAME_WORD_EXCEPTIONS.rule;
+  }
+
   for (const candidate of NOON_TANWEEN_RULE_GROUP.rules) {
     if (candidate.nextBases.includes(base)) return candidate.rule;
   }
@@ -366,10 +392,10 @@ export const TAJWEED_RULES = Object.freeze([
     id: 'izhar',
     color: null,
     family: 'plain',
-    name: { en: 'Izhar (clear noon)', ar: 'الإظهار الحلقي' },
+    name: { en: 'Izhar (clear noon)', ar: 'الإظهار الحلقي والمطلق' },
     desc: {
-      en: 'Noon sakinah or tanween is pronounced clearly before the throat letters.',
-      ar: 'إظهار النون الساكنة أو التنوين عند حروف الحلق.',
+      en: 'Noon sakinah/tanween is clear before the throat letters; the nūn also remains clear before yāʾ or wāw in the four one-word exceptions of izhar mutlaq: al-dunya, bunyan, sinwan, and qinwan.',
+      ar: 'تُظهر النون الساكنة أو التنوين عند حروف الحلق، وتُظهر النون قبل الياء أو الواو في الكلمات الأربع للإظهار المطلق: الدنيا، وبنيان، وصنوان، وقنوان.',
     },
   },
   {
@@ -690,6 +716,25 @@ function skeletonOf(word) {
 }
 
 /** One-letter prefix particles that can precede the article (و ف ب ك). */
+/**
+ * Minimal letter skeleton for the closed Izhar Mutlaq list. It strips only
+ * marks/ornaments and the dagger-alif presentation sign; it never rewrites
+ * the Qur'an string used for rendering or span offsets.
+ */
+function noonTanweenWordSkeleton(word) {
+  return [...String(word)]
+    .filter(
+      (ch) =>
+        !DIACRITIC_CHARS.has(ch) &&
+        ch !== TATWEEL &&
+        ch !== DAGGER_ALIF &&
+        !WORD_ORNAMENT_CHARS.has(ch) &&
+        !ORNAMENT_DIGITS.has(ch)
+    )
+    .map((ch) => (ch === ALIF_WASLA ? ALIF : ch))
+    .join('');
+}
+
 function isPrefixParticle(unit) {
   return (
     (unit.base === WAW || unit.base === '\u0641' || unit.base === BEH || unit.base === '\u0643') &&
@@ -842,7 +887,10 @@ export function classifyWordTajweed(
     } else if (noonSakinah || tanween) {
       const nb = next ? next.base : nextWordFirstBase;
       if (nb) {
-        const rule = noonTanweenRuleForNextBase(nb);
+        const rule = noonTanweenRuleForNextBase(nb, {
+          sameWord: Boolean(next),
+          wordSkeleton: next ? noonTanweenWordSkeleton(word) : null,
+        });
         if (rule) spans.push({ start: u.start, end: u.end, rule });
       }
     }
