@@ -37,40 +37,48 @@ Continue independently across waves/chats. Persist meaningful progress in GitHub
 
 Do not claim local Node/Chromium/device execution unless the evidence exists. Queued GitHub Actions are not passes.
 
-## DO NOT START ANY OTHER TAJWEED WORK — read this first
+## Tajweed rasm divergence — row 99 mostly fixed, residue and gates remain
 
-**Ledger row 99 is now the whole priority.** The Mushaf reader colours the same
-ayah differently from the Qur'an reader on **1,221 of 6,236 ayahs (19.6%)**, and
-per-word rule sets differ on 3,275 (52.5%). Measured by direct execution over all
-604 Mushaf pages, not estimated.
+**Update (v5.17.139).** Three branches attempted this fix. The single-commit
+mainline candidate was merged because it is the only one whose own alignment test
+passes — the `row99` branch fails with 6 unresolved exceptions and the longer branch
+leaves 6 test failures. Remeasured with `npm run audit:tajweed-rasm` over all 114
+surahs and all 604 Mushaf pages:
 
-The cause is identified and it is not a guess: **the classifier was written against
-the corpus rasm and has never been made rasm-agnostic.** `data/mushaf/*.json` and
-`data/quran/*.json` spell the same ayah differently in three systematic ways, and
-each rule condition keys on the corpus spelling only:
+|                              | before                      | after     |
+| ---------------------------- | --------------------------- | --------- |
+| ayahs classified identically | 5,015                       | **6,126** |
+| glyph-offset divergences     | one per tatweel+dagger-alif | **0**     |
 
-| Divergence         | Ayahs | Corpus spelling                            | Mushaf spelling                                     | Effect                                                                                        |
-| ------------------ | ----: | ------------------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Madd Badal lost    |   267 | `U+0623 U+0653` (hamza + madda-above)      | `U+0654 U+064E` (hamza-above + fatha) after tatweel | `madd_badal` silently falls through to `madd_2`                                               |
-| Madd Iwaḍ spurious |   716 | `U+0657` superscript tanween-alif          | `U+064B U+0627` full tanween + alif                 | ayah-final detection fires on the Mushaf spelling only                                        |
-| Iqlab boundary     |   260 | small-high-meem splits onto the next token | `U+06E2` attaches to the preceding word             | the noon-sakinah branch reads a different word                                                |
-| Span offsets       |     — | —                                          | `U+0640 U+0670` tatweel + dagger-alif               | `tokenizeUnits` skips tatweel but offsets are absolute, so the highlight lands one glyph left |
+Three rule conditions were the cause and are now corrected:
 
-Worked examples, all reproduced: 2:4 and 2:8 for Badal (`وَبِٱلۡأٓخِرَةِ` →
-`madd_badal`, `وَبِٱلْـَٔاخِرَةِ` → `madd_2`); 4:1, 4:2, 4:4 for Iwaḍ
-(`رَقِيبٗا` vs `رَقِيبًا`); 2:10 and 2:18 for Iqlab (`أَلِيمٌۢ`). Normalising the
-rasm does **not** close the gap — the divergence count is identical after
-normalisation — so this is a rule-condition problem, not only an orthography one.
+| Divergence         | Ayahs | Cause                                                                                                                                                        | Fix                                                                                                |
+| ------------------ | ----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Madd Badal lost    |   267 | corpus `U+0623 U+0653` (hamza + madda-above) vs Mushaf `U+0654 U+064E` (hamza-above + fatha) after tatweel; only the first matched the `signaled` madda test | both spellings recognised; span anchored to source glyphs, not the hamza letter cell               |
+| Madd Iwaḍ spurious |   716 | corpus ends with `U+0657`, Mushaf with `U+064B U+0627`; only the latter read as an ayah-final stop                                                           | inverted form honoured **only** in the final shape, so its dammatan meaning elsewhere is unchanged |
+| Iqlab boundary     |   260 | `U+06E2` honoured only beside a separate tanween mark, so the same boundary resolved differently by file                                                     | `U+06E2` is a signal in its own right                                                              |
 
-**Do not** start a scholarly review of the classifier against a reference, a new
-rule, a new colour, or a browser polish pass until row 99 is fixed. Any of those
-work would be measured against the corpus rasm and would silently be wrong in the
-Mushaf. Fix direction: make each rule condition accept every spelling of the same
-orthographic fact, normalise span offsets past skipped tatweel, and add a
-Mushaf-rasm corpus sweep beside the existing corpus one so the two spellings can
-never diverge again.
+**Residue — 110 ayahs, one family.** A tanween whose Iqlab mark is attached in one
+rasm and expressed structurally in the other still resolves differently
+(`أَبَدَۢا` vs `أَبَدًۢا`), yielding `madd_2` on one side only. This is the same class
+of defect as the three just fixed, so it is worth finishing rather than treating as
+new work.
 
-The ledger is now **95 rows**. Row 99 is filed, OPEN, with the evidence above.
+**Also new, and expected.** Reading `U+06E2` standalone adds four same-unit collision
+pairs (`ghunnah+iqlab` 5, `ghunnah+madd_iwad` 2, `iqlab+madd_2` 3, `iqlab+tafkhim` 41,
+plus `madd_246+madd_iwad` 1). These are the fix behaving correctly — two real
+phenomena on one written unit, the same class as the pre-existing `ghunnah+idgham_*`
+pairs — and `filterSpansByPrefs()` keeps both spans independently toggleable. The
+sweep's collision inventory is re-pinned at seven pairs.
+
+**Do not** start a scholarly review of the classifier against a reference, a new rule,
+a new colour, or a browser polish pass until the 110-ayah residue is closed and the
+Mushaf is verified in a browser. Run `npm run audit:tajweed-rasm` before making any
+cross-reader claim; CI now runs it on every change and publishes the JSON.
+
+**Still owed and not delivered:** real-browser verification of the recoloured Mushaf
+in EN/AR × light/dark × phone/desktop, and the scholarly review this feature has never
+had. The ledger is **95 rows**; row 99 stays OPEN.
 
 ## Current deep-review focus: Tajweed
 

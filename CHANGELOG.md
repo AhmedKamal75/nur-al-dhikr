@@ -1,4 +1,15 @@
-# v5.17.138 — the Tajweed integration branch, merged and made honest
+# v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
+
+- Lands the crew's fix for ledger row 99, from the single-commit mainline candidate (the other two branches attempting it fail their own alignment test).
+- Madd Badal is recognised in both the corpus spelling (`hamza + madda-above`) and the Mushaf spelling (`hamza-above + fatha`), so it no longer falls through to `madd_2` on 267 ayahs.
+- Madd Iwaḍ accepts both tanween-alif encodings, removing a spurious Iwaḍ from 716 Mushaf ayahs.
+- U+06E2 is read as an Iqlab signal in its own right rather than only beside a separate tanween mark.
+- Glyph-offset divergence between the two rasms is now 0. The same ayah is coloured identically in both readers on 6,126 of 6,236 ayahs, up from 5,015.
+- Practice pool regenerated from the corrected classifier; the corpus sweep's collision inventory re-pinned at seven pairs (the four new ones are the fix working, not new defects).
+- A CI job runs the cross-rasm diagnostic and publishes its JSON as an artifact.
+- 110 ayahs still differ, all one family of tanween/Iqlab attachment. Ledger row 99 stays OPEN. Religious corpus bytes unchanged.
+
+## v5.17.138 — the Tajweed integration branch, merged and made honest
 
 - Resolved the interrupted merge of `integration/tajweed-clean-mainline-2026-10-09` into main (8 conflicted files). Content-level disagreements kept both sides' changes; prettier-only disagreements took the house style; the three docs conflicts were reconciled by union with the superseded checkpoints kept as audit trail.
 - Alternate Tajweed citations are visible again: the runtime mirror had flattened each registry `also` record to a bare work id, silently dropping them from the Mushaf legend. Locators are localized (`ch. 5` → `الفصل 5`).

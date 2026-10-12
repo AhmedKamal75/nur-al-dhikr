@@ -44,9 +44,8 @@ Last verified: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromi
    worst thing in this repo, because it is the only failure nothing downstream
    can catch.
 
-
-    Prefer sophisticated simplicity: solve the whole problem with the smallest clear, testable
-    design. Never add complexity for its own sake; this complements and never relaxes existing rules.
+   Prefer sophisticated simplicity: solve the whole problem with the smallest clear, testable
+   design. Never add complexity for its own sake; this complements and never relaxes existing rules.
 
 ## 2. Architecture in one page
 
@@ -110,15 +109,19 @@ Last verified: **v5.17.138**, `npm run check` green (2870 pass / 0 fail), Chromi
 See `docs/OPEN-ISSUES.md` for the full list with owners. The ones most likely to
 be forgotten:
 
-- **TOP PRIORITY — Tajweed is wrong in the Mushaf reader (ledger row 99).** The
-  classifier was written against the `data/quran/*.json` rasm and is not
-  rasm-agnostic. The same ayah is coloured differently depending on which door the
-  reader entered, on **1,221 of 6,236 ayahs (19.6%)**. Three spellings cause it:
-  Madd Badal lost (267 ayahs — Mushaf writes `hamza-above + fatha`, corpus writes
-  `hamza + madda-above`, so Badal falls through to `madd_2`); Madd Iwaḍ spuriously
-  added (716); Iqlab crossing a word boundary (260). Normalising the rasm does not
-  close the gap. Until this is fixed, **any** Tajweed work measured against the
-  corpus is silently wrong in the Mushaf. Details in the handoff doc and row 99.
+- **Tajweed rasm divergence (ledger row 99) — mostly fixed, still open.** The
+  classifier was written against the `data/quran/*.json` rasm and was not
+  rasm-agnostic. **Lesson learned, now general: any rule that reads Arabic
+  orthography must accept every spelling the app ships, because the Mushaf and the
+  Qur'an corpus spell the same word differently and the reader picks which file it
+  came from.** v5.17.139 fixed three conditions (Madd Badal, Madd Iwaḍ, Iqlab).
+  Remeasured: identical classification on **6,126 of 6,236 ayahs**, up from 5,015;
+  glyph-offset divergence now 0. **110 ayahs still differ** — one family, a tanween
+  whose Iqlab mark is attached in one rasm and structural in the other. Still
+  outstanding: that residue, browser verification of the recoloured Mushaf in
+  EN/AR × light/dark × phone/desktop, and the scholarly review this has never had.
+  Run `npm run audit:tajweed-rasm` before trusting any cross-reader claim; CI now
+  runs it on every change.
 - **Scholar-gated, never machine-filled:** grades for `pdf-duas`, `daily-sunnah`,
   `reflections`; the 30 quranic items in simplified orthography (F5); whether
   Bismillah-as-interactive-text is acceptable; qalqalah colour convention; a

@@ -193,14 +193,30 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
     `practice pool coverage drifted from the classifier:\n  ${drift.join('\n  ')}`
   );
 
-  // Same-unit overlaps are not automatically classifier errors: tanween can
-  // share a written unit with shaddah-ghunnah. Pin the four observed collisions
-  // so any new pair forces deliberate review of the painter/inspector precedence.
+  // Same-unit overlaps are not automatically classifier errors: a tanween or an
+  // already-applied assimilation mark can share a written unit with
+  // shaddah-ghunnah, and a following madd can share one with the madd it
+  // lengthens. Pin every observed pair so any change forces deliberate review of
+  // the painter/inspector precedence.
+  //
+  // The four iqlab-bearing pairs below are new since the cross-rasm alignment
+  // (ledger row 99). They are the fix behaving correctly, not new defects: once
+  // U+06E2 is read as an iqlab signal in its own right rather than only
+  // alongside a separate tanween mark, words like صُمُّۢ and بَصِيرُۢ legitimately
+  // carry iqlab on the same unit as ghunnah/tafkhim. This is the same class as
+  // the pre-existing ghunnah+idgham_* pairs — two real phenomena, one written
+  // unit — and filterSpansByPrefs keeps both enabled spans so either can be
+  // toggled independently.
   assert.deepEqual(
     [...multiRulePairs.entries()].sort(([a], [b]) => a.localeCompare(b)),
     [
       ['ghunnah+idgham_ghunnah', 3],
       ['ghunnah+idgham_no_ghunnah', 1],
+      ['ghunnah+iqlab', 5],
+      ['ghunnah+madd_iwad', 2],
+      ['iqlab+madd_2', 3],
+      ['iqlab+tafkhim', 41],
+      ['madd_246+madd_iwad', 1],
     ],
     'same-unit Tajweed rule pairs changed; review rule overlap and rendering precedence'
   );

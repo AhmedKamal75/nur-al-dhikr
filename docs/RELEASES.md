@@ -1,9 +1,47 @@
-## v5.17.139 — cross-rasm Tajweed correctness (candidate)
+## v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
 
-- Corrected three spelling-dependent classifications reproduced from checked-in Qur'an and Mushaf text: Madd Badal (2:4/2:8), Madd Iwaḍ (4:1), and explicit Iqlab marker handling (2:18).
-- Added source-backed regressions and a full 114-surah / 604-page diagnostic aligned by canonical word positions.
-- Added a GitHub Actions audit job that publishes diagnostic JSON as a 30-day artifact. It reports remaining differences rather than presenting the report as scholarly ground truth.
-- Qur'an/Mushaf corpus bytes remain unchanged. The reported 1,221-ayah / 52.5% aggregate must be remeasured against this candidate; actual glyph-offset verification and scholarly review remain open. This candidate is not certified.
+Lands the crew's fix for ledger row 99. Three branches attempted it; the
+single-commit mainline candidate was adopted because it is the only one whose own
+alignment test passes.
+
+- **Madd Badal no longer depends on which rasm you read.** The Qur'an corpus spells
+  hamza+madd as `U+0623 U+0653` (alef-with-hamza + madda-above); the Mushaf spells it
+  `U+0654 U+064E` (hamza-above + fatha) after a tatweel. The old `signaled` test looked
+  only for madda-above, so Badal silently fell through to `madd_2` on 267 ayahs in the
+  Mushaf. Both spellings are now recognised, and the span is anchored to the untouched
+  source glyphs rather than to the hamza's letter cell.
+- **Madd Iwaḍ accepts both tanween-alif encodings.** The corpus ends these words with
+  `U+0657`, the Mushaf with a full `U+064B U+0627`. Only the latter read as an
+  ayah-final stop, which added a spurious Iwaḍ to 716 Mushaf ayahs. The inverted form
+  is now honoured **only** in the final shape, so its ordinary dammatan meaning
+  elsewhere is untouched.
+- **U+06E2 is read as an Iqlab signal in its own right.** It was previously honoured
+  only when a separate tanween mark accompanied it, so the same boundary resolved
+  differently depending on which file the ayah came from.
+- **Glyph offsets are now identical across both rasms** — 0 divergences, down from one
+  per Mushaf-only tatweel+dagger-alif sequence.
+- **The same ayah is now coloured the same way in both readers** on 6,126 of 6,236
+  ayahs, up from 5,015. Measured, not estimated: `npm run audit:tajweed-rasm` over all
+  114 surahs and all 604 Mushaf pages.
+- **The practice pool was regenerated** from the corrected classifier, so the
+  pool-coverage gate in `tests/tajweed-corpus-sweep.test.js` holds.
+- **The corpus sweep's collision inventory was re-pinned at seven pairs.** Four are new
+  and they are the fix working, not new defects: now that U+06E2 can stand alone,
+  words like `صُمُّۢ` and `بَصِيرُۢ` legitimately carry Iqlab on the same written unit as
+  ghunnah or tafkhim — the same two-phenomena-one-unit class the pre-existing
+  `ghunnah+idgham_*` pairs already documented. Both spans stay enabled and
+  independently toggleable.
+- **A CI job now runs the cross-rasm diagnostic** and publishes the JSON as a 30-day
+  artifact, so a future rasm divergence surfaces on every change instead of at review
+  time.
+- **Religious corpus bytes unchanged.** No Qur'an or Mushaf text was edited, no
+  citation was invented, and no row was closed by this release.
+
+**Still open, and not fixed here.** 110 ayahs still differ between the two readers,
+all of the same family: a tanween whose Iqlab mark is attached in one rasm and
+expressed structurally in the other (`أَبَدَۢا` vs `أَبَدًۢا`). Ledger row 99 stays
+OPEN for that residue plus browser and scholarly review; this release is not a
+certification that the classifier is correct.
 
 ## v5.17.138 — the Tajweed integration branch, merged and made honest
 

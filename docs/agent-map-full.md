@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 244 — data files: 27 — tests: 283
+- js modules: 244 — data files: 27 — tests: 284
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -7719,6 +7719,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/tajweed-course.test.js` — the course spine, and both progression modes Two things are being protected here. First, honesty. The course must not become a place where religious prose (pins: `../js/domain/tajweed.js`, `../js/domain/tajweedCourse.js`, `../js/domain/tajweedSources.js`)
 - `tests/tajweed-makharij.test.js` — the makharij/sifat spreads (v5.17.32) Handoff §8.4: render the 17/16/14 spread, never resolve it. There is no TAJ-09 ruling anywhere in the tree (docs/TRUSTED-SOURCES.md §1c and (pins: `../js/domain/tajweedCourse.js`, `../js/domain/tajweedSources.js`, `../js/views/tajweedCourseView.js`)
 - `tests/tajweed-quiz-modes.test.js` — (TAJ-QUIZ-01) unified quiz modes on the existing classifier engine (no second quiz system). Modes: find-spans (existing) / find-word / classify / review. (pins: `../js/domain/tajweed.js`, `../js/domain/tajweedPractice.js`)
+- `tests/tajweed-rasm-equivalence.test.js` — (no header comment) (pins: `../js/domain/tajweed.js`)
 - `tests/tajweed-sources.test.js` — no rule may be taught without a citation (v5.17.18) Tajweed rule definitions and study entries evolve; every user-facing rule description is religious teaching, so AGENTS.md §1.1a requires it to (pins: `../js/domain/tajweed.js`, `../js/domain/tajweedSources.js`)
 - `tests/tajweed-words.test.js` — word-tap pop-up integrity (bug 1) + engine coverage for corpus-attested marks and rules (bug 2). Bug 1: mushaf pages, classic docs, and grammar records tokenize (pins: `../js/domain/tajweed.js`, `../js/domain/wordStudy.js`, `../js/views/tafsirPanel.js`, `./helpers/seedMode.mjs`)
 - `tests/tajweed.test.js` — the deterministic Tajweed rule classifier. Test cases are chosen from well-known textbook examples so each assertion doubles as documentation of the rule it's checking. (pins: `../js/domain/tajweed.js`)

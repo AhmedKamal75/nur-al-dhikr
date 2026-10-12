@@ -28,7 +28,10 @@ function firstSpan(text, rule) {
 }
 
 test('Madd Badal recognizes both checked-in spellings in Quran 2:4 and 2:8', () => {
-  for (const [ayah, page] of [[4, 2], [8, 3]]) {
+  for (const [ayah, page] of [
+    [4, 2],
+    [8, 3],
+  ]) {
     const corpusText = quranAyah(2, ayah);
     const mushafText = mushafAyah(page, 2, ayah);
     assert.ok(corpusText, `missing Quran 2:${ayah}`);
@@ -60,7 +63,10 @@ test('Madd Iwad accepts the corpus final-tanween spelling contextually', () => {
   assert.equal(mushaf.text, 'بً');
 
   const midAyah = classifyWordTajweed('رَقِيبٗا', { isLastWordOfAyah: false });
-  assert.equal(midAyah.some((span) => span.rule === 'madd_iwad'), false);
+  assert.equal(
+    midAyah.some((span) => span.rule === 'madd_iwad'),
+    false
+  );
 });
 
 test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2:18', () => {
@@ -74,7 +80,13 @@ test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2
     ['Mushaf', mushafText],
   ]) {
     const firstWord = classifyAyahTajweed(text)[0];
-    assert.ok(firstWord.spans.some((span) => span.rule === 'ghunnah'), `${label} ghunnah`);
-    assert.ok(firstWord.spans.some((span) => span.rule === 'iqlab'), `${label} iqlab`);
+    assert.ok(
+      firstWord.spans.some((span) => span.rule === 'ghunnah'),
+      `${label} ghunnah`
+    );
+    assert.ok(
+      firstWord.spans.some((span) => span.rule === 'iqlab'),
+      `${label} iqlab`
+    );
   }
 });
