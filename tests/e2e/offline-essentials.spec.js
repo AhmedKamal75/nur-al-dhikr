@@ -146,10 +146,11 @@ test.describe('offline essentials', () => {
     await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
     await expect(page.locator('#main')).toContainText('إبقاء القرآن جاهزًا للعمل دون اتصال');
 
-    // Flip it and prove the preference survives a reload. The switch input is
-    // opacity:0 by design, so it needs force — the same call every other
-    // switch in this suite makes.
-    await sw.uncheck({ force: true });
+    // Drive the visible switch track, not the opacity:0 implementation
+    // input. This exercises the same label/native-change path a reader uses
+    // and avoids a forced click being retargeted through the overlaid track
+    // differently across viewport engines.
+    await page.locator('.offline-essentials--primary .switch__track').click();
     await expect(sw).not.toBeChecked({ timeout: 10000 });
     await page.reload();
     await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
