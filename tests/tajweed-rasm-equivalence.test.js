@@ -175,6 +175,22 @@ test('Madd Muttasil recognises hamza-above encoded on a seated letter in both ra
   }
 });
 
+test('Allah tafkhim respects final kasrah across yeh/alif-maqsurah rasms (49:1)', () => {
+  const corpusText = quranAyah(49, 1);
+  const mushafText = mushafAyah(515, 49, 1);
+  assert.ok(corpusText, 'missing Quran 49:1');
+  assert.ok(mushafText, 'missing Mushaf 49:1');
+  assert.ok(corpusText.includes('يَدَيِ'));
+  assert.ok(mushafText.includes('يَدَىِ'));
+
+  const corpusAllah = classifyAyahTajweed(corpusText).find((row) => row.word === 'ٱللَّهِ');
+  const mushafAllah = classifyAyahTajweed(mushafText).find((row) => row.word === 'ٱللَّهِ');
+  assert.ok(corpusAllah, 'missing Allah after the kasrah-ended source word in Quran rasm');
+  assert.ok(mushafAllah, 'missing Allah after the kasrah-ended source word in Mushaf rasm');
+  assert.ok(!corpusAllah.spans.some((span) => span.rule === 'tafkhim'));
+  assert.ok(!mushafAllah.spans.some((span) => span.rule === 'tafkhim'));
+});
+
 test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2:18', () => {
   const corpusText = quranAyah(2, 18);
   const mushafText = mushafAyah(4, 2, 18);

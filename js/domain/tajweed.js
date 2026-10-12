@@ -621,6 +621,10 @@ function previousWordHasHeavyFinalVowel(word) {
   const units = tokenizeUnits(word);
   const last = units.at(-1);
   if (!last) return false;
+  // A final explicit kasrah is the pronounced vowel, even when this rasm
+  // writes the carrier as alif-maqsurah (يَدَىِ) instead of yeh (يَدَيِ).
+  // Do not let the preceding letter's fatḥah override that light context.
+  if (last.diacritics.has(KASRA) || last.diacritics.has(KASRATAN)) return false;
   if (unitHasHeavyVowel(last)) return true;
 
   const beforeLast = units.at(-2);
