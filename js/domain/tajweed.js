@@ -982,9 +982,19 @@ export function classifyWordTajweed(
     const atPauseEnd = i === units.length - 1 || (i === units.length - 2 && trailingTanweenAlif);
     // One corpus spells ayah-final fathatan-before-alif as U+0657. Preserve its
     // ordinary dammatan meaning elsewhere; recognize it here only in this final shape.
+    // A source rasm can encode tanween-fatha as fatha + the explicit
+    // small-high-meem Iqlab mark before a written alif (e.g. 4:137). When
+    // that token is ayah-final, stopping there still triggers Madd Iwad;
+    // connected-reading Iqlab must not erase the pause rule.
+    const iqlabTanweenFatha =
+      u.diacritics.has(FATHA) &&
+      u.diacritics.has(IQLAB_MARK) &&
+      trailingTanweenAlif &&
+      i === units.length - 2;
     const finalFathatanVariant =
       u.diacritics.has(FATHATAN) ||
-      (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2);
+      (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2) ||
+      iqlabTanweenFatha;
     if (isLastWordOfAyah && atPauseEnd && finalFathatanVariant) {
       spans.push({ start: u.start, end: u.end, rule: 'madd_iwad' });
     }

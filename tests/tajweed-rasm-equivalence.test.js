@@ -123,6 +123,23 @@ test('ra with dammatan is heavy in both checked-in rasms (Quran 2:96)', () => {
   );
 });
 
+test('Madd Iwad recognises ayah-final Iqlab tanween-fatha across the two rasms (4:137)', () => {
+  const corpusText = quranAyah(4, 137);
+  const mushafText = mushafAyah(100, 4, 137);
+  assert.ok(corpusText, 'missing Quran 4:137');
+  assert.ok(mushafText, 'missing Mushaf 4:137');
+
+  const corpus = classifyAyahTajweed(corpusText).at(-1);
+  const mushaf = classifyAyahTajweed(mushafText).at(-1);
+  assert.equal(corpus.word, 'سَبِيلَۢا');
+  assert.equal(mushaf.word, 'سَبِيلًۢا');
+  assert.ok(corpus.spans.some((span) => span.rule === 'madd_iwad'));
+  assert.ok(mushaf.spans.some((span) => span.rule === 'madd_iwad'));
+
+  const midAyah = classifyWordTajweed('رَقِيبَۢا', { isLastWordOfAyah: false });
+  assert.ok(!midAyah.some((span) => span.rule === 'madd_iwad'));
+});
+
 test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2:18', () => {
   const corpusText = quranAyah(2, 18);
   const mushafText = mushafAyah(4, 2, 18);
