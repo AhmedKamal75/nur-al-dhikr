@@ -27,6 +27,8 @@ The current same-word lookahead treated nūn sākinah followed by yāʾ/wāw ins
 
 The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct. A separate corpus regression also guards the hamza-family follower set (`ء`, `أ`, `إ`, `ؤ`, `ئ`, `آ`) using the actual `مِنۡ أَهۡلِ` form in 98:1; those code points share the hamza sound even though their written shapes differ.
 
+The rule is intentionally explicit in both code and tests: standalone and seated hamza glyphs use the same follower family, and a combining hamza-above mark on a leading alif is carried across a word boundary as lookahead metadata rather than by rewriting source text.
+
 ## Correctness and parity requirements
 
 1. Treat the previous classifier output as a differential baseline only, not as a source of religious truth.
