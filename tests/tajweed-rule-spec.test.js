@@ -29,8 +29,8 @@ test('noon/tanween specification is explicit, immutable, and limited to exclusiv
 
     for (const base of entry.nextBases) {
       assert.equal([...base].length, 1, `expected one glyph for ${entry.rule}: ${base}`);
-      assert.match(base, /^\\p{L}$/u, `expected a letter, not a mark: ${base}`);
-      assert.match(base, /^\\p{Script=Arabic}$/u, `expected an Arabic letter: ${base}`);
+      assert.match(base, /^\p{L}$/u, `expected a letter, not a mark: ${base}`);
+      assert.match(base, /^\p{Script=Arabic}$/u, `expected an Arabic letter: ${base}`);
       assert.ok(
         !seenLetters.has(base),
         `${base} assigned to both ${seenLetters.get(base)} and ${entry.rule}`
