@@ -42,8 +42,26 @@ export function studyContextParams(surah, ayah, from = 'mushaf', meta = null) {
     : {};
 }
 
+/**
+ * The inline Study Tray already has the exact ayah that opened it. Carry that
+ * source into its journey links even when the reader URL itself has no ayah
+ * context query parameters. Never infer an ayah from a Mushaf page number.
+ */
+function studyTrayContextOf(state) {
+  const from =
+    state?.activeView === VIEWS.MUSHAF
+      ? 'mushaf'
+      : state?.activeView === VIEWS.QURAN
+        ? 'quran'
+        : null;
+  const tray = state?.studyTray;
+  if (!from || !tray) return null;
+  const reference = exactAyahReference(tray.surah, tray.ayah, state?.quran?.meta);
+  return reference ? { from, ...reference } : null;
+}
+
 export function mergeStudyContextParams(params, state) {
-  const ctx = studyContextOf(state);
+  const ctx = studyContextOf(state) || studyTrayContextOf(state);
   return ctx
     ? { ...params, ...studyContextParams(ctx.surah, ctx.ayah, ctx.from, state?.quran?.meta) }
     : params;

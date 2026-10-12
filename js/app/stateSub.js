@@ -325,7 +325,9 @@ export function onStateChange(stateArg, action) {
     // Direct related-study links must validate their return ayah against the
     // canonical counts, even when no reader has been opened in this session.
     if (
-      (state.activeView === VIEWS.ROOTS || state.activeView === VIEWS.MUTASHABIHAT) &&
+      (state.activeView === VIEWS.ROOTS ||
+        state.activeView === VIEWS.MUTASHABIHAT ||
+        state.activeView === VIEWS.TAJWEED_COURSE) &&
       (state.activeParams?.from === 'mushaf' || state.activeParams?.from === 'quran') &&
       !state.quran.meta &&
       !state.loadErrors?.['quran-meta']

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { buildHash } from '../js/core/router.js';
+import { renderTajweedCourse } from '../js/views/tajweedCourseView.js';
 import {
   studyContextOf,
   studyContextParams,
@@ -69,6 +70,68 @@ test('study context parameters preserve origin and can be merged into route para
     buildHash('roots', merged),
     '#/roots/%D9%86%D8%B5%D8%B1?from=mushaf&fromSurah=36&fromAyah=12'
   );
+});
+
+test('Study Tray journey links derive context from the exact open ayah', () => {
+  const mushaf = {
+    ...base({ page: '42' }),
+    activeView: 'mushaf',
+    studyTray: { surah: '2', ayah: '255', word: 3 },
+  };
+  assert.deepEqual(mergeStudyContextParams({ id: 'نصر' }, mushaf), {
+    id: 'نصر',
+    from: 'mushaf',
+    fromSurah: '2',
+    fromAyah: '255',
+  });
+  const quran = {
+    ...base({ id: '2' }),
+    activeView: 'quran',
+    studyTray: { surah: '2', ayah: '255', word: 3 },
+  };
+  assert.deepEqual(mergeStudyContextParams({ id: 'نصر' }, quran), {
+    id: 'نصر',
+    from: 'quran',
+    fromSurah: '2',
+    fromAyah: '255',
+  });
+  assert.deepEqual(
+    mergeStudyContextParams(
+      { id: 'نصر' },
+      { ...mushaf, studyTray: { surah: '1', ayah: '8' } }
+    ),
+    { id: 'نصر' },
+    'invalid tray references must not create a study context'
+  );
+  assert.deepEqual(
+    mergeStudyContextParams({ id: 'نصر' }, { ...mushaf, studyTray: null }),
+    { id: 'نصر' },
+    'a page-only Mushaf route must not guess which ayah was open'
+  );
+  const relatedStudy = {
+    ...base({ from: 'mushaf', fromSurah: '2', fromAyah: '255' }),
+    activeView: 'roots',
+    studyTray: { surah: '3', ayah: '7' },
+  };
+  assert.deepEqual(mergeStudyContextParams({ id: 'نصر' }, relatedStudy), {
+    id: 'نصر',
+    from: 'mushaf',
+    fromSurah: '2',
+    fromAyah: '255',
+  });
+});
+
+test('Tajweed Course renders a validated return path for direct study links', () => {
+  const html = renderTajweedCourse(
+    base({ from: 'mushaf', fromSurah: '2', fromAyah: '255' })
+  );
+  assert.match(html, /class="study-context"/);
+  assert.match(html, /Return to ayah 2:255/);
+  assert.ok(html.includes('#/mushaf?s=2&ay=255'));
+  const invalid = renderTajweedCourse(
+    base({ from: 'mushaf', fromSurah: '1', fromAyah: '8' })
+  );
+  assert.doesNotMatch(invalid, /class="study-context"/);
 });
 
 test('word-root navigation preserves an exact source ayah', () => {
