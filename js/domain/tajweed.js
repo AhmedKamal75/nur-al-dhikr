@@ -294,30 +294,6 @@ export function noonTanweenRuleForNextBase(
   return null;
 }
 
-/**
- * Declarative decision table for the mutually exclusive Meem Sakinah
- * follower family. The default is Izhar Shafawi for any present following
- * base that is neither mīm nor bāʾ; no following base means no decision.
- */
-export const MEEM_SAKINAH_RULE_GROUP = Object.freeze({
-  id: 'meem_sakinah',
-  mode: 'explicit-with-default',
-  rules: Object.freeze([
-    Object.freeze({ rule: 'idgham_shafawi', nextBases: Object.freeze(['م']) }),
-    Object.freeze({ rule: 'ikhfa_shafawi', nextBases: Object.freeze(['ب']) }),
-  ]),
-  defaultRule: 'izhar_shafawi',
-});
-
-/** Resolve the Meem Sakinah follower rule without changing source text. */
-export function meemSakinahRuleForNextBase(base) {
-  if (!base) return null;
-  for (const candidate of MEEM_SAKINAH_RULE_GROUP.rules) {
-    if (candidate.nextBases.includes(base)) return candidate.rule;
-  }
-  return MEEM_SAKINAH_RULE_GROUP.defaultRule;
-}
-
 /* Meem-sakinah lookahead groups (v3.7). Exactly one letter decides each:
  * before م the two merge entirely (idgham mutamathilayn, with ghunnah);
  * before ب the meem hides softly (ikhfa shafawi); every other letter reads
@@ -1105,8 +1081,9 @@ export function classifyWordTajweed(
       (u.diacritics.has(SUKUN) || u.diacritics.has(SUKUN_ALT) || u.diacritics.size === 0)
     ) {
       const nb = next ? next.base : nextWordFirstBase;
-      const rule = meemSakinahRuleForNextBase(nb);
-      if (rule) spans.push({ start: u.start, end: u.end, rule });
+      if (nb === MEEM) spans.push({ start: u.start, end: u.end, rule: 'idgham_shafawi' });
+      else if (nb === BEH) spans.push({ start: u.start, end: u.end, rule: 'ikhfa_shafawi' });
+      else if (nb) spans.push({ start: u.start, end: u.end, rule: 'izhar_shafawi' });
     }
 
     // Tafkhim on the lām of lafẓ al-jalālah is context-sensitive:
