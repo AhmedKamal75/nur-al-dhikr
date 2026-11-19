@@ -182,6 +182,32 @@ test('Madd Munfasil resolves waw plus combining hamza-below without rewriting so
   assert.deepEqual(firstSpan(unmarkedText, 'madd_2'), precomposed);
 });
 
+test('Quran 15:53 and Mushaf page 265 carry the same consonantal word', () => {
+  const corpusText = quranAyah(15, 53);
+  const mushafText = mushafAyah(265, 15, 53);
+  assert.ok(corpusText, 'missing Quran 15:53');
+  assert.ok(mushafText, 'missing Mushaf 15:53');
+  const corpusWord = corpusText.split(/\s+/u).find((word) => word.startsWith('عَلِيم'));
+  const mushafWord = mushafText.split(/\s+/u).find((word) => word.startsWith('عَلِيم'));
+  assert.equal(corpusWord, 'عَلِيمٖ');
+  assert.equal(mushafWord, 'عَلِيمٍۢ');
+  assert.equal(corpusWord.replace(/\p{M}/gu, ''), mushafWord.replace(/\p{M}/gu, ''));
+  assert.ok(!mushafText.includes('غَلِيمٍ'), 'the former repair typo must not return');
+});
+
+test('Quran 17:7 preserves the documented small-waw orthographic difference', () => {
+  const corpusText = quranAyah(17, 7);
+  const mushafText = mushafAyah(282, 17, 7);
+  assert.ok(corpusText, 'missing Quran 17:7');
+  assert.ok(mushafText, 'missing Mushaf 17:7');
+  const corpusWord = corpusText.split(/\s+/u).find((word) => word.startsWith('لِيَسُ'));
+  const mushafWord = mushafText.split(/\s+/u).find((word) => word.startsWith('لِيَسُ'));
+  assert.equal(corpusWord, 'لِيَسُـُٔواْ');
+  assert.equal(mushafWord, 'لِيَسُـۥٓـُٔوا۟');
+  assert.ok([...mushafWord].some((character) => character.codePointAt(0) === 0x06e5));
+  assert.notEqual(corpusWord, mushafWord, 'do not erase the source rasm distinction');
+});
+
 test('Quran 56:23 preserves its terminal waw plus combining hamza-below spelling', () => {
   const corpusText = quranAyah(56, 23);
   const mushafText = mushafAyah(535, 56, 23);

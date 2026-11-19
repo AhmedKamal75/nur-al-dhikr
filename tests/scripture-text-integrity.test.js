@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 const dataDir = new URL('../data/', import.meta.url);
@@ -29,10 +29,17 @@ test('scripture corpora contain no replacement or control characters', () => {
   assert.deepEqual(offenders, []);
 });
 
-test('every shipped scripture gzip twin matches its plain JSON bytes', () => {
+test('generated scripture gzip twins match their plain JSON bytes', (t) => {
+  const packaged = files.filter((file) => existsSync(new URL(`${file}.gz`, dataDir)));
+  if (packaged.length === 0) {
+    t.skip('gzip twins are generated release artifacts and are absent from a clean source checkout');
+    return;
+  }
   for (const file of files) {
+    const packedUrl = new URL(`${file}.gz`, dataDir);
+    assert.ok(existsSync(packedUrl), `${file}.gz is missing; run npm run compress-data`);
     const plain = readFileSync(new URL(file, dataDir));
-    const packed = gunzipSync(readFileSync(new URL(`${file}.gz`, dataDir)));
+    const packed = gunzipSync(readFileSync(packedUrl));
     assert.deepEqual(packed, plain, `${file}.gz is stale`);
   }
 });
@@ -47,7 +54,7 @@ test('repaired Mushaf verses carry the expected verified words', () => {
     '136.json': ['6:73', 'ٱلصُّورِ'],
     '156.json': ['7:50', 'ٱلۡمَآءِ'],
     '243.json': ['12:69', 'إِنِّىٓ'],
-    '265.json': ['15:53', 'غَلِيمٍ'],
+    '265.json': ['15:53', 'عَلِيمٍۢ'],
     '309.json': ['19:58', 'وَمِن'],
     '485.json': ['42:21', 'لَهُم'],
     '524.json': ['52:18', 'وَوَقَىٰهُمْ'],

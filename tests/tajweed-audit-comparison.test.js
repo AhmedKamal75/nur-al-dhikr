@@ -89,18 +89,15 @@ test('does not infer offsets from unmatched span prefixes when cardinality diffe
   const mushaf = [{ rule: 'madd_2', letterOrdinal: 5 }];
 
   assert.deepEqual(compareSharedRuleSpanOffsets(quran, mushaf), []);
-  assert.deepEqual(
-    compareSharedRuleSpanCounts(quran, mushaf),
-    [
-      {
-        rule: 'madd_2',
-        quranCount: 2,
-        mushafCount: 1,
-        quranOnly: 1,
-        mushafOnly: 0,
-      },
-    ]
-  );
+  assert.deepEqual(compareSharedRuleSpanCounts(quran, mushaf), [
+    {
+      rule: 'madd_2',
+      quranCount: 2,
+      mushafCount: 1,
+      quranOnly: 1,
+      mushafOnly: 0,
+    },
+  ]);
 });
 
 test('compares occurrence offsets only when rule span counts match', () => {
