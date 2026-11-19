@@ -158,9 +158,11 @@ test('Meem Sakinah uses its explicit exceptions and sourced-rule fallback', () =
   ]) {
     assert.equal(meemSakinahRuleForNextBase(nextBase), expectedRule);
     const spans = classifyWordTajweed('مْ', { nextWordFirstBase: nextBase });
+    const matchingRules = spans
+      .filter(({ rule }) => ['idgham_shafawi', 'ikhfa_shafawi', 'izhar_shafawi'].includes(rule))
+      .map(({ rule }) => rule);
     assert.deepEqual(
-      spans.filter(({ rule }) => ['idgham_shafawi', 'ikhfa_shafawi', 'izhar_shafawi'].includes(rule))
-        .map(({ rule }) => rule),
+      matchingRules,
       [expectedRule],
       `classifier disagreed with the Meem Sakinah table before ${nextBase}`
     );
