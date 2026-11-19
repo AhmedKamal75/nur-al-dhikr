@@ -41,7 +41,9 @@ test('ORTH-01 mushaf orthography sweep: no overflow, screenshots kept', async ({
       );
       await expect(toggle, 'tajweed toggle renders').toBeAttached({ timeout: 15000 });
       const toggleHandle = await toggle.elementHandle();
-      const switchTrack = page.locator('.mushaf-sheet [data-key="tajweedColoring"] + .switch__track');
+      const switchTrack = page.locator(
+        '.mushaf-sheet [data-key="tajweedColoring"] + .switch__track'
+      );
       if ((await toggle.isChecked()) === tajweed) await switchTrack.click();
       await switchTrack.click();
       if (tajweed) await expect(toggle).toBeChecked();

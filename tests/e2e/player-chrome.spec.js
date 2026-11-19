@@ -51,9 +51,10 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
   await playButton.click();
   await expect(page.locator('.player-bar--recite')).toBeVisible({ timeout: 20000 });
   await page.waitForFunction(
-    () => window.__nurAlDhikrMediaElements?.some(
-      (audio) => audio.__key && !audio.paused && !audio.ended && audio.currentTime >= 0.25
-    ),
+    () =>
+      window.__nurAlDhikrMediaElements?.some(
+        (audio) => audio.__key && !audio.paused && !audio.ended && audio.currentTime >= 0.25
+      ),
     null,
     { timeout: 20000 }
   );
@@ -79,9 +80,10 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
   ).toHaveAttribute('aria-label', /Play|تشغيل/, { timeout: 10000 });
   await page.keyboard.press(' ');
   await page.waitForFunction(
-    () => window.__nurAlDhikrMediaElements?.some(
-      (audio) => audio.__key && !audio.paused && !audio.ended && audio.currentTime >= 0.25
-    ),
+    () =>
+      window.__nurAlDhikrMediaElements?.some(
+        (audio) => audio.__key && !audio.paused && !audio.ended && audio.currentTime >= 0.25
+      ),
     null,
     { timeout: 20000 }
   );
