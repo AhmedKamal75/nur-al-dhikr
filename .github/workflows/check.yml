@@ -24,7 +24,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Capture Prettier formatting diff
-        if: always()
+        if: always() && matrix.node == 20
         run: |
           for file in js/domain/tajweed.js tests/tajweed-rasm-equivalence.test.js tests/tajweed-rule-spec.test.js; do
             mkdir -p "/tmp/tajweed-prettier/original/$(dirname "$file")"
@@ -35,7 +35,7 @@ jobs:
             diff -u "/tmp/tajweed-prettier/original/$file" "/tmp/tajweed-prettier/formatted/$file" > "/tmp/tajweed-prettier/diffs/$file.diff" || true
           done
       - name: Upload Prettier formatting evidence
-        if: always()
+        if: always() && matrix.node == 20
         uses: actions/upload-artifact@v4
         with:
           name: tajweed-prettier-format
