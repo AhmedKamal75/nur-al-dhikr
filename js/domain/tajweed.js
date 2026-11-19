@@ -124,6 +124,7 @@ function hamzaAwareBase(base, hasHamzaAbove = false, hasHamzaBelow = false) {
   if (base === YEH && hasHamzaBelow) return '\u0626';
   return base;
 }
+
 const SUN_LETTERS = new Set([
   '\u062A',
   '\u062B',
@@ -206,8 +207,14 @@ export const NOON_TANWEEN_RULE_GROUP = Object.freeze({
   mode: 'first-match',
   rules: Object.freeze([
     Object.freeze({ rule: 'iqlab', nextBases: Object.freeze(['ب']) }),
-    Object.freeze({ rule: 'idgham_ghunnah', nextBases: Object.freeze(['ي', 'ن', 'م', 'و']) }),
-    Object.freeze({ rule: 'idgham_no_ghunnah', nextBases: Object.freeze(['ل', 'ر']) }),
+    Object.freeze({
+      rule: 'idgham_ghunnah',
+      nextBases: Object.freeze(['ي', 'ن', 'م', 'و']),
+    }),
+    Object.freeze({
+      rule: 'idgham_no_ghunnah',
+      nextBases: Object.freeze(['ل', 'ر']),
+    }),
     Object.freeze({
       rule: 'ikhfa',
       nextBases: Object.freeze([
@@ -1012,7 +1019,11 @@ export function classifyWordTajweed(
           )
         )
       ) {
-        spans.push({ start: u.start, end: u.end, rule: isSilah ? 'madd_silah' : 'madd_munfasil' });
+        spans.push({
+          start: u.start,
+          end: u.end,
+          rule: isSilah ? 'madd_silah' : 'madd_munfasil',
+        });
       } else if (isSilah) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
       } else if (signaled) {
