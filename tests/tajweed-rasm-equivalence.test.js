@@ -224,9 +224,7 @@ test('Quran 56:23 preserves its terminal waw plus combining hamza-below spelling
     const hamzaSeatStart = word === corpusWord ? word.indexOf('وٕ') : word.lastIndexOf('ؤ');
     assert.ok(hamzaSeatStart >= 0, `missing terminal hamza seat in ${word}`);
     assert.ok(
-      !row.spans.some(
-        ({ start, rule }) => start === hamzaSeatStart && rule.startsWith('madd_')
-      ),
+      !row.spans.some(({ start, rule }) => start === hamzaSeatStart && rule.startsWith('madd_')),
       'a waw bearing hamza-below is a hamza seat, not an independent madd carrier'
     );
   }
