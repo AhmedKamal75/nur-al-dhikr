@@ -93,7 +93,7 @@ const missingFromQuran = [...mushaf.keys()].filter((key) => !quran.has(key));
 const mismatchSamples = [];
 const offsetSamples = [];
 const wordCountMismatchSamples = [];
-const surfaceSkeletonMismatchSamples = [];
+const surfaceSkeletonMismatchDetails = [];
 const ruleDeltas = new Map();
 const affectedAyahs = new Set();
 const unalignedAyahs = new Set();
@@ -134,17 +134,18 @@ for (const [key, text] of quran) {
       surfaceSkeletonMismatches += 1;
       unalignedWordPairs += 1;
       unalignedAyahs.add(key);
-      if (surfaceSkeletonMismatchSamples.length < SAMPLE_LIMIT) {
-        surfaceSkeletonMismatchSamples.push({
-          key,
-          page: pageRecord.page,
-          wordIndex: i + 1,
-          quranWord: a.raw,
-          mushafWord: b.raw,
-          quranSkeleton: a.skeleton,
-          mushafSkeleton: b.skeleton,
-        });
-      }
+      // Keep every raw unaligned pair in the artifact. Unlike ordinary
+      // examples, alignment failures are the audit inventory itself and
+      // must never be truncated by SAMPLE_LIMIT.
+      surfaceSkeletonMismatchDetails.push({
+        key,
+        page: pageRecord.page,
+        wordIndex: i + 1,
+        quranWord: a.raw,
+        mushafWord: b.raw,
+        quranSkeleton: a.skeleton,
+        mushafSkeleton: b.skeleton,
+      });
       // Same-index tokens with different letter skeletons are not yet a
       // defensible semantic pair. Preserve the raw pair above, but do not
       // count rule-set or span deltas until a reviewed alignment exists.
@@ -220,7 +221,7 @@ console.log(JSON.stringify({
   samples: {
     ruleMismatches: mismatchSamples, offsetDivergences: offsetSamples,
     wordCountMismatchAyahs: wordCountMismatchSamples,
-    surfaceSkeletonMismatches: surfaceSkeletonMismatchSamples,
+    surfaceSkeletonMismatches: surfaceSkeletonMismatchDetails,
     missingFromMushaf: missingFromMushaf.slice(0, SAMPLE_LIMIT),
     missingFromQuran: missingFromQuran.slice(0, SAMPLE_LIMIT),
     duplicateQuran: duplicateQuran.slice(0, SAMPLE_LIMIT),
