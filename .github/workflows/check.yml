@@ -19,6 +19,20 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
+      - name: Capture Prettier-formatted Tajweed files
+        if: always()
+        run: |
+          mkdir -p /tmp/tajweed-prettier
+          npx prettier js/domain/tajweed.js > /tmp/tajweed-prettier/tajweed.js
+          npx prettier tests/tajweed-rasm-equivalence.test.js > /tmp/tajweed-prettier/tajweed-rasm-equivalence.test.js
+          npx prettier tests/tajweed-rule-spec.test.js > /tmp/tajweed-prettier/tajweed-rule-spec.test.js
+      - name: Upload Prettier formatting evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tajweed-prettier-format
+          path: /tmp/tajweed-prettier/
+          retention-days: 1
       - run: npm run compress-data
       - run: npm run check
 
