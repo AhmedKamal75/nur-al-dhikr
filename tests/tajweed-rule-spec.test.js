@@ -61,32 +61,27 @@ test('Izhar Mutlaq exception list is closed, sourced, and separate from ordinary
   assert.equal(NOON_TANWEEN_SAME_WORD_EXCEPTIONS.source, 'awqaf-noon-sakinah');
   assert.ok(Object.isFrozen(NOON_TANWEEN_SAME_WORD_EXCEPTIONS));
   assert.ok(Object.isFrozen(NOON_TANWEEN_SAME_WORD_EXCEPTIONS.wordSkeletons));
-  assert.deepEqual(
-    NOON_TANWEEN_SAME_WORD_EXCEPTIONS.nextBases,
-    ['ي', 'و']
+  assert.deepEqual(NOON_TANWEEN_SAME_WORD_EXCEPTIONS.nextBases, ['ي', 'و']);
+  assert.ok(
+    TAJWEED_SOURCES.izhar.also.some(
+      (citation) => citation.work === NOON_TANWEEN_SAME_WORD_EXCEPTIONS.source
+    )
   );
-  assert.ok(TAJWEED_SOURCES.izhar.also.some((citation) =>
-    citation.work === NOON_TANWEEN_SAME_WORD_EXCEPTIONS.source
-  ));
   assert.ok(TAJWEED_WORKS[NOON_TANWEEN_SAME_WORD_EXCEPTIONS.source].url);
 
-  for (const [word, nextBase] of [
-    ['ٱلدُّنۡيَا', 'ي'],
-    ['بُنۡيَٰنٗا', 'ي'],
-    ['صِنۡوَانٞ', 'و'],
-    ['قِنۡوَانٞ', 'و'],
-  ]) {
+  const fixtures = [
+    { word: 'ٱلدُّنۡيَا', nextBase: 'ي', wordSkeleton: 'الدنيا' },
+    { word: 'بُنۡيَٰنٗا', nextBase: 'ي', wordSkeleton: 'بنيانا' },
+    { word: 'صِنۡوَانٞ', nextBase: 'و', wordSkeleton: 'صنوان' },
+    { word: 'قِنۡوَانٞ', nextBase: 'و', wordSkeleton: 'قنوان' },
+  ];
+
+  for (const { word, nextBase, wordSkeleton } of fixtures) {
     const spans = classifyWordTajweed(word);
     assert.ok(spans.some(({ rule }) => rule === 'izhar'), word);
     assert.ok(!spans.some(({ rule }) => rule === 'idgham_ghunnah'), word);
     assert.equal(
-      noonTanweenRuleForNextBase(nextBase, {
-        sameWord: true,
-        wordSkeleton:
-          word === 'ٱلدُّنۡيَا' ? 'الدنيا' :
-          word === 'بُنۡيَٰنٗا' ? 'بنيانا' :
-          word === 'صِنۡوَانٞ' ? 'صنوان' : 'قنوان',
-      }),
+      noonTanweenRuleForNextBase(nextBase, { sameWord: true, wordSkeleton }),
       'izhar'
     );
   }
