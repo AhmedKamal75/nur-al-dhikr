@@ -34,7 +34,7 @@ const DAGGER_ALIF = '\u0670';
 const TATWEEL = '\u0640';
 const MADDA_ABOVE = '\u0653';
 const HAMZA_ABOVE_MARK = '\u0654'; // combining hamza above; Uthmani orthography may use a mark instead of a precomposed letter
-const HAMZA_BELOW_MARK = '\u0655'; // combining hamza below on a yeh carrier (e.g. the Quran corpus's ...يِٕ spelling)
+const HAMZA_BELOW_MARK = '\u0655'; // combining hamza below on a seated carrier (e.g. yeh or waw)
 const IQLAB_MARK = '\u06E2'; // small high meem isolated form — marks a noon/tanween that has already undergone iqlab in the text itself
 const IQLAB_MARK_LOW = '\u06ED'; // small low meem — the same iqlab mark in a lower position
 const MADDA_SMALL_HIGH = '\u06E4'; // small high madda — the madda mark in its raised spelling (e.g. on a silah waw)
@@ -124,7 +124,7 @@ function hamzaAwareBase(base, hasHamzaAbove = false, hasHamzaBelow = false) {
     if (hasHamzaAbove) return '\u0623';
     if (hasHamzaBelow) return '\u0625';
   }
-  if (base === WAW && hasHamzaAbove) return '\u0624';
+  if (base === WAW && (hasHamzaAbove || hasHamzaBelow)) return '\u0624';
   if (base === YEH && (hasHamzaAbove || hasHamzaBelow)) return '\u0626';
   return base;
 }
@@ -243,19 +243,7 @@ export const NOON_TANWEEN_RULE_GROUP = Object.freeze({
       rule: 'izhar',
       // Hamza is phonetic, not a code-point identity: include its common
       // seated spellings as well as the standalone form in Uthmani text.
-      nextBases: Object.freeze([
-        'ء',
-        'أ',
-        'إ',
-        'ؤ',
-        'ئ',
-        'آ',
-        'ه',
-        'ع',
-        'ح',
-        'غ',
-        'خ',
-      ]),
+      nextBases: Object.freeze(['ء', 'أ', 'إ', 'ؤ', 'ئ', 'آ', 'ه', 'ع', 'ح', 'غ', 'خ']),
     }),
   ]),
 });
@@ -276,10 +264,7 @@ export const NOON_TANWEEN_SAME_WORD_EXCEPTIONS = Object.freeze({
 });
 
 /** Resolve context first, then the closed mutually-exclusive follower group. */
-export function noonTanweenRuleForNextBase(
-  base,
-  { sameWord = false, wordSkeleton = null } = {}
-) {
+export function noonTanweenRuleForNextBase(base, { sameWord = false, wordSkeleton = null } = {}) {
   if (
     sameWord &&
     NOON_TANWEEN_SAME_WORD_EXCEPTIONS.nextBases.includes(base) &&
@@ -676,11 +661,7 @@ function isMaddLetter(unit, prev) {
   // the explicit small-high-meem iqlab mark (e.g. 2:95). That alif is part
   // of tanween orthography, not a natural-madd vowel. The corresponding
   // fathatan spelling is already excluded by the preceding vowel check.
-  if (
-    unit.base === ALIF &&
-    prev?.diacritics.has(FATHA) &&
-    prev.diacritics.has(IQLAB_MARK)
-  ) {
+  if (unit.base === ALIF && prev?.diacritics.has(FATHA) && prev.diacritics.has(IQLAB_MARK)) {
     return false;
   }
   if ((unit.base === ALIF || unit.base === ALIF_WASLA) && prev?.diacritics.has(FATHA)) return true;
@@ -1016,11 +997,7 @@ export function classifyWordTajweed(
       } else if (
         !next &&
         HAMZA_LETTERS.has(
-          hamzaAwareBase(
-            nextWordFirstBase,
-            nextWordFirstHasHamzaAbove,
-            nextWordFirstHasHamzaBelow
-          )
+          hamzaAwareBase(nextWordFirstBase, nextWordFirstHasHamzaAbove, nextWordFirstHasHamzaBelow)
         )
       ) {
         spans.push({
@@ -1155,12 +1132,7 @@ export function classifyWordTajweed(
       (u.hasInvertedDammatan && trailingTanweenAlif && i === units.length - 2) ||
       invertedFathatanOnFinalHamza ||
       iqlabTanweenFatha;
-    if (
-      isLastWordOfAyah &&
-      atPauseEnd &&
-      finalFathatanVariant &&
-      u.base !== TA_MARBUTA
-    ) {
+    if (isLastWordOfAyah && atPauseEnd && finalFathatanVariant && u.base !== TA_MARBUTA) {
       spans.push({ start: u.start, end: u.end, rule: 'madd_iwad' });
     }
   }
@@ -1233,10 +1205,8 @@ export function classifyAyahTajweed(ayahText) {
     const nextWordUnits = nextWord ? tokenizeUnits(nextWord) : [];
     const nextWordFirstBase = nextWordUnits[0]?.base ?? null;
     const nextWordFirstHasShadda = nextWordUnits[0]?.diacritics.has(SHADDA) ?? false;
-    const nextWordFirstHasHamzaAbove =
-      nextWordUnits[0]?.hamzaAboveStart !== undefined;
-    const nextWordFirstHasHamzaBelow =
-      nextWordUnits[0]?.hamzaBelowStart !== undefined;
+    const nextWordFirstHasHamzaAbove = nextWordUnits[0]?.hamzaAboveStart !== undefined;
+    const nextWordFirstHasHamzaBelow = nextWordUnits[0]?.hamzaBelowStart !== undefined;
     const previousIndex = previousSemanticIndex.get(i);
     const previousWord = previousIndex === undefined ? null : words[previousIndex];
     return {

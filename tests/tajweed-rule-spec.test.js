@@ -78,12 +78,12 @@ test('Izhar Mutlaq exception list is closed, sourced, and separate from ordinary
 
   for (const { word, nextBase, wordSkeleton } of fixtures) {
     const spans = classifyWordTajweed(word);
-    assert.ok(spans.some(({ rule }) => rule === 'izhar'), word);
-    assert.ok(!spans.some(({ rule }) => rule === 'idgham_ghunnah'), word);
-    assert.equal(
-      noonTanweenRuleForNextBase(nextBase, { sameWord: true, wordSkeleton }),
-      'izhar'
+    assert.ok(
+      spans.some(({ rule }) => rule === 'izhar'),
+      word
     );
+    assert.ok(!spans.some(({ rule }) => rule === 'idgham_ghunnah'), word);
+    assert.equal(noonTanweenRuleForNextBase(nextBase, { sameWord: true, wordSkeleton }), 'izhar');
   }
 
   const nonException = classifyWordTajweed('مِنْيَ');
@@ -113,11 +113,22 @@ test('cross-word lookahead preserves a combining hamza on initial alif', () => {
   assert.ok(!unmarked.some(({ rule }) => groupRuleIds.includes(rule)));
 });
 
+test('same-word lookahead resolves combining hamza-below on waw', () => {
+  const marked = classifyWordTajweed('نْوِٕ');
+  assert.ok(marked.some(({ rule }) => rule === 'izhar'));
+  assert.ok(!marked.some(({ rule }) => rule === 'idgham_ghunnah'));
+
+  const unmarked = classifyWordTajweed('نْوِ');
+  assert.ok(unmarked.some(({ rule }) => rule === 'idgham_ghunnah'));
+  assert.ok(!unmarked.some(({ rule }) => rule === 'izhar'));
+});
+
 test('cross-word lookahead resolves combining hamza for all supported seats', () => {
   for (const [nextWordFirstBase, mark, flag] of [
     ['ا', 'above', 'nextWordFirstHasHamzaAbove'],
     ['ا', 'below', 'nextWordFirstHasHamzaBelow'],
     ['و', 'above', 'nextWordFirstHasHamzaAbove'],
+    ['و', 'below', 'nextWordFirstHasHamzaBelow'],
     ['ي', 'above', 'nextWordFirstHasHamzaAbove'],
     ['ي', 'below', 'nextWordFirstHasHamzaBelow'],
   ]) {
