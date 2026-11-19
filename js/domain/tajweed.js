@@ -120,8 +120,12 @@ const HAMZA_LETTERS = new Set(['\u0621', '\u0623', '\u0625', '\u0624', '\u0626',
  * untouched; callers use this only for rule selection.
  */
 function hamzaAwareBase(base, hasHamzaAbove = false, hasHamzaBelow = false) {
-  if (base === ALIF && hasHamzaAbove) return '\u0623';
-  if (base === YEH && hasHamzaBelow) return '\u0626';
+  if (base === ALIF) {
+    if (hasHamzaAbove) return '\u0623';
+    if (hasHamzaBelow) return '\u0625';
+  }
+  if (base === WAW && hasHamzaAbove) return '\u0624';
+  if (base === YEH && (hasHamzaAbove || hasHamzaBelow)) return '\u0626';
   return base;
 }
 
