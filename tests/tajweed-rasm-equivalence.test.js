@@ -28,10 +28,7 @@ function firstSpan(text, rule) {
 }
 
 test('Madd Badal recognizes both checked-in spellings in Quran 2:4 and 2:8', () => {
-  for (const [ayah, page] of [
-    [4, 2],
-    [8, 3],
-  ]) {
+  for (const [ayah, page] of [[4, 2], [8, 3]]) {
     const corpusText = quranAyah(2, ayah);
     const mushafText = mushafAyah(page, 2, ayah);
     assert.ok(corpusText, `missing Quran 2:${ayah}`);
