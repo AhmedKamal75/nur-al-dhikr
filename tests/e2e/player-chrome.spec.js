@@ -11,15 +11,31 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
   test.slow();
   const pageErrors = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
+  await page.addInitScript(() => {
+    const mediaElements = [];
+    Object.defineProperty(window, '__nurAlDhikrMediaElements', { value: mediaElements });
+    const nativePlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function (...args) {
+      if (!mediaElements.includes(this)) mediaElements.push(this);
+      return nativePlay.apply(this, args);
+    };
+  });
   await page.goto('#/mushaf?page=2');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await page.waitForTimeout(3000);
-  await page.evaluate(() => {
-    const btns = [...document.querySelectorAll('[data-action="surah-play"]')];
-    const b = btns.find((x) => x.dataset.surah === '2') || btns[0];
-    b.click();
-  });
+  const surahTwoPlay = page.locator('[data-action="surah-play"][data-surah="2"]:visible');
+  const playButton = (await surahTwoPlay.count())
+    ? surahTwoPlay.first()
+    : page.locator('[data-action="surah-play"]:visible').first();
+  await expect(playButton).toBeVisible({ timeout: 20000 });
+  await playButton.click();
   await expect(page.locator('.player-bar--recite')).toBeVisible({ timeout: 20000 });
+  await page.waitForFunction(
+    () => window.__nurAlDhikrMediaElements?.some(
+      (audio) => !audio.paused && !audio.ended && audio.currentTime >= 0.25
+    ),
+    null,
+    { timeout: 20000 }
+  );
 
   // Minimize → slim pill, session untouched.
   await page.locator('.player-bar--recite [data-action="player-min-toggle"]').first().click();
@@ -41,6 +57,13 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
     page.locator('.player-bar--recite [data-action="recite-pause-toggle"]').first()
   ).toHaveAttribute('aria-label', /Play|تشغيل/, { timeout: 10000 });
   await page.keyboard.press(' ');
+  await page.waitForFunction(
+    () => window.__nurAlDhikrMediaElements?.some(
+      (audio) => !audio.paused && !audio.ended && audio.currentTime >= 0.25
+    ),
+    null,
+    { timeout: 20000 }
+  );
   // ArrowLeft steps to the next ayah (mushaf order).
   await page.keyboard.press('ArrowLeft');
   await expect.poll(async () => counter.textContent(), { timeout: 15000 }).not.toBe(before);

@@ -146,10 +146,9 @@ test.describe('offline essentials', () => {
     await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
     await expect(page.locator('#main')).toContainText('إبقاء القرآن جاهزًا للعمل دون اتصال');
 
-    // Flip it and prove the preference survives a reload. The switch input is
-    // opacity:0 by design, so it needs force — the same call every other
-    // switch in this suite makes.
-    await sw.uncheck({ force: true });
+    // Flip it through the visible track inside the native wrapping-label
+    // activation path, then prove the preference survives a reload.
+    await page.locator('.offline-essentials--primary .switch__track').click();
     await expect(sw).not.toBeChecked({ timeout: 10000 });
     await page.reload();
     await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });

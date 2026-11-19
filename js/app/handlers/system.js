@@ -510,23 +510,17 @@ export const changeHandlers = [
   },
   {
     sel: '[data-action="toggle-mushaf-pref"]',
-    run: async (ds, el) => {
-      // (v5.2.18) the sheet builder loads on demand (see handlers/quran.js).
-      const { buildMushafSheet } = await import('../../views/mushafReader.js');
+    run: (ds, el) => {
+      const inMushafSheet = Boolean(el.closest('.mushaf-sheet'));
       store.dispatch(actions.updateMushafPrefs({ [ds.key]: el.checked }));
-      // The legend only shows while tajweed coloring is on, and toggles in
-      // general read better with instant feedback — refresh the originating
-      // panel in place (sheet toggles stay in the sheet, settings toggles
-      // stay in settings) rather than waiting for the next re-render.
-      if (el.closest('.mushaf-sheet')) {
-        openModal(buildMushafSheet(store.getState()), {
-          labelledBy: 'modal-title-mushaf-sheet',
-        });
-      } else {
-        openModal(buildMushafSettingsPanel(store.getState()), {
-          labelledBy: 'modal-title-mushaf-settings',
-        });
-      }
+
+      // Sheet switches do not change its structure. Preserve the native
+      // checkbox node and focus; the store subscription updates the reader.
+      if (inMushafSheet) return;
+
+      openModal(buildMushafSettingsPanel(store.getState()), {
+        labelledBy: 'modal-title-mushaf-settings',
+      });
     },
   },
   {

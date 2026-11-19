@@ -28,7 +28,10 @@ function firstSpan(text, rule) {
 }
 
 test('Madd Badal recognizes both checked-in spellings in Quran 2:4 and 2:8', () => {
-  for (const [ayah, page] of [[4, 2], [8, 3]]) {
+  for (const [ayah, page] of [
+    [4, 2],
+    [8, 3],
+  ]) {
     const corpusText = quranAyah(2, ayah);
     const mushafText = mushafAyah(page, 2, ayah);
     assert.ok(corpusText, `missing Quran 2:${ayah}`);
@@ -60,7 +63,10 @@ test('Madd Iwad accepts the corpus final-tanween spelling contextually', () => {
   assert.equal(mushaf.text, 'بً');
 
   const midAyah = classifyWordTajweed('رَقِيبٗا', { isLastWordOfAyah: false });
-  assert.equal(midAyah.some((span) => span.rule === 'madd_iwad'), false);
+  assert.equal(
+    midAyah.some((span) => span.rule === 'madd_iwad'),
+    false
+  );
 });
 
 test('cross-rasm tanween-fatha spelling does not invent natural madd (Quran 2:95)', () => {
@@ -128,13 +134,7 @@ test('Madd Iwad recognises ayah-final Iqlab tanween-fatha across the two rasms (
 
 test('Madd Munfasil recognises combining hamza on every supported seat', () => {
   const precomposed = firstSpan('فِي أَحَدٍ', 'madd_munfasil');
-  const markedForms = [
-    'فِي أَحَدٍ',
-    'فِي إِحَدٍ',
-    'فِي ؤَحَدٍ',
-    'فِي ئَحَدٍ',
-    'فِي يِٕحَدٍ',
-  ];
+  const markedForms = ['فِي أَحَدٍ', 'فِي إِحَدٍ', 'فِي ؤَحَدٍ', 'فِي ئَحَدٍ', 'فِي يِٕحَدٍ'];
 
   for (const text of markedForms) {
     assert.deepEqual(
@@ -160,6 +160,41 @@ test('Madd Munfasil recognises combining hamza on every supported seat', () => {
   for (const text of ['فِي اَهَدٍ', 'فِي يَهَدٍ', 'فِي وَهَدٍ']) {
     assert.equal(firstSpan(text, 'madd_munfasil'), null, text);
     assert.deepEqual(firstSpan(text, 'madd_2'), precomposed, text);
+  }
+});
+
+test('Madd Munfasil resolves waw plus combining hamza-below without rewriting source text', () => {
+  const precomposed = firstSpan('فِي ؤَحَدٍ', 'madd_munfasil');
+  const markedText = 'فِي وِٕحَدٍ';
+  const markedRows = classifyAyahTajweed(markedText);
+
+  assert.deepEqual(firstSpan(markedText, 'madd_munfasil'), precomposed);
+  assert.deepEqual(
+    markedRows.map(({ word }) => word),
+    markedText.split(/\\s+/u),
+    'classification must retain the original source words'
+  );
+  const maddSpan = markedRows[0].spans.find(({ rule }) => rule === 'madd_munfasil');
+  assert.deepEqual([maddSpan.start, maddSpan.end], [2, 3]);
+
+  const unmarkedText = 'فِي وَحَدٍ';
+  assert.equal(firstSpan(unmarkedText, 'madd_munfasil'), null);
+  assert.deepEqual(firstSpan(unmarkedText, 'madd_2'), precomposed);
+});
+
+test('Quran 56:23 preserves its terminal waw plus combining hamza-below spelling', () => {
+  const corpusText = quranAyah(56, 23);
+  const mushafText = mushafAyah(535, 56, 23);
+  const corpusWord = 'ٱللُّؤۡلُوِٕ';
+  const mushafWord = 'ٱللُّؤْلُؤِ';
+
+  assert.ok(corpusText?.includes(corpusWord), 'Quran 56:23 source spelling');
+  assert.ok(mushafText?.includes(mushafWord), 'Mushaf 56:23 source spelling');
+
+  for (const word of [corpusWord, mushafWord]) {
+    const row = classifyAyahTajweed(word).find(({ word: sourceWord }) => sourceWord === word);
+    assert.ok(row, 'classifier retains original source word');
+    assert.ok(row.spans.every(({ start, end }) => start >= 0 && end > start && end <= word.length));
   }
 });
 
@@ -233,10 +268,7 @@ test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2
 });
 
 function wordSkeletonForTest(word) {
-  return String(word)
-    .replace(/\p{M}/gu, '')
-    .replace(/ـ/gu, '')
-    .replace(/ٱ/gu, 'ا');
+  return String(word).replace(/\p{M}/gu, '').replace(/ـ/gu, '').replace(/ٱ/gu, 'ا');
 }
 
 test('the four Quranic Izhar Mutlaq word exceptions remain clear in the shipped corpus', () => {

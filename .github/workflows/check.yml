@@ -27,7 +27,7 @@ jobs:
       - name: Capture Prettier formatting diff
         if: always() && matrix.node == 20
         run: |
-          for file in js/domain/tajweed.js tests/tajweed-rasm-equivalence.test.js tests/tajweed-rule-spec.test.js; do
+          for file in docs/TAJWEED-RULE-INVENTORY-2026-11-19.md js/domain/tajweed.js tests/tajweed-audit-comparison.test.js tests/tajweed-rasm-equivalence.test.js tests/tajweed-rule-spec.test.js; do
             mkdir -p "/tmp/tajweed-prettier/original/$(dirname "$file")"
             mkdir -p "/tmp/tajweed-prettier/formatted/$(dirname "$file")"
             mkdir -p "/tmp/tajweed-prettier/diffs/$(dirname "$file")"
