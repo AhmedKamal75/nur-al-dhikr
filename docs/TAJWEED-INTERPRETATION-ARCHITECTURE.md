@@ -36,8 +36,9 @@ The rule is intentionally explicit in both code and tests: standalone and seated
 3. Preserve original-source character offsets for visible highlights; compare semantic letters separately from source-string offsets.
 4. Report every cross-rasm token-count mismatch and keep both original word arrays in the audit artifact. Do not silently skip an ayah without naming it.
 5. Each advertised rule needs source-backed positive and negative examples. Cases dependent on riwayah, transmission, pause/continuation or contested scholarship must declare their scope or remain explicitly unresolved.
-6. Keep semantic rule decisions separate from palette, user preferences and paint-overlap behavior.
-7. Validate citation coverage, corpus reachability, course eligibility, practice pool coverage, and painter/inspector parity as distinct contracts.
+6. On exact-skeleton word pairs, compare both rule-ID presence and span cardinality for each shared rule ID; set equality alone can hide a missing repeated occurrence. Report span-count differences separately from rule-presence and letter-ordinal offset differences.
+7. Keep semantic rule decisions separate from palette, user preferences and paint-overlap behavior.
+8. Validate citation coverage, corpus reachability, course eligibility, practice pool coverage, and painter/inspector parity as distinct contracts.
 
 ## Next implementation stages
 
