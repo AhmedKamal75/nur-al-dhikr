@@ -16,8 +16,9 @@
  * sakinah / tanween family (idgham/ikhfa/iqlab), the meem sakinah family
  * (izhar/idgham/ikhfa shafawi), and madd (natural/connected/separated/
  * obligatory). It intentionally leaves a small number of rules that need
- * full recitation-context (e.g. madd al-'iwad, some riwayah-specific waqf
- * behavior) uncolored rather than guess.
+ * fuller recitation-context or riwayah-specific decisions uncolored rather than
+ * guess. Madd al-'iwad is implemented for the app's explicit ayah-final pause
+ * context; other waqf/riwayah decisions remain outside this deterministic layer.
  */
 
 // Diacritics
