@@ -3,8 +3,10 @@ import test from 'node:test';
 
 import {
   classifyWordTajweed,
+  MEEM_SAKINAH_RULE_GROUP,
   NOON_TANWEEN_RULE_GROUP,
   NOON_TANWEEN_SAME_WORD_EXCEPTIONS,
+  meemSakinahRuleForNextBase,
   noonTanweenRuleForNextBase,
   TAJWEED_RULES,
 } from '../js/domain/tajweed.js';
@@ -125,4 +127,45 @@ test('cross-word lookahead treats combining hamza-below on a yeh carrier as hamz
     nextWordFirstHasHamzaBelow: false,
   });
   assert.ok(plain.some(({ rule }) => rule === 'idgham_ghunnah'));
+});
+test('Meem Sakinah uses its explicit exceptions and sourced-rule fallback', () => {
+  assert.equal(MEEM_SAKINAH_RULE_GROUP.id, 'meem_sakinah');
+  assert.equal(MEEM_SAKINAH_RULE_GROUP.mode, 'explicit-with-default');
+  assert.equal(MEEM_SAKINAH_RULE_GROUP.defaultRule, 'izhar_shafawi');
+  assert.ok(Object.isFrozen(MEEM_SAKINAH_RULE_GROUP));
+  assert.ok(Object.isFrozen(MEEM_SAKINAH_RULE_GROUP.rules));
+
+  const seen = new Set();
+  for (const entry of MEEM_SAKINAH_RULE_GROUP.rules) {
+    assert.ok(TAJWEED_RULES.some(({ id }) => id === entry.rule), entry.rule);
+    assert.ok(TAJWEED_SOURCES[entry.rule], entry.rule);
+    assert.ok(Object.isFrozen(entry));
+    assert.ok(Object.isFrozen(entry.nextBases));
+    for (const base of entry.nextBases) {
+      assert.match(base, /^\\p{L}$/u);
+      assert.match(base, /^\\p{Script=Arabic}$/u);
+      assert.ok(!seen.has(base), `overlapping Meem Sakinah follower: ${base}`);
+      seen.add(base);
+    }
+  }
+
+  for (const [nextBase, expectedRule] of [
+    ['م', 'idgham_shafawi'],
+    ['ب', 'ikhfa_shafawi'],
+    ['ت', 'izhar_shafawi'],
+    ['ن', 'izhar_shafawi'],
+    ['ء', 'izhar_shafawi'],
+  ]) {
+    assert.equal(meemSakinahRuleForNextBase(nextBase), expectedRule);
+    const spans = classifyWordTajweed('مْ', { nextWordFirstBase: nextBase });
+    assert.deepEqual(
+      spans.filter(({ rule }) => ['idgham_shafawi', 'ikhfa_shafawi', 'izhar_shafawi'].includes(rule))
+        .map(({ rule }) => rule),
+      [expectedRule],
+      `classifier disagreed with the Meem Sakinah table before ${nextBase}`
+    );
+  }
+
+  assert.equal(meemSakinahRuleForNextBase(null), null);
+  assert.equal(meemSakinahRuleForNextBase(''), null);
 });
