@@ -146,7 +146,7 @@ test('Madd Munfasil recognises combining hamza on every supported seat', () => {
     const rows = classifyAyahTajweed(text);
     assert.deepEqual(
       rows.map(({ word }) => word),
-      text.split(/\\s+/u),
+      text.split(/\s+/u),
       'classification must retain the original source words'
     );
     const maddSpan = rows[0].spans.find(({ rule }) => rule === 'madd_munfasil');
