@@ -171,7 +171,7 @@ test('Madd Munfasil resolves waw plus combining hamza-below without rewriting so
   assert.deepEqual(firstSpan(markedText, 'madd_munfasil'), precomposed);
   assert.deepEqual(
     markedRows.map(({ word }) => word),
-    markedText.split(/\\s+/u),
+    markedText.split(/\s+/u),
     'classification must retain the original source words'
   );
   const maddSpan = markedRows[0].spans.find(({ rule }) => rule === 'madd_munfasil');
