@@ -113,6 +113,17 @@ export const BISMILLAH_AR =
   '\u0628\u0650\u0633\u06E1\u0645\u0650 \u0671\u0644\u0644\u0651\u064E\u0647\u0650 \u0671\u0644\u0631\u0651\u064E\u062D\u06E1\u0645\u064E\u0670\u0646\u0650 \u0671\u0644\u0631\u0651\u064E\u062D\u0650\u064A\u0645\u0650';
 
 const HAMZA_LETTERS = new Set(['\u0621', '\u0623', '\u0625', '\u0624', '\u0626', ALIF_MADDA]);
+
+/**
+ * Resolve a leading carrier plus combining hamza mark as the corresponding
+ * hamza letter for phonetic lookahead. The source glyph and offsets remain
+ * untouched; callers use this only for rule selection.
+ */
+function hamzaAwareBase(base, hasHamzaAbove = false, hasHamzaBelow = false) {
+  if (base === ALIF && hasHamzaAbove) return '\u0623';
+  if (base === YEH && hasHamzaBelow) return '\u0626';
+  return base;
+}
 const SUN_LETTERS = new Set([
   '\u062A',
   '\u062B',
@@ -917,9 +928,7 @@ export function classifyWordTajweed(
       const nextHasHamzaBelow = next
         ? next.hamzaBelowStart !== undefined
         : nextWordFirstHasHamzaBelow;
-      let nb = rawNextBase;
-      if (nextHasHamzaAbove && rawNextBase === ALIF) nb = '\u0623';
-      else if (nextHasHamzaBelow && rawNextBase === YEH) nb = '\u0626';
+      const nb = hamzaAwareBase(rawNextBase, nextHasHamzaAbove, nextHasHamzaBelow);
       if (nb) {
         const rule = noonTanweenRuleForNextBase(nb, {
           sameWord: Boolean(next),
@@ -993,7 +1002,16 @@ export function classifyWordTajweed(
         // orthographic silence (the plural alif in وَٱسۡجُدُواْۤ), not jazm —
         // that waw stays a plain 2-count madd.
         spans.push({ start: u.start, end: u.end, rule: 'madd_6' });
-      } else if (!next && nextWordFirstBase && HAMZA_LETTERS.has(nextWordFirstBase)) {
+      } else if (
+        !next &&
+        HAMZA_LETTERS.has(
+          hamzaAwareBase(
+            nextWordFirstBase,
+            nextWordFirstHasHamzaAbove,
+            nextWordFirstHasHamzaBelow
+          )
+        )
+      ) {
         spans.push({ start: u.start, end: u.end, rule: isSilah ? 'madd_silah' : 'madd_munfasil' });
       } else if (isSilah) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_silah' });
