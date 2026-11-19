@@ -96,9 +96,11 @@ const wordCountMismatchSamples = [];
 const surfaceSkeletonMismatchSamples = [];
 const ruleDeltas = new Map();
 const affectedAyahs = new Set();
+const unalignedAyahs = new Set();
 let checkedAyahs = 0;
 let wordCountMismatches = 0;
 let surfaceSkeletonMismatches = 0;
+let unalignedWordPairs = 0;
 let wordsCompared = 0;
 let differingWords = 0;
 let offsetDivergenceCount = 0;
@@ -130,6 +132,8 @@ for (const [key, text] of quran) {
     const b = pageWords[i];
     if (a.skeleton !== b.skeleton) {
       surfaceSkeletonMismatches += 1;
+      unalignedWordPairs += 1;
+      unalignedAyahs.add(key);
       if (surfaceSkeletonMismatchSamples.length < SAMPLE_LIMIT) {
         surfaceSkeletonMismatchSamples.push({
           key,
@@ -141,6 +145,10 @@ for (const [key, text] of quran) {
           mushafSkeleton: b.skeleton,
         });
       }
+      // Same-index tokens with different letter skeletons are not yet a
+      // defensible semantic pair. Preserve the raw pair above, but do not
+      // count rule-set or span deltas until a reviewed alignment exists.
+      continue;
     }
     wordsCompared += 1;
     const onlyQuran = a.rules.filter((rule) => !b.rules.includes(rule));
@@ -193,13 +201,18 @@ for (const [key, text] of quran) {
 console.log(JSON.stringify({
   scope: {
     quranAyahs: quran.size, mushafAyahs: mushaf.size, checkedAyahs,
-    wordAlignedAyahs: checkedAyahs - wordCountMismatches,
-    wordsCompared, wordCountMismatches, missingFromMushaf: missingFromMushaf.length,
+    wordCountMatchedAyahs: checkedAyahs - wordCountMismatches,
+    wordsCompared,
+    unalignedWordPairs,
+    wordCountMismatches,
+    missingFromMushaf: missingFromMushaf.length,
     missingFromQuran: missingFromQuran.length, duplicateQuran: duplicateQuran.length,
     duplicateMushaf: duplicateMushaf.length,
   },
   result: {
-    affectedAyahsByRuleSet: affectedAyahs.size, differingWords,
+    affectedAyahsByRuleSet: affectedAyahs.size,
+    ayahsWithUnalignedWords: unalignedAyahs.size,
+    differingWords,
     surfaceSkeletonMismatches,
     offsetDivergences: offsetDivergenceCount,
     ruleDeltas: Object.fromEntries([...ruleDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))),
