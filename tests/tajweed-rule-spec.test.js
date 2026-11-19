@@ -133,12 +133,18 @@ test('cross-word lookahead resolves combining hamza for all supported seats', ()
     );
   }
 
-  for (const nextWordFirstBase of ['ا', 'و', 'ي']) {
+  for (const [nextWordFirstBase, expectedRule] of [
+    ['ا', null],
+    ['و', 'idgham_ghunnah'],
+    ['ي', 'idgham_ghunnah'],
+  ]) {
     const plain = classifyWordTajweed('نْ', { nextWordFirstBase });
-    assert.ok(
-      !plain.some(({ rule }) => NOON_TANWEEN_RULE_GROUP.rules.some(
-        ({ rule }) => rule !== 'izhar' && plain.some((span) => span.rule === rule)
-      )),
+    const actualRules = plain
+      .filter(({ rule }) => groupRuleIds.includes(rule))
+      .map(({ rule }) => rule);
+    assert.deepEqual(
+      actualRules,
+      expectedRule ? [expectedRule] : [],
       `unmarked ${nextWordFirstBase} must not be treated as a hamza`
     );
   }
