@@ -43,3 +43,32 @@ export function compareSharedRuleSpanCounts(quranSpans, mushafSpans) {
 
   return differences.sort((a, b) => a.rule.localeCompare(b.rule));
 }
+
+
+/**
+ * Compare letter ordinals only when the same rule has equal span cardinality.
+ * With unequal counts there is no safe occurrence-by-occurrence pairing:
+ * that discrepancy belongs to compareSharedRuleSpanCounts instead.
+ */
+export function compareSharedRuleSpanOffsets(quranSpans, mushafSpans) {
+  const quranByRule = groupSpansByRule(quranSpans);
+  const mushafByRule = groupSpansByRule(mushafSpans);
+  const divergences = [];
+
+  for (const [rule, quranRuleSpans] of quranByRule) {
+    const mushafRuleSpans = mushafByRule.get(rule);
+    if (!mushafRuleSpans || quranRuleSpans.length !== mushafRuleSpans.length) continue;
+
+    for (let index = 0; index < quranRuleSpans.length; index += 1) {
+      const quranSpan = quranRuleSpans[index];
+      const mushafSpan = mushafRuleSpans[index];
+      if (quranSpan.letterOrdinal !== mushafSpan.letterOrdinal) {
+        divergences.push({ rule, index, quranSpan, mushafSpan });
+      }
+    }
+  }
+
+  return divergences.sort(
+    (a, b) => a.rule.localeCompare(b.rule) || a.index - b.index
+  );
+}

@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
   compareSharedRuleSpanCounts,
+  compareSharedRuleSpanOffsets,
   groupSpansByRule,
 } from '../scripts/tajweed-audit-comparison.mjs';
 
@@ -78,4 +79,46 @@ test('leaves one-sided rule presence to the separate rule-set mismatch audit', (
     []
   );
   assert.deepEqual(compareSharedRuleSpanCounts(null, undefined), []);
+});
+
+test('does not infer offsets from unmatched span prefixes when cardinality differs', () => {
+  const quran = [
+    { rule: 'madd_2', letterOrdinal: 2 },
+    { rule: 'madd_2', letterOrdinal: 5 },
+  ];
+  const mushaf = [{ rule: 'madd_2', letterOrdinal: 5 }];
+
+  assert.deepEqual(compareSharedRuleSpanOffsets(quran, mushaf), []);
+  assert.deepEqual(
+    compareSharedRuleSpanCounts(quran, mushaf),
+    [
+      {
+        rule: 'madd_2',
+        quranCount: 2,
+        mushafCount: 1,
+        quranOnly: 1,
+        mushafOnly: 0,
+      },
+    ]
+  );
+});
+
+test('compares occurrence offsets only when rule span counts match', () => {
+  const quran = [
+    { rule: 'madd_2', letterOrdinal: 1 },
+    { rule: 'madd_2', letterOrdinal: 5 },
+  ];
+  const mushaf = [
+    { rule: 'madd_2', letterOrdinal: 1 },
+    { rule: 'madd_2', letterOrdinal: 4 },
+  ];
+
+  assert.deepEqual(compareSharedRuleSpanOffsets(quran, mushaf), [
+    {
+      rule: 'madd_2',
+      index: 1,
+      quranSpan: quran[1],
+      mushafSpan: mushaf[1],
+    },
+  ]);
 });
