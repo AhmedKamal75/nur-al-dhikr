@@ -1,6 +1,6 @@
 # Tajweed interpretation pipeline — implementation record
 
-**Status:** first data-driven family prototype; not a certified Tajweed engine and not a release approval.
+**Status:** two data-driven family prototypes with focused cross-rasm corrections; not a certified Tajweed engine and not a release approval.
 
 ## Objective
 
@@ -15,17 +15,20 @@ Both the classic Qur'an reader and the 604-page Mushaf must consume the same sem
 
 ## Prototype decision: data table first, no custom DSL
 
-The noon-sakinah/tanween next-letter family is the first deliberately limited vertical slice. Its mutual-exclusion priority and Arabic follower sets are now represented as `NOON_TANWEEN_RULE_GROUP` in `js/domain/tajweed.js`. The classifier still owns context detection and the explicit small-high-meem Iqlab path; the declarative lookup only selects the following-letter result. That keeps the interpreter trivial: there is no parser, dynamic evaluation, build step, or runtime dependency.
+The noon-sakinah/tanween next-letter family and the meem-sakinah family are now represented as two deliberately limited vertical slices in `js/domain/tajweed.js`:
 
-Only this group is marked `first-match`. The project intentionally preserves multiple annotations for other phenomena on a written unit, so the rule must not be generalized to the entire classifier.
+- `NOON_TANWEEN_RULE_GROUP` declares the mutually exclusive Arabic follower sets and their `first-match` priority. The classifier still owns context detection, combining-hamza lookahead, and the explicit small-high-meem Iqlab path.
+- `MEEM_SAKINAH_RULE_GROUP` declares the two exceptional followers (mīm and bāʾ) and the ordinary `izhar_shafawi` default. A missing following letter remains unresolved rather than being assigned a rule.
 
-The spec test checks unique IDs, one-glyph Arabic letter sets, disjoint membership, citation/legend registry membership, and live classifier behavior for every branch. It is a contract test for architecture, not a scholarly proof that every letter set is correct.
+The lookups select a family result; they do not parse Quran text, alter source strings, choose a recitation route, or own span offsets. The implementation has no parser, dynamic evaluation, build step, or runtime dependency. Only the noon/tanween group uses `first-match`; the project intentionally preserves multiple annotations for other phenomena on a written unit, so this mode must not be generalized to the entire classifier.
+
+The specification tests check immutable tables, one-glyph Arabic follower sets, disjoint explicit membership, fallback-rule registry coverage, source/legend membership, and live classifier behavior for every branch. Existing classifier tests retain the end-to-end meem examples (`هُمْ مِّنْ`, `عَنْهُمْ بِآيَاتٍ`, and `أَلَمْ نَشْرَحْ`). These are contract tests for code structure, not scholarly proof that every letter set is correct.
 
 ## First source-backed classification defect addressed
 
 The current same-word lookahead treated nūn sākinah followed by yāʾ/wāw inside the four traditional Izhar Mutlaq words as ordinary idghām. The Egyptian Ministry of Awqaf's article **أحكام النون الساكنة والتنوين** explicitly names **الدنيا، بنيان، صنوان، قنوان** as one-word exceptions that must remain clear. Its URL and locator are now included under the existing Izhar citation; the rule stays in the existing `izhar` identity to avoid an unsupported new practice-pool taxonomy.
 
-The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct. A separate corpus regression also guards the hamza-family follower set (`ء`, `أ`, `إ`, `ؤ`, `ئ`, `آ`) using the actual `مِنۡ أَهۡلِ` form in 98:1; those code points share the hamza sound even though their written shapes differ.
+The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Combining hamza-above on a leading alif and hamza-below on a leading yeh are now resolved through one phonetic lookahead helper for both noon/tanween and Madd Munfasil; the original glyph sequence remains untouched. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct. A separate corpus regression also guards the hamza-family follower set (`ء`, `أ`, `إ`, `ؤ`, `ئ`, `آ`) using the actual `مِنۡ أَهۡلِ` form in 98:1; those code points share the hamza sound even though their written shapes differ.
 
 The rule is intentionally explicit in both code and tests: standalone and seated hamza glyphs use the same follower family, and a combining hamza-above mark on a leading alif is carried across a word boundary as lookahead metadata rather than by rewriting source text.
 
@@ -43,7 +46,7 @@ The rule is intentionally explicit in both code and tests: standalone and seated
 
 ### A. Finish the current corpus evidence pass
 
-Review the newest artifacts from [issue #31](https://github.com/AhmedKamal75/nur-al-dhikr/issues/31) and draft PRs [#39](https://github.com/AhmedKamal75/nur-al-dhikr/pull/39) and [#40](https://github.com/AhmedKamal75/nur-al-dhikr/pull/40). Keep the six word-boundary disagreements visible. Distinguish an orthographic alignment mismatch from a rule error and a rendered-glyph offset error.
+Review the newest artifacts from [issue #31](https://github.com/AhmedKamal75/nur-al-dhikr/issues/31) and draft PRs [#39](https://github.com/AhmedKamal75/nur-al-dhikr/pull/39) and [#40](https://github.com/AhmedKamal75/nur-al-dhikr/pull/40). Keep word-count mismatches and same-index letter-skeleton mismatches visible. The audit now retains mismatched surface pairs but excludes those unaligned pairs from rule-set and span-offset deltas; it does not pretend that their semantic alignment is solved. Distinguish an orthographic alignment mismatch from a rule error and a rendered-glyph offset error.
 
 ### B. Expand the rule inventory before migrating another family
 
