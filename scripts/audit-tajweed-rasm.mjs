@@ -7,7 +7,6 @@ import { readFileSync } from 'node:fs';
 import { canonicalWordTokens, classifyAyahTajweed } from '../js/domain/tajweed.js';
 
 const ROOT = new URL('../', import.meta.url);
-const SAMPLE_LIMIT = Number(process.argv.find((arg) => arg.startsWith('--samples='))?.split('=')[1] || 30);
 const ORNAMENTS = new Set([
   '\u0640', '\u06D6', '\u06D7', '\u06D8', '\u06DA', '\u06DB', '\u06DC', '\u06DE',
   '\u06E9', '\u06EC', '\uFD3E', '\uFD3F', '(', ')',
@@ -90,9 +89,9 @@ for (let page = 1; page <= 604; page += 1) {
 
 const missingFromMushaf = [...quran.keys()].filter((key) => !mushaf.has(key));
 const missingFromQuran = [...mushaf.keys()].filter((key) => !quran.has(key));
-const mismatchSamples = [];
-const offsetSamples = [];
-const wordCountMismatchSamples = [];
+const ruleMismatchDetails = [];
+const offsetDivergenceDetails = [];
+const wordCountMismatchDetails = [];
 const surfaceSkeletonMismatchDetails = [];
 const ruleDeltas = new Map();
 const affectedAyahs = new Set();
@@ -113,16 +112,14 @@ for (const [key, text] of quran) {
   const pageWords = classifyCanonicalWords(pageRecord.text);
   if (corpusWords.length !== pageWords.length) {
     wordCountMismatches += 1;
-    if (wordCountMismatchSamples.length < SAMPLE_LIMIT) {
-      wordCountMismatchSamples.push({
-        key,
-        page: pageRecord.page,
-        quranWordCount: corpusWords.length,
-        mushafWordCount: pageWords.length,
-        quranWords: corpusWords.map((word) => word.raw),
-        mushafWords: pageWords.map((word) => word.raw),
-      });
-    }
+    wordCountMismatchDetails.push({
+      key,
+      page: pageRecord.page,
+      quranWordCount: corpusWords.length,
+      mushafWordCount: pageWords.length,
+      quranWords: corpusWords.map((word) => word.raw),
+      mushafWords: pageWords.map((word) => word.raw),
+    });
     continue;
   }
 
@@ -136,7 +133,7 @@ for (const [key, text] of quran) {
       unalignedAyahs.add(key);
       // Keep every raw unaligned pair in the artifact. Unlike ordinary
       // examples, alignment failures are the audit inventory itself and
-      // must never be truncated by SAMPLE_LIMIT.
+      // must never be truncated in the audit artifact.
       surfaceSkeletonMismatchDetails.push({
         key,
         page: pageRecord.page,
@@ -167,13 +164,11 @@ for (const [key, text] of quran) {
         row.mushafOnly += 1;
         ruleDeltas.set(rule, row);
       }
-      if (mismatchSamples.length < SAMPLE_LIMIT) {
-        mismatchSamples.push({
-          key, page: pageRecord.page, wordIndex: i + 1,
-          quranWord: a.raw, mushafWord: b.raw,
-          quranRules: a.rules, mushafRules: b.rules, onlyQuran, onlyMushaf,
-        });
-      }
+      ruleMismatchDetails.push({
+        key, page: pageRecord.page, wordIndex: i + 1,
+        quranWord: a.raw, mushafWord: b.raw,
+        quranRules: a.rules, mushafRules: b.rules, onlyQuran, onlyMushaf,
+      });
     }
 
     if (a.skeleton && a.skeleton === b.skeleton) {
@@ -184,13 +179,11 @@ for (const [key, text] of quran) {
         for (let j = 0; j < Math.min(aSpans.length, bSpans.length); j += 1) {
           if (aSpans[j].letterOrdinal !== bSpans[j].letterOrdinal) {
             offsetDivergenceCount += 1;
-            if (offsetSamples.length < SAMPLE_LIMIT) {
-              offsetSamples.push({
-                key, page: pageRecord.page, wordIndex: i + 1, rule,
-                quranWord: a.raw, mushafWord: b.raw,
-                quranSpan: aSpans[j], mushafSpan: bSpans[j],
-              });
-            }
+            offsetDivergenceDetails.push({
+              key, page: pageRecord.page, wordIndex: i + 1, rule,
+              quranWord: a.raw, mushafWord: b.raw,
+              quranSpan: aSpans[j], mushafSpan: bSpans[j],
+            });
           }
         }
       }
@@ -218,13 +211,14 @@ console.log(JSON.stringify({
     offsetDivergences: offsetDivergenceCount,
     ruleDeltas: Object.fromEntries([...ruleDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))),
   },
-  samples: {
-    ruleMismatches: mismatchSamples, offsetDivergences: offsetSamples,
-    wordCountMismatchAyahs: wordCountMismatchSamples,
+  details: {
+    ruleMismatches: ruleMismatchDetails,
+    offsetDivergences: offsetDivergenceDetails,
+    wordCountMismatchAyahs: wordCountMismatchDetails,
     surfaceSkeletonMismatches: surfaceSkeletonMismatchDetails,
-    missingFromMushaf: missingFromMushaf.slice(0, SAMPLE_LIMIT),
-    missingFromQuran: missingFromQuran.slice(0, SAMPLE_LIMIT),
-    duplicateQuran: duplicateQuran.slice(0, SAMPLE_LIMIT),
-    duplicateMushaf: duplicateMushaf.slice(0, SAMPLE_LIMIT),
+    missingFromMushaf,
+    missingFromQuran,
+    duplicateQuran,
+    duplicateMushaf,
   },
 }, null, 2));
