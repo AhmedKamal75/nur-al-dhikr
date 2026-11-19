@@ -1,6 +1,6 @@
 # Tajweed interpretation pipeline — implementation record
 
-**Status:** two data-driven family prototypes with focused cross-rasm corrections; not a certified Tajweed engine and not a release approval.
+**Status:** one data-driven family prototype with focused cross-rasm correctness corrections; not a certified Tajweed engine and not a release approval.
 
 ## Objective
 
@@ -15,20 +15,17 @@ Both the classic Qur'an reader and the 604-page Mushaf must consume the same sem
 
 ## Prototype decision: data table first, no custom DSL
 
-The noon-sakinah/tanween next-letter family and the meem-sakinah family are now represented as two deliberately limited vertical slices in `js/domain/tajweed.js`:
+The noon-sakinah/tanween next-letter family is the sole deliberately limited vertical slice in this prototype. Its mutually exclusive Arabic follower sets and `first-match` priority are represented as `NOON_TANWEEN_RULE_GROUP` in `js/domain/tajweed.js`. The classifier still owns context detection, combining-hamza lookahead, and the explicit small-high-meem Iqlab path. The Meem Sakinah family remains in its existing named procedural branch; it has not been migrated because the current evidence does not demonstrate that another table would remove a real correctness or duplication problem.
 
-- `NOON_TANWEEN_RULE_GROUP` declares the mutually exclusive Arabic follower sets and their `first-match` priority. The classifier still owns context detection, combining-hamza lookahead, and the explicit small-high-meem Iqlab path.
-- `MEEM_SAKINAH_RULE_GROUP` declares the two exceptional followers (mīm and bāʾ) and the ordinary `izhar_shafawi` default. A missing following letter remains unresolved rather than being assigned a rule.
+The lookup selects a family result; it does not parse Quran text, alter source strings, choose a recitation route, or own span offsets. The implementation has no parser, dynamic evaluation, build step, or runtime dependency. The project intentionally preserves multiple annotations for other phenomena on a written unit, so `first-match` must not be generalized to the entire classifier.
 
-The lookups select a family result; they do not parse Quran text, alter source strings, choose a recitation route, or own span offsets. The implementation has no parser, dynamic evaluation, build step, or runtime dependency. Only the noon/tanween group uses `first-match`; the project intentionally preserves multiple annotations for other phenomena on a written unit, so this mode must not be generalized to the entire classifier.
-
-The specification tests check immutable tables, one-glyph Arabic follower sets, disjoint explicit membership, fallback-rule registry coverage, source/legend membership, and live classifier behavior for every branch. Existing classifier tests retain the end-to-end meem examples (`هُمْ مِّنْ`, `عَنْهُمْ بِآيَاتٍ`, and `أَلَمْ نَشْرَحْ`). These are contract tests for code structure, not scholarly proof that every letter set is correct.
+The specification tests check the noon table's immutability, one-glyph Arabic follower sets, disjoint membership, citation/legend registry membership, and live classifier behavior for every declared branch. Existing classifier tests continue to cover Meem Sakinah as part of the current procedural implementation. These are contract tests for code structure, not scholarly proof that every letter set is correct.
 
 ## First source-backed classification defect addressed
 
 The current same-word lookahead treated nūn sākinah followed by yāʾ/wāw inside the four traditional Izhar Mutlaq words as ordinary idghām. The Egyptian Ministry of Awqaf's article **أحكام النون الساكنة والتنوين** explicitly names **الدنيا، بنيان، صنوان، قنوان** as one-word exceptions that must remain clear. Its URL and locator are now included under the existing Izhar citation; the rule stays in the existing `izhar` identity to avoid an unsupported new practice-pool taxonomy.
 
-The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Combining hamza-above on a leading alif and hamza-below on a leading yeh are now resolved through one phonetic lookahead helper for both noon/tanween and Madd Munfasil; the original glyph sequence remains untouched. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct. A separate corpus regression also guards the hamza-family follower set (`ء`, `أ`, `إ`, `ؤ`, `ئ`, `آ`) using the actual `مِنۡ أَهۡلِ` form in 98:1; those code points share the hamza sound even though their written shapes differ.
+The classifier expresses that exception as a closed, sourced table, normalizes only a comparison key (not the original string), and preserves original span positions. Combining hamza marks on supported alif, waw and yeh seats are now resolved through one phonetic lookahead helper for both noon/tanween and Madd Munfasil; the original glyph sequence remains untouched. Regression tests use checked-in corpus verses 79:38, 37:97, 13:4, and 6:99, including both صنوان occurrences in 13:4, and assert the nūn receives `izhar` rather than `idgham_ghunnah`. This is a targeted proven correction, not proof that every noon/tanween context or all Tajweed rules are correct. A separate corpus regression also guards the hamza-family follower set (`ء`, `أ`, `إ`, `ؤ`, `ئ`, `آ`) using the actual `مِنۡ أَهۡلِ` form in 98:1; those code points share the hamza sound even though their written shapes differ.
 
 The rule is intentionally explicit in both code and tests: standalone and seated hamza glyphs use the same follower family, and a combining hamza-above mark on a leading alif is carried across a word boundary as lookahead metadata rather than by rewriting source text.
 
