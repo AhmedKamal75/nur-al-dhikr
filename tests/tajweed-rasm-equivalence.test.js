@@ -126,16 +126,28 @@ test('Madd Iwad recognises ayah-final Iqlab tanween-fatha across the two rasms (
   assert.ok(!midAyah.some((span) => span.rule === 'madd_iwad'));
 });
 
-test('Madd Munfasil recognises combining hamza on the next word without false positives', () => {
+test('Madd Munfasil recognises combining hamza on every supported seat', () => {
   const precomposed = firstSpan('فِي أَحَدٍ', 'madd_munfasil');
-  const hamzaAbove = firstSpan('فِي أَحَدٍ', 'madd_munfasil');
-  const hamzaBelow = firstSpan('فِي يِٕحَدٍ', 'madd_munfasil');
+  const markedForms = [
+    'فِي أَحَدٍ',
+    'فِي إِحَدٍ',
+    'فِي ؤَحَدٍ',
+    'فِي ئَحَدٍ',
+    'فِي يِٕحَدٍ',
+  ];
 
-  assert.deepEqual(hamzaAbove, precomposed, 'combining hamza-above on alif is a hamza');
-  assert.deepEqual(hamzaBelow, precomposed, 'combining hamza-below on yeh is a hamza');
-  assert.equal(firstSpan('فِي اَهَدٍ', 'madd_munfasil'), null);
-  assert.deepEqual(firstSpan('فِي اَهَدٍ', 'madd_2'), precomposed);
-  assert.equal(firstSpan('فِي يَهَدٍ', 'madd_munfasil'), null);
+  for (const text of markedForms) {
+    assert.deepEqual(
+      firstSpan(text, 'madd_munfasil'),
+      precomposed,
+      `combining hamza must retain Madd Munfasil for ${text}`
+    );
+  }
+
+  for (const text of ['فِي اَهَدٍ', 'فِي يَهَدٍ', 'فِي وَهَدٍ']) {
+    assert.equal(firstSpan(text, 'madd_munfasil'), null, text);
+    assert.deepEqual(firstSpan(text, 'madd_2'), precomposed, text);
+  }
 });
 
 test('Madd Muttasil recognises hamza-above encoded on a seated letter in both rasms', () => {
