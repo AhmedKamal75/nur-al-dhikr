@@ -153,6 +153,8 @@ test('Meem Sakinah uses its explicit exceptions and sourced-rule fallback', () =
   assert.equal(MEEM_SAKINAH_RULE_GROUP.id, 'meem_sakinah');
   assert.equal(MEEM_SAKINAH_RULE_GROUP.mode, 'explicit-with-default');
   assert.equal(MEEM_SAKINAH_RULE_GROUP.defaultRule, 'izhar_shafawi');
+  assert.ok(TAJWEED_RULES.some(({ id }) => id === MEEM_SAKINAH_RULE_GROUP.defaultRule));
+  assert.ok(TAJWEED_SOURCES[MEEM_SAKINAH_RULE_GROUP.defaultRule]);
   assert.ok(Object.isFrozen(MEEM_SAKINAH_RULE_GROUP));
   assert.ok(Object.isFrozen(MEEM_SAKINAH_RULE_GROUP.rules));
 
@@ -163,8 +165,8 @@ test('Meem Sakinah uses its explicit exceptions and sourced-rule fallback', () =
     assert.ok(Object.isFrozen(entry));
     assert.ok(Object.isFrozen(entry.nextBases));
     for (const base of entry.nextBases) {
-      assert.match(base, /^\\p{L}$/u);
-      assert.match(base, /^\\p{Script=Arabic}$/u);
+      assert.match(base, /^\p{L}$/u);
+      assert.match(base, /^\p{Script=Arabic}$/u);
       assert.ok(!seen.has(base), `overlapping Meem Sakinah follower: ${base}`);
       seen.add(base);
     }
