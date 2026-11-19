@@ -29,6 +29,16 @@ The classifier expresses that exception as a closed, sourced table, normalizes o
 
 The rule is intentionally explicit in both code and tests: standalone and seated hamza glyphs use the same follower family, and a combining hamza-above mark on a leading alif is carried across a word boundary as lookahead metadata rather than by rewriting source text.
 
+## Taxonomy completeness is a separate scholarly gate
+
+This prototype's current classifier inventory is 20 deterministic rule IDs. That is not a claim that the app covers the complete classical Tajweed taxonomy.
+
+The repository research dossier identifies two classical, corpus-attested assimilation families currently absent from the classifier: `idgham_mutajanisayn` and `idgham_mutaqaribayn`. Its crosswalk records 58 and 13 annotation sites respectively, but those counts are external research leads—not independently reproduced coverage in this branch—and the dossier explicitly blocks inclusion pending a named scholar's ruling because published colour systems differ in their treatment.
+
+The same dossier questions whether the current citations for `madd_iwad` and `madd_silah` directly support their definitions: they are not standalone rules in the two cited matns, even though the present registry cites a contested taxonomy locator. This needs direct-source review or an explicit extension label. It also flags the scope of `tafkhim` and the waqf-dependent reach of `qalqalah`.
+
+These questions are tracked in [Issue #44 — scholar review of taxonomy gaps and rule-source scope](https://github.com/AhmedKamal75/nur-al-dhikr/issues/44). No new rule IDs, colour entries, or practice/course rows should be added until the recitation scope and source-backed scholarly decisions are recorded. A passing reachability test for every current rule ID proves only that the current inventory executes; it does not prove that the inventory is complete.
+
 ## Correctness and parity requirements
 
 1. Treat the previous classifier output as a differential baseline only, not as a source of religious truth.
