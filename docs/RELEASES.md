@@ -1,3 +1,9 @@
+## v5.17.140 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
+
+- Adds a small, test-covered declarative lookup for the mutually exclusive noon-sakinah/tanween next-letter family; contextual detection remains in the shared classifier.
+- Incorporates cross-rasm audit instrumentation and corpus-backed regression candidates for variant tanween and hamza spellings. Canonical Qur’an/Mushaf text is unchanged.
+- This is not a full Tajweed rewrite or scholarly certification. Full-corpus mismatch triage, remaining rule families, Node/CI, browser-glyph and source-backed review gates remain required.
+
 ## v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
 
 Lands the crew's fix for ledger row 99. Three branches attempted it; the

@@ -2,7 +2,12 @@ name: check
 
 on:
   push:
+    branches: [main]
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   check:
@@ -19,6 +24,24 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
+      - name: Capture Prettier formatting diff
+        if: always() && matrix.node == 20
+        run: |
+          for file in docs/TAJWEED-RULE-INVENTORY-2026-11-19.md js/domain/tajweed.js scripts/repair-scripted-text.mjs tests/scripture-text-integrity.test.js tests/tajweed-audit-comparison.test.js tests/tajweed-rasm-equivalence.test.js tests/tajweed-rule-spec.test.js tests/e2e/overhaul-orthography.spec.js tests/e2e/player-chrome.spec.js; do
+            mkdir -p "/tmp/tajweed-prettier/original/$(dirname "$file")"
+            mkdir -p "/tmp/tajweed-prettier/formatted/$(dirname "$file")"
+            mkdir -p "/tmp/tajweed-prettier/diffs/$(dirname "$file")"
+            cp "$file" "/tmp/tajweed-prettier/original/$file"
+            npx prettier "$file" > "/tmp/tajweed-prettier/formatted/$file"
+            diff -u "/tmp/tajweed-prettier/original/$file" "/tmp/tajweed-prettier/formatted/$file" > "/tmp/tajweed-prettier/diffs/$file.diff" || true
+          done
+      - name: Upload Prettier formatting evidence
+        if: always() && matrix.node == 20
+        uses: actions/upload-artifact@v4
+        with:
+          name: tajweed-prettier-format
+          path: /tmp/tajweed-prettier/
+          retention-days: 1
       - run: npm run compress-data
       - run: npm run check
 

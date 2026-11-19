@@ -11,15 +11,53 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
   test.slow();
   const pageErrors = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
+  // Remote reciter availability is not the subject of this chrome test.
+  // Exercise the real HTML media pipeline with deterministic, long WAV audio.
+  const sampleRate = 8000;
+  const sampleCount = sampleRate * 30;
+  const silentWav = Buffer.alloc(44 + sampleCount * 2);
+  silentWav.write('RIFF', 0);
+  silentWav.writeUInt32LE(36 + sampleCount * 2, 4);
+  silentWav.write('WAVE', 8);
+  silentWav.write('fmt ', 12);
+  silentWav.writeUInt32LE(16, 16);
+  silentWav.writeUInt16LE(1, 20);
+  silentWav.writeUInt16LE(1, 22);
+  silentWav.writeUInt32LE(sampleRate, 24);
+  silentWav.writeUInt32LE(sampleRate * 2, 28);
+  silentWav.writeUInt16LE(2, 32);
+  silentWav.writeUInt16LE(16, 34);
+  silentWav.write('data', 36);
+  silentWav.writeUInt32LE(sampleCount * 2, 40);
+  await page.route('**/*.mp3', (route) =>
+    route.fulfill({ status: 200, contentType: 'audio/wav', body: silentWav })
+  );
+  await page.addInitScript(() => {
+    const mediaElements = [];
+    Object.defineProperty(window, '__nurAlDhikrMediaElements', { value: mediaElements });
+    const nativePlay = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function (...args) {
+      if (this.__key && !mediaElements.includes(this)) mediaElements.push(this);
+      return nativePlay.apply(this, args);
+    };
+  });
   await page.goto('#/mushaf?page=2');
   await expect(page.locator('#main')).not.toBeEmpty({ timeout: 20000 });
-  await page.waitForTimeout(3000);
-  await page.evaluate(() => {
-    const btns = [...document.querySelectorAll('[data-action="surah-play"]')];
-    const b = btns.find((x) => x.dataset.surah === '2') || btns[0];
-    b.click();
-  });
+  const surahTwoPlay = page.locator('[data-action="surah-play"][data-surah="2"]:visible');
+  const playButton = (await surahTwoPlay.count())
+    ? surahTwoPlay.first()
+    : page.locator('[data-action="surah-play"]:visible').first();
+  await expect(playButton).toBeVisible({ timeout: 20000 });
+  await playButton.click();
   await expect(page.locator('.player-bar--recite')).toBeVisible({ timeout: 20000 });
+  await page.waitForFunction(
+    () =>
+      window.__nurAlDhikrMediaElements?.some(
+        (audio) => audio.__key && !audio.paused && !audio.ended && audio.currentTime >= 0.25
+      ),
+    null,
+    { timeout: 20000 }
+  );
 
   // Minimize → slim pill, session untouched.
   await page.locator('.player-bar--recite [data-action="player-min-toggle"]').first().click();
@@ -41,6 +79,14 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
     page.locator('.player-bar--recite [data-action="recite-pause-toggle"]').first()
   ).toHaveAttribute('aria-label', /Play|تشغيل/, { timeout: 10000 });
   await page.keyboard.press(' ');
+  await page.waitForFunction(
+    () =>
+      window.__nurAlDhikrMediaElements?.some(
+        (audio) => audio.__key && !audio.paused && !audio.ended && audio.currentTime >= 0.25
+      ),
+    null,
+    { timeout: 20000 }
+  );
   // ArrowLeft steps to the next ayah (mushaf order).
   await page.keyboard.press('ArrowLeft');
   await expect.poll(async () => counter.textContent(), { timeout: 15000 }).not.toBe(before);
@@ -53,9 +99,9 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
   );
   await page.keyboard.press('m');
 
-  // Idle fade: 5s of quiet dims the bar; motion wakes it.
-  await page.waitForTimeout(5600);
-  await expect(page.locator('body.player-idle')).toBeAttached({ timeout: 5000 });
+  // Explicitly start a fresh idle interval after the final keyboard activity.
+  await page.mouse.move(300, 300);
+  await expect(page.locator('body.player-idle')).toBeAttached({ timeout: 8000 });
   await page.mouse.move(300, 300);
   await expect(page.locator('body.player-idle')).toHaveCount(0, { timeout: 5000 });
   expect(pageErrors).toEqual([]);

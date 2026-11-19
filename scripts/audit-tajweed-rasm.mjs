@@ -5,9 +5,12 @@
  */
 import { readFileSync } from 'node:fs';
 import { canonicalWordTokens, classifyAyahTajweed } from '../js/domain/tajweed.js';
+import {
+  compareSharedRuleSpanCounts,
+  compareSharedRuleSpanOffsets,
+} from './tajweed-audit-comparison.mjs';
 
 const ROOT = new URL('../', import.meta.url);
-const SAMPLE_LIMIT = Number(process.argv.find((arg) => arg.startsWith('--samples='))?.split('=')[1] || 30);
 const ORNAMENTS = new Set([
   '\u0640', '\u06D6', '\u06D7', '\u06D8', '\u06DA', '\u06DB', '\u06DC', '\u06DE',
   '\u06E9', '\u06EC', '\uFD3E', '\uFD3F', '(', ')',
@@ -30,15 +33,6 @@ function letterOrdinal(text, offset) {
   return [...text.slice(0, offset)].filter(
     (ch) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch)
   ).length;
-}
-
-function groupByRule(spans) {
-  const groups = new Map();
-  for (const span of spans) {
-    if (!groups.has(span.rule)) groups.set(span.rule, []);
-    groups.get(span.rule).push(span);
-  }
-  return groups;
 }
 
 function classifyCanonicalWords(text) {
@@ -90,14 +84,23 @@ for (let page = 1; page <= 604; page += 1) {
 
 const missingFromMushaf = [...quran.keys()].filter((key) => !mushaf.has(key));
 const missingFromQuran = [...mushaf.keys()].filter((key) => !quran.has(key));
-const mismatchSamples = [];
-const offsetSamples = [];
+const ruleMismatchDetails = [];
+const offsetDivergenceDetails = [];
+const wordCountMismatchDetails = [];
+const surfaceSkeletonMismatchDetails = [];
+const spanMultiplicityMismatchDetails = [];
 const ruleDeltas = new Map();
+const spanMultiplicityDeltas = new Map();
 const affectedAyahs = new Set();
+const affectedAyahsBySpanMultiplicity = new Set();
+const unalignedAyahs = new Set();
 let checkedAyahs = 0;
 let wordCountMismatches = 0;
+let surfaceSkeletonMismatches = 0;
+let unalignedWordPairs = 0;
 let wordsCompared = 0;
 let differingWords = 0;
+let spanMultiplicityRuleGroupMismatchCount = 0;
 let offsetDivergenceCount = 0;
 
 for (const [key, text] of quran) {
@@ -108,6 +111,14 @@ for (const [key, text] of quran) {
   const pageWords = classifyCanonicalWords(pageRecord.text);
   if (corpusWords.length !== pageWords.length) {
     wordCountMismatches += 1;
+    wordCountMismatchDetails.push({
+      key,
+      page: pageRecord.page,
+      quranWordCount: corpusWords.length,
+      mushafWordCount: pageWords.length,
+      quranWords: corpusWords.map((word) => word.raw),
+      mushafWords: pageWords.map((word) => word.raw),
+    });
     continue;
   }
 
@@ -115,7 +126,55 @@ for (const [key, text] of quran) {
   for (let i = 0; i < corpusWords.length; i += 1) {
     const a = corpusWords[i];
     const b = pageWords[i];
+    if (a.skeleton !== b.skeleton) {
+      surfaceSkeletonMismatches += 1;
+      unalignedWordPairs += 1;
+      unalignedAyahs.add(key);
+      // Keep every raw unaligned pair in the artifact. Unlike ordinary
+      // examples, alignment failures are the audit inventory itself and
+      // must never be truncated in the audit artifact.
+      surfaceSkeletonMismatchDetails.push({
+        key,
+        page: pageRecord.page,
+        wordIndex: i + 1,
+        quranWord: a.raw,
+        mushafWord: b.raw,
+        quranSkeleton: a.skeleton,
+        mushafSkeleton: b.skeleton,
+      });
+      // Same-index tokens with different letter skeletons are not yet a
+      // defensible semantic pair. Preserve the raw pair above, but do not
+      // count rule-set or span deltas until a reviewed alignment exists.
+      continue;
+    }
     wordsCompared += 1;
+
+    // Equal rule-ID sets can still conceal a missing/extra occurrence when
+    // one word contains multiple spans of the same rule. Keep this separate
+    // from rule-presence deltas and from letter-ordinal offset differences.
+    const spanMultiplicityDifferences = compareSharedRuleSpanCounts(a.spans, b.spans);
+    if (spanMultiplicityDifferences.length) {
+      affectedAyahsBySpanMultiplicity.add(key);
+      spanMultiplicityRuleGroupMismatchCount += spanMultiplicityDifferences.length;
+      for (const difference of spanMultiplicityDifferences) {
+        const row = spanMultiplicityDeltas.get(difference.rule) || {
+          quranOnly: 0,
+          mushafOnly: 0,
+        };
+        row.quranOnly += difference.quranOnly;
+        row.mushafOnly += difference.mushafOnly;
+        spanMultiplicityDeltas.set(difference.rule, row);
+      }
+      spanMultiplicityMismatchDetails.push({
+        key,
+        page: pageRecord.page,
+        wordIndex: i + 1,
+        quranWord: a.raw,
+        mushafWord: b.raw,
+        differences: spanMultiplicityDifferences,
+      });
+    }
+
     const onlyQuran = a.rules.filter((rule) => !b.rules.includes(rule));
     const onlyMushaf = b.rules.filter((rule) => !a.rules.includes(rule));
     if (onlyQuran.length || onlyMushaf.length) {
@@ -131,32 +190,22 @@ for (const [key, text] of quran) {
         row.mushafOnly += 1;
         ruleDeltas.set(rule, row);
       }
-      if (mismatchSamples.length < SAMPLE_LIMIT) {
-        mismatchSamples.push({
-          key, page: pageRecord.page, wordIndex: i + 1,
-          quranWord: a.raw, mushafWord: b.raw,
-          quranRules: a.rules, mushafRules: b.rules, onlyQuran, onlyMushaf,
-        });
-      }
+      ruleMismatchDetails.push({
+        key, page: pageRecord.page, wordIndex: i + 1,
+        quranWord: a.raw, mushafWord: b.raw,
+        quranRules: a.rules, mushafRules: b.rules, onlyQuran, onlyMushaf,
+      });
     }
 
     if (a.skeleton && a.skeleton === b.skeleton) {
-      const byRuleA = groupByRule(a.spans);
-      const byRuleB = groupByRule(b.spans);
-      for (const [rule, aSpans] of byRuleA) {
-        const bSpans = byRuleB.get(rule) || [];
-        for (let j = 0; j < Math.min(aSpans.length, bSpans.length); j += 1) {
-          if (aSpans[j].letterOrdinal !== bSpans[j].letterOrdinal) {
-            offsetDivergenceCount += 1;
-            if (offsetSamples.length < SAMPLE_LIMIT) {
-              offsetSamples.push({
-                key, page: pageRecord.page, wordIndex: i + 1, rule,
-                quranWord: a.raw, mushafWord: b.raw,
-                quranSpan: aSpans[j], mushafSpan: bSpans[j],
-              });
-            }
-          }
-        }
+      const offsetDifferences = compareSharedRuleSpanOffsets(a.spans, b.spans);
+      for (const difference of offsetDifferences) {
+        offsetDivergenceCount += 1;
+        offsetDivergenceDetails.push({
+          key, page: pageRecord.page, wordIndex: i + 1, rule: difference.rule,
+          quranWord: a.raw, mushafWord: b.raw,
+          quranSpan: difference.quranSpan, mushafSpan: difference.mushafSpan,
+        });
       }
     }
   }
@@ -165,21 +214,37 @@ for (const [key, text] of quran) {
 
 console.log(JSON.stringify({
   scope: {
-    quranAyahs: quran.size, mushafAyahs: mushaf.size, checkedAyahs, wordsCompared,
-    wordCountMismatches, missingFromMushaf: missingFromMushaf.length,
+    quranAyahs: quran.size, mushafAyahs: mushaf.size, checkedAyahs,
+    wordCountMatchedAyahs: checkedAyahs - wordCountMismatches,
+    wordsCompared,
+    spanMultiplicityRuleGroupMismatches: spanMultiplicityRuleGroupMismatchCount,
+    unalignedWordPairs,
+    wordCountMismatches,
+    missingFromMushaf: missingFromMushaf.length,
     missingFromQuran: missingFromQuran.length, duplicateQuran: duplicateQuran.length,
     duplicateMushaf: duplicateMushaf.length,
   },
   result: {
-    affectedAyahsByRuleSet: affectedAyahs.size, differingWords,
+    affectedAyahsByRuleSet: affectedAyahs.size,
+    ayahsWithSpanMultiplicityMismatches: affectedAyahsBySpanMultiplicity.size,
+    ayahsWithUnalignedWords: unalignedAyahs.size,
+    differingWords,
+    surfaceSkeletonMismatches,
     offsetDivergences: offsetDivergenceCount,
     ruleDeltas: Object.fromEntries([...ruleDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))),
+    spanMultiplicityDeltas: Object.fromEntries(
+      [...spanMultiplicityDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))
+    ),
   },
-  samples: {
-    ruleMismatches: mismatchSamples, offsetDivergences: offsetSamples,
-    missingFromMushaf: missingFromMushaf.slice(0, SAMPLE_LIMIT),
-    missingFromQuran: missingFromQuran.slice(0, SAMPLE_LIMIT),
-    duplicateQuran: duplicateQuran.slice(0, SAMPLE_LIMIT),
-    duplicateMushaf: duplicateMushaf.slice(0, SAMPLE_LIMIT),
+  details: {
+    ruleMismatches: ruleMismatchDetails,
+    spanMultiplicityMismatches: spanMultiplicityMismatchDetails,
+    offsetDivergences: offsetDivergenceDetails,
+    wordCountMismatchAyahs: wordCountMismatchDetails,
+    surfaceSkeletonMismatches: surfaceSkeletonMismatchDetails,
+    missingFromMushaf,
+    missingFromQuran,
+    duplicateQuran,
+    duplicateMushaf,
   },
 }, null, 2));
