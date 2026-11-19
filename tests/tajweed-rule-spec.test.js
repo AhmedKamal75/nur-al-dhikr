@@ -115,18 +115,33 @@ test('cross-word lookahead preserves a combining hamza on initial alif', () => {
   assert.ok(!unmarked.some(({ rule }) => groupRuleIds.includes(rule)));
 });
 
-test('cross-word lookahead treats combining hamza-below on a yeh carrier as hamza', () => {
-  const marked = classifyWordTajweed('نْ', {
-    nextWordFirstBase: 'ي',
-    nextWordFirstHasHamzaBelow: true,
-  });
-  assert.ok(marked.some(({ rule }) => rule === 'izhar'));
+test('cross-word lookahead resolves combining hamza for all supported seats', () => {
+  for (const [nextWordFirstBase, mark, flag] of [
+    ['ا', 'above', 'nextWordFirstHasHamzaAbove'],
+    ['ا', 'below', 'nextWordFirstHasHamzaBelow'],
+    ['و', 'above', 'nextWordFirstHasHamzaAbove'],
+    ['ي', 'above', 'nextWordFirstHasHamzaAbove'],
+    ['ي', 'below', 'nextWordFirstHasHamzaBelow'],
+  ]) {
+    const marked = classifyWordTajweed('نْ', {
+      nextWordFirstBase,
+      [flag]: true,
+    });
+    assert.ok(
+      marked.some(({ rule }) => rule === 'izhar'),
+      `${mark} hamza on ${nextWordFirstBase} must be Izhar`
+    );
+  }
 
-  const plain = classifyWordTajweed('نْ', {
-    nextWordFirstBase: 'ي',
-    nextWordFirstHasHamzaBelow: false,
-  });
-  assert.ok(plain.some(({ rule }) => rule === 'idgham_ghunnah'));
+  for (const nextWordFirstBase of ['ا', 'و', 'ي']) {
+    const plain = classifyWordTajweed('نْ', { nextWordFirstBase });
+    assert.ok(
+      !plain.some(({ rule }) => NOON_TANWEEN_RULE_GROUP.rules.some(
+        ({ rule }) => rule !== 'izhar' && plain.some((span) => span.rule === rule)
+      )),
+      `unmarked ${nextWordFirstBase} must not be treated as a hamza`
+    );
+  }
 });
 test('Meem Sakinah uses its explicit exceptions and sourced-rule fallback', () => {
   assert.equal(MEEM_SAKINAH_RULE_GROUP.id, 'meem_sakinah');
