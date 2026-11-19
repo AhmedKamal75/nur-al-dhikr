@@ -31,7 +31,7 @@ The rule is intentionally explicit in both code and tests: standalone and seated
 
 ## Taxonomy completeness is a separate scholarly gate
 
-This prototype's current classifier inventory is 20 deterministic rule IDs. That is not a claim that the app covers the complete classical Tajweed taxonomy.
+This prototype starts from the current 22 deterministic classifier IDs (`izhar` and `madd_4_6` post-date the research dossier's historical 20-rule count). That is not a claim that the app covers the complete classical Tajweed taxonomy.
 
 The repository research dossier identifies two classical, corpus-attested assimilation families currently absent from the classifier: `idgham_mutajanisayn` and `idgham_mutaqaribayn`. Its crosswalk records 58 and 13 annotation sites respectively, but those counts are external research leads—not independently reproduced coverage in this branch—and the dossier explicitly blocks inclusion pending a named scholar's ruling because published colour systems differ in their treatment.
 
