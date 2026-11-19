@@ -1,0 +1,89 @@
+# Tajweed rule inventory — 2026-11-19
+
+**Purpose:** Phase A inventory for [Issue #41](https://github.com/AhmedKamal75/nur-al-dhikr/issues/41). This records what the current code exposes and which contracts exist; it is not a scholarly certification or a claim of complete classical coverage.
+
+## Pinned baseline
+
+- Base `main`: `ab5323febaee3e4e986f7412c81bea5d18051cf0`.
+- `js/domain/tajweed.js` on the implementation branch: `164b51984c31b816e6508b4b39670284ebdf7997`.
+- `data/tajweed-sources.json`: `9979d65b4c43d8c5c87e806d7a007caad2b92e41`.
+- `data/tajweed-course.json`: `4cd78814f72fdbd897d431d6031f1f4559db37a4`.
+
+Rebuild this inventory when the classifier or source registry changes. Counts below are parsed from the pinned files, not copied from the older research dossier.
+
+## What currently exists
+
+| Measure | Current inventory | What it does — and does not — prove |
+| --- | ---: | --- |
+| Deterministic classifier IDs | **22** | The implemented/persisted rule identities. Does not prove the classical taxonomy is complete. |
+| Source-registry entries | **29** | 22 classifier IDs plus seven study/disagreement entries for makharij and sifat counts. |
+| Classifier IDs with source entries | **22 / 22** | Citation-presence contract passes; a locator's presence is not proof that it directly supports every algorithmic predicate. |
+| Source review states | **15 sourced / 7 contested** | The current registry's declared review metadata; contested entries require their bilingual caveat to remain visible. |
+| Course focus coverage | **22 / 22** | Every current classifier ID occurs in at least one course session. This checks the current curriculum, not scholarly completeness. |
+| Practice-pool generation | Derived from the same classifier | A generated row re-derives from the classifier; this prevents hand-authored answer-key drift but is not an independent recitation oracle. |
+
+The seven source-registry entries that are not classifier rules are `makharij_17`, `makharij_16`, `makharij_14`, `sifat_17`, `sifat_18`, `sifat_20`, and `sifat_44`. They are study positions/disagreements, not rules the word classifier should emit.
+
+## Current classifier inventory
+
+| Family | Stable rule IDs | Current detection shape | Source locator / registry review | Teaching surface |
+| --- | --- | --- | --- | --- |
+| Silent / orthography | `hamzat_wasl` | Alif-wasla unit; a standalone silent-letter annotation. | al-Jazariyya 100–103; al-Tamhid ch. 5 — **sourced**. | Wasl and qaṭʿ. |
+| Silent / orthography | `lam_shamsiyyah` | Definite-article lām before a sun letter with shadda; prefix/article shape is checked. | Tuhfat al-Atfal 24–29; al-Jazariyya 28, 43 — **sourced**. | The sun letters. |
+| Noon / tanween | `ghunnah` | Shadda on nūn or mīm; may coexist with a second rule on the same unit. | Tuhfat al-Atfal 14–17; al-Jazariyya 19 — **sourced**. | Ghunnah / makharij study. |
+| Noon / tanween | `ikhfa` | Sakin nūn/tanween context + one of the 15 follower letters. | Tuhfat al-Atfal 14–17 — **sourced**. | Hidden noon. |
+| Noon / tanween | `izhar` | Throat-letter follower plus closed same-word Izhar Mutlaq exceptions. Same stable ID is used for the word-level subtype. | Tuhfat al-Atfal 6–13; Egyptian Ministry of Awqaf, Izhar Mutlaq section — **sourced**. | Clear noon. |
+| Noon / tanween | `iqlab` | Explicit small-high-meem signal or follower bāʾ. | Tuhfat al-Atfal 6–13 — **sourced**. | Noon into meem. |
+| Noon / tanween | `idgham_ghunnah` | Mutually exclusive follower set yāʾ/nūn/mīm/wāw. | Tuhfat al-Atfal 6–13 — **sourced**. | Merging noon. |
+| Noon / tanween | `idgham_no_ghunnah` | Mutually exclusive follower lām/rāʾ. | Tuhfat al-Atfal 6–13 — **sourced**. | Merging noon. |
+| Meem sakinah | `idgham_shafawi` | Sakin mīm + following mīm. | Tuhfat al-Atfal 18–23 — **sourced**. | The three meem rulings. |
+| Meem sakinah | `ikhfa_shafawi` | Sakin mīm + following bāʾ. | Tuhfat al-Atfal 18–23 — **sourced**. | The three meem rulings. |
+| Meem sakinah | `izhar_shafawi` | Sakin mīm + remaining following letter in the current classifier. | Tuhfat al-Atfal 18–23 — **sourced**. | The three meem rulings. |
+| Sifat / articulation | `qalqalah` | Qāf/ṭāʾ/bāʾ/jīm/dāl under sukun/waqf-aware handling, with explicit Muqaṭṭaʿāt and assimilation exceptions. | al-Jazariyya 23, 37–39; al-Mawsuʿa al-Saʿudiyya — **contested** with a sourced alternate. | The bounce. |
+| Sifat / articulation | `tafkhim` | Context-sensitive lām of lafẓ al-jalālah and rāʾ vowel cases. | al-Jazariyya 34–56 — registry **sourced**; breadth of the app's tafkhim scope is separately flagged in the research dossier. | Heavy and light. |
+| Madd | `madd_2` | Natural-madd carrier/diacritic cases and explicit small-letter guide forms. | Tuhfat al-Atfal 35–41; al-Jazariyya 68–71 — **sourced**. | Natural madd. |
+| Madd | `madd_iwad` | Ayah-final fathatan at the pause; source-specific spellings handled contextually. | Tuhfat al-Atfal 47–58 — registry **contested**; dossier says this is not a standalone rule in the cited matns and calls for direct-source/extension review. | Madd lāzim / other madd forms. |
+| Madd | `madd_badal` | Hamza followed by its madd carrier; orthographic forms are handled without modifying source text. | Tuhfat al-Atfal 46 — **contested**. | Madd lāzim / other madd forms. |
+| Madd | `madd_246` | Madd before an ayah-final consonant under pause context. | Tuhfat al-Atfal 42–47 — **contested**; al-Jazariyya 68–71 — alternate **sourced** locator. | Madd at a pause. |
+| Madd | `madd_munfasil` | Madd at word end + hamza beginning the next word; lookahead is hamza-aware. | Tuhfat al-Atfal 42–47; al-Jazariyya 68–71 — **sourced**. | Connected and separated madd. |
+| Madd | `madd_silah` | Hāʾ al-kināyah small-wāw/yeh or lengthened pronoun with contextual hamza lookahead. | Tuhfat al-Atfal 47–58 — registry **contested**; dossier says the cited matns do not give this as a standalone rule and calls for direct-source/extension review. | Madd lāzim / other madd forms. |
+| Madd | `madd_muttasil` | Madd carrier + hamza in the same word; hamza seats/combining forms are recognized. | Tuhfat al-Atfal 42–47; al-Jazariyya 68–71 — **sourced**. | Connected and separated madd. |
+| Madd | `madd_6` | Madd before original sukun/shadda or specified letter-name forms. | Tuhfat al-Atfal 47–58 — **contested**. | Madd lāzim / other madd forms. |
+| Madd | `madd_4_6` | Special ʿayn letter-name case in Muqaṭṭaʿāt, kept separate from fixed six-count Madd lāzim. | Tuhfat al-Atfal 54 — **contested**; Egyptian Ministry of Awqaf al-Madd wa-l-Qasr — alternate **sourced** locator. | Madd lāzim / other madd forms. |
+
+## How the current code is organized
+
+- **One shared reader path already exists:** `views/quran.js` and `views/mushafReader.js` both use `views/tafsirPanel.js`'s `renderAyahWords`, which calls `classifyAyahTajweed` on each original source string. The remaining parity work is about source spelling, semantic/token alignment, contextual interpretation, and glyph offsets—not two wholly separate view-level classifiers.
+- **Declarative today:** `NOON_TANWEEN_RULE_GROUP` captures the mutually exclusive follower-letter table. `NOON_TANWEEN_SAME_WORD_EXCEPTIONS` is a separate closed, sourced context exception. Only the follower group is first-match.
+- **Still procedural/contextual:** meem-sakinah's three-way branch; qalqalah's sukun/waqf/assimilation/Muqaṭṭaʿāt handling; Madd's context, hamza, word/ayah boundary and pause logic; and tafkhim's divine-name/rāʾ context.
+- **Stable IDs are persisted contracts:** user preferences, settings, course, generated practice rows and quiz miss records use rule IDs. Renaming or splitting an existing rule is a migration, not a cosmetic refactor.
+- **Citations already have a source of truth:** `data/tajweed-sources.json` is canonical; `js/domain/tajweedSources.js` is a synchronous runtime mirror checked for exact parity. Do not create a second citation registry.
+
+## Existing test contracts
+
+| Test / script | What it checks | What it does not prove |
+| --- | --- | --- |
+| `tests/tajweed.test.js` | Positive/negative examples for the implemented classifier branches, context, overlaps and special spellings. | Independent scholarly correctness for every corpus occurrence. |
+| `tests/tajweed-rule-spec.test.js` | Declarative noon/tanween table integrity, unique/disjoint Arabic follower sets, source/legend membership, live branch behavior, Izhar Mutlaq exception scope, and hamza lookahead controls. | Completeness of the classical taxonomy. |
+| `tests/tajweed-sources.test.js` | Every classifier ID has a source entry; locators/review metadata/caveats are valid; JSON/runtime mirror parity. | That a given locator directly supports every code predicate. |
+| `tests/tajweed-corpus-sweep.test.js` | All 6,236 Qur'an ayahs execute; known IDs, span bounds, duplicate-span and overlap contracts; generated practice-pool coverage matches classifier-derived counts. | That the classifier is a correct religious gold standard; pool derivation is intentionally same-engine. |
+| `tests/p0-tajweed-rounds.test.js` | Practice rows are real corpus references and re-derive; coverage is not padded with invented examples. | Independent rule adjudication. |
+| `tests/tajweed-course.test.js` | Course structure, rule/source references and curriculum consistency. | That every classical phenomenon has been included in the course. |
+| `tests/tajweed-coherence.test.js` | Settings/legend and Mushaf preference/rendering contracts; intentional same-unit overlaps remain accessible. | Correctness of the ruling that created a span. |
+| `tests/tajweed-rasm-equivalence.test.js` + `scripts/audit-tajweed-rasm.mjs` | Known source-spelling regressions and full-corpus cross-rasm diagnostics. | Safe equivalence for word pairs not yet aligned/reviewed. |
+| `tests/tajweed-audit-comparison.test.js` | Rule-span cardinality and positional comparison are reported as separate diagnostic dimensions. | Semantic alignment when the surface skeleton differs. |
+
+## Known completeness and source gates
+
+1. **Two classical assimilation families remain absent:** `idgham_mutajanisayn` and `idgham_mutaqaribayn`. The research dossier's external annotation crosswalk offers 58 and 13 sites as leads, and lists inclusion as a named-scholar decision because the cited systems differ. Reproduce those sites against current source text and resolve [Issue #44](https://github.com/AhmedKamal75/nur-al-dhikr/issues/44) before claiming full taxonomy coverage.
+2. **Do not confuse source-entry count with classifier count:** the 29 source-registry entries comprise 22 classifier rules plus seven makharij/sifat discussion positions.
+3. **Seven rules are marked contested** in the registry: `qalqalah`, `madd_iwad`, `madd_badal`, `madd_246`, `madd_silah`, `madd_6`, and `madd_4_6`. Keep their caveats and review labels visible.
+4. The dossier specifically asks for direct-source review or an explicit “extension” label for `madd_iwad` and `madd_silah`; their current contested citations must not be represented as direct definitions if they only locate a taxonomy disagreement.
+5. The broad scope of `tafkhim` and the waqf dependence of `qalqalah` are still explicit review questions in the dossier.
+6. Full-corpus reachability and view parity do not establish correctness for the 22 currently declared IDs, nor do they prove the taxonomy complete.
+
+## Next smallest useful implementation slice
+
+After the current cross-rasm inventory and review gates are stable, the next clean table-driven candidate is the **meem-sakinah follower decision**: mīm → `idgham_shafawi`, bāʾ → `ikhfa_shafawi`, and the remaining Arabic follower letters → `izhar_shafawi`. This should only be migrated if its context preconditions and the Wāw/Fāʾ caution from Tuhfat al-Atfal v. 23 remain explicit and its old/new outputs match all existing fixtures and the full corpus. Do not generalize first-match behavior outside a proven mutually exclusive group.
+
+**Bottom line:** the 22 current IDs are centralized through one shared classifier and existing registries/contracts, but this is not yet a complete classical taxonomy or a scholarly oracle. The remaining design work must reduce duplicated decisions without hiding the explicit source, scope, and alignment gaps.
