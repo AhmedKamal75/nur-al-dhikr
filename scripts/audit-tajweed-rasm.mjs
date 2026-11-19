@@ -5,6 +5,10 @@
  */
 import { readFileSync } from 'node:fs';
 import { canonicalWordTokens, classifyAyahTajweed } from '../js/domain/tajweed.js';
+import {
+  compareSharedRuleSpanCounts,
+  groupSpansByRule,
+} from './tajweed-audit-comparison.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const ORNAMENTS = new Set([
@@ -29,15 +33,6 @@ function letterOrdinal(text, offset) {
   return [...text.slice(0, offset)].filter(
     (ch) => /\p{L}/u.test(ch) && /\p{Script=Arabic}/u.test(ch)
   ).length;
-}
-
-function groupByRule(spans) {
-  const groups = new Map();
-  for (const span of spans) {
-    if (!groups.has(span.rule)) groups.set(span.rule, []);
-    groups.get(span.rule).push(span);
-  }
-  return groups;
 }
 
 function classifyCanonicalWords(text) {
@@ -93,8 +88,11 @@ const ruleMismatchDetails = [];
 const offsetDivergenceDetails = [];
 const wordCountMismatchDetails = [];
 const surfaceSkeletonMismatchDetails = [];
+const spanMultiplicityMismatchDetails = [];
 const ruleDeltas = new Map();
+const spanMultiplicityDeltas = new Map();
 const affectedAyahs = new Set();
+const affectedAyahsBySpanMultiplicity = new Set();
 const unalignedAyahs = new Set();
 let checkedAyahs = 0;
 let wordCountMismatches = 0;
@@ -102,6 +100,7 @@ let surfaceSkeletonMismatches = 0;
 let unalignedWordPairs = 0;
 let wordsCompared = 0;
 let differingWords = 0;
+let spanMultiplicityMismatchCount = 0;
 let offsetDivergenceCount = 0;
 
 for (const [key, text] of quran) {
@@ -149,6 +148,33 @@ for (const [key, text] of quran) {
       continue;
     }
     wordsCompared += 1;
+
+    // Equal rule-ID sets can still conceal a missing/extra occurrence when
+    // one word contains multiple spans of the same rule. Keep this separate
+    // from rule-presence deltas and from letter-ordinal offset differences.
+    const spanMultiplicityDifferences = compareSharedRuleSpanCounts(a.spans, b.spans);
+    if (spanMultiplicityDifferences.length) {
+      affectedAyahsBySpanMultiplicity.add(key);
+      spanMultiplicityMismatchCount += spanMultiplicityDifferences.length;
+      for (const difference of spanMultiplicityDifferences) {
+        const row = spanMultiplicityDeltas.get(difference.rule) || {
+          quranOnly: 0,
+          mushafOnly: 0,
+        };
+        row.quranOnly += difference.quranOnly;
+        row.mushafOnly += difference.mushafOnly;
+        spanMultiplicityDeltas.set(difference.rule, row);
+      }
+      spanMultiplicityMismatchDetails.push({
+        key,
+        page: pageRecord.page,
+        wordIndex: i + 1,
+        quranWord: a.raw,
+        mushafWord: b.raw,
+        differences: spanMultiplicityDifferences,
+      });
+    }
+
     const onlyQuran = a.rules.filter((rule) => !b.rules.includes(rule));
     const onlyMushaf = b.rules.filter((rule) => !a.rules.includes(rule));
     if (onlyQuran.length || onlyMushaf.length) {
@@ -172,8 +198,8 @@ for (const [key, text] of quran) {
     }
 
     if (a.skeleton && a.skeleton === b.skeleton) {
-      const byRuleA = groupByRule(a.spans);
-      const byRuleB = groupByRule(b.spans);
+      const byRuleA = groupSpansByRule(a.spans);
+      const byRuleB = groupSpansByRule(b.spans);
       for (const [rule, aSpans] of byRuleA) {
         const bSpans = byRuleB.get(rule) || [];
         for (let j = 0; j < Math.min(aSpans.length, bSpans.length); j += 1) {
@@ -197,6 +223,7 @@ console.log(JSON.stringify({
     quranAyahs: quran.size, mushafAyahs: mushaf.size, checkedAyahs,
     wordCountMatchedAyahs: checkedAyahs - wordCountMismatches,
     wordsCompared,
+    spanMultiplicityMismatches: spanMultiplicityMismatchCount,
     unalignedWordPairs,
     wordCountMismatches,
     missingFromMushaf: missingFromMushaf.length,
@@ -205,14 +232,19 @@ console.log(JSON.stringify({
   },
   result: {
     affectedAyahsByRuleSet: affectedAyahs.size,
+    ayahsWithSpanMultiplicityMismatches: affectedAyahsBySpanMultiplicity.size,
     ayahsWithUnalignedWords: unalignedAyahs.size,
     differingWords,
     surfaceSkeletonMismatches,
     offsetDivergences: offsetDivergenceCount,
     ruleDeltas: Object.fromEntries([...ruleDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))),
+    spanMultiplicityDeltas: Object.fromEntries(
+      [...spanMultiplicityDeltas.entries()].sort(([a], [b]) => a.localeCompare(b))
+    ),
   },
   details: {
     ruleMismatches: ruleMismatchDetails,
+    spanMultiplicityMismatches: spanMultiplicityMismatchDetails,
     offsetDivergences: offsetDivergenceDetails,
     wordCountMismatchAyahs: wordCountMismatchDetails,
     surfaceSkeletonMismatches: surfaceSkeletonMismatchDetails,
