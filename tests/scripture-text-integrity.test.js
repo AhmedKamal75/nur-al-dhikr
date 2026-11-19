@@ -32,7 +32,9 @@ test('scripture corpora contain no replacement or control characters', () => {
 test('generated scripture gzip twins match their plain JSON bytes', (t) => {
   const packaged = files.filter((file) => existsSync(new URL(`${file}.gz`, dataDir)));
   if (packaged.length === 0) {
-    t.skip('gzip twins are generated release artifacts and are absent from a clean source checkout');
+    t.skip(
+      'gzip twins are generated release artifacts and are absent from a clean source checkout'
+    );
     return;
   }
   for (const file of files) {
