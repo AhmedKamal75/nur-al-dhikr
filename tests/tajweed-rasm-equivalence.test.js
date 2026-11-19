@@ -142,6 +142,19 @@ test('Madd Munfasil recognises combining hamza on every supported seat', () => {
       precomposed,
       `combining hamza must retain Madd Munfasil for ${text}`
     );
+
+    const rows = classifyAyahTajweed(text);
+    assert.deepEqual(
+      rows.map(({ word }) => word),
+      text.split(/\\s+/u),
+      'classification must retain the original source words'
+    );
+    const maddSpan = rows[0].spans.find(({ rule }) => rule === 'madd_munfasil');
+    assert.deepEqual(
+      [maddSpan.start, maddSpan.end],
+      [2, 3],
+      'Madd Munfasil must retain the original source span'
+    );
   }
 
   for (const text of ['فِي اَهَدٍ', 'فِي يَهَدٍ', 'فِي وَهَدٍ']) {
