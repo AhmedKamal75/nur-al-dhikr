@@ -120,7 +120,7 @@
 
 .card__arabic {
   font-family: var(--font-arabic-reading, var(--font-arabic));
-  font-size: var(--fs-arabic-card);
+  font-size: var(--fs-arabic-card-list);
   line-height: var(--lh-arabic);
   color: var(--color-text);
   text-align: start;
@@ -1494,7 +1494,7 @@ a.home-today__cell:hover {
 }
 
 .panel--reflection .card__arabic {
-  font-size: calc(var(--fs-arabic-card) * 0.85);
+  font-size: calc(var(--fs-arabic-card-list) * 0.85);
 }
 
 /* Ramadan seasonal banner */
@@ -2806,7 +2806,7 @@ body.has-player .hadith-card {
 }
 .hadith-card__arabic {
   font-family: var(--font-arabic-reading, var(--font-arabic));
-  font-size: calc(var(--fs-arabic-card) * 0.8);
+  font-size: calc(var(--fs-arabic-card-list) * 0.8);
   line-height: var(--lh-arabic);
   /* (v5.17.22) The corpus marks genuine line breaks in hadith with a
      newline, and they are rendered here. Upstream used a literal `<br>`,

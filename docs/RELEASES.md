@@ -1,3 +1,16 @@
+## v5.17.142 — Azkar cards: long adhkar stay scannable on phones
+
+Phone-QA report: on the Azkar list, long adhkar (Ayat al-Kursi) rendered
+oversized — at the maximum Arabic font scale a single card grew to ~1450px,
+three words per line. Scrolling card lists (azkar and hadith cards, the
+reflection panel) now cap the effective Arabic scale at 1.25 below 560px
+via --fs-arabic-card-list; the mushaf reader, focus mode and the tasbih
+stage keep the full 0.85-1.6 range. Desktop is unchanged. Pinned by
+tests/e2e/azkar-arabic-cap.spec.js (phone cap + full desktop range + full
+Quran-reader range on the phone).
+
+(v5.17.140 and v5.17.141 are held by branches still in review.)
+
 ## v5.17.141 — prayer ribbon: badges no longer crush prayer names on phones
 
 User report from a phone QA pass: on the Home "Today's prayers" card, the two

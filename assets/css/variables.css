@@ -276,6 +276,14 @@
   --fs-arabic-card: calc(1.75rem * var(--arabic-font-scale));
   --fs-arabic-focus: calc(2.5rem * var(--arabic-font-scale));
 
+  /* Scrolling card lists (azkar/hadith cards) share the mushaf's Arabic
+     scale on wide screens, but on a phone the full range breaks the list:
+     at scale 1.6 a single long dhikr (Ayat al-Kursi) becomes a ~1450px
+     card, three words per line — reported in the 2026-11-23 phone QA pass.
+     The list cap keeps phones scannable; mushaf, focus and the tasbih
+     stage keep the full expressive range. */
+  --fs-arabic-card-list: var(--fs-arabic-card);
+
   --lh-tight: 1.25;
   --lh-normal: 1.55;
   --lh-arabic: 2.05;
@@ -549,4 +557,10 @@
   --font-arabic-reading:
     system-ui, -apple-system, 'Segoe UI', 'Noto Naskh Arabic', 'Geeza Pro', 'Al Bayan', 'Damascus',
     sans-serif;
+}
+
+@media (max-width: 560px) {
+  :root {
+    --fs-arabic-card-list: calc(1.75rem * min(var(--arabic-font-scale), 1.25));
+  }
 }
