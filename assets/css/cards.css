@@ -1183,7 +1183,10 @@ a.home-today__cell:hover {
   font-size: var(--fs-sm);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  /* A 12-hour clock is wider than a phone cell. Wrap at the AM/PM
+     space rather than painting over the neighboring prayer time. */
+  white-space: normal;
+  text-align: center;
 }
 .home-prayer-ribbon__badge {
   font-size: var(--fs-caption);
