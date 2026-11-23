@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { TAJWEED_SITES } from '../js/domain/tajweedSites.js';
 import {
+  TAJWEED_RULE_VARS,
+  TAJWEED_FAMILY_VARS,
   classifyAyahTajweed,
   classifyConventionAyah,
   wordUnits,
@@ -116,5 +118,30 @@ test('stable rule-ID colors override legacy family picks and survive convention 
     const settings = sanitizeSettings({ tajweedPrefs, tajweedConvention });
     assert.deepEqual(settings.tajweedPrefs, tajweedPrefs);
     assert.equal(effectiveRuleColor(settings.tajweedPrefs, tajweedRule(ids[0])), '#123456');
+  }
+});
+
+test('every per-rule color control is accepted, persisted and mapped to paint', () => {
+  const css = readFileSync(new URL('../assets/css/quran.css', import.meta.url), 'utf8');
+  for (const convention of ['lpmq', 'dar-al-maarifah']) {
+    const html = buildTajweedSettingsPanel(state(convention));
+    const controls = [...html.matchAll(/data-action="tajweed-set-color" data-rule="([^"]+)"/g)];
+    assert.ok(controls.length);
+    for (const [, id] of controls) {
+      const variable = TAJWEED_RULE_VARS[id];
+      assert.ok(variable, `${id}: handler accepts a paint key`);
+      assert.ok(
+        Object.values(TAJWEED_FAMILY_VARS).flat().includes(variable),
+        `${id}: reset clears the property`
+      );
+      assert.ok(css.includes(`var(${variable}, var(`), `${id}: paint reads property`);
+      const settings = sanitizeSettings({
+        tajweedConvention: convention,
+        tajweedPrefs: { colors: { [id]: '#123456' } },
+      });
+      assert.equal(settings.tajweedPrefs.colors[id], '#123456', `${id}: persisted`);
+      assert.equal(effectiveRuleColor(settings.tajweedPrefs, tajweedRule(id)), '#123456');
+    }
+    assert.ok(!html.includes('data-action="tajweed-set-color" data-rule="madd_4_6"'));
   }
 });

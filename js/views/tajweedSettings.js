@@ -17,6 +17,7 @@ import {
   TAJWEED_FAMILIES,
   TAJWEED_RULES,
   TAJWEED_COLOR_CHOICES,
+  TAJWEED_RULE_VARS,
   tajweedPrefsOf,
   ruleEnabled,
   ruleInConvention,
@@ -65,7 +66,7 @@ export function buildTajweedSettingsPanel(state) {
         <span class="switch" aria-hidden="true">
           <span class="switch__track ${on ? 'switch__track--on' : ''}"></span>
         </span>
-      </button>${r.color ? `<details class="tajpick__rule-colors"><summary>${escapeHTML(pickLocale(r.name, lang))} · ${t('tajweed.familyColor', lang, { family: pickLocale(r.name, lang) })}</summary><div class="tajpick__swatches" role="group" aria-label="${escapeHTML(pickLocale(r.name, lang))}">${TAJWEED_COLOR_CHOICES.map((hex) => `<button type="button" class="tajpick__swatch" style="background:${hex}" data-action="tajweed-set-color" data-rule="${r.id}" data-color="${hex}" aria-label="${escapeHTML(pickLocale(r.name, lang))}: ${hex}"></button>`).join('')}</div></details>` : ''}`;
+      </button>${r.color && TAJWEED_RULE_VARS[r.id] ? `<details class="tajpick__rule-colors"><summary>${escapeHTML(pickLocale(r.name, lang))} · ${t('tajweed.familyColor', lang, { family: pickLocale(r.name, lang) })}</summary><div class="tajpick__swatches" role="group" aria-label="${escapeHTML(pickLocale(r.name, lang))}">${TAJWEED_COLOR_CHOICES.map((hex) => `<button type="button" class="tajpick__swatch" style="background:${hex}" data-action="tajweed-set-color" data-rule="${r.id}" data-color="${hex}" aria-label="${escapeHTML(pickLocale(r.name, lang))}: ${hex}"></button>`).join('')}</div></details>` : ''}`;
         })
         .join('');
 
