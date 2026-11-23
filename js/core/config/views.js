@@ -351,6 +351,10 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // (v5.17.16) Arabic reading-text typeface. Default reproduces the
   // previously hard-coded Amiri stack, so upgrading changes nothing.
   arabicFont: 'amiri',
+  // (v5.17.147, C01) global-search scope: the whole library + Qur'an +
+  // tafsir corpora ('all') or only the saved subset — favorites and
+  // collection items ('saved'). Restored across navigation like any pref.
+  searchScope: 'all',
   reduceMotion: false,
   highContrast: false,
   // (v5.2.59) dyslexia-friendly reading (legible stack + wider spacing)

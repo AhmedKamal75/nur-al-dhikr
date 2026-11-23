@@ -291,6 +291,7 @@ export function sanitizeSettings(raw) {
     themeMode: asEnum(s.themeMode, new Set(THEME_MODES), d.themeMode),
     palette: asEnum(s.palette, PALETTE_IDS, d.palette),
     shape: asEnum(s.shape, SHAPE_IDS, d.shape),
+    searchScope: asEnum(s.searchScope, new Set(['all', 'saved']), d.searchScope),
     // WCAG 1.4.4 asks for text resizable to 200% without loss of content. The
     // slider used to stop at 1.4, which put a low-vision reader's only full
     // path behind browser zoom — a real accessibility failure, not a

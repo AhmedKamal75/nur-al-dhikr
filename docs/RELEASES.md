@@ -1,3 +1,8 @@
+## v5.17.147 — saved-only scope in global search
+
+- Adds a Saved chip beside All in global search: saved mode searches only favorites and collection items through the same index and ranking (domain savedIds option), with Quran/tafsir/roots/hadith sections excluded.
+- The scope persists in settings.searchScope (sanitized), restored across navigation; distinct empty states for "nothing saved yet" and "no saved match". EN+AR.
+
 ## v5.17.146 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
 
 - Adds a small, test-covered declarative lookup for the mutually exclusive noon-sakinah/tanween next-letter family; contextual detection remains in the shared classifier.

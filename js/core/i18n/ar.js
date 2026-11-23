@@ -650,6 +650,13 @@ export const ar = {
   'search.rootFamily': 'بما في ذلك عائلة {root} ({n} كلمة)',
   'search.emptyNamed': 'تم البحث في {scope} — ولا توجد نتائج.',
   'search.scopeLibrary': 'مكتبة الأذكار',
+  'search.scopeAll': 'الكل',
+  'search.scopeSaved': 'المحفوظ',
+  'search.scopeLabel': 'نطاق البحث',
+  'search.savedBreakdown': 'النتائج المحفوظة: {z}',
+  'search.emptySaved': 'لا يوجد محفوظ بعد.',
+  'search.emptySavedHint':
+    'اضغط على النجمة في أي بطاقة للاحتفاظ بها هنا، أو أضفها إلى مجموعة — البحث المحفوظ يشمل كليهما.',
   'search.scopeQuran': 'القرآن الكريم',
   'favorites.empty': 'لم تُضِف شيئًا إلى المفضلة بعد.',
   'favorites.emptyHint': 'اضغط على أيقونة القلب في أي بطاقة لحفظها هنا.',

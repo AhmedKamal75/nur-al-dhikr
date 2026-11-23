@@ -238,10 +238,25 @@ export function renderSearch(state) {
   // with no network answered a real query with "nothing found", which is a
   // claim about the corpus when the truth is that the corpus was never
   // fetched. `library.js:282` gets this right; search did not.
+  // (v5.17.147, C01) the Saved scope: one local subset — favorites plus
+  // every collection's items — searched with the SAME index, ranking,
+  // normalization and root-expansion as an All pass (domain/search.js
+  // savedIds option), never a second engine. Saved mode shows only this
+  // library subset: the Qur'an/tafsir/roots/hadith sections stay out, and
+  // the scope rides settings.searchScope so it survives navigation.
+  const savedOnly = state.settings.searchScope === 'saved';
+  const savedIds = savedOnly
+    ? new Set([
+        ...(Array.isArray(state.favorites) ? state.favorites : []),
+        ...(Array.isArray(state.collections) ? state.collections : []).flatMap((c) =>
+          Array.isArray(c.items) ? c.items : []
+        ),
+      ])
+    : null;
   const libLoadFailed = Boolean(state.loadErrors?.library);
   const libAll =
     query && !libLoadFailed
-      ? runSearch(query, { limit: Infinity, extraTerms: expansion?.arabicForms })
+      ? runSearch(query, { limit: Infinity, extraTerms: expansion?.arabicForms, savedIds })
       : [];
   const hadithAll = query ? searchHadith(query, { limit: Infinity }) : [];
   const hadithStats = hadithIndexStats();
@@ -273,6 +288,11 @@ export function renderSearch(state) {
         data-bind="search-query"
         autocomplete="off"
       />
+    </div>
+
+    <div class="chip-row search-scope" role="group" aria-label="${t('search.scopeLabel', lang)}">
+      <button type="button" class="chip ${!savedOnly ? 'chip--active' : ''}" data-action="set-setting" data-key="searchScope" data-value="all" aria-pressed="${!savedOnly}">${t('search.scopeAll', lang)}</button>
+      <button type="button" class="chip ${savedOnly ? 'chip--active' : ''}" data-action="set-setting" data-key="searchScope" data-value="saved" aria-pressed="${savedOnly}">${t('search.scopeSaved', lang)}</button>
     </div>
 
     ${
@@ -309,22 +329,40 @@ export function renderSearch(state) {
         : ''
     }
 
-    ${query ? quranSection(state, query, lang, quranAll) : ''}
+    ${query && !savedOnly ? quranSection(state, query, lang, quranAll) : ''}
 
-    ${query ? tafsirSection(state, query, lang, tafsirAll) : ''}
+    ${query && !savedOnly ? tafsirSection(state, query, lang, tafsirAll) : ''}
 
-    ${query ? rootsSection(expansion, lang) : ''}
+    ${query && !savedOnly ? rootsSection(expansion, lang) : ''}
 
     ${
       query
         ? `
-      <p class="search-results-count" role="status">${t('search.breakdown', lang, { q: quranAll == null ? '—' : quranAll.length, h: hadithBreakdown, z: libLoadFailed ? '—' : azkarAll.length })}</p>
-      <p class="search-hadith-link"><a href="${buildHash(VIEWS.HADITH, { q: query })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-q="${escapeHTML(query)}">${icon('book', { size: 13 })} ${t('search.searchHadith', lang, { q: query })}</a></p>
+      <p class="search-results-count" role="status">${
+        savedOnly
+          ? t('search.savedBreakdown', lang, { z: libLoadFailed ? '—' : libAll.length })
+          : t('search.breakdown', lang, {
+              q: quranAll == null ? '—' : quranAll.length,
+              h: hadithBreakdown,
+              z: libLoadFailed ? '—' : azkarAll.length,
+            })
+      }</p>
+      ${
+        savedOnly
+          ? ''
+          : `<p class="search-hadith-link"><a href="${buildHash(VIEWS.HADITH, { q: query })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-q="${escapeHTML(query)}">${icon('book', { size: 13 })} ${t('search.searchHadith', lang, { q: query })}</a></p>`
+      }
       ${
         libLoadFailed
           ? loadErrorStateHTML({ lang, tierKey: 'library', t })
-          : libShown.length
-            ? `
+          : savedOnly && savedIds.size === 0
+            ? emptyStateHTML({
+                iconName: 'star',
+                title: t('search.emptySaved', lang),
+                hint: t('search.emptySavedHint', lang),
+              })
+            : libShown.length
+              ? `
       <div class="card-list">
         ${libShown
           .map((r) =>
@@ -343,11 +381,15 @@ export function renderSearch(state) {
           )
           .join('')}
       </div>${pageHTML(lang, 'library', libPage.page, libPage.pageCount, libShown.length, libAll.length)}`
-            : emptyStateHTML({
-                iconName: 'search',
-                title: t('search.emptyNamed', lang, { scope: t('search.scopeLibrary', lang) }),
-                hint: t('search.noResultsHint', lang),
-              })
+              : emptyStateHTML({
+                  iconName: 'search',
+                  title: t('search.emptyNamed', lang, {
+                    scope: savedOnly
+                      ? t('search.scopeSaved', lang)
+                      : t('search.scopeLibrary', lang),
+                  }),
+                  hint: t('search.noResultsHint', lang),
+                })
       }
     `
         : ''

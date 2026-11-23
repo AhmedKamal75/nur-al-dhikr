@@ -696,6 +696,13 @@ export const en = {
   'search.rootFamily': 'Including the {root} family ({n} words)',
   'search.emptyNamed': 'Searched {scope} \u2014 nothing matched.',
   'search.scopeLibrary': 'the azkar library',
+  'search.scopeAll': 'All',
+  'search.scopeSaved': 'Saved',
+  'search.scopeLabel': 'Search scope',
+  'search.savedBreakdown': 'Saved results: {z}',
+  'search.emptySaved': 'Nothing saved yet.',
+  'search.emptySavedHint':
+    'Tap the star on any card to keep it here, or add it to a collection \u2014 saved search covers both.',
   'search.scopeQuran': 'the Qur\u2019an',
   'favorites.empty': 'You haven\u2019t favorited anything yet.',
   'favorites.emptyHint': 'Tap the heart icon on any card to save it here.',
