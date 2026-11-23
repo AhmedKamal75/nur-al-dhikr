@@ -99,6 +99,18 @@ body.is-elder {
   --fs-xl: calc(1.75rem * var(--font-scale) * 1.1);
   --fs-arabic-card: calc(1.75rem * var(--arabic-font-scale) * 1.3);
 }
+
+/* The phone card-list cap (variables.css, --fs-arabic-card-list) recomputes
+   from the raw --arabic-font-scale, which would bypass the elder boost above
+   and silently shrink elder users' card Arabic ~23%. Custom properties
+   resolve var() where they are defined, so the boost cannot ride a token
+   from :root — compose it here, scoped to the same 560px media query:
+   elder phone card Arabic = 1.75rem * min(scale, 1.25) * 1.3. */
+@media (max-width: 560px) {
+  body.is-elder {
+    --fs-arabic-card-list: calc(1.75rem * min(var(--arabic-font-scale), 1.25) * 1.3);
+  }
+}
 body.is-elder .btn--sm,
 body.is-elder .chip {
   min-height: var(--touch-target);
