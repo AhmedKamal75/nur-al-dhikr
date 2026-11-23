@@ -7,7 +7,12 @@
  * a round, and updating streak/accuracy stats. No DOM — the view layer
  * (views/tajweedPracticeView.js) is a thin template shell around this.
  */
-import { classifyAyahTajweed, TAJWEED_RULES } from './tajweed.js';
+import {
+  classifyConventionAyah,
+  ruleInConvention,
+  rulesForConvention,
+  TAJWEED_RULES,
+} from './tajweed.js';
 import { recordQuizMiss, clearQuizMiss, weakQuizIds, isQuizItemId } from './quiz.js';
 
 /** (v5.4.0, P0-5b — ported from the v5.3.0 audit) A practice ROUND is 5
@@ -56,7 +61,12 @@ export const PRACTICE_POOL_CAP = 25;
 export function backfillTajweedPool(
   pool,
   surahDocs,
-  { min = PRACTICE_POOL_MIN, cap = PRACTICE_POOL_CAP, only = null } = {}
+  {
+    min = PRACTICE_POOL_MIN,
+    cap = PRACTICE_POOL_CAP,
+    only = null,
+    convention = 'dar-al-maarifah',
+  } = {}
 ) {
   const base = pool && typeof pool === 'object' ? pool : {};
   const byRule = { ...(base.byRule || {}) };
@@ -64,7 +74,7 @@ export function backfillTajweedPool(
   const mixed = [...(base.mixed || [])];
   const onlySet = Array.isArray(only) && only.length ? new Set(only) : null;
   const addedByRule = {};
-  for (const rule of TAJWEED_RULES) {
+  for (const rule of rulesForConvention(convention)) {
     if (onlySet && !onlySet.has(rule.id)) continue;
     const list = byRule[rule.id] || [];
     if (list.length >= min && !onlySet) continue;
@@ -80,7 +90,11 @@ export function backfillTajweedPool(
         if (list.length + additions.length >= cap) break;
         const key = `${surah}:${ayah.number}`;
         if (seen.has(key)) continue;
-        const perWord = classifyAyahTajweed(String(ayah.text || ''));
+        const perWord = classifyConventionAyah(String(ayah.text || ''), {
+          surah,
+          ayah: ayah.number,
+          convention,
+        });
         let firstWord = 0;
         let count = 0;
         for (const w of perWord) {
@@ -208,8 +222,8 @@ function keyOf(t) {
 
 /** The answer key for a round: every (word, start, end) unit that carries
  *  the target rule in this ayah. 'mixed' mode targets every rule found. */
-export function buildAnswerKey(ayahText, ruleId) {
-  const perWord = classifyAyahTajweed(ayahText);
+export function buildAnswerKey(ayahText, ruleId, context = {}) {
+  const perWord = classifyConventionAyah(ayahText, context);
   const targets = [];
   for (const { wordIndex, spans } of perWord) {
     for (const s of spans) {
@@ -287,8 +301,8 @@ export function normalizeTajweedAnswerMode(mode) {
 }
 
 /** Word-level answer key: 1-based word indices carrying `ruleId`. */
-export function buildWordAnswerKey(ayahText, ruleId) {
-  const perWord = classifyAyahTajweed(ayahText);
+export function buildWordAnswerKey(ayahText, ruleId, context = {}) {
+  const perWord = classifyConventionAyah(ayahText, context);
   const words = [];
   for (const { wordIndex, spans } of perWord) {
     if (spans.some((s) => ruleId === 'mixed' || s.rule === ruleId)) words.push(wordIndex);
@@ -296,9 +310,14 @@ export function buildWordAnswerKey(ayahText, ruleId) {
   return words;
 }
 
-export function firstWeakRuleForAyah(ayahText, weakRules) {
+export function firstWeakRuleForAyah(ayahText, weakRules, context = {}) {
   for (const ruleId of Array.isArray(weakRules) ? weakRules : []) {
-    if (isTajweedRuleId(ruleId) && buildAnswerKey(ayahText, ruleId).length) return ruleId;
+    if (
+      isTajweedRuleId(ruleId) &&
+      ruleInConvention(ruleId, context.convention) &&
+      buildAnswerKey(ayahText, ruleId, context).length
+    )
+      return ruleId;
   }
   return null;
 }
@@ -326,8 +345,18 @@ export function scoreWordRound(targetWords, selected) {
  * 'tajweed-rule-index'). Returns null when the ayah carries no marked
  * rule or the rule id is unsourced — never a guessed question.
  */
-export function buildClassifyQuestion(ayahText, { surah = null, ayah = null, options = 4 } = {}) {
-  const perWord = classifyAyahTajweed(String(ayahText || ''));
+export function buildClassifyQuestion(
+  ayahText,
+  {
+    surah = null,
+    ayah = null,
+    options = 4,
+    convention = 'dar-al-maarifah',
+    targetRuleId = null,
+  } = {}
+) {
+  const perWord = classifyConventionAyah(String(ayahText || ''), { surah, ayah, convention });
+  const activeRules = rulesForConvention(convention);
   const present = [];
   for (const { spans } of perWord) {
     for (const s of spans) {
@@ -335,14 +364,16 @@ export function buildClassifyQuestion(ayahText, { surah = null, ayah = null, opt
     }
   }
   if (!present.length) return null;
-  const correctId = present[0];
+  if (targetRuleId && !present.includes(targetRuleId)) return null;
+  const correctId = targetRuleId || present[0];
+  const idsForLpmq = ['idgham_mutajanisayn', 'idgham_mutaqaribayn'];
   const rule = TAJWEED_RULES.find((r) => r.id === correctId);
   if (!rule) return null;
   const n = Math.max(2, Math.min(6, Math.floor(Number(options)) || 4));
-  const idx = TAJWEED_RULES.findIndex((r) => r.id === correctId);
+  const idx = activeRules.findIndex((r) => r.id === correctId);
   const distractors = [];
-  for (let i = 1; distractors.length < n - 1 && i < TAJWEED_RULES.length + 1; i += 1) {
-    const cand = TAJWEED_RULES[(idx + i) % TAJWEED_RULES.length];
+  for (let i = 1; distractors.length < n - 1 && i < activeRules.length + 1; i += 1) {
+    const cand = activeRules[(idx + i) % activeRules.length];
     if (cand && cand.id !== correctId && !distractors.includes(cand.id)) distractors.push(cand.id);
   }
   // Deterministic option order: rotate so the correct answer is not
@@ -352,6 +383,14 @@ export function buildClassifyQuestion(ayahText, { surah = null, ayah = null, opt
   const ordered = all.map((_, i) => all[(i + rot) % all.length]);
   return {
     mode: 'classify',
+    target: perWord.flatMap((w) =>
+      w.spans
+        .filter((s) => s.rule === correctId)
+        .map((s) => ({ word: w.wordIndex, start: s.start, end: s.end }))
+    )[0],
+    evidenceLevel: idsForLpmq.includes(correctId)
+      ? 'rule-level-cited; per-site visual Unknown'
+      : 'baseline-classifier',
     ruleId: correctId,
     sourceAyah: surah != null && ayah != null ? { s: Number(surah), a: Number(ayah) } : null,
     ayahText: String(ayahText),
@@ -372,4 +411,18 @@ export function accuracyFor(stats, ruleId = null) {
   const correct = ruleId ? entry?.correct : stats?.totalCorrect;
   if (!attempts) return null;
   return Math.round((100 * correct) / attempts);
+}
+
+/** Shared historical results remain saved. Only in-scope rule totals are shown. */
+export function statsForConvention(stats, convention) {
+  const byRule = Object.fromEntries(
+    Object.entries(stats?.byRule || {}).filter(([id]) => ruleInConvention(id, convention))
+  );
+  const entries = Object.values(byRule);
+  return {
+    ...stats,
+    byRule,
+    totalAttempts: entries.reduce((n, r) => n + (r.attempts || 0), 0),
+    totalCorrect: entries.reduce((n, r) => n + (r.correct || 0), 0),
+  };
 }

@@ -12,7 +12,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { classifyAyahTajweed, TAJWEED_RULES } from '../js/domain/tajweed.js';
+import {
+  classifyAyahTajweed,
+  classifyConventionAyah,
+  TAJWEED_RULES,
+} from '../js/domain/tajweed.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const QURAN_DIR = path.join(ROOT, 'data', 'quran');
@@ -61,7 +65,11 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
       nextSemanticIndex.set(semanticWordIndexes[i], semanticWordIndexes[i + 1]);
     }
 
-    const result = classifyAyahTajweed(row.text);
+    const result = classifyConventionAyah(row.text, {
+      surah: row.surah,
+      ayah: row.ayah,
+      convention: 'lpmq',
+    });
     assert.equal(
       result.length,
       row.text.trim().split(/\s+/).filter(Boolean).length,

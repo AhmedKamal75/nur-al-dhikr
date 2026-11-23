@@ -258,7 +258,8 @@ describe('P0-5: classifier memo is bounded (FIFO @ 6,236)', () => {
         const ayahText = surahDoc(e.s).ayahs.find((a) => a.number === e.a)?.text;
         assert.ok(ayahText, `${rule.id}: ${e.s}:${e.a} exists in corpus`);
         assert.ok(
-          buildAnswerKey(ayahText, rule.id).length > 0,
+          buildAnswerKey(ayahText, rule.id, { surah: e.s, ayah: e.a, convention: 'lpmq' }).length >
+            0,
           `${rule.id}: ${e.s}:${e.a} genuinely contains the rule`
         );
       }

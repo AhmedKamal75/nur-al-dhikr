@@ -24,15 +24,18 @@ import {
   TAJWEED_FAMILIES,
   effectiveRuleColor,
   ruleEnabled,
+  rulesForConvention,
+  ruleInConvention,
   tajweedPrefsOf,
   tajweedRule,
   wordUnits,
-  classifyAyahTajweed,
+  classifyConventionAyah,
 } from '../domain/tajweed.js';
 import {
   accuracyFor,
   normalizeTajweedAnswerMode,
   practiceLevel,
+  statsForConvention,
   weakTajweedRules,
   PRACTICE_ROUND_SIZE,
 } from '../domain/tajweedPractice.js';
@@ -45,9 +48,11 @@ export function buildPracticePicker(state, answerMode = 'find-spans') {
   const lang = state.settings.language;
   const mode = normalizeTajweedAnswerMode(answerMode) || 'find-spans';
   const prefs = tajweedPrefsOf(state);
-  const stats = state.tajweedPracticeStats;
+  const stats = statsForConvention(state.tajweedPracticeStats, prefs.convention);
   const overall = accuracyFor(stats);
-  const missedRules = weakTajweedRules(state.tajweedMissRecords).length;
+  const missedRules = weakTajweedRules(state.tajweedMissRecords).filter((id) =>
+    ruleInConvention(id, prefs.convention)
+  ).length;
   const modeButton = (value, labelKey) => `
     <button type="button" class="btn btn--secondary btn--sm${mode === value ? ' practice-mode--active' : ''}" data-action="practice-mode" data-mode="${value}" aria-pressed="${mode === value}">${t(labelKey, lang)}</button>`;
 
@@ -110,7 +115,7 @@ export function buildPracticePicker(state, answerMode = 'find-spans') {
         : ''
     }
 
-    <div class="practice-rule-list">${TAJWEED_RULES.map(ruleRow).join('')}</div>
+    <div class="practice-rule-list">${rulesForConvention(prefs.convention).map(ruleRow).join('')}</div>
   </div>`;
 }
 
@@ -247,13 +252,21 @@ export function buildPracticeRound(state, session) {
 /** End-of-round summary: gentle, factual, shame-free. Clean count, the
  *  round's best streak, and the Review path when anything was missed. */
 export function buildPracticeSummary(state, session) {
+  const prefs = tajweedPrefsOf(state);
   const lang = state.settings.language;
   const mode = session.answerMode === 'find-word' ? 'find-word' : 'find-spans';
-  const total = session.results.length;
-  const clean = session.results.filter((r) => r.perfect).length;
+  const results =
+    session.mode === 'classify'
+      ? session.questions.map((q, i) => ({ perfect: Boolean(session.results?.[i]?.perfect) }))
+      : session.results;
+  const total = results.length;
+  const clean = results.filter((r) => r.perfect).length;
   const best = session.roundStreak;
   const missed = total - clean;
-  const reviewable = weakTajweedRules(state.tajweedMissRecords).length > 0;
+  const reviewable =
+    weakTajweedRules(state.tajweedMissRecords).filter((id) =>
+      ruleInConvention(id, prefs.convention)
+    ).length > 0;
   const againRule =
     session.ruleId === 'review'
       ? reviewable
@@ -283,10 +296,10 @@ export function buildPracticeSummary(state, session) {
  * reader jumps to and highlights), and the drill button. Pure template —
  * the handler loads the pool and passes validated examples.
  */
-function renderRuleExampleText(text, ruleId) {
+function renderRuleExampleText(text, ruleId, context) {
   const raw = String(text || '').trim();
   if (!raw) return '';
-  const words = classifyAyahTajweed(raw);
+  const words = classifyConventionAyah(raw, context);
   return words
     .map((entry) => {
       const source = String(entry.word || '');
@@ -329,7 +342,11 @@ export function buildPracticeLesson(state, ruleId, examples = []) {
   const exampleCards = list
     .map((e) => {
       const ref = `${escapeHTML(surahName(e.s))} · ${t('practice.exampleRef', lang, { s: e.s, a: e.a })}`;
-      const text = renderRuleExampleText(e.text, rule.id);
+      const text = renderRuleExampleText(e.text, rule.id, {
+        surah: e.s,
+        ayah: e.a,
+        convention: state.settings.tajweedConvention,
+      });
       const hasMark = text.includes('practice-lesson__mark');
       return `
         <article class="practice-lesson__example-card">
@@ -418,12 +435,21 @@ export function renderClassifyRoundHtml(state, session) {
       </div>`
     : '';
 
+  const markedAyah = String(q.text || '')
+    .split(/(\s+)/)
+    .map((word, i, all) => {
+      const index = all.slice(0, i + 1).filter((w) => w && !/^\s+$/.test(w)).length;
+      return q.target && !/^\s+$/.test(word) && index === q.target.word
+        ? `${escapeHTML(word.slice(0, q.target.start))}<mark>${escapeHTML(word.slice(q.target.start, q.target.end))}</mark>${escapeHTML(word.slice(q.target.end))}`
+        : escapeHTML(word);
+    })
+    .join('');
   const last = session.qIndex + 1 >= session.questions.length;
   return `
   <div class="tajweed-practice tajweed-practice--classify">
     <h2 id="modal-title-practice" class="sr-only">${t('practice.classifyTitle', lang)}</h2>
     <p class="tajweed-practice__q">${t('practice.classifyQuestion', lang)}</p>
-    <p class="tajweed-practice__ayah" dir="rtl" lang="ar">${escapeHTML(q.text)}</p>
+    <p class="tajweed-practice__ayah" dir="rtl" lang="ar">${markedAyah}</p>
     <div class="tajweed-practice__options" role="group" aria-label="${escapeHTML(t('practice.classifyQuestion', lang))}">${options}</div>
     ${feedback}
     <div class="practice-round__hud" aria-live="polite">

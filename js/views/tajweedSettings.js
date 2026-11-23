@@ -19,6 +19,7 @@ import {
   TAJWEED_COLOR_CHOICES,
   tajweedPrefsOf,
   ruleEnabled,
+  ruleInConvention,
   effectiveRuleColor,
 } from '../domain/tajweed.js';
 import { tajweedConventionHTML } from './tajweedConvention.js';
@@ -34,22 +35,27 @@ export function buildTajweedSettingsPanel(state) {
     return TAJWEED_FAMILIES.find((f) => f.id === familyId)?.color || null;
   };
 
-  const familyBlocks = TAJWEED_FAMILIES.map((family) => {
-    const rules = TAJWEED_RULES.filter((r) => r.family === family.id);
-    const currentColor = familyColor(family.id);
-    const recolorable = family.recolorable !== false && family.color;
-    const swatches = recolorable
-      ? TAJWEED_COLOR_CHOICES.map(
-          (hex) => `
+  const familyBlocks = TAJWEED_FAMILIES.filter(
+    (f) => f.id !== 'assimilation' || prefs.convention === 'lpmq'
+  )
+    .map((family) => {
+      const rules = TAJWEED_RULES.filter(
+        (r) => r.family === family.id && ruleInConvention(r.id, prefs.convention)
+      );
+      const currentColor = familyColor(family.id);
+      const recolorable = family.recolorable !== false && family.color;
+      const swatches = recolorable
+        ? TAJWEED_COLOR_CHOICES.map(
+            (hex) => `
       <button type="button" class="tajpick__swatch ${String(currentColor).toLowerCase() === hex ? 'tajpick__swatch--active' : ''}" style="background:${hex}" data-action="tajweed-set-color" data-family="${family.id}" data-color="${hex}" aria-label="${t('tajweed.familyColor', lang, { family: pickLocale(family.name, lang) })}: ${hex}" title="${hex}"></button>`
-        ).join('')
-      : '';
+          ).join('')
+        : '';
 
-    const ruleRows = rules
-      .map((r) => {
-        const on = ruleEnabled(prefs, r.id);
-        const color = effectiveRuleColor(prefs, r);
-        return `
+      const ruleRows = rules
+        .map((r) => {
+          const on = ruleEnabled(prefs, r.id);
+          const color = effectiveRuleColor(prefs, r);
+          return `
       <button type="button" class="tajpick__rule ${on ? '' : 'tajpick__rule--off'}" data-action="tajweed-toggle-rule" data-rule="${r.id}" aria-pressed="${on}">
         <span class="tajpick__rule-swatch" style="${color ? `background:${color}` : 'border-style:dashed'}" aria-hidden="true"></span>
         <span class="tajpick__rule-body">
@@ -59,11 +65,11 @@ export function buildTajweedSettingsPanel(state) {
         <span class="switch" aria-hidden="true">
           <span class="switch__track ${on ? 'switch__track--on' : ''}"></span>
         </span>
-      </button>`;
-      })
-      .join('');
+      </button>${r.color ? `<details class="tajpick__rule-colors"><summary>${escapeHTML(pickLocale(r.name, lang))} · ${t('tajweed.familyColor', lang, { family: pickLocale(r.name, lang) })}</summary><div class="tajpick__swatches" role="group" aria-label="${escapeHTML(pickLocale(r.name, lang))}">${TAJWEED_COLOR_CHOICES.map((hex) => `<button type="button" class="tajpick__swatch" style="background:${hex}" data-action="tajweed-set-color" data-rule="${r.id}" data-color="${hex}" aria-label="${escapeHTML(pickLocale(r.name, lang))}: ${hex}"></button>`).join('')}</div></details>` : ''}`;
+        })
+        .join('');
 
-    return `
+      return `
     <section class="tajpick__family">
       <div class="tajpick__family-head">
         <span class="tajpick__family-swatch${currentColor ? '' : ' tajpick__family-swatch--plain'}"${currentColor ? ` style="background:${currentColor}"` : ''} aria-hidden="true"></span>
@@ -76,7 +82,8 @@ export function buildTajweedSettingsPanel(state) {
       }
       ${ruleRows}
     </section>`;
-  }).join('');
+    })
+    .join('');
 
   return `
   <div class="tajpick">

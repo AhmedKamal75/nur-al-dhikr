@@ -77,7 +77,14 @@ import {
   buildSavedWordsPanel,
 } from '../../views/tafsirPanel.js';
 import { buildTajweedSettingsPanel } from '../../views/tajweedSettings.js';
-import { TAJWEED_FAMILY_VARS, tajweedPrefsOf } from '../../domain/tajweed.js';
+import {
+  TAJWEED_FAMILY_VARS,
+  TAJWEED_RULE_VARS,
+  TAJWEED_COLOR_CHOICES,
+  tajweedRule,
+  tajweedPrefsOf,
+  ruleInConvention,
+} from '../../domain/tajweed.js';
 import { wordStudyContextParams } from '../../views/studyContext.js';
 
 /** (v4.6.0) Push the user's family color overrides onto <html> as the
@@ -97,6 +104,11 @@ export function applyTajweedColors(state) {
         document.documentElement.style.removeProperty(v);
       }
     }
+  }
+  for (const [ruleId, variable] of Object.entries(TAJWEED_RULE_VARS)) {
+    const color = overrides[ruleId];
+    if (typeof color === 'string' && /^#[0-9a-fA-F]{6}$/.test(color))
+      document.documentElement.style.setProperty(variable, color);
   }
 }
 
@@ -909,7 +921,7 @@ export const clickHandlers = {
     const { tajweedLessonRule, tajweedLessonExamples } =
       await import('../../domain/tajweedLessons.js');
     const rule = tajweedLessonRule(ds.rule);
-    if (!rule) return;
+    if (!rule || !ruleInConvention(rule.id, store.getState().settings.tajweedConvention)) return;
     // (merged-plan item 2) opening a rule lesson marks the rule last-place.
     store.dispatch(actions.setTajweedLast({ ruleId: rule.id }));
     // Per-surah ayah counts are required to reject impossible pool references
@@ -1018,14 +1030,15 @@ export const clickHandlers = {
     // with no marked rules anywhere keeps the original toast.
     let useAyah = ayah;
     let useText = ayahText;
-    let targets = buildAnswerKey(ayahText, 'mixed');
+    const context = (a) => ({ surah, ayah: a, convention: state.settings.tajweedConvention });
+    let targets = buildAnswerKey(ayahText, 'mixed', context(ayah));
     if (!targets.length && Array.isArray(surahDoc?.ayahs)) {
       const textByNum = new Map(surahDoc.ayahs.map((a) => [String(a.number), a.text]));
       for (let d = 1; d < surahDoc.ayahs.length && !targets.length; d += 1) {
         for (const cand of [ayah - d, ayah + d]) {
           const txt = textByNum.get(String(cand));
           if (!txt) continue;
-          const tg = buildAnswerKey(txt, 'mixed');
+          const tg = buildAnswerKey(txt, 'mixed', context(cand));
           if (tg.length) {
             useAyah = cand;
             useText = txt;
@@ -1053,7 +1066,7 @@ export const clickHandlers = {
       selected: new Set(),
       checked: false,
       targets,
-      targetWords: buildWordAnswerKey(useText, 'mixed'),
+      targetWords: buildWordAnswerKey(useText, 'mixed', context(useAyah)),
       result: null,
       results: [],
       roundStreak: 0,
@@ -1101,7 +1114,14 @@ export const clickHandlers = {
 
   'tajweed-set-color': (ds) => {
     const prefs = tajweedPrefsOf(store.getState());
-    const colors = { ...(prefs.colors || {}), [ds.family]: ds.color };
+    const key = ds.rule || ds.family;
+    if (
+      !TAJWEED_COLOR_CHOICES.includes(ds.color) ||
+      (!TAJWEED_FAMILY_VARS[key] && !TAJWEED_RULE_VARS[key])
+    )
+      return;
+    if (ds.rule && !ruleInConvention(ds.rule, prefs.convention)) return;
+    const colors = { ...(prefs.colors || {}), [key]: ds.color };
     store.dispatch(actions.updateSettings({ tajweedPrefs: { ...prefs, colors } }));
     applyTajweedColors(store.getState());
     openModal(buildTajweedSettingsPanel(store.getState()), {
@@ -1111,6 +1131,7 @@ export const clickHandlers = {
 
   'tajweed-toggle-rule': (ds) => {
     const prefs = tajweedPrefsOf(store.getState());
+    if (!tajweedRule(ds.rule) || !ruleInConvention(ds.rule, prefs.convention)) return;
     const rules = { ...(prefs.rules || {}) };
     if (rules[ds.rule] === false) delete rules[ds.rule];
     else rules[ds.rule] = false;

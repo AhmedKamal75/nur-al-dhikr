@@ -4,8 +4,8 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 Read this file first. It is deliberately short: the spine, the lookup tables and the counted inventories. For one specific module’s exports, one `data-action`’s handler, or one keyword’s owners, read the exhaustive dump next.
 
-- js modules: 248 — data files: 28 — tests: 290
-- exhaustive dump: `docs/agent-map-full.md` (566 entries)
+- js modules: 249 — data files: 29 — tests: 292
+- exhaustive dump: `docs/agent-map-full.md` (570 entries)
 
 ## 1. The spine: chrome section → routes → view module
 
@@ -73,8 +73,8 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 | `js/core/i18n`    | bilingual dictionaries (en/ar).                                              | 2       | [open](agent-map-full.md#core/i18n)    |
 | `js/core/idb`     | IndexedDB open helpers.                                                      | 1       | [open](agent-map-full.md#core/idb)     |
 | `js/core/state`   | store + reducer + slices + selectors + persistence restore.                  | 13      | [open](agent-map-full.md#core/state)   |
-| `data/`           | offline-first corpora consumed by domain/app layers.                         | 28      | [open](agent-map-full.md#data)         |
-| `js/domain`       | pure logic: no DOM, no store; core-only imports (compass sensor excepted).   | 74      | [open](agent-map-full.md#domain)       |
+| `data/`           | offline-first corpora consumed by domain/app layers.                         | 29      | [open](agent-map-full.md#data)         |
+| `js/domain`       | pure logic: no DOM, no store; core-only imports (compass sensor excepted).   | 75      | [open](agent-map-full.md#domain)       |
 | `js/services`     | side-effect owners: audio, notifications, persistence helpers.               | 28      | [open](agent-map-full.md#services)     |
 | `js/ui`           | dumb chrome primitives: toasts, modals, cards, shells.                       | 12      | [open](agent-map-full.md#ui)           |
 | `js/views`        | pure state→HTML templates + their pure helpers.                              | 53      | [open](agent-map-full.md#views)        |
@@ -82,9 +82,9 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 ## 5. Lookup tables (counts; open the dump for the rows)
 
 - `data-action` values emitted anywhere: **360** — every one resolves to a handler (see the Allowlist section of the dump).
-- files that handle at least one click/change/form action: **19** of 248.
-- exported symbols: **1577**.
-- i18n keys touched by js/: **1530** of the two dictionaries.
+- files that handle at least one click/change/form action: **19** of 249.
+- exported symbols: **1584**.
+- i18n keys touched by js/: **1532** of the two dictionaries.
 
 ## 6. When you need the exhaustive dump
 

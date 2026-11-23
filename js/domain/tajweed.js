@@ -1,3 +1,4 @@
+import { resolveConventionSites } from './tajweedSites.js';
 /**
  * tajweed.js
  * A deterministic Tajweed (recitation-rule) classifier that runs directly
@@ -318,6 +319,15 @@ export function noonTanweenRuleForNextBase(base, { sameWord = false, wordSkeleto
  */
 export const TAJWEED_FAMILIES = Object.freeze([
   {
+    id: 'assimilation',
+    color: '#ef5350',
+    name: { en: 'LPMQ assimilation group', ar: 'مجموعة الإدغام وفق الدليل الإندونيسي' },
+    desc: {
+      en: 'Rule-level-cited treatment, not a full reproduction of the printed palette.',
+      ar: 'عرض مستند إلى مرجع القاعدة، وليس نسخة كاملة من ألوان الطبعة.',
+    },
+  },
+  {
     id: 'silent',
     color: '#9E9E9E',
     name: { en: 'Silent letters', ar: 'الحروف الصامتة' },
@@ -375,6 +385,26 @@ export const TAJWEED_FAMILIES = Object.freeze([
 ]);
 
 export const TAJWEED_RULES = Object.freeze([
+  {
+    id: 'idgham_mutajanisayn',
+    family: 'assimilation',
+    color: '#ef5350',
+    name: { en: 'Idgham Mutajanisayn', ar: 'إدغام المتجانسين' },
+    desc: {
+      en: 'LPMQ, Chapter II A.a, lists mutajanisayn in its red idgham group. The ba + mim case is an explicit magenta exception and is not included here. Locations are corpus-derived, not visually verified in an LPMQ mushaf.',
+      ar: 'يسرد الدليل الإندونيسي في الباب الثاني، القسم أ، إدغام المتجانسين ضمن مجموعة الإدغام الحمراء. ويستثني الباء مع الميم إلى اللون الأرجواني، فلا تُدرج هنا. المواضع مستخرجة من النص، ولم تُراجع بصريًا في مصحف إندونيسي ملون.',
+    },
+  },
+  {
+    id: 'idgham_mutaqaribayn',
+    family: 'assimilation',
+    color: '#ef5350',
+    name: { en: 'Idgham Mutaqaribayn', ar: 'إدغام المتقاربين' },
+    desc: {
+      en: 'LPMQ, Chapter II A.a, limits this group to lam + ra and qaf + kaf and lists it in red. Locations are corpus-derived, not visually verified in an LPMQ mushaf.',
+      ar: 'يقصر الدليل الإندونيسي في الباب الثاني، القسم أ، هذه المجموعة على اللام مع الراء والقاف مع الكاف، ويذكرها باللون الأحمر. المواضع مستخرجة من النص، ولم تُراجع بصريًا في مصحف إندونيسي ملون.',
+    },
+  },
   {
     id: 'hamzat_wasl',
     color: '#9E9E9E',
@@ -1487,6 +1517,7 @@ export function wordUnits(word) {
  * Paper scopes may override the standard --tw-* palette locally; separate
  * --tw-user-* properties let the learner's explicit choice win on every paper. */
 export const TAJWEED_FAMILY_VARS = Object.freeze({
+  assimilation: ['--tw-user-mutajanisayn', '--tw-user-mutaqaribayn'],
   silent: ['--tw-user-hamza-wasl', '--tw-user-lam-shamsiyah'],
   nasal: [
     '--tw-user-ghunnah',
@@ -1522,12 +1553,15 @@ export function tajweedPrefsOf(state) {
 
 /** A rule is active unless explicitly switched off (all-on default). */
 export function ruleEnabled(prefs, ruleId) {
-  return prefs?.rules?.[ruleId] !== false;
+  return ruleInConvention(ruleId, prefs?.convention) && prefs?.rules?.[ruleId] !== false;
 }
 
 /** The effective color of a rule: family override > rule default. */
 export function effectiveRuleColor(prefs, rule) {
   if (!rule) return null;
+  const ruleOverride = prefs?.colors?.[rule.id];
+  if (typeof ruleOverride === 'string' && /^#[0-9a-fA-F]{6}$/.test(ruleOverride))
+    return ruleOverride;
   const familyOverride = rule.family ? prefs?.colors?.[rule.family] : null;
   return typeof familyOverride === 'string' && /^#[0-9a-fA-F]{6}$/.test(familyOverride)
     ? familyOverride
@@ -1563,3 +1597,55 @@ export const TAJWEED_COLOR_CHOICES = Object.freeze([
   '#5d4037',
   '#3949ab',
 ]);
+
+/** New teaching-scope IDs are never active in the DAM observation profile. */
+export function ruleInConvention(ruleId, convention = 'dar-al-maarifah') {
+  return !['idgham_mutajanisayn', 'idgham_mutaqaribayn'].includes(ruleId) || convention === 'lpmq';
+}
+
+export function rulesForConvention(convention = 'dar-al-maarifah') {
+  return TAJWEED_RULES.filter((rule) => ruleInConvention(rule.id, convention));
+}
+
+/** Presentation overlay only. The baseline detector and its memo stay unchanged.
+ * Exact source-string offsets are derived afresh from validated corpus anchors. */
+export function classifyConventionAyah(
+  text,
+  { surah = null, ayah = null, convention = 'dar-al-maarifah' } = {}
+) {
+  const baseline = classifyAyahTajweed(text);
+  const additions = resolveConventionSites(text, surah, ayah, convention).flatMap((hit) => {
+    const word = baseline[hit.wordIndex - 1];
+    const unit = word ? wordUnits(word.word).find((u) => u.start === hit.start) : null;
+    return unit ? [{ ...hit, end: unit.end }] : [];
+  });
+  if (!additions.length) return baseline;
+  return baseline.map((word) => ({
+    ...word,
+    spans: [...additions.filter((hit) => hit.wordIndex === word.wordIndex), ...word.spans],
+  }));
+}
+
+/** Stable rule-ID color ownership. Existing family choices remain fallback. */
+export const TAJWEED_RULE_VARS = Object.freeze({
+  idgham_mutajanisayn: '--tw-user-mutajanisayn',
+  idgham_mutaqaribayn: '--tw-user-mutaqaribayn',
+  hamzat_wasl: '--tw-user-hamza-wasl',
+  lam_shamsiyyah: '--tw-user-lam-shamsiyah',
+  ghunnah: '--tw-user-ghunnah',
+  ikhfa: '--tw-user-ikhfa',
+  iqlab: '--tw-user-iqlab',
+  idgham_ghunnah: '--tw-user-idgham-ghunnah',
+  idgham_shafawi: '--tw-user-idgham-shafawi',
+  ikhfa_shafawi: '--tw-user-ikhfa-shafawi',
+  qalqalah: '--tw-user-qalqalah',
+  tafkhim: '--tw-user-tafkhim',
+  madd_2: '--tw-user-madd-normal',
+  madd_iwad: '--tw-user-madd-iwad',
+  madd_badal: '--tw-user-madd-badal',
+  madd_246: '--tw-user-madd-arid',
+  madd_munfasil: '--tw-user-madd-munfasil',
+  madd_silah: '--tw-user-madd-silah',
+  madd_muttasil: '--tw-user-madd-muttasil',
+  madd_6: '--tw-user-madd-laazim',
+});

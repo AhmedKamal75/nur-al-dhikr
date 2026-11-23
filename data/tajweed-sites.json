@@ -1,0 +1,2854 @@
+{
+  "schemaVersion": 1,
+  "provenance": {
+    "annotations": {
+      "author": "cpfair/quran-tajweed contributors",
+      "url": "https://github.com/cpfair/quran-tajweed",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "changes": "Mapped annotation locations to the bundled corpora by Arabic letter-skeleton offsets. No source text imported or edited."
+    },
+    "lpmq": {
+      "url": "https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf",
+      "locator": "Bab II A.a, printed p.6 (PDF p.15)",
+      "level": "rule-level citation",
+      "perSiteVisual": "Unknown",
+      "sha256": "ee7e2533b215e5a697d8d43d5bd287e4cebc1d520c4bfd72f90a249a11d18e4c"
+    },
+    "dar-al-maarifah": {
+      "url": "https://archive.org/details/Tajweed-Quran-Arabic-114638",
+      "level": "observational only",
+      "paletteCopied": false
+    }
+  },
+  "sites": [
+    {
+      "n": 1,
+      "ref": "2:233",
+      "surah": 2,
+      "ayah": 233,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 37,
+      "quran": {
+        "word_whitespace": 45,
+        "word_letter_token": 45,
+        "sakin_skeleton_offset": 196,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 53,
+        "word_letter_token": 45,
+        "sakin_skeleton_offset": 196,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "UNMARKED",
+        "mushaf_page": 37,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 2,
+      "ref": "2:256",
+      "surah": 2,
+      "ayah": 256,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 42,
+      "quran": {
+        "word_a_whitespace": 5,
+        "word_b_whitespace": 6,
+        "word_a_letter_token": 5,
+        "word_b_letter_token": 6,
+        "sakin_skeleton_offset": 15,
+        "follower_skeleton_offset": 16
+      },
+      "mushaf": {
+        "word_a_whitespace": 6,
+        "word_b_whitespace": 7,
+        "word_a_letter_token": 5,
+        "word_b_letter_token": 6,
+        "sakin_skeleton_offset": 15,
+        "follower_skeleton_offset": 16
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 42,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page",
+        "evidence_crop": "batch3-p42-site-400dpi.png"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 3,
+      "ref": "3:69",
+      "surah": 3,
+      "ayah": 69,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "ط"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 58,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "ط",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 58,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 4,
+      "ref": "3:72",
+      "surah": 3,
+      "ayah": 72,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "ط"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 59,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 4,
+        "follower_skeleton_offset": 5
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 4,
+        "follower_skeleton_offset": 5
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "ط",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 59,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page",
+        "evidence_crop": "batch3-p59-site-wide-400dpi.png"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 5,
+      "ref": "3:122",
+      "surah": 3,
+      "ayah": 122,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "ط"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 66,
+      "quran": {
+        "word_a_whitespace": 2,
+        "word_b_whitespace": 3,
+        "word_a_letter_token": 2,
+        "word_b_letter_token": 3,
+        "sakin_skeleton_offset": 4,
+        "follower_skeleton_offset": 5
+      },
+      "mushaf": {
+        "word_a_whitespace": 2,
+        "word_b_whitespace": 3,
+        "word_a_letter_token": 2,
+        "word_b_letter_token": 3,
+        "sakin_skeleton_offset": 4,
+        "follower_skeleton_offset": 5
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "ط",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 66,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 6,
+      "ref": "3:194",
+      "surah": 3,
+      "ayah": 194,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 75,
+      "quran": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 75,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 7,
+      "ref": "4:20",
+      "surah": 4,
+      "ayah": 20,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 81,
+      "quran": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 5,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 5,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "UNMARKED",
+        "mushaf_page": 81,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 8,
+      "ref": "4:64",
+      "surah": 4,
+      "ayah": 64,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ذ",
+        "ظ"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 88,
+      "quran": {
+        "word_a_whitespace": 11,
+        "word_b_whitespace": 12,
+        "word_a_letter_token": 11,
+        "word_b_letter_token": 12,
+        "sakin_skeleton_offset": 39,
+        "follower_skeleton_offset": 40
+      },
+      "mushaf": {
+        "word_a_whitespace": 12,
+        "word_b_whitespace": 13,
+        "word_a_letter_token": 11,
+        "word_b_letter_token": 12,
+        "sakin_skeleton_offset": 39,
+        "follower_skeleton_offset": 40
+      },
+      "sakin_letter": "ذ",
+      "follower_letter": "ظ",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 88,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 9,
+      "ref": "4:89",
+      "surah": 4,
+      "ayah": 89,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 92,
+      "quran": {
+        "word_whitespace": 22,
+        "word_letter_token": 22,
+        "sakin_skeleton_offset": 97,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 24,
+        "word_letter_token": 22,
+        "sakin_skeleton_offset": 97,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 92,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 10,
+      "ref": "4:113",
+      "surah": 4,
+      "ayah": 113,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "ط"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 96,
+      "quran": {
+        "word_a_whitespace": 6,
+        "word_b_whitespace": 7,
+        "word_a_letter_token": 6,
+        "word_b_letter_token": 7,
+        "sakin_skeleton_offset": 26,
+        "follower_skeleton_offset": 27
+      },
+      "mushaf": {
+        "word_a_whitespace": 6,
+        "word_b_whitespace": 7,
+        "word_a_letter_token": 6,
+        "word_b_letter_token": 7,
+        "sakin_skeleton_offset": 26,
+        "follower_skeleton_offset": 27
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "ط",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 96,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 11,
+      "ref": "4:158",
+      "surah": 4,
+      "ayah": 158,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 103,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 1,
+        "follower_skeleton_offset": 2
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 1,
+        "follower_skeleton_offset": 2
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 103,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 12,
+      "ref": "5:89",
+      "surah": 5,
+      "ayah": 89,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 122,
+      "quran": {
+        "word_whitespace": 10,
+        "word_letter_token": 10,
+        "sakin_skeleton_offset": 43,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 10,
+        "word_letter_token": 10,
+        "sakin_skeleton_offset": 43,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 122,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 13,
+      "ref": "5:110",
+      "surah": 5,
+      "ayah": 110,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 126,
+      "quran": {
+        "word_whitespace": 13,
+        "word_letter_token": 13,
+        "sakin_skeleton_offset": 47,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 13,
+        "word_letter_token": 13,
+        "sakin_skeleton_offset": 47,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "UNMARKED",
+        "mushaf_page": 126,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 14,
+      "ref": "6:94",
+      "surah": 6,
+      "ayah": 94,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 139,
+      "quran": {
+        "word_a_whitespace": 22,
+        "word_b_whitespace": 23,
+        "word_a_letter_token": 22,
+        "word_b_letter_token": 23,
+        "sakin_skeleton_offset": 96,
+        "follower_skeleton_offset": 97
+      },
+      "mushaf": {
+        "word_a_whitespace": 24,
+        "word_b_whitespace": 25,
+        "word_a_letter_token": 22,
+        "word_b_letter_token": 23,
+        "sakin_skeleton_offset": 96,
+        "follower_skeleton_offset": 97
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 139,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 15,
+      "ref": "6:147",
+      "surah": 6,
+      "ayah": 147,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 148,
+      "quran": {
+        "word_a_whitespace": 3,
+        "word_b_whitespace": 4,
+        "word_a_letter_token": 3,
+        "word_b_letter_token": 4,
+        "sakin_skeleton_offset": 10,
+        "follower_skeleton_offset": 11
+      },
+      "mushaf": {
+        "word_a_whitespace": 3,
+        "word_b_whitespace": 4,
+        "word_a_letter_token": 3,
+        "word_b_letter_token": 4,
+        "sakin_skeleton_offset": 10,
+        "follower_skeleton_offset": 11
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 148,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 16,
+      "ref": "7:44",
+      "surah": 7,
+      "ayah": 44,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 156,
+      "quran": {
+        "word_whitespace": 14,
+        "word_letter_token": 14,
+        "sakin_skeleton_offset": 51,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 14,
+        "word_letter_token": 14,
+        "sakin_skeleton_offset": 51,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 156,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 17,
+      "ref": "7:176",
+      "surah": 7,
+      "ayah": 176,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ث",
+        "ذ"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 173,
+      "quran": {
+        "word_a_whitespace": 20,
+        "word_b_whitespace": 21,
+        "word_a_letter_token": 20,
+        "word_b_letter_token": 21,
+        "sakin_skeleton_offset": 82,
+        "follower_skeleton_offset": 83
+      },
+      "mushaf": {
+        "word_a_whitespace": 21,
+        "word_b_whitespace": 23,
+        "word_a_letter_token": 20,
+        "word_b_letter_token": 21,
+        "sakin_skeleton_offset": 82,
+        "follower_skeleton_offset": 83
+      },
+      "sakin_letter": "ث",
+      "follower_letter": "ذ",
+      "dam": {
+        "verdict": "UNMARKED-OUTLIER",
+        "mushaf_page": 173,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 18,
+      "ref": "7:189",
+      "surah": 7,
+      "ayah": 189,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "د"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 175,
+      "quran": {
+        "word_a_whitespace": 20,
+        "word_b_whitespace": 21,
+        "word_a_letter_token": 20,
+        "word_b_letter_token": 21,
+        "sakin_skeleton_offset": 81,
+        "follower_skeleton_offset": 82
+      },
+      "mushaf": {
+        "word_a_whitespace": 23,
+        "word_b_whitespace": 24,
+        "word_a_letter_token": 20,
+        "word_b_letter_token": 21,
+        "sakin_skeleton_offset": 81,
+        "follower_skeleton_offset": 82
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "د",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 175,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 19,
+      "ref": "8:42",
+      "surah": 8,
+      "ayah": 42,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 182,
+      "quran": {
+        "word_whitespace": 12,
+        "word_letter_token": 12,
+        "sakin_skeleton_offset": 56,
+        "pair_offset_within_word": 4
+      },
+      "mushaf": {
+        "word_whitespace": 13,
+        "word_letter_token": 12,
+        "sakin_skeleton_offset": 56,
+        "pair_offset_within_word": 4
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 182,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 20,
+      "ref": "8:56",
+      "surah": 8,
+      "ayah": 56,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 184,
+      "quran": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 7,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 7,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 184,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 21,
+      "ref": "9:1",
+      "surah": 9,
+      "ayah": 1,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 187,
+      "quran": {
+        "word_whitespace": 7,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 28,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 7,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 28,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 187,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 22,
+      "ref": "9:4",
+      "surah": 9,
+      "ayah": 4,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 187,
+      "quran": {
+        "word_whitespace": 3,
+        "word_letter_token": 3,
+        "sakin_skeleton_offset": 10,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 3,
+        "word_letter_token": 3,
+        "sakin_skeleton_offset": 10,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 187,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 23,
+      "ref": "9:5",
+      "surah": 9,
+      "ayah": 5,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 187,
+      "quran": {
+        "word_whitespace": 8,
+        "word_letter_token": 8,
+        "sakin_skeleton_offset": 40,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 8,
+        "word_letter_token": 8,
+        "sakin_skeleton_offset": 40,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 187,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 24,
+      "ref": "9:7",
+      "surah": 9,
+      "ayah": 7,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 188,
+      "quran": {
+        "word_whitespace": 11,
+        "word_letter_token": 11,
+        "sakin_skeleton_offset": 45,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 11,
+        "word_letter_token": 11,
+        "sakin_skeleton_offset": 45,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 188,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 25,
+      "ref": "9:117",
+      "surah": 9,
+      "ayah": 117,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 205,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 205,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 26,
+      "ref": "10:89",
+      "surah": 10,
+      "ayah": 89,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "د"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 219,
+      "quran": {
+        "word_a_whitespace": 3,
+        "word_b_whitespace": 4,
+        "word_a_letter_token": 3,
+        "word_b_letter_token": 4,
+        "sakin_skeleton_offset": 9,
+        "follower_skeleton_offset": 10
+      },
+      "mushaf": {
+        "word_a_whitespace": 3,
+        "word_b_whitespace": 4,
+        "word_a_letter_token": 3,
+        "word_b_letter_token": 4,
+        "sakin_skeleton_offset": 9,
+        "follower_skeleton_offset": 10
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "د",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 219,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 27,
+      "ref": "11:30",
+      "surah": 11,
+      "ayah": 30,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 225,
+      "quran": {
+        "word_whitespace": 7,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 23,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 7,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 23,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 225,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 28,
+      "ref": "11:34",
+      "surah": 11,
+      "ayah": 34,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 225,
+      "quran": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 17,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 17,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 225,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 29,
+      "ref": "11:42",
+      "surah": 11,
+      "ayah": 42,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ب",
+        "م"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 226,
+      "quran": {
+        "word_a_whitespace": 14,
+        "word_b_whitespace": 15,
+        "word_a_letter_token": 14,
+        "word_b_letter_token": 15,
+        "sakin_skeleton_offset": 52,
+        "follower_skeleton_offset": 53
+      },
+      "mushaf": {
+        "word_a_whitespace": 14,
+        "word_b_whitespace": 15,
+        "word_a_letter_token": 14,
+        "word_b_letter_token": 15,
+        "sakin_skeleton_offset": 52,
+        "follower_skeleton_offset": 53
+      },
+      "sakin_letter": "ب",
+      "follower_letter": "م",
+      "dam": {
+        "verdict": "MARKED-GREEN",
+        "mushaf_page": 226,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "magenta (Bab II A.a* ba+meem exception; rule-level only)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 30,
+      "ref": "12:32",
+      "surah": 12,
+      "ayah": 32,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 239,
+      "quran": {
+        "word_whitespace": 7,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 28,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 8,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 28,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 239,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 31,
+      "ref": "12:47",
+      "surah": 12,
+      "ayah": 47,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 241,
+      "quran": {
+        "word_whitespace": 7,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 25,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 7,
+        "word_letter_token": 7,
+        "sakin_skeleton_offset": 25,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 241,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 32,
+      "ref": "12:51",
+      "surah": 12,
+      "ayah": 51,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 241,
+      "quran": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 241,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 33,
+      "ref": "12:51",
+      "surah": 12,
+      "ayah": 51,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 241,
+      "quran": {
+        "word_whitespace": 24,
+        "word_letter_token": 24,
+        "sakin_skeleton_offset": 83,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 26,
+        "word_letter_token": 24,
+        "sakin_skeleton_offset": 83,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 241,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 34,
+      "ref": "14:22",
+      "surah": 14,
+      "ayah": 22,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 258,
+      "quran": {
+        "word_whitespace": 11,
+        "word_letter_token": 11,
+        "sakin_skeleton_offset": 42,
+        "pair_offset_within_word": 3
+      },
+      "mushaf": {
+        "word_whitespace": 11,
+        "word_letter_token": 11,
+        "sakin_skeleton_offset": 42,
+        "pair_offset_within_word": 3
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 258,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 35,
+      "ref": "16:91",
+      "surah": 16,
+      "ayah": 91,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 277,
+      "quran": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 19,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 19,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 277,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 36,
+      "ref": "16:94",
+      "surah": 16,
+      "ayah": 94,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 278,
+      "quran": {
+        "word_whitespace": 13,
+        "word_letter_token": 13,
+        "sakin_skeleton_offset": 57,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 13,
+        "word_letter_token": 13,
+        "sakin_skeleton_offset": 57,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 278,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 37,
+      "ref": "17:8",
+      "surah": 17,
+      "ayah": 8,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 283,
+      "quran": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 19,
+        "pair_offset_within_word": 1
+      },
+      "mushaf": {
+        "word_whitespace": 7,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 19,
+        "pair_offset_within_word": 1
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 283,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 38,
+      "ref": "17:24",
+      "surah": 17,
+      "ayah": 24,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 284,
+      "quran": {
+        "word_a_whitespace": 7,
+        "word_b_whitespace": 8,
+        "word_a_letter_token": 7,
+        "word_b_letter_token": 8,
+        "sakin_skeleton_offset": 27,
+        "follower_skeleton_offset": 28
+      },
+      "mushaf": {
+        "word_a_whitespace": 7,
+        "word_b_whitespace": 8,
+        "word_a_letter_token": 7,
+        "word_b_letter_token": 8,
+        "sakin_skeleton_offset": 27,
+        "follower_skeleton_offset": 28
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "MARKED",
+        "mushaf_page": 284,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 39,
+      "ref": "17:74",
+      "surah": 17,
+      "ayah": 74,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 289,
+      "quran": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 16,
+        "pair_offset_within_word": 1
+      },
+      "mushaf": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 16,
+        "pair_offset_within_word": 1
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "UNMARKED",
+        "mushaf_page": 289,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 40,
+      "ref": "17:80",
+      "surah": 17,
+      "ayah": 80,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 290,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 290,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 41,
+      "ref": "18:22",
+      "surah": 18,
+      "ayah": 22,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 296,
+      "quran": {
+        "word_a_whitespace": 15,
+        "word_b_whitespace": 16,
+        "word_a_letter_token": 15,
+        "word_b_letter_token": 16,
+        "sakin_skeleton_offset": 78,
+        "follower_skeleton_offset": 79
+      },
+      "mushaf": {
+        "word_a_whitespace": 17,
+        "word_b_whitespace": 18,
+        "word_a_letter_token": 15,
+        "word_b_letter_token": 16,
+        "sakin_skeleton_offset": 78,
+        "follower_skeleton_offset": 79
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 296,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 42,
+      "ref": "18:36",
+      "surah": 18,
+      "ayah": 36,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 298,
+      "quran": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 23,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 23,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 298,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 43,
+      "ref": "18:51",
+      "surah": 18,
+      "ayah": 51,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 299,
+      "quran": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 5,
+        "pair_offset_within_word": 3
+      },
+      "mushaf": {
+        "word_whitespace": 3,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 5,
+        "pair_offset_within_word": 3
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 299,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 44,
+      "ref": "18:79",
+      "surah": 18,
+      "ayah": 79,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 302,
+      "quran": {
+        "word_whitespace": 8,
+        "word_letter_token": 8,
+        "sakin_skeleton_offset": 37,
+        "pair_offset_within_word": 3
+      },
+      "mushaf": {
+        "word_whitespace": 8,
+        "word_letter_token": 8,
+        "sakin_skeleton_offset": 37,
+        "pair_offset_within_word": 3
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 302,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 45,
+      "ref": "19:33",
+      "surah": 19,
+      "ayah": 33,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 307,
+      "quran": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 307,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 46,
+      "ref": "20:86",
+      "surah": 20,
+      "ayah": 86,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 317,
+      "quran": {
+        "word_whitespace": 18,
+        "word_letter_token": 18,
+        "sakin_skeleton_offset": 70,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 20,
+        "word_letter_token": 18,
+        "sakin_skeleton_offset": 70,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 317,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 47,
+      "ref": "20:114",
+      "surah": 20,
+      "ayah": 114,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 320,
+      "quran": {
+        "word_a_whitespace": 14,
+        "word_b_whitespace": 15,
+        "word_a_letter_token": 14,
+        "word_b_letter_token": 15,
+        "sakin_skeleton_offset": 55,
+        "follower_skeleton_offset": 56
+      },
+      "mushaf": {
+        "word_a_whitespace": 16,
+        "word_b_whitespace": 17,
+        "word_a_letter_token": 14,
+        "word_b_letter_token": 15,
+        "sakin_skeleton_offset": 55,
+        "follower_skeleton_offset": 56
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 320,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 48,
+      "ref": "21:56",
+      "surah": 21,
+      "ayah": 56,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 326,
+      "quran": {
+        "word_a_whitespace": 2,
+        "word_b_whitespace": 3,
+        "word_a_letter_token": 2,
+        "word_b_letter_token": 3,
+        "sakin_skeleton_offset": 4,
+        "follower_skeleton_offset": 5
+      },
+      "mushaf": {
+        "word_a_whitespace": 2,
+        "word_b_whitespace": 3,
+        "word_a_letter_token": 2,
+        "word_b_letter_token": 3,
+        "sakin_skeleton_offset": 4,
+        "follower_skeleton_offset": 5
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 326,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 49,
+      "ref": "23:29",
+      "surah": 23,
+      "ayah": 29,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 344,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 344,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 50,
+      "ref": "23:93",
+      "surah": 23,
+      "ayah": 93,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 348,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 1,
+        "follower_skeleton_offset": 2
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 1,
+        "follower_skeleton_offset": 2
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 348,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 51,
+      "ref": "23:97",
+      "surah": 23,
+      "ayah": 97,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 348,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 348,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 52,
+      "ref": "23:118",
+      "surah": 23,
+      "ayah": 118,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 349,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 2,
+        "follower_skeleton_offset": 3
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 349,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 53,
+      "ref": "26:22",
+      "surah": 26,
+      "ayah": 22,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 368,
+      "quran": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 20,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 20,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 368,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 54,
+      "ref": "27:23",
+      "surah": 27,
+      "ayah": 23,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 379,
+      "quran": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 5,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 5,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 379,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 55,
+      "ref": "27:24",
+      "surah": 27,
+      "ayah": 24,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 379,
+      "quran": {
+        "word_whitespace": 1,
+        "word_letter_token": 1,
+        "sakin_skeleton_offset": 2,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 1,
+        "word_letter_token": 1,
+        "sakin_skeleton_offset": 2,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 379,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 56,
+      "ref": "28:85",
+      "surah": 28,
+      "ayah": 85,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ل",
+        "ر"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 396,
+      "quran": {
+        "word_a_whitespace": 9,
+        "word_b_whitespace": 10,
+        "word_a_letter_token": 9,
+        "word_b_letter_token": 10,
+        "sakin_skeleton_offset": 33,
+        "follower_skeleton_offset": 34
+      },
+      "mushaf": {
+        "word_a_whitespace": 10,
+        "word_b_whitespace": 11,
+        "word_a_letter_token": 9,
+        "word_b_letter_token": 10,
+        "sakin_skeleton_offset": 33,
+        "follower_skeleton_offset": 34
+      },
+      "sakin_letter": "ل",
+      "follower_letter": "ر",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 396,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 57,
+      "ref": "29:35",
+      "surah": 29,
+      "ayah": 35,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 400,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 3,
+        "follower_skeleton_offset": 4
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 3,
+        "follower_skeleton_offset": 4
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 400,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 58,
+      "ref": "29:38",
+      "surah": 29,
+      "ayah": 38,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 400,
+      "quran": {
+        "word_a_whitespace": 3,
+        "word_b_whitespace": 4,
+        "word_a_letter_token": 3,
+        "word_b_letter_token": 4,
+        "sakin_skeleton_offset": 13,
+        "follower_skeleton_offset": 14
+      },
+      "mushaf": {
+        "word_a_whitespace": 3,
+        "word_b_whitespace": 4,
+        "word_a_letter_token": 3,
+        "word_b_letter_token": 4,
+        "sakin_skeleton_offset": 13,
+        "follower_skeleton_offset": 14
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 400,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 59,
+      "ref": "33:13",
+      "surah": 33,
+      "ayah": 13,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "ط"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 419,
+      "quran": {
+        "word_a_whitespace": 2,
+        "word_b_whitespace": 3,
+        "word_a_letter_token": 2,
+        "word_b_letter_token": 3,
+        "sakin_skeleton_offset": 6,
+        "follower_skeleton_offset": 7
+      },
+      "mushaf": {
+        "word_a_whitespace": 2,
+        "word_b_whitespace": 3,
+        "word_a_letter_token": 2,
+        "word_b_letter_token": 3,
+        "sakin_skeleton_offset": 6,
+        "follower_skeleton_offset": 7
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "ط",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 419,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 60,
+      "ref": "37:56",
+      "surah": 37,
+      "ayah": 56,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 448,
+      "quran": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 11,
+        "pair_offset_within_word": 1
+      },
+      "mushaf": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 11,
+        "pair_offset_within_word": 1
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 448,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 61,
+      "ref": "40:8",
+      "surah": 40,
+      "ayah": 8,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 468,
+      "quran": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 23,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 23,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 468,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 62,
+      "ref": "41:21",
+      "surah": 41,
+      "ayah": 21,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 479,
+      "quran": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 17,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 4,
+        "word_letter_token": 4,
+        "sakin_skeleton_offset": 17,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 479,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 63,
+      "ref": "43:24",
+      "surah": 43,
+      "ayah": 24,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 491,
+      "quran": {
+        "word_whitespace": 6,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 21,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 7,
+        "word_letter_token": 6,
+        "sakin_skeleton_offset": 21,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 491,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 64,
+      "ref": "43:39",
+      "surah": 43,
+      "ayah": 39,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ذ",
+        "ظ"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 492,
+      "quran": {
+        "word_a_whitespace": 4,
+        "word_b_whitespace": 5,
+        "word_a_letter_token": 4,
+        "word_b_letter_token": 5,
+        "sakin_skeleton_offset": 15,
+        "follower_skeleton_offset": 16
+      },
+      "mushaf": {
+        "word_a_whitespace": 4,
+        "word_b_whitespace": 5,
+        "word_a_letter_token": 4,
+        "word_b_letter_token": 5,
+        "sakin_skeleton_offset": 15,
+        "follower_skeleton_offset": 16
+      },
+      "sakin_letter": "ذ",
+      "follower_letter": "ظ",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 492,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 65,
+      "ref": "54:15",
+      "surah": 54,
+      "ayah": 15,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 529,
+      "quran": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 3,
+        "follower_skeleton_offset": 4
+      },
+      "mushaf": {
+        "word_a_whitespace": 1,
+        "word_b_whitespace": 2,
+        "word_a_letter_token": 1,
+        "word_b_letter_token": 2,
+        "sakin_skeleton_offset": 3,
+        "follower_skeleton_offset": 4
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 529,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 66,
+      "ref": "61:5",
+      "surah": 61,
+      "ayah": 5,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 551,
+      "quran": {
+        "word_a_whitespace": 8,
+        "word_b_whitespace": 9,
+        "word_a_letter_token": 8,
+        "word_b_letter_token": 9,
+        "sakin_skeleton_offset": 31,
+        "follower_skeleton_offset": 32
+      },
+      "mushaf": {
+        "word_a_whitespace": 8,
+        "word_b_whitespace": 9,
+        "word_a_letter_token": 8,
+        "word_b_letter_token": 9,
+        "sakin_skeleton_offset": 31,
+        "follower_skeleton_offset": 32
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 551,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 67,
+      "ref": "61:14",
+      "surah": 61,
+      "ayah": 14,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "ط"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 552,
+      "quran": {
+        "word_a_whitespace": 22,
+        "word_b_whitespace": 23,
+        "word_a_letter_token": 22,
+        "word_b_letter_token": 23,
+        "sakin_skeleton_offset": 98,
+        "follower_skeleton_offset": 99
+      },
+      "mushaf": {
+        "word_a_whitespace": 24,
+        "word_b_whitespace": 25,
+        "word_a_letter_token": 22,
+        "word_b_letter_token": 23,
+        "sakin_skeleton_offset": 98,
+        "follower_skeleton_offset": 99
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "ط",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 552,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 68,
+      "ref": "61:14",
+      "surah": 61,
+      "ayah": 14,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "ت",
+        "ط"
+      ],
+      "boundary": "cross-word",
+      "mushaf_page": 552,
+      "quran": {
+        "word_a_whitespace": 27,
+        "word_b_whitespace": 28,
+        "word_a_letter_token": 27,
+        "word_b_letter_token": 28,
+        "sakin_skeleton_offset": 119,
+        "follower_skeleton_offset": 120
+      },
+      "mushaf": {
+        "word_a_whitespace": 29,
+        "word_b_whitespace": 30,
+        "word_a_letter_token": 27,
+        "word_b_letter_token": 28,
+        "sakin_skeleton_offset": 119,
+        "follower_skeleton_offset": 120
+      },
+      "sakin_letter": "ت",
+      "follower_letter": "ط",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 552,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 69,
+      "ref": "74:14",
+      "surah": 74,
+      "ayah": 14,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 575,
+      "quran": {
+        "word_whitespace": 1,
+        "word_letter_token": 1,
+        "sakin_skeleton_offset": 3,
+        "pair_offset_within_word": 3
+      },
+      "mushaf": {
+        "word_whitespace": 1,
+        "word_letter_token": 1,
+        "sakin_skeleton_offset": 3,
+        "pair_offset_within_word": 3
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 575,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 70,
+      "ref": "77:20",
+      "surah": 77,
+      "ayah": 20,
+      "rule": "idgham_mutaqaribayn",
+      "pair": [
+        "ق",
+        "ك"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 581,
+      "quran": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 6,
+        "pair_offset_within_word": 3
+      },
+      "mushaf": {
+        "word_whitespace": 2,
+        "word_letter_token": 2,
+        "sakin_skeleton_offset": 6,
+        "pair_offset_within_word": 3
+      },
+      "sakin_letter": "ق",
+      "follower_letter": "ك",
+      "dam": {
+        "verdict": "UNMARKED",
+        "mushaf_page": 581,
+        "verified": true,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    },
+    {
+      "n": 71,
+      "ref": "109:4",
+      "surah": 109,
+      "ayah": 4,
+      "rule": "idgham_mutajanisayn",
+      "pair": [
+        "د",
+        "ت"
+      ],
+      "boundary": "within-word",
+      "mushaf_page": 603,
+      "quran": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "mushaf": {
+        "word_whitespace": 5,
+        "word_letter_token": 5,
+        "sakin_skeleton_offset": 14,
+        "pair_offset_within_word": 2
+      },
+      "sakin_letter": "د",
+      "follower_letter": "ت",
+      "dam": {
+        "verdict": "PENDING",
+        "mushaf_page": 603,
+        "verified": false,
+        "source": "archive.org item Tajweed-Quran-Arabic-114638, PDF page = mushaf page"
+      },
+      "lpmq": {
+        "treatment": "red (Bab II)",
+        "level": "rule-level citation (Pedoman Bab II)",
+        "per_site_visual": "Unknown"
+      }
+    }
+  ]
+}

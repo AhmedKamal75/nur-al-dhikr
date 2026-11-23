@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /** Build the full Quranic Tajweed quiz corpus from the app's deterministic classifier. */
 import { readFile, writeFile } from 'node:fs/promises';
-import { classifyAyahTajweed, TAJWEED_RULES } from '../js/domain/tajweed.js';
+import { classifyConventionAyah, TAJWEED_RULES } from '../js/domain/tajweed.js';
 
 const ROOT = new URL('..', import.meta.url);
 const outUrl = new URL('./data/tajweed-practice.json', ROOT);
@@ -15,7 +15,11 @@ for (let s = 1; s <= 114; s += 1) {
   const doc = JSON.parse(await readFile(new URL(`./data/quran/${s}.json`, ROOT), 'utf8'));
   for (const ayah of doc.ayahs || []) {
     ayahs += 1;
-    const perWord = classifyAyahTajweed(String(ayah.text || ''));
+    const perWord = classifyConventionAyah(String(ayah.text || ''), {
+      surah: s,
+      ayah: ayah.number,
+      convention: 'lpmq',
+    });
     const found = [];
     for (const rule of TAJWEED_RULES) {
       let firstWord = 0;
@@ -38,7 +42,12 @@ for (let s = 1; s <= 114; s += 1) {
     }
     if (found.length && !mixedSeen.has(`${s}:${ayah.number}`)) {
       mixedSeen.add(`${s}:${ayah.number}`);
-      mixed.push({ s, a: Number(ayah.number), w: found[0].w, c: found.reduce((n, r) => n + r.c, 0) });
+      mixed.push({
+        s,
+        a: Number(ayah.number),
+        w: found[0].w,
+        c: found.reduce((n, r) => n + r.c, 0),
+      });
     }
   }
 }
@@ -53,7 +62,10 @@ for (const rule of TAJWEED_RULES) {
 }
 
 const coverage = Object.fromEntries(
-  TAJWEED_RULES.map((r) => [r.id, { ayahs: byRule[r.id].length, spans: byRule[r.id].reduce((n, x) => n + x.c, 0) }])
+  TAJWEED_RULES.map((r) => [
+    r.id,
+    { ayahs: byRule[r.id].length, spans: byRule[r.id].reduce((n, x) => n + x.c, 0) },
+  ])
 );
 
 const payload = {
@@ -66,5 +78,8 @@ const payload = {
   mixed,
 };
 await writeFile(outUrl, `${JSON.stringify(payload)}\n`, 'utf8');
-console.log(`tajweed-practice: ${ayahs} ayahs, ${TAJWEED_RULES.length} rules, ${mixed.length} mixed rows`);
-for (const rule of TAJWEED_RULES) console.log(`${rule.id}: ${coverage[rule.id].ayahs} ayahs / ${coverage[rule.id].spans} spans`);
+console.log(
+  `tajweed-practice: ${ayahs} ayahs, ${TAJWEED_RULES.length} rules, ${mixed.length} mixed rows`
+);
+for (const rule of TAJWEED_RULES)
+  console.log(`${rule.id}: ${coverage[rule.id].ayahs} ayahs / ${coverage[rule.id].spans} spans`);

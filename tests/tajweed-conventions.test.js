@@ -68,12 +68,12 @@ test('bilingual disclosure names both sources and honestly states incomplete app
     const html = tajweedConventionHTML({ settings: { language, tajweedConvention: 'lpmq' } });
     assert.match(html, /data-convention="lpmq" aria-pressed="true"/);
     assert.match(html, /data-convention="dar-al-maarifah"/);
-    assert.match(html, /tashih\.kemenag\.go\.id/);
+    assert.match(html, /tashih\.lpmqkemenag\.id/);
     assert.match(html, /archive\.org/);
     assert.doesNotMatch(html, /undefined|\[object Object\]/);
     assert.ok(
       language === 'en'
-        ? html.includes('verification is in progress')
+        ? html.includes('verification remains incomplete')
         : html.includes('التحقق من الاصطلاحين')
     );
   }

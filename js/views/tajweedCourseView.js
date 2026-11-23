@@ -246,6 +246,7 @@ export function renderTajweedCourse(state) {
     ${modeSwitch}
     ${continueBlock}
     ${search}
+    ${state.settings.tajweedConvention === 'lpmq' ? `<section class="taj-course__stage"><h2>${escapeHTML(t('tajweed.lpmqExtension', lang))}</h2><p class="panel__subtext">${escapeHTML(t('tajweed.lpmqLevel', lang))}</p>${['idgham_mutajanisayn', 'idgham_mutaqaribayn'].map((id) => `<article class="taj-course__session"><h3>${escapeHTML(pickLocale(ruleById.get(id)?.name, lang))}</h3><p>${escapeHTML(pickLocale(ruleById.get(id)?.desc, lang))}</p><p class="panel__subtext">${escapeHTML(tajweedCitation(id, lang)?.title || '')} · ${escapeHTML(tajweedCitation(id, lang)?.lines || '')}</p><button type="button" class="btn btn--secondary" data-action="practice-lesson" data-rule="${id}">${escapeHTML(t('practice.lesson', lang))}</button></article>`).join('')}</section>` : ''}
     <div class="taj-course__body">${body}</div>
     <a class="back-link" href="${buildHash(VIEWS.MUSHAF)}" data-action="navigate" data-view="${VIEWS.MUSHAF}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 18 })} ${escapeHTML(t('nav.quran', lang))}</a>
   </div>`;

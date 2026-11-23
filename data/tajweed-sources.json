@@ -90,6 +90,18 @@
     "ar": "شرح رسمي لوزارة الأوقاف المصرية يذكر الكلمات الأربع للإظهار المطلق: الدنيا، وبنيان، وصنوان، وقنوان."
    },
    "url": "https://awkafonline.gov.eg/content-sections/116/4995/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D9%86%D9%88%D9%86-%D8%A7%D9%84%D8%B3%D8%A7%D9%83%D9%86%D8%A9%D8%8C-%D9%88%D8%A7%D9%84%D8%AA%D9%86%D9%88%D9%8A%D9%86"
+  },
+  "lpmq-2011": {
+   "author": {
+    "en": "Lajnah Pentashihan Mushaf al-Quran, Ministry of Religious Affairs, Indonesia",
+    "ar": "لجنة تصحيح المصحف بوزارة الشؤون الدينية الإندونيسية"
+   },
+   "shortTitle": {
+    "en": "Pedoman Tajwid Sistem Warna (2011)",
+    "ar": "دليل التجويد بنظام الألوان (٢٠١١)"
+   },
+   "url": "https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf",
+   "sha256": "ee7e2533b215e5a697d8d43d5bd287e4cebc1d520c4bfd72f90a249a11d18e4c"
   }
  },
  "rules": {
@@ -434,6 +446,26 @@
      "review": "sourced"
     }
    ]
+  },
+  "idgham_mutajanisayn": {
+   "work": "lpmq-2011",
+   "lines": "الباب الثاني، القسم أ، ص ٦",
+   "review": "contested",
+   "topic": "assimilation",
+   "caveat": {
+    "en": "Rule-level citation only. Corpus locations are reproduced from cpfair annotations, not per-site LPMQ visual verification. DAM observations are separate and do not activate this teaching group.",
+    "ar": "مرجع على مستوى القاعدة فقط. المواضع معاد تحديدها من بيانات توصيف النص، وليست تحققًا بصريًا لكل موضع في مصحف إندونيسي. ملاحظات طبعة دار المعرفة مستقلة، ولا تفعّل هذه المجموعة التعليمية."
+   }
+  },
+  "idgham_mutaqaribayn": {
+   "work": "lpmq-2011",
+   "lines": "الباب الثاني، القسم أ، ص ٦",
+   "review": "contested",
+   "topic": "assimilation",
+   "caveat": {
+    "en": "Rule-level citation only. Corpus locations are reproduced from cpfair annotations, not per-site LPMQ visual verification. DAM observations are separate and do not activate this teaching group.",
+    "ar": "مرجع على مستوى القاعدة فقط. المواضع معاد تحديدها من بيانات توصيف النص، وليست تحققًا بصريًا لكل موضع في مصحف إندونيسي. ملاحظات طبعة دار المعرفة مستقلة، ولا تفعّل هذه المجموعة التعليمية."
+   }
   }
  },
  "provenance": {

@@ -1,4 +1,4 @@
-/** Runtime mirror of data/tajweed-rules.json. Parity-tested. No detector cutover. */
+/** Runtime mirror of data/tajweed-rules.json. No baseline detector cutover. */
 export const TAJWEED_RULE_REGISTRY = deepFreeze({
   schemaVersion: 1,
   recitationProfile: {
@@ -9,7 +9,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
   },
   conventions: {
     lpmq: {
-      url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+      url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
       locator: 'Bab II',
       kind: 'published-rule-level',
       siteVerification: 'unknown',
@@ -23,6 +23,76 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
   },
   rules: [
     {
+      id: 'idgham_mutajanisayn',
+      predicate: 'corpusLocatedRuleLevel',
+      scope: 'corpus-located-rule-level-cited',
+      conventions: {
+        lpmq: {
+          active: true,
+          shippingEnabled: true,
+          citation: {
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            locator: 'Bab II A.a, printed p.6 (PDF p.15)',
+            kind: 'published-rule-level',
+            siteVerification: 'unknown',
+            sha256: 'ee7e2533b215e5a697d8d43d5bd287e4cebc1d520c4bfd72f90a249a11d18e4c',
+          },
+          status: 'rule-level-cited; per-site visual Unknown',
+        },
+        'dar-al-maarifah': {
+          active: false,
+          shippingEnabled: false,
+          citation: {
+            url: 'https://archive.org/details/Tajweed-Quran-Arabic-114638',
+            locator: 'Printed page key; per-site matrix v2 (2026-11-23)',
+            kind: 'observation-only',
+            siteVerification: 'partial',
+          },
+        },
+      },
+      family: 'assimilation',
+      labels: {
+        en: 'Idgham Mutajanisayn',
+        ar: 'إدغام المتجانسين',
+      },
+      sourceKeys: ['idgham_mutajanisayn'],
+    },
+    {
+      id: 'idgham_mutaqaribayn',
+      predicate: 'corpusLocatedRuleLevel',
+      scope: 'corpus-located-rule-level-cited',
+      conventions: {
+        lpmq: {
+          active: true,
+          shippingEnabled: true,
+          citation: {
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            locator: 'Bab II A.a, printed p.6 (PDF p.15)',
+            kind: 'published-rule-level',
+            siteVerification: 'unknown',
+            sha256: 'ee7e2533b215e5a697d8d43d5bd287e4cebc1d520c4bfd72f90a249a11d18e4c',
+          },
+          status: 'rule-level-cited; per-site visual Unknown',
+        },
+        'dar-al-maarifah': {
+          active: false,
+          shippingEnabled: false,
+          citation: {
+            url: 'https://archive.org/details/Tajweed-Quran-Arabic-114638',
+            locator: 'Printed page key; per-site matrix v2 (2026-11-23)',
+            kind: 'observation-only',
+            siteVerification: 'partial',
+          },
+        },
+      },
+      family: 'assimilation',
+      labels: {
+        en: 'Idgham Mutaqaribayn',
+        ar: 'إدغام المتقاربين',
+      },
+      sourceKeys: ['idgham_mutaqaribayn'],
+    },
+    {
       id: 'hamzat_wasl',
       family: 'silent',
       labels: {
@@ -35,7 +105,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -66,7 +136,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -97,7 +167,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -128,7 +198,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -159,7 +229,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -190,7 +260,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -221,7 +291,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -252,7 +322,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -283,7 +353,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -314,7 +384,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -345,7 +415,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -376,7 +446,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -407,7 +477,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -438,7 +508,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -469,7 +539,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -500,7 +570,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -531,7 +601,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -562,7 +632,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -593,7 +663,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -624,7 +694,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -655,7 +725,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -686,7 +756,7 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       conventions: {
         lpmq: {
           citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
+            url: 'https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
             locator: 'Bab II',
             kind: 'published-rule-level',
             siteVerification: 'unknown',
@@ -705,67 +775,12 @@ export const TAJWEED_RULE_REGISTRY = deepFreeze({
       },
     },
   ],
-  pendingRules: [
-    {
-      id: 'idgham_mutajanisayn',
-      predicate: 'verifiedSite',
-      scope: 'pending-site-verification',
-      conventions: {
-        lpmq: {
-          active: true,
-          shippingEnabled: false,
-          citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
-            locator: 'Bab II',
-            kind: 'published-rule-level',
-            siteVerification: 'unknown',
-          },
-        },
-        'dar-al-maarifah': {
-          active: false,
-          shippingEnabled: false,
-          citation: {
-            url: 'https://archive.org/details/Tajweed-Quran-Arabic-114638',
-            locator: 'Printed page key; per-site matrix v2 (2026-11-23)',
-            kind: 'observation-only',
-            siteVerification: 'partial',
-          },
-        },
-      },
-    },
-    {
-      id: 'idgham_mutaqaribayn',
-      predicate: 'verifiedSite',
-      scope: 'pending-site-verification',
-      conventions: {
-        lpmq: {
-          active: true,
-          shippingEnabled: false,
-          citation: {
-            url: 'https://tashih.kemenag.go.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf',
-            locator: 'Bab II',
-            kind: 'published-rule-level',
-            siteVerification: 'unknown',
-          },
-        },
-        'dar-al-maarifah': {
-          active: false,
-          shippingEnabled: false,
-          citation: {
-            url: 'https://archive.org/details/Tajweed-Quran-Arabic-114638',
-            locator: 'Printed page key; per-site matrix v2 (2026-11-23)',
-            kind: 'observation-only',
-            siteVerification: 'partial',
-          },
-        },
-      },
-    },
-  ],
+  pendingRules: [],
   verification: {
-    matrixVersion: 2,
+    matrixVersion: '3-working-batch-1',
     totalSites: 71,
-    damVerified: 13,
-    damPending: 58,
+    damVerified: 15,
+    damPending: 56,
     lpmqSiteVerification: 'unknown',
     complete: false,
   },
@@ -780,6 +795,14 @@ function deepFreeze(value) {
 
 /** Closed predicate set. Unknown site evidence never returns a span. */
 export const TAJWEED_PREDICATES = Object.freeze({
+  corpusLocatedRuleLevel: (site) =>
+    site?.evidenceLevel === 'rule-level-cited' &&
+    site?.perSiteVisual === 'Unknown' &&
+    Number.isInteger(site.start) &&
+    Number.isInteger(site.end) &&
+    site.end > site.start
+      ? [site]
+      : [],
   existingClassifier: (spans, ruleId) =>
     Array.isArray(spans) ? spans.filter((s) => s.rule === ruleId) : [],
   verifiedSite: (site) =>
