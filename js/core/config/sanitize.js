@@ -575,7 +575,12 @@ function sanitizeTajweedPrefs(raw) {
   if (p.colors && typeof p.colors === 'object' && !Array.isArray(p.colors)) {
     const colors = {};
     for (const [k, v] of Object.entries(p.colors)) {
-      if (TAJWEED_FAMILY_ID_SET.has(k) && typeof v === 'string' && HEX.test(v)) colors[k] = v;
+      if (
+        (TAJWEED_FAMILY_ID_SET.has(k) || TAJWEED_RULE_ID_SET.has(k)) &&
+        typeof v === 'string' &&
+        HEX.test(v)
+      )
+        colors[k] = v;
     }
     if (Object.keys(colors).length) out.colors = colors;
   }

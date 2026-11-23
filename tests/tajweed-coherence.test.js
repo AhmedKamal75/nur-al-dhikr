@@ -18,6 +18,7 @@ function state(overrides = {}) {
   return {
     settings: {
       language: 'en',
+      tajweedConvention: 'lpmq',
       mushafPrefs: { tajweedColoring: true },
       tajweedPrefs: {},
       ...overrides.settings,
@@ -57,6 +58,7 @@ test('the Mushaf legend reads tajweedPrefs and includes every rule', () => {
     state({
       settings: {
         language: 'en',
+        tajweedConvention: 'lpmq',
         mushafPrefs: { tajweedColoring: true },
         tajweedPrefs: { colors: { nasal: '#ff9800' }, rules: { ghunnah: false } },
       },

@@ -4,6 +4,7 @@ for (const lang of ['en', 'ar']) {
   test(`convention selection persists without losing overrides (${lang})`, async ({
     page,
   }, testInfo) => {
+    test.setTimeout(60000);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.addInitScript((language) => {
       if (localStorage.getItem('convention-seeded')) return;

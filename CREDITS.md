@@ -76,3 +76,11 @@ recording is credited in `assets/audio/adhan/CREDITS.md`.
 - World Magnetic Model 2025 (WMM2025), public domain, NOAA/NCEI — embedded
   coefficients verbatim; the Qibla compass corrects magnetic headings with
   it through 2030.
+
+## Tajweed corpus-located LPMQ class treatments (v5.17.150)
+
+The two idgham groups use rule-level facts from LPMQ, _Pedoman Tajwid Sistem Warna_ (2011), Bab II A.a, printed page 6 (PDF page 15). Source: https://tashih.lpmqkemenag.id/uploads/1/2019-08/buku_pedoman_tajwid_sistem_warna.pdf. PDF SHA-256: `ee7e2533b215e5a697d8d43d5bd287e4cebc1d520c4bfd72f90a249a11d18e4c`.
+
+Location leads adapted from cpfair/quran-tajweed contributors (https://github.com/cpfair/quran-tajweed), CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Changes: mapped to the bundled corpora using letter-skeleton coordinates and checked raw token indexes. No Quran text was imported or edited. The table contains 71 leads; 70 nonconflicted leads are enabled for LPMQ only. All per-site LPMQ visual verification remains Unknown. 11:42 is excluded, not silently assigned a different rule. The cited source has an internal Chapter I/II disagreement, disclosed in the app. Its teacher clause is Bab I D.2, printed page 2 (PDF page 11).
+
+Dar Al-Ma'arifah is referenced observationally only: https://archive.org/details/Tajweed-Quran-Arabic-114638. No publisher palette or layout is copied. Pending observations remain pending. This is a partial teaching-scope extension, not a complete implementation of either printed color scheme.

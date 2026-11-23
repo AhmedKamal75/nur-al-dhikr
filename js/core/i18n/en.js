@@ -2441,11 +2441,14 @@ export const en = {
   'editor.sheet.backup': 'Export a backup',
 
   /* Tajweed rules & colors (v4.6.0) */
+  'tajweed.lpmqExtension': 'LPMQ class-treatment extension',
+  'tajweed.lpmqLevel':
+    'These two groups use Chapter II rule-level citations and corpus-located sites, not per-site visual verification. The disputed 11:42 site is excluded. This is not a complete LPMQ palette.',
   'tajweed.convention': 'Teaching convention',
   'tajweed.conventionDam': "Dar Al-Ma'arifah",
   'tajweed.conventionLpmq': 'LPMQ (Indonesia)',
   'tajweed.conventionPending':
-    'Convention verification is in progress. This selection is saved, but the existing app palette and detector remain in use. Unverified differences are not added.',
+    'Convention verification remains incomplete. LPMQ adds two rule-level-cited groups at corpus-located sites, not per-site visual verification. Dar Al-Maarifah remains observational only and adds no new rule colors. Other app colors remain unchanged.',
   'tajweed.conventionSources':
     "References: LPMQ, Pedoman Tajwid Sistem Warna (2011), Chapter II; Dar Al-Ma'arifah printed edition, observation only. The app does not copy the publisher's palette or layout.",
   'tajweed.conventionCaveat':
@@ -2555,7 +2558,7 @@ export const en = {
   'moods.pickerHint': 'Choose what you would like to focus on.',
   'practice.classifyMode': 'Name the rule',
   'practice.classifyTitle': 'Name the rule',
-  'practice.classifyQuestion': 'Which rule does this ayah show?',
+  'practice.classifyQuestion': 'Which rule applies to the highlighted letters?',
   'practice.classifyRight': 'Correct.',
   'practice.classifyWrong': 'Not quite — this is the rule:',
   'practice.readAyah': 'Read it in the Qur’an (verse {n})',

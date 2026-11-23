@@ -1,3 +1,4 @@
+import { ruleInConvention } from '../domain/tajweed.js';
 /**
  * app/practice.js — the Tajweed drill-mode session engine (pure scoring
  * lives in domain/tajweedPractice.js; this is the mutable session).
@@ -73,11 +74,12 @@ async function loadQuestion(entry, targetRuleId, answerMode, weakRules = null) {
   }
   const ayahText = surahDoc?.ayahs?.find((a) => String(a.number) === String(entry.a))?.text;
   if (!ayahText) return null;
+  const context = { surah: entry.s, ayah: entry.a, convention: state.settings.tajweedConvention };
   const ruleId =
-    targetRuleId === 'review' ? firstWeakRuleForAyah(ayahText, weakRules) : targetRuleId;
+    targetRuleId === 'review' ? firstWeakRuleForAyah(ayahText, weakRules, context) : targetRuleId;
   if (!ruleId) return null;
-  const targets = buildAnswerKey(ayahText, ruleId);
-  const targetWords = buildWordAnswerKey(ayahText, ruleId);
+  const targets = buildAnswerKey(ayahText, ruleId, context);
+  const targetWords = buildWordAnswerKey(ayahText, ruleId, context);
   if (answerMode === 'find-word' && !targetWords.length) return null;
   if (answerMode === 'find-spans' && !targets.length) return null;
   return {
@@ -109,7 +111,11 @@ async function loadQuestion(entry, targetRuleId, answerMode, weakRules = null) {
 export async function startClassifyRound(ruleId = 'mixed') {
   const state = store.getState();
   const lang = state.settings.language;
-  if (ruleId !== 'mixed' && !isTajweedRuleId(ruleId)) return null;
+  if (
+    ruleId !== 'mixed' &&
+    (!isTajweedRuleId(ruleId) || !ruleInConvention(ruleId, state.settings.tajweedConvention))
+  )
+    return null;
   await ensureTajweedPool(state);
   const pool = store.getState().tajweedPool;
   if (!pool) return null;
@@ -138,9 +144,14 @@ export async function startClassifyRound(ruleId = 'mixed') {
     const key = `${entry.s}:${entry.a}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    const q = loadQuestion(entry, null, 'find-spans');
+    const q = await loadQuestion(entry, 'mixed', 'find-spans');
     if (!q) continue;
-    const mcq = buildClassifyQuestion(q.text, { surah: q.s, ayah: q.a });
+    const mcq = buildClassifyQuestion(q.text, {
+      surah: q.s,
+      ayah: q.a,
+      convention: state.settings.tajweedConvention,
+      targetRuleId: ruleId === 'mixed' ? null : ruleId,
+    });
     // Fewer than two options is not a question, and a single-rule ayah makes
     // it guessable by elimination.
     if (!mcq || mcq.options.length < 2) continue;
@@ -179,6 +190,8 @@ export function answerClassify(ruleId) {
   session.checked = true;
   session.answer = ruleId;
   const perfect = ruleId === q.correctAnswer;
+  session.results ||= [];
+  session.results[session.qIndex] = { perfect };
   if (perfect) {
     session.correct += 1;
     session.roundStreak = (session.roundStreak || 0) + 1;
@@ -214,10 +227,19 @@ export async function startPracticeRound(ruleId, answerMode = 'find-spans') {
   const mode = normalizeTajweedAnswerMode(answerMode);
   if (!mode || (ruleId !== 'mixed' && ruleId !== 'review' && !isTajweedRuleId(ruleId))) return;
   const state = store.getState();
+  if (
+    !['mixed', 'review'].includes(ruleId) &&
+    !ruleInConvention(ruleId, state.settings.tajweedConvention)
+  )
+    return;
   await ensureTajweedPool(state);
   const pool = store.getState().tajweedPool;
   const isReview = ruleId === 'review';
-  const weak = isReview ? weakTajweedRules(state.tajweedMissRecords) : null;
+  const weak = isReview
+    ? weakTajweedRules(state.tajweedMissRecords).filter((id) =>
+        ruleInConvention(id, state.settings.tajweedConvention)
+      )
+    : null;
   if (isReview && (!weak || !weak.length)) {
     showToast(t('practice.nothingToReview', state.settings.language));
     return;
@@ -239,6 +261,7 @@ export async function startPracticeRound(ruleId, answerMode = 'find-spans') {
   if (questions.length < wanted && pool && !isReview) {
     const { pool: filled, addedByRule } = backfillTajweedPool(pool, store.getState().quran.surahs, {
       only: ruleId === 'mixed' ? null : [ruleId],
+      convention: state.settings.tajweedConvention,
     });
     if (Object.keys(addedByRule).length) {
       store.dispatch(actions.setTajweedPool(filled));

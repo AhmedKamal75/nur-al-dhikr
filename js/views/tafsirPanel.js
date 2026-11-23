@@ -18,7 +18,8 @@ import { emptyStateHTML, loadErrorStateHTML } from '../ui/emptyState.js';
 import { missingDataHTML } from '../ui/missingData.js';
 import { MUSHAF_FONTS, MUSHAF_PAPERS, VIEWS } from '../core/config.js';
 import {
-  classifyAyahTajweed,
+  classifyConventionAyah,
+  ruleInConvention,
   classifyWordTajweed,
   canonicalWordTokens,
   sameSurfaceWord,
@@ -82,7 +83,9 @@ export function renderAyahWords(
   // the grammar records. Ornament-only tokens render plain and untappable.
   const canon = canonicalWordTokens(officialText);
   const canonIdxByRaw = new Map(canon.map((c, ci) => [c.rawIndex, ci]));
-  const tajweedByWord = tajweed ? classifyAyahTajweed(officialText) : null;
+  const tajweedByWord = tajweed
+    ? classifyConventionAyah(officialText, { surah, ayah, convention: prefs?.convention })
+    : null;
 
   // (v5.4.0, P0-2c — ported from the v5.3.0 audit) standalone ornament
   // tokens (waqf letters, the rub el-hizb divider, the sajdah mark) wrap
@@ -275,10 +278,21 @@ function wordTajweedSection(state, surah, ayah, wordIndex, lang) {
   // rules; it comes from the same tokenizer the rules themselves use.
   const nextUnits = resolved.nextToken ? wordUnits(resolved.nextToken) : [];
   const prefs = tajweedPrefsOf(state);
-  const allSpans = classifyWordTajweed(token, {
+  const baselineSpans = classifyWordTajweed(token, {
     nextWordFirstBase: nextUnits[0] ? resolved.nextToken[nextUnits[0].start] : null,
     isLastWordOfAyah: resolved.isLast,
   });
+  const overlayWord = classifyConventionAyah(ayahText, {
+    surah,
+    ayah,
+    convention: prefs.convention,
+  }).find(
+    (w) => w.wordIndex === (canonicalWordTokens(ayahText)[resolved.tokenIndex]?.rawIndex ?? -1) + 1
+  );
+  const allSpans = [
+    ...baselineSpans,
+    ...(overlayWord?.spans || []).filter((sp) => sp.evidenceLevel === 'rule-level-cited'),
+  ];
   const spans = filterSpansByPrefs(allSpans, prefs);
   if (!spans.length) return '';
   // Dedupe identical (rule, range) pairs defensively; sort in reading order.
@@ -1229,25 +1243,28 @@ export function buildMushafSettingsPanel(state) {
     <h3 class="mushaf-jump__heading">${t('mushaf.tajweedLegend', lang)}</h3>
     ${tajweedConventionHTML(state)}
     <div class="tajweed-legend">
-      ${TAJWEED_FAMILIES.map((family) => {
-        // The legend mirrors the page exactly: family swatches resolve the
-        // user's color overrides, and rules toggled off render as plain
-        // swatches (the page leaves them uncolored). Defaults alone used
-        // to render here, so any customization made this chart disagree
-        // with the colored text.
-        const override = tPrefs.colors?.[family.id];
-        const familyColor =
-          typeof override === 'string' && /^#[0-9a-fA-F]{6}$/.test(override)
-            ? override
-            : family.color;
-        return `
+      ${TAJWEED_FAMILIES.filter((f) => f.id !== 'assimilation' || tPrefs.convention === 'lpmq')
+        .map((family) => {
+          // The legend mirrors the page exactly: family swatches resolve the
+          // user's color overrides, and rules toggled off render as plain
+          // swatches (the page leaves them uncolored). Defaults alone used
+          // to render here, so any customization made this chart disagree
+          // with the colored text.
+          const override = tPrefs.colors?.[family.id];
+          const familyColor =
+            typeof override === 'string' && /^#[0-9a-fA-F]{6}$/.test(override)
+              ? override
+              : family.color;
+          return `
         <div class="tajweed-legend__family">
           <div class="tajweed-legend__family-head">
             <span class="tajweed-legend__swatch${familyColor ? '' : ' tajweed-legend__swatch--plain'}"${familyColor ? ` style="background:${familyColor}"` : ''}></span>
             <span class="tajweed-legend__family-name">${escapeHTML(pickLocale(family.name, lang))}</span>
           </div>
           <p class="tajweed-legend__family-desc">${escapeHTML(pickLocale(family.desc, lang))}</p>
-          ${TAJWEED_RULES.filter((r) => r.family === family.id)
+          ${TAJWEED_RULES.filter(
+            (r) => r.family === family.id && ruleInConvention(r.id, tPrefs.convention)
+          )
             .map((r) => {
               const on = ruleEnabled(tPrefs, r.id);
               const rc = on ? effectiveRuleColor(tPrefs, r) : null;
@@ -1263,7 +1280,8 @@ export function buildMushafSettingsPanel(state) {
             })
             .join('')}
         </div>`;
-      }).join('')}
+        })
+        .join('')}
       <p class="tajweed-legend__coverage">${escapeHTML(t('mushaf.tajweedCoverage', lang))}</p>
     </div>`
         : ''

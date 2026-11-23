@@ -130,6 +130,7 @@
      UNTOKENIZED — the standard convention leaves both uncolored. */
   --tw-hamza-wasl: #9e9e9e;
   --tw-lam-shamsiyah: #9e9e9e;
+  --tw-assimilation: #b71c1c;
   --tw-ghunnah: #4caf50;
   --tw-ikhfa: #4caf50;
   --tw-iqlab: #4caf50;
@@ -372,6 +373,7 @@
      holds AA on dark, unlike the print originals. */
   --tw-hamza-wasl: #bdbdbd;
   --tw-lam-shamsiyah: #bdbdbd;
+  --tw-assimilation: #ef9a9a;
   --tw-ghunnah: #66bb6a;
   --tw-ikhfa: #66bb6a;
   --tw-iqlab: #66bb6a;

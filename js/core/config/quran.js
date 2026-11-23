@@ -172,6 +172,8 @@ export const TAJWEED_PRACTICE_POOL_URL = 'data/tajweed-practice.json';
  *  (Duplicated as frozen id arrays here so core/config.js stays free of
  *  a domain import — config is loaded before everything else.) */
 export const TAJWEED_RULE_ID_SET = new Set([
+  'idgham_mutajanisayn',
+  'idgham_mutaqaribayn',
   'hamzat_wasl',
   'lam_shamsiyyah',
   'ghunnah',
@@ -194,6 +196,7 @@ export const TAJWEED_RULE_ID_SET = new Set([
   'madd_6',
 ]);
 export const TAJWEED_FAMILY_ID_SET = new Set([
+  'assimilation',
   'silent',
   'nasal',
   'qalqalah',

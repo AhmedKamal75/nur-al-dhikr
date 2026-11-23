@@ -1,3 +1,10 @@
+## v5.17.150 - Corpus-located LPMQ class treatments
+
+- Adds 70 corpus-located annotations for two idgham groups under LPMQ only, supported by Pedoman Chapter II rule-level citations. All per-site visual checks remain Unknown; 11:42 is excluded. This is not a complete printed palette.
+- Both reader surfaces, word inspection, course extension, answer keys, distractors, review, rule statistics and teaching rows use the selected convention. DAM remains observational only with no new rule colors.
+- Stable rule-ID color overrides coexist with existing family choices and survive convention changes. Baseline detection and Quran/Mushaf text bytes are unchanged.
+- Credits pin source attribution, PDF hash and exact locators. Corpus-unit, convention-isolation and bilingual browser checks guard the overlay.
+
 ## v5.17.149 - Tajweed convention preference and registry foundation
 
 - Adds a canonical rules registry and parity-tested runtime mirror, named predicates, stable IDs and per-convention citation records. No classifier migration or Quran/Mushaf text changes.
