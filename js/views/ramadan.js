@@ -18,6 +18,7 @@ import { pickLocale } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { VIEWS, SUHOOR_OFFSETS } from '../core/config.js';
 import { calculateTimes, formatClock } from '../domain/prayer.js';
+import { prayerClock } from '../domain/timezone.js';
 import { permissionState } from '../services/notifications.js';
 import {
   ramadanInfo,
@@ -61,7 +62,8 @@ function resolveDuaId(itemIndex, preferred, match) {
 }
 
 function phaseCard(state, lang, times, tomorrowFajr) {
-  const phase = fastPhase(new Date(), times, tomorrowFajr);
+  // (v5.17.143) compare on the location's clock, matching the times.
+  const phase = fastPhase(prayerClock(state.settings.prayer, new Date()).date, times, tomorrowFajr);
   const isFasting = phase.phase === 'fasting';
   const targetClock = formatClock(phase.targetHours);
 
@@ -96,8 +98,7 @@ function trackerPanel(state, lang, hijri, times = null, totalDays = null) {
   // (v4.3) Laylat al-Qadr attribution follows the Islamic night (Maghrib →
   // Fajr), not the calendar day number — the extracted rule lives in
   // domain/ramadan.js#qadrNightFor with the full reasoning + tests.
-  const now = new Date();
-  const nowHours = now.getHours() + now.getMinutes() / 60;
+  const nowHours = prayerClock(state.settings.prayer, new Date()).localHours;
   const qadr = qadrNightFor(hijri, times, nowHours, total);
   const nightDay = qadr ? qadr.dayOfRamadan : hijri.day + 1;
 
@@ -332,12 +333,12 @@ export function renderRamadan(state) {
     });
   } else if (inRamadan) {
     const now = new Date();
-    const tz = -now.getTimezoneOffset() / 60;
+    const clock = prayerClock(p, now);
     const times = calculateTimes({
       date: now,
       latitude: p.latitude,
       longitude: p.longitude,
-      timezoneOffsetHours: tz,
+      timezoneOffsetHours: clock.offsetHours,
       method: p.method,
       asr: p.asr,
       offsets: p.offsets,
@@ -349,8 +350,8 @@ export function renderRamadan(state) {
       longitude: p.longitude,
       // (v4.3) tomorrow's own UTC offset: on the night a DST shift occurs,
       // reusing TODAY's offset put tomorrow's Fajr a full hour off in the
-      // suhoor countdown.
-      timezoneOffsetHours: -tomorrow.getTimezoneOffset() / 60,
+      // suhoor countdown. (v5.17.143): resolved from the location's zone.
+      timezoneOffsetHours: prayerClock(p, tomorrow).offsetHours,
       method: p.method,
       asr: p.asr,
       offsets: p.offsets,

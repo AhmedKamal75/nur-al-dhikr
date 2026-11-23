@@ -25,6 +25,7 @@ import {
   OFFSET_PRAYERS,
 } from '../domain/prayer.js';
 import { buildTimeline } from '../domain/prayerTimeline.js';
+import { prayerClock } from '../domain/timezone.js';
 import { SOUND_IDS, ADHAN_MODES, customAdhanFlags } from '../services/prayerSound.js';
 import { buildMonthTimetable, timetableCell, PRAYER_EXPORT_ORDER } from '../domain/prayerExport.js';
 import { selectors } from '../core/state.js';
@@ -127,12 +128,16 @@ export function renderPrayer(state) {
   }
 
   const now = new Date();
-  const tzOffsetHours = -now.getTimezoneOffset() / 60;
+  // (v5.17.143) the clock the times are expressed on: the saved location's
+  // own IANA timezone when it resolves, the device clock only as fallback.
+  // Before this, settings.prayer.timezone was stored but never read and the
+  // device offset won silently (2026-11-23 phone QA, item 3).
+  const clock = prayerClock(p, now);
   const times = calculateTimes({
     date: now,
     latitude: p.latitude,
     longitude: p.longitude,
-    timezoneOffsetHours: tzOffsetHours,
+    timezoneOffsetHours: clock.offsetHours,
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
@@ -142,20 +147,24 @@ export function renderPrayer(state) {
   // localized name under the rows instead of presenting clamped transits as
   // measured worship times.
   const fallbackNames = times?.unreachable ? PRAYER_ORDER.filter((n) => times.unreachable[n]) : [];
-  const next = nextPrayer(times, now);
-  const nowHours = now.getHours() + now.getMinutes() / 60;
+  const next = nextPrayer(times, clock.date);
+  const nowHours = clock.localHours;
   const minsUntil = Math.round(((next.hours - nowHours + 24) % 24) * 60);
   const hrsUntil = Math.floor(minsUntil / 60);
   const remMins = minsUntil % 60;
 
-  // FIX (review v3.3 A7): the solar times are correct for the saved
-  // coordinates, but the CLOCK they are expressed on is always the
-  // device's. When the longitude-implied UTC offset differs from the
-  // device's by 45 minutes or more, the person is almost certainly
-  // looking at a place in another time zone — flag it instead of letting
-  // the numbers silently pose as local prayer times.
+  // FIX (review v3.3 A7, reworked v5.17.143): times are now computed on
+  // the saved location's own clock. Two honest flags remain: when the
+  // location's zone resolved but differs from this device's zone (>= 45
+  // min), say which clock is on screen; when the zone could not resolve
+  // and the longitude-implied offset disagrees with the device's, the old
+  // mismatch warning still applies.
+  const deviceOffsetHours = -now.getTimezoneOffset() / 60;
   const longitudeImpliedOffset = Math.round((p.longitude / 15) * 4) / 4; // nearest 15 min
-  const tzMismatch = Math.abs(longitudeImpliedOffset - tzOffsetHours) >= 0.75;
+  const tzZoneShown =
+    clock.source === 'location' && Math.abs(clock.offsetHours - deviceOffsetHours) >= 0.75;
+  const tzMismatch =
+    clock.source !== 'location' && Math.abs(longitudeImpliedOffset - deviceOffsetHours) >= 0.75;
 
   // Prayer log (v3.0): tri-state cycle button per fard prayer, riding the
   // same dailyChecklist storage the habit checklist uses (see js/prayerLog.js).
@@ -262,7 +271,7 @@ export function renderPrayer(state) {
       </div>
       <div class="next-prayer-card__place">
         ${icon('location', { size: 13 })}
-        <span>${placeName}</span>
+        <span>${placeName}</span>${clock.timeZone ? ` <span class="next-prayer-card__tz" dir="ltr">${escapeHTML(clock.timeZone)}</span>` : ''}
       </div>
     </div>
 
@@ -307,12 +316,12 @@ export function renderPrayer(state) {
           : ''
       }
       ${
-        /* FIX (review v3.3 A7): prayer times are computed on the device's
-          clock offset, so coordinates entered for a different time zone show
-          clock times nobody there can pray by — silently. When the saved
-          longitude implies a different offset (≥ 45 min) from the device's,
-          say so honestly instead of letting the numbers pass as local. */ ''
+        /* FIX (review v3.3 A7, reworked v5.17.143): times follow the saved
+          location's own clock now. When that clock is not this device's,
+          name the clock on screen; when no zone resolved and the longitude
+          disagrees with the device, the older warning still stands. */ ''
       }
+      ${tzZoneShown ? `<p class="panel__subtext tz-mismatch-note">${icon('info', { size: 14 })} ${t('prayer.tzZoneShown', lang, { zone: clock.timeZone })}</p>` : ''}
       ${tzMismatch ? `<p class="panel__subtext tz-mismatch-note">${icon('info', { size: 14 })} ${t('prayer.tzMismatch', lang)}</p>` : ''}
     </section>
 
@@ -523,6 +532,7 @@ export function buildMonthModal(state, year, month) {
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
+    timezone: p.timezone,
   });
   if (!table) return '';
   const monthName = new Date(year, month - 1, 1).toLocaleDateString(

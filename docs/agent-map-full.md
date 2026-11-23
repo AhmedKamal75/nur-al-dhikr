@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 244 — data files: 27 — tests: 284
+- js modules: 245 — data files: 27 — tests: 285
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -1678,6 +1678,16 @@ job: runtime mirror of data/tajweed-sources.json (v5.17.18) A JS module, not a f
 - i18n: —
 - routes: —
 
+### `js/domain/timezone.js`
+
+job: the clock the prayer times are expressed on. (v5.17.143) Until now every call site derived the UTC offset from the DEVICE (-date.getTimezoneOffset() / 60), so a reader who saved a city
+
+- exports: `zoneOffsetHours` (function), `zoneLocalHours` (function), `prayerClock` (function)
+- emits: —
+- handles: —
+- i18n: —
+- routes: —
+
 ### `js/domain/translationCompare.js`
 
 job: Translation-compare view: pure helpers for showing a SECOND translation edition under the primary one in the classic reader. No DOM, no store.
@@ -2487,7 +2497,7 @@ job: (v4.6.0) The Prayer page is FOCUSED: the next-prayer hero, the day's times,
 - exports: `PRAYER_ICONS` (object), `alertStatusHTML` (function), `renderPrayer` (function), `sunnahPanelHTML` (function), `qadaPanelHTML` (function), `adhanPanelHTML` (function), `buildMonthModal` (function), `calcPanelHTML` (function), `profilesPanelHTML` (function)
 - emits: `location-profile-apply`, `location-profile-save`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-manual-location`, `prayer-month-ics`, `prayer-month-nav`, `prayer-month-print`, `prayer-request-location`, `prayer-set-alert-mode`, `prayer-test-sound`, `prayer-use-city`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `sunnah-toggle`, `toggle-prayer-alert`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
 - handles: —
-- i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+73 more)
+- i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+74 more)
 - routes: —
 
 ### `js/views/qibla.js`
@@ -4097,6 +4107,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `plusDays`: `js/domain/hifz.js`
 - `practiceLevel`: `js/domain/tajweedPractice.js`
 - `prayerBestStreak`: `js/domain/prayerLog.js`
+- `prayerClock`: `js/domain/timezone.js`
 - `prayerICSFilename`: `js/domain/prayerExport.js`
 - `prayerInsights`: `js/domain/prayerLog.js`
 - `prayerMethodLine`: `js/domain/prayer.js`
@@ -4583,6 +4594,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `writeBackupToHandle`: `js/services/backup.js`
 - `writeScrollTop`: `js/app/renderer.js`
 - `yieldFullSurahPlayer`: `js/app/audioEngine.js`
+- `zoneLocalHours`: `js/domain/timezone.js`
+- `zoneOffsetHours`: `js/domain/timezone.js`
 
 ## Reverse index: job keyword → files
 
@@ -4914,7 +4927,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `calculation`: `js/domain/prayer.js`
 - `calculator`: `js/views/zakat.js`
 - `calendar`: `js/core/state/slices/library.js`, `js/core/state/slices/shell.js`, `js/domain/calendar.js`, `js/domain/prayerExport.js`, `js/domain/reminderPresets.js`, `js/services/calendarNotes.js`, `js/ui/calendarModals.js`, `js/views/calendar.js`
-- `call`: `js/app/quizDeck.js`, `js/ui/modal.js`
+- `call`: `js/app/quizDeck.js`, `js/domain/timezone.js`, `js/ui/modal.js`
 - `caller`: `js/domain/grammarDrill.js`, `js/views/tajweedCourseView.js`
 - `calls`: `js/domain/prayer.js`, `js/services/tasbih.js`
 - `calm`: `js/views/kids.js`, `js/views/mushafReader.js`, `js/views/settings.js`
@@ -4965,7 +4978,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `chunked`: `js/app/tafsirSearch.js`
 - `circle`: `js/domain/qibla.js`
 - `citation`: `js/domain/tajweedSources.js`
-- `city`: `js/domain/locations.js`
+- `city`: `js/domain/locations.js`, `js/domain/timezone.js`
 - `civil`: `js/domain/calendar.js`
 - `claimspeaker`: `js/app/audioEngine.js`
 - `clamp`: `js/core/utils.js`, `js/domain/gestures.js`
@@ -5005,7 +5018,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `client`: `js/services/notifications.js`
 - `clipboard`: `js/ui/toast.js`
 - `clips`: `js/services/dhikrAudio.js`
-- `clock`: `js/app/readingTimer.js`
+- `clock`: `js/app/readingTimer.js`, `js/domain/timezone.js`
 - `clone`: `js/core/utils.js`
 - `close`: `js/app/drawer.js`
 - `closeaudiostoreforreset`: `js/services/audioStore.js`
@@ -5152,7 +5165,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `dailyversereminder`: `js/domain/reminderPresets.js`
 - `database`: `js/services/audioStore.js`
 - `dataset`: `js/app/handlers/audio.js`, `js/app/handlers/editor.js`, `js/app/handlers/hifz.js`, `js/app/handlers/items.js`, `js/app/handlers/journal.js`, `js/app/handlers/location.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quiz.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/tasbih.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`
-- `date`: `js/domain/homeInvitations.js`, `js/domain/prayer.js`, `js/domain/prayerTimeline.js`, `js/domain/qada.js`, `js/domain/wmm.js`, `js/services/calendarNotes.js`
+- `date`: `js/domain/homeInvitations.js`, `js/domain/prayer.js`, `js/domain/prayerTimeline.js`, `js/domain/qada.js`, `js/domain/timezone.js`, `js/domain/wmm.js`, `js/services/calendarNotes.js`
 - `datekey`: `js/core/utils.js`
 - `dates`: `js/domain/prayerExport.js`
 - `dateswithnotesinrange`: `js/services/calendarNotes.js`
@@ -5224,7 +5237,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `demand`: `js/app/offlineJobs.js`, `js/views/offline.js`, `js/views/tafsirPanel.js`
 - `dependency`: `js/core/utils.js`
 - `derive`: `js/core/config/nav.js`, `js/domain/statistics.js`
-- `derived`: `js/domain/hadithStudy.js`
+- `derived`: `js/domain/hadithStudy.js`, `js/domain/timezone.js`
 - `describebackupsummary`: `js/views/backupSummary.js`
 - `design`: `js/domain/sunnah.js`, `js/services/soundDesign.js`
 - `desiredplayingstate`: `js/services/mediaSession.js`
@@ -5234,7 +5247,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `detectinstallplatform`: `js/domain/install.js`
 - `detection`: `js/domain/ramadan.js`
 - `deterministic`: `js/app/quizDeck.js`, `js/domain/tajweed.js`, `js/domain/tajweedPractice.js`, `js/services/hadith.js`
-- `device`: `js/domain/duaJournal.js`, `js/views/journal.js`
+- `device`: `js/domain/duaJournal.js`, `js/domain/timezone.js`, `js/views/journal.js`
 - `deviceorientationevent`: `js/domain/compass.js`
 - `devices`: `js/services/backup.js`, `js/services/gapTelemetry.js`
 - `devotional`: `js/domain/localeContent.js`, `js/services/shareCard.js`
@@ -5431,6 +5444,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `exportable`: `js/domain/planExport.js`, `js/views/certificate.js`
 - `exported`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/core/config/sanitize.js`, `js/core/config/views.js`, `js/services/backup.js`
 - `exports`: `js/app/handlers/audio.js`, `js/app/handlers/editor.js`, `js/app/handlers/hifz.js`, `js/app/handlers/items.js`, `js/app/handlers/location.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quiz.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/tasbih.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`, `js/core/state.js`, `js/domain/planExport.js`
+- `expressed`: `js/domain/timezone.js`
 - `extracted`: `js/app/net.js`, `js/views/ayahStudy.js`, `js/views/hadithCard.js`, `js/views/khatma.js`, `js/views/mushafBookmarks.js`, `js/views/mushafJump.js`, `js/views/mushafPlayer.js`
 - `fabricate`: `js/domain/lexicalProvenance.js`
 - `facade`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/core/config/sanitize.js`, `js/core/config/views.js`, `js/core/state/actions.js`, `js/core/state/initial.js`, `js/core/state/restore.js`, `js/core/state/selectors.js`, `js/core/state/store.js`, `js/core/state.js`
@@ -5582,6 +5596,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `getitementry`: `js/app/shared.js`
 - `getmodalgeneration`: `js/ui/modal.js`
 - `gets`: `js/ui/emptyState.js`, `js/views/mushafJump.js`
+- `gettimezoneoffset`: `js/domain/timezone.js`
 - `getverseaudio`: `js/services/audioStore.js`
 - `getword`: `js/domain/wordStudy.js`
 - `given`: `js/domain/worship.js`, `js/services/calendarNotes.js`, `js/ui/card.js`
@@ -6237,7 +6252,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `offlinejobs`: `js/app/handlers/offline.js`, `js/domain/offline.js`
 - `offplaybackended`: `js/services/recitation.js`
 - `offplaybackerror`: `js/services/recitation.js`
-- `offset`: `js/domain/onboarding.js`, `js/domain/prayer.js`, `js/views/onboardingPanel.js`
+- `offset`: `js/domain/onboarding.js`, `js/domain/prayer.js`, `js/domain/timezone.js`, `js/views/onboardingPanel.js`
 - `offsets`: `js/core/config/app.js`
 - `often`: `js/services/moshafAvailability.js`
 - `omitted`: `js/ui/card.js`
@@ -6413,8 +6428,9 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `powers`: `js/domain/roots.js`
 - `practice`: `js/core/config/quran.js`, `js/core/state/slices/quran.js`, `js/core/state/slices/worship.js`, `js/domain/tajweedPractice.js`, `js/views/mutashabihat.js`, `js/views/tajweedPracticeView.js`
 - `practicelevel`: `js/domain/tajweedPractice.js`
-- `prayer`: `js/app/handlers/viewMenus.js`, `js/app/tickers.js`, `js/app/triggers.js`, `js/domain/locations.js`, `js/domain/prayer.js`, `js/domain/prayerExport.js`, `js/domain/prayerLog.js`, `js/domain/prayerTimeline.js`, `js/domain/qada.js`, `js/domain/sunnah.js`, `js/services/alertTriggers.js`, `js/services/prayerSound.js`, `js/views/ambient.js`, `js/views/prayer.js`, `js/views/qibla.js`, `js/views/ramadan.js`
+- `prayer`: `js/app/handlers/viewMenus.js`, `js/app/tickers.js`, `js/app/triggers.js`, `js/domain/locations.js`, `js/domain/prayer.js`, `js/domain/prayerExport.js`, `js/domain/prayerLog.js`, `js/domain/prayerTimeline.js`, `js/domain/qada.js`, `js/domain/sunnah.js`, `js/domain/timezone.js`, `js/services/alertTriggers.js`, `js/services/prayerSound.js`, `js/views/ambient.js`, `js/views/prayer.js`, `js/views/qibla.js`, `js/views/ramadan.js`
 - `prayerbeststreak`: `js/domain/prayerLog.js`
+- `prayerclock`: `js/domain/timezone.js`
 - `prayericsfilename`: `js/domain/prayerExport.js`
 - `prayerinsights`: `js/domain/prayerLog.js`
 - `prayerlog`: `js/domain/sunnah.js`
@@ -6542,7 +6558,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `reacts`: `js/core/theme.js`
 - `read`: `js/app/renderer.js`, `js/domain/milestones.js`, `js/domain/statistics.js`, `js/services/editor.js`, `js/views/favorites.js`
 - `readautosnapshot`: `js/services/backup.js`
-- `reader`: `js/core/state/slices/hadith.js`, `js/core/state/slices/quran.js`, `js/domain/lastPosition.js`, `js/domain/readerWindow.js`, `js/domain/translationCompare.js`, `js/services/floatingCounter.js`, `js/services/mushaf.js`, `js/ui/recitationConsole.js`, `js/views/hadith.js`, `js/views/quran.js`
+- `reader`: `js/core/state/slices/hadith.js`, `js/core/state/slices/quran.js`, `js/domain/lastPosition.js`, `js/domain/readerWindow.js`, `js/domain/timezone.js`, `js/domain/translationCompare.js`, `js/services/floatingCounter.js`, `js/services/mushaf.js`, `js/ui/recitationConsole.js`, `js/views/hadith.js`, `js/views/quran.js`
 - `readers`: `js/app/readingTimer.js`, `js/ui/toast.js`
 - `readerwindow`: `js/domain/readerWindow.js`
 - `readfileastext`: `js/services/backup.js`
@@ -6839,7 +6855,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `saveaudio`: `js/services/audioStore.js`
 - `savebackuphandle`: `js/services/backup.js`
 - `savebatchqueue`: `js/services/audioStore.js`
-- `saved`: `js/ui/toast.js`, `js/views/zakat.js`
+- `saved`: `js/domain/timezone.js`, `js/ui/toast.js`, `js/views/zakat.js`
 - `saveitem`: `js/services/editor.js`
 - `savestate`: `js/core/storage.js`
 - `saveverseaudio`: `js/services/audioStore.js`
@@ -7005,7 +7021,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `simply`: `js/ui/card.js`
 - `since`: `js/app.js`, `js/core/config.js`, `js/core/state/reducer.js`, `js/core/state.js`, `js/domain/search.js`, `js/views/search.js`
 - `single`: `js/app/audioEngine.js`, `js/app/focusRuntime.js`, `js/app/handlers/audio.js`, `js/app/handlers/editor.js`, `js/app/handlers/hifz.js`, `js/app/handlers/items.js`, `js/app/handlers/location.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quiz.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/tasbih.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`, `js/app/quranData.js`, `js/app/stateSub.js`, `js/app/tafsirSearch.js`, `js/core/config/nav.js`, `js/core/state/reducer.js`, `js/core/state.js`, `js/domain/compass.js`, `js/services/dhikrAudio.js`, `js/ui/modal.js`, `js/ui/readingTokens.js`, `js/views/calendar.js`, `js/views/collection.js`, `js/views/viewSheets.js`
-- `site`: `js/app/quizDeck.js`
+- `site`: `js/app/quizDeck.js`, `js/domain/timezone.js`
 - `sits`: `js/app/readingTimer.js`
 - `sitting`: `js/domain/completedCards.js`
 - `size`: `js/domain/grammarDrill.js`, `js/domain/readerWindow.js`, `js/domain/roots.js`, `js/domain/tajweedPractice.js`, `js/services/hadith.js`, `js/views/journal.js`
@@ -7238,7 +7254,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `timeline`: `js/domain/prayerTimeline.js`
 - `timeout`: `js/app/net.js`, `js/core/fetch.js`
 - `timer`: `js/app/focusRuntime.js`, `js/app/readingTimer.js`, `js/domain/sleepTimer.js`, `js/services/surahPlayback.js`
-- `times`: `js/domain/fasting.js`, `js/domain/locations.js`, `js/domain/prayerExport.js`, `js/domain/prayerTimeline.js`, `js/views/prayer.js`, `js/views/qibla.js`, `js/views/ramadan.js`
+- `times`: `js/domain/fasting.js`, `js/domain/locations.js`, `js/domain/prayerExport.js`, `js/domain/prayerTimeline.js`, `js/domain/timezone.js`, `js/views/prayer.js`, `js/views/qibla.js`, `js/views/ramadan.js`
 - `timestamptriggers`: `js/app/triggers.js`
 - `timetablecell`: `js/domain/prayerExport.js`
 - `tint`: `js/services/shareCard.js`
@@ -7307,7 +7323,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `units`: `js/domain/zakat.js`
 - `unkn`: `js/views/favorites.js`
 - `unknown`: `js/core/migration.js`, `js/domain/grades.js`, `js/domain/homePanels.js`, `js/ui/missingData.js`
-- `until`: `js/domain/sleepTimer.js`, `js/services/alertTriggers.js`
+- `until`: `js/domain/sleepTimer.js`, `js/domain/timezone.js`, `js/services/alertTriggers.js`
 - `unwireaudioshortcutsfortests`: `js/app/audioEngine.js`
 - `upcomingfastingdays`: `js/domain/fasting.js`
 - `update`: `js/services/editor.js`
@@ -7458,6 +7474,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `zakat`: `js/app/inputs.js`, `js/domain/adhkarTiming.js`, `js/domain/zakat.js`, `js/views/zakat.js`
 - `zakatable`: `js/domain/zakat.js`
 - `zero`: `js/domain/planExport.js`, `js/services/dhikrAudio.js`, `js/services/player.js`
+- `zonelocalhours`: `js/domain/timezone.js`
+- `zoneoffsethours`: `js/domain/timezone.js`
 
 ## Tests: what each pins
 
@@ -7730,6 +7748,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/tasbihCaps.test.js` — OPEN-ISSUES #19: tasbih lifetime counters are unbounded. count is bounded by its target, but completedCycles and totalRecitations grew without end — a mashed dial (or a crafted (pins: `../js/core/state.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/core/utils.js`, `../js/services/tasbih.js`)
 - `tests/tasbihCustom.test.js` — item 3 (tasbih custom dhikr) gates: 1. TASBIH_CUSTOM_ADD builds a capped entry (trimmed text, clamped named goal) and no-ops on empty input; (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/services/tasbih.js`, `../js/views/tasbih.js`)
 - `tests/tier-log-hygiene.test.js` — (v5.2.87, P1-1) missing optional tiers (seed/slim bundle, pruned install) warn instead of erroring, so the e2e zero-console-error hygiene keeps catching real defects. Genuine failures (pins: `../js/app/net.js`)
+- `tests/timezone.test.js` — the location-clock helper behind v5.17.143. Pins: IANA offsets resolve with DST on the DATE asked, wall hours come from the zone (not the device), invalid/empty zones fall back to the (pins: `../js/domain/timezone.js`)
 - `tests/translationCompare.test.js` — translation-compare view helpers (v5.2.0): overlay reduction + visibility rules. Pure domain, no store. (pins: `../js/domain/translationCompare.js`)
 - `tests/translations.test.js` — v3.15 "More Qur'an translations" gates: - config: TRANSLATION_EDITIONS allowlist, asTranslationEdition sanitize (garbage/prototype-ish/unknown → en-sahih), TRANSLATION_URL shape (pins: `../js/core/config.js`, `./helpers/seedMode.mjs`)
 - `tests/trigger-plan.test.js` — B10 regression: one channel per arm must not leak an entangled port with a live handler. First worker reply wins; later duplicates are ignored. (pins: `../js/app/rt.js`, `../js/app/triggers.js`)

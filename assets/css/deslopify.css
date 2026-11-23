@@ -3053,6 +3053,12 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 .view--prayer .next-prayer-card__place {
   color: var(--color-text-muted);
 }
+/* (v5.17.143) the IANA zone tag beside the place name: which clock the
+   times are on, always visible, never louder than the place itself. */
+.view--prayer .next-prayer-card__tz {
+  font-size: var(--fs-caption);
+  opacity: 0.75;
+}
 
 /* -------------------------------------------------------------------------
    Pass 11 — utility + secondary feature interiors.

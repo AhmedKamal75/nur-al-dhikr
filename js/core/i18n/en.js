@@ -1056,6 +1056,8 @@ export const en = {
   'prayer.locationSet': 'Location set — times are approximate until exact coordinates are entered',
   'prayer.tzMismatch':
     'These times follow the sun at your saved coordinates but are shown on this device’s clock. If you entered coordinates for a place in another time zone, pray by the local times there, not by this clock.',
+  'prayer.tzZoneShown':
+    'These times are shown on the saved location’s clock ({zone}), which differs from this device’s time zone. Prayer alerts still follow this device’s clock.',
   'prayer.polarNote':
     'At your latitude the sun does not reach the position that defines {names} today — the marked times are best-effort estimates, not measured positions. Please follow your local mosque or moon-sighting authority.',
   'prayer.fallbackNote': 'Estimated time (sun position not reached today)',

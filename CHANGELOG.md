@@ -1,3 +1,11 @@
+# v5.17.143 — prayer times follow the saved location's clock
+
+- Phone-QA fix (2026-11-23, item 3): `settings.prayer.timezone` was written by every location path (GPS, city preset, manual form) but never read — every view computed the UTC offset from the device, so a city saved abroad rendered times on the phone's clock and the "timezone setting" felt dead.
+- New `js/domain/timezone.js`: `prayerClock()` resolves the stored IANA zone's offset and wall time via Intl (DST-correct per date), with an honest device-clock fallback when no zone resolves.
+- Prayer view, Home ribbon, adhkar window ranking, live countdown tickers, Ambient, Ramadan suhoor/iftar, and the month timetable/ICS export all compute and compare on the location clock. The Prayer view names the zone beside the place name, and when the location's clock differs from the device's by 45+ minutes an honest note says which clock is on screen (EN+AR).
+- Prayer alert scheduling still follows the device clock (unchanged, internally consistent); zone-correct alert arming is tracked as follow-up.
+- Religious corpus bytes unchanged.
+
 # v5.17.142 — Azkar cards: long adhkar stay scannable on phones
 
 - Scrolling card lists cap the effective Arabic scale at 1.25 below 560px (--fs-arabic-card-list): at max scale a long dhikr no longer becomes a ~1450px card. The mushaf reader, focus and the tasbih stage keep the full range; desktop is unchanged.
