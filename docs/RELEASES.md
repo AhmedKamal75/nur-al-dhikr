@@ -1,3 +1,18 @@
+## v5.17.141 — prayer ribbon: badges no longer crush prayer names on phones
+
+User report from a phone QA pass: on the Home "Today's prayers" card, the two
+cells carrying a live Now/Next badge (Sunrise and Dhuhr at that hour) rendered
+their prayer names as one-letter-per-line vertical strips, the times overlapping
+the neighbours. Six columns at phone width leave ~45px per cell; the badge pill
+cannot shrink, so the flex topline starved the name to its minimum (a single
+letter, `overflow-wrap: anywhere`). The topline now wraps: when name and badge
+do not fit side by side the badge drops to its own line, and the name renders
+exactly like its unbadged neighbours. Pinned by a new EN+AR phone-viewport e2e
+spec that fails on the old CSS and passes on the new.
+
+(The jump from v5.17.139 past v5.17.140 is deliberate: that number is held by
+the tajweed-interpreter integration branch, still in review.)
+
 ## v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
 
 Lands the crew's fix for ledger row 99. Three branches attempted it; the

@@ -1149,8 +1149,13 @@ a.home-today__cell:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px 4px;
   max-inline-size: 100%;
+  /* Six columns on a phone leave ~45px per cell: the Now/Next badge pill
+     cannot shrink, so without wrapping it starved the prayer name to one
+     letter per line (user report, phone portrait). Let the badge drop to
+     its own line when name + badge do not fit side by side. */
+  flex-wrap: wrap;
 }
 .home-prayer-ribbon__name {
   font-size: var(--fs-caption);
@@ -1169,11 +1174,21 @@ a.home-today__cell:hover {
 .home-prayer-ribbon__badge {
   font-size: var(--fs-caption);
   font-weight: 700;
-  padding: 1px var(--space-2);
+  padding: 1px 6px;
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--color-primary) 14%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-primary) 22%, transparent);
   color: var(--color-primary-text);
+  /* The badge word is one unbreakable unit: on a phone the topline wraps it
+     onto its own line, and without nowrap the ~45px cell would squeeze the
+     pill itself into stacked letters (planner review on the first fix). */
+  white-space: nowrap;
+}
+@media (max-width: 560px) {
+  .home-prayer-ribbon__badge {
+    /* القادمة measures 47px at the base padding; the phone cell is ~45px. */
+    padding: 1px 4px;
+  }
 }
 
 /* (v5.17.51, merged-plan item 4) the active-method line: one quiet
