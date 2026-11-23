@@ -207,16 +207,40 @@ test('every bundled Quran ayah executes through the Tajweed classifier', () => {
   // the pre-existing ghunnah+idgham_* pairs — two real phenomena, one written
   // unit — and filterSpansByPrefs keeps both enabled spans so either can be
   // toggled independently.
+  //
+  // 2026-11-23 review (PR #43 gates): two sourced corrections added pairs, and
+  // every new entry was verified by inspection before re-pinning:
+  //  - *+tafkhim pairs (idgham_*/ikhfa/iqlab/izhar/madd_iwad): the classifier
+  //    now marks rāʾ carrying fathatan/dammatan heavy (al-Jazariyya's rāʾ vowel
+  //    cases), so a tanween sitting on a heavy rāʾ legitimately shares its
+  //    unit with the noon-family rule that same tanween triggers.
+  //  - ghunnah+izhar ×1: غَمٍّ أُعِيدُواْ (22:22) — a shaddah'd mīm (ghunnah)
+  //    carrying kasra-tanween before a hamza (izhar); both rules are real.
+  //  - iqlab+madd_iwad(+tafkhim) ×13+5: ayah-final words like سَبِيلَۢا
+  //    (4:137) whose tanween is written with U+06E2 (the explicit iqlab mark)
+  //    now also take Madd Iwad: at a pause the fatha-tanween lengthens to an
+  //    alif (iwad) while the connected-reading iqlab mark stays on the unit.
+  //    Two reading modes on one written unit, same U+06E2 family as row 99.
+  //    (A 3-rule unit also increments its 2-rule prefix here, so
+  //    iqlab+tafkhim stays at 41 alongside the 5 new triples.)
   assert.deepEqual(
     [...multiRulePairs.entries()].sort(([a], [b]) => a.localeCompare(b)),
     [
       ['ghunnah+idgham_ghunnah', 3],
       ['ghunnah+idgham_no_ghunnah', 1],
       ['ghunnah+iqlab', 5],
+      ['ghunnah+izhar', 1],
       ['ghunnah+madd_iwad', 2],
+      ['idgham_ghunnah+tafkhim', 137],
+      ['idgham_no_ghunnah+tafkhim', 95],
+      ['ikhfa+tafkhim', 36],
       ['iqlab+madd_2', 3],
+      ['iqlab+madd_iwad', 13],
+      ['iqlab+madd_iwad+tafkhim', 5],
       ['iqlab+tafkhim', 41],
+      ['izhar+tafkhim', 49],
       ['madd_246+madd_iwad', 1],
+      ['madd_iwad+tafkhim', 253],
     ],
     'same-unit Tajweed rule pairs changed; review rule overlap and rendering precedence'
   );

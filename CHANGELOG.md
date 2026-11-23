@@ -1,26 +1,3 @@
-# v5.17.145 — prayer names never break mid-word (ribbon, times list, resume card)
-
-- Phone-QA fix (2026-11-23, follow-up to the badge crush): "Sunrise", "Dhuhr" and "Maghrib" still wrapped mid-word in the Home prayer ribbon at 390px. Root cause: the phone cell-tightening media rule sat ABOVE the base `.home-prayer-ribbon__cell` rule, so source order binned it and phones kept desktop padding. The rule now lands after the base rule, with a 3px track gap, 1px side padding and a 12px panel inset — measured: all six names render on one line with the Now/Next badges on their own line.
-- "Maghrib" also broke ("Maghri h") in the Prayer view's times list: three 16px gaps left the 700-weight name 54px, a pixel short. Phone rows now use an 8px gap.
-- "Continue where you left off": a long resume value ("Morning Adhkar · Surah Al-Ikhlas (×3)") claimed the whole row — the section name collapsed to 0px and rendered one letter per line while the value overflowed the card. The name now keeps a 10ch floor and the value wraps instead of overflowing.
-- Religious corpus bytes unchanged.
-
-# v5.17.144 — set your city: Alexandria + seven more, and a Change-city button
-
-- Phone-QA fix (2026-11-23, item 2): the reporter could not set his own city at all — Alexandria (الإسكندرية) was missing from the one-tap directory. Added it plus Sanaa, Tripoli, Mogadishu, Kano, Lucknow, Dushanbe and Bishkek — 80 cities, each with EN+AR names and its IANA zone. Alexandria is pinned in the directory contract test.
-- With a location saved there was no way back to the city picker: the prayer hero's place name now carries a Change-city button (EN+AR) opening the location editor (city select + coordinates), pinned in the hero render test.
-- The hero place name used to freeze in the language the city was picked in (AR mode kept showing Latin "Alexandria"): preset-chosen locations now store the preset id (`settings.prayer.cityId`, sanitized) and render the name in the active language; GPS/manual entries clear the link and keep their name. The location editor preselects by id. Pinned in the hero render test.
-- smoke.spec.js's directory count was a hard-coded 72 — parametrized to CITY_PRESETS/CITY_REGIONS lengths so a directory growth never again arms a trap.
-- Religious corpus bytes unchanged.
-
-# v5.17.143 — prayer times follow the saved location's clock
-
-- Phone-QA fix (2026-11-23, item 3): `settings.prayer.timezone` was written by every location path (GPS, city preset, manual form) but never read — every view computed the UTC offset from the device, so a city saved abroad rendered times on the phone's clock and the "timezone setting" felt dead.
-- New `js/domain/timezone.js`: `prayerClock()` resolves the stored IANA zone's offset and wall time via Intl (DST-correct per date), with an honest device-clock fallback when no zone resolves.
-- Prayer view, Home ribbon, adhkar window ranking, live countdown tickers, Ambient, Ramadan suhoor/iftar, and the month timetable/ICS export all compute and compare on the location clock. The Prayer view names the zone beside the place name, and when the location's clock differs from the device's by 45+ minutes an honest note says which clock is on screen (EN+AR).
-- Prayer alert scheduling still follows the device clock (unchanged, internally consistent); zone-correct alert arming is tracked as follow-up.
-- Religious corpus bytes unchanged.
-
 # v5.17.142 — Azkar cards: long adhkar stay scannable on phones
 
 - Scrolling card lists cap the effective Arabic scale at 1.25 below 560px (--fs-arabic-card-list): at max scale a long dhikr no longer becomes a ~1450px card. The mushaf reader, focus and the tasbih stage keep the full range; desktop is unchanged.

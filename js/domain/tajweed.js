@@ -748,17 +748,22 @@ function skeletonOf(word) {
  * the Qur'an string used for rendering or span offsets.
  */
 function noonTanweenWordSkeleton(word) {
-  return [...String(word)]
-    .filter(
-      (ch) =>
-        !DIACRITIC_CHARS.has(ch) &&
-        ch !== TATWEEL &&
-        ch !== DAGGER_ALIF &&
-        !WORD_ORNAMENT_CHARS.has(ch) &&
-        !ORNAMENT_DIGITS.has(ch)
-    )
-    .map((ch) => (ch === ALIF_WASLA ? ALIF : ch))
-    .join('');
+  return (
+    [...String(word)]
+      // A dagger alif is a written alif, not a mark to drop: بُنۡيَٰنٗا must
+      // skeletonize to بنيانا, or the Izhar Mutlaq exception never matches
+      // it. Map before filtering because DIACRITIC_CHARS contains U+0670.
+      .map((ch) => (ch === ALIF_WASLA || ch === DAGGER_ALIF ? ALIF : ch))
+      .filter(
+        (ch) =>
+          !DIACRITIC_CHARS.has(ch) &&
+          ch !== TATWEEL &&
+          ch !== DAGGER_ALIF &&
+          !WORD_ORNAMENT_CHARS.has(ch) &&
+          !ORNAMENT_DIGITS.has(ch)
+      )
+      .join('')
+  );
 }
 
 function isPrefixParticle(unit) {
@@ -977,8 +982,15 @@ export function classifyWordTajweed(
       if (
         next &&
         (HAMZA_LETTERS.has(next.base) ||
-          next.hamzaAboveStart !== undefined ||
-          next.hamzaBelowStart !== undefined)
+          // A hamza MARK counts only when it rides on a hamza seat (the
+          // آيٕ / آئ spellings). A hamza mark stacked on a sakin or
+          // shaddah'd consonant belongs to the syllable AFTER that
+          // consonant (ءَآلۡـَٔانَ: لْ is jazm, so the madd before it is
+          // lazim, not muttasil).
+          ((next.hamzaAboveStart !== undefined || next.hamzaBelowStart !== undefined) &&
+            !next.diacritics.has(SHADDA) &&
+            !next.diacritics.has(SUKUN) &&
+            !next.diacritics.has(SUKUN_ALT)))
       ) {
         spans.push({ start: u.start, end: u.end, rule: 'madd_muttasil' });
       } else if (

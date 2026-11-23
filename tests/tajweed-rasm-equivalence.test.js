@@ -257,7 +257,18 @@ test('Madd Muttasil recognises hamza-above encoded on a seated letter in both ra
       mushafWord.spans.some((span) => span.rule === 'madd_muttasil'),
       `Mushaf ${surah}:${ayah} must classify the explicit hamza form as Madd Muttasil`
     );
-    assert.ok(!corpusWord.spans.some((span) => span.rule === 'madd_2'));
+    // The muttasil seat itself must not be double-labeled natural madd. A
+    // genuine natural madd elsewhere in the word is fine and expected
+    // (وَإِيتَآيِٕ 16:90: the ي of إِي; ءَانَآيِٕ 20:130: the ا of ءَا).
+    const muttasilStarts = corpusWord.spans
+      .filter((span) => span.rule === 'madd_muttasil')
+      .map((span) => span.start);
+    assert.ok(
+      !corpusWord.spans.some(
+        (span) => span.rule === 'madd_2' && muttasilStarts.includes(span.start)
+      ),
+      `Quran ${surah}:${ayah} must not label the muttasil seat as natural madd`
+    );
   }
 });
 
@@ -300,7 +311,15 @@ test('the small-high-meem independently signals Iqlab in both Quran and Mushaf 2
 });
 
 function wordSkeletonForTest(word) {
-  return String(word).replace(/\p{M}/gu, '').replace(/ـ/gu, '').replace(/ٱ/gu, 'ا');
+  return (
+    String(word)
+      // Dagger alif is a written alif, not a mark to drop: بُنۡيَٰنٗا -> بنيانا,
+      // matching the skeleton semantics of NOON_TANWEEN_SAME_WORD_EXCEPTIONS.
+      .replace(/\u0670/gu, 'ا')
+      .replace(/\p{M}/gu, '')
+      .replace(/ـ/gu, '')
+      .replace(/ٱ/gu, 'ا')
+  );
 }
 
 test('the four Quranic Izhar Mutlaq word exceptions remain clear in the shipped corpus', () => {
@@ -323,13 +342,21 @@ test('the four Quranic Izhar Mutlaq word exceptions remain clear in the shipped 
       `unexpected ${fixture.key} corpus occurrences at ${fixture.surah}:${fixture.ayah}`
     );
     for (const row of rows) {
+      const izharSpans = row.spans.filter((span) => span.rule === 'izhar');
       assert.ok(
-        row.spans.some((span) => span.rule === 'izhar'),
+        izharSpans.length > 0,
         `${fixture.surah}:${fixture.ayah} ${row.word} must be clear under Izhar Mutlaq`
       );
+      // The exception governs the INTERNAL noon before ي/و: it must not be
+      // assimilated. A word-final tanween still follows the ordinary
+      // cross-word rule (صِنۡوَانٞ وَغَيۡرُ at 13:4 merges into the next و),
+      // so the ban is scoped to the exception span, not the whole word.
       assert.ok(
-        !row.spans.some((span) => span.rule === 'idgham_ghunnah'),
-        `${fixture.surah}:${fixture.ayah} ${row.word} must not be assimilated`
+        !row.spans.some(
+          (span) =>
+            span.rule === 'idgham_ghunnah' && izharSpans.some((iz) => iz.start === span.start)
+        ),
+        `${fixture.surah}:${fixture.ayah} ${row.word} must not assimilate the Izhar Mutlaq noon`
       );
     }
   }
@@ -384,7 +411,17 @@ test('Madd Muttasil is consistent for combining hamza-below and precomposed hamz
     assert.ok(mushafWord, `missing Mushaf hamza form at ${surah}:${ayah}`);
     assert.ok(corpusWord.spans.some((span) => span.rule === 'madd_muttasil'));
     assert.ok(mushafWord.spans.some((span) => span.rule === 'madd_muttasil'));
-    assert.ok(!corpusWord.spans.some((span) => span.rule === 'madd_2'));
+    // Same contract as the seated-letter test above: no natural-madd label on
+    // the muttasil seat; genuine natural madds elsewhere in the word stand.
+    const muttasilStarts = corpusWord.spans
+      .filter((span) => span.rule === 'madd_muttasil')
+      .map((span) => span.start);
+    assert.ok(
+      !corpusWord.spans.some(
+        (span) => span.rule === 'madd_2' && muttasilStarts.includes(span.start)
+      ),
+      `Quran ${surah}:${ayah} must not label the muttasil seat as natural madd`
+    );
   }
 });
 
