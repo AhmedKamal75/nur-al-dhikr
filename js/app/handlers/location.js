@@ -28,6 +28,8 @@ export const clickHandlers = {
             longitude: pos.coords.longitude,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             locationName: '',
+            // GPS is no preset: drop any stored city link.
+            cityId: null,
             // (v5.2.77, UP-03) keep the fix accuracy so Qibla can show an
             // honest ±m badge; sanitizer clamps junk to null.
             locationAccuracy:
@@ -74,6 +76,9 @@ export const clickHandlers = {
             : preset.en
           : String(ds.name || '')
         ).slice(0, 80),
+        // (v5.17.144) keep the preset link so the hero re-localizes the
+        // name when the app language changes.
+        cityId: preset ? preset.id : null,
         locationAccuracy: null,
       })
     );

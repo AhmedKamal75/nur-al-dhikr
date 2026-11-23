@@ -176,6 +176,9 @@ function sanitizePrayer(raw) {
     longitude: p.longitude == null ? null : asCoords(p.longitude, null),
     timezone: asShortStr(p.timezone, d.timezone, 64),
     locationName: asShortStr(p.locationName, d.locationName, 80),
+    // (v5.17.144) optional link to the CITY_PRESETS entry the location came
+    // from; unknown ids are inert (render falls back to locationName).
+    cityId: asShortStr(p.cityId, null, 64),
     // (v5.2.77, UP-03) GPS fix accuracy in meters (null = manual/unknown).
     // Finite, clamped 0–100000; junk degrades to null, never a crash.
     locationAccuracy:

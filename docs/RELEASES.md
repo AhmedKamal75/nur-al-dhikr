@@ -10,7 +10,10 @@ Lucknow (Asia/Kolkata), Dushanbe (Asia/Dushanbe) and Bishkek (Asia/Bishkek):
 Alexandria row is pinned in the directory contract test, and the prayer
 hero's place name now carries a Change-city button (EN+AR) opening the
 location editor — the city select there applies the preset's zone, so it
-composes with the v5.17.143 location-clock fix.
+composes with the v5.17.143 location-clock fix. Preset-chosen locations
+also carry the preset id now, so the hero name re-localizes when the app
+language changes (AR mode no longer shows a frozen Latin city name);
+GPS and manual entries keep their own name.
 
 ## v5.17.143 — prayer times follow the saved location's clock
 

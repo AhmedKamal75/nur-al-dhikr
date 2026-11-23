@@ -42,6 +42,9 @@ export function manualLocationFormHTML(lang, p) {
   const selectedName = String(p.locationName || '')
     .trim()
     .toLowerCase();
+  // (v5.17.144) a stored preset link preselects exactly, regardless of the
+  // language the name was saved in.
+  const selectedId = String(p.cityId || '').trim();
   const cityOptions = CITY_REGIONS.map((region) => {
     const cities = CITY_PRESETS.filter((city) => city.region === region);
     if (!cities.length) return '';
@@ -49,7 +52,7 @@ export function manualLocationFormHTML(lang, p) {
       ${cities
         .map(
           (city) =>
-            `<option value="${city.id}" data-lat="${city.lat}" data-lng="${city.lng}" data-name="${escapeHTML(lang === 'ar' ? city.ar : city.en)}" ${selectedName === city.id || selectedName === city.en.toLowerCase() || selectedName === city.ar.toLowerCase() ? 'selected' : ''}>${escapeHTML(lang === 'ar' ? city.ar : city.en)}</option>`
+            `<option value="${city.id}" data-lat="${city.lat}" data-lng="${city.lng}" data-name="${escapeHTML(lang === 'ar' ? city.ar : city.en)}" ${selectedId === city.id || selectedName === city.id || selectedName === city.en.toLowerCase() || selectedName === city.ar.toLowerCase() ? 'selected' : ''}>${escapeHTML(lang === 'ar' ? city.ar : city.en)}</option>`
         )
         .join('')}
     </optgroup>`;
@@ -417,6 +420,7 @@ export const formHandlers = {
     let locationName = String(fd.get('locationName') || '').trim();
     let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const presetId = String(fd.get('cityPreset') || '');
+    let cityId = null;
     if (presetId) {
       const preset = CITY_PRESETS.find((city) => city.id === presetId);
       if (preset) {
@@ -424,6 +428,9 @@ export const formHandlers = {
         lng = preset.lng;
         locationName = lang === 'ar' ? preset.ar : preset.en;
         timezone = preset.timezone;
+        // (v5.17.144) keep the preset link so the hero re-localizes the
+        // name when the app language changes.
+        cityId = preset.id;
       }
     }
     if (
@@ -443,6 +450,7 @@ export const formHandlers = {
         longitude: lng,
         locationName,
         timezone,
+        cityId,
       })
     );
     closeModal();

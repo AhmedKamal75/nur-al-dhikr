@@ -227,6 +227,23 @@ describe('render: focal hero is compact; home strip keeps the full summary', () 
     );
   });
 
+  test('a preset-linked location renders its name in the ACTIVE language', () => {
+    // (v5.17.144) the place name used to freeze in the language the city
+    // was picked in — AR mode kept showing Latin "Alexandria".
+    const seeded = { cityId: 'alexandria', locationName: 'Alexandria' };
+    const htmlEn = renderPrayer(viewState({ prayer: seeded }));
+    assert.ok(htmlEn.includes('Alexandria'), 'EN hero names the preset in English');
+    const htmlAr = renderPrayer(viewState({ lang: 'ar', prayer: seeded }));
+    assert.ok(htmlAr.includes('الإسكندرية'), 'AR hero re-localizes the same saved location');
+    assert.ok(!htmlAr.includes('>Alexandria<'), 'no frozen Latin name in AR');
+    const manual = renderPrayer(
+      viewState({ prayer: { cityId: 'bogus', locationName: 'My Place' } })
+    );
+    assert.ok(manual.includes('My Place'), 'an unknown cityId falls back to the stored name');
+    const gps = renderPrayer(viewState({ prayer: { cityId: null, locationName: '' } }));
+    assert.ok(gps.includes('30.04, 31.24'), 'no cityId keeps the coordinates fallback');
+  });
+
   test('AR hero stays compact while the home strip retains the full transparent summary', () => {
     const hero = renderPrayer(viewState({ lang: 'ar' }));
     assert.ok(hero.includes(ar['prayer.method.MWL']), 'AR method on the hero');

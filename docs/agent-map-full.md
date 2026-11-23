@@ -2494,7 +2494,7 @@ job: The persistent full-surah player bar, rendered once a moshaf+surah is selec
 
 job: (v4.6.0) The Prayer page is FOCUSED: the next-prayer hero, the day's times, and the log strip. Everything that used to stack below — sunnah tracker, qada' backlog, traveler mode, adhan & alerts, calc…
 
-- exports: `PRAYER_ICONS` (object), `alertStatusHTML` (function), `renderPrayer` (function), `sunnahPanelHTML` (function), `qadaPanelHTML` (function), `adhanPanelHTML` (function), `buildMonthModal` (function), `calcPanelHTML` (function), `profilesPanelHTML` (function)
+- exports: `PRAYER_ICONS` (object), `prayerPlaceName` (function), `alertStatusHTML` (function), `renderPrayer` (function), `sunnahPanelHTML` (function), `qadaPanelHTML` (function), `adhanPanelHTML` (function), `buildMonthModal` (function), `calcPanelHTML` (function), `profilesPanelHTML` (function)
 - emits: `location-profile-apply`, `location-profile-save`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-manual-location`, `prayer-month-ics`, `prayer-month-nav`, `prayer-month-print`, `prayer-request-location`, `prayer-set-alert-mode`, `prayer-test-sound`, `prayer-use-city`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `sunnah-toggle`, `toggle-prayer-alert`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
 - handles: —
 - i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+75 more)
@@ -4113,6 +4113,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `prayerMethodLine`: `js/domain/prayer.js`
 - `prayerMonthCount`: `js/domain/prayerLog.js`
 - `prayerMonthICSFilename`: `js/domain/prayerExport.js`
+- `prayerPlaceName`: `js/views/prayer.js`
 - `prayerRibbonHTML`: `js/views/home.js`
 - `prayerState`: `js/domain/prayerLog.js`
 - `prayerStreak`: `js/domain/prayerLog.js`
@@ -6437,6 +6438,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `prayermethodline`: `js/domain/prayer.js`
 - `prayermonthcount`: `js/domain/prayerLog.js`
 - `prayermonthicsfilename`: `js/domain/prayerExport.js`
+- `prayerplacename`: `js/views/prayer.js`
 - `prayerribbonhtml`: `js/views/home.js`
 - `prayers`: `js/domain/prayer.js`, `js/domain/prayerLog.js`, `js/domain/qada.js`, `js/services/checklist.js`, `js/views/checklist.js`
 - `prayersloggedtoday`: `js/domain/worship.js`

@@ -549,6 +549,9 @@ export const DEFAULT_SETTINGS = Object.freeze({
     locationName: '',
     // (v5.2.77, UP-03) GPS fix accuracy in meters (null = manual/unknown).
     locationAccuracy: null,
+    // (v5.17.144) CITY_PRESETS id when the location came from the
+    // directory; null for GPS / free-text entries.
+    cityId: null,
     // Smart Prayer Alerts: per-prayer toggle + a selectable alert tone.
     // Alerts are computed against *today's actual* prayer times (not a
     // fixed clock time), so they stay correct as sunrise/sunset drift
