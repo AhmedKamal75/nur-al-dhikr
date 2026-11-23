@@ -28,6 +28,16 @@ import { hasPendingScholarlyReview } from '../domain/contentLens.js';
  * live here, next to the template that reads them. Same item, no class,
  * no replay; new item, one directional slide. Session memory only.
  */
+const WAKE_STATUS_KEYS = Object.freeze({
+  off: 'focus.wake.off',
+  waiting: 'focus.wake.waiting',
+  requesting: 'focus.wake.requesting',
+  active: 'focus.wake.active',
+  released: 'focus.wake.released',
+  denied: 'focus.wake.denied',
+  unsupported: 'focus.wake.unsupported',
+});
+
 let lastFocusKey = null;
 let lastFocusIdx = -1;
 
@@ -222,6 +232,10 @@ export function renderFocus(state) {
         </button>
       </div>
     </header>
+    <div class="focus__wake">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="focus-wake-toggle" aria-pressed="${state.focusWake?.enabled === true}">${escapeHTML(t('focus.wakeToggle', lang))}</button>
+      <span class="focus__wake-status" role="status" aria-live="polite">${escapeHTML(t(WAKE_STATUS_KEYS[state.focusWake?.status] || WAKE_STATUS_KEYS.off, lang))}</span>
+    </div>
     <div class="focus__progress" role="progressbar" aria-valuenow="${idx + 1}" aria-valuemin="1" aria-valuemax="${items.length}" aria-label="${escapeHTML(t('focus.progress', lang, { count: idx + 1, target: items.length }))}">
       <span class="focus__progress-fill" style="--focus-pct:${Math.max(0, Math.min(100, ((idx + 1) / Math.max(1, items.length)) * 100))}%"></span>
     </div>

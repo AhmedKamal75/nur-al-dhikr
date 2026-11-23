@@ -1,3 +1,4 @@
+import { toggleFocusWake } from '../focusWakeLock.js';
 /**
  * app/handlers — feature-scoped controller modules. Each exports a
  * partial click-handler map (pure (dataset, element, event) functions);
@@ -250,6 +251,7 @@ export const clickHandlers = {
   },
 
   'focus-exit': () => exitFocus(),
+  'focus-wake-toggle': () => toggleFocusWake(),
 
   'focus-reset': (ds) => {
     // A pending auto-advance would otherwise yank the view right after the

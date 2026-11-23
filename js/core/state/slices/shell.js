@@ -20,6 +20,16 @@ import { lensLibrary, prefsOf } from '../../../domain/contentLens.js';
 
 export function reduceShell(state, action) {
   switch (action.type) {
+    case 'FOCUS_WAKE_STATUS': {
+      const value = action.value || {};
+      if (
+        !['off', 'waiting', 'requesting', 'active', 'released', 'denied', 'unsupported'].includes(
+          value.status
+        )
+      )
+        return state;
+      return { ...state, focusWake: { enabled: value.enabled === true, status: value.status } };
+    }
     case 'BOOT_COMPLETE': {
       // (v5.0.0) The library slice keeps BOTH shapes: `raw` = the immutable
       // bundled documents as fetched (the restore-to-default source of

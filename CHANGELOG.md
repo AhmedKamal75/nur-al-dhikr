@@ -1,3 +1,9 @@
+# v5.17.151 - Keep the screen awake in Focus
+
+- Adds an explicit session-only, default-off screen-awake toggle to adhkar Focus and collection reading sessions. Active status appears only after a browser grant; unsupported, denied, hidden and system-released states stay honest.
+- Releases the Focus lock on exit, session change, page hide or visibility loss. A visible return re-requests only for an opted-in ongoing session. Generation guards release late grants after navigation or toggling off.
+- Existing Mushaf fullscreen and Ambient wake-lock owners are unchanged. Nothing is persisted. Unit and EN/AR phone/desktop browser coverage checks denial, visibility return, collection continuity and late grants.
+
 # v5.17.150 - Corpus-located LPMQ class treatments
 
 - Adds 70 corpus-located annotations for two idgham groups under LPMQ only, supported by Pedoman Chapter II rule-level citations. All per-site visual checks remain Unknown; 11:42 is excluded. This is not a complete printed palette.

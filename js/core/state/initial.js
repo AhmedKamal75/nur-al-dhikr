@@ -281,6 +281,7 @@ export function initialState() {
     // auto-fade. Ephemeral on purpose — it is a reading *gesture*, not a
     // preference; a reload (or navigating anywhere else) starts windowed.
     // NAVIGATE resets it (see reducer) and PERSISTED_KEYS ignores it.
+    focusWake: { enabled: false, status: 'off' },
     mushafFullscreen: false,
     // (v4.5) Classic-reader immersive mode: the study reader hides the
     // app chrome (topbar / nav, playerbar stays for recitation sessions)
