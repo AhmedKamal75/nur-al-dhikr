@@ -1,6 +1,7 @@
 # v5.17.142 — Azkar cards: long adhkar stay scannable on phones
 
 - Scrolling card lists cap the effective Arabic scale at 1.25 below 560px (--fs-arabic-card-list): at max scale a long dhikr no longer becomes a ~1450px card. The mushaf reader, focus and the tasbih stage keep the full range; desktop is unchanged.
+- The elder-mode x1.3 Arabic boost composes with the cap (body.is-elder override in the same 560px media query): an elder phone at scale 1.0 renders 36.4px, pinned by a spec assertion — the boost is never silently bypassed.
 - New e2e pin covers the phone cap, the full desktop range, and the Quran reader's full range on a phone.
 
 # v5.17.141 — prayer ribbon: badges no longer crush prayer names on phones
