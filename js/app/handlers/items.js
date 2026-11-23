@@ -4,7 +4,12 @@
  * app/events.js merges them into the single delegation table.
  */
 
-import { isAutoAdvancePendingFor, scheduleAutoAdvance } from '../focusRuntime.js';
+import {
+  isAutoAdvancePendingFor,
+  scheduleAutoAdvance,
+  navigateFocusAdjacent,
+  exitFocus,
+} from '../focusRuntime.js';
 import { rt } from '../rt.js';
 import {
   ensureHadithBook,
@@ -45,6 +50,7 @@ import {
 import { hasVerifiedDhikrAudio } from '../../core/schema.js';
 import * as tasbih from '../../services/tasbih.js';
 import { pickRandomHadith } from '../../services/hadith.js';
+import { collectionSessionStart, focusRoute } from '../../services/focusQueue.js';
 import { dismissCompleted, noteCompleted } from '../../domain/completedCards.js';
 
 /** (v5.0.0) The counting ripple: one span, radial bloom at the tap point,
@@ -231,9 +237,19 @@ export const clickHandlers = {
     go(VIEWS.FOCUS, { id: ds.categoryId, subId: ds.itemId });
   },
 
-  'focus-exit': (ds) => {
-    go(VIEWS.CATEGORY, { id: ds.categoryId });
+  'collection-session-start': (ds) => {
+    const state = store.getState();
+    const col = selectors.getCollection(state, ds.id);
+    const entry = collectionSessionStart(state, col);
+    if (entry) go(VIEWS.FOCUS, focusRoute(entry, col.id));
   },
+
+  'focus-adjacent': (ds) => {
+    const dir = Number(ds.dir);
+    if (dir === 1 || dir === -1) navigateFocusAdjacent(dir);
+  },
+
+  'focus-exit': () => exitFocus(),
 
   'focus-reset': (ds) => {
     // A pending auto-advance would otherwise yank the view right after the

@@ -6,7 +6,7 @@
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { hasVerifiedDhikrAudio } from '../core/schema.js';
-import { escapeHTML, dateKey, categoryDisplayName } from '../core/utils.js';
+import { escapeHTML, dateKey, categoryDisplayName, pickLocale } from '../core/utils.js';
 import { buildHash } from '../core/router.js';
 import { referenceLineFor, noteFor } from '../domain/localeContent.js';
 import { selectors } from '../core/state.js';
@@ -18,16 +18,8 @@ import { disclosureHTML } from '../ui/card.js';
 import { listCompletion } from '../domain/reflections.js';
 import { wasJustCompleted } from '../services/tasbih.js';
 import { visibleCategoryItems, itemTargetOf } from '../services/contentPrefs.js';
+import { resolveFocusQueue } from '../services/focusQueue.js';
 import { hasPendingScholarlyReview } from '../domain/contentLens.js';
-
-function findCategory(state, categoryId) {
-  const docs = [...Object.values(state.library.documents), ...Object.values(state.customContent)];
-  for (const doc of docs) {
-    const cat = doc.categories.find((c) => c.id === categoryId);
-    if (cat) return cat;
-  }
-  return null;
-}
 
 /**
  * (v5.2.24) Item-change transition memory, view-local on purpose. The
@@ -102,30 +94,28 @@ function focusPickerHTML(state, lang) {
 export function renderFocus(state) {
   const lang = state.settings.language;
   const categoryId = state.activeParams.id;
-  const itemId = state.activeParams.subId;
-  const cat = findCategory(state, categoryId);
-  const item = visibleCategoryItems(state, cat).find((i) => i.id === itemId);
+  const { cat, item, items, idx, collectionId, collection } = resolveFocusQueue(state);
 
   // No category asked for yet: show the picker rather than a dead end. A
   // mistyped id must NOT get the picker — that would dress a broken link up
   // as a working page.
-  if (!categoryId) return focusPickerHTML(state, lang);
+  if (!categoryId && !collectionId) return focusPickerHTML(state, lang);
 
   if (!cat || !item) {
     // (v5.12.1 UX audit S13) same shared recovery state (Go home) as
     // category/mood/collection. A typed or stale id is genuinely not-found.
-    return `<section class="view">${notFoundStateHTML({ title: t('common.notFoundItem', lang), lang, t })}</section>`;
+    return `<section class="view">${collectionId ? `<a class="back-link" href="${buildHash(VIEWS.COLLECTION, { id: collectionId })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(collectionId)}">${t('nav.collections', lang)}</a>` : ''}${notFoundStateHTML({ title: t('common.notFoundItem', lang), lang, t })}</section>`;
   }
 
   // (v4.5.2) Focus follows the manage lens: hidden items are skipped and
   // the effective target (override > corpus default) drives the counter,
   // so the arrangement you set in manage mode is exactly what you recite.
-  const items = visibleCategoryItems(state, cat);
-  const idx = items.findIndex((i) => i.id === itemId);
   const prevItem = items[idx - 1] || null;
   const nextItem = items[idx + 1] || null;
 
-  const categoryName = categoryDisplayName(cat, lang);
+  const categoryName = collection
+    ? pickLocale(collection.name, lang)
+    : categoryDisplayName(cat, lang);
 
   const counter = selectors.getCounter(state, item.id) || {
     count: 0,
@@ -175,7 +165,7 @@ export function renderFocus(state) {
   const pct = Math.min(100, Math.round((displayCount / Math.max(1, counter.target)) * 100));
   // (v5.2.24) directional enter: forward slides from the reading-start
   // side, back from the other — auto-advance (+1) always slides forward.
-  const focusKey = `${cat.id}:${item.id}`;
+  const focusKey = `${collectionId || cat.id}:${item.id}`;
   const enterClass = focusEnterClass(focusKey, idx, { key: lastFocusKey, idx: lastFocusIdx });
   lastFocusKey = focusKey;
   lastFocusIdx = idx;
@@ -292,8 +282,8 @@ export function renderFocus(state) {
         ${icon('refresh', { size: 20 })}
       </button>
       <div class="focus__bar-arrows">
-        <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${prevItem ? escapeHTML(prevItem.id) : ''}" ${prevItem ? '' : 'disabled'} aria-label="${t('focus.previous', lang)}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 20 })}</button>
-        <button type="button" class="icon-btn" data-action="navigate" data-view="${VIEWS.FOCUS}" data-id="${escapeHTML(cat.id)}" data-sub-id="${nextItem ? escapeHTML(nextItem.id) : ''}" ${nextItem ? '' : 'disabled'} aria-label="${t('focus.next', lang)}">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 20 })}</button>
+        <button type="button" class="icon-btn" data-action="focus-adjacent" data-dir="-1" ${prevItem ? '' : 'disabled'} aria-label="${t('focus.previous', lang)}">${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 20 })}</button>
+        <button type="button" class="icon-btn" data-action="focus-adjacent" data-dir="1" ${nextItem ? '' : 'disabled'} aria-label="${t('focus.next', lang)}">${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 20 })}</button>
       </div>
       <button type="button" class="focus__counter${justCompleted ? ' is-just-completed' : ''}${focusDone ? ' is-done' : ''}" dir="ltr" data-action="counter-tap" data-item-id="${escapeHTML(item.id)}" data-category-id="${escapeHTML(cat.id)}" data-target="${escapeHTML(String(counter.target))}" aria-label="${t('focus.tapToCount', lang)} — ${t('focus.progress', lang, { count: displayCount, target: counter.target })}">
         <svg class="focus__ring" viewBox="0 0 64 64" aria-hidden="true">
