@@ -1,3 +1,21 @@
+## v5.17.145 — prayer names never break mid-word (ribbon, times list, resume card)
+
+Phone-QA follow-up (2026-11-23): after the badge-crush fix, prayer NAMES
+still wrapped mid-word in three places at 390px.
+
+- Home ribbon ("Sunr ise", "Dhu hr", "Mag hrib"): the phone cell-tightening
+  media rule was declared above the base cell rule, so source order silently
+  discarded it and phones kept desktop padding. Moved after the base rule,
+  plus a 3px track gap, 1px side padding and a 12px panel inset — all six
+  names measured on one line, badges on their own line, no clipped times.
+- Prayer times list ("Maghri h"): 16px flex gaps starved the 700-weight
+  name by a pixel; phone rows now use an 8px gap (name measured at 86px).
+- "Continue where you left off" ("A/d/h/k/a/r" stacked letters): a long
+  nowrap resume value claimed the whole row; the name collapsed to 0px and
+  the value overflowed the card. The name keeps a 10ch floor and the value
+  wraps — verified with the exact reported state (Mushaf page 561 + Morning
+  Adhkar · Surah Al-Ikhlas (×3)).
+
 ## v5.17.144 — set your city: Alexandria + seven more, and a Change-city button
 
 Phone-QA report (2026-11-23, item 2): the one-tap city path "couldn't be

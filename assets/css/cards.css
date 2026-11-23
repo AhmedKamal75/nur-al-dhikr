@@ -1121,9 +1121,6 @@ a.home-today__cell:hover {
   .home-prayer-ribbon__cells {
     gap: 4px;
   }
-  .home-prayer-ribbon__cell {
-    padding: var(--space-1) 2px;
-  }
 }
 .home-prayer-ribbon__cell {
   display: flex;
@@ -1144,6 +1141,23 @@ a.home-today__cell:hover {
 }
 .home-prayer-ribbon__cell--next {
   border-color: color-mix(in srgb, var(--color-primary) 45%, transparent);
+}
+@media (max-width: 560px) {
+  /* (v5.17.145) phone-QA: this cell tightening previously sat ABOVE the
+     base .home-prayer-ribbon__cell rule, so source order silently binned
+     it — phones kept the desktop's 8px padding and "Maghrib" (47px at the
+     12px a11y floor) broke mid-word inside 33px of content width. Placed
+     after the base rule it actually applies: 1px side padding, a 3px
+     track gap and a 12px panel inset give the name ~50px with headroom. */
+  .home-prayer-ribbon__cells {
+    gap: 3px;
+  }
+  .home-prayer-ribbon__cell {
+    padding: var(--space-1) 1px;
+  }
+  .panel--worship {
+    padding-inline: var(--space-3);
+  }
 }
 .home-prayer-ribbon__topline {
   display: flex;
@@ -1623,18 +1637,26 @@ a.worship-row:hover {
   flex-shrink: 0;
 }
 .worship-row__name {
-  flex: 1;
+  flex: 1 1 auto;
   font-size: var(--fs-sm);
   font-weight: 600;
   letter-spacing: -0.005em;
-  min-width: 0;
+  /* (v5.17.145) phone-QA: with a long value ("Morning Adhkar · Surah
+     Al-Ikhlas (×3)") the nowrap value claimed the whole row and this
+     flex:1+min-width:0 name collapsed to 0px, rendering one letter per
+     line while the value overflowed the card. The name keeps a readable
+     floor; the value wraps instead of overflowing. */
+  min-width: 10ch;
 }
 .worship-row__value {
   font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--color-primary-text);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  text-align: end;
+  overflow-wrap: break-word;
 }
 .worship-row--actions {
   gap: var(--space-1);

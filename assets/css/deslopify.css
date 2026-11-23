@@ -1305,6 +1305,14 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   padding: 8px 10px;
   border-bottom: 1px solid color-mix(in srgb, var(--color-border) 62%, transparent);
 }
+@media (max-width: 560px) {
+  /* (v5.17.145) phone-QA: three 16px gaps + the 44px icon left "Maghrib"
+     54px — a pixel short of its 700-weight width — and it broke
+     "Maghri h". Tighter gaps hand the name ~72px. */
+  .view--prayer .prayer-row {
+    gap: var(--space-2);
+  }
+}
 
 .view--prayer .prayer-row:last-child {
   border-bottom: 0;
