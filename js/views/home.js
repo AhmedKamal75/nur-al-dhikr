@@ -77,6 +77,7 @@ import {
   formatClock,
   prayerMethodLine,
 } from '../domain/prayer.js';
+import { prayerClock } from '../domain/timezone.js';
 import { dailyHadithCardHTML } from './hadithCard.js';
 import { countMemorized, dueCounts, dueSurahs, suggestFromKhatma } from '../domain/hifz.js';
 import { worshipTodayRows } from '../domain/worship.js';
@@ -426,12 +427,14 @@ function todayPrayerTimes(state) {
   const p = state.settings.prayer;
   if (p.latitude == null || p.longitude == null) return null;
   const now = new Date();
-  const tz = -now.getTimezoneOffset() / 60;
+  // (v5.17.143) the saved location's own clock, not the device's — the
+  // ribbon, the adhkar windows and the countdown all read these times.
+  const clock = prayerClock(p, now);
   return calculateTimes({
     date: now,
     latitude: p.latitude,
     longitude: p.longitude,
-    timezoneOffsetHours: tz,
+    timezoneOffsetHours: clock.offsetHours,
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
@@ -448,7 +451,10 @@ function todayPrayerTimes(state) {
  */
 export function resolveBrowserWindow(state) {
   const prayerTimes = todayPrayerTimes(state);
-  return { prayerTimes, nowWindow: recommendedAdhkarWindow(new Date(), prayerTimes) };
+  // The window ranking compares against location-clock times, so it must
+  // read the location's wall time too (v5.17.143).
+  const clockNow = prayerClock(state.settings.prayer, new Date()).date;
+  return { prayerTimes, nowWindow: recommendedAdhkarWindow(clockNow, prayerTimes) };
 }
 
 /**
@@ -1186,7 +1192,7 @@ export function renderHome(state) {
         <div class="home-section__heading">
           <h2 id="home-today-heading">${t('home.todayHeading', lang)}</h2>
         </div>
-        ${prayerRibbonHTML(state, lang, prayerTimes)}
+        ${prayerRibbonHTML(state, lang, prayerTimes, prayerClock(state.settings.prayer, new Date()).date)}
         ${libraryErrorHTML(state, lang)}
         ${homeTodayStripHTML(state)}
         ${progressPanel}

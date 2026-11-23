@@ -20,6 +20,7 @@ import { escapeHTML } from '../core/utils.js';
 import { VIEWS, AMBIENT_MODES } from '../core/config.js';
 import { calculateTimes } from '../domain/prayer.js';
 import { nextPrayerCountdown } from '../domain/prayerTimeline.js';
+import { prayerClock } from '../domain/timezone.js';
 import { ambientVerse, ambientDhikr } from '../domain/ambient.js';
 import { sleepSnapshot } from '../services/surahPlayback.js';
 import { PRAYER_ICONS } from './prayer.js';
@@ -49,16 +50,17 @@ export function renderAmbient(state) {
   }
 
   const now = new Date();
+  const clock = prayerClock(p, now);
   const times = calculateTimes({
     date: now,
     latitude: p.latitude,
     longitude: p.longitude,
-    timezoneOffsetHours: -now.getTimezoneOffset() / 60,
+    timezoneOffsetHours: clock.offsetHours,
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
   });
-  const cd = nextPrayerCountdown(times, now);
+  const cd = nextPrayerCountdown(times, clock.date);
   if (!cd) {
     return `
     <section class="view view--ambient">

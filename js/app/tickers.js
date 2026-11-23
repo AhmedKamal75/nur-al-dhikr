@@ -11,6 +11,7 @@ import { dateKey } from '../core/utils.js';
 import { t } from '../core/i18n.js';
 import { calculateTimes, nextPrayer } from '../domain/prayer.js';
 import { nextPrayerCountdown } from '../domain/prayerTimeline.js';
+import { prayerClock } from '../domain/timezone.js';
 import { fastPhase, formatCountdown } from '../domain/ramadan.js';
 
 /* Ramadan: live Suhoor/Iftar countdown                                */
@@ -40,12 +41,14 @@ export function ramadanTick() {
   }
 
   const now = new Date();
-  const tz = -now.getTimezoneOffset() / 60;
+  // (v5.17.143) the saved location's clock drives both the suhoor/iftar
+  // times and the countdown math comparing against them.
+  const clock = prayerClock(p, now);
   const times = calculateTimes({
     date: now,
     latitude: p.latitude,
     longitude: p.longitude,
-    timezoneOffsetHours: tz,
+    timezoneOffsetHours: clock.offsetHours,
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
@@ -56,19 +59,20 @@ export function ramadanTick() {
     latitude: p.latitude,
     longitude: p.longitude,
     // (v4.3) tomorrow's own UTC offset — reusing today's put tomorrow's
-    // Fajr an hour off on the night a DST shift occurs.
-    timezoneOffsetHours: -tomorrow.getTimezoneOffset() / 60,
+    // Fajr an hour off on the night a DST shift occurs. (v5.17.143): the
+    // offset comes from the location's zone when it resolves.
+    timezoneOffsetHours: prayerClock(p, tomorrow).offsetHours,
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
   });
 
-  const phase = fastPhase(now, times, tomorrowTimes.fajr);
+  const phase = fastPhase(clock.date, times, tomorrowTimes.fajr);
   const nowMs =
-    now.getHours() * 3600000 +
-    now.getMinutes() * 60000 +
-    now.getSeconds() * 1000 +
-    now.getMilliseconds();
+    clock.date.getHours() * 3600000 +
+    clock.date.getMinutes() * 60000 +
+    clock.date.getSeconds() * 1000 +
+    clock.date.getMilliseconds();
   let targetMs = phase.targetHours * 3600000;
   if (targetMs <= nowMs) targetMs += 86400000; // night phase counting into tomorrow
   el.textContent = formatCountdown(targetMs - nowMs);
@@ -124,20 +128,23 @@ export function homeTick() {
   }
 
   const now = new Date();
-  const tz = -now.getTimezoneOffset() / 60;
+  // (v5.17.143) same location clock as the views — a ticker that recomputed
+  // on the device clock would fight the rendered rows after every render.
+  const clock = prayerClock(p, now);
   const times = calculateTimes({
     date: now,
     latitude: p.latitude,
     longitude: p.longitude,
-    timezoneOffsetHours: tz,
+    timezoneOffsetHours: clock.offsetHours,
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
   });
   if (!times) return;
-  const next = nextPrayer(times, now);
+  const next = nextPrayer(times, clock.date);
 
-  const nowHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
+  const nowHours =
+    clock.date.getHours() + clock.date.getMinutes() / 60 + clock.date.getSeconds() / 3600;
   const diffHours = (next.hours - nowHours + 24) % 24;
   const totalSec = Math.round(diffHours * 3600);
   const h = Math.floor(totalSec / 3600);
@@ -186,16 +193,17 @@ function livePrayerCountdown(state) {
   const p = state.settings.prayer;
   if (p.latitude == null || p.longitude == null) return null;
   const now = new Date();
+  const clock = prayerClock(p, now);
   const times = calculateTimes({
     date: now,
     latitude: p.latitude,
     longitude: p.longitude,
-    timezoneOffsetHours: -now.getTimezoneOffset() / 60,
+    timezoneOffsetHours: clock.offsetHours,
     method: p.method,
     asr: p.asr,
     offsets: p.offsets,
   });
-  const countdown = nextPrayerCountdown(times, now);
+  const countdown = nextPrayerCountdown(times, clock.date);
   return countdown ? { countdown, lang: state.settings.language } : null;
 }
 

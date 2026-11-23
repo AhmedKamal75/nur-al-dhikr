@@ -11,6 +11,7 @@
 import { t } from '../../core/i18n.js';
 import { actions, store } from '../../core/state.js';
 import { calculateTimes } from '../../domain/prayer.js';
+import { prayerClock } from '../../domain/timezone.js';
 import {
   PRAYER_EXPORT_ORDER,
   buildPrayerICS,
@@ -172,7 +173,7 @@ export const clickHandlers = {
       date: now,
       latitude: p.latitude,
       longitude: p.longitude,
-      timezoneOffsetHours: -now.getTimezoneOffset() / 60,
+      timezoneOffsetHours: prayerClock(p, now).offsetHours,
       method: p.method,
       asr: p.asr,
       offsets: p.offsets,
@@ -231,6 +232,7 @@ export const clickHandlers = {
       method: p.method,
       asr: p.asr,
       offsets: p.offsets,
+      timezone: p.timezone,
     });
     const names = {};
     for (const n of PRAYER_EXPORT_ORDER) names[n] = t(`prayer.${n}`, lang);

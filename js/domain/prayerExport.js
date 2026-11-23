@@ -6,6 +6,7 @@
  * decimalHoursToDate so high-latitude midnight-wrap stays correct.
  */
 import { decimalHoursToDate, calculateTimes, formatClock } from './prayer.js';
+import { zoneOffsetHours } from './timezone.js';
 
 export const PRAYER_EXPORT_ORDER = Object.freeze([
   'fajr',
@@ -106,6 +107,7 @@ export function buildMonthTimetable({
   method = 'MWL',
   asr = 'Standard',
   offsets = null,
+  timezone = '',
 }) {
   const y = Math.floor(Number(year));
   const m = Math.floor(Number(month));
@@ -119,11 +121,13 @@ export function buildMonthTimetable({
     try {
       // Per-day UTC offset (not the month's): a DST shift mid-month would
       // otherwise skew every later day by an hour, including the .ics.
+      // (v5.17.143) the saved location's zone supplies the offset when it
+      // resolves; the device offset stays the documented fallback.
       times = calculateTimes({
         date,
         latitude,
         longitude,
-        timezoneOffsetHours: -date.getTimezoneOffset() / 60,
+        timezoneOffsetHours: zoneOffsetHours(timezone, date) ?? -date.getTimezoneOffset() / 60,
         method,
         asr,
         offsets,
