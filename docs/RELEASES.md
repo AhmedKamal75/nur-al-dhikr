@@ -1,3 +1,8 @@
+## v5.17.152 - Phone prayer times stay inside their cells
+
+- Home prayer ribbon clocks wrap at the AM/PM space when a phone cell is too narrow. The complete time stays readable without shrinking text or overlapping the next prayer.
+- Bilingual phone and desktop browser coverage measures actual text fragments, not only element boxes. No religious data changed.
+
 ## v5.17.151 - Keep the screen awake in Focus
 
 - Adds an explicit session-only, default-off screen-awake toggle to adhkar Focus and collection reading sessions. Active status appears only after a browser grant; unsupported, denied, hidden and system-released states stay honest.
