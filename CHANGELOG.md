@@ -1,3 +1,10 @@
+# v5.17.146 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
+
+- Adds a data-driven next-letter table for the mutually exclusive noon-sakinah/tanween family, with contract tests for table integrity, cited rule IDs, and parity with the live classifier.
+- Combines the newest audit instrumentation and targeted cross-rasm regression candidates on a clean branch from main.
+- Carries the verified one-word mushaf correction at 15:53 (عَلِيمٍ), approved explicitly by the owner after three-source verification.
+- No other Qur’an text was edited or normalized. This is a prototype, not proof that all Tajweed rules are correct; full source-backed and browser review remains mandatory.
+
 # v5.17.142 — Azkar cards: long adhkar stay scannable on phones
 
 - Scrolling card lists cap the effective Arabic scale at 1.25 below 560px (--fs-arabic-card-list): at max scale a long dhikr no longer becomes a ~1450px card. The mushaf reader, focus and the tasbih stage keep the full range; desktop is unchanged.
@@ -8,13 +15,6 @@
 
 - Home "Today's prayers": on a phone, the cells carrying a live Now/Next badge crushed their prayer names to one letter per line (the inflexible badge pill starved the name in the flex topline). The topline now wraps, so the badge drops to its own line and the name renders like its unbadged neighbours.
 - New EN+AR phone-viewport e2e spec pins the layout: it fails on the old CSS and passes on the new.
-
-# v5.17.140 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
-
-- Adds a data-driven next-letter table for the mutually exclusive noon-sakinah/tanween family, with contract tests for table integrity, cited rule IDs, and parity with the live classifier.
-- Combines the newest audit instrumentation and targeted cross-rasm regression candidates on a clean branch from main.
-- Carries the verified one-word mushaf correction at 15:53 (عَلِيمٍ), approved explicitly by the owner after three-source verification.
-- No other Qur’an text was edited or normalized. This is a prototype, not proof that all Tajweed rules are correct; full source-backed and browser review remains mandatory.
 
 # v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
 
