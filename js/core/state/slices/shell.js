@@ -8,6 +8,7 @@
  * dispatcher in ../reducer.js tries each slice in turn).
  */
 
+import { resolveFocusQueue } from '../../../services/focusQueue.js';
 import { VIEWS, resolveKidsView, sanitizeSettings } from '../../config.js';
 import { dateKey, isSafeKey } from '../../utils.js';
 import { normalizeCustomContentMap } from '../../schema.js';
@@ -81,8 +82,19 @@ export function reduceShell(state, action) {
       const lastChanged =
         lastPosition !== state.lastPosition &&
         Object.keys(lastPosition).some((k) => lastPosition[k] !== state.lastPosition?.[k]);
+      const queue =
+        view === VIEWS.FOCUS && params.collection
+          ? resolveFocusQueue({ ...state, activeParams: params })
+          : null;
+      const collections =
+        queue?.item && queue.collection
+          ? state.collections.map((col) =>
+              col.id === queue.collectionId ? { ...col, sessionItemId: queue.item.id } : col
+            )
+          : state.collections;
       const base = {
         ...state,
+        collections,
         activeView: view,
         activeParams: action.params || {},
         ...(lastChanged ? { lastPosition } : null),

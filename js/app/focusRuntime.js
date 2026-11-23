@@ -4,8 +4,7 @@
  */
 
 import { rt } from './rt.js';
-import { getItemEntry } from './shared.js';
-import { visibleCategoryItems } from '../services/contentPrefs.js';
+import { resolveFocusQueue, focusRoute, focusExitRoute } from '../services/focusQueue.js';
 import { VIEWS } from '../core/config.js';
 import { go } from '../core/router.js';
 import { store } from '../core/state.js';
@@ -34,7 +33,7 @@ export function handleFocusKeydown(e) {
       btn.click();
     }
   } else if (e.key === 'Escape') {
-    go(VIEWS.CATEGORY, { id: state.activeParams.id });
+    exitFocus();
   }
 }
 
@@ -43,22 +42,26 @@ export function isAutoAdvancePendingFor(itemId) {
   const state = store.getState();
   return (
     state.activeView === VIEWS.FOCUS &&
-    String(state.activeParams?.subId ?? '') === String(itemId ?? '')
+    String(resolveFocusQueue(state).item?.id ?? '') === String(itemId ?? '')
   );
+}
+
+export function exitFocus() {
+  clearTimeout(rt.pendingAutoAdvanceTimer);
+  rt.pendingAutoAdvanceTimer = null;
+  const route = focusExitRoute(store.getState());
+  go(route.view, route.params);
 }
 
 export function navigateFocusAdjacent(dir) {
   const state = store.getState();
-  const categoryId = state.activeParams.id;
-  const itemId = state.activeParams.subId;
-  const entry = getItemEntry(itemId);
-  if (!entry) return;
-  // Walk the MANAGE LENS (user order, hidden removed) — the raw corpus
-  // used to step onto hidden ids and strand the view on "item not found".
-  const items = visibleCategoryItems(state, entry.category);
-  const idx = items.findIndex((i) => i.id === itemId);
-  const target = items[idx + dir];
-  if (target) go(VIEWS.FOCUS, { id: categoryId, subId: target.id });
+  const queue = resolveFocusQueue(state);
+  const target = queue.items[queue.idx + dir];
+  if (!queue.item || !target) return;
+  const entry = queue.collectionId
+    ? state.library.itemIndex[target.id]
+    : { item: target, category: queue.cat };
+  if (entry) go(VIEWS.FOCUS, focusRoute(entry, queue.collectionId));
 }
 
 /* v3.7 FIX — auto-advance used to stack one anonymous setTimeout per
@@ -77,6 +80,7 @@ export function scheduleAutoAdvance(delay = 220) {
     view: origin.activeView,
     id: String(origin.activeParams?.id ?? ''),
     subId: String(origin.activeParams?.subId ?? ''),
+    collection: String(origin.activeParams?.collection ?? ''),
   };
   clearTimeout(rt.pendingAutoAdvanceTimer);
   rt.pendingAutoAdvanceTimer = setTimeout(
@@ -87,6 +91,7 @@ export function scheduleAutoAdvance(delay = 220) {
       if (now.activeView !== from.view) return;
       if (String(now.activeParams?.id ?? '') !== from.id) return;
       if (String(now.activeParams?.subId ?? '') !== from.subId) return;
+      if (String(now.activeParams?.collection ?? '') !== from.collection) return;
       navigateFocusAdjacent(1);
     },
     Math.max(120, Math.min(600, Number(delay) || 220))

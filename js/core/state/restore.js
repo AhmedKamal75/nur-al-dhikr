@@ -492,6 +492,10 @@ export function sanitizeRestoredPayload(payload) {
             : typeof c.name === 'string'
               ? c.name.slice(0, 120)
               : '',
+        sessionItemId:
+          typeof c.sessionItemId === 'string' && asArray(c.items).includes(c.sessionItemId)
+            ? c.sessionItemId.slice(0, 128)
+            : null,
         items: asArray(c.items)
           .filter((id) => typeof id === 'string')
           .slice(0, 500),

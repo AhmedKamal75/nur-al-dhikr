@@ -723,6 +723,8 @@ export const en = {
   // v5.2.89 floating back-to-top on long card lists (P2).
   'category.backToTop': 'Back to top',
   // (v5.17.52) session queue entry: play through the whole category in Focus.
+  'collections.sessionStart': 'Read collection in Focus',
+  'collections.sessionContinue': 'Continue collection',
   'category.sessionStart': 'Read through in Focus',
   // v5.2.89 waqf & portion-marks legend in the Mushaf settings (P0-2).
   // Standard Uthmani print signs (same reference class as the tajweed

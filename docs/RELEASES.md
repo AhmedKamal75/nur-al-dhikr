@@ -1,3 +1,9 @@
+## v5.17.148 - read a collection as a Focus session
+
+- Collection detail now offers Start or Continue, reading the saved collection order across categories. Hidden, removed and missing entries are skipped.
+- A per-collection item bookmark survives exit, reload and reordering independently of ordinary category Focus. Arrows, keyboard, swipes and auto-advance use the same collection-aware queue; exit returns to the collection.
+- EN and AR labels, recovery for deleted/empty collections, and unit/browser coverage for queue integrity and resume. Religious corpus bytes unchanged.
+
 ## v5.17.147 — saved-only scope in global search
 
 - Adds a Saved chip beside All in global search: saved mode searches only favorites and collection items through the same index and ranking (domain savedIds option), with Quran/tafsir/roots/hadith sections excluded.

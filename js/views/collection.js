@@ -5,6 +5,7 @@
  * the cards. Reorder hides while filtering — moving filtered rows would
  * silently reorder invisible neighbors.
  */
+import { collectionSessionStart } from '../services/focusQueue.js';
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
@@ -52,6 +53,7 @@ export function renderCollection(state) {
     return `<section class="view">${notFoundStateHTML({ title: t('common.notFoundCollection', lang), lang, t })}</section>`;
   }
 
+  const sessionFirst = collectionSessionStart(state, col);
   const q = String(state.activeParams?.q || '');
   const terms = q ? q.split(/\s+/) : [];
   const resolved = col.items.map((id) => state.library.itemIndex[id]).filter(Boolean);
@@ -83,6 +85,7 @@ export function renderCollection(state) {
         <button type="button" class="icon-btn" data-action="share-collection" data-id="${escapeHTML(col.id)}" aria-label="${t('collections.share', lang)}" title="${t('collections.share', lang)}">${icon('share', { size: 18 })}</button>
         <button type="button" class="icon-btn" data-action="delete-collection" data-id="${escapeHTML(col.id)}" aria-label="${t('collections.delete', lang)}">${icon('trash', { size: 18 })}</button>
       </div>
+      ${sessionFirst ? `<button type="button" class="btn btn--secondary" data-action="collection-session-start" data-id="${escapeHTML(col.id)}">${icon('play', { size: 16 })} ${t(col.sessionItemId ? 'collections.sessionContinue' : 'collections.sessionStart', lang)}</button>` : ''}
       <p class="view__meta">${t('collections.itemCount', lang, { n: entries.length })}</p>
       ${
         missingFavorites.length

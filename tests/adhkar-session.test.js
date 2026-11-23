@@ -234,10 +234,14 @@ test('focus: stage keeps Arabic + position, session progress rides below', () =>
   assert.ok(!html.includes('focus__complete'), 'no completion line mid-session');
   assert.match(
     html,
-    /data-action="navigate"[^>]*aria-label="Previous"/,
+    /data-action="focus-adjacent" data-dir="-1"[^>]*aria-label="Previous"/,
     'prev reuses the focus stage'
   );
-  assert.match(html, /data-action="navigate"[^>]*aria-label="Next"/, 'next reuses the focus stage');
+  assert.match(
+    html,
+    /data-action="focus-adjacent" data-dir="1"[^>]*aria-label="Next"/,
+    'next reuses the focus stage'
+  );
 });
 
 test('focus: Unknown grade stays visible while details stay collapsed', () => {

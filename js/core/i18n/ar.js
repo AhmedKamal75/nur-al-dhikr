@@ -677,6 +677,8 @@ export const ar = {
   // v5.2.89 floating back-to-top on long card lists (P2) — parity with en.
   'category.backToTop': 'العودة إلى الأعلى',
   // (v5.17.52) session queue entry — parity with en.
+  'collections.sessionStart': 'قراءة المجموعة في وضع التركيز',
+  'collections.sessionContinue': 'متابعة المجموعة',
   'category.sessionStart': 'قراءة متتابعة في وضع التركيز',
   // v5.2.89 waqf & portion-marks legend (P0-2) — parity with en.
   'mushaf.waqfLegend': 'علامات الوقف والأجزاء',

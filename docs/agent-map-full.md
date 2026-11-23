@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 245 — data files: 27 — tests: 288
+- js modules: 246 — data files: 27 — tests: 289
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -88,11 +88,11 @@ job: user file imports: backup JSON (with confirm), shared family plans (with co
 
 job: Focus-mode runtime: keyboard navigation and the single pending auto-advance timer (v3.7 race fix).
 
-- exports: `handleFocusKeydown` (function), `isAutoAdvancePendingFor` (function), `navigateFocusAdjacent` (function), `scheduleAutoAdvance` (function)
+- exports: `handleFocusKeydown` (function), `isAutoAdvancePendingFor` (function), `exitFocus` (function), `navigateFocusAdjacent` (function), `scheduleAutoAdvance` (function)
 - emits: —
 - handles: —
 - i18n: —
-- routes: `VIEWS.CATEGORY`, `VIEWS.FOCUS`
+- routes: `VIEWS.FOCUS`
 
 ### `js/app/forms.js`
 
@@ -384,9 +384,9 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `triggerRipple` (function), `shareAyahCard` (function), `clickHandlers` (object), `changeHandlers` (const)
 - emits: `collection-picker-toggle`, `counter-tap`, `hadith-note-delete`, `modal-close`
-- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-exit`, `focus-reset`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input)
+- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input)
 - i18n: `card.copied`, `card.copyFailed`, `card.imageSaved`, `collections.itemCount`, `collections.namePrompt`, `collections.shareEmpty`, `common.delete`, `common.error`, `common.retry`, `common.save`, `dhikrAudio.failed`, `editor.cancel`, `editor.deleteConfirm`, `favorites.clearConfirm`, `hadith.note`, `hadith.noteDeleted`, `hadith.notePh`, `hadith.noteTitle`, `hadith.speechUnsupported`, `kids.quizWin` (+1 more)
-- routes: `#/hadith`, `VIEWS.CATEGORY`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.SEARCH`
+- routes: `#/hadith`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.SEARCH`
 
 ### `js/app/handlers/journal.js`
 
@@ -816,7 +816,7 @@ job: app-shell slice of the store reducer. Owns navigation, settings, boot/resto
 - emits: —
 - handles: —
 - i18n: —
-- routes: `VIEWS.HADITH`, `VIEWS.MUSHAF`, `VIEWS.QURAN`, `VIEWS.SETTINGS`, `VIEWS.TAJWEED_COURSE`
+- routes: `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.MUSHAF`, `VIEWS.QURAN`, `VIEWS.SETTINGS`, `VIEWS.TAJWEED_COURSE`
 
 ### `js/core/state/slices/worship.js`
 
@@ -1882,6 +1882,16 @@ job: the counter as a floating window. (v5.17.15) A reader counting while doing 
 - i18n: —
 - routes: —
 
+### `js/services/focusQueue.js`
+
+job: / Focus queues share one resolver across rendering, keys and auto-advance.
+
+- exports: `collectionSessionEntries` (function), `collectionSessionStart` (function), `focusRoute` (function), `resolveFocusQueue` (function), `focusExitRoute` (function)
+- emits: —
+- handles: —
+- i18n: —
+- routes: `VIEWS.CATEGORY`, `VIEWS.COLLECTION`
+
 ### `js/services/gapTelemetry.js`
 
 job: (v5.11.0 C) opt-in, local-only follow-gap telemetry for low-end devices. Headless numbers never capture budget-phone render costs, so the app can
@@ -2245,7 +2255,7 @@ job: A private, local-only daily tracker for the five prayers plus morning/ even
 job: A single collection: rename + share + delete in the header, bulk import of missing favorites, and per-item reorder controls (up/down) alongside the cards. Reorder hides while filtering — moving filte…
 
 - exports: `buildCollectionShareText` (function), `renderCollection` (function)
-- emits: `collection-add-favorites`, `collection-move`, `delete-collection`, `navigate`, `rename-collection`, `share-collection`
+- emits: `collection-add-favorites`, `collection-move`, `collection-session-start`, `delete-collection`, `navigate`, `rename-collection`, `share-collection`
 - handles: —
 - i18n: `collections.addFavorites`, `collections.delete`, `collections.empty`, `collections.itemCount`, `collections.rename`, `collections.searchPh`, `collections.share`, `common.notFoundCollection`, `content.reviewPending`, `nav.collections`, `search.noResults`, `settings.moveDown`, `settings.moveUp`
 - routes: `VIEWS.COLLECTIONS`
@@ -2285,10 +2295,10 @@ job: The flat favorites list, sortable (recent / alpha / most-read) with per-row
 job: Full-bleed, distraction-free reading/counting mode for one item at a time, with previous/next navigation through the rest of its category.
 
 - exports: `focusEnterClass` (function), `renderFocus` (function)
-- emits: `byheart-reveal`, `byheart-review`, `counter-tap`, `focus-exit`, `focus-reset`, `navigate`, `open-card-menu`, `play-dhikr-audio`, `toggle-favorite`, `toggle-speech`
+- emits: `byheart-reveal`, `byheart-review`, `counter-tap`, `focus-adjacent`, `focus-exit`, `focus-reset`, `navigate`, `open-card-menu`, `play-dhikr-audio`, `toggle-favorite`, `toggle-speech`
 - handles: —
-- i18n: `card.completedTimes`, `card.favorite`, `card.more`, `card.narratedBy`, `category.progressToday`, `collections.itemCount`, `common.notFoundItem`, `content.reviewPending`, `focus.exit`, `focus.next`, `focus.pickerHint`, `focus.pickerTitle`, `focus.previous`, `focus.progress`, `focus.reset`, `focus.sessionComplete`, `focus.tapToCount`, `hifz.again`, `hifz.easy`, `hifz.good` (+7 more)
-- routes: `VIEWS.FOCUS`, `VIEWS.LIBRARY`
+- i18n: `card.completedTimes`, `card.favorite`, `card.more`, `card.narratedBy`, `category.progressToday`, `collections.itemCount`, `common.notFoundItem`, `content.reviewPending`, `focus.exit`, `focus.next`, `focus.pickerHint`, `focus.pickerTitle`, `focus.previous`, `focus.progress`, `focus.reset`, `focus.sessionComplete`, `focus.tapToCount`, `hifz.again`, `hifz.easy`, `hifz.good` (+8 more)
+- routes: `VIEWS.COLLECTION`, `VIEWS.FOCUS`, `VIEWS.LIBRARY`
 
 ### `js/views/garden.js`
 
@@ -2703,6 +2713,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `collection-add-favorites`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `collection-move`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `collection-picker-toggle`: emitted by `js/app/handlers/items.js`, `js/ui/menus.js`; handled in `js/app/handlers/items.js`
+- `collection-session-start`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `confirm-content-restore-library`: emitted by `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `content-delete-category`: emitted by `js/views/category.js`, `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `content-delete-item`: emitted by `js/views/category.js`; handled in `js/app/handlers/content.js`
@@ -2756,6 +2767,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `fasting-toggle-category`: emitted by `js/views/calendar.js`; handled in `js/app/handlers/worship.js`
 - `fasting-toggle-remind`: emitted by `js/views/calendar.js`; handled in `js/app/handlers/worship.js`
 - `favorites-sort`: emitted by `js/views/favorites.js`; handled in `js/app/handlers/items.js`
+- `focus-adjacent`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `focus-exit`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `focus-reset`: emitted by `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `gap-telemetry-clear`: emitted by `js/views/statistics.js`; handled in `js/app/handlers/worship.js`
@@ -3513,6 +3525,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `coerceGoal`: `js/core/state/streak.js`
 - `collectDrillWords`: `js/domain/grammarDrill.js`
 - `collectionFor`: `js/domain/localeContent.js`
+- `collectionSessionEntries`: `js/services/focusQueue.js`
+- `collectionSessionStart`: `js/services/focusQueue.js`
 - `compactPrayerMethodLine`: `js/domain/prayer.js`
 - `compareVisible`: `js/domain/translationCompare.js`
 - `completeOldest`: `js/domain/qada.js`
@@ -3679,6 +3693,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `escapeHTML`: `js/core/utils.js`
 - `essentialsAutoBlocker`: `js/app/offlineJobs.js`
 - `ewmaUpdate`: `js/services/surahPlayback.js`
+- `exitFocus`: `js/app/focusRuntime.js`
 - `expandQueryWithRoots`: `js/domain/rootAwareSearch.js`
 - `expandWindow`: `js/domain/readerWindow.js`
 - `fail`: `js/core/utils.js`
@@ -3712,6 +3727,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `floatingCounterHTML`: `js/services/floatingCounter.js`
 - `flushReading`: `js/app/readingTimer.js`
 - `focusEnterClass`: `js/views/focus.js`
+- `focusExitRoute`: `js/services/focusQueue.js`
+- `focusRoute`: `js/services/focusQueue.js`
 - `focusSignature`: `js/app/renderer.js`
 - `focusSwipeTurn`: `js/domain/gestures.js`
 - `foldRoot`: `js/domain/roots.js`
@@ -4275,6 +4292,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `resolveCompareText`: `js/domain/translationCompare.js`
 - `resolveCompareTexts`: `js/domain/translationCompare.js`
 - `resolveContextProvenance`: `js/domain/lexicalProvenance.js`
+- `resolveFocusQueue`: `js/services/focusQueue.js`
 - `resolveHomePanels`: `js/domain/homePanels.js`
 - `resolveIrabProvenance`: `js/domain/lexicalProvenance.js`
 - `resolveKidsView`: `js/core/config/views.js`
@@ -4619,7 +4637,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `account`: `js/domain/planExport.js`
 - `accumulate`: `js/app/readingTimer.js`
 - `accuracyfor`: `js/domain/tajweedPractice.js`
-- `across`: `js/app/shared.js`, `js/domain/hadithSearch.js`, `js/domain/quranSearch.js`, `js/views/roots.js`, `js/views/tafsirPanel.js`
+- `across`: `js/app/shared.js`, `js/domain/hadithSearch.js`, `js/domain/quranSearch.js`, `js/services/focusQueue.js`, `js/views/roots.js`, `js/views/tafsirPanel.js`
 - `action`: `js/core/state/reducer.js`, `js/core/state/slices/hadith.js`, `js/domain/quickTiles.js`, `js/services/speech.js`, `js/ui/menus.js`, `js/views/installRow.js`
 - `actions`: `js/app/handlers/content.js`, `js/core/state/actions.js`, `js/core/state.js`, `js/domain/statistics.js`, `js/services/soundDesign.js`, `js/views/ayahStudy.js`
 - `activatemushafautofit`: `js/app/autoFit.js`
@@ -4642,7 +4660,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `adhkar`: `js/domain/adhkarTiming.js`, `js/domain/grades.js`, `js/services/checklist.js`, `js/services/shareCard.js`, `js/views/checklist.js`, `js/views/library.js`, `js/views/mood.js`, `js/views/palette.js`, `js/views/search.js`
 - `adhkarbrowserhtml`: `js/views/home.js`, `js/views/library.js`
 - `adhkarwindowlabel`: `js/views/home.js`
-- `advance`: `js/app/focusRuntime.js`, `js/services/surahPlayback.js`
+- `advance`: `js/app/focusRuntime.js`, `js/services/focusQueue.js`, `js/services/surahPlayback.js`
 - `advanceclassifyround`: `js/app/practice.js`
 - `advancepracticeround`: `js/app/practice.js`
 - `advancequeue`: `js/domain/audioQueue.js`
@@ -4742,7 +4760,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `audit`: `js/app/autoFit.js`, `js/app/practice.js`, `js/domain/localeContent.js`
 - `authored`: `js/services/editor.js`
 - `authority`: `js/app/handlers/content.js`, `js/domain/contentLens.js`
-- `auto`: `js/app/autoFit.js`, `js/app/focusRuntime.js`, `js/services/backup.js`, `js/ui/toast.js`
+- `auto`: `js/app/autoFit.js`, `js/app/focusRuntime.js`, `js/services/backup.js`, `js/services/focusQueue.js`, `js/ui/toast.js`
 - `autobackupdue`: `js/services/backup.js`
 - `automatic`: `js/services/surahPlayback.js`
 - `availability`: `js/services/moshafAvailability.js`
@@ -5041,6 +5059,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `collection`: `js/core/config/app.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/collection.js`, `js/views/favorites.js`
 - `collectionfor`: `js/domain/localeContent.js`
 - `collections`: `js/core/state/slices/library.js`, `js/domain/moods.js`, `js/services/hadith.js`, `js/ui/card.js`
+- `collectionsessionentries`: `js/services/focusQueue.js`
+- `collectionsessionstart`: `js/services/focusQueue.js`
 - `color`: `js/domain/tajweed.js`, `js/views/tajweedSettings.js`
 - `coloring`: `js/domain/tajweedPractice.js`
 - `colors`: `js/views/tajweedSettings.js`
@@ -5438,6 +5458,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `exceptions`: `js/domain/tajweed.js`
 - `existing`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/core/config/sanitize.js`, `js/core/config/views.js`, `js/domain/ramadanPlanner.js`, `js/domain/reminderPresets.js`, `js/views/mood.js`, `js/views/quiz.js`
 - `exists`: `js/domain/sessionFlags.js`, `js/domain/worship.js`
+- `exitfocus`: `js/app/focusRuntime.js`
 - `expandquerywithroots`: `js/domain/rootAwareSearch.js`
 - `expandwindow`: `js/domain/readerWindow.js`
 - `expansion`: `js/domain/rootAwareSearch.js`
@@ -5532,9 +5553,11 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `flow`: `js/app/installPrompt.js`, `js/domain/completedCards.js`, `js/domain/install.js`, `js/views/qibla.js`
 - `flows`: `js/app/stateSub.js`
 - `flushreading`: `js/app/readingTimer.js`
-- `focus`: `js/app/drawer.js`, `js/app/focusRuntime.js`, `js/domain/gestures.js`, `js/services/tasbih.js`, `js/ui/card.js`
+- `focus`: `js/app/drawer.js`, `js/app/focusRuntime.js`, `js/domain/gestures.js`, `js/services/focusQueue.js`, `js/services/tasbih.js`, `js/ui/card.js`
 - `focused`: `js/core/config.js`, `js/core/state/reducer.js`, `js/core/state.js`, `js/views/prayer.js`
 - `focusenterclass`: `js/views/focus.js`
+- `focusexitroute`: `js/services/focusQueue.js`
+- `focusroute`: `js/services/focusQueue.js`
 - `focussignature`: `js/app/renderer.js`
 - `focusswipeturn`: `js/domain/gestures.js`
 - `fold`: `js/domain/homeInvitations.js`, `js/domain/tafsirSearch.js`
@@ -5883,7 +5906,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `kernel`: `js/core/fetch.js`
 - `keyboard`: `js/app/focusRuntime.js`, `js/domain/playerShortcuts.js`
 - `keyed`: `js/core/icons.js`, `js/services/editor.js`
-- `keys`: `js/app/renderer.js`, `js/core/config/app.js`, `js/core/config/nav.js`, `js/core/i18n/ar.js`, `js/core/i18n/en.js`, `js/core/state/initial.js`, `js/core/state.js`, `js/domain/contentLens.js`, `js/domain/prayerLog.js`, `js/domain/ramadanPlanner.js`, `js/domain/searchPagination.js`
+- `keys`: `js/app/renderer.js`, `js/core/config/app.js`, `js/core/config/nav.js`, `js/core/i18n/ar.js`, `js/core/i18n/en.js`, `js/core/state/initial.js`, `js/core/state.js`, `js/domain/contentLens.js`, `js/domain/prayerLog.js`, `js/domain/ramadanPlanner.js`, `js/domain/searchPagination.js`, `js/services/focusQueue.js`
 - `keytodate`: `js/domain/review.js`
 - `keywords`: `js/domain/dailyAyah.js`
 - `khatma`: `js/domain/khatma.js`, `js/domain/planExport.js`, `js/views/khatma.js`
@@ -6521,6 +6544,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `query`: `js/core/state/slices/audio.js`
 - `question`: `js/views/quiz.js`
 - `queue`: `js/domain/audioBatch.js`, `js/domain/audioQueue.js`, `js/domain/reflections.js`
+- `queues`: `js/services/focusQueue.js`
 - `queuesignature`: `js/services/surahPlayback.js`
 - `quick`: `js/domain/locations.js`, `js/domain/quickTiles.js`
 - `quicktileshtml`: `js/views/home.js`
@@ -6665,7 +6689,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `rendergarden`: `js/views/garden.js`
 - `renderhadith`: `js/views/hadith.js`
 - `renderhome`: `js/views/home.js`
-- `rendering`: `js/domain/localeContent.js`, `js/domain/readerWindow.js`, `js/services/calendarNotes.js`
+- `rendering`: `js/domain/localeContent.js`, `js/domain/readerWindow.js`, `js/services/calendarNotes.js`, `js/services/focusQueue.js`
 - `renderjournal`: `js/views/journal.js`
 - `renderkids`: `js/views/kids.js`
 - `renderlibrary`: `js/views/library.js`
@@ -6745,6 +6769,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `resolvecomparetext`: `js/domain/translationCompare.js`
 - `resolvecomparetexts`: `js/domain/translationCompare.js`
 - `resolvecontextprovenance`: `js/domain/lexicalProvenance.js`
+- `resolvefocusqueue`: `js/services/focusQueue.js`
 - `resolvehomepanels`: `js/domain/homePanels.js`
 - `resolveirabprovenance`: `js/domain/lexicalProvenance.js`
 - `resolvekidsview`: `js/core/config/views.js`
@@ -6756,6 +6781,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `resolvepage`: `js/services/mushaf.js`
 - `resolvequeueitem`: `js/services/surahPlayback.js`
 - `resolvequicktiles`: `js/domain/quickTiles.js`
+- `resolver`: `js/services/focusQueue.js`
 - `resolverangesave`: `js/app/handlers/audio.js`
 - `resolverootprovenance`: `js/domain/lexicalProvenance.js`
 - `resolves`: `js/core/idb/openDB.js`, `js/domain/lexicalProvenance.js`
@@ -6986,7 +7012,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `shape`: `js/core/router.js`, `js/core/theme.js`, `js/services/editor.js`, `js/ui/skeleton.js`
 - `shaped`: `js/core/migration.js`, `js/domain/tajweedCourse.js`
 - `shapes`: `js/core/config/views.js`
-- `share`: `js/domain/launchIntents.js`, `js/views/ayahStudy.js`, `js/views/collection.js`
+- `share`: `js/domain/launchIntents.js`, `js/services/focusQueue.js`, `js/views/ayahStudy.js`, `js/views/collection.js`
 - `shareable`: `js/services/shareCard.js`
 - `shareayahcard`: `js/app/handlers/items.js`
 - `shared`: `js/app/audioEngine.js`, `js/app/fileImports.js`, `js/app/shared.js`, `js/core/state/streak.js`, `js/domain/audioQueue.js`, `js/domain/celebrate.js`, `js/services/recitation.js`, `js/ui/emptyState.js`, `js/views/backupSummary.js`, `js/views/hadithCard.js`, `js/views/installRow.js`, `js/views/studyContext.js`, `js/views/tafsirPanel.js`, `js/views/viewSheets.js`
@@ -7532,6 +7558,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/checklist-deslopify.test.js` — (no header comment) (pins: —)
 - `tests/checklist.test.js` — (no header comment) (pins: `../js/core/config.js`, `../js/core/utils.js`, `../js/services/checklist.js`)
 - `tests/city-presets.test.js` — the offline city directory: unique ids, sane coordinates, known regions, both languages named. A wrong coordinate is a wrong Fajr; this gate keeps the directory honest. (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/locations.js`)
+- `tests/collection-session.test.js` — (no header comment) (pins: `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/services/focusQueue.js`)
 - `tests/collections.test.js` — item 7 (collections) gates: 1. COLLECTION_MOVE_ITEM swaps neighbors; edges, unknown ids and hostile dirs no-op; (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/views/collection.js`)
 - `tests/compare-c-5.2.78.test.js` — UP-06 second compare slot. Pure reducer/sanitizer/domain checks only (no DOM, no network). (pins: `../js/core/config.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/domain/translationCompare.js`)
 - `tests/compass.test.js` — (v5.17.4, real-phone pass) the iOS permission gate. Android Chrome exposes DeviceOrientationEvent WITHOUT requestPermission: the wrapper must resolve true there (nothing to ask) instead of (pins: `../js/domain/compass.js`)
