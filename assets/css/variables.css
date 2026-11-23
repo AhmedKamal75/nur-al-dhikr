@@ -561,6 +561,8 @@
 
 @media (max-width: 560px) {
   :root {
+    /* The elder-mode Arabic boost (accessibility.css, body.is-elder)
+       composes with this cap via its own override there. */
     --fs-arabic-card-list: calc(1.75rem * min(var(--arabic-font-scale), 1.25));
   }
 }

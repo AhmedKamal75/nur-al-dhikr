@@ -54,6 +54,30 @@ test('azkar card Arabic is capped at 1.25x on a phone, full range on desktop', a
   await desktop.close();
 });
 
+test('elder mode Arabic boost composes with the phone cap', async ({ browser }) => {
+  const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const phoneErrors = [];
+  phone.on('pageerror', (e) => phoneErrors.push(String(e)));
+  await phone.addInitScript((s) => {
+    localStorage.setItem(
+      'nurAlDhikr:v2:state',
+      JSON.stringify({
+        settings: { language: 'en', themeMode: 'dark', arabicFontScale: s, elderMode: true },
+      })
+    );
+  }, 1.0);
+  await phone.goto('./#/category/morning');
+  const arabic = phone.locator('.card__arabic').first();
+  await expect(arabic).toBeAttached({ timeout: 20000 });
+  const px = parseFloat(await arabic.evaluate((a) => getComputedStyle(a).fontSize));
+  // Elder mode must not be silently shrunk by the cap: the x1.3 boost
+  // composes with it -> 1.75rem * min(1.0, 1.25) * 1.3 = 36.4px.
+  expect(px).toBeGreaterThan(35);
+  expect(px).toBeLessThanOrEqual(37);
+  expect(phoneErrors).toEqual([]);
+  await phone.close();
+});
+
 test('quran reader ayah cards keep the full Arabic range on a phone', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.addInitScript(seed(), 1.6);
