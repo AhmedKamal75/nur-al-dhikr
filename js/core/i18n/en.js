@@ -2441,6 +2441,19 @@ export const en = {
   'editor.sheet.backup': 'Export a backup',
 
   /* Tajweed rules & colors (v4.6.0) */
+  'tajweed.convention': 'Teaching convention',
+  'tajweed.conventionDam': "Dar Al-Ma'arifah",
+  'tajweed.conventionLpmq': 'LPMQ (Indonesia)',
+  'tajweed.conventionPending':
+    'Convention verification is in progress. This selection is saved, but the existing app palette and detector remain in use. Unverified differences are not added.',
+  'tajweed.conventionSources':
+    "References: LPMQ, Pedoman Tajwid Sistem Warna (2011), Chapter II; Dar Al-Ma'arifah printed edition, observation only. The app does not copy the publisher's palette or layout.",
+  'tajweed.conventionCaveat':
+    'The LPMQ document differs between Chapters I and II. This project records the Chapter II reading; per-site LPMQ checks are still Unknown.',
+  'tajweed.teacherClause':
+    'Color aids do not replace learning with a teacher through direct recitation and correction (musyafahah and talaqqi).',
+  'tajweed.recitationProfile':
+    'Recitation profile: Hafs from Asim, Uthmani script, pause at ayah endings.',
   'tajweed.rulesTitle': 'Tajweed rules & colors',
   'tajweed.rulesHint':
     'Turn rules on or off and pick each family\u2019s color. All rules are active by default.',

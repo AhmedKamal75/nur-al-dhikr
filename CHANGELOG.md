@@ -1,3 +1,10 @@
+# v5.17.149 - Tajweed convention preference and registry foundation
+
+- Adds a canonical rules registry and parity-tested runtime mirror, named predicates, stable IDs and per-convention citation records. No classifier migration or Quran/Mushaf text changes.
+- Saves a teaching-convention preference: Dar Al-Ma'arifah by default for new and existing users, with LPMQ one tap away. Existing per-rule toggles and family-color overrides survive switching.
+- EN/AR settings and legend disclosures name both references, the recitation profile, source disagreement and the need for a teacher. The selector explicitly states that rendering is unchanged while verification is pending. This is a foundation, not completed dual-convention coloring.
+- New rule families remain pending and shipping-disabled. Unverified sites are not annotated, taught or added to practice.
+
 # v5.17.148 - read a collection as a Focus session
 
 - Collection detail now offers Start or Continue, reading the saved collection order across categories. Hidden, removed and missing entries are skipped.

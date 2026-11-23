@@ -419,6 +419,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   // (v4.6.0) Tajweed rule preferences: which rules are ON (all by default)
   // and each family's color. Empty object = the standard chart exactly.
   tajweedPrefs: {},
+  tajweedConvention: 'dar-al-maarifah',
   // (v5.17.19) 'guided' walks the stages in order; 'open' lets a reader jump
   // straight to any session. A preference, never a capability gate — and
   // switching between them must not touch progress.

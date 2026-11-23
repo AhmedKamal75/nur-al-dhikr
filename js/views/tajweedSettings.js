@@ -21,6 +21,7 @@ import {
   ruleEnabled,
   effectiveRuleColor,
 } from '../domain/tajweed.js';
+import { tajweedConventionHTML } from './tajweedConvention.js';
 import { renderAyahWords } from './tafsirPanel.js';
 
 export function buildTajweedSettingsPanel(state) {
@@ -81,6 +82,7 @@ export function buildTajweedSettingsPanel(state) {
   <div class="tajpick">
     <h2 id="modal-title-tajweed-settings">${t('tajweed.rulesTitle', lang)}</h2>
     <p class="view-sheet__intro">${t('tajweed.rulesHint', lang)}</p>
+    ${tajweedConventionHTML(state)}
 
     <p class="tajpick__sample tajweed-sample" dir="rtl" lang="ar" aria-hidden="true">${renderAyahWords(BISMILLAH_AR, null, 1, 0, { tappable: false, tajweed: true, prefs })}</p>
 

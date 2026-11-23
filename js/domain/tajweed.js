@@ -1513,7 +1513,11 @@ export const TAJWEED_FAMILY_VARS = Object.freeze({
 /** Safe read of the prefs slice (absent/hostile → empty = all standard). */
 export function tajweedPrefsOf(state) {
   const p = state?.settings?.tajweedPrefs;
-  return p && typeof p === 'object' && !Array.isArray(p) ? p : {};
+  const prefs = p && typeof p === 'object' && !Array.isArray(p) ? p : {};
+  return {
+    ...prefs,
+    convention: state?.settings?.tajweedConvention === 'lpmq' ? 'lpmq' : 'dar-al-maarifah',
+  };
 }
 
 /** A rule is active unless explicitly switched off (all-on default). */

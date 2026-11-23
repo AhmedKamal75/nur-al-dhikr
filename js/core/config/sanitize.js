@@ -333,6 +333,9 @@ export function sanitizeSettings(raw) {
     showTranslation: asBool(s.showTranslation, d.showTranslation),
     showHadithArabic: asBool(s.showHadithArabic, d.showHadithArabic),
     tajweedPrefs: sanitizeTajweedPrefs(s.tajweedPrefs),
+    tajweedConvention: ['lpmq', 'dar-al-maarifah'].includes(s.tajweedConvention)
+      ? s.tajweedConvention
+      : d.tajweedConvention,
     // Enum, not a boolean: 'open' and 'guided' are both first-class and a
     // junk value must fall back to the plan rather than to "no restrictions".
     tajweedPathMode: TAJWEED_PATH_MODES.includes(s.tajweedPathMode)
