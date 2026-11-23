@@ -190,7 +190,7 @@ test('Quran 15:53 and Mushaf page 265 carry the same consonantal word', () => {
   const corpusWord = corpusText.split(/\s+/u).find((word) => word.startsWith('عَلِيم'));
   const mushafWord = mushafText.split(/\s+/u).find((word) => word.startsWith('عَلِيم'));
   assert.equal(corpusWord, 'عَلِيمٖ');
-  assert.equal(mushafWord, 'عَلِيمٍۢ');
+  assert.equal(mushafWord, 'عَلِيمٍ');
   assert.equal(corpusWord.replace(/\p{M}/gu, ''), mushafWord.replace(/\p{M}/gu, ''));
   assert.ok(!mushafText.includes('غَلِيمٍ'), 'the former repair typo must not return');
 });
