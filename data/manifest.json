@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "version": "5.17.145",
+  "version": "5.17.146",
   "mode": "full",
   "algorithm": "sha256",
   "files": [
@@ -1017,7 +1017,7 @@
     {
       "path": "mushaf/265.json",
       "bytes": 2767,
-      "sha256": "d39382d394971e9b937dfa79ae6837ec2a326aa5f39199c33b30093937bf624f"
+      "sha256": "4e3921a3e796113bc1dee7803d53232db553f2ae35d11c5bb83f3689b80ffa2a"
     },
     {
       "path": "mushaf/266.json",
@@ -9461,13 +9461,13 @@
     },
     {
       "path": "tajweed-practice.json",
-      "bytes": 2773128,
-      "sha256": "87f4a3deba4d63868e268ae3f585f2328118d0a4399993a7d68c22f80c0d2358"
+      "bytes": 2814142,
+      "sha256": "e94a2d9bb91cd27809df6f20337cea0ed30c02f2c46b88c2eea58e3a3d54dead"
     },
     {
       "path": "tajweed-sources.json",
-      "bytes": 19696,
-      "sha256": "32005d791530116785c72286767be618ef717f31df94970517948f3eec75fb94"
+      "bytes": 20695,
+      "sha256": "5d0e3209a6640ec66a70a8e885e24cfacd26780204d0a783c260507b001e2ae6"
     },
     {
       "path": "translations/fr-hamidullah/1.json",

@@ -1,3 +1,9 @@
+## v5.17.146 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
+
+- Adds a small, test-covered declarative lookup for the mutually exclusive noon-sakinah/tanween next-letter family; contextual detection remains in the shared classifier.
+- Incorporates cross-rasm audit instrumentation and corpus-backed regression candidates for variant tanween and hamza spellings. Canonical Qur’an/Mushaf text is unchanged.
+- This is not a full Tajweed rewrite or scholarly certification. Full-corpus mismatch triage, remaining rule families, Node/CI, browser-glyph and source-backed review gates remain required.
+
 ## v5.17.145 — prayer names never break mid-word (ribbon, times list, resume card)
 
 Phone-QA follow-up (2026-11-23): after the badge-crush fix, prayer NAMES
@@ -507,6 +513,20 @@ No religious data was changed.
 ## v5.17.89 — Mushaf contextual study rail
 
 - Ayah taps now open the contextual Study rail beneath the Mushaf paper.
+
+## v5.17.88 — Unified ayah study journey
+
+- Added a compact **Continue studying** strip to the inline ayah study tray.
+- From the same ayah, the user can move directly to **Tafsir, the selected word's root, Tajweed course, memorization, or Mutashabihat** without losing the ayah context on routes that support it.
+- The root destination appears only when a selected word has a real root; no fabricated fallback is shown.
+- Added English/Arabic labels and restrained Mushaf/Qur'an styling for the new study bridge.
+
+## v5.17.87 — Qur'an study gateway + teach-before-drill Tajweed
+
+- The classic Qur'an index now exposes a restrained study gateway for the four major study depths already shipped: Mushaf, Word Study, Tajweed course, and Look-alike Ayat. This improves discoverability without moving them into a generic dashboard or changing the settled Qur'an navigation hierarchy.
+- Tajweed course rule rows now expose two distinct intentions: **Learn** opens the sourced teaching lesson; the existing rule action remains the drill. A learner no longer has to infer that tapping a curriculum rule immediately starts a quiz.
+- Tajweed rule lessons now surface their citation directly beside the definition, before the example ayahs and drill CTA.
+- All new user-facing strings are bilingual; mobile collapses the Qur'an study gateway to a compact two-column link grid.
 
 ## v5.17.86 — Focus completion-state handoff
 
@@ -5682,17 +5702,3 @@ runtime subsystems); the 1,878-line `state.js` became the
 system was rewritten on a token pipeline with mathematical scales; the
 docs were consolidated from 3,225 lines of history into this file +
 ARCHITECTURE.md + CREDITS.md.
-
-## v5.17.88 — Unified ayah study journey
-
-- Added a compact **Continue studying** strip to the inline ayah study tray.
-- From the same ayah, the user can move directly to **Tafsir, the selected word's root, Tajweed course, memorization, or Mutashabihat** without losing the ayah context on routes that support it.
-- The root destination appears only when a selected word has a real root; no fabricated fallback is shown.
-- Added English/Arabic labels and restrained Mushaf/Qur'an styling for the new study bridge.
-
-## v5.17.87 — Qur'an study gateway + teach-before-drill Tajweed
-
-- The classic Qur'an index now exposes a restrained study gateway for the four major study depths already shipped: Mushaf, Word Study, Tajweed course, and Look-alike Ayat. This improves discoverability without moving them into a generic dashboard or changing the settled Qur'an navigation hierarchy.
-- Tajweed course rule rows now expose two distinct intentions: **Learn** opens the sourced teaching lesson; the existing rule action remains the drill. A learner no longer has to infer that tapping a curriculum rule immediately starts a quiz.
-- Tajweed rule lessons now surface their citation directly beside the definition, before the example ayahs and drill CTA.
-- All new user-facing strings are bilingual; mobile collapses the Qur'an study gateway to a compact two-column link grid.

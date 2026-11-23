@@ -233,3 +233,18 @@ test('Madd al-Lin of ʿAyn cites the Tuhfat verse naming its two faces', () => {
     'https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1'
   );
 });
+
+test('Izhar citation includes the official source for the four word-level exceptions', () => {
+  const en = tajweedCitation('izhar', 'en');
+  const ar = tajweedCitation('izhar', 'ar');
+  assert.ok(en);
+  assert.equal(en.also.length, 1);
+  assert.equal(en.also[0].title, 'Rulings of Nūn Sākinah and Tanwīn');
+  assert.equal(
+    en.also[0].url,
+    'https://awkafonline.gov.eg/content-sections/116/4995/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D9%86%D9%88%D9%86-%D8%A7%D9%84%D8%B3%D8%A7%D9%83%D9%86%D8%A9%D8%8C-%D9%88%D8%A7%D9%84%D8%AA%D9%86%D9%88%D9%8A%D9%86'
+  );
+  assert.equal(en.also[0].lines, 'izhar mutlaq section');
+  assert.equal(ar.also[0].title, 'أحكام النون الساكنة والتنوين');
+  assert.equal(ar.also[0].lines, 'فقرة الإظهار المطلق');
+});

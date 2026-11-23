@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 245 — data files: 27 — tests: 285
+- js modules: 245 — data files: 27 — tests: 287
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -1632,7 +1632,7 @@ job: full-text search over one bundled tafsir edition. Tafsir is modern Arabic p
 
 job: A deterministic Tajweed (recitation-rule) classifier that runs directly against this app's own Uthmani text. Character-index alignment between this app's text and any pre-computed third-party annotat…
 
-- exports: `BISMILLAH_AR` (const), `TAJWEED_FAMILIES` (const), `TAJWEED_RULES` (const), `classifyWordTajweed` (function), `CLASSIFY_MEMO_CAP` (const), `clearClassifyMemo` (function), `classifyMemoSizeForTests` (function), `classifyAyahTajweed` (function), `tajweedRule` (function), `canonicalWordTokens` (function), `ornamentTokenKind` (function), `matchesAccentWord` (function), `sameSurfaceWord` (function), `containsSurfaceWord` (function), `wordUnits` (function), `TAJWEED_FAMILY_VARS` (const), `tajweedPrefsOf` (function), `ruleEnabled` (function), `effectiveRuleColor` (function), `filterSpansByPrefs` (function), `TAJWEED_COLOR_CHOICES` (const)
+- exports: `BISMILLAH_AR` (const), `NOON_TANWEEN_RULE_GROUP` (const), `NOON_TANWEEN_SAME_WORD_EXCEPTIONS` (const), `noonTanweenRuleForNextBase` (function), `TAJWEED_FAMILIES` (const), `TAJWEED_RULES` (const), `classifyWordTajweed` (function), `CLASSIFY_MEMO_CAP` (const), `clearClassifyMemo` (function), `classifyMemoSizeForTests` (function), `classifyAyahTajweed` (function), `tajweedRule` (function), `canonicalWordTokens` (function), `ornamentTokenKind` (function), `matchesAccentWord` (function), `sameSurfaceWord` (function), `containsSurfaceWord` (function), `wordUnits` (function), `TAJWEED_FAMILY_VARS` (const), `tajweedPrefsOf` (function), `ruleEnabled` (function), `effectiveRuleColor` (function), `filterSpansByPrefs` (function), `TAJWEED_COLOR_CHOICES` (const)
 - emits: —
 - handles: —
 - i18n: —
@@ -3179,6 +3179,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `NAV_GROUPS`: `js/ui/shell.js`
 - `NISAB_GOLD_GRAMS`: `js/domain/zakat.js`
 - `NISAB_SILVER_GRAMS`: `js/domain/zakat.js`
+- `NOON_TANWEEN_RULE_GROUP`: `js/domain/tajweed.js`
+- `NOON_TANWEEN_SAME_WORD_EXCEPTIONS`: `js/domain/tajweed.js`
 - `NUDGE_FRESH_DAYS`: `js/domain/nudge.js`
 - `NUDGE_MIN_GAP_DAYS`: `js/domain/nudge.js`
 - `NUDGE_REPEAT_DAYS`: `js/domain/nudge.js`
@@ -3996,6 +3998,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `nextSpreadPage`: `js/services/mushaf.js`
 - `nextStats`: `js/domain/tajweedPractice.js`
 - `nodeKey`: `js/app/renderer.js`
+- `noonTanweenRuleForNextBase`: `js/domain/tajweed.js`
 - `normalizeArabic`: `js/core/utils.js`
 - `normalizeAyahKey`: `js/domain/hifz.js`
 - `normalizeCategory`: `js/core/schema.js`
@@ -5432,6 +5435,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `exactly`: `js/app/installPrompt.js`, `js/domain/install.js`, `js/domain/locations.js`
 - `example`: `js/domain/tajweedLessons.js`
 - `except`: `js/core/utils.js`
+- `exceptions`: `js/domain/tajweed.js`
 - `existing`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/core/config/sanitize.js`, `js/core/config/views.js`, `js/domain/ramadanPlanner.js`, `js/domain/reminderPresets.js`, `js/views/mood.js`, `js/views/quiz.js`
 - `exists`: `js/domain/sessionFlags.js`, `js/domain/worship.js`
 - `expandquerywithroots`: `js/domain/rootAwareSearch.js`
@@ -5627,7 +5631,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `gregorian`: `js/domain/calendar.js`, `js/views/calendar.js`
 - `grid`: `js/views/calendar.js`, `js/views/hadith.js`
 - `ground`: `js/domain/ambient.js`
-- `group`: `js/domain/offline.js`, `js/domain/roots.js`, `js/views/offline.js`
+- `group`: `js/domain/offline.js`, `js/domain/roots.js`, `js/domain/tajweed.js`, `js/views/offline.js`
 - `grouped`: `js/ui/viewSheet.js`, `js/views/roots.js`
 - `groups`: `js/app/offlineJobs.js`, `js/core/config/nav.js`, `js/domain/offline.js`, `js/ui/shell.js`, `js/views/settings.js`
 - `growth`: `js/domain/garden.js`, `js/views/garden.js`
@@ -6199,6 +6203,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `nobody`: `js/views/qibla.js`
 - `nodekey`: `js/app/renderer.js`
 - `none`: `js/app/fullscreen.js`
+- `noon`: `js/domain/tajweed.js`
+- `noontanweenrulefornextbase`: `js/domain/tajweed.js`
 - `normal`: `js/core/storage.js`
 - `normalization`: `js/core/migration.js`, `js/core/schema.js`
 - `normalizearabic`: `js/core/utils.js`
@@ -6825,7 +6831,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `sajda`: `js/services/mushaf.js`
 - `salawat`: `js/domain/reminderPresets.js`
 - `salvage`: `js/app/inputs.js`
-- `same`: `js/domain/adhkarTiming.js`, `js/domain/ambient.js`, `js/domain/khatma.js`, `js/domain/roots.js`, `js/domain/tajweedPractice.js`, `js/services/editor.js`, `js/ui/emptyState.js`, `js/ui/recitationConsole.js`, `js/ui/viewSheet.js`, `js/views/certificate.js`, `js/views/library.js`, `js/views/qibla.js`, `js/views/ramadan.js`, `js/views/studyTray.js`
+- `same`: `js/domain/adhkarTiming.js`, `js/domain/ambient.js`, `js/domain/khatma.js`, `js/domain/roots.js`, `js/domain/tajweed.js`, `js/domain/tajweedPractice.js`, `js/services/editor.js`, `js/ui/emptyState.js`, `js/ui/recitationConsole.js`, `js/ui/viewSheet.js`, `js/views/certificate.js`, `js/views/library.js`, `js/views/qibla.js`, `js/views/ramadan.js`, `js/views/studyTray.js`
 - `samesurfaceword`: `js/domain/tajweed.js`
 - `sample`: `js/domain/roots.js`, `js/views/tajweedSettings.js`
 - `samples`: `js/services/gapTelemetry.js`
@@ -7213,6 +7219,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `tajweedprefsof`: `js/domain/tajweed.js`
 - `tajweedrule`: `js/domain/tajweed.js`
 - `takeovermanualzoom`: `js/app/autoFit.js`
+- `tanween`: `js/domain/tajweed.js`
 - `tapping`: `js/views/studyTray.js`
 - `taraweeh`: `js/domain/ramadanPlanner.js`, `js/services/moshafAvailability.js`
 - `taraweehcount`: `js/domain/ramadanPlanner.js`
@@ -7438,7 +7445,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `wizardstepindex`: `js/domain/onboarding.js`
 - `wmm2025`: `js/domain/wmm-coefs.js`, `js/domain/wmm.js`
 - `wmm2025cof`: `js/domain/wmm-coefs.js`
-- `word`: `js/core/config/quran.js`, `js/core/state/slices/quran.js`, `js/domain/grammarDrill.js`, `js/domain/roots.js`, `js/domain/wordStudy.js`, `js/views/roots.js`, `js/views/tafsirPanel.js`
+- `word`: `js/core/config/quran.js`, `js/core/state/slices/quran.js`, `js/domain/grammarDrill.js`, `js/domain/roots.js`, `js/domain/tajweed.js`, `js/domain/wordStudy.js`, `js/views/roots.js`, `js/views/tafsirPanel.js`
 - `wordaffixlabels`: `js/domain/wordStudy.js`
 - `wordbookmarkkey`: `js/domain/wordStudy.js`
 - `worddetailtags`: `js/domain/wordStudy.js`
@@ -7735,6 +7742,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/tafsir-study-context.test.js` — (no header comment) (pins: `../js/views/tafsirPanel.js`)
 - `tests/tafsirEnglish.test.js` — item 20 (English tafsir) gates: 1. the en-mukhtasar catalog entry is bundled with names, slug and an explicit lang marker (neighbors and defaults untouched); (pins: `../js/views/tafsirPanel.js`, `./helpers/seedMode.mjs`)
 - `tests/tafsirSearch.test.js` — bundled-edition full-text tafsir search. Pins the pure index (diacritic-insensitive AND + phrase bonus, hostile input, malformed files) and the hard rule: remote editions are never (pins: `../js/domain/tafsirSearch.js`)
+- `tests/tajweed-audit-comparison.test.js` — (no header comment) (pins: —)
 - `tests/tajweed-classify.test.js` — the finished generator is finally reachable (v5.17.20) buildClassifyQuestion was written, tested and provenance-tagged when the (pins: `../js/domain/tajweed.js`, `../js/domain/tajweedPractice.js`, `../js/domain/tajweedSources.js`)
 - `tests/tajweed-coherence.test.js` — (no header comment) (pins: `../js/domain/tajweed.js`, `../js/views/tafsirPanel.js`, `../js/views/tajweedPracticeView.js`, `../js/views/tajweedSettings.js`)
 - `tests/tajweed-corpus-sweep.test.js` — Corpus-wide Tajweed execution sweep. This is an execution/invariant test, not a scholarly oracle. It runs every bundled Qur'an ayah through the classifier and catches crashes, invalid (pins: `../js/domain/tajweed.js`)
@@ -7742,6 +7750,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/tajweed-makharij.test.js` — the makharij/sifat spreads (v5.17.32) Handoff §8.4: render the 17/16/14 spread, never resolve it. There is no TAJ-09 ruling anywhere in the tree (docs/TRUSTED-SOURCES.md §1c and (pins: `../js/domain/tajweedCourse.js`, `../js/domain/tajweedSources.js`, `../js/views/tajweedCourseView.js`)
 - `tests/tajweed-quiz-modes.test.js` — (TAJ-QUIZ-01) unified quiz modes on the existing classifier engine (no second quiz system). Modes: find-spans (existing) / find-word / classify / review. (pins: `../js/domain/tajweed.js`, `../js/domain/tajweedPractice.js`)
 - `tests/tajweed-rasm-equivalence.test.js` — (no header comment) (pins: `../js/domain/tajweed.js`)
+- `tests/tajweed-rule-spec.test.js` — (no header comment) (pins: `../js/domain/tajweed.js`, `../js/domain/tajweedSources.js`)
 - `tests/tajweed-sources.test.js` — no rule may be taught without a citation (v5.17.18) Tajweed rule definitions and study entries evolve; every user-facing rule description is religious teaching, so AGENTS.md §1.1a requires it to (pins: `../js/domain/tajweed.js`, `../js/domain/tajweedSources.js`)
 - `tests/tajweed-words.test.js` — word-tap pop-up integrity (bug 1) + engine coverage for corpus-attested marks and rules (bug 2). Bug 1: mushaf pages, classic docs, and grammar records tokenize (pins: `../js/domain/tajweed.js`, `../js/domain/wordStudy.js`, `../js/views/tafsirPanel.js`, `./helpers/seedMode.mjs`)
 - `tests/tajweed.test.js` — the deterministic Tajweed rule classifier. Test cases are chosen from well-known textbook examples so each assertion doubles as documentation of the rule it's checking. (pins: `../js/domain/tajweed.js`)

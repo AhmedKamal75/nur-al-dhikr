@@ -1,3 +1,10 @@
+# v5.17.146 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
+
+- Adds a data-driven next-letter table for the mutually exclusive noon-sakinah/tanween family, with contract tests for table integrity, cited rule IDs, and parity with the live classifier.
+- Combines the newest audit instrumentation and targeted cross-rasm regression candidates on a clean branch from main.
+- Carries the verified one-word mushaf correction at 15:53 (عَلِيمٍ), approved explicitly by the owner after three-source verification.
+- No other Qur’an text was edited or normalized. This is a prototype, not proof that all Tajweed rules are correct; full source-backed and browser review remains mandatory.
+
 # v5.17.145 — prayer names never break mid-word (ribbon, times list, resume card)
 
 - Phone-QA fix (2026-11-23, follow-up to the badge crush): "Sunrise", "Dhuhr" and "Maghrib" still wrapped mid-word in the Home prayer ribbon at 390px. Root cause: the phone cell-tightening media rule sat ABOVE the base `.home-prayer-ribbon__cell` rule, so source order binned it and phones kept desktop padding. The rule now lands after the base rule, with a 3px track gap, 1px side padding and a 12px panel inset — measured: all six names render on one line with the Now/Next badges on their own line.
@@ -31,7 +38,6 @@
 
 - Home "Today's prayers": on a phone, the cells carrying a live Now/Next badge crushed their prayer names to one letter per line (the inflexible badge pill starved the name in the flex topline). The topline now wraps, so the badge drops to its own line and the name renders like its unbadged neighbours.
 - New EN+AR phone-viewport e2e spec pins the layout: it fails on the old CSS and passes on the new.
-- v5.17.140 is held by the tajweed-interpreter integration branch, still in review.
 
 # v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
 

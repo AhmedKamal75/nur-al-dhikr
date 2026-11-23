@@ -385,6 +385,7 @@ export function wirePlayer() {
 // can never stage a double fade (console at 3s, bar at 5s) again.
 export const PLAYER_IDLE_MS = 5000;
 let playerIdleTimer = null;
+let playerIdleWired = false;
 
 function setPlayerIdle(idle) {
   if (typeof document === 'undefined') return;
@@ -435,7 +436,10 @@ export function resetPlayerIdleTimer() {
 }
 
 function wirePlayerIdle() {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || playerIdleWired) return;
+  playerIdleWired = true;
+  store.subscribe(syncPlayerIdleArmed);
+  syncPlayerIdleArmed();
   for (const evt of ['pointermove', 'pointerdown', 'keydown', 'touchstart', 'wheel']) {
     window.addEventListener(evt, () => resetPlayerIdleTimer(), { passive: true });
   }

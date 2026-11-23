@@ -75,6 +75,21 @@
     "ar": "مقال رسمي لوزارة الأوقاف المصرية. يذكر قسم أحكام الحروف في أوائل السور استثناء العين بمقدار أربع أو ست حركات."
    },
    "url": "https://awkafonline.gov.eg/content-sections/116/5024/%D8%A7%D9%84%D9%85%D8%AF-%D9%88%D8%A7%D9%84%D9%82%D8%B5%D8%B1"
+  },
+  "awqaf-noon-sakinah": {
+   "author": {
+    "en": "Egyptian Ministry of Awqaf",
+    "ar": "وزارة الأوقاف المصرية"
+   },
+   "shortTitle": {
+    "en": "Rulings of Nūn Sākinah and Tanwīn",
+    "ar": "أحكام النون الساكنة والتنوين"
+   },
+   "note": {
+    "en": "Official Ministry of Awqaf explanation that names the four one-word Izhar Mutlaq exceptions: al-dunya, bunyan, sinwan, and qinwan.",
+    "ar": "شرح رسمي لوزارة الأوقاف المصرية يذكر الكلمات الأربع للإظهار المطلق: الدنيا، وبنيان، وصنوان، وقنوان."
+   },
+   "url": "https://awkafonline.gov.eg/content-sections/116/4995/%D8%A3%D8%AD%D9%83%D8%A7%D9%85-%D8%A7%D9%84%D9%86%D9%88%D9%86-%D8%A7%D9%84%D8%B3%D8%A7%D9%83%D9%86%D8%A9%D8%8C-%D9%88%D8%A7%D9%84%D8%AA%D9%86%D9%88%D9%8A%D9%86"
   }
  },
  "rules": {
@@ -165,7 +180,14 @@
    "work": "tuhfat-al-atfal",
    "lines": "6-13",
    "review": "sourced",
-   "topic": "nun-sakinah"
+   "topic": "nun-sakinah",
+   "also": [
+    {
+     "work": "awqaf-noon-sakinah",
+     "lines": "izhar mutlaq section",
+     "review": "sourced"
+    }
+   ]
   },
   "izhar_shafawi": {
    "work": "tuhfat-al-atfal",
