@@ -165,6 +165,7 @@
     "js/domain/tajweedSources.js": "2d1868935deb44a0389fe1b18879104402ef4b040b6d488473436bdcb2d43a4b",
     "js/domain/tajweedLessons.js": "842cae67c37a6afbcca66a632c1b535079a3b00eb9589c68e56bcc7baf56aaed",
     "js/domain/tajweedPractice.js": "9ec51ef2790fc2ae1782db7993e78b0c24b4660d01c60c08d6fcc6d371f3d636",
+    "js/domain/timezone.js": "da2b4818156b63194c323589e39fc2a7ffb4630570fd6538295ce6ccc2134bcb",
     "js/domain/translationCompare.js": "0164747a0960836f324e5f354c298f4d882b46a76dc2787d214ea04281ab55d6",
     "js/domain/wmm-coefs.js": "90f79c46e2a567adaaa834fa53df2ecc0e7d9ccff0349313f4d864687ca57a3e",
     "js/domain/wmm.js": "1b6bf6d0022d50ac38d116def2293a26491e0a4c8b71a06d94af8ed7f2c8c711",
@@ -278,6 +279,6 @@
     "assets/fonts/ScheherazadeNew-Bold.woff2": "6b6d12c4d0d9f2ec3ed790cc168ec10af7bd57862a0aaf6be112624b027ae0ef",
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
-    "sw.js": "8d6e0a078c742e85dedaf7afe3a68172dea35d6058f28f16291e23275d964089"
+    "sw.js": "6ed0c45dcc5ab9bbabcb930820f1da8e26b5b89c52c88c40e1bb6fbe8157bf8a"
   }
 }
