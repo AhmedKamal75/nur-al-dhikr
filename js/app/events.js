@@ -1,3 +1,4 @@
+import { initFocusWake } from './focusWakeLock.js';
 import { rt } from './rt.js';
 import { closeNavDrawer } from './drawer.js';
 import { handleAdhanImport, handleImportFile, handleImportPlanFile } from './fileImports.js';
@@ -397,6 +398,7 @@ function armAyahLongPress() {
 export function bindGlobalEvents() {
   // (v4.4) TRUE fullscreen Mushaf: browser-exit sync + wake-lock re-arm.
   initFullscreenSync();
+  initFocusWake();
   // (v4.4) Control auto-fade: any pointer/key activity in a fullscreen
   // session brings the bar back and re-arms the fade timer. pointermove
   // covers mouse approach; pointerdown covers TOUCH — a stationary tap

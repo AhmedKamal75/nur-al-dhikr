@@ -4,6 +4,7 @@
  * (ticker/compass), guard resets, and the view re-render itself.
  */
 
+import { syncFocusWake, stopFocusWake } from './focusWakeLock.js';
 import { rt } from './rt.js';
 import {
   ensureRecitersData,
@@ -183,6 +184,10 @@ export function resetStaleFetchGuards(state) {
 export function onStateChange(stateArg, action) {
   try {
     let state = stateArg;
+    const wakeBefore = store.getState();
+    if (action?.type === 'RESET_ALL' || action?.type === 'RESTORE_STATE') stopFocusWake();
+    syncFocusWake(state);
+    if (store.getState() !== wakeBefore) state = store.getState();
     // FIX (walkthrough v3.4 W-1): a modal left open used to survive view
     // navigation — most reproducibly via the browser Back button / mobile
     // back-swipe with a card menu open: the hash changes, the view under
