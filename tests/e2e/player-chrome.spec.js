@@ -3,35 +3,19 @@
  * restore keeps the session, Space / arrows / M drive it, and the bar
  * fades after 5s idle and returns on activity.
  */
+import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
 
 /**
- * A valid, silent WAV keeps this chrome test independent of third-party CDN
- * uptime. It exercises the real media element and state machine without
- * embedding or playing Qur'an audio as test data.
+ * A real, decodable silent MP3 keeps this chrome test independent of
+ * third-party CDN uptime. It exercises the real media element and state
+ * machine without embedding or playing Qur'an audio as test data. It MUST
+ * be a genuine MP3: Chromium sniffs and plays WAV bytes served against an
+ * .mp3 URL, but Firefox rejects them (MEDIA_ERR_DECODE), which collapses
+ * the session for engine-specific reasons unrelated to the chrome contract.
+ * Fixture: tests/e2e/fixtures/silence-120s.mp3 (ffmpeg anullsrc, 16kbps mono).
  */
-function silentWav(durationSeconds = 120) {
-  const channels = 1;
-  const sampleRate = 8000;
-  const bitsPerSample = 16;
-  const blockAlign = (channels * bitsPerSample) / 8;
-  const dataSize = sampleRate * blockAlign * durationSeconds;
-  const wav = Buffer.alloc(44 + dataSize);
-  wav.write('RIFF', 0);
-  wav.writeUInt32LE(36 + dataSize, 4);
-  wav.write('WAVE', 8);
-  wav.write('fmt ', 12);
-  wav.writeUInt32LE(16, 16);
-  wav.writeUInt16LE(1, 20);
-  wav.writeUInt16LE(channels, 22);
-  wav.writeUInt32LE(sampleRate, 24);
-  wav.writeUInt32LE(sampleRate * blockAlign, 28);
-  wav.writeUInt16LE(blockAlign, 32);
-  wav.writeUInt16LE(bitsPerSample, 34);
-  wav.write('data', 36);
-  wav.writeUInt32LE(dataSize, 40);
-  return wav;
-}
+const SILENT_MP3 = readFileSync(new URL('./fixtures/silence-120s.mp3', import.meta.url));
 
 test('player chrome: minimize, keys, idle fade keep one session', async ({ page }) => {
   // (v5.17.2, matrix) fixed sleeps alone total ~9s plus long polls; triple
@@ -43,16 +27,15 @@ test('player chrome: minimize, keys, idle fade keep one session', async ({ page 
   // The chrome contract should not fail because a public streaming mirror
   // is down, CORS changes, or a CI browser cannot reach the CDN. Fulfill only
   // the known verse-audio hosts with silence; all app/data requests are real.
-  const mediaFixture = silentWav();
   const fulfillSilentMedia = (route) =>
     route.fulfill({
       status: 200,
       headers: {
-        'Content-Type': 'audio/wav',
+        'Content-Type': 'audio/mpeg',
         'Access-Control-Allow-Origin': '*',
         'Cache-Control': 'no-store',
       },
-      body: mediaFixture,
+      body: SILENT_MP3,
     });
   await page.route('https://cdn.islamic.network/quran/audio/**', fulfillSilentMedia);
   await page.route('https://everyayah.com/data/**', fulfillSilentMedia);
