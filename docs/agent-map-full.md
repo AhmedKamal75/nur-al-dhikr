@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 245 — data files: 27 — tests: 287
+- js modules: 245 — data files: 27 — tests: 288
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -2555,9 +2555,9 @@ job: the root-family browser (v3.22.0). A dedicated view that shows EVERY occurr
 job: Global search: the Adhkar/Duas/Names library index (search.js) plus, since v3.6, the entire Qur'an — Uthmani Arabic (diacritic-insensitive) and the Sahih International translation — with jump-to-ayah…
 
 - exports: `renderSearch` (function)
-- emits: `clear-search-history`, `navigate`, `run-search`, `search-page`
+- emits: `clear-search-history`, `navigate`, `run-search`, `search-page`, `set-setting`
 - handles: —
-- i18n: `mushaf.openInMushaf`, `mushaf.pageLabel`, `nav.search`, `search.breakdown`, `search.clearHistory`, `search.emptyHint`, `search.emptyNamed`, `search.loadingCorpus`, `search.mushafPage`, `search.next`, `search.noResults`, `search.noResultsHint`, `search.pageOf`, `search.placeholder`, `search.previous`, `search.quranResults`, `search.recent`, `search.relatedRoot`, `search.rootFamily`, `search.rootsCount` (+8 more)
+- i18n: `mushaf.openInMushaf`, `mushaf.pageLabel`, `nav.search`, `search.breakdown`, `search.clearHistory`, `search.emptyHint`, `search.emptyNamed`, `search.emptySaved`, `search.emptySavedHint`, `search.loadingCorpus`, `search.mushafPage`, `search.next`, `search.noResults`, `search.noResultsHint`, `search.pageOf`, `search.placeholder`, `search.previous`, `search.quranResults`, `search.recent`, `search.relatedRoot` (+14 more)
 - routes: `VIEWS.HADITH`, `VIEWS.MUSHAF`, `VIEWS.QURAN`, `VIEWS.ROOTS`
 
 ### `js/views/settings.js`
@@ -2970,7 +2970,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `schedule-toggle`: emitted by `js/views/viewSheets.js`; handled in `js/app/handlers/content.js`
 - `search-page`: emitted by `js/views/search.js`; handled in `js/app/handlers/items.js`
 - `session-start`: emitted by `js/views/category.js`; handled in `js/app/handlers/items.js`
-- `set-setting`: emitted by `js/app/handlers/quranAudio.js`, `js/views/audioManager.js`, `js/views/onboardingPanel.js`, `js/views/settings.js`; handled in `js/app/handlers/system.js`
+- `set-setting`: emitted by `js/app/handlers/quranAudio.js`, `js/views/audioManager.js`, `js/views/onboardingPanel.js`, `js/views/search.js`, `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `share-collection`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `share-item`: emitted by `js/ui/menus.js`; handled in `js/app/handlers/items.js`
 - `stats-heatmap-export`: emitted by `js/views/statistics.js`; handled in `js/app/handlers/worship.js`
@@ -7715,6 +7715,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/search-pagination-590.test.js` — (v5.9.0 origins, SEARCH-01 rework) explicit page-number contracts. No hard truncation: over-limit scopes render "Page X of Y" with (pins: `../js/domain/quranSearch.js`, `../js/views/search.js`)
 - `tests/search-pagination-pages.test.js` — (SEARCH-01) explicit page-number contract. - "Page X of Y" + Previous/Next per scope (no Load More); - page count correct, no duplicated results across pages; (pins: `../js/domain/quranSearch.js`, `../js/domain/searchPagination.js`, `../js/views/search.js`)
 - `tests/search-root-empty.test.js` — (no header comment) (pins: —)
+- `tests/search-saved-scope.test.js` — the Saved scope of global search (C01). The Saved chip narrows the SAME index pass to favorites + collection items via the savedIds option: identical ranking/normalization, never a (pins: `../js/core/config/sanitize.js`, `../js/domain/search.js`)
 - `tests/seedBundle.test.js` — / Seed-bundle contract: the slim archive is intentionally tiny but runnable. (pins: `./helpers/seedMode.mjs`)
 - `tests/separation-renderers.test.js` — template-level language-separation gates (takeover audit A1-A4, A6, B2). The v5.2.31 audit pinned the contract at five renderers; the takeover (pins: `../js/domain/localeContent.js`, `../js/ui/card.js`, `../js/views/editor.js`, `../js/views/hadith.js`, `../js/views/quiz.js`)
 - `tests/session-start-warm.test.js` — (v5.11.0 A) tap-parallel warm: start() fires the lookahead horizon's probes+preloads synchronously at tap time (concurrent with the first ayah's own storage probe), instead (pins: `../js/services/mushaf.js`, `../js/services/recitation.js`, `../js/services/surahPlayback.js`)

@@ -1,3 +1,7 @@
+# v5.17.147 — saved-only scope in global search
+
+Creativity-track item C01 (2026-11-23): a Saved chip beside All in global search. Saved mode searches only the local subset — favorites plus collection items — through the same index, ranking, normalization and root-expansion as an All pass (new savedIds option in domain/search.js); Quran/tafsir/roots/hadith sections stay out of saved results. The scope persists in settings.searchScope (sanitized enum), so it survives navigation. Empty saved library gets its own state; a saved search with no match names the Saved scope. EN+AR.
+
 # v5.17.146 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
 
 - Adds a data-driven next-letter table for the mutually exclusive noon-sakinah/tanween family, with contract tests for table integrity, cited rule IDs, and parity with the live classifier.

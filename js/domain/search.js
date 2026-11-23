@@ -79,9 +79,15 @@ export function buildIndex(itemIndex) {
  * (cross-script bridging, scored below a body hit), and `extraTerms`
  * (root-family Arabic forms from expandQueryWithRoots) append OR-matched
  * expansion hits with viaRoot:true AFTER every exact hit.
+ * `savedIds` (Set of itemIds) narrows the pass to the caller's saved
+ * subset (favorites + collection items) — the Saved scope of the global
+ * search view. Ranking, normalization and root-expansion are identical to
+ * an unscoped pass; an empty set honestly answers [].
  */
-export function search(query, { limit = 50, extraTerms = null } = {}) {
+export function search(query, { limit = 50, extraTerms = null, savedIds = null } = {}) {
   const resultLimit = limit == null ? Infinity : Number(limit);
+  const savedOnly = savedIds instanceof Set;
+  if (savedOnly && savedIds.size === 0) return [];
   const safeLimit = Number.isFinite(resultLimit) ? Math.max(0, resultLimit) : Infinity;
   const q = normalizeSearch(query);
   if (!q) return [];
@@ -91,6 +97,7 @@ export function search(query, { limit = 50, extraTerms = null } = {}) {
   const results = [];
   const exactIds = new Set();
   for (const rec of index) {
+    if (savedOnly && !savedIds.has(rec.itemId)) continue;
     let score = 0;
     let allMatch = true;
     for (const term of terms) {
@@ -123,6 +130,7 @@ export function search(query, { limit = 50, extraTerms = null } = {}) {
     const expanded = [];
     for (const rec of index) {
       if (exactIds.has(rec.itemId)) continue;
+      if (savedOnly && !savedIds.has(rec.itemId)) continue;
       let hits = 0;
       for (const form of extras) {
         if (rec.haystack.includes(form) || rec.titleHaystack.includes(form)) hits += 1;
