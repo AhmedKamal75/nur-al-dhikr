@@ -70,6 +70,15 @@ jobs:
       - run: npm ci
       - run: npm run compress-data
       - run: npx playwright install --with-deps chromium firefox webkit
+      # Firefox/WebKit media fails at the audio output sink when the runner
+      # has no sound device (NS_ERROR_DOM_MEDIA_MEDIASINK_ERR on play()); the
+      # app's mirror failover then honestly kills the session and chrome
+      # assertions lose their bar. Give the job a real (silent) sink instead
+      # of weakening any assertion.
+      - name: Start a null audio sink for browser media
+        run: |
+          pulseaudio --start --exit-idle-time=-1
+          pactl load-module module-null-sink sink_name=ci_sink
       - run: >-
           CROSS_ENGINE=1 npx playwright test tests/e2e/smoke.spec.js
           tests/e2e/player-chrome.spec.js tests/e2e/volume-regression.spec.js
