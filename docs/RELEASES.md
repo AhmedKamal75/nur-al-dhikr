@@ -1,5 +1,3 @@
-
-
 ## v5.17.146 — declarative noon/tanween prototype and cross-rasm evidence (candidate; not certified)
 
 - Adds a small, test-covered declarative lookup for the mutually exclusive noon-sakinah/tanween next-letter family; contextual detection remains in the shared classifier.
