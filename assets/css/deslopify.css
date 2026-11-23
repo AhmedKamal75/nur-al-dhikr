@@ -3059,6 +3059,12 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   font-size: var(--fs-caption);
   opacity: 0.75;
 }
+/* (v5.17.144) the change-city affordance sits in the hero's narrow place
+   rail — keep it one unwrapped line so it never stacks mid-word. */
+.view--prayer .next-prayer-card__change {
+  white-space: nowrap;
+}
+}
 
 /* -------------------------------------------------------------------------
    Pass 11 — utility + secondary feature interiors.

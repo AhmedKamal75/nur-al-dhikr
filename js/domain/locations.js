@@ -39,6 +39,11 @@ export const CITY_REGIONS = Object.freeze([
 
 const CITY_TIMEZONES = Object.freeze({
   cairo: 'Africa/Cairo',
+  alexandria: 'Africa/Cairo',
+  sanaa: 'Asia/Aden',
+  tripoli: 'Africa/Tripoli',
+  mogadishu: 'Africa/Mogadishu',
+  kano: 'Africa/Lagos',
   mecca: 'Asia/Riyadh',
   medina: 'Asia/Riyadh',
   jerusalem: 'Asia/Jerusalem',
@@ -89,9 +94,12 @@ const CITY_TIMEZONES = Object.freeze({
   islamabad: 'Asia/Karachi',
   lahore: 'Asia/Karachi',
   mumbai: 'Asia/Kolkata',
+  lucknow: 'Asia/Kolkata',
   singapore: 'Asia/Singapore',
   kabul: 'Asia/Kabul',
   tashkent: 'Asia/Tashkent',
+  dushanbe: 'Asia/Dushanbe',
+  bishkek: 'Asia/Bishkek',
   beijing: 'Asia/Shanghai',
   tokyo: 'Asia/Tokyo',
   seoul: 'Asia/Seoul',
@@ -115,6 +123,17 @@ const CITY_TIMEZONES = Object.freeze({
 export const CITY_PRESETS = Object.freeze(
   [
     { id: 'cairo', en: 'Cairo', ar: 'القاهرة', lat: 30.0444, lng: 31.2357, region: 'me' },
+    // (v5.17.144) the reporter's own city was missing from the directory -
+    // the one-tap path genuinely "couldn't be used" for him (phone QA item
+    // 2). Alexandria joins Cairo's region + zone.
+    {
+      id: 'alexandria',
+      en: 'Alexandria',
+      ar: 'الإسكندرية',
+      lat: 31.2001,
+      lng: 29.9187,
+      region: 'me',
+    },
     { id: 'mecca', en: 'Mecca', ar: 'مكة المكرمة', lat: 21.4225, lng: 39.8262, region: 'me' },
     { id: 'medina', en: 'Medina', ar: 'المدينة المنورة', lat: 24.5247, lng: 39.5692, region: 'me' },
     { id: 'jerusalem', en: 'Jerusalem', ar: 'القدس', lat: 31.7683, lng: 35.2137, region: 'me' },
@@ -125,6 +144,7 @@ export const CITY_PRESETS = Object.freeze(
     { id: 'dubai', en: 'Dubai', ar: 'دبي', lat: 25.2048, lng: 55.2708, region: 'me' },
     { id: 'doha', en: 'Doha', ar: 'الدوحة', lat: 25.2854, lng: 51.531, region: 'me' },
     { id: 'muscat', en: 'Muscat', ar: 'مسقط', lat: 23.588, lng: 58.3829, region: 'me' },
+    { id: 'sanaa', en: 'Sanaa', ar: 'صنعاء', lat: 15.3694, lng: 44.191, region: 'me' },
     {
       id: 'kuwait',
       en: 'Kuwait City',
@@ -149,8 +169,11 @@ export const CITY_PRESETS = Object.freeze(
     },
     { id: 'algiers', en: 'Algiers', ar: 'الجزائر', lat: 36.7538, lng: 3.0588, region: 'africa' },
     { id: 'tunis', en: 'Tunis', ar: 'تونس', lat: 36.8065, lng: 10.1815, region: 'africa' },
+    { id: 'tripoli', en: 'Tripoli', ar: 'طرابلس', lat: 32.8872, lng: 13.1913, region: 'africa' },
     { id: 'dakar', en: 'Dakar', ar: 'دكار', lat: 14.7167, lng: -17.4677, region: 'africa' },
     { id: 'lagos', en: 'Lagos', ar: 'لاغوس', lat: 6.5244, lng: 3.3792, region: 'africa' },
+    { id: 'kano', en: 'Kano', ar: 'كانو', lat: 12.0022, lng: 8.592, region: 'africa' },
+    { id: 'mogadishu', en: 'Mogadishu', ar: 'مقديشو', lat: 2.0469, lng: 45.3182, region: 'africa' },
     { id: 'nairobi', en: 'Nairobi', ar: 'نيروبي', lat: -1.2921, lng: 36.8219, region: 'africa' },
     {
       id: 'johannesburg',
@@ -242,6 +265,7 @@ export const CITY_PRESETS = Object.freeze(
     },
     { id: 'lahore', en: 'Lahore', ar: 'لاهور', lat: 31.5204, lng: 74.3587, region: 'asia' },
     { id: 'mumbai', en: 'Mumbai', ar: 'مومباي', lat: 19.076, lng: 72.8777, region: 'asia' },
+    { id: 'lucknow', en: 'Lucknow', ar: 'لكهنؤ', lat: 26.8467, lng: 80.9462, region: 'asia' },
     {
       id: 'singapore',
       en: 'Singapore',
@@ -252,6 +276,8 @@ export const CITY_PRESETS = Object.freeze(
     },
     { id: 'kabul', en: 'Kabul', ar: 'كابل', lat: 34.5553, lng: 69.2075, region: 'asia' },
     { id: 'tashkent', en: 'Tashkent', ar: 'طشقند', lat: 41.2995, lng: 69.2401, region: 'asia' },
+    { id: 'dushanbe', en: 'Dushanbe', ar: 'دوشنبه', lat: 38.5598, lng: 68.787, region: 'asia' },
+    { id: 'bishkek', en: 'Bishkek', ar: 'بيشكك', lat: 42.8746, lng: 74.5698, region: 'asia' },
     { id: 'beijing', en: 'Beijing', ar: 'بكين', lat: 39.9042, lng: 116.4074, region: 'asia' },
     { id: 'tokyo', en: 'Tokyo', ar: 'طوكيو', lat: 35.6762, lng: 139.6503, region: 'asia' },
     { id: 'seoul', en: 'Seoul', ar: 'سيول', lat: 37.5665, lng: 126.978, region: 'asia' },

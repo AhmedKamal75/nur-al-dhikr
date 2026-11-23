@@ -33,6 +33,12 @@ test('city directory: unique ids, finite in-range coordinates, known regions', (
   })) {
     assert.equal(CITY_PRESETS.find((city) => city.id === id)?.timezone, timezone);
   }
+  // (v5.17.144) phone-QA regression: the reporter's own city was missing,
+  // making the one-tap path unusable for him. Pin it and its zone.
+  const alex = CITY_PRESETS.find((city) => city.id === 'alexandria');
+  assert.ok(alex, 'Alexandria is in the directory');
+  assert.equal(alex.timezone, 'Africa/Cairo');
+  assert.equal(alex.ar, 'الإسكندرية');
   for (const r of CITY_REGIONS) {
     assert.ok(
       CITY_PRESETS.some((c) => c.region === r),

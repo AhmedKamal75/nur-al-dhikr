@@ -272,6 +272,7 @@ export function renderPrayer(state) {
       <div class="next-prayer-card__place">
         ${icon('location', { size: 13 })}
         <span>${placeName}</span>${clock.timeZone ? ` <span class="next-prayer-card__tz" dir="ltr">${escapeHTML(clock.timeZone)}</span>` : ''}
+        <button type="button" class="link-btn link-btn--sm next-prayer-card__change" data-action="prayer-manual-location">${t('prayer.changeLocation', lang)}</button>
       </div>
     </div>
 

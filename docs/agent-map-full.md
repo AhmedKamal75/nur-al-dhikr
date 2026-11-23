@@ -2497,7 +2497,7 @@ job: (v4.6.0) The Prayer page is FOCUSED: the next-prayer hero, the day's times,
 - exports: `PRAYER_ICONS` (object), `alertStatusHTML` (function), `renderPrayer` (function), `sunnahPanelHTML` (function), `qadaPanelHTML` (function), `adhanPanelHTML` (function), `buildMonthModal` (function), `calcPanelHTML` (function), `profilesPanelHTML` (function)
 - emits: `location-profile-apply`, `location-profile-save`, `prayer-adhan-clear`, `prayer-adhan-import`, `prayer-enable-notifications`, `prayer-log-cycle`, `prayer-manual-location`, `prayer-month-ics`, `prayer-month-nav`, `prayer-month-print`, `prayer-request-location`, `prayer-set-alert-mode`, `prayer-test-sound`, `prayer-use-city`, `qada-add`, `qada-clear-prayer`, `qada-complete`, `sunnah-toggle`, `toggle-prayer-alert`, `toggle-prayer-quiet`, `toggle-prayer-quiet-cancel`
 - handles: —
-- i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+74 more)
+- i18n: `checklist.today`, `common.am`, `common.pm`, `common.print`, `missingData.location-missing`, `nav.prayer`, `plog.bestStreak`, `plog.hint`, `plog.jamaahRate`, `plog.monthCount`, `plog.mostMissed`, `plog.rate30`, `plog.streak`, `plog.title`, `prayer.`, `prayer.addToCalendar`, `prayer.adhanBundled`, `prayer.adhanClear`, `prayer.adhanCustomSet`, `prayer.adhanImport` (+75 more)
 - routes: —
 
 ### `js/views/qibla.js`
