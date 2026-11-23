@@ -91,6 +91,36 @@ for (const lang of ['en', 'ar']) {
       expect(m.badgeR).toBeLessThanOrEqual(m.cellR + 2);
       expect(m.badgeL).toBeGreaterThanOrEqual(m.cellL - 2);
     }
+
+    // (v5.17.145) phone-QA: the badge fix left the NAMES wrapping mid-word
+    // ("Sunr ise", "Mag hrib") — the phone cell-tightening rule had been
+    // silently binned by source order. Every prayer name in this corpus is
+    // a single word, so a multi-line name IS the defect, badged cell or
+    // not; and a time must never clip out of its cell.
+    const cells = await page.evaluate(() => {
+      return [...document.querySelectorAll('.home-prayer-ribbon__cell')].map((c) => {
+        const name = c.querySelector('.home-prayer-ribbon__name');
+        const time = c.querySelector('.home-prayer-ribbon__time');
+        const range = document.createRange();
+        range.selectNodeContents(name);
+        const cr = c.getBoundingClientRect();
+        const tr = time.getBoundingClientRect();
+        return {
+          text: name.textContent.trim(),
+          nameLines: range.getClientRects().length,
+          timeClipsRight: tr.right > cr.right + 1,
+          timeClipsLeft: tr.left < cr.left - 1,
+        };
+      });
+    });
+    expect(cells.length).toBe(6);
+    for (const c of cells) {
+      expect(c.nameLines, `${c.text} must render on one line`).toBe(1);
+      expect(
+        c.timeClipsRight || c.timeClipsLeft,
+        `${c.text}'s time must stay inside its cell`
+      ).toBe(false);
+    }
     expect(pageErrors).toEqual([]);
   });
 }

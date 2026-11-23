@@ -1,21 +1,21 @@
 {
-  "version": "5.17.144",
+  "version": "5.17.145",
   "files": {
     "index.html": "fb7741ae58391b597cfb84d72726296749c6d9f99e2b386a327928c850830ad2",
     "offline.html": "d68f3af959b6c2ddcd3a2ac490207de02ee1daa1cfe2ee34519931a09889b266",
     "favicon.ico": "c22c052f94e0ff0c329258ef5e87d2a1ee347db8545c3004774839d0a7d296fd",
-    "manifest.json": "62682bc18bd9c8e961c8384f27d24a4583124f8e937229d962cd1ca9b632397e",
+    "manifest.json": "64527bdabd5bb9c3870fc18710ea40b4c4ec0a563c9ea1845cee100836749c8f",
     "assets/css/variables.css": "80594033078898eaa9d03302c36daaf9c3510f78bd97dc635c2491b8576f69ef",
     "assets/css/base.css": "e7e5af46db23c2ed72fa5a9d7542dee9ca127b01ce828ddcc23dfc8063c58d5e",
     "assets/css/layout.css": "18aee200a2019ab12d4241f2b161a166c95f89c629a87d05f956d60476da074f",
     "assets/css/components.css": "b848f217b19cd98c5335df7399824a5724cd4ed716d04e2b7b20b54d4c82e8dd",
-    "assets/css/cards.css": "4affb07ec0007e4cf49e84dd19d75c65eb0651bd52cc521eeded8bb7f01db4a1",
+    "assets/css/cards.css": "d39b6dc22a6e0dc4fbeb1a3dc5f6cc792e748bce33612cbfafae6e8e09d45ba1",
     "assets/css/quran.css": "0c07209fe5fb5afff66ce8cc7916ef96655e1b86310455171ae7edb06582d050",
     "assets/css/tajweed-course.css": "6faf8b236738b3ace62876b11b8067a469f17cc81937da672b6097a79daf01e0",
     "assets/css/animations.css": "248895a7e5f93fe108af454b1bc068c340d19d430dae2136e3639e77a1c87aea",
     "assets/css/desktop.css": "eb200d865341ddb6287f2d4800796279b6ac792dbcf4f290d11cb8d0e281729f",
     "assets/css/accessibility.css": "da2d66141973e603cb19bb6102b2c31604b2fdf4c534ee7e5d1a5cd11c1132d2",
-    "assets/css/deslopify.css": "1a7ce5abf7eab9a48a2788e6debc8429ae86a70d538d5ef3804d4baca4d0d447",
+    "assets/css/deslopify.css": "777a38034560a62e4a8d59542dca52250ff7cd8246f52c7aba39e4d6bff4a704",
     "js/app.js": "61cb1b322d45c74122dafe71ea9f5d10b7e25f3364c9f17af09b70db538c5385",
     "js/app/audioEngine.js": "d9430d936639ebc2c42d485bd4f1c2169611ef61b8e4ad9c6da5a30388d052eb",
     "js/app/autoFit.js": "4ef02fdaf5fbd3e78cef0fe276d02c5a8e7f2c693a44c48d348abe9ae47157e1",
@@ -65,7 +65,7 @@
     "js/app/tafsirSearch.js": "4117d5b7163ea602924de8a45e55eed779c98d59469336faee2ef758b778380f",
     "js/app/tickers.js": "151d274647f824f58bd0b38f770e8fa974eeb89aa8180cfa4ee06318e0d19290",
     "js/app/triggers.js": "45ea466de28bf5f848746e0ba7f57303c03cd2fe5e3082575ebf44548f0fd509",
-    "js/core/config.js": "4a3f6677967d1d2ac84ba8cb5629069619b45f72618e5a4fdc0479785c00eb1a",
+    "js/core/config.js": "2fd64eedbf292a7ece7ed3ce696819b433beeb5b31ed4a037c39ed36fe7159da",
     "js/core/config/app.js": "b8237b2ea9a82475822d0644fc591d95786e7cd017e92b5f5b5c8ac143363a39",
     "js/core/config/nav.js": "d5cbb42594260f138fabfb537dbde622abb1b4cf37872f7fedf5d7b6e7e4eeda",
     "js/core/config/quran.js": "aeb93fa7da04c73e8251901d02446eb8e4c6552d8681fad09e2b72467865c8e4",
@@ -165,7 +165,6 @@
     "js/domain/tajweedSources.js": "2d1868935deb44a0389fe1b18879104402ef4b040b6d488473436bdcb2d43a4b",
     "js/domain/tajweedLessons.js": "842cae67c37a6afbcca66a632c1b535079a3b00eb9589c68e56bcc7baf56aaed",
     "js/domain/tajweedPractice.js": "9ec51ef2790fc2ae1782db7993e78b0c24b4660d01c60c08d6fcc6d371f3d636",
-    "js/domain/timezone.js": "da2b4818156b63194c323589e39fc2a7ffb4630570fd6538295ce6ccc2134bcb",
     "js/domain/translationCompare.js": "0164747a0960836f324e5f354c298f4d882b46a76dc2787d214ea04281ab55d6",
     "js/domain/wmm-coefs.js": "90f79c46e2a567adaaa834fa53df2ecc0e7d9ccff0349313f4d864687ca57a3e",
     "js/domain/wmm.js": "1b6bf6d0022d50ac38d116def2293a26491e0a4c8b71a06d94af8ed7f2c8c711",
@@ -279,6 +278,6 @@
     "assets/fonts/ScheherazadeNew-Bold.woff2": "6b6d12c4d0d9f2ec3ed790cc168ec10af7bd57862a0aaf6be112624b027ae0ef",
     "assets/fonts/ScheherazadeNew-OFL.txt": "5b9fd21ce2377fc542debebd9edfe1c48f2d3525e78a2a8abdba4a0ec3280163",
     "assets/fonts/OFL.txt": "18aabf190848725e2576eefb5c29ba06aac1029d02132252a7f312eac2e50cf3",
-    "sw.js": "6ed0c45dcc5ab9bbabcb930820f1da8e26b5b89c52c88c40e1bb6fbe8157bf8a"
+    "sw.js": "92734a018153b0ba95490bb1388e8c2382087dde139bd564e7a37ff131e52fd4"
   }
 }

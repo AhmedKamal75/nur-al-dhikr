@@ -1,3 +1,10 @@
+# v5.17.145 — prayer names never break mid-word (ribbon, times list, resume card)
+
+- Phone-QA fix (2026-11-23, follow-up to the badge crush): "Sunrise", "Dhuhr" and "Maghrib" still wrapped mid-word in the Home prayer ribbon at 390px. Root cause: the phone cell-tightening media rule sat ABOVE the base `.home-prayer-ribbon__cell` rule, so source order binned it and phones kept desktop padding. The rule now lands after the base rule, with a 3px track gap, 1px side padding and a 12px panel inset — measured: all six names render on one line with the Now/Next badges on their own line.
+- "Maghrib" also broke ("Maghri h") in the Prayer view's times list: three 16px gaps left the 700-weight name 54px, a pixel short. Phone rows now use an 8px gap.
+- "Continue where you left off": a long resume value ("Morning Adhkar · Surah Al-Ikhlas (×3)") claimed the whole row — the section name collapsed to 0px and rendered one letter per line while the value overflowed the card. The name now keeps a 10ch floor and the value wraps instead of overflowing.
+- Religious corpus bytes unchanged.
+
 # v5.17.144 — set your city: Alexandria + seven more, and a Change-city button
 
 - Phone-QA fix (2026-11-23, item 2): the reporter could not set his own city at all — Alexandria (الإسكندرية) was missing from the one-tap directory. Added it plus Sanaa, Tripoli, Mogadishu, Kano, Lucknow, Dushanbe and Bishkek — 80 cities, each with EN+AR names and its IANA zone. Alexandria is pinned in the directory contract test.
