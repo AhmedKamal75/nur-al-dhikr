@@ -188,6 +188,7 @@ const APP_SHELL = [
   'js/domain/tajweedSources.js',
   'js/domain/tajweedLessons.js',
   'js/domain/tajweedPractice.js',
+  'js/domain/timezone.js',
   'js/domain/translationCompare.js',
   'js/domain/wmm-coefs.js',
   'js/domain/wmm.js',
