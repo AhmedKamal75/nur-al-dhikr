@@ -1,3 +1,4 @@
+import { tajweedConventionHTML } from './tajweedConvention.js';
 /**
  * views/tafsirPanel.js
  * Shared UI (modal templates) for the Qur'an study features: the per-word
@@ -1226,6 +1227,7 @@ export function buildMushafSettingsPanel(state) {
       prefs.tajweedColoring
         ? `
     <h3 class="mushaf-jump__heading">${t('mushaf.tajweedLegend', lang)}</h3>
+    ${tajweedConventionHTML(state)}
     <div class="tajweed-legend">
       ${TAJWEED_FAMILIES.map((family) => {
         // The legend mirrors the page exactly: family swatches resolve the

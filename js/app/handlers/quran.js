@@ -1091,6 +1091,14 @@ export const clickHandlers = {
     });
   },
 
+  'tajweed-set-convention': (ds) => {
+    if (!['lpmq', 'dar-al-maarifah'].includes(ds.convention)) return;
+    store.dispatch(actions.updateSettings({ tajweedConvention: ds.convention }));
+    openModal(buildTajweedSettingsPanel(store.getState()), {
+      labelledBy: 'modal-title-tajweed-settings',
+    });
+  },
+
   'tajweed-set-color': (ds) => {
     const prefs = tajweedPrefsOf(store.getState());
     const colors = { ...(prefs.colors || {}), [ds.family]: ds.color };
