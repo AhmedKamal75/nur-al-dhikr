@@ -1149,8 +1149,13 @@ a.home-today__cell:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px 4px;
   max-inline-size: 100%;
+  /* Six columns on a phone leave ~45px per cell: the Now/Next badge pill
+     cannot shrink, so without wrapping it starved the prayer name to one
+     letter per line (user report, phone portrait). Let the badge drop to
+     its own line when name + badge do not fit side by side. */
+  flex-wrap: wrap;
 }
 .home-prayer-ribbon__name {
   font-size: var(--fs-caption);

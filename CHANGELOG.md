@@ -1,3 +1,9 @@
+# v5.17.141 — prayer ribbon: badges no longer crush prayer names on phones
+
+- Home "Today's prayers": on a phone, the cells carrying a live Now/Next badge crushed their prayer names to one letter per line (the inflexible badge pill starved the name in the flex topline). The topline now wraps, so the badge drops to its own line and the name renders like its unbadged neighbours.
+- New EN+AR phone-viewport e2e spec pins the layout: it fails on the old CSS and passes on the new.
+- v5.17.140 is held by the tajweed-interpreter integration branch, still in review.
+
 # v5.17.139 — cross-rasm Tajweed alignment, and what it did not fix
 
 - Lands the crew's fix for ledger row 99, from the single-commit mainline candidate (the other two branches attempting it fail their own alignment test).
