@@ -1052,6 +1052,7 @@ export const en = {
     'If you prefer not to grant location access, choose a city below. City coordinates are approximate.',
   'prayer.chooseCityShort': 'Choose a city',
   'prayer.chooseCityPlaceholder': 'Select a city (optional)',
+  'prayer.changeLocation': 'Change',
   'prayer.useManualLocation': 'Use a city or enter coordinates',
   'prayer.locationSet': 'Location set — times are approximate until exact coordinates are entered',
   'prayer.tzMismatch':

@@ -1,3 +1,20 @@
+## v5.17.144 — set your city: Alexandria + seven more, and a Change-city button
+
+Phone-QA report (2026-11-23, item 2): the one-tap city path "couldn't be
+used" — the reporter's own city was not in the directory, and with a
+location saved there was no way back to the picker at all. Alexandria
+(الإسكندرية, Africa/Cairo) joins Cairo's row, plus Sanaa (Asia/Aden),
+Tripoli (Africa/Tripoli), Mogadishu (Africa/Mogadishu), Kano (Africa/Lagos),
+Lucknow (Asia/Kolkata), Dushanbe (Asia/Dushanbe) and Bishkek (Asia/Bishkek):
+80 one-tap cities, each named EN+AR with a validated IANA zone. The
+Alexandria row is pinned in the directory contract test, and the prayer
+hero's place name now carries a Change-city button (EN+AR) opening the
+location editor — the city select there applies the preset's zone, so it
+composes with the v5.17.143 location-clock fix. Preset-chosen locations
+also carry the preset id now, so the hero name re-localizes when the app
+language changes (AR mode no longer shows a frozen Latin city name);
+GPS and manual entries keep their own name.
+
 ## v5.17.143 — prayer times follow the saved location's clock
 
 - Phone-QA fix (2026-11-23, item 3): `settings.prayer.timezone` was written by every location path (GPS, city preset, manual form) but never read — every view computed the UTC offset from the device, so a city saved abroad rendered times on the phone's clock and the "timezone setting" felt dead.

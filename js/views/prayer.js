@@ -69,6 +69,14 @@ export const PRAYER_ICONS = {
  *  - permission: one-tap enable.
  * Pure over ({mode, count}, lang) — unit-tested.
  */
+/** (v5.17.144) display name for the saved location: a preset-linked city
+ *  resolves in the active language; free-text/GPS keeps its stored name. */
+export function prayerPlaceName(p, lang) {
+  const preset = p?.cityId ? CITY_PRESETS.find((c) => c.id === p.cityId) : null;
+  if (preset) return lang === 'ar' ? preset.ar : preset.en;
+  return p?.locationName || `${p?.latitude?.toFixed(2)}, ${p?.longitude?.toFixed(2)}`;
+}
+
 export function alertStatusHTML(status, lang) {
   const mode = status && typeof status.mode === 'string' ? status.mode : 'unknown';
   const count = Math.floor(Number(status?.count)) || 0;
@@ -246,9 +254,10 @@ export function renderPrayer(state) {
     )
     .join('');
 
-  const placeName = escapeHTML(
-    p.locationName || `${p.latitude.toFixed(2)}, ${p.longitude.toFixed(2)}`
-  );
+  // (v5.17.144) a preset-chosen city renders in the ACTIVE language, not
+  // the language it was picked in: the settings carry the preset id and the
+  // name resolves live. Free-text / GPS locations keep their stored name.
+  const placeName = escapeHTML(prayerPlaceName(p, lang));
   const dateLabel = now.toLocaleDateString(lang === 'ar' ? 'ar' : 'en-US', {
     weekday: 'long',
     day: 'numeric',
@@ -272,6 +281,7 @@ export function renderPrayer(state) {
       <div class="next-prayer-card__place">
         ${icon('location', { size: 13 })}
         <span>${placeName}</span>${clock.timeZone ? ` <span class="next-prayer-card__tz" dir="ltr">${escapeHTML(clock.timeZone)}</span>` : ''}
+        <button type="button" class="link-btn link-btn--sm next-prayer-card__change" data-action="prayer-manual-location">${t('prayer.changeLocation', lang)}</button>
       </div>
     </div>
 
@@ -697,7 +707,7 @@ export function profilesPanelHTML(state) {
     <div class="chip-row">${profileChips}</div>
     ${
       profiles.length
-        ? `<div class="qada-row"><span class="panel__subtext">${escapeHTML(p.locationName || `${p.latitude.toFixed(2)}, ${p.longitude.toFixed(2)}`)}</span>
+        ? `<div class="qada-row"><span class="panel__subtext">${escapeHTML(prayerPlaceName(p, lang))}</span>
            <button type="button" class="icon-btn icon-btn--sm" data-action="location-profile-save" data-name="" aria-label="${t('profiles.saveCurrent', lang)}" title="${t('profiles.saveCurrent', lang)}">${icon('plus', { size: 14 })}</button></div>`
         : `<p class="panel__subtext">${t('profiles.hint', lang)}</p>`
     }

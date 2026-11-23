@@ -990,6 +990,7 @@ export const ar = {
     'إن لم ترغب في منح إذن الموقع، اختر مدينة من القائمة. إحداثيات المدن تقريبية.',
   'prayer.chooseCityShort': 'اختر مدينة',
   'prayer.chooseCityPlaceholder': 'اختر مدينة (اختياري)',
+  'prayer.changeLocation': 'تغيير',
   'prayer.useManualLocation': 'استخدم مدينة أو أدخل الإحداثيات',
   'prayer.locationSet': 'تم تحديد الموقع — المواقيت تقريبية حتى تُدخل الإحداثيات الدقيقة',
   'prayer.tzMismatch':

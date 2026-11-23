@@ -4,6 +4,7 @@
  * produces zero console errors and zero uncaught exceptions.
  */
 import { test, expect } from '@playwright/test';
+import { CITY_PRESETS, CITY_REGIONS } from '../../js/domain/locations.js';
 
 const ROUTES = [
   'home',
@@ -59,8 +60,8 @@ test('smoke: tasbih burst counts and survives reload', async ({ page }) => {
 test('smoke: prayer empty state offers grouped city directory', async ({ page }) => {
   await page.goto('#/prayer');
   await expect(page.locator('.city-group').first()).toBeAttached({ timeout: 20000 });
-  await expect(page.locator('.city-group')).toHaveCount(6);
-  await expect(page.locator('[data-action="prayer-use-city"]')).toHaveCount(72);
+  await expect(page.locator('.city-group')).toHaveCount(CITY_REGIONS.length);
+  await expect(page.locator('[data-action="prayer-use-city"]')).toHaveCount(CITY_PRESETS.length);
   await page.locator('.city-group summary').first().click();
   await expect(
     page.locator('.city-group').first().locator('[data-action="prayer-use-city"]').first()
