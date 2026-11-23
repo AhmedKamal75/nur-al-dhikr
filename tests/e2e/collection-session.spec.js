@@ -28,7 +28,7 @@ function seed(lang) {
 for (const lang of ['en', 'ar']) {
   test(`collection queue keeps context through auto/arrow/key/exit/reload (${lang})`, async ({
     page,
-  }) => {
+  }, testInfo) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
@@ -75,20 +75,26 @@ for (const lang of ['en', 'ar']) {
     });
     await expect(page.locator('.focus')).toHaveAttribute('data-item-id', 'adh-mor-001');
     await expect(page.locator('.focus__position')).toHaveText('1 / 2');
-    await page.screenshot({ path: `/downloads/c02-focus-${lang}.png`, fullPage: true });
+    await page.screenshot({ path: testInfo.outputPath(`c02-focus-${lang}.png`), fullPage: true });
     await page.locator('[data-action="focus-exit"]').click();
     await expect(page).toHaveURL(/#\/collection\/session-test$/);
-    await page.screenshot({ path: `/downloads/c02-collection-${lang}.png`, fullPage: true });
+    await page.screenshot({
+      path: testInfo.outputPath(`c02-collection-${lang}.png`),
+      fullPage: true,
+    });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
     expect(overflow).toBe(false);
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.screenshot({
-      path: `/downloads/c02-collection-desktop-${lang}.png`,
+      path: testInfo.outputPath(`c02-collection-desktop-${lang}.png`),
       fullPage: false,
     });
     await launcher.click();
     await expect(page.locator('.focus')).toBeVisible();
-    await page.screenshot({ path: `/downloads/c02-focus-desktop-${lang}.png`, fullPage: false });
+    await page.screenshot({
+      path: testInfo.outputPath(`c02-focus-desktop-${lang}.png`),
+      fullPage: false,
+    });
     // A deleted collection cannot silently spill into the category queue.
     await page.goto('./#/focus/morning/adh-mor-001?collection=deleted-collection');
     await expect(page.locator('.focus')).toHaveCount(0);
