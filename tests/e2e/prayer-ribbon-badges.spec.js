@@ -57,13 +57,20 @@ for (const lang of ['en', 'ar']) {
       return cells
         .filter((c) => c.querySelector('.home-prayer-ribbon__badge'))
         .map((c) => {
+          const cell = c.getBoundingClientRect();
           const name = c.querySelector('.home-prayer-ribbon__name').getBoundingClientRect();
           const badge = c.querySelector('.home-prayer-ribbon__badge').getBoundingClientRect();
           return {
+            cellL: cell.left,
+            cellR: cell.right,
             nameW: name.width,
             nameH: name.height,
             badgeTop: badge.top,
             nameBottom: name.bottom,
+            badgeW: badge.width,
+            badgeH: badge.height,
+            badgeL: badge.left,
+            badgeR: badge.right,
           };
         });
     });
@@ -76,6 +83,13 @@ for (const lang of ['en', 'ar']) {
       expect(m.nameH).toBeLessThan(60);
       // The badge wrapped below the name instead of sharing a starved row.
       expect(m.badgeTop).toBeGreaterThanOrEqual(m.nameBottom - 1);
+      // The badge itself stays one readable pill: never squeezed into
+      // stacked letters (the first fix's relapse, caught in review), and
+      // never spilling out of its cell.
+      expect(m.badgeH).toBeLessThan(30);
+      expect(m.badgeW).toBeGreaterThan(15);
+      expect(m.badgeR).toBeLessThanOrEqual(m.cellR + 2);
+      expect(m.badgeL).toBeGreaterThanOrEqual(m.cellL - 2);
     }
     expect(pageErrors).toEqual([]);
   });
