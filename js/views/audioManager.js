@@ -25,6 +25,7 @@ import {
 import { SLEEP_TIMER_CHOICES, nextSleepRung } from '../domain/sleepTimer.js';
 import {
   searchReciters,
+  reciterCatalogPage,
   findMoshaf,
   rewayaAr,
   translationLabel,
@@ -73,32 +74,32 @@ export function renderAudio(state) {
   const selected = selectedId ? findMoshaf(selectedId, state.settings.customReciters || []) : null;
   const downloads = state.audioDownloads || {};
 
-  const rows = hits
-    .slice(0, 60)
-    .map((r) => {
-      const active = r.id === selectedId;
-      // Riwaya renders localized in AR (unmapped Latin omitted, never leaked).
-      const rewaya = lang === 'ar' ? rewayaAr(r.rewaya) : String(r.rewaya || '');
-      const trans = translationLabel(r, lang);
-      const subBits = [
-        r.nameAr && r.nameEn && lang === 'ar' ? r.nameEn : r.nameAr || '',
-        rewaya,
-        trans,
-      ].filter(Boolean);
-      // (v5.17.27, OPEN-ISSUES #13) whole-surah honesty in the picker
-      // itself: every moshaf row carries the no-ayah-timings chip (the
-      // fileModeNote sentence as its title). Verse rows below carry none.
-      const timingBadge = ` <span class="chip chip--muted" title="${escapeHTML(t('audio.fileModeNote', lang))}">${escapeHTML(t('audio.wholeSurahBadge', lang))}</span>`;
-      return `
+  const catalogPage = reciterCatalogPage(hits, selected, state.audioManager?.visibleCount);
+  const renderRow = (r, pinned = false) => {
+    const active = r.id === selectedId;
+    // Riwaya renders localized in AR (unmapped Latin omitted, never leaked).
+    const rewaya = lang === 'ar' ? rewayaAr(r.rewaya) : String(r.rewaya || '');
+    const trans = translationLabel(r, lang);
+    const subBits = [
+      r.nameAr && r.nameEn && lang === 'ar' ? r.nameEn : r.nameAr || '',
+      rewaya,
+      trans,
+    ].filter(Boolean);
+    // (v5.17.27, OPEN-ISSUES #13) whole-surah honesty in the picker
+    // itself: every moshaf row carries the no-ayah-timings chip (the
+    // fileModeNote sentence as its title). Verse rows below carry none.
+    const timingBadge = ` <span class="chip chip--muted" title="${escapeHTML(t('audio.fileModeNote', lang))}">${escapeHTML(t('audio.wholeSurahBadge', lang))}</span>`;
+    return `
     <div class="reciter-row ${active ? 'reciter-row--active' : ''}">
       <button type="button" class="reciter-row__main" data-action="audio-select-moshaf" data-id="${escapeHTML(r.id)}">
-        <span class="reciter-row__name">${highlightMatch(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn, String(q).split(/\s+/))}</span><span class="reciter-row__badges">${trans ? ` <span class="chip chip--muted">${escapeHTML(trans)}</span>` : ''}${timingBadge}</span>
+        <span class="reciter-row__name">${pinned ? `<span class="reciter-row__selected-label">${t('audio.selectedOutside', lang)}</span>` : ''}${highlightMatch(lang === 'ar' && r.nameAr ? r.nameAr : r.nameEn, String(q).split(/\s+/))}</span><span class="reciter-row__badges">${trans ? ` <span class="chip chip--muted">${escapeHTML(trans)}</span>` : ''}${timingBadge}</span>
         ${subBits.length ? `<span class="reciter-row__sub">${escapeHTML(subBits.join(' — '))}</span>` : ''}
       </button>
       ${r.source === 'custom' ? `<button type="button" class="icon-btn icon-btn--sm" data-action="audio-remove-custom" data-id="${escapeHTML(r.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 14 })}</button>` : ''}
     </div>`;
-    })
-    .join('');
+  };
+  const rows = catalogPage.rows.map((r) => renderRow(r)).join('');
+  const pinnedRow = catalogPage.pinned ? renderRow(catalogPage.pinned, true) : '';
 
   let grid = '';
   if (selected) {
@@ -275,8 +276,10 @@ export function renderAudio(state) {
     }
     ${q ? '' : verseSection}
     ${q ? '' : buildPlaybackDefaults(state, lang)}
+    ${pinnedRow ? `<div class="reciter-list reciter-list--selected">${pinnedRow}</div>` : ''}
+    <p class="audio-catalog-count" role="status">${t('audio.catalogCount', lang, { x: catalogPage.shown, y: catalogPage.total })}</p>
     ${rows ? `<div class="reciter-list">${rows}</div>` : state.audioManager?.catalogReady && !hits.length ? emptyStateHTML({ iconName: 'volume', title: t('search.noResults', lang), hint: t('audio.noResultsHint', lang) }) : ''}
-    ${hits.length > 60 ? `<p class="empty-hint">${t('audio.moreResults', lang, { n: hits.length })}</p>` : ''}
+    ${catalogPage.shown < catalogPage.total ? `<div class="audio-catalog-actions"><button type="button" class="btn btn--secondary" data-action="audio-catalog-more">${t('audio.catalogNext', lang)}</button><button type="button" class="btn btn--ghost" data-action="audio-catalog-all">${t('audio.catalogAll', lang)}</button></div>` : ''}
 
     ${grid}
     ${q ? '' : versePacks}

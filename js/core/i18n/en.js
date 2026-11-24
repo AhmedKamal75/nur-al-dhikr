@@ -253,7 +253,10 @@ export const en = {
   'audio.subtitle':
     '312 full mushafs from mp3quran.net and quranicaudio.com — stream any surah, or download surahs or whole mushafs for fully offline listening.',
   'audio.searchPh': 'Search reciters (English or Arabic)…',
-  'audio.moreResults': 'Showing first 60 of {n} matches — keep typing to narrow.',
+  'audio.catalogCount': 'Showing {x} of {y}',
+  'audio.catalogNext': 'Show next 60',
+  'audio.catalogAll': 'Show all',
+  'audio.selectedOutside': 'Selected reciter (outside shown results)',
   'audio.noResultsHint': 'Try a different spelling — or add your own reciter below.',
   'audio.downloadAll': 'Download all (114)',
   'audio.downloadMissing': 'Download missing',

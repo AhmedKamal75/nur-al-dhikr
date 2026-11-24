@@ -111,12 +111,24 @@ export function reduceAudio(state, action) {
       if (state.audioManager.catalogReady) return state;
       return { ...state, audioManager: { ...state.audioManager, catalogReady: true } };
 
+    case 'AUDIO_CATALOG_EXPAND': {
+      if (!Number.isFinite(Number(action.count))) return state;
+      const visibleCount = Math.max(
+        state.audioManager.visibleCount || 60,
+        Math.floor(Number(action.count) || 60)
+      );
+      if (visibleCount === state.audioManager.visibleCount) return state;
+      return { ...state, audioManager: { ...state.audioManager, visibleCount } };
+    }
     case 'AUDIO_MANAGER_QUERY':
       // MUST no-op on an unchanged query: ensureRecitersData nudges this
       // action after the catalog arrives, and a reducer that always returns
       // a fresh object turns that nudge into an infinite render loop.
       if (state.audioManager.query === action.query) return state;
-      return { ...state, audioManager: { ...state.audioManager, query: action.query } };
+      return {
+        ...state,
+        audioManager: { ...state.audioManager, query: action.query, visibleCount: 60 },
+      };
 
     case 'AUDIO_BATCH_RUNNING':
       // (v4.2) ephemeral: is a "Download All" batch in flight? Drives the

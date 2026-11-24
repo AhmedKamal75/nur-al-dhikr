@@ -337,6 +337,7 @@ export const actions = {
   // (v5.2.61) verse-pack status cache write ({voice, surah, done, total}
   // or {voice, reset:true} to drop a voice).
   setVersePackStatus: (patch) => ({ type: 'VERSE_PACK_STATUS', ...patch }),
+  expandAudioCatalog: (count) => ({ type: 'AUDIO_CATALOG_EXPAND', count }),
   setAudioManagerQuery: (query) => ({ type: 'AUDIO_MANAGER_QUERY', query }),
   // (v4.2) batch download lifecycle: flips the Download All button to Stop.
   setAudioBatchRunning: (running) => ({ type: 'AUDIO_BATCH_RUNNING', running }),

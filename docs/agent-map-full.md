@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 251 — data files: 29 — tests: 294
+- js modules: 251 — data files: 29 — tests: 295
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -354,7 +354,7 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const), `resolveRangeSave` (function)
 - emits: —
-- handles: `audio-batch-dismiss`, `audio-batch-stop`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-download-surah`, `audio-mute-toggle`, `audio-pick-moshaf`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `audio-sleep-cycle`, `player-close`, `player-min-toggle`, `player-next`, `player-prev`, `player-rate`, `player-repeat`, `player-seek-back`, `player-seek-fwd`, `player-sleep-cycle`, `player-toggle`, `playlist-create`, `playlist-delete`, `playlist-delete-confirmed`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `playlist-save-range`, `quran-play-surah`, `verse-pack-delete`, `verse-pack-download`
+- handles: `audio-batch-dismiss`, `audio-batch-stop`, `audio-catalog-all`, `audio-catalog-more`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-download-surah`, `audio-mute-toggle`, `audio-pick-moshaf`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `audio-sleep-cycle`, `player-close`, `player-min-toggle`, `player-next`, `player-prev`, `player-rate`, `player-repeat`, `player-seek-back`, `player-seek-fwd`, `player-sleep-cycle`, `player-toggle`, `playlist-create`, `playlist-delete`, `playlist-delete-confirmed`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `playlist-save-range`, `quran-play-surah`, `verse-pack-delete`, `verse-pack-download`
 - i18n: `audio.allDone`, `audio.batchCancelled`, `audio.batchDone`, `audio.batchDoneSkipped`, `audio.batchStarted`, `audio.deleted`, `audio.downloadDone`, `audio.downloadFailed`, `audio.downloading`, `audio.echoNeedsRepeat`, `audio.evictedWarning`, `audio.loopNeedsSession`, `audio.quota`, `audio.reciteStartFailed`, `audio.sleepArmed`, `audio.sleepOff`, `audio.surahUnavailable`, `audio.versePackDone`, `common.retry`, `playlist.addedRange` (+7 more)
 - routes: `VIEWS.AUDIO`
 
@@ -1828,7 +1828,7 @@ job: the installable-app icon badge (Badging API, no backend, fully local). Pure
 
 job: The full-reciter catalog: 312 mushafs from mp3quran.net + quranicaudio.com (both CORS-open, both serving per-surah files 001.mp3…114.mp3), loaded lazily from data/reciters.json, plus user-added custo…
 
-- exports: `pad3` (function), `surahUrl` (function), `customMoshafId` (function), `rewayaAr` (function), `loadCatalog` (function), `resetCatalogForTests` (function), `searchReciters` (function), `translationLabel` (function), `findMoshaf` (function), `validateCustomServer` (function)
+- exports: `pad3` (function), `surahUrl` (function), `customMoshafId` (function), `rewayaAr` (function), `loadCatalog` (function), `resetCatalogForTests` (function), `searchReciters` (function), `translationLabel` (function), `findMoshaf` (function), `validateCustomServer` (function), `reciterCatalogPage` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -2237,9 +2237,9 @@ job: Ambient / kiosk display: a big-text, chrome-free nightstand view. Four disp
 job: Reciters & offline downloads: - searchable catalog of 312 mushafs (mp3quran + quranicaudio) + the user's custom reciters,
 
 - exports: `resumeBannerHTML` (function), `renderAudio` (function)
-- emits: `audio-batch-dismiss`, `audio-batch-stop`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `audio-sleep-cycle`, `playlist-create`, `playlist-delete`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `set-setting` (+ dynamic `data-action="${...}"`)
+- emits: `audio-batch-dismiss`, `audio-batch-stop`, `audio-catalog-all`, `audio-catalog-more`, `audio-delete-moshaf`, `audio-delete-surah`, `audio-download-all`, `audio-play-moshaf`, `audio-remove-custom`, `audio-select-moshaf`, `audio-sleep-cycle`, `playlist-create`, `playlist-delete`, `playlist-move-item`, `playlist-play`, `playlist-remove-item`, `playlist-rename`, `set-setting` (+ dynamic `data-action="${...}"`)
 - handles: —
-- i18n: `audio.batchResume`, `audio.batchResumeGo`, `audio.batchStop`, `audio.customHint`, `audio.customName`, `audio.customNamePh`, `audio.customServer`, `audio.customTitle`, `audio.deleteAll`, `audio.deleteFile`, `audio.downloadAll`, `audio.downloadFile`, `audio.downloadMissing`, `audio.fileModeNote`, `audio.loopMode`, `audio.loopNeedsSession`, `audio.loopOnce`, `audio.moreResults`, `audio.noResultsHint`, `audio.note` (+33 more)
+- i18n: `audio.batchResume`, `audio.batchResumeGo`, `audio.batchStop`, `audio.catalogAll`, `audio.catalogCount`, `audio.catalogNext`, `audio.customHint`, `audio.customName`, `audio.customNamePh`, `audio.customServer`, `audio.customTitle`, `audio.deleteAll`, `audio.deleteFile`, `audio.downloadAll`, `audio.downloadFile`, `audio.downloadMissing`, `audio.fileModeNote`, `audio.loopMode`, `audio.loopNeedsSession`, `audio.loopOnce` (+36 more)
 - routes: —
 
 ### `js/views/ayahStudy.js`
@@ -2749,6 +2749,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `ambient-mode`: emitted by `js/views/ambient.js`; handled in `js/app/handlers/items.js`
 - `audio-batch-dismiss`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `audio-batch-stop`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
+- `audio-catalog-all`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
+- `audio-catalog-more`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `audio-delete-moshaf`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `audio-delete-surah`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
 - `audio-download-all`: emitted by `js/views/audioManager.js`; handled in `js/app/handlers/audio.js`
@@ -4262,6 +4264,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `recentVoluntaryFasts`: `js/domain/fasting.js`
 - `recitationChipsHTML`: `js/ui/recitationConsole.js`
 - `recitationEchoHTML`: `js/ui/recitationConsole.js`
+- `reciterCatalogPage`: `js/services/audioCatalog.js`
 - `reciterDisplayName`: `js/core/config/quran.js`
 - `reciterShortLabel`: `js/ui/recitationConsole.js`
 - `recommendedAdhkarWindow`: `js/domain/adhkarTiming.js`
@@ -6706,6 +6709,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `recitationechohtml`: `js/ui/recitationConsole.js`
 - `recitations`: `js/core/utils.js`
 - `reciter`: `js/app/audioEngine.js`, `js/core/config/quran.js`, `js/domain/onboarding.js`, `js/services/audioCatalog.js`, `js/views/offline.js`, `js/views/onboardingPanel.js`
+- `recitercatalogpage`: `js/services/audioCatalog.js`
 - `reciterdisplayname`: `js/core/config/quran.js`
 - `reciters`: `js/core/config/quran.js`, `js/core/state/slices/audio.js`, `js/services/audioCatalog.js`, `js/ui/skeleton.js`, `js/views/audioManager.js`, `js/views/palette.js`
 - `recitershortlabel`: `js/ui/recitationConsole.js`
@@ -7820,6 +7824,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/recitation-gapless.test.js` — (v5.10.3) ping-pong handoff + URL walk: preload() buffers the next file on the spare, play() swaps onto it when ready, mirror deaths walk silently, and only the final failure speaks. (pins: —)
 - `tests/recitation-honesty.test.js` — two claims that audits have reported as open, repeatedly, and which are in fact shipped. Both are pinned here by EXECUTION so the report stops costing time: (pins: `../js/core/config/sanitize.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/views/playerBar.js`)
 - `tests/recitation-listeners.test.js` — B3 regression: verse-failure listeners coexist (toast wiring + verse session) instead of clobbering one slot, and a stopped session unregisters so later single-ayah failures still (pins: —)
+- `tests/reciter-catalog-page.test.js` — (no header comment) (pins: `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/services/audioCatalog.js`)
 - `tests/referenceAr.test.js` — audit §5.4 first light (v5.2.70) gates: 1. collection matching folds diacritics + curly quotes (Ṣaḥīḥ, Aḥmad, Tirmidhī, Jami’, Qur’an) with byte-identical remainders from RAW; (pins: `../js/core/schema.js`, `../js/domain/localeContent.js`)
 - `tests/reminder-settings.test.js` — B-2: the first-class clock settings (Jumu'ah, daily verse, Zakat al-Fitr) persisted since v4.4 now fire through the scheduler. Firing is observed two ways: captured (pins: `../js/core/utils.js`, `../js/domain/calendar.js`, `../js/services/notifications.js`)
 - `tests/reminderPresets.test.js` — Jumu'ah + daily-verse presets (v5.2.0). Date math, recurrence shape, dedupe, and null-safety. Pure domain. (pins: `../js/domain/reminderPresets.js`, `../js/services/calendarNotes.js`)
