@@ -40,8 +40,6 @@ function offlineBadge(book, lang) {
 
 /** Results per grid page (cards are heavy — 10, not the reader's 20). */
 const HADITH_GRID_PAGE_SIZE = 10;
-/** Ranked total cap: deep result sets page through the pager, not the DOM. */
-const HADITH_GRID_RESULT_CAP = 200;
 
 function gridSearchBox(lang, q) {
   return `
@@ -59,7 +57,7 @@ function renderGridSearch(state, lang, q) {
   const docs = state.hadith.docs || {};
   const stats = hadithIndexStats();
   const terms = q.split(/\s+/);
-  const all = searchHadith(q, { limit: HADITH_GRID_RESULT_CAP });
+  const all = searchHadith(q, { limit: Infinity });
   const pages = Math.max(1, Math.ceil(all.length / HADITH_GRID_PAGE_SIZE));
   const rawPage = Math.floor(Number(state.activeParams?.page));
   const page = !Number.isFinite(rawPage) || rawPage < 1 ? 1 : Math.min(pages, rawPage);
@@ -91,12 +89,11 @@ function renderGridSearch(state, lang, q) {
     })
     .join('');
 
-  // Honest scope: the index covers loaded books; the build trigger in
-  // stateSub keeps loading the rest while this query stands.
-  const scope =
-    books.length && stats.books.length < books.length
-      ? `<p class="panel__subtext">${t('hadith.searchScope', lang, { a: stats.books.length, b: books.length })}</p>`
-      : '';
+  // Honest scope: only the loaded index is searched. Missing books still
+  // require explicit consent; result totals do not imply the full catalog.
+  const scope = books.length
+    ? `<p class="panel__subtext">${t('hadith.searchScope', lang, { a: stats.books.length, b: books.length })}</p>`
+    : '';
   // (v5.2.75, BUG-09) large downloads are user-initiated: indexing the
   // missing books waits for an explicit tap, and the grid says so.
   const missingCount = books.filter((b) => !docs[b.id]).length;
@@ -109,12 +106,12 @@ function renderGridSearch(state, lang, q) {
       : '';
   const pager =
     pages <= 1
-      ? ''
+      ? `<p class="hadith-pager__status">${t('hadith.pageStatus', lang, { from, to, total: all.length, p: page, pages })}</p>`
       : `
     <div class="hadith-pager" dir="ltr">
-      <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-grid-prev" ${page <= 1 ? 'disabled' : ''}>${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('common.prev', lang)}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-grid-prev" data-page="${Math.max(1, page - 1)}" ${page <= 1 ? 'disabled' : ''}>${icon(isRTL(lang) ? 'chevronRight' : 'chevronLeft', { size: 14 })} ${t('common.prev', lang)}</button>
       <span class="hadith-pager__status">${t('hadith.pageStatus', lang, { from, to, total: all.length, p: page, pages })}</span>
-      <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-grid-next" ${page >= pages ? 'disabled' : ''}>${t('common.next', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}</button>
+      <button type="button" class="btn btn--secondary btn--sm" data-action="hadith-grid-next" data-page="${Math.min(pages, page + 1)}" ${page >= pages ? 'disabled' : ''}>${t('common.next', lang)} ${icon(isRTL(lang) ? 'chevronLeft' : 'chevronRight', { size: 14 })}</button>
     </div>`;
 
   return `

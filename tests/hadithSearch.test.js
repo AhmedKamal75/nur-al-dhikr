@@ -259,3 +259,56 @@ describe('hadith search wiring: trigger, handlers, inputs, precache, strings', (
     }
   });
 });
+
+describe('uncapped loaded-corpus search', () => {
+  test('rebuild and reset invalidate the same-query cache', () => {
+    const first = { a: { hadiths: [{ n: 1, ar: 'اختبار', en: 'needle' }] } };
+    buildHadithIndex(first);
+    assert.equal(searchHadith('needle', { limit: Infinity }).length, 1);
+    buildHadithIndex({ ...first, b: { hadiths: [{ n: 1, ar: 'اختبار', en: 'needle' }] } });
+    assert.equal(searchHadith('needle', { limit: Infinity }).length, 2);
+    resetHadithIndex();
+    buildHadithIndex(first);
+    assert.equal(searchHadith('needle', { limit: Infinity }).length, 1);
+    resetHadithIndex();
+  });
+  for (const lang of ['en', 'ar'])
+    test(`all 237 matches remain paginated and scoped (${lang})`, () => {
+      const doc = {
+        name: { en: 'Test book', ar: 'كتاب اختبار' },
+        sections: [],
+        hadiths: Array.from({ length: 237 }, (_, i) => ({
+          n: i + 1,
+          b: 1,
+          ar: 'اختبار',
+          en: 'needle',
+        })),
+      };
+      buildHadithIndex({ a: doc });
+      const state = {
+        settings: { language: lang },
+        hadith: {
+          index: {
+            books: [
+              { id: 'a', name: doc.name, count: 237 },
+              { id: 'b', name: { en: 'Missing book' }, count: 100 },
+            ],
+          },
+          docs: { a: doc },
+          errors: {},
+          bookView: {},
+        },
+        activeParams: { q: 'needle', page: '24' },
+      };
+      const html = renderHadith(state);
+      assert.equal(searchHadith('needle', { limit: Infinity }).length, 237);
+      assert.equal((html.match(/class="hadith-hit"/g) || []).length, 7);
+      assert.ok(html.includes('237'));
+      assert.ok(html.includes('#/hadith/a?n=237'));
+      assert.ok(html.includes('hadith-index-all'));
+      assert.ok(/hadith-grid-next" data-page="24" disabled/.test(html));
+      const p1 = renderHadith({ ...state, activeParams: { q: 'needle', page: '-2' } });
+      assert.equal((p1.match(/class="hadith-hit"/g) || []).length, 10);
+      resetHadithIndex();
+    });
+});
