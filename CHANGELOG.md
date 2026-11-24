@@ -1,3 +1,8 @@
+# v5.17.164 - Continue calendar events and Home recents
+
+- Upcoming calendar events show exact counts for the remaining events in the current Gregorian year, with Show more in batches of five. Calendar month context and the estimate disclosure stay in place.
+- The optional Home recents panel now counts the full eligible deduplicated history before taking its initial three cards, with Show more in batches of three. Missing and completed/dismissed entries no longer consume the initial slots. Browsing does not alter stored history.
+
 # v5.17.163 - Continue root and study matches
 
 - Root look-alike pairs page through the complete computed loaded-text pool, 12 pairs per page, with exact counts and explicit previous/next controls. Root and tab stay in the URL; hostile pages clamp to the available pool.

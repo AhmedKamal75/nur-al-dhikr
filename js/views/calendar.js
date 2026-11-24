@@ -250,9 +250,12 @@ export function renderCalendar(state) {
   // against "now" hid today's event the second the day began.
   const todayStart = new Date(today);
   todayStart.setHours(0, 0, 0, 0);
-  const events = islamicEventsForYear(today.getFullYear())
-    .filter((e) => e.date >= todayStart)
-    .slice(0, 5);
+  const allEvents = islamicEventsForYear(today.getFullYear()).filter((e) => e.date >= todayStart);
+  const eventLimit = Math.max(
+    5,
+    Math.min(100, Math.floor(Number(state.activeParams?.events)) || 5)
+  );
+  const events = allEvents.slice(0, eventLimit);
 
   return `
   <section class="view view--calendar">
@@ -293,6 +296,7 @@ export function renderCalendar(state) {
         ? `
     <section class="panel">
       <div class="panel__header"><h2>${t('calendar.events', lang)}</h2></div>
+      <p class="panel__subtext" data-calendar-event-count>${t('list.shown', lang, { n: events.length, total: allEvents.length })} · ${today.getFullYear()}</p>
       <div class="event-list">
         ${events
           .map(
@@ -304,6 +308,7 @@ export function renderCalendar(state) {
           )
           .join('')}
       </div>
+      ${events.length < allEvents.length ? `<button type="button" class="btn btn--secondary btn--sm" data-action="calendar-events-more" data-count="${eventLimit + 5}">${t('list.more', lang)}</button>` : ''}
       <p class="panel__subtext">${t('calendar.gregorian', lang)} \u2014 ${t('calendar.estimateNote', lang)}</p>
     </section>`
         : ''
