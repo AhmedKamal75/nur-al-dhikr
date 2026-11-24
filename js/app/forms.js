@@ -565,8 +565,16 @@ export const formHandlers = {
     const lang = store.getState().settings.language;
     showToast(t('worship.sadaqahLogged', lang));
     try {
-      const { buildSadaqahEditor } = await import('../views/home.js');
-      openModal(buildSadaqahEditor(store.getState()), { labelledBy: 'modal-title-sadaqah' });
+      const { sadaqahHistoryHTML } = await import('../views/home.js');
+      const list = document.querySelector('[data-gift-list]');
+      if (list && form.isConnected) {
+        list.outerHTML = sadaqahHistoryHTML(
+          store.getState(),
+          list.dataset.query,
+          Number(list.dataset.limit)
+        );
+        form.reset();
+      }
     } catch {
       closeModal();
     }

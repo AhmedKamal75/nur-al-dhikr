@@ -7,6 +7,13 @@
  */
 
 export const en = {
+  'list.shown': 'Showing {n} of {total}',
+  'list.total': '{n} total',
+  'list.noMatches': 'No matches.',
+  'list.older': 'Show older gifts',
+  'list.more': 'Show more',
+  'list.filterGifts': 'Filter gifts by note, amount or date',
+  'list.filterHidden': 'Filter hidden hadiths by number or text',
   'app.name': 'Nūr al-Dhikr',
   'app.tagline': 'Read. Remember. Reflect. Act.',
   'nav.home': 'Home',

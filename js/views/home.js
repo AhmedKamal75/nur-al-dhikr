@@ -5,7 +5,13 @@ import { collectionReadableCount } from '../services/focusQueue.js';
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
-import { pickLocale, categoryDisplayName, dateKey, escapeHTML } from '../core/utils.js';
+import {
+  pickLocale,
+  categoryDisplayName,
+  dateKey,
+  escapeHTML,
+  normalizeSearch,
+} from '../core/utils.js';
 import { selectors } from '../core/state.js';
 import { sessionFlag } from '../domain/sessionFlags.js';
 import { VIEWS, CHECKLIST_ITEMS } from '../core/config.js';
@@ -1375,7 +1381,7 @@ export function reviewDigestCardHTML(state) {
  * currencies). Pure template — `sadaqah-entry` in app/forms.js logs,
  * `sadaqah-remove` deletes (rebuilt in place when the modal is open).
  */
-export function buildSadaqahEditor(state) {
+export function sadaqahHistoryHTML(state, query = '', limit = 20) {
   const lang = state.settings.language;
   const log = Array.isArray(state.sadaqahLog) ? state.sadaqahLog : [];
   const fmtDay = (ts) => {
@@ -1388,19 +1394,33 @@ export function buildSadaqahEditor(state) {
       return '';
     }
   };
-  const rows = log
-    .slice(0, 20)
+  const terms = normalizeSearch(query).split(' ').filter(Boolean);
+  const filtered = log.filter((e) =>
+    terms.every((term) =>
+      normalizeSearch(`${e.note || ''} ${e.amount ?? ''} ${fmtDay(e.ts)}`).includes(term)
+    )
+  );
+  const shown = Math.min(filtered.length, Math.max(20, Number(limit) || 20));
+  const rows = filtered
+    .slice(0, shown)
     .map(
-      (e) => `
-      <div class="prayer-row">
-        <span class="prayer-row__icon">${icon('coins', { size: 18 })}</span>
-        <span class="prayer-row__name">${escapeHTML(fmtDay(e.ts))}${e.note ? ` · ${escapeHTML(e.note)}` : ''}</span>
-        ${e.amount != null ? `<span class="prayer-row__time" dir="ltr">${escapeHTML(String(e.amount))}</span>` : ''}
-        <button type="button" class="icon-btn icon-btn--sm" data-action="sadaqah-remove" data-id="${escapeHTML(e.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 15 })}</button>
-      </div>`
+      (e) => `<div class="prayer-row">
+      <span class="prayer-row__icon">${icon('coins', { size: 18 })}</span>
+      <span class="prayer-row__name">${escapeHTML(fmtDay(e.ts))}${e.note ? ` · ${escapeHTML(e.note)}` : ''}</span>
+      ${e.amount != null ? `<span class="prayer-row__time" dir="ltr">${escapeHTML(String(e.amount))}</span>` : ''}
+      <button type="button" class="icon-btn icon-btn--sm" data-action="sadaqah-remove" data-id="${escapeHTML(e.id)}" aria-label="${t('common.delete', lang)}">${icon('trash', { size: 15 })}</button>
+    </div>`
     )
     .join('');
+  return `<div data-gift-list data-query="${escapeHTML(query)}" data-limit="${shown}">
+    <p class="panel__subtext" data-gift-count>${t('list.shown', lang, { n: shown, total: filtered.length })} · ${t('list.total', lang, { n: log.length })}</p>
+    ${rows || `<p class="empty-hint">${t(log.length ? 'list.noMatches' : 'worship.sadaqahEmpty', lang)}</p>`}
+    ${shown < filtered.length ? `<button type="button" class="btn btn--secondary btn--sm" data-action="sadaqah-history-more">${t('list.older', lang)}</button>` : ''}
+  </div>`;
+}
 
+export function buildSadaqahEditor(state) {
+  const lang = state.settings.language;
   return `
   <div class="sadaqah-editor">
     <h2 id="modal-title-sadaqah">${t('worship.sadaqahEditor', lang)}</h2>
@@ -1413,6 +1433,7 @@ export function buildSadaqahEditor(state) {
       </div>
     </form>
     <div class="panel__header panel__header--sub"><h3>${t('worship.sadaqahHistory', lang)}</h3></div>
-    ${rows || `<p class="empty-hint">${t('worship.sadaqahEmpty', lang)}</p>`}
+    <label class="field">${t('list.filterGifts', lang)}<input type="search" class="input" data-bind="sadaqah-history-filter" aria-label="${t('list.filterGifts', lang)}" /></label>
+    ${sadaqahHistoryHTML(state)}
   </div>`;
 }

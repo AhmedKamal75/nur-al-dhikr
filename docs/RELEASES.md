@@ -1,3 +1,8 @@
+## v5.17.162 - Browse hidden hadiths and older gifts
+
+- Hidden-hadith recovery has an independent number/text filter, exact matching count and Show more in batches of 40. The reader's query, page and chapter stay separate; recovery state resets when changing books.
+- Gift history has note/amount/date filtering, exact matching and total counts, and older entries in batches of 20. Browsing and deletion preserve the unsaved gift form; save and deletion preserve history filters. No bulk actions or currency totals added.
+
 ## v5.17.161 - Search every matching loaded hadith
 
 - Cross-book hadith search counts every match in the loaded index, without the former 200-result cutoff. Ten cards render per page; the loaded-book scope remains explicit and missing-book downloads still require consent.
