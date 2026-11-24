@@ -738,6 +738,24 @@ body.tajweed-underlines-off .tajweed {
   white-space: nowrap;
 }
 
+@media (max-width: 560px) {
+  /* Keep the full reading location above the six controls instead of
+     leaving it a few pixels between the Home and action buttons. */
+  .mushaf-topbar {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    justify-items: center;
+  }
+  .mushaf-topbar__title {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: stretch;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: start;
+  }
+}
+
 /* --- The page ---------------------------------------------------------- */
 .mushaf-page {
   position: relative;

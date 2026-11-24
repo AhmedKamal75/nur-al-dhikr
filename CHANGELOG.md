@@ -1,3 +1,8 @@
+# v5.17.153 - Readable phone Mushaf location header
+
+- Gives the phone Mushaf location title its own wrapping row above the six controls, keeping the full surah and Juz position visible without shrinking controls. Desktop layout and reading behavior are unchanged.
+- Bilingual phone and desktop browser tests measure text fragments, control bounds, tap sizes and sequence order. No Quran or Mushaf content changed.
+
 # v5.17.152 - Phone prayer times stay inside their cells
 
 - Home prayer ribbon clocks wrap at the AM/PM space when a phone cell is too narrow. The complete time stays readable without shrinking text or overlapping the next prayer.
