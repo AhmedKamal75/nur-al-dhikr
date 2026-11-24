@@ -26,6 +26,11 @@ export function collectionSessionEntries(state, collection) {
   });
 }
 
+/** Read-eligible count shares the exact Focus queue contract. */
+export function collectionReadableCount(state, collection) {
+  return collectionSessionEntries(state, collection).length;
+}
+
 export function collectionSessionStart(state, collection) {
   const entries = collectionSessionEntries(state, collection);
   return entries.find((entry) => entry.item.id === collection?.sessionItemId) || entries[0] || null;

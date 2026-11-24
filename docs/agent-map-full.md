@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 251 — data files: 29 — tests: 293
+- js modules: 251 — data files: 29 — tests: 294
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -1938,7 +1938,7 @@ job: the counter as a floating window. (v5.17.15) A reader counting while doing 
 
 job: / Focus queues share one resolver across rendering, keys and auto-advance.
 
-- exports: `collectionSessionEntries` (function), `collectionSessionStart` (function), `focusRoute` (function), `resolveFocusQueue` (function), `focusExitRoute` (function)
+- exports: `collectionSessionEntries` (function), `collectionReadableCount` (function), `collectionSessionStart` (function), `focusRoute` (function), `resolveFocusQueue` (function), `focusExitRoute` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -2309,14 +2309,14 @@ job: A single collection: rename + share + delete in the header, bulk import of 
 - exports: `buildCollectionShareText` (function), `renderCollection` (function)
 - emits: `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `delete-collection`, `navigate`, `rename-collection`, `share-collection`
 - handles: —
-- i18n: `collections.addFavorites`, `collections.delete`, `collections.empty`, `collections.itemCount`, `collections.rename`, `collections.searchPh`, `collections.sessionBeginning`, `collections.share`, `common.notFoundCollection`, `content.reviewPending`, `nav.collections`, `search.noResults`, `settings.moveDown`, `settings.moveUp`
+- i18n: `collections.addFavorites`, `collections.delete`, `collections.empty`, `collections.itemCount`, `collections.matchedCount`, `collections.rename`, `collections.searchPh`, `collections.sessionBeginning`, `collections.share`, `common.notFoundCollection`, `content.reviewPending`, `nav.collections`, `search.noResults`, `settings.moveDown`, `settings.moveUp`
 - routes: `VIEWS.COLLECTIONS`
 
 ### `js/views/collections.js`
 
 job: (header names file only — no job line)
 
-- exports: `liveCollectionCount` (function), `renderCollections` (function)
+- exports: `liveCollectionCount` (re-export), `renderCollections` (function)
 - emits: `create-collection`, `create-collection-suggested`, `navigate`
 - handles: —
 - i18n: `collections.create`, `collections.empty`, `collections.emptyHint`, `collections.itemCount`, `collections.suggestions`, `nav.collections`
@@ -3595,6 +3595,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `coerceGoal`: `js/core/state/streak.js`
 - `collectDrillWords`: `js/domain/grammarDrill.js`
 - `collectionFor`: `js/domain/localeContent.js`
+- `collectionReadableCount`: `js/services/focusQueue.js`
 - `collectionSessionEntries`: `js/services/focusQueue.js`
 - `collectionSessionStart`: `js/services/focusQueue.js`
 - `compactPrayerMethodLine`: `js/domain/prayer.js`
@@ -5141,6 +5142,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `collectdrillwords`: `js/domain/grammarDrill.js`
 - `collection`: `js/core/config/app.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/collection.js`, `js/views/favorites.js`
 - `collectionfor`: `js/domain/localeContent.js`
+- `collectionreadablecount`: `js/services/focusQueue.js`
 - `collections`: `js/core/state/slices/library.js`, `js/domain/moods.js`, `js/services/hadith.js`, `js/ui/card.js`
 - `collectionsessionentries`: `js/services/focusQueue.js`
 - `collectionsessionstart`: `js/services/focusQueue.js`
@@ -7655,6 +7657,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/checklist-deslopify.test.js` — (no header comment) (pins: —)
 - `tests/checklist.test.js` — (no header comment) (pins: `../js/core/config.js`, `../js/core/utils.js`, `../js/services/checklist.js`)
 - `tests/city-presets.test.js` — the offline city directory: unique ids, sane coordinates, known regions, both languages named. A wrong coordinate is a wrong Fajr; this gate keeps the directory honest. (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/locations.js`)
+- `tests/collection-readable-count.test.js` — (no header comment) (pins: `../js/core/state/initial.js`, `../js/services/focusQueue.js`, `../js/views/collection.js`, `../js/views/collections.js`, `../js/views/home.js`)
 - `tests/collection-session.test.js` — (no header comment) (pins: `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/services/focusQueue.js`)
 - `tests/collections.test.js` — item 7 (collections) gates: 1. COLLECTION_MOVE_ITEM swaps neighbors; edges, unknown ids and hostile dirs no-op; (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/views/collection.js`)
 - `tests/compare-c-5.2.78.test.js` — UP-06 second compare slot. Pure reducer/sanitizer/domain checks only (no DOM, no network). (pins: `../js/core/config.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/domain/translationCompare.js`)

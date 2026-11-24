@@ -1,6 +1,7 @@
 /**
  * views/collections.js
  */
+import { collectionReadableCount } from '../services/focusQueue.js';
 import { t } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
@@ -8,12 +9,8 @@ import { pickLocale, escapeHTML } from '../core/utils.js';
 import { VIEWS, COLLECTION_SUGGESTIONS } from '../core/config.js';
 import { emptyStateHTML } from '../ui/emptyState.js';
 
-/** Live item count (prune keeps deleted ids for restore; the index drops
- *  them — the tile must agree with the detail view, not the raw array). */
-export function liveCollectionCount(state, collection) {
-  const index = state.library?.itemIndex || {};
-  return (collection?.items || []).filter((id) => index[id]).length;
-}
+/** Compatibility export for callers of the former live-index count. */
+export { collectionReadableCount as liveCollectionCount } from '../services/focusQueue.js';
 
 export function renderCollections(state) {
   const lang = state.settings.language;
@@ -40,7 +37,7 @@ export function renderCollections(state) {
         <a class="collection-tile" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">
           <span class="collection-tile__icon">${icon('bookmark', { size: 22 })}</span>
           <span class="collection-tile__name">${escapeHTML(pickLocale(c.name, lang))}</span>
-          <span class="collection-tile__count">${t('collections.itemCount', lang, { n: liveCollectionCount(state, c) })}</span>
+          <span class="collection-tile__count">${t('collections.itemCount', lang, { n: collectionReadableCount(state, c) })}</span>
         </a>`
         )
         .join('')}
