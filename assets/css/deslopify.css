@@ -4742,9 +4742,10 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   font-weight: 650;
 }
 .nav__section-row {
-  display: flex;
-  align-items: stretch;
-  gap: 4px;
+  position: relative;
+}
+.nav__section-row > .nav__section-link {
+  margin-inline-end: calc(var(--touch-target) + 4px);
 }
 .nav__section-details {
   flex: 0 0 auto;
@@ -4753,7 +4754,9 @@ html[dir='rtl'] .view--home .home-hero__greeting {
   min-inline-size: 0;
 }
 .nav__section-toggle {
-  position: static;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
   z-index: var(--z-raised);
   inline-size: var(--touch-target);
   min-block-size: var(--touch-target);
@@ -4789,10 +4792,10 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 [dir='rtl'] .nav__section-chevron {
   transform: rotate(90deg);
 }
-.nav__section[open] > .nav__section-toggle .nav__section-chevron {
+.nav__section-details[open] > .nav__section-toggle .nav__section-chevron {
   transform: none;
 }
-.nav__section--current > .nav__section-toggle {
+.nav__section--current .nav__section-toggle {
   color: var(--color-primary-text);
 }
 .nav__section-link {
@@ -4834,6 +4837,9 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 @media (min-width: 960px) {
   html[data-nav-collapsed='true'] .nav__section-toggle {
     display: none;
+  }
+  html[data-nav-collapsed='true'] .nav__section-row > .nav__section-link {
+    margin-inline-end: 0;
   }
   html[data-nav-collapsed='true'] .nav__section-link {
     grid-template-columns: 24px;
