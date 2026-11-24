@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 251 — data files: 29 — tests: 297
+- js modules: 251 — data files: 29 — tests: 298
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -464,7 +464,7 @@ job: (no header comment)
 
 - exports: `applyTajweedColors` (function), `navigateMushafPage` (function), `clickHandlers` (object), `changeHandlers` (const), `inputHandlers` (const)
 - emits: `tajweed-course-mode`, `word-bookmark`
-- handles: `khatma-clear-plan`, `khatma-open-plan`, `mushaf-ayah-tap`, `mushaf-copy-ayah`, `mushaf-find-page-result`, `mushaf-jump-page`, `mushaf-more`, `mushaf-next`, `mushaf-open-at-surah`, `mushaf-open-bookmarks`, `mushaf-open-in-study`, `mushaf-open-jump`, `mushaf-open-page-find`, `mushaf-open-settings`, `mushaf-open-track`, `mushaf-play-pick`, `mushaf-prev`, `mushaf-remove-bookmark`, `mushaf-reset-progress`, `mushaf-set-bismillah`, `mushaf-set-font`, `mushaf-set-paper`, `mushaf-set-tafsir`, `mushaf-toggle-bookmark`, `mushaf-toggle-fullscreen`, `play-ayah`, `practice-check`, `practice-classify`, `practice-classify-next`, `practice-lesson`, `practice-mode`, `practice-next`, `practice-open`, `practice-review`, `practice-start`, `practice-tap`, `practice-this-ayah`, `quran-toggle-immersive`, `quran-window-expand`, `root-jump`, `roots-expand`, `roots-jump`, `roots-open`, `roots-page`, `roots-tab`, `study-tray-close`, `study-tray-toggle`, `study-tray-word`, `tafsir-compare`, `tafsir-compare-download`, `tafsir-download`, `tafsir-open`, `tafsir-tab`, `tajweed-course-drill`, `tajweed-course-drill-rule`, `tajweed-course-toggle-done`, `tajweed-open-settings`, `tajweed-reset`, `tajweed-set-color`, `tajweed-set-convention`, `tajweed-toggle-rule`, `word-bookmark`, `word-bookmark-open`, `word-bookmark-remove`, `word-bookmarks-open`, `word-copy`, `word-share`, `word-speak`, `word-study-from-tray`, `word-tap`, `tajweed-course-mode` (change/input)
+- handles: `khatma-clear-plan`, `khatma-open-plan`, `mushaf-ayah-tap`, `mushaf-copy-ayah`, `mushaf-find-page-result`, `mushaf-jump-page`, `mushaf-more`, `mushaf-next`, `mushaf-open-at-surah`, `mushaf-open-bookmarks`, `mushaf-open-in-study`, `mushaf-open-jump`, `mushaf-open-page-find`, `mushaf-open-settings`, `mushaf-open-track`, `mushaf-play-pick`, `mushaf-prev`, `mushaf-remove-bookmark`, `mushaf-reset-progress`, `mushaf-set-bismillah`, `mushaf-set-font`, `mushaf-set-paper`, `mushaf-set-tafsir`, `mushaf-toggle-bookmark`, `mushaf-toggle-fullscreen`, `play-ayah`, `practice-check`, `practice-classify`, `practice-classify-next`, `practice-lesson`, `practice-mode`, `practice-next`, `practice-open`, `practice-review`, `practice-start`, `practice-tap`, `practice-this-ayah`, `quran-toggle-immersive`, `quran-window-expand`, `root-jump`, `roots-confusables-page`, `roots-expand`, `roots-jump`, `roots-open`, `roots-page`, `roots-tab`, `study-tray-close`, `study-tray-toggle`, `study-tray-word`, `tafsir-compare`, `tafsir-compare-download`, `tafsir-download`, `tafsir-open`, `tafsir-tab`, `tajweed-course-drill`, `tajweed-course-drill-rule`, `tajweed-course-toggle-done`, `tajweed-open-settings`, `tajweed-reset`, `tajweed-set-color`, `tajweed-set-convention`, `tajweed-toggle-rule`, `word-bookmark`, `word-bookmark-open`, `word-bookmark-remove`, `word-bookmarks-open`, `word-copy`, `word-share`, `word-speak`, `word-study-from-tray`, `word-tap`, `tajweed-course-mode` (change/input)
 - i18n: `card.copied`, `card.copyFailed`, `common.error`, `common.retry`, `khatma.planCleared`, `mushaf.khatmaResetDone`, `mushaf.loadFailed`, `practice.nearestAyah`, `practice.nothingHere`, `tajweed.resetDone`, `wordStudy.savedWordRemoved`, `wordStudy.soundOff`, `wordStudy.speechUnsupported`, `wordStudy.title`
 - routes: `VIEWS.MUSHAF`, `VIEWS.QURAN`, `VIEWS.ROOTS`
 
@@ -2249,7 +2249,7 @@ job: the per-ayah detail modal: Arabic, translation, play/copy/share/study actio
 - exports: `buildStudyHadithSection` (function), `buildMushafAyahDetail` (function)
 - emits: `ayah-share`, `hifz-ayah-mark`, `hifz-mark`, `hifz-review`, `mushaf-copy-ayah`, `mushaf-open-in-study`, `mushaf-toggle-bookmark`, `navigate`, `play-ayah`, `practice-this-ayah`, `surah-play`
 - handles: —
-- i18n: `audio.reciteFromHere`, `card.copy`, `hifz.markMemorized`, `mushaf.listen`, `mushaf.openInStudy`, `practice.thisAyah`, `quran.shareAyah`, `study.hadithNone`, `study.hadithNote`, `study.hadithScope`, `study.hadithTitle`, `study.openHadith`, `study.title`
+- i18n: `audio.reciteFromHere`, `card.copy`, `hifz.markMemorized`, `list.shown`, `mushaf.listen`, `mushaf.openInStudy`, `palette.seeAll`, `practice.thisAyah`, `quran.shareAyah`, `study.hadithNone`, `study.hadithNote`, `study.hadithScope`, `study.hadithTitle`, `study.openHadith`, `study.title`
 - routes: `VIEWS.HADITH`
 
 ### `js/views/backupSummary.js`
@@ -2607,9 +2607,9 @@ job: The Ramadan & Fasting companion: a live Suhoor–Iftar countdown driven by 
 job: the root-family browser (v3.22.0). A dedicated view that shows EVERY occurrence of a Qur'anic root across the whole corpus, grouped by the word-forms it takes (the per-word
 
 - exports: `drillHTML` (function), `renderRoots` (function)
-- emits: `grammar-exit`, `grammar-grade`, `grammar-restart`, `grammar-reveal`, `grammar-start`, `navigate`, `retry-load`, `roots-expand`, `roots-jump`, `roots-page`, `roots-tab`
+- emits: `grammar-exit`, `grammar-grade`, `grammar-restart`, `grammar-reveal`, `grammar-start`, `navigate`, `retry-load`, `roots-confusables-page`, `roots-expand`, `roots-jump`, `roots-page`, `roots-tab`
 - handles: —
-- i18n: `common.next`, `common.prev`, `common.retry`, `grammar.done`, `grammar.exit`, `grammar.hint`, `grammar.progress`, `grammar.prompt`, `grammar.restart`, `grammar.reveal`, `grammar.right`, `grammar.start`, `grammar.title`, `grammar.wrong`, `journal.pageStatus`, `nav.search`, `roots.back`, `roots.confusablesNeedCorpus`, `roots.empty`, `roots.indexStats` (+15 more)
+- i18n: `common.next`, `common.prev`, `common.retry`, `grammar.done`, `grammar.exit`, `grammar.hint`, `grammar.progress`, `grammar.prompt`, `grammar.restart`, `grammar.reveal`, `grammar.right`, `grammar.start`, `grammar.title`, `grammar.wrong`, `journal.pageStatus`, `list.shown`, `nav.search`, `roots.back`, `roots.confusablesNeedCorpus`, `roots.empty` (+17 more)
 - routes: `VIEWS.QURAN`, `VIEWS.ROOTS`, `VIEWS.SEARCH`
 
 ### `js/views/search.js`
@@ -3035,6 +3035,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `restore-auto-backup`: emitted by `js/views/backupSummary.js`, `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `retry-load`: emitted by `js/ui/emptyState.js`, `js/views/roots.js`; handled in `js/app/handlers/system.js`
 - `root-jump`: emitted by `js/views/tafsirPanel.js`; handled in `js/app/handlers/quran.js`
+- `roots-confusables-page`: emitted by `js/views/roots.js`; handled in `js/app/handlers/quran.js`
 - `roots-expand`: emitted by `js/views/roots.js`; handled in `js/app/handlers/quran.js`
 - `roots-jump`: emitted by `js/views/roots.js`; handled in `js/app/handlers/quran.js`
 - `roots-open`: emitted by `js/views/tafsirPanel.js`; handled in `js/app/handlers/quran.js`
@@ -7873,6 +7874,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/statsExport.test.js` — item 4 (statistics export) gates: 1. buildStatsCSV emits the daily grain oldest-first (header + all four counters), coercing hostile values and skipping junk/rolled keys; (pins: `../js/core/utils.js`, `../js/domain/statistics.js`)
 - `tests/streak.test.js` — item 2 (streak inflation) gates for the v5.2.45 rules in core/state/streak.js: 1. an idle today never inflates or breaks: empty history reads 0 (was (pins: `../js/core/state.js`, `../js/core/state/streak.js`, `../js/core/utils.js`)
 - `tests/study-context.test.js` — (no header comment) (pins: `../js/core/router.js`, `../js/views/studyContext.js`, `../js/views/tajweedCourseView.js`)
+- `tests/study-continuations.test.js` — (no header comment) (pins: `../js/domain/hadithSearch.js`, `../js/domain/mutashabihat.js`, `../js/views/ayahStudy.js`, `../js/views/roots.js`)
 - `tests/study-mode.test.js` — (no header comment) (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/hadithSearch.js`, `../js/views/ayahStudy.js`)
 - `tests/study-tray.test.js` — merged-plan item 7 (v5.17.54), permanent. The inline Qur'an study tray: tapping an ayah's Study control renders the SAME study panel inline UNDER the tapped ayah row (classic reader cards + (pins: `../js/app/events.js`, `../js/core/config.js`, `../js/core/i18n.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/reducer.js`, `../js/views/mushafReader.js`, `../js/views/quran.js`, `../js/views/studyTray.js`)
 - `tests/studyLanguage.test.js` — item v5.2.68 (study in your language) gates: 1. the Settings tafsir picker lists bundled editions (native names), marks the active default, and dispatches mushaf-set-tafsir; (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/domain/grammarDrill.js`, `../js/domain/roots.js`, `../js/views/ayahStudy.js`, `../js/views/kids.js`, `../js/views/palette.js`, `../js/views/quran.js`, `../js/views/roots.js`, `../js/views/settings.js`, `../js/views/tafsirPanel.js`)

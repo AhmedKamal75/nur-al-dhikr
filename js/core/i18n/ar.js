@@ -1331,6 +1331,7 @@ export const ar = {
   'wordStudy.noRootMeaningData': 'لا يوجد معنى أصلي مسجّل لهذا الجذر بعد.',
   'wordStudy.noIrabData': 'لا توجد حقول إعرابية مسجّلة لهذه الكلمة بعد.',
   // v3.22.0 root-family browser
+  'roots.pairScope': 'مجموعة تشابه محسوبة من نص القرآن المحمل.',
   'roots.title': 'الجذور القرآنية',
   'roots.subtitle': 'كل مواضع كل جذر، مجمّعة حسب صيغ الكلمة — بناء المعرفة من القرآن نفسه.',
   'roots.searchPlaceholder': 'ابحث عن جذر — مثال: رحم',

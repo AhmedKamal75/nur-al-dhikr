@@ -1402,6 +1402,7 @@ export const en = {
   'wordStudy.noRootMeaningData': 'No recorded core meaning for this root yet.',
   'wordStudy.noIrabData': 'No grammar fields recorded for this word yet.',
   // v3.22.0 root-family browser
+  'roots.pairScope': 'Computed look-alike pool from loaded Quran text.',
   'roots.title': 'Qur\u2019an Root Families',
   'roots.subtitle':
     'Every occurrence of every root, grouped by the word-forms it takes — a vocabulary builder built from the Qur\u2019an itself.',

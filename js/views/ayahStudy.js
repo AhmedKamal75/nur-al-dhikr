@@ -78,8 +78,9 @@ export function buildStudyHadithSection(state, surahNumber, ayahNumber, arabicTe
   const docs = state.hadith?.docs || {};
   const stats = hadithIndexStats();
   const totalBooks = state.hadith?.index?.books?.length || 0;
-  const hits = searchHadith(query, { limit: 5 });
+  const hits = searchHadith(query, { limit: Infinity });
   const cards = hits
+    .slice(0, 5)
     .map((hit) => {
       const doc = docs[hit.bookId];
       const h = doc?.hadiths?.find((x) => x && Number(x.n) === Number(hit.n));
@@ -100,6 +101,8 @@ export function buildStudyHadithSection(state, surahNumber, ayahNumber, arabicTe
       <h3 class="mushaf-ayah-detail__study-heading">${escapeHTML(t('study.hadithTitle', lang))}</h3>
       <p class="panel__subtext">${escapeHTML(t('study.hadithScope', lang, { a: stats.books.length, b: totalBooks }))}</p>
       <p class="panel__subtext">${escapeHTML(t('study.hadithNote', lang))}</p>
+      <p class="panel__subtext" data-study-hadith-count>${t('list.shown', lang, { n: Math.min(5, hits.length), total: hits.length })}</p>
+      ${hits.length ? `<a class="btn btn--secondary btn--sm" data-study-hadith-all href="${buildHash(VIEWS.HADITH, { q: query })}" data-action="navigate" data-view="${VIEWS.HADITH}" data-q="${escapeHTML(query)}">${t('palette.seeAll', lang, { n: hits.length })}</a>` : ''}
       ${
         cards ||
         `<p class="panel__subtext">${escapeHTML(t('study.hadithNone', lang))}</p>
