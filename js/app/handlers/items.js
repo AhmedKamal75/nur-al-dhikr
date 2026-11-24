@@ -52,6 +52,7 @@ import { hasVerifiedDhikrAudio } from '../../core/schema.js';
 import * as tasbih from '../../services/tasbih.js';
 import { pickRandomHadith } from '../../services/hadith.js';
 import {
+  resolveFocusQueue,
   collectionSessionStart,
   collectionSessionEntries,
   focusRoute,
@@ -59,6 +60,12 @@ import {
 import { dismissCompleted, noteCompleted } from '../../domain/completedCards.js';
 import { selectedMoodIds } from '../../services/moodSelection.js';
 import { moodDestinationHTML } from '../../views/mood.js';
+import {
+  focusSizePercent,
+  focusSizeStep,
+  focusSizeSheetHTML,
+  syncFocusSizeSheet,
+} from '../../views/focus.js';
 
 /** (v5.0.0) The counting ripple: one span, radial bloom at the tap point,
  *  removed on animationend. The CSS (cards.css) honors
@@ -296,6 +303,26 @@ export const clickHandlers = {
   },
 
   'focus-exit': () => exitFocus(),
+  'focus-size-open': () => {
+    const state = store.getState();
+    if (state.activeView !== VIEWS.FOCUS || !resolveFocusQueue(state).item) return;
+    const scale = focusSizePercent(state.settings.arabicFontScale) / 100;
+    if (state.settings.arabicFontScale !== scale)
+      store.dispatch(actions.updateSettings({ arabicFontScale: scale }));
+    openModal(focusSizeSheetHTML(store.getState()), { labelledBy: 'modal-title-focus-size' });
+  },
+  'focus-size-step': (ds) => {
+    const state = store.getState();
+    if (
+      state.activeView !== VIEWS.FOCUS ||
+      !document.querySelector('[data-focus-size-sheet]') ||
+      !['-1', '1'].includes(ds.dir)
+    )
+      return;
+    const scale = focusSizeStep(state.settings.arabicFontScale, ds.dir);
+    store.dispatch(actions.updateSettings({ arabicFontScale: scale }));
+    syncFocusSizeSheet(scale);
+  },
   'focus-wake-toggle': () => toggleFocusWake(),
 
   'focus-reset': (ds) => {
