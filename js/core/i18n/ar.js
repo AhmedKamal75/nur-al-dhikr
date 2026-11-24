@@ -831,6 +831,12 @@ export const ar = {
   'focus.wake.released': 'أُوقف إبقاء الشاشة مضاءة؛ أوقف الخيار ثم فعّله للمحاولة',
   'focus.wake.denied': 'لم يسمح المتصفح بذلك؛ قد تنطفئ الشاشة',
   'focus.wake.unsupported': 'غير مدعوم هنا؛ قد تنطفئ الشاشة',
+  'focus.size.title': 'حجم القراءة',
+  'focus.size.shared':
+    'هذا تفضيل مشترك لحجم النص العربي في الأذكار. يتغير الحجم في بقية شاشات الأذكار، ولا يتغير حجم المصحف.',
+  'focus.size.current': 'الحجم الحالي:',
+  'focus.size.smaller': 'تصغير النص العربي',
+  'focus.size.larger': 'تكبير النص العربي',
   'focus.exit': 'الخروج من وضع التركيز',
   'focus.reset': 'إعادة تعيين العداد',
   // (v5.17.52) session queue — parity with en.

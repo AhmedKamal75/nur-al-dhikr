@@ -4338,7 +4338,7 @@ html[dir='rtl'] .view--home .home-hero__greeting {
 .focus__arabic {
   max-inline-size: 42rem;
   margin-inline: auto;
-  font-size: clamp(1.55rem, 3.2vw, 2.25rem);
+  font-size: calc(clamp(1.55rem, 3.2vw, 2.25rem) * var(--arabic-font-scale));
   line-height: 2.15;
   text-align: center;
 }
@@ -4364,7 +4364,7 @@ html[dir='rtl'] .view--home .home-hero__greeting {
     padding-block: 20px 26px;
   }
   .focus__arabic {
-    font-size: clamp(1.42rem, 7vw, 1.8rem);
+    font-size: calc(clamp(1.42rem, 7vw, 1.8rem) * var(--arabic-font-scale));
     line-height: 2.05;
   }
 }

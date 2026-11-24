@@ -1,3 +1,8 @@
+## v5.17.166 - Adjust Arabic reading size from Focus
+
+- Adhkar Focus has a Reading size sheet using the existing shared Arabic-size preference, with 5% steps from 85% to 160%, current size, labeled controls and disabled bounds. The shared effect is explained in English and Arabic; Mushaf sizing is untouched.
+- The final Focus style now honors the shared Arabic-size setting on phone and desktop. The sheet updates without replacing the reading view, preserves count/position/scroll and returns focus to its opener. Tests cover keyboard, modal containment, background swipe and route teardown.
+
 ## v5.17.165 - Save selected need-based duas to a collection
 
 - Browse by need offers explicit temporary selection, with no items preselected, select-all, a live count and native labeled checkboxes separate from card controls.

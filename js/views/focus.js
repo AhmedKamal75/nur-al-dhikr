@@ -233,6 +233,7 @@ export function renderFocus(state) {
       </div>
     </header>
     <div class="focus__wake">
+      <button type="button" class="btn btn--secondary btn--sm" data-action="focus-size-open">${escapeHTML(t('focus.size.title', lang))}</button>
       <button type="button" class="btn btn--secondary btn--sm" data-action="focus-wake-toggle" aria-pressed="${state.focusWake?.enabled === true}">${escapeHTML(t('focus.wakeToggle', lang))}</button>
       <span class="focus__wake-status" role="status" aria-live="polite">${escapeHTML(t(WAKE_STATUS_KEYS[state.focusWake?.status] || WAKE_STATUS_KEYS.off, lang))}</span>
     </div>
@@ -312,4 +313,44 @@ export function renderFocus(state) {
       </button>
     </footer>
   </section>`;
+}
+
+/** Percent ticks avoid floating-point drift and clamp stale settings. */
+export function focusSizePercent(value) {
+  const n = Number(value);
+  return Math.max(85, Math.min(160, Math.round((Number.isFinite(n) && n > 0 ? n : 1) * 20) * 5));
+}
+
+export function focusSizeStep(value, dir) {
+  return Math.max(85, Math.min(160, focusSizePercent(value) + (Number(dir) > 0 ? 5 : -5))) / 100;
+}
+
+export function focusSizeSheetHTML(state) {
+  const lang = state.settings.language;
+  const n = focusSizePercent(state.settings.arabicFontScale);
+  return `<div data-focus-size-sheet>
+    <h2 id="modal-title-focus-size">${escapeHTML(t('focus.size.title', lang))}</h2>
+    <p>${escapeHTML(t('focus.size.shared', lang))}</p>
+    <p role="status" aria-live="polite" aria-atomic="true"><span>${escapeHTML(t('focus.size.current', lang))}</span> <output data-focus-size-value dir="ltr">${n}%</output></p>
+    <div class="editor-form__actions">
+      <button type="button" class="btn btn--secondary" data-action="focus-size-step" data-dir="-1" aria-label="${escapeHTML(t('focus.size.smaller', lang))}" ${n <= 85 ? 'disabled' : ''}>A−</button>
+      <button type="button" class="btn btn--secondary" data-action="focus-size-step" data-dir="1" aria-label="${escapeHTML(t('focus.size.larger', lang))}" ${n >= 160 ? 'disabled' : ''}>A+</button>
+      <button type="button" class="btn btn--primary" data-action="modal-close">${t('common.done', lang)}</button>
+    </div>
+  </div>`;
+}
+
+/** Settings updates skip the view render, keep this modal and its focus alive. */
+export function syncFocusSizeSheet(value) {
+  const sheet = document.querySelector('[data-focus-size-sheet]');
+  if (!sheet) return;
+  const n = focusSizePercent(value);
+  sheet.querySelector('[data-focus-size-value]').textContent = `${n}%`;
+  for (const button of sheet.querySelectorAll('[data-action="focus-size-step"]')) {
+    const disabled = Number(button.dataset.dir) < 0 ? n <= 85 : n >= 160;
+    const hadFocus = document.activeElement === button;
+    button.disabled = disabled;
+    if (disabled && hadFocus)
+      sheet.querySelector('[data-action="modal-close"]').focus({ preventScroll: true });
+  }
 }

@@ -882,6 +882,12 @@ export const en = {
   'focus.wake.released': 'Screen lock released, tap off then on to retry',
   'focus.wake.denied': 'Browser did not allow it, screen may sleep',
   'focus.wake.unsupported': 'Not supported here, screen may sleep',
+  'focus.size.title': 'Reading size',
+  'focus.size.shared':
+    'Shared adhkar Arabic-size preference. This also changes Arabic size in other adhkar views, not the Mushaf.',
+  'focus.size.current': 'Current size:',
+  'focus.size.smaller': 'Smaller Arabic text',
+  'focus.size.larger': 'Larger Arabic text',
   'focus.exit': 'Exit Focus Mode',
   'focus.reset': 'Reset counter',
   // (v5.17.52) session queue: plain completion line when every visible item
