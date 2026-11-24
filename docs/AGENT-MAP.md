@@ -4,8 +4,8 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 Read this file first. It is deliberately short: the spine, the lookup tables and the counted inventories. For one specific module’s exports, one `data-action`’s handler, or one keyword’s owners, read the exhaustive dump next.
 
-- js modules: 250 — data files: 29 — tests: 293
-- exhaustive dump: `docs/agent-map-full.md` (572 entries)
+- js modules: 251 — data files: 29 — tests: 293
+- exhaustive dump: `docs/agent-map-full.md` (573 entries)
 
 ## 1. The spine: chrome section → routes → view module
 
@@ -66,7 +66,7 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 
 | subsystem         | what lives there                                                             | modules | where in the dump                      |
 | ----------------- | ---------------------------------------------------------------------------- | ------- | -------------------------------------- |
-| `js/app`          | wiring + event handlers: boot, render dispatch, delegation, feature runners. | 32      | [open](agent-map-full.md#app)          |
+| `js/app`          | wiring + event handlers: boot, render dispatch, delegation, feature runners. | 33      | [open](agent-map-full.md#app)          |
 | `js/app/handlers` | feature-scoped click-handler maps merged by app/events.js.                   | 18      | [open](agent-map-full.md#app/handlers) |
 | `js/core`         | state container, hash router, config, i18n, storage, schema, utils.          | 11      | [open](agent-map-full.md#core)         |
 | `js/core/config`  | routes (views.js), chrome doors (nav.js), defaults, sanitizer.               | 5       | [open](agent-map-full.md#core/config)  |
@@ -82,8 +82,8 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 ## 5. Lookup tables (counts; open the dump for the rows)
 
 - `data-action` values emitted anywhere: **361** — every one resolves to a handler (see the Allowlist section of the dump).
-- files that handle at least one click/change/form action: **19** of 250.
-- exported symbols: **1589**.
+- files that handle at least one click/change/form action: **19** of 251.
+- exported symbols: **1591**.
 - i18n keys touched by js/: **1533** of the two dictionaries.
 
 ## 6. When you need the exhaustive dump

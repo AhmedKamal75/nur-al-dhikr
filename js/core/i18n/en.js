@@ -1169,7 +1169,7 @@ export const en = {
   // in English UI — the nav groups announce the rule once, sr-only, instead
   // of leaving every EN user to reverse-engineer it.
   'mushaf.bookOrderNote': 'Pages and ayahs follow mushaf order — right to left in both languages',
-  'mushaf.swipeHint': 'Swipe or use the arrows to turn the page',
+  'mushaf.swipeHint': 'Drag right for the next page, left for the previous. Or use the arrows.',
   'mushaf.findOnPage': 'Find on this page',
   'mushaf.findOnPageHint': 'Search only the text on the visible Mushaf page.',
   'mushaf.findOnPageInput': 'Find in this page',

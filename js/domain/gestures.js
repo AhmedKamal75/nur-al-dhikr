@@ -2,9 +2,9 @@
  * domain/gestures.js — pure touch-gesture decisions (v5.2.22, bug-report wave).
  *
  * The Mushaf page-turn swipe emulates a physical Arabic book, so its
- * direction is ALWAYS right-to-left book order — a swipe right-to-left
- * (the finger moves left, dx < 0) turns to the NEXT page, a swipe
- * left-to-right (dx > 0) turns to the PREVIOUS page — regardless of the
+ * direction is ALWAYS right-to-left book order — a swipe left-to-right
+ * (the finger moves right, dx > 0) turns to the NEXT page, a swipe
+ * right-to-left (dx < 0) turns to the PREVIOUS page — regardless of the
  * app's own UI language (document.dir). The keyboard page-turn arrows in
  * app/events.js follow the same mapping (ArrowLeft = next page), so keys,
  * buttons, and swipes can never disagree.
@@ -31,8 +31,8 @@ export function mushafSwipeTurn(dx, dy) {
   if (!Number.isFinite(dx) || !Number.isFinite(dy)) return null;
   if (Math.abs(dx) < MUSHAF_SWIPE_MIN_PX) return null;
   if (Math.abs(dx) < Math.abs(dy)) return null;
-  // RTL book order: leftward travel is forward, rightward is back.
-  return dx < 0 ? 'next' : 'prev';
+  // Paper moves right to uncover the next page on its left.
+  return dx > 0 ? 'next' : 'prev';
 }
 
 /**
