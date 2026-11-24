@@ -10,7 +10,7 @@ import {
 } from '../services/mushaf.js';
 import { ensureMushafNavigationPages } from './lazyData.js';
 import { navigateMushafPage } from './handlers/quran.js';
-import { takeoverManualZoom } from './autoFit.js';
+import { takeoverManualZoom, fitMushafPreview } from './autoFit.js';
 
 /** Owns only the temporary paper surfaces, never scripture or reader state. */
 export function initMushafSwipe() {
@@ -53,18 +53,37 @@ export function initMushafSwipe() {
         document.querySelector('#bottomnav')?.getBoundingClientRect().top || window.innerHeight;
       const bottom = Math.min(window.innerHeight, navTop > box.top ? navTop : window.innerHeight);
       const stage = document.createElement('div');
-      stage.className = 'mushaf-drag-stage';
+      stage.className = `mushaf-drag-stage mushaf-page-wrap view--mushaf${state.mushafFullscreen ? ' view--mushaf-fullscreen' : ''}`;
+      const originalWrap = book.closest('.mushaf-page-wrap');
+      const inherited = getComputedStyle(originalWrap);
+      for (const attr of originalWrap.attributes)
+        if (attr.name.startsWith('data-')) stage.setAttribute(attr.name, attr.value);
       stage.setAttribute('aria-hidden', 'true');
       stage.inert = true;
       stage.style.cssText = `left:${box.left}px;top:${Math.max(0, box.top)}px;width:${box.width}px;height:${Math.min(box.bottom, bottom) - Math.max(0, box.top)}px`;
       const outgoing = book.cloneNode(true);
       outgoing.classList.add('mushaf-drag-outgoing');
       outgoing.style.cssText = `position:absolute;top:${Math.min(0, box.top)}px;width:${box.width}px`;
+      if (state.mushafFullscreen) {
+        outgoing.style.height = `${box.height}px`;
+        outgoing.style.setProperty(
+          '--mushaf-fit-scale',
+          getComputedStyle(originalWrap).getPropertyValue('--mushaf-fit-scale')
+        );
+      }
       stage.append(outgoing);
+      const liveTexts = book.querySelectorAll('.mushaf-page__text');
+
+      for (const name of inherited)
+        if (name.startsWith('--')) stage.style.setProperty(name, inherited.getPropertyValue(name));
       document.body.append(stage);
+      outgoing.querySelectorAll('.mushaf-page__text').forEach((el, i) => {
+        el.scrollTop = liveTexts[i].scrollTop;
+      });
       g.stage = stage;
       g.outgoing = outgoing;
       g.width = box.width;
+      g.height = box.height;
       g.bookTop = Math.min(0, box.top);
       document.body.classList.add('is-mushaf-dragging');
     }
@@ -80,20 +99,9 @@ export function initMushafSwipe() {
       incoming.classList.add('mushaf-drag-incoming');
       incoming.dataset.page = String(dest);
       incoming.style.cssText = `position:absolute;top:${g.bookTop}px;width:${g.width}px`;
-      // The overlay is outside #main. Copy inherited page/theme variables.
-      const original = document.querySelector('.mushaf-page-wrap');
-      if (original) {
-        const cs = getComputedStyle(original);
-        for (const name of [
-          '--mushaf-gold',
-          '--mushaf-gold-soft',
-          '--mushaf-paper-bg',
-          '--mushaf-paper-ink',
-          '--mushaf-paper-border',
-        ])
-          g.stage.style.setProperty(name, cs.getPropertyValue(name));
-      }
+      if (state.mushafFullscreen) incoming.style.height = `${g.height}px`;
       g.stage.append(incoming);
+      if (state.mushafFullscreen) fitMushafPreview(incoming);
       g.incoming = incoming;
       g.sign = sign;
     }

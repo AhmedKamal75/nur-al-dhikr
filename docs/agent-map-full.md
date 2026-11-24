@@ -28,7 +28,7 @@ job: full-surah audio: reciter catalog, offline downloads (IndexedDB), and the s
 
 job: (v5.4.0, P0-3 — ported from the v5.3.0 audit, replacing the v5.2.87 dispatch-based fit engine) the Mushaf fullscreen auto-fit engine.
 
-- exports: `FIT_MIN` (const), `FIT_MAX` (const), `computeFitScale` (function), `refreshMushafFit` (function), `activateMushafAutoFit` (function), `deactivateMushafAutoFit` (function), `updateMushafAutoFitLifecycle` (function), `takeoverManualZoom` (function)
+- exports: `FIT_MIN` (const), `FIT_MAX` (const), `computeFitScale` (function), `refreshMushafFit` (function), `activateMushafAutoFit` (function), `deactivateMushafAutoFit` (function), `updateMushafAutoFitLifecycle` (function), `takeoverManualZoom` (function), `fitMushafPreview` (function)
 - emits: —
 - handles: —
 - i18n: —
@@ -3794,6 +3794,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `firstPendingItem`: `js/domain/reflections.js`
 - `firstTrackedKey`: `js/domain/review.js`
 - `firstWeakRuleForAyah`: `js/domain/tajweedPractice.js`
+- `fitMushafPreview`: `js/app/autoFit.js`
 - `floatingCounterHTML`: `js/services/floatingCounter.js`
 - `flushReading`: `js/app/readingTimer.js`
 - `focusEnterClass`: `js/views/focus.js`
@@ -5622,6 +5623,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `firstpendingitem`: `js/domain/reflections.js`
 - `firsttrackedkey`: `js/domain/review.js`
 - `firstweakruleforayah`: `js/domain/tajweedPractice.js`
+- `fitmushafpreview`: `js/app/autoFit.js`
 - `fitr`: `js/domain/zakat.js`, `js/views/zakat.js`
 - `five`: `js/domain/prayerLog.js`, `js/domain/sunnah.js`, `js/services/checklist.js`, `js/views/checklist.js`
 - `flags`: `js/app/installPrompt.js`, `js/core/theme.js`, `js/domain/sessionFlags.js`

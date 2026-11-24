@@ -251,3 +251,16 @@ export function takeoverManualZoom() {
     store.dispatch(actions.updateMushafPrefs({ autoFit: false }));
   }
 }
+
+/** Fit an inert drag preview in its already constrained final page box. */
+export function fitMushafPreview(wrap) {
+  const prefs = store.getState().settings.mushafPrefs;
+  if (prefs.autoFit === false) {
+    wrap.style.setProperty(
+      '--mushaf-fit-scale',
+      String(Math.min(FIT_MAX, Math.max(FIT_MIN, Number(prefs.fontScale) || 1)))
+    );
+    return;
+  }
+  fitOneWrap(wrap);
+}

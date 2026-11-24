@@ -248,3 +248,141 @@ test('fullscreen paper follows the finger and rapid second gestures cannot doubl
   await expect(page).toHaveURL(/page=5/);
   await expect(page.locator('.mushaf-drag-stage')).toHaveCount(0);
 });
+
+for (const language of ['en', 'ar']) {
+  test(`fullscreen drag preserves fitted font, lines and vertical geometry (${language})`, async ({
+    page,
+  }, testInfo) => {
+    await page.addInitScript(
+      (lang) =>
+        localStorage.setItem(
+          'nurAlDhikr:v2:state',
+          JSON.stringify({ settings: { language: lang, themeMode: 'dark' } })
+        ),
+      language
+    );
+    await page.goto('#/mushaf?page=4');
+    await expect(page.locator('.mushaf-book')).toBeVisible({ timeout: 20000 });
+    await page.locator('[data-action="mushaf-toggle-fullscreen"]').click();
+    await expect(page.locator('body')).toHaveClass(/is-mushaf-fullscreen/);
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      const { ensureMushafNavigationPages } = await import('/js/app/lazyData.js');
+      await ensureMushafNavigationPages(5);
+      const { refreshMushafFit } = await import('/js/app/autoFit.js');
+      refreshMushafFit();
+    });
+    const geometry = async (selector) =>
+      page.locator(selector).evaluate((el) => {
+        const text = el.querySelector('.mushaf-page__text');
+        const r = text.getBoundingClientRect();
+        const walker = document.createTreeWalker(text, NodeFilter.SHOW_TEXT);
+        const tops = new Set();
+        let node;
+        while ((node = walker.nextNode())) {
+          const range = document.createRange();
+          range.selectNodeContents(node);
+          for (const rect of range.getClientRects())
+            if (rect.width > 0) tops.add(Math.round(rect.top));
+        }
+        return {
+          font: parseFloat(getComputedStyle(text).fontSize),
+          top: r.top,
+          height: r.height,
+          scroll: text.scrollHeight,
+          lines: tops.size,
+        };
+      });
+    await page.waitForTimeout(450); // Let the fullscreen entrance finish before measuring its fixed geometry.
+    const before = await geometry('#main .mushaf-book');
+    const client = await page.context().newCDPSession(page);
+    await drag(page, client, [80, 110, 150, 200], { release: false });
+    const outgoing = await geometry('.mushaf-drag-outgoing');
+    const incoming = await geometry('.mushaf-drag-incoming');
+    for (const key of ['font', 'top', 'height', 'scroll', 'lines'])
+      expect(outgoing[key], `outgoing ${key}`).toBeCloseTo(before[key], 0);
+    expect(incoming.scroll).toBeLessThanOrEqual(incoming.height + 1);
+    await page.screenshot({ path: testInfo.outputPath(`fitted-mid-${language}.png`) });
+    await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(page).toHaveURL(/page=5/);
+    await expect(page.locator('.mushaf-drag-stage')).toHaveCount(0);
+    const settled = await geometry('#main .mushaf-book');
+    for (const key of ['font', 'top', 'height', 'scroll', 'lines'])
+      expect(settled[key], `incoming/settled ${key}`).toBeCloseTo(incoming[key], 0);
+  });
+}
+
+for (const mode of ['windowed', 'manual', 'madinah']) {
+  test(`drag retains paper context and scrolled geometry (${mode})`, async ({ page }, testInfo) => {
+    await page.addInitScript(
+      (paper) =>
+        localStorage.setItem(
+          'nurAlDhikr:v2:state',
+          JSON.stringify({
+            settings: {
+              language: 'ar',
+              themeMode: 'light',
+              mushafPrefs: {
+                paper,
+                font: 'scheherazade',
+                fontScale: 1.3,
+                lineSpacing: 1.1,
+                autoFit: false,
+              },
+            },
+          })
+        ),
+      mode === 'madinah' ? 'madinah' : 'night'
+    );
+    await page.goto('#/mushaf?page=4');
+    await expect(page.locator('.mushaf-book')).toBeVisible({ timeout: 20000 });
+    if (mode === 'manual') {
+      await page.locator('[data-action="mushaf-toggle-fullscreen"]').click();
+      await expect(page.locator('body')).toHaveClass(/is-mushaf-fullscreen/);
+      await page.waitForTimeout(450);
+    }
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      const { ensureMushafNavigationPages } = await import('/js/app/lazyData.js');
+      await ensureMushafNavigationPages(5);
+      if (document.body.classList.contains('is-mushaf-fullscreen')) {
+        const { refreshMushafFit } = await import('/js/app/autoFit.js');
+        refreshMushafFit();
+        document.querySelector('.mushaf-page__text').scrollTop = 90;
+      } else window.scrollTo(0, 180);
+    });
+    const measure = async (selector) =>
+      page.locator(selector).evaluate((el) => {
+        const text = el.querySelector('.mushaf-page__text'),
+          marker = el.querySelector('.mushaf-ayah__marker');
+        const c = getComputedStyle(text),
+          r = text.getBoundingClientRect();
+        return {
+          font: c.fontSize,
+          spacing: c.wordSpacing,
+          line: c.lineHeight,
+          color: c.color,
+          top: r.top,
+          height: r.height,
+          scroll: text.scrollTop,
+          marker: getComputedStyle(marker).backgroundColor,
+        };
+      });
+    const before = await measure('#main .mushaf-book');
+    const client = await page.context().newCDPSession(page);
+    await drag(page, client, [80, 110, 150, 200], { release: false });
+    const outgoing = await measure('.mushaf-drag-outgoing');
+    const incoming = await measure('.mushaf-drag-incoming');
+    for (const key of ['font', 'spacing', 'line', 'color', 'marker', 'scroll'])
+      expect(outgoing[key], key).toBe(before[key]);
+    expect(outgoing.top).toBeCloseTo(before.top, 0);
+    expect(outgoing.height).toBeCloseTo(before.height, 0);
+    await page.screenshot({ path: testInfo.outputPath(`context-${mode}.png`) });
+    await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(page).toHaveURL(/page=5/);
+    await expect(page.locator('.mushaf-drag-stage')).toHaveCount(0);
+    const settled = await measure('#main .mushaf-book');
+    for (const key of ['font', 'spacing', 'line', 'color', 'marker', 'height'])
+      expect(settled[key], key).toBe(incoming[key]);
+  });
+}
