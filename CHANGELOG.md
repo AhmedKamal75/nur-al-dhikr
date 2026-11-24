@@ -1,3 +1,8 @@
+# v5.17.155 - Readable reciter identities
+
+- Audio catalog names and metadata wrap instead of hiding behind ellipsis. Translation and whole-surah badges sit below the name instead of interrupting it. Selection and custom-delete controls remain separate. Other pickers are unchanged.
+- EN/AR phone and desktop checks measure actual text fragments for all visible catalog rows and exercise custom selection and deletion. No catalog data or playback behavior changed.
+
 # v5.17.154 - Continuous physical Mushaf page swipes
 
 - Dragging the paper right reveals the next page from the left; dragging left reveals the previous page from the right, independent of UI language. Next/previous arrow and keyboard actions keep their book-navigation meaning. The swipe hint explains the distinction in both languages.

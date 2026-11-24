@@ -2281,6 +2281,28 @@ body.is-mushaf-fullscreen #playerbar:has(.player-bar--min) {
   text-overflow: ellipsis;
 }
 
+/* Full catalog identities must remain distinguishable on phones. Keep
+   badges below the name, not between its words, and wrap the metadata. */
+.view--audio .reciter-row__main {
+  text-align: start;
+}
+.view--audio .reciter-row__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.view--audio .reciter-row__name,
+.view--audio .reciter-row__sub {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  overflow: visible;
+}
+.view--audio .reciter-row__badges .chip {
+  max-inline-size: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .reciter-list {
   display: flex;
   flex-direction: column;
