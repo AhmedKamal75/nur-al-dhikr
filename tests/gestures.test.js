@@ -2,8 +2,8 @@
  * gestures.test.js — v5.2.22 bug-report wave, permanent.
  *
  * 1. RTL swipe pin: the Mushaf swipe emulates a physical Arabic book, so
- *    right-to-left travel (dx < 0) is ALWAYS the next page and
- *    left-to-right (dx > 0) is ALWAYS the previous page — independent of
+ *    left-to-right travel (dx > 0) is ALWAYS the next page and
+ *    right-to-left (dx < 0) is ALWAYS the previous page — independent of
  *    the app's UI language. Short drags and scroll-like vertical drags
  *    never turn.
  * 2. Control-surface guard: touches beginning on buttons, links, inputs,
@@ -36,14 +36,14 @@ import { renderPlayerBar } from '../js/views/playerBar.js';
 import { renderSettings } from '../js/views/settings.js';
 import { fsRecitationState } from '../js/views/mushafReader.js';
 
-test('mushaf swipe: right-to-left travel turns to the NEXT page (RTL book order)', () => {
-  assert.equal(mushafSwipeTurn(-120, 0), 'next');
-  assert.equal(mushafSwipeTurn(-200, 30), 'next');
+test('mushaf swipe: rightward paper reveals the NEXT page in both languages', () => {
+  assert.equal(mushafSwipeTurn(120, 0), 'next');
+  assert.equal(mushafSwipeTurn(200, 30), 'next');
 });
 
-test('mushaf swipe: left-to-right travel turns to the PREVIOUS page', () => {
-  assert.equal(mushafSwipeTurn(120, 0), 'prev');
-  assert.equal(mushafSwipeTurn(200, -30), 'prev');
+test('mushaf swipe: leftward paper reveals the PREVIOUS page', () => {
+  assert.equal(mushafSwipeTurn(-120, 0), 'prev');
+  assert.equal(mushafSwipeTurn(-200, -30), 'prev');
 });
 
 test('mushaf swipe: short drags and scroll-like vertical drags never turn', () => {

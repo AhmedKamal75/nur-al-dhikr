@@ -1104,7 +1104,7 @@ export const ar = {
   // in English UI — the nav groups announce the rule once, sr-only, instead
   // of leaving every EN user to reverse-engineer it.
   'mushaf.bookOrderNote': 'الصفحات والآيات بترتيب المصحف — من اليمين إلى اليسار في اللغتين',
-  'mushaf.swipeHint': 'اسحب أو استخدم الأسهم لتقليب الصفحة',
+  'mushaf.swipeHint': 'اسحب يمينًا للصفحة التالية ويسارًا للسابقة، أو استخدم الأسهم',
   'mushaf.findOnPage': 'البحث في هذه الصفحة',
   'mushaf.findOnPageHint': 'يبحث فقط في النص الظاهر في صفحة المصحف.',
   'mushaf.findOnPageInput': 'البحث داخل الصفحة',

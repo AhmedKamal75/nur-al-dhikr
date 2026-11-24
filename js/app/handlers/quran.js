@@ -120,7 +120,7 @@ export function applyTajweedColors(state) {
  * invariant: never route to a page until every page required by the current
  * spread is resident.
  */
-export async function navigateMushafPage(direction) {
+export async function navigateMushafPage(direction, { animate = true } = {}) {
   const generation = rt.lazyDataGeneration;
   const state = store.getState();
   if (state.activeView !== VIEWS.MUSHAF) return false;
@@ -173,7 +173,7 @@ export async function navigateMushafPage(direction) {
     return false;
   }
 
-  setFlipDirection(direction);
+  setFlipDirection(animate ? direction : null);
   playFlipSound();
   go(VIEWS.MUSHAF, { page: String(dest) });
   return true;

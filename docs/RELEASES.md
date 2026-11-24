@@ -1,3 +1,9 @@
+## v5.17.154 - Continuous physical Mushaf page swipes
+
+- Dragging the paper right reveals the next page from the left; dragging left reveals the previous page from the right, independent of UI language. Next/previous arrow and keyboard actions keep their book-navigation meaning. The swipe hint explains the distinction in both languages.
+- Current and adjacent paper surfaces track the finger together and settle from the exact release position, without restarting an entrance animation. Cancel, reversal, boundaries, vertical scroll, pinch, route exit, reduced motion and disabled animation preserve navigation safety.
+- Real Chromium touch input checks multiple in-flight frames, both page bounds, explicit page numbers and release continuity in EN/AR. Quran/Mushaf data is unchanged.
+
 ## v5.17.153 - Readable phone Mushaf location header
 
 - Gives the phone Mushaf location title its own wrapping row above the six controls, keeping the full surah and Juz position visible without shrinking controls. Desktop layout and reading behavior are unchanged.

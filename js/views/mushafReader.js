@@ -113,7 +113,7 @@ export { pageChapters, buildMushafPlayPick } from './mushafPlayer.js';
 export { setFlipDirection, setFullscreenAnim } from '../ui/readingTokens.js';
 import { consumeFlipDirection, consumeFullscreenAnim } from '../ui/readingTokens.js';
 
-export function renderMushaf(state) {
+export function renderMushaf(state, { preview = false } = {}) {
   const lang = state.settings.language;
   const meta = state.mushaf.meta;
   // (v5.17.21, FIXED) `s`/`ay` resolve the PAGE, not merely the marker. The
@@ -150,8 +150,8 @@ export function renderMushaf(state) {
   const mushafLineScale = clamp(Number(prefs.lineSpacing) || 1, 0.85, 1.3);
   // Bookmark lookup set — built once per render, O(1) per ayah.
   const bookmarkedKeys = new Set(state.ayahBookmarks.map((b) => b.key));
-  const dir = consumeFlipDirection(); // single-use: consumed by this render
-  const fsAnim = consumeFullscreenAnim();
+  const dir = preview ? null : consumeFlipDirection(); // single-use: consumed by this render
+  const fsAnim = preview ? null : consumeFullscreenAnim();
 
   /* ---------------------------------------------------------------- */
   /* (v4.5) Double-page spread: on a wide viewport the book opens like  */
@@ -350,7 +350,7 @@ export function renderMushaf(state) {
       </article>`;
 
   const bookHTML = `
-    <div class="mushaf-book ${spread ? 'mushaf-book--spread' : ''}">
+    <div data-mushaf-page="${rightPage}" class="mushaf-book ${spread ? 'mushaf-book--spread' : ''}">
       ${pageArticle(rightPage, rightDoc)}
       ${leftPage != null ? pageArticle(leftPage, leftDoc) : ''}
     </div>`;

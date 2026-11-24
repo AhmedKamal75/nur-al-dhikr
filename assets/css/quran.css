@@ -4412,3 +4412,20 @@ body.has-player .reader-immersive-echo {
     outline: 2px solid Highlight;
   }
 }
+
+/* Touch paper surfaces live above the reader only while dragging/settling.
+   Inert clones never expose duplicate controls or verse targets. */
+.mushaf-drag-stage {
+  position: fixed;
+  z-index: var(--z-player);
+  overflow: hidden;
+  pointer-events: none;
+  direction: rtl;
+}
+body.is-mushaf-dragging #main .mushaf-book {
+  visibility: hidden;
+}
+.mushaf-drag-stage .mushaf-page {
+  animation: none !important;
+  transition: none !important;
+}

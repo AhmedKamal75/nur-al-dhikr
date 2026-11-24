@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 250 — data files: 29 — tests: 293
+- js modules: 251 — data files: 29 — tests: 293
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -163,6 +163,16 @@ job: (no header comment)
 - handles: —
 - i18n: `common.retry`, `khatma.completeToast`, `quran.loadFailed`
 - routes: —
+
+### `js/app/mushafSwipe.js`
+
+job: (no header comment)
+
+- exports: `initMushafSwipe` (function)
+- emits: —
+- handles: —
+- i18n: —
+- routes: `VIEWS.MUSHAF`
 
 ### `js/app/net.js`
 
@@ -1172,7 +1182,7 @@ job: The Garden — a growth visualization of a lifetime of dhikr, restored from
 
 ### `js/domain/gestures.js`
 
-job: pure touch-gesture decisions (v5.2.22, bug-report wave). The Mushaf page-turn swipe emulates a physical Arabic book, so its direction is ALWAYS right-to-left book order — a swipe right-to-left
+job: pure touch-gesture decisions (v5.2.22, bug-report wave). The Mushaf page-turn swipe emulates a physical Arabic book, so its direction is ALWAYS right-to-left book order — a swipe left-to-right
 
 - exports: `MUSHAF_SWIPE_MIN_PX` (const), `FOCUS_SWIPE_MIN_PX` (const), `PLAYER_DISMISS_MIN_DY` (const), `mushafSwipeTurn` (function), `focusSwipeTurn` (function), `SWIPE_GUARD_SELECTOR` (const), `SWIPE_TEXT_SURFACE_SELECTOR` (const), `isSwipeGuardTarget` (function), `findTouch` (function), `MUSHAF_DRAG_CLAMP_RATIO` (const), `MUSHAF_DRAG_LIFT` (const), `mushafDragStyle` (function), `isPlayerDismissSwipe` (function), `resolveMinControl` (function)
 - emits: `player-min-toggle`
@@ -3870,6 +3880,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `increment`: `js/services/tasbih.js`
 - `initFocusWake`: `js/app/focusWakeLock.js`
 - `initFullscreenSync`: `js/app/fullscreen.js`
+- `initMushafSwipe`: `js/app/mushafSwipe.js`
 - `initRouter`: `js/core/router.js`
 - `initialReaderWindow`: `js/domain/readerWindow.js`
 - `initialState`: `js/core/state/initial.js`, `js/core/state.js`
@@ -5139,7 +5150,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `comes`: `js/domain/khatma.js`, `js/domain/wordStudy.js`, `js/services/mushaf.js`
 - `comfort`: `js/domain/onboarding.js`
 - `command`: `js/app/palette.js`, `js/views/palette.js`
-- `comment`: `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quran.js`, `js/app/lazyData.js`, `js/app/practice.js`, `js/app/recitationFollow.js`, `js/domain/tajweed.js`, `js/views/tafsirPanel.js`
+- `comment`: `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quran.js`, `js/app/lazyData.js`, `js/app/mushafSwipe.js`, `js/app/practice.js`, `js/app/recitationFollow.js`, `js/domain/tajweed.js`, `js/views/tafsirPanel.js`
 - `compactprayermethodline`: `js/domain/prayer.js`
 - `companion`: `js/domain/homeInvitations.js`, `js/domain/ramadan.js`, `js/views/ramadan.js`
 - `compare`: `js/domain/translationCompare.js`
@@ -5779,7 +5790,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `hawl`: `js/domain/zakat.js`
 - `hawlduefor`: `js/domain/zakat.js`
 - `haystackbuildsfortests`: `js/services/hadith.js`
-- `header`: `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quran.js`, `js/app/lazyData.js`, `js/app/practice.js`, `js/app/recitationFollow.js`, `js/domain/tajweed.js`, `js/ui/viewSheet.js`, `js/views/category.js`, `js/views/collection.js`, `js/views/collections.js`, `js/views/home.js`, `js/views/settings.js`, `js/views/statistics.js`, `js/views/tafsirPanel.js`, `js/views/tasbih.js`
+- `header`: `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quran.js`, `js/app/lazyData.js`, `js/app/mushafSwipe.js`, `js/app/practice.js`, `js/app/recitationFollow.js`, `js/domain/tajweed.js`, `js/ui/viewSheet.js`, `js/views/category.js`, `js/views/collection.js`, `js/views/collections.js`, `js/views/home.js`, `js/views/settings.js`, `js/views/statistics.js`, `js/views/tafsirPanel.js`, `js/views/tasbih.js`
 - `heading`: `js/domain/compass.js`, `js/services/moshafAvailability.js`
 - `headless`: `js/services/gapTelemetry.js`
 - `headset`: `js/services/mediaSession.js`
@@ -5854,6 +5865,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `initialreaderwindow`: `js/domain/readerWindow.js`
 - `initialstate`: `js/core/state/initial.js`, `js/core/state.js`
 - `initialtimerstate`: `js/domain/sleepTimer.js`
+- `initmushafswipe`: `js/app/mushafSwipe.js`
 - `initrouter`: `js/core/router.js`
 - `inline`: `js/core/icons.js`, `js/views/studyTray.js`
 - `input`: `js/app/palette.js`, `js/app/renderer.js`
@@ -7675,7 +7687,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/gap-telemetry.test.js` — (v5.11.0 C) opt-in, local-only follow-gap telemetry: pure math, the disabled-by-default gate, sample lifecycle, hostile storage/sanitize input, and the ring-buffer cap. (pins: `../js/core/config.js`, `../js/services/gapTelemetry.js`)
 - `tests/garden.test.js` — v4.5.2, the Garden. The growth computation (thresholds, spans, achievements) and the view contract: positive framing, both languages, locale-aware numerals, and (pins: `../js/core/config.js`, `../js/domain/garden.js`, `../js/views/garden.js`)
 - `tests/gentle-ledger.test.js` — (v5.17.57, merged-plan item 10) the gentle memorization queue + private practice ledger. The contract, in one place: (pins: `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/core/state/initial.js`, `../js/views/home.js`, `../js/views/khatma.js`, `../js/views/statistics.js`)
-- `tests/gestures.test.js` — v5.2.22 bug-report wave, permanent. 1. RTL swipe pin: the Mushaf swipe emulates a physical Arabic book, so right-to-left travel (dx < 0) is ALWAYS the next page and (pins: `../js/domain/gestures.js`, `../js/views/mushafReader.js`, `../js/views/playerBar.js`, `../js/views/settings.js`)
+- `tests/gestures.test.js` — v5.2.22 bug-report wave, permanent. 1. RTL swipe pin: the Mushaf swipe emulates a physical Arabic book, so left-to-right travel (dx > 0) is ALWAYS the next page and (pins: `../js/domain/gestures.js`, `../js/views/mushafReader.js`, `../js/views/playerBar.js`, `../js/views/settings.js`)
 - `tests/grade-consistency.test.js` — grade must not deny what the record itself cites. The failure this pins was not subtle to a reader and was invisible to the suite. 61 records carried grade: "Unknown" next to a reference reading (pins: `../js/core/config.js`)
 - `tests/grades.test.js` — (no header comment) (pins: `../js/domain/grades.js`)
 - `tests/grammarDrill.test.js` — grammar flashcards: pure deck building (deterministic shuffle, candidate filtering, caps) + the ephemeral session reducer walk. (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/domain/grammarDrill.js`)

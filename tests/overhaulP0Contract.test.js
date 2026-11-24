@@ -39,7 +39,10 @@ test('P0 Mushaf navigation routes only through the awaitable page-ready guard', 
   assert.match(quran, /ensureMushafNavigationPages\(dest\)/);
   assert.match(quran, /mushafNavigationIntent/);
   assert.match(events, /navigateMushafPage\(toNext \? 'next' : 'prev'\)/);
-  assert.match(events, /navigateMushafPage\(turn\)/);
+  assert.match(events, /initMushafSwipe\(\)/);
+  const swipe = await read('js/app/mushafSwipe.js');
+  assert.match(swipe, /navigateMushafPage\(turn,/);
+  assert.match(swipe, /ensureMushafNavigationPages\(dest\)/);
   assert.match(quran, /'mushaf-jump-page': async/);
   assert.match(quran, /ensureMushafNavigationPages\(dest\)/);
   assert.match(quran, /ensureMushafNavigationPages\(page\)/);
