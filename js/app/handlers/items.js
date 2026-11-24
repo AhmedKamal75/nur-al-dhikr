@@ -57,6 +57,8 @@ import {
   focusRoute,
 } from '../../services/focusQueue.js';
 import { dismissCompleted, noteCompleted } from '../../domain/completedCards.js';
+import { selectedMoodIds } from '../../services/moodSelection.js';
+import { moodDestinationHTML } from '../../views/mood.js';
 
 /** (v5.0.0) The counting ripple: one span, radial bloom at the tap point,
  *  removed on animationend. The CSS (cards.css) honors
@@ -156,6 +158,38 @@ export async function shareAyahCard(surahNum, ayahNum) {
 }
 
 export const clickHandlers = {
+  'mood-select-start': () => store.dispatch({ type: 'MOOD_SELECT_START' }),
+  'mood-select-cancel': () => store.dispatch({ type: 'MOOD_SELECT_CLEAR' }),
+  'mood-select-all': () => store.dispatch({ type: 'MOOD_SELECT_ALL' }),
+  'mood-selection-destination': () => {
+    const state = store.getState();
+    if (!selectedMoodIds(state).length) return;
+    openModal(moodDestinationHTML(state));
+  },
+  'mood-selection-create': () => {
+    const state = store.getState();
+    const n = selectedMoodIds(state).length;
+    if (!n) return;
+    const lang = state.settings.language;
+    openModal(
+      buildTextPrompt({
+        title: `${t('collections.namePrompt', lang)} · ${t('moods.selectedCount', lang, { n })}`,
+        confirmAction: 'submit-mood-collection',
+        lang,
+      })
+    );
+  },
+  'mood-selection-add': (ds) => {
+    const before = store.getState();
+    store.dispatch({ type: 'MOOD_SELECTION_COMMIT', id: ds.id });
+    if (store.getState() === before) {
+      openModal(moodDestinationHTML(store.getState()));
+      return;
+    }
+    closeModal();
+    go(VIEWS.COLLECTION, { id: ds.id });
+  },
+
   'toggle-favorite': (ds) => {
     store.dispatch(actions.toggleFavorite(ds.itemId));
   },
@@ -973,6 +1007,10 @@ export const clickHandlers = {
 
 /** change registry (Blueprint D): { sel, run(ds, el, e) }. */
 export const changeHandlers = [
+  {
+    sel: '[data-action="mood-select-toggle"]',
+    run: (ds) => store.dispatch({ type: 'MOOD_SELECT_TOGGLE', id: ds.id }),
+  },
   {
     sel: '[data-action="collection-picker-toggle"]',
     run: (ds, el) => {

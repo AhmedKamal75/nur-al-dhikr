@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 251 — data files: 29 — tests: 299
+- js modules: 252 — data files: 29 — tests: 300
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -403,9 +403,9 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 job: (no header comment)
 
 - exports: `triggerRipple` (function), `shareAyahCard` (function), `clickHandlers` (object), `changeHandlers` (const)
-- emits: `collection-picker-toggle`, `counter-tap`, `hadith-note-delete`, `modal-close`
-- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-recovery-more`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input)
-- i18n: `card.copied`, `card.copyFailed`, `card.imageSaved`, `collections.itemCount`, `collections.namePrompt`, `collections.shareEmpty`, `common.delete`, `common.error`, `common.retry`, `common.save`, `dhikrAudio.failed`, `editor.cancel`, `editor.deleteConfirm`, `favorites.clearConfirm`, `hadith.note`, `hadith.noteDeleted`, `hadith.notePh`, `hadith.noteTitle`, `hadith.speechUnsupported`, `kids.quizWin` (+1 more)
+- emits: `collection-picker-toggle`, `counter-tap`, `hadith-note-delete`, `modal-close`, `mood-select-toggle`
+- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-recovery-more`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `mood-select-all`, `mood-select-cancel`, `mood-select-start`, `mood-selection-add`, `mood-selection-create`, `mood-selection-destination`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input), `mood-select-toggle` (change/input)
+- i18n: `card.copied`, `card.copyFailed`, `card.imageSaved`, `collections.itemCount`, `collections.namePrompt`, `collections.shareEmpty`, `common.delete`, `common.error`, `common.retry`, `common.save`, `dhikrAudio.failed`, `editor.cancel`, `editor.deleteConfirm`, `favorites.clearConfirm`, `hadith.note`, `hadith.noteDeleted`, `hadith.notePh`, `hadith.noteTitle`, `hadith.speechUnsupported`, `kids.quizWin` (+2 more)
 - routes: `#/hadith`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.SEARCH`
 
 ### `js/app/handlers/journal.js`
@@ -816,7 +816,7 @@ job: library slice of the store reducer. Owns favorites, hadith bookmarks, colle
 - emits: —
 - handles: —
 - i18n: —
-- routes: —
+- routes: `VIEWS.MOOD`
 
 ### `js/core/state/slices/quran.js`
 
@@ -1974,6 +1974,16 @@ job: lock-screen / headset / notification-shade controls for recitation (Media S
 - i18n: —
 - routes: —
 
+### `js/services/moodSelection.js`
+
+job: / Temporary Browse by need selection. Uses the existing read-visibility contract.
+
+- exports: `moodEntries` (function), `selectedMoodIds` (function)
+- emits: —
+- handles: —
+- i18n: —
+- routes: `VIEWS.MOOD`
+
 ### `js/services/moshafAvailability.js`
 
 job: learned per-surah availability. Catalog servers are assumed to host 001–114.mp3, but translation, Taraweeh and Mu'allim variants often lack surahs. Rather than HEADing
@@ -2446,10 +2456,10 @@ job: the Azkar section (IA-7, v5.17.61). Reading mode IS the adhkar browser move
 
 job: "Browse by need" — a curated, cross-library list of duas and adhkar for how a person is feeling right now. Mirrors views/category.js's card-list pattern so every existing card affordance (count, favo…
 
-- exports: `renderMood` (function)
-- emits: `navigate`
+- exports: `renderMood` (function), `moodDestinationHTML` (function)
+- emits: `modal-close`, `mood-select-all`, `mood-select-cancel`, `mood-select-start`, `mood-select-toggle`, `mood-selection-add`, `mood-selection-create`, `mood-selection-destination`, `navigate`
 - handles: —
-- i18n: `collections.itemCount`, `editor.emptyState`, `moods.notFound`, `moods.pickerHint`, `moods.subtitle`, `moods.title`, `nav.azkar`
+- i18n: `collections.empty`, `collections.itemCount`, `collections.new`, `common.cancel`, `editor.emptyState`, `moods.addExisting`, `moods.appendCount`, `moods.notFound`, `moods.pickerHint`, `moods.select`, `moods.selectAll`, `moods.selectItem`, `moods.selectedCount`, `moods.selection`, `moods.subtitle`, `moods.title`, `nav.azkar`
 - routes: `VIEWS.LIBRARY`, `VIEWS.MOOD`
 
 ### `js/views/mushafBookmarks.js`
@@ -2902,8 +2912,15 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `library-jump`: emitted by `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `location-profile-apply`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
 - `location-profile-save`: emitted by `js/views/prayer.js`; handled in `js/app/handlers/worship.js`
-- `modal-close`: emitted by `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quranAudio.js`, `js/ui/calendarModals.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/editor.js`, `js/views/home.js`, `js/views/mushafBookmarks.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/editor.js`
+- `modal-close`: emitted by `js/app/events.js`, `js/app/forms.js`, `js/app/handlers/items.js`, `js/app/handlers/quranAudio.js`, `js/ui/calendarModals.js`, `js/ui/menus.js`, `js/ui/modal.js`, `js/views/editor.js`, `js/views/home.js`, `js/views/mood.js`, `js/views/mushafBookmarks.js`, `js/views/tafsirPanel.js`; handled in `js/app/handlers/editor.js`
 - `modal-close-overlay`: emitted by `js/ui/modal.js`; handled in `js/app/events.js`
+- `mood-select-all`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
+- `mood-select-cancel`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
+- `mood-select-start`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
+- `mood-select-toggle`: emitted by `js/app/handlers/items.js`, `js/views/mood.js`; handled in `js/app/handlers/items.js`
+- `mood-selection-add`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
+- `mood-selection-create`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
+- `mood-selection-destination`: emitted by `js/views/mood.js`; handled in `js/app/handlers/items.js`
 - `move-to-collection`: emitted by `js/ui/menus.js`; handled in `js/app/handlers/items.js`
 - `mushaf-ayah-tap`: emitted by `js/views/mushafReader.js`; handled in `js/app/handlers/quran.js`
 - `mushaf-copy-ayah`: emitted by `js/views/ayahStudy.js`; handled in `js/app/handlers/quran.js`
@@ -4063,6 +4080,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `monthTotal`: `js/domain/statistics.js`
 - `monthWindow`: `js/domain/statistics.js`
 - `moodById`: `js/domain/moods.js`
+- `moodDestinationHTML`: `js/views/mood.js`
+- `moodEntries`: `js/services/moodSelection.js`
 - `mostReadCategories`: `js/domain/statistics.js`
 - `mountShell`: `js/app/renderer.js`
 - `moveCategory`: `js/services/contentPrefs.js`
@@ -4474,6 +4493,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `seek`: `js/services/player.js`
 - `seekBy`: `js/services/player.js`
 - `selectDueAlerts`: `js/services/alertTriggers.js`
+- `selectedMoodIds`: `js/services/moodSelection.js`
 - `selectors`: `js/core/state/selectors.js`, `js/core/state.js`
 - `sendTriggerPlan`: `js/app/triggers.js`
 - `sessionFlag`: `js/domain/sessionFlags.js`
@@ -4932,7 +4952,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `brief`: `js/ui/toast.js`
 - `briefly`: `js/services/alertTriggers.js`
 - `broken`: `js/domain/nudge.js`, `js/services/audioStore.js`
-- `browse`: `js/domain/moods.js`, `js/views/editor.js`, `js/views/mood.js`
+- `browse`: `js/domain/moods.js`, `js/services/moodSelection.js`, `js/views/editor.js`, `js/views/mood.js`
 - `browser`: `js/app/fullscreen.js`, `js/core/router.js`, `js/domain/install.js`, `js/domain/roots.js`, `js/views/installRow.js`, `js/views/library.js`, `js/views/roots.js`
 - `browsers`: `js/services/audioContext.js`
 - `budget`: `js/services/gapTelemetry.js`
@@ -5218,7 +5238,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `context`: `js/app/rt.js`, `js/services/audioContext.js`, `js/views/studyContext.js`
 - `contextual`: `js/ui/modal.js`
 - `continuous`: `js/domain/sleepTimer.js`, `js/services/surahPlayback.js`
-- `contract`: `js/domain/localeContent.js`, `js/domain/nudge.js`, `js/domain/review.js`
+- `contract`: `js/domain/localeContent.js`, `js/domain/nudge.js`, `js/domain/review.js`, `js/services/moodSelection.js`
 - `control`: `js/app/boot.js`, `js/views/studyTray.js`
 - `controller`: `js/app/handlers/audio.js`, `js/app/handlers/editor.js`, `js/app/handlers/grammar.js`, `js/app/handlers/hifz.js`, `js/app/handlers/journal.js`, `js/app/handlers/location.js`, `js/app/handlers/navigation.js`, `js/app/handlers/quiz.js`, `js/app/handlers/quranAudio.js`, `js/app/handlers/system.js`, `js/app/handlers/tasbih.js`, `js/app/handlers/worship.js`, `js/app/handlers/zakat.js`
 - `controls`: `js/app/handlers/offline.js`, `js/services/mediaSession.js`, `js/ui/recitationConsole.js`, `js/views/collection.js`
@@ -5553,7 +5573,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `example`: `js/domain/tajweedLessons.js`
 - `except`: `js/core/utils.js`
 - `exceptions`: `js/domain/tajweed.js`
-- `existing`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/core/config/sanitize.js`, `js/core/config/views.js`, `js/domain/ramadanPlanner.js`, `js/domain/reminderPresets.js`, `js/views/mood.js`, `js/views/quiz.js`
+- `existing`: `js/core/config/app.js`, `js/core/config/quran.js`, `js/core/config/sanitize.js`, `js/core/config/views.js`, `js/domain/ramadanPlanner.js`, `js/domain/reminderPresets.js`, `js/services/moodSelection.js`, `js/views/mood.js`, `js/views/quiz.js`
 - `exists`: `js/domain/sessionFlags.js`, `js/domain/worship.js`
 - `exitfocus`: `js/app/focusRuntime.js`
 - `expandquerywithroots`: `js/domain/rootAwareSearch.js`
@@ -6245,6 +6265,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `monthwindow`: `js/domain/statistics.js`
 - `mood`: `js/domain/grammarDrill.js`, `js/domain/moods.js`, `js/domain/wordStudy.js`, `js/views/library.js`
 - `moodbyid`: `js/domain/moods.js`
+- `mooddestinationhtml`: `js/views/mood.js`
+- `moodentries`: `js/services/moodSelection.js`
 - `moods`: `js/domain/moods.js`
 - `morning`: `js/domain/adhkarTiming.js`, `js/services/checklist.js`, `js/views/checklist.js`
 - `morphology`: `js/domain/grammarDrill.js`
@@ -6295,7 +6317,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `navigation`: `js/app/focusRuntime.js`, `js/app/inputs.js`, `js/core/state/slices/shell.js`, `js/services/mushaf.js`, `js/ui/shell.js`, `js/views/focus.js`, `js/views/palette.js`
 - `near`: `js/views/mushafJump.js`
 - `nearbymosquemapurl`: `js/domain/locations.js`
-- `need`: `js/domain/moods.js`, `js/domain/tajweedSources.js`, `js/views/mood.js`
+- `need`: `js/domain/moods.js`, `js/domain/tajweedSources.js`, `js/services/moodSelection.js`, `js/views/mood.js`
 - `needed`: `js/services/prayerSound.js`
 - `needs`: `js/app/fullscreen.js`, `js/views/backupSummary.js`
 - `needspermission`: `js/domain/compass.js`
@@ -6689,7 +6711,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `reactive`: `js/app/installPrompt.js`
 - `reactively`: `js/app/handlers/offline.js`
 - `reacts`: `js/core/theme.js`
-- `read`: `js/app/renderer.js`, `js/domain/milestones.js`, `js/domain/statistics.js`, `js/services/editor.js`, `js/views/favorites.js`
+- `read`: `js/app/renderer.js`, `js/domain/milestones.js`, `js/domain/statistics.js`, `js/services/editor.js`, `js/services/moodSelection.js`, `js/views/favorites.js`
 - `readautosnapshot`: `js/services/backup.js`
 - `reader`: `js/core/state/slices/hadith.js`, `js/core/state/slices/quran.js`, `js/domain/lastPosition.js`, `js/domain/readerWindow.js`, `js/domain/timezone.js`, `js/domain/translationCompare.js`, `js/services/floatingCounter.js`, `js/services/mushaf.js`, `js/ui/recitationConsole.js`, `js/views/hadith.js`, `js/views/quran.js`
 - `readers`: `js/app/focusWakeLock.js`, `js/app/readingTimer.js`, `js/ui/toast.js`
@@ -7045,7 +7067,8 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `seg2`: `js/core/router.js`
 - `selectduealerts`: `js/services/alertTriggers.js`
 - `selected`: `js/views/playerBar.js`
-- `selection`: `js/domain/dailyAyah.js`
+- `selectedmoodids`: `js/services/moodSelection.js`
+- `selection`: `js/domain/dailyAyah.js`, `js/services/moodSelection.js`
 - `selector`: `js/domain/gestures.js`
 - `selectors`: `js/core/state/selectors.js`, `js/core/state.js`
 - `selects`: `js/views/quiz.js`
@@ -7363,6 +7386,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `telemetry`: `js/services/gapTelemetry.js`
 - `template`: `js/ui/card.js`
 - `templates`: `js/views/khatma.js`, `js/views/mushafBookmarks.js`, `js/views/tajweedCourseView.js`, `js/views/tajweedPracticeView.js`
+- `temporary`: `js/services/moodSelection.js`
 - `test`: `js/app/offlineJobs.js`, `js/services/dataHealth.js`, `js/services/prayerSound.js`
 - `testable`: `js/domain/adhkarTiming.js`, `js/domain/khatma.js`
 - `tested`: `js/domain/reflections.js`, `js/services/appBadge.js`, `js/services/mediaSession.js`, `js/views/onboardingPanel.js`
@@ -7523,7 +7547,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `views`: `js/app/palette.js`, `js/core/config/views.js`, `js/domain/adhkarTiming.js`, `js/domain/dailyAyah.js`, `js/domain/grades.js`, `js/domain/quickTiles.js`, `js/domain/readerWindow.js`, `js/domain/sessionFlags.js`, `js/domain/statistics.js`, `js/ui/modal.js`, `js/ui/readingTokens.js`, `js/views/ayahStudy.js`, `js/views/hadithCard.js`, `js/views/khatma.js`, `js/views/library.js`, `js/views/mood.js`, `js/views/mushafBookmarks.js`
 - `viewsheet`: `js/ui/viewSheet.js`, `js/views/viewSheets.js`
 - `virtuefor`: `js/domain/localeContent.js`
-- `visibility`: `js/domain/homePanels.js`, `js/domain/quickTiles.js`
+- `visibility`: `js/domain/homePanels.js`, `js/domain/quickTiles.js`, `js/services/moodSelection.js`
 - `visible`: `js/domain/homePanels.js`, `js/views/garden.js`, `js/views/mushafPageFind.js`
 - `visiblecategoryitems`: `js/services/contentPrefs.js`
 - `visual`: `js/ui/viewSheet.js`
@@ -7754,6 +7778,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/mediaSession.test.js` — (no header comment) (pins: `../js/services/mediaSession.js`)
 - `tests/milestone.test.js` — tasbih milestone pings (v5.2.0): the pure "buzz every Nth count" predicate used by services/tasbih.js. (pins: `../js/domain/celebrate.js`)
 - `tests/missing-data.test.js` — merged-plan item 6 (v5.17.53), permanent. ONE honest-absence pattern (js/ui/missingData.js): dashed warm-gray, plain words, calm — never red — bilingual EN+AR, unifying unknown grade / (pins: `../js/core/i18n.js`, `../js/core/i18n/ar.js`, `../js/core/i18n/en.js`, `../js/domain/grades.js`, `../js/ui/card.js`, `../js/ui/emptyState.js`, `../js/ui/missingData.js`)
+- `tests/mood-selection.test.js` — (no header comment) (pins: `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/services/moodSelection.js`, `../js/views/mood.js`)
 - `tests/moods.test.js` — "Browse by need" cross-library matcher (pins: `../js/domain/moods.js`)
 - `tests/motion.test.js` — v3.12 UI/UX Phase B gates. Three layers are pinned here: 1. js/celebrate.js — the transient celebration registry (behavioral). (pins: `../js/app/renderer.js`, `../js/domain/celebrate.js`, `../js/domain/khatma.js`)
 - `tests/mushaf-cache-settings-590.test.js` — (v5.9.0) P2/E gates. 1. The mushaf page store stays bounded (48 most-recent docs) no matter how far a reading session flips. (pins: `../js/core/config.js`, `../js/core/state.js`, `../js/views/tafsirPanel.js`)

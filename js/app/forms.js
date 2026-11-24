@@ -587,7 +587,14 @@ export function handlePromptForm(form) {
   const value = (fd.get('value') || '').trim();
   if (!value) return;
 
-  if (action === 'submit-new-collection') {
+  if (action === 'submit-mood-collection') {
+    const id = uid('col');
+    const before = store.getState();
+    store.dispatch({ type: 'MOOD_SELECTION_COMMIT', id, name: value });
+    if (store.getState() === before) return;
+    closeModal();
+    go(VIEWS.COLLECTION, { id });
+  } else if (action === 'submit-new-collection') {
     const id = uid('col');
     store.dispatch(actions.createCollection(id, { en: value, ar: value }));
     closeModal();

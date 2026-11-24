@@ -1,3 +1,8 @@
+# v5.17.165 - Save selected need-based duas to a collection
+
+- Browse by need offers explicit temporary selection, with no items preselected, select-all, a live count and native labeled checkboxes separate from card controls.
+- Create a named collection or choose an existing destination with a missing-item count preview. Cancel changes nothing; commit rechecks read visibility, preserves displayed order and appends only missing IDs. Selection clears on navigation or reload and never records mood history.
+
 # v5.17.164 - Continue calendar events and Home recents
 
 - Upcoming calendar events show exact counts for the remaining events in the current Gregorian year, with Show more in batches of five. Calendar month context and the estimate disclosure stay in place.

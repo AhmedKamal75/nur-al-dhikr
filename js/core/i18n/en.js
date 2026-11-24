@@ -2059,6 +2059,13 @@ export const en = {
   'plog.logAction': 'Log prayer',
   'plog.allLoggedToast': 'All five prayers logged — barakallahu feek.',
   'card.imageSaved': 'Image saved to your downloads.',
+  'moods.selection': 'Select duas',
+  'moods.selectedCount': '{n} selected',
+  'moods.selectAll': 'Select all available',
+  'moods.addExisting': 'Add to a collection',
+  'moods.select': 'Select duas',
+  'moods.selectItem': 'Select {name}',
+  'moods.appendCount': 'Add {n} new',
   'moods.title': 'Browse by need',
   'moods.subtitle':
     'Duas and adhkar for how you’re feeling right now — gathered from every library.',

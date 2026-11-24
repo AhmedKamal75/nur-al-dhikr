@@ -17,6 +17,8 @@ import {
 import { markMemorizedKey, logReviewKey, normalizeHifzGrade } from '../../../domain/hifz.js';
 import { initialState } from '../initial.js';
 import { computeStreak } from '../streak.js';
+import { moodEntries, selectedMoodIds } from '../../../services/moodSelection.js';
+import { VIEWS } from '../../config.js';
 
 /** One playlist range item, or null when unusable. Surah is strictly
  *  1–114; from/to are positive ints (upper bounds clamp against live
@@ -364,6 +366,61 @@ export function reduceLibrary(state, action) {
         ...state,
         profiles: state.profiles.filter((p) => p.id !== id),
         profileStore: store,
+      };
+    }
+
+    case 'MOOD_SELECT_START': {
+      if (state.activeView !== VIEWS.MOOD || !moodEntries(state).length) return state;
+      return { ...state, moodSelection: { moodId: state.activeParams.id, ids: [] } };
+    }
+    case 'MOOD_SELECT_CLEAR':
+      return { ...state, moodSelection: null };
+    case 'MOOD_SELECT_TOGGLE': {
+      if (!state.moodSelection || !moodEntries(state).some((e) => e.item.id === action.id))
+        return state;
+      const ids = selectedMoodIds(state);
+      return {
+        ...state,
+        moodSelection: {
+          ...state.moodSelection,
+          ids: ids.includes(action.id) ? ids.filter((id) => id !== action.id) : [...ids, action.id],
+        },
+      };
+    }
+    case 'MOOD_SELECT_ALL':
+      return state.moodSelection
+        ? {
+            ...state,
+            moodSelection: {
+              ...state.moodSelection,
+              ids: moodEntries(state).map((e) => e.item.id),
+            },
+          }
+        : state;
+    case 'MOOD_SELECTION_COMMIT': {
+      const ids = selectedMoodIds(state);
+      if (!ids.length || !isSafeKey(action.id)) return state;
+      if (action.name != null) {
+        const name = typeof action.name === 'string' ? action.name.trim() : '';
+        if (!name || state.collections.some((c) => c.id === action.id)) return state;
+        return {
+          ...state,
+          moodSelection: null,
+          collections: [
+            ...state.collections,
+            { id: action.id, name: { en: name, ar: name }, items: ids, createdAt: Date.now() },
+          ],
+        };
+      }
+      if (!state.collections.some((c) => c.id === action.id)) return state;
+      return {
+        ...state,
+        moodSelection: null,
+        collections: state.collections.map((c) =>
+          c.id === action.id
+            ? { ...c, items: [...c.items, ...ids.filter((id) => !c.items.includes(id))] }
+            : c
+        ),
       };
     }
 

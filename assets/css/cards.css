@@ -5012,3 +5012,25 @@ button.toggle-row:focus-visible {
   overflow-wrap: anywhere;
   flex: 1 1 10rem;
 }
+
+.mood-selection {
+  margin-block: 1rem;
+}
+.mood-selection__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.mood-selection__check {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
+.mood-selection__check input {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
