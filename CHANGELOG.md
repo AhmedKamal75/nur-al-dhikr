@@ -1,3 +1,8 @@
+# v5.17.161 - Search every matching loaded hadith
+
+- Cross-book hadith search counts every match in the loaded index, without the former 200-result cutoff. Ten cards render per page; the loaded-book scope remains explicit and missing-book downloads still require consent.
+- Rebuilding or resetting the index invalidates cached queries so newly loaded books update totals. Pager targets follow the rendered clamped page. EN/AR regressions reach result 237, retain queries and verify no missing-book fetch.
+
 # v5.17.160 - Expand every palette result group
 
 - Capped palette groups show exact matching totals and See all. Expansion stays in the palette, preserves the query and other groups, and renders in batches of 60 without selecting, playing or navigating.

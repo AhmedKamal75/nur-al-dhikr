@@ -554,9 +554,9 @@ export const clickHandlers = {
 
   // (v5.2.57) grid cross-book pager: replaceGo keeps the query, drops
   // page 1 — the journal pager discipline (no history spam per flip).
-  'hadith-grid-prev': () => {
+  'hadith-grid-prev': (ds) => {
     const params = store.getState().activeParams || {};
-    const page = Math.max(1, Math.floor(Number(params.page)) || 1) - 1;
+    const page = Number(ds?.page) || Math.max(1, Math.floor(Number(params.page)) || 1) - 1;
     replaceGo(VIEWS.HADITH, {
       ...(params.q ? { q: params.q } : {}),
       ...(page > 1 ? { page: String(page) } : {}),
@@ -564,9 +564,9 @@ export const clickHandlers = {
     scrollToHadithListTop();
   },
 
-  'hadith-grid-next': () => {
+  'hadith-grid-next': (ds) => {
     const params = store.getState().activeParams || {};
-    const page = (Math.floor(Number(params.page)) || 1) + 1;
+    const page = Number(ds?.page) || (Math.floor(Number(params.page)) || 1) + 1;
     replaceGo(VIEWS.HADITH, { ...(params.q ? { q: params.q } : {}), page: String(page) });
     scrollToHadithListTop();
   },

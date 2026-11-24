@@ -32,6 +32,7 @@ let indexedBookIds = [];
  * drop out defensively. Returns { books, records } counts.
  */
 export function buildHadithIndex(docs) {
+  lastSearch = { query: null, limit: 0, results: null };
   hadithRecords = [];
   indexedBookIds = [];
   if (!docs || typeof docs !== 'object' || Array.isArray(docs)) {
@@ -62,6 +63,7 @@ export function buildHadithIndex(docs) {
 
 /** Drop the whole index (tests + RESET-path hygiene). */
 export function resetHadithIndex() {
+  lastSearch = { query: null, limit: 0, results: null };
   hadithRecords = [];
   indexedBookIds = [];
 }
