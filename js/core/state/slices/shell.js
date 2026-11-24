@@ -105,6 +105,7 @@ export function reduceShell(state, action) {
       const base = {
         ...state,
         collections,
+        moodSelection: null,
         activeView: view,
         activeParams: action.params || {},
         ...(lastChanged ? { lastPosition } : null),

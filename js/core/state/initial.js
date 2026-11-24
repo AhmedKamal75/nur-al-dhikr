@@ -27,6 +27,7 @@ export function initialState() {
     booted: false,
     activeView: DEFAULT_VIEW,
     activeParams: {},
+    moodSelection: null, // Temporary only: not persisted or restored.
     library: {
       // populated at boot by app.js from catalog + fetched documents
       documents: {}, // { libraryId: normalizedDocument }
