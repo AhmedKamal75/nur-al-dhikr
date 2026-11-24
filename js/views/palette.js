@@ -74,6 +74,13 @@ export function buildPaletteGroups(deps) {
   const q = normalizeSearch(query);
   const terms = q.split(' ').filter(Boolean);
   const groups = [];
+  const totals = {};
+  const windowRows = (key, all, initial) => {
+    totals[key] = all.length;
+    const requested = Number(deps.groupLimits?.[key]);
+    const limit = Number.isFinite(requested) ? Math.max(initial, requested) : initial;
+    return all.slice(0, limit);
+  };
 
   const matchSettings = (titleKey, hintKey) => {
     if (!q) return true;
@@ -109,7 +116,7 @@ export function buildPaletteGroups(deps) {
 
   if (!q) {
     // Empty query: recent searches double as suggestions.
-    const history = (deps.history || []).slice(0, 5).map((h) => ({
+    const history = windowRows('history', deps.history || [], 5).map((h) => ({
       kind: 'button',
       icon: 'search',
       primary: h,
@@ -118,7 +125,13 @@ export function buildPaletteGroups(deps) {
       data: { query: h },
     }));
     if (history.length)
-      groups.push({ key: 'history', title: t('search.recent', lang), rows: history });
+      groups.push({
+        key: 'history',
+        title: t('search.recent', lang),
+        rows: history,
+        total: totals.history,
+        shown: history.length,
+      });
     groups.push({
       key: 'action',
       title: t('palette.action', lang),
@@ -135,7 +148,7 @@ export function buildPaletteGroups(deps) {
   }
 
   // Surahs — names in every script + number (the surah-list upgrade).
-  const surahHits = searchSurahs(deps.surahs || [], query).slice(0, 4);
+  const surahHits = windowRows('surah', searchSurahs(deps.surahs || [], query), 4);
   if (surahHits.length) {
     groups.push({
       key: 'surah',
@@ -159,7 +172,7 @@ export function buildPaletteGroups(deps) {
     groups.push({
       key: 'ayah',
       title: t('palette.ayah', lang),
-      rows: deps.ayahIndex.hits.slice(0, 5).map((h) => ({
+      rows: windowRows('ayah', deps.ayahIndex.hits, 5).map((h) => ({
         kind: 'link',
         icon: 'book',
         primary: h.text.length > 120 ? `${h.text.slice(0, 120)}…` : h.text,
@@ -176,7 +189,7 @@ export function buildPaletteGroups(deps) {
     groups.push({
       key: 'tafsir',
       title: t('palette.tafsir', lang),
-      rows: deps.tafsirIndex.hits.slice(0, 5).map((h) => ({
+      rows: windowRows('tafsir', deps.tafsirIndex.hits, 5).map((h) => ({
         kind: 'link',
         icon: 'book-open',
         primary: h.text.length > 120 ? `${h.text.slice(0, 120)}…` : h.text,
@@ -189,7 +202,7 @@ export function buildPaletteGroups(deps) {
   }
 
   // Adhkar & duas (precomputed library hits from the app layer).
-  const libHits = (deps.libraryHits || []).slice(0, 6);
+  const libHits = windowRows('library', deps.libraryHits || [], 6);
   if (libHits.length) {
     groups.push({
       key: 'library',
@@ -209,7 +222,7 @@ export function buildPaletteGroups(deps) {
   }
 
   // Reciters (catalog + customs, when loaded).
-  const recHits = (deps.reciters || []).slice(0, 4);
+  const recHits = windowRows('reciter', deps.reciters || [], 4);
   if (recHits.length) {
     groups.push({
       key: 'reciter',
@@ -226,7 +239,11 @@ export function buildPaletteGroups(deps) {
   }
 
   // Hadith books.
-  const bookHits = (deps.books || []).filter((b) => matchText(b.name?.en, b.name?.ar)).slice(0, 3);
+  const bookHits = windowRows(
+    'book',
+    (deps.books || []).filter((b) => matchText(b.name?.en, b.name?.ar)),
+    3
+  );
   if (bookHits.length) {
     groups.push({
       key: 'book',
@@ -245,7 +262,11 @@ export function buildPaletteGroups(deps) {
 
   // Journal entries (device-local duas + reflections) — rows land on
   // the filtered journal view, so the match is one tap from full context.
-  const journalHits = (deps.journal || []).filter((j) => matchText(j.text, '')).slice(0, 4);
+  const journalHits = windowRows(
+    'journal',
+    (deps.journal || []).filter((j) => matchText(j.text, '')),
+    4
+  );
   if (journalHits.length) {
     groups.push({
       key: 'journal',
@@ -266,9 +287,13 @@ export function buildPaletteGroups(deps) {
   // view opens on the matching accordion (the view's own filter narrows
   // further when a query is present). Injected lists use titleKey/hintKey;
   // the view's own SETTINGS_SECTIONS uses title/hint — both read here.
-  const settingsHits = (deps.settingsSections || SETTINGS_SECTIONS)
-    .filter((sec) => matchSettings(sec.title ?? sec.titleKey, sec.hint ?? sec.hintKey))
-    .slice(0, 3);
+  const settingsHits = windowRows(
+    'settings',
+    (deps.settingsSections || SETTINGS_SECTIONS).filter((sec) =>
+      matchSettings(sec.title ?? sec.titleKey, sec.hint ?? sec.hintKey)
+    ),
+    3
+  );
   if (settingsHits.length) {
     groups.push({
       key: 'settings',
@@ -304,6 +329,10 @@ export function buildPaletteGroups(deps) {
   if (actRows.length)
     groups.push({ key: 'action', title: t('palette.action', lang), rows: actRows });
 
+  for (const group of groups) {
+    group.total = totals[group.key] ?? group.rows.length;
+    group.shown = group.rows.length;
+  }
   return { groups, terms };
 }
 
@@ -321,7 +350,7 @@ function paletteRowHTML(row, terms, idx, active) {
   if (row.kind === 'link') {
     return `<a class="${cls}" href="${escapeHTML(row.href)}" data-action="${escapeHTML(row.action)}" ${dataAttrs} data-idx="${idx}">${inner}</a>`;
   }
-  return `<button type="button" class="${cls}" data-action="${escapeHTML(row.action)}" ${dataAttrs} data-idx="${idx}">${inner}</button>`;
+  return `<button type="button" class="${cls}" ${row.action ? `data-action="${escapeHTML(row.action)}"` : ''} ${dataAttrs} data-idx="${idx}">${inner}</button>`;
 }
 
 /** Render groups with a running flat index; activeIdx highlights one row. */
@@ -337,14 +366,15 @@ export function paletteGroupsHTML(groups, terms, lang, activeIdx = 0) {
         idx += 1;
         return html;
       })
-      .join('')}`
+      .join('')}
+    ${g.total > g.rows.length ? paletteRowHTML({ kind: 'button', icon: 'plus', primary: t('palette.seeAll', lang, { n: g.total }), secondary: t('palette.shown', lang, { n: g.rows.length, total: g.total }), data: { 'palette-group': g.key, shown: g.rows.length, total: g.total } }, [], idx++, activeIdx) : ''}`
     )
     .join('');
 }
 
 /** Count selectable rows (for keyboard wrap-around). */
 export function paletteRowCount(groups) {
-  return groups.reduce((n, g) => n + g.rows.length, 0);
+  return groups.reduce((n, g) => n + g.rows.length + (g.total > g.rows.length ? 1 : 0), 0);
 }
 
 /** The overlay shell: input + live results + hint footer. */

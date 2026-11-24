@@ -24,9 +24,12 @@ import { ensureTafsirSearchData } from './tafsirSearch.js';
 import { loadCatalog } from '../services/audioCatalog.js';
 import { ensureQuranSearchData } from './quranSearch.js';
 
+let groupLimits = {};
+let lastQuery = null;
 let activeIdx = 0;
 let rowTotal = 0;
 let chromeArmed = false;
+let expansionToken = 0;
 
 function paletteRoot() {
   return document.getElementById('palette-input') ? document.getElementById('modal-root') : null;
@@ -42,7 +45,7 @@ function collectDeps(query) {
   const lang = state.settings.language;
   let ayahIndex = null;
   if (query.trim() && isQuranSearchReady()) {
-    const hits = searchQuran(query, { limit: 5 });
+    const hits = searchQuran(query, { limit: Infinity });
     ayahIndex = {
       hits: hits.map((h) => {
         const doc = state.quran.surahs?.[String(h.s)];
@@ -68,7 +71,7 @@ function collectDeps(query) {
     tafsirIndex = {
       editionName:
         lang === 'ar' ? edDoc?.nameAr || edDoc?.nameEn || '' : edDoc?.nameEn || edDoc?.nameAr || '',
-      hits: searchTafsir(query, { limit: 5 }).map((h) => ({
+      hits: searchTafsir(query, { limit: Infinity }).map((h) => ({
         ...h,
         text: texts[String(h.s)]?.[String(h.a)] || '',
       })),
@@ -91,28 +94,33 @@ function collectDeps(query) {
     : [];
   return {
     query,
+    groupLimits,
     lang,
     journal,
     tafsirIndex,
-    libraryHits: query.trim() ? searchLibrary(query, { limit: 6 }) : [],
+    libraryHits: query.trim() ? searchLibrary(query, { limit: Infinity }) : [],
     surahs: state.quran.meta?.surahs || [],
     ayahIndex,
-    reciters: query.trim()
-      ? searchReciters(query, state.settings.customReciters || []).slice(0, 4)
-      : [],
+    reciters: query.trim() ? searchReciters(query, state.settings.customReciters || []) : [],
     books: state.hadith.index?.books || [],
     history: state.search.historyList || [],
   };
 }
 
-export function updatePalette() {
+export function updatePalette(preserveActive = false) {
   const root = paletteRoot();
   const box = document.getElementById('palette-results');
   if (!root || !box) return;
   const state = store.getState();
-  const { groups, terms } = buildPaletteGroups(collectDeps(currentQuery()));
+  const query = currentQuery();
+  if (lastQuery !== query) {
+    groupLimits = {};
+    expansionToken++;
+    lastQuery = query;
+  }
+  const { groups, terms } = buildPaletteGroups(collectDeps(query));
   rowTotal = paletteRowCount(groups);
-  activeIdx = 0;
+  activeIdx = preserveActive === true ? Math.min(activeIdx, Math.max(0, rowTotal - 1)) : 0;
   box.innerHTML = paletteGroupsHTML(groups, terms, state.settings.language, activeIdx);
   paintActive();
 }
@@ -143,18 +151,55 @@ function paletteChrome(e) {
     if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Enter') return;
     if (!rowTotal) return;
     e.preventDefault();
+    const focusedRow = e.target?.closest?.('#palette-results .palette__item');
+    if (focusedRow) activeIdx = Number(focusedRow.dataset.idx) || 0;
     if (e.key === 'Enter') {
+      if (focusedRow) {
+        focusedRow.click();
+        return;
+      }
       document.querySelector('#palette-results .palette__item--active')?.click();
       return;
     }
     activeIdx = (activeIdx + (e.key === 'ArrowDown' ? 1 : -1) + rowTotal) % rowTotal;
     paintActive();
+    if (focusedRow)
+      document
+        .querySelector('#palette-results .palette__item--active')
+        ?.focus({ preventScroll: true });
   }
+}
+
+async function expandGroup(expand) {
+  const key = expand.dataset.paletteGroup;
+  const total = Number(expand.dataset.total);
+  const query = currentQuery();
+  const token = ++expansionToken;
+  activeIdx = Number(expand.dataset.idx) || 0;
+  const box = document.getElementById('palette-results');
+  const scroll = box?.scrollTop || 0;
+  let shown = Number(expand.dataset.shown);
+  while (shown < total) {
+    await new Promise(requestAnimationFrame);
+    if (token !== expansionToken || !paletteRoot() || currentQuery() !== query) return;
+    shown = Math.min(total, shown + 60);
+    groupLimits[key] = shown;
+    updatePalette(true);
+    if (box) box.scrollTop = scroll;
+  }
+  document.querySelector('#palette-results .palette__item--active')?.focus({ preventScroll: true });
 }
 
 function paletteClickCloser(e) {
   if (!document.getElementById('palette-input')) return; // cleaned by paletteChrome
   if (e.target?.closest?.('#palette-input')) return;
+  const expand = e.target?.closest?.('[data-palette-group]');
+  if (expand) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    void expandGroup(expand);
+    return;
+  }
   if (e.target?.closest?.('[data-action]')) {
     // A pick redeems the typed query: record it like any other search so
     // history reflects searches that led somewhere (typing alone never did).
@@ -177,6 +222,8 @@ export function openPalette() {
     input.focus();
     return;
   }
+  groupLimits = {};
+  lastQuery = null;
   const lang = store.getState().settings.language;
   openModal(paletteShellHTML(lang), { labelledBy: 'palette-title' });
   updatePalette();

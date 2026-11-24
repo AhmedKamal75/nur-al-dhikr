@@ -1,3 +1,8 @@
+## v5.17.160 - Expand every palette result group
+
+- Capped palette groups show exact matching totals and See all. Expansion stays in the palette, preserves the query and other groups, and renders in batches of 60 without selecting, playing or navigating.
+- Quran, tafsir, library and reciter providers supply complete matches before display windows apply. EN/AR tests cover isolated expansion, zero matches, keyboard/mouse and phone/desktop. No religious data changed.
+
 ## v5.17.159 - Browse the complete reciter catalog
 
 - Audio catalog reports exact shown/matching totals and offers Show next 60 or Show all. Show all adds bounded batches, retaining filter, selected voice and scroll without starting playback.
