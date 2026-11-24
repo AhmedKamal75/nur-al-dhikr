@@ -4,6 +4,7 @@
  * app/events.js merges them into the single delegation table.
  */
 
+import { searchReciters } from '../../services/audioCatalog.js';
 import { rt } from '../../app/rt.js';
 import { downloadOne, startAudioPlay, toggleAudioMute, claimSpeaker } from '../audioEngine.js';
 import { fetchJSON } from '../net.js';
@@ -54,7 +55,31 @@ function applyFileSleep(next, lang) {
   showToast(t('audio.sleepArmed', lang, { n: next }));
 }
 
+let catalogExpansion = 0;
+async function expandCatalog(all) {
+  const token = ++catalogExpansion;
+  const query = store.getState().audioManager.query;
+  do {
+    const state = store.getState();
+    if (
+      token !== catalogExpansion ||
+      state.activeView !== VIEWS.AUDIO ||
+      state.audioManager.query !== query
+    )
+      return;
+    const total = searchReciters(query, state.settings.customReciters || []).length;
+    const count = Math.min(total, (state.audioManager.visibleCount || 60) + 60);
+    const y = window.scrollY;
+    store.dispatch(actions.expandAudioCatalog(count));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    window.scrollTo(0, y);
+    if (!all || count >= total) return;
+  } while (true);
+}
+
 export const clickHandlers = {
+  'audio-catalog-more': () => expandCatalog(false),
+  'audio-catalog-all': () => expandCatalog(true),
   'audio-select-moshaf': (ds) => {
     store.dispatch(actions.setAudioPrefs({ moshafId: ds.id }));
   },

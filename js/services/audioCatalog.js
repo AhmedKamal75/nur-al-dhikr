@@ -191,3 +191,12 @@ export function validateCustomServer(raw) {
   const base = s.endsWith('/') ? s : `${s}/`;
   return { ok: true, server: base };
 }
+
+/** Window the matching catalog without losing the selected identity. */
+export function reciterCatalogPage(hits, selected, limit = 60) {
+  const safe = Math.max(60, Math.floor(Number(limit) || 60));
+  const unique = [...new Map(hits.map((entry) => [entry.id, entry])).values()];
+  const rows = unique.slice(0, safe);
+  const pinned = selected && !rows.some((entry) => entry.id === selected.id) ? selected : null;
+  return { rows, pinned, shown: rows.length, total: unique.length };
+}

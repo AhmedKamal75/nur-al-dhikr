@@ -233,7 +233,10 @@ export const ar = {
   'audio.subtitle':
     '٣١٢ مصحفًا كاملًا من mp3quran.net وquranicaudio.com — استمع لأي سورة مباشرة أو حمّل السور أو المصاحف كاملة للاستماع دون اتصال.',
   'audio.searchPh': 'ابحث عن قارئ بالعربية أو الإنجليزية…',
-  'audio.moreResults': 'أول ٦٠ من {n} نتيجة — واصل الكتابة لتضييق البحث.',
+  'audio.catalogCount': 'عرض {x} من {y}',
+  'audio.catalogNext': 'عرض الـ 60 التالية',
+  'audio.catalogAll': 'عرض الكل',
+  'audio.selectedOutside': 'القارئ المحدد (خارج النتائج المعروضة)',
   'audio.noResultsHint': 'جرّب كتابة مختلفة — أو أضف قارئك الخاص بالأسفل.',
   'audio.downloadAll': 'تحميل الكل (١١٤)',
   'audio.downloadMissing': 'تحميل الناقص',

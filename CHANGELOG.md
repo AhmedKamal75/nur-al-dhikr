@@ -1,3 +1,8 @@
+# v5.17.159 - Browse the complete reciter catalog
+
+- Audio catalog reports exact shown/matching totals and offers Show next 60 or Show all. Show all adds bounded batches, retaining filter, selected voice and scroll without starting playback.
+- A selected voice outside the shown matches stays visible in a labeled, deduplicated row. Bilingual tests cover expansion, zero/boundary totals, Arabic normalization and selection/playback preservation. No reciter data changed.
+
 # v5.17.158 - Full-width navigation submenus
 
 - Expanded navigation sections put their child links below the section header instead of squeezing the parent label beside them. The parent link and disclosure remain separate controls; collapsed desktop rail and mobile drawer behavior are preserved.

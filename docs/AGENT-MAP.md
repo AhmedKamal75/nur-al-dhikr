@@ -4,8 +4,8 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 Read this file first. It is deliberately short: the spine, the lookup tables and the counted inventories. For one specific module’s exports, one `data-action`’s handler, or one keyword’s owners, read the exhaustive dump next.
 
-- js modules: 251 — data files: 29 — tests: 294
-- exhaustive dump: `docs/agent-map-full.md` (574 entries)
+- js modules: 251 — data files: 29 — tests: 295
+- exhaustive dump: `docs/agent-map-full.md` (575 entries)
 
 ## 1. The spine: chrome section → routes → view module
 
@@ -81,10 +81,10 @@ Routes in VIEWS claimed by no section: `SEARCH`, `ZAKAT`, `SETTINGS`, `ABOUT`, `
 
 ## 5. Lookup tables (counts; open the dump for the rows)
 
-- `data-action` values emitted anywhere: **362** — every one resolves to a handler (see the Allowlist section of the dump).
+- `data-action` values emitted anywhere: **364** — every one resolves to a handler (see the Allowlist section of the dump).
 - files that handle at least one click/change/form action: **19** of 251.
-- exported symbols: **1592**.
-- i18n keys touched by js/: **1535** of the two dictionaries.
+- exported symbols: **1593**.
+- i18n keys touched by js/: **1538** of the two dictionaries.
 
 ## 6. When you need the exhaustive dump
 
