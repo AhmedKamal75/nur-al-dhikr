@@ -17,7 +17,7 @@ import {
   debounceSearchNavigate,
   debounceSettingsSearchNavigate,
 } from '../inputs.js';
-import { go } from '../../core/router.js';
+import { go, replaceGo } from '../../core/router.js';
 import { actions, store } from '../../core/state.js';
 import { VIEWS, resolveKidsView } from '../../core/config.js';
 import { t } from '../../core/i18n.js';
@@ -39,6 +39,22 @@ function kidsScopeGuard(view) {
 }
 
 export const clickHandlers = {
+  'home-recents-more': (ds) => {
+    const y = window.scrollY;
+    replaceGo(VIEWS.HOME, {
+      ...store.getState().activeParams,
+      recent: String(Math.min(500, Math.max(3, Number(ds.count) || 3))),
+    });
+    requestAnimationFrame(() => window.scrollTo(0, y));
+  },
+  'calendar-events-more': (ds) => {
+    const y = window.scrollY;
+    replaceGo(VIEWS.CALENDAR, {
+      ...store.getState().activeParams,
+      events: String(Math.min(100, Math.max(5, Number(ds.count) || 5))),
+    });
+    requestAnimationFrame(() => window.scrollTo(0, y));
+  },
   navigate: (ds) => {
     const params = {};
     if (ds.id) params.id = ds.id;

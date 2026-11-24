@@ -4,7 +4,7 @@ GENERATED — do not hand-edit. Regenerate with `node scripts/agent-map.mjs` (pl
 
 This is the exhaustive dump. For the one-page version — chrome spine, where-to-change table, counted inventory — read `docs/AGENT-MAP.md` instead. This file is ~530 KB by design; it is meant to be searched for one named thing, not read end to end.
 
-- js modules: 251 — data files: 29 — tests: 298
+- js modules: 251 — data files: 29 — tests: 299
 
 Conventions: `js/views/*.js` pure state→HTML templates; `js/domain/*.js` pure logic;
 `js/app/**/*.js` wiring + handlers; `js/core/**` state/router/config/i18n/storage;
@@ -434,9 +434,9 @@ job: app/handlers — feature-scoped controller modules. Each exports a partial 
 
 - exports: `clickHandlers` (object), `inputHandlers` (const)
 - emits: —
-- handles: `go-back`, `nav-drawer-close`, `nav-drawer-go`, `nav-toggle`, `navigate`, `open-palette`, `quick-language-toggle`, `quick-theme-toggle`, `quick-tile`
+- handles: `calendar-events-more`, `go-back`, `home-recents-more`, `nav-drawer-close`, `nav-drawer-go`, `nav-toggle`, `navigate`, `open-palette`, `quick-language-toggle`, `quick-theme-toggle`, `quick-tile`
 - i18n: `kids.blocked`
-- routes: `VIEWS.KIDS`, `VIEWS.SEARCH`
+- routes: `VIEWS.CALENDAR`, `VIEWS.HOME`, `VIEWS.KIDS`, `VIEWS.SEARCH`
 
 ### `js/app/handlers/offline.js`
 
@@ -2267,9 +2267,9 @@ job: (v5.17.59, merged-plan item 12) the ONE unified offline+backup summary card
 job: A single navigable Gregorian month grid where every cell shows its Hijri equivalent too (day number, and month name at the seam where the Hijri month rolls over) — genuinely "dual calendar" without t…
 
 - exports: `renderCalendar` (function)
-- emits: `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `navigate`, `ramadan-enable-notifications`, `ramadan-toggle-fast`
+- emits: `calendar-events-more`, `calendar-open-day`, `fasting-cycle-remind-time`, `fasting-toggle-category`, `fasting-toggle-remind`, `navigate`, `ramadan-enable-notifications`, `ramadan-toggle-fast`
 - handles: —
-- i18n: `calendar.ah`, `calendar.estimateNote`, `calendar.events`, `calendar.gregorian`, `calendar.hasNotes`, `calendar.nextMonth`, `calendar.prevMonth`, `calendar.today`, `calendar.whiteDays`, `fasting.count`, `fasting.countYear`, `fasting.fasted`, `fasting.history`, `fasting.markFasted`, `fasting.next`, `fasting.noneUpcoming`, `fasting.off`, `fasting.on`, `fasting.remind`, `fasting.remindTime` (+6 more)
+- i18n: `calendar.ah`, `calendar.estimateNote`, `calendar.events`, `calendar.gregorian`, `calendar.hasNotes`, `calendar.nextMonth`, `calendar.prevMonth`, `calendar.today`, `calendar.whiteDays`, `fasting.count`, `fasting.countYear`, `fasting.fasted`, `fasting.history`, `fasting.markFasted`, `fasting.next`, `fasting.noneUpcoming`, `fasting.off`, `fasting.on`, `fasting.remind`, `fasting.remindTime` (+8 more)
 - routes: `view:calendar`
 
 ### `js/views/category.js`
@@ -2387,9 +2387,9 @@ job: shared hadith card builders. (v5.2.18) Extracted from views/hadith.js so Ho
 job: (header names file only — no job line)
 
 - exports: `quickTilesHTML` (function), `worshipTodayCardHTML` (function), `resumePanelHTML` (function), `nudgeCardHTML` (function), `resolveBrowserWindow` (function), `prayerRibbonHTML` (function), `adhkarWindowLabel` (function), `rankBrowserDocuments` (function), `docCorpusCount` (function), `rankBrowserCategories` (function), `homeTodayStripHTML` (function), `homeInvitesHTML` (function), `adhkarBrowserHTML` (function), `renderHome` (function), `hifzReviewCardHTML` (function), `reviewDigestCardHTML` (function), `sadaqahHistoryHTML` (function), `buildSadaqahEditor` (function)
-- emits: `home-invite-dismiss`, `modal-close`, `mushaf-open-at-surah`, `navigate`, `nudge-dismiss`, `practice-start`, `quick-tile`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`
+- emits: `home-invite-dismiss`, `home-recents-more`, `modal-close`, `mushaf-open-at-surah`, `navigate`, `nudge-dismiss`, `practice-start`, `quick-tile`, `sadaqah-history-more`, `sadaqah-log`, `sadaqah-open-editor`, `sadaqah-remove`
 - handles: —
-- i18n: `app.name`, `app.tagline`, `calendar.estimateNote`, `category.progressToday`, `certificate.title`, `checklist.today`, `collections.itemCount`, `common.am`, `common.delete`, `common.pm`, `editor.cancel`, `editor.save`, `hifz.availableHint`, `hifz.cardTitle`, `hifz.memorizedBadge`, `hifz.openLedger`, `hifz.suggestHint`, `home.blankPage`, `home.browserSub`, `home.browserTitle` (+83 more)
+- i18n: `app.name`, `app.tagline`, `calendar.estimateNote`, `category.progressToday`, `certificate.title`, `checklist.today`, `collections.itemCount`, `common.am`, `common.delete`, `common.pm`, `editor.cancel`, `editor.save`, `hifz.availableHint`, `hifz.cardTitle`, `hifz.memorizedBadge`, `hifz.openLedger`, `hifz.suggestHint`, `home.blankPage`, `home.browserSub`, `home.browserTitle` (+84 more)
 - routes: `VIEWS.CALENDAR`, `VIEWS.CATEGORY`, `VIEWS.CERTIFICATE`, `VIEWS.CHECKLIST`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.HADITH`, `VIEWS.HOME`, `VIEWS.LIBRARY`, `VIEWS.MOOD`, `VIEWS.MUSHAF`, `VIEWS.PRAYER`, `VIEWS.QUIZ`, `VIEWS.QURAN`, `VIEWS.RAMADAN`, `VIEWS.SETTINGS`, `VIEWS.STATISTICS`, `VIEWS.TAJWEED_COURSE`, `VIEWS.TASBIH`, `VIEWS.ZAKAT`
 
 ### `js/views/installRow.js`
@@ -2768,6 +2768,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `byheart-review`: emitted by `js/ui/card.js`, `js/views/focus.js`; handled in `js/app/handlers/items.js`
 - `calendar-delete-note`: emitted by `js/ui/calendarModals.js`; handled in `js/app/handlers/worship.js`
 - `calendar-edit-note`: emitted by `js/ui/calendarModals.js`; handled in `js/app/handlers/worship.js`
+- `calendar-events-more`: emitted by `js/views/calendar.js`; handled in `js/app/handlers/navigation.js`
 - `calendar-new-note`: emitted by `js/ui/calendarModals.js`; handled in `js/app/handlers/worship.js`
 - `calendar-open-day`: emitted by `js/views/calendar.js`; handled in `js/app/handlers/worship.js`
 - `category-top`: emitted by `js/views/category.js`; handled in `js/app/handlers/content.js`
@@ -2880,6 +2881,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `home-invite-dismiss`: emitted by `js/views/home.js`; handled in `js/app/handlers/worship.js`
 - `home-panel-move`: emitted by `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `home-panel-toggle`: emitted by `js/app/handlers/system.js`, `js/views/settings.js`; handled in `js/app/handlers/system.js`
+- `home-recents-more`: emitted by `js/views/home.js`; handled in `js/app/handlers/navigation.js`
 - `import-backup`: emitted by `js/views/backupSummary.js`, `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `import-plan`: emitted by `js/views/settings.js`; handled in `js/app/handlers/system.js`
 - `install-later`: emitted by `js/views/installRow.js`; handled in `js/app/handlers/worship.js`
@@ -7659,6 +7661,7 @@ Each unit test file, its header job, and the `js/` modules it imports (its pins)
 - `tests/backupAuto.test.js` — item 10 (backup) gates: 1. autoBackupDue fires for returning users past the interval only; backupStale flags never/old manual exports; (pins: `../js/core/state.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/services/backup.js`, `../js/views/settings.js`)
 - `tests/byHeart.test.js` — adhkar-by-heart mode: session walk + SRS records over item ids + restore boundary. (pins: `../js/core/state/actions.js`, `../js/core/state/initial.js`, `../js/core/state/reducer.js`, `../js/core/state/restore.js`, `../js/domain/hifz.js`)
 - `tests/calendar-deslopify.test.js` — (no header comment) (pins: —)
+- `tests/calendar-home-continuations.test.js` — (no header comment) (pins: `../js/core/schema.js`, `../js/core/state/initial.js`, `../js/views/calendar.js`, `../js/views/home.js`)
 - `tests/calendarRecurrence.test.js` — item 12 (calendar recurrence) gates: 1. weekly/monthly/yearly match calendar fields (short months skip, Feb 29 keeps leap years), floored at startDate and capped by endDate; (pins: `../js/domain/calendar.js`, `../js/services/calendarNotes.js`, `../js/ui/calendarModals.js`)
 - `tests/category-hierarchy.test.js` — (no header comment) (pins: —)
 - `tests/chaos-matrix.test.js` — (v5.17.2) audit CHAOS follow-up. Pins the fault catalog and proves the harness invariants against stubs: network faults surface structured errors, storage faults keep cache data. (pins: —)

@@ -1019,13 +1019,14 @@ export function renderHome(state) {
     if (fresh >= 0) daily = dailyPick.eligible[fresh];
   }
   const shownIds = new Set(daily?.item?.id != null ? [daily.item.id] : []);
-  const takeFresh = (entries) => {
+  const takeFresh = (entries, limit = Infinity) => {
     const out = [];
     for (const entry of dedupeEntries(entries)) {
       const id = entry?.item?.id;
       if (id == null || shownIds.has(id) || isStaleEntry(entry)) continue;
       shownIds.add(id);
       out.push(entry);
+      if (out.length >= limit) break;
     }
     return out;
   };
@@ -1033,12 +1034,14 @@ export function renderHome(state) {
   // (one computation, two readers — see resolveBrowserWindow above).
   const { prayerTimes, nowWindow } = resolveBrowserWindow(state);
 
-  const recentEntries = takeFresh(
-    state.history
-      .slice(0, 3)
-      .map((h) => state.library.itemIndex[h.itemId])
-      .filter(Boolean)
+  const recentCandidates = dedupeEntries(
+    state.history.map((h) => state.library.itemIndex[h.itemId]).filter(Boolean)
+  ).filter((entry) => !shownIds.has(entry.item.id) && !isStaleEntry(entry));
+  const recentLimit = Math.max(
+    3,
+    Math.min(500, Math.floor(Number(state.activeParams?.recent)) || 3)
   );
+  const recentEntries = takeFresh(recentCandidates, recentLimit);
   const favEntries = takeFresh(
     state.favorites
       .slice(0, 3)
@@ -1123,11 +1126,13 @@ export function renderHome(state) {
     worship: worshipTodayCardHTML(state),
     recent: recentEntries.length
       ? `
-    <section class="panel">
+    <section class="panel" data-home-recents>
       <div class="panel__header"><h2>${t('home.panel.recent', lang)}</h2></div>
+      <p class="panel__subtext">${t('list.shown', lang, { n: recentEntries.length, total: recentCandidates.length })}</p>
       <div class="card-row">
         ${recentEntries.map((e) => cardHTML(e.item, e.category, { lang, isFavorite: selectors.isFavorite(state, e.item.id), isSpeaking: state.speakingItemId === e.item.id, isPlayingAudio: state.dhikrAudioItemId === e.item.id, counter: selectors.getCounter(state, e.item.id), compact: true, showTranslation: false, fields: fieldTogglesFor(state, e.document?.metadata?.id) })).join('')}
       </div>
+      ${recentEntries.length < recentCandidates.length ? `<button type="button" class="btn btn--secondary btn--sm" data-action="home-recents-more" data-count="${recentLimit + 3}">${t('list.more', lang)}</button>` : ''}
     </section>`
       : emptyStateHTML({
           iconName: 'book',
