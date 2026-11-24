@@ -368,6 +368,16 @@ for (const mode of ['windowed', 'manual', 'madinah']) {
           marker: getComputedStyle(marker).backgroundColor,
         };
       });
+    // Measure the settled paper, not an intermediate fullscreen entrance frame.
+    await page.evaluate(async () => {
+      await Promise.all(
+        document
+          .getAnimations()
+          .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+          .map((a) => a.finished.catch(() => {}))
+      );
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
     const before = await measure('#main .mushaf-book');
     const client = await page.context().newCDPSession(page);
     await drag(page, client, [80, 110, 150, 200], { release: false });

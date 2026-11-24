@@ -404,7 +404,7 @@ job: (no header comment)
 
 - exports: `triggerRipple` (function), `shareAyahCard` (function), `clickHandlers` (object), `changeHandlers` (const)
 - emits: `collection-picker-toggle`, `counter-tap`, `hadith-note-delete`, `modal-close`
-- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input)
+- handles: `ambient-mode`, `ayah-share`, `byheart-exit`, `byheart-reveal`, `byheart-review`, `byheart-start`, `clear-search-history`, `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `confirm-delete-collection`, `confirm-unfavorite-all`, `copy-ayah`, `copy-item`, `counter-tap`, `create-collection`, `create-collection-inline`, `create-collection-inline-move`, `create-collection-suggested`, `delete-collection`, `favorites-sort`, `focus-adjacent`, `focus-exit`, `focus-reset`, `focus-wake-toggle`, `hadith-bookmark`, `hadith-copy`, `hadith-daily-shuffle`, `hadith-grid-next`, `hadith-grid-prev`, `hadith-index-all`, `hadith-mem-reveal`, `hadith-mem-review`, `hadith-memorize`, `hadith-note-delete`, `hadith-note-open`, `hadith-page-next`, `hadith-page-prev`, `hadith-retry`, `hadith-retry-index`, `hadith-section`, `hadith-share`, `hadith-speak`, `kids-quiz-answer`, `kids-quiz-exit`, `kids-quiz-start`, `move-to-collection`, `open-card-menu`, `open-collection-picker`, `open-focus`, `open-move-picker`, `play-dhikr-audio`, `rename-collection`, `run-search`, `search-page`, `session-start`, `share-collection`, `share-item`, `toggle-favorite`, `toggle-speech`, `unfavorite-all`, `collection-picker-toggle` (change/input)
 - i18n: `card.copied`, `card.copyFailed`, `card.imageSaved`, `collections.itemCount`, `collections.namePrompt`, `collections.shareEmpty`, `common.delete`, `common.error`, `common.retry`, `common.save`, `dhikrAudio.failed`, `editor.cancel`, `editor.deleteConfirm`, `favorites.clearConfirm`, `hadith.note`, `hadith.noteDeleted`, `hadith.notePh`, `hadith.noteTitle`, `hadith.speechUnsupported`, `kids.quizWin` (+1 more)
 - routes: `#/hadith`, `VIEWS.COLLECTION`, `VIEWS.COLLECTIONS`, `VIEWS.FAVORITES`, `VIEWS.FOCUS`, `VIEWS.HADITH`, `VIEWS.SEARCH`
 
@@ -2307,9 +2307,9 @@ job: A private, local-only daily tracker for the five prayers plus morning/ even
 job: A single collection: rename + share + delete in the header, bulk import of missing favorites, and per-item reorder controls (up/down) alongside the cards. Reorder hides while filtering — moving filte…
 
 - exports: `buildCollectionShareText` (function), `renderCollection` (function)
-- emits: `collection-add-favorites`, `collection-move`, `collection-session-start`, `delete-collection`, `navigate`, `rename-collection`, `share-collection`
+- emits: `collection-add-favorites`, `collection-move`, `collection-session-beginning`, `collection-session-start`, `delete-collection`, `navigate`, `rename-collection`, `share-collection`
 - handles: —
-- i18n: `collections.addFavorites`, `collections.delete`, `collections.empty`, `collections.itemCount`, `collections.rename`, `collections.searchPh`, `collections.share`, `common.notFoundCollection`, `content.reviewPending`, `nav.collections`, `search.noResults`, `settings.moveDown`, `settings.moveUp`
+- i18n: `collections.addFavorites`, `collections.delete`, `collections.empty`, `collections.itemCount`, `collections.rename`, `collections.searchPh`, `collections.sessionBeginning`, `collections.share`, `common.notFoundCollection`, `content.reviewPending`, `nav.collections`, `search.noResults`, `settings.moveDown`, `settings.moveUp`
 - routes: `VIEWS.COLLECTIONS`
 
 ### `js/views/collections.js`
@@ -2775,6 +2775,7 @@ job: The Zakat calculator: metal-priced nisab (gold 85 g / silver 595 g), seven 
 - `collection-add-favorites`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `collection-move`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `collection-picker-toggle`: emitted by `js/app/handlers/items.js`, `js/ui/menus.js`; handled in `js/app/handlers/items.js`
+- `collection-session-beginning`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `collection-session-start`: emitted by `js/views/collection.js`; handled in `js/app/handlers/items.js`
 - `confirm-content-restore-library`: emitted by `js/views/library.js`; handled in `js/app/handlers/content.js`
 - `content-delete-category`: emitted by `js/views/category.js`, `js/views/library.js`; handled in `js/app/handlers/content.js`

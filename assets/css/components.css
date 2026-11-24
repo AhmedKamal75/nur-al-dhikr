@@ -3323,3 +3323,14 @@ a.view-sheet__row {
   line-height: 1;
   letter-spacing: 0.02em;
 }
+
+.collection-session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.collection-session-actions .btn {
+  white-space: normal;
+  max-inline-size: 100%;
+  text-align: start;
+}
