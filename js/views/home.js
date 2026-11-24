@@ -1,6 +1,7 @@
 /**
  * views/home.js
  */
+import { collectionReadableCount } from '../services/focusQueue.js';
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
@@ -1148,7 +1149,7 @@ export function renderHome(state) {
         <a href="${buildHash(VIEWS.COLLECTIONS)}" data-action="navigate" data-view="${VIEWS.COLLECTIONS}" aria-label="${t('home.viewAll.collections', lang)}">${goIcon(lang, 16)}</a>
       </div>
       <div class="chip-row">
-        ${pinnedCollections.map((c) => `<a class="chip chip--collection" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">${escapeHTML(pickLocale(c.name, lang))} <span class="chip__count">${c.items.length}</span></a>`).join('')}
+        ${pinnedCollections.map((c) => `<a class="chip chip--collection" href="${buildHash(VIEWS.COLLECTION, { id: c.id })}" data-action="navigate" data-view="${VIEWS.COLLECTION}" data-id="${escapeHTML(c.id)}">${escapeHTML(pickLocale(c.name, lang))} <span class="chip__count">${collectionReadableCount(state, c)}</span></a>`).join('')}
       </div>
     </section>`
       : '',

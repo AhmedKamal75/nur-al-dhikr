@@ -80,7 +80,12 @@ describe('scroll memory keys separate surfaces', () => {
 
 describe('collection tiles count live items', () => {
   test('deleted ids excluded', () => {
-    const state = { library: { itemIndex: { a: {}, b: {} } } };
+    const a = { id: 'a' },
+      b = { id: 'b' };
+    const category = { id: 'c', items: [a, b] };
+    const state = {
+      library: { itemIndex: { a: { item: a, category }, b: { item: b, category } } },
+    };
     assert.equal(liveCollectionCount(state, { items: ['a', 'b', 'ghost'] }), 2);
     assert.equal(liveCollectionCount(state, null), 0);
   });

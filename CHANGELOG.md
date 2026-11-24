@@ -3,6 +3,11 @@
 - Expanded navigation sections put their child links below the section header instead of squeezing the parent label beside them. The parent link and disclosure remain separate controls; collapsed desktop rail and mobile drawer behavior are preserved.
 - EN/AR regression checks cover every expandable section, parent text ranges, submenu geometry, keyboard disclosure and sidebar collapse. No religious content changed.
 
+# v5.17.157 - Collection counts match the readable queue
+
+- Home collection chips, collection tiles and detail totals now count the same read-eligible, deduplicated entries as Focus. Missing, hidden and deleted content is excluded without removing stored collection membership.
+- Collection search shows matched-of-total, without changing the queue. Tests cover each hide/delete level, duplicates, missing entries, restoration and EN/AR phone/desktop rendering.
+
 # v5.17.156 - Begin a collection again without losing progress
 
 - Collection detail offers a quieter Start from beginning action alongside Continue only when the saved reading position differs from the first readable entry. It follows saved order, skips unavailable entries and ignores collection search.

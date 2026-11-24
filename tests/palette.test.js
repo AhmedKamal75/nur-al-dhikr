@@ -414,6 +414,8 @@ describe('list filters: settings, favorites, collections', () => {
     const { renderFavorites } = await import('../js/views/favorites.js');
     const { renderCollection } = await import('../js/views/collection.js');
     const idx = { a: entry('a', 'Morning Light', 'نور'), b: entry('b', 'Evening Calm', 'هدوء') };
+    const category = { id: 'test-category', items: Object.values(idx).map((e) => e.item) };
+    for (const e of Object.values(idx)) e.category = category;
     const core = {
       favorites: [],
       settings: { language: 'en', showTransliteration: true, showTranslation: true },

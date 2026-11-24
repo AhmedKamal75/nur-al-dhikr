@@ -5,7 +5,11 @@
  * the cards. Reorder hides while filtering — moving filtered rows would
  * silently reorder invisible neighbors.
  */
-import { collectionSessionStart, collectionSessionEntries } from '../services/focusQueue.js';
+import {
+  collectionSessionStart,
+  collectionSessionEntries,
+  collectionReadableCount,
+} from '../services/focusQueue.js';
 import { t, isRTL } from '../core/i18n.js';
 import { icon } from '../core/icons.js';
 import { buildHash } from '../core/router.js';
@@ -57,8 +61,9 @@ export function renderCollection(state) {
   const beginning = collectionSessionEntries(state, col)[0];
   const q = String(state.activeParams?.q || '');
   const terms = q ? q.split(/\s+/) : [];
-  const resolved = col.items.map((id) => state.library.itemIndex[id]).filter(Boolean);
+  const resolved = collectionSessionEntries(state, col);
   const entries = filterEntries(resolved, q);
+  const total = collectionReadableCount(state, col);
   const orderable = !q;
 
   // Favorites missing from this collection — one tap imports them all.
@@ -90,7 +95,7 @@ export function renderCollection(state) {
       ${sessionFirst ? `<button type="button" class="btn btn--secondary" data-action="collection-session-start" data-id="${escapeHTML(col.id)}">${icon('play', { size: 16 })} ${t(col.sessionItemId ? 'collections.sessionContinue' : 'collections.sessionStart', lang)}</button>` : ''}
       ${beginning && sessionFirst?.item.id !== beginning.item.id ? `<button type="button" class="btn btn--ghost" data-action="collection-session-beginning" data-id="${escapeHTML(col.id)}">${t('collections.sessionBeginning', lang)}</button>` : ''}
       </div>
-      <p class="view__meta">${t('collections.itemCount', lang, { n: entries.length })}</p>
+      <p class="view__meta">${q ? t('collections.matchedCount', lang, { n: entries.length, total }) : t('collections.itemCount', lang, { n: total })}</p>
       ${
         missingFavorites.length
           ? `<button type="button" class="btn btn--secondary btn--sm" data-action="collection-add-favorites" data-id="${escapeHTML(col.id)}">${icon('heart', { size: 14 })} ${t('collections.addFavorites', lang)} (${missingFavorites.length})</button>`
